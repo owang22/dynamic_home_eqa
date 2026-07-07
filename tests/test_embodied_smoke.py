@@ -1,5 +1,5 @@
 """
-M3 smoke test: all six policies run end-to-end on one scene, one day, ten
+M3 smoke test: all eight policies run end-to-end on one scene, one day, ten
 MCQ questions, producing a replay log and a results CSV. Smoke only — this
 checks the whole pipeline executes and produces sane-shaped output, not
 that any policy is "good" (that's the experiment sweep, M4+).
@@ -62,22 +62,27 @@ def _all_policies():
     from dynamic_home_eqa.embodied.policy import (
         AlwaysResense,
         AnswerImmediately,
-        ConfidenceStop,
+        CoverageStop,
         DecayThreshold,
         DecayVoi,
         DecayVoiRouting,
+        RandomResense,
+        RandomResenseConfig,
+        TimeOnlyThreshold,
     )
     return {
-        "answer_immediately": AnswerImmediately(),
-        "always_resense":     AlwaysResense(),
-        "confidence_stop":    ConfidenceStop(),
-        "decay_threshold":    DecayThreshold(),
-        "decay_voi":          DecayVoi(),
-        "decay_voi_routing":  DecayVoiRouting(),
+        "answer_immediately":    AnswerImmediately(),
+        "always_resense":        AlwaysResense(),
+        "coverage_stop":         CoverageStop(),
+        "decay_threshold":       DecayThreshold(),
+        "decay_voi":             DecayVoi(),
+        "decay_voi_routing":     DecayVoiRouting(),
+        "budget_matched_random": RandomResense(RandomResenseConfig(p_resense=0.12, seed=0)),
+        "time_only_threshold":   TimeOnlyThreshold(),
     }
 
 
-def test_all_six_policies_run_end_to_end_and_produce_a_results_csv(real_day, decay_models, tmp_path):
+def test_all_eight_policies_run_end_to_end_and_produce_a_results_csv(real_day, decay_models, tmp_path):
     from dynamic_home_eqa.embodied.belief import BeliefStore
     from dynamic_home_eqa.embodied.question import (
         categories_ever_outdoor,
@@ -91,7 +96,7 @@ def test_all_six_policies_run_end_to_end_and_produce_a_results_csv(real_day, dec
     csv_rows: list[dict] = []
 
     policies = _all_policies()
-    assert len(policies) == 6
+    assert len(policies) == 8
 
     anchor_history = category_anchor_history([manifest])
     outdoor_categories = categories_ever_outdoor([manifest])
@@ -146,7 +151,7 @@ def test_all_six_policies_run_end_to_end_and_produce_a_results_csv(real_day, dec
             world.close()
 
     assert len(csv_rows) > 0
-    assert len(csv_rows) % 6 == 0  # same question count asked under every policy
+    assert len(csv_rows) % 8 == 0  # same question count asked under every policy
 
     out_csv = tmp_path / "results.csv"
     with open(out_csv, "w", newline="") as f:

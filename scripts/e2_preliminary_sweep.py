@@ -51,11 +51,14 @@ from dynamic_home_eqa.embodied.experiment_config import FROZEN, FrozenConfig
 from dynamic_home_eqa.embodied.policy import (
     AlwaysResense,
     AnswerImmediately,
-    ConfidenceStop,
+    CoverageStop,
     DecayThreshold,
     DecayVoi,
     DecayVoiConfig,
     DecayVoiRouting,
+    RandomResense,
+    RandomResenseConfig,
+    TimeOnlyThreshold,
 )
 from dynamic_home_eqa.embodied.posterior import (
     PosteriorBeliefStore,
@@ -78,6 +81,11 @@ from dynamic_home_eqa.scripts.scene_validation import validate_folder
 
 _N_TOD_BUCKETS = 4
 _BINDING_LATENCY_WEIGHT = 0.01  # results/reports/voi_boundary.md
+# results/reports/budget_matched_random.md — calibrated so budget_matched_
+# random's realized mean travel distance matches decay_voi's ~2.2m on the
+# frozen scene (scripts/budget_matched_random_calibration.py's own grid
+# search, not guessed).
+_BUDGET_MATCHED_P_RESENSE = 0.12
 _DIAGNOSTICS_DIR = _DYNAMIC_EQA / "embodied_results" / "diagnostics"
 _POOL_STATE_PATH = _DYNAMIC_EQA / "generation_out" / "_expand_scene_pool_state.json"
 
@@ -86,15 +94,19 @@ def _policies() -> dict[str, object]:
     """Same policy set embodied_m3_gate.py uses, minus conformal_decay_
     threshold (dropped in the coverage-repair phase), with decay_voi/
     decay_voi_routing at the validated binding latency_weight instead of
-    the untested default."""
+    the untested default, plus two cheap model-free control baselines
+    (budget_matched_random, time_only_threshold) added for the LLM-agent
+    comparison phase — see results/reports/INDEX.md."""
     voi_config = DecayVoiConfig(latency_weight=_BINDING_LATENCY_WEIGHT)
     return {
-        "answer_immediately": AnswerImmediately(),
-        "always_resense":     AlwaysResense(),
-        "confidence_stop":    ConfidenceStop(),
-        "decay_threshold":    DecayThreshold(),
-        "decay_voi":          DecayVoi(voi_config),
-        "decay_voi_routing":  DecayVoiRouting(voi_config),
+        "answer_immediately":     AnswerImmediately(),
+        "always_resense":         AlwaysResense(),
+        "coverage_stop":          CoverageStop(),
+        "decay_threshold":        DecayThreshold(),
+        "decay_voi":              DecayVoi(voi_config),
+        "decay_voi_routing":      DecayVoiRouting(voi_config),
+        "budget_matched_random":  RandomResense(RandomResenseConfig(p_resense=_BUDGET_MATCHED_P_RESENSE, seed=0)),
+        "time_only_threshold":    TimeOnlyThreshold(),
     }
 
 

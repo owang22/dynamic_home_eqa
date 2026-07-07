@@ -66,10 +66,11 @@ class TestClassify:
         ) == "baseline_abstained_right"
 
 
-def _row(policy, wait_hours, label, correct, abstained=False, log=None):
+def _row(policy, wait_hours, label, correct, abstained=False, log=None, scene="", eval_folder=""):
     return {
         "policy": policy, "wait_hours": wait_hours, "label": label,
         "correct": correct, "abstained": abstained, "log": log or [],
+        "scene": scene, "eval_folder": eval_folder,
     }
 
 
@@ -94,6 +95,26 @@ class TestDecompose:
         # not in current_instances() for that trial) — nothing to diff against.
         rows = [_row("decay_voi", 2.0, "vase_1", correct=True)]
         assert module.decompose(rows) == []
+
+    def test_same_label_and_wait_in_different_scenes_do_not_collide(self, module):
+        """Regression test (decay_voi reconciliation batch): a generic
+        label like "candle_1" recurring in two different scenes at the
+        same wait_hours used to collide in decompose()'s pairing dict
+        (keyed by (policy, wait_hours, label) only), silently dropping
+        one scene's trial. Both scenes' trials must produce their own
+        TransitionRecord now that scene/eval_folder disambiguate them."""
+        rows = [
+            _row("answer_immediately", 1.0, "candle_1", correct=False, scene="sceneA", eval_folder="sceneA_day4"),
+            _row("decay_voi", 1.0, "candle_1", correct=True, scene="sceneA", eval_folder="sceneA_day4",
+                 log=[{"kind": "goto_resense", "anchor": "living_room.shelf"}]),
+            _row("answer_immediately", 1.0, "candle_1", correct=True, scene="sceneB", eval_folder="sceneB_day4"),
+            _row("decay_voi", 1.0, "candle_1", correct=False, scene="sceneB", eval_folder="sceneB_day4",
+                 log=[{"kind": "goto_resense", "anchor": "kitchen.counter"}]),
+        ]
+        records = module.decompose(rows)
+        assert len(records) == 2, "both scenes' trials must survive, not just one"
+        transitions = sorted(r.transition for r in records)
+        assert transitions == ["right_to_wrong", "wrong_to_right"]
 
     def test_multiple_resense_anchors_all_attributed(self, module):
         rows = [

@@ -22,6 +22,7 @@ from dynamic_home_eqa.embodied.posterior import (
     fit_state_transition_kernels,
     fit_transition_kernels,
     shrink_hierarchical,
+    shrink_hierarchical_with_llm,
 )
 from dynamic_home_eqa.embodied.types import OracleDetection, Pose
 
@@ -180,6 +181,108 @@ def test_shrink_hierarchical_matches_two_nested_shrink_calls():
     expected_profile = _shrink(profile.value, global_.value, profile.weight, prior_strength)
     expected = _shrink(scene.value, expected_profile, scene.weight, prior_strength)
     assert shrink_hierarchical(scene, profile, global_, prior_strength) == pytest.approx(expected)
+
+
+# ---------------------------------------------------------------------------
+# shrink_hierarchical_with_llm (L1 T1: LLM as the 4th, bottom backoff level)
+# ---------------------------------------------------------------------------
+
+def test_zero_concentration_is_the_do_no_harm_floor():
+    """concentration=0 (llm.weight=0) must make this function IDENTICAL
+    to shrink_hierarchical on a cell with real data at every other level
+    — a concentration=0 LLM prior is mathematically inert, not merely
+    small. This is T1's own required do-no-harm property, tested here
+    directly rather than only inferred from T2's later ablation."""
+    scene = HierarchicalStat(value=0.2, weight=4.0)
+    profile = HierarchicalStat(value=0.5, weight=8.0)
+    global_ = HierarchicalStat(value=0.8, weight=200.0)
+    llm = HierarchicalStat(value=0.99, weight=0.0)  # value irrelevant at weight=0
+    prior_strength = 3.0
+
+    with_llm = shrink_hierarchical_with_llm(scene, profile, global_, llm, prior_strength)
+    without_llm = shrink_hierarchical(scene, profile, global_, prior_strength)
+    assert with_llm == pytest.approx(without_llm)
+
+
+def test_zero_global_weight_falls_back_exactly_to_llm_value():
+    """The zero-data limit: a category with no real events anywhere in
+    the pool (global.weight=0) must back off to EXACTLY the LLM's
+    elicited value — not blended with anything else — for any positive
+    concentration."""
+    scene = HierarchicalStat(value=999.0, weight=0.0)
+    profile = HierarchicalStat(value=999.0, weight=0.0)
+    global_ = HierarchicalStat(value=999.0, weight=0.0)
+    llm = HierarchicalStat(value=0.63, weight=5.0)
+    result = shrink_hierarchical_with_llm(scene, profile, global_, llm, prior_strength=3.0)
+    assert result == pytest.approx(0.63)
+
+
+def test_zero_global_weight_limit_holds_at_any_positive_concentration():
+    scene = HierarchicalStat(value=999.0, weight=0.0)
+    profile = HierarchicalStat(value=999.0, weight=0.0)
+    global_ = HierarchicalStat(value=999.0, weight=0.0)
+    llm = HierarchicalStat(value=0.4, weight=500.0)  # high concentration, same limit
+    result = shrink_hierarchical_with_llm(scene, profile, global_, llm, prior_strength=3.0)
+    assert result == pytest.approx(0.4)
+
+
+def test_higher_concentration_pulls_the_backed_off_value_closer_to_llm():
+    """Not an exact limit (global.weight > 0 here) — concentration
+    controls how fast real data overrides the LLM prior, so a higher
+    concentration should monotonically pull the global-level result
+    closer to llm.value, never further from it."""
+    scene = HierarchicalStat(value=999.0, weight=0.0)
+    profile = HierarchicalStat(value=999.0, weight=0.0)
+    global_ = HierarchicalStat(value=0.1, weight=10.0)
+    llm_value = 0.9
+
+    low = shrink_hierarchical_with_llm(scene, profile, global_, HierarchicalStat(llm_value, weight=1.0))
+    mid = shrink_hierarchical_with_llm(scene, profile, global_, HierarchicalStat(llm_value, weight=10.0))
+    high = shrink_hierarchical_with_llm(scene, profile, global_, HierarchicalStat(llm_value, weight=1000.0))
+
+    assert global_.value < low < mid < high < llm_value + 1e-9
+    assert high == pytest.approx(llm_value, abs=0.02)  # near-total override at high concentration
+
+
+def test_strong_global_weight_stays_close_to_its_own_value_regardless_of_llm():
+    """The other half of do-no-harm: even a high-concentration LLM prior
+    must not meaningfully move a cell where global already has abundant
+    real data — this is what T2's ablation checks at the belief-store
+    level; this is the same property checked directly on the backoff
+    math alone."""
+    scene = HierarchicalStat(value=999.0, weight=0.0)
+    profile = HierarchicalStat(value=999.0, weight=0.0)
+    global_ = HierarchicalStat(value=0.7, weight=5000.0)
+    llm = HierarchicalStat(value=0.1, weight=50.0)
+    result = shrink_hierarchical_with_llm(scene, profile, global_, llm, prior_strength=3.0)
+    assert result == pytest.approx(0.7, abs=0.01)
+
+
+def test_matches_shrink_hierarchical_with_llm_backed_off_global_substituted():
+    from dynamic_home_eqa.embodied.posterior import _shrink
+
+    scene = HierarchicalStat(value=0.2, weight=4.0)
+    profile = HierarchicalStat(value=0.5, weight=8.0)
+    global_ = HierarchicalStat(value=0.8, weight=20.0)
+    llm = HierarchicalStat(value=0.3, weight=15.0)
+    prior_strength = 2.5
+
+    global_backed_off = _shrink(global_.value, llm.value, global_.weight, llm.weight)
+    expected_profile = _shrink(profile.value, global_backed_off, profile.weight, prior_strength)
+    expected = _shrink(scene.value, expected_profile, scene.weight, prior_strength)
+    assert shrink_hierarchical_with_llm(scene, profile, global_, llm, prior_strength) == pytest.approx(expected)
+
+
+def test_both_global_and_llm_weight_zero_raises_rather_than_silently_guessing():
+    """A cell with no real data anywhere AND no LLM prior configured has
+    nothing to base an estimate on — this must fail loudly (guards
+    fatal), not return an arbitrary or NaN value."""
+    scene = HierarchicalStat(value=999.0, weight=0.0)
+    profile = HierarchicalStat(value=999.0, weight=0.0)
+    global_ = HierarchicalStat(value=999.0, weight=0.0)
+    llm = HierarchicalStat(value=999.0, weight=0.0)
+    with pytest.raises(ZeroDivisionError):
+        shrink_hierarchical_with_llm(scene, profile, global_, llm, prior_strength=3.0)
 
 
 def test_category_with_more_events_shrinks_less_toward_pooled():

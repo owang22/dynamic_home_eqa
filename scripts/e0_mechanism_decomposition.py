@@ -92,20 +92,34 @@ class TransitionRecord:
     resense_anchors: tuple[str, ...]
 
 
+def _scene_key(row: dict) -> tuple[str, str]:
+    """(scene, eval_folder) — the disambiguator decompose()'s pairing keys
+    were missing (decay_voi reconciliation batch): a bare (wait_hours,
+    label) key collides across scenes whenever a generic object label
+    ("book_1", "candle_1", ...) recurs in more than one scene's qualified-
+    label set, which is the common case on a multi-scene pool. On a
+    single-scene result file every row shares one (scene, eval_folder), so
+    this is a no-op there — the bug only manifests, and was only found,
+    once decompose()/its e2_headline_comparison.py counterpart ran against
+    multi-scene rows. Falls back to "" rather than a FrozenConfig default
+    so this module stays independent of any one frozen scene."""
+    return (row.get("scene", ""), row.get("eval_folder", ""))
+
+
 def decompose(rows: list[dict]) -> list[TransitionRecord]:
-    by_policy_wait_label = {(r["policy"], r["wait_hours"], r["label"]): r for r in rows}
+    by_policy_wait_label = {(r["policy"], *_scene_key(r), r["wait_hours"], r["label"]): r for r in rows}
     baseline_rows = {
-        (wait_hours, label): r
-        for (policy, wait_hours, label), r in by_policy_wait_label.items()
+        (scene, eval_folder, wait_hours, label): r
+        for (policy, scene, eval_folder, wait_hours, label), r in by_policy_wait_label.items()
         if policy == _BASELINE_POLICY
     }
 
-    policies = sorted({p for (p, _, _) in by_policy_wait_label} - {_BASELINE_POLICY})
+    policies = sorted({p for (p, _s, _e, _w, _l) in by_policy_wait_label} - {_BASELINE_POLICY})
     records: list[TransitionRecord] = []
-    for (policy, wait_hours, label), row in by_policy_wait_label.items():
+    for (policy, scene, eval_folder, wait_hours, label), row in by_policy_wait_label.items():
         if policy not in policies:
             continue
-        baseline_row = baseline_rows.get((wait_hours, label))
+        baseline_row = baseline_rows.get((scene, eval_folder, wait_hours, label))
         if baseline_row is None:
             continue  # baseline trial missing (label wasn't current instances at that trial)
         transition = classify(Outcome.from_row(baseline_row), Outcome.from_row(row))

@@ -116,6 +116,43 @@ def shrink_hierarchical(
     return _shrink(scene.value, profile_backed_off, scene.weight, prior_strength)
 
 
+def shrink_hierarchical_with_llm(
+    scene: HierarchicalStat, profile: HierarchicalStat, global_: HierarchicalStat, llm: HierarchicalStat,
+    prior_strength: float = _DEFAULT_PRIOR_STRENGTH,
+) -> float:
+    """L1 T1: 4-level count-weighted backoff, scene -> profile -> global ->
+    LLM. Identical to shrink_hierarchical except global no longer backs
+    off toward an implicit floor (previously whatever _normalize_with_
+    laplace's Laplace-smoothed cross-category average happened to give) —
+    it now backs off toward an explicit, category-specific LLM prior
+    first, using llm.weight as the backoff's prior_strength for that one
+    step (llm.weight IS the elicited prior's concentration parameter —
+    see llm_prior/pseudo_counts.py's own docstring for why weight and
+    concentration are the same number here, not two different ones that
+    happen to compose).
+
+    do-no-harm floor (T1's own required property, verified in this
+    module's tests): llm.weight == 0 (concentration=0) makes this
+    function IDENTICAL to shrink_hierarchical — the global level then
+    backs off toward llm.value with prior_strength=0, which is _shrink's
+    own weight=0 case, collapsing to global.value exactly regardless of
+    what llm.value is. A concentration=0 LLM prior is therefore
+    mathematically inert, not merely "small" — the required floor for
+    "an integration point must not be able to drag a strong cell down."
+
+    zero-data limit: global.weight == 0 (this category has no real
+    events anywhere in the pool) makes the global-backed-off value equal
+    EXACTLY llm.value, for any llm.weight > 0 — the same exact-fallback
+    property shrink_hierarchical's own scene/profile levels already have.
+    Higher llm.weight does not change this exact limit; what it changes
+    is how much global data it takes to override the LLM prior once
+    global.weight becomes nonzero (see this module's own tests for the
+    asymptotic-approach case, not just the two exact limits)."""
+    global_backed_off = _shrink(global_.value, llm.value, global_.weight, llm.weight)
+    profile_backed_off = _shrink(profile.value, global_backed_off, profile.weight, prior_strength)
+    return _shrink(scene.value, profile_backed_off, scene.weight, prior_strength)
+
+
 def _normalize_with_laplace(counts: dict[str, int], keys: tuple[str, ...], alpha: float = 1.0) -> dict[str, float]:
     total = sum(counts.get(k, 0) for k in keys) + alpha * len(keys)
     return {k: (counts.get(k, 0) + alpha) / total for k in keys}

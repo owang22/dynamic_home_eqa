@@ -43,14 +43,19 @@ Mean travel distance (m) — the cost side of the frontier:
 | answer_immediately / confidence_stop / tod_prior | 0.0 | 0.0 |
 
 Mechanism decomposition (wrong->right = discovery, wrong->abstain =
-selective abstention), summed across resensing policies:
+selective abstention), volatile-location:
 
-| policy | hazard | wrong->right | wrong->abstain |
-|---|---|---|---|
-| always_resense | volatile | 7 | 0 |
-| decay_threshold | volatile | 4 | 0 |
-| decay_voi, decay_voi_routing, confidence_stop | stable + volatile | 0 | 0 |
-| **total (resensing policies)** | | **11** | **0** |
+**Correction (see `e2_reconciliation.md`):** the numbers originally
+reported here for `decay_voi`/`decay_voi_routing` (0 and 0) were wrong —
+a cross-scene key-collision bug in `stratified_decomposition()` silently
+dropped most trials before counting. Fixed; corrected counts below.
+
+| policy | wrong->right | wrong->abstain |
+|---|---|---|
+| always_resense | 22 | 38 |
+| decay_threshold | 15 | 36 |
+| decay_voi / decay_voi_routing | 9 | 19 |
+| confidence_stop | 0 | 0 |
 
 ## Plots
 
@@ -69,26 +74,60 @@ always-resensing. This is the value-of-information tradeoff the project's
 central claim is about, visible for the first time on real multi-scene
 data, not one scene's rehearsal.
 
-**Discovery, not selective abstention, is still the separating mechanism**
-— 11 wrong-to-right flips against 0 wrong-to-abstain, matching the
-single-scene M2 finding's shape. But on this larger sample, all 11
-discoveries come from `always_resense` and `decay_threshold`; `decay_voi`
-contributes zero in this data, unlike the single-scene check in
-`voi_boundary.md` (which found 3, unchanged between lambda settings). This
-is not a contradiction — different scene mix, different specific trials —
-but it means `decay_voi`'s discovery contribution should be read as
-scene-dependent, not a fixed constant, until the pool is much larger.
+**`decay_voi`'s +0.072 accuracy gain over the floor is real (paired
+bootstrap CI [0.023, 0.131], excludes zero — see `e2_reconciliation.md`)
+and is a mix of genuine discovery and selective abstention, not either
+alone**: 9 wrong-to-right flips and 19 wrong-to-abstain flips on
+volatile-location, with the floor wrong on 19/19 of the questions
+`decay_voi` chose to abstain on instead. Full paired-question traces,
+the corrected decomposition, and the counting-bug fix that this table's
+earlier (wrong) numbers required are in `e2_reconciliation.md` — read
+that report before citing this table's mechanism-decomposition numbers
+anywhere else.
 
-`confidence_stop` and `answer_immediately` are numerically identical on
-every cell measured — `confidence_stop`'s literature stopping rule never
-actually differs from never resensing on this pool's data (it never
-triggers), which is itself worth noting rather than assuming the two
-policies are redundant by design.
+**Correction: `confidence_stop` is not a real baseline.** It is not
+"numerically identical to `answer_immediately` on this pool's data" as
+this report originally said — it is **structurally identical by
+construction**, on every possible input, not just the 855 trials run so
+far. `ConfidenceStop.act()` calls the exact same `_answer_from_belief(...,
+confidence=1.0)` as `AnswerImmediately` whenever a belief exists, and its
+one intended point of difference (resensing when nothing is believed at
+all) was scoped out at implementation time ("no exploration in scope" —
+see `embodied/policy.py`'s own docstring) — that branch returns `Abstain()`
+regardless, the same value `_answer_from_belief` already returns for a
+missing belief. There is no belief state on which these two policies can
+diverge; the "literature baseline" the E2 comparison is supposed to
+include currently contributes zero information. This is flagged, not
+fixed, pending a decision on what "confidence-based stopping" should mean
+here (real threshold on posterior confidence vs. a minimal fix to the dead
+branch) — see `INDEX.md`'s open questions. Every `confidence_stop` number
+in this report is real (the policy ran, 855/855 trials) but should be read
+as a second copy of `answer_immediately`, not an independent comparison
+point, until this is resolved.
 
-`tod_prior` is far below every resensing policy and below the answer-
-immediately floor (0.133/0.180 vs. 0.476/0.366) — a schedule-only prior
-with zero live sensing does not substitute for observing anything on this
-pool, which is the point of the comparison, not a surprise.
+**Second correction (2026-07-07):** the "flagged, not fixed" decision
+above was revisited — `ConfidenceStop` was renamed to `CoverageStop` and
+the dead branch fixed to the literal instruction (search when nothing is
+believed). The fix is real but PROVABLY still a no-op — see `INDEX.md`'s
+open questions for the structural proof. This is a behavior-bearing
+change to `embodied/policy.py` (new `code_hash`); the numbers in this
+report predate it and have not yet been regenerated under the new name
+— that regen is deliberately deferred pending L0
+(`l0_llm_prior_calibration.md`), not silently skipped.
+
+**`tod_prior` lands well below even the stale-observation floor, and that
+gap is itself a finding, not a null result.** 0.133/0.180 (stable/volatile
+location) vs. `answer_immediately`'s 0.476/0.366 means a learned daily
+schedule alone is *worse* than trusting a single, possibly hours-old
+observation — sensing carries real information over routine priors on
+this benchmark, decisively. That is a load-bearing line for the paper
+(motivates why the project resenses at all, not just how it decides when)
+and it is now also the bar LLM Phase L0's elicited priors are measured
+against: if a frontier model's forecast-only prior (no live observation,
+same information the fitted schedule kernel has) also lands under the
+answer-immediately floor, that sharpens the case that LLM priors must be
+*blended with observation* (L1's Dirichlet backoff design), not
+substituted for sensing outright.
 
 ## What is too thin to call
 
@@ -125,3 +164,7 @@ differ by design — each hashes that scene's own labels/folders; see
 `scripts/e2_preliminary_report.py`'s `check_consistency`). Reproduce with
 `scripts/e2_preliminary_sweep.py` then `scripts/e2_preliminary_report.py`.
 Full data: `e2_PRELIMINARY_headline.csv`, `e2_PRELIMINARY_mechanism_decomposition.csv`.
+Mechanism-decomposition numbers were corrected after this report was first
+written — see `e2_reconciliation.md` for the paired-question audit, the
+counting-bug fix, and the statistically-significant paired-delta CIs
+behind the headline accuracy gap.

@@ -17,6 +17,7 @@ from dynamic_home_eqa.scripts.e2_headline_comparison import (
     bootstrap_over_clusters,
     check_pool_fingerprint,
     cluster_key,
+    stratified_decomposition,
 )
 
 
@@ -27,47 +28,59 @@ def _descriptor(scene_id="102343992", location_labels=("book_1",), state_labels=
     )
 
 
+def _manifest(scenes=(), pipeline_version="v1", generation_model="test-model"):
+    return PoolManifest(scenes=scenes, pipeline_version=pipeline_version, generation_model=generation_model)
+
+
 class TestPoolManifest:
     def test_fingerprint_is_deterministic(self):
-        m1 = PoolManifest(scenes=(_descriptor(),), pipeline_version="v1")
-        m2 = PoolManifest(scenes=(_descriptor(),), pipeline_version="v1")
+        m1 = _manifest(scenes=(_descriptor(),))
+        m2 = _manifest(scenes=(_descriptor(),))
         assert m1.fingerprint() == m2.fingerprint()
 
     def test_fingerprint_changes_with_scene_labels(self):
-        m1 = PoolManifest(scenes=(_descriptor(location_labels=("book_1",)),), pipeline_version="v1")
-        m2 = PoolManifest(scenes=(_descriptor(location_labels=("book_1", "vase_1")),), pipeline_version="v1")
+        m1 = _manifest(scenes=(_descriptor(location_labels=("book_1",)),))
+        m2 = _manifest(scenes=(_descriptor(location_labels=("book_1", "vase_1")),))
         assert m1.fingerprint() != m2.fingerprint()
 
     def test_fingerprint_changes_with_navmesh(self):
-        m1 = PoolManifest(scenes=(_descriptor(navmesh="a"),), pipeline_version="v1")
-        m2 = PoolManifest(scenes=(_descriptor(navmesh="b"),), pipeline_version="v1")
+        m1 = _manifest(scenes=(_descriptor(navmesh="a"),))
+        m2 = _manifest(scenes=(_descriptor(navmesh="b"),))
         assert m1.fingerprint() != m2.fingerprint()
 
     def test_fingerprint_changes_with_start_island(self):
-        m1 = PoolManifest(scenes=(_descriptor(island=1),), pipeline_version="v1")
-        m2 = PoolManifest(scenes=(_descriptor(island=2),), pipeline_version="v1")
+        m1 = _manifest(scenes=(_descriptor(island=1),))
+        m2 = _manifest(scenes=(_descriptor(island=2),))
         assert m1.fingerprint() != m2.fingerprint()
 
     def test_fingerprint_changes_with_pipeline_version(self):
-        m1 = PoolManifest(scenes=(_descriptor(),), pipeline_version="v1")
-        m2 = PoolManifest(scenes=(_descriptor(),), pipeline_version="v2")
+        m1 = _manifest(scenes=(_descriptor(),), pipeline_version="v1")
+        m2 = _manifest(scenes=(_descriptor(),), pipeline_version="v2")
         assert m1.fingerprint() != m2.fingerprint()
 
     def test_fingerprint_changes_with_more_scenes(self):
-        m1 = PoolManifest(scenes=(_descriptor(scene_id="a"),), pipeline_version="v1")
-        m2 = PoolManifest(scenes=(_descriptor(scene_id="a"), _descriptor(scene_id="b")), pipeline_version="v1")
+        m1 = _manifest(scenes=(_descriptor(scene_id="a"),))
+        m2 = _manifest(scenes=(_descriptor(scene_id="a"), _descriptor(scene_id="b")))
+        assert m1.fingerprint() != m2.fingerprint()
+
+    def test_fingerprint_changes_with_generation_model(self):
+        # L0's circularity check depends on this: the pool fingerprint must
+        # move if the generator model family ever changes, the same as any
+        # other config field.
+        m1 = _manifest(scenes=(_descriptor(),), generation_model="Qwen/Qwen3-14B-AWQ")
+        m2 = _manifest(scenes=(_descriptor(),), generation_model="meta-llama/Llama-3.2-1B")
         assert m1.fingerprint() != m2.fingerprint()
 
 
 class TestCheckPoolFingerprint:
     def test_passes_with_matching_fingerprints(self):
         results = [{"fingerprint": "abc"}, {"fingerprint": "abc"}]
-        check_pool_fingerprint(results, PoolManifest(scenes=(), pipeline_version="v1"))  # must not raise
+        check_pool_fingerprint(results, _manifest())  # must not raise
 
     def test_raises_on_mismatched_fingerprints(self):
         results = [{"fingerprint": "abc"}, {"fingerprint": "def"}]
         with pytest.raises(ValueError, match="Mismatched fingerprints"):
-            check_pool_fingerprint(results, PoolManifest(scenes=(), pipeline_version="v1"))
+            check_pool_fingerprint(results, _manifest())
 
 
 class TestClusterKey:
@@ -139,3 +152,41 @@ class TestBootstrapOverClusters:
         result = bootstrap_over_clusters([1.0, float("nan"), 3.0])
         assert result.n_clusters == 2
         assert result.point == pytest.approx(2.0)
+
+
+def _decomp_row(policy, scene, eval_folder, wait_hours, label, correct, abstained=False, hazard_class="volatile"):
+    return {
+        "policy": policy, "scene": scene, "eval_folder": eval_folder, "wait_hours": wait_hours,
+        "label": label, "correct": correct, "abstained": abstained, "hazard_class": hazard_class,
+    }
+
+
+class TestStratifiedDecomposition:
+    def test_same_label_and_wait_in_different_scenes_do_not_collide(self):
+        """Regression test (decay_voi reconciliation batch): confirmed on
+        the E2 preliminary sweep's volatile-location stratum — 505
+        answer_immediately trials collapsed to 70 distinct (wait_hours,
+        label) pairs because the pairing dict didn't include scene/
+        eval_folder, silently dropping ~86% of trials. A generic label
+        ("candle_1") recurring in two different scenes at the same
+        wait_hours must produce two independent transition counts, not one."""
+        rows = [
+            _decomp_row("answer_immediately", "sceneA", "sceneA_day4", 1.0, "candle_1", correct=False),
+            _decomp_row("decay_voi", "sceneA", "sceneA_day4", 1.0, "candle_1", correct=True),
+            _decomp_row("answer_immediately", "sceneB", "sceneB_day4", 1.0, "candle_1", correct=True),
+            _decomp_row("decay_voi", "sceneB", "sceneB_day4", 1.0, "candle_1", correct=False),
+        ]
+        decomposition = stratified_decomposition(rows)
+        assert len(decomposition) == 1  # one (policy, hazard_class) group: (decay_voi, volatile)
+        counts = decomposition[0]
+        assert counts["policy"] == "decay_voi"
+        assert counts.get("wrong_to_right", 0) == 1
+        assert counts.get("right_to_wrong", 0) == 1
+
+    def test_single_scene_unaffected(self):
+        rows = [
+            _decomp_row("answer_immediately", "sceneA", "sceneA_day4", 1.0, "book_1", correct=False),
+            _decomp_row("decay_voi", "sceneA", "sceneA_day4", 1.0, "book_1", correct=True),
+        ]
+        decomposition = stratified_decomposition(rows)
+        assert decomposition[0]["wrong_to_right"] == 1

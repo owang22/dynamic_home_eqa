@@ -42,6 +42,7 @@ under posterior.PosteriorBeliefStore.
 """
 from __future__ import annotations
 
+import hashlib
 import math
 from dataclasses import dataclass
 from typing import Callable, Optional, TYPE_CHECKING, Union
@@ -236,27 +237,66 @@ class AlwaysResense:
         return _continue_or_answer(belief, question, question.label, t, travel_time_to, confidence=1.0)
 
 
-class ConfidenceStop:
-    """The literature's stopping rule with the time term removed: resense
-    iff the instance isn't currently believed at all (never observed, or
-    displaced by a negative observation); otherwise answer regardless of
-    how stale the belief is. Confidence is always 1.0 when it answers —
-    this policy has no uncertainty notion at all, by design (it is the
-    literature baseline, not a strawman); its resulting miscalibration
-    (high confidence regardless of true staleness) is an expected,
-    reportable result, not a bug to quietly soften."""
+class CoverageStop:
+    """Renamed from ConfidenceStop (2026-07-07): "confidence" implied a
+    confidence model, and this policy's confidence is the constant 1.0 —
+    the name should say what it mechanically is. In the paper this maps to
+    literature confidence-stopping (GraphEQA/MemoryEQA-style) under
+    perfect perception and perfect memory, an a-fortiori comparison, not a
+    literal reimplementation of any one paper's stopping rule.
+
+    The literature's stopping rule with the time term removed: resense
+    iff the instance isn't currently believed at all; otherwise answer
+    regardless of how stale the belief is. Confidence is always 1.0 when
+    it answers — this policy has no uncertainty notion at all, by design
+    (it is the literature baseline, not a strawman); its resulting
+    miscalibration (high confidence regardless of true staleness) is an
+    expected, reportable result, not a bug to quietly soften.
+
+    "Not believed at all" previously had a dead branch here that always
+    abstained instead of searching — found (see results/reports/
+    INDEX.md's history) to make this policy structurally identical to
+    AnswerImmediately on every input, contributing nothing as a second
+    comparison point. Fixed to the literal instruction: when nothing is
+    believed, this now travels to the most plausible known candidate and
+    senses before answering (reusing _continue_or_answer, the exact same
+    goto/sense/search-depth-cap machinery every other search policy in
+    this module already uses).
+
+    PROVEN STILL DEGENERATE (verified, not assumed — see
+    tests/test_coverage_stop.py's TestStructuralInvariant): every
+    believed_anchor() implementation in this codebase (belief.BeliefStore,
+    posterior.PosteriorBeliefStore, posterior.TimeOfDayBeliefStore) derives
+    "is anything believed" from the SAME propagated posterior and the SAME
+    >1e-9 survival threshold that top_candidates()/_search_targets() uses
+    to decide "is there anything to search for" — believed_anchor's check
+    is the ARGMAX of the identical per-candidate values top_candidates
+    filters, so whenever believed_anchor returns None, top_candidates is
+    mathematically guaranteed to return empty too (an argmax below
+    threshold implies every candidate is below threshold). So this fix,
+    though real (it changes what the "not believed" branch does), can
+    never actually execute a search: _continue_or_answer's search-target
+    lookup is empty in exactly the cases where anchor was None, every
+    time, by construction, not merely on this pool's data. Reusing the
+    EXISTING goto/sense machinery therefore cannot produce a
+    non-degenerate literature baseline under the current belief-store
+    interface — that would need a NEW candidate-selection path not gated
+    by the survival threshold (e.g., an unconditional last-positively-
+    confirmed-anchor fallback), which is a bigger change than "reuse
+    existing machinery" and is intentionally not built here. No decay
+    model, no posterior-validity gate, no cost/benefit anywhere in this
+    decision either way: unlike DecayThreshold/DecayVoi, CoverageStop's
+    choice of WHETHER to search depends only on whether anything is
+    currently believed, never on how stale or how costly reaching it
+    would be — it just turns out "search when nothing is believed" and
+    "nothing to search for" coincide exactly."""
 
     def act(self, belief: BeliefStore, question: "MCQQuestion", pose, t: float,
             config: AgentConfig, travel_time_to: TravelTimeFn) -> Decision:
         anchor = belief.believed_anchor(question.label, t)
         if anchor is not None:
             return _answer_from_belief(belief, question, question.label, t, confidence=1.0)
-        if _just_resensed(belief, question.label, t):
-            return Abstain()
-        # Nothing believed and no anchor to travel toward — cannot resense
-        # toward an unknown location (no exploration in scope); abstain
-        # rather than stall.
-        return Abstain()
+        return _continue_or_answer(belief, question, question.label, t, travel_time_to, confidence=1.0)
 
 
 @dataclass(frozen=True)
@@ -358,3 +398,91 @@ class DecayVoiRouting(DecayVoi):
     behavior, but its actual decision rule today is identical to DecayVoi's.
     Documented here rather than silently passed off as a complete
     implementation."""
+
+
+def _deterministic_unit_interval(seed: int, label: str, t: float) -> float:
+    """A reproducible pseudo-random float in [0, 1), derived by hashing
+    (seed, label, t) rather than drawing from a stateful RNG object — keeps
+    RandomResense a stateless frozen-config policy like every other class
+    in this module (see _n_ruled_out's docstring for why that matters: no
+    mutable per-episode state anywhere in a policy)."""
+    key = f"{seed}:{label}:{t!r}"
+    digest = hashlib.sha256(key.encode()).digest()
+    return int.from_bytes(digest[:8], "little") / 2 ** 64
+
+
+@dataclass(frozen=True)
+class RandomResenseConfig:
+    """p_resense: probability of attempting a resense at each decision
+    point where something is already believed, independent of category,
+    staleness, or cost. Calibrated (not guessed) so this policy's realized
+    mean travel distance matches decay_voi's ~2.2m on the same scene —
+    see results/reports/budget_matched_random.md for the calibration run
+    and the value this defaults to. seed makes the draw reproducible."""
+    p_resense: float
+    seed: int = 0
+
+
+class RandomResense:
+    """Control baseline for E2: a travel-budget-matched null model for
+    decay_voi's *selectivity*. Resenses with fixed probability p_resense
+    at each decision point rather than weighing expected gain against
+    cost — so any accuracy gap between this policy and decay_voi at
+    matched average travel distance is attributable to WHICH resenses
+    decay_voi chooses, not merely how many trips it takes. Uses the same
+    belief.validity()-based confidence as decay_voi (not a flat 1.0) so
+    the comparison isolates the resense-selection rule, not confidence
+    calibration."""
+
+    def __init__(self, config: RandomResenseConfig) -> None:
+        self.policy_config = config
+
+    def act(self, belief: BeliefStore, question: "MCQQuestion", pose, t: float,
+            config: AgentConfig, travel_time_to: TravelTimeFn) -> Decision:
+        anchor = belief.believed_anchor(question.label, t)
+        if anchor is None:
+            return Abstain()
+        if _just_confirmed(belief, question.label, t):
+            return _answer_from_belief(belief, question, question.label, t,
+                                       confidence=belief.validity(question.label, t))
+        roll = _deterministic_unit_interval(self.policy_config.seed, question.label, t)
+        if roll < self.policy_config.p_resense:
+            return _continue_or_answer(belief, question, question.label, t, travel_time_to,
+                                       confidence=belief.validity(question.label, t))
+        return _answer_from_belief(belief, question, question.label, t,
+                                   confidence=belief.validity(question.label, t))
+
+
+@dataclass(frozen=True)
+class TimeOnlyThresholdConfig:
+    """threshold_hours: resense iff elapsed time since the belief was last
+    (positively) observed exceeds this fixed cutoff — no reference to
+    category, fitted decay rate, or posterior validity anywhere in the
+    decision. 1.0 hour is an untuned, round-number default: tuning it
+    against this pool's data would defeat the point of a cheap,
+    category-blind competitor to DecayThreshold's calibrated theta."""
+    threshold_hours: float = 1.0
+
+
+class TimeOnlyThreshold:
+    """Control baseline for E2: resense iff observation age exceeds a
+    fixed threshold, category-blind. Unlike DecayThreshold (which compares
+    a fitted per-category validity to theta), this policy never consults
+    the decay-model machinery for its decision at all — only a raw
+    elapsed-time comparison. Confidence is a flat 1.0 when it answers,
+    matching CoverageStop's convention for a policy with no calibration
+    model of its own: this is a "clock only" baseline, not a strawman."""
+
+    def __init__(self, config: Optional[TimeOnlyThresholdConfig] = None) -> None:
+        self.policy_config = config or TimeOnlyThresholdConfig()
+
+    def act(self, belief: BeliefStore, question: "MCQQuestion", pose, t: float,
+            config: AgentConfig, travel_time_to: TravelTimeFn) -> Decision:
+        anchor = belief.believed_anchor(question.label, t)
+        if anchor is None:
+            return Abstain()
+        elapsed = belief.elapsed_since_update(question.label, t)
+        stale = elapsed is None or elapsed > self.policy_config.threshold_hours
+        if stale:
+            return _continue_or_answer(belief, question, question.label, t, travel_time_to, confidence=1.0)
+        return _answer_from_belief(belief, question, question.label, t, confidence=1.0)

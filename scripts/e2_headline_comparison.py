@@ -4,7 +4,7 @@ e2_headline_comparison.py — E2: the headline policy comparison.
 
 IV: the policy itself (belief model + decision rule). Every policy in one
 table — floors (answer_immediately), ceilings (always_resense), literature
-(confidence_stop), ours (decay_threshold, decay_voi, decay_voi_routing),
+(coverage_stop), ours (decay_threshold, decay_voi, decay_voi_routing),
 and the baseline (tod_prior) — stratified by hazard_class and
 question_type (location vs state). conformal_decay_threshold is
 deliberately absent: dropped in the coverage-repair phase after its
@@ -114,9 +114,17 @@ class PoolManifest:
     E1-E4 pool-level counterpart of embodied.experiment_config.
     FrozenConfig.fingerprint() for a single scene. Any change to any field
     for any scene changes this hash; the mismatch guard (check_fingerprint
-    below) stays fatal exactly like build_attribution_table.py's does."""
+    below) stays fatal exactly like build_attribution_table.py's does.
+
+    generation_model is required, no default: LLM Phase L0 needs to know
+    which model family produced the pool's ground-truth traces (L0 scores
+    an elicited prior's same-family vs. cross-family calibration relative
+    to it), and generation_result.json itself does not record this — see
+    rehearsal_pool_manifest's own comment for how the value is determined.
+    """
     scenes:           tuple[SceneDescriptor, ...]
     pipeline_version: str
+    generation_model: str
 
     def fingerprint(self) -> str:
         payload = repr((
@@ -124,6 +132,7 @@ class PoolManifest:
                    s.start_island, s.portal_config, s.validation_hashes)
                   for s in self.scenes),
             self.pipeline_version,
+            self.generation_model,
         ))
         return hashlib.sha256(payload.encode()).hexdigest()[:16]
 
@@ -142,6 +151,25 @@ def _frozen_scene_validation_hashes(out_dir: pathlib.Path) -> tuple[str, ...]:
     return tuple(validate_folder(out_dir, f).validation_hash() for f in folders)
 
 
+# The generator model family, for every scene this pool's traces were ever
+# produced from. generation_result.json does not itself record a "model"
+# field (checked directly — its top-level keys are household_id, scene_id,
+# profile, day, clutter, persona, traces, displacements, raw_proposals,
+# grounded_proposals, mean_realism_score, grounding_stats, conflict_report;
+# no model identifier). Determined instead from the generation call sites:
+# generation.llm_client.DEFAULT_MODEL ("Qwen/Qwen3-14B-Instruct") is NOT
+# what actually ran — that model id does not exist on the HF Hub (HF API
+# 401) and is not cached locally, so any run relying on that default alone
+# would have failed outright. scripts/expand_scene_pool.py (which produced
+# every pool scene) passes --model explicitly as "Qwen/Qwen3-14B-AWQ",
+# matching agents/llm_agent.py's MODEL_14B ("production") and
+# scripts/compare_agents.py's _DEFAULT_MODEL. All pool generation this
+# project has run used this one model; if a future generation run uses a
+# different model, this constant — and therefore the pool fingerprint —
+# must change with it.
+_GENERATION_MODEL = "Qwen/Qwen3-14B-AWQ"
+
+
 def rehearsal_pool_manifest(out_dir: Optional[pathlib.Path] = None) -> PoolManifest:
     """The one-scene rehearsal pool: 102343992 via FROZEN, start_island=1
     (kitchen — confirmed by the navmesh-connectivity phase's D0/D1 fix and
@@ -157,6 +185,7 @@ def rehearsal_pool_manifest(out_dir: Optional[pathlib.Path] = None) -> PoolManif
             validation_hashes=_frozen_scene_validation_hashes(out_dir),
         ),),
         pipeline_version=pipeline_version(),
+        generation_model=_GENERATION_MODEL,
     )
 
 
@@ -280,20 +309,37 @@ def stratified_decomposition(rows: list[dict]) -> list[dict]:
     """wrong->right / wrong->abstain / right->{abstain,wrong} / unchanged
     counts per (policy, hazard_class) — the same transition classification
     e0_mechanism_decomposition.py uses, stratified by hazard_class here
-    (that script groups by wait_hours only)."""
+    (that script groups by wait_hours only).
+
+    decay_voi reconciliation batch: the pairing keys used to be (policy,
+    wait_hours, label) and (wait_hours, label) — omitting scene/eval_folder
+    entirely. On a single-scene result file this is harmless (every label
+    belongs to exactly one scene), but generic object labels ("book_1",
+    "candle_1") recur across many scenes' qualified-label sets, so on a
+    multi-scene pool this silently collapsed distinct trials from
+    different scenes onto the same dict key — confirmed on the E2
+    preliminary sweep's volatile-location stratum: 505 answer_immediately
+    trials collapsed to 70 distinct (wait_hours, label) pairs, dropping
+    ~86% of them (whichever scene's row was NOT last in iteration order).
+    This under-counted every policy's flip totals, most visibly decay_voi's
+    (reported as 0 wrong->right on that stratum; the real, scene-aware
+    count is 9 — see results/reports/e2_reconciliation.md). cluster_key
+    (scene, eval_folder) — already this module's own unit of independence
+    for bootstrap clustering — is reused here as the missing disambiguator,
+    not a new concept."""
     from dynamic_home_eqa.scripts.e0_mechanism_decomposition import Outcome, classify
 
-    by_key = {(r["policy"], r["wait_hours"], r["label"]): r for r in rows}
+    by_key = {(r["policy"], *cluster_key(r), r["wait_hours"], r["label"]): r for r in rows}
     baseline_rows = {
-        (r["wait_hours"], r["label"]): r for r in rows if r["policy"] == "answer_immediately"
+        (*cluster_key(r), r["wait_hours"], r["label"]): r for r in rows if r["policy"] == "answer_immediately"
     }
-    policies = sorted({p for (p, _, _) in by_key} - {"answer_immediately"})
+    policies = sorted({p for (p, _scene, _eval, _wait, _label) in by_key} - {"answer_immediately"})
 
     tallies: dict[tuple[str, str], dict[str, int]] = {}
-    for (policy, wait_hours, label), row in by_key.items():
+    for (policy, scene, eval_folder, wait_hours, label), row in by_key.items():
         if policy not in policies:
             continue
-        baseline = baseline_rows.get((wait_hours, label))
+        baseline = baseline_rows.get((scene, eval_folder, wait_hours, label))
         if baseline is None:
             continue
         transition = classify(Outcome.from_row(baseline), Outcome.from_row(row))

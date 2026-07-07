@@ -57,7 +57,7 @@ from dynamic_home_eqa.embodied.experiment_config import FROZEN
 from dynamic_home_eqa.embodied.policy import (
     AlwaysResense,
     AnswerImmediately,
-    ConfidenceStop,
+    CoverageStop,
     DecayThreshold,
     DecayVoi,
     DecayVoiRouting,
@@ -108,7 +108,7 @@ def main() -> None:
     posterior_policies = {
         "answer_immediately": AnswerImmediately(),
         "always_resense":     AlwaysResense(),
-        "confidence_stop":    ConfidenceStop(),
+        "coverage_stop":    CoverageStop(),
         "decay_threshold":    DecayThreshold(),
         "decay_voi":          DecayVoi(),
         "decay_voi_routing":  DecayVoiRouting(),
