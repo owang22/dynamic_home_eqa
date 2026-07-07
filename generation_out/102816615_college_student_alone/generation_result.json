@@ -1,0 +1,545 @@
+{
+  "household_id": "102816615_college_student_alone",
+  "scene_id": "102816615",
+  "profile": "college_student_alone",
+  "day": 0,
+  "clutter": [
+    {
+      "object_category": "book",
+      "target_relationship": "on_top",
+      "target_anchor": "shelves",
+      "reason": "Books are commonly placed on shelves in a college student's room for easy access and organization."
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "on",
+      "target_anchor": "counter",
+      "reason": "A bowl might be placed on the kitchen counter for holding fruits or snacks."
+    },
+    {
+      "object_category": "cup",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "A cup is likely to be found on a table, especially in a dining room or kitchen."
+    },
+    {
+      "object_category": "candle",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "Candles are often placed on tables for ambiance or decoration."
+    },
+    {
+      "object_category": "vase",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "A vase might be placed on a table to hold flowers or as a decorative item."
+    },
+    {
+      "object_category": "bottle",
+      "target_relationship": "in_region",
+      "target_anchor": "kitchen",
+      "reason": "A bottle could be found in the kitchen, perhaps on a counter or shelf."
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "on",
+      "target_anchor": "counter",
+      "reason": "Another bowl might be placed on the kitchen counter for holding utensils or food."
+    },
+    {
+      "object_category": "book",
+      "target_relationship": "on_top",
+      "target_anchor": "shelves",
+      "reason": "Another book placed on the shelves, possibly in a different section or shelf."
+    },
+    {
+      "object_category": "cup",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "Another cup on a table, maybe in the kitchen or dining room."
+    },
+    {
+      "object_category": "candle",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "Another candle on a table, possibly in a different room."
+    }
+  ],
+  "persona": {
+    "occupants": [
+      {
+        "name": "Alex",
+        "age_band": "adult",
+        "role": "student",
+        "typical_wake": 7.5,
+        "typical_sleep": 23.0,
+        "habits": "Alex is an early riser who enjoys morning coffee and a quick jog around the campus. They often study in the library and have a routine of attending late-night study sessions with friends.",
+        "tidiness": 0.3
+      }
+    ],
+    "household_type": "college_student_alone",
+    "schedule_notes": "Alex's schedule is flexible, often shifting based on class schedules and social activities. Late nights are common due to study sessions and socializing."
+  },
+  "traces": [
+    {
+      "occupant_name": "Alex",
+      "activities": [
+        {
+          "activity": "waking_up",
+          "location": "bedroom",
+          "start": 7.5,
+          "end": 7.6
+        },
+        {
+          "activity": "coffee",
+          "location": "kitchen",
+          "start": 7.6,
+          "end": 7.8
+        },
+        {
+          "activity": "jogging",
+          "location": "outdoor",
+          "start": 7.8,
+          "end": 8.2
+        },
+        {
+          "activity": "breakfast",
+          "location": "kitchen",
+          "start": 8.2,
+          "end": 8.4
+        },
+        {
+          "activity": "reorganising_room",
+          "location": "living_room",
+          "start": 8.4,
+          "end": 11.0
+        },
+        {
+          "activity": "lunch",
+          "location": "dining_room",
+          "start": 11.0,
+          "end": 11.2
+        },
+        {
+          "activity": "moving_furniture",
+          "location": "living_room",
+          "start": 11.2,
+          "end": 13.0
+        },
+        {
+          "activity": "cleaning",
+          "location": "living_room",
+          "start": 13.0,
+          "end": 14.0
+        },
+        {
+          "activity": "snack",
+          "location": "kitchen",
+          "start": 14.0,
+          "end": 14.2
+        },
+        {
+          "activity": "study_session",
+          "location": "office",
+          "start": 14.2,
+          "end": 17.0
+        },
+        {
+          "activity": "dinner",
+          "location": "dining_room",
+          "start": 17.0,
+          "end": 17.2
+        },
+        {
+          "activity": "socializing",
+          "location": "outdoor",
+          "start": 17.2,
+          "end": 19.0
+        },
+        {
+          "activity": "late_night_study",
+          "location": "office",
+          "start": 19.0,
+          "end": 22.0
+        },
+        {
+          "activity": "sleeping",
+          "location": "bedroom",
+          "start": 22.0,
+          "end": 23.0
+        }
+      ]
+    }
+  ],
+  "displacements": [
+    {
+      "object_category": "cup",
+      "target_relationship": "in_region",
+      "target_anchor": "bedroom",
+      "reason": "A cup might be moved from the kitchen to the bedroom if Alex is bringing it for breakfast.",
+      "assumed_from": "kitchen",
+      "_activity": "waking_up",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 7.5,
+      "_end": 7.6,
+      "_location": "bedroom"
+    },
+    {
+      "object_category": "cup",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Alex may place a cup on the fridge while making coffee, perhaps to keep it within reach or as part of a routine.",
+      "assumed_from": "kitchen",
+      "_activity": "coffee",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 7.6,
+      "_end": 7.8,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "wallet",
+      "target_relationship": "in_region",
+      "target_anchor": "bedroom",
+      "reason": "Wallet might be put in the bedroom after jogging, possibly on a table or in a bag.",
+      "assumed_from": "outdoor",
+      "_activity": "jogging",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 7.8,
+      "_end": 8.2,
+      "_location": "outdoor"
+    },
+    {
+      "object_category": "keys",
+      "target_relationship": "in_region",
+      "target_anchor": "bedroom",
+      "reason": "Keys could be placed in the bedroom upon returning from jogging, perhaps on a counter or near the door.",
+      "assumed_from": "outdoor",
+      "_activity": "jogging",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 7.8,
+      "_end": 8.2,
+      "_location": "outdoor"
+    },
+    {
+      "object_category": "phone",
+      "target_relationship": "in_region",
+      "target_anchor": "bedroom",
+      "reason": "Alex might place the phone in the bedroom while returning from jogging, possibly on a nightstand or dresser.",
+      "assumed_from": "outdoor",
+      "_activity": "jogging",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 7.8,
+      "_end": 8.2,
+      "_location": "outdoor"
+    },
+    {
+      "object_category": "phone",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Temporarily putting the phone on the fridge during breakfast.",
+      "assumed_from": "bedroom",
+      "_activity": "breakfast",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.2,
+      "_end": 8.4,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "cup",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Storing a cup in the fridge for future use.",
+      "assumed_from": "kitchen counter",
+      "_activity": "breakfast",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.2,
+      "_end": 8.4,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "laptop",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Temporarily placing the laptop on the fridge while preparing breakfast.",
+      "assumed_from": "bedroom",
+      "_activity": "breakfast",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.2,
+      "_end": 8.4,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "laptop",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Putting the laptop on the fridge to free up space on the table.",
+      "assumed_from": "bedroom",
+      "_activity": "breakfast",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.2,
+      "_end": 8.4,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Storing a bowl in the fridge for later use.",
+      "assumed_from": "kitchen counter",
+      "_activity": "breakfast",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.2,
+      "_end": 8.4,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Putting away a bowl after breakfast.",
+      "assumed_from": "kitchen counter",
+      "_activity": "breakfast",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.2,
+      "_end": 8.4,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "laptop",
+      "target_relationship": "next_to",
+      "target_anchor": "tv",
+      "reason": "Positioning the laptop next to the TV for convenient access.",
+      "assumed_from": "unknown",
+      "_activity": "reorganising_room",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.4,
+      "_end": 11.0,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "phone",
+      "target_relationship": "on",
+      "target_anchor": "counter",
+      "reason": "Phone might be placed on the counter after lunch.",
+      "assumed_from": "table",
+      "_activity": "lunch",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 11.0,
+      "_end": 11.2,
+      "_location": "dining_room"
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "Bowl is likely to be placed on the dining table during lunch.",
+      "assumed_from": "counter",
+      "_activity": "lunch",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 11.0,
+      "_end": 11.2,
+      "_location": "dining_room"
+    },
+    {
+      "object_category": "keys",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "Keys might be placed on the table temporarily during lunch.",
+      "assumed_from": "pocket",
+      "_activity": "lunch",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 11.0,
+      "_end": 11.2,
+      "_location": "dining_room"
+    },
+    {
+      "object_category": "wallet",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "Wallet might be placed on the table during lunch.",
+      "assumed_from": "pocket",
+      "_activity": "lunch",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 11.0,
+      "_end": 11.2,
+      "_location": "dining_room"
+    },
+    {
+      "object_category": "keys",
+      "target_relationship": "within",
+      "target_anchor": "tv",
+      "reason": "To put the keys within the TV area for easy access.",
+      "assumed_from": "bedroom",
+      "_activity": "moving_furniture",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 11.2,
+      "_end": 13.0,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "bottle",
+      "target_relationship": "in_region",
+      "target_anchor": "tv",
+      "reason": "Cleaning may involve placing items in a visible area for later use.",
+      "assumed_from": "kitchen",
+      "_activity": "cleaning",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 13.0,
+      "_end": 14.0,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "vase",
+      "target_relationship": "in_region",
+      "target_anchor": "tv",
+      "reason": "Cleaning may involve placing decorative items in a visible area for later use.",
+      "assumed_from": "kitchen",
+      "_activity": "cleaning",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 13.0,
+      "_end": 14.0,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "cup",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Alex may place a cup on the fridge while preparing a snack.",
+      "assumed_from": "table",
+      "_activity": "snack",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 14.2,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "cup",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Alex may place a cup on the fridge while preparing a snack.",
+      "assumed_from": "table",
+      "_activity": "snack",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 14.2,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "cup",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Alex may place a cup on the fridge while preparing a snack.",
+      "assumed_from": "table",
+      "_activity": "snack",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 14.2,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "laptop",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "Alex may place the laptop on the table to use during the study session.",
+      "assumed_from": "lap",
+      "_activity": "study_session",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 14.2,
+      "_end": 17.0,
+      "_location": "office"
+    },
+    {
+      "object_category": "laptop",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "Alex might place the laptop on the table while having dinner.",
+      "assumed_from": "bedroom",
+      "_activity": "dinner",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 17.0,
+      "_end": 17.2,
+      "_location": "dining_room"
+    },
+    {
+      "object_category": "phone",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "Putting the phone on the table during dinner.",
+      "assumed_from": "pocket",
+      "_activity": "dinner",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 17.0,
+      "_end": 17.2,
+      "_location": "dining_room"
+    },
+    {
+      "object_category": "bottle",
+      "target_relationship": "next_to",
+      "target_anchor": "tv",
+      "reason": "Alex might place the bottle next to the TV while studying to have a drink nearby.",
+      "assumed_from": "shelf",
+      "_activity": "late_night_study",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 19.0,
+      "_end": 22.0,
+      "_location": "office"
+    },
+    {
+      "object_category": "book",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "Alex might open a book and place it on the table while studying late at night.",
+      "assumed_from": "shelf",
+      "_activity": "late_night_study",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 19.0,
+      "_end": 22.0,
+      "_location": "office"
+    }
+  ],
+  "raw_proposals": 110,
+  "grounded_proposals": 110,
+  "mean_realism_score": 0.5593,
+  "grounding_stats": {
+    "total": 110,
+    "accepted": 110,
+    "survival_rate": 1.0,
+    "infra_rejection_rate": 0.0,
+    "model_rejection_rate": 0.0,
+    "no_object": 0,
+    "no_anchor": 0,
+    "no_placement": 0,
+    "bad_relation": 0,
+    "rejected_categories": {}
+  },
+  "conflict_report": {
+    "conflicts": []
+  }
+}

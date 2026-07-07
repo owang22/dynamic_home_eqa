@@ -1,0 +1,339 @@
+{
+  "household_id": "102816627_single_retiree",
+  "scene_id": "102816627",
+  "profile": "single_retiree",
+  "day": 0,
+  "clutter": [
+    {
+      "object_category": "book",
+      "target_relationship": "on_top",
+      "target_anchor": "shelves",
+      "reason": "retirees often have books on shelves"
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "on_top",
+      "target_anchor": "counter",
+      "reason": "a fruit bowl on the counter is common in kitchens"
+    },
+    {
+      "object_category": "candle",
+      "target_relationship": "on_top",
+      "target_anchor": "table",
+      "reason": "candles are often placed on living room tables"
+    },
+    {
+      "object_category": "vase",
+      "target_relationship": "on_top",
+      "target_anchor": "bench",
+      "reason": "vases can be placed on benches in living areas"
+    },
+    {
+      "object_category": "bottle",
+      "target_relationship": "inside",
+      "target_anchor": "cabinet",
+      "reason": "bottles are commonly stored in cabinets"
+    },
+    {
+      "object_category": "book",
+      "target_relationship": "on_top",
+      "target_anchor": "bench",
+      "reason": "books can be placed on benches for reading"
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "on_top",
+      "target_anchor": "table",
+      "reason": "a decorative bowl on the table is typical"
+    },
+    {
+      "object_category": "bottle",
+      "target_relationship": "inside",
+      "target_anchor": "chest_of_drawers",
+      "reason": "some bottles might be stored in drawers"
+    },
+    {
+      "object_category": "vase",
+      "target_relationship": "on_top",
+      "target_anchor": "shelves",
+      "reason": "vases are often placed on shelves"
+    },
+    {
+      "object_category": "book",
+      "target_relationship": "on_top",
+      "target_anchor": "shelves",
+      "reason": "books are commonly found on shelves"
+    }
+  ],
+  "persona": {
+    "occupants": [
+      {
+        "name": "Eleanor",
+        "age_band": "senior",
+        "role": "retired",
+        "typical_wake": 7.5,
+        "typical_sleep": 21.0,
+        "habits": "reads the newspaper and sips herbal tea in the morning; takes a midday walk with her dog; enjoys gardening in the late afternoon; watches classic films in the evening",
+        "tidiness": 0.8
+      }
+    ],
+    "household_type": "single_retiree"
+  },
+  "traces": [
+    {
+      "occupant_name": "Eleanor",
+      "activities": [
+        {
+          "activity": "reading_newspaper",
+          "location": "living_room",
+          "start": 7.5,
+          "end": 8.5
+        },
+        {
+          "activity": "sipping_herbal_tea",
+          "location": "kitchen",
+          "start": 8.5,
+          "end": 9.0
+        },
+        {
+          "activity": "meditation",
+          "location": "bedroom",
+          "start": 9.0,
+          "end": 10.0
+        },
+        {
+          "activity": "light_stretching",
+          "location": "living_room",
+          "start": 10.0,
+          "end": 10.5
+        },
+        {
+          "activity": "breakfast",
+          "location": "kitchen",
+          "start": 10.5,
+          "end": 11.2
+        },
+        {
+          "activity": "gardening",
+          "location": "outdoor",
+          "start": 14.0,
+          "end": 15.3
+        },
+        {
+          "activity": "walking_with_dog",
+          "location": "outdoor",
+          "start": 16.0,
+          "end": 17.0
+        },
+        {
+          "activity": "watching_classic_film",
+          "location": "living_room",
+          "start": 19.0,
+          "end": 21.0
+        }
+      ]
+    }
+  ],
+  "displacements": [
+    {
+      "object_category": "phone",
+      "target_relationship": "on",
+      "target_anchor": "couch",
+      "reason": "reading newspaper on the couch, phone likely placed on the couch nearby",
+      "assumed_from": "pocket",
+      "_activity": "reading_newspaper",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 7.5,
+      "_end": 8.5,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "candle",
+      "target_relationship": "on",
+      "target_anchor": "wardrobe",
+      "reason": "Eleanor might place the candle on the wardrobe in the bedroom as part of a meditation setup.",
+      "assumed_from": "hand",
+      "_activity": "meditation",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 9.0,
+      "_end": 10.0,
+      "_location": "bedroom"
+    },
+    {
+      "object_category": "wallet",
+      "target_relationship": "in_region",
+      "target_anchor": "bedroom",
+      "reason": "Eleanor might place her wallet on a surface in the bedroom during meditation, like a nightstand or dresser.",
+      "assumed_from": "hand",
+      "_activity": "meditation",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 9.0,
+      "_end": 10.0,
+      "_location": "bedroom"
+    },
+    {
+      "object_category": "phone",
+      "target_relationship": "in_region",
+      "target_anchor": "living_room",
+      "reason": "Eleanor might place her phone on the floor or a nearby surface in the living room while stretching.",
+      "assumed_from": "on_person",
+      "_activity": "light_stretching",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 10.0,
+      "_end": 10.5,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Putting a bowl in the fridge to store leftovers after breakfast.",
+      "assumed_from": "kitchen counter",
+      "_activity": "breakfast",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 10.5,
+      "_end": 11.2,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "laptop",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Placing the laptop on the fridge to have it within reach while having breakfast.",
+      "assumed_from": "bedroom",
+      "_activity": "breakfast",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 10.5,
+      "_end": 11.2,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "bottle",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Putting a bottle in the fridge to keep drinks cold for later.",
+      "assumed_from": "kitchen counter",
+      "_activity": "breakfast",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 10.5,
+      "_end": 11.2,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "phone",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Placing the phone on the fridge for easy access while preparing breakfast.",
+      "assumed_from": "pocket",
+      "_activity": "breakfast",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 10.5,
+      "_end": 11.2,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "candle",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "Storing the candle in the fridge to keep it cool and preserve it.",
+      "assumed_from": "kitchen counter",
+      "_activity": "breakfast",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 10.5,
+      "_end": 11.2,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "chair",
+      "target_relationship": "next_to",
+      "target_anchor": "bed",
+      "reason": "Eleanor might place a chair near the bed in the bedroom for resting or reading after gardening.",
+      "assumed_from": "living_room",
+      "_activity": "gardening",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 15.3,
+      "_location": "outdoor"
+    },
+    {
+      "object_category": "vase",
+      "target_relationship": "on_top",
+      "target_anchor": "bed",
+      "reason": "Eleanor may put a vase on the bedroom bed to hold freshly cut flowers from the garden.",
+      "assumed_from": "kitchen",
+      "_activity": "gardening",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 15.3,
+      "_location": "outdoor"
+    },
+    {
+      "object_category": "wallet",
+      "target_relationship": "in_region",
+      "target_anchor": "living_room",
+      "reason": "Eleanor might leave her wallet on a table or chair in the living room while walking the dog, temporarily setting it down.",
+      "assumed_from": "pocket",
+      "_activity": "walking_with_dog",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 16.0,
+      "_end": 17.0,
+      "_location": "outdoor"
+    },
+    {
+      "object_category": "phone",
+      "target_relationship": "on",
+      "target_anchor": "couch",
+      "reason": "To use the phone for streaming or controlling the film playback while seated.",
+      "assumed_from": "pocket",
+      "_activity": "watching_classic_film",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 19.0,
+      "_end": 21.0,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "laptop",
+      "target_relationship": "on",
+      "target_anchor": "couch",
+      "reason": "To stream the film or access a playlist from a more comfortable seating position.",
+      "assumed_from": "desk",
+      "_activity": "watching_classic_film",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 19.0,
+      "_end": 21.0,
+      "_location": "living_room"
+    }
+  ],
+  "raw_proposals": 53,
+  "grounded_proposals": 53,
+  "mean_realism_score": 0.7,
+  "grounding_stats": {
+    "total": 53,
+    "accepted": 53,
+    "survival_rate": 1.0,
+    "infra_rejection_rate": 0.0,
+    "model_rejection_rate": 0.0,
+    "no_object": 0,
+    "no_anchor": 0,
+    "no_placement": 0,
+    "bad_relation": 0,
+    "rejected_categories": {}
+  },
+  "conflict_report": {
+    "conflicts": []
+  }
+}

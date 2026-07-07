@@ -1,0 +1,46 @@
+name: dynamic-eqa
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - cmake=3.14.0
+  - pip
+
+  # Numerics / plotting
+  - numpy=1.26.4
+  - pandas
+  - matplotlib=3.8.0
+  - scipy
+
+  # PyTorch (vLLM-compatible build)
+  - pytorch=2.4.1
+  - torchvision=0.19.1
+  - torchaudio=2.4.1
+  - pytorch-cuda=12.4
+
+  - pip:
+    # ── Core inference ──────────────────────────────────────────────────
+    - vllm>=0.20.0          # offline LLM inference with structured output
+
+    # ── PARTNR / Habitat ecosystem (optional for full sim integration) ──
+    # Uncomment these if you need the full PARTNR simulation stack:
+    # - habitat-sim==0.3.3     (install via conda: conda install habitat-sim=0.3.3 withbullet headless -c aihabitat)
+    # - habitat-lab             (install from ../third_party/habitat-lab)
+    # - hydra-core
+    # - omegaconf
+
+    # ── Dynamic EQA standalone deps ─────────────────────────────────────
+    - tqdm>=4.0.0
+    - pathlib2
+    - typing_extensions
+
+    # ── Optional: PARTNR requirements subset ────────────────────────────
+    # (full requirements.txt has more; only list what dynamic-eqa needs)
+    - openai>=1.10.0        # for OpenAI-backed LLM agent variant
+    - transformers>=4.40.0  # tokenizer only; no full model needed
+    - accelerate
+    - tiktoken
+    - networkx              # graph utilities

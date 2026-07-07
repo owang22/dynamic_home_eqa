@@ -1,0 +1,410 @@
+{
+  "household_id": "102816627_single_retiree",
+  "scene_id": "102816627",
+  "profile": "single_retiree",
+  "day": 1,
+  "clutter": [
+    {
+      "object_category": "book",
+      "target_relationship": "on_top",
+      "target_anchor": "shelves",
+      "reason": "retirees often have books on shelves"
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "on_top",
+      "target_anchor": "counter",
+      "reason": "a fruit bowl on the counter is common in kitchens"
+    },
+    {
+      "object_category": "candle",
+      "target_relationship": "on_top",
+      "target_anchor": "table",
+      "reason": "candles are often placed on living room tables"
+    },
+    {
+      "object_category": "vase",
+      "target_relationship": "on_top",
+      "target_anchor": "bench",
+      "reason": "vases can be placed on benches in living areas"
+    },
+    {
+      "object_category": "bottle",
+      "target_relationship": "inside",
+      "target_anchor": "cabinet",
+      "reason": "bottles are commonly stored in cabinets"
+    },
+    {
+      "object_category": "book",
+      "target_relationship": "on_top",
+      "target_anchor": "bench",
+      "reason": "books can be placed on benches for reading"
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "on_top",
+      "target_anchor": "table",
+      "reason": "a decorative bowl on the table is typical"
+    },
+    {
+      "object_category": "bottle",
+      "target_relationship": "inside",
+      "target_anchor": "chest_of_drawers",
+      "reason": "some bottles might be stored in drawers"
+    },
+    {
+      "object_category": "vase",
+      "target_relationship": "on_top",
+      "target_anchor": "shelves",
+      "reason": "vases are often placed on shelves"
+    },
+    {
+      "object_category": "book",
+      "target_relationship": "on_top",
+      "target_anchor": "shelves",
+      "reason": "books are commonly found on shelves"
+    }
+  ],
+  "persona": {
+    "occupants": [
+      {
+        "name": "Eleanor",
+        "age_band": "senior",
+        "role": "retired",
+        "typical_wake": 7.5,
+        "typical_sleep": 21.0,
+        "habits": "reads the newspaper and sips herbal tea in the morning; takes a midday walk with her dog; enjoys gardening in the late afternoon; watches classic films in the evening",
+        "tidiness": 0.8
+      }
+    ],
+    "household_type": "single_retiree"
+  },
+  "traces": [
+    {
+      "occupant_name": "Eleanor",
+      "activities": [
+        {
+          "activity": "reading newspaper",
+          "location": "living_room",
+          "start": 7.5,
+          "end": 8.0
+        },
+        {
+          "activity": "preparing herbal tea",
+          "location": "kitchen",
+          "start": 8.0,
+          "end": 8.2
+        },
+        {
+          "activity": "sipping herbal tea",
+          "location": "living_room",
+          "start": 8.2,
+          "end": 8.5
+        },
+        {
+          "activity": "gardening",
+          "location": "outdoor",
+          "start": 12.0,
+          "end": 13.0
+        },
+        {
+          "activity": "walking with dog",
+          "location": "outdoor",
+          "start": 13.0,
+          "end": 13.5
+        },
+        {
+          "activity": "light cleaning",
+          "location": "living_room",
+          "start": 14.0,
+          "end": 14.3
+        },
+        {
+          "activity": "light cleaning",
+          "location": "kitchen",
+          "start": 14.3,
+          "end": 14.5
+        },
+        {
+          "activity": "preparing for friend's visit",
+          "location": "living_room",
+          "start": 14.5,
+          "end": 16.0
+        },
+        {
+          "activity": "watching classic film",
+          "location": "living_room",
+          "start": 19.0,
+          "end": 21.0
+        }
+      ]
+    }
+  ],
+  "displacements": [
+    {
+      "object_category": "phone",
+      "target_relationship": "on",
+      "target_anchor": "couch",
+      "reason": "To use the phone while reading the newspaper, Eleanor might place it on the couch nearby.",
+      "assumed_from": "pocket",
+      "_activity": "reading newspaper",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 7.5,
+      "_end": 8.0,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "candle",
+      "target_relationship": "on",
+      "target_anchor": "fridge",
+      "reason": "to provide ambient lighting while preparing tea",
+      "assumed_from": "none",
+      "_activity": "preparing herbal tea",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 8.0,
+      "_end": 8.2,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "inside",
+      "target_anchor": "couch",
+      "reason": "Eleanor might place the bowl inside a cushion on the couch for a cozy tea time.",
+      "assumed_from": "kitchen",
+      "_activity": "sipping herbal tea",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 8.2,
+      "_end": 8.5,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "on",
+      "target_anchor": "bench",
+      "reason": "Eleanor might set the bowl on a bench while sitting to sip her tea.",
+      "assumed_from": "kitchen",
+      "_activity": "sipping herbal tea",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 8.2,
+      "_end": 8.5,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "keys",
+      "target_relationship": "on",
+      "target_anchor": "table",
+      "reason": "Eleanor might place her keys on a table while gardening to keep them accessible and visible.",
+      "assumed_from": "pocket",
+      "_activity": "gardening",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 12.0,
+      "_end": 13.0,
+      "_location": "outdoor"
+    },
+    {
+      "object_category": "laptop",
+      "target_relationship": "in_region",
+      "target_anchor": "living_room",
+      "reason": "Eleanor may set her laptop down in the living room while walking the dog, perhaps on a coffee table or chair.",
+      "assumed_from": "lap",
+      "_activity": "walking with dog",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 13.0,
+      "_end": 13.5,
+      "_location": "outdoor"
+    },
+    {
+      "object_category": "candle",
+      "target_relationship": "on",
+      "target_anchor": "couch",
+      "reason": "Candle could be placed on the couch in the living room during light cleaning.",
+      "assumed_from": "table",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 14.3,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "bowl",
+      "target_relationship": "in_region",
+      "target_anchor": "living_room",
+      "reason": "Bowl might be moved to living room as part of cleaning up after a meal or snack.",
+      "assumed_from": "kitchen",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 14.3,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "vase",
+      "target_relationship": "on",
+      "target_anchor": "bench",
+      "reason": "Vase could be placed on a bench in the living room during light cleaning.",
+      "assumed_from": "table",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 14.3,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "keys",
+      "target_relationship": "on",
+      "target_anchor": "couch",
+      "reason": "Keys might be placed on the couch in the living room during cleaning.",
+      "assumed_from": "table",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 14.3,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "bottle",
+      "target_relationship": "inside",
+      "target_anchor": "bench",
+      "reason": "Bottle may be stored inside a bench in the living room during cleaning.",
+      "assumed_from": "counter",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 14.3,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "phone",
+      "target_relationship": "on",
+      "target_anchor": "couch",
+      "reason": "Phone might be placed on the couch in the living room while cleaning.",
+      "assumed_from": "table",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 14.3,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "wallet",
+      "target_relationship": "in_region",
+      "target_anchor": "living_room",
+      "reason": "Wallet could be moved to living room during light cleaning.",
+      "assumed_from": "bedroom",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.0,
+      "_end": 14.3,
+      "_location": "living_room"
+    },
+    {
+      "object_category": "potted_plant",
+      "target_relationship": "next_to",
+      "target_anchor": "fridge",
+      "reason": "Eleanor might reposition a potted plant next to the fridge to organize the kitchen space during light cleaning.",
+      "assumed_from": "living_room",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.3,
+      "_end": 14.5,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "bottle",
+      "target_relationship": "in_region",
+      "target_anchor": "kitchen",
+      "reason": "Eleanor could move a bottle to the kitchen for cleaning purposes, such as washing it or storing it.",
+      "assumed_from": "counter",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.3,
+      "_end": 14.5,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "potted_plant",
+      "target_relationship": "near",
+      "target_anchor": "fridge",
+      "reason": "Eleanor may move a potted plant near the fridge to add a touch of greenery or to clean around the fridge area.",
+      "assumed_from": "living_room",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.3,
+      "_end": 14.5,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "book",
+      "target_relationship": "in_region",
+      "target_anchor": "kitchen",
+      "reason": "Eleanor may move a book to the kitchen while cleaning, possibly to organize it or to use it as a reference.",
+      "assumed_from": "bedroom",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.3,
+      "_end": 14.5,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "phone",
+      "target_relationship": "near",
+      "target_anchor": "fridge",
+      "reason": "Eleanor may move her phone near the fridge while cleaning, perhaps to use it for a quick task or to organize.",
+      "assumed_from": "counter",
+      "_activity": "light cleaning",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 14.3,
+      "_end": 14.5,
+      "_location": "kitchen"
+    },
+    {
+      "object_category": "potted_plant",
+      "target_relationship": "in_region",
+      "target_anchor": "living_room",
+      "reason": "Eleanor may move a potted plant to a more visible spot in the living room to enhance the ambiance while watching films.",
+      "assumed_from": "bedroom",
+      "_activity": "watching classic film",
+      "_occupant": "Eleanor",
+      "_occupant_index": 0,
+      "_start": 19.0,
+      "_end": 21.0,
+      "_location": "living_room"
+    }
+  ],
+  "raw_proposals": 67,
+  "grounded_proposals": 67,
+  "mean_realism_score": 0.6237,
+  "grounding_stats": {
+    "total": 67,
+    "accepted": 67,
+    "survival_rate": 1.0,
+    "infra_rejection_rate": 0.0,
+    "model_rejection_rate": 0.0,
+    "no_object": 0,
+    "no_anchor": 0,
+    "no_placement": 0,
+    "bad_relation": 0,
+    "rejected_categories": {}
+  },
+  "conflict_report": {
+    "conflicts": []
+  }
+}
