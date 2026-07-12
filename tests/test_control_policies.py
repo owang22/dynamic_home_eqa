@@ -1,5 +1,5 @@
 """
-Tests for embodied/policy.py's two E2 control baselines added this batch:
+Tests for embodied/policy.py's two E2 control baselines:
 RandomResense (budget_matched_random) and TimeOnlyThreshold
 (time_only_threshold) — cheap, model-free comparison points the LLM agent
 (L1+) will also need to beat, per results/reports/INDEX.md.

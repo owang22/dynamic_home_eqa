@@ -15,7 +15,9 @@ import sys
 
 import pytest
 
-_SCRIPT_PATH = pathlib.Path(__file__).parent.parent / "scripts" / "e0_mechanism_decomposition.py"
+from dynamic_home_eqa.paths import PACKAGE_ROOT
+
+_SCRIPT_PATH = PACKAGE_ROOT / "scripts" / "e0_mechanism_decomposition.py"
 
 
 def _load_module():

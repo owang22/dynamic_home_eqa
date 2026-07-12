@@ -38,18 +38,32 @@ def test_scene_qualifies_under_the_navmesh_connectivity_fix():
 
 
 def test_living_room_furniture_cluster_is_excluded_not_unreachable():
-    """The one navmesh fragment D1's sweep never merged (living_room's
-    sofa/corner/open_floor/window_sill anchors, ~9.3 m², confirmed
-    disconnected at every swept setting including agent_radius=0.04) must
-    show up as an excluded sub-threshold fragment, not silently pass and
-    not count as a failure — this is the exact distinction that keeps the
-    invariant from being either too strict (blocking on a real, tiny,
-    disqualified fragment) or too lax (missing a real reachability gap).
+    """The living_room navmesh fragment D1's sweep never merged (sofa/
+    corner/open_floor/window_sill anchors, ~9.3 m², confirmed disconnected
+    at every swept setting including agent_radius=0.04) must show up as an
+    excluded sub-threshold fragment, not silently pass and not count as a
+    failure — this is the exact distinction that keeps the invariant from
+    being either too strict (blocking on a real, tiny, disqualified
+    fragment) or too lax (missing a real reachability gap).
 
     "tv" (M3: state-change dynamics — env/inventory.py's STATEFUL_FURNITURE)
     joins this same known fragment in this scene — its real HSSD position
     resolves into the same disconnected media-console nook as the sofa
-    cluster, not a new/different disconnection."""
+    cluster, not a new/different disconnection.
+
+    anchor_world_positions was widened to a real
+    per-room furniture census (not just the 16 hand-authored SLOT_ANCHORS
+    entries) — this surfaced MORE real anchors landing in the SAME
+    disconnected living_room fragment (living_room.couch/table/cabinet/
+    potted_plant — the same real instances behind sofa/corner/etc., just
+    newly given their own census-derived keys too), confirmed by direct
+    inspection to be the identical small fragment, not a new one. It ALSO
+    surfaced a genuinely SEPARATE, previously-invisible disconnected
+    fragment: "bathroom.bathtub" — a different room, a different island,
+    not folded into "the living room cluster" naming even though both are
+    reported by the same check. Two known small fragments now, not one;
+    this is a real, disclosed finding about this scene's navmesh, not
+    something to paper over by growing the assertion silently."""
     from dynamic_home_eqa.embodied.config import NavMeshConfig
     from dynamic_home_eqa.embodied.reachability import check_reachability_invariant
 
@@ -58,7 +72,10 @@ def test_living_room_furniture_cluster_is_excluded_not_unreachable():
     assert excluded_anchors == {
         "living_room.sofa", "living_room.corner",
         "living_room.open_floor", "living_room.window_sill",
+        "living_room.couch", "living_room.table",
+        "living_room.cabinet", "living_room.potted_plant",
         "tv",
+        "bathroom.bathtub",
     }
 
 

@@ -1,0 +1,152 @@
+{
+  "expected": {
+    "easy-table": {
+      "before_status": "ok",
+      "after_status": "ok"
+    },
+    "counter": {
+      "before_status": "object_spawn_failed",
+      "after_status": "object_spawn_failed"
+    },
+    "fridge-top": {
+      "before_status": "ok",
+      "after_status": "object_spawn_failed"
+    },
+    "unresolved-name": {
+      "before_status": "anchor_unresolved",
+      "after_status": "anchor_unresolved"
+    },
+    "state": {
+      "before_status": "aim_failed",
+      "after_status": "aim_failed"
+    },
+    "large-object": {
+      "before_status": "ok",
+      "after_status": "ok"
+    },
+    "small-object": {
+      "before_status": "ok",
+      "after_status": "ok"
+    },
+    "cross-room": {
+      "before_status": "ok",
+      "after_status": "ok"
+    }
+  },
+  "actual": {
+    "easy-table": {
+      "before_status": "ok",
+      "after_status": "ok"
+    },
+    "fridge-top": {
+      "before_status": "ok",
+      "after_status": "object_spawn_failed"
+    },
+    "unresolved-name": {
+      "before_status": "anchor_unresolved",
+      "after_status": "anchor_unresolved"
+    },
+    "state": {
+      "before_status": "ok",
+      "after_status": "ok"
+    },
+    "large-object": {
+      "before_status": "ok",
+      "after_status": "ok"
+    },
+    "small-object": {
+      "before_status": "ok",
+      "after_status": "ok"
+    },
+    "cross-room": {
+      "before_status": "ok",
+      "after_status": "ok"
+    },
+    "counter": {
+      "before_status": "object_spawn_failed",
+      "after_status": "object_spawn_failed"
+    }
+  },
+  "diff": [
+    {
+      "name": "counter",
+      "expected_before": "object_spawn_failed",
+      "actual_before": "object_spawn_failed",
+      "before_flip": false,
+      "expected_after": "object_spawn_failed",
+      "actual_after": "object_spawn_failed",
+      "after_flip": false,
+      "flipped": false
+    },
+    {
+      "name": "cross-room",
+      "expected_before": "ok",
+      "actual_before": "ok",
+      "before_flip": false,
+      "expected_after": "ok",
+      "actual_after": "ok",
+      "after_flip": false,
+      "flipped": false
+    },
+    {
+      "name": "easy-table",
+      "expected_before": "ok",
+      "actual_before": "ok",
+      "before_flip": false,
+      "expected_after": "ok",
+      "actual_after": "ok",
+      "after_flip": false,
+      "flipped": false
+    },
+    {
+      "name": "fridge-top",
+      "expected_before": "ok",
+      "actual_before": "ok",
+      "before_flip": false,
+      "expected_after": "object_spawn_failed",
+      "actual_after": "object_spawn_failed",
+      "after_flip": false,
+      "flipped": false
+    },
+    {
+      "name": "large-object",
+      "expected_before": "ok",
+      "actual_before": "ok",
+      "before_flip": false,
+      "expected_after": "ok",
+      "actual_after": "ok",
+      "after_flip": false,
+      "flipped": false
+    },
+    {
+      "name": "small-object",
+      "expected_before": "ok",
+      "actual_before": "ok",
+      "before_flip": false,
+      "expected_after": "ok",
+      "actual_after": "ok",
+      "after_flip": false,
+      "flipped": false
+    },
+    {
+      "name": "state",
+      "expected_before": "aim_failed",
+      "actual_before": "ok",
+      "before_flip": true,
+      "expected_after": "aim_failed",
+      "actual_after": "ok",
+      "after_flip": true,
+      "flipped": true
+    },
+    {
+      "name": "unresolved-name",
+      "expected_before": "anchor_unresolved",
+      "actual_before": "anchor_unresolved",
+      "before_flip": false,
+      "expected_after": "anchor_unresolved",
+      "actual_after": "anchor_unresolved",
+      "after_flip": false,
+      "flipped": false
+    }
+  ]
+}

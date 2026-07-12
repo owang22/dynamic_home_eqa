@@ -4,7 +4,7 @@ bug (Results-First batch, the one allowed must-fix): it used to check
 file existence only, so generate_scene() would report a scene "fully
 generated" and skip regeneration even when a folder's manifest failed
 trace_validate — exactly what happened to 102344049's day0 (corrupted
-since before this session's manifest.py fixes) in every expand_scene_pool
+since before manifest.py's trace-integrity fixes) in every expand_scene_pool
 run across this project's history. _scene_fully_generated must delegate
 to _folder_ready (which does call trace_validate) for every folder.
 

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dynamic-home-eqa"
+version = "0.1.0"
+description = "Dynamic Home EQA: LLM-generated household object dynamics + embodied resense-policy experiments on HSSD scenes"
+requires-python = ">=3.9"
+# Dependencies are intentionally NOT declared here: the runtime env
+# (conda env `dynamic_eqa`) is built by hand around habitat-sim's pins —
+# see README "Environment". `pip install -e .` must never trigger a
+# dependency resolution that could bump numpy/pillow/opencv past those pins.
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["dynamic_home_eqa*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

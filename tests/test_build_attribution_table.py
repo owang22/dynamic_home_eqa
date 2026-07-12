@@ -15,7 +15,9 @@ import pathlib
 
 import pytest
 
-_SCRIPT_PATH = pathlib.Path(__file__).parent.parent / "scripts" / "build_attribution_table.py"
+from dynamic_home_eqa.paths import PACKAGE_ROOT
+
+_SCRIPT_PATH = PACKAGE_ROOT / "scripts" / "build_attribution_table.py"
 
 
 def _load_module():

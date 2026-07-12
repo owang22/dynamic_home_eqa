@@ -19,10 +19,12 @@ from __future__ import annotations
 
 import pathlib
 
-_DYNAMIC_EQA = pathlib.Path(__file__).parent.parent.resolve()
+from dynamic_home_eqa.paths import PACKAGE_ROOT, REPO_ROOT
+
+_DYNAMIC_EQA = REPO_ROOT
 
 # The one legitimate constructor of this manifest shape.
-_CANONICAL_WRITER = _DYNAMIC_EQA / "embodied" / "attribution.py"
+_CANONICAL_WRITER = PACKAGE_ROOT / "embodied" / "attribution.py"
 
 # Test fixtures legitimately construct synthetic manifest dicts to feed
 # build_attribution_table.py's own fingerprint/code-hash checks — that is
@@ -74,5 +76,5 @@ def test_embodied_m2_and_m3_gates_no_longer_construct_their_own_manifest():
     scripts used to merge rerun_frozen_e0's temp-file rows into a manifest
     via their own json.dumps, bypassing code_hash entirely."""
     for name in ("embodied_m2_gate.py", "embodied_m3_gate.py"):
-        path = _DYNAMIC_EQA / "scripts" / name
+        path = PACKAGE_ROOT / "scripts" / name
         assert not _constructs_manifest_shape(path), f"{name} still constructs its own manifest dict"

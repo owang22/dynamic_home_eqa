@@ -13,7 +13,9 @@ from __future__ import annotations
 import ast
 import pathlib
 
-_EMBODIED_DIR = pathlib.Path(__file__).parent.parent / "embodied"
+from dynamic_home_eqa.paths import PACKAGE_ROOT
+
+_EMBODIED_DIR = PACKAGE_ROOT / "embodied"
 
 _FORBIDDEN_IMPORTERS = [
     "world.py", "sensor.py", "belief.py", "policy.py", "types.py", "config.py", "scoring.py",

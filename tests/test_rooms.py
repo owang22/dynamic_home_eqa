@@ -1,8 +1,11 @@
 """Unit tests for rooms.py."""
 from __future__ import annotations
 
+import pytest
+
 from dynamic_home_eqa.rooms import (
     CANONICAL_ROOMS,
+    UnresolvableSlotError,
     anchors_in_room,
     location_at,
     occupants_in_room,
@@ -121,25 +124,73 @@ def test_resolve_slot_in_region_returns_normalised_anchor():
     assert resolve_slot("Living Room", "in_region", room=None) == "living_room"
 
 
-def test_resolve_slot_synthesizes_slot_for_unmapped_category_with_room():
-    assert resolve_slot("sink", "on", room="bathroom") == "bathroom.sink"
+def test_resolve_slot_resolves_unmapped_category_against_the_real_census():
+    # "sink" has no SLOT_ANCHORS entry:
+    # resolve_slot no longer blindly synthesizes "bathroom.sink", it checks
+    # a real per-scene, per-room furniture census (the same one the LLM's
+    # own proposal was grounded against) and only resolves if a real "sink"
+    # instance actually exists in "bathroom".
+    census = {"bathroom": {"sink", "toilet"}}
+    assert resolve_slot("sink", "on", room="bathroom", room_instance_categories=census) == "bathroom.sink"
 
 
 def test_resolve_slot_never_crosses_into_a_different_room_than_requested():
     # "cabinet" IS in FURNITURE_TYPE_TO_SLOT (-> "kitchen.cabinet"), but no
     # SLOT_ANCHORS entry is authored for "outdoor" at all. The room-agnostic
     # fallback must not silently win here — a caller-given room always wins,
-    # even via a synthesized slot, so slot_room() of the result agrees with
-    # the room that was asked for.
-    result = resolve_slot("cabinet", "on_top", room="outdoor")
+    # even via a census-verified slot, so slot_room() of the result agrees
+    # with the room that was asked for.
+    census = {"outdoor": {"cabinet"}}
+    result = resolve_slot("cabinet", "on_top", room="outdoor", room_instance_categories=census)
     assert result == "outdoor.cabinet"
     assert slot_room(result) == "outdoor"
+
+
+def test_resolve_slot_rejects_a_room_category_pair_with_no_real_instance():
+    # Regression: "kitchen.table" was
+    # being synthesized and trusted even when this scene's real table is
+    # in "dining_room" — now this raises instead of guessing.
+    census = {"dining_room": {"table"}}
+    with pytest.raises(UnresolvableSlotError):
+        resolve_slot("table", "on", room="kitchen", room_instance_categories=census)
+
+
+def test_resolve_slot_rejects_when_no_census_given_at_all_for_an_unmapped_category():
+    # room_instance_categories=None (the default) is a caller error for any
+    # anchor that would reach the fallback branch — not silent permission
+    # to revert to blind synthesis.
+    with pytest.raises(UnresolvableSlotError):
+        resolve_slot("sink", "on", room="bathroom")
 
 
 def test_resolve_slot_falls_back_without_room_context():
     # No room given: falls back to the room-agnostic first match (pre-existing
     # behavior), not a crash or an unresolved slot.
     assert resolve_slot("table", "on", room=None) == "dining.table"
+
+
+def test_resolve_slot_returns_bare_key_for_stateful_furniture_with_room():
+    # "wardrobe" is a STATEFUL_FURNITURE category — its real position is
+    # registered under the bare category name (topdown_map.
+    # anchor_world_positions), never a room-qualified dotted slot. Before
+    # this fix, resolve_slot synthesized "bedroom.wardrobe" here, a string
+    # slot_room() happily resolves to "bedroom" but that has NO entry
+    # anywhere in the real anchor-position registry — a genuine,
+    # previously-silent resolution gap found via the realism render job
+    # (results/reports/human_realism_study.md).
+    assert resolve_slot("wardrobe", "on", room="bedroom") == "wardrobe"
+    assert resolve_slot("fridge", "on", room="kitchen") == "fridge"
+
+
+def test_resolve_slot_returns_bare_key_for_stateful_furniture_without_room():
+    assert resolve_slot("tv", "on", room=None) == "tv"
+
+
+def test_resolve_slot_stateful_furniture_still_prefers_a_real_slot_anchors_match():
+    # If a real, hand-authored SLOT_ANCHORS entry exists for a category in
+    # a given room, that takes priority over the bare-key shortcut — the
+    # bare-key path only kicks in when there's genuinely no authored slot.
+    assert resolve_slot("table", "on", room="office") == "office.desk"
 
 
 _ACTIVITIES = [

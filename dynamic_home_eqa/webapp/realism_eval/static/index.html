@@ -1,0 +1,116 @@
+<title>Realism Eval</title>
+<style>
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; max-width: 900px; margin: 24px auto; padding: 0 16px; color: #222; }
+  #start-screen { text-align: center; margin-top: 80px; }
+  #start-screen input { font-size: 16px; padding: 8px; width: 240px; }
+  #start-screen button, .nav-row button, #save-next { font-size: 15px; padding: 8px 16px; cursor: pointer; }
+  #eval-screen { display: none; }
+  .item-image { max-width: 100%; border: 1px solid #ccc; }
+  .caption-box { background: #f4f4f4; border-radius: 6px; padding: 10px 14px; margin: 10px 0; font-size: 14px; }
+  .rating-box { border-radius: 8px; padding: 12px 16px; margin: 14px 0; }
+  .rating-box.placement { background: #eef6ff; }
+  .rating-box.behavior { background: #f0fff0; }
+  .rating-box.visibility { background: #fff8ec; }
+  .rating-box.issues { background: #fdf0f5; }
+  .rating-box h3 { margin: 0 0 8px 0; font-size: 15px; }
+  .choice { display: inline-block; margin: 4px 14px 4px 0; font-size: 14px; }
+  .rating-box.na-disabled { opacity: 0.45; }
+  .na-note { font-style: italic; font-size: 13px; margin: 4px 0 0 0; }
+  textarea { width: 100%; box-sizing: border-box; font-size: 14px; padding: 6px; margin-top: 6px; }
+  details.glossary-box { margin: 12px 0; font-size: 13px; color: #444; }
+  .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+  #debug-box { display: none; background: #222; color: #b6ffb6; font-family: monospace; font-size: 12px; padding: 10px; margin-top: 10px; white-space: pre-wrap; border-radius: 6px; }
+  .progress-line { font-size: 13px; color: #666; }
+  .celebration-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 10; }
+  .celebration-card { background: white; border-radius: 10px; padding: 30px 40px; text-align: center; }
+  .burst { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: gold; animation: burstfly 0.9s ease-out forwards; }
+  @keyframes burstfly { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+</style>
+
+<div id="start-screen">
+  <h2>Realism Eval</h2>
+  <p>Enter your first name to begin. No other identifying information is collected.</p>
+  <input id="name-input" placeholder="First name" />
+  <div><button id="start-button" onclick="start()">Start</button></div>
+</div>
+
+<div id="eval-screen">
+  <div class="nav-row">
+    <span class="progress-line" id="progress-line"></span>
+    <span>
+      <select id="question-jump" onchange="jumpToQuestion()"></select>
+      <label><input type="checkbox" id="debug-toggle" onchange="toggleDebug()" /> Show debug info</label>
+    </span>
+  </div>
+
+  <img class="item-image" id="item-image" src="" alt="event grid" />
+  <div class="caption-box" id="caption-box"></div>
+
+  <details class="glossary-box">
+    <summary>What do these ratings mean?</summary>
+    <p><b>Placement plausibility</b>: does the object's final position look like somewhere it would actually rest — resting on/in a real supporting surface, not floating or embedded?</p>
+    <p><b>Behavior plausibility</b>: given the stated reason and mover, does this move/state-change make sense as something a real household member would do?</p>
+    <p><b>Visual identifiability</b>: can you actually see/tell what changed from the images, independent of whether it seems realistic?</p>
+  </details>
+
+  <div class="rating-box placement">
+    <h3>Placement plausibility</h3>
+    <div id="placement-options">
+      <label class="choice"><input type="radio" name="placement" value="resting_naturally" /> Resting naturally</label>
+      <label class="choice"><input type="radio" name="placement" value="slightly_off" /> Slightly off</label>
+      <label class="choice"><input type="radio" name="placement" value="clearly_wrong" /> Clearly wrong</label>
+      <label class="choice"><input type="radio" name="placement" value="cannot_tell" /> Can't tell</label>
+    </div>
+    <input type="radio" name="placement" value="not_applicable" style="display:none" />
+    <p id="placement-na-note" class="na-note" style="display:none">N/A — state change, not visually represented.</p>
+  </div>
+
+  <div class="rating-box behavior">
+    <h3>Behavior plausibility</h3>
+    <label class="choice"><input type="radio" name="behavior" value="plausible" /> Plausible</label>
+    <label class="choice"><input type="radio" name="behavior" value="unusual_but_possible" /> Unusual but possible</label>
+    <label class="choice"><input type="radio" name="behavior" value="implausible" /> Implausible</label>
+    <label class="choice"><input type="radio" name="behavior" value="cannot_judge" /> Can't judge</label>
+  </div>
+
+  <div class="rating-box visibility">
+    <h3>Visual identifiability</h3>
+    <div id="visibility-options">
+      <label class="choice"><input type="radio" name="visibility" value="clearly_visible" /> Clearly visible</label>
+      <label class="choice"><input type="radio" name="visibility" value="visible_but_hard" /> Visible but hard to tell</label>
+      <label class="choice"><input type="radio" name="visibility" value="not_visible" /> Not visible</label>
+    </div>
+    <input type="radio" name="visibility" value="not_applicable" style="display:none" />
+    <p id="visibility-na-note" class="na-note" style="display:none">N/A — state change, not visually represented.</p>
+  </div>
+
+  <div class="rating-box issues">
+    <h3>Issues (optional, check any that apply)</h3>
+    <label class="choice"><input type="checkbox" name="issue" value="clipping_or_intersecting" /> Clipping/intersecting</label>
+    <label class="choice"><input type="checkbox" name="issue" value="floating" /> Floating</label>
+    <label class="choice"><input type="checkbox" name="issue" value="wrong_surface_for_category" /> Wrong surface for this object</label>
+    <label class="choice"><input type="checkbox" name="issue" value="reason_does_not_match_move" /> Stated reason doesn't match the move</label>
+    <label class="choice"><input type="checkbox" name="issue" value="mover_capability_violation" /> This mover wouldn't plausibly do this</label>
+    <label class="choice"><input type="checkbox" name="issue" value="before_and_after_look_identical" /> Before/after look identical</label>
+    <label class="choice"><input type="checkbox" name="issue" value="viewpoint_problem" /> Viewpoint problem (bad angle/blank)</label>
+    <label class="choice"><input type="checkbox" name="issue" value="other" /> Other</label>
+    <textarea id="comment" rows="2" placeholder="Optional comment"></textarea>
+  </div>
+
+  <div id="debug-box"></div>
+
+  <div class="nav-row">
+    <button onclick="prevItem()">&larr; Previous</button>
+    <button id="save-next" onclick="saveAndNext()">Save &amp; Next &rarr;</button>
+  </div>
+</div>
+
+<div class="celebration-overlay" id="celebration-overlay">
+  <div class="celebration-card">
+    <h2>All done — thank you!</h2>
+    <p>Your responses have been recorded.</p>
+    <button onclick="closeCelebration()">Close</button>
+  </div>
+</div>
+
+<script src="/app.js"></script>

@@ -185,7 +185,11 @@ def test_anchor_within_range_is_visible_when_unobstructed(world):
 # docstring on the living_room furniture cluster) — see
 # experiment_config.py's FROZEN_STATE_LABELS, which excludes "fridge_1"
 # for exactly this reason.
-_NO_VIEWPOINT_WITHIN_RANGE = {"bedroom.bed", "fridge"}
+_NO_VIEWPOINT_WITHIN_RANGE = {"bedroom.bed", "fridge", "bedroom.table"}
+# "bedroom.table" (a census-derived anchor
+# set) sits ~2m from bedroom.bed in this scene's own real furniture
+# census — the same tight bedroom nook bedroom.bed already fails this
+# check in, not a region-matching mismatch pulling in an unrelated table.
 
 
 def test_viewpoint_for_returns_a_visible_pose_for_every_real_anchor(world):
@@ -214,3 +218,76 @@ def test_viewpoint_for_is_cached(world):
 
 def test_viewpoint_for_unknown_anchor_returns_none(world):
     assert world.viewpoint_for("not_a_real_slot") is None
+
+
+# ---------------------------------------------------------------------------
+# viewpoint_from_position(prefer_farthest=...)
+# ---------------------------------------------------------------------------
+
+def test_prefer_farthest_returns_a_pose_at_least_as_far_as_the_default(world):
+    from dynamic_home_eqa.embodied.sensor import viewpoint_from_position
+
+    pos = world._anchor_positions["dining.table"]
+    nearest = viewpoint_from_position(world, pos)
+    farthest = viewpoint_from_position(world, pos, prefer_farthest=True)
+    assert nearest is not None and farthest is not None
+
+    def _dist(vp):
+        return ((vp.x - pos[0]) ** 2 + (vp.z - pos[2]) ** 2) ** 0.5
+
+    assert _dist(farthest) >= _dist(nearest) - 1e-9
+
+
+# ---------------------------------------------------------------------------
+# spectator_viewpoint — study camera, no navmesh/eye-height constraint.
+# ---------------------------------------------------------------------------
+
+def test_spectator_viewpoint_finds_a_pose_for_an_open_anchor(world):
+    from dynamic_home_eqa.embodied.sensor import spectator_viewpoint
+
+    pos = world._anchor_positions["dining.table"]
+    aabb = ((pos[0] - 0.1, pos[1], pos[2] - 0.1), (pos[0] + 0.1, pos[1] + 0.2, pos[2] + 0.1))
+    vp = spectator_viewpoint(world._sim, aabb, object_max_extent=0.2)
+    assert vp is not None
+    assert vp.elevation_deg in (15.0, 30.0, 45.0, 60.0)
+    assert vp.distance_m > 0.0
+
+
+def test_spectator_viewpoint_succeeds_where_the_embodied_viewpoint_search_fails(world):
+    # fridge is the concrete real-scene case _NO_VIEWPOINT_WITHIN_RANGE
+    # documents above: no navmesh-snapped, eye-height standing pose has a
+    # clear line of sight to it. The Spectator Camera round exists
+    # precisely so a STUDY render of this real object is still possible —
+    # confirm that directly, not just that spectator_viewpoint runs.
+    from dynamic_home_eqa.embodied.sensor import spectator_viewpoint
+
+    assert world.viewpoint_for("fridge") is None  # the failure this item fixes
+    pos = world._anchor_positions["fridge"]
+    aabb = ((pos[0] - 0.3, pos[1], pos[2] - 0.3), (pos[0] + 0.3, pos[1] + 1.2, pos[2] + 0.3))
+    vp = spectator_viewpoint(world._sim, aabb, object_max_extent=1.2)
+    assert vp is not None, "spectator_viewpoint should find a study pose even where no embodied viewpoint exists"
+
+
+def test_spectator_viewpoint_high_angle_flag(world):
+    from dynamic_home_eqa.embodied.sensor import SpectatorPose
+
+    low = SpectatorPose(camera_pos=(0, 0, 0), look_at=(0, 0, 0), distance_m=1.0, elevation_deg=15.0, azimuth_deg=0.0)
+    high = SpectatorPose(camera_pos=(0, 0, 0), look_at=(0, 0, 0), distance_m=1.0, elevation_deg=45.0, azimuth_deg=0.0)
+    assert not low.is_high_angle
+    assert high.is_high_angle
+
+
+def test_spectator_viewpoint_prefers_lowest_elevation_available():
+    # Pure selection-logic test on the sort key spectator_viewpoint uses
+    # (lowest elevation first, then farthest distance) -- no habitat_sim
+    # needed for the sort itself, only exercised here without a real sim.
+    from dynamic_home_eqa.embodied.sensor import SpectatorPose
+
+    candidates = [
+        SpectatorPose(camera_pos=(0, 0, 0), look_at=(0, 0, 0), distance_m=2.0, elevation_deg=45.0, azimuth_deg=0.0),
+        SpectatorPose(camera_pos=(0, 0, 0), look_at=(0, 0, 0), distance_m=1.0, elevation_deg=15.0, azimuth_deg=0.0),
+        SpectatorPose(camera_pos=(0, 0, 0), look_at=(0, 0, 0), distance_m=3.0, elevation_deg=15.0, azimuth_deg=90.0),
+    ]
+    best = sorted(candidates, key=lambda p: (p.elevation_deg, -p.distance_m))[0]
+    assert best.elevation_deg == 15.0
+    assert best.distance_m == 3.0  # farthest among the tied-lowest-elevation candidates

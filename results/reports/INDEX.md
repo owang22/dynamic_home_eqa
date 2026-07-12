@@ -5,6 +5,28 @@ takeaway a project owner needs before opening anything else.
 
 ## Open questions
 
+- **Render pipeline, round 3 update: the position-mismatch mystery is
+  RESOLVED (not worked around); one open item remains.** The ~120px
+  marker/object discrepancy flagged as unexplained after round 2 is now
+  root-caused: NOT a COM/physics bug (tested directly — `obj.com`,
+  `.translation`, `.absolute_translation` all agreed exactly for a real
+  spawned object) but two concrete bugs — a semantic-ID collision
+  (`object_id + 1` coincided with a real HSSD scene's own baked static
+  ID) and the camera aiming at a different position than the object was
+  actually placed at (anchor+height-offset vs. true surface-resolved
+  position). Both fixed via a real instance-segmentation sensor + a
+  single source-of-truth position (`world_aabb_centroid`) that camera
+  aim, marker, and offset logging all now derive from — see
+  `human_realism_study.md`'s "Round 3" section. Round 2's whole-frame
+  pixel-diff check (the "18.5% -> 63.0%" widening) is DELETED, identified
+  as the guard inverted, not calibrated correctly — replaced by the mask
+  predicate. **Still open:** `NO_NAVIGABLE_VIEWPOINT` for `kitchen.fridge`/
+  `bedroom.wardrobe`-style anchors — 100% occlusion at every tried height
+  offset, genuinely fully blocked, not a slack-tolerance problem;
+  confirmed still real under the new predicate (the gold set's
+  `fridge-top` item). Addressing this needs an elevated study-camera path
+  (explicitly deferred, STOP pending owner review of a separate finding —
+  see `asset_coverage.md`'s round 2).
 - **The FM is a capable reasoner and a poor uncertainty estimator, in
   every role tested so far — naming this now so it stops being
   re-discovered per phase.** L0: elicited location/dynamics priors score
@@ -120,6 +142,140 @@ takeaway a project owner needs before opening anything else.
 
 ## Reports
 
+- **`asset_coverage.md`** — **Objaverse sourcing for keys/wallet: 5/10
+  mechanically-passing candidates, STOPPED for owner review, nothing
+  finalized.** LVIS-Objaverse has exact category labels (`"key"`: 82
+  UIDs, `"wallet"`: 13), but the category assignment is demonstrably
+  noisy (`"key"` includes literal non-matches like `"Jones Light Post"`)
+  — 5 per category picked by name-plausibility + CC-BY license, not a
+  blind positional top-5. Raw mesh units were exactly as untrustworthy as
+  expected (0.28 to 188.5 extent range, no consistent convention) —
+  scale computed per-asset from a real-world target; 9/10 candidates
+  needed a computed `up`/`front` remap to lie flat (only 1 was already
+  correctly oriented), verified directly against a live spawn's
+  post-scale bounding box. All 10/10 passed scale+support checks (the
+  pipeline itself is solid); the pixel-diff visibility check was the
+  real discriminator — every rejected key failed on visibility (real
+  objects, genuinely small, not a miscalibrated check), 1 key + 4
+  wallets passed comfortably. New standing constraint
+  (`assert_category_has_asset_coverage`) fails loudly at pool-
+  construction time for any category with no asset-mapping entry at
+  all — verified against the full 211-folder pool (not just the
+  80-item sample): all 18 real categories are covered, the render job
+  would not have broken had this existed from the start. `keys`/`wallet`
+  remain in `NO_ASSET_CATEGORIES` (not yet promoted) pending the owner
+  picking one survivor per category from `results/reports/
+  asset_candidates/*.png`.
+  **Update (round 2 of this report, same file):** re-verified under the
+  real output-truth mask predicate (see `human_realism_study.md`'s
+  "Round 3") instead of the pixel-diff check above — **0/5 now pass**,
+  all fail `mask_too_small` (0.108%-0.318% of frame, under the 0.5%
+  floor). License audit re-confirmed all 5 as clear CC-BY. Not a
+  calibration target: the old pixel-diff numbers were counting
+  shadow/AO changes beyond the object's real footprint. `NO_ASSET_CATEGORIES`
+  unchanged (nothing was ever promoted).
+  **Update (round 3, same file) — CLOSED:** re-run under the full production
+  pose search (standard ring, farthest-passing preference — not one fixed
+  pose) — still **0/5**, confirmed at every standard radius including the
+  nearest (1.5m); full mask-area-vs-distance curves recorded, none rescued
+  by a closer pose. Per the standing decision rule, `keys`/`wallet` are now
+  **PERCEPTUAL-TIER-EXCLUDED, attempted and documented** — closed, not
+  revisited without new candidates. Separately: a requested diagnostic
+  (mask-area distribution for native small categories candle/phone/
+  drinkware, sampled from real pool events) found the 0.5% floor is
+  compatible with reasonably-sized objects (phone: 13/13 OK panels,
+  1.0-1.3% area, comfortable margin) but structurally excludes a small/
+  thin-footprint size class independent of source — **candle (0/24) and
+  drinkware/cup (0/24) fail the identical way keys/wallet do, TODAY, in
+  the currently-shipping pool**, not a hypothetical. Surfaced as an open,
+  independent design decision for the owner (viewing distance vs. floor
+  vs. accept), not resolved unilaterally.
+- **`human_realism_study.md`** — **Tooling built and verified end to end
+  against real data, including real object instantiation; no human has
+  rated anything yet.** Render job (2x2 grids, failures included+labeled
+  not skipped, both location and state events) -> webapp (FastAPI+SQLite,
+  adapted from a reference QA app, joint-quota shared assignment, 3-axis
+  rubric) -> analysis script (pairwise weighted kappa, human-vs-automatic
+  Spearman correlation, per-stratum quality rates). **Three review
+  rounds, real bugs found and fixed each time:**
+  round 1 (pooled suspicion tail starving state events; a highlight
+  marker's autoscale distorting its own image; an infeasible 3-way joint
+  quota; `rooms.resolve_slot()`'s anchor-naming bug; a too-close default
+  camera ring). Round 2, prompted by the user loading the webapp and
+  reporting exactly what looked wrong: an explicit per-panel status
+  (`STATUS_OK`/`ANCHOR_UNRESOLVED`/`NO_NAVIGABLE_VIEWPOINT`/`AIM_FAILED`)
+  replacing one boolean; a full 3D look-at camera with real pitch
+  (`AIM_FAILED` -> 0/80); a real visibility-validated search for
+  room-centroid anchors (`viewpoint_from_position`, extracted from
+  `viewpoint_for` with zero behavior change — `test_sensor.py` still
+  12/12); and an independent matplotlib `axis("off")` bug that had been
+  silently blanking every placeholder's status text project-wide since
+  before this task began. Round 3: the round-2 renders were still empty
+  rooms with a star sticker — Tier-2b clutter objects (vase, bowl, cup,
+  ...) were never physically instantiated anywhere in this project
+  (`embodied/world.py`'s own module docstring). Built real object
+  spawning against the actual HSSD asset catalog (real assets for 8/11
+  needed categories; `cup` substituted to `drinkware`, disclosed;
+  `wallet`/`keys` genuinely have no matching asset in this dataset at
+  all — reported honestly, not faked), raycast-plus-bounding-box surface
+  placement, a new `geom_check_mesh` signal (disagrees with the old
+  point-based check 16.7% of the time), and a `STATUS_OBJECT_SPAWN_FAILED`
+  code. Found and fixed a real bug in the spawn-verification check
+  itself along the way: a marker-windowed with/without-render diff was
+  rejecting the large majority of genuinely successful spawns because the
+  object's actual rendered position can differ from where every position
+  readout (including `project_point` on the object's own translation)
+  says it is — root cause not fully chased down (ruled out gravity/motion-
+  type and render/physics desync directly), worked around with a
+  whole-frame changed-pixel count instead of assuming a location.
+  **Effect: spawn success rate 18.5% -> 63.0%** on a full re-render.
+  **Final per-panel breakdown (80-item pool, all three rounds' fixes):**
+  BEFORE 43.75% OK / 12.5% NO_NAVIGABLE_VIEWPOINT / 7.5% ANCHOR_UNRESOLVED
+  / 16.25% OBJECT_SPAWN_FAILED / 20% N/A(state); AFTER 41.25% / 13.75% /
+  3.75% / 21.25% / 20%. `AIM_FAILED` stayed 0/80. State-change items now
+  skip the egocentric axis entirely (render AND webapp, server-validated).
+  Per-scene mean luminance now tracked (confirmed pool-wide: no scene has
+  a missing lighting config to fix — all 21 scenes have none authored at
+  all).
+  **Update (Round 3, same file):** the round-2 checks (this bullet, above)
+  were themselves PROXIES, never asserting "the object is visible in the
+  frame" directly — replaced with a real instance-segmentation mask
+  predicate (`evaluate_object_mask`) gating every panel, plus a single
+  source-of-truth object position (`world_aabb_centroid`) camera aim and
+  markers now derive from. The marker/object-position discrepancy noted
+  as open above is RESOLVED (semantic-ID collision + aim-vs-placement
+  mismatch, not COM — see the "Open questions" entry). Round 2's
+  whole-frame pixel-diff check is DELETED (identified as an inverted
+  guard, not a correct calibration — standing rule adopted: never loosen
+  a failing check to agree with a desired outcome). A new 8-item gold set
+  (`scripts/gold_set.py`) now regression-tests per-item status on every
+  change. The stale 80-item pre-fix batch was archived (2 items) and
+  cleared. `NO_NAVIGABLE_VIEWPOINT`'s dominant cause remains open,
+  confirmed still real under the new predicate.
+  **Update (full re-render, same seed=0/same 80-item pool — confirmed
+  identical: `NO_NAVIGABLE_VIEWPOINT`/`ANCHOR_UNRESOLVED` counts match the
+  round-2 numbers EXACTLY, digit for digit, real evidence this comparison
+  is isolated and controlled):** BEFORE 21.25% OK (was 43.75%) / 12.5%
+  NO_NAVIGABLE_VIEWPOINT (unchanged) / 7.5% ANCHOR_UNRESOLVED (unchanged)
+  / 38.75% OBJECT_SPAWN_FAILED (was 16.25%) / 20% N/A; AFTER 27.5% OK
+  (was 41.25%) / 13.75% (unchanged) / 3.75% (unchanged) / 35% (was
+  21.25%) / 20%. The entire OK-drop moves cleanly into
+  `OBJECT_SPAWN_FAILED` and nowhere else — reason breakdown across all 80
+  items: `mask_too_small` 22 (dominated by candle/cup/drinkware, matching
+  the diagnostic exactly), `mask_empty` 12 (occlusion), `not_found_in_scene`
+  11 (mostly `stool` — the already-instantiated-lookup fix correctly
+  refusing a false match), `no_asset_for_category` 10 (exactly
+  wallet 6 + keys 4, the pinned exclusion), `mask_too_large` 4. Full
+  per-item flip list against round 2 not reconstructable (round 2's
+  78 remaining per-item JSONs were deleted in this round's own cleanup,
+  before this comparison was requested — a real, disclosed gap, only 2
+  items archived); the 2 archived items were matched into the new batch
+  by (folder, label, t): one stable `ok`/`ok`, one real, expected flip
+  (`stool_1`'s "after" panel: `ok` -> `object_spawn_failed`,
+  `not_found_in_scene` — exactly the already-instantiated-category bug
+  this round fixed). Webapp restarted on the fresh pool (port 8842) —
+  **not yet cleared for volunteers: the standing "owner reviews 10 study
+  items before study-ready" gate has not run.**
 - **`render_tool.md`** — **Works, and already found two real things by
   actually looking — the first rendered pixel checked in this project's
   history.** Suspicion-ranked (cross-room, rare pairing, low confidence,

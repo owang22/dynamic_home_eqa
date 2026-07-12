@@ -75,14 +75,32 @@ def test_anchor_world_positions_returns_real_scene_data():
         assert all(isinstance(v, float) for v in pos)
 
 
-def test_anchor_world_positions_only_includes_known_slots_or_stateful_categories():
+def test_anchor_world_positions_keys_are_known_slots_stateful_categories_or_room_qualified_census_entries():
+    # anchor_world_positions is no longer
+    # capped at the 16 hand-authored SLOT_ANCHORS entries — it also
+    # includes one f"{room}.{category}" key per real (room, category) pair
+    # from instance_room_positions' census (e.g. "kitchen.table",
+    # "kitchen.range_hood" — real anchors the old 16-entry table simply
+    # predates). Every key must still be one of: a real SLOT_ANCHORS slot,
+    # a bare STATEFUL_FURNITURE category, or f"{room}.{cat}" with room a
+    # real CANONICAL_ROOMS name — never something unaccounted for.
     from dynamic_home_eqa.env.deltas import SLOT_ANCHORS
     from dynamic_home_eqa.env.inventory import STATEFUL_FURNITURE
+    from dynamic_home_eqa.rooms import CANONICAL_ROOMS
+
     positions = anchor_world_positions(_REAL_SCENE)
-    # Keys are either a real SLOT_ANCHORS slot, or a bare STATEFUL_FURNITURE
-    # category name (M3: state-change dynamics — e.g. "fridge", the real
-    # anchor a state question's resense targets, not a location slot).
-    assert set(positions.keys()) <= set(SLOT_ANCHORS.keys()) | set(STATEFUL_FURNITURE.keys())
+    known = set(SLOT_ANCHORS.keys()) | set(STATEFUL_FURNITURE.keys())
+    for key in positions:
+        if key in known:
+            continue
+        room, _, cat = key.partition(".")
+        assert room in CANONICAL_ROOMS and cat, f"unaccounted-for anchor key: {key!r}"
+
+    # And the expansion is real, not vacuous — this scene has real
+    # room-qualified entries beyond the legacy 16 (not every `known` key
+    # need be present, e.g. this scene genuinely has no oven — omitted, per
+    # anchor_world_positions' own docstring, not fabricated).
+    assert set(positions.keys()) - known
 
 
 def test_anchor_world_positions_includes_present_stateful_furniture():
@@ -165,7 +183,13 @@ def test_check_anchor_sanity_real_scene():
     # space — confirmed by direct inspection, not a registration bug (see
     # test_sensor.py's _NO_VIEWPOINT_WITHIN_RANGE and experiment_config.py's
     # FROZEN_STATE_LABELS, which excludes "fridge_1" for exactly this reason).
-    _KNOWN_NON_ADJACENT = {"fridge"}
+    # "living_room.cabinet" (a census-derived
+    # anchor set) is the same kind of case — a real, built-in-style cabinet
+    # tight against a wall with no adjacent navmesh cell, not a region-
+    # matching bug (its position sits close to this scene's real
+    # living_room.couch/living_room.table positions, consistent placement,
+    # not an out-of-room mismatch).
+    _KNOWN_NON_ADJACENT = {"fridge", "living_room.cabinet"}
 
     result = check_anchor_sanity(_REAL_SCENE)
     assert result.checked > 0

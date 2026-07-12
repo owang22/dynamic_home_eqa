@@ -62,7 +62,7 @@ class TestScoreDynamicsPriors:
             assert wait in result["fitted_reference"]["location"]
 
     def test_no_parse_failures_on_committed_cache(self):
-        # Regression for the elicit.py bug this batch found and fixed
+        # Regression for an elicit.py bug
         # (location targets never got a dynamics elicitation at all,
         # showing up as n_parse_failures == every location target).
         for family in ("qwen", "phi3"):
