@@ -26,7 +26,7 @@ SCENES   = ["102343992", "102344022", "102344049"]
 PROFILES = ["family_with_kids", "single_retiree", "work_from_home_adult"]
 
 
-def _fake_generate(self, system, user, schema, seed=None):
+def _fake_generate(self, system, user, schema, seed=None, temperature=None):
     rng = random.Random(seed)
     props = schema.get("properties", {})
 

@@ -15,7 +15,7 @@ from dynamic_home_eqa.generation import llm_client as llm_client_mod
 from dynamic_home_eqa.generation.pipeline import run_batch
 
 
-def _fake_generate(self, system, user, schema, seed=None):
+def _fake_generate(self, system, user, schema, seed=None, temperature=None):
     rng = random.Random(seed)
     props = schema.get("properties", {})
 
@@ -53,9 +53,14 @@ def _fake_generate(self, system, user, schema, seed=None):
 
     if "activities" in props:
         locs = [l for l in props["activities"]["items"]["properties"]["location"]["enum"] if l != "away"]
+        # Vary both the location AND the transition time by seed so two
+        # different day-seeds reliably produce different traces (the earlier
+        # single rng.choice(loc) collided ~1/8 of the time, making the
+        # day-variance assertion seed-fragile).
+        mid = round(rng.uniform(17.0, 21.0), 1)
         acts = [
-            {"activity": "resting", "location": rng.choice(locs), "start": 6.0, "end": 20.0},
-            {"activity": "sleep", "location": "bedroom", "start": 20.0, "end": 6.0},
+            {"activity": "resting", "location": rng.choice(locs), "start": 6.0, "end": mid},
+            {"activity": "sleep", "location": "bedroom", "start": mid, "end": 6.0},
         ]
         return json.dumps({"occupant_name": "unused", "activities": acts})
 

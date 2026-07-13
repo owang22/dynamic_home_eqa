@@ -21,7 +21,7 @@ from dynamic_home_eqa.generation.manifest import build_manifest
 from dynamic_home_eqa.generation.pipeline import generate_for_scene
 
 
-def _fake_generate(self, system, user, schema, seed=None):
+def _fake_generate(self, system, user, schema, seed=None, temperature=None):
     # Deliberately keyed only on `seed` (and the schema's own enums), never
     # on call count or wall-clock — a real determinism test would be
     # meaningless if the fake itself carried hidden state across calls.

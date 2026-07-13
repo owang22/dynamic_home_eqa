@@ -6,7 +6,7 @@ plus embodied resense-policy experiments over the generated worlds.
 ## Layout
 
 ```
-dynamic_home_eqa/      the Python package (install with pip install -e .)
+src/dynamic_home_eqa/  the Python package (install with pip install -e .)
   generation/          LLM day-trace generation (persona, activities, displacements)
   env/                 scene state, deltas, replay, inventory
   qa/                  question generation from manifests
@@ -127,7 +127,7 @@ Note `vllm==0.10.2`'s API: `generation/llm_client.py` uses
 | `DYNAMIC_HOME_EQA_ROOT` | repo checkout | override where data/output dirs are resolved |
 | `REALISM_MEDIA_DIR`, `REALISM_DATA_DIR` | see `webapp/realism_eval/app.py` | webapp media/DB locations |
 
-All other paths resolve through `dynamic_home_eqa/paths.py`, anchored at the
+All other paths resolve through `src/dynamic_home_eqa/paths.py`, anchored at the
 repo checkout — output lands in the repo regardless of working directory.
 
 ## Documentation map
