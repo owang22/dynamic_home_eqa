@@ -281,6 +281,7 @@ def build_manifest(
     n_rejected_unreachable_anchor = 0
     n_rejected_over_capacity = 0
     n_dropped_despawn_notout = 0
+    n_rejected_no_seat_in_room = 0
 
     for t, idx, prop in timed:
         cat      = prop["object_category"]
@@ -333,11 +334,28 @@ def build_manifest(
         has_real_instance = bool(furniture_pool.get(cat))
         if has_real_instance:
             # Instance resolution per event, not per day: the occupant uses
-            # the instance already in THEIR room (the chair beside them, not
-            # one teleported from across the house); deterministic fallback
-            # to the lowest-index instance when the room has none. See
-            # generation/instances.py for why per-label chains stay
-            # consistent under this policy.
+            # the instance already in THEIR room. For floor-bound seating
+            # (chair/stool) that is a HARD requirement — scenes are seat-poor
+            # (992: two chairs, both on the patio), and the lowest-index
+            # fallback teleported one chair across the whole house, so a
+            # seatless room means NO seat move (you sit on built-in seating).
+            # The pipeline's vocabulary gate should prevent these proposals
+            # existing at all; this is the replay-level backstop. Non-seating
+            # categories (books, bowls) keep the lowest-index fallback —
+            # carrying those between rooms is ordinary behavior.
+            from ..env.inventory import FLOOR_BOUND_CATEGORIES
+            from ..rooms import rooms_match
+            from .instances import instance_room
+            if cat in FLOOR_BOUND_CATEGORIES:
+                in_room = [iid for iid in sorted(furniture_pool[cat])
+                           if location
+                           and (r := instance_room(current_slot.get(iid))) is not None
+                           and rooms_match(r, location)]
+                if not in_room:
+                    n_rejected_no_seat_in_room += 1
+                    _logger.warning("manifest: rejecting %s move — no %s currently in %s",
+                                     cat, cat, location)
+                    continue
             label = pick_real_instance(cat, furniture_pool[cat], current_slot, location)
         else:
             key = (cat, occupant)
@@ -491,6 +509,7 @@ def build_manifest(
             "rejected_unreachable_anchor":  n_rejected_unreachable_anchor,
             "rejected_over_capacity":       n_rejected_over_capacity,
             "dropped_despawn_notout":       n_dropped_despawn_notout,
+            "rejected_no_seat_in_room":     n_rejected_no_seat_in_room,
             "clutter_rejected_unreachable": n_clutter_rejected_unreachable,
             "admission_map_used":           admission_map is not None,
         },

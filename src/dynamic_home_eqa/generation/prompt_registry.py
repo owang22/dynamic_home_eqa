@@ -25,7 +25,13 @@ from ..rooms import CANONICAL_ROOMS as _CANONICAL_ROOMS
 
 # Bump by hand whenever the Python-side user-prompt assembly changes (line
 # builders in stages.py, ContextBuilder later). See module docstring.
-BUILDER_VERSION = "b1"
+BUILDER_VERSION = "b2"  # b1 -> b2: seat-in-room vocabulary gate (chair/stool
+                        # removed from a window's movable categories unless an
+                        # instance is currently in the acting room) changes the
+                        # assembled displacement prompt without touching any
+                        # template text — bumped so pre-gate cached responses
+                        # (which still propose cross-room chair fetches) can
+                        # never replay against post-gate code.
 
 _ACTIVITY_LOCATIONS = [*_CANONICAL_ROOMS, "away"]
 
@@ -163,10 +169,6 @@ Respond only with valid JSON matching the provided schema. No commentary.
 DISPLACEMENT = PromptTemplate("displacement", """\
 You are a household object-placement modeller. Given an activity and a scene
 inventory, propose CANDIDATE objects the occupant might move and where to.
-You are a proposer, not a filter — a separate downstream stage grounds,
-scores, and selects the final subset, so proposing more candidates than
-would realistically all happen at once is fine, and preferred, over a short
-"safe" list.
 
 Rules:
 - Only propose object categories that appear in the inventory.
@@ -206,9 +208,7 @@ Rules:
   not the same table three times over.
 - A candidate must still be physically sensible for the activity (a cup can
   move to the table during breakfast; a sofa does not move during
-  breakfast). Behavioral realism — how *likely* the move is, not just
-  whether it's conceivable — is judged downstream; do not self-censor a
-  plausible-but-less-common move here.
+  breakfast).
 - For each proposal, write the `reason` FIRST: reason about what this
   activity, done by this person in this room, plausibly implies for object
   movement — given who they are, what they're doing, and where things

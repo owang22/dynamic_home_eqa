@@ -437,6 +437,15 @@ def generate_for_scene(
         act_location = activity.get("location")
         owned = ownership.get(occ_name, [])
         occ_inventory = restrict_inventory_to_owner(inventory, owned)
+        # Seat-in-room gate: floor-bound furniture (chair/stool) is only in
+        # this window's movable vocabulary if an instance is CURRENTLY in the
+        # acting occupant's room — no chair in the room means you sit on the
+        # built-in seating, not fetch one from the bedroom. Presence is a
+        # pure function of start slots + moves-so-far, both covered by the
+        # state hash, so caching stays correct.
+        _present = state.categories_present_in(act_location)
+        occ_inventory = {c: n for c, n in occ_inventory.items()
+                         if c not in FLOOR_BOUND_CATEGORIES or c in _present}
         state_block = state.object_state_block(occ_name, owned) if enrich_context else None
         live_occ = state.anchors_in_use(act_location) if enrich_context else None
         # Offer "put_away" only when this occupant has a carried item currently

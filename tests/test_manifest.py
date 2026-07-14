@@ -108,11 +108,11 @@ def test_despawn_without_prior_placement_is_dropped_and_counted():
 
 def test_real_instance_backed_category_is_always_move_existing():
     result = _base_result([
-        _prop("chair", "on", "counter", 1.0, 2.0),
-        _prop("chair", "on", "table", 5.0, 6.0),
+        _prop("stool", "on", "counter", 1.0, 2.0),
+        _prop("stool", "on", "table", 5.0, 6.0),
     ])
     manifest = build_manifest(_SCENE, "test_profile", 0, result)
-    chair_changes = [c for c in manifest["changes"] if c["object_category"] == "chair"]
+    chair_changes = [c for c in manifest["changes"] if c["object_category"] == "stool"]
     assert len(chair_changes) == 2
     assert all(c["change_type"] == "move_existing" for c in chair_changes)
     # First event's from_semantic is the real starting slot, never None —
@@ -140,12 +140,12 @@ def test_volatile_category_insert_new_fires_exactly_once():
 
 def test_no_op_proposal_is_dropped_and_counted():
     result = _base_result([
-        _prop("chair", "on", "counter", 1.0, 2.0),
-        _prop("chair", "on", "counter", 3.0, 4.0),  # same resolved slot -> no-op
-        _prop("chair", "on", "table", 5.0, 6.0),
+        _prop("stool", "on", "counter", 1.0, 2.0),
+        _prop("stool", "on", "counter", 3.0, 4.0),  # same resolved slot -> no-op
+        _prop("stool", "on", "table", 5.0, 6.0),
     ])
     manifest = build_manifest(_SCENE, "test_profile", 0, result)
-    chair_changes = [c for c in manifest["changes"] if c["object_category"] == "chair"]
+    chair_changes = [c for c in manifest["changes"] if c["object_category"] == "stool"]
     assert len(chair_changes) == 2  # the repeat-to-counter proposal was dropped
     assert manifest["integrity_stats"]["dropped_noop"] == 1
 
@@ -182,13 +182,13 @@ def test_reason_is_verbatim_and_change_carries_activity():
     # each change names the activity window it was part of. No assumed_from is
     # stored, and the retired divergence counter is gone from integrity_stats.
     result = _base_result([
-        _prop("chair", "on", "counter", 1.0, 2.0),
-        _prop("chair", "on", "table", 3.0, 4.0,
+        _prop("stool", "on", "counter", 1.0, 2.0),
+        _prop("stool", "on", "table", 3.0, 4.0,
               reason="cooking needs counter space, so the chair moves to the table",
               activity="cooking"),
     ])
     manifest = build_manifest(_SCENE, "test_profile", 0, result)
-    second = sorted((c for c in manifest["changes"] if c["object_category"] == "chair"),
+    second = sorted((c for c in manifest["changes"] if c["object_category"] == "stool"),
                     key=lambda c: c["t"])[1]
     assert "llm_claimed_from" not in second
     assert "purpose" not in second
@@ -288,7 +288,7 @@ def test_capacity_frees_up_after_the_occupant_moves_away(monkeypatch):
 
 def test_no_admission_map_disables_gates_and_is_recorded_not_silent(monkeypatch):
     _patch_admission_map(monkeypatch, None)
-    result = _base_result([_prop("chair", "on", "counter", 1.0, 2.0)])
+    result = _base_result([_prop("stool", "on", "counter", 1.0, 2.0)])
     manifest = build_manifest(_SCENE, "test_profile", 0, result)
     assert manifest["integrity_stats"]["admission_map_used"] is False
     assert manifest["integrity_stats"]["rejected_unreachable_anchor"] == 0
@@ -306,12 +306,12 @@ def test_tuck_untuck_cycle_is_real_changes_not_noops():
     # table: distinct slots, so the tuck is a real change (not no-op
     # suppressed), and the chain stays valid.
     result = _base_result([
-        _prop("chair", "next_to", "kitchen.table_1", 1.0, 2.0),
-        _prop("chair", "tucked_under", "kitchen.table_1", 3.0, 4.0,
-              reason="done with breakfast, tucking the chair back in"),
+        _prop("stool", "next_to", "kitchen.table_1", 1.0, 2.0),
+        _prop("stool", "tucked_under", "kitchen.table_1", 3.0, 4.0,
+              reason="done with breakfast, tucking the stool back in"),
     ])
     manifest = build_manifest(_SCENE, "test_profile", 0, result)
-    chair = sorted((c for c in manifest["changes"] if c["object_category"] == "chair"),
+    chair = sorted((c for c in manifest["changes"] if c["object_category"] == "stool"),
                    key=lambda c: c["t"])
     assert len(chair) == 2
     assert chair[0]["to_semantic"] == "kitchen.table_1"
@@ -325,29 +325,32 @@ def test_tuck_untuck_cycle_is_real_changes_not_noops():
 def test_double_tuck_at_same_anchor_is_a_noop():
     # tucking an already-tucked chair at the same furniture IS a no-op.
     result = _base_result([
-        _prop("chair", "tucked_under", "kitchen.table_1", 1.0, 2.0),
-        _prop("chair", "tucked_under", "kitchen.table_1", 3.0, 4.0),
+        _prop("stool", "tucked_under", "kitchen.table_1", 1.0, 2.0),
+        _prop("stool", "tucked_under", "kitchen.table_1", 3.0, 4.0),
     ])
     manifest = build_manifest(_SCENE, "test_profile", 0, result)
-    chair = [c for c in manifest["changes"] if c["object_category"] == "chair"]
+    chair = [c for c in manifest["changes"] if c["object_category"] == "stool"]
     assert len(chair) == 1
     assert manifest["integrity_stats"]["dropped_noop"] == 1
 
 
-def test_multiple_instances_animate_independently_by_room():
-    # Scene 102343992 has two real chairs. Proposals in DIFFERENT rooms must
-    # animate the chair already in that room, not drag one chair everywhere.
+def test_seat_moves_stay_in_room_and_resolve_per_instance():
+    # Scene 102344049 has three stools, all starting in the kitchen. In-room
+    # proposals animate kitchen stools; a seat proposal in a seatless room is
+    # REJECTED (never resolved by fetching one from another room).
     result = _base_result([
-        _prop("chair", "next_to", "kitchen.table_1", 1.0, 2.0, location="kitchen"),
-        _prop("chair", "next_to", "kitchen.counter_1", 3.0, 4.0, location="kitchen"),
+        _prop("stool", "next_to", "kitchen.table_1", 1.0, 2.0, location="kitchen"),
+        _prop("stool", "next_to", "kitchen.counter_1", 3.0, 4.0, location="kitchen"),
+        _prop("stool", "on", "bed", 5.0, 6.0, location="bedroom"),  # no stool in bedroom
     ])
-    manifest = build_manifest(_SCENE, "test_profile", 0, result)
-    chair = sorted((c for c in manifest["changes"] if c["object_category"] == "chair"),
+    result["traces"][0]["activities"] = [
+        {"activity": "resting", "location": "kitchen", "start": 0.0, "end": 4.5},
+        {"activity": "resting", "location": "bedroom", "start": 4.5, "end": 24.0},
+    ]
+    manifest = build_manifest("102344049", "test_profile", 0, result)
+    stool = sorted((c for c in manifest["changes"] if c["object_category"] == "stool"),
                    key=lambda c: c["t"])
-    assert len(chair) == 2
-    # Second proposal finds the chair the FIRST move brought into the kitchen
-    # (same instance, now in-room), chaining correctly.
-    assert chair[0]["label"] == chair[1]["label"]
-    assert chair[1]["from_semantic"] == chair[0]["to_semantic"]
+    assert len(stool) == 2  # bedroom proposal rejected
+    assert manifest["integrity_stats"]["rejected_no_seat_in_room"] == 1
     report = validate(manifest["changes"], result["traces"])
     assert report.ok, report.summary()

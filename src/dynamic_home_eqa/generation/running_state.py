@@ -78,6 +78,26 @@ class RunningState:
                 st.tier2_slots[iid] = inst.current_semantic or None
         return st
 
+    def categories_present_in(self, room: Optional[str]) -> set[str]:
+        """Tier-2a categories with at least one instance currently in `room`
+        (canonical room aliasing). Drives the seat-in-room vocabulary gate:
+        chair/stool are only proposable where one physically is — nobody
+        fetches a bedroom chair to sit at lunch; scenes are seat-poor (992
+        has two chairs, both on the patio), so absent this gate the
+        lowest-index fallback teleported one chair everywhere."""
+        if room is None:
+            return set(self.tier2_pool.keys())
+        from .instances import instance_room
+        from ..rooms import rooms_match
+        out: set[str] = set()
+        for cat, pool in self.tier2_pool.items():
+            for iid in pool:
+                r = instance_room(self.tier2_slots.get(iid))
+                if r is not None and rooms_match(r, room):
+                    out.add(cat)
+                    break
+        return out
+
     def _tier2_label(self, category: str, room: Optional[str]) -> Optional[str]:
         """Which real instance a category-level proposal touches, or None
         when the category has no tracked real instances (clutter categories
