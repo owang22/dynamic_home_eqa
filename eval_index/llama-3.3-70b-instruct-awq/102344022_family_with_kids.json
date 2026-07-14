@@ -1,0 +1,901 @@
+{
+ "schema_version": 1,
+ "run_id": "llama-3.3-70b-instruct-awq",
+ "condition": "casperhansen/llama-3.3-70b-instruct-awq",
+ "scene_id": "102344022",
+ "profile": "family_with_kids",
+ "household_id": "102344022_family_with_kids",
+ "day": 0,
+ "folder": "102344022_family_with_kids",
+ "day_context": {
+  "John": {
+   "day_type": "weekday",
+   "day_scenario": "John starts his day by reading the newspaper during breakfast, then heads out to work at 7:30am, looking forward to a productive day at the office. He'll be back home in the evening to spend time with the family."
+  },
+  "Emily": {
+   "day_type": "weekday",
+   "day_scenario": "Emily takes the kids to school, then has some time to herself before doing the household chores, and later unwinds with her evening yoga practice. She'll also prepare dinner for the family and take care of Sophia after she wakes up from her nap."
+  },
+  "Michael": {
+   "day_type": "weekday",
+   "day_scenario": "Michael attends school, focusing on his classes and assignments, and after coming home, he spends some time playing video games before starting his homework. He's looking forward to his part-time job on the weekend, but for now, it's just a regular school day."
+  },
+  "Sophia": {
+   "day_type": "weekday",
+   "day_scenario": "Sophia watches her favorite cartoons in the morning, plays with her toys, and then takes a nap after lunch, recharging for more playtime in the afternoon with her mother's supervision. She'll have a fun evening with her family, playing and reading together before bedtime."
+  }
+ },
+ "occupants": [
+  {
+   "name": "John",
+   "role": "father",
+   "age_band": "adult",
+   "tidiness": 0.8,
+   "owned_items": [
+    "phone",
+    "wallet",
+    "keys",
+    "laptop"
+   ],
+   "bedroom_index": 1
+  },
+  {
+   "name": "Emily",
+   "role": "mother",
+   "age_band": "adult",
+   "tidiness": 0.9,
+   "owned_items": [
+    "phone",
+    "wallet",
+    "keys",
+    "laptop"
+   ],
+   "bedroom_index": 1
+  },
+  {
+   "name": "Michael",
+   "role": "son",
+   "age_band": "teen",
+   "tidiness": 0.4,
+   "owned_items": [
+    "phone",
+    "laptop"
+   ],
+   "bedroom_index": 2
+  },
+  {
+   "name": "Sophia",
+   "role": "daughter",
+   "age_band": "toddler",
+   "tidiness": 0.1,
+   "owned_items": [],
+   "bedroom_index": 3
+  }
+ ],
+ "activities": [
+  {
+   "occupant": "John",
+   "day_type": "weekday",
+   "day_scenario": "John starts his day by reading the newspaper during breakfast, then heads out to work at 7:30am, looking forward to a productive day at the office. He'll be back home in the evening to spend time with the family.",
+   "spans": [
+    {
+     "activity": "waking_up",
+     "location": "bedroom",
+     "start": 6.5,
+     "end": 6.7
+    },
+    {
+     "activity": "reading_newspaper",
+     "location": "dining_room",
+     "start": 7.2,
+     "end": 7.3
+    },
+    {
+     "activity": "getting_ready_for_work",
+     "location": "bathroom",
+     "start": 7.3,
+     "end": 7.3
+    },
+    {
+     "activity": "commuting_to_work",
+     "location": "away",
+     "start": 7.3,
+     "end": 8.3
+    },
+    {
+     "activity": "working",
+     "location": "away",
+     "start": 8.3,
+     "end": 17.0
+    },
+    {
+     "activity": "commuting_from_work",
+     "location": "away",
+     "start": 17.0,
+     "end": 17.8
+    },
+    {
+     "activity": "spending_time_with_family",
+     "location": "living_room",
+     "start": 17.8,
+     "end": 19.3
+    },
+    {
+     "activity": "relaxing",
+     "location": "living_room",
+     "start": 20.1,
+     "end": 21.8
+    },
+    {
+     "activity": "preparing_for_bed",
+     "location": "bathroom",
+     "start": 21.8,
+     "end": 22.0
+    },
+    {
+     "activity": "sleeping",
+     "location": "bedroom",
+     "start": 22.0,
+     "end": 22.5
+    },
+    {
+     "activity": "sleeping",
+     "location": "bedroom",
+     "start": 22.5,
+     "end": 30.5
+    }
+   ]
+  },
+  {
+   "occupant": "Emily",
+   "day_type": "weekday",
+   "day_scenario": "Emily takes the kids to school, then has some time to herself before doing the household chores, and later unwinds with her evening yoga practice. She'll also prepare dinner for the family and take care of Sophia after she wakes up from her nap.",
+   "spans": [
+    {
+     "activity": "breakfast",
+     "location": "kitchen",
+     "start": 7.15,
+     "end": 7.45
+    },
+    {
+     "activity": "getting_kids_ready_for_school",
+     "location": "bedroom",
+     "start": 7.45,
+     "end": 8.15
+    },
+    {
+     "activity": "taking_kids_to_school",
+     "location": "away",
+     "start": 8.15,
+     "end": 9.0
+    },
+    {
+     "activity": "personal_time",
+     "location": "living_room",
+     "start": 9.0,
+     "end": 10.0
+    },
+    {
+     "activity": "laundry",
+     "location": "laundry_room",
+     "start": 10.0,
+     "end": 11.0
+    },
+    {
+     "activity": "cleaning",
+     "location": "living_room",
+     "start": 11.15,
+     "end": 12.0
+    },
+    {
+     "activity": "taking_care_of_Sophia",
+     "location": "living_room",
+     "start": 13.0,
+     "end": 15.0
+    },
+    {
+     "activity": "spending_time_with_Sophia",
+     "location": "living_room",
+     "start": 15.0,
+     "end": 16.3
+    },
+    {
+     "activity": "evening_yoga",
+     "location": "office",
+     "start": 17.0,
+     "end": 18.0
+    },
+    {
+     "activity": "yoga",
+     "location": "living_room",
+     "start": 18.0,
+     "end": 19.0
+    },
+    {
+     "activity": "relaxation",
+     "location": "living_room",
+     "start": 19.0,
+     "end": 21.0
+    },
+    {
+     "activity": "preparing_for_bed",
+     "location": "bedroom",
+     "start": 21.0,
+     "end": 22.0
+    }
+   ]
+  },
+  {
+   "occupant": "Michael",
+   "day_type": "weekday",
+   "day_scenario": "Michael attends school, focusing on his classes and assignments, and after coming home, he spends some time playing video games before starting his homework. He's looking forward to his part-time job on the weekend, but for now, it's just a regular school day.",
+   "spans": [
+    {
+     "activity": "waking_up",
+     "location": "bedroom",
+     "start": 7.5,
+     "end": 8.0
+    },
+    {
+     "activity": "getting_ready",
+     "location": "bathroom",
+     "start": 8,
+     "end": 8.25
+    },
+    {
+     "activity": "getting_ready_for_school",
+     "location": "bathroom",
+     "start": 8.5,
+     "end": 9.0
+    },
+    {
+     "activity": "away_at_school",
+     "location": "away",
+     "start": 9.0,
+     "end": 15.0
+    },
+    {
+     "activity": "snack",
+     "location": "kitchen",
+     "start": 15,
+     "end": 15.25
+    },
+    {
+     "activity": "playing_video_games",
+     "location": "living_room",
+     "start": 15.3,
+     "end": 16.5
+    },
+    {
+     "activity": "homework",
+     "location": "office",
+     "start": 16.5,
+     "end": 18.5
+    },
+    {
+     "activity": "relaxing",
+     "location": "living_room",
+     "start": 19.5,
+     "end": 20.5
+    },
+    {
+     "activity": "preparing_for_bed",
+     "location": "bathroom",
+     "start": 20.5,
+     "end": 21.0
+    },
+    {
+     "activity": "sleeping",
+     "location": "bedroom",
+     "start": 21.0,
+     "end": 31.5
+    }
+   ]
+  },
+  {
+   "occupant": "Sophia",
+   "day_type": "weekday",
+   "day_scenario": "Sophia watches her favorite cartoons in the morning, plays with her toys, and then takes a nap after lunch, recharging for more playtime in the afternoon with her mother's supervision. She'll have a fun evening with her family, playing and reading together before bedtime.",
+   "spans": [
+    {
+     "activity": "watching_cartoons",
+     "location": "living_room",
+     "start": 8.5,
+     "end": 10.0
+    },
+    {
+     "activity": "playing",
+     "location": "living_room",
+     "start": 10.0,
+     "end": 12.0
+    },
+    {
+     "activity": "lunch",
+     "location": "kitchen",
+     "start": 12.0,
+     "end": 13.0
+    },
+    {
+     "activity": "nap",
+     "location": "bedroom",
+     "start": 13.0,
+     "end": 15.0
+    },
+    {
+     "activity": "playing",
+     "location": "living_room",
+     "start": 15.0,
+     "end": 17.0
+    },
+    {
+     "activity": "arts_and_crafts",
+     "location": "living_room",
+     "start": 17.3,
+     "end": 18.3
+    },
+    {
+     "activity": "dinner",
+     "location": "kitchen",
+     "start": 18.5,
+     "end": 19.0
+    },
+    {
+     "activity": "bedtime_reading",
+     "location": "bedroom",
+     "start": 19.0,
+     "end": 20.0
+    }
+   ]
+  }
+ ],
+ "events": [
+  {
+   "event_id": "102344022_family_with_kids:0",
+   "t": 6.518,
+   "t_clock": "06:31",
+   "occupant": "John",
+   "activity": "waking_up",
+   "object": "john_phone",
+   "category": "phone",
+   "relation": "on",
+   "change_type": "insert_new",
+   "from_semantic": null,
+   "to_semantic": "bedroom_1.cabinet_1",
+   "reason": "John needs to start his day, so he retrieves his phone to check the time or any important notifications.",
+   "judge_score": 0.8,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_stfaee7441_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:1",
+   "t": 6.535,
+   "t_clock": "06:32",
+   "occupant": "John",
+   "activity": "waking_up",
+   "object": "book_2",
+   "category": "book",
+   "relation": "on",
+   "change_type": "move_existing",
+   "from_semantic": "bedroom_1.cabinet_3",
+   "to_semantic": "bedroom_1.cabinet_1",
+   "reason": "After waking up, John might want to read something, so he moves a book from his nightstand or a nearby shelf.",
+   "judge_score": 0.6,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_stfaee7441_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:2",
+   "t": 7.313,
+   "t_clock": "07:19",
+   "occupant": "Emily",
+   "activity": "breakfast",
+   "object": "chair_1",
+   "category": "chair",
+   "relation": "next_to",
+   "change_type": "move_existing",
+   "from_semantic": "bedroom_2.table_1.tucked",
+   "to_semantic": "kitchen.counter_1",
+   "reason": "To eat breakfast, Emily might need to sit down, so she could pull out a chair from the kitchen table.",
+   "judge_score": 0.8,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st7d96815e_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:3",
+   "t": 7.993,
+   "t_clock": "07:00",
+   "occupant": "Michael",
+   "activity": "waking_up",
+   "object": "michael_phone",
+   "category": "phone",
+   "relation": "on",
+   "change_type": "insert_new",
+   "from_semantic": null,
+   "to_semantic": "bedroom_2.bed_1",
+   "reason": "As Michael wakes up, he may want to check his phone, so he might retrieve it from its put-away location.",
+   "judge_score": 0.9,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st56720d68_mh2590b66c_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:4",
+   "t": 8.067,
+   "t_clock": "08:04",
+   "occupant": "Emily",
+   "activity": "getting_kids_ready_for_school",
+   "object": "chair_1",
+   "category": "chair",
+   "relation": "near",
+   "change_type": "move_existing",
+   "from_semantic": "kitchen.counter_1",
+   "to_semantic": "bedroom_1.cabinet_1",
+   "reason": "Emily needs to get the kids ready for school and may need to sit down to help them with their tasks, so she might pull out a chair from the dining area to provide a seat.",
+   "judge_score": 0.4,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st23cf3b57_mhf4766a35_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:5",
+   "t": 8.588,
+   "t_clock": "08:35",
+   "occupant": "Sophia",
+   "activity": "watching_cartoons",
+   "object": "chair_7",
+   "category": "chair",
+   "relation": "near",
+   "change_type": "move_existing",
+   "from_semantic": "living_room.table_3.tucked",
+   "to_semantic": "living_room.couch_1",
+   "reason": "Sophia needs to sit down to watch cartoons, and a chair is a suitable option.",
+   "judge_score": 0.8,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st27764077_mha0202c23_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": false
+  },
+  {
+   "event_id": "102344022_family_with_kids:6",
+   "t": 8.62,
+   "t_clock": "08:37",
+   "occupant": "Michael",
+   "activity": "getting_ready_for_school",
+   "object": "chair_1",
+   "category": "chair",
+   "relation": "near",
+   "change_type": "move_existing",
+   "from_semantic": "bedroom_1.cabinet_1",
+   "to_semantic": "bathroom_1.cabinet_1",
+   "reason": "Michael might need to move a chair to sit down and tie his shoes or gather his backpack.",
+   "judge_score": 0.3,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st91affa24_mh59d10e6b_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:7",
+   "t": 9.541,
+   "t_clock": "09:32",
+   "occupant": "Emily",
+   "activity": "personal_time",
+   "object": "emily_laptop",
+   "category": "laptop",
+   "relation": "on",
+   "change_type": "insert_new",
+   "from_semantic": null,
+   "to_semantic": "living_room.couch_1",
+   "reason": "Emily could use her laptop for some relaxing activity, like reading or listening to music, so she might take it out and place it on the couch or a stool in the living room.",
+   "judge_score": 0.8,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st698630c3_mh28081988_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:8",
+   "t": 10.067,
+   "t_clock": "10:04",
+   "occupant": "Emily",
+   "activity": "laundry",
+   "object": "emily_laptop",
+   "category": "laptop",
+   "relation": "on",
+   "change_type": "remove",
+   "from_semantic": "living_room.couch_1",
+   "to_semantic": "away",
+   "reason": "As Emily is doing laundry, which involves cleaning, she might decide to put away items that are out of place. Her laptop, currently on the living_room.couch_1, could be put away to clear space or to keep it safe from potential water splashes.",
+   "judge_score": 0.8,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_stad8b8a04_mh25839cee_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:9",
+   "t": 11.395,
+   "t_clock": "11:24",
+   "occupant": "Emily",
+   "activity": "cleaning",
+   "object": "stool_1",
+   "category": "stool",
+   "relation": "next_to",
+   "change_type": "move_existing",
+   "from_semantic": "kitchen.counter_tucked",
+   "to_semantic": "living_room.couch_1",
+   "reason": "A stool could be in the way while cleaning and needs to be relocated.",
+   "judge_score": 0.6,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st68c32c9d_mhdc70500a_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:10",
+   "t": 11.486,
+   "t_clock": "11:29",
+   "occupant": "Emily",
+   "activity": "cleaning",
+   "object": "potted_plant_1",
+   "category": "potted_plant",
+   "relation": "near",
+   "change_type": "move_existing",
+   "from_semantic": "living_room.corner",
+   "to_semantic": "living_room.couch_1",
+   "reason": "Emily might want to dust or clean the TV and needs to move a nearby object, such as a potted plant, to access it.",
+   "judge_score": 0.8,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st68c32c9d_mhdc70500a_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:11",
+   "t": 12.494,
+   "t_clock": "12:30",
+   "occupant": "Sophia",
+   "activity": "lunch",
+   "object": "stool_2",
+   "category": "stool",
+   "relation": "near",
+   "change_type": "move_existing",
+   "from_semantic": "kitchen.counter_tucked",
+   "to_semantic": "kitchen.counter_1",
+   "reason": "Sophia might want to sit comfortably while eating, so she could pull out a stool from the living room and place it near the kitchen counter.",
+   "judge_score": 0.4,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st68d9e9c3_mh054d084b_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": false
+  },
+  {
+   "event_id": "102344022_family_with_kids:12",
+   "t": 15.091,
+   "t_clock": "15:05",
+   "occupant": "Michael",
+   "activity": "snack",
+   "object": "michael_phone",
+   "category": "phone",
+   "relation": "on",
+   "change_type": "move_existing",
+   "from_semantic": "bedroom_2.bed_1",
+   "to_semantic": "kitchen.counter_1",
+   "reason": "With his hands full of snack, Michael might put his phone down on the counter before eating.",
+   "judge_score": 0.8,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_stde7c5658_mhe11634c1_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:13",
+   "t": 15.42,
+   "t_clock": "15:25",
+   "occupant": "Michael",
+   "activity": "playing_video_games",
+   "object": "michael_phone",
+   "category": "phone",
+   "relation": "on",
+   "change_type": "move_existing",
+   "from_semantic": "kitchen.counter_1",
+   "to_semantic": "living_room.couch_1",
+   "reason": "Michael's phone is currently on the kitchen counter, but he might want to have it nearby while playing video games, so he might move it to the living room.",
+   "judge_score": 0.8,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st58566ea0_mh67b23964_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:14",
+   "t": 16.32,
+   "t_clock": "16:19",
+   "occupant": "Michael",
+   "activity": "playing_video_games",
+   "object": "michael_laptop",
+   "category": "laptop",
+   "relation": "on",
+   "change_type": "insert_new",
+   "from_semantic": null,
+   "to_semantic": "living_room.couch_1",
+   "reason": "Michael might want to use his laptop to play video games, so he needs to take it out from its put away location.",
+   "judge_score": 0.9,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st58566ea0_mh67b23964_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:15",
+   "t": 18.14,
+   "t_clock": "18:08",
+   "occupant": "John",
+   "activity": "spending_time_with_family",
+   "object": "bowl_2",
+   "category": "bowl",
+   "relation": "on",
+   "change_type": "move_existing",
+   "from_semantic": "living_room.table_1",
+   "to_semantic": "living_room.couch_1",
+   "reason": "The family might want to have some snacks or drinks while spending time together, so John might move a bowl from the kitchen counter to the living room coffee table or a nearby surface.",
+   "judge_score": 0.6,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st4055f18c_mh0d76a609_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:16",
+   "t": 18.345,
+   "t_clock": "18:21",
+   "occupant": "Michael",
+   "activity": "homework",
+   "object": "michael_phone",
+   "category": "phone",
+   "relation": "on",
+   "change_type": "remove",
+   "from_semantic": "living_room.couch_1",
+   "to_semantic": "away",
+   "reason": "After playing video games, Michael's phone might be put away as he focuses on homework.",
+   "judge_score": 0.8,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st386f9444_mh41baac4a_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344022_family_with_kids:17",
+   "t": 21.279,
+   "t_clock": "21:17",
+   "occupant": "Emily",
+   "activity": "preparing_for_bed",
+   "object": "emily_phone",
+   "category": "phone",
+   "relation": "inside",
+   "change_type": "insert_new",
+   "from_semantic": null,
+   "to_semantic": "bedroom_1.cabinet_1",
+   "reason": "Emily is preparing for bed and needs to put away her personal items, including her phone, wallet, keys, and laptop, which are currently not out.",
+   "judge_score": 0.9,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st7e6d2cbd_mhb9d349b8_pc6cc39c4_b1",
+   "render": {
+    "png": null,
+    "json": null,
+    "mask_status": null
+   },
+   "capability_ok": true
+  }
+ ],
+ "trajectories": {
+  "john_phone": [
+   {
+    "t": 6.518,
+    "t_clock": "06:31",
+    "from": null,
+    "to": "bedroom_1.cabinet_1"
+   }
+  ],
+  "book_2": [
+   {
+    "t": 6.535,
+    "t_clock": "06:32",
+    "from": "bedroom_1.cabinet_3",
+    "to": "bedroom_1.cabinet_1"
+   }
+  ],
+  "chair_1": [
+   {
+    "t": 7.313,
+    "t_clock": "07:19",
+    "from": "bedroom_2.table_1.tucked",
+    "to": "kitchen.counter_1"
+   },
+   {
+    "t": 8.067,
+    "t_clock": "08:04",
+    "from": "kitchen.counter_1",
+    "to": "bedroom_1.cabinet_1"
+   },
+   {
+    "t": 8.62,
+    "t_clock": "08:37",
+    "from": "bedroom_1.cabinet_1",
+    "to": "bathroom_1.cabinet_1"
+   }
+  ],
+  "michael_phone": [
+   {
+    "t": 7.993,
+    "t_clock": "07:00",
+    "from": null,
+    "to": "bedroom_2.bed_1"
+   },
+   {
+    "t": 15.091,
+    "t_clock": "15:05",
+    "from": "bedroom_2.bed_1",
+    "to": "kitchen.counter_1"
+   },
+   {
+    "t": 15.42,
+    "t_clock": "15:25",
+    "from": "kitchen.counter_1",
+    "to": "living_room.couch_1"
+   },
+   {
+    "t": 18.345,
+    "t_clock": "18:21",
+    "from": "living_room.couch_1",
+    "to": "away"
+   }
+  ],
+  "chair_7": [
+   {
+    "t": 8.588,
+    "t_clock": "08:35",
+    "from": "living_room.table_3.tucked",
+    "to": "living_room.couch_1"
+   }
+  ],
+  "emily_laptop": [
+   {
+    "t": 9.541,
+    "t_clock": "09:32",
+    "from": null,
+    "to": "living_room.couch_1"
+   },
+   {
+    "t": 10.067,
+    "t_clock": "10:04",
+    "from": "living_room.couch_1",
+    "to": "away"
+   }
+  ],
+  "stool_1": [
+   {
+    "t": 11.395,
+    "t_clock": "11:24",
+    "from": "kitchen.counter_tucked",
+    "to": "living_room.couch_1"
+   }
+  ],
+  "potted_plant_1": [
+   {
+    "t": 11.486,
+    "t_clock": "11:29",
+    "from": "living_room.corner",
+    "to": "living_room.couch_1"
+   }
+  ],
+  "stool_2": [
+   {
+    "t": 12.494,
+    "t_clock": "12:30",
+    "from": "kitchen.counter_tucked",
+    "to": "kitchen.counter_1"
+   }
+  ],
+  "michael_laptop": [
+   {
+    "t": 16.32,
+    "t_clock": "16:19",
+    "from": null,
+    "to": "living_room.couch_1"
+   }
+  ],
+  "bowl_2": [
+   {
+    "t": 18.14,
+    "t_clock": "18:08",
+    "from": "living_room.table_1",
+    "to": "living_room.couch_1"
+   }
+  ],
+  "emily_phone": [
+   {
+    "t": 21.279,
+    "t_clock": "21:17",
+    "from": null,
+    "to": "bedroom_1.cabinet_1"
+   }
+  ]
+ }
+}
