@@ -20,12 +20,16 @@ must satisfy (see trace_validate.py, which independently checks all of this):
     genuine first event has from_semantic=None (nothing to chain from), not
     a fabricated value — see the no-op note below for why that distinction
     matters. Real-instance-backed categories (Tier 1/2a/2b — anything with a
-    real starting instance in this scene, see env/inventory.py) are tracked
-    by category alone: exactly one real instance is animated per category
-    per day, chosen deterministically (sorted pool, first) rather than
-    fragmented across (category, occupant) pairs — per-occupant keying can
-    resolve one category to two different real instances and break from/to
-    chains when a scene has multiple instances of a category.
+    real starting instance in this scene, see env/inventory.py) resolve WHICH
+    instance moves per event via generation/instances.pick_real_instance:
+    the instance currently in the acting occupant's room, lowest index on
+    ties, lowest-index fallback when the room has none. (Replaced the old
+    one-instance-per-category-per-day rule, which produced a single chair
+    endlessly teleported across the house while its siblings never moved.
+    Chains stay consistent because each label's from_semantic comes from
+    that label's OWN tracked slot regardless of which instance is picked;
+    the failure mode the old rule guarded against was (category, occupant)
+    KEYING, not per-event room lookup.)
   - Insert-once: insert_new fires at most once per label — its true first
     event, and only for volatile (Tier 3, no real starting instance) labels.
     Real-instance-backed labels are always move_existing, including their
@@ -46,15 +50,21 @@ must satisfy (see trace_validate.py, which independently checks all of this):
     ever silently failing (e.g. the room-scoping fallback firing, or
     _location being absent on the live-WorldGraph path), not the primary
     mechanism.
-  - assumed_from (the LLM's own free-text belief about the object's prior
-    location — a diagnostic field, see schemas.py) is preserved verbatim as
-    llm_claimed_from and never used to write from_semantic. Divergences
-    from the real tracked from_semantic are counted (integrity_stats
-    ["llm_claim_divergence"]) as a signal of model/prompt confusion, not
-    acted upon.
-  - confidence is genuine per-event behavioral-plausibility scoring
-    (plausibility.score_confidence) — occupant-capability, egress, and
-    ping-pong penalties — not a placeholder constant.
+  - reason is the proposal's own leading `reason` field, verbatim — genuine
+    pre-proposal reasoning (guided decoding emits it before the object/anchor
+    fields, so it drives the choice). The prompt instructs any origin mention
+    to come from the authoritative Current-object-state block, and
+    from_semantic itself always comes from the chronological replay — never
+    from model text. Each change also carries `activity`, the window this
+    movement was part of. (assumed_from and the purpose/templated-reason
+    split are both retired — see data_quality_backlog.md #1.)
+  - There is no per-event confidence field. The old one (plausibility.
+    score_confidence) was measured near-constant 1.0 on real generations —
+    its capability/egress/ping-pong factors almost never fired — and was
+    dropped rather than shipped as a constant that looks meaningful.
+    Plausibility is now priced where it has signal: the realism judge
+    (with move-history context) gates selection and clutter admission
+    via selection.REALISM_FLOOR.
 
 Tier awareness (see env/inventory.py's module docstring for the full
 rationale): whether a category is real-instance-backed (move_existing,
@@ -76,8 +86,10 @@ from typing import Optional
 
 from ..env.anchor_admission import anchor_capacity, is_reachable, load_anchor_admission_map
 from ..env.inventory import load_scene_state
+from .ownership import TIER3_CATEGORIES, tier3_instance_label
+from .instances import pick_real_instance
+from .schemas import PUT_AWAY_ANCHOR
 from ..env.state import ObjectInstance
-from ..plausibility import score_confidence
 from ..rooms import UnresolvableSlotError, occupants_in_room, resolve_slot, slot_room
 from ..topdown_map import instance_room_positions
 from .cache import make_seed
@@ -99,17 +111,6 @@ def _pick_time(household_id: str, day: int, index: int, start: float, end: float
     frac = (seed % 10_000) / 10_000.0
     t = start + frac * (end - start)
     return round(min(t, end - 1e-3), 3) if end - start > 1e-3 else round(start, 3)
-
-
-def _same_claim(llm_claimed: str, from_slot: str) -> bool:
-    """Loose match between the LLM's free-text assumed_from guess and the
-    real tracked from_slot. Diagnostic only (see llm_claimed_from), so an
-    approximate token-overlap check is enough — this never gates anything."""
-    norm_claim = llm_claimed.lower().replace(" ", "_").replace("-", "_")
-    norm_slot  = from_slot.lower().replace(".", "_").replace(" ", "_")
-    if norm_claim in norm_slot or norm_slot in norm_claim:
-        return True
-    return any(tok in norm_slot for tok in norm_claim.split("_") if len(tok) > 3)
 
 
 def build_manifest(
@@ -232,9 +233,6 @@ def build_manifest(
     for iid, inst in scene_state.instances.items():
         furniture_pool.setdefault(inst.category, []).append(iid)
 
-    # One real instance animated per category per day (see module docstring
-    # for why this replaced (category, occupant)-scoped assignment).
-    real_assigned: dict[str, str] = {}
     volatile_assigned: dict[tuple[str, str], str] = {}
     volatile_counters: dict[str, int] = {}
     seen_labels: set[str] = set()
@@ -246,7 +244,6 @@ def build_manifest(
     # already starts crowded counts toward its own capacity immediately —
     # not only once a displacement additionally lands there.
     slot_occupancy: dict[str, int] = dict(Counter(current_slot.values()))
-    move_times: dict[str, list[float]] = {}
 
     displacements = sorted(
         generation_result.get("displacements", []),
@@ -280,19 +277,33 @@ def build_manifest(
     changes: list[dict] = []
     n_rejected_unattended = 0
     n_dropped_noop = 0
-    n_claim_divergence = 0
     n_rejected_unbacked_anchor = 0
     n_rejected_unreachable_anchor = 0
     n_rejected_over_capacity = 0
+    n_dropped_despawn_notout = 0
 
     for t, idx, prop in timed:
         cat      = prop["object_category"]
         occupant = prop.get("_occupant", "")
         location = prop.get("_location")
-        try:
+        # Phase 3 despawn/put-away: the occupant puts their own Tier-3 item
+        # away at night. There's no destination anchor to resolve — the item
+        # leaves the tracked world ("away"). We don't model where it goes, only
+        # that it's no longer placed anywhere. Emitted as change_type="remove",
+        # the established "object leaves the world" contract every downstream
+        # consumer already implements (env/replay.py pops the instance,
+        # env/world_graph_adapter.py no-ops, build_realized_day knows it) —
+        # NOT a new synonym they'd all have to special-case. Skip resolve_slot
+        # and the anchor-admission gates: they're about a real target surface a
+        # removal doesn't have.
+        is_despawn = bool(prop.get("_despawn")) or prop.get("target_anchor") == PUT_AWAY_ANCHOR
+        if is_despawn:
+            to_slot = "away"
+        else:
+          try:
             to_slot = resolve_slot(prop["target_anchor"], prop["target_relationship"], room=location,
                                     room_instance_categories=room_instance_categories)
-        except UnresolvableSlotError as exc:
+          except UnresolvableSlotError as exc:
             # Realized World Phase round 2's admission rule enforced at the
             # source: the LLM's (category, room) pick had no real backing
             # instance in that room — reject here rather than let
@@ -321,52 +332,78 @@ def build_manifest(
 
         has_real_instance = bool(furniture_pool.get(cat))
         if has_real_instance:
-            if cat not in real_assigned:
-                real_assigned[cat] = sorted(furniture_pool[cat])[0]
-            label = real_assigned[cat]
+            # Instance resolution per event, not per day: the occupant uses
+            # the instance already in THEIR room (the chair beside them, not
+            # one teleported from across the house); deterministic fallback
+            # to the lowest-index instance when the room has none. See
+            # generation/instances.py for why per-label chains stay
+            # consistent under this policy.
+            label = pick_real_instance(cat, furniture_pool[cat], current_slot, location)
         else:
             key = (cat, occupant)
             if key not in volatile_assigned:
-                volatile_counters[cat] = volatile_counters.get(cat, 0) + 1
-                volatile_assigned[key] = f"{cat}_{volatile_counters[cat]}"
+                if cat in TIER3_CATEGORIES:
+                    # Owner-named Tier-3 instance (michael_laptop) so per-owner
+                    # move counts are coherent — each occupant carries their own.
+                    volatile_assigned[key] = tier3_instance_label(occupant, cat)
+                else:
+                    volatile_counters[cat] = volatile_counters.get(cat, 0) + 1
+                    volatile_assigned[key] = f"{cat}_{volatile_counters[cat]}"
             label = volatile_assigned[key]
 
         from_slot = current_slot.get(label)  # None => label's genuine first event
 
-        # Attendance (defense-in-depth — see module docstring). dest_room is
-        # always derived from the *actual* resolved to_slot, never from
-        # `location` directly — `location` is only a disambiguation hint fed
-        # into resolve_slot (and, for in_region proposals, resolve_slot
-        # doesn't consult it at all, since the anchor itself already is the
-        # destination room). Trusting `location` here instead of re-deriving
-        # from to_slot would make this check tautological: if generation's
-        # room-scoping ever falls back to the whole-scene vocabulary (see
-        # generate_displacements) and the model picks an anchor outside the
-        # occupant's real room, to_slot reflects that real (wrong) room, and
-        # dest_room must reflect it too, or this gate would rubber-stamp the
-        # exact failure mode it exists to catch.
-        dest_room = slot_room(to_slot)
-        src_room  = slot_room(from_slot)
-        present = set(occupants_in_room(traces, dest_room, t)) | set(occupants_in_room(traces, src_room, t))
-        if occupant in present:
+        if is_despawn:
+            # Nothing to put away in this chronological replay: the placement
+            # that would have set it out was itself rejected/dropped upstream
+            # (over-capacity, unattended, unbacked anchor), so RunningState and
+            # the manifest replay diverged. Drop rather than emit a despawn
+            # from nowhere — keeps the change log self-consistent.
+            if from_slot is None or from_slot == "away":
+                n_dropped_despawn_notout += 1
+                continue
+            # The occupant carries their own item, so they're the mover by
+            # definition — no room-attendance check (the item is with them,
+            # not sitting in from_slot's room waiting to be picked up).
             mover = occupant
-        elif present:
-            mover = sorted(present)[0]  # deterministic tie-break, not set iteration order
         else:
-            mover = None
+            # Attendance (defense-in-depth — see module docstring). dest_room is
+            # always derived from the *actual* resolved to_slot, never from
+            # `location` directly — `location` is only a disambiguation hint fed
+            # into resolve_slot (and, for in_region proposals, resolve_slot
+            # doesn't consult it at all, since the anchor itself already is the
+            # destination room). Trusting `location` here instead of re-deriving
+            # from to_slot would make this check tautological: if generation's
+            # room-scoping ever falls back to the whole-scene vocabulary (see
+            # generate_displacements) and the model picks an anchor outside the
+            # occupant's real room, to_slot reflects that real (wrong) room, and
+            # dest_room must reflect it too, or this gate would rubber-stamp the
+            # exact failure mode it exists to catch.
+            dest_room = slot_room(to_slot)
+            src_room  = slot_room(from_slot)
+            present = set(occupants_in_room(traces, dest_room, t)) | set(occupants_in_room(traces, src_room, t))
+            if occupant in present:
+                mover = occupant
+            elif present:
+                mover = sorted(present)[0]  # deterministic tie-break, not set iteration order
+            else:
+                mover = None
 
-        if mover is None:
-            n_rejected_unattended += 1
-            _logger.warning(
-                "manifest: dropping unattributable displacement cat=%s %s->%s "
-                "@t=%.2f (dest_room=%s src_room=%s; no occupant present)",
-                cat, from_slot, to_slot, t, dest_room, src_room,
-            )
-            continue
+            if mover is None:
+                n_rejected_unattended += 1
+                _logger.warning(
+                    "manifest: dropping unattributable displacement cat=%s %s->%s "
+                    "@t=%.2f (dest_room=%s src_room=%s; no occupant present)",
+                    cat, from_slot, to_slot, t, dest_room, src_room,
+                )
+                continue
 
         is_first_event  = label not in seen_labels
         seen_labels.add(label)
-        change_type = "insert_new" if (is_first_event and not has_real_instance) else "move_existing"
+        if is_despawn:
+            change_type = "remove"
+        else:
+            change_type = "insert_new" if (is_first_event and not has_real_instance) else "move_existing"
 
         # No-op suppression. A label's true first event always has
         # from_slot=None (never pre-seeded for volatile labels, always a
@@ -377,10 +414,6 @@ def build_manifest(
         if from_slot is not None and from_slot == to_slot:
             n_dropped_noop += 1
             continue
-
-        llm_claimed = prop.get("assumed_from")
-        if llm_claimed and from_slot is not None and not _same_claim(llm_claimed, from_slot):
-            n_claim_divergence += 1
 
         # Capacity gate, after no-op suppression (a no-op is not a new
         # arrival, so it must not consume budget) and before this event
@@ -403,12 +436,6 @@ def build_manifest(
             # day progresses regardless of what actually left.
             slot_occupancy[from_slot] = max(0, slot_occupancy[from_slot] - 1)
 
-        prior_moves = move_times.setdefault(label, [])
-        confidence = score_confidence(
-            cat, occupant_age_band.get(mover), slot_room(to_slot), prior_moves, t,
-        )
-        prior_moves.append(t)
-
         current_slot[label] = to_slot
         changes.append({
             "t":                t,
@@ -423,9 +450,13 @@ def build_manifest(
             # instead of on its surface (see env/deltas.py's Change).
             "target_relationship": prop.get("target_relationship"),
             "mover":            mover,
-            "llm_claimed_from": llm_claimed,
+            # The proposal's leading `reason` (pre-proposal reasoning, guided
+            # decoding emits it before the object/anchor fields) carried
+            # verbatim — the event's trace. `activity` names the window this
+            # movement was part of, so a manifest row is interpretable on its
+            # own. (The earlier purpose/templated-reason split is retired.)
+            "activity":         prop.get("_activity"),
             "reason":           prop.get("reason", ""),
-            "confidence":       confidence,
             "object_handle":    None,
         })
 
@@ -438,14 +469,28 @@ def build_manifest(
         "scene_id":         scene_id,
         "resident_profile": household_type,
         "seed":             seed,
+        # Generating model (comparison label; "" on old generation_results).
+        "model":            generation_result.get("model", ""),
+        # Per-occupant day context (weekday/weekend/flex + scenario text) that
+        # shaped each activity trace — surfaced here so the day's character is
+        # visible at the manifest level, not buried in generation_result. Note
+        # each occupant draws its own scenario today (see data_quality_backlog:
+        # household day-type coherence).
+        "day_context":      {
+            tr.get("occupant_name", ""): {
+                "day_type":    tr.get("day_type"),
+                "day_scenario": tr.get("day_context"),
+            }
+            for tr in traces
+        },
         "changes":          changes,
         "integrity_stats": {
             "rejected_unattended":          n_rejected_unattended,
             "dropped_noop":                 n_dropped_noop,
-            "llm_claim_divergence":         n_claim_divergence,
             "rejected_unbacked_anchor":     n_rejected_unbacked_anchor,
             "rejected_unreachable_anchor":  n_rejected_unreachable_anchor,
             "rejected_over_capacity":       n_rejected_over_capacity,
+            "dropped_despawn_notout":       n_dropped_despawn_notout,
             "clutter_rejected_unreachable": n_clutter_rejected_unreachable,
             "admission_map_used":           admission_map is not None,
         },
@@ -543,7 +588,7 @@ def build_state_changes(
             "t": t, "label": label, "change_type": "state_change",
             "object_category": cat, "from_semantic": cat, "to_semantic": cat,
             "state_variable": variable, "from_state": current, "to_state": target,
-            "mover": mover, "reason": p["reason"], "confidence": 1.0, "object_handle": None,
+            "mover": mover, "reason": p["reason"], "object_handle": None,
         })
         tracked[key] = target
 

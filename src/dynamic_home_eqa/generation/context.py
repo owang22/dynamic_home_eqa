@@ -73,12 +73,19 @@ def temporal_context(trace: Optional[dict], start: float, end: float) -> str:
     return header + f" Earlier today: {seq}."
 
 
-def surface_occupancy(room: Optional[str], room_inventory: Optional[dict]) -> str:
-    """Start-of-day object counts for the room's anchors (from scene state +
-    clutter). Explicitly labeled start-of-day until Phase 3 makes it live."""
-    if not room or not room_inventory:
+def surface_occupancy(room: Optional[str], data: Optional[dict], live: bool = False) -> str:
+    """Object counts for the room's anchors.
+
+    live=False (default): start-of-day — `data` is the whole room_inventory,
+    keyed room -> {category: count}, labeled "start-of-day".
+    live=True (Phase 3): `data` is already {anchor: count} for objects
+    currently sitting in this room, from the running state, labeled "now"."""
+    if not room or not data:
         return ""
-    cats = room_inventory.get(room)
+    if live:
+        items = ", ".join(f"{anchor}×{n}" for anchor, n in sorted(data.items()))
+        return f"Objects currently placed in {room}: {items}."
+    cats = data.get(room)
     if not cats:
         return ""
     items = ", ".join(f"{cat}×{n}" for cat, n in sorted(cats.items()))
@@ -87,6 +94,15 @@ def surface_occupancy(room: Optional[str], room_inventory: Optional[dict]) -> st
 
 def candidate_line(i: int, c: dict) -> str:
     """The per-candidate line shared by the judge and (centralized here) any
-    future proposer echo — one place to change the format."""
-    return (f"  [{i}] {c.get('object_category', '')} {c.get('target_relationship', '')} "
-            f"{c.get('target_anchor', '')} — proposed reason: {c.get('reason', '')}")
+    future proposer echo — one place to change the format.
+
+    Shows the model's `reason` (its pre-proposal reasoning) and, when set,
+    the object's move-history note so the judge can weigh CUMULATIVE
+    relocation plausibility (see running_state.move_history_note)."""
+    reason = c.get("reason", "")
+    line = (f"  [{i}] {c.get('object_category', '')} {c.get('target_relationship', '')} "
+            f"{c.get('target_anchor', '')} — reason: {reason}")
+    note = c.get("_move_history_note")
+    if note:
+        line += f"\n        {note}"
+    return line

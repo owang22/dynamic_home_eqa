@@ -97,12 +97,12 @@ FLOOR_BOUND_CATEGORIES: set[str] = {"chair", "stool"}
 # --- Tier 2b: static clutter HSSD's uncluttered variant omits — needs the
 # clutter-generation pass (generation/clutter/) to invent a starting slot.
 TIER2_CLUTTER_CATALOG: dict[str, int] = {
-    "book":      3,
+    "book":      4,
     "candle":    1,
     "vase":      1,
-    "bowl":      2,
-    "cup":       3,
-    "drinkware": 2,
+    "bowl":      4,
+    "cup":       4,
+    "drinkware": 4,
     "bottle":    2,
 }
 
@@ -115,17 +115,70 @@ TIER3_MOBILE: dict[str, int] = {
     "laptop": 1,
 }
 
+# The categories that can actually be MOVED by an activity (Tier 2 clutter +
+# Tier 3 carried). TIER1_FURNITURE is deliberately excluded: those are fixtures
+# / placement anchors (fridge, tv, wardrobe, counter), not carried objects — the
+# displacement proposer must not offer them as things to relocate. Used to
+# filter the proposer's object vocabulary; see generation/stages.py.
+MOVABLE_CATEGORIES: set[str] = (
+    set(TIER2_HSSD_NATIVE) | set(TIER2_CLUTTER_CATALOG) | set(TIER3_MOBILE)
+)
+
 # HSSD dataset location.
 from dynamic_home_eqa.paths import HSSD_DIR
 _SEMANTICS_CSV = HSSD_DIR / "semantics" / "objects.csv"
 
 # Heuristic initial semantic slot by Tier 2a (HSSD-native) category.
+# For chair/stool these are the LAST-RESORT fallback only: the canonical
+# tucked representation is census-unified ("<census_anchor>.tucked", the
+# same slot form resolve_slot gives tucked_under destinations), computed
+# per-instance from the scene's real census by _census_tucked_start below.
+# Without unification, "tuck the chair back under its own table" produced a
+# fake move (dining.table_tucked -> dining_room.table_1.tucked: different
+# strings, same physical state) instead of a suppressed no-op.
 _DEFAULT_SEMANTIC: dict[str, str] = {
     "chair":        "dining.table_tucked",
     "stool":        "kitchen.counter_tucked",
     "potted_plant": "living_room.corner",
     "cushion":      "living_room.sofa",
 }
+
+# Which census categories a floor-bound category starts tucked under, and how
+# far (XZ metres) the nearest such instance may be before we stop believing
+# the chair is actually tucked at it and fall back to the generic slot.
+_TUCK_START_CATEGORIES: dict[str, set[str]] = {
+    "chair": {"table", "desk"},
+    "stool": {"counter"},
+}
+_TUCK_START_MAX_DIST_M = 2.0
+
+
+def _census_tucked_start(scene_id: str, category: str,
+                          position: Optional[tuple]) -> Optional[str]:
+    """Census-unified starting slot for a chair/stool: the nearest tuckable
+    census instance (by real XZ distance to the object's own HSSD position)
+    within _TUCK_START_MAX_DIST_M, as "<census_anchor>.tucked" — one tucked
+    representation everywhere, origins and destinations alike. None when the
+    category isn't tuckable, the scene has no census, or nothing is near
+    (caller falls back to _DEFAULT_SEMANTIC)."""
+    wanted = _TUCK_START_CATEGORIES.get(category)
+    if wanted is None or position is None:
+        return None
+    from .anchor_census import load_anchor_census
+    census = load_anchor_census(scene_id)
+    if not census:
+        return None
+    best, best_d = None, _TUCK_START_MAX_DIST_M
+    for label, rec in census.get("anchors", {}).items():
+        if rec.get("category") not in wanted:
+            continue
+        p = rec.get("position")
+        if not p:
+            continue
+        d = ((p[0] - position[0]) ** 2 + (p[2] - position[2]) ** 2) ** 0.5
+        if d < best_d:
+            best, best_d = label, d
+    return f"{best}.tucked" if best else None
 
 
 @lru_cache(maxsize=1)
@@ -230,7 +283,8 @@ def load_scene_state(scene_id: str) -> SceneState:
         state.instances[iid] = ObjectInstance(
             instance_id=iid,
             category=category,
-            current_semantic=_DEFAULT_SEMANTIC.get(category, ""),
+            current_semantic=(_census_tucked_start(scene_id, category, position)
+                              or _DEFAULT_SEMANTIC.get(category, "")),
             position=position,
         )
 

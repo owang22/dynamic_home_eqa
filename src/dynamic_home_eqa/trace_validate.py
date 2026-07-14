@@ -12,7 +12,10 @@ hard invariants every exported day trace must satisfy:
      later event for that label must be move_existing.
   3. No no-ops — from_semantic must differ from to_semantic.
   4. Attendance — the event's source or destination room must contain an
-     occupant (per `traces`) at event time.
+     occupant (per `traces`) at event time. For a change_type=="remove"
+     (Phase 3 despawn/put-away of a carried Tier-3 item), the item travels
+     with its owner rather than sitting in a room, so this instead requires
+     the mover to be home (a real, non-"away" activity location) at event time.
 
 For change_type == "state_change" (M3: state-change dynamics), invariants
 1 and 3 are checked on (from_state, to_state) keyed by (label,
@@ -36,7 +39,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Optional
 
-from .rooms import occupants_in_room, slot_room
+from .rooms import location_at, occupants_in_room, slot_room
 
 
 class FindingKind(str, Enum):
@@ -194,19 +197,42 @@ def validate(changes: list[dict], traces: list[dict]) -> Report:
                 ))
             inserted.add(label)
 
-        # 4. Attendance (unchanged — state_change events still carry
-        # from_semantic/to_semantic, the furniture's own fixed room)
-        dest_room = slot_room(to_sem)
-        src_room  = slot_room(from_sem)
-        present = set(occupants_in_room(traces, dest_room, t)) \
-            | set(occupants_in_room(traces, src_room, t))
-        if not present:
-            report.findings.append(Finding(
-                FindingKind.UNATTENDED, Severity.HARD, idx, label,
-                f"{label}@t={t:.2f}: no occupant in source ({src_room!r}) or "
-                f"destination ({dest_room!r}) room (manifest claimed mover: "
-                f"{c.get('mover')!r})",
-            ))
+        # 4. Attendance.
+        if ctype == "remove":
+            # A removal (Phase 3 despawn/put-away) is an occupant pocketing
+            # their OWN carried Tier-3 item — it travels with them, so it need
+            # not sit in any fixed room and to_semantic is the symbolic "away".
+            # The room-presence check below would misfire (destination room is
+            # None). The meaningful invariant instead: the mover is actually
+            # home (a real, non-"away" activity location) at event time. Still
+            # re-derived from `traces`, so a put-away claimed while its mover is
+            # out of the house is caught.
+            mover = c.get("mover")
+            mover_room = next(
+                (location_at(tr.get("activities", []), t)
+                 for tr in traces if tr.get("occupant_name") == mover),
+                None,
+            )
+            if mover_room is None or mover_room == "away":
+                report.findings.append(Finding(
+                    FindingKind.UNATTENDED, Severity.HARD, idx, label,
+                    f"{label}@t={t:.2f}: remove/put-away but mover {mover!r} is "
+                    f"not home (location={mover_room!r}) at event time",
+                ))
+        else:
+            # (state_change events still carry from_semantic/to_semantic, the
+            # furniture's own fixed room, so the room derivation applies.)
+            dest_room = slot_room(to_sem)
+            src_room  = slot_room(from_sem)
+            present = set(occupants_in_room(traces, dest_room, t)) \
+                | set(occupants_in_room(traces, src_room, t))
+            if not present:
+                report.findings.append(Finding(
+                    FindingKind.UNATTENDED, Severity.HARD, idx, label,
+                    f"{label}@t={t:.2f}: no occupant in source ({src_room!r}) or "
+                    f"destination ({dest_room!r}) room (manifest claimed mover: "
+                    f"{c.get('mover')!r})",
+                ))
 
         last_to[label] = to_sem
 

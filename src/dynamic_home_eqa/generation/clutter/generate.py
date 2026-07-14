@@ -90,3 +90,38 @@ def generate_clutter(
         temperature=temperature,
     )
     return result.get("proposals", [])
+
+
+def admit_clutter(
+    clutter: list[dict],
+    scores: list[float],
+    floor: float,
+    catalog: dict[str, int],
+) -> tuple[list[dict], list[dict], int, int]:
+    """Judge-gated clutter admission: floor + per-category catalog cap.
+
+    Clutter entered the world unjudged before this — census-starved scenes
+    produced absurd start states (measured: 18 bowls in one home, 6 on a bed,
+    when the census offered no kitchen counter). Each placement's judge score
+    is gated by `floor`, then each category keeps at most catalog[category]
+    placements, highest score first (ties broken by emission order —
+    deterministic).
+
+    Returns (kept, rejected, n_below_floor, n_over_cap); kept/rejected both
+    preserve emission order.
+    """
+    n_below_floor = sum(1 for s in scores if s < floor)
+    kept_per_cat: dict[str, int] = {}
+    keep = [False] * len(clutter)
+    order = sorted(range(len(clutter)), key=lambda i: (-scores[i], i))
+    for i in order:
+        if scores[i] < floor:
+            continue
+        cat = clutter[i]["object_category"]
+        if kept_per_cat.get(cat, 0) < catalog.get(cat, 0):
+            kept_per_cat[cat] = kept_per_cat.get(cat, 0) + 1
+            keep[i] = True
+    n_over_cap = sum(1 for i, k in enumerate(keep) if not k and scores[i] >= floor)
+    kept     = [p for p, k in zip(clutter, keep) if k]
+    rejected = [p for p, k in zip(clutter, keep) if not k]
+    return kept, rejected, n_below_floor, n_over_cap

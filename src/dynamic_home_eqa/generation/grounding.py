@@ -67,6 +67,10 @@ _RELATION_MAP: dict[str, tuple[str, str | None]] = {
     "inside":    ("within", None),
     "next_to":   ("on",     "next_to"),
     "near":      ("on",     "next_to"),
+    # Tuck: spatially a beside-the-furniture placement (the chair ends up at
+    # the table's edge); the tucked/beside distinction lives in the slot
+    # string (resolve_slot appends ".tucked"), not in PARTNR geometry.
+    "tucked_under": ("on", "next_to"),
 }
 
 

@@ -37,6 +37,11 @@ class Candidate:
     flag: str
     human_band: int             # the corrected `band` column — ground truth
     notes: str
+    # Optional per-candidate move-history note (Phase 3 judge strategy). When
+    # present it rides into the judge's candidate line so repeat-move rows can
+    # be labeled and scored — the harness lever for the cumulative-justification
+    # rubric (a plant's 7th move should band low, a phone's 7th fine).
+    move_history_note: str = ""
 
     @property
     def is_dinner_laptop(self) -> bool:
@@ -73,13 +78,17 @@ def load_labeled_csv(path: pathlib.Path) -> list[Candidate]:
             target_relationship=r["target_relationship"],
             target_anchor=r["target_anchor"],
             room=r["room"],
-            reason=r["reason"],
+            # `purpose` is retired (proposals emit a single `reason` again),
+            # but label CSVs created during the purpose era carry it — the
+            # fallback keeps the existing human-labeled set loadable.
+            reason=r.get("reason") or r.get("purpose", ""),
             assumed_from=r.get("assumed_from", ""),
             judge_score=float(r["judge_score"]),
             machine_band=int(r["machine_band"]),
             flag=r.get("flag", ""),
             human_band=int(band_raw),
             notes=r.get("notes", ""),
+            move_history_note=r.get("move_history_note", ""),
         ))
     if errors:
         raise ValueError("labeled CSV has unlabeled/invalid bands:\n  " + "\n  ".join(errors))

@@ -36,6 +36,10 @@ PARTNR_RELATIONSHIPS: set[str] = {
     "on_top",
     "inside",
     "near",
+    # Tuck (see TUCK_RELATIONSHIP below): PARTNR-side it grounds exactly like
+    # next_to (grounding._RELATION_MAP); the tucked distinction lives in the
+    # resolved slot string, not in PARTNR geometry.
+    "tucked_under",
 }
 
 # Stage 1 (persona) schema/prompts/profiles live in generation/persona/ —
@@ -79,7 +83,7 @@ ACTIVITY_SCHEMA: dict = {
                     "location": {
                         "type": "string",
                         "enum": ACTIVITY_LOCATIONS,
-                        "description": "'away' = outside the house entirely (school, work commute, errands).",
+                        "description": "'away' = outside the house entirely (school, work, errands).",
                     },
                     "start": {"type": "number", "description": "Start hour (24h float)."},
                     "end":   {"type": "number", "description": "End hour (24h float)."},
@@ -115,6 +119,11 @@ REGION_ONLY_RELATIONSHIPS: set[str] = {"in_region"}
 SURFACE_RELATIONSHIPS: set[str] = {"on", "on_top", "inside", "within"}
 PROXIMITY_RELATIONSHIPS: set[str] = {"near", "next_to"}
 
+# Tuck (floor-bound furniture only): a chair/stool pushed back under a
+# table/counter/desk. Distinct from proximity — resolve_slot appends
+# ".tucked" to the anchor so tucked and beside are different slots.
+TUCK_RELATIONSHIP = "tucked_under"
+
 # Explicit abstain entry, always present in every anchor enum — the model
 # is never forced to pick an inappropriate surface just because the enum
 # is small (a room with no valid surfaces offers ONLY this). Abstained
@@ -122,12 +131,21 @@ PROXIMITY_RELATIONSHIPS: set[str] = {"near", "next_to"}
 # (generation/pipeline.py) — never grounded, never built.
 ABSTAIN_ANCHOR = "none"
 
+# Phase 3 despawn: a symbolic target meaning "the occupant puts this carried
+# item away (into a bag/pocket/drawer) and it disappears from the scene." Only
+# offered for a window where the occupant has a Tier-3 item currently OUT (see
+# generation/stages.py) and only despawns Tier-3 items (gated in the pipeline);
+# we deliberately do NOT model where it goes, only that it leaves.
+PUT_AWAY_ANCHOR = "put_away"
+
 
 def _build_placement_item_schema(
     valid_categories: list[str],
     surface_anchors: list[str],
     proximity_anchors: list[str],
     include_assumed_from: bool = False,
+    include_put_away: bool = False,
+    tuck_anchors: Optional[list[str]] = None,
 ) -> dict:
     """Build the {object_category, target_relationship, target_anchor, reason}
     item schema shared by displacement proposals and clutter placements, with
@@ -156,18 +174,46 @@ def _build_placement_item_schema(
     round (a flat union enum let the model emit incoherent pairs like "on" a
     room — confirmed on real generation output).
 
-    include_assumed_from adds a required `assumed_from` field: the model's
-    own belief about where this object currently is, before this move. It is
-    never used to write from_semantic (that always comes from the pipeline's
-    tracked scene state — see generation/manifest.py) — it is a diagnostic
-    only. Displacement proposals set this True; clutter placements (no
-    "before" state) leave it False.
+    include_assumed_from adds a required `assumed_from` field: the model's own
+    belief about where this object currently is, before this move. Retired for
+    displacements (Phase 3 made from_semantic authoritative and the guess was
+    measured as 55-79% wrong noise that also anchored the reason to a false
+    origin — see results/reports/data_quality_backlog.md #1); left as an opt-in
+    param, off everywhere today.
+
+    The leading field is always `reason` — genuine pre-proposal reasoning.
+    Guided decoding emits fields in schema order, so the model reasons over
+    its inputs (activity, persona, location, current object state, available
+    objects/anchors) BEFORE committing to an object change; the reason is
+    then carried into the manifest verbatim as the event's trace. (The
+    earlier purpose/templated-reason split is retired: it produced two
+    half-fields, neither a good trace.)
     """
-    def _branch(relationships: list[str], anchors: list[str]) -> dict:
+    cot_field = "reason"
+    cot_desc = (
+        "Reason FIRST: think through what this activity, done by this person "
+        "in this room, plausibly implies for object movement — consult the "
+        "current object state for where things are now, name which object "
+        "would move, why, and where it would end up. Then fill the fields "
+        "below to match that reasoning; they must follow from it, not the "
+        "other way around."
+    )
+
+    def _branch(relationships: list[str], anchors: list[str],
+                categories: Optional[list[str]] = None) -> dict:
+        # The CoT field is deliberately FIRST: guided decoding emits fields in
+        # schema order, so the model reasons about what the activity implies
+        # BEFORE it commits object_category/target_relationship/target_anchor —
+        # genuine chain-of-thought, not a post-hoc justification of an
+        # already-picked placement. Order matters here; do not move it down.
         properties = {
+            cot_field: {
+                "type": "string",
+                "description": cot_desc,
+            },
             "object_category": {
                 "type": "string",
-                "enum": valid_categories,
+                "enum": categories or valid_categories,
                 "description": "Object category present in the scene inventory.",
             },
             "target_relationship": {
@@ -182,12 +228,8 @@ def _build_placement_item_schema(
                     f"or {ABSTAIN_ANCHOR!r} to abstain if nothing fits."
                 ),
             },
-            "reason": {
-                "type": "string",
-                "description": "One-sentence behavioural justification.",
-            },
         }
-        required = ["object_category", "target_relationship", "target_anchor", "reason"]
+        required = [cot_field, "object_category", "target_relationship", "target_anchor"]
         if include_assumed_from:
             properties["assumed_from"] = {
                 "type": "string",
@@ -205,25 +247,49 @@ def _build_placement_item_schema(
     if not valid_categories or not surface_relationships or not proximity_relationships:
         raise ValueError("_build_placement_item_schema: empty category or relationship vocabulary")
 
-    return {"oneOf": [
-        _branch(surface_relationships, sorted(set(surface_anchors)) + [ABSTAIN_ANCHOR]),
-        _branch(proximity_relationships, sorted(set(proximity_anchors)) + [ABSTAIN_ANCHOR]),
-    ]}
+    extra = [ABSTAIN_ANCHOR] + ([PUT_AWAY_ANCHOR] if include_put_away else [])
+    branches = [
+        _branch(surface_relationships, sorted(set(surface_anchors)) + extra),
+        _branch(proximity_relationships, sorted(set(proximity_anchors)) + extra),
+    ]
+    # Tuck branch (displacements only): floor-bound categories (chair/stool)
+    # can be tucked back under table/counter/desk instances — the inverse of
+    # pulling one out (next_to). Own branch so BOTH the category and anchor
+    # vocabularies are constrained (a book cannot be tucked; a chair cannot
+    # tuck under a bed). resolve_slot maps tucked_under to the distinct
+    # "<anchor>.tucked" slot, so a tuck after an untuck at the same furniture
+    # is a real state change, not a suppressed no-op.
+    if tuck_anchors:
+        from ..env.inventory import FLOOR_BOUND_CATEGORIES
+        tuck_categories = sorted(set(valid_categories) & FLOOR_BOUND_CATEGORIES)
+        if tuck_categories:
+            branches.append(_branch([TUCK_RELATIONSHIP],
+                                    sorted(set(tuck_anchors)) + [ABSTAIN_ANCHOR],
+                                    categories=tuck_categories))
+    return {"oneOf": branches}
 
 
 def build_displacement_schema(
     valid_categories: list[str],
     surface_anchors: list[str],
     proximity_anchors: list[str],
+    include_put_away: bool = False,
+    tuck_anchors: Optional[list[str]] = None,
 ) -> dict:
     """Displacement proposal schema: an {activity, occupant, proposals} object,
     each proposal a placement item (see _build_placement_item_schema).
     `surface_anchors`/`proximity_anchors` are room-scoped census instance
     labels (see generation/stages.py's generate_displacements for how they're
-    scoped to the occupant's current room)."""
+    scoped to the occupant's current room).
+
+    Each proposal leads with `reason` (pre-proposal reasoning over the
+    activity/persona/location/current-state inputs; carried into the manifest
+    verbatim) and has no `assumed_from` — Phase 3 tracks origin
+    authoritatively, so the model's origin guess is never solicited."""
     item_schema = _build_placement_item_schema(
         valid_categories, surface_anchors, proximity_anchors,
-        include_assumed_from=True,
+        include_assumed_from=False, include_put_away=include_put_away,
+        tuck_anchors=tuck_anchors,
     )
     return {
         "type": "object",

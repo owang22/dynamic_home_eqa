@@ -27,8 +27,14 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 # Categories a toddler would not plausibly relocate/carry/own themselves.
+# Two flavours: heavy/awkward movable furniture they can't physically relocate
+# (chair/stool/potted_plant — cushion is intentionally NOT here, a toddler can
+# carry a cushion; the other Tier-2a furniture like bench/couch/table are Tier-1
+# fixtures that never move anyway), plus small items they wouldn't
+# carry/own/handle (laptop/keys/wallet/phone/candle).
 TODDLER_RESTRICTED_CATEGORIES: set[str] = {
-    "stool", "laptop", "keys", "wallet", "phone", "candle",
+    "chair", "stool", "potted_plant",
+    "laptop", "keys", "wallet", "phone", "candle",
 }
 
 # Furniture-class categories that are unusual (not impossible) outdoors.

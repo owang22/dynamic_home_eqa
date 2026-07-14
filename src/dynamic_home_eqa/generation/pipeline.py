@@ -120,6 +120,8 @@ def generate_for_scene(
     reachability_filtering: bool = False,
     judge_thinking: bool = False,
     judge_style: str = "asis",
+    enrich_context: bool = False,
+    exemplar_block=None,
 ) -> dict:
     """Run the full generation pipeline for one scene.
 
@@ -260,6 +262,9 @@ def generate_for_scene(
     # clutter placements against.
     clutter: list[dict] = []
     n_abstained_clutter = 0
+    n_clutter_below_floor = 0
+    n_clutter_over_cap = 0
+    clutter_rejected: list[dict] = []
     if anchor_inventory is not None:
         clutter = generate_clutter(
             household_type=household_type,
@@ -277,6 +282,41 @@ def generate_for_scene(
         # starting state; counted, never silent.
         n_abstained_clutter = sum(1 for p in clutter if p.get("target_anchor") == ABSTAIN_ANCHOR)
         clutter = [p for p in clutter if p.get("target_anchor") != ABSTAIN_ANCHOR]
+
+        # Judge + floor + catalog cap (clutter admission). Clutter previously
+        # entered the world unjudged, so census-starved scenes produced absurd
+        # start states (measured: 18 bowls in one home, 6 of them on a bed,
+        # when the census offered no kitchen counter — see
+        # data_quality_backlog). Reuse the displacement judge: each placement
+        # is priced as a persistent start-of-day home for that object, gated
+        # by the same REALISM_FLOOR selection uses, then capped per category
+        # to TIER2_CLUTTER_CATALOG's intended quantities (highest-scored
+        # kept). Judged with day pinned to 0 and no occupant context: clutter
+        # runs before persona exists and is day-invariant by design — a
+        # day-dependent judge seed would fracture the same house's start
+        # state across days.
+        if clutter:
+            from ..env.inventory import TIER2_CLUTTER_CATALOG
+            from .selection import REALISM_FLOOR
+            c_scores, c_meta = score_realism_batch(
+                candidates=clutter,
+                activity="static clutter placement (each object's persistent, start-of-day home in this house)",
+                occupant_name="the household",
+                persona={},
+                household_id=household_id,
+                day=0, start=0.0, end=0.0, occupant_index=0,
+                model=model, temperature=temperature, cache=cache, force=force,
+                judge_thinking=judge_thinking, judge_style=judge_style,
+                include_context=False, exemplar_block=None,
+            )
+            for p, s in zip(clutter, c_scores):
+                p["_judge_score"] = s
+                p["_judge_stage_tag"] = c_meta["stage_tag"]
+            from .clutter.generate import admit_clutter
+            clutter, clutter_rejected, n_clutter_below_floor, n_clutter_over_cap = admit_clutter(
+                clutter, c_scores, REALISM_FLOOR, TIER2_CLUTTER_CATALOG,
+            )
+
         clutter_counts: dict[str, int] = {}
         for placement in clutter:
             cat = placement["object_category"]
@@ -339,142 +379,169 @@ def generate_for_scene(
             force=force,
         )
 
-    # ── Stage 3: Displacement proposals (per activity per occupant) ───────────
-    all_raw_proposals: list[dict] = []
-    for occ_idx, (occupant, trace) in enumerate(
-            zip(persona.get("occupants", []), traces)):
-        occ_name = occupant["name"]
-        for activity in trace.get("activities", []):
-            act_label = activity["activity"]
-            act_location = activity.get("location")
-            if act_location == "away":
-                continue  # no indoor object displacements while away
-
-            displacement = generate_displacements(
-                activity=act_label,
-                start=float(activity["start"]),
-                end=float(activity["end"]),
-                occupant_name=occ_name,
-                occupant_index=occ_idx,
-                persona=persona,
-                inventory=inventory,
-                room_inventory=room_inventory_reachable,
-                location=act_location,
-                # Census Unification (Reachability Removal Phase 1): must
-                # match what ground_displacement_batch_semantic is given
-                # below — see the KNOWN TENSION note above this loop.
-                anchor_inventory=anchor_inventory_reachable,
-                anchor_census=anchor_census,
-                household_id=household_id,
-                day=day,
-                model=model,
-                temperature=temperature,
-                cache=cache,
-                force=force,
-            )
-            for prop in displacement.get("proposals", []):
-                prop["_activity"]        = act_label
-                prop["_occupant"]        = occ_name
-                prop["_occupant_index"]  = occ_idx
-                prop["_start"]           = activity["start"]
-                prop["_end"]             = activity["end"]
-                prop["_location"]        = act_location
-                all_raw_proposals.append(prop)
-
-    # Part A: drop abstained proposals ("none" anchor — the model's explicit
-    # "no listed surface fits this object") BEFORE grounding; counted, never
-    # silent. An abstain is a designed outcome of the realizable-anchor
-    # vocabulary, not a grounding rejection — mixing them into
-    # GroundingStats's buckets would misattribute deliberate model restraint
-    # as an infra/model failure.
-    n_abstained = sum(1 for p in all_raw_proposals if p.get("target_anchor") == ABSTAIN_ANCHOR)
-    all_raw_proposals = [p for p in all_raw_proposals if p.get("target_anchor") != ABSTAIN_ANCHOR]
-
-    # Floor-Bound Realization round: a chair/stool proposed ON a surface
-    # (on/on_top/inside/within) is physically conceivable but not how homes
-    # work — drop at the source, counted. near/next_to proposals for the
-    # same categories pass through and are realized as floor placements
-    # beside the anchor (see build_realized_day). The prompt tells the
-    # model this rule; this filter enforces it when the model ignores it.
+    # ── Stage 3: displacement + grounding + judge + select, per chronological
+    #    WINDOW (Phase 3 — sequential state threading) ──────────────────────────
+    # Per-occupant Tier-3 ownership + bedroom (Phase 2.1): the proposer only
+    # offers an occupant their OWN carried items, and a "bedroom" activity
+    # scopes to that occupant's own bedroom.
+    #
+    # Windows (one activity occurrence each) are processed in chronological
+    # order, interleaving occupants. A running object state is threaded through:
+    # after each window's moves are selected they are applied to the state, and
+    # the next window's proposer AND judge see the authoritative current state
+    # instead of the proposer's assumed_from guess. The state block's hash is
+    # folded into the displacement/judge cache tags, so editing an earlier
+    # window correctly invalidates every later window.
+    from .ownership import (
+        assign_bedrooms, assign_ownership, restrict_inventory_to_owner,
+        tier3_instance_label as tier3_label, TIER3_CATEGORIES,
+    )
+    from .running_state import RunningState
     from ..env.inventory import FLOOR_BOUND_CATEGORIES
-    from .schemas import SURFACE_RELATIONSHIPS
+    from .schemas import SURFACE_RELATIONSHIPS, PUT_AWAY_ANCHOR
+
+    ownership = assign_ownership(persona)
+    bedrooms = assign_bedrooms(persona)
 
     def _floor_bound_surface(p: dict) -> bool:
         return (p.get("object_category") in FLOOR_BOUND_CATEGORIES
                 and p.get("target_relationship") in SURFACE_RELATIONSHIPS)
 
-    n_floor_bound_dropped = sum(1 for p in all_raw_proposals if _floor_bound_surface(p))
-    all_raw_proposals = [p for p in all_raw_proposals if not _floor_bound_surface(p)]
+    windows: list[tuple] = []
+    for occ_idx, (occupant, trace) in enumerate(zip(persona.get("occupants", []), traces)):
+        occ_name = occupant["name"]
+        for activity in trace.get("activities", []):
+            if activity.get("location") == "away":
+                continue  # no indoor object displacements while away
+            windows.append((float(activity["start"]), occ_idx, occ_name, trace, activity))
+    windows.sort(key=lambda w: (w[0], w[1]))  # chronological, tie-break by occupant
 
-    # ── Grounding (batched across the whole scene) ─────────────────────────────
+    scene_regions = load_scene_regions(scene_id) if (use_semantic_grounding and world_graph is None) else None
+    from ..env.inventory import load_scene_state as _load_scene_state
+    try:
+        _scene_state = _load_scene_state(scene_id)
+    except Exception:
+        _scene_state = None  # live-WorldGraph/synthetic paths: category-keyed fallback
+    state = RunningState.initial(ownership, scene_state=_scene_state)
     stats = GroundingStats()
-    if env is not None and agent is not None and world_graph is not None:
-        grounded, stats = ground_displacement_batch(
-            all_raw_proposals, world_graph, env, agent, grasp_mgr, stats, scene_id=scene_id
-        )
-    elif use_semantic_grounding:
-        scene_regions = load_scene_regions(scene_id)  # None if JSON missing
-        grounded, stats = ground_displacement_batch_semantic(
-            all_raw_proposals, inventory, scene_regions, stats,
-            anchor_inventory=anchor_inventory_reachable, anchor_census=anchor_census,
-        )
-    else:
-        grounded = all_raw_proposals
-        stats.total    = len(all_raw_proposals)
-        stats.accepted = len(all_raw_proposals)
-
-    # ── Realism scoring + stochastic selection (per activity occurrence) ───────
-    # Judge calls only see one activity's grounded candidates at a time — never
-    # the whole scene's pool — so batching for call-count efficiency doesn't
-    # reintroduce the "see everything, rank favorites" bias.
-    by_activity: dict[tuple, list[dict]] = defaultdict(list)
-    for prop in grounded:
-        key = (prop["_occupant"], prop["_activity"], prop["_start"], prop["_end"])
-        by_activity[key].append(prop)
-
+    all_raw_proposals: list[dict] = []   # post-filter, pre-grounding (len only)
+    all_candidates: list[dict] = []
     selected: list[dict] = []
     selected_realism_scores: list[float] = []
-    all_candidates: list[dict] = []
-    for (occ_name, act_label, act_start, act_end), group in by_activity.items():
-        occ_idx = group[0].get("_occupant_index", 0)
-        scores, judge_meta = score_realism_batch(
-            candidates=group,
-            activity=act_label,
-            occupant_name=occ_name,
-            persona=persona,
-            household_id=household_id,
-            day=day,
-            start=act_start,
-            occupant_index=occ_idx,
-            model=model,
-            temperature=temperature,
-            cache=cache,
-            force=force,
-            judge_thinking=judge_thinking,
-            judge_style=judge_style,
+    n_abstained = 0
+    n_floor_bound_dropped = 0
+
+    for start, occ_idx, occ_name, trace, activity in windows:
+        act_label = activity["activity"]
+        act_end = float(activity["end"])
+        act_location = activity.get("location")
+        owned = ownership.get(occ_name, [])
+        occ_inventory = restrict_inventory_to_owner(inventory, owned)
+        state_block = state.object_state_block(occ_name, owned) if enrich_context else None
+        live_occ = state.anchors_in_use(act_location) if enrich_context else None
+        # Offer "put_away" only when this occupant has a carried item currently
+        # out — nothing to put away otherwise (Phase 3 despawn).
+        out_labels = {tier3_label(occ_name, c) for c in owned
+                      if state.tier3.get(tier3_label(occ_name, c)) is not None}
+        allow_put_away = enrich_context and bool(out_labels)
+
+        displacement = generate_displacements(
+            activity=act_label, start=start, end=act_end,
+            occupant_name=occ_name, occupant_index=occ_idx, persona=persona,
+            inventory=occ_inventory, room_inventory=room_inventory_reachable,
+            location=act_location, anchor_inventory=anchor_inventory_reachable,
+            anchor_census=anchor_census, household_id=household_id, day=day,
+            model=model, temperature=temperature, cache=cache, force=force,
+            trace=trace, include_context=enrich_context, bedroom_index=bedrooms.get(occ_name),
+            current_state_block=state_block, live_occupancy=live_occ,
+            allow_put_away=allow_put_away,
         )
-        # Persist judge provenance on EVERY candidate (selected and
-        # rejected alike): the exact score selection samples against, the
-        # judge arm (stage tag) and seed that produced it, and the
-        # truncated think excerpt when the judge ran in thinking mode.
-        # Selected records are these same dicts, so `displacements` below
-        # carries the score it was sampled under automatically.
-        for c, s in zip(group, scores):
-            c["_judge_score"] = s
+        window_props: list[dict] = []
+        for prop in displacement.get("proposals", []):
+            prop["_activity"]       = act_label
+            prop["_occupant"]       = occ_name
+            prop["_occupant_index"] = occ_idx
+            prop["_start"]          = activity["start"]
+            prop["_end"]            = activity["end"]
+            prop["_location"]       = act_location
+            window_props.append(prop)
+
+        n_abstained += sum(1 for p in window_props if p.get("target_anchor") == ABSTAIN_ANCHOR)
+        window_props = [p for p in window_props if p.get("target_anchor") != ABSTAIN_ANCHOR]
+        n_floor_bound_dropped += sum(1 for p in window_props if _floor_bound_surface(p))
+        window_props = [p for p in window_props if not _floor_bound_surface(p)]
+
+        # Phase 3 despawn: split off "put_away" proposals. They bypass grounding
+        # (a put-away is always feasible), but only for a Tier-3 item currently
+        # out; anything else claiming put_away is dropped. Marked _despawn so the
+        # manifest and running state treat them as the item leaving the scene.
+        despawns_w: list[dict] = []
+        placements_w: list[dict] = []
+        for p in window_props:
+            if p.get("target_anchor") == PUT_AWAY_ANCHOR:
+                if (p.get("object_category") in TIER3_CATEGORIES
+                        and tier3_label(occ_name, p["object_category"]) in out_labels):
+                    p["_despawn"] = True
+                    despawns_w.append(p)
+                # else: invalid put_away, silently dropped
+            else:
+                placements_w.append(p)
+        all_raw_proposals.extend(placements_w + despawns_w)
+
+        if env is not None and agent is not None and world_graph is not None:
+            grounded_w, stats = ground_displacement_batch(
+                placements_w, world_graph, env, agent, grasp_mgr, stats, scene_id=scene_id)
+        elif use_semantic_grounding:
+            grounded_w, stats = ground_displacement_batch_semantic(
+                placements_w, inventory, scene_regions, stats,
+                anchor_inventory=anchor_inventory_reachable, anchor_census=anchor_census)
+        else:
+            grounded_w = placements_w
+            stats.total += len(placements_w)
+            stats.accepted += len(placements_w)
+        grounded_w = grounded_w + despawns_w  # despawns join the judged/selected pool
+        if not grounded_w:
+            continue
+
+        # Annotate each candidate with its object's move history so the judge
+        # can price cumulative relocation contextually (a phone's 7th move vs a
+        # plant's). Set before judging so it rides into the candidate line — and
+        # into the judge's cache key, which hashes the full user prompt.
+        for c in grounded_w:
+            c["_move_history_note"] = state.move_history_note(
+                c.get("_occupant", occ_name), c.get("object_category", ""),
+                room=c.get("_location"))
+
+        scores, judge_meta = score_realism_batch(
+            candidates=grounded_w, activity=act_label, occupant_name=occ_name,
+            persona=persona, household_id=household_id, day=day, start=start, end=act_end,
+            occupant_index=occ_idx, model=model, temperature=temperature, cache=cache, force=force,
+            judge_thinking=judge_thinking, judge_style=judge_style, trace=trace,
+            include_context=enrich_context, exemplar_block=exemplar_block,
+            current_state_block=state_block,
+        )
+        for c, s in zip(grounded_w, scores):
+            c["_judge_score"]     = s
             c["_judge_stage_tag"] = judge_meta["stage_tag"]
-            c["_judge_seed"] = judge_meta["seed"]
+            c["_judge_seed"]      = judge_meta["seed"]
             if judge_meta.get("think"):
                 c["_judge_think"] = judge_meta["think"][:500]
             if judge_meta.get("score_fallback"):
                 c["_judge_score_fallback"] = judge_meta["score_fallback"]
-        chosen = select_for_activity(group, scores, act_label, household_id, day, start=act_start)
+
+        chosen = select_for_activity(grounded_w, scores, act_label, household_id, day,
+                                     start=start, anchor_uses=dict(state.anchor_uses))
         chosen_ids = {id(c) for c in chosen}
-        for c in group:
+        for c in grounded_w:
             c["_selected"] = id(c) in chosen_ids
-        all_candidates.extend(group)
-        score_by_id = {id(c): s for c, s in zip(group, scores)}
+        all_candidates.extend(grounded_w)
+        score_by_id = {id(c): s for c, s in zip(grounded_w, scores)}
         selected.extend(chosen)
         selected_realism_scores.extend(score_by_id[id(c)] for c in chosen)
+
+        state.apply(chosen)  # thread the running state to the next window
+
+    grounded = all_candidates  # grounded_proposals == len(all_candidates)
 
     mean_realism = (
         sum(selected_realism_scores) / len(selected_realism_scores)
@@ -484,6 +551,9 @@ def generate_for_scene(
     return {
         "household_id":        household_id,
         "scene_id":            scene_id,
+        # The generating model — the run's comparison label (qwen-style vs
+        # llama-style arms; the eval webapp's future `condition` field).
+        "model":               model,
         "profile":             household_type,
         "day":                 day,
         "clutter":             clutter,
@@ -501,6 +571,12 @@ def generate_for_scene(
         # explicit "none" entry, dropped before grounding (see above).
         "abstained_proposals": n_abstained,
         "abstained_clutter":   n_abstained_clutter,
+        # Clutter admission (judge + floor + catalog cap — see Stage 0):
+        # below-floor and over-cap are counted separately, and the rejected
+        # placements ride along (with their _judge_score) for inspection.
+        "clutter_below_floor": n_clutter_below_floor,
+        "clutter_over_cap":    n_clutter_over_cap,
+        "clutter_rejected":    clutter_rejected,
         # Floor-Bound Realization round: chair/stool surface proposals
         # dropped before grounding (see the filter above).
         "floor_bound_surface_dropped": n_floor_bound_dropped,
@@ -541,6 +617,8 @@ def run_batch(
     reachability_filtering: bool = False,
     judge_thinking: bool = False,
     judge_style: str = "asis",
+    enrich_context: bool = False,
+    exemplar_block=None,
 ) -> tuple[GroundingStats, float]:
     """Generate, ground, and build manifests for a list of scenes.
 
@@ -625,6 +703,8 @@ def run_batch(
                         reachability_filtering=reachability_filtering,
                         judge_thinking=judge_thinking,
                         judge_style=judge_style,
+                        enrich_context=enrich_context,
+                        exemplar_block=exemplar_block,
                     )
 
                     manifest_seed += 1

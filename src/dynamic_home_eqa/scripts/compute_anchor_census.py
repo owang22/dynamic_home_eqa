@@ -67,15 +67,24 @@ from dynamic_home_eqa.paths import REPO_ROOT as _DYNAMIC_EQA
 _REPORT_DIR = _DYNAMIC_EQA / "results" / "reports" / "anchor_census"
 
 
+# Rename ambiguous HSSD region names at label-definition time so a room and an
+# object never share a token the LLM sees. "tv" is an HSSD room name AND a
+# furniture/object category ("tv" the appliance) — rename the ROOM to
+# "tv_room" so the proposer/judge see "tv_room.couch_1" as a place, distinct
+# from the "tv" object. Aliasing to living_room (rooms._ALIASES / rooms_match /
+# slot_room) still holds, so activity-location matching is unaffected.
+_ROOM_RENAME: dict[str, str] = {"tv": "tv_room"}
+
+
 def _disambiguated_room_names(scene_regions, bedroom_indices: frozenset = frozenset()) -> dict[int, str]:
     """{region_index: final_room_name}. `bedroom_indices` is the bed-rule
     override set — those regions' base name becomes "bedroom" BEFORE
     dedup, so a converted office and a real bedroom share one numbering
     sequence. See module docstring for both rules."""
-    base_names = {
-        i: ("bedroom" if i in bedroom_indices else region.normalised)
-        for i, region in enumerate(scene_regions.regions)
-    }
+    def _base(i, region) -> str:
+        nm = "bedroom" if i in bedroom_indices else region.normalised
+        return _ROOM_RENAME.get(nm, nm)
+    base_names = {i: _base(i, region) for i, region in enumerate(scene_regions.regions)}
     by_name: dict[str, list[int]] = collections.defaultdict(list)
     for i in sorted(base_names):
         by_name[base_names[i]].append(i)

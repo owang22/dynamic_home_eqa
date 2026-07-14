@@ -20,6 +20,17 @@ from .cache import ResponseCache
 # to) — no special-cased model directory.
 DEFAULT_MODEL       = os.environ.get("GENERATION_MODEL", "Qwen/Qwen3-32B")
 DEFAULT_CACHE_DIR   = "/tmp/dynamic-home-eqa-gen-cache"
+
+
+def model_slug(model: str) -> str:
+    """Short filesystem/label-safe identifier for a model string —
+    "casperhansen/llama-3.3-70b-instruct-awq" -> "llama-3.3-70b-instruct-awq",
+    "Qwen/Qwen3-32B" -> "qwen3-32b". Used to label per-model output folders
+    and cache dirs: the response cache is keyed by seed alone (never by
+    model), so two models sharing a cache dir would silently replay each
+    other's responses — every non-default model MUST get its own cache dir
+    (see scripts/regenerate_comparison_set.py)."""
+    return model.rsplit("/", 1)[-1].lower().replace("_", "-")
 DEFAULT_TEMPERATURE = 0.7
 MAX_RETRIES         = 3
 

@@ -21,7 +21,7 @@ from .cache import make_seed
 # tune the keyword groups as generated activity labels reveal gaps.
 _LAMBDA_KEYWORDS: list[tuple[tuple[str, ...], float]] = [
     (("breakfast", "lunch", "dinner", "cook", "meal", "snack", "party"), 3.0),
-    (("clean", "tidy", "organiz", "chore", "laundry", "declutter"), 2.5),
+    (("clean", "tidy", "organize", "chore", "laundry", "declutter"), 2.5),
     (("work", "desk", "study", "read", "call", "meeting"), 1.2),
     (("tv", "relax", "rest", "lounge", "nap", "movie"), 0.8),
     (("sleep", "away", "outdoor", "gym", "errand", "shower", "bath"), 0.3),
@@ -38,15 +38,33 @@ def lambda_moves_for(activity: str) -> float:
     return _DEFAULT_LAMBDA
 
 
+# Judge-score floor for selection eligibility. Grounded in the judge harness's
+# measured band separation (results/reports/prompting_p2.md, strict_ctx_fs:
+# band means 0.11 absurd / 0.36 contrived / 0.50 plausible / 0.80 natural) —
+# 0.3 sits between the absurd and contrived means, so it rejects what the
+# judge calls absurd and most of contrived while keeping plausible/natural.
+# This deliberately replaces the old "unlikely but not impossible" philosophy:
+# measured on real generations, a window whose pool was junk-dominated STILL
+# selected from it (72% of selected candidates scored <0.3, mean selected
+# realism 0.25), because the Poisson draw was a quota. Below-floor candidates
+# are now simply not moves — a window where nothing plausible was proposed
+# moves nothing, which is itself realistic behavior.
+REALISM_FLOOR = 0.3
+
+
 def select_displacements(candidates, realism_scores, lambda_moves, rng,
-                         temperature=1.0):
+                         temperature=1.0, anchor_uses=None,
+                         realism_floor=REALISM_FLOOR):
     """Select a stochastic subset of displacement candidates.
 
-    Count is drawn from Poisson(lambda_moves), clamped to the pool size, so
-    the number of objects moved varies run-to-run around the activity's
-    expected value with no hard cap. Selection is weighted by realism score
-    so implausible candidates are unlikely — but not impossible — to be
-    chosen, preserving occasional realistic surprises.
+    Candidates scoring below `realism_floor` are ineligible outright — the
+    judge's verdict is a gate, not merely a weight. Among eligible candidates,
+    count is drawn from Poisson(lambda_moves) as a CAP (clamped to the eligible
+    pool size, possibly 0), so the number of objects moved varies run-to-run
+    around the activity's expected value and can naturally be zero: a quiet
+    window is a valid outcome, not a failure to fill a quota. Selection among
+    eligible candidates is weighted by realism score so stronger candidates
+    are favored.
 
     Args:
         candidates:     list of grounded displacement candidates.
@@ -56,19 +74,33 @@ def select_displacements(candidates, realism_scores, lambda_moves, rng,
         temperature:    softmax temperature on the selection weights.
                         Lower sharpens toward high-realism candidates;
                         higher flattens toward uniform.
+        anchor_uses:    {anchor: times already used today} (Phase 3). When
+                        given, each candidate's weight is downweighted by
+                        1/(1+uses) for its target_anchor, so the day doesn't
+                        pile every object onto the same one or two surfaces.
+        realism_floor:  absolute judge-score eligibility threshold (see
+                        REALISM_FLOOR for how the default was chosen).
 
     Returns:
-        Selected subset of candidates.
+        Selected subset of candidates (possibly empty).
     """
     if not candidates:
         return []
-    n_target = min(rng.poisson(lambda_moves), len(candidates))
+    eligible = [i for i, s in enumerate(realism_scores) if s >= realism_floor]
+    if not eligible:
+        return []
+    n_target = min(rng.poisson(lambda_moves), len(eligible))
     if n_target == 0:
         return []
-    weights = np.exp(np.array(realism_scores) / temperature)
+    elig_scores = np.array([realism_scores[i] for i in eligible])
+    weights = np.exp(elig_scores / temperature)
+    if anchor_uses:
+        rep = np.array([1.0 / (1.0 + anchor_uses.get(candidates[i].get("target_anchor"), 0))
+                        for i in eligible])
+        weights = weights * rep
     weights /= weights.sum()
-    idx = rng.choice(len(candidates), size=n_target, replace=False, p=weights)
-    return [candidates[i] for i in idx]
+    idx = rng.choice(len(eligible), size=n_target, replace=False, p=weights)
+    return [candidates[eligible[i]] for i in idx]
 
 
 def select_for_activity(
@@ -79,6 +111,7 @@ def select_for_activity(
     day: int,
     start: float = 0.0,
     temperature: float = 1.0,
+    anchor_uses: dict | None = None,
 ) -> list[dict]:
     """select_displacements(), with lambda_moves and a reproducible seed derived
     from (household_id, day, activity, start, "select") so selections are
@@ -89,8 +122,16 @@ def select_for_activity(
     day (e.g. "work" split across four windows) — without it every recurrence
     drew the identical Poisson count and the identical weighted sample, so a
     repeated activity always selected the same candidates verbatim.
+
+    anchor_uses (Phase 3): per-anchor daily use counts, threaded so repeated
+    destinations get downweighted — the whole day's placements spread out
+    instead of piling onto one surface. (Repeated relocation of the SAME object
+    is handled by the judge, not here — it gets the object's move history in its
+    candidate line and prices cumulative implausibility contextually; the
+    REALISM_FLOOR gate is what makes that verdict binding on selection.)
     """
     seed = make_seed(household_id, day, f"select_{activity}_{start:.2f}", 0)
     rng = np.random.default_rng(seed)
     lam = lambda_moves_for(activity)
-    return select_displacements(candidates, realism_scores, lam, rng, temperature)
+    return select_displacements(candidates, realism_scores, lam, rng, temperature,
+                                anchor_uses=anchor_uses)

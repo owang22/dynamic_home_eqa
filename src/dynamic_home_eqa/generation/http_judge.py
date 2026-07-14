@@ -43,7 +43,10 @@ class HTTPThinkingClient:
             "chat_template_kwargs": {"enable_thinking": True},
         }
         if seed is not None:
-            body["seed"] = seed
+            # make_seed returns an unsigned 64-bit int; the OpenAI API validates
+            # seed as a signed int64 (<= 2**63-1). Mask to 63 bits — still
+            # deterministic per call, just within range.
+            body["seed"] = seed & 0x7FFFFFFFFFFFFFFF
         resp = requests.post(f"{self.base}/v1/chat/completions", json=body, timeout=self.timeout)
         resp.raise_for_status()
         msg = resp.json()["choices"][0]["message"]

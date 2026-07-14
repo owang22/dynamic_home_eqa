@@ -348,6 +348,14 @@ def resolve_slot(
     # slot string matches CENSUS_LABEL_RE (see its definition), so this
     # cannot shadow any existing resolution path.
     if CENSUS_LABEL_RE.match(anchor_norm):
+        # Tuck (schemas.TUCK_RELATIONSHIP): the tucked position is its own
+        # slot — "<census anchor>.tucked" — distinct from the beside/on slot
+        # so tuck<->untuck cycles at the same furniture are real changes,
+        # never suppressed as no-ops. Deliberately NOT census-shaped (no
+        # trailing _N), so census parsing never mistakes it for an instance
+        # label; the builder strips the suffix to resolve the real furniture.
+        if target_relationship == "tucked_under":
+            return anchor_norm + ".tucked"
         return anchor_norm
 
     if target_relationship == "in_region":
