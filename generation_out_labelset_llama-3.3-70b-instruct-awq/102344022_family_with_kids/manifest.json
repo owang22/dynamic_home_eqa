@@ -1,0 +1,270 @@
+{
+  "scene_id": "102344022",
+  "resident_profile": "family_with_kids",
+  "seed": 2,
+  "model": "casperhansen/llama-3.3-70b-instruct-awq",
+  "day_context": {
+    "John": {
+      "day_type": "weekday",
+      "day_scenario": "John starts his day by reading the newspaper during breakfast, then heads out to work at 7:30am, looking forward to a productive day at the office. He'll be back home in the evening to spend time with the family."
+    },
+    "Emily": {
+      "day_type": "weekday",
+      "day_scenario": "Emily takes the kids to school, then has some time to herself before doing the household chores, and later unwinds with her evening yoga practice. She'll also prepare dinner for the family and take care of Sophia after she wakes up from her nap."
+    },
+    "Michael": {
+      "day_type": "weekday",
+      "day_scenario": "Michael attends school, focusing on his classes and assignments, and after coming home, he spends some time playing video games before starting his homework. He's looking forward to his part-time job on the weekend, but for now, it's just a regular school day."
+    },
+    "Sophia": {
+      "day_type": "weekday",
+      "day_scenario": "Sophia watches her favorite cartoons in the morning, plays with her toys, and then takes a nap after lunch, recharging for more playtime in the afternoon with her mother's supervision. She'll have a fun evening with her family, playing and reading together before bedtime."
+    }
+  },
+  "changes": [
+    {
+      "t": 6.518,
+      "label": "john_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "bedroom_1.cabinet_1",
+      "target_relationship": "on",
+      "mover": "John",
+      "activity": "waking_up",
+      "reason": "John needs to start his day, so he retrieves his phone to check the time or any important notifications.",
+      "object_handle": null
+    },
+    {
+      "t": 6.535,
+      "label": "book_2",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "bedroom_1.cabinet_3",
+      "to_semantic": "bedroom_1.cabinet_1",
+      "target_relationship": "on",
+      "mover": "John",
+      "activity": "waking_up",
+      "reason": "After waking up, John might want to read something, so he moves a book from his nightstand or a nearby shelf.",
+      "object_handle": null
+    },
+    {
+      "t": 7.313,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "bedroom_2.table_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Emily",
+      "activity": "breakfast",
+      "reason": "To eat breakfast, Emily might need to sit down, so she could pull out a chair from the kitchen table.",
+      "object_handle": null
+    },
+    {
+      "t": 7.993,
+      "label": "michael_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "bedroom_2.bed_1",
+      "target_relationship": "on",
+      "mover": "Michael",
+      "activity": "waking_up",
+      "reason": "As Michael wakes up, he may want to check his phone, so he might retrieve it from its put-away location.",
+      "object_handle": null
+    },
+    {
+      "t": 8.067,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "bedroom_1.cabinet_1",
+      "target_relationship": "near",
+      "mover": "Emily",
+      "activity": "getting_kids_ready_for_school",
+      "reason": "Emily needs to get the kids ready for school and may need to sit down to help them with their tasks, so she might pull out a chair from the dining area to provide a seat.",
+      "object_handle": null
+    },
+    {
+      "t": 8.588,
+      "label": "chair_7",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_3.tucked",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "near",
+      "mover": "Sophia",
+      "activity": "watching_cartoons",
+      "reason": "Sophia needs to sit down to watch cartoons, and a chair is a suitable option.",
+      "object_handle": null
+    },
+    {
+      "t": 8.62,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "bedroom_1.cabinet_1",
+      "to_semantic": "bathroom_1.cabinet_1",
+      "target_relationship": "near",
+      "mover": "Michael",
+      "activity": "getting_ready_for_school",
+      "reason": "Michael might need to move a chair to sit down and tie his shoes or gather his backpack.",
+      "object_handle": null
+    },
+    {
+      "t": 9.541,
+      "label": "emily_laptop",
+      "change_type": "insert_new",
+      "object_category": "laptop",
+      "from_semantic": null,
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "on",
+      "mover": "Emily",
+      "activity": "personal_time",
+      "reason": "Emily could use her laptop for some relaxing activity, like reading or listening to music, so she might take it out and place it on the couch or a stool in the living room.",
+      "object_handle": null
+    },
+    {
+      "t": 10.067,
+      "label": "emily_laptop",
+      "change_type": "remove",
+      "object_category": "laptop",
+      "from_semantic": "living_room.couch_1",
+      "to_semantic": "away",
+      "target_relationship": "on",
+      "mover": "Emily",
+      "activity": "laundry",
+      "reason": "As Emily is doing laundry, which involves cleaning, she might decide to put away items that are out of place. Her laptop, currently on the living_room.couch_1, could be put away to clear space or to keep it safe from potential water splashes.",
+      "object_handle": null
+    },
+    {
+      "t": 11.395,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_tucked",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "next_to",
+      "mover": "Emily",
+      "activity": "cleaning",
+      "reason": "A stool could be in the way while cleaning and needs to be relocated.",
+      "object_handle": null
+    },
+    {
+      "t": 11.486,
+      "label": "potted_plant_1",
+      "change_type": "move_existing",
+      "object_category": "potted_plant",
+      "from_semantic": "living_room.corner",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "near",
+      "mover": "Emily",
+      "activity": "cleaning",
+      "reason": "Emily might want to dust or clean the TV and needs to move a nearby object, such as a potted plant, to access it.",
+      "object_handle": null
+    },
+    {
+      "t": 12.494,
+      "label": "stool_2",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "near",
+      "mover": "Sophia",
+      "activity": "lunch",
+      "reason": "Sophia might want to sit comfortably while eating, so she could pull out a stool from the living room and place it near the kitchen counter.",
+      "object_handle": null
+    },
+    {
+      "t": 15.091,
+      "label": "michael_phone",
+      "change_type": "move_existing",
+      "object_category": "phone",
+      "from_semantic": "bedroom_2.bed_1",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Michael",
+      "activity": "snack",
+      "reason": "With his hands full of snack, Michael might put his phone down on the counter before eating.",
+      "object_handle": null
+    },
+    {
+      "t": 15.42,
+      "label": "michael_phone",
+      "change_type": "move_existing",
+      "object_category": "phone",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "on",
+      "mover": "Michael",
+      "activity": "playing_video_games",
+      "reason": "Michael's phone is currently on the kitchen counter, but he might want to have it nearby while playing video games, so he might move it to the living room.",
+      "object_handle": null
+    },
+    {
+      "t": 16.32,
+      "label": "michael_laptop",
+      "change_type": "insert_new",
+      "object_category": "laptop",
+      "from_semantic": null,
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "on",
+      "mover": "Michael",
+      "activity": "playing_video_games",
+      "reason": "Michael might want to use his laptop to play video games, so he needs to take it out from its put away location.",
+      "object_handle": null
+    },
+    {
+      "t": 18.14,
+      "label": "bowl_2",
+      "change_type": "move_existing",
+      "object_category": "bowl",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "on",
+      "mover": "John",
+      "activity": "spending_time_with_family",
+      "reason": "The family might want to have some snacks or drinks while spending time together, so John might move a bowl from the kitchen counter to the living room coffee table or a nearby surface.",
+      "object_handle": null
+    },
+    {
+      "t": 18.345,
+      "label": "michael_phone",
+      "change_type": "remove",
+      "object_category": "phone",
+      "from_semantic": "living_room.couch_1",
+      "to_semantic": "away",
+      "target_relationship": "on",
+      "mover": "Michael",
+      "activity": "homework",
+      "reason": "After playing video games, Michael's phone might be put away as he focuses on homework.",
+      "object_handle": null
+    },
+    {
+      "t": 21.279,
+      "label": "emily_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "bedroom_1.cabinet_1",
+      "target_relationship": "inside",
+      "mover": "Emily",
+      "activity": "preparing_for_bed",
+      "reason": "Emily is preparing for bed and needs to put away her personal items, including her phone, wallet, keys, and laptop, which are currently not out.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 19,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}
