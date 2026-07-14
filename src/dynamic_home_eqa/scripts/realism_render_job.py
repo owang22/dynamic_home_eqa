@@ -101,7 +101,7 @@ def hour_to_clock(t: float) -> str:
 @dataclass
 class PoolItem:
     folder: str
-    change_type: str          # "location" | "state"
+    change_type: str          # "location" | "state" | "remove"
     event: dict = field(repr=False)
 
 
@@ -110,20 +110,28 @@ def select_random_sample_per_type(
     n_location: int,
     n_state: int,
     seed: int,
+    n_remove: Optional[int] = None,
 ) -> list[PoolItem]:
     """Uniform random sample within each change_type partition — no
     suspicion scoring, no stratification. Capped by availability per
     partition (never raises if a partition has fewer than n candidates;
     a render batch's actual composition is allowed to be uneven, unlike
-    the removed stratified sampler's fixed-quota assumption)."""
+    the removed stratified sampler's fixed-quota assumption).
+
+    Removes (Phase 3 put-away) are their own partition: they are rare
+    (a handful per scene-day), and the whole point of rendering them is
+    verifying the disappearance mechanic — n_remove defaults to ALL of
+    them rather than a uniform share that would usually round to zero."""
     by_type: dict[str, list[PoolItem]] = defaultdict(list)
     for p in pool:
         by_type[p.change_type].append(p)
     rng = random.Random(seed)
     location = list(by_type.get("location", []))
     state = list(by_type.get("state", []))
+    removes = list(by_type.get("remove", []))
     sampled = rng.sample(location, min(n_location, len(location)))
     sampled += rng.sample(state, min(n_state, len(state)))
+    sampled += removes if n_remove is None else rng.sample(removes, min(n_remove, len(removes)))
     return sampled
 
 
@@ -430,6 +438,9 @@ def format_caption(item: PoolItem, generation_result: dict) -> dict:
     if item.change_type == "location":
         base["from"] = e.get("from_semantic")
         base["to"] = e["to_semantic"]
+    elif item.change_type == "remove":
+        base["from"] = e.get("from_semantic")
+        base["to"] = "away"
     else:
         base["anchor"] = e["to_semantic"]
         base["state_variable"] = e["state_variable"]
@@ -800,11 +811,18 @@ class _EventTimeContext:
 
     def _pose_at(self, rec, t: float):
         """Latest effective pose at or before `t`, or None (leave the
-        object in its start state / unspawned)."""
+        object in its start state / unspawned). A PLACEMENT_REMOVED event
+        (Phase 3 put-away) positively resets the pose to None — the object
+        is gone from the world from that event onward, so the skip-None
+        carry-forward below must not resurrect its pre-removal pose."""
+        from dynamic_home_eqa.embodied.realized_world import PLACEMENT_REMOVED
         pose = None
         for ev in rec.events:
-            if ev.t <= t + 1e-6 and ev.effective_pose is not None:
-                pose = ev.effective_pose
+            if ev.t <= t + 1e-6:
+                if ev.placement_status == PLACEMENT_REMOVED:
+                    pose = None
+                elif ev.effective_pose is not None:
+                    pose = ev.effective_pose
         return pose
 
     def apply(self, t: float, exclude_label: str) -> None:
@@ -934,10 +952,16 @@ def render_event_grid(
     label = e["label"]
     category = e["object_category"]
     is_state = item.change_type == "state"
+    is_remove = item.change_type == "remove"
 
     if item.change_type == "location":
         to_anchor = e["to_semantic"]
         from_anchor = e.get("from_semantic") or to_anchor
+    elif is_remove:
+        # Phase 3 put-away: the only real place to photograph is where the
+        # object WAS. to_semantic is the symbolic "away".
+        from_anchor = e.get("from_semantic") or "unknown"
+        to_anchor = "away (put away)"
     else:
         to_anchor = from_anchor = e["to_semantic"]  # fixed furniture — same anchor before/after
 
@@ -996,6 +1020,49 @@ def render_event_grid(
         ("before", axes[0][0], before_event, from_anchor, f"BEFORE (egocentric): {from_anchor}"),
         ("after", axes[0][1], after_event, to_anchor, f"AFTER (egocentric): {to_anchor}"),
     ):
+        if key == "after" and is_remove:
+            # Phase 3 put-away: the honest "after" is the BEFORE panel's own
+            # camera pose with the object gone — the disappearance is the
+            # event. The target object is deliberately never materialized
+            # (same physical situation an insert_new's before-frame shows:
+            # the receptacle without the object); the event-time context
+            # still reconstructs every OTHER object at t. held_vp is the
+            # same held-framing mechanism ENCLOSED after-panels reuse.
+            if held_vp is None:
+                # The before panel produced no usable camera (its own
+                # failure card is showing why); there is no honest frame
+                # to show the disappearance from.
+                _draw_placeholder(ax, "OBJECT PUT AWAY\n(no before-camera to reuse)")
+                panel_status[key] = STATUS_ANCHOR_UNRESOLVED
+                spawn_info[key] = {"attempted": False, "removed": True, "reason": "no_held_framing"}
+            else:
+                context.apply(panel_time[key], exclude_label=label)
+                rm_agent_pos = (held_vp.camera_pos[0], held_vp.camera_pos[1] - 1.5, held_vp.camera_pos[2])
+                rgb, semantic, *_ = capture_rgb_semantic_and_basis(
+                    render_sim, rm_agent_pos, held_vp.look_at
+                )
+                H, W = rgb.shape[0], rgb.shape[1]
+                # The target was never materialized, so its reserved semantic
+                # id appearing would mean a context/restore leak put it (or a
+                # stale spawn) back in frame — recorded as the per-panel
+                # verification of the disappearance mechanic.
+                object_absent = not bool((semantic == _SPAWNED_OBJECT_SEMANTIC_ID).any())
+                ax.imshow(rgb)
+                ax.set_xlim(0, W)
+                ax.set_ylim(H, 0)
+                ax.text(0.5, 0.06, "(object put away — no longer present in scene)",
+                        color="yellow", fontsize=8, ha="center", transform=ax.transAxes,
+                        bbox=dict(facecolor="black", alpha=0.55, pad=2))
+                panel_status[key] = STATUS_OK if object_absent else STATUS_OBJECT_SPAWN_FAILED
+                spawn_info[key] = {"attempted": False, "removed": True, "held_framing": True,
+                                   "object_absent_verified": object_absent}
+                panel_luminance[key] = float(
+                    (rgb[..., 0] * 0.299 + rgb[..., 1] * 0.587 + rgb[..., 2] * 0.114).mean()
+                )
+            ax.set_title(title, fontsize=9)
+            _hide_decorations(ax)
+            continue
+
         if ev is None or not ev.realized:
             reason = ev.placement_status if ev is not None else "anchor_unbacked"
             status = _PLACEMENT_TO_STATUS.get(reason, STATUS_ANCHOR_UNRESOLVED)
@@ -1313,13 +1380,18 @@ def main() -> None:
     ap.add_argument("--n-state", type=int, default=8)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--folders", nargs="*", default=None, help="restrict to these folders; default: full validated pool")
+    ap.add_argument("--gen-dir", default=None,
+                    help="directory holding the generation folders (default: generation_out/)")
     args = ap.parse_args()
 
     from dynamic_home_eqa.embodied.realized_world import load_realized_day
     from dynamic_home_eqa.scripts.build_realized_day import assert_category_has_asset_coverage
     from dynamic_home_eqa.scripts.build_realized_day import _OUT_DIR as _REALIZED_DAY_DIR
 
-    out_dir = _DYNAMIC_EQA / "generation_out"
+    import pathlib as _pl
+    out_dir = _pl.Path(args.gen_dir) if args.gen_dir else _DYNAMIC_EQA / "generation_out"
+    if not out_dir.is_absolute():
+        out_dir = _DYNAMIC_EQA / out_dir
     requested_folders = args.folders or discover_valid_folders(out_dir)
 
     # Realized World Phase cutover: this job now READS realized_day.json
@@ -1349,11 +1421,14 @@ def main() -> None:
         for c in manifest["changes"]:
             if c.get("change_type") == "state_change":
                 pool.append(PoolItem(folder=folder, change_type="state", event=c))
+            elif c.get("change_type") == "remove":
+                pool.append(PoolItem(folder=folder, change_type="remove", event=c))
             else:
                 pool.append(PoolItem(folder=folder, change_type="location", event=c))
 
     print(f"{len(pool)} candidate events pool-wide ({sum(1 for p in pool if p.change_type=='location')} location, "
-          f"{sum(1 for p in pool if p.change_type=='state')} state)")
+          f"{sum(1 for p in pool if p.change_type=='state')} state, "
+          f"{sum(1 for p in pool if p.change_type=='remove')} remove)")
 
     # Standing constraint: fail loudly, at pool-construction time, on any
     # category with no entry anywhere in the asset mapping — see

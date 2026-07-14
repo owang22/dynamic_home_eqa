@@ -28,6 +28,11 @@ PLACEMENT_INFEASIBLE = "placement_infeasible"           # compliance resolution 
 PLACEMENT_ANCHOR_UNBACKED = "anchor_unbacked"            # instance-style anchor with no real backing scene instance
 PLACEMENT_NO_ASSET = "no_asset_for_category"             # spawn category with no registered asset (keys/wallet)
 PLACEMENT_NOT_APPLICABLE = "not_applicable"              # state_change event — no position to realize
+PLACEMENT_REMOVED = "removed"                            # remove event (Phase 3 put-away) — the object left the
+                                                         # world; deliberate, NOT a failure. Its effective_pose is
+                                                         # None from this event onward, which every pose-at-t
+                                                         # consumer (pose_at below, the render job's event-time
+                                                         # context) reads as "not present".
 # Pre-Pool-Build Remediation round: PLACEMENT_SURFACE_FULL split into
 # distinguishable causes (was previously one bucket conflating all of
 # these) — see build_realized_day.py's compliance_place_on_surface for

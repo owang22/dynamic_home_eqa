@@ -53,6 +53,7 @@ from dynamic_home_eqa.embodied.realized_world import (
     PLACEMENT_NO_RECEPTACLE_AUTHORED,
     PLACEMENT_NOT_APPLICABLE,
     PLACEMENT_OK,
+    PLACEMENT_REMOVED,
     PLACEMENT_SUPPORT_MESH_GAP,
     PLACEMENT_SURFACE_FULL,
     BIND,
@@ -918,6 +919,9 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
         "support_mesh_gap": 0, "no_receptacle_authored": 0,
         "placement_method": {"snap_down": 0, "surface_height": 0, "synthetic": 0},
         "unrealized_events": 0, "divergent_events": 0,
+        # Phase 3 put-away removes — deliberate departures, counted apart
+        # from unrealized_events (a remove is a success, not a failure).
+        "removed_events": 0,
         # Part A: per-event trace of which anchor label was chosen upstream
         # vs which live furniture handle it actually resolved to — the
         # "chosen vs resolved" audit trail; and whether a census record
@@ -1036,8 +1040,50 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
                              pose, PLACEMENT_NOT_APPLICABLE)
             continue
 
+        if c.change_type == "remove":
+            # Phase 3 put-away: the object leaves the world (to_semantic is
+            # the symbolic "away", never a real anchor). Deliberately NOT
+            # routed through _finalize_event — its carry-forward semantics
+            # ("no object is ever poseless") are exactly wrong here: from
+            # this event onward the object HAS no pose, and every pose-at-t
+            # consumer must see None (realized_world.pose_at reads the
+            # latest event's effective_pose directly; the render job's
+            # event-time context parks a spawned context object out of view
+            # on a None pose). The live handle is deleted so later
+            # placements in this build don't collide against an object
+            # that's gone.
+            audit["removed_events"] += 1
+            rm_handle = live_handle.pop(label, None)
+            if rm_handle is not None:
+                try:
+                    sim.get_rigid_object_manager().remove_object_by_id(rm_handle.object_id)
+                except Exception as exc:  # habitat-sim raises plain RuntimeError
+                    log.append(f"remove: failed to delete live handle for {label!r}: {exc}")
+            last_effective_pose.pop(label, None)
+            last_effective_anchor.pop(label, None)
+            objects[label].events.append(ObjectEventRecord(
+                t=c.t, anchor=c.to_semantic, realized_pose=None,
+                placement_status=PLACEMENT_REMOVED, placement_method=None,
+                realized=False, effective_pose=None, divergent=False,
+            ))
+            event_mirrors.append(RealizedEventMirror(
+                label=label, change_type=c.change_type, t=c.t,
+                from_semantic=c.from_semantic, to_semantic=c.to_semantic,
+                placement_status=PLACEMENT_REMOVED, failure_detail=None,
+                realized=False, divergent=False,
+            ))
+            continue
+
         anchor = c.to_semantic
-        kind, cats = classify_anchor(anchor)
+        # Tucked slots ("dining_room.table_1.tucked" — see rooms.resolve_slot)
+        # name the same real furniture as their base census anchor; strip the
+        # suffix for classification/position/census resolution, keep the full
+        # string on the recorded event (it IS the slot, chain-consistent with
+        # the manifest). is_tucked tightens the floor-beside ring below so the
+        # chair hugs the furniture face instead of standing clear of it.
+        is_tucked = anchor.endswith(".tucked")
+        anchor_base = anchor[: -len(".tucked")] if is_tucked else anchor
+        kind, cats = classify_anchor(anchor_base)
         audit[kind] += 1
 
         if kind == "unbacked":
@@ -1047,9 +1093,9 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
             continue
 
         from dynamic_home_eqa.rooms import census_label_parts
-        is_census_anchor = census_label_parts(normalize_stateful_anchor(anchor)) is not None
+        is_census_anchor = census_label_parts(normalize_stateful_anchor(anchor_base)) is not None
 
-        target_pos = resolve_anchor_position(world, anchor, anchor_census)
+        target_pos = resolve_anchor_position(world, anchor_base, anchor_census)
         if target_pos is None:
             audit["anchor_unbacked"] += 1
             _finalize_event(label, anchor, c.change_type, c.t, c.from_semantic, None, PLACEMENT_ANCHOR_UNBACKED,
@@ -1057,7 +1103,7 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
                                             f"({'census miss' if is_census_anchor else 'navmesh-pruned?'})")
             continue
 
-        if kind == "instance" and not is_census_anchor and normalize_stateful_anchor(anchor) not in world._anchor_positions:
+        if kind == "instance" and not is_census_anchor and normalize_stateful_anchor(anchor_base) not in world._anchor_positions:
             # resolve_anchor_position fell back to a ROOM-CENTROID point
             # (world._ensure_sim() pruned this anchor's own real instance
             # position — it sits on a navmesh island below
@@ -1104,7 +1150,7 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
         census_record = None
         if is_census_anchor:
             from dynamic_home_eqa.env.anchor_census import resolve_anchor
-            census_record = resolve_anchor(anchor_census, normalize_stateful_anchor(anchor))
+            census_record = resolve_anchor(anchor_census, normalize_stateful_anchor(anchor_base))
 
         # Floor-Bound Realization round: three ways an instance-anchor event
         # is realized as a floor placement BESIDE the instance rather than
@@ -1135,10 +1181,10 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
             # the floor just past its edge, which is farther from the
             # counter's pivot than the bare open-floor tolerance allows
             # (see compliance_place_region's beside_extent_m comment).
-            beside_furniture = furniture_handle_cache.get(anchor, "MISS")
+            beside_furniture = furniture_handle_cache.get(anchor_base, "MISS")
             if beside_furniture == "MISS":
                 beside_furniture = find_live_object_at_xz(sim, target_pos)
-                furniture_handle_cache[anchor] = beside_furniture
+                furniture_handle_cache[anchor_base] = beside_furniture
             beside_extent = 0.0
             beside_min_offset = 0.0
             if beside_furniture is not None:
@@ -1148,6 +1194,14 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
                 # the nearest real "beside" position (see
                 # compliance_place_region's beside_min_offset_m comment).
                 beside_min_offset = min(fmax_x - fmin_x, fmax_z - fmin_z) / 2.0
+            if is_tucked:
+                # Tucked: hug the furniture face instead of standing clear of
+                # it — let candidates start at ~60% of the short-axis
+                # half-extent (seat edging under the tabletop). snap_down's
+                # collision check walks the ring outward until feasible, so
+                # this realizes "as tucked as physically possible", degrading
+                # to a beside placement rather than failing.
+                beside_min_offset *= 0.6
             final_pos, status = compliance_place_region(
                 sim, world, handle, label, f"{label}:{c.t}", target_pos,
                 beside_extent_m=beside_extent, beside_min_offset_m=beside_min_offset,
@@ -1159,7 +1213,7 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
                 "census_backed": census_record is not None,
                 "resolved_handle": getattr(beside_furniture, "handle", None),
                 "note": f"floor beside instance (relation={relation}, category={category}, "
-                        f"beside_extent={beside_extent:.2f}m)",
+                        f"beside_extent={beside_extent:.2f}m, tucked={is_tucked})",
             })
         elif kind == "instance":
             # Real receptacle-based placement (Receptacle Infrastructure
@@ -1171,10 +1225,10 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
             # anchor string — many events/labels can share the same
             # anchor (a busy dining table), and the furniture itself
             # never moves.
-            furniture_handle = furniture_handle_cache.get(anchor, "MISS")
+            furniture_handle = furniture_handle_cache.get(anchor_base, "MISS")
             if furniture_handle == "MISS":
                 furniture_handle = find_live_object_at_xz(sim, target_pos)
-                furniture_handle_cache[anchor] = furniture_handle
+                furniture_handle_cache[anchor_base] = furniture_handle
             audit["anchor_resolutions"].append({
                 "t": c.t, "label": label, "anchor_chosen": anchor,
                 "census_backed": is_census_anchor,
@@ -1264,15 +1318,22 @@ def main() -> None:
     # pipeline instructions, which rely on this default matching
     # gen_dataset.py's own no-arg default folder).
     ap.add_argument("--folders", nargs="+", default=[_DEFAULT_TEST_FOLDER])
+    ap.add_argument("--gen-dir", default=str(_GEN_OUT),
+                    help="directory holding the generation folders (default: generation_out/)")
     args = ap.parse_args()
+
+    import pathlib as _pl
+    gen_dir = _pl.Path(args.gen_dir)
+    if not gen_dir.is_absolute():
+        gen_dir = _DYNAMIC_EQA / gen_dir
 
     from dynamic_home_eqa.embodied.world import EmbodiedWorld
     from dynamic_home_eqa.scripts.realism_render_job import _make_render_sim
 
     total_audit = {}
     for folder in args.folders:
-        gen_result = json.loads((_GEN_OUT / folder / "generation_result.json").read_text())
-        manifest = json.loads((_GEN_OUT / folder / "manifest.json").read_text())
+        gen_result = json.loads((gen_dir / folder / "generation_result.json").read_text())
+        manifest = json.loads((gen_dir / folder / "manifest.json").read_text())
         scene_id = gen_result["scene_id"]
 
         for category in sorted({c["object_category"] for c in manifest["changes"]}):
@@ -1282,7 +1343,13 @@ def main() -> None:
         sim = _make_render_sim(scene_id)  # enable_physics + renderer off would be enough, but reuses a known-good factory
         world = EmbodiedWorld(scene_id, gen_result, manifest)
         try:
-            artifact, audit = build_realized_day(folder, scene_id, sim, world)
+            # manifest passed explicitly: build_realized_day's None-default
+            # re-reads from the hardcoded generation_out/ — silently building
+            # from the WRONG pool whenever --gen-dir points elsewhere (bit
+            # exactly that way on the labelset renders: artifact events came
+            # from the frozen pool while the render job pooled the labelset
+            # manifests, so every t-lookup missed).
+            artifact, audit = build_realized_day(folder, scene_id, sim, world, manifest=manifest)
         finally:
             world.close()
             sim.close()
