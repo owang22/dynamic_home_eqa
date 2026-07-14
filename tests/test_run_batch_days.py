@@ -72,9 +72,22 @@ def _fake_generate(self, system, user, schema, seed=None, temperature=None):
     return json.dumps({"conflicts": []})
 
 
+
+
+def _fake_generate_thinking(self, system, user, seed=None, temperature=0.6, max_tokens=8192):
+    """Day-plan thinking path: scenario per member parsed from the prompt."""
+    import json as _json
+    import re as _re
+    names = _re.findall(r"^- ([^:]+): age_band=", user, flags=_re.M)
+    return _json.dumps({
+        "household_context": "fake shared day",
+        "occupants": [{"name": n, "scenario": f"fake scenario for {n}"} for n in names],
+    }), "fake think"
+
 @pytest.fixture(autouse=True)
 def _patch_llm_client(monkeypatch):
     monkeypatch.setattr(llm_client_mod._LLMClient, "generate", _fake_generate)
+    monkeypatch.setattr(llm_client_mod._LLMClient, "generate_thinking", _fake_generate_thinking)
 
 
 def test_single_day_default_keeps_old_folder_naming(tmp_path):

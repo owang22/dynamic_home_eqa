@@ -224,3 +224,11 @@ def test_occupants_in_room_matches_by_exact_canonical_room():
 def test_occupants_in_room_none_room_returns_empty():
     traces = [{"occupant_name": "Alex", "activities": _ACTIVITIES}]
     assert occupants_in_room(traces, None, 8.0) == []
+
+
+def test_resolve_slot_tucked_under_census_anchor_gets_tucked_suffix():
+    from dynamic_home_eqa.rooms import resolve_slot, slot_room
+    assert resolve_slot("dining_room.table_1", "tucked_under") == "dining_room.table_1.tucked"
+    assert resolve_slot("dining_room.table_1", "next_to") == "dining_room.table_1"
+    # the tucked slot still resolves to its room for attendance checks
+    assert slot_room("dining_room.table_1.tucked") == "dining_room"

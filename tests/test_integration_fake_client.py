@@ -41,8 +41,9 @@ def _fake_generate(self, system, user, schema, seed=None, temperature=None):
                 "object_category":     rng.choice(bp["object_category"]["enum"]),
                 "target_relationship": rng.choice(bp["target_relationship"]["enum"]),
                 "target_anchor":       rng.choice(bp["target_anchor"]["enum"]),
-                "reason":              "fake reason",
             }
+            if "reason" in bp:
+                item["reason"] = "fake reason"
             if "assumed_from" in bp:
                 item["assumed_from"] = rng.choice(
                     ["kitchen counter", "unknown", "the table", "living room shelf", ""]
@@ -89,9 +90,23 @@ def _fake_generate(self, system, user, schema, seed=None, temperature=None):
     return json.dumps({"conflicts": []})
 
 
+def _fake_generate_thinking(self, system, user, seed=None, temperature=0.6, max_tokens=8192):
+    """Fake for the thinking path (day plan): parse member names from the
+    user message ("- Name: age_band=...") and return a scenario per member,
+    exercising generate_day_plan's validate/fallback contract."""
+    import re
+    names = re.findall(r"^- ([^:]+): age_band=", user, flags=re.M)
+    payload = json.dumps({
+        "household_context": "fake shared day",
+        "occupants": [{"name": n, "scenario": f"fake scenario for {n}"} for n in names],
+    })
+    return payload, "fake think"
+
+
 @pytest.fixture(autouse=True)
 def _patch_llm_client(monkeypatch):
     monkeypatch.setattr(llm_client_mod._LLMClient, "generate", _fake_generate)
+    monkeypatch.setattr(llm_client_mod._LLMClient, "generate_thinking", _fake_generate_thinking)
 
 
 @pytest.mark.parametrize("scene_id", SCENES)
@@ -109,3 +124,30 @@ def test_generated_manifest_satisfies_hard_invariants(scene_id, profile, variant
         f"{scene_id}/{profile}/v{variant}: {report.summary()}\n" +
         "\n".join(str(f) for f in report.findings)
     )
+
+
+@pytest.mark.parametrize("scene_id", SCENES)
+@pytest.mark.parametrize("variant", [0, 1, 2])
+def test_phase3_sequential_state_manifest_is_trace_valid(scene_id, variant):
+    """Phase 3 path: enrich_context=True runs the chronological per-window
+    loop with running-state threading and offers "put_away" despawns. The
+    fake client randomly emits put_away for whatever anchor enum it sees, so
+    across scenes/seeds this exercises the despawn split, the manifest
+    despawn/"away" change, and re-appearance chaining. The hard trace
+    invariants must still hold with despawns in the change log."""
+    result = generate_for_scene(
+        scene_id=scene_id, household_type="work_from_home_adult", day=variant, variant=variant,
+        cache_dir=None, force=True, use_semantic_grounding=True, enrich_context=True,
+    )
+    manifest = build_manifest(scene_id, "work_from_home_adult", variant, result, seed=variant + 1)
+    report = validate(manifest["changes"], result["traces"])
+    assert report.ok, (
+        f"{scene_id}/v{variant}: {report.summary()}\n" +
+        "\n".join(str(f) for f in report.findings)
+    )
+    # Any despawn/put-away that made it into the change log is emitted as a
+    # "remove" (env/replay.py's object-leaves contract), must target "away",
+    # and chain from a real prior location (never None / from-nowhere).
+    for c in manifest["changes"]:
+        if c["change_type"] == "remove" and c["to_semantic"] == "away":
+            assert c["from_semantic"] not in (None, "away")
