@@ -161,9 +161,20 @@ def build_index(folder_dir: pathlib.Path, run_id: str, media_dir: pathlib.Path) 
                 {"t": t, "t_clock": hour_to_clock(t),
                  "from": c.get("from_semantic"), "to": c.get("to_semantic")})
 
+    try:
+        media_ref = str(media_dir.resolve().relative_to(REPO_ROOT))
+    except ValueError:
+        media_ref = str(media_dir.resolve())  # outside the repo: keep absolute
+
     return {
         "schema_version": SCHEMA_VERSION,
         "run_id": run_id,
+        # Where this run's render PNGs/JSONs live (repo-relative when under
+        # REPO_ROOT). The webapp backend serves /media/{run_id}/... from
+        # here instead of assuming one global media dir — runs that share
+        # folder names (same scene+profile, different model) keep their
+        # media separated by construction.
+        "media_dir": media_ref,
         "condition": man.get("model", ""),
         "scene_id": gen["scene_id"],
         "profile": gen["profile"],
@@ -211,6 +222,8 @@ def main() -> None:
     out_dir = pathlib.Path(args.out) / run_id
     out_dir.mkdir(parents=True, exist_ok=True)
     media_dir = pathlib.Path(args.media_dir)
+    if not media_dir.is_absolute():
+        media_dir = REPO_ROOT / media_dir  # anchor to the repo, not the caller's CWD
 
     for d in folders:
         idx = build_index(d, run_id, media_dir)

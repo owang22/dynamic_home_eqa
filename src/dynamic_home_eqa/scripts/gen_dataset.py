@@ -34,6 +34,7 @@ from __future__ import annotations
 import argparse
 import glob
 import json
+import os
 import pathlib
 import sys
 from typing import Optional
@@ -142,7 +143,16 @@ def main() -> None:
                     help="Print detailed grounding survival report at end")
     ap.add_argument("--gen-questions", action="store_true",
                     help="Run gen_questions.py on each manifest after writing")
+    ap.add_argument("--endpoint", default=None,
+                    help="OpenAI-compatible server URL (e.g. http://127.0.0.1:8300) to "
+                         "use instead of in-process vLLM — sets GENERATION_ENDPOINT for "
+                         "this run (see generation/llm_client.py). Serve the model with "
+                         "scripts/serve_llm.py from an env with a current vllm; this "
+                         "env then only needs `requests`, no vllm/GPU claim.")
     args = ap.parse_args()
+
+    if args.endpoint:
+        os.environ["GENERATION_ENDPOINT"] = args.endpoint
 
     scenes = args.scenes or _ALL_SCENES[:args.n]
     if not scenes:
@@ -164,6 +174,7 @@ def main() -> None:
     print(f"Variants     : {args.n_variants}")
     print(f"Days         : {args.n_days}")
     print(f"Model        : {args.model}")
+    print(f"Backend      : {os.environ.get('GENERATION_ENDPOINT') or 'in-process vLLM'}")
     print(f"Output       : {out_dir}")
     print(f"Cache        : {cache_dir if cache_dir else 'disabled (--no-cache)'}")
     print(f"Force regen  : {args.force}")

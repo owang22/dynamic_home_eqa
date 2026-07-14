@@ -1,0 +1,172 @@
+<title>Dynamic Home EQA — Eval Browser</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --ink: #222; --muted: #667; --line: #d8dce2; --panel: #f5f6f8;
+    --accent: #2563eb; --warn-bg: #fff3cd; --warn-ink: #7a5c00;
+  }
+  body { font-family: -apple-system, Helvetica, Arial, sans-serif; max-width: 1060px;
+         margin: 18px auto; padding: 0 16px; color: var(--ink); }
+  h2 { margin: 6px 0 12px; }
+  button { font-size: 14px; padding: 6px 12px; cursor: pointer; }
+  select, input[type=number], input[type=text] { font-size: 14px; padding: 4px 6px; }
+
+  /* ── header ─────────────────────────────────────────────── */
+  #header { display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+            border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+  #header .title { font-weight: 700; font-size: 17px; margin-right: 8px; }
+  .tabs { display: inline-flex; gap: 4px; }
+  .tabs button { border: 1px solid var(--line); background: white; border-radius: 6px; }
+  .tabs button.active { background: var(--accent); border-color: var(--accent); color: white; }
+  #pickers { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  #debug-label { margin-left: auto; font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .badge { display: inline-block; font-size: 12px; border-radius: 10px; padding: 1px 8px;
+           background: var(--panel); border: 1px solid var(--line); color: var(--muted); }
+
+  /* ── debug filter bar ───────────────────────────────────── */
+  #filter-bar { display: none; gap: 8px; align-items: center; flex-wrap: wrap;
+                background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+                padding: 8px 10px; margin: 10px 0; font-size: 13px; }
+  #filter-bar label { color: var(--muted); }
+  #filter-bar input[type=number] { width: 62px; }
+
+  /* ── start screen ───────────────────────────────────────── */
+  #start-screen { text-align: center; margin-top: 90px; }
+  #start-screen input { font-size: 16px; padding: 8px; width: 240px; }
+
+  /* ── event card ─────────────────────────────────────────── */
+  #card-view { display: none; }
+  .card-nav { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; }
+  .card-nav .pos { font-size: 13px; color: var(--muted); }
+  .event-card { border: 1px solid var(--line); border-radius: 10px; padding: 14px 18px; }
+  .ev-head { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+  .ev-time { font-size: 22px; font-weight: 700; }
+  .ev-activity { font-size: 15px; color: var(--muted); }
+  .occupant-chip { background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+                   padding: 4px 10px; font-size: 13px; margin: 8px 0; display: inline-block; }
+  .move-line { font-size: 16px; margin: 10px 0 4px; }
+  .move-line .obj { font-weight: 700; }
+  .move-line .arrow { color: var(--accent); font-weight: 700; padding: 0 4px; }
+  .slot { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 14px;
+          background: var(--panel); border-radius: 5px; padding: 1px 6px; }
+  .reason { font-style: italic; color: #445; margin: 8px 0; }
+  .render-wrap { position: relative; margin-top: 10px; }
+  .render-wrap img { max-width: 100%; border: 1px solid var(--line); border-radius: 6px; display: block; }
+  .mask-overlay { position: absolute; left: 0; right: 0; top: 0; padding: 6px 10px;
+                  background: var(--warn-bg); color: var(--warn-ink); font-size: 13px;
+                  border-radius: 6px 6px 0 0; opacity: 0.95; }
+  .no-render { background: var(--panel); border: 1px dashed var(--line); border-radius: 6px;
+               color: var(--muted); text-align: center; padding: 40px 0; margin-top: 10px; font-size: 14px; }
+  .debug-box { display: none; background: #222; color: #b6ffb6; font-family: ui-monospace, Menlo, monospace;
+               font-size: 12px; padding: 10px 12px; margin-top: 12px; white-space: pre-wrap; border-radius: 6px; }
+
+  /* ── timeline ───────────────────────────────────────────── */
+  #timeline-view { display: none; }
+  .traj-strip { border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; margin: 10px 0; }
+  .traj-strip .lbl { font-size: 12px; color: var(--muted); margin-right: 6px; }
+  .obj-chip { display: inline-block; margin: 2px 4px 2px 0; padding: 2px 9px; font-size: 13px;
+              border: 1px solid var(--line); border-radius: 12px; background: white; cursor: pointer; }
+  .obj-chip:hover, .obj-chip.active { background: var(--accent); color: white; border-color: var(--accent); }
+  #traj-path { margin-top: 8px; font-size: 13px; display: none; }
+  #traj-path .hop { display: inline-block; margin: 2px 0; }
+  #traj-path .hop-t { color: var(--muted); font-size: 11px; display: block; }
+  #traj-path .hop-arrow { color: var(--accent); padding: 0 6px; font-weight: 700; }
+  .tracks { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 10px 0; }
+  .track-row { display: flex; align-items: center; gap: 8px; margin: 4px 0; }
+  .track-name { width: 90px; font-size: 12px; text-align: right; color: var(--muted); flex-shrink: 0; }
+  .track-bar { position: relative; flex: 1; height: 18px; background: var(--panel); border-radius: 4px; }
+  .track-span { position: absolute; top: 1px; bottom: 1px; border-radius: 3px; opacity: 0.85; }
+  .track-axis { display: flex; margin-left: 98px; font-size: 10px; color: var(--muted);
+                justify-content: space-between; }
+  .feed { margin-top: 12px; }
+  .feed-item { display: flex; gap: 12px; padding: 7px 8px; border-left: 3px solid var(--line);
+               margin: 3px 0; font-size: 14px; align-items: flex-start; }
+  .feed-item .ft { width: 92px; flex-shrink: 0; color: var(--muted);
+                   font-family: ui-monospace, Menlo, monospace; font-size: 12px; padding-top: 2px; }
+  .feed-item.ev { background: #fbfcff; border-left-color: var(--accent); }
+  .feed-item .thumb { width: 130px; flex-shrink: 0; cursor: pointer; }
+  .feed-item .thumb img { width: 100%; border: 1px solid var(--line); border-radius: 4px; }
+  .feed-item .obj-link { color: var(--accent); cursor: pointer; text-decoration: underline dotted; }
+  .feed-item .score { font-size: 12px; color: var(--muted); }
+
+  /* ── aggregate ──────────────────────────────────────────── */
+  #agg-view { display: none; }
+  .agg-table { border-collapse: collapse; font-size: 13px; margin: 10px 0 18px; }
+  .agg-table th, .agg-table td { border: 1px solid var(--line); padding: 4px 10px; text-align: center; }
+  .agg-table th { background: var(--panel); font-weight: 600; }
+  .agg-table td.rowhead { text-align: right; background: var(--panel); font-weight: 600; }
+  .agg-table td.cell { cursor: pointer; min-width: 44px; }
+  .agg-table td.cell:hover { outline: 2px solid var(--accent); }
+  #agg-events { margin-top: 6px; }
+
+  .hint { color: var(--muted); font-size: 13px; margin: 8px 0; }
+</style>
+
+<div id="start-screen">
+  <h2>Dynamic Home EQA — Eval Browser</h2>
+  <p>Enter your first name to begin. No other identifying information is collected.</p>
+  <input id="name-input" placeholder="First name" />
+  <div style="margin-top:10px"><button onclick="startSession()">Start</button></div>
+</div>
+
+<div id="main" style="display:none">
+  <div id="header">
+    <span class="title">Eval Browser</span>
+    <span class="tabs">
+      <button id="tab-cards" onclick="setView('cards')">Events</button>
+      <button id="tab-timeline" onclick="setView('timeline')">Day timeline</button>
+      <button id="tab-agg" onclick="setView('agg')" style="display:none">Aggregate</button>
+    </span>
+    <span id="pickers">
+      <select id="run-select" onchange="onRunChange()"></select>
+      <select id="folder-select" onchange="onFolderChange()"></select>
+    </span>
+    <span id="debug-label" style="display:none">
+      <span class="badge" id="condition-badge"></span>
+      <label><input type="checkbox" id="debug-toggle" onchange="renderAll()" /> debug</label>
+    </span>
+  </div>
+
+  <div id="filter-bar">
+    <b>Filters</b>
+    <label>occupant <select id="f-occupant"><option value="">all</option></select></label>
+    <label>category <select id="f-category"><option value="">all</option></select></label>
+    <label>anchor <select id="f-anchor"><option value="">all</option></select></label>
+    <label>judge ≥ <input type="number" id="f-jmin" step="0.05" min="0" max="1" /></label>
+    <label>judge ≤ <input type="number" id="f-jmax" step="0.05" min="0" max="1" /></label>
+    <label><input type="checkbox" id="f-rendered" /> rendered only</label>
+    <button onclick="clearFilters()">clear</button>
+    <span id="filter-count" class="badge"></span>
+  </div>
+
+  <div id="card-view">
+    <div class="card-nav">
+      <button onclick="prevCard()">&larr; Previous</button>
+      <span class="pos" id="card-pos"></span>
+      <button onclick="nextCard()">Next &rarr;</button>
+    </div>
+    <div id="event-card"></div>
+    <p class="hint">Keyboard: &larr; / &rarr; to navigate events.</p>
+  </div>
+
+  <div id="timeline-view">
+    <div class="traj-strip">
+      <span class="lbl">Objects (click for full-day trajectory):</span>
+      <span id="obj-chips"></span>
+      <div id="traj-path"></div>
+    </div>
+    <div class="tracks" id="tracks"></div>
+    <div class="feed" id="feed"></div>
+  </div>
+
+  <div id="agg-view">
+    <p class="hint">Dynamics cards over every household of the selected run — click a cell to list its events.</p>
+    <h3 style="margin-bottom:2px">Moves by category × time of day</h3>
+    <div id="agg-tod"></div>
+    <h3 style="margin-bottom:2px">Moves by category × destination room</h3>
+    <div id="agg-room"></div>
+    <div id="agg-events"></div>
+  </div>
+</div>
+
+<script src="/app.js"></script>

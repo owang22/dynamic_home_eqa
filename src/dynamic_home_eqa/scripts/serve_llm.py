@@ -30,22 +30,43 @@ _HOST = "127.0.0.1"  # loopback only — see module docstring
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--model", required=True, help="vLLM model string, e.g. casperhansen/llama-3.3-70b-instruct-awq")
+    ap.add_argument("--model", required=True, help="vLLM model string, e.g. Qwen/Qwen3-235B-A22B-GPTQ-Int4")
     ap.add_argument("--port", type=int, default=8123)
+    ap.add_argument("--gpus", default=None,
+                    help="Comma-separated GPU indices to pin the server to, e.g. '2,3' "
+                         "(sets CUDA_VISIBLE_DEVICES). Default: whatever the shell already exposes.")
+    ap.add_argument("--tensor-parallel-size", "--tp", type=int, default=None, dest="tp",
+                    help="Tensor parallel degree. Default: the number of GPUs in --gpus "
+                         "when given, else vLLM's own default (1).")
+    ap.add_argument("--max-model-len", type=int, default=None,
+                    help="Context length cap; lower it to trade context for KV-cache "
+                         "headroom on tightly packed multi-GPU quantized loads.")
+    ap.add_argument("--gpu-memory-utilization", type=float, default=None)
     ap.add_argument("--trust-remote-code", action="store_true")
     args = ap.parse_args()
 
     env = dict(os.environ)
     env.setdefault("HF_HOME", MODEL_CACHE_DIR)
+    if args.gpus:
+        env["CUDA_VISIBLE_DEVICES"] = args.gpus
+        if args.tp is None:
+            args.tp = len([g for g in args.gpus.split(",") if g.strip()])
 
     cmd = [
         sys.executable, "-m", "vllm.entrypoints.openai.api_server",
         "--model", args.model, "--host", _HOST, "--port", str(args.port),
     ]
+    if args.tp:
+        cmd += ["--tensor-parallel-size", str(args.tp)]
+    if args.max_model_len:
+        cmd += ["--max-model-len", str(args.max_model_len)]
+    if args.gpu_memory_utilization:
+        cmd += ["--gpu-memory-utilization", str(args.gpu_memory_utilization)]
     if args.trust_remote_code:
         cmd.append("--trust-remote-code")
 
-    print(f"Launching {args.model} on http://{_HOST}:{args.port} (loopback only)")
+    print(f"Launching {args.model} on http://{_HOST}:{args.port} (loopback only)"
+          + (f" — GPUs {args.gpus}, TP={args.tp}" if args.gpus else ""))
     os.execvpe(cmd[0], cmd, env)
 
 

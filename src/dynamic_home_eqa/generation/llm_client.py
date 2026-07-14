@@ -1,6 +1,20 @@
 """
-Shared lazy-loaded vLLM client used by every generation stage (persona,
+Shared lazy-loaded LLM client used by every generation stage (persona,
 activity trace, displacement, realism judge, conflict verification).
+
+Two backends, selected by the GENERATION_ENDPOINT env var:
+
+  unset (default) — in-process vLLM (_LLMClient). The original path; loads
+                    the model into this process's GPUs. Tests monkeypatch
+                    _LLMClient.generate/generate_thinking, so this stays the
+                    default.
+  set             — OpenAI-compatible HTTP server (OpenAIHTTPClient), e.g.
+                    "http://127.0.0.1:8300". The model is served out of
+                    process (scripts/serve_llm.py) and this env only needs
+                    `requests` — no vllm/torch import, no GPU claim. Guided
+                    JSON goes through the server's response_format
+                    json_schema structured-outputs path; determinism via the
+                    request `seed` field, same seeds as in-process.
 
 Split out from stages.py so the persona/ package doesn't have to import from
 stages.py (which owns the non-persona stages) just to get the client — both
@@ -12,9 +26,11 @@ import hashlib
 import json
 import logging
 import os
+import time
 from typing import Any, Callable, Optional
 
 from .cache import ResponseCache
+from .http_judge import HTTPThinkingClient
 
 # Qwen/Qwen3-32B lives in the standard HF cache (whatever HF_HOME resolves
 # to) — no special-cased model directory.
@@ -147,13 +163,97 @@ class _LLMClient:
         return payload.strip(), think
 
 
-_client: Optional[_LLMClient] = None
+class OpenAIHTTPClient(HTTPThinkingClient):
+    """OpenAI-compatible chat-completions client for an out-of-process
+    served model (vLLM's api_server — see scripts/serve_llm.py).
+
+    Duck-types _LLMClient: generate() (guided JSON) and generate_thinking()
+    (inherited from HTTPThinkingClient, the judge-proven implementation),
+    so every stage can use it wherever it would use the in-process client.
+
+    Guided decoding rides the server's structured-outputs path via the
+    standard response_format={"type": "json_schema", ...} field — the HTTP
+    equivalent of SamplingParams(guided_decoding=GuidedDecodingParams(json=
+    schema)), and unlike that 0.10.2-era kwarg it survives newer vLLMs
+    (the whole point of serving out of process — see http_judge.py).
+
+    enable_thinking=False is passed explicitly on the guided path: in
+    process, the JSON grammar suppressed a hybrid Qwen3 model's think block
+    as a side effect (see generate_thinking's docstring); over HTTP the
+    template kwarg is the documented way to get the same
+    straight-to-payload behavior, and templates that don't know the kwarg
+    (Llama etc.) simply ignore it.
+    """
+
+    # Transient-failure retries live HERE, not in generate_json's loop:
+    # that loop treats a failure as "resample with seed+attempt", which is
+    # the wrong medicine for a connection blip (and generate_json doesn't
+    # catch requests exceptions anyway — a dead server should abort the
+    # scene loudly, not burn MAX_RETRIES reseeding into the void).
+    _HTTP_RETRIES = 3
+
+    def _post_chat(self, body: dict) -> dict:
+        import requests
+        last_err: Exception = RuntimeError("unreachable")
+        for attempt in range(self._HTTP_RETRIES):
+            try:
+                resp = requests.post(f"{self.base}/v1/chat/completions",
+                                     json=body, timeout=self.timeout)
+                resp.raise_for_status()
+                return resp.json()
+            except (requests.ConnectionError, requests.Timeout, requests.HTTPError) as e:
+                status = getattr(getattr(e, "response", None), "status_code", None)
+                if status is not None and status < 500:
+                    raise  # 4xx is a real request bug, never transient
+                last_err = e
+                _logger.warning("HTTP LLM call failed (attempt %d/%d): %s",
+                                attempt + 1, self._HTTP_RETRIES, e)
+                time.sleep(2.0 * (attempt + 1))
+        raise last_err
+
+    def generate(self, system: str, user: str, schema: dict, seed: Optional[int] = None,
+                 temperature: float = DEFAULT_TEMPERATURE) -> str:
+        body = {
+            "model": self.model,
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user",   "content": user},
+            ],
+            "temperature": temperature,
+            "max_tokens": 2048,  # same budget as the in-process path (see _LLMClient.generate)
+            "response_format": {
+                "type": "json_schema",
+                "json_schema": {"name": "generation", "schema": schema},
+            },
+            "chat_template_kwargs": {"enable_thinking": False},
+        }
+        if seed is not None:
+            # make_seed returns an unsigned 64-bit int; the OpenAI API
+            # validates seed as signed int64 — mask to 63 bits (same as
+            # HTTPThinkingClient.generate_thinking).
+            body["seed"] = seed & 0x7FFFFFFFFFFFFFFF
+        data = self._post_chat(body)
+        return (data["choices"][0]["message"].get("content") or "").strip()
 
 
-def _get_client(model: str) -> _LLMClient:
+_client = None  # _LLMClient | OpenAIHTTPClient — whichever _get_client last built
+
+
+def _get_client(model: str):
+    """Shared client singleton. GENERATION_ENDPOINT set -> HTTP client
+    against that OpenAI-compatible server; unset -> in-process vLLM.
+    Re-read per call (not import time) so tests and callers can flip the
+    env var without re-importing the module."""
     global _client
-    if _client is None or _client.model != model:
-        _client = _LLMClient(model)
+    endpoint = os.environ.get("GENERATION_ENDPOINT", "").strip()
+    if endpoint:
+        if (not isinstance(_client, OpenAIHTTPClient)
+                or _client.model != model
+                or _client.base != endpoint.rstrip("/")):
+            _client = OpenAIHTTPClient(endpoint, model)
+    else:
+        if not isinstance(_client, _LLMClient) or _client.model != model:
+            _client = _LLMClient(model)
     return _client
 
 

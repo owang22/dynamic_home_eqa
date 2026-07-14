@@ -6,6 +6,32 @@ displacement → realism judge) plus a deterministic grounding step and a
 stochastic selection step. Run via `scripts/gen_dataset.py`; output lands
 under `generation_out/<scene_id>_<household_type>[_v<variant>]/`.
 
+## LLM backend: in-process vs. served endpoint
+
+`llm_client._get_client` picks the backend from the `GENERATION_ENDPOINT`
+env var (see `llm_client.py`'s module docstring):
+
+- unset — in-process vLLM, the original path (model loads into this
+  process's GPUs; requires vllm installed in the calling env).
+- set (e.g. `http://127.0.0.1:8300`) — OpenAI-compatible HTTP server;
+  guided JSON via `response_format: json_schema`, same seeds, and the
+  calling env only needs `requests`. Serve with e.g.:
+
+  ```bash
+  # from an env with a current vllm (e.g. vllm-cu128)
+  python -m dynamic_home_eqa.scripts.serve_llm \
+      --model Qwen/Qwen3-235B-A22B-GPTQ-Int4 --gpus 2,3 --port 8300
+  # then, in any env:
+  GENERATION_ENDPOINT=http://127.0.0.1:8300 \
+      python -m dynamic_home_eqa.scripts.gen_dataset \
+      --model Qwen/Qwen3-235B-A22B-GPTQ-Int4 \
+      --cache-dir /tmp/dynamic-home-eqa-gen-cache-qwen3-235b-a22b-gptq-int4
+  ```
+
+  Remember the per-model cache-dir rule (`llm_client.model_slug`): the
+  response cache is keyed by seed alone, so every non-default model must
+  get its own cache dir.
+
 ## Object tiers
 
 Every object belongs to one of three tiers (full rationale and vocabulary in

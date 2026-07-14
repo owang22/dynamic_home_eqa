@@ -49,6 +49,7 @@ from __future__ import annotations
 import argparse
 import json
 import math
+import os
 import pathlib
 import random
 from collections import defaultdict
@@ -520,6 +521,17 @@ def _make_render_sim(scene_id: str):
     backend_cfg.scene_id = scene_id
     backend_cfg.enable_physics = True
     backend_cfg.create_renderer = True
+    # gpu_device_id is an EGL device index in headless builds, and EGL
+    # enumeration order is NOT CUDA order. On this machine the default
+    # (device 0) maps to a GPU whose VRAM is pinned near-full by the vLLM
+    # server, and a starved GL context here doesn't error — it silently
+    # renders BLACK frames (mask_empty on every panel; measured directly,
+    # devices 0/1 black, 2/3 fine) and eventually SIGABRTs. No API exposes
+    # the EGL->CUDA mapping to pick automatically, so it's an env var:
+    #   DYNAMIC_EQA_RENDER_GPU=<egl-device-index>
+    _gpu = os.environ.get("DYNAMIC_EQA_RENDER_GPU")
+    if _gpu is not None:
+        backend_cfg.gpu_device_id = int(_gpu)
     assert_enable_physics(backend_cfg)
 
     rgb_spec = habitat_sim.CameraSensorSpec()
@@ -1382,13 +1394,30 @@ def main() -> None:
     ap.add_argument("--folders", nargs="*", default=None, help="restrict to these folders; default: full validated pool")
     ap.add_argument("--gen-dir", default=None,
                     help="directory holding the generation folders (default: generation_out/)")
+    ap.add_argument("--realized-dir", default=None,
+                    help="directory holding {folder}.realized_day.json artifacts "
+                         "(default: build_realized_day's own data/realized_days/). "
+                         "Pass the same run-scoped dir given to build_realized_day "
+                         "--out-dir when rendering a non-default --gen-dir run.")
+    ap.add_argument("--media-dir", default=str(_MEDIA_DIR),
+                    help="where the PNG/JSON media and render_manifest.json land "
+                         "(default: results/reports/realism_eval_media/). Item ids "
+                         "are keyed by folder name alone, so runs that share folder "
+                         "names need distinct --media-dirs — same collision rule as "
+                         "build_realized_day --out-dir.")
     args = ap.parse_args()
 
     from dynamic_home_eqa.embodied.realized_world import load_realized_day
     from dynamic_home_eqa.scripts.build_realized_day import assert_category_has_asset_coverage
-    from dynamic_home_eqa.scripts.build_realized_day import _OUT_DIR as _REALIZED_DAY_DIR
+    from dynamic_home_eqa.scripts.build_realized_day import _OUT_DIR as _DEFAULT_REALIZED_DAY_DIR
 
     import pathlib as _pl
+    _REALIZED_DAY_DIR = _pl.Path(args.realized_dir) if args.realized_dir else _DEFAULT_REALIZED_DAY_DIR
+    if not _REALIZED_DAY_DIR.is_absolute():
+        _REALIZED_DAY_DIR = _DYNAMIC_EQA / _REALIZED_DAY_DIR
+    media_dir = _pl.Path(args.media_dir)
+    if not media_dir.is_absolute():
+        media_dir = _DYNAMIC_EQA / media_dir
     out_dir = _pl.Path(args.gen_dir) if args.gen_dir else _DYNAMIC_EQA / "generation_out"
     if not out_dir.is_absolute():
         out_dir = _DYNAMIC_EQA / out_dir
@@ -1444,7 +1473,7 @@ def main() -> None:
         scene_id = gen_results[item.folder]["scene_id"]
         by_scene[scene_id].append(item)
 
-    _MEDIA_DIR.mkdir(parents=True, exist_ok=True)
+    media_dir.mkdir(parents=True, exist_ok=True)
     manifest_index = []
     plausibility_cache: dict[str, dict] = {}
 
@@ -1462,7 +1491,7 @@ def main() -> None:
                 world = EmbodiedWorld(scene_id, gen_result, manifest)
                 try:
                     item_id = f"{item.folder}_{item.event['label']}_t{item.event['t']:.2f}_{item.change_type}"
-                    png_path = _MEDIA_DIR / f"{item_id}.png"
+                    png_path = media_dir / f"{item_id}.png"
                     geom = render_event_grid(world, render_sim, topdown, item, gen_result, artifacts[item.folder], png_path)
                 finally:
                     world.close()
@@ -1494,7 +1523,7 @@ def main() -> None:
                 })
 
                 caption = format_caption(item, gen_result)
-                json_path = _MEDIA_DIR / f"{item_id}.json"
+                json_path = media_dir / f"{item_id}.json"
                 json_path.write_text(json.dumps({"caption": caption, "automatic_signals": signals}, indent=2))
 
                 manifest_index.append({
@@ -1505,8 +1534,8 @@ def main() -> None:
         finally:
             render_sim.close()
 
-    (_MEDIA_DIR / "render_manifest.json").write_text(json.dumps(manifest_index, indent=2))
-    print(f"\nWrote {len(manifest_index)} items to {_MEDIA_DIR}")
+    (media_dir / "render_manifest.json").write_text(json.dumps(manifest_index, indent=2))
+    print(f"\nWrote {len(manifest_index)} items to {media_dir}")
 
 
 if __name__ == "__main__":

@@ -41,11 +41,14 @@ LLM_PRIOR_CACHE = REPO_ROOT / "llm_prior_cache"
 ARCHIVE_DIR = REPO_ROOT / "archive"
 
 # External inputs outside the repo
+# (the old /mnt/nvme/oliver/... locations are gone from this machine — HSSD
+# now lives under the EXPRESS-Bench checkout and models in the shared HF
+# cache on /data; both still env-var overridable as before)
 HSSD_DIR = pathlib.Path(
     os.environ.get(
-        "HSSD_DIR", "/mnt/nvme/oliver/robot/datasets/moving-eqa/scene_datasets/hssd-hab"
+        "HSSD_DIR", "/data/oliver/robot/EXPRESS-Bench/data/versioned_data/hssd-hab"
     )
 )
 # HF model cache used as HF_HOME by llm_prior and serve_llm (large-model
-# downloads land on the NVMe drive, not the default ~/.cache).
-MODEL_CACHE_DIR = os.environ.get("DYNAMIC_EQA_HF_HOME", "/mnt/nvme/oliver/robot/models")
+# downloads land on the big /data array, not the default ~/.cache).
+MODEL_CACHE_DIR = os.environ.get("DYNAMIC_EQA_HF_HOME", "/data/oliver/huggingface_cache")

@@ -226,6 +226,7 @@ Rules:
 Respond only with valid JSON matching the provided schema. No commentary.
 """)
 
+#NOT USED 
 REALISM_ASIS = PromptTemplate("realism_asis", """\
 You are a behavioral-plausibility judge for household object placements.
 Grounding has already confirmed each candidate below is physically
@@ -282,6 +283,8 @@ bad selection pollutes the dataset.
 Be wary of justifications that don't make logical sense. Think about how the 
 human would use the object, and if they would bring it with them on their activity.
 Common reasons a placement wouldn't make sense:
+- The justification references a different object or location than the actual motion being proposed
+  eg. a cup is proposed to be moved to the table, but the justification references a phone on the table
 - The object would be brought with the human and not left out. eg. a phone brought out on a jog
 - There is a more convenient instance of the same or similar object at the destination. eg. a chair 
   for this human is already at the table, so a second chair from another room is not brought there.
@@ -293,12 +296,10 @@ Common reasons a placement wouldn't make sense:
   actually need easy access to the object during this activity.
 
 
-
 Some candidates carry a `move history` note — how many times that object has
 already moved today and its path. Repeated relocation of the SAME object needs
 cumulative justification: each additional move of an object that does not
-normally travel (furniture, plants, decor, dishware that lives in a cabinet)
-is less believable than the last, so score a 4th/5th/7th such move
+normally travel (furniture, plants, decor) is less believable than the last, so score a 4th/5th/7th such move
 progressively lower. Objects a person naturally carries all day (phone, keys,
 wallet, laptop, a cup in active use) are exempt — their repeated movement is
 normal, not suspicious.
@@ -321,10 +322,10 @@ scheduling conflicts.
 A conflict is:
   - Two occupants using the same scarce object simultaneously
     (e.g. both occupants eating at the single dining table at the same time is
-     fine if there are 2+ seats; both using the single computer simultaneously
+     fine if there are 2+ seats; both using the same phone simultaneously
      is a conflict).
-  - An occupant marked as 'away' also doing an indoor activity at the same time.
-  - Any logically contradictory joint state.
+  - An occupant marked as 'away' or otherwise outdoors also doing an indoor activity at the same time.
+  - Any other logically contradictory joint state.
 
 For each conflict found, return the occupant name, the conflicting time range,
 and a brief description. If no conflicts, return an empty list.
