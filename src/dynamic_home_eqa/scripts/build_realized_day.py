@@ -68,7 +68,16 @@ from dynamic_home_eqa.embodied.realized_world import (
     save_realized_day,
 )
 
-_BUILDER_VERSION = "realized_day_v4_census_anchors"  # v1 -> v2: INSTANCE-anchor placement replatformed onto
+_BUILDER_VERSION = "realized_day_v6_clutter_starts"  # v5 -> v6: t=0 clutter placements enter the
+                                                    # artifact as real spawned objects (object
+                                                    # records only, no event mirrors) so renders
+                                                    # show the true start state.
+                                                    # v4 -> v5: per-label render assets — manifest
+                                                    # LLM bindings for owner items + seeded
+                                                    # without-replacement pool draws for shared
+                                                    # clutter (AssetAllocator); recorded in each
+                                                    # object's binding.template_name.
+                                                    # v1 -> v2: INSTANCE-anchor placement replatformed onto
                                                  # habitat-lab Receptacle + snap_down (Receptacle
                                                  # Infrastructure Investigation round, GO'd). v2 -> v3:
                                                  # Pre-Pool-Build Remediation round — SURFACE_FULL split
@@ -131,6 +140,26 @@ SPAWNABLE_ASSET_BY_CATEGORY: dict[str, str] = {
 
     "wallet": "wallet_45e061790f36",
     "phone": "phone_223b376823b5",
+
+    # Object-variety expansion (2026-07-15): reviewer-kept Objaverse assets
+    # (data/objects/external_props/, tags in mapping.json). One asset per
+    # category here for now — the per-label multi-asset binder (pools +
+    # tag-driven owner assignment) replaces this dict's single-asset
+    # limitation next.
+    "plate": "plate_5d7ba0f7cebb",
+    "mug": "mug_9646813e492b",
+    "toy": "toy_16f83d9187ed",
+    "towel": "towel_35b76b90614d",
+    "newspaper": "newspaper_972f084ea5b9",
+    "remote_control": "remote_control_35ac912c7dc1",
+    "tray": "tray_4b8d86761f94",
+    "cutting_board": "cutting_board_c1e6ac573c37",
+    "scissors": "scissors_9399c720c9ed",
+    "shears": "shears_0019c537f588",
+    "teapot": "teapot_a90fd116b4b1",
+    "alarm_clock": "alarm_clock_2d44fd75427e",
+    "laundry_basket": "laundry_basket_1e88c90205f2",
+    "medicine": "medicine_429536ff8dd8",
     # Objaverse "small key" (uid 9835dac44cd94286956357c21f17bfda, CC-BY,
     # Frybrix) — asset_coverage.md's Round 3 rejected this same candidate
     # (0.108% frame area) under the since-superseded ring-camera search;
@@ -170,6 +199,11 @@ def resolve_asset_config_path(asset_id: str) -> str:
 # scale/unit bug (an asset landing 10x too big or too small).
 _SPAWNABLE_SIZE_BAND_M = (0.02, 0.8)
 
+# Overhang-suspect placements (footprint corner test failed on an accepted
+# snap_down placement) — surfaced per build for collider-side QA, never a
+# rejection (see compliance_place_on_surface).
+_FOOTPRINT_SUSPECTS: list[str] = []
+
 
 class UncoveredCategoryError(ValueError):
     """Raised by assert_category_has_asset_coverage — a category this pool
@@ -187,8 +221,10 @@ def assert_category_has_asset_coverage(category: str) -> None:
     builder is what actually spawns/binds objects now), not render time.
     A category is covered if it's spawnable, bind-eligible (env/inventory.py's
     tier categories), or an explicitly evaluated no-asset exclusion."""
+    from dynamic_home_eqa.generation.asset_binding import load_asset_pools
     covered = (
         category in SPAWNABLE_ASSET_BY_CATEGORY
+        or category in load_asset_pools()      # reviewer-curated multi-asset pools
         or category in _bind_categories()
         or category in NO_ASSET_CATEGORIES
     )
@@ -427,15 +463,14 @@ def find_live_object_at_xz(sim, position: tuple[float, float, float], max_xz_dis
     return best
 
 
-def spawn_new_object(sim, category: str):
-    """New clutter mesh for a SPAWN-category label. Reuses (not
-    duplicates) the render job's existing asset mapping/spawn helper —
-    per the phase's cleanup rule, these move into this module at cutover
-    (step 4); imported for now since the render job still owns the live
-    per-render path until then."""
+def spawn_new_object(sim, category: str, asset_id: Optional[str] = None):
+    """New clutter mesh for a SPAWN-category label. `asset_id` (the
+    label's recorded binding, from the AssetAllocator) takes precedence;
+    the category's legacy single-asset default is the fallback so old
+    artifacts and category-only callers keep working."""
     import habitat_sim
 
-    asset_id = SPAWNABLE_ASSET_BY_CATEGORY.get(category)
+    asset_id = asset_id or SPAWNABLE_ASSET_BY_CATEGORY.get(category)
     if asset_id is None:
         return None, None
     obj_attr_mgr = sim.get_object_template_manager()
@@ -450,7 +485,67 @@ def spawn_new_object(sim, category: str):
     return obj, asset_id
 
 
-def determine_binding(sim, scene_id: str, label: str, category: str, log: list[str]) -> ObjectBinding:
+class AssetAllocator:
+    """Per-build label -> render-asset resolution (Strategy 2+).
+
+    Resolution order for a SPAWN label:
+      1. the manifest's `asset_bindings` (the generation-time LLM pick for
+         owned Tier-3 items — obeyed verbatim, never re-rolled here);
+      2. a seeded WITHOUT-REPLACEMENT draw from the category's reviewer-
+         curated pool (external_props/mapping.json), so a home's three cups
+         are visibly three DIFFERENT cups; the pool reshuffles and repeats
+         once exhausted (a matching set is realistic, invisibility is not);
+      3. the legacy single-asset default (SPAWNABLE_ASSET_BY_CATEGORY);
+      4. None (PLACEMENT_NO_ASSET downstream, unchanged).
+
+    Draws are memoized per label and seeded from (manifest seed, folder),
+    so the same artifact rebuild binds the same assets — and the artifact
+    records every choice in each object's binding.template_name anyway,
+    which is what downstream readers should trust."""
+
+    def __init__(self, manifest: Optional[dict], folder: str) -> None:
+        import random
+        from dynamic_home_eqa.generation.asset_binding import load_asset_pools
+        self._manifest_bindings: dict = (manifest or {}).get("asset_bindings", {}) or {}
+        self._pools = {cat: [e["uid"] for e in entries]
+                       for cat, entries in load_asset_pools().items()}
+        # Assets the reviewer flagged as rare ("only rarely use this one" in
+        # the mapping note) sort to the END of every refill shuffle — drawn
+        # only once the rest of the pool is in use, never first.
+        self._rare = {e["uid"] for entries in load_asset_pools().values()
+                      for e in entries if "rare" in (e.get("note") or "").lower()}
+        self._rng = random.Random(f"{(manifest or {}).get('seed', 0)}|{folder}|assetalloc")
+        self._remaining: dict[str, list[str]] = {}
+        self._by_label: dict[str, str] = {}
+        self.source_by_label: dict[str, str] = {}
+
+    def pick(self, label: str, category: str) -> Optional[str]:
+        if label in self._by_label:
+            return self._by_label[label]
+        uid = self._manifest_bindings.get(label)
+        source = "external_props_llm_bound"
+        if uid is None and self._pools.get(category):
+            rem = self._remaining.get(category)
+            if not rem:
+                rem = list(self._pools[category])
+                self._rng.shuffle(rem)
+                # pop() draws from the END, so rare-flagged uids go FIRST
+                # in the list (drawn last).
+                rem.sort(key=lambda u: 0 if u in self._rare else 1)
+                self._remaining[category] = rem
+            uid = rem.pop()
+            source = "external_props_pool"
+        if uid is None:
+            uid = SPAWNABLE_ASSET_BY_CATEGORY.get(category)
+            source = "hssd_spawnable"
+        if uid is not None:
+            self._by_label[label] = uid
+            self.source_by_label[label] = source
+        return uid
+
+
+def determine_binding(sim, scene_id: str, label: str, category: str, log: list[str],
+                      allocator: Optional[AssetAllocator] = None) -> ObjectBinding:
     from dynamic_home_eqa.env.inventory import load_scene_state
 
     if category in _bind_categories():
@@ -463,9 +558,14 @@ def determine_binding(sim, scene_id: str, label: str, category: str, log: list[s
                     f"census position in scene {scene_id} — falling back to spawn (should not "
                     f"normally happen; generation is expected to only reference real census labels).")
 
-    asset_id = SPAWNABLE_ASSET_BY_CATEGORY.get(category)
+    if allocator is not None:
+        asset_id = allocator.pick(label, category)
+        source = allocator.source_by_label.get(label, "none")
+    else:
+        asset_id = SPAWNABLE_ASSET_BY_CATEGORY.get(category)
+        source = "hssd_spawnable"
     return ObjectBinding(kind=SPAWN, scene_instance_index=None, template_name=asset_id,
-                          source="hssd_spawnable" if asset_id else "none")
+                          source=source if asset_id else "none")
 
 
 def _footprint_radius(obj) -> float:
@@ -699,7 +799,51 @@ def _other_object_collides(sim, obj) -> bool:
     return False
 
 
-def _place_at_candidates(sim, obj, bb, candidates) -> Optional[tuple[float, float, float]]:
+def _footprint_supported(sim, obj, support_ids, inset_frac: float = 0.12,
+                         max_drop_m: float = 0.12) -> bool:
+    """All four (inset) corners of the object's world-AABB footprint must
+    have the support surface directly beneath them — rejects candidates
+    snap_down/collision accept with the object hanging off a counter edge
+    or clipping through it (confirmed visually on scene 102344022's
+    kitchen counter: plates/cups/laptops half off the side). A corner ray
+    that first hits anything OTHER than the support (or nothing within
+    max_drop_m) marks the candidate overhanging. support_ids empty (the
+    synthetic/no-receptacle path has no authoritative support id set)
+    accepts any first hit within range — the check then still rejects
+    corners hanging over open air."""
+    import habitat_sim
+    import magnum as mn
+
+    (min_x, min_y, min_z), (max_x, max_y, max_z) = get_world_aabb(obj)
+    dx, dz = (max_x - min_x) * inset_frac, (max_z - min_z) * inset_frac
+    own_id = obj.object_id
+    # Rays start ABOVE the object's base (not below it): after snap_down the
+    # base is in contact with the support, and an origin below it sits
+    # INSIDE the support's collision solid, where the ray misses everything
+    # and every legitimate placement got rejected (measured: 60%+ unrealized
+    # rates). Own-collider hits are skipped on the way down.
+    start_up = 0.04
+    ok_corners = 0
+    for x in (min_x + dx, max_x - dx):
+        for z in (min_z + dz, max_z - dz):
+            ray = habitat_sim.geo.Ray(mn.Vector3(x, min_y + start_up, z), mn.Vector3(0.0, -1.0, 0.0))
+            res = sim.cast_ray(ray, max_distance=start_up + max_drop_m)
+            for h in res.hits:
+                if h.object_id == own_id:
+                    continue
+                if (h.object_id in support_ids) if support_ids else True:
+                    ok_corners += 1
+                break  # nearest non-self hit decides
+    # 3-of-4, not 4-of-4: several HSSD colliders genuinely don't reach the
+    # whole annotated surface (the documented support_mesh_gap — scene
+    # 102344022's kitchen counter among them), so a strict all-corners
+    # requirement rejected 30-55% of legitimate placements. Three corners
+    # still rules out the visible half-off-the-edge overhangs this exists
+    # to stop, while tolerating a collider gap under one corner.
+    return ok_corners >= 3
+
+
+def _place_at_candidates(sim, obj, bb, candidates, support_ids=()) -> Optional[tuple[float, float, float]]:
     """Shared placement loop for both fallback methods (item 3/4): each
     candidate is (x, y, z) where y is ALREADY the real resting/support
     height (the receptacle sample's own Y, or the furniture's own real
@@ -711,6 +855,12 @@ def _place_at_candidates(sim, obj, bb, candidates) -> Optional[tuple[float, floa
 
     for cx, cy, cz in candidates:
         obj.translation = mn.Vector3(cx, cy - bb.min.y, cz)
+        # No _footprint_supported gate here (deliberately): these fallback
+        # paths exist precisely because the furniture's collider CANNOT
+        # confirm its own surface (support_mesh_gap / no receptacle) — a
+        # collider-raycast gate would re-reject exactly the placements the
+        # fallback was invented to rescue (measured: bed/backpack and the
+        # scene-102344022 counter went 30-55% unrealized with it applied).
         if not _other_object_collides(sim, obj):
             return (obj.translation.x, obj.translation.y, obj.translation.z)
     return None
@@ -851,6 +1001,16 @@ def compliance_place_on_surface(sim, obj, label: str, seed_key: str, anchor_posi
             if prescreen["surface_snap_point"] is not None:
                 prescreen_ever_ok = True
             if snap_down(sim, obj, support_obj_ids=support_ids):
+                # Overhang DETECTOR (not a gate): the corner-ray test proved
+                # unreliable as a rejector on scene-baked colliders (rays
+                # vs. stage-baked furniture ids — rejecting on it pushed
+                # legitimate placements to 30-55% unrealized while fixing
+                # nothing), but it still flags candidates worth eyeballing.
+                # The real overhang/clipping fix is collider-side (e.g.
+                # scene 102344022's kitchen counter), tracked via this count
+                # in the build report.
+                if not _footprint_supported(sim, obj, support_ids):
+                    _FOOTPRINT_SUSPECTS.append(f"{label} on {getattr(receptacle, 'name', '?')}")
                 final_pos = (obj.translation.x, obj.translation.y, obj.translation.z)
                 return final_pos, PLACEMENT_OK, "snap_down"
 
@@ -872,7 +1032,8 @@ def _trace_hash(manifest: dict) -> str:
     return hashlib.sha256(json.dumps(manifest["changes"], sort_keys=True).encode()).hexdigest()[:16]
 
 
-def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optional[dict] = None) -> tuple[RealizedDayArtifact, dict]:
+def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optional[dict] = None,
+                       clutter: Optional[list] = None) -> tuple[RealizedDayArtifact, dict]:
     """`manifest`: pre-loaded manifest dict, for callers that already have
     one in memory (e.g. a test fixture not backed by a real
     generation_out/ folder). Defaults to reading generation_out/<folder>/
@@ -884,7 +1045,51 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
 
     if manifest is None:
         manifest = json.loads((_GEN_OUT / folder / "manifest.json").read_text())
+    if clutter is None:
+        _gr_path = _GEN_OUT / folder / "generation_result.json"
+        clutter = (json.loads(_gr_path.read_text()).get("clutter", [])
+                   if _gr_path.exists() else [])
     initial_state, changes = initial_state_and_changes_from_manifest(manifest)
+
+    # Clutter-start realization: the t=0 clutter placements are REAL objects
+    # the generation state reasons about ("plate_1 and plate_2 are already
+    # on the counter"), but only labels with manifest CHANGES used to enter
+    # this artifact — a never-moved plate was invisible in every render, and
+    # even a moved one had no pose before its first move. Synthesized as
+    # t=0.0 insert events through the normal placement path (physical
+    # placement, collision, allocator asset), recorded ONLY on the object
+    # records — not the event mirrors, which stay a 1:1 mirror of the
+    # manifest's own change list. Label numbering mirrors build_manifest's
+    # clutter_counters (same iteration order).
+    from dynamic_home_eqa.env.deltas import Change as _Change
+    from dynamic_home_eqa.rooms import resolve_slot
+    from dynamic_home_eqa.topdown_map import instance_room_positions
+    clutter_start_labels: set[str] = set()
+    if clutter:
+        _cc: dict[str, int] = {}
+        _synthetic: list = []
+        for _p in clutter:
+            _cat = _p["object_category"]
+            _cc[_cat] = _cc.get(_cat, 0) + 1
+            _lbl = f"{_cat}_{_cc[_cat]}"
+            clutter_start_labels.add(_lbl)
+            try:
+                _slot = resolve_slot(_p["target_anchor"], _p["target_relationship"],
+                                     room_instance_categories={
+                                         room: set(cats) for room, cats
+                                         in instance_room_positions(scene_id).items()})
+            except Exception:
+                _slot = _p["target_anchor"]
+            _synthetic.append(_Change(
+                activity="clutter_start", phase="enter", instance_id=_lbl,
+                change_type="insert_new", object_category=_cat,
+                from_semantic=None, to_semantic=_slot,
+                reason="start-of-day clutter placement", t=0.0))
+        changes = _synthetic + list(changes)
+
+    # Strategy 2+ per-label asset resolution: manifest LLM bindings first,
+    # then seeded without-replacement pool draws (see AssetAllocator).
+    asset_allocator = AssetAllocator(manifest, folder)
 
     # Part A: the realizable-anchor census — census instance labels in the
     # manifest resolve directly against this (see resolve_anchor_position).
@@ -963,18 +1168,22 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
             placement_method=placement_method, realized=is_realized,
             effective_pose=effective_pose, divergent=divergent,
         ))
-        event_mirrors.append(RealizedEventMirror(
-            label=label, change_type=change_type, t=t, from_semantic=from_semantic, to_semantic=anchor,
-            placement_status=placement_status, failure_detail=failure_detail,
-            realized=is_realized, divergent=divergent,
-        ))
+        # Clutter-start events live only on object records — the mirror list
+        # stays a strict 1:1 mirror of the manifest's own change list.
+        if not (label in clutter_start_labels and t == 0.0):
+            event_mirrors.append(RealizedEventMirror(
+                label=label, change_type=change_type, t=t, from_semantic=from_semantic, to_semantic=anchor,
+                placement_status=placement_status, failure_detail=failure_detail,
+                realized=is_realized, divergent=divergent,
+            ))
 
     for c in changes:
         label = c.instance_id
         category = c.object_category
 
         if label not in objects:
-            binding = determine_binding(sim, scene_id, label, category, log)
+            binding = determine_binding(sim, scene_id, label, category, log,
+                                        allocator=asset_allocator)
             objects[label] = RealizedObject(label=label, category=category, binding=binding, events=[])
             if binding.kind == BIND:
                 # Seed the carry-forward state from this object's REAL
@@ -1138,7 +1347,11 @@ def build_realized_day(folder: str, scene_id: str, sim, world, manifest: Optiona
                     audit["no_asset"] += 1
                     _finalize_event(label, anchor, c.change_type, c.t, c.from_semantic, None, PLACEMENT_NO_ASSET)
                     continue
-                handle, _asset_id = spawn_new_object(sim, category)
+                # Spawn the label's OWN bound asset (Strategy 2+), never a
+                # category-wide lookup — this is what makes bowl_1 and
+                # bowl_2 different bowls, and Ana's headphones always hers.
+                handle, _asset_id = spawn_new_object(sim, category,
+                                                     asset_id=obj_record.binding.template_name)
             live_handle[label] = handle
 
         if handle is None:
@@ -1359,7 +1572,8 @@ def main() -> None:
             # exactly that way on the labelset renders: artifact events came
             # from the frozen pool while the render job pooled the labelset
             # manifests, so every t-lookup missed).
-            artifact, audit = build_realized_day(folder, scene_id, sim, world, manifest=manifest)
+            artifact, audit = build_realized_day(folder, scene_id, sim, world, manifest=manifest,
+                                                 clutter=gen_result.get("clutter", []))
         finally:
             world.close()
             sim.close()
@@ -1387,6 +1601,11 @@ def main() -> None:
         print(f"  placement_method (of ok): snap_down={pm['snap_down']} surface_height={pm['surface_height']} synthetic={pm['synthetic']}")
         unrealized_rate = audit["unrealized_events"] / audit["n_events"] if audit["n_events"] else 0.0
         divergent_rate = audit["divergent_events"] / audit["n_events"] if audit["n_events"] else 0.0
+        if _FOOTPRINT_SUSPECTS:
+            print(f"  overhang-suspect placements (collider QA, not rejected): {len(_FOOTPRINT_SUSPECTS)}")
+            for s in _FOOTPRINT_SUSPECTS[:8]:
+                print(f"    {s}")
+            _FOOTPRINT_SUSPECTS.clear()
         print(f"  unrealized-event rate: {unrealized_rate:.1%} ({audit['unrealized_events']}/{audit['n_events']})  "
               f"divergent-object-time rate: {divergent_rate:.1%} ({audit['divergent_events']}/{audit['n_events']})")
         for line in audit["log"]:

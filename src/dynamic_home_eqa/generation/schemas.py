@@ -85,8 +85,15 @@ ACTIVITY_SCHEMA: dict = {
                         "enum": ACTIVITY_LOCATIONS,
                         "description": "'away' = outside the house entirely (school, work, errands).",
                     },
-                    "start": {"type": "number", "description": "Start hour (24h float)."},
-                    "end":   {"type": "number", "description": "End hour (24h float)."},
+                    # bounds are grammar-enforced: the trace model
+                    # occasionally emitted MINUTES here (e.g. 930.645), and
+                    # every downstream time (displacement t, replay windows)
+                    # inherits the unit error. 30 allows the legitimate
+                    # past-midnight sleep wrap (typical_sleep > 24).
+                    "start": {"type": "number", "minimum": 0, "maximum": 30,
+                              "description": "Start hour (24h float)."},
+                    "end":   {"type": "number", "minimum": 0, "maximum": 30,
+                              "description": "End hour (24h float)."},
                 },
                 "required": ["activity", "location", "start", "end"],
             },
@@ -146,6 +153,7 @@ def _build_placement_item_schema(
     include_assumed_from: bool = False,
     include_put_away: bool = False,
     tuck_anchors: Optional[list[str]] = None,
+    conceal_anchors: Optional[list[str]] = None,
 ) -> dict:
     """Build the {object_category, target_relationship, target_anchor, reason}
     item schema shared by displacement proposals and clutter placements, with
@@ -196,7 +204,7 @@ def _build_placement_item_schema(
         "current object state for where things are now, name which object "
         "would move, why, and where it would end up. Then fill the fields "
         "below to match that reasoning; they must follow from it, not the "
-        "other way around."
+        "other way around. At most two sentences."
     )
 
     def _branch(relationships: list[str], anchors: list[str],
@@ -209,6 +217,11 @@ def _build_placement_item_schema(
         properties = {
             cot_field: {
                 "type": "string",
+                # Hard cap (grammar-enforced, not just prompted): ~2 full
+                # sentences of headroom. Stops the occasional paragraph
+                # without truncating a normal 2-sentence reason mid-word
+                # (320 clipped ~15% of reasons, manufacturing incoherence).
+                "maxLength": 400,
                 "description": cot_desc,
             },
             "object_category": {
@@ -248,8 +261,19 @@ def _build_placement_item_schema(
         raise ValueError("_build_placement_item_schema: empty category or relationship vocabulary")
 
     extra = [ABSTAIN_ANCHOR] + ([PUT_AWAY_ANCHOR] if include_put_away else [])
+    # Floor-bound entries — bare seat categories AND seat instance tokens
+    # ("stool_2", from generate_displacements' seat_instances vocabulary) —
+    # are excluded from the SURFACE branch at the grammar level (a chair is
+    # never lifted onto a table) and are the only entries the tuck branch
+    # admits. instance_token_category maps both forms to the category.
+    from ..env.inventory import FLOOR_BOUND_CATEGORIES
+    from .instances import instance_token_category
+    floor_bound = sorted(c for c in valid_categories
+                         if instance_token_category(c) in FLOOR_BOUND_CATEGORIES)
+    non_floor = [c for c in valid_categories if c not in floor_bound]
     branches = [
-        _branch(surface_relationships, sorted(set(surface_anchors)) + extra),
+        _branch(surface_relationships, sorted(set(surface_anchors)) + extra,
+                categories=non_floor or valid_categories),
         _branch(proximity_relationships, sorted(set(proximity_anchors)) + extra),
     ]
     # Tuck branch (displacements only): floor-bound categories (chair/stool)
@@ -259,13 +283,19 @@ def _build_placement_item_schema(
     # tuck under a bed). resolve_slot maps tucked_under to the distinct
     # "<anchor>.tucked" slot, so a tuck after an untuck at the same furniture
     # is a real state change, not a suppressed no-op.
-    if tuck_anchors:
-        from ..env.inventory import FLOOR_BOUND_CATEGORIES
-        tuck_categories = sorted(set(valid_categories) & FLOOR_BOUND_CATEGORIES)
-        if tuck_categories:
-            branches.append(_branch([TUCK_RELATIONSHIP],
-                                    sorted(set(tuck_anchors)) + [ABSTAIN_ANCHOR],
-                                    categories=tuck_categories))
+    if tuck_anchors and floor_bound:
+        branches.append(_branch([TUCK_RELATIONSHIP],
+                                sorted(set(tuck_anchors)) + [ABSTAIN_ANCHOR],
+                                categories=floor_bound))
+    # Concealment branch (displacements only): 'inside' a CONCEALING storage
+    # anchor (cabinet/wardrobe/fridge/...) is a put-away — the pipeline
+    # converts it to a remove event, never a visible placement, so these
+    # anchors are legal 'inside' targets even with zero authored interior
+    # receptacles. Small items only (non-floor-bound).
+    if conceal_anchors:
+        branches.append(_branch(["inside"],
+                                sorted(set(conceal_anchors)) + [ABSTAIN_ANCHOR],
+                                categories=non_floor or valid_categories))
     return {"oneOf": branches}
 
 
@@ -275,6 +305,7 @@ def build_displacement_schema(
     proximity_anchors: list[str],
     include_put_away: bool = False,
     tuck_anchors: Optional[list[str]] = None,
+    conceal_anchors: Optional[list[str]] = None,
 ) -> dict:
     """Displacement proposal schema: an {activity, occupant, proposals} object,
     each proposal a placement item (see _build_placement_item_schema).
@@ -289,7 +320,7 @@ def build_displacement_schema(
     item_schema = _build_placement_item_schema(
         valid_categories, surface_anchors, proximity_anchors,
         include_assumed_from=False, include_put_away=include_put_away,
-        tuck_anchors=tuck_anchors,
+        tuck_anchors=tuck_anchors, conceal_anchors=conceal_anchors,
     )
     return {
         "type": "object",
@@ -368,17 +399,23 @@ REALISM_SCHEMA: dict = {
 }
 
 
-def build_realism_schema(n_candidates: int) -> dict:
+def build_realism_schema(n_candidates: int, with_fix: bool = False) -> dict:
     """Guided realism-judge schema for a batch of exactly n_candidates.
 
     Pins the scores array to exactly n_candidates entries
     (minItems == maxItems == n): the grammar physically cannot emit the
     empty {"scores": []} the model otherwise takes ~half the time, nor a
     partial array — full coverage is enforced at decode time, not patched
-    up after. No per-score `reason` field: it is unused downstream (only
-    the score is consumed) and its free text is what pushed large batches
-    past the token cap and truncated the JSON. Judge rationale, when
-    wanted, comes from the thinking-mode trace, not this field.
+    up after.
+
+    Per-score `reason` comes FIRST (schema order = decode order, the same
+    reason-before-commitment pattern as the proposer's CoT field): the judge
+    weighs the evidence in text, then emits a score consistent with that
+    reasoning — and the reason is persisted to choices.jsonl for debugging
+    judge behavior. An earlier revision deliberately dropped this field
+    because free-text reasons pushed large batches past the 2048 token cap;
+    that cap is now 4096 (llm_client) and the prompt bounds reasons to two
+    sentences, which is what made it affordable to restore.
     """
     n = max(1, n_candidates)
     return {
@@ -392,9 +429,28 @@ def build_realism_schema(n_candidates: int) -> dict:
                     "type": "object",
                     "properties": {
                         "candidate_index": {"type": "integer", "minimum": 0, "maximum": n - 1},
+                        "reason": {
+                            "type": "string",
+                            "maxLength": 400,
+                            "description": "Weigh the evidence for/against this exact "
+                                           "placement BEFORE scoring. At most two sentences.",
+                        },
                         "score":           {"type": "number", "minimum": 0.0, "maximum": 1.0},
+                        # judge-retry round 1 only (with_fix): a repair hint
+                        # decoded AFTER the score so it cannot bias it. The
+                        # round-2 (kill-only) judge uses the plain schema.
+                        **({"fix": {
+                            "type": "string", "maxLength": 240,
+                            "description": "For scores below ~0.3: the minimal edit "
+                                           "(destination, object, or relation) that "
+                                           "would make the move plausible — or exactly "
+                                           "the word 'hopeless' if no small edit can "
+                                           "repair it. Empty string for acceptable "
+                                           "candidates.",
+                        }} if with_fix else {}),
                     },
-                    "required": ["candidate_index", "score"],
+                    "required": ["candidate_index", "reason", "score"]
+                                + (["fix"] if with_fix else []),
                 },
             },
         },

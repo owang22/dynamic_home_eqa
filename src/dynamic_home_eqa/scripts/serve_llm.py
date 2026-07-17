@@ -42,6 +42,26 @@ def main() -> None:
                     help="Context length cap; lower it to trade context for KV-cache "
                          "headroom on tightly packed multi-GPU quantized loads.")
     ap.add_argument("--gpu-memory-utilization", type=float, default=None)
+    ap.add_argument("--max-num-seqs", type=int, default=None,
+                    help="Concurrent-sequence cap. Hybrid Mamba-layer models "
+                         "(Qwen3.5/3.6 MoE) allocate one Mamba cache block per decode "
+                         "sequence, and vLLM's 1024 default can exceed what fits after "
+                         "weights + KV; a single-client generation run needs far less.")
+    ap.add_argument("--moe-backend", default=None,
+                    help="Force a fused-MoE kernel backend (e.g. 'triton'). Needed on "
+                         "this machine's sm_120 (RTX PRO 6000 Blackwell) GPU: the default "
+                         "FlashInfer CUTLASS path JIT-compiles per-arch kernels and there "
+                         "is no CUDA >=12.8 nvcc installed, so it dies with 'No supported "
+                         "CUDA architectures found for major versions [12]'.")
+    ap.add_argument("--compact-guided-json", action="store_true",
+                    help="Pass structured-outputs config {'disable_any_whitespace': "
+                         "true} so guided-JSON grammars only admit compact JSON. "
+                         "Without it the grammar admits unbounded whitespace between "
+                         "JSON tokens, and low-temperature guided calls (the strict "
+                         "realism judge) can degenerate into a whitespace loop that "
+                         "burns the whole max_tokens budget after '{\"scores\": [' — "
+                         "observed with Qwen3.6-35B-A3B, poisoning judge scores to "
+                         "the 0.0 fallback.")
     ap.add_argument("--trust-remote-code", action="store_true")
     args = ap.parse_args()
 
@@ -62,6 +82,15 @@ def main() -> None:
         cmd += ["--max-model-len", str(args.max_model_len)]
     if args.gpu_memory_utilization:
         cmd += ["--gpu-memory-utilization", str(args.gpu_memory_utilization)]
+    if args.max_num_seqs:
+        cmd += ["--max-num-seqs", str(args.max_num_seqs)]
+    if args.moe_backend:
+        cmd += ["--moe-backend", args.moe_backend]
+    if args.compact_guided_json:
+        # backend must be pinned explicitly: 'auto' rejects the flag at
+        # config validation ("only supported for xgrammar and guidance").
+        cmd += ["--structured-outputs-config",
+                '{"backend": "xgrammar", "disable_any_whitespace": true}']
     if args.trust_remote_code:
         cmd.append("--trust-remote-code")
 

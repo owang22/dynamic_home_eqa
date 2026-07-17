@@ -277,11 +277,13 @@ def build_manifest(
     changes: list[dict] = []
     n_rejected_unattended = 0
     n_dropped_noop = 0
+    n_dropped_bad_time = 0
     n_rejected_unbacked_anchor = 0
     n_rejected_unreachable_anchor = 0
     n_rejected_over_capacity = 0
     n_dropped_despawn_notout = 0
     n_rejected_no_seat_in_room = 0
+    n_spawned_from_storage = 0
 
     for t, idx, prop in timed:
         cat      = prop["object_category"]
@@ -332,6 +334,7 @@ def build_manifest(
             continue
 
         has_real_instance = bool(furniture_pool.get(cat))
+        spawned = False
         if has_real_instance:
             # Instance resolution per event, not per day: the occupant uses
             # the instance already in THEIR room. For floor-bound seating
@@ -343,6 +346,7 @@ def build_manifest(
             # existing at all; this is the replay-level backstop. Non-seating
             # categories (books, bowls) keep the lowest-index fallback —
             # carrying those between rooms is ordinary behavior.
+            from ..env.inventory import ABUNDANT_STORAGE_CATEGORIES, TIER2_CLUTTER_CATALOG
             from ..env.inventory import FLOOR_BOUND_CATEGORIES
             from ..rooms import rooms_match
             from .instances import instance_room
@@ -356,7 +360,40 @@ def build_manifest(
                     _logger.warning("manifest: rejecting %s move — no %s currently in %s",
                                      cat, cat, location)
                     continue
-            label = pick_real_instance(cat, furniture_pool[cat], current_slot, location)
+            # Instance-explicit proposals (seat instances the proposer picked
+            # by id — see generate_displacements' seat vocabulary): honor the
+            # model's own choice when it names a real instance; this is what
+            # lets two occupants use DIFFERENT chairs instead of both
+            # resolving onto the same lowest-index one. Floor-bound safety
+            # still applies: an explicit seat not currently in the acting
+            # room falls back to the picker (which the in_room gate above
+            # already vetted) rather than teleporting across the house.
+            explicit = prop.get("_instance")
+            if explicit and explicit in furniture_pool[cat] and not (
+                cat in FLOOR_BOUND_CATEGORIES and location and (
+                    (r := instance_room(current_slot.get(explicit))) is None
+                    or not rooms_match(r, location))):
+                label = explicit
+            else:
+                label = pick_real_instance(cat, furniture_pool[cat], current_slot, location)
+            # Abundant-storage spawn: the resolved instance is already AT the
+            # proposed destination (previously a dropped no-op). For abundant
+            # categories that collision means "take a fresh one from storage"
+            # — a home holds more bowls/cups/books than the few set out at
+            # t=0, and nobody reuses the used one on the table. Allocate the
+            # next instance id (insert_new, from storage) while total
+            # instances stay within the clutter catalog cap; at cap, fall
+            # through to the ordinary no-op drop below.
+            if (cat in ABUNDANT_STORAGE_CATEGORIES
+                    and not is_despawn
+                    and current_slot.get(label) is not None
+                    and current_slot.get(label) == to_slot
+                    and len(furniture_pool[cat]) < TIER2_CLUTTER_CATALOG.get(cat, 0)):
+                clutter_counters[cat] = clutter_counters.get(cat, 0) + 1
+                label = f"{cat}_{clutter_counters[cat]}"
+                furniture_pool[cat].append(label)
+                spawned = True
+                n_spawned_from_storage += 1
         else:
             key = (cat, occupant)
             if key not in volatile_assigned:
@@ -421,7 +458,11 @@ def build_manifest(
         if is_despawn:
             change_type = "remove"
         else:
-            change_type = "insert_new" if (is_first_event and not has_real_instance) else "move_existing"
+            # `spawned` — an abundant-storage instance allocated above enters
+            # the world here, from storage, exactly like a volatile label's
+            # first event (from_slot is None for both).
+            change_type = ("insert_new" if (spawned or (is_first_event and not has_real_instance))
+                           else "move_existing")
 
         # No-op suppression. A label's true first event always has
         # from_slot=None (never pre-seeded for volatile labels, always a
@@ -454,6 +495,13 @@ def build_manifest(
             # day progresses regardless of what actually left.
             slot_occupancy[from_slot] = max(0, slot_occupancy[from_slot] - 1)
 
+        # Time-sanity backstop behind the schema bounds: an event outside
+        # [0, 30) hours (past-midnight sleep wrap allowed) is a unit error
+        # (minutes-as-hours), and replay would place it on a phantom day.
+        if not (0.0 <= t < 30.0):
+            n_dropped_bad_time += 1
+            _logger.warning("manifest: dropping event with out-of-range t=%.3f (label=%s)", t, label)
+            continue
         current_slot[label] = to_slot
         changes.append({
             "t":                t,
@@ -489,6 +537,11 @@ def build_manifest(
         "seed":             seed,
         # Generating model (comparison label; "" on old generation_results).
         "model":            generation_result.get("model", ""),
+        # {owner label -> render asset uid}: the LLM's in-character pick for
+        # each owned Tier-3 item (generation/asset_binding.py). Carried here
+        # so build_realized_day binds the same asset the generation chose;
+        # {} on old generation_results.
+        "asset_bindings":   generation_result.get("asset_bindings", {}),
         # Per-occupant day context (weekday/weekend/flex + scenario text) that
         # shaped each activity trace — surfaced here so the day's character is
         # visible at the manifest level, not buried in generation_result. Note
@@ -505,6 +558,8 @@ def build_manifest(
         "integrity_stats": {
             "rejected_unattended":          n_rejected_unattended,
             "dropped_noop":                 n_dropped_noop,
+            "dropped_bad_time":             n_dropped_bad_time,
+            "spawned_from_storage":         n_spawned_from_storage,
             "rejected_unbacked_anchor":     n_rejected_unbacked_anchor,
             "rejected_unreachable_anchor":  n_rejected_unreachable_anchor,
             "rejected_over_capacity":       n_rejected_over_capacity,

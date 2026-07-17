@@ -1,0 +1,901 @@
+{
+ "schema_version": 1,
+ "run_id": "qwen3.6-35b-a3b",
+ "media_dir": "results/reports/realism_eval_media",
+ "condition": "Qwen/Qwen3.6-35B-A3B",
+ "scene_id": "102344049",
+ "profile": "family_with_kids",
+ "household_id": "102344049_family_with_kids",
+ "day": 0,
+ "folder": "102344049_family_with_kids",
+ "day_context": {
+  "Elena": {
+   "day_type": "weekday",
+   "day_scenario": "Working from home on a tight graphic design deadline, she pauses her morning to meticulously reorganize the pantry by color before the afternoon thunderstorm rolls in. She closes the windows and sips coffee while watching the rain blur her laptop screen."
+  },
+  "David": {
+   "day_type": "weekday",
+   "day_scenario": "He heads to a civil engineering site early, then spends his evening at home leaving a trail of wrenches and tape measures across his workbench. The sudden downpour keeps him indoors, where he tunes his guitar and sketches out a new chord progression after dinner."
+  },
+  "Leo": {
+   "day_type": "weekday",
+   "day_scenario": "After a full day at high school, he rushes to varsity soccer practice, only for the afternoon storm to force the team indoors for conditioning. He spends the rest of the evening in the hallway untangling his wet gear while blasting hip-hop through his headphones."
+  },
+  "Mia": {
+   "day_type": "weekday",
+   "day_scenario": "School and art club keep her busy until the heavy rain delays her commute home, giving her extra quiet time to meticulously sketch in her journal. Back in her room, she escapes into a fantasy novel before bed, completely lost in the story while thunder rumbles outside."
+  }
+ },
+ "occupants": [
+  {
+   "name": "Elena",
+   "role": "mother",
+   "age_band": "adult",
+   "tidiness": 0.85,
+   "owned_items": [
+    "phone",
+    "wallet",
+    "keys",
+    "laptop",
+    "sunglasses"
+   ],
+   "bedroom_index": 1
+  },
+  {
+   "name": "David",
+   "role": "father",
+   "age_band": "adult",
+   "tidiness": 0.6,
+   "owned_items": [
+    "phone",
+    "wallet",
+    "keys",
+    "laptop",
+    "sunglasses"
+   ],
+   "bedroom_index": 1
+  },
+  {
+   "name": "Leo",
+   "role": "son",
+   "age_band": "teen",
+   "tidiness": 0.3,
+   "owned_items": [
+    "phone",
+    "laptop",
+    "headphones",
+    "backpack",
+    "sunglasses"
+   ],
+   "bedroom_index": 2
+  },
+  {
+   "name": "Mia",
+   "role": "daughter",
+   "age_band": "teen",
+   "tidiness": 0.7,
+   "owned_items": [
+    "phone",
+    "laptop",
+    "headphones",
+    "backpack",
+    "sunglasses"
+   ],
+   "bedroom_index": 3
+  }
+ ],
+ "activities": [
+  {
+   "occupant": "Elena",
+   "day_type": "weekday",
+   "day_scenario": "Working from home on a tight graphic design deadline, she pauses her morning to meticulously reorganize the pantry by color before the afternoon thunderstorm rolls in. She closes the windows and sips coffee while watching the rain blur her laptop screen.",
+   "spans": [
+    {
+     "activity": "waking_up",
+     "location": "bedroom",
+     "start": 6.0,
+     "end": 6.3
+    },
+    {
+     "activity": "personal_hygiene",
+     "location": "bathroom",
+     "start": 6.3,
+     "end": 7.0
+    },
+    {
+     "activity": "making_coffee",
+     "location": "kitchen",
+     "start": 7.0,
+     "end": 7.15
+    },
+    {
+     "activity": "pantry_organization",
+     "location": "kitchen",
+     "start": 7.15,
+     "end": 8.45
+    },
+    {
+     "activity": "eating_breakfast",
+     "location": "kitchen",
+     "start": 8.45,
+     "end": 9.15
+    },
+    {
+     "activity": "working",
+     "location": "office",
+     "start": 9.15,
+     "end": 12.0
+    },
+    {
+     "activity": "lunch",
+     "location": "kitchen",
+     "start": 12.0,
+     "end": 12.45
+    },
+    {
+     "activity": "working",
+     "location": "office",
+     "start": 12.45,
+     "end": 15.3
+    },
+    {
+     "activity": "closing_windows",
+     "location": "living_room",
+     "start": 15.3,
+     "end": 15.45
+    },
+    {
+     "activity": "watching_rain",
+     "location": "living_room",
+     "start": 15.45,
+     "end": 16.45
+    },
+    {
+     "activity": "working",
+     "location": "office",
+     "start": 16.45,
+     "end": 19.3
+    },
+    {
+     "activity": "dinner",
+     "location": "dining_room",
+     "start": 19.3,
+     "end": 20.15
+    },
+    {
+     "activity": "cleaning_up",
+     "location": "kitchen",
+     "start": 20.15,
+     "end": 20.45
+    },
+    {
+     "activity": "relaxing",
+     "location": "living_room",
+     "start": 20.45,
+     "end": 22.3
+    },
+    {
+     "activity": "winding_down",
+     "location": "bedroom",
+     "start": 22.3,
+     "end": 23.0
+    }
+   ]
+  },
+  {
+   "occupant": "David",
+   "day_type": "weekday",
+   "day_scenario": "He heads to a civil engineering site early, then spends his evening at home leaving a trail of wrenches and tape measures across his workbench. The sudden downpour keeps him indoors, where he tunes his guitar and sketches out a new chord progression after dinner.",
+   "spans": [
+    {
+     "activity": "wake_up_and_get_ready",
+     "location": "bedroom",
+     "start": 6.3,
+     "end": 7.0
+    },
+    {
+     "activity": "breakfast",
+     "location": "kitchen",
+     "start": 7.0,
+     "end": 7.4
+    },
+    {
+     "activity": "leave_for_work",
+     "location": "away",
+     "start": 7.4,
+     "end": 8.0
+    },
+    {
+     "activity": "work_on_site",
+     "location": "away",
+     "start": 8.0,
+     "end": 12.0
+    },
+    {
+     "activity": "lunch_break",
+     "location": "away",
+     "start": 12.0,
+     "end": 12.45
+    },
+    {
+     "activity": "work_on_site",
+     "location": "away",
+     "start": 12.45,
+     "end": 17.0
+    },
+    {
+     "activity": "commute_home",
+     "location": "away",
+     "start": 17.0,
+     "end": 17.45
+    },
+    {
+     "activity": "unpack_tools",
+     "location": "kitchen",
+     "start": 17.45,
+     "end": 18.0
+    },
+    {
+     "activity": "dinner",
+     "location": "dining_room",
+     "start": 18.0,
+     "end": 18.45
+    },
+    {
+     "activity": "tidy_up_kitchen",
+     "location": "kitchen",
+     "start": 18.45,
+     "end": 19.0
+    },
+    {
+     "activity": "play_guitar",
+     "location": "living_room",
+     "start": 19.0,
+     "end": 20.3
+    },
+    {
+     "activity": "relax_in_living_room",
+     "location": "living_room",
+     "start": 20.3,
+     "end": 21.3
+    },
+    {
+     "activity": "prepare_for_bed",
+     "location": "bedroom",
+     "start": 21.3,
+     "end": 22.3
+    },
+    {
+     "activity": "sleep",
+     "location": "bedroom",
+     "start": 22.3,
+     "end": 23.3
+    }
+   ]
+  },
+  {
+   "occupant": "Leo",
+   "day_type": "weekday",
+   "day_scenario": "After a full day at high school, he rushes to varsity soccer practice, only for the afternoon storm to force the team indoors for conditioning. He spends the rest of the evening in the hallway untangling his wet gear while blasting hip-hop through his headphones.",
+   "spans": [
+    {
+     "activity": "wake_up",
+     "location": "bedroom",
+     "start": 7.0,
+     "end": 7.25
+    },
+    {
+     "activity": "shower",
+     "location": "bathroom",
+     "start": 7.25,
+     "end": 7.5
+    },
+    {
+     "activity": "get_dressed",
+     "location": "bedroom",
+     "start": 7.5,
+     "end": 7.75
+    },
+    {
+     "activity": "breakfast",
+     "location": "kitchen",
+     "start": 7.75,
+     "end": 8.0
+    },
+    {
+     "activity": "commute_to_school",
+     "location": "away",
+     "start": 8.0,
+     "end": 8.3
+    },
+    {
+     "activity": "attend_school",
+     "location": "away",
+     "start": 8.3,
+     "end": 14.3
+    },
+    {
+     "activity": "commute_to_practice",
+     "location": "away",
+     "start": 14.3,
+     "end": 15.0
+    },
+    {
+     "activity": "soccer_practice_conditioning",
+     "location": "away",
+     "start": 15.0,
+     "end": 16.3
+    },
+    {
+     "activity": "commute_home",
+     "location": "away",
+     "start": 16.3,
+     "end": 17.0
+    },
+    {
+     "activity": "unpack_wet_gear",
+     "location": "outdoor",
+     "start": 17.0,
+     "end": 17.3
+    },
+    {
+     "activity": "shower_after_sports",
+     "location": "bathroom",
+     "start": 17.3,
+     "end": 18.0
+    },
+    {
+     "activity": "snack",
+     "location": "kitchen",
+     "start": 18.0,
+     "end": 18.2
+    },
+    {
+     "activity": "organize_soccer_gear",
+     "location": "living_room",
+     "start": 18.2,
+     "end": 19.0
+    }
+   ]
+  },
+  {
+   "occupant": "Mia",
+   "day_type": "weekday",
+   "day_scenario": "School and art club keep her busy until the heavy rain delays her commute home, giving her extra quiet time to meticulously sketch in her journal. Back in her room, she escapes into a fantasy novel before bed, completely lost in the story while thunder rumbles outside.",
+   "spans": [
+    {
+     "activity": "waking_up",
+     "location": "bedroom",
+     "start": 7.0,
+     "end": 7.3
+    },
+    {
+     "activity": "showering",
+     "location": "bathroom",
+     "start": 7.3,
+     "end": 8.0
+    },
+    {
+     "activity": "getting_dressed",
+     "location": "bedroom",
+     "start": 8.0,
+     "end": 8.2
+    },
+    {
+     "activity": "eating_breakfast",
+     "location": "kitchen",
+     "start": 8.2,
+     "end": 8.5
+    },
+    {
+     "activity": "leaving_home",
+     "location": "away",
+     "start": 8.5,
+     "end": 9.0
+    },
+    {
+     "activity": "school_class",
+     "location": "away",
+     "start": 9.0,
+     "end": 15.3
+    },
+    {
+     "activity": "walking_home",
+     "location": "away",
+     "start": 15.3,
+     "end": 16.1
+    },
+    {
+     "activity": "changing_clothes",
+     "location": "bedroom",
+     "start": 16.1,
+     "end": 16.3
+    },
+    {
+     "activity": "sketching_journal",
+     "location": "bedroom",
+     "start": 16.3,
+     "end": 17.3
+    },
+    {
+     "activity": "snack",
+     "location": "kitchen",
+     "start": 17.3,
+     "end": 17.5
+    },
+    {
+     "activity": "reading",
+     "location": "bedroom",
+     "start": 17.5,
+     "end": 18.5
+    },
+    {
+     "activity": "helping_with_dinner",
+     "location": "kitchen",
+     "start": 18.5,
+     "end": 19.2
+    },
+    {
+     "activity": "eating_dinner",
+     "location": "dining_room",
+     "start": 19.2,
+     "end": 20.0
+    },
+    {
+     "activity": "tidying_room",
+     "location": "bedroom",
+     "start": 20.0,
+     "end": 20.3
+    },
+    {
+     "activity": "showering",
+     "location": "bathroom",
+     "start": 20.3,
+     "end": 21.0
+    },
+    {
+     "activity": "reading",
+     "location": "bedroom",
+     "start": 21.0,
+     "end": 22.0
+    }
+   ]
+  }
+ ],
+ "events": [
+  {
+   "event_id": "102344049_family_with_kids:0",
+   "t": 7.025,
+   "t_clock": "07:02",
+   "occupant": "David",
+   "activity": "breakfast",
+   "object": "book_1",
+   "category": "book",
+   "relation": "on",
+   "change_type": "move_existing",
+   "from_semantic": "living_room.table_1",
+   "to_semantic": "kitchen.counter_1",
+   "reason": "He may want to listen to music or the news while eating, so he will bring out a book or use the remote if the TV is relevant, but given he plays guitar later, a book is a plausible morning companion.",
+   "judge_score": 0.6,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_sta31ac3ca_p0be2cf39_b6",
+   "render": {
+    "png": "102344049_family_with_kids_book_1_t7.03_location.png",
+    "json": "102344049_family_with_kids_book_1_t7.03_location.json",
+    "mask_status": "object_spawn_failed"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:1",
+   "t": 7.056,
+   "t_clock": "07:03",
+   "occupant": "David",
+   "activity": "breakfast",
+   "object": "plate_1",
+   "category": "plate",
+   "relation": "on",
+   "change_type": "move_existing",
+   "from_semantic": "living_room.table_1",
+   "to_semantic": "kitchen.counter_1",
+   "reason": "David is starting breakfast and likely needs a plate for his food, as none are currently on the counters. He will retrieve a plate from storage to use at the counter.",
+   "judge_score": 0.9,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_sta31ac3ca_p0be2cf39_b6",
+   "render": {
+    "png": "102344049_family_with_kids_plate_1_t7.06_location.png",
+    "json": "102344049_family_with_kids_plate_1_t7.06_location.json",
+    "mask_status": "object_spawn_failed"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:2",
+   "t": 7.12,
+   "t_clock": "07:07",
+   "occupant": "David",
+   "activity": "breakfast",
+   "object": "bowl_3",
+   "category": "bowl",
+   "relation": "on",
+   "change_type": "insert_new",
+   "from_semantic": null,
+   "to_semantic": "kitchen.counter_1",
+   "reason": "The existing bowls on the counter might be for other family members or leftovers; David will likely bring out a fresh bowl for his own breakfast item like cereal or fruit.",
+   "judge_score": 0.7,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_sta31ac3ca_p0be2cf39_b6",
+   "render": {
+    "png": "102344049_family_with_kids_bowl_3_t7.12_location.png",
+    "json": "102344049_family_with_kids_bowl_3_t7.12_location.json",
+    "mask_status": "ok"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:3",
+   "t": 7.582,
+   "t_clock": "07:35",
+   "occupant": "Elena",
+   "activity": "pantry_organization",
+   "object": "stool_1",
+   "category": "stool",
+   "relation": "next_to",
+   "change_type": "move_existing",
+   "from_semantic": "kitchen.counter_1.tucked",
+   "to_semantic": "kitchen.counter_1",
+   "reason": "Elena may need to sit while sorting through pantry items if the task is lengthy or requires detailed work. Stools are currently tucked away; pulling one out next to the counter provides a seat for her to work at the staging area on the counter. This is a standard tidying/setup action for a seated task.",
+   "judge_score": 0.6,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st02fb1d93_p0be2cf39_b6",
+   "render": {
+    "png": "102344049_family_with_kids_stool_1_t7.58_location.png",
+    "json": "102344049_family_with_kids_stool_1_t7.58_location.json",
+    "mask_status": "ok"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:4",
+   "t": 7.785,
+   "t_clock": "07:47",
+   "occupant": "Leo",
+   "activity": "breakfast",
+   "object": "leo_headphones",
+   "category": "headphones",
+   "relation": "next_to",
+   "change_type": "insert_new",
+   "from_semantic": null,
+   "to_semantic": "kitchen.counter_1",
+   "reason": "Leo is a teen varsity soccer player who leaves gear in the hallway, but currently, he is in the kitchen. To tidy up his personal space while eating or before leaving for school, he might want to grab his headphones. Since they are 'put away', he needs to retrieve them. But wait, the rule says 'propose object displacements caused by this activity'. Retrieving an item is a displacement. He will move",
+   "judge_score": 0.6,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st554b686f_p0be2cf39_b6",
+   "render": {
+    "png": "102344049_family_with_kids_leo_headphones_t7.79_location.png",
+    "json": "102344049_family_with_kids_leo_headphones_t7.79_location.json",
+    "mask_status": "ok"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:5",
+   "t": 8.338,
+   "t_clock": "08:20",
+   "occupant": "Elena",
+   "activity": "pantry_organization",
+   "object": "bowl_4",
+   "category": "bowl",
+   "relation": "on",
+   "change_type": "insert_new",
+   "from_semantic": null,
+   "to_semantic": "kitchen.counter_1",
+   "reason": "Elena is organizing the pantry by color, which requires moving items out to sort them and then placing them back in an orderly fashion. Since the pantry itself is not in the scene inventory and cannot be targeted, and the activity involves handling small storage items like bowls or containers, she would likely place a bowl on the counter to sort or access its contents. The counter is the only flat",
+   "judge_score": 0.95,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st02fb1d93_p0be2cf39_b6",
+   "render": {
+    "png": "102344049_family_with_kids_bowl_4_t8.34_location.png",
+    "json": "102344049_family_with_kids_bowl_4_t8.34_location.json",
+    "mask_status": "ok"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:6",
+   "t": 8.638,
+   "t_clock": "08:38",
+   "occupant": "Elena",
+   "activity": "eating_breakfast",
+   "object": "elena_laptop",
+   "category": "laptop",
+   "relation": "on_top",
+   "change_type": "insert_new",
+   "from_semantic": null,
+   "to_semantic": "kitchen.counter_1",
+   "reason": "Elena owns a laptop which is currently put away. As a freelance graphic designer, she might bring her laptop out to the kitchen counter to check emails or work briefly while eating her morning meal.",
+   "judge_score": 0.6,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st651e15d2_p0be2cf39_b6",
+   "render": {
+    "png": "102344049_family_with_kids_elena_laptop_t8.64_location.png",
+    "json": "102344049_family_with_kids_elena_laptop_t8.64_location.json",
+    "mask_status": "ok"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:7",
+   "t": 8.971,
+   "t_clock": "08:58",
+   "occupant": "Elena",
+   "activity": "eating_breakfast",
+   "object": "stool_2",
+   "category": "stool",
+   "relation": "next_to",
+   "change_type": "move_existing",
+   "from_semantic": "kitchen.counter_1.tucked",
+   "to_semantic": "kitchen.counter_1",
+   "reason": "To sit comfortably at the counter to eat, Elena needs to pull out a stool that is currently tucked away. Since stool_1 is already positioned next to the counter, she might pull out one of the tucked stools to sit on.",
+   "judge_score": 0.9,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st651e15d2_p0be2cf39_b6",
+   "render": {
+    "png": "102344049_family_with_kids_stool_2_t8.97_location.png",
+    "json": "102344049_family_with_kids_stool_2_t8.97_location.json",
+    "mask_status": "ok"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:8",
+   "t": 16.441,
+   "t_clock": "16:26",
+   "occupant": "Elena",
+   "activity": "watching_rain",
+   "object": "book_2",
+   "category": "book",
+   "relation": "on",
+   "change_type": "move_existing",
+   "from_semantic": "living_room.couch_1",
+   "to_semantic": "living_room.table_1",
+   "reason": "Elena is settling in to relax and watch the rain, so she will likely bring a book from the couch to read while she watches. She will place it on the side table within easy reach of the couch.",
+   "judge_score": 0.6,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_st4bc524da_p0be2cf39_b6",
+   "render": {
+    "png": "102344049_family_with_kids_book_2_t16.44_location.png",
+    "json": "102344049_family_with_kids_book_2_t16.44_location.json",
+    "mask_status": "ok"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:9",
+   "t": 17.983,
+   "t_clock": "17:59",
+   "occupant": "David",
+   "activity": "unpack_tools",
+   "object": "stool_3",
+   "category": "stool",
+   "relation": "next_to",
+   "change_type": "move_existing",
+   "from_semantic": "kitchen.counter_1.tucked",
+   "to_semantic": "kitchen.counter_1",
+   "reason": "David is unpacking tools he brought home from work, likely placing them on the workbench or a counter surface for organization or temporary storage. The kitchen counter is the primary work surface available in the current room.",
+   "judge_score": 0.85,
+   "judge_think_excerpt": null,
+   "stage_tag": "realism_strict_ctx_fs_stb7192d8e_p0be2cf39_b6",
+   "render": {
+    "png": "102344049_family_with_kids_stool_3_t17.98_location.png",
+    "json": "102344049_family_with_kids_stool_3_t17.98_location.json",
+    "mask_status": "ok"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:10",
+   "t": 20.122,
+   "t_clock": "20:07",
+   "occupant": "Mia",
+   "activity": "tidying_room",
+   "object": "toy_2",
+   "category": "toy",
+   "relation": "inside",
+   "change_type": "remove",
+   "from_semantic": "bedroom_1.bed_1",
+   "to_semantic": "away",
+   "reason": "The toy currently on the bed should be put away to clear the sleeping space as part of tidying the room. Since no specific toy box or shelf is listed in the inventory for the bedroom, and the wardrobe is the primary storage, she places the toy inside the wardrobe.",
+   "judge_score": null,
+   "judge_think_excerpt": null,
+   "stage_tag": null,
+   "render": {
+    "png": "102344049_family_with_kids_toy_2_t20.12_remove.png",
+    "json": "102344049_family_with_kids_toy_2_t20.12_remove.json",
+    "mask_status": "anchor_unresolved"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:11",
+   "t": 20.232,
+   "t_clock": "20:14",
+   "occupant": "Elena",
+   "activity": "cleaning_up",
+   "object": "bowl_1",
+   "category": "bowl",
+   "relation": "inside",
+   "change_type": "remove",
+   "from_semantic": "kitchen.counter_1",
+   "to_semantic": "away",
+   "reason": "She tidies the remaining bowls on the counter, storing them in the cabinet to keep the workspace clear for future meal prep.",
+   "judge_score": null,
+   "judge_think_excerpt": null,
+   "stage_tag": null,
+   "render": {
+    "png": "102344049_family_with_kids_bowl_1_t20.23_remove.png",
+    "json": "102344049_family_with_kids_bowl_1_t20.23_remove.json",
+    "mask_status": "ok"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:12",
+   "t": 20.288,
+   "t_clock": "20:17",
+   "occupant": "Elena",
+   "activity": "cleaning_up",
+   "object": "book_1",
+   "category": "book",
+   "relation": "inside",
+   "change_type": "remove",
+   "from_semantic": "kitchen.counter_1",
+   "to_semantic": "away",
+   "reason": "As Elena tidies the kitchen, she needs to clear the counters of clutter to restore order. She moves the books currently on the counter to a storage location or puts them away, as they are not needed for the meal-prepping activity that happens earlier in the day.",
+   "judge_score": null,
+   "judge_think_excerpt": null,
+   "stage_tag": null,
+   "render": {
+    "png": "102344049_family_with_kids_book_1_t20.29_remove.png",
+    "json": "102344049_family_with_kids_book_1_t20.29_remove.json",
+    "mask_status": "anchor_unresolved"
+   },
+   "capability_ok": true
+  },
+  {
+   "event_id": "102344049_family_with_kids:13",
+   "t": 20.448,
+   "t_clock": "20:27",
+   "occupant": "Elena",
+   "activity": "cleaning_up",
+   "object": "toy_1",
+   "category": "toy",
+   "relation": "inside",
+   "change_type": "remove",
+   "from_semantic": "kitchen.counter_1",
+   "to_semantic": "away",
+   "reason": "Small items like toys and extra bowls are often put away into cabinets during a cleaning routine to reduce visual clutter. She places the toy currently on the counter into storage.",
+   "judge_score": null,
+   "judge_think_excerpt": null,
+   "stage_tag": null,
+   "render": {
+    "png": "102344049_family_with_kids_toy_1_t20.45_remove.png",
+    "json": "102344049_family_with_kids_toy_1_t20.45_remove.json",
+    "mask_status": "ok"
+   },
+   "capability_ok": true
+  }
+ ],
+ "trajectories": {
+  "book_1": [
+   {
+    "t": 7.025,
+    "t_clock": "07:02",
+    "from": "living_room.table_1",
+    "to": "kitchen.counter_1"
+   },
+   {
+    "t": 20.288,
+    "t_clock": "20:17",
+    "from": "kitchen.counter_1",
+    "to": "away"
+   }
+  ],
+  "plate_1": [
+   {
+    "t": 7.056,
+    "t_clock": "07:03",
+    "from": "living_room.table_1",
+    "to": "kitchen.counter_1"
+   }
+  ],
+  "bowl_3": [
+   {
+    "t": 7.12,
+    "t_clock": "07:07",
+    "from": null,
+    "to": "kitchen.counter_1"
+   }
+  ],
+  "stool_1": [
+   {
+    "t": 7.582,
+    "t_clock": "07:35",
+    "from": "kitchen.counter_1.tucked",
+    "to": "kitchen.counter_1"
+   }
+  ],
+  "leo_headphones": [
+   {
+    "t": 7.785,
+    "t_clock": "07:47",
+    "from": null,
+    "to": "kitchen.counter_1"
+   }
+  ],
+  "bowl_4": [
+   {
+    "t": 8.338,
+    "t_clock": "08:20",
+    "from": null,
+    "to": "kitchen.counter_1"
+   }
+  ],
+  "elena_laptop": [
+   {
+    "t": 8.638,
+    "t_clock": "08:38",
+    "from": null,
+    "to": "kitchen.counter_1"
+   }
+  ],
+  "stool_2": [
+   {
+    "t": 8.971,
+    "t_clock": "08:58",
+    "from": "kitchen.counter_1.tucked",
+    "to": "kitchen.counter_1"
+   }
+  ],
+  "book_2": [
+   {
+    "t": 16.441,
+    "t_clock": "16:26",
+    "from": "living_room.couch_1",
+    "to": "living_room.table_1"
+   }
+  ],
+  "stool_3": [
+   {
+    "t": 17.983,
+    "t_clock": "17:59",
+    "from": "kitchen.counter_1.tucked",
+    "to": "kitchen.counter_1"
+   }
+  ],
+  "toy_2": [
+   {
+    "t": 20.122,
+    "t_clock": "20:07",
+    "from": "bedroom_1.bed_1",
+    "to": "away"
+   }
+  ],
+  "bowl_1": [
+   {
+    "t": 20.232,
+    "t_clock": "20:14",
+    "from": "kitchen.counter_1",
+    "to": "away"
+   }
+  ],
+  "toy_1": [
+   {
+    "t": 20.448,
+    "t_clock": "20:27",
+    "from": "kitchen.counter_1",
+    "to": "away"
+   }
+  ]
+ }
+}

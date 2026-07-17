@@ -1,0 +1,24 @@
+# Pre-Stage-2 re-gate configuration (stage1b).
+episode:
+  gen_dir: generation_out_dynbelief
+  folders:                       # null -> autodiscover
+  out_dir: logs/dynbelief_ep049w
+
+probe:
+  seed: 7
+  grid_min: 60                   # uniform grid (heatmaps); B4 adds fine points at transitions
+  train_days: [0, 1, 2, 3, 4, 5, 6]
+  test_days: [8, 10, 12]
+  train_feed_min: 30
+  qtypes: [location_now, room_now]
+  per_stratum_cap: 12            # B1: max objects sampled per volatility tercile
+  tiers:
+    - {name: b0_lastseen}
+    - {name: b1_longmem}
+    - {name: b2_classdecay}
+    - {name: b3_perpetua_star, f_source: fremen}
+    - {name: b3_perpetua_star, f_source: schedule_prior}
+  temp_fit_day: 8                # D2: fit T here, evaluate on the other test days
+  n_boot: 500
+
+report_dir: reports/stage1b

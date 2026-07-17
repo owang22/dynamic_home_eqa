@@ -16,16 +16,21 @@ proposer work on any persona.
 from __future__ import annotations
 
 # The carried categories ownership applies to (matches env.inventory.TIER3_MOBILE).
-TIER3_CATEGORIES: list[str] = ["phone", "wallet", "keys", "laptop"]
+TIER3_CATEGORIES: list[str] = ["phone", "wallet", "keys", "laptop",
+                               "backpack", "sunglasses", "headphones", "medicine"]
 
 # Deterministic fallback: who plausibly owns what, by age band. Used only when
-# the persona doesn't state owned_items for an occupant.
+# the persona doesn't state owned_items for an occupant. The expansion
+# categories are deliberately age-skewed: backpacks belong to school-age
+# kids, headphones to teens, medicine to seniors — not "everyone gets
+# everything", which would flood every window's vocabulary and read as a
+# household of clones.
 _FALLBACK_BY_AGE: dict[str, list[str]] = {
-    "adult":        ["phone", "wallet", "keys", "laptop"],
-    "senior":       ["phone", "wallet", "keys"],
-    "teen":         ["phone", "laptop", "keys"],
-    "older_child":  ["phone"],
-    "young_child":  [],
+    "adult":        ["phone", "wallet", "keys", "laptop", "sunglasses"],
+    "senior":       ["phone", "wallet", "keys", "medicine"],
+    "teen":         ["phone", "laptop", "keys", "headphones", "backpack"],
+    "older_child":  ["phone", "backpack"],
+    "young_child":  ["backpack"],
     "toddler":      [],
 }
 

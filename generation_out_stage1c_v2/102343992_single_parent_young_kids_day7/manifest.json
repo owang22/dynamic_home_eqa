@@ -1,0 +1,107 @@
+{
+  "scene_id": "102343992",
+  "resident_profile": "single_parent_young_kids",
+  "seed": 8,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "alex_laptop": "laptop_a031287e7b68",
+    "alex_phone": "phone_223b376823b5",
+    "alex_wallet": "wallet_4eb66e5c0b4f",
+    "alex_keys": "keys_92167e12a3f0",
+    "leo_backpack": "backpack_390164707739"
+  },
+  "day_context": {
+    "Alex": {
+      "day_type": "weekday",
+      "day_scenario": "Wakes at 6:30 AM to prepare for a video call from the home office, then heads out to listen to a historical fiction audiobook during the commute. After navigating project deadlines at the office, Alex returns home to quietly review files in the study before finally winding down at 23:00."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "After waking at 7:00 AM for breakfast in the kitchen, Leo spends the morning stacking wooden blocks in the living room before heading to his part-time preschool. He returns home to construct another towering structure in the middle of the floor, carefully stepping around it before beginning his bedtime routine at 20:00."
+    },
+    "Mia": {
+      "day_type": "weekday",
+      "day_scenario": "After waking at 7:00 AM, Mia begins her morning by sketching colorful dragons on construction paper at the dining table, leaving her red and blue crayons scattered across the surface. After a quiet afternoon of drawing in her bedroom, she leaves her supplies out before settling in for bedtime at 20:30."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.424,
+      "label": "bowl_2",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on_top",
+      "mover": "Leo",
+      "activity": "breakfast",
+      "reason": "Leo needs a vessel to eat his breakfast in the kitchen, so he will bring a bowl out from storage to the table.",
+      "object_handle": null
+    },
+    {
+      "t": 18.173,
+      "label": "alex_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "dinner",
+      "reason": "Alex is carrying personal items to the kitchen for dinner, such as a phone for timing or music, and will likely set it down on the table.",
+      "object_handle": null
+    },
+    {
+      "t": 18.527,
+      "label": "bowl_3",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "dinner",
+      "reason": "Alex is preparing for dinner and needs a dining surface; the kitchen table is the appropriate place to set out dishes for the meal.",
+      "object_handle": null
+    },
+    {
+      "t": 18.922,
+      "label": "candle_1",
+      "change_type": "move_existing",
+      "object_category": "candle",
+      "from_semantic": "kitchen.table_1",
+      "to_semantic": "bedroom_3.stand_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "storytime",
+      "reason": "Storytime often involves a relaxed, cozy atmosphere, so Mia might place the candle on the stool to create ambiance while she sits or reads. The stool is the only available surface in the bedroom for placing small items.",
+      "object_handle": null
+    },
+    {
+      "t": 21.787,
+      "label": "candle_1",
+      "change_type": "move_existing",
+      "object_category": "candle",
+      "from_semantic": "bedroom_3.stand_1",
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "relaxing",
+      "reason": "Alex is relaxing in the living room and may wish to enhance the atmosphere with lighting or scent, so the candle is moved to the TV stand for use. The candle is placed on the tv anchor as it is the primary furniture piece in the living room for such items.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 2,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

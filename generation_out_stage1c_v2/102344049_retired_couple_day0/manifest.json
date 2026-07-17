@@ -1,0 +1,159 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "retired_couple",
+  "seed": 1,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "arthur_phone": "phone_a022864ae7b6",
+    "arthur_wallet": "wallet_4bc4176c10b9",
+    "arthur_keys": "keys_aaccd2b9848d",
+    "arthur_medicine": "medicine_429536ff8dd8",
+    "martha_phone": "phone_15c2adf9af7a",
+    "martha_wallet": "wallet_4d63cef3d4c3",
+    "martha_keys": "keys_92167e12a3f0",
+    "martha_medicine": "medicine_d83f35ad19e8",
+    "martha_sunglasses": "sunglasses_1145d066f664"
+  },
+  "day_context": {
+    "Arthur": {
+      "day_type": "weekday",
+      "day_scenario": "Arthur rises at 6:00 AM to carefully prune the tomato vines in his back garden before the morning dew dries. He later settles at the kitchen table with a biography of Roman emperors, enjoying the quiet afternoon light before retreating to the parlor to unwind in silence until his 10:00 PM bedtime."
+    },
+    "Martha": {
+      "day_type": "weekday",
+      "day_scenario": "Martha wakes at 6:30 AM to tackle the Monday crossword with a steaming mug of Earl Grey tea. With her painting class absent from the calendar, she spends the afternoon organizing her craft supplies before curling up in bed with her small journal to reflect on the week\u2019s quiet moments before sleeping at 10:30 PM."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.696,
+      "label": "martha_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Martha",
+      "activity": "puzzle",
+      "reason": "Martha places her phone on the counter to keep it accessible but out of the way while she focuses on the puzzle. This prevents the phone from interfering with her activity.",
+      "object_handle": null
+    },
+    {
+      "t": 7.806,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "near",
+      "mover": "Martha",
+      "activity": "puzzle",
+      "reason": "She may need to sit comfortably for the long duration, so she pulls a stool close to the work area.",
+      "object_handle": null
+    },
+    {
+      "t": 9.327,
+      "label": "potted_plant_1",
+      "change_type": "move_existing",
+      "object_category": "potted_plant",
+      "from_semantic": "living_room.corner",
+      "to_semantic": "living_room.tv_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "cleaning",
+      "reason": "The potted plants in the living room may need to be dusted or rearranged. Martha moves one plant to the side to clean the surface beneath it.",
+      "object_handle": null
+    },
+    {
+      "t": 11.684,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.tv_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "reading",
+      "reason": "Martha is settling in for a long reading session in the living room, so she will likely need a comfortable seat. She moves one of the available chairs to a spot near the TV or a plant where she can relax.",
+      "object_handle": null
+    },
+    {
+      "t": 12.484,
+      "label": "arthur_keys",
+      "change_type": "insert_new",
+      "object_category": "keys",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "eating_lunch",
+      "reason": "Arthur may place his keys on the counter temporarily while eating, keeping them accessible but out of the way.",
+      "object_handle": null
+    },
+    {
+      "t": 12.981,
+      "label": "arthur_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "eating_lunch",
+      "reason": "It is plausible that Arthur places his phone on the counter within reach while he focuses on his meal.",
+      "object_handle": null
+    },
+    {
+      "t": 16.725,
+      "label": "arthur_phone",
+      "change_type": "move_existing",
+      "object_category": "phone",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "relaxing",
+      "reason": "Arthur is relaxing in the living room, so he likely places his carried phone on a nearby surface to use it or set it aside temporarily. The nearest available surface is the table in the living room.",
+      "object_handle": null
+    },
+    {
+      "t": 18.575,
+      "label": "towel_2",
+      "change_type": "insert_new",
+      "object_category": "towel",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Arthur",
+      "activity": "washing_dishes",
+      "reason": "Arthur is washing dishes, so he likely needs a dry towel to dry the clean items. The single towel in the inventory is the only candidate for this task.",
+      "object_handle": null
+    },
+    {
+      "t": 19.417,
+      "label": "potted_plant_1",
+      "change_type": "move_existing",
+      "object_category": "potted_plant",
+      "from_semantic": "living_room.tv_1",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "cleaning",
+      "reason": "Potted plants are often moved during cleaning to wipe down the leaves or clean the surface underneath them. She will pick up the plant currently in the kitchen to tend to it.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 1,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

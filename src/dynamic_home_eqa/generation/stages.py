@@ -40,6 +40,7 @@ from .schemas import (
 from .prompt_registry import (
     ACTIVITY as _ACTIVITY_T,
     DAY_PLAN as _DAY_PLAN_T,
+    ROUTINE_CHARTER as _CHARTER_T,
     CONFLICT_VERIFY as _CONFLICT_T,
     DISPLACEMENT as _DISPLACEMENT_T,
     REALISM_ASIS as _REALISM_ASIS_T,
@@ -123,11 +124,42 @@ _DAY_SCENARIOS: list[tuple[str, str]] = [
 ]
 
 
+# Calendar mode (gen_dataset --calendar-days): day_type follows a real week
+# (day 0 = Monday, days 5/6 = weekend) instead of the seeded pool draw. The
+# pool draw gives each (household, day) an INDEPENDENT day type — fine for
+# independent-day training data, but it means "day 5" is not Saturday and no
+# weekly periodicity exists in the generated world at all, so a weekly
+# belief component (dynbelief Section C) would be fitting pure noise. Off by
+# default: flipping it changes day_type for existing (household, day) seeds,
+# so old outputs stay reproducible only with the flag unset. The flex pool
+# (night-shift/late-night scenarios) is unreachable in calendar mode; that
+# lifestyle should come from persona habits instead.
+_CALENDAR_DAYS = False
+_DAY_NAMES = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+              "Saturday", "Sunday"]
+
+
+def set_calendar_days(enabled: bool) -> None:
+    global _CALENDAR_DAYS
+    _CALENDAR_DAYS = enabled
+
+
+def _day_label(day_type: str, day: int) -> str:
+    """What the prompts see: "weekday (Tuesday)" in calendar mode so the
+    model can write day-of-week-appropriate plans; bare day_type otherwise."""
+    if _CALENDAR_DAYS:
+        return f"{day_type} ({_DAY_NAMES[day % 7]})"
+    return day_type
+
+
 def _household_day_type(household_id: str, day: int) -> str:
     """The ONE day_type every member of this household lives on this day —
     seeded per (household, day) only, deliberately no occupant_index. Drawn
     by indexing the full scenario pool so the weekday/weekend/flex frequency
-    follows the pool's own composition rather than a separate weight table."""
+    follows the pool's own composition rather than a separate weight table.
+    In calendar mode the calendar decides instead (see _CALENDAR_DAYS)."""
+    if _CALENDAR_DAYS:
+        return "weekend" if day % 7 >= 5 else "weekday"
     seed = make_seed(household_id, day, "day_type", 0)
     return _DAY_SCENARIOS[seed % len(_DAY_SCENARIOS)][1]
 
@@ -183,11 +215,129 @@ _CONFLICT_SCHEMA: dict = {
 # Stage 2 — Activity trace (per occupant)
 # ---------------------------------------------------------------------------
 
+_GENERIC_OCCUPATIONS = {
+    "toddler": {"toddler", "preschooler"},
+    "young_child": {"student", "schoolchild", "child"},
+    "older_child": {"student", "schoolchild"},
+    "teen": {"student", "high", "schooler"},
+    "senior": {"retiree", "retired", "senior"},
+    "adult": {"homemaker", "parent"},
+}
+_STOP_WORDS = {"who", "the", "a", "an", "with", "and", "for", "their", "her",
+               "his", "as", "at", "of", "to", "in", "on", "up", "works"}
+
+
+def _charter_occupation_ok(occ: str, member: dict) -> bool:
+    """Mechanical persona-consistency check: the charter occupation must
+    share a content word with the member's own habits/role, or be a generic
+    occupation allowed for their age band. This is the guard the stage1c
+    postmortem demanded: a day-0 hallucinated occupation ("night-shift
+    nurse" for a yoga instructor) must fail loudly, not become 12 days of
+    alternate reality."""
+    words = {w.strip(".,;") for w in occ.lower().split()} - _STOP_WORDS
+    profile = (str(member.get("habits", "")) + " " + str(member.get("role", ""))).lower()
+    if any(w and w in profile for w in words):
+        return True
+    allowed = _GENERIC_OCCUPATIONS.get(member.get("age_band", "adult"), set())
+    return bool(words & allowed)
+
+
+def _fallback_charter(persona: dict) -> dict[str, dict]:
+    """Deterministic no-LLM charter straight from the persona — used when
+    generation fails validation after retries. Boring but never wrong."""
+    out = {}
+    for o in persona.get("occupants", []):
+        habits = str(o.get("habits", ""))
+        out[o.get("name", "")] = {
+            "occupation": o.get("role", "member"),
+            "weekday_routine": f"Follows their usual weekday pattern: {habits}",
+            "weekend_routine": f"A typical weekend day, per their habits: {habits}",
+            "signature_habits": [h.strip() for h in habits.split(";") if h.strip()][:4],
+        }
+    return out
+
+
+def generate_routine_charter(
+    persona: dict,
+    household_id: str,
+    model: str = DEFAULT_MODEL,
+    cache: Optional[ResponseCache] = None,
+    force: bool = False,
+) -> dict[str, dict]:
+    """One guided call per HOUSEHOLD (not per day): the stable weekly routine
+    each member repeats, validated against the persona. Returns
+    {name: {occupation, weekday_routine, weekend_routine, signature_habits}}.
+    Cached by household seed, so every day of every run renders the same
+    charter."""
+    occupants = persona.get("occupants", [])
+    names = [o.get("name") for o in occupants]
+    if not names:
+        return {}
+    stage = _CHARTER_T.tag("routine_charter", builder=True)
+    seed = make_seed(household_id, 0, stage, 0)
+    lines = [
+        f"- {o.get('name')}: age_band={o.get('age_band', 'adult')}, "
+        f"role={o.get('role', 'member')}, wake={o.get('typical_wake', 7.0)}, "
+        f"sleep={o.get('typical_sleep', 22.0)}, "
+        f"habits={o.get('habits', 'none given')}"
+        for o in occupants
+    ]
+    user = ("Household members:\n" + "\n".join(lines)
+            + "\n\nWrite the routine charter for every member.")
+    schema = {
+        "type": "object",
+        "properties": {"occupants": {
+            "type": "array", "minItems": len(names), "maxItems": len(names),
+            "items": {"type": "object", "properties": {
+                "name": {"type": "string", "enum": names},
+                "occupation": {"type": "string", "maxLength": 60},
+                "weekday_routine": {"type": "string", "maxLength": 500},
+                "weekend_routine": {"type": "string", "maxLength": 500},
+                "signature_habits": {"type": "array", "minItems": 2, "maxItems": 4,
+                                      "items": {"type": "string", "maxLength": 120}},
+            }, "required": ["name", "occupation", "weekday_routine",
+                             "weekend_routine", "signature_habits"]},
+        }},
+        "required": ["occupants"],
+    }
+    by_name = {o.get("name"): o for o in occupants}
+
+    def _validate(result: dict) -> dict[str, dict]:
+        out: dict[str, dict] = {}
+        for e in (result.get("occupants", []) if isinstance(result, dict) else []):
+            nm = str(e.get("name", "")).strip()
+            if nm not in by_name:
+                continue
+            if not _charter_occupation_ok(str(e.get("occupation", "")), by_name[nm]):
+                raise ValueError(
+                    f"charter occupation {e.get('occupation')!r} contradicts "
+                    f"{nm}'s profile — regenerate")
+            out[nm] = {k: e[k] for k in ("occupation", "weekday_routine",
+                                          "weekend_routine", "signature_habits")}
+        missing = [n for n in names if n not in out]
+        if missing:
+            raise ValueError(f"charter missing members {missing!r}")
+        return out
+
+    client = _get_client(model)
+    try:
+        return generate_json(
+            client, _CHARTER_T.text, user, schema,
+            seed=seed, stage=stage, cache=cache, force=force, validate=_validate,
+        )
+    except Exception as exc:
+        _logger.warning("routine charter failed for %s (%s) — mechanical fallback",
+                        household_id, exc)
+        return _fallback_charter(persona)
+
+
 def generate_day_plan(
     persona: dict,
     household_id: str,
     day: int,
     day_type: str,
+    charter: Optional[dict] = None,
+    event_note: Optional[str] = None,
     model: str = DEFAULT_MODEL,
     cache: Optional[ResponseCache] = None,
     force: bool = False,
@@ -213,17 +363,34 @@ def generate_day_plan(
     occupants = persona.get("occupants", [])
     if not occupants:
         return {}
-    stage = _DAY_PLAN_T.tag(f"day_plan_{day_type}", builder=True)
+    # calendar mode folds the day name into the tag: the response cache is
+    # keyed by seed alone, so a Tuesday plan must never replay a cached
+    # pool-draw plan generated under the same (household, day)
+    charter = charter or {}
+    tag = f"day_plan_{day_type}" + (f"_cal{day % 7}" if _CALENDAR_DAYS else "")
+    # cache keys are seed-only: a plan rendered under a different charter or
+    # scheduled event must never replay a stale entry
+    ctx_text = json.dumps(charter, sort_keys=True) + "|" + (event_note or "")
+    tag += "_ch" + hashlib.sha256(ctx_text.encode()).hexdigest()[:8]
+    stage = _DAY_PLAN_T.tag(tag, builder=True)
     seed = make_seed(household_id, day, stage, 0)
     lines = [
         f"- {o.get('name')}: age_band={o.get('age_band', 'adult')}, "
         f"role={o.get('role', 'member')}, habits={o.get('habits', 'none given')}"
         for o in occupants
     ]
+    charter_lines = []
+    for nm, ch in charter.items():
+        routine = ch.get("weekend_routine" if day_type == "weekend" else "weekday_routine", "")
+        charter_lines.append(f"- {nm} ({ch.get('occupation', '?')}): {routine} "
+                             f"Signature habits: {'; '.join(ch.get('signature_habits', []))}")
     user = (
-        f"Day type: {day_type}\n"
+        f"Day type: {_day_label(day_type, day)}\n"
         f"Household members:\n" + "\n".join(lines) + "\n\n"
-        "Plan this household's day and write each member's scenario."
+        f"Routine charter (authoritative for this day type):\n"
+        + "\n".join(charter_lines) + "\n\n"
+        f"Today's scheduled event: {event_note or 'none — ordinary day'}\n\n"
+        "Render this household's day and write each member's scenario."
     )
     names = [o.get("name") for o in occupants]
 
@@ -290,6 +457,9 @@ def generate_activity_trace(
     cache: Optional[ResponseCache] = None,
     force: bool = False,
     variant_tag: str = "",
+    conflict_context: str = "",
+    charter: Optional[dict] = None,
+    event_note: Optional[str] = None,
 ) -> dict:
     """Generate a day's activity trace for one occupant.
 
@@ -307,6 +477,14 @@ def generate_activity_trace(
                          resample a conflicting occupant without either reusing
                          the cached original or force-regenerating
                          non-reproducibly (see verification.resolve_conflicts).
+        conflict_context: "Coordination notes" appended to the request — the
+                         detected clashes with other occupants' plans this
+                         regeneration must plan around ("Sarah also wants the
+                         kitchen at 12:00, ..."). Without it, the conflict-
+                         resolution pass just resampled blind and hoped the
+                         clash vanished by luck. Folded into the stage tag
+                         (content hash) so different conflict sets never
+                         share a cache entry.
     """
     # Day-type coherence, two levels: day_type is drawn ONCE per (household,
     # day) — everyone lives the same calendar day (it previously hung off the
@@ -319,12 +497,22 @@ def generate_activity_trace(
     # from cache.
     day_type = _household_day_type(household_id, day)
     plan = generate_day_plan(persona, household_id, day, day_type,
+                             charter=charter, event_note=event_note,
                              model=model, cache=cache, force=force)
     day_text = plan.get(occupant_name) or _occupant_day_scenario(
         household_id, day, occupant_index, day_type)
+    # the occupant's charter routine rides along into the trace prompt so the
+    # schedule stays anchored to the household's stable pattern, not just to
+    # today's one-line scenario
+    _ch = (charter or {}).get(occupant_name, {})
+    routine_text = _ch.get("weekend_routine" if day_type == "weekend"
+                           else "weekday_routine", "")
 
     base = "activity" + (f"_{variant_tag}" if variant_tag else "")
-    base += "_dc" + hashlib.sha256(f"{day_type}|{day_text}".encode()).hexdigest()[:8]
+    base += "_dc" + hashlib.sha256(
+        f"{_day_label(day_type, day)}|{day_text}|{routine_text}".encode()).hexdigest()[:8]
+    if conflict_context:
+        base += "_cc" + hashlib.sha256(conflict_context.encode()).hexdigest()[:8]
     stage = _ACTIVITY_T.tag(base, builder=True)
     seed = make_seed(household_id, day, stage, occupant_index)
 
@@ -345,9 +533,13 @@ def generate_activity_trace(
         f"Schedule notes: {persona.get('schedule_notes', 'none')}\n"
         f"Typical wake: {occupant_info.get('typical_wake', 7.0):.1f}h  "
         f"Typical sleep: {occupant_info.get('typical_sleep', 22.0):.1f}h\n"
-        f"Day type: {day_type}\n"
-        f"Day context: {day_text}\n"
-        f"\nGenerate a full day's activity trace for {occupant_name}, reflecting their habits."
+        f"Day type: {_day_label(day_type, day)}\n"
+        + (f"Stable routine (repeats week after week): {routine_text}\n" if routine_text else "")
+        + f"Day context: {day_text}\n"
+        + (f"\nCoordination notes — this occupant's previous plan clashed with other "
+           f"household members'; plan around these (see system prompt):\n{conflict_context}\n"
+           if conflict_context else "")
+        + f"\nGenerate a full day's activity trace for {occupant_name}, reflecting their habits."
     )
 
     def _validate(result: dict) -> dict:
@@ -429,8 +621,20 @@ def generate_displacements(
     current_state_block: Optional[str] = None,
     live_occupancy: Optional[dict] = None,
     allow_put_away: bool = False,
+    seat_instances: Optional[dict] = None,
+    revision_feedback: Optional[str] = None,
 ) -> dict:
     """Propose object displacements for one activity.
+
+    seat_instances — {instance_id: current slot} for the floor-bound seats
+    (chair/stool) currently in the occupant's room (RunningState.
+    seat_instances_in_room). When given, the schema's object vocabulary
+    offers those INSTANCE ids ("stool_2") in place of the bare seat
+    category, so the model commits to a specific seat — the fix for two
+    occupants' category-level proposals silently resolving onto the same
+    chair. The state block lists each instance's current slot, so the model
+    can pick one that isn't already in use. The pipeline normalizes the
+    token back to (category, _instance) before grounding.
 
     Phase 2 enrichment (default off, so the baseline is unchanged):
       include_context — prepend the occupant_card / temporal_context /
@@ -506,6 +710,9 @@ def generate_displacements(
         # Phase 3: the proposal depends on the running world state; fold its
         # hash into the tag so later windows never serve a stale cached call.
         _base += "_st" + hashlib.sha256(current_state_block.encode()).hexdigest()[:8]
+    if revision_feedback:
+        # judge-retry revision round: distinct cache entry per feedback set
+        _base += "_rev" + hashlib.sha256(revision_feedback.encode()).hexdigest()[:8]
     _stage_tag = _DISPLACEMENT_T.tag(_base, builder=True)
     seed = make_seed(household_id, day, f"{_stage_tag}_{activity}_{start:.2f}", occupant_index)
 
@@ -546,8 +753,16 @@ def generate_displacements(
     # Only offer categories that can actually be MOVED — Tier-1 fixtures
     # (fridge, tv, wardrobe, counter, ...) are placement anchors, not carried
     # objects, and the proposer must never suggest relocating them.
-    from ..env.inventory import MOVABLE_CATEGORIES
+    from ..env.inventory import FLOOR_BOUND_CATEGORIES, MOVABLE_CATEGORIES
     valid_categories = [c for c in sorted(inventory.keys()) if c in MOVABLE_CATEGORIES] or ["object"]
+    if seat_instances:
+        # Seats are proposed by INSTANCE id, never by bare category: replace
+        # "chair"/"stool" with the ids of the instances actually in this room
+        # (see docstring). A seat category with no in-room instance was
+        # already excluded by the pipeline's seat-in-room vocabulary gate.
+        valid_categories = [c for c in valid_categories if c not in FLOOR_BOUND_CATEGORIES]
+        valid_categories += sorted(seat_instances.keys())
+        valid_categories = valid_categories or ["object"]
 
     if anchor_census is not None:
         # Part A: room-scoped census instance labels, surface-vs-proximity
@@ -578,8 +793,18 @@ def generate_displacements(
             a for a in proximity_anchors
             if (parts := census_label_parts(a)) is not None and parts[1] in _TUCKABLE
         ]
+        # Concealment vocabulary: census anchors whose category is closed
+        # storage (cabinet/wardrobe/fridge/...) accept `inside` as a put-away
+        # (see CONCEALING_STORAGE_CATEGORIES) regardless of receptacle backing.
+        from ..env.inventory import CONCEALING_STORAGE_CATEGORIES
+        conceal_anchors = [
+            a for a in set(surface_anchors) | set(proximity_anchors)
+            if (parts := census_label_parts(a)) is not None
+            and parts[1] in CONCEALING_STORAGE_CATEGORIES
+        ]
         schema = build_displacement_schema(valid_categories, surface_anchors, proximity_anchors,
-                                           include_put_away=allow_put_away, tuck_anchors=tuck_anchors)
+                                           include_put_away=allow_put_away, tuck_anchors=tuck_anchors,
+                                           conceal_anchors=conceal_anchors)
     else:
         _logger.warning(
             "generate_displacements: no anchor census for this scene — falling back to the "
@@ -596,6 +821,17 @@ def generate_displacements(
         )
         schema = build_displacement_schema(valid_categories, valid_furniture_anchors, valid_furniture_anchors, include_put_away=allow_put_away)
 
+    if revision_feedback:
+        user += (
+            "\n\nREVISION ROUND — a realism reviewer rejected some of your earlier "
+            "proposals for this activity. Each line below gives the rejected move, "
+            "your original reason, the reviewer's critique, and (when present) a "
+            "suggested fix. Propose a REVISED set addressing the critiques: usually "
+            "that means moving the object to the destination your own reasoning "
+            "supports, or picking a more sensible object/destination. Drop any move "
+            "that cannot be fixed; do NOT re-propose a rejected move unchanged, and "
+            "do NOT re-propose moves that were already accepted.\n"
+            + revision_feedback)
     client = _get_client(model)
     return generate_json(
         client, _DISPLACEMENT_SYSTEM, user, schema,
@@ -641,26 +877,30 @@ def _entry_score(entry: dict) -> float:
 
 
 def _normalize_judge_scores(result, n_candidates: int) -> dict:
-    """Canonical {int index: float score} from any of the judge output
-    shapes observed in the real thinking-mode comparison
+    """Canonical {int index: {"score": float, "reason": str}} from any of the
+    judge output shapes observed in the real thinking-mode comparison
     (results/reports/llm_comparison/thinking_vs_moe.md): the schema's
-    {"scores": [{candidate_index, score, ...}]} array, a {"scores":
+    {"scores": [{candidate_index, reason, score}]} array, a {"scores":
     {"0": 0.6}} dict, a flat {"0": 0.9} dict, or a bare list of
-    floats/dicts. Raises ValueError on anything else, and
-    PartialJudgeScores when any candidate index is missing — both trigger
-    the caller's retry."""
+    floats/dicts. `reason` is the judge's own pre-score evidence weighing
+    (guided schema orders it before the score; "" for shapes that lack it).
+    Raises ValueError on anything else, and PartialJudgeScores when any
+    candidate index is missing — both trigger the caller's retry."""
+    def _entry(v) -> dict:
+        if isinstance(v, dict):
+            return {"score": _entry_score(v), "reason": str(v.get("reason", "")),
+                    "fix": str(v.get("fix", ""))}
+        return {"score": float(v), "reason": "", "fix": ""}
+
     scores = result.get("scores", result) if isinstance(result, dict) else result
     out: dict = {}
     if isinstance(scores, list):
         for i, entry in enumerate(scores):
-            if isinstance(entry, dict):
-                out[int(entry.get("candidate_index", i))] = _entry_score(entry)
-            else:
-                out[i] = float(entry)
+            idx = int(entry.get("candidate_index", i)) if isinstance(entry, dict) else i
+            out[idx] = _entry(entry)
     elif isinstance(scores, dict):
         for k, v in scores.items():
-            idx = int(k)
-            out[idx] = _entry_score(v) if isinstance(v, dict) else float(v)
+            out[int(k)] = _entry(v)
     else:
         raise ValueError(f"unrecognized judge output shape: {type(scores).__name__}")
     # Any candidate without a score is partial coverage — INCLUDING the
@@ -702,6 +942,8 @@ def score_realism_batch(
     judge_client=None,
     model_tag: str = "",
     current_state_block: Optional[str] = None,
+    request_fix: bool = False,
+    round_tag: str = "",
 ) -> tuple[list[float], dict]:
     """Score behavioral plausibility for a pool of grounded displacement candidates.
 
@@ -777,17 +1019,21 @@ def score_realism_batch(
         base += "_fs"
     if current_state_block:
         base += "_st" + hashlib.sha256(current_state_block.encode()).hexdigest()[:8]
-    # Move-history notes ride in the candidate lines but not in current_state_block,
-    # so fold them into the tag too — the cache is keyed by the stage tag (seed),
-    # not the prompt text, and two windows can share a state block yet differ in
-    # how many times each object has already moved.
-    mh = "".join(c.get("_move_history_note", "") for c in candidates)
-    if mh:
-        base += "_mh" + hashlib.sha256(mh.encode()).hexdigest()[:8]
     if model_tag:
         base += f"_m{model_tag}"
     if sample_index:
         base += f"_s{sample_index}"
+    # judge-retry plumbing: request_fix marks the round-1 call (fix field in
+    # schema + user instruction); round_tag separates the round-2 kill-only
+    # call's cache entries from round 1's (same window, different pool).
+    if request_fix:
+        # "_fixh" (not "_fix"): the hopeless-sentinel instruction changed the
+        # fix contract, and the marker rename invalidates exactly the round-1
+        # fix-requesting judge entries — everything else (charters, plans,
+        # traces, displacements, kill-only judges) replays from cache
+        base += "_fixh"
+    if round_tag:
+        base += f"_{round_tag}"
     stage_tag = template.tag(base, builder=True)
     seed = make_seed(household_id, day, f"{stage_tag}_{activity}_{start:.2f}", occupant_index)
 
@@ -816,6 +1062,17 @@ def score_realism_batch(
         f"Score all {n} candidate(s) below — output exactly {n} score object(s), "
         f"one per candidate, using its candidate_index (0..{n - 1}):"
     )
+    if request_fix:
+        # instruction lives in the USER message, not the template: the
+        # round-2 judge must run the unmodified kill-only contract, and a
+        # template edit would leak the fix idea into every call.
+        lines.append(
+            "For each candidate you score below 0.3, also fill `fix`: the "
+            "minimal edit that would make the move plausible (usually the "
+            "destination the candidate's own reason argues for). If NO small "
+            "edit can repair it — the move makes no sense for this occupant/"
+            "activity at all — write exactly the word 'hopeless' instead, so "
+            "it is not retried. Leave `fix` empty for acceptable candidates.")
     for i, c in enumerate(candidates):
         lines.append(candidate_line(i, c))
     user = "\n".join(lines)
@@ -840,7 +1097,8 @@ def score_realism_batch(
             judge_meta["think"] = think
         else:
             by_index = generate_json(
-                client, system_prompt, user, build_realism_schema(len(candidates)),
+                client, system_prompt, user,
+                build_realism_schema(len(candidates), with_fix=request_fix),
                 seed=seed, stage=stage_tag, cache=cache, force=force, validate=_validate,
                 temperature=temperature,
             )
@@ -857,7 +1115,7 @@ def score_realism_batch(
         )
         by_index = dict(e.scores)
         for i in e.missing:
-            by_index[i] = default
+            by_index[i] = {"score": default, "reason": ""}
         judge_meta["score_fallback"] = list(e.missing)
     except (json.JSONDecodeError, KeyError, TypeError, ValueError) as e:
         # The judge produced NO usable output at all after every retry —
@@ -872,12 +1130,14 @@ def score_realism_batch(
             "defaulting all %d score(s) to %.1f",
             stage_tag, seed, e, len(candidates), default,
         )
-        by_index = {i: default for i in range(len(candidates))}
+        by_index = {i: {"score": default, "reason": ""} for i in range(len(candidates))}
         judge_meta["score_fallback"] = list(range(len(candidates)))
         judge_meta["fallback_reason"] = str(e)[:200]
     # Coverage is enforced above, so this lookup cannot silently invent a
     # score — every index is present, from the judge or the logged fallback.
-    return [by_index[i] for i in range(len(candidates))], judge_meta
+    judge_meta["reasons"] = [by_index[i].get("reason", "") for i in range(len(candidates))]
+    judge_meta["fixes"] = [by_index[i].get("fix", "") for i in range(len(candidates))]
+    return [by_index[i]["score"] for i in range(len(candidates))], judge_meta
 
 
 # ---------------------------------------------------------------------------

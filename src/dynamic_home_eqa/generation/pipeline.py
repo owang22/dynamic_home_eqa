@@ -55,7 +55,7 @@ from __future__ import annotations
 
 import json
 import pathlib
-from collections import defaultdict
+from collections import Counter, defaultdict
 from typing import Optional, TYPE_CHECKING
 
 from .anchor_reachability_filter import (
@@ -86,7 +86,7 @@ from .manifest import build_manifest
 from .persona import generate_persona
 from .regions import load_scene_regions
 from .schemas import filter_displacement_proposals
-from .selection import select_for_activity
+from .selection import REALISM_FLOOR, select_for_activity
 from .stages import (
     generate_activity_trace,
     generate_displacements,
@@ -101,6 +101,87 @@ if TYPE_CHECKING:
 # ---------------------------------------------------------------------------
 # Per-scene generation
 # ---------------------------------------------------------------------------
+
+def _preflight_replay_gates(candidates, state, occupant, room_instance_categories,
+                            admission_map, slot_occupancy):
+    """Mirror build_manifest's replay gates (unbacked anchor, no-op-with-
+    spawn-allowance, capacity) against the running state, BEFORE the Poisson
+    selection draw — so the draw operates on the pool of moves that will
+    actually materialize, and lambda is a clean scene-activity knob whose
+    shape no downstream gate silently eats into.
+
+    Survivors get `_resolved_slot` (the same resolved slot string
+    build_manifest will record — RunningState.apply stores it so the no-op
+    comparison stays manifest-grade across windows); excluded candidates get
+    `_gate_excluded` = reason and ride into choices.jsonl unselected.
+
+    Deliberately NOT preflighted: attendance (event t is jittered inside the
+    manifest and proposals are already room-scoped to the acting occupant,
+    so it essentially never fires) and same-window capacity races (two
+    chosen candidates filling one slot in the same draw). build_manifest
+    remains the authority; a rare late drop there costs one event, not the
+    Poisson shape.
+    """
+    from ..env.anchor_admission import anchor_capacity
+    from ..env.inventory import ABUNDANT_STORAGE_CATEGORIES, TIER2_CLUTTER_CATALOG
+    from ..rooms import UnresolvableSlotError, resolve_slot
+    from .ownership import TIER3_CATEGORIES, tier3_instance_label
+
+    gated: list[dict] = []
+    excluded: Counter = Counter()
+    for c in candidates:
+        if c.get("_despawn"):
+            # A put-away is always feasible — except concealing a Tier-2
+            # instance that is ALREADY stored away (slot None): the manifest
+            # would drop that as despawn-of-nothing, so exclude it here and
+            # let the Poisson draw pick something real instead.
+            cat0 = c.get("object_category", "")
+            if c.get("_concealed_in") and cat0 not in TIER3_CATEGORIES:
+                explicit = c.get("_instance")
+                lbl0 = explicit if (explicit and explicit in state.tier2_slots) \
+                    else state._tier2_label(cat0, c.get("_location"))
+                if lbl0 is not None and state.tier2_slots.get(lbl0) is None:
+                    c["_gate_excluded"] = "already_stored"
+                    excluded["already_stored"] += 1
+                    continue
+            gated.append(c)
+            continue
+        cat = c.get("object_category", "")
+        loc = c.get("_location")
+        try:
+            to_slot = resolve_slot(c["target_anchor"], c["target_relationship"], room=loc,
+                                   room_instance_categories=room_instance_categories)
+        except UnresolvableSlotError:
+            c["_gate_excluded"] = "unbacked_anchor"
+            excluded["unbacked_anchor"] += 1
+            continue
+        # Current slot of the instance this proposal would actually move —
+        # same resolution order as build_manifest (explicit _instance first,
+        # then the room-aware picker).
+        if cat in TIER3_CATEGORIES:
+            cur = state.tier3.get(tier3_instance_label(c.get("_occupant", occupant), cat))
+        else:
+            explicit = c.get("_instance")
+            lbl = explicit if (explicit and explicit in state.tier2_slots) \
+                else state._tier2_label(cat, loc)
+            cur = state.tier2_slots.get(lbl) if lbl else state.moved_today.get(cat)
+        if cur is not None and cur == to_slot:
+            can_spawn = (cat in ABUNDANT_STORAGE_CATEGORIES
+                         and len(state.tier2_pool.get(cat, []))
+                         < TIER2_CLUTTER_CATALOG.get(cat, 0))
+            if not can_spawn:
+                c["_gate_excluded"] = "noop"
+                excluded["noop"] += 1
+                continue
+        cap = anchor_capacity(admission_map, to_slot)
+        if cap is not None and slot_occupancy.get(to_slot, 0) >= cap:
+            c["_gate_excluded"] = "capacity"
+            excluded["capacity"] += 1
+            continue
+        c["_resolved_slot"] = to_slot
+        gated.append(c)
+    return gated, excluded
+
 
 def generate_for_scene(
     scene_id: str,
@@ -122,6 +203,8 @@ def generate_for_scene(
     judge_style: str = "asis",
     enrich_context: bool = False,
     exemplar_block=None,
+    activity_scale: float = 1.0,
+    judge_retry: bool = False,
 ) -> dict:
     """Run the full generation pipeline for one scene.
 
@@ -309,9 +392,12 @@ def generate_for_scene(
                 judge_thinking=judge_thinking, judge_style=judge_style,
                 include_context=False, exemplar_block=None,
             )
-            for p, s in zip(clutter, c_scores):
+            c_reasons = c_meta.get("reasons") or [""] * len(clutter)
+            for p, s, jr in zip(clutter, c_scores, c_reasons):
                 p["_judge_score"] = s
                 p["_judge_stage_tag"] = c_meta["stage_tag"]
+                if jr:
+                    p["_judge_reason"] = jr
             from .clutter.generate import admit_clutter
             clutter, clutter_rejected, n_clutter_below_floor, n_clutter_over_cap = admit_clutter(
                 clutter, c_scores, REALISM_FLOOR, TIER2_CLUTTER_CATALOG,
@@ -338,6 +424,18 @@ def generate_for_scene(
         force=force,
     )
 
+    # ── Stage 1.5: routine charter (once per HOUSEHOLD — cached across days)
+    # and today's calendar event (seeded, sparse; None = ordinary day). The
+    # charter pins each member's stable weekly pattern so day plans render
+    # rather than re-imagine the household; the calendar makes variety an
+    # explicit sampled quantity instead of a prompt exhortation.
+    from .stages import generate_routine_charter
+    from .event_calendar import event_for_day
+    charter = generate_routine_charter(persona, household_id, model=model,
+                                       cache=cache, force=force)
+    event = event_for_day(household_id, day, persona)
+    event_note = event["note"] if event else None
+
     # ── Stage 2: Activity traces (one per occupant) ───────────────────────────
     traces: list[dict] = []
     for occ_idx, occupant in enumerate(persona.get("occupants", [])):
@@ -352,6 +450,8 @@ def generate_for_scene(
             temperature=temperature,
             cache=cache,
             force=force,
+            charter=charter,
+            event_note=event_note,
         )
         # occupant_name is free-text in ACTIVITY_SCHEMA (not enum-constrained
         # to the real persona name — nothing stops the model from echoing it
@@ -377,6 +477,8 @@ def generate_for_scene(
             temperature=temperature,
             cache=cache,
             force=force,
+            charter=charter,
+            event_note=event_note,
         )
 
     # ── Stage 3: displacement + grounding + judge + select, per chronological
@@ -403,6 +505,14 @@ def generate_for_scene(
     ownership = assign_ownership(persona)
     bedrooms = assign_bedrooms(persona)
 
+    # Strategy 2+ asset binding: each owner's Tier-3 item gets a specific
+    # render asset, chosen by the LLM from the reviewer-tagged pool so the
+    # pick is in character (generation/asset_binding.py). Carried on the
+    # result + manifest; build_realized_day obeys it verbatim.
+    from .asset_binding import bind_owner_assets
+    asset_bindings = bind_owner_assets(
+        persona, ownership, household_id, model=model, cache=cache, force=force)
+
     def _floor_bound_surface(p: dict) -> bool:
         return (p.get("object_category") in FLOOR_BOUND_CATEGORIES
                 and p.get("target_relationship") in SURFACE_RELATIONSHIPS)
@@ -423,11 +533,30 @@ def generate_for_scene(
     except Exception:
         _scene_state = None  # live-WorldGraph/synthetic paths: category-keyed fallback
     state = RunningState.initial(ownership, scene_state=_scene_state)
+    # Tier-2b clutter enters the tracked state as real instances (bowl_1...),
+    # mirroring build_manifest's numbering, so the state block/prompt and the
+    # manifest replay agree on which bowl is where — and so the abundant-
+    # storage spawn cap (catalog total) counts the clutter already out.
+    # The resolver stores manifest-grade resolved slots, which the gate
+    # preflight's no-op comparison requires.
+    from ..rooms import resolve_slot as _resolve_slot
+    state.seed_clutter(clutter, resolver=lambda p: _resolve_slot(
+        p["target_anchor"], p["target_relationship"],
+        room_instance_categories=room_instance_categories))
+    # Live slot occupancy for the preflight's capacity gate — seeded from
+    # every tracked instance's starting slot, the same way build_manifest
+    # seeds its own slot_occupancy.
+    slot_occupancy: dict[str, int] = dict(Counter(
+        v for v in state.tier2_slots.values() if v))
+    preflight_excluded: Counter = Counter()
     stats = GroundingStats()
     all_raw_proposals: list[dict] = []   # post-filter, pre-grounding (len only)
     all_candidates: list[dict] = []
     selected: list[dict] = []
     selected_realism_scores: list[float] = []
+    retry_stats = {"windows_with_rejects": 0, "rejected_first_pass": 0,
+                   "revision_proposals": 0, "revived_eligible": 0,
+                   "killed_second_pass": 0, "hopeless_skipped": 0}
     n_abstained = 0
     n_floor_bound_dropped = 0
 
@@ -446,7 +575,13 @@ def generate_for_scene(
         _present = state.categories_present_in(act_location)
         occ_inventory = {c: n for c, n in occ_inventory.items()
                          if c not in FLOOR_BOUND_CATEGORIES or c in _present}
-        state_block = state.object_state_block(occ_name, owned) if enrich_context else None
+        # Per-instance seat vocabulary: the seats currently in this room, by
+        # id — offered to the proposer in place of the bare category (see
+        # generate_displacements' seat_instances docstring) and listed in the
+        # state block so it can pick one that isn't in use.
+        seat_instances = state.seat_instances_in_room(act_location) if enrich_context else {}
+        state_block = (state.object_state_block(occ_name, owned, room=act_location)
+                       if enrich_context else None)
         live_occ = state.anchors_in_use(act_location) if enrich_context else None
         # Offer "put_away" only when this occupant has a carried item currently
         # out — nothing to put away otherwise (Phase 3 despawn).
@@ -463,10 +598,19 @@ def generate_for_scene(
             model=model, temperature=temperature, cache=cache, force=force,
             trace=trace, include_context=enrich_context, bedroom_index=bedrooms.get(occ_name),
             current_state_block=state_block, live_occupancy=live_occ,
-            allow_put_away=allow_put_away,
+            allow_put_away=allow_put_away, seat_instances=seat_instances,
         )
         window_props: list[dict] = []
+        from .instances import instance_token_category
         for prop in displacement.get("proposals", []):
+            # Normalize instance-token proposals ("stool_2") back to
+            # (category, _instance) so grounding/judge/selection see a real
+            # category and the manifest/running state move the model's own
+            # chosen instance instead of re-resolving one.
+            token = prop.get("object_category", "")
+            if token in seat_instances:
+                prop["_instance"] = token
+                prop["object_category"] = instance_token_category(token)
             prop["_activity"]       = act_label
             prop["_occupant"]       = occ_name
             prop["_occupant_index"] = occ_idx
@@ -486,6 +630,8 @@ def generate_for_scene(
         # manifest and running state treat them as the item leaving the scene.
         despawns_w: list[dict] = []
         placements_w: list[dict] = []
+        from ..env.inventory import CONCEALING_STORAGE_CATEGORIES
+        from ..rooms import census_label_parts as _clp
         for p in window_props:
             if p.get("target_anchor") == PUT_AWAY_ANCHOR:
                 if (p.get("object_category") in TIER3_CATEGORIES
@@ -493,6 +639,15 @@ def generate_for_scene(
                     p["_despawn"] = True
                     despawns_w.append(p)
                 # else: invalid put_away, silently dropped
+            elif (p.get("target_relationship") == "inside"
+                  and (_pp := _clp(p.get("target_anchor", ""))) is not None
+                  and _pp[1] in CONCEALING_STORAGE_CATEGORIES):
+                # Concealment: 'inside' closed storage is a put-away, not a
+                # visible placement — the object is stored out of sight.
+                # Bypasses grounding (always feasible) like put_away.
+                p["_despawn"] = True
+                p["_concealed_in"] = p["target_anchor"]
+                despawns_w.append(p)
             else:
                 placements_w.append(p)
         all_raw_proposals.extend(placements_w + despawns_w)
@@ -512,15 +667,6 @@ def generate_for_scene(
         if not grounded_w:
             continue
 
-        # Annotate each candidate with its object's move history so the judge
-        # can price cumulative relocation contextually (a phone's 7th move vs a
-        # plant's). Set before judging so it rides into the candidate line — and
-        # into the judge's cache key, which hashes the full user prompt.
-        for c in grounded_w:
-            c["_move_history_note"] = state.move_history_note(
-                c.get("_occupant", occ_name), c.get("object_category", ""),
-                room=c.get("_location"))
-
         scores, judge_meta = score_realism_batch(
             candidates=grounded_w, activity=act_label, occupant_name=occ_name,
             persona=persona, household_id=household_id, day=day, start=start, end=act_end,
@@ -528,25 +674,159 @@ def generate_for_scene(
             judge_thinking=judge_thinking, judge_style=judge_style, trace=trace,
             include_context=enrich_context, exemplar_block=exemplar_block,
             current_state_block=state_block,
+            request_fix=judge_retry,
         )
-        for c, s in zip(grounded_w, scores):
+        judge_reasons = judge_meta.get("reasons") or [""] * len(grounded_w)
+        for c, s, jr in zip(grounded_w, scores, judge_reasons):
             c["_judge_score"]     = s
             c["_judge_stage_tag"] = judge_meta["stage_tag"]
             c["_judge_seed"]      = judge_meta["seed"]
+            # The judge's own pre-score evidence weighing (guided schema puts
+            # reason before score) — persisted so choices.jsonl carries the
+            # WHY next to every score, selected and rejected alike.
+            if jr:
+                c["_judge_reason"] = jr
             if judge_meta.get("think"):
                 c["_judge_think"] = judge_meta["think"][:500]
             if judge_meta.get("score_fallback"):
                 c["_judge_score_fallback"] = judge_meta["score_fallback"]
 
-        chosen = select_for_activity(grounded_w, scores, act_label, household_id, day,
-                                     start=start, anchor_uses=dict(state.anchor_uses))
+        # ── Judge-retry: ONE revision round per window ──────────────────
+        # The strict judge is precise about WHY a candidate fails (most
+        # often: sound reason, incongruous destination). Feeding each
+        # reject's critique + fix hint back to the proposer for a single
+        # revision grows the ELIGIBLE pool — the term that binds move counts
+        # whenever pool < Poisson draw — without touching lambda or the
+        # floor. The revised set is re-grounded and re-judged by a fresh
+        # kill-only call (no fix request, separate seed/tag, no round 3):
+        # its rejects are final.
+        if judge_retry:
+            _floor = REALISM_FLOOR
+            fixes = judge_meta.get("fixes") or [""] * len(grounded_w)
+            fix_by_id = {id(c): f for c, f in zip(grounded_w, fixes)}
+            all_rejects = [c for c, s in zip(grounded_w, scores)
+                           if s < _floor and not c.get("_despawn")]
+            # "hopeless" sentinel (cheap string check): the judge marked the
+            # reject as unrepairable by any small edit — sending it back to
+            # the proposer wastes a revision slot and, when a whole window's
+            # rejects are hopeless, the entire revision + second-judge round
+            # (two LLM calls) is skipped.
+            rejected_w = [c for c in all_rejects
+                          if "hopeless" not in fix_by_id.get(id(c), "").lower()]
+            retry_stats["hopeless_skipped"] += len(all_rejects) - len(rejected_w)
+            if rejected_w:
+                retry_stats["windows_with_rejects"] += 1
+                retry_stats["rejected_first_pass"] += len(rejected_w)
+                fb_lines = []
+                for c in rejected_w:
+                    line = (f"- {c.get('object_category')} -> "
+                            f"{c.get('target_anchor')} "
+                            f"({c.get('target_relationship')}) | your reason: "
+                            f"{str(c.get('reason', ''))[:160]} | reviewer: "
+                            f"{str(c.get('_judge_reason', ''))[:200]}")
+                    if fix_by_id.get(id(c)):
+                        line += f" | suggested fix: {fix_by_id[id(c)][:200]}"
+                    fb_lines.append(line)
+                rev_disp = generate_displacements(
+                    activity=act_label, start=start, end=act_end,
+                    occupant_name=occ_name, occupant_index=occ_idx, persona=persona,
+                    inventory=occ_inventory, room_inventory=room_inventory_reachable,
+                    location=act_location, anchor_inventory=anchor_inventory_reachable,
+                    anchor_census=anchor_census, household_id=household_id, day=day,
+                    model=model, temperature=temperature, cache=cache, force=force,
+                    trace=trace, include_context=enrich_context,
+                    bedroom_index=bedrooms.get(occ_name),
+                    current_state_block=state_block, live_occupancy=live_occ,
+                    allow_put_away=allow_put_away, seat_instances=seat_instances,
+                    revision_feedback="\n".join(fb_lines),
+                )
+                rev_props: list[dict] = []
+                for prop in rev_disp.get("proposals", [])[:len(rejected_w)]:
+                    token = prop.get("object_category", "")
+                    if token in seat_instances:
+                        prop["_instance"] = token
+                        prop["object_category"] = instance_token_category(token)
+                    if prop.get("target_anchor") == ABSTAIN_ANCHOR:
+                        continue
+                    if _floor_bound_surface(prop):
+                        continue
+                    if prop.get("target_anchor") == PUT_AWAY_ANCHOR:
+                        continue  # revision round is placements-only
+                    prop["_activity"] = act_label
+                    prop["_occupant"] = occ_name
+                    prop["_occupant_index"] = occ_idx
+                    prop["_start"] = activity["start"]
+                    prop["_end"] = activity["end"]
+                    prop["_location"] = act_location
+                    prop["_revision_round"] = 1
+                    rev_props.append(prop)
+                retry_stats["revision_proposals"] += len(rev_props)
+                if env is not None and agent is not None and world_graph is not None:
+                    rev_grounded, stats = ground_displacement_batch(
+                        rev_props, world_graph, env, agent, grasp_mgr, stats,
+                        scene_id=scene_id)
+                elif use_semantic_grounding:
+                    rev_grounded, stats = ground_displacement_batch_semantic(
+                        rev_props, inventory, scene_regions, stats,
+                        anchor_inventory=anchor_inventory_reachable,
+                        anchor_census=anchor_census)
+                else:
+                    rev_grounded = rev_props
+                    stats.total += len(rev_props)
+                    stats.accepted += len(rev_props)
+                all_raw_proposals.extend(rev_props)
+                if rev_grounded:
+                    rev_scores, rev_meta = score_realism_batch(
+                        candidates=rev_grounded, activity=act_label,
+                        occupant_name=occ_name, persona=persona,
+                        household_id=household_id, day=day, start=start,
+                        end=act_end, occupant_index=occ_idx, model=model,
+                        temperature=temperature, cache=cache, force=force,
+                        judge_thinking=judge_thinking, judge_style=judge_style,
+                        trace=trace, include_context=enrich_context,
+                        exemplar_block=exemplar_block,
+                        current_state_block=state_block,
+                        round_tag="r2kill",
+                    )
+                    rev_reasons = rev_meta.get("reasons") or [""] * len(rev_grounded)
+                    for c, s, jr in zip(rev_grounded, rev_scores, rev_reasons):
+                        c["_judge_score"] = s
+                        c["_judge_stage_tag"] = rev_meta["stage_tag"]
+                        c["_judge_seed"] = rev_meta["seed"]
+                        if jr:
+                            c["_judge_reason"] = jr
+                    revived = sum(1 for s in rev_scores if s >= _floor)
+                    retry_stats["revived_eligible"] += revived
+                    retry_stats["killed_second_pass"] += len(rev_scores) - revived
+                    grounded_w = grounded_w + rev_grounded
+                    scores = scores + rev_scores
+
+        # Replay-gate preflight BEFORE the Poisson draw (see
+        # _preflight_replay_gates): the draw shapes the FINAL manifest count,
+        # gates only shrink the pool it draws from.
+        score_by_id = {id(c): s for c, s in zip(grounded_w, scores)}
+        gated_w, excl = _preflight_replay_gates(
+            grounded_w, state, occ_name, room_instance_categories,
+            admission_map, slot_occupancy)
+        preflight_excluded.update(excl)
+
+        chosen = select_for_activity(gated_w, [score_by_id[id(c)] for c in gated_w],
+                                     act_label, household_id, day,
+                                     start=start, activity_scale=activity_scale)
         chosen_ids = {id(c) for c in chosen}
         for c in grounded_w:
             c["_selected"] = id(c) in chosen_ids
         all_candidates.extend(grounded_w)
-        score_by_id = {id(c): s for c, s in zip(grounded_w, scores)}
         selected.extend(chosen)
         selected_realism_scores.extend(score_by_id[id(c)] for c in chosen)
+
+        # Commit the chosen moves' capacity consumption (mirrors
+        # build_manifest: only slots with a real per-object budget count).
+        from ..env.anchor_admission import anchor_capacity as _anchor_capacity
+        for c in chosen:
+            slot = c.get("_resolved_slot")
+            if slot and _anchor_capacity(admission_map, slot) is not None:
+                slot_occupancy[slot] = slot_occupancy.get(slot, 0) + 1
 
         state.apply(chosen)  # thread the running state to the next window
 
@@ -560,12 +840,25 @@ def generate_for_scene(
     return {
         "household_id":        household_id,
         "scene_id":            scene_id,
+        # the household's stable weekly pattern (once per household) and this
+        # day's scheduled calendar event (None = ordinary day) — the two
+        # structures that replaced free-text day imagination (see
+        # event_calendar.py's postmortem note)
+        "routine_charter":     charter,
+        "calendar_event":      event,
+        # judge-retry accounting (all zeros when the flag is off): how many
+        # windows had first-pass rejects, how many revision proposals came
+        # back, and the second judge's verdict split (kill-only, no round 3).
+        "judge_retry_stats":   retry_stats,
         # The generating model — the run's comparison label (qwen-style vs
         # llama-style arms; the eval webapp's future `condition` field).
         "model":               model,
         "profile":             household_type,
         "day":                 day,
         "clutter":             clutter,
+        # {owner label -> render asset uid} for owned Tier-3 items (LLM-
+        # bound from the tagged pool; see generation/asset_binding.py).
+        "asset_bindings":      asset_bindings,
         "persona":             persona,
         "traces":              traces,
         "displacements":       selected,
@@ -589,6 +882,11 @@ def generate_for_scene(
         # Floor-Bound Realization round: chair/stool surface proposals
         # dropped before grounding (see the filter above).
         "floor_bound_surface_dropped": n_floor_bound_dropped,
+        # Replay-gate preflight exclusions (pre-Poisson; see
+        # _preflight_replay_gates). These candidates ride in `candidates`
+        # with _gate_excluded set; the manifest's own integrity_stats should
+        # show ~zero corresponding drops now.
+        "preflight_excluded":  dict(preflight_excluded),
         "mean_realism_score":  round(mean_realism, 4),
         "grounding_stats": {
             "total":                stats.total,
@@ -626,10 +924,17 @@ def run_batch(
     reachability_filtering: bool = False,
     judge_thinking: bool = False,
     judge_style: str = "asis",
+    judge_retry: bool = False,
     enrich_context: bool = False,
     exemplar_block=None,
+    activity_scale: float = 1.0,
 ) -> tuple[GroundingStats, float]:
     """Generate, ground, and build manifests for a list of scenes.
+
+    activity_scale: scene-activity knob — multiplies every window's Poisson
+    mean (see selection.select_for_activity), so one number makes the whole
+    batch's homes busier (>1) or quieter (<1) without touching gates,
+    prompts, or judge behavior.
 
     Writes one subfolder per (scene, variant, day) under
     out_dir/<scene_id>_<household_type>[_v<variant>][_day<N>]/ (the _v suffix
@@ -712,8 +1017,10 @@ def run_batch(
                         reachability_filtering=reachability_filtering,
                         judge_thinking=judge_thinking,
                         judge_style=judge_style,
+                        judge_retry=judge_retry,
                         enrich_context=enrich_context,
                         exemplar_block=exemplar_block,
+                        activity_scale=activity_scale,
                     )
 
                     manifest_seed += 1

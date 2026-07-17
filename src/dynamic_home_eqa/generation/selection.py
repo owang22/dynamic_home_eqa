@@ -22,9 +22,10 @@ from .cache import make_seed
 _LAMBDA_KEYWORDS: list[tuple[tuple[str, ...], float]] = [
     (("breakfast", "lunch", "dinner", "cook", "meal", "snack", "party"), 3.0),
     (("clean", "tidy", "organize", "chore", "laundry", "declutter"), 2.5),
-    (("work", "desk", "study", "read", "call", "meeting"), 1.2),
-    (("tv", "relax", "rest", "lounge", "nap", "movie"), 0.8),
-    (("sleep", "away", "outdoor", "gym", "errand", "shower", "bath"), 0.3),
+    (("work", "desk", "study", "read", "call", "meeting"), 2.0),
+    (("tv", "relax", "rest", "lounge", "nap", "movie"), 1.5),
+    (("gym", "errand", "shower", "bath"), 1.0),
+    (("sleep", "away", "outdoor"), 0.4),
 ]
 _DEFAULT_LAMBDA = 1.5
 
@@ -53,9 +54,17 @@ REALISM_FLOOR = 0.3
 
 
 def select_displacements(candidates, realism_scores, lambda_moves, rng,
-                         temperature=1.0, anchor_uses=None,
+                         temperature=1.0,
                          realism_floor=REALISM_FLOOR):
     """Select a stochastic subset of displacement candidates.
+
+    THE FINAL COUNT-SHAPER: the caller (pipeline) runs the replay-gate
+    preflight FIRST (no-op/capacity/unbacked-anchor — the same gates
+    build_manifest enforces), so `candidates` is already the pool of moves
+    that will actually materialize if drawn. That makes lambda_moves a clean
+    scene-activity knob: the number of manifest events per window is
+    min(Poisson(lambda), pool), with no downstream gate silently eating into
+    the drawn count.
 
     Candidates scoring below `realism_floor` are ineligible outright — the
     judge's verdict is a gate, not merely a weight. Among eligible candidates,
@@ -64,20 +73,18 @@ def select_displacements(candidates, realism_scores, lambda_moves, rng,
     around the activity's expected value and can naturally be zero: a quiet
     window is a valid outcome, not a failure to fill a quota. Selection among
     eligible candidates is weighted by realism score so stronger candidates
-    are favored.
+    are favored. (The old per-anchor repeat-downweight is retired: surface
+    spreading is the proposer's job now — the live surface-occupancy block
+    and the vary-target_anchor prompt rule — not a sampler-side correction.)
 
     Args:
-        candidates:     list of grounded displacement candidates.
+        candidates:     list of gate-surviving displacement candidates.
         realism_scores: parallel list of plausibility scores in [0, 1].
         lambda_moves:   activity's expected displacement count (Poisson mean).
         rng:            seeded numpy Generator for reproducibility.
         temperature:    softmax temperature on the selection weights.
                         Lower sharpens toward high-realism candidates;
                         higher flattens toward uniform.
-        anchor_uses:    {anchor: times already used today} (Phase 3). When
-                        given, each candidate's weight is downweighted by
-                        1/(1+uses) for its target_anchor, so the day doesn't
-                        pile every object onto the same one or two surfaces.
         realism_floor:  absolute judge-score eligibility threshold (see
                         REALISM_FLOOR for how the default was chosen).
 
@@ -94,10 +101,6 @@ def select_displacements(candidates, realism_scores, lambda_moves, rng,
         return []
     elig_scores = np.array([realism_scores[i] for i in eligible])
     weights = np.exp(elig_scores / temperature)
-    if anchor_uses:
-        rep = np.array([1.0 / (1.0 + anchor_uses.get(candidates[i].get("target_anchor"), 0))
-                        for i in eligible])
-        weights = weights * rep
     weights /= weights.sum()
     idx = rng.choice(len(eligible), size=n_target, replace=False, p=weights)
     return [candidates[eligible[i]] for i in idx]
@@ -111,7 +114,7 @@ def select_for_activity(
     day: int,
     start: float = 0.0,
     temperature: float = 1.0,
-    anchor_uses: dict | None = None,
+    activity_scale: float = 1.0,
 ) -> list[dict]:
     """select_displacements(), with lambda_moves and a reproducible seed derived
     from (household_id, day, activity, start, "select") so selections are
@@ -123,15 +126,19 @@ def select_for_activity(
     drew the identical Poisson count and the identical weighted sample, so a
     repeated activity always selected the same candidates verbatim.
 
-    anchor_uses (Phase 3): per-anchor daily use counts, threaded so repeated
-    destinations get downweighted — the whole day's placements spread out
-    instead of piling onto one surface. (Repeated relocation of the SAME object
-    is handled by the judge, not here — it gets the object's move history in its
-    candidate line and prices cumulative implausibility contextually; the
-    REALISM_FLOOR gate is what makes that verdict binding on selection.)
+    activity_scale: the scene-activity knob. Multiplies every window's
+    Poisson mean, so 2.0 roughly doubles how many objects move in a day and
+    0.5 halves it, uniformly across activity types — the single number to
+    turn when a dataset needs busier or quieter homes. It shapes the FINAL
+    manifest count directly because the pipeline gate-preflights the pool
+    before this draw (see select_displacements).
+
+    (There is deliberately no per-object repeat-move penalty and no per-anchor
+    repeat-downweight here: proposals are instance-explicit for seats and
+    spawn fresh instances for abundant clutter, and surface spreading is
+    prompt-side — the sampler stays a pure realism-weighted Poisson draw.)
     """
     seed = make_seed(household_id, day, f"select_{activity}_{start:.2f}", 0)
     rng = np.random.default_rng(seed)
-    lam = lambda_moves_for(activity)
-    return select_displacements(candidates, realism_scores, lam, rng, temperature,
-                                anchor_uses=anchor_uses)
+    lam = lambda_moves_for(activity) * activity_scale
+    return select_displacements(candidates, realism_scores, lam, rng, temperature)

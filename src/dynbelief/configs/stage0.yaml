@@ -1,0 +1,21 @@
+# Stage 0 gate configuration (one YAML per stage).
+episode:
+  gen_dir: generation_out_dynbelief          # repo-relative
+  folders:                                   # ordered day folders; null -> autodiscover *_day<k>
+  out_dir: logs/dynbelief_ep049w             # episode log dir (repo-relative)
+
+run:
+  seed: 7
+  grid_min: 10
+  train_days: 2          # observation feeds only; metrics logged after this
+  eval_days: 5           # gate requires >= 5 evaluated sim-days
+  perceiver:
+    fov_deg: 360         # fallback viewpoints have uncurated yaw; sweep in place
+    d_max: 5.0
+  schedules:
+    round_robin: {period_min: 45}
+    random_uniform: {rate_per_hour: 1.5}
+  tiers: [b0_lastseen, b1_longmem, b2_classdecay, b3_perpetua_star]
+  b3_f_source: fremen
+
+report_dir: reports/stage0

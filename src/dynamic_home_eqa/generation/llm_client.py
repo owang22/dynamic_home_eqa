@@ -108,7 +108,11 @@ class _LLMClient:
             # requiring a required free-text `habits` field) truncated
             # mid-string and failed all MAX_RETRIES with a JSONDecodeError
             # — verified via a real run, not a hypothetical margin.
-            max_tokens=2048,
+            # 2048 -> 4096: same failure mode again with Qwen3.6-35B-A3B,
+            # whose displacement responses run much wordier than Qwen3-32B's
+            # — a real displacement_ctx call truncated mid-string on all 3
+            # attempts (Unterminated string) and cost the scene.
+            max_tokens=4096,
             seed=seed,
             guided_decoding=self._structured_outputs(schema),
         )
@@ -220,7 +224,7 @@ class OpenAIHTTPClient(HTTPThinkingClient):
                 {"role": "user",   "content": user},
             ],
             "temperature": temperature,
-            "max_tokens": 2048,  # same budget as the in-process path (see _LLMClient.generate)
+            "max_tokens": 4096,  # same budget as the in-process path (see _LLMClient.generate)
             "response_format": {
                 "type": "json_schema",
                 "json_schema": {"name": "generation", "schema": schema},

@@ -1,0 +1,107 @@
+{
+  "scene_id": "102343992",
+  "resident_profile": "single_parent_young_kids",
+  "seed": 9,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "alex_laptop": "laptop_a031287e7b68",
+    "alex_phone": "phone_223b376823b5",
+    "alex_wallet": "wallet_4eb66e5c0b4f",
+    "alex_keys": "keys_92167e12a3f0",
+    "leo_backpack": "backpack_390164707739"
+  },
+  "day_context": {
+    "Alex": {
+      "day_type": "weekday",
+      "day_scenario": "Alex wakes at 6:30 AM to join an early client sync from the home office before commuting with an audiobook on his phone. He spends the afternoon reviewing project timelines in the study, finally logging off to wind down and retire to bed at 23:00."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "Leo wakes at 7:00 AM to stack wooden blocks in the living room corner before his morning drop-off at part-time preschool. After returning home, he constructs a sprawling tower in the hallway, leaving it standing in the middle of the floor as he heads to bed at 20:00."
+    },
+    "Mia": {
+      "day_type": "weekday",
+      "day_scenario": "Mia wakes at 7:00 AM and spreads a fresh sheet of paper on the kitchen counter to sketch bright pictures with her wax crayons. After a quiet afternoon of painting, she leaves her art supplies scattered on the dining table before settling into her pajamas for bedtime at 20:30."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.8,
+      "label": "bowl_2",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "breakfast",
+      "reason": "To eat breakfast, Mia likely brings a bowl from storage (as none are currently visible on surfaces) and places it on the table.",
+      "object_handle": null
+    },
+    {
+      "t": 8.035,
+      "label": "bowl_3",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "breakfast",
+      "reason": "Leo is having breakfast in the kitchen, so he needs a surface to place his food. The kitchen table is the appropriate dining surface for this activity.",
+      "object_handle": null
+    },
+    {
+      "t": 9.51,
+      "label": "candle_1",
+      "change_type": "move_existing",
+      "object_category": "candle",
+      "from_semantic": "kitchen.table_1",
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "play",
+      "reason": "Mia is playing in the living room and may want some ambient light or decoration, so she might bring a candle from the kitchen to the living room table.",
+      "object_handle": null
+    },
+    {
+      "t": 12.109,
+      "label": "bowl_4",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
+      "mover": "Alex",
+      "activity": "lunch_break",
+      "reason": "Alex is having lunch in the kitchen and needs a surface to place his food; the kitchen table provides a suitable dining spot for the bowl.",
+      "object_handle": null
+    },
+    {
+      "t": 22.659,
+      "label": "alex_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "inside",
+      "mover": "Alex",
+      "activity": "sleep",
+      "reason": "Alex is preparing for sleep and needs to secure personal items before resting. The phone is currently out and should be put away to avoid distraction and ensure safety.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 3,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 3,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

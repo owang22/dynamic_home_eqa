@@ -1,0 +1,232 @@
+{
+  "scene_id": "102344022",
+  "resident_profile": "roommates_shared_house",
+  "seed": 15,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "alex_laptop": "laptop_a031287e7b68",
+    "casey_laptop": "laptop_a031287e7b68",
+    "alex_phone": "phone_223b376823b5",
+    "alex_wallet": "wallet_4eb66e5c0b4f",
+    "alex_keys": "keys_92167e12a3f0",
+    "alex_headphones": "headphones_c7d3e24c0362",
+    "jordan_phone": "phone_7f658554a385",
+    "jordan_wallet": "wallet_4d63cef3d4c3",
+    "jordan_keys": "keys_aaccd2b9848d",
+    "jordan_sunglasses": "sunglasses_1145d066f664",
+    "casey_phone": "phone_708c7214aa7f",
+    "casey_headphones": "headphones_8a0c9d1a4da7",
+    "casey_sunglasses": "sunglasses_193b5e63672a"
+  },
+  "day_context": {
+    "Alex": {
+      "day_type": "weekday",
+      "day_scenario": "Waking at 6:30 AM, Alex pours a cup of black coffee in the kitchen before heading to his home office to debug backend code. He returns to the dining room for a late-night coding session, leaving his work laptop open on the table overnight until morning, and finally rests at 11:00 PM."
+    },
+    "Jordan": {
+      "day_type": "weekday",
+      "day_scenario": "Rising at 7:00 AM, Jordan steps onto the balcony for a sunrise meditation before teaching a morning vinyasa class and commuting home while listening to a true-crime podcast. After preparing a lentil soup for dinner, he spends the early evening meticulously wiping down the counters and aligning the utensil drawer before turning in at 10:00 PM."
+    },
+    "Casey": {
+      "day_type": "weekday",
+      "day_scenario": "Casey wakes at 9:00 AM and sets up his drawing tablet in the spare bedroom to draft vector illustrations for a client, leaving a citrus energy drink can on his desk. He continues refining layouts throughout the afternoon before switching to his gaming console, playing until 3:00 AM before finally collapsing into bed."
+    }
+  },
+  "changes": [
+    {
+      "t": 6.64,
+      "label": "casey_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Casey",
+      "activity": "breakfast",
+      "reason": "Casey is in the kitchen for breakfast. The phone is a personal carried item that might be placed on a nearby surface to check notifications or listen to music while eating, or put away if the activity implies tidying up before leaving, but given it's breakfast, placing it on the counter is more likely than putting it away immediately.",
+      "object_handle": null
+    },
+    {
+      "t": 6.789,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Alex",
+      "activity": "drinking_coffee",
+      "reason": "The activity is drinking coffee, which is a leisure activity often done while seated. Alex might pull out a stool to sit on in the kitchen while drinking.",
+      "object_handle": null
+    },
+    {
+      "t": 6.941,
+      "label": "cup_2",
+      "change_type": "insert_new",
+      "object_category": "cup",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Alex",
+      "activity": "drinking_coffee",
+      "reason": "Alex is drinking coffee, so he likely needs a cup to hold the beverage. Since only one cup is listed and it may already be in use or out of sight, he might retrieve a fresh one or use the existing one if available.",
+      "object_handle": null
+    },
+    {
+      "t": 7.179,
+      "label": "cup_3",
+      "change_type": "insert_new",
+      "object_category": "cup",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Casey",
+      "activity": "breakfast",
+      "reason": "Casey is eating breakfast in the kitchen and will need a surface for their meal. The kitchen counters are the primary work surfaces available for placing food and drink during this activity.",
+      "object_handle": null
+    },
+    {
+      "t": 7.548,
+      "label": "cup_1",
+      "change_type": "move_existing",
+      "object_category": "cup",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "dining_room.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "eating_breakfast",
+      "reason": "Alex is eating breakfast in the dining room, so he will likely bring a cup to the table to drink from. The single listed cup is placed on the table for his use.",
+      "object_handle": null
+    },
+    {
+      "t": 7.634,
+      "label": "chair_2",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "dining.table_tucked",
+      "to_semantic": "dining_room.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Alex",
+      "activity": "eating_breakfast",
+      "reason": "The activity involves eating, which often requires seating. Alex needs to sit down, so he will pull out one of the available chairs in the dining room to sit at the table.",
+      "object_handle": null
+    },
+    {
+      "t": 8.299,
+      "label": "cup_4",
+      "change_type": "insert_new",
+      "object_category": "cup",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Jordan",
+      "activity": "breakfast",
+      "reason": "Jordan needs a vessel for his morning beverage, so he retrieves a clean cup from storage rather than using the single visible one which may be reserved or dirty.",
+      "object_handle": null
+    },
+    {
+      "t": 12.384,
+      "label": "bottle_1",
+      "change_type": "move_existing",
+      "object_category": "bottle",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "dining_room.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "lunch",
+      "reason": "Alex may bring a drink for lunch; with a bottle listed in the inventory, he will place it on the table to have alongside his meal.",
+      "object_handle": null
+    },
+    {
+      "t": 17.536,
+      "label": "jordan_keys",
+      "change_type": "insert_new",
+      "object_category": "keys",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "inside",
+      "mover": "Jordan",
+      "activity": "cooking",
+      "reason": "Jordan may need to store a carried item like keys or a phone while focusing on cooking, so putting it away prevents clutter or loss.",
+      "object_handle": null
+    },
+    {
+      "t": 18.446,
+      "label": "chair_7",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_3.tucked",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "next_to",
+      "mover": "Casey",
+      "activity": "gaming",
+      "reason": "Casey is settling in for a long gaming session and will likely pull out a stool to sit on comfortably. This stool is moved from its stored position to be next to the TV area for better viewing.",
+      "object_handle": null
+    },
+    {
+      "t": 19.028,
+      "label": "vase_1",
+      "change_type": "move_existing",
+      "object_category": "vase",
+      "from_semantic": "dining_room.counter_1",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Jordan",
+      "activity": "cleaning",
+      "reason": "Cleaning often involves wiping down surfaces; a vase might be moved to a stable surface to be dusted or cleaned.",
+      "object_handle": null
+    },
+    {
+      "t": 19.265,
+      "label": "bottle_2",
+      "change_type": "insert_new",
+      "object_category": "bottle",
+      "from_semantic": null,
+      "to_semantic": "dining_room.counter_1",
+      "target_relationship": "on",
+      "mover": "Alex",
+      "activity": "coding",
+      "reason": "Alex is coding for an extended period, so he likely needs to stay hydrated without leaving his workstation. He will retrieve a fresh bottle from storage to place within easy reach on the table.",
+      "object_handle": null
+    },
+    {
+      "t": 19.535,
+      "label": "casey_phone",
+      "change_type": "move_existing",
+      "object_category": "phone",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Casey",
+      "activity": "gaming",
+      "reason": "Casey needs a place to put their phone while gaming so it doesn't get knocked over or distract them. They will place it on the nearby table surface.",
+      "object_handle": null
+    },
+    {
+      "t": 20.363,
+      "label": "chair_7",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "next_to",
+      "mover": "Jordan",
+      "activity": "reading",
+      "reason": "Jordan is settling in to read, so he will pull out a nearby chair from the living room to sit on for comfort. The chair is moved next to the sofa area where he intends to read.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 4,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "family_with_kids",
+  "seed": 8,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "sarah_laptop": "laptop_a031287e7b68",
+    "leo_laptop": "laptop_a031287e7b68",
+    "sarah_phone": "phone_223b376823b5",
+    "sarah_wallet": "wallet_4eb66e5c0b4f",
+    "sarah_keys": "keys_92167e12a3f0",
+    "david_phone": "phone_7f658554a385",
+    "david_wallet": "wallet_4e2567974149",
+    "david_keys": "keys_aaccd2b9848d",
+    "david_sunglasses": "sunglasses_1145d066f664",
+    "leo_phone": "phone_708c7214aa7f",
+    "leo_headphones": "headphones_8a0c9d1a4da7",
+    "leo_backpack": "backpack_f129ca7ee93d",
+    "mia_backpack": "backpack_390164707739"
+  },
+  "day_context": {
+    "Sarah": {
+      "day_type": "weekday",
+      "day_scenario": "Waking at 6:30 AM, Sarah balances her project management duties with household management, carefully reviewing Monday\u2019s deliverables over coffee in the kitchen before heading to her home office. After a long day of meetings and errands, she finishes her evening planning at the dining table, leaving her laptop open before retiring at 10:30 PM."
+    },
+    "David": {
+      "day_type": "weekday",
+      "day_scenario": "Rising at 7:00 AM, David dives into his software engineering tasks, coding through the morning while keeping an eye on the house schedule. He wraps up his engineering work late into the evening, taking a quick late-night call from his team before tossing his wrinkled work clothes into a heap on the bathroom floor and finally sleeping at 11:00 PM."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "Leo wakes at 7:30 AM, grabs his backpack, and heads to high school as a junior, leaving his muddy soccer cleats by the back door after afternoon practice. He finishes his homework and joins his friends online for some late-night gaming, staying up until his 11:30 PM bedtime."
+    },
+    "Mia": {
+      "day_type": "weekday",
+      "day_scenario": "Mia wakes at 7:00 AM and immediately starts coloring on the kitchen table, stubbornly refusing her afternoon nap until she finally dozes off on the living room rug. After waking, she scatters her stuffed animals and sticker sheets across the floor while playing with her family, finally settling down for her 8:00 PM bedtime."
+    }
+  },
+  "changes": [
+    {
+      "t": 3.185,
+      "label": "leo_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "bedroom_2.bed_1",
+      "target_relationship": "inside",
+      "mover": "Leo",
+      "activity": "sleeping",
+      "reason": "During sleep preparation, a carried personal electronic device like a phone is typically put away to avoid distraction and noise. The activity of going to sleep implies concluding the day's digital interactions.",
+      "object_handle": null
+    },
+    {
+      "t": 7.503,
+      "label": "bowl_4",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Sarah",
+      "activity": "breakfast",
+      "reason": "Sarah is preparing to eat breakfast, so she likely needs a bowl for her food. Since the activity is morning breakfast, she may retrieve a fresh bowl from storage or bring one out, placing it on the counter where she is working or eating.",
+      "object_handle": null
+    },
+    {
+      "t": 7.518,
+      "label": "sarah_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Sarah",
+      "activity": "breakfast",
+      "reason": "Sarah might place her phone on the counter to check messages or use it as a timer while she eats, keeping it accessible but off the food.",
+      "object_handle": null
+    },
+    {
+      "t": 7.72,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Sarah",
+      "activity": "breakfast",
+      "reason": "To sit comfortably while eating or preparing breakfast, Sarah might pull out a stool from its current location to place next to the counter or table area.",
+      "object_handle": null
+    },
+    {
+      "t": 7.88,
+      "label": "sarah_laptop",
+      "change_type": "insert_new",
+      "object_category": "laptop",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Sarah",
+      "activity": "reviewing_work_deliverables",
+      "reason": "Sarah needs her laptop to review work deliverables. The laptop is currently unlisted in the current state, implying she is carrying it or it is nearby; she will place it on a surface to use it.",
+      "object_handle": null
+    },
+    {
+      "t": 8.241,
+      "label": "sarah_phone",
+      "change_type": "remove",
+      "object_category": "phone",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Sarah",
+      "activity": "reviewing_work_deliverables",
+      "reason": "To maintain focus and avoid distractions during work, Sarah will put away personal items like her phone, wallet, and keys that are currently out.",
+      "object_handle": null
+    },
+    {
+      "t": 12.627,
+      "label": "bowl_1",
+      "change_type": "remove",
+      "object_category": "bowl",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "David",
+      "activity": "lunch",
+      "reason": "He will retrieve a clean bowl from storage to serve his lunch, as using a fresh item is standard practice.",
+      "object_handle": null
+    },
+    {
+      "t": 14.774,
+      "label": "toy_3",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "playing_with_family",
+      "reason": "Mia is playing with family in the living room, likely engaging with toys brought from elsewhere or stored in the bedroom. A toy is a logical object to interact with during this social activity.",
+      "object_handle": null
+    },
+    {
+      "t": 15.779,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.tv_1",
+      "target_relationship": "next_to",
+      "mover": "Mia",
+      "activity": "playing_with_stuffed_animals",
+      "reason": "There are four chairs in the living room. If Mia is sitting on one to play, she might pull another chair closer to act as a 'seat' for a stuffed animal or a table for accessories, enhancing the imaginative play setup.",
+      "object_handle": null
+    },
+    {
+      "t": 17.196,
+      "label": "remote_control_1",
+      "change_type": "move_existing",
+      "object_category": "remote_control",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "living_room.tv_1",
+      "target_relationship": "near",
+      "mover": "Mia",
+      "activity": "watching_cartoon",
+      "reason": "Mia is settling in to watch a cartoon, so she likely needs to grab the remote control to operate the TV.",
+      "object_handle": null
+    },
+    {
+      "t": 21.339,
+      "label": "sarah_keys",
+      "change_type": "insert_new",
+      "object_category": "keys",
+      "from_semantic": null,
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "inside",
+      "mover": "Sarah",
+      "activity": "winding_down",
+      "reason": "Sarah is winding down for the night in the living room, so she likely puts away her carried personal items to prepare for rest. The 'put_away' anchor is the correct mechanism for storing these items out of sight, rather than placing them on a surface.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 1,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 2,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 1,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

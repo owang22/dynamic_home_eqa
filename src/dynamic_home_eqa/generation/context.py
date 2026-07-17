@@ -96,13 +96,10 @@ def candidate_line(i: int, c: dict) -> str:
     """The per-candidate line shared by the judge and (centralized here) any
     future proposer echo — one place to change the format.
 
-    Shows the model's `reason` (its pre-proposal reasoning) and, when set,
-    the object's move-history note so the judge can weigh CUMULATIVE
-    relocation plausibility (see running_state.move_history_note)."""
+    Shows the proposer's `reason` (its pre-proposal reasoning) and, for an
+    instance-explicit proposal (seat instances), WHICH instance moves —
+    the judge should know it's stool_2 being returned, not "a stool"."""
     reason = c.get("reason", "")
-    line = (f"  [{i}] {c.get('object_category', '')} {c.get('target_relationship', '')} "
+    obj = c.get("_instance") or c.get("object_category", "")
+    return (f"  [{i}] {obj} {c.get('target_relationship', '')} "
             f"{c.get('target_anchor', '')} — reason: {reason}")
-    note = c.get("_move_history_note")
-    if note:
-        line += f"\n        {note}"
-    return line

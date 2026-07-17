@@ -40,6 +40,9 @@ def main() -> None:
                          "(<default>-<model-slug>) — the cache is seed-keyed, so "
                          "sharing one dir across models replays the wrong model")
     ap.add_argument("--model", default=DEFAULT_MODEL)
+    ap.add_argument("--activity-scale", type=float, default=1.0,
+                    help="Scene-activity knob: multiplies every window's Poisson mean "
+                         "(post-gate, so it shapes the final manifest count directly)")
     ap.add_argument("--no-force", action="store_true", help="reuse cache where tags match (not recommended)")
     args = ap.parse_args()
 
@@ -61,10 +64,19 @@ def main() -> None:
           "judge strict+context+exemplars")
     print(f"Scenes: {_SCENES}  ->  {args.out}")
 
+    # Anchor a relative --out at the repo (same convention as gen_dataset):
+    # a background/cron invocation's cwd is arbitrary, and resolving against
+    # it once scattered a full regen into $HOME while every downstream step
+    # read the stale repo folder.
+    out_dir = pathlib.Path(args.out)
+    if not out_dir.is_absolute():
+        out_dir = (REPO_ROOT / out_dir).resolve()
+
     agg, mean_realism = run_batch(
-        scene_ids=_SCENES, household_type=_PROFILE, out_dir=pathlib.Path(args.out),
+        scene_ids=_SCENES, household_type=_PROFILE, out_dir=out_dir,
         model=args.model, cache_dir=args.cache_dir, force=not args.no_force,
         judge_style="strict", enrich_context=True, exemplar_block=exemplar_block,
+        activity_scale=args.activity_scale,
     )
     print(f"\nDONE  survival={agg.survival_rate:.1%}  mean_realism(selected)={mean_realism:.3f}")
 

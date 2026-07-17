@@ -56,12 +56,16 @@ PERSONA_SCHEMA: dict = {
                                      )},
                     "owned_items":  {"type": "array",
                                      "items": {"type": "string",
-                                               "enum": ["phone", "wallet", "keys", "laptop"]},
+                                               "enum": ["phone", "wallet", "keys", "laptop",
+                                                        "backpack", "sunglasses", "headphones",
+                                                        "medicine"]},
                                      "description": (
                                          "The carried personal items THIS occupant owns and moves "
-                                         "around — a subset of phone/wallet/keys/laptop. Give each "
-                                         "person their own; a working adult typically has all four, "
-                                         "a teen a phone+laptop, a young child usually none. Only the "
+                                         "around. Give each person their own, age-appropriately: a "
+                                         "working adult typically phone/wallet/keys/laptop (+ maybe "
+                                         "sunglasses), a teen phone/laptop/headphones/backpack, a "
+                                         "school-age child a backpack (maybe a phone), a senior "
+                                         "phone/wallet/keys/medicine, a toddler none. Only the "
                                          "owner moves their own item, so don't hand a toddler a "
                                          "laptop or give the whole family one shared phone."
                                      )},

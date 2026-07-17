@@ -1,0 +1,240 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "family_with_kids",
+  "seed": 3,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "elena_laptop": "laptop_a031287e7b68",
+    "marcus_laptop": "laptop_a031287e7b68",
+    "leo_laptop": "laptop_a031287e7b68",
+    "mia_laptop": "laptop_a031287e7b68",
+    "elena_phone": "phone_223b376823b5",
+    "elena_wallet": "wallet_4eb66e5c0b4f",
+    "elena_keys": "keys_92167e12a3f0",
+    "elena_sunglasses": "sunglasses_1145d066f664",
+    "marcus_phone": "phone_7f658554a385",
+    "marcus_wallet": "wallet_4e2567974149",
+    "marcus_keys": "keys_aaccd2b9848d",
+    "leo_phone": "phone_708c7214aa7f",
+    "leo_headphones": "headphones_8a0c9d1a4da7",
+    "leo_backpack": "backpack_f129ca7ee93d",
+    "mia_phone": "phone_b77da5b9052e",
+    "mia_headphones": "headphones_c7d3e24c0362",
+    "mia_backpack": "backpack_9fa2da2c4223",
+    "mia_sunglasses": "sunglasses_193b5e63672a"
+  },
+  "day_context": {
+    "Elena": {
+      "day_type": "flex",
+      "day_scenario": "Elena tackles her freelance design backlog in the morning before tending to her patio garden, then shifts to the kitchen to assemble a comforting dinner with her prepped ingredients as the storm arrives."
+    },
+    "Marcus": {
+      "day_type": "flex",
+      "day_scenario": "Marcus reviews engineering blueprints from his home office before retreating to the garage for his evening woodworking session, only to be called inside by the approaching storm to join the family dinner, leaving his favorite chisel on the workbench."
+    },
+    "Leo": {
+      "day_type": "flex",
+      "day_scenario": "Leo burns off energy with an early morning soccer practice before settling into the living room to study, leaving his cleats and water bottle in the hallway, then joins his parents for dinner as the rain drums against the windows."
+    },
+    "Mia": {
+      "day_type": "flex",
+      "day_scenario": "Mia spends the afternoon meticulously organizing her desk and closet before settling at the piano for her evening practice, then rushes to the dining table to join the family dinner, dropping her jacket on the bedroom floor in her haste as the storm passes."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.143,
+      "label": "marcus_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Marcus",
+      "activity": "breakfast",
+      "reason": "Marcus is currently in the kitchen for breakfast. He may have brought his phone in with him and placed it on the counter to check messages or set an alarm while eating.",
+      "object_handle": null
+    },
+    {
+      "t": 7.241,
+      "label": "bottle_2",
+      "change_type": "insert_new",
+      "object_category": "bottle",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Marcus",
+      "activity": "breakfast",
+      "reason": "He likely has a drink with his breakfast. A bottle is available in the inventory and can be placed on the counter within reach.",
+      "object_handle": null
+    },
+    {
+      "t": 7.716,
+      "label": "bowl_3",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "quick_breakfast",
+      "reason": "Leo needs a place to put his breakfast bowl, and the counter provides a convenient surface for a quick meal.",
+      "object_handle": null
+    },
+    {
+      "t": 7.796,
+      "label": "bowl_4",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "breakfast",
+      "reason": "Mia needs a vessel to eat her breakfast, and since she is starting a meal, she will likely bring a fresh bowl from storage rather than using a potentially used one already present.",
+      "object_handle": null
+    },
+    {
+      "t": 7.851,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Leo",
+      "activity": "quick_breakfast",
+      "reason": "Leo is eating quickly, so he will pull out a stool to sit on near the counter to eat.",
+      "object_handle": null
+    },
+    {
+      "t": 7.954,
+      "label": "elena_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Elena",
+      "activity": "breakfast",
+      "reason": "Elena is carrying her phone into the kitchen for the morning and needs to set it down on a surface while she eats.",
+      "object_handle": null
+    },
+    {
+      "t": 13.726,
+      "label": "bottle_1",
+      "change_type": "move_existing",
+      "object_category": "bottle",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Leo",
+      "activity": "studying",
+      "reason": "To sustain focus over three hours, he will likely need a drink, so he will bring a bottle from the fridge to the study area.",
+      "object_handle": null
+    },
+    {
+      "t": 17.019,
+      "label": "elena_phone",
+      "change_type": "remove",
+      "object_category": "phone",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Elena",
+      "activity": "cleaning",
+      "reason": "She tidies up small clutter by putting her phone away after using it or before starting the cleaning routine.",
+      "object_handle": null
+    },
+    {
+      "t": 17.29,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "bedroom_1.bed_1",
+      "to_semantic": "bedroom_3.chest_of_drawers_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "organizing_desk",
+      "reason": "Mia is organizing her desk, which likely involves sorting books; she may move a book from the desk to a more accessible spot or store it away if the desk is cluttered.",
+      "object_handle": null
+    },
+    {
+      "t": 17.324,
+      "label": "bottle_2",
+      "change_type": "remove",
+      "object_category": "bottle",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Elena",
+      "activity": "cooking",
+      "reason": "She may need to store an ingredient or a prepared dish temporarily. The fridge is the appropriate place to keep food items cold or safe during the cooking process.",
+      "object_handle": null
+    },
+    {
+      "t": 19.19,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "next_to",
+      "mover": "Elena",
+      "activity": "tidying",
+      "reason": "She tucks in a chair that is pulled out to restore order to the living room seating arrangement.",
+      "object_handle": null
+    },
+    {
+      "t": 21.187,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "bedroom_3.chest_of_drawers_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Leo",
+      "activity": "reading_for_leisure",
+      "reason": "Leo is settling in to read for leisure, so he needs to retrieve a book from its current location to read. He will bring a fresh book out to the living room to use it.",
+      "object_handle": null
+    },
+    {
+      "t": 21.602,
+      "label": "book_2",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "bedroom_1.bed_1",
+      "to_semantic": "bedroom_3.chest_of_drawers_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "relaxing",
+      "reason": "Mia is relaxing in her bedroom, likely reading or browsing on her device; bringing a book out from storage makes sense for this leisure activity.",
+      "object_handle": null
+    },
+    {
+      "t": 21.978,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.couch_1",
+      "to_semantic": "living_room.tv_1",
+      "target_relationship": "next_to",
+      "mover": "Marcus",
+      "activity": "relaxing",
+      "reason": "Marcus is relaxing in the living room and likely needs a place to sit, so he moves one of the available chairs to a comfortable spot for himself.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "spawned_from_storage": 3,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 3,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

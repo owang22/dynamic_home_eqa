@@ -1,0 +1,107 @@
+{
+  "scene_id": "102343992",
+  "resident_profile": "single_parent_young_kids",
+  "seed": 5,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "alex_laptop": "laptop_a031287e7b68",
+    "alex_phone": "phone_223b376823b5",
+    "alex_wallet": "wallet_4eb66e5c0b4f",
+    "alex_keys": "keys_92167e12a3f0",
+    "leo_backpack": "backpack_390164707739"
+  },
+  "day_context": {
+    "Alex": {
+      "day_type": "weekday",
+      "day_scenario": "Alex rises at 6:30 AM to join a video conference from the home office, then heads out to traffic while an audiobook narrates a historical biography. After wrapping up project deliverables over a quick desk lunch, Alex finally clocks off and unwinds with a cup of tea before settling into bed at 23:00."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "Leo wakes at 7:00 AM to stack wooden blocks in the living room before his caregiver takes him to part-time preschool for morning stories and snacks. He returns home to finish constructing a tall red tower in the hallway, leaving it standing right in the middle of the floor until his evening bath and bedtime at 20:00."
+    },
+    "Mia": {
+      "day_type": "weekday",
+      "day_scenario": "Mia wakes at 7:00 AM and spreads her drawing paper across the kitchen counter, carefully coloring pictures of flowers and butterflies with her favorite wax crayons. She leaves her art supplies scattered on the dining table after finishing her morning session, then spends the afternoon playing quietly before her routine bedtime at 20:30."
+    }
+  },
+  "changes": [
+    {
+      "t": 6.829,
+      "label": "alex_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "waking_up",
+      "reason": "Alex is waking up and may need to check their phone for alarms or messages; bringing it closer to the bed makes it accessible immediately upon waking.",
+      "object_handle": null
+    },
+    {
+      "t": 7.894,
+      "label": "bowl_2",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "eating_breakfast",
+      "reason": "Although only one bowl is listed as currently present, it is normal for a household to have more stored away; Mia will likely retrieve a clean bowl from the kitchen storage to eat her breakfast. The bowl is placed on the table for use.",
+      "object_handle": null
+    },
+    {
+      "t": 17.12,
+      "label": "bowl_1",
+      "change_type": "move_existing",
+      "object_category": "bowl",
+      "from_semantic": "kitchen.table_1",
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Leo",
+      "activity": "playing_with_blocks",
+      "reason": "Leo is playing with blocks, an activity that often involves eating snacks while seated. Since the only bowl in the house is currently empty and not on a surface suitable for play, he might bring a bowl from the kitchen counter to the living room coffee table to hold snacks or the blocks themselves.",
+      "object_handle": null
+    },
+    {
+      "t": 19.645,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_tucked",
+      "to_semantic": "kitchen.cabinet_1",
+      "target_relationship": "next_to",
+      "mover": "Alex",
+      "activity": "cooking",
+      "reason": "Alex may need a step or seat to reach higher shelves or counters while cooking, so the stool is brought from the bedroom to the kitchen for temporary support.",
+      "object_handle": null
+    },
+    {
+      "t": 21.962,
+      "label": "alex_phone",
+      "change_type": "move_existing",
+      "object_category": "phone",
+      "from_semantic": "bedroom_1.bed_1",
+      "to_semantic": "tv_room.couch_1",
+      "target_relationship": "on",
+      "mover": "Alex",
+      "activity": "relaxing",
+      "reason": "Alex is settling in for a relaxing evening in the living room and may wish to place his phone on a surface to keep it accessible but out of the way. The sofa is the most natural surface for a seated occupant to place a personal device.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 1,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

@@ -1,0 +1,29 @@
+# Stage 1c: multi-scene re-gate on calendar episodes (5 weeks per household).
+episode:
+  gen_dir: generation_out_stage1c_v2
+  households:
+    - {scene: "102344049", profile: family_with_kids}
+    - {scene: "102344049", profile: retired_couple}
+    - {scene: "102343992", profile: single_parent_young_kids}
+    - {scene: "102344022", profile: roommates_shared_house}
+  out_root: logs/dynbelief_stage1c
+
+probe:
+  seed: 7
+  grid_min: 60
+  train_days_max: 28           # days 0..27 = 4 full calendar weeks
+  test_days: [29, 31, 33, 34]  # Tue, Thu, Sat, Sun of week 5
+  train_feed_min: 30
+  qtypes: [location_now, room_now]
+  per_stratum_cap: 18          # stage1b's 12 dropped a test-day mover; 18 covers everything seen so far
+  tiers:
+    - {name: b0_lastseen}
+    - {name: b1_longmem}
+    - {name: b2_classdecay}
+    - {name: b3_perpetua_star, f_source: fremen}
+    - {name: b3_perpetua_star, f_source: fremen_weekly}
+    - {name: b3_perpetua_star, f_source: schedule_prior}
+  temp_fit_day: 29
+  n_boot: 500
+
+report_dir: reports/stage1c

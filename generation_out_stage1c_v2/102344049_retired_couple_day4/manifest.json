@@ -1,0 +1,185 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "retired_couple",
+  "seed": 5,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "arthur_phone": "phone_a022864ae7b6",
+    "arthur_wallet": "wallet_4bc4176c10b9",
+    "arthur_keys": "keys_aaccd2b9848d",
+    "arthur_medicine": "medicine_429536ff8dd8",
+    "martha_phone": "phone_15c2adf9af7a",
+    "martha_wallet": "wallet_4d63cef3d4c3",
+    "martha_keys": "keys_92167e12a3f0",
+    "martha_medicine": "medicine_d83f35ad19e8",
+    "martha_sunglasses": "sunglasses_1145d066f664"
+  },
+  "day_context": {
+    "Arthur": {
+      "day_type": "weekday",
+      "day_scenario": "Arthur rises at 6:00 AM to tend to his vegetable garden before the sun is fully up, carefully weeding the herb patch and checking the drip irrigation. He spends the afternoon relaxing at the kitchen table with a historical non-fiction book on Roman engineering, later enjoying a silent evening to wind down before sleeping at 10:00 PM."
+    },
+    "Martha": {
+      "day_type": "weekday",
+      "day_scenario": "Martha wakes at 6:30 AM to enjoy her morning crossword puzzles with a steaming cup of Earl Grey tea. Since it is Friday, she stays home to organize her knitting supplies and later slips into bed to write in her small journal by the bed for evening reflections before going to sleep at 10:30 PM."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.607,
+      "label": "martha_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Martha",
+      "activity": "reading_crossword",
+      "reason": "During a long reading session, Martha may place her personal items down on a surface nearby so they are accessible but out of the way. She places her phone on the kitchen counter.",
+      "object_handle": null
+    },
+    {
+      "t": 8.213,
+      "label": "vase_1",
+      "change_type": "move_existing",
+      "object_category": "vase",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "cleaning_kitchen",
+      "reason": "Small decorative items like the vase are often moved during deep cleaning to wipe underneath them. Arthur will move the vase to the side of the counter to access the surface.",
+      "object_handle": null
+    },
+    {
+      "t": 8.362,
+      "label": "towel_2",
+      "change_type": "insert_new",
+      "object_category": "towel",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Arthur",
+      "activity": "cleaning_kitchen",
+      "reason": "Arthur is cleaning the kitchen and needs a surface to wipe down or place cleaning supplies on, so he retrieves a towel to use for wiping surfaces.",
+      "object_handle": null
+    },
+    {
+      "t": 8.363,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "eating_breakfast",
+      "reason": "Martha is eating breakfast in the kitchen and will likely need a seat at the counter or table area. She will pull out one of the available stools to sit on. This stool is a floor object, so it must be moved via proximity (next_to) rather than placed on a surface.",
+      "object_handle": null
+    },
+    {
+      "t": 9.525,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.tv_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "organizing_knitting",
+      "reason": "Martha needs a comfortable seat to sit and knit for two hours, so she will pull out a chair to use. She will position it next to a surface where she can rest her materials, such as a side table or just in the open space of the living room.",
+      "object_handle": null
+    },
+    {
+      "t": 13.313,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.tv_1",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "reading",
+      "reason": "Martha is settling in to read for a long duration and will likely need to sit comfortably in one of the living room chairs. She will pull a chair out from its current position to sit at a spot suitable for reading, such as near a window or away from the TV.",
+      "object_handle": null
+    },
+    {
+      "t": 14.471,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.couch_1",
+      "to_semantic": "living_room.table_1.tucked",
+      "target_relationship": "tucked_under",
+      "mover": "Martha",
+      "activity": "tidying_living_room",
+      "reason": "Martha is tidying the living room, so she should return any chairs that have been pulled out to their tucked-under positions to clear the floor space. The chairs are floor objects, so they must be moved via proximity relations like 'tucked_under'.",
+      "object_handle": null
+    },
+    {
+      "t": 14.761,
+      "label": "potted_plant_1",
+      "change_type": "move_existing",
+      "object_category": "potted_plant",
+      "from_semantic": "living_room.corner",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Martha",
+      "activity": "tidying_living_room",
+      "reason": "Martha may move one of the potted plants to a better-lit spot or simply ensure it is upright and tidy on its current surface.",
+      "object_handle": null
+    },
+    {
+      "t": 15.37,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "resting",
+      "reason": "Martha is resting, so she might move a chair to make herself more comfortable or clear space if she is sitting on the floor or another seat. Pulling a chair out next to the sofa or table allows her to sit or rest her feet.",
+      "object_handle": null
+    },
+    {
+      "t": 15.933,
+      "label": "martha_sunglasses",
+      "change_type": "insert_new",
+      "object_category": "sunglasses",
+      "from_semantic": null,
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Martha",
+      "activity": "resting",
+      "reason": "Martha is resting, so she likely puts away her sunglasses to keep them safe and out of the way. Since no specific storage is listed in the living room, she might place them on a nearby surface or put them away if she has a bag.",
+      "object_handle": null
+    },
+    {
+      "t": 19.809,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.couch_1",
+      "to_semantic": "living_room.tv_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "watching_tv",
+      "reason": "Martha is settling in to watch TV, so she will likely sit on a chair in the living room. She needs to pull one out from its tucked position to sit comfortably.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 1,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 2,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

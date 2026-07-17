@@ -92,7 +92,11 @@ TIER2_HSSD_NATIVE: set[str] = {"chair", "stool", "potted_plant", "cushion"}
 # event as a floor placement beside the anchor instance regardless of
 # what a legacy manifest says. Deliberately NOT including potted_plant/
 # cushion: a plant on a table or a cushion on a couch is normal life.
-FLOOR_BOUND_CATEGORIES: set[str] = {"chair", "stool"}
+FLOOR_BOUND_CATEGORIES: set[str] = {"chair", "stool",
+                                    # expansion round: a laundry basket lives
+                                    # on the floor — carried beside furniture,
+                                    # never lifted onto a table.
+                                    "laundry_basket"}
 
 # --- Tier 2b: static clutter HSSD's uncluttered variant omits — needs the
 # clutter-generation pass (generation/clutter/) to invent a starting slot.
@@ -104,6 +108,60 @@ TIER2_CLUTTER_CATALOG: dict[str, int] = {
     "cup":       4,
     "drinkware": 4,
     "bottle":    2,
+    # Object-variety expansion (2026-07-15, reviewer-curated Objaverse set —
+    # see data/objects/external_props_candidates/README.md for the per-
+    # category tier rationale). Values are per-home instance caps (clutter
+    # start + abundant-storage spawns combined).
+    "plate":          4,
+    "mug":            4,
+    "toy":            4,
+    "towel":          3,
+    "newspaper":      2,
+    "remote_control": 2,
+    "tray":           2,
+    "cutting_board":  1,
+    "scissors":       1,
+    "shears":         1,
+    "teapot":         1,
+    "alarm_clock":    2,
+    "laundry_basket": 1,
+    # medicine moved to TIER3_MOBILE (ownership-bound, one per owner) — it
+    # was briefly a scarce clutter category here.
+    # umbrella / watering_can: proposed but currently WITHOUT a reviewer-kept
+    # render asset (the sole closed-umbrella model in Objaverse arrived after
+    # the review pass; the kept watering-can was reclassified as a teapot) —
+    # add them back here once an asset is kept, or build_realized_day's
+    # coverage assert will rightly fail.
+}
+
+# Storage furniture that CONCEALS what goes inside it: an object placed
+# `inside` one of these is put away out of sight — the generation pipeline
+# converts such proposals into concealment events (put_away-style remove,
+# see pipeline/manifest), NOT a visible surface placement. Fixes the
+# confirmed failure where "put the bowl away in the cabinet" produced a
+# bowl sitting ON the cabinet/bench because most cabinets have no authored
+# interior receptacle to physically place into.
+CONCEALING_STORAGE_CATEGORIES: set[str] = {
+    "cabinet", "wardrobe", "chest_of_drawers", "filing_cabinet",
+    "fridge", "dishwasher", "washer_dryer",
+}
+
+# Abundant-storage categories: a real home holds MANY of these in cabinets/
+# shelves beyond the few the clutter pass sets out at t=0, and people take a
+# FRESH one rather than reuse one already left out (nobody eats from the bowl
+# sitting on the table). When a displacement proposal for one of these
+# resolves to an instance that is ALREADY at the proposed destination — the
+# collision build_manifest previously dropped as a no-op — the manifest
+# instead spawns a new instance from implied storage (insert_new), capped so
+# total instances (clutter start + spawns) never exceed TIER2_CLUTTER_CATALOG
+# [category]. Deliberately excludes: candle/vase (decor — you re-place the
+# one you have, you don't fetch a fresh vase per activity), Tier-3 carried
+# items (finite and ownership-bound: nobody spawns a second wallet), and all
+# seating/furniture (physically enumerable instances; see FLOOR_BOUND).
+ABUNDANT_STORAGE_CATEGORIES: set[str] = {
+    "book", "bowl", "cup", "drinkware", "bottle",
+    # expansion round: a home holds spares of these in storage too
+    "plate", "mug", "toy", "towel",
 }
 
 # --- Tier 3: mobile — carried, meant to spawn/despawn with activities ---
@@ -113,6 +171,14 @@ TIER3_MOBILE: dict[str, int] = {
     "wallet": 1,
     "keys":   1,
     "laptop": 1,
+    # Object-variety expansion (2026-07-15): ownership-bound carried items,
+    # age-skewed (see generation/ownership.py's fallback table) — a backpack
+    # belongs to a school kid, medicine to a senior. One per owner, never
+    # spawned from storage.
+    "backpack":   1,
+    "sunglasses": 1,
+    "headphones": 1,
+    "medicine":   1,
 }
 
 # The categories that can actually be MOVED by an activity (Tier 2 clutter +

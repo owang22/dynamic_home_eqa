@@ -314,6 +314,10 @@ def evaluate_object_mask(mask, anchor_px: Optional[tuple[float, float]]) -> tupl
 _SIZE_SWEEP_DISTANCE_FACTORS = {
     MASK_FAIL_TOO_SMALL: (0.65, 0.45, 0.3),   # progressively closer
     MASK_FAIL_TOO_LARGE: (1.4, 1.8, 2.5),      # progressively farther
+    # Not visible at all: back up progressively — a wider view brings an
+    # occluded or just-out-of-frame object into frame (the azimuth offsets
+    # below also nudge around whatever was blocking the original sightline).
+    MASK_FAIL_EMPTY:     (1.5, 2.0, 2.6),
 }
 # Absolute floor for swept camera distances — matches embodied/sensor.py's
 # closest per-tier minimum (_SPECTATOR_TIER_MIN_DISTANCES_M[0]): measured
@@ -328,6 +332,46 @@ _SIZE_SWEEP_MIN_DISTANCE_M = 0.45
 # landing on an embedded/occluded spot at the new distance, not the primary
 # correction mechanism.
 _SIZE_SWEEP_AZIMUTH_OFFSETS_DEG = (0.0, -25.0, 25.0, -50.0, 50.0)
+
+
+def _digital_zoom_pass(rgb, mask, anchor_px, factors=(2.0, 3.0, 4.0)):
+    """Final fallback for a too-small-BUT-visible object after the distance
+    sweep floors out (the sweep can't get closer than
+    _SIZE_SWEEP_MIN_DISTANCE_M without embedding the camera, and a
+    flat/edge-on object stays tiny at that distance regardless). Crops the
+    frame around the object's mask centroid and upscales — a pure
+    post-process 'optical zoom' that can't disturb the RGB/semantic
+    co-registration or embed the camera, since it never moves it. Crops
+    the boolean mask the same way and re-evaluates: a genuinely visible
+    object's mask fraction rises into the valid band. Returns
+    (zoomed_rgb, mask_info, marker) for the first factor that passes, else
+    None. Deliberately last-resort and small-only (the caller gates on
+    MASK_FAIL_TOO_SMALL)."""
+    import numpy as np
+    from PIL import Image
+
+    H, W = mask.shape
+    ys, xs = np.nonzero(mask)
+    if len(xs) == 0:
+        return None
+    ccx, ccy = float(xs.mean()), float(ys.mean())
+    for f in factors:
+        cw, ch = max(1, int(W / f)), max(1, int(H / f))
+        x0 = int(round(min(max(ccx - cw / 2, 0), W - cw)))
+        y0 = int(round(min(max(ccy - ch / 2, 0), H - ch)))
+        crop_mask = mask[y0:y0 + ch, x0:x0 + cw]
+        crop_rgb = rgb[y0:y0 + ch, x0:x0 + cw]
+        up_mask = np.array(Image.fromarray(crop_mask).resize((W, H), Image.NEAREST))
+        up_rgb = np.array(Image.fromarray(crop_rgb.astype(np.uint8)).resize((W, H), Image.BILINEAR))
+        marker_in = None
+        if anchor_px is not None:
+            ax, ay = (anchor_px[0] - x0) * (W / cw), (anchor_px[1] - y0) * (H / ch)
+            if 0 <= ax <= W and 0 <= ay <= H:
+                marker_in = (ax, ay)
+        passed, reason, info = evaluate_object_mask(up_mask, marker_in)
+        if passed and reason == "ok":
+            return up_rgb, info, info["centroid_px"]
+    return None
 
 
 def _score_capture(mask_info: dict, resolution: tuple[int, int], unobstructed: bool) -> float:
@@ -359,8 +403,9 @@ def _score_capture(mask_info: dict, resolution: tuple[int, int], unobstructed: b
 def _size_corrective_sweep(
     render_sim, aabb, target_pos: tuple[float, float, float], fail_reason: str, original_vp,
 ):
-    """Bounded retry after a too-small/too-large capture. Re-samples
-    distance (in the diagnosed direction) x a few azimuth offsets around
+    """Bounded retry after a too-small/too-large/empty capture. Re-samples
+    distance (in the diagnosed direction — closer for too-small, farther
+    for too-large and for empty/occluded) x a few azimuth offsets around
     `original_vp`'s own azimuth/elevation, scoring every non-embedded
     candidate by _score_capture. Returns (rgb, mask, mask_info,
     mask_passed, fail_reason, vp, score, anchor_px) for the best candidate
@@ -702,11 +747,18 @@ _PLACEMENT_TO_STATUS = {
 }
 
 
-def _materialize_object(render_sim, scene_id: str, label: str, category: str, pos: tuple[float, float, float]):
+def _materialize_object(render_sim, scene_id: str, label: str, category: str, pos: tuple[float, float, float],
+                        asset_id_override: str | None = None):
     """Places the object AT `pos` — the artifact's own realized_pose, no
     placement computation here at all (the builder already resolved
     that, with real collision avoidance). Returns (obj_or_None,
     asset_id_or_None, is_spawned: bool).
+
+    asset_id_override: the label's OWN bound asset recorded in the
+    artifact (binding.template_name — Strategy 2+). Always pass it when
+    the artifact has one: the category dict below is a single legacy
+    default that knows nothing about per-label bindings, and Tier-3
+    pool-only categories (headphones, backpack) aren't in it at all.
 
     BIND categories (env/inventory.py's tier data, via
     build_realized_day._bind_categories — the same real scene instance
@@ -745,7 +797,7 @@ def _materialize_object(render_sim, scene_id: str, label: str, category: str, po
         obj.translation = mn.Vector3(*pos)
         return obj, None, False
 
-    asset_id = SPAWNABLE_ASSET_BY_CATEGORY.get(category)
+    asset_id = asset_id_override or SPAWNABLE_ASSET_BY_CATEGORY.get(category)
     if asset_id is None:
         return None, None, True
     obj_attr_mgr = render_sim.get_object_template_manager()
@@ -852,7 +904,10 @@ class _EventTimeContext:
             elif pose is not None:
                 # SPAWN-category context object that exists by time t.
                 if label not in self._spawned:
-                    asset_id = self._spawnable.get(rec.category)
+                    # The artifact records each label's OWN bound asset
+                    # (Strategy 2+, AssetAllocator) — obey it; the legacy
+                    # category dict is only the fallback for old artifacts.
+                    asset_id = rec.binding.template_name or self._spawnable.get(rec.category)
                     if asset_id is None:
                         continue
                     mgr = self._sim.get_object_template_manager()
@@ -903,6 +958,62 @@ def _restore_bind_object(scene_id: str, label: str, obj) -> None:
     inst = load_scene_state(scene_id).instances.get(label)
     if inst is not None and inst.position is not None:
         obj.translation = mn.Vector3(*inst.position)
+    # Also surrender the reserved mask id. Without this, a BIND object that
+    # was EVER a target keeps _SPAWNED_OBJECT_SEMANTIC_ID in the reused
+    # render_sim — its pixels then count toward LATER items' mask checks,
+    # and the remove-/insert-panel "object absent" verifications see a
+    # phantom object anywhere that chair is merely in frame. (Spawned
+    # targets don't need this — remove_object deletes them outright.)
+    obj.semantic_id = 0
+
+
+def _debug_failure_shot(render_sim, center: tuple[float, float, float], extent_m: float = 0.5):
+    """Best-effort camera for a FAILURE panel — a real photograph of the
+    target area so the reviewer can debug (see what's at/around the spot)
+    instead of a gray card. Spectator search over a synthetic AABB first;
+    if even that is enclosed, a fixed oblique fallback that deliberately
+    ignores obstruction (photographing the cabinet an object is sealed
+    inside is exactly the debugging value). Returns rgb or None."""
+    from dynamic_home_eqa.embodied.sensor import spectator_viewpoint
+
+    half = max(extent_m, 0.3) / 2.0
+    synth_aabb = ((center[0] - half, center[1] - half, center[2] - half),
+                  (center[0] + half, center[1] + half, center[2] + half))
+    vp = spectator_viewpoint(render_sim, synth_aabb, max(extent_m, 0.3))
+    if vp is not None:
+        agent_pos = (vp.camera_pos[0], vp.camera_pos[1] - 1.5, vp.camera_pos[2])
+        rgb, *_ = capture_rgb_semantic_and_basis(render_sim, agent_pos, vp.look_at)
+        return rgb
+    import math
+    best = None
+    d = max(1.4, 3.0 * extent_m)
+    for az_deg in (30, 120, 210, 300):
+        az = math.radians(az_deg)
+        agent_pos = (center[0] + d * math.cos(az), center[1] + d * 0.7 - 1.5,
+                     center[2] + d * math.sin(az))
+        rgb, *_ = capture_rgb_semantic_and_basis(render_sim, agent_pos, center)
+        if float(rgb.std()) > 8.0:   # not a wall-filled/void frame
+            return rgb
+        best = rgb
+    return best
+
+
+def _draw_debug_failure(ax, rgb, status_label: str, detail: str) -> None:
+    """Failure panel WITH a real photograph (orange border, banner) — the
+    debugging-friendly replacement for the gray card whenever a target
+    position was known. The status/JSON record keeps the failure verdict;
+    only the visual changes."""
+    import matplotlib.patches as mpatches
+
+    H, W = rgb.shape[0], rgb.shape[1]
+    ax.imshow(rgb)
+    ax.set_xlim(0, W)
+    ax.set_ylim(H, 0)
+    ax.add_patch(mpatches.Rectangle((0, 0), 1, 1, transform=ax.transAxes, fill=False,
+                                     edgecolor="orange", linewidth=5, clip_on=False))
+    ax.text(0.5, 0.06, f"{status_label} [{detail}]\ndebug shot of target area — object not confirmed",
+            color="white", fontsize=8, fontweight="bold", ha="center", va="center",
+            transform=ax.transAxes, bbox=dict(facecolor="darkorange", alpha=0.75, pad=4))
 
 
 def _draw_mask_fail_disclaimer(ax, rgb, W: int, H: int, fail_reason: str, marker: Optional[tuple[float, float]]) -> None:
@@ -979,11 +1090,31 @@ def render_event_grid(
 
     obj_record = artifact.objects.get(label)
     before_event = after_event = None
+    is_first_event = False
     if obj_record is not None:
         idx = next((i for i, ev in enumerate(obj_record.events) if abs(ev.t - e["t"]) < 1e-3), None)
         if idx is not None:
             after_event = obj_record.events[idx]
             before_event = after_event if is_state else (obj_record.events[idx - 1] if idx > 0 else after_event)
+            is_first_event = idx == 0
+    # Spawn-in honesty: an insert_new event's BEFORE panel must show the
+    # destination WITHOUT the object — it does not exist yet (the manifest
+    # says so; before_event == after_event above is a framing convenience,
+    # not a claim the object was already there). Handled by its own branch
+    # in the panel loop, mirroring the remove-path's disappearance shot.
+    is_insert = e.get("change_type") == "insert_new" and not is_remove and not is_state
+    # First MOVE of a real scene instance (BIND, e.g. a chair's first pull-
+    # out): the honest before-pose is its census starting position, not the
+    # event's own realized pose (before_event == after_event would photo-
+    # graph it already moved).
+    bind_start_pos = None
+    from dynamic_home_eqa.embodied.realized_world import BIND as _BIND_KIND
+    if (is_first_event and not is_insert and not is_state and not is_remove
+            and obj_record is not None and obj_record.binding.kind == _BIND_KIND):
+        from dynamic_home_eqa.env.inventory import load_scene_state
+        _inst = load_scene_state(world.scene_id).instances.get(label)
+        if _inst is not None and _inst.position is not None:
+            bind_start_pos = tuple(_inst.position)
 
     # Pre-Pool-Build Remediation round (item 2): top-down markers use
     # effective_pose (the carried-forward "what the physical world
@@ -1032,6 +1163,55 @@ def render_event_grid(
         ("before", axes[0][0], before_event, from_anchor, f"BEFORE (egocentric): {from_anchor}"),
         ("after", axes[0][1], after_event, to_anchor, f"AFTER (egocentric): {to_anchor}"),
     ):
+        if key == "before" and is_insert:
+            # Spawn-in mirror of the remove-path below: the honest "before"
+            # for an insert_new is the DESTINATION WITHOUT the object — it
+            # does not exist until this event. The target is deliberately
+            # never materialized; every other object is reconstructed at
+            # before-time, and the object's absence is verified the same
+            # way the remove-path verifies a disappearance.
+            context.apply(panel_time[key], exclude_label=label)
+            tp = (after_event.realized_pose.pos
+                  if (after_event is not None and after_event.realized_pose is not None) else to_pos)
+            if tp is None:
+                _draw_placeholder(ax, "OBJECT NOT YET PRESENT\n(no destination position to aim at)")
+                panel_status[key] = STATUS_ANCHOR_UNRESOLVED
+                spawn_info[key] = {"attempted": False, "insert_before": True, "reason": "no_position"}
+            else:
+                half = 0.3
+                synth_aabb = ((tp[0] - half, tp[1] - half, tp[2] - half),
+                              (tp[0] + half, tp[1] + half, tp[2] + half))
+                vp = spectator_viewpoint(render_sim, synth_aabb, 0.6)
+                if vp is None:
+                    rgb = _debug_failure_shot(render_sim, tp)
+                    if rgb is None:
+                        _draw_placeholder(ax, _STATUS_MESSAGES[STATUS_ENCLOSED])
+                    else:
+                        _draw_debug_failure(ax, rgb, "ENCLOSED", "pre-spawn destination")
+                    panel_status[key] = STATUS_ENCLOSED
+                    spawn_info[key] = {"attempted": False, "insert_before": True, "reason": "enclosed"}
+                else:
+                    in_agent_pos = (vp.camera_pos[0], vp.camera_pos[1] - 1.5, vp.camera_pos[2])
+                    rgb, semantic, *_ = capture_rgb_semantic_and_basis(render_sim, in_agent_pos, vp.look_at)
+                    H, W = rgb.shape[0], rgb.shape[1]
+                    object_absent = not bool((semantic == _SPAWNED_OBJECT_SEMANTIC_ID).any())
+                    ax.imshow(rgb)
+                    ax.set_xlim(0, W)
+                    ax.set_ylim(H, 0)
+                    ax.text(0.5, 0.06, "(object not yet present — spawns in at this event)",
+                            color="yellow", fontsize=8, ha="center", transform=ax.transAxes,
+                            bbox=dict(facecolor="black", alpha=0.55, pad=2))
+                    held_vp = vp
+                    panel_status[key] = STATUS_OK if object_absent else STATUS_OBJECT_SPAWN_FAILED
+                    spawn_info[key] = {"attempted": False, "insert_before": True,
+                                       "object_absent_verified": object_absent}
+                    panel_luminance[key] = float(
+                        (rgb[..., 0] * 0.299 + rgb[..., 1] * 0.587 + rgb[..., 2] * 0.114).mean()
+                    )
+            ax.set_title(title, fontsize=9)
+            _hide_decorations(ax)
+            continue
+
         if key == "after" and is_remove:
             # Phase 3 put-away: the honest "after" is the BEFORE panel's own
             # camera pose with the object gone — the disappearance is the
@@ -1084,14 +1264,30 @@ def render_event_grid(
             # specific cause code appended, so a reviewer sees WHICH of
             # the 4 SURFACE_FULL-family causes (or another failure) this
             # was without needing to cross-reference the JSON.
-            _draw_placeholder(ax, f"{_STATUS_MESSAGES[status]}\n[{reason}]")
+            # Debug-shot upgrade: when the object has ANY known physical
+            # position (its carried-forward effective pose), photograph
+            # that area instead of a gray card — the status/JSON keep the
+            # failure verdict, the reviewer gets something to look at.
+            dbg_center = to_pos or from_pos
+            rgb = _debug_failure_shot(render_sim, dbg_center) if dbg_center is not None else None
+            if rgb is None:
+                _draw_placeholder(ax, f"{_STATUS_MESSAGES[status]}\n[{reason}]")
+            else:
+                _draw_debug_failure(ax, rgb, status.upper(), reason)
             panel_status[key] = status
-            spawn_info[key] = {"attempted": False, "reason": reason}
+            spawn_info[key] = {"attempted": False, "reason": reason,
+                               "debug_shot": rgb is not None}
             ax.set_title(title, fontsize=9)
             _hide_decorations(ax)
             continue
 
         target_pos = ev.realized_pose.pos
+        if key == "before" and bind_start_pos is not None:
+            # First move of a real scene instance: the before panel shows it
+            # at its census STARTING position (see prologue) — before_event
+            # is this same event, whose realized pose is already the moved-
+            # to position, which would render before == after.
+            target_pos = bind_start_pos
 
         # Materialize FIRST (no placement computation here, see docstring)
         # — the spectator camera search needs the object's own real,
@@ -1099,11 +1295,18 @@ def render_event_grid(
         # viewpoint to search for until the object actually exists in the
         # sim. If materialization fails, there is nothing to photograph
         # regardless of what a camera search would have found.
-        obj, asset_id, is_spawned = _materialize_object(render_sim, world.scene_id, label, category, target_pos)
+        obj, asset_id, is_spawned = _materialize_object(
+            render_sim, world.scene_id, label, category, target_pos,
+            asset_id_override=(obj_record.binding.template_name if obj_record else None))
         if obj is None:
-            _draw_placeholder(ax, _STATUS_MESSAGES[STATUS_OBJECT_SPAWN_FAILED])
+            rgb = _debug_failure_shot(render_sim, target_pos)
+            if rgb is None:
+                _draw_placeholder(ax, _STATUS_MESSAGES[STATUS_OBJECT_SPAWN_FAILED])
+            else:
+                _draw_debug_failure(ax, rgb, "OBJECT_SPAWN_FAILED", "materialize_failed")
             panel_status[key] = STATUS_OBJECT_SPAWN_FAILED
-            spawn_info[key] = {"attempted": True, "reason": "materialize_failed", "realized_pos": target_pos}
+            spawn_info[key] = {"attempted": True, "reason": "materialize_failed",
+                               "realized_pos": target_pos, "debug_shot": rgb is not None}
             ax.set_title(title, fontsize=9)
             _hide_decorations(ax)
             continue
@@ -1139,13 +1342,22 @@ def render_event_grid(
                 used_held_framing = True
 
         if vp is None:
+            # Debug shot BEFORE removing the object: the oblique fallback in
+            # _debug_failure_shot ignores obstruction on purpose — a photo
+            # of the closed cabinet the object is sealed inside is the
+            # debugging value here.
+            rgb = _debug_failure_shot(render_sim, target_pos, extent_m=max_extent)
             if is_spawned:
                 remove_object(render_sim, obj)
             else:
                 _restore_bind_object(world.scene_id, label, obj)
-            _draw_placeholder(ax, _STATUS_MESSAGES[STATUS_ENCLOSED])
+            if rgb is None:
+                _draw_placeholder(ax, _STATUS_MESSAGES[STATUS_ENCLOSED])
+            else:
+                _draw_debug_failure(ax, rgb, "ENCLOSED", "no unobstructed viewpoint")
             panel_status[key] = STATUS_ENCLOSED
-            spawn_info[key] = {"attempted": True, "reason": "enclosed", "realized_pos": target_pos}
+            spawn_info[key] = {"attempted": True, "reason": "enclosed",
+                               "realized_pos": target_pos, "debug_shot": rgb is not None}
             ax.set_title(title, fontsize=9)
             _hide_decorations(ax)
             continue
@@ -1184,14 +1396,18 @@ def render_event_grid(
         anchor_px = project_point(eye, forward, right, up, target_pos)
         mask_passed, fail_reason, mask_info = evaluate_object_mask(mask, anchor_px)
 
-        # Item 4: bounded corrective sweep, only for the two size-diagnosed
-        # fail modes (a distance problem — see _size_corrective_sweep's
-        # docstring for why off-center/empty/anchor-out-of-frame aren't in
-        # scope). Adopted only if it found a strictly passing candidate, or
-        # (still failing either way) scored better than the original
-        # capture — a bounded retry must never make the shown result worse.
+        # Item 4: bounded corrective sweep for the two size-diagnosed fail
+        # modes (a distance problem) plus MASK_FAIL_EMPTY (an occlusion/
+        # framing problem — backing up widens the view and the azimuth
+        # offsets step around the blocker). off_center/anchor-out-of-frame
+        # stay out of scope: those are aim problems a distance change
+        # doesn't address. Adopted only if it found a strictly passing
+        # candidate, or (still failing either way) scored better than the
+        # original capture — a bounded retry must never make the shown
+        # result worse.
         size_corrected = False
-        if not mask_passed and fail_reason in (MASK_FAIL_TOO_SMALL, MASK_FAIL_TOO_LARGE):
+        if not mask_passed and fail_reason in (MASK_FAIL_TOO_SMALL, MASK_FAIL_TOO_LARGE,
+                                               MASK_FAIL_EMPTY):
             swept = _size_corrective_sweep(render_sim, aabb, target_pos, fail_reason, vp)
             if swept is not None:
                 sw_rgb, sw_mask, sw_mask_info, sw_passed, sw_fail_reason, sw_vp, swept_score, sw_anchor_px = swept
@@ -1210,6 +1426,20 @@ def render_event_grid(
                     H, W = rgb.shape[0], rgb.shape[1]
                     size_corrected = True
 
+        # Digital-zoom last resort: a still-too-small BUT visible object
+        # (the distance sweep floored out) gets cropped-and-upscaled around
+        # its mask so a small/flat item like a plate or keys reads clearly.
+        # Pure post-process — no re-render, no camera move.
+        digital_zoom = False
+        if not mask_passed and fail_reason == MASK_FAIL_TOO_SMALL:
+            zoomed = _digital_zoom_pass(rgb, mask, anchor_px)
+            if zoomed is not None:
+                rgb, mask_info, _marker = zoomed
+                mask_passed, fail_reason = True, "ok"
+                anchor_px = mask_info["centroid_px"]
+                H, W = rgb.shape[0], rgb.shape[1]
+                digital_zoom = True
+
         if is_spawned:
             remove_object(render_sim, obj)
         else:
@@ -1223,6 +1453,7 @@ def render_event_grid(
             "mask_status": "ok" if mask_passed else "failed",
             "spectator_distance_m": vp.distance_m, "spectator_elevation_deg": vp.elevation_deg,
             "held_framing": used_held_framing, "size_corrected": size_corrected,
+            "digital_zoom": digital_zoom,
         }
 
         if key == "before":
@@ -1263,6 +1494,10 @@ def render_event_grid(
                         bbox=dict(facecolor="black", alpha=0.55, pad=2))
             if used_held_framing:
                 ax.text(0.5, 0.15, "(held framing — reused prior camera pose)",
+                        color="yellow", fontsize=7, ha="center", transform=ax.transAxes,
+                        bbox=dict(facecolor="black", alpha=0.55, pad=2))
+            if digital_zoom:
+                ax.text(0.5, 0.21, "(digitally zoomed — small object magnified)",
                         color="yellow", fontsize=7, ha="center", transform=ax.transAxes,
                         bbox=dict(facecolor="black", alpha=0.55, pad=2))
             if vp.is_high_angle:

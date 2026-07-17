@@ -1,0 +1,1333 @@
+{
+  "household_id": "102343992_family_with_kids",
+  "scene_id": "102343992",
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "profile": "family_with_kids",
+  "day": 0,
+  "clutter": [
+    {
+      "reason": "A small vase with fresh flowers sits on the dining table to brighten the meal space.",
+      "object_category": "vase",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.8,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification describes a vase with flowers on the dining table, which matches the candidate object (vase) and target (kitchen.table_1, assuming dining table is the kitchen table). This is a plausible static placement."
+    },
+    {
+      "reason": "A decorative candle sits on the kitchen cabinet shelf, adding warmth to the room.",
+      "object_category": "candle",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.cabinet_1",
+      "_judge_score": 0.7,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification describes a decorative candle on the kitchen cabinet shelf, which matches the candidate object (candle) and target (kitchen.cabinet_1). This is a plausible static placement."
+    }
+  ],
+  "asset_bindings": {
+    "alice_laptop": "laptop_a031287e7b68",
+    "bob_laptop": "laptop_a031287e7b68",
+    "leo_laptop": "laptop_a031287e7b68",
+    "alice_phone": "phone_223b376823b5",
+    "alice_wallet": "wallet_4eb66e5c0b4f",
+    "alice_keys": "keys_92167e12a3f0",
+    "bob_phone": "phone_7f658554a385",
+    "bob_wallet": "wallet_4e2567974149",
+    "bob_keys": "keys_aaccd2b9848d",
+    "bob_sunglasses": "sunglasses_1145d066f664",
+    "leo_phone": "phone_708c7214aa7f",
+    "leo_headphones": "headphones_8a0c9d1a4da7",
+    "leo_backpack": "backpack_f129ca7ee93d",
+    "mia_phone": "phone_b77da5b9052e",
+    "mia_headphones": "headphones_c7d3e24c0362",
+    "mia_backpack": "backpack_9fa2da2c4223"
+  },
+  "persona": {
+    "occupants": [
+      {
+        "name": "Alice",
+        "age_band": "adult",
+        "role": "mother",
+        "typical_wake": 6.5,
+        "typical_sleep": 22.5,
+        "habits": "Works as a project manager; leaves her coffee mug on the desk if she's rushing to work, but always wipes the kitchen counters before leaving.",
+        "tidiness": 0.6,
+        "owned_items": [
+          "phone",
+          "wallet",
+          "keys",
+          "laptop"
+        ],
+        "bedroom_index": 1
+      },
+      {
+        "name": "Bob",
+        "age_band": "adult",
+        "role": "father",
+        "typical_wake": 7.0,
+        "typical_sleep": 23.0,
+        "habits": "Software engineer; tends to pile work papers on the dining table and forgets to hang his jacket on the chair back.",
+        "tidiness": 0.3,
+        "owned_items": [
+          "phone",
+          "wallet",
+          "keys",
+          "laptop",
+          "sunglasses"
+        ],
+        "bedroom_index": 1
+      },
+      {
+        "name": "Leo",
+        "age_band": "teen",
+        "role": "son",
+        "typical_wake": 7.5,
+        "typical_sleep": 23.5,
+        "habits": "High school student and part-time gamer; leaves his gaming headset on the floor and piles laundry in the corner of his room.",
+        "tidiness": 0.2,
+        "owned_items": [
+          "phone",
+          "laptop",
+          "headphones",
+          "backpack"
+        ],
+        "bedroom_index": 2
+      },
+      {
+        "name": "Mia",
+        "age_band": "teen",
+        "role": "daughter",
+        "typical_wake": 7.0,
+        "typical_sleep": 22.0,
+        "habits": "High school student who plays violin; keeps her sheet music organized but often leaves her violin case in the hallway after practice.",
+        "tidiness": 0.7,
+        "owned_items": [
+          "phone",
+          "headphones",
+          "backpack"
+        ],
+        "bedroom_index": 3
+      }
+    ],
+    "household_type": "family_with_kids"
+  },
+  "traces": [
+    {
+      "occupant_name": "Alice",
+      "activities": [
+        {
+          "activity": "wake_up_and_get_ready",
+          "location": "bedroom",
+          "start": 6.5,
+          "end": 7.25
+        },
+        {
+          "activity": "make_coffee",
+          "location": "kitchen",
+          "start": 7.25,
+          "end": 7.4
+        },
+        {
+          "activity": "check_email",
+          "location": "office",
+          "start": 7.4,
+          "end": 7.75
+        },
+        {
+          "activity": "eat_breakfast",
+          "location": "kitchen",
+          "start": 7.75,
+          "end": 8.25
+        },
+        {
+          "activity": "wipe_kitchen_counters",
+          "location": "kitchen",
+          "start": 8.25,
+          "end": 8.35
+        },
+        {
+          "activity": "leave_for_work",
+          "location": "away",
+          "start": 8.35,
+          "end": 9.0
+        },
+        {
+          "activity": "morning_meetings",
+          "location": "away",
+          "start": 9.0,
+          "end": 12.0
+        },
+        {
+          "activity": "lunch_break",
+          "location": "away",
+          "start": 12.0,
+          "end": 13.0
+        },
+        {
+          "activity": "afternoon_project_work",
+          "location": "away",
+          "start": 13.0,
+          "end": 16.0
+        },
+        {
+          "activity": "commute_home",
+          "location": "away",
+          "start": 16.0,
+          "end": 17.0
+        },
+        {
+          "activity": "change_clothes",
+          "location": "bedroom",
+          "start": 17.0,
+          "end": 17.2
+        },
+        {
+          "activity": "help_with_homework",
+          "location": "living_room",
+          "start": 17.2,
+          "end": 18.2
+        },
+        {
+          "activity": "cook_dinner",
+          "location": "kitchen",
+          "start": 18.2,
+          "end": 19.0
+        },
+        {
+          "activity": "eat_dinner",
+          "location": "dining_room",
+          "start": 19.0,
+          "end": 19.45
+        },
+        {
+          "activity": "clean_up_kitchen",
+          "location": "kitchen",
+          "start": 19.45,
+          "end": 20.15
+        },
+        {
+          "activity": "watch_tv",
+          "location": "living_room",
+          "start": 20.15,
+          "end": 21.5
+        },
+        {
+          "activity": "wind_down",
+          "location": "bedroom",
+          "start": 21.5,
+          "end": 22.5
+        }
+      ],
+      "day_type": "weekday",
+      "day_context": "Alice rushes out the door, leaving her coffee mug on the desk but dutifully wiping the kitchen counters before heading to her project management meetings. She navigates the sudden afternoon downpour on her commute, returning home to join the family for a warm dinner."
+    },
+    {
+      "occupant_name": "Bob",
+      "activities": [
+        {
+          "activity": "wake_up_and_groom",
+          "location": "bathroom",
+          "start": 7.0,
+          "end": 7.45
+        },
+        {
+          "activity": "breakfast",
+          "location": "kitchen",
+          "start": 7.45,
+          "end": 8.15
+        },
+        {
+          "activity": "leave_for_work",
+          "location": "away",
+          "start": 8.15,
+          "end": 9.0
+        },
+        {
+          "activity": "work",
+          "location": "away",
+          "start": 9.0,
+          "end": 12.3
+        },
+        {
+          "activity": "lunch_break",
+          "location": "away",
+          "start": 12.3,
+          "end": 13.15
+        },
+        {
+          "activity": "work",
+          "location": "away",
+          "start": 13.15,
+          "end": 17.0
+        },
+        {
+          "activity": "commute_home",
+          "location": "away",
+          "start": 17.0,
+          "end": 17.45
+        },
+        {
+          "activity": "enter_home",
+          "location": "living_room",
+          "start": 17.45,
+          "end": 18.0
+        },
+        {
+          "activity": "change_clothes",
+          "location": "bedroom",
+          "start": 18.0,
+          "end": 18.2
+        },
+        {
+          "activity": "tidying",
+          "location": "dining_room",
+          "start": 18.2,
+          "end": 18.45
+        },
+        {
+          "activity": "dinner",
+          "location": "dining_room",
+          "start": 18.45,
+          "end": 19.3
+        },
+        {
+          "activity": "work_papers",
+          "location": "dining_room",
+          "start": 19.3,
+          "end": 20.3
+        },
+        {
+          "activity": "relax",
+          "location": "living_room",
+          "start": 20.3,
+          "end": 22.3
+        },
+        {
+          "activity": "prepare_for_bed",
+          "location": "bathroom",
+          "start": 22.3,
+          "end": 23.0
+        },
+        {
+          "activity": "sleep",
+          "location": "bedroom",
+          "start": 23.0,
+          "end": 23.0
+        }
+      ],
+      "day_type": "weekday",
+      "day_context": "Bob piles his work papers on the dining table and leaves his jacket draped over the chair before heading to the office for a day of software engineering. He braves the sudden afternoon downpour on his way back, settling in to tackle his paperwork pile during the family dinner."
+    },
+    {
+      "occupant_name": "Leo",
+      "activities": [
+        {
+          "activity": "waking_up",
+          "location": "bedroom",
+          "start": 7.5,
+          "end": 8.0
+        },
+        {
+          "activity": "getting_ready",
+          "location": "bathroom",
+          "start": 8.0,
+          "end": 8.45
+        },
+        {
+          "activity": "breakfast",
+          "location": "kitchen",
+          "start": 8.45,
+          "end": 9.15
+        },
+        {
+          "activity": "commuting",
+          "location": "away",
+          "start": 9.15,
+          "end": 9.45
+        },
+        {
+          "activity": "attending_school",
+          "location": "away",
+          "start": 9.45,
+          "end": 15.3
+        },
+        {
+          "activity": "commuting",
+          "location": "away",
+          "start": 15.3,
+          "end": 16.0
+        },
+        {
+          "activity": "online_gaming",
+          "location": "bedroom",
+          "start": 16.0,
+          "end": 17.0
+        },
+        {
+          "activity": "helping_clear_table",
+          "location": "dining_room",
+          "start": 17.0,
+          "end": 17.3
+        },
+        {
+          "activity": "dinner",
+          "location": "dining_room",
+          "start": 17.3,
+          "end": 18.15
+        },
+        {
+          "activity": "hanging_out",
+          "location": "living_room",
+          "start": 18.15,
+          "end": 20.0
+        },
+        {
+          "activity": "homework",
+          "location": "office",
+          "start": 20.0,
+          "end": 22.0
+        },
+        {
+          "activity": "relaxing",
+          "location": "bedroom",
+          "start": 22.0,
+          "end": 23.5
+        }
+      ],
+      "day_type": "weekday",
+      "day_context": "Leo heads to high school, leaving his gaming headset on the bedroom floor and a pile of laundry in the corner. After classes and a quick online match, he makes it home through the sudden downpour and helps clear the dinner table before retreating to his room."
+    },
+    {
+      "occupant_name": "Mia",
+      "activities": [
+        {
+          "activity": "wake_up",
+          "location": "bedroom",
+          "start": 7.0,
+          "end": 7.3
+        },
+        {
+          "activity": "hygiene",
+          "location": "bathroom",
+          "start": 7.3,
+          "end": 8.0
+        },
+        {
+          "activity": "breakfast",
+          "location": "kitchen",
+          "start": 8.0,
+          "end": 8.4
+        },
+        {
+          "activity": "leave_house",
+          "location": "away",
+          "start": 8.4,
+          "end": 9.0
+        },
+        {
+          "activity": "school_classes",
+          "location": "away",
+          "start": 9.0,
+          "end": 15.0
+        },
+        {
+          "activity": "orchestra_rehearsal",
+          "location": "away",
+          "start": 15.0,
+          "end": 16.3
+        },
+        {
+          "activity": "travel_home",
+          "location": "away",
+          "start": 16.3,
+          "end": 17.0
+        },
+        {
+          "activity": "change_clothes",
+          "location": "bedroom",
+          "start": 17.0,
+          "end": 17.2
+        },
+        {
+          "activity": "organize_sheet_music",
+          "location": "bedroom",
+          "start": 17.2,
+          "end": 17.5
+        },
+        {
+          "activity": "leave_violin_case",
+          "location": "living_room",
+          "start": 17.5,
+          "end": 18.3
+        },
+        {
+          "activity": "dinner",
+          "location": "dining_room",
+          "start": 18.3,
+          "end": 19.1
+        },
+        {
+          "activity": "homework",
+          "location": "office",
+          "start": 19.1,
+          "end": 20.3
+        },
+        {
+          "activity": "evening_practice",
+          "location": "bedroom",
+          "start": 20.3,
+          "end": 21.3
+        },
+        {
+          "activity": "prepare_for_bed",
+          "location": "bedroom",
+          "start": 21.3,
+          "end": 22.0
+        }
+      ],
+      "day_type": "weekday",
+      "day_context": "Mia leaves her violin case in the hallway after afternoon practice, keeps her sheet music neatly organized, and heads to high school for classes and orchestra rehearsal. She navigates the sudden afternoon downpour on her way back, joins the family dinner, and later unpacks her instrument for evening practice."
+    }
+  ],
+  "displacements": [
+    {
+      "reason": "After waking up and starting her routine, she might place her phone on a surface in the bathroom or bedroom to check messages or set an alarm before leaving.",
+      "object_category": "phone",
+      "target_relationship": "on",
+      "target_anchor": "bathroom_1.cabinet_1",
+      "_activity": "hygiene",
+      "_occupant": "Mia",
+      "_occupant_index": 3,
+      "_start": 7.3,
+      "_end": 8.0,
+      "_location": "bathroom",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_ctx_fs_sta32b12a5_p0be2cf39_b6",
+      "_judge_seed": 11677314126341449616,
+      "_judge_reason": "Checking a phone is a standard part of a morning hygiene routine, and placing it on the bathroom cabinet is a common, safe behavior for a teen. This matches the activity and object perfectly.",
+      "_resolved_slot": "bathroom_1.cabinet_1",
+      "_selected": true
+    },
+    {
+      "reason": "The vase is currently on the table and may be an obstruction for eating; moving it to a nearby surface keeps the table clear for food while keeping the decor visible.",
+      "object_category": "vase",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.cabinet_1",
+      "_activity": "breakfast",
+      "_occupant": "Bob",
+      "_occupant_index": 1,
+      "_start": 7.45,
+      "_end": 8.15,
+      "_location": "kitchen",
+      "_judge_score": 0.6,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stdb1adc1e_p0be2cf39_b6",
+      "_judge_seed": 15312945907577895073,
+      "_judge_reason": "Moving a decorative vase to a high cabinet surface to clear the table is a plausible tidying action before eating, consistent with clearing space for breakfast.",
+      "_resolved_slot": "kitchen.cabinet_1",
+      "_selected": true
+    },
+    {
+      "reason": "Leo owns a laptop which is currently 'put away / not out yet'; as a gamer and student, he may bring it out to check schoolwork or gaming updates. Placing it on the bed or a nearby surface is a common initial step before setting it up on a desk.",
+      "object_category": "laptop",
+      "target_relationship": "on_top",
+      "target_anchor": "bedroom_2.bed_1",
+      "_activity": "waking_up",
+      "_occupant": "Leo",
+      "_occupant_index": 2,
+      "_start": 7.5,
+      "_end": 8.0,
+      "_location": "bedroom",
+      "_judge_score": 0.3,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st5750cc14_p0be2cf39_b6",
+      "_judge_seed": 6849358383037208813,
+      "_judge_reason": "Bringing a laptop out of storage at 7:30 AM to check 'gaming updates' or 'schoolwork' is unlikely for a typical wake-up routine; students usually prioritize hygiene and breakfast first, or grab the phone. Laptops are rarely the first item retrieved upon waking unless specifically waking to game/work, which isn't implied by 'waking_up'.",
+      "_resolved_slot": "bedroom_2.bed_1",
+      "_selected": true
+    },
+    {
+      "reason": "Leo is a part-time gamer who habitually leaves his gaming headset on the floor; upon waking, he will retrieve his headphones to either use them or put them away properly rather than leaving them on the floor as usual. Since the headphones are currently 'put away / not out yet' in the inventory state, this implies he is retrieving them from storage to start his morning routine or check messages.",
+      "object_category": "headphones",
+      "target_relationship": "on_top",
+      "target_anchor": "bedroom_2.bed_1",
+      "_activity": "waking_up",
+      "_occupant": "Leo",
+      "_occupant_index": 2,
+      "_start": 7.5,
+      "_end": 8.0,
+      "_location": "bedroom",
+      "_judge_score": 0.6,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st5750cc14_p0be2cf39_b6",
+      "_judge_seed": 6849358383037208813,
+      "_judge_reason": "The justification claims the item is retrieved from storage, but the state shows it is 'put away / not out yet', which is consistent. However, placing headphones on the bed upon waking is less typical than placing them on a nightstand or keeping them in hand, and the reasoning is slightly speculative about 'starting morning routine' vs just waking up. Still, it's a plausible personal item handling",
+      "_resolved_slot": "bedroom_2.bed_1",
+      "_selected": true
+    },
+    {
+      "reason": "The stool is currently tucked under the counter. While cooking, she might pull it out to sit and prep food or rest briefly, especially given her role as a mother who might be multitasking.",
+      "object_category": "stool",
+      "target_relationship": "next_to",
+      "target_anchor": "kitchen.cabinet_1",
+      "_instance": "stool_1",
+      "_activity": "cook_dinner",
+      "_occupant": "Alice",
+      "_occupant_index": 0,
+      "_start": 18.2,
+      "_end": 19.0,
+      "_location": "kitchen",
+      "_judge_score": 0.7,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stdf4ade4f_p0be2cf39_b6",
+      "_judge_seed": 4674670458280034471,
+      "_judge_reason": "The justification correctly identifies the stool's current tucked position and provides a plausible reason for its removal during meal prep (sitting to chop/multitask). This is a common, safe, and behaviorally consistent action for cooking.",
+      "_resolved_slot": "kitchen.cabinet_1",
+      "_selected": true
+    },
+    {
+      "reason": "The candle is also on the counter and needs to be moved aside to allow for thorough wiping of the surface.",
+      "object_category": "candle",
+      "target_relationship": "near",
+      "target_anchor": "kitchen.cabinet_2",
+      "_activity": "clean_up_kitchen",
+      "_occupant": "Alice",
+      "_occupant_index": 0,
+      "_start": 19.45,
+      "_end": 20.15,
+      "_location": "kitchen",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stbf9fe39d_p0be2cf39_b6",
+      "_judge_seed": 8525622475210088164,
+      "_judge_reason": "The candle is on the counter and must be moved to wipe the surface thoroughly, making this a necessary and typical part of the cleaning process.",
+      "_resolved_slot": "kitchen.cabinet_2",
+      "_selected": true
+    }
+  ],
+  "candidates": [
+    {
+      "reason": "After waking up and starting her routine, she might place her phone on a surface in the bathroom or bedroom to check messages or set an alarm before leaving.",
+      "object_category": "phone",
+      "target_relationship": "on",
+      "target_anchor": "bathroom_1.cabinet_1",
+      "_activity": "hygiene",
+      "_occupant": "Mia",
+      "_occupant_index": 3,
+      "_start": 7.3,
+      "_end": 8.0,
+      "_location": "bathroom",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_ctx_fs_sta32b12a5_p0be2cf39_b6",
+      "_judge_seed": 11677314126341449616,
+      "_judge_reason": "Checking a phone is a standard part of a morning hygiene routine, and placing it on the bathroom cabinet is a common, safe behavior for a teen. This matches the activity and object perfectly.",
+      "_resolved_slot": "bathroom_1.cabinet_1",
+      "_selected": true
+    },
+    {
+      "reason": "Mia is getting ready for school, so she likely needs to access personal items from her wardrobe to get dressed or organize her outfit for the day.",
+      "object_category": "backpack",
+      "target_relationship": "inside",
+      "target_anchor": "bathroom_1.cabinet_1",
+      "_activity": "hygiene",
+      "_occupant": "Mia",
+      "_occupant_index": 3,
+      "_start": 7.3,
+      "_end": 8.0,
+      "_location": "bathroom",
+      "_despawn": true,
+      "_concealed_in": "bathroom_1.cabinet_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_sta32b12a5_p0be2cf39_b6",
+      "_judge_seed": 11677314126341449616,
+      "_judge_reason": "A backpack is not typically stored inside a bathroom cabinet during a morning hygiene routine; it is usually kept in the bedroom or hallway. This placement lacks behavioral connection to the current activity.",
+      "_selected": false
+    },
+    {
+      "reason": "Bob is starting breakfast in the kitchen, so he will need a drinking vessel for his morning coffee or juice. He will likely retrieve a fresh cup from the kitchen storage since the one currently on the table might be used or simply because he is setting up for the meal.",
+      "object_category": "candle",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_activity": "breakfast",
+      "_occupant": "Bob",
+      "_occupant_index": 1,
+      "_start": 7.45,
+      "_end": 8.15,
+      "_location": "kitchen",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stdb1adc1e_p0be2cf39_b6",
+      "_judge_seed": 15312945907577895073,
+      "_judge_reason": "The justification claims Bob needs a drinking vessel and retrieves a cup, but the candidate placement is for a candle. This is a direct object mismatch.",
+      "_resolved_slot": "kitchen.table_1",
+      "_selected": false
+    },
+    {
+      "reason": "The vase is currently on the table and may be an obstruction for eating; moving it to a nearby surface keeps the table clear for food while keeping the decor visible.",
+      "object_category": "vase",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.cabinet_1",
+      "_activity": "breakfast",
+      "_occupant": "Bob",
+      "_occupant_index": 1,
+      "_start": 7.45,
+      "_end": 8.15,
+      "_location": "kitchen",
+      "_judge_score": 0.6,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stdb1adc1e_p0be2cf39_b6",
+      "_judge_seed": 15312945907577895073,
+      "_judge_reason": "Moving a decorative vase to a high cabinet surface to clear the table is a plausible tidying action before eating, consistent with clearing space for breakfast.",
+      "_resolved_slot": "kitchen.cabinet_1",
+      "_selected": true
+    },
+    {
+      "reason": "Leo is a part-time gamer who habitually leaves his gaming headset on the floor; upon waking, he will retrieve his headphones to either use them or put them away properly rather than leaving them on the floor as usual. Since the headphones are currently 'put away / not out yet' in the inventory state, this implies he is retrieving them from storage to start his morning routine or check messages.",
+      "object_category": "headphones",
+      "target_relationship": "on_top",
+      "target_anchor": "bedroom_2.bed_1",
+      "_activity": "waking_up",
+      "_occupant": "Leo",
+      "_occupant_index": 2,
+      "_start": 7.5,
+      "_end": 8.0,
+      "_location": "bedroom",
+      "_judge_score": 0.6,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st5750cc14_p0be2cf39_b6",
+      "_judge_seed": 6849358383037208813,
+      "_judge_reason": "The justification claims the item is retrieved from storage, but the state shows it is 'put away / not out yet', which is consistent. However, placing headphones on the bed upon waking is less typical than placing them on a nightstand or keeping them in hand, and the reasoning is slightly speculative about 'starting morning routine' vs just waking up. Still, it's a plausible personal item handling",
+      "_resolved_slot": "bedroom_2.bed_1",
+      "_selected": true
+    },
+    {
+      "reason": "As a high school student, Leo likely has a backpack for school supplies; since it is currently 'put away / not out yet', he will bring it out to the bedroom to prepare for the day. Placing it on the floor near the bed is a typical initial placement before packing or checking contents.",
+      "object_category": "backpack",
+      "target_relationship": "on_top",
+      "target_anchor": "bedroom_2.bed_1",
+      "_activity": "waking_up",
+      "_occupant": "Leo",
+      "_occupant_index": 2,
+      "_start": 7.5,
+      "_end": 8.0,
+      "_location": "bedroom",
+      "_judge_score": 0.2,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st5750cc14_p0be2cf39_b6",
+      "_judge_seed": 6849358383037208813,
+      "_judge_reason": "Placing a backpack on the bed is highly implausible for a teen getting ready for school; backpacks are typically placed on the floor, a chair, or a desk. The bed is a sleeping surface, not a storage spot for a school bag, making this behavior odd regardless of tidiness.",
+      "_resolved_slot": "bedroom_2.bed_1",
+      "_selected": false
+    },
+    {
+      "reason": "Leo owns a phone which is currently 'put away / not out yet'; upon waking, he will retrieve it to check the time, alarms, or messages. He typically places it on his nightstand or bed surface for easy access.",
+      "object_category": "phone",
+      "target_relationship": "on_top",
+      "target_anchor": "bedroom_2.bed_1",
+      "_activity": "waking_up",
+      "_occupant": "Leo",
+      "_occupant_index": 2,
+      "_start": 7.5,
+      "_end": 8.0,
+      "_location": "bedroom",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st5750cc14_p0be2cf39_b6",
+      "_judge_seed": 6849358383037208813,
+      "_judge_reason": "Checking a phone immediately upon waking is a very common habit. Placing it on the bed or nightstand for easy access is the standard behavior for a teen. This fits the activity and object perfectly.",
+      "_resolved_slot": "bedroom_2.bed_1",
+      "_selected": false
+    },
+    {
+      "reason": "Leo owns a laptop which is currently 'put away / not out yet'; as a gamer and student, he may bring it out to check schoolwork or gaming updates. Placing it on the bed or a nearby surface is a common initial step before setting it up on a desk.",
+      "object_category": "laptop",
+      "target_relationship": "on_top",
+      "target_anchor": "bedroom_2.bed_1",
+      "_activity": "waking_up",
+      "_occupant": "Leo",
+      "_occupant_index": 2,
+      "_start": 7.5,
+      "_end": 8.0,
+      "_location": "bedroom",
+      "_judge_score": 0.3,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st5750cc14_p0be2cf39_b6",
+      "_judge_seed": 6849358383037208813,
+      "_judge_reason": "Bringing a laptop out of storage at 7:30 AM to check 'gaming updates' or 'schoolwork' is unlikely for a typical wake-up routine; students usually prioritize hygiene and breakfast first, or grab the phone. Laptops are rarely the first item retrieved upon waking unless specifically waking to game/work, which isn't implied by 'waking_up'.",
+      "_resolved_slot": "bedroom_2.bed_1",
+      "_selected": true
+    },
+    {
+      "reason": "Alice is about to eat breakfast in the kitchen, so she needs a place to sit. She will pull out the stool from under the counter to use as a chair at the eating surface.",
+      "object_category": "stool",
+      "target_relationship": "next_to",
+      "target_anchor": "kitchen.cabinet_1",
+      "_instance": "stool_1",
+      "_activity": "eat_breakfast",
+      "_occupant": "Alice",
+      "_occupant_index": 0,
+      "_start": 7.75,
+      "_end": 8.25,
+      "_location": "kitchen",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stdf4ade4f_p0be2cf39_b6",
+      "_judge_seed": 10389876793658610043,
+      "_judge_reason": "The justification claims the stool is pulled out to be used as a chair at the eating surface, but the candidate placement puts it next to the cabinet (where it started), not at a table or eating area. This is a contradiction between the action described and the resulting state.",
+      "_resolved_slot": "kitchen.cabinet_1",
+      "_selected": false
+    },
+    {
+      "reason": "Alice wipes the counters before leaving, so she moves the stool tucked under the counter to the floor to access the surface underneath or simply to clear the workspace.",
+      "object_category": "stool",
+      "target_relationship": "next_to",
+      "target_anchor": "kitchen.cabinet_1",
+      "_instance": "stool_1",
+      "_activity": "wipe_kitchen_counters",
+      "_occupant": "Alice",
+      "_occupant_index": 0,
+      "_start": 8.25,
+      "_end": 8.35,
+      "_location": "kitchen",
+      "_judge_score": 0.3,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stdf4ade4f_p0be2cf39_b6",
+      "_judge_seed": 4393076923083805900,
+      "_judge_reason": "Moving a tucked-in stool to the floor in the middle of wiping counters is physically awkward and offers no clear benefit over leaving it tucked or moving it fully aside; it creates an obstacle rather than clearing the workspace.",
+      "_resolved_slot": "kitchen.cabinet_1",
+      "_selected": false
+    },
+    {
+      "reason": "The candle is currently on the cabinet which might be part of the counter area being cleaned; she moves it to a safe, out-of-the-way spot on the other counter to avoid getting it wet or dirty.",
+      "object_category": "candle",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.cabinet_1",
+      "_activity": "wipe_kitchen_counters",
+      "_occupant": "Alice",
+      "_occupant_index": 0,
+      "_start": 8.25,
+      "_end": 8.35,
+      "_location": "kitchen",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stdf4ade4f_p0be2cf39_b6",
+      "_judge_seed": 4393076923083805900,
+      "_judge_reason": "The justification claims the candle is moved to 'the other counter', but the candidate placement keeps it on the same cabinet/surface it started on, creating a direct object/destination mismatch.",
+      "_gate_excluded": "noop",
+      "_selected": false
+    },
+    {
+      "reason": "Leo is starting an online gaming session and needs his headphones to hear audio and communicate, so he will take them from the bed to wear them.",
+      "object_category": "headphones",
+      "target_relationship": "near",
+      "target_anchor": "bedroom_2.bed_1",
+      "_activity": "online_gaming",
+      "_occupant": "Leo",
+      "_occupant_index": 2,
+      "_start": 16.0,
+      "_end": 17.0,
+      "_location": "bedroom",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st53ee197f_p0be2cf39_b6",
+      "_judge_seed": 8745091484223546080,
+      "_judge_reason": "The justification states Leo will 'wear' the headphones, which implies they are being put on the person, not left sitting on the bed. Placing them 'near' the bed contradicts the action of equipping them for gaming. Additionally, since they are already on the bed, moving them slightly nearby serves no functional purpose for starting a session.",
+      "_gate_excluded": "noop",
+      "_selected": false
+    },
+    {
+      "reason": "Mia is changing clothes in bedroom 2, so she needs to access the wardrobe to retrieve clean clothes or store the ones she is removing. The wardrobe is the primary furniture for this activity in this room.",
+      "object_category": "backpack",
+      "target_relationship": "inside",
+      "target_anchor": "bedroom_3.wardrobe_1",
+      "_activity": "change_clothes",
+      "_occupant": "Mia",
+      "_occupant_index": 3,
+      "_start": 17.0,
+      "_end": 17.2,
+      "_location": "bedroom",
+      "_despawn": true,
+      "_concealed_in": "bedroom_3.wardrobe_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st02bee472_p0be2cf39_b6",
+      "_judge_seed": 6124300066213705591,
+      "_judge_reason": "The justification incorrectly states Mia is in bedroom 2, whereas she sleeps in bedroom 3 and the candidate places the backpack in bedroom 3. This location contradiction makes the reasoning incoherent with the candidate's actual placement.",
+      "_selected": false
+    },
+    {
+      "reason": "Mia often leaves her backpack out after coming home; since she is changing, she likely puts her backpack away in her own bedroom's storage to clear the space for getting undressed.",
+      "object_category": "headphones",
+      "target_relationship": "inside",
+      "target_anchor": "bedroom_3.wardrobe_1",
+      "_activity": "change_clothes",
+      "_occupant": "Mia",
+      "_occupant_index": 3,
+      "_start": 17.0,
+      "_end": 17.2,
+      "_location": "bedroom",
+      "_despawn": true,
+      "_concealed_in": "bedroom_3.wardrobe_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st02bee472_p0be2cf39_b6",
+      "_judge_seed": 6124300066213705591,
+      "_judge_reason": "The justification describes putting away a backpack, but the candidate proposes placing headphones in the wardrobe. This is an object/destination mismatch between the reason and the action.",
+      "_selected": false
+    },
+    {
+      "reason": "Mia needs a surface to spread out her sheet music for organization, and the only available surface in her current room (bedroom) is the bed. She will place the sheet music on the bed to work on it.",
+      "object_category": "potted_plant",
+      "target_relationship": "on_top",
+      "target_anchor": "bedroom_3.bed_1",
+      "_activity": "organize_sheet_music",
+      "_occupant": "Mia",
+      "_occupant_index": 3,
+      "_start": 17.2,
+      "_end": 17.5,
+      "_location": "bedroom",
+      "_judge_score": 0.05,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st02bee472_p0be2cf39_b6",
+      "_judge_seed": 4630288254602599644,
+      "_judge_reason": "The justification incorrectly claims the bed is the surface for sheet music, but the activity is organizing sheet music which requires a flat, stable surface like a desk or table; placing sheet music on a soft, uneven bed is impractical and unlikely for an organized student. Additionally, the candidate object is a potted plant, not sheet music, creating a total mismatch between the object proposed",
+      "_resolved_slot": "bedroom_3.bed_1",
+      "_selected": false
+    },
+    {
+      "reason": "The stool in the bedroom is currently empty and provides a stable, seated position or additional flat surface nearby for her to sit on while organizing, or to place items temporarily. It is plausible she pulls it out to sit on while working at the bed.",
+      "object_category": "backpack",
+      "target_relationship": "next_to",
+      "target_anchor": "bedroom_3.stand_1",
+      "_activity": "organize_sheet_music",
+      "_occupant": "Mia",
+      "_occupant_index": 3,
+      "_start": 17.2,
+      "_end": 17.5,
+      "_location": "bedroom",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st02bee472_p0be2cf39_b6",
+      "_judge_seed": 4630288254602599644,
+      "_judge_reason": "The justification describes using a stand for seating or surface, but the candidate object is a backpack, which is not a seating surface or a stable workspace. Placing a backpack next to a stand does not facilitate organizing sheet music, and the reasoning contradicts the physical nature of the object.",
+      "_resolved_slot": "bedroom_3.stand_1",
+      "_selected": false
+    },
+    {
+      "reason": "Bob is changing clothes, so he needs to remove his work jacket and store it in the wardrobe rather than leaving it on a chair. He will place the jacket inside the wardrobe to keep the living space tidy.",
+      "object_category": "sunglasses",
+      "target_relationship": "inside",
+      "target_anchor": "bedroom_1.bed_1",
+      "_activity": "change_clothes",
+      "_occupant": "Bob",
+      "_occupant_index": 1,
+      "_start": 18.0,
+      "_end": 18.2,
+      "_location": "bedroom",
+      "_judge_score": 0.0,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st6b62226d_p0be2cf39_b6",
+      "_judge_seed": 1582976966922649409,
+      "_judge_reason": "The justification describes putting away a jacket, but the candidate object is sunglasses. This is a direct object mismatch between the reason and the action.",
+      "_resolved_slot": "bedroom_1.bed_1",
+      "_selected": false
+    },
+    {
+      "reason": "Leo is hanging out in the living room (implied by the presence of the TV and his gaming habits), so he likely needs a place to sit if he isn't already seated. The stool in the bedroom is a floor object that can be moved to the living room to provide seating near the TV.",
+      "object_category": "headphones",
+      "target_relationship": "next_to",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "hanging_out",
+      "_occupant": "Leo",
+      "_occupant_index": 2,
+      "_start": 18.15,
+      "_end": 20.0,
+      "_location": "living_room",
+      "_judge_score": 0.0,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st53ee197f_p0be2cf39_b6",
+      "_judge_seed": 11970454911201150018,
+      "_judge_reason": "The justification claims the object is a stool to provide seating, but the candidate object is headphones; this is an object mismatch. Additionally, headphones are not used as a seat.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": false
+    },
+    {
+      "reason": "Since Leo has been gaming earlier and is now hanging out, he might want to listen to music or game audio without disturbing others, so he places his headphones on the nearest surface in the living room, which is the TV stand/surface.",
+      "object_category": "headphones",
+      "target_relationship": "on",
+      "target_anchor": "tv_room.table_1",
+      "_activity": "hanging_out",
+      "_occupant": "Leo",
+      "_occupant_index": 2,
+      "_start": 18.15,
+      "_end": 20.0,
+      "_location": "living_room",
+      "_judge_score": 0.2,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st53ee197f_p0be2cf39_b6",
+      "_judge_seed": 11970454911201150018,
+      "_judge_reason": "Placing headphones on a table while actively using them to hang out or game is implausible; users typically wear them or put them away when not in use, rather than leaving them on a surface while engaged in an audio-dependent activity.",
+      "_resolved_slot": "tv_room.table_1",
+      "_selected": false
+    },
+    {
+      "reason": "Alice is tidying the kitchen before or during cooking; she keeps her coffee mug on the desk if rushing, but since she is home and cooking, she likely brought it back or needs a clean one. However, the inventory shows no mug. She might want to place the candle she has out on the counter for ambiance or safety while cooking, moving it from the cabinet.",
+      "object_category": "candle",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.cabinet_1",
+      "_activity": "cook_dinner",
+      "_occupant": "Alice",
+      "_occupant_index": 0,
+      "_start": 18.2,
+      "_end": 19.0,
+      "_location": "kitchen",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stdf4ade4f_p0be2cf39_b6",
+      "_judge_seed": 4674670458280034471,
+      "_judge_reason": "The justification incorrectly attributes the action to tidying or mug management, while the proposed move is placing a candle on the counter. Leaving a candle on a cooking surface is a safety hazard and not a standard part of the cooking workflow, making it implausible.",
+      "_gate_excluded": "noop",
+      "_selected": false
+    },
+    {
+      "reason": "The stool is currently tucked under the counter. While cooking, she might pull it out to sit and prep food or rest briefly, especially given her role as a mother who might be multitasking.",
+      "object_category": "stool",
+      "target_relationship": "next_to",
+      "target_anchor": "kitchen.cabinet_1",
+      "_instance": "stool_1",
+      "_activity": "cook_dinner",
+      "_occupant": "Alice",
+      "_occupant_index": 0,
+      "_start": 18.2,
+      "_end": 19.0,
+      "_location": "kitchen",
+      "_judge_score": 0.7,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stdf4ade4f_p0be2cf39_b6",
+      "_judge_seed": 4674670458280034471,
+      "_judge_reason": "The justification correctly identifies the stool's current tucked position and provides a plausible reason for its removal during meal prep (sitting to chop/multitask). This is a common, safe, and behaviorally consistent action for cooking.",
+      "_resolved_slot": "kitchen.cabinet_1",
+      "_selected": true
+    },
+    {
+      "reason": "Alice habitually wipes the kitchen counters before leaving, so she will move the decorative items currently on the counter to clear the surface for cleaning.",
+      "object_category": "vase",
+      "target_relationship": "near",
+      "target_anchor": "kitchen.cabinet_2",
+      "_activity": "clean_up_kitchen",
+      "_occupant": "Alice",
+      "_occupant_index": 0,
+      "_start": 19.45,
+      "_end": 20.15,
+      "_location": "kitchen",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stbf9fe39d_p0be2cf39_b6",
+      "_judge_seed": 8525622475210088164,
+      "_judge_reason": "The activity involves cleaning counters, and the vase is on a counter; moving decorative items to clear the surface is a standard, logical step for this task.",
+      "_resolved_slot": "kitchen.cabinet_2",
+      "_selected": false
+    },
+    {
+      "reason": "The candle is also on the counter and needs to be moved aside to allow for thorough wiping of the surface.",
+      "object_category": "candle",
+      "target_relationship": "near",
+      "target_anchor": "kitchen.cabinet_2",
+      "_activity": "clean_up_kitchen",
+      "_occupant": "Alice",
+      "_occupant_index": 0,
+      "_start": 19.45,
+      "_end": 20.15,
+      "_location": "kitchen",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stbf9fe39d_p0be2cf39_b6",
+      "_judge_seed": 8525622475210088164,
+      "_judge_reason": "The candle is on the counter and must be moved to wipe the surface thoroughly, making this a necessary and typical part of the cleaning process.",
+      "_resolved_slot": "kitchen.cabinet_2",
+      "_selected": true
+    },
+    {
+      "reason": "Alice tidies up after dinner, so she will put away the stool that was used or moved earlier today to restore order to the kitchen.",
+      "object_category": "stool",
+      "target_relationship": "next_to",
+      "target_anchor": "kitchen.cabinet_1",
+      "_instance": "stool_1",
+      "_activity": "clean_up_kitchen",
+      "_occupant": "Alice",
+      "_occupant_index": 0,
+      "_start": 19.45,
+      "_end": 20.15,
+      "_location": "kitchen",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stbf9fe39d_p0be2cf39_b6",
+      "_judge_seed": 8525622475210088164,
+      "_judge_reason": "The stool is already located next to kitchen.cabinet_1; proposing it 'next_to kitchen.cabinet_1' implies no movement, yet the reason claims she 'puts it away' to restore order, which is an incoherent justification for a static placement.",
+      "_gate_excluded": "noop",
+      "_selected": false
+    },
+    {
+      "reason": "Alice is settling in to watch TV in the living area, where ambient lighting is often adjusted for comfort. The candle is currently in the kitchen, so she may bring it to the living room to create a cozy atmosphere while watching.",
+      "object_category": "candle",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "watch_tv",
+      "_occupant": "Alice",
+      "_occupant_index": 0,
+      "_start": 20.15,
+      "_end": 21.5,
+      "_location": "living_room",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st86336288_p0be2cf39_b6",
+      "_judge_seed": 14397301433046352821,
+      "_judge_reason": "Bringing a candle from the kitchen to the TV area for ambiance is a standard, plausible behavior for an adult settling in for evening relaxation. The placement aligns with the activity and the object's function.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": false
+    },
+    {
+      "reason": "Bob is settling in to relax in the living room and may want to adjust his seating for comfort. He will pull out the nearby stool to sit on.",
+      "object_category": "laptop",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "relax",
+      "_occupant": "Bob",
+      "_occupant_index": 1,
+      "_start": 20.3,
+      "_end": 22.3,
+      "_location": "living_room",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stafb03af9_p0be2cf39_b6",
+      "_judge_seed": 14115868379189695749,
+      "_judge_reason": "The justification describes pulling out a stool for seating, but the candidate placement is for a laptop; the object (laptop) does not match the action described in the reason (moving a stool).",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": false
+    },
+    {
+      "reason": "Since Bob's personal items are already put away, he doesn't need to move them. However, relaxing often involves listening to music or ambient sound, and he might want to bring his headphones from the bedroom to the living room.",
+      "object_category": "laptop",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "relax",
+      "_occupant": "Bob",
+      "_occupant_index": 1,
+      "_start": 20.3,
+      "_end": 22.3,
+      "_location": "living_room",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_stafb03af9_p0be2cf39_b6",
+      "_judge_seed": 14115868379189695749,
+      "_judge_reason": "The justification discusses bringing headphones to the living room, but the candidate placement is for a laptop; there is a direct mismatch between the object in the reason and the object in the candidate.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": false
+    },
+    {
+      "reason": "Mia is preparing for violin practice and needs her headphones, which are currently stored away in her room. She will retrieve them from their storage location to listen to backing tracks or metronome apps.",
+      "object_category": "headphones",
+      "target_relationship": "on_top",
+      "target_anchor": "bedroom_3.stand_1",
+      "_activity": "evening_practice",
+      "_occupant": "Mia",
+      "_occupant_index": 3,
+      "_start": 20.3,
+      "_end": 21.3,
+      "_location": "bedroom",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_std90910d8_p0be2cf39_b6",
+      "_judge_seed": 16984992739707131610,
+      "_judge_reason": "The justification claims headphones are 'stored away in her room', but the state explicitly places them on bedroom_2.bed_1 (Leo's room), creating a direct contradiction. Additionally, headphones are typically worn, not left on a stand, during practice.",
+      "_resolved_slot": "bedroom_3.stand_1",
+      "_selected": false
+    },
+    {
+      "reason": "Her backpack, used for school and orchestra, is currently stored away. She may need to retrieve items like her instrument case or sheet music from it before starting practice.",
+      "object_category": "backpack",
+      "target_relationship": "on_top",
+      "target_anchor": "bedroom_3.bed_1",
+      "_activity": "evening_practice",
+      "_occupant": "Mia",
+      "_occupant_index": 3,
+      "_start": 20.3,
+      "_end": 21.3,
+      "_location": "bedroom",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_std90910d8_p0be2cf39_b6",
+      "_judge_seed": 16984992739707131610,
+      "_judge_reason": "The justification claims the backpack is 'stored away', but it is already in the room (bedroom_3) and needs to be moved to the bed. While retrieving items is plausible, the reasoning contains an internal inconsistency about the item's location.",
+      "_resolved_slot": "bedroom_3.bed_1",
+      "_selected": false
+    },
+    {
+      "reason": "Mia often leaves her violin case in the hallway, but for this activity, she needs to access it. Since the case isn't in the inventory of movable objects currently in the room, and the prompt asks for displacements from the inventory, we look for other items. However, the 'current object state' mentions the violin case was left in the hallway. The inventory lists 'headphones' and 'backpack' as hers",
+      "object_category": "phone",
+      "target_relationship": "on_top",
+      "target_anchor": "bedroom_3.bed_1",
+      "_activity": "evening_practice",
+      "_occupant": "Mia",
+      "_occupant_index": 3,
+      "_start": 20.3,
+      "_end": 21.3,
+      "_location": "bedroom",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_std90910d8_p0be2cf39_b6",
+      "_judge_seed": 16984992739707131610,
+      "_judge_reason": "The justification is incoherent, failing to identify a clear behavioral reason for placing a phone on the bed other than a confused reference to the violin case which is not a candidate. Placing a phone on a bed during active practice is not a standard behavior for easy access.",
+      "_resolved_slot": "bedroom_3.bed_1",
+      "_selected": false
+    },
+    {
+      "reason": "Mia is getting ready for bed and her phone is currently left on the bathroom counter, so she likely retrieves it from the bathroom and puts it away into her bag or a drawer for the night.",
+      "object_category": "phone",
+      "target_relationship": "inside",
+      "target_anchor": "bedroom_3.bed_1",
+      "_activity": "prepare_for_bed",
+      "_occupant": "Mia",
+      "_occupant_index": 3,
+      "_start": 21.3,
+      "_end": 22.0,
+      "_location": "bedroom",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_ctx_fs_std90910d8_p0be2cf39_b6",
+      "_judge_seed": 5807480157422288686,
+      "_judge_reason": "The justification claims Mia puts the phone into a bag or drawer, but the candidate placement is on the bed; furthermore, placing a phone on the bed is not 'putting it away' for the night in a tidiness context, nor does it match the described action of retrieving it to store it.",
+      "_resolved_slot": "bedroom_3.bed_1",
+      "_selected": false
+    },
+    {
+      "reason": "Leo is a gamer who leaves his headset on the floor, so he likely picks it up to use while relaxing in bed. He moves the headphones from the bed to his ears, which implies taking them off the surface.",
+      "object_category": "headphones",
+      "target_relationship": "on",
+      "target_anchor": "bedroom_2.bed_1",
+      "_activity": "relaxing",
+      "_occupant": "Leo",
+      "_occupant_index": 2,
+      "_start": 22.0,
+      "_end": 23.5,
+      "_location": "bedroom",
+      "_judge_score": 0.0,
+      "_judge_stage_tag": "realism_strict_ctx_fs_st3616d069_p0be2cf39_b6",
+      "_judge_seed": 5960111818551744246,
+      "_judge_reason": "The justification claims Leo moves the headphones from the bed to his ears (implying removal), but the candidate placement is on the bed (implying they are left there). This is a direct contradiction between the stated action and the proposed state.",
+      "_gate_excluded": "noop",
+      "_selected": false
+    }
+  ],
+  "raw_proposals": 32,
+  "grounded_proposals": 32,
+  "abstained_proposals": 27,
+  "abstained_clutter": 0,
+  "clutter_below_floor": 13,
+  "clutter_over_cap": 0,
+  "clutter_rejected": [
+    {
+      "reason": "A bowl of apples sits on the main kitchen counter for easy snacking by the children.",
+      "object_category": "bowl",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.bench_2",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a bowl of apples on the counter, but the candidate places a bowl on the bench; the object and location in the reason do not match the candidate's target anchor or implied purpose for a 'home' placement."
+    },
+    {
+      "reason": "Children's picture books are stored on the living room shelf for easy access during playtime.",
+      "object_category": "book",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.cabinet_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification explicitly states books are stored on the living room shelf, which directly contradicts the candidate placement on the kitchen cabinet."
+    },
+    {
+      "reason": "A basket of remote controls is kept on the living room coffee table for quick access.",
+      "object_category": "remote_control",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification states remotes are kept on the living room coffee table, which contradicts the candidate placement on the kitchen table."
+    },
+    {
+      "reason": "A stack of colorful plastic plates is left on the kitchen counter after dinner.",
+      "object_category": "plate",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification describes plates left on the counter after dinner, but the candidate places them on the table; this is a location mismatch for the described state."
+    },
+    {
+      "reason": "Children's art supplies and crayons are kept in a bin on the living room couch arm for creative play.",
+      "object_category": "toy",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.cabinet_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification states art supplies are on the living room couch, which contradicts the candidate placement on the kitchen cabinet."
+    },
+    {
+      "reason": "A basket of folded laundry sits on the bedroom bench, ready to be put away.",
+      "object_category": "laundry_basket",
+      "target_relationship": "near",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification states the laundry basket is on the bedroom bench, which contradicts the candidate placement near the kitchen table."
+    },
+    {
+      "reason": "A collection of family photo frames decorates the top of the living room cabinet.",
+      "object_category": "vase",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.cabinet_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification describes photo frames on the living room cabinet, but the candidate places a vase on the kitchen cabinet; object and location mismatch."
+    },
+    {
+      "reason": "A mug of coffee sits on the kitchen counter next to the sink for the morning routine.",
+      "object_category": "mug",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification states the mug is on the kitchen counter, but the candidate places it on the table; this is a location mismatch."
+    },
+    {
+      "reason": "A box of tissues is placed on the living room table for convenience.",
+      "object_category": "towel",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification describes a box of tissues on the living room table, which contradicts the candidate placement of a towel on the kitchen table."
+    },
+    {
+      "reason": "Children's shoes are lined up on the floor near the kitchen entrance bench.",
+      "object_category": "shears",
+      "target_relationship": "near",
+      "target_anchor": "kitchen.bench_2",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification describes children's shoes on the floor, but the candidate places shears near the bench; object mismatch."
+    },
+    {
+      "reason": "A stack of magazines is piled on the living room couch cushion.",
+      "object_category": "newspaper",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.cabinet_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification describes magazines on the living room couch, which contradicts the candidate placement of a newspaper on the kitchen cabinet."
+    },
+    {
+      "reason": "A set of coasters is arranged on the kitchen dining table to protect the surface.",
+      "object_category": "plate",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification describes coasters on the kitchen table, but the candidate places a plate there; object mismatch."
+    },
+    {
+      "reason": "A small potted herb sits on the kitchen counter near the window.",
+      "object_category": "plate",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification describes a potted herb on the kitchen counter, but the candidate places a plate on the table; object and location mismatch."
+    }
+  ],
+  "floor_bound_surface_dropped": 0,
+  "preflight_excluded": {
+    "noop": 5
+  },
+  "mean_realism_score": 0.6667,
+  "grounding_stats": {
+    "total": 29,
+    "accepted": 29,
+    "survival_rate": 1.0,
+    "infra_rejection_rate": 0.0,
+    "model_rejection_rate": 0.0,
+    "no_object": 0,
+    "no_anchor": 0,
+    "no_placement": 0,
+    "bad_relation": 0,
+    "rejected_categories": {}
+  },
+  "conflict_report": {
+    "conflicts": []
+  }
+}

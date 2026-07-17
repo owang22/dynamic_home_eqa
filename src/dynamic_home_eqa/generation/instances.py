@@ -48,6 +48,16 @@ def _instance_index(iid: str) -> int:
         return 0
 
 
+def instance_token_category(token: str) -> str:
+    """Category of an instance token: "stool_2" -> "stool", "chair_10" ->
+    "chair"; a bare category ("bowl", "potted_plant") passes through
+    unchanged. Instance ids are always "<category>_<int>" (scene loader and
+    clutter/spawn numbering both), so a trailing integer suffix is the
+    complete test — no category list needed."""
+    parts = token.rsplit("_", 1)
+    return parts[0] if len(parts) == 2 and parts[1].isdigit() else token
+
+
 def pick_real_instance(
     category: str,
     pool: list[str],

@@ -1,0 +1,242 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "family_with_kids",
+  "seed": 3,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "elena_laptop": "laptop_a031287e7b68",
+    "david_laptop": "laptop_a031287e7b68",
+    "leo_laptop": "laptop_a031287e7b68",
+    "mia_laptop": "laptop_a031287e7b68",
+    "elena_phone": "phone_223b376823b5",
+    "elena_wallet": "wallet_4eb66e5c0b4f",
+    "elena_keys": "keys_92167e12a3f0",
+    "elena_sunglasses": "sunglasses_1145d066f664",
+    "david_phone": "phone_7f658554a385",
+    "david_wallet": "wallet_4bc4176c10b9",
+    "david_keys": "keys_aaccd2b9848d",
+    "david_sunglasses": "sunglasses_1145d066f664",
+    "leo_phone": "phone_708c7214aa7f",
+    "leo_headphones": "headphones_8a0c9d1a4da7",
+    "leo_backpack": "backpack_f129ca7ee93d",
+    "leo_sunglasses": "sunglasses_1145d066f664",
+    "mia_phone": "phone_b77da5b9052e",
+    "mia_headphones": "headphones_c7d3e24c0362",
+    "mia_backpack": "backpack_9fa2da2c4223",
+    "mia_sunglasses": "sunglasses_193b5e63672a"
+  },
+  "day_context": {
+    "Elena": {
+      "day_type": "weekday",
+      "day_scenario": "Working from home on a tight graphic design deadline, she pauses her morning to meticulously reorganize the pantry by color before the afternoon thunderstorm rolls in. She closes the windows and sips coffee while watching the rain blur her laptop screen."
+    },
+    "David": {
+      "day_type": "weekday",
+      "day_scenario": "He heads to a civil engineering site early, then spends his evening at home leaving a trail of wrenches and tape measures across his workbench. The sudden downpour keeps him indoors, where he tunes his guitar and sketches out a new chord progression after dinner."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "After a full day at high school, he rushes to varsity soccer practice, only for the afternoon storm to force the team indoors for conditioning. He spends the rest of the evening in the hallway untangling his wet gear while blasting hip-hop through his headphones."
+    },
+    "Mia": {
+      "day_type": "weekday",
+      "day_scenario": "School and art club keep her busy until the heavy rain delays her commute home, giving her extra quiet time to meticulously sketch in her journal. Back in her room, she escapes into a fantasy novel before bed, completely lost in the story while thunder rumbles outside."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.025,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "David",
+      "activity": "breakfast",
+      "reason": "He may want to listen to music or the news while eating, so he will bring out a book or use the remote if the TV is relevant, but given he plays guitar later, a book is a plausible morning companion.",
+      "object_handle": null
+    },
+    {
+      "t": 7.056,
+      "label": "plate_1",
+      "change_type": "move_existing",
+      "object_category": "plate",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "David",
+      "activity": "breakfast",
+      "reason": "David is starting breakfast and likely needs a plate for his food, as none are currently on the counters. He will retrieve a plate from storage to use at the counter.",
+      "object_handle": null
+    },
+    {
+      "t": 7.12,
+      "label": "bowl_3",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "David",
+      "activity": "breakfast",
+      "reason": "The existing bowls on the counter might be for other family members or leftovers; David will likely bring out a fresh bowl for his own breakfast item like cereal or fruit.",
+      "object_handle": null
+    },
+    {
+      "t": 7.582,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Elena",
+      "activity": "pantry_organization",
+      "reason": "Elena may need to sit while sorting through pantry items if the task is lengthy or requires detailed work. Stools are currently tucked away; pulling one out next to the counter provides a seat for her to work at the staging area on the counter. This is a standard tidying/setup action for a seated task.",
+      "object_handle": null
+    },
+    {
+      "t": 7.785,
+      "label": "leo_headphones",
+      "change_type": "insert_new",
+      "object_category": "headphones",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Leo",
+      "activity": "breakfast",
+      "reason": "Leo is a teen varsity soccer player who leaves gear in the hallway, but currently, he is in the kitchen. To tidy up his personal space while eating or before leaving for school, he might want to grab his headphones. Since they are 'put away', he needs to retrieve them. But wait, the rule says 'propose object displacements caused by this activity'. Retrieving an item is a displacement. He will move",
+      "object_handle": null
+    },
+    {
+      "t": 8.338,
+      "label": "bowl_4",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Elena",
+      "activity": "pantry_organization",
+      "reason": "Elena is organizing the pantry by color, which requires moving items out to sort them and then placing them back in an orderly fashion. Since the pantry itself is not in the scene inventory and cannot be targeted, and the activity involves handling small storage items like bowls or containers, she would likely place a bowl on the counter to sort or access its contents. The counter is the only flat",
+      "object_handle": null
+    },
+    {
+      "t": 8.638,
+      "label": "elena_laptop",
+      "change_type": "insert_new",
+      "object_category": "laptop",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Elena",
+      "activity": "eating_breakfast",
+      "reason": "Elena owns a laptop which is currently put away. As a freelance graphic designer, she might bring her laptop out to the kitchen counter to check emails or work briefly while eating her morning meal.",
+      "object_handle": null
+    },
+    {
+      "t": 8.971,
+      "label": "stool_2",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Elena",
+      "activity": "eating_breakfast",
+      "reason": "To sit comfortably at the counter to eat, Elena needs to pull out a stool that is currently tucked away. Since stool_1 is already positioned next to the counter, she might pull out one of the tucked stools to sit on.",
+      "object_handle": null
+    },
+    {
+      "t": 16.441,
+      "label": "book_2",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "living_room.couch_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Elena",
+      "activity": "watching_rain",
+      "reason": "Elena is settling in to relax and watch the rain, so she will likely bring a book from the couch to read while she watches. She will place it on the side table within easy reach of the couch.",
+      "object_handle": null
+    },
+    {
+      "t": 17.983,
+      "label": "stool_3",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "David",
+      "activity": "unpack_tools",
+      "reason": "David is unpacking tools he brought home from work, likely placing them on the workbench or a counter surface for organization or temporary storage. The kitchen counter is the primary work surface available in the current room.",
+      "object_handle": null
+    },
+    {
+      "t": 20.122,
+      "label": "toy_2",
+      "change_type": "remove",
+      "object_category": "toy",
+      "from_semantic": "bedroom_1.bed_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Mia",
+      "activity": "tidying_room",
+      "reason": "The toy currently on the bed should be put away to clear the sleeping space as part of tidying the room. Since no specific toy box or shelf is listed in the inventory for the bedroom, and the wardrobe is the primary storage, she places the toy inside the wardrobe.",
+      "object_handle": null
+    },
+    {
+      "t": 20.232,
+      "label": "bowl_1",
+      "change_type": "remove",
+      "object_category": "bowl",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Elena",
+      "activity": "cleaning_up",
+      "reason": "She tidies the remaining bowls on the counter, storing them in the cabinet to keep the workspace clear for future meal prep.",
+      "object_handle": null
+    },
+    {
+      "t": 20.288,
+      "label": "book_1",
+      "change_type": "remove",
+      "object_category": "book",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Elena",
+      "activity": "cleaning_up",
+      "reason": "As Elena tidies the kitchen, she needs to clear the counters of clutter to restore order. She moves the books currently on the counter to a storage location or puts them away, as they are not needed for the meal-prepping activity that happens earlier in the day.",
+      "object_handle": null
+    },
+    {
+      "t": 20.448,
+      "label": "toy_1",
+      "change_type": "remove",
+      "object_category": "toy",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Elena",
+      "activity": "cleaning_up",
+      "reason": "Small items like toys and extra bowls are often put away into cabinets during a cleaning routine to reduce visual clutter. She places the toy currently on the counter into storage.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "spawned_from_storage": 2,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

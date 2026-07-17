@@ -25,13 +25,23 @@ from ..rooms import CANONICAL_ROOMS as _CANONICAL_ROOMS
 
 # Bump by hand whenever the Python-side user-prompt assembly changes (line
 # builders in stages.py, ContextBuilder later). See module docstring.
-BUILDER_VERSION = "b2"  # b1 -> b2: seat-in-room vocabulary gate (chair/stool
+BUILDER_VERSION = "b6"  # b3 -> b4: state block carries placement relations
+                        # ("tucked under kitchen.counter_1"), concealment
+                        # branch/vocabulary (inside closed storage = put-away),
+                        # and grammar maxLength on reasons — assembly changes.
+                        # b1 -> b2: seat-in-room vocabulary gate (chair/stool
                         # removed from a window's movable categories unless an
                         # instance is currently in the acting room) changes the
                         # assembled displacement prompt without touching any
                         # template text — bumped so pre-gate cached responses
                         # (which still propose cross-room chair fetches) can
                         # never replay against post-gate code.
+                        # b2 -> b3: instance-explicit seats (seat ids replace
+                        # the bare category in the schema enum + state block
+                        # lists per-seat slots), candidate_line drops the
+                        # move-history note and shows the instance id, and
+                        # the judge schema gains a per-candidate reason —
+                        # all Python-side assembly changes.
 
 _ACTIVITY_LOCATIONS = [*_CANONICAL_ROOMS, "away"]
 
@@ -82,13 +92,16 @@ habits: give each occupant something concrete that distinguishes their day
 from another occupant with a similar role — a specific job, a hobby, a
 routine quirk. This matters most when two occupants share a role (e.g. two
 working adults, or two children close in age). Give every occupant a real, separate voice and unique personality.
+In addition, take into account the day of the week.
 
-owned_items: the carried personal items (phone/wallet/keys/laptop) THIS
-occupant owns and moves around. Assign per person, not per household — a
-working adult usually carries all four, a teenager a phone and laptop, a
-young child or toddler usually none. Only the owner ever moves their own
-item, so never give a toddler a laptop or make the whole family share one
-phone.
+owned_items: the carried personal items THIS occupant owns and moves around
+(phone/wallet/keys/laptop/backpack/sunglasses/headphones/medicine). Assign
+per person and age-appropriately, not per household — a working adult
+usually phone/wallet/keys/laptop (sunglasses if they drive or go out), a
+teenager phone/laptop plus headphones and a school backpack, a school-age
+child a backpack (maybe a phone), a senior phone/wallet/keys plus daily
+medicine, a toddler none. Only the owner ever moves their own item, so
+never give a toddler a laptop or make the whole family share one phone.
 
 bedroom_index: which bedroom this occupant sleeps in, as a 1-based index. A
 couple shares one index; each child gets their own. Two parents and two kids
@@ -97,29 +110,63 @@ means the parents are both index 1 and the kids are 2 and 3.
 Respond only with valid JSON matching the provided schema. No commentary.
 """)
 
+# Postmortem note (stage1c): earlier versions of this prompt asked the model
+# to invent each day from scratch and to self-police variety ("most days
+# ordinary", "don't repeat recent themes"). That made both repetition AND
+# variety properties of model temperament: it mode-collapsed onto one motif
+# when primed, produced near-verbatim days when de-primed, and eventually
+# resolved the repetition/variety tension by rewriting an occupant's
+# occupation mid-episode. The planner is now a RENDERER: the routine charter
+# (generated once per household, validated against the persona) says what
+# repeats; the seeded event calendar says what varies; the model improvises
+# neither.
 DAY_PLAN = PromptTemplate("day_plan", """\
-You are planning ONE day for a household. You are given the day type
-(weekday / weekend / flex) and every member's profile. Think through what
-this specific household's day looks like, then write a short scenario
-(1-2 sentences) for EACH member.
+You are rendering ONE day for a household. You are given the day type, each
+member's profile, each member's ROUTINE CHARTER (their stable weekly
+pattern — authoritative ground truth), and today's scheduled event (usually
+none). Write a short scenario (1-2 sentences) for EACH member.
 
 Hard constraints:
-- It is ONE coherent day: everyone lives the same calendar day. Household-
-  scale events (a dinner party, a power outage, bad weather, a visitor) must
-  appear in EVERY member's scenario if they appear in any.
+- Follow each member's routine charter for this day type exactly. Do NOT
+  invent new occupations, schedules, or lifestyles, and do not contradict
+  the charter's wake/sleep pattern. Vary only the small, concrete details
+  of how the routine plays out today (which room, which chore, which meal).
+- If a scheduled event is given, weave it coherently into EVERY member's
+  scenario. If none is given, this is an ordinary day: no parties, guests,
+  outages, storms, illnesses, or trips.
 - Respect age and role. Toddlers do not meditate, work, run errands alone,
   or supervise anything. School-age children and teens are at school on a
-  weekday unless the day itself justifies staying home (illness, holiday) —
-  and then say so. Working adults work on weekdays (at home or away, per
-  their habits).
-- Ground each scenario in the member's own profile (habits, role, age) —
-  an artistic teen's Saturday differs from a gardening retiree's.
-- Vary energy and texture across members; not everyone has an eventful day.
-  "Ordinary day, follows their usual routine" is a fine scenario.
+  weekday unless the scheduled event says otherwise.
+- Ground each scenario in the member's signature habits where natural —
+  those habits are what move household objects.
 
 Respond with JSON only:
 {"household_context": "<one sentence: the shared shape of this day>",
  "occupants": [{"name": "<name>", "scenario": "<1-2 sentences>"}, ...]}
+Include every member exactly once. No commentary outside the JSON.
+""")
+
+ROUTINE_CHARTER = PromptTemplate("routine_charter", """\
+You are defining the STABLE weekly routine of each household member — the
+pattern that repeats week after week. This charter is generated ONCE per
+household and then governs every generated day, so it must be strictly
+faithful to each member's given profile: same occupation, same wake/sleep
+tendencies, same habits. Never invent an occupation or lifestyle that the
+profile does not state.
+
+For each member output:
+- occupation: their occupation/role exactly as the profile implies (a
+  school-age child's occupation is "student"; a toddler's is "toddler").
+- weekday_routine: 2-3 sentences describing their typical weekday, from
+  wake to sleep, consistent with the profile's wake/sleep times.
+- weekend_routine: 2-3 sentences for a typical weekend day.
+- signature_habits: 2-4 short recurring habits involving household objects,
+  drawn from the profile (e.g. "leaves the work laptop on the dining
+  table overnight").
+
+Respond with JSON only:
+{"occupants": [{"name": "...", "occupation": "...", "weekday_routine": "...",
+                "weekend_routine": "...", "signature_habits": ["...", ...]}]}
 Include every member exactly once. No commentary outside the JSON.
 """)
 
@@ -163,6 +210,13 @@ four times for no stated reason). Prefer plain, ordinary activity labels
 "cooking_special_dish") unless the day context specifically motivates
 something out of the ordinary.
 
+If the request includes "Coordination notes" — known clashes with other
+household members' plans (both wanting the same space, object, or time slot)
+— treat them as constraints: shift, shorten, or re-order this occupant's
+activities so the clash doesn't happen, in a way that stays natural for who
+they are. Do not simply drop the activity; people adapt (eat a little later,
+use another room, wait their turn), they rarely abandon the plan outright.
+
 Respond only with valid JSON matching the provided schema. No commentary.
 """.format(locations=", ".join(_ACTIVITY_LOCATIONS)))
 
@@ -186,10 +240,33 @@ Rules:
   moved next to furniture — never lifted onto a table/counter/bed. For
   chair/stool, only use proximity relations (near, next_to); a chair/stool
   surface proposal will be discarded.
+- Seats and other floor-standing objects (chairs, stools, laundry baskets)
+  are offered as SPECIFIC instances (stool_1, stool_2, ...), each listed in
+  the current-state block with where it is right now. Propose the instance
+  id as the object_category. Pick one that makes sense to move: a seat
+  already pulled out and in use by another person at their spot stays put —
+  take a different instance. Moving them BACK is ordinary life: tucking
+  chairs back under the table after a meal, or returning a pulled-out
+  stool, is exactly what a tidying/cleaning/after-meal activity does,
+  including several seats in one activity.
+- Small everyday items (books, bowls, cups, drinkware, bottles) are ABUNDANT:
+  homes keep more of them in cabinets and shelves than are visible. Bringing
+  a fresh one out for an activity is normal even when one of the same kind is
+  already sitting out — people don't eat from the used bowl on the table.
+  Prefer bringing a fresh one to re-moving one someone else set down. This
+  does NOT apply to carried personal items (phone, keys, wallet, laptop —
+  exactly one each, tied to their owner) or to furniture and seats (a home
+  does not produce new chairs).
 - If no listed anchor is an appropriate destination for an object, choose
   "none" (abstain) for that proposal rather than forcing a bad fit. An
   abstained proposal is dropped, not penalised — a wrong surface is worse
   than no proposal.
+- Putting something INSIDE closed storage furniture (a cabinet, wardrobe,
+  chest of drawers, fridge, dishwasher, washer/dryer) uses relation "inside"
+  with that anchor, and means the object is STORED OUT OF SIGHT — it
+  disappears from view like a put-away, it does not sit visibly on or
+  beside the furniture. Use it for tidying items into cupboards, food into
+  the fridge, dishes into the dishwasher.
 - If target_anchor "put_away" is offered, it means the occupant PUTS A CARRIED
   ITEM AWAY — a phone/keys/wallet/laptop that is currently out goes back into a
   bag, pocket, or drawer and disappears from view (we don't track where). Use
@@ -214,7 +291,8 @@ Rules:
   movement — given who they are, what they're doing, and where things
   currently are. Only then fill object_category/target_relationship/
   target_anchor to match that reasoning. The reasoning drives the choice,
-  never rationalizes a choice already made.
+  never rationalizes a choice already made. Keep the reason to AT MOST two
+  sentences — one for why this object moves, one for where it ends up.
 - If your reason mentions where an object currently is, take it from the
   "Current object state" block — never guess. If the block doesn't list it,
   don't claim an origin at all.
@@ -275,10 +353,45 @@ For EACH candidate, independently assign a realism score in [0, 1]:
 
 Actively penalize: placements with no behavioral connection to THIS
 activity; odd object-surface pairings a person wouldn't choose (books in a
-bathtub, a vase on a toilet); the same object repeatedly shuffled to
-arbitrary surfaces; safety-implausible placements. When in doubt, score
-LOWER — a missed good candidate costs little in an over-generated pool, a
-bad selection pollutes the dataset.
+bathtub, a vase on a toilet); safety-implausible placements. When in doubt,
+score LOWER — a missed good candidate costs little in an over-generated
+pool, a bad selection pollutes the dataset.
+
+For EACH candidate, write its `reason` BEFORE its score: weigh the evidence
+for and against this exact placement — the activity, the person, the time,
+the current object state — and state the deciding factor. AT MOST two
+sentences. Then give a score consistent with that reasoning; the reasoning
+decides the score, never justifies one already picked.
+
+Before scoring, settle these consistency questions. A "yes" to ANY of them
+is a hard failure: the reason IS INCOHERENT WITH THE MOVE, so the score
+MUST be 0.1 or lower regardless of how sensible the placement would be on
+its own — an incoherent justification is exactly the noise this pool
+exists to filter, and a plausible-sounding placement with a contradictory
+reason is worse than an implausible one, not better.
+- FRESH vs. EXISTING mismatch — but FIRST apply the abundance rule above:
+  for everyday abundant items (dishes, plates, bowls, cups, mugs, glasses,
+  bottles, books, towels, toys), bringing out a FRESH one is CORRECT and
+  normal even when another of the same kind is already sitting out — a home
+  has many, and people take a clean one. DO NOT flag that as a
+  contradiction; it is the expected behavior. This check fires only for
+  UNIQUE or PERSONAL items that cannot have a fresh duplicate — a specific
+  person's wallet/phone/keys/laptop/backpack, or one specific chair/stool
+  named in the state: for those, a "bring a fresh one" justification is
+  nonsense (there is only the one), and so is a reason that names moving a
+  specific existing item the state shows is NOT out. Also flag any reason
+  that internally contradicts itself (claims to bring a fresh item AND to
+  relocate the specific used one in the same breath).
+- PUT-AWAY mismatch: does the justification describe putting something
+  AWAY, tidying it into a cupboard/drawer/cabinet, or clearing it out of
+  sight, while the candidate is a VISIBLE placement (on_top / next_to a
+  surface)? A real putting-away is an "inside <storage>" concealment or a
+  put_away — not an object left sitting on a bench or table.
+- OBJECT/DESTINATION mismatch: does the justification name a different
+  object, or a different surface/room, than the candidate's actual
+  object_category and target_anchor?
+Only after all three are clear (no contradiction) do you score the
+placement on its own behavioral merits using the bands above.
 
 Be wary of justifications that don't make logical sense. Think about how the 
 human would use the object, and if they would bring it with them on their activity.
@@ -286,8 +399,10 @@ Common reasons a placement wouldn't make sense:
 - The justification references a different object or location than the actual motion being proposed
   eg. a cup is proposed to be moved to the table, but the justification references a phone on the table
 - The object would be brought with the human and not left out. eg. a phone brought out on a jog
-- There is a more convenient instance of the same or similar object at the destination. eg. a chair 
-  for this human is already at the table, so a second chair from another room is not brought there.
+- A seat or furniture piece is fetched when a more convenient instance is already at the
+  destination. eg. a chair for this human is already at the table, so a second chair from another
+  room is not brought there. (This is about seats/furniture — for abundant small items like bowls
+  and cups, a fresh one coming out alongside an existing one is normal; see below.)
 - The justification text implies a different activity than the current one. eg. someone organizing 
   the house after dinner would not be organizing DURING dinner time
 - The object is not needed for the activity despite the proposed justification. eg. a bowl is not 
@@ -296,13 +411,14 @@ Common reasons a placement wouldn't make sense:
   actually need easy access to the object during this activity.
 
 
-Some candidates carry a `move history` note — how many times that object has
-already moved today and its path. Repeated relocation of the SAME object needs
-cumulative justification: each additional move of an object that does not
-normally travel (furniture, plants, decor) is less believable than the last, so score a 4th/5th/7th such move
-progressively lower. Objects a person naturally carries all day (phone, keys,
-wallet, laptop, a cup in active use) are exempt — their repeated movement is
-normal, not suspicious.
+Two placement patterns are ordinary life, not suspicious: (1) small everyday
+items (books, bowls, cups, drinkware, bottles) are abundant — a home holds
+more in cabinets than are visible, so a fresh one coming out is normal even
+when one of the same kind is already sitting out; (2) seats moving back —
+chairs tucked back under the table after a meal, a pulled-out stool returned
+— are exactly what tidying and after-meal activities do, even several seats
+within one activity. Judge each such move on whether THIS activity by THIS
+person implies it, not on how much movement the day has already seen.
 
 Score every candidate strictly on its own merits. Do not compare candidates
 to each other or rank them, and do not let pool size influence a score.
@@ -345,6 +461,25 @@ def realism_strict_fewshot(exemplar_block: str) -> PromptTemplate:
     )
 
 
+ASSET_BINDING = PromptTemplate("asset_binding", """\
+You are assigning REAL 3D render assets to a household's personal carried
+items. Each item below belongs to one specific person and lists candidate
+assets as "uid: tags" — the tags are a human reviewer's appearance/style
+descriptors (color, style, who it suits).
+
+Pick the ONE candidate per item that best fits its owner's age, role, and
+habits: a teen gets the gaming headset, not the classic office pair; a
+retiree the sensible black sunglasses, not the hippie circles; a school
+kid the cute frog backpack. Two people MAY receive the same style when
+nothing distinguishes them, but prefer visibly different assets for
+different people so items are tellable apart in a photo of the home.
+A candidate tagged as odd/rare (e.g. "only rarely use") should be picked
+only when it genuinely fits the owner better than everything else.
+
+Respond only with valid JSON matching the provided schema — one binding
+per item, using each item's own candidate uids. No commentary.
+""")
+
 CLUTTER = PromptTemplate("clutter", """\
 You are a household clutter modeller. Given a household type and its real
 furniture layout (rooms + furniture categories actually present in this
@@ -365,11 +500,18 @@ inside, within) may only use anchors from the surface list; proximity
 relations (near, next_to) may use any listed anchor. If nothing listed fits
 an object, choose "none" (abstain) for it rather than forcing a bad fit.
 
-Propose realistic quantities for a home of this type — a handful of each
-category, not one per room and not every category maxed out. Vary
-target_anchor across proposals of the same category (e.g. three "book"
-proposals on two different shelves) so the result
-reads as a lived-in home, not a uniform stack.
+A real home contains MOST of these categories somewhere — aim for broad,
+lived-in coverage: typically 10–18 objects total spanning many different
+categories, weighted by what this household type plausibly owns (a family
+with kids has toys out; a retiree a teapot and newspaper; everyone has
+plates and towels). Do not max out any single category, and skip a category
+only when it genuinely doesn't fit the household. Vary target_anchor across
+proposals of the same category (e.g. three "book" proposals on two
+different shelves) so the result reads as a lived-in home, not a uniform
+stack.
+
+Keep each proposal's `reason` to AT MOST two sentences — why this object
+lives in this home, and why on this anchor.
 
 Respond only with valid JSON matching the provided schema. No commentary.
 """)

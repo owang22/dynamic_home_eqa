@@ -1,0 +1,197 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "family_with_kids",
+  "seed": 1,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "sarah_laptop": "laptop_a031287e7b68",
+    "leo_laptop": "laptop_a031287e7b68",
+    "sarah_phone": "phone_223b376823b5",
+    "sarah_wallet": "wallet_4eb66e5c0b4f",
+    "sarah_keys": "keys_92167e12a3f0",
+    "david_phone": "phone_7f658554a385",
+    "david_wallet": "wallet_4e2567974149",
+    "david_keys": "keys_aaccd2b9848d",
+    "david_sunglasses": "sunglasses_1145d066f664",
+    "leo_phone": "phone_708c7214aa7f",
+    "leo_headphones": "headphones_8a0c9d1a4da7",
+    "leo_backpack": "backpack_f129ca7ee93d",
+    "mia_backpack": "backpack_390164707739"
+  },
+  "day_context": {
+    "Sarah": {
+      "day_type": "weekday",
+      "day_scenario": "Sarah wakes at 6:30 AM to tackle project deadlines from her home office, then shifts to household management before reheating dinner from her Sunday meal prep. After finalizing her evening planning, she leaves her laptop on the dining table and heads to bed by 10:30 PM."
+    },
+    "David": {
+      "day_type": "weekday",
+      "day_scenario": "David wakes at 7:00 AM to debug software and lead engineering stand-ups, working steadily through the afternoon before a late-night client call. He strips off his work clothes and piles them on the bathroom floor, finally logging off and sleeping at 11:00 PM."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "Leo wakes at 7:30 AM for his junior classes, then heads straight to varsity soccer practice after the final bell rings. He drops his muddy cleats by the back door, finishes his homework, and stays up late gaming with friends before sleeping at 11:30 PM."
+    },
+    "Mia": {
+      "day_type": "weekday",
+      "day_scenario": "Mia wakes at 7:00 AM and immediately starts decorating her picture books and the coffee table with bright stickers. She resists her afternoon nap but eventually dozes off, leaving her scattered toy trucks across the living room rug before her 8:00 PM bedtime."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.781,
+      "label": "newspaper_1",
+      "change_type": "move_existing",
+      "object_category": "newspaper",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "David",
+      "activity": "eating_breakfast",
+      "reason": "David is in the kitchen during breakfast and may wish to read the newspaper while eating. He will take one of the available newspapers and place it on the counter for easy access.",
+      "object_handle": null
+    },
+    {
+      "t": 7.821,
+      "label": "bowl_4",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "David",
+      "activity": "eating_breakfast",
+      "reason": "David is eating breakfast and likely needs a bowl for his food; bringing a fresh one from storage is standard even if others are present. He will place it on the kitchen counter to access or store items nearby.",
+      "object_handle": null
+    },
+    {
+      "t": 7.9,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "David",
+      "activity": "eating_breakfast",
+      "reason": "David is sitting at the kitchen counter to eat and will pull out a stool to sit on. He chooses a stool that is not currently occupied or in use.",
+      "object_handle": null
+    },
+    {
+      "t": 11.893,
+      "label": "toy_3",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "playing",
+      "reason": "Playing often involves toys, so Mia might bring a toy from elsewhere in the house into the living room to play with it on the floor or a surface.",
+      "object_handle": null
+    },
+    {
+      "t": 12.499,
+      "label": "candle_1",
+      "change_type": "move_existing",
+      "object_category": "candle",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "bedroom_3.chest_of_drawers_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "resting",
+      "reason": "Mia is resting in the bedroom and may wish to block out light or create a cozy atmosphere, so she might turn on a candle if she has one nearby. The inventory lists a candle, which is a common item for creating ambiance during rest.",
+      "object_handle": null
+    },
+    {
+      "t": 15.21,
+      "label": "toy_4",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "playing",
+      "reason": "Mia is playing in the living room, so she likely brings out a toy to engage with. Since toys are abundant and not currently visible in the living room, she retrieves one from storage or another room.",
+      "object_handle": null
+    },
+    {
+      "t": 16.38,
+      "label": "bowl_1",
+      "change_type": "remove",
+      "object_category": "bowl",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Sarah",
+      "activity": "unpacking_groceries",
+      "reason": "Groceries often need to be stored in the fridge. Sarah will move items from her bags or hands into the fridge to keep them cold.",
+      "object_handle": null
+    },
+    {
+      "t": 19.985,
+      "label": "toy_1",
+      "change_type": "remove",
+      "object_category": "toy",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Mia",
+      "activity": "reading",
+      "reason": "The occupant is tidying up the low household tidiness score before relaxing, so she will put away the toy that is currently out. She will place it inside the wardrobe to clear the floor.",
+      "object_handle": null
+    },
+    {
+      "t": 20.789,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "next_to",
+      "mover": "Sarah",
+      "activity": "relaxing",
+      "reason": "Sarah might tidy up a chair that is currently pulled out or not tucked in properly to create a more comfortable seating arrangement for herself. She pulls the chair next to the table or adjusts its position.",
+      "object_handle": null
+    },
+    {
+      "t": 22.462,
+      "label": "leo_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "bedroom_2.bed_1",
+      "target_relationship": "on_top",
+      "mover": "Leo",
+      "activity": "gaming",
+      "reason": "Gaming often involves checking messages or using apps, so Leo might place his phone within easy reach on the bed.",
+      "object_handle": null
+    },
+    {
+      "t": 23.463,
+      "label": "remote_control_1",
+      "change_type": "move_existing",
+      "object_category": "remote_control",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "bedroom_2.bed_1",
+      "target_relationship": "on_top",
+      "mover": "Leo",
+      "activity": "gaming",
+      "reason": "He might want to listen to music or ambient sounds while gaming, so he may bring a remote control to the bedroom.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 3,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

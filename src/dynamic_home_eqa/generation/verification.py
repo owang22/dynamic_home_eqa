@@ -51,6 +51,8 @@ def resolve_conflicts(
     cache,
     force: bool = False,
     max_rounds: int = 2,
+    charter: dict | None = None,
+    event_note: str | None = None,
 ) -> list[dict]:
     """Regenerate activity spans flagged as conflicting.
 
@@ -83,14 +85,23 @@ def resolve_conflicts(
         if not conflict_list:
             break
 
-        # Build a set of (occupant_name, span_start, span_end) to regenerate
+        # Build a set of (occupant_name, span_start, span_end) to regenerate,
+        # keeping each conflict's own description so the regeneration can
+        # plan AROUND the clash instead of resampling blind and hoping it
+        # vanishes by luck (it usually didn't — the replacement trace knew
+        # nothing about the other occupant's competing plan).
         spans_to_fix: dict[str, list[tuple[float, float]]] = {}
+        notes_by_occ: dict[str, list[str]] = {}
         for c in conflict_list:
             occ = c.get("occupant", "")
             if occ:
-                spans_to_fix.setdefault(occ, []).append(
-                    (float(c.get("start", 0)), float(c.get("end", 24)))
-                )
+                start, end = float(c.get("start", 0)), float(c.get("end", 24))
+                spans_to_fix.setdefault(occ, []).append((start, end))
+                desc = str(c.get("description", "")).strip()
+                if desc:
+                    notes_by_occ.setdefault(occ, []).append(
+                        f"- Around {start:.1f}–{end:.1f}h: {desc}"
+                    )
 
         for occ_name, spans in spans_to_fix.items():
             idx = occupant_by_name.get(occ_name)
@@ -98,10 +109,11 @@ def resolve_conflicts(
                 continue
             # Regenerate this occupant's trace under a DISTINCT but
             # deterministic seed (variant_tag folds the round index into the
-            # stage string), so it differs from the cached original without
-            # force-regenerating non-reproducibly. Same conflict on the same
-            # input now resamples the same replacement every run, and the
-            # original activity cache entry is left intact.
+            # stage string; conflict_context's hash is folded in too), so it
+            # differs from the cached original without force-regenerating
+            # non-reproducibly. Same conflict on the same input now resamples
+            # the same replacement every run, and the original activity cache
+            # entry is left intact.
             new_trace = generate_activity_trace(
                 persona=persona,
                 occupant_name=occ_name,
@@ -112,7 +124,10 @@ def resolve_conflicts(
                 temperature=temperature,
                 cache=cache,
                 force=force,
+                charter=charter,
+                event_note=event_note,
                 variant_tag=f"conflictfix_r{round_idx}",
+                conflict_context="\n".join(notes_by_occ.get(occ_name, [])),
             )
             # Splice in only the conflicting spans from the new trace;
             # keep non-conflicting activities from the original.
@@ -176,6 +191,8 @@ def run_verification_pass(
     temperature: float,
     cache,
     force: bool = False,
+    charter: dict | None = None,
+    event_note: str | None = None,
 ) -> tuple[list[dict], dict]:
     """Full verification pass for a multi-occupant household.
 
@@ -216,6 +233,8 @@ def run_verification_pass(
         temperature=temperature,
         cache=cache,
         force=force,
+        charter=charter,
+        event_note=event_note,
     )
 
     # Final conflict check for metadata. Content-derived seed (see

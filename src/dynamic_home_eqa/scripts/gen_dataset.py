@@ -78,6 +78,14 @@ def main() -> None:
                     help="Specific scene IDs (overrides --n)")
     ap.add_argument("--day", type=int, default=0,
                     help="Day index for trace seeding (default: 0)")
+    ap.add_argument("--calendar-days", action="store_true",
+                    help="Day types follow a real calendar (day 0 = Monday, "
+                         "days 5/6 = weekend) instead of the seeded per-day "
+                         "pool draw. Required for data with genuine weekly "
+                         "periodicity (dynbelief weekly component); changes "
+                         "day_type for existing (household, day) seeds, so "
+                         "never mix it with non-calendar days of the same "
+                         "household in one episode.")
     ap.add_argument("--n-variants", type=int, default=1,
                     help="Distinct persona variants to generate per scene (default: 1). "
                          "Each variant is a different household for the same house — "
@@ -95,6 +103,12 @@ def main() -> None:
                     help=f"vLLM model string (default: {DEFAULT_MODEL})")
     ap.add_argument("--temperature", type=float, default=DEFAULT_TEMPERATURE,
                     help=f"Sampling temperature (default: {DEFAULT_TEMPERATURE})")
+    ap.add_argument("--activity-scale", type=float, default=1.0,
+                    help="Scene-activity knob: multiplies every window's Poisson "
+                         "mean for the final move count (default 1.0). The Poisson "
+                         "draw runs AFTER the replay-gate preflight, so this shapes "
+                         "the manifest's event count directly — 2.0 for busier "
+                         "homes, 0.5 for quieter ones.")
     ap.add_argument("--out", default="generation_out",
                     help="Output directory (default: generation_out/)")
     ap.add_argument("--cache-dir", default=DEFAULT_CACHE_DIR,
@@ -118,6 +132,14 @@ def main() -> None:
                          "alongside a think block on this vLLM version); output shapes are "
                          "normalized and the reasoning trace is stored in the response cache. "
                          "Proposer stays guided/non-thinking.")
+    ap.add_argument("--judge-retry", action="store_true",
+                    help="ONE revision round per activity window: first-pass "
+                         "judge rejects (score < 0.3) go back to the proposer "
+                         "with the judge's critique + fix suggestion; revised "
+                         "proposals are re-grounded and re-judged by a fresh "
+                         "kill-only call (no fix request, no further rounds). "
+                         "Grows the eligible pool the Poisson draw selects "
+                         "from; per-day counts land in judge_retry_stats.")
     ap.add_argument("--judge-style", choices=["asis", "strict"], default="asis",
                     help="Judge prompt style: 'asis' = the existing realism prompt; 'strict' = "
                          "the selective variant calibrated for over-generated pools (most "
@@ -150,6 +172,9 @@ def main() -> None:
                          "scripts/serve_llm.py from an env with a current vllm; this "
                          "env then only needs `requests`, no vllm/GPU claim.")
     args = ap.parse_args()
+    if args.calendar_days:
+        from dynamic_home_eqa.generation.stages import set_calendar_days
+        set_calendar_days(True)
 
     if args.endpoint:
         os.environ["GENERATION_ENDPOINT"] = args.endpoint
@@ -200,6 +225,8 @@ def main() -> None:
         reachability_filtering=args.reachability_filtering,
         judge_thinking=args.judge_thinking,
         judge_style=args.judge_style,
+        judge_retry=args.judge_retry,
+        activity_scale=args.activity_scale,
     )
 
     if args.gen_questions:

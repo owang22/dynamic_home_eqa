@@ -1,0 +1,159 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "retired_couple",
+  "seed": 2,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "arthur_phone": "phone_a022864ae7b6",
+    "arthur_wallet": "wallet_4bc4176c10b9",
+    "arthur_keys": "keys_aaccd2b9848d",
+    "arthur_medicine": "medicine_429536ff8dd8",
+    "martha_phone": "phone_15c2adf9af7a",
+    "martha_wallet": "wallet_4d63cef3d4c3",
+    "martha_keys": "keys_92167e12a3f0",
+    "martha_medicine": "medicine_d83f35ad19e8",
+    "martha_sunglasses": "sunglasses_1145d066f664"
+  },
+  "day_context": {
+    "Arthur": {
+      "day_type": "weekday",
+      "day_scenario": "Arthur rises at 6:00 AM to tend the vegetable garden before the sun crests the horizon, then spends his afternoon at the kitchen table with a cup of tea and a book on the Renaissance. He honors his preference for evening stillness, letting the house grow quiet before settling into bed at 10:00 PM."
+    },
+    "Martha": {
+      "day_type": "weekday",
+      "day_scenario": "Martha wakes at 6:30 AM to work through the crossword puzzle with a warm cup of tea, then heads out for her Tuesday watercolor painting class at the local arts center. She returns home to quietly record her evening reflections in the small journal kept by her bed, finally turning in at 10:30 PM."
+    }
+  },
+  "changes": [
+    {
+      "t": 6.858,
+      "label": "martha_sunglasses",
+      "change_type": "insert_new",
+      "object_category": "sunglasses",
+      "from_semantic": null,
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "on",
+      "mover": "Martha",
+      "activity": "bedroom",
+      "reason": "Martha may remove her sunglasses after returning home and place them on the bedside surface to keep them safe and out of the way while she rests.",
+      "object_handle": null
+    },
+    {
+      "t": 8.403,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Arthur",
+      "activity": "breakfast",
+      "reason": "Arthur is starting breakfast and likely needs a place to sit at the counter or table area. He would pull out one of the stools to use for seating.",
+      "object_handle": null
+    },
+    {
+      "t": 8.996,
+      "label": "arthur_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "inside",
+      "mover": "Arthur",
+      "activity": "cleaning",
+      "reason": "Arthur is tidying up the kitchen area; he will put away his phone which he was likely carrying or holding while cleaning.",
+      "object_handle": null
+    },
+    {
+      "t": 13.706,
+      "label": "martha_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "kitchen",
+      "reason": "Martha is in the kitchen for an extended period and likely needs to use her phone for communication, navigation, or entertainment while preparing food or eating. Placing it on the nearest accessible surface allows her to check it easily without carrying it.",
+      "object_handle": null
+    },
+    {
+      "t": 13.916,
+      "label": "arthur_phone",
+      "change_type": "move_existing",
+      "object_category": "phone",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Arthur",
+      "activity": "resting",
+      "reason": "Arthur is resting in the living room, likely on a chair or sofa (implied by the presence of chairs and the activity). He may need to access his phone for entertainment or communication while relaxing. Since the phone is a carried personal item and not currently listed in the living room inventory, he likely has it with him. Resting doesn't inherently require putting it away unless he is leaving, '",
+      "object_handle": null
+    },
+    {
+      "t": 14.87,
+      "label": "candle_1",
+      "change_type": "move_existing",
+      "object_category": "candle",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "reading",
+      "reason": "To improve the ambiance or lighting for his extended reading, Arthur might light a candle, placing it on a stable surface away from foot traffic.",
+      "object_handle": null
+    },
+    {
+      "t": 15.265,
+      "label": "remote_control_1",
+      "change_type": "move_existing",
+      "object_category": "remote_control",
+      "from_semantic": "living_room.couch_1",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "reading",
+      "reason": "He may need to use the remote control to adjust the TV volume or turn it off to avoid distraction while reading, placing it on a nearby surface within easy reach.",
+      "object_handle": null
+    },
+    {
+      "t": 18.501,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "kitchen.counter_1.tucked",
+      "target_relationship": "tucked_under",
+      "mover": "Arthur",
+      "activity": "cleaning",
+      "reason": "Arthur is cleaning the kitchen, so he likely tidies the stool currently in use or visible by pushing it under the counter to clear the floor space.",
+      "object_handle": null
+    },
+    {
+      "t": 20.638,
+      "label": "arthur_phone",
+      "change_type": "move_existing",
+      "object_category": "phone",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "on_top",
+      "mover": "Arthur",
+      "activity": "resting",
+      "reason": "Arthur will likely place his phone down on a stable surface near where he is sitting to keep it accessible while he rests.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 2,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 0,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

@@ -1,0 +1,22 @@
+# Stage 1 gate configuration.
+episode:
+  gen_dir: generation_out_dynbelief
+  folders:                      # null -> autodiscover *_day<k> (weeks 1+2)
+  out_dir: logs/dynbelief_ep049w
+
+probe:
+  seed: 7
+  grid_min: 60                  # (t_seen, t_query) grid step on both axes
+  train_days: [0, 1, 2, 3, 4, 5, 6]      # week 1: routine training
+  test_days: [8, 10, 12]                 # week 2 subset: disjoint, fixed split
+  train_feed_min: 30
+  qtypes: [location_now, room_now]
+  target_objects: moved         # moved (on test days) | all
+  tiers:
+    - {name: b0_lastseen}
+    - {name: b1_longmem}
+    - {name: b2_classdecay}
+    - {name: b3_perpetua_star, f_source: fremen}
+    - {name: b3_perpetua_star, f_source: schedule_prior}
+
+report_dir: reports/stage1
