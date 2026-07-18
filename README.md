@@ -6,7 +6,9 @@ plus embodied resense-policy experiments over the generated worlds.
 ## Layout
 
 ```
-src/dynamic_home_eqa/  the Python package (install with pip install -e .)
+.env / .env.example    machine config (paths, endpoints, keys) — SINGLE source; see TRANSFER.md
+env.sh                 source in shell scripts to export the same config
+src/dynamic_home_eqa/  the generation Python package (install with pip install -e .)
   generation/          LLM day-trace generation (persona, activities, displacements)
   env/                 scene state, deltas, replay, inventory
   qa/                  question generation from manifests
@@ -14,14 +16,22 @@ src/dynamic_home_eqa/  the Python package (install with pip install -e .)
   llm_prior/           LLM prior elicitation + FM decision policy
   webapp/realism_eval/ FastAPI human-rating webapp
   scripts/             all CLI entry points (python -m dynamic_home_eqa.scripts.<name>)
-  paths.py             single source of truth for every repo/data/output path
+  paths.py             single source of truth for every repo/data/output path (+ .env loader)
+src/dynbelief/         belief-model research package (Stage 0–2)
+  beliefs/             belief zoo b0–b3 (last-seen, long-mem, class-decay, Perpetua*)
+  replay/, eqa/        ReplayWorld, MCQ probe, symbolic answerer, analysis
+  active/              active displacement probe (VoI sense-or-answer, day budget)
+  llm_agent/           LLM-as-agent experiments (memory, ReAct-style decisions, clients)
+  experiments/         stage runners (stage0/1/1b/1c, active_probe, day_budget)
 tests/                 pytest suite
 data/                  pipeline inputs and per-scene caches (admission maps, census,
                        realized days, external prop assets)
-generation_out/        generated day traces (the scene pool)
-embodied_results/      milestone/experiment result JSONs
-results/               reports (results/reports/, indexed by INDEX.md), figures,
-                       run outputs (diagnostics/, e0/, e1e4/, realism_eval/)
+generation_out*/       generated day traces (scene pools; _stage1c_v2 = calendar+charter)
+logs/                  logged episodes for dynbelief (registry + events + snapshots)
+reports/               dynbelief + llm_agent experiment reports (stage1c/, active_probe/,
+                       day_budget/, llm_agent/) and raw parquet/JSON artifacts
+results/               generation-side reports (results/reports/, indexed by INDEX.md)
+scratch_runs/          in-repo throwaway run scripts (NOT /tmp — survives reboots)
 archive/               superseded outputs, untracked (see .gitignore)
 ```
 
@@ -34,6 +44,17 @@ archive/               superseded outputs, untracked (see .gitignore)
 /path/to/miniconda3/envs/dynamic_eqa/bin/pip install -e . --no-deps
 ```
 
+3. **Configure this machine** — copy the template and edit the two paths that
+   always differ (`HSSD_DIR`, `DYNAMIC_EQA_HF_HOME`):
+
+```bash
+cp .env.example .env    # then edit HSSD_DIR + DYNAMIC_EQA_HF_HOME
+python -c "from dynamic_home_eqa.paths import HSSD_DIR, MODEL_CACHE_DIR; print(HSSD_DIR, MODEL_CACHE_DIR)"
+```
+
+`.env` is gitignored and **auto-loaded** by `paths.py` at import — no manual
+`export` for Python. It is the single source of machine config; see
+**External inputs and env vars** and `TRANSFER.md` for moving machines.
 After that, every script runs from any working directory.
 
 ## Running the pipeline
@@ -118,21 +139,51 @@ Note `vllm==0.10.2`'s API: `generation/llm_client.py` uses
 
 ## External inputs and env vars
 
+**All machine config lives in one gitignored `.env` at the repo root**
+(template: `.env.example`, documented per-var). `paths.py` auto-loads it at
+import (existing environment wins over the file); shell scripts `source env.sh`.
+Only `HSSD_DIR` and `DYNAMIC_EQA_HF_HOME` reliably change between machines.
+
 | var | default | meaning |
 |---|---|---|
-| `HSSD_DIR` | `/mnt/nvme/oliver/robot/datasets/moving-eqa/scene_datasets/hssd-hab` | HSSD scene dataset root |
-| `GENERATION_MODEL` | `Qwen/Qwen3-32B` | generation-stage vLLM model (standard HF cache) |
-| `DYNAMIC_EQA_HF_HOME` | `/mnt/nvme/oliver/robot/models` | HF_HOME for llm_prior / serve_llm large models |
-| `DYNAMIC_EQA_GEN_PYTHON` | this interpreter | interpreter for expand_scene_pool's generation subprocess |
-| `DYNAMIC_HOME_EQA_ROOT` | repo checkout | override where data/output dirs are resolved |
+| `HSSD_DIR` | `/data/oliver/.../hssd-hab` | HSSD scene dataset root — **set per machine** |
+| `DYNAMIC_EQA_HF_HOME` | `/data/oliver/huggingface_cache` | HF_HOME for large models — **set per machine** |
+| `GENERATION_ENDPOINT` | `""` (in-process) | vLLM OpenAI-compatible URL (e.g. `http://127.0.0.1:8300`) |
+| `GENERATION_MODEL` | `Qwen/Qwen3-32B` | local generation/served model id |
+| `DYNAMIC_EQA_GEN_PYTHON` | this interpreter | interpreter for generation subprocesses |
+| `OPENAI_API_KEY` | `""` | frontier-model key (llm_agent). API runs need **no GPU** |
+| `DYNAMIC_EQA_OPENAI_KEYFILE` | `~/.config/dynamic_eqa/openai_key` | keyfile if not using the env var |
+| `DYNAMIC_HOME_EQA_ROOT` | repo checkout | override where data/output dirs resolve |
 | `REALISM_MEDIA_DIR`, `REALISM_DATA_DIR` | see `webapp/realism_eval/app.py` | webapp media/DB locations |
 
-All other paths resolve through `src/dynamic_home_eqa/paths.py`, anchored at the
-repo checkout — output lands in the repo regardless of working directory.
+**Secrets never enter the repo:** the OpenAI key is read at runtime from
+`OPENAI_API_KEY` or the external keyfile — never committed, never in `.env`
+(which only points to the keyfile path). All other paths resolve through
+`src/dynamic_home_eqa/paths.py`, anchored at the repo checkout, so output lands
+in the repo regardless of working directory.
+
+## Research experiments (dynbelief + LLM agents)
+
+The belief-model and LLM-agent studies run **replay-only** over logged episodes
+(`logs/<episode>/`), so most need no GPU:
+
+```bash
+# log an episode from generated day traces, then run a stage
+python -m dynbelief.experiments.stage1c        # belief-model probe gate
+python -m dynbelief.experiments.active_probe    # VoI sense-or-answer
+python -m dynbelief.experiments.day_budget      # shared daily sensing budget
+```
+
+LLM-agent experiments (`src/dynbelief/llm_agent/`) compare local Qwen (via the
+vLLM endpoint) against frontier API models (`clients.py`; `OPENAI_API_KEY`) on
+a frozen episode bank. Reports and raw artifacts land in `reports/` (e.g.
+`reports/llm_agent/PRELIM.md`, `reports/active_probe/SUMMARY.md`).
 
 ## Documentation map
 
 - `generation/README.md` — generation-stage design (what's LLM-sampled vs
   seeded-deterministic, reproducibility contract, trace-integrity invariants).
-- `results/reports/INDEX.md` — index of all experiment reports and findings,
+- `results/reports/INDEX.md` — index of all generation-side reports/findings,
   reverse-chronological, including what supersedes what.
+- `TRANSFER.md` — moving the code to a new machine (the `.env` checklist).
+- `reports/*/SUMMARY.md` — dynbelief/LLM-agent experiment write-ups.
