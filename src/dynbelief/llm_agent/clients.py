@@ -34,7 +34,8 @@ class OpenAIClient:
         import os, pathlib as _pl
         key = os.environ.get("OPENAI_API_KEY", "")
         if not key:
-            kf = _pl.Path.home() / ".config/dynamic_eqa/openai_key"
+            kf = _pl.Path(os.environ.get("DYNAMIC_EQA_OPENAI_KEYFILE",
+                         "~/.config/dynamic_eqa/openai_key")).expanduser()
             if kf.exists():
                 key = kf.read_text().strip()
         if not key:

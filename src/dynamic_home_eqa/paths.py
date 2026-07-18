@@ -15,6 +15,22 @@ from __future__ import annotations
 import os
 import pathlib
 
+# Auto-load a repo-root .env for machine-portable config (HSSD_DIR, model
+# cache, endpoints, keys). No manual `export` needed; existing environment
+# always wins over the file. Silent if python-dotenv or .env is absent.
+_PKG = pathlib.Path(__file__).resolve().parent
+_ENV_FILE = _PKG.parent.parent / ".env"
+if _ENV_FILE.exists():
+    try:
+        from dotenv import load_dotenv as _ld
+        _ld(_ENV_FILE, override=False)
+    except Exception:
+        for _line in _ENV_FILE.read_text().splitlines():
+            _line = _line.strip()
+            if _line and not _line.startswith("#") and "=" in _line:
+                _k, _, _v = _line.partition("=")
+                os.environ.setdefault(_k.strip(), _v.strip())
+
 PACKAGE_ROOT = pathlib.Path(__file__).resolve().parent  # .../src/dynamic_home_eqa
 REPO_ROOT = pathlib.Path(
     os.environ.get("DYNAMIC_HOME_EQA_ROOT", str(PACKAGE_ROOT.parent.parent))
