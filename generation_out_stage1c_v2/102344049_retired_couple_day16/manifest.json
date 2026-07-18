@@ -1,0 +1,197 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "retired_couple",
+  "seed": 17,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "arthur_phone": "phone_a022864ae7b6",
+    "arthur_wallet": "wallet_4bc4176c10b9",
+    "arthur_keys": "keys_92167e12a3f0",
+    "arthur_medicine": "medicine_429536ff8dd8",
+    "martha_phone": "phone_15c2adf9af7a",
+    "martha_wallet": "wallet_4d63cef3d4c3",
+    "martha_keys": "keys_aaccd2b9848d",
+    "martha_medicine": "medicine_d83f35ad19e8"
+  },
+  "day_context": {
+    "Arthur": {
+      "day_type": "weekday",
+      "day_scenario": "Arthur rises precisely at 6:00 AM to stake his wilting tomato plants in the back yard while the dew still clings to the grass. Later, he settles at the dining table with the Wednesday edition of the paper before tackling a squeaky hinge on the pantry door, maintaining his orderly rhythm until his 10:00 PM bedtime."
+    },
+    "Martha": {
+      "day_type": "weekday",
+      "day_scenario": "Martha begins her morning at 6:30 AM with a steaming cup of chamomile by the sunroom window, tracking the sparrows at the feeder. She spends the afternoon sorting mismatched buttons into glass jars on her craft table before carefully alphabetizing the pantry\u2019s spice rack, keeping her creative corner immaculate as she winds down for her 9:30 PM rest."
+    }
+  },
+  "changes": [
+    {
+      "t": 6.518,
+      "label": "cup_2",
+      "change_type": "insert_new",
+      "object_category": "cup",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "drinking_coffee",
+      "reason": "Arthur is drinking coffee in the kitchen, so he will need a surface to place his cup on while he enjoys it. The kitchen counter provides a stable surface for this purpose.",
+      "object_handle": null
+    },
+    {
+      "t": 6.962,
+      "label": "martha_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "near",
+      "mover": "Martha",
+      "activity": "wake_up",
+      "reason": "As Martha wakes up, she likely reaches for her phone to check the time or notifications, as it is a common carried item present in the bedroom. Since the activity is waking up and not leaving the house, the phone remains where it is or is briefly handled but not put away into storage.",
+      "object_handle": null
+    },
+    {
+      "t": 9.193,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Arthur",
+      "activity": "tidying_kitchen",
+      "reason": "A stool left out during tidying should be tucked back under the counter or table to clear floor space, assuming one is currently pulled out or misplaced.",
+      "object_handle": null
+    },
+    {
+      "t": 9.727,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "next_to",
+      "mover": "Arthur",
+      "activity": "reading_newspaper",
+      "reason": "Arthur is settling in to read, so he likely pulls out a nearby chair to sit on for comfort. He will position the chair next to the sofa or armchair area to face the room or a window while reading.",
+      "object_handle": null
+    },
+    {
+      "t": 10.329,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.couch_1",
+      "to_semantic": "living_room.tv_1",
+      "target_relationship": "near",
+      "mover": "Arthur",
+      "activity": "tidying_living_room",
+      "reason": "With multiple chairs present, one is likely left slightly askew; moving another chair to align with the others creates a tidy, symmetrical arrangement.",
+      "object_handle": null
+    },
+    {
+      "t": 16.332,
+      "label": "bowl_2",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "snack",
+      "reason": "Arthur is having a snack in the kitchen and needs a surface to place his food, so he will use the available bowl.",
+      "object_handle": null
+    },
+    {
+      "t": 16.338,
+      "label": "cup_3",
+      "change_type": "insert_new",
+      "object_category": "cup",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "snack",
+      "reason": "He likely needs a drink to accompany his snack, and since there is only one cup listed, he will bring it out for use.",
+      "object_handle": null
+    },
+    {
+      "t": 16.673,
+      "label": "newspaper_1",
+      "change_type": "move_existing",
+      "object_category": "newspaper",
+      "from_semantic": "living_room.table_2",
+      "to_semantic": "living_room.couch_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "reading_newspaper",
+      "reason": "The reading activity requires the newspaper, which is currently unplaced, to be accessible to Arthur.",
+      "object_handle": null
+    },
+    {
+      "t": 18.163,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "kitchen.counter_1.tucked",
+      "target_relationship": "tucked_under",
+      "mover": "Arthur",
+      "activity": "cleaning_up_kitchen",
+      "reason": "Arthur is tidying the kitchen, so he likely moves a stool that is currently out of place back to its designated spot under the counter or table to clear floor space. The kitchen currently has 3 stools, and tucking one in is a standard cleaning action.",
+      "object_handle": null
+    },
+    {
+      "t": 18.177,
+      "label": "cup_4",
+      "change_type": "insert_new",
+      "object_category": "cup",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "cleaning_up_kitchen",
+      "reason": "The activity involves cleaning up, which often includes putting away small items like cups after use. Since there is a cup in the inventory, it is plausible Arthur places it in a cabinet or dishwasher (if implied) or simply moves it to a counter to be washed/stored. However, without a specific 'cabinet' anchor in the kitchen list, he might place it on the counter_2 if it's dirty, or if we assume '",
+      "object_handle": null
+    },
+    {
+      "t": 19.126,
+      "label": "remote_control_1",
+      "change_type": "move_existing",
+      "object_category": "remote_control",
+      "from_semantic": "living_room.couch_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Arthur",
+      "activity": "watching_tv",
+      "reason": "He will need to watch the screen, so he moves the remote control to a nearby surface for easy access. The remote is placed on the table in the living room.",
+      "object_handle": null
+    },
+    {
+      "t": 21.344,
+      "label": "martha_phone",
+      "change_type": "remove",
+      "object_category": "phone",
+      "from_semantic": "bedroom_1.bed_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Martha",
+      "activity": "sleep",
+      "reason": "Martha is preparing for sleep, so she should put away her phone to avoid distractions and charge it or store it safely. The phone is a carried personal item being put away at bedtime.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 3,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 4,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 3,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

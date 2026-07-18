@@ -7,27 +7,26 @@
     "alex_laptop": "laptop_a031287e7b68",
     "alex_phone": "phone_223b376823b5",
     "alex_wallet": "wallet_4eb66e5c0b4f",
-    "alex_keys": "keys_92167e12a3f0",
-    "leo_backpack": "backpack_390164707739"
+    "alex_keys": "keys_92167e12a3f0"
   },
   "day_context": {
     "Alex": {
       "day_type": "weekday",
-      "day_scenario": "Waking at 6:30 AM, Alex dives straight into early morning meetings before heading out the door, commuting to the office while listening to an industry audiobook. After a full day of coordinating deliverables and reviewing project timelines, they unwind with a quiet cup of tea before finally turning in at 11:00 PM."
+      "day_scenario": "Alex wakes at 6:30 AM to log into her work laptop at the dining table, spending the day managing project timelines before returning home to organize the next day's school lunches. Once Leo and Mia are asleep, she settles into the living room to review client emails over a warm mug of tea before heading to bed at 11:00 PM."
     },
     "Leo": {
       "day_type": "weekday",
-      "day_scenario": "Leo rises at 7:00 AM for a quick breakfast before packing his favorite wooden blocks for his morning preschool session. He spends the afternoon back in the living room, carefully stacking colorful towers that he deliberately leaves standing in the middle of the floor before his 8:00 PM bedtime routine begins."
+      "day_scenario": "Leo wakes at 7:00 AM and spends the afternoon carefully stacking wooden blocks into a tall, crooked tower near the front door. He steps away to wash up, leaving the structure standing in the hallway until it inevitably topples over before his 8:00 PM bedtime."
     },
     "Mia": {
       "day_type": "weekday",
-      "day_scenario": "Mia wakes at 7:00 AM and settles at the dining table, where she spends the morning sketching vibrant pictures with her wax crayons. After returning from preschool, she continues her craft project in the sunroom, leaving her scattered paper and crayons on the dining table before starting her 8:30 PM bedtime routine."
+      "day_scenario": "Mia wakes at 7:00 AM and fills a fresh sheet of paper with bright green scribbles of her favorite stuffed bear before taping it to the refrigerator door. After wandering off to play, she leaves her red and yellow crayons scattered across the coffee table until dinner."
     }
   },
   "changes": [
     {
-      "t": 7.667,
-      "label": "bowl_2",
+      "t": 7.517,
+      "label": "bowl_3",
       "change_type": "insert_new",
       "object_category": "bowl",
       "from_semantic": null,
@@ -35,20 +34,85 @@
       "target_relationship": "on",
       "mover": "Alex",
       "activity": "breakfast",
-      "reason": "Alex is having breakfast and needs a bowl for food, so he will retrieve a fresh bowl from storage rather than using the single visible bowl which may already be in use or dirty.",
+      "reason": "Alex is eating breakfast, so she will likely need a bowl for her food. Bringing a fresh bowl from the kitchen storage to the table provides a clean place to eat.",
       "object_handle": null
     },
     {
-      "t": 13.499,
+      "t": 7.543,
       "label": "stool_1",
       "change_type": "move_existing",
       "object_category": "stool",
       "from_semantic": "kitchen.counter_tucked",
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "next_to",
+      "mover": "Alex",
+      "activity": "breakfast",
+      "reason": "The stool is currently in the bedroom; if Alex plans to sit at the kitchen table for breakfast, she would move the available stool to the kitchen and place it next to the table.",
+      "object_handle": null
+    },
+    {
+      "t": 7.749,
+      "label": "bowl_4",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
+      "mover": "Alex",
+      "activity": "breakfast",
+      "reason": "During breakfast, the occupant needs a vessel to hold food, and since the existing bowls may be in use or less suitable for a fresh meal, bringing out a clean bowl is standard practice.",
+      "object_handle": null
+    },
+    {
+      "t": 7.824,
+      "label": "alex_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "getting_dressed",
+      "reason": "The phone is currently being carried or used by Alex while getting dressed; placing it on the bed keeps it accessible but out of the way while she dresses, as the bed is the primary surface in the bedroom.",
+      "object_handle": null
+    },
+    {
+      "t": 10.888,
+      "label": "toy_1",
+      "change_type": "remove",
+      "object_category": "toy",
+      "from_semantic": "tv_room.table_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Leo",
+      "activity": "sleeping",
+      "reason": "During sleep, personal items like toys are typically cleared from the immediate sleeping area to create a safe, uncluttered environment. The toy currently in the bedroom is stored away in the wardrobe to keep the sleeping space tidy.",
+      "object_handle": null
+    },
+    {
+      "t": 15.071,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.table_1",
       "to_semantic": "kitchen.cabinet_1",
       "target_relationship": "next_to",
-      "mover": "Leo",
-      "activity": "lunch",
-      "reason": "Leo needs a seat to eat lunch in the kitchen, and the stool is already present in the kitchen, so he pulls it out next to the counter. The stool is a floor object and must be placed using a proximity relation.",
+      "mover": "Mia",
+      "activity": "sticking_artwork",
+      "reason": "Mia is sticking artwork in the kitchen, likely on the fridge or a wall near the counters. She may need a stool to reach higher surfaces or to stand on for stability while applying the artwork.",
+      "object_handle": null
+    },
+    {
+      "t": 20.805,
+      "label": "bowl_1",
+      "change_type": "remove",
+      "object_category": "bowl",
+      "from_semantic": "kitchen.table_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Alex",
+      "activity": "organizing_school_lunches",
+      "reason": "Alex is likely putting away or retrieving lunch-related items like bowls from the kitchen storage to prepare meals. The fridge is the primary location for perishable lunch ingredients.",
       "object_handle": null
     }
   ],
@@ -56,11 +120,11 @@
     "rejected_unattended": 0,
     "dropped_noop": 0,
     "dropped_bad_time": 0,
-    "spawned_from_storage": 1,
+    "spawned_from_storage": 2,
     "rejected_unbacked_anchor": 0,
     "rejected_unreachable_anchor": 0,
     "rejected_over_capacity": 0,
-    "dropped_despawn_notout": 1,
+    "dropped_despawn_notout": 0,
     "rejected_no_seat_in_room": 0,
     "clutter_rejected_unreachable": 0,
     "admission_map_used": true

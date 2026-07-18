@@ -7,95 +7,120 @@
     "alex_laptop": "laptop_a031287e7b68",
     "alex_phone": "phone_223b376823b5",
     "alex_wallet": "wallet_4eb66e5c0b4f",
-    "alex_keys": "keys_92167e12a3f0",
-    "leo_backpack": "backpack_390164707739"
+    "alex_keys": "keys_92167e12a3f0"
   },
   "day_context": {
     "Alex": {
       "day_type": "weekday",
-      "day_scenario": "Wakes at 6:30 AM to prepare for a video call from the home office, then heads out to listen to a historical fiction audiobook during the commute. After navigating project deadlines at the office, Alex returns home to quietly review files in the study before finally winding down at 23:00."
+      "day_scenario": "After waking at 6:30 AM, Alex balances her professional responsibilities as a project manager throughout the day from her home office. In the evening, she organizes the next day's school lunches in the kitchen and checks emails at the dining table while the kids are in bed."
     },
     "Leo": {
       "day_type": "weekday",
-      "day_scenario": "After waking at 7:00 AM for breakfast in the kitchen, Leo spends the morning stacking wooden blocks in the living room before heading to his part-time preschool. He returns home to construct another towering structure in the middle of the floor, carefully stepping around it before beginning his bedtime routine at 20:00."
+      "day_scenario": "Leo wakes up at 7:00 AM and spends his day engaging in play, particularly building block towers near the living room entrance. He often leaves these structures standing in the hallway until they inevitably fall over, just before his 8:00 PM bedtime."
     },
     "Mia": {
       "day_type": "weekday",
-      "day_scenario": "After waking at 7:00 AM, Mia begins her morning by sketching colorful dragons on construction paper at the dining table, leaving her red and blue crayons scattered across the surface. After a quiet afternoon of drawing in her bedroom, she leaves her supplies out before settling in for bedtime at 20:30."
+      "day_scenario": "Mia wakes at 7:00 AM and spends her time drawing on paper and sticking it on the fridge above the kitchen counter. She frequently leaves her crayons on the coffee table after her creative sessions, winding down for her 8:00 PM bedtime."
     }
   },
   "changes": [
     {
-      "t": 7.424,
-      "label": "bowl_2",
-      "change_type": "insert_new",
-      "object_category": "bowl",
-      "from_semantic": null,
-      "to_semantic": "kitchen.table_1",
-      "target_relationship": "on_top",
-      "mover": "Leo",
-      "activity": "breakfast",
-      "reason": "Leo needs a vessel to eat his breakfast in the kitchen, so he will bring a bowl out from storage to the table.",
-      "object_handle": null
-    },
-    {
-      "t": 18.173,
-      "label": "alex_phone",
-      "change_type": "insert_new",
-      "object_category": "phone",
-      "from_semantic": null,
-      "to_semantic": "kitchen.table_1",
-      "target_relationship": "on_top",
-      "mover": "Alex",
-      "activity": "dinner",
-      "reason": "Alex is carrying personal items to the kitchen for dinner, such as a phone for timing or music, and will likely set it down on the table.",
-      "object_handle": null
-    },
-    {
-      "t": 18.527,
+      "t": 7.635,
       "label": "bowl_3",
       "change_type": "insert_new",
       "object_category": "bowl",
       "from_semantic": null,
       "to_semantic": "kitchen.table_1",
-      "target_relationship": "on_top",
-      "mover": "Alex",
-      "activity": "dinner",
-      "reason": "Alex is preparing for dinner and needs a dining surface; the kitchen table is the appropriate place to set out dishes for the meal.",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "breakfast",
+      "reason": "Leo needs a bowl for his breakfast, and since the household is untidy, he likely needs a fresh one rather than using a dirty one already present.",
       "object_handle": null
     },
     {
-      "t": 18.922,
-      "label": "candle_1",
-      "change_type": "move_existing",
-      "object_category": "candle",
-      "from_semantic": "kitchen.table_1",
-      "to_semantic": "bedroom_3.stand_1",
-      "target_relationship": "on_top",
+      "t": 9.319,
+      "label": "bowl_4",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
       "mover": "Mia",
-      "activity": "storytime",
-      "reason": "Storytime often involves a relaxed, cozy atmosphere, so Mia might place the candle on the stool to create ambiance while she sits or reads. The stool is the only available surface in the bedroom for placing small items.",
+      "activity": "snack",
+      "reason": "Mia is eating a snack in the kitchen, so she likely needs a bowl to hold her food. She will bring a fresh bowl from storage to the kitchen surface for use.",
       "object_handle": null
     },
     {
-      "t": 21.787,
-      "label": "candle_1",
+      "t": 11.816,
+      "label": "toy_1",
       "change_type": "move_existing",
-      "object_category": "candle",
-      "from_semantic": "bedroom_3.stand_1",
-      "to_semantic": "tv_room.table_1",
+      "object_category": "toy",
+      "from_semantic": "tv_room.table_1",
+      "to_semantic": "tv_room.tv_1",
+      "target_relationship": "near",
+      "mover": "Mia",
+      "activity": "playing",
+      "reason": "There is a toy listed in the inventory, and playing often involves moving or retrieving toys. Since the toy is not currently listed in the 'Current object state' as being held or in a specific spot, it's plausible she is bringing it out or moving it to a central play area near the TV.",
+      "object_handle": null
+    },
+    {
+      "t": 16.449,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_tucked",
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "next_to",
+      "mover": "Leo",
+      "activity": "snack",
+      "reason": "Leo is sitting in the kitchen to eat his snack, so he will position his stool next to the table to sit on it comfortably.",
+      "object_handle": null
+    },
+    {
+      "t": 17.264,
+      "label": "toy_2",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "tv_room.tv_1",
+      "target_relationship": "next_to",
+      "mover": "Leo",
+      "activity": "playing",
+      "reason": "Leo is playing in the living room and may want to interact with the toy currently present. He will likely move the toy to the floor or a low surface to play with it. Since there are no specific floor anchors or low tables listed in the living room inventory for placing items on, and the toy is small, it might be moved near the tv or potted plant if he is using them as part of his play scenario, or",
+      "object_handle": null
+    },
+    {
+      "t": 19.118,
+      "label": "potted_plant_1",
+      "change_type": "move_existing",
+      "object_category": "potted_plant",
+      "from_semantic": "living_room.corner",
+      "to_semantic": "kitchen.table_1",
       "target_relationship": "on_top",
       "mover": "Alex",
-      "activity": "relaxing",
-      "reason": "Alex is relaxing in the living room and may wish to enhance the atmosphere with lighting or scent, so the candle is moved to the TV stand for use. The candle is placed on the tv anchor as it is the primary furniture piece in the living room for such items.",
+      "activity": "cleaning",
+      "reason": "Alex is cleaning the kitchen, so she will likely tidy up the potted plants that are currently on the kitchen floor or surfaces to wipe them down or rearrange them for better access. The plants are abundant and can be moved individually to clear space.",
+      "object_handle": null
+    },
+    {
+      "t": 19.506,
+      "label": "toy_1",
+      "change_type": "remove",
+      "object_category": "toy",
+      "from_semantic": "tv_room.tv_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Mia",
+      "activity": "reading",
+      "reason": "Mia is likely tidying up her messy bedroom before settling in to read, so she should put the visible toy away into storage. The toy is moved inside the wardrobe to clear the floor space.",
       "object_handle": null
     }
   ],
   "integrity_stats": {
     "rejected_unattended": 0,
-    "dropped_noop": 0,
+    "dropped_noop": 1,
     "dropped_bad_time": 0,
-    "spawned_from_storage": 2,
+    "spawned_from_storage": 3,
     "rejected_unbacked_anchor": 0,
     "rejected_unreachable_anchor": 0,
     "rejected_over_capacity": 0,

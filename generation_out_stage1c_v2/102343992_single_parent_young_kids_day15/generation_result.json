@@ -1,0 +1,1343 @@
+{
+  "household_id": "102343992_single_parent_young_kids",
+  "scene_id": "102343992",
+  "routine_charter": {
+    "Alex": {
+      "occupation": "project manager",
+      "weekday_routine": "Alex wakes at 6:30 AM to start her day, balancing professional responsibilities as a project manager throughout the day. In the evenings, she organizes the next day's school lunches and checks emails while the children are in bed. She winds down and goes to sleep at 11:00 PM.",
+      "weekend_routine": "On weekends, Alex likely maintains a similar wake-up time but may have more flexibility in her evening schedule. She continues to manage household logistics and personal tasks, ensuring the week ahead is prepared. She still aims to sleep by 11:00 PM to maintain her routine.",
+      "signature_habits": [
+        "organizes the next day's school lunches in the evening",
+        "checks emails while the kids are in bed"
+      ]
+    },
+    "Leo": {
+      "occupation": "toddler",
+      "weekday_routine": "Leo wakes up at 7:00 AM and spends his day engaging in play, particularly building block towers. He often leaves these structures standing in the hallway until they inevitably fall over. He goes to bed at 8:00 PM.",
+      "weekend_routine": "On weekends, Leo continues to wake at 7:00 AM and enjoys his favorite activity of building block towers. He leaves the towers in the hallway, where they eventually collapse, creating a consistent pattern of play and cleanup. He retires for the night at 8:00 PM.",
+      "signature_habits": [
+        "loves building block towers",
+        "leaves them standing in the hallway until they inevitably fall"
+      ]
+    },
+    "Mia": {
+      "occupation": "toddler",
+      "weekday_routine": "Mia wakes at 7:00 AM and spends her time drawing on paper and sticking her artwork on the fridge. She frequently leaves her crayons on the coffee table after her creative sessions. She goes to sleep at 8:00 PM.",
+      "weekend_routine": "On weekends, Mia wakes up at 7:00 AM and continues to enjoy drawing and decorating the fridge with her creations. She often forgets to put away her crayons, leaving them on the coffee table. She goes to bed at 8:00 PM.",
+      "signature_habits": [
+        "enjoys drawing on paper and sticking it on the fridge",
+        "often leaves crayons on the coffee table"
+      ]
+    }
+  },
+  "calendar_event": null,
+  "judge_retry_stats": {
+    "windows_with_rejects": 1,
+    "rejected_first_pass": 1,
+    "revision_proposals": 1,
+    "revived_eligible": 0,
+    "killed_second_pass": 1,
+    "hopeless_skipped": 5
+  },
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "profile": "single_parent_young_kids",
+  "day": 15,
+  "clutter": [
+    {
+      "reason": "Young kids often leave toys out in the living area for easy access. The TV stand is a common spot for toy storage or display.",
+      "object_category": "toy",
+      "target_relationship": "on_top",
+      "target_anchor": "tv_room.table_1",
+      "_judge_score": 0.6,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The placement is on a TV room table, which aligns with the justification's mention of the living area. However, toys are more commonly on the floor or low shelves, making this less typical but not impossible."
+    },
+    {
+      "reason": "A fruit bowl keeps healthy snacks visible for busy parents and kids. The kitchen counter is the natural place for daily food items.",
+      "object_category": "bowl",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a kitchen counter, but the candidate places the bowl on the kitchen table. While both are in the kitchen, the mismatch between the specific surface named in the reason and the candidate is minor, but the placement itself is highly plausible for a fruit bowl."
+    },
+    {
+      "reason": "A watering can is essential for maintaining the potted plants in the kitchen. It sits nearby for easy use.",
+      "object_category": "watering_can",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.5,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a watering can for kitchen plants, but the candidate places it on the kitchen table. While plausible for a plant stand, a table is a less common 'home' than a windowsill or shelf, but the object-location match is correct."
+    },
+    {
+      "reason": "A fruit bowl is a staple in kitchens, keeping snacks visible and accessible. The kitchen counter is the ideal spot.",
+      "object_category": "bowl",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a fruit bowl on the kitchen counter, but the candidate places it on the kitchen table. While both are kitchen surfaces, the mismatch is minor, and the placement is highly plausible for a fruit bowl."
+    }
+  ],
+  "asset_bindings": {
+    "alex_laptop": "laptop_a031287e7b68",
+    "alex_phone": "phone_223b376823b5",
+    "alex_wallet": "wallet_4eb66e5c0b4f",
+    "alex_keys": "keys_92167e12a3f0"
+  },
+  "persona": {
+    "occupants": [
+      {
+        "name": "Alex",
+        "age_band": "adult",
+        "role": "mother",
+        "typical_wake": 6.5,
+        "typical_sleep": 23.0,
+        "habits": "Works as a project manager; spends evenings organizing the next day's school lunches and checking emails while the kids are in bed.",
+        "tidiness": 0.8,
+        "owned_items": [
+          "phone",
+          "wallet",
+          "keys",
+          "laptop"
+        ],
+        "bedroom_index": 1
+      },
+      {
+        "name": "Leo",
+        "age_band": "toddler",
+        "role": "son",
+        "typical_wake": 7.0,
+        "typical_sleep": 20.0,
+        "habits": "Loves building block towers; leaves them standing in the hallway until they inevitably fall.",
+        "tidiness": 0.1,
+        "owned_items": [],
+        "bedroom_index": 2
+      },
+      {
+        "name": "Mia",
+        "age_band": "toddler",
+        "role": "daughter",
+        "typical_wake": 7.0,
+        "typical_sleep": 20.0,
+        "habits": "Enjoys drawing on paper and sticking it on the fridge; often leaves crayons on the coffee table.",
+        "tidiness": 0.1,
+        "owned_items": [],
+        "bedroom_index": 3
+      }
+    ],
+    "household_type": "single_parent_young_kids"
+  },
+  "traces": [
+    {
+      "occupant_name": "Alex",
+      "activities": [
+        {
+          "activity": "waking_up",
+          "location": "bedroom",
+          "start": 6.5,
+          "end": 7.0
+        },
+        {
+          "activity": "getting_dressed",
+          "location": "bedroom",
+          "start": 7.0,
+          "end": 7.3
+        },
+        {
+          "activity": "brushing_teeth",
+          "location": "bathroom",
+          "start": 7.3,
+          "end": 7.45
+        },
+        {
+          "activity": "making_coffee",
+          "location": "kitchen",
+          "start": 7.45,
+          "end": 8.0
+        },
+        {
+          "activity": "breakfast",
+          "location": "kitchen",
+          "start": 8.0,
+          "end": 8.3
+        },
+        {
+          "activity": "helping_kids_get_ready",
+          "location": "living_room",
+          "start": 8.3,
+          "end": 9.0
+        },
+        {
+          "activity": "dropping_kids_off",
+          "location": "away",
+          "start": 9.0,
+          "end": 9.45
+        },
+        {
+          "activity": "commute_home",
+          "location": "away",
+          "start": 9.45,
+          "end": 10.0
+        },
+        {
+          "activity": "working_from_home",
+          "location": "office",
+          "start": 10.0,
+          "end": 12.3
+        },
+        {
+          "activity": "lunch_break",
+          "location": "kitchen",
+          "start": 12.3,
+          "end": 13.0
+        },
+        {
+          "activity": "working_from_home",
+          "location": "office",
+          "start": 13.0,
+          "end": 16.3
+        },
+        {
+          "activity": "tidying_living_room",
+          "location": "living_room",
+          "start": 16.3,
+          "end": 17.0
+        },
+        {
+          "activity": "dinner_preparation",
+          "location": "kitchen",
+          "start": 17.0,
+          "end": 18.0
+        },
+        {
+          "activity": "dinner",
+          "location": "dining_room",
+          "start": 18.0,
+          "end": 18.45
+        },
+        {
+          "activity": "cleaning_kitchen",
+          "location": "kitchen",
+          "start": 18.45,
+          "end": 19.15
+        },
+        {
+          "activity": "helping_with_homework",
+          "location": "dining_room",
+          "start": 19.15,
+          "end": 20.0
+        },
+        {
+          "activity": "bath_time",
+          "location": "bathroom",
+          "start": 20.0,
+          "end": 20.45
+        },
+        {
+          "activity": "bedtime_routine",
+          "location": "bedroom",
+          "start": 20.45,
+          "end": 21.3
+        },
+        {
+          "activity": "organizing_lunches",
+          "location": "kitchen",
+          "start": 21.3,
+          "end": 22.0
+        },
+        {
+          "activity": "checking_emails",
+          "location": "living_room",
+          "start": 22.0,
+          "end": 23.0
+        }
+      ],
+      "day_type": "weekday",
+      "day_context": "Alex wakes at 6:30 AM to tackle project deadlines from her home office before the household fully stirs. After dinner, she arranges tomorrow\u2019s lunch containers on the kitchen counter while quietly reviewing work emails on her tablet while the children are in bed."
+    },
+    {
+      "occupant_name": "Leo",
+      "activities": [
+        {
+          "activity": "sleeping",
+          "location": "bedroom",
+          "start": 20.0,
+          "end": 7.0
+        },
+        {
+          "activity": "waking_up",
+          "location": "bedroom",
+          "start": 7.0,
+          "end": 7.3
+        },
+        {
+          "activity": "using_bathroom",
+          "location": "bathroom",
+          "start": 7.3,
+          "end": 7.45
+        },
+        {
+          "activity": "eating",
+          "location": "dining_room",
+          "start": 7.45,
+          "end": 8.3
+        },
+        {
+          "activity": "playing",
+          "location": "living_room",
+          "start": 8.3,
+          "end": 11.0
+        },
+        {
+          "activity": "sleeping",
+          "location": "bedroom",
+          "start": 11.0,
+          "end": 13.0
+        },
+        {
+          "activity": "eating",
+          "location": "dining_room",
+          "start": 13.0,
+          "end": 13.3
+        },
+        {
+          "activity": "playing",
+          "location": "living_room",
+          "start": 13.3,
+          "end": 15.0
+        },
+        {
+          "activity": "using_bathroom",
+          "location": "bathroom",
+          "start": 15.0,
+          "end": 15.15
+        },
+        {
+          "activity": "eating",
+          "location": "dining_room",
+          "start": 15.15,
+          "end": 15.45
+        },
+        {
+          "activity": "playing",
+          "location": "living_room",
+          "start": 15.45,
+          "end": 17.0
+        },
+        {
+          "activity": "using_bathroom",
+          "location": "bathroom",
+          "start": 17.0,
+          "end": 17.15
+        },
+        {
+          "activity": "eating",
+          "location": "dining_room",
+          "start": 17.15,
+          "end": 17.45
+        },
+        {
+          "activity": "playing",
+          "location": "living_room",
+          "start": 17.45,
+          "end": 19.3
+        },
+        {
+          "activity": "winding_down",
+          "location": "bedroom",
+          "start": 19.3,
+          "end": 20.0
+        }
+      ],
+      "day_type": "weekday",
+      "day_context": "Leo wakes at 7:00 AM and spends the morning stacking wooden blocks into a towering spiral in the living room. By afternoon, he drags the remaining bricks down the hallway, leaving a precarious tower that eventually tumbles onto the rug."
+    },
+    {
+      "occupant_name": "Mia",
+      "activities": [
+        {
+          "activity": "waking_up",
+          "location": "bedroom",
+          "start": 7.0,
+          "end": 7.25
+        },
+        {
+          "activity": "bathing",
+          "location": "bathroom",
+          "start": 7.25,
+          "end": 7.5
+        },
+        {
+          "activity": "eating_breakfast",
+          "location": "dining_room",
+          "start": 7.5,
+          "end": 8.0
+        },
+        {
+          "activity": "drawing",
+          "location": "dining_room",
+          "start": 8.0,
+          "end": 9.0
+        },
+        {
+          "activity": "decorating",
+          "location": "kitchen",
+          "start": 9.0,
+          "end": 9.15
+        },
+        {
+          "activity": "playing",
+          "location": "living_room",
+          "start": 9.15,
+          "end": 10.3
+        },
+        {
+          "activity": "snacking",
+          "location": "living_room",
+          "start": 10.3,
+          "end": 10.5
+        },
+        {
+          "activity": "playing",
+          "location": "living_room",
+          "start": 10.5,
+          "end": 12.0
+        },
+        {
+          "activity": "eating_lunch",
+          "location": "dining_room",
+          "start": 12.0,
+          "end": 12.45
+        },
+        {
+          "activity": "sleeping",
+          "location": "bedroom",
+          "start": 13.0,
+          "end": 15.0
+        },
+        {
+          "activity": "playing",
+          "location": "living_room",
+          "start": 15.0,
+          "end": 16.3
+        },
+        {
+          "activity": "drawing",
+          "location": "dining_room",
+          "start": 16.3,
+          "end": 17.15
+        },
+        {
+          "activity": "decorating",
+          "location": "kitchen",
+          "start": 17.15,
+          "end": 17.3
+        },
+        {
+          "activity": "playing",
+          "location": "living_room",
+          "start": 17.3,
+          "end": 18.3
+        },
+        {
+          "activity": "eating_dinner",
+          "location": "dining_room",
+          "start": 18.3,
+          "end": 19.15
+        },
+        {
+          "activity": "bathing",
+          "location": "bathroom",
+          "start": 19.15,
+          "end": 19.45
+        },
+        {
+          "activity": "reading",
+          "location": "bedroom",
+          "start": 19.45,
+          "end": 20.0
+        }
+      ],
+      "day_type": "weekday",
+      "day_context": "Mia wakes at 7:00 AM and settles at the dining table to sketch colorful dragons, later proudly taping them to the refrigerator door. After her creative session, she wanders into the family room, leaving a scattered trail of crayons across the coffee table."
+    }
+  ],
+  "displacements": [
+    {
+      "reason": "Leo is waking up in a very messy room, so he likely tidies up by placing the scattered toy into the wardrobe to clear the floor space.",
+      "object_category": "toy",
+      "target_relationship": "inside",
+      "target_anchor": "bedroom_2.wardrobe_1",
+      "_activity": "waking_up",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 7.0,
+      "_end": 7.3,
+      "_location": "bedroom",
+      "_despawn": true,
+      "_concealed_in": "bedroom_2.wardrobe_1",
+      "_judge_score": 0.6,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 15429198479889894338,
+      "_judge_reason": "While waking up can trigger tidying, the extreme messiness (tidiness 0.1) and the specific act of putting a toy in a wardrobe is a plausible cleaning behavior, not absurd. However, typically one might just leave it or put it in a bin; putting it in a wardrobe is a specific storage decision. It is plausible enough for a messy person to start organizing.",
+      "_selected": true
+    },
+    {
+      "reason": "Alex is preparing or eating breakfast in the kitchen, so she likely brings a bowl out for use. A fresh bowl is preferred over re-using one that might already be on a surface.",
+      "object_category": "bowl",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_activity": "breakfast",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.0,
+      "_end": 8.3,
+      "_location": "kitchen",
+      "_judge_score": 0.95,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17545709164127257170,
+      "_judge_reason": "Bringing a fresh bowl to the table for breakfast is the standard, expected behavior for this activity. The justification correctly identifies the need for a clean dish and the location of use.",
+      "_resolved_slot": "kitchen.table_1",
+      "_selected": true
+    },
+    {
+      "reason": "The stool is currently in the bedroom. Alex might bring it to the kitchen to sit at the counter or table if seating is needed for breakfast.",
+      "object_category": "stool",
+      "target_relationship": "next_to",
+      "target_anchor": "kitchen.table_1",
+      "_activity": "breakfast",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.0,
+      "_end": 8.3,
+      "_location": "kitchen",
+      "_judge_score": 0.3,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17545709164127257170,
+      "_judge_reason": "The justification claims the stool is in the bedroom, but Alex is already in the kitchen for breakfast; it is highly implausible to retrieve a specific seat from another room when one is likely already at the table or when standing is an option. This implies an unnecessary and inefficient movement not typical for a simple breakfast.",
+      "_resolved_slot": "kitchen.table_1",
+      "_selected": true
+    },
+    {
+      "reason": "Leo is playing in the living room, and the only toy listed is currently unplaced or out, so he likely picks it up to use it during play.",
+      "object_category": "toy",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "playing",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 8.3,
+      "_end": 11.0,
+      "_location": "living_room",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 7586639437801530514,
+      "_judge_reason": "The placement of a toy near the TV during play is a highly plausible and common behavior for a child, aligning perfectly with the activity and low tidiness.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": true
+    },
+    {
+      "reason": "Mia is decorating, which likely involves arranging or bringing in fresh plants for display. She would move a potted plant from storage or another room to a visible spot in the kitchen to enhance the decor.",
+      "object_category": "potted_plant",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_activity": "decorating",
+      "_occupant": "Mia",
+      "_occupant_index": 2,
+      "_start": 9.0,
+      "_end": 9.15,
+      "_location": "kitchen",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 13418620783070196517,
+      "_judge_reason": "Bringing a plant into the kitchen for decoration is a standard, logical action for this activity, regardless of existing items due to the abundance of decor. This is a typical placement for the stated goal.",
+      "_resolved_slot": "kitchen.table_1",
+      "_selected": true
+    },
+    {
+      "reason": "Alex is eating lunch and likely needs a bowl for her food; since bowls are abundant and one might already be in use or dirty, she brings a fresh one out. The kitchen counter is a standard surface for preparing or placing food items during a break.",
+      "object_category": "bowl",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.bench_2",
+      "_activity": "lunch_break",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 12.3,
+      "_end": 13.0,
+      "_location": "kitchen",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 12274983006848263127,
+      "_judge_reason": "The justification correctly identifies that bowls are abundant and a fresh one is appropriate for lunch, making the placement on a kitchen bench (a standard food surface) behaviorally sound. There are no contradictions regarding object uniqueness or activity mismatch.",
+      "_resolved_slot": "kitchen.bench_2",
+      "_selected": true
+    },
+    {
+      "reason": "Mia is playing in the living room and may want to bring the single available toy into the space to play with it. The tv stand is a stable surface nearby for placing the toy.",
+      "object_category": "toy",
+      "target_relationship": "on",
+      "target_anchor": "tv_room.table_1",
+      "_activity": "playing",
+      "_occupant": "Mia",
+      "_occupant_index": 2,
+      "_start": 15.0,
+      "_end": 16.3,
+      "_location": "living_room",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 6258062003983870394,
+      "_judge_reason": "The justification correctly identifies that Mia is playing in the living room and needs the toy for that activity. Placing the toy on a nearby table is a standard, low-effort way to keep it accessible during play without leaving it on the floor, fitting the context perfectly.",
+      "_resolved_slot": "tv_room.table_1",
+      "_selected": true
+    },
+    {
+      "reason": "Leo might bring a toy from another room into the living room to continue his play session. Since 'toy' is in the inventory and he is playing, he likely interacts with it.",
+      "object_category": "toy",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "playing",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 15.45,
+      "_end": 17.0,
+      "_location": "living_room",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 2325192894169977013,
+      "_judge_reason": "Bringing a toy from another room to the living room to continue playing is exactly what a child would do when changing play locations or gathering materials. It aligns perfectly with the activity and the inventory.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": true
+    },
+    {
+      "reason": "Alex is preparing dinner and will likely need a bowl for ingredients or serving; since only two are present and one might be in use or stored, bringing a fresh one out is standard practice.",
+      "object_category": "bowl",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_activity": "dinner_preparation",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 17.0,
+      "_end": 18.0,
+      "_location": "kitchen",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 3059726849117870671,
+      "_judge_reason": "The justification correctly identifies that bringing a fresh bowl is standard practice for dinner preparation, even if others exist, as bowls are abundant everyday items. This placement aligns perfectly with the activity and household norms.",
+      "_resolved_slot": "kitchen.table_1",
+      "_selected": true
+    },
+    {
+      "reason": "Leo is playing in the living room, so he likely moves the toy from its current location to the floor area where he is playing to engage with it.",
+      "object_category": "toy",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "playing",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 17.45,
+      "_end": 19.3,
+      "_location": "living_room",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 11193298863417084927,
+      "_judge_reason": "Placing a toy on or near the TV stand is a common behavior for a child playing in the living room, allowing easy access or display during play. This aligns perfectly with the activity and location.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": true
+    },
+    {
+      "reason": "Leo is winding down in his bedroom, likely preparing for sleep or relaxing, so he might tidy up any clutter. The toy is a common item to put away at the end of the day to keep the room tidy.",
+      "object_category": "toy",
+      "target_relationship": "inside",
+      "target_anchor": "bedroom_2.wardrobe_1",
+      "_activity": "winding_down",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 19.3,
+      "_end": 20.0,
+      "_location": "bedroom",
+      "_despawn": true,
+      "_concealed_in": "bedroom_2.wardrobe_1",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 5987308259012606659,
+      "_judge_reason": "Tidying up clutter by putting a toy away in a wardrobe is a standard pre-sleep routine, especially with low tidiness indicating clutter exists. The destination (wardrobe) matches the action (putting away/tidying).",
+      "_selected": true
+    },
+    {
+      "reason": "Alex is preparing for a bath in the bathroom, so she likely puts away personal items she was carrying or had nearby to keep them dry and safe from water.",
+      "object_category": "phone",
+      "target_relationship": "inside",
+      "target_anchor": "bathroom_1.cabinet_1",
+      "_activity": "bath_time",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 20.0,
+      "_end": 20.45,
+      "_location": "bathroom",
+      "_despawn": true,
+      "_concealed_in": "bathroom_1.cabinet_1",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17317734175412036714,
+      "_judge_reason": "Placing a phone in a bathroom cabinet during bath time is a standard safety measure to prevent water damage, aligning perfectly with the activity.",
+      "_selected": true
+    },
+    {
+      "reason": "Similar to the phone, the wallet is a small personal item that should be secured in a dry place during bath time.",
+      "object_category": "wallet",
+      "target_relationship": "inside",
+      "target_anchor": "bathroom_1.cabinet_1",
+      "_activity": "bath_time",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 20.0,
+      "_end": 20.45,
+      "_location": "bathroom",
+      "_despawn": true,
+      "_concealed_in": "bathroom_1.cabinet_1",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17317734175412036714,
+      "_judge_reason": "Putting a wallet in a bathroom cabinet is logical to keep it dry and safe, consistent with standard bath-time behavior.",
+      "_selected": true
+    },
+    {
+      "reason": "Keys are essential but need to be kept dry and secure while bathing, so they are put away in a cabinet or drawer.",
+      "object_category": "keys",
+      "target_relationship": "inside",
+      "target_anchor": "bathroom_1.cabinet_1",
+      "_activity": "bath_time",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 20.0,
+      "_end": 20.45,
+      "_location": "bathroom",
+      "_despawn": true,
+      "_concealed_in": "bathroom_1.cabinet_1",
+      "_judge_score": 0.8,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17317734175412036714,
+      "_judge_reason": "Keys are often carried into the bathroom and stored in a cabinet to keep them dry and secure, making this a plausible action.",
+      "_selected": true
+    }
+  ],
+  "candidates": [
+    {
+      "reason": "Leo is waking up in a very messy room, so he likely tidies up by placing the scattered toy into the wardrobe to clear the floor space.",
+      "object_category": "toy",
+      "target_relationship": "inside",
+      "target_anchor": "bedroom_2.wardrobe_1",
+      "_activity": "waking_up",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 7.0,
+      "_end": 7.3,
+      "_location": "bedroom",
+      "_despawn": true,
+      "_concealed_in": "bedroom_2.wardrobe_1",
+      "_judge_score": 0.6,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 15429198479889894338,
+      "_judge_reason": "While waking up can trigger tidying, the extreme messiness (tidiness 0.1) and the specific act of putting a toy in a wardrobe is a plausible cleaning behavior, not absurd. However, typically one might just leave it or put it in a bin; putting it in a wardrobe is a specific storage decision. It is plausible enough for a messy person to start organizing.",
+      "_selected": true
+    },
+    {
+      "reason": "As Mia wakes up and tidies her bedroom, she likely puts away the toy currently on the floor to reduce clutter. She stores it inside the wardrobe to keep the room organized.",
+      "object_category": "toy",
+      "target_relationship": "inside",
+      "target_anchor": "bedroom_3.wardrobe_1",
+      "_activity": "waking_up",
+      "_occupant": "Mia",
+      "_occupant_index": 2,
+      "_start": 7.0,
+      "_end": 7.25,
+      "_location": "bedroom",
+      "_despawn": true,
+      "_concealed_in": "bedroom_3.wardrobe_1",
+      "_judge_score": 0.2,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 14022587518925188724,
+      "_judge_reason": "The activity is 'waking_up', which typically implies the initial act of rising from bed, not a comprehensive tidying session that involves clearing the floor and storing items in a wardrobe. This justification describes a cleaning activity that is distinct from the immediate physiological act of waking up.",
+      "_gate_excluded": "already_stored",
+      "_selected": false
+    },
+    {
+      "reason": "Alex is preparing or eating breakfast in the kitchen, so she likely brings a bowl out for use. A fresh bowl is preferred over re-using one that might already be on a surface.",
+      "object_category": "bowl",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_activity": "breakfast",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.0,
+      "_end": 8.3,
+      "_location": "kitchen",
+      "_judge_score": 0.95,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17545709164127257170,
+      "_judge_reason": "Bringing a fresh bowl to the table for breakfast is the standard, expected behavior for this activity. The justification correctly identifies the need for a clean dish and the location of use.",
+      "_resolved_slot": "kitchen.table_1",
+      "_selected": true
+    },
+    {
+      "reason": "The stool is currently in the bedroom. Alex might bring it to the kitchen to sit at the counter or table if seating is needed for breakfast.",
+      "object_category": "stool",
+      "target_relationship": "next_to",
+      "target_anchor": "kitchen.table_1",
+      "_activity": "breakfast",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.0,
+      "_end": 8.3,
+      "_location": "kitchen",
+      "_judge_score": 0.3,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17545709164127257170,
+      "_judge_reason": "The justification claims the stool is in the bedroom, but Alex is already in the kitchen for breakfast; it is highly implausible to retrieve a specific seat from another room when one is likely already at the table or when standing is an option. This implies an unnecessary and inefficient movement not typical for a simple breakfast.",
+      "_resolved_slot": "kitchen.table_1",
+      "_selected": true
+    },
+    {
+      "reason": "After breakfast, Alex may tidy up by putting away a used bowl into storage to keep the kitchen clear. The fridge is the only listed storage anchor for dishes.",
+      "object_category": "bowl",
+      "target_relationship": "inside",
+      "target_anchor": "kitchen.cabinet_1",
+      "_activity": "breakfast",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 8.0,
+      "_end": 8.3,
+      "_location": "kitchen",
+      "_despawn": true,
+      "_concealed_in": "kitchen.cabinet_1",
+      "_judge_score": 0.0,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17545709164127257170,
+      "_judge_reason": "The justification states Alex tidies up by putting the bowl away, but the candidate places the bowl 'inside kitchen.cabinet_1' while the text claims 'The fridge is the only listed storage anchor for dishes,' creating a direct contradiction between the action (cabinet storage) and the reasoning (fridge storage).",
+      "_selected": false
+    },
+    {
+      "reason": "Leo is playing in the living room, and the only toy listed is currently unplaced or out, so he likely picks it up to use it during play.",
+      "object_category": "toy",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "playing",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 8.3,
+      "_end": 11.0,
+      "_location": "living_room",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 7586639437801530514,
+      "_judge_reason": "The placement of a toy near the TV during play is a highly plausible and common behavior for a child, aligning perfectly with the activity and low tidiness.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": true
+    },
+    {
+      "reason": "The living room is quite untidy, and Leo might move a potted plant to a better spot or clear space while playing, using one of the plants already in the room.",
+      "object_category": "potted_plant",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "playing",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 8.3,
+      "_end": 11.0,
+      "_location": "living_room",
+      "_judge_score": 0.2,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 7586639437801530514,
+      "_judge_reason": "Moving a potted plant specifically to make space while playing is an unusual and unlikely behavioral connection; plants are typically stationary fixtures, not clutter to be shuffled for play.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": false
+    },
+    {
+      "reason": "Mia is decorating, which likely involves arranging or bringing in fresh plants for display. She would move a potted plant from storage or another room to a visible spot in the kitchen to enhance the decor.",
+      "object_category": "potted_plant",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_activity": "decorating",
+      "_occupant": "Mia",
+      "_occupant_index": 2,
+      "_start": 9.0,
+      "_end": 9.15,
+      "_location": "kitchen",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 13418620783070196517,
+      "_judge_reason": "Bringing a plant into the kitchen for decoration is a standard, logical action for this activity, regardless of existing items due to the abundance of decor. This is a typical placement for the stated goal.",
+      "_resolved_slot": "kitchen.table_1",
+      "_selected": true
+    },
+    {
+      "reason": "After placing the plant, she might tidy the area by storing unused items or tools. Since there is no explicit storage furniture listed for small decor items, she might use the stool as a temporary surface or move it if it was in the way, but given the low tidiness, she is more likely to leave it. However, if she needs a step or seat to reach high places, she might pull out the stool.",
+      "object_category": "stool",
+      "target_relationship": "next_to",
+      "target_anchor": "kitchen.table_1",
+      "_activity": "decorating",
+      "_occupant": "Mia",
+      "_occupant_index": 2,
+      "_start": 9.0,
+      "_end": 9.15,
+      "_location": "kitchen",
+      "_judge_score": 0.4,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 13418620783070196517,
+      "_judge_reason": "The reasoning contradicts itself by suggesting the stool is stored or left alone, yet the action is placing it next to the table. While a stool can be used for reaching heights, 'decorating' typically implies arranging items rather than climbing, and pulling a stool to the center of the kitchen without a clear need to reach high is less direct than simply arranging the plant. However, it is not in",
+      "_gate_excluded": "noop",
+      "_selected": false
+    },
+    {
+      "reason": "Alex is eating lunch and likely needs a bowl for her food; since bowls are abundant and one might already be in use or dirty, she brings a fresh one out. The kitchen counter is a standard surface for preparing or placing food items during a break.",
+      "object_category": "bowl",
+      "target_relationship": "on",
+      "target_anchor": "kitchen.bench_2",
+      "_activity": "lunch_break",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 12.3,
+      "_end": 13.0,
+      "_location": "kitchen",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 12274983006848263127,
+      "_judge_reason": "The justification correctly identifies that bowls are abundant and a fresh one is appropriate for lunch, making the placement on a kitchen bench (a standard food surface) behaviorally sound. There are no contradictions regarding object uniqueness or activity mismatch.",
+      "_resolved_slot": "kitchen.bench_2",
+      "_selected": true
+    },
+    {
+      "reason": "Mia is playing in the living room and may want to bring the single available toy into the space to play with it. The tv stand is a stable surface nearby for placing the toy.",
+      "object_category": "toy",
+      "target_relationship": "on",
+      "target_anchor": "tv_room.table_1",
+      "_activity": "playing",
+      "_occupant": "Mia",
+      "_occupant_index": 2,
+      "_start": 15.0,
+      "_end": 16.3,
+      "_location": "living_room",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 6258062003983870394,
+      "_judge_reason": "The justification correctly identifies that Mia is playing in the living room and needs the toy for that activity. Placing the toy on a nearby table is a standard, low-effort way to keep it accessible during play without leaving it on the floor, fitting the context perfectly.",
+      "_resolved_slot": "tv_room.table_1",
+      "_selected": true
+    },
+    {
+      "reason": "As Leo plays in the living room, he might move a potted plant to create a makeshift obstacle course or decoration for his game. He would place it on the floor or a low surface to integrate it into his play area.",
+      "object_category": "potted_plant",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "playing",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 15.45,
+      "_end": 17.0,
+      "_location": "living_room",
+      "_judge_score": 0.2,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 2325192894169977013,
+      "_judge_reason": "Moving a potted plant to create an obstacle course is physically possible but highly improbable and dangerous for a typical child; plants are fragile and not standard play props. This is a contrived scenario unlikely to occur in normal play behavior.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": false
+    },
+    {
+      "reason": "Leo might bring a toy from another room into the living room to continue his play session. Since 'toy' is in the inventory and he is playing, he likely interacts with it.",
+      "object_category": "toy",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "playing",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 15.45,
+      "_end": 17.0,
+      "_location": "living_room",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 2325192894169977013,
+      "_judge_reason": "Bringing a toy from another room to the living room to continue playing is exactly what a child would do when changing play locations or gathering materials. It aligns perfectly with the activity and the inventory.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": true
+    },
+    {
+      "reason": "Alex is preparing dinner and will likely need a bowl for ingredients or serving; since only two are present and one might be in use or stored, bringing a fresh one out is standard practice.",
+      "object_category": "bowl",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_activity": "dinner_preparation",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 17.0,
+      "_end": 18.0,
+      "_location": "kitchen",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 3059726849117870671,
+      "_judge_reason": "The justification correctly identifies that bringing a fresh bowl is standard practice for dinner preparation, even if others exist, as bowls are abundant everyday items. This placement aligns perfectly with the activity and household norms.",
+      "_resolved_slot": "kitchen.table_1",
+      "_selected": true
+    },
+    {
+      "reason": "Leo is playing in the living room, so he likely moves the toy from its current location to the floor area where he is playing to engage with it.",
+      "object_category": "toy",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "playing",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 17.45,
+      "_end": 19.3,
+      "_location": "living_room",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 11193298863417084927,
+      "_judge_reason": "Placing a toy on or near the TV stand is a common behavior for a child playing in the living room, allowing easy access or display during play. This aligns perfectly with the activity and location.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": true
+    },
+    {
+      "reason": "With very low household tidiness (0.1/1.0), Leo may have knocked over or misplaced the single potted plant in the living room while playing, requiring him to move it back to an upright position on the floor or a low surface.",
+      "object_category": "potted_plant",
+      "target_relationship": "near",
+      "target_anchor": "tv_room.tv_1",
+      "_activity": "playing",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 17.45,
+      "_end": 19.3,
+      "_location": "living_room",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 11193298863417084927,
+      "_judge_reason": "A potted plant is not a toy and has no behavioral connection to playing; knocking it over and moving it is an accident, not a deliberate placement for the activity. The justification contradicts the nature of the object and activity.",
+      "_resolved_slot": "tv_room.tv_1",
+      "_selected": false
+    },
+    {
+      "reason": "Alex is tidying the kitchen, so she should put away the single stool currently located in the bedroom to keep the home organized.",
+      "object_category": "stool",
+      "target_relationship": "next_to",
+      "target_anchor": "kitchen.table_1",
+      "_activity": "cleaning_kitchen",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 18.45,
+      "_end": 19.15,
+      "_location": "kitchen",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 18317314888006380734,
+      "_judge_reason": "The justification claims Alex is tidying the kitchen but retrieves a stool from the bedroom, which contradicts the activity scope (tidying the kitchen shouldn't involve moving furniture from unrelated rooms) and introduces an unnecessary, non-local action. Additionally, fetching a single stool from another room for a general kitchen clean is not a standard or efficient behavior compared to simplyt",
+      "_gate_excluded": "noop",
+      "_selected": false
+    },
+    {
+      "reason": "Leo is winding down in his bedroom, likely preparing for sleep or relaxing, so he might tidy up any clutter. The toy is a common item to put away at the end of the day to keep the room tidy.",
+      "object_category": "toy",
+      "target_relationship": "inside",
+      "target_anchor": "bedroom_2.wardrobe_1",
+      "_activity": "winding_down",
+      "_occupant": "Leo",
+      "_occupant_index": 1,
+      "_start": 19.3,
+      "_end": 20.0,
+      "_location": "bedroom",
+      "_despawn": true,
+      "_concealed_in": "bedroom_2.wardrobe_1",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 5987308259012606659,
+      "_judge_reason": "Tidying up clutter by putting a toy away in a wardrobe is a standard pre-sleep routine, especially with low tidiness indicating clutter exists. The destination (wardrobe) matches the action (putting away/tidying).",
+      "_selected": true
+    },
+    {
+      "reason": "Alex is preparing for a bath in the bathroom, so she likely puts away personal items she was carrying or had nearby to keep them dry and safe from water.",
+      "object_category": "phone",
+      "target_relationship": "inside",
+      "target_anchor": "bathroom_1.cabinet_1",
+      "_activity": "bath_time",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 20.0,
+      "_end": 20.45,
+      "_location": "bathroom",
+      "_despawn": true,
+      "_concealed_in": "bathroom_1.cabinet_1",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17317734175412036714,
+      "_judge_reason": "Placing a phone in a bathroom cabinet during bath time is a standard safety measure to prevent water damage, aligning perfectly with the activity.",
+      "_selected": true
+    },
+    {
+      "reason": "Similar to the phone, the wallet is a small personal item that should be secured in a dry place during bath time.",
+      "object_category": "wallet",
+      "target_relationship": "inside",
+      "target_anchor": "bathroom_1.cabinet_1",
+      "_activity": "bath_time",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 20.0,
+      "_end": 20.45,
+      "_location": "bathroom",
+      "_despawn": true,
+      "_concealed_in": "bathroom_1.cabinet_1",
+      "_judge_score": 0.9,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17317734175412036714,
+      "_judge_reason": "Putting a wallet in a bathroom cabinet is logical to keep it dry and safe, consistent with standard bath-time behavior.",
+      "_selected": true
+    },
+    {
+      "reason": "Keys are essential but need to be kept dry and secure while bathing, so they are put away in a cabinet or drawer.",
+      "object_category": "keys",
+      "target_relationship": "inside",
+      "target_anchor": "bathroom_1.cabinet_1",
+      "_activity": "bath_time",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 20.0,
+      "_end": 20.45,
+      "_location": "bathroom",
+      "_despawn": true,
+      "_concealed_in": "bathroom_1.cabinet_1",
+      "_judge_score": 0.8,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17317734175412036714,
+      "_judge_reason": "Keys are often carried into the bathroom and stored in a cabinet to keep them dry and secure, making this a plausible action.",
+      "_selected": true
+    },
+    {
+      "reason": "The laptop is a valuable electronic device that must be kept away from moisture during bath time.",
+      "object_category": "laptop",
+      "target_relationship": "inside",
+      "target_anchor": "bathroom_1.cabinet_1",
+      "_activity": "bath_time",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 20.0,
+      "_end": 20.45,
+      "_location": "bathroom",
+      "_despawn": true,
+      "_concealed_in": "bathroom_1.cabinet_1",
+      "_judge_score": 0.2,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 17317734175412036714,
+      "_judge_reason": "Laptops are rarely brought into the bathroom for a bath, making this placement behaviorally implausible for a typical scenario.",
+      "_selected": false
+    },
+    {
+      "reason": "Alex is preparing for bed, so she will put away the phone she is likely carrying to avoid distractions and charge it overnight.",
+      "object_category": "phone",
+      "target_relationship": "inside",
+      "target_anchor": "bedroom_1.bed_1",
+      "_activity": "bedtime_routine",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 20.45,
+      "_end": 21.3,
+      "_location": "bedroom",
+      "_judge_score": 0.2,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 1624908295874829240,
+      "_judge_reason": "Placing a phone directly inside the bedding is physically possible but behaviorally implausible for charging or storage; users typically place it on a nightstand or in a drawer to avoid heat buildup and damage. This is a contrived placement that doesn't align with standard bedtime routines.",
+      "_resolved_slot": "bedroom_1.bed_1",
+      "_selected": false
+    },
+    {
+      "reason": "Alex is likely carrying her phone while getting ready for bed and needs to place it somewhere safe and accessible for charging or alarm setting. Placing it on the nightstand is the standard, practical location for a phone during bedtime routines.",
+      "object_category": "phone",
+      "target_relationship": "on",
+      "target_anchor": "bedroom_1.bed_1",
+      "_activity": "bedtime_routine",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 20.45,
+      "_end": 21.3,
+      "_location": "bedroom",
+      "_revision_round": 1,
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_r2kill_p3ef0b5c9_b6",
+      "_judge_seed": 12119971633692648979,
+      "_judge_reason": "The justification explicitly states the phone is placed on the nightstand, which contradicts the candidate's target location of the bed. This is an OBJECT/DESTINATION mismatch.",
+      "_resolved_slot": "bedroom_1.bed_1",
+      "_selected": false
+    },
+    {
+      "reason": "Alex is organizing lunches in the kitchen, which likely involves retrieving food items from storage. The fridge is the primary storage location for perishable lunch ingredients.",
+      "object_category": "bowl",
+      "target_relationship": "inside",
+      "target_anchor": "kitchen.bench_2",
+      "_activity": "organizing_lunches",
+      "_occupant": "Alex",
+      "_occupant_index": 0,
+      "_start": 21.3,
+      "_end": 22.0,
+      "_location": "kitchen",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_fixh_p3ef0b5c9_b6",
+      "_judge_seed": 4409333673388053009,
+      "_judge_reason": "The justification explicitly states the fridge is the storage location, but the candidate places the bowl on a kitchen bench, creating a direct contradiction between the stated intent and the physical placement.",
+      "_resolved_slot": "kitchen.bench_2",
+      "_selected": false
+    }
+  ],
+  "raw_proposals": 25,
+  "grounded_proposals": 25,
+  "abstained_proposals": 38,
+  "abstained_clutter": 0,
+  "clutter_below_floor": 14,
+  "clutter_over_cap": 0,
+  "clutter_rejected": [
+    {
+      "reason": "Children's books are frequently left open or stacked after reading time. A low shelf in the living room is accessible for kids.",
+      "object_category": "book",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a low shelf in the living room, but the candidate places the book on the kitchen table. This is an OBJECT/DESTINATION mismatch between the reason's implied location and the candidate's location."
+    },
+    {
+      "reason": "A basket for remote controls keeps the living room tidy. The couch provides a convenient resting spot for these items.",
+      "object_category": "blanket",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a basket for remote controls on the couch, but the candidate places a blanket on the kitchen table. This is a complete OBJECT/DESTINATION mismatch; the reason describes a different object and location entirely."
+    },
+    {
+      "reason": "Slippers are typically left by the bed for easy morning and evening access. This fits the standard bedroom routine.",
+      "object_category": "slippers",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions slippers by the bed, but the candidate places them on the kitchen table. This is an OBJECT/DESTINATION mismatch; slippers belong in the bedroom, not the kitchen."
+    },
+    {
+      "reason": "A nightlight ensures safety for young children navigating the bedroom at night. It belongs on a bedside surface.",
+      "object_category": "nightlight",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a nightlight on a bedside surface, but the candidate places it on the kitchen table. This is an OBJECT/DESTINATION mismatch; nightlights belong in bedrooms."
+    },
+    {
+      "reason": "Outdoor cushions are stored or displayed in the outdoor area. The bench is a logical place for them.",
+      "object_category": "outdoor_cushions",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions outdoor cushions on an outdoor bench, but the candidate places them on the kitchen table. This is an OBJECT/DESTINATION mismatch; outdoor items do not belong on indoor kitchen furniture."
+    },
+    {
+      "reason": "A rake is a common gardening tool kept near outdoor plants. The outdoor area is its natural home.",
+      "object_category": "rake",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a rake near outdoor plants, but the candidate places it on the kitchen table. This is an OBJECT/DESTINATION mismatch; rakes are outdoor tools and do not belong on indoor tables."
+    },
+    {
+      "reason": "A shovel is another basic gardening tool for the outdoor space. It fits well with other outdoor maintenance items.",
+      "object_category": "shovel",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a shovel for outdoor space, but the candidate places it on the kitchen table. This is an OBJECT/DESTINATION mismatch; shovels are outdoor tools."
+    },
+    {
+      "reason": "A garden hose is stored in the outdoor area for watering plants. The outdoor bench or ground is suitable.",
+      "object_category": "garden_hose",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a garden hose in the outdoor area, but the candidate places it on the kitchen table. This is an OBJECT/DESTINATION mismatch; hoses are outdoor items."
+    },
+    {
+      "reason": "A jewelry box is a personal item kept in the bedroom for security. It belongs on a dresser or nightstand.",
+      "object_category": "jewelry_box",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a jewelry box in the bedroom, but the candidate places it on the kitchen table. This is an OBJECT/DESTINATION mismatch; personal security items belong in the bedroom."
+    },
+    {
+      "reason": "Pillows are essential for comfort on the bed in the bedroom. They are typically arranged on the bed.",
+      "object_category": "pillow",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions pillows on the bed, but the candidate places one on the kitchen table. This is an OBJECT/DESTINATION mismatch; pillows belong on beds."
+    },
+    {
+      "reason": "A blanket is often draped over the couch in the living room for warmth. It adds a lived-in feel to the seating area.",
+      "object_category": "blanket",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions a blanket draped over a couch, but the candidate places it on the kitchen table. This is an OBJECT/DESTINATION mismatch; blankets belong on couches or beds."
+    },
+    {
+      "reason": "Toys are a key part of a young children's household. They are often scattered on the floor or low surfaces in the living room.",
+      "object_category": "toy",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions toys scattered in the living room, but the candidate places a toy on the kitchen table. This is an OBJECT/DESTINATION mismatch; toys belong in living areas."
+    },
+    {
+      "reason": "Books are common in family homes, often placed on living room shelves for easy access by kids.",
+      "object_category": "book",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions books on living room shelves, but the candidate places a book on the kitchen table. This is an OBJECT/DESTINATION mismatch; books belong in living areas or libraries."
+    },
+    {
+      "reason": "Remote controls are clutter items that accumulate on living room surfaces. The TV stand is a prime location.",
+      "object_category": "toy",
+      "target_relationship": "on_top",
+      "target_anchor": "kitchen.table_1",
+      "_judge_score": 0.1,
+      "_judge_stage_tag": "realism_strict_p3ef0b5c9_b6",
+      "_judge_reason": "The justification mentions remote controls on a TV stand, but the candidate places a toy on the kitchen table. This is a complete OBJECT/DESTINATION mismatch."
+    }
+  ],
+  "floor_bound_surface_dropped": 0,
+  "preflight_excluded": {
+    "already_stored": 1,
+    "noop": 2
+  },
+  "mean_realism_score": 0.8321,
+  "grounding_stats": {
+    "total": 17,
+    "accepted": 17,
+    "survival_rate": 1.0,
+    "infra_rejection_rate": 0.0,
+    "model_rejection_rate": 0.0,
+    "no_object": 0,
+    "no_anchor": 0,
+    "no_placement": 0,
+    "bad_relation": 0,
+    "rejected_categories": {}
+  },
+  "conflict_report": {
+    "conflicts": []
+  }
+}

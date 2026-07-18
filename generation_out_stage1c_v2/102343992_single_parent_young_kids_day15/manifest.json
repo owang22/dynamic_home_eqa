@@ -1,0 +1,184 @@
+{
+  "scene_id": "102343992",
+  "resident_profile": "single_parent_young_kids",
+  "seed": 16,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "alex_laptop": "laptop_a031287e7b68",
+    "alex_phone": "phone_223b376823b5",
+    "alex_wallet": "wallet_4eb66e5c0b4f",
+    "alex_keys": "keys_92167e12a3f0"
+  },
+  "day_context": {
+    "Alex": {
+      "day_type": "weekday",
+      "day_scenario": "Alex wakes at 6:30 AM to tackle project deadlines from her home office before the household fully stirs. After dinner, she arranges tomorrow\u2019s lunch containers on the kitchen counter while quietly reviewing work emails on her tablet while the children are in bed."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "Leo wakes at 7:00 AM and spends the morning stacking wooden blocks into a towering spiral in the living room. By afternoon, he drags the remaining bricks down the hallway, leaving a precarious tower that eventually tumbles onto the rug."
+    },
+    "Mia": {
+      "day_type": "weekday",
+      "day_scenario": "Mia wakes at 7:00 AM and settles at the dining table to sketch colorful dragons, later proudly taping them to the refrigerator door. After her creative session, she wanders into the family room, leaving a scattered trail of crayons across the coffee table."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.108,
+      "label": "toy_1",
+      "change_type": "remove",
+      "object_category": "toy",
+      "from_semantic": "tv_room.table_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Leo",
+      "activity": "waking_up",
+      "reason": "Leo is waking up in a very messy room, so he likely tidies up by placing the scattered toy into the wardrobe to clear the floor space.",
+      "object_handle": null
+    },
+    {
+      "t": 8.222,
+      "label": "bowl_3",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "breakfast",
+      "reason": "Alex is preparing or eating breakfast in the kitchen, so she likely brings a bowl out for use. A fresh bowl is preferred over re-using one that might already be on a surface.",
+      "object_handle": null
+    },
+    {
+      "t": 8.296,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_tucked",
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "next_to",
+      "mover": "Alex",
+      "activity": "breakfast",
+      "reason": "The stool is currently in the bedroom. Alex might bring it to the kitchen to sit at the counter or table if seating is needed for breakfast.",
+      "object_handle": null
+    },
+    {
+      "t": 8.778,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "away",
+      "to_semantic": "tv_room.tv_1",
+      "target_relationship": "near",
+      "mover": "Leo",
+      "activity": "playing",
+      "reason": "Leo is playing in the living room, and the only toy listed is currently unplaced or out, so he likely picks it up to use it during play.",
+      "object_handle": null
+    },
+    {
+      "t": 9.028,
+      "label": "potted_plant_1",
+      "change_type": "move_existing",
+      "object_category": "potted_plant",
+      "from_semantic": "living_room.corner",
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "decorating",
+      "reason": "Mia is decorating, which likely involves arranging or bringing in fresh plants for display. She would move a potted plant from storage or another room to a visible spot in the kitchen to enhance the decor.",
+      "object_handle": null
+    },
+    {
+      "t": 12.883,
+      "label": "bowl_1",
+      "change_type": "move_existing",
+      "object_category": "bowl",
+      "from_semantic": "kitchen.table_1",
+      "to_semantic": "kitchen.bench_2",
+      "target_relationship": "on",
+      "mover": "Alex",
+      "activity": "lunch_break",
+      "reason": "Alex is eating lunch and likely needs a bowl for her food; since bowls are abundant and one might already be in use or dirty, she brings a fresh one out. The kitchen counter is a standard surface for preparing or placing food items during a break.",
+      "object_handle": null
+    },
+    {
+      "t": 15.449,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "tv_room.tv_1",
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "playing",
+      "reason": "Mia is playing in the living room and may want to bring the single available toy into the space to play with it. The tv stand is a stable surface nearby for placing the toy.",
+      "object_handle": null
+    },
+    {
+      "t": 15.971,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "tv_room.table_1",
+      "to_semantic": "tv_room.tv_1",
+      "target_relationship": "near",
+      "mover": "Leo",
+      "activity": "playing",
+      "reason": "Leo might bring a toy from another room into the living room to continue his play session. Since 'toy' is in the inventory and he is playing, he likely interacts with it.",
+      "object_handle": null
+    },
+    {
+      "t": 17.928,
+      "label": "bowl_1",
+      "change_type": "move_existing",
+      "object_category": "bowl",
+      "from_semantic": "kitchen.bench_2",
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "dinner_preparation",
+      "reason": "Alex is preparing dinner and will likely need a bowl for ingredients or serving; since only two are present and one might be in use or stored, bringing a fresh one out is standard practice.",
+      "object_handle": null
+    },
+    {
+      "t": 18.858,
+      "label": "toy_2",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "tv_room.tv_1",
+      "target_relationship": "near",
+      "mover": "Leo",
+      "activity": "playing",
+      "reason": "Leo is playing in the living room, so he likely moves the toy from its current location to the floor area where he is playing to engage with it.",
+      "object_handle": null
+    },
+    {
+      "t": 19.394,
+      "label": "toy_1",
+      "change_type": "remove",
+      "object_category": "toy",
+      "from_semantic": "tv_room.tv_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Leo",
+      "activity": "winding_down",
+      "reason": "Leo is winding down in his bedroom, likely preparing for sleep or relaxing, so he might tidy up any clutter. The toy is a common item to put away at the end of the day to keep the room tidy.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 2,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 3,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

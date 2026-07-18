@@ -172,6 +172,38 @@ def log_episode(gen_dir: pathlib.Path, folders: list[str],
         indexed.append((int(m.group(1)) if m else pos, folder))
     indexed.sort()
     logged_days = [d for d, _f in indexed]
+    # Receptacle-LABEL prefix canonicalization (alias fix, part 2). Legacy
+    # hand-authored slots spell rooms differently from census labels
+    # ("dining.table_tucked" vs "dining_room.table_1"), so the model-facing
+    # vocabulary showed one room under two names. Rewrite a label's prefix to
+    # the census room iff the prefix is a ROOM word (not a furniture/appliance
+    # category like fridge/tv — "fridge.inside" reads naturally and its room
+    # is handled by the room-projection fix) that alias-matches exactly one
+    # census room. Bijective per scene, applied at every label entry point.
+    from dynamic_home_eqa.rooms import CATEGORY_ROOM_HINT as _CRH, rooms_match as _rm
+    from dynamic_home_eqa.env.anchor_census import load_anchor_census
+    _census_rooms_early = None
+    _label_map: dict[str, str] = {}
+
+    def _canon_label(lbl: str) -> str:
+        nonlocal _census_rooms_early
+        if lbl in _label_map:
+            return _label_map[lbl]
+        out = lbl
+        if "." in lbl:
+            prefix, _, rest = lbl.partition(".")
+            if _census_rooms_early is None:
+                _c = load_anchor_census(scene_id) or {"anchors": {}}
+                _census_rooms_early = sorted({a.get("room") for a in
+                                              _c["anchors"].values() if a.get("room")})
+            if (prefix not in _census_rooms_early
+                    and prefix not in _CRH):
+                m = [r for r in _census_rooms_early if _rm(prefix, r)]
+                if len(m) == 1:
+                    out = f"{m[0]}.{rest}"
+        _label_map[lbl] = out
+        return out
+
     for day, folder in indexed:
         manifest = json.loads((gen_dir / folder / "manifest.json").read_text())
         gen_result = json.loads((gen_dir / folder / "generation_result.json").read_text())
@@ -180,6 +212,8 @@ def log_episode(gen_dir: pathlib.Path, folders: list[str],
         assert manifest["scene_id"] == scene_id, "episode must be one scene"
 
         parents = _day_start_parents(manifest, gen_result)
+        parents = {o: _canon_label(v) if v != ELSEWHERE_LABEL else v
+                   for o, v in parents.items()}
         object_labels.update(parents)
         receptacle_labels.update(v for v in parents.values() if v != ELSEWHERE_LABEL)
 
@@ -204,14 +238,20 @@ def log_episode(gen_dir: pathlib.Path, folders: list[str],
         })
 
         day_events = _day_events(manifest, day, parents, states)
+        for e in day_events:
+            if e["parent_label"] != ELSEWHERE_LABEL:
+                e["parent_label"] = _canon_label(e["parent_label"])
         receptacle_labels.update(e["parent_label"] for e in day_events
                                  if e["parent_label"] != ELSEWHERE_LABEL)
         object_labels.update(e["label"] for e in day_events)
         all_events.extend(day_events)
-        prev_end_parents = dict(parents)
+        # _day_events mutates `parents` to end-of-day state using RAW manifest
+        # labels — re-canonicalize before it becomes the boundary reference,
+        # else the midnight reset sees phantom alias diffs
+        prev_end_parents = {o: (_canon_label(v) if v != ELSEWHERE_LABEL else v)
+                            for o, v in parents.items()}
 
     # ---- registry: stable int ids ------------------------------------------
-    from dynamic_home_eqa.env.anchor_census import load_anchor_census
     census = load_anchor_census(scene_id) or {"anchors": {}}
     # Receptacle vocabulary = every census anchor (the full candidate set the
     # brief requires) plus anything observed as a parent that the census
@@ -222,12 +262,44 @@ def log_episode(gen_dir: pathlib.Path, folders: list[str],
         recep_ids[lbl] = i
     obj_ids = {lbl: i for i, lbl in enumerate(sorted(object_labels))}
 
+    # Canonical room projection (alias fix at source). Legacy hand-authored
+    # slot labels ("dining.table_tucked", "tv.on", "fridge.inside") used to
+    # fall back to their raw prefix as the "room", minting phantom rooms
+    # ('dining' next to the census's 'dining_room', 'tv' next to
+    # 'living_room') — measured downstream as phantom room-level moves (15/15
+    # of the chair moved-bank cell). Receptacle labels stay distinct (a
+    # tucked-slot and a table are different receptacles); only their ROOM
+    # projection is unified: census rooms verbatim, legacy prefixes resolved
+    # through CATEGORY_ROOM_HINT + rooms_match against this scene's census
+    # rooms.
+    from dynamic_home_eqa.rooms import CATEGORY_ROOM_HINT, rooms_match
+    census_rooms = sorted({a.get("room") for a in census["anchors"].values()
+                           if a.get("room")})
+
+    def _canonical_room(lbl: str, census_room: Optional[str]) -> Optional[str]:
+        if census_room:
+            return census_room
+        if "." not in lbl:
+            return None
+        prefix = lbl.split(".")[0]
+        if prefix in census_rooms:
+            return prefix
+        cand = CATEGORY_ROOM_HINT.get(prefix, prefix)
+        def _base(r):
+            h, _, t = r.rpartition("_")
+            return h if t.isdigit() else r
+        matches = [r for r in census_rooms
+                   if rooms_match(cand, r) or rooms_match(cand, _base(r))]
+        if len(matches) == 1:
+            return matches[0]
+        return cand
+
     recep_meta = {}
     for lbl, rid in recep_ids.items():
         rec = census["anchors"].get(lbl, {})
         recep_meta[str(rid)] = {
             "label": lbl,
-            "room": rec.get("room") or (lbl.split(".")[0] if "." in lbl else None),
+            "room": _canonical_room(lbl, rec.get("room")),
             "position": rec.get("position"),
             "category": rec.get("category"),
         }
