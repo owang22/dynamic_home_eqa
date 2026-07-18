@@ -132,6 +132,13 @@ def main() -> None:
                          "alongside a think block on this vLLM version); output shapes are "
                          "normalized and the reasoning trace is stored in the response cache. "
                          "Proposer stays guided/non-thinking.")
+    ap.add_argument("--enrich-context", action="store_true",
+                    help="Thread the running object state + today's activity "
+                         "history into the proposer AND judge prompts (Phase 3 "
+                         "sequential state threading), and enable put-away "
+                         "proposals. Defends temporal coherence (a move can be "
+                         "judged against 'dinner already happened') at the cost "
+                         "of ~2x prompt size. Off by default for legacy parity.")
     ap.add_argument("--judge-retry", action="store_true",
                     help="ONE revision round per activity window: first-pass "
                          "judge rejects (score < 0.3) go back to the proposer "
@@ -226,6 +233,7 @@ def main() -> None:
         judge_thinking=args.judge_thinking,
         judge_style=args.judge_style,
         judge_retry=args.judge_retry,
+        enrich_context=args.enrich_context,
         activity_scale=args.activity_scale,
     )
 

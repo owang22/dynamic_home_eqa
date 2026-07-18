@@ -59,7 +59,7 @@ def generate_clutter(
     """
     from ..inventory import format_inventory_for_prompt
     from ...env.anchor_census import census_anchor_vocabulary
-    from ...env.inventory import TIER2_CLUTTER_CATALOG
+    from ...env.inventory import TIER2_CLUTTER_CATALOG, CLUTTER_ROOM_MAP
 
     # variant/day-independent: clutter's starting position is a property of
     # the house + household, not of any one day, so this seed is pinned the
@@ -68,10 +68,23 @@ def generate_clutter(
     seed = make_seed(household_id, 0, _stage, 0)
 
     inv_text = format_inventory_for_prompt(anchor_inventory, room_inventory)
+    # Auto-expanded categories carry a nominal home room (CLUTTER_ROOM_MAP,
+    # from scripts/expand_clutter_catalog.py). Steer them there the same way
+    # the CLUTTER prompt's built-in examples steer bowl->kitchen: a definite
+    # room per category, not either/or. Only mention categories whose room
+    # actually exists in this scene's inventory, so we never ask for a
+    # bathroom object in a house with no bathroom.
+    _present_rooms = set((room_inventory or {}).keys())
+    _hints = [f"- {c.replace('_', ' ')} -> {r.replace('_', ' ')}"
+              for c, r in sorted(CLUTTER_ROOM_MAP.items())
+              if any(r in pr or pr in r for pr in _present_rooms)]
+    _route = ("\n\nThese categories have a definite home room — place each in "
+              "that room when it fits:\n" + "\n".join(_hints) if _hints else "")
     user = (
         f"Household type: {household_type}\n"
         f"\n{inv_text}\n"
-        f"\nPropose the static clutter objects for this home and where each lives."
+        + _route +
+        f"\n\nPropose the static clutter objects for this home and where each lives."
     )
 
     valid_categories = sorted(TIER2_CLUTTER_CATALOG.keys())

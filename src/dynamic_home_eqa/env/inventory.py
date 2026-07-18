@@ -124,7 +124,7 @@ TIER2_CLUTTER_CATALOG: dict[str, int] = {
     "shears":         1,
     "teapot":         1,
     "alarm_clock":    2,
-    "laundry_basket": 1,
+    "laundry_basket": 2,
     # medicine moved to TIER3_MOBILE (ownership-bound, one per owner) — it
     # was briefly a scarce clutter category here.
     # umbrella / watering_can: proposed but currently WITHOUT a reviewer-kept
@@ -133,6 +133,28 @@ TIER2_CLUTTER_CATALOG: dict[str, int] = {
     # add them back here once an asset is kept, or build_realized_day's
     # coverage assert will rightly fail.
 }
+
+# ── Auto-expanded clutter (scripts/expand_clutter_catalog.py) ────────────────
+# The offline "LLM proposes, cheap approval gate" loop writes
+# data/objects/clutter_room_map.json {category: canonical_room} for objects
+# that populate under-served rooms (bathroom/laundry/office/...). We fold them
+# into the catalog here (enum inclusion) and expose CLUTTER_ROOM_MAP so the
+# clutter proposer can be steered to place each in its nominal room. These are
+# NOMINAL-LOCATION categories: they need no render mesh to appear in a manifest
+# (rendering is a separate, deferred concern) — build_realized_day skips
+# materialising a category with no asset rather than asserting.
+CLUTTER_ROOM_MAP: dict[str, str] = {}
+try:
+    import json as _json, pathlib as _pl
+    _cm = _pl.Path(__file__).resolve().parents[3] / "data/objects/clutter_room_map.json"
+    if _cm.exists():
+        _data = _json.loads(_cm.read_text())
+        _cnt = int(_data.get("default_count", 2))
+        for _cat, _room in _data.get("map", {}).items():
+            CLUTTER_ROOM_MAP[_cat] = _room
+            TIER2_CLUTTER_CATALOG.setdefault(_cat, _cnt)
+except Exception:  # never let a bad map file break generation
+    CLUTTER_ROOM_MAP = {}
 
 # Storage furniture that CONCEALS what goes inside it: an object placed
 # `inside` one of these is put away out of sight — the generation pipeline

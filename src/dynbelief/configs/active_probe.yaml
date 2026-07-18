@@ -1,0 +1,22 @@
+# Active displacement probe (Stage 2) config.
+episodes:
+  # (scene episode dir, schedule_prior available?) — run per-scene, never pool raw acc
+  - {name: ep049w, dir: logs/dynbelief_ep049w, train_days: 7, test_days: [8, 10, 12]}
+
+probe:
+  seed: 7
+  grid_hours: [8, 11, 14, 17, 20]      # t_seen/t_query grid (hour of test day)
+  train_feed_min: 30
+  n_boot: 1000
+  # deliberate volatility mix (NOT movers-only): stable = over-sensing control
+  per_stratum: {static: 8, occasional: 8, dynamic: 12}
+
+# load-bearing cells only (~8); full grid runnable with --all-cells
+tiers: [b0_lastseen, b2_classdecay, "b3_perpetua_star(fremen)", "b3_perpetua_star(schedule_prior)"]
+cells:
+  - {policy: answer_now,            tiers: all}                       # value of acting reference, per tier
+  - {policy: voi_predictive,        tiers: [b2_classdecay, "b3_perpetua_star(fremen)", "b3_perpetua_star(schedule_prior)"]}
+  - {policy: sense_until_confident, tiers: ["b3_perpetua_star(fremen)"]}
+  # sense_once optional — omitted from headline
+
+report_dir: reports/active_probe

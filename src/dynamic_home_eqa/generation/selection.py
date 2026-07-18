@@ -20,14 +20,14 @@ from .cache import make_seed
 # is a best-effort keyword heuristic rather than a per-profile lookup table —
 # tune the keyword groups as generated activity labels reveal gaps.
 _LAMBDA_KEYWORDS: list[tuple[tuple[str, ...], float]] = [
-    (("breakfast", "lunch", "dinner", "cook", "meal", "snack", "party"), 3.0),
-    (("clean", "tidy", "organize", "chore", "laundry", "declutter"), 2.5),
-    (("work", "desk", "study", "read", "call", "meeting"), 2.0),
-    (("tv", "relax", "rest", "lounge", "nap", "movie"), 1.5),
-    (("gym", "errand", "shower", "bath"), 1.0),
-    (("sleep", "away", "outdoor"), 0.4),
+    (("breakfast", "lunch", "dinner", "cook", "meal", "snack", "party"), 6.0),
+    (("clean", "tidy", "organize", "chore", "laundry", "declutter"), 6.0),
+    (("work", "desk", "study", "read", "call", "meeting"), 5.0),
+    (("tv", "relax", "rest", "lounge", "nap", "movie"), 4.0),
+    (("sleep", "gym", "errand", "shower", "bath"), 3.0),
+    (("away", "outdoor"), 1.0),
 ]
-_DEFAULT_LAMBDA = 1.5
+_DEFAULT_LAMBDA = 3.0
 
 
 def lambda_moves_for(activity: str) -> float:

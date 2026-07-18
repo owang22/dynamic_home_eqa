@@ -1,0 +1,17 @@
+# Day-budget active probe (shared daily sensing budget).
+scenes:
+  - {name: ep049w,    dir: logs/dynbelief_ep049w,                                    train_days: [0,1,2,3,4,5,6],       test_days: [7,8,9,10,11,12]}
+  - {name: family,    dir: logs/dynbelief_daybudget_102344049_family_with_kids,      train_days: [0,1,2,3,4,5,7,8,9],   test_days: [10,11,12,13,14,16,17]}
+  - {name: roommates, dir: logs/dynbelief_daybudget_102344022_roommates_shared_house, train_days: [0,1,2,3,4,5,6,7,8,9], test_days: [10,11,12,13,14,15,16,17]}
+
+run:
+  seed: 7
+  q_per_day: 10
+  frac_transition: 0.6
+  train_feed_min: 30
+  budgets: [5, 10, 20, 30, 40]
+  n_boot: 1000
+  # anti-hollowing cell: voi_fixed(0.05) on b2 at this single budget
+  b2_cell_budget: 20
+
+report_dir: reports/day_budget
