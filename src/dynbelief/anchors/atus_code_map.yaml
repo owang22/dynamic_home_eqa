@@ -1,0 +1,68 @@
+# atus_code_map.yaml -- our charter activity -> ATUS activity code prefixes
+# (Anchor 1, [ATUS]). Used by V6a: each [ATUS]-tagged schedule block's start
+# time must fall within the [10th, 90th] percentile band for its mapped
+# activity/day-type among full-time-employed respondents.
+#
+# Code prefixes taken from the anchor brief's stated mapping; STRUCTURAL only,
+# drafted (Claude) for HUMAN REVIEW. No percentile numbers here -- those are
+# compiled from the ATUS microdata by compile_envelope.py once the zips are
+# placed (bls.gov unreachable -> NEEDS_DATA until then).
+
+version: 1
+source:
+  survey: American Time Use Survey (ATUS) 2003-2023
+  page: https://www.bls.gov/tus/data.htm
+  filter: full-time employed respondents (atusresp labor-force status)
+  bands: "10th / 50th / 90th percentile start-time, weekday vs weekend"
+
+# ATUS 2-6 digit activity codes (lexicon on the same page). Prefixes per the
+# anchor brief; VERIFY against the shipped ATUS coding lexicon.
+map:
+  sleep:         {atus: ["0101"], confidence: high, note: "010101 sleeping"}
+  morning_prep:  {atus: ["0102"], confidence: med,  note: "grooming/washing up"}
+  prep_b1:       {atus: ["0102"], confidence: med}
+  prep_b2:       {atus: ["0102"], confidence: med}
+  prep_p1:       {atus: ["0102"], confidence: med}
+  prep_p2:       {atus: ["0102"], confidence: med}
+  prep_k1:       {atus: ["0102"], confidence: med}
+  prep_k2:       {atus: ["0102"], confidence: med}
+  breakfast:     {atus: ["1101", "1102"], confidence: high, note: "eating & drinking"}
+  breakfast_r1:  {atus: ["1101", "1102"], confidence: high}
+  breakfast_r2:  {atus: ["1101", "1102"], confidence: high}
+  breakfast_p1:  {atus: ["1101", "1102"], confidence: high}
+  kid_breakfast_k1: {atus: ["1101", "1102"], confidence: high}
+  kid_breakfast_k2: {atus: ["1101", "1102"], confidence: high}
+  cook_dinner:   {atus: ["0202"], confidence: high, note: "food & drink prep"}
+  make_lunches:  {atus: ["0202"], confidence: high}
+  dinner:        {atus: ["1101", "1102"], confidence: high}
+  dinner_shared: {atus: ["1101", "1102"], confidence: high}
+  family_dinner: {atus: ["1101", "1102"], confidence: high}
+  late_dinner_r2: {atus: ["1101", "1102"], confidence: med}
+  tv_evening:    {atus: ["120303", "120304"], confidence: high, note: "TV/movies"}
+  leave_work:    {atus: ["1805", "0501"], confidence: med, note: "travel to work / working"}
+  away_at_work:  {atus: ["0501"], confidence: high, note: "working at main job"}
+  return_home:   {atus: ["1805"], confidence: med, note: "travel related to work"}
+  return_p1:     {atus: ["1805"], confidence: med}
+  school_run:    {atus: ["1806", "1503"], confidence: low, note: "travel to/from care of hh children"}
+  school_pickup: {atus: ["1806", "1503"], confidence: low}
+  tidy_house:    {atus: ["0201"], confidence: high, note: "interior cleaning"}
+  housework:     {atus: ["0201"], confidence: high}
+  study_r1:      {atus: ["0601"], confidence: med, note: "education / homework"}
+  homework_k1:   {atus: ["0601"], confidence: med}
+  homework_k2:   {atus: ["0601"], confidence: med}
+
+# Activities without an ATUS band (no [ATUS] tag in any charter, or no clean
+# code): listed, not dropped.
+unmapped:
+  - laptop_couch
+  - gaming_r2
+  - play_k1
+  - at_class_r1
+  - at_class_r2
+  - at_school_k1
+  - at_school_k2
+  - work_shift_r2
+  - leave_class_r1
+  - leave_class_r2
+  - return_r1
+  - return_r2

@@ -1,0 +1,312 @@
+# family4_typ_v1 -- typical base #3
+# Authorship note: DRAFT produced by a model OUTSIDE the evaluated set
+# (Claude), for the researcher to verify. Every numeric value is
+# provenance-tagged; status stays DRAFT until a human verifies the tags
+# against the cited anchor and validate_charter.py passes. Atypical variants
+# are produced ONLY by transforms.py, never by hand or model.
+#
+# Household: two-parent, two-child family. P1 full-time office worker; P2
+# part-time / flexible, carries most housework and the school run; K1
+# elementary-age child; K2 high-school-age child. School-morning rush, after-
+# school activities, a shared family dinner, staggered kid bedtimes. Personal
+# items are per-resident instances (phone_p1 / phone_k2 -> class "phone") so
+# V1 never sees an object required in two receptacles at once. Shared family
+# objects (remote, family tableware, cookware) are bound by one parent's
+# activity.
+#
+# Provenance key: [ATUS] [BEHAV] [HOMER] [HKEEP] [DESIGN]  (see single_adult)
+
+household: family4_typ_v1
+# VERIFIED by the researcher (Oliver, 2026-07-19): provenance tags reviewed;
+# validate_charter.py passes (no FAIL). cutting_board + pot retagged [DESIGN]
+# (BEHAVIOR-1K has no distinct board / stockpot synset).
+status: VERIFIED
+derived_from: null
+transformation: null
+
+receptacles:
+  - {id: bed_master,    room: bedroom_main,  aliases: [bed_p]}
+  - {id: nightstand_p1, room: bedroom_main,  aliases: []}
+  - {id: nightstand_p2, room: bedroom_main,  aliases: []}
+  - {id: dresser_main,  room: bedroom_main,  aliases: [wardrobe_main]}
+  - {id: bed_k1,        room: bedroom_kid1,  aliases: []}
+  - {id: desk_k1,       room: bedroom_kid1,  aliases: []}
+  - {id: bed_k2,        room: bedroom_kid2,  aliases: []}
+  - {id: desk_k2,       room: bedroom_kid2,  aliases: []}
+  - {id: nightstand_k2, room: bedroom_kid2,  aliases: []}
+  - {id: counter_k1,    room: kitchen,   aliases: [kitchen_counter]}
+  - {id: cupboard_k1,   room: kitchen,   aliases: [cabinet_k1]}
+  - {id: sink_k1,       room: kitchen,   aliases: []}
+  - {id: stove_k1,      room: kitchen,   aliases: []}
+  - {id: fridge_k1,     room: kitchen,   aliases: []}
+  - {id: island_k1,     room: kitchen,   aliases: [kitchen_island]}
+  - {id: table_d1,      room: dining,    aliases: [dining_table]}
+  - {id: sofa_l1,       room: living,    aliases: [couch]}
+  - {id: coffee_table_l1, room: living,  aliases: []}
+  - {id: tv_stand_l1,   room: living,    aliases: []}
+  - {id: desk_o1,       room: office,    aliases: [home_office_desk]}
+  - {id: entry_hook_e1, room: entryway,  aliases: [key_hook]}
+  - {id: shelf_e1,      room: entryway,  aliases: []}
+  - {id: cubby_e1,      room: entryway,  aliases: [kids_cubby]}
+  - {id: bathroom_c1,   room: bathroom,  aliases: [bathroom_cabinet]}
+
+residents:
+  - id: P1
+    description: parent, full-time office worker
+    schedule:
+      - {activity: sleep_p1,     days: [Mo,Tu,We,Th,Fr], start: "22:45", end: "06:15"}  # [ATUS]
+      - {activity: prep_p1,      days: [Mo,Tu,We,Th,Fr], start: "06:15", end: "06:50"}  # [ATUS]
+      - {activity: breakfast_p1, days: [Mo,Tu,We,Th,Fr], start: "06:50", end: "07:15"}  # [ATUS]
+      - {activity: leave_work,   days: [Mo,Tu,We,Th,Fr], start: "07:15", end: "07:30"}  # [ATUS]
+      - {activity: away_at_work, days: [Mo,Tu,We,Th,Fr], start: "07:30", end: "18:00"}  # [ATUS]
+      - {activity: return_p1,    days: [Mo,Tu,We,Th,Fr], start: "18:00", end: "18:20"}  # [ATUS]
+      - {activity: family_dinner,days: [Mo,Tu,We,Th,Fr], start: "18:45", end: "19:30"}  # [ATUS]
+      - {activity: tv_evening,   days: [Mo,Tu,We,Th,Fr], start: "20:30", end: "22:30"}  # [ATUS]
+      - {activity: sleep_p1,     days: [Sa,Su],          start: "00:00", end: "08:00"}  # [ATUS] weekend sleep-in (non-wrapping; the Fri/Sat bedtime is the weekday block's wrap)
+      - {activity: family_dinner,days: [Sa,Su],          start: "18:30", end: "19:30"}  # [ATUS]
+      - {activity: tv_evening,   days: [Sa,Su],          start: "20:30", end: "23:30"}  # [ATUS]
+  - id: P2
+    description: parent, part-time / flexible, school run and housework
+    schedule:
+      - {activity: sleep_p2,     days: [Mo,Tu,We,Th,Fr], start: "22:30", end: "06:15"}  # [ATUS]
+      - {activity: prep_p2,      days: [Mo,Tu,We,Th,Fr], start: "06:15", end: "06:45"}  # [ATUS]
+      - {activity: make_lunches, days: [Mo,Tu,We,Th,Fr], start: "06:45", end: "07:15"}  # [BEHAV]
+      - {activity: school_run,   days: [Mo,Tu,We,Th,Fr], start: "07:45", end: "08:30"}  # [ATUS]
+      - {activity: housework,    days: [Mo,We,Fr],       start: "09:30", end: "11:30"}  # [ATUS]
+      - {activity: school_pickup,days: [Mo,Tu,We,Th,Fr], start: "15:00", end: "15:45"}  # [ATUS]
+      - {activity: cook_dinner,  days: [Mo,Tu,We,Th,Fr], start: "17:45", end: "18:45"}  # [ATUS]
+      - {activity: family_dinner,days: [Mo,Tu,We,Th,Fr], start: "18:45", end: "19:30"}  # [ATUS]
+      - {activity: tidy_house,   days: [Sa],             start: "10:00", end: "12:00"}  # [ATUS]
+      - {activity: cook_dinner,  days: [Sa,Su],          start: "17:30", end: "18:30"}  # [ATUS]
+      - {activity: sleep_p2,     days: [Sa,Su],          start: "00:00", end: "07:30"}  # [ATUS] weekend sleep-in
+  - id: K1
+    description: elementary-school child
+    schedule:
+      - {activity: sleep_k1,     days: [Mo,Tu,We,Th,Fr], start: "20:30", end: "06:45"}  # [ATUS]
+      - {activity: prep_k1,      days: [Mo,Tu,We,Th,Fr], start: "06:45", end: "07:30"}  # [ATUS]
+      - {activity: kid_breakfast_k1, days: [Mo,Tu,We,Th,Fr], start: "07:30", end: "07:45"}  # [ATUS]
+      - {activity: at_school_k1, days: [Mo,Tu,We,Th,Fr], start: "08:30", end: "15:00"}  # [ATUS]
+      - {activity: homework_k1,  days: [Mo,Tu,We,Th,Fr], start: "16:00", end: "17:00"}  # [DESIGN]
+      - {activity: play_k1,      days: [Mo,Tu,We,Th,Fr], start: "17:00", end: "18:00"}  # [DESIGN]
+      - {activity: sleep_k1,     days: [Sa,Su],          start: "00:00", end: "08:00"}  # [ATUS] weekend sleep-in
+      - {activity: play_k1,      days: [Sa,Su],          start: "10:00", end: "12:00"}  # [DESIGN]
+  - id: K2
+    description: high-school child, after-school sport
+    schedule:
+      - {activity: sleep_k2,     days: [Mo,Tu,We,Th,Fr], start: "22:30", end: "06:30"}  # [ATUS]
+      - {activity: prep_k2,      days: [Mo,Tu,We,Th,Fr], start: "06:30", end: "07:10"}  # [ATUS]
+      - {activity: kid_breakfast_k2, days: [Mo,Tu,We,Th,Fr], start: "07:10", end: "07:30"}  # [ATUS]
+      - {activity: at_school_k2, days: [Mo,Tu,We,Th,Fr], start: "08:00", end: "16:30"}  # [ATUS] incl. sport
+      - {activity: homework_k2,  days: [Mo,Tu,We,Th,Fr], start: "19:45", end: "21:30"}  # [DESIGN]
+      - {activity: sleep_k2,     days: [Sa,Su],          start: "00:00", end: "10:00"}  # [ATUS] weekend sleep-in (teen)
+      - {activity: homework_k2,  days: [Su],             start: "15:00", end: "17:00"}  # [DESIGN]
+
+activities:
+  # --- P1 personal --------------------------------------------------------------
+  prep_p1:
+    jitter_min: 10                                   # [HOMER]
+    objects: [phone_p1, glasses_p1, watch_p1]
+    during: {phone_p1: nightstand_p1, glasses_p1: nightstand_p1, watch_p1: nightstand_p1}
+    after:
+      phone_p1:   {dest: counter_k1, p: 0.85, else: nightstand_p1}   # [DESIGN]
+      glasses_p1: {dest: null, p: 1.0}
+      watch_p1:   {dest: null, p: 1.0}
+  breakfast_p1:
+    jitter_min: 8                                    # [HOMER]
+    objects: [mug_p1]
+    during: {mug_p1: counter_k1}
+    after:
+      mug_p1: {dest: sink_k1, p: 0.7, else: counter_k1}             # [HKEEP]
+  leave_work:
+    jitter_min: 5                                    # [DESIGN]
+    objects: [keys_p1, phone_p1, laptop_p1, watch_p1]
+    after:
+      keys_p1:   {dest: null, p: 1.0}
+      phone_p1:  {dest: null, p: 1.0}
+      laptop_p1: {dest: null, p: 0.85, else: desk_o1}              # [DESIGN]
+      watch_p1:  {dest: null, p: 1.0}
+  away_at_work:
+    jitter_min: 0
+    objects: []
+  return_p1:
+    jitter_min: 20                                   # [DESIGN]
+    objects: [keys_p1, phone_p1, laptop_p1, watch_p1]
+    after:
+      keys_p1:   {dest: entry_hook_e1, p: 0.85, else: counter_k1}  # [HKEEP]
+      phone_p1:  {dest: sofa_l1, p: 0.5, else: counter_k1}         # [DESIGN]
+      laptop_p1: {dest: desk_o1, p: 0.8, else: sofa_l1}            # [HKEEP]
+      watch_p1:  {dest: nightstand_p1, p: 0.6, else: dresser_main}
+  # --- P2 personal + household --------------------------------------------------
+  prep_p2:
+    jitter_min: 10
+    objects: [phone_p2, glasses_p2]
+    during: {phone_p2: nightstand_p2, glasses_p2: nightstand_p2}
+    after:
+      phone_p2:   {dest: counter_k1, p: 0.8, else: nightstand_p2}
+      glasses_p2: {dest: null, p: 1.0}
+  make_lunches:
+    jitter_min: 10                                   # [BEHAV]
+    objects: [lunchbox_k1, lunchbox_k2, cutting_board]
+    during: {lunchbox_k1: counter_k1, lunchbox_k2: counter_k1, cutting_board: counter_k1}
+    after:
+      lunchbox_k1:   {dest: cubby_e1, p: 0.9, else: counter_k1}    # packed, by the door
+      lunchbox_k2:   {dest: cubby_e1, p: 0.9, else: counter_k1}
+      cutting_board: {dest: sink_k1, p: 0.6, else: counter_k1}     # [HKEEP]
+  school_run:
+    jitter_min: 12                                   # [ATUS]
+    objects: [keys_p2, phone_p2]
+    after:
+      keys_p2:  {dest: entry_hook_e1, p: 0.8, else: counter_k1}
+      phone_p2: {dest: counter_k1, p: 0.6, else: island_k1}
+  housework:
+    jitter_min: 40                                   # [HOMER]
+    objects: [remote_control, water_glass_s]         # a reset pass through the living room
+    after:
+      remote_control: {dest: tv_stand_l1, p: 0.9, else: sofa_l1}
+      water_glass_s:  {dest: sink_k1, p: 0.9, else: coffee_table_l1}
+  school_pickup:
+    jitter_min: 15
+    objects: [keys_p2, phone_p2]
+    after:
+      keys_p2:  {dest: entry_hook_e1, p: 0.8, else: counter_k1}
+      phone_p2: {dest: island_k1, p: 0.6, else: counter_k1}
+  cook_dinner:
+    jitter_min: 25                                   # [HOMER]
+    objects: [pan, pot, cutting_board, knife]
+    during:
+      pan:           stove_k1    # [BEHAV]
+      pot:           stove_k1    # [DESIGN] generic cookware; no distinct BEHAVIOR-1K synset (only teapot/kettle)
+      cutting_board: island_k1   # [DESIGN] BEHAVIOR-1K models 'countertop', not a distinct board synset
+      knife:         island_k1   # [BEHAV]
+    after:
+      pan:           {dest: sink_k1, p: 0.6, else: stove_k1}       # [HKEEP]
+      pot:           {dest: sink_k1, p: 0.6, else: stove_k1}
+      cutting_board: {dest: sink_k1, p: 0.7, else: island_k1}
+      knife:         {dest: sink_k1, p: 0.9, else: island_k1}
+  tidy_house:
+    jitter_min: 45                                   # [HOMER]
+    objects: [remote_control, water_glass_s, toy_k1, backpack_k1]
+    after:
+      remote_control: {dest: tv_stand_l1, p: 1.0}
+      water_glass_s:  {dest: sink_k1, p: 1.0}
+      toy_k1:         {dest: bed_k1, p: 1.0}
+      backpack_k1:   {dest: cubby_e1, p: 0.5}
+  # --- shared family activities (bound by P1) -----------------------------------
+  family_dinner:
+    jitter_min: 12                                   # [ATUS]
+    objects: [plate_s, bowl_s, fork_s, water_glass_s, serving_dish]
+    during: {plate_s: table_d1, bowl_s: table_d1, fork_s: table_d1, water_glass_s: table_d1, serving_dish: table_d1}
+    after:
+      plate_s:       {dest: sink_k1, p: 0.9, else: table_d1}       # [HKEEP]
+      bowl_s:        {dest: sink_k1, p: 0.85, else: table_d1}
+      fork_s:        {dest: sink_k1, p: 0.9, else: table_d1}
+      water_glass_s: {dest: sink_k1, p: 0.5, else: table_d1}
+      serving_dish:  {dest: sink_k1, p: 0.7, else: counter_k1}
+  tv_evening:
+    jitter_min: 20
+    objects: [remote_control, phone_p1]
+    during: {remote_control: sofa_l1, phone_p1: sofa_l1}
+    after:
+      remote_control: {dest: coffee_table_l1, p: 0.4, else: sofa_l1}   # [DESIGN]
+      phone_p1:       {dest: nightstand_p1, p: 0.85, else: sofa_l1}
+  # --- K1 (elementary) ----------------------------------------------------------
+  prep_k1:
+    jitter_min: 15                                   # [HOMER] kids more variable
+    objects: [backpack_k1]
+    during: {backpack_k1: bed_k1}
+    after:
+      backpack_k1: {dest: cubby_e1, p: 0.7, else: sofa_l1}         # [HKEEP]
+  kid_breakfast_k1:
+    jitter_min: 10
+    objects: [bowl_k1, spoon_k1]
+    during: {bowl_k1: table_d1, spoon_k1: table_d1}
+    after:
+      bowl_k1:  {dest: sink_k1, p: 0.6, else: table_d1}            # kids leave dishes
+      spoon_k1: {dest: sink_k1, p: 0.6, else: table_d1}
+  at_school_k1:
+    jitter_min: 0
+    objects: []
+  homework_k1:
+    jitter_min: 25                                   # [DESIGN]
+    objects: [backpack_k1, tablet_k1]
+    during: {backpack_k1: desk_k1, tablet_k1: desk_k1}
+    after:
+      backpack_k1: {dest: cubby_e1, p: 0.5, else: desk_k1}
+      tablet_k1:   {dest: desk_k1, p: 0.5, else: sofa_l1}          # [DESIGN] wanders
+  play_k1:
+    jitter_min: 30                                   # [DESIGN]
+    objects: [toy_k1, tablet_k1]
+    during: {toy_k1: sofa_l1, tablet_k1: sofa_l1}
+    after:
+      toy_k1:    {dest: bed_k1, p: 0.3, else: sofa_l1}             # toys left out
+      tablet_k1: {dest: coffee_table_l1, p: 0.4, else: sofa_l1}
+  # --- K2 (high school) ---------------------------------------------------------
+  prep_k2:
+    jitter_min: 12
+    objects: [phone_k2, backpack_k2]
+    during: {phone_k2: nightstand_k2, backpack_k2: bed_k2}
+    after:
+      phone_k2:    {dest: null, p: 1.0}
+      backpack_k2: {dest: null, p: 0.9, else: cubby_e1}            # takes it to school
+  kid_breakfast_k2:
+    jitter_min: 10
+    objects: [mug_k2]
+    during: {mug_k2: counter_k1}
+    after:
+      mug_k2: {dest: sink_k1, p: 0.5, else: counter_k1}
+  at_school_k2:
+    jitter_min: 0
+    objects: []
+  homework_k2:
+    jitter_min: 30                                   # [DESIGN]
+    objects: [phone_k2, backpack_k2, laptop_k2, headphones_k2]
+    during: {phone_k2: desk_k2, backpack_k2: desk_k2, laptop_k2: desk_k2, headphones_k2: desk_k2}
+    after:
+      phone_k2:      {dest: nightstand_k2, p: 0.5, else: bed_k2}
+      backpack_k2:   {dest: cubby_e1, p: 0.4, else: desk_k2}
+      laptop_k2:     {dest: desk_k2, p: 0.7, else: bed_k2}
+      headphones_k2: {dest: desk_k2, p: 0.5, else: nightstand_k2}
+
+placements:
+  # parents' personal items
+  phone_p1:      {home: nightstand_p1, volatility_class_hint: high}   # [DESIGN]
+  phone_p2:      {home: nightstand_p2, volatility_class_hint: high}
+  laptop_p1:     {home: desk_o1}                                      # [HKEEP]
+  keys_p1:       {home: entry_hook_e1, p_misplace: 0.10, misplace_set: [counter_k1, dresser_main]}  # [HKEEP]
+  keys_p2:       {home: entry_hook_e1, p_misplace: 0.12, misplace_set: [counter_k1, island_k1]}
+  glasses_p1:    {home: nightstand_p1}
+  glasses_p2:    {home: nightstand_p2}
+  watch_p1:      {home: nightstand_p1, volatility_class_hint: high}
+  mug_p1:        {home: cupboard_k1}
+  # kids' personal items
+  phone_k2:      {home: nightstand_k2, volatility_class_hint: high}
+  laptop_k2:     {home: desk_k2}
+  headphones_k2: {home: desk_k2, volatility_class_hint: high}
+  tablet_k1:     {home: desk_k1, volatility_class_hint: high}         # [DESIGN] wanders
+  backpack_k1:   {home: cubby_e1, p_misplace: 0.10, misplace_set: [sofa_l1, bed_k1]}   # [HKEEP]
+  backpack_k2:   {home: cubby_e1, p_misplace: 0.12, misplace_set: [desk_k2, bed_k2]}
+  lunchbox_k1:   {home: cupboard_k1}
+  lunchbox_k2:   {home: cupboard_k1}
+  toy_k1:        {home: bed_k1, p_misplace: 0.15, misplace_set: [sofa_l1, coffee_table_l1]}  # [DESIGN]
+  bowl_k1:       {home: cupboard_k1}
+  spoon_k1:      {home: cupboard_k1}
+  mug_k2:        {home: cupboard_k1}
+  # shared family tableware / cookware (dish-cycle returns from sink nightly)
+  plate_s:       {home: cupboard_k1}
+  bowl_s:        {home: cupboard_k1}
+  fork_s:        {home: cupboard_k1}
+  water_glass_s: {home: cupboard_k1}
+  serving_dish:  {home: cupboard_k1}
+  pan:           {home: cupboard_k1}
+  pot:           {home: cupboard_k1}
+  cutting_board: {home: island_k1}
+  knife:         {home: cupboard_k1}
+  remote_control: {home: tv_stand_l1, volatility_class_hint: high}    # [DESIGN]
+  # static low-volatility tercile (never activity-bound)
+  toaster:       {home: counter_k1,  volatility_class_hint: static}
+  microwave:     {home: counter_k1,  volatility_class_hint: static}
+  vase:          {home: table_d1,    volatility_class_hint: static}
+  first_aid_kit: {home: bathroom_c1, volatility_class_hint: static}
+
+# Dish-cycle rule (generator-level, all charters): objects in sink_k1 at 21:30
+# return to their placement home at 21:45 with p=0.9. [DESIGN]

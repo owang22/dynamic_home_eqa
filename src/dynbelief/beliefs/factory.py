@@ -7,13 +7,14 @@ offline schedule prior drops in here).
 from __future__ import annotations
 
 from dynbelief.beliefs.base import object_class
+from dynbelief.beliefs.beta_bayes import B25BetaBayes
 from dynbelief.beliefs.fremen import (constant_prior, fremen_prior,
                                       fremen_prior_weekly)
 from dynbelief.beliefs.perpetua import B3PerpetuaStar
 from dynbelief.beliefs.zoo import B0LastSeen, B1LongMem, B2ClassDecay
 
 BELIEF_TIERS = ["b0_lastseen", "b1_longmem", "b2_classdecay",
-                "b3_perpetua_star"]
+                "b25_betabayes", "b3_perpetua_star"]
 
 
 def make_belief(name: str, world, f_source: str = "fremen",
@@ -29,6 +30,8 @@ def make_belief(name: str, world, f_source: str = "fremen",
         return B1LongMem()
     if name == "b2_classdecay":
         return B2ClassDecay(classes)
+    if name == "b25_betabayes":
+        return B25BetaBayes(classes)
     if name == "b3_perpetua_star":
         if switching_prior is not None:
             f = switching_prior

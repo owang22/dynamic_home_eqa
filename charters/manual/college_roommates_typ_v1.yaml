@@ -1,0 +1,243 @@
+# college_roommates_typ_v1 -- typical base #2
+# Authorship note: DRAFT produced by a model OUTSIDE the evaluated set
+# (Claude), for the researcher to verify. Every numeric value is
+# provenance-tagged; status stays DRAFT until a human verifies the tags
+# against the cited anchor and validate_charter.py passes. Atypical variants
+# are produced ONLY by transforms.py, never by hand or model.
+#
+# Household: two college-aged roommates sharing an apartment with offset
+# schedules (R1 early-morning-classes bird; R2 night-owl with afternoon
+# classes and an evening cafe shift). Personal items are per-resident
+# instances (phone_r1 / phone_r2 -> class "phone") so no object is ever
+# required in two receptacles at once (V1). Shared household objects (remote,
+# game controller, cookware, tableware) are bound by whichever roommate's
+# activity uses them; their evening living-room blocks are adjacent, not
+# concurrent.
+#
+# Provenance key: [ATUS] [BEHAV] [HOMER] [HKEEP] [DESIGN]  (see single_adult)
+
+household: college_roommates_typ_v1
+# VERIFIED by the researcher (Oliver, 2026-07-19): provenance tags reviewed;
+# validate_charter.py passes (no FAIL). cutting_board retagged [DESIGN].
+status: VERIFIED
+derived_from: null
+transformation: null
+
+receptacles:
+  - {id: bed_b1,        room: bedroom_a, aliases: [bed_r1]}
+  - {id: desk_b1,       room: bedroom_a, aliases: []}
+  - {id: nightstand_b1, room: bedroom_a, aliases: []}
+  - {id: bed_b2,        room: bedroom_b, aliases: [bed_r2]}
+  - {id: desk_b2,       room: bedroom_b, aliases: []}
+  - {id: nightstand_b2, room: bedroom_b, aliases: []}
+  - {id: counter_k1,    room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,   room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,       room: kitchen,  aliases: []}
+  - {id: stove_k1,      room: kitchen,  aliases: []}
+  - {id: fridge_k1,     room: kitchen,  aliases: []}
+  - {id: table_d1,      room: dining,   aliases: [dining_table]}
+  - {id: sofa_l1,       room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living, aliases: []}
+  - {id: tv_stand_l1,   room: living,   aliases: []}
+  - {id: entry_hook_e1, room: entryway, aliases: [key_hook]}
+  - {id: shelf_e1,      room: entryway, aliases: []}
+  - {id: bathroom_c1,   room: bathroom, aliases: [bathroom_cabinet]}
+
+residents:
+  - id: R1
+    description: early-riser roommate, morning classes then afternoon study
+    schedule:
+      - {activity: sleep_b1,      days: [Mo,Tu,We,Th,Fr], start: "23:30", end: "07:00"}  # [ATUS]
+      - {activity: prep_b1,       days: [Mo,Tu,We,Th,Fr], start: "07:00", end: "07:30"}  # [ATUS]
+      - {activity: breakfast_r1,  days: [Mo,Tu,We,Th,Fr], start: "07:30", end: "08:00"}  # [ATUS]
+      - {activity: leave_class_r1,days: [Mo,Tu,We,Th,Fr], start: "08:00", end: "08:15"}  # [DESIGN]
+      - {activity: at_class_r1,   days: [Mo,Tu,We,Th,Fr], start: "08:15", end: "13:00"}  # [ATUS]
+      - {activity: return_r1,     days: [Mo,Tu,We,Th,Fr], start: "13:00", end: "13:20"}  # [DESIGN]
+      - {activity: study_r1,      days: [Mo,Tu,We,Th,Fr], start: "14:00", end: "16:30"}  # [DESIGN]
+      - {activity: cook_dinner,   days: [Mo,We,Fr],       start: "18:00", end: "18:45"}  # [ATUS]
+      - {activity: dinner_shared, days: [Mo,We,Fr],       start: "18:45", end: "19:15"}  # [ATUS]
+      - {activity: tv_evening,    days: [Mo,Tu,We,Th,Fr], start: "20:00", end: "22:30"}  # [ATUS]
+      - {activity: sleep_b1,      days: [Sa,Su],          start: "01:00", end: "09:30"}  # [ATUS] weekend
+      - {activity: laptop_couch,  days: [Sa,Su],          start: "13:00", end: "15:30"}  # [DESIGN]
+      - {activity: tv_evening,    days: [Sa,Su],          start: "21:00", end: "23:30"}  # [ATUS]
+  - id: R2
+    description: night-owl roommate, afternoon classes then an evening cafe shift
+    schedule:
+      - {activity: sleep_b2,      days: [Mo,Tu,We,Th,Fr], start: "02:00", end: "10:00"}  # [ATUS]
+      - {activity: prep_b2,       days: [Mo,Tu,We,Th,Fr], start: "10:00", end: "10:30"}  # [ATUS]
+      - {activity: breakfast_r2,  days: [Mo,Tu,We,Th,Fr], start: "10:30", end: "11:00"}  # [ATUS]
+      - {activity: leave_class_r2,days: [Mo,Tu,We,Th,Fr], start: "11:30", end: "11:45"}  # [DESIGN]
+      - {activity: at_class_r2,   days: [Mo,Tu,We,Th,Fr], start: "12:00", end: "15:00"}  # [ATUS]
+      - {activity: work_shift_r2, days: [Mo,Tu,Th,Fr],    start: "16:00", end: "21:00"}  # [ATUS] cafe
+      - {activity: return_r2,     days: [Mo,Tu,Th,Fr],    start: "21:00", end: "21:20"}  # [DESIGN]
+      - {activity: late_dinner_r2,days: [Mo,Tu,We,Th,Fr], start: "21:30", end: "22:00"}  # [ATUS]
+      - {activity: gaming_r2,     days: [Mo,Tu,We,Th,Fr], start: "22:30", end: "01:30"}  # [DESIGN]
+      - {activity: sleep_b2,      days: [Sa,Su],          start: "03:00", end: "11:30"}  # [ATUS] weekend
+      - {activity: gaming_r2,     days: [Sa,Su],          start: "16:00", end: "19:00"}  # [DESIGN]
+      - {activity: late_dinner_r2,days: [Sa,Su],          start: "20:00", end: "20:45"}  # [ATUS]
+
+activities:
+  # --- R1 personal routine -----------------------------------------------------
+  prep_b1:
+    jitter_min: 12                                   # [HOMER]
+    objects: [phone_r1, glasses_r1]
+    during: {phone_r1: nightstand_b1, glasses_r1: nightstand_b1}
+    after:
+      phone_r1:   {dest: counter_k1, p: 0.85, else: desk_b1}   # [DESIGN]
+      glasses_r1: {dest: null, p: 1.0}
+  breakfast_r1:
+    jitter_min: 10                                   # [HOMER]
+    objects: [mug_r1, bowl_s]
+    during: {mug_r1: counter_k1, bowl_s: table_d1}   # [BEHAV]
+    after:
+      mug_r1: {dest: sink_k1, p: 0.7, else: counter_k1}        # [HKEEP]
+      bowl_s: {dest: sink_k1, p: 0.85, else: table_d1}         # [HKEEP]
+  leave_class_r1:
+    jitter_min: 5                                    # [DESIGN]
+    objects: [keys_r1, backpack_r1, phone_r1, laptop_r1]
+    after:
+      keys_r1:     {dest: null, p: 1.0}
+      backpack_r1: {dest: null, p: 1.0}
+      phone_r1:    {dest: null, p: 1.0}
+      laptop_r1:   {dest: null, p: 0.9, else: desk_b1}          # [DESIGN]
+  at_class_r1:
+    jitter_min: 0
+    objects: []
+  return_r1:
+    jitter_min: 20                                   # [DESIGN]
+    objects: [keys_r1, backpack_r1, phone_r1, laptop_r1]
+    after:
+      keys_r1:     {dest: entry_hook_e1, p: 0.8, else: desk_b1} # [HKEEP]
+      backpack_r1: {dest: desk_b1, p: 0.7, else: sofa_l1}       # [HKEEP]
+      phone_r1:    {dest: sofa_l1, p: 0.5, else: desk_b1}       # [DESIGN]
+      laptop_r1:   {dest: desk_b1, p: 0.85, else: sofa_l1}      # [HKEEP]
+  study_r1:
+    jitter_min: 30                                   # [DESIGN]
+    objects: [laptop_r1, mug_r1, headphones_r1]
+    during: {laptop_r1: desk_b1, mug_r1: desk_b1, headphones_r1: desk_b1}
+    after:
+      laptop_r1:     {dest: desk_b1, p: 0.9, else: sofa_l1}
+      mug_r1:        {dest: sink_k1, p: 0.6, else: desk_b1}
+      headphones_r1: {dest: desk_b1, p: 0.7, else: nightstand_b1}
+  laptop_couch:
+    jitter_min: 30
+    objects: [laptop_r1, mug_r1]
+    during: {laptop_r1: sofa_l1, mug_r1: coffee_table_l1}
+    after:
+      laptop_r1: {dest: sofa_l1, p: 0.6, else: desk_b1}
+      mug_r1:    {dest: sink_k1, p: 0.5, else: coffee_table_l1}
+  # --- shared household activities (bound by R1) -------------------------------
+  cook_dinner:
+    jitter_min: 25                                   # [HOMER]
+    objects: [pan, cutting_board, knife]
+    during:
+      pan:           stove_k1     # [BEHAV]
+      cutting_board: counter_k1   # [DESIGN] BEHAVIOR-1K models 'countertop', not a distinct board synset
+      knife:         counter_k1   # [BEHAV]
+    after:
+      pan:           {dest: sink_k1, p: 0.6, else: stove_k1}    # [HKEEP]
+      cutting_board: {dest: sink_k1, p: 0.7, else: counter_k1}
+      knife:         {dest: sink_k1, p: 0.9, else: counter_k1}
+  dinner_shared:
+    jitter_min: 12
+    objects: [plate_s, fork_s, water_glass_s]
+    during: {plate_s: table_d1, fork_s: table_d1, water_glass_s: table_d1}
+    after:
+      plate_s:       {dest: sink_k1, p: 0.85, else: table_d1}
+      fork_s:        {dest: sink_k1, p: 0.85, else: table_d1}
+      water_glass_s: {dest: sink_k1, p: 0.45, else: table_d1}
+  tv_evening:
+    jitter_min: 20
+    objects: [remote_control, game_controller]
+    during: {remote_control: sofa_l1, game_controller: coffee_table_l1}
+    after:
+      remote_control:  {dest: coffee_table_l1, p: 0.4, else: sofa_l1}  # [DESIGN]
+      game_controller: {dest: tv_stand_l1, p: 0.3, else: coffee_table_l1}
+  # --- R2 personal routine -----------------------------------------------------
+  prep_b2:
+    jitter_min: 15                                   # [HOMER]
+    objects: [phone_r2, water_bottle_r2]
+    during: {phone_r2: nightstand_b2, water_bottle_r2: nightstand_b2}
+    after:
+      phone_r2:        {dest: counter_k1, p: 0.6, else: desk_b2}
+      water_bottle_r2: {dest: desk_b2, p: 0.7, else: counter_k1}
+  breakfast_r2:
+    jitter_min: 15
+    objects: [mug_r2]
+    during: {mug_r2: counter_k1}
+    after:
+      mug_r2: {dest: sink_k1, p: 0.6, else: counter_k1}
+  leave_class_r2:
+    jitter_min: 8                                    # [DESIGN]
+    objects: [keys_r2, backpack_r2, phone_r2, laptop_r2]
+    after:
+      keys_r2:     {dest: null, p: 1.0}
+      backpack_r2: {dest: null, p: 1.0}
+      phone_r2:    {dest: null, p: 1.0}
+      laptop_r2:   {dest: null, p: 0.85, else: desk_b2}
+  at_class_r2:
+    jitter_min: 0
+    objects: []
+  work_shift_r2:
+    jitter_min: 10
+    objects: []
+  return_r2:
+    jitter_min: 25                                   # [DESIGN]
+    objects: [keys_r2, backpack_r2, phone_r2, laptop_r2]
+    after:
+      keys_r2:     {dest: entry_hook_e1, p: 0.75, else: nightstand_b2}
+      backpack_r2: {dest: desk_b2, p: 0.65, else: sofa_l1}
+      phone_r2:    {dest: sofa_l1, p: 0.55, else: nightstand_b2}
+      laptop_r2:   {dest: desk_b2, p: 0.8, else: sofa_l1}
+  late_dinner_r2:
+    jitter_min: 20
+    objects: [plate_s2, fork_s2]
+    during: {plate_s2: sofa_l1, fork_s2: sofa_l1}    # eats on the couch [DESIGN]
+    after:
+      plate_s2: {dest: sink_k1, p: 0.7, else: coffee_table_l1}
+      fork_s2:  {dest: sink_k1, p: 0.7, else: coffee_table_l1}
+  gaming_r2:
+    jitter_min: 30                                   # [DESIGN]
+    objects: [game_controller, headphones_r2, water_bottle_r2]
+    during: {game_controller: sofa_l1, headphones_r2: sofa_l1, water_bottle_r2: coffee_table_l1}
+    after:
+      game_controller: {dest: tv_stand_l1, p: 0.35, else: sofa_l1}
+      headphones_r2:   {dest: desk_b2, p: 0.5, else: sofa_l1}
+      water_bottle_r2: {dest: sink_k1, p: 0.4, else: coffee_table_l1}
+
+placements:
+  # personal items (class strips the _r1/_r2 suffix)
+  phone_r1:        {home: nightstand_b1, volatility_class_hint: high}     # [DESIGN]
+  phone_r2:        {home: nightstand_b2, volatility_class_hint: high}     # [DESIGN]
+  laptop_r1:       {home: desk_b1}                                        # [HKEEP]
+  laptop_r2:       {home: desk_b2}
+  backpack_r1:     {home: desk_b1, p_misplace: 0.10, misplace_set: [sofa_l1, entry_hook_e1]}  # [HKEEP]
+  backpack_r2:     {home: desk_b2, p_misplace: 0.12, misplace_set: [sofa_l1, entry_hook_e1]}
+  keys_r1:         {home: entry_hook_e1, p_misplace: 0.10, misplace_set: [desk_b1, counter_k1]}  # [HKEEP]
+  keys_r2:         {home: entry_hook_e1, p_misplace: 0.14, misplace_set: [nightstand_b2, sofa_l1]}
+  headphones_r1:   {home: desk_b1}
+  headphones_r2:   {home: desk_b2, volatility_class_hint: high}
+  glasses_r1:      {home: nightstand_b1}
+  water_bottle_r2: {home: desk_b2, volatility_class_hint: high}
+  mug_r1:          {home: cupboard_k1}
+  mug_r2:          {home: cupboard_k1}
+  # shared tableware / cookware (dish-cycle returns from sink nightly)
+  bowl_s:          {home: cupboard_k1}
+  plate_s:         {home: cupboard_k1}
+  fork_s:          {home: cupboard_k1}
+  water_glass_s:   {home: cupboard_k1}
+  plate_s2:        {home: cupboard_k1}
+  fork_s2:         {home: cupboard_k1}
+  pan:             {home: cupboard_k1}
+  cutting_board:   {home: counter_k1}
+  knife:           {home: cupboard_k1}
+  remote_control:  {home: coffee_table_l1, volatility_class_hint: high}   # [DESIGN]
+  game_controller: {home: tv_stand_l1, volatility_class_hint: high}
+  # static low-volatility tercile (never activity-bound)
+  toaster:         {home: counter_k1,  volatility_class_hint: static}
+  microwave:       {home: counter_k1,  volatility_class_hint: static}
+  router:          {home: tv_stand_l1, volatility_class_hint: static}
+  first_aid_kit:   {home: bathroom_c1, volatility_class_hint: static}
+
+# Dish-cycle rule (generator-level, all charters): objects in sink_k1 at 21:30
+# return to their placement home at 21:45 with p=0.9. [DESIGN]

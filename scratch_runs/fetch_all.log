@@ -1,0 +1,18 @@
+[fetch_all] third_party = /home/oliver/robot/dynamic_home_eqa/third_party
+[fetch_all] data/anchors = /home/oliver/robot/dynamic_home_eqa/data/anchors
+
+  CLONE HOMER_PLUS: https://github.com/Maithili/HOMER_PLUS -> third_party/HOMER_PLUS
+  CLONE bddl: https://github.com/StanfordVL/bddl -> third_party/bddl
+  CLONE housekeep: https://github.com/yashkant/housekeep -> third_party/housekeep
+  CLONE parsec: https://github.com/kartikvrama/parsec -> third_party/parsec
+
+ATUS: NEEDS_DATA — bls.gov is not reachable from this environment.
+      Download these from https://www.bls.gov/tus/data.htm (free, no registration) and place in:
+        /home/oliver/robot/dynamic_home_eqa/data/anchors/atus/raw
+        - atusact_2003-2023.zip   (Activity file: activity codes + start/stop times)
+        - atusresp_2003-2023.zip  (Respondent file: labor-force status for the FT-employed filter)
+        - ATUS activity coding lexicon (code -> description), from the same page
+      Then re-run fetch_all + compile_envelope. Until present, V6a (schedule
+      timing) reports NEEDS_DATA and is non-gating.
+
+[fetch_all] done. Next: python -m dynbelief.anchors.compile_envelope

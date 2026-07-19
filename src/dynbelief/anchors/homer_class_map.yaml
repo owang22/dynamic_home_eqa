@@ -1,0 +1,109 @@
+# homer_class_map.yaml -- mapping to HOMER+ (Anchor 2, [HOMER]).
+#
+# Two maps:
+#   object_class_map:  our object class -> HOMER+ movable node_classes, for
+#                      V6c (emergent receptacle-change-rate envelope). HOMER+
+#                      tracks mostly furniture/rooms; movable props are sparse
+#                      (knifeblock/mat/trashcan), so most of our classes have
+#                      NO HOMER counterpart -> left unmapped (V6c then falls
+#                      back to the literature tier, Anchor 5, as the band).
+#   activity_map:      our charter activity -> HOMER+ activity label, for V6b
+#                      (jitter reference = std of that activity's daily start
+#                      time across HOMER+ days). This is the well-populated map.
+#
+# STRUCTURAL correspondences only, drafted (Claude) for HUMAN REVIEW. No
+# numeric values. Loose matches carry confidence: low.
+#
+# HOMER labels verified in third_party/HOMER_PLUS/common_data.json at fetch.
+
+version: 1
+source:
+  repo: https://github.com/Maithili/HOMER_PLUS
+  common_data: third_party/HOMER_PLUS/common_data.json
+  routines: third_party/HOMER_PLUS/Household{A,B,C}/routines_train/*.json
+
+object_class_map:
+  # our_class: {homer: [node_classes], confidence}   -- most have no match
+  knife:  {homer: [knifeblock], confidence: low, note: "knifeblock is the receptacle, not the knife; proxy only"}
+  # The following charter classes have NO movable counterpart in HOMER+ props
+  # (HOMER+ props = knifeblock/mat/trashcan). Listed so they are not silently
+  # dropped; V6c uses the literature tier for these.
+  unmapped_no_homer_prop:
+    - phone
+    - keys
+    - laptop
+    - backpack
+    - mug
+    - bowl
+    - plate
+    - fork
+    - spoon
+    - water_glass
+    - pan
+    - pot
+    - cutting_board
+    - remote_control
+    - glasses
+    - toaster
+    - vase
+    - first_aid_kit
+    - headphones
+    - water_bottle
+    - game_controller
+    - tablet
+    - toy
+    - lunchbox
+    - watch
+    - router
+    - microwave
+    - serving_dish
+
+activity_map:
+  # our_activity: {homer: activity_label, confidence}
+  sleep:         {homer: sleep, confidence: high}
+  morning_prep:  {homer: getting_dressed, confidence: med}
+  prep_b1:       {homer: getting_dressed, confidence: med}
+  prep_b2:       {homer: getting_dressed, confidence: med}
+  prep_p1:       {homer: getting_dressed, confidence: med}
+  prep_p2:       {homer: getting_dressed, confidence: med}
+  prep_k1:       {homer: getting_dressed, confidence: med}
+  prep_k2:       {homer: getting_dressed, confidence: med}
+  breakfast:     {homer: breakfast, confidence: high}
+  breakfast_r1:  {homer: breakfast, confidence: high}
+  breakfast_r2:  {homer: breakfast, confidence: high}
+  breakfast_p1:  {homer: breakfast, confidence: high}
+  kid_breakfast_k1: {homer: breakfast, confidence: high}
+  kid_breakfast_k2: {homer: breakfast, confidence: high}
+  cook_dinner:   {homer: dinner, confidence: med, note: "HOMER folds prep into the meal activity"}
+  dinner:        {homer: dinner, confidence: high}
+  dinner_shared: {homer: dinner, confidence: high}
+  family_dinner: {homer: dinner, confidence: high}
+  late_dinner_r2: {homer: dinner, confidence: med}
+  tv_evening:    {homer: watching_tv, confidence: high}
+  leave_work:    {homer: leave_home, confidence: high}
+  leave_class_r1: {homer: leave_home, confidence: high}
+  leave_class_r2: {homer: leave_home, confidence: high}
+  school_run:    {homer: leave_home, confidence: med}
+  return_home:   {homer: come_home, confidence: high}
+  return_p1:     {homer: come_home, confidence: high}
+  return_r1:     {homer: come_home, confidence: high}
+  return_r2:     {homer: come_home, confidence: high}
+  school_pickup: {homer: come_home, confidence: med}
+  study_r1:      {homer: computer_work, confidence: med}
+  laptop_couch:  {homer: computer_work, confidence: med}
+  homework_k1:   {homer: reading, confidence: low}
+  homework_k2:   {homer: computer_work, confidence: low}
+  tidy_house:    {homer: cleaning, confidence: high}
+  housework:     {homer: cleaning, confidence: high}
+  make_lunches:  {homer: wash_dishes_breakfast, confidence: low, note: "no HOMER meal-prep; nearest kitchen-work label"}
+  gaming_r2:     {homer: watching_tv, confidence: low}
+
+# Charter activities without a HOMER activity label (no jitter reference):
+unmapped_activities:
+  - away_at_work
+  - at_class_r1
+  - at_class_r2
+  - at_school_k1
+  - at_school_k2
+  - work_shift_r2
+  - play_k1

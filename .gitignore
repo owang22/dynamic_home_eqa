@@ -10,3 +10,16 @@ llm_prior_cache/
 # Superseded/stale outputs, kept on disk but not in git
 archive/
 .env
+
+# Anchor datasets: raw data + third-party clones stay out of git (hard rule).
+# The compiled envelope.yaml and hand-mapping tables under src/dynbelief/anchors/
+# ARE committed (small, reviewable, cited).
+data/anchors/
+third_party/
+
+# Charter-generated symbolic episode banks (regenerable from charters+seed;
+# the hash manifest in the bank dir pins provenance).
+banks/
+
+# Regenerable per-charter anchor reports (validate_charter.py output).
+charters/manual/*.anchor_report.md

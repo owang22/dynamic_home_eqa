@@ -1,0 +1,88 @@
+# bddl_activity_map.yaml -- our charter activity -> nearest BEHAVIOR-1K BDDL
+# activities (Anchor 3, [BEHAV]). Used by V6d: the union of the mapped BDDL
+# activities' object synsets is the allowed set for that charter activity's
+# [BEHAV]-tagged objects.
+#
+# STRUCTURAL name-to-name correspondences only, drafted (Claude) for HUMAN
+# REVIEW per the anchor brief. No numeric values. Rows whose semantic match is
+# loose carry `confidence: low`. Unmapped charter activities are listed under
+# `unmapped:` (not silently dropped); they contribute no V6d constraint.
+#
+# BDDL activity names verified present in
+# third_party/bddl/bddl/activity_definitions/ at fetch time.
+
+version: 1
+source:
+  repo: https://github.com/StanfordVL/bddl
+  path: bddl/bddl/activity_definitions/<activity>/problem0.bddl
+
+map:
+  # charter_activity: {bddl: [activity_dirs], confidence: high|med|low, note}
+  breakfast:
+    bddl: [serving_a_meal, washing_dishes, making_tea]
+    confidence: med
+    note: "no dedicated 'eat_breakfast'; washing_dishes covers bowl/cup/plate, making_tea covers teapot/cup"
+  breakfast_r1:   {bddl: [serving_a_meal, washing_dishes, making_tea], confidence: med}
+  breakfast_r2:   {bddl: [serving_a_meal, washing_dishes, making_tea], confidence: med}
+  breakfast_p1:   {bddl: [serving_a_meal, washing_dishes, making_tea], confidence: med}
+  kid_breakfast_k1: {bddl: [serving_a_meal, washing_dishes], confidence: med}
+  kid_breakfast_k2: {bddl: [serving_a_meal, washing_dishes, making_tea], confidence: med}
+  cook_dinner:
+    bddl: [chopping_vegetables, preparing_salad, washing_pots_and_pans, washing_dishes]
+    confidence: med
+    note: "chopping/prep cover knife/countertop/dish/plate; washing_pots_and_pans covers pan/kettle. NOTE: cutting_board and (stock)pot are NOT distinct BDDL synsets (only countertop / teapot) -> V6d will flag them for human retag ([DESIGN]) or remap"
+  dinner:
+    bddl: [serving_a_meal, clearing_the_table_after_dinner]
+    confidence: med
+  dinner_shared: {bddl: [serving_a_meal, clearing_the_table_after_dinner], confidence: med}
+  family_dinner: {bddl: [serving_a_meal, clearing_the_table_after_dinner], confidence: med}
+  late_dinner_r2: {bddl: [serving_a_meal], confidence: low}
+  make_lunches:
+    bddl: [packing_lunches, packing_food_for_work]
+    confidence: high
+    note: "packing_lunches directly references lunch_box / food synsets"
+  tidy_house:
+    bddl: [putting_away_toys, cleaning_up_the_kitchen_only, collect_misplaced_items]
+    confidence: med
+  housework:
+    bddl: [collect_misplaced_items, cleaning_up_the_kitchen_only]
+    confidence: low
+  tv_evening:
+    bddl: [setting_up_candles]
+    confidence: low
+    note: "no BDDL 'watch_tv'; remote_control not a BDDL object -> expect [DESIGN] tag, not [BEHAV]"
+  play_k1:
+    bddl: [putting_away_toys]
+    confidence: med
+  homework_k1:  {bddl: [organizing_school_stuff], confidence: low}
+  homework_k2:  {bddl: [organizing_school_stuff], confidence: low}
+  study_r1:     {bddl: [organizing_school_stuff], confidence: low}
+
+# Charter activities intentionally without a BDDL binding (movement is
+# [DESIGN]/[HOMER]-driven, not object-affordance-driven): listed, not dropped.
+unmapped:
+  - sleep
+  - morning_prep
+  - prep_b1
+  - prep_b2
+  - prep_p1
+  - prep_p2
+  - prep_k1
+  - prep_k2
+  - leave_work
+  - away_at_work
+  - return_home
+  - return_p1
+  - leave_class_r1
+  - leave_class_r2
+  - at_class_r1
+  - at_class_r2
+  - at_school_k1
+  - at_school_k2
+  - work_shift_r2
+  - return_r1
+  - return_r2
+  - school_run
+  - school_pickup
+  - laptop_couch
+  - gaming_r2

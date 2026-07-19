@@ -1,0 +1,48 @@
+# literature_constants.yaml -- Anchor 5 (hardcoded, cited; no download).
+#
+# HARD RULE: a human transcribes the numeric values from the published tables.
+# Transcription is NOT the coding agent's job -- this file ships with TODO
+# placeholders and exact table references. Do NOT fill numbers with an LLM.
+#
+# Used by V6c as a SECONDARY, non-gating band (informational) alongside the
+# HOMER+ emergent envelope. Once filled, compile_envelope.py folds these into
+# envelope.yaml under `literature_tier`.
+
+version: 1
+status: NEEDS_HUMAN_TRANSCRIPTION
+
+sources:
+  three_rscan:
+    paper: "Wald, Avetisyan, Navab, Tombari, Niessner -- RIO: 3D Object Instance Re-Localization in Changing Indoor Environments (3RScan)"
+    venue: ICCV 2019
+    arxiv_id: "1908.06109"
+    note: "Transcribe per-class object MOVE frequencies from the paper's tables/figures. Do NOT apply for the dataset itself."
+  fremen:
+    paper: "Krajnik, Fentanes, Santos, Duckett -- FreMEn: Frequency Map Enhancement for Long-Term Mobile Robot Autonomy in Changing Environments"
+    venue: IEEE T-RO 2017
+    doi: "10.1109/TRO.2017.2665664"
+    note: "Qualitative persistence/periodicity bands are acceptable."
+
+# Per-class change-rate bands (daily receptacle-change probability or rate).
+# value_or_range: TODO  <- human fills. units + basis documented per entry.
+three_rscan_move_frequency:
+  # object_class: {value_or_range: TODO, source: three_rscan, table: "TODO", units: "moves per scan-pair (relative)"}
+  phone:          {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  keys:           {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  cup:            {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  mug:            {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  bowl:           {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  plate:          {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  book:           {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  laptop:         {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  backpack:       {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  remote_control: {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  vase:           {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  # static tier (expected ~0):
+  toaster:        {value_or_range: TODO, source: three_rscan, table: "TODO"}
+  first_aid_kit:  {value_or_range: TODO, source: three_rscan, table: "TODO"}
+
+fremen_persistence_bands:
+  # qualitative: which classes are periodic vs persistent vs transient
+  periodic_daily:   {classes: TODO, source: fremen}
+  persistent_static: {classes: TODO, source: fremen}
