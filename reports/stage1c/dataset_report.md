@@ -26,7 +26,7 @@ Generator fixes in this rebuild: (1) DAY_PLAN prompt de-primed (no more storm/po
 | sick/ill | 0/16 |
 | repair/plumber | 0/16 |
 
-**Routine charter (generated once, persona-validated):**
+**Routine profile (generated once, persona-validated):**
 
 - Sarah: **Project Manager** — habits: Leaves work laptop on the dining table after evening planning; Strictly follows a meal-prep routine on Sundays
 - David: **Software Engineer** — habits: Often takes late-night calls; Leaves work clothes in a heap on the bathroom floor; Avid homebrewer on weekends
@@ -73,7 +73,7 @@ Generator fixes in this rebuild: (1) DAY_PLAN prompt de-primed (no more storm/po
 | sick/ill | 1/18 |
 | repair/plumber | 0/18 |
 
-**Routine charter (generated once, persona-validated):**
+**Routine profile (generated once, persona-validated):**
 
 - Alex: **Software Engineer** — habits: Drinks black coffee immediately upon waking; Leaves work laptop open on the dining table until morning; Engages in late-night coding sessions
 - Jordan: **Yoga Instructor** — habits: Wakes up for sunrise meditation; Meticulously organizes the kitchen after cooking; Listens to podcasts while commuting

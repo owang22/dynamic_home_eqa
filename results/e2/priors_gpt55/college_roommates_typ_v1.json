@@ -1,0 +1,370 @@
+{
+ "base": "college_roommates_typ_v1",
+ "descriptor": "a home shared by two college students",
+ "models": [
+  "gpt-5.5"
+ ],
+ "n_samples_total": 5,
+ "prior": {
+  "backpack": {
+   "home": "entry_hook_e1",
+   "secondary": {
+    "entry_hook_e1": 0.096,
+    "bed_b1": 0.06999999999999999,
+    "desk_b2": 0.13000000000000003,
+    "desk_b1": 0.156,
+    "sofa_l1": 0.02
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "afternoon": 1.0,
+    "evening": 1.0
+   },
+   "weekday_weekend": "more_weekday",
+   "move_rate": "high",
+   "n": 5
+  },
+  "bowl": {
+   "home": "cupboard_k1",
+   "secondary": {
+    "sink_k1": 0.22000000000000003,
+    "counter_k1": 0.13,
+    "table_d1": 0.128
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "midday": 0.8,
+    "evening": 1.0,
+    "latenight": 0.8
+   },
+   "weekday_weekend": "same",
+   "move_rate": "medium",
+   "n": 5
+  },
+  "cutting_board": {
+   "home": "cupboard_k1",
+   "secondary": {
+    "counter_k1": 0.23399999999999999,
+    "sink_k1": 0.13999999999999999,
+    "stove_k1": 0.04,
+    "table_d1": 0.01
+   },
+   "active_windows": {
+    "midday": 0.6,
+    "evening": 1.0
+   },
+   "weekday_weekend": "more_weekend",
+   "move_rate": "low",
+   "n": 5
+  },
+  "first_aid_kit": {
+   "home": "bathroom_c1",
+   "secondary": {
+    "cupboard_k1": 0.156,
+    "shelf_e1": 0.1
+   },
+   "active_windows": {
+    "morning": 0.2,
+    "evening": 0.2
+   },
+   "weekday_weekend": "same",
+   "move_rate": "static",
+   "n": 5
+  },
+  "fork": {
+   "home": "cupboard_k1",
+   "secondary": {
+    "sink_k1": 0.254,
+    "table_d1": 0.162,
+    "counter_k1": 0.096
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "midday": 0.8,
+    "evening": 1.0,
+    "latenight": 0.8
+   },
+   "weekday_weekend": "same",
+   "move_rate": "medium",
+   "n": 5
+  },
+  "game_controller": {
+   "home": "tv_stand_l1",
+   "secondary": {
+    "sofa_l1": 0.192,
+    "coffee_table_l1": 0.2,
+    "desk_b1": 0.012
+   },
+   "active_windows": {
+    "evening": 1.0,
+    "latenight": 1.0
+   },
+   "weekday_weekend": "more_weekend",
+   "move_rate": "medium",
+   "n": 5
+  },
+  "glasses": {
+   "home": "nightstand_b1",
+   "secondary": {
+    "desk_b1": 0.2,
+    "bed_b1": 0.046,
+    "bathroom_c1": 0.09,
+    "coffee_table_l1": 0.02,
+    "nightstand_b2": 0.06
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "midday": 0.2,
+    "afternoon": 0.2,
+    "evening": 0.6,
+    "latenight": 1.0,
+    "night": 0.4
+   },
+   "weekday_weekend": "same",
+   "move_rate": "high",
+   "n": 5
+  },
+  "headphones": {
+   "home": "desk_b1",
+   "secondary": {
+    "bed_b1": 0.15,
+    "nightstand_b1": 0.08,
+    "desk_b2": 0.11000000000000001,
+    "table_d1": 0.016
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "midday": 1.0,
+    "afternoon": 1.0,
+    "evening": 1.0,
+    "latenight": 1.0
+   },
+   "weekday_weekend": "more_weekday",
+   "move_rate": "high",
+   "n": 5
+  },
+  "keys": {
+   "home": "entry_hook_e1",
+   "secondary": {
+    "desk_b1": 0.10400000000000001,
+    "counter_k1": 0.05,
+    "table_d1": 0.05,
+    "coffee_table_l1": 0.11200000000000002,
+    "nightstand_b1": 0.02
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "afternoon": 1.0,
+    "evening": 1.0,
+    "latenight": 0.2
+   },
+   "weekday_weekend": "more_weekday",
+   "move_rate": "high",
+   "n": 5
+  },
+  "knife": {
+   "home": "cupboard_k1",
+   "secondary": {
+    "counter_k1": 0.20600000000000002,
+    "sink_k1": 0.188,
+    "table_d1": 0.04,
+    "stove_k1": 0.01
+   },
+   "active_windows": {
+    "midday": 0.8,
+    "evening": 1.0,
+    "morning": 0.2
+   },
+   "weekday_weekend": "same",
+   "move_rate": "medium",
+   "n": 5
+  },
+  "laptop": {
+   "home": "desk_b1",
+   "secondary": {
+    "bed_b1": 0.17600000000000002,
+    "table_d1": 0.13799999999999998,
+    "coffee_table_l1": 0.05600000000000001,
+    "desk_b2": 0.09
+   },
+   "active_windows": {
+    "morning": 0.8,
+    "midday": 1.0,
+    "afternoon": 1.0,
+    "evening": 1.0,
+    "latenight": 1.0
+   },
+   "weekday_weekend": "more_weekday",
+   "move_rate": "high",
+   "n": 5
+  },
+  "microwave": {
+   "home": "counter_k1",
+   "secondary": {},
+   "active_windows": {
+    "morning": 1.0,
+    "midday": 0.8,
+    "evening": 1.0,
+    "latenight": 1.0
+   },
+   "weekday_weekend": "same",
+   "move_rate": "static",
+   "n": 5
+  },
+  "mug": {
+   "home": "cupboard_k1",
+   "secondary": {
+    "desk_b1": 0.158,
+    "sink_k1": 0.20600000000000002,
+    "counter_k1": 0.06999999999999999,
+    "coffee_table_l1": 0.036
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "evening": 1.0,
+    "latenight": 1.0,
+    "midday": 0.2
+   },
+   "weekday_weekend": "same",
+   "move_rate": "medium",
+   "n": 5
+  },
+  "pan": {
+   "home": "cupboard_k1",
+   "secondary": {
+    "stove_k1": 0.22999999999999998,
+    "sink_k1": 0.148,
+    "counter_k1": 0.07200000000000001
+   },
+   "active_windows": {
+    "evening": 1.0,
+    "midday": 0.4,
+    "morning": 0.2
+   },
+   "weekday_weekend": "more_weekend",
+   "move_rate": "medium",
+   "n": 5
+  },
+  "phone": {
+   "home": "nightstand_b1",
+   "secondary": {
+    "desk_b1": 0.196,
+    "bed_b1": 0.06,
+    "coffee_table_l1": 0.08,
+    "sofa_l1": 0.08399999999999999,
+    "counter_k1": 0.02
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "midday": 1.0,
+    "afternoon": 1.0,
+    "evening": 1.0,
+    "latenight": 1.0
+   },
+   "weekday_weekend": "same",
+   "move_rate": "high",
+   "n": 5
+  },
+  "plate": {
+   "home": "cupboard_k1",
+   "secondary": {
+    "sink_k1": 0.254,
+    "table_d1": 0.162,
+    "counter_k1": 0.096
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "midday": 0.8,
+    "evening": 1.0,
+    "latenight": 0.8
+   },
+   "weekday_weekend": "same",
+   "move_rate": "medium",
+   "n": 5
+  },
+  "remote_control": {
+   "home": "coffee_table_l1",
+   "secondary": {
+    "sofa_l1": 0.21600000000000003,
+    "tv_stand_l1": 0.162
+   },
+   "active_windows": {
+    "evening": 1.0,
+    "latenight": 1.0
+   },
+   "weekday_weekend": "more_weekend",
+   "move_rate": "medium",
+   "n": 5
+  },
+  "router": {
+   "home": "tv_stand_l1",
+   "secondary": {
+    "tv_stand_l1": 0.08,
+    "desk_b1": 0.076,
+    "shelf_e1": 0.11000000000000001
+   },
+   "active_windows": {
+    "night": 0.4,
+    "morning": 0.4,
+    "midday": 0.4,
+    "afternoon": 0.4,
+    "evening": 0.4,
+    "latenight": 0.4
+   },
+   "weekday_weekend": "same",
+   "move_rate": "static",
+   "n": 5
+  },
+  "toaster": {
+   "home": "counter_k1",
+   "secondary": {
+    "cupboard_k1": 0.13399999999999998
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "latenight": 0.6
+   },
+   "weekday_weekend": "same",
+   "move_rate": "static",
+   "n": 5
+  },
+  "water_bottle": {
+   "home": "desk_b1",
+   "secondary": {
+    "bed_b1": 0.138,
+    "table_d1": 0.11399999999999999,
+    "sofa_l1": 0.02,
+    "nightstand_b1": 0.03,
+    "desk_b2": 0.04
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "midday": 1.0,
+    "afternoon": 1.0,
+    "evening": 1.0,
+    "latenight": 0.2
+   },
+   "weekday_weekend": "more_weekday",
+   "move_rate": "high",
+   "n": 5
+  },
+  "water_glass": {
+   "home": "cupboard_k1",
+   "secondary": {
+    "nightstand_b1": 0.13599999999999998,
+    "sink_k1": 0.20800000000000002,
+    "coffee_table_l1": 0.04,
+    "desk_b1": 0.10800000000000001
+   },
+   "active_windows": {
+    "morning": 1.0,
+    "evening": 1.0,
+    "latenight": 1.0,
+    "midday": 0.4
+   },
+   "weekday_weekend": "same",
+   "move_rate": "medium",
+   "n": 5
+  }
+ }
+}

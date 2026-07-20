@@ -1,11 +1,11 @@
-# bddl_activity_map.yaml -- our charter activity -> nearest BEHAVIOR-1K BDDL
+# bddl_activity_map.yaml -- our profile activity -> nearest BEHAVIOR-1K BDDL
 # activities (Anchor 3, [BEHAV]). Used by V6d: the union of the mapped BDDL
-# activities' object synsets is the allowed set for that charter activity's
+# activities' object synsets is the allowed set for that profile activity's
 # [BEHAV]-tagged objects.
 #
 # STRUCTURAL name-to-name correspondences only, drafted (Claude) for HUMAN
 # REVIEW per the anchor brief. No numeric values. Rows whose semantic match is
-# loose carry `confidence: low`. Unmapped charter activities are listed under
+# loose carry `confidence: low`. Unmapped profile activities are listed under
 # `unmapped:` (not silently dropped); they contribute no V6d constraint.
 #
 # BDDL activity names verified present in
@@ -17,7 +17,7 @@ source:
   path: bddl/bddl/activity_definitions/<activity>/problem0.bddl
 
 map:
-  # charter_activity: {bddl: [activity_dirs], confidence: high|med|low, note}
+  # profile_activity: {bddl: [activity_dirs], confidence: high|med|low, note}
   breakfast:
     bddl: [serving_a_meal, washing_dishes, making_tea]
     confidence: med
@@ -57,8 +57,19 @@ map:
   homework_k1:  {bddl: [organizing_school_stuff], confidence: low}
   homework_k2:  {bddl: [organizing_school_stuff], confidence: low}
   study_r1:     {bddl: [organizing_school_stuff], confidence: low}
+  # night_shift_typ_v1 activities (same objects as breakfast/cook_dinner, night names)
+  first_meal:
+    bddl: [serving_a_meal, washing_dishes, making_tea]
+    confidence: med
+    note: "first meal on waking; washing_dishes covers bowl/cup, making_tea covers cup/teapot"
+  cook_main:
+    bddl: [chopping_vegetables, preparing_salad, washing_pots_and_pans, washing_dishes]
+    confidence: med
+    note: "main meal cooked before the night shift; same coverage as cook_dinner"
+  main_meal:    {bddl: [serving_a_meal, clearing_the_table_after_dinner], confidence: med}
+  post_shift_snack: {bddl: [serving_a_meal, washing_dishes], confidence: low}
 
-# Charter activities intentionally without a BDDL binding (movement is
+# Profile activities intentionally without a BDDL binding (movement is
 # [DESIGN]/[HOMER]-driven, not object-affordance-driven): listed, not dropped.
 unmapped:
   - sleep
@@ -86,3 +97,12 @@ unmapped:
   - school_pickup
   - laptop_couch
   - gaming_r2
+  # night_shift non-object-affordance activities
+  - wake_prep
+  - day_sleep
+  - night_work
+  - chores_errands
+  - pre_shift_unwind
+  - weekend_leisure
+  - late_leisure
+  - return_home

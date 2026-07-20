@@ -40,7 +40,7 @@ from .schemas import (
 from .prompt_registry import (
     ACTIVITY as _ACTIVITY_T,
     DAY_PLAN as _DAY_PLAN_T,
-    ROUTINE_CHARTER as _CHARTER_T,
+    ROUTINE_PROFILE as _PROFILE_T,
     CONFLICT_VERIFY as _CONFLICT_T,
     DISPLACEMENT as _DISPLACEMENT_T,
     REALISM_ASIS as _REALISM_ASIS_T,
@@ -227,8 +227,8 @@ _STOP_WORDS = {"who", "the", "a", "an", "with", "and", "for", "their", "her",
                "his", "as", "at", "of", "to", "in", "on", "up", "works"}
 
 
-def _charter_occupation_ok(occ: str, member: dict) -> bool:
-    """Mechanical persona-consistency check: the charter occupation must
+def _profile_occupation_ok(occ: str, member: dict) -> bool:
+    """Mechanical persona-consistency check: the profile occupation must
     share a content word with the member's own habits/role, or be a generic
     occupation allowed for their age band. This is the guard the stage1c
     postmortem demanded: a day-0 hallucinated occupation ("night-shift
@@ -242,8 +242,8 @@ def _charter_occupation_ok(occ: str, member: dict) -> bool:
     return bool(words & allowed)
 
 
-def _fallback_charter(persona: dict) -> dict[str, dict]:
-    """Deterministic no-LLM charter straight from the persona — used when
+def _fallback_profile(persona: dict) -> dict[str, dict]:
+    """Deterministic no-LLM profile straight from the persona — used when
     generation fails validation after retries. Boring but never wrong."""
     out = {}
     for o in persona.get("occupants", []):
@@ -257,7 +257,7 @@ def _fallback_charter(persona: dict) -> dict[str, dict]:
     return out
 
 
-def generate_routine_charter(
+def generate_routine_profile(
     persona: dict,
     household_id: str,
     model: str = DEFAULT_MODEL,
@@ -268,12 +268,12 @@ def generate_routine_charter(
     each member repeats, validated against the persona. Returns
     {name: {occupation, weekday_routine, weekend_routine, signature_habits}}.
     Cached by household seed, so every day of every run renders the same
-    charter."""
+    profile."""
     occupants = persona.get("occupants", [])
     names = [o.get("name") for o in occupants]
     if not names:
         return {}
-    stage = _CHARTER_T.tag("routine_charter", builder=True)
+    stage = _PROFILE_T.tag("routine_profile", builder=True)
     seed = make_seed(household_id, 0, stage, 0)
     lines = [
         f"- {o.get('name')}: age_band={o.get('age_band', 'adult')}, "
@@ -283,7 +283,7 @@ def generate_routine_charter(
         for o in occupants
     ]
     user = ("Household members:\n" + "\n".join(lines)
-            + "\n\nWrite the routine charter for every member.")
+            + "\n\nWrite the routine profile for every member.")
     schema = {
         "type": "object",
         "properties": {"occupants": {
@@ -308,27 +308,27 @@ def generate_routine_charter(
             nm = str(e.get("name", "")).strip()
             if nm not in by_name:
                 continue
-            if not _charter_occupation_ok(str(e.get("occupation", "")), by_name[nm]):
+            if not _profile_occupation_ok(str(e.get("occupation", "")), by_name[nm]):
                 raise ValueError(
-                    f"charter occupation {e.get('occupation')!r} contradicts "
+                    f"profile occupation {e.get('occupation')!r} contradicts "
                     f"{nm}'s profile — regenerate")
             out[nm] = {k: e[k] for k in ("occupation", "weekday_routine",
                                           "weekend_routine", "signature_habits")}
         missing = [n for n in names if n not in out]
         if missing:
-            raise ValueError(f"charter missing members {missing!r}")
+            raise ValueError(f"profile missing members {missing!r}")
         return out
 
     client = _get_client(model)
     try:
         return generate_json(
-            client, _CHARTER_T.text, user, schema,
+            client, _PROFILE_T.text, user, schema,
             seed=seed, stage=stage, cache=cache, force=force, validate=_validate,
         )
     except Exception as exc:
-        _logger.warning("routine charter failed for %s (%s) — mechanical fallback",
+        _logger.warning("routine profile failed for %s (%s) — mechanical fallback",
                         household_id, exc)
-        return _fallback_charter(persona)
+        return _fallback_profile(persona)
 
 
 def generate_day_plan(
@@ -336,7 +336,7 @@ def generate_day_plan(
     household_id: str,
     day: int,
     day_type: str,
-    charter: Optional[dict] = None,
+    profile: Optional[dict] = None,
     event_note: Optional[str] = None,
     model: str = DEFAULT_MODEL,
     cache: Optional[ResponseCache] = None,
@@ -366,11 +366,11 @@ def generate_day_plan(
     # calendar mode folds the day name into the tag: the response cache is
     # keyed by seed alone, so a Tuesday plan must never replay a cached
     # pool-draw plan generated under the same (household, day)
-    charter = charter or {}
+    profile = profile or {}
     tag = f"day_plan_{day_type}" + (f"_cal{day % 7}" if _CALENDAR_DAYS else "")
-    # cache keys are seed-only: a plan rendered under a different charter or
+    # cache keys are seed-only: a plan rendered under a different profile or
     # scheduled event must never replay a stale entry
-    ctx_text = json.dumps(charter, sort_keys=True) + "|" + (event_note or "")
+    ctx_text = json.dumps(profile, sort_keys=True) + "|" + (event_note or "")
     tag += "_ch" + hashlib.sha256(ctx_text.encode()).hexdigest()[:8]
     stage = _DAY_PLAN_T.tag(tag, builder=True)
     seed = make_seed(household_id, day, stage, 0)
@@ -379,16 +379,16 @@ def generate_day_plan(
         f"role={o.get('role', 'member')}, habits={o.get('habits', 'none given')}"
         for o in occupants
     ]
-    charter_lines = []
-    for nm, ch in charter.items():
+    profile_lines = []
+    for nm, ch in profile.items():
         routine = ch.get("weekend_routine" if day_type == "weekend" else "weekday_routine", "")
-        charter_lines.append(f"- {nm} ({ch.get('occupation', '?')}): {routine} "
+        profile_lines.append(f"- {nm} ({ch.get('occupation', '?')}): {routine} "
                              f"Signature habits: {'; '.join(ch.get('signature_habits', []))}")
     user = (
         f"Day type: {_day_label(day_type, day)}\n"
         f"Household members:\n" + "\n".join(lines) + "\n\n"
-        f"Routine charter (authoritative for this day type):\n"
-        + "\n".join(charter_lines) + "\n\n"
+        f"Routine profile (authoritative for this day type):\n"
+        + "\n".join(profile_lines) + "\n\n"
         f"Today's scheduled event: {event_note or 'none — ordinary day'}\n\n"
         "Render this household's day and write each member's scenario."
     )
@@ -458,7 +458,7 @@ def generate_activity_trace(
     force: bool = False,
     variant_tag: str = "",
     conflict_context: str = "",
-    charter: Optional[dict] = None,
+    profile: Optional[dict] = None,
     event_note: Optional[str] = None,
 ) -> dict:
     """Generate a day's activity trace for one occupant.
@@ -497,14 +497,14 @@ def generate_activity_trace(
     # from cache.
     day_type = _household_day_type(household_id, day)
     plan = generate_day_plan(persona, household_id, day, day_type,
-                             charter=charter, event_note=event_note,
+                             profile=profile, event_note=event_note,
                              model=model, cache=cache, force=force)
     day_text = plan.get(occupant_name) or _occupant_day_scenario(
         household_id, day, occupant_index, day_type)
-    # the occupant's charter routine rides along into the trace prompt so the
+    # the occupant's profile routine rides along into the trace prompt so the
     # schedule stays anchored to the household's stable pattern, not just to
     # today's one-line scenario
-    _ch = (charter or {}).get(occupant_name, {})
+    _ch = (profile or {}).get(occupant_name, {})
     routine_text = _ch.get("weekend_routine" if day_type == "weekend"
                            else "weekday_routine", "")
 
@@ -1029,7 +1029,7 @@ def score_realism_batch(
     if request_fix:
         # "_fixh" (not "_fix"): the hopeless-sentinel instruction changed the
         # fix contract, and the marker rename invalidates exactly the round-1
-        # fix-requesting judge entries — everything else (charters, plans,
+        # fix-requesting judge entries — everything else (profiles, plans,
         # traces, displacements, kill-only judges) replays from cache
         base += "_fixh"
     if round_tag:

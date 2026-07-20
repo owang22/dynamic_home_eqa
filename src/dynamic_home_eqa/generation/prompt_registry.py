@@ -116,20 +116,20 @@ Respond only with valid JSON matching the provided schema. No commentary.
 # variety properties of model temperament: it mode-collapsed onto one motif
 # when primed, produced near-verbatim days when de-primed, and eventually
 # resolved the repetition/variety tension by rewriting an occupant's
-# occupation mid-episode. The planner is now a RENDERER: the routine charter
+# occupation mid-episode. The planner is now a RENDERER: the routine profile
 # (generated once per household, validated against the persona) says what
 # repeats; the seeded event calendar says what varies; the model improvises
 # neither.
 DAY_PLAN = PromptTemplate("day_plan", """\
 You are rendering ONE day for a household. You are given the day type, each
-member's profile, each member's ROUTINE CHARTER (their stable weekly
+member's profile, each member's ROUTINE PROFILE (their stable weekly
 pattern — authoritative ground truth), and today's scheduled event (usually
 none). Write a short scenario (1-2 sentences) for EACH member.
 
 Hard constraints:
-- Follow each member's routine charter for this day type exactly. Do NOT
+- Follow each member's routine profile for this day type exactly. Do NOT
   invent new occupations, schedules, or lifestyles, and do not contradict
-  the charter's wake/sleep pattern. Vary only the small, concrete details
+  the profile's wake/sleep pattern. Vary only the small, concrete details
   of how the routine plays out today (which room, which chore, which meal).
 - If a scheduled event is given, weave it coherently into EVERY member's
   scenario. If none is given, this is an ordinary day: no parties, guests,
@@ -146,9 +146,9 @@ Respond with JSON only:
 Include every member exactly once. No commentary outside the JSON.
 """)
 
-ROUTINE_CHARTER = PromptTemplate("routine_charter", """\
+ROUTINE_PROFILE = PromptTemplate("routine_profile", """\
 You are defining the STABLE weekly routine of each household member — the
-pattern that repeats week after week. This charter is generated ONCE per
+pattern that repeats week after week. This profile is generated ONCE per
 household and then governs every generated day, so it must be strictly
 faithful to each member's given profile: same occupation, same wake/sleep
 tendencies, same habits. Never invent an occupation or lifestyle that the

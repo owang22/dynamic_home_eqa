@@ -1,17 +1,17 @@
-"""Anchor data acquisition + automated charter checks (anchor_checks_brief).
+"""Anchor data acquisition + automated profile checks (anchor_checks_brief).
 
 Compiles five external anchor datasets into machine-checkable validation
-bounds for charter_schema_v1 YAMLs.
+bounds for profile_schema_v1 YAMLs.
 
   fetch_all.py         idempotent clone/download of Anchors 1-4 into
                        third_party/ + data/anchors/ (gitignored); ATUS
                        (bls.gov, unreachable here) prints NEEDS_DATA.
   compile_envelope.py  raw anchors -> envelope.yaml (committed, provenance
                        per bound, band-multiplier config block at the top).
-  validate_charter.py  V1-V5 (structural, from charters.schema) + V6a-V6e
+  validate_profile.py  V1-V5 (structural, from profiles.schema) + V6a-V6e
                        (anchor checks); writes anchor_report.md; nonzero exit
                        on any FAIL. The bank builder calls this and refuses
-                       charters not fully PASS/WARN with status VERIFIED.
+                       profiles not fully PASS/WARN with status VERIFIED.
 
 Committed config/mapping tables (this directory):
   envelope.yaml            compiled bounds + band config  (compile_envelope output)

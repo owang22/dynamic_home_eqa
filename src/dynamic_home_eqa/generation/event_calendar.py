@@ -9,7 +9,7 @@ near-verbatim ordinary days punctuated by an occupant spontaneously changing
 occupation. Variety is now DATA: a sparse, seeded calendar sampled once per
 household decides which days carry a notable event and what it is; the day
 planner just renders it. What should repeat (routines) comes from the routine
-charter; what should vary (events) comes from here; the model improvises
+profile; what should vary (events) comes from here; the model improvises
 neither.
 
 Prefix-stable by construction: day k's outcome depends only on days 0..k of

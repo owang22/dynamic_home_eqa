@@ -4,7 +4,7 @@ Deterministic. Parses whatever anchor data is present under third_party/ and
 data/anchors/ and writes envelope.yaml with:
 
   config:             band multipliers (editable; tighten later)
-  bddl_object_unions: per charter-activity synset union       (Anchor 3, V6d)
+  bddl_object_unions: per profile-activity synset union       (Anchor 3, V6d)
   housekeep_placements: per object-class correct/misplaced receptacle
                         categories                            (Anchor 4, V6e)
   homer_jitter_std:   per HOMER activity, std of daily start  (Anchor 2, V6b)
@@ -13,7 +13,7 @@ data/anchors/ and writes envelope.yaml with:
   literature_tier:    secondary V6c band                      (Anchor 5)
 
 Anchors with no data present are written as {status: NEEDS_DATA, ...} so
-validate_charter degrades that check rather than failing the run. No numeric
+validate_profile degrades that check rather than failing the run. No numeric
 value is invented: every number here is parsed from a shipped dataset or left
 as NEEDS_DATA / TODO for human transcription.
 
@@ -37,7 +37,7 @@ DATA_ANCHORS = REPO_ROOT / "data" / "anchors"
 
 # ── band multiplier config (defaults; edit here, re-run) ─────────────────────
 CONFIG = {
-    "jitter_band": [0.5, 2.0],       # V6b: charter jitter_min within [0.5x, 2x] HOMER std
+    "jitter_band": [0.5, 2.0],       # V6b: profile jitter_min within [0.5x, 2x] HOMER std
     "hazard_band": [0.5, 2.0],       # V6c: emergent class rate within [0.5x min, 2x max]
     "atus_percentiles": [10, 50, 90],  # V6a band = [10th, 90th]
     "binding_warn_at": 1,            # V6d/V6e: 1 unmatched = WARN
@@ -74,15 +74,15 @@ def compile_bddl() -> dict:
         return {"status": "NEEDS_DATA", "hint": "run fetch_all (bddl clone missing)"}
     amap = _load_map("bddl_activity_map.yaml")["map"]
     per_bddl = {}
-    out = {"status": "OK", "by_charter_activity": {}}
-    for charter_act, spec in amap.items():
+    out = {"status": "OK", "by_profile_activity": {}}
+    for profile_act, spec in amap.items():
         union: set[str] = set()
         for bddl_act in spec["bddl"]:
             d = root / bddl_act
             if bddl_act not in per_bddl:
                 per_bddl[bddl_act] = parse_bddl_synsets(d) if d.exists() else set()
             union |= per_bddl[bddl_act]
-        out["by_charter_activity"][charter_act] = {
+        out["by_profile_activity"][profile_act] = {
             "bddl": spec["bddl"], "confidence": spec.get("confidence"),
             "synsets": sorted(union),
             # bare object names (strip .n.NN) for name-level matching in V6d

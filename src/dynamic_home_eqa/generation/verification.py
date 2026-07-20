@@ -51,7 +51,7 @@ def resolve_conflicts(
     cache,
     force: bool = False,
     max_rounds: int = 2,
-    charter: dict | None = None,
+    profile: dict | None = None,
     event_note: str | None = None,
 ) -> list[dict]:
     """Regenerate activity spans flagged as conflicting.
@@ -124,7 +124,7 @@ def resolve_conflicts(
                 temperature=temperature,
                 cache=cache,
                 force=force,
-                charter=charter,
+                profile=profile,
                 event_note=event_note,
                 variant_tag=f"conflictfix_r{round_idx}",
                 conflict_context="\n".join(notes_by_occ.get(occ_name, [])),
@@ -191,7 +191,7 @@ def run_verification_pass(
     temperature: float,
     cache,
     force: bool = False,
-    charter: dict | None = None,
+    profile: dict | None = None,
     event_note: str | None = None,
 ) -> tuple[list[dict], dict]:
     """Full verification pass for a multi-occupant household.
@@ -233,7 +233,7 @@ def run_verification_pass(
         temperature=temperature,
         cache=cache,
         force=force,
-        charter=charter,
+        profile=profile,
         event_note=event_note,
     )
 

@@ -7,7 +7,7 @@
 #                      (knifeblock/mat/trashcan), so most of our classes have
 #                      NO HOMER counterpart -> left unmapped (V6c then falls
 #                      back to the literature tier, Anchor 5, as the band).
-#   activity_map:      our charter activity -> HOMER+ activity label, for V6b
+#   activity_map:      our profile activity -> HOMER+ activity label, for V6b
 #                      (jitter reference = std of that activity's daily start
 #                      time across HOMER+ days). This is the well-populated map.
 #
@@ -25,7 +25,7 @@ source:
 object_class_map:
   # our_class: {homer: [node_classes], confidence}   -- most have no match
   knife:  {homer: [knifeblock], confidence: low, note: "knifeblock is the receptacle, not the knife; proxy only"}
-  # The following charter classes have NO movable counterpart in HOMER+ props
+  # The following profile classes have NO movable counterpart in HOMER+ props
   # (HOMER+ props = knifeblock/mat/trashcan). Listed so they are not silently
   # dropped; V6c uses the literature tier for these.
   unmapped_no_homer_prop:
@@ -98,7 +98,7 @@ activity_map:
   make_lunches:  {homer: wash_dishes_breakfast, confidence: low, note: "no HOMER meal-prep; nearest kitchen-work label"}
   gaming_r2:     {homer: watching_tv, confidence: low}
 
-# Charter activities without a HOMER activity label (no jitter reference):
+# Profile activities without a HOMER activity label (no jitter reference):
 unmapped_activities:
   - away_at_work
   - at_class_r1

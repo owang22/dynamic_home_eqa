@@ -424,14 +424,14 @@ def generate_for_scene(
         force=force,
     )
 
-    # ── Stage 1.5: routine charter (once per HOUSEHOLD — cached across days)
+    # ── Stage 1.5: routine profile (once per HOUSEHOLD — cached across days)
     # and today's calendar event (seeded, sparse; None = ordinary day). The
-    # charter pins each member's stable weekly pattern so day plans render
+    # profile pins each member's stable weekly pattern so day plans render
     # rather than re-imagine the household; the calendar makes variety an
     # explicit sampled quantity instead of a prompt exhortation.
-    from .stages import generate_routine_charter
+    from .stages import generate_routine_profile
     from .event_calendar import event_for_day
-    charter = generate_routine_charter(persona, household_id, model=model,
+    profile = generate_routine_profile(persona, household_id, model=model,
                                        cache=cache, force=force)
     event = event_for_day(household_id, day, persona)
     event_note = event["note"] if event else None
@@ -450,7 +450,7 @@ def generate_for_scene(
             temperature=temperature,
             cache=cache,
             force=force,
-            charter=charter,
+            profile=profile,
             event_note=event_note,
         )
         # occupant_name is free-text in ACTIVITY_SCHEMA (not enum-constrained
@@ -477,7 +477,7 @@ def generate_for_scene(
             temperature=temperature,
             cache=cache,
             force=force,
-            charter=charter,
+            profile=profile,
             event_note=event_note,
         )
 
@@ -844,7 +844,7 @@ def generate_for_scene(
         # day's scheduled calendar event (None = ordinary day) — the two
         # structures that replaced free-text day imagination (see
         # event_calendar.py's postmortem note)
-        "routine_charter":     charter,
+        "routine_profile":     profile,
         "calendar_event":      event,
         # judge-retry accounting (all zeros when the flag is off): how many
         # windows had first-pass rejects, how many revision proposals came

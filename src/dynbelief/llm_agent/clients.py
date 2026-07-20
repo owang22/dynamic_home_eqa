@@ -51,8 +51,13 @@ class OpenAIClient:
     # counts, so costs can be recomputed later from the JSONL regardless.
     PRICES = {}
 
+    # Hard caps for reasoning-class models (cost control). max_completion_tokens
+    # bounds reasoning+output; reasoning_effort trims the thinking budget. Both
+    # are opt-in via generate(); defaults preserve prior behaviour.
     def generate(self, system: str, user: str, schema: dict,
-                 seed=None, temperature: float = 0.2) -> str:
+                 seed=None, temperature: float = 0.2,
+                 max_completion_tokens: int | None = None,
+                 reasoning_effort: str | None = None) -> str:
         import copy as _copy, json as _json, time as _time, pathlib as _pl
         strict = _copy.deepcopy(schema)
         strict.setdefault("additionalProperties", False)
@@ -66,6 +71,10 @@ class OpenAIClient:
                              "json_schema": {"name": "decision",
                                              "strict": True,
                                              "schema": strict}})
+        if max_completion_tokens is not None:
+            kwargs["max_completion_tokens"] = int(max_completion_tokens)
+        if reasoning_effort is not None:
+            kwargs["reasoning_effort"] = reasoning_effort
         try:
             resp = self.client.chat.completions.create(temperature=temperature, **kwargs)
         except Exception as e:

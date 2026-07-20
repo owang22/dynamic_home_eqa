@@ -1,13 +1,13 @@
 # dynamic_home_eqa
 
-Dynamic Home EQA. **v2 (current): a charter-driven SYMBOLIC household simulator** —
-a provenance-tagged YAML charter (who lives here + weekly routine) deterministically
+Dynamic Home EQA. **v2 (current): a profile-driven SYMBOLIC household simulator** —
+a provenance-tagged YAML profile (who lives here + weekly routine) deterministically
 generates receptacle-level object-movement logs, which feed belief-model and
 LLM-routine-knowledge experiments. No Habitat, no scene render, no LLM in the data
-loop. See **Charter system** below.
+loop. See **Profile system** below.
 
 The original **HSSD-scene LLM generation** pipeline (Habitat + HSSD) is **legacy**,
-superseded as the data source by the charter simulator. Its scene-generation,
+superseded as the data source by the profile simulator. Its scene-generation,
 QA, embodied-agent, and webapp code + generated data + tests were moved to
 `archive/hssd_generation/` (on disk, out of git — see its README to restore).
 Retained in-tree: `src/dynamic_home_eqa/generation/` (shared scene-region +
@@ -21,22 +21,22 @@ Qwen client import), plus `paths.py`/`rooms.py`/`topdown_map.py`. Findings live 
 .env / .env.example    machine config (paths, endpoints, keys) — SINGLE source; see TRANSFER.md
 env.sh                 source in shell scripts to export the same config
 src/dynbelief/         belief-model + LLM-agent research package (the active work)
-  charters/            v2 charter system: schema+validator (V1–V5), 4 transforms,
-                       symbolic generator, bank builder (charters -> frozen banks)
-  anchors/             anchor-dataset acquisition + charter checks V6a–e (envelope.yaml,
-                       validate_charter.py, mapping tables, literature_constants)
+  profiles/            v2 profile system: schema+validator (V1–V5), 4 transforms,
+                       symbolic generator, bank builder (profiles -> frozen banks)
+  anchors/             anchor-dataset acquisition + profile checks V6a–e (envelope.yaml,
+                       validate_profile.py, mapping tables, literature_constants)
   beliefs/             belief zoo b0/b1/b2/b2.5-betabayes/b3-Perpetua*
-  replay/, eqa/        ReplayWorld (reads charter OR HSSD episodes), MCQ probe, answerer
+  replay/, eqa/        ReplayWorld (reads profile OR HSSD episodes), MCQ probe, answerer
   active/              active displacement probe (VoI sense-or-answer, day budget)
   llm_agent/           LLM-as-agent clients (local Qwen + API) + earlier HSSD experiments
-  experiments/         charter_e1 (routine-knowledge forecasting) + legacy stage runners
-charters/manual/       VERIFIED charter YAMLs (single_adult, college_roommates, family4)
+  experiments/         e1 (routine-knowledge forecasting) + legacy stage runners
+profiles/manual/       VERIFIED profile YAMLs (single_adult, college_roommates, family4)
 banks/                 frozen episode banks (typ_v1/atyp_v1/atyp_shift_v1) — gitignored,
-                       regenerable from charters+seed; each dir has a hash manifest
+                       regenerable from profiles+seed; each dir has a hash manifest
 src/dynamic_home_eqa/  LEGACY HSSD generation package + shared infra (paths.py, rooms.py)
   generation/ qa/ embodied/ webapp/   HSSD scene pipeline (legacy; see note above)
   paths.py             single source of truth for every repo/data/output path (+ .env loader)
-tests/                 pytest suite (charter validators + belief/replay + legacy HSSD)
+tests/                 pytest suite (profile validators + belief/replay + legacy HSSD)
 data/anchors/          raw anchor data + third_party/ clones — gitignored (hard rule)
 reports/               dynbelief + llm_agent experiment reports and raw artifacts
 scratch_runs/          in-repo throwaway run scripts (NOT /tmp — survives reboots)
@@ -65,15 +65,15 @@ python -c "from dynamic_home_eqa.paths import HSSD_DIR, MODEL_CACHE_DIR; print(H
 **External inputs and env vars** and `TRANSFER.md` for moving machines.
 After that, every script runs from any working directory.
 
-## Charter system (v2 — the current data source)
+## Profile system (v2 — the current data source)
 
-A charter is a provenance-tagged YAML in `charters/manual/` (schema:
-`dynbelief/charters/schema.py`). Values carry anchor tags `[ATUS] [BEHAV]
+A profile is a provenance-tagged YAML in `profiles/manual/` (schema:
+`dynbelief/profiles/schema.py`). Values carry anchor tags `[ATUS] [BEHAV]
 [HOMER] [HKEEP] [DESIGN]`; a human verifies them and flips `status: DRAFT ->
-VERIFIED` once `validate_charter.py` reports no FAIL. **Atypical charters are
+VERIFIED` once `validate_profile.py` reports no FAIL. **Atypical profiles are
 never hand- or model-authored** — they are produced only by the registered
 transforms (`phase_shift`, `block_permutation`, `role_reassignment`,
-`compression`) in `dynbelief/charters/transforms.py`.
+`compression`) in `dynbelief/profiles/transforms.py`.
 
 ### 1. Anchors (once per machine / when mappings change)
 
@@ -87,39 +87,39 @@ python -m dynbelief.anchors.compile_envelope   # raw anchors -> src/dynbelief/an
 `envelope.yaml` and the mapping tables (`*_map.yaml`, `literature_constants.yaml`)
 are committed; `data/anchors/` + `third_party/` clones are gitignored.
 
-### 2. Validate a charter (runs V1–V5 + V6a–e; writes anchor_report.md)
+### 2. Validate a profile (runs V1–V5 + V6a–e; writes anchor_report.md)
 
 ```bash
-python -m dynbelief.anchors.validate_charter charters/manual/single_adult_typ_v1.yaml
+python -m dynbelief.anchors.validate_profile profiles/manual/single_adult_typ_v1.yaml
 # exit 0 = no FAIL (may WARN / NEEDS_DATA). Only FAIL blocks a VERIFIED flip.
 ```
 
 ### 3. Freeze the episode banks (A2–A4)
 
 ```bash
-python -m dynbelief.charters.bank --bank all              # typ_v1, atyp_v1, atyp_shift_v1
-python -m dynbelief.charters.bank --bank typ_v1 --allow-draft --days 6 --targets 12 \
+python -m dynbelief.profiles.bank --bank all              # typ_v1, atyp_v1, atyp_shift_v1
+python -m dynbelief.profiles.bank --bank typ_v1 --allow-draft --days 6 --targets 12 \
        --banks-root /tmp/dev_banks                        # dev/throwaway (DRAFT ok, non-reportable)
 ```
 
 Each bank freezes 3 households × 30 days × 4 queries/day (budget 3), 20 targets
 stratified into volatility terciles with 5 class-disjoint held-out objects, plus
 ground-truth + `class_hazards` tables and a hash `manifest.json`. The builder
-calls `validate_charter` and refuses DRAFT / anchor-FAIL charters unless
+calls `validate_profile` and refuses DRAFT / anchor-FAIL profiles unless
 `--allow-draft` (which stamps the manifest `non_reportable`). Banks are
 gitignored and regenerable; the manifest pins provenance.
 
 ### 4. Experiments (E1 routine-knowledge forecasting; E2–E4 to come)
 
 ```bash
-python -m dynbelief.experiments.charter_e1 --client mock   # offline plumbing (last-seen baseline)
-python -m dynbelief.experiments.charter_e1 --client qwen \
+python -m dynbelief.experiments.e1 --client mock   # offline plumbing (last-seen baseline)
+python -m dynbelief.experiments.e1 --client qwen \
        --endpoint http://127.0.0.1:8300                    # real run (needs the vLLM endpoint / GPU)
 ```
 
 E1 sweeps {typ_v1, atyp_v1} × history-days {0,1,3,7,14} × {history-only,
-history+charter-prose}, plus the `atyp_shift_v1` C4 control, and reports
-accuracy-vs-history / ECE / moved-only / held-out slices to `reports/charter_e1/`.
+history+profile-prose}, plus the `atyp_shift_v1` C4 control, and reports
+accuracy-vs-history / ECE / moved-only / held-out slices to `reports/e1/`.
 
 ## LEGACY HSSD pipeline (archived)
 
@@ -201,12 +201,12 @@ in the repo regardless of working directory.
 ## Research experiments (dynbelief + LLM agents)
 
 The belief-model and LLM studies run **replay-only** over episode directories, so
-most need no GPU. The current substrate is the charter banks (`banks/<name>/`,
+most need no GPU. The current substrate is the profile banks (`banks/<name>/`,
 built above); `ReplayWorld` reads them exactly as it read the legacy HSSD logs.
 
 ```bash
-# charter-world experiments (v2)
-python -m dynbelief.experiments.charter_e1 --client mock     # routine-knowledge forecasting
+# profile-world experiments (v2)
+python -m dynbelief.experiments.e1 --client mock     # routine-knowledge forecasting
 
 # legacy HSSD-logged experiments (replay over logs/<episode>/)
 python -m dynbelief.experiments.stage1c        # belief-model probe gate
@@ -218,13 +218,13 @@ The belief zoo (`dynbelief/beliefs/`) now includes **b2.5 (`b25_betabayes`)**, a
 Beta-Bayesian per-edge model between b2's class-decay and b3's periodic prior.
 LLM clients (`dynbelief/llm_agent/clients.py`) cover local Qwen (vLLM endpoint)
 and the frontier API axis (`OPENAI_API_KEY`); per the current experiment plan the
-charter runs are **local-Qwen only**. Reports land in `reports/` (e.g.
-`reports/charter_e1/`, `reports/llm_agent/PRELIM.md`).
+profile runs are **local-Qwen only**. Reports land in `reports/` (e.g.
+`reports/e1/`, `reports/llm_agent/PRELIM.md`).
 
-Run the charter/belief tests directly:
+Run the profile/belief tests directly:
 
 ```bash
-python -m pytest tests/test_charter_validators.py -q   # validators, transforms, generator, bank, b2.5
+python -m pytest tests/test_profile_validators.py -q   # validators, transforms, generator, bank, b2.5
 ```
 
 ## Documentation map
