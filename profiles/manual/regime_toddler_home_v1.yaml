@@ -1,0 +1,120 @@
+# regime_toddler_home_v1 -- CONFIRMATORY pair (unseen during design)
+# Persona: a stay-at-home parent of a toddler; objects migrate to the play mat.
+# Confusable with regime_pet_heavy_v1 (both: small objects on the living-room
+# floor / a low activity area). DIAGNOSTIC (SEMANTICS-necessary): sippy_cup,
+# board_book, toy_blocks, high_chair -- you must know these mean "toddler" to
+# place the shared objects on the play mat; anonymized, "small objects on the
+# floor" is equally a pet household. PRE-REGISTER named >> anon.
+# DEPENDENT (shared): cushion, blanket, ball -> on the PLAY MAT. Query targets.
+household: regime_toddler_home_v1
+status: VERIFIED  # confirmatory (Oliver, 2026-07-21)
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,        room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1, room: bedroom,  aliases: []}
+  - {id: crib_n1,       room: nursery,  aliases: []}
+  - {id: play_mat_l1,   room: living,   aliases: [play_area]}
+  - {id: toy_bin_l1,    room: living,   aliases: []}
+  - {id: sofa_l1,       room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living, aliases: []}
+  - {id: tv_stand_l1,   room: living,   aliases: []}
+  - {id: high_chair_d1, room: dining,   aliases: []}
+  - {id: table_d1,      room: dining,   aliases: [dining_table]}
+  - {id: counter_k1,    room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,   room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,       room: kitchen,  aliases: []}
+  - {id: fridge_k1,     room: kitchen,  aliases: []}
+  - {id: entry_hook_e1, room: entryway, aliases: [key_hook]}
+  - {id: bathroom_c1,   room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: stay-at-home parent of a toddler
+    schedule:
+      - {activity: sleep,        days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "22:30", end: "06:30"}  # [ATUS]
+      - {activity: breakfast_kid,days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "07:00", end: "07:45"}  # [DESIGN] high chair, sippy cup
+      - {activity: playtime_am,  days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "09:00", end: "11:00"}  # [DESIGN] play mat
+      - {activity: lunch_kid,    days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "12:00", end: "12:45"}  # [DESIGN]
+      - {activity: nap,          days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "13:00", end: "15:00"}  # [DESIGN] no-op
+      - {activity: playtime_pm,  days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "15:00", end: "17:00"}  # [DESIGN] play mat
+      - {activity: dinner_kid,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "18:00", end: "18:45"}  # [DESIGN]
+      - {activity: bedtime,      days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "19:30", end: "20:15"}  # [DESIGN] board book
+      - {activity: tv_evening,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "20:30", end: "22:00"}  # [ATUS]
+activities:
+  breakfast_kid:
+    jitter_min: 10
+    objects: [sippy_cup, bowl, spoon]
+    during: {sippy_cup: high_chair_d1, bowl: high_chair_d1, spoon: high_chair_d1}
+    after:
+      sippy_cup: {dest: sink_k1, p: 0.6, else: counter_k1}
+      bowl:      {dest: sink_k1, p: 0.8, else: high_chair_d1}
+      spoon:     {dest: sink_k1, p: 0.8, else: high_chair_d1}
+  playtime_am:
+    jitter_min: 20                                   # [DESIGN] everything ends up on the play mat
+    objects: [toy_blocks, ball, cushion, sippy_cup]
+    during: {toy_blocks: play_mat_l1, ball: play_mat_l1, cushion: play_mat_l1, sippy_cup: play_mat_l1}
+    after:
+      toy_blocks: {dest: toy_bin_l1, p: 0.5, else: play_mat_l1}
+      ball:       {dest: play_mat_l1, p: 0.6, else: toy_bin_l1}    # [DESIGN]
+      cushion:    {dest: play_mat_l1, p: 0.6, else: sofa_l1}       # [DESIGN] dragged to the play mat
+      sippy_cup:  {dest: play_mat_l1, p: 0.5, else: counter_k1}
+  lunch_kid:
+    jitter_min: 15
+    objects: [sippy_cup, plate, spoon]
+    during: {sippy_cup: high_chair_d1, plate: high_chair_d1, spoon: high_chair_d1}
+    after:
+      sippy_cup: {dest: sink_k1, p: 0.6, else: counter_k1}
+      plate:     {dest: sink_k1, p: 0.8, else: high_chair_d1}
+      spoon:     {dest: sink_k1, p: 0.8, else: high_chair_d1}
+  playtime_pm:
+    jitter_min: 20                                   # [DESIGN]
+    objects: [toy_blocks, ball, blanket, board_book]
+    during: {toy_blocks: play_mat_l1, ball: play_mat_l1, blanket: play_mat_l1, board_book: play_mat_l1}
+    after:
+      toy_blocks: {dest: toy_bin_l1, p: 0.5, else: play_mat_l1}
+      ball:       {dest: play_mat_l1, p: 0.6, else: toy_bin_l1}
+      blanket:    {dest: play_mat_l1, p: 0.6, else: sofa_l1}       # [DESIGN]
+      board_book: {dest: play_mat_l1, p: 0.5, else: crib_n1}
+  dinner_kid:
+    jitter_min: 10
+    objects: [sippy_cup, plate, spoon]
+    during: {sippy_cup: high_chair_d1, plate: high_chair_d1, spoon: high_chair_d1}
+    after:
+      sippy_cup: {dest: sink_k1, p: 0.7, else: counter_k1}
+      plate:     {dest: sink_k1, p: 0.85, else: high_chair_d1}
+      spoon:     {dest: sink_k1, p: 0.85, else: high_chair_d1}
+  bedtime:
+    jitter_min: 15
+    objects: [board_book, blanket]
+    during: {board_book: crib_n1, blanket: crib_n1}
+    after:
+      board_book: {dest: crib_n1, p: 0.6, else: toy_bin_l1}
+      blanket:    {dest: crib_n1, p: 0.7, else: play_mat_l1}
+  tv_evening:
+    jitter_min: 20
+    objects: [remote, phone]
+    during: {remote: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.4, else: sofa_l1}
+      phone:  {dest: nightstand_r1, p: 0.85, else: sofa_l1}
+placements:
+  # DIAGNOSTIC (SEMANTICS-necessary; toddler tells)
+  sippy_cup:  {home: cupboard_k1, volatility_class_hint: high}   # [DESIGN]
+  board_book: {home: toy_bin_l1, volatility_class_hint: high}    # [DESIGN]
+  toy_blocks: {home: toy_bin_l1, volatility_class_hint: high}    # [DESIGN]
+  # DEPENDENT (shared; regime -> play mat)
+  cushion:  {home: sofa_l1, volatility_class_hint: high}         # [DESIGN]
+  blanket:  {home: sofa_l1, volatility_class_hint: high}         # [DESIGN]
+  ball:     {home: toy_bin_l1, volatility_class_hint: high}      # [DESIGN]
+  # ordinary
+  bowl:   {home: cupboard_k1}
+  plate:  {home: cupboard_k1}
+  spoon:  {home: cupboard_k1}
+  remote: {home: coffee_table_l1}
+  phone:  {home: nightstand_r1, volatility_class_hint: high}
+  keys:   {home: entry_hook_e1, p_misplace: 0.08, misplace_set: [counter_k1, coffee_table_l1]}
+  # static
+  toaster:       {home: counter_k1,  volatility_class_hint: static}
+  router:        {home: tv_stand_l1, volatility_class_hint: static}
+  first_aid_kit: {home: bathroom_c1, volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9. [DESIGN]

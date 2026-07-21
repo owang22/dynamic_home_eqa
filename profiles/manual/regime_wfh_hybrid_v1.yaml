@@ -1,0 +1,145 @@
+# regime_wfh_hybrid_v1 -- INFERABLE-REGIME atypical (H2 redesign)
+#
+# CONFUSABLE PARTNER of regime_office_commuter_v1: both leave the house some
+# mornings, so a single morning sighting is ambiguous. DIAGNOSTIC objects
+# (headset, webcam, laptop_stand -- a home-office rig) reveal a HYBRID remote
+# worker who works from home Mon/Wed/Fri and commutes Tue/Thu. The regime flips
+# the SHARED dependent object: at 14:00 on a WFH day the laptop is at the HOME
+# desk, not away at an office as a typical prior assumes.
+#
+# DIAGNOSTIC (persona-exclusive): headset, webcam, laptop_stand.
+# DEPENDENT (shared): laptop, coffee_mug -- held-out targets (queried midday on a
+# WFH day, where the regime makes "home desk" the surprising-but-correct answer).
+
+household: regime_wfh_hybrid_v1
+status: VERIFIED  # regime-inference redesign (Oliver, 2026-07-21)
+derived_from: null
+transformation: null
+
+receptacles:
+  - {id: bed_r1,        room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1, room: bedroom,  aliases: []}
+  - {id: desk_o1,       room: office,   aliases: [desk]}
+  - {id: bookshelf_o1,  room: office,   aliases: []}
+  - {id: sofa_l1,       room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living, aliases: []}
+  - {id: tv_stand_l1,   room: living,   aliases: []}
+  - {id: counter_k1,    room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,   room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,       room: kitchen,  aliases: []}
+  - {id: fridge_k1,     room: kitchen,  aliases: []}
+  - {id: table_d1,      room: dining,   aliases: [dining_table]}
+  - {id: entry_hook_e1, room: entryway, aliases: [key_hook]}
+  - {id: bathroom_c1,   room: bathroom, aliases: [bathroom_cabinet]}
+
+residents:
+  - id: R1
+    description: hybrid remote worker; WFH Mon/Wed/Fri, commutes Tue/Thu
+    schedule:
+      - {activity: sleep,        days: [Mo,Tu,We,Th,Fr], start: "23:00", end: "07:00"}  # [ATUS]
+      - {activity: morning_prep, days: [Mo,Tu,We,Th,Fr], start: "07:00", end: "07:30"}  # [ATUS]
+      - {activity: breakfast,    days: [Mo,Tu,We,Th,Fr], start: "07:30", end: "08:00"}  # [ATUS]
+      # WFH days (Mon/Wed/Fri): at the home desk all day
+      - {activity: wfh_setup,    days: [Mo,We,Fr],       start: "08:30", end: "09:00"}  # [DESIGN] headset/laptop at desk
+      - {activity: wfh_work_am,  days: [Mo,We,Fr],       start: "09:00", end: "12:30"}  # [DESIGN] no-op (at home desk)
+      - {activity: wfh_lunch,    days: [Mo,We,Fr],       start: "12:30", end: "13:15"}  # [DESIGN] eats at home
+      - {activity: wfh_work_pm,  days: [Mo,We,Fr],       start: "13:15", end: "17:00"}  # [DESIGN] no-op
+      # office days (Tue/Thu): laptop leaves
+      - {activity: leave_office, days: [Tu,Th],          start: "08:00", end: "08:30"}  # [DESIGN] laptop/headset... no, only laptop
+      - {activity: away_office,  days: [Tu,Th],          start: "08:30", end: "17:30"}  # [DESIGN] no-op
+      - {activity: return_office,days: [Tu,Th],          start: "17:30", end: "18:00"}  # [DESIGN]
+      - {activity: dinner,       days: [Mo,Tu,We,Th,Fr], start: "18:30", end: "19:15"}  # [ATUS]
+      - {activity: tv_evening,   days: [Mo,Tu,We,Th,Fr], start: "20:00", end: "22:30"}  # [ATUS]
+      - {activity: sleep,        days: [Sa,Su],          start: "00:00", end: "08:30"}  # [ATUS] weekend
+      - {activity: errand,       days: [Sa],             start: "11:00", end: "12:00"}  # [DESIGN]
+      - {activity: dinner,       days: [Sa,Su],          start: "18:30", end: "19:15"}  # [ATUS]
+      - {activity: tv_evening,   days: [Sa,Su],          start: "20:00", end: "23:00"}  # [ATUS]
+
+activities:
+  morning_prep:
+    jitter_min: 10                                   # [HOMER]
+    objects: [phone]
+    during: {phone: nightstand_r1}
+    after:
+      phone: {dest: counter_k1, p: 0.7, else: nightstand_r1}
+  breakfast:
+    jitter_min: 10                                   # [HOMER]
+    objects: [coffee_mug, bowl]
+    during: {coffee_mug: counter_k1, bowl: table_d1}
+    after:
+      coffee_mug: {dest: counter_k1, p: 0.5, else: sink_k1}
+      bowl:       {dest: sink_k1, p: 0.8, else: table_d1}
+  wfh_setup:
+    jitter_min: 15                                   # [DESIGN] the home-office rig comes out
+    objects: [headset, webcam, laptop, laptop_stand, coffee_mug]
+    during: {headset: desk_o1, webcam: desk_o1, laptop: desk_o1, laptop_stand: desk_o1, coffee_mug: desk_o1}
+    after:
+      headset:      {dest: desk_o1, p: 0.95}         # [DESIGN] home-office gear stays at the desk
+      webcam:       {dest: desk_o1, p: 0.95}
+      laptop:       {dest: desk_o1, p: 0.9, else: sofa_l1}   # [DESIGN] laptop at HOME desk all WFH day
+      laptop_stand: {dest: desk_o1, p: 0.98}
+      coffee_mug:   {dest: desk_o1, p: 0.6, else: sink_k1}   # [DESIGN] mug cycles at the desk
+  wfh_lunch:
+    jitter_min: 15                                   # [DESIGN]
+    objects: [plate, fork, coffee_mug]
+    during: {plate: table_d1, fork: table_d1, coffee_mug: counter_k1}
+    after:
+      plate:      {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:       {dest: sink_k1, p: 0.85, else: table_d1}
+      coffee_mug: {dest: desk_o1, p: 0.6, else: counter_k1}  # back to the desk for the afternoon
+  leave_office:
+    jitter_min: 5                                    # [DESIGN] laptop goes with them Tue/Thu
+    objects: [keys, laptop, phone, coffee_mug]
+    after:
+      keys:       {dest: null, p: 1.0}
+      laptop:     {dest: null, p: 1.0}               # [DESIGN] laptop AWAY on office days
+      phone:      {dest: null, p: 1.0}
+      coffee_mug: {dest: cupboard_k1, p: 0.7, else: sink_k1}  # travel mug used instead; this one stays
+  return_office:
+    jitter_min: 20                                   # [DESIGN]
+    objects: [keys, laptop, phone]
+    after:
+      keys:   {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      laptop: {dest: desk_o1, p: 0.85, else: sofa_l1}
+      phone:  {dest: sofa_l1, p: 0.5, else: counter_k1}
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  tv_evening:
+    jitter_min: 20
+    objects: [remote, phone]
+    during: {remote: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.4, else: sofa_l1}
+      phone:  {dest: nightstand_r1, p: 0.9, else: sofa_l1}
+  errand:
+    jitter_min: 15                                   # [DESIGN]
+    objects: [keys, phone]
+    after:
+      keys:  {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      phone: {dest: sofa_l1, p: 0.5, else: counter_k1}
+
+placements:
+  # DIAGNOSTIC (persona-exclusive home-office rig)
+  headset:      {home: desk_o1, volatility_class_hint: high}     # [DESIGN]
+  webcam:       {home: desk_o1}                                  # [DESIGN]
+  laptop_stand: {home: desk_o1, volatility_class_hint: static}   # [DESIGN]
+  # DEPENDENT (shared; regime sets midday location -> targets)
+  laptop:       {home: desk_o1, volatility_class_hint: high}     # [DESIGN] home desk on WFH days, away on office days
+  coffee_mug:   {home: cupboard_k1, volatility_class_hint: high} # [DESIGN] desk-cycling on WFH days
+  phone:        {home: nightstand_r1, volatility_class_hint: high}
+  keys:         {home: entry_hook_e1, p_misplace: 0.10, misplace_set: [counter_k1, desk_o1]}  # [HKEEP]
+  bowl:         {home: cupboard_k1}
+  plate:        {home: cupboard_k1}
+  fork:         {home: cupboard_k1}
+  remote:       {home: coffee_table_l1}
+  # static
+  router:       {home: bookshelf_o1, volatility_class_hint: static}
+  toaster:      {home: counter_k1,   volatility_class_hint: static}
+  first_aid_kit: {home: bathroom_c1,  volatility_class_hint: static}
+
+# Dish-cycle rule (all profiles): sink_k1 at 21:30 -> home at 21:45, p=0.9. [DESIGN]

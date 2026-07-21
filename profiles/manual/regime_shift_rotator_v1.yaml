@@ -1,0 +1,143 @@
+# regime_shift_rotator_v1 -- CONFIRMATORY pair (unseen during design)
+# Persona: a worker on ROTATING shifts -- early (05:30-14:00) Mon/Wed/Fri, late
+# (13:30-22:00) Tue/Thu. Present at home at UNPREDICTABLE times.
+# Confusable with regime_frequent_traveler_v1 (both: absent at odd/irregular
+# times). DIAGNOSTIC (SEMANTICS-necessary): work_badge, hi_vis_vest,
+# shift_calendar, thermos -- you must know these mean "rotating shift worker"
+# to know she is at WORK (not travelling) and thus where the shared objects are.
+# PRE-REGISTER named >> anon.
+# DEPENDENT (shared): phone, keys, laptop -> follow the shifted schedule.
+household: regime_shift_rotator_v1
+status: VERIFIED  # confirmatory (Oliver, 2026-07-21)
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,        room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1, room: bedroom,  aliases: []}
+  - {id: closet_r1,     room: bedroom,  aliases: [wardrobe]}
+  - {id: desk_o1,       room: office,   aliases: [desk]}
+  - {id: sofa_l1,       room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living, aliases: []}
+  - {id: tv_stand_l1,   room: living,   aliases: []}
+  - {id: counter_k1,    room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,   room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,       room: kitchen,  aliases: []}
+  - {id: fridge_k1,     room: kitchen,  aliases: []}
+  - {id: table_d1,      room: dining,   aliases: [dining_table]}
+  - {id: entry_hook_e1, room: entryway, aliases: [key_hook]}
+  - {id: bathroom_c1,   room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: rotating-shift worker; early Mon/Wed/Fri, late Tue/Thu
+    schedule:
+      # shifts are CLUSTERED (early Mon-Wed, late Thu-Fri) to avoid a late->early
+      # turnaround; the point is only that presence is regime-shifted, not typical.
+      - {activity: sleep,       days: [Su,Mo,Tu],       start: "21:30", end: "04:45"}  # [DESIGN] early-bed before early shifts
+      - {activity: sleep,       days: [We,Th,Fr,Sa],    start: "23:00", end: "08:00"}  # [DESIGN] normal nights
+      # early shift days (Mon/Tue/Wed)
+      - {activity: shift_prep,  days: [Mo,Tu,We],       start: "04:45", end: "05:10"}  # [DESIGN] badge/vest on
+      - {activity: leave_early, days: [Mo,Tu,We],       start: "05:10", end: "05:30"}  # [DESIGN]
+      - {activity: away_early,  days: [Mo,Tu,We],       start: "05:30", end: "14:00"}  # [DESIGN] no-op (AT WORK)
+      - {activity: return_early,days: [Mo,Tu,We],       start: "14:00", end: "14:30"}  # [DESIGN]
+      # late shift days (Thu/Fri)
+      - {activity: breakfast,   days: [Th,Fr],          start: "08:00", end: "08:40"}  # [ATUS] home in the morning
+      - {activity: leave_late,  days: [Th,Fr],          start: "13:00", end: "13:30"}  # [DESIGN]
+      - {activity: away_late,   days: [Th,Fr],          start: "13:30", end: "22:00"}  # [DESIGN] no-op
+      - {activity: return_late, days: [Th,Fr],          start: "22:00", end: "22:30"}  # [DESIGN]
+      # shared evenings (early days + weekend; late days she's at work)
+      - {activity: dinner,      days: [Mo,Tu,We,Sa,Su], start: "18:30", end: "19:15"}  # [ATUS]
+      - {activity: tv_evening,  days: [Mo,Tu,We,Sa,Su], start: "19:30", end: "21:00"}  # [ATUS]
+      - {activity: errand,      days: [Sa,Su],          start: "10:00", end: "11:00"}  # [DESIGN]
+activities:
+  shift_prep:
+    jitter_min: 10                                   # [DESIGN] dons the uniform
+    objects: [work_badge, hi_vis_vest, thermos]
+    during: {work_badge: nightstand_r1, hi_vis_vest: closet_r1, thermos: counter_k1}
+    after:
+      work_badge:  {dest: null, p: 1.0}
+      hi_vis_vest: {dest: null, p: 1.0}
+      thermos:     {dest: null, p: 1.0}
+  leave_early:
+    jitter_min: 8                                    # [DESIGN]
+    objects: [keys, phone, laptop]
+    after:
+      keys:   {dest: null, p: 1.0}
+      phone:  {dest: null, p: 1.0}
+      laptop: {dest: null, p: 0.8, else: desk_o1}
+  return_early:
+    jitter_min: 20                                   # [DESIGN]
+    objects: [keys, phone, laptop, work_badge, hi_vis_vest, thermos]
+    after:
+      keys:        {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      phone:       {dest: sofa_l1, p: 0.5, else: counter_k1}
+      laptop:      {dest: desk_o1, p: 0.8, else: sofa_l1}
+      work_badge:  {dest: nightstand_r1, p: 0.7, else: entry_hook_e1}
+      hi_vis_vest: {dest: closet_r1, p: 0.8, else: sofa_l1}
+      thermos:     {dest: sink_k1, p: 0.7, else: counter_k1}
+  breakfast:
+    jitter_min: 10
+    objects: [coffee_mug, bowl, phone]
+    during: {coffee_mug: counter_k1, bowl: table_d1, phone: table_d1}
+    after:
+      coffee_mug: {dest: sink_k1, p: 0.6, else: counter_k1}
+      bowl:       {dest: sink_k1, p: 0.8, else: table_d1}
+      phone:      {dest: sofa_l1, p: 0.5, else: counter_k1}
+  leave_late:
+    jitter_min: 8                                    # [DESIGN]
+    objects: [keys, phone, laptop, work_badge, hi_vis_vest, thermos]
+    after:
+      keys:        {dest: null, p: 1.0}
+      phone:       {dest: null, p: 1.0}
+      laptop:      {dest: null, p: 0.8, else: desk_o1}
+      work_badge:  {dest: null, p: 1.0}
+      hi_vis_vest: {dest: null, p: 1.0}
+      thermos:     {dest: null, p: 1.0}
+  return_late:
+    jitter_min: 15                                   # [DESIGN]
+    objects: [keys, phone, laptop, work_badge, thermos]
+    after:
+      keys:       {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      phone:      {dest: nightstand_r1, p: 0.7, else: sofa_l1}
+      laptop:     {dest: desk_o1, p: 0.8, else: sofa_l1}
+      work_badge: {dest: nightstand_r1, p: 0.7, else: entry_hook_e1}
+      thermos:    {dest: sink_k1, p: 0.7, else: counter_k1}
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  tv_evening:
+    jitter_min: 20
+    objects: [remote, phone]
+    during: {remote: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.4, else: sofa_l1}
+      phone:  {dest: nightstand_r1, p: 0.85, else: sofa_l1}
+  errand:
+    jitter_min: 15                                   # [DESIGN]
+    objects: [keys, phone]
+    after:
+      keys:  {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      phone: {dest: sofa_l1, p: 0.5, else: counter_k1}
+placements:
+  # DIAGNOSTIC (SEMANTICS-necessary; shift-work tells)
+  work_badge:   {home: nightstand_r1, volatility_class_hint: high}   # [DESIGN]
+  hi_vis_vest:  {home: closet_r1, volatility_class_hint: high}       # [DESIGN]
+  thermos:      {home: cupboard_k1, volatility_class_hint: high}     # [DESIGN]
+  # DEPENDENT (shared; regime -> shifted presence)
+  phone:  {home: nightstand_r1, volatility_class_hint: high}
+  keys:   {home: entry_hook_e1, p_misplace: 0.08, misplace_set: [counter_k1, sofa_l1]}
+  laptop: {home: desk_o1, volatility_class_hint: high}               # [DESIGN]
+  # ordinary
+  coffee_mug: {home: cupboard_k1}
+  bowl:   {home: cupboard_k1}
+  plate:  {home: cupboard_k1}
+  fork:   {home: cupboard_k1}
+  remote: {home: coffee_table_l1}
+  # static
+  toaster:       {home: counter_k1,  volatility_class_hint: static}
+  router:        {home: tv_stand_l1, volatility_class_hint: static}
+  first_aid_kit: {home: bathroom_c1, volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9. [DESIGN]
