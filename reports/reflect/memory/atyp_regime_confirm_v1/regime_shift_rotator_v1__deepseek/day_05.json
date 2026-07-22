@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A person with a rotating or variable work schedule, likely in a field requiring safety gear (e.g., construction, maintenance). The resident works early mornings on Mon-Wed and later shifts on Thu-Fri, with a late return and bedtime. The pattern suggests a weekly rotation or different assignments. On Saturday, the resident stays home, has a relaxed meal, and does not use work gear, indicating a day off.",
+   "prob": 0.8,
+   "rationale": "Days 0-2 show consistent early departure (before 05:30) and return around 14:30. Days 3-4 show later breakfast (08:00), departure around 13:30, and return after 22:00. Day 5 (Saturday) shows no work gear, a late breakfast/early lunch (10:48 phone at counter, 18:29 plate at table), and evening relaxation (phone at sofa, dishes done by 21:45). This confirms a weekday-only work schedule with a day off on Saturday."
+  },
+  {
+   "persona": "A single working professional with a fixed early-morning shift on Mon-Wed and a different shift on Thu-Fri (possibly a split shift or overtime). The early-morning pattern on Mon-Wed is very consistent, and the Thu-Fri pattern is also consistent. Saturday is a day off.",
+   "prob": 0.15,
+   "rationale": "The early-morning pattern on Mon-Wed is very consistent. The Thu-Fri pattern is also consistent (breakfast at 08:00, departure ~13:30, return after 22:00). This could be a fixed weekly schedule with two different shifts. However, the late return on Thu-Fri is not typical for a single shift; it suggests a different work assignment. Saturday's relaxed routine supports a day off."
+  },
+  {
+   "persona": "A person with a flexible or hybrid work schedule, possibly working from home some mornings and then going to a job site later. The work gear suggests an off-site job, but the late breakfast and departure on Thu-Fri could indicate a different routine. Saturday is a day off.",
+   "prob": 0.05,
+   "rationale": "The resident is home until 08:00 on Thu-Fri, which could be a work-from-home morning. However, the departure with work gear and late return suggests a job site visit. This hypothesis is less likely because the pattern is too regular for a flexible schedule, but it remains possible if the resident has a hybrid role. Saturday's relaxed routine is consistent with a day off."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 05:09 \u2014 hi_vis_vest at elsewhere (early departure for safety-gear job)",
+  "Day 0, 05:28 \u2014 keys, laptop, phone at elsewhere (resident leaves before 05:30)",
+  "Day 0, 14:25 \u2014 hi_vis_vest at closet_r1, keys at entry_hook_e1, laptop at desk_o1, phone at sofa_l1, thermos at sink_k1, work_badge at entry_hook_e1 (return from work around 14:25)",
+  "Day 0, 21:11 \u2014 phone at nightstand_r1 (bedtime routine)",
+  "Day 1, 05:20 \u2014 hi_vis_vest, thermos, work_badge at elsewhere (departure for work)",
+  "Day 1, 14:23 \u2014 hi_vis_vest at closet_r1, keys at entry_hook_e1, laptop at desk_o1, phone at counter_k1, thermos at sink_k1, work_badge at entry_hook_e1 (return from work)",
+  "Day 2, 05:12 \u2014 hi_vis_vest, thermos, work_badge at elsewhere (departure for work)",
+  "Day 2, 14:35 \u2014 hi_vis_vest at closet_r1, keys at entry_hook_e1, laptop at sofa_l1, phone at counter_k1, thermos at sink_k1, work_badge at entry_hook_e1 (return from work)",
+  "Day 3, 08:00 \u2014 bowl, coffee_mug, phone at table_d1 (breakfast at home, later start)",
+  "Day 3, 13:23 \u2014 hi_vis_vest, keys, laptop, phone, thermos, work_badge at elsewhere (departure for work at 13:23)",
+  "Day 3, 22:39 \u2014 keys at entry_hook_e1, laptop at sofa_l1, phone at sofa_l1, thermos at sink_k1, work_badge at nightstand_r1 (late return after 22:39)",
+  "Day 4, 08:07 \u2014 bowl, phone at table_d1 (breakfast at home, later start)",
+  "Day 4, 13:29 \u2014 keys, phone, thermos, work_badge at elsewhere (departure for work at 13:29)",
+  "Day 4, 22:18 \u2014 keys at entry_hook_e1, phone at nightstand_r1, thermos at sink_k1, work_badge at nightstand_r1 (late return after 22:18)",
+  "Day 5, 18:29 \u2014 plate at table_d1 (relaxed Saturday meal, no work gear)"
+ ],
+ "notes": "Day 5 (Saturday) confirms a day off: no work gear, late meal, evening relaxation. The weekly pattern is now clear: early mornings Mon-Wed, later shifts Thu-Fri, day off Saturday. Need to observe Day 6 (Sunday) to see if it's also a day off or if there is a different pattern. Open questions: Does the resident have a second job or different assignment on Thu-Fri? Is Sunday also a day off? The work gear is always present on workdays, confirming the job type."
+}

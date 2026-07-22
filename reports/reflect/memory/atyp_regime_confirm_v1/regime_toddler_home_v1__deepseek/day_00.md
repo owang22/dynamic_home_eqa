@@ -1,0 +1,23 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Family with a toddler (approx. 1-2 years old) who follows a structured daily routine: breakfast, play, lunch, nap, dinner, and bedtime. The child uses a high chair, sippy cup, and toys; the parent cleans up and puts items away in the evening. — Repeated use of high chair, sippy cup, spoon, bowl, plate at consistent meal times (07:00, 12:00, 18:00); play mat and toy bin used mid-morning and afternoon; blanket and board book moved to crib at 19:30 (bedtime); phone and remote on sofa in evening (parent relaxing); all child items returned to cupboard at 21:45 (end-of-day cleanup).
+2. (p=0.10) Single parent or caregiver who works from home or is a stay-at-home parent, as no laptop or work-related items were observed during the day, and the parent's phone is used on the sofa in the evening. — No work items (laptop, desk) seen; parent's phone appears at 20:17 on sofa and later at nightstand; the routine is child-centric with no evidence of a second adult or older child.
+
+## Selected evidence
+- Day 0, 06:56 — bowl, sippy_cup, spoon at high_chair_d1 (toddler breakfast start)
+- Day 0, 07:41 — bowl at sink_k1, sippy_cup at counter_k1, spoon at sink_k1 (post-breakfast cleanup)
+- Day 0, 08:46 — ball, cushion, sippy_cup, toy_blocks at play_mat_l1 (morning playtime)
+- Day 0, 10:46 — ball at toy_bin_l1, cushion at sofa_l1 (playtime ends, items put away)
+- Day 0, 12:00 — plate, sippy_cup, spoon at high_chair_d1 (lunch)
+- Day 0, 12:45 — sippy_cup, spoon at sink_k1 (post-lunch cleanup)
+- Day 0, 15:06 — ball, blanket, board_book at play_mat_l1 (afternoon play)
+- Day 0, 18:05 — sippy_cup, spoon at high_chair_d1 (dinner)
+- Day 0, 18:50 — plate, sippy_cup, spoon at sink_k1 (post-dinner cleanup)
+- Day 0, 19:30 — blanket, board_book at crib_n1 (bedtime routine)
+- Day 0, 20:17 — phone, remote at sofa_l1 (parent evening relaxation)
+- Day 0, 21:45 — bowl, plate, sippy_cup, spoon at cupboard_k1 (end-of-day kitchen reset)
+- Day 0, 21:47 — phone at nightstand_r1 (parent goes to bed)
+
+## Notes
+Day 0 (Monday) shows a clear toddler routine with three meals, two play sessions, and a bedtime. No work-related items observed; parent uses phone in evening. Need to verify if this pattern repeats on weekdays and if weekend differs. Also check for any second adult or older child items in future days.

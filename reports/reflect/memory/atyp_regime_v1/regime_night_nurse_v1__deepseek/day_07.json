@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A healthcare worker (likely a nurse or doctor) who works a day shift on weekdays, leaves home around 08:00-08:22, returns around 17:55-18:00, and immediately changes out of scrubs. On weekends, the routine shifts to a later breakfast and dinner, with no work-related items (scrubs, badge, stethoscope) appearing. The weekend pattern shows a relaxed schedule: breakfast around 08:00, dinner around 18:09, and evening relaxation with phone on sofa and bedtime around 22:10.",
+   "prob": 0.92,
+   "rationale": "Day 7 (Monday) shows the typical weekday pattern: scrubs and badge appear at 17:58, then stored at 18:28, consistent with returning from work and changing. The absence of morning events is not observed today, but the evening pattern matches previous weekdays. The weekend pattern (days 5-6) remains consistent with no work items. The day 4 anomaly (Friday) is still unexplained but may be a one-off; next weekdays will clarify."
+  },
+  {
+   "persona": "A single person who works a regular weekday job (possibly healthcare) but occasionally works from home or has a day off. The morning routine includes breakfast and departure around 08:00-08:22 on workdays, but on day 4 there was no departure, suggesting a day off or work-from-home. The weekend shows a similar relaxed routine: breakfast around 08:00, dinner around 18:09, and evening relaxation. The absence of scrubs on day 4 and both weekend days supports a flexible schedule.",
+   "prob": 0.06,
+   "rationale": "Day 7 (Monday) shows the typical weekday evening pattern with scrubs, which is more consistent with a regular healthcare worker than a flexible schedule. The day 4 anomaly remains unexplained but could be a day off; however, the consistent weekday scrubs on days 0-3 and now day 7 make this hypothesis less likely."
+  },
+  {
+   "persona": "A person who works a job that requires scrubs (e.g., healthcare, lab, or similar) but has a flexible schedule, sometimes working from home or having a day off. The morning routine includes breakfast and departure around 08:00-08:22 on workdays, but on day 4 there was no departure, suggesting a day off or work-from-home. The weekend shows a similar relaxed routine. The absence of scrubs on day 4 and both weekend days supports a flexible schedule.",
+   "prob": 0.02,
+   "rationale": "Day 7 (Monday) shows the typical weekday evening pattern with scrubs, which is more consistent with a regular healthcare worker than a flexible schedule. The day 4 anomaly remains unexplained but could be a one-off; the flexible schedule hypothesis is less parsimonious and has lower probability."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 18:02 \u2014 scrubs at bed_r1 (work uniform discarded at home, indicating a healthcare worker)",
+  "Day 0, 18:32 \u2014 badge at elsewhere (work ID put away after shift)",
+  "Day 0, 18:32 \u2014 stethoscope at elsewhere (medical tool stored at home)",
+  "Day 1, 08:22 \u2014 badge at nightstand_r1 (morning pickup before work)",
+  "Day 1, 08:22 \u2014 keys at entry_hook_e1 (morning departure)",
+  "Day 1, 08:22 \u2014 scrubs at closet_r1 (morning retrieval of work uniform)",
+  "Day 1, 08:22 \u2014 stethoscope at closet_r1 (morning retrieval of medical tool)",
+  "Day 1, 08:22 \u2014 thermos at sink_k1 (morning preparation of drink for work)",
+  "Day 1, 17:52 \u2014 scrubs at bed_r1 (evening removal of work uniform)",
+  "Day 1, 18:22 \u2014 badge at elsewhere (evening storage of work ID)",
+  "Day 1, 18:22 \u2014 stethoscope at elsewhere (evening storage of medical tool)",
+  "Day 3, 07:55 \u2014 badge at entry_hook_e1 (morning departure, slightly earlier than previous days)",
+  "Day 3, 07:55 \u2014 keys at nightstand_r1 (morning departure, keys left behind? unusual)",
+  "Day 3, 07:55 \u2014 phone at nightstand_r1 (morning departure, phone left behind? unusual)",
+  "Day 3, 07:55 \u2014 scrubs at closet_r1 (morning retrieval of work uniform, consistent)"
+ ],
+ "notes": "Day 7 (Monday) confirms the weekday pattern: scrubs and badge appear at 17:58, then stored at 18:28, consistent with returning from work and changing. The 07:55 departure on day 3 with keys and phone left behind remains puzzling; possibly a misdetection or a second set of keys. The day 4 (Friday) anomaly (no scrubs, keys at entry_hook at 11:57) still unexplained; next weekdays (days 8-10) will show if it repeats. The weekend pattern (days 5-6) is consistent with no work items. The dinner time on day 6 (18:09) is slightly later than day 5 (17:51) but still within a relaxed weekend. The evening routine on day 7 includes phone and keys stored at 19:08, and a plate at cupboard at 21:45, suggesting dinner cleanup. No morning events were observed today, but the evening pattern is strong."
+}

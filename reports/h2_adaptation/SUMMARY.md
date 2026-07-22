@@ -280,3 +280,130 @@ the LLM, timing from data) remains the right design if it is revisited.
 this directory; harness in `src/dynbelief/h2/` (`core.py`, `e0_baselines.py`,
 `e1_curves.py`, `e2_anon.py`, `e3_transfer.py`). Reproduce a report with
 `python -m dynbelief.h2.<module> --report-only`.
+
+---
+
+## Reviewer-driven rework (frozen classical, events axis, evidence-routed hybrid)
+
+**1. Frozen classical = C3g (BIC/held-out-gated periodic).** The ungated C3 crashed
+below persistence on sparse edges (pet cushion 0.86→0.29; sparse shift laptop) — an
+anti-learning artifact from fitting a 13-feature periodic GLM on 8–40 events. C3g
+enables the per-object periodic term ONLY when it beats the constant model on that
+object's own held-out likelihood by ≥0.7 nats/pt. Verified: C3g never dips below C1,
+and still reaches the genuine weekly ceiling (retiree coffee_mug → 1.0). This is the
+single named "vs classical" opponent for every downstream claim.
+`rates/c3g_gated.py`, arm "C3g".
+
+**2. E7 v2 — events-observed axis, pooled, rarity-stratified.** Replaced the 4-panel
+days-axis anecdote with pooled curves over all 18 regime-conditioned target objects ×
+6 households, x = EVENTS-OBSERVED (removes the days↔rarity confound), rarity terciles,
+clustered CIs. Robust findings (`e7_learning_curves.png`):
+  - **Cold-start gap (k=0):** LLM 0.31/0.50/0.24 (rare/med/freq) vs classical **0.00**
+    everywhere. World knowledge gives zero-shot regime transfer; the per-edge classical
+    has nothing without target events. This is the clean, defensible headline.
+  - **Frequent crossover:** in the frequent tercile C3g climbs to 0.64 by k=16 while C1
+    (persistence) decays to 0.14 — the periodic term genuinely learning the cycle.
+  - **Honest caveat:** the mid-k gap is NOT significant (n=6/tercile). A single recent
+    observation of a *stable* regime object lets classical catch up, so the LLM's edge
+    is concentrated at cold-start, not sustained. This is the truthful aggregate; v1's
+    dramatic sustained gap was an artifact of 4 curated cases on a confounded axis.
+
+**3. Evidence-routed hybrid (E4 v2) — HONEST NEGATIVE.** Routed LLM-vs-C3g by an
+events-observed threshold frozen on the dev bank (atyp_regime_v1), evaluated on the
+confirmatory bank. Both a global τ*=14 and a dev-frozen rarity-aware τ* FAIL the
+pre-registered "hybrid ≥ max(endpoints) in every stratum" — they underperform the LLM
+in the medium stratum (0.58/0.50 vs LLM 0.62). Reason: at k≤16 on the held-out bank,
+C3g never establishes a clear winning regime for a frozen router to exploit (frequent
+C3g 0.36 vs LLM 0.32 — tied); there is no classical "ceiling" to inherit. The LLM is
+the strongest single arm in 2/3 strata and tied in the third. The dev/test wall
+correctly surfaced that a frozen event-count router is insufficient — "enough events"
+depends on per-object learnability (cyclic vs stable), which a count threshold cannot
+see. `e7_hybrid.py`.
+
+---
+
+## Round 2 — paired analysis, granularity, and the fusion hybrid (reviewer moves)
+
+**Move 1 — paired differences (free re-analysis, `e7_paired.py`).** The E7 comparison
+is paired (same object×household×k, both arms on the same queries). Plotting the
+per-cluster Δ(LLM−C3g) with clustered CIs removes between-object variance and flips
+the significance story: the cold-start (k=0) LLM advantage is significant in ALL
+strata (Δ=+0.31/+0.50/+0.24), and in MEDIUM the advantage is significant even pooled
+over k (Δ=+0.23 [+0.06,+0.45]) — invisible in the overlapping marginal bands.
+`e7_paired_diff.png`.
+
+**Move 2+3 — granularity split + early-k headlines (`e7_score.py`).** Enriched E7 to
+log per-query predictions, then scored at ROOM and RECEPTACLE and TOP-3 level.
+Receptacle top-1 was punishing the LLM for shelf precision it never claimed; ROOM-level
+recovers ~0.19 ("right room, wrong shelf"). Headline (paired room-level LLM−C3g):
+cold-start +0.67/+0.60/+0.36 (all sig), early-k +0.15/+0.32/+0.14 (ALL sig). TOP-3 is
+starkest: rare LLM 0.79 vs C3g 0.00 at k=0. The LLM's advantage is significant across
+every stratum once scored at the granularity of the knowledge and weighted to the
+deployment-relevant (cold-start / early-k) regime.
+
+**Move 2 — LLM-as-prior FUSION (`e7_fusion.py`, the system contribution).** Router
+selection failed because no event-count boundary predicts the winner. Fusion needs no
+boundary: express the LLM regime prediction as κ days of pseudo-observations, prepend
+to the object's real events (existing `e2.inject`), fit frozen C3g. κ and injection
+granularity (room vs receptacle) chosen on dev, frozen. HONEST, MIXED result on the
+confirmatory bank (κ=2, receptacle):
+  - MEDIUM: fusion SIGNIFICANTLY beats both endpoints at receptacle level (+0.19
+    cold-start, +0.10 early-k) — the pseudo-count prior DENOISES the LLM's jittery
+    per-query predictions. Genuine complementarity.
+  - RARE: fusion ties/loses — the LLM's sharp shelf guess is hard to beat by smoothing.
+  - FREQUENT: fusion DEGRADES with more events (0.33→0.17 room-level) — the stationary
+    regime-hour prior, injected as pseudo-obs at fixed hours, is fit by the periodic GLM
+    and re-introduces a crash-like artifact; it never reaches C3g's cyclic ceiling.
+  So "fusion ≥ max(endpoints) in every stratum" is FALSIFIED. `e7_fusion_curves.png`.
+
+**Synthesis across the three honest results.** (1) Router: selection is the wrong
+structure (no boundary). (2) Paired+granularity: the LLM PARETO-DOMINATES C3g at
+room-level across the evidence range and strata (the positive headline). (3) Fusion:
+because the LLM already dominates, a blend mostly dilutes; it adds value only where the
+sources are genuinely complementary (MEDIUM: LLM right-but-noisy → prior denoises), and
+a naive stationary prior HARMS frequent cyclic objects. Design implication: the prior
+must be time-aware or gated (inject only into the occupancy term / only at low evidence)
+to avoid fighting the periodic learner — future work. Deployment takeaway: LLM-alone
+(optionally with light pseudo-count denoising for the noisy-regime middle) is the system;
+the classical learner is the baseline it dominates, not a partner it needs — except on
+frequent, densely-observed cyclic objects, the one regime where C3g still wins.
+
+---
+
+## Reflective memory (src/dynbelief/reflect/, reports/reflect/)
+
+New architecture: an online agent lives through days 0-13 of the FULL event stream
+(diagnostics + targets + conventional distractors), reflecting nightly into a memory
+file (≤15 curated evidence lines + top-3 persona hypotheses with probabilities,
+revisable). Hypothesis entropy gates the fusion prior: kappa_eff = round(kappa_max ·
+(1 − H/log2 3)), kappa_max*=1 frozen on dev. All arms answer from the IDENTICAL
+stream — classical updates statistically, llm_direct/nomem semantically, fusion both
+(per-query memory-conditioned LLM belief injected as pseudo-obs into the TARGET's
+edge only; base model, rates, and other objects stay real-data).
+
+Findings (confirmatory bank, clustered CIs; reports/reflect/report_conf.txt):
+1. CURATION KEEPS THE SEMANTIC CHANNEL ALIVE (strongest result). llm_nomem (raw
+   digest) collapses as history grows: pooled room 0.65 (day 1) → 0.06 (day 14),
+   literally 0.00 on frequent objects — the model drowns in ~400 uncurated lines.
+   llm_direct (memory only, ≤15 lines) holds 0.63-0.79 throughout. Early (days 1-3)
+   the two are equal — curation is lossless compression; late, it is the difference
+   between reasoning and noise. P2 exceeded: curation doesn't just match raw
+   context, it is what makes long-horizon semantic reasoning viable at all.
+2. FUSION IS THE BEST ARM AT DAY 14, both granularities: pooled receptacle 0.70
+   [0.60,0.80] vs C3g 0.60 / direct 0.55; room 0.79 [0.67,0.89] vs 0.71 / 0.63.
+   P1 PASS (pooled fusion ≥ both endpoints). Crucially it WINS the FREQUENT stratum
+   (0.79 recep at day 14 vs C3g 0.67, direct 0.36) — where every previous hybrid
+   failed — because the prior is light (kappa=1), targeted (target edge only), and
+   rates stay data-driven, so it can't corrupt the periodic learner; and where the
+   memory's static hypothesis mis-serves a time-varying object, the statistical
+   side carries the prediction. Statistical + semantic > either alone.
+3. ENTROPY DYNAMICS (P3 confirmed): all six households converge to correct personas
+   (reflect_entropy.png). Showcase: shift_rotator revises — confident-but-wrong day
+   0 (H=0.47), contradiction spikes H to 1.36 (day 3), then correct Mon-We shift
+   schedule at H=0.08. pet_heavy discriminates itself from its confusable partner.
+4. ENTROPY GATE: honest FAIL (P4). On the H>0.5 slice (n=336) gated fusion 0.542 <
+   flat 0.613: with kappa_max=1 the gate is binary and zeroes the prior exactly at
+   early checkpoints where the classical fallback is weakest — an uncertain prior
+   still beat no prior. The gate should be RELATIVE (memory uncertainty vs the
+   classical model's own uncertainty), not absolute — future refinement. Elsewhere
+   H is low so gated == flat.

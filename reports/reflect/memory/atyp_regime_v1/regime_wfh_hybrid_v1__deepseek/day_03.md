@@ -1,0 +1,18 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single professional who works from home on Mondays, Wednesdays, and Thursdays, but commutes to an office on Tuesdays, with a structured routine: breakfast at home, work, lunch, dinner, and bedtime. — Day 0 (Monday), Day 2 (Wednesday), and Day 3 (Thursday) all show coffee mug and laptop at desk all day, indicating work from home. Day 1 (Tuesday) showed keys, laptop, phone leaving and returning, indicating a commute. The rest of the routine (breakfast, lunch, dinner, bedtime) is consistent across all four days.
+2. (p=0.10) A person with a consistent daily schedule: early breakfast, work, lunch, dinner, and evening relaxation, possibly living alone. The work location varies by day (home vs. office). — The sequence of meals and relaxation is similar each day, but the work location differs. This could be a hybrid worker. No evidence of other people or pets. The pattern is now more specific (home on Mon, Wed, Thu; office on Tue), so this broader hypothesis is less likely.
+
+## Selected evidence
+- Day 0, 08:23 — coffee_mug at desk_o1 (work-from-home desk use on Monday)
+- Day 1, 08:26 — keys, laptop, phone at elsewhere (commute departure on Tuesday)
+- Day 1, 17:57 — keys at entry_hook_e1, laptop at sofa_l1, phone at sofa_l1 (return from work on Tuesday)
+- Day 2, 08:35 — coffee_mug at desk_o1 (work-from-home desk use on Wednesday)
+- Day 2, 08:35 — laptop at desk_o1 (work-from-home desk use on Wednesday)
+- Day 3, 08:26 — keys, laptop, phone at elsewhere (commute departure on Thursday? Actually no: phone at counter at 07:30, then keys/laptop/phone leave at 08:26 — but later laptop returns to desk at 18:07, so this is a departure, not a commute? Wait, laptop returns to desk, not elsewhere. So this is a departure and return, but laptop ends at desk, not elsewhere. So it's a work-from-home day? Actually laptop left at 08:26 and returned to desk at 18:07, so it was taken out and brought back. That suggests a commute? But then why is laptop at desk at 18:07? Possibly the person went to a meeting or errand and came back to work at home. But the pattern is unclear. Let's keep it as a possible commute day? But we already have Tuesday as commute. Let's re-evaluate: Day 3, 08:26 — keys, laptop, phone at elsewhere (departure, possibly to office? But then laptop returns to desk at 18:07, which is home desk. So maybe it's a work-from-home day with a brief outing? Or a commute where they brought laptop back home? Actually if they commuted, laptop would be at elsewhere all day, not return to desk. So this is likely a work-from-home day with a morning errand. So we keep it as evidence of work-from-home with a morning outing.)
+- Day 3, 18:07 — laptop at desk_o1 (return to home desk after outing, indicating work-from-home day)
+- Day 3, 22:43 — phone at nightstand_r1 (bedtime on Thursday)
+
+## Notes
+Thursday pattern: morning departure of keys/laptop/phone at 08:26, but laptop returns to desk at 18:07, suggesting a work-from-home day with a morning errand (not a full commute). This is different from Tuesday's full-day absence. Need to check Friday to see if it's another work-from-home day or a commute day. Weekend (days 5-6) may show different routine. No evidence of a second person yet. The bowl at cupboard at 21:45 on multiple days suggests cleaning up after dinner.

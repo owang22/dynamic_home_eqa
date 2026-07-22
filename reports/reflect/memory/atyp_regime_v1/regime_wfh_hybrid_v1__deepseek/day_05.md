@@ -1,0 +1,23 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single professional who works from home on Mondays, Wednesdays, Thursdays, and Fridays, but commutes to an office on Tuesdays, with a structured routine: breakfast at home, work, lunch, dinner, and bedtime. On Saturdays, the routine is more relaxed: a late morning start, a simple dinner at home, and evening relaxation on the sofa. — The weekday pattern is confirmed. Saturday shows no work-related items (laptop absent), a late first appearance of keys and phone at 11:51, a simple dinner (fork, plate) at 18:30, and evening relaxation (phone, remote on sofa) followed by remote on coffee table at bedtime. This is consistent with a weekend day off.
+2. (p=0.05) A person with a consistent daily schedule: early breakfast, work, lunch, dinner, and evening relaxation, possibly living alone. The work location varies by day (home vs. office), and weekends are more relaxed. — This broader hypothesis is still possible but less specific. The Saturday data fits a relaxed weekend pattern, but the weekday pattern is now more precisely defined (home on Mon, Wed, Thu, Fri; office on Tue). The probability is reduced.
+
+## Selected evidence
+- Day 0, 08:23 — coffee_mug at desk_o1 (work-from-home desk use on Monday)
+- Day 1, 08:26 — keys, laptop, phone at elsewhere (commute departure on Tuesday)
+- Day 1, 17:57 — keys at entry_hook_e1, laptop at sofa_l1, phone at sofa_l1 (return from work on Tuesday)
+- Day 2, 08:35 — coffee_mug at desk_o1 (work-from-home desk use on Wednesday)
+- Day 2, 08:35 — laptop at desk_o1 (work-from-home desk use on Wednesday)
+- Day 3, 08:26 — keys, laptop, phone at elsewhere (morning errand on Thursday, but laptop returns to desk at 18:07, so work-from-home day)
+- Day 3, 18:07 — laptop at desk_o1 (return to home desk after errand, confirming work-from-home day)
+- Day 4, 08:31 — coffee_mug at desk_o1 (work-from-home desk use on Friday)
+- Day 4, 22:36 — phone at nightstand_r1 (bedtime on Friday)
+- Day 5, 11:51 — keys, phone at counter_k1 (late start on Saturday, no work items)
+- Day 5, 18:30 — fork, plate at table_d1 (dinner at home on Saturday)
+- Day 5, 20:14 — phone, remote at sofa_l1 (evening relaxation on Saturday)
+- Day 5, 23:14 — remote at coffee_table_l1 (bedtime on Saturday)
+
+## Notes
+Saturday pattern confirmed: no work, late start, simple dinner, evening relaxation. Need to observe Sunday (day 6) to see if it matches Saturday or has a different pattern. Also need to verify if Tuesday is the only commute day or if there are other variations (e.g., occasional errands on other days). No evidence of a second person or pet yet.

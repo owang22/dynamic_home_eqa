@@ -1,0 +1,22 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) Single adult with a pet (likely a dog) and a regular 9-to-5 work schedule. The phone leaves home around 07:10 and returns around 17:14, consistent with a work commute. Pet items (blanket, chew toy, cushion) are moved to the pet bed in the morning and afternoon, indicating a dog that is active during the day. Meals are eaten at home (lunch ~12:35, dinner ~18:22) with dishes cleaned promptly. The phone ends up on the nightstand at 22:10, suggesting a consistent bedtime. The litter_scoop at feed_station on day 1 suggests a cat, but the chew toy and ball suggest a dog; possibly both pets. Day 2 shows a bowl used for breakfast (08:25) and coffee mug, suggesting a morning routine. The phone briefly appears at home at 07:54 and 17:39, possibly for a quick stop or remote work start/end. — The consistent phone departure and return times strongly support a 9-to-5 commute. The pet items moved at 09:23 and 16:48 (chew toy to basket) align with a dog's active periods. The single fork and plate at lunch and dinner confirm one person. The bowl and coffee mug at breakfast add detail. The phone's brief appearances at home at 07:54 and 17:39 could be for a quick stop or remote work start/end, but the overall pattern remains a commute.
+2. (p=0.15) Remote worker or student with a pet. The phone is at home at 07:54 and 17:39, which could indicate a flexible schedule or working from home. However, the phone leaves at 07:09 and returns at 16:54, which is less typical for a remote worker. The pet items are moved at 09:23 and 16:48, suggesting the pet is active during the day. The bowl and coffee mug at 08:25 suggest a morning routine at home. The litter_scoop at feed_station on day 1 suggests a cat. — The phone's presence at home at 07:54 and 17:39 could indicate a remote worker who steps out briefly. However, the 07:09 departure and 16:54 return still suggest a commute. The pet items moved during the day could be during work breaks. The bowl and coffee mug at 08:25 suggest a morning routine at home, which could be before starting work. The probability is lowered because the commute pattern is more consistent.
+3. (p=0.05) Couple with a pet, one of whom works outside the home. The phone movements could belong to one person, while the other might be at home (e.g., pet items moved at 09:23 and 16:48). The meal times show only one fork and plate at lunch and dinner, suggesting one person eating. The bowl and coffee mug at 08:25 could be for one person. The remote on coffee_table at 22:29 suggests evening TV. No evidence of a second person's items. — Only one fork and plate used at lunch and dinner, and only one bowl and coffee mug at breakfast, strongly suggest a single person. The pet items moved during the day could be by a stay-at-home partner, but no evidence of a second person's items. The probability is very low.
+
+## Selected evidence
+- Day 0, 07:11 — phone at entry_hook_e1 (leaves home for work, consistent commute start)
+- Day 0, 17:04 — phone at entry_hook_e1 (returns from work, consistent commute end)
+- Day 0, 22:43 — phone at nightstand_r1 (bedtime, consistent)
+- Day 1, 08:05 — litter_scoop at feed_station_k1 (pet feeding, suggests cat)
+- Day 1, 09:18 — blanket, cushion at pet_bed_l1 (pet items moved, dog active morning)
+- Day 1, 14:55 — chew_toy, cushion at pet_bed_l1 (pet active afternoon)
+- Day 2, 08:25 — bowl at table_d1, coffee_mug at counter_k1 (breakfast routine, single person)
+- Day 2, 12:38 — fork, plate at table_d1 (lunch for one)
+- Day 2, 16:48 — chew_toy at toy_basket_l1 (pet toy put away, afternoon activity)
+- Day 2, 19:59 — blanket, phone, remote at sofa_l1 (evening relaxation, TV)
+- Day 2, 22:29 — phone at nightstand_r1, remote at coffee_table_l1 (bedtime, remote left on table)
+
+## Notes
+Day 2 (Wednesday) confirms weekday pattern: phone leaves ~07:09, returns ~16:54 (slightly earlier than previous days). Breakfast routine with bowl and coffee mug at 08:25, then bowl to sink at 08:52. Lunch and dinner use one fork and plate, confirming single person. Pet items: blanket moved to pet bed at 09:23, chew toy to basket at 16:48 (afternoon). Evening: blanket, phone, remote on sofa at 19:59, then phone to nightstand and remote to coffee table at 22:29. No litter_scoop observed today; cat may not be present or routine varies. Need to observe weekend days (5-6) to see if work schedule changes. No laptop or work bag observed yet.

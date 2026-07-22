@@ -1,0 +1,32 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Single adult with a dog, working a flexible schedule (likely remote or hybrid). The phone leaves home around 07:00 for a morning walk (returns ~07:30-07:45) and again around 17:00 for an afternoon walk (returns ~17:45). This pattern is observed on Monday, Tuesday, Wednesday, and now Thursday (Days 7, 8, 9, 10). On Saturday and Sunday, the same pattern occurs. On earlier weekdays (Day 0, Day 4), the phone left at ~07:00 and returned at ~17:00 without a midday return, which could be days the resident went to the office. The dog's items (chew toy, cushion, blanket) are moved to the pet bed in the morning and afternoon, confirming the dog is active. Meals are eaten at home (breakfast ~08:30, lunch ~12:30, dinner ~18:30) with dishes cleaned promptly. The phone ends up on the nightstand around 22:00-22:30, suggesting a consistent bedtime. No laptop or work bag observed yet, but the resident likely works from home on most days.",
+   "prob": 0.85,
+   "rationale": "The Thursday data (Day 10) matches the pattern seen on Monday, Tuesday, and Wednesday: phone leaves ~06:51, returns ~07:36 (morning walk), then leaves ~17:06, returns ~17:51 (afternoon walk). This is now four consecutive weekdays with the same pattern, strongly supporting a flexible/remote work schedule. The earlier weekdays (Day 0, Day 4) are now the minority and likely represent occasional office days. The dog's items (chew toy, blanket) are moved to the pet bed in the morning and afternoon, confirming the dog is active. Meals are at similar times. The probability is increased from 0.15 to 0.85 because the evidence is now overwhelming."
+  },
+  {
+   "persona": "Single adult with a dog, working a regular 9-to-5 job with occasional work-from-home. The phone leaves home around 07:00 and returns around 17:00 on some weekdays (Day 0, Day 4), consistent with a commute. However, on most observed weekdays (Days 7-10), the phone returns mid-morning and mid-afternoon, suggesting the resident is at home. This could be a hybrid schedule where the resident goes to the office on some days and works from home on others. The dog's items are moved to the pet bed in the morning and afternoon, confirming the dog is active. Meals are eaten at home (breakfast ~08:30, lunch ~12:30, dinner ~18:30) with dishes cleaned promptly. The phone ends up on the nightstand around 22:00-22:30, suggesting a consistent bedtime.",
+   "prob": 0.15,
+   "rationale": "The earlier weekdays (Day 0, Day 4) still show a commute pattern, but the majority of observed weekdays now show a flexible pattern. This hypothesis is retained as a possible explanation for the occasional office days, but the probability is reduced because the evidence for a regular commute is weak."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 07:11 \u2014 phone at entry_hook_e1 (leaves home for work, possible office day)",
+  "Day 0, 17:04 \u2014 phone at entry_hook_e1 (returns from work, possible office day)",
+  "Day 4, 07:04 \u2014 phone at entry_hook_e1 (leaves home for work, possible office day)",
+  "Day 4, 16:50 \u2014 phone at entry_hook_e1 (returns from work, possible office day)",
+  "Day 5, 07:02 \u2014 dog_leash, keys, phone at entry_hook_e1 (morning walk on Saturday)",
+  "Day 5, 07:47 \u2014 phone at counter_k1 (returns from morning walk)",
+  "Day 5, 16:49 \u2014 phone at entry_hook_e1 (afternoon walk on Saturday)",
+  "Day 5, 17:34 \u2014 phone at counter_k1 (returns from afternoon walk)",
+  "Day 6, 07:05 \u2014 phone at entry_hook_e1 (morning walk on Sunday)",
+  "Day 6, 07:50 \u2014 phone at counter_k1 (returns from morning walk)",
+  "Day 6, 17:11 \u2014 dog_leash, phone at entry_hook_e1 (afternoon walk on Sunday)",
+  "Day 6, 17:56 \u2014 phone at counter_k1 (returns from afternoon walk)",
+  "Day 7, 06:49 \u2014 phone at entry_hook_e1 (morning walk on Monday)",
+  "Day 7, 07:34 \u2014 phone at counter_k1 (returns from morning walk)",
+  "Day 7, 16:58 \u2014 phone at entry_hook_e1 (afternoon walk on Monday)"
+ ],
+ "notes": "The pattern on Monday, Tuesday, Wednesday, and Thursday (Days 7, 8, 9, 10) is now consistent: phone leaves ~07:00, returns ~07:30-07:45 (morning walk), then leaves ~17:00, returns ~17:45 (afternoon walk). This is the same as the weekend pattern. The earlier weekdays (Day 0, Day 4) showed a different pattern (phone gone all day). This suggests the resident works from home most days and goes to the office occasionally. Need to observe more weekdays to see if the pattern repeats or if there are occasional office days. No laptop or work bag observed yet. Dog items (chew toy, blanket) moved to pet bed in morning and afternoon, confirming dog activity. Meals consistent with single person. Bedtime around 22:00-22:30. The Thursday data also shows the dog leash moved to the sofa at 07:36 (after the walk) and the blanket moved to the sofa at 19:49 (evening relaxation), which is consistent with a single person with a dog."
+}

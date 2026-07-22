@@ -1,0 +1,34 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Single adult with a pet (likely a dog) and a regular 9-to-5 work schedule. The phone leaves home around 07:11 and returns around 17:04, suggesting a typical workday. The pet items (blanket, chew toy, cushion, ball) are moved to the pet bed and later to the sofa, indicating a pet that is active during the day. Meals are eaten at home (breakfast ~08:27, lunch ~12:49, dinner ~18:40) with dishes cleaned promptly. The phone ends up on the nightstand at 22:43, suggesting a consistent bedtime.",
+   "prob": 0.7,
+   "rationale": "The phone movements strongly suggest a work commute. The pet items and feeding schedule (litter scoop in bathroom) indicate a pet. The meal times are regular and dishes are washed after each meal."
+  },
+  {
+   "persona": "Remote worker or student with a pet. The phone is at home until 07:56 (on counter) and then again at 12:49 (counter), which could indicate a flexible schedule or working from home. However, the phone leaves at 17:04 and returns, which is less typical for a remote worker. The pet items are moved around midday, suggesting the pet is active during the day.",
+   "prob": 0.2,
+   "rationale": "The phone is seen at home at 07:56 and 12:49, which could be a remote worker. But the 17:04 departure and 17:49 return suggest an errand or commute. The pet items are moved at 09:49 and 14:51, which could be during a work break."
+  },
+  {
+   "persona": "Couple with a pet, one of whom works outside the home. The phone movements could belong to one person, while the other might be at home (e.g., the pet items moved at 09:49 and 14:51). The meal times are for two people (fork and plate used at lunch and dinner). The remote on the sofa at 20:13 suggests evening TV.",
+   "prob": 0.1,
+   "rationale": "The use of two forks and plates at lunch and dinner could indicate two people. However, the phone movements only show one person's commute. The pet items are moved during the day, which could be by a stay-at-home partner."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 07:11 \u2014 phone at entry_hook_e1 (leaves home for work)",
+  "Day 0, 08:27 \u2014 bowl at table_d1, coffee_mug at counter_k1 (breakfast)",
+  "Day 0, 08:27 \u2014 litter_scoop at bathroom_c1 (pet litter box maintenance)",
+  "Day 0, 09:49 \u2014 blanket, chew_toy, cushion at pet_bed_l1 (pet items moved to bed)",
+  "Day 0, 12:49 \u2014 fork, plate at table_d1 (lunch for two?)",
+  "Day 0, 13:21 \u2014 fork, plate at sink_k1 (dishes washed after lunch)",
+  "Day 0, 14:51 \u2014 ball, chew_toy, cushion at pet_bed_l1 (pet active in afternoon)",
+  "Day 0, 17:04 \u2014 phone at entry_hook_e1 (returns from work)",
+  "Day 0, 18:40 \u2014 fork, plate at table_d1 (dinner for two?)",
+  "Day 0, 19:25 \u2014 fork, plate at sink_k1 (dishes washed after dinner)",
+  "Day 0, 20:13 \u2014 remote at sofa_l1 (evening TV)",
+  "Day 0, 22:43 \u2014 phone at nightstand_r1 (bedtime)"
+ ],
+ "notes": "Day 0 is Monday. Need to compare with weekend days (5-6) to see if work schedule changes. The litter_scoop in bathroom suggests a cat or small pet, but chew_toy and ball suggest a dog. Could be both? The use of two forks/plates at lunch and dinner might indicate two people, but could also be one person using two plates (unlikely). Need to observe if the same pattern repeats on other weekdays. The phone is the only personal device tracked; no laptop or work bag observed yet."
+}

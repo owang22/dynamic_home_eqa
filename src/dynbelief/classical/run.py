@@ -28,7 +28,7 @@ import numpy as np
 from dynbelief.classical.filter import Filter, uniform_belief
 from dynbelief.classical.oracle import C5Oracle, C5Particle
 from dynbelief.classical.rates import (C0LastObs, C1Constant, C2Spectral,
-                                       C3PeriodicGLM, C4RegimeHMM)
+                                       C3PeriodicGLM, C3GatedGLM, C4RegimeHMM)
 from dynbelief.classical.rates.base import heldout_loglik, split_history
 from dynbelief.experiments.e1 import score_prediction
 from dynbelief.experiments.streams import (
@@ -42,9 +42,10 @@ C_SWEEP = [0.1, 1.0, 10.0]
 REGIME_SWEEP = [2, 3, 4]
 # C5  = particle/trajectory oracle (TRUE ceiling, captures conditional dependence)
 # C5m = marginal oracle (the marginal ceiling, for the two-number comparison)
-ARMS = ["C0", "C1", "C2", "C2pe", "C3", "C4", "C5", "C5m"]
+ARMS = ["C0", "C1", "C2", "C2pe", "C3", "C3g", "C4", "C5", "C5m"]
 ARM_MODEL_NAME = {"C0": "C0_lastobs", "C1": "C1_constant", "C2": "C2_spectral",
-                  "C2pe": "C2_spectral_peredge", "C3": "C3_glm", "C4": "C4_regime",
+                  "C2pe": "C2_spectral_peredge", "C3": "C3_glm", "C3g": "C3g_gated",
+                  "C4": "C4_regime",
                   "C5": "C5plus_particle", "C5m": "C5_marginal"}
 
 
@@ -80,6 +81,18 @@ def make_arm(arm: str, cands: list[str], hist: list[dict]) -> tuple[object, dict
             C = 1.0; info["low_d_fixed"] = True       # R4 fixed penalty
             info["hyper"] = {"C": C, "heldout_ll": None}
         rm = C3PeriodicGLM(cands, C=C)
+    elif arm == "C3g":                            # FROZEN canonical classical (BIC-gated periodic)
+        if have_val:
+            sc = {}
+            for C in C_SWEEP:
+                tmp = C3GatedGLM(cands, C=C); tmp.fit(fit_rows)
+                sc[C] = heldout_loglik(tmp, val_rows, cands)
+            C = _best(sc, 1.0)
+            info["hyper"] = {"C": C, "heldout_ll": _round(sc)}
+        else:
+            C = 1.0; info["low_d_fixed"] = True
+            info["hyper"] = {"C": C, "heldout_ll": None}
+        rm = C3GatedGLM(cands, C=C)
     elif arm == "C4":
         sc = {n: C4RegimeHMM(cands, n_regimes=n).heldout_day_loglik(hist)
               for n in REGIME_SWEEP}

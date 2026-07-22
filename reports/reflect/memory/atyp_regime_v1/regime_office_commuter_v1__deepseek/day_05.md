@@ -1,0 +1,24 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A single working professional with a standard Monday-to-Friday office schedule, who eats breakfast at home, commutes with transit, and returns in the evening to have dinner and relax. On weekends, they stay home, have a relaxed schedule, and eat dinner later. — The weekday pattern is robust and consistent. Saturday shows a late start (keys and travel_mug at counter at 12:30, phone on sofa), a later dinner (plate at table at 18:35), and cleanup at 21:45. No commute items leave. This matches a typical weekend routine of a weekday office worker.
+2. (p=0.01) A remote worker who occasionally goes to the office — The evidence continues to contradict this hypothesis. The laptop, work lanyard, and transit card leave and return together every weekday, indicating a daily commute. No sign of working from home (e.g., laptop staying at desk during the day). This hypothesis is nearly ruled out.
+
+## Selected evidence
+- Day 0, 08:34 — keys, laptop, phone, transit_card, travel_mug, work_lanyard all at elsewhere (commute to work, office day)
+- Day 0, 18:05 — keys, laptop, phone, transit_card, travel_mug, work_lanyard return (evening return from work)
+- Day 1, 08:34 — keys, laptop, phone, transit_card, travel_mug, work_lanyard all at elsewhere (commute to work, office day)
+- Day 1, 17:36 — keys, laptop, phone, transit_card, travel_mug, work_lanyard return (evening return from work)
+- Day 2, 08:32 — keys, laptop, phone, transit_card, travel_mug, work_lanyard all at elsewhere (commute to work, office day)
+- Day 2, 18:03 — keys, laptop, phone, transit_card, travel_mug, work_lanyard return (evening return from work)
+- Day 3, 08:30 — keys, laptop, phone, transit_card, travel_mug, work_lanyard all at elsewhere (commute to work, office day)
+- Day 3, 18:14 — keys, laptop, phone, transit_card, travel_mug, work_lanyard return (evening return from work)
+- Day 4, 08:28 — keys, laptop, phone, transit_card, travel_mug, work_lanyard all at elsewhere (commute to work, office day)
+- Day 4, 18:15 — keys, laptop, phone, transit_card, travel_mug, work_lanyard return (evening return from work)
+- Day 5, 12:30 — keys at counter_k1, phone at sofa_l1, travel_mug at counter_k1 (weekend late start, no commute)
+- Day 5, 18:35 — plate at table_d1 (weekend dinner later than weekday)
+- Day 5, 21:45 — bowl, fork, plate at cupboard_k1 (evening cleanup, same as weekday pattern)
+- Day 5, 23:05 — phone at nightstand_r1 (late bedtime on weekend)
+
+## Notes
+Weekend (Saturday) observed: no commute items leave; late start (12:30), later dinner (18:35), cleanup at 21:45, bedtime at 23:05. This is consistent with a weekday office worker relaxing at home. Need to observe Sunday (day 6) to see if any weekend-specific activities (e.g., leaving home, hobbies) appear. No hobby items (yoga mat, suitcase) observed yet. The evening cleanup at 21:45 on weekdays and now Saturday reinforces a tidy routine.

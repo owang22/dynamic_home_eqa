@@ -1,0 +1,33 @@
+[e7v2:deepseek] regime_early_fitness_v1:water_bottle (n=89,frequent) done
+[e7v2:deepseek] regime_early_fitness_v1:phone (n=147,frequent) done
+[e7v2:deepseek] regime_early_fitness_v1:protein_shaker (n=65,medium) done
+[e7v2:deepseek] regime_night_nurse_v1:water_bottle (n=41,rare) done
+[e7v2:deepseek] regime_night_nurse_v1:phone (n=68,medium) done
+[e7v2:deepseek] regime_night_nurse_v1:keys (n=35,rare) done
+[e7v2:deepseek] regime_wfh_hybrid_v1:laptop (n=20,rare) done
+[e7v2:deepseek] regime_wfh_hybrid_v1:coffee_mug (n=75,medium) done
+[e7v2:deepseek] regime_office_commuter_v1:laptop (n=44,rare) done
+[e7v2:deepseek] regime_office_commuter_v1:coffee_mug (n=35,rare) done
+==============================================================================
+E4 v2 — EVIDENCE-ROUTED HYBRID   (model=deepseek)
+==============================================================================
+
+DEV threshold selection (bank=atyp_regime_v1):  pooled accuracy vs k
+     k       LLM       C3g
+     0      0.44      0.00
+     1      0.44      0.30
+     2      0.53      0.43
+     4      0.54      0.33
+     8      0.57      0.46
+    14      0.71      0.71
+    16      0.51      0.60
+
+  => FROZEN tau* = 14 events (route LLM when observed events < 14, else frozen C3g)
+
+TEST evaluation (bank=atyp_regime_confirm_v1), clustered 95% CI:
+  stratum                      LLM                   C3g                hybrid     claim
+  rare             0.46[0.34,0.58]       0.41[0.29,0.59]       0.46[0.34,0.60]      PASS
+  medium           0.62[0.42,0.79]       0.38[0.17,0.58]       0.58[0.40,0.76]      FAIL
+  frequent         0.32[0.17,0.47]       0.36[0.27,0.48]       0.37[0.28,0.50]      PASS
+
+  Pre-registered claim (hybrid >= max(endpoints) in every stratum): FAIL

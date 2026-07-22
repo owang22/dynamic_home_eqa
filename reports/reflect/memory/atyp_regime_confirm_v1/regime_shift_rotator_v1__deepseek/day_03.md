@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.50) A single working professional with a fixed early-morning shift (likely in construction, maintenance, or similar field requiring safety gear). The resident leaves before 05:30, returns around 14:30, has an evening meal around 18:30, and goes to bed by 21:00. The routine is consistent across weekdays (Monday through Wednesday). — Days 0-2 showed a consistent early departure and return. However, Day 3 (Thursday) shows a completely different pattern: the resident is home until 08:00 (breakfast), then leaves at 13:23 (not before 05:30), and returns after 22:39 (not around 14:30). This contradicts the fixed early-morning shift hypothesis. The probability is reduced because the pattern is broken, but it may still be a weekday variation (e.g., a different shift or day off).
+2. (p=0.40) A person with a variable or rotating work schedule, possibly in a field that sometimes requires early mornings and sometimes later starts. The resident may have a day off or a later shift on Thursdays. The presence of work gear (hi_vis_vest, work_badge) still indicates a job requiring safety equipment, but the timing is not fixed. — Day 3 shows a later departure (13:23) and a late return (after 22:39), which is a significant deviation from the early-morning pattern. This suggests the resident's schedule is not fixed to early mornings every weekday. The work gear is still present, so the job type is consistent. The late return and bedtime (keys, laptop, phone at 22:39) indicate a different shift or a late workday.
+3. (p=0.10) A person who works from home or has a flexible schedule, but the work gear contradicts a typical WFH setup. This hypothesis is retained as a low-probability alternative in case weekend data shows a different pattern. — The resident is home until 08:00 on Day 3, which could indicate a work-from-home morning, but the departure at 13:23 with work gear suggests an off-site job. The late return (22:39) is not typical for a standard WFH day. This hypothesis is less likely but not impossible if the resident has a hybrid role.
+
+## Selected evidence
+- Day 0, 05:09 — hi_vis_vest at elsewhere (job requiring safety gear, early departure)
+- Day 0, 05:28 — keys, laptop, phone at elsewhere (resident leaves for work before 05:30)
+- Day 0, 14:25 — hi_vis_vest at closet_r1, keys at entry_hook_e1, laptop at desk_o1, phone at sofa_l1, thermos at sink_k1, work_badge at entry_hook_e1 (return from work around 14:25)
+- Day 0, 18:22 — fork, plate at table_d1 (evening meal around 18:22)
+- Day 0, 21:11 — phone at nightstand_r1 (bedtime routine)
+- Day 1, 05:20 — hi_vis_vest, thermos, work_badge at elsewhere (departure for work)
+- Day 1, 14:23 — hi_vis_vest at closet_r1, keys at entry_hook_e1, laptop at desk_o1, phone at counter_k1, thermos at sink_k1, work_badge at entry_hook_e1 (return from work)
+- Day 1, 18:24 — fork, plate at table_d1 (evening meal)
+- Day 1, 20:51 — phone at nightstand_r1 (bedtime)
+- Day 2, 05:12 — hi_vis_vest, thermos, work_badge at elsewhere (departure for work)
+- Day 2, 14:35 — hi_vis_vest at closet_r1, keys at entry_hook_e1, laptop at sofa_l1, phone at counter_k1, thermos at sink_k1, work_badge at entry_hook_e1 (return from work)
+- Day 2, 18:33 — fork, plate at table_d1 (evening meal)
+- Day 3, 08:00 — bowl, coffee_mug, phone at table_d1 (breakfast at home, later start)
+- Day 3, 13:23 — hi_vis_vest, keys, laptop, phone, thermos, work_badge at elsewhere (departure for work at 13:23, not early morning)
+- Day 3, 22:39 — keys at entry_hook_e1, laptop at sofa_l1, phone at sofa_l1, thermos at sink_k1, work_badge at nightstand_r1 (late return after 22:39, bedtime items)
+
+## Notes
+Day 3 (Thursday) breaks the early-morning pattern: resident has breakfast at 08:00, leaves at 13:23, returns after 22:39. This suggests a variable or rotating schedule. Need to observe Day 4 (Friday) and weekend days (5-6) to see if there is a weekly pattern (e.g., early mornings Mon-Wed, later on Thu-Fri). The work gear is still present, so the job type is consistent. The late return and bedtime (22:39) indicate a different shift. Open question: Is the resident on a rotating shift, or does Thursday represent a different work assignment?
