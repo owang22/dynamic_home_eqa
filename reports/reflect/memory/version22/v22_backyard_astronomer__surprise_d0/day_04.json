@@ -1,0 +1,32 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single person with a hybrid work schedule (WFH some days, office others) who has a strong interest in astronomy and uses the patio for stargazing. The morning coffee at the table suggests a relaxed start on WFH days, while the telescope cap movements indicate active nighttime observation. The late-night coffee mug at sink (00:33) on Friday suggests an unusual late-night routine, possibly after stargazing or a late work session.",
+   "prob": 0.85,
+   "rationale": "Day 4 (Friday) shows coffee_mug at sink at 00:33 (late night cleanup, possibly after stargazing or late work), then coffee_mug at table at 08:54 (morning coffee at table again, consistent with WFH day). Telescope_cap at scope_cabinet at 00:33 (stowed after use) and star_chart at patio_table at 22:03 (active stargazing) confirm the astronomy hobby. The fork at sink at 19:26 is mundane dinner cleanup. The pattern of coffee at table on both Thursday and Friday mornings strengthens the WFH hypothesis. The late-night coffee mug at sink is a new element but fits a single person with flexible hours."
+  },
+  {
+   "persona": "A single person who works outside the home on some days and has a consistent evening outdoor routine (patio for relaxation or stargazing). The morning coffee at table could be a weekend-like start on a weekday, but the late-night coffee mug at sink suggests an irregular sleep schedule.",
+   "prob": 0.1,
+   "rationale": "The telescope cap and star chart movements are strong evidence for a dedicated astronomy hobby, but the coffee mug at table on two consecutive weekdays (Thursday and Friday) suggests a pattern of relaxed mornings, which is more consistent with WFH than office days. The late-night coffee mug at sink (00:33) is unusual for a typical office worker. This hypothesis is less likely because the morning coffee pattern is becoming regular."
+  },
+  {
+   "persona": "A couple or family where one member is an astronomy enthusiast and another has a variable work schedule. The coffee mug at table and bowl at sink could be from different people, and the late-night coffee mug at sink might be from a second person.",
+   "prob": 0.05,
+   "rationale": "The telescope cap and star chart movements are strong evidence for an astronomy hobbyist, but the coffee mug at table at 08:54 and at sink at 00:33 could be from different people. However, the lack of multiple distinct objects (e.g., two coffee mugs, two phones) and the consistent single-person patterns (phone, coffee mug) make this less likely. The surprise events don't strongly support a multi-person household."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 12:28 \u2014 phone at sofa_l1 (midday break, possibly remote work on a Monday)",
+  "Day 2, 09:24 \u2014 phone at table_d1 (morning phone at table, not sofa; suggests different morning activity, maybe preparing to leave for office)",
+  "Day 2, 21:45 \u2014 phone at patio_table_p1 (evening outdoor phone use, possibly combined with stargazing)",
+  "Day 3, 00:15 \u2014 telescope_cap at scope_cabinet_p1 (astronomy hobby, late-night stargazing setup)",
+  "Day 3, 08:51 \u2014 coffee_mug at table_d1 (morning coffee at table, not sink; suggests relaxed breakfast, possibly WFH day)",
+  "Day 3, 22:03 \u2014 telescope_cap at patio_table_p1 (evening stargazing, consistent with astronomy hobby)",
+  "Day 4, 00:33 \u2014 coffee_mug at sink_k1 (late-night coffee cleanup, possibly after stargazing or late work; unusual time)",
+  "Day 4, 00:33 \u2014 telescope_cap at scope_cabinet_p1 (telescope stowed after late-night use, consistent with astronomy hobby)",
+  "Day 4, 08:54 \u2014 coffee_mug at table_d1 (morning coffee at table again, reinforces WFH morning routine)",
+  "Day 4, 22:03 \u2014 star_chart at patio_table_p1 (active stargazing with chart, confirms astronomy hobby)"
+ ],
+ "notes": "Day 4 (Friday) adds strong evidence for a regular astronomy hobby (star_chart at patio_table at 22:03) and a consistent WFH morning routine (coffee_mug at table at 08:54, same as Day 3). The late-night coffee_mug at sink at 00:33 is a new pattern\u2014could be from a late-night stargazing session or a late work night. Need weekend observations (days 5-6) to see if morning routines change (e.g., later coffee) or if telescope use increases. Also need to track phone location on Day 4 (not observed today) to see if it matches earlier patterns. The fork at sink at 19:26 is mundane dinner cleanup. The surprise events (coffee_mug at sink at 00:33, telescope_cap at scope_cabinet at 00:33, coffee_mug at table at 08:54) all had low prior probability, but the model is learning these patterns now."
+}

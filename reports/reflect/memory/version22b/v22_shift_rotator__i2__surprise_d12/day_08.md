@@ -1,0 +1,25 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single adult with a non-standard work schedule, likely a shift worker (e.g., manual labor or trade) who works early morning shifts and sometimes late evening shifts, but has weekends off or a relaxed weekend routine. — Day 7 (Monday) shows a disrupted morning: phone left at entry_hook_e1 at 05:04 (surprising, as it was expected elsewhere for early departure), but hi_vis_vest leaves at 05:19, still indicating an early work start. However, the phone being left behind suggests a rushed or unusual start, possibly a later shift or a day off from the usual pattern. The rest of the day shows relaxed home activities (floor lamp, picture frame, dining chair movements) and no work gear return until late evening (no badge or vest seen returning). This could indicate a day off or a later shift. The shift worker hypothesis remains strongest but probability decreases due to the unexpected phone location and lack of work gear return.
+2. (p=0.20) A single adult with a flexible or part-time job who works from home occasionally, with a clear weekend relaxation pattern, and may have a non-standard Monday routine. — Day 7 shows a late morning (bed_pillow at bed_r1 at 10:27, suggesting a late wake-up or nap), and no early work gear movement except the vest leaving at 05:19. The phone left at home at 05:04 could indicate a work-from-home day or a later start. The relaxed activities (floor lamp, picture frame, dining chair) and no work gear return suggest a day off or flexible schedule. This hypothesis gains probability as it accommodates the surprising phone location and the lack of structured work pattern.
+3. (p=0.10) A single adult who works in a trade or manual labor job with irregular hours, possibly including night shifts, but with a consistent weekend off, and may have a variable Monday schedule. — Day 7 shows an early vest departure (05:19) but phone left behind, which could indicate a rushed start for a shift that doesn't require the phone, or a later shift. The lack of work gear return and relaxed home activities suggest a day off or a later shift. This hypothesis remains less likely than the regular shift worker or flexible worker hypotheses, as the pattern is less consistent.
+
+## Selected evidence
+- Day 0, 05:24 — phone at elsewhere (early wake-up, consistent with early work start)
+- Day 2, 05:07 — work_badge at elsewhere (early departure for work, likely commute)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (return from work, earlier than 9-to-5, suggests half-day or shift end)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (late-night return of work gear, indicates shift work or manual labor job)
+- Day 3, 23:02 — work_badge at locker_shelf_e1 (late-night return of badge, consistent with shift work)
+- Day 4, 04:59 — phone at entry_hook_e1 (phone left at home before early departure, unusual but consistent with early start)
+- Day 4, 04:59 — work_badge at entry_hook_e1 (badge left at home before early departure, suggests rushed morning)
+- Day 4, 05:14 — hi_vis_vest at elsewhere (early departure with vest, confirms manual labor job and early start)
+- Day 5, 12:44 — phone at sofa_l1 (late weekend wake-up, no work gear, indicates day off)
+- Day 6, 18:17 — plate at table_d1 (late Sunday meal, relaxed weekend routine)
+- Day 6, 19:14 — coffee_mug at desk_o1 (Sunday coffee at desk, possibly for leisure or light work)
+- Day 7, 05:04 — phone at entry_hook_e1 (surprising: phone left at home instead of leaving early, suggests disrupted morning or day off)
+- Day 7, 05:19 — hi_vis_vest at elsewhere (early departure with vest, but phone left behind, inconsistent with previous early starts)
+- Day 7, 10:27 — bed_pillow at bed_r1 (late morning nap or late wake-up, suggests flexible schedule or day off)
+
+## Notes
+Day 7 (Monday) shows a surprising pattern: phone left at entry_hook_e1 at 05:04 (expected elsewhere for early departure), while hi_vis_vest leaves at 05:19. This could indicate a day off from the usual early shift, a later shift, or a work-from-home day. No work gear (badge, vest) returns observed, and relaxed home activities (floor lamp, picture frame, dining chair) suggest a non-work day or a later shift. Need to observe next few days to see if the early morning pattern resumes or if this is a new routine. Also, the coffee_mug at sink_k1 at 20:52 is surprising (expected elsewhere), but may be part of evening cleanup. The doormat movement at 07:15 is mundane and dropped. The wall_clock movement is mundane and dropped. The bath_mat movement is mundane and dropped. The fork at sink is mundane. The picture_frame movements are consistent with weekend pattern but now on Monday, suggesting a day off. The floor_lamp movements are consistent with relaxation. The dining_chair movements at 08:04, 08:45, 17:50 suggest meals or desk use, but not diagnostic. Overall, the Monday pattern is less structured than previous weekdays, suggesting a possible day off or schedule change.

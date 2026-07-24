@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A cyclist who commutes by bike and works a standard Monday-Friday job, likely returning home in the evening. — The weekday pattern of helmet and pannier leaving around 10:00 and returning in the evening is well-established. Weekend observations (Saturday helmet at hall_shelf, Sunday no bike gear departure) confirm a non-commute weekend. Sunday's hex_wrench_set at bike_rack suggests bike maintenance, typical for a cyclist on a day off. Today (Monday) shows no bike gear events, but the morning coffee mug at table (07:46) and dining chair (08:45) are consistent with a morning routine before a later departure (10:00-10:30). The absence of bike events today may be due to incomplete observation or a different start time.
+2. (p=0.04) A person who values a tidy, organized home with a consistent morning routine, possibly living alone or with a partner. — The doormat, dining chair, and phone events in the morning suggest tidiness, but these are less distinctive than the cycling pattern. The waste bin and coffee mug events are common in many households and do not add strong evidence. Today's events (coffee mug at table, dining chair at table, bed pillow at bed, wall clock at counter, picture frame at coffee table, floor lamp at sofa, bath mat at bathroom, plate at table, bowl and plate at cupboard) are all mundane and do not differentiate.
+3. (p=0.01) A person who works from home or has a flexible schedule, as the helmet and pannier left at 10:09 (not early morning) and the water bottle at sink (not bike rack) on Thursday suggest a later start and possibly different commute timing. — The departure time around 10:00 is later than typical 9-to-5, but the consistent weekday pattern still aligns with a commute. The water bottle at sink on Thursday could be an anomaly (e.g., washing). The weekend helmet at 13:07 does not indicate a work-from-home pattern. Today's events show no bike gear, but the morning routine (coffee, dining chair) is consistent with a later start. This hypothesis is further weakened.
+
+## Selected evidence
+- Day 0, 18:07 — water_bottle at bike_rack_h1 (evening bike return, commute pattern)
+- Day 1, 18:33 — water_bottle at bike_rack_h1 (repeated Tuesday, strengthens commute)
+- Day 2, 18:12 — pannier at bike_rack_h1 (bike accessory return, supports cycling routine)
+- Day 2, 21:45 — water_bottle at bike_rack_h1 (later return, possibly longer day or errand)
+- Day 3, 10:01 — helmet at elsewhere (morning departure with bike gear, confirms commute)
+- Day 3, 10:01 — pannier at elsewhere (morning departure with bike gear, confirms commute)
+- Day 3, 18:09 — water_bottle at sink_k1 (evening, but at sink not bike rack; may indicate different end-of-day routine)
+- Day 4, 10:09 — helmet at elsewhere (Friday morning departure, consistent with weekday commute)
+- Day 4, 18:22 — dining_chair at table_d1 (evening tidy, part of routine after return)
+- Day 4, 18:25 — bed_pillow at bed_r1 (evening bedroom activity, likely preparing for night)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (evening living room activity, possibly decoration or tidying)
+- Day 4, 19:31 — fork at sink_k1 (evening kitchen cleanup after dinner)
+- Day 4, 20:54 — floor_lamp at sofa_l1 (evening living room activity, likely reading or relaxing)
+- Day 5, 13:07 — helmet at hall_shelf_h1 (Saturday, helmet not used for commute; stored or used for leisure ride)
+- Day 6, 16:05 — hex_wrench_set at bike_rack_h1 (Sunday bike maintenance, typical for cyclist on day off)
+
+## Notes
+Weekend pattern confirmed: no morning bike departure, later activities (coffee mug at 08:10, floor lamp at 09:33, waste bin at 10:53, bath mat at 10:57, wall clock at 12:18 and 18:09, fork at 18:44, plate at 19:24). Sunday's hex_wrench_set at bike_rack suggests bike maintenance. The water bottle at sink on Thursday remains an anomaly; may be due to washing or a different use. Consider if pannier contains laptop or work items (not observed yet). Today (Monday) shows no bike gear events, but morning routine (coffee mug at 07:46, dining chair at 08:45) is consistent with a later departure. The absence of bike events may be due to incomplete observation or a different start time. Need to verify if bike gear appears later in the day or if today is an exception.

@@ -1,0 +1,19 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single working professional with a structured morning routine, likely leaving home early for work, and possibly working in a trade or field requiring a hi-vis vest and work badge. — Thermos at 05:14 on Monday and work badge at 05:27 on Wednesday confirm early morning work preparation. Hi-vis vest and work badge both at locker shelf at 14:42 suggest a job where these are stored after work (e.g., construction, maintenance, or security). The badge's surprising return to locker (expected elsewhere) reinforces a structured end-of-workday routine.
+2. (p=0.20) A person who values evening relaxation at home, possibly winding down after work, with a consistent evening routine involving the living room and coffee table. — Picture frame at coffee table on both Monday (21:04) and Wednesday (15:08) suggests a regular evening activity (e.g., decorating, reading, or tidying). Coffee mug at desk at 19:46 indicates evening work or leisure at home desk. Dining chair movements at 16:06 and 21:06 suggest meals at home.
+3. (p=0.10) A person with a consistent bedtime routine, possibly going to bed early, and taking afternoon naps. — Bed pillow at bed at 13:52 and 16:47 on Wednesday, plus 12:57 and 20:54 on Monday, suggests napping or adjusting bedding. Bath mat at bathroom at 20:23 on Monday indicates evening hygiene. However, the nap timing is inconsistent with a strict early bedtime, so probability is lower.
+
+## Selected evidence
+- Day 0, 05:14 — thermos at elsewhere (early morning hot drink preparation, likely for work commute)
+- Day 2, 05:27 — work_badge at elsewhere (early morning departure for work, consistent with Monday)
+- Day 2, 14:42 — hi_vis_vest at locker_shelf_e1 (work gear stored after shift, suggests trade job)
+- Day 2, 14:42 — work_badge at locker_shelf_e1 (surprising: badge returned to locker, confirming end-of-work routine)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine before bed)
+- Day 2, 19:46 — coffee_mug at desk_o1 (evening work or leisure at home desk)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (surprising: mug put away late, possibly after evening use)
+- Day 0, 21:04 — picture_frame at coffee_table_l1 (evening leisure activity, repeated on Day 2 at 15:08)
+
+## Notes
+Wednesday events confirm early morning work routine (work badge at 05:27). Hi-vis vest and work badge at locker at 14:42 strongly suggest a trade or field job (e.g., construction, maintenance). The surprising badge return to locker (expected elsewhere) reinforces end-of-shift storage. Coffee mug at desk at 19:46 and then cupboard at 21:45 suggests evening home use and cleanup. Picture frame at coffee table at 15:08 (earlier than Monday's 21:04) may indicate a flexible afternoon routine. Need to verify if weekend patterns differ (e.g., no work badge or vest). Look for signs of other household members (e.g., multiple mugs, chairs). Day-of-week pattern: Monday and Wednesday similar; check Thursday and Friday for consistency.

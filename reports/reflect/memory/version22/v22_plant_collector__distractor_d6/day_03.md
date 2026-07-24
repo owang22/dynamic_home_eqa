@@ -1,0 +1,24 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single person who works from home or has a flexible schedule, with a routine that includes morning plant care, afternoon relaxation, and evening winding down. — Day 3 shows a clear work-from-home pattern: laptop and keys leave at 09:40 (likely a short errand or commute), but the person returns to home-based activities (floor lamp at 12:21, pillow at 18:51 and 21:57, phone at nightstand at 22:04). The notebook on the coffee table at 09:18 suggests work or planning. The doormat movements at 07:57 and 09:02 indicate morning entry/exit, consistent with a flexible schedule. The evening pillow movements and phone at nightstand reinforce a wind-down routine.
+2. (p=0.15) A person who values a tidy and organized home, with a focus on comfort and aesthetics. — The notebook placed on the coffee table, doormat at entry hook, and fork at sink show attention to order. However, the laptop and keys leaving together (09:40) and the floor lamp moved at 12:21 are less distinctive of tidiness. This hypothesis remains plausible but less supported than the work-from-home pattern.
+3. (p=0.05) A person who may have a pet or be very attentive to household details, as evidenced by the plant mister and multiple pillow adjustments. — The pillow movements (18:51 and 21:57) could be for a pet or personal comfort, but no direct pet evidence. The plant mister was only seen once. This hypothesis is weakened by the lack of new pet-related events and the strong work-from-home pattern.
+
+## Selected evidence
+- Day 0, 09:10 — plant_mister at windowsill_l1 (morning plant care, suggests a routine with plants)
+- Day 0, 12:57 — bed_pillow at bed_r1 (afternoon pillow placement, possibly a nap or rest)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening lighting adjustment for relaxation)
+- Day 1, 10:42 — dining_chair at table_d1 (morning/early afternoon seating, suggests home-based work or meal)
+- Day 2, 13:33 — phone at table_d1 (afternoon phone use, likely work break or personal time)
+- Day 2, 13:52 — bed_pillow at bed_r1 (afternoon pillow movement, consistent with nap or rest)
+- Day 2, 21:43 — remote at coffee_table_l1 (evening TV or entertainment, part of wind-down)
+- Day 3, 09:18 — notebook at coffee_table_l1 (morning work or planning activity)
+- Day 3, 09:40 — keys at elsewhere (morning departure, likely for work or errand)
+- Day 3, 09:40 — laptop at elsewhere (morning departure with laptop, supports work-from-home or flexible schedule)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (afternoon lighting adjustment, possibly for reading or relaxation)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening pillow movement, consistent with rest or nap)
+- Day 3, 22:04 — phone at nightstand_r1 (evening phone use before bed, part of wind-down)
+
+## Notes
+Day 3 (Thursday) shows a clear morning departure with laptop and keys at 09:40, suggesting a work-from-home or flexible schedule where the person leaves for a short period. The notebook on the coffee table at 09:18 indicates morning work/planning. The doormat movements at 07:57 and 09:02 suggest multiple entries/exits in the morning. The floor lamp at 12:21 and pillow at 18:51 and 21:57 reinforce the afternoon/evening relaxation pattern. The phone at nightstand at 22:04 is new and suggests a consistent bedtime routine. Need to verify if the morning departure pattern repeats on Day 4 (Friday) and if weekend patterns differ (e.g., later wake-up, different activities). The plant mister was not observed again; may be a weekly or occasional event.

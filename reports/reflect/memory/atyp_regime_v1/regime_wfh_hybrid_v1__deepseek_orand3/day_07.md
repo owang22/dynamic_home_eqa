@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A remote worker or student who works from home, with a desk as a primary workspace and a coffee habit in the morning and early afternoon. — Weekday evidence remains strong. Monday shows a morning bowl at table (breakfast) and evening cleanup, but no laptop or coffee events today. However, the pattern of weekday morning meals and evening phone at nightstand is consistent. The absence of desk events today may be due to incomplete observation or a slight variation.
+2. (p=0.15) A person with a relaxed weekend routine, sleeping in and having a late breakfast, then a quiet evening at home. — Sunday events remain consistent with a relaxed day. Monday's events are typical weekday routine, not contradicting this hypothesis. The weekend pattern is still supported.
+
+## Selected evidence
+- Day 0, 08:23 — coffee_mug at desk_o1 (morning coffee at desk, suggests work-from-home or study routine)
+- Day 2, 08:35 — laptop at desk_o1 (laptop at desk on a weekday morning, strong evidence for remote work or study)
+- Day 3, 08:26 — coffee_mug at cupboard_k1 (morning coffee preparation, consistent with workday start)
+- Day 4, 07:31 — bowl at table_d1 (breakfast bowl at table, consistent with weekday morning meal)
+- Day 4, 08:01 — bowl at sink_k1 (breakfast cleanup, routine morning chore)
+- Day 4, 08:01 — coffee_mug at sink_k1 (morning coffee cleanup, reinforces coffee habit)
+- Day 4, 18:37 — plate at table_d1 (dinner plate at table, typical evening meal)
+- Day 4, 22:36 — phone at nightstand_r1 (phone at nightstand at bedtime, consistent with weekday bedtime)
+- Day 5, 11:51 — keys at counter_k1 (keys out at late morning on Saturday, suggests a later start or outing)
+- Day 5, 23:14 — remote at coffee_table_l1 (remote on coffee table late at night on weekend, indicates evening TV)
+- Day 6, 18:38 — plate at table_d1 (dinner plate at table on Sunday, consistent with evening meal)
+- Day 6, 19:23 — plate at sink_k1 (dinner cleanup on Sunday, routine chore)
+- Day 6, 21:45 — bowl at cupboard_k1 (evening bowl storage, possibly snack or dessert)
+- Day 7, 07:29 — bowl at table_d1 (weekday morning breakfast, consistent with routine)
+- Day 7, 22:32 — phone at nightstand_r1 (weekday bedtime, consistent with routine)
+
+## Notes
+Monday (Day 7) shows a typical weekday pattern: breakfast bowl at 07:29, dinner cleanup at 19:13, bowl storage at 21:45, and phone at nightstand at 22:32. No laptop or coffee events observed today, but the pattern is still consistent with a remote worker/student. The weekend pattern (Saturday and Sunday) is now confirmed: later start, no desk work, evening TV/relaxation. Need to observe more weekdays to confirm the weekly cycle. Look for objects like yoga mat, suitcase, or guests to further refine persona. The remote event on Saturday is kept as it contrasts with weekday evenings (phone at nightstand).

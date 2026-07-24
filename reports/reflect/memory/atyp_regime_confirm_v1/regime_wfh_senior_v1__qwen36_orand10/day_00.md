@@ -1,0 +1,16 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) Remote Worker / Student — Coffee mug moves from counter to desk in the morning and stays there through midday, suggesting sustained work/study session. Laptop not seen, but desk usage is high.
+2. (p=0.30) Standard Office Worker — Morning coffee routine is standard. Lunch at table suggests a break from home activities. Evening cleanup is standard.
+3. (p=0.10) Night Owl / Shift Worker — No evidence yet of late-night activity or early morning exercise. Low probability based on current data.
+
+## Selected evidence
+- Day 0, 07:11 — coffee_mug at counter_k1 (Morning routine start)
+- Day 0, 08:43 — coffee_mug at desk_o1 (Moved to workspace, implies work/study)
+- Day 0, 13:27 — coffee_mug at desk_o1 (Still at desk after lunch, suggests continuous work block)
+- Day 0, 12:42 — plate/fork at table_d1 (Lunch break away from desk)
+- Day 0, 21:45 — fork at cupboard_k1 (Evening cleanup, routine end)
+
+## Notes
+Need to observe if the coffee mug returns to the desk after lunch (Day 0, 13:27 it was there, but need to see if it stays). Check if 'reading_glasses' at desk_o1 correlates with laptop use (laptop not observed yet). Verify if Day 0, 17:50 plate at table is dinner or leftover lunch. Key differentiator for next days: Does the person leave the house? Do they exercise? Is the desk used for leisure or work?

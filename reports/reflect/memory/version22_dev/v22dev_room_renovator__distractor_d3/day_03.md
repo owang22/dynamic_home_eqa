@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single working professional with a regular 9-to-5 schedule, returning home in the evening and winding down with dinner and relaxation. — Day 3 (Thursday) shows keys, laptop_bag, and phone all leaving at 08:11 (consistent morning commute), plate at table at 18:00 (evening meal), and pillow at bed at 18:51 and again at 21:57 (bedtime routine). The pattern is very consistent across all four weekdays. No evidence of a second person.
+2. (p=0.03) A couple or family where one person works standard hours and another may be at home, but the evening routine is shared. — No new evidence of multiple residents. The single plate, single set of keys, single phone, and single pillow all point to a single person. The dining chair at table at 08:57 could be a second person setting a chair, but it's more likely the resident themselves. Probability reduced.
+3. (p=0.02) A remote worker or student with flexible hours, but the 08:11 keys event suggests leaving home, so less likely. — The consistent 08:11 departure with laptop_bag and phone strongly indicates a commute to a workplace, not a home office. The evening return at 18:00 is also consistent with a standard workday. Probability reduced further.
+
+## Selected evidence
+- Day 0, 08:11 — keys at elsewhere (leaving home for work)
+- Day 0, 18:08 — plate at table_d1 (evening meal after work)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime)
+- Day 1, 16:12 — doormat at entry_hook_e1 (early arrival or delivery, possible anomaly)
+- Day 1, 18:57 — paint_roller at paint_shelf_s1 (DIY project in evening)
+- Day 2, 08:38 — doormat at entry_hook_e1 (leaving home, consistent commute)
+- Day 2, 17:41 — laptop_bag at sofa_l1 (return from work)
+- Day 2, 17:59 — plate at table_d1 (evening meal)
+- Day 2, 22:20 — phone at nightstand_r1 (bedtime routine)
+- Day 3, 08:11 — keys, laptop_bag, phone at elsewhere (morning departure, all together)
+- Day 3, 18:00 — plate at table_d1 (evening meal)
+- Day 3, 18:51 — bed_pillow at bed_r1 (early bedtime preparation)
+- Day 3, 21:57 — bed_pillow at bed_r1 (final bedtime)
+
+## Notes
+Day 3 (Thursday) confirms the morning departure at 08:11 with all work items (keys, laptop_bag, phone). The dining chair at table at 08:57 might be a morning routine (setting chair for evening?). The pillow at 18:51 is unusually early for bedtime; perhaps the resident naps or prepares bed early. The second pillow event at 21:57 suggests the actual bedtime. The 16:12 doormat on Day 1 remains unexplained; could be a delivery or a one-off early return. Weekend data (Day 5-6) will be crucial to see if the pattern changes. No evidence of multiple residents yet.

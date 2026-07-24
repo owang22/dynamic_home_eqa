@@ -1,0 +1,20 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A shift worker (likely in construction, maintenance, or a trade) who leaves early (05:09) with a thermos, work badge, and keys, and returns around 14:25, hanging up the vest and badge, placing keys on the hook, and then using the laptop and phone. The early start and mid-afternoon return suggest a non-standard work schedule, possibly a 6am-2pm shift. — The early departure with work badge and thermos, plus the return at 14:25 with hi-vis vest, badge, and keys, strongly indicates a shift worker. The laptop and phone use after return suggest some personal or remote work time.
+2. (p=0.15) A remote worker who also has a side job or hobby that requires early morning outings (e.g., a fitness class or errand) but primarily works from home, as evidenced by the laptop at the desk and phone on the sofa in the afternoon. — The laptop and phone use at home in the afternoon could indicate remote work, but the early departure with work badge and thermos is more consistent with a job outside the home. The hi-vis vest suggests a physical job, not a typical remote worker.
+3. (p=0.05) A student or intern who has a morning class or internship (leaving at 05:09) and returns home in the early afternoon to study or relax, using the laptop and phone. — The early start and return at 14:25 could fit a student schedule, but the hi-vis vest and work badge are more typical of a job than a student. The thermos also suggests a long morning away from home.
+
+## Selected evidence
+- Day 0, 05:09 — thermos at elsewhere (early departure with drink, suggests long morning away)
+- Day 0, 05:09 — work_badge at elsewhere (leaving for work early)
+- Day 0, 05:28 — keys at elsewhere (final departure item)
+- Day 0, 14:25 — hi_vis_vest at closet_r1 (return from work, likely a physical job)
+- Day 0, 14:25 — keys at entry_hook_e1 (immediate key placement on return)
+- Day 0, 14:25 — laptop at desk_o1 (afternoon work or personal use at home)
+- Day 0, 14:25 — phone at sofa_l1 (relaxation or personal time after work)
+- Day 0, 14:25 — thermos at sink_k1 (unpacking and cleaning after work)
+- Day 0, 14:25 — work_badge at entry_hook_e1 (badge hung up, end of work day)
+
+## Notes
+Day 0 (Monday) shows a clear pattern: early departure (05:09-05:28) with work badge, thermos, keys; return at 14:25 with hi-vis vest, badge, keys, then laptop and phone use. Need to see if this pattern repeats on other weekdays and if weekends differ. The fork at 18:22 suggests dinner at home. No evidence of other residents yet.

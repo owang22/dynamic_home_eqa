@@ -1,0 +1,35 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single adult with a regular work schedule, likely commuting to an office (work badge used), who returns home in the afternoon and has a structured evening routine. The morning badge use at 05:07 suggests an early start, and the badge returning at 15:05 indicates a standard workday ending. Evening activities (picture frame, dining chair, coffee mug, fork/plate) suggest relaxation, possibly working from home later (coffee mug at desk at 19:13).",
+   "prob": 0.7,
+   "rationale": "Work badge events at 05:07 and 15:05 strongly support a commuting worker. The 15:05 return time is consistent with a typical office schedule. The coffee mug at desk at 19:13 may indicate evening work or leisure. No evidence of multiple residents or children."
+  },
+  {
+   "persona": "A person with a consistent evening routine, possibly a remote worker who also goes to an office occasionally. The 15:05 return and subsequent activities (picture frame, dining chair, coffee mug) suggest home-based activities after work. The 19:13 coffee mug at desk could be for work or personal use.",
+   "prob": 0.2,
+   "rationale": "The 15:05 return is earlier than typical office end, but could be a half-day or flexible schedule. The coffee mug at desk at 19:13 might indicate work-from-home in the evening. Still possible but less likely given the early badge use."
+  },
+  {
+   "persona": "A person who may have a partner or family, but evidence remains insufficient. The single fork and plate at 21:45 suggest a single person's meal cleanup, but the picture frame at coffee table could indicate a shared space. No strong evidence of multiple residents yet.",
+   "prob": 0.1,
+   "rationale": "Only one fork and plate observed, consistent with single occupancy. The picture frame could be decorative. No other items (e.g., multiple pillows, toothbrushes) suggest multiple people. Low probability due to lack of supporting evidence."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 05:24 \u2014 phone at elsewhere (morning phone use, possibly alarm or work check)",
+  "Day 0, 18:52 \u2014 fork at sink_k1 (evening meal cleanup, typical after work)",
+  "Day 0, 20:06 \u2014 floor_lamp at sofa_l1 (evening relaxation, likely TV or reading)",
+  "Day 0, 20:23 \u2014 bath_mat at bathroom_c1 (pre-bedtime shower or bath)",
+  "Day 0, 20:54 \u2014 bed_pillow at bed_r1 (going to sleep, consistent with bath)",
+  "Day 2, 05:07 \u2014 work_badge at elsewhere (early morning departure for work, commuting)",
+  "Day 2, 08:38 \u2014 doormat at entry_hook_e1 (morning arrival? possibly a delivery or leaving? but doormat moved, could be cleaning or return)",
+  "Day 2, 15:05 \u2014 work_badge at entry_hook_e1 (return from work, consistent with office schedule)",
+  "Day 2, 15:08 \u2014 picture_frame at coffee_table_l1 (afternoon activity, possibly decorating or tidying)",
+  "Day 2, 16:06 \u2014 dining_chair at table_d1 (afternoon seating, maybe snack or work)",
+  "Day 2, 19:13 \u2014 coffee_mug at desk_o1 (evening coffee, possibly work or leisure at desk)",
+  "Day 2, 21:45 \u2014 fork at cupboard_k1 (late evening meal cleanup, putting away dishes)",
+  "Day 2, 21:45 \u2014 plate at cupboard_k1 (same as fork, consistent with single meal)"
+ ],
+ "notes": "Work badge events on Wednesday (Day 2) confirm a commuting worker with early start (05:07) and return at 15:05. The 08:38 doormat event is ambiguous; could be a morning return or a different activity. The 19:13 coffee mug at desk suggests evening desk use, possibly work-from-home or personal. The 21:45 fork and plate at cupboard indicate late dinner cleanup. Need to check if morning phone use (Day 0) is consistent with badge use (Day 2) or if it's a different routine. Weekend patterns (Day 5-6) will help distinguish work vs. leisure. No evidence of children or multiple residents; single person likely. The surprising events (work_badge at entry_hook at 15:05 and fork at cupboard at 21:45) were unexpected by the model but now fit the commuting worker hypothesis."
+}

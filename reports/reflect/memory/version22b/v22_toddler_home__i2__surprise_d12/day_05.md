@@ -1,0 +1,26 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A family with a young child (toddler/preschooler) who uses a play mat, board books, stacking rings, a high chair, and a crib, with a structured daily routine (morning play, midday meal, evening wind-down). The child's activities are consistent across weekdays, and the parent(s) manage household tasks like waste bin use and evening cleanup. — The new evidence strongly reinforces the child-centered household: sippy cup at high chair (06:49) for breakfast, cushion and stacking rings at play mat (08:42) for morning play, stacking rings moved to toy corner (16:40) after play, and bath mat at bathroom (14:40, 16:17, 16:26) for bath time. The waste bin at counter (07:09, 07:15, 08:41) suggests kitchen cleanup after breakfast. Evening items (dining chair, bed pillow, picture frame, floor lamp, fork) are consistent with adult relaxation and dinner cleanup. The surprising events (cushion and stacking rings at play mat) now fit the child's morning play routine, increasing confidence.
+2. (p=0.04) A single adult who works from home or has a flexible schedule, with a young child living full-time. The adult manages child routines and personal relaxation (e.g., floor lamp, picture frame at coffee table). — The evidence does not contradict a single-parent household, but the structured routine and multiple adult items (picture frame, floor lamp) could also indicate two adults. The waste bin movements might be from one adult doing kitchen chores. This hypothesis remains possible but less likely than a two-parent family.
+3. (p=0.01) A couple without children, with a pet or exercise equipment, but the board book, high chair, crib, sippy cup, and stacking rings are strong evidence against this. This hypothesis is now contradicted. — The new evidence (sippy cup, stacking rings) further confirms child-specific items, making a childless household extremely unlikely. Retained only for completeness.
+
+## Selected evidence
+- Day 0, 08:49 — cushion at play_mat_n1 (morning child play activity)
+- Day 0, 12:30 — dining_chair at table_d1 (midday meal routine)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation/reading)
+- Day 2, 11:10 — sippy_cup at sink_k1 (child's cup washed after morning use)
+- Day 2, 19:02 — sippy_cup at crib_n1 (child's cup placed in crib, bedtime routine)
+- Day 3, 08:47 — board_book at play_mat_n1 (morning child reading/play)
+- Day 3, 11:17 — board_book at toy_corner_l1 (child's book moved to toy corner after play)
+- Day 3, 17:36 — plate at high_chair_d1 (child's evening meal)
+- Day 4, 06:49 — sippy_cup at high_chair_d1 (child's breakfast routine)
+- Day 4, 08:42 — cushion at play_mat_n1 (morning child play, surprising but now consistent)
+- Day 4, 08:42 — stacking_rings at play_mat_n1 (new child toy for morning play, surprising but consistent)
+- Day 4, 16:40 — stacking_rings at toy_corner_l1 (child's toy put away after play)
+- Day 4, 14:40 — bath_mat at bathroom_c1 (afternoon bath time routine)
+- Day 4, 18:25 — bed_pillow at bed_r1 (evening bedtime preparation)
+- Day 4, 19:10 — floor_lamp at sofa_l1 (evening adult relaxation)
+
+## Notes
+Friday (day 4) shows a clear morning child routine: sippy cup at high chair (06:49) for breakfast, then cushion and stacking rings at play mat (08:42) for play. The waste bin at counter (07:09, 07:15, 08:41) suggests kitchen cleanup after breakfast, possibly by a parent. Stacking rings is a new child toy, consistent with a toddler. Bath mat at bathroom (14:40, 16:17, 16:26) indicates an afternoon bath. Evening items (dining chair, bed pillow, picture frame, floor lamp, fork) suggest adult activities after child's bedtime. The surprising events (cushion and stacking rings at play mat) are now explained as part of the child's morning play. Need to observe weekend (days 5-6) for routine changes. Open question: Are there two adults? Look for multiple coffee cups or adult-specific items. Also, no work-from-home items (laptop, documents) observed yet; check if parent works outside home.

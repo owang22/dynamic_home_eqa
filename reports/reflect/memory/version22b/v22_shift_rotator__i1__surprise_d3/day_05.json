@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single working professional with a structured morning routine and a job requiring a work badge and hi-vis vest (e.g., construction, warehouse, or field work). The early departure and use of thermos suggest a commute, and the evening items indicate a consistent wind-down. The picture frame on the coffee table suggests a personal touch, likely a single resident. The surprising midday return of badge and vest on Thursday (Day 3) suggests a variable shift or half-day, but the overall pattern remains consistent with a full-time worker. The weekend events (Day 5) show a relaxed Saturday: phone on sofa at midday, no work gear, and a normal evening routine (bath mat, fork/plate cleanup). This supports a single person with a weekday work schedule and weekend leisure.",
+   "prob": 0.85,
+   "rationale": "The weekend absence of work badge/vest and the presence of phone on sofa at 12:25 (leisure) and evening hygiene (bath mat at 20:27) align with a single professional relaxing at home. The fork and plate at sink/cupboard indicate a home-cooked meal, typical for a single resident. No evidence of multiple residents or work on Saturday."
+  },
+  {
+   "persona": "A remote worker or student with a flexible schedule who also has a part-time or occasional job requiring a badge and vest. The early badge movement could be for a shift, but the vest return at 14:42 and mug at desk in evening suggest home-based work later. The surprising midday return of badge and vest (13:19) could indicate a short shift or a flexible schedule, but the consistent early morning pattern (Day 0, Day 2) and evening thermos cleaning suggest a more structured routine. The weekend phone on sofa at 12:25 and no work gear suggest a day off, but the lack of work-related items on Saturday reduces the likelihood of a regular part-time job.",
+   "prob": 0.1,
+   "rationale": "The weekend pattern (no badge/vest, phone on sofa) is consistent with a day off, but the weekday pattern still suggests a more structured job than a flexible student schedule. The probability is reduced because the evidence increasingly points to a single full-time worker."
+  },
+  {
+   "persona": "A couple or family where one person works early (badge, vest) and another uses the home items (mug, picture frame) later. The single set of evening items (lamp, bath mat, pillow) could be shared, but the picture frame might indicate a family photo. The weekend events (phone on sofa at 12:25, single fork and plate at 21:45) still show only one set of items, suggesting a single resident. No new evidence of multiple residents (e.g., two mugs, two pillows).",
+   "prob": 0.05,
+   "rationale": "The weekend evidence of a single fork and plate, and a single phone on sofa, continues to support a single resident. The picture frame is not enough to infer multiple people. Probability remains low due to lack of supporting evidence."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 05:14 \u2014 thermos at elsewhere (early morning preparation for work/commute)",
+  "Day 0, 20:06 \u2014 floor_lamp at sofa_l1 (evening relaxation, likely reading or screen time)",
+  "Day 0, 20:23 \u2014 bath_mat at bathroom_c1 (evening hygiene routine, likely shower/bath)",
+  "Day 0, 20:54 \u2014 bed_pillow at bed_r1 (bedtime preparation, consistent with 20:00-21:00 sleep schedule)",
+  "Day 2, 05:27 \u2014 work_badge at elsewhere (early departure for work, confirms work routine)",
+  "Day 2, 14:42 \u2014 hi_vis_vest at locker_shelf_e1 (returned to storage, suggests job requiring safety gear)",
+  "Day 2, 14:42 \u2014 work_badge at locker_shelf_e1 (returned with vest, indicates end of work shift)",
+  "Day 2, 19:46 \u2014 coffee_mug at desk_o1 (evening work or leisure at home desk)",
+  "Day 2, 21:45 \u2014 coffee_mug at cupboard_k1 (cleanup before bed, consistent with evening routine)",
+  "Day 3, 13:19 \u2014 hi_vis_vest at elsewhere (surprising midday return, suggests half-day or variable shift)",
+  "Day 3, 13:19 \u2014 work_badge at elsewhere (surprising midday return, confirms variable schedule)",
+  "Day 3, 22:51 \u2014 thermos at sink_k1 (late cleaning, consistent with single person's routine)",
+  "Day 5, 12:25 \u2014 phone at sofa_l1 (weekend leisure, no work gear, supports single resident relaxing)",
+  "Day 5, 20:27 \u2014 bath_mat at bathroom_c1 (evening hygiene routine, consistent with weekday pattern)",
+  "Day 5, 21:45 \u2014 fork at cupboard_k1 (single utensil cleanup, supports single resident)"
+ ],
+ "notes": "Day 5 is Saturday. The surprising events (phone at sofa at 12:25, fork at sink at 19:01, fork at cupboard at 21:45) were initially surprising because the belief model expected these objects elsewhere (e.g., phone at work, fork in drawer), but on a weekend, they are actually consistent with a single person at home. The wall_clock and waste_bin movements are mundane and not informative. The weekend pattern shows no work gear, confirming a weekday work schedule. Need to observe Day 6 (Sunday) to see if the pattern holds (e.g., no work items, similar leisure). Also look for any multiple-person indicators (e.g., two phones, two sets of utensils) on the weekend. The picture frame at coffee table remains uninformative but could be a personal photo."
+}

@@ -1,0 +1,25 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single person living alone, likely a student or remote worker, with a structured daily routine that includes morning study, consistent meal times, and evening relaxation. The math workbook and flashcards appear regularly, suggesting educational activities. — Weekday pattern of morning study (flashcards, math workbook) and evening relaxation (floor lamp, bath mat) is consistent. Saturday shows a more relaxed schedule: no study objects, later meal times (plate at 12:25, bowl/plate at 21:45), and bath mat at 12:41 (midday bath) and 20:27 (evening bath). This suggests a student who studies on weekdays and has a leisurely weekend.
+2. (p=0.10) A person with a structured daily schedule who values home organization, as shown by the doormat being placed at the entry hook multiple times and the picture frame being moved twice on Day 2. — Picture frame appears twice today (08:34 and 18:45) at bookshelf_l1, indicating continued tidying or decoration. However, this is less specific than the student hypothesis and the doormat did not appear today. The wall clock appears multiple times (09:01, 12:31, 17:26) at tv_stand_l1, possibly indicating time-checking or decoration, but this is common.
+3. (p=0.05) A person who uses the kitchen regularly, as indicated by the waste bin, fork, and plate movements, but this is common in any household. — Waste bin appears multiple times (09:01, 09:44, 16:32) at counter_k1, and plate appears at table_d1 (07:12, 12:25) and later at cupboard_k1 (21:45). Bowl also at cupboard_k1 at 21:45. These suggest meal cleanup, but are mundane and do not strongly discriminate the persona.
+
+## Selected evidence
+- Day 0, 08:39 — floor_lamp at sofa_l1 (morning relaxation, consistent across days)
+- Day 1, 15:45 — math_workbook at supply_caddy_d1 (student activity, appears again Day 2 and 3)
+- Day 2, 13:17 — math_workbook at table_d1 (afternoon study session, different location)
+- Day 3, 08:56 — kitchen_timer at table_d1 (morning study or cooking timer, new object)
+- Day 3, 08:56 — tablet at table_d1 (morning study or work, new object)
+- Day 3, 11:56 — flashcards at supply_caddy_d1 (student activity, new object)
+- Day 4, 08:55 — flashcards at table_d1 (morning study, consistent with Day 3)
+- Day 4, 18:12 — keys at entry_hook_e1 (return home, new object indicating coming/going)
+- Day 5, 12:41 — bath_mat at bathroom_c1 (midday bath on Saturday, different from weekday evening pattern)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening bath on Saturday, consistent with weekday evening)
+- Day 5, 07:12 — plate at table_d1 (early breakfast on Saturday, similar to weekday)
+- Day 5, 12:25 — plate at table_d1 (lunch on Saturday, later than weekday lunch)
+- Day 5, 21:45 — bowl at cupboard_k1 (post-dinner cleanup on Saturday, similar to weekday)
+- Day 5, 21:45 — plate at cupboard_k1 (post-dinner cleanup on Saturday, similar to weekday)
+
+## Notes
+Saturday (Day 5) shows a more relaxed weekend pattern: no study objects (flashcards, math workbook) appeared, suggesting the resident does not study on weekends. Meal times are later (lunch at 12:25, dinner cleanup at 21:45) compared to weekdays. Bath mat appears twice (12:41 and 20:27), indicating a midday bath and an evening bath, which is different from the weekday evening-only pattern. The wall clock appears multiple times (09:01, 12:31, 17:26) at tv_stand_l1, possibly indicating time-checking or decoration. Need to observe Sunday (Day 6) to confirm weekend pattern and see if any study objects appear. No evidence of a second person or pets yet.

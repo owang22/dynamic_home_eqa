@@ -1,0 +1,26 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A person who works from home or has a flexible schedule, with a strong fitness-oriented morning routine. The early morning foam roller at 05:00 on a Wednesday, followed by breakfast cleanup (bowl at sink at 07:16), and then laptop at desk at 17:30 and plate at table at 18:02 (home-cooked dinner) indicate being home in the late afternoon and evening. The consistent early morning workout (foam roller at coffee table on Day 9, previously at gym rack on Day 8) and early bedtime (21:07 on Day 2) align with an early wake-up. The absence of keys events on this weekday further supports a flexible schedule or work-from-home. — The new evidence (foam roller at 05:00, bowl at sink at 07:16, laptop at desk at 17:30, plate at table at 18:02) strongly reinforces the pattern of morning workout, breakfast, and being home in the late afternoon/evening. The lack of keys events today suggests the person did not leave home, consistent with a flexible schedule or work-from-home. The early morning workout is now a consistent pattern across multiple days (Day 4, 7, 8, 9). The late afternoon laptop use (17:30) and dinner (18:02) are typical for someone who works from home.
+2. (p=0.04) A person with a standard 9-to-5 job who commutes, but with a morning fitness habit. The early morning foam roller at 05:00 could be a pre-work routine, and the bowl at sink at 07:16 might be breakfast before leaving. However, the laptop at desk at 17:30 and plate at table at 18:02 suggest being home in the late afternoon, which is inconsistent with a standard commute unless the person works from home in the afternoon. The lack of keys events today contradicts a commute. — The new evidence (laptop at desk at 17:30, plate at table at 18:02) shows the person is home in the late afternoon, which is hard to reconcile with a standard 9-to-5 commute. The absence of keys events today further weakens this hypothesis. The early morning workout is still possible, but the overall pattern favors a flexible schedule.
+3. (p=0.01) A student or someone with evening classes, who also exercises in the morning. The early morning foam roller at 05:00 could be a pre-class routine, and the bowl at sink at 07:16 might be breakfast before classes. However, the laptop at desk at 17:30 and plate at table at 18:02 suggest being home in the late afternoon and evening, which is inconsistent with evening classes. The early bedtime (21:07) is also not typical for a student. — The new evidence (laptop at desk at 17:30, plate at table at 18:02) shows the person is home in the late afternoon and evening, contradicting the idea of evening classes. The early bedtime (21:07) remains inconsistent with a student's typical schedule. This hypothesis is very unlikely.
+
+## Selected evidence
+- Day 1, 17:35 — laptop at desk_o1 (late afternoon laptop use on a weekday, suggests work-from-home or flexible schedule)
+- Day 2, 06:40 — protein_shaker at counter_k1 (morning fitness routine, strong indicator of exercise habit)
+- Day 2, 07:59 — keys at elsewhere (keys taken, likely leaving home, possibly for work or errand)
+- Day 2, 17:18 — phone at sofa_l1 (phone used on sofa in late afternoon, suggests relaxation after work/study)
+- Day 2, 21:01 — phone at nightstand_r1 (phone placed on nightstand, likely bedtime routine)
+- Day 3, 06:44 — bowl at table_d1 (breakfast at home, consistent with flexible morning)
+- Day 3, 06:44 — mug at counter_k1 (morning hot drink, part of breakfast routine)
+- Day 3, 06:44 — protein_shaker at counter_k1 (repeated morning fitness routine, strengthens habit)
+- Day 3, 08:02 — phone at elsewhere (phone taken, likely leaving home, possibly for work or errand)
+- Day 4, 05:12 — dumbbells at coffee_table_l1 (early morning home workout, strong fitness indicator)
+- Day 4, 05:12 — yoga_mat at coffee_table_l1 (early morning home workout, strong fitness indicator)
+- Day 4, 06:42 — phone at counter_k1 (phone used after workout, likely before breakfast)
+- Day 4, 17:58 — fork at table_d1 (early dinner on a Friday, suggests flexible schedule or work-from-home)
+- Day 5, 06:44 — water_bottle at coffee_table_l1 (weekend morning hydration, consistent with fitness routine)
+- Day 5, 09:26 — protein_shaker at counter_k1 (weekend morning fitness routine, habit persists on Saturday)
+
+## Notes
+Day 9 (Wednesday) shows: foam_roller at coffee_table_l1 at 05:00 (early morning workout, consistent with previous days), bowl at sink_k1 at 07:16 (breakfast cleanup), laptop at desk_o1 at 17:30 (late afternoon laptop use, suggests work-from-home or flexible schedule), plate at table_d1 at 18:02 (dinner at home). No keys events today, reinforcing the hypothesis of a flexible schedule or work-from-home. The foam roller location alternates between coffee table and gym rack; this may indicate storage or usage pattern. Need to observe if the protein shaker appears tomorrow (Thursday) to confirm the morning fitness routine. The early bedtime pattern (21:01, 21:07) is consistent with early wake-up (05:00). The lack of keys events on most weekdays (only Day 2, 3, 8) suggests the person rarely leaves home in the morning, supporting a work-from-home hypothesis.

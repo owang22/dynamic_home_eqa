@@ -1,0 +1,34 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single working adult with a structured evening routine, likely returning home after work and engaging in self-care activities before bed. Weekend pattern shows later mornings and consistent evening self-care, but no work-related items on weekends.",
+   "prob": 0.6,
+   "rationale": "Weekend evidence (coffee at 07:57, no work items) supports a relaxed weekend, but the evening self-care (bath mat) and late-night phone persist. The absence of work-related events on weekends is consistent with a weekday worker."
+  },
+  {
+   "persona": "A person with a hobby involving cricket care (likely a pet cricket or terrarium), as evidenced by recurring morning maintenance tasks on weekdays and now also on Sunday (scissors and cricket tub at terrarium). This suggests a daily routine, not just weekdays.",
+   "prob": 0.3,
+   "rationale": "Cricket care observed on Sunday (scissors at 08:01, cricket tub at 08:51) confirms it is a daily hobby, not limited to weekdays. This strengthens the hypothesis."
+  },
+  {
+   "persona": "A person who works from home or has a flexible schedule, given the morning activity at home and the early evening routine. Weekend pattern shows a relaxed day at home, but no strong evidence for WFH on weekdays.",
+   "prob": 0.1,
+   "rationale": "Weekend evidence shows a relaxed day at home, but the weekday pattern (keys leaving midday, lunch box at sink) suggests a typical office job. The WFH hypothesis is less likely now."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 18:32 \u2014 lunch_box at sink_k1 (return from work, unpacking lunch)",
+  "Day 0, 20:23 \u2014 bath_mat at bathroom_c1 (evening self-care, likely shower/bath)",
+  "Day 2, 08:50 \u2014 scissors at cricket_shelf_s1 (morning cricket care, recurring hobby)",
+  "Day 2, 12:16 \u2014 keys at elsewhere (leaving home midday, possibly for work)",
+  "Day 3, 18:25 \u2014 keys at entry_hook_e1 (returning home from work, consistent evening pattern)",
+  "Day 4, 07:55 \u2014 calcium_powder at terrarium_stand_s1 (morning cricket care, daily routine)",
+  "Day 5, 07:28 \u2014 coffee_mug at table_d1 (weekend morning, later start than weekdays)",
+  "Day 5, 20:27 \u2014 bath_mat at bathroom_c1 (evening self-care, consistent with weekday pattern)",
+  "Day 5, 22:42 \u2014 phone at nightstand_r1 (late night phone use before bed)",
+  "Day 6, 08:01 \u2014 scissors at terrarium_stand_s1 (Sunday cricket care, confirms daily hobby)",
+  "Day 6, 08:51 \u2014 cricket_tub at cricket_shelf_s1 (Sunday cricket care, part of routine)",
+  "Day 6, 18:46 \u2014 plate at table_d1 (Sunday evening meal, consistent with weekday dinner pattern)"
+ ],
+ "notes": "Cricket care now confirmed on Sunday (day 6), indicating it is a daily routine, not just weekdays. Weekend mornings are later (coffee at 07:57 vs weekday breakfast at 07:20). No evidence of a second person. Need to observe if cricket care occurs on all days of the week. The wall_clock and waste_bin events remain uninformative. The WFH hypothesis is weakening; the resident likely has a standard office job with a daily cricket hobby."
+}

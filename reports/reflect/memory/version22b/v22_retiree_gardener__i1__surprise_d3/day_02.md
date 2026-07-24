@@ -1,0 +1,24 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) A single remote worker with a flexible but structured weekday routine, who works from home and has a morning coffee ritual, takes lunch at home, and winds down in the evening. The person uses a phone on the patio and sofa during the day, suggesting work breaks or personal time. — The coffee mug on the patio at 7:32 on Monday and the phone on the patio at 9:08 on Wednesday suggest a morning routine that includes coffee and phone use, possibly for work or leisure. The phone on the sofa at 13:50 indicates a midday break. The plate at the sink at 12:33 on Monday and the dining chair at 16:06 on Wednesday suggest lunch and possibly an early dinner at home. The evening wind-down (floor lamp, bath mat, bed pillow) on Monday and the coffee mug and fork put away at 21:45 on Wednesday indicate a consistent bedtime routine. The doormat at the entry hook at 8:38 suggests the person left or returned, consistent with a remote worker who may step out. The reading glasses and picture frame on the coffee table suggest personal items, not multiple residents.
+2. (p=0.20) A single working professional who works from home on some days and goes to an office on others, with a standard weekday routine of morning coffee, lunch at home, and evening relaxation. — The morning coffee on the patio and lunch at home on Monday could fit a professional working from home. The phone on the patio and sofa on Wednesday might indicate work-related calls or breaks. However, the lack of a laptop or work bag during the day makes this less likely than a full-time remote worker. The doormat at 8:38 could indicate leaving for work, but the phone use at home suggests otherwise.
+3. (p=0.05) A couple or family where one person works from home and the other has a different schedule, but evidence is still sparse. — The single coffee mug, plate, and fork suggest one person eating. The phone, reading glasses, and picture frame could belong to one person. No multiple items or distinct timings for two people have been observed. The doormat at 8:38 could be from one person leaving, but no other evidence supports multiple residents.
+
+## Selected evidence
+- Day 0, 07:32 — coffee_mug at patio_table_p1 (morning coffee ritual on patio, suggests a routine start to the day)
+- Day 0, 12:33 — plate at sink_k1 (lunch at home on a Monday, indicates working from home or a lunch break)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation on sofa, typical wind-down)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath/shower, part of bedtime routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (early bedtime, consistent with a standard workday)
+- Day 2, 08:38 — doormat at entry_hook_e1 (suggests someone left or returned, possibly a morning departure)
+- Day 2, 09:08 — phone at patio_table_p1 (morning phone use on patio, likely work or personal break)
+- Day 2, 11:08 — reading_glasses at coffee_table_l1 (personal item, suggests reading or close work)
+- Day 2, 13:50 — phone at sofa_l1 (midday phone use on sofa, break time)
+- Day 2, 15:08 — picture_frame at coffee_table_l1 (decorative item, personal touch)
+- Day 2, 16:06 — dining_chair at table_d1 (early dinner or snack, consistent with home routine)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (evening cleanup, consistent with bedtime routine)
+- Day 2, 21:45 — fork at cupboard_k1 (evening cleanup, supports single-person meal)
+
+## Notes
+The surprising events (phone on patio and sofa, coffee mug at cupboard) were unexpected by the model but are consistent with a remote worker's flexible routine. The phone on the patio at 9:08 and on the sofa at 13:50 suggest the person uses their phone during breaks, not necessarily at a desk. The coffee mug at cupboard at 21:45 indicates evening cleanup, not a morning coffee. Need to verify if the same pattern repeats on other weekdays and if weekend events differ. Look for work-related items like laptop or work bag during typical work hours. Also check for multiple residents by observing two coffee mugs or different bedtimes.

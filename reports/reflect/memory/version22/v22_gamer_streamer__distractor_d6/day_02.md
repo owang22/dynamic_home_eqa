@@ -1,0 +1,25 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Single adult with a regular 9-to-5 job, likely living alone or with minimal housemates. The morning doormat movement (08:38) suggests leaving for work, and the keys/phone at elsewhere at 12:46 could be a lunch break or errand. The evening routine (dinner at 21:45, chair movements, headset at desk at 21:40) indicates late work or leisure. The pillow movements at 13:52 and 16:47 might be bed-making or a nap, but the overall pattern is consistent with a workday. — The doormat at 08:38 on a Wednesday morning strongly suggests leaving for work. The keys and phone at elsewhere at 12:46 could be a lunch break or errand. The headset at desk at 21:40 suggests late work or gaming. The dinner plate at 21:45 is later than previous days, but still within a workday pattern. The pillow movements at 13:52 and 16:47 might be bed-making or a nap, but not definitive. The single plate and single chair movements still suggest one person.
+2. (p=0.15) Retired or work-from-home individual with a flexible schedule. The morning doormat at 08:38 could be a morning walk or mail check. The keys/phone at elsewhere at 12:46 might be a midday outing. The pillow movements at 13:52 and 16:47 suggest napping or bed tidying. The headset at desk at 21:40 could be for late-night calls or entertainment. The late dinner (21:45) is later than previous days, but still possible for a flexible schedule. — The doormat at 08:38 could be a morning walk or mail check, not necessarily leaving for work. The keys/phone at elsewhere at 12:46 might be a midday outing. The pillow movements at 13:52 and 16:47 suggest napping or bed tidying, which is more common for a retired or WFH person. The headset at desk at 21:40 could be for late-night calls or entertainment. The late dinner (21:45) is later than previous days, but still possible for a flexible schedule. However, the doormat at 08:38 is earlier than previous days, which weakens this hypothesis.
+3. (p=0.10) Couple or family with at least one person working from home. The doormat at 08:38 could be one person leaving, while the keys/phone at elsewhere at 12:46 might be another person. The pillow movements at 13:52 and 16:47 could be from different people. The headset at desk at 21:40 might be for one person working late. The single plate at 21:45 still suggests only one person ate dinner, but the chair movements at 16:06 and 21:06 could be from different people. — The doormat at 08:38 could be one person leaving, while the keys/phone at elsewhere at 12:46 might be another person. The pillow movements at 13:52 and 16:47 could be from different people. The headset at desk at 21:40 might be for one person working late. The single plate at 21:45 still suggests only one person ate dinner, but the chair movements at 16:06 and 21:06 could be from different people. However, the evidence for multiple residents remains weak.
+
+## Selected evidence
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday pillow movement suggests bed use or tidying during the day)
+- Day 0, 18:47 — plate at table_d1 (dinner time, consistent with a workday evening meal)
+- Day 1, 16:12 — doormat at entry_hook_e1 (mid-afternoon arrival or adjustment, possibly returning home)
+- Day 1, 19:13 — plate at table_d1 (dinner time, similar to day 0, reinforces workday pattern)
+- Day 1, 21:04 — dining_chair at table_d1 (evening chair movement, possibly adjusting seating)
+- Day 1, 21:20 — dining_chair at table_d1 (second chair movement, could indicate another person or repeated adjustment)
+- Day 1, 21:45 — energy_can at counter_k1 (late caffeine consumption, suggests staying up late or needing energy)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure or arrival, suggests leaving for work)
+- Day 2, 12:46 — keys at elsewhere (midday keys movement, could be lunch break or errand)
+- Day 2, 12:46 — phone at elsewhere (midday phone movement, same time as keys, supports midday outing)
+- Day 2, 13:52 — bed_pillow at bed_r1 (afternoon pillow movement, could be nap or bed-making)
+- Day 2, 16:47 — bed_pillow at bed_r1 (second afternoon pillow movement, reinforces bed use)
+- Day 2, 21:40 — headset at desk_o1 (late evening headset at desk, suggests work or gaming)
+- Day 2, 21:45 — plate at cupboard_k1 (late dinner plate, later than previous days)
+
+## Notes
+Day 2 (Wednesday) shows a morning doormat movement at 08:38, which is new and suggests a morning departure. Keys and phone at elsewhere at 12:46 could be a lunch break or errand. Two pillow movements at 13:52 and 16:47 suggest bed use during the day. Headset at desk at 21:40 is new and suggests late work or gaming. Dinner plate at 21:45 is later than previous days (18:47, 19:13). Need to check if morning events continue on Thursday. Weekend observations (days 5-6) will be crucial to distinguish between work-from-home and office worker. Also watch for multiple plates or signs of other residents.

@@ -1,0 +1,16 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Single professional with a dog — Evidence remains consistent: single place settings, rigid 07:00 departure with keys/leash, no work artifacts on weekends, and now confirmed on Monday (Day 7). The routine is stable across all observed days.
+2. (p=0.01) Remote worker with errand-heavy weekend — Still unlikely due to lack of laptop/work artifacts on weekends and the rigid 07:00 departure on Monday morning, which suggests a commute or fixed schedule rather than flexible remote work.
+3. (p=0.01) Couple with one partner away — No second-person artifacts (extra dishes, clothes, etc.) observed on any day, including Monday. Probability remains static/low.
+
+## Selected evidence
+- Day 7, 07:04 — phone at entry_hook_e1 (Morning departure; confirms 07:00 routine persists on Monday, suggesting commute/fixed schedule)
+- Day 7, 08:58 — bowl at sink_k1 (Single diner profile; no second set of dishes)
+- Day 7, 12:21 — blanket at sofa_l1 (Midday leisure/rest; consistent with post-lunch relaxation)
+- Day 7, 17:14 — phone at entry_hook_e1 (Evening return; confirms return time aligns with weekday expectations)
+- Day 7, 22:49 — phone at nightstand_r1 (Nightly routine; confirms single-person sleep pattern)
+
+## Notes
+Monday (Day 7) confirms the 07:00 departure is not just a weekend habit but part of the weekly routine. No work artifacts observed on Monday either, which slightly challenges the 'professional' label if it implies office work, but 'professional' is used here to denote employment status rather than work location. The dog's chew toy movements are frequent but non-diagnostic for persona. Key question: Does the resident work from home on weekdays? (No laptop observed on Day 7, but also no clear 'work desk' usage pattern yet. Need to observe if a laptop appears later in the week or if the 07:00 departure is indeed a commute.)

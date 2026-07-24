@@ -1,0 +1,16 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Fitness-oriented professional with a flexible or remote work schedule, exercising before standard work hours. — Consistent early morning exercise (05:00-06:30) combined with a late afternoon return (17:35-17:44) and items remaining in living areas (foam roller on coffee table) suggests a routine that accommodates home life or remote work, rather than a rigid 9-5 commute requiring gear storage.
+2. (p=0.15) Shift worker with variable start times. — The shift in exercise time from 06:30 to 05:00 could indicate a changing shift pattern, but the consistent late afternoon return makes this less likely than a fixed schedule with variable morning routines.
+3. (p=0.10) Student with early morning study/exercise routine. — Still possible, but the 'keys at entry_hook' on Day 1 suggests a commute or structured departure, which is less typical for a student living at home unless attending classes. The probability remains low due to the professional-like timing of the return.
+
+## Selected evidence
+- Day 0, 06:30 — foam_roller at gym_rack_l1 (establishes baseline early fitness routine)
+- Day 0, 17:44 — backpack at entry_hook_e1 (establishes return time and commuting gear)
+- Day 1, 05:00 — foam_roller at coffee_table_l1 (indicates variable exercise timing or post-workout relaxation in living area, not immediate gym storage)
+- Day 1, 17:35 — keys at entry_hook_e1 (confirms consistent late afternoon return, keys stored at entry suggests quick drop-off)
+- Day 1, 19:34 — phone at sofa_l1 (indicates evening leisure/relaxation in living room, consistent with post-work wind-down)
+
+## Notes
+Exercise timing varies (06:30 vs 05:00); need to track if this correlates with work schedule changes. Keys moved from 'elsewhere' (Day 0) to 'entry_hook' (Day 1), suggesting a habituation to storing keys at the entry upon return. Phone location (sofa) confirms evening presence in living area. No evidence of laptop use yet; need to check for work-related objects during midday hours on subsequent days to confirm remote vs. office work.

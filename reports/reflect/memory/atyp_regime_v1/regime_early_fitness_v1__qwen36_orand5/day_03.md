@@ -1,0 +1,16 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Active remote worker with morning fitness routine — Consistent early fitness (foam roller, protein shaker) and laptop leaving with keys at 08:02 strongly suggest a flexible schedule where work is taken elsewhere or to a co-working space, rather than staying home all day. The 17:18 laptop return on Day 2 is now interpreted as returning from a work outing, not just finishing home work.
+2. (p=0.05) Standard office worker with early gym habit — Keys and laptop leaving together at 08:02 fits a standard commute. The previous Day 2 laptop at home desk at 17:18 is now re-interpreted as a forgotten item or a rare WFH day, but the consistency of leaving the laptop with keys today makes this less likely than the remote/flexible hypothesis.
+3. (p=0.00) Night owl / Shift worker — Contradicted by consistent early morning activity (05:00-08:00) and early departure. Removed from active consideration.
+
+## Selected evidence
+- Day 0, 05:00 — foam_roller at coffee_table_l1 (establishes early morning fitness routine)
+- Day 2, 06:40 — protein_shaker at counter_k1 (confirms post-workout nutrition habit)
+- Day 2, 17:18 — laptop at desk_o1 (laptop returns home late afternoon; suggests work is not strictly 9-5 at office)
+- Day 3, 08:02 — laptop at elsewhere (laptop leaves with keys; confirms work device is taken out, supporting remote/flexible work or co-working)
+- Day 3, 08:02 — keys at elsewhere (consistent departure time with laptop, reinforcing commute/work outing pattern)
+
+## Notes
+The key discriminator is the laptop's location. On Day 2 it was at home late afternoon; on Day 3 it left with keys in the morning. This suggests the resident does not keep the laptop at home during work hours, or takes it to a secondary location (co-working, client site, or just a different desk). The 08:02 departure is consistent with a standard work start time if they commute, or a flexible start if they go to a gym/co-working first. The protein shaker appearing again at 06:44 on Day 3 reinforces the daily fitness routine. Need to observe if the laptop returns home on Day 3 evening to confirm the 'return' pattern.

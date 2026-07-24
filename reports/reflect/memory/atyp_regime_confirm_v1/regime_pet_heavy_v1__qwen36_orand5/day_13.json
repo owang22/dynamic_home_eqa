@@ -1,0 +1,36 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Hybrid Worker (Mon-Thu Office, Fri Remote)",
+   "prob": 0.95,
+   "rationale": "Day 13 (Sunday) shows no morning departure (phone on sofa, not entry hook), consistent with weekend rest. The pattern of Mon-Thu office, Fri remote, and Sat/Sun rest remains robust. Probability increased due to consistent weekend non-commute signals."
+  },
+  {
+   "persona": "Standard 9-5 Worker with occasional WFH",
+   "prob": 0.04,
+   "rationale": "Still possible if the resident takes random days off, but the consistency of Friday being a home day and Sat/Sun being rest days makes a fixed hybrid schedule more likely than random leave. Probability decreased slightly as the 'fixed' pattern holds."
+  },
+  {
+   "persona": "Shift Worker / Irregular Schedule",
+   "prob": 0.01,
+   "rationale": "Low probability. The pattern is too regular (Mon-Thu office, Fri home, Sat/Sun rest) to be purely irregular. Kept as a fallback."
+  }
+ ],
+ "selected_evidence": [
+  "Day 1, 07:00 \u2014 phone at entry_hook_e1 (baseline commute start)",
+  "Day 1, 16:50 \u2014 phone at entry_hook_e1 (baseline commute end)",
+  "Day 7, 07:49 \u2014 phone at counter_k1 (home morning, no commute)",
+  "Day 9, 17:00 \u2014 phone at entry_hook_e1 (return from office)",
+  "Day 10, 07:36 \u2014 phone at counter_k1 (arrival at home, supports remote)",
+  "Day 10, 17:06 \u2014 dog_leash at entry_hook_e1 (post-work routine)",
+  "Day 11, 08:25 \u2014 food_bowl at sink_k1 (pet care, no human commute signal)",
+  "Day 11, 12:48 \u2014 coffee_mug at counter_k1 (midday home activity)",
+  "Day 12, 08:59 \u2014 bowl at sink_k1 (weekend breakfast prep, no commute signal)",
+  "Day 12, 18:20 \u2014 plate at table_d1 (evening meal, consistent with weekend leisure)",
+  "Day 13, 07:37 \u2014 phone at sofa_l1 (weekend morning, no commute signal)",
+  "Day 13, 09:00 \u2014 bowl at sink_k1 (weekend breakfast prep, no commute signal)",
+  "Day 13, 16:45 \u2014 phone at entry_hook_e1 (late afternoon return, possibly errand or work-related)",
+  "Day 13, 21:24 \u2014 keys at sofa_l1 (evening relaxation, keys not at entry hook)"
+ ],
+ "notes": "Day 13 (Sunday) confirms weekend pattern: no morning departure, late breakfast (09:00 vs 07:00 on workdays), and evening relaxation (keys on sofa). The 'Hybrid Worker' hypothesis is further strengthened. The late afternoon phone movement (16:45) on Sunday is interesting; could be a work call or errand, but doesn't contradict the weekend rest pattern. Days 7-8 (Tue-Wed) remain anomalies; consider if the resident takes a mid-week break or if those were sick days. Need to verify if Day 14 (Monday) shows a return to the office commute pattern."
+}

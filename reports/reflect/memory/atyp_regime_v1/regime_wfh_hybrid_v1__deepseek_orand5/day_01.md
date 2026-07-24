@@ -1,0 +1,17 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A remote worker or student who works from home, with a coffee mug at the desk in the morning and afternoon, suggesting a desk-based routine. — Day 0 showed coffee mug at desk at 08:23 and 13:08, indicating a work/study day at home. Day 1 shows a bowl at table at 07:38 (breakfast), keys at entry hook at 17:57 (returning home), plate at table at 18:23 (dinner), bowl to cupboard at 21:45 (cleaning up), and phone at nightstand at 22:13 (bedtime). This pattern is consistent with a person who leaves home during the day (keys gone) and returns in the evening, but the desk activity on Day 0 suggests they may work from home on some days. The evening phone on nightstand is typical.
+2. (p=0.30) A person with a flexible schedule, possibly working from home but not necessarily a full-time remote worker, as the coffee mug appears only twice and the remote use is in the evening. — The events are minimal and could fit many lifestyles, but the desk focus and evening TV suggest a home-based routine. Day 1 adds evidence of leaving home (keys gone) and returning, which could be a commute to work or errands. The bowl and plate at table suggest meals at home, but not necessarily desk-based work.
+3. (p=0.10) A person who works outside the home on some days, as indicated by keys leaving in the morning and returning in the evening on Day 1, but also works from home on other days (Day 0). — Day 0 had no key events, suggesting the person stayed home. Day 1 shows keys at entry hook at 17:57, implying they left and returned. This mix suggests a hybrid work schedule or a person with variable daily routines.
+
+## Selected evidence
+- Day 0, 08:23 — coffee_mug at desk_o1 (morning coffee at desk, suggests work/study start)
+- Day 0, 13:08 — coffee_mug at desk_o1 (afternoon coffee at desk, indicates continued desk activity)
+- Day 0, 20:02 — remote at sofa_l1 (evening TV use, typical after work)
+- Day 1, 07:38 — bowl at table_d1 (breakfast at table, not desk, suggests different morning routine)
+- Day 1, 17:57 — keys at entry_hook_e1 (returning home in evening, indicates leaving home during day)
+- Day 1, 22:13 — phone at nightstand_r1 (bedtime phone, typical evening routine)
+
+## Notes
+Day 1 (Tuesday) shows a different pattern from Day 0 (Monday): keys leaving/returning suggests the person left home on Tuesday, while Monday had no key events. Need to see if this is a weekly pattern (e.g., work from home on Mondays, office on Tuesdays). Also note no coffee mug at desk on Day 1, consistent with being away. Weekend patterns (days 5-6) not yet observed. Look for objects like laptop, yoga mat, suitcase to further refine.

@@ -1,0 +1,35 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A remote worker or student with a highly variable weekday routine that includes desk-based work on most days but with distinct morning patterns: Monday has a table coffee at 07:00 and desk headset at 09:00; Tuesday now shows desk coffee at 07:47; Thursday has desk coffee and coffee table newspaper; Friday has a table breakfast. Weekend patterns: Sunday shows desk coffee then leisure at coffee table. The resident likely works from home or studies, with flexible start times and occasional breakfast at the table.",
+   "prob": 0.9,
+   "rationale": "The new Tuesday desk coffee at 07:47 is consistent with a desk-based morning work/study routine, similar to Thursday and Sunday. The surprising reading_glasses at coffee table at 13:45 on Tuesday suggests a midday leisure or reading break, which aligns with the flexible routine. The fork at table at 11:45 is a mundane lunch event. The remote worker/student hypothesis remains the best fit, and the probability increases as the pattern of desk coffee on multiple days (Monday table coffee is an exception) becomes clearer."
+  },
+  {
+   "persona": "A person with a regular meal schedule, as indicated by plate and fork movements to sink around lunchtime on multiple weekdays (Monday, Wednesday, Thursday, Friday). This is common in many households and not highly discriminating, but the consistency adds some support.",
+   "prob": 0.07,
+   "rationale": "No new lunchtime events today (Tuesday) to confirm or contradict this pattern. The fork at table at 11:45 could be a lunch event, but it is not at the sink. The probability is slightly reduced as the morning routine evidence becomes more specific and dominant."
+  },
+  {
+   "persona": "A person who may have a different morning routine on Sundays, possibly a weekend work/study session at the desk followed by leisure time at the coffee table. The phone at coffee table at 10:12 and again at 16:05 suggests a relaxed afternoon. This could be a weekly pattern (e.g., catching up on work or personal projects on Sunday mornings).",
+   "prob": 0.03,
+   "rationale": "The Sunday events are distinct from weekdays: coffee and reading glasses at desk (like a workday start) but then phone at coffee table (leisure). This is speculative with only one Sunday observed, but worth tracking to see if Sundays consistently show a desk-to-coffee-table transition. Today's Tuesday desk coffee and reading_glasses at coffee table suggest that the Sunday pattern may be part of a broader weekly variation rather than a unique Sunday-only pattern. The probability decreases further."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 09:00 \u2014 headset at desk_o1 (suggests work/study activity at start of workday on Monday)",
+  "Day 3, 07:42 \u2014 coffee_mug at desk_o1 (surprising: coffee at desk on Thursday, indicating morning work/study with coffee)",
+  "Day 3, 07:42 \u2014 newspaper at coffee_table_l1 (suggests morning reading habit at coffee table on Thursday)",
+  "Day 3, 21:42 \u2014 phone at nightstand_r1 (surprising: phone at nightstand, indicating consistent bedtime location)",
+  "Day 4, 06:51 \u2014 bowl at table_d1 (new object: suggests breakfast with cereal or similar on Friday)",
+  "Day 4, 06:51 \u2014 coffee_mug at table_d1 (surprising: coffee at table instead of desk, indicating a different morning routine on Friday)",
+  "Day 4, 06:51 \u2014 newspaper at table_d1 (surprising: newspaper at table instead of coffee table, reinforcing a breakfast reading habit)",
+  "Day 6, 07:40 \u2014 coffee_mug at desk_o1 (surprising: coffee at desk on Sunday, suggesting weekend work/study session)",
+  "Day 6, 09:12 \u2014 reading_glasses at desk_o1 (surprising: reading glasses at desk on Sunday, reinforcing desk-based morning activity)",
+  "Day 6, 10:12 \u2014 phone at coffee_table_l1 (surprising: phone at coffee table on Sunday, indicating shift to leisure)",
+  "Day 7, 07:00 \u2014 coffee_mug at table_d1 (surprising: coffee at table on Monday, suggesting a new weekday variation: breakfast at table on Monday)",
+  "Day 8, 07:47 \u2014 coffee_mug at desk_o1 (surprising: desk coffee on Tuesday, consistent with desk-based work/study on multiple days)",
+  "Day 8, 13:45 \u2014 reading_glasses at coffee_table_l1 (surprising: midday reading/leisure at coffee table on Tuesday, suggesting a break routine)"
+ ],
+ "notes": "Today (Tuesday) had two surprising events: coffee_mug at desk at 07:47 (model expected elsewhere) and reading_glasses at coffee_table at 13:45 (model expected elsewhere). The desk coffee on Tuesday is consistent with the pattern seen on Thursday and Sunday, suggesting that desk coffee is a common morning activity on multiple days, while Monday and Friday have table coffee/breakfast exceptions. The reading_glasses at coffee table at 13:45 is a new midday event; previously reading_glasses were only seen at desk on Sunday morning. This could indicate a midday reading or leisure break on Tuesday. The fork at table at 11:45 is likely a lunch event, but not surprising. Need to check if Tuesday consistently has desk coffee and a midday reading break. Also, the Sunday pattern (desk coffee, then phone at coffee table) needs another Sunday to confirm. Day-of-week patterns: Monday now has two variants (headset at desk at 09:00 and coffee at table at 07:00); Tuesday has desk coffee at 07:47 and reading_glasses at coffee table at 13:45; Thursday has desk coffee and coffee table newspaper; Friday has table breakfast; Sunday has desk coffee then leisure. The resident's routine is highly variable by day, supporting the remote worker/student hypothesis."
+}

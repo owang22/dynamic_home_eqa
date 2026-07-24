@@ -1,0 +1,24 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A family with a young child (toddler/infant) who uses a play mat, board books, stacking rings, and a ball during the day, and adults who maintain a tidy home in the evening. The sippy cup, high chair, and crib further confirm a child. The high chair and plate at high chair reinforce mealtime routine. Weekend pattern: play mat use continues in the morning, and the blanket is used on the play mat (Day 5) and later at the crib (Day 6). Day 7 (Monday) shows sippy cup at high chair at 06:43 (morning breakfast), bowl at sink at 07:28 (after breakfast cleanup), dining chair at table at 08:45 (mundane), bed pillow at bed at 10:27 (mundane), wall clock at counter at 14:10 (mundane), picture frame at coffee table at 16:43 (mundane), floor lamp at sofa at 17:20 (mundane), bath mat at bathroom at 18:35 (mundane), fork at sink at 18:35 (mundane), sippy cup at crib at 19:12 (evening bedtime). The sippy cup at high chair in the morning and at crib in the evening strongly reinforce the child's routine. Day 8 (Tuesday) shows cushion at play mat at 08:49 (morning play), plate at high chair at 11:43 (late morning meal), stacking rings at play mat at 15:22 (afternoon play), consistent with child's weekday routine. No contradictory evidence. — The consistent pattern of child-related objects (sippy cup, high chair, play mat, stacking rings, board books) at times typical for a child's day (morning breakfast, midday meal, afternoon play, evening bedtime) strongly supports a family with a young child. The weekday and weekend patterns are similar, with no evidence of adult work or school routines.
+2. (p=0.01) A single adult or couple without children, who uses the play mat for exercise and the board book as a decorative or fidget item, and tidies up in the evening. The high chair, sippy cup, and stacking rings are strong evidence against this hypothesis. The probability remains very low. — The presence of a high chair, sippy cup, and stacking rings is highly specific to a child. The play mat and board book could be used by adults, but the combination with child-specific items makes this hypothesis unlikely.
+
+## Selected evidence
+- Day 0, 08:49 — cushion at play_mat_n1 (morning use of play mat, likely child's play)
+- Day 2, 11:10 — sippy_cup at sink_k1 (midday, child's cup at sink, after use)
+- Day 2, 19:02 — sippy_cup at crib_n1 (evening, child's cup at crib, bedtime)
+- Day 3, 08:47 — board_book at play_mat_n1 (morning, child's book on play mat)
+- Day 3, 17:36 — plate at high_chair_d1 (afternoon, child's plate at high chair, mealtime)
+- Day 4, 06:49 — sippy_cup at high_chair_d1 (morning, child's cup at high chair, breakfast)
+- Day 5, 08:57 — blanket at play_mat_n1 (Saturday morning, child's blanket on play mat)
+- Day 5, 21:45 — sippy_cup at cupboard_k1 (Saturday evening, child's cup put away, tidying)
+- Day 6, 12:59 — blanket at crib_n1 (Sunday midday, blanket at crib, nap time)
+- Day 7, 06:43 — sippy_cup at high_chair_d1 (Monday morning, child's cup at high chair, breakfast)
+- Day 7, 19:12 — sippy_cup at crib_n1 (Monday evening, child's cup at crib, bedtime)
+- Day 8, 08:49 — cushion at play_mat_n1 (Tuesday morning, child's play)
+- Day 8, 11:43 — plate at high_chair_d1 (Tuesday late morning, child's meal)
+- Day 8, 15:22 — stacking_rings at play_mat_n1 (Tuesday afternoon, child's toy on play mat)
+
+## Notes
+Day 8 (Tuesday) shows cushion at play mat at 08:49 (morning play), plate at high chair at 11:43 (late morning meal), stacking rings at play mat at 15:22 (afternoon play). The waste bin at counter at 11:46, 12:25, and 21:43 is mundane (trash disposal). Dining chair at table at 14:19 is mundane (seating). Wall clock at counter at 16:14 is mundane (clock placement). Doormat at entry hook at 19:17 is mundane (door mat). No new contradictory evidence. Next: watch for any weekday-specific activities (e.g., earlier wake-up, work/school schedule) and weekend variations.

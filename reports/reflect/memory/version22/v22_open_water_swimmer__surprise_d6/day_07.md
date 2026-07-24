@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single adult who is a dedicated early morning water sports enthusiast, with a flexible weekday routine that includes leaving home for the water activity around 05:30 and returning around 07:30, then leaving again for work/errands and returning in the late afternoon. On weekends, the morning water sport still occurs but the wetsuit is brought home and dried on the drying rack, then later moved to the entry bench in the evening, suggesting a more relaxed post-activity routine. The single dining chair and plate events consistently indicate solo living. — Day 7 (Monday) reinforces the weekday pattern: mesh_bag and swim_cap at elsewhere at 05:33 (consistent early departure). The dining_chair at table_d1 at 08:45 suggests a solo breakfast after return. The bed_pillow at bed_r1 at 10:27 indicates a midday break, consistent with flexible schedule. The floor_lamp at sofa_l1 at 17:20 and phone at sofa_l1 at 19:18 suggest evening relaxation. The swim_goggles at entry_bench_e1 at 20:33 is surprising but may indicate gear storage after a later activity or cleaning. The wall_clock at counter_k1 at 14:10 and picture_frame at dresser_r1 at 16:43 are mundane. The bath_mat at bathroom_c1 at 18:35 is routine. No evidence of a second person.
+2. (p=0.03) A couple or family with one dedicated morning water sports enthusiast and another person who uses the bedroom at midday, but the single dining chair and plate events from previous days still suggest mostly solo meals, reducing likelihood. The midday bed events could be from the same person taking a break. — Day 7 provides no new evidence of multiple residents. The single dining_chair at table_d1 at 08:45 and lack of multiple dining items still suggest solo living. The bed_pillow at bed_r1 at 10:27 could be from the same person. The hypothesis remains possible but unlikely.
+3. (p=0.02) A remote worker or student who lives alone, has a flexible schedule, and engages in morning water sports, but the keys at 05:32 on day 4 and the consistent early morning departures suggest a commute or errand after the water activity, making full remote work less likely. The weekend pattern (wetsuit drying at home) could be consistent with a student or flexible worker who has more time on weekends. — Day 7 does not contradict this hypothesis, but the early morning departure (mesh_bag and swim_cap at 05:33) and the midday bed_pillow at 10:27 suggest a flexible schedule. The phone at sofa_l1 at 19:18 could indicate evening work or leisure. The probability remains low due to lack of evidence for full remote work.
+
+## Selected evidence
+- Day 0, 05:34 — wetsuit at elsewhere (early morning water sport, active lifestyle)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday bed use, flexible schedule)
+- Day 2, 17:38 — keys at entry_hook_e1 (return from outside, suggests commute or errand)
+- Day 2, 20:32 — wetsuit at entry_bench_e1 (anomaly: evening wetsuit, drying after late activity)
+- Day 3, 05:30 — wetsuit at elsewhere (early morning water sport, consistent pattern)
+- Day 3, 07:28 — keys at entry_hook_e1 (return from outside after morning activity)
+- Day 3, 07:28 — mesh_bag at entry_bench_e1 (water sport gear, confirms morning routine)
+- Day 3, 07:28 — swim_cap at drying_rack_u1 (water sport gear, confirms morning routine)
+- Day 4, 05:32 — keys at elsewhere (surprising: departure for early morning water activity)
+- Day 4, 05:32 — swim_goggles at elsewhere (surprising: water sport gear, confirms morning routine)
+- Day 4, 05:32 — towel at elsewhere (water sport gear, confirms morning routine)
+- Day 4, 17:56 — phone at counter_k1 (surprising: return or home-based activity in evening)
+- Day 4, 18:22 — dining_chair at table_d1 (solo dinner, single chair)
+- Day 5, 07:22 — wetsuit at drying_rack_u1 (surprising: weekend variation, wetsuit brought home to dry)
+- Day 5, 20:35 — wetsuit at entry_bench_e1 (surprising: weekend evening storage of dried wetsuit)
+
+## Notes
+Day 7 is Monday. The surprising events (mesh_bag and swim_cap at elsewhere at 05:33) confirm the weekday pattern of early morning water sport departure. The swim_goggles at entry_bench_e1 at 20:33 is surprising (p=0.00) and may indicate a later return or gear storage after a second activity; need to observe if this becomes a pattern. The phone at sofa_l1 at 19:18 (p=0.00) suggests evening relaxation, consistent with previous days. The bed_pillow at bed_r1 at 10:27 continues the midday bed use pattern observed on weekdays (days 0,2,3). The dining_chair at table_d1 at 08:45 suggests a solo breakfast after the morning activity. The wall_clock at counter_k1 at 14:10 and picture_frame at dresser_r1 at 16:43 are mundane and may be dropped if not informative. Need to verify if the midday bed events occur on all weekdays and if the weekend pattern (wetsuit drying at home) repeats on day 12 (next Saturday). The doormat events from day 3 were not repeated; may be occasional. The floor lamp at sofa_l1 on days 3,4,6, and now day 7 at 17:20 suggests a consistent evening routine; check if it appears on weekday mornings.

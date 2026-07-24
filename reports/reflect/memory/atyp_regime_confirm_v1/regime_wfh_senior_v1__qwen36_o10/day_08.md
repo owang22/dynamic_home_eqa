@@ -1,0 +1,25 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Office Worker with Morning Commute — Day 8 (Tuesday) replicates the Day 7 (Monday) pattern: rigid 07:10 wake-up, phone at desk at 08:37 (pre-commute check), and no keys observed (possibly already left or not detected). The 12:30 coffee at counter suggests a quick home lunch or break, but the lack of laptop/work items reinforces external employment. The consistency across two weekdays strengthens this hypothesis.
+2. (p=0.01) Remote Worker with Strict Boundaries — Still possible if work is entirely mobile/off-site, but the absence of any work-related objects (laptop, documents) on Day 8, combined with the 'commute-like' phone usage at 08:37, makes this highly unlikely. Probability decreased slightly as the pattern holds.
+3. (p=0.01) Student or Night-Shift Worker — Discarded. The consistent 07:10 wake-up and 21:45 bedtime on Day 8 (Tuesday) completely contradict night-shift or irregular student schedules. No study materials observed.
+
+## Selected evidence
+- Day 8, 07:10 — pill_organizer at cupboard_k1 (confirms Tuesday wake-up routine identical to Monday, reinforcing rigid schedule)
+- Day 8, 08:37 — phone at desk_o1 (high-signal: likely pre-commute navigation or work check-in, supports Office Worker hypothesis)
+- Day 8, 12:30 — coffee_mug at counter_k1 (midday break at home, consistent with lunch break at home or remote work segment, but no laptop seen)
+- Day 8, 21:45 — bowl/plate/fork at cupboard_k1 (confirms consistent bedtime ~21:45, no late-night activity)
+- Day 7, 06:46 — pill_organizer at counter_k1 (confirms Monday wake-up routine identical to previous Mondays, reinforcing rigid schedule)
+- Day 7, 08:36 — phone at desk_o1 (high-signal: likely pre-commute navigation or work check-in, supports Office Worker hypothesis)
+- Day 7, 13:17 — coffee_mug at desk_o1 (midday break at home desk, consistent with lunch break at home or remote work segment, but no laptop seen)
+- Day 7, 21:46 — phone at nightstand_r1 (confirms consistent bedtime ~21:45-22:30, no late-night activity)
+- Day 0, 06:45 — pill_organizer at counter_k1 (baseline disciplined health routine)
+- Day 0, 07:11 — coffee_mug at counter_k1 (baseline wake-up time ~07:00)
+- Day 2, 10:53 — keys at desk_o1 (preparation for leaving, supports office worker)
+- Day 5, 06:45 — reading_glasses at counter_k1 (weekend wake-up time identical to weekday)
+- Day 6, 15:51 — remote at coffee_table_l1 (evening relaxation pattern)
+- Day 7, 19:16 — phone at sofa_l1 (evening leisure, consistent with post-dinner wind-down)
+
+## Notes
+Day 8 (Tuesday) confirms the weekly pattern repeats. The 08:37 phone at the desk is a key indicator of pre-departure routine. The 12:30 coffee at counter suggests the resident is home at midday, which could imply a lunch break at home or a hybrid schedule, but the lack of a laptop makes 'Remote Worker' less likely than 'Office Worker with home lunch break'. No keys observed on Day 8, which is slightly unusual for a Tuesday if they leave early, but the phone usage at 08:37 compensates as a proxy for departure prep. The dinner cleanup at 21:45 is consistent with previous days. No evidence of a second resident. Need to observe if keys appear on Day 9 (Wednesday) to confirm daily commute.

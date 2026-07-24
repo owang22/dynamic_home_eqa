@@ -1,0 +1,25 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A healthcare worker (likely a nurse or doctor) who works a day shift on weekdays, with a different schedule on Friday (possibly half-day) and a relaxed weekend routine. The weekday pattern includes returning home around 18:00, changing out of scrubs, and placing work items (badge, stethoscope, keys, phone, thermos) in a designated 'elsewhere' area. On Saturday and Sunday, the routine is more leisurely: breakfast at 08:06, early dinner at 17:51-18:09, and evening relaxation with phone at sofa and nightstand. No work items appear on weekends, consistent with days off. — Day 12 (Saturday) shows a typical weekend pattern: water_bottle at counter at 07:56, bowl at table at 08:09 (breakfast), bowl at sink at 08:39 (cleanup), fork and water_bottle at table at 18:08 (dinner), plate at sink at 18:53, plate at cupboard at 21:45 (evening cleanup). No work items appear, consistent with days off. The early return on Friday (keys at entry_hook at 12:04) strongly supports the half-day hypothesis. The missing work items on Friday remain puzzling but could be due to a different routine (e.g., not wearing scrubs on Friday, or items stored elsewhere). The overall pattern remains strong.
+2. (p=0.05) A single resident with a structured, health-conscious routine (e.g., meal prep, early bedtime) who eats breakfast at home, has an early dinner, and cleans up later in the evening. The weekend pattern is similar to weekday evenings, with meals at consistent times (breakfast ~08:00, dinner ~17:30-18:00). The water bottle is used throughout the day and placed at nightstand in the evening, indicating hydration focus. — This hypothesis is still possible but less specific. The healthcare worker hypothesis already explains the observed patterns more parsimoniously. The single resident hypothesis does not account for the work items (badge, stethoscope, scrubs) that appear on weekdays. It remains as a low-probability alternative. The early return on Friday (keys at entry_hook at 12:04) could also be explained by a half-day at a non-healthcare job, but the absence of work items (badge, stethoscope, scrubs) on other days is not explained. The morning and evening patterns are consistent with a structured routine, but the healthcare worker hypothesis is more specific and fits the data better.
+
+## Selected evidence
+- Day 0, 18:02 — scrubs at bed_r1 (immediate change out of work uniform upon return)
+- Day 0, 18:32 — badge at elsewhere (work ID placed in designated spot)
+- Day 0, 18:32 — stethoscope at elsewhere (medical tool stored with work items)
+- Day 1, 08:22 — badge at nightstand_r1 (badge retrieved before work)
+- Day 1, 08:22 — scrubs at closet_r1 (scrubs taken from closet, likely put on)
+- Day 1, 17:52 — scrubs at bed_r1 (scrubs removed upon return, consistent with Day 0)
+- Day 1, 18:22 — badge at elsewhere (badge placed in drop zone after work)
+- Day 1, 18:22 — stethoscope at elsewhere (stethoscope stored with badge)
+- Day 2, 08:22 — keys at nightstand_r1 (keys retrieved before work, consistent with morning routine)
+- Day 2, 08:22 — stethoscope at nightstand_r1 (stethoscope retrieved before work, consistent with morning routine)
+- Day 4, 11:57 — keys at entry_hook (early return on Friday, possibly half-day)
+- Day 7, 17:58 — badge at nightstand_r1 (badge retrieved before work? Actually, this is at 17:58, likely after work, but the pattern shows badge at nightstand before being moved to elsewhere; consistent with weekday routine)
+- Day 7, 17:58 — scrubs at bed_r1 (scrubs removed upon return, consistent with weekday pattern)
+- Day 7, 18:28 — badge at elsewhere (badge placed in drop zone after work)
+- Day 7, 18:28 — stethoscope at elsewhere (stethoscope stored with badge)
+
+## Notes
+Day 12 (Saturday) confirms the weekend pattern: breakfast at 08:09, dinner at 18:08, evening cleanup at 21:45. No work items appear, consistent with days off. The early return on Friday (keys at entry_hook at 12:04) is now observed on two Fridays (Day 4 and Day 11), strengthening the half-day hypothesis. However, the missing work items on Friday (no badge, stethoscope, scrubs after work) remain unexplained. Could be that on Friday the resident does not wear scrubs or stores items elsewhere. Need to observe next Friday to see if the missing work items is a consistent pattern. Also, note that the water_bottle at counter at 07:56 on Saturday is a new location; previously it was at nightstand in the morning. This might indicate a different morning routine on weekends (e.g., water_bottle placed at counter before breakfast). The bowl at table at 08:09 and bowl at sink at 08:39 are consistent with previous weekend breakfasts. The fork at table at 18:08 and water_bottle at table at 18:08 suggest dinner with water. The plate at sink at 18:53 and plate at cupboard at 21:45 indicate evening cleanup. Overall, the healthcare worker hypothesis remains strong, but the missing work items on Friday need further investigation.

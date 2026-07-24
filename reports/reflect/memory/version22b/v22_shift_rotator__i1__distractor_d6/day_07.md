@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single working professional with a structured early-morning routine, likely in a job requiring safety gear (construction, maintenance, etc.), who works weekdays and relaxes on weekends. — Day 7 (Monday) shows work_badge at entry_hook at 05:09, consistent with early weekday departure. The rest of the day shows relaxed home activities (dining_chair at 08:45, bed_pillow at 10:27, picture_frame at 16:43, floor_lamp at 17:20, single plate and coffee_mug at sink at 19:07 and 20:48, coffee_mug put away at 21:45). This matches the weekday pattern of early departure and evening return, with single occupancy confirmed by single dish use. The Day 3 late departure remains a one-off anomaly.
+2. (p=0.04) A person who works from home or has a flexible schedule, with occasional late starts or afternoon departures. — Day 7 shows no late departure; the work_badge was at the hook at 05:09, suggesting early departure. The relaxed morning (dining_chair at 08:45, bed_pillow at 10:27) could be a day off, but the work_badge event contradicts that. The Day 3 late departure is still unexplained but appears isolated. This hypothesis is weakened.
+3. (p=0.01) A couple or family with one person leaving early and another at home during the day. — Day 7 shows only one plate and one coffee_mug used, and no evidence of multiple people (e.g., multiple dishes, multiple chairs moved). The doormat events on Day 3 were likely deliveries. This hypothesis is nearly ruled out.
+
+## Selected evidence
+- Day 0, 05:14 — thermos at elsewhere (early departure, likely for work)
+- Day 1, 22:47 — keys at entry_hook_e1 (late return, consistent with work)
+- Day 2, 05:27 — work_badge at elsewhere (early departure, consistent with work)
+- Day 2, 14:42 — hi_vis_vest at locker_shelf_e1 (safety gear, suggests job type)
+- Day 2, 19:46 — coffee_mug at desk_o1 (evening work or relaxation at desk)
+- Day 2, 21:06 — dining_chair at table_d1 (evening meal, consistent pattern)
+- Day 3, 13:19 — hi_vis_vest at elsewhere (afternoon departure, possibly shift change)
+- Day 3, 13:19 — work_badge at elsewhere (afternoon departure, possibly shift change)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening nap or early bedtime)
+- Day 3, 22:51 — thermos at sink_k1 (late return, washed thermos)
+- Day 4, 05:08 — phone at entry_hook_e1 (early departure preparation)
+- Day 4, 05:23 — keys at elsewhere (early departure, consistent with work)
+- Day 4, 18:22 — dining_chair at table_d1 (evening meal, consistent pattern)
+- Day 4, 18:25 — bed_pillow at bed_r1 (early evening wind-down)
+- Day 5, 08:34 — picture_frame at coffee_table_l1 (relaxed weekend morning, no early departure)
+
+## Notes
+Day 7 (Monday) confirms early weekday departure (work_badge at 05:09) and single occupancy (single plate and coffee_mug). The Day 3 late departure remains unexplained; need to check next week's Thursday to see if it repeats. Weekend pattern (Day 5-6) shows relaxed mornings and single dish use, consistent with single working professional. The wall_clock and waste_bin events on weekends are likely cleaning or adjustment, not routine-defining.

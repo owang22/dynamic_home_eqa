@@ -1,0 +1,26 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single adult with a flexible work-from-home or hybrid schedule, who has a morning routine at home, takes a midday break, and relaxes in the evening. The surprising tablet movements on Saturday (morning at table, evening at coffee table) suggest a weekend shift in device use, possibly for leisure or errands. — Day 5 (Saturday) shows tablet at table_d1 at 06:57 (surprising, expected elsewhere) and at coffee_table_l1 at 21:49 (surprising, expected elsewhere). This indicates a weekend morning device use at the table (maybe breakfast or planning) and evening relaxation on the sofa. No backpack/keys events, consistent with a day off. The bath mat at 12:41 and 20:27 suggests a midday shower and evening hygiene, typical of a home-based weekend. The fork at table at 12:21 and at cupboard at 21:45 shows a midday meal and evening cleanup. The picture frame and wall clock movements are decorative or time-checking, not diagnostic. The waste bin at counter multiple times suggests kitchen cleanup. This pattern strengthens the flexible home-based hypothesis.
+2. (p=0.20) A remote worker or student who works from home, with a routine that includes morning device use, midday meals, and evening relaxation. The bath mat movements (12:41 and 20:27) on Saturday suggest a midday shower and evening hygiene, common for someone at home all day. The absence of backpack/keys events supports a stay-at-home weekend. — Day 5 (Saturday) shows no backpack or keys events, consistent with a day off. The tablet at table in the morning and at coffee table in the evening could be for work or study, but the weekend timing suggests leisure. The bath mat movements are similar to Day 4 (Friday) afternoon, indicating a consistent home-based routine. This hypothesis is plausible but less specific than the flexible schedule one.
+3. (p=0.10) A single adult with a pet (possibly a dog) that requires morning door access, explaining the doormat movements on Day 3. However, no pet-related events (doormat, pet objects) occurred on Day 5 (Saturday), weakening this hypothesis. The bath mat movements could be from pet cleaning, but no direct evidence. — Day 5 (Saturday) had no doormat or pet-related events. The bath mat movements at 12:41 and 20:27 are more likely from human use (shower) than pet cleaning. The absence of pet evidence on a weekend day reduces the likelihood of a pet. This hypothesis is retained with low probability pending further weekend observations.
+
+## Selected evidence
+- Day 0, 08:40 — backpack at elsewhere (departure for work/errand, suggests leaving home)
+- Day 0, 12:30 — dining_chair at table_d1 (midday meal at home, flexible schedule)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday rest, not typical for strict 9-to-5)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, consistent pattern)
+- Day 3, 07:38 — tablet at coffee_table_l1 (morning device use, home-based start)
+- Day 3, 07:57 — doormat at entry_hook_e1 (morning door activity, possibly pet or mail)
+- Day 3, 08:47 — keys at elsewhere (surprising: keys moved, possibly taken for errand)
+- Day 3, 12:08 — fork and plate at table_d1 (midday meal at home)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday relaxation, flexible schedule)
+- Day 3, 18:36 — backpack at backpack_rack_e1 (return from work/errand, evening arrival)
+- Day 4, 06:56 — bowl at table_d1 (breakfast at home, early morning)
+- Day 4, 14:40 — bath_mat at bathroom_c1 (afternoon shower or cleaning, home-based)
+- Day 5, 06:57 — tablet at table_d1 (surprising: weekend morning device use at table, not coffee table)
+- Day 5, 12:21 — fork at table_d1 (midday meal on Saturday, consistent with home-based)
+- Day 5, 21:49 — tablet at coffee_table_l1 (surprising: weekend evening device use at coffee table, not elsewhere)
+
+## Notes
+Day 5 (Saturday) shows a weekend pattern: tablet at table in the morning (surprising, expected elsewhere) and at coffee table in the evening (surprising, expected elsewhere). No backpack or keys events, consistent with a day off. Bath mat at 12:41 and 20:27 suggests midday and evening showers. Fork at table at 12:21 and at cupboard at 21:45 indicates a midday meal and evening cleanup. The wall clock and picture frame movements are likely decorative or time-checking, not diagnostic. The waste bin at counter multiple times suggests kitchen cleanup. The pet hypothesis is weakened by no doormat or pet events on Saturday. Need to observe Sunday (Day 6) to see if the pattern repeats or if there are any errands (backpack/keys) on the weekend. Consider if the tablet at table in the morning could be for breakfast reading or planning, and at coffee table in the evening for relaxation. The surprising events (tablet at table and coffee table) suggest the model expected the tablet to be elsewhere (e.g., bedroom or office) on weekends, but the resident uses it in living areas.

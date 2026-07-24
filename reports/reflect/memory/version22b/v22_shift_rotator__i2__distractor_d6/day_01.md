@@ -1,0 +1,24 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) Single adult with a regular 9-to-5 job, likely working from home or hybrid, who keeps a tidy home and has a consistent evening routine. — The new events reinforce a structured weekday pattern: keys and thermos at the counter/sink at 22:39 suggest returning from work or an evening outing. The dining chair seen at the table at 10:42 and again at 21:04/21:20 suggests a home office setup (chair at table during work hours) and then moved back for dinner. The doormat at the entry at 16:12 and 21:45 could indicate arrivals/departures. The wall clock at the counter at 18:37 might be a routine adjustment. No evidence of a second person (single chair, single thermos). The early phone event from day 0 is not repeated, but the late key/thermos event suggests a workday ending around 22:30.
+2. (p=0.20) Couple or family with at least one adult who works outside the home, and another who may work from home or be a homemaker. — The single dining chair and single thermos still suggest one person, but the doormat at entry at two different times (16:12 and 21:45) could indicate two separate arrivals. However, the chair is only moved once (10:42) and then again at 21:04, which could be one person using it. The wall clock at the counter is a neutral event. The probability is lowered because the evidence still points to a single person.
+3. (p=0.10) Student or young professional living alone, with a flexible schedule and a tendency to tidy up in the evening. — The late key/thermos event (22:39) could be a student returning from classes or a young professional from work. The dining chair at the table at 10:42 might be a study/work session. The doormat at entry at 16:12 and 21:45 could be coming and going. However, the structured timing (chair at table at 10:42, then again at 21:04) suggests a more regular routine than a typical student. The probability is lowered.
+
+## Selected evidence
+- Day 0, 05:24 — phone at elsewhere (early riser, not using phone in bed)
+- Day 0, 12:57 — bed_pillow at bed_r1 (bed made or nap; structured day)
+- Day 0, 18:52 — fork at sink_k1 (solo dinner)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bed prepared for sleep)
+- Day 1, 10:42 — dining_chair at table_d1 (chair at table during work/study hours)
+- Day 1, 16:12 — doormat at entry_hook_e1 (possible arrival/departure)
+- Day 1, 18:37 — wall_clock at counter_k1 (routine adjustment)
+- Day 1, 21:04 — dining_chair at table_d1 (chair moved back for evening)
+- Day 1, 21:45 — doormat at entry_hook_e1 (another arrival/departure)
+- Day 1, 22:39 — keys at counter_k1 (returning home late)
+- Day 1, 22:39 — thermos at sink_k1 (evening cleanup after work/outing)
+
+## Notes
+Day 1 (Tuesday) shows a pattern: chair at table during midday (10:42) and again in evening (21:04), suggesting a home office or study setup. Keys and thermos at 22:39 indicate a late return, possibly from work or an evening activity. Doormat events at 16:12 and 21:45 could be two separate arrivals (e.g., coming home for a break then going out again) or one person coming and going. The wall clock at 18:37 is a minor event. Need to confirm if the early phone event (05:24) repeats on other days. Watch for weekend differences (days 5-6). Also, no evidence of a second person yet; single chair, single thermos, single fork. The structured evening routine (dinner, sofa, bath, bed) from day 0 is consistent with a single adult with a regular job.

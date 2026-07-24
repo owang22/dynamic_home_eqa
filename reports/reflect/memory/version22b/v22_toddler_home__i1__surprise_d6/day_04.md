@@ -1,0 +1,25 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Family with a young child (toddler/preschooler) and a regular weekday routine — The bowl at high_chair_d1 at 06:49 strongly confirms a child's breakfast routine, a discriminative event for a toddler. The sippy_cup at play_mat_n1 at 08:50 and later at sink_k1 at 18:30 (post-dinner cleanup) reinforce child-centered care. The blanket at play_mat_n1 suggests playtime or nap. The bed_pillow at 18:25 indicates early bedtime prep. The doormat events from Day 3 (07:57, 09:02) align with school/daycare drop-off. The picture_frame at coffee_table_l1 is consistent with family decor. The plate at cupboard_k1 at 21:45 is typical after dinner. The floor_lamp at sofa_l1 is mundane. The waste_bin at counter_k1 is likely kitchen cleanup. The dining_chair at table_d1 at 18:22 suggests dinner setup. The surprising bowl at high_chair_d1 and sippy_cup at sink_k1 are now explained by the child's routine.
+2. (p=0.10) Household with a child and a parent who works from home or is a stay-at-home parent — The midday play events on Day 3 (board_book, ball at 11:34) and the morning blanket/sippy_cup at play_mat_n1 at 08:50 suggest a parent present during the day. However, the doormat at 07:57 and 09:02 on Day 3 could indicate a parent returning from a short errand or school drop-off. The evidence is consistent but less discriminative than the first hypothesis, as the child's routine dominates.
+
+## Selected evidence
+- Day 0, 08:41 — sippy_cup at play_mat_n1 (child's morning playtime)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday rest, possibly child's nap)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath routine, likely for child)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation)
+- Day 3, 07:57 — doormat at entry_hook_e1 (morning departure/arrival, possibly daycare/school)
+- Day 3, 09:04 — board_book at play_mat_n1 (child's morning play)
+- Day 3, 11:34 — ball at toy_corner_l1 (midday playtime)
+- Day 3, 11:34 — board_book at toy_corner_l1 (book moved to toy corner)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening bedtime routine)
+- Day 4, 06:49 — bowl at high_chair_d1 (child's breakfast, strong toddler indicator)
+- Day 4, 08:50 — blanket at play_mat_n1 (child's play or nap setup)
+- Day 4, 08:50 — sippy_cup at play_mat_n1 (child's morning play)
+- Day 4, 18:25 — bed_pillow at bed_r1 (early bedtime prep)
+- Day 4, 18:30 — sippy_cup at sink_k1 (post-dinner cleanup of child's cup)
+- Day 4, 21:45 — plate at cupboard_k1 (after dinner cleanup)
+
+## Notes
+The surprising bowl at high_chair_d1 (06:49) and sippy_cup at sink_k1 (18:30) are now explained by the child's routine. The high_chair is a strong indicator of a toddler. The doormat events on Day 3 (07:57, 09:02) suggest a morning drop-off routine; need to verify if this repeats on Day 4 (no doormat events today, but it's Friday). Weekend patterns (Day 5-6) may show changes (e.g., later wake-up, no school drop-off). The floor_lamp at sofa_l1 (20:54) is likely mundane (reading or evening activity). The waste_bin at counter_k1 (07:09, 08:41) is typical kitchen cleanup. The dining_chair at table_d1 (18:22) suggests dinner setup. The picture_frame at coffee_table_l1 (18:34) is consistent with family decor. The plate at cupboard_k1 (21:45) is after dinner. The single adult/couple hypothesis is removed due to strong child evidence.

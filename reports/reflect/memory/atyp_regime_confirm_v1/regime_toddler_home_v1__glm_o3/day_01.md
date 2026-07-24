@@ -1,0 +1,16 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Parent with young child — The presence of a ball on a play mat and toy blocks in a toy bin strongly indicates a child in the household. The consistent placement of these items suggests regular play routines.
+2. (p=0.05) Pet owner — A ball could be for a pet, but the play mat and toy blocks make this less likely than for a child.
+3. (p=0.05) Fitness enthusiast — Could be using the ball for exercise, but the play mat location and toy blocks don't support this hypothesis well.
+
+## Selected evidence
+- Day 0, 08:46 — ball seen at play_mat_l1 (suggests morning play activity, likely for a child)
+- Day 0, 15:06 — ball seen at play_mat_l1 (confirms regular play routine, possibly with a child)
+- Day 1, 16:53 — toy_blocks seen at toy_bin_l1 (further evidence of child's presence and organized play)
+- Day 1, 20:48 — phone seen at sofa_l1 (evening relaxation routine)
+- Day 1, 21:45 — bowl seen at cupboard_k1 (evening meal preparation or cleanup)
+
+## Notes
+The presence of both a ball on a play mat and toy blocks in a toy bin strongly suggests a young child in the household. Need to observe more days to confirm patterns, especially during the upcoming weekend. The evening phone use on sofa suggests relaxation time after work.

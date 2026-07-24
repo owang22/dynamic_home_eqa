@@ -1,0 +1,14 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) Remote worker or student with flexible schedule — Glasses moved from dining table (work/reading) to coffee table (leisure/relaxing) in the afternoon suggests a break from a home-based activity. Late evening bowl cleanup is consistent with a non-standard dinner time.
+2. (p=0.30) Standard working adult with evening leisure — Morning glasses at table could be pre-work routine. Afternoon move to coffee table indicates coming home and relaxing. Late bowl suggests a late dinner or snack.
+3. (p=0.10) Elderly resident with specific morning routine — Retained as low probability due to lack of specific age-correlated evidence; morning glasses usage is ambiguous.
+
+## Selected evidence
+- Day 0, 07:03 — reading_glasses at table_d1 (indicates morning routine, likely reading or work)
+- Day 1, 13:58 — reading_glasses at coffee_table_l1 (indicates transition from work/reading to leisure, suggests home presence during day)
+- Day 1, 21:45 — bowl at cupboard_k1 (indicates late evening meal or snack, suggests non-standard dinner time)
+
+## Notes
+Glasses movement from table to coffee table is a key discriminator for activity type (work vs leisure). Need to track if glasses return to table on subsequent days to confirm work-from-home pattern. Late evening bowl suggests dinner might be after 20:00.

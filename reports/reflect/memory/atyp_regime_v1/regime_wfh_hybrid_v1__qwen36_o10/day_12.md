@@ -1,0 +1,19 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.92) Hybrid Office Worker (WFH Mon-Wed-Fri, Commute Thu) — Day 12 (Sat) shows keys moving from desk to entry, suggesting a weekend errand rather than work commute. The core Mon-Wed-Fri WFH / Thu Commute pattern remains robust. Probability increased slightly as Day 12 did not contradict the WFH hypothesis (no morning keys at 07:00).
+2. (p=0.07) Standard Office Worker (Commuter) — Requires Days 9, 11, and 12 to be anomalies. Day 12's key movement is ambiguous (errand vs commute), but the lack of a 'return' key event by nightfall makes a full work day less likely. Still possible if they left early and returned late, or if the 'keys at desk' was a false positive.
+3. (p=0.01) Remote Worker with Erratic Schedule — Contradicted by the specific, timed 'keys at entry' on Day 10 and consistent WFH markers on Days 9/11. Day 12's key movement is too brief for a typical remote work day but fits an errand.
+
+## Selected evidence
+- Day 9, 13:09 — coffee_mug at desk_o1 (Midday WFH presence; supports Weds WFH)
+- Day 10, 07:21 — phone at counter_k1 (Pre-departure routine; supports Thu Commute)
+- Day 10, 18:02 — keys at entry_hook_e1 (Return from commute; confirms office presence)
+- Day 10, 18:02 — laptop at desk_o1 (Laptop brought home; confirms commute completion)
+- Day 11, 08:41 — coffee_mug at desk_o1 (Morning WFH presence; supports Fri WFH)
+- Day 11, 12:39 — plate at table_d1 (Lunch break; consistent with WFH routine)
+- Day 12, 09:52 — keys at desk_o1 (Keys retrieved from desk; suggests weekend errand prep)
+- Day 12, 12:09 — keys at entry_hook_e1 (Keys returned; short trip, likely errand, not work commute)
+
+## Notes
+Day 12 (Saturday) shows keys moving from desk to entry and back within ~2 hours. This is inconsistent with a work commute (which would likely involve a laptop and longer absence) but consistent with a quick errand. The 'keys at desk' in the morning suggests they were left there from the previous day or placed there intentionally. Weekend routine appears to involve leaving the house for short periods. Need to verify if Day 13 (Sunday) shows similar short trips or a full day in. The 'plate at table' on Day 11 and 'plate at sink' on Day 12 confirm meal hygiene habits.

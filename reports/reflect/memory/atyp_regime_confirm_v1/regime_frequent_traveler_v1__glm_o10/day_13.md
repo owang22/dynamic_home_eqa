@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=1.00) Frequent business traveler who works from home — The resident has now completed four full weekly cycles of the same travel pattern: departing on Tuesday morning and returning on Friday evening. The consistent preparation of travel items and work equipment confirms a regular business travel routine. Weekend observations show the resident stays home during weekends, with relaxed routines including meals at home and leisure activities.
+2. (p=0.00) International business professional with remote work flexibility — Evidence contradicts this hypothesis as the travel pattern is now well-established as domestic business travel with consistent Tuesday-Friday schedule.
+3. (p=0.00) Part-time digital nomad with local base — Evidence contradicts this hypothesis as the resident maintains a consistent home base with predictable travel patterns rather than nomadic behavior.
+
+## Selected evidence
+- Day 0, 07:36 — coffee_mug at counter_k1 (early morning routine suggests regular work schedule)
+- Day 0, 09:03 — coffee_mug at desk_o1 (indicates work-from-home setup)
+- Day 0, 19:59 — packing_cubes at bed_r1 (preparing for travel)
+- Day 0, 19:59 — passport at bed_r1 (international travel preparation)
+- Day 0, 19:59 — suitcase at bed_r1 (packing for imminent departure)
+- Day 0, 20:44 — suitcase at entry_hook_e1 (ready for morning departure)
+- Day 1, 06:22 — keys seen at elsewhere (complete departure confirmed)
+- Day 1, 06:22 — laptop seen at elsewhere (work equipment taken on trips)
+- Day 1, 06:22 — packing_cubes seen at elsewhere (travel system in use)
+- Day 1, 06:22 — passport seen at elsewhere (international travel confirmed)
+- Day 1, 06:22 — suitcase seen at elsewhere (departure confirmed)
+- Day 1, 06:22 — toiletry_bag seen at elsewhere (extended travel preparation)
+- Day 1, 06:22 — travel_adapter seen at elsewhere (international travel confirmed)
+- Day 3, 20:41 — keys at entry_hook_e1 (return from trip confirmed)
+- Day 11, 21:45 — coffee_mug at cupboard_k1 (return home routine established)
+
+## Notes
+The resident has now completed four full weekly cycles of the same travel pattern: departing on Tuesday morning and returning on Friday evening. Weekend observations show the resident stays home during weekends with relaxed routines. Day 12 (Saturday) showed breakfast at home, phone usage on sofa, and evening meal preparation. Day 13 (Sunday) shows similar relaxed weekend routine with phone usage on sofa and meal preparation/cleanup. The pattern is well-established: travel on Tuesday-Thursday, return on Friday, and prepare for next trip on Monday. Weekend behavior is now observed to be home-based with leisure activities.

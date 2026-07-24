@@ -1,0 +1,21 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A frequent traveler who leaves for a trip early Tuesday morning and returns Thursday evening. — The Tuesday departure and Thursday return pattern is now confirmed over two weeks. The resident returns with all travel items and immediately places them in their usual spots. This suggests a regular short business or personal trip.
+2. (p=0.10) A single professional who works from home on Mondays and has a regular morning routine, but may also work from home on Fridays. — The Monday pattern (phone at desk, bowl routine) remains consistent. On Friday, the resident's morning routine (phone at nightstand, then counter, bowl at table) is similar to Monday, but the phone is on the sofa in the afternoon, suggesting a relaxed end-of-week. The travel adapter and packing cubes are stored away, indicating no immediate travel. This pattern is consistent with a work-from-home Friday, but the evidence is still limited.
+
+## Selected evidence
+- Day 0, 09:03 — phone at desk_o1 (suggests work-from-home or desk-based activity on Monday morning)
+- Day 0, 19:59 — packing_cubes, passport, toiletry_bag, travel_adapter at bed_r1 (preparing for a trip, packing on bed)
+- Day 0, 20:44 — passport, suitcase, toiletry_bag at entry_hook_e1 (trip items moved to exit, likely leaving soon)
+- Day 1, 06:22 — keys, laptop, phone, suitcase, passport, packing_cubes, toiletry_bag, travel_adapter all seen at elsewhere (confirmed departure early Tuesday morning)
+- Day 3, 20:41 — keys, laptop, passport, phone, suitcase, toiletry_bag all seen at their usual spots (return from trip Thursday evening, items placed in home locations)
+- Day 4, 07:00 — phone at nightstand_r1 (wake-up time on Friday, consistent with weekday routine)
+- Day 4, 07:30 — phone at counter_k1 (morning routine, likely breakfast preparation)
+- Day 4, 07:37 — bowl at table_d1 (breakfast, similar to Monday pattern)
+- Day 4, 08:07 — travel_adapter at bed_r1 (stored away after trip, not packed for new trip)
+- Day 4, 08:29 — packing_cubes at closet_r1 (stored away, no immediate travel)
+- Day 4, 16:50 — phone at sofa_l1 (afternoon relaxation, suggests work-from-home or day off)
+
+## Notes
+The Friday pattern shows a relaxed morning and afternoon, with no work-from-home desk activity observed. The travel items are stored away, confirming no travel on Friday. Next week will test if the Tuesday-Thursday trip pattern repeats and if Monday work-from-home is consistent. Need to observe weekend patterns to see if the resident has a different routine on Saturday/Sunday.

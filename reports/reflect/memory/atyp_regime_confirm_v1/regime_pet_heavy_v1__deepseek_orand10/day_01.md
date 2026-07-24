@@ -1,0 +1,21 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single person with a cat, working from home or with a flexible schedule, who uses the sofa and blanket during the day and cleans up in the evening. — Phone at entry hook at 07:10 suggests the person is home (or left it there overnight). Lunchtime fork and plate at sink at 13:20, then fork at table at 18:22 (dinner) and back to sink at 19:07, consistent with a single person eating at home. Blanket moves from pet bed (09:18) to sofa (19:40) as before. Bowl at sink at 08:51 and later at cupboard at 21:45 indicates cat feeding and cleanup. No second person's items observed.
+2. (p=0.15) A couple with a cat, where one person works from home and the other commutes, sharing household chores. — Cat evidence is strong. The phone at entry hook at 07:10 could be the commuter leaving early or the home worker's phone. However, no second person's items (e.g., second phone, different mug) have been observed. The single fork and plate at lunch and dinner suggest one person eating. Probability decreased.
+3. (p=0.05) A remote worker with a cat who has a structured routine: works from home, takes a lunch break, and tidies up in the evening. — The timing of events (lunch cleanup at 13:20, dinner at 18:22, evening cleanup at 21:45) suggests a regular schedule. However, the phone at entry hook at 07:10 could indicate a commute start, which contradicts a strict remote worker. Probability reduced.
+
+## Selected evidence
+- Day 0, 08:27 — litter_scoop at bathroom_c1 (indicates cat ownership)
+- Day 0, 12:49 — blanket at sofa_l1 (cat moves to sofa during day)
+- Day 0, 17:04 — phone at entry_hook_e1 (person returns home or leaves phone at entry)
+- Day 1, 07:10 — phone at entry_hook_e1 (phone still at entry; suggests person is home or left it overnight)
+- Day 1, 08:51 — bowl at sink_k1 (cat feeding bowl used in morning)
+- Day 1, 13:20 — fork and plate at sink_k1 (lunch cleanup, single person meal)
+- Day 1, 18:22 — fork at table_d1 (dinner started)
+- Day 1, 19:07 — fork at sink_k1 (dinner cleanup)
+- Day 1, 19:40 — blanket at sofa_l1 (cat moves to sofa in evening)
+- Day 1, 21:45 — bowl at cupboard_k1 (evening cleanup, bowl put away)
+
+## Notes
+Two weekdays observed (Monday and Tuesday). Phone at entry hook at 07:10 on Tuesday could mean the person works from home or left it there overnight. No second person's items observed. Cat routine consistent: blanket on pet bed in morning, sofa in evening. Need to check weekend patterns and if phone moves during the day. Observe if coffee mug appears again.

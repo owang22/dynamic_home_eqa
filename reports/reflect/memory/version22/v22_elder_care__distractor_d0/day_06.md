@@ -1,0 +1,22 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A person who uses a walker pouch and a hearing aid case, likely elderly or with mobility and hearing needs, with a routine of watching TV in the evening and eating dinner at home. — Hearing aid case and walker pouch appear daily (including weekend Day 6), confirming consistent use. Evening remote/plate pattern continues. No contradictory evidence.
+2. (p=0.03) A person who works from home or has a flexible schedule, as evidenced by midday remote use and morning coffee routine, but no laptop or desk events yet. — Morning coffee mug (Day 3) and midday remote (Day 2) suggest flexibility, but absence of work objects and consistent weekend routine (same as weekday) make this less likely. New bp_cuff suggests health monitoring, not work.
+3. (p=0.02) A person who monitors their blood pressure at home, likely due to a health condition, consistent with elderly profile. — bp_cuff appears at side_table_l1 on Day 6 (Sunday) at 17:03, indicating health monitoring. This aligns with elderly hypothesis but is a single event; probability low until more evidence.
+
+## Selected evidence
+- Day 2, 08:33 — walker_pouch at recliner_l1 (mobility aid, likely elderly or recovering resident)
+- Day 2, 13:44 — remote at recliner_l1 (midday TV use, flexible schedule)
+- Day 3, 07:42 — coffee_mug at table_d1 (morning coffee, start of day)
+- Day 3, 22:03 — hearing_aid_case at nightstand_r2 (hearing aid user, likely elderly)
+- Day 4, 07:31 — hearing_aid_case at side_table_l1 (hearing aid case moved in morning, daily use)
+- Day 4, 17:59 — plate at table_d1 (early dinner, consistent with elderly routine)
+- Day 5, 08:37 — walker_pouch at recliner_l1 (walker pouch reappears on weekend, consistent mobility need)
+- Day 5, 21:57 — walker_pouch at nightstand_r2 (walker pouch moved to bedroom at night, consistent with elderly routine)
+- Day 6, 08:31 — walker_pouch at recliner_l1 (weekend morning same as weekday, reinforces daily mobility aid use)
+- Day 6, 12:00 — plate at table_d1 (lunch at noon, consistent meal schedule)
+- Day 6, 17:03 — bp_cuff at side_table_l1 (blood pressure monitoring, suggests health management)
+
+## Notes
+Day 6 (Sunday) shows same morning routine (walker_pouch at recliner at 08:31) and meal times (lunch at 12:00) as weekdays, reinforcing no work schedule. New bp_cuff event at 17:03 suggests health monitoring, possibly daily. No laptop or desk events observed; work-from-home hypothesis very weak. Day 0 (Monday) events missing; consider if pattern repeats weekly. Next observation: Day 7 (Monday) to see if weekly pattern holds.

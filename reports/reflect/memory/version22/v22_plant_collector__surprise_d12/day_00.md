@@ -1,0 +1,25 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single person with a regular work-from-home or flexible schedule, who uses the living room and dining area during the day and has a consistent evening routine. — The floor lamp is moved to the sofa multiple times (morning, afternoon, evening), suggesting a single person who uses the sofa for reading or relaxing. The dining chair is used at midday and again in the evening, indicating meals at home. The bed pillow is moved to the bed at 12:57 and again at 20:54, suggesting a nap or bed-making routine. The picture frame is moved to the coffee table twice, possibly for decoration or cleaning. The plant mister is used in the morning, indicating plant care. The fork is moved to the sink after lunch. The bath mat is moved to the bathroom twice, suggesting a shower routine. The wall clock is moved to the counter in the evening, possibly for time-checking while cooking. Overall, this suggests a single person with a home-based routine.
+2. (p=0.20) A couple or family with one person working from home and another possibly working outside, sharing household tasks. — The multiple movements of the floor lamp, dining chair, and bed pillow could be from different individuals. The plant mister and picture frame movements might be from a second person. However, the lack of multiple distinct objects (e.g., two coffee mugs, two plates) makes this less likely.
+3. (p=0.10) A person with a pet (e.g., cat or dog) that moves objects around, explaining some of the repeated movements. — The repeated movements of the floor lamp, picture frame, and dining chair could be from a pet knocking them over or playing. However, the timing and consistency suggest human activity more than pet behavior.
+
+## Selected evidence
+- Day 0, 08:39 — floor_lamp at sofa_l1 (morning lamp movement suggests living room use)
+- Day 0, 09:10 — plant_mister at windowsill_l1 (morning plant care routine)
+- Day 0, 12:30 — dining_chair at table_d1 (midday meal at home)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday nap or bed-making)
+- Day 0, 13:17 — fork at sink_k1 (post-lunch dish cleaning)
+- Day 0, 13:20 — picture_frame at coffee_table_l1 (afternoon decoration or cleaning)
+- Day 0, 13:24 — floor_lamp at sofa_l1 (afternoon lamp movement, possibly for reading)
+- Day 0, 13:25 — bath_mat at bathroom_c1 (afternoon shower or bath)
+- Day 0, 19:28 — wall_clock at counter_k1 (evening kitchen activity, possibly cooking)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening lamp movement, likely for relaxation)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower or bath)
+- Day 0, 20:54 — bed_pillow at bed_r1 (evening bed preparation)
+- Day 0, 21:04 — picture_frame at coffee_table_l1 (evening decoration or cleaning)
+- Day 0, 21:15 — dining_chair at table_d1 (evening meal or activity at table)
+
+## Notes
+Day 0 is Monday. Need to observe more days to confirm weekly patterns. Look for weekend differences (e.g., later wake-up, different activities). Check if the same objects are moved at similar times each day. Consider if there are multiple residents (e.g., two coffee mugs, two plates). The plant mister suggests plant care, which might be weekly or daily. The wall clock movement to the counter is unusual; might be for cooking timing. The picture frame movements might indicate a person who likes to rearrange decor. The bath mat movements suggest two showers per day (afternoon and evening), which could be from one person showering twice or two people showering at different times. The bed pillow movements at 12:57 and 20:54 suggest a nap and then bedtime, or bed-making and then bedtime. The floor lamp movements at 08:39, 13:24, and 20:06 suggest three distinct periods of living room use: morning, afternoon, and evening. This could be a work-from-home person who uses the sofa for breaks. The dining chair movements at 12:30 and 21:15 suggest lunch and dinner at home. The fork at sink at 13:17 is consistent with lunch cleanup. Overall, a single person with a home-based routine is the most likely hypothesis so far.

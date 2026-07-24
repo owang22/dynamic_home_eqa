@@ -1,0 +1,21 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Family with a young child (board book, ball, play mat, sippy cup, and early evening cushion on sofa suggest a toddler's play and reading routines; multiple pillow and bath mat events indicate daily care). — Board book and ball are strong child-specific items. The play mat is used for child's activities. Sippy cup from day 0 reinforces this. The cushion on sofa at 17:01 could be for child's TV time or parent relaxing. Multiple pillow and bath mat events are consistent with family routines.
+2. (p=0.10) Single adult or couple without children (board book could be for decoration or adult reading, ball for pet or exercise, play mat for yoga; but combination with child-specific items is less likely). — Board book and ball could be used by adults, but the presence of a play mat and sippy cup together makes this less probable. The doormat events and floor lamp movements are neutral.
+
+## Selected evidence
+- Day 0, 08:41 — sippy_cup at play_mat_n1 (child-related items, suggests toddler in household)
+- Day 0, 12:30 — dining_chair at table_d1 (lunchtime seating, could be parent or remote worker)
+- Day 0, 17:01 — cushion at sofa_l1 (afternoon relaxation, possibly child's play or adult TV time)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath routine, likely daily)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation, consistent with family schedule)
+- Day 3, 09:04 — board_book at play_mat_n1 (child's reading/play item, reinforces toddler presence)
+- Day 3, 11:34 — ball at toy_corner_l1 (child's toy, indicates dedicated play area)
+- Day 3, 11:34 — board_book at toy_corner_l1 (child's book moved to toy corner, consistent with child tidying or playing)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (lighting moved for reading or activity, possibly child-related)
+- Day 3, 17:13 — board_book at toy_corner_l1 (afternoon playtime, child returns book to toy corner)
+- Day 3, 21:31 — floor_lamp at sofa_l1 (evening lighting adjustment, possibly for reading or relaxation)
+
+## Notes
+Day 3 (Thursday) shows strong child indicators: board book and ball appear, both surprising to the belief model. The board book moves between play mat and toy corner, suggesting active child play. No laptop or work items observed yet, reducing likelihood of remote worker. Weekend observations (days 5-6) will help confirm if child is present on non-school days. Doormat events at 07:57, 09:02, 17:35 suggest multiple entries/exits, possibly for school drop-off/pickup. Floor lamp movements at 12:21 and 21:31 may indicate reading or playtime lighting. Need to check if sippy cup reappears on weekend.

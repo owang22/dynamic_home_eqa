@@ -1,0 +1,26 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Single small business owner or freelancer who works from home and runs a food-related business (e.g., catering, meal prep, or selling salsa). — The Wednesday events reinforce the business pattern: order_pad at counter at 07:34 (morning work start), salsa_container at elsewhere at 10:31 (likely a business errand or delivery). The surprising fork at table_d1 at 20:38 and plate at sink_k1 at 21:08 are consistent with a single person's dinner routine (fork used at table, plate washed at sink). The floor_lamp at sofa_l1 (09:39) and wall_clock at counter_k1 (18:37) suggest personal decoration and home organization, not multiple residents. No evidence of a second person. The business evidence remains strong and the single-person routine is clear.
+2. (p=0.08) Single working professional with a side food business or hobby that involves salsa making, with a structured morning and evening routine. — The Wednesday events (order_pad, salsa_container) still indicate a food-related activity, but the timing (order_pad at 07:34, salsa_container at 10:31) could fit a side business done before or after a main job. However, the lack of a laptop or work documents at a desk weakens this hypothesis. The single-person dinner routine (fork at table, plate at sink) is consistent but not distinctive. This hypothesis is less parsimonious than the first.
+3. (p=0.02) Couple or family where one person runs a home-based food business, and another has a separate routine. — The Wednesday events show only one person's pattern: order_pad and salsa_container for business, fork and plate for a single dinner. No second set of items (e.g., another phone, another bed, two plates at dinner) appeared. The floor_lamp and wall_clock are neutral. The surprising events (fork at table, plate at sink) are typical for one person. Probability remains very low.
+
+## Selected evidence
+- Day 3, 10:34 — cash_box at elsewhere (business outing mid-morning)
+- Day 3, 10:34 — keys at elsewhere (accompanying cash box, likely outing)
+- Day 3, 10:34 — order_pad at elsewhere (further evidence of business errand)
+- Day 4, 07:50 — phone at counter_k1 (morning work start at counter)
+- Day 4, 07:50 — salsa_container at counter_k1 (food prep item, likely for business)
+- Day 4, 10:15 — salsa_container at fridge_k1 (storage after prep, consistent with food business)
+- Day 5, 07:27 — order_pad at counter_k1 (surprising: weekend morning work start, business prep)
+- Day 5, 20:27 — cash_box at kitchen_shelf_k1 (surprising: business item stored at home on weekend, not taken out)
+- Day 5, 22:51 — phone at nightstand_r1 (surprising: bedtime routine, single person)
+- Day 7, 07:27 — bowl at sink_k1 (Monday breakfast cleanup, single person)
+- Day 7, 16:43 — picture_frame at coffee_table_l1 (personal decoration, likely single resident)
+- Day 7, 17:20 — floor_lamp at sofa_l1 (living room arrangement, relaxation)
+- Day 7, 21:45 — fork at cupboard_k1 (dinner cleanup, single person)
+- Day 7, 21:45 — thermos at counter_k1 (evening hot drink, possibly for next day's work)
+- Day 9, 07:34 — order_pad at counter_k1 (morning business start, Wednesday)
+
+## Notes
+Wednesday (Day 9) shows a clear business morning: order_pad at 07:34, salsa_container at 10:31 (likely taken out for delivery/errand). The surprising fork at table_d1 (20:38) and plate at sink_k1 (21:08) are now understood as a single person's dinner routine (fork used at table, plate washed at sink) — the belief model was surprised because it expected fork at cupboard (from Day 7 pattern) but the fork was at table, indicating a different dinner setup (maybe eating at table vs. counter). This suggests the resident sometimes eats at the table, not always at the counter. The wall_clock at counter_k1 (18:37) may indicate a new decoration or adjustment. No evidence of multiple residents. Need to verify if the business routine (order_pad, cash_box, salsa_container) appears on other weekdays (e.g., Thursday) and if the dinner location (table vs. counter) varies. Also watch for laptop or work documents to confirm home office.

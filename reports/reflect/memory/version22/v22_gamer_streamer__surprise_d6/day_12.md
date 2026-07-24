@@ -1,0 +1,26 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) Single adult with a regular 9-to-5 job, likely working from home or returning home early evening, but with a late-night work or gaming habit. — The pattern of morning dining chair (breakfast), midday lamp (break), afternoon pillow (nap or bed-making), evening bath mat (shower), and late-night phone at desk (work/gaming) is consistent with a single remote worker. The surprising headset at shelf at 01:18 (Monday early morning) suggests a late-night gaming or work session, reinforcing the night-owl habit. The plate at cupboard at 21:45 (after dinner cleanup) fits a single-person routine. No evidence of a second person.
+2. (p=0.20) Couple or family with at least one adult who works from home, but the evidence still favors a single person. — The multiple pillow events (10:27 and previous days) could indicate two people making the bed, but the single plate, mug, and chair suggest one person's routine. The headset at shelf at 01:18 could be shared, but no other dual-use items observed. The evidence is still weak for multiple residents; the single-person hypothesis remains stronger.
+3. (p=0.10) Retiree or person with a non-standard schedule, possibly a night owl. — The late-night headset (01:18) and phone at desk (21:29) suggest a non-standard schedule, but the morning dining chair at 08:45 and midday lamp at 17:20 indicate a somewhat regular day. The energy can and gaming chair from previous days point to a younger, more active lifestyle, making the single adult hypothesis more likely. This hypothesis is retained but with lower probability.
+
+## Selected evidence
+- Day 0, 11:34 — plate at sink_k1 (late morning dish cleanup, likely breakfast or lunch)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation in living room)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath or shower routine)
+- Day 3, 08:57 — dining_chair at table_d1 (breakfast seating)
+- Day 3, 10:46 — coffee_mug and plate at table_d1 (late breakfast/early lunch)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday break, relaxation)
+- Day 3, 15:05 — blanket at gaming_chair_o1 (afternoon gaming or work break)
+- Day 3, 21:58 — energy_can at desk_o1 (late-night work or gaming)
+- Day 6, 10:31 — plate at table_d1 (late breakfast on weekend)
+- Day 6, 12:45 — blanket at sofa_l1 (weekend sofa relaxation)
+- Day 7, 01:18 — headset at shelf_o1 (late-night gaming or work session, surprising early Monday)
+- Day 7, 08:45 — dining_chair at table_d1 (morning breakfast routine)
+- Day 7, 10:27 — bed_pillow at bed_r1 (midday pillow movement, possibly bed-making or nap)
+- Day 7, 21:29 — phone at desk_o1 (late-night work or gaming)
+- Day 7, 21:45 — plate at cupboard_k1 (evening dish cleanup, surprising but consistent with single-person routine)
+
+## Notes
+Day 7 (Monday) shows a consistent weekday pattern: morning dining chair (08:45), midday pillow (10:27), evening lamp (17:20), bath mat (18:35), plate at sink (19:54), and late-night phone at desk (21:29). The surprising headset at shelf at 01:18 (p=0.00) strongly suggests a late-night gaming or work session, reinforcing the night-owl habit. The plate at cupboard at 21:45 (p=0.04) is surprising but fits a single person cleaning up after dinner. No evidence of multiple residents yet; single-person hypothesis strengthened. Need to observe more weekdays to confirm routine and check for any weekday/weekend differences in work habits. Open question: Is the headset used for work or gaming? The late hour suggests gaming.

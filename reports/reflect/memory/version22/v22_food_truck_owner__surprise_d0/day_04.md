@@ -1,0 +1,21 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) Single adult who runs a food-related business (e.g., salsa-making, meal prep, or catering) from home, with a flexible morning routine. The early morning bowl and salsa_container at counter_k1 (07:00-07:50) suggest active food preparation before a typical workday, while the phone at counter_k1 at 07:50 indicates a work-from-home start. The salsa_container moving to the fridge at 10:15 suggests batch storage, and the plate at table_d1 at 20:38 points to an evening meal. The business objects (cash_box, order_pad, prep_apron) from Day 3 align with this. — The surprising events on Day 4 (Friday) reinforce the food business hypothesis: salsa_container appears twice (counter then fridge), indicating active salsa production. The phone at counter_k1 at 07:50 is earlier than Day 3's 09:58 sofa phone, suggesting a busier morning. The bowl at 07:00 is consistent with prep. The plate at 20:38 is mundane but fits a single adult's dinner. The business objects from Day 3 remain strong evidence.
+2. (p=0.15) Single adult with a flexible schedule who may be a remote worker with a side food hobby (e.g., making salsa for personal use or small sales). The salsa_container and bowl suggest cooking, but the phone at counter_k1 at 07:50 could be a work call. The lack of business objects today (no cash_box, order_pad, or prep_apron) weakens the primary business hypothesis slightly. — The absence of business objects on Day 4 reduces the probability of a full-time business. The salsa-making could be personal. However, the pattern of morning food prep and evening meal is consistent with a home cook. The phone at counter_k1 at 07:50 is ambiguous.
+3. (p=0.05) Single adult who works a standard 9-to-5 job but has a morning routine involving food prep (e.g., making salsa for the week). The phone at counter_k1 at 07:50 could be a quick check before leaving for work, and the salsa_container at fridge at 10:15 suggests storage before leaving. The plate at 20:38 is a typical dinner. This hypothesis is less likely given the business objects from Day 3. — The business objects (cash_box, order_pad, prep_apron) on Day 3 are hard to explain with a standard job. The morning salsa prep could be for personal use, but the timing (07:00-07:50) is early for a 9-to-5 commute. The phone at counter_k1 at 07:50 might be a work call, but the lack of a laptop or desk activity weakens this.
+
+## Selected evidence
+- Day 0, 12:20 — phone at counter_k1 (midday phone suggests work-from-home or flexible schedule)
+- Day 3, 09:58 — phone at sofa_l1 (morning phone on sofa, relaxed start before business activities)
+- Day 3, 10:34 — cash_box at elsewhere (cash handling for food business, not typical office worker)
+- Day 3, 10:34 — order_pad at elsewhere (order taking for food business)
+- Day 3, 20:10 — prep_apron at counter_k1 (evening meal prep or cleanup for business)
+- Day 4, 07:00 — bowl at counter_k1 (early morning food prep, likely for salsa-making)
+- Day 4, 07:50 — phone at counter_k1 (morning phone at counter, earlier than Day 3, suggests busy morning)
+- Day 4, 07:50 — salsa_container at counter_k1 (salsa preparation in progress)
+- Day 4, 10:15 — salsa_container at fridge_k1 (batch storage after prep, likely for later use or sale)
+- Day 4, 20:38 — plate at table_d1 (evening meal, consistent with single adult routine)
+
+## Notes
+Day 4 (Friday) shows a clear salsa-making routine: bowl and salsa_container at counter early morning, then salsa_container moved to fridge by 10:15. The phone at counter at 07:50 is earlier than Day 3's sofa phone (09:58), suggesting a busier morning on Friday. No business objects (cash_box, order_pad, prep_apron) appeared today, which could mean the business is not daily or Friday is a prep day. Need to observe weekend (Days 5-6) to see if business objects reappear or if patterns change. The 'elsewhere' location for cash_box and order_pad on Day 3 remains vague; future observations may clarify. The plate at table_d1 at 20:38 is mundane but confirms evening meal timing. The surprising events (phone, salsa_container) were unexpected by the belief model, likely because they are new objects or timings not seen before. The bowl at 07:00 was not marked surprising, but it fits the pattern.

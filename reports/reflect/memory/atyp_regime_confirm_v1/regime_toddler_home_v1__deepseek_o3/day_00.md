@@ -1,0 +1,13 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A family with a young child who plays with a ball on a play mat, likely a toddler or preschooler. The remote on the sofa suggests a parent relaxing in the evening. — Ball on play mat twice (morning and afternoon) indicates a child's play routine. Remote on sofa in evening suggests adult leisure.
+2. (p=0.20) A single adult who occasionally plays with a pet (e.g., dog) using a ball, and uses the remote in the evening. — Ball could be for pet play, but two separate times on a play mat is more typical of a child. Remote on sofa is common for any adult.
+
+## Selected evidence
+- Day 0, 08:46 — ball at play_mat_l1 (child's morning play)
+- Day 0, 15:06 — ball at play_mat_l1 (afternoon play, consistent with child's routine)
+- Day 0, 20:17 — remote at sofa_l1 (evening relaxation, likely parent)
+
+## Notes
+Only one day observed (Monday). Need to see if ball appears on play mat on other days, especially weekends. Also look for other child-related items (toys, books) or pet items. Remote on sofa is common but may become informative if it appears at unusual times.

@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=1.00) Health-conscious professional with a structured morning routine — The 06:30 wake-up persisted on Sunday (Day 13), confirming the rigid schedule extends to the entire week. This definitively rules out 'retiree' (who typically sleeps in on Sundays) and 'remote worker' (who usually has flexible hours). The consistent pill usage and early start across all 7 days strongly support this disciplined profile.
+2. (p=0.00) Retiree with high leisure time — Discarded. The strict 06:30 wake-up on Sunday contradicts the typical leisurely weekend routine of a retiree.
+3. (p=0.00) Remote worker with irregular sleep patterns — Discarded. Lack of work devices and rigid schedule make this impossible.
+
+## Selected evidence
+- Day 13, 06:30 — pill_organizer at counter_k1 (confirms routine holds on Sunday, key discriminator against retiree)
+- Day 13, 06:30 — reading_glasses at counter_k1 (confirms routine holds on Sunday, key discriminator against retiree)
+- Day 13, 07:03 — newspaper at table_d1 (identifies breakfast routine at table, consistent with previous days)
+- Day 13, 08:19 — coffee_mug at patio_table_p1 (continues outdoor morning activity pattern)
+- Day 13, 12:04 — fork at table_d1 (lunch preparation/eating, consistent timing)
+- Day 13, 14:03 — phone at sofa_l1 (afternoon break pattern continues)
+- Day 13, 14:03 — reading_glasses at coffee_table_l1 (afternoon reading/leisure pattern)
+- Day 13, 16:03 — remote at coffee_table_l1 (evening TV preparation)
+- Day 13, 18:48 — fork at sink_k1 (post-dinner cleanup)
+- Day 13, 18:48 — plate at sink_k1 (post-dinner cleanup)
+- Day 13, 19:48 — remote at sofa_l1 (evening TV consumption)
+- Day 13, 21:45 — bowl at cupboard_k1 (post-dinner cleanup)
+- Day 13, 21:45 — fork at cupboard_k1 (post-dinner cleanup)
+- Day 13, 21:45 — plate at cupboard_k1 (post-dinner cleanup)
+- Day 13, 22:18 — phone at nightstand_r1 (bedtime routine)
+
+## Notes
+The Sunday 06:30 wake-up confirms the 'strict personal discipline' aspect of the professional profile. The resident's routine is extremely rigid, even on weekends. No work devices observed. The pill organizer is consistently used, suggesting a chronic condition or preventive health measure. The pattern is now fully established for a 7-day week. No new hypotheses needed.

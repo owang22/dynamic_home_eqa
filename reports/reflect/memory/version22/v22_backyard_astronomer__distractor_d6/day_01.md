@@ -1,0 +1,18 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) Single adult with a regular 9-to-5 job, likely working from home or returning home early afternoon. The phone on the sofa at 12:28 suggests a lunch break, and the plate at 19:19 indicates a home-cooked dinner. The bed pillow moved at 12:57 and again at 20:54 suggests making the bed or napping, and the bath mat at 20:23 points to an evening shower. The floor lamp and picture frame being moved in the evening suggest tidying or decorating. The timing of events (midday phone, evening dinner, night-time bathroom) aligns with a typical workday routine. The absence of children's items or multiple-person indicators suggests a single adult. The telescope cap on the patio table at 21:42 suggests an evening hobby (stargazing) that fits a single adult's routine. — The new events (dining chair moved twice, plate on table at 18:46, telescope cap on patio table at 21:42) reinforce a single adult with a structured evening routine: dinner at table, then stargazing. No evidence of multiple people.
+2. (p=0.20) Couple or family with at least one adult who works from home. The phone on the sofa at 12:28 could be a work break, and the plate at 19:19 might be dinner for two. The bed pillow moved twice could indicate two people using the bed (e.g., one napping, one making it). The bath mat at 20:23 suggests a shared bathroom routine. However, the lack of multiple plates or children's items makes this less likely. The new events (single plate on table, single dining chair moved) still show only one person's activity. — No new evidence of multiple people; single plate and single chair movements persist. Probability reduced.
+3. (p=0.10) Retired person or someone with a flexible schedule who spends time at home during the day. The phone on the sofa at 12:28 and the plate at 19:19 suggest a relaxed pace. The bed pillow moved at 12:57 could be an afternoon nap, and the bath mat at 20:23 indicates a routine. The floor lamp and picture frame movements in the evening suggest home decoration or rearrangement. The telescope cap at 21:42 suggests a hobby that could fit a retiree's schedule. However, the timing is also consistent with a working adult. Lower probability due to lack of strong retiree-specific signals. — No strong retiree-specific evidence; telescope hobby could be for any age. Probability unchanged.
+
+## Selected evidence
+- Day 0, 12:28 — phone at sofa_l1 (midday phone use suggests break from work or leisure)
+- Day 0, 12:57 — bed_pillow at bed_r1 (pillow moved midday, possibly making bed or napping)
+- Day 0, 19:19 — plate at sink_k1 (home-cooked dinner, not takeout)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower/bath routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (second pillow move, possibly preparing for sleep)
+- Day 1, 18:46 — plate at table_d1 (dinner at table, not on sofa, suggests structured meal)
+- Day 1, 21:42 — telescope_cap at patio_table_p1 (evening stargazing hobby, likely single adult)
+
+## Notes
+Day 1 (Tuesday) shows similar pattern to Monday: dinner at table, evening hobby. No evidence of multiple people. Need to observe weekend (days 5-6) to see if routine changes (e.g., later wake-up, different activities). Also check if phone is used at desk during work hours (no desk events yet). The telescope cap suggests a hobby that might be weather-dependent; look for more stargazing events. The doormat and wall clock movements seem mundane; not included in evidence.

@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single working professional with a flexible schedule, likely working from home most days. The consistent morning coffee on the patio, afternoon phone break on the sofa, and early evening meal prep (dining chair at table) suggest a structured but relaxed routine. The reading glasses on the patio with the phone at 09:10 on Thursday indicate reading or work during the morning break. The absence of work-related items like a laptop or work bag in the observed events may indicate they are kept in a dedicated office space not monitored. — The Thursday events reinforce the pattern: coffee mug on patio at 07:44, phone on patio at 09:10, reading glasses on patio at 09:10 (morning reading/work), phone on sofa at 13:46 (afternoon break), plate to cupboard at 21:45 (evening cleanup). The dining chair at table at 08:57 is earlier than previous days but still consistent with a home-based routine. No evidence of multiple people or different routines.
+2. (p=0.07) A couple or family where one person works from home and another is at home during the day, sharing the space. The single plate and chair events could be from one person, but the phone on patio and sofa might be used by different individuals. The reading glasses on patio at 09:10 could be from a different person than the phone user. However, the events are still mostly singular items, and no strong evidence of multiple people has emerged. — The Thursday events do not provide clear evidence of multiple people. The reading glasses and phone on the patio at the same time could be used by the same person. The dining chair at 08:57 is still a single item. The hypothesis remains possible but less likely.
+3. (p=0.03) A retiree or someone with a flexible schedule who enjoys a structured daily routine. The Thursday events (coffee mug on patio at 07:44, phone and reading glasses on patio at 09:10, phone on sofa at 13:46, plate to cupboard at 21:45) show a consistent pattern of morning coffee, reading, afternoon leisure, and evening cleanup. The reading glasses on the patio suggest a morning reading habit. The early dining chair at 08:57 might indicate an early breakfast or meal prep. The retiree hypothesis remains less likely given the lack of distinctive early-morning or midday activities. — The Thursday events are consistent with a retiree's routine, but the timing is not particularly early or late. The reading glasses on the patio at 09:10 could be a hobby. However, the absence of distinctive retiree markers (e.g., gardening, long afternoon walks) keeps this hypothesis low.
+
+## Selected evidence
+- Day 0, 07:32 — coffee_mug at patio_table_p1 (morning coffee outdoors, suggests a morning ritual)
+- Day 0, 12:33 — plate at sink_k1 (lunch at home, likely a work-from-home or lunch break)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, turning on lamp)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath/shower prep)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation)
+- Day 1, 13:50 — phone at sofa_l1 (afternoon phone use, likely leisure or work break)
+- Day 1, 18:51 — plate at sink_k1 (evening meal, consistent with home-cooked dinner)
+- Day 1, 21:20 — dining_chair at table_d1 (late dinner or post-dinner activity)
+- Day 2, 09:08 — phone at patio_table_p1 (morning phone use, likely with coffee)
+- Day 2, 11:08 — reading_glasses at coffee_table_l1 (reading or close work, suggests a hobby or work)
+- Day 2, 13:50 — phone at sofa_l1 (afternoon phone use, consistent with break)
+- Day 2, 16:06 — dining_chair at table_d1 (early dinner prep, earlier than previous days)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (evening cleanup, consistent with home-cooked meal)
+- Day 3, 07:44 — coffee_mug at patio_table_p1 (morning coffee outdoors, reinforces morning ritual)
+- Day 3, 09:10 — reading_glasses at patio_table_p1 (morning reading or work on patio, new location for glasses)
+
+## Notes
+Four weekdays observed (Mon-Thu). The pattern of home-cooked meals (plate to sink/cupboard) and evening relaxation (phone on sofa, lamp on sofa) is consistent. The reading glasses appeared on the coffee table on Wednesday and on the patio on Thursday, suggesting a morning reading or work habit. The dining chair at table at 08:57 on Thursday is earlier than previous days (16:06 on Wednesday, 21:20 on Tuesday), which might indicate a different meal schedule or activity. Need weekend data to see if the routine changes (e.g., later wake-up, different activities). Look for work-related items (laptop, work bag) or exercise gear to confirm work-from-home vs. office worker. The phone on sofa at 13:46 on Thursday is consistent with an afternoon break. The bed_pillow events at 18:51 and 21:57 on Thursday are unusual; the first might be a nap or early bedtime prep, and the second is the actual bedtime. This could indicate a flexible schedule or a second person's routine.

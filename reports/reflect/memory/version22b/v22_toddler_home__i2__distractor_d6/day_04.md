@@ -1,0 +1,25 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A family with a young child (toddler/infant) who uses a play mat, board books, stacking rings, and a ball during the day, and adults who maintain a tidy home in the evening (moving items like a floor lamp, picture frame, and doormat to their proper places). The sippy cup, high chair, and crib further confirm a child. The high chair and plate at high chair reinforce mealtime routine. — Day 4 events: sippy cup at high chair at 06:49 (morning mealtime), cushion and stacking rings on play mat at 08:42 (morning play), stacking rings moved to toy corner at 16:40 (afternoon tidying), picture frame at coffee table at 18:34 and floor lamp at sofa at 20:54 (evening tidying). These are consistent with a child's routine and adult tidying. The waste bin at counter at 07:09 and 08:41 is mundane but could be part of kitchen cleanup. The dining chair and bed pillow events are mundane. The fork at cupboard is mundane. The high chair and sippy cup are strong child indicators. The evening tidying pattern continues. The probability is increased because no contradictory evidence appeared.
+2. (p=0.01) A single adult or couple without children, who uses the play mat for exercise and the board book as a decorative or fidget item, and tidies up in the evening. — The high chair, sippy cup, and stacking rings are strong evidence against this hypothesis. The probability is reduced further.
+
+## Selected evidence
+- Day 0, 08:49 — cushion at play_mat_n1 (morning use of play mat, possibly child's play or exercise)
+- Day 0, 15:48 — cushion at play_mat_n1 (afternoon return to play mat, consistent with child's play)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening tidying, lamp moved to living area)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening tidying, bath mat returned to bathroom)
+- Day 0, 21:04 — picture_frame at coffee_table_l1 (evening tidying, decorative item placed on coffee table)
+- Day 1, 17:16 — stacking_rings at toy_corner_l1 (afternoon, child's toy at toy corner)
+- Day 1, 21:45 — doormat at entry_hook_e1 (evening tidying, doormat returned to entry hook)
+- Day 2, 11:10 — sippy_cup at sink_k1 (midday, child's cup at sink, likely after use)
+- Day 2, 17:07 — ball at toy_corner_l1 (afternoon, child's ball at toy corner)
+- Day 2, 19:02 — sippy_cup at crib_n1 (evening, child's cup at crib, likely before bedtime)
+- Day 3, 08:47 — board_book at play_mat_n1 (morning, child's book on play mat)
+- Day 3, 11:17 — board_book at toy_corner_l1 (late morning, child's book moved to toy corner)
+- Day 3, 17:36 — plate at high_chair_d1 (afternoon, child's plate at high chair, mealtime)
+- Day 4, 06:49 — sippy_cup at high_chair_d1 (morning, child's cup at high chair, breakfast)
+- Day 4, 08:42 — cushion at play_mat_n1 (morning, child's play on play mat)
+
+## Notes
+Day 4 (Friday) shows morning mealtime (sippy cup at high chair at 06:49) and morning play (cushion and stacking rings on play mat at 08:42). Evening tidying continues (picture frame at coffee table at 18:34, floor lamp at sofa at 20:54). Weekend patterns to verify: do play mat and toys appear more often? Also watch for morning routines (e.g., coffee maker, alarm). The waste bin events at counter are mundane and not selected. The dining chair and bed pillow events are mundane. The fork at cupboard is mundane. The high chair and sippy cup are strong child indicators. The probability of the child hypothesis is increased to 0.99.

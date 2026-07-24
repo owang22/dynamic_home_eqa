@@ -1,0 +1,25 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single working professional who works from home and has a structured weekday routine but a more relaxed weekend schedule with later meals and less patio use. — Weekday evidence (bowl, newspaper, reading_glasses at table at 07:09, patio coffee at 07:49, remote at 16:19) strongly supports a structured workday. Saturday shows coffee_mug at table at 06:56 (earlier than weekday patio coffee, but still morning), no patio events, and fork at table at 12:11 (lunch at table, not desk). Sunday shows reading_glasses at table at 07:02 then moved to patio at 07:42 (surprising, but still a morning outdoor habit), fork at table at 12:03 (lunch at table), and plate at sink at 12:48 (surprising, as weekend dishes were expected to go to cupboard, but this could be a Sunday variation). The single bowl, mug, fork, plate, pillow, remote, bath_mat all point to one person. The wall_clock at tv_stand_l1 (09:01, 12:31, 12:18, 18:09) may be a weekend decoration or adjustment, not a second person.
+2. (p=0.10) A retiree or someone with a relaxed morning and evening routine, possibly living alone. — The Saturday schedule (coffee at 06:56, lunch at 12:11, bath_mat at 20:27, dishes to cupboard at 21:45) is consistent with a retiree's unhurried day. Sunday shows reading_glasses at table at 07:02 then patio at 07:42 (morning reading outdoors), fork at table at 12:03 (lunch at table), and plate at sink at 12:48 (dishes to sink, not cupboard, which is more typical of a retiree's routine). However, the weekday structure (07:09 breakfast, 07:49 patio, 16:19 remote) is more typical of a working professional. The probability remains low due to the weekday pattern.
+3. (p=0.05) A couple or family where one person works from home and another has a different schedule, but evidence remains weak. — The single coffee_mug, bowl, fork, plate, and pillow still suggest one person. The picture_frame movement (Day 4, Day 5) could be decorative adjustment by a second person, but no other objects (e.g., second mug, second bowl) appear. The wall_clock at tv_stand_l1 (09:01, 12:31, 12:18, 18:09) might indicate someone adjusting the clock, but could be the same person. Sunday's events (reading_glasses moved from table to patio, plate at sink) are consistent with a single person. This hypothesis is less likely but not ruled out.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading habit, likely before work)
+- Day 0, 12:31 — plate at sink_k1 (lunch at home, suggests work-from-home or flexible schedule)
+- Day 3, 07:47 — coffee_mug at patio_table_p1 (morning coffee on patio, outdoor ritual on weekday)
+- Day 3, 07:47 — reading_glasses at patio_table_p1 (reading on patio, consistent with newspaper habit)
+- Day 4, 07:09 — bowl at table_d1 (breakfast at table, not sink; structured morning meal)
+- Day 4, 16:19 — remote at coffee_table_l1 (afternoon TV/leisure, surprising on Friday, possibly end-of-week treat)
+- Day 5, 06:56 — coffee_mug at table_d1 (Saturday morning coffee at table, not patio; weekend routine differs)
+- Day 5, 12:11 — fork at table_d1 (Saturday lunch at table, not desk; relaxed weekend meal)
+- Day 5, 21:45 — fork at cupboard_k1 (dishes returned to cupboard directly, not sink; weekend cleaning pattern)
+- Day 6, 07:02 — reading_glasses at table_d1 (Sunday morning reading at table, consistent with weekend breakfast)
+- Day 6, 07:42 — reading_glasses at patio_table_p1 (surprising move to patio on Sunday, suggests occasional outdoor reading on weekends)
+- Day 6, 12:03 — fork at table_d1 (Sunday lunch at table, consistent with weekend pattern)
+- Day 6, 12:48 — plate at sink_k1 (surprising: Sunday dishes to sink, not cupboard; may indicate a different weekend sub-routine or a one-off)
+- Day 6, 18:09 — wall_clock at tv_stand_l1 (repeated weekend clock adjustment, possibly decorative or time-setting)
+
+## Notes
+Sunday (Day 6) shows a mix of weekend patterns: reading_glasses at table at 07:02 then moved to patio at 07:42 (surprising, but still morning outdoor habit), fork at table at 12:03 (lunch at table), and plate at sink at 12:48 (surprising, as weekend dishes were expected to go to cupboard, but this could be a Sunday variation). The wall_clock at tv_stand_l1 appears again (12:18, 18:09), suggesting a regular weekend activity (e.g., adjusting for daylight saving or decoration). The floor_lamp at sofa_l1 (09:33, 10:12) is mundane and not informative. The waste_bin at counter_k1 (10:53) is mundane. Open questions: Is the plate at sink on Sunday a one-off or a pattern? Does the resident sometimes use the patio on weekends (reading_glasses moved there)? Verify next weekend for consistency. The single-person hypothesis remains strongest, but the Sunday patio use and sink dishwashing suggest some flexibility in the weekend routine.

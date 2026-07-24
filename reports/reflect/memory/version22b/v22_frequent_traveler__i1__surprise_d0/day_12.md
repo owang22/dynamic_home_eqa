@@ -1,0 +1,19 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A remote worker or student who works from home, with a structured weekday routine but flexible timing, and now appears to be preparing for travel. — Weekday evidence (coffee at desk, meals at home) suggests work/study from home. Today's surprising events (passport in carryon, neck pillow elsewhere) indicate travel preparation, which may be a periodic or one-off event. The routine is flexible (different Monday patterns), and travel could be for work or leisure. However, today's phone at desk (surprising) suggests a return to normal routine after travel, reducing the travel hypothesis probability slightly.
+2. (p=0.25) A single adult living alone who occasionally travels, possibly for work or personal reasons. — All observed events involve single instances of objects, no signs of multiple people. Today's passport and neck pillow suggest solo travel, consistent with a single person's lifestyle. The travel may be a departure from the usual home-based routine. Today's phone at desk indicates return to routine, supporting occasional travel rather than frequent.
+3. (p=0.15) A frequent traveler or someone with a hybrid work schedule who works from home but also travels regularly, possibly for business. — The passport and neck pillow at 06:23 and 07:35 on a Tuesday morning suggest an early departure for a trip. This could indicate a pattern of travel (e.g., weekly or bi-weekly business trips) that was not observed before. The flexible weekday routine (different Monday patterns) might accommodate travel days. However, only one travel event is observed, and today's return to normal routine (phone at desk) suggests the trip was short, but not yet enough evidence for regular travel. Probability increased slightly due to the trip being completed and return observed.
+
+## Selected evidence
+- Day 0, 09:18 — coffee_mug at desk_o1 (morning coffee at desk suggests work/study from home)
+- Day 6, 08:03 — bowl at sink_k1 (Sunday breakfast later than weekday, suggests weekend lie-in)
+- Day 6, 20:09 — phone at sofa_l1 (evening phone use on sofa, typical weekend relaxation)
+- Day 7, 08:08 — bowl at sink_k1 (Monday breakfast later than first Monday, variable morning routine)
+- Day 7, 20:11 — remote at sofa_l1 (Monday evening remote use on sofa, weekday relaxation similar to weekend)
+- Day 8, 06:23 — passport at carryon_e1 (early morning travel preparation, surprising; suggests trip departure)
+- Day 8, 07:35 — neck_pillow at elsewhere (travel accessory packed, supports travel hypothesis)
+- Day 11, 09:20 — phone at desk_o1 (Friday morning phone at desk, surprising; indicates return to normal work routine after travel)
+
+## Notes
+Today's events (Day 11, Friday) show a return to normal routine: coffee at table (07:38), phone at desk (09:20) — surprising because the model expected phone elsewhere (likely due to travel context), and fork at cupboard (21:45) — surprising because expected elsewhere (maybe due to evening meal pattern). The phone at desk suggests the resident is back to work from home after the trip. The fork at cupboard at 21:45 is unusual timing for a fork to be put away (maybe after a late dinner or cleaning). Need to observe if travel patterns recur (e.g., next Tuesday) to confirm frequency. Also check if desk is used on weekends or if other travel items appear. The trip appears to have been short (departed Tuesday morning, returned by Friday).

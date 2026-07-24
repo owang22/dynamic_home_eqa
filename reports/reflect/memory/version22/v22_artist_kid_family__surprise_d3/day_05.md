@@ -1,0 +1,24 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A remote worker or student who works/studies from home most days, with a structured morning and evening routine, and a relaxed weekend pattern. — Day 4 (Friday) showed no departure, consistent with remote work. Day 5 (Saturday) shows a weekend pattern: tablet at table at 06:57 (early morning use, possibly breakfast or leisure), fork at table at 12:21 (lunch at home), bath mat at bathroom at 20:27 (evening wind-down), and tablet at coffee table at 21:49 (evening relaxation). The surprising early tablet at table on a Saturday suggests a consistent early riser, even on weekends, but the lack of work-related events (no backpack, keys) and the later lunch time (12:21 vs. earlier weekday meals) indicate a more leisurely weekend routine. The wall clock at tv stand at 12:31 may indicate adjusting decor or cleaning, a weekend activity.
+2. (p=0.20) A working professional or student with a hybrid schedule (some days out, some remote), but weekend evidence shows a home-based, relaxed routine. — Previous days (Day 0, Day 3) showed departure events (backpack, keys) and returns, suggesting some out-of-home work/study. Day 5 (Saturday) shows no departure, which is expected for a weekend. However, the early tablet use at 06:57 is surprising for a weekend if the resident typically sleeps in; this could indicate a consistent early riser regardless of work schedule. The hypothesis is retained but weakened by the strong home-based weekend pattern.
+3. (p=0.10) A creative hobbyist who engages in evening crafts and values comfort, with a consistent morning routine. — Craft activity (scissors at craft shelf) was only observed on Day 0, and no new craft evidence on Day 4 or Day 5. The picture frame at coffee table on Day 4 and wall clock at tv stand on Day 5 could indicate decorative activities, but they are weak. The consistent early morning tablet use and evening wind-down (bath mat) suggest a structured routine rather than a purely hobbyist lifestyle. This hypothesis remains low pending further craft evidence.
+
+## Selected evidence
+- Day 0, 08:40 — backpack at elsewhere (resident left for work/school; personal item movement)
+- Day 0, 18:18 — scissors at craft_shelf_s1 (evening craft activity, hobby indicator)
+- Day 3, 08:47 — keys at elsewhere (resident left home later than usual, or brief return)
+- Day 3, 12:08 — fork and plate at table_d1 (midday meal at home, suggests remote work/study)
+- Day 3, 18:36 — backpack at backpack_rack_e1 (return from work/school)
+- Day 4, 06:56 — bowl at table_d1 (breakfast at home, early morning)
+- Day 4, 07:36 — tablet at coffee_table_l1 (morning work/leisure at home)
+- Day 4, 18:24 — fork at table_d1 (dinner at home)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (evening decorative activity)
+- Day 5, 06:57 — tablet at table_d1 (early morning weekend use, surprising for weekend but consistent early riser)
+- Day 5, 12:21 — fork at table_d1 (lunch at home on weekend, later than weekday meals)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening wind-down routine, consistent with weekday)
+- Day 5, 21:49 — tablet at coffee_table_l1 (evening relaxation on weekend)
+
+## Notes
+Day 5 (Saturday) shows a weekend pattern: no departure events, later lunch (12:21), and evening relaxation (tablet at coffee table). The surprising early tablet at table (06:57) and later tablet at coffee table (21:49) were flagged by the belief model (p=0.00), indicating the model expected different locations (e.g., tablet elsewhere at those times). This suggests the resident uses the tablet in different rooms on weekends vs. weekdays. The wall clock at tv stand (12:31) and waste bin at counter (16:32) are mundane weekend activities (decorating, cleaning) and not retained as discriminative. Need to observe Day 6 (Sunday) to confirm weekend pattern and see if craft activity recurs. Also check if weekday departure events (backpack, keys) occur on Monday (Day 7) to reinforce hybrid vs. fully remote hypothesis.

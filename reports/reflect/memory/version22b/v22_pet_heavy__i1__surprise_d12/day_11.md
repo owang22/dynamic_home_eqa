@@ -1,0 +1,26 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single person with a dog, likely retired or working from home, who maintains a consistent daily routine with morning dog walks, coffee, and evening relaxation. Weekend patterns show similar timing but with more varied activities (e.g., plate at table for lunch, picture frame moved, wall clock moved). — Today's events (Wednesday) show a dog walk at 07:32, consistent with weekday routine. However, no coffee mug observed today, and the plate at table at 11:55 suggests a late breakfast/lunch, which is unusual for a weekday. The cushion movements (15:18 to dog bed, 16:48 to sofa) are surprising but could be part of pet care or tidying. The picture frame at coffee table (10:25) and wall clock at counter (18:37) indicate ongoing decor adjustments, possibly due to cleaning or rearranging. The waste bin movements (19:46, 21:02) suggest kitchen cleanup. The absence of work objects (laptop, desk) still supports a retired or flexible WFH persona. The surprising cushion events may reflect a more active pet routine or cleaning, not contradicting the single-person hypothesis.
+2. (p=0.15) A person who works from home and has a dog, with a flexible schedule that includes weekend errands or hobbies. The weekend shows more object movement (picture frame, wall clock) suggesting home improvement or cleaning. — Today's events show a late plate at table (11:55) and picture frame movement (10:25), which could indicate a flexible work schedule with breaks for home tasks. The cushion movements (15:18, 16:48) might be pet-related during a work-from-home day. However, no laptop or desk objects have ever been observed, reducing probability. The wall clock move (18:37) and waste bin moves (19:46, 21:02) suggest evening chores, consistent with a WFH routine. The surprising cushion events are not strong evidence against this hypothesis.
+3. (p=0.05) A couple or family with a dog, where one person is home during the day and they have a relaxed routine. The picture frame moves could be two people adjusting decor, and the plate at table could be a shared meal. — No strong evidence of multiple people: only one plate observed today, one coffee mug historically, and no second person's objects (e.g., second phone, second coffee mug). The cushion movements could be from a single person. Probability remains low due to lack of confirming evidence.
+
+## Selected evidence
+- Day 0, 07:37 — coffee_mug at table_d1 (morning coffee, start of day)
+- Day 0, 15:38 — cushion at dog_bed_l1 (dog present, pet care routine)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation)
+- Day 4, 06:53 — dog_leash at mudroom_m1 (morning dog walk, confirms dog and routine)
+- Day 4, 07:46 — coffee_mug at table_d1 (morning coffee, consistent)
+- Day 5, 07:20 — dog_leash at leash_hook_m1 (weekend dog walk, same timing as weekday)
+- Day 5, 11:54 — plate at table_d1 (late weekend breakfast/lunch)
+- Day 5, 13:55 — bed_pillow at bed_r1 (weekend nap, earlier than weekday)
+- Day 5, 21:56 — phone at nightstand_r1 (bedtime routine)
+- Day 9, 07:32 — dog_leash at leash_hook_m1 (weekday dog walk, consistent timing)
+- Day 9, 10:25 — picture_frame at coffee_table_l1 (weekday decor adjustment, unusual)
+- Day 9, 11:55 — plate at table_d1 (late weekday meal, suggests flexible schedule)
+- Day 9, 15:18 — cushion at dog_bed_l1 (surprising: pet care during afternoon, not typical)
+- Day 9, 16:48 — cushion at sofa_l1 (surprising: cushion moved back, possibly tidying)
+- Day 9, 18:37 — wall_clock at counter_k1 (evening decor adjustment, consistent with weekend pattern)
+
+## Notes
+Today (Day 9, Wednesday) shows a weekday pattern with some weekend-like elements: dog walk at 07:32 (consistent), but no coffee mug observed. Plate at table at 11:55 suggests a late meal, similar to weekend. Picture frame moved at 10:25 and wall clock at 18:37 indicate ongoing decor adjustments, possibly due to cleaning or rearranging. The cushion movements (15:18 to dog bed, 16:48 to sofa) were surprising to the belief model, suggesting a more active pet routine or tidying than expected. Waste bin movements (19:46, 21:02) suggest kitchen cleanup. Need to observe more weekdays to see if this pattern (late meals, decor moves) is a new routine or a one-off. Still no evidence of work objects (laptop, desk) or multiple people. The surprising cushion events may indicate a change in pet care or cleaning habits; consider if the resident is preparing for something (e.g., guests, home maintenance).

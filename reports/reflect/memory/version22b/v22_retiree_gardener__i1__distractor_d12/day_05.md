@@ -1,0 +1,24 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single person with a flexible schedule who works from home or is retired, with a consistent morning routine (coffee on patio, floor lamp at sofa, phone on patio) and occasional midday naps (bed_pillow movements). The absence of laptop or work documents suggests a non-desk job or retired status. Day 4 showed a Friday variation (breakfast with newspaper). Day 5 (Saturday) shows a weekend pattern: newspaper at table (06:57) instead of coffee on patio, seed tray on patio (11:00) suggests gardening or bird feeding, and no floor lamp movement until later. The person still naps (bed_pillow at 13:55) and has evening relaxation (picture frame at coffee table). The weekend routine differs from weekdays, supporting a work-from-home or retired person who enjoys outdoor activities on weekends. — The weekend evidence (newspaper at table, seed tray on patio, no morning coffee mug) contrasts with weekday mornings, suggesting a different weekend routine. The absence of work items and presence of leisure activities (gardening, reading) reinforce the non-desk job or retired hypothesis.
+2. (p=0.15) A person who values comfort and relaxation, with multiple lamp and picture frame adjustments, and a habit of moving the dining chair multiple times per day (possibly for meals or reading). Day 5 shows picture_frame at coffee_table (08:34, 18:45) and dining_chair at table (15:40), consistent with this hypothesis. The seed tray on patio (11:00) adds a new leisure activity. This hypothesis is less distinctive but still plausible. — The repeated picture frame and dining chair movements, along with the new seed tray, indicate a person who enjoys arranging their environment for comfort and leisure.
+3. (p=0.05) A person who eats meals at home regularly, with lunch and dinner dishes (plate and fork at cupboard at 21:45 on Day 5 suggests evening meal preparation). The morning newspaper and bowl events on Day 4 suggest breakfast at home. The seed tray on patio (11:00) might indicate a hobby rather than a meal. This hypothesis remains weak but gains some support from the evening dish events. — The evening plate and fork at cupboard (21:45) suggest a meal was prepared or eaten, but the overall pattern of meal-related events is still sparse and inconsistent.
+
+## Selected evidence
+- Day 0, 07:32 — coffee_mug at patio_table_p1 (morning coffee outdoors, weekday routine)
+- Day 1, 07:43 — floor_lamp at sofa_l1 (lamp at sofa, consistent weekday morning)
+- Day 2, 09:08 — phone at patio_table_p1 (phone on patio, morning outdoor break)
+- Day 3, 09:10 — reading_glasses at patio_table_p1 (reading outdoors, suggests leisure)
+- Day 4, 07:04 — bowl at table_d1 (breakfast with newspaper, Friday variation)
+- Day 4, 07:04 — newspaper at table_d1 (reading newspaper at breakfast)
+- Day 4, 18:25 — bed_pillow at bed_r1 (evening nap or sleep prep)
+- Day 5, 06:57 — newspaper at table_d1 (weekend morning reading at table)
+- Day 5, 11:00 — seed_tray at patio_table_p1 (gardening or bird feeding, weekend activity)
+- Day 5, 13:55 — bed_pillow at bed_r1 (afternoon nap, weekend)
+- Day 5, 15:40 — dining_chair at table_d1 (afternoon seating, possibly for meal or activity)
+- Day 5, 21:45 — plate at cupboard_k1 (evening dish put away, suggests dinner)
+- Day 5, 21:45 — fork at cupboard_k1 (evening dish put away, suggests dinner)
+
+## Notes
+Weekend pattern (Day 5) differs from weekdays: no morning coffee mug on patio, instead newspaper at table (06:57) and seed tray on patio (11:00). This suggests a different weekend routine (e.g., sleeping in, gardening). The person still naps (bed_pillow at 13:55) and has evening relaxation (picture frame at coffee table). Need to observe Day 6 (Sunday) to confirm weekend pattern. Also note that floor lamp was not moved today; perhaps it's a weekday-only habit. The seed tray is a new object; could indicate a hobby (gardening, bird feeding). The evening plate and fork at cupboard (21:45) suggest a meal was prepared or eaten at home. Continue to monitor for work-related items (laptop, documents) to rule out work-from-home.

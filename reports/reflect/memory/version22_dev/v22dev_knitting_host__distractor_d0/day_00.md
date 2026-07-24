@@ -1,0 +1,13 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A person who works from home or has a flexible schedule, as the phone is at the counter at 11:39 (likely during a work break or morning routine) and the teapot is used in the afternoon (14:29), suggesting a relaxed tea-drinking habit. — The phone at the counter at 11:39 could indicate a work-from-home setup (phone nearby during work) or a morning routine. The teapot at 14:29 suggests a tea break, common in home offices or leisurely afternoons. This is more distinctive than a typical 9-to-5 commuter.
+2. (p=0.30) A person who is home during the day, possibly retired or not working, as the phone and teapot are used at times that suggest a relaxed, non-commute schedule. — The phone at 11:39 and teapot at 14:29 are both during typical work hours, which could indicate the resident is at home and not in a traditional office. However, this is less specific than the work-from-home hypothesis.
+3. (p=0.10) A person who values routine and comfort, as the teapot is used in the afternoon, possibly for a daily tea ritual. — The teapot at 14:29 could be part of a daily habit, but with only one observation, it's too early to confirm a pattern. This hypothesis is less likely than the others.
+
+## Selected evidence
+- Day 0, 11:39 — phone at counter_k1 (suggests resident is home and using phone during late morning, possibly for work or personal tasks)
+- Day 0, 14:29 — teapot at side_table_l1 (afternoon tea ritual, indicating a relaxed or home-based lifestyle)
+
+## Notes
+Only one day observed (Monday). Need to see if phone and teapot appear at similar times on other weekdays. Weekend observations will help distinguish work-from-home vs. leisure patterns. Also, note that no other objects (e.g., laptop, yoga mat) have appeared yet, so hypotheses are tentative.

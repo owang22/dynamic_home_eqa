@@ -1,0 +1,19 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Standard Office Worker with Commute — Evidence strengthens: work_lanyard leaves at 08:31 (consistent with Day 8) and returns to home desk at 17:54. This confirms the resident works outside the home but brings work items back, or the 'elsewhere' location is a transit hub/office lobby and 'desk_o1' is the home workspace where they process work. The rigid 08:30 departure and ~18:00 return remain stable. The lanyard being at 'desk_o1' (home) in the evening suggests they bring work home or the 'elsewhere' tag was misapplied to a transit card reader, but given 'laptop' was also at 'elsewhere' on Day 8, it's more likely they commute to an office and return. Wait, if lanyard is at 'desk_o1' (home) at 17:54, it means it returned home. This is consistent with a commute. The probability increases as the pattern holds.
+2. (p=0.02) Remote/Hybrid Worker with Office Days — The presence of work artifacts (laptop, lanyard) moving to 'elsewhere' and back suggests office days. However, if they were fully remote, these items would stay home. The movement to 'elsewhere' contradicts pure remote work. The probability is low but non-zero in case 'elsewhere' is a co-working space they visit occasionally, but the daily recurrence makes 'Standard Office Worker' much more likely.
+3. (p=0.00) Night Owl / Shift Worker — Discarded. The consistent early morning departure (08:30) and evening return (17:54) are incompatible with night shift patterns.
+
+## Selected evidence
+- Day 9, 08:31 — work_lanyard at elsewhere (confirms daily work departure; consistent with Day 8)
+- Day 9, 17:54 — work_lanyard at desk_o1 (confirms return from work; item is now at home workspace)
+- Day 8, 08:30 — laptop at elsewhere (confirms work departure; discriminates against remote work)
+- Day 8, 08:30 — work_lanyard at elsewhere (strong indicator of corporate employment)
+- Day 8, 17:46 — transit_card at counter_k1 (confirms commute return)
+- Day 7, 07:09 — phone at counter_k1 (baseline weekday wake-up)
+- Day 7, 18:23 — plate at table_d1 (baseline weekday dinner)
+- Day 6, 12:37 — travel_mug at sink_k1 (weekend 'sleep in' pattern)
+
+## Notes
+The work_lanyard returning to 'desk_o1' (home) at 17:54 is a key detail. It suggests the resident brings work items home, or 'desk_o1' is where they store work gear after returning. The 'elsewhere' location for the lanyard/laptop in the morning strongly implies an office commute. The pattern is now very stable: Wake ~07:00-07:30, Leave ~08:30, Return ~17:45-18:00. Dinner ~18:20-18:35. Weekend pattern remains distinct with later starts. No new hypotheses needed. The 'travel_mug' on Day 6 (Saturday) at sink suggests it's used on weekends too, or just cleaned. Need to check if travel_mug appears on weekday mornings to confirm commute usage.

@@ -1,0 +1,17 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A resident who works or studies outside the home on weekdays (backpack gone at 08:40 on Monday, keys gone at 08:47 on Thursday) and returns home in the evening (keys at entry hook at 18:37 on Tuesday, backpack at rack at 18:36 on Thursday). The watercolor set appearing at 17:46 on Wednesday suggests a creative hobby practiced after work. The remote on the coffee table at 21:26 indicates evening relaxation. The tablet on the coffee table at 07:38 on Thursday suggests morning use before leaving. — The backpack and keys pattern is consistent with a weekday work/school schedule. The watercolor set is a distinctive hobby item that appears in the late afternoon, likely after returning home. The remote at 21:26 fits an evening wind-down routine. The tablet at 07:38 on Thursday suggests a morning routine before leaving, which is consistent with a workday morning. The 12:08 fork and plate at table on Thursday could be a lunch at home, but given the keys left at 08:47, it's likely a remote work day or a break, but the overall pattern strongly supports outside work.
+2. (p=0.05) A resident who works from home or has a flexible schedule (fork and plate at table at 12:08 on Thursday suggests lunch at home, and the backpack returned at 18:36 on Thursday could be from a short outing). The watercolor set at 17:46 on Wednesday could be a hobby done after work, but the midday meal at home weakens the 'outside work' hypothesis. — The 12:08 lunch at home on Thursday is not typical for someone who commutes to work, but it could be a remote work day or a break. The backpack returning at 18:36 could be from a short outing. However, the keys leaving at 08:47 and the backpack returning at 18:36 are more consistent with a full workday outside. The probability is reduced.
+
+## Selected evidence
+- Day 0, 08:40 — backpack at elsewhere (resident leaves home for work/school on weekday morning)
+- Day 1, 18:37 — keys at entry_hook_e1 (resident returns home in the evening on weekday)
+- Day 2, 17:46 — watercolor_set at craft_shelf_s1 (creative hobby, appears after typical work hours)
+- Day 3, 07:38 — tablet at coffee_table_l1 (morning use before leaving, consistent with weekday routine)
+- Day 3, 08:47 — keys at elsewhere (resident leaves home on Thursday morning)
+- Day 3, 12:08 — fork and plate at table_d1 (lunch at home on Thursday, possibly remote work or flexible schedule)
+- Day 3, 18:36 — backpack at backpack_rack_e1 (resident returns home in the evening on Thursday)
+
+## Notes
+The 12:08 lunch at home on Thursday is a new pattern that may indicate a remote work day or a flexible schedule. Need to check if backpack leaves on Wednesday and Friday. Weekend patterns still unknown. The watercolor set is a distinctive hobby item; its placement time may vary. The tablet at 07:38 on Thursday suggests a morning routine before leaving. The keys leaving at 08:47 and backpack returning at 18:36 on Thursday are consistent with a workday outside. The 12:08 lunch at home could be a remote work day or a break, but the overall pattern strongly supports outside work. Need to observe more days to confirm.

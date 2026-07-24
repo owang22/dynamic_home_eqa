@@ -1,0 +1,17 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A hobbyist potter or artist who works with clay, likely working from home or has a dedicated studio space. The clay bag and wheel cover at the wheel bench suggest a regular creative session, possibly in the late morning. — The wheel cover appearing at 11:34 on Wednesday, similar to the clay bag at 09:04 on Monday, reinforces a consistent pottery routine. The plate at table_d1 at 11:58 suggests a lunch break after the session, supporting a home-based worker pattern.
+2. (p=0.20) A person who eats at home during lunchtime and dinner, likely working from home or on a break. The plate at table_d1 at 11:58 and fork at 18:31 indicate regular meals at home. — The plate at table_d1 at 11:58 on Wednesday matches the Monday pattern, and the fork at 18:31 suggests a dinner meal. This is consistent with a home-based worker, but the pottery evidence is more distinctive.
+
+## Selected evidence
+- Day 0, 09:04 — clay_bag at wheel_bench_g1 (indicates pottery hobby, not typical household item)
+- Day 0, 11:54 — plate at table_d1 (suggests midday meal, possibly home-based worker)
+- Day 2, 11:34 — wheel_cover at wheel_bench_g1 (confirms regular pottery session, likely late morning)
+- Day 2, 11:58 — plate at table_d1 (consistent lunchtime meal, supports home-based routine)
+- Day 2, 18:31 — fork at table_d1 (dinner at home, reinforces home-based worker pattern)
+- Day 2, 21:45 — plate at cupboard_k1 (evening cleanup, typical after dinner)
+- Day 2, 21:53 — phone at nightstand_r1 (bedtime routine, suggests single occupant or shared bedroom)
+
+## Notes
+Pottery activity appears on Monday and Wednesday, both weekdays. Need to check if it occurs on weekends. Lunchtime plate at table_d1 is consistent on both days. Dinner fork at 18:31 is new; may indicate regular dinner time. Phone at nightstand suggests bedtime around 22:00. No evidence of other household members yet. Day-of-week pattern: Monday and Wednesday show similar morning pottery and lunch. Need to observe more days to confirm weekly routine.

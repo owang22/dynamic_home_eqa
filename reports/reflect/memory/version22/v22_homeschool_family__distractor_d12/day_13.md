@@ -1,0 +1,25 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single person living alone, likely a student or remote worker, with a structured weekday routine that includes morning study, consistent meal times, and evening relaxation. Weekends show a more relaxed pattern with later meals and midday baths. — Day 13 (Sunday) shows a relaxed weekend pattern: no study objects, a midday bath (bath_mat at 09:50), and evening relaxation (floor_lamp at sofa at 20:38). The doormat events (11:29, 18:39, 20:40) suggest the resident left and returned, but no keys events were observed. The absence of study objects on weekends is consistent with previous weekends. The weekday pattern is expected to resume on Day 14 (Monday).
+2. (p=0.07) A person who values home organization, as shown by the doormat being placed at the entry hook multiple times and the picture frame being adjusted on the bookshelf. — Day 13 shows doormat events at 11:29, 18:39, 20:40, and picture_frame at 13:00 and 16:34, all at the same locations. This suggests the resident is tidying or adjusting items, but these events are not strongly diagnostic of a distinct persona.
+3. (p=0.03) A person who uses the kitchen regularly, as indicated by the waste bin, fork, and plate movements, but this is common in any household. — Day 13 shows only a bowl at sink at 07:58, which is mundane. No other kitchen events. This hypothesis does not discriminate the persona and remains low probability.
+
+## Selected evidence
+- Day 1, 15:45 — math_workbook at supply_caddy_d1 (student activity, appears again Day 2 and 3)
+- Day 2, 13:17 — math_workbook at table_d1 (afternoon study session, different location)
+- Day 3, 08:56 — kitchen_timer at table_d1 (morning study or cooking timer, new object)
+- Day 3, 08:56 — tablet at table_d1 (morning study or work, new object)
+- Day 3, 11:56 — flashcards at supply_caddy_d1 (student activity, new object)
+- Day 4, 08:55 — flashcards at table_d1 (morning study, consistent with Day 3)
+- Day 4, 18:12 — keys at entry_hook_e1 (return home, new object indicating coming/going)
+- Day 5, 12:41 — bath_mat at bathroom_c1 (midday bath on Saturday, different from weekday evening pattern)
+- Day 5, 07:12 — plate at table_d1 (early breakfast on Saturday, similar to weekday)
+- Day 5, 12:25 — plate at table_d1 (lunch on Saturday, later than weekday lunch)
+- Day 6, 10:57 — bath_mat at bathroom_c1 (midday bath on Sunday, consistent with weekend pattern)
+- Day 8, 08:51 — kitchen_timer at table_d1 (morning study or cooking timer, consistent with weekday pattern)
+- Day 13, 09:50 — bath_mat at bathroom_c1 (midday bath on Sunday, consistent with weekend pattern)
+- Day 13, 20:38 — floor_lamp at sofa_l1 (evening relaxation on Sunday, consistent with weekend pattern)
+
+## Notes
+Day 13 (Sunday) shows a relaxed weekend pattern: no study objects, a midday bath (09:50), and evening relaxation (floor_lamp at 20:38). The doormat events (11:29, 18:39, 20:40) suggest the resident left and returned, but no keys events were observed. The picture frame and wall clock events are likely adjustments, not meaningful moves. Need to observe if study objects reappear on Day 14 (Monday) to confirm the weekday routine. Also, the absence of keys events on weekends may indicate the resident uses a different key location or leaves the keys in a bag. No evidence of a second person or pets.

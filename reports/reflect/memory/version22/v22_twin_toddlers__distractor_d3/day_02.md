@@ -1,0 +1,17 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Family with a young child (toddler/preschooler). The sippy cup on Monday, diaper caddy and board book at crib on Wednesday, and doormat at entry hook in the morning (Wednesday) and afternoon (Tuesday) suggest a child who is at home or returns from daycare. The evening events (dining chair, plate, phone at nightstand) are consistent with a family routine. The cushion and picture frame are generic but fit a family setting. — Strong evidence: diaper caddy and board book at crib are unmistakably child-related. Doormat at entry hook in the morning (Wednesday) could be a parent leaving with child; afternoon (Tuesday) could be return. Sippy cup earlier. The other events are generic but consistent.
+2. (p=0.10) Single adult with a child visiting part-time. The child-related items (sippy cup, diaper caddy, board book) appear only on some days, but Wednesday shows multiple child items, suggesting the child might be present more often than not. However, the doormat at entry hook in the morning could be the adult leaving alone. The evening phone at nightstand is generic. — Less likely because child items appear on multiple days (Monday, Wednesday) and include a diaper caddy, which suggests regular care. But still possible if the child visits frequently.
+3. (p=0.05) Couple without children. The child-related items (sippy cup, diaper caddy, board book) are very strong indicators of a child, making this hypothesis unlikely. The other events are generic. — Contradicted by multiple child-specific objects. Only kept for completeness.
+
+## Selected evidence
+- Day 0, 17:16 — sippy_cup at elsewhere (sippy cup indicates a young child in the household)
+- Day 1, 16:12 — doormat at entry_hook_e1 (doormat moved to entry hook in the afternoon could indicate child returning from daycare)
+- Day 2, 08:38 — doormat at entry_hook_e1 (doormat at entry hook in the morning could indicate parent leaving with child or child leaving for daycare)
+- Day 2, 17:54 — diaper_caddy at dresser_n1 (diaper caddy is a strong child indicator, likely in a nursery)
+- Day 2, 19:08 — board_book at crib_n1 (board book at crib confirms a child's bedroom and bedtime routine)
+- Day 2, 21:30 — phone at nightstand_r1 (phone at nightstand in the evening suggests adult bedtime routine, generic but consistent)
+
+## Notes
+Three days observed (Mon-Wed). Child-related items (sippy cup, diaper caddy, board book) appear on multiple days, strongly suggesting a full-time child. Doormat at entry hook appears both morning and afternoon, possibly indicating a parent's routine with daycare drop-off/pickup. Need to observe weekend days to see if child-related items appear then (would confirm full-time family) or if they disappear (could indicate part-time care). Also look for other child items like toys or high chair. The phone at nightstand is generic but may help confirm adult bedtime routine.

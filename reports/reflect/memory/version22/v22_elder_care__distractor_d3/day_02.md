@@ -1,0 +1,26 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single adult with a standard workday routine, likely working from home or with a flexible schedule, who uses the sofa for phone breaks and has a consistent evening wind-down routine. — Wednesday's events show a walker pouch at recliner at 08:33, which is unusual for a young adult; it suggests mobility aid use. The remote at recliner at 13:44 and later at nightstand at 21:56 indicate a consistent evening relaxation and bedtime routine. The doormat at 08:38 suggests the resident leaves early or returns later. The plate at cupboard at 21:45 continues the evening cleanup pattern. The blanket on sofa at 21:41 suggests evening comfort. The walker pouch is a strong new signal that the resident may be elderly or have mobility issues, which reduces the probability of a standard work-from-home adult.
+2. (p=0.30) An elderly or mobility-impaired adult living alone, with a structured daily routine that includes morning mobility aid use, afternoon relaxation, and evening wind-down. — The walker pouch at recliner at 08:33 is a clear indicator of a mobility aid. The doormat at 08:38 suggests the resident may have gone out or returned from a morning errand. The remote at recliner at 13:44 and later at nightstand at 21:56 show consistent afternoon and evening relaxation. The blanket on sofa at 21:41 adds to the comfort routine. The plate at cupboard at 21:45 shows evening cleanup. This pattern is consistent with an elderly person living alone, with no evidence of multiple residents.
+3. (p=0.10) A couple or family with at least one adult who works from home, sharing evening relaxation and bedtime rituals. — The walker pouch could belong to one resident, but the remote and blanket suggest shared use. However, no multiple objects or conflicting timings observed. The doormat at 08:38 could be one adult leaving or returning. The probability remains low due to lack of multiple plates or chairs.
+
+## Selected evidence
+- Day 0, 07:38 — plate at table_d1 (breakfast at home, suggests resident eats at home in the morning)
+- Day 0, 14:18 — phone at sofa_l1 (afternoon break on sofa, typical of a work-from-home or flexible schedule)
+- Day 0, 20:06 — floor_lamp at recliner_l1 (evening relaxation, reading or screen time)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower/bath, part of wind-down routine)
+- Day 0, 20:54 — bed_pillow at bed_r2 (bedtime preparation, consistent with a regular sleep schedule)
+- Day 1, 16:12 — doormat at entry_hook_e1 (afternoon arrival, suggests resident returns home around this time)
+- Day 1, 18:10 — fork at table_d1 (evening meal preparation, consistent with dinner routine)
+- Day 1, 21:20 — dining_chair at table_d1 (late evening seating, likely after dinner cleanup)
+- Day 1, 21:45 — plate at cupboard_k1 (evening dish storage, part of nightly cleanup)
+- Day 2, 08:33 — walker_pouch at recliner_l1 (mobility aid use in morning, suggests elderly or mobility-impaired resident)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure or return, consistent with errand or walk)
+- Day 2, 13:44 — remote at recliner_l1 (afternoon relaxation, likely TV or entertainment)
+- Day 2, 15:08 — picture_frame at side_table_l1 (decorative item moved, possibly for cleaning or rearrangement)
+- Day 2, 21:41 — blanket at sofa_l1 (evening comfort, part of wind-down routine)
+- Day 2, 21:56 — remote at nightstand_r2 (bedtime preparation, consistent with regular sleep schedule)
+
+## Notes
+Wednesday's walker pouch is a strong new signal suggesting an elderly or mobility-impaired resident. The doormat at 08:38 (morning) differs from Tuesday's 16:12 (afternoon), so the resident's schedule may vary. The picture frame moved at 15:08 could be a one-time event. Need to observe weekend days (days 5-6) to see if patterns change. Also check if phone appears on sofa again on other weekdays to confirm work-from-home pattern. The walker pouch reduces the probability of a standard work-from-home adult and increases the elderly hypothesis.

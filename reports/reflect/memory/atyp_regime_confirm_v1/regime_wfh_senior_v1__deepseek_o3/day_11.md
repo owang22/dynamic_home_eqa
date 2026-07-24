@@ -1,0 +1,25 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A remote worker or student who uses a desk regularly, with morning coffee and a midday meal at home, and likely wears reading glasses. The weekend shows a shift to leisure (reading glasses at coffee table, remote at coffee table), suggesting a break from work. Day 9 showed a morning deviation (reading glasses at counter instead of desk), but Day 10 (Thursday) shows a return to a structured morning (bowl at table for breakfast) and evening meal (plate and fork at table). The desk routine may be flexible but the overall pattern remains strong. — Consistent weekday breakfast and dinner at table, with occasional morning desk variation. No evidence of other household members. — Day 11 (Friday) shows reading glasses at desk at 08:39, reinforcing the workday desk routine. The pill organizer at cupboard at 07:08 suggests a health routine, but it's not yet clear if it's daily or weekly. The phone at nightstand at 22:14 indicates a consistent bedtime routine. The structured meal pattern persists.
+2. (p=0.15) A person with a structured daily routine, living alone, with a possible health management component (pill organizer). The weekday pattern is consistent with breakfast and dinner at table, but no new pill organizer evidence today. The health component remains plausible but not reinforced. — No new pill organizer events, but the structured meal times persist. The health routine may be weekly or not observed today. — Day 11 shows a pill organizer event at 07:08, which supports the health management hypothesis. However, the desk routine and reading glasses are more prominent, so the health component is secondary. The structured routine is still evident.
+
+## Selected evidence
+- Day 0, 07:11 — reading_glasses at desk_o1 (early morning desk use, suggests work/study start)
+- Day 0, 13:27 — coffee_mug at desk_o1 (afternoon coffee at desk, typical of desk job)
+- Day 2, 08:31 — coffee_mug at desk_o1 (morning coffee at desk, reinforces work routine)
+- Day 2, 12:30 — plate at table_d1 (midday meal at home, remote worker/student)
+- Day 3, 07:09 — reading_glasses at desk_o1 (confirms early morning desk use)
+- Day 4, 06:45 — pill_organizer at counter_k1 (daily medication, health routine)
+- Day 4, 07:08 — bowl at table_d1 (breakfast at table, structured morning)
+- Day 5, 06:45 — reading_glasses at counter_k1 (weekend morning, still early but not at desk)
+- Day 5, 14:02 — reading_glasses at coffee_table_l1 (afternoon leisure reading, weekend break)
+- Day 5, 21:52 — remote at coffee_table_l1 (evening TV/relaxation, weekend evening)
+- Day 6, 13:51 — reading_glasses at coffee_table_l1 (Sunday afternoon leisure reading, consistent weekend pattern)
+- Day 6, 15:51 — remote at coffee_table_l1 (Sunday afternoon TV/relaxation, consistent weekend pattern)
+- Day 7, 06:46 — reading_glasses at counter_k1 (Monday morning variation, not at desk)
+- Day 8, 08:37 — coffee_mug at desk_o1 (Tuesday morning coffee at desk, typical workday)
+- Day 11, 07:08 — pill_organizer at cupboard_k1 (Friday morning medication, reinforces health routine)
+
+## Notes
+Day 11 (Friday) shows a pill organizer event at 07:08, which strengthens the health management hypothesis. The reading glasses at desk at 08:39 confirms the workday desk routine. The phone at nightstand at 22:14 indicates a consistent bedtime. The weekend pattern (reading glasses and remote at coffee table) is expected to repeat tomorrow (Saturday). Continue to monitor for pill organizer frequency (daily or weekly) and any signs of other household members. The structured meal pattern (bowl at table for breakfast, plate and fork at table for dinner) remains consistent on weekdays.

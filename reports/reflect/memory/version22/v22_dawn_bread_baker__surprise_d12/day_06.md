@@ -1,0 +1,21 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A person with a serious baking hobby, likely making sourdough or artisan bread, with a routine that includes early morning dough preparation and evening starter feeding. The baking schedule may be flexible on weekends (e.g., Sunday shows later cleanup and fridge storage of starter). — Strong evidence from multiple days: early morning (04:50) bench knife, proofing basket, water bottle, phone at counter; evening starter jar at counter (17:15). Today's surprising events (bench_knife at sink at 08:03, starter_jar at fridge at 08:03) suggest a shift in routine on Sunday—perhaps cleaning up after baking and storing starter in fridge. This is a distinctive pattern.
+2. (p=0.20) A single person who works from home or has a flexible schedule, with a routine that includes morning coffee, midday meal at home, and evening relaxation in the living room. — Morning coffee mug at sink (08:41), dining chair at table (12:05), floor lamp at sofa (09:33, 10:12) indicate home-based meals and relaxation. However, no laptop or desk events observed, and baking dominates. Probability reduced.
+3. (p=0.10) A person who values home tidiness and decor, with a habit of adjusting picture frame and bath mat at consistent times. — Picture frame at coffee table (07:48) and bath mat at bathroom (10:57, 19:02) appear, but these are less distinctive and could be part of general household maintenance. Probability lowered as baking evidence is more informative.
+
+## Selected evidence
+- Day 4, 04:50 — bench_knife at counter_k1 (early morning baking prep, p=0.00)
+- Day 4, 04:50 — proofing_basket at counter_k1 (sourdough proofing, p=0.00)
+- Day 4, 04:50 — water_bottle at counter_k1 (hydration during baking, p=0.00)
+- Day 4, 17:15 — starter_jar at counter_k1 (evening starter feeding, p=0.00)
+- Day 6, 08:03 — bench_knife at sink_k1 (Sunday baking cleanup, p=0.00)
+- Day 6, 08:03 — starter_jar at fridge_k1 (Sunday starter storage in fridge, p=0.00)
+- Day 6, 08:41 — coffee_mug at sink_k1 (morning coffee, home routine)
+- Day 6, 12:05 — dining_chair at table_d1 (midday meal at home)
+- Day 6, 09:33 — floor_lamp at sofa_l1 (morning relaxation)
+- Day 6, 07:48 — picture_frame at coffee_table_l1 (decor adjustment)
+
+## Notes
+Sunday (Day 6) shows a shift in baking routine: bench_knife at sink (not counter) and starter_jar at fridge (not counter) suggest cleaning up and storing starter in fridge, possibly because it's a rest day or baking was done earlier. No early morning baking events observed today (no 04:50 events). Wall clock moved to counter multiple times (12:18, 13:21, 17:50, 17:55, 18:09) is unusual—maybe for timing baking or other activities? Need to check if this is a weekend pattern. Open question: does the resident work from home? No laptop or desk events yet. Weekend baking may be less intensive. Verify if picture frame and bath mat events are truly routine or random.

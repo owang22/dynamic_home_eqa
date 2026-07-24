@@ -1,0 +1,18 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A remote worker or student with a flexible morning routine, who uses a headset at a desk early in the workday, but sometimes has coffee and phone at the desk mid-morning, and reads newspaper at the coffee table. The phone at the nightstand at night suggests a consistent bedtime location. The reading glasses at the table in the early morning may indicate breakfast reading. — The headset at desk on Monday (09:00) and coffee mug at desk on Thursday (07:42) suggest a morning work/study period. The phone at desk on Wednesday (09:12) and phone at nightstand on Thursday (21:42) show the phone moves between work and sleep areas. The newspaper at coffee table and reading glasses at table indicate a morning reading habit. The fork at table at lunchtime is mundane but consistent with a meal routine. The surprise events (coffee mug at desk, phone at nightstand) were unexpected by the model, but they fit a work/study pattern with evening wind-down.
+2. (p=0.15) A person with a regular meal schedule, as indicated by plate and fork movements to sink around lunch and dinner times on previous days, and fork at table at lunchtime today. This is common in many households and not highly discriminating. — The timing of fork at table (12:09) on Thursday is consistent with a lunchtime meal, similar to previous days. However, this is mundane and does not strongly discriminate household type.
+3. (p=0.05) A person who may have a different morning routine on Thursdays, as the coffee mug was at the desk (surprising) and the newspaper was at the coffee table, while on Monday the headset was at the desk and phone at sofa. This could indicate a mid-week variation in morning activities, possibly a day with more reading and coffee before work. — The coffee mug at desk on Thursday (07:42) was surprising (p=0.00), suggesting the model expected it elsewhere (likely kitchen or coffee table). The newspaper at coffee table and reading glasses at table are new objects that suggest a reading habit. With only three weekdays observed (Monday, Wednesday, Thursday), it's too early to confirm a pattern, but the variation is notable.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (suggests work/study activity at start of workday)
+- Day 0, 14:17 — phone at sofa_l1 (suggests break or leisure time in the afternoon)
+- Day 2, 09:12 — phone at desk_o1 (surprising: phone at desk instead of sofa, indicating variable morning routine)
+- Day 3, 07:02 — reading_glasses at table_d1 (suggests morning reading or breakfast activity)
+- Day 3, 07:42 — coffee_mug at desk_o1 (surprising: coffee at desk, indicating morning work/study with coffee)
+- Day 3, 07:42 — newspaper at coffee_table_l1 (suggests morning reading habit at coffee table)
+- Day 3, 21:42 — phone at nightstand_r1 (surprising: phone at nightstand, indicating consistent bedtime location)
+
+## Notes
+Three weekdays observed (Monday, Wednesday, Thursday). Need to check if headset appears at desk on other weekdays (e.g., Tuesday, Friday) to confirm work/study routine. The coffee mug at desk on Thursday is a deviation from Monday's pattern (headset at desk, phone at sofa later). The newspaper and reading glasses are new objects that suggest a morning reading habit. The phone at nightstand at 21:42 is a new location for the phone, indicating a bedtime routine. Weekend patterns unknown. Consider tracking other objects like laptop, yoga mat, or suitcase to better discriminate household type. The surprise events (coffee mug at desk, phone at nightstand) were unexpected by the model, but they help refine the work/study hypothesis with a morning coffee and evening wind-down pattern.

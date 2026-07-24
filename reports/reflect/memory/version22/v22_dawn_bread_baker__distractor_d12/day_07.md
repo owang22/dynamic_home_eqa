@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.94) A single person with a regular 9-to-5 job who comes home for lunch and has a consistent evening routine, and who is an avid baker (likely making sourdough bread). — Day 7 (Monday) shows a doormat departure at 07:15 (commute), no lunchtime return observed (but not required), and baking activity (dough_scraper at 05:08, starter_jar at 17:06). The bed_pillow was made at 10:27 (later than weekday norm, but still within workday). Evening routine includes bath_mat at 18:35, plate at sink at 19:14, and remote at sofa at 19:28. The baking hobby remains strong and consistent with weekday schedule.
+2. (p=0.04) A person who values cleanliness and order, with a consistent daily routine of making the bed and showering morning and evening. — Bed_pillow moved at 10:27 and 19:24, bath_mat at 18:35, but the bed-making time is later than typical weekday (10:27 vs earlier on previous days). The baking hobby and relaxed weekend schedule reduce the likelihood of a strict cleanliness routine.
+3. (p=0.02) A person who works from home or has a flexible schedule, as they are home during midday and evening, but the early baking and lack of work objects (laptop, papers) make this less likely. — No work-from-home objects observed on Monday either. The doormat departure at 07:15 suggests a commute. Probability remains low.
+
+## Selected evidence
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure, likely for work)
+- Day 2, 13:34 — doormat at entry_hook_e1 (lunchtime return, supports midday meal at home)
+- Day 3, 05:06 — water_bottle at counter_k1 (early morning hydration, pre-work routine)
+- Day 3, 08:06 — flour_bin_scoop at baking_shelf_k1 (morning baking prep, reinforces hobby)
+- Day 3, 09:02 — doormat at entry_hook_e1 (morning departure, likely for work)
+- Day 3, 17:35 — doormat at entry_hook_e1 (afternoon return, consistent with workday end)
+- Day 4, 04:50 — proofing_basket at counter_k1 (very early sourdough baking, key hobby evidence)
+- Day 4, 17:15 — starter_jar at counter_k1 (sourdough starter maintenance, confirms baking hobby)
+- Day 5, 04:52 — phone at counter_k1 (early wake-up on weekend, consistent with baking routine)
+- Day 5, 13:55 — bed_pillow at bed_r1 (later bed-making on weekend, relaxed schedule)
+- Day 5, 21:45 — dough_scraper at baking_shelf_k1 (evening baking activity, hobby persists on weekend)
+- Day 6, 08:03 — starter_jar at fridge_k1 (Sunday morning baking prep, hobby continues on weekend)
+- Day 6, 17:05 — flour_bin_scoop at baking_shelf_k1 (afternoon baking activity on Sunday)
+- Day 7, 05:08 — dough_scraper at counter_k1 (early Monday baking prep, hobby continues on workday)
+- Day 7, 07:15 — doormat at entry_hook_e1 (Monday morning departure, confirms work commute)
+
+## Notes
+Day 7 (Monday) confirms the weekday commute (doormat at 07:15) and early baking (dough_scraper at 05:08). No lunchtime return observed today, but that may be due to event sampling. Evening routine includes bath_mat at 18:35, plate at sink at 19:14, and remote at sofa at 19:28. The picture_frame and floor_lamp movements are not yet informative. Need to observe more weekdays to see if lunchtime return is consistent and if any work-from-home days occur. The baking hobby appears daily, with early morning prep on both weekdays and weekends.

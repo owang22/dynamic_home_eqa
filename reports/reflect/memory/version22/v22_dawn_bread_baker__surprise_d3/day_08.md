@@ -1,0 +1,24 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single remote worker or student with a flexible schedule who bakes frequently and has a consistent morning coffee routine but variable evening cleanup. — The early-morning baking pattern (dough_scraper at 05:08 on Day 7) is confirmed, but today's surprising events (dough_scraper at sink at 07:59, plate at table at 08:19, phone at elsewhere at 10:15) suggest a shift: perhaps the resident cleaned up baking tools later than usual, had breakfast at the table, and left the phone elsewhere (maybe a work call or errand). The doormat at entry_hook (19:17) could indicate a return or departure, but no second person's distinct routine. The waste_bin and wall_clock on counter are mundane. The single-person hypothesis still fits with a flexible schedule.
+2. (p=0.12) A couple or family where one person works from home and bakes, while another may have a different schedule, leading to multiple object placements. — The doormat event (Day 2 and now Day 8 at 19:17) could indicate a second person's arrival/departure. The plate at table at 08:19 might be a second person's breakfast, but the single-person patterns (coffee_mug at table, early baking) still dominate. The phone at elsewhere at 10:15 could be a second person's phone, but no clear evidence of separate routines. This hypothesis remains possible but weak.
+3. (p=0.03) A single working professional with a strict morning routine who bakes occasionally, but the surprising events are anomalies due to a one-time change. — The early-morning baking (Day 7, 05:08) and afternoon prep (17:06) are inconsistent with a strict 9-to-5 worker. The weekend shift (Day 6) and relaxed evening patterns further contradict a rigid schedule. Today's surprising events (dough_scraper at sink at 07:59, plate at table at 08:19) could be anomalies, but the overall pattern of flexible baking and variable cleanup rules out a strict routine. This hypothesis is nearly ruled out.
+
+## Selected evidence
+- Day 2, 08:13 — coffee_mug at table_d1 (flexible morning routine, not sink)
+- Day 2, 08:38 — doormat at entry_hook_e1 (possible departure or second occupant, isolated event)
+- Day 3, 05:06 — water_bottle at counter_k1 (early hydration, part of baking routine)
+- Day 3, 08:06 — coffee_mug at table_d1 (repeated pattern: mug at table, not sink)
+- Day 4, 04:50 — proofing_basket at counter_k1 (dedicated baker, early start)
+- Day 4, 17:15 — starter_jar at counter_k1 (afternoon baking prep for next day)
+- Day 6, 08:03 — bench_knife at sink_k1 (weekend shift: no early baking, later start)
+- Day 7, 05:08 — dough_scraper at counter_k1 (resumed weekday early baking at 05:08)
+- Day 7, 17:06 — starter_jar at counter_k1 (afternoon prep consistent with Day 4 pattern)
+- Day 8, 07:59 — dough_scraper at sink_k1 (surprising: baking tool cleaned later than usual, maybe after breakfast)
+- Day 8, 08:19 — plate at table_d1 (surprising: breakfast at table, not sink cleanup)
+- Day 8, 10:15 — phone at elsewhere (surprising: phone left elsewhere, maybe work call or errand)
+- Day 8, 19:17 — doormat at entry_hook_e1 (second doormat event, could indicate second person's return)
+
+## Notes
+Day 8 (Tuesday) shows surprising events: dough_scraper at sink (07:59) instead of counter, plate at table (08:19) instead of sink, phone at elsewhere (10:15) instead of counter. This could be a shift in routine (e.g., resident cleaned up later, had breakfast at table, left phone for a call). The doormat at entry_hook (19:17) is the second such event (Day 2 also had doormat at 08:38), suggesting a possible second person's arrival/departure pattern. Need to observe if doormat events recur on specific days (e.g., Tuesdays) or times. The waste_bin and wall_clock on counter are mundane. Continue to watch for yoga mat, suitcase, laptop to confirm remote worker/student persona. Next weekend (Day 12-13) will clarify if Saturday also shows a shift like Sunday.

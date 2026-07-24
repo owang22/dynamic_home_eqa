@@ -1,0 +1,16 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Hybrid professional with structured home office — Day 4 (Friday) shows the same 08:28 departure and 18:15 return pattern as Wed/Thu. The presence of the laptop and work lanyard at the home desk at 18:15 confirms the 'hybrid' nature: they commute Mon-Thu (implied by consistency) and work from home on Fridays, or simply bring work home daily. The strict commute times rule out pure remote or shift work.
+2. (p=0.04) Remote worker with evening deep-work routine — Still possible if 'elsewhere' is just a drop zone, but the 08:28 departure with keys/lanyard strongly suggests leaving the house. The laptop appearing at the desk at 18:15 supports evening work, but the morning departure makes 'pure remote' less likely than 'hybrid'.
+3. (p=0.01) Shift worker with irregular sleep/eat cycles — Discarded. The 08:28/18:15 pattern is too rigid and consistent across three days to be irregular shifts.
+
+## Selected evidence
+- Day 4, 08:28 — keys at elsewhere (confirms daily departure routine continues on Friday)
+- Day 4, 08:28 — travel_mug at elsewhere (reinforces commute habit; mug taken out, not left at sink)
+- Day 4, 18:15 — laptop at desk_o1 (indicates work activity at home in the evening, consistent with hybrid model)
+- Day 4, 18:15 — work_lanyard at desk_o1 (lanyard returned home, confirming the day's commute is over)
+- Day 4, 21:45 — travel_mug at cupboard_k1 (mug returned and stored, completing the daily cycle)
+
+## Notes
+Friday (Day 4) mirrors Wednesday/Thursday perfectly in terms of departure/return times. This suggests the resident works outside the home Mon-Fri, or at least maintains the commute routine through Friday. The laptop and lanyard at the desk at 18:15 suggest they may work from home in the evening on Fridays, or simply bring work home. Need to observe Day 5 (Saturday) to see if the 08:28 departure disappears (weekend) or if the laptop remains at the desk during the day (remote work day).

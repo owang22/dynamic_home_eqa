@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single adult with a regular work schedule, likely working from home or commuting by bike, who maintains a tidy home and has a consistent evening routine. — The helmet and pannier at elsewhere at 10:01 on Thursday suggest a bike commute or errand, consistent with earlier days. The doormat at entry at 07:57, 09:02, and 17:35 indicates multiple arrivals/departures, possibly a work commute. The bed_pillow at bed at 07:58 and 21:57 shows a consistent sleep schedule. The bath_mat at bathroom at 09:15 and 21:12 indicates both morning and evening showers. The floor_lamp at sofa at 12:21 and 21:31 suggests relaxation times. The water_bottle at sink at 18:09 is a new location, possibly washing. The bowl at cupboard at 21:45 is a one-off. The waste_bin at counter at 12:26 is mundane. The phone at elsewhere at 10:01 is likely taken on commute. The midday bed_pillow at 18:51 is earlier than previous days, possibly a nap. Overall, the pattern supports a WFH or flexible schedule with bike commuting.
+2. (p=0.10) A person who works a standard 9-to-5 job, possibly with a flexible schedule, and values home comfort and organization. — The doormat at 07:57 and 09:02 could indicate leaving for work and returning briefly. The helmet and pannier at 10:01 suggest a bike commute, but the timing is later than typical 9-to-5 start. The midday floor_lamp and waste_bin are mundane. The evening doormat at 17:35 is consistent with returning from work. The water_bottle at sink at 18:09 and bath_mat at 21:12 fit a post-work routine. However, the bed_pillow at 18:51 is unusual for a standard workday. The probability is lowered because the evidence is less distinctive.
+3. (p=0.05) A person who is active and health-conscious, possibly a cyclist, and has a structured daily routine. — The helmet and pannier at elsewhere at 10:01 reinforce cycling. The water_bottle at sink at 18:09 might be cleaning after a ride. The consistent bed_pillow and bath_mat times suggest discipline. However, the midday floor_lamp and the early evening bed_pillow (18:51) are less typical for a strict athlete. The probability remains low due to lack of strong athletic indicators like workout gear or specific times.
+
+## Selected evidence
+- Day 0, 10:00 — helmet at elsewhere (bike commute or errand, not WFH all day)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch at home, possibly WFH or break)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday rest, nap or WFH break)
+- Day 0, 18:07 — water_bottle at bike_rack_h1 (return from bike ride, after work)
+- Day 1, 08:37 — dining_chair at table_d1 (morning meal, likely breakfast)
+- Day 1, 08:47 — bath_mat at bathroom_c1 (morning shower, different from evening)
+- Day 1, 10:42 — dining_chair at table_d1 (mid-morning meal or break)
+- Day 1, 11:18 — bed_pillow at bed_r1 (midday rest, consistent with Day 0)
+- Day 1, 16:12 — doormat at entry_hook_e1 (early afternoon arrival, possibly from work)
+- Day 1, 18:33 — water_bottle at bike_rack_h1 (return from bike ride, similar to Day 0)
+- Day 1, 20:46 — bike_pump at hall_shelf_h1 (bike maintenance, active cyclist)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure/arrival)
+- Day 2, 10:09 — phone at elsewhere (phone taken on commute or errand)
+- Day 2, 18:12 — pannier at bike_rack_h1 (bike errand or commute)
+- Day 3, 10:01 — helmet at elsewhere (bike commute or errand, consistent pattern)
+
+## Notes
+Day 3 (Thursday) shows a morning doormat at 07:57 and 09:02, suggesting two departures/arrivals. The helmet and pannier at elsewhere at 10:01 confirm bike use. The water_bottle at sink at 18:09 is a new location, possibly washing. The bed_pillow at 18:51 is earlier than previous days, possibly a nap. The bowl at cupboard at 21:45 is a one-off. The phone at elsewhere at 10:01 is likely taken on commute. Need to check weekend (days 5-6) for leisure vs. work patterns. The helmet was not seen on Day 1 or Day 2; maybe it's not moved daily. The wall clock movement was a one-off. The morning shower on Day 1 (08:47) and Day 3 (09:15) suggests a pattern, but Day 0 had evening shower (20:23). Need to verify if both occur daily.

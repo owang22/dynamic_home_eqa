@@ -1,0 +1,26 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single person who works from home or has a flexible schedule, with a routine that includes morning plant care, evening relaxation, and consistent bedtime. — The new Friday events show a morning coffee at 07:05 (consistent with weekday breakfast timing), phone at table at 09:44 (likely work-related, WFH), picture_frame at coffee_table at 11:02 (afternoon home activity), dining_chair at table at 14:07 (lunch or desk work), floor_lamp at sofa at 15:25 (afternoon relaxation), and phone at nightstand at 21:56 (bedtime routine). The surprising phone events (p=0.00) likely reflect the model's expectation of phone being elsewhere (e.g., at work desk or charging station) during midday, but the resident uses it at the table for work or leisure, consistent with WFH. No evidence of multiple residents or a strict 9-to-5 schedule.
+2. (p=0.08) A person with a standard 9-to-5 job who occasionally works from home, but with weekend relaxation patterns. — The Friday events (coffee at 07:05, phone at table at 09:44, dining_chair at 14:07) could be a WFH day, but the consistent weekday morning plant care (day 4 at 09:22) and lunch at home (days 0, 2) suggest frequent WFH. The surprising phone events might indicate a break from standard work routine. Probability reduced further as evidence increasingly supports a flexible schedule.
+3. (p=0.02) A couple or family with one person working from home and another with a standard schedule, or a single person with a pet. — No new evidence of multiple residents (e.g., two distinct sets of objects at the same time, or different activity patterns). The doormat event on day 2 remains the only ambiguous event, but it could be a delivery or pet. Probability unchanged due to lack of new evidence.
+
+## Selected evidence
+- Day 0, 09:10 — plant_mister at windowsill_l1 (morning plant care, deliberate activity)
+- Day 0, 13:17 — fork at sink_k1 (lunch at home, WFH indicator)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning arrival/departure, possibly WFH start or pet/delivery)
+- Day 2, 13:29 — fork at sink_k1 (lunch at home, consistent WFH)
+- Day 4, 07:22 — bowl at table_d1 (breakfast at home, WFH indicator)
+- Day 4, 09:22 — watering_can at sink_k1 (morning plant watering, routine)
+- Day 5, 07:19 — coffee_mug at table_d1 (weekend late morning coffee, surprising vs weekday pattern)
+- Day 5, 12:37 — plate at table_d1 (weekend lunch at home, surprising vs weekday pattern)
+- Day 5, 21:45 — watering_can at windowsill_l1 (evening plant care, consistent with day 4 pattern)
+- Day 11, 07:05 — coffee_mug at table_d1 (weekday morning coffee, consistent with breakfast timing)
+- Day 11, 09:44 — phone at table_d1 (midday phone use at table, surprising vs model expectation of elsewhere)
+- Day 11, 14:07 — dining_chair at table_d1 (afternoon lunch or desk work, WFH indicator)
+- Day 11, 21:56 — phone at nightstand_r1 (bedtime phone use, consistent with evening wind-down)
+
+## Notes
+Day 11 (Friday) shows a consistent weekday pattern: coffee at 07:05, phone at table at 09:44 (surprising, likely work-related), dining_chair at 14:07 (lunch/desk), floor_lamp at 15:25 (afternoon relaxation), phone at nightstand at 21:56 (bedtime). The surprising phone events (p=0.00) suggest the model expected the phone to be elsewhere (e.g., at a charging station or work desk) during midday, but the resident uses it at the table for work or leisure, reinforcing WFH. The doormat event on day 2 remains unexplained; could be a one-time delivery or pet. Need to observe day 12 (Saturday) to confirm weekend patterns (e.g., later start, no plant care). No evidence of multiple residents yet.

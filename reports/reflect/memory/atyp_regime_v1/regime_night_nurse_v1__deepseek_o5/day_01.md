@@ -1,0 +1,15 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A healthcare worker (likely a doctor or nurse) who works a day shift and returns home around 18:00-19:00, changing out of scrubs and putting away a stethoscope before placing keys and phone in a designated spot. The badge seen on the nightstand in the morning suggests a morning routine of picking up work ID. — Scrubs, stethoscope, badge, and consistent evening key/phone placement strongly indicate a medical professional. The badge on the nightstand at 08:22 suggests a morning departure for work. The 16:58 plate at sink suggests a late lunch or early dinner at home, possibly a day off or a split shift, but the 19:02 keys placement still aligns with a typical end-of-shift. The 21:45 dish return to cupboard is a mundane household event.
+2. (p=0.05) A person with a variable work schedule, possibly a shift worker or someone who works from home some days. The 16:58 plate at sink could indicate a meal at home during a break, and the 19:02 keys placement might be from a later return. However, the badge and scrubs still point to healthcare. — The 16:58 plate at sink is earlier than the previous day's 18:02 scrubs arrival, suggesting a different schedule. But the badge and scrubs are strong evidence for healthcare, so this hypothesis is less likely.
+
+## Selected evidence
+- Day 0, 18:02 — scrubs at bed_r1 (medical uniform discarded after work)
+- Day 0, 18:32 — stethoscope at elsewhere (medical tool put away)
+- Day 0, 19:00 — keys at elsewhere (keys placed in usual spot)
+- Day 1, 08:22 — badge at nightstand_r1 (morning pickup of work ID)
+- Day 1, 19:02 — keys at elsewhere (keys placed in usual spot, consistent with work return)
+
+## Notes
+Day 1 (Tuesday) shows a badge on the nightstand in the morning, reinforcing the healthcare worker hypothesis. The 16:58 plate at sink is earlier than the previous day's scrubs arrival; could be a lunch or a day off. Need to observe more days to see if scrubs appear again and if there is a consistent pattern. Also need to identify 'elsewhere' locations. Weekend observations will be key to confirm work schedule.

@@ -1,0 +1,24 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single person who works from home or has a flexible schedule, with a morning coffee routine and a midday meal at home, but with a more variable morning start time and occasional outdoor phone use. — Coffee mug at cupboard at 21:45 (not morning) and phone on patio at 09:08 (outdoor use) suggest flexible schedule. Lunch at 12:05 (picture frame) and dining chair at 16:06 indicate home presence. Bed pillow at 13:52 and 16:47 suggests napping or bed-making. No morning coffee event today, but phone on patio may replace coffee routine.
+2. (p=0.20) A person who values home decor and comfort, frequently adjusting lamps and decorative items, but with less frequent lamp movements today. — Floor lamp at sofa at 09:08 (once today vs multiple times on Monday). Picture frame at coffee table at 12:05 and 15:08 (consistent with decor adjustment). Less lamp movement suggests occasional rather than daily habit.
+3. (p=0.10) A person with a regular evening routine, possibly winding down with TV or reading, but with a later evening shower and no TV stand activity today. — Bath mat at 18:48 (earlier than Monday's 20:23). No wall clock or floor lamp evening events. Dining chair at 21:06 suggests late meal. Evening routine less consistent.
+
+## Selected evidence
+- Day 0, 07:32 — coffee_mug at patio_table_p1 (morning coffee outdoors, suggests morning routine)
+- Day 0, 12:30 — dining_chair at table_d1 (midday meal at home, not typical for office worker)
+- Day 0, 12:33 — plate at sink_k1 (lunch cleanup, consistent with home lunch)
+- Day 0, 12:57 — bed_pillow at bed_r1 (possible nap or bed-making, flexible schedule)
+- Day 0, 13:20 — picture_frame at coffee_table_l1 (decor adjustment, interest in home aesthetics)
+- Day 0, 13:24 — floor_lamp at sofa_l1 (lamp moved, attention to lighting)
+- Day 0, 19:28 — wall_clock at tv_stand_l1 (evening TV or relaxation area setup)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening lighting adjustment)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower or bath)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bed preparation for sleep)
+- Day 2, 09:08 — phone at patio_table_p1 (surprising: outdoor phone use at 09:08, not expected; suggests flexible morning)
+- Day 2, 13:50 — phone at sofa_l1 (surprising: phone moved to sofa, not expected; indicates indoor relaxation)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (surprising: coffee mug stored at night, not morning; suggests evening coffee or different routine)
+
+## Notes
+Wednesday shows no morning coffee event (mug at cupboard at 21:45 instead). Phone on patio at 09:08 and later on sofa at 13:50 suggests phone use pattern. Picture frame moved twice (12:05, 15:08) consistent with decor interest. Bed pillow at 13:52 and 16:47 (two nap/bed-making events). Bath mat at 18:48 (earlier than Monday). No wall clock or floor lamp evening events. Need to observe Thursday and Friday to see if weekday pattern stabilizes. Weekend observations may reveal different routine. Consider if phone use indicates work calls or personal use. Check if coffee mug storage at night is a new habit or anomaly.

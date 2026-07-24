@@ -1,0 +1,26 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Working professional who commutes to an office — The consistent weekday morning departure pattern with work items (keys, work lanyard, travel mug) and evening returns strongly suggests a regular work commute. This pattern has been observed for ten consecutive weekdays (days 0-4 and days 7-11). The weekend behavior (days 5-6) shows a relaxed routine with no early departure, which is consistent with a professional who doesn't work on weekends.
+2. (p=0.01) Someone who works remotely but occasionally goes to an office — The laptop returning to the desk in the evening could suggest remote work, but the consistent morning departure pattern with multiple work items makes this increasingly unlikely. Weekend behavior doesn't strongly support this hypothesis.
+3. (p=0.01) Student with occasional classes or study groups — The work lanyard and consistent commuting pattern make this hypothesis increasingly unlikely. Weekend behavior doesn't suggest student activities.
+
+## Selected evidence
+- Day 0, 08:34 — laptop seen at elsewhere (suggests regular work/study outside the home)
+- Day 0, 08:34 — work_lanyard seen at elsewhere (indicates employment with ID requirements)
+- Day 0, 18:05 — transit_card seen at entry_hook_e1 (suggests regular commuting pattern)
+- Day 1, 08:34 — keys seen at elsewhere (consistent morning departure pattern)
+- Day 1, 17:36 — laptop seen at desk_o1 (return from work in evening)
+- Day 2, 08:32 — phone seen at elsewhere (consistent work commute pattern)
+- Day 2, 08:32 — travel_mug seen at elsewhere (consistent work commute pattern)
+- Day 2, 08:32 — work_lanyard seen at elsewhere (consistent work commute pattern)
+- Day 2, 18:03 — transit_card seen at entry_hook_e1 (consistent evening return pattern)
+- Day 2, 21:45 — travel_mug seen at cupboard_k1 (cleaning routine after work)
+- Day 3, 08:30 — keys seen at elsewhere (consistent morning departure pattern)
+- Day 3, 08:30 — work_lanyard seen at elsewhere (consistent work commute pattern)
+- Day 3, 18:14 — travel_mug seen at sink_k1 (cleaning routine after work)
+- Day 3, 22:25 — phone seen at nightstand_r1 (return home in evening)
+- Day 11, 08:26 — keys seen at elsewhere (consistent morning departure pattern)
+
+## Notes
+Ten consecutive weekdays (days 0-4 and days 7-11) show consistent morning departure patterns with work items (keys, work lanyard, travel mug, transit card) and evening returns. The transit card usage and travel mug cleaning pattern reinforce the regular work commute hypothesis. Day 5 (Saturday) shows a relaxed routine with no early departure, consistent with a professional who doesn't work on weekends. Day 6 (Sunday) shows a later morning routine with keys and phone at entry/counter, and a later meal pattern with dishes used at 18:32. The phone was on the sofa at 19:56 on day 4, suggesting relaxation time after work. Day 7 (Monday) confirms the weekday pattern with laptop leaving at 08:26 and work items returning at 17:49. Day 8 (Tuesday) continues the pattern with laptop, phone, transit card, and work lanyard all leaving at 08:30. Day 9 (Wednesday) shows the same pattern with phone, transit card leaving at 08:31 and returning at 17:54. Day 10 (Thursday) shows the same pattern with work_lanyard leaving at 08:35 and keys returning at 18:08. Day 11 (Friday) continues the pattern with keys, phone, and work_lanyard leaving at 08:26. The bowl at table_d1 at 07:24 and sink_k1 at 07:46 suggests breakfast before work. The remote on sofa at 19:50 indicates evening relaxation. Need to observe next week to see if the pattern continues.

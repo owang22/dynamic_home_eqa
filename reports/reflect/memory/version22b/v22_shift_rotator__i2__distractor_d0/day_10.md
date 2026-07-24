@@ -1,0 +1,21 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) A single person with a non-standard work schedule, likely a shift worker (e.g., construction, security) who works variable shifts. The hi_vis_vest and work_badge are consistently used, and departure/return times vary. The weekend shows a relaxed pattern with late meals and coffee at the desk. Day 10 (Thursday) shows a midday departure with hi_vis_vest (13:18) and a late return of keys (22:38), consistent with a variable shift schedule. The single-person evidence continues to accumulate. — The Thursday pattern (hi_vis_vest at 13:18, keys at 22:38) suggests a later shift or a long day, consistent with variable shift work. No evidence of multiple people.
+2. (p=0.02) A single person with a standard 9-to-5 job who occasionally works late or has a second activity. The Thursday pattern (hi_vis_vest at 13:18, keys at 22:38) could be a late workday or a second job, but the hi_vis_vest is not typical for a standard office job. The variable departure times across days weaken this hypothesis. — The hi_vis_vest and variable timings are inconsistent with a standard 9-to-5 job. The Thursday pattern further supports a non-standard schedule.
+
+## Selected evidence
+- Day 2, 05:07 — work_badge at elsewhere (early departure for work, consistent with shift work)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (return from work, early afternoon)
+- Day 3, 13:28 — phone at elsewhere (afternoon departure, different from Wednesday's early start)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (high-visibility vest returned, indicates job requiring safety gear)
+- Day 4, 04:59 — work_badge at entry_hook_e1 (early departure for work)
+- Day 5, 12:44 — phone at sofa_l1 (relaxed weekend day, phone on sofa)
+- Day 6, 19:14 — coffee_mug at desk_o1 (coffee at desk in evening, suggests relaxed weekend activity)
+- Day 7, 05:19 — hi_vis_vest at elsewhere (early departure with safety gear, consistent with shift work)
+- Day 9, 05:00 — thermos at counter_k1 (early morning preparation for work, likely shift worker)
+- Day 10, 13:18 — hi_vis_vest at elsewhere (midday departure with safety gear, consistent with variable shift)
+- Day 10, 22:38 — keys at counter_k1 (late return, suggests a long shift or late activity)
+
+## Notes
+Day 10 (Thursday) shows a midday departure with hi_vis_vest (13:18) and a late return of keys (22:38). This pattern is consistent with a shift worker working a later shift (e.g., 2pm-10pm) or a long day. The thermos was not seen today, which may indicate a different shift type. Next, observe if the Thursday pattern repeats next week. Also check if the thermos appears on other days. The weekend pattern (relaxed, late coffee at desk) remains consistent. No evidence of multiple people yet.

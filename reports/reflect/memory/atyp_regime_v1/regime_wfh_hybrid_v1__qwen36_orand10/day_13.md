@@ -1,0 +1,19 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Hybrid working professional with strict routine — Sunday dinner (18:35) and cleanup (21:45) times remain nearly identical to weekdays, indicating a rigid schedule that overrides typical weekend leisure. The evening relaxation (phone/remote) occurs only after chores are complete, consistent with a disciplined professional.
+2. (p=0.03) Student with irregular weekend schedule — The lack of deviation in meal/cleanup times on Sunday strongly contradicts the 'irregular' nature of most student schedules. Probability reduced further as the pattern holds across two weekends.
+3. (p=0.02) Retiree or non-working resident — While retirees might have routines, the specific combination of midday desk activity (Day 11) and the precise, early-evening wind-down (21:45) is more characteristic of a working professional's boundary-setting than typical retiree leisure. Probability remains low but non-zero due to the absence of explicit work artifacts on Sunday.
+
+## Selected evidence
+- Day 13, 18:35 — plate at table_d1 (Sunday dinner time matches weekday 18:28±7m, reinforcing rigid routine)
+- Day 13, 21:45 — plate at cupboard_k1 (Sunday cleanup matches weekday 21:45 exactly, confirming consistent wind-down)
+- Day 13, 22:41 — phone at nightstand_r1 (Late night activity suggests work-related check-in or late leisure, not early retiree sleep)
+- Day 12, 09:52 — keys at desk_o1 (Weekend departure prep, distinguishes from WFH stillness)
+- Day 12, 12:09 — keys at entry_hook_e1 (Confirmed exit, suggests errand/visit, not office commute)
+- Day 11, 13:24 — coffee_mug at desk_o1 (Midday work activity, supports professional hypothesis)
+- Day 11, 08:41 — coffee_mug at desk_o1 (Morning work activity, supports professional hypothesis)
+- Day 11, 07:29 — phone at counter_k1 (Morning home start, no keys, supports WFH pattern)
+
+## Notes
+Sunday (Day 13) confirms the rigid routine hypothesis: dinner and cleanup times are virtually identical to weekdays. The 'Student' hypothesis is effectively falsified by the lack of schedule drift. The 'Retiree' hypothesis is weakened by the late-night phone usage (22:41) and the precision of the schedule. Key question: Does the resident work from home on Sundays? No desk activity observed today, but the phone at the nightstand late suggests some engagement. Need to observe if Monday resumes the 07:29/08:41 morning pattern.

@@ -1,0 +1,26 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Family with a young child (toddler/preschooler) who uses a sippy cup, plays with stacking rings and a ball, has a board book in the crib, and uses a high chair. The child likely goes to bed early, as the sippy cup is out in the morning and the bed pillow is used in the evening. The blanket on the play mat suggests comfort or nap time. The picture frame on the coffee table may indicate family photos. Weekend patterns show a later morning start (sippy cup at sink at 07:39) and later evening cleanup (bowl and sippy cup put away at 21:45), consistent with a relaxed weekend schedule. — The high chair and bowl at breakfast on Friday strongly confirm a young child. Weekend events show a later morning (sippy cup at sink at 07:39) and later evening cleanup (bowl and sippy cup put away at 21:45), consistent with a relaxed weekend schedule. The bath mat at 20:27 suggests a later bath time, possibly for the child. The wall clock and plate events are mundane and not informative. The waste bin event is generic. The child hypothesis remains almost certain.
+2. (p=0.01) Single adult or couple without children, but the sippy cup could be for a pet or a guest, the play mat for exercise, and the ball for a pet. The stacking rings and board book are less typical for a childless household, but possible if the adult collects toys or uses them for decoration. The high chair and bowl are very specific to a child, making this hypothesis extremely unlikely. — The high chair and bowl at breakfast on Friday are strong evidence for a child. Weekend events do not contradict this. The sippy cup at sink in the morning and put away in the evening are consistent with a child's routine. The bath mat at 20:27 could be for a child's bath. This hypothesis remains very unlikely.
+3. (p=0.00) Remote worker or stay-at-home parent who uses the play mat for exercise or work, the sippy cup for convenience, and the ball for a pet. The stacking rings and board book could be for a child or for decoration. The high chair and bowl are very specific to a child, making this hypothesis nearly ruled out. — The high chair and bowl at breakfast on Friday are strong evidence for a child. Weekend events do not contradict this. The sippy cup at sink in the morning and put away in the evening are consistent with a child's routine. The bath mat at 20:27 could be for a child's bath. This hypothesis is now ruled out.
+
+## Selected evidence
+- Day 0, 08:41 — sippy_cup at play_mat_n1 (indicates a young child; sippy cups are rarely used by adults)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath routine, likely for a child's bedtime)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation, consistent with early child bedtime)
+- Day 1, 17:18 — ball at toy_corner_l1 (child's toy; reinforces presence of a young child)
+- Day 2, 11:34 — stacking_rings at toy_corner_l1 (classic toddler toy; strengthens child hypothesis)
+- Day 2, 18:59 — board_book at crib_n1 (board book in crib indicates a child who reads or is read to before sleep)
+- Day 3, 09:04 — board_book at play_mat_n1 (board book moved from crib to play mat, showing morning play)
+- Day 3, 11:34 — board_book at toy_corner_l1 (board book moved to toy corner, consistent with child's play area)
+- Day 3, 18:51 — bed_pillow at bed_r1 (early evening pillow placement, likely child's bedtime)
+- Day 4, 06:49 — bowl at high_chair_d1 (high chair used at breakfast, strong evidence for a young child)
+- Day 4, 08:50 — blanket at play_mat_n1 (blanket on play mat suggests child's nap or comfort)
+- Day 4, 08:50 — sippy_cup at play_mat_n1 (morning sippy cup, consistent with child's play)
+- Day 4, 18:30 — sippy_cup at sink_k1 (evening cleanup of child's cup)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (family photo, common in households with children)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening bath on weekend, later than weekday, consistent with relaxed schedule)
+
+## Notes
+Six days observed (Mon-Sat). Weekend pattern shows later morning (sippy cup at sink at 07:39) and later evening cleanup (bowl and sippy cup put away at 21:45). Bath mat at 20:27 on Saturday suggests a later bath time, possibly for the child. The wall clock and plate events are mundane and not informative. The waste bin event is generic. Need to observe Sunday (day 6) to see if the pattern continues. Also look for other child items like baby bottles or toys. The picture frame remains a family photo indicator.

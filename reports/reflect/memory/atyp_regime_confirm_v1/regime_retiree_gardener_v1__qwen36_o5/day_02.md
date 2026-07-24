@@ -1,0 +1,19 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Health-conscious professional with strict medication routine — Pill organizer at 06:30 on Day 1 remains a strong discriminator. Day 2 shows no contradictory evidence (e.g., late-night work or irregular meals). The early morning phone use on patio suggests a disciplined start to the day, consistent with this profile.
+2. (p=0.15) Remote worker with flexible hours — Still possible but unlikely. The rigid meal/cleanup times and lack of laptop evidence on Days 0-2 make this less probable. The phone on the patio at 08:30 could be remote work, but without a laptop, it's weak support.
+3. (p=0.10) Student or shift worker — Remains low probability. The regularity of the schedule (meals, meds) continues to contradict typical student/shift worker patterns. No new evidence supports this hypothesis.
+
+## Selected evidence
+- Day 0, 07:03 — reading_glasses at table_d1 (indicates morning routine, likely reading news or planning day)
+- Day 0, 12:03 — plate at table_d1 (indicates lunch at the main dining table, not just quick eating)
+- Day 0, 13:56 — phone at sofa_l1 (indicates post-lunch relaxation or break, suggests home presence during afternoon)
+- Day 0, 17:50 — plate at table_d1 (indicates dinner preparation or eating at the main table)
+- Day 0, 18:35 — fork at sink_k1 (indicates evening meal cleanup, routine domestic behavior)
+- Day 1, 06:30 — pill_organizer at counter_k1 (strong indicator of health-consciousness or medical need; suggests disciplined morning routine)
+- Day 1, 12:36 — plate at sink_k1 (confirms lunch cleanup, consistent with Day 0 pattern)
+- Day 2, 08:30 — phone at patio_table_p1 (suggests morning routine outside, possibly reading or checking messages before work; reinforces disciplined start)
+
+## Notes
+Discarded Day 2 fork events (18:55, 21:45) as they are mundane cleanup actions already covered by the 'fork at sink' pattern. Discarded Day 2 phone at nightstand (21:54) as it is a standard end-of-day routine. Need to observe if the laptop appears at the desk on Day 3 (Thursday) to further distinguish between office and remote work. Check if the pill organizer is used daily to confirm the health hypothesis. The phone on the patio at 08:30 is a new pattern worth monitoring for consistency.

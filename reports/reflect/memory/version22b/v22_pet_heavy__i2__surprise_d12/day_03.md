@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single person with a dog, working from home or with a flexible schedule, who uses the living room and kitchen in the morning and evening, and has a consistent bedtime routine. — The dog bed cushion (Day 0) and ball (Day 3) confirm a dog. The coffee mug at sink in the morning (Day 0, Day 3) and dining chair at table at lunchtime (Day 0) suggest meals at home. The bed pillow moved at 07:58 (morning) and 18:51/21:57 (evening) indicates a consistent sleep schedule. The bath mat at 09:15 and 21:12 shows morning and evening hygiene. The floor lamp at 12:21 and 21:31 suggests daytime and evening use. No evidence of a second person (single coffee mug, single dining chair). The surprising events (bowl at table at 07:39, coffee mug at sink at 08:19, fork at sink at 12:48, coffee mug at cupboard at 21:45) are consistent with a single person's routine: bowl for dog food, coffee mug used and later stored, fork used for lunch. The belief model's surprise may be due to limited prior data (only Monday observed) and day-of-week variation (Thursday vs Monday).
+2. (p=0.20) A remote worker with a dog, who has a structured day: morning coffee, lunch break, afternoon nap, evening relaxation, and consistent bedtime. — The events are consistent with a work-from-home routine: coffee at 08:19, lunch (fork at sink at 12:48), afternoon nap (bed pillow at 18:51 is earlier than Day 0's 20:54, but still a rest), evening relaxation (floor lamp at 21:31, bath mat at 21:12), and bedtime (bed pillow at 21:57). The dog ball at 09:26 suggests a morning walk or play. However, the nap timing varies (Day 0 at 12:57, Day 3 at 18:51), so the 'afternoon nap' is not fixed. This hypothesis is a more specific version of the first, but the evidence is still limited and the nap timing is inconsistent.
+3. (p=0.10) A couple or family with a dog, where one person works from home and the other may have a different schedule, leading to multiple uses of living room and kitchen throughout the day. — The floor lamp moved at 12:21 and 21:31 could indicate different people adjusting lighting. The bowl at table at 07:39 might be for a child's breakfast or dog feeding. However, the single coffee mug, single dining chair, and single fork suggest only one person is active. The dog ball and dog bed confirm a dog, but no clear signs of a second person. This hypothesis is less likely given the current evidence.
+
+## Selected evidence
+- Day 0, 08:34 — coffee_mug at sink_k1 (morning coffee routine)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch at home)
+- Day 0, 12:57 — bed_pillow at bed_r1 (afternoon nap or rest)
+- Day 0, 15:03 — cushion at dog_bed_l1 (dog present)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (consistent bedtime)
+- Day 3, 07:39 — bowl at table_d1 (dog feeding or breakfast, surprising but fits single person with dog)
+- Day 3, 07:58 — bed_pillow at bed_r1 (morning wake-up, consistent with sleep routine)
+- Day 3, 08:19 — coffee_mug at sink_k1 (morning coffee, consistent with Day 0)
+- Day 3, 09:26 — ball at mudroom_m1 (dog play or walk, confirms dog activity)
+- Day 3, 12:48 — fork at sink_k1 (lunch, consistent with Day 0's lunch timing)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening rest, earlier than Day 0 but still a nap)
+- Day 3, 21:12 — bath_mat at bathroom_c1 (evening hygiene, consistent with Day 0)
+- Day 3, 21:31 — floor_lamp at sofa_l1 (evening relaxation, consistent with Day 0's lamp use)
+- Day 3, 21:57 — bed_pillow at bed_r1 (bedtime, consistent with Day 0's bedtime)
+
+## Notes
+Day 3 (Thursday) shows a similar routine to Day 0 (Monday) but with some timing shifts: morning coffee at 08:19 vs 08:34, lunch at 12:48 vs 12:30, evening rest at 18:51 vs 12:57 (nap timing varies), bedtime at 21:57 vs 20:54. The bowl at table at 07:39 is new and likely for dog feeding. The ball at mudroom at 09:26 suggests a morning dog walk. The surprising events (bowl, coffee_mug at sink, fork at sink, coffee_mug at cupboard) are all consistent with a single person's daily routine; the belief model's surprise may be due to limited prior data (only Monday) and day-of-week variation. Need to observe more days to confirm if the nap timing is flexible or if there is a pattern (e.g., no nap on Thursday). Weekend patterns (Day 5-6) may differ. No evidence of a second person yet.

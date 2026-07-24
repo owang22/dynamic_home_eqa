@@ -1,0 +1,25 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Retiree or non-working resident with structured morning leisure — Day 12 (Saturday) confirms the persistence of the morning routine (newspaper, coffee) on weekends, reinforcing the non-working status. The rigid 07:00-07:45 morning block and lack of work devices across 13 days strongly support this.
+2. (p=0.01) Remote worker with flexible schedule — Still unsupported. No work hardware observed on Day 12. The consistent morning leisure routine and absence of midday work activity remain inconsistent with typical remote work patterns.
+3. (p=0.00) Health-conscious professional with morning medication routine — Discarded. No professional markers observed in 13 days. The pill organizer pattern (Mon/Thu) suggests a general health routine rather than a work-specific one.
+
+## Selected evidence
+- Day 12, 07:05 — newspaper at table_d1 (critical discriminator: confirms weekend morning newspaper habit, consistent with retiree/non-worker routine)
+- Day 12, 07:05 — coffee_mug at table_d1 (critical discriminator: confirms morning coffee setup, consistent with leisure-focused schedule)
+- Day 12, 07:45 — coffee_mug at patio_table_p1 (reinforces outdoor morning leisure routine)
+- Day 12, 16:11 — phone at coffee_table_l1 (afternoon leisure, no work-related context)
+- Day 11, 07:04 — reading_glasses at table_d1 (confirms daily morning reading setup)
+- Day 11, 07:04 — newspaper at table_d1 (confirms daily newspaper habit)
+- Day 11, 07:34 — coffee_mug at patio_table_p1 (morning coffee moved to patio)
+- Day 10, 06:30 — pill_organizer at counter_k1 (suggests broader weekly health routine)
+- Day 9, 06:30 — reading_glasses at counter_k1 (consistent with morning reading setup)
+- Day 9, 07:34 — coffee_mug at patio_table_p1 (outdoor morning leisure)
+- Day 8, 07:06 — newspaper at table_d1 (reinforces daily morning newspaper habit)
+- Day 7, 06:34 — pill_organizer at counter_k1 (confirms weekday-specific routine)
+- Day 6, 07:07 — newspaper at table_d1 (reinforces daily morning newspaper habit)
+- Day 5, 07:41 — newspaper at coffee_table_l1 (confirms weekend morning routine)
+
+## Notes
+Key pattern update: Day 12 (Saturday) confirms the morning routine (newspaper, coffee) persists on weekends, further solidifying the 'Retiree/Non-working' hypothesis. The pill organizer was not observed on Day 12, consistent with the Mon/Thu pattern seen previously. Next week, verify if pill organizer appears on other weekdays (Tue, Wed, Fri) or remains Monday/Thursday only. Also, verify if newspaper appears on all days or just specific days. The absence of work devices in 13 days strongly supports the non-working/retiree hypothesis.

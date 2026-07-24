@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Single small business owner or freelancer who works from home and runs a food-related business (e.g., catering, meal prep, or selling salsa). — The surprising Monday events (bowl at sink at 07:27, fork at cupboard at 21:45) are consistent with a single person's breakfast and dinner cleanup. The thermos at counter at 21:45 suggests a hot drink for evening work or next-day prep. The picture_frame and floor_lamp moved to living room (coffee_table, sofa) indicate personal decoration or relaxation, not a family. No evidence of multiple residents. The business pattern (order_pad, cash_box, salsa) remains strong.
+2. (p=0.10) Single working professional with a side food business or hobby that involves salsa making, with a structured morning and evening routine. — The Monday events (bowl at sink, fork at cupboard) could fit a standard workday routine, but the thermos at counter and the living room items (picture_frame, floor_lamp) are less specific to a side business. The business evidence (order_pad, cash_box) is still present but less dominant. This hypothesis is less parsimonious than the first.
+3. (p=0.05) Couple or family where one person runs a home-based food business, and another has a separate routine. — The Monday events (bowl at sink, fork at cupboard) could be from two people, but the single-person pattern (phone at nightstand, pillow, apron) still dominates. No strong evidence of multiple residents (e.g., two phones, two beds). The living room items (picture_frame, floor_lamp) could be from one person decorating. Probability remains low.
+
+## Selected evidence
+- Day 3, 10:34 — cash_box at elsewhere (business outing mid-morning)
+- Day 3, 10:34 — keys at elsewhere (accompanying cash box, likely outing)
+- Day 3, 10:34 — order_pad at elsewhere (further evidence of business errand)
+- Day 4, 07:50 — phone at counter_k1 (morning work start at counter)
+- Day 4, 07:50 — salsa_container at counter_k1 (food prep item, likely for business)
+- Day 4, 10:15 — salsa_container at fridge_k1 (storage after prep, consistent with food business)
+- Day 5, 07:27 — order_pad at counter_k1 (surprising: weekend morning work start, business prep)
+- Day 5, 20:27 — cash_box at kitchen_shelf_k1 (surprising: business item stored at home on weekend, not taken out)
+- Day 5, 22:51 — phone at nightstand_r1 (surprising: bedtime routine, single person)
+- Day 7, 07:27 — bowl at sink_k1 (surprising: Monday breakfast cleanup, single person)
+- Day 7, 16:43 — picture_frame at coffee_table_l1 (personal decoration, likely single resident)
+- Day 7, 17:20 — floor_lamp at sofa_l1 (living room arrangement, relaxation)
+- Day 7, 21:45 — fork at cupboard_k1 (surprising: dinner cleanup, single person)
+- Day 7, 21:45 — thermos at counter_k1 (evening hot drink, possibly for next day's work)
+
+## Notes
+Monday (Day 7) shows a typical workday: bowl at sink (07:27) for breakfast, fork at cupboard (21:45) for dinner cleanup, thermos at counter (21:45) for evening drink. Living room items (picture_frame, floor_lamp) moved in late afternoon/evening suggest personal time. No business items moved today (no order_pad, cash_box, salsa_container) — possibly a non-business day or the business is done earlier. Need to check Tuesday (Day 8) for pattern: does the business routine (order_pad, cash_box) reappear on weekdays? Also watch for laptop or work documents to confirm home office. No evidence of multiple residents yet.

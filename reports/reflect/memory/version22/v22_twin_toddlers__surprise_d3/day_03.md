@@ -1,0 +1,20 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A family with a young child (toddler/preschooler) and at least one parent who works from home or has a flexible schedule. The child has a dedicated play area (playmat, toy bin) and a consistent bedtime routine (pillow, sippy cup put away in evening). The parent likely works from home or is a stay-at-home parent, as no laptop or desk events have been observed during work hours, but the phone on counter at 8:54 on day 0 suggests a morning routine at home. — Sippy cup appears on day 0 and day 3, now with a playmat and board book, strongly indicating a resident child. The playmat and toy bin suggest a dedicated play area. The evening sippy cup at cupboard (21:45) and pillow at bed (18:51, 21:57) suggest a consistent bedtime routine. No work-from-home evidence yet (no laptop/desk), but the phone on counter at 8:54 on day 0 could be a parent starting the day at home. The surprise events (cushion, sippy cup, board book, plate) all fit a child's daily routine, not a single adult.
+2. (p=0.10) A single adult with a young child visiting or living part-time. The child items (sippy cup, board book, playmat) appear only on some days, suggesting the child is not a permanent resident. The adult may work outside the home (no work-from-home evidence), and the evening routine is child-focused when the child is present. — Sippy cup appeared on day 0 and day 3, but not on day 1 or 2 (not observed). The board book and playmat are new on day 3. If the child lived here full-time, we might expect more consistent daily child items. However, the surprise events today could simply be the first time we observed the play area. The adult's work pattern is unclear.
+3. (p=0.05) A remote worker with a young child. The parent works from home but uses a phone rather than a laptop (phone on counter at 8:54 on day 0). The child's play area is in the living room (playmat, toy bin), and the parent manages work while caring for the child. — No laptop or desk events have been observed, but the phone on counter at 8:54 could be a work phone. The playmat and toy bin suggest the child is present during the day. The parent may be a stay-at-home parent or remote worker. The lack of work-related items is puzzling, but the child's routine is clear.
+
+## Selected evidence
+- Day 0, 08:54 — phone at counter_k1 (morning routine at home, possibly work-from-home or stay-at-home parent)
+- Day 0, 17:16 — sippy_cup at elsewhere (strong indicator of young child)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (bath time, likely child's bedtime routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime, consistent with child's schedule)
+- Day 3, 08:43 — cushion at playmat_n1 (child's play area set up in morning)
+- Day 3, 08:43 — sippy_cup at playmat_n1 (child's morning play/feeding routine)
+- Day 3, 11:13 — board_book at toy_bin_l1 (child's play/reading activity, toy bin location)
+- Day 3, 17:40 — plate at table_d1 (evening meal, likely family dinner)
+- Day 3, 21:45 — sippy_cup at cupboard_k1 (child's cup put away after evening use, consistent bedtime routine)
+
+## Notes
+Day 3 (Thursday) provided strong evidence of a child's daily routine: playmat, cushion, sippy cup, board book, and toy bin. The plate at table at 17:40 suggests a family dinner. The sippy cup at cupboard at 21:45 indicates the child's cup is stored after use, consistent with a bedtime routine. No work-from-home items (laptop, desk) observed yet, but the phone on counter at 8:54 on day 0 remains the only work-related clue. Need to observe more weekdays to see if a laptop or desk appears during work hours. Weekend patterns may reveal different routines (e.g., later wake-up, more family activities). The surprise events today all fit a child's routine, so the belief model's surprise may be due to lack of prior data on play area objects. Consider adding a hypothesis about a stay-at-home parent if no work items appear.

@@ -1,0 +1,23 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A frequent traveler who leaves for a trip early Tuesday morning and returns Thursday evening. — The Tuesday-Thursday trip pattern is confirmed over two weeks. Packing on Monday evening and departure on Tuesday morning is consistent. Sunday remains a relaxed day at home.
+2. (p=0.05) A single professional who works from home on Mondays and has a relaxed Friday and Saturday routine. — Monday work-from-home pattern is consistent (phone at desk, coffee mug). Friday and Saturday show relaxation. However, the travel pattern is more distinctive and dominates the evidence.
+
+## Selected evidence
+- Day 0, 09:03 — phone at desk_o1 (work-from-home Monday morning)
+- Day 0, 19:59 — packing_cubes, passport, toiletry_bag, travel_adapter at bed_r1 (packing for trip Sunday evening)
+- Day 1, 06:22 — keys, laptop, phone, suitcase, passport, packing_cubes, toiletry_bag, travel_adapter at elsewhere (departure early Tuesday)
+- Day 3, 20:41 — keys, laptop, passport, phone, suitcase, toiletry_bag at usual spots (return Thursday evening)
+- Day 4, 16:50 — phone at sofa_l1 (relaxed Friday afternoon, no desk work)
+- Day 5, 12:15 — phone at sofa_l1 (afternoon relaxation on Saturday)
+- Day 6, 20:13 — phone at sofa_l1 (evening relaxation on Sunday)
+- Day 7, 20:12 — packing_cubes, passport, suitcase, toiletry_bag at bed_r1 (packing for next trip Monday evening, confirming pattern)
+- Day 8, 06:39 — keys, laptop, phone, suitcase, passport, packing_cubes, toiletry_bag, travel_adapter at elsewhere (departure early Tuesday, consistent timing)
+- Day 10, 20:30 — keys, laptop, passport, phone, suitcase, toiletry_bag at usual spots (return Thursday evening, consistent)
+- Day 12, 12:10 — phone at sofa_l1 (relaxed Saturday afternoon, consistent with weekend)
+- Day 13, 07:00 — phone at nightstand_r1 (wake-up on Sunday, no early departure)
+- Day 13, 22:19 — remote at coffee_table_l1 (evening relaxation on Sunday, no packing observed)
+
+## Notes
+Today (Day 13, Sunday) showed no packing activity, consistent with the pattern that packing occurs on Monday evening. The resident woke up at 7:00, had breakfast, and relaxed in the evening. No travel-related events. Next week (Day 14 Monday) we expect packing in the evening. The Tuesday-Thursday trip pattern is now confirmed over two weeks; a third week would solidify it. Need to observe if any work-from-home Monday pattern persists (phone at desk in morning).

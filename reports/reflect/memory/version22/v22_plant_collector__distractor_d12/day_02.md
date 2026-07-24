@@ -1,0 +1,26 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single person who works from home or has a flexible schedule, with a routine that includes morning lamp use, midday meal at the table, and evening relaxation in the living room. — Consistent morning floor lamp (Day 0,1,2), midday dining chair (Day 0,1,2), and evening dining chair (Day 0,1,2) strongly support a home-based worker. The midday bed pillow (Day 0,1,2) and phone at table (Day 2) reinforce a flexible schedule. No evidence of a second person.
+2. (p=0.15) A person who maintains a tidy home with regular cleaning and organization, as seen by the bath mat being moved to the bathroom in the morning and evening, and the doormat being moved to the entry hook. — Bath mat at bathroom (Day 0,2) and doormat at entry hook (Day 1,2) suggest a cleaning routine. However, the doormat appears only once on Day 2 (08:38) and again at 13:34, which may be a single tidying event. The waste bin at counter (Day 2) could be part of cleaning but is not yet a strong pattern.
+3. (p=0.05) A person who values decor and personal touches, as evidenced by the picture frame being moved to the coffee table at midday and evening. — Picture frame at coffee table (Day 1,2) appears twice on Day 2 (12:05 and 15:08), but the wall clock move (Day 1) was not repeated. This hypothesis is weakening as the evidence is less distinctive and could be part of a general tidying routine.
+
+## Selected evidence
+- Day 0, 08:39 — floor_lamp at sofa_l1 (morning lamp use, suggests home-based work)
+- Day 0, 12:30 — dining_chair at table_d1 (midday meal at home, flexible schedule)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday nap or bed-making, flexible routine)
+- Day 1, 07:43 — floor_lamp at sofa_l1 (morning lamp use, repeats)
+- Day 1, 10:42 — dining_chair at table_d1 (midday meal, consistent)
+- Day 1, 11:18 — bed_pillow at bed_r1 (midday nap, repeats)
+- Day 1, 16:12 — doormat at entry_hook_e1 (entryway tidying, suggests coming home)
+- Day 1, 21:04 — dining_chair at table_d1 (evening meal, consistent)
+- Day 2, 09:08 — floor_lamp at sofa_l1 (morning lamp, consistent)
+- Day 2, 12:05 — picture_frame at coffee_table_l1 (decor adjustment, but less distinctive)
+- Day 2, 13:33 — phone at table_d1 (midday phone use, supports flexible schedule)
+- Day 2, 13:52 — bed_pillow at bed_r1 (midday nap, consistent)
+- Day 2, 16:06 — dining_chair at table_d1 (afternoon meal or work, consistent)
+- Day 2, 18:48 — bath_mat at bathroom_c1 (evening bathroom cleaning, tidy habit)
+- Day 2, 21:06 — dining_chair at table_d1 (evening meal, consistent)
+
+## Notes
+Day 2 (Wednesday) confirms the core routine: morning lamp, midday dining chair and bed pillow, evening dining chair. The doormat appears only once in the morning (08:38) and again at 13:34, which may be a single tidying event rather than a twice-daily pattern. The waste bin at counter (08:23 and 13:35) is new; could be part of a cleaning routine or a one-time event. The phone at table (13:33) is new and supports a flexible schedule. The picture frame appears twice (12:05 and 15:08) but is not as distinctive as the core routine. The remote at coffee table (21:43) and coffee mug at cupboard (21:45) are evening activities but not yet diagnostic. Need to observe weekend (Day 5-6) for changes. No evidence of a second person yet.

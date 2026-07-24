@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Single working adult with a strong baking hobby and early-morning routine, likely working from home or with flexible hours. — The early-morning baking pattern is now confirmed on a Monday (Day 7) with dough_scraper at 05:08, continuing the trend from previous days. The single phone and water_bottle still support a single person. The midday pillow (10:27) and evening relaxation (floor_lamp, bath_mat) are consistent with a flexible schedule. The surprising starter_jar at counter at 17:06 suggests a second baking session or prep for the next day, which fits a dedicated hobbyist. The plate at sink at 19:14 is mundane but the surprise indicates the model expected it elsewhere; this could be a dinner cleanup timing shift.
+2. (p=0.10) Couple or family with at least one person who bakes early in the morning and another who works a standard schedule. — The early baking (05:08) and later starter_jar (17:06) could be two different people, but the lack of multiple distinct objects (e.g., two phones, two water bottles) still weakens this. The picture_frame at coffee_table at 16:43 might indicate a decorative touch by another household member, but it's weak evidence. The probability is lowered as the single-person hypothesis gains strength.
+3. (p=0.05) Retired or unemployed individual with a serious baking hobby and early-morning routine, possibly health-conscious. — The early-morning baking (05:08) and midday pillow (10:27) could fit a retiree with a flexible schedule. However, the consistent early-morning activity (05:08 on Monday) is more typical of a working person or someone with a strict routine. The probability remains low as the working adult hypothesis fits better.
+
+## Selected evidence
+- Day 0, 08:04 — bench_knife at sink_k1 (morning breakfast prep, workday routine)
+- Day 0, 08:46 — coffee_mug at sink_k1 (morning coffee, typical before work)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation area use)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower/bath routine)
+- Day 2, 08:13 — coffee_mug at table_d1 (morning coffee at table, different routine)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure/arrival)
+- Day 2, 13:52 — bed_pillow at bed_r1 (midday pillow, repeats from Day 0)
+- Day 2, 16:47 — flour_bin_scoop at counter_k1 (afternoon baking activity)
+- Day 3, 05:06 — water_bottle at counter_k1 (very early morning, exercise or routine)
+- Day 3, 08:06 — flour_bin_scoop at baking_shelf_k1 (morning baking prep, hobby)
+- Day 4, 04:50 — bench_knife at counter_k1 (very early baking prep, serious hobby)
+- Day 4, 04:50 — phone at counter_k1 (early phone use, likely for recipes/timers)
+- Day 4, 04:50 — proofing_basket at counter_k1 (sourdough or bread proofing, dedicated baking)
+- Day 7, 05:08 — dough_scraper at counter_k1 (Monday early baking, confirms weekly pattern)
+- Day 7, 17:06 — starter_jar at counter_k1 (afternoon/evening baking prep, second session)
+
+## Notes
+The early-morning baking pattern is now confirmed on Monday (Day 7) with dough_scraper at 05:08, continuing the weekly routine. The surprising starter_jar at 17:06 suggests a second baking session or prep for the next day, which is new. The wall_clock at counter at 14:10 is unusual; need to observe if this repeats. The picture_frame at coffee_table at 16:43 might indicate a decorative activity. The midday pillow at 10:27 on Monday suggests this might be a weekday pattern (Day 0 and Day 2 also had midday pillows). The plate at sink at 19:14 is mundane but the surprise indicates the model expected it elsewhere; this could be a timing shift. Need to observe more days to see if the second baking session (starter_jar at 17:06) becomes a regular pattern. The single phone and water_bottle still support a single person. The weekend pattern (Day 6) showed later baking (08:03) and coffee (08:41), consistent with a weekend sleep-in.

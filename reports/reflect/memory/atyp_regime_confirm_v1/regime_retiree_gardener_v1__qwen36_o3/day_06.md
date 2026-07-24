@@ -1,0 +1,22 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.92) Remote worker with health-conscious routine — The persistence of the 07:00 wake-up on Sunday (Day 6) and the specific midday plate usage strongly reinforce a structured, self-imposed schedule typical of remote work or disciplined health management, rather than leisurely retiree habits which usually shift later on weekends.
+2. (p=0.06) Retiree or unemployed with structured routine — Still plausible due to rigid regularity, but the lack of any weekend deviation (sleeping in) makes this less likely than the remote worker hypothesis. The midday plate could be a leisurely lunch, but the timing is too precise for typical retiree behavior.
+3. (p=0.02) Work-from-home parent/caregiver — Remains highly unlikely. No child-related items, toys, or irregular schedules have appeared. The routine is too solitary and rigid for a typical caregiver scenario.
+
+## Selected evidence
+- Day 0, 07:03 — reading_glasses at table_d1 (indicates adult resident; consistent morning routine)
+- Day 1, 13:58 — phone at sofa_l1 (indicates home during midday; contradicts 9-5 office worker)
+- Day 2, 08:30 — phone at patio_table_p1 (suggests morning outdoor routine)
+- Day 3, 07:04 — coffee_mug at table_d1 (confirms morning coffee routine at table)
+- Day 3, 07:44 — coffee_mug at patio_table_p1 (confirms transition to outdoor morning routine)
+- Day 4, 06:30 — pill_organizer at counter_k1 (indicates health management/medication; suggests adult with chronic condition or preventive care)
+- Day 4, 06:52 — pill_organizer at cupboard_k1 (indicates storage routine; confirms organized household)
+- Day 5, 06:57 — reading_glasses at table_d1 (confirms weekend wake-up time ~07:00; reinforces structured routine)
+- Day 5, 12:09 — coffee_mug at counter_k1 (confirms midday break persists on Saturday; suggests work break or health habit)
+- Day 6, 07:07 — reading_glasses at table_d1 (confirms Sunday wake-up time ~07:00; routine holds on weekend)
+- Day 6, 12:12 — plate at table_d1 (indicates midday meal; timing aligns with structured break, not leisurely late lunch)
+
+## Notes
+The Sunday wake-up at 07:07 confirms the routine is rigid across all days, strongly favoring the 'remote worker' or 'highly disciplined' profile over a retiree who might sleep in. The midday plate on Sunday at 12:12 mirrors the Saturday midday activity, suggesting a consistent daily rhythm for meals/breaks. No evidence of children or irregular caregiving duties. Key question: Will the evening routine (dinner) show any deviation or social interaction indicators?

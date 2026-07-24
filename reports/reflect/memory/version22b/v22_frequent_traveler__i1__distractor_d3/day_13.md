@@ -1,0 +1,25 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single professional who works from home and travels frequently for business, typically departing early Friday morning and returning mid-week. The morning routine includes coffee and laptop at desk, and evenings involve relaxation with remote and pillow. The packing on Thursday evening and the laptop moving to carryon on Friday morning confirm a regular weekly travel pattern. The new evidence of a Tuesday departure (passport at carryon early Tuesday) suggests the resident may travel on different days but still frequently. The single-person hypothesis remains strongest. — The new events (coffee_mug at table_d1 on Sunday morning, floor_lamp at sofa_l1 in the afternoon and evening, wall_clock at counter_k1, bowl at cupboard_k1) are all mundane and consistent with a single person's weekend routine. No evidence of multiple residents or a different routine.
+2. (p=0.03) A couple or family where one member works from home and travels occasionally, while another handles home decoration and evening meals. The travel evidence could be one member, and the picture frame and dining chair events could be another. However, the packing and laptop events are more consistent with a single frequent traveler. — The new events do not add support for multiple residents. The picture_frame at coffee_table_l1 was a repeat of a previous event, and today's events are all mundane. The probability is reduced further.
+3. (p=0.02) A remote worker who occasionally travels for leisure, with a less structured routine. The travel items (neck pillow, packing cubes) could be for a weekend trip, and the laptop at carryon might be for work on the go. However, the morning coffee and laptop at desk on Friday suggest a workday before departure, which is more typical of a business traveler. The new evidence of a Tuesday departure (passport at carryon early morning, keys and neck_pillow at elsewhere) suggests a mid-week trip, which is less typical for leisure and more for business. The pattern of frequent travel (previous Friday departure, now Tuesday) is more consistent with business travel. — The new events do not support a leisure travel pattern. The coffee_mug at table_d1 on Sunday morning is a typical weekend breakfast. No evidence of a different routine.
+
+## Selected evidence
+- Day 0, 09:18 — coffee_mug at desk_o1 (morning coffee at desk suggests work-from-home routine)
+- Day 1, 07:14 — passport at elsewhere (travel document out early morning, indicates departure for trip)
+- Day 1, 07:14 — suitcase at elsewhere (suitcase out early morning, confirms travel)
+- Day 1, 16:12 — doormat at entry_hook_e1 (doormat at entry in afternoon suggests return from trip)
+- Day 3, 18:35 — neck_pillow at carryon_e1 (packing for travel, indicates another trip preparation)
+- Day 3, 18:35 — packing_cubes at carryon_e1 (packing for travel, confirms trip preparation)
+- Day 4, 09:06 — coffee_mug at desk_o1 (morning coffee at desk, consistent with work-from-home before departure)
+- Day 4, 09:06 — laptop at desk_o1 (laptop at desk in morning, indicates work-from-home)
+- Day 4, 16:29 — laptop at carryon_e1 (laptop moved to carryon, confirms departure for trip)
+- Day 8, 06:23 — passport at carryon_e1 (passport at carryon early Tuesday, suggests another departure)
+- Day 8, 07:35 — keys at elsewhere (keys out early morning, indicates leaving house)
+- Day 8, 07:35 — neck_pillow at elsewhere (neck_pillow out early morning, confirms travel departure)
+- Day 8, 19:17 — doormat at entry_hook_e1 (doormat at entry in evening, could be return from trip or daily habit)
+- Day 10, 18:37 — laptop at carryon_e1 (laptop packed in carryon Thursday evening, consistent with previous Thursday packing pattern)
+
+## Notes
+The Thursday evening laptop at carryon (18:37) reinforces the pattern of packing for a Friday departure. The Tuesday departure (Day 8) remains an anomaly; it could be a different trip or a change in schedule. Need to observe next week to see if the pattern stabilizes (e.g., departures on both Friday and Tuesday, or a consistent Friday departure). The single frequent business traveler hypothesis remains strongly supported (p=0.95). Weekend patterns (coffee at table, floor lamp at sofa) are consistent with a single person's relaxed weekend. No evidence of multiple residents. Today's events (coffee_mug at table_d1 at 07:37, floor_lamp at sofa_l1 at 13:31 and 20:38, wall_clock at counter_k1 at 16:29, bowl at cupboard_k1 at 21:45) are all mundane and do not add new information. The bowl at cupboard_k1 in the evening is a routine kitchen event.

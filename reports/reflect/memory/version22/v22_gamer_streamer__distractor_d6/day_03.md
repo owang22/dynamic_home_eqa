@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) Single adult with a regular 9-to-5 job, likely living alone or with minimal housemates. The morning doormat movements (07:57 and 09:02) suggest a morning departure and possibly a quick return or mail check. The coffee mug and plate at table at 10:46 indicate a late breakfast or early lunch, consistent with a work-from-home or flexible schedule. The floor lamp at sofa at 12:21 suggests a midday break. The blanket at gaming chair at 15:05 could be for comfort while working or gaming. The pillow movements at 18:51 and 21:57 suggest bed use in the evening, possibly for a nap or bedtime. The energy can at desk at 21:58 indicates late-night work or gaming. The single plate and single chair movements still suggest one person. — The morning doormat events are earlier than previous days, but still consistent with a workday routine. The late breakfast/early lunch at 10:46 is new and suggests a flexible schedule, possibly WFH. The evening pillow and energy can reinforce late-night activity. The single plate and chair movements still point to one person.
+2. (p=0.25) Retired or work-from-home individual with a flexible schedule. The morning doormat at 07:57 could be a morning walk or mail check, and the second doormat at 09:02 might be returning from a short outing. The coffee mug and plate at table at 10:46 suggest a late breakfast. The floor lamp at sofa at 12:21 indicates a midday break. The blanket at gaming chair at 15:05 could be for napping or comfort. The pillow movements at 18:51 and 21:57 suggest bed use, possibly for a nap or early bedtime. The energy can at desk at 21:58 is late, but could be for entertainment. The lack of a morning departure for work supports this hypothesis. — The morning doormat events are not clearly a departure for work; they could be a walk or mail check. The late breakfast and midday break are typical of a flexible schedule. The evening pillow and energy can are consistent with a retired or WFH person.
+3. (p=0.15) Couple or family with at least one person working from home. The morning doormat at 07:57 could be one person leaving, while the second doormat at 09:02 might be another person arriving or leaving. The coffee mug and plate at table at 10:46 could be from one person having breakfast, while the floor lamp at sofa at 12:21 might be another person. The blanket at gaming chair at 15:05 could be for one person, and the pillow movements at 18:51 and 21:57 could be from different people. The energy can at desk at 21:58 might be for one person working late. However, the single plate and single chair movements still suggest only one person ate, and the evidence for multiple residents remains weak. — The two doormat events could indicate two people, but they could also be the same person leaving and returning. The other events are still consistent with a single person. The evidence for multiple residents is not strong enough to increase probability.
+
+## Selected evidence
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday pillow movement suggests bed use or tidying during the day)
+- Day 0, 18:47 — plate at table_d1 (dinner time, consistent with a workday evening meal)
+- Day 1, 19:13 — plate at table_d1 (dinner time, similar to day 0, reinforces workday pattern)
+- Day 1, 21:45 — energy_can at counter_k1 (late caffeine consumption, suggests staying up late or needing energy)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure or arrival, suggests leaving for work)
+- Day 2, 12:46 — keys at elsewhere (midday keys movement, could be lunch break or errand)
+- Day 2, 12:46 — phone at elsewhere (midday phone movement, same time as keys, supports midday outing)
+- Day 2, 13:52 — bed_pillow at bed_r1 (afternoon pillow movement, could be nap or bed-making)
+- Day 2, 16:47 — bed_pillow at bed_r1 (second afternoon pillow movement, reinforces bed use)
+- Day 2, 21:40 — headset at desk_o1 (late evening headset at desk, suggests work or gaming)
+- Day 2, 21:45 — plate at cupboard_k1 (late dinner plate, later than previous days)
+- Day 3, 07:57 — doormat at entry_hook_e1 (morning departure or arrival, earlier than previous days)
+- Day 3, 09:02 — doormat at entry_hook_e1 (second morning doormat event, could be return or another person)
+- Day 3, 10:46 — coffee_mug at table_d1 (late breakfast or early lunch, suggests flexible schedule)
+- Day 3, 10:46 — plate at table_d1 (same time as coffee mug, reinforces meal time)
+
+## Notes
+Day 3 (Thursday) shows two morning doormat events (07:57 and 09:02), which could indicate a departure and return, or two people. The late breakfast/early lunch at 10:46 is new and suggests a flexible schedule. The floor lamp at sofa at 12:21 and blanket at gaming chair at 15:05 are new items. The evening pillow movements (18:51 and 21:57) and energy can at desk (21:58) continue the late-night pattern. Need to check if morning doormat events continue on Friday. Weekend observations (days 5-6) will be crucial to distinguish between work-from-home and office worker. Also watch for multiple plates or signs of other residents. The single plate and single chair movements still suggest one person, but the two doormat events are worth monitoring.

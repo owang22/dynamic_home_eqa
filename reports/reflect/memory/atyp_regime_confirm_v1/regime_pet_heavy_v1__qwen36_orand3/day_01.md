@@ -1,0 +1,13 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) Remote worker with a pet — The pet bed evidence remains strong. The phone at the counter in the evening is consistent with a resident returning home or relaxing after work. No commute evidence yet.
+2. (p=0.20) Pet owner with irregular sleep — Still possible, but the lack of late-night activity or early morning yoga/mat usage on Day 1 slightly reduces the 'irregular' aspect compared to the standard remote worker profile.
+3. (p=0.10) Standard working household — Dishes cycling is generic. The pet bed is the only discriminator, but without further evidence of specific routines (like a laptop at a desk), this remains a low-probability baseline.
+
+## Selected evidence
+- Day 0, 09:49 — blanket at pet_bed_l1 (indicates a pet is present and has a designated resting spot, discriminating against households without pets)
+- Day 1, 17:59 — phone at counter_k1 (suggests resident is home in the late afternoon/evening, consistent with remote work or early return from commute; distinguishes from absent residents)
+
+## Notes
+Day 1 fork at cupboard is mundane. Need to observe if the phone stays at the counter (work-from-home) or moves to a bedroom (commuter). Look for laptop usage, specific food items, or commute-related items (keys, bags) in future days to distinguish between remote workers, commuters, or students. Check if the pet bed blanket is moved frequently.

@@ -1,0 +1,20 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single adult with a regular 9-to-5 job, commuting to work. — The work badge leaving at 05:07 and returning at 15:05 on day 2, combined with the doormat at 16:12 on day 1 and the evening desk coffee, strongly supports a standard workday. The new day 3 events show a later badge return (23:02) and a hi-vis vest, suggesting a different work schedule or a second job. However, the single items (fork, plate, pillow) still indicate a single occupant. The pattern is still consistent with a commuter, but the late return and vest introduce variability.
+2. (p=0.12) A person with a non-standard work schedule, possibly shift work or a second job. — The day 3 events show work_badge and hi_vis_vest returning at 23:02, which is much later than the previous 15:05. This could indicate a shift worker (e.g., construction, security) or someone with a second job. The vest suggests a manual or safety-related occupation. The early badge departure on day 2 (05:07) could be for a morning shift, and the late return on day 3 for an evening shift. This hypothesis gains support from the new evidence.
+3. (p=0.03) A couple or family with at least one adult, but the single items (fork, plate, pillow) and single badge suggest a single occupant. — No new evidence of multiple residents. All objects remain singular. This hypothesis is nearly ruled out.
+
+## Selected evidence
+- Day 0, 05:24 — phone at elsewhere (early morning phone activity, possibly alarm or morning routine)
+- Day 1, 16:12 — doormat at entry_hook_e1 (returning home in late afternoon, consistent with workday)
+- Day 1, 22:39 — keys at counter_k1 (end-of-day arrival, likely after work)
+- Day 1, 22:39 — thermos at sink_k1 (end-of-day cleanup, possibly from work lunch)
+- Day 2, 05:07 — work_badge at elsewhere (leaving for work early morning, confirms commute)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (returning from work in mid-afternoon, consistent with standard workday)
+- Day 2, 19:13 — coffee_mug at desk_o1 (evening activity at desk, possibly work or leisure)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (safety vest, suggests manual or outdoor job)
+- Day 3, 23:02 — work_badge at locker_shelf_e1 (returning from work very late, shift work pattern)
+
+## Notes
+Day 3 (Thursday) shows a very different pattern: work_badge and hi_vis_vest return at 23:02, much later than previous 15:05. The vest is new and suggests a job requiring safety gear (construction, warehouse, etc.). The dining_chair at table at 08:57 and phone/thermos at elsewhere at 13:28 are mundane. Bed_pillow at bed_r1 at 18:51 and 21:57 may indicate napping or early bedtime. Need to check weekend days (5-6) to see if routine changes. Also look for laptop at desk during midday to confirm work-from-home, or suitcase leaving for days to indicate travel. The early badge departure on day 2 (05:07) and late return on day 3 (23:02) could indicate rotating shifts. Household size still appears to be single adult.

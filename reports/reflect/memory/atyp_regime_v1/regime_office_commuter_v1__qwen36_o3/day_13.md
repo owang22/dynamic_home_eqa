@@ -1,0 +1,21 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=1.00) Standard Office Worker — Day 13 (Sunday) confirms the weekend baseline: late morning activity (12:37) and no commute items. This reinforces the distinction from remote/shift workers. No new evidence contradicts the 9-5 office pattern established in Days 8-12.
+2. (p=0.00) Remote Worker with Strict Boundaries — Discarded. Previous evidence (lanyard/transit card leaving home) and current weekend behavior (no work device movement) contradict this.
+3. (p=0.00) Shift Worker / Night Owl — Discarded. Consistent early morning activity on weekdays and late morning activity on weekends is incompatible with night shift patterns.
+
+## Selected evidence
+- Day 7, 07:09 — phone at counter_k1 (weekday wake-up; confirms early start vs 12:30 weekend)
+- Day 8, 08:30 — laptop at elsewhere (work device leaving home; confirms office-bound status)
+- Day 8, 08:30 — work_lanyard at elsewhere (ID badge leaving home; confirms professional employment)
+- Day 8, 17:46 — transit_card at counter_k1 (return from commute; confirms physical office attendance)
+- Day 11, 07:25 — coffee_mug at counter_k1 (weekday morning routine; consistent with early start)
+- Day 11, 08:26 — phone at elsewhere (departure; consistent with ~08:30 work departure)
+- Day 12, 12:37 — phone at sofa_l1 (weekend leisure; confirms significantly later wake-up than weekdays)
+- Day 12, 12:37 — travel_mug at sink_k1 (weekend beverage; suggests casual routine vs structured weekday)
+- Day 12, 18:30 — plate at table_d1 (weekend dinner; confirms resident is home, no evening commute)
+- Day 13, 12:37 — phone at sofa_l1 (Sunday leisure; replicates Saturday pattern, solidifying weekend baseline)
+
+## Notes
+Day 13 (Sunday) perfectly mirrors Day 12 (Saturday) in timing (12:37 phone usage), confirming a stable weekend routine. The 'plate at sink' and 'travel_mug at cupboard' are mundane cleanup events and do not add diagnostic value for persona identification. The hypothesis of 'Standard Office Worker' is now highly robust (p=1.0) given the consistent 5-day work week pattern (Mon-Fri office, Sat-Sun home) observed over Days 7-13. No new hypotheses needed.

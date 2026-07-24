@@ -1,0 +1,26 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single working professional who works from home, has a simple lunch, and winds down in the evening with a lamp on while relaxing on the sofa, then prepares for bed. The phone on the sofa at 13:46 confirms a midday break. The reading glasses at the desk at 07:46 suggest morning reading or computer work. The coffee mug at the desk at 09:01 indicates a morning work routine. The late dinner cleanup (21:45) and the bed pillow events (18:51 and 21:57) suggest an evening nap or early bedtime preparation, consistent with a flexible schedule. — The new evidence strongly supports a work-from-home professional: reading glasses at desk in the morning, coffee mug at desk, phone on sofa at midday break, and bed pillow events indicating a nap or early bedtime. The single fork at dinner cleanup reinforces a single person. The retiree hypothesis is less likely due to the late dinner and midday phone break. The couple/family hypothesis is contradicted by the lack of multiple items. — Day 4 (Friday) shows bowl and reading glasses at table at 06:58 (breakfast), coffee mug at desk at 07:38 (work start), fork at table at 18:01 (dinner), phone at nightstand at 22:10 (bedtime). No signs of a second person. The pattern is consistent with a single work-from-home professional.
+2. (p=0.08) A retiree who enjoys a leisurely morning with a newspaper, has a light lunch, and follows a consistent evening routine. The reading glasses at the desk at 07:46 could be for reading or hobbies. The coffee mug at the desk at 09:01 suggests a morning beverage. The phone on the sofa at 13:46 might be a midday rest. The bed pillow events (18:51 and 21:57) could indicate an afternoon nap and early bedtime. However, the late dinner cleanup (21:45) is less typical for a retiree. — The retiree hypothesis remains possible but less likely due to the late dinner and the phone break at 13:46, which is more typical of a working professional. The newspaper was not observed today, but the pattern is still consistent. The probability is reduced from 0.15 to 0.08. — Day 4 shows a morning routine (bowl, reading glasses, coffee mug) but no newspaper. The late dinner (18:01) is earlier than previous days, but still not typical for a retiree. The phone at nightstand at 22:10 suggests a late bedtime. The retiree hypothesis is less consistent.
+3. (p=0.02) A couple or family with one person working from home and another possibly working outside, sharing a morning routine and having a simple lunch, then a quiet evening. The reading glasses at the desk at 07:46 could be one partner reading. The coffee mug at the desk at 09:01 might be one person's morning coffee. The phone on the sofa at 13:46 could be a break. The single fork at dinner cleanup (21:45) suggests only one person eating, but the bed pillow events (18:51 and 21:57) might indicate two different bedtimes. However, no multiple plates or signs of others. — The lack of multiple items (only one fork, one coffee mug, one bowl) strongly suggests a single person. The bed pillow events could be the same person napping and then going to bed. The couple/family hypothesis is very unlikely and probability is reduced from 0.05 to 0.02. — Day 4 shows only single items: one bowl, one coffee mug, one fork. No evidence of a second person. The hypothesis is very unlikely.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading habit, suggests print subscription)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, turning on lamp)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath or shower routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation)
+- Day 1, 13:51 — phone at sofa_l1 (midday break, likely work-from-home professional)
+- Day 1, 21:20 — dining_chair at table_d1 (late dinner, typical of single person)
+- Day 2, 12:15 — fork at table_d1 (simple lunch, single person)
+- Day 2, 14:03 — reading_glasses at coffee_table_l1 (reading or close work, likely work-from-home professional)
+- Day 2, 18:55 — fork at sink_k1 (dinner cleanup, single person)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (late evening cleanup, single person)
+- Day 3, 07:46 — reading_glasses at desk_o1 (morning reading or computer work, work-from-home professional)
+- Day 3, 09:01 — coffee_mug at desk_o1 (morning work routine, work-from-home professional)
+- Day 3, 13:46 — phone at sofa_l1 (midday break, consistent with work-from-home)
+- Day 3, 18:51 — bed_pillow at bed_r1 (afternoon nap or early bedtime preparation)
+- Day 3, 21:45 — fork at cupboard_k1 (late dinner cleanup, single person)
+
+## Notes
+Day 4 (Friday) shows bowl and reading glasses at table at 06:58 (breakfast), coffee mug at desk at 07:38 (work start), fork at table at 18:01 (dinner), phone at nightstand at 22:10 (bedtime). No newspaper observed today; check if it appears on weekends (Day 5-6) to confirm subscription vs. weekday-only. The bath mat event was only on Day 0; check if it repeats. The picture frame at coffee_table at 18:34 is a new object; may indicate decoration or personal item. Need to verify if the lamp and sofa use pattern continues. The single bowl and fork reinforce single person. The phone at nightstand at 22:10 suggests bedtime routine.

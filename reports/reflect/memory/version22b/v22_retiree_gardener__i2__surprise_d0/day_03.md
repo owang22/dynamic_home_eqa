@@ -1,0 +1,16 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A person who enjoys a morning coffee and reading on the patio, likely a retiree or someone with a flexible schedule who values leisure time. The consistent morning newspaper habit (Day 0) and now coffee mug and reading glasses on the patio at 07:47 suggest a relaxed morning routine outdoors. — The surprising events on Day 3 (coffee mug, reading glasses, phone on patio at 07:47) strongly indicate a morning ritual on the patio, which aligns with a leisurely lifestyle. The newspaper on Day 0 at 07:34 also fits this pattern. The phone suggests connectivity, but the outdoor setting and reading glasses imply a relaxed start.
+2. (p=0.30) A person who works from home or has a flexible schedule, as evidenced by lunch at home (Day 0, 12:31) and the phone on the patio at 09:10 (possibly for work calls or browsing). The structured dishwashing (plate at sink immediately after lunch) suggests routine. — The lunch at home and immediate dish cleaning on Day 0 indicate a structured midday break. The phone on the patio at 09:10 could be for work or personal use, but the overall pattern still supports a work-from-home or flexible schedule. However, the strong patio morning ritual reduces the probability of a traditional office worker.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading habit, traditional media, suggests leisurely start)
+- Day 0, 12:31 — plate at sink_k1 (lunch at home, immediate cleaning, indicates structured routine)
+- Day 3, 07:47 — coffee_mug at patio_table_p1 (morning coffee outdoors, reinforces leisure morning ritual)
+- Day 3, 07:47 — reading_glasses at patio_table_p1 (reading outdoors, consistent with newspaper habit)
+- Day 3, 09:10 — phone at patio_table_p1 (phone use during morning routine, possibly for news or work)
+- Day 3, 13:52 — reading_glasses at coffee_table_l1 (glasses moved indoors after morning, suggests transition to indoor reading)
+
+## Notes
+The surprising events on Day 3 (Thursday) reveal a strong morning patio routine with coffee, reading glasses, and phone. This contradicts the earlier expectation of a simple indoor morning. Need to verify if this patio routine occurs daily or only on certain days (e.g., weekdays vs. weekends). Also, the newspaper was not observed on Day 3; perhaps it was read on the patio or not present. The bowl at cupboard at 21:45 suggests evening kitchen activity, but not surprising. Future observations should check for weekend patterns and whether the newspaper appears again.

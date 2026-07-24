@@ -382,13 +382,18 @@ stream — classical updates statistically, llm_direct/nomem semantically, fusio
 edge only; base model, rates, and other objects stay real-data).
 
 Findings (confirmatory bank, clustered CIs; reports/reflect/report_conf.txt):
-1. CURATION KEEPS THE SEMANTIC CHANNEL ALIVE (strongest result). llm_nomem (raw
-   digest) collapses as history grows: pooled room 0.65 (day 1) → 0.06 (day 14),
-   literally 0.00 on frequent objects — the model drowns in ~400 uncurated lines.
-   llm_direct (memory only, ≤15 lines) holds 0.63-0.79 throughout. Early (days 1-3)
-   the two are equal — curation is lossless compression; late, it is the difference
-   between reasoning and noise. P2 exceeded: curation doesn't just match raw
-   context, it is what makes long-horizon semantic reasoning viable at all.
+1. CURATION MATCHES THE RAW STREAM AT 25x COMPRESSION [CORRECTED]. The initially
+   reported llm_nomem "collapse" (0.06 at day 14) was substantially a CONTEXT-
+   OVERFLOW ARTIFACT: prompt + a hardcoded max_tokens=4096 exceeded the server's
+   8192 max-model-len on long raw digests, silently zeroing failed calls (pred
+   defaulted to the alphabetically-first candidate — 105/126 'bathroom_c1' at day
+   14 was the tell). After fixing the generation budget (max_tokens=1024), nomem
+   holds ~0.55-0.60 receptacle through day 10 (day 14 still ~33% overflows on the
+   largest digests pending a 16k-context rerun). Honest claim: llm_direct (≤15
+   curated lines) ≈ llm_nomem (~300-470 raw lines) — curation is ~25x lossless
+   compression of the regime signal, plus immunity to the context ceiling that the
+   raw stream WILL eventually hit in any real deployment. P2 as pre-registered
+   (direct ≈ nomem), not the stronger version first reported.
 2. FUSION IS THE BEST ARM AT DAY 14, both granularities: pooled receptacle 0.70
    [0.60,0.80] vs C3g 0.60 / direct 0.55; room 0.79 [0.67,0.89] vs 0.71 / 0.63.
    P1 PASS (pooled fusion ≥ both endpoints). Crucially it WINS the FREQUENT stratum
@@ -407,3 +412,86 @@ Findings (confirmatory bank, clustered CIs; reports/reflect/report_conf.txt):
    still beat no prior. The gate should be RELATIVE (memory uncertainty vs the
    classical model's own uncertainty), not absolute — future refinement. Elsewhere
    H is low so gated == flat.
+
+---
+
+## Reflective memory — round 2 (ratio fusion, entropy diagnostic, obs-per-day)
+
+**Ratio fusion (replaces the failed absolute gate).** Trust = ratio of confidences,
+not the LLM's alone: alpha = round(alpha_max*(1-H/H_max)) pseudo-COUNTS on the target
+edge, fit jointly with that edge's real events so the prior's influence is
+automatically ~alpha/(alpha+n) vs the classical confidence n (real event count). No
+gate. Continuous. `fusion ≈ fusion_flat` throughout — confirming the alpha/(alpha+n)
+RATIO, not the entropy term, is the active mechanism. `reflect/report.py`.
+
+**Entropy diagnostic (all 3 models, reports/reflect/entropy_diagnostic.png).** Plotted
+llm_direct accuracy vs the memory's OWN top-3 hypothesis entropy, binned, clustered
+CIs. VERDICT: NO downward slope in any model — flat-to-INVERTED (DeepSeek highest-H
+bin 0.68 recep = best; GLM 0.51 = best; Qwen flat). LLM self-reported hypothesis
+entropy is NOT a usable trust signal; it is mildly anti-calibrated (low-entropy =
+confident-but-wrong is the failure mode, e.g. shift_rotator day 0). This is WHY the
+original absolute gate failed (P4) and why ratio fusion must weight by evidence, not
+self-reported confidence.
+
+**nomem collapse was an ARTIFACT (fully resolved).** Original day-14 llm_nomem 0.06
+was context overflow: hardcoded max_tokens=4096 + long raw digest > 8192 model-len,
+silently zeroing calls (pred defaulted to 'bathroom_c1', 105/126 at day 14). Fixed:
+max_tokens param + 16k server. Corrected nomem day-14 = 0.48 recep / 0.66 room, zero
+overflows. Honest claim = P2 as pre-registered: llm_direct (≤15 curated lines) ≈
+llm_nomem (~300-470 raw lines) — curation is ~25x lossless compression.
+
+**Observation rate is the key regime knob (`run.py` OBS_PER_DAY / --obs-per-day).**
+Default (all ~30 events/day) SATURATES: one day already reveals a strongly-conditioned
+persona, so no learning trajectory is visible and "rare" (rare-in-event-count) objects
+are actually EASY (near-stationary). Setting obs-per-day=3 (deterministic per-day
+subsample; identical stream to every arm) starves the early days and is the headline
+setting:
+  - LEARNING TRAJECTORIES appear: llm_direct climbs 0.36→0.63 (pooled recep, day 1→14).
+  - STRATUM SPECIALIZATION: LLM wins RARE+MEDIUM (semantic transfer where per-edge
+    stats can't accumulate; room-level rare direct→0.88), classical wins FREQUENT
+    (enough events even thinned; the LLM's static hypothesis mis-serves cyclic objects).
+  - FUSION TRACKS THE UPPER ENVELOPE per stratum and leads in the starved early days
+    (day-1 rare recep: fusion 0.62 vs direct 0.26, C3g 0.57) — the genuine
+    complementarity full-obs never produced. alpha_max re-swept to 1 (lighter prior
+    optimal on thinner data). Figures: reflect_curves_deepseek_o3.png.
+  Qwen3.6 + GLM obs3 runs in progress for cross-model confirmation.
+
+---
+
+## Reflective memory — FINAL: entropy dropped, pure evidence-ratio fusion, 3 models @ obs=3
+
+Entropy weighting REMOVED (diagnostic showed LLM hypothesis-entropy is flat-to-inverted
+vs accuracy in all 3 models — not a usable trust signal). Fusion is now a single arm:
+a CONSTANT alpha pseudo-counts of the memory-conditioned LLM belief on the target edge,
+fit jointly with real events so influence = alpha/(alpha+n) vs the classical confidence
+(edge event count). alpha swept {1,2,3,5,8} on the dev bank (held-out accuracy), frozen,
+evaluated on confirmatory. Dev bank verified comparable to conf (same simulator, object/
+event counts, all rarity terciles). alpha*=1 for all three obs=3 models.
+
+Cross-model, obs-per-day=3, pooled RECEPTACLE accuracy (day 1 cold-start -> day 14):
+  arm            DeepSeek     Qwen3.6      GLM
+  llm_direct     0.36->0.63   0.34->0.40   0.31->0.51   (capability-dependent; climbs)
+  llm_nomem      0.30->0.45   0.27->0.33   0.21->0.43   (raw digest, weakest)
+  fusion         0.44->0.60   0.39->0.61   0.39->0.61   (MODEL-INVARIANT)
+  classical_C3g  0.48->0.60   (identical across models — same statistical model)
+  classical_C1   0.48->0.48   (persistence, no periodic term)
+
+Findings:
+1. FUSION IS CAPABILITY-ROBUST & MODEL-INVARIANT: 0.60-0.61 recep / 0.69-0.71 room at
+   day 14 for ALL three models, despite llm_direct ranging 0.40-0.63. The alpha/(alpha+n)
+   ratio anchors fusion in model-independent statistics and adds whatever semantic signal
+   exists — so a WEAK LLM (Qwen 0.40, GLM 0.51 alone) still yields fusion 0.61, because
+   real data overrides bad pseudo-counts. This is the payoff of dropping entropy for the
+   evidence ratio: robustness to a weak/wrong semantic prior, for free.
+2. COMPLEMENTARITY PEAKS MID-RANGE (days 2-3): fusion rises above both endpoints while
+   the classical model is still accumulating and the LLM prior is most informative.
+3. STRONG MODEL, LONG HORIZON: DeepSeek llm_direct OVERTAKES fusion by day 14
+   (0.63 > 0.60) — with a capable model and enough curated evidence, pure semantic memory
+   eventually wins the pooled receptacle metric. Per-stratum it's cleaner: LLM wins
+   rare+medium (semantic transfer where per-edge stats can't accumulate), classical wins
+   frequent; fusion inherits each.
+4. HONEST CAVEAT: at obs=3 POOLED, fusion is close to classical_C3g (both ~0.60); the
+   fusion win over classical is modest and concentrated in the mid-range + rare/medium
+   strata. It never LOSES to classical, and hugely beats the LLM alone for weak models —
+   but "fusion >> both endpoints everywhere" is NOT the claim; "fusion tracks the upper
+   envelope and is capability-robust" is. Figures: xmodel_obs3.png, reflect_curves_*_o3.png.

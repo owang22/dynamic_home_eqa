@@ -1,0 +1,15 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Active remote worker with morning fitness routine — Strongest fit. Day 0 foam roller (05:00) and Day 2 protein shaker (06:40) confirm early fitness. Laptop at desk at 17:18 suggests work is done or shifted to evening, consistent with remote flexibility. Keys at 07:59 'elsewhere' likely in bag/car for commute to gym or co-working, not office.
+2. (p=0.10) Standard office worker with early gym habit — Keys leaving at 07:59 fits commute. However, laptop appearing at home desk at 17:18 is unusual for a standard 9-5 worker unless they work from home part-time or forgot it. The 17:18 timing is early for return from a standard office if traffic is heavy, but possible.
+3. (p=0.05) Night owl / Shift worker — Contradicted by consistent early morning activity (05:00, 06:40). Low probability remains only if 'elsewhere' keys imply a very late night shift ending at 07:59, but the protein shaker suggests post-workout breakfast, not post-shift wind-down.
+
+## Selected evidence
+- Day 0, 05:00 — foam_roller at coffee_table_l1 (strong indicator of early morning exercise routine)
+- Day 2, 06:40 — protein_shaker at counter_k1 (confirms post-workout nutrition, reinforces active morning routine)
+- Day 2, 07:59 — keys at elsewhere (suggests departure; combined with morning fitness, likely gym or co-working, not standard office)
+- Day 2, 17:18 — laptop at desk_o1 (laptop returns home late afternoon; suggests remote work or flexible schedule, not standard 9-5 office presence)
+
+## Notes
+The laptop appearing at the home desk at 17:18 is a key discriminator against a standard office worker who would leave it at the office. The keys leaving at 07:59 'elsewhere' likely means they are in a bag/car, not on a hook, supporting the idea that the person is going somewhere (gym/co-working) rather than just to a nearby office. The protein shaker on Day 2 confirms the fitness routine is not a one-off. Need to verify if the laptop was at the desk on Day 1 morning to see if the 17:18 arrival is a return or a first appearance.

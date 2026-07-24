@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Family with a young child (toddler/preschooler) who attends daycare on weekdays but is at home on Friday, Saturday, and Sunday. — The child-related items (sippy cup, board book, diaper caddy, cushion, playmat, bath mat) appear every day. The doormat pattern (seen on Tuesday and Wednesday, not on Friday–Sunday) strongly suggests weekday daycare drop-off/pickup. Today (Monday) the board book moved to toy bin at 19:41, consistent with evening playtime, and no doormat movement was observed, which may be due to a different routine (e.g., parent works from home or child is picked up earlier). The bowl at sink (07:05) and cupboard (21:45) are generic breakfast/dinner dishes. The picture frame at coffee table (16:43) and floor lamp at sofa (17:20) are generic. The bath mat at bathroom (18:35) could be a child's bath. The fork at sink (18:38) is mundane. The evidence strongly supports a full-time child with weekday daycare.
+2. (p=0.01) Single adult with a child visiting part-time (e.g., every other weekend or weekdays). — The child items appear on all seven days, which is less typical for part-time care unless the adult works from home or the child is in daycare on weekdays. The doormat pattern (not seen on Friday–Sunday) could still fit a part-time schedule, but the consistent presence of child items every day makes this less likely than full-time care. The new evidence (board book at toy bin on Monday) does not contradict this hypothesis but does not strengthen it either.
+3. (p=0.00) Couple without children. — The overwhelming evidence of child-related items (sippy cup, board book, diaper caddy, cushion, playmat, bath mat) makes this hypothesis impossible. Removed.
+
+## Selected evidence
+- Day 0, 17:16 — sippy_cup at elsewhere (sippy cup indicates a young child in the household)
+- Day 1, 16:12 — doormat at entry_hook_e1 (doormat moved to entry hook in the afternoon could indicate child returning from daycare)
+- Day 2, 08:38 — doormat at entry_hook_e1 (doormat at entry hook in the morning could indicate parent leaving with child or child leaving for daycare)
+- Day 2, 17:54 — diaper_caddy at dresser_n1 (diaper caddy is a strong child indicator, likely in a nursery)
+- Day 2, 19:08 — board_book at crib_n1 (board book at crib confirms a child's bedroom and bedtime routine)
+- Day 3, 08:43 — cushion at playmat_n1 (cushion on playmat suggests a child's play area, active in the morning)
+- Day 3, 08:43 — sippy_cup at playmat_n1 (sippy cup on playmat confirms child's morning playtime)
+- Day 3, 11:13 — board_book at toy_bin_l1 (board book in toy bin indicates child's toy storage)
+- Day 3, 21:45 — sippy_cup at cupboard_k1 (sippy cup in cupboard in the evening suggests clean-up after child's use)
+- Day 4, 07:11 — sippy_cup at sink_k1 (sippy cup at sink in the morning suggests child's breakfast routine)
+- Day 4, 17:41 — sippy_cup at table_d1 (sippy cup at table in the evening suggests child's dinner routine)
+- Day 5, 12:38 — sippy_cup at sink_k1 (sippy cup at sink on Saturday suggests child's lunchtime routine)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (bath mat in bathroom in the evening could indicate child's bath time)
+- Day 5, 21:45 — sippy_cup at cupboard_k1 (sippy cup in cupboard on Saturday evening suggests clean-up after child's use)
+- Day 6, 17:47 — sippy_cup at table_d1 (sippy cup at table on Sunday confirms child's dinner routine on weekend)
+
+## Notes
+Eight days observed (Mon–Mon). Child-related items appear every day. Doormat pattern: seen on Tue (afternoon) and Wed (morning), not on Fri, Sat, Sun, or Mon. This suggests weekday daycare drop-off/pickup, but Monday's absence may be due to a different routine (e.g., parent works from home, child is picked up earlier, or doormat was not moved). The board book at toy bin on Monday (19:41) is consistent with evening playtime. The bath mat at bathroom (18:35) on Monday could be a child's bath. Need to observe Tuesday to see if doormat pattern resumes (e.g., doormat at entry hook in the morning or afternoon). Also look for other child items like high chair, toys, or stroller. The picture frame at coffee table (16:43) is generic but could be a family photo. The floor lamp at sofa (17:20) is generic. The bowl at sink (07:05) and cupboard (21:45) are generic breakfast/dinner dishes. The fork at sink (18:38) is mundane.

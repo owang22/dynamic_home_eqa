@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Full-time remote worker with structured morning health routine and consistent home dining habits. — The reappearance of reading glasses at the desk on Sunday morning (Day 13) strongly contradicts the 'weekend errand' hypothesis and reinforces the core remote-work identity. The Saturday keys event is now interpreted as an anomaly or a specific one-off trip, while the Sunday desk presence re-establishes the dominant pattern. Probability drops slightly from 0.95 to account for the persistent ambiguity of the Saturday event, but remains high.
+2. (p=0.15) Hybrid worker who works from home Mon-Fri but leaves the house on weekends for errands or social visits. — This hypothesis is weakened by the Day 13 observation. If the resident were strictly a 'weekend leaver', the desk should remain empty on Sunday. The presence of glasses at the desk suggests either a 'work-from-home weekend' (contradicting the 'Mon-Fri' constraint) or that the Saturday keys event was an outlier. It remains possible if the resident works irregular weekends, but less likely than the full-time remote hypothesis given the immediate return to desk work.
+3. (p=0.00) Non-resident visitor or short-term guest. — Removed. The 14-day streak of consistent routines and home presence rules out transient behavior.
+
+## Selected evidence
+- Day 0, 06:45 — pill_organizer at counter_k1 (discriminates: daily health routine, predates work)
+- Day 0, 07:11 — reading_glasses at desk_o1 (discriminates: start of workday/screen time)
+- Day 0, 13:27 — coffee_mug at desk_o1 (discriminates: sustained presence at workspace)
+- Day 0, 21:45 — bowl at cupboard_k1 (discriminates: evening meal at home)
+- Day 2, 08:31 — coffee_mug at desk_o1 (confirms: remote work pattern on Wednesday)
+- Day 2, 12:30 — plate at table_d1 (discriminates: lunch at home)
+- Day 3, 07:09 — reading_glasses at desk_o1 (confirms: remote work pattern on Thursday)
+- Day 4, 06:45 — pill_organizer at counter_k1 (confirms: routine persists into Friday)
+- Day 5, 06:45 — reading_glasses at counter_k1 (discriminates: weekend/leisure start, no desk)
+- Day 6, 13:51 — reading_glasses at coffee_table_l1 (discriminates: weekend leisure location)
+- Day 8, 08:37 — coffee_mug at desk_o1 (confirms: return to work pattern on Tuesday)
+- Day 8, 12:30 — fork at table_d1 (confirms: lunch at home, consistent with workday)
+- Day 9, 06:45 — reading_glasses at counter_k1 (confirms: persistent morning routine, pre-work transition)
+- Day 10, 07:16 — bowl at table_d1 (discriminates: late breakfast/lunch, no desk activity yet)
+- Day 13, 07:10 — reading_glasses at desk_o1 (discriminates: Sunday work activity, contradicts weekend-leaver hypothesis)
+
+## Notes
+Day 13 (Sunday) observation of reading_glasses at desk_o1 is critical. It invalidates the 'strict weekend leaver' aspect of Hypothesis 2. The resident appears to work on Sundays as well, or at least uses the desk for non-work screen time. The Saturday keys event (Day 12) remains an outlier; it might indicate a one-off trip or a delivery pickup, but the immediate return to desk work on Sunday suggests the resident was home anyway. The 'pill_organizer' was not observed on Day 12 or 13; this may be a detection gap or a change in routine. Need to verify if the Sunday desk usage is consistent with work or leisure (e.g., reading). The 'remote at sofa' and 'plate at sink' are mundane and discarded.

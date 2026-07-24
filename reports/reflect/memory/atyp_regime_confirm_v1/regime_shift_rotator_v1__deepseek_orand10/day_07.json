@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A person who works a physically demanding job (e.g., construction, maintenance, or security) with a consistent early start and return by mid-afternoon. The hi-vis vest and thermos are taken together at 05:05 and returned at 14:10, suggesting a shift that ends around 2 PM. The laptop is at home during the day, indicating it is not used for work. The evening routine (plate, fork, remote) is similar to previous days, but the thermos is now stored after use. This pattern is distinct from the previous hybrid office hypothesis.",
+   "prob": 0.8,
+   "rationale": "Day 7 (Monday) shows hi-vis vest and thermos leaving at 05:05 and returning at 14:10, with laptop at home. This contradicts the previous office-worker pattern (work_badge at 05:09 on Day 0). The new evidence strongly suggests a different occupation with a fixed early shift."
+  },
+  {
+   "persona": "A person who lives alone and maintains a tidy, organized home. Single sets of dishes (plate, fork) are used and cleaned each day. The thermos is used on workdays (Day 0-2, Day 7) but not on weekends (Day 5-6). The remote is used in the evening, and the phone returns to the nightstand at bedtime. This solitary, tidy routine is consistent across all observed days.",
+   "prob": 0.15,
+   "rationale": "The single-person household is supported by the use of one plate, fork, and thermos each day. The tidy behavior (cleaning and storing dishes) is consistent. This hypothesis is less distinctive than the work pattern but remains plausible."
+  },
+  {
+   "persona": "A person with a consistent evening routine: dinner around 18:30-19:00, cleaning up by 19:16, and then relaxing with the remote (TV) before bed. The phone is used in the morning (counter) and evening (sofa) but returns to the nightstand at bedtime. This routine is observed on both weekdays and weekends, with timing shifting later on weekends.",
+   "prob": 0.05,
+   "rationale": "The evening pattern is consistent but not highly diagnostic; it is common to many households. The probability is low because it does not help discriminate between personas."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 05:09 \u2014 work_badge at elsewhere (early departure, office job)",
+  "Day 1, 05:20 \u2014 work_badge at elsewhere (consistent early departure)",
+  "Day 2, 05:12 \u2014 work_badge at elsewhere (consistent early departure)",
+  "Day 3, 13:23 \u2014 laptop at elsewhere (late departure, flexible schedule)",
+  "Day 3, 22:39 \u2014 keys at entry_hook_e1 (late return, different pattern)",
+  "Day 4, 13:29 \u2014 keys at elsewhere (midday departure, laptop left at desk_o1)",
+  "Day 4, 13:29 \u2014 laptop at desk_o1 (laptop not taken, possibly working from home)",
+  "Day 4, 22:18 \u2014 work_badge at nightstand_r1 (badge not used today, stayed home)",
+  "Day 5, 10:48 \u2014 phone at counter_k1 (late start on weekend, no work items)",
+  "Day 5, 18:29 \u2014 plate at table_d1 (evening meal at home on weekend)",
+  "Day 5, 21:45 \u2014 fork at cupboard_k1 (cleaning and storage after meal)",
+  "Day 6, 11:15 \u2014 phone at counter_k1 (late start on Sunday, no work items)",
+  "Day 6, 18:37 \u2014 plate at table_d1 (evening meal at home on Sunday)",
+  "Day 6, 21:45 \u2014 plate at cupboard_k1 (cleaning and storage after meal)",
+  "Day 7, 05:05 \u2014 hi_vis_vest at elsewhere (early departure for physical job, contradicts office pattern)"
+ ],
+ "notes": "Day 7 (Monday) reveals a hi-vis vest and thermos leaving at 05:05 and returning at 14:10, with laptop at home. This contradicts the previous office-worker hypothesis (work_badge at 05:09 on Day 0). The new evidence suggests a physically demanding job (e.g., construction, maintenance) with a fixed early shift. The work_badge was not observed today; it may have been left at home or not moved. Need to observe if the hi-vis vest and thermos pattern repeats on Tuesday and Wednesday. Also, note that the thermos was stored at 21:45, similar to previous days. The weekend pattern (no work items, late start) remains consistent. The laptop at home during the day suggests it is not used for work. The evening routine (plate, fork, remote) is similar to previous days. Next steps: verify if the hi-vis vest and thermos are used on Tuesday and Wednesday, and if the work_badge reappears. Also, check if the laptop is used in the evening or remains at desk."
+}

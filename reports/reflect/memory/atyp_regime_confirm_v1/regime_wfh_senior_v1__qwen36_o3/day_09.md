@@ -1,0 +1,24 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Full-time remote worker with structured morning health routine and consistent home dining habits. — Day 9 (Wednesday) confirms the persistent 06:45 pill routine. The 13:04 plate at sink and 17:57 plate at table indicate continued home dining. The lack of 'leaving' events or weekend-specific leisure objects (like yoga mats or books at coffee table) on a mid-week day reinforces the standard workday pattern. The 'glasses at counter' at 06:45 is likely a pre-work transition or outlier, as the primary work signal (glasses at desk) hasn't appeared yet, but the routine consistency is high.
+2. (p=0.01) Commuter who works from home Mon-Thu but leaves early Friday. — Still contradicted by the lack of any 'departure' signals (keys, suitcase, coat) on any day, including the hypothetical 'early Friday' window. The 06:45 pill routine on weekends further undermines the commuter hypothesis which usually implies different morning flows on off-days.
+3. (p=0.01) Non-resident visitor or short-term guest. — The 9-day streak of identical morning health routines and consistent meal locations strongly indicates residency. No signs of transient behavior or packing/unpacking.
+
+## Selected evidence
+- Day 0, 06:45 — pill_organizer at counter_k1 (discriminates: daily health routine, predates work)
+- Day 0, 07:11 — reading_glasses at desk_o1 (discriminates: start of workday/screen time)
+- Day 0, 13:27 — coffee_mug at desk_o1 (discriminates: sustained presence at workspace)
+- Day 0, 21:45 — bowl at cupboard_k1 (discriminates: evening meal at home)
+- Day 2, 08:31 — coffee_mug at desk_o1 (confirms: remote work pattern on Wednesday)
+- Day 2, 12:30 — plate at table_d1 (discriminates: lunch at home)
+- Day 3, 07:09 — reading_glasses at desk_o1 (confirms: remote work pattern on Thursday)
+- Day 4, 06:45 — pill_organizer at counter_k1 (confirms: routine persists into Friday)
+- Day 5, 06:45 — reading_glasses at counter_k1 (discriminates: weekend/leisure start, no desk)
+- Day 6, 13:51 — reading_glasses at coffee_table_l1 (discriminates: weekend leisure location)
+- Day 8, 08:37 — coffee_mug at desk_o1 (confirms: return to work pattern on Tuesday)
+- Day 8, 12:30 — fork at table_d1 (confirms: lunch at home, consistent with workday)
+- Day 9, 06:45 — reading_glasses at counter_k1 (confirms: persistent morning routine, pre-work transition)
+
+## Notes
+Day 9 (Wednesday) shows the 06:45 pill routine again, reinforcing the 'health routine' anchor. The glasses were at the counter at 06:45, similar to Day 5 (Saturday) and Day 7 (Monday), but unlike the typical workday pattern where glasses move to the desk by 07:11-08:37. This suggests either a later start to work on this specific Wednesday or that the 'glasses at desk' event simply hasn't been captured yet today. The 13:04 plate at sink and 17:57 plate at table confirm home dining. Need to monitor if glasses move to desk later in the day on Day 9 to confirm the 'workday' status definitively, or if the 'counter' location persists, indicating a non-standard workday.

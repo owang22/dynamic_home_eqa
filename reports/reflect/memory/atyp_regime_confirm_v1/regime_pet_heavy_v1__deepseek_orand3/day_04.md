@@ -1,0 +1,22 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A pet owner who works from home or has a flexible schedule, with a consistent pet-care routine (morning blanket, chew toy, ball) and midday meals at home. — The new events (phone at entry hook at 07:04 and 16:50, phone at counter at 07:49, bowl at table at 08:38, coffee mug at sink at 09:03) are consistent with a morning routine (breakfast, coffee) and leaving/returning home (phone at entry hook). The pet evidence remains strong and is not contradicted. The resident appears to be home during the day (midday meals, blanket on sofa) and has a pet care routine. The phone at entry hook at 07:04 suggests leaving the house early, but the bowl and coffee mug at home indicate a home-based breakfast, so the resident may leave after breakfast. The phone at entry hook at 16:50 suggests returning home. This pattern is compatible with a flexible schedule or remote work with occasional outings.
+2. (p=0.10) A remote worker or someone with a home-based routine, but the pet evidence is now overwhelming, so this hypothesis is less likely. — The pet-specific objects (chew toy, ball, pet bed blanket) are more distinctive than the home-based routine evidence. The new events do not add evidence for or against this hypothesis, but the pet ownership hypothesis subsumes it.
+
+## Selected evidence
+- Day 0, 09:49 — blanket at pet_bed_l1 (pet care morning routine)
+- Day 2, 22:29 — blanket at pet_bed_l1 (evening pet care routine)
+- Day 3, 09:54 — chew_toy at pet_bed_l1 (pet toy, reinforces pet ownership)
+- Day 3, 16:46 — ball at toy_basket_l1 (pet toy, active play in afternoon)
+- Day 0, 13:21 — plate at sink_k1 (midday meal at home)
+- Day 2, 12:38 — plate at table_d1 (midday meal at home)
+- Day 3, 12:54 — blanket at sofa_l1 (resident home midday, possibly on break)
+- Day 4, 07:04 — phone at entry_hook_e1 (leaving home early morning)
+- Day 4, 07:49 — phone at counter_k1 (returned home briefly after leaving?)
+- Day 4, 08:38 — bowl at table_d1 (breakfast at home)
+- Day 4, 09:03 — coffee_mug at sink_k1 (coffee after breakfast)
+- Day 4, 16:50 — phone at entry_hook_e1 (returning home in late afternoon)
+
+## Notes
+Day 4 (Friday) shows a morning routine: phone at entry hook at 07:04 (leaving), then phone at counter at 07:49 (returned?), bowl at table at 08:38 (breakfast), coffee mug at sink at 09:03, and phone at entry hook at 16:50 (returning). This suggests the resident may have left briefly at 07:04 (e.g., walk the dog?) and then had breakfast at home. The pet evidence is strong; need to check if the pet bed blanket appears again in the evening on day 4 (not observed yet). Weekend patterns (day 5-6) will help distinguish if the resident goes out or stays home. Also look for work-related objects (laptop, desk) to confirm work-from-home. The phone at nightstand is mundane; ignore.

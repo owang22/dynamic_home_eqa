@@ -1,0 +1,26 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single older adult who lives alone, uses a hearing aid, a walker, and now a pill organizer and reading glasses, indicating multiple age-related aids. The consistent home-based routine with meals at home and weekend pattern shifts (plate at cupboard, walker pouch at nightstand) suggest a retired or work-from-home individual with a structured but flexible schedule. — The new evidence of a pill organizer and reading glasses on Monday morning strengthens the profile of an older adult managing medications and vision. The fork at table_d1 for dinner is consistent with weekday meals at home. The phone at nightstand_r1 (instead of nightstand_r2) is a minor variation but still fits a single person's bedtime routine. The walker pouch and hearing aid case remain consistent. The surprising events (fork at table, phone at nightstand) are not contradictory; they align with a single older adult's routine.
+2. (p=0.07) A couple or family where one person uses a hearing aid and another uses a walker, but the evidence still points to a single person due to lack of multiple objects (e.g., only one plate, one remote, one fork, one phone). The pill organizer and reading glasses could belong to the same person or a second person, but no other objects suggest multiple residents. — The new objects (pill organizer, reading glasses) could be shared, but the single fork and phone suggest one person. The walker pouch and hearing aid case could belong to different individuals, but the consistent single-object pattern (one plate, one remote) makes this less likely. The surprising events do not add evidence for a second person.
+3. (p=0.03) A student or young adult with a hearing aid, temporary mobility issue, and now medication and reading glasses, but the combination of aids (hearing aid, walker, pill organizer, reading glasses) is more typical of an older adult. The weekend pattern (plate at cupboard) might indicate a different routine, but the overall evidence strongly favors an older adult. — The new evidence of a pill organizer and reading glasses further reduces the likelihood of a young adult, as these are more common in older age. The surprising events (fork at table, phone at nightstand) are mundane and do not support a student profile. The probability is lowered due to accumulating age-related aids.
+
+## Selected evidence
+- Day 0, 07:38 — plate at table_d1 (morning meal at home, suggests breakfast routine)
+- Day 3, 07:42 — coffee_mug at table_d1 (morning coffee ritual, consistent with work-from-home start)
+- Day 3, 22:03 — hearing_aid_case at nightstand_r2 (evening hearing aid removal, indicates hearing aid user)
+- Day 4, 07:01 — hearing_aid_case at counter_k1 (morning hearing aid placement before use, part of routine)
+- Day 4, 07:31 — hearing_aid_case at side_table_l1 (hearing aid moved during morning routine, likely before wearing)
+- Day 4, 17:59 — plate at table_d1 (dinner at home, supports work-from-home or evening routine)
+- Day 4, 22:03 — remote at nightstand_r2 (evening relaxation in bed, typical for single person)
+- Day 5, 07:26 — hearing_aid_case at side_table_l1 (weekend morning hearing aid routine, consistent with weekday)
+- Day 5, 08:37 — walker_pouch at recliner_l1 (walker pouch appears on Saturday, suggests mobility aid use at home)
+- Day 5, 21:45 — plate at cupboard_k1 (surprising: plate stored in cupboard on Saturday evening, different from weekday dinner at table, indicates weekend meal pattern change)
+- Day 5, 21:57 — walker_pouch at nightstand_r2 (surprising: walker pouch moved to nightstand in evening, suggests bedtime routine with mobility aid nearby)
+- Day 7, 07:06 — pill_organizer at counter_k1 (morning medication routine, indicates regular medication use, typical for older adult)
+- Day 7, 07:06 — reading_glasses at counter_k1 (morning glasses placement, suggests vision aid use, common in older age)
+- Day 7, 18:06 — fork at table_d1 (weekday dinner at home, consistent with weekday meal pattern)
+- Day 7, 21:21 — phone at nightstand_r1 (evening phone placement at bedside, slight variation from previous nightstand_r2, but still single-person bedtime routine)
+
+## Notes
+The surprising events today (fork at table_d1, phone at nightstand_r1) were not actually surprising in terms of household type; the belief model's surprise may be due to specific object-receptacle probabilities (e.g., fork expected elsewhere, phone expected at nightstand_r2). However, these are minor variations and do not contradict the single older adult hypothesis. The pill organizer and reading glasses are new and reinforce the older adult profile. Need to observe more weekdays to see if walker pouch appears on weekdays (it only appeared on Saturday so far). Also, check for work-related objects (laptop, work bag) on weekdays to confirm if the person works from home or is retired. The weekend pattern (plate at cupboard, walker pouch at nightstand) should be verified on next Saturday.

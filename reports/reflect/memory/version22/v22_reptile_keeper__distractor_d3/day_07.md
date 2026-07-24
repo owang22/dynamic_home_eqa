@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single working adult with a structured evening routine, likely returning home after work and engaging in self-care activities before bed. Weekend pattern shows later mornings and consistent evening self-care, but no work-related items on weekends. — Weekday pattern of keys leaving midday and returning in the evening, lunch box at sink, and consistent evening self-care (bath mat) supports a standard office job. Weekend evidence (coffee at 07:57, no work items) confirms a relaxed weekend. The WFH hypothesis is less likely.
+2. (p=0.30) A person with a daily hobby involving cricket care (likely a pet cricket or terrarium), as evidenced by recurring morning maintenance tasks on weekdays and weekends. — Cricket care observed on Sunday (scissors at 08:01, cricket tub at 08:51) and on weekdays (scissors at 08:50, calcium powder at 07:55) confirms it is a daily routine, not limited to weekdays. This strengthens the hypothesis.
+3. (p=0.10) A person who works from home or has a flexible schedule, given the morning activity at home and the early evening routine. Weekend pattern shows a relaxed day at home, but no strong evidence for WFH on weekdays. — Weekend evidence shows a relaxed day at home, but the weekday pattern (keys leaving midday, lunch box at sink) suggests a typical office job. The WFH hypothesis is less likely now.
+
+## Selected evidence
+- Day 0, 18:32 — lunch_box at sink_k1 (return from work, unpacking lunch)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening self-care, likely shower/bath)
+- Day 2, 08:50 — scissors at cricket_shelf_s1 (morning cricket care, recurring hobby)
+- Day 2, 12:16 — keys at elsewhere (leaving home midday, possibly for work)
+- Day 3, 18:25 — keys at entry_hook_e1 (returning home from work, consistent evening pattern)
+- Day 4, 07:55 — calcium_powder at terrarium_stand_s1 (morning cricket care, daily routine)
+- Day 5, 07:28 — coffee_mug at table_d1 (weekend morning, later start than weekdays)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening self-care, consistent with weekday pattern)
+- Day 5, 22:42 — phone at nightstand_r1 (late night phone use before bed)
+- Day 6, 08:01 — scissors at terrarium_stand_s1 (Sunday cricket care, confirms daily hobby)
+- Day 6, 08:51 — cricket_tub at cricket_shelf_s1 (Sunday cricket care, part of routine)
+- Day 6, 18:46 — plate at table_d1 (Sunday evening meal, consistent with weekday dinner pattern)
+- Day 7, 07:15 — coffee_mug at table_d1 (Monday morning coffee, consistent with weekday start)
+- Day 7, 18:35 — bath_mat at bathroom_c1 (Monday evening self-care, consistent routine)
+- Day 7, 20:40 — phone at sofa_l1 (evening phone use, likely relaxation)
+
+## Notes
+Cricket care now confirmed on Sunday (day 6) and Monday (day 7) morning coffee at 07:15 matches weekday pattern. Evening self-care (bath mat) and phone use consistent. No evidence of a second person. Need to observe if cricket care occurs on all days of the week. The wall_clock and waste_bin events remain uninformative. The WFH hypothesis is weakening; the resident likely has a standard office job with a daily cricket hobby.

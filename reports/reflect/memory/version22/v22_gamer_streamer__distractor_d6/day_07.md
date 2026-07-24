@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Single adult with a flexible schedule, likely working from home or self-employed, with a consistent late-night routine and a preference for comfort items (blanket, floor lamp). — Day 7 (Monday) shows no morning doormat event, which is inconsistent with a typical workday commute. Instead, the day starts with a dining chair at table (08:45) and a bed pillow at bed (10:27), suggesting a late start. The floor lamp moved to sofa (17:20) and phone at desk (21:29) reinforce a relaxed, home-based routine. Single plate events (19:54, 21:45) confirm one person. The headset at shelf (01:18) indicates late-night activity. This pattern is more consistent with a flexible schedule than a retiree or couple.
+2. (p=0.05) Retired individual with a relaxed daily routine, but with some late-night activity (energy can, phone) that is less typical for a retiree. — The lack of morning doormat on Monday and the late breakfast pattern (though not directly observed today) could fit a retiree. However, the late-night headset and phone use (01:18, 21:29) are less typical for a retiree, and the floor lamp and blanket usage suggest a comfort-oriented but not necessarily elderly lifestyle. Probability decreases further.
+3. (p=0.05) Couple or family with at least one person working from home, but evidence remains weak. — No new evidence of a second person today. Single plate events and single dining chair continue. The two doormat events from day 3 remain the only potential sign, but they could be the same person. Probability remains low.
+
+## Selected evidence
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure, suggests workday start)
+- Day 2, 12:46 — keys at elsewhere (midday outing, possibly lunch break)
+- Day 2, 21:40 — headset at desk_o1 (late evening work or gaming)
+- Day 3, 07:57 — doormat at entry_hook_e1 (earlier morning departure, flexible schedule)
+- Day 3, 09:02 — doormat at entry_hook_e1 (second morning event, could be return or another person)
+- Day 3, 10:46 — coffee_mug at table_d1 (late breakfast, flexible schedule)
+- Day 4, 01:18 — energy_can at sink_k1 (late-night caffeine, consistent late-night activity)
+- Day 4, 01:18 — phone at nightstand_r1 (late-night phone use)
+- Day 4, 10:59 — coffee_mug at table_d1 (late breakfast pattern continues)
+- Day 4, 18:22 — dining_chair at table_d1 (single chair, confirms one person)
+- Day 4, 19:03 — plate at table_d1 (single plate, reinforces single person)
+- Day 5, 10:44 — coffee_mug at table_d1 (late breakfast on Saturday, consistent routine)
+- Day 5, 15:42 — blanket at gaming_chair_o1 (afternoon comfort, same as weekday)
+- Day 6, 10:31 — plate at table_d1 (single plate on Sunday, consistent single-person meals)
+- Day 7, 01:18 — headset at shelf_o1 (late-night activity, consistent with flexible schedule)
+
+## Notes
+Day 7 (Monday) shows no morning doormat event, which is a departure from the previous weekday pattern (Day 2 and Day 3 had doormat events). This could indicate a change in routine or that the doormat events are not daily. The late-night headset (01:18) and phone at desk (21:29) continue the late-night pattern. The floor lamp moved to sofa (17:20) suggests a comfort-oriented evening. Next week will help verify if the weekday pattern is consistent or if there are variations. Also watch for any signs of a second person (e.g., multiple plates, different room usage).

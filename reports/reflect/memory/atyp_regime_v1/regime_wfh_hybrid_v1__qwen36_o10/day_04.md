@@ -1,0 +1,17 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard Office Worker — Consistent commute pattern (keys) and standard dinner/bedtime routine. Day 4 shows no deviation from the established weekday pattern.
+2. (p=0.03) Remote Worker / Student — Unlikely due to keys leaving/returning. No evidence of laptop usage at home desk during day to suggest remote work.
+3. (p=0.02) Night Owl / Shift Worker — Contradicted by early morning activity and early evening return. No late-night work evidence.
+
+## Selected evidence
+- Day 3, 08:26 — keys at elsewhere (Departure for work/school; confirms physical commute)
+- Day 3, 18:07 — keys at entry_hook_e1 (Return home; confirms end of workday)
+- Day 4, 07:31 — bowl at table_d1 (Breakfast routine; consistent with weekday schedule)
+- Day 4, 12:40 — fork/plate at table_d1 (Lunch at home; suggests no office cafeteria or packed lunch eaten elsewhere)
+- Day 4, 19:22 — fork/plate at sink_k1 (Dinner consumed; consistent with post-commute timing)
+- Day 4, 22:36 — phone at nightstand_r1 (Bedtime routine; confirms standard sleep schedule)
+
+## Notes
+Day 4 (Friday) mirrors Day 3 (Wednesday) closely, reinforcing the 'Standard Office Worker' hypothesis. Lunch at home (12:40) is a new detail; previously only dinner was observed. No keys observed on Day 4 in the provided events, so commute status for Friday is inferred from previous days. Need to check Day 5 (Saturday) for deviations: sleeping in, different meal times, or leisure activities (yoga, cleaning) to distinguish between 'Standard Worker' and 'Weekend Leisure' patterns.

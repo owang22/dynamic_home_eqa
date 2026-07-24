@@ -1,0 +1,18 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Young family with a toddler (1-3 years old) — Weekend routine (Day 12) shows shifted but consistent toddler-centric patterns: later start (07:35 vs 07:09), play mat usage (08:57), and late afternoon blanket on sofa (16:52) suggesting a relaxed nap/rest time. The persistent presence of toddler items (sippy cup, high chair) and structured meal/cleanup times remains the dominant signal. The lack of distinct 'second adult' signals keeps the single parent hypothesis low, but the family structure is robust.
+2. (p=0.05) Single parent with a toddler — Still possible. The late spoon cleanup (17:51) and blanket movement (16:52) could reflect a single adult managing household tasks after a later morning start on the weekend. However, the structured nature of the events and the specific toddler items continue to favor the 'family' label over 'single parent' as a distinct category, though the distinction is subtle without more adult-specific signals.
+3. (p=0.00) Shared housing with a child guest — Discarded. The daily, structured nature of the events over multiple days (including weekend) indicates a permanent resident, not a transient guest.
+
+## Selected evidence
+- Day 12, 07:35 — spoon at sink_k1 (weekend morning cleanup, later than weekday 07:09 start, indicating relaxed weekend schedule)
+- Day 12, 08:57 — sippy_cup at play_mat_l1 (morning play, consistent with toddler presence, mirrors Day 11's play mat usage)
+- Day 12, 10:57 — cushion at sofa_l1 (living area activity, suggests family gathering or play space usage)
+- Day 12, 10:57 — sippy_cup at counter_k1 (mid-morning snack/drink, indicates ongoing toddler care throughout the day)
+- Day 12, 12:38 — spoon at sink_k1 (midday cleanup, consistent with weekday lunchtime pattern, reinforcing routine stability)
+- Day 12, 16:52 — blanket at sofa_l1 (late afternoon rest, shifted from Day 11's 15:00 play mat, suggesting flexible weekend nap time)
+- Day 12, 17:51 — spoon at high_chair_d1 (late afternoon/evening meal setup, later than weekday 18:01, consistent with weekend shift)
+
+## Notes
+Day 12 (Saturday) confirms the 'Young Family' hypothesis with a shifted but consistent routine. Key observation: Weekend start is later (07:35 vs 07:09), and afternoon rest moves to the sofa (16:52) rather than the play mat (15:00). This suggests a more relaxed, less structured weekend compared to weekdays. The 17:51 high chair usage is later than the weekday 18:01, further supporting the weekend shift. No new hypotheses needed. Day 13 (Sunday) will verify if this relaxed weekend pattern persists or if there's a Sunday-specific shift (e.g., earlier start for Monday prep).

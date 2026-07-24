@@ -1,0 +1,26 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A person with a non-standard work schedule, likely in a trade (e.g., construction, maintenance) that requires safety gear and involves early or late shifts, possibly with weekend work. — The Wednesday pattern shows hi_vis_vest returned at 15:01 (earlier than previous days), suggesting a shorter shift or a different schedule. The thermos at counter at 05:00 (surprising) may indicate a packed lunch prepared but not taken, or a change in routine. The plate at table at 18:07 and sink at 18:52 shows a normal dinner time, but the early return of safety gear is a new variation. The dominant evidence still supports a trade job with early starts, but the shift length may vary.
+2. (p=0.15) A single person who lives alone, with a routine that includes late dinners and evening coffee, possibly working from home occasionally or having a desk job with flexible hours. — The single set of objects (one plate, one thermos) continues to support living alone. The Wednesday evening events (plate at table at 18:07, sink at 18:52) show a normal dinner time, not late. The thermos at counter at 05:00 (not taken) could indicate a work-from-home day or a change in lunch plans. The early return of safety gear (15:01) might allow for a more flexible afternoon. This hypothesis gains a bit from the surprising thermos location, but the safety gear still points to a trade job.
+3. (p=0.05) A health-conscious individual who exercises in the early morning (e.g., before work) and has a structured routine. — No new evidence of early morning exercise on Wednesday (the 05:00 thermos is work-related, not exercise). The early return of safety gear (15:01) could allow for afternoon exercise, but no objects support that. This hypothesis remains low-probability as a fallback.
+
+## Selected evidence
+- Day 2, 05:07 — work_badge at elsewhere (early departure for work, likely morning shift)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (return from work, shift length varies)
+- Day 2, 21:45 — fork at cupboard_k1 (late dinner cleanup, meal after 21:00)
+- Day 3, 13:28 — thermos at elsewhere (packed lunch taken to work, suggests midday break)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (safety gear stored at home, trade job)
+- Day 3, 23:02 — work_badge at locker_shelf_e1 (badge stored with safety gear)
+- Day 3, 23:02 — keys at entry_hook_e1 (late return home after 23:00)
+- Day 4, 04:59 — phone at entry_hook_e1 (phone grabbed for early shift, surprising but now consistent)
+- Day 4, 05:14 — hi_vis_vest at elsewhere (vest taken for early shift)
+- Day 5, 12:44 — phone at sofa_l1 (relaxed Saturday afternoon, leisure)
+- Day 5, 19:05 — fork at sink_k1 (normal dinner time on Saturday)
+- Day 5, 21:45 — coffee_mug at cupboard_k1 (evening coffee on Saturday)
+- Day 6, 18:17 — plate at table_d1 (Sunday dinner at table, surprising location)
+- Day 6, 19:14 — coffee_mug at desk_o1 (Sunday evening coffee at desk, surprising location)
+- Day 9, 15:01 — hi_vis_vest at locker_shelf_e1 (early return of safety gear, shift length varies)
+
+## Notes
+Wednesday (Day 9) shows a surprising pattern: thermos at counter at 05:00 (not taken to work, p=0.00) and hi_vis_vest returned at 15:01 (earlier than previous days, p=0.00). This could indicate a half-day, a day off from work, or a change in shift schedule. The plate at table at 18:07 and sink at 18:52 is a normal dinner time, not late. Need to observe if the thermos is taken later or if this is a new routine (e.g., working from home in the morning). Also check if the early return of safety gear becomes a pattern on Wednesdays or other days. The single set of objects still supports a single-person household. Open question: Does the resident have a variable shift schedule (e.g., rotating shifts) or occasional half-days?

@@ -1,0 +1,24 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A single person with a non-standard work schedule, likely a shift worker (e.g., construction, security) who works variable shifts. The hi_vis_vest and work_badge are consistently used, and departure/return times vary. The weekend shows a relaxed pattern with late meals and coffee at the desk. Day 11 (Friday) shows an early departure (05:05) with phone, consistent with a morning shift. Day 12 (Saturday) shows the phone on the nightstand at 21:01, indicating a relaxed evening at home, consistent with a weekend day off. — The Saturday evening phone on the nightstand suggests a relaxed weekend evening, consistent with the previous weekend pattern. No work gear or early departure observed, reinforcing the shift worker hypothesis with variable days off.
+2. (p=0.01) A single person with a standard 9-to-5 job who occasionally works late or has a second activity. The Friday early departure (05:05) could be a commute to a second job, but the hi_vis_vest is not typical for a standard office job. The variable departure times across days weaken this hypothesis. The Saturday evening phone on the nightstand is consistent with a relaxed weekend, but the overall pattern of variable work times and safety gear makes this hypothesis unlikely. — The Saturday evening phone on the nightstand does not contradict this hypothesis, but the accumulated evidence of variable early departures and safety gear strongly favors the shift worker hypothesis.
+
+## Selected evidence
+- Day 2, 05:07 — work_badge at elsewhere (early departure for work, consistent with shift work)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (return from work, early afternoon)
+- Day 3, 13:28 — phone at elsewhere (afternoon departure, different from Wednesday's early start)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (high-visibility vest returned, indicates job requiring safety gear)
+- Day 4, 04:59 — work_badge at entry_hook_e1 (early departure for work)
+- Day 5, 12:44 — phone at sofa_l1 (relaxed weekend day, phone on sofa)
+- Day 6, 19:14 — coffee_mug at desk_o1 (coffee at desk in evening, suggests relaxed weekend activity)
+- Day 7, 05:19 — hi_vis_vest at elsewhere (early departure with safety gear, consistent with shift work)
+- Day 9, 05:00 — thermos at counter_k1 (early morning preparation for work, likely shift worker)
+- Day 10, 13:18 — hi_vis_vest at elsewhere (midday departure with safety gear, consistent with variable shift)
+- Day 10, 22:38 — keys at counter_k1 (late return, suggests a long shift or late activity)
+- Day 11, 05:05 — phone at elsewhere (early departure on Friday, consistent with morning shift)
+- Day 11, 21:45 — fork at cupboard_k1 (late meal, possibly after a long day)
+- Day 12, 21:01 — phone at nightstand_r1 (relaxed Saturday evening, phone on nightstand, consistent with weekend off)
+
+## Notes
+Day 12 (Saturday) shows a relaxed evening with phone on nightstand at 21:01, consistent with previous weekend pattern. No work gear or early departure observed. Next, observe if the Friday early departure pattern repeats next week. Also check if the thermos appears on other days. The weekend pattern (relaxed, late coffee at desk) remains consistent. No evidence of multiple people yet.

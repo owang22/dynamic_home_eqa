@@ -1,0 +1,146 @@
+# v22_frequent_traveler -- VERSION22b confusable pair I (with v22_shift_rotator).
+# Both LEAVE with a work kit; they DIFFER IN DEPARTURE REGULARITY: here a frequent
+# business traveler is GONE FOR MULTI-DAY TRIPS (Tu->Th most weeks) -- so the
+# shared laptop/phone/keys live in the CARRY-ON BY THE DOOR (packed), not on a
+# home desk, and are ABSENT for days at a stretch. Regime-legible: suitcase +
+# passport + packing_cubes cycling => "frequent traveler" => the kit is staged at
+# the entry, gone mid-week.
+# DIAGNOSTIC: suitcase, passport, packing_cubes, neck_pillow.
+# DEPENDENT targets (shared class): laptop -> carryon_e1 (staged by the door),
+#   phone -> carryon/elsewhere on trips, keys -> carryon_e1.
+# STATIC DISTRACTORS: dining_chair, bed_pillow, wall_clock, floor_lamp, doormat,
+#   waste_bin, picture_frame, bath_mat.
+household: v22_frequent_traveler
+status: DRAFT  # version22b authoring 2026-07-22 — needs human anchor verification
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,          room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1,   room: bedroom,  aliases: []}
+  - {id: sofa_l1,         room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living,   aliases: []}
+  - {id: desk_o1,         room: office,   aliases: [home_desk]}
+  - {id: counter_k1,      room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,     room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,         room: kitchen,  aliases: []}
+  - {id: table_d1,        room: dining,   aliases: [dining_table]}
+  - {id: entry_hook_e1,   room: entryway, aliases: [key_hook]}
+  - {id: carryon_e1,      room: entryway, aliases: [carry_on, travel_bag]}
+  - {id: closet_shelf_e1, room: entryway, aliases: [luggage_shelf]}
+  - {id: bathroom_c1,     room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: frequent business traveler; multi-day Tu-Th trips, home otherwise
+    schedule:
+      # home nights only: away Tu+We (hotel), back Thu evening. No home sleep
+      # block on trip nights, so the wrapping never overlaps away_trip.
+      - {activity: sleep,        days: [Mo,Th,Fr,Sa,Su], start: "23:00", end: "06:00"}
+      - {activity: pack_trip,    days: [Tu],       start: "06:15", end: "06:55"}
+      - {activity: leave_trip,   days: [Tu],       start: "07:00", end: "07:20"}
+      - {activity: away_trip,    days: [Tu],       start: "07:20", end: "23:59"}
+      - {activity: away_trip,    days: [We],       start: "00:00", end: "23:59"}
+      - {activity: away_trip,    days: [Th],       start: "00:00", end: "18:00"}
+      - {activity: return_trip,  days: [Th],       start: "18:00", end: "18:40"}
+      - {activity: home_desk_work, days: [Mo,Fr],  start: "09:00", end: "12:00"}
+      - {activity: home_desk_work, days: [Mo,Fr],  start: "13:30", end: "16:30"}
+      - {activity: breakfast,    days: [Mo,Fr,Sa,Su], start: "07:30", end: "08:10"}
+      - {activity: dinner,       days: [Mo,Th,Fr,Sa,Su], start: "18:45", end: "19:30"}
+      - {activity: evening_tv,   days: [Mo,Th,Fr,Sa,Su], start: "20:00", end: "22:30"}
+      - {activity: weekend_errand, days: [Sa],     start: "11:00", end: "12:30"}
+activities:
+  breakfast:
+    jitter_min: 10
+    objects: [bowl, coffee_mug]
+    during: {bowl: table_d1, coffee_mug: table_d1}
+    after:
+      bowl:       {dest: sink_k1, p: 0.85, else: table_d1}
+      coffee_mug: {dest: sink_k1, p: 0.7, else: table_d1}
+  pack_trip:
+    jitter_min: 10
+    objects: [suitcase, passport, packing_cubes, neck_pillow, laptop, phone, keys]
+    during: {suitcase: carryon_e1, passport: carryon_e1, packing_cubes: carryon_e1,
+             neck_pillow: carryon_e1, laptop: carryon_e1, phone: carryon_e1, keys: carryon_e1}
+    after:
+      suitcase:      {dest: carryon_e1, p: 0.95}
+      passport:      {dest: carryon_e1, p: 0.95}
+      packing_cubes: {dest: carryon_e1, p: 0.95}
+      neck_pillow:   {dest: carryon_e1, p: 0.9}
+      laptop:        {dest: carryon_e1, p: 0.9}          # laptop packed by the door
+      phone:         {dest: carryon_e1, p: 0.85, else: nightstand_r1}
+      keys:          {dest: carryon_e1, p: 0.85, else: entry_hook_e1}
+  leave_trip:
+    jitter_min: 15
+    objects: [suitcase, passport, packing_cubes, neck_pillow, laptop, phone, keys]
+    after:
+      suitcase:      {dest: null, p: 1.0}
+      passport:      {dest: null, p: 1.0}
+      packing_cubes: {dest: null, p: 1.0}
+      neck_pillow:   {dest: null, p: 1.0}
+      laptop:        {dest: null, p: 1.0}
+      phone:         {dest: null, p: 1.0}
+      keys:          {dest: null, p: 1.0}
+  return_trip:
+    jitter_min: 25
+    objects: [suitcase, passport, packing_cubes, neck_pillow, laptop, phone, keys]
+    after:
+      suitcase:      {dest: closet_shelf_e1, p: 0.7, else: carryon_e1}
+      passport:      {dest: carryon_e1, p: 0.8, else: closet_shelf_e1}
+      packing_cubes: {dest: carryon_e1, p: 0.85}
+      neck_pillow:   {dest: carryon_e1, p: 0.85}
+      laptop:        {dest: carryon_e1, p: 0.9}          # lives staged in the bag
+      phone:         {dest: sofa_l1, p: 0.7, else: coffee_table_l1}
+      keys:          {dest: carryon_e1, p: 0.85}         # kept with the travel kit
+  home_desk_work:
+    jitter_min: 20
+    objects: [laptop, phone, coffee_mug]
+    during: {laptop: desk_o1, phone: desk_o1, coffee_mug: desk_o1}
+    after:
+      laptop:     {dest: carryon_e1, p: 0.9}                   # repacked into the bag
+      phone:      {dest: coffee_table_l1, p: 0.5, else: desk_o1}
+      coffee_mug: {dest: sink_k1, p: 0.7, else: desk_o1}
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  evening_tv:
+    jitter_min: 20
+    objects: [remote, phone]
+    during: {remote: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+      phone:  {dest: nightstand_r1, p: 0.8, else: sofa_l1}
+  weekend_errand:
+    jitter_min: 20
+    objects: [keys, phone]
+    after:
+      keys:  {dest: carryon_e1, p: 0.95}    # kept with the travel kit, even on errands
+      phone: {dest: sofa_l1, p: 0.6, else: coffee_table_l1}
+placements:
+  # DIAGNOSTIC (persona-exclusive)
+  suitcase:      {home: closet_shelf_e1, volatility_class_hint: high}
+  passport:      {home: carryon_e1, volatility_class_hint: high}
+  packing_cubes: {home: carryon_e1}
+  neck_pillow:   {home: carryon_e1}
+  # DEPENDENT targets (shared class; regime -> carry-on by the door)
+  laptop: {home: carryon_e1, volatility_class_hint: high}
+  phone:  {home: nightstand_r1, volatility_class_hint: high}
+  keys:   {home: carryon_e1, volatility_class_hint: high}
+  # ordinary
+  bowl:       {home: cupboard_k1}
+  plate:      {home: cupboard_k1}
+  fork:       {home: cupboard_k1}
+  coffee_mug: {home: cupboard_k1}
+  remote:     {home: coffee_table_l1}
+  # STATIC DISTRACTORS
+  dining_chair:  {home: table_d1,        volatility_class_hint: static}
+  bed_pillow:    {home: bed_r1,          volatility_class_hint: static}
+  wall_clock:    {home: counter_k1,      volatility_class_hint: static}
+  floor_lamp:    {home: sofa_l1,         volatility_class_hint: static}
+  doormat:       {home: entry_hook_e1,   volatility_class_hint: static}
+  waste_bin:     {home: counter_k1,      volatility_class_hint: static}
+  picture_frame: {home: coffee_table_l1, volatility_class_hint: static}
+  bath_mat:      {home: bathroom_c1,     volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9.

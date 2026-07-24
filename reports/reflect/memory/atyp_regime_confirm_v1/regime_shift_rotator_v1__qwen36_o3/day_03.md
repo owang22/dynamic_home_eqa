@@ -1,0 +1,17 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Hybrid Office Worker (Remote/Mixed) — Consistent early departure (05:28/05:29) combined with work badge presence at midday (Day 1, Day 3) and laptop usage at home (Day 2) strongly indicates a professional who leaves for work but may work remotely or take extended breaks. The 14:23/13:23 badge timings are inconsistent with a strict 9-5 office presence, suggesting remote work or a flexible schedule.
+2. (p=0.01) Night Shift Worker — Effectively contradicted by early morning departures and midday work badge presence. No evidence of late-night activity or sleeping during the day.
+3. (p=0.01) Early Morning Athlete — Early departure could be for gym, but the presence of a work badge at midday and laptop usage at home makes professional identity primary. No specific athletic gear observed in discriminative contexts.
+
+## Selected evidence
+- Day 0, 05:28 — keys at elsewhere (consistent early departure pattern)
+- Day 1, 14:23 — work_badge at entry_hook_e1 (strong discriminator for 9-5 routine)
+- Day 2, 05:29 — phone at elsewhere (confirms consistent early departure timing)
+- Day 2, 14:35 — laptop at sofa_l1 (suggests remote work or lunch break; discriminates against strict office-only routine)
+- Day 3, 13:23 — work_badge at elsewhere (confirms midday work-related activity; timing varies slightly but remains midday)
+- Day 0, 21:11 — phone at nightstand_r1 (standard evening wind-down)
+
+## Notes
+The work badge is now observed on Day 1 (14:23) and Day 3 (13:23) at midday. This reinforces the 'Hybrid' hypothesis. The early departure (05:28/05:29) is consistent. The laptop on the sofa at 14:35 on Day 2 is a key discriminator for remote work. Need to observe if the work badge is present on Day 4 (Friday) to confirm the weekly pattern. Also, check if the resident returns home in the evening on Day 3 to confirm the full daily cycle.

@@ -1,0 +1,26 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A person who works from home or has a flexible schedule, with a strong fitness-oriented morning routine. The early morning dumbbells and yoga mat at 05:12 indicate a home workout before the protein shaker and breakfast, and the phone at counter at 06:42 suggests a brief break. The late afternoon fork at table (17:58) on a Friday is consistent with an early dinner at home, typical of a flexible schedule. The weekend morning protein shaker (09:26) and water bottle (06:44) show the fitness habit persists on Saturday, and the early phone bedtime (22:18) aligns with an early wake-up. — The weekend evidence (Day 5) shows the protein shaker at 09:26 (later than weekdays, but still morning) and water bottle at 06:44, consistent with a fitness routine. The phone at nightstand at 22:18 suggests an early bedtime, supporting the early wake-up pattern. The remote at coffee table is mundane. This strengthens the work-from-home/flexible schedule hypothesis, as the person is home on Saturday morning and evening.
+2. (p=0.10) A person with a standard 9-to-5 job who commutes, but with a morning fitness habit. The early morning workout (dumbbells, yoga mat) could be a pre-work routine, and the phone at counter at 06:42 might be before leaving. However, the late afternoon fork at 17:58 on a Friday is earlier than a typical commuter would return, and the previous late afternoon home presence (17:18, 17:35) is hard to reconcile with a standard commute. The weekend morning protein shaker (09:26) and water bottle (06:44) could be a weekend routine, but the lack of keys leaving on weekdays (only Day 2 and Day 3) weakens the commute pattern. — The weekend evidence does not contradict this hypothesis, but the late afternoon home presence on weekdays remains problematic. The probability is reduced further.
+3. (p=0.05) A student or someone with evening classes, who also exercises in the morning. The early morning workout (dumbbells, yoga mat) could be a pre-class routine, and the phone at counter at 06:42 might be before leaving for classes. However, the late afternoon fork at 17:58 on a Friday suggests being home for dinner, which conflicts with evening classes. The weekend morning protein shaker (09:26) and water bottle (06:44) could be a weekend routine, but the early bedtime (22:18) is not typical for a student. The probability is lowered. — The weekend evidence (early bedtime, morning routine) is not typical for a student with evening classes. The hypothesis is weakened.
+
+## Selected evidence
+- Day 1, 17:35 — laptop at desk_o1 (late afternoon laptop use on a weekday, suggests work-from-home or flexible schedule)
+- Day 2, 06:40 — protein_shaker at counter_k1 (morning fitness routine, strong indicator of exercise habit)
+- Day 2, 07:59 — keys at elsewhere (keys taken, likely leaving home, possibly for work or errand)
+- Day 2, 17:18 — phone at sofa_l1 (phone used on sofa in late afternoon, suggests relaxation after work/study)
+- Day 2, 21:01 — phone at nightstand_r1 (phone placed on nightstand, likely bedtime routine)
+- Day 3, 06:44 — bowl at table_d1 (breakfast at home, consistent with flexible morning)
+- Day 3, 06:44 — mug at counter_k1 (morning hot drink, part of breakfast routine)
+- Day 3, 06:44 — protein_shaker at counter_k1 (repeated morning fitness routine, strengthens habit)
+- Day 3, 08:02 — phone at elsewhere (phone taken, likely leaving home, possibly for work or errand)
+- Day 4, 05:12 — dumbbells at coffee_table_l1 (early morning home workout, strong fitness indicator)
+- Day 4, 05:12 — yoga_mat at coffee_table_l1 (early morning home workout, strong fitness indicator)
+- Day 4, 06:42 — phone at counter_k1 (phone used after workout, likely before breakfast)
+- Day 4, 17:58 — fork at table_d1 (early dinner on a Friday, suggests flexible schedule or work-from-home)
+- Day 5, 06:44 — water_bottle at coffee_table_l1 (weekend morning hydration, consistent with fitness routine)
+- Day 5, 09:26 — protein_shaker at counter_k1 (weekend morning fitness routine, habit persists on Saturday)
+
+## Notes
+The weekend evidence (Day 5) shows the protein shaker at 09:26 (later than weekdays, but still morning) and water bottle at 06:44, consistent with a fitness routine. The phone at nightstand at 22:18 suggests an early bedtime, supporting the early wake-up pattern. The remote at coffee table is mundane. Need to observe if the laptop appears at the desk on weekends, and if the keys leaving pattern is absent on weekends (no keys event today). Also look for other fitness objects (yoga mat, running shoes) or work-related items (documents, bag). The keys leaving pattern (Day 2 and Day 3) might be for errands rather than a commute, given the late afternoon home presence. The phone at nightstand at 21:01 on Day 2 and 22:18 on Day 5 suggests a consistent early bedtime, which aligns with an early morning routine. Need to check if the protein shaker appears on Sunday as well.

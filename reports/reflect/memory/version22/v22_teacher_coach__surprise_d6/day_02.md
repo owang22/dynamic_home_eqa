@@ -1,0 +1,23 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single working professional with a structured routine, likely working from home or with a fixed schedule. The thermos and whistle suggest morning departure for work or exercise, and the evening activities (lamp, bath mat, pillow) indicate a wind-down routine after work. The laptop at the kitchen table at 19:58 suggests evening work or study. The phone moving to the nightstand at 21:38 and fork to cupboard at 21:45 indicate a consistent bedtime and kitchen cleanup routine. — The whistle at 07:31 on Wednesday (similar to thermos at 07:30 on Monday) suggests a morning routine, possibly for exercise or work. The laptop at 19:58 on the kitchen table indicates evening work or study, consistent with a professional. The phone at nightstand at 21:38 and fork at cupboard at 21:45 are typical evening wind-down and cleanup. The midday pillow movement (13:52 and 16:47) could be bed-making or a nap, but the overall pattern supports a structured routine.
+2. (p=0.20) A student or remote worker with a flexible schedule, as the midday pillow movements (13:52, 16:47) could indicate naps or bed-making, and the laptop at 19:58 on the kitchen table suggests evening study. The whistle at 07:31 could be for a morning class or exercise. The phone at nightstand at 21:38 and fork at cupboard at 21:45 are generic evening activities. — The midday pillow movements are more frequent than expected for a strict 9-to-5 worker, suggesting flexibility. The laptop at 19:58 could be for study. However, the morning whistle and evening routine are also consistent with a working professional, so this hypothesis is less likely.
+3. (p=0.10) A couple or family with one person working and another at home, given the multiple pillow movements (13:52, 16:47) and the picture frame on coffee table (decorative item). The whistle and thermos could be for one person's morning routine, while the laptop at 19:58 could be for another. The phone at nightstand at 21:38 and fork at cupboard at 21:45 are generic. — The evidence for multiple residents is still weak. The picture frame movement (15:08) is consistent with a decorative item, but no clear pattern of two distinct routines. The pillow movements could be from the same person. This hypothesis remains low probability.
+
+## Selected evidence
+- Day 0, 07:30 — thermos at elsewhere (morning departure, likely for work/study)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday bed activity, possibly nap or making bed)
+- Day 0, 16:24 — thermos at kitchen_table_k1 (return from work/study, afternoon break)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, turning on lamp)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower/bath routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (preparing bed for sleep)
+- Day 2, 07:31 — whistle at elsewhere (morning departure, possibly for exercise or work, similar to thermos)
+- Day 2, 13:52 — bed_pillow at bed_r1 (midday bed activity, consistent with nap or bed-making)
+- Day 2, 16:47 — bed_pillow at bed_r1 (second midday bed activity, possibly making bed or nap)
+- Day 2, 19:58 — laptop at kitchen_table_k1 (evening work or study, suggests professional or student)
+- Day 2, 21:38 — phone at nightstand_r1 (evening wind-down, preparing for sleep) *** SURPRISING
+- Day 2, 21:45 — fork at cupboard_k1 (evening kitchen cleanup, after dinner) *** SURPRISING
+
+## Notes
+The surprising events (phone at nightstand at 21:38, fork at cupboard at 21:45) are actually consistent with a typical evening routine, but the belief model expected them elsewhere (p=0.00), possibly because these objects were not observed on Day 0. This suggests the model needs to learn these objects' typical locations. The whistle on Wednesday morning (07:31) is similar to the thermos on Monday (07:30), reinforcing a morning departure routine. The two midday pillow movements (13:52 and 16:47) on Wednesday are notable; they could indicate a nap or bed-making, but the timing is close to the Monday midday pillow movement (12:57). Need to check if this pattern repeats on other weekdays. Weekend data (days 5-6) is still missing. The picture frame movement (15:08) is again observed, but it's unclear if it's a regular event. Consider if there is a second resident (e.g., two pillows moved at different times). The laptop at 19:58 on the kitchen table suggests evening work, which is common for professionals or students. The fork at cupboard at 21:45 suggests dinner cleanup, which is generic. The phone at nightstand at 21:38 is a typical bedtime routine. These events are not truly surprising but were unexpected by the model due to lack of prior data.

@@ -1,0 +1,25 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single professional who works from home, with a structured but not rigid routine. They use the desk in the morning, have lunch at the table, and relax in the living room in the evening. The passport and suitcase at 07:14 on Tuesday suggest a planned trip, possibly a business trip or vacation, indicating a job that requires occasional travel. — The consistent morning desk use (coffee mug at 09:18 Monday, dining chair at 08:37 Tuesday, and now waste bin at counter at 08:23 Wednesday) supports a work-from-home routine. The nap at 13:52 Wednesday (similar to Monday's 12:57) suggests a flexible schedule. The travel evidence (passport and suitcase) remains strong. The doormat events (08:38 and 13:34) could be cleaning or arrival, but no clear second person items appear.
+2. (p=0.15) A couple or family with at least one person who works from home, but the evidence is still sparse. The multiple floor lamp events could be different people, and the picture frame on coffee table suggests decoration. The passport and suitcase could belong to one member traveling, but no clear second person's items yet. — The picture frame moved twice (12:05 and 15:08) could indicate two different people, but it's weak. The doormat events (08:38 and 13:34) might be two different arrivals, but still consistent with a single person. No new strong evidence for a second person.
+3. (p=0.05) A retiree or someone with a flexible schedule, as they have a nap at 12:57 and early evening relaxation. The passport and suitcase at 07:14 on Tuesday could indicate a planned trip, but the nap at 11:18 on Tuesday suggests a less structured day. However, the desk use at 09:18 on Monday suggests work, so less likely. — The nap at 13:52 Wednesday and the earlier nap on Tuesday (11:18) still suggest flexibility, but the consistent morning desk use (waste bin at 08:23 Wednesday) and dining chair at 16:06 (afternoon work) make a work-from-home professional more likely. The travel evidence also fits a professional better.
+
+## Selected evidence
+- Day 0, 09:18 — coffee_mug at desk_o1 (morning work start)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch time)
+- Day 0, 12:57 — bed_pillow at bed_r1 (afternoon nap)
+- Day 0, 18:46 — fork at table_d1 (dinner)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine)
+- Day 1, 07:14 — passport at elsewhere (travel preparation)
+- Day 1, 07:14 — suitcase at elsewhere (travel preparation)
+- Day 1, 08:37 — dining_chair at table_d1 (morning work/breakfast)
+- Day 1, 11:18 — bed_pillow at bed_r1 (midday nap, earlier than Monday)
+- Day 2, 08:23 — waste_bin at counter_k1 (morning work routine)
+- Day 2, 13:52 — bed_pillow at bed_r1 (afternoon nap, consistent with Monday)
+- Day 2, 16:06 — dining_chair at table_d1 (afternoon work/break)
+- Day 2, 18:48 — bath_mat at bathroom_c1 (evening hygiene routine)
+
+## Notes
+Day 2 is Wednesday. The nap at 13:52 is similar to Monday's 12:57, suggesting a regular afternoon nap. The waste bin at counter at 08:23 and dining chair at 16:06 reinforce a work-from-home routine. The doormat events (08:38 and 13:34) could be cleaning or arrival, but not diagnostic. The picture frame moved twice (12:05 and 15:08) might indicate two people, but still weak. Need to check if the resident returns from travel later (suitcase reappears). Weekend days (5-6) will be key to see if routine changes. The passport and suitcase at 07:14 on Tuesday suggest a trip; if the resident is away, we might see fewer events or different patterns.

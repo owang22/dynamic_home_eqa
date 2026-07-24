@@ -1,0 +1,26 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single professional who works from home or has a desk job, with a structured morning and evening routine, and who occasionally travels for work. The midday pillow habit (Day 0 and Day 7) suggests a flexible schedule or a nap habit, possibly a remote worker. — The return of the carryon and suitcase at 06:15 on Tuesday confirms a typical work trip (departed Friday, returned Tuesday). Morning coffee at desk on workdays, evening decoration and bath mat use, and the midday pillow pattern all support a home-based professional with a flexible routine.
+2. (p=0.08) A person who values home comfort and decoration, possibly living alone or with a partner, with a relaxed evening and a tendency to rearrange items. The picture frame and floor lamp events are consistent, but no new decoration events today. — The decoration events are sporadic and not increasing; the overall pattern is dominated by the professional routine. This hypothesis remains plausible but weak.
+3. (p=0.02) A person with a consistent sleep schedule and a structured day, possibly an early riser who occasionally naps. The midday pillow pattern (Day 0 and Day 7) suggests a regular nap or bed-making habit, but the travel pattern and work-from-home evidence are stronger. — The midday pillow is now observed twice, but it is not enough to override the professional hypothesis. This hypothesis is retained as a minor possibility.
+
+## Selected evidence
+- Day 0, 08:51 — coffee_mug at desk_o1 (morning coffee at desk suggests work-from-home or desk job)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday pillow use indicates a nap or bed-making, unusual for a strict office worker)
+- Day 1, 07:09 — packing_cubes at elsewhere (packing cubes at 07:09 on Tuesday suggests travel preparation, likely for work or a trip)
+- Day 3, 18:48 — neck_pillow at carryon_e1 (neck pillow placed in carryon, indicates preparation for another trip)
+- Day 3, 18:48 — passport at carryon_e1 (passport placed in carryon, confirms travel preparation)
+- Day 4, 16:34 — laptop at carryon_e1 (laptop placed in carryon, confirms departure for a trip)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (evening decoration adjustment, personal comfort habit)
+- Day 4, 20:54 — floor_lamp at sofa_l1 (evening lamp moved to sofa for cozy lighting, personal comfort habit)
+- Day 5, 07:25 — coffee_mug at table_d1 (weekend morning coffee at table, not desk, indicating a relaxed start)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening bath mat use, suggests a bath or shower routine on weekend)
+- Day 7, 10:27 — bed_pillow at bed_r1 (midday pillow on Monday, repeats Day 0 pattern, suggests a regular nap or bed-making habit)
+- Day 8, 06:15 — phone at carryon_e1 (phone placed in carryon at 06:15 on Tuesday, indicates return from trip and unpacking)
+- Day 8, 06:15 — suitcase at carryon_e1 (suitcase placed at carryon at 06:15, confirms return from trip)
+- Day 8, 07:20 — laptop at elsewhere (laptop moved to elsewhere at 07:20, likely taken to work area after unpacking)
+- Day 8, 19:17 — doormat at entry_hook_e1 (doormat placed at entry hook at 19:17, suggests evening arrival or tidying)
+
+## Notes
+The carryon and suitcase returned at 06:15 on Tuesday, confirming a typical work trip (departed Friday, returned Tuesday). The midday pillow pattern is now observed twice (Day 0 and Day 7), suggesting a regular habit (nap or bed-making) that may be part of the routine. The doormat at entry hook at 19:17 is a new event; its significance is unclear but may indicate evening arrival or tidying. The waste bin events (11:46, 12:25, 21:43) are mundane and not retained. The professional hypothesis remains strong, but the midday pillow adds a nuance that may indicate a flexible work schedule or a nap habit. Need to observe if the midday pillow continues on future Mondays to confirm regularity.

@@ -1,0 +1,20 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A healthcare worker (likely a doctor or nurse) who works a day shift and returns home around 18:00-19:00, changing out of scrubs and putting away a stethoscope before placing keys and phone in a designated spot. The badge seen on the nightstand in the morning suggests a morning routine of picking up work ID. — Scrubs, stethoscope, badge, and consistent evening key/phone placement strongly indicate a medical professional. The badge on the nightstand at 08:22 suggests a morning departure for work. The 16:58 plate at sink suggests a late lunch or early dinner at home, possibly a day off or a split shift, but the 19:02 keys placement still aligns with a typical end-of-shift. The 21:45 dish return to cupboard is a mundane household event.
+2. (p=0.05) A person with a variable work schedule, possibly a shift worker or someone who works from home some days. The 16:58 plate at sink could indicate a meal at home during a break, and the 19:02 keys placement might be from a later return. However, the badge and scrubs still point to healthcare. — The 16:58 plate at sink is earlier than the previous day's 18:02 scrubs arrival, suggesting a different schedule. But the badge and scrubs are strong evidence for healthcare, so this hypothesis is less likely.
+
+## Selected evidence
+- Day 0, 18:02 — scrubs at bed_r1 (medical uniform discarded after work)
+- Day 0, 18:32 — stethoscope at elsewhere (medical tool put away)
+- Day 0, 19:00 — keys at elsewhere (keys placed in usual spot)
+- Day 1, 08:22 — badge at nightstand_r1 (morning pickup of work ID)
+- Day 1, 19:02 — keys at elsewhere (keys placed in usual spot, consistent with work return)
+- Day 2, 15:45 — fork at table_d1 (lunch/early meal at home, possibly a break)
+- Day 2, 15:45 — mug at counter_k1 (hot drink during break)
+- Day 2, 16:25 — plate at sink_k1 (meal finished, earlier than previous scrubs arrival)
+- Day 2, 18:31 — scrubs at elsewhere (work uniform discarded after shift)
+- Day 2, 18:56 — thermos at elsewhere (likely work thermos put away after shift)
+
+## Notes
+Day 2 (Wednesday) shows scrubs again at 18:31, consistent with a work day. The earlier meal (15:45-16:25) suggests a lunch break at home, possibly a split shift or a day with a later start. The thermos at 18:56 reinforces the work routine. Need to observe more days to see if the pattern holds, especially weekends. Also need to identify 'elsewhere' locations. The fork and mug at 15:45 are new; they may indicate a meal at home during a break. The plate at sink at 16:25 is earlier than the previous day's 16:58, but still before scrubs arrival. This could be a lunch break at home. The thermos is a new object; likely a work thermos. The badge was not seen today; it may have been picked up earlier or not observed. The keys were not seen today; they may have been placed elsewhere or not observed. The stethoscope was not seen today; it may have been put away earlier or not observed. The weekend observations will be key to confirm work schedule.

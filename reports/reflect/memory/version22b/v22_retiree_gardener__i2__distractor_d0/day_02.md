@@ -1,0 +1,16 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.50) A person who reads a physical newspaper in the morning, likely a traditionalist or someone who enjoys a slow morning routine. The newspaper at the coffee table suggests a dedicated reading habit, possibly before work. — The newspaper event on day 0 is still the most distinctive. However, the reading glasses on the sofa in the late afternoon suggest reading or screen use at home, which could be consistent with a home-worker or retiree. The remote on the sofa is mundane.
+2. (p=0.50) A person who works from home or has a flexible schedule, as the newspaper is read at home in the morning and a plate appears at lunchtime, suggesting they are home for meals. The reading glasses on the sofa in the late afternoon further support being at home during the day. — The reading glasses at 16:11 on a Tuesday indicate the person is at home in the late afternoon, which is more typical of a home-worker or someone with a flexible schedule. The remote on the sofa is common but consistent with evening relaxation at home.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (indicates morning reading habit, possibly before work or as part of a routine)
+- Day 1, 16:11 — reading_glasses at sofa_l1 (suggests reading or screen use at home in late afternoon, supporting a home-worker or flexible schedule)
+- Day 2, 11:49 — fork at table_d1 (lunchtime utensil use at home, consistent with being home for midday meal)
+- Day 2, 15:50 — phone at coffee_table_l1 (afternoon phone use at home, further evidence of being home during work hours)
+- Day 2, 18:50 — plate at sink_k1 (evening meal cleanup, typical but reinforces home-based routine)
+- Day 2, 21:45 — bowl and coffee_mug at cupboard_k1 (late evening tidying, suggests a regular evening routine at home)
+
+## Notes
+Day 2 (Wednesday) shows lunchtime fork use, afternoon phone at coffee table, evening plate at sink, and late evening bowl and mug put away. This pattern strongly suggests the person is home throughout the day, consistent with a home-worker or retiree. No newspaper appeared today, which might indicate the newspaper is not daily or was missed. Need to observe more days to see if newspaper appears on weekdays or only on certain days. Weekend observations (days 5-6) will be crucial to distinguish between a home-worker and a retiree (e.g., different weekend activities). The phone at coffee table in the afternoon is a new data point; it could indicate work-related phone use or leisure. The late evening tidying (bowl and mug) suggests a regular evening routine. The fork at table at 11:49 is earlier than typical lunch, possibly a late breakfast or early lunch. Keep tracking morning events and weekend patterns.

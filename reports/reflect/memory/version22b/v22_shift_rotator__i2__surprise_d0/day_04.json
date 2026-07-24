@@ -1,0 +1,34 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A person with a non-standard work schedule, likely in a trade (e.g., construction, maintenance) that requires safety gear and involves early or late shifts, possibly with weekend work.",
+   "prob": 0.8,
+   "rationale": "The hi_vis_vest and work_badge are consistently used together. On Day 4 (Friday), the resident leaves at 05:14 with hi_vis_vest and keys, and the work_badge was already at entry_hook at 04:59, suggesting a very early start. The late return on Day 3 (23:02) and early departure on Day 2 (05:07) indicate variable shifts. The phone at entry_hook at 04:59 suggests it was grabbed on the way out. This pattern strongly supports a shift worker."
+  },
+  {
+   "persona": "A single person who lives alone, with a routine that includes late dinners and evening coffee, possibly working from home occasionally or having a desk job with flexible hours.",
+   "prob": 0.15,
+   "rationale": "The coffee_mug at desk in the evening (Day 2) and late dinner cleanup (fork at sink at 18:58 on Day 4, though earlier than previous 21:45) suggest a solitary evening routine. The thermos at elsewhere at 13:28 on Day 3 could be a packed lunch for work, but the early departure on Day 4 (05:14) and late return on Day 3 (23:02) make a standard desk job less likely. This hypothesis is retained as a secondary possibility."
+  },
+  {
+   "persona": "A health-conscious individual who exercises in the early morning (e.g., before work) and has a structured routine.",
+   "prob": 0.05,
+   "rationale": "The early departure at 05:14 on Day 4 could be for a morning run or gym, but the hi_vis_vest and work_badge suggest work, not exercise. The phone at entry_hook at 04:59 might be for a workout app, but the safety gear contradicts this. This hypothesis is weakened further and kept only as a low-probability alternative."
+  }
+ ],
+ "selected_evidence": [
+  "Day 2, 05:07 \u2014 work_badge at elsewhere (early departure for work, possibly a morning shift)",
+  "Day 2, 15:05 \u2014 work_badge at entry_hook_e1 (return from work, but shift length varies)",
+  "Day 2, 21:45 \u2014 fork at cupboard_k1 (late dinner cleanup, indicating meal after 21:00)",
+  "Day 3, 13:28 \u2014 thermos at elsewhere (packed lunch or drink taken to work, suggesting midday break)",
+  "Day 3, 23:02 \u2014 hi_vis_vest at locker_shelf_e1 (safety gear stored at home, indicating trade job)",
+  "Day 3, 23:02 \u2014 work_badge at locker_shelf_e1 (badge stored with safety gear, consistent with shift work)",
+  "Day 3, 23:02 \u2014 keys at entry_hook_e1 (late return home, after 23:00)",
+  "Day 4, 04:59 \u2014 phone at entry_hook_e1 (phone grabbed on way out for early shift, surprising because phone usually elsewhere at this time)",
+  "Day 4, 04:59 \u2014 work_badge at entry_hook_e1 (badge ready for early departure, surprising because badge was expected elsewhere)",
+  "Day 4, 05:14 \u2014 hi_vis_vest at elsewhere (vest taken for early shift, surprising because vest was expected elsewhere)",
+  "Day 4, 05:14 \u2014 keys at elsewhere (keys taken for early departure, surprising because keys were expected elsewhere)",
+  "Day 4, 18:58 \u2014 fork at sink_k1 (dinner cleanup earlier than previous late dinner, suggesting variable meal times)"
+ ],
+ "notes": "The surprising events on Day 4 (Friday) confirm a very early start (05:14) with safety gear, consistent with a shift worker. The phone at entry_hook at 04:59 suggests it was part of the morning routine. The fork at sink at 18:58 is earlier than the previous 21:45 dinner, indicating meal times vary. Need to observe weekend (days 5-6) to see if the resident works weekends or has different patterns. The thermos at 13:28 on Day 3 might be a lunch break during a day shift, but the early departure on Day 4 suggests a different shift. The work_badge events on Day 2 (05:07 and 15:05) might have been a different shift (e.g., 10-hour day). The coffee_mug at desk in the evening (Day 2) could be for personal use or remote work. The hi_vis_vest is a strong discriminator for trade work. The resident likely lives alone given the single set of objects and no evidence of others."
+}

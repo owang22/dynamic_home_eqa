@@ -1,0 +1,25 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single adult with a regular medication routine, likely older or managing a chronic condition, who works from home and has a structured daily schedule. — Pill organizer observed on Mon, Tue, Thu, Fri, and now also on Sunday (Day 13). This expands the medication pattern beyond weekdays, suggesting a daily or near-daily routine. Work-from-home pattern (reading glasses at desk, coffee mug at desk, lunch at home) and weekend leisure (reading glasses on coffee table/sofa, phone on sofa) remain robust. Today's events (pill organizer at 07:10, reading glasses at coffee table at 13:44, fork at sink at 18:48, plate at cupboard at 21:45, phone at nightstand at 22:02) are consistent with a relaxed Sunday: morning medication, afternoon leisure reading, dinner at home, and bedtime routine.
+2. (p=0.05) A health-conscious adult who takes supplements and works from home, with a structured daily schedule. — Pill organizer could be supplements, but the early hour and daily consistency (including Sunday) are more typical of medication. No other health-related objects observed. This hypothesis remains possible but less likely.
+
+## Selected evidence
+- Day 0, 07:11 — pill_organizer at cupboard_k1 (medication routine on Monday)
+- Day 1, 06:45 — pill_organizer at counter_k1 (medication routine on Tuesday)
+- Day 2, 08:31 — coffee_mug at desk_o1 (work-from-home: morning coffee at desk)
+- Day 2, 08:31 — reading_glasses at desk_o1 (work-from-home: reading glasses at desk)
+- Day 2, 12:30 — fork at table_d1 (lunch at home, consistent timing)
+- Day 2, 22:10 — phone at nightstand_r1 (bedtime routine, phone on nightstand)
+- Day 4, 06:45 — pill_organizer at counter_k1 (medication routine on Friday)
+- Day 6, 07:49 — bowl at sink_k1 (weekend breakfast later than weekday)
+- Day 6, 13:51 — reading_glasses at coffee_table_l1 (weekend leisure reading)
+- Day 6, 19:43 — phone at sofa_l1 (evening phone use on sofa, no work desk activity)
+- Day 10, 06:51 — pill_organizer at counter_k1 (medication on Thursday)
+- Day 11, 07:08 — pill_organizer at cupboard_k1 (medication on Friday)
+- Day 12, 07:16 — coffee_mug at counter_k1 (Saturday: later morning coffee, no desk)
+- Day 12, 12:36 — keys at counter_k1 (Saturday: leaving home midday, likely errand or outing)
+- Day 13, 07:10 — pill_organizer at cupboard_k1 (medication on Sunday, expands pattern to weekend)
+
+## Notes
+Pill organizer now observed on Mon, Tue, Thu, Fri, and Sun (Days 0,1,4,10,11,13). Still not observed on Wed (Days 2,9) or Sat (Day 5,12). This suggests a daily medication except possibly Wednesday and Saturday, or missed observations. Need to check future Wednesdays and Saturdays. Weekend routine (Day 6,13) shows later breakfast, leisure reading, and no work desk activity. Today (Sunday) shows morning medication, afternoon reading, dinner, and bedtime phone. Open question: why no pill organizer on Wed? Could be a different medication schedule or missed event. Also, no reading glasses or phone events on Day 12, but that may be due to limited observations.

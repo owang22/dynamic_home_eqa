@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A person who commutes by bike on weekdays, with a flexible start time around 10:00, and has a relaxed weekend routine. The weekday pattern includes a morning coffee and breakfast before departure, and evening meal cleanup. On weekends, the bike gear stays home, and the morning coffee is at the table. — The new Monday events show a morning coffee mug at table (consistent with weekday routine) and evening plate at table followed by bowl and plate returning to cupboard, indicating a home-cooked dinner and cleanup. No bike gear departure events were observed today, but the morning coffee and evening meal pattern aligns with the established weekday routine. The absence of bike gear events is not contradictory; it may simply not have been captured or the resident worked from home today.
+2. (p=0.05) A person who occasionally works from home or has a non-standard schedule, as the weekday departure around 10:00 is later than typical 9-to-5 commuters. The weekend pattern shows no bike use, but the bike maintenance on Sunday suggests the bike is used for leisure or errands on weekends, not just commuting. — The Monday events do not show a bike commute departure, which could indicate a work-from-home day or a different schedule. However, the morning coffee and evening meal pattern is still present. This hypothesis remains possible but less likely given the strong commuting pattern observed in previous weekdays.
+
+## Selected evidence
+- Day 0, 10:00 — helmet at elsewhere (cycling gear stored away mid-morning, suggests a commute that ends before 10)
+- Day 0, 18:07 — water_bottle at bike_rack_h1 (bottle returned to bike rack at end of workday, consistent with bike commuting)
+- Day 1, 18:33 — water_bottle at bike_rack_h1 (repeated evening return, strengthens commuting pattern)
+- Day 2, 18:12 — pannier at bike_rack_h1 (bike bag returned, further evidence of bike commute)
+- Day 2, 21:45 — water_bottle at bike_rack_h1 (evening return, consistent with previous days)
+- Day 3, 10:01 — helmet, pannier, phone at elsewhere (all three leave together at 10:01, indicating a later departure than previously thought)
+- Day 3, 18:09 — water_bottle at sink_k1 (bottle returned to sink instead of bike rack, possibly being washed or refilled; still evening return)
+- Day 4, 07:51 — bowl at table_d1 (breakfast bowl out before departure, indicates morning meal)
+- Day 4, 08:26 — coffee_mug at sink_k1 (coffee mug in sink after morning coffee, part of morning routine)
+- Day 4, 10:09 — helmet at elsewhere (helmet leaves at 10:09, consistent with later departure on Friday)
+- Day 5, 07:54 — coffee_mug at table_d1 (weekend morning coffee at table, relaxed start)
+- Day 5, 13:07 — helmet at hall_shelf_h1 (helmet stays home all Saturday, no bike commute on weekend)
+- Day 5, 22:10 — phone at hall_shelf_h1 (phone at home all day, no departure on weekend)
+- Day 6, 16:05 — hex_wrench_set at bike_rack_h1 (bike maintenance on Sunday, typical weekend activity for a cyclist)
+- Day 7, 07:46 — coffee_mug at table_d1 (Monday morning coffee at table, consistent with weekday routine)
+
+## Notes
+Monday events show morning coffee at table (07:46) and evening meal cleanup (plate at table at 18:53, then bowl and plate to cupboard at 21:45). No bike gear departure events observed today; this could be a work-from-home day or the events were missed. Need to observe more Mondays to see if the pattern holds. The hex wrench set on Sunday suggests bike maintenance is a weekend activity. No evidence of a second person yet. Day-of-week pattern: weekday mornings have coffee at table (Day 4, Day 7) and sometimes bowl at table (Day 4). Weekend mornings also have coffee at table (Day 5). The departure time around 10:00 on weekdays (Day 0, 3, 4) is consistent. The water bottle cleaning event on Day 3 (at sink) is a potential anomaly to watch for repetition.

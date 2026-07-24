@@ -1,0 +1,26 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Family with at least one school-age child and one adult working from home or with flexible schedule — The morning routine on Friday (flashcards and kitchen timer at 08:55, consistent with previous days) and the keys arriving at 18:12 (likely adult returning from work) reinforce the family pattern. The math workbook and flashcards are clearly educational, and the doormat movements on previous days suggest a child's school drop-off. The bed pillow at 18:25 could be a parent resting after work. The plate at 07:09 and bowl at 21:45 indicate meal times. The picture frame at 18:34 suggests a decorative or sentimental item, common in a family home.
+2. (p=0.07) Single adult with a structured routine, possibly working from home — The flashcards and math workbook could be for personal study or tutoring, but the timing (08:55 on Friday, similar to previous days) and the presence of multiple educational items make this less likely. The keys at 18:12 could be a single adult returning from work, but the morning routine with flashcards and timer is more typical of a child's schedule.
+3. (p=0.03) Couple without children, one of whom works from home — The educational items (flashcards, math workbook) are less typical for a childless couple unless they are tutors or hobbyists. The morning routine with flashcards and timer at 08:55 is more consistent with a child's study time. The keys at 18:12 could be one partner returning from work, but the overall pattern still leans toward a family with a child.
+
+## Selected evidence
+- Day 1, 15:45 — math_workbook at supply_caddy_d1 (homework after school, suggests school-age child)
+- Day 1, 16:12 — doormat at entry_hook_e1 (arrival home, likely child from school)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure or arrival, possibly adult leaving for work or child to school)
+- Day 2, 13:17 — math_workbook at table_d1 (homework earlier in day, could be half-day or different schedule)
+- Day 2, 13:52 — bed_pillow at bed_r1 (midday nap or bed-making, possibly parent working from home)
+- Day 3, 07:57 — doormat at entry_hook_e1 (morning departure, likely child to school)
+- Day 3, 08:56 — kitchen_timer at table_d1 (morning routine, possibly breakfast or study)
+- Day 3, 08:56 — tablet at table_d1 (morning use, possibly for study or work)
+- Day 3, 09:02 — doormat at entry_hook_e1 (return, possibly adult after drop-off)
+- Day 3, 11:56 — flashcards at supply_caddy_d1 (educational activity, supports child presence)
+- Day 3, 13:20 — math_workbook at table_d1 (homework, consistent with half-day schedule)
+- Day 4, 08:55 — flashcards at table_d1 (morning study, consistent with child's routine)
+- Day 4, 08:55 — kitchen_timer at table_d1 (morning routine, likely breakfast or study)
+- Day 4, 18:12 — keys at entry_hook_e1 (adult returning from work, likely parent)
+- Day 4, 18:25 — bed_pillow at bed_r1 (afternoon rest, possibly parent after work)
+
+## Notes
+Friday (Day 4) shows a similar morning routine to Thursday: flashcards and kitchen timer at 08:55, suggesting a consistent weekday schedule. The keys at 18:12 indicate an adult returning from work, and the bed pillow at 18:25 could be a parent resting. The plate at 07:09 and bowl at 21:45 are meal-related but not highly diagnostic. Weekend observations (Days 5-6) will be crucial to see if the child is present on weekends (e.g., doormat movements, educational items). Also look for multiple plates or other signs of multiple residents. The picture frame at 18:34 is a common household item but could indicate a family setting.

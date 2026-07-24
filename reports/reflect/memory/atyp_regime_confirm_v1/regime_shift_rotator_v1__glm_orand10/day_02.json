@@ -1,0 +1,34 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Working professional with a 9-5 schedule, leaves home early in the morning and returns in the afternoon",
+   "prob": 0.92,
+   "rationale": "Early departure (5:09-5:20) with work badge and thermos, returns mid-afternoon (14:23-14:35) with keys, consistent work schedule observed on consecutive days"
+  },
+  {
+   "persona": "Health-conscious professional who brings a thermos for drinks throughout the day",
+   "prob": 0.06,
+   "rationale": "Thermos is prepared daily (counter_k1 to elsewhere) but primary pattern is work schedule"
+  },
+  {
+   "persona": "Someone who eats dinner at home but cleans up late",
+   "prob": 0.02,
+   "rationale": "Plate appears at dinner table (18:33) but dishes aren't cleaned up until later (21:45), but this appears secondary to work pattern"
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 05:09 \u2014 work_badge seen at elsewhere (early departure for work)",
+  "Day 0, 05:09 \u2014 thermos seen at elsewhere (preparing for workday)",
+  "Day 0, 14:25 \u2014 keys seen at entry_hook_e1 (returning home from work)",
+  "Day 0, 14:25 \u2014 laptop seen at desk_o1 (continuing work at home)",
+  "Day 1, 04:55 \u2014 thermos seen at counter_k1 (preparing for workday)",
+  "Day 1, 05:20 \u2014 work_badge seen at elsewhere (early departure for work)",
+  "Day 1, 14:23 \u2014 keys seen at entry_hook_e1 (returning home from work)",
+  "Day 2, 05:12 \u2014 work_badge seen at elsewhere (early departure for work)",
+  "Day 2, 05:29 \u2014 laptop seen at elsewhere (taking work laptop)",
+  "Day 2, 14:35 \u2014 keys seen at entry_hook_e1 (returning home from work)",
+  "Day 2, 18:33 \u2014 plate seen at table_d1 (dinner preparation)",
+  "Day 2, 19:18 \u2014 phone seen at sofa_l1 (evening relaxation routine)"
+ ],
+ "notes": "Consistent early departure (5:09-5:29) and return (14:23-14:35) times confirm regular 9-5 work schedule. Thermos preparation pattern continues. Weekend patterns needed to confirm work schedule. Phone on sofa at 19:18 suggests evening relaxation routine after dinner. Laptop now being taken to work on Day 2, which wasn't observed on previous days."
+}

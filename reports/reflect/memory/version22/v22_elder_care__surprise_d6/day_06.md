@@ -1,0 +1,24 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single older adult with mobility aids (walker) and a structured but flexible weekend routine, likely retired or working part-time from home. — The walker pouch (Day 5, 08:37 and 21:57) strongly indicates a mobility aid, consistent with an older resident. The hearing aid case (07:26) and picture frame (08:34) at side table suggest a relaxed Saturday morning. The wall clock at counter (09:01, 12:31) and waste bin at counter (09:01, 16:32) indicate household chores or organization. The bath mat at bathroom (20:27) suggests evening hygiene routine. The surprising plate at cupboard (21:45) and walker pouch at nightstand (21:57) deviate from weekday patterns, possibly due to weekend schedule (e.g., later dinner, earlier bedtime prep). The absence of midday lamp use and earlier pillow moves (not seen today) support a flexible weekend routine.
+2. (p=0.20) A couple or family with one older adult (hearing aid user, walker user) and another person who may be a caregiver or family member, sharing the space with overlapping routines. — The walker pouch and hearing aid case suggest an older resident needing assistance. The picture frame at side table (08:34) could be a personal item moved by a caregiver. The wall clock at counter (09:01, 12:31) and waste bin movements might be from different users. However, the lack of multiple distinct items (e.g., two coffee mugs, two plates) and the single plate at cupboard (21:45) weaken this hypothesis. The surprising events (plate at cupboard, walker pouch at nightstand) could be explained by a caregiver tidying up, but the pattern is still consistent with a single resident.
+3. (p=0.10) A retiree living alone with a very consistent daily routine, but with weekend deviations due to errands or visitors. — The hearing aid case (07:26) and walker pouch (08:37) suggest a structured morning. The wall clock and waste bin at counter indicate routine cleaning. The bath mat at 20:27 is typical evening hygiene. However, the surprising plate at cupboard (21:45) and walker pouch at nightstand (21:57) are deviations from the expected weekday pattern (e.g., plate usually at table or sink, walker pouch at recliner). This could be due to a visitor or a different weekend schedule, but the overall pattern is less rigid than a retiree with a fixed routine. The probability is lowered because the walker pouch and hearing aid case suggest more variability than a strict routine.
+
+## Selected evidence
+- Day 0, 07:38 — plate at table_d1 (morning breakfast, routine meal)
+- Day 0, 20:06 — floor_lamp at recliner_l1 (evening reading/TV, consistent evening activity)
+- Day 3, 08:22 — coffee_mug at side_table_l1 (quick transition after breakfast, suggests workday rush)
+- Day 3, 12:21 — floor_lamp at recliner_l1 (midday lamp use, flexible schedule)
+- Day 3, 22:03 — hearing_aid_case at nightstand_r2 (hearing aid at bedside, indicates older resident)
+- Day 4, 07:01 — hearing_aid_case at counter_k1 (unusual morning placement, possible Friday routine)
+- Day 4, 17:59 — plate at table_d1 (evening meal, consistent dinner at home)
+- Day 4, 22:03 — remote at nightstand_r2 (remote in bedroom, suggests TV in bedroom or early bedtime)
+- Day 5, 08:37 — walker_pouch at recliner_l1 (mobility aid, indicates older resident with walker)
+- Day 5, 09:01 — wall_clock at counter_k1 (household chore/organization, weekend pattern)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening hygiene routine)
+- Day 5, 21:45 — plate at cupboard_k1 (surprising: plate put away late, weekend deviation)
+- Day 5, 21:57 — walker_pouch at nightstand_r2 (surprising: walker pouch moved to bedroom, early bedtime prep)
+
+## Notes
+Day 5 (Saturday) introduces a walker pouch, strongly suggesting mobility aid use. The hearing aid case at side table (07:26) and picture frame (08:34) indicate a relaxed morning. The wall clock and waste bin at counter (09:01, 12:31, 16:32) suggest household chores. The bath mat at 20:27 is typical evening hygiene. The surprising events (plate at cupboard at 21:45, walker pouch at nightstand at 21:57) deviate from weekday patterns—possibly due to weekend schedule (later dinner, earlier bedtime). Need to verify if weekend days (5-6) consistently show later wake-up, more daytime activity, and different object placements. The walker pouch is a new object; its movements (recliner to nightstand) may indicate a routine of moving the walker to the bedroom at night. The plate at cupboard is unusual; could be a visitor or a different meal schedule. Continue monitoring for weekday vs. weekend patterns, especially for hearing aid case, walker pouch, and plate movements.

@@ -1,0 +1,19 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A person who works a standard office job (likely 9-to-5) and lives alone or in a small household. The laptop leaves around 08:00 and returns around 17:30-17:50, consistent with a commute. Evening relaxation (remote on sofa) and bedtime routine (phone on nightstand) are regular. The bowl at sink at 07:10 suggests a quick breakfast before leaving. The protein shaker at 06:44 on Thursday suggests a morning workout or protein shake before work, adding a fitness element to the routine. — Laptop pattern strongly supports office job. Protein shaker at 06:44 indicates a fitness habit, but still consistent with a morning routine before work. Backpack on sofa at 17:50 could be from work or gym, but doesn't contradict office job.
+2. (p=0.08) A person who works from home or has a flexible schedule, but the laptop leaving at 07:59 and returning at 17:51 on Wednesday suggests a regular commute. The bowl at table at 06:44 on Thursday could be breakfast at home, and the protein shaker might be used after a morning workout. However, the consistent departure and return times make WFH less likely. The backpack on sofa at 17:50 might indicate returning from somewhere, but not necessarily work. — The pattern is still more consistent with office job, but a hybrid schedule (e.g., WFH some days) cannot be ruled out yet. Weekend observations will help.
+3. (p=0.02) A person who is a student or has a part-time job, with a similar routine of leaving in the morning and returning in the late afternoon. The bowl and protein shaker suggest a morning routine before leaving. The backpack on sofa at 17:50 could be from school or a part-time job. However, the laptop pattern is more typical of a full-time worker. — The evidence is still consistent with a student, but the timing (leaving at 08:00, returning at 17:30-17:50) is more typical of a full-time job. Probability remains low.
+
+## Selected evidence
+- Day 0, 07:55 — laptop at elsewhere (taken out of home, suggests leaving for work/school)
+- Day 1, 17:35 — laptop at desk_o1 (returned from work, typical end of workday)
+- Day 2, 07:59 — laptop at elsewhere (consistent morning departure)
+- Day 2, 17:51 — plate at table_d1 (dinner time, suggests eating at home after work)
+- Day 2, 07:10 — bowl at sink_k1 (quick breakfast before leaving, typical workday)
+- Day 3, 06:44 — bowl at table_d1 (breakfast at table, earlier than previous days)
+- Day 3, 06:44 — protein_shaker at counter_k1 (morning fitness routine, suggests health-conscious)
+- Day 3, 17:50 — backpack at sofa_l1 (returned from somewhere, possibly work or gym)
+
+## Notes
+Thursday's events show a protein shaker at 06:44, indicating a morning workout or protein shake before work. The bowl at table at the same time suggests breakfast at the table, earlier than previous days (07:10). The backpack on sofa at 17:50 could be from work or gym. Need to observe weekend days (5-6) for differences. Also look for other objects like gym bag, books, or cooking items to refine persona. The remote pattern is consistent but not highly diagnostic. The phone on nightstand at 21:04 on Tuesday suggests a consistent bedtime.

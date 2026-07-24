@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A student with a structured weekday routine and a relaxed weekend pattern. The weekday evidence (laptop, school_bag, grade_folder leaving at 07:31, whistle at entry_hook at 16:31) strongly suggests a student. The weekend (Sunday) shows later morning activities, a midday meal, and evening thermos, but no morning departure or afternoon return. The surprising events (fork at kitchen_table at 19:23 and fork at sink at 19:58) indicate a late dinner or snack, consistent with a student's evening routine. The late-night packing of grade_folder into school_bag on Day 7 further supports this. — The student hypothesis is strengthened by the consistent weekday pattern and the late-night packing. The surprising fork events are not contradictory but show a later evening meal, which is typical for a student. The teacher hypothesis is less likely because the school_bag and late-night packing are more typical of a student.
+2. (p=0.12) A teacher or educator who works weekdays and has a more relaxed weekend. The grade_folder and school_bag could be for grading or carrying materials. The weekend shows a later start and no morning departure, which is typical for a teacher on a Sunday. The surprising events (fork at kitchen_table at 19:23 and fork at sink at 19:58) suggest a later dinner, which could be a teacher grading or preparing lessons in the evening. — The teacher hypothesis is a refinement of the student hypothesis, but the school_bag is more typical of a student. The late-night packing of grade_folder into school_bag on Day 7 is less typical for a teacher, who might leave materials at work. The surprising fork events are consistent with a teacher's evening routine but not distinctive.
+3. (p=0.03) A remote worker or freelancer who works from home on weekdays but has a different weekend routine. The weekday morning departure with laptop and keys could be for a co-working space or office, but the school_bag and grade_folder are less common. The weekend shows a later start and no departure, which could be a day off. The surprising events (fork at kitchen_table at 19:23 and fork at sink at 19:58) suggest a later dinner, which could be a remote worker's flexible schedule. — The remote worker hypothesis is weakened by the strong student/teacher indicators (school_bag, grade_folder). The weekday morning departure with grade_folder is not typical for a remote worker, who would usually stay home. The surprising fork events are consistent but not distinctive. This hypothesis is the least likely.
+
+## Selected evidence
+- Day 0, 07:30 — thermos at elsewhere (morning hot drink taken out, likely to work/school)
+- Day 0, 12:30 — dining_chair at kitchen_table_k1 (midday meal at home on weekday)
+- Day 2, 07:31 — whistle at elsewhere (morning hot drink ritual, similar to thermos)
+- Day 2, 16:06 — dining_chair at kitchen_table_k1 (afternoon meal, later than Day 0)
+- Day 2, 19:58 — laptop at kitchen_table_k1 (evening work/study session)
+- Day 4, 06:22 — laptop at school_bag_e1 (morning packing for school/work, strong student/teacher indicator)
+- Day 4, 07:31 — laptop, grade_folder, keys at elsewhere (morning departure with school/work items)
+- Day 4, 16:31 — whistle at entry_hook (afternoon return, tea/coffee ritual)
+- Day 6, 07:48 — picture_frame at coffee_table_l1 (weekend morning decoration, later start)
+- Day 6, 11:04 — coffee_mug at sink_k1 (weekend late breakfast/brunch, surprising but consistent with relaxed Sunday)
+- Day 6, 11:04 — plate at sink_k1 (weekend late breakfast/brunch, surprising but consistent)
+- Day 6, 12:05 — dining_chair at kitchen_table_k1 (weekend midday meal)
+- Day 6, 19:21 — plate at kitchen_table_k1 (weekend later dinner, surprising but consistent)
+- Day 7, 07:31 — grade_folder at elsewhere (morning departure with school/work items, consistent with weekday routine)
+- Day 7, 21:56 — grade_folder at school_bag_e1 (late-night packing for next day, surprising but consistent with student preparing for school)
+
+## Notes
+Today (Wednesday) shows a typical weekday routine: morning packing (laptop at school_bag at 06:25), morning departure (whistle at elsewhere at 07:35), morning activities (floor_lamp at sofa at 09:15 and 09:39, picture_frame at coffee_table at 10:25), afternoon rest (bed_pillow at bed at 13:49 and 15:57), evening meal (dining_chair at kitchen_table at 17:51 and 18:16, wall_clock at counter at 18:37, floor_lamp at sofa at 18:50), and surprising events (fork at kitchen_table at 19:23, waste_bin at counter at 19:46, fork at sink at 19:58, dining_chair at kitchen_table at 20:13, waste_bin at counter at 21:02). The surprising fork events indicate a late dinner or snack, which is consistent with a student's evening routine. The waste_bin events suggest cleaning up after the meal. The student hypothesis is strengthened. Open question: Is the resident a student or a teacher? The school_bag and late-night packing suggest a student. Need to observe if the pattern repeats on other weekdays. The retiree hypothesis is removed. The remote worker hypothesis is very unlikely.

@@ -1,0 +1,25 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single adult who works a standard daytime job, likely leaves home early and returns in the evening. — The consistent early departure (work_badge) on weekdays and evening meals (plate at sink) reinforce a standard work schedule. Today's early thermos preparation and departure (05:07) fit the pattern, though the late return on Day 10 remains an outlier.
+2. (p=0.15) A person with a morning routine that includes preparing a hot beverage to take along, possibly a commuter or outdoor worker. — Thermos appeared at counter at 04:52 and then at elsewhere at 05:07 today, consistent with early morning preparation for a workday. The hi_vis_vest and work_badge still suggest a job requiring safety gear. The thermos pattern is now observed on multiple days (Day 0, Day 9, Day 11).
+3. (p=0.05) A person who may have a non-standard work schedule (e.g., shift work or early finish) on some days. — Today's events (early departure, no late return) are consistent with a standard workday, so the non-standard schedule hypothesis remains less likely. The late return on Day 10 could be an exception.
+
+## Selected evidence
+- Day 0, 05:14 — thermos at elsewhere (early morning preparation of a drink to take out, suggests a workday commute or early activity)
+- Day 2, 05:27 — work_badge at elsewhere (early departure for work, confirms workday routine)
+- Day 2, 14:42 — hi_vis_vest at locker_shelf_e1 (return from work with safety vest, suggests a job requiring high-visibility gear)
+- Day 3, 13:19 — work_badge, hi_vis_vest, keys, phone at elsewhere (midday departure with all work items, suggests a shift or early finish)
+- Day 4, 05:08 — phone, work_badge at entry_hook_e1 (early morning departure preparation, consistent with workday)
+- Day 5, 12:25 — phone at sofa_l1 (relaxed weekend activity, no work items present)
+- Day 7, 05:09 — work_badge at entry_hook_e1 (early Monday departure, reinforces weekday routine)
+- Day 7, 19:07 — plate at sink_k1 (evening meal cleanup, typical after returning from work)
+- Day 9, 04:49 — thermos at counter_k1 (early morning preparation of a hot drink, consistent with workday routine)
+- Day 9, 05:04 — work_badge at elsewhere (early departure for work, typical weekday pattern)
+- Day 10, 13:07 — keys at elsewhere (midday departure with keys, could indicate a shift or errand)
+- Day 10, 23:10 — hi_vis_vest at locker_shelf_e1 (late return of safety vest, suggests a long workday or shift)
+- Day 11, 04:52 — thermos at counter_k1 (early morning preparation of a hot drink, consistent with workday routine)
+- Day 11, 05:07 — thermos at elsewhere (early departure with thermos, reinforces workday commute)
+
+## Notes
+Today (Friday) showed the typical early morning thermos preparation and departure (05:07), consistent with a standard workday. The late return on Day 10 (Thursday) remains an outlier; need to observe if such late returns occur on other Thursdays or other days. Weekend pattern (no work items, relaxed activities) still consistent. No evidence of other household members.

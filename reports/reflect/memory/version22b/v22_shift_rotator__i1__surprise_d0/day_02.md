@@ -1,0 +1,18 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single professional who works outside the home, likely in a job requiring a work badge and hi-vis vest (e.g., construction, warehouse, or field technician), with a morning departure around 05:30 and evening return. The thermos and coffee mug suggest a coffee/tea habit, but the mug is used at home in the evening, not taken to work. — The work badge and hi-vis vest appearing at 14:42 on a Wednesday, both placed on a locker shelf, strongly suggest a job with safety gear and a locker. The badge was seen at 'elsewhere' at 05:27, indicating departure. The coffee mug at desk_o1 at 19:46 and then cupboard at 21:45 shows evening home use, not a travel mug. This refines the earlier 'thermos' hypothesis: the thermos may be for a packed drink, but the mug is for home. The single-person pattern holds.
+2. (p=0.10) A single professional who works from home some days, as the coffee mug is used at a home desk in the evening, but the badge and vest indicate an off-site job. The 14:42 return time is early for a full workday, suggesting a half-day or flexible schedule. — The coffee mug at desk_o1 at 19:46 could be a home office desk, but the badge and vest at 14:42 suggest the person returned home early. This is less likely given the 05:27 departure and 14:42 return, which is a short workday. The surprise events (badge and mug at unexpected locations) indicate the belief model was wrong about their typical locations.
+3. (p=0.05) A single person with a non-standard work schedule (e.g., shift work or part-time), as the 05:27 departure and 14:42 return on a Wednesday could be a morning shift. The hi-vis vest and badge suggest a manual or safety-sensitive job. — The timing is consistent with a shift ending at 14:00-14:30. The evening coffee mug use is normal. This is a plausible alternative but less supported than the standard workday hypothesis.
+
+## Selected evidence
+- Day 0, 05:14 — thermos at elsewhere (early morning thermos suggests workday departure with packed drink)
+- Day 0, 18:20 — fork at table_d1 (evening solo meal at home)
+- Day 2, 05:27 — work_badge at elsewhere (morning departure with badge, confirming work outside home)
+- Day 2, 14:42 — hi_vis_vest at locker_shelf_e1 (return with safety gear, placed in locker, suggests job requiring vest)
+- Day 2, 14:42 — work_badge at locker_shelf_e1 (badge stored with vest, consistent with locker use)
+- Day 2, 19:46 — coffee_mug at desk_o1 (evening coffee at home desk, not a travel mug)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (mug put away late, indicating end-of-day routine)
+
+## Notes
+Day 2 (Wednesday) shows a clear work pattern: badge and vest used, returned early afternoon. The thermos on Day 0 (Monday) at 05:14 may be a different item or a different day's routine. Need to check if thermos appears again on other days. The coffee mug at desk_o1 suggests a home desk, possibly for evening work or leisure. The surprise events (badge at locker_shelf_e1 instead of elsewhere, mug at cupboard_k1 instead of elsewhere) indicate the belief model expected these objects to be in different locations, possibly because the model assumed they were taken to work or left out. Weekend patterns (days 5-6) will be crucial to see if the person stays home or goes out. Also look for other objects like laptop, keys, or gym bag to refine the persona.

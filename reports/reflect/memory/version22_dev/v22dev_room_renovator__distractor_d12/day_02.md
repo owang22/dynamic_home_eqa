@@ -1,0 +1,25 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single working professional with a flexible schedule who works from home at least some days, has a structured evening routine, and is engaged in home improvement projects. — No keys event on Day 1 or Day 2, but a laptop bag appears at 17:41 (likely end of workday). Morning events (08:23 waste bin, 08:38 doormat, 09:08 lamp) suggest a morning routine at home. Midday events (12:05 picture frame, 13:34 doormat, 13:52 pillow) indicate presence at home. Evening routine (16:06 dining chair, 17:59 plate, 18:48 bath mat, 21:06 dining chair, 22:20 phone) is consistent. The radio at workbench at 19:35 suggests a hobby or project. The paint roller and sanding block from previous days support ongoing DIY.
+2. (p=0.30) A person who works from home or has a very flexible schedule, possibly a freelancer or remote worker, with a midday break and evening relaxation. — The absence of keys events on Day 1 and Day 2, combined with multiple daytime events at home (08:23, 08:38, 09:08, 12:05, 13:34, 13:52, 15:08, 16:06), suggests the resident is home most of the day. The laptop bag at 17:41 could indicate the end of a work-from-home day. The midday pillow event (13:52) might be a nap or break. The radio at workbench (19:35) indicates a hobby or project.
+3. (p=0.10) A couple or family with one person working outside and another at home, given the multiple dining chair events and the variety of objects (paint roller, sanding block) suggesting DIY activities. — The multiple dining chair events (08:37, 10:42, 21:04, 21:20 on Day 1; 16:06, 21:06 on Day 2) could indicate different people using the table. The paint roller and sanding block from previous days suggest home improvement, possibly by a different household member. However, the evidence is still weak and the single laptop bag and phone events do not strongly indicate multiple residents.
+
+## Selected evidence
+- Day 0, 08:11 — keys at elsewhere (resident leaves home, likely for work or errand)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch at home, suggests midday break)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday nap or bed-making, unusual for strict 9-5)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation in living room)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath/shower routine)
+- Day 1, 07:43 — floor_lamp at sofa_l1 (morning lamp use, earlier than yesterday's evening use)
+- Day 1, 08:37 — dining_chair at table_d1 (breakfast at home, no keys event today)
+- Day 1, 10:42 — dining_chair at table_d1 (mid-morning break, suggests flexible schedule)
+- Day 1, 18:57 — paint_roller at paint_shelf_s1 (home improvement activity)
+- Day 1, 21:42 — sanding_block at paint_shelf_s1 (continued DIY project)
+- Day 2, 13:52 — bed_pillow at bed_r1 (midday nap or break, consistent with flexible schedule)
+- Day 2, 17:41 — laptop_bag at sofa_l1 (likely end of workday, suggests work-from-home or remote work)
+- Day 2, 19:35 — radio at workbench_s1 (hobby or project in the evening)
+- Day 2, 22:20 — phone at nightstand_r1 (preparing for bed, consistent evening routine)
+
+## Notes
+No keys event on Day 1 or Day 2, unlike Day 0. This could indicate a different schedule (e.g., working from home on Tuesday/Wednesday) or that the keys event was a one-off. The midday pillow event on Day 0 and Day 2 suggests a possible nap or break. The paint roller and sanding block from Day 1 indicate a home project; the radio at workbench on Day 2 suggests a hobby. Need to compare with weekend days (5-6) to see if routine changes. The wall clock movement on Day 1 is still unexplained and may be a one-time adjustment. The multiple dining chair events could be from one person or multiple; need more evidence.

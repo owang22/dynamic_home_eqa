@@ -1,0 +1,23 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A student living alone with a flexible schedule, including late-night study and midday naps. — The track_duffel appearing at 07:27 and then at school_bag_e1 at 18:50 strongly suggests a student carrying a bag to and from school. The midday nap (bed_pillow at 07:58 and 18:51) and late-night study (grade_folder on Day 1) are consistent. The whistle at 07:27 may be for a morning routine (e.g., alarm or hobby). The doormat moves at 07:57, 09:02, and 17:35 could be for mail or packages, typical for a home-based student.
+2. (p=0.15) A single working professional with a home office, who also does some academic work in the evenings. — The track_duffel and school_bag_e1 are less typical for a professional; the midday nap and late-night study are more student-like. However, the floor_lamp at 12:21 and 21:31 could be for work, and the thermos pattern (Day 0) suggests a morning coffee routine. This hypothesis is less likely given the strong student indicators.
+3. (p=0.05) A retiree with a relaxed schedule, possibly involved in volunteer work or hobbies that involve a grade_folder. — The track_duffel and school_bag_e1 are not typical for a retiree. The midday nap and doormat moves could fit, but the academic indicators (grade_folder, late-night study) are less likely. This hypothesis is now very unlikely.
+
+## Selected evidence
+- Day 0, 07:30 — thermos at elsewhere (morning coffee/tea, likely for work or start of day)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday nap, suggests flexible schedule)
+- Day 1, 21:59 — grade_folder at school_bag_e1 (late-night study or schoolwork, indicates student)
+- Day 2, 07:31 — whistle at elsewhere (unusual morning object, possibly for hobby or alarm)
+- Day 2, 13:52 — bed_pillow at bed_r1 (midday nap, consistent with flexible schedule)
+- Day 2, 19:58 — laptop at kitchen_table_k1 (evening work or study, supports academic or home office)
+- Day 3, 07:27 — track_duffel at elsewhere (morning departure with duffel bag, likely for school or gym)
+- Day 3, 07:27 — whistle at elsewhere (morning whistle, possibly for routine or hobby)
+- Day 3, 07:58 — bed_pillow at bed_r1 (morning bed-making or nap, flexible schedule)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday lamp use, possibly for reading or work)
+- Day 3, 18:50 — track_duffel at school_bag_e1 (evening return, duffel stored in school bag, confirms student)
+- Day 3, 21:57 — bed_pillow at bed_r1 (bedtime preparation, consistent with evening routine)
+
+## Notes
+Day 3 is Thursday. The track_duffel at 07:27 and then at school_bag_e1 at 18:50 strongly suggests a student who goes to school or gym in the morning and returns in the evening. The whistle at 07:27 may be part of a morning routine (e.g., alarm or hobby). The midday nap pattern continues (bed_pillow at 07:58 and 18:51). The doormat moves at 07:57, 09:02, and 17:35 could be for mail or packages. Need to observe weekend days (5-6) to see if routine changes (e.g., later wake-up, no track_duffel). Also look for multiple-person indicators (e.g., two coffee cups, different bedtimes). The wall_clock move on Day 1 remains unexplained; could be for time adjustment or decoration. The picture_frame moves on Day 2 (12:05 and 15:08) are decorative and not informative. The waste_bin moves (08:23 and 13:35) are mundane. The bath_mat at 18:48 is mundane. The fork at 21:45 is mundane.

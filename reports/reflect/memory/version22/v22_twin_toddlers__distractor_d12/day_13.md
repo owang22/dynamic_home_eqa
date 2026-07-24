@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) A family with a young child (baby/toddler) and a parent who works from home or is a stay-at-home parent. The child attends daycare or school on weekdays, with a consistent routine: morning breakfast (sippy cup at sink at 07:20 on Sunday), midday cleanup (fork at sink at 12:26 on weekday), afternoon bath (bath mat moves at 09:50 on Sunday), and evening family time (keys at entry at 17:49 on weekday suggesting parent returns). The new evidence reinforces the child presence: sippy cup at sink (07:20) for breakfast cleanup, bath mat at bathroom (09:50) for child's bath, and doormat at entry (11:29, 18:39, 20:40) indicating comings and goings. The wall clock at counter (12:07, 16:29, 21:47) may be for time checks. The pattern is consistent with a family with a young child, even on weekends. — The sippy cup at sink at 07:20 on Sunday is a strong child indicator for breakfast cleanup. The bath mat at bathroom at 09:50 suggests a child's bath time. The doormat at entry at multiple times suggests a parent returning home or leaving. The consistency and timing of child items make a family with a young child the most likely hypothesis. The weekend events show child items, indicating the child is home on weekends.
+2. (p=0.01) A single adult who works from home, with a visiting child or pet that explains the child items. The adult has a structured routine: morning phone, midday meals, evening cleanup. The child items (sippy cup, bath mat) could be for a visiting child or a pet (e.g., a dog's water bowl). The new evidence shows a sippy cup at sink (07:20) and bath mat at bathroom (09:50), which could be for a visiting child or pet. The doormat at entry (11:29, 18:39, 20:40) might be for the adult's comings and goings. However, the consistency and timing of child items make a single adult less likely. — The child items are too regular and specific (e.g., sippy cup at breakfast, bath mat at afternoon) to be explained by occasional visits or a pet. The weekend presence of child items further supports a resident child.
+3. (p=0.01) A couple with no children, one of whom works from home, with a visiting child or pet that explains the child items. The couple has a structured routine: morning phone, midday meals, evening cleanup. The child items (sippy cup, bath mat) could be for a visiting child or a pet. The new evidence shows a sippy cup at sink (07:20) and bath mat at bathroom (09:50), which could be for a visiting child or pet. The doormat at entry (11:29, 18:39, 20:40) might be for one adult's comings and goings. However, the child items are too specific and regular for a childless couple. — Same as above: the regularity of child items is inconsistent with a childless couple. The weekend presence of child items further supports a resident child.
+
+## Selected evidence
+- Day 0, 17:16 — sippy_cup at elsewhere (strong indicator of a young child, appears after daycare/school pickup time)
+- Day 2, 17:54 — diaper_caddy at dresser_n1 (baby care item, suggests a baby/toddler in the household)
+- Day 2, 19:08 — board_book at crib_n1 (child's book at crib, reinforces presence of a young child)
+- Day 4, 06:26 — bowl at table_d1 (morning breakfast, likely for child's cereal)
+- Day 4, 07:11 — sippy_cup at sink_k1 (morning sippy cup wash, consistent with child's breakfast)
+- Day 4, 17:41 — sippy_cup at table_d1 (evening sippy cup, likely for child's dinner)
+- Day 4, 14:40, 16:17, 16:26 — bath_mat at bathroom_c1 (multiple afternoon bath mat moves, suggests child's bath time)
+- Day 5, 12:38 — sippy_cup at sink_k1 (midday sippy cup on Saturday, child home all day)
+- Day 8, 08:40 — board_book at playmat_n1 (morning play, child activity)
+- Day 8, 12:21 — sippy_cup at sink_k1 (midday sippy cup wash, consistent with child's lunch)
+- Day 8, 15:26, 17:40 — bath_mat at bathroom_c1 (afternoon bath time, child's bath)
+- Day 9, 06:36 — sippy_cup at table_d1 (morning breakfast, child's sippy cup)
+- Day 9, 12:26 — fork at sink_k1 (midday meal cleanup, likely parent's lunch)
+- Day 9, 17:49 — keys at entry_hook_e1 (parent returning home, likely from work or errands)
+- Day 13, 07:20 — sippy_cup at sink_k1 (Sunday morning breakfast cleanup, child home on weekend)
+
+## Notes
+Day 13 is Sunday. Child-specific items (sippy cup, bath mat) were observed, indicating the child is home on weekends. The doormat at entry at multiple times suggests comings and goings. The wall clock and picture frame movements are mundane. The primary hypothesis remains strong. Need to observe if the diaper caddy or crib items reappear on weekdays. The keys at entry on a weekday suggest a parent working outside the home. Need to verify if this pattern repeats on other weekdays. The weekend presence of child items supports a resident child rather than a visiting child.

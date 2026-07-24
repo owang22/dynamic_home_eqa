@@ -1,0 +1,143 @@
+# v22_pet_heavy -- VERSION22b confusable pair H (with v22_toddler_home).
+# Both are home-centered households that churn floor objects all day; they DIFFER
+# IN WHICH OBJECTS CHURN AND WHERE: here a large DOG's care drags cushion/blanket/
+# ball to the DOG BED and back-door mudroom. Regime-legible: dog_leash + food_bowl
+# + chew_toy => "pet-heavy home" => the soft shared objects live at the dog bed /
+# by the back door, not a toddler play mat.
+# DIAGNOSTIC: dog_leash, food_bowl, chew_toy, grooming_brush.
+# DEPENDENT targets (shared class): cushion, blanket, ball -> dog_bed_l1 /
+#   mudroom_m1 during the day.
+# STATIC DISTRACTORS: dining_chair, bed_pillow, wall_clock, floor_lamp, doormat,
+#   waste_bin, picture_frame, bath_mat.
+household: v22_pet_heavy
+status: DRAFT  # version22b authoring 2026-07-22 — needs human anchor verification
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,          room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1,   room: bedroom,  aliases: []}
+  - {id: sofa_l1,         room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living,   aliases: []}
+  - {id: dog_bed_l1,      room: living,   aliases: [pet_bed]}
+  - {id: counter_k1,      room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,     room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,         room: kitchen,  aliases: []}
+  - {id: feeding_mat_k1,  room: kitchen,  aliases: [dog_feeding_mat]}
+  - {id: table_d1,        room: dining,   aliases: [dining_table]}
+  - {id: mudroom_m1,      room: mudroom,  aliases: [back_door]}
+  - {id: leash_hook_m1,   room: mudroom,  aliases: []}
+  - {id: entry_hook_e1,   room: entryway, aliases: [key_hook]}
+  - {id: bathroom_c1,     room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: home-based owner of a large dog; walks + play + feeding all day
+    schedule:
+      - {activity: sleep,        days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "22:15", end: "06:30"}
+      - {activity: morning_walk, days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "06:45", end: "07:30"}
+      - {activity: breakfast,    days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "07:45", end: "08:25"}
+      - {activity: yard_play,    days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "09:30", end: "11:30"}
+      - {activity: lunch,        days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "12:00", end: "12:40"}
+      - {activity: midday_rest,  days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "13:30", end: "15:00"}
+      - {activity: afternoon_fetch, days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "15:30", end: "17:00"}
+      - {activity: feeding,      days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "17:30", end: "17:50"}
+      - {activity: dinner,       days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "18:15", end: "19:00"}
+      - {activity: evening_tv,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "19:45", end: "22:00"}
+activities:
+  morning_walk:
+    jitter_min: 15
+    objects: [dog_leash, ball]
+    during: {dog_leash: mudroom_m1, ball: mudroom_m1}
+    after:
+      dog_leash: {dest: leash_hook_m1, p: 0.85, else: mudroom_m1}
+      ball:      {dest: mudroom_m1, p: 0.6, else: dog_bed_l1}
+  breakfast:
+    jitter_min: 10
+    objects: [bowl, coffee_mug, food_bowl]
+    during: {bowl: table_d1, coffee_mug: table_d1, food_bowl: feeding_mat_k1}
+    after:
+      bowl:       {dest: sink_k1, p: 0.85, else: table_d1}
+      coffee_mug: {dest: sink_k1, p: 0.7, else: table_d1}
+      food_bowl:  {dest: feeding_mat_k1, p: 0.9}
+  yard_play:
+    jitter_min: 20
+    objects: [ball, chew_toy, cushion, blanket, grooming_brush]
+    during: {ball: mudroom_m1, chew_toy: dog_bed_l1, cushion: dog_bed_l1,
+             blanket: dog_bed_l1, grooming_brush: mudroom_m1}
+    after:
+      ball:           {dest: mudroom_m1, p: 0.55, else: dog_bed_l1}      # shared: by the back door
+      chew_toy:       {dest: dog_bed_l1, p: 0.7, else: mudroom_m1}
+      cushion:        {dest: dog_bed_l1, p: 0.55, else: sofa_l1}         # shared: on the dog bed
+      blanket:        {dest: dog_bed_l1, p: 0.55, else: sofa_l1}         # shared: dog's blanket
+      grooming_brush: {dest: mudroom_m1, p: 0.8, else: bathroom_c1}
+  lunch:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  midday_rest:
+    jitter_min: 15
+    objects: [blanket, cushion, chew_toy]
+    during: {blanket: dog_bed_l1, cushion: sofa_l1, chew_toy: dog_bed_l1}
+    after:
+      blanket:  {dest: dog_bed_l1, p: 0.7, else: sofa_l1}
+      cushion:  {dest: sofa_l1, p: 0.6, else: dog_bed_l1}
+      chew_toy: {dest: dog_bed_l1, p: 0.8, else: mudroom_m1}
+  afternoon_fetch:
+    jitter_min: 20
+    objects: [ball, dog_leash, cushion]
+    during: {ball: mudroom_m1, dog_leash: mudroom_m1, cushion: dog_bed_l1}
+    after:
+      ball:      {dest: mudroom_m1, p: 0.55, else: dog_bed_l1}
+      dog_leash: {dest: leash_hook_m1, p: 0.85, else: mudroom_m1}
+      cushion:   {dest: dog_bed_l1, p: 0.5, else: sofa_l1}
+  feeding:
+    jitter_min: 10
+    objects: [food_bowl]
+    during: {food_bowl: feeding_mat_k1}
+    after:
+      food_bowl: {dest: feeding_mat_k1, p: 0.9, else: sink_k1}
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  evening_tv:
+    jitter_min: 15
+    objects: [remote, phone, blanket]
+    during: {remote: sofa_l1, phone: sofa_l1, blanket: sofa_l1}
+    after:
+      remote:  {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+      phone:   {dest: nightstand_r1, p: 0.85, else: sofa_l1}
+      blanket: {dest: dog_bed_l1, p: 0.6, else: sofa_l1}
+placements:
+  # DIAGNOSTIC (persona-exclusive)
+  dog_leash:      {home: leash_hook_m1, volatility_class_hint: high}
+  food_bowl:      {home: feeding_mat_k1, volatility_class_hint: high}
+  chew_toy:       {home: dog_bed_l1, volatility_class_hint: high}
+  grooming_brush: {home: mudroom_m1}
+  # DEPENDENT targets (shared class; regime -> dog bed / back door)
+  cushion: {home: sofa_l1, volatility_class_hint: high}
+  blanket: {home: sofa_l1, volatility_class_hint: high}
+  ball:    {home: dog_bed_l1, volatility_class_hint: high}
+  # ordinary
+  bowl:       {home: cupboard_k1}
+  plate:      {home: cupboard_k1}
+  fork:       {home: cupboard_k1}
+  coffee_mug: {home: cupboard_k1}
+  remote:     {home: coffee_table_l1}
+  phone:      {home: nightstand_r1, volatility_class_hint: high}
+  keys:       {home: entry_hook_e1, p_misplace: 0.06, misplace_set: [counter_k1, mudroom_m1]}
+  # STATIC DISTRACTORS
+  dining_chair:  {home: table_d1,        volatility_class_hint: static}
+  bed_pillow:    {home: bed_r1,          volatility_class_hint: static}
+  wall_clock:    {home: counter_k1,      volatility_class_hint: static}
+  floor_lamp:    {home: sofa_l1,         volatility_class_hint: static}
+  doormat:       {home: mudroom_m1,      volatility_class_hint: static}
+  waste_bin:     {home: counter_k1,      volatility_class_hint: static}
+  picture_frame: {home: coffee_table_l1, volatility_class_hint: static}
+  bath_mat:      {home: bathroom_c1,     volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9.

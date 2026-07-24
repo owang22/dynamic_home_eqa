@@ -1,0 +1,22 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A person who works outside the home in an office job requiring a packed lunch or hot drink, evidenced by thermos commuting pattern on Monday and absence of laptop-at-desk events on Tuesday morning/afternoon. The Thursday track_duffel and whistle suggest a coaching or sports-related activity after work, consistent with a structured weekday routine. — The thermos pattern on Monday and Tuesday, plus the new evidence of a track_duffel and whistle appearing at 'elsewhere' in the morning and returning to a school bag in the evening, strongly suggests a regular after-work commitment (e.g., coaching a sports team). This reinforces the hypothesis of a person with a fixed work schedule outside the home.
+2. (p=0.25) A person who works from home or has a flexible schedule, evidenced by laptop use at the kitchen table in the evening (19:58) and phone use on the sofa in the afternoon (16:22) on Wednesday. However, the Thursday morning departure of track_duffel and whistle at 07:27 (typical commute time) and their return to a school bag in the evening weakens this hypothesis, as it suggests a regular out-of-home commitment. — The Wednesday evening laptop and afternoon phone still indicate some home-based activity, but the Thursday morning departure of sports gear at a typical workday time suggests a regular out-of-home commitment, reducing the likelihood of full-time WFH.
+3. (p=0.15) A person with a consistent evening routine involving phone and laptop use at home, possibly for leisure or personal tasks, evidenced by phone on nightstand at 21:38 and fork in cupboard at 21:45 on Wednesday. The Thursday evening fork in cupboard at 21:45 repeats this pattern, indicating a stable wind-down routine. — The repeated fork-in-cupboard event at 21:45 on both Wednesday and Thursday confirms a consistent evening kitchen cleanup, but this is common and not highly diagnostic. The hypothesis remains plausible but less specific.
+
+## Selected evidence
+- Day 0, 07:31 — thermos at backpack (suggests packed lunch/hot drink for work commute)
+- Day 1, 07:31 — thermos at backpack (repeated pattern, likely workday routine)
+- Day 1, 12:00 — laptop at home_desk (unusual for office worker; could be WFH or break)
+- Day 2, 16:22 — phone at sofa_l1 (afternoon leisure at home, not typical for strict 9-5 office)
+- Day 2, 19:58 — laptop at kitchen_table_k1 (evening work or personal use at home)
+- Day 2, 21:38 — phone at nightstand_r1 (consistent bedtime routine)
+- Day 2, 21:45 — fork at cupboard_k1 (evening kitchen cleanup)
+- Day 3, 07:27 — track_duffel at elsewhere (morning departure of sports gear, suggests after-work coaching or practice)
+- Day 3, 07:27 — whistle at elsewhere (accompanies track_duffel, reinforces sports/coaching activity)
+- Day 3, 18:50 — track_duffel at school_bag_e1 (return of sports gear in evening, consistent with after-work commitment)
+- Day 3, 21:45 — fork at cupboard_k1 (repeated evening kitchen cleanup, confirms routine)
+
+## Notes
+The Thursday events strongly suggest a regular after-work sports commitment (coaching or practice) given the track_duffel and whistle departing at 07:27 and returning to a school bag at 18:50. This aligns with the office worker hypothesis. Need to observe Friday (day 4) to see if thermos pattern continues and if laptop appears at desk during work hours. Weekend observations (days 5-6) will help distinguish work vs. leisure routines. The repeated fork-in-cupboard at 21:45 on both Wednesday and Thursday confirms a consistent evening cleanup, but this is common. The phone at elsewhere at 07:27 on Thursday is not informative.

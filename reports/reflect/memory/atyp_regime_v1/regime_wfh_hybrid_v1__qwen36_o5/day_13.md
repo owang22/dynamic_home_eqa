@@ -1,0 +1,20 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Hybrid Worker with Weekend Errands — Saturday mid-day outing (keys) and late night (23:12) persist. Sunday shows no work signals (no laptop/keys), reinforcing weekend leisure. The pattern of structured weekday work vs. unstructured weekend remains strong.
+2. (p=0.10) Standard 9-5 Worker with Weekend Flexibility — Still possible if the 'mid-day outing' was a weekend errand for a 9-5er. However, the lack of any work-related object movement on Sunday (Day 13) makes the 'strict 9-5' less likely than the 'hybrid' model which allows for full weekend disconnection.
+3. (p=0.00) Student with Irregular Schedule — Removed. No evidence supports this; the structured weekday routine and specific desk usage patterns remain inconsistent with a typical student profile.
+
+## Selected evidence
+- Day 12, 09:52 — keys at desk_o1 (CRITICAL: Keys at desk suggests preparation for leaving, possibly after a morning routine or work session, indicating a planned outing)
+- Day 12, 12:09 — keys at entry_hook_e1 (CRITICAL: Keys returned to entry hook suggests the resident is back home or has just arrived, confirming a mid-day trip)
+- Day 12, 12:09 — phone at sofa_l1 (SUPPORTIVE: Phone at sofa during mid-day suggests the resident is relaxing at home, consistent with being present after the trip)
+- Day 12, 23:12 — phone at nightstand_r1 (SUPPORTIVE: Late night phone placement indicates a late bedtime, common for weekends but less so for strict 9-5 weekdays)
+- Day 13, 18:35 — fork at table_d1 (SUPPORTIVE: Evening meal preparation, consistent with weekend leisure routine)
+- Day 13, 19:20 — plate at sink_k1 (MUNDANE: Discarded as generic household activity)
+- Day 13, 19:41 — phone at sofa_l1 (SUPPORTIVE: Phone moved to living area during evening, consistent with relaxation/TV watching)
+- Day 13, 22:41 — phone at nightstand_r1 (SUPPORTIVE: Late night phone placement indicates late bedtime, consistent with Saturday's pattern)
+- Day 13, 22:41 — remote at coffee_table_l1 (SUPPORTIVE: Remote usage confirms leisure activity in living room during evening)
+
+## Notes
+Sunday (Day 13) showed no work-related object movements (no laptop, no keys at desk). This strengthens the 'Hybrid' or 'Weekend-Off' hypothesis. The evening routine (fork, plate, phone to sofa, remote) is consistent with leisure. The late bedtime (22:41) on Sunday is slightly earlier than Saturday (23:12), possibly indicating a slight wind-down for the upcoming week, but still late. Need to observe Monday morning for return to structured work patterns.

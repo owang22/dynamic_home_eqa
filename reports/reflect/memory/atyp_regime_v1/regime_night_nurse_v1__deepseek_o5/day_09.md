@@ -1,0 +1,25 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A healthcare worker (likely a doctor or nurse) who works a day shift and returns home around 18:00-19:00, changing out of scrubs and putting away a stethoscope before placing keys and phone in a designated spot. The badge seen on the nightstand in the morning suggests a morning routine of picking up work ID. — Consistent scrubs, stethoscope, badge, and key/phone placement. Day 9 shows badge at nightstand at 08:21 (morning pickup), stethoscope at closet at 08:21 (morning preparation), thermos at sink at 08:21 (likely washing after use), scrubs at bed at 17:56 (work uniform discarded after shift), badge at elsewhere at 18:26 (badge put away after work). This reinforces the weekday work schedule.
+2. (p=0.05) A person with a variable work schedule, possibly a shift worker or someone who works from home some days. The 16:16 plate could indicate a meal at home during a break, and the 08:20 phone and thermos suggest a morning routine. However, the badge and scrubs still point to healthcare. — The 16:16 meal is earlier than previous days' scrubs arrival, suggesting a different schedule. But the strong healthcare evidence keeps this hypothesis less likely. Day 9's events are consistent with a standard workday, so this hypothesis remains low probability.
+
+## Selected evidence
+- Day 0, 18:02 — scrubs at bed_r1 (medical uniform discarded after work)
+- Day 0, 18:32 — stethoscope at elsewhere (medical tool put away)
+- Day 0, 19:00 — keys at elsewhere (keys placed in usual spot)
+- Day 1, 08:22 — badge at nightstand_r1 (morning pickup of work ID)
+- Day 1, 19:02 — keys at elsewhere (keys placed in usual spot, consistent with work return)
+- Day 2, 15:45 — fork at table_d1 (lunch/early meal at home, possibly a break)
+- Day 2, 18:31 — scrubs at elsewhere (work uniform discarded after shift)
+- Day 2, 18:56 — thermos at elsewhere (likely work thermos put away after shift)
+- Day 3, 07:55 — stethoscope at closet_r1 (morning preparation for work)
+- Day 3, 16:02 — fork at table_d1 (early meal at home, possibly lunch break)
+- Day 3, 17:58 — water_bottle at table_d1 (hydration during break)
+- Day 3, 22:26 — phone at nightstand_r1 (evening routine before sleep)
+- Day 4, 08:02 — bowl at table_d1 (morning breakfast before work)
+- Day 5, 07:51 — water_bottle at counter_k1 (weekend morning hydration, later start)
+- Day 7, 19:08 — keys at elsewhere (keys placed in usual spot, consistent with work return)
+
+## Notes
+Day 9 (Wednesday) shows badge at nightstand at 08:21 (morning pickup), stethoscope at closet at 08:21 (morning preparation), thermos at sink at 08:21 (likely washing after use), scrubs at bed at 17:56 (work uniform discarded after shift), badge at elsewhere at 18:26 (badge put away after work). This is consistent with a healthcare worker's weekday schedule. The early meal (16:16) is similar to previous days (15:45-16:25), suggesting a consistent lunch break at home. The thermos at sink in the morning might indicate it was used and left to soak. 'Elsewhere' locations remain unidentified; they may be a specific drawer or shelf. Need to observe more days to confirm the pattern of badge placement (Day 7 had badge at nightstand at 17:58, earlier than other days). Weekend pattern (Saturday and Sunday) supports the healthcare worker hypothesis with a regular weekday schedule.

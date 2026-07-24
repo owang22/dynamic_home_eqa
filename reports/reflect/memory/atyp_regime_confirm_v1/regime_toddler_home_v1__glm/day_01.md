@@ -1,0 +1,22 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Parent/caregiver of a young child with a structured daily routine — The consistent pattern of child care items (high chair, play mat, crib) and regular meal times (breakfast, lunch, dinner) continues on day 1, reinforcing the hypothesis of a household with a young child. The structured schedule appears to be repeating from day 0.
+2. (p=0.75) Stay-at-home caregiver with limited outside employment — The caregiver is consistently present throughout the day for meals, playtime, and bedtime, suggesting they may not have a traditional 9-5 job. The evening phone usage pattern also repeats from day 0.
+3. (p=0.55) Single parent household — No evidence of another adult's presence or belongings in the observed events over two days. The routine appears to be managed by one person, though this remains uncertain as we haven't observed different times or weekend patterns yet.
+
+## Selected evidence
+- Day 0, 06:56 — bowl, sippy_cup, spoon at high_chair_d1 (indicates early morning feeding of a young child)
+- Day 0, 08:46 — ball, cushion, sippy_cup, toy_blocks at play_mat_l1 (morning playtime with toddler)
+- Day 0, 12:00 — plate, sippy_cup, spoon at high_chair_d1 (lunchtime routine for child)
+- Day 0, 19:30 — blanket, board_book at crib_n1 (bedtime routine preparation)
+- Day 0, 20:17 — phone, remote at sofa_l1 (evening relaxation time after child's bedtime)
+- Day 1, 06:51 — bowl, sippy_cup, spoon at high_chair_d1 (consistent morning feeding routine)
+- Day 1, 12:10 — plate, sippy_cup, spoon at high_chair_d1 (lunchtime routine matching day 0)
+- Day 1, 15:00 — blanket, board_book at play_mat_l1 (afternoon play and reading routine)
+- Day 1, 17:57 — plate, sippy_cup, spoon at high_chair_d1 (dinner routine, different from day 0)
+- Day 1, 20:48 — phone at sofa_l1 (evening relaxation pattern continuing)
+- Day 1, 22:18 — phone at nightstand_r1 (consistent bedtime routine)
+
+## Notes
+The pattern from day 0 is largely repeating on day 1, confirming a structured daily routine. Dinner appears to be at 17:57 on day 1 vs 19:30 on day 0 - need to verify if this is a consistent difference or variation. Still no evidence of another adult's presence. Need to observe weekend patterns (days 5-6) to see if they differ from weekdays.

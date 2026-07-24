@@ -1,0 +1,24 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single working professional who works from home, has a structured daily routine with morning coffee/reading on the patio, lunch at home, and consistent evening wind-down. The newspaper subscription is likely daily, and the patio use suggests a pleasant morning ritual. — Day 4 (Friday) shows newspaper, reading_glasses, and bowl at table_d1 at 07:09, confirming a morning reading/breakfast routine. Then coffee_mug on patio at 07:49 continues the outdoor coffee habit. The remote on coffee table at 16:19 and picture_frame at 18:34 suggest evening relaxation. The pattern is consistent with a home-based worker with a structured day.
+2. (p=0.15) A remote worker or freelancer who lives alone and has a flexible but home-based day, with morning coffee/reading on the patio, midday work at the dining table, and evening relaxation. — The evidence still supports a home-based worker, but the consistent timing of meals and the daily newspaper suggest a more structured routine than a typical freelancer. The hypothesis is retained but with lower probability as the structured pattern becomes clearer.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning print newspaper suggests a regular reader, likely daily subscription)
+- Day 0, 12:31 — plate at sink_k1 (lunch at home on Monday, consistent with work-from-home)
+- Day 0, 20:54 — bed_pillow at bed_r1 (consistent bedtime, suggesting regular sleep schedule)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning arrival/departure, suggests daily routine of leaving/returning)
+- Day 2, 11:49 — fork at table_d1 (midday meal preparation, consistent with lunch at home)
+- Day 2, 18:50 — plate at sink_k1 (evening meal cleanup, consistent with dinner at home)
+- Day 3, 07:47 — coffee_mug and reading_glasses at patio_table_p1 (morning coffee/reading on patio, a new routine element)
+- Day 3, 08:57 — dining_chair at table_d1 (morning seating at dining table, possibly for work)
+- Day 3, 09:10 — phone at patio_table_p1 (morning phone use on patio, could be work or leisure)
+- Day 3, 13:52 — reading_glasses at coffee_table_l1 (afternoon reading/close work, home-based activity)
+- Day 4, 07:09 — bowl, newspaper, reading_glasses at table_d1 (morning breakfast and reading at dining table, confirming daily newspaper habit)
+- Day 4, 07:49 — coffee_mug at patio_table_p1 (morning coffee on patio, consistent with Day 3)
+- Day 4, 16:19 — remote at coffee_table_l1 (afternoon TV use, typical wind-down)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (evening decoration or personal item, suggests relaxation)
+
+## Notes
+Day 4 (Friday) confirms the morning routine: breakfast/reading at dining table (07:09) followed by coffee on patio (07:49). The newspaper appears again, supporting a daily subscription. The remote and picture_frame in the evening suggest relaxation. Need to observe weekend days (5-6) to see if the newspaper appears on Saturday/Sunday, confirming a daily subscription. Also check if the patio routine repeats on weekends. The doormat at 08:38 on Wednesday might correspond to leaving after the patio time; need to see if that pattern holds. The earlier bed_pillow at 18:51 on Day 3 is still unexplained; could be a nap or one-off.

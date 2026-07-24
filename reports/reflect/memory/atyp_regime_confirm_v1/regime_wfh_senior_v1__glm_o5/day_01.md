@@ -1,0 +1,16 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Elderly individual living alone — Pill organizer usage continues to suggest regular medication routine, common among elderly residents. The remote being moved between sofa and coffee table indicates leisure time spent watching TV, which is typical for retired individuals.
+2. (p=0.20) Middle-aged person with health concerns — Pill organizer could indicate health management needs. The simple meal pattern (plate at table then moved to sink) suggests basic cooking habits.
+3. (p=0.05) Young adult with occasional medication needs — Pill organizer might be for vitamins or occasional medications. The remote movement pattern suggests typical TV watching behavior.
+
+## Selected evidence
+- Day 0, 07:11 — pill_organizer seen at cupboard_k1 (suggests regular medication routine, potentially indicating health management needs common in elderly or those with chronic conditions)
+- Day 1, 06:45 — pill_organizer seen at counter_k1 (consistent morning medication routine, strengthening hypothesis of regular health management)
+- Day 0, 19:47 — remote seen at sofa_l1 (evening leisure activity, typical TV watching pattern)
+- Day 0, 22:17 — remote seen at coffee_table_l1 (continued leisure activity, possibly indicates extended viewing sessions or preference for remote location)
+- Day 1, 21:50 — remote seen at coffee_table_l1 (consistent evening TV watching pattern, suggesting regular leisure routine)
+
+## Notes
+Pill organizer is consistently used in the morning (around 07:00-06:45) on both Monday and Tuesday, suggesting a regular medication routine. TV watching appears to be an evening activity with the remote ending up at the coffee table. Meal pattern shows basic cooking habits with plate usage. Need to observe more days to establish patterns, especially weekend behavior to confirm retirement status. Should look for visitors or other household members.

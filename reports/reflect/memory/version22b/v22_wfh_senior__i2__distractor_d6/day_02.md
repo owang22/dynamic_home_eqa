@@ -1,0 +1,21 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single working professional who works from home or has a flexible schedule, with a structured daily routine including morning reading, lunch at home, and evening relaxation. — Consistent lunch at home (Day 0 plate at sink, Day 2 fork at table and later at sink), morning newspaper on Monday but not Wednesday (reading glasses on coffee table at 14:03 suggests reading later in the day), repeated evening TV setup (wall clock to TV stand on Day 0 and Day 1), and multiple bed-pillow events (making bed and preparing for sleep) indicate a routine. The doormat at entry hook at 08:38 on Wednesday could be a morning tidying or arrival. The phone on sofa at 13:51 on Tuesday and reading glasses at coffee table suggest work-from-home or flexible schedule.
+2. (p=0.20) A person who values order and tidiness, with a consistent evening wind-down routine. — Multiple bed-pillow events (Day 0 12:57, Day 2 13:52 and 16:47) suggest making the bed and preparing for sleep. Evening events like wall clock to TV stand, floor lamp to sofa, bath mat to bathroom on Day 0, and repeated wall clock on Day 1 indicate a structured evening routine. The doormat at entry hook at 08:38 and 16:12 (Day 1) could be part of a cleaning or arrival routine. The dining chair events (Day 0 10:42, 21:04, 21:20; Day 2 16:06, 21:06) might be part of a daily schedule (meals or work).
+3. (p=0.10) A person who has a late-evening snack or cleanup habit, possibly winding down with a hot drink. — Bowl at cupboard at 21:45 on Day 1 and coffee mug at cupboard at 21:45 on Day 2 suggest a consistent late-evening snack or drink. Plate at cupboard at 21:45 on Day 2 also indicates cleanup. This could be part of a nightly routine.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading habit, possibly daily but not seen on Wednesday)
+- Day 0, 12:45 — plate at sink_k1 (lunch at home, consistent with Day 2 fork at table and sink)
+- Day 0, 19:28 — wall_clock at tv_stand_l1 (evening TV routine, repeated Day 1 18:37)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation setup)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine)
+- Day 1, 13:51 — phone at sofa_l1 (break or work-from-home moment)
+- Day 1, 16:12 — doormat at entry_hook_e1 (returning home or tidying, also Day 2 08:38)
+- Day 2, 14:03 — reading_glasses at coffee_table_l1 (reading later in day, possibly work-related)
+- Day 2, 15:08 — picture_frame at coffee_table_l1 (personal item moved, maybe decoration or cleaning)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (late-evening drink, consistent with Day 1 bowl at cupboard)
+
+## Notes
+Wednesday shows no newspaper, but reading glasses appear at 14:03, suggesting reading later. Lunch pattern holds (fork at table 12:15, then sink 18:55). Doormat at 08:38 could be morning tidying or arrival. Picture frame moved at 15:08 might be cleaning or rearranging. Evening snack/drink at 21:45 consistent (coffee mug vs bowl). Need to observe weekend to see if routine changes. Dining chair events (16:06, 21:06) could be work or meal times. Bed-pillow events at 13:52 and 16:47 suggest making bed and preparing for sleep, but timing varies. Day-of-week patterns: Monday had newspaper, Tuesday had phone on sofa, Wednesday had reading glasses. Need more days to confirm weekly rhythm.

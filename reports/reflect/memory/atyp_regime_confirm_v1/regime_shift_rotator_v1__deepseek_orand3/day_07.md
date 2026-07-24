@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A person who leaves early for work on Monday and Wednesday (keys gone at 05:28, laptop gone at 05:29) and returns mid-afternoon (keys and work_badge at entry_hook at 14:35), suggesting a standard 9-to-5 office worker on those days. On Thursday and Friday, they have a later morning (bowl and coffee_mug at sink at 08:36 on Thursday, bowl at table and coffee_mug at counter at 08:07 on Friday) and a late evening return (thermos at sink at 22:39 on Thursday, 22:18 on Friday), with a midday phone departure (13:23 on Thursday, 13:29 on Friday), indicating a different schedule, possibly a later shift or flexible hours. On Saturday and Sunday, they have a relaxed morning (phone at counter at 10:48 on Saturday, 11:15 on Sunday), a late afternoon meal (plate at table at 18:29 on Saturday, fork and plate at table at 18:37 on Sunday), and evening relaxation (phone at sofa at 19:33 on Sunday), consistent with weekend days off. — Today (Monday) shows a thermos at counter at 04:45, which is earlier than the previous early departure (05:28), suggesting the resident may be preparing a hot beverage for an early start. The plate at sink at 19:16 indicates a dinner at home, and phone at nightstand at 20:52 suggests an early bedtime, consistent with a standard workday. The fork at cupboard at 21:45 is likely a routine cleanup. This reinforces the Monday early departure pattern. — The new Monday observations (thermos at 04:45, plate at sink at 19:16, phone at nightstand at 20:52) align with a standard workday: early preparation, dinner at home, early bedtime. The thermos at 04:45 is even earlier than previous early departures, possibly indicating a slightly earlier start or preparation. This strengthens the hypothesis that Monday is a standard workday.
+2. (p=0.05) A person who works a later shift or has a flexible schedule on Thursdays and Fridays, as evidenced by later morning routines (bowl and coffee_mug at sink at 08:36 on Thursday, bowl at table and coffee_mug at counter at 08:07 on Friday) and late evening returns (thermos at sink at 22:39 on Thursday, 22:18 on Friday). The phone leaving at 13:23 on Thursday and 13:29 on Friday suggests a midday departure, possibly for work or errands. This could indicate a different work pattern on these days, such as a later start and end, or a second job. Saturday and Sunday show a relaxed morning and late afternoon meal, consistent with weekend days off. — Today's Monday observations (thermos at 04:45, plate at sink at 19:16, phone at nightstand at 20:52) are consistent with a standard workday, not a later shift, so this hypothesis remains less likely. — The new Monday data does not support a later shift on Monday; it shows an early thermos and early bedtime, consistent with a standard workday. The later shift pattern is only observed on Thursday and Friday, so this hypothesis remains possible but less likely.
+
+## Selected evidence
+- Day 0, 05:28 — keys at elsewhere (early departure for work, standard workday)
+- Day 2, 05:29 — laptop at elsewhere (workday start, laptop taken to work)
+- Day 2, 14:35 — keys at entry_hook_e1 (return from work)
+- Day 2, 14:35 — work_badge at entry_hook_e1 (return from work, confirms job type)
+- Day 3, 08:36 — bowl at sink_k1 (later breakfast, deviating from early departure pattern)
+- Day 3, 13:23 — phone at elsewhere (midday departure, possibly for work or errand)
+- Day 3, 22:39 — thermos at sink_k1 (late return, thermos used, suggesting a different schedule)
+- Day 4, 08:07 — bowl at table_d1 (later breakfast, consistent with Thursday pattern)
+- Day 4, 13:29 — phone at elsewhere (midday departure, similar to Thursday)
+- Day 4, 22:18 — thermos at sink_k1 (late return, consistent with Thursday pattern)
+- Day 5, 10:48 — phone at counter_k1 (relaxed morning, weekend day off)
+- Day 5, 18:29 — plate at table_d1 (late afternoon meal, weekend routine)
+- Day 6, 11:15 — phone at counter_k1 (relaxed morning, weekend day off)
+- Day 6, 18:37 — fork at table_d1 (late afternoon meal, weekend routine)
+- Day 7, 04:45 — thermos at counter_k1 (early morning preparation for work, earlier than previous early departures)
+
+## Notes
+Today (Monday) shows a thermos at counter at 04:45, which is earlier than the previous early departure (05:28), suggesting the resident may be preparing a hot beverage for an early start. The plate at sink at 19:16 indicates a dinner at home, and phone at nightstand at 20:52 suggests an early bedtime, consistent with a standard workday. The fork at cupboard at 21:45 is likely a routine cleanup. This reinforces the Monday early departure pattern. Need to observe Wednesday to confirm the early departure pattern repeats. Also, the thermos at 04:45 on Monday is a new early time; it may indicate a slightly earlier start or preparation. The midday phone departure on Thursday and Friday (13:23 and 13:29) remains a regular pattern. No evidence of other household members yet.

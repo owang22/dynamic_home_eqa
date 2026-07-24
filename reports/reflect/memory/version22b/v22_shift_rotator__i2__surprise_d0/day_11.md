@@ -1,0 +1,26 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A person with a non-standard work schedule, likely in a trade (e.g., construction, maintenance) that requires safety gear and involves variable shifts, possibly with early or late starts and occasional half-days or days off. — The Friday events show phone at entry_hook at 04:50 (unexpected, suggests phone was left there overnight or placed before departure) and then phone at elsewhere at 05:05 (taken for early departure). This aligns with an early start on Friday, contrasting with Thursday's midday vest departure. The variable shift pattern (early one day, late another) is now more pronounced, supporting a trade job with rotating or irregular hours. The single set of objects and late key return (Day 10) still fit a single-person household with a non-standard schedule.
+2. (p=0.15) A single person who lives alone, with a routine that includes late dinners and evening coffee, possibly working from home occasionally or having a desk job with flexible hours. — The Friday early phone departure (05:05) and the safety gear (hi_vis_vest) still point to a trade job rather than a desk job. However, the single-person evidence (one plate, one thermos) remains strong. This hypothesis is less likely given the consistent presence of work gear and variable shifts, but it is kept as a secondary possibility in case future evidence shows more home-based activity.
+3. (p=0.05) A health-conscious individual who exercises in the early morning (e.g., before work) and has a structured routine. — No new evidence of exercise-related objects (e.g., yoga mat, running shoes) on Friday. The early phone departure (05:05) could be for exercise, but the safety gear and variable shifts make this less likely. This hypothesis remains low-probability as a fallback, but it is not supported by current evidence.
+
+## Selected evidence
+- Day 2, 05:07 — work_badge at elsewhere (early departure for work, likely morning shift)
+- Day 3, 13:28 — thermos at elsewhere (packed lunch taken to work, suggests midday break)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (safety gear stored at home, trade job)
+- Day 4, 05:14 — hi_vis_vest at elsewhere (vest taken for early shift)
+- Day 5, 12:44 — phone at sofa_l1 (relaxed Saturday afternoon, leisure)
+- Day 5, 19:05 — fork at sink_k1 (normal dinner time on Saturday)
+- Day 5, 21:45 — coffee_mug at cupboard_k1 (evening coffee on Saturday)
+- Day 6, 18:17 — plate at table_d1 (Sunday dinner at table, surprising location)
+- Day 6, 19:14 — coffee_mug at desk_o1 (Sunday evening coffee at desk, surprising location)
+- Day 9, 05:00 — thermos at counter_k1 (not taken to work, surprising; possible half-day or WFH)
+- Day 9, 15:01 — hi_vis_vest at locker_shelf_e1 (early return of safety gear, shift length varies)
+- Day 10, 13:18 — hi_vis_vest at elsewhere (midday departure, later start than usual)
+- Day 10, 22:38 — keys at counter_k1 (late return, keys not on hook; suggests irregular schedule)
+- Day 11, 04:50 — phone at entry_hook_e1 (phone left at hook overnight or placed before early departure, surprising)
+- Day 11, 05:05 — phone at elsewhere (early departure on Friday, contrasting with Thursday's midday start)
+
+## Notes
+Friday (Day 11) shows a surprising early phone departure (05:05) after phone was at entry_hook at 04:50 (unexpected location). This contrasts with Thursday's midday vest departure (13:18) and late key return (22:38), reinforcing a variable shift schedule. The pattern now suggests the resident may have rotating shifts (early one day, late another) or occasional half-days (like Wednesday). Need to observe if the phone at entry_hook becomes a pattern (e.g., left there overnight before early starts). Also check if the keys at counter (Day 10) recurs on late returns. The single-person household is still supported. Open question: Does the resident work in a trade with rotating shifts (e.g., construction with different start times) or have a second job? Also, verify if weekend patterns (leisure on Saturday, desk coffee on Sunday) are consistent.

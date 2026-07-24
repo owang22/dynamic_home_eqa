@@ -1,0 +1,23 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Hybrid worker with flexible morning hours and weekend leisure — Day 12 (Sat) shows a late start (06:49 departure, 07:34 return to counter) and weekend-specific leisure items (ball, blanket). The 21:45 bowl suggests a late dinner or snack, consistent with relaxed weekend pacing. The 22:27 phone at nightstand confirms a late sleep schedule, distinct from the weekday 21:45 coffee pattern.
+2. (p=0.15) Remote worker with irregular schedule — The variance in morning times (06:49 vs 07:34) and lack of clear 'office' departure on Saturday could still fit a fully remote role. However, the strong distinction between weekday (dog leash, early departure) and weekend (ball, late start) routines makes the hybrid model more probable.
+3. (p=0.00) Student or night-shift worker — Discarded. Consistent weekday/evening patterns and dog care routine contradict this.
+
+## Selected evidence
+- Day 12, 06:49 — phone at entry_hook_e1 (late Saturday departure, confirms weekend flexibility)
+- Day 12, 07:34 — phone at counter_k1 (return to kitchen, suggests casual weekend routine)
+- Day 12, 14:41 — ball at pet_bed_l1 (weekend pet play, distinguishes from weekday leash walks)
+- Day 12, 19:57 — blanket at sofa_l1 (evening relaxation, consistent with weekend wind-down)
+- Day 12, 21:45 — bowl at cupboard_k1 (late dinner/snack, differs from weekday coffee mug)
+- Day 12, 22:27 — phone at nightstand_r1 (late sleep, confirms weekend late-night pattern)
+- Day 11, 07:48 — phone at counter_k1 (Friday flexible departure, supports hybrid hypothesis)
+- Day 11, 18:00 — phone at sofa_l1 (Friday evening relaxation, distinguishes from work desk)
+- Day 10, 06:51 — phone at entry_hook_e1 (Thursday early departure, establishes range)
+- Day 10, 17:06 — dog_leash at entry_hook_e1 (Thursday evening walk, confirms daily pet care)
+- Day 5, 12:49 — fork at table_d1 (weekend home meal, distinguishes weekend from weekday)
+- Day 6, 17:11 — dog_leash at entry_hook_e1 (weekend evening walk, confirms leisure timing)
+
+## Notes
+Day 12 confirms the weekend pattern: later start, pet play (ball) instead of leash walks, and late sleep (22:27). The 21:45 bowl vs weekday 21:45 coffee mug suggests different evening activities (dinner vs caffeine). The 06:49 departure on Saturday is earlier than Friday's 07:48, but still later than Thursday's 06:51, reinforcing 'flexible' rather than 'fixed' morning hours. Need to verify if the 07:34 counter appearance is a second departure or just moving around. Check Day 13 (Sunday) for further weekend routine confirmation.

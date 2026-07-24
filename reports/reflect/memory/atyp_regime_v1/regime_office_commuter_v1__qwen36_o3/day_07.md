@@ -1,0 +1,14 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Standard Office Worker — Day 7 (Monday) shows a return to weekday rhythm: early wake-up (07:09 vs 12:30 weekend), early dinner (19:08 vs 18:30 weekend), and evening wind-down (21:45). The sharp contrast with Days 5-6 reinforces the 'office-bound' distinction. No laptop observed yet, but the timing aligns perfectly with a standard 9-5 schedule.
+2. (p=0.01) Remote Worker with Strict Boundaries — Still possible if the resident works from home but strictly limits device usage to specific times not yet captured (e.g., laptop hidden or used in another room). However, the lack of any work-object movement on Monday morning (07:09-12:00) makes this less likely than the standard worker hypothesis.
+3. (p=0.01) Shift Worker / Night Owl — Discarded. The consistent sleep onset at ~23:05 and wake-up times (07:09 weekdays, 12:30 weekends) are inconsistent with night shift patterns. No evidence of inverted circadian rhythm.
+
+## Selected evidence
+- Day 7, 07:09 — phone at counter_k1 (weekday wake-up; contrasts sharply with 12:30 weekend start, confirming office-bound routine)
+- Day 7, 19:08 — fork at sink_k1 (weekday dinner; ~30 mins earlier than weekend, indicating structured evening schedule)
+- Day 7, 21:45 — travel_mug at cupboard_k1 (evening wind-down; suggests mug is cleaned and stored, not left out, indicating routine tidiness)
+
+## Notes
+Monday pattern is now established: wake ~07:00, dinner ~19:00. Key open question: When does the resident leave for work? The phone at the counter at 07:09 might be part of the morning routine (alarm/checking messages), but no 'keys' or 'bag' event was observed between 07:09 and the next observation (19:08). Need to monitor Day 8 (Tuesday) for morning departure objects (keys, bag) and potential laptop usage during the day if the resident is home. The 'travel_mug at cupboard' on Day 7 suggests a different evening routine than Day 5/6 (where mugs/plates were left out or at sink). Verify if this is a one-off or a new pattern.

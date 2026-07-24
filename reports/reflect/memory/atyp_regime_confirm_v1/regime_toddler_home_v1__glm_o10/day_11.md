@@ -1,0 +1,26 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Parent of a young child with a regular mealtime routine — The consistent pattern of child-related items (sippy cup, spoon, plate) at the high chair around meal times and subsequent movement to the sink for cleaning strongly suggests a parent caring for a young child. The presence of a blanket and board book at the crib indicates a bedtime routine.
+2. (p=0.01) Daycare provider or nanny caring for a child — The structured meal and nap routines could indicate a professional caregiver. However, the lack of additional adult items or signs of multiple children makes this less likely than a parent-child household.
+3. (p=0.00) Adult living with a young relative or friend's child — The consistent pattern of child care suggests this is not occasional care but a full-time responsibility, making this hypothesis less likely.
+
+## Selected evidence
+- Day 0, 12:00 — sippy_cup seen at high_chair_d1 (indicates a young child in the household)
+- Day 1, 06:51 — bowl seen at high_chair_d1 (morning meal routine for child)
+- Day 1, 17:57 — sippy_cup seen at high_chair_d1 (evening meal routine for child)
+- Day 1, 15:00 — blanket seen at play_mat_l1 (child's nap or rest time)
+- Day 1, 19:24 — blanket seen at crib_n1 (child's bedtime routine)
+- Day 2, 11:52 — plate seen at high_chair_d1 (lunchtime routine for child)
+- Day 2, 15:16 — board_book seen at play_mat_l1 (child's playtime activity)
+- Day 2, 17:16 — board_book seen at crib_n1 (child's bedtime routine with book)
+- Day 2, 17:50 — spoon seen at high_chair_d1 (evening meal routine for child)
+- Day 3, 08:43 — ball seen at play_mat_l1 (child's morning play activity)
+- Day 3, 12:43 — spoon seen at sink_k1 (post-meal cleaning routine)
+- Day 3, 17:57 — sippy_cup seen at high_chair_d1 (evening meal routine for child)
+- Day 3, 19:45 — blanket seen at crib_n1 (child's bedtime routine)
+- Day 3, 19:45 — board_book seen at crib_n1 (child's bedtime reading routine)
+- Day 5, 20:44 — phone seen at sofa_l1 (adult relaxation time on weekend evening)
+
+## Notes
+The child appears to have regular meal times (morning, midday, and evening) and a consistent nap/bedtime routine with the blanket and book. The pattern is similar across weekdays (Day 0-3) and continues on Day 5-6 (weekend), suggesting the routine extends to weekends. The introduction of a ball, toy blocks, and cushion indicates playtime activities. Items being moved to the sink after meals suggest an adult is responsible for cleanup. The phone being used on the sofa on Day 5 evening indicates adult leisure time. Day 6 (Sunday) shows similar child care patterns with additional play items (cushion, toy blocks) being used and then stored in the toy bin. The bowl being placed in the cupboard on Day 6 evening suggests meal cleanup is complete for the day. Weekend days (Day 5-6) show consistent child care patterns with adult leisure time in the evening, confirming the parent hypothesis. Day 7 (Monday) shows the return of the weekday routine with child meal items appearing at the high chair in the morning, followed by cleanup in the evening. The phone being placed at the nightstand suggests the adult is preparing for sleep, maintaining the consistent bedtime routine observed throughout the week. Day 8 (Tuesday) continues the weekday pattern with breakfast items already in the sink at 07:50, suggesting morning cleanup routine. Play items (cushion, toy blocks) are used in the morning and then moved to the sofa by mid-morning. The lunchtime sippy cup appears at 12:02, followed by evening meal with a plate at 17:58. The plate is cleaned and stored in the cupboard by 21:45, and the phone is placed at the nightstand by 22:06, indicating consistent bedtime routine. Day 9 (Wednesday) follows the established weekday pattern with sippy cup at high chair in morning, play items used during the day, and evening meal routine followed by adult leisure time with phone on sofa. The consistent pattern across multiple days strongly supports the parent hypothesis. Day 10 (Thursday) continues the established weekday pattern with breakfast items at high chair at 06:59, followed by cleanup in the sink by 07:44. The sippy cup appears at counter at 12:32, followed by nap items (blanket and book) at play mat at 15:00. Evening routine includes moving nap items to crib at 19:42, cleaning spoon and storing in cupboard by 21:45, and adult placing phone at nightstand by 21:56, maintaining the consistent bedtime routine. Day 11 (Friday) follows the established weekday pattern with breakfast items at high chair at 07:09, followed by cleanup in the sink by 07:54. Play items (ball and sippy cup) are used at play mat at 08:40. Lunchtime sippy cup appears at 11:49, followed by cleaning at 12:34. Evening routine includes board book at crib at 16:41 and sippy cup at counter at 18:46, indicating consistent meal and nap routines.

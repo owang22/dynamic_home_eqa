@@ -1,0 +1,15 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Healthcare Professional (Nurse/Doctor) — Day 4 shows no scrubs, consistent with Friday being a standard workday where scrubs might not be worn (e.g., admin, clinic, or off-shift) or the resident is working a different uniform. However, the lack of scrubs on Day 4 is a deviation from Days 1-3. Wait, Day 4 is Friday. If Days 1-3 were Mon-Wed, Day 4 is Thu? No, Day 0 is Monday. Day 4 is Friday. The previous hypothesis relied on 'consistent weekday scrubs'. If Day 4 has no scrubs, this weakens the 'daily scrubs' theory. But the prompt says 'Day 0 is a Monday'. So Day 4 is Friday. The previous memory said 'Day 3 confirms...'. Day 3 was Thursday. So Mon, Tue, Wed, Thu had scrubs. Friday (Day 4) does not. This suggests scrubs are worn Mon-Thu, not Fri. This is still consistent with a healthcare professional who might have a different schedule or uniform on Fridays. The probability remains high.
+2. (p=0.01) Medical Student/Intern — Still lacks study materials. The absence of scrubs on Friday might suggest a lighter clinical load or non-clinical day, which fits an intern's variable schedule, but the lack of books/laptops makes this less likely than a employed professional.
+3. (p=0.00) Remote Worker with Flexible Uniform — Discarded. The specific 'scrubs' pattern on Days 1-3 is too specific for general remote work. The absence on Day 4 doesn't strongly support this over the healthcare hypothesis with a 4-day shift.
+
+## Selected evidence
+- Day 4, 08:02 — mug at counter_k1 (morning coffee; confirms weekday morning routine)
+- Day 4, 11:57 — keys at entry_hook_e1 (midday exit/return; suggests work or errand, not home all day)
+- Day 4, 18:40 — water_bottle at nightstand_r1 (evening hydration; consistent with Days 1-3)
+- Day 4, 21:45 — bowl/mug/plate at cupboard_k1 (dinner cleanup; confirms end-of-day domestic routine)
+
+## Notes
+Day 4 (Friday) had no scrubs observed, unlike Days 1-3 (Mon-Thu). This suggests a 4-day clinical week or variable uniform. Keys at 11:57 suggest a midday break or errand. No new contradictory evidence for healthcare role. Need to observe Day 5-6 (weekend) to see if scrubs are absent and if routine changes significantly (e.g., later wake times, different activities).

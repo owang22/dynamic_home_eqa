@@ -1,0 +1,26 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.50) A single working professional with a flexible schedule, likely working from home most days. — The Sunday events show a later start (bowl at sink at 07:42, reading glasses on patio at 08:41) compared to weekday mornings, consistent with a weekend lie-in. The floor lamp on sofa at 09:33 and again at 10:12 suggests a relaxed morning reading or phone use. The waste bin on counter at 10:53 indicates kitchen tidying after breakfast. The fork at sink at 12:37 suggests a late lunch or snack. The phone on coffee table at 16:02 is typical afternoon leisure. No work items appear on Sunday, as expected. The weekday pattern (morning coffee on patio, afternoon phone on sofa, evening meal prep) still supports a home-based professional. However, the lack of any work-related items (laptop, work bag) across all days weakens this hypothesis slightly, as a dedicated office might hide them. The probability is reduced from 0.70 to 0.50 because the retiree hypothesis gains more support from the consistent weekend gardening and early newspaper, and the Sunday routine is more relaxed.
+2. (p=0.40) A retiree or someone with a flexible schedule who enjoys a structured daily routine. — The Sunday events reinforce a weekend pattern: later morning (bowl at sink at 07:42, reading glasses on patio at 08:41), then relaxation (floor lamp on sofa at 09:33 and 10:12), kitchen cleanup (waste bin at 10:53), late lunch (fork at sink at 12:37), and afternoon phone use (16:02). The Saturday gardening (seed tray at 11:00) and home decoration (wall clock at 12:31) are strong retiree markers. The early newspaper on Friday (07:04) and Saturday (06:57) suggests a morning reading habit typical of retirees. The absence of work items on weekdays (no laptop, no work bag) is consistent with a retiree. The probability is increased from 0.25 to 0.40 because the weekend pattern is now clearer and more consistent with a retiree lifestyle.
+3. (p=0.10) A couple or family where one person works from home and another is at home during the day, sharing the space. — The Sunday events could be from one person, but the floor lamp being moved twice (09:33 and 10:12) might indicate two people adjusting lighting. The phone on coffee table at 16:02 could be from a different person than the one who used the reading glasses earlier. However, no strong evidence of multiple people has emerged (no second set of items, no overlapping events at different locations). The probability is increased slightly from 0.05 to 0.10 because the floor lamp double movement is a weak signal, but the hypothesis remains unlikely.
+
+## Selected evidence
+- Day 0, 07:32 — coffee_mug at patio_table_p1 (morning coffee outdoors, weekday ritual)
+- Day 0, 12:33 — plate at sink_k1 (lunch at home, suggests work-from-home or flexible schedule)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath, consistent daily habit)
+- Day 1, 13:50 — phone at sofa_l1 (afternoon phone break, weekday pattern)
+- Day 2, 11:08 — reading_glasses at coffee_table_l1 (morning reading, hobby or work)
+- Day 3, 09:10 — reading_glasses at patio_table_p1 (morning reading on patio, new location)
+- Day 4, 07:04 — bowl at table_d1 (breakfast with newspaper, strong morning routine)
+- Day 4, 07:04 — newspaper at table_d1 (morning newspaper, retiree or structured professional)
+- Day 4, 07:04 — reading_glasses at table_d1 (reading glasses with newspaper, consistent)
+- Day 5, 06:57 — newspaper at table_d1 (early weekend newspaper, same pattern)
+- Day 5, 11:00 — seed_tray at patio_table_p1 (gardening, strong retiree signal)
+- Day 5, 12:31 — wall_clock at tv_stand_l1 (home decoration, weekend project)
+- Day 6, 08:41 — reading_glasses at patio_table_p1 (Sunday morning reading on patio, relaxed weekend)
+- Day 6, 09:33 — floor_lamp at sofa_l1 (morning relaxation, possibly reading)
+- Day 6, 16:02 — phone at coffee_table_l1 (afternoon leisure, consistent)
+
+## Notes
+Seven days observed (Mon-Sun). Sunday shows a relaxed weekend pattern: later morning (bowl at sink 07:42, reading glasses on patio 08:41), then floor lamp on sofa twice (09:33, 10:12) suggesting extended morning relaxation, kitchen cleanup (waste bin 10:53), late lunch (fork at sink 12:37), and afternoon phone (16:02). No gardening or home decoration on Sunday, which may be a rest day. The weekday pattern (morning coffee on patio, afternoon phone on sofa, evening meal) is consistent. The retiree hypothesis is now stronger due to weekend gardening and early newspaper, but the work-from-home professional remains possible. Need to look for work items (laptop, work bag) on weekdays to confirm. Also, the floor lamp double movement on Sunday is a weak signal for multiple people; watch for more such events. The bed_pillow events from earlier days (Day 4 at 18:51 and 21:57) remain unexplained; they could indicate a nap or two people's bedtimes. Next week, focus on weekday mornings for work-related items and on any new weekend activities.

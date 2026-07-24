@@ -1,0 +1,25 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Frequent Business Traveler",
+   "prob": 0.95,
+   "rationale": "Early morning departure (06:22) with full travel kit (passport, keys, adapter) strongly indicates a business trip rather than leisure. The late-night packing on Day 0 suggests a tight schedule typical of business travel."
+  },
+  {
+   "persona": "Vacation Planner",
+   "prob": 0.04,
+   "rationale": "Less likely due to the early hour and lack of leisure-specific items (e.g., sunscreen, casual wear visible). However, early flights for vacations are possible."
+  },
+  {
+   "persona": "Occasional Traveler",
+   "prob": 0.01,
+   "rationale": "The specific combination of items and the routine nature of the packing/departure sequence makes this less likely than a frequent traveler, but cannot be fully ruled out without long-term data."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 19:59 \u2014 passport at bed_r1 (indicates travel intent; high-value discriminative item)",
+  "Day 0, 20:44 \u2014 suitcase at entry_hook_e1 (confirms packing/travel prep; location suggests readiness for departure)",
+  "Day 1, 06:22 \u2014 keys/passport/phone/suitcase/adapter at elsewhere (confirms departure; early timing suggests business or early flight)"
+ ],
+ "notes": "Traveler has left. Key question: When do they return? If they return by Day 2 (Wednesday), it's a short business trip. If they return after Day 6 (Sunday), it's a longer trip. Watch for the return of the passport and suitcase to the entry_hook_e1 or bed_r1. Also, check if 'elsewhere' is the car or front door to confirm exit."
+}

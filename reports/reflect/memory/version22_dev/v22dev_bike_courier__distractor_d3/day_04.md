@@ -1,0 +1,19 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A cyclist who commutes by bike and works a standard daytime job, but with a flexible start time or a mid-morning errand. — The helmet storage at 10:09 on Friday matches the pattern of late morning storage (Monday 10:00, Thursday 10:01), strongly suggesting a consistent routine of a late morning ride, likely a commute with a flexible start. The evening water bottle events (18:07, 18:33, 18:09) and pannier at 18:12 on Wednesday support a commute end. The doormat events (08:38 Wed, 16:12 Tue) are minor but not contradictory. The absence of work-related objects (laptop, work bag) in the selected evidence is not surprising as they may be stored elsewhere.
+2. (p=0.15) A person who works from home or has a flexible schedule, as the helmet and pannier are stored at 10:09 (not early morning) and the water bottle is at the sink at 18:09 (could be after a leisure ride). — The late morning storage and water bottle at the sink could indicate a leisure ride or a flexible schedule. However, the pannier at 18:12 on Wednesday still aligns with a commute end, and the helmet/pannier storage at 10:09 on Friday matches the pattern, making this less likely than the commute hypothesis.
+3. (p=0.05) A person who does not own a car and relies on a bike for transportation, possibly a student or someone with a non-9-to-5 schedule. — The evidence is still thin. The late morning storage and water bottle at the sink could be for leisure rides, but the pannier at 18:12 on Wednesday suggests a commute-like pattern. The doormat events are ambiguous. This hypothesis is less likely given the consistent evening water bottle times and the pattern of late morning storage.
+
+## Selected evidence
+- Day 0, 10:00 — helmet at elsewhere (helmet stored mid-morning, not early commute)
+- Day 0, 18:07 — water_bottle at bike_rack_h1 (evening water bottle, suggests bike use after work)
+- Day 1, 18:33 — water_bottle at bike_rack_h1 (similar evening time, reinforces commute pattern)
+- Day 2, 18:12 — pannier at bike_rack_h1 (pannier placed on bike rack, strong evidence for bike commute)
+- Day 3, 10:01 — helmet at elsewhere (helmet stored mid-morning again, pattern with Monday)
+- Day 3, 10:01 — pannier at elsewhere (pannier stored with helmet, reinforces bike commute pattern)
+- Day 3, 18:09 — water_bottle at sink_k1 (water bottle at sink, likely cleaning after commute)
+- Day 4, 10:09 — helmet at elsewhere (helmet stored mid-morning again, consistent pattern)
+
+## Notes
+Five days observed (Mon-Fri). The helmet storage at 10:09 on Friday matches the pattern of late morning storage (Monday 10:00, Thursday 10:01), strongly suggesting a consistent routine. The water bottle at the sink on Thursday (18:09) instead of the bike rack is a slight variation but could be due to cleaning. The doormat events (08:38 Wed, 16:12 Tue) remain isolated and may be deliveries or occasional early returns. Need to observe weekend days to see if bike-related objects appear at different times (e.g., leisure rides). Also, look for work-related objects like laptop or work bag to confirm commute vs. flexible schedule. Day of week: all weekdays observed; weekend observations will be key.

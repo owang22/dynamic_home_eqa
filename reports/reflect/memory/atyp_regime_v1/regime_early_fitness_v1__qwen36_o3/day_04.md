@@ -1,0 +1,18 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Remote worker with dedicated fitness routine — The presence of dumbbells and a yoga mat at 05:12 on a Friday morning strongly confirms a structured, early-morning fitness habit. Combined with the protein shaker on Day 3 and laptop usage patterns, this profile is now highly probable. The early start (05:12) suggests high discipline, typical of remote workers who structure their day around health before work hours.
+2. (p=0.04) Hybrid worker (commuter) — While the laptop leaving the house on Day 2 could suggest commuting, the specific fitness equipment (yoga mat/dumbbells) appearing at home at 05:12 makes a gym commute less likely than a home workout. A commuter might not keep heavy gym gear at home unless they work out exclusively at home, which aligns more with remote work flexibility. This hypothesis is weakening.
+3. (p=0.01) Student — No academic materials observed. The disciplined 05:12 wake-up and specific fitness gear are less characteristic of typical student routines compared to the professional remote worker profile. This hypothesis is effectively discarded.
+
+## Selected evidence
+- Day 0, 06:30 — phone at counter_k1 (early wake-up; establishes baseline routine start time)
+- Day 2, 07:59 — laptop at elsewhere (indicates mobility; likely gym or cafe, not office commute)
+- Day 3, 06:44 — protein_shaker at counter_k1 (strong fitness/health indicator)
+- Day 3, 17:50 — backpack at sofa_l1 (evening return; bag likely contains work/gym items)
+- Day 4, 05:12 — dumbbells at coffee_table_l1 (confirms home fitness routine; early start)
+- Day 4, 05:12 — yoga_mat at coffee_table_l1 (confirms home fitness routine; specific equipment)
+- Day 4, 17:58 — plate at table_d1 (dinner/evening meal; consistent with daily living pattern)
+
+## Notes
+The appearance of dumbbells and yoga mat at 05:12 on Friday is the strongest evidence yet for a home-based fitness routine. This reinforces the 'Remote Worker' hypothesis significantly. The laptop being 'elsewhere' on Day 2 morning is now interpreted as a trip to a gym or cafe for work, rather than a commute to an office. The plate at 17:58 is mundane but confirms evening presence. Need to observe Day 5 (Saturday) to see if the fitness routine continues on weekends and if the laptop remains at 'elsewhere' or returns to the desk, which would further distinguish between a strict remote worker and a hybrid worker who works from home on weekends.

@@ -1,0 +1,31 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Hybrid professional with fixed weekday commute and weekend leisure",
+   "prob": 0.9,
+   "rationale": "Saturday (Day 12) showed keys out at 19:22. Sunday (Day 13) shows keys at entry_hook at 12:37 (likely returning from a morning outing) and no work artifacts. The pattern of 'keys out' on weekend evenings/mornings persists, reinforcing the 'leisure/social' hypothesis over 'homebody'. The strict Mon-Fri 08:26-18:03 office pattern remains unbroken."
+  },
+  {
+   "persona": "Remote worker with occasional office visits",
+   "prob": 0.05,
+   "rationale": "Still possible if the 'office' visits are mandatory but rare, and the weekend 'keys out' events are errands. However, the rigid 08:26 departure on weekdays makes 'occasional' less likely than 'fixed'. The lack of any work artifacts (laptop, lanyard) on weekends supports this being a non-work day, but the 'fixed' nature of the weekday departure contradicts a flexible remote schedule."
+  },
+  {
+   "persona": "Shift worker with fixed weekend off",
+   "prob": 0.05,
+   "rationale": "Discarded previously due to Mon-Fri consistency, but kept as a residual possibility. If the 'office' is a shift base, the weekend absence of work artifacts fits. However, the specific 'transit_card' and 'lanyard' usage strongly points to standard employment. The Sunday 'keys out' at 12:37 is ambiguous but doesn't contradict this hypothesis."
+  }
+ ],
+ "selected_evidence": [
+  "Day 13, 12:37 \u2014 keys at entry_hook_e1 (discriminator: keys returned mid-day on Sunday, suggests morning outing/errand, consistent with weekend leisure pattern)",
+  "Day 13, 19:13 \u2014 plate/fork at sink_k1 (weekend meal timing; later than weekday cleanup, consistent with relaxed routine)",
+  "Day 13, 21:45 \u2014 travel_mug at cupboard_k1 (evening cleanup; confirms dinner routine continues on weekends)",
+  "Day 13, 22:51 \u2014 phone at nightstand_r1 (bedtime routine; consistent with weekday pattern)",
+  "Day 12, 19:22 \u2014 keys at counter_k1 (discriminator: keys out on Saturday evening suggests social outing/errand, not work)",
+  "Day 12, 18:30 \u2014 plate/fork at table_d1 (weekend meal timing later than weekdays, suggests relaxed routine)",
+  "Day 11, 08:26 \u2014 work_lanyard at elsewhere (confirms office-based employment; consistent with Mon-Thu pattern)",
+  "Day 11, 18:03 \u2014 keys at entry_hook_e1 (confirms return from office; consistent with Mon-Thu pattern)",
+  "Day 11, 18:03 \u2014 transit_card at counter_k1 (confirms return from transit; consistent with Mon-Thu pattern)"
+ ],
+ "notes": "Sunday (Day 13) confirms the 'weekend off' aspect. Keys were out in the morning (12:37 return), suggesting a morning outing, unlike Saturday's evening outing. No work artifacts observed on Sunday. The 19:13 meal cleanup is later than the weekday 21:45 cleanup, indicating a later dinner time on weekends. The 'travel_mug' appearing at the sink at 12:37 and cupboard at 21:45 suggests it was used throughout the day. Need to observe Monday (Day 14) to see if the rigid 08:26-18:03 office pattern resumes."
+}

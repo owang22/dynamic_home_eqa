@@ -1,0 +1,15 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.92) Parent with young child(ren) — The presence of a ball on a play mat and now a plate at a high chair strongly indicates a household with young children. The high chair sighting is particularly telling as it's specifically designed for young children during meal times.
+2. (p=0.05) Pet owner — A ball could be for a pet, but the combination with a play mat and high chair makes this increasingly unlikely.
+3. (p=0.03) Active individual who plays indoor sports — The ball could be for exercise, but the play mat and high chair evidence contradicts this hypothesis.
+
+## Selected evidence
+- Day 0, 08:46 — ball seen at play_mat_l1 (suggests morning play activity, possibly with a child)
+- Day 0, 15:06 — ball seen at play_mat_l1 (ball returned to play area after being used, consistent with child's play pattern)
+- Day 1, 17:57 — plate seen at high_chair_d1 (strong evidence of young child in household, as high chairs are specifically for young children during meals)
+- Day 1, 21:45 — bowl seen at cupboard_k1 (kitchen storage of child's dishes, consistent with parent-child household)
+
+## Notes
+The high chair sighting on day 1 strongly confirms the parent-with-young-children hypothesis. Need to observe meal times and see if there are other child-related objects. The bowl in the cupboard suggests regular meal preparation for the child. Should watch for patterns in when the high chair is used and if other child care items appear.

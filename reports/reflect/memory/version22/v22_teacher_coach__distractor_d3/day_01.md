@@ -1,0 +1,20 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.55) A single working professional with a structured morning and evening routine, likely commuting with a thermos and winding down at home in the evening. — Thermos pattern from day 0 (07:30 out, 16:24 back) is consistent with a workday commute. Evening events (lamp, bath mat, pillow) suggest a predictable wind-down. Day 1 adds a school bag with a grade folder at 21:59, which could indicate the resident is a student or a parent, but the folder is placed in a school bag, suggesting the resident may be a student or a teacher. However, the thermos pattern is more typical of a working professional. The doormat at 16:12 might indicate someone arriving home, but it's earlier than the thermos return on day 0, so perhaps the resident works from home or has a different schedule on Tuesday. The fork at sink at 19:54 and dining chair at table at 21:20 suggest a late dinner, which could be a student studying late. The wall clock at counter at 18:37 is a mundane event. Overall, the evidence is mixed, but the thermos pattern remains strong.
+2. (p=0.35) A student or teacher who uses a school bag and has a late evening routine, possibly studying or grading papers. — The grade_folder at school_bag at 21:59 strongly suggests academic work. The late dinner (fork at sink 19:54, chair at table 21:20) aligns with a student's schedule. The doormat at 16:12 could be a return from school. However, the thermos from day 0 is less typical for a student, but not impossible. This hypothesis gains support from day 1 events.
+3. (p=0.10) A person with a flexible schedule who works from home or has varied daily routines. — The doormat at 16:12 on day 1 is earlier than the thermos return on day 0, suggesting the resident's schedule may vary. The late dinner and academic folder could be part of a flexible routine. However, the evidence is still limited, and this hypothesis is less specific.
+
+## Selected evidence
+- Day 0, 07:30 — thermos at elsewhere (likely taken to work/commute)
+- Day 0, 16:24 — thermos at kitchen_table_k1 (returned home after work)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation started)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation)
+- Day 1, 16:12 — doormat at entry_hook_e1 (possible arrival home, earlier than day 0)
+- Day 1, 19:54 — fork at sink_k1 (late dinner)
+- Day 1, 21:20 — dining_chair at kitchen_table_k1 (late meal or study)
+- Day 1, 21:59 — grade_folder at school_bag_e1 (academic work, suggests student or teacher)
+
+## Notes
+Day 1 (Tuesday) shows a different pattern: doormat at 16:12 (earlier than day 0's thermos return), late dinner (fork at sink 19:54, chair at table 21:20), and a grade folder in a school bag at 21:59. This suggests the resident might be a student or teacher, conflicting with the working professional hypothesis from day 0. The thermos was not observed on day 1, so its pattern may not be daily. Need to observe more days, especially weekend days (5-6), to see if the school bag and grade folder appear regularly. Also look for other objects like laptop, yoga mat, or suitcase to clarify persona.

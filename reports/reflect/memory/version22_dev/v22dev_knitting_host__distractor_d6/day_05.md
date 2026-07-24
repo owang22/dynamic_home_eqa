@@ -1,0 +1,26 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single person who works from home or has a flexible schedule, with a consistent afternoon tea habit and evening crafting/reading routine, and now shows a weekend pattern of morning tea and evening bath. — Weekend evidence: teapot at 07:20 (morning tea, earlier than weekday afternoon tea), bath_mat at 20:27 (evening bath, not seen since Day 0), reading_glasses at nightstand (bedtime reading). This suggests a relaxed weekend routine with morning tea and a bath, while weekday pattern of afternoon tea and evening crafting/reading remains strong. Phone not seen today, but midday pattern is consistent on weekdays.
+2. (p=0.10) A person who values comfort and relaxation in the evening, with a wind-down routine that may vary (bath, reading, crafting). — Evening events: bath_mat reappears (Day 5), reading_glasses at nightstand, remote at side_table. This supports a relaxation routine but is less specific than the main hypothesis. The bath is now confirmed as a weekend activity.
+3. (p=0.05) A tidy person who maintains order in the home, as seen by doormat placement, pillow adjustments, and now picture frame and wall clock movements. — Picture frame moved again (Day 5), wall clock moved to counter (Day 5), waste bin moved (Day 5). These are common household actions and not strongly diagnostic. Probability remains low.
+
+## Selected evidence
+- Day 0, 11:39 — phone at counter_k1 (phone left out at midday suggests flexible schedule, not rushed)
+- Day 0, 14:29 — teapot at side_table_l1 (afternoon tea break, relaxed routine)
+- Day 1, 17:10 — teapot at sideboard_d1 (afternoon tea repeated, consistent habit)
+- Day 0, 20:06 — floor_lamp at armchair_l1 (evening relaxation setup)
+- Day 1, 21:30 — reading_glasses at yarn_basket_l1 (evening reading/crafting activity)
+- Day 2, 14:34 — knitting_needles at armchair_l1 (afternoon crafting, hobby)
+- Day 2, 19:45 — knitting_needles at sofa_l1 (evening crafting moved to sofa)
+- Day 2, 21:45 — knitting_needles at yarn_basket_l1 (crafting items stored together, organized hobby)
+- Day 3, 11:45 — phone at side_table_l1 (phone left out midday again, reinforces flexible schedule)
+- Day 3, 12:21 — floor_lamp at armchair_l1 (evening relaxation setup consistent)
+- Day 4, 17:00 — teapot at sideboard_d1 (afternoon tea again, strong habit)
+- Day 4, 20:54 — floor_lamp at armchair_l1 (evening relaxation consistent)
+- Day 5, 07:20 — teapot at table_d1 (morning tea on weekend, different from weekday afternoon tea)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening bath on weekend, not seen on weekdays)
+- Day 5, 21:28 — reading_glasses at nightstand_r1 (bedtime reading, part of wind-down)
+
+## Notes
+Weekend (Day 5) shows a different routine: morning tea (07:20) instead of afternoon tea, and an evening bath (bath_mat at 20:27). No phone seen today, but weekday midday pattern is strong. Picture frame and wall clock movements may indicate tidying or decorating, but not yet a strong pattern. Next day (Day 6, Sunday) will help confirm weekend routine. No evidence of other household members.

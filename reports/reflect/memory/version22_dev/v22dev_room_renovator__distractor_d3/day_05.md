@@ -1,0 +1,26 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single working professional with a regular 9-to-5 schedule, returning home in the evening and winding down with dinner and relaxation. — Consistent morning departure at 08:11 with keys, laptop_bag, phone across multiple days. Evening meal at 18:00-18:42, relaxation (radio, picture_frame), and bedtime routine (phone at nightstand). No evidence of a second person. Weekend data shows a later start (radio at 06:50 but no departure event) and a relaxed day (phone at nightstand at 16:29, bath mat at 20:27, plate put away at 21:45). This is consistent with a single person who sleeps in on Saturday.
+2. (p=0.03) A couple or family where one person works standard hours and another may be at home, but the evening routine is shared. — No new evidence of multiple residents. Single plate, single set of keys, single phone, single pillow. The dining chair at table on Day 3 remains ambiguous but likely the resident themselves. Probability reduced further.
+3. (p=0.02) A remote worker or student with flexible hours, but the 08:11 keys event suggests leaving home, so less likely. — Consistent 08:11 departure with laptop_bag and phone strongly indicates a commute to a workplace. Evening return at 18:00-18:42 is also consistent with a standard workday. Weekend data shows no departure, which is consistent with a non-commute day. Probability reduced further.
+
+## Selected evidence
+- Day 0, 08:11 — keys at elsewhere (leaving home for work)
+- Day 1, 18:57 — paint_roller at paint_shelf_s1 (DIY project in evening)
+- Day 2, 17:41 — laptop_bag at sofa_l1 (return from work)
+- Day 2, 22:20 — phone at nightstand_r1 (bedtime routine)
+- Day 3, 08:11 — keys, laptop_bag, phone at elsewhere (morning departure, all together)
+- Day 3, 18:00 — plate at table_d1 (evening meal)
+- Day 3, 18:51 — bed_pillow at bed_r1 (early bedtime preparation)
+- Day 4, 06:52 — bowl at table_d1 (breakfast before work)
+- Day 4, 06:52 — radio at counter_k1 (morning routine)
+- Day 4, 08:11 — keys at elsewhere (consistent morning departure)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (evening relaxation)
+- Day 4, 21:55 — phone at nightstand_r1 (bedtime routine)
+- Day 5, 06:50 — radio at counter_k1 (weekend morning, later than weekday 06:52)
+- Day 5, 16:29 — phone at nightstand_r1 (afternoon nap or relaxation on weekend)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening bath, weekend self-care)
+
+## Notes
+Weekend (Day 5, Saturday) shows a different pattern: no morning departure, radio at 06:50 (similar to weekday 06:52 but no bowl/breakfast), phone at nightstand at 16:29 (afternoon rest), bath mat at 20:27 (bath), plate put away at 21:45 (dinner cleanup), phone at nightstand at 22:22 (bedtime). This is consistent with a single person who sleeps in and has a relaxed weekend. The 16:12 doormat on Day 1 remains unexplained; could be a delivery or early return. Need to observe Day 6 (Sunday) to confirm weekend pattern. No evidence of multiple residents.

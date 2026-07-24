@@ -1,0 +1,24 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single older adult with a flexible schedule, possibly retired or working part-time from home, who has a structured morning and evening routine but varies midday activities. — Hearing aid case is a strong indicator of an older resident. The morning events (hearing aid case at counter at 07:01, then at side table at 07:31, plate at table at 07:38) suggest a consistent breakfast routine but with some variability in object placement. The floor lamp at recliner at 20:54 and remote at nightstand at 22:03 indicate a typical evening wind-down. The absence of a midday lamp event today (unlike Day 3) and the early pillow move (18:25) suggest a flexible schedule. The waste bin at counter twice (07:09, 08:41) may indicate cleaning or meal prep. The picture frame at side table at 18:34 could be a personal touch, reinforcing a single resident.
+2. (p=0.30) A couple or family with one older adult (hearing aid user) and another person who works outside the home, sharing the living space with some overlapping routines. — The hearing aid case suggests an older adult, but the multiple object movements (plate at table at 07:38 and again at 17:59, dining chair moved at 18:22) could indicate two people eating at different times. The waste bin at counter twice might be from different users. However, the lack of multiple distinct coffee mugs or other duplicate items weakens this hypothesis. The picture frame at side table could be a shared decoration. The remote at nightstand at 22:03 is unusual for a couple (often in living room), but possible if one person goes to bed early.
+3. (p=0.10) A retiree living alone with a very consistent daily routine, but with occasional deviations due to errands or visitors. — The hearing aid case and early morning events (07:01, 07:31) suggest a fixed morning routine. The plate at table at 07:38 and again at 17:59 indicates two meals at home, typical of a retiree. The floor lamp at 20:54 and remote at 22:03 are consistent with evening TV. However, the waste bin movements and picture frame event are minor deviations that could be explained by cleaning or decorating. The lack of midday lamp use today (unlike Day 3) suggests some flexibility, but overall pattern is stable. This hypothesis is less likely because the surprising events (hearing aid case at counter, plate at table) suggest more variability than a rigid routine.
+
+## Selected evidence
+- Day 0, 07:38 — plate at table_d1 (morning breakfast, routine meal)
+- Day 0, 20:06 — floor_lamp at recliner_l1 (evening reading/TV, consistent evening activity)
+- Day 0, 20:54 — bed_pillow at bed_r2 (final bedtime preparation)
+- Day 3, 07:42 — coffee_mug at table_d1 (morning coffee, part of breakfast)
+- Day 3, 08:22 — coffee_mug at side_table_l1 (surprising: quick transition to living room after breakfast, suggests workday rush)
+- Day 3, 12:21 — floor_lamp at recliner_l1 (midday lamp use, earlier than other days, flexible schedule)
+- Day 3, 22:03 — hearing_aid_case at nightstand_r2 (hearing aid at bedside, indicates older resident)
+- Day 4, 07:01 — hearing_aid_case at counter_k1 (surprising: hearing aid case left on counter in morning, unusual placement)
+- Day 4, 07:31 — hearing_aid_case at side_table_l1 (surprising: moved to side table, possibly forgotten or placed during breakfast)
+- Day 4, 07:38 — plate at table_d1 (surprising: plate at table at same time as hearing aid case moves, suggests breakfast routine)
+- Day 4, 17:59 — plate at table_d1 (evening meal, consistent with dinner at home)
+- Day 4, 20:54 — floor_lamp at recliner_l1 (evening lamp use, consistent with previous days)
+- Day 4, 22:03 — remote at nightstand_r2 (remote taken to bedroom, suggests TV in bedroom or early bedtime)
+
+## Notes
+Day 4 (Friday) shows a new pattern: hearing aid case appears at counter (07:01) and then side table (07:31) in the morning, which is surprising given it was at nightstand on Day 3. This could indicate a rushed morning or a different routine on Fridays. The plate at table at 07:38 is also surprising because it was expected elsewhere (maybe sink) based on previous days. The waste bin at counter twice (07:09, 08:41) is new—could be cleaning or meal prep. The evening events (plate at 17:59, dining chair at 18:22, pillow at 18:25, picture frame at 18:34) suggest a structured dinner and early relaxation. The remote at nightstand at 22:03 is a new object location, possibly indicating TV in bedroom. Need to check if weekend (days 5-6) shows different patterns (e.g., later wake-up, more daytime activity). The hearing aid case movements need monitoring to see if they become regular on Fridays or are random. The picture frame event is a new object; could be a personal item moved for decoration or cleaning.

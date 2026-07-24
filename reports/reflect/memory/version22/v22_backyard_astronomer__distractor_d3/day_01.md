@@ -1,0 +1,19 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) Single working adult with a regular evening routine — Day 1 events reinforce a structured evening: plate at table at 18:46 (dinner), dining chair at 21:20 (post-dinner sitting), telescope cap at 21:42 (hobby/observation). No evidence of multiple residents. Midday phone on sofa (Day 0) still suggests work-from-home or lunch break.
+2. (p=0.20) Remote worker with a structured evening routine and hobby — Telescope cap at 21:42 indicates an astronomy or outdoor hobby, adding to the structured evening pattern. The resident likely works from home (phone on sofa at midday) and has a fixed schedule including dinner, relaxation, and hobby time.
+3. (p=0.10) Couple or family with one person working from home — No new evidence of multiple residents. The doormat at entry_hook at 16:12 could be a delivery or someone coming home, but it's a single event. The telescope cap might be a shared hobby, but still no clear second-person evidence.
+
+## Selected evidence
+- Day 0, 12:28 — phone at sofa_l1 (midday phone use suggests work-from-home or lunch break)
+- Day 0, 19:19 — plate at sink_k1 (dinner time, typical of single adult or couple)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, likely reading or TV)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath/shower, part of nightly routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime, consistent with early-to-bed pattern)
+- Day 1, 18:46 — plate at table_d1 (dinner at table, not sink; suggests sit-down meal)
+- Day 1, 21:20 — dining_chair at table_d1 (post-dinner sitting, possibly reading or conversation)
+- Day 1, 21:42 — telescope_cap at patio_table_p1 (hobby/astronomy interest, evening outdoor activity)
+
+## Notes
+Day 1 (Tuesday) shows a later dinner (18:46 vs 19:19 on Monday) and a new hobby (telescope cap at 21:42). Doormat at 16:12 might indicate a delivery or someone arriving home. Need to observe weekend days (5-6) to see if routine changes. Look for patterns like laptop at desk, yoga mat, or suitcase to refine persona. The telescope cap suggests an outdoor/astronomy hobby, possibly a regular evening activity.

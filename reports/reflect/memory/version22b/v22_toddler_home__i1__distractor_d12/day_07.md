@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Family with a young child (toddler or preschooler) — structured daily routine with morning bath, midday nap, evening meals, and child-specific toys. Weekend shows a later start (sippy cup at high chair at 11:48, no early breakfast), a midday bath (bath mat at 10:57 and 19:02), and family time (picture frame at coffee table at 07:48, board book at play mat at 09:18, ball at play mat at 15:13). The absence of doormat movement confirms no school/work departure. The wall clock movements (10:53, 12:18, 13:21, 17:50, 17:55, 18:09) are likely due to cleaning or rearranging, not diagnostic. — All events are consistent with a child-centered household. The weekend pattern (later wake-up, midday bath, nap) is typical for a family with a young child. No contradictory evidence. — Day 7 (Monday) reinforces the child-centered routine: sippy cup at high chair at 06:38 (early breakfast), doormat at 07:15 (morning departure, likely school/work), sippy cup at sink at 07:23 (after breakfast), dining chair at table at 08:04 and 08:45 (likely breakfast and then adult departure), floor lamp at sofa at 08:46 (morning activity), bed pillow at bed at 10:27 (midday nap), picture frame at coffee table at 12:12 and 16:43 (family time), wall clock at counter at 14:10 (cleaning), floor lamp at sofa at 17:20 (evening), dining chair at table at 17:50 (dinner), plate at sink at 18:30 (after dinner), bath mat at bathroom at 18:35 (evening bath), bed pillow at bed at 19:24 (bedtime), sippy cup at sink at 19:38 (evening cleanup). The doormat movement at 07:15 confirms a morning departure, consistent with school/work. The midday nap (bed pillow at 10:27) and evening bath (bath mat at 18:35) are typical for a young child. The picture frame movements suggest family time. No evidence contradicts this hypothesis.
+2. (p=0.01) Single adult with a structured routine — but child evidence is overwhelming. The sippy cup, bath mat, board book, ball, stacking rings, and picture frame movements are not typical for a single adult. The weekend pattern (later start, midday bath, nap) is also not typical for a single adult. — The presence of child-specific items (sippy cup, bath mat, board book, ball, stacking rings) and the pattern of events (midday bath, nap) strongly indicate a child. The single adult hypothesis is highly unlikely. — Day 7 adds more child-specific evidence: sippy cup at high chair, bath mat at bathroom, bed pillow at midday. The doormat movement at 07:15 could be an adult leaving for work, but the child items and nap pattern are inconsistent with a single adult. The hypothesis remains highly improbable.
+3. (p=0.01) Couple without children — but child evidence is overwhelming. The sippy cup, bath mat, board book, ball, stacking rings, and picture frame movements are not typical for a childless couple. The weekend pattern (later start, midday bath, nap) is also not typical for a childless couple. — The child-specific items and the pattern of events (midday bath, nap) strongly indicate a child. The couple without children hypothesis is highly unlikely. — Day 7 evidence (sippy cup, bath mat, bed pillow nap) is inconsistent with a childless couple. The hypothesis remains highly improbable.
+
+## Selected evidence
+- Day 0, 08:41 — sippy_cup at play_mat_n1 (young child)
+- Day 1, 17:18 — ball at toy_corner_l1 (child play)
+- Day 2, 11:34 — stacking_rings at toy_corner_l1 (child toy)
+- Day 2, 18:59 — board_book at crib_n1 (child bedtime reading)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday nap, likely child)
+- Day 1, 08:47 — bath_mat at bathroom_c1 (morning bath, child routine)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure, school/work)
+- Day 1, 16:12 — doormat at entry_hook_e1 (afternoon arrival, school pickup)
+- Day 2, 13:34 — doormat at entry_hook_e1 (afternoon arrival, consistent)
+- Day 1, 21:04 — dining_chair at table_d1 (evening family dinner)
+- Day 2, 21:06 — dining_chair at table_d1 (evening family dinner)
+- Day 3, 07:57 — doormat at entry_hook_e1 (morning departure, earlier than previous days)
+- Day 3, 09:02 — doormat at entry_hook_e1 (second morning departure, possibly adult)
+- Day 3, 09:04 — board_book at play_mat_n1 (morning reading with child)
+- Day 3, 17:35 — doormat at entry_hook_e1 (afternoon arrival, consistent with school pickup)
+
+## Notes
+Day 7 (Monday) confirms weekday pattern: early sippy cup (06:38), doormat departure (07:15), midday nap (bed pillow at 10:27), evening bath (bath mat at 18:35), and dinner (dining chair at 17:50, plate at sink at 18:30). The doormat time (07:15) is earlier than previous weekdays (07:57, 08:38), possibly due to day-of-week variation. The picture frame at coffee table at 12:12 and 16:43 suggests family time during lunch and afternoon. The wall clock at counter at 14:10 is likely cleaning. Next week will help confirm the weekly pattern (e.g., doormat times, bath times). Also look for any weekend-specific activities (e.g., outdoor toys, guest arrivals).

@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single person who works from home or has a flexible schedule, with a routine that includes morning coffee, midday meal, afternoon nap, and evening relaxation. The resident's outings are irregular; on Day 3 (Thursday) keys and laptop left, but on Day 10 (Thursday) they stayed home. Day 11 (Friday) shows no keys or laptop leaving, suggesting a work-from-home day. Day 12 (Saturday) and Day 13 (Sunday) show weekend patterns with decor and cleaning events, but no outings observed. The pattern of morning decor placement (picture frame, wall clock), midday meal (dining chair at table), afternoon relaxation (floor lamp at sofa), and evening cleaning (waste bin) is consistent.",
+   "prob": 0.85,
+   "rationale": "Day 13 (Sunday) shows no keys or laptop leaving, consistent with a weekend at home. The events: plant_mister at plant_shelf at 07:55 (morning plant care), bath_mat at bathroom at 09:50 (morning hygiene), doormat at entry at 11:29 (midday cleaning), wall_clock at counter at 12:07 (midday decor), picture_frame at coffee_table at 13:00 (afternoon decor), floor_lamp at sofa at 13:31 (afternoon relaxation), wall_clock at counter at 16:29 (afternoon decor), picture_frame at coffee_table at 16:34 (afternoon decor), dining_chair at table at 16:39 (afternoon meal), doormat at entry at 18:39 (evening cleaning), phone at sofa at 19:30 (evening relaxation), floor_lamp at sofa at 20:38 (evening relaxation), doormat at entry at 20:40 (evening cleaning), wall_clock at counter at 21:47 (evening decor). This pattern of home-based activities with no outings supports a flexible schedule."
+  },
+  {
+   "persona": "A person who maintains a tidy home with regular cleaning and organization, as seen by the waste bin being moved to the counter in the evening, and the picture frame being moved multiple times (likely as part of cleaning or rearranging). Day 12 shows waste bin at counter at 19:26, and picture frame at coffee table at 10:00, 15:09, 15:37, 17:34, 20:30, indicating a consistent cleaning or organizing routine. Day 13 shows doormat at entry at 11:29, 18:39, 20:40 (multiple times), and picture_frame at coffee_table at 13:00 and 16:34, suggesting a cleaning or organizing routine.",
+   "prob": 0.1,
+   "rationale": "The multiple doormat events today (11:29, 18:39, 20:40) and picture_frame events (13:00, 16:34) suggest a cleaning or organizing routine. However, these events are not more frequent than previous days, and the cleaning hypothesis remains secondary to the work-from-home hypothesis."
+  },
+  {
+   "persona": "A person who values decor and personal touches, as evidenced by the picture frame being moved to the coffee table multiple times today (13:00, 16:34) and the wall clock appearing at the counter at 12:07, 16:29, 21:47. These events suggest a routine of arranging decorative items, but they are less frequent than cleaning events. Day 13 also shows plant_mister at plant_shelf at 07:55, indicating plant care, which adds to the decor persona.",
+   "prob": 0.05,
+   "rationale": "The decor events are present but not unique. The picture frame appears twice today, and the wall clock appears three times, which is more than usual. The plant_mister event is new and suggests plant care, which could be part of a decor routine. However, this hypothesis remains less distinctive and is reduced due to limited additional evidence."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:39 \u2014 floor_lamp at sofa_l1 (morning lamp use, suggests home-based work)",
+  "Day 0, 12:30 \u2014 dining_chair at table_d1 (midday meal at home, flexible schedule)",
+  "Day 0, 12:57 \u2014 bed_pillow at bed_r1 (midday nap or bed-making, flexible routine)",
+  "Day 3, 09:40 \u2014 keys at elsewhere (keys and laptop leaving home, suggests leaving for work/errands)",
+  "Day 3, 09:40 \u2014 laptop at elsewhere (laptop leaving home, supports work-from-home but also leaving)",
+  "Day 5, 12:37 \u2014 plate at table_d1 (weekend midday meal, consistent with weekday pattern)",
+  "Day 5, 13:55 \u2014 bed_pillow at bed_r1 (weekend afternoon nap, consistent with weekday pattern)",
+  "Day 8, 08:48 \u2014 waste_bin at counter_k1 (morning cleaning routine, tidying)",
+  "Day 8, 09:48 \u2014 keys at elsewhere (keys leaving home on Tuesday, suggests errand or work)",
+  "Day 8, 11:56 \u2014 doormat at entry_hook_e1 (midday doormat placement, cleaning routine)",
+  "Day 8, 14:15 \u2014 picture_frame at coffee_table_l1 (midday decor arrangement)",
+  "Day 8, 14:19 \u2014 dining_chair at table_d1 (midday meal, consistent with flexible schedule)",
+  "Day 8, 14:45 \u2014 floor_lamp at sofa_l1 (afternoon lamp use, home-based work)",
+  "Day 8, 17:51 \u2014 keys at entry_hook_e1 (keys return home, confirms outing)",
+  "Day 13, 07:55 \u2014 plant_mister at plant_shelf_l1 (morning plant care, adds to decor persona)"
+ ],
+ "notes": "Day 13 (Sunday) shows no keys or laptop leaving, consistent with a weekend at home. The multiple doormat events (11:29, 18:39, 20:40) and wall_clock events (12:07, 16:29, 21:47) are notable; could be part of a cleaning or decorating routine. The plant_mister event at 07:55 is new and suggests plant care, which may indicate a decor or hobby routine. The phone at sofa at 19:30 suggests evening relaxation. No evidence of a second person yet. Need to observe future weekdays to see if the pattern of keys/laptop leaving repeats, and to verify if the multiple decor events are a weekend pattern."
+}

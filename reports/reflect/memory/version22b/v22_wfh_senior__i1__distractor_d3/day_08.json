@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single professional who works from home or has a home office, with a consistent weekday routine of morning work, lunch, and evening relaxation. Weekend routine shows later mornings and more leisure activities.",
+   "prob": 0.97,
+   "rationale": "Tuesday's events perfectly match the weekday pattern: coffee at desk at 07:47 (morning work start), fork at table at 11:45 (lunch), waste bin at counter (kitchen cleanup), reading glasses at coffee table (afternoon break), wall clock at TV stand (evening leisure), and doormat at entry at 19:17 (returning home after being out during the day). This is the first doormat event on a weekday, suggesting the resident left home during the day and returned in the evening, consistent with a professional who may have gone to an office or errand. The pattern is highly consistent."
+  },
+  {
+   "persona": "A single person with a flexible schedule who may work from home but has a distinct weekend routine (later mornings, more leisure activities).",
+   "prob": 0.02,
+   "rationale": "Tuesday's events are indistinguishable from the professional hypothesis. The weekday pattern is now even more consistent, and the weekend pattern remains distinct. This hypothesis is less likely."
+  },
+  {
+   "persona": "A couple or family where one person uses the desk and another uses the sofa, but the events are sparse and could be from one person.",
+   "prob": 0.01,
+   "rationale": "No new evidence of multiple people. All Tuesday events are consistent with a single person. The doormat event at 19:17 could be a second person returning, but it could also be the same person. No other objects suggest a second person. This hypothesis remains very unlikely."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 09:00 \u2014 headset at desk_o1 (morning work/study activity)",
+  "Day 1, 16:12 \u2014 doormat at entry_hook_e1 (returning home, suggests leaving during day)",
+  "Day 2, 08:38 \u2014 doormat at entry_hook_e1 (leaving home in morning, consistent with weekday)",
+  "Day 2, 09:12 \u2014 phone at desk_o1 (morning work/study, consistent with Day 0 headset)",
+  "Day 2, 12:36 \u2014 plate at sink_k1 (lunch, midday meal)",
+  "Day 3, 07:02 \u2014 reading_glasses at table_d1 (morning breakfast/reading, new object)",
+  "Day 3, 07:42 \u2014 coffee_mug at desk_o1 (morning work start, consistent with headset/phone at desk)",
+  "Day 3, 21:42 \u2014 phone at nightstand_b1 (evening wind-down, bedtime routine)",
+  "Day 4, 06:51 \u2014 bowl, coffee_mug, newspaper, reading_glasses at table_d1 (consistent morning breakfast/reading routine)",
+  "Day 4, 12:51 \u2014 plate at sink_k1 (lunch, consistent with Day 2)",
+  "Day 4, 18:34 \u2014 picture_frame at coffee_table_l1 (evening decoration/relaxation, consistent with Day 2)",
+  "Day 5, 07:10 \u2014 coffee_mug at table_d1 (later weekend morning coffee, vs 06:51 weekday)",
+  "Day 5, 11:50 \u2014 fork at table_d1 (late breakfast/brunch, weekend pattern)",
+  "Day 5, 12:31 \u2014 wall_clock at tv_stand_l1 (weekend leisure, moving clock to entertainment area)",
+  "Day 8, 19:17 \u2014 doormat at entry_hook_e1 (returning home in evening, first weekday doormat event, suggests leaving home during day)"
+ ],
+ "notes": "Tuesday (Day 8) confirms weekday pattern: coffee at desk (07:47), fork at table (11:45), waste bin at counter (11:46), reading glasses at coffee table (13:45), wall clock at TV stand (16:14), doormat at entry (19:17). The doormat event at 19:17 is the first weekday doormat event, indicating the resident left home during the day and returned in the evening. This could be a work-from-home day with an afternoon errand or a day at the office. The single professional hypothesis is now very strong (p=0.97). Next weekend will help further distinguish weekend patterns."
+}

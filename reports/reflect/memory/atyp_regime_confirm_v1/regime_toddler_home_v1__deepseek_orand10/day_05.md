@@ -1,0 +1,25 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Family with a young child (toddler/preschooler) who is home during the day; the child uses a sippy cup, eats in a high chair, plays with blocks and a ball, and has a consistent daily routine with meals, play, and nap/bedtime. — Day 5 (Saturday) shows the same pattern as weekdays: sippy cup at high chair at 06:52 (breakfast), bowl to sink at 07:37 (cleanup), sippy cup on play mat at 08:43 (morning play), spoon at high chair at 11:57 (lunch), plate to sink at 12:42 (cleanup), ball in toy bin at 17:14 (afternoon tidy-up), spoon to sink at 18:35 (dinner cleanup), blanket and board book at crib at 19:34 (bedtime routine), board book to toy bin at 20:19 (final tidy), phone at nightstand at 22:14 (adult bedtime). The child is home on Saturday, consistent with a stay-at-home parent or no daycare on weekends.
+2. (p=0.01) Single adult or couple without children, but occasionally babysitting or having a child visit. — Child-related items appear every day, including Saturday, not just occasionally. The blanket and board book moving to crib at 19:34 suggests a daily bedtime routine, not a visit. This hypothesis is very unlikely.
+
+## Selected evidence
+- Day 0, 07:41 — sippy_cup at counter_k1 (child's morning drink preparation)
+- Day 0, 08:46 — ball at play_mat_l1 (child's morning playtime on dedicated mat)
+- Day 0, 12:00 — sippy_cup at high_chair_d1 (child's lunch in high chair)
+- Day 0, 15:06 — ball at play_mat_l1 (afternoon play session)
+- Day 0, 20:17 — phone and remote at sofa_l1 (adult evening relaxation)
+- Day 0, 21:45 — plate and sippy_cup at cupboard_k1 (end-of-day storage, child's items put away)
+- Day 1, 06:51 — bowl at high_chair_d1 (child's breakfast in high chair)
+- Day 1, 15:00 — blanket at play_mat_l1 (afternoon nap/play setup on child's mat)
+- Day 1, 19:24 — blanket at crib_n1 (child's bedtime preparation)
+- Day 1, 20:48 — phone at sofa_l1 (adult evening relaxation)
+- Day 1, 22:18 — phone at nightstand_r1 (adult bedtime)
+- Day 2, 07:02 — sippy_cup at high_chair_d1 (child's breakfast)
+- Day 2, 11:52 — plate and sippy_cup at high_chair_d1 (child's lunch)
+- Day 2, 15:16 — board_book at play_mat_l1 (afternoon play)
+- Day 2, 17:16 — ball at toy_bin_l1 and board_book at crib_n1 (tidy-up and bedtime story)
+
+## Notes
+Day 5 (Saturday) confirms the child is home on weekends, with a similar routine: breakfast (06:52), cleanup (07:37), morning play (08:43), lunch (11:57), cleanup (12:42), afternoon tidy (17:14), dinner cleanup (18:35), bedtime routine (19:34), final tidy (20:19), adult bedtime (22:14). No evidence of daycare drop-off or absence on any day. The blanket and board book at crib at 19:34 on Saturday matches the weekday bedtime story pattern. The phone at nightstand at 22:14 is consistent with adult bedtime around 22:00-22:30. Need to observe Day 6 (Sunday) to see if the pattern holds. Also note the cushion at sofa at 10:43 on Saturday is a new event; watch for repeat.

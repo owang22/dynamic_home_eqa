@@ -1,0 +1,23 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single shift worker with a variable schedule, likely in a manual or safety-sensitive job (hi-vis vest, work badge). The midday departure on Thursday and early morning on Wednesday suggest rotating shifts. The thermos used late at night and washed at 22:51 indicates a late shift or evening work. The Saturday phone on sofa at 12:25 suggests a relaxed weekend morning, consistent with a day off or late start. The Sunday phone on nightstand at 20:47 suggests an early bedtime or a quiet evening at home, consistent with a day off before a workday. — The Sunday evening phone on nightstand at 20:47 is surprising because the model expected it elsewhere (likely carried out or in a living area), but it indicates the resident is at home and possibly going to bed early, which is consistent with a shift worker preparing for an early Monday shift. The plate and fork movements are mundane kitchen events and do not contradict this hypothesis. The variable departure times and late thermos washing remain strong evidence.
+2. (p=0.15) A single professional with a hybrid schedule, working outside the home some days (with safety gear) and working from home or having a day off on weekends. The Saturday phone on sofa at 12:25 suggests a relaxed morning, possibly a day off. The Sunday phone on nightstand at 20:47 could indicate an early bedtime before a workday, but the lack of any work-from-home evidence (e.g., laptop, coffee mug at desk) on weekends makes this less likely. — The Sunday evening phone on nightstand is consistent with an early bedtime before a Monday workday, but the absence of any work-from-home objects on weekends (e.g., laptop, desk items) weakens this hypothesis. The variable departure times are more typical of shift work than a hybrid schedule.
+3. (p=0.05) A single person with a non-standard routine, possibly part-time or freelance, who uses safety gear occasionally. The Saturday phone on sofa at 12:25 suggests a weekend day off, and the Sunday phone on nightstand at 20:47 suggests an early evening, possibly due to fatigue or personal preference. The lack of other objects (e.g., laptop, gym bag) leaves ambiguity. — This hypothesis is a catch-all for remaining uncertainty. The evidence is still limited, and weekend patterns are emerging but not yet definitive. The Sunday phone on nightstand is not strongly contradictory, but the safety gear and variable departure times still point more strongly to shift work.
+
+## Selected evidence
+- Day 0, 05:14 — thermos at elsewhere (early morning departure with packed drink, likely workday)
+- Day 2, 05:27 — work_badge at elsewhere (morning departure with badge, confirming work outside home)
+- Day 2, 14:42 — hi_vis_vest at locker_shelf_e1 (return with safety gear, placed in locker, suggests job requiring vest)
+- Day 2, 14:42 — work_badge at locker_shelf_e1 (badge stored with vest, consistent with locker use)
+- Day 2, 19:46 — coffee_mug at desk_o1 (evening coffee at home desk, not a travel mug)
+- Day 3, 13:19 — hi_vis_vest at elsewhere (midday departure with vest, earlier than previous day's 05:27, showing variable schedule)
+- Day 3, 13:19 — keys at elsewhere (keys carried out, standard for departure)
+- Day 3, 13:19 — phone at elsewhere (phone carried out, standard for departure)
+- Day 3, 13:19 — work_badge at elsewhere (badge carried out, consistent with work departure)
+- Day 3, 22:51 — thermos at sink_k1 (thermos washed late at night, suggests it was used and returned home after work)
+- Day 5, 12:25 — phone at sofa_l1 (Saturday midday, phone not carried out, suggests a relaxed day off at home)
+- Day 6, 20:47 — phone at nightstand_r1 (Sunday evening, phone on nightstand suggests early bedtime or quiet evening, consistent with day off before workday)
+
+## Notes
+The surprise events on Day 6 (Sunday) were: plate at table_d1 at 18:08, plate at sink_k1 at 18:53, and phone at nightstand_r1 at 20:47. The plate movements are mundane kitchen events and do not add diagnostic value. The phone on nightstand at 20:47 is informative: it suggests the resident is at home and possibly going to bed early, which is consistent with a shift worker preparing for an early Monday shift. This strengthens the shift worker hypothesis. Need to observe more weekdays to confirm the pattern of variable departure times and late thermos washing. Also look for objects like laptop, gym bag, or suitcase to refine the persona. The single-person household remains the best fit.

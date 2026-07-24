@@ -1,0 +1,15 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A remote worker or student who works from home, with a desk as a primary workspace and a coffee habit in the morning and early afternoon. — The laptop at desk on Wednesday and coffee mug at desk on Monday strongly support a work-from-home routine. The coffee mug at cupboard on Thursday morning (08:26) suggests a morning coffee preparation, consistent with a workday start. The phone at nightstand at 22:43 confirms a normal bedtime. No contradictory evidence.
+2. (p=0.05) A person with a relaxed evening routine, possibly watching TV or using phone on the sofa after work. — The phone at nightstand at 22:43 is a common evening activity, but no sofa events today. This hypothesis remains possible but less supported.
+
+## Selected evidence
+- Day 0, 08:23 — coffee_mug at desk_o1 (morning coffee at desk, suggests work-from-home or study routine)
+- Day 0, 13:08 — coffee_mug at desk_o1 (afternoon coffee at desk, reinforces desk as primary workspace)
+- Day 2, 08:35 — laptop at desk_o1 (laptop at desk on a weekday morning, strong evidence for remote work or study)
+- Day 3, 08:26 — coffee_mug at cupboard_k1 (morning coffee preparation, consistent with workday start)
+- Day 3, 22:43 — phone at nightstand_r1 (phone at nightstand at bedtime, typical but confirms evening routine)
+
+## Notes
+Four days observed (Mon, Tue, Wed, Thu). The laptop event on Wednesday and coffee mug at cupboard on Thursday strengthen the work-from-home hypothesis. No weekend data yet. Need to observe weekend days (Day 5-6) to see if routine changes. Look for objects like yoga mat, suitcase, or guests to further refine persona. The fork at table on Thursday evening (18:37) is a mundane meal event, not kept.

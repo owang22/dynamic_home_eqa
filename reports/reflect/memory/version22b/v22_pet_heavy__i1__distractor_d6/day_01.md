@@ -1,0 +1,19 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single person with a dog, working from home or with a flexible schedule, who has a consistent morning coffee routine and uses the sofa and floor lamp in the evening. — Morning coffee on day 0, dog leash returned at 17:12 (likely after a walk), and evening relaxation items (lamp, picture frame) on day 0. No evidence of a second person or commute. The dining chair moved at 10:42 and 21:04 suggests a single person using the table for work or meals.
+2. (p=0.20) A person who works outside the home and returns in the evening, with a dog, and has a structured evening routine. — Dog leash returned at 17:12 could indicate a post-work walk. Evening events (lamp, picture frame, bath mat) on day 0 suggest returning home. However, no morning departure evidence (keys, bag) and the 10:42 dining chair move weakens this.
+3. (p=0.10) A couple or family with a dog, where one person works from home and the other may have a different schedule, with evening activities centered around the living room. — Multiple evening events on day 0 (lamp, picture frame, bath mat) could indicate multiple people, but no clear evidence of two distinct individuals. The dog leash and single dining chair moves suggest one person.
+
+## Selected evidence
+- Day 0, 07:37 — coffee_mug at table_d1 (morning coffee ritual, likely before work or start of day)
+- Day 0, 15:38 — cushion at dog_bed_l1 (dog present, cushion moved to dog bed)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, lamp moved to sofa area)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath or shower routine)
+- Day 0, 21:04 — picture_frame at coffee_table_l1 (evening decoration or tidying)
+- Day 1, 10:42 — dining_chair at table_d1 (midday use of table, possibly for work or lunch)
+- Day 1, 17:12 — dog_leash at leash_hook_m1 (dog walk after work hours, consistent with pet care)
+- Day 1, 21:04 — dining_chair at table_d1 (evening use of table, likely for dinner or activity)
+
+## Notes
+Day 1 (Tuesday) shows a midday dining chair move (10:42) and a dog leash return at 17:12, suggesting a flexible schedule or work-from-home. No morning coffee observed today, but that may be due to event detection. Need to verify if coffee is daily. Weekend patterns (days 5-6) will be key to distinguish work-from-home vs. commute. The wall_clock and fork events seem mundane and were discarded.

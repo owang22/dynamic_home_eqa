@@ -1,0 +1,150 @@
+# v22_reptile_keeper -- VERSION22 confirmatory household (pair D with
+# v22_plant_collector: both do 08:00 care rounds with water/spray gear, but the
+#   gear clusters at a TERRARIUM STAND in the study, not a plant windowsill).
+# Persona: keeps two geckos and a snake; 08:00 misting/feeding round + 20:00
+#   heat-lamp check nightly; warehouse job Mo-Fr afternoons.
+# IDIOSYNCRATIC-BUT-REALISTIC: the WATERING_CAN (dechlorinated water) lives on
+#   the terrarium stand in the study; SCISSORS live taped to the cricket bin
+#   (cutting feeder bags); the NOTEBOOK is the feeding log on the terrarium stand.
+# DIAGNOSTIC: cricket_tub, heat_lamp_timer, terrarium_tongs, calcium_powder.
+# DEPENDENT targets: watering_can (terrarium_stand_s1 at 08:30), scissors
+#   (cricket_shelf_s1), notebook (terrarium_stand_s1 at 20:30).
+# STATIC DISTRACTORS: dining_chair, bed_pillow, wall_clock, floor_lamp, doormat,
+#   waste_bin, picture_frame, bath_mat.
+household: v22_reptile_keeper
+status: DRAFT  # version22 authoring 2026-07-22 — needs human anchor verification
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,            room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1,     room: bedroom,  aliases: []}
+  - {id: sofa_l1,           room: living,   aliases: [couch]}
+  - {id: coffee_table_l1,   room: living,   aliases: []}
+  - {id: terrarium_stand_s1, room: study,   aliases: [reptile_stand]}
+  - {id: cricket_shelf_s1,  room: study,    aliases: [feeder_shelf]}
+  - {id: counter_k1,        room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,       room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,           room: kitchen,  aliases: []}
+  - {id: fridge_k1,         room: kitchen,  aliases: []}
+  - {id: table_d1,          room: dining,   aliases: [dining_table]}
+  - {id: entry_hook_e1,     room: entryway, aliases: [key_hook]}
+  - {id: bathroom_c1,       room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: reptile keeper; 08:00 care round + 20:00 lamp check, warehouse job Mo-Fr
+    schedule:
+      - {activity: sleep,        days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "23:00", end: "07:15"}
+      - {activity: breakfast,    days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "07:20", end: "07:55"}
+      - {activity: care_round,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "08:00", end: "08:50"}
+      - {activity: leave_shift,  days: [Mo,Tu,We,Th,Fr],       start: "12:00", end: "12:15"}
+      - {activity: away_shift,   days: [Mo,Tu,We,Th,Fr],       start: "12:15", end: "18:15"}
+      - {activity: return_shift, days: [Mo,Tu,We,Th,Fr],       start: "18:15", end: "18:35"}
+      - {activity: morning_couch, days: [Mo,Tu,We,Th,Fr],      start: "09:30", end: "11:30"}
+      - {activity: herp_meetup,  days: [Sa],                   start: "13:00", end: "16:00"}
+      - {activity: dinner,       days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "19:00", end: "19:40"}
+      - {activity: lamp_check,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "20:00", end: "20:40"}
+      - {activity: tv_evening,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "20:50", end: "22:45"}
+activities:
+  breakfast:
+    jitter_min: 10
+    objects: [bowl, coffee_mug]
+    during: {bowl: table_d1, coffee_mug: table_d1}
+    after:
+      bowl:       {dest: sink_k1, p: 0.85, else: table_d1}
+      coffee_mug: {dest: sink_k1, p: 0.6, else: table_d1}
+  care_round:
+    jitter_min: 10
+    objects: [cricket_tub, terrarium_tongs, calcium_powder, watering_can,
+              scissors, notebook, spray_bottle]
+    during: {cricket_tub: terrarium_stand_s1, terrarium_tongs: terrarium_stand_s1,
+             calcium_powder: terrarium_stand_s1, watering_can: terrarium_stand_s1,
+             scissors: terrarium_stand_s1, notebook: terrarium_stand_s1,
+             spray_bottle: terrarium_stand_s1}
+    after:
+      cricket_tub:     {dest: cricket_shelf_s1, p: 0.9, else: terrarium_stand_s1}
+      terrarium_tongs: {dest: terrarium_stand_s1, p: 0.85}
+      calcium_powder:  {dest: cricket_shelf_s1, p: 0.8, else: terrarium_stand_s1}
+      watering_can:    {dest: terrarium_stand_s1, p: 0.8, else: sink_k1}  # stays by the tanks
+      scissors:        {dest: cricket_shelf_s1, p: 0.85, else: terrarium_stand_s1}
+      notebook:        {dest: terrarium_stand_s1, p: 0.85, else: coffee_table_l1}
+      spray_bottle:    {dest: terrarium_stand_s1, p: 0.85, else: cricket_shelf_s1}
+  morning_couch:
+    jitter_min: 25
+    objects: [remote, phone]
+    during: {remote: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+      phone:  {dest: sofa_l1, p: 0.6, else: coffee_table_l1}
+  leave_shift:
+    jitter_min: 5
+    objects: [keys, phone, lunch_box]
+    after:
+      keys:      {dest: null, p: 1.0}
+      phone:     {dest: null, p: 1.0}
+      lunch_box: {dest: null, p: 1.0}
+  return_shift:
+    jitter_min: 15
+    objects: [keys, phone, lunch_box]
+    after:
+      keys:      {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      phone:     {dest: sofa_l1, p: 0.5, else: counter_k1}
+      lunch_box: {dest: sink_k1, p: 0.7, else: counter_k1}
+  herp_meetup:
+    jitter_min: 20
+    objects: [keys, phone]
+    after:
+      keys:  {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      phone: {dest: sofa_l1, p: 0.5, else: counter_k1}
+  dinner:
+    jitter_min: 15
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  lamp_check:
+    jitter_min: 10
+    objects: [notebook, spray_bottle, phone]
+    during: {notebook: terrarium_stand_s1, spray_bottle: terrarium_stand_s1,
+             phone: terrarium_stand_s1}
+    after:
+      notebook:     {dest: terrarium_stand_s1, p: 0.9}
+      spray_bottle: {dest: terrarium_stand_s1, p: 0.9}
+      phone:        {dest: sofa_l1, p: 0.7, else: terrarium_stand_s1}
+  tv_evening:
+    jitter_min: 15
+    objects: [remote, phone]
+    during: {remote: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+      phone:  {dest: nightstand_r1, p: 0.85, else: sofa_l1}
+placements:
+  # DIAGNOSTIC
+  cricket_tub:     {home: cricket_shelf_s1, volatility_class_hint: high}
+  heat_lamp_timer: {home: terrarium_stand_s1, volatility_class_hint: static}
+  terrarium_tongs: {home: terrarium_stand_s1}
+  calcium_powder:  {home: cricket_shelf_s1}
+  spray_bottle:    {home: terrarium_stand_s1}
+  # DEPENDENT targets (idiosyncratic homes)
+  watering_can: {home: terrarium_stand_s1, volatility_class_hint: high} # dechlorinated water
+  scissors:     {home: cricket_shelf_s1, volatility_class_hint: high}   # taped to cricket bin
+  notebook:     {home: terrarium_stand_s1, volatility_class_hint: high} # feeding log
+  # ordinary
+  bowl:       {home: cupboard_k1}
+  plate:      {home: cupboard_k1}
+  fork:       {home: cupboard_k1}
+  coffee_mug: {home: cupboard_k1}
+  remote:     {home: coffee_table_l1}
+  phone:      {home: nightstand_r1, volatility_class_hint: high}
+  keys:       {home: entry_hook_e1, p_misplace: 0.08, misplace_set: [counter_k1, coffee_table_l1]}
+  lunch_box:  {home: cupboard_k1}
+  # STATIC DISTRACTORS
+  dining_chair:  {home: table_d1,        volatility_class_hint: static}
+  bed_pillow:    {home: bed_r1,          volatility_class_hint: static}
+  wall_clock:    {home: counter_k1,      volatility_class_hint: static}
+  floor_lamp:    {home: sofa_l1,         volatility_class_hint: static}
+  doormat:       {home: entry_hook_e1,   volatility_class_hint: static}
+  waste_bin:     {home: counter_k1,      volatility_class_hint: static}
+  picture_frame: {home: coffee_table_l1, volatility_class_hint: static}
+  bath_mat:      {home: bathroom_c1,     volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9.

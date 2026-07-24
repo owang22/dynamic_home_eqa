@@ -1,0 +1,36 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A remote worker or student who uses a headset at a desk in the morning, then relaxes on the sofa with a phone in the afternoon, and later has a coffee mug put away in the evening.",
+   "prob": 0.8,
+   "rationale": "The headset at desk at 09:00 on day 0 and phone at desk at 09:12 on day 2 suggest a morning work/study routine. The phone on the sofa at 14:17 on day 0 and at the coffee table at 15:50 on day 1 indicates afternoon leisure. The coffee mug put away at 21:45 on day 1 and the fork/plate put away at 21:45 on day 2 suggest an evening cleanup routine. This pattern is consistent with a typical work-from-home or student routine. Day 3 adds a coffee mug at desk at 07:42, reinforcing morning work/study, and a phone at nightstand at 21:42, suggesting a bedtime routine."
+  },
+  {
+   "persona": "A person who eats lunch at home (plate at sink at 12:36) and dinner at home (fork at sink at 18:54), suggesting they are home during the day and evening, possibly a remote worker or student.",
+   "prob": 0.15,
+   "rationale": "The plate at sink at 12:36 on day 2 and fork at sink at 18:54 on day 2 indicate meals at home, which supports the hypothesis of a remote worker or student who is home during the day. Day 3 adds a fork at table at 12:09, consistent with a midday meal. However, this is only two days of evidence, so the probability is lower."
+  },
+  {
+   "persona": "A person who reads a newspaper and uses reading glasses in the morning, suggesting a morning reading habit, possibly a retiree or someone with a relaxed morning routine.",
+   "prob": 0.05,
+   "rationale": "Day 3 shows reading_glasses at table at 07:02 and newspaper at coffee_table at 07:42, indicating a morning reading habit. This is a new pattern not seen before, so it is a low-probability hypothesis. It could be a weekend-like activity on a weekday, or a new routine. More evidence is needed."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 09:00 \u2014 headset at desk_o1 (suggests work/study activity in the morning)",
+  "Day 0, 14:17 \u2014 phone at sofa_l1 (indicates a break or leisure time in the afternoon)",
+  "Day 1, 15:50 \u2014 phone at coffee_table_l1 (reinforces afternoon leisure pattern)",
+  "Day 1, 21:45 \u2014 coffee_mug at cupboard_k1 (evening cleanup routine)",
+  "Day 2, 09:12 \u2014 phone at desk_o1 (morning work/study, phone used at desk)",
+  "Day 2, 12:36 \u2014 plate at sink_k1 (lunch at home, midday meal)",
+  "Day 2, 18:54 \u2014 fork at sink_k1 (dinner at home, evening meal)",
+  "Day 2, 21:45 \u2014 fork at cupboard_k1 (evening cleanup, utensils put away)",
+  "Day 2, 21:45 \u2014 plate at cupboard_k1 (evening cleanup, dishes put away)",
+  "Day 3, 07:02 \u2014 reading_glasses at table_d1 (morning reading habit, new pattern)",
+  "Day 3, 07:42 \u2014 coffee_mug at desk_o1 (morning work/study, coffee at desk)",
+  "Day 3, 07:42 \u2014 newspaper at coffee_table_l1 (morning reading, newspaper)",
+  "Day 3, 12:09 \u2014 fork at table_d1 (midday meal at home)",
+  "Day 3, 21:42 \u2014 phone at nightstand_r1 (bedtime routine, phone in bedroom)"
+ ],
+ "notes": "Day 3 (Thursday) shows a new morning reading pattern (reading_glasses and newspaper) that was not present on previous weekdays. This could be a weekly variation (e.g., Thursday is a lighter work day) or a new habit. The coffee mug at desk at 07:42 is earlier than the headset at 09:00 on day 0, suggesting the morning routine may start earlier. The phone at nightstand at 21:42 is a new evening event, indicating a bedtime routine. Need to observe if the reading pattern repeats on other days, especially weekends. Also need to see if the headset appears again on day 4 (Friday) to confirm the morning work/study pattern. The fork at table at 12:09 on day 3 is consistent with a midday meal, but the location (table) differs from previous sink events, possibly indicating a different meal type or cleanup habit."
+}

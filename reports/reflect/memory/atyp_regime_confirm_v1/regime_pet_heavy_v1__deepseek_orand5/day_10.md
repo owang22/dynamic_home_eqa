@@ -1,0 +1,24 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A single person with a pet (likely a dog) who works from home or has a flexible schedule, as pet care events occur in the morning and afternoon, and the person is home for lunch and evening activities. Weekend evidence shows a later morning departure (07:02 on Saturday) and a relaxed Sunday with pet care at 09:11, lunch at 12:39, and evening TV at 22:17. Day 7 (Monday) showed no morning departure (phone at counter at 07:49), dinner at 18:24, evening TV at 20:19, and phone at nightstand at 22:49. Day 8 (Tuesday) shows phone at sofa at 19:42, consistent with evening relaxation. Day 9 (Wednesday) shows phone at counter at 07:39 (no morning departure), pet care at 09:30, coffee mug at counter at 12:43 (lunch at home), phone at entry hook at 17:00 (return home), and fork at table at 18:36 (dinner). Day 10 (Thursday) shows phone at entry hook at 06:51 (morning departure), then phone at counter at 07:36 (return home), dog leash at entry hook at 17:06 (afternoon walk), fork at table at 18:31 (dinner), and plate at cupboard at 21:45 (evening cleanup). This pattern strongly supports a single person with a pet who works from home, with a variable morning routine (some days leave early, some days stay home). — Day 10 adds a morning departure (phone at entry hook at 06:51) followed by a return (phone at counter at 07:36), a dog leash at entry hook at 17:06 (afternoon walk), dinner at 18:31, and evening cleanup at 21:45. This is consistent with a single person with a dog who works from home, with a variable morning schedule. No evidence of a second person.
+2. (p=0.01) A couple or family with a pet, where one person works from home or has a flexible schedule, as pet care events occur in the afternoon, and the phone was at the entry hook at different times on different days, possibly indicating two people with different schedules. However, no new evidence for multiple residents on Day 7, Day 8, Day 9, or Day 10; the single phone and single set of items suggest one person. This hypothesis is becoming less probable. — Day 10 shows only one phone movement and no second set of items. The pattern remains consistent with a single person.
+
+## Selected evidence
+- Day 0, 09:49 — blanket at pet_bed_l1 (indicates a pet lives here and the person is home in the morning)
+- Day 1, 07:10 — phone at entry_hook_e1 (suggests the person leaves the house in the morning, possibly for work or errands)
+- Day 1, 14:55 — chew_toy at pet_bed_l1 (confirms a pet lives here and the person is home in the afternoon to provide the toy)
+- Day 2, 12:38 — fork and plate at table_d1 (the person eats lunch at home, supporting a work-from-home or flexible schedule)
+- Day 3, 09:54 — chew_toy at pet_bed_l1 (pet care in the morning, consistent with a resident pet)
+- Day 3, 15:16 — chew_toy at pet_bed_l1 (afternoon pet care, consistent with previous days)
+- Day 3, 22:49 — blanket at pet_bed_l1 (evening pet care, indicating the pet sleeps on the bed)
+- Day 4, 07:04 — phone at entry_hook_e1 (person leaves home in the morning, consistent with day 1)
+- Day 4, 16:50 — phone at entry_hook_e1 (person returns home in the afternoon, consistent with day 2)
+- Day 5, 07:02 — phone at entry_hook_e1 (weekend morning departure, similar to weekday pattern)
+- Day 6, 09:11 — chew_toy at pet_bed_l1 (Sunday pet care, confirming pet is resident and person is home in the morning)
+- Day 7, 07:49 — phone at counter_k1 (no morning departure on Monday, variable schedule)
+- Day 9, 17:00 — phone at entry_hook_e1 (return home in the afternoon, consistent with work-from-home)
+- Day 10, 17:06 — dog_leash at entry_hook_e1 (afternoon dog walk, confirms pet is a dog and person is home in the afternoon)
+
+## Notes
+Day 10 (Thursday) shows a morning departure at 06:51 (phone at entry hook) and return at 07:36 (phone at counter), then dog leash at entry hook at 17:06 (afternoon walk), dinner at 18:31, and evening cleanup at 21:45. This pattern is consistent with a single person with a dog who works from home, with a variable morning routine (some days leave early, some days stay home). The dog leash event confirms the pet is a dog. Need to observe next week to see if weekday pattern repeats and if weekend pattern is consistent. Also, note that the pet care event on Sunday at 09:11 is later than weekday pet care (around 09:49-09:54), suggesting a more relaxed weekend morning. The pattern of no morning departure on Monday and Wednesday (phone at counter) versus morning departure on other weekdays (phone at entry hook) is interesting; may indicate a variable schedule or different activities on those days.

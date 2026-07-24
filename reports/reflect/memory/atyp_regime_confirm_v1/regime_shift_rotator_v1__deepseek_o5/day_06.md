@@ -1,0 +1,26 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A professional with a hybrid work schedule: early office days Mon-Wed, later start and late return Thu-Fri, and a relaxed weekend at home. — Weekend pattern (Sunday) matches Saturday: late morning phone at counter, dinner at table, then phone on sofa, then phone to nightstand. No work items. This strongly supports a consistent free weekend.
+2. (p=0.15) A person who works outside the home with occasional remote work in the afternoon, but weekend is free. — Weekend evidence is consistent, but the lack of laptop events on Thu/Fri and the consistent late returns make the hybrid schedule more likely.
+3. (p=0.05) A person with a non-standard work schedule, possibly shift work or irregular hours, but weekend is free. — Weekend is free, but the early mornings Mon-Wed and late returns Thu-Fri are still inconsistent with a typical shift pattern. This hypothesis remains less likely.
+
+## Selected evidence
+- Day 0, 05:09 — work_badge at elsewhere (early commute to office)
+- Day 0, 14:25 — laptop at desk_o1 (afternoon remote work)
+- Day 1, 04:55 — thermos at counter_k1 (early morning prep for commute)
+- Day 1, 14:23 — phone at counter_k1 (return home)
+- Day 2, 05:29 — laptop at elsewhere (early departure to office)
+- Day 2, 14:35 — keys at entry_hook_e1 (return home)
+- Day 3, 08:36 — phone at counter_k1 (later start, not early departure)
+- Day 3, 13:23 — phone at elsewhere (midday departure)
+- Day 3, 22:39 — thermos at sink_k1 (late return, evening cleanup)
+- Day 4, 08:07 — phone at table_d1 (later start, breakfast)
+- Day 4, 13:29 — phone at elsewhere (midday departure)
+- Day 4, 22:18 — thermos at sink_k1 (late return, evening cleanup)
+- Day 5, 10:48 — phone at counter_k1 (late morning, relaxed start)
+- Day 6, 11:15 — phone at counter_k1 (late morning, relaxed start)
+- Day 6, 19:33 — phone at sofa_l1 (evening relaxation)
+
+## Notes
+Sunday pattern matches Saturday: late morning phone at counter, dinner at table, then phone on sofa, then phone to nightstand. No work items. Weekend is consistently free. Next week will test if the Mon-Wed early pattern repeats. Single occupant still plausible but not confirmed.

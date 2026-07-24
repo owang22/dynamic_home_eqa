@@ -1,0 +1,25 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Single adult with a regular 9-to-5 job, likely working from home or hybrid, who keeps a tidy home and has a consistent evening routine. The job requires safety gear (hi-vis vest) and involves early starts (05:00) and variable return times (15:01, 23:02). Day 9 (Wednesday) shows a thermos at 05:00, consistent with early morning preparation for work. The hi-vis vest returns at 15:01, indicating a workday ending in the afternoon. The plate and dining chair at table at 18:07-18:16 suggest a home office or dining setup after work. The wall_clock at counter at 18:37 and waste_bin events at 19:46 and 21:02 are consistent with evening cleanup. Single-person evidence remains strong. — The thermos at 05:00 reinforces the early start pattern. The hi-vis vest return at 15:01 is earlier than some days but still within a work schedule. The evening routine (plate, chair, wall_clock, waste_bin) is consistent with a single adult tidying up. No evidence of a second person.
+2. (p=0.03) Couple or family with at least one adult who works outside the home, and another who may work from home or be a homemaker. The doormat events on Day 3 (07:57 and 09:02) could indicate two people, but the single chair, fork, plate, and consistent single-person badge events make this less likely. Day 9 shows only single-person items and no second person evidence. — No new evidence supports a second person. The doormat events remain unexplained but could be a delivery or a one-time occurrence. The single-person pattern continues.
+3. (p=0.02) Student or young professional living alone, with a flexible schedule and a tendency to tidy up in the evening. The early departure (05:00) and hi-vis vest are more typical of a job than a student. The structured timing (chair at 18:16, plate at 18:07) suggests a regular routine, but the safety gear and work badge point away from a student. Day 9 shows a thermos at 05:00, which is more typical of a worker than a student. — The thermos at 05:00 and hi-vis vest at 15:01 are strong indicators of a job, not a student lifestyle. The probability is reduced further.
+
+## Selected evidence
+- Day 2, 05:07 — work_badge at elsewhere (early departure, consistent with job)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (returning from work, consistent with job)
+- Day 2, 16:06 — dining_chair at table_d1 (home office setup after work)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (safety gear, suggests job type)
+- Day 4, 05:14 — hi_vis_vest at elsewhere (early departure with safety gear)
+- Day 4, 05:14 — keys at elsewhere (early departure)
+- Day 5, 12:44 — phone at sofa_l1 (relaxed weekend, no work)
+- Day 9, 05:00 — thermos at counter_k1 (early morning preparation for work)
+- Day 9, 15:01 — hi_vis_vest at locker_shelf_e1 (returning from work in afternoon)
+- Day 9, 18:07 — plate at table_d1 (evening meal, solo)
+- Day 9, 18:16 — dining_chair at table_d1 (home office or dining setup after work)
+- Day 9, 18:37 — wall_clock at counter_k1 (evening cleanup activity)
+- Day 9, 19:46 — waste_bin at counter_k1 (evening cleanup)
+- Day 9, 21:02 — waste_bin at counter_k1 (evening cleanup)
+
+## Notes
+Day 9 (Wednesday) confirms early start (05:00 thermos) and afternoon return (15:01 hi-vis vest). Evening routine (plate, chair, wall_clock, waste_bin) is consistent with single adult. The doormat events on Day 3 (07:57 and 09:02) remain unexplained—could be a delivery or second person, but single-person evidence is strong. Need to check if the doormat events repeat on a weekday to see if they indicate a second person or a delivery. The floor_lamp events on Day 9 (09:15, 09:39) are not yet informative. The wall_clock at counter at 18:37 is a new event; may indicate a specific cleaning or organizing habit. The waste_bin events at counter (19:46, 21:02) suggest kitchen cleanup after dinner. No evidence of a second person on Day 9.

@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.50) A single person who works from home or has a flexible schedule, with a routine that includes using the sofa and coffee table during the day and a consistent evening dinner and bedtime. — Morning coffee mug at table (08:51) and dining chair at table (08:57) suggest breakfast/start of work. Evening plate at table (18:32) and pillow at bed (18:51, 21:57) indicate dinner and bedtime. The surprising telescope cap at patio (22:03) and cabinet (00:15) suggests a new hobby (stargazing) that fits a flexible schedule. The doormat movements (07:57, 09:02, 17:35) hint at outdoor activity or mail pickup, consistent with home-based work.
+2. (p=0.35) A person with a stargazing hobby, using a telescope cap at night and storing it in a cabinet, with outdoor relaxation on the patio. — Telescope cap seen at scope_cabinet_p1 at 00:15 (surprising, p=0.00) and at patio_table_p1 at 22:03 (surprising, p=0.00) indicates active use of a telescope, likely for stargazing. This is a distinctive hobby not seen before, explaining the surprising events. The patio phone use on day 2 (21:45) may also relate to outdoor evening activity.
+3. (p=0.15) A person who values home decor and tidiness, frequently adjusting picture frames and lamps. — Floor lamp moved twice today (12:21, 21:31) and previously (day 2, 09:08) suggests ongoing adjustment for lighting or aesthetics. Picture frame movements on day 2 (12:05, 15:08) reinforce this pattern. However, the stargazing evidence is more novel and surprising, reducing the probability of this hypothesis.
+
+## Selected evidence
+- Day 0, 12:28 — phone at sofa_l1 (midday phone use suggests work/leisure at home)
+- Day 0, 12:30 — dining_chair at table_d1 (lunchtime meal)
+- Day 0, 19:19 — plate at sink_k1 (dinner cleanup)
+- Day 2, 09:24 — phone at table_d1 (morning phone use, likely work/breakfast; surprising vs. sofa pattern)
+- Day 2, 12:05 — picture_frame at coffee_table_l1 (decorative adjustment, midday)
+- Day 2, 13:52 — bed_pillow at bed_r1 (afternoon nap or bed-making)
+- Day 2, 15:08 — picture_frame at coffee_table_l1 (second decorative adjustment)
+- Day 2, 18:48 — bath_mat at bathroom_c1 (evening bath or shower)
+- Day 2, 21:45 — phone at patio_table_p1 (evening outdoor phone use; surprising, suggests relaxation)
+- Day 3, 00:15 — telescope_cap at scope_cabinet_p1 (surprising, p=0.00; indicates stargazing hobby, stored in cabinet)
+- Day 3, 08:51 — coffee_mug at table_d1 (surprising, p=0.00; morning coffee at table, likely breakfast)
+- Day 3, 09:26 — bowl at sink_k1 (surprising, p=0.00; morning dish cleanup, consistent with breakfast)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday lamp adjustment, decorative or lighting)
+- Day 3, 18:32 — plate at table_d1 (dinner preparation or meal)
+- Day 3, 22:03 — telescope_cap at patio_table_p1 (surprising, p=0.00; evening stargazing on patio)
+
+## Notes
+Thursday reveals a new stargazing hobby: telescope cap at cabinet at midnight and at patio at 22:03, both surprising. Morning coffee mug at table (08:51) and bowl at sink (09:26) are also surprising, suggesting a consistent breakfast routine. Doormat movements (07:57, 09:02, 17:35) may indicate outdoor activity or mail. Floor lamp moved twice (12:21, 21:31) continues decorative pattern. Need to verify if stargazing occurs on other nights (e.g., weekends) and if telescope is used regularly. Day-of-week pattern: Monday had lunch at 12:30, dinner at 19:19; Wednesday had dinner prep at 18:59 and meal at 21:06; Thursday has dinner at 18:32. Check if weekend has later times or more outdoor activity.

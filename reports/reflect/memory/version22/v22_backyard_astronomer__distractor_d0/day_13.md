@@ -1,0 +1,23 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A single person who works from home or has a flexible schedule, with an interest in astronomy. — Consistent weekday morning coffee at desk, evening telescope use, and a relaxed weekend schedule (later meals, no desk coffee) all point to a single remote worker with an astronomy hobby. Today's red_flashlight at scope_cabinet_p1 at 00:10 (late-night hobby activity) and coffee_mug at patio_table_p1 at 22:09 (evening coffee on patio, possibly during stargazing) further confirm the hobby and flexible schedule. No evidence of multiple residents.
+2. (p=0.01) A couple or family where one person works from home and another shares the hobby. — Still possible but no new evidence of multiple residents; single laptop, phone, and consistent single items across days make this very unlikely. Today's single red_flashlight and coffee_mug do not indicate multiple people.
+3. (p=0.01) A student or shift worker with an irregular schedule and an astronomy hobby. — Less likely given the consistent weekday morning coffee at desk and evening hobby pattern; today's late-night red_flashlight (00:10) could fit an irregular schedule, but the overall pattern remains regular. The coffee_mug at 22:09 on a Sunday evening is consistent with a weekend hobby, not irregularity.
+
+## Selected evidence
+- Day 0, 12:28 — phone at sofa_l1 (midday phone on Monday suggests remote work or flexible schedule)
+- Day 1, 21:42 — telescope_cap at patio_table_p1 (evening telescope use indicates astronomy hobby)
+- Day 2, 09:24 — phone at table_d1 (phone at desk during work hours on Wednesday confirms remote work)
+- Day 3, 08:51 — coffee_mug at table_d1 (morning coffee at desk on Thursday reinforces work-from-home routine)
+- Day 4, 08:54 — coffee_mug at table_d1 (morning coffee at desk on Friday continues work-from-home pattern)
+- Day 4, 22:03 — star_chart at patio_table_p1 (evening star chart on Friday shows astronomy hobby continues into weekend eve)
+- Day 5, 12:44 — plate at table_d1 (Saturday lunch at home, later than weekday breakfast, suggests relaxed weekend schedule)
+- Day 6, 09:16 — coffee_mug at sink_k1 (morning coffee finished, no desk placement on weekend)
+- Day 9, 00:48 — eyepiece_case at scope_cabinet_p1 (late-night hobby cleanup on Wednesday, consistent with astronomy hobby)
+- Day 11, 09:33 — laptop at table_d1 (laptop at desk on Friday morning confirms remote work)
+- Day 13, 00:10 — red_flashlight at scope_cabinet_p1 (late-night hobby activity on Sunday, confirms flexible schedule and astronomy interest)
+- Day 13, 22:09 — coffee_mug at patio_table_p1 (evening coffee on patio on Sunday, likely during stargazing, reinforces weekend hobby pattern)
+
+## Notes
+Weekend pattern confirmed: Saturday and Sunday show later meals, no desk coffee, and evening hobby activity. Today's red_flashlight at 00:10 (Sunday night) and coffee_mug at 22:09 (Sunday evening) further support the astronomy hobby and flexible schedule. Next: look for laptop at desk on other weekdays to solidify pattern; also check for any second-person evidence (e.g., two coffee mugs, two plates). Day-of-week pattern: all weekdays show home presence in morning and evening; weekend schedule is relaxed.

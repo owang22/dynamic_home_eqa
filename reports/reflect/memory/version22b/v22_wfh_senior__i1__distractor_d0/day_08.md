@@ -1,0 +1,26 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A remote worker or student with a morning work/study routine (headset, coffee at desk) on weekdays and a more relaxed weekend pattern (reading, breakfast at table, afternoon phone on sofa). — Day 8 (Tuesday) shows coffee_mug at desk at 07:47, consistent with weekday morning work/study. The headset was not observed today, but the coffee location aligns with the weekday pattern. The weekend pattern remains distinct. The slight deviation on Day 7 (coffee at table) appears to be an exception, possibly due to a different start of the day. Confidence increased from 0.60 to 0.70.
+2. (p=0.20) A person with a strong morning reading habit (newspaper, reading glasses) and breakfast at home, possibly a retiree or someone with a flexible schedule, but this pattern is now less distinct on weekends. — Day 8 shows reading_glasses at coffee_table_l1 at 13:45, which is an afternoon reading event, not morning. This deviates from the previous morning reading pattern (Day 3, 4, 6). The reading habit is still present but less consistent in timing. Confidence reduced from 0.25 to 0.20.
+3. (p=0.10) A person who eats lunch at home and has a consistent evening cleanup, likely a remote worker or student, but this is not distinctive enough to be a primary hypothesis. — Day 8 shows fork at table at 11:45, indicating a midday meal at home. This is consistent with lunch at home, but no evening cleanup events were observed today. The hypothesis overlaps with the first and remains the least distinctive. Confidence reduced from 0.15 to 0.10.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (weekday morning work/study start)
+- Day 2, 09:12 — phone at desk_o1 (weekday morning work/study, phone used at desk)
+- Day 3, 07:02 — reading_glasses at table_d1 (morning reading habit, weekday)
+- Day 3, 07:42 — coffee_mug at desk_o1 (weekday morning work/study, coffee at desk)
+- Day 3, 07:42 — newspaper at coffee_table_l1 (morning reading, weekday)
+- Day 4, 06:51 — bowl at table_d1 (breakfast at home, reading routine, weekday)
+- Day 4, 06:51 — newspaper at table_d1 (morning reading, repeated weekday)
+- Day 5, 07:10 — coffee_mug at table_d1 (weekend morning, breakfast at table)
+- Day 5, 11:50 — fork at table_d1 (weekend midday meal at home)
+- Day 5, 21:45 — plate at cupboard_k1 (evening cleanup, weekend)
+- Day 5, 21:50 — phone at nightstand_r1 (bedtime routine, weekend)
+- Day 6, 07:40 — coffee_mug at desk_o1 (Sunday morning, coffee at desk, not table)
+- Day 6, 09:12 — reading_glasses at desk_o1 (Sunday morning reading at desk)
+- Day 6, 10:12 — phone at coffee_table_l1 (Sunday late morning leisure)
+- Day 8, 07:47 — coffee_mug at desk_o1 (weekday morning work/study, coffee at desk)
+
+## Notes
+Day 8 (Tuesday) confirms weekday morning coffee at desk (07:47), reinforcing the work/study routine. The headset was not observed today, but the coffee location aligns with the pattern. The reading_glasses appeared at 13:45 (afternoon) on coffee_table, which is a new time and location for reading; this may indicate a flexible reading habit or a different activity. The fork at 11:45 suggests lunch at home. Need to observe more weekdays to see if headset reappears and if reading_glasses pattern stabilizes. Also check if newspaper appears on Tuesday to see if reading habit is daily or weekday-only. The weekend pattern (coffee at table, phone on coffee table) remains distinct.

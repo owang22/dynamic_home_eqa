@@ -1,0 +1,26 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single person or couple with a dog, likely working from home or with a flexible schedule, who maintains a tidy home and has a consistent evening routine. The weekday pattern shows a structured morning (dog walk at 06:58, breakfast at 07:43, coffee cleanup later) and evening relaxation (floor lamp at 17:20, bath mat at 18:35, fork at sink at 18:50). The surprising events (dog_leash at mudroom at 06:58, bowl at table at 07:43, fork at sink at 18:50, bowl at cupboard at 21:45) are consistent with a workday routine that differs from weekend patterns, confirming the belief model's surprise was due to day-of-week variation. — The surprising events on Day 7 (Monday) align with a typical workday: early dog walk (06:58), breakfast (07:43), dinner cleanup (18:50), and evening tidying (21:45). This contrasts with the weekend pattern (later breakfast, more sofa lounging). The single coffee mug and pillow still suggest one primary person, but the blanket and cushion movements could be shared. The dog is confirmed. The structured evening routine (floor lamp at 17:20, bath mat at 18:35) matches previous workdays.
+2. (p=0.30) A remote worker who lives alone with a dog, with a consistent daily routine including morning coffee, midday bed-making, and evening relaxation. The weekday pattern is more structured than weekends, with earlier dog walks and meals. The surprising events on Day 7 (Monday) reinforce this: dog_leash at 06:58 (morning walk), bowl at table at 07:43 (breakfast), fork at sink at 18:50 (dinner cleanup), bowl at cupboard at 21:45 (evening tidying). The single-person evidence (single coffee mug, single pillow) remains strong. — The lack of multiple-person items (e.g., second mug, second pillow) and the consistent single-person movements (coffee mug, pillow, dining chair) support a single resident. The dog is confirmed. The weekday routine is more rigid than weekends, as seen in the timing differences. The surprising events are explained by the day-of-week pattern.
+3. (p=0.10) A family with a dog, where someone works from home or is home during the day, and has a structured evening routine. The weekday pattern shows a morning dog walk (06:58), breakfast (07:43), and evening activities (floor lamp at 17:20, bath mat at 18:35, fork at sink at 18:50). The surprising events (dog_leash at mudroom, bowl at table, fork at sink, bowl at cupboard) could be from one primary person, but the blanket and cushion movements on the weekend could be used by multiple people. However, no strong evidence of children's items or multiple distinct routines has emerged. — The single coffee mug and single pillow movements still suggest one primary person. The dog is confirmed. The weekend blanket and cushion movements could be shared, but no additional items (e.g., second mug, second pillow) have appeared. The probability is reduced due to lack of multiple-person evidence.
+
+## Selected evidence
+- Day 0, 08:34 — coffee_mug at sink_k1 (morning coffee routine, likely after breakfast)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday bed-making or tidying, suggests someone is home)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation area setup)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower/bath routine)
+- Day 3, 07:39 — bowl at table_d1 (breakfast at home, consistent with workday)
+- Day 3, 09:26 — ball at mudroom_m1 (dog play or walk, confirms dog activity)
+- Day 4, 07:22 — dog_leash at leash_hook_m1 (morning dog walk, confirms dog routine)
+- Day 4, 18:11 — fork at table_d1 (early dinner setup, pre-weekend pattern)
+- Day 6, 11:18 — blanket at sofa_l1 (weekend morning relaxation, blanket moved from elsewhere)
+- Day 6, 13:35 — blanket at dog_bed_l1 (weekend: blanket moved to dog bed for dog's nap)
+- Day 6, 16:45 — cushion at sofa_l1 (weekend afternoon lounging)
+- Day 7, 06:58 — dog_leash at mudroom_m1 (workday morning dog walk, earlier than weekend)
+- Day 7, 07:43 — bowl at table_d1 (workday breakfast, earlier than weekend)
+- Day 7, 18:50 — fork at sink_k1 (workday dinner cleanup, consistent with evening routine)
+- Day 7, 21:45 — bowl at cupboard_k1 (evening tidying, end-of-day routine)
+
+## Notes
+Day 7 (Monday) confirms a structured workday pattern: early dog walk (06:58), breakfast (07:43), evening relaxation (floor lamp at 17:20, bath mat at 18:35), dinner cleanup (18:50), and evening tidying (21:45). The surprising events (dog_leash at mudroom, bowl at table, fork at sink, bowl at cupboard) are all consistent with a workday routine, contrasting with the weekend pattern (later breakfast, more sofa time, blanket movements). The belief model's surprise was due to day-of-week variation. Need to observe more weekdays and weekends to solidify the pattern. Day 5 (Saturday) was not observed; would be useful to see if Saturday matches Sunday. The single person hypothesis remains strongest, but the blanket and cushion movements could also be used by a couple. No evidence of children's items yet. The wall clock at counter (14:10) and picture frame at coffee table (16:43) are likely mundane (cleaning or decoration adjustment) and not diagnostic.

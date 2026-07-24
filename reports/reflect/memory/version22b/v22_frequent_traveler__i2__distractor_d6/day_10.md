@@ -1,0 +1,26 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single professional who works from home or has a desk job, with a structured morning and evening routine, and who occasionally travels for work. The midday pillow habit (Days 0, 7, and now 10) suggests a regular nap or bed-making habit, likely a remote worker with a flexible schedule. The return of the carryon and suitcase at 06:15 on Tuesday confirms a typical work trip (departed Friday, returned Tuesday). Morning coffee at desk on workdays, evening decoration and bath mat use, and the midday pillow pattern all support a home-based professional with a flexible routine. The new events (picture frame at coffee table in the morning, dining chair at table in the morning, laptop placed in carryon in the evening) are consistent: morning decoration adjustment, morning dining, and evening travel preparation (laptop in carryon suggests another trip). The waste bin and wall clock at counter are mundane but fit a structured evening. — The midday pillow on a Thursday (Day 10) strengthens the regular nap habit. Laptop in carryon in the evening suggests another trip, consistent with the professional travel pattern. No contradictory evidence.
+2. (p=0.08) A person who values home comfort and decoration, possibly living alone or with a partner, with a relaxed evening and a tendency to rearrange items. The picture frame and floor lamp events are consistent, but no new decoration events today beyond the morning picture frame adjustment. — The morning picture frame event is a decoration adjustment, but it's also consistent with a morning routine. The hypothesis remains weak.
+3. (p=0.02) A person with a consistent sleep schedule and a structured day, possibly an early riser who occasionally naps. The midday pillow pattern (Days 0, 7, and 10) suggests a regular nap or bed-making habit, but the travel pattern and work-from-home evidence are stronger. — No new evidence for or against this hypothesis. It remains a minor possibility.
+
+## Selected evidence
+- Day 0, 08:51 — coffee_mug at desk_o1 (morning coffee at desk suggests work-from-home or desk job)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday pillow use indicates a nap or bed-making, unusual for a strict office worker)
+- Day 1, 07:09 — packing_cubes at elsewhere (packing cubes at 07:09 on Tuesday suggests travel preparation, likely for work or a trip)
+- Day 3, 18:48 — neck_pillow at carryon_e1 (neck pillow placed in carryon, indicates preparation for another trip)
+- Day 3, 18:48 — passport at carryon_e1 (passport placed in carryon, confirms travel preparation)
+- Day 4, 16:34 — laptop at carryon_e1 (laptop placed in carryon, confirms departure for a trip)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (evening decoration adjustment, personal comfort habit)
+- Day 4, 20:54 — floor_lamp at sofa_l1 (evening lamp moved to sofa for cozy lighting, personal comfort habit)
+- Day 5, 07:25 — coffee_mug at table_d1 (weekend morning coffee at table, not desk, indicating a relaxed start)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening bath mat use, suggests a bath or shower routine on weekend)
+- Day 7, 10:27 — bed_pillow at bed_r1 (midday pillow on Monday, repeats Day 0 pattern, suggests a regular nap or bed-making habit)
+- Day 8, 06:15 — phone at carryon_e1 (phone placed in carryon at 06:15 on Tuesday, indicates return from trip and unpacking)
+- Day 8, 06:15 — suitcase at carryon_e1 (suitcase placed at carryon at 06:15, confirms return from trip)
+- Day 9, 09:15 — floor_lamp at sofa_l1 (morning lamp adjustment, consistent with home-based routine)
+- Day 10, 13:30 — bed_pillow at bed_r1 (midday pillow on Thursday, repeats pattern, strengthens regular nap habit)
+
+## Notes
+The midday pillow pattern is now observed three times (Days 0, 7, 10) on different weekdays (Monday, Monday, Thursday), suggesting a regular nap or bed-making habit that is not limited to a specific day. The laptop placed in carryon in the evening (Day 10, 18:41) suggests another trip is imminent, possibly departing Friday (consistent with previous pattern). Need to observe if the carryon leaves tomorrow (Friday) to confirm. The floor lamp seen twice at sofa in the morning on Day 9 is consistent with a home-based routine; no new decoration events today beyond the morning picture frame. The dining chair at table in the morning (09:06) is mundane but fits a structured morning. The waste bin and wall clock at counter in the evening are mundane. The fork at sink is mundane. The professional hypothesis remains strong; the midday pillow adds a nuance that may indicate a flexible work schedule or a nap habit. Need to observe if the midday pillow continues on other days to confirm regularity.

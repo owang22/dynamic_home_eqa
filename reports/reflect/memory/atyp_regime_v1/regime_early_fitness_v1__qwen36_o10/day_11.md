@@ -1,0 +1,16 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Health-conscious professional with fixed commute — Day 11 confirms the 05:00 wake-up and fitness routine (foam roller, dumbbells, protein shaker). The 07:56 keys departure and 16:55 backpack return strongly reinforce the fixed 9-5 (or similar) office commute pattern. The laptop leaving earlier further supports this over WFH.
+2. (p=0.01) Hybrid worker (WFH evenings) — Still possible if the resident works from home *only* on weekends or late nights not yet observed, but the consistent departure of work items (laptop, backpack) during the day makes this unlikely for weekdays. The evening return of the backpack at 16:55 suggests they are home by late afternoon, leaving little time for evening WFH unless it's strictly personal.
+3. (p=0.00) Night shift worker — Discarded. The 05:00 wake-up and 08:00 departure are incompatible with night shift schedules.
+
+## Selected evidence
+- Day 11, 05:01 — foam_roller at coffee_table_l1 (confirms consistent morning fitness routine, reinforces health-conscious persona)
+- Day 11, 05:01 — water_bottle at coffee_table_l1 (confirms hydration routine, supports health-conscious persona)
+- Day 11, 07:56 — keys at elsewhere (confirms departure from home, supports commute theory)
+- Day 11, 16:55 — backpack at sofa_l1 (confirms return from work, supports fixed commute theory)
+- Day 11, 07:16 — protein_shaker at sink_k1 (confirms post-workout routine, reinforces health-conscious persona)
+
+## Notes
+Day 11 (Friday) pattern is consistent with previous weekdays. The 05:00 wake-up and fitness routine are now confirmed across multiple days. The 07:56 keys departure and 16:55 backpack return solidify the fixed commute hypothesis. The protein shaker at the sink suggests the resident cleans up after their morning routine. Need to observe weekend patterns (Day 12-13) to see if the fitness routine continues and if the laptop returns to the home desk for personal use.

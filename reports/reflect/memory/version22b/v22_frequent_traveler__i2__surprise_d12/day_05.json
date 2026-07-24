@@ -1,0 +1,32 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single working professional who works from home on weekdays but has a more relaxed weekend routine, with later morning coffee and evening relaxation. The surprising events (fork at table, plate at cupboard, remote at coffee table) are consistent with a single person having a leisurely Saturday meal and TV time.",
+   "prob": 0.7,
+   "rationale": "Weekday pattern (coffee at desk, lunch at table, evening sofa) is typical of WFH. Saturday shows coffee at table (later), no desk use, and evening remote at coffee table (likely TV). The fork and plate suggest a home-cooked meal, not unusual for a single person. The wall_clock and waste_bin movements are mundane and can be ignored."
+  },
+  {
+   "persona": "A couple or family where at least one person works from home, but the weekend shows shared activities. The multiple picture_frame moves and the fork/plate could indicate two people eating together.",
+   "prob": 0.2,
+   "rationale": "The picture_frame moved twice on Monday and again on Saturday (morning and evening) could be two people adjusting it. The fork and plate at table on Saturday evening could be a shared meal. However, no clear evidence of two distinct individuals (e.g., two coffee mugs, different bed times)."
+  },
+  {
+   "persona": "A remote worker who also does household chores during the day, with a consistent evening routine. The surprising events are just part of a normal weekend day.",
+   "prob": 0.1,
+   "rationale": "The bath_mat appears twice (morning and evening) on Saturday, similar to Monday. The bed_pillow at 13:55 could be a nap or making the bed. The fork and plate are just meal-related. This hypothesis is less specific and overlaps with the first."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:51 \u2014 coffee_mug at desk_o1 (morning work start, home office on weekday)",
+  "Day 0, 12:30 \u2014 dining_chair at table_d1 (lunch at home on weekday)",
+  "Day 0, 20:06 \u2014 floor_lamp at sofa_l1 (evening relaxation in living room)",
+  "Day 0, 20:23 \u2014 bath_mat at bathroom_c1 (evening shower routine)",
+  "Day 5, 07:25 \u2014 coffee_mug at table_d1 (later coffee on Saturday, not at desk)",
+  "Day 5, 12:41 \u2014 bath_mat at bathroom_c1 (midday shower on weekend)",
+  "Day 5, 13:55 \u2014 bed_pillow at bed_r1 (afternoon nap or bed making on Saturday)",
+  "Day 5, 18:50 \u2014 fork at table_d1 (evening meal, surprising but consistent with home cooking)",
+  "Day 5, 21:45 \u2014 plate at cupboard_k1 (post-meal cleanup, surprising but normal)",
+  "Day 5, 22:10 \u2014 remote at coffee_table_l1 (evening TV, surprising but expected on weekend)"
+ ],
+ "notes": "Weekend pattern differs from weekday: coffee at table instead of desk, no desk use observed, later shower (12:41 vs 20:23 on Monday), afternoon pillow movement (nap?), and evening meal with fork and plate. The wall_clock and waste_bin movements are frequent and likely mundane (cleaning, adjusting). Need to observe more weekends to confirm if this is typical. The surprising events (fork, plate, remote) are actually consistent with a single person's weekend routine; the belief model may have been too narrow. Consider if there are two people: the picture_frame moved twice on Saturday (08:34 and 18:45) could be two different people, but still weak evidence. Next: check for multiple coffee mugs or different bed times."
+}

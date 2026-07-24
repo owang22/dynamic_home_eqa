@@ -1,0 +1,18 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single professional who works from home or has a home office, with a structured morning routine (coffee at desk) and evening relaxation (lamp at sofa, pillow on bed). The travel evidence on Tuesday suggests occasional business trips, but the return on Tuesday afternoon and the doormat at entry on Wednesday morning indicate a return to normal routine. — Coffee mug at desk on Monday, travel on Tuesday, return Tuesday afternoon, doormat at entry Wednesday morning. The picture frame and dining chair on Wednesday evening suggest a settled home routine.
+2. (p=0.30) A frequent traveler or business person who works from home but travels occasionally, with a routine that includes early morning departures and returns in the afternoon. The doormat at entry on Wednesday morning might indicate a daily habit of placing it there, but the travel pattern is less frequent than initially thought. — Passport and suitcase on Tuesday, doormat at entry on Tuesday afternoon and Wednesday morning. The picture frame and dining chair on Wednesday evening are generic.
+3. (p=0.10) A couple or family with a shared evening routine, where one person uses the desk in the morning and others use the sofa and bathroom later. The travel evidence on Tuesday could be one member traveling, but the doormat at entry on Wednesday morning and the picture frame at coffee table suggest a shared living space. — Multiple items on Monday, travel on Tuesday, but the doormat and picture frame on Wednesday are consistent with a household.
+
+## Selected evidence
+- Day 0, 09:18 — coffee_mug at desk_o1 (morning coffee at desk suggests work-from-home or office routine)
+- Day 1, 07:14 — passport at elsewhere (travel document out early morning, indicates departure for trip)
+- Day 1, 07:14 — suitcase at elsewhere (suitcase out early morning, confirms travel)
+- Day 1, 16:12 — doormat at entry_hook_e1 (doormat at entry in afternoon suggests return from trip or errand)
+- Day 2, 08:38 — doormat at entry_hook_e1 (doormat at entry in morning, possibly daily habit or after return)
+- Day 2, 15:08 — picture_frame at coffee_table_l1 (decorative item moved to coffee table, suggests home decoration or personal touch)
+- Day 2, 16:06 — dining_chair at table_d1 (dining chair at table in late afternoon, suggests dinner preparation or routine)
+
+## Notes
+The doormat at entry on Wednesday morning could be a daily habit or a sign that the resident is home. The picture frame and dining chair on Wednesday evening are generic but add to the home routine. Need to see if coffee at desk repeats on Thursday or if the resident is away again. Weekend patterns still unknown. Consider looking for yoga mat, laptop at midday, or other discriminating events.

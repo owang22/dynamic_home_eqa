@@ -1,0 +1,21 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.96) Hybrid Worker (Office Mon/Wed/Fri, WFH Thu, Weekend Errands) — Day 10 (Thu) shows a morning departure (06:51) but no midday home event, contradicting the previous 'Thu is WFH' inference. However, the consistent morning departures on Mon/Wed/Fri (07:00-07:49) and the lack of midday home events on those days strongly support Office days. The previous Day 3 (Thu) midday home event was likely an anomaly (sick day/errand). The new hypothesis refines the schedule: Office Mon/Wed/Fri, WFH Tue? No, Day 1 (Tue) had 07:10 departure. Let's re-evaluate. Day 0 (Mon) 07:49 dep. Day 1 (Tue) 07:10 dep. Day 2 (Wed) 16:54 ret (implies morning dep). Day 3 (Thu) 12:54 home. Day 4 (Fri) 07:04 dep. Day 5 (Sat) 07:02 dep. Day 6 (Sun) no dep. Day 7 (Mon) 07:49 dep. Day 8 (Tue) 07:04 dep. Day 9 (Wed) 07:39 dep. Day 10 (Thu) 06:51 dep. Pattern: Mon/Wed/Fri/Tue/Sat have morning departures. Thu has morning departure but also had a midday home event previously. Now Thu has morning departure. This suggests Thu is ALSO an office day, or the resident works 5 days a week Mon-Fri. The 'Hybrid' label might be misleading if they work all weekdays. Let's stick to 'Office Worker Mon-Fri' as the primary, but keep 'Hybrid' if there's a specific WFH day. Wait, Day 3 (Thu) was the ONLY midday home event. Day 10 (Thu) has NO midday home event. This makes Thu look like a standard office day. So the resident works Mon-Fri. The 'Hybrid' hypothesis from before was based on Day 3. Now Day 10 contradicts it. I should update the hypothesis to 'Standard 5-Day Office Worker' or 'Hybrid with rare WFH'. Given the strong consistency of morning departures Mon-Fri, 'Standard 5-Day Office Worker' is now more likely. But Day 5 (Sat) departure suggests weekend errands. Let's merge: 'Office Worker Mon-Fri with Weekend Errands'. Probability of 'Remote/Erratic' is still low. Probability of 'Standard 9-5' increases. Let's rename Hypothesis 1 to 'Office Worker Mon-Fri' and increase prob. Hypothesis 2 'Standard 9-5' is essentially the same. I will combine them into one strong hypothesis. Hypothesis 3 'Remote' remains low.
+2. (p=0.96) Office Worker Mon-Fri with Weekend Errands — Consistent morning departures on Mon (07:49), Tue (07:10), Wed (07:39), Fri (07:04), and Thu (06:51). The previous Day 3 (Thu) midday home event is now an outlier. Day 10 (Thu) confirms Thu is an office day. Weekend departure on Sat (07:02) suggests errands. Sun is rest day.
+3. (p=0.04) Remote Worker with Erratic Schedule — Discarded as primary. The schedule is highly regular Mon-Fri. Only possible if 'office' is a misinterpretation of remote work with strict clock-in times, but the physical movement of the phone to entry_hook/counter suggests leaving the house.
+
+## Selected evidence
+- Day 0, 07:49 — phone at counter_k1 (Mon departure, establishes late morning office start)
+- Day 1, 07:10 — phone at entry_hook_e1 (Tue departure, establishes early morning office start)
+- Day 2, 16:54 — phone at entry_hook_e1 (Wed return, confirms office day)
+- Day 4, 07:04 — phone at entry_hook_e1 (Fri departure, establishes early morning office start)
+- Day 5, 07:02 — phone at entry_hook_e1 (Sat departure, suggests weekend errands/work)
+- Day 7, 07:49 — phone at counter_k1 (Mon departure, confirms consistent late morning start)
+- Day 8, 07:04 — phone at entry_hook_e1 (Tue departure, confirms consistent early morning start)
+- Day 9, 07:39 — phone at counter_k1 (Wed departure, confirms consistent late morning start)
+- Day 10, 06:51 — phone at entry_hook_e1 (Thu departure, confirms Thu is office day, not WFH)
+- Day 10, 17:06 — dog_leash at entry_hook_e1 (Evening dog walk, confirms resident home late afternoon/evening)
+
+## Notes
+Day 10 (Thu) morning departure at 06:51 contradicts the previous hypothesis that Thu was a WFH day (based on Day 3). The resident now appears to work Mon-Fri. The 'midday home' event on Day 3 was likely an anomaly. The schedule is: Mon/Wed start ~07:40, Tue/Fri/Thu start ~07:00. Sat has errands. Sun is rest. Need to verify if Day 11 (Fri) follows the 07:00 pattern. Also, note the dog leash on Day 10 evening, suggesting a pet walk routine after work.

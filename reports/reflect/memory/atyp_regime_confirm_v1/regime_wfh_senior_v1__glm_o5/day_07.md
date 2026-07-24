@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Elderly individual living alone — Pill organizer usage continues to suggest regular medication routine, common among elderly residents. The remote being moved between sofa and coffee table indicates leisure time spent watching TV, which is typical for retired individuals. Weekend behavior shows consistent morning routine with reading glasses.
+2. (p=0.04) Middle-aged person with health concerns — Pill organizer could indicate health management needs. The simple meal pattern (plate at table then moved to sink) suggests basic cooking habits. Weekend behavior shows some deviation from weekday patterns.
+3. (p=0.01) Young adult with occasional medication needs — Pill organizer might be for vitamins or occasional medications. The remote movement pattern suggests typical TV watching behavior. Weekend behavior shows less structured routine than weekdays.
+
+## Selected evidence
+- Day 0, 07:11 — pill_organizer seen at cupboard_k1 (suggests regular medication routine, potentially indicating health management needs common in elderly or those with chronic conditions)
+- Day 1, 06:45 — pill_organizer seen at counter_k1 (consistent morning medication routine, strengthening hypothesis of regular health management)
+- Day 2, 07:41 — coffee_mug seen at sink_k1 (morning routine suggests regular waking pattern)
+- Day 2, 08:31 — coffee_mug seen at desk_o1 (morning work/reading routine with coffee)
+- Day 2, 08:31 — reading_glasses seen at desk_o1 (visual aid usage suggests possible age-related vision needs)
+- Day 0, 19:47 — remote seen at sofa_l1 (evening leisure activity, typical TV watching pattern)
+- Day 0, 22:17 — remote seen at coffee_table_l1 (continued leisure activity, possibly indicates extended viewing sessions or preference for remote location)
+- Day 1, 21:50 — remote seen at coffee_table_l1 (consistent evening TV watching pattern, suggesting regular leisure routine)
+- Day 3, 07:09 — reading_glasses seen at desk_o1 (morning reading/work routine with visual aid)
+- Day 3, 07:53 — bowl seen at sink_k1 (morning meal preparation, suggesting breakfast routine)
+- Day 3, 07:53 — coffee_mug seen at sink_k1 (consistent morning coffee routine)
+- Day 3, 08:52 — reading_glasses seen at coffee_table_l1 (morning reading routine extending to coffee table)
+- Day 3, 21:45 — plate seen at cupboard_k1 (unusual pattern - plate returned to cupboard instead of sink, suggesting possible different evening routine or visitor)
+- Day 4, 06:45 — pill_organizer seen at counter_k1 (consistent morning medication routine on Friday, strengthening hypothesis of regular health management)
+- Day 5, 06:45 — reading_glasses seen at counter_k1 (weekend morning routine with visual aid suggests consistent habits across weekdays and weekends)
+
+## Notes
+Pill organizer is consistently used in the morning (around 07:00-06:45) on Monday through Friday, suggesting a regular medication routine. TV watching appears to be an evening activity with the remote ending up at the coffee table. Morning coffee routine with reading glasses at desk suggests possible work-from-home or reading habits. The plate being returned to the cupboard on Thursday evening is unusual and may indicate a different routine or visitor. The fork being returned to the cupboard on Friday evening is also unusual. Weekend behavior shows reading glasses used in morning and plate returned to cupboard after dinner, similar to Thursday. Phone placement at nightstand suggests bedtime routine. Sunday observations show bowl at sink in morning, reading glasses moved between coffee table and sofa, plate at table for dinner, and phone on sofa in evening, confirming weekend patterns are consistent with Saturday. Monday shows return to weekday pattern with reading glasses at counter in morning.

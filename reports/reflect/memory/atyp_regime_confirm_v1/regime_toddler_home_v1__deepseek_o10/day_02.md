@@ -1,0 +1,21 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Family with a young child (toddler or baby) — Consistent daily routine: breakfast ~06:51, lunch ~11:52, dinner ~17:50, bedtime ~19:24. Objects: sippy cup, high chair, crib, play mat, board book, blanket. No work items observed.
+2. (p=0.05) Single adult with a pet (e.g., dog) — Unlikely given high chair, sippy cup, board book, and crib. Retained only for completeness.
+
+## Selected evidence
+- Day 0, 12:00 — sippy_cup at high_chair_d1 (child's mealtime, typical for toddler)
+- Day 0, 12:00 — spoon at high_chair_d1 (child's mealtime, reinforces child presence)
+- Day 1, 06:51 — bowl at high_chair_d1 (breakfast routine for child)
+- Day 1, 15:00 — blanket at play_mat_l1 (blanket used for child's play/nap)
+- Day 1, 17:57 — sippy_cup at high_chair_d1 (dinner routine for child)
+- Day 1, 19:24 — blanket at crib_n1 (blanket moved to crib, likely bedtime)
+- Day 2, 11:52 — plate at high_chair_d1 (lunch routine for child)
+- Day 2, 11:52 — sippy_cup at high_chair_d1 (lunch routine for child)
+- Day 2, 15:16 — board_book at play_mat_l1 (child's reading/play activity)
+- Day 2, 17:16 — board_book at crib_n1 (book moved to crib, likely bedtime reading)
+- Day 2, 17:50 — spoon at high_chair_d1 (dinner routine for child)
+
+## Notes
+Day 2 (Wednesday) confirms consistent toddler schedule: lunch ~11:52, dinner ~17:50. Board book appears at play mat and later at crib, suggesting reading before nap/bedtime. No adult-specific items (laptop, briefcase, coffee mugs) observed yet. Need to check weekend patterns (days 5-6) and whether multiple adults are present. Child age likely 1-2 years (sippy cup, high chair, crib, board book).

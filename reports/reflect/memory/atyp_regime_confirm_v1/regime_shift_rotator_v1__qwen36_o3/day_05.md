@@ -1,0 +1,18 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Hybrid Office Worker (Remote/Mixed) — Consistent early departures (05:28-05:29) on weekdays, midday work badge/laptop presence, and weekend relaxation patterns (late phone use, kitchen activity) strongly support this. The thermos on Friday midday suggests commuting or lunch out, fitting the hybrid model.
+2. (p=0.01) Night Shift Worker — Contradicted by consistent early morning departures and lack of late-night discriminative events. Weekend events (10:48 phone, 19:14 fork) align with normal circadian rhythms, not night shift recovery.
+3. (p=0.01) Early Morning Athlete — Early departures could be for gym, but midday work badge and laptop usage indicate professional obligations. No specific athletic gear (yoga mat, dumbbells) observed in discriminative contexts. Low probability remains only due to early timing.
+
+## Selected evidence
+- Day 0, 05:28 — keys at elsewhere (consistent early departure pattern)
+- Day 1, 14:23 — work_badge at entry_hook_e1 (strong discriminator for 9-5 routine)
+- Day 2, 05:29 — phone at elsewhere (confirms consistent early departure timing)
+- Day 2, 14:35 — laptop at sofa_l1 (suggests remote work or lunch break; discriminates against strict office-only routine)
+- Day 3, 13:23 — work_badge at elsewhere (confirms midday work-related activity; timing varies slightly but remains midday)
+- Day 4, 13:29 — thermos at elsewhere (suggests midday outing or commute; consistent with hybrid/active routine)
+- Day 5, 10:48 — phone at counter_k1 (weekend morning activity; no early departure observed, supports weekend relaxation hypothesis)
+
+## Notes
+Day 5 (Saturday) shows no early departure, confirming weekend pattern. Phone at counter in late morning suggests leisure or casual use. Fork at sink in evening and thermos in cupboard at night are mundane but consistent with weekend dinner routine. No work badge or laptop observed on weekend, reinforcing the hybrid/weekend distinction. Need to observe Day 6 (Sunday) for further weekend pattern confirmation and Day 0 (next Monday) for return to weekday routine.

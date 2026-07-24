@@ -1,0 +1,26 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A person who works a standard daytime job (likely office or similar) and returns home in the evening, with a consistent morning departure and evening wind-down routine. — Day 8 (Tuesday) shows an early departure (thermos at 05:08, phone at 05:24) and a return in the early afternoon (phone at counter at 14:25), followed by evening relaxation (phone at sofa at 19:27). This matches the standard weekday pattern seen on Day 0, 1, 2, and 7. The probability increases because the pattern is consistent across multiple weekdays.
+2. (p=0.10) A person who works from home or has a flexible schedule, possibly with a late start or remote work. — The early departure on Day 8 (05:08) and the return at 14:25 still suggest a standard work schedule. The later starts on Days 3-4 (Thursday/Friday) remain a slight anomaly but are not repeated on this Tuesday. The probability decreases further as the standard job pattern becomes more dominant.
+3. (p=0.05) A person with a non-standard schedule (e.g., shift worker, freelancer) who has an early morning activity and a late evening wind-down. — The early departure (05:08) and return at 14:25 could fit a shift worker, but the consistent weekend relaxation (no early activity) and the lack of a clear shift pattern (e.g., varying departure times) make this unlikely. The probability remains low.
+
+## Selected evidence
+- Day 0, 05:28 — keys at elsewhere (morning departure, likely for work)
+- Day 1, 04:55 — thermos at counter_k1 (preparing packed lunch/coffee for work, consistent with early departure)
+- Day 2, 05:29 — laptop at elsewhere (morning departure with work equipment, strong evidence for office job)
+- Day 2, 14:35 — keys at entry_hook_e1 (return from work, midday arrival)
+- Day 2, 14:35 — work_badge at entry_hook_e1 (return from work, confirms work-related commute)
+- Day 3, 08:00 — phone at table_d1 (later morning start, possibly a different schedule)
+- Day 3, 13:23 — phone at elsewhere (midday departure, possibly for work or errand)
+- Day 3, 22:39 — work_badge at nightstand_r1 (late evening return, wind-down)
+- Day 4, 08:07 — phone at table_d1 (later morning start, consistent with Day 3 pattern)
+- Day 4, 13:29 — phone at elsewhere (midday departure, similar to Day 3)
+- Day 4, 22:18 — thermos at sink_k1 (late evening return, likely after work)
+- Day 5, 10:48 — phone at counter_k1 (relaxed Saturday start, no early departure)
+- Day 5, 18:29 — plate at table_d1 (late dinner, typical weekend evening)
+- Day 6, 11:15 — phone at counter_k1 (relaxed Sunday start, no early departure)
+- Day 7, 04:45 — thermos at counter_k1 (early morning prep, consistent with weekday pattern)
+
+## Notes
+Day 8 (Tuesday) confirms the early weekday pattern: thermos at elsewhere at 05:08 (morning departure), phone at elsewhere at 05:24 (leaving home), phone at counter at 14:25 (return), phone at sofa at 19:27 (evening relaxation). This matches the standard weekday routine. The Thursday/Friday later starts (Days 3-4) are still a slight anomaly but may be due to a different work schedule on those days. Need to observe more weeks to see if this pattern repeats. No exercise gear or social items observed yet; may need to look for those to further refine persona.

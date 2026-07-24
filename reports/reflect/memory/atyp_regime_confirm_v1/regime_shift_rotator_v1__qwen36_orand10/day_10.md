@@ -1,0 +1,16 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Shift Worker (Industrial/Field) with Evening Remote Work — Day 10 breaks the rigid 05:00 departure pattern. The resident was active at 08:00 (phone at table) and 13:29 (badge at work location). This suggests a flexible shift, a day off, or a different shift schedule (e.g., afternoon/evening start). The evening routine (laptop/phone/badge at nightstand) remains consistent with winding down after a long day. The 'remote admin' aspect is less supported today as the laptop appeared late at night, not morning.
+2. (p=0.04) Hybrid Professional with Field Safety Requirements — The 08:00-13:29 activity window is more typical of a hybrid professional who might have morning meetings or site visits. However, the presence of 'work_badge' and 'hi_vis_vest' (from previous days) still strongly points to industrial/field work. The probability increases slightly because the rigid 05:00 departure is not universal for all shift workers (e.g., some start at 07:00 or 08:00). The lack of a laptop in the morning supports a role where the laptop is not needed for the primary field task.
+3. (p=0.01) Student/Researcher with Early Fieldwork — Discarded as primary. The specific industrial gear and consistent long shifts (even if variable start times) are more indicative of employment. The 08:00 activity could be a class or lab, but the 'work_badge' makes this unlikely.
+
+## Selected evidence
+- Day 10, 08:00 — phone at table_d1 (breaks 05:00 departure pattern; suggests later start or day off)
+- Day 10, 13:29 — work_badge at elsewhere (confirms field/industrial work context; timing suggests mid-morning/early afternoon activity)
+- Day 10, 22:29 — laptop at sofa_l1 (evening leisure/remote work; no morning laptop use observed today)
+- Day 10, 22:29 — work_badge at nightstand_r1 (end of day routine; badge stored, not taken out)
+- Day 10, 22:29 — phone at nightstand_r1 (consistent with sleep routine)
+
+## Notes
+Day 10 (Thursday) shows a significant deviation from the 05:00 departure pattern. The resident was active at 08:00 and had their badge at work at 13:29. This could indicate a different shift (e.g., 08:00-16:00 or 09:00-17:00) or a day off with a site visit. The evening routine remains stable. Need to observe Day 11 (Friday) to see if this is a one-off or a new pattern. The laptop appearing at 22:29 suggests it is used for evening activities, not morning work prep. The 'thermos' was not observed at the sink today, which might mean the resident drank from it at work or used a different container.

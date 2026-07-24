@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single person who works from home or has a flexible schedule, with a morning coffee routine that is now shifting indoors on Mondays (coffee_mug at table_d1 instead of patio), midday home presence, and evening relaxation with lamp and decor adjustments. The surprising coffee_mug at table_d1 (p=0.00) and plate at table_d1 (p=0.00) suggest a new Monday pattern: indoor breakfast with coffee and a plate, possibly a work-from-home day with a sit-down meal. The afternoon bath_mat (18:35) and bed_pillow (19:24) indicate a later evening routine. The hypothesis remains strong but now includes a Monday-specific indoor morning. — The surprising events on Day 7 (Monday) mirror the Friday pattern (Day 4) of indoor morning activities, but with coffee_mug instead of reading_glasses. This suggests a consistent weekday pattern (Monday and Friday) of indoor breakfast, possibly due to work schedule or preference. The midday and evening events (floor_lamp, picture_frame, remote) confirm home presence and decor interest. The hypothesis is updated to reflect a hybrid indoor/outdoor morning routine depending on the day.
+2. (p=0.20) A person who values home decor and comfort, frequently adjusting lamps and decorative items, with a possible interest in reading and TV (remote at sofa_l1). The multiple picture_frame and floor_lamp movements on Day 7 (12:12, 16:43, 17:20) reinforce this. The wall_clock at tv_stand_l1 (14:10) is a new decor element, suggesting ongoing home arrangement. — The evidence for decor interest is strong: picture_frame moved twice, floor_lamp moved twice, and a new wall_clock placement. The remote at sofa_l1 (13:55) adds a TV/entertainment element. This hypothesis is consistent with previous days and gains support from the variety of decor items.
+3. (p=0.10) A person with a regular evening routine, possibly winding down with TV or reading, with a later evening shower and bed preparation. Day 7 shows bath_mat at 18:35 (evening shower) and bed_pillow at 19:24 (bed preparation), which aligns with an evening wind-down. The remote at sofa_l1 (13:55) suggests TV use earlier in the day, but the evening events are consistent with a routine. — The evening bath_mat and bed_pillow events on Day 7 are consistent with an evening routine, though the timing (18:35 and 19:24) is earlier than previous days (e.g., Day 0 at 20:23, Day 3 at 21:12). The hypothesis is less likely than the work-from-home hypothesis but remains plausible as a secondary pattern.
+
+## Selected evidence
+- Day 0, 07:32 — coffee_mug at patio_table_p1 (morning coffee outdoors, suggests morning routine)
+- Day 0, 12:30 — dining_chair at table_d1 (midday meal at home, not typical for office worker)
+- Day 0, 13:20 — picture_frame at coffee_table_l1 (decor adjustment, interest in home aesthetics)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower or bath)
+- Day 2, 09:08 — phone at patio_table_p1 (outdoor phone use, flexible morning)
+- Day 3, 07:44 — coffee_mug at patio_table_p1 (morning coffee outdoors, consistent with Day 0)
+- Day 3, 09:10 — reading_glasses at patio_table_p1 (reading outdoors, suggests leisure or work)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday lamp adjustment, home presence)
+- Day 3, 21:12 — bath_mat at bathroom_c1 (evening shower, consistent with Day 0)
+- Day 4, 07:04 — reading_glasses at table_d1 (surprising: indoor morning reading with newspaper, different from outdoor coffee routine)
+- Day 4, 07:44 — bowl at sink_k1 (surprising: breakfast cleanup, not seen before)
+- Day 4, 14:40 — bath_mat at bathroom_c1 (afternoon shower, new routine element)
+- Day 7, 07:02 — coffee_mug at table_d1 (surprising: indoor coffee on Monday, p=0.00, suggests a new weekday pattern)
+- Day 7, 08:04 — dining_chair at table_d1 (morning meal at home, consistent with work-from-home)
+- Day 7, 17:57 — plate at table_d1 (surprising: plate at table, p=0.00, suggests sit-down meal, possibly dinner prep)
+
+## Notes
+Monday (Day 7) shows a surprising indoor morning with coffee_mug at table_d1 (p=0.00) and plate at table_d1 (p=0.00), mirroring Friday's indoor pattern but with coffee instead of reading_glasses. This suggests a consistent weekday pattern (Monday and Friday) of indoor breakfast, possibly due to work schedule (e.g., early meetings) or preference. The doormat at entry_hook_e1 (07:15) is new and may indicate a morning arrival or delivery. The wall_clock at tv_stand_l1 (14:10) is a new decor item. Need to observe Tuesday-Thursday to see if outdoor coffee returns (as on Day 0 and Day 3) or if the indoor pattern persists. Also, no reading_glasses events today—could be a Monday-specific habit. Weekend observations (Saturday/Sunday) are still needed to distinguish workdays from days off. Open question: does the resident have a hybrid work schedule (e.g., office on some days, home on others)? The indoor morning on Monday and Friday might be days with early meetings, while outdoor coffee on Wednesday (Day 3) might be a more relaxed start.

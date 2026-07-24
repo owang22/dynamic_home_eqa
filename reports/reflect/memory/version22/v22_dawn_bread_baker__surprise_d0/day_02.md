@@ -1,0 +1,18 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single person who works from home or has a flexible schedule, with a habit of baking or cooking from scratch (flour bin scoop) and a late-evening kitchen cleanup (fork and mug put away at 21:45). The coffee mug at the dining table at 08:13 suggests a relaxed morning, possibly working from home. — The flour bin scoop indicates baking or cooking, which is less common in a rushed household. The late-evening tidying (mug and fork to cupboard) suggests a routine of cleaning up after dinner. The coffee mug at the table rather than sink implies a sit-down breakfast, consistent with a home-based worker. The surprise events (mug at table, mug and fork at cupboard) reinforce a non-standard pattern.
+2. (p=0.20) A couple or family where one person bakes/cooks and another does late cleanup, but the single set of items (one fork, one mug) still suggests a small household. The 16:47 scoop use might be for afternoon baking, and the 21:45 cleanup could be shared. — The flour bin scoop could be used by a family member for baking, but the lack of multiple items (e.g., two forks) weakens this. The late cleanup could be a shared task, but the evidence is still minimal.
+3. (p=0.10) A person with a non-standard work schedule (e.g., shift worker or freelancer) who has a late breakfast (08:13) and bakes in the afternoon, then cleans up late. The 21:45 cupboard events suggest a winding-down routine before bed. — The timing of events (late breakfast, afternoon baking, late cleanup) could fit a shift worker, but the lack of other evidence (e.g., work gear) makes this less likely. The surprise events don't strongly contradict this hypothesis.
+
+## Selected evidence
+- Day 0, 08:04 — bench_knife at sink_k1 (morning kitchen cleanup after breakfast prep)
+- Day 0, 08:46 — coffee_mug at sink_k1 (morning coffee consumption, likely part of breakfast routine)
+- Day 2, 08:13 — coffee_mug at table_d1 (coffee at dining table, not sink; suggests sit-down breakfast, not rushed)
+- Day 2, 16:47 — flour_bin_scoop at counter_k1 (afternoon baking or cooking from scratch, not a typical weekday event for many)
+- Day 2, 19:09 — fork at sink_k1 (evening meal cleanup, likely dinner)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (late-night tidying, mug put away after use)
+- Day 2, 21:45 — fork at cupboard_k1 (late-night tidying, fork put away after dinner)
+
+## Notes
+Wednesday shows a clear pattern: morning coffee at table (not sink), afternoon baking (flour scoop), dinner cleanup (fork at sink), and late-night tidying (mug and fork to cupboard). The surprise events (mug at table, mug and fork at cupboard) indicate a departure from the earlier belief that mug always goes to sink. Need to check if this pattern repeats on other weekdays (e.g., Thursday, Friday) and if weekend differs. Also, no evidence of leaving the house (e.g., keys, shoes) yet, supporting home-based work. The flour bin scoop is a strong signal of baking; consider if this is a weekly habit (e.g., Wednesday baking).

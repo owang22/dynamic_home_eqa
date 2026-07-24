@@ -1,0 +1,25 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single working professional who reads a physical newspaper in the morning, has a simple lunch at home, and winds down in the evening with a lamp on the sofa before a consistent bedtime routine. — The newspaper at 07:34 on Monday suggests a morning routine with a print subscription. The plate at sink at 12:31 indicates a lunch at home, typical of someone who works from home or has a flexible schedule. The evening lamp and bath mat/pillow movements suggest a predictable evening wind-down and hygiene routine. The reading glasses on the sofa at 16:11 on Tuesday could indicate reading or close work in the afternoon, consistent with a home-based worker. The remote on the sofa at 19:14 suggests evening TV use, and the dining chair at the table at 21:20 might indicate a late meal or activity, but overall the pattern remains consistent.
+2. (p=0.30) A remote worker or freelancer who lives alone and has a structured but home-based day, with clear morning, lunch, and evening routines. — The midday plate at sink and evening lamp use are consistent with someone who is home during the day. The newspaper could be a morning habit. The reading glasses and remote on the sofa in the late afternoon/evening suggest leisure activities at home. The dining chair movement at 21:20 might indicate a late dinner or work session. This hypothesis is slightly less likely because the newspaper might also be read by a retiree or someone with a longer morning commute, but the evidence does not strongly contradict it.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning print newspaper suggests a regular reader, possibly older or traditional)
+- Day 0, 12:31 — plate at sink_k1 (lunch at home on a Monday, indicating a work-from-home or flexible schedule)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation on sofa, a common wind-down activity)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine, likely before bed)
+- Day 0, 20:54 — bed_pillow at bed_r1 (consistent bedtime, suggesting a regular sleep schedule)
+- Day 1, 16:11 — reading_glasses at sofa_l1 (afternoon reading or close work, consistent with home-based activity)
+- Day 1, 19:14 — remote at sofa_l1 (evening TV use, typical wind-down)
+- Day 1, 21:20 — dining_chair at table_d1 (late evening activity at dining table, possibly a meal or work)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning arrival or departure, suggests a daily routine of leaving/returning home)
+- Day 2, 11:49 — fork at table_d1 (midday meal preparation, consistent with lunch at home)
+- Day 2, 15:08 — picture_frame at coffee_table_l1 (afternoon decoration or tidying, possibly a personal touch)
+- Day 2, 15:50 — phone at coffee_table_l1 (afternoon phone use, could be work or leisure)
+- Day 2, 16:06 — dining_chair at table_d1 (afternoon seating, possibly for work or snack)
+- Day 2, 18:50 — plate at sink_k1 (evening meal cleanup, consistent with dinner at home)
+- Day 2, 21:45 — bowl and coffee_mug at cupboard_k1 (late evening kitchen cleanup, suggests a regular bedtime routine)
+
+## Notes
+Day 2 (Wednesday) shows a doormat at 08:38, suggesting the resident left or returned in the morning, consistent with a work-from-home or flexible schedule. The fork at 11:49 and plate at 18:50 reinforce lunch and dinner at home. The picture_frame and phone on the coffee table in the afternoon suggest personal or work activities. The late evening bowl and mug cleanup at 21:45 aligns with a consistent bedtime routine. Need to observe weekend patterns (days 5-6) to see if newspaper appears on Saturday/Sunday, which would indicate a daily subscription vs. weekday-only. Also check if the doormat appears at similar times on other days to confirm a daily routine. The dining chair movement at 16:06 is earlier than the previous 21:20, so need to see if there is a pattern of multiple uses.

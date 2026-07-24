@@ -1,0 +1,18 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Remote worker or student with a dedicated home office, likely male or female, who works from home during the day and eats dinner at the kitchen counter or table. — The recurrence of the morning desk routine (glasses/coffee) and the midday desk presence strongly support this. The pill organizer is now seen on both Day 1 and Day 4, suggesting a daily health routine rather than a strictly weekday one, which fits a remote worker managing their own schedule. The lack of commuting evidence persists.
+2. (p=0.08) Retiree or stay-at-home parent with flexible daytime activities. — The pill organizer appearing on Day 4 (Friday) reinforces the health-conscious aspect. However, the sustained, focused desk usage (glasses + coffee for hours) is less typical for a general retiree unless they are also working remotely or studying. The probability remains low but non-zero.
+3. (p=0.02) Single professional who commutes but uses the desk for evening work or hobbies. — Still highly unlikely. The morning desk presence (07:08-07:11) and midday desk presence are too early and sustained for a commuter who leaves for work. The phone at the sofa at 08:52 is inconsistent with leaving for a commute.
+
+## Selected evidence
+- Day 0, 07:11 — reading_glasses at desk_o1 (indicates morning routine involving reading/screen work, likely at a stationary location)
+- Day 0, 13:27 — coffee_mug at desk_o1 (confirms sustained presence at the desk during midday, suggesting work/study rather than brief visit)
+- Day 1, 06:45 — pill_organizer at counter_k1 (suggests a structured health routine, possibly indicating an older adult or someone with chronic conditions; supports retiree/health-conscious remote worker)
+- Day 2, 08:31 — phone at desk_o1 (confirms active engagement at the desk during morning hours, reinforcing the remote work/study hypothesis)
+- Day 3, 07:09 — reading_glasses at desk_o1 (confirms the morning desk routine is recurring, strengthening the remote worker/student hypothesis)
+- Day 3, 08:52 — phone at sofa_l1 (indicates a transition from desk to living room, suggesting a break or leisure activity, consistent with home-based routine)
+- Day 4, 06:45 — pill_organizer at counter_k1 (confirms the health routine is daily, not just weekday, supporting the remote worker/retiree hypothesis over a strict commuter schedule)
+
+## Notes
+The pill organizer appearing on both Day 1 and Day 4 suggests a daily routine, not just a weekday one. This weakens the 'strictly weekday commuter' hypothesis further. The morning desk routine (glasses at ~07:00-07:11) is consistent across Days 0, 2, and 3. Need to check if the desk is used on Day 5 (Saturday) and Day 6 (Sunday) to confirm if the work/study pattern is strictly weekday or daily. The bowl at the table on Day 4 morning might indicate breakfast, but the lack of other breakfast-specific items (like cereal boxes) makes it ambiguous. Need to observe if the desk is used on the weekend.

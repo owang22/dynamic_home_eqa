@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Single working adult with a hybrid schedule and an astronomy hobby, who works from home on some days and has a structured weekday routine including morning coffee, dinner, and late-night stargazing on the patio. — Day 0 (Monday) showed midday phone on sofa and evening routine. Day 2 (Wednesday) showed morning coffee, phone at table, dinner, and late-night phone on patio. Day 3 (Thursday) adds telescope cap at scope cabinet at 00:15 (stored after use) and at patio table at 22:03 (brought out for stargazing), plus coffee mug at table at 08:51 (morning coffee at table, not sink), bowl at sink at 09:26 (breakfast cleanup), and plate at table at 18:32 (dinner). The telescope cap movements strongly suggest a regular stargazing hobby, likely on clear nights. The coffee mug at table (not sink) on Thursday differs from Day 2 (sink), but still morning coffee. The bowl at sink at 09:26 suggests breakfast. The plate at table at 18:32 is consistent with dinner. The bed pillow at 18:51 and 21:57 suggests early and late bed preparation, possibly a nap or early sleep. The doormat at entry hook on Day 2 at 08:38 suggests leaving/returning, but no such event today, so maybe a variable schedule. The single adult hypothesis remains strongest, with added hobby detail.
+2. (p=0.15) Couple or family with one person working from home and another with a different schedule, possibly sharing the telescope hobby, but evidence still weak for two distinct individuals. — The telescope cap at patio at 22:03 could be used by one person, but the bed pillow at 18:51 and 21:57 might indicate two different sleep times. However, no clear evidence of two separate phones, meal times, or distinct routines. The coffee mug at table at 08:51 and bowl at sink at 09:26 could be one person's breakfast. The plate at table at 18:32 is a single dinner. The doormat event on Day 2 is not repeated. This hypothesis is less likely than single adult.
+3. (p=0.10) Student or freelancer with an irregular schedule and an astronomy interest, but the consistent morning coffee and dinner times suggest more structure than typical. — The telescope cap at 00:15 and 22:03 could be late-night study breaks or hobby. The coffee mug at table at 08:51 and bowl at sink at 09:26 suggest a late breakfast. The plate at table at 18:32 is a regular dinner. The bed pillow at 18:51 and 21:57 could be erratic sleep. However, the pattern of morning coffee and evening dinner is too regular for a typical student. This hypothesis is least likely.
+
+## Selected evidence
+- Day 0, 12:28 — phone at sofa_l1 (midday phone use suggests work-from-home or lunch break)
+- Day 0, 19:19 — plate at sink_k1 (dinner cleanup, typical evening meal)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, moving lamp to seating area)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (pre-bedtime bathing routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (preparing for sleep)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning arrival or departure, suggests leaving home or returning)
+- Day 2, 09:21 — coffee_mug at sink_k1 (morning coffee, typical start of day)
+- Day 2, 09:24 — phone at table_d1 (morning phone use at table, likely work or breakfast)
+- Day 2, 15:08 — picture_frame at coffee_table_l1 (afternoon decorative adjustment, possibly tidying or personalizing space)
+- Day 2, 18:59 — fork at table_d1 (dinner time, consistent with Day 0 evening meal)
+- Day 2, 21:45 — bowl at cupboard_k1 (post-dinner cleanup, consistent with evening routine)
+- Day 2, 21:45 — phone at patio_table_p1 (late evening outdoor phone use, suggests relaxation or work on patio)
+- Day 3, 00:15 — telescope_cap at scope_cabinet_p1 (stargazing equipment stored after use, indicates astronomy hobby)
+- Day 3, 08:51 — coffee_mug at table_d1 (morning coffee at table, not sink, suggests breakfast routine)
+- Day 3, 22:03 — telescope_cap at patio_table_p1 (telescope cap brought out for late-night stargazing, confirms hobby)
+
+## Notes
+Day 3 (Thursday) introduces telescope cap movements at 00:15 and 22:03, strongly suggesting a regular stargazing hobby, likely on clear nights. The coffee mug at table at 08:51 (not sink as on Day 2) and bowl at sink at 09:26 indicate a breakfast routine. The plate at table at 18:32 is consistent with dinner. The bed pillow at 18:51 and 21:57 is unusual—could be a nap or early sleep, then later adjustment. No doormat event today, so the Day 2 event may be occasional. Need to check if telescope cap appears on other nights, especially weekends. Weekend observations (days 5-6) will help distinguish work-from-home vs. office worker and whether stargazing is a weekend activity. The single adult with hobby hypothesis is strengthened; consider reducing the couple hypothesis further if no second person evidence appears.

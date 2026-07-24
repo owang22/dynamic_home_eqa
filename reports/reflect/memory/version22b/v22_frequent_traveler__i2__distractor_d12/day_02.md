@@ -1,0 +1,23 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) A single person who works from home or has a flexible schedule, with a routine that includes morning coffee at the desk, lunch at the dining table, and evening relaxation in the living room. — Consistent morning floor lamp at sofa (09:08) and dining chair at table (16:06, 21:06) suggest a home-based workday. Bed pillow moves at 13:52 and 16:47 may indicate a nap or making bed, typical of a flexible schedule. No evidence of leaving for work.
+2. (p=0.20) A person who values home decor and tidiness, as seen by frequent adjustments of picture frame and consistent placement of bath mat and doormat. — Picture frame moved to coffee table twice (12:05, 15:08) and doormat placed at entry twice (08:38, 13:34) indicate attention to arrangement. Bath mat at bathroom at 18:48 suggests evening shower routine.
+3. (p=0.05) A person with a consistent evening routine, including moving the dining chair back to the table and adjusting the bed pillow before sleep. — Dining chair at table at 21:06 and bed pillow at bed at 16:47 (earlier than previous days) suggest a variable bedtime. Wall clock not moved today, so evening routine may be less fixed.
+
+## Selected evidence
+- Day 0, 08:51 — coffee_mug at desk_o1 (morning coffee at desk suggests work/study from home)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch at dining table, typical home routine)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening lamp use, likely reading or relaxing)
+- Day 1, 07:09 — packing_cubes at elsewhere (packing cubes early Tuesday, possible travel or storage)
+- Day 1, 07:09 — phone at elsewhere (phone moved early, maybe for travel or charging)
+- Day 1, 08:47 — bath_mat at bathroom_c1 (morning bath mat placement, suggests shower routine)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning doormat placement, likely entry use)
+- Day 2, 09:08 — floor_lamp at sofa_l1 (morning lamp use, consistent with flexible schedule)
+- Day 2, 12:05 — picture_frame at coffee_table_l1 (decorative item moved, indicates attention to decor)
+- Day 2, 13:52 — bed_pillow at bed_r1 (afternoon pillow move, possibly nap or making bed)
+- Day 2, 18:48 — bath_mat at bathroom_c1 (evening bath mat placement, evening shower routine)
+- Day 2, 21:06 — dining_chair at table_d1 (evening chair returned to table, end-of-day tidying)
+
+## Notes
+Day 2 (Wednesday) shows no packing cubes or phone movement, so Tuesday's early events may be a one-time travel prep. Doormat appears twice (morning and afternoon), possibly for cleaning or entry use. Wall clock not moved today, so its previous moves may be irregular. Need to observe weekend days (5-6) to see if routine changes. Bath mat appears in evening (18:48) vs morning on Tuesday, suggesting variable shower timing.

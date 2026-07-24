@@ -1,0 +1,24 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A plant-loving resident with a hybrid work schedule (works from home some weekdays, goes to office on others). — The watering can at windowsill on Day 4 (Friday) at 21:45 reinforces plant care, now seen on two different days (Day 0 and Day 4). The bowl at table at 07:22 and at sink at 07:57 suggests breakfast at home. The fork at sink at 18:58 indicates dinner at home. The laptop and keys leaving at 09:40 on Day 3 (Thursday) suggests office days, while lunch at home on Day 0 and Day 2 suggests work-from-home days. This hybrid pattern is consistent.
+2. (p=0.20) A resident with a regular evening routine, typically having dinner around 19:00 and watering plants in the evening. — Evening meal events: Day 1 at 19:20, Day 2 at 18:19, Day 3 at 19:13, Day 4 at 18:58. The watering can at windowsill at 21:45 on Day 4 adds an evening plant-care routine. The phone at nightstand at 22:04 on Day 3 suggests bedtime. This pattern is consistent but not highly distinctive.
+3. (p=0.10) A resident who works outside the home on some weekdays, as indicated by laptop and keys leaving at 09:40 on Day 3 (Thursday). — The laptop and keys leaving at 09:40 on Day 3 is strong evidence for office days. However, the bowl at table at 07:22 on Day 4 (Friday) and no leaving event suggests the resident may work from home on Fridays. This hypothesis is now subsumed by the hybrid schedule hypothesis, but kept as a separate possibility until more data on office days.
+
+## Selected evidence
+- Day 0, 09:10 — plant_mister at windowsill_l1 (plant care, possibly weekly)
+- Day 0, 13:17 — fork at sink_k1 (lunch at home on Monday, suggests flexible schedule)
+- Day 2, 13:29 — fork at sink_k1 (lunch at home on Wednesday, reinforces flexible schedule)
+- Day 3, 09:18 — notebook at coffee_table_l1 (morning work at home before leaving)
+- Day 3, 09:40 — laptop at elsewhere (resident leaves for work on Thursday)
+- Day 3, 09:40 — keys at elsewhere (resident leaves home, consistent with laptop)
+- Day 3, 19:13 — fork at sink_k1 (dinner at home, timing ~19:00)
+- Day 3, 22:04 — phone at nightstand_r1 (bedtime routine, phone used before sleep)
+- Day 4, 07:22 — bowl at table_d1 (breakfast at home on Friday)
+- Day 4, 07:57 — bowl at sink_k1 (breakfast cleanup)
+- Day 4, 09:22 — watering_can at sink_k1 (plant care preparation)
+- Day 4, 18:58 — fork at sink_k1 (dinner at home, timing ~19:00)
+- Day 4, 21:45 — watering_can at windowsill_l1 (evening plant watering, reinforces plant care)
+
+## Notes
+Day 4 (Friday) shows breakfast at home (bowl at table 07:22, bowl at sink 07:57) and no leaving event, suggesting the resident works from home on Fridays. The watering can appears at sink at 09:22 and later at windowsill at 21:45, indicating plant watering in the evening. This is the second plant-care event (first was Day 0 with plant mister). The pattern may be weekly (Day 0 Monday? Actually Day 0 is Monday, Day 4 is Friday, so not weekly; perhaps twice a week). Need to observe weekend days (Day 5-6) for different patterns. The evening meal timing remains consistent around 19:00. The phone at nightstand on Day 3 suggests bedtime around 22:00. No TV remote event today; need to check if TV watching is regular.

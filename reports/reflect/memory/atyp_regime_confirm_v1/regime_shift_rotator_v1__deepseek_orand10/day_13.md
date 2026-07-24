@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A person who works a physically demanding job (e.g., construction, maintenance, or security) with a consistent early start and return by mid-afternoon on most weekdays, but occasionally has a different schedule (e.g., a later start or day off). The hi-vis vest and thermos are taken together at 05:05-05:17 and returned by 14:24 on three consecutive weekdays (Day 7-9), but on Day 10 (Thursday) there was no such movement and a later start (phone at table at 08:00). On Day 11 (Friday), the work_badge, phone, and laptop left together at 13:22, suggesting a later shift or different work activity. The laptop is at home during the day when the early shift is worked, indicating it is not used for work. The pattern is not perfectly consistent but strongly suggests a non-desk job with variable hours. — The early shift pattern was strong on three weekdays, but Day 10 and Day 11 show deviations. Day 11 shows a later departure of work items (13:22) and no hi-vis vest or thermos movement, which could indicate a different work assignment or a day with a later start. The probability is reduced slightly from 0.85 to 0.80 to account for the variability.
+2. (p=0.15) A person who lives alone and maintains a tidy, organized home. Single sets of dishes (plate, fork, bowl) are used and cleaned each day. The thermos is used on workdays but not on weekends. The remote is used in the evening, and the phone returns to the nightstand at bedtime. This solitary, tidy routine is consistent across all observed days, including Day 10 and Day 11. — The single-person household is supported by the use of one bowl and coffee mug on Day 11, and the tidy behavior (cleaning and storing dishes) is consistent. This hypothesis is less distinctive than the work pattern but remains plausible.
+3. (p=0.05) A person with a consistent evening routine: dinner around 18:21-19:00, cleaning up by 19:06, and then relaxing with the remote (TV) before bed. The phone is used in the evening (sofa) but returns to the nightstand at bedtime. This routine is observed on both weekdays and weekends, with timing shifting later on weekends. On Day 11, the phone is at nightstand at 22:16, consistent with bedtime routine. — The evening pattern is consistent but not highly diagnostic; it is common to many households. The probability remains low because it does not help discriminate between personas.
+
+## Selected evidence
+- Day 7, 05:05 — hi_vis_vest at elsewhere (early departure for physical job, contradicts office pattern)
+- Day 7, 14:10 — hi_vis_vest at closet_r1 (return from work, consistent with shift end)
+- Day 8, 05:08 — thermos at elsewhere (taken with hi-vis vest, part of work gear)
+- Day 8, 05:08 — work_badge at elsewhere (also taken, but hi-vis vest is distinctive)
+- Day 8, 14:25 — hi_vis_vest at closet_r1 (returned at same time as keys, confirming pattern)
+- Day 8, 14:25 — laptop at sofa_l1 (laptop at home during workday, not used for work)
+- Day 9, 05:17 — hi_vis_vest at elsewhere (early departure, consistent with workdays)
+- Day 9, 14:24 — thermos at sink_k1 (returned after work, consistent with shift end)
+- Day 10, 08:00 — phone at table_d1 (later start, no hi-vis vest or thermos, suggests different schedule)
+- Day 10, 13:29 — work_badge at elsewhere (taken later in day, possibly for a later shift or errand)
+- Day 11, 13:22 — work_badge at elsewhere (later departure of work items, no hi-vis vest or thermos, suggests variable schedule)
+- Day 11, 13:22 — laptop at elsewhere (laptop taken, possibly for work or errand, different from previous workdays)
+- Day 11, 13:22 — phone at elsewhere (phone taken with work items, consistent with later departure)
+- Day 11, 22:16 — thermos at sink_k1 (returned in evening, not used in morning, suggests different work pattern)
+- Day 12, 20:51 — phone at nightstand_r1 (early bedtime on Saturday, consistent with weekend relaxation)
+
+## Notes
+Day 13 (Sunday) shows a relaxed weekend pattern: phone on sofa at 10:54, dinner at 18:26, cleanup by 19:11, remote on coffee table at 21:14, dishes stored by 21:45. No work items moved. This reinforces the weekend hypothesis. Next week will be crucial to see if the early shift pattern (Mon-Wed) and later shifts (Thu-Fri) repeat. Also, the laptop was taken on Day 11 (Friday) for the first time; need to see if this becomes a regular Friday pattern.

@@ -1,0 +1,20 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single person who works from home or has a flexible schedule, with a routine that includes morning plant care, afternoon relaxation, and evening winding down. — The plant mister at 09:10 on Day 0 suggests plant care. The pillow on the bed at 12:57 and 20:54 on Day 0 indicates napping or resting. The floor lamp moved to the sofa at 20:06 and picture frame to coffee table at 21:04 suggest evening relaxation. Today's events (dining chair at table at 10:42 and 21:04/21:20, plate at sink at 19:20, fork at cupboard at 21:45) are consistent with a home-based routine with meals at home.
+2. (p=0.30) A person who values a tidy and organized home, with a focus on comfort and aesthetics. — The plant mister, picture frame, and floor lamp movements indicate attention to decor and comfort. The bath mat at 20:23 on Day 0 suggests a bath or shower in the evening. Today's events (doormat at entry hook at 16:12 and 21:45, wall clock at counter at 18:37) show attention to entryway and kitchen organization.
+3. (p=0.10) A person who may have a pet or be very attentive to household details, as evidenced by the plant mister and multiple pillow adjustments. — The plant mister could be for indoor plants, and the pillow movements might be for a pet or personal comfort. However, today's events do not provide additional evidence for a pet, so this hypothesis remains low probability.
+
+## Selected evidence
+- Day 0, 09:10 — plant_mister at windowsill_l1 (morning plant care, suggests a routine with plants)
+- Day 0, 12:57 — bed_pillow at bed_r1 (afternoon pillow placement, possibly a nap or rest)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening lighting adjustment for relaxation)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath or shower, part of wind-down)
+- Day 0, 21:04 — picture_frame at coffee_table_l1 (evening decoration or personal touch)
+- Day 1, 10:42 — dining_chair at table_d1 (morning/early afternoon seating, suggests home-based work or meal)
+- Day 1, 19:20 — plate at sink_k1 (evening meal cleanup, consistent with dinner at home)
+- Day 1, 21:04 — dining_chair at table_d1 (evening seating, possibly after dinner activity)
+- Day 1, 21:45 — fork at cupboard_k1 (evening kitchen organization after meal)
+
+## Notes
+Day 1 (Tuesday) shows a pattern of home-based meals and evening kitchen cleanup. The dining chair movements at 10:42 and 21:04/21:20 suggest the resident spends time at the table during the day and evening. The doormat at entry hook at 16:12 and 21:45 may indicate coming and going, but no clear pattern yet. Need to verify if the morning plant care and afternoon nap repeat on weekdays. Weekend patterns may differ.

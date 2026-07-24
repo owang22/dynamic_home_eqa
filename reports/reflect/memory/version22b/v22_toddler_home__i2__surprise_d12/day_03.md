@@ -1,0 +1,23 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A family with a young child who uses a play mat, board books, a high chair, and a crib, with a structured daily routine (morning play, midday meal, evening wind-down). The child is likely a toddler or preschooler, given the board book and high chair. — The board book at play mat (08:47) and later at toy corner (11:17) confirms child literacy/play. The high chair with plate (17:36) indicates a child's meal. The sippy cup at crib (previous day) and crib itself are consistent. The doormat movements (07:57, 09:02, 17:35) suggest a parent leaving/returning, possibly for work or school drop-off. The floor lamp at sofa (12:21, 21:31) and cushion at sofa (11:17) suggest adult relaxation, but child items dominate.
+2. (p=0.08) A single adult who works from home or has a flexible schedule, with a young child living full-time. The adult manages child routines and personal relaxation (e.g., floor lamp, cushion at sofa). — The doormat movements could be a parent stepping out briefly. The board book and high chair are child-specific, but the adult's items (floor lamp, cushion) are present. However, the consistent child items and structured routine (e.g., board book at play mat in morning, high chair at dinner) suggest a full-time child, making a single-parent household possible but less likely than a two-parent family.
+3. (p=0.02) A couple without children, with a pet or exercise equipment, but the board book, high chair, and crib are strong evidence against this. This hypothesis is now contradicted. — The board book and high chair are unequivocally child-related. The crib and sippy cup from previous days further contradict a childless household. This hypothesis is retained only for completeness but is very unlikely.
+
+## Selected evidence
+- Day 0, 08:49 — cushion at play_mat_n1 (morning child play activity)
+- Day 0, 12:30 — dining_chair at table_d1 (midday meal routine)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation/reading)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine)
+- Day 2, 11:10 — sippy_cup at sink_k1 (child's cup washed after morning use)
+- Day 2, 17:07 — ball at toy_corner_l1 (child's toy put away)
+- Day 2, 19:02 — sippy_cup at crib_n1 (child's cup placed in crib, bedtime routine)
+- Day 3, 08:47 — board_book at play_mat_n1 (morning child reading/play)
+- Day 3, 11:17 — board_book at toy_corner_l1 (child's book moved to toy corner, likely after play)
+- Day 3, 11:17 — cushion at sofa_l1 (adult relaxation during child's playtime)
+- Day 3, 17:36 — plate at high_chair_d1 (child's evening meal)
+- Day 3, 21:45 — plate at cupboard_k1 (plate put away after dinner, possibly after child's bedtime)
+
+## Notes
+Thursday shows a clear child routine: board book at play mat in morning (08:47), then moved to toy corner (11:17). The cushion at sofa (11:17) suggests an adult relaxing while child plays. The high chair with plate (17:36) indicates a child's dinner. The plate at cupboard (21:45) is surprising but likely after cleaning up. Doormat movements (07:57, 09:02, 17:35) suggest a parent leaving/returning, possibly for work or school drop-off. No work items (laptop, documents) observed yet; need to check if parent works from home. Weekend patterns (days 5-6) are still unknown; expect possible changes in routine. The board book at toy corner (11:17) and cushion at sofa (11:17) were surprising but now fit the child+adult pattern. The plate at cupboard (21:45) was surprising but consistent with evening cleanup.

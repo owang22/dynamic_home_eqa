@@ -1,0 +1,19 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single working professional who values a structured morning routine and unwinds in the evening. The newspaper at 07:34 on Monday and reading glasses on the sofa at 16:11 on Tuesday suggest a consistent reading habit, likely after work. The doormat moved to the entry hook at 16:12 could indicate returning home from work. No evidence of multiple residents or children. — The reading glasses at 16:11 on a Tuesday suggest a post-work relaxation activity. The doormat at 16:12 is consistent with coming home. The newspaper on Monday morning remains a strong indicator of a morning routine. The pillow movements on Monday could be a single person's nap or bed-making. The evening lamp and bath mat on Monday also fit a wind-down routine. The dining chair movements at 10:42 and 21:04/21:20 are ambiguous but could be meal times.
+2. (p=0.20) A couple or family with at least one person who works from home or has a flexible schedule. The reading glasses on the sofa at 16:11 could be one person, while the doormat at 16:12 could be another arriving. The dining chair moved multiple times in the evening (21:04, 21:20) might indicate multiple people sitting down. However, the newspaper at 07:34 on Monday is more typical of a single person's routine. — The doormat at 16:12 could be someone arriving home, and the reading glasses at 16:11 could be another person already there. The dining chair movements at 21:04 and 21:20 could be two separate sittings or adjustments. But the lack of other multiple-person indicators (e.g., two toothbrushes, multiple plates) keeps this less likely.
+3. (p=0.10) A retiree or someone with a relaxed schedule, as the newspaper is read in the morning, and the reading glasses on the sofa at 16:11 suggest a leisurely afternoon. The doormat at 16:12 could be a simple errand. No work-related items observed. The evening activities (lamp, bath mat) suggest a calm, home-centered evening. — The reading glasses at 16:11 on a Tuesday afternoon could indicate a retiree reading. The doormat at 16:12 might be a quick trip out. However, the newspaper at 07:34 is also consistent with a working person, and the lack of work items is not conclusive. The probability is lowered because the doormat timing (16:12) is more typical of a workday return.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading routine, suggests print media preference)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday pillow move, could indicate nap or bed-making)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, lamp moved to seating area)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath/shower routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (second pillow move, possibly preparing for sleep)
+- Day 1, 16:11 — reading_glasses at sofa_l1 (afternoon reading, likely post-work or leisure)
+- Day 1, 16:12 — doormat at entry_hook_e1 (arrival home, suggests workday return)
+- Day 1, 21:04 — dining_chair at table_d1 (evening meal or activity, repeated at 21:20)
+
+## Notes
+Day 1 (Tuesday) shows reading glasses at 16:11 and doormat at 16:12, reinforcing a workday return. No newspaper on Tuesday morning yet (only observed Monday). Need to check if newspaper appears on other weekdays. The dining chair moved at 21:04 and 21:20 could be multiple people or one person adjusting. The wall clock moved to tv_stand at 18:37 is unusual but may be a one-time adjustment. Continue to track work-related items (laptop, briefcase) and weekend patterns.

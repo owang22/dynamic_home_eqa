@@ -1,0 +1,25 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Single elderly individual living alone, with a structured daily routine that includes morning and evening rituals, and uses assistive devices and health monitoring. — Consistent morning pill organizer, reading glasses, hearing aid case, walker pouch, and evening bath mat, floor lamp, and phone at nightstand. Blood pressure cuff on Sunday and pill organizer on Monday confirm health management. No evidence of multiple residents or children. Day 11 events (reading glasses at counter, bowl at sink, picture frame at side table, dining chair at table, floor lamp at recliner, waste bin at counter, bed pillow at bed, remote at nightstand) are all consistent with a quiet, home-based routine of an elderly person.
+2. (p=0.05) Single adult with a regular 9-to-5 job, working from home or hybrid, who maintains a tidy home and has a consistent evening routine. — The morning coffee mug and plate at sink could be from a work-from-home breakfast. The floor lamp at recliner at 12:21 might indicate a lunch break. However, the mobility and hearing aids contradict a typical working-age adult, making this less likely. Weekend evidence does not support a work-from-home pattern. Day 11 events (no laptop, no office chair movement) further weaken this hypothesis.
+
+## Selected evidence
+- Day 2, 08:33 — walker_pouch at recliner_l1 (mobility aid, elderly resident)
+- Day 3, 22:03 — hearing_aid_case at nightstand_r2 (hearing aid removal at bedtime)
+- Day 4, 07:01 — hearing_aid_case at counter_k1 (morning hearing aid handling, routine)
+- Day 0, 07:38 — plate at table_d1 (morning breakfast, routine start)
+- Day 0, 20:06 — floor_lamp at recliner_l1 (evening lamp moved to recliner, reading/relaxing)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath, nightly routine)
+- Day 2, 13:52 — bed_pillow at bed_r2 (afternoon nap or bed-making)
+- Day 4, 20:54 — floor_lamp at recliner_l1 (evening relaxation spot)
+- Day 4, 22:03 — remote at nightstand_r2 (bedtime routine)
+- Day 5, 07:26 — hearing_aid_case at side_table_l1 (morning hearing aid handling, weekend consistency)
+- Day 5, 08:37 — walker_pouch at recliner_l1 (mobility aid used in morning, weekend)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening bath, weekend routine)
+- Day 7, 07:06 — pill_organizer at counter_k1 (medication routine, Monday)
+- Day 7, 07:06 — reading_glasses at counter_k1 (reading aid, Monday)
+- Day 9, 17:12 — bp_cuff at bathroom_c1 (blood pressure monitoring, health routine)
+
+## Notes
+Day 11 (Friday) shows reading glasses at counter (morning reading), bowl at sink (breakfast cleanup), picture frame at side table (personal item moved, possibly cleaning or display), dining chair at table (midday meal), floor lamp at recliner (afternoon relaxation), waste bin at counter (cleaning, twice), bed pillow at bed (evening bed-making), remote at nightstand (bedtime routine). No evidence of work-related items (laptop, office chair) or second person. The routine remains consistent with an elderly person living alone. Open question: does the resident have a caregiver who visits? The consistent self-care suggests living alone but with assistance needs. Day-of-week patterns: weekdays and weekends show similar morning and evening routines, with slight timing variations. No work-related items observed, supporting the elderly hypothesis.

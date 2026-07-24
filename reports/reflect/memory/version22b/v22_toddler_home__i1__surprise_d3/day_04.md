@@ -1,0 +1,25 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Family with a young child (toddler/preschooler) and a parent who works from home or is a stay-at-home parent — The new evidence strongly reinforces this hypothesis. The bowl at high_chair_d1 at 06:49 (Friday morning) is a classic sign of a toddler's breakfast routine, and the high chair itself is a strong indicator of a young child. The blanket at play_mat_n1 at 08:50 suggests comfort/play time, and the sippy_cup at play_mat_n1 at the same time confirms child feeding. The sippy_cup at sink_k1 at 18:30 indicates post-meal cleanup, consistent with a child's dinner. The plate at cupboard_k1 at 21:45 shows evening cleanup. The waste_bin at counter_k1 at 07:09 and 08:41 is mundane but fits a family kitchen routine. The picture_frame at coffee_table_l1 at 18:34 suggests a family photo, common in households with children. The pattern of child-related items (high chair, sippy cup, blanket, bowl) on a Friday morning and evening confirms a consistent daily routine, likely with a parent at home.
+2. (p=0.07) Single adult with a pet (e.g., dog) that requires a play mat and sippy cup — The high chair and bowl at 06:49 are very unlikely for a pet; pets typically don't use high chairs. The blanket and sippy cup at play_mat_n1 could be for a pet, but the high chair is a strong counter-indication. This hypothesis is further weakened.
+3. (p=0.03) Elderly person living alone with a visiting grandchild occasionally — The consistent daily routine (Friday morning high chair, play mat, sippy cup) suggests the child is present every weekday, not just occasionally. The high chair is a permanent fixture, not a temporary item. This hypothesis is now very unlikely.
+
+## Selected evidence
+- Day 0, 08:41 — sippy_cup at play_mat_n1 (indicates a young child, likely toddler/preschooler)
+- Day 3, 08:57 — dining_chair at table_d1 (morning meal, likely for child or parent)
+- Day 3, 09:04 — board_book at play_mat_n1 (morning reading/play with child, confirms child's presence)
+- Day 3, 11:34 — ball at toy_corner_l1 (child's play activity, consistent with toddler)
+- Day 3, 11:34 — board_book at toy_corner_l1 (child moves book to toy corner, typical play behavior)
+- Day 3, 17:13 — board_book at toy_corner_l1 (afternoon play, child's routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation, consistent with child's bedtime)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening bedtime routine, repeated pattern)
+- Day 4, 06:49 — bowl at high_chair_d1 (morning breakfast for toddler, strong child indicator)
+- Day 4, 08:50 — blanket at play_mat_n1 (morning comfort/play, child routine)
+- Day 4, 08:50 — sippy_cup at play_mat_n1 (morning drink for child, consistent with toddler)
+- Day 4, 18:30 — sippy_cup at sink_k1 (post-dinner cleanup, child's cup washed)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (family photo, common in family homes)
+- Day 4, 21:45 — plate at cupboard_k1 (evening cleanup, household routine)
+
+## Notes
+The high chair (high_chair_d1) is a new object that strongly confirms a toddler. The bowl at 06:49 on Friday suggests a morning meal routine. The blanket at play_mat_n1 at 08:50 may indicate a comfort item for the child. The sippy_cup at sink_k1 at 18:30 suggests the child's cup is washed after dinner, consistent with a family evening routine. The picture_frame at coffee_table_l1 at 18:34 could be a family photo, reinforcing the family hypothesis. Need to observe weekend days (days 5-6) to see if the child is present or if there are different activities (e.g., outdoor gear, toys). Also look for work-related items (laptop, work bag) to confirm if a parent works from home. The waste_bin events at counter_k1 are mundane and not included in selected evidence.

@@ -1,0 +1,21 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single adult with a structured daily routine, likely working from home or with a regular job, who maintains a tidy home and has a hobby involving cricket care (feeding or housing crickets for a reptile or terrarium). — The cricket_tub moving from terrarium_stand to cricket_shelf at 08:40 suggests active cricket husbandry, likely for feeding a pet (e.g., lizard, frog) or as part of a terrarium ecosystem. Scissors used at the same shelf indicate preparation (e.g., cutting food or plants). Keys arriving at 18:25 suggest a return from work or errands, consistent with a working adult. Lunch box on Day 0 and bed pillow tidying reinforce a structured routine.
+2. (p=0.20) A person who values comfort and relaxation, possibly a retiree or someone with flexible hours, as seen by the bath mat and floor lamp placement in the evening. — Floor lamp at sofa at 12:21 (earlier than previous evening) and bed pillow at 18:51 and 21:57 suggest a relaxed, possibly homebound routine. However, the cricket care and keys at 18:25 indicate some out-of-home activity, reducing probability.
+3. (p=0.10) A family with at least one child, given the presence of a lunch box and picture frame, but the evidence is weak. — No new child-related evidence today. Cricket tub and scissors could be for a child's pet, but the structured timing (keys at 18:25, bed pillow at 18:51) suggests adult routine. Picture frame remains static. Probability lowered.
+
+## Selected evidence
+- Day 0, 08:03 — scissors at terrarium_stand_s1 (indicates plant or terrarium care hobby)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday bed tidying, suggests structured routine)
+- Day 0, 18:32 — lunch_box at sink_k1 (packed lunch returned, typical of working adult or school child)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation setup)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath routine)
+- Day 3, 08:40 — cricket_tub at cricket_shelf_s1 (cricket husbandry, likely for pet feeding; surprising move from terrarium_stand)
+- Day 3, 08:40 — scissors at cricket_shelf_s1 (preparation for cricket care, e.g., cutting food)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (daytime relaxation, earlier than previous evening)
+- Day 3, 18:25 — keys at entry_hook_e1 (return from work or errands; surprising location suggests routine arrival)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening bed tidying, consistent with structured routine)
+
+## Notes
+Cricket tub and scissors at cricket shelf are new evidence of pet care (likely reptile/amphibian feeding). Keys at 18:25 suggest a regular return time, possibly after work. Day 3 is Thursday; need to compare with weekend (days 5-6) to see if lunch box, keys, and cricket care occur. Also check if doormat moves (seen at 07:57 and 09:02 today, possibly for cleaning). Floor lamp at 12:21 is earlier than Day 0's 20:06, suggesting flexible use. Bed pillow at 18:51 and 21:57 may indicate multiple tidying events or napping. Open question: is the cricket tub used daily? Does the picture frame ever move?

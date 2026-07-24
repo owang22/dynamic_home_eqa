@@ -54,6 +54,18 @@ class HouseholdSpec:
     profile: str                                  # base profile id in profiles/manual
     transform: Optional[dict] = None              # {"type":..., "params":{...}} or None
     per_object_shift: bool = False                # atyp_shift_v1 log-level op
+    instance: Optional[int] = None                # >=1 -> a SEED-VARIANT of the same
+                                                  # persona (new realization/layout
+                                                  # noise): the cheapest cluster
+                                                  # multiplier. Output dir + scene_id
+                                                  # get an "__i{n}" suffix; the base
+                                                  # profile (for room lookups) is
+                                                  # recovered by splitting on "__".
+
+    @property
+    def hh_id(self) -> str:
+        """Household id = profile, plus an __i{n} suffix for seed-variant instances."""
+        return self.profile if self.instance is None else f"{self.profile}__i{self.instance}"
 
 
 @dataclass
@@ -374,7 +386,10 @@ def build_household(hh: HouseholdSpec, spec: BankSpec, manual_dir: pathlib.Path,
         raise RuntimeError(f"{profile.household}: transformed profile FAILs V1-V5 "
                            f"(broken transformation); refusing to freeze")
 
-    seed = int(hashlib.sha256(f"{spec.name}:{profile.household}:{spec.seed}"
+    # instance suffix -> a distinct realization seed (seed-variant household),
+    # and a distinct household id / output dir; the base profile is unchanged.
+    hh_id = hh.hh_id
+    seed = int(hashlib.sha256(f"{spec.name}:{hh_id}:{spec.seed}"
                               .encode()).hexdigest()[:8], 16)
     rng = random.Random(seed)
     events, snapshots, meta = simulate(profile, n_days=spec.n_days, seed=seed)
@@ -418,8 +433,9 @@ def build_household(hh: HouseholdSpec, spec: BankSpec, manual_dir: pathlib.Path,
     coverage = observation_coverage(events, observations, profile.placements)
     daytype = daytype_movement_stats(events, profile.placements, spec.n_days, workdays)
 
-    # write episode dir (ReplayWorld format)
-    hdir = out_dir / profile.household
+    # write episode dir (ReplayWorld format) — dir/scene_id use the (maybe
+    # suffixed) household id so seed-variant instances live side by side.
+    hdir = out_dir / hh_id
     hdir.mkdir(parents=True, exist_ok=True)
     obj_ids, recep_ids = _int_ids(profile)
     recep_meta = {str(i): {"label": lbl,
@@ -427,7 +443,7 @@ def build_household(hh: HouseholdSpec, spec: BankSpec, manual_dir: pathlib.Path,
                            "category": None if lbl == ELSEWHERE_LABEL else default_class(lbl)}
                   for lbl, i in recep_ids.items()}
     (hdir / "registry.json").write_text(json.dumps({
-        "scene_id": profile.household, "n_days": spec.n_days,
+        "scene_id": hh_id, "n_days": spec.n_days,
         "days": list(range(spec.n_days)), "objects": obj_ids, "receptacles": recep_ids,
         "receptacle_meta": recep_meta, "elsewhere_id": ELSEWHERE_ID,
         "object_class": {o: p.cls for o, p in profile.placements.items()},
@@ -459,7 +475,7 @@ def build_household(hh: HouseholdSpec, spec: BankSpec, manual_dir: pathlib.Path,
     (hdir / "class_hazards.json").write_text(json.dumps(hazards, indent=1))
 
     return {
-        "household": profile.household, "base_profile": hh.profile,
+        "household": hh_id, "base_profile": hh.profile, "instance": hh.instance,
         "status": profile.status, "transformation": profile.transformation,
         "per_object_shift": hh.per_object_shift,
         "n_objects": len(profile.placements), "n_events": len(events),

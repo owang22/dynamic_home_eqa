@@ -1,0 +1,17 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Young family with a toddler (1-3 years old) — Day 7 confirms the return to strict weekday routines: early breakfast (06:50), midday cleanup (12:45), and structured evening wind-down (19:30 book at crib). The persistence of toddler-specific items (sippy cup, high chair, board books) and the clear distinction between weekend flexibility and weekday structure strongly supports this primary hypothesis. The lack of adult work objects during the day remains consistent with a stay-at-home parent or remote worker, but the 'Young Family' label is the best fit for the observed object density and routine complexity.
+2. (p=0.05) Single parent with a toddler — Still possible. The late cleanup (21:45) and adult phone usage (20:17) suggest adult activity, but the absence of clear 'second adult' signals (like a second laptop or distinct adult meal timing) keeps this as a low-probability alternative. The structured weekday routine does not contradict this, but the 'Young Family' label remains stronger due to the density of child-centric items and the specific weekend/weekday shift patterns.
+3. (p=0.00) Shared housing with a child guest — Discarded. The permanence of items and daily intensity of the routine make this highly unlikely. No new evidence suggests a transient guest.
+
+## Selected evidence
+- Day 7, 06:50 — sippy_cup/spoon at high_chair_d1 (weekday breakfast start, ~1h earlier than weekend Sat 06:52, confirming routine shift)
+- Day 7, 12:45 — sippy_cup at sink_k1 (midday cleanup, distinct from weekend leisure patterns, indicating structured day)
+- Day 7, 15:00 — board_book at play_mat_l1 (afternoon activity, consistent with weekend leisure but earlier than weekend 15:00 nap context, suggesting active play)
+- Day 7, 19:30 — board_book at crib_n1 (early bedtime routine, ~2h earlier than weekend wind-down, confirming weekday structure)
+- Day 7, 20:17 — phone at sofa_l1 (adult leisure/relaxation post-dinner, distinct from late-night bedtime phone use)
+- Day 7, 21:45 — bowl at cupboard_k1 (late dinner cleanup, consistent with Saturday's late wind-down but earlier than typical late-night adult activity)
+
+## Notes
+Day 7 (Monday) confirms the 'structured weekday' pattern: earlier breakfast (06:50), midday cleanup (12:45), and early bedtime routine (19:30 book at crib). The 'board_book' moves from play mat (afternoon) to crib (evening) on weekdays, indicating a structured wind-down. The 'phone' at the sofa at 20:17 suggests adult relaxation time before the child's bedtime. The 'Young Family' hypothesis remains strongest. Day 8 (Tuesday) will be critical to verify the consistency of these weekday patterns.

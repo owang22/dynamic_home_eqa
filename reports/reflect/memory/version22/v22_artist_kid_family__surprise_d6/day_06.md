@@ -1,0 +1,26 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) A single adult with a flexible work schedule, working from home on weekdays, who engages in home decoration and crafting in the evenings. Weekend mornings show a similar early start but with more decoration activity and a later evening routine. The absence of backpack departure on weekends confirms no work commute. — Day 6 (Sunday) reinforces the weekend pattern: no backpack, decoration events (floor_lamp, wall_clock) occur in the morning and early afternoon, and the tablet at craft_desk at 10:20 suggests crafting activity. The surprising plate at sink at 07:33 and plate at table at 12:28 indicate a later breakfast and lunch, consistent with a relaxed weekend schedule. Keys at entry_hook at 18:28 suggest a brief outing, possibly a walk or errand. The hypothesis remains strong.
+2. (p=0.20) A person with a consistent evening decoration/crafting hobby, often moving decorative items and using scissors/craft shelf in the evening. Weekend decoration occurs earlier in the day, suggesting more time for the hobby on weekends. — Day 6 shows floor_lamp at sofa at 09:33 and 10:12, and wall_clock at tv_stand at 12:18 and 18:09, indicating decoration activity spread throughout the day. The tablet at craft_desk at 10:20 suggests crafting. This is consistent with a hobby that is more active on weekends. No scissors or craft shelf observed today, but the pattern of moving decorative items continues.
+3. (p=0.05) A person with a variable bedtime routine, including an early evening rest and a later bedtime. On weekends, the evening routine shifts later, with later sleep times. — Day 6 shows no bed_pillow movement, and the latest event is keys at entry_hook at 18:28, suggesting the person was home by early evening. No late evening events observed today, which weakens the hypothesis of a later weekend bedtime. The absence of evidence reduces its probability.
+
+## Selected evidence
+- Day 0, 08:40 — backpack at elsewhere (weekday departure for work/school)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday rest, unusual for strict 9-to-5)
+- Day 0, 18:18 — scissors at craft_shelf_s1 (evening crafting activity)
+- Day 0, 19:28 — wall_clock at tv_stand_l1 (living room decoration)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (further decoration)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bathroom routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (evening bedtime preparation)
+- Day 0, 21:04 — picture_frame at coffee_table_l1 (decorating coffee table)
+- Day 3, 07:38 — tablet at coffee_table_l1 (morning leisure or work at home)
+- Day 3, 12:08 — fork and plate at table_d1 (midday meal at home, flexible schedule)
+- Day 3, 18:36 — backpack at backpack_rack_e1 (return from work/school in evening)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening rest before bedtime)
+- Day 4, 06:56 — bowl at table_d1 (early breakfast, weekday routine)
+- Day 5, 06:57 — tablet at table_d1 (weekend morning, similar early start but no breakfast cleanup)
+- Day 6, 10:20 — tablet at craft_desk_s1 (weekend crafting activity, surprising to model)
+
+## Notes
+Day 6 (Sunday) shows a weekend pattern consistent with Day 5: no backpack, decoration in morning/afternoon (floor_lamp, wall_clock), and a later breakfast (plate at sink at 07:33, plate at table at 12:28). The surprising tablet at craft_desk at 10:20 suggests crafting activity on weekends. Keys at entry_hook at 18:28 indicate a brief outing. No bed_pillow movement observed today, suggesting weekend bedtime may be later or less structured. Need to observe more weekdays to confirm weekday routine and see if decoration/crafting occurs on weekdays as well. The hypothesis of a second resident remains unsupported; all events can be explained by one person.

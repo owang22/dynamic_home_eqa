@@ -1,0 +1,21 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A student or teacher with a structured morning routine involving sports (whistle, track duffel) and academic work (grade folder, laptop). The track duffel and whistle together at 07:27 suggest a morning practice or coaching session. The duffel returns to the school bag at 18:50, consistent with a school day. The late fork at 21:45 and pillow at 21:57 indicate a late evening routine. This hypothesis is now the most likely. — The track duffel and whistle together at 07:27 on day 3 strongly support a sports-related morning activity, likely coaching or practice. The duffel returning to the school bag at 18:50 aligns with a school schedule. The grade folder from day 1 and laptop from day 2 further support an academic persona. The thermos was only seen once, so it may be a red herring or used on specific days.
+2. (p=0.20) A single working professional with a structured morning and evening routine, possibly commuting with a thermos and winding down at home. The thermos pattern from day 0 is still a strong indicator, but it has not been observed on days 1-3. The whistle and track duffel could be a side activity (e.g., gym before work). However, the lack of thermos and the presence of academic items reduce this probability. — The thermos was only seen on day 0, and no other work-related items (e.g., laptop at home desk during work hours) have been observed. The whistle and duffel could be a morning workout, but the duffel returning to the school bag suggests a school context rather than a gym bag. This hypothesis is less supported now.
+3. (p=0.10) A person with a flexible schedule who works from home or has varied daily routines, possibly a freelancer or remote worker. The varied timings of doormat and the presence of both academic and sports items could indicate a non-traditional schedule. However, the consistent morning sports activity and academic folder suggest a more structured routine, making this hypothesis less likely. — The evidence is becoming more consistent with a student/teacher routine. The doormat timings are still varied, but the track duffel and whistle pattern is emerging. This hypothesis remains a catch-all but is less probable.
+
+## Selected evidence
+- Day 0, 07:30 — thermos at elsewhere (possible commute, but not repeated)
+- Day 0, 16:24 — thermos at kitchen_table_k1 (returned home after work)
+- Day 1, 21:59 — grade_folder at school_bag_e1 (academic work, student/teacher)
+- Day 2, 07:31 — whistle at elsewhere (morning sports activity)
+- Day 2, 19:58 — laptop at kitchen_table_k1 (evening work/study)
+- Day 3, 07:27 — track_duffel at elsewhere (morning sports gear)
+- Day 3, 07:27 — whistle at elsewhere (consistent morning sports)
+- Day 3, 18:50 — track_duffel at school_bag_e1 (returned to school bag after day)
+- Day 3, 21:45 — fork at cupboard_k1 (late meal cleanup)
+- Day 3, 21:57 — bed_pillow at bed_r1 (bedtime)
+
+## Notes
+Day 3 (Thursday) shows a clear pattern: track duffel and whistle together at 07:27, suggesting a morning sports activity (coaching or practice). The duffel returns to the school bag at 18:50, indicating it is part of a school routine. The phone at 07:27 also leaves, likely with the person. No thermos observed today, so the thermos may be used only on certain days (e.g., Monday). The fork at 21:45 and pillow at 21:57 are consistent with late evening. Need to observe weekend days (5-6) to see if the sports pattern continues or if there are different activities. Also look for other objects like yoga mat or suitcase to further clarify persona.

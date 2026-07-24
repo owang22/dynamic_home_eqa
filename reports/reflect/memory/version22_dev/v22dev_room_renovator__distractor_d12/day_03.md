@@ -1,0 +1,25 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single working professional who commutes to work on some days and works from home on others, with a structured morning and evening routine, and engages in home improvement projects. — Day 3 shows keys, laptop_bag, and phone leaving at 08:11, indicating a commute to work. This contrasts with Day 1 and Day 2 where no keys event occurred, suggesting work-from-home days. The morning routine (doormat, bed_pillow, dining_chair) and evening routine (doormat, plate, bath_mat, floor_lamp) are consistent. The radio at workbench on Day 2 and paint roller/sanding block on Day 1 support a DIY hobby.
+2. (p=0.20) A person with a flexible schedule who works from home at least part of the week, takes midday breaks, and has a consistent evening wind-down. — The midday pillow events on Day 0 and Day 2 suggest naps or breaks. The laptop_bag at sofa on Day 2 at 17:41 could indicate end of work-from-home. However, Day 3's commute weakens this hypothesis. The evening routine (bath_mat, floor_lamp, phone) is consistent across days.
+3. (p=0.10) A couple or family with one person commuting and another at home, given the multiple dining chair events and variety of objects. — The multiple dining chair events (e.g., Day 1: 08:37, 10:42, 21:04, 21:20; Day 2: 16:06, 21:06) could indicate multiple people. The paint roller and sanding block suggest DIY by a different household member. However, the single set of keys and laptop_bag on Day 3 suggests only one person commuting. Evidence is still weak.
+
+## Selected evidence
+- Day 0, 08:11 — keys at elsewhere (resident leaves home, likely for work or errand)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday nap or break, suggests flexible schedule)
+- Day 1, 08:37 — dining_chair at table_d1 (breakfast at home, no keys event today)
+- Day 1, 10:42 — dining_chair at table_d1 (mid-morning break, suggests flexible schedule)
+- Day 1, 18:57 — paint_roller at paint_shelf_s1 (home improvement activity)
+- Day 2, 13:52 — bed_pillow at bed_r1 (midday nap or break, consistent with flexible schedule)
+- Day 2, 17:41 — laptop_bag at sofa_l1 (likely end of workday, suggests work-from-home)
+- Day 2, 19:35 — radio at workbench_s1 (hobby or project in the evening)
+- Day 3, 08:11 — keys, laptop_bag, phone at elsewhere (commute to work, contrasting with previous days)
+- Day 3, 08:57 — dining_chair at table_d1 (morning routine before leaving)
+- Day 3, 17:35 — doormat at entry_hook_e1 (return home from work)
+- Day 3, 18:00 — plate at table_d1 (evening meal)
+- Day 3, 21:12 — bath_mat at bathroom_c1 (evening bath/shower routine)
+- Day 3, 21:31 — floor_lamp at sofa_l1 (evening relaxation in living room)
+
+## Notes
+Day 3 (Thursday) shows a clear commute pattern: keys, laptop_bag, phone leave at 08:11 and return at 17:35 (doormat). This contrasts with Day 1 and Day 2 (Tuesday/Wednesday) where no keys event occurred, suggesting work-from-home days. Day 0 (Monday) also had a keys event at 08:11, so Monday and Thursday are commute days. Need to observe Friday (Day 4) and weekend (Days 5-6) to see if pattern holds. The midday pillow events on Day 0 and Day 2 may be specific to work-from-home days. The multiple dining chair events still need clarification—could be one person using the chair multiple times or multiple people. The wall clock movement from Day 1 remains unexplained.

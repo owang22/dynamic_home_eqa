@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Single working adult with a regular weekday routine, likely working from home or returning home in the evening. — The 08:57 dining chair at table_d1 and 10:46 coffee mug and plate at table_d1 suggest a morning work-from-home breakfast. The 15:05 blanket at gaming_chair_o1 indicates a break or relaxation, consistent with a flexible work schedule. The 21:58 energy can at desk_o1 reinforces late-night work or study. Single plate and pillow still point to a single resident.
+2. (p=0.07) Couple or family with one person working from home and another returning later, but no strong evidence of multiple people yet. — No new evidence of multiple residents. The single plate and pillow remain. The blanket at gaming chair could be used by a second person, but it's not conclusive.
+3. (p=0.03) Student living alone with a flexible schedule, possibly studying or working part-time. — The 15:05 blanket at gaming chair and 21:58 energy can at desk could indicate gaming or late-night study, but the consistent morning breakfast and lack of study materials (books, laptop) make this less likely.
+
+## Selected evidence
+- Day 0, 11:34 — plate at sink_k1 (lunch at home on Monday suggests work-from-home or flexible schedule)
+- Day 0, 18:47 — plate at table_d1 (dinner at home, typical evening meal)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, likely after work)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower/bath routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (preparing for sleep, consistent with regular bedtime)
+- Day 1, 19:13 — plate at table_d1 (dinner at home, consistent with Monday's evening meal)
+- Day 1, 21:20 — dining_chair at table_d1 (sitting down for a meal or activity, evening routine)
+- Day 1, 21:45 — energy_can at counter_k1 (late evening energy boost, could be for work or study)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning delivery or brief outing, consistent with work-from-home)
+- Day 2, 12:46 — keys at elsewhere (midday departure or errand, suggests lunch break away from home)
+- Day 2, 12:46 — phone at elsewhere (accompanies keys, likely the resident leaving)
+- Day 2, 21:40 — headset at desk_o1 (late-night work or calls, reinforces professional routine)
+- Day 2, 21:45 — plate at cupboard_k1 (late dinner cleanup, consistent with evening meal pattern)
+- Day 3, 10:46 — coffee_mug at table_d1 (morning coffee at home on Thursday, supports work-from-home)
+- Day 3, 15:05 — blanket at gaming_chair_o1 (afternoon break or relaxation, flexible schedule)
+
+## Notes
+Thursday shows a morning breakfast (coffee mug, plate at table_d1) and an afternoon blanket at gaming chair, suggesting a break or relaxation. The energy can at desk at 21:58 continues the late-night work/study pattern. Weekend observations (days 5-6) will be crucial to distinguish work-from-home vs. office worker. Look for objects like yoga mat, suitcase, laptop to refine persona. Still no evidence of multiple residents.

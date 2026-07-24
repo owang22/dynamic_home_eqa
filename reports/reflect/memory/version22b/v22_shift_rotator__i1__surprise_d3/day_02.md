@@ -1,0 +1,21 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single working professional with a structured morning routine and a job that requires a work badge and possibly a hi-vis vest (e.g., construction, warehouse, or field work). The early departure and use of thermos suggest a commute, and the evening items indicate a consistent wind-down. The picture frame on the coffee table suggests a personal touch, likely a single resident. — The work badge at 05:27 and hi-vis vest at 14:42 (returned to locker) confirm a work-related routine. The badge was expected elsewhere (surprise) but now fits a pattern of being taken to work and returned. The coffee mug at desk at 19:46 and then cupboard at 21:45 suggests evening work or relaxation at home, then cleanup. No evidence of multiple residents.
+2. (p=0.20) A remote worker or student with a flexible schedule who also has a part-time or occasional job requiring a badge and vest. The early badge movement could be for a shift, but the vest return at 14:42 and mug at desk in evening suggest home-based work later. — The hi-vis vest and badge returned to locker at 14:42 could indicate a shift ending, but the coffee mug at desk at 19:46 suggests evening work at home. The picture frame on coffee table is generic. Less likely given the early badge time (05:27) typical of a full-time worker.
+3. (p=0.10) A couple or family where one person works early (badge, vest) and another uses the home items (mug, picture frame) later. The single set of evening items (lamp, bath mat, pillow) could be shared, but the picture frame might indicate a family photo. — The work badge and vest suggest one resident with a job, but the coffee mug at desk at 19:46 could be another person. However, no multiple sets of items (e.g., two mugs, two pillows) have been observed. The picture frame is ambiguous. Low probability due to lack of strong evidence.
+
+## Selected evidence
+- Day 0, 05:14 — thermos at elsewhere (early morning preparation for work/commute)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, likely reading or screen time)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine, likely shower/bath)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation, consistent with 20:00-21:00 sleep schedule)
+- Day 2, 05:27 — work_badge at elsewhere (early departure for work, confirms work routine)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning arrival, likely after work or errand)
+- Day 2, 14:42 — hi_vis_vest at locker_shelf_e1 (returned to storage, suggests job requiring safety gear)
+- Day 2, 14:42 — work_badge at locker_shelf_e1 (returned with vest, indicates end of work shift)
+- Day 2, 19:46 — coffee_mug at desk_o1 (evening work or leisure at home desk)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (cleanup before bed, consistent with evening routine)
+
+## Notes
+Day 2 is Wednesday. The work badge and hi-vis vest suggest a job with safety gear (e.g., construction, warehouse). The badge was surprising at locker (expected elsewhere) but now fits a pattern of being taken to work and returned. The coffee mug at desk in evening and then cupboard suggests home-based activity after work. Need to observe weekend patterns: if badge/vest appear on weekends, it might indicate overtime or a different schedule. Also look for multiple sets of items (e.g., two mugs, two pillows) to confirm single vs. multiple residents. The picture frame at coffee table is a new personal item but not yet informative.

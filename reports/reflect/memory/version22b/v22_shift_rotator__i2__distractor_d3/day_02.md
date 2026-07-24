@@ -1,0 +1,21 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single adult with a regular 9-to-5 job, commuting to work. The work badge leaving at 05:07 and returning at 15:05, combined with the doormat at 08:38 (likely after leaving) and the evening routine (coffee mug at desk, dishes put away), strongly supports a standard workday schedule. The single items (fork, plate, pillow) confirm a single occupant. — Day 2 events: work_badge at elsewhere at 05:07 (leaving for work), doormat at entry_hook at 08:38 (possibly after leaving or tidying), work_badge at entry_hook at 15:05 (returning from work), picture_frame at coffee_table (decorative, neutral), dining_chair at table (likely used for meals), coffee_mug at desk (evening work or leisure), fork and plate at cupboard (cleanup after dinner). This pattern is highly consistent with a commuter who works outside home.
+2. (p=0.08) A person with a flexible schedule, possibly working from home or having non-standard hours. The early badge departure (05:07) could be for a morning shift or personal activity, and the return at 15:05 could be early. However, the doormat at 08:38 and the evening desk coffee suggest some home-based activity. This hypothesis is less likely given the clear badge pattern. — The work badge events are strong evidence of a commute, but the early return (15:05) could indicate a flexible schedule or part-time work. The coffee mug at desk at 19:13 might be for evening work or leisure. Still, the consistency with day 1's doormat at 16:12 suggests a typical workday end.
+3. (p=0.02) A couple or family with at least one adult, but the single items (fork, plate, pillow, doormat, keys, thermos) and single badge suggest a single occupant. No evidence of multiple residents yet. — All observed objects are singular (one fork, one plate, one pillow, one doormat, one set of keys, one thermos, one work badge). No second person's items have appeared. This hypothesis is nearly ruled out.
+
+## Selected evidence
+- Day 0, 05:24 — phone at elsewhere (early morning phone activity, possibly alarm or morning routine)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, turning on lamp)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath or shower routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation)
+- Day 1, 16:12 — doormat at entry_hook_e1 (returning home in late afternoon, consistent with workday)
+- Day 1, 22:39 — keys at counter_k1 (end-of-day arrival, likely after work)
+- Day 1, 22:39 — thermos at sink_k1 (end-of-day cleanup, possibly from work lunch)
+- Day 2, 05:07 — work_badge at elsewhere (leaving for work early morning, confirms commute)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (returning from work in mid-afternoon, consistent with standard workday)
+- Day 2, 19:13 — coffee_mug at desk_o1 (evening activity at desk, possibly work or leisure)
+
+## Notes
+Three weekdays observed (Mon, Tue, Wed). The work badge pattern (leaving ~05:07, returning ~15:05) is strong evidence of a commute. The early phone on day 0 (05:24) aligns with the badge departure. The doormat at 08:38 on day 2 is puzzling—perhaps it was moved after leaving? Need to check if doormat events repeat. Weekend days (5-6) will be crucial to see if routine changes (e.g., no badge movement, later wake-up). Also look for laptop at desk during midday to confirm work-from-home, or suitcase leaving for days to indicate travel. Household size still appears to be single adult.

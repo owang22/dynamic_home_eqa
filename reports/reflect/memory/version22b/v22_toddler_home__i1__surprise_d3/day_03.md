@@ -1,0 +1,24 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Family with a young child (toddler/preschooler) and a parent who works from home or is a stay-at-home parent — The board_book appearing at play_mat_n1 in the morning (09:04) and later moving to toy_corner_l1 (11:34, 17:13) strongly confirms a young child's presence and a regular play/reading routine. The dining chair at table_d1 at 08:57 suggests a morning meal, likely for the child. The ball at toy_corner_l1 at 11:34 reinforces child play. The evening bed_pillow at bed_r1 (18:51, 21:57) indicates a consistent bedtime routine. The plate at cupboard_k1 at 21:45 suggests post-dinner cleanup. This pattern is consistent with a family with a young child and a parent at home during the day.
+2. (p=0.10) Single adult with a pet (e.g., dog) that requires a play mat and sippy cup — The board_book and ball are less typical for a pet, but a highly trained pet could interact with a ball. However, the board_book is strongly associated with a child. The probability is reduced from 0.20 to 0.10 as the evidence increasingly points to a child.
+3. (p=0.05) Elderly person living alone with a visiting grandchild occasionally — The board_book and ball appearing on a Thursday morning and afternoon suggest regular childcare, not just occasional visits. The probability is reduced from 0.10 to 0.05 as the evidence points to a consistent daily routine.
+
+## Selected evidence
+- Day 0, 08:41 — sippy_cup at play_mat_n1 (indicates a young child, likely toddler/preschooler)
+- Day 3, 08:57 — dining_chair at table_d1 (morning meal, likely for child or parent)
+- Day 3, 09:04 — board_book at play_mat_n1 (morning reading/play with child, confirms child's presence)
+- Day 3, 11:34 — ball at toy_corner_l1 (child's play activity, consistent with toddler)
+- Day 3, 11:34 — board_book at toy_corner_l1 (child moves book to toy corner, typical play behavior)
+- Day 3, 17:13 — board_book at toy_corner_l1 (afternoon play, child's routine)
+- Day 0, 17:01 — cushion at sofa_l1 (evening relaxation, parent winding down)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening reading/screen time, parent routine)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath, likely for child or adult)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation, consistent with child's bedtime)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening bedtime routine, repeated pattern)
+- Day 3, 21:45 — plate at cupboard_k1 (post-dinner cleanup, household routine)
+- Day 3, 21:57 — bed_pillow at bed_r1 (final bedtime preparation)
+
+## Notes
+The board_book at play_mat_n1 and toy_corner_l1 on Thursday (day 3) confirms a regular childcare routine, not just Monday. The ball at toy_corner_l1 supports child play. The dining chair at table_d1 at 08:57 suggests a morning meal, possibly breakfast for the child. The evening bed_pillow at 18:51 and 21:57 indicates a consistent bedtime routine, possibly for the child. Need to observe weekend days (days 5-6) to see if the child is present or if there are different activities (e.g., outdoor gear, toys). Also look for work-related items (laptop, work bag) to confirm if a parent works from home or is stay-at-home. The plate at cupboard_k1 at 21:45 suggests dinner cleanup, typical for any household but consistent with family routine.

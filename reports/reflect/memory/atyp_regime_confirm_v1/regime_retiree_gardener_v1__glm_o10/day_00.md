@@ -1,0 +1,16 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) Professional adult working from home with regular meal times — The presence of coffee_mug at 07:03 suggests morning routine, followed by meals at regular times (lunch around 12:00). Objects being moved to sink and cupboard indicate dishwashing routine typical of a working adult.
+2. (p=0.20) Retired person with relaxed daily schedule — Late morning coffee (07:03) and leisurely reading with glasses on sofa could indicate retirement. However, the relatively structured meal timing somewhat contradicts this hypothesis.
+3. (p=0.10) Student with flexible schedule — The presence of reading materials and phone on coffee table could suggest study habits, but the structured meal timing is more consistent with a working professional than a typical student schedule.
+
+## Selected evidence
+- Day 0, 07:03 — coffee_mug seen at table_d1 (indicates morning routine)
+- Day 0, 07:03 — reading_glasses seen at table_d1 (suggests reading during breakfast)
+- Day 0, 12:03 — plate seen at table_d1 (indicates lunch routine)
+- Day 0, 15:56 — phone seen at coffee_table_l1 (suggests leisure time in afternoon)
+- Day 0, 15:56 — reading_glasses seen at sofa_l1 (indicates reading during relaxation time)
+
+## Notes
+Need to observe weekend patterns to distinguish between workdays and free days. Should look for exercise equipment, work materials, or social activity indicators to further refine persona hypothesis.

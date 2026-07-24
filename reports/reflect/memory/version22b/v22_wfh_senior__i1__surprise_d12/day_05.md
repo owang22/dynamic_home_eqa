@@ -1,0 +1,26 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single professional who works from home, with a structured but relaxed routine, possibly older or needing reading glasses. — Consistent morning routine with reading_glasses, newspaper, coffee_mug, and bowl at table (Day 4) suggests breakfast at table, not desk. No headset or desk events today (Friday) may indicate a lighter workday or day off. Evening bath_mat and bed_pillow events remain single-person. The picture_frame moves (Day 2, Day 4) are now likely decorative adjustments, not child play, given no other child evidence.
+2. (p=0.10) A remote worker who also does home yoga or exercise in the morning. — No exercise equipment observed yet, but the early morning routine (06:51) could include exercise before breakfast. The waste_bin at counter multiple times (07:09, 07:15, 08:41) might indicate kitchen cleanup after a quick workout snack. Hypothesis remains plausible but weak.
+3. (p=0.05) A couple or family with a child, but with a quiet weekday routine. — The picture_frame moves (Day 2, Day 4) are the only potential child evidence, but no toys, multiple headsets, or other child-specific items observed. Today's events (reading_glasses, newspaper, bowl, coffee_mug at table) are more consistent with an older adult. This hypothesis is nearly contradicted and will be removed if no further evidence appears.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (work-from-home start at 9am)
+- Day 0, 12:30 — dining_chair at table_d1 (lunchtime meal)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath/shower)
+- Day 0, 20:54 — bed_pillow at bed_r1 (preparing for sleep)
+- Day 2, 09:08 — floor_lamp at sofa_l1 (morning lighting adjustment, break from desk)
+- Day 2, 09:12 — phone at desk_o1 (work-from-home start, phone used at desk)
+- Day 2, 12:05 — picture_frame at coffee_table_l1 (decorative item moved, possibly child or decoration)
+- Day 2, 15:08 — picture_frame at coffee_table_l1 (second move, suggests child play or decoration adjustment)
+- Day 2, 18:48 — bath_mat at bathroom_c1 (evening bath/shower, consistent with Day 0)
+- Day 3, 07:02 — reading_glasses at table_d1 (morning reading/breakfast, suggests older adult)
+- Day 3, 07:42 — coffee_mug at desk_o1 (early work start or breakfast at desk, surprising but now integrated)
+- Day 3, 07:42 — newspaper at coffee_table_l1 (morning reading routine)
+- Day 3, 21:42 — phone at nightstand_r1 (evening wind-down, phone used in bedroom)
+- Day 4, 06:51 — bowl, coffee_mug, newspaper, reading_glasses at table_d1 (Friday breakfast at table, not desk; coffee_mug and newspaper surprising because expected elsewhere)
+- Day 4, 14:40 — bath_mat at bathroom_c1 (afternoon bath/shower, unusual timing, possibly Friday afternoon relaxation)
+
+## Notes
+Day 4 (Friday) shows a different morning pattern: all breakfast items (bowl, coffee_mug, newspaper, reading_glasses) at table_d1 at 06:51, not at desk. This suggests a relaxed Friday routine or day off. The coffee_mug and newspaper were surprising because the model expected them at desk and coffee_table respectively (based on Day 3). No headset or desk events today, supporting a lighter workday. The multiple waste_bin events at counter (07:09, 07:15, 08:41) might indicate kitchen cleanup after breakfast. The afternoon bath_mat events (14:40, 16:17, 16:26) are unusual for a weekday and may indicate a midday shower or relaxation. The picture_frame moves (18:34, 19:00) are now likely decorative adjustments. Need to observe weekend patterns (Day 5-6) to see if this relaxed routine continues. Also watch for exercise equipment to confirm or reject the exercise hypothesis. The couple/family hypothesis is nearly contradicted and will be removed if no further child evidence appears.

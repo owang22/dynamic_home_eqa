@@ -1,0 +1,14 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Rotating Shift Worker (Single) — Day 6 confirms the weekend rest pattern: late start (11:15), no work gear, single serving dinner, and evening relaxation (remote/phone). The consistency with Day 5 strengthens the 'single resident' and 'shift worker' profile. The lack of any second-person artifacts or distinct routines for a partner/student remains absolute.
+2. (p=0.03) Remote Worker with Variable Schedule — Still contradicted by the absence of work equipment (laptop, badges) on the weekend and the passive leisure activity (TV/phone) in the evening. A remote worker might work on weekends, but the strict separation seen in previous days (work gear present weekdays, absent weekends) suggests a physical job with fixed shifts rather than flexible remote work.
+3. (p=0.02) Two-Person Household (One Shift Worker, One Remote/Student) — Remains highly improbable. Day 6 shows only one set of keys, one phone usage pattern, and single-serving dishes. If a second person existed, we would expect either a second set of keys/phone or distinct meal times/quantities. The 'late breakfast' anomaly from previous days is now fully explained by the shift worker's sleep schedule, removing the need for a second person hypothesis.
+
+## Selected evidence
+- Day 6, 11:15 — keys/phone at counter_k1 (late weekend start, confirms rest day, single set of items)
+- Day 6, 18:37 — plate/fork at table_d1 (single serving dinner, consistent with Day 5)
+- Day 6, 21:03 — remote at coffee_table_l1 (evening leisure, no work prep, reinforces non-remote status)
+
+## Notes
+Day 6 (Sunday) mirrors Day 5 (Saturday) perfectly: late start, single meal, evening relaxation. This solidifies the 'weekend rest' pattern for the shift worker. No new anomalies detected. The hypothesis of a second person is effectively discarded as the 'late breakfast' was likely just the shift worker waking up late. Next observation should focus on Day 0 (Monday) to see the transition back to work gear.

@@ -1,0 +1,12 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A pet owner who works from home or has a flexible schedule, as the blanket on the pet bed in the morning suggests a pet is cared for during the day. The phone on the counter at 17:59 and fork in the cupboard at 21:45 are mundane and do not contradict this. — The pet bed blanket remains the strongest distinctive evidence. The new events are typical household actions and do not add discriminatory information.
+2. (p=0.40) A remote worker or someone with a home-based routine, as the midday plate at home on day 0 and the pet bed indicate a home environment. The phone and fork events are consistent with a typical evening routine. — The evidence still supports a home-based routine, but the pet bed is more specific. No new evidence shifts this hypothesis.
+
+## Selected evidence
+- Day 0, 09:49 — blanket at pet_bed_l1 (indicates a pet lives here, likely a dog or cat, and the resident cares for it in the morning)
+- Day 0, 13:21 — plate at sink_k1 (mundane, but confirms a midday meal at home, consistent with a home-based routine)
+
+## Notes
+Only two days observed. Need to see if the pet bed blanket is a daily routine. Also look for pet food bowls, toys, or work-related objects (laptop, desk). Weekend patterns will help distinguish work-from-home vs. office worker. The phone and fork events today are mundane and do not add new information.

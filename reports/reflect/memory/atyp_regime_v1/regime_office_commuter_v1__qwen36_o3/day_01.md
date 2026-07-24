@@ -1,0 +1,15 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard Office Worker — The appearance of a work_lanyard at the entry hook on Day 1 strongly confirms a professional office job, reinforcing the Day 0 transit card evidence. The consistent late dinner (21:45) aligns with a standard 9-5 or 9-6 workday with commute time.
+2. (p=0.04) Remote Worker with Errands — While the laptop was seen elsewhere on Day 0, the work_lanyard suggests physical office attendance. This hypothesis is now highly unlikely unless the lanyard is for a co-working space, but the transit card usage contradicts this.
+3. (p=0.01) Shift Worker / Night Owl — The consistent 21:45 dinner time and morning/evening transit/lanyard patterns suggest a regular diurnal schedule, not irregular shifts. This hypothesis is effectively discarded.
+
+## Selected evidence
+- Day 0, 08:34 — laptop at elsewhere (indicates leaving home with work device, suggesting commute or remote work off-site)
+- Day 0, 18:05 — transit_card at entry_hook_e1 (strong signal of returning from a commute via public transport)
+- Day 0, 21:45 — bowl at cupboard_k1 (late dinner, potentially indicating a long work day or specific dietary habit)
+- Day 1, 17:36 — work_lanyard at entry_hook_e1 (confirms professional office employment; timing suggests arrival home from work)
+
+## Notes
+The work_lanyard appearing at 17:36 on Tuesday (Day 1) strongly supports the 'Standard Office Worker' hypothesis. The late dinner time (21:45) persisted on Day 1, suggesting a consistent routine. Need to verify if the laptop appears at 'elsewhere' again on Day 2 (Wednesday) to confirm if the morning departure involves work gear. Check if the transit card appears on Day 2 morning.

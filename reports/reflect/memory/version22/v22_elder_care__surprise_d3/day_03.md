@@ -1,0 +1,21 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single adult living alone, likely working from home or with a flexible schedule, who uses the sofa and recliner in the evening and has a consistent bedtime routine. — The phone on the sofa at 14:18 (Day 0) and the coffee mug at side_table_l1 at 08:22 (Day 3) suggest a relaxed, home-based lifestyle. The hearing aid case at nightstand_r2 at 22:03 (Day 3) indicates a single resident with a specific health need, and the consistent evening routine (bath mat, bed pillow) supports this. No evidence of multiple residents or children.
+2. (p=0.20) A remote worker or student who spends most of the day at home, with a structured evening routine and a morning coffee habit. — The coffee mug at table_d1 at 07:42 (Day 3) and then at side_table_l1 at 08:22 suggests a morning work/study break. The plate at sink_k1 at 08:22 and fork at sink_k1 at 12:36 indicate meals at home during the day. The hearing aid case suggests a resident who may be older or have a condition, but the daytime home presence aligns with remote work/study.
+3. (p=0.10) A couple or family with at least one adult who works a standard 9-to-5 job, coming home in the evening and engaging in household tasks. — The morning coffee and plate at sink could be from one adult leaving for work, but the lack of multiple personal items (e.g., second phone, laptop) and the single hearing aid case make this less likely. The evening routine could be shared, but no strong evidence of multiple residents.
+
+## Selected evidence
+- Day 0, 07:38 — plate at table_d1 (breakfast before a typical workday start, but no work items seen later)
+- Day 0, 14:18 — phone at sofa_l1 (afternoon break, suggests flexible schedule or work-from-home)
+- Day 0, 20:06 — floor_lamp at recliner_l1 (evening relaxation, reading or TV)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine)
+- Day 0, 20:54 — bed_pillow at bed_r2 (consistent bedtime, around 21:00)
+- Day 3, 07:42 — coffee_mug at table_d1 (morning coffee, likely start of day)
+- Day 3, 08:22 — coffee_mug at side_table_l1 (moved to side table, suggests relaxed morning at home)
+- Day 3, 08:22 — plate at sink_k1 (breakfast dishes, consistent with home-based morning)
+- Day 3, 12:36 — fork at sink_k1 (lunch dishes, confirms daytime home presence)
+- Day 3, 22:03 — hearing_aid_case at nightstand_r2 (indicates a resident with hearing aid, likely single adult)
+
+## Notes
+Day 3 (Thursday) shows a clear morning routine with coffee and breakfast at home, and lunch dishes at 12:36, supporting a work-from-home or flexible schedule. The hearing aid case is a new, strong indicator of a single resident with a specific need. The surprising events (coffee_mug at side_table_l1, plate at sink_k1, fork at sink_k1) were unexpected by the model but are consistent with a home-based lifestyle. Need to verify if the 07:38 plate on Day 0 was a one-off or part of a pattern. Weekend patterns (Day 5-6) may differ. No evidence of children or pets yet.

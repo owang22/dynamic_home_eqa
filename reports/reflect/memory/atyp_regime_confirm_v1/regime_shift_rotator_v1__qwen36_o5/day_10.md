@@ -1,0 +1,21 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Field Technician / Site Worker — The hi-vis vest on Day 9 is a strong discriminator for trade/site work. Day 10 shows the work badge leaving at 13:29, suggesting a midday site visit or administrative task at a different location, consistent with a mobile role. Early departures (05:00-05:30) align with shift starts or travel time.
+2. (p=0.10) Hybrid Office Worker (Variable Schedule) — The laptop at home on Day 8 and badge at home on Day 8/9 could imply remote work days. However, the hi-vis vest and early departures make this less likely than pure field work. The badge leaving midday on Day 10 is ambiguous but fits a hybrid model where they leave for client meetings.
+3. (p=0.05) Standard Office Worker (Flexible/Late Start) — Consistently contradicted by early departures (05:00-05:30) and the presence of specialized gear (hi-vis vest). The midday badge departure on Day 10 is the only slight support, but the overall pattern is too irregular and early for a standard 9-5 role.
+
+## Selected evidence
+- Day 0, 05:09 — work_badge at elsewhere (Early departure; establishes baseline routine)
+- Day 2, 05:29 — laptop at elsewhere (Work equipment leaving; supports mobile workflow)
+- Day 7, 04:45 — thermos at counter_k1 (Early morning prep; consistent with early start)
+- Day 8, 05:08 — thermos at elsewhere (Early departure; reinforces early start habit)
+- Day 8, 14:25 — laptop at sofa_l1 (Work equipment at home midday; suggests hybrid or site admin)
+- Day 8, 14:25 — work_badge at nightstand_r1 (Badge at home midday; suggests return or non-commute day)
+- Day 9, 05:17 — thermos at elsewhere (Early departure; consistent with Day 0/2/8 pattern)
+- Day 9, 14:24 — hi_vis_vest at closet_r1 (CRITICAL: Suggests field work/site visit, not standard office)
+- Day 9, 14:24 — work_badge at nightstand_r1 (Badge at home midday; suggests resident is home, possibly after site visit)
+- Day 10, 13:29 — work_badge at elsewhere (Midday departure with badge; suggests site visit or client meeting, not typical office arrival)
+
+## Notes
+Day 10 (Thursday) shows the work badge leaving at 13:29, which is unusual for a standard office worker but plausible for a field technician visiting a site or office mid-day. The hi-vis vest was not seen on Day 10, suggesting it might be used intermittently or stored elsewhere. The early departure pattern (05:00-05:30) remains consistent. Need to observe if the laptop appears at home again to confirm hybrid work vs. site admin. The 'Standard Office Worker' hypothesis is effectively discarded.

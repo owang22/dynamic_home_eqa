@@ -1,0 +1,15 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A parent with a young child (toddler) who uses a play mat, has a crib, and uses sippy cups and toys. The child likely has a bedtime routine involving the crib. — Consistent evidence: play mat, sippy cup, ball, crib. The sippy cup at crib at 19:02 suggests a bedtime routine. The remote at coffee table at 21:43 is typical adult evening activity, not surprising for a parent.
+2. (p=0.05) A single adult with no children, but occasional child visitors. — The remote and fork events are typical adult household events. However, the child items (play mat, sippy cup, ball, crib) are too frequent and specific to be just visitors. This hypothesis is weak.
+
+## Selected evidence
+- Day 0, 08:49 — cushion at play_mat_n1 (child play area, likely young child)
+- Day 2, 11:10 — sippy_cup at sink_k1 (child feeding item, mid-morning)
+- Day 2, 17:07 — ball at toy_corner_l1 (child toy, late afternoon play)
+- Day 2, 19:02 — sippy_cup at crib_n1 (bedtime routine, child's crib)
+- Day 2, 21:43 — remote at coffee_table_l1 (adult evening activity, parent relaxing)
+
+## Notes
+The surprising events (sippy_cup at crib, remote at coffee_table) actually reinforce the parent-with-child hypothesis: sippy cup at crib is part of bedtime, remote at coffee table is parent evening activity. Need to check if play mat is used daily and if there are weekend patterns. Also look for work-from-home indicators (laptop, desk) or other adult routines.

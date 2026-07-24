@@ -1,0 +1,26 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single working professional who works from home or has a flexible schedule, with a consistent evening routine and a midday nap habit. — The midday nap is confirmed on Day 0, Day 2, and now Day 4 (pillow at 18:25, though earlier than previous days). The departure at 08:11 (keys) is consistent with a work start, but the chair at table at 18:22 and lamp at sofa at 20:54 suggest a return home and evening relaxation. The single set of keys and lack of multiple-person indicators (e.g., two phones, two bags) favor a single person. The early evening pillow might be a nap before dinner, which is still a nap habit.
+2. (p=0.15) A couple or family with at least one person who works from home or has a flexible schedule, and another who may have a standard work schedule. — The departure of keys at 08:11 could be one person leaving for work, while the chair at table at 18:22 and lamp at sofa at 20:54 could be another person's routine. However, the repeated single pillow events and lack of multiple distinct objects (e.g., two phones, two bags) make this less likely. The picture frame at coffee table (18:34) could be a shared item, but it's not strong evidence.
+3. (p=0.05) A night-shift worker or someone with an irregular sleep schedule, who naps during the day and is active in the evening. — The midday nap and evening activities (plate, phone, radio) could fit an irregular schedule, but the consistent evening wind-down (phone at nightstand at 21:55) and lack of late-night events make this less likely. Today's events show a departure at 08:11 and a return to routine, which is more typical of a standard schedule.
+
+## Selected evidence
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday nap habit, repeated on Day 2, Day 3, and Day 4)
+- Day 0, 18:08 — plate at table_d1 (evening dinner routine, repeated on Day 3)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation near sofa, repeated on Day 3 and Day 4)
+- Day 0, 20:54 — bed_pillow at bed_r1 (preparing for sleep, repeated on Day 3)
+- Day 1, 10:42 — dining_chair at table_d1 (daytime presence, possibly work or meal)
+- Day 1, 18:57 — paint_roller at paint_shelf_s1 (evening DIY project)
+- Day 2, 13:52 — bed_pillow at bed_r1 (midday nap, confirms habit)
+- Day 2, 17:41 — laptop_bag at sofa_l1 (work-from-home or flexible work)
+- Day 2, 19:35 — radio at workbench_s1 (evening hobby or project work)
+- Day 3, 08:11 — keys and laptop_bag at elsewhere (departure for work, suggests standard work schedule)
+- Day 3, 08:57 — dining_chair at table_d1 (someone home after departure, possibly another person or return)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (daytime presence, relaxation or work)
+- Day 3, 18:51 — bed_pillow at bed_r1 (early evening nap or rest, unusual timing)
+- Day 4, 18:25 — bed_pillow at bed_r1 (early evening nap, consistent with nap habit)
+- Day 4, 21:55 — phone at nightstand_r1 (evening wind-down, consistent with sleep routine)
+
+## Notes
+Today (Day 4, Friday) shows a departure at 08:11 (keys) again, consistent with a workday. The pillow appears at 18:25, earlier than previous nap times (12:57, 13:52, 18:51), but still a nap. The picture frame at coffee table (18:34) is new; could be a decorative item moved for cleaning or a personal touch. The evening routine (lamp at sofa, phone at nightstand) is consistent. Weekend patterns (Day 5-6) will help clarify if the schedule is work-related. The DIY project (paint roller, sanding block) hasn't been seen today; may be a weekend activity. Need to check if the early evening pillow is a nap or preparation for sleep.

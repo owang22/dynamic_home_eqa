@@ -1,0 +1,25 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single working professional who works from home or has a flexible schedule, with a structured but not rigid routine. The person reads a physical newspaper in the morning, has lunch at home, and winds down in the evening. The appearance of reading glasses and a picture frame suggests a home office or personal space, and the late-evening mug and plate indicate a possible second meal or snack before bed. The new evidence of a bowl at the table at 06:58 and reading glasses at the table at 06:58 on Friday suggests a morning breakfast and reading at the dining table, possibly a change from desk routine. The coffee mug at the desk at 07:38 reinforces a morning work start with coffee. The earlier pillow event (18:51) and later pillow (21:57) suggest a flexible evening routine, possibly with a nap or early wind-down. The phone at the nightstand at 22:10 suggests a late-night phone use before bed, consistent with a modern professional. — The surprising events (bowl at table, reading glasses at table) indicate a morning routine at the dining table, which could be a variation of the work-from-home pattern (e.g., breakfast and reading before moving to desk). The phone at nightstand at 22:10 is typical for a working professional checking messages before sleep. The retiree hypothesis is less likely due to the desk-based coffee mug and late-night phone use.
+2. (p=0.15) A retiree or someone with a relaxed schedule who enjoys a structured day with morning reading, a home-cooked lunch, and early evening relaxation, but with occasional late-evening activity. The reading glasses and picture frame suggest a hobby or personal interest, and the late-evening mug and plate could indicate a nighttime tea or snack. The new evidence of a bowl at the table at 06:58 and reading glasses at the table at 06:58 on Friday could be interpreted as a morning hobby (e.g., reading or puzzles) at the dining table, followed by breakfast. The coffee mug at the desk at 07:38 might be a morning coffee while reading. The phone at the nightstand at 22:10 could be a late-night call or reading. The earlier pillow at 18:51 could be an afternoon nap, and the later pillow at 21:57 is the actual bedtime. — The retiree hypothesis is still possible but less likely because the morning desk activity with coffee mug and the late-night phone use are more consistent with a working professional. The lack of work-related objects (e.g., laptop) makes this hypothesis weaker, but the flexible routine could fit a retiree.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading ritual, suggests regular subscriber)
+- Day 0, 12:45 — plate at sink_k1 (lunch at home, likely work-from-home or flexible schedule)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation on sofa, likely daily wind-down)
+- Day 0, 20:54 — bed_pillow at bed_r1 (consistent bedtime around 21:00, but later varied)
+- Day 2, 14:03 — reading_glasses at coffee_table_l1 (afternoon reading or work, suggests near or far vision need)
+- Day 2, 15:08 — picture_frame at coffee_table_l1 (personal item, possibly decoration or hobby)
+- Day 2, 18:55 — fork at sink_k1 (late afternoon/early evening meal cleanup, surprising timing)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (late evening hot drink, surprising for early bedtime pattern)
+- Day 2, 21:45 — plate at cupboard_k1 (late evening dish storage, surprising for early bedtime pattern)
+- Day 3, 07:46 — bowl at sink_k1 (morning breakfast cleanup, suggests breakfast at home)
+- Day 3, 07:46 — reading_glasses at desk_o1 (morning reading or work at desk, suggests home office)
+- Day 3, 09:01 — coffee_mug at desk_o1 (morning coffee at desk, reinforces work-from-home routine)
+- Day 3, 18:51 — bed_pillow at bed_r1 (early pillow event, possibly nap or early wind-down)
+- Day 3, 21:57 — bed_pillow at bed_r1 (final bedtime, later than Monday's 20:54)
+- Day 4, 06:58 — bowl at table_d1 (morning breakfast at dining table, variation from desk routine) *** SURPRISING
+
+## Notes
+The surprising events on Friday (bowl at table, reading glasses at table) suggest a morning routine at the dining table, possibly a change from the desk routine on Thursday. The phone at nightstand at 22:10 is new and indicates late-night phone use, common for working professionals. Need to check if newspaper appears on weekends (Day 5-6) to confirm subscription. Look for work-related objects (laptop, work bag) on weekdays vs. weekends. The doormat at entry_hook at 08:38 on Wednesday might be a morning routine (e.g., checking mail or leaving). The dining chair at table at 16:06 on Wednesday could be a setup for a meal or activity. Continue to monitor for consistency of bedtime and evening activities across days. The retiree hypothesis is becoming less likely due to the desk-based morning routine and late-night phone use.

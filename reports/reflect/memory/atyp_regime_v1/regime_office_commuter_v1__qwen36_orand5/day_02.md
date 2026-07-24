@@ -1,0 +1,19 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard Office Worker — Consistent 08:30 departure with laptop/transit card and 17:30-18:00 return strongly confirms fixed 9-5 schedule. Evening routine (dinner, dishwashing, mug to cupboard) is stable. Remote work and shift work hypotheses are effectively contradicted by the rigid commute pattern and lack of evening laptop usage.
+2. (p=0.04) Remote Worker with Errands — Unlikely due to strict transit card usage and lack of laptop at home desk during day. However, if 'elsewhere' is a co-working space, this remains theoretically possible but low probability given the commute artifacts.
+3. (p=0.01) Shift Worker / Night Owl — Contradicted by early morning departure and late afternoon return. No evidence of night activity.
+
+## Selected evidence
+- Day 0, 08:34 — laptop at elsewhere (indicates leaving home for work/study, distinguishing from stay-at-home setups)
+- Day 0, 18:05 — transit_card at entry_hook_e1 (indicates return from commute, confirming public transport use)
+- Day 1, 17:36 — transit_card at entry_hook_e1 (confirms consistent return time, reinforcing 9-5 routine)
+- Day 2, 08:32 — transit_card at elsewhere (confirms continued commute pattern, ruling out WFH)
+- Day 2, 18:03 — phone at sofa_l1 (indicates post-work relaxation, consistent with office worker routine)
+- Day 2, 18:27 — plate at table_d1 (indicates home-cooked dinner preparation, suggests resident cooks at home)
+- Day 2, 19:12 — plate at sink_k1 (indicates dishwashing routine shortly after eating, suggests tidy habits)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (indicates evening beverage routine and storage, consistent with Day 1 pattern)
+
+## Notes
+The 'travel_mug' from Day 1 was likely a misidentification or same object as 'coffee_mug' on Day 2. The resident consistently puts mugs in the cupboard at night. Dinner routine is stable: plate to table, then to sink within ~1 hour. Phone on sofa at 18:03 suggests decompression time. No laptop seen at home desk on Day 2, reinforcing office work hypothesis. Need to verify if laptop returns to home desk in the evening on subsequent days to confirm it's not taken to a co-working space.

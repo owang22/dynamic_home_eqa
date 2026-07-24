@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.55) A retiree or someone with a flexible schedule who enjoys a structured daily routine. — The Monday pattern (coffee at table at 07:02, remote on sofa at 13:55, picture frame moved at 16:43, floor lamp on sofa at 17:20, plate at table at 17:57, bath mat at 18:35, bowl put away at 21:45) is consistent with a relaxed, home-based day. No work items appear, and the early coffee at the table (not patio) may be due to weather or preference. The weekend gardening and newspaper habits strongly support a retiree lifestyle. The probability increases from 0.40 to 0.55 because the absence of work items on a Monday (a typical workday) further weakens the professional hypothesis.
+2. (p=0.35) A single working professional with a flexible schedule, likely working from home most days. — The Monday events could still fit a work-from-home professional: coffee at table at 07:02 (breakfast before work), remote on sofa at 13:55 (lunch break), picture frame moved at 16:43 (afternoon break), floor lamp on sofa at 17:20 (end-of-day relaxation), plate at table at 17:57 (dinner), bath mat at 18:35 (evening routine), bowl put away at 21:45 (kitchen tidy). However, the lack of any work-related items (laptop, work bag) on a Monday is notable. The probability is reduced from 0.50 to 0.35 because the retiree hypothesis is now more supported.
+3. (p=0.10) A couple or family where one person works from home and another is at home during the day, sharing the space. — The Monday events do not provide strong evidence of multiple people. The picture frame being moved at 16:43 could be a decoration change, but it is a single event. The floor lamp on sofa at 17:20 is a single movement. No overlapping events or distinct item sets suggest two people. The probability remains at 0.10 as no new evidence supports or contradicts this hypothesis.
+
+## Selected evidence
+- Day 0, 07:32 — coffee_mug at patio_table_p1 (morning coffee outdoors, weekday ritual)
+- Day 0, 12:33 — plate at sink_k1 (lunch at home, suggests flexible schedule)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath, consistent daily habit)
+- Day 1, 13:50 — phone at sofa_l1 (afternoon phone break, weekday pattern)
+- Day 2, 11:08 — reading_glasses at coffee_table_l1 (morning reading, hobby or work)
+- Day 3, 09:10 — reading_glasses at patio_table_p1 (morning reading on patio, new location)
+- Day 4, 07:04 — bowl at table_d1 (breakfast with newspaper, strong morning routine)
+- Day 4, 07:04 — newspaper at table_d1 (morning newspaper, retiree or structured professional)
+- Day 4, 07:04 — reading_glasses at table_d1 (reading glasses with newspaper, consistent)
+- Day 5, 06:57 — newspaper at table_d1 (early weekend newspaper, same pattern)
+- Day 5, 11:00 — seed_tray at patio_table_p1 (gardening, strong retiree signal)
+- Day 5, 12:31 — wall_clock at tv_stand_l1 (home decoration, weekend project)
+- Day 6, 08:41 — reading_glasses at patio_table_p1 (Sunday morning reading on patio, relaxed weekend)
+- Day 6, 09:33 — floor_lamp at sofa_l1 (morning relaxation, possibly reading)
+- Day 6, 16:02 — phone at coffee_table_l1 (afternoon leisure, consistent)
+
+## Notes
+Day 7 (Monday) observed: coffee at table (07:02) instead of patio, remote on sofa (13:55), picture frame moved (16:43), floor lamp on sofa (17:20), plate at table (17:57), bath mat (18:35), bowl put away (21:45). No work items again. The coffee location change (table vs patio) may be due to weather or preference; need to see if this repeats. The picture frame movement is new; could be decoration or cleaning. The retiree hypothesis is now strongest. Next week, look for any work-related items on weekdays and check if the weekend gardening pattern repeats. Also, watch for any signs of a second person (e.g., two coffee mugs, overlapping events).

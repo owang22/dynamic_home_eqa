@@ -1,0 +1,20 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A frequent traveler who departs early Tuesday morning and returns Thursday evening, with a work-from-home setup when not traveling. The return of travel items on Thursday evening is consistent with a multi-day trip ending that evening. The morning bowl and coffee mug on Friday suggest a typical home day after returning. — The travel pattern is well-established: packing Monday evening, departure Tuesday early morning, return Thursday evening. Friday's events show a normal home routine (phone on nightstand, bowl at table, coffee mug, phone on sofa, plate put away), consistent with a day at home. No evidence contradicts this hypothesis.
+2. (p=0.05) A person who works from home with a regular morning routine, but the travel evidence is now overwhelming. This hypothesis is retained only as a low-probability alternative in case the travel is a one-off. — The return of travel items on Thursday evening makes a one-off trip less likely, but the morning bowl on Monday and Friday's bowl and coffee mug are still consistent with a home worker. The lack of other household members or pets remains unchanged.
+
+## Selected evidence
+- Day 0, 08:06 — bowl at sink_k1 (morning meal, routine start)
+- Day 0, 19:59 — packing_cubes at bed_r1 (packing for travel)
+- Day 0, 20:44 — passport at entry_hook_e1 (imminent departure)
+- Day 1, 06:22 — passport, suitcase, keys, phone, travel_adapter all at elsewhere (confirmed departure early Tuesday)
+- Day 3, 20:41 — keys, passport, phone, toiletry_bag, laptop all return (return from trip Thursday evening)
+- Day 4, 07:00 — phone at nightstand_r1 (wake-up, phone nearby)
+- Day 4, 07:37 — bowl at table_d1 (morning meal at table)
+- Day 4, 07:37 — coffee_mug at counter_k1 (coffee made, morning routine)
+- Day 4, 16:50 — phone at sofa_l1 (afternoon relaxation or work break)
+- Day 4, 21:45 — plate at cupboard_k1 (evening cleanup, end of day)
+
+## Notes
+Friday's events show a typical home day after returning from travel. No weekend patterns observed yet (e.g., yoga mat, social events). Next week, expect similar packing on Monday evening and departure Tuesday morning, and return Thursday evening. Monitor for any weekend activities to refine persona. No evidence of other household members or pets yet.

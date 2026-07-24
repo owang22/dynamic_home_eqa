@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Hybrid Worker (WFH Fri) with Weekend Errands — Day 13 (Sun) shows no departure (phone at sofa/nightstand), confirming a rest day. This reinforces the Mon-Thu office, Fri WFH, Sat Errands, Sun Rest pattern. The lack of movement on Sunday strongly supports this structured routine over erratic or standard office models.
+2. (p=0.01) Standard 5-Day Office Worker with Pet — Requires assuming Day 11 (Fri) midday coffee mug and Day 13 (Sun) lack of departure are anomalies. The consistency of the 'Fri home' signal across multiple days makes this highly unlikely.
+3. (p=0.01) Remote Worker with Erratic Schedule — The schedule is highly predictable (Mon-Thu departures, Fri/Sat/Sun home). 'Erratic' is contradicted by the rigid daily structure observed over 14 days.
+
+## Selected evidence
+- Day 0, 07:49 — phone at counter_k1 (Mon departure, late start)
+- Day 1, 07:10 — phone at entry_hook_e1 (Tue departure, early start)
+- Day 2, 16:54 — phone at entry_hook_e1 (Wed return, confirms office day)
+- Day 4, 07:04 — phone at entry_hook_e1 (Fri departure, early start)
+- Day 5, 07:02 — phone at entry_hook_e1 (Sat departure, weekend errands)
+- Day 7, 07:49 — phone at counter_k1 (Mon departure, confirms late start)
+- Day 8, 07:04 — phone at entry_hook_e1 (Tue departure, confirms early start)
+- Day 9, 07:39 — phone at counter_k1 (Wed departure, confirms late start)
+- Day 10, 06:51 — phone at entry_hook_e1 (Thu departure, confirms office day)
+- Day 10, 17:06 — dog_leash at entry_hook_e1 (Evening dog walk, confirms resident home late afternoon)
+- Day 11, 12:48 — coffee_mug at counter_k1 (Fri midday home, suggests WFH)
+- Day 11, 18:00 — dog_leash at sofa_l1 (Fri evening prep, suggests home presence)
+- Day 12, 08:29 — phone at counter_k1 (Sat departure, late start for errands)
+- Day 12, 16:57 — phone at entry_hook_e1 (Sat return, confirms errand completion)
+- Day 13, 22:34 — phone at nightstand_r1 (Sun night, confirms full day at home)
+
+## Notes
+Day 13 (Sun) confirms the 'Rest Day' hypothesis: phone remains indoors (sofa -> nightstand), no departure. The pattern is now robust: Mon-Thu (Office), Fri (WFH), Sat (Errands), Sun (Rest). The 'bowl at sink' on Day 13 is likely pet-related, consistent with the dog_leash observations on Day 10 and 11. No new hypotheses needed; current model is stable.

@@ -1,0 +1,25 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single adult with a strong early-morning water sports routine (likely surfing or diving) who works a flexible job or is retired. The consistent 05:30 wetsuit events on Monday, Thursday, Friday, Saturday, and now Sunday (water_bottle at 05:27) confirm a daily early-morning water activity. The Sunday 07:26 swim_cap and wetsuit at drying_rack_u1 indicate gear drying after the morning session, consistent with weekend routine. The floor_lamp events at sofa_l1 (09:33, 10:12) suggest home-based relaxation during the day, typical of a flexible schedule. The surprising wetsuit at drying_rack_u1 (p=0.07) is actually consistent with the drying pattern observed on Saturday, so it reinforces the routine rather than contradicting it. The fork at sink_k1 (p=0.00) is a mundane kitchen event that was unexpected by the model but does not change the persona. — The early-morning water sport pattern now spans five days (Monday, Thursday, Friday, Saturday, Sunday), strongly supporting a daily habit. The Sunday events (water_bottle at 05:27, swim_cap and wetsuit at drying_rack_u1 at 07:26) align with the weekend gear drying pattern seen on Saturday. The floor_lamp events indicate home-based activity during the day, consistent with a flexible schedule. The surprising events are either consistent (wetsuit at drying_rack) or mundane (fork at sink). The Wednesday evening anomaly (Day 2) remains unexplained but does not weaken the primary hypothesis.
+2. (p=0.15) A person who works from home or has a flexible schedule, as evidenced by the phone at counter_k1 at 17:56 and dining chair at table at 08:57 on previous days, and now the floor_lamp at sofa_l1 at 09:33 and 10:12 on Sunday, indicating home-based activity during typical work hours. The early-morning water sport is a consistent habit, and the Sunday gear drying (swim_cap, wetsuit at drying_rack) continues the weekend pattern. The surprising events do not contradict this hypothesis. — The home-based activity evidence is still present (floor_lamp on Sunday), but the early-morning water sport habit is now so dominant that the flexible schedule hypothesis is less likely. The Sunday events are consistent with a flexible schedule, but the primary hypothesis better explains the overall pattern.
+
+## Selected evidence
+- Day 0, 05:34 — wetsuit at elsewhere (early morning water sport, consistent habit)
+- Day 3, 05:30 — wetsuit at elsewhere (early morning water sport, confirms habit)
+- Day 4, 05:32 — keys at elsewhere (early morning water sport preparation)
+- Day 4, 05:32 — swim_goggles at elsewhere (early morning water sport gear)
+- Day 4, 05:32 — towel at elsewhere (early morning water sport gear)
+- Day 5, 05:33 — swim_goggles at elsewhere (early morning water sport, weekend continuation)
+- Day 5, 07:22 — wetsuit at drying_rack_u1 (gear drying after morning session, weekend routine)
+- Day 5, 20:35 — wetsuit at entry_bench_e1 (gear storage or preparation for next day, weekend routine)
+- Day 6, 05:27 — water_bottle at elsewhere (early morning water sport, Sunday continuation)
+- Day 6, 07:26 — swim_cap at drying_rack_u1 (gear drying after morning session, weekend routine)
+- Day 6, 07:26 — wetsuit at drying_rack_u1 (gear drying after morning session, weekend routine)
+- Day 3, 07:28 — keys at entry_hook_e1 (return from early outing, likely water activity)
+- Day 3, 08:36 — phone at elsewhere (home activity during work hours, flexible schedule)
+- Day 3, 08:57 — dining_chair at table_d1 (home activity during work hours, flexible schedule)
+- Day 2, 20:32 — wetsuit at entry_bench_e1 (surprising evening water-related activity, likely anomaly)
+
+## Notes
+The early-morning water sport pattern is now confirmed on Monday, Thursday, Friday, Saturday, and Sunday (Day 0, 3, 4, 5, 6). The Sunday 05:27 water_bottle continues the pattern, and the 07:26 swim_cap and wetsuit at drying_rack_u1 match the Saturday gear drying routine. The floor_lamp events (09:33, 10:12) on Sunday suggest home-based relaxation, consistent with a flexible schedule. The fork at sink_k1 (p=0.00) is a mundane kitchen event that was surprising to the model but does not affect the persona. The Wednesday evening wetsuit/towel event (Day 2, 20:32) remains an anomaly; it may be a one-off or a weekly pattern (e.g., gear cleaning) but needs more data. No evidence of multiple residents yet. Need to observe Tuesday (Day 1) data to see if the early-morning pattern holds on that day. Day of week patterns: Monday, Thursday, Friday, Saturday, Sunday show early-morning water sport; Wednesday shows evening anomaly. The surprising events today (wetsuit at drying_rack_u1, fork at sink_k1) are either consistent with the routine or mundane, so the belief model's surprise may be due to insufficient data on weekend patterns.

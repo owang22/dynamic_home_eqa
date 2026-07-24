@@ -1,0 +1,29 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Standard 9-5 Office Worker",
+   "prob": 0.9,
+   "rationale": "Consistent morning departure (keys/laptop away by 08:26) and evening return (keys at entry 17:57 Day 1, implied presence Day 2/3). The strict 08:26 departure window strongly supports a fixed commute. Weekend verification pending."
+  },
+  {
+   "persona": "Remote Worker / Student",
+   "prob": 0.09,
+   "rationale": "Laptop is taken away from the home desk every morning (Day 2, Day 3), which contradicts typical remote work where the laptop stays at the desk. However, if they work from a co-working space or library, this could still fit. Probability reduced due to 'keys at entry' signal on Day 1."
+  },
+  {
+   "persona": "Night Shift Worker",
+   "prob": 0.01,
+   "rationale": "Effectively falsified. Activity is concentrated in morning/evening. Kept only as a negligible residual."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:23 \u2014 coffee_mug at desk_o1 (establishes morning workspace routine)",
+  "Day 1, 17:57 \u2014 keys at entry_hook_e1 (strong signal of returning from external activity, likely work)",
+  "Day 2, 08:35 \u2014 laptop at desk_o1 (confirms work/study activity begins early morning, consistent with 9-5 start)",
+  "Day 2, 18:37 \u2014 plate at table_d1 (indicates evening meal preparation, routine domestic behavior)",
+  "Day 3, 08:26 \u2014 keys at elsewhere (confirms departure from home, consistent with commute)",
+  "Day 3, 08:26 \u2014 laptop at elsewhere (confirms departure from home, consistent with commute)",
+  "Day 3, 22:43 \u2014 phone at nightstand_r1 (indicates bedtime routine, consistent with standard sleep schedule)"
+ ],
+ "notes": "Day 3 confirms the 'departure' pattern: keys and laptop are gone by 08:26. The 'keys at elsewhere' is a strong discriminator against a purely home-based worker. The 22:43 phone placement suggests a regular sleep time. Need to observe Day 5/6 (weekend) to see if keys appear or if the desk is used differently. Check if 'keys' appear on weekends to confirm the work-week pattern."
+}

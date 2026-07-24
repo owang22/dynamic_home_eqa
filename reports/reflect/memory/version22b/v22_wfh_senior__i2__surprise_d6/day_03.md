@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single working professional who works from home at least part of the week, with a structured morning routine and a late dinner cleanup. The presence of a coffee mug at the desk at 09:01 and reading glasses at the desk at 07:46 on Thursday strongly suggest a home office setup and a workday start. The late fork at cupboard at 21:45 and earlier bowl at sink at 07:46 indicate a consistent late dinner and breakfast cleanup. The doormat at 07:57 and 09:02 may reflect morning arrivals or deliveries, but the desk items are key. — The surprising events (bowl at sink, reading glasses at desk, coffee mug at desk) all point to a work-from-home professional. The bowl at 07:46 suggests breakfast, the reading glasses at desk indicate work/reading, and the coffee mug at desk is a classic work item. The late dinner cleanup (fork at 21:45) matches a workday pattern. The floor lamp at sofa at 12:21 and phone at sofa at 13:46 suggest a lunch break or relaxation, consistent with a flexible workday. The bed pillow at 18:51 and 21:57 might indicate an early evening rest or bed-making, but not contradictory.
+2. (p=0.20) A couple or family with one person working from home and another possibly commuting, but evidence remains weak. The single coffee mug and single reading glasses at the desk suggest only one person is active in the morning. The bowl at sink at 07:46 could be from one person's breakfast, and the fork at cupboard at 21:45 could be from a shared dinner, but no clear signs of multiple people (e.g., two mugs, two plates at same time). The doormat at 07:57 and 09:02 might indicate two separate arrivals, but could also be the same person. — The doormat appearing twice (07:57 and 09:02) could be a single person stepping out and back in, or two people. The lack of multiple distinct objects (e.g., two coffee mugs, two plates) weakens the couple hypothesis. The bed pillow at 18:51 and 21:57 might be from one person's nap, not necessarily two. The surprising events are all consistent with a single person's routine.
+3. (p=0.10) A retiree or someone with a flexible schedule who works from home occasionally, but the late dinner and morning desk items suggest a more structured day than typical for a retiree. The reading glasses at desk at 07:46 and coffee mug at desk at 09:01 could be for morning reading or hobbies, but the late fork at 21:45 is less common for retirees who often eat earlier. The bowl at sink at 07:46 is typical for breakfast. The floor lamp at sofa at 12:21 and phone at sofa at 13:46 suggest a relaxed afternoon, which could fit a retiree. — The morning desk items (reading glasses, coffee mug) could be for reading the newspaper or a book, but the late dinner cleanup (21:45) is less typical. The bed pillow at 18:51 might indicate an early evening rest, which is common for retirees. However, the overall pattern (structured morning, late dinner) leans more toward a working professional. The retiree hypothesis is less likely but not ruled out.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading habit, traditional media)
+- Day 0, 12:45 — plate at sink_k1 (lunch at home on Monday, midday presence)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, reading or screen time)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath, wind-down routine)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning routine, possibly arrival or delivery)
+- Day 2, 12:15 — fork at table_d1 (midday meal, consistent with lunch at home)
+- Day 2, 14:03 — reading_glasses at coffee_table_l1 (afternoon reading, supports reading habit)
+- Day 2, 15:08 — picture_frame at coffee_table_l1 (personal memento, home decoration)
+- Day 2, 18:55 — fork at sink_k1 (late dinner cleanup, surprising timing for a retiree)
+- Day 2, 21:45 — plate at cupboard_k1 (late evening dish storage, surprising timing)
+- Day 3, 07:46 — bowl at sink_k1 (breakfast cleanup, morning routine)
+- Day 3, 07:46 — reading_glasses at desk_o1 (work/reading at desk, home office indicator)
+- Day 3, 09:01 — coffee_mug at desk_o1 (workday start, home office indicator)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday relaxation, lunch break)
+- Day 3, 21:45 — fork at cupboard_k1 (late dinner cleanup, consistent with workday)
+
+## Notes
+Thursday's events strongly support a work-from-home professional: bowl at sink (breakfast), reading glasses and coffee mug at desk (home office), floor lamp at sofa (lunch break), and late fork at cupboard (dinner). The doormat appeared twice (07:57 and 09:02) — need to check if this is a pattern (e.g., mail delivery or stepping out). The bed pillow at 18:51 and 21:57 might indicate an early evening nap or bed-making; watch for consistency. Weekend patterns (days 5-6) will be crucial to confirm work-from-home vs. retiree. Also look for laptop or work documents at desk during work hours (09:00-17:00) to strengthen the hypothesis. The surprising events (bowl at sink, reading glasses at desk, coffee mug at desk) are now explained by a work-from-home routine.

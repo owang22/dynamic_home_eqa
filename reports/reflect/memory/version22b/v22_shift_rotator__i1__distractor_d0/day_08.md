@@ -1,0 +1,21 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single adult who works a standard daytime job, likely leaves home early and returns in the evening. — The consistent early departure (work_badge) on weekdays and evening meals (plate at sink) reinforce a standard work schedule. Today's midday work_badge at home is an anomaly but could be a one-off (e.g., working from home or a break). The overall pattern remains strong.
+2. (p=0.20) A person with a morning routine that includes preparing a hot beverage to take along, possibly a commuter or outdoor worker. — Thermos reappeared today (13:28) but not in the morning; it was placed at elsewhere, possibly after use. The hi_vis_vest and work_badge still suggest a job requiring safety gear. The thermos may be used occasionally, not daily.
+3. (p=0.10) A person who may have a non-standard work schedule (e.g., shift work or early finish) on some days. — Today's midday work_badge at home (11:22) could indicate a late start or a day off, but the rest of the weekdays show early departures. This hypothesis remains possible but less likely given the dominant pattern.
+
+## Selected evidence
+- Day 0, 05:14 — thermos at elsewhere (early morning preparation of a drink to take out, suggests a workday commute or early activity)
+- Day 2, 05:27 — work_badge at elsewhere (early departure for work, confirms workday routine)
+- Day 2, 14:42 — hi_vis_vest at locker_shelf_e1 (return from work with safety vest, suggests a job requiring high-visibility gear)
+- Day 3, 13:19 — work_badge, hi_vis_vest, keys, phone at elsewhere (midday departure with all work items, suggests a shift or early finish)
+- Day 4, 05:08 — phone, work_badge at entry_hook_e1 (early morning departure preparation, consistent with workday)
+- Day 5, 12:25 — phone at sofa_l1 (relaxed weekend activity, no work items present)
+- Day 7, 05:09 — work_badge at entry_hook_e1 (early Monday departure, reinforces weekday routine)
+- Day 7, 19:07 — plate at sink_k1 (evening meal cleanup, typical after returning from work)
+- Day 8, 11:22 — work_badge at entry_hook_e1 (midday presence of work badge at home, unusual for standard workday; could indicate a late start or day off)
+- Day 8, 13:28 — keys, thermos at elsewhere (afternoon placement of keys and thermos, possibly after returning from an outing or work)
+
+## Notes
+Today (Tuesday) showed a midday work_badge at home, which is a deviation from the typical early departure pattern. This could be a one-off (e.g., working from home, late start, or a day off). The thermos reappeared in the afternoon, not morning, suggesting it may be used for lunch or other outings. Need to observe if this midday pattern repeats on other Tuesdays or if it's an anomaly. Weekend pattern (no work items, relaxed activities) remains consistent. No evidence of other household members.

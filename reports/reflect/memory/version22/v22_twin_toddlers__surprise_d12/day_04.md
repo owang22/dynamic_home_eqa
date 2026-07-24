@@ -1,0 +1,25 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A family with a young child (toddler/preschooler) and at least one parent who works from home or has a flexible schedule. The child has a structured day with morning playtime (cushion, sippy cup on playmat), a midday nap (pillow moved to bed), and family dinner around 17:40. The parent uses the phone at the counter in the morning (work start) and moves the dining chair for lunch. The surprising events today (sippy cup at sink at 07:11, phone at counter at 08:43, plate in cupboard at 21:45) are consistent with a weekday routine: the sippy cup is washed in the morning, the phone is used for work, and the plate is stored after dinner. The picture frame on the coffee table at 18:34 and 19:00 suggests evening family time or decoration. — The combination of child-specific items (sippy cup, board book, cushion on playmat) and adult work-from-home indicators (phone at counter, dining chair moved at lunch) strongly supports this hypothesis. The surprising events are actually consistent with a family routine: the sippy cup at the sink in the morning is a normal cleaning step, the phone at the counter is a work start, and the plate in the cupboard at 21:45 is evening storage. The picture frame on the coffee table suggests a decorative or sentimental item, common in family homes.
+2. (p=0.08) A single adult or couple without children, possibly working from home. The sippy cup could be a reusable water bottle, the board book a decorative item, and the cushion on the playmat for exercise or meditation. The surprising events (sippy cup at sink, phone at counter, plate in cupboard) fit a typical adult routine: morning dish cleaning, work start, and evening storage. The picture frame on the coffee table is a normal decorative item. — This hypothesis is less likely because the combination of a sippy cup, board book, and cushion on a playmat is more typical of a young child. The doormat movements (not observed today but previously) suggest someone leaving/returning, which could be a parent or a child going to daycare. The picture frame is neutral.
+3. (p=0.02) A remote worker with a pet. The sippy cup could be a pet water bowl, the board book a chew toy, and the cushion on the playmat a pet bed. The surprising events (sippy cup at sink, phone at counter, plate in cupboard) fit a pet owner's routine: cleaning the water bowl, working, and storing dishes. The picture frame is a normal decorative item. — This hypothesis is the least likely because a pet water bowl is usually not a sippy cup, and a board book is not a typical pet item. The cushion on a playmat is more likely for a child's play area. The pattern of events (playmat in morning, dinner at 17:40, evening cleanup) aligns better with a family with a child.
+
+## Selected evidence
+- Day 0, 08:54 — phone at counter_k1 (morning work start, work-from-home indicator)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch at home, flexible schedule)
+- Day 0, 12:57 — bed_pillow at bed_r1 (likely child nap time)
+- Day 0, 17:16 — sippy_cup at elsewhere (strong child indicator, possibly misplaced)
+- Day 3, 08:43 — cushion at playmat_n1 (morning child playtime)
+- Day 3, 08:43 — sippy_cup at playmat_n1 (child's drink during play)
+- Day 3, 11:13 — board_book at toy_bin_l1 (child's book in toy bin)
+- Day 3, 17:40 — plate at table_d1 (family dinner time)
+- Day 3, 21:45 — sippy_cup at cupboard_k1 (evening cleanup, storage)
+- Day 4, 07:11 — sippy_cup at sink_k1 (morning cleaning of child's cup, consistent with routine)
+- Day 4, 08:43 — phone at counter_k1 (morning work start, consistent with work-from-home)
+- Day 4, 17:41 — sippy_cup at table_d1 (child's drink at dinner)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (evening decoration or family photo)
+- Day 4, 21:45 — plate at cupboard_k1 (evening dish storage, consistent with routine)
+
+## Notes
+Day 4 (Friday) provided further support for the family-with-child hypothesis. The surprising events (sippy cup at sink at 07:11, phone at counter at 08:43, plate in cupboard at 21:45) are actually consistent with a weekday routine: morning cleaning, work start, and evening storage. The picture frame on the coffee table at 18:34 and 19:00 suggests a decorative item, possibly a family photo. Need to observe weekend (days 5-6) to see if the child is home all day or has different routines (e.g., later wake-up, more playtime). The doormat movements were not observed today, but previous days showed them at 07:57, 09:02, 17:35, suggesting someone leaving/returning. The bath mat at 14:40, 16:17, 16:26 may indicate multiple bathroom uses or cleaning. The floor lamp at sofa at 19:10 and 20:54 suggests evening reading or relaxation. The dining chair at table at 18:22 is likely dinner setup. The bed pillow at 18:25 may be bed-making or preparation for bedtime.

@@ -1,0 +1,26 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A family with a young child (toddler/preschooler) and at least one parent who works from home or has a flexible schedule. — The child's routine is consistent: board_book at playmat in the morning (Day 8, 08:40), sippy_cup at sink midday (Day 8, 12:21), and fork at table for lunch (Day 8, 11:36). The weekday timing (08:40) matches earlier weekday patterns (Day 3, 08:43). The parent's phone at counter on weekday mornings (Day 4, 08:43) and wall_clock moved at 16:14 (household task) suggest a parent managing home during the day. The surprise events (board_book at playmat, fork at table) are now consistent with a structured weekday routine for a child. The weekend relaxation (fork at table at 11:39 on Sunday) is a weekend variant. No work-from-home equipment observed yet, but the phone and household tasks support a flexible schedule.
+2. (p=0.10) A single adult with a young child visiting or living part-time. — The child's presence on Tuesday (board_book, sippy_cup, fork) is consistent with a regular schedule, but the adult's routine lacks work items. The weekday events (board_book at 08:40, fork at 11:36) could be a single parent's routine. However, the child's consistent presence on both weekdays and weekends (Day 6, 17:47 sippy_cup) weakens the part-time hypothesis. The absence of work items on weekdays still leaves this possible, but the family hypothesis is stronger.
+3. (p=0.05) A stay-at-home parent with a young child. — The child's routine is clear, and no work-from-home equipment has been observed on any weekday (including Day 8). The parent's phone at counter on Day 4 and wall_clock moved at 16:14 on Day 8 suggest household management. However, the phone at 08:43 on a weekday morning (Day 4) could still indicate remote work, and the absence of a laptop or desk is not definitive. The family hypothesis with flexible work is more likely.
+
+## Selected evidence
+- Day 0, 08:54 — phone at counter_k1 (morning routine, possibly work-from-home or stay-at-home parent)
+- Day 0, 17:16 — sippy_cup at elsewhere (strong indicator of young child)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (bath time, likely child's bedtime routine)
+- Day 3, 08:43 — cushion at playmat_n1 (child's play area set up in morning)
+- Day 3, 08:43 — sippy_cup at playmat_n1 (child's morning play/feeding routine)
+- Day 3, 11:13 — board_book at toy_bin_l1 (child's play/reading activity, toy bin location)
+- Day 3, 17:40 — plate at table_d1 (evening meal, likely family dinner)
+- Day 3, 21:45 — sippy_cup at cupboard_k1 (child's cup put away after evening use, consistent bedtime routine)
+- Day 4, 06:26 — bowl at table_d1 (morning breakfast, likely family routine)
+- Day 4, 07:11 — sippy_cup at sink_k1 (morning cleanup of child's cup, consistent with child present)
+- Day 4, 08:43 — phone at counter_k1 (work-from-home indicator on a weekday morning)
+- Day 5, 07:14 — bowl at sink_k1 (weekend morning cleanup, later than weekday breakfast at 06:26)
+- Day 8, 08:40 — board_book at playmat_n1 (child's morning reading/play, consistent weekday routine)
+- Day 8, 11:36 — fork at table_d1 (child's lunch, consistent with weekday meal timing)
+- Day 8, 12:21 — sippy_cup at sink_k1 (child's cup cleaned after lunch, routine)
+
+## Notes
+Day 8 (Tuesday) confirms a structured weekday routine: board_book at playmat at 08:40 (child's morning activity), fork at table at 11:36 (lunch), sippy_cup at sink at 12:21 (cleanup). The surprise events (board_book at playmat, fork at table) are now expected on weekdays, suggesting the belief model needs to update its expectations. The wall_clock at counter at 16:14 and waste_bin at counter at 11:46 are mundane household tasks. The doormat at entry_hook at 19:17 may indicate someone arriving home. Need to observe if work-from-home items (laptop, desk) appear on future weekdays to distinguish between family with flexible work vs. stay-at-home parent. Also check if the child's bedtime routine (bath_mat, bed_pillow) appears consistently on weekdays.

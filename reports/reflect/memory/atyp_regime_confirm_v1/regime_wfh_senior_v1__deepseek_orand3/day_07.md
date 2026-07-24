@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A professional who works from home, likely in a desk job, and uses reading glasses. The coffee mug at the desk during lunchtime suggests a typical workday routine. Weekend evidence shows glasses on counter and coffee table, not at desk, indicating a break from work. Phone at nightstand at consistent bedtime suggests regular sleep schedule. — Consistent desk use on weekday mornings (glasses, coffee), plus the glasses moving to coffee table later suggests a break or leisure reading. Weekend pattern shows glasses on counter and coffee table, not at desk, confirming no work on Saturday. Sunday's events (glasses at coffee table then sofa, no desk use) further support no work on weekends. Today (Monday) glasses at counter at 06:46, not at desk, which is unusual for a weekday morning; this might indicate a delayed start or a different routine, but overall pattern still strong.
+2. (p=0.10) A person who manages a daily medication regimen, likely an older adult or someone with a chronic condition, as indicated by the pill organizer appearing at 06:45 on a weekday. However, no pill organizer observed on Saturday or Sunday, which may indicate it is not used on weekends or is a weekday-only routine. — The pill organizer at counter at 06:45 on Friday suggests a daily medication routine, but its absence on Saturday and Sunday mornings (no events) weakens the hypothesis. It could be a weekday-only medication or the event was missed. Still a distinctive health-related behavior not typical of all households. Today (Monday) no pill organizer event observed, but it might have been missed or not used today.
+
+## Selected evidence
+- Day 0, 07:11 — reading_glasses at desk_o1 (desk job, reading glasses)
+- Day 0, 13:27 — coffee_mug at desk_o1 (midday coffee at desk, work-from-home)
+- Day 2, 08:31 — coffee_mug at desk_o1 (morning coffee at desk, weekday routine)
+- Day 2, 08:31 — reading_glasses at desk_o1 (morning desk work)
+- Day 2, 12:30 — fork at table_d1 (lunch at table, midday break)
+- Day 2, 22:10 — phone at nightstand_r1 (bedtime phone use, consistent sleep schedule)
+- Day 3, 07:09 — reading_glasses at desk_o1 (morning desk work, weekday pattern)
+- Day 3, 08:52 — reading_glasses at coffee_table_l1 (break from desk, leisure reading)
+- Day 4, 06:45 — pill_organizer at counter_k1 (daily medication routine, health management)
+- Day 5, 06:45 — reading_glasses at counter_k1 (weekend morning, not at desk)
+- Day 5, 14:02 — reading_glasses at coffee_table_l1 (weekend leisure reading)
+- Day 5, 21:52 — phone at nightstand_r1 (consistent bedtime, even on weekend)
+- Day 6, 13:51 — reading_glasses at coffee_table_l1 (Sunday leisure reading, no desk use)
+- Day 6, 15:51 — reading_glasses at sofa_l1 (Sunday afternoon reading on sofa, leisure)
+- Day 7, 06:46 — reading_glasses at counter_k1 (Monday morning, not at desk; possible delayed start)
+
+## Notes
+Weekday pattern: desk use in morning (glasses, coffee), breakfast cleanup (bowl, mug at sink), then glasses move to coffee table (break). Lunch at table, phone at nightstand before bed. Weekend pattern: glasses on counter in morning (Saturday) or directly on coffee table (Sunday), then coffee table or sofa in afternoon, no desk use. Phone at nightstand at 21:52 on Saturday matches weekday bedtime. Pill organizer not observed on Saturday or Sunday; need to check next weekdays to confirm if it's daily or weekday-only. No laptop or work papers observed on weekend, supporting work-from-home hypothesis. Today (Monday) glasses at counter at 06:46, not at desk, which is a deviation from previous weekday pattern; need to see if this becomes a new pattern or is an anomaly. Also, no coffee mug at desk observed today; may be a different routine. Plate at table at 17:56 suggests dinner, phone at sofa at 19:16 suggests evening relaxation, fork at cupboard at 21:45 suggests cleanup. These are mundane but consistent with evening routine.

@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A fitness-conscious professional with a structured morning routine and evening relaxation. — Day 7 (Monday) repeats the early morning foam roller at 05:00, confirming the weekday exercise habit. The evening shows plate at table at 18:08 (dinner), then water bottle at nightstand at 18:53 (winding down), and finally bowl, plate, and protein shaker all put away at 21:45 (cleaning up before bed). This matches the professional's structured weekday pattern. The weekend relaxation pattern (later start, no exercise) is also consistent. Probability increased.
+2. (p=0.08) A student or remote worker with a flexible schedule but still has morning commitments and evening relaxation. — The weekday pattern is very consistent with a professional, but the weekend shift could also fit a student. However, the fixed 05:00 exercise and 08:00 departure (inferred from previous days) is more typical of a professional. Probability decreased slightly.
+3. (p=0.02) A retiree or someone without a fixed work schedule, but still has a morning exercise habit and evening routine. — The weekday 05:00 exercise and consistent departure time (laptop, keys) strongly argue against a retiree. The weekend pattern is not enough to overcome this. Probability decreased.
+
+## Selected evidence
+- Day 1, 05:00 — foam_roller at coffee_table_l1 (early morning exercise, likely yoga or stretching)
+- Day 1, 07:59 — phone at elsewhere (morning departure, consistent with work/school)
+- Day 2, 06:40 — protein_shaker at counter_k1 (morning protein shake, post-exercise)
+- Day 2, 07:59 — keys at elsewhere (consistent morning departure time)
+- Day 3, 08:02 — laptop at elsewhere (laptop leaves with keys, confirming work/school departure)
+- Day 3, 21:45 — mug at cupboard_k1 (evening mug put away, winding down)
+- Day 4, 05:12 — dumbbells at coffee_table_l1 (early morning strength training)
+- Day 4, 05:12 — yoga_mat at coffee_table_l1 (early morning yoga/stretching)
+- Day 5, 09:26 — protein_shaker at counter_k1 (weekend late morning protein shake, relaxed schedule)
+- Day 5, 22:18 — phone at nightstand_r1 (evening winding down, consistent with weekday pattern)
+- Day 6, 08:43 — phone at elsewhere (Sunday late morning start, no exercise items observed)
+- Day 6, 18:10 — water_bottle at table_d1 (evening hydration, relaxed weekend)
+- Day 7, 05:00 — foam_roller at coffee_table_l1 (repeats weekday early exercise)
+- Day 7, 21:45 — protein_shaker at cupboard_k1 (evening cleanup, post-dinner)
+
+## Notes
+Day 7 (Monday) confirms the weekday pattern: early exercise (foam roller at 05:00), dinner (plate at table at 18:08), and evening wind-down (water bottle at nightstand at 18:53, then cleanup at 21:45). The protein shaker is put away at 21:45, suggesting it was used earlier (likely after morning exercise). Need to observe if exercise items appear on weekends (Day 5 had no exercise items, Day 6 none). Also, the water bottle at nightstand at 18:53 is a new evening pattern—possibly hydration before bed. Next week: check if the 08:00 departure (phone/keys/laptop) repeats on weekdays and if weekend mornings remain exercise-free.

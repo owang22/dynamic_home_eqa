@@ -1,0 +1,28 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Standard Office Worker (Flexible/Late Start)",
+   "prob": 0.95,
+   "rationale": "Weekend behavior (Day 5) shows no early departure or external work equipment movement, contrasting sharply with weekday patterns. The late morning phone presence at home and evening domestic activity (dishes) align with a standard worker's weekend rest. Probability increased as weekend evidence contradicted remote/night-shift hypotheses."
+  },
+  {
+   "persona": "Remote Worker with External Meetings",
+   "prob": 0.04,
+   "rationale": "Still possible if the resident takes weekends off entirely. However, the strong weekday evidence of 'work_badge' leaving home (Day 0, Day 2) makes pure remote work unlikely. The lack of laptop movement on Day 5 further weakens this compared to the office worker hypothesis."
+  },
+  {
+   "persona": "Night Shift Worker",
+   "prob": 0.01,
+   "rationale": "Remains highly unlikely. Day 5 shows normal daytime activity (10:48 phone at home, 18:29 dinner prep) with no inverted sleep/wake cycle indicators. The previous low probability is maintained."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 05:09 \u2014 work_badge at elsewhere (indicates early departure; key discriminator for office worker vs. remote)",
+  "Day 2, 05:29 \u2014 laptop at elsewhere (suggests taking work equipment out; supports professional routine)",
+  "Day 2, 14:35 \u2014 keys at entry_hook_e1 (indicates departure; combined with badge, confirms external activity)",
+  "Day 4, 13:29 \u2014 phone at elsewhere (confirms external presence during the day; supports office/external work model)",
+  "Day 5, 10:48 \u2014 phone at counter_k1 (weekend morning routine at home; contrasts with weekday early departures)",
+  "Day 5, 18:29 \u2014 plate at table_d1 (evening domestic activity; confirms standard residential weekend pattern)"
+ ],
+ "notes": "Day 5 (Saturday) confirms a distinct weekend routine: no early badge/key movement, no external laptop/phone presence during the day. The resident stays home in the morning (phone at counter) and engages in evening domestic tasks (dishes). This strongly supports the 'Standard Office Worker' hypothesis with a flexible weekday schedule but rigid weekend rest. Day 6 (Sunday) should be observed to confirm if the weekend pattern persists (e.g., no work items, later wake times)."
+}

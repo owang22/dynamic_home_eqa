@@ -1,0 +1,26 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single person who works from home or has a flexible schedule, with a routine that includes morning plant care, midday phone use, and evening relaxation in the living room. — The Friday events show a consistent home-based routine: coffee mug at table at 07:05 (morning coffee), phone at table at 09:44 (daytime phone use, surprising but fits home presence), picture frame at coffee table at 11:02 (personal decoration), dining chair at table at 14:07 (likely lunch), floor lamp at sofa at 15:25 (afternoon relaxation), waste bin at counter at 15:35 and 18:45 (kitchen activity), bed pillow at bed at 19:49 (evening preparation), and phone at nightstand at 21:56 (bedtime phone use). No work objects (laptop, desk) have appeared, but the consistent daytime presence and plant care (not seen today but previously) suggest a flexible schedule. The surprising phone events are actually consistent with a home-based routine where the phone is used at various locations.
+2. (p=0.07) A person with a standard 9-to-5 job who comes home in the evening and engages in household tasks, but with occasional daytime presence. — The Friday events show daytime presence (phone at table at 09:44, dining chair at table at 14:07) which contradicts a typical 9-to-5 job. The lack of work-related objects during the week and the consistent daytime activities make this hypothesis less likely.
+3. (p=0.03) A couple or family with at least one person at home during the day, but the evidence is still sparse. — The single coffee mug, single phone, single bed pillow, and single dining chair still suggest one person. No evidence of multiple residents (e.g., two coffee mugs, multiple pillows) has appeared. This hypothesis remains unlikely.
+
+## Selected evidence
+- Day 0, 09:10 — plant_mister at windowsill_l1 (indicates plant care, a personal hobby)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, likely a single person settling in)
+- Day 2, 13:33 — phone at table_d1 (daytime phone use, suggests home presence)
+- Day 4, 07:22 — bowl at table_d1 (morning breakfast at home, suggests a routine)
+- Day 4, 09:22 — watering_can at sink_k1 (morning plant care, reinforces plant hobby)
+- Day 4, 20:54 — floor_lamp at sofa_l1 (evening relaxation, repeated pattern)
+- Day 4, 21:45 — watering_can at windowsill_l1 (evening plant care, shows daily plant routine)
+- Day 5, 07:19 — coffee_mug at table_d1 (weekend breakfast at home, reinforces home-based routine)
+- Day 5, 12:37 — plate at table_d1 (weekend lunch at home, consistent with home presence)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening shower, part of evening routine)
+- Day 5, 21:45 — watering_can at windowsill_l1 (evening plant care, repeated from Day 4)
+- Day 5, 22:13 — phone at nightstand_r1 (bedtime phone use, suggests single person)
+- Day 11, 07:05 — coffee_mug at table_d1 (morning coffee on a weekday, consistent with home routine)
+- Day 11, 09:44 — phone at table_d1 (daytime phone use, surprising but fits home presence)
+- Day 11, 21:56 — phone at nightstand_r1 (bedtime phone use, repeated pattern)
+
+## Notes
+The surprising events today (phone at table at 09:44 and phone at nightstand at 21:56) were unexpected by the belief model, but they actually reinforce the single-person home-based routine. The phone appears at table during the day and at nightstand at bedtime, which is consistent with a person who uses their phone at home. No work objects (laptop, desk) have appeared yet; this could mean the person works from home but uses a mobile device, or they are retired/unemployed. The picture frame at coffee table at 11:02 is a new object, suggesting personal decoration. The dining chair at table at 14:07 suggests a midday meal. The waste bin at counter at 15:35 and 18:45 indicates kitchen activity. The bed pillow at bed at 19:49 suggests evening preparation for sleep. Need to check Day 12 (Saturday) to see if weekend routines differ further. Consider adding a hypothesis about a retiree or homemaker if no work objects appear by next week.

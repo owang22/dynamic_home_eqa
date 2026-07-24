@@ -1,0 +1,21 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Remote Worker / Digital Nomad — Day 5 (Saturday) shows no work equipment (laptop, passport, adapter) in use. The resident sleeps in (phone at nightstand 07:00, coffee 07:25) and engages in leisure (remote at 22:45). This contrasts with the 'early departure' of Day 1 and 'work base' of Day 3, suggesting the work week is distinct from the weekend routine. The lack of travel gear on Saturday reinforces that the previous trip was completed.
+2. (p=0.20) Frequent Business Traveler (Hybrid) — The structured work week (Mon-Thu) followed by a complete disengagement from work/travel items on Saturday supports a hybrid model where travel is confined to weekdays. However, the absence of any 'packing' or 'pre-trip' signals on Friday evening/night makes this less likely than a pure remote worker who travels occasionally.
+3. (p=0.05) Vacation Planner / Staycationer — Still low probability. The 'remote work' signals on Days 3-4 (laptop at desk, adapter) are too specific to be mere 'staycation' behavior. The Saturday leisure pattern is consistent with this, but the prior week's evidence strongly points to professional obligations.
+
+## Selected evidence
+- Day 0, 19:59 — packing_cubes at bed_r1 (organized travel prep, high discriminative value)
+- Day 0, 20:44 — suitcase at entry_hook_e1 (departure preparation)
+- Day 1, 06:22 — suitcase at elsewhere (early business departure)
+- Day 1, 06:22 — laptop at elsewhere (work access during trip)
+- Day 3, 20:41 — passport at entry_hook_e1 (international/formal travel confirmation)
+- Day 3, 20:41 — laptop at desk_o1 (return to work base)
+- Day 3, 20:41 — suitcase at closet_r1 (routine storage, tidy resident)
+- Day 4, 08:07 — travel_adapter at bed_r1 (tech usage, possibly WFH or pre-trip prep)
+- Day 5, 07:00 — phone at nightstand_r1 (late start, weekend routine)
+- Day 5, 22:49 — remote at coffee_table_l1 (leisure activity, confirms non-work day)
+
+## Notes
+Day 5 (Saturday) confirms a clear weekend routine: late start, no work devices, leisure focus. The 'coffee_mug' at counter_k1 at 07:25 suggests a morning coffee ritual, but no 'coffee_maker' event was logged, so the source is unknown (pre-made? kettle?). The 'bowl' at sink_k1 at 07:52 might be breakfast cleanup. The 'remote' at 22:49 is a strong leisure signal. Need to monitor Day 6 (Sunday) for similar patterns to confirm the weekend routine. Also, check if the 'travel_adapter' is still out on Day 6, which would indicate ongoing tech usage or preparation for a Sunday night/Monday morning trip.

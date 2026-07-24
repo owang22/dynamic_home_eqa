@@ -1,0 +1,25 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A retired or semi-retired individual who enjoys a leisurely morning routine with coffee, reading glasses, and a newspaper, followed by a simple lunch at home, and spends afternoons relaxing in the living room. — Day 13 (Sunday) continues the same pattern: reading_glasses at counter at 06:30, moved to table at 06:56; coffee_mug at sink at 10:49 (after morning coffee); phone on sofa at 14:03 (afternoon relaxation); dishes put away at 21:45. No work objects appear. The consistency across 14 days (including weekends) strongly supports a non-working, health-conscious resident with a fixed daily routine.
+2. (p=0.01) A remote worker who starts the day with coffee and reading but takes a break to have lunch at home and then works from the living room in the afternoon. — The absence of any work-related objects (laptop, documents, desk use) across 14 days (including weekdays) makes this hypothesis very unlikely. The afternoon phone and reading_glasses on sofa suggest leisure, not work.
+
+## Selected evidence
+- Day 0, 07:03 — coffee_mug at table_d1 (morning coffee routine)
+- Day 1, 06:30 — pill_organizer at counter_k1 (health routine, suggests older or health-conscious resident)
+- Day 1, 08:47 — phone at patio_table_p1 (morning outdoor phone use, consistent)
+- Day 1, 22:04 — phone at nightstand_r1 (bedtime phone use, suggests single occupant)
+- Day 2, 14:00 — phone at sofa_l1 (afternoon relaxation on sofa)
+- Day 3, 12:14 — plate at table_d1 (lunch at home, consistent)
+- Day 5, 06:30 — reading_glasses at counter_k1 (weekend morning same as weekday)
+- Day 6, 07:07 — newspaper at table_d1 (Sunday morning same as weekday)
+- Day 6, 15:56 — reading_glasses at sofa_l1 (afternoon reading, consistent)
+- Day 7, 06:34 — pill_organizer at counter_k1 (Monday morning health routine, consistent)
+- Day 7, 08:37 — phone at patio_table_p1 (Monday morning outdoor phone, consistent)
+- Day 7, 11:54 — fork and plate at table_d1 (Monday lunch at home, consistent)
+- Day 7, 14:09 — phone at sofa_l1 (Monday afternoon relaxation, consistent)
+- Day 12, 07:05 — coffee_mug and newspaper at table_d1 (Saturday morning same as weekday)
+- Day 12, 07:45 — coffee_mug at patio_table_p1 (morning outdoor coffee, consistent)
+
+## Notes
+Day 13 (Sunday) shows the same pattern: reading_glasses at counter at 06:30, moved to table at 06:56; coffee_mug at sink at 10:49 (after morning coffee); phone on sofa at 14:03 (afternoon relaxation); dishes put away at 21:45. No work objects observed. The phone moving to nightstand was not observed today, but the pattern is consistent with single occupant. No new patterns emerged; the evidence overwhelmingly supports a retired or health-conscious individual with a fixed daily routine. The third hypothesis (flexible schedule) was removed on day 9 due to lack of evidence.

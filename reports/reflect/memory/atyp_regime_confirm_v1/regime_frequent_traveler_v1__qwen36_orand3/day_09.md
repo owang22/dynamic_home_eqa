@@ -1,0 +1,17 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Business Traveler / Frequent Flyer — The absence of events on Day 9 (Wednesday) strongly supports the hypothesis that the resident is away on a multi-day business trip. The previous evidence (suitcase Day 7, laptop/packing cubes Day 8) established the departure. A standard office worker would likely be present or have different activity patterns. The probability remains high as no contradictory evidence (e.g., return) has emerged.
+2. (p=0.04) Remote Worker / Digital Nomad — Still possible if the resident is traveling for leisure or long-term remote work. However, the specific 'Monday evening packing' pattern is more characteristic of business travel cycles. The lack of activity on Day 9 is consistent with being away, but doesn't distinguish between business and leisure travel without further context.
+3. (p=0.01) Standard Office Worker (Hybrid) — Unlikely. A standard office worker would not typically pack a suitcase on a Monday evening for a mid-week absence unless for a specific planned vacation, which is less frequent. The passport and adapter suggest regular travel needs inconsistent with a standard local office job. The continued absence on Day 9 makes this even less likely.
+
+## Selected evidence
+- Day 8, 06:39 — laptop at elsewhere (indicates work-related travel or remote work on the go, consistent with business traveler profile)
+- Day 8, 06:39 — packing_cubes at elsewhere (confirms active packing for a trip, reinforcing the suitcase evidence from Day 7)
+- Day 7, 20:57 — suitcase at entry_hook_e1 (strong indicator of imminent travel, likely for work given Monday timing)
+- Day 7, 20:12 — travel_adapter at bed_r1 (supports packing/prep for travel, often used for international or specific region trips)
+- Day 3, 10:00 — passport at desk_d1 (previous evidence of travel readiness, now corroborated by current packing behavior)
+- Day 6, 07:24 — coffee_mug at counter_k1 (confirms resident was home on Sunday, ruling out continuous travel prior to Day 7)
+
+## Notes
+Day 9 (Wednesday) had no observed events. This reinforces the hypothesis that the resident is away. The apartment is likely empty. Need to observe if the resident returns later in the week (e.g., Day 10 Thursday or Day 11 Friday) or if the absence extends into the weekend. If the resident returns on Day 10, it would suggest a short business trip. If they return on Day 12 (Monday), it would suggest a longer trip or weekend getaway.

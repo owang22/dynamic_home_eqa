@@ -1,0 +1,18 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A working professional who commutes to an office, likely with a standard 9-to-5 schedule. The laptop is taken to work in the morning, the transit card is hung up after returning home in the evening, and the work lanyard appears at a similar time. The late bowl and fork suggest a simple dinner routine after work. The travel mug leaving in the morning and returning in the evening further supports a daily commute with a coffee routine. — Day 0: laptop at elsewhere (08:34), transit card at entry hook (18:05), bowl at cupboard (21:45). Day 1: work lanyard at entry hook (17:36), fork at cupboard (21:45). Day 2: travel mug at elsewhere (08:32), travel mug at sink (18:03), plate at sink (19:12). The travel mug pattern strongly reinforces a daily commute with a coffee-to-go habit. The plate at 19:12 suggests dinner is eaten earlier than the previous late bowl/fork, but still within a typical workday evening. The lanyard and transit card confirm a workplace commute. The consistent morning departure (08:32-08:34) and evening return (17:36-18:05) solidify a 9-to-5 schedule.
+2. (p=0.05) A student or remote worker who uses the laptop at home but also has a transit card and lanyard for occasional outings. The late bowl and fork could be a study snack. However, the lanyard at 17:36 and travel mug pattern suggest a structured schedule, making this less likely. — The lanyard and transit card could be for a part-time job or class, but the consistent evening return times (17:36, 18:05) and the travel mug leaving and returning at similar times each day are more typical of a full-time worker. The plate at 19:12 is earlier than the previous late dinner, which could be a student's early dinner, but the overall pattern is more consistent with a professional.
+
+## Selected evidence
+- Day 0, 08:34 — laptop at elsewhere (morning departure for work)
+- Day 0, 18:05 — transit_card at entry_hook_e1 (evening return after commute)
+- Day 0, 21:45 — bowl at cupboard_k1 (late evening meal cleanup, workday pattern)
+- Day 1, 17:36 — work_lanyard at entry_hook_e1 (confirms workplace commute, similar return time)
+- Day 1, 21:45 — fork at cupboard_k1 (consistent late dinner routine)
+- Day 2, 08:32 — travel_mug at elsewhere (morning coffee-to-go, commute habit)
+- Day 2, 18:03 — travel_mug at sink_k1 (evening return, coffee mug washed)
+- Day 2, 19:12 — plate at sink_k1 (dinner cleanup, earlier than previous days)
+
+## Notes
+Three weekdays observed (Mon, Tue, Wed). Laptop not seen today; need to check if it leaves every morning. Travel mug pattern (08:32 out, 18:03 in) strongly supports daily commute with coffee. Plate at 19:12 is earlier than previous late dinner (21:45), suggesting possible variation in dinner time or a different meal. Weekend patterns unknown. Consider if there is a second resident if multiple sets of keys or lanyards appear. The consistent morning departure (08:32-08:34) and evening return (17:36-18:05) across three days solidifies a 9-to-5 work schedule.

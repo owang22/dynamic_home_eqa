@@ -1,0 +1,26 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) A single working professional who works from home and has a morning outdoor/patio routine (reading, coffee, phone) before starting work, followed by a structured evening wind-down. — The Friday morning events (bowl, newspaper, reading_glasses at table_d1 at 07:09) suggest a breakfast routine before the patio coffee at 07:49. The bowl at table (not sink) indicates a meal at the table, consistent with a structured morning. The remote at coffee_table_l1 at 16:19 (surprising) suggests an afternoon break or TV use, which could be a Friday relaxation. The evening sequence (dining_chair at 18:22, pillow at 18:25, picture_frame at 18:34, floor_lamp at 20:54) shows a wind-down routine. Single pillow, single bowl, single coffee mug support one person.
+2. (p=0.15) A couple or family where one person works from home and another may have a different schedule, but the evidence is still weak. — The multiple pillow events (Day 3, Day 4) could indicate two people, but the same pillow appears repeatedly, likely one person adjusting. The single bowl and single coffee mug suggest one person. The picture_frame at coffee_table_l1 could be a decorative item moved by someone, but not strong evidence for multiple residents. This hypothesis remains possible but less likely.
+3. (p=0.10) A retiree or someone with a relaxed morning and evening routine, possibly living alone. — The morning breakfast at table (bowl, newspaper, reading_glasses) and patio coffee could fit a retiree. The afternoon remote use and evening picture_frame movement suggest leisure. However, the structured timing (07:09 breakfast, 07:49 patio, 16:19 remote, 18:22 chair) is more typical of a working professional with a schedule. The probability remains low.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading habit, likely before work)
+- Day 0, 12:31 — plate at sink_k1 (lunch at home, suggests work-from-home or flexible schedule)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation in living room)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine before bed)
+- Day 0, 20:54 — bed_pillow at bed_r1 (preparing for sleep, consistent with earlier events)
+- Day 3, 07:47 — coffee_mug at patio_table_p1 (morning coffee on patio, suggests outdoor morning ritual)
+- Day 3, 07:47 — reading_glasses at patio_table_p1 (reading on patio, consistent with newspaper habit)
+- Day 3, 09:10 — phone at patio_table_p1 (phone use on patio, likely checking messages or news)
+- Day 3, 13:52 — reading_glasses at coffee_table_l1 (glasses moved to coffee table, possibly for afternoon reading)
+- Day 3, 18:51 — bed_pillow at bed_r1 (early evening pillow placement, part of wind-down)
+- Day 3, 21:57 — bed_pillow at bed_r1 (second pillow event, likely adjusting for sleep)
+- Day 4, 07:09 — bowl at table_d1 (breakfast at table, not sink; suggests structured morning meal)
+- Day 4, 07:09 — newspaper at table_d1 (morning reading at table, consistent with breakfast)
+- Day 4, 16:19 — remote at coffee_table_l1 (afternoon TV/leisure, surprising on Friday)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (decorative item moved, possibly for evening relaxation)
+
+## Notes
+Friday (Day 4) shows a new breakfast routine: bowl, newspaper, reading_glasses at table_d1 at 07:09, followed by patio coffee at 07:49. This suggests a consistent morning pattern (breakfast then patio) on workdays. The surprising remote at 16:19 indicates afternoon leisure, possibly a Friday habit. The picture_frame at coffee_table_l1 at 18:34 is new; could be a decorative item moved for evening ambiance. Need to check if weekend (Day 5-6) shows different patterns (e.g., later breakfast, no patio). The waste_bin events at counter_k1 (07:09 and 08:41) might indicate cleaning after breakfast, but not surprising. The dining_chair at table_d1 at 18:22 suggests a meal or setup for evening. The single bowl and single coffee mug reinforce one-person hypothesis. Open question: Is the remote use a Friday-only relaxation? Does the picture_frame appear regularly? Verify day-of-week patterns for weekend.

@@ -1,0 +1,25 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A healthcare worker (likely a nurse or doctor) working evening/night shifts, with a consistent shift start around 18:30-19:00 on weekdays. The badge, stethoscope, and thermos leaving at ~18:30 on multiple weekdays, and the pre-shift meal around 18:00-18:30 on weekdays, strongly support this. The weekend pattern (Saturday late meal, Sunday relaxed) indicates days off. No evidence of a second resident. — The pattern is highly consistent across multiple weekdays, including the pre-shift meal on day 10 and day 11. The Saturday events (mug at sink at 08:39, phone at sofa at 19:41) are consistent with a relaxed day off, no work-related departures.
+2. (p=0.05) A person with a variable schedule, possibly working from home or in a profession with irregular hours, given the absence of a consistent morning routine and the late evening meal. The scrubs and thermos could be from a medical profession but the timing is not yet fully consistent with a fixed shift pattern. This hypothesis accounts for remaining uncertainty. — The evidence is now very strong for a regular shift pattern, but there is still some residual uncertainty (e.g., no data on weekends, no confirmation of a second resident). No new evidence supports a variable schedule.
+
+## Selected evidence
+- Day 0, 18:32 — badge at elsewhere (identifies a healthcare worker, likely entering or leaving a medical facility)
+- Day 0, 18:32 — stethoscope at elsewhere (strongly associated with medical profession, same time as badge)
+- Day 1, 08:22 — badge at nightstand_r1 (badge placed on nightstand after a shift, suggesting overnight work or early morning return)
+- Day 1, 21:45 — plate at cupboard_k1 (late meal, consistent with night shift schedule)
+- Day 2, 18:31 — badge at elsewhere (consistent shift start time, ~18:30)
+- Day 2, 18:31 — stethoscope at elsewhere (same time as badge, reinforcing medical profession)
+- Day 2, 18:56 — thermos at elsewhere (packed meal for shift, supports work departure)
+- Day 3, 07:55 — scrubs at closet_r1 (morning change into work attire, possibly for a later shift or different schedule)
+- Day 3, 21:45 — thermos at cupboard_k1 (thermos returned after shift, indicating packed meal consumed)
+- Day 4, 08:02 — bowl at table_d1 (breakfast at home, consistent with a morning routine before a shift or day off)
+- Day 4, 18:40 — plate at sink_k1 (dinner at home, earlier than the usual late meal, possibly a day off or different schedule)
+- Day 5, 21:45 — plate at cupboard_k1 (late meal on Saturday, consistent with night shift schedule even on weekend)
+- Day 6, 08:06 — bowl at table_d1 (breakfast on Sunday, day off)
+- Day 7, 19:08 — keys at elsewhere (evening departure, likely for work, consistent with shift start)
+- Day 10, 08:06 — badge and keys at nightstand_r1 (badge at home in morning, indicating return from or preparation for shift; keys at nightstand suggests a later departure or day off, but followed by pre-shift meal at 18:03)
+
+## Notes
+Day 12 (Saturday) shows mug at sink at 08:39 (morning coffee/tea, relaxed day off) and phone at sofa at 19:41 (evening relaxation, consistent with day off). No work-related departures observed. The pattern of a healthcare worker with evening shifts on weekdays and days off on weekends remains very strong. Need to observe if there is any variation on Thursdays (e.g., a different shift start) or if the scrubs at 07:55 on day 3 was an anomaly. Also need to check for any other work-related objects (e.g., laptop, work bag) to confirm the profession.

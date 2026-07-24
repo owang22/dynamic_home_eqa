@@ -1,0 +1,21 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A family with a young child (sippy cup, board book, cushion on playmat) and a parent who works from home or has a flexible schedule (phone on counter midday, dining chair moved at lunch). The child likely has a structured day with playtime on the playmat in the morning (cushion and sippy cup at 08:43) and a nap or quiet time around 12:30-13:00 (pillow moved to bed). The board book in the toy bin at 11:13 confirms a toddler/preschooler. The plate at the table at 17:40 suggests a family dinner. The sippy cup in the cupboard at 21:45 indicates evening cleanup and storage. — The surprising events today strongly reinforce the young child hypothesis: cushion and sippy cup on the playmat at 08:43 indicate morning playtime; board book in toy bin at 11:13 is a clear child item; plate at table at 17:40 suggests a family meal; sippy cup in cupboard at 21:45 shows routine storage. The doormat movements (07:57, 09:02, 17:35) suggest someone entering/exiting, possibly a parent or child. The floor lamp at sofa at 12:21 and 21:31 indicates reading or relaxation. The bath mat at 09:15 and 21:12 suggests morning and evening hygiene routines. The waste bin at counter at 12:26 is mundane but fits a kitchen cleanup after lunch.
+2. (p=0.10) A single adult or couple without children, possibly working from home (phone on counter midday, dining chair moved at lunch). The sippy cup could be a reusable water bottle for an adult, and the board book might be a decorative or reference item. The cushion on the playmat could be for meditation or exercise. The plate at table at 17:40 is a normal dinner. The sippy cup in cupboard at 21:45 is just storage. — This hypothesis is less likely because the combination of sippy cup, board book, and cushion on a playmat is more typical of a young child. The doormat movements and lamp adjustments could fit an adult routine, but the child-related items are harder to explain away.
+3. (p=0.05) A remote worker with a pet (sippy cup could be a pet water bowl, board book could be a chew toy or decoration). The cushion on the playmat might be a pet bed. The plate at table at 17:40 is a normal dinner. The doormat movements could be from the pet or owner. The floor lamp adjustments are for reading or work. — This hypothesis is the least likely because a pet water bowl is usually not a sippy cup, and a board book is not a typical pet item. The cushion on a playmat is more likely for a child's play area. The pattern of events (playmat in morning, dinner at 17:40, evening cleanup) aligns better with a family with a child.
+
+## Selected evidence
+- Day 0, 08:54 — phone at counter_k1 (morning routine, work-from-home start)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch at home)
+- Day 0, 12:57 — bed_pillow at bed_r1 (nap or bed-making, likely child nap)
+- Day 0, 17:16 — sippy_cup at elsewhere (strong indicator of young child)
+- Day 3, 08:43 — cushion at playmat_n1 (morning playtime for child)
+- Day 3, 08:43 — sippy_cup at playmat_n1 (child's drink during play)
+- Day 3, 11:13 — board_book at toy_bin_l1 (child's book in toy bin)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday reading or relaxation)
+- Day 3, 17:40 — plate at table_d1 (family dinner time)
+- Day 3, 21:45 — sippy_cup at cupboard_k1 (evening cleanup, storage)
+
+## Notes
+Day 3 (Thursday) provided strong evidence for a young child: cushion and sippy cup on playmat at 08:43, board book in toy bin at 11:13, plate at table at 17:40, and sippy cup in cupboard at 21:45. The doormat movements (07:57, 09:02, 17:35) suggest someone leaving/returning, possibly a parent going to work or a child going to daycare. Need to observe weekend (days 5-6) to see if child is home all day or has different routines. The floor lamp at sofa at 12:21 and 21:31 suggests a reading or relaxation spot. The bath mat at 09:15 and 21:12 indicates morning and evening hygiene. The waste bin at counter at 12:26 is mundane but fits kitchen cleanup. The pillow movements (07:58, 18:51, 21:57) suggest bed-making and bedtime routine. The dining chair at table at 08:57 is likely breakfast. The sippy cup at 'elsewhere' on Day 0 remains unexplained but may have been misplaced.

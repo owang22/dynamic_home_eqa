@@ -1,0 +1,24 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=1.00) A shift worker (likely in construction, maintenance, or a trade) who works a rotating schedule: early morning shifts (departure ~05:00-05:30, return ~14:30) on some days, and later shifts (departure ~13:30, return ~22:30) on others. The consistent use of work badge, keys, thermos, and hi-vis vest indicates a physical job. The laptop and phone are taken to work on early shifts but left at home on later shifts, suggesting they are used for work communication or documentation only during certain shifts. The pattern across days 0-3 showed early departures (Mon-Wed) and a late departure on Thursday. Friday showed a late shift. Saturday and Sunday show relaxed days at home with meals, phone use, and no work items leaving the home. This is consistent with a weekend off. Day 7 (Monday) confirmed an early shift. Day 8 (Tuesday) showed another early shift. Day 9 (Wednesday) shows an early shift. Day 10 (Thursday) shows a late shift: hi-vis vest, keys, and phone leave at 13:29, and return at 22:29 with keys, laptop, phone, and work badge. This matches the late shift pattern seen on previous Thursdays and Fridays. The shift worker hypothesis remains extremely strong. — Day 10 (Thursday) provides a clear late shift departure at 13:29 and return at 22:29, exactly matching the pattern seen on day 3 (Thursday) and day 4 (Friday). The laptop was not taken to work (consistent with late shift pattern), and the work badge was placed on the nightstand upon return (consistent with late shift routine). The evening routine is typical. The shift worker hypothesis is now extremely strong (p=1.0). The remote worker hypothesis is effectively ruled out. No evidence of other residents.
+
+## Selected evidence
+- Day 0, 05:09 — work_badge at elsewhere (early departure for work)
+- Day 0, 14:25 — hi_vis_vest at closet_r1 (return from physical job)
+- Day 1, 05:20 — thermos at elsewhere (departure with drink, consistent with shift work)
+- Day 2, 05:12 — work_badge at elsewhere (early departure, consistent with shift work)
+- Day 3, 13:23 — hi_vis_vest at elsewhere (departure for work, physical job)
+- Day 3, 22:39 — keys at entry_hook_e1 (return and key placement, late evening)
+- Day 4, 13:29 — keys at elsewhere (departure for work, late shift)
+- Day 4, 13:29 — phone at elsewhere (phone taken on late shift, used for work)
+- Day 4, 22:18 — thermos at sink_k1 (return from late shift, thermos used)
+- Day 4, 22:18 — work_badge at nightstand_n1 (badge placed on nightstand, different from early shift routine)
+- Day 5, 10:48 — phone at counter_k1 (weekend, phone used at home)
+- Day 5, 21:45 — thermos at cupboard_k1 (thermos stored away, not used on weekend)
+- Day 6, 11:15 — keys at counter_k1 (Sunday, keys at home all day)
+- Day 7, 05:05 — work_badge at elsewhere (Monday early shift departure)
+- Day 7, 14:10 — keys at entry_hook_e1 (return from early shift, key placement)
+
+## Notes
+Day 10 (Thursday) confirms the late shift pattern: hi-vis vest, keys, and phone leave at 13:29, and return at 22:29 with keys, laptop, phone, and work badge. The laptop was not taken to work (consistent with late shift pattern). The work badge was placed on the nightstand upon return (consistent with late shift routine). The evening routine is typical. The shift worker hypothesis is now extremely strong (p=1.0). The remote worker hypothesis is effectively ruled out. No evidence of other residents. Next: observe Friday (day 11) to see if a late shift occurs again, as seen on day 4 (Friday). Also note that the work badge placement on nightstand after early shift on day 9 was different from previous early shift days; this might indicate a change in routine or a different end-of-day habit. The pattern of early shifts on Mon-Wed and late shifts on Thu-Fri is now well established.

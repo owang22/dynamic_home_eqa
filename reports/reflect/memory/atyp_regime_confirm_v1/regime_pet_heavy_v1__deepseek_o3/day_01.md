@@ -1,0 +1,15 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single person with a pet (likely a cat or small dog) who works from home or has a flexible schedule, as the blanket is placed on a pet bed in the morning, suggesting pet care, and the fork and plate at the sink indicate a simple meal routine. The phone moving from counter to sofa in the evening suggests a relaxed, home-based evening routine. — The blanket at the pet bed is a distinctive event that suggests a pet lives here, and the timing (morning) could indicate the resident is home. The phone movements in the evening are consistent with a single person relaxing at home. The bowl at the cupboard at 21:45 could be part of a late evening routine (e.g., preparing a snack or pet food).
+2. (p=0.30) A couple or family with a pet, where one person works from home or is home during the day, as the blanket on the pet bed in the morning might be part of a routine, and the dishes at the sink suggest a meal shared or prepared at home. The phone events could be from one person, but the bowl at the cupboard might indicate multiple people's activities. — The pet bed event is still distinctive, but the dishes could be from multiple people. The phone events are not clearly from multiple people. The bowl at the cupboard at 21:45 could be from a second person, but it's not strong evidence.
+3. (p=0.10) A remote worker or student who lives alone and has a pet, as the morning blanket placement and evening phone/bowl events suggest a home-based routine with minimal social activity. The phone moving from counter to sofa in the evening is typical of a single person relaxing. — This is a more specific version of the first hypothesis, but the evidence does not yet confirm remote work (e.g., no laptop or desk events). The phone and bowl events are consistent with a single person's evening routine.
+
+## Selected evidence
+- Day 0, 09:49 — blanket at pet_bed_l1 (indicates a pet lives here; morning placement suggests routine care or comfort)
+- Day 1, 17:59 — phone at counter_k1 (phone placed on counter in late afternoon, possibly after returning home or during a break)
+- Day 1, 19:40 — phone at sofa_l1 (phone moved to sofa in evening, suggesting relaxation or TV time)
+- Day 1, 21:45 — bowl at cupboard_k1 (bowl put away late evening, could be from a snack or pet feeding)
+
+## Notes
+Only two days observed (Monday and Tuesday). The phone and bowl events on Tuesday are consistent with a single person's evening routine. Need more days to confirm pet type, number of residents, and work/sleep patterns. Look for repeated pet bed events, meal times, and any work-related objects (laptop, desk). Day 0 is Monday, so weekday vs weekend patterns will emerge. The bowl at cupboard at 21:45 could be pet-related (e.g., putting away pet bowl) or human snack. Consider if the phone is used for work (e.g., seen at a desk).

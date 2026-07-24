@@ -1,0 +1,14 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single adult living alone, likely working from home or with a flexible schedule, as the phone is on the counter at midday (not in a bag or office) and the fork is washed in the evening, suggesting a simple meal routine. The thermos at 20:26 suggests a packed lunch or hot drink prepared for the next day, consistent with a work-from-home or commuting routine. — The thermos at 20:26 is a strong indicator of preparing for the next day, which is typical for someone with a regular work schedule (either home or office). The phone at midday and fork at 19:25 remain consistent with a single adult. The plate at 21:45 is a mundane event but fits the pattern.
+2. (p=0.20) A couple or family with one person working from home, as the phone at midday might be a shared device or a work break, and the fork at 19:25 could be from a family dinner. The thermos at 20:26 could be for a child's lunch or a partner's work, but the single plate at 21:45 suggests a single person's meal cleanup. — The single plate at 21:45 weakens the family hypothesis, as a family would likely produce multiple plates. The thermos could still be for a family member, but the evidence is less supportive.
+3. (p=0.10) A student or shift worker with irregular hours, as the phone at 12:20 might be a lunch break and the fork at 19:25 could be a late meal, but the thermos at 20:26 suggests preparation for a regular next-day activity, which is less typical for irregular schedules. — The thermos at 20:26 indicates some regularity, which contradicts the irregular schedule hypothesis. The plate at 21:45 is neutral. This hypothesis is less likely.
+
+## Selected evidence
+- Day 0, 12:20 — phone at counter_k1 (midday phone placement suggests home presence or break; could indicate work-from-home or flexible schedule)
+- Day 0, 19:25 — fork at sink_k1 (evening meal cleanup, typical but timing may help establish dinner routine)
+- Day 1, 20:26 — thermos at counter_k1 (preparing a packed lunch or hot drink for next day, suggests a regular work or study routine)
+
+## Notes
+Day 1 is Tuesday. The thermos at 20:26 is a new informative object; it suggests preparation for the next day, which is common for work-from-home or commuting adults. The plate at 21:45 is mundane and not kept. Need to see if thermos appears at similar time on other weekdays. Weekend observations (days 5-6) will help distinguish work-from-home vs. office commute. No suitcase, yoga mat, or laptop yet; these would be more informative. The single plate at 21:45 supports single adult hypothesis.

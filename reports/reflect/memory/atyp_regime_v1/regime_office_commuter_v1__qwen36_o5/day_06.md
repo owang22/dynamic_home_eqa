@@ -1,0 +1,18 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Office Commuter (Weekday Routine) — Day 6 (Sunday) shows no morning laptop departure and activity starts late (12:37 phone use), reinforcing the 'weekend off' pattern. The 18:32 dinner setup and 19:17 cleanup mirror Day 5's evening routine, confirming a consistent weekend wind-down schedule.
+2. (p=0.03) Remote Worker with Fixed Office Days — Still unlikely. If this were a remote worker with fixed office days, we might expect some digital activity (laptop/phone) earlier in the day on weekends, or a different pattern of device usage. The lack of work devices on Day 6 keeps this low.
+3. (p=0.02) Shift Worker / Irregular Schedule — Contradicted by the high consistency of the 18:30-19:30 evening routine across Day 5 and Day 6, and the clear weekday/weekend distinction in morning activity.
+
+## Selected evidence
+- Day 4, 08:28 — laptop at elsewhere (confirms work device taken out; supports office commute over remote work)
+- Day 5, 12:30 — keys at counter_k1 (weekend presence; keys out suggests potential outing or just returned from morning errand, breaks the 'home all day' null hypothesis)
+- Day 5, 12:30 — travel_mug at counter_k1 (weekend leisure/commute overlap; mug used outside standard work hours, suggests relaxed weekend routine)
+- Day 5, 19:20 — plate at sink_k1 (evening meal cleanup; confirms resident is home and active in the evening, consistent with post-work/weekend wind-down)
+- Day 6, 12:37 — phone at counter_k1 (late weekend start; phone use at this hour suggests waking up or leisure, no work device observed)
+- Day 6, 18:32 — plate at table_d1 (dinner setup; mirrors Day 5's evening routine, reinforcing consistent weekend dinner time)
+- Day 6, 19:17 — plate at sink_k1 (dinner cleanup; confirms resident is home and active in the evening, consistent with post-work/weekend wind-down)
+
+## Notes
+Day 6 (Sunday) confirms the 'late start' pattern seen on Day 5. No work devices (laptop) observed on either weekend day. The 18:30-19:30 evening routine is stable across both weekend days. Need to observe Day 7 (Monday) to see if the 08:28 laptop departure pattern resumes, which would solidify the 'Office Commuter' hypothesis.

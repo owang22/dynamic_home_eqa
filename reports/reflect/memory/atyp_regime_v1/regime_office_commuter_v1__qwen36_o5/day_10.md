@@ -1,0 +1,16 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Office Commuter (Weekday Routine) — Day 10 shows NO morning departure items (transit_card/travel_mug remained at home), contradicting the rigid 08:30 departure pattern seen on Days 8-9. This suggests the resident is working from home or has a flexible schedule, weakening the 'strict commuter' model.
+2. (p=0.04) Remote Worker with Flexible Schedule — The absence of morning departure items combined with the laptop appearing at the sofa in the evening (18:08) supports a work-from-home scenario. The resident may have worked earlier in the day or is using the evening for leisure/work on the sofa.
+3. (p=0.01) Shift Worker / Irregular Schedule — Still unlikely due to the consistency of the previous days, but the Day 10 anomaly could indicate a shift change. However, the laptop on the sofa suggests a more standard evening routine than a late-night shift return.
+
+## Selected evidence
+- Day 10, 07:24 — bowl at table_d1 (breakfast activity; confirms morning routine exists but lacks commute items)
+- Day 10, 07:24 — coffee_mug at counter_k1 (morning beverage; resident stayed home)
+- Day 10, 18:08 — laptop at sofa_l1 (evening work/leisure; contradicts 'strict office return' pattern where laptop would be at desk or absent)
+- Day 10, 18:08 — transit_card at counter_k1 (card remained home; strong evidence against mandatory office commute today)
+- Day 10, 18:08 — travel_mug at counter_k1 (mug remained home; reinforces that the resident did not leave for work)
+
+## Notes
+Day 10 (Thursday) breaks the Tue/Wed commute pattern. The resident stayed home (no transit_card/travel_mug departure). The laptop on the sofa at 18:08 is key: it suggests either working from home in the evening or using the laptop for leisure. Need to check Day 11 (Friday) to see if this is a one-off (sick day) or a new pattern (WFH). Also, note that 'elsewhere' is no longer a reliable departure indicator for this day.

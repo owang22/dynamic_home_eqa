@@ -1,0 +1,22 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single adult working shift work (likely construction, warehouse, or security) with a rotating schedule. — Day 8 (Tuesday) shows a midday departure at 13:02 with keys, phone, and work_badge, which is later than previous early-morning shifts. This suggests a rotating shift pattern. The hi-vis vest was not moved today, but the work_badge confirms work. No evidence of multiple residents.
+2. (p=0.04) A single adult with a regular 9-to-5 job, commuting to work. — Day 8's departure at 13:02 is inconsistent with a standard 9-to-5 start. The earlier early-morning departures (05:07, 05:14) and late return (23:02) also contradict a fixed 9-to-5. This hypothesis is nearly ruled out.
+3. (p=0.01) A couple or family with at least one adult. — No new evidence of multiple residents. All objects remain singular (one set of keys, one phone, one work_badge). This hypothesis is effectively ruled out.
+
+## Selected evidence
+- Day 2, 05:07 — work_badge at elsewhere (leaving for work early morning, confirms commute)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (returning from work in mid-afternoon, consistent with standard workday)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (safety vest, suggests manual or outdoor job)
+- Day 3, 23:02 — work_badge at locker_shelf_e1 (returning from work very late, shift work pattern)
+- Day 4, 05:14 — hi_vis_vest at elsewhere (leaving for work with safety vest, early shift)
+- Day 5, 12:44 — phone at sofa_l1 (weekend relaxation, no work items moved)
+- Day 7, 05:19 — hi_vis_vest at elsewhere (leaving for work early Monday, shift work)
+- Day 7, 16:43 — picture_frame at coffee_table_l1 (returned home mid-afternoon, standard shift length)
+- Day 8, 13:02 — keys at elsewhere (midday departure, different from previous early-morning shifts)
+- Day 8, 13:02 — phone at elsewhere (midday departure)
+- Day 8, 13:02 — work_badge at elsewhere (midday departure, confirms work)
+
+## Notes
+Day 8 (Tuesday) shows a midday departure at 13:02, which is later than previous early-morning shifts (05:07, 05:14, 05:19). This suggests a rotating shift schedule. No work items moved on Day 6 (Sunday) and relaxed Day 5 (Saturday) suggest fixed weekend off. Next week: watch for any weekend work items to confirm irregular schedule, or suitcase leaving for days to indicate travel. Also monitor for laptop at desk during midday to rule out work-from-home. The wall_clock and doormat movements today are mundane and not informative.

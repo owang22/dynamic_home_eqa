@@ -1,0 +1,22 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Standard 9-5 worker with a dog — Day 7 (Monday) shows a late morning start (07:49 phone at counter, no departure by 08:29) compared to previous weekdays (07:00-07:10). However, the evening return at 17:14 is consistent with a standard workday. The lack of a morning departure signal on Day 7 suggests either a later start time, remote work hybrid, or simply a slower morning routine, but the strong evening return and weekend leisure patterns still dominate. The 'phone at counter' at 07:49 might indicate a later wake-up or remote check-in before leaving.
+2. (p=0.01) Remote worker with irregular schedule — The absence of a morning departure signal on Day 7 (phone stayed at counter until 07:49, no keys/phone at entry_hook for departure) contrasts with Days 1, 3, 4. However, the resident was not seen leaving. The evening return at 17:14 is consistent with both hypotheses. The 'blanket' and 'cushion' movements on the sofa during the day (12:21, 16:17) could suggest home-based activity, but these are also consistent with weekend leisure carried over or general comfort. No strong evidence for full remote work yet.
+3. (p=0.00) Student or night-shift worker — Discarded. The consistent evening return around 17:00-17:30 on weekdays (Days 1, 3, 4, 7) and the clear weekend pattern (no morning departure, leisure activities) strongly contradict a night-shift or typical student schedule. The Day 7 late morning is not indicative of a night shift.
+
+## Selected evidence
+- Day 0, 08:27 — litter_scoop at bathroom_c1 (confirms pet ownership, likely cat or dog with indoor habits)
+- Day 1, 07:10 — phone at entry_hook_e1 (strong morning departure signal)
+- Day 1, 17:04 — phone at entry_hook_e1 (evening return from work)
+- Day 3, 17:08 — phone at entry_hook_e1 (evening return, consistent with Day 1)
+- Day 4, 07:04 — phone at entry_hook_e1 (morning departure, consistent with Day 1)
+- Day 4, 17:35 — dog_leash at sofa_l1 (post-work pet care, confirms dog ownership and routine)
+- Day 5, 12:49 — fork at table_d1 (home meal, consistent with weekend or lunch break)
+- Day 5, 19:54 — phone at sofa_l1 (evening relaxation, consistent with weekend pattern)
+- Day 6, 17:11 — dog_leash at entry_hook_e1 (weekend evening walk, confirms dog ownership and leisure timing)
+- Day 6, 21:45 — fork at cupboard_k1 (dinner cleanup, consistent with home evening routine)
+- Day 7, 17:14 — phone at entry_hook_e1 (evening return, consistent with weekday pattern despite late morning)
+
+## Notes
+Day 7 (Monday) deviates from the strict 07:00 departure pattern seen on Days 1, 3, 4. The phone was at the counter at 07:49 and no departure signal (phone/keys at entry_hook) was observed before 17:14. This could indicate a later start, remote work, or a missed observation. The evening return at 17:14 is consistent with a standard workday. The 'blanket' and 'cushion' movements on the sofa during the day (12:21, 16:17) are noted but not strongly diagnostic. Need to observe Day 8 (Tuesday) to see if the late morning pattern persists or if Day 7 was an anomaly. The dog leash was not observed on Day 7, which is unusual if the evening walk is a routine. Check if the dog leash was used earlier or if the walk was skipped.

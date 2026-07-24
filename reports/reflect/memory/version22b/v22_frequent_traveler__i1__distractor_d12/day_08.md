@@ -1,0 +1,25 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A single professional who works from home, with a structured but flexible routine, and who is preparing for a trip. — Day 8 (Tuesday) shows passport in carryon at 06:23, confirming active trip preparation. Keys and neck_pillow moved to elsewhere at 07:35 suggest leaving the home (possibly for the trip). Work routine continues with dining_chair at table at 14:19 and floor_lamp at sofa at 14:45, but the absence of morning work items (e.g., coffee_mug at desk) and the early departure items indicate a disrupted workday. No evidence of a second person.
+2. (p=0.01) A couple or family with at least one person who works from home, but evidence remains weak. — No new evidence of a second person. The picture_frame and bath_mat events could be moved by different people, but no distinct items (e.g., second coffee_mug, different phone) appear. The weekend routine is still consistent with a single person.
+
+## Selected evidence
+- Day 1, 07:14 — passport at elsewhere (travel preparation)
+- Day 1, 07:14 — suitcase at elsewhere (travel preparation)
+- Day 3, 18:35 — neck_pillow at carryon_e1 (travel prep, packing)
+- Day 3, 18:35 — packing_cubes at carryon_e1 (travel prep, packing)
+- Day 4, 16:29 — laptop at carryon_e1 (travel prep, packing laptop)
+- Day 5, 07:39 — coffee_mug at table_d1 (weekend morning coffee, relaxed start)
+- Day 5, 13:55 — bed_pillow at bed_r1 (afternoon nap, weekend pattern)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening hygiene, consistent)
+- Day 5, 22:27 — phone at nightstand_r1 (bedtime, single person)
+- Day 6, 20:09 — phone at sofa_l1 (evening relaxation, no work items moved)
+- Day 7, 08:04 — dining_chair at table_d1 (workday morning, likely desk chair)
+- Day 7, 08:45 — dining_chair at table_d1 (workday morning, likely desk chair)
+- Day 7, 17:20 — floor_lamp at sofa_l1 (evening relaxation, consistent with single person)
+- Day 8, 06:23 — passport at carryon_e1 (trip preparation, active packing)
+- Day 8, 07:35 — keys at elsewhere (likely leaving home, possibly for trip)
+
+## Notes
+Day 8 (Tuesday) shows passport in carryon at 06:23, confirming active trip preparation. Keys and neck_pillow moved to elsewhere at 07:35 suggest leaving the home (possibly for the trip). Work routine continues with dining_chair at table at 14:19 and floor_lamp at sofa at 14:45, but the absence of morning work items (e.g., coffee_mug at desk) and the early departure items indicate a disrupted workday. No evidence of a second person. Need to observe if travel items reappear (suitcase, passport) or if work routine continues. The wall_clock events (multiple times) are likely just time-checking, not diagnostic. The picture_frame at coffee_table (07:48) may be decorative, not routine.

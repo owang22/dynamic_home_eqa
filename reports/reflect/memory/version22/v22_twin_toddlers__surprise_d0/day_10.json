@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A parent with a young child who works a standard office job outside the home on weekdays, with a consistent weekend routine at home.",
+   "prob": 0.65,
+   "rationale": "Weekday pattern of phone at counter at 08:43 (Day 0, Day 4) and sippy cup at sink at 07:11 (Day 4) strongly suggests morning departure for work. No midday home events on weekdays support office job. Saturday (Day 5) showed relaxed weekend pattern. Sunday (Day 6) shows phone at counter at 08:59 (similar to weekday departure, possibly church/errand). Today (Day 8, Tuesday) the surprising board_book at playmat at 08:40 (just before typical departure time) suggests the child was playing at home that morning, possibly before daycare/school, which is consistent with a morning routine before work. The surprising fork at table at 11:36 (midday weekday) is unexpected for an office job; it could indicate a work-from-home day or a lunch break at home, slightly reducing probability."
+  },
+  {
+   "persona": "A parent with a young child who works part-time or has a flexible schedule, possibly with a caregiver present on weekdays.",
+   "prob": 0.25,
+   "rationale": "The weekday phone at counter at 08:43 could indicate a later departure or errand, and the 07:11 sippy cup at sink might be caregiver cleanup. Saturday's relaxed pattern and Sunday's phone at counter at 08:59 (weekend departure) could reflect a flexible schedule. Today's surprising board_book at playmat at 08:40 (morning play before departure) and fork at table at 11:36 (midday meal at home) are more consistent with a flexible schedule or working from home, as the parent is home during the day. This hypothesis gains probability from the surprising midday fork event."
+  },
+  {
+   "persona": "A stay-at-home parent or remote worker with a young child, where the child is home during the day, but with occasional morning departures.",
+   "prob": 0.1,
+   "rationale": "Weekday sippy cup at sink at 07:11 and at table at 17:41 could fit a home-based routine, but the consistent phone-at-counter at 08:43 on two weekdays suggests leaving home. Saturday's events (bowl at sink at 07:14, sippy cup at sink at 12:38) are consistent with a home-based weekend, but the weekday departure signal remains contradictory. Sunday's phone at counter at 08:59 (weekend departure) further weakens this hypothesis. Today's surprising board_book at playmat at 08:40 (morning play) and fork at table at 11:36 (midday meal) are consistent with being home, but the departure signals still reduce probability."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:54 \u2014 phone at counter_k1 (morning departure signal for work or errand)",
+  "Day 0, 17:16 \u2014 sippy_cup at elsewhere (indicates young child in household, possibly after daycare/school pickup)",
+  "Day 3, 08:43 \u2014 cushion at playmat_n1 (morning playtime setup, child active at home)",
+  "Day 3, 08:43 \u2014 sippy_cup at playmat_n1 (child's drink during morning play, consistent with home care)",
+  "Day 3, 11:13 \u2014 board_book at toy_bin_l1 (midday toy/book cleanup, child's activity)",
+  "Day 3, 17:40 \u2014 plate at table_d1 (early dinner or snack, possibly child's meal)",
+  "Day 3, 21:45 \u2014 sippy_cup at cupboard_k1 (evening cleanup, child's cup stored after use)",
+  "Day 4, 06:26 \u2014 bowl at table_d1 (early morning breakfast, likely child's meal before school/daycare)",
+  "Day 4, 07:11 \u2014 sippy_cup at sink_k1 (morning cleanup after breakfast, child's cup washed before departure)",
+  "Day 4, 08:43 \u2014 phone at counter_k1 (consistent morning departure signal, same time as Day 0, strengthens office-job hypothesis)",
+  "Day 4, 17:41 \u2014 sippy_cup at table_d1 (after-work child meal, consistent with pickup from daycare/school)",
+  "Day 5, 07:14 \u2014 bowl at sink_k1 (Saturday morning, later than weekday 06:26 bowl at table; relaxed weekend breakfast)",
+  "Day 5, 12:38 \u2014 sippy_cup at sink_k1 (Saturday midday, no morning departure signal; child's cup washed later, consistent with weekend)",
+  "Day 6, 08:59 \u2014 phone at counter_k1 (Sunday morning departure, similar to weekday time; could be weekend errand or church)",
+  "Day 8, 08:40 \u2014 board_book at playmat_n1 (Tuesday morning, child playing before typical departure time; suggests home-based morning routine before daycare/school)"
+ ],
+ "notes": "Today (Day 8, Tuesday) had two surprising events: board_book at playmat at 08:40 (just before typical 08:43 departure) and fork at table at 11:36 (midday weekday). The board_book event suggests the child was playing at home that morning, possibly before daycare/school, which is consistent with a morning routine before work. The fork at table at 11:36 is surprising for a standard office job; it could indicate a work-from-home day, a flexible schedule, or a caregiver preparing lunch. Need to observe if similar midday events occur on other weekdays to determine if this is a one-off or a pattern. Also need to check if the phone at counter pattern holds on Monday (Day 7) and if weekend departure times vary. The sippy_cup at sink at 12:21 is consistent with midday cleanup, possibly after lunch."
+}

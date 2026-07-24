@@ -1,0 +1,21 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single person who works from home or has a flexible schedule, with a routine that includes morning lamp use, midday meal at the table, and evening relaxation in the living room. — The floor lamp is moved to the sofa multiple times (morning, afternoon, evening), suggesting a home-based worker who uses the living room throughout the day. The dining chair at the table at 12:30 indicates a midday meal at home. The bed pillow is moved to the bed at 12:57 and again at 20:54, suggesting a nap or bed-making routine.
+2. (p=0.30) A person who maintains a tidy home with regular cleaning and organization, as seen by the bath mat being moved to the bathroom twice (13:25 and 20:23) and the plant mister being used in the morning. — The bath mat is moved to the bathroom at 13:25 and again at 20:23, suggesting a routine of cleaning or drying the mat. The plant mister at the windowsill at 09:10 indicates plant care, which is a sign of a tidy and organized household.
+3. (p=0.10) A person who values decor and personal touches, as evidenced by the picture frame being moved to the coffee table twice (13:20 and 21:04). — The picture frame is moved to the coffee table at 13:20 and again at 21:04, suggesting the resident likes to display personal items or rearrange decor.
+
+## Selected evidence
+- Day 0, 08:39 — floor_lamp at sofa_l1 (morning lamp use, suggests home-based work or leisure)
+- Day 0, 09:10 — plant_mister at windowsill_l1 (plant care, indicates a tidy household)
+- Day 0, 12:30 — dining_chair at table_d1 (midday meal at home, suggests flexible schedule)
+- Day 0, 12:57 — bed_pillow at bed_r1 (nap or bed-making, midday activity)
+- Day 0, 13:20 — picture_frame at coffee_table_l1 (decor rearrangement, personal touch)
+- Day 0, 13:25 — bath_mat at bathroom_c1 (bathroom cleaning routine)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bathroom routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (evening bed preparation)
+- Day 0, 21:04 — picture_frame at coffee_table_l1 (evening decor adjustment)
+- Day 0, 21:15 — dining_chair at table_d1 (evening meal or activity at table)
+
+## Notes
+Day 0 is Monday. Need to observe if the midday nap and evening routines repeat on weekdays. Weekend patterns may differ. The floor lamp is moved multiple times; check if it's a consistent pattern. The plant mister and picture frame suggest a person who cares about home aesthetics. No evidence of a second person yet (e.g., multiple dishes, two chairs moved).

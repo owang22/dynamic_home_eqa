@@ -1,0 +1,26 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single person who works from home or has a flexible schedule, with a routine that includes morning plant care, evening relaxation, and a consistent bedtime. — Friday shows no commute (no keys event), phone at desk at 09:44 (work from home), floor_lamp at sofa at 15:25 (afternoon relaxation), and phone at nightstand at 21:56 (consistent bedtime). The afternoon nap on Thursday is not repeated, so it may have been an exception. The Tuesday commute remains an outlier, but the overall pattern strongly supports a flexible schedule.
+2. (p=0.10) A person with a plant hobby, possibly a plant enthusiast, as indicated by regular watering can use in the morning and evening. — No plant care events observed today, but the pattern from previous days (watering can at windowsill, balcony) suggests daily care. The absence may be due to timing (e.g., before 07:05 or after 21:56). Probability unchanged.
+3. (p=0.05) A person who works outside the home on some weekdays, with a typical 9-to-5 schedule, as suggested by the Tuesday keys departure and return. — Friday shows no commute, and the Thursday afternoon nap is not repeated. The Tuesday pattern is still valid but increasingly isolated. Probability reduced from 0.10 to 0.05.
+
+## Selected evidence
+- Day 0, 09:10 — plant_mister at windowsill_l1 (morning plant care, suggests plant hobby)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, likely reading or screen time)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine, before bed)
+- Day 0, 20:54 — bed_pillow at bed_r1 (consistent bedtime, regular sleep schedule)
+- Day 2, 13:33 — phone at table_d1 (phone use at home desk, likely work)
+- Day 3, 09:40 — laptop at elsewhere (departure with laptop, possible hybrid work)
+- Day 4, 07:22 — bowl at table_d1 (quick breakfast at home, flexible schedule)
+- Day 4, 09:22 — watering_can at sink_k1 (morning plant care, regular routine)
+- Day 5, 07:19 — coffee_mug at table_d1 (weekend morning coffee, later than weekday)
+- Day 5, 21:45 — watering_can at windowsill_l1 (evening plant care, daily routine)
+- Day 6, 09:33 — floor_lamp at sofa_l1 (Sunday morning relaxation, consistent weekend pattern)
+- Day 6, 14:10 — watering_can at balcony_bench_b1 (afternoon plant care, daily routine)
+- Day 8, 09:48 — keys at elsewhere (departure, likely work commute on Tuesday)
+- Day 8, 17:51 — keys at entry_hook_e1 (return home, typical workday end)
+- Day 11, 09:44 — phone at table_d1 (phone at desk, work from home on Friday)
+
+## Notes
+Friday pattern: coffee_mug at table at 07:05 (morning coffee), phone at desk at 09:44 (work from home), picture_frame at coffee_table at 11:02 (mundane, not retained), dining_chair at table at 14:07 (mundane), floor_lamp at sofa at 15:25 (afternoon relaxation), phone at nightstand at 21:56 (bedtime). No plant care observed today, but may occur before 07:05 or after 21:56. The Thursday afternoon nap (bed_pillow at 13:30) was not repeated, so it may have been a one-off. Tuesday commute pattern remains but is isolated. Need to observe next week to see if Tuesday commute repeats and if plant care is truly daily. Weekend breakfast later (~07:19 Saturday) confirmed. Day-of-week: Tuesday commute, Wednesday/Thursday/Friday no commute. The picture_frame and dining_chair events are mundane and not retained.

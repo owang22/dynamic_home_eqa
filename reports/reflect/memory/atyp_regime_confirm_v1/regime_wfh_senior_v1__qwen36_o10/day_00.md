@@ -1,0 +1,15 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) Standard working professional with a home office — Morning coffee routine, lunch at desk, evening meal, and phone charging in bedroom are consistent with a typical 9-5 worker.
+2. (p=0.30) Remote worker with flexible hours — Glasses and mug at desk at midday suggest working from home, but the lack of sustained laptop presence or specific work tools makes this less certain than standard employment.
+3. (p=0.10) Student or night-shift worker — Possible due to late phone usage, but early morning coffee (07:11) contradicts typical night-shift sleep schedules.
+
+## Selected evidence
+- Day 0, 07:11 — coffee_mug at counter_k1 (indicates early morning routine, likely waking up around this time)
+- Day 0, 07:11 — reading_glasses at desk_o1 (suggests morning reading or work preparation at the desk)
+- Day 0, 13:27 — coffee_mug at desk_o1 (suggests working or studying from home during the day)
+- Day 0, 22:17 — phone at nightstand_r1 (indicates bedtime routine, likely sleeping around 22:30-23:00)
+
+## Notes
+Need to observe if the laptop is present at the desk during the day to confirm remote work. Check if the 'reading_glasses' are used for work or leisure. Verify if the 07:11 coffee is a daily habit or a one-off. Look for signs of a second resident (e.g., two mugs, two sets of glasses).

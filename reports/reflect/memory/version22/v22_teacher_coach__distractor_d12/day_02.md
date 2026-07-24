@@ -1,0 +1,25 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A student living alone with a flexible schedule, including late-night study and midday naps. — The grade_folder at 21:59 on Day 1 and the laptop at 19:58 on Day 2 strongly indicate academic work. The bed_pillow at 13:52 (nap) and phone at 21:38 (bedtime) suggest a flexible routine. The doormat moves at 08:38 and 13:34 could be for mail or packages, typical of a home-based student. The whistle at 07:31 is unusual but could be for a hobby or alarm.
+2. (p=0.20) A single working professional with a home office, who also does some academic work in the evenings. — The floor_lamp at 09:08 and laptop at 19:58 could be for work. The thermos pattern (Day 0) suggests a morning coffee routine. However, the grade_folder and late-night study are less typical for a standard professional. The midday nap (bed_pillow at 13:52) is more common in flexible or student schedules.
+3. (p=0.10) A retiree with a relaxed schedule, possibly involved in volunteer work or hobbies that involve a grade_folder. — The midday nap, multiple doormat moves, and evening laptop use could fit a retiree. However, the grade_folder and late-night study are less typical. The whistle at 07:31 might be for a morning walk or hobby. This hypothesis is less likely given the academic indicators.
+
+## Selected evidence
+- Day 0, 07:30 — thermos at elsewhere (morning coffee/tea, likely for work or start of day)
+- Day 0, 12:30 — dining_chair at kitchen_table_k1 (lunch time, consistent with midday meal)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday nap, suggests flexible schedule)
+- Day 0, 16:24 — thermos at kitchen_table_k1 (afternoon refill, typical of home worker)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation)
+- Day 0, 21:15 — dining_chair at kitchen_table_k1 (dinner time, later meal)
+- Day 1, 07:43 — floor_lamp at sofa_l1 (morning lamp, likely for reading or work)
+- Day 1, 11:18 — bed_pillow at bed_r1 (midday nap, consistent with flexible schedule)
+- Day 1, 16:12 — doormat at entry_hook_e1 (afternoon mail or package, suggests home during day)
+- Day 1, 21:59 — grade_folder at school_bag_e1 (late-night study or schoolwork, indicates student)
+- Day 2, 07:31 — whistle at elsewhere (unusual morning object, possibly for hobby or alarm)
+- Day 2, 13:52 — bed_pillow at bed_r1 (midday nap, consistent with flexible schedule)
+- Day 2, 19:58 — laptop at kitchen_table_k1 (evening work or study, supports academic or home office)
+- Day 2, 21:38 — phone at nightstand_r1 (bedtime phone use, consistent with evening routine)
+
+## Notes
+Day 2 is Wednesday. The whistle at 07:31 is new; could be for a morning routine (e.g., dog whistle, alarm, or hobby). The laptop at 19:58 supports academic or work activity. The doormat moves at 08:38 and 13:34 suggest mail or package deliveries, typical for someone home during the day. The bed_pillow at 13:52 confirms a midday nap pattern. The phone at 21:38 indicates bedtime. Need to observe weekend days (5-6) to see if routine changes (e.g., later wake-up, no grade_folder). Also look for multiple-person indicators (e.g., two coffee cups, different bedtimes). The wall_clock move on Day 1 remains unexplained; could be for time adjustment or decoration. The picture_frame moves on Day 2 (12:05 and 15:08) are decorative and not informative. The waste_bin moves (08:23 and 13:35) are mundane. The bath_mat at 18:48 is mundane. The fork at 21:45 is mundane.

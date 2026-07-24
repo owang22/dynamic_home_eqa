@@ -1,0 +1,17 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard office worker (non-remote) — The Saturday evening cleanup at 19:13 mirrors the weekday evening routine (19:10 on Day 10). This consistency suggests a fixed daily rhythm rather than a flexible remote schedule or weekend leisure pattern. No weekend-specific objects (yoga mat, books, gaming) have appeared to contradict the 'strict routine' profile.
+2. (p=0.04) Remote worker with strict commute-like routine — Still possible if the resident maintains a rigid 'workday' structure even on weekends, but the lack of any work-related objects (laptop, notebook) at the desk during the entire observed period (including Saturday) makes this increasingly unlikely. Probability remains low but non-zero due to the rigid timing.
+3. (p=0.01) Shift worker / Student — Contradicted by the high consistency of the daily rhythm over 6 days and the lack of rotating shift indicators or study materials. The Saturday evening activity aligns with a standard post-work wind-down, not a shift change or study session.
+
+## Selected evidence
+- Day 12, 19:13 — plate at sink_k1 (confirms weekend evening routine mirrors weekday; no deviation in timing suggests fixed daily structure)
+- Day 11, 08:41 — coffee_mug at desk_o1 (pre-departure ritual; no laptop observed, weakening remote work hypothesis)
+- Day 11, 07:29 — phone at counter_k1 (morning routine start; consistent with departure prep)
+- Day 10, 19:10 — plate at sink_k1 (consistent evening cleanup; no late-night activity)
+- Day 10, 07:25 — bowl at table_d1 (consistent morning meal timing before 08:30 departure)
+- Day 9, 07:34 — coffee_mug at counter_k1 (baseline morning routine)
+
+## Notes
+Weekend observation (Day 12) shows no deviation in the evening cleanup time (19:13 vs 19:10 weekday). This reinforces the 'standard office worker' hypothesis with a rigid daily rhythm. No leisure objects (yoga mat, books, gaming console) appeared on Saturday, which is notable. If the resident were a remote worker or student, one might expect different weekend behaviors (e.g., later wake times, different object usage). The absence of such deviations strengthens the case for a non-remote, routine-driven lifestyle. Continue monitoring for any weekend-specific objects in the coming days.

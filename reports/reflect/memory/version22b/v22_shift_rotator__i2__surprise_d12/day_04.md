@@ -1,0 +1,26 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single adult with a non-standard work schedule, likely a shift worker (e.g., manual labor or trade) who works early morning shifts and sometimes late evening shifts. The early departure on Day 2 (05:07) and return at 15:05, combined with the late-night return of hi-vis vest and work badge on Day 3 (23:02), and the early morning departure of vest and keys on Day 4 (05:14) suggest a pattern of early starts and occasional late finishes. The thermos leaving at 13:28 on Day 3 may indicate a packed meal for a later shift. Single utensils and consistent single-person routines support a single resident. — The surprising events on Day 4 (phone and work badge at entry_hook at 04:59, hi-vis vest and keys elsewhere at 05:14) strongly reinforce an early morning departure for work, consistent with a shift worker. The late-night return on Day 3 and early departure on Day 4 suggest a pattern of early starts and occasional late shifts. The single-person evidence remains consistent.
+2. (p=0.15) A single adult with a flexible or part-time job who also works from home occasionally. The midday nap (Day 0, 12:57) and sofa lamp use at midday (Day 3, 12:21) suggest a relaxed home routine. The thermos leaving at 13:28 on Day 3 could be for a part-time job or errand. The late-night return of work gear on Day 3 might be a second job or a late shift. The early morning departure on Day 4 (05:14) could be for a part-time job or early errand. — The early morning departure on Day 4 is less consistent with a flexible schedule, but the midday nap and sofa use still suggest some flexibility. The late-night return on Day 3 could be a second job. This hypothesis is less likely than the shift worker hypothesis due to the consistent early starts.
+3. (p=0.05) A single adult who works in a trade or manual labor job with irregular hours, possibly including night shifts. The hi-vis vest and work badge appearing at 23:02 on Day 3 suggest a late shift or night work. The early departure on Day 2 (05:07) and return at 15:05 could be a different shift. The early morning departure on Day 4 (05:14) might be for a day shift. The thermos leaving at 13:28 on Day 3 could be for a later shift. — The hi-vis vest is a strong indicator of manual labor, but the pattern of early starts and late returns is more consistent with a shift worker than irregular hours. The early morning departure on Day 4 and late-night return on Day 3 suggest a structured shift pattern rather than irregular hours. This hypothesis is less likely.
+
+## Selected evidence
+- Day 0, 05:24 — phone at elsewhere (early wake-up, consistent with early work start)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday nap, suggests flexible schedule or shift work)
+- Day 2, 05:07 — work_badge at elsewhere (early departure for work, likely commute)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (return from work, earlier than 9-to-5, suggests half-day or shift end)
+- Day 2, 19:13 — coffee_mug at desk_o1 (evening desk use, possibly work or personal)
+- Day 2, 21:45 — fork at cupboard_k1 (single utensil, confirms one person eating dinner)
+- Day 2, 21:45 — plate at cupboard_k1 (single plate, confirms one person)
+- Day 3, 13:28 — thermos at elsewhere (packed meal leaving home, suggests work or errand)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (late-night return of work gear, indicates shift work or manual labor job)
+- Day 3, 23:02 — work_badge at locker_shelf_e1 (late-night return of badge, consistent with shift work)
+- Day 3, 23:02 — keys at entry_hook_e1 (late-night return, confirms resident came home late)
+- Day 4, 04:59 — phone at entry_hook_e1 (phone left at home before early departure, unusual but consistent with early start)
+- Day 4, 04:59 — work_badge at entry_hook_e1 (badge left at home before early departure, suggests rushed morning)
+- Day 4, 05:14 — hi_vis_vest at elsewhere (early departure with vest, confirms manual labor job and early start)
+- Day 4, 05:14 — keys at elsewhere (early departure, consistent with shift work)
+
+## Notes
+Day 4 is Friday. The surprising events were phone and work_badge at entry_hook at 04:59 (expected elsewhere), and hi_vis_vest and keys at elsewhere at 05:14 (expected elsewhere). This suggests the resident left for work very early, but forgot or left behind the phone and badge initially, then took them later? Or the phone and badge were placed at entry_hook before departure. The hi-vis vest and keys leaving at 05:14 confirm an early start. The fork at sink at 18:58 (surprising, expected elsewhere) suggests a single utensil used for dinner, consistent with single person. The picture_frame at coffee_table at 18:34 and 19:00 suggests a personal item placed on display, possibly for relaxation. The floor_lamp at sofa at 19:10 and 20:54 suggests evening sofa use. No evidence of a second person yet. Need to observe weekend days (5-6) to see if routine changes (e.g., later wake-up, no work gear). The doormat, bath mat, and waste bin movements are mundane and dropped. The bed_pillow at bed_r1 at 18:25 suggests a nap or bed-making. The dining_chair at table_d1 at 18:22 suggests dinner. The waste_bin at counter_k1 multiple times in the morning suggests kitchen cleaning, mundane.

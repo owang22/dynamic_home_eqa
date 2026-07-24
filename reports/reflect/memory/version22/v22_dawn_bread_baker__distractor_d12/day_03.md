@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single person with a regular 9-to-5 job who comes home for lunch and has a consistent evening routine. — Day 3 (Thursday) continues the pattern: morning coffee mug (08:06), doormat at entry (09:02, likely leaving for work), doormat again at 17:35 (return from work), evening floor lamp (21:31) and bed pillow (21:57). The 05:06 water bottle is early but could be pre-work hydration. The 12:21 floor lamp and 12:26 waste bin suggest a midday presence, consistent with a lunch break. No work-from-home objects observed, and the departure/return times align with a standard workday.
+2. (p=0.15) A person who values cleanliness and order, with a possible hobby involving baking or cooking. — The flour bin scoop at 08:06 (morning baking prep) and bench knife at 21:45 (evening cooking) suggest a baking/cooking hobby. The bed pillow at 07:58 (making bed) and bath mat at 09:15 and 21:12 (morning and evening showers) indicate a tidy routine. The picture frame movements from previous days also hint at a decorative hobby, but no new picture frame events today.
+3. (p=0.05) A person who works from home or has a flexible schedule, as they are home during midday and evening. — The doormat at 09:02 suggests leaving, but the 12:21 floor lamp and 12:26 waste bin indicate presence at midday. However, the 17:35 doormat return is typical of a 9-to-5 worker. No work objects (laptop, papers) have been observed, and the pattern is more consistent with a lunch break than full-time WFH. Probability reduced further.
+
+## Selected evidence
+- Day 0, 12:30 — dining_chair at table_d1 (lunchtime use, indicates midday meal at home)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening lamp use, typical relaxation time)
+- Day 1, 08:37 — dining_chair at table_d1 (breakfast time, supports morning routine)
+- Day 1, 12:47 — picture_frame at coffee_table_l1 (midday decorative adjustment, possible hobby)
+- Day 1, 16:12 — doormat at entry_hook_e1 (afternoon arrival, suggests coming home from work)
+- Day 2, 08:13 — coffee_mug at table_d1 (morning coffee, consistent with breakfast)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure, likely for work)
+- Day 2, 13:34 — doormat at entry_hook_e1 (lunchtime return, supports midday meal at home)
+- Day 2, 16:47 — flour_bin_scoop at baking_shelf_k1 (afternoon baking prep, possible hobby)
+- Day 3, 05:06 — water_bottle at counter_k1 (early morning hydration, pre-work routine)
+- Day 3, 07:58 — bed_pillow at bed_r1 (making bed, consistent daily habit)
+- Day 3, 08:06 — flour_bin_scoop at baking_shelf_k1 (morning baking prep, reinforces hobby)
+- Day 3, 09:02 — doormat at entry_hook_e1 (morning departure, likely for work)
+- Day 3, 17:35 — doormat at entry_hook_e1 (afternoon return, consistent with workday end)
+- Day 3, 21:45 — bench_knife at baking_shelf_k1 (evening cooking, supports baking/cooking hobby)
+
+## Notes
+Day 3 (Thursday) reinforces the weekday pattern: morning departure around 09:00, return around 17:30, with midday presence (12:21 floor lamp, 12:26 waste bin) likely a lunch break. The baking/cooking hobby is strengthened by flour bin scoop at 08:06 and bench knife at 21:45. No picture frame movements today, but the hobby remains plausible. Weekend data (days 5-6) is still missing; will be crucial to see if the pattern changes. The phone at 10:10 (elsewhere) is not informative. Need to watch for work-related objects (laptop, papers) to further confirm or refute the WFH hypothesis.

@@ -1,0 +1,23 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A remote worker or student with a flexible morning routine that varies by day of week, including a distinct weekend pattern. On weekdays, they often work at a desk in the morning (headset on Monday, coffee at desk on Thursday), but on Friday they have a relaxed breakfast reading session at the table. On Sunday, they start with coffee at the desk and reading glasses there, suggesting a weekend work/study session, then move the phone to the coffee table for leisure. The phone at nightstand on Thursday evening indicates a consistent bedtime routine. — The Sunday events (coffee_mug and reading_glasses at desk) show a desk-based morning activity on a weekend, which is consistent with a remote worker/student who sometimes works on weekends. The phone at coffee table later suggests a shift to relaxation. This strengthens the flexible routine hypothesis, while the Friday table breakfast remains a distinct weekday pattern. The surprising events (model expected coffee_mug and reading_glasses elsewhere) are explained by the weekend variation.
+2. (p=0.12) A person with a regular meal schedule, as indicated by plate and fork movements to sink around lunchtime on multiple weekdays (Monday, Wednesday, Thursday, Friday). This is common in many households and not highly discriminating, but the consistency adds some support. — No new lunchtime events today (Sunday) to confirm or contradict this pattern. The probability is slightly reduced as the morning routine evidence becomes more specific and dominant.
+3. (p=0.08) A person who may have a different morning routine on Sundays, possibly a weekend work/study session at the desk followed by leisure time at the coffee table. The phone at coffee table at 10:12 and again at 16:05 suggests a relaxed afternoon. This could be a weekly pattern (e.g., catching up on work or personal projects on Sunday mornings). — The Sunday events are distinct from weekdays: coffee and reading glasses at desk (like a workday start) but then phone at coffee table (leisure). This is speculative with only one Sunday observed, but worth tracking to see if Sundays consistently show a desk-to-coffee-table transition.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (suggests work/study activity at start of workday on Monday)
+- Day 3, 07:02 — reading_glasses at table_d1 (suggests morning reading or breakfast activity on Thursday)
+- Day 3, 07:42 — coffee_mug at desk_o1 (surprising: coffee at desk on Thursday, indicating morning work/study with coffee)
+- Day 3, 07:42 — newspaper at coffee_table_l1 (suggests morning reading habit at coffee table on Thursday)
+- Day 3, 21:42 — phone at nightstand_r1 (surprising: phone at nightstand, indicating consistent bedtime location)
+- Day 4, 06:51 — bowl at table_d1 (new object: suggests breakfast with cereal or similar on Friday)
+- Day 4, 06:51 — coffee_mug at table_d1 (surprising: coffee at table instead of desk, indicating a different morning routine on Friday)
+- Day 4, 06:51 — newspaper at table_d1 (surprising: newspaper at table instead of coffee table, reinforcing a breakfast reading habit)
+- Day 4, 06:51 — reading_glasses at table_d1 (consistent with morning reading, now at table on Friday)
+- Day 6, 07:40 — coffee_mug at desk_o1 (surprising: coffee at desk on Sunday, suggesting weekend work/study session)
+- Day 6, 09:12 — reading_glasses at desk_o1 (surprising: reading glasses at desk on Sunday, reinforcing desk-based morning activity)
+- Day 6, 10:12 — phone at coffee_table_l1 (surprising: phone at coffee table on Sunday, indicating shift to leisure)
+
+## Notes
+Sunday (day 6) shows a desk-based morning with coffee and reading glasses, then phone at coffee table for leisure. This contrasts with Friday's table breakfast and Thursday's desk coffee. The surprising events (coffee_mug and reading_glasses at desk on Sunday) suggest the model expected them elsewhere (likely table or coffee table based on weekday patterns). Need to check if this Sunday pattern repeats next week. Also, the phone at coffee table at 10:12 and 16:05 suggests prolonged leisure time. No lunchtime events observed on Sunday; track if weekend meals differ. The bowl from Friday is still unique; watch for it on other days. Weekend patterns are emerging; consider tracking objects like yoga mat or suitcase to further discriminate persona.

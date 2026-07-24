@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A retiree or older adult living alone, with a calm daily rhythm and no evidence of children or pets. — The consistent morning newspaper and reading glasses (including today at 06:30), pill organizer on weekdays (observed on days 1,4,7,10) and now also on a Sunday (day 13 at 06:56), and relaxed weekend schedule (patio coffee, phone breaks, early dinner) strongly suggest a retiree. No work-related items (laptop, papers) have appeared over 13 days, and the 22:19 phone at nightstand indicates an early bedtime. Today's Sunday events show the same pattern: reading_glasses at counter_k1 at 06:30, pill_organizer at cupboard_k1 at 06:56 (Sunday medication, new but consistent with health routine), phone at patio_table_p1 at 08:19 (morning break), phone at coffee_table_l1 at 10:49 (midday break), coffee_mug and fork at sink_k1 at 12:49 (lunch cleanup), phone at sofa_l1 at 14:03 (afternoon rest), remote at coffee_table_l1 at 16:03 (afternoon TV), plate at sink_k1 at 18:48 (dinner cleanup), remote at sofa_l1 at 19:48 (evening TV). No work items, consistent with retiree. The pill organizer on Sunday is a new observation but does not contradict the retiree hypothesis; it may indicate a daily medication or a weekend dose.
+2. (p=0.01) A single working professional who works from home or has a flexible schedule, with a morning coffee routine and a midday meal at home. — The weekday pattern of morning coffee, phone breaks, and home meals persists, and the weekend schedule is similar. However, the lack of any work-related items (laptop, work papers) over 13 days, combined with the strong retiree indicators (pill organizer, reading glasses, newspaper), makes this very unlikely. Today's events show no work items, further reducing probability. The newspaper and reading glasses are more typical of a retiree.
+3. (p=0.00) A student or young adult living alone, with a flexible schedule and minimal household activity. — Only one person's items observed, and phone use throughout day suggests leisure. However, the pill organizer, reading glasses, and newspaper are atypical for a young adult. The Sunday pattern (reading_glasses at 06:30, pill_organizer at 06:56, early dinner cleanup at 18:48) is inconsistent with a student's typical weekend. This hypothesis is now contradicted by the consistent morning newspaper and reading glasses on Sunday, and the pill organizer on a weekend day. Removed due to zero probability.
+
+## Selected evidence
+- Day 1, 06:30 — pill_organizer at counter_k1 (medication routine, suggests older adult or health-conscious person)
+- Day 4, 06:30 — pill_organizer at counter_k1 (medication routine, consistent with previous days)
+- Day 7, 06:34 — pill_organizer at counter_k1 (Monday medication, confirms weekday pattern)
+- Day 10, 06:30 — pill_organizer at counter_k1 (Thursday medication, reaffirms weekday routine)
+- Day 13, 06:56 — pill_organizer at cupboard_k1 (Sunday medication, new weekend observation, suggests daily or flexible medication)
+- Day 0, 07:03 — coffee_mug at table_d1 (morning coffee ritual, likely resident starts day early)
+- Day 3, 07:04 — newspaper at table_d1 (morning newspaper reading, typical of retiree or professional)
+- Day 6, 07:07 — reading_glasses at table_d1 (morning reading, consistent with retiree)
+- Day 5, 06:30 — reading_glasses at counter_k1 (weekend morning reading, earlier than weekday 07:50)
+- Day 13, 06:30 — reading_glasses at counter_k1 (Sunday morning reading, consistent with weekend pattern)
+- Day 2, 12:59 — plate at sink_k1 (lunch cleanup, home-based meal)
+- Day 2, 18:55 — plate at sink_k1 (dinner cleanup, evening routine)
+- Day 6, 21:45 — coffee_mug at cupboard_k1 (evening coffee put away, suggests early bedtime)
+- Day 8, 07:06 — newspaper at table_d1 (Tuesday morning newspaper, confirms daily newspaper reading)
+- Day 12, 07:05 — newspaper at table_d1 (Saturday morning newspaper, consistent with daily pattern)
+
+## Notes
+Day 13 (Sunday) confirms weekend pattern: reading_glasses at counter_k1 at 06:30, pill_organizer at cupboard_k1 at 06:56 (new: Sunday medication), phone at patio_table_p1 at 08:19, phone at coffee_table_l1 at 10:49, coffee_mug and fork at sink_k1 at 12:49 (lunch cleanup), phone at sofa_l1 at 14:03, remote at coffee_table_l1 at 16:03, plate at sink_k1 at 18:48 (dinner cleanup), remote at sofa_l1 at 19:48. The pill organizer on Sunday is a new observation; it may indicate a daily medication or a weekend dose. Next week: check for weekday pill organizer (days 14, 15, 16) and any work-related items. Also look for weekly events like trash day or laundry. The bowl at breakfast was observed on days 8,9,10 and day 12; not seen today (Sunday) — may be a weekday breakfast item. The remote appears on weekends (day 12 and 13) at coffee_table_l1 and sofa_l1, suggesting TV use in the afternoon/evening.

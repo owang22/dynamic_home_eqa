@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A remote worker or student who works/studies from home most days, with a structured morning and evening routine, and a relaxed weekend pattern. — Day 6 (Sunday) shows a weekend pattern: no departure events, later lunch (12:28), and craft activity (tablet at craft desk at 10:20). The surprising early plate at sink (07:33) and plate at table (12:28) suggest a consistent early riser and home-based meals. The keys at entry hook (18:28) are surprising for a Sunday, possibly indicating a brief outing or return from a walk. The floor lamp moved to sofa (09:33, 10:12) suggests weekend relaxation or cleaning. The craft desk use strengthens the hobbyist aspect but the overall routine remains structured.
+2. (p=0.25) A working professional or student with a hybrid schedule (some days out, some remote), but weekend evidence shows a home-based, relaxed routine with occasional outings. — Day 6 (Sunday) shows no departure events, but the keys at entry hook (18:28) could indicate a return from a short outing, consistent with a hybrid worker who might go out on weekends. The early morning plate at sink (07:33) and plate at table (12:28) suggest home-based meals. The craft desk use (tablet at 10:20) is a new weekend activity, possibly a hobby. The floor lamp movements are mundane. This hypothesis is retained but weakened by the strong home-based pattern.
+3. (p=0.15) A creative hobbyist who engages in weekend crafts and values comfort, with a consistent early morning routine. — Day 6 (Sunday) shows tablet at craft desk (10:20), a clear craft activity, which was previously only seen on Day 0 (scissors). This strengthens the hobbyist hypothesis. The early morning plate at sink (07:33) and plate at table (12:28) indicate a structured morning. The floor lamp movements (09:33, 10:12) suggest adjusting lighting for comfort. The keys at entry hook (18:28) could be a brief outing. This hypothesis gains probability but remains lower due to limited craft evidence overall.
+
+## Selected evidence
+- Day 0, 08:40 — backpack at elsewhere (resident left for work/school; personal item movement)
+- Day 0, 18:18 — scissors at craft_shelf_s1 (evening craft activity, hobby indicator)
+- Day 3, 08:47 — keys at elsewhere (resident left home later than usual, or brief return)
+- Day 3, 12:08 — fork and plate at table_d1 (midday meal at home, suggests remote work/study)
+- Day 3, 18:36 — backpack at backpack_rack_e1 (return from work/school)
+- Day 4, 06:56 — bowl at table_d1 (breakfast at home, early morning)
+- Day 4, 07:36 — tablet at coffee_table_l1 (morning work/leisure at home)
+- Day 4, 18:24 — fork at table_d1 (dinner at home)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (evening decorative activity)
+- Day 5, 06:57 — tablet at table_d1 (early morning weekend use, consistent early riser)
+- Day 5, 12:21 — fork at table_d1 (lunch at home on weekend, later than weekday meals)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening wind-down routine, consistent with weekday)
+- Day 5, 21:49 — tablet at coffee_table_l1 (evening relaxation on weekend)
+- Day 6, 07:33 — plate at sink_k1 (early morning weekend dish, consistent early riser)
+- Day 6, 10:20 — tablet at craft_desk_s1 (weekend craft activity, hobby indicator)
+
+## Notes
+Day 6 (Sunday) shows a weekend pattern with craft activity (tablet at craft desk at 10:20), strengthening the hobbyist hypothesis. The surprising events: plate at sink (07:33) and plate at table (12:28) suggest the model expected different locations (e.g., plate elsewhere at those times), possibly due to weekday patterns. Keys at entry hook (18:28) are surprising for a Sunday, indicating a possible brief outing. Floor lamp movements (09:33, 10:12) are mundane but may indicate weekend relaxation. Need to observe Day 7 (Monday) to see if weekday departure events (backpack, keys) recur, confirming hybrid vs. fully remote. Also check if craft activity recurs on weekdays or remains a weekend pattern.

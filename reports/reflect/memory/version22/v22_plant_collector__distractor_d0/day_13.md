@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.92) A plant-loving resident with a hybrid work schedule (works from home some weekdays, goes to office on others, and has a relaxed weekend routine). — Plant care observed on Sunday morning (Day 13) reinforces the plant-loving persona. Office days on Tuesday and Thursday, work-from-home on Wednesday and Friday, and relaxed weekend routine (no work events) are consistent.
+2. (p=0.06) A resident with a consistent evening routine, including dinner around 19:00 and phone use before sleep around 22:00. — Phone at sofa at 19:30 on Sunday is earlier than typical bedtime phone, but still within evening relaxation. Previous dinner and phone events support this routine, though it is less distinctive.
+3. (p=0.02) A resident who works outside the home on some weekdays, as indicated by laptop and keys leaving on Thursday and Tuesday. — This is subsumed by the hybrid schedule hypothesis but kept separate until more data on which weekdays are office days. No new evidence today.
+
+## Selected evidence
+- Day 0, 09:10 — plant_mister at windowsill_l1 (plant care on Monday morning, suggests regular plant care)
+- Day 3, 09:40 — laptop at elsewhere (resident leaves for work on Thursday, hybrid schedule)
+- Day 3, 09:40 — keys at elsewhere (resident leaves home, consistent with laptop)
+- Day 3, 19:13 — fork at sink_k1 (dinner at home, timing ~19:00 on weekday)
+- Day 3, 22:04 — phone at nightstand_r1 (bedtime routine, phone used before sleep)
+- Day 4, 21:45 — watering_can at windowsill_l1 (evening plant watering on Friday)
+- Day 5, 07:19 — coffee_mug at table_d1 (weekend morning coffee, relaxed routine)
+- Day 5, 12:37 — plate at table_d1 (weekend lunch at home, no work schedule pressure)
+- Day 6, 14:10 — watering_can at balcony_bench_b1 (Sunday afternoon plant care on balcony, different location)
+- Day 7, 19:09 — fork at sink_k1 (Monday dinner at home, timing ~19:00 matches weekday pattern)
+- Day 8, 09:48 — keys at elsewhere (resident leaves for work on Tuesday, office day evidence)
+- Day 10, 19:16 — remote at sofa (evening TV use on Thursday, work-from-home day)
+- Day 11, 09:44 — phone at table_d1 (morning phone use on Friday, work-from-home day)
+- Day 11, 21:56 — phone at nightstand_r1 (bedtime phone use on Friday, consistent with evening routine)
+- Day 13, 07:55 — plant_mister at plant_shelf_l1 (Sunday morning plant care, reinforces plant-loving persona)
+
+## Notes
+Today (Day 13, Sunday) observed plant care at 07:55 and phone at sofa at 19:30. Plant care now observed on Sunday (Day 6 and Day 13) and other days (Monday, Friday, Saturday? Not yet). Office days: Tuesday and Thursday; work-from-home: Wednesday and Friday. Weekend routine remains relaxed. Need to check if plant care occurs every day or only on specific days. Also note phone at sofa at 19:30 on Sunday may indicate evening relaxation before bedtime.

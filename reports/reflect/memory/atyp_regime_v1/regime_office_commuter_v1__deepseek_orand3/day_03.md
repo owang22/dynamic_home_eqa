@@ -1,0 +1,19 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A professional who works from home or has a flexible schedule, as the laptop is at 'elsewhere' at 08:30 on Thursday, consistent with a work-from-home start. The phone also leaves the sofa area at 08:30, suggesting the resident starts work at that time. The travel mug pattern is less consistent, but the laptop and phone events strongly support a home-based work routine. — The laptop and phone both moving to 'elsewhere' at 08:30 on Thursday is a strong signal of a work start. This aligns with the Monday laptop event at 08:34. The travel mug events are less frequent, but the consistent morning laptop/phone pattern outweighs the mug evidence. The probability is increased from 0.55 to 0.60.
+2. (p=0.30) A commuter who works outside the home, as the travel mug appeared at the sink on Monday evening and at 'elsewhere' on Wednesday morning, suggesting a commute routine. However, the Thursday morning events show laptop and phone at 'elsewhere' at 08:30, which could also be interpreted as the resident taking them to work. The phone at sofa in the evening (18:14) and at nightstand later (22:25) is consistent with returning home and relaxing. The absence of a travel mug event on Thursday weakens this hypothesis. — The Thursday events show laptop and phone leaving at 08:30, which could be a commute. But the travel mug pattern is not repeated on Thursday, and the laptop/phone could also be used at home. The probability is reduced from 0.35 to 0.30 because the evidence is ambiguous and the travel mug is missing.
+3. (p=0.10) A student or freelancer with a variable schedule, as the laptop and phone are at 'elsewhere' at 08:30 on Thursday, but this could be a study session or work at a cafe. The phone at sofa in the evening and at nightstand later is typical. The evidence is still sparse and does not strongly support a fixed routine. — The evidence remains too sparse to strongly support this hypothesis, but it is a possible alternative. The probability is unchanged.
+
+## Selected evidence
+- Day 0, 08:34 — laptop at elsewhere (suggests work-from-home or remote work start on Monday morning)
+- Day 0, 18:05 — travel_mug at sink_k1 (evening arrival, likely from work or commute, being washed)
+- Day 2, 08:32 — travel_mug at elsewhere (morning use, could be taken to work or used at home; strengthens commute or flexible schedule)
+- Day 2, 18:03 — phone at sofa_l1 (evening relaxation after returning home, consistent with commuter or home-based worker)
+- Day 3, 08:30 — laptop at elsewhere (consistent work start at 08:30 on Thursday, strengthens work-from-home hypothesis)
+- Day 3, 08:30 — phone at elsewhere (phone also leaves at same time, reinforcing work start)
+- Day 3, 18:14 — phone at sofa_l1 (evening relaxation after returning home)
+- Day 3, 22:25 — phone at nightstand_r1 (bedtime routine, consistent with typical sleep schedule)
+
+## Notes
+Thursday events show a clear morning routine: laptop and phone both move to 'elsewhere' at 08:30. This is a strong signal of a work start, whether at home or outside. The travel mug did not appear on Thursday, which weakens the commute hypothesis. The phone at sofa in the evening and at nightstand later is consistent with a typical evening routine. Need to observe weekend patterns (days 5-6) to distinguish between work-from-home and commuter. Also, check if the laptop returns home in the evening (e.g., at sofa or elsewhere) to confirm if it is taken out or stays home. The bowl at sink at 07:47 is a mundane breakfast event and not retained.

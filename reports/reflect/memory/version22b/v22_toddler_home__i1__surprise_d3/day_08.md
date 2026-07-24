@@ -1,0 +1,22 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Family with a young child (toddler/preschooler) and a parent who works from home or is a stay-at-home parent — The new Tuesday evidence strongly reinforces this hypothesis. The board_book at play_mat_n1 at 08:49 (morning play/reading), plate at high_chair_d1 at 11:49 (lunch for toddler, surprising but consistent with child's meal), stacking_rings at play_mat_n1 at 15:50 (afternoon play, typical toddler toy), and doormat at entry_hook_e1 at 19:17 (evening entry, possibly after a walk or return) all align with a daily routine centered on a young child. The surprising events (plate at high_chair, stacking_rings at play_mat) are actually strong child indicators, not anomalies. The waste_bin at counter_k1 at 11:46 and wall_clock at counter_k1 at 16:14 are mundane but fit a family home. The weekday pattern (Tuesday) mirrors previous weekdays, suggesting a parent at home during the day.
+2. (p=0.01) Single adult with a pet (e.g., dog) that requires a play mat and sippy cup — The new evidence of a plate at high_chair_d1 and stacking_rings at play_mat_n1 is extremely unlikely for a pet. A high chair is specifically for a child, and stacking rings are a child's toy. This hypothesis is nearly impossible.
+3. (p=0.01) Elderly person living alone with a visiting grandchild occasionally — The Tuesday evidence shows child-related items (board_book, plate at high_chair, stacking_rings) at times consistent with a daily routine (morning, midday, afternoon), not just occasional visits. The doormat at entry_hook_e1 at 19:17 could be from a caregiver or parent returning, but the consistent child activity throughout the day suggests the child lives here. This hypothesis is very unlikely.
+
+## Selected evidence
+- Day 0, 08:41 — sippy_cup at play_mat_n1 (young child indicator, morning drink)
+- Day 3, 09:04 — board_book at play_mat_n1 (morning reading/play with child)
+- Day 4, 06:49 — bowl at high_chair_d1 (toddler breakfast, strong child evidence)
+- Day 4, 08:50 — sippy_cup at play_mat_n1 (morning drink for child)
+- Day 4, 18:30 — sippy_cup at sink_k1 (post-dinner cleanup, child's cup)
+- Day 5, 07:39 — sippy_cup at sink_k1 (Saturday morning cleanup, weekend routine)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening bath time for child on weekend)
+- Day 8, 08:49 — board_book at play_mat_n1 (Tuesday morning play/reading, weekday pattern)
+- Day 8, 11:49 — plate at high_chair_d1 (toddler lunch, surprising but consistent with child's meal)
+- Day 8, 15:50 — stacking_rings at play_mat_n1 (afternoon toddler play, typical toy)
+- Day 8, 19:17 — doormat at entry_hook_e1 (evening entry, possibly after walk or return)
+
+## Notes
+Tuesday (day 8) shows a clear weekday pattern: morning child activity (board_book at play_mat), midday meal (plate at high_chair), afternoon play (stacking_rings), and evening entry (doormat). The surprising events (plate at high_chair, stacking_rings at play_mat) are actually strong child indicators; the belief model's surprise may be due to insufficient data for these specific object-receptacle pairs. Need to observe more weekdays to confirm consistency and look for work-related items (laptop, work bag) to determine if a parent works from home. Also check for weekend patterns (e.g., outdoor activities, different meal times) on upcoming Saturday/Sunday.

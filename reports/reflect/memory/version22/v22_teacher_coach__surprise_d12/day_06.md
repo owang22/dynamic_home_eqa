@@ -1,0 +1,26 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A student or young professional with a structured weekday routine, but with a more relaxed weekend pattern. The weekday evidence (laptop, school_bag, grade_folder leaving at 07:31, whistle at entry_hook at 16:31) strongly suggests a student or teacher. The weekend (Sunday) shows later morning activities (picture_frame at 07:48, floor_lamp at 09:33), a midday meal (dining_chair at 12:05), and evening thermos at 20:12, but no morning departure or afternoon return. The surprising events (coffee_mug and plate at sink at 11:04, plate at kitchen_table at 19:21) indicate a weekend brunch or late breakfast and a later dinner, consistent with a relaxed Sunday routine. — The weekday evidence is strong for a student/teacher, and the weekend pattern (later start, no departure) supports this. The surprising events are not contradictory but show a different weekend schedule.
+2. (p=0.10) A teacher or educator who works weekdays and has a more relaxed weekend. The grade_folder and school_bag could be for grading or carrying materials. The weekend shows a later start and no morning departure, which is typical for a teacher on a Sunday. The surprising events (coffee_mug and plate at sink at 11:04) suggest a late breakfast, and the plate at kitchen_table at 19:21 suggests a later dinner. — The teacher hypothesis is a refinement of the student hypothesis, but the school_bag is more typical of a student. The weekend pattern is consistent with both.
+3. (p=0.05) A remote worker or freelancer who works from home on weekdays but has a different weekend routine. The weekday morning departure with laptop and keys could be for a co-working space or office, but the school_bag and grade_folder are less common. The weekend shows a later start and no departure, which could be a day off. The surprising events (coffee_mug and plate at sink at 11:04) suggest a late breakfast, and the plate at kitchen_table at 19:21 suggests a later dinner. — The remote worker hypothesis is weakened by the strong student/teacher indicators (school_bag, grade_folder). The weekend pattern is consistent but not distinctive.
+
+## Selected evidence
+- Day 0, 07:30 — thermos at elsewhere (morning hot drink taken out, likely to work/school)
+- Day 0, 12:30 — dining_chair at kitchen_table_k1 (midday meal at home on weekday)
+- Day 0, 16:24 — thermos at kitchen_table_k1 (afternoon refill, home in afternoon)
+- Day 2, 07:31 — whistle at elsewhere (morning hot drink ritual, similar to thermos)
+- Day 2, 16:06 — dining_chair at kitchen_table_k1 (afternoon meal, later than Day 0)
+- Day 2, 19:58 — laptop at kitchen_table_k1 (evening work/study session)
+- Day 4, 06:22 — laptop at school_bag_e1 (morning packing for school/work, strong student/teacher indicator)
+- Day 4, 07:31 — laptop, grade_folder, keys at elsewhere (morning departure with school/work items)
+- Day 4, 16:31 — whistle at entry_hook (afternoon return, tea/coffee ritual)
+- Day 6, 07:48 — picture_frame at coffee_table_l1 (weekend morning decoration, later start)
+- Day 6, 11:04 — coffee_mug at sink_k1 (weekend late breakfast/brunch, surprising but consistent with relaxed Sunday)
+- Day 6, 11:04 — plate at sink_k1 (weekend late breakfast/brunch, surprising but consistent)
+- Day 6, 12:05 — dining_chair at kitchen_table_k1 (weekend midday meal)
+- Day 6, 19:21 — plate at kitchen_table_k1 (weekend later dinner, surprising but consistent)
+- Day 6, 20:12 — thermos at kitchen_table_k1 (weekend evening hot drink)
+
+## Notes
+Weekend (Sunday) shows a later start (picture_frame at 07:48, floor_lamp at 09:33) and no morning departure, confirming a relaxed weekend routine. The surprising events (coffee_mug and plate at sink at 11:04, plate at kitchen_table at 19:21) are consistent with a late breakfast/brunch and later dinner on Sunday. The wall_clock events at counter_k1 (multiple times) are likely sensor noise or a clock being moved; not informative. The waste_bin at counter_k1 is mundane. The bath_mat events are not informative. Open question: Is the resident a student or a teacher? The school_bag suggests a student, but a teacher might also carry a bag. The weekday departure time (07:31) and return (16:31) are typical for a school day. The weekend pattern (no departure, later meals) is consistent with both. Need to observe next weekdays to see if the pattern repeats. The retiree hypothesis is now removed due to lack of evidence.

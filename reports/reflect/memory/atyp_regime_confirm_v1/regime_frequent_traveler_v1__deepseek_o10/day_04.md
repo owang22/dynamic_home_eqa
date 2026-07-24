@@ -1,0 +1,24 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A professional who works from home on Mondays, with a morning coffee routine at the desk, and takes a 3-day business trip (Tuesday–Thursday). — Return of laptop, passport, and suitcase on Thursday evening confirms a short business trip. Monday work-from-home pattern is consistent. Friday events show no work-from-home indicators (no laptop at desk, no coffee mug at desk), suggesting a different routine on Fridays.
+2. (p=0.15) A frequent traveler who packs efficiently and returns after a few days, possibly for work or personal reasons. — Trip duration is short, but the presence of laptop and passport still suggests business. The routine is still generic. Friday events show travel adapter and packing cubes being stored, indicating trip gear is put away.
+
+## Selected evidence
+- Day 0, 09:03 — coffee_mug at desk_o1 (work-from-home indicator, Monday morning)
+- Day 0, 09:03 — phone at desk_o1 (supports work activity at home desk)
+- Day 0, 19:59 — passport at bed_r1 (international travel preparation)
+- Day 0, 19:59 — packing_cubes at bed_r1 (organized packing for trip)
+- Day 0, 20:44 — suitcase at entry_hook_e1 (departure imminent, next morning)
+- Day 1, 06:22 — laptop at elsewhere (taken on trip, confirms work-related travel)
+- Day 1, 06:22 — passport at elsewhere (departure with international travel documents)
+- Day 3, 20:41 — laptop at desk_o1 (returned from trip, placed at work desk)
+- Day 3, 20:41 — passport at entry_hook_e1 (returned, placed near entry)
+- Day 3, 20:41 — suitcase at closet_r1 (returned and stored in closet)
+- Day 4, 08:07 — travel_adapter at bed_r1 (trip gear still out, not yet stored)
+- Day 4, 08:29 — packing_cubes at closet_r1 (trip gear stored away later in morning)
+- Day 4, 18:31 — plate at table_d1 (evening dinner at home, typical Friday evening)
+- Day 4, 22:31 — remote at coffee_table_l1 (evening relaxation, TV use)
+
+## Notes
+Friday shows no work-from-home indicators (no laptop at desk, no coffee mug at desk). Travel adapter and packing cubes were stored later in the morning, suggesting trip gear is put away on Friday. Evening dinner and TV use are typical. Need to observe next Monday to confirm work-from-home pattern. Weekend patterns still unknown. No events on Wednesday (day 2) observed. Keys returned to entry hook, phone left on sofa — typical evening arrival behavior.

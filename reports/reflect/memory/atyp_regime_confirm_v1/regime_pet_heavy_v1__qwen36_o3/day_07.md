@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Single professional with a pet — Evidence strongly supports a single resident with a structured weekday routine (early departure, evening return) and a pet. The Monday morning event (phone at kitchen counter) aligns with a standard workday start, reinforcing the professional hypothesis over WFH or minimalist models.
+2. (p=0.01) Work-from-home hybrid — The consistent early morning departures on weekdays (Day 4, Day 7) and Saturday make this less likely. The midday meals observed previously may indicate flexible lunch breaks or meal prep, but the lack of sustained presence at a home desk during core work hours contradicts a primary WFH model.
+3. (p=0.01) Minimalist or low-occupancy household — Specific pet items and meal evidence contradict minimalism. No new evidence supports this hypothesis.
+
+## Selected evidence
+- Day 0, 09:49 — blanket at pet_bed_l1 (confirms pet presence, likely dog/cat)
+- Day 1, 17:59 — phone at counter_k1 (post-work arrival/snack prep)
+- Day 1, 19:40 — phone at sofa_l1 (leisure time, single resident unwinding)
+- Day 2, 12:38 — plate at table_d1 (midday meal, suggests home lunch or work-from-home element)
+- Day 3, 17:08 — phone at entry_hook_e1 (consistent evening arrival pattern)
+- Day 4, 07:04 — phone at entry_hook_e1 (morning departure, confirms workday routine)
+- Day 4, 17:35 — phone at sofa_l1 (evening leisure, consistent with post-work wind-down)
+- Day 5, 07:02 — phone at entry_hook_e1 (early Saturday departure, suggests specific weekend commitment)
+- Day 5, 12:49 — fork at table_d1 (midday meal, confirms home presence during day)
+- Day 5, 22:24 — phone at nightstand_r1 (bedtime routine, confirms single resident sleep location)
+- Day 6, 09:11 — cushion at pet_bed_l1 (late morning pet activity, suggests resident still home or pet active while resident sleeps in)
+- Day 6, 12:39 — plate at table_d1 (midday meal, confirms home presence during day)
+- Day 6, 14:53 — chew_toy at pet_bed_l1 (confirms pet presence and interaction, reinforces pet ownership)
+- Day 7, 07:49 — phone at counter_k1 (Monday morning routine, likely breakfast/prep before work, consistent with weekday pattern)
+
+## Notes
+Day 7 (Monday) confirms the return to weekday routine with a morning activity at the kitchen counter (07:49), likely breakfast or prep before leaving. The evening plate at the sink (19:09) suggests a dinner prepared at home, consistent with the post-work arrival pattern. The late-night phone at the nightstand (22:49) confirms the sleep location. The pattern of early weekday departures and weekend flexibility remains strong. Need to observe Day 8 (Tuesday) to verify consistency of the morning routine.

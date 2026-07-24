@@ -1,0 +1,15 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A healthcare worker (likely a nurse or doctor) who works a day shift and returns home around 18:00, then immediately changes out of work clothes and places work items (badge, stethoscope, scrubs) in a designated area ('elsewhere'). — The presence of scrubs, a badge, and a stethoscope strongly indicates a medical professional. The timing (18:02-19:00) suggests a shift ending, and the items are placed in 'elsewhere' (likely a laundry or storage area).
+2. (p=0.10) A person who works a standard 9-to-5 job but also has a side interest in healthcare (e.g., a medical student or volunteer), as the items could be from a class or volunteer shift. — Less likely because the items are all professional-grade and the timing is consistent with a full workday, but possible if the person is a student or part-time worker.
+
+## Selected evidence
+- Day 0, 18:02 — scrubs at bed_r1 (indicates healthcare worker changing out of work clothes immediately upon arrival)
+- Day 0, 18:32 — badge at elsewhere (work ID placed in designated area, suggesting routine)
+- Day 0, 18:32 — stethoscope at elsewhere (medical equipment stored together)
+- Day 0, 19:00 — keys at elsewhere (personal items also stored, likely after changing)
+- Day 0, 19:00 — phone at elsewhere (consistent with end-of-day routine)
+
+## Notes
+First day observed (Monday). Need to see if this pattern repeats on weekdays and if weekends differ. Also need to identify what 'elsewhere' is (e.g., a specific drawer, bag, or closet). No evidence yet of other household members or activities outside work.

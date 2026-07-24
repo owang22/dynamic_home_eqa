@@ -1,0 +1,25 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A parent with a young child (toddler) who uses a play mat, has a crib, and uses sippy cups, board books, stacking rings, and a high chair. The child has a consistent daily routine: early morning sippy cup at high chair, morning play with cushion and stacking rings at play mat, mid-morning toy rotation, late afternoon snack/meal at high chair, and bedtime routine involving the crib. The parent relaxes in the evening. The stacking rings are a new toy confirming fine motor skill development typical of a toddler. The surprising bowl at sink in the morning and fork at sink in the evening suggest a parent who prepares meals (e.g., breakfast and dinner) for the child or themselves, consistent with a home routine. — All observed events fit a toddler's routine. The surprising bowl at sink (morning) and fork at sink (evening) are mundane kitchen cleanup events that any household would produce, but the belief model flagged them due to low prior probability for those objects at that time. However, they are consistent with a parent preparing meals (e.g., breakfast bowl, dinner fork) and cleaning up. No evidence contradicts the toddler hypothesis.
+2. (p=0.05) A single adult with no children, but occasional child visitors. — The child-specific items (board book, high chair, play mat, stacking rings, sippy cup) are too frequent and routine for just visitors. This hypothesis is weak and maintained only as a fallback.
+
+## Selected evidence
+- Day 0, 08:49 — cushion at play_mat_n1 (child play area, morning play)
+- Day 2, 11:10 — sippy_cup at sink_k1 (child feeding item, mid-morning)
+- Day 2, 17:07 — ball at toy_corner_l1 (child toy, late afternoon play)
+- Day 2, 19:02 — sippy_cup at crib_n1 (bedtime routine)
+- Day 2, 21:43 — remote at coffee_table_l1 (parent evening relaxation)
+- Day 3, 08:47 — board_book at play_mat_n1 (morning reading/play)
+- Day 3, 11:17 — board_book at toy_corner_l1 (mid-morning toy rotation)
+- Day 3, 11:17 — cushion at sofa_l1 (parent sits nearby during child play)
+- Day 3, 17:36 — plate at high_chair_d1 (afternoon meal for child)
+- Day 3, 21:45 — plate at cupboard_k1 (evening cleanup after child's meal)
+- Day 4, 06:49 — sippy_cup at high_chair_d1 (early morning feeding routine)
+- Day 4, 08:42 — cushion at play_mat_n1 (morning play, consistent with toddler routine)
+- Day 4, 08:42 — stacking_rings at play_mat_n1 (new toy, morning play, fine motor skill development)
+- Day 4, 16:40 — stacking_rings at toy_corner_l1 (afternoon toy rotation, typical toddler behavior)
+- Day 4, 21:45 — fork at cupboard_k1 (evening cleanup)
+
+## Notes
+The surprising events (bowl at sink in morning, fork at sink in evening) are mundane kitchen cleanup events that any household would produce. They are consistent with a parent preparing meals (e.g., breakfast bowl, dinner fork) and cleaning up. No evidence contradicts the toddler hypothesis. Need to verify: (1) Is there a work-from-home adult? Look for laptop, desk, or office chair events. (2) Weekend patterns: do child items appear at different times on Saturday/Sunday? (3) Is there a second adult? Look for pairs of plates or cups at meals. (4) The early morning sippy cup at high chair suggests a morning feeding routine; check if this is consistent on weekends. (5) The bowl at sink in the morning (Day 7) might indicate a breakfast routine; the fork at sink in the evening (Day 7) might indicate a dinner routine. These are typical for any household and do not change the persona hypothesis.

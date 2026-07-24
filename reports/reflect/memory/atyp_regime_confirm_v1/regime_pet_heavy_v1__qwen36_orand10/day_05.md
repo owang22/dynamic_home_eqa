@@ -1,0 +1,16 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) Pet owner with standard 9-5 job — Weekend schedule is relaxed (no 07:00 departure, later coffee), but the rigid 21:45 cleanup persists, suggesting ingrained routine. Dog leash/cushion activity confirms pet ownership. The 'standard job' hypothesis remains strongest because the weekday structure was so dominant, but the weekend shift in behavior (staying in, leisure items) is now clear.
+2. (p=0.35) Pet owner with hybrid/remote work schedule — The 12:49 coffee mug and blanket on the sofa suggest a leisurely morning/afternoon at home, consistent with remote work or a day off. However, the strict 21:45 cleanup is less typical for pure remote workers who might have more fluid evening routines. The lack of laptop evidence on weekdays still weakens this, but the weekend behavior is more aligned with it than a strict commuter.
+3. (p=0.05) Single person living alone — No new evidence supports this. The multi-item pet care (leash, ball, litter, blanket) and the specific cleanup routine still suggest a single resident managing a pet, but the probability remains low as it doesn't explain the weekday/weekend contrast better than the other two.
+
+## Selected evidence
+- Day 5, 07:02 — keys at entry_hook_e1 (weekend departure, likely short trip or errand, not work commute)
+- Day 5, 12:49 — coffee_mug at counter_k1 (leisurely midday coffee, supports relaxed weekend routine)
+- Day 5, 12:49 — blanket at sofa_l1 (leisure activity, suggests staying in during the day)
+- Day 5, 15:18 — cushion at pet_bed_l1 (pet comfort, confirms ongoing pet care on weekends)
+- Day 5, 21:45 — plate at cupboard_k1 (strict cleanup routine persists even on weekends, key diagnostic trait)
+
+## Notes
+Weekend (Day 5) shows a clear shift from weekday routine: later start, leisure items (blanket, cushion), and no work-related departures. However, the 21:45 cleanup is invariant. This suggests a person who maintains strict household management habits regardless of work status. The 'standard job' hypothesis is still plausible if the person has rigid habits, but the 'hybrid' hypothesis gains slight traction due to the relaxed daytime. Need to see if Day 6 (Sunday) follows the same pattern or if the cleanup time shifts. The 12:49 coffee mug is now a weekend pattern, not an anomaly.

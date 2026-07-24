@@ -1,0 +1,17 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A person who does water sports (wetsuit, swim goggles) and has a regular evening routine (dinner at table, then relaxing on sofa, then bathroom, then bed). The wetsuit at 05:34 and swim goggles at 20:36 suggest early morning water activity and evening gear storage. The evening sequence of fork at table, lamp at sofa, bath mat, and pillow indicates a typical wind-down routine. The wetsuit again at 20:32 on day 2 reinforces the pattern of evening gear storage after a late activity. — Consistent water sport gear (wetsuit, swim goggles) and evening routine. No work objects observed, but early morning activity still possible before work.
+2. (p=0.10) A person who works from home or has a flexible schedule, as the wetsuit is seen at home in the early morning, not at a gym or beach. The swim goggles at 20:36 might indicate evening gear storage after a late activity. No work objects observed yet, but the early hour could indicate a morning workout before work. The doormat at 08:38 on day 2 might indicate someone leaving or arriving, but no work objects yet. — No work-related objects observed. The doormat and keys at 17:38 suggest a typical workday return, but no laptop or documents seen.
+
+## Selected evidence
+- Day 0, 05:34 — wetsuit at elsewhere (suggests water sport hobby, early morning activity)
+- Day 0, 18:09 — fork at table_d1 (evening meal at home)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation in living room)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime around 21:00)
+- Day 1, 20:36 — swim_goggles at entry_bench_e1 (reinforces water sport hobby; evening gear storage)
+- Day 2, 20:32 — wetsuit at entry_bench_e1 (evening gear storage, consistent with day 1 pattern)
+
+## Notes
+Day 2 (Wednesday) observed. Wetsuit again at 20:32, reinforcing evening gear storage after a late activity. Towel at drying rack at 07:31 might be from morning shower. Doormat at 08:38 could indicate someone leaving or arriving. Keys at 17:38 suggest return from work. Plate at sink at 18:42 indicates dinner. No work objects (laptop, documents) seen yet. Need to check weekend days (5-6) for different patterns. Also look for any objects suggesting children or second person.

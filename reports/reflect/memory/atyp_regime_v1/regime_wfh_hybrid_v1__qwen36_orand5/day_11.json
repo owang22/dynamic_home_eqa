@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Standard 9-5 Office Worker",
+   "prob": 0.95,
+   "rationale": "Consistent weekday meal times (07:30, 13:00, 18:30) and early wake-up (07:20-07:30) persist. The absence of keys/laptop departure logs on Days 8-11 suggests either remote work or sensor gaps, but the rigid schedule remains the strongest signal. The 20:18 phone on sofa suggests evening relaxation, consistent with post-work wind-down."
+  },
+  {
+   "persona": "Remote Worker with Strict Schedule",
+   "prob": 0.04,
+   "rationale": "Possible if the resident works from home but mimics office hours. The lack of laptop movement to 'elsewhere' (commute) and presence at desk during midday (13:24) supports this. However, the strict 13:00 lunch break is less common for remote workers who might eat more flexibly."
+  },
+  {
+   "persona": "Night Shift Worker",
+   "prob": 0.01,
+   "rationale": "Falsified by consistent early morning activity and evening meal timing. No evidence supports night shift patterns."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:23 \u2014 coffee_mug at desk_o1 (establishes morning workspace routine)",
+  "Day 1, 17:57 \u2014 keys at entry_hook_e1 (strong signal of returning from external activity)",
+  "Day 2, 08:35 \u2014 laptop at desk_o1 (confirms work/study activity begins early morning)",
+  "Day 3, 08:26 \u2014 keys at elsewhere (confirms departure from home, consistent with commute)",
+  "Day 3, 08:26 \u2014 laptop at elsewhere (confirms departure from home, consistent with commute)",
+  "Day 3, 22:43 \u2014 phone at nightstand_r1 (indicates bedtime routine, consistent with standard sleep schedule)",
+  "Day 4, 07:31 \u2014 bowl at table_d1 (morning meal prep, consistent with weekday routine)",
+  "Day 4, 18:37 \u2014 plate at table_d1 (evening meal preparation, consistent with returning home after work)",
+  "Day 5, 11:51 \u2014 keys at counter_k1 (confirms resident is home on Saturday, validating work-week pattern)",
+  "Day 5, 18:30 \u2014 plate at table_d1 (evening meal prep on weekend, suggests consistent dining habits)",
+  "Day 6, 18:38 \u2014 plate at table_d1 (reinforces consistent evening meal timing on Sunday)",
+  "Day 7, 07:29 \u2014 bowl at table_d1 (confirms return to weekday morning routine on Monday)",
+  "Day 7, 13:05 \u2014 fork at sink_k1 (confirms midday meal cycle, consistent with office worker lunch break)",
+  "Day 7, 18:28 \u2014 fork at table_d1 (confirms evening meal timing, consistent with post-work return)",
+  "Day 11, 20:18 \u2014 phone at sofa_l1 (evening relaxation, consistent with post-work wind-down)"
+ ],
+ "notes": "Days 8-11 show no 'keys/laptop' departure events, strengthening the 'Remote Worker' possibility slightly, but the rigid schedule still favors 'Office Worker' with potential remote days or sensor gaps. The 13:24 coffee_mug at desk on Day 11 (Friday) is notable; it's later than the typical 13:00 lunch break, suggesting a slight variation or extended lunch. The 20:18 phone on sofa indicates evening leisure. Next observation should check for 'keys/laptop' on Day 12 (Saturday) to see if the weekend pattern holds (keys at counter vs. elsewhere)."
+}

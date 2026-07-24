@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single working professional with a regular 9-to-5 schedule, returning home in the evening and winding down with dinner and relaxation.",
+   "prob": 0.97,
+   "rationale": "Consistent morning departure at 08:11 with keys, laptop_bag, phone across multiple weekdays. Evening meal at 18:00-18:42, relaxation (radio, picture_frame), and bedtime routine (phone at nightstand). Weekend data shows a later start (radio at 06:50 but no departure event) and a relaxed day (phone at nightstand at 16:29, bath mat at 20:27, plate put away at 21:45). Sunday (Day 6) shows a similar relaxed pattern: no departure, radio at workbench at 10:11 (likely a hobby activity), phone at nightstand at 16:41 (afternoon rest), plate at table at 18:02 (evening meal). This is consistent with a single person who sleeps in on weekends and engages in home activities."
+  },
+  {
+   "persona": "A couple or family where one person works standard hours and another may be at home, but the evening routine is shared.",
+   "prob": 0.02,
+   "rationale": "No new evidence of multiple residents. Single plate, single set of keys, single phone, single pillow. The dining chair at table on Day 3 remains ambiguous but likely the resident themselves. Probability reduced further."
+  },
+  {
+   "persona": "A remote worker or student with flexible hours, but the 08:11 keys event suggests leaving home, so less likely.",
+   "prob": 0.01,
+   "rationale": "Consistent 08:11 departure with laptop_bag and phone strongly indicates a commute to a workplace. Evening return at 18:00-18:42 is also consistent with a standard workday. Weekend data shows no departure, which is consistent with a non-commute day. Probability reduced further."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:11 \u2014 keys at elsewhere (leaving home for work)",
+  "Day 1, 18:57 \u2014 paint_roller at paint_shelf_s1 (DIY project in evening)",
+  "Day 2, 17:41 \u2014 laptop_bag at sofa_l1 (return from work)",
+  "Day 2, 22:20 \u2014 phone at nightstand_r1 (bedtime routine)",
+  "Day 3, 08:11 \u2014 keys, laptop_bag, phone at elsewhere (morning departure, all together)",
+  "Day 3, 18:00 \u2014 plate at table_d1 (evening meal)",
+  "Day 4, 06:52 \u2014 bowl at table_d1 (breakfast before work)",
+  "Day 4, 08:11 \u2014 keys at elsewhere (consistent morning departure)",
+  "Day 4, 18:34 \u2014 picture_frame at coffee_table_l1 (evening relaxation)",
+  "Day 5, 06:50 \u2014 radio at counter_k1 (weekend morning, later than weekday 06:52)",
+  "Day 5, 16:29 \u2014 phone at nightstand_r1 (afternoon nap or relaxation on weekend)",
+  "Day 5, 20:27 \u2014 bath_mat at bathroom_c1 (evening bath, weekend self-care)",
+  "Day 6, 10:11 \u2014 radio at workbench_s1 (weekend hobby activity)",
+  "Day 6, 16:41 \u2014 phone at nightstand_r1 (afternoon rest on Sunday)",
+  "Day 6, 18:02 \u2014 plate at table_d1 (evening meal on Sunday)"
+ ],
+ "notes": "Weekend pattern confirmed: no morning departure, later wake-up (radio at 06:50 on Saturday, 10:11 on Sunday), afternoon rest (phone at nightstand), evening meal (plate at table). Sunday shows a hobby activity (radio at workbench). No evidence of multiple residents. The 16:12 doormat on Day 1 remains unexplained; could be a delivery or early return. Need to observe next weekdays to confirm consistency of morning departure and evening routine."
+}

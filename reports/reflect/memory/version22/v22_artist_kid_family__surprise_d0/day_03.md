@@ -1,0 +1,16 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single working professional who works from home some days and goes to an office on others. The tablet at the coffee table in the morning suggests a relaxed start, keys appearing elsewhere (not on the hook) indicates a rushed departure, and backpack returning to its rack in the evening suggests a standard workday. The fork and plate at the table at midday point to a home lunch, possibly a work-from-home day. — Day 3 (Thursday) shows a pattern: tablet out early (07:38), keys left elsewhere (08:47) implying a quick exit, then lunch at home (12:08), and backpack returned in the evening (18:36). This fits a hybrid worker who sometimes works from home.
+2. (p=0.30) A student or remote learner who has classes or study sessions at home, with a midday meal break. The tablet is used for study, keys are misplaced, and the backpack is used for carrying materials to and from home. — The tablet and backpack are typical for a student. The keys being elsewhere could be forgetfulness. Lunch at home is common. However, the timing (07:38 tablet, 18:36 backpack) suggests a full day at home, which is more typical of a remote worker than a student with classes.
+3. (p=0.10) A freelancer or self-employed person who works from home but has occasional meetings outside. The tablet is for work, keys misplaced indicate a rushed morning, and backpack suggests carrying work materials. — Similar to the first hypothesis but with less evidence for a regular office commute. The backpack returning in the evening could be from a meeting or errand. Lower probability due to lack of distinguishing events.
+
+## Selected evidence
+- Day 3, 07:38 — tablet at coffee_table_l1 (morning tablet use suggests work/study start at home)
+- Day 3, 08:47 — keys at elsewhere (keys not on hook implies rushed departure or forgetfulness)
+- Day 3, 12:08 — fork at table_d1 (home lunch, typical for work-from-home or student)
+- Day 3, 12:08 — plate at table_d1 (home lunch, consistent with midday meal)
+- Day 3, 18:36 — backpack at backpack_rack_e1 (evening return of backpack suggests end of work/study day)
+
+## Notes
+Only one day (Thursday) observed so far. Need to compare with other weekdays and weekend to confirm work-from-home pattern. Check if keys are consistently misplaced or if tablet is used every morning. Also note that all events today were surprising to the belief model, indicating a new pattern is emerging. No prior days' evidence was kept, so this is the first set of selected evidence.

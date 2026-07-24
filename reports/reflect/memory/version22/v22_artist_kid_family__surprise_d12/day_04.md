@@ -1,0 +1,25 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single adult with a flexible work-from-home or hybrid schedule, who has a morning routine at home, takes a midday break, and relaxes in the evening. The surprising bowl and fork movements suggest a more varied meal pattern than a strict 9-to-5. — Day 4 (Friday) shows a bowl at table at 06:56 (breakfast), then at sink at 07:36 (clearing). Tablet at coffee table at 07:36 (morning device use). No backpack or keys events today, but evening relaxation (lamp, picture frame) consistent. The surprising bowl and fork movements (bowl at sink, fork at cupboard) indicate meal cleanup and storage, fitting a home-based routine.
+2. (p=0.30) A remote worker or student who works from home, with a routine that includes morning device use, midday meals, and evening relaxation. The bath mat movements (14:40-16:26) suggest a midday shower or bathroom cleaning, typical of a flexible schedule. — Day 4 bath mat at bathroom_c1 multiple times in the afternoon indicates a shower or bathroom activity, which is common for someone at home during the day. The absence of backpack/keys events today could mean a day without errands. The surprising bowl and fork events are consistent with meal preparation and cleanup at home.
+3. (p=0.10) A single adult with a pet (possibly a dog) that requires morning door access, explaining the doormat movements on Day 3. The bath mat movements could be from pet-related cleaning. However, no direct pet evidence yet. — Day 3 doormat at entry_hook at 07:57 and 09:02 could be from letting a pet out. Day 4 bath mat movements might be from cleaning after a pet. But no pet objects (toys, food bowls) observed. This hypothesis is weaker but possible.
+
+## Selected evidence
+- Day 0, 08:40 — backpack at elsewhere (departure for work/errand, suggests leaving home)
+- Day 0, 12:30 — dining_chair at table_d1 (midday meal at home, flexible schedule)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday rest, not typical for strict 9-to-5)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, consistent pattern)
+- Day 3, 07:38 — tablet at coffee_table_l1 (morning device use, home-based start)
+- Day 3, 07:57 — doormat at entry_hook_e1 (morning door activity, possibly pet or mail)
+- Day 3, 08:47 — keys at elsewhere (surprising: keys moved, possibly taken for errand)
+- Day 3, 12:08 — fork and plate at table_d1 (midday meal at home)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday relaxation, flexible schedule)
+- Day 3, 18:36 — backpack at backpack_rack_e1 (return from work/errand, evening arrival)
+- Day 4, 06:56 — bowl at table_d1 (breakfast at home, early morning)
+- Day 4, 07:36 — bowl at sink_k1 (surprising: clearing breakfast, expected elsewhere)
+- Day 4, 14:40 — bath_mat at bathroom_c1 (afternoon shower or cleaning, home-based)
+- Day 4, 21:45 — fork at cupboard_k1 (surprising: storing fork after evening meal, expected elsewhere)
+
+## Notes
+Day 4 (Friday) shows a clear morning breakfast routine (bowl at table, then sink). No backpack or keys events today, which is surprising compared to Day 3. The bath mat movements in the afternoon suggest a shower or bathroom activity, common for someone at home. The surprising bowl and fork events (bowl at sink, fork at cupboard) indicate meal cleanup and storage, which the model didn't expect. Weekend observations (days 5-6) will help confirm if the resident works from home or has a hybrid schedule. Need to track if doormat movements recur on weekends to support pet hypothesis. Consider adding a hypothesis about a person who exercises at home if bath mat movements correlate with morning or evening times.

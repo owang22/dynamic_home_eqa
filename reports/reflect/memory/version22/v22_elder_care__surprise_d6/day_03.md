@@ -1,0 +1,25 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.50) A single adult with a regular 9-to-5 job, who eats breakfast at home, works or relaxes in the living room in the afternoon, and has a consistent evening routine (dinner, TV, bed). — Morning coffee mug and plate at sink suggest breakfast cleanup; doormat moved twice (07:57 and 09:02) could indicate leaving/returning or adjusting; floor lamp at recliner at 12:21 suggests a midday break (WFH or weekend-like schedule); evening pillow events and hearing aid case at nightstand point to a structured bedtime. The 08:22 coffee mug at side_table and plate at sink are surprising but consistent with a quick breakfast and cleanup before work.
+2. (p=0.35) A couple or family with one person working from home part-time, sharing the living room and bedroom spaces, with a structured evening routine. — Multiple items moved at different times (coffee mug, plate, fork, floor lamp) could indicate different household members; the doormat being moved twice might suggest two people entering/exiting; the hearing aid case suggests an older adult or someone with hearing needs, possibly living with a partner. The 12:21 floor lamp event is earlier than previous days, hinting at a flexible schedule for one member.
+3. (p=0.15) A retiree or someone with a flexible schedule, who spends time at home during the day and has a fixed evening routine. — Morning coffee and breakfast cleanup, then floor lamp at 12:21 (midday relaxation), and early evening pillow events (18:51 and 21:57) suggest a relaxed daily rhythm. The hearing aid case reinforces an older resident. The surprising events (coffee mug at side_table, plate at sink) are minor deviations that could be explained by a flexible routine.
+
+## Selected evidence
+- Day 0, 07:38 — plate at table_d1 (morning breakfast, suggests a routine meal)
+- Day 0, 12:57 — bed_pillow at bed_r2 (pillow moved to bed at lunchtime, possibly making bed or nap)
+- Day 0, 14:18 — phone at sofa_l1 (afternoon break or remote work on sofa)
+- Day 0, 20:06 — floor_lamp at recliner_l1 (evening reading or TV, lamp moved to recliner)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower/bath routine)
+- Day 0, 20:54 — bed_pillow at bed_r2 (pillow moved to bed again, likely preparing for sleep)
+- Day 3, 07:42 — coffee_mug at table_d1 (morning coffee, part of breakfast routine)
+- Day 3, 07:57 — doormat at entry_hook_e1 (doormat moved, possibly adjusting entryway)
+- Day 3, 08:22 — coffee_mug at side_table_l1 (surprising: coffee mug moved to side table after breakfast, suggests a quick transition to living room)
+- Day 3, 08:22 — plate at sink_k1 (surprising: plate moved to sink immediately after breakfast, suggests cleanup before leaving or starting work)
+- Day 3, 12:21 — floor_lamp at recliner_l1 (midday lamp use, earlier than previous days, suggests a flexible afternoon break)
+- Day 3, 18:51 — bed_pillow at bed_r2 (early evening pillow move, possibly preparing bed early)
+- Day 3, 21:57 — bed_pillow at bed_r2 (second pillow move, likely final bedtime preparation)
+- Day 3, 22:03 — hearing_aid_case at nightstand_r2 (hearing aid case at bedside, indicates an older resident or someone with hearing needs)
+
+## Notes
+Day 3 (Thursday) shows a different pattern: coffee mug and plate moved earlier (08:22) than Day 0 (07:38 plate only), and floor lamp used at 12:21 instead of 20:06. The doormat moved twice (07:57 and 09:02) is new—could indicate someone leaving and returning, or adjusting the mat. Hearing aid case is a strong new signal for an older resident. Need to verify if the 12:57 pillow event from Day 0 repeats on other days; it was absent today. Weekend patterns (days 5-6) still unknown. The surprising events (coffee mug at side_table, plate at sink, fork at sink) suggest a more rushed morning than Day 0, possibly a workday vs. Monday start. Day-of-week patterns emerging: Monday had a later breakfast cleanup? Thursday has midday lamp use. Continue to monitor for consistency.

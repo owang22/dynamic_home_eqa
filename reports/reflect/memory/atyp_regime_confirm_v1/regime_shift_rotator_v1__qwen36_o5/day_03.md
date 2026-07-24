@@ -1,0 +1,19 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Standard Office Worker (Late Start/Shift) — The 08:36 kitchen activity suggests a later morning routine than previous days, aligning with the 14:35 departure on Day 2. The 13:23 phone at 'elsewhere' confirms external presence during the day. The 22:39 thermos at sink is a new data point but doesn't contradict the office worker model (perhaps evening commute or late work). The lack of early badge/key movement on Day 3 weakens the 'early commuter' aspect but supports a flexible or late-start schedule.
+2. (p=0.08) Remote Worker with External Meetings — The 13:23 phone at 'elsewhere' could indicate a midday meeting. However, the consistent presence of work_badge and keys on previous days strongly points to physical office attendance. The 08:36 kitchen activity is consistent with remote work, but the badge evidence remains the stronger discriminator.
+3. (p=0.02) Night Shift Worker — Still contradicted by the 08:36 morning activity and 13:23 daytime external presence. The 22:39 thermos at sink is late, but not late enough to suggest a night shift start (which would likely involve activity much later or earlier in the day). This hypothesis remains highly unlikely.
+
+## Selected evidence
+- Day 0, 05:09 — work_badge at elsewhere (indicates early departure; key discriminator for office worker vs. remote)
+- Day 0, 14:25 — laptop at desk_o1 (confirms home office usage during standard work hours)
+- Day 1, 04:55 — thermos at counter_k1 (strong indicator of early morning routine, likely for commute or early start outside home)
+- Day 2, 05:29 — laptop at elsewhere (suggests taking work equipment out, possibly for a meeting or co-working; supports professional routine)
+- Day 2, 14:35 — keys at entry_hook_e1 (indicates departure; combined with badge, confirms external activity)
+- Day 2, 14:35 — work_badge at entry_hook_e1 (confirms professional external activity; timing is late for standard 9-5, suggesting shift or flexible schedule)
+- Day 3, 08:36 — coffee_mug at sink_k1 (indicates morning routine, but later than Day 0/1; suggests variable start time)
+- Day 3, 13:23 — phone at elsewhere (confirms external presence during the day; supports office/external work model)
+
+## Notes
+Day 3 (Thursday) shows a later morning routine (08:36) compared to Day 0/1 (04:55-05:09). This variability suggests a flexible schedule or shift work rather than a rigid 9-5. The 13:23 phone at 'elsewhere' confirms the resident is out during the day. The 22:39 thermos at sink is unusual; need to check if this is a new habit or an anomaly. Day 4 (Friday) will be critical to see if the pattern holds or if the weekend (Day 5-6) shows a different routine (e.g., no early thermos, no external phone). The 'laptop at elsewhere' on Day 2 is still unexplained but likely related to work.

@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A frequent business traveler who works from home on Fridays after returning from a trip. The pattern of Monday departure, Thursday return, Friday work-from-home, and quiet weekend is now observed over a full week. Today (Monday) shows travel preparation in the evening (toiletry_bag and travel_adapter on bed at 20:12, packing_cubes and travel_adapter at entry_hook at 20:57), consistent with a Monday departure. The probability is increased because the weekly pattern is confirmed. — The Monday evening travel preparation (toiletry_bag, travel_adapter, packing_cubes) matches the previous Monday departure pattern. The weekend was quiet, consistent with a business traveler's home routine. No contradictory evidence.
+2. (p=0.05) A remote worker who travels occasionally, with a home office setup and a routine of returning from trips in the evening. The Friday events show a typical work-from-home day with breakfast and evening relaxation. Saturday and Sunday's quiet home days are also consistent with a remote worker's weekend, but the consistent Monday departure and Thursday return over the observed week is more indicative of a regular business traveler. The probability remains low because the evidence strongly supports a regular weekly travel pattern. — The Monday evening travel preparation is again observed, reinforcing the regular weekly pattern. No evidence of a home office setup beyond the laptop on the desk on Thursday, which is also consistent with business travel. The occasional travel hypothesis is less likely given the consistent weekly pattern.
+
+## Selected evidence
+- Day 0, 19:59 — passport at bed_r1 (travel preparation, not daily)
+- Day 0, 20:44 — suitcase at entry_hook_e1 (ready for departure)
+- Day 1, 06:22 — passport, suitcase, travel_adapter, phone, keys all at elsewhere (confirmed departure)
+- Day 3, 20:41 — keys at entry_hook_e1 (return home)
+- Day 3, 20:41 — laptop at desk_o1 (work item, suggests business travel)
+- Day 3, 20:41 — passport at entry_hook_e1 (returned from trip)
+- Day 3, 20:41 — suitcase at closet_r1 (stored after return)
+- Day 3, 20:41 — toiletry_bag at bathroom_c1 (unpacked in bathroom)
+- Day 4, 07:00 — phone at nightstand_r1 (waking up at home on Friday)
+- Day 4, 07:37 — bowl at table_d1, coffee_mug at counter_k1 (breakfast at home, not rushed)
+- Day 4, 16:50 — phone at sofa_l1 (afternoon leisure, likely work-from-home day)
+- Day 5, 07:25 — coffee_mug at counter_k1 (morning coffee on Saturday, weekend routine)
+- Day 5, 18:34 — fork at table_d1 (evening meal at home on Saturday)
+- Day 5, 22:49 — phone at nightstand_r1 (bedtime routine on Saturday)
+- Day 5, 22:49 — remote at coffee_table_l1 (evening relaxation on Saturday)
+
+## Notes
+Monday (day 7) shows travel preparation in the evening: toiletry_bag and travel_adapter on bed at 20:12, then packing_cubes and travel_adapter at entry_hook at 20:57. This matches the previous Monday departure pattern. The weekly routine (Monday departure, Thursday return, Friday work-from-home, quiet weekend) is now confirmed over two weeks. Need to observe next Thursday (day 10) to see if the return pattern repeats. No evidence of social outings or hobbies, so the persona remains a business traveler with a quiet home life.

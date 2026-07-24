@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single professional who works from home or has a home office, uses a headset for calls, and has a structured weekday routine with morning coffee at desk, reading newspaper, and evening relaxation. Weekend mornings show a later start but still at the desk, suggesting a flexible work-from-home schedule that extends into weekends. — Day 7 (Monday) events are mostly consistent with this hypothesis: coffee_mug at table at 07:00 (surprising because model expected desk, but this is a weekday morning coffee at table, similar to Day 4 pattern, showing routine flexibility). floor_lamp at sofa at 17:20 (evening relaxation), plate at table at 18:04 (dinner), bath_mat at bathroom at 18:35 (evening bath routine), remote at sofa at 19:12 (evening TV/leisure). The picture_frame at coffee_table at 16:43 is a new object; it may be a decorative item moved for cleaning or display, not contradicting the hypothesis. The bowl at cupboard at 21:45 (surprising) suggests kitchen cleanup after a meal, which is typical. The headset was not observed today, but that is not contradictory. The single resident pattern remains strong.
+2. (p=0.10) A gamer or streamer who uses a headset at a desk and then moves to the sofa for leisure in the evening, but with a structured morning routine (coffee, newspaper) that suggests a hybrid lifestyle. Weekend events show a later start and more leisure time, but no gaming-specific items have been observed. — Day 7 events do not provide gaming-specific evidence. The headset was not observed today. The evening routine (floor_lamp at sofa, remote at sofa) is consistent with general leisure, not specifically gaming. The picture_frame and bowl are neutral. The hypothesis remains possible but less likely due to lack of gaming items.
+3. (p=0.05) A student who studies at a desk with a headset and has a structured morning routine (coffee, newspaper) but also uses the sofa for relaxation. Weekend events show a later start and more leisure time, but no study materials (laptop, books) have been observed. — Day 7 events do not provide student-specific evidence. No laptop, books, or study materials observed. The morning coffee at table and evening routine are consistent with a general routine. The hypothesis remains unlikely due to lack of supporting evidence.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (suggests work or gaming at a desk in the morning)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (lamp moved to sofa in evening, indicating reading or relaxing)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath routine)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning activity: delivery or leaving/returning, suggests weekday routine)
+- Day 2, 09:12 — phone at desk_o1 (phone at desk mid-morning, consistent with work/study)
+- Day 3, 07:02 — reading_glasses at table_d1 (morning reading or breakfast activity)
+- Day 3, 07:42 — coffee_mug at desk_o1 (morning coffee at desk, strong work-from-home signal)
+- Day 3, 07:42 — newspaper at coffee_table_l1 (morning newspaper reading, suggests a routine)
+- Day 3, 12:09 — fork at table_d1 (lunch at table, consistent with weekday meal pattern)
+- Day 3, 21:42 — phone at nightstand_r1 (evening wind-down, phone moved to nightstand for bedtime)
+- Day 4, 06:51 — coffee_mug at table_d1 (morning coffee at table instead of desk, shows routine flexibility)
+- Day 4, 06:51 — newspaper at table_d1 (morning newspaper at table, consistent with reading habit)
+- Day 4, 06:51 — reading_glasses at table_d1 (morning reading at table, reinforces routine)
+- Day 6, 07:40 — coffee_mug at desk_o1 (weekend morning coffee at desk, later start than weekday, suggests work-from-home on weekends)
+- Day 6, 09:12 — reading_glasses at desk_o1 (weekend morning reading at desk, consistent with routine)
+
+## Notes
+Day 7 (Monday) surprising events: coffee_mug at table at 07:00 (model expected desk, but this matches Day 4 pattern of table coffee on some weekdays, showing routine flexibility). bowl at cupboard at 21:45 (model expected elsewhere, but likely kitchen cleanup after dinner). picture_frame at coffee_table at 16:43 is a new object; may be decorative or moved for cleaning. The evening routine (floor_lamp at sofa, plate at table, bath_mat, remote at sofa) is consistent with previous weekday evenings. The headset was not observed today, but that is not surprising. Need to observe more days to see if the coffee_mug location alternates between desk and table on weekdays, and if the bowl event is a regular occurrence. The doormat event on Day 2 was not repeated; it may be a one-time delivery or departure. The bath_mat event on Day 0 and Day 7 suggests a regular evening bath routine (possibly daily or every other day). The floor_lamp event on Day 0 and Day 7 suggests a regular evening relaxation routine. The phone at nightstand on Day 3 was not repeated; it may be a typical bedtime routine but not observed on other days. Overall, the evidence strongly points to a single professional with a structured weekday routine and a similar but later weekend routine. The gamer and student hypotheses are less likely due to lack of supporting evidence. Weekend observations will be crucial to confirm or refine the persona.

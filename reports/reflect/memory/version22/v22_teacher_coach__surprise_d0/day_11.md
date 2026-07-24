@@ -1,0 +1,26 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.97) A school-age child or teenager who attends school and has after-school sports (whistle). The laptop and grade_folder leaving in the morning and returning in the afternoon confirm a school day. The thermos and keys also leave, consistent with a student's routine. The laptop at kitchen table in the evening suggests homework. The phone on sofa and nightstand are typical for a teenager. The weekend pattern (thermos at kitchen table on Sunday evening) suggests the thermos is used for weekend activities or simply stored at home, not taken to school on weekends. The surprising events today (fork at kitchen_table and sink in the evening) are consistent with a student: the fork is used at dinner and then placed in the sink. The whistle leaving in the morning and the laptop packed in the school bag further confirm the school routine. This hypothesis remains the strongest. — The surprising events (fork at kitchen_table and sink) are mundane dinner cleanup, not contradictory. The morning events (laptop in school_bag, whistle leaving) reinforce the student routine. The fork events are typical for any household and do not weaken the student hypothesis.
+2. (p=0.02) A person with a flexible schedule who may work from home or have part-time work, but the school-related items (laptop in school_bag, grade_folder) are more consistent with a student. The whistle could indicate coaching or a sport, but the overall pattern is less likely for a remote worker. The weekend events do not provide strong evidence for or against this hypothesis. The school items still point more strongly to a student. The surprising events today (fork at kitchen_table and sink) are neutral and do not support this hypothesis. — The school items (laptop in school_bag, grade_folder) remain strong evidence against a typical remote worker. The fork events are neutral. Probability decreases further.
+3. (p=0.01) A person who works outside the home in an office or field job, with a side activity involving a whistle (e.g., coaching). The thermos and keys leaving in the morning and returning in the afternoon suggest a commute. However, the laptop in a school_bag and grade_folder are not typical office items; they are more school-related. The weekend events (thermos at home on Sunday) do not contradict this, but the school items make it unlikely. The surprising events today (fork at kitchen_table and sink) are neutral, but the morning events (laptop in school_bag, whistle leaving) are more consistent with a student. This hypothesis is now very unlikely. — The school items (laptop in school_bag, grade_folder) are strong evidence against an office worker. The fork events are neutral. Probability decreases further.
+
+## Selected evidence
+- Day 4, 06:22 — laptop at school_bag_e1 (laptop packed in school bag, strong evidence of student)
+- Day 4, 07:31 — grade_folder at elsewhere (school folder leaving home, confirms student)
+- Day 4, 07:31 — keys at elsewhere (keys taken, consistent with leaving for school)
+- Day 4, 07:31 — laptop at elsewhere (laptop taken to school)
+- Day 4, 16:31 — whistle at entry_hook_e1 (whistle returned after school, likely from sports practice)
+- Day 2, 16:22 — phone at sofa_l1 (afternoon relaxation, typical after school)
+- Day 2, 19:58 — laptop at kitchen_table_k1 (evening homework or personal use at home)
+- Day 2, 21:38 — phone at nightstand_r1 (bedtime routine)
+- Day 0, 07:30 — thermos at elsewhere (morning departure, likely taken to school)
+- Day 0, 16:24 — thermos at kitchen_table_k1 (returned home in late afternoon, consistent with school day end)
+- Day 6, 20:12 — thermos at kitchen_table_k1 (Sunday evening, thermos at home, not taken to school on weekend)
+- Day 7, 07:31 — grade_folder at elsewhere (Monday morning, grade_folder leaves for school, confirms weekly pattern)
+- Day 7, 21:56 — grade_folder at school_bag_e1 (Monday evening, grade_folder packed for next school day, consistent with student routine)
+- Day 9, 06:25 — laptop at school_bag_e1 (Wednesday morning, laptop packed for school, confirms weekly pattern)
+- Day 9, 07:35 — whistle at elsewhere (Wednesday morning, whistle taken to school for sports practice)
+
+## Notes
+The surprising events today (fork at kitchen_table and sink) are mundane dinner cleanup, not contradictory to the student hypothesis. The morning events (laptop in school_bag, whistle leaving) reinforce the school routine. The fork events are typical for any household and do not provide diagnostic information. Need to observe more weekends to confirm if school items (laptop, grade_folder, whistle) stay home on Saturdays and Sundays. Also check if thermos and keys leave on weekends. The whistle may be for a specific sport (e.g., soccer, basketball) that occurs on weekdays. Day 9 is Wednesday, next observation is Thursday (day 10) to see the weekly pattern repeat. The fork events are not surprising in retrospect; they are normal evening events.

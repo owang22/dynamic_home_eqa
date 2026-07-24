@@ -1,0 +1,17 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) Single adult with a regular 9-to-5 job, likely working from home or returning home early evening. The plate at sink in late morning suggests a quick breakfast or lunch cleanup, and the plate at table in early evening suggests dinner at home. The pillow on bed at 12:57 and again at 20:54 indicates a made bed or tidying routine. The floor lamp moved to sofa at 20:06 suggests evening relaxation in the living room. The bath mat in bathroom at 20:23 points to a shower or bath before bed. The picture frame on coffee table at 21:04 hints at a decorative or personal touch in the living area. — The timing of events (lunch cleanup, evening dinner, relaxation, and bedtime prep) aligns with a typical workday routine. No evidence of children or multiple residents yet.
+2. (p=0.20) Couple or family with at least one adult who works from home or has a flexible schedule. The plate at sink at 11:34 could be a late breakfast or early lunch for one person, while the plate at table at 18:47 suggests a shared dinner. The pillow on bed at two different times might indicate different people making the bed or napping. The floor lamp and picture frame movements could be shared activities. However, the lack of multiple plates or other items suggests a single person is more likely. — The evidence is still sparse; multiple residents would likely produce more objects or different timings. The single plate and pillow movements are more consistent with one person.
+3. (p=0.10) Retiree or person with a non-standard schedule. The late morning plate at sink and early evening dinner could indicate a flexible routine. The pillow on bed at midday might suggest an afternoon nap. The evening activities (lamp, bath mat, picture frame) are typical but could occur at any time. However, the lack of daytime events (e.g., no objects moved between 13:00 and 18:00) might indicate the person is out or engaged in non-object-moving activities. — The evidence is weak for this hypothesis; the timing is still consistent with a standard workday. More days needed to confirm.
+
+## Selected evidence
+- Day 0, 11:34 — plate at sink_k1 (late morning dish suggests a meal cleanup, possibly breakfast or lunch)
+- Day 0, 12:57 — bed_pillow at bed_r1 (pillow on bed at midday could indicate bed-making or nap)
+- Day 0, 18:47 — plate at table_d1 (early evening dinner at home)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation in living room)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath or shower routine)
+- Day 0, 21:04 — picture_frame at coffee_table_l1 (decorative item moved to coffee table, possibly for ambiance)
+
+## Notes
+Day 0 (Monday) shows a pattern of home activities: late morning dish, midday pillow, early dinner, evening relaxation and bath. No evidence of work-from-home (no laptop or desk items) or out-of-home work (no leaving events). Need to observe more days to see if this pattern repeats, especially weekends. The wall_clock moved to shelf at 19:28 is unusual but may be a one-time adjustment; not included as it doesn't reveal routine. Future days should check for multiple residents (e.g., two plates, different bed times) and work-related items.

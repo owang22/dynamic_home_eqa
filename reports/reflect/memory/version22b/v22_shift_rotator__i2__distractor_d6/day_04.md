@@ -1,0 +1,26 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Single adult with a regular 9-to-5 job, likely working from home or hybrid, who keeps a tidy home and has a consistent evening routine. The job requires safety gear (hi-vis vest) and involves early starts (05:14) and variable return times (15:05, 23:02). — Day 4 (Friday) shows a very early departure (05:14) with hi-vis vest, keys, and work badge, consistent with a job requiring safety gear. The earlier return (18:22 chair at table) suggests a shorter workday or end-of-week pattern. No evidence of a second person; single fork/plate pattern continues.
+2. (p=0.08) Couple or family with at least one adult who works outside the home, and another who may work from home or be a homemaker. — The doormat events on Day 3 (07:57 and 09:02) could indicate two people, but the single chair, fork, plate, and consistent single-person badge events make this less likely. The hi-vis vest and early departure are still consistent with one person.
+3. (p=0.02) Student or young professional living alone, with a flexible schedule and a tendency to tidy up in the evening. — The early departure (05:14) and hi-vis vest are more typical of a job than a student. The structured timing (chair at 18:22, pillow at 18:25) suggests a regular routine, but the early start and safety gear point away from a student.
+
+## Selected evidence
+- Day 2, 05:07 — work_badge at elsewhere (early departure, consistent with job)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (returning from work, consistent with job)
+- Day 2, 16:06 — dining_chair at table_d1 (home office setup after work)
+- Day 2, 21:06 — dining_chair at table_d1 (chair moved back for evening)
+- Day 2, 21:45 — fork at cupboard_k1 (evening cleanup, solo meal)
+- Day 2, 21:45 — plate at cupboard_k1 (evening cleanup, solo meal)
+- Day 3, 07:57 — doormat at entry_hook_e1 (morning routine, possibly leaving for work)
+- Day 3, 08:57 — dining_chair at table_d1 (home office setup during work hours)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (safety gear, suggests job type)
+- Day 3, 23:02 — keys at entry_hook_e1 (returning home late)
+- Day 3, 23:02 — work_badge at locker_shelf_e1 (returning from work late)
+- Day 4, 04:59 — phone at entry_hook_e1 (early morning routine)
+- Day 4, 05:14 — hi_vis_vest at elsewhere (early departure with safety gear)
+- Day 4, 05:14 — keys at elsewhere (early departure)
+- Day 4, 18:22 — dining_chair at table_d1 (returning home, home office setup)
+
+## Notes
+Day 4 (Friday) shows a very early departure (05:14) with hi-vis vest, keys, and work badge, consistent with a job requiring safety gear. The earlier return (18:22 chair at table) suggests a shorter workday or end-of-week pattern. The phone at entry_hook at 04:59 may indicate alarm or preparation. The waste_bin events at 07:09 and 08:41 could be morning cleaning. The picture_frame at coffee_table at 18:34 is a new object—could indicate personalization or decoration, but not yet informative. Need to check weekend patterns (days 5-6) to see if the resident stays home or goes out. Also, the doormat events on Day 3 (07:57 and 09:02) need further verification—could be a delivery or second person.

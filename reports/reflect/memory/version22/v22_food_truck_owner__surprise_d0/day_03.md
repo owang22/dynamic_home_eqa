@@ -1,0 +1,16 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Single adult who works from home but also runs a small food-related business (e.g., meal prep, catering, or a pop-up kitchen) from the home. The phone on the sofa at 09:58 suggests a relaxed start to the workday, while the cash_box, keys, order_pad, and prep_apron appearing together indicate business-related activities (handling cash, orders, and cooking). The prep_apron at the counter in the evening suggests meal preparation or cleanup after a work shift. — The surprising events (cash_box, order_pad, prep_apron) are not typical for a standard 9-to-5 office worker. They point to a side business or primary occupation involving food preparation and cash transactions. The phone on the sofa at 09:58 could be a morning check-in before starting business tasks.
+2. (p=0.15) Single adult with a flexible schedule who may be a freelancer or remote worker, but the business-related objects (cash_box, order_pad) suggest occasional side gigs or selling goods. The prep_apron at 20:10 indicates evening cooking, possibly for the next day's sales. — This hypothesis retains the possibility of a standard remote job but acknowledges the business objects as secondary. However, the concentration of business items on the same day makes the primary business hypothesis more likely.
+
+## Selected evidence
+- Day 0, 12:20 — phone at counter_k1 (midday phone presence suggests work-from-home or lunch break)
+- Day 0, 19:25 — fork at sink_k1 (evening meal cleanup, typical for a single adult)
+- Day 3, 09:58 — phone at sofa_l1 (morning phone on sofa, relaxed start before business activities)
+- Day 3, 10:34 — cash_box at elsewhere (business cash handling, not typical for standard office worker)
+- Day 3, 10:34 — order_pad at elsewhere (order taking for food business)
+- Day 3, 20:10 — prep_apron at counter_k1 (evening meal prep or cleanup, likely for business)
+
+## Notes
+The surprising events on Day 3 (Thursday) strongly suggest a food-related business. Need to verify if cash_box, order_pad, and prep_apron appear on other weekdays (especially Friday) and whether weekend patterns differ. Also check if phone appears at sofa on other mornings. The 'elsewhere' location for cash_box and order_pad is vague; future observations may clarify if they move to a specific area (e.g., a desk or kitchen). The previous hypothesis of a simple 9-to-5 worker is now contradicted by the business objects.

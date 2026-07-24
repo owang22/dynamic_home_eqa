@@ -1,0 +1,22 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single shift worker with a variable schedule, likely in a manual or safety-sensitive job (hi-vis vest, work badge). The midday departure on Thursday and early morning on Wednesday suggest rotating shifts. The thermos used late at night and washed at 22:51 indicates a late shift or evening work. The Saturday phone on sofa at 12:25 suggests a relaxed weekend morning, consistent with a day off or late start. — The surprise events on Day 5 (phone on sofa at 12:25) confirm a weekend day off, as the phone is not carried out. The fork and plate movements are mundane kitchen events, but the phone's location is informative. The variable departure times (05:27 vs 13:19) and late thermos washing strongly support shift work. The single-person household remains likely.
+2. (p=0.20) A single professional with a hybrid schedule, working outside the home some days (with safety gear) and working from home or having a day off on weekends. The Saturday phone on sofa at 12:25 suggests a relaxed morning, possibly a day off. The variable departure times could be due to different shift start times or appointments. — The Saturday phone on sofa is consistent with a day off, but the lack of any work-from-home evidence on Saturday (no laptop, no coffee mug at desk) makes this less likely than a shift worker. The variable departure times are more typical of shift work than a hybrid schedule.
+3. (p=0.10) A single person with a non-standard routine, possibly part-time or freelance, who uses safety gear occasionally. The Saturday phone on sofa at 12:25 suggests a weekend day off, but the lack of other objects (e.g., laptop, gym bag) leaves ambiguity. — This hypothesis is a catch-all for remaining uncertainty. The evidence is still limited to a few days, and weekend patterns are just emerging. The surprise events on Day 5 are not strongly contradictory to this hypothesis.
+
+## Selected evidence
+- Day 0, 05:14 — thermos at elsewhere (early morning departure with packed drink, likely workday)
+- Day 2, 05:27 — work_badge at elsewhere (morning departure with badge, confirming work outside home)
+- Day 2, 14:42 — hi_vis_vest at locker_shelf_e1 (return with safety gear, placed in locker, suggests job requiring vest)
+- Day 2, 14:42 — work_badge at locker_shelf_e1 (badge stored with vest, consistent with locker use)
+- Day 2, 19:46 — coffee_mug at desk_o1 (evening coffee at home desk, not a travel mug)
+- Day 3, 13:19 — hi_vis_vest at elsewhere (midday departure with vest, earlier than previous day's 05:27, showing variable schedule)
+- Day 3, 13:19 — keys at elsewhere (keys carried out, standard for departure)
+- Day 3, 13:19 — phone at elsewhere (phone carried out, standard for departure)
+- Day 3, 13:19 — work_badge at elsewhere (badge carried out, consistent with work departure)
+- Day 3, 22:51 — thermos at sink_k1 (thermos washed late at night, suggests it was used and returned home after work)
+- Day 5, 12:25 — phone at sofa_l1 (Saturday midday, phone not carried out, suggests a relaxed day off at home)
+
+## Notes
+The surprise event on Day 5 (phone on sofa at 12:25) was unexpected because the model predicted the phone would be elsewhere (likely carried out) based on weekday patterns. This confirms a weekend day off. The fork and plate movements are mundane kitchen events and do not add diagnostic value. Need to observe more weekend days (Day 6 Sunday) to see if the person stays home or goes out. Also look for objects like laptop, gym bag, or suitcase to refine the persona. The variable departure times (05:27 vs 13:19) remain key evidence for shift work. The single-person household is still the best fit.

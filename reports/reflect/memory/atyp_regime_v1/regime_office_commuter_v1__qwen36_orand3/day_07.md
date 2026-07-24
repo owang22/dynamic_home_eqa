@@ -1,0 +1,17 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Standard Office Worker with Flexible Weekends — Day 7 (Monday) shows a return to weekday timing: phone at counter at 07:09 suggests morning routine start, and dinner at 18:23 aligns with the weekday 18:15 return pattern. The strong consistency of the 08:30 departure on weekdays and the distinct 'late start' on weekends (Days 5-6) strongly supports this. The lack of laptop on weekends further suggests the home is not a primary workspace, or work is done elsewhere.
+2. (p=0.10) Remote/Hybrid Worker — Still possible if the worker strictly leaves the house for client meetings or co-working on weekdays but works from home on weekends without using the desk. However, the rigid weekday schedule makes this less likely than the standard worker hypothesis. The 'keys out' on Saturday remains unexplained by this persona unless it's a social outing.
+3. (p=0.05) Night Owl / Shift Worker — Effectively discarded. The consistent 07:09 phone usage on Monday morning and 18:23 dinner time are incompatible with a night owl or irregular shift schedule. Previous probability was already low (0.10) and has been further reduced by the clear weekday/weekend dichotomy.
+
+## Selected evidence
+- Day 7, 07:09 — phone at counter_k1 (morning routine start; confirms return to weekday schedule after weekend shift)
+- Day 7, 18:23 — plate at table_d1 (early dinner; aligns with weekday 18:15 return pattern, distinct from weekend 18:30+)
+- Day 6, 12:37 — travel_mug at sink_k1 (late morning coffee; confirms weekend 'sleep in' pattern)
+- Day 6, 18:32 — plate at table_d1 (late dinner; reinforces weekend routine stability)
+- Day 5, 12:30 — keys at entryway (ambiguous departure; likely social/leisure given no work items)
+- Day 5, 18:35 — plate at table_d1 (late dinner; consistent with Day 6 weekend pattern)
+
+## Notes
+The transition from Day 6 (Sunday) to Day 7 (Monday) is clear: wake-up time shifts earlier (phone at 07:09 vs 12:30 on weekends), and dinner time shifts earlier (18:23 vs 18:32). This confirms the 'Standard Office Worker' hypothesis. The travel mug was not seen on Day 7 morning, which might mean it was used and taken to work, or the resident switched to a different cup. Need to track if the travel mug appears on future weekdays to confirm it's a 'commute' item. The 'keys out' on Saturday remains the only unexplained departure; if it happens again on a weekend, it might indicate a regular weekend activity (e.g., gym, market) rather than work.

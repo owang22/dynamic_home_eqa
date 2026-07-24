@@ -1,0 +1,26 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Working professional who returns home in the evening — Keys seen elsewhere suggest the resident left home in the morning, and the work lanyard at entry hook indicates they returned from work in the evening.
+2. (p=0.01) Someone who eats dinner at home — A bowl was seen in the cupboard, suggesting it was used for a meal and then washed and put away.
+3. (p=0.01) Person who commutes by public transit — Transit card seen at entry hook suggests public transportation use.
+
+## Selected evidence
+- Day 0, 08:34 — keys seen at elsewhere (indicates resident left home in the morning)
+- Day 0, 18:05 — work_lanyard seen at entry_hook_e1 (indicates return from work)
+- Day 1, 17:36 — transit_card seen at entry_hook_e1 (suggests public transportation commute)
+- Day 2, 08:32 — travel_mug seen at elsewhere (indicates resident left home in the morning with a drink for commute)
+- Day 3, 08:30 — laptop seen at elsewhere (indicates resident takes work equipment when leaving home)
+- Day 3, 18:14 — phone seen at sofa_l1 (resident returns home in the evening and relaxes)
+- Day 5, 12:30 — keys seen at counter_k1 (unusual timing for weekend - resident left home midday)
+- Day 5, 12:30 — travel_mug seen at counter_k1 (resident prepared to go out midday on weekend)
+- Day 7, 07:09 — phone seen at counter_k1 (resident left home early on Monday)
+- Day 7, 19:08 — plate seen at sink_k1 (suggests dinner was eaten at home on Monday)
+- Day 7, 22:36 — phone seen at nightstand_r1 (evening routine before bed)
+- Day 8, 08:30 — keys seen at elsewhere (resident left home in the morning)
+- Day 8, 08:30 — travel_mug seen at elsewhere (resident prepared commute drink)
+- Day 8, 17:46 — phone seen at sofa_l1 (resident returns home in the evening and relaxes)
+- Day 9, 08:31 — transit_card seen at elsewhere (resident uses public transit for commute)
+
+## Notes
+Observing a consistent pattern of leaving home in the morning and returning in the evening on weekdays. The travel mug sightings and laptop observations suggest the resident prepares for a commute and takes work equipment. Dinner appears to be eaten at home on most days. Weekend pattern shows resident leaving home midday (around 12:30) and returning by early evening, with dinner at home. Monday pattern shows resident leaving home early (around 07:09) and returning by evening (around 19:08), with dinner eaten at home and phone placed on nightstand before bed. Tuesday pattern shows similar weekday routine with morning departure and evening return, with dinner eaten at home. Wednesday shows bowl in sink at 07:46 (possibly breakfast), transit card and travel mug taken at 08:31, travel mug returned at 17:54, and fork at table at 18:25 (suggesting dinner preparation). Thursday shows bowl at table at 07:24 (breakfast), coffee mug at counter at 07:24, laptop at sofa at 18:08 (evening relaxation), transit card and travel mug at counter at 18:08 (suggesting commute preparation for next day).

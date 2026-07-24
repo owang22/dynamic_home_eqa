@@ -1,0 +1,14 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard 9-5 Office Worker — Weekend (Day 5) shows no early morning departure (08:00) or midday absence (13:29). Instead, activity is centered around evening meal prep/cleanup (18:29-21:45). This confirms the weekday routine is work-bound, not home-based.
+2. (p=0.04) Remote Worker with Errands — Still possible if the resident works from home on weekends but takes errands during the week. However, the lack of any laptop usage or 'work' signals on Saturday makes this less likely than a standard worker who simply rests or does chores on weekends.
+3. (p=0.01) Night Shift Worker — Contradicted. The resident was active in the evening (18:29-21:45) on a Saturday, which is inconsistent with a night shift schedule where they would likely be sleeping or just waking up.
+
+## Selected evidence
+- Day 5, 10:48 — phone at counter_k1 (resident home late morning; contrasts with weekday 08:00 departure, confirming weekend rest pattern)
+- Day 5, 18:29 — plate at table_d1 (evening meal preparation; indicates domestic routine on weekend, unlike weekday midday absence)
+- Day 5, 21:45 — fork at cupboard_k1 (post-dinner cleanup; confirms evening wind-down routine, consistent with Day 4's late return but on a weekend schedule)
+
+## Notes
+Weekend pattern is emerging: no early start, activity centered on evening meals. The 'thermos' at cupboard_k1 on Day 5 suggests it was stored away after use, possibly for the next day. No laptop observed on Day 5, further weakening the remote work hypothesis. Need to observe Day 6 (Sunday) to see if the pattern holds or if there are different weekend activities (e.g., gym, social). The 'plate' and 'fork' events are mundane but confirm the resident is home and cooking/eating, which is a key discriminator from a pure 'out all day' weekend profile.

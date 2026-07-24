@@ -1,0 +1,13 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A family with a young child (toddler/preschooler) who uses a sippy cup and plays on a play mat. The cushion on the sofa suggests a comfortable, child-friendly living area. — The sippy cup is a strong indicator of a young child, and the play mat reinforces that. The cushion on the sofa is common but consistent with a family setting.
+2. (p=0.15) A single adult or couple who occasionally care for a young child (e.g., babysitting, visiting grandchild). The sippy cup and play mat might be temporary. — The evidence is limited to one day; the sippy cup and play mat could be for a visiting child, not a permanent resident.
+3. (p=0.05) A household with a pet (e.g., a dog) that uses a sippy cup-like toy or a child's item left out, but the play mat suggests a child is more likely. — Sippy cups are almost exclusively for children; a pet toy would be different. This hypothesis is unlikely but kept for completeness.
+
+## Selected evidence
+- Day 0, 08:41 — sippy_cup at play_mat_n1 (indicates a young child in the household, likely a toddler/preschooler, as sippy cups are used for transitioning from bottles)
+- Day 0, 17:01 — cushion at sofa_l1 (common item, but consistent with a family living room setup; may be used for child comfort or adult lounging)
+
+## Notes
+Only one day observed (Monday). Need to see if sippy cup and play mat appear regularly, especially on weekdays vs weekends. Also look for other child-related items (toys, high chair, baby gate) or adult-only items (laptop, work desk) to confirm household type. The cushion is too generic to be diagnostic alone.

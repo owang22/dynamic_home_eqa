@@ -1,0 +1,32 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single remote worker who starts the day with coffee at a desk and cleans up in the late afternoon, but on weekends shifts to a more relaxed routine with meals at the dining table and evening TV. However, on Monday (day 7) the coffee was at the table instead of the desk, suggesting a possible flexible start or a new pattern.",
+   "prob": 0.6,
+   "rationale": "The weekday coffee-at-desk pattern was broken on day 7 (Monday) with coffee at table. The plate and bowl events are typical cleanup, but the plate's location (sink then cupboard) is consistent with evening cleanup. The surprise was due to the model expecting the plate elsewhere (likely at table or desk), but it appeared at sink and cupboard, which is still plausible for a single person. The weekend pattern remains distinct."
+  },
+  {
+   "persona": "A single person who works from home but has a flexible morning routine, sometimes having coffee at the dining table even on weekdays, and maintains a consistent evening cleanup routine.",
+   "prob": 0.3,
+   "rationale": "The coffee at table on Monday could indicate a flexible start or a change in habit. The plate and bowl events are standard evening cleanup. The surprise about plate location may be due to the model's expectation of a different object (e.g., fork or remote) at that time, but the actual events are still consistent with a single person's routine."
+  },
+  {
+   "persona": "A single person who may have a second person visiting occasionally, as the fork and remote appeared only on weekend, but no strong evidence of a second resident yet.",
+   "prob": 0.1,
+   "rationale": "The fork and remote on weekend could be from a guest, but the Monday events (coffee at table, plate and bowl cleanup) are still consistent with a single person. The surprise events do not strongly indicate a second person."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:51 \u2014 coffee_mug at desk_o1 (morning coffee at desk suggests work/study start)",
+  "Day 0, 16:46 \u2014 coffee_mug at sink_k1 (end-of-workday cleanup, typical of home office)",
+  "Day 5, 07:25 \u2014 coffee_mug at table_d1 (weekend morning coffee at dining table, not desk)",
+  "Day 5, 18:50 \u2014 fork at table_d1 (first observed fork; weekend dinner at table)",
+  "Day 5, 21:45 \u2014 plate at cupboard_k1 (post-dinner cleanup, plate stored)",
+  "Day 5, 22:10 \u2014 remote at coffee_table_l1 (evening TV use, remote left on coffee table)",
+  "Day 7, 07:33 \u2014 coffee_mug at table_d1 (Monday coffee at table, breaking weekday desk pattern)",
+  "Day 7, 19:25 \u2014 plate at sink_k1 (evening plate cleanup, surprising because model expected elsewhere)",
+  "Day 7, 21:45 \u2014 bowl at cupboard_k1 (evening bowl storage, part of cleanup)",
+  "Day 7, 21:45 \u2014 plate at cupboard_k1 (plate stored after sink, surprising location but consistent with cleanup)"
+ ],
+ "notes": "The Monday coffee at table (instead of desk) is a new pattern that may indicate a flexible morning routine or a change in work schedule. The plate and bowl events are typical evening cleanup, but the model was surprised by the plate's location (sink then cupboard) possibly because it expected the plate to be at the table or elsewhere at that time. Need to observe if the weekday coffee-at-desk pattern returns on Tuesday or if the table coffee becomes a new norm. Also need to see if the weekend pattern (fork, remote) repeats next weekend. No strong evidence of a second person yet."
+}

@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.97) A healthcare worker (likely a nurse or doctor) who works a day shift on weekdays, with a different schedule on Friday (possibly half-day) and a relaxed weekend routine. The weekday pattern includes returning home around 18:00, changing out of scrubs, and placing work items (badge, stethoscope, keys, phone, thermos) in a designated 'elsewhere' area. On Saturday and Sunday, the routine is more leisurely: breakfast at 08:06, early dinner at 17:51-18:09, and evening relaxation with phone at sofa and nightstand. No work items appear on weekends, consistent with days off. — Day 7 (Monday) perfectly replicates the weekday pattern: badge and scrubs at nightstand_r1 at 17:58 (retrieved before work? Actually, badge and scrubs seen at nightstand_r1 at 17:58 likely indicates they were placed there after being used? Wait, the events show badge and scrubs at nightstand_r1 at 17:58, then later at elsewhere at 18:28. This is consistent with the resident coming home, placing scrubs on bed (but here it's nightstand_r1? Actually the event says 'badge seen at nightstand_r1' and 'scrubs seen at bed_r1' at 17:58, then both moved to elsewhere at 18:28. This matches the pattern of changing out of scrubs and putting work items in the drop zone. The water bottle at nightstand at 19:08 and plate to cupboard at 21:45 are consistent with evening routine. No contradictions. The healthcare worker hypothesis is strongly reinforced.
+2. (p=0.03) A single resident with a structured, health-conscious routine (e.g., meal prep, early bedtime) who eats breakfast at home, has an early dinner, and cleans up later in the evening. The weekend pattern is similar to weekday evenings, with meals at consistent times (breakfast ~08:00, dinner ~17:30-18:00). The water bottle is used throughout the day and placed at nightstand in the evening, indicating hydration focus. — This hypothesis is still possible but less specific. The healthcare worker hypothesis already explains the observed patterns more parsimoniously. The single resident hypothesis does not account for the work items (badge, stethoscope, scrubs) that appear on weekdays. It remains as a low-probability alternative.
+
+## Selected evidence
+- Day 0, 18:02 — scrubs at bed_r1 (immediate change out of work uniform upon return)
+- Day 0, 18:32 — badge at elsewhere (work ID placed in designated spot)
+- Day 0, 18:32 — stethoscope at elsewhere (medical tool stored with work items)
+- Day 1, 08:22 — badge at nightstand_r1 (badge retrieved before work)
+- Day 1, 08:22 — scrubs at closet_r1 (scrubs taken from closet, likely put on)
+- Day 1, 17:52 — scrubs at bed_r1 (scrubs removed upon return, consistent with Day 0)
+- Day 1, 18:22 — badge at elsewhere (badge placed in drop zone after work)
+- Day 1, 18:22 — stethoscope at elsewhere (stethoscope stored with badge)
+- Day 2, 08:22 — keys at nightstand_r1 (keys retrieved before work, consistent with morning routine)
+- Day 2, 08:22 — stethoscope at nightstand_r1 (stethoscope retrieved before work, consistent with morning routine)
+- Day 4, 11:57 — keys at entry_hook (early return on Friday, possibly half-day)
+- Day 7, 17:58 — badge at nightstand_r1 (badge retrieved before work? Actually, this is at 17:58, likely after work, but the pattern shows badge at nightstand before being moved to elsewhere; consistent with weekday routine)
+- Day 7, 17:58 — scrubs at bed_r1 (scrubs removed upon return, consistent with weekday pattern)
+- Day 7, 18:28 — badge at elsewhere (badge placed in drop zone after work)
+- Day 7, 18:28 — stethoscope at elsewhere (stethoscope stored with badge)
+
+## Notes
+Day 7 (Monday) confirms the weekday pattern: badge and scrubs at nightstand_r1 at 17:58 (likely after returning home, before moving to elsewhere), then all work items (badge, scrubs, stethoscope, keys, phone, thermos) moved to elsewhere by 19:08. Water bottle at nightstand at 19:08 and plate to cupboard at 21:45 are consistent with evening routine. No evidence of other household members. The 'elsewhere' receptacle is clearly a dedicated work-item drop zone. Need to observe next week to confirm the weekly pattern, especially Friday's early return. Also, note that on Day 7, the badge and scrubs were first seen at nightstand_r1 and bed_r1 at 17:58, then moved to elsewhere at 18:28. This suggests the resident may place items temporarily on the nightstand/bed before putting them away. The timing of the water bottle at nightstand (19:08) is consistent with evening hydration before bed. The plate to cupboard at 21:45 indicates cleanup after dinner. No breakfast or morning events observed today, but the pattern is clear from previous days.

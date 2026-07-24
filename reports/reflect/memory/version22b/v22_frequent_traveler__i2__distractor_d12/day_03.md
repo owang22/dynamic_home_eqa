@@ -1,0 +1,26 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single person who works from home or has a flexible schedule, with a routine that includes morning coffee at the desk, lunch at the dining table, and evening relaxation in the living room. — Consistent morning floor lamp at sofa (09:08, 12:21) and dining chair at table (08:57) suggest a home-based workday. Bed pillow moves at 07:58, 18:51, 21:57 indicate variable sleep schedule. No evidence of leaving for work. However, the evening packing of neck pillow and passport into carryon (18:48) suggests upcoming travel, which may alter routine.
+2. (p=0.25) A person who values home decor and tidiness, as seen by frequent adjustments of picture frame and consistent placement of bath mat and doormat. — Doormat placed at entry three times today (07:57, 09:02, 17:35) indicates repeated attention to entryway. Bath mat at bathroom at 09:15 and 21:12 suggests morning and evening shower routine. Picture frame not moved today, but previous moves (Day 2) still support decor consciousness.
+3. (p=0.15) A person who is preparing for travel, as evidenced by packing cubes and phone moved early on Tuesday, and now neck pillow and passport packed into carryon on Thursday evening. — Day 1: packing cubes and phone moved early (07:09). Day 3: neck pillow and passport placed in carryon at 18:48. This suggests a planned trip, possibly departing soon (Friday or weekend). The travel preparation is a new pattern not seen on other days.
+
+## Selected evidence
+- Day 0, 08:51 — coffee_mug at desk_o1 (morning coffee at desk suggests work/study from home)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch at dining table, typical home routine)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening lamp use, likely reading or relaxing)
+- Day 1, 07:09 — packing_cubes at elsewhere (packing cubes early Tuesday, possible travel prep)
+- Day 1, 07:09 — phone at elsewhere (phone moved early, maybe for travel or charging)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning doormat placement, likely entry use)
+- Day 2, 12:05 — picture_frame at coffee_table_l1 (decorative item moved, indicates attention to decor)
+- Day 2, 13:52 — bed_pillow at bed_r1 (afternoon pillow move, possibly nap or making bed)
+- Day 2, 18:48 — bath_mat at bathroom_c1 (evening bath mat placement, evening shower routine)
+- Day 3, 07:58 — bed_pillow at bed_r1 (morning pillow move, consistent with flexible schedule)
+- Day 3, 08:57 — dining_chair at table_d1 (morning chair placement, likely breakfast or work)
+- Day 3, 18:48 — neck_pillow at carryon_e1 (travel pillow packed, confirms upcoming trip)
+- Day 3, 18:48 — passport at carryon_e1 (passport packed, indicates international travel)
+- Day 3, 21:12 — bath_mat at bathroom_c1 (evening bath mat, consistent evening shower)
+- Day 3, 22:36 — phone at nightstand_r1 (phone placed on nightstand, likely bedtime)
+
+## Notes
+Day 3 (Thursday) shows clear travel preparation: neck pillow and passport packed into carryon at 18:48. This aligns with Day 1's packing cubes and phone movement, suggesting a trip planned for Friday or weekend. Doormat appears three times today (07:57, 09:02, 17:35) — possibly multiple entries/exits or cleaning. Bath mat appears both morning (09:15) and evening (21:12), confirming a twice-daily shower routine. Bed pillow moves at 07:58, 18:51, 21:57 — variable sleep schedule. No picture frame or wall clock moves today, so those may be irregular. Need to observe Day 4 (Friday) and weekend (Days 5-6) to see if travel occurs and if routine changes.

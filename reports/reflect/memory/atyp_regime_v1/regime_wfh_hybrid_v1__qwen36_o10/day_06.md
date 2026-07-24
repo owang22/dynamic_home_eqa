@@ -1,0 +1,19 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Standard Office Worker — Day 6 (Sunday) mirrors Day 5 (Saturday) with a late dinner (18:38) and evening leisure (remote at 20:08), confirming a consistent weekend 'rest' pattern distinct from weekdays. The 23:08 phone usage suggests typical wind-down, not shift work.
+2. (p=0.05) Remote Worker / Student — Still possible due to lack of morning routine evidence, but the strong weekend/weekday contrast in dining times makes a fixed 9-5 job more likely. No laptop/office evidence has emerged to support this.
+3. (p=0.05) Night Owl / Shift Worker — Activity at 23:08 is late but not extreme. The 11:51 wake-up on Saturday is too early for a typical night owl. This hypothesis remains weak.
+
+## Selected evidence
+- Day 6, 18:38 — fork/plate at table_d1 (Late dinner on Sunday matches Saturday's 18:30, reinforcing 'weekend mode' vs weekday 19:22)
+- Day 6, 20:08 — remote at sofa_l1 (Evening leisure on Sunday mirrors Saturday, confirming relaxed weekend routine)
+- Day 6, 23:08 — phone at nightstand_r1 (Late-night device usage; consistent with typical wind-down, not extreme enough for shift worker)
+- Day 5, 11:51 — keys at counter_k1 (Late start on Saturday; keys present suggests no long commute, supports weekend leisure)
+- Day 5, 18:30 — fork/plate at table_d1 (Dinner timing shifted later than weekday 19:22, consistent with weekend routine)
+- Day 5, 20:14 — remote at sofa_l1 (Leisure activity; confirms evening relaxation, not work-related)
+- Day 5, 23:14 — remote at coffee_table_l1 (Late night activity; extends wakefulness, but not extreme enough for shift worker hypothesis)
+- Day 4, 12:40 — fork/plate at table_d1 (Lunch at home; reinforces self-sufficient routine, no external cafeteria dependency)
+
+## Notes
+Sunday (Day 6) confirms the weekend pattern: late dinner (18:38) and evening leisure. The 'Standard Office Worker' hypothesis is strengthened by the consistency of the weekend 'rest' pattern across both Saturday and Sunday. No new discriminative evidence (e.g., gym gear, specific work tools) has appeared. The 'keys at counter' on Saturday remains ambiguous but leans towards 'no commute' given the late start. Need to observe Day 0 (next Monday) to see if the routine snaps back to weekday timings (earlier dinner, potential morning commute cues).

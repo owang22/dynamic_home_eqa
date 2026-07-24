@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single professional who works from home or has a home office, uses a headset for calls, and has a relaxed evening routine with TV and sofa time. — Consistent work-related items (headset at desk on Monday, phone at desk on Wednesday, coffee mug at desk on Thursday, Friday, and Sunday), morning reading glasses at desk on Sunday, evening TV setup (wall clock at TV stand on multiple days), and evening sofa/lamp pattern. No evidence of other people. The dining chair events suggest a single person using the table for meals. The waste bin events on Friday and Sunday suggest kitchen cleanup after breakfast. Today (Monday) shows coffee mug at table (breakfast), dining chair at table (single person), bed pillow at bed (morning bed-making), wall clock at TV stand (afternoon TV setup), picture frame at coffee table (decorative item moved), floor lamp at sofa (evening sofa time), plate at table (dinner), bath mat at bathroom (evening shower), remote at sofa (TV use), bowl at cupboard (kitchen cleanup). This reinforces the single professional hypothesis.
+2. (p=0.05) A person with a consistent daily routine, possibly a remote worker who also does household chores (bath mat moved in afternoon on Sunday, but not seen again). — The bath mat event on day 0 was at 20:23, on Saturday at 20:27, and now Sunday at 10:57 (afternoon). This suggests a variable shower time on weekends. The overall pattern of work and evening relaxation is consistent. This hypothesis is now subsumed by the first, but kept as a separate possibility for now.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (suggests work/study start time)
+- Day 0, 19:28 — wall_clock at tv_stand_l1 (evening TV setup)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (lighting for evening sofa time)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower routine)
+- Day 1, 18:37 — wall_clock at tv_stand_l1 (evening TV setup, consistent)
+- Day 2, 09:12 — phone at desk_o1 (workday start, phone used at desk)
+- Day 2, 12:36 — plate at sink_k1 (lunch cleanup)
+- Day 3, 07:02 — reading_glasses at table_d1 (morning reading/breakfast)
+- Day 3, 07:42 — coffee_mug at desk_o1 (morning coffee at work desk)
+- Day 3, 07:42 — newspaper at coffee_table_l1 (morning newspaper reading)
+- Day 3, 08:57 — dining_chair at table_d1 (single person using table for breakfast)
+- Day 3, 12:09 — fork at table_d1 (lunch at table)
+- Day 3, 21:42 — phone at nightstand_r1 (evening phone use in bedroom)
+- Day 5, 07:10 — coffee_mug at table_d1 (Saturday breakfast, similar to weekday)
+- Day 6, 07:40 — coffee_mug at desk_o1 (Sunday morning coffee at desk, different from Saturday)
+
+## Notes
+Weekend pattern observed: Saturday shows similar morning (coffee mug at table) and evening (wall clock at TV stand, bath mat, phone at nightstand) as weekdays. Sunday shows coffee mug at desk (instead of table), reading glasses at desk (instead of table), floor lamp at sofa (daytime sofa time), phone at coffee table (daytime phone use), wall clock at TV stand (evening TV), bath mat at bathroom (afternoon shower). This suggests a different weekend routine: Sunday may be a work-from-home day or a day with more desk activity. No work-related items (headset, phone at desk) seen on Saturday, but Sunday has coffee mug and reading glasses at desk. Need to check if wall clock moves back to original location or stays on TV stand (it was seen at TV stand twice on Saturday and twice on Sunday, suggesting it stays there). Also note: doormat events on day 3 (07:57 and 09:02) suggest morning arrival and possibly leaving again; not repeated on weekend. Open question: does the resident leave the house on weekends? No doormat events on Saturday or Sunday. Also, no newspaper seen on weekend; maybe weekend routine differs. Day 7 (Monday) shows: coffee mug at table (breakfast), dining chair at table (single person), bed pillow at bed (morning bed-making), wall clock at TV stand (afternoon TV setup), picture frame at coffee table (decorative item moved), floor lamp at sofa (evening sofa time), plate at table (dinner), bath mat at bathroom (evening shower), remote at sofa (TV use), bowl at cupboard (kitchen cleanup). This matches weekday pattern. No headset or phone at desk today, but that may be due to limited observations. Need to verify if headset appears on other weekdays.

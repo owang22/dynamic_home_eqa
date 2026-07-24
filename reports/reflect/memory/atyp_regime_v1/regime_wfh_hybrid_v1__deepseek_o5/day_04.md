@@ -1,0 +1,22 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single adult with a standard workday routine, working from home at least some days. — Consistent meal times, single-person items, and laptop movement pattern (desk on Wednesday, elsewhere on Thursday) strongly suggest a hybrid worker. Friday's events (breakfast, coffee, dinner, phone at nightstand) continue the pattern with no evidence of a second person.
+2. (p=0.03) A couple or family with one person working from home, but still weak evidence. — Only one set of keys, one phone, one coffee mug, and one fork observed. No second person's items. Unlikely.
+3. (p=0.02) A student or remote worker with irregular meal times, but pattern is too consistent. — Times are regular (breakfast ~07:30-08:00, dinner ~18:30). Laptop movement suggests a hybrid worker, not a student. Unlikely.
+
+## Selected evidence
+- Day 0, 08:06 — bowl at sink_k1 (breakfast cleanup, morning routine)
+- Day 0, 12:30 — plate at table_d1 (lunch at home, not at work)
+- Day 1, 17:57 — keys at entry_hook_e1 (returning from work, suggests commute)
+- Day 2, 08:35 — laptop at desk_o1 (work-from-home or hybrid, not remote-only)
+- Day 2, 12:30 — fork at table_d1 (lunch at home, consistent)
+- Day 3, 08:26 — laptop at elsewhere (laptop moved, suggests leaving home for work)
+- Day 4, 07:31 — bowl at table_d1 (breakfast, consistent morning time)
+- Day 4, 08:01 — bowl at sink_k1 (breakfast cleanup, routine)
+- Day 4, 08:01 — coffee_mug at sink_k1 (morning coffee, routine)
+- Day 4, 18:37 — plate at table_d1 (dinner, consistent evening time)
+- Day 4, 22:36 — phone at nightstand_r1 (bedtime, single person)
+
+## Notes
+Five weekdays observed (Mon-Fri). Pattern: breakfast ~07:30-08:00, lunch at home (Mon, Wed, Fri? but not Tue? actually Tue had lunch at home too), dinner ~18:00-19:00. Keys return only observed on Day 1 (Tue? actually Day 1 is Tuesday) — need to check if keys return on other days. Laptop at desk on Wednesday, at elsewhere on Thursday, suggesting hybrid work. No weekend data yet. Need to observe if laptop returns in the evening on Thursday (missed that). Also look for second set of keys or phone to confirm single occupancy. Weekend pattern unknown.

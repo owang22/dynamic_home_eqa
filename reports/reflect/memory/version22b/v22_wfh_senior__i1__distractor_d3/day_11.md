@@ -1,0 +1,25 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A single professional who works from home or has a home office, with a consistent weekday routine of morning work, lunch, and evening relaxation. Weekend routine shows later mornings and more leisure activities. — Friday's events continue the strong weekday pattern: newspaper at table at 07:04 (morning breakfast/reading), reading glasses at desk at 07:44 (morning work start), picture frame at coffee table at 11:02 (midday decoration/relaxation), dining chair at table at 14:07 (afternoon meal or rearrangement), floor lamp at sofa at 15:25 (afternoon relaxation/lighting), plate at cupboard at 21:45 (evening cleanup). No doormat event suggests a work-from-home day. The pattern is highly consistent with a single professional.
+2. (p=0.01) A single person with a flexible schedule who may work from home but has a distinct weekend routine (later mornings, more leisure activities). — Friday's events are indistinguishable from the professional hypothesis. The weekday pattern is now even more consistent, and the weekend pattern remains distinct. This hypothesis is less likely.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (morning work/study activity)
+- Day 2, 08:38 — doormat at entry_hook_e1 (leaving home in morning, consistent with weekday)
+- Day 2, 12:36 — plate at sink_k1 (lunch, midday meal)
+- Day 3, 07:02 — reading_glasses at table_d1 (morning breakfast/reading, new object)
+- Day 3, 07:42 — coffee_mug at desk_o1 (morning work start, consistent with headset/phone at desk)
+- Day 3, 21:42 — phone at nightstand_b1 (evening wind-down, bedtime routine)
+- Day 4, 06:51 — bowl, coffee_mug, newspaper, reading_glasses at table_d1 (consistent morning breakfast/reading routine)
+- Day 4, 12:51 — plate at sink_k1 (lunch, consistent with Day 2)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (evening decoration/relaxation, consistent with Day 2)
+- Day 5, 07:10 — coffee_mug at table_d1 (later weekend morning coffee, vs 06:51 weekday)
+- Day 5, 11:50 — fork at table_d1 (late breakfast/brunch, weekend pattern)
+- Day 5, 12:31 — wall_clock at tv_stand_l1 (weekend leisure, moving clock to entertainment area)
+- Day 8, 19:17 — doormat at entry_hook_e1 (returning home in evening, first weekday doormat event, suggests leaving home during day)
+- Day 10, 13:30 — bed_pillow at bed_r1 (midday rest, possibly nap or making bed, new weekday event)
+- Day 11, 07:04 — newspaper at table_d1 (morning breakfast/reading, consistent weekday pattern)
+
+## Notes
+Friday (Day 11) confirms weekday pattern: newspaper at table (07:04), reading glasses at desk (07:44), picture frame at coffee table (11:02), dining chair at table (14:07), floor lamp at sofa (15:25), plate at cupboard (21:45). No doormat event today, suggesting a work-from-home day. The single professional hypothesis remains very strong (p=0.99). The couple/family hypothesis was removed due to lack of evidence. Next weekend will help further distinguish weekend patterns. Open question: does the resident leave home on some weekdays (like Tuesday) but not others? The doormat event on Tuesday at 19:17 suggests an afternoon errand or office day. Need to observe more weekdays to see if this is a regular pattern. Also, the bed pillow event at 13:30 is new; could indicate a midday nap or making the bed after lunch. The dining chair event at 14:07 is new; could indicate a late lunch or rearrangement.

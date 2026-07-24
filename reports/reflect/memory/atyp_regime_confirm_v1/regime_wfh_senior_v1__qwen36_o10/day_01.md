@@ -1,0 +1,19 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) Health-conscious professional with a strict morning medication routine — The pill organizer appearing at 06:45, before coffee, strongly suggests a disciplined health routine. The consistent 07:09 coffee time and 22:17 phone bedtime align with a standard 9-5 schedule. The lack of sustained laptop presence at the desk during the day (only glasses and mug) makes 'remote worker' less likely than 'office worker who brings lunch/snacks to desk' or 'works elsewhere'. The pill organizer is a high-signal discriminator for health-consciousness.
+2. (p=0.20) Remote worker with a separate health routine — Still possible if the person works from home but leaves the desk area for lunch/errands, or if the 'desk' is used for reading/admin rather than active computing. The glasses at the desk at 07:11 and 06:45 (moved to counter) suggest some desk activity. However, the absence of a laptop or work documents in the observed events reduces confidence.
+3. (p=0.10) Student or night-shift worker — Still unlikely due to the early 06:45-07:11 wake-up window and early 22:17 bedtime. The pill routine is consistent with any age, but the timing strongly contradicts night-shift patterns. This hypothesis is retained only as a low-probability outlier.
+
+## Selected evidence
+- Day 0, 07:11 — coffee_mug at counter_k1 (establishes baseline wake-up time ~07:00)
+- Day 0, 13:27 — coffee_mug at desk_o1 (suggests midday activity at desk, possibly lunch/snack)
+- Day 0, 22:17 — phone at nightstand_r1 (establishes consistent bedtime ~22:30)
+- Day 1, 06:45 — pill_organizer at counter_k1 (high-signal: disciplined health routine, precedes coffee)
+- Day 1, 07:09 — coffee_mug at counter_k1 (confirms consistent morning routine timing)
+- Day 1, 13:09 — fork at sink_k1 (suggests lunch consumed at desk or nearby, not kitchen table)
+- Day 1, 17:52 — plate at table_d1 (dinner preparation or consumption at dining table)
+- Day 1, 18:37 — plate at sink_k1 (post-dinner cleanup, consistent with evening meal routine)
+
+## Notes
+The pill organizer is a key new discriminator. It appears before coffee, suggesting a strict morning routine. The fork at the sink at 13:09 suggests lunch was eaten, likely at the desk (given the mug was there at 13:27 on Day 0). No laptop observed yet; need to check if it's hidden or if the person works elsewhere. The 06:45 pill time is very early; verify if this is a daily habit. Check for second resident signs (e.g., two pill organizers, two coffee mugs used simultaneously). The plate at table_d1 at 17:52 suggests dinner is eaten at the dining table, not the desk.

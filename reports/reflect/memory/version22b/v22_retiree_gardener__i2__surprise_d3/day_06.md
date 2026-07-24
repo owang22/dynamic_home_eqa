@@ -1,0 +1,26 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single working professional who works from home, has a morning coffee on the patio, reads with glasses, and has a structured evening routine. — The weekday pattern (newspaper, coffee, early bedtime) remains strong. Saturday's coffee at table (06:56) instead of patio suggested a weekend shift. Sunday's reading_glasses at table (07:02) then at patio (07:42) shows a transition from indoor to outdoor reading, consistent with a relaxed weekend morning. The surprising plate at sink (12:48) on Sunday indicates a late lunch/early dinner cleanup, which is unusual for a weekday but fits a weekend schedule. The floor_lamp at sofa (09:33, 10:12) suggests daytime relaxation or reading, reinforcing the work-from-home persona. The fork at table (12:03) and plate at sink (12:48) together suggest a midday meal, which is typical for a weekend. The probability is slightly reduced because the plate at sink on Sunday was surprising (p=0.00), but the overall pattern still supports this hypothesis.
+2. (p=0.30) A retiree with a structured day, including morning reading and coffee, but with weekend variability. — The early morning reading (glasses at table 07:02, then patio 07:42) and midday meal (fork at table 12:03, plate at sink 12:48) could fit a retiree's relaxed weekend. The floor_lamp at sofa (09:33, 10:12) suggests daytime reading or napping, which is common for retirees. However, the surprising plate at sink (12:48) on Sunday (p=0.00) is less typical for a retiree who might have a more consistent lunchtime. The probability increases slightly from 0.25 to 0.30 as the weekend pattern becomes clearer.
+3. (p=0.10) A couple where one person works from home and the other has a different schedule, with weekend activities diverging. — No new evidence of a second person. The single reading_glasses, fork, and plate still suggest one resident. The floor_lamp at sofa could be a shared activity, but insufficient. Probability remains low.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning print subscription, suggests routine and possibly older demographic)
+- Day 0, 12:31 — plate at sink_k1 (home lunch on a weekday, hints at work-from-home or flexible schedule)
+- Day 0, 20:54 — bed_pillow at bed_r1 (early bedtime, consistent with structured day)
+- Day 3, 07:47 — coffee_mug at patio_table_p1 (morning coffee outdoors, suggests a patio routine)
+- Day 3, 07:47 — reading_glasses at patio_table_p1 (morning reading with glasses, reinforces reading habit)
+- Day 4, 07:09 — bowl at table_d1 (breakfast at dining table, new location for morning meal)
+- Day 4, 07:09 — newspaper at table_d1 (newspaper at dining table instead of coffee table, suggests breakfast reading)
+- Day 4, 07:49 — coffee_mug at patio_table_p1 (morning coffee on patio, consistent with Day 3 patio routine)
+- Day 4, 16:19 — remote at coffee_table_l1 (afternoon TV remote, suggests afternoon relaxation or TV break)
+- Day 5, 06:56 — coffee_mug at table_d1 (Saturday morning coffee at dining table instead of patio, weekend shift in routine)
+- Day 5, 21:45 — fork at cupboard_k1 (late evening utensil return, surprising but suggests late meal cleanup)
+- Day 5, 21:45 — plate at cupboard_k1 (late evening dish return, surprising but consistent with late dinner)
+- Day 6, 07:02 — reading_glasses at table_d1 (Sunday morning reading at dining table, weekend indoor start)
+- Day 6, 07:42 — reading_glasses at patio_table_p1 (Sunday morning reading moves to patio, weekend outdoor transition; surprising p=0.01)
+- Day 6, 12:48 — plate at sink_k1 (Sunday midday meal cleanup; surprising p=0.00, indicates weekend lunch pattern)
+
+## Notes
+Sunday (Day 6) confirms a weekend pattern: reading starts indoors (table) then moves to patio (07:42), and a midday meal (fork at table 12:03, plate at sink 12:48). The floor_lamp at sofa (09:33, 10:12) suggests daytime relaxation. The surprising events (reading_glasses at patio p=0.01, plate at sink p=0.00) indicate the model expected weekday patterns (glasses at patio earlier? plate elsewhere?). Need to observe Monday (Day 7) to see if weekday routine resumes. Open questions: Is the dining table breakfast a weekend-only pattern? Does the resident have a consistent late dinner on weekends? The bath_mat at bathroom (20:27 on Day 5) suggests evening bath/shower, but no new data today. Also, the waste_bin at counter (10:53) is mundane.

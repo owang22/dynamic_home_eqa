@@ -1,0 +1,34 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single adult with a regular work schedule, likely working from home or commuting to a job that requires a backpack. They have a craft hobby (scissors on craft shelf) and maintain a tidy home (bath mat in bathroom, bed pillow on bed). The evening activities suggest relaxation (floor lamp by sofa, picture frame on coffee table). The doormat and keys events at 18:37 suggest returning home from work, and the dining chair events indicate meals at home.",
+   "prob": 0.7,
+   "rationale": "Backpack at elsewhere at 8:40 on Monday suggests leaving for work. On Tuesday, keys and doormat at 18:37 suggest returning home. Dining chair events at 10:42 and 21:04/21:20 suggest meals at home, consistent with a single adult who works away from home but eats at home. No evidence of multiple residents."
+  },
+  {
+   "persona": "A family with at least one child, given the presence of a craft shelf and multiple pillows (bed_pillow seen twice). The backpack could belong to a child for school. The evening routine includes setting up the living room (floor lamp, picture frame) and bathroom (bath mat). The doormat and keys events could be a parent returning home. However, the dining chair events at 10:42 (midday) and 21:04/21:20 (evening) could be a child or adult eating.",
+   "prob": 0.2,
+   "rationale": "Craft shelf and multiple pillow events could indicate a child's room. However, no direct evidence of multiple residents yet. The doormat and keys at 18:37 could be a parent returning, but the dining chair events at 10:42 might be a child home during the day (school holiday? or remote learning?). Still less likely than single adult."
+  },
+  {
+   "persona": "A couple without children, both working. The backpack might be for one partner's commute. The craft shelf could be a shared hobby. Evening activities are typical for a couple relaxing. The doormat and keys at 18:37 suggest one partner returning home, and the dining chair events could be shared meals.",
+   "prob": 0.1,
+   "rationale": "Less likely due to lack of evidence for two people, but possible. The dining chair events at 10:42 (midday) might be one partner working from home, but no other evidence of a second person."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:40 \u2014 backpack at elsewhere (suggests leaving for work/school, not a work-from-home day)",
+  "Day 0, 12:57 \u2014 bed_pillow at bed_r1 (midday pillow adjustment, possibly after nap or making bed)",
+  "Day 0, 18:18 \u2014 scissors at craft_shelf_s1 (indicates a craft hobby, not just household chores)",
+  "Day 0, 20:06 \u2014 floor_lamp at sofa_l1 (evening relaxation setup, typical for winding down)",
+  "Day 0, 20:23 \u2014 bath_mat at bathroom_c1 (evening bath/shower routine)",
+  "Day 0, 21:04 \u2014 picture_frame at coffee_table_l1 (decorative item placed in living room, personal touch)",
+  "Day 1, 10:42 \u2014 dining_chair at table_d1 (midday meal, possibly lunch at home)",
+  "Day 1, 18:37 \u2014 keys at entry_hook_e1 (returning home from work/errands, consistent with workday)",
+  "Day 1, 18:37 \u2014 doormat at entry_hook_e1 (same time as keys, reinforces arrival)",
+  "Day 1, 21:04 \u2014 dining_chair at table_d1 (evening meal, likely dinner)",
+  "Day 1, 21:20 \u2014 dining_chair at table_d1 (second dining chair event, possibly moving chair or second person? but same chair? unclear)",
+  "Day 1, 21:45 \u2014 fork at cupboard_k1 (after dinner, putting away cutlery)"
+ ],
+ "notes": "Day 1 (Tuesday) shows a pattern: keys and doormat at 18:37 suggest returning home around that time. Dining chair events at 10:42 (lunch) and 21:04/21:20 (dinner) suggest meals at home. The fork at 21:45 indicates after-dinner cleanup. Need to track if the 10:42 dining chair event is consistent on weekdays (could indicate working from home or a day off). Also note the two dining chair events at 21:04 and 21:20: could be the same chair moved twice or two different chairs? If two chairs, that might indicate multiple people. Will look for more evidence of multiple residents. Weekend patterns to verify."
+}

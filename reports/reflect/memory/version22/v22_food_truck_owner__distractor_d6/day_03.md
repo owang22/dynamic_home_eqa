@@ -1,0 +1,23 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Single professional with a regular 9-to-5 schedule, likely working from home or hybrid, who returns home in the evening and has a consistent bedtime routine. — Day 3 events reinforce the pattern: morning doormat at 07:57 and 09:02 (likely leaving for work), phone at sofa at 09:58 (midday break), cash_box, keys, order_pad together at 10:34 (possibly a work-related errand or side job), floor_lamp at sofa at 12:21 (afternoon relaxation), prep_apron at 20:10 (evening cooking), bed_pillow at 18:51 and 21:57 (evening and bedtime routine). This strongly supports a structured workday with evening home activities.
+2. (p=0.10) Retired or non-working individual with a relaxed daily routine, spending time at home during the day and evening. — Day 3 events: morning doormat movements (07:57 and 09:02) could be for a walk or errand, but the presence of cash_box, keys, order_pad together at 10:34 suggests a work-related errand rather than a leisurely activity. The consistent evening apron and pillow moves are less typical for a retired person who might have earlier routines. Probability decreased.
+3. (p=0.05) Student living alone, with irregular schedule but some structure (evening home activities). — Day 3 events: morning doormat at 07:57 and 09:02 could be for classes, but the cash_box, keys, order_pad together at 10:34 suggest a work-related errand (e.g., delivery or side job) rather than a typical student schedule. The consistent evening apron and pillow moves are similar to a professional. Probability remains low.
+
+## Selected evidence
+- Day 0, 12:20 — phone at counter_k1 (midday phone placement suggests work-from-home or lunch break)
+- Day 0, 12:57 — bed_pillow at bed_r1 (pillow moved to bed in early afternoon, possibly for a nap or making bed)
+- Day 1, 16:12 — doormat at entry_bench_e1 (doormat moved in late afternoon, possibly from coming home or leaving)
+- Day 1, 20:26 — thermos at counter_k1 (thermos placed on counter in evening, likely work-related coffee/tea)
+- Day 2, 08:38 — doormat at entry_bench_e1 (morning doormat movement, likely leaving for work)
+- Day 2, 20:22 — prep_apron at counter_k1 (apron placed on counter in evening, cooking after work)
+- Day 2, 22:52 — laptop at kitchen_shelf_k1 (laptop put away late, work device used in evening)
+- Day 3, 07:57 — doormat at entry_bench_e1 (morning doormat movement, likely leaving for work)
+- Day 3, 09:02 — doormat at entry_bench_e1 (second morning doormat movement, possibly returning briefly or another departure)
+- Day 3, 10:34 — cash_box, keys, order_pad at elsewhere (work-related items together, suggests a side job or errand)
+- Day 3, 20:10 — prep_apron at counter_k1 (evening cooking after work)
+- Day 3, 21:57 — bed_pillow at bed_r1 (evening bedtime preparation)
+
+## Notes
+Day 3 (Thursday) shows a clear morning departure pattern (doormat at 07:57 and 09:02) and a work-related errand at 10:34 (cash_box, keys, order_pad together). Evening cooking (apron) and bedtime routine (pillow) are consistent. Need to observe weekend (days 5-6) to see if the pattern changes (e.g., later mornings, no work items). Also check if the order_pad is used regularly, which might indicate a delivery or service job.

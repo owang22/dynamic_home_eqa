@@ -1,0 +1,24 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A person who works from home or has a flexible schedule, with a strong fitness-oriented morning routine. The early morning phone at 05:01 continues the pattern of early morning activity (likely checking phone before workout). The bowl at table at 06:46 suggests breakfast at home, consistent with a flexible schedule. The protein shaker at cupboard at 21:45 indicates evening cleaning or preparation for next day's workout. The absence of keys events on most weekdays (only Day 2, 3, 8) and the consistent early morning fitness-related objects (foam roller, dumbbells, yoga mat, protein shaker, water bottle, phone) strongly support a work-from-home or flexible schedule. The early bedtime (21:01, 21:07) aligns with early wake-up (05:00). — The new evidence (phone at 05:01, bowl at 06:46, protein shaker at 21:45) reinforces the pattern of early morning activity, breakfast at home, and evening preparation for fitness. The lack of keys events today further supports a flexible schedule. The hypothesis is now extremely strong.
+2. (p=0.01) A person with a standard 9-to-5 job who commutes, but with a morning fitness habit. The early morning phone at 05:01 could be pre-work alarm checking, and the bowl at table at 06:46 might be breakfast before leaving. However, the lack of keys events today (no keys taken) contradicts a commute. The pattern of being home in the late afternoon (laptop at desk at 17:30 on Day 9, fork at table at 17:59 on Day 10) is inconsistent with a standard commute unless the person works from home in the afternoon. This hypothesis is very unlikely. — The new evidence (no keys events) further weakens this hypothesis. The consistent late afternoon home presence makes a standard commute improbable.
+
+## Selected evidence
+- Day 2, 06:40 — protein_shaker at counter_k1 (morning fitness routine, strong indicator of exercise habit)
+- Day 4, 05:12 — dumbbells at coffee_table_l1 (early morning home workout, strong fitness indicator)
+- Day 4, 05:12 — yoga_mat at coffee_table_l1 (early morning home workout, strong fitness indicator)
+- Day 4, 17:58 — fork at table_d1 (early dinner on a Friday, suggests flexible schedule or work-from-home)
+- Day 5, 06:44 — water_bottle at coffee_table_l1 (weekend morning hydration, consistent with fitness routine)
+- Day 5, 09:26 — protein_shaker at counter_k1 (weekend morning fitness routine, habit persists on Saturday)
+- Day 9, 05:00 — foam_roller at coffee_table_l1 (early morning workout, consistent pattern)
+- Day 9, 17:30 — laptop at desk_o1 (late afternoon laptop use, suggests work-from-home or flexible schedule)
+- Day 9, 18:02 — plate at table_d1 (dinner at home, consistent with being home in evening)
+- Day 10, 05:00 — water_bottle at coffee_table_l1 (early morning hydration, part of fitness routine)
+- Day 10, 17:59 — fork at table_d1 (early dinner at home, reinforces being home in late afternoon)
+- Day 11, 05:01 — phone at coffee_table_l1 (early morning phone use, likely checking before workout)
+- Day 11, 06:46 — bowl at table_d1 (breakfast at home, consistent with flexible schedule)
+- Day 11, 21:45 — protein_shaker at cupboard_k1 (evening cleaning or preparation for next day's workout)
+
+## Notes
+Day 11 (Friday) shows: phone at coffee_table_l1 at 05:01 (early morning phone use, likely checking before workout), bowl at table_d1 at 06:46 (breakfast at home), protein_shaker at cupboard_k1 at 21:45 (evening cleaning or preparation). No keys events today, reinforcing the hypothesis of a flexible schedule or work-from-home. The early morning fitness pattern is now observed on multiple days (Day 4, 5, 7, 8, 9, 10, 11) with various objects (foam roller, dumbbells, yoga mat, protein shaker, water bottle, phone). The late afternoon/evening home presence is consistent (laptop, fork, plate). The early bedtime pattern (21:01, 21:07) is consistent with early wake-up (05:00). The lack of keys events on most weekdays (only Day 2, 3, 8) suggests the person rarely leaves home in the morning, supporting a work-from-home hypothesis. The weekend pattern (Day 5) shows similar morning fitness, indicating the routine persists on weekends. Need to observe if the protein shaker appears tomorrow (Saturday) to confirm the morning fitness routine on weekends.

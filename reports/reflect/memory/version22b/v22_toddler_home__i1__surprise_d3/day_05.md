@@ -1,0 +1,26 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Family with a young child (toddler/preschooler) and a parent who works from home or is a stay-at-home parent — The new Saturday evidence shows a sippy_cup at sink_k1 at 07:39 (morning cleanup), a bowl at cupboard_k1 at 21:45 (evening storage), and a sippy_cup at cupboard_k1 at 21:45 (evening storage), all consistent with a toddler's daily routine. The bath_mat at bathroom_c1 at 20:27 suggests a bath time, typical for a young child. The wall_clock at counter_k1 at 12:31 is mundane but fits a family home. The plate at sink_k1 at 12:32 (surprising) may indicate a lunch cleanup, still consistent with a family. The waste_bin at counter_k1 at 16:32 is mundane. The weekend pattern shows continued child-related activity, reinforcing a parent at home.
+2. (p=0.03) Single adult with a pet (e.g., dog) that requires a play mat and sippy cup — The high chair and bowl at 06:49 on Friday are very unlikely for a pet. The consistent daily routine of child items (sippy cup, bowl, blanket) on Saturday further weakens this hypothesis. A pet would not use a high chair or have a bath mat at 20:27 in a bathroom context typical for a child.
+3. (p=0.02) Elderly person living alone with a visiting grandchild occasionally — The Saturday evidence shows child-related items (sippy cup, bowl) at times consistent with a daily routine (morning and evening), not just occasional visits. The bath mat at 20:27 suggests a regular bath time, which is more typical of a resident child. This hypothesis is now very unlikely.
+
+## Selected evidence
+- Day 0, 08:41 — sippy_cup at play_mat_n1 (indicates a young child, likely toddler/preschooler)
+- Day 3, 08:57 — dining_chair at table_d1 (morning meal, likely for child or parent)
+- Day 3, 09:04 — board_book at play_mat_n1 (morning reading/play with child, confirms child's presence)
+- Day 3, 11:34 — ball at toy_corner_l1 (child's play activity, consistent with toddler)
+- Day 3, 11:34 — board_book at toy_corner_l1 (child moves book to toy corner, typical play behavior)
+- Day 3, 17:13 — board_book at toy_corner_l1 (afternoon play, child's routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation, consistent with child's bedtime)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening bedtime routine, repeated pattern)
+- Day 4, 06:49 — bowl at high_chair_d1 (morning breakfast for toddler, strong child indicator)
+- Day 4, 08:50 — blanket at play_mat_n1 (morning comfort/play, child routine)
+- Day 4, 08:50 — sippy_cup at play_mat_n1 (morning drink for child, consistent with toddler)
+- Day 4, 18:30 — sippy_cup at sink_k1 (post-dinner cleanup, child's cup washed)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (family photo, common in family homes)
+- Day 5, 07:39 — sippy_cup at sink_k1 (Saturday morning cleanup, child's routine continues on weekend)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening bath time, typical for young child on weekend)
+
+## Notes
+Saturday (day 5) shows continued child-related activity: sippy_cup at sink in morning, bath mat at bathroom in evening, bowl and sippy_cup stored at cupboard at night. The surprising events (plate at sink at 12:32, bowl at cupboard at 21:45) are actually consistent with a family routine; the belief model's surprise may be due to insufficient weekend data. Need to observe Sunday (day 6) to see if pattern holds or changes (e.g., outdoor activities, different meal times). Also look for work-related items (laptop, work bag) on weekdays to confirm if a parent works from home. The wall_clock at counter_k1 at 12:31 is mundane and not included in evidence.

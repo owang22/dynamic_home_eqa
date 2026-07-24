@@ -1,0 +1,21 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single working adult who leaves for work in the morning and returns in the evening for a meal, with evening DIY/hobby projects. — Day 3 shows keys, laptop_bag, and phone all leaving at 08:11, strongly indicating a coordinated departure for work. Evening plate at 18:00 and plate to cupboard at 21:45 (after dinner cleanup) reinforce a consistent after-work meal. Previous evening DIY (paint, sanding, radio) fits a homeowner/renter with projects. Weekend patterns still unknown but this is the most coherent hypothesis.
+2. (p=0.15) A person who works from home or has a flexible schedule, with occasional evening DIY projects. — The simultaneous departure of keys, laptop_bag, and phone at 08:11 on Day 3 makes a work-from-home scenario less likely, as it suggests leaving the home. However, it could still be a flexible worker who goes to a co-working space or has errands. The consistent evening meal and DIY pattern remain, but the morning departure weakens this hypothesis.
+
+## Selected evidence
+- Day 0, 08:11 — keys at elsewhere (leaving home, likely for work)
+- Day 0, 18:08 — plate at table_d1 (evening meal after work)
+- Day 1, 18:57 — paint_roller at paint_shelf_s1 (evening DIY project, homeowner/renter)
+- Day 1, 21:42 — sanding_block at paint_shelf_s1 (continued late evening DIY)
+- Day 2, 17:41 — laptop_bag at sofa_l1 (returning from work, relaxing before dinner)
+- Day 2, 17:59 — plate at table_d1 (evening meal, consistent timing)
+- Day 2, 19:35 — radio at workbench_s1 (evening hobby/DIY activity)
+- Day 2, 22:20 — phone at nightstand_r1 (bedtime routine)
+- Day 3, 08:11 — keys, laptop_bag, phone at elsewhere (coordinated morning departure for work)
+- Day 3, 18:00 — plate at table_d1 (evening meal, consistent with after-work)
+- Day 3, 21:45 — plate at cupboard_k1 (dinner cleanup, end of evening routine)
+
+## Notes
+Day 3 (Thursday) provides strong evidence for a standard work schedule: all three key items (keys, laptop_bag, phone) left together at 08:11. Evening meal at 18:00 and plate put away at 21:45. No morning events on Day 2 remain unexplained but could be a missed observation or a different routine that day. Weekend patterns (Day 5-6) will be critical to confirm if the resident stays home or has different activities. The DIY project appears ongoing; watch for paint tools or radio movements on weekend days. The phone leaving at 08:11 suggests it is used for work or commute. The hypothesis of a flexible schedule is now less likely but not impossible (e.g., a day off on Day 2).

@@ -1,0 +1,23 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=1.00) A parent with a young child (toddler) who uses a play mat, toy corner, high chair, and crib, indicating a structured daily routine of morning play, afternoon play, feeding, and bedtime around 19:00. — The sippy cup at high chair at 06:49 suggests a morning feeding, cushion and stacking rings at play mat at 08:42 confirm morning play, stacking rings moved to toy corner at 16:40 indicates afternoon play, and fork put away at 21:45 shows evening cleanup after child's bedtime. No contradictory evidence.
+
+## Selected evidence
+- Day 0, 08:49 — cushion at play_mat_n1 (morning play area use)
+- Day 1, 17:16 — stacking_rings at toy_corner_l1 (afternoon toy use)
+- Day 2, 11:10 — sippy_cup at sink_k1 (child's feeding item washed after morning)
+- Day 2, 17:07 — ball at toy_corner_l1 (afternoon play)
+- Day 2, 19:02 — sippy_cup at crib_n1 (bedtime routine)
+- Day 3, 08:47 — board_book at play_mat_n1 (morning reading/play)
+- Day 3, 11:17 — board_book at toy_corner_l1 (toy moved to corner, consistent with play)
+- Day 3, 17:36 — plate at high_chair_d1 (child's dinner time)
+- Day 3, 21:45 — plate at cupboard_k1 (evening cleanup after child's bedtime)
+- Day 4, 06:49 — sippy_cup at high_chair_d1 (morning feeding)
+- Day 4, 08:42 — cushion at play_mat_n1 (morning play)
+- Day 4, 08:42 — stacking_rings at play_mat_n1 (morning play)
+- Day 4, 16:40 — stacking_rings at toy_corner_l1 (afternoon play)
+- Day 4, 21:45 — fork at cupboard_k1 (evening cleanup)
+
+## Notes
+The routine is consistent across weekdays. Weekend (days 5-6) may show changes (e.g., later wake-up, different activities). No adult work items (laptop, desk) observed yet; parent may be stay-at-home or work outside. Need to watch for any adult-specific items or timing shifts.

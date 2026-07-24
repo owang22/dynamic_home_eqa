@@ -1,0 +1,32 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A person who leaves early for work on Monday and Wednesday (keys gone at 05:28, laptop gone at 05:29) and returns mid-afternoon (keys and work_badge at entry_hook at 14:35), suggesting a standard 9-to-5 office worker on those days. On Thursday and Friday, they have a later morning (bowl and coffee_mug at sink at 08:36 on Thursday, bowl at table and coffee_mug at counter at 08:07 on Friday) and a late evening return (thermos at sink at 22:39 on Thursday, 22:18 on Friday), with a midday phone departure (13:23 on Thursday, 13:29 on Friday), indicating a different schedule, possibly a later shift or flexible hours. On Saturday and Sunday, they have a relaxed morning (phone at counter at 10:48 on Saturday, 11:15 on Sunday), a late afternoon meal (plate at table at 18:29 on Saturday, fork and plate at table at 18:37 on Sunday), and evening relaxation (phone at sofa at 19:33 on Sunday), consistent with weekend days off.",
+   "prob": 0.95,
+   "rationale": "Sunday's pattern (phone at counter at 11:15, fork and plate at table at 18:37, phone at sofa at 19:33) closely matches Saturday's relaxed weekend routine, reinforcing the weekday/weekend distinction. The early departure on Monday and Wednesday remains strong evidence for a standard work schedule on those days, while the later pattern on Thursday and Friday is now a regular weekly variation. The Sunday observations add no contradiction and fit a weekend routine, making this hypothesis more likely."
+  },
+  {
+   "persona": "A person who works a later shift or has a flexible schedule on Thursdays and Fridays, as evidenced by later morning routines (bowl and coffee_mug at sink at 08:36 on Thursday, bowl at table and coffee_mug at counter at 08:07 on Friday) and late evening returns (thermos at sink at 22:39 on Thursday, 22:18 on Friday). The phone leaving at 13:23 on Thursday and 13:29 on Friday suggests a midday departure, possibly for work or errands. This could indicate a different work pattern on these days, such as a later start and end, or a second job. Saturday and Sunday show a relaxed morning and late afternoon meal, consistent with weekend days off.",
+   "prob": 0.05,
+   "rationale": "Sunday's observations (phone at counter at 11:15, fork and plate at table at 18:37, phone at sofa at 19:33) are consistent with a weekend day off, but the early departure on Monday and Wednesday is more consistent with a standard work schedule on those days. The later shift hypothesis for Thursday and Friday remains possible but less likely given the strong evidence for a standard schedule on other weekdays."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 05:28 \u2014 keys at elsewhere (early departure for work, standard workday)",
+  "Day 2, 05:29 \u2014 laptop at elsewhere (workday start, laptop taken to work)",
+  "Day 2, 14:35 \u2014 keys at entry_hook_e1 (return from work)",
+  "Day 2, 14:35 \u2014 work_badge at entry_hook_e1 (return from work, confirms job type)",
+  "Day 3, 08:36 \u2014 bowl at sink_k1 (later breakfast, deviating from early departure pattern)",
+  "Day 3, 13:23 \u2014 phone at elsewhere (midday departure, possibly for work or errand)",
+  "Day 3, 22:39 \u2014 thermos at sink_k1 (late return, thermos used, suggesting a different schedule)",
+  "Day 4, 08:07 \u2014 bowl at table_d1 (later breakfast, consistent with Thursday pattern)",
+  "Day 4, 13:29 \u2014 phone at elsewhere (midday departure, similar to Thursday)",
+  "Day 4, 22:18 \u2014 thermos at sink_k1 (late return, consistent with Thursday pattern)",
+  "Day 5, 10:48 \u2014 phone at counter_k1 (relaxed morning, weekend day off)",
+  "Day 5, 18:29 \u2014 plate at table_d1 (late afternoon meal, weekend routine)",
+  "Day 6, 11:15 \u2014 phone at counter_k1 (relaxed morning, weekend day off)",
+  "Day 6, 18:37 \u2014 fork at table_d1 (late afternoon meal, weekend routine)",
+  "Day 6, 19:33 \u2014 phone at sofa_l1 (evening relaxation, weekend routine)"
+ ],
+ "notes": "Sunday shows a relaxed morning (phone at counter at 11:15), a late afternoon meal (fork and plate at table at 18:37), and evening relaxation (phone at sofa at 19:33), consistent with a weekend day off. This strengthens the weekday/weekend distinction. No evidence of other household members yet. The early departure on Monday and Wednesday remains strong, while the later pattern on Thursday and Friday is now a regular weekly variation. The midday phone departure on Thursday and Friday (13:23 and 13:29) suggests a regular midday departure, possibly for work or errands. The thermos at sink at late hours on Thursday and Friday suggests the resident returns home late and uses the thermos, possibly for a beverage after work. Need to observe Monday to confirm the early departure pattern repeats."
+}

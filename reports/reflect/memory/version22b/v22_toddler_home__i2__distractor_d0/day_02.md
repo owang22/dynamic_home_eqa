@@ -1,0 +1,15 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=1.00) A parent with a young child who uses a play mat, toy corner, and now a sippy cup and crib, indicating a toddler or infant. The child's play and feeding routines occur in late afternoon and evening. — The sippy cup at sink (11:10) and later at crib (19:02) suggests a feeding and bedtime routine. The ball at toy corner (17:07) reinforces afternoon play. The remote at coffee table (21:43) is a common adult evening activity and does not contradict the child hypothesis.
+
+## Selected evidence
+- Day 0, 08:49 — cushion at play_mat_n1 (child's play area, morning use)
+- Day 0, 15:48 — cushion at play_mat_n1 (afternoon play, consistent with child's schedule)
+- Day 1, 17:16 — stacking_rings at toy_corner_l1 (toy corner used in late afternoon)
+- Day 2, 11:10 — sippy_cup at sink_k1 (child's feeding item, washed after morning use)
+- Day 2, 17:07 — ball at toy_corner_l1 (another toy, reinforces afternoon play)
+- Day 2, 19:02 — sippy_cup at crib_n1 (child's bedtime routine, sippy cup placed in crib)
+
+## Notes
+Now have evidence of a child's feeding (sippy cup) and sleeping (crib) items. The pattern suggests a toddler who plays in the afternoon, eats, and goes to bed around 19:00. Need to check if play mat is used daily and if there are any adult-only items (e.g., work laptop, gym bag) that might indicate a different household type. Weekend observations will be key to see if routines change.

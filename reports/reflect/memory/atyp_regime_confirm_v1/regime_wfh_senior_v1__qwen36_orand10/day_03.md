@@ -1,0 +1,16 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Hybrid Office Worker / Remote Worker — Consistent early morning desk presence (07:09) with reading glasses suggests work-related reading or admin before commute. Keys observed leaving at 08:31 on Day 2 confirms physical commute. Evening return implied by dinner setup (18:10 plate). This profile fits the 07:00-08:30 home window and 08:30-18:00 absence pattern.
+2. (p=0.08) Standard Office Worker — The commute (keys) fits, but the sustained desk presence with reading glasses at 07:09 is less typical for a standard 9-5er who might leave earlier or not engage in focused desk work immediately upon waking. However, if the job requires early prep, this remains possible.
+3. (p=0.02) Night Owl / Shift Worker — Contradicted by consistent early wake times (06:45 Day 2, 07:09 Day 3) and early bedtime (22:10 Day 2). No evidence of night activity.
+
+## Selected evidence
+- Day 3, 07:09 — reading_glasses at desk_o1 (Discriminates: Sustained morning desk presence for work/reading before commute; reinforces Hybrid/Office profile)
+- Day 2, 08:31 — keys at desk_o1 (Discriminates: CRITICAL. Indicates leaving the house; rules out pure remote work)
+- Day 3, 18:10 — plate at table_d1 (Discriminates: Evening return home; confirms commute loop completion)
+- Day 2, 06:45 — reading_glasses at counter_k1 (Discriminates: Early morning routine; consistent with structured start)
+- Day 2, 22:10 — phone at nightstand_r1 (Discriminates: Regular sleep schedule; rules out shift work)
+
+## Notes
+Day 3 confirms the morning desk routine (glasses at desk 07:09) but does not show keys leaving (observation ended or keys not moved). However, Day 2's key event + Day 3's evening plate strongly supports the commute hypothesis. The pill organizer was not observed on Day 2 or 3; need to check if it's taken in the morning (counter) or evening (nightstand). The 'bowl at table 07:06/07:18' and 'sink 07:53' suggests a quick breakfast routine. No new hypotheses needed; probabilities sharpened towards Hybrid Worker due to consistent desk presence before commute.

@@ -1,0 +1,17 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single professional who works from home, with a structured but relaxed evening routine. — The headset at the desk at 09:00 on Day 0 strongly suggests a work-from-home setup. The phone on the coffee table at 15:50 on Day 1 (a Tuesday) indicates a midday break, consistent with a workday. The evening movements (floor lamp, picture frame, wall clock) suggest a routine of adjusting the living space for relaxation. The absence of multiple personal devices or children's items supports a single resident. The dining chair movements at meal times (08:37, 10:42, 21:04, 21:20) could be for a single person eating at different times or tidying, but not strong evidence for multiple residents.
+2. (p=0.15) A couple or family with a shared morning and evening routine, but the evidence is weak. — The dining chair movements at 08:37, 10:42, 21:04, and 21:20 could indicate multiple people eating, but the single headset and phone suggest limited personal devices. The bath mat at 08:47 might indicate a morning shower, but not distinctive. The doormat movements at 16:12 and 21:45 could be for a single person coming and going. Overall, the evidence is insufficient to confirm multiple residents.
+3. (p=0.05) A student or remote learner with a flexible schedule. — The headset at the desk at 09:00 on Day 0 could be for online classes, but the phone on the coffee table at 15:50 on Day 1 is more typical of a work break. The lack of textbooks, notebooks, or other study materials makes this less likely than a professional. The evening movements (floor lamp, picture frame, wall clock) could be for studying or relaxing, but the pattern is more consistent with a work-from-home professional.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (suggests work-from-home or online activity start)
+- Day 0, 14:17 — phone at sofa_l1 (midday break, phone usage on sofa)
+- Day 1, 15:50 — phone at coffee_table_l1 (midday break, consistent with workday)
+- Day 1, 18:37 — wall_clock at tv_stand_l1 (evening adjustment for relaxation)
+- Day 1, 21:04 — dining_chair at table_d1 (evening meal, possibly single person)
+- Day 1, 21:20 — dining_chair at table_d1 (second movement, could be tidying or second person)
+
+## Notes
+Day 1 is Tuesday. The headset was not observed today, but the phone at 15:50 is consistent with a workday break. The dining chair movements at 21:04 and 21:20 are close together; need to check if this is a pattern (e.g., two people eating or one person adjusting). The doormat at 16:12 and 21:45 suggests someone left and returned, but could be a single person. Weekend observations (Day 5-6) will be crucial to distinguish between professional (likely no headset at desk) and student (may still have online classes). Also look for any signs of multiple residents (e.g., multiple headsets, phones, or simultaneous movements of personal items).

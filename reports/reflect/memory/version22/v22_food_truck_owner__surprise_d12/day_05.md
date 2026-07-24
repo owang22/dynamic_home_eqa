@@ -1,0 +1,25 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single adult who runs a small food business (likely salsa or meal prep) from home, with a flexible schedule that includes early morning food preparation and weekend market or delivery activity. The business items (cash_box, order_pad) are present at home on Saturday, suggesting no market day today, or a shift in routine. Evening relaxation and morning routine remain consistent. — The surprising return of order_pad and cash_box to home on Saturday (expected elsewhere) contradicts the previous assumption of a Friday market day. Instead, the resident may be preparing for a Sunday market or doing home-based sales. The early morning food prep pattern (bowl, salsa_container) on Friday and the presence of business items at home on Saturday reinforce a home-based food business. No evidence of a second person; single phone and single bed_pillow suggest one resident.
+2. (p=0.10) A couple or family where one person runs a food business and another works from home or has a different schedule, but the business items are shared. The picture_frame at coffee_table in the evening could indicate a second person decorating, but no separate objects (e.g., second phone) have been observed. The Saturday events show only one phone and one bed_pillow, making this less likely. — The lack of multiple phones or distinct schedules (e.g., two people using different rooms at the same time) weakens this hypothesis. The picture_frame could be used by the same resident. The business items are present at home on Saturday, which could be used by one person. Probability lowered.
+3. (p=0.05) A student living alone with a part-time food delivery job, but the consistent early morning routine (07:00-07:50 food prep) and business items (cash_box, order_pad) suggest a more structured business than typical student gigs. The Saturday events show no academic items (e.g., laptop, books) and a relaxed weekend pattern (bath_mat, bed_pillow, dining_chair). — The early morning food prep and business items are more consistent with a small business owner than a student. The weekend pattern (no early morning events, later bed_pillow at 13:55) could fit a student, but the business items at home on Saturday contradict a typical student's part-time job schedule. Probability lowered further.
+
+## Selected evidence
+- Day 3, 10:34 — cash_box at elsewhere (business departure with order_pad and keys)
+- Day 3, 10:34 — order_pad at elsewhere (part of business departure)
+- Day 4, 07:50 — phone at counter_k1 (morning food prep for business)
+- Day 4, 07:50 — salsa_container at counter_k1 (food preparation for side business)
+- Day 4, 10:15 — salsa_container at fridge_k1 (storing prepared food)
+- Day 4, 20:38 — plate at table_d1 (evening dinner routine)
+- Day 5, 07:27 — order_pad at counter_k1 (surprising: business item at home on Saturday, not elsewhere)
+- Day 5, 20:27 — cash_box at kitchen_shelf_k1 (surprising: business item at home on Saturday evening)
+- Day 5, 22:51 — phone at nightstand_r1 (surprising: phone in bedroom late, not at counter)
+- Day 5, 13:55 — bed_pillow at bed_r1 (afternoon nap or rest on weekend)
+- Day 5, 15:40 — dining_chair at table_d1 (afternoon meal or activity)
+- Day 5, 18:45 — picture_frame at coffee_table_l1 (evening decoration or use of living room)
+- Day 4, 07:00 — bowl at counter_k1 (morning food prep)
+- Day 3, 21:31 — floor_lamp at sofa_l1 (evening relaxation)
+
+## Notes
+Saturday (Day 5) shows business items (order_pad, cash_box) at home, contrary to expectation of them being elsewhere (e.g., market). This suggests no market day on Saturday; perhaps Sunday is market day, or the business is home-based (e.g., online orders, meal prep for delivery). The phone at nightstand at 22:51 indicates late-night use, possibly for business planning or personal. The afternoon bed_pillow (13:55) and dining_chair (15:40) suggest a relaxed weekend schedule. Need to observe Sunday (Day 6) to see if cash_box/order_pad leave for a market or if food prep occurs. The wall_clock and waste_bin events at counter are mundane (cleaning, time-check) and not informative. The picture_frame at coffee_table in evening (18:45) is consistent with previous evening events. Open question: Is the food business market-based or home-delivery? Does the resident have a second job or hobby? Day-of-week pattern: Monday (midday nap), Thursday (business departure), Friday (morning food prep), Saturday (business items at home, relaxed).

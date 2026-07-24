@@ -1,0 +1,25 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A single person with a regular work-from-home or hybrid schedule, who uses the living room (armchair) in the evening and has a structured morning/evening routine. The weekend (Day 5 and Day 6) shows a later start (teapot at 07:20, picture frame at 08:34) and more leisure activities (pattern book, reading glasses at armchair or nightstand), consistent with a relaxed weekend. No evidence of multiple people or pets. Day 11 (Friday) continues the weekday pattern: teapot at table (07:24) suggests morning tea, picture frame at sideboard (11:02) is a morning ritual, doormat at entry (12:38) suggests midday arrival, bath mat at bathroom (13:52, 13:55) shows afternoon bathroom use, dining chair at table (14:07) is afternoon seating, coffee mug at side table (14:11) is afternoon coffee, floor lamp at armchair (15:25, 17:05) shows afternoon/evening relaxation, waste bin at counter (15:35, 18:45) is afternoon/evening cleanup, wall clock at counter (16:00) is afternoon kitchen activity, bed pillow at bed (19:49) is evening bed-making, picture frame at sideboard (21:30) is evening ritual, fork at cupboard (21:45) is evening kitchen activity. The single-person hypothesis remains strong. — Day 11 events are consistent with a single person's weekday routine: morning tea, morning ritual, midday arrival, afternoon bathroom use, afternoon seating, afternoon coffee, afternoon/evening relaxation, afternoon/evening cleanup, afternoon kitchen activity, evening bed-making, evening ritual, evening kitchen activity. No evidence of multiple people or pets.
+2. (p=0.01) A person with a flexible schedule who works from home and has a pet (no direct evidence yet, but the repeated movements of the same objects could be from a pet moving things). The reading glasses at yarn basket at 21:53 could be a pet moving them, but the times are too regular for a pet. This hypothesis is weak and may be removed if no further evidence. Day 11 shows no new pet evidence. The regular timing of object movements continues to suggest deliberate human activity. This hypothesis remains low probability. — No pet evidence on Day 11. The regular timing of events (e.g., teapot at 07:24, picture frame at 11:02, doormat at 12:38, bed pillow at 19:49) is more consistent with human routine than pet activity.
+
+## Selected evidence
+- Day 0, 08:39 — floor_lamp at armchair_l1 (morning relaxation spot, repeated on weekdays and weekend evening)
+- Day 0, 12:30 — dining_chair at table_d1 (lunchtime meal, repeated on weekdays and weekend afternoon)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday bed-making, repeated on weekdays and weekend afternoon)
+- Day 0, 13:25 — bath_mat at bathroom_c1 (afternoon bathroom use, repeated on weekdays and weekend)
+- Day 0, 14:29 — teapot at side_table_l1 (afternoon tea ritual, repeated on weekdays; weekend morning at sideboard)
+- Day 1, 16:12 — doormat at entry_hook_e1 (afternoon arrival, repeated on weekdays; not on weekend)
+- Day 1, 21:30 — reading_glasses at yarn_basket_l1 (evening leisure activity, repeated on weekdays; weekend at armchair or nightstand)
+- Day 2, 14:34 — knitting_needles at armchair_l1 (afternoon crafting, repeated on weekdays)
+- Day 3, 07:57 — coffee_mug at sink_k1 (morning coffee, repeated on weekdays)
+- Day 3, 11:45 — phone at side_table_l1 (daytime leisure, possibly work break)
+- Day 4, 07:16 — bowl at table_d1 (breakfast, repeated on weekdays)
+- Day 4, 12:22 — fork at table_d1 (lunch, repeated on weekdays)
+- Day 5, 09:01 — wall_clock at counter_k1 (weekend morning kitchen activity, now also seen on weekday mornings Day 10)
+- Day 5, 14:29 — pattern_book at side_table_l1 (weekend afternoon leisure, now also seen on weekday Day 8)
+- Day 10, 07:32 — picture_frame at sideboard_d1 (morning ritual on weekday, previously weekend morning)
+
+## Notes
+Day 11 (Friday) shows teapot at table at 07:24, which is a new morning tea location (previously teapot at sideboard on weekend morning, or at side table on weekday afternoon). Picture frame at sideboard at 11:02 is a morning ritual (previously seen at 07:32 on Day 10). Doormat at entry at 12:38 suggests midday arrival (previously afternoon arrival at 15:59 on Day 10). Bath mat at bathroom at 13:52 and 13:55 shows afternoon bathroom use. Dining chair at table at 14:07 is afternoon seating. Coffee mug at side table at 14:11 is afternoon coffee (previously morning coffee at sink). Floor lamp at armchair at 15:25 and 17:05 shows afternoon/evening relaxation. Waste bin at counter at 15:35 and 18:45 is afternoon/evening cleanup. Wall clock at counter at 16:00 is afternoon kitchen activity. Bed pillow at bed at 19:49 is evening bed-making (previously midday at 13:30). Picture frame at sideboard at 21:30 is evening ritual. Fork at cupboard at 21:45 is evening kitchen activity. The teapot at table in the morning is a new pattern; need to observe if it repeats. The doormat at 12:38 suggests the resident may have returned home at midday, possibly for lunch. The single-person hypothesis remains strong.

@@ -1,0 +1,25 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.55) A remote worker or student who works/studies from home most days, with a structured morning and evening routine, and a relaxed weekend pattern. — Day 8 (Tuesday) shows backpack at elsewhere at 08:40, a weekday departure event consistent with leaving for work/school. This strengthens the hybrid or remote worker hypothesis. The craft activity (scissors at craft_desk_s1 at 16:08 and craft_shelf_s1 at 18:08) on a weekday afternoon suggests a hobby that may be integrated into the daily routine, not just weekends. The waste_bin at counter_k1 (11:46) and wall_clock at tv_stand_l1 (16:14) are mundane. The doormat at entry_hook_e1 (19:17) is likely a return or adjustment. The early morning plate at sink (07:33) on Day 6 and consistent meal times support a structured day. The surprising events (backpack at elsewhere, scissors movements) indicate the model expected different locations, possibly due to weekday patterns. This hypothesis remains strongest.
+2. (p=0.30) A working professional or student with a hybrid schedule (some days out, some remote), but weekend evidence shows a home-based, relaxed routine with occasional outings. — Day 8 (Tuesday) shows backpack at elsewhere at 08:40, a clear departure event, supporting a hybrid schedule where the resident leaves home on some weekdays. The craft activity (scissors at craft_desk_s1 at 16:08 and craft_shelf_s1 at 18:08) on a weekday afternoon suggests the resident returns home and engages in hobbies, consistent with a hybrid worker who may work from home in the afternoon or have flexible hours. The surprising events (backpack at elsewhere, scissors movements) align with a hybrid pattern. The weekend pattern (Day 6) with no departure events but keys at entry hook (18:28) suggests a brief outing. This hypothesis gains probability as the weekday departure is confirmed.
+3. (p=0.15) A creative hobbyist who engages in weekday and weekend crafts, with a consistent early morning routine and a structured schedule that includes leaving home on some weekdays. — Day 8 (Tuesday) shows scissors at craft_desk_s1 at 16:08 and craft_shelf_s1 at 18:08, indicating craft activity on a weekday afternoon, not just weekends. This strengthens the hobbyist hypothesis, as craft items are used both on weekends (Day 6: tablet at craft desk) and weekdays. The backpack at elsewhere at 08:40 suggests the resident leaves home, possibly for work or study, and returns to engage in crafts. The early morning routine (plate at sink at 07:33 on Day 6) and structured meals are consistent. The surprising events (scissors movements) support a hobbyist pattern. However, the craft evidence is still limited to a few days, so probability remains lower.
+
+## Selected evidence
+- Day 0, 08:40 — backpack at elsewhere (weekday departure, work/school)
+- Day 0, 18:18 — scissors at craft_shelf_s1 (evening craft activity, hobby indicator)
+- Day 3, 08:47 — keys at elsewhere (late departure or brief return)
+- Day 3, 12:08 — fork and plate at table_d1 (midday meal at home, remote work/study)
+- Day 4, 06:56 — bowl at table_d1 (early breakfast, structured morning)
+- Day 4, 07:36 — tablet at coffee_table_l1 (morning work/leisure at home)
+- Day 5, 06:57 — tablet at table_d1 (early morning weekend use, consistent early riser)
+- Day 5, 12:21 — fork at table_d1 (weekend lunch later than weekday)
+- Day 6, 07:33 — plate at sink_k1 (early morning weekend dish, consistent early riser)
+- Day 6, 10:20 — tablet at craft_desk_s1 (weekend craft activity, hobby indicator)
+- Day 6, 18:28 — keys at entry_hook_e1 (Sunday brief outing, surprising)
+- Day 8, 08:40 — backpack at elsewhere (weekday departure, confirms hybrid/remote pattern)
+- Day 8, 16:08 — scissors at craft_desk_s1 (weekday afternoon craft, hobby integrated into routine)
+- Day 8, 18:08 — scissors at craft_shelf_s1 (evening craft storage, consistent hobby pattern)
+
+## Notes
+Day 8 (Tuesday) confirms weekday departure (backpack at elsewhere at 08:40) and weekday craft activity (scissors at craft_desk_s1 at 16:08 and craft_shelf_s1 at 18:08). The surprising events (backpack at elsewhere, scissors movements) indicate the model expected different locations, possibly due to limited weekday craft data. The waste_bin at counter_k1 (11:46) and wall_clock at tv_stand_l1 (16:14) are mundane. The doormat at entry_hook_e1 (19:17) may indicate a return or adjustment. Need to observe if craft activity recurs on other weekdays (e.g., Wednesday, Thursday) to confirm it's a regular hobby, not just occasional. Also check if departure times vary (e.g., later on some days) to refine hybrid vs. fully remote. Weekend pattern (Day 6) with keys at entry hook (18:28) suggests brief outings; verify if this repeats on future weekends.

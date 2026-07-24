@@ -1,0 +1,15 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Remote Worker / Digital Nomad — Day 5 (Saturday) shows no travel preparation or departure. The resident remains home, engaging in standard domestic routines (coffee, dinner, leisure). The laptop was present on Day 3 but not moved for work on Day 4 or 5, suggesting flexible or non-traditional work hours, consistent with remote work. The lack of weekend travel prep strongly supports this over the Business Traveler profile.
+2. (p=0.20) Standard Office Worker (Hybrid) — The resident is home on Saturday, which is typical for a standard work week. However, the absence of any work-related objects (laptop, documents) on Day 4 (Friday) or Day 5 (Saturday) makes it less likely they are actively working from home. The 'passport' from Day 3 remains unexplained, but could be for occasional travel rather than frequent business trips.
+3. (p=0.05) Frequent Business Traveler — This hypothesis is now highly unlikely. A frequent traveler would likely have a suitcase departing or arriving on a weekend, or at least show signs of travel prep (packing, checking flights). The static nature of Day 5 contradicts the core behavior of this persona.
+
+## Selected evidence
+- Day 5, 07:25 — coffee_mug at counter_k1 (standard weekend morning routine, no travel items)
+- Day 5, 18:34 — fork at table_d1 (dinner preparation, standard domestic activity)
+- Day 5, 22:49 — phone at nightstand_r1 (end of day routine, resident is home)
+- Day 5, 22:49 — remote at coffee_table_l1 (leisure activity, resident is home)
+
+## Notes
+Day 5 (Saturday) confirms the resident is home for the weekend. No travel-related objects were observed. The 'passport' from Day 3 is still an outlier; it may have been put away or is for a future trip. Key question for Day 6 (Sunday): Does the resident leave the house? If yes, is it for leisure or work? If no, the 'Remote Worker' hypothesis becomes even stronger. The 'Standard Office Worker' hypothesis remains possible if they work from home on weekdays and are off on weekends, but the lack of work objects on Friday makes this less certain.

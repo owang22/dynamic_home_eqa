@@ -1,0 +1,19 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single professional who works from home or has a home office, uses a headset for calls, and has a relaxed evening routine with TV and sofa time. — Headset at desk at 9am suggests work/study; phone on sofa and floor lamp moved to sofa in evening suggest relaxation; wall clock moved to TV stand hints at TV watching.
+2. (p=0.30) A couple or family with a child, given the multiple pillow movements and picture frame on coffee table, but the evidence is still weak. — Two pillow events (one at 12:57, one at 20:54) could indicate different people or a child's nap; picture frame on coffee table is a common family item.
+3. (p=0.10) A person with a consistent daily routine, possibly a remote worker who also does household chores (bath mat moved in evening). — Bath mat moved to bathroom at 20:23 suggests evening shower; headset at desk at 9am suggests work; but this is too generic to be a strong hypothesis.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (suggests work/study start time)
+- Day 0, 12:57 — bed_pillow at bed_r1 (possible nap or bed-making, but time is unusual)
+- Day 0, 14:17 — phone at sofa_l1 (afternoon relaxation or phone use)
+- Day 0, 19:28 — wall_clock at tv_stand_l1 (evening TV setup)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (lighting for evening sofa time)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (evening bed preparation)
+- Day 0, 21:04 — picture_frame at coffee_table_l1 (decorative item moved, possibly for display)
+
+## Notes
+Day 0 is Monday. Need to observe more days to confirm work-from-home pattern (headset at desk on weekdays). Check if pillow events are from same person or different. Weekend patterns may differ. Look for consistent evening TV/sofa routine. Consider if picture frame is a permanent decoration or moved frequently.

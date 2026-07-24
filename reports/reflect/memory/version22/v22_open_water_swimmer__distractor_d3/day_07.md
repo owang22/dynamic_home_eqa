@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A person who does water sports (wetsuit, swim goggles, swim cap, mesh bag, towel) and has a regular morning swim routine (wetsuit at 05:30, swim cap and mesh bag at 07:28, towel at 05:32) and a consistent evening wind-down (dinner at table, relaxing on sofa, bathroom, bed). The early morning departure with keys, goggles, and towel on day 4 confirms a morning swim before leaving home. No work objects observed, suggesting a flexible schedule or non-desk job. The weekend pattern shows a later swim (wetsuit drying at 07:22) and a relaxed evening (bath mat at 20:27, wetsuit stored at 20:35, plate at 21:45). — The morning swim routine is confirmed on weekdays (days 0, 3, 4) and continues on Saturday (day 5) and Sunday (day 6) with swim cap and wetsuit drying at 07:26. The evening routine is consistent. No work objects observed, supporting a non-desk job or flexible schedule. The weekend shows a later swim and relaxed evening. — The water sport evidence is overwhelming and consistent across weekdays and weekends. The lack of work objects and the early morning swim routine strongly suggest a non-desk job or flexible schedule. The weekend pattern (later swim, no departure) is consistent with a day off. — Day 7 (Monday) confirms the morning swim routine: mesh_bag and swim_cap at 05:33 (early departure for swim). Evening routine: floor_lamp at sofa at 17:20 (relaxation), bath_mat at bathroom at 18:35 (hygiene), phone at sofa at 19:18 (evening relaxation). Swim_goggles stored at entry_bench at 20:33 (evening gear storage). No work objects observed. The picture_frame at dresser at 16:43 is a new object but does not indicate work. The routine is consistent with a water sports enthusiast with a flexible schedule.
+2. (p=0.05) A person who works from home or has a flexible schedule, as the morning swim is done at home (wetsuit at 05:30, swim cap at 07:28) and then leaves home with keys and phone (day 3) or keys, goggles, towel (day 4). The lack of work objects at home suggests the work is done elsewhere or remotely but not observed. The weekend pattern (wetsuit drying at 07:22, no departure) suggests a more relaxed day. — The morning departure with keys and swim gear suggests leaving for a swim or work, but no work objects have been observed at home. The probability remains low because the water sport evidence is much stronger and the work-from-home hypothesis lacks supporting objects. The weekend pattern does not show a departure, which could indicate a day off. — The work-from-home hypothesis is not supported by any observed work objects. The morning departure could be for a swim or work, but the consistent water sport routine and lack of work objects make this hypothesis less likely. — Day 7 still shows no work objects (laptop, documents, etc.). The morning departure with swim gear (mesh_bag, swim_cap) at 05:33 is consistent with a swim, not work. The evening routine is typical. The work-from-home hypothesis remains unsupported and probability low.
+
+## Selected evidence
+- Day 0, 05:34 — wetsuit at elsewhere (early morning water activity)
+- Day 0, 18:09 — fork at table_d1 (evening meal at home)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation in living room)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime around 21:00)
+- Day 1, 20:36 — swim_goggles at entry_bench_e1 (evening gear storage after late activity)
+- Day 2, 20:32 — wetsuit at entry_bench_e1 (evening gear storage, consistent with day 1 pattern)
+- Day 3, 05:30 — wetsuit at elsewhere (early morning water activity, consistent with day 0)
+- Day 3, 07:28 — mesh_bag at entry_bench_e1 (morning gear storage after swim)
+- Day 3, 07:28 — swim_cap at drying_rack_u1 (morning gear drying after swim)
+- Day 3, 07:28 — keys at entry_hook_e1 (morning departure from home)
+- Day 4, 05:32 — keys at elsewhere (early morning departure for swim)
+- Day 4, 05:32 — swim_goggles at elsewhere (early morning departure for swim)
+- Day 4, 05:32 — towel at elsewhere (early morning departure for swim)
+- Day 7, 05:33 — mesh_bag at elsewhere (early morning departure for swim, consistent weekday pattern)
+
+## Notes
+Day 7 (Monday) observed. Morning swim routine confirmed: mesh_bag and swim_cap at 05:33 (early departure). Evening routine: floor_lamp at sofa at 17:20, bath_mat at bathroom at 18:35, phone at sofa at 19:18, swim_goggles stored at entry_bench at 20:33. New object: picture_frame at dresser at 16:43 (personal item, not work-related). Still no work objects (laptop, documents) seen. Need to check for any objects suggesting children or second person. Weekend pattern (day 5-6) shows later swim and no departure; weekday pattern shows early departure with swim gear. The routine is consistent with a water sports enthusiast with a flexible schedule or non-desk job.

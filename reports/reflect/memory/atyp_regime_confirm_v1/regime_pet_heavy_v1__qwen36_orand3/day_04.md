@@ -1,0 +1,17 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Remote worker with a pet — Evidence of morning routine (coffee, phone at entry) and stable late-afternoon arrival (16:50) strongly supports a standard workday structure performed from home. Pet evidence remains consistent.
+2. (p=0.03) Pet owner with irregular sleep — Still possible as a sub-component of the primary hypothesis regarding sleep variance, but morning activity suggests regularity rather than irregularity.
+3. (p=0.02) Standard working household (commuter) — The 07:04 phone at entry hook could imply a commute, but the lack of laptop evidence and the very early arrival time (16:50) makes this less likely than remote work. Probability reduced as morning routine suggests staying home or quick drop-off.
+
+## Selected evidence
+- Day 0, 09:49 — blanket at pet_bed_l1 (confirms pet presence, discriminates against non-pet households)
+- Day 2, 16:54 — phone at entry_hook_e1 (establishes baseline late-afternoon arrival routine)
+- Day 3, 16:46 — ball at toy_basket_l1 (reinforces pet ownership and evening interaction)
+- Day 4, 07:04 — phone at entry_hook_e1 (suggests morning departure or quick check-in; consistent with work start)
+- Day 4, 08:38 — bowl at table_d1 (indicates breakfast routine, supporting resident presence in morning)
+- Day 4, 16:50 — phone at entry_hook_e1 (confirms stable arrival time ~16:50, reinforcing remote work or early commute end)
+
+## Notes
+Morning routine established: phone at entry (07:04), breakfast (08:38). This contradicts the 'irregular sleep' hypothesis slightly, suggesting a more structured day. The 07:04 event is ambiguous (commute vs. leaving phone at hook while home), but combined with 16:50 arrival, it fits a 9-5 remote worker who leaves the house briefly or just checks out. No laptop observed yet; need to check for work objects during 09:00-15:00 window on future days. Pet activity remains a strong constant.

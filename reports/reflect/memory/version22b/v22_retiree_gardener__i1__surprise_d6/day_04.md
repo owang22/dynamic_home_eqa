@@ -1,0 +1,26 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single working professional with a structured morning and evening routine, likely working from home or with a flexible schedule. — Consistent morning coffee at patio table (Day 0, Day 3), phone and glasses used at patio table during work hours (Day 2, Day 3), lunch at home (Day 0), and evening cleanup (Day 2, Day 3). Day 4 shows a new morning pattern: bowl and newspaper at table_d1 at 07:04, then bowl to sink at 07:44, suggesting breakfast at the dining table. Reading glasses at table_d1 (07:04) and later at sofa_l1 (16:10) indicate reading during breakfast and afternoon leisure. The surprising events (reading_glasses at table_d1, bowl at sink_k1, reading_glasses at sofa_l1) are now consistent with a varied but predictable routine. No strong evidence of a second person or pet.
+2. (p=0.10) A couple or family with one person working from home and another possibly working outside, sharing household tasks. — Multiple pillow events (Day 0, Day 2, Day 3) could indicate two people, but no distinct second routine (e.g., different coffee times, separate meal events) has emerged. Day 4's events (single bowl, single newspaper, single glasses) are all consistent with one person. Probability reduced due to lack of corroborating evidence.
+3. (p=0.05) A remote worker with a pet, as some objects might be moved by a pet (e.g., pillow, picture frame). — Pillow moved multiple times (Day 2, Day 3) and picture frame moved (Day 2, Day 4) could be pet activity, but no direct pet evidence (e.g., food bowl, toy) and the pattern of events (phone, glasses, coffee mug, newspaper) is more consistent with human routine. Probability remains low.
+
+## Selected evidence
+- Day 0, 07:32 — coffee_mug at patio_table_p1 (morning coffee routine on Monday)
+- Day 0, 12:33 — plate at sink_k1 (lunch at home on a workday)
+- Day 2, 09:08 — phone at patio_table_p1 (phone used during morning work hours)
+- Day 2, 11:08 — reading_glasses at coffee_table_l1 (reading/leisure activity mid-morning)
+- Day 2, 13:50 — phone at sofa_l1 (phone used during afternoon break)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (evening cleanup, surprising time for mug storage)
+- Day 3, 07:44 — coffee_mug at patio_table_p1 (morning coffee routine on Thursday)
+- Day 3, 09:10 — reading_glasses at patio_table_p1 (glasses used with phone at patio table during work hours)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (afternoon relaxation setup)
+- Day 3, 21:45 — plate at cupboard_k1 (evening cleanup, surprising time for plate storage)
+- Day 4, 07:04 — bowl at table_d1 (breakfast at dining table on Friday)
+- Day 4, 07:04 — newspaper at table_d1 (reading newspaper during breakfast)
+- Day 4, 07:04 — reading_glasses at table_d1 (glasses used for reading newspaper at breakfast)
+- Day 4, 07:44 — bowl at sink_k1 (breakfast cleanup)
+- Day 4, 16:10 — reading_glasses at sofa_l1 (afternoon reading/leisure on sofa)
+
+## Notes
+Day 4 (Friday) shows a new morning pattern: breakfast at dining table (bowl, newspaper, reading_glasses at table_d1 at 07:04) instead of coffee at patio table. This could be a Friday variation or a shift in routine. The reading_glasses appear at sofa_l1 at 16:10, indicating afternoon reading. Need to observe weekend days (5-6) to see if routine changes significantly. Look for signs of second person (e.g., two coffee mugs, different schedules). Pet evidence still weak; consider if picture frame and pillow movements are human or pet. The waste_bin events (07:09, 08:41) are mundane and not informative.

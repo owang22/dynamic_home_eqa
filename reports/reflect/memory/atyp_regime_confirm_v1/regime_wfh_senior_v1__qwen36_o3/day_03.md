@@ -1,0 +1,19 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Full-time remote worker/student with a dedicated home office, likely male or female, who works from home during the day and eats dinner at home. — Desk presence confirmed on Day 0, 1, 2, and now Day 3 (07:09). The consistency across four consecutive weekdays strongly reinforces the full-time remote work profile. The 12:30 plate on Day 2 and 12:44 coffee on Day 3 suggest a consistent midday routine.
+2. (p=0.10) Commuter who works from home occasionally, or a part-time worker. — Still possible if the person works from home Mon-Thu but commutes Fri. However, the sustained desk usage over four days makes this less likely than full remote work. Needs weekend observation to confirm if the pattern breaks on Day 4 (Friday) or Day 5 (Saturday).
+3. (p=0.05) Non-resident visitor or short-term guest. — Unlikely given the specific, sustained use of a fixed workspace and evening meal routine over four days. No signs of transient behavior (e.g., luggage, varied locations). Probability remains low.
+
+## Selected evidence
+- Day 0, 07:11 — reading_glasses at desk_o1 (indicates morning routine involving reading/screen work, implies a dedicated workspace)
+- Day 0, 13:27 — coffee_mug at desk_o1 (indicates sustained presence at the desk during work hours, not just a quick visit)
+- Day 0, 21:45 — bowl at cupboard_k1 (indicates evening meal consumption at home, likely dinner)
+- Day 1, 19:20 — remote at sofa_l1 (indicates evening leisure activity at home, consistent with a resident unwinding after work)
+- Day 2, 08:31 — coffee_mug at desk_o1 (confirms continued remote work pattern on Wednesday, reinforcing 'home-dweller' profile)
+- Day 2, 12:30 — plate at table_d1 (indicates lunch consumption at home, further supporting resident status and daily routine)
+- Day 3, 07:09 — reading_glasses at desk_o1 (confirms continued remote work pattern on Thursday, reinforcing 'home-dweller' profile)
+- Day 3, 12:44 — coffee_mug at counter_k1 (indicates midday break, possibly lunch or coffee, consistent with resident routine)
+
+## Notes
+Discarded Day 3, 07:53 bowl at sink_k1 as mundane (dishwashing is common). Need to observe if desk items persist on Day 4 (Friday) to confirm if remote work is a 5-day week. Check if person leaves house during Day 3 daytime to rule out commuter profile more definitively. Note the lunch plate at 12:30 on Day 2 and coffee at 12:44 on Day 3; verify if this is a consistent daily pattern. Weekend observation (Day 5-6) is critical to distinguish between full-time remote worker and part-time/commuter.

@@ -1,0 +1,20 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.40) A parent with a young child who works a standard office job outside the home on weekdays, with a consistent weekend routine at home. — The consistent phone-at-counter at 08:43 on multiple weekdays (Day 0, Day 4) strongly suggests a morning departure for work. However, today's surprising events—plate at sink at 07:25 (early morning cleanup, possibly after breakfast), plate at table at 11:39 (midday weekday meal), and plate at cupboard at 21:45 (evening storage)—are all unexpected for a standard office job. The midday plate at table contradicts the assumption of being away at work, and the early morning plate at sink suggests a home-based breakfast routine. This hypothesis is weakened by today's evidence.
+2. (p=0.50) A parent with a young child who works part-time or has a flexible schedule, possibly with a caregiver present on weekdays. — Today's surprising events—plate at sink at 07:25 (morning cleanup after breakfast), plate at table at 11:39 (midday meal at home), and plate at cupboard at 21:45 (evening storage)—are consistent with a parent who is home during the day, either working from home or on a flexible schedule. The earlier board_book at playmat at 08:40 on Day 8 also supports morning play before a later departure. The phone-at-counter pattern on some weekdays could indicate occasional errands or a part-time work schedule. This hypothesis gains probability from today's evidence.
+3. (p=0.10) A stay-at-home parent or remote worker with a young child, where the child is home during the day, but with occasional morning departures. — Today's events (plate at sink at 07:25, plate at table at 11:39, plate at cupboard at 21:45) are fully consistent with a home-based routine. However, the consistent phone-at-counter at 08:43 on multiple weekdays (Day 0, Day 4) and the Sunday departure (Day 6) still suggest regular departures that are hard to reconcile with a stay-at-home parent. The probability remains low.
+
+## Selected evidence
+- Day 0, 08:54 — phone at counter_k1 (morning departure signal for work or errand)
+- Day 4, 08:43 — phone at counter_k1 (consistent morning departure, same time as Day 0)
+- Day 4, 07:11 — sippy_cup at sink_k1 (morning cleanup after child's breakfast, before departure)
+- Day 5, 07:14 — bowl at sink_k1 (Saturday, later morning cleanup; relaxed weekend pattern)
+- Day 6, 08:59 — phone at counter_k1 (Sunday morning departure, similar to weekday time; weekend errand or church)
+- Day 8, 08:40 — board_book at playmat_n1 (Tuesday morning, child playing before typical departure time; suggests home-based morning routine)
+- Day 11, 07:25 — plate at sink_k1 (Friday morning, early cleanup after breakfast; surprising for standard office job, suggests home-based morning)
+- Day 11, 11:39 — plate at table_d1 (Friday midday, weekday meal at home; contradicts away-at-work assumption, supports flexible schedule)
+- Day 11, 21:45 — plate at cupboard_k1 (Friday evening, storage after dinner; consistent with home-based routine)
+
+## Notes
+Today (Day 11, Friday) had three surprising events: plate at sink at 07:25, plate at table at 11:39, and plate at cupboard at 21:45. The belief model expected these objects elsewhere (p=0.00), indicating a significant deviation from the learned pattern. The midday plate at table is particularly strong evidence against a standard office job, as it suggests the parent is home for lunch. The early morning plate at sink (07:25) is earlier than the typical 08:43 departure, suggesting a home-based breakfast routine. Need to observe if similar midday events occur on other weekdays (e.g., Monday, Tuesday) to confirm a pattern of working from home or flexible schedule. Also need to check if the phone-at-counter pattern persists on future weekdays to see if departures are occasional rather than daily. The sippy_cup events were not observed today, but the plate events dominate the evidence.

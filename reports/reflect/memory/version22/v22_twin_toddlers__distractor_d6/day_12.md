@@ -1,0 +1,25 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A family with a young child (sippy cup, board book, playmat) and a regular work/school schedule (phone at counter in morning, pillow on bed at night). The child's playmat and toy bin are used during the day, and the sippy cup is put away in the evening. Weekend evidence shows a relaxed morning (bowl at sink, picture frame at coffee table) and child's sippy cup washed and put away, consistent with a weekend routine. No work-from-home items observed. — Strong child evidence continues with sippy cup at table on Day 10 morning (06:36) and picture frame at coffee table (07:32) suggesting morning decoration or family photo. Weekday pattern of meals (fork at sink 18:28), afternoon pillow on bed (13:30) suggesting nap or rest, waste bin at counter (14:04, 19:00) for kitchen cleanup, and wall clock at counter (18:28) is consistent. No contradictory evidence. Day 10 adds sippy cup at table (06:36) confirming morning child drink; picture frame at coffee table (07:32) suggests morning decoration or family photo; dining chair at table (09:06) for breakfast; bed pillow at bed (13:30) indicates afternoon nap or rest; waste bin at counter (14:04, 19:00) for kitchen cleanup; fork at sink (18:28) for dinner cleanup; wall clock at counter (18:28) for daytime activity. No work-from-home items observed. Child evidence remains strong. Day 11 (Friday) shows picture frame at coffee table (11:02) — consistent with morning decoration routine; plate at sink (07:25) for breakfast cleanup; plate at table (11:39) for lunch; dining chair at table (14:07) for afternoon meal; floor lamp at sofa (15:25) for afternoon relaxation; waste bin at counter (15:35, 18:45) for kitchen cleanup; bed pillow at bed (19:49) for evening sleep prep; plate at cupboard (21:45) for evening dish put away. No child-specific items observed today, but the pattern remains consistent with a family with a young child. No work-from-home items observed. Day 12 (Saturday) shows picture frame at coffee table (10:00, 15:09, 15:37, 20:30) — consistent with weekend decoration or family photo display; wall clock at counter (11:29) for daytime activity; dining chair at table (14:16) for afternoon meal; plate at sink (18:30) for dinner cleanup. No child-specific items observed today, but the weekend pattern of picture frame at coffee table is consistent with previous weekends. No work-from-home items observed.
+2. (p=0.01) A single adult or couple without children, possibly working from home (phone at counter, but no other child items). — Unlikely given strong child evidence (sippy cup, board book, playmat) observed consistently across days. Day 10 adds sippy cup at table, further confirming child presence. No new evidence supports this hypothesis; child evidence continues to dominate. Day 11 shows no child-specific items, but the overall pattern still strongly suggests a child's presence from previous days. Day 12 shows no child-specific items, but the weekend pattern of picture frame at coffee table is consistent with a family. This hypothesis remains low probability.
+
+## Selected evidence
+- Day 0, 17:16 — sippy_cup at elsewhere (child's item, indicates young child)
+- Day 2, 17:54 — diaper_caddy at dresser_n1 (baby care item, confirms infant/toddler)
+- Day 2, 19:08 — board_book at crib_n1 (crib and board book, strong child evidence)
+- Day 3, 08:43 — cushion at playmat_n1 (child's play area, morning playtime)
+- Day 3, 08:43 — sippy_cup at playmat_n1 (child's drink during play)
+- Day 3, 11:13 — board_book at toy_bin_l1 (child's book stored in toy bin)
+- Day 3, 21:45 — sippy_cup at cupboard_k1 (evening cleanup, child's item put away)
+- Day 0, 08:54 — phone at counter_k1 (morning routine, parent preparing)
+- Day 2, 21:30 — phone at nightstand_r1 (evening phone placement, parent bedtime)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening pillow, sleep prep)
+- Day 4, 07:11 — sippy_cup at sink_k1 (morning child cup washing)
+- Day 4, 17:41 — sippy_cup at table_d1 (evening child drink at table)
+- Day 5, 12:38 — sippy_cup at sink_k1 (weekend midday child cup washing)
+- Day 5, 21:45 — sippy_cup at cupboard_k1 (weekend evening child cup put away)
+- Day 6, 17:47 — sippy_cup at table_d1 (Sunday child drink at table)
+
+## Notes
+Day 12 (Saturday) shows picture frame at coffee table (10:00, 15:09, 15:37, 20:30) — consistent with weekend decoration or family photo display; wall clock at counter (11:29) for daytime activity; dining chair at table (14:16) for afternoon meal; plate at sink (18:30) for dinner cleanup. No child-specific items observed today, but the weekend pattern of picture frame at coffee table is consistent with previous weekends. No work-from-home items observed. Next: observe day 13 (Sunday) to confirm weekend pattern (e.g., relaxed morning, child items out later).

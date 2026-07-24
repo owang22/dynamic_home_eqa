@@ -1,0 +1,153 @@
+# v22_dawn_bread_baker -- VERSION22 confirmatory household (pair B with
+# v22_open_water_swimmer: both up ~05:00, but this one STAYS IN THE KITCHEN).
+# Persona: home micro-bakery; bakes 05:00-08:00 daily, delivers loaves Tu/Th
+#   late morning, farmers-market stall Sa morning.
+# IDIOSYNCRATIC-BUT-REALISTIC: a clean bath TOWEL is used as the proofing couche
+#   on the kitchen counter every dawn; the WATER_BOTTLE (dough hydration spritz
+#   refill) lives next to the flour bin; the phone sits on the kitchen counter in
+#   a zip-lock bag (floury hands) during bakes.
+# DIAGNOSTIC: proofing_basket, dough_scraper, flour_bin_scoop, bench_knife.
+# DEPENDENT targets: towel (counter_k1 at 06:00, not the bathroom), water_bottle
+#   (counter at 06:00), keys (home at dawn; leave Tu/Th/Sa late morning).
+# STATIC DISTRACTORS: dining_chair, bed_pillow, wall_clock, floor_lamp, doormat,
+#   waste_bin, picture_frame, bath_mat.
+household: v22_dawn_bread_baker
+status: DRAFT  # version22 authoring 2026-07-22 — needs human anchor verification
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,          room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1,   room: bedroom,  aliases: []}
+  - {id: sofa_l1,         room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living,   aliases: []}
+  - {id: counter_k1,      room: kitchen,  aliases: [kitchen_counter]}
+  - {id: baking_shelf_k1, room: kitchen,  aliases: [bakers_rack]}
+  - {id: cupboard_k1,     room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,         room: kitchen,  aliases: []}
+  - {id: fridge_k1,       room: kitchen,  aliases: []}
+  - {id: table_d1,        room: dining,   aliases: [dining_table]}
+  - {id: entry_hook_e1,   room: entryway, aliases: [key_hook]}
+  - {id: crate_stack_e1,  room: entryway, aliases: [delivery_crates]}
+  - {id: bathroom_c1,     room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: micro-bakery owner; 05:00 daily bake, Tu/Th deliveries, Sa market stall
+    schedule:
+      - {activity: sleep,          days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "21:30", end: "04:50"}
+      - {activity: dawn_bake,      days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "05:00", end: "08:00"}
+      - {activity: breakfast,      days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "08:10", end: "08:45"}
+      - {activity: leave_delivery, days: [Tu,Th],                start: "10:00", end: "10:15"}
+      - {activity: away_delivery,  days: [Tu,Th],                start: "10:15", end: "13:00"}
+      - {activity: return_delivery, days: [Tu,Th],               start: "13:00", end: "13:20"}
+      - {activity: leave_market,   days: [Sa],                   start: "08:50", end: "09:05"}
+      - {activity: away_market,    days: [Sa],                   start: "09:05", end: "14:00"}
+      - {activity: return_market,  days: [Sa],                   start: "14:00", end: "14:20"}
+      - {activity: starter_feed,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "17:00", end: "17:20"}
+      - {activity: dinner,         days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "18:30", end: "19:10"}
+      - {activity: tv_evening,     days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "19:30", end: "21:00"}
+activities:
+  dawn_bake:
+    jitter_min: 10
+    objects: [proofing_basket, dough_scraper, bench_knife, towel, water_bottle,
+              phone, starter_jar, flour_bin_scoop]
+    during: {proofing_basket: counter_k1, dough_scraper: counter_k1,
+             bench_knife: counter_k1, towel: counter_k1, water_bottle: counter_k1,
+             phone: counter_k1, starter_jar: counter_k1, flour_bin_scoop: counter_k1}
+    after:
+      proofing_basket: {dest: baking_shelf_k1, p: 0.85, else: counter_k1}
+      dough_scraper:   {dest: sink_k1, p: 0.7, else: counter_k1}
+      bench_knife:     {dest: sink_k1, p: 0.6, else: counter_k1}
+      towel:           {dest: counter_k1, p: 0.75, else: sink_k1}   # couche stays out to dry
+      water_bottle:    {dest: baking_shelf_k1, p: 0.8, else: counter_k1}
+      phone:           {dest: counter_k1, p: 0.7, else: coffee_table_l1}
+      starter_jar:     {dest: fridge_k1, p: 0.6, else: counter_k1}
+      flour_bin_scoop: {dest: baking_shelf_k1, p: 0.85, else: counter_k1}
+  breakfast:
+    jitter_min: 10
+    objects: [bowl, plate, coffee_mug]
+    during: {bowl: table_d1, plate: table_d1, coffee_mug: table_d1}
+    after:
+      bowl:       {dest: sink_k1, p: 0.85, else: table_d1}
+      plate:      {dest: sink_k1, p: 0.8, else: table_d1}
+      coffee_mug: {dest: sink_k1, p: 0.7, else: table_d1}
+  leave_delivery:
+    jitter_min: 5
+    objects: [keys, phone, tote_bag]
+    after:
+      keys:     {dest: null, p: 1.0}
+      phone:    {dest: null, p: 1.0}
+      tote_bag: {dest: null, p: 1.0}
+  return_delivery:
+    jitter_min: 20
+    objects: [keys, phone, tote_bag]
+    after:
+      keys:     {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      phone:    {dest: counter_k1, p: 0.6, else: sofa_l1}
+      tote_bag: {dest: crate_stack_e1, p: 0.9}
+  leave_market:
+    jitter_min: 5
+    objects: [keys, phone, tote_bag, cash_box]
+    after:
+      keys:     {dest: null, p: 1.0}
+      phone:    {dest: null, p: 1.0}
+      tote_bag: {dest: null, p: 1.0}
+      cash_box: {dest: null, p: 1.0}
+  return_market:
+    jitter_min: 20
+    objects: [keys, phone, tote_bag, cash_box]
+    after:
+      keys:     {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      phone:    {dest: sofa_l1, p: 0.5, else: counter_k1}
+      tote_bag: {dest: crate_stack_e1, p: 0.9}
+      cash_box: {dest: crate_stack_e1, p: 0.85, else: coffee_table_l1}
+  starter_feed:
+    jitter_min: 15
+    objects: [starter_jar, flour_bin_scoop]
+    during: {starter_jar: counter_k1, flour_bin_scoop: counter_k1}
+    after:
+      starter_jar:     {dest: counter_k1, p: 0.7, else: fridge_k1}
+      flour_bin_scoop: {dest: baking_shelf_k1, p: 0.85, else: counter_k1}
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  tv_evening:
+    jitter_min: 15
+    objects: [remote, phone]
+    during: {remote: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+      phone:  {dest: nightstand_r1, p: 0.85, else: sofa_l1}
+placements:
+  # DIAGNOSTIC
+  proofing_basket: {home: baking_shelf_k1, volatility_class_hint: high}
+  dough_scraper:   {home: baking_shelf_k1}
+  bench_knife:     {home: baking_shelf_k1}
+  flour_bin_scoop: {home: baking_shelf_k1}
+  starter_jar:     {home: fridge_k1, volatility_class_hint: high}
+  # DEPENDENT targets (idiosyncratic homes)
+  towel:        {home: counter_k1, volatility_class_hint: high}  # proofing couche, kitchen not bathroom
+  water_bottle: {home: baking_shelf_k1, volatility_class_hint: high}
+  keys:         {home: entry_hook_e1, volatility_class_hint: high}
+  # ordinary
+  bowl:       {home: cupboard_k1}
+  plate:      {home: cupboard_k1}
+  fork:       {home: cupboard_k1}
+  coffee_mug: {home: cupboard_k1}
+  remote:     {home: coffee_table_l1}
+  phone:      {home: nightstand_r1, volatility_class_hint: high}
+  tote_bag:   {home: crate_stack_e1}
+  cash_box:   {home: crate_stack_e1}
+  # STATIC DISTRACTORS
+  dining_chair:  {home: table_d1,        volatility_class_hint: static}
+  bed_pillow:    {home: bed_r1,          volatility_class_hint: static}
+  wall_clock:    {home: counter_k1,      volatility_class_hint: static}
+  floor_lamp:    {home: sofa_l1,         volatility_class_hint: static}
+  doormat:       {home: entry_hook_e1,   volatility_class_hint: static}
+  waste_bin:     {home: counter_k1,      volatility_class_hint: static}
+  picture_frame: {home: coffee_table_l1, volatility_class_hint: static}
+  bath_mat:      {home: bathroom_c1,     volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9.

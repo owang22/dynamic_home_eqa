@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Single adult with a regular 9-to-5 job, likely working from home or hybrid, who keeps a tidy home and has a consistent evening routine. The job requires safety gear (hi-vis vest) and involves early starts (05:14) and variable return times (15:05, 23:02). — Day 7 (Monday) shows the same early departure with hi-vis vest (05:19) and phone left at entry hook, consistent with a workday. The dining chair at table at 08:45 suggests a home office setup after returning or during work hours. The single fork and coffee mug at sink in the evening reinforce solo living. The doormat events on Day 3 remain the only potential counter-evidence, but they are insufficient to suggest a second resident.
+2. (p=0.03) Couple or family with at least one adult who works outside the home, and another who may work from home or be a homemaker. — The doormat events on Day 3 (07:57 and 09:02) could indicate two people, but the single chair, fork, plate, and consistent single-person badge events make this less likely. Day 6 (Sunday) shows only single-person usage (one fork, one plate, one coffee mug), further reducing the likelihood of a second resident. Day 7 also shows only single-person items.
+3. (p=0.02) Student or young professional living alone, with a flexible schedule and a tendency to tidy up in the evening. — The early departure (05:14) and hi-vis vest are more typical of a job than a student. The structured timing (chair at 18:22, pillow at 18:25) suggests a regular routine, but the early start and safety gear point away from a student. Day 7 (Monday) shows a workday pattern, not a student's flexible schedule.
+
+## Selected evidence
+- Day 2, 05:07 — work_badge at elsewhere (early departure, consistent with job)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (returning from work, consistent with job)
+- Day 2, 16:06 — dining_chair at table_d1 (home office setup after work)
+- Day 2, 21:45 — fork at cupboard_k1 (evening cleanup, solo meal)
+- Day 2, 21:45 — plate at cupboard_k1 (evening cleanup, solo meal)
+- Day 3, 07:57 — doormat at entry_hook_e1 (morning routine, possibly leaving for work)
+- Day 3, 08:57 — dining_chair at table_d1 (home office setup during work hours)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (safety gear, suggests job type)
+- Day 3, 23:02 — keys at entry_hook_e1 (returning home late)
+- Day 3, 23:02 — work_badge at locker_shelf_e1 (returning from work late)
+- Day 4, 05:14 — hi_vis_vest at elsewhere (early departure with safety gear)
+- Day 4, 05:14 — keys at elsewhere (early departure)
+- Day 4, 18:22 — dining_chair at table_d1 (returning home, home office setup)
+- Day 5, 12:44 — phone at sofa_l1 (relaxed weekend, no work)
+- Day 5, 21:45 — coffee_mug at cupboard_k1 (evening cleanup, solo meal)
+
+## Notes
+Day 7 (Monday) confirms the workday pattern: early departure (05:19) with hi-vis vest, phone left at entry hook. Dining chair at table at 08:45 suggests home office setup after returning or during work hours. Single fork and coffee mug at sink in the evening reinforce solo living. The doormat events on Day 3 (07:57 and 09:02) remain unexplained—could be a delivery or second person, but single-person evidence is strong. Need to check if the doormat events repeat on a weekday to see if they indicate a second person or a delivery. The floor_lamp and waste_bin events on Day 6 are not yet informative. The wall_clock, picture_frame, floor_lamp, and bath_mat events on Day 7 are not yet informative.

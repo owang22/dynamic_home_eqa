@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single professional who works from home or has a desk job, with a structured morning routine and evening relaxation, and who travels occasionally. — Monday events show a typical work-from-home day: bowl at sink (breakfast), dining chair at table (morning meal), bed pillow at bed (midday rest), floor lamp at sofa (evening relaxation), plate at sink (dinner), remote at sofa (evening leisure). No travel items moved. The single-person usage continues.
+2. (p=0.03) A person with a regular 9-to-5 job who travels for work, returning home in the evening and engaging in household activities. — Monday events show a work-from-home pattern (midday rest, evening relaxation at home), not a 9-to-5 commute. No evidence of travel today. This hypothesis is further weakened.
+3. (p=0.02) A couple or family with one person working from home and another traveling, but evidence is still sparse. — Monday events show only single-person usage: one bowl, one plate, one bed pillow, one remote, one floor lamp. No evidence of a second person. This hypothesis remains unlikely.
+
+## Selected evidence
+- Day 0, 09:18 — coffee_mug at desk_o1 (work-from-home morning routine)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday rest, work-from-home break)
+- Day 1, 07:14 — passport at elsewhere (travel document, trip start)
+- Day 1, 07:14 — suitcase at elsewhere (luggage, confirms travel)
+- Day 2, 13:52 — bed_pillow at bed_r1 (midday rest, consistent work-from-home)
+- Day 2, 21:06 — dining_chair at table_d1 (single evening chair, single person)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday relaxation, work-from-home)
+- Day 3, 18:35 — neck_pillow at carryon_e1 (packing for trip, evening preparation)
+- Day 3, 18:35 — packing_cubes at carryon_e1 (packing for trip, confirms travel)
+- Day 4, 09:06 — coffee_mug at desk_o1 (morning desk routine, work-from-home)
+- Day 4, 09:06 — laptop at desk_o1 (work-from-home start)
+- Day 4, 16:29 — laptop at carryon_e1 (packing laptop for trip, Friday afternoon)
+- Day 5, 07:39 — coffee_mug at table_d1 (weekend morning, relaxed routine)
+- Day 5, 22:27 — phone at nightstand_r1 (evening bedtime, single person)
+- Day 6, 20:09 — phone at sofa_l1 (evening leisure, single person)
+
+## Notes
+Monday (Day 7) shows a typical work-from-home day: bowl at sink (breakfast), dining chair at table (morning meal), bed pillow at bed (midday rest), floor lamp at sofa (evening relaxation), plate at sink (dinner), remote at sofa (evening leisure). No travel items moved. The packing on Friday afternoon (Day 4) might have been for a trip that was cancelled or postponed, or the resident returned without moving items back? But no return movements observed. The wall_clock and waste_bin movements are mundane and not included. The bowl, plate, fork movements are routine. The bath_mat movement at 18:35 suggests an evening shower, typical weekday routine. Next week will help clarify if there is a weekly pattern of work-from-home and occasional travel.

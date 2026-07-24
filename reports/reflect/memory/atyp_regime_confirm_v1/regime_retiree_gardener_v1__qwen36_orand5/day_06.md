@@ -1,0 +1,17 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) Health-conscious professional with structured daily habits — The 06:30 weekday pill routine and immediate cleanup patterns remain strong. Saturday's 06:57 glasses and Sunday's 07:07 pill organizer confirm medication adherence continues on weekends, just slightly later. The 08:12 phone on the patio suggests leisure/remote work, fitting a professional lifestyle.
+2. (p=0.15) Senior resident with medication needs — Retained due to consistent pill usage and reading glasses. The 07:07 Sunday pill time is later than weekdays, which could indicate age-related sleep patterns or simply weekend flexibility. The lack of other age-specific markers (like mobility aids or specific medical devices) keeps this lower than the professional hypothesis.
+3. (p=0.05) Standard working adult with evening leisure routine — Still low probability. The strict medication schedule and early wake-up times are less typical for a 'casual' profile. No new evidence supports this over the structured hypotheses.
+
+## Selected evidence
+- Day 6, 07:07 — pill_organizer at cupboard_k1 (confirms weekend medication adherence; slight delay from weekday 06:30 suggests flexible but consistent routine)
+- Day 6, 08:12 — phone at patio_table_p1 (indicates morning leisure or remote work; supports 'professional' or 'active senior' persona over sedentary baseline)
+- Day 6, 10:42 — coffee_mug at sink_k1 (morning cleanup; reinforces 'immediate tidiness' pattern observed on weekdays and Saturday)
+- Day 6, 12:12 — fork at table_d1 (lunch preparation/eating; midday meal aligns with structured daily rhythm)
+- Day 6, 12:57 — plate at sink_k1 (immediate post-meal cleanup; consistent with 'immediate tidiness' hypothesis)
+- Day 6, 13:56 — reading_glasses at coffee_table_l1 (afternoon reading/leisure; confirms glasses are used for activities beyond just morning mail)
+
+## Notes
+Sunday routine mirrors Saturday's structure but with slightly later start times (07:07 vs 06:57 for glasses/pills). The 'immediate cleanup' pattern is robust across all observed days (mugs/plates to sink/cupboard within ~1 hour of use). The pill organizer is definitely used on weekends, ruling out the hypothesis that medication is skipped. The phone on the patio at 08:12 is a new data point suggesting outdoor leisure or work, distinguishing this household from a purely indoor-focused one. Need to verify if the 06:30 weekday pill time is strictly observed or if there's variance.

@@ -1,0 +1,25 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A person who works a physically demanding job (e.g., construction, maintenance, or security) with a consistent early start and return by mid-afternoon. The hi-vis vest and thermos are taken together at 05:05-05:17 and returned by 14:24, suggesting a shift that ends around 2 PM. The laptop is at home during the day, indicating it is not used for work. The work_badge is also taken, but the hi-vis vest is the distinctive item. The evening routine (plate, fork, remote) is similar to previous days. This pattern is now confirmed on three consecutive weekdays (Day 7 Monday, Day 8 Tuesday, Day 9 Wednesday). — Day 9 shows hi-vis vest leaving at 05:17 and thermos returning at 14:24, consistent with previous workdays. Laptop and phone left home (laptop at elsewhere, phone at elsewhere) further support a non-desk job. The pattern is stable across three weekdays, increasing confidence. — Day 10 shows a later start (phone at table at 08:00, bowl at sink at 08:34) and no hi-vis vest or thermos movement, suggesting a different schedule or day off. However, the work_badge is taken at 13:29, which could indicate a later shift or a different work activity. The laptop is at home until 22:29, consistent with a non-desk job. The earlier pattern (hi-vis vest and thermos) is still strong but now appears less consistent. The probability is reduced slightly to account for the anomaly.
+2. (p=0.10) A person who lives alone and maintains a tidy, organized home. Single sets of dishes (plate, fork) are used and cleaned each day. The thermos is used on workdays but not on weekends. The remote is used in the evening, and the phone returns to the nightstand at bedtime. This solitary, tidy routine is consistent across all observed days. — The single-person household is supported by the use of one plate and thermos each day. The tidy behavior (cleaning and storing dishes) is consistent. However, this hypothesis is less distinctive than the work pattern and does not help discriminate between personas. — Day 10 shows a bowl used and cleaned, and phone and work_badge placed on nightstand at bedtime, consistent with a tidy single-person household. The pattern remains stable.
+3. (p=0.05) A person with a consistent evening routine: dinner around 18:21-19:00, cleaning up by 19:06, and then relaxing with the remote (TV) before bed. The phone is used in the evening (sofa) but returns to the nightstand at bedtime. This routine is observed on both weekdays and weekends, with timing shifting later on weekends. — The evening pattern is consistent but not highly diagnostic; it is common to many households. The probability is low because it does not help discriminate between personas. — Day 10 shows phone at nightstand at 22:29, consistent with bedtime routine. No other evening events observed, but the pattern is not contradicted.
+
+## Selected evidence
+- Day 7, 05:05 — hi_vis_vest at elsewhere (early departure for physical job, contradicts office pattern)
+- Day 7, 14:10 — hi_vis_vest at closet_r1 (return from work, consistent with shift end)
+- Day 8, 05:08 — thermos at elsewhere (taken with hi-vis vest, part of work gear)
+- Day 8, 05:08 — work_badge at elsewhere (also taken, but hi-vis vest is distinctive)
+- Day 8, 14:25 — hi_vis_vest at closet_r1 (returned at same time as keys, confirming pattern)
+- Day 8, 14:25 — keys at entry_hook_e1 (returned after work, consistent with arrival)
+- Day 8, 14:25 — laptop at sofa_l1 (laptop at home during workday, not used for work)
+- Day 9, 05:17 — hi_vis_vest at elsewhere (early departure, consistent with workdays)
+- Day 9, 14:24 — thermos at sink_k1 (returned after work, consistent with shift end)
+- Day 10, 08:00 — phone at table_d1 (later start, no hi-vis vest or thermos, suggests different schedule)
+- Day 10, 13:29 — work_badge at elsewhere (taken later in day, possibly for a later shift or errand)
+- Day 10, 22:29 — laptop at sofa_l1 (laptop at home in evening, not used for work during day)
+- Day 10, 22:29 — phone at nightstand_r1 (bedtime routine, consistent with tidy behavior)
+- Day 10, 22:29 — work_badge at nightstand_r1 (returned to nightstand, part of bedtime routine)
+
+## Notes
+Day 10 (Thursday) shows a different pattern: no hi-vis vest or thermos movement, later start (phone at table at 08:00, bowl at sink at 08:34), and work_badge taken at 13:29. This could indicate a day off from the physical job, a later shift, or a different work activity. The laptop remains at home until 22:29, consistent with a non-desk job. Need to observe if this pattern repeats on other days (e.g., every Thursday or occasionally). Also, check if the hi-vis vest and thermos pattern resumes on Day 11 (Friday). The weekend pattern (no work items, late start) is still expected on Days 12-13 (Saturday-Sunday).

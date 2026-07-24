@@ -1,0 +1,26 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A family with a young child, likely a toddler, and at least one adult who works from home or has a flexible schedule. — The sippy cup at sink (11:10) and later at crib (19:02) is a strong child indicator. The ball at toy corner (17:07) and stacking rings (day 1) confirm child toys. The single dining chair and bed pillow could be because the child is very young and shares the bed or uses a high chair not observed. The doormat at entry (08:38, 13:34) suggests a morning arrival and afternoon outing, possibly daycare drop-off/pickup. The floor lamp at sofa (09:08) and dining chair at table (16:06, 21:06) indicate an adult working/leisure at home. The picture frame at coffee table (12:05, 15:08) suggests personalization. The bath mat (18:48) indicates a bath routine for the child. The remote at coffee table (21:43) is evening leisure.
+2. (p=0.15) A single adult with a regular work-from-home schedule, who occasionally has a child visiting or has a child's toy as decoration. — The single dining chair and bed pillow still suggest one adult. The child items (sippy cup, ball, stacking rings) could be from a visiting child or a pet toy, but the sippy cup at crib is very specific to a toddler. The doormat at entry twice could be a delivery or brief outing, not necessarily a child. This hypothesis is less likely given the crib and sippy cup.
+3. (p=0.05) A couple with a young child, both working outside the home, with a structured morning and evening routine. — The single dining chair and bed pillow contradict a couple. The child items are present, but no second adult items (e.g., second mug, second pillow) have appeared. The doormat at entry at 08:38 and 13:34 could be one adult leaving and returning, not two. This hypothesis is nearly ruled out.
+
+## Selected evidence
+- Day 2, 11:10 — sippy_cup at sink_k1 (child's cup, strong indicator of toddler)
+- Day 2, 19:02 — sippy_cup at crib_n1 (child's cup at crib, confirms child bedtime)
+- Day 2, 17:07 — ball at toy_corner_l1 (child's toy, reinforces child presence)
+- Day 1, 17:16 — stacking_rings at toy_corner_l1 (child's toy, consistent with child)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning arrival, possibly daycare drop-off)
+- Day 2, 13:34 — doormat at entry_hook_e1 (afternoon return, possibly daycare pickup)
+- Day 2, 09:08 — floor_lamp at sofa_l1 (morning reading/work spot, adult routine)
+- Day 2, 16:06 — dining_chair at table_d1 (afternoon work/meal, adult at home)
+- Day 2, 21:06 — dining_chair at table_d1 (evening meal, adult routine)
+- Day 2, 18:48 — bath_mat at bathroom_c1 (bath time, likely child's bath)
+- Day 2, 12:05 — picture_frame at coffee_table_l1 (personalization, family photo?)
+- Day 2, 21:43 — remote at coffee_table_l1 (evening TV/leisure, adult)
+- Day 2, 13:52 — bed_pillow at bed_r1 (afternoon nap, adult or child?)
+- Day 2, 16:47 — bed_pillow at bed_r1 (afternoon nap, possibly child's nap)
+- Day 0, 08:39 — floor_lamp at sofa_l1 (morning routine, repeated)
+
+## Notes
+Day 2 (Wednesday) strongly suggests a toddler: sippy cup at sink and crib, ball at toy corner, bath mat. The doormat at 08:38 and 13:34 could be daycare drop-off/pickup. The single dining chair and bed pillow still suggest one adult, but the child might share the bed or use a high chair. Need to check weekend days (5-6) for different patterns (e.g., later wake-up, more family time). Also look for a second adult's items (e.g., second mug, second pillow) or a laptop to confirm work-from-home. The picture frame at coffee table is new; could be a family photo.

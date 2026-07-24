@@ -1,0 +1,16 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Health-conscious professional with structured daily habits — The 06:30 glasses and 07:34 coffee/newspaper routine reinforces a disciplined, early-starting professional. The 12:35 lunch cleanup is consistent with a standard workday. The shift from patio (Day 8) to indoor coffee (Day 9) suggests flexibility within the structure, not a contradiction.
+2. (p=0.20) Senior resident with medication needs — The 06:30 glasses usage is highly characteristic of older adults. The newspaper reading is a strong signal for this demographic. The lack of medication events on Day 8 and 9 weakens the 'strict adherence' aspect but doesn't rule out the resident profile itself, especially if meds are taken with breakfast (coffee) and not tracked as separate 'object' events.
+3. (p=0.05) Standard working adult with evening leisure routine — Still unlikely due to the consistent early wake-up (06:30-07:06) and morning newspaper/coffee ritual, which is less common for 'casual' evening-leisure profiles. The 14:16 phone on sofa suggests afternoon rest, which could fit, but the morning rigidity dominates.
+
+## Selected evidence
+- Day 9, 06:30 — reading_glasses at counter_k1 (strong discriminator for senior/older adult profile; indicates early morning visual task)
+- Day 9, 07:34 — newspaper at coffee_table_l1 (strong discriminator for senior/traditional media user; contrasts with digital-only profiles)
+- Day 9, 07:34 — coffee_mug at patio_table_p1 (confirms morning coffee habit; location shift from table to patio suggests variable leisure preference)
+- Day 9, 12:35 — fork at sink_k1 (confirms midday meal cleanup; timing is consistent with professional lunch break)
+- Day 9, 14:16 — phone at sofa_l1 (suggests afternoon rest or leisure; distinguishes from continuous work-at-desk profiles)
+
+## Notes
+Day 9 (Wednesday) shows a slightly earlier start (06:30 glasses) than Day 8 (07:06 coffee). The newspaper appearance is a new, strong signal for the 'Senior' hypothesis, raising its probability. The coffee moved to the patio again, suggesting a preference for outdoor morning light when weather permits. The 14:16 phone on the sofa indicates an afternoon break, possibly post-lunch rest or casual browsing. The 'structured professional' hypothesis remains strong due to the 12:35 lunch cleanup, but the 'Senior' hypothesis is gaining ground due to glasses/newspaper. Need to verify if the 06:30 glasses are for reading the newspaper or general morning tasks. The dinner time on Day 9 is not yet observed; will monitor for consistency with Day 8's early dinner (18:39) vs Day 7's late dinner (21:45).

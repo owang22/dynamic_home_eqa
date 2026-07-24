@@ -1,0 +1,18 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Rotating Shift Worker (Single) — Day 10 confirms the resident leaves for work, but the time (13:29) is drastically different from the 05:17 departure on Days 7-9. This strongly suggests a rotating shift pattern (e.g., afternoon/evening shift) rather than a fixed early morning shift. The gear (hi-vis, badge, thermos) remains consistent. The late return (22:29) fits an evening shift. The laptop moving to the sofa suggests evening leisure or remote admin after the shift.
+2. (p=0.04) Two-Shift Worker (Variable) — The significant jump from 05:17 to 13:29 departure could indicate two different shift types (early vs. late) rotating. However, the single-person evidence remains strong, and the 'variable schedule' hypothesis is too broad without more data points to distinguish between rotation and irregularity.
+3. (p=0.01) Remote Worker with Erratic Schedule — Contradicted by the consistent presence of industrial work gear (hi-vis, badge) and the strict departure/return times. The laptop's location changes are likely secondary to the primary physical job requirement.
+
+## Selected evidence
+- Day 10, 13:29 — hi_vis_vest at elsewhere (departure with work gear, confirms physical job continues)
+- Day 10, 13:29 — work_badge at elsewhere (confirms employment identity persists)
+- Day 10, 13:29 — keys at elsewhere (departure, confirms leaving the house)
+- Day 10, 22:29 — keys at entry_hook_e1 (return from shift, late evening)
+- Day 10, 22:29 — work_badge at nightstand_r1 (gear removed and stored near bed, consistent with fatigue/routine)
+- Day 10, 22:29 — laptop at sofa_l1 (laptop moved from desk to sofa, suggests evening use or storage change)
+- Day 10, 22:29 — thermos at sink_k1 (post-shift cleaning, consistent with single resident routine)
+
+## Notes
+Day 10 (Thursday) shows a major shift in schedule: departure at 13:29 instead of 05:17, and return at 22:29 instead of 14:24. This strongly supports the 'Rotating Shift' hypothesis over a fixed early-morning shift. The laptop is back on the sofa, not the desk, suggesting it may not be used for work during the day or is used in the evening. Need to observe Day 11 (Friday) to see if the pattern holds or if it's a one-off. Weekend (Day 11-12) will be critical to confirm if the resident sleeps in or maintains a modified schedule.

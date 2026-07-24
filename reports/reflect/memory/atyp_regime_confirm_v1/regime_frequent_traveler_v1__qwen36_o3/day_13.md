@@ -1,0 +1,22 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Business Traveler with Weekend Trips — The suitcase and adapter remained stationary through Saturday and Sunday morning, contradicting the 'imminent departure' pattern of previous trips. However, the specific clustering of travel gear (suitcase, adapter, packing cubes) strongly suggests intent. The lack of departure by Sunday evening (Day 13) is anomalous but does not rule out a late Sunday departure or a canceled trip. The probability increases because the 'Routine Change' hypothesis (p=0.10) is weakened by the continued presence of specialized travel gear without any work-related items (laptop) appearing, suggesting the resident is still in 'travel mode' rather than 'work mode'.
+2. (p=0.05) Business Traveler (Routine Change) — The resident may have decided to stay home, using the bed for charging devices (adapter) and keeping the suitcase packed but unused. This is less likely given the specific 'travel gear' clustering (suitcase + adapter + packing cubes) which usually precedes movement. The absence of the laptop from the desk continues to support a non-WFH profile, making a 'staycation' less likely than a delayed travel plan.
+3. (p=0.05) Hybrid Worker with Weekend Trips — Still unlikely. The laptop was removed on Monday (Day 8) and has not returned to the desk by Sunday. The absence of work equipment during the weekend further supports a travel-heavy or non-WFH profile. No new evidence contradicts this low probability.
+
+## Selected evidence
+- Day 0, 19:59 — passport at bed_r1 (indicates travel planning)
+- Day 0, 20:44 — suitcase at entry_hook_e1 (confirms travel intent)
+- Day 1, 06:22 — suitcase at elsewhere (confirms departure)
+- Day 3, 20:41 — keys at entry_hook_e1 (confirms return)
+- Day 3, 20:41 — laptop at desk_o1 (confirms work setup)
+- Day 7, 20:57 — packing_cubes at entry_hook_e1 (confirms preparation for next trip)
+- Day 8, 06:39 — laptop at elsewhere (confirms departure of work gear)
+- Day 8, 06:39 — packing_cubes at elsewhere (confirms departure of travel gear)
+- Day 10, 20:40 — suitcase at bed_r1 (ANOMALY: Suitcase out on a non-travel day, suggests potential weekend trip)
+- Day 11, 08:07 — travel_adapter at bed_r1 (CONFIRMS travel intent: Adapter is rarely used at home unless preparing for travel or charging while away)
+- Day 13, 07:40 — bowl at table_d1 (MUNDANE: Discarded as routine breakfast activity, no diagnostic value for persona)
+
+## Notes
+The suitcase and adapter have remained stationary since Thursday/Friday through Sunday evening. The bowl at the table on Sunday morning is a mundane domestic event and does not help distinguish between hypotheses. Key question: Will the suitcase leave on Monday (Day 14)? If it leaves Monday morning, it confirms the 'Weekend Trip' hypothesis (delayed). If it stays until Tuesday, the 'Routine Change' or 'False Alarm' hypotheses gain weight. The laptop's absence from the desk continues to support the 'Travel-Heavy' profile over 'Standard WFH'. The coffee mug at the cupboard is mundane.

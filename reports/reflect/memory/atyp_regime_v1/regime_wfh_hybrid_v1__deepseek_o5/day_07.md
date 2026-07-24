@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single adult with a standard workday routine, working from home at least some days, and a relaxed weekend pattern. — Weekday pattern of breakfast, lunch at home, dinner, and laptop movement (desk vs elsewhere) strongly suggests a hybrid worker. Weekend events (keys seen at 11:51, late lunch/early dinner, dishes put away by 21:45) are consistent with a single person who sleeps in and has a leisurely weekend. No evidence of a second person.
+2. (p=0.03) A couple or family with one person working from home, but still weak evidence. — Only one set of keys, one phone, one coffee mug, and one fork observed. No second person's items. Unlikely.
+3. (p=0.02) A student or remote worker with irregular meal times, but pattern is too consistent. — Times are regular (breakfast ~07:30-08:00, dinner ~18:30). Laptop movement suggests a hybrid worker, not a student. Unlikely.
+
+## Selected evidence
+- Day 0, 08:06 — bowl at sink_k1 (breakfast cleanup, morning routine)
+- Day 0, 12:30 — plate at table_d1 (lunch at home, not at work)
+- Day 1, 17:57 — keys at entry_hook_e1 (returning from work, suggests commute)
+- Day 2, 08:35 — laptop at desk_o1 (work-from-home or hybrid, not remote-only)
+- Day 2, 12:30 — fork at table_d1 (lunch at home, consistent)
+- Day 3, 08:26 — laptop at elsewhere (laptop moved, suggests leaving home for work)
+- Day 4, 07:31 — bowl at table_d1 (breakfast, consistent morning time)
+- Day 4, 08:01 — bowl at sink_k1 (breakfast cleanup, routine)
+- Day 4, 08:01 — coffee_mug at sink_k1 (morning coffee, routine)
+- Day 4, 18:37 — plate at table_d1 (dinner, consistent evening time)
+- Day 4, 22:36 — phone at nightstand_r1 (bedtime, single person)
+- Day 5, 11:51 — keys at counter_k1 (weekend, keys not on hook, suggests relaxed morning)
+- Day 5, 18:30 — plate at table_d1 (weekend dinner, similar time to weekday)
+- Day 5, 21:45 — fork at cupboard_k1 (dishes put away, single person cleanup)
+- Day 6, 18:38 — plate at table_d1 (Sunday dinner, consistent weekend timing)
+
+## Notes
+Weekend pattern observed: keys not on hook until 11:51 (slept in or went out earlier?), dinner at 18:30 similar to weekday, dishes put away by 21:45. No laptop movement observed on Saturday (expected for weekend). Need to observe next week to confirm hybrid work pattern (laptop at desk on some weekdays, elsewhere on others). Also check if keys return on other weekdays to confirm commute pattern. No second person evidence yet. Sunday events show dinner at 18:38, fork at sink at 19:23, remote on sofa at 20:08, and dishes put away by 21:45 — consistent with a single person's relaxed weekend evening. Today (Monday) events: breakfast at 07:29, dinner at 18:28, phone on sofa at 20:02, dishes put away at 21:45, phone at nightstand at 22:32 — consistent with weekday routine. No laptop movement observed today, but that may be due to limited observations.

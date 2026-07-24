@@ -1,0 +1,24 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A person who works from home or has a flexible schedule, with a strong fitness-oriented morning routine. The early morning dumbbells and yoga mat at 05:12 indicate a home workout before the protein shaker and breakfast, and the phone at counter at 06:42 suggests a brief break. The late afternoon fork at table (17:58) on a Friday is consistent with an early dinner at home, typical of a flexible schedule. — The new evidence of dumbbells and yoga mat at 05:12 on Day 4 (Friday) strongly supports a home fitness routine, and the phone at counter at 06:42 aligns with the previous morning pattern. The fork at table at 17:58 on a Friday suggests an early dinner, which is more common for someone with a flexible schedule or who works from home. This strengthens the work-from-home hypothesis.
+2. (p=0.15) A person with a standard 9-to-5 job who commutes, but with a morning fitness habit. The early morning workout (dumbbells, yoga mat) could be a pre-work routine, and the phone at counter at 06:42 might be before leaving. However, the late afternoon fork at 17:58 on a Friday is earlier than a typical commuter would return, and the previous late afternoon home presence (17:18, 17:35) is hard to reconcile with a standard commute. — The early morning workout is consistent with a pre-work routine, but the late afternoon home presence on multiple days (including Friday) remains contradictory. The probability is reduced.
+3. (p=0.05) A student or someone with evening classes, who also exercises in the morning. The early morning workout (dumbbells, yoga mat) could be a pre-class routine, and the phone at counter at 06:42 might be before leaving for classes. However, the late afternoon fork at 17:58 on a Friday suggests being home for dinner, which conflicts with evening classes. The previous late afternoon home presence also weakens this hypothesis. — The evidence is still weak. The late afternoon home presence on multiple days (including Friday) is not typical for a student with evening classes. The probability is lowered.
+
+## Selected evidence
+- Day 1, 17:35 — laptop at desk_o1 (late afternoon laptop use on a weekday, suggests work-from-home or flexible schedule)
+- Day 2, 06:40 — protein_shaker at counter_k1 (morning fitness routine, strong indicator of exercise habit)
+- Day 2, 07:59 — keys at elsewhere (keys taken, likely leaving home, possibly for work or errand)
+- Day 2, 17:18 — phone at sofa_l1 (phone used on sofa in late afternoon, suggests relaxation after work/study)
+- Day 2, 21:01 — phone at nightstand_r1 (phone placed on nightstand, likely bedtime routine)
+- Day 3, 06:44 — bowl at table_d1 (breakfast at home, consistent with flexible morning)
+- Day 3, 06:44 — mug at counter_k1 (morning hot drink, part of breakfast routine)
+- Day 3, 06:44 — protein_shaker at counter_k1 (repeated morning fitness routine, strengthens habit)
+- Day 3, 08:02 — phone at elsewhere (phone taken, likely leaving home, possibly for work or errand)
+- Day 4, 05:12 — dumbbells at coffee_table_l1 (early morning home workout, strong fitness indicator)
+- Day 4, 05:12 — yoga_mat at coffee_table_l1 (early morning home workout, strong fitness indicator)
+- Day 4, 06:42 — phone at counter_k1 (phone used after workout, likely before breakfast)
+- Day 4, 17:58 — fork at table_d1 (early dinner on a Friday, suggests flexible schedule or work-from-home)
+
+## Notes
+The early morning workout (dumbbells, yoga mat) on Day 4 (Friday) at 05:12 is a new strong indicator of a home fitness routine. The phone at counter at 06:42 fits the pattern of morning activities. The fork at table at 17:58 on a Friday suggests an early dinner, which is more typical for someone with a flexible schedule or who works from home. Need to observe if the laptop appears at the desk on other weekdays at similar times, and if the protein shaker appears on weekends. Also look for other fitness objects (yoga mat, running shoes) or work-related items (documents, bag). The keys leaving pattern (Day 2 and Day 3) might be for errands rather than a commute, given the late afternoon home presence. The phone at nightstand at 21:01 on Day 2 suggests an early bedtime, consistent with an early morning routine. The mug at 21:45 on Day 2 is later than the phone, so maybe the phone was moved earlier. Need to check if the keys leaving is a daily pattern (commute) or occasional.

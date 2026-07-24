@@ -1,0 +1,16 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.92) Remote worker with fitness routine — Morning protein shaker (06:44) and early start suggest health-conscious remote worker. Laptop at 'elsewhere' on Day 2 morning likely indicates a gym visit or coffee shop run, not a commute, given the evening return to desk. The backpack at sofa in evening suggests it was brought home but not unpacked, or used for weekend prep.
+2. (p=0.06) Hybrid worker (commuter) — Laptop at 'elsewhere' on Day 2 morning could imply a commute. However, the protein shaker at 06:44 is less typical for a standard commuter who might eat at home or on the go, but not necessarily with a dedicated shaker at the counter. The backpack at sofa in evening is consistent with returning from work.
+3. (p=0.02) Student — Still possible, but the structured morning routine (protein shaker) and specific desk usage are more indicative of a professional. No strong evidence for student life (e.g., textbooks, library items).
+
+## Selected evidence
+- Day 0, 06:30 — phone at counter_k1 (early morning wake-up routine)
+- Day 1, 17:35 — laptop at desk_o1 (establishes fixed home office; evening work/study)
+- Day 2, 07:59 — laptop at elsewhere (suggests mobile use or pre-desk activity; contradicts strict 'laptop always at desk' hypothesis)
+- Day 3, 06:44 — protein_shaker at counter_k1 (strong indicator of fitness/health routine; supports remote worker hypothesis)
+- Day 3, 17:50 — backpack at sofa_l1 (evening return; suggests bag was brought home, possibly from work/gym)
+
+## Notes
+Protein shaker at 06:44 is a new, strong signal for a fitness routine. This strengthens the 'Remote worker with fitness routine' hypothesis. The laptop at 'elsewhere' on Day 2 morning is now more likely a gym/coffee shop visit than a commute, given the protein shaker. Need to check if laptop returns to desk_o1 on Day 3 evening. Backpack at sofa in evening is ambiguous; could be from work, gym, or just placed there. Day 4 (Friday) will be critical to see if the pattern holds and if the backpack is used for weekend activities.

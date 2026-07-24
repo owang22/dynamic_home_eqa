@@ -1,0 +1,120 @@
+# v22_wfh_senior -- VERSION22b confusable pair G (with v22_retiree_gardener).
+# Both are HOME ALL DAY; they DIFFER IN ONE ACTIVITY: the 09-11 daytime block is
+# DESK WORK IN THE STUDY here vs gardening on the patio for the retiree. The
+# shared dependent objects (coffee_mug, phone, reading_glasses) ride to the DESK
+# in the morning, not the patio. Regime-legible: laptop + headset at the desk at
+# 10:00 => "work-from-home senior" => the mug/phone/glasses are at the desk.
+# DIAGNOSTIC: laptop, headset, webcam, desk_lamp.
+# DEPENDENT targets (shared class, regime-flipped location): coffee_mug, phone,
+#   reading_glasses -> desk_o1 in the morning.
+# STATIC DISTRACTORS: dining_chair, bed_pillow, wall_clock, floor_lamp, doormat,
+#   waste_bin, picture_frame, bath_mat.
+household: v22_wfh_senior
+status: DRAFT  # version22b authoring 2026-07-22 — needs human anchor verification
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,          room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1,   room: bedroom,  aliases: []}
+  - {id: sofa_l1,         room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living,   aliases: []}
+  - {id: tv_stand_l1,     room: living,   aliases: []}
+  - {id: desk_o1,         room: office,   aliases: [work_desk]}
+  - {id: shelf_o1,        room: office,   aliases: [office_shelf]}
+  - {id: counter_k1,      room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,     room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,         room: kitchen,  aliases: []}
+  - {id: table_d1,        room: dining,   aliases: [dining_table]}
+  - {id: entry_hook_e1,   room: entryway, aliases: [key_hook]}
+  - {id: bathroom_c1,     room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: work-from-home senior, desk work every morning, home all day
+    schedule:
+      - {activity: sleep,        days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "22:30", end: "06:30"}
+      - {activity: breakfast,    days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "07:00", end: "07:40"}
+      - {activity: desk_work,    days: [Mo,Tu,We,Th,Fr],       start: "09:00", end: "11:00"}
+      - {activity: desk_work,    days: [Sa,Su],                start: "09:30", end: "10:30"}
+      - {activity: lunch,        days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "12:00", end: "12:45"}
+      - {activity: tv_afternoon, days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "14:00", end: "16:00"}
+      - {activity: dinner,       days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "18:00", end: "18:45"}
+      - {activity: tv_evening,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "19:30", end: "22:00"}
+activities:
+  breakfast:
+    jitter_min: 10
+    objects: [newspaper, coffee_mug, bowl, reading_glasses]
+    during: {newspaper: table_d1, coffee_mug: table_d1, bowl: table_d1, reading_glasses: table_d1}
+    after:
+      newspaper:       {dest: coffee_table_l1, p: 0.6, else: table_d1}
+      coffee_mug:      {dest: desk_o1, p: 0.75, else: table_d1}          # carried to the desk
+      bowl:            {dest: sink_k1, p: 0.8, else: table_d1}
+      reading_glasses: {dest: desk_o1, p: 0.6, else: table_d1}
+  desk_work:
+    jitter_min: 20
+    objects: [laptop, headset, webcam, desk_lamp, coffee_mug, phone, reading_glasses]
+    during: {laptop: desk_o1, headset: desk_o1, webcam: desk_o1, desk_lamp: desk_o1,
+             coffee_mug: desk_o1, phone: desk_o1, reading_glasses: desk_o1}
+    after:
+      laptop:          {dest: desk_o1, p: 0.9}
+      headset:         {dest: desk_o1, p: 0.85, else: shelf_o1}
+      webcam:          {dest: desk_o1, p: 0.9}
+      desk_lamp:       {dest: desk_o1, p: 0.95}
+      coffee_mug:      {dest: sink_k1, p: 0.55, else: desk_o1}
+      phone:           {dest: coffee_table_l1, p: 0.5, else: desk_o1}
+      reading_glasses: {dest: coffee_table_l1, p: 0.5, else: desk_o1}
+  lunch:
+    jitter_min: 15
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  tv_afternoon:
+    jitter_min: 20
+    objects: [remote, reading_glasses, phone]
+    during: {remote: sofa_l1, reading_glasses: coffee_table_l1, phone: sofa_l1}
+    after:
+      remote:          {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+      reading_glasses: {dest: coffee_table_l1, p: 0.6, else: sofa_l1}
+      phone:           {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  tv_evening:
+    jitter_min: 20
+    objects: [remote, phone]
+    during: {remote: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.4, else: sofa_l1}
+      phone:  {dest: nightstand_r1, p: 0.85, else: sofa_l1}
+placements:
+  # DIAGNOSTIC (persona-exclusive)
+  laptop:    {home: desk_o1, volatility_class_hint: high}
+  headset:   {home: shelf_o1}
+  webcam:    {home: desk_o1}
+  desk_lamp: {home: desk_o1, volatility_class_hint: static}
+  # DEPENDENT targets (shared class; regime -> desk in the morning)
+  coffee_mug:      {home: cupboard_k1, volatility_class_hint: high}
+  phone:           {home: nightstand_r1, volatility_class_hint: high}
+  reading_glasses: {home: coffee_table_l1, volatility_class_hint: high}
+  # ordinary
+  newspaper: {home: table_d1, volatility_class_hint: high}
+  bowl:    {home: cupboard_k1}
+  plate:   {home: cupboard_k1}
+  fork:    {home: cupboard_k1}
+  remote:  {home: coffee_table_l1}
+  keys:    {home: entry_hook_e1, p_misplace: 0.08, misplace_set: [counter_k1, coffee_table_l1]}
+  # STATIC DISTRACTORS
+  dining_chair:  {home: table_d1,        volatility_class_hint: static}
+  bed_pillow:    {home: bed_r1,          volatility_class_hint: static}
+  wall_clock:    {home: tv_stand_l1,     volatility_class_hint: static}
+  floor_lamp:    {home: sofa_l1,         volatility_class_hint: static}
+  doormat:       {home: entry_hook_e1,   volatility_class_hint: static}
+  waste_bin:     {home: counter_k1,      volatility_class_hint: static}
+  picture_frame: {home: coffee_table_l1, volatility_class_hint: static}
+  bath_mat:      {home: bathroom_c1,     volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9.

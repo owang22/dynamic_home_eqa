@@ -1,0 +1,23 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single person with a cat, working from home or with a flexible schedule, who uses the sofa and blanket during the day and cleans up in the evening. — Phone movements on Friday (entry hook at 07:04, counter at 07:49, entry hook at 16:50) suggest the person leaves home in the morning and returns in the afternoon, possibly commuting. Cat evidence remains strong (bowl at table at 08:38, ball at pet bed at 14:57). No second person's items observed. However, the dog leash at sofa at 17:35 is a new object that contradicts the cat-only hypothesis. The person may have a dog as well, or the leash could belong to a visitor. The remote at coffee table at 22:15 is mundane.
+2. (p=0.30) A single person with a cat and a dog, who commutes to work (or has a hybrid schedule) and returns home in the late afternoon. — The dog leash at sofa at 17:35 on Friday suggests dog ownership. The phone at entry hook at 07:04 and then at counter at 07:49 could indicate the person leaves for work after 07:49, and returns at 16:50 (phone at entry hook). This is consistent with a commuting schedule. Cat evidence (bowl, ball) remains. The coffee mug at counter at 12:37 suggests a midday coffee break, possibly at home if the person works from home that day, but the phone movements indicate they were out. The mug could be from morning or a quick return. The remote at coffee table is mundane.
+3. (p=0.10) A couple with a cat and a dog, where one person works from home and the other commutes, sharing household chores. — The dog leash and cat items could belong to a couple. However, no second person's items (e.g., second phone, second set of dishes) have been observed. The phone movements are consistent with a single person. Probability remains low.
+
+## Selected evidence
+- Day 0, 08:27 — litter_scoop at bathroom_c1 (indicates cat ownership)
+- Day 2, 07:54 — phone at counter_k1 (person starts day at home, likely WFH)
+- Day 2, 16:54 — phone at entry_hook_e1 (possible quick errand or mail check)
+- Day 2, 19:59 — phone at sofa_l1 (evening relaxation with cat)
+- Day 3, 09:54 — chew_toy at pet_bed_l1 (cat plays in morning)
+- Day 4, 07:04 — phone at entry_hook_e1 (phone left at entry overnight or person leaves early)
+- Day 4, 07:49 — phone at counter_k1 (person starts day at home, but then leaves?)
+- Day 4, 12:37 — coffee_mug at counter_k1 (midday coffee, possibly from morning or quick return)
+- Day 4, 16:50 — phone at entry_hook_e1 (person returns home in late afternoon, suggests commute)
+- Day 4, 17:35 — dog_leash at sofa_l1 (dog ownership, new object)
+- Day 4, 18:40 — fork at table_d1 (dinner, single person)
+- Day 4, 21:45 — plate at cupboard_k1 (evening cleanup)
+
+## Notes
+Friday shows a different pattern: phone at entry hook at 07:04 (possibly left overnight) and then at counter at 07:49, then at entry hook again at 16:50. This suggests the person may have left home after 07:49 and returned at 16:50, indicating a commute. The dog leash at sofa at 17:35 is new and suggests dog ownership. The coffee mug at counter at 12:37 is ambiguous (could be from morning or a quick return). Need to observe weekend days (5-6) to see if routine changes. Also need to see if dog leash appears again and if any dog-related items (e.g., food bowl) appear. The cat evidence is strong; the person may have both a cat and a dog. The remote at coffee table at 22:15 is mundane and not selected.

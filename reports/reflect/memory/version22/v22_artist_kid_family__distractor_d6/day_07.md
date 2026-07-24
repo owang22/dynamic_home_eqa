@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) A single adult with a hybrid work schedule (some days at home, some days commuting) and a creative hobby (watercolor, crafts). They have a consistent evening relaxation routine (floor lamp, remote) and a tidy home. The backpack is used for commuting days; on work-from-home days, they have lunch at home and engage in hobbies in the late afternoon. The tablet on the coffee table in the morning suggests morning news or planning. Weekend mornings are relaxed with tablet at table, and evenings include a bath (bath_mat) and tablet on coffee table. Day 7 (Monday) shows a work-from-home day: tablet at table at 06:53 (morning routine), dining chair at table at 08:45 (likely breakfast), bed pillow at 10:27 (making bed), floor lamp at 17:20 (evening relaxation), bath mat at 18:35 (bath), remote at 19:45 (TV), phone at 21:45 (bedtime). No commuting events (backpack, keys) observed, consistent with a work-from-home Monday. The craft hobby is not observed today but is part of the weekly pattern. — Day 7 (Monday) shows a work-from-home day: no backpack or keys events, morning tablet and dining chair, evening relaxation (floor lamp, remote), bath, and phone at nightstand. This matches the hybrid pattern observed on previous work-from-home days (Day 1, Day 4). The single adult hypothesis is now extremely strong.
+2. (p=0.01) A couple without children, with one partner working from home some days and the other commuting. The backpack and keys events could belong to one partner commuting, while the other may work from home (lunch at home, craft hobby). The tablet in the morning could be used by the home-based partner. The bed_pillow events could be making the bed or one partner napping. Weekend events (tablet at table, picture_frame, bath_mat) could be shared activities, but no clear evidence of two people. Day 7 (Monday) shows no second-person evidence (e.g., two plates, two toothbrushes). The single plate at table, single tablet usage, and single phone at nightstand are all consistent with one person. The hypothesis remains possible but less likely. — Day 7 provides no evidence of a second person. The single tablet, single dining chair, single phone, and single bath mat usage are all consistent with one person. The hypothesis is retained with low probability.
+3. (p=0.01) A family with a school-age child, where the child uses the backpack for school and the parent works from home. The craft shelf and watercolor set could be the child's hobby. The tablet in the morning could be used by the child for school or by the parent. The doormat and keys events at 08:47 could be the parent leaving for work after the child's school drop-off? But the backpack return at 18:36 suggests the child returns from school. Weekend events (tablet at table, picture_frame, bath_mat) could be family activities, but no child-specific items (toys, children's books) observed. Day 7 (Monday) shows no school-related events (no backpack, no early morning departure). The lack of child-specific items and the consistent adult evening relaxation (floor lamp, remote) make this hypothesis the least likely. — Day 7 shows no child-specific evidence. The relaxed Monday pattern (tablet at table, floor lamp, remote, bath) is adult-oriented. The hypothesis is retained with minimal probability.
+
+## Selected evidence
+- Day 0, 08:40 — backpack at elsewhere (commuting day, not work-from-home)
+- Day 0, 18:18 — scissors at craft_shelf_s1 (craft hobby, not just chores)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation routine)
+- Day 1, 10:42 — dining_chair at table_d1 (midday meal at home, work-from-home day)
+- Day 1, 18:37 — keys at entry_hook_e1 (returning home from work/errands)
+- Day 2, 17:46 — watercolor_set at craft_shelf_s1 (creative hobby, late afternoon)
+- Day 2, 21:26 — remote at coffee_table_l1 (evening TV relaxation)
+- Day 3, 07:38 — tablet at coffee_table_l1 (morning use, possibly news/planning)
+- Day 3, 08:47 — keys at elsewhere (morning departure for work)
+- Day 3, 18:36 — backpack at backpack_rack_e1 (return from work/school, commuting day)
+- Day 4, 06:56 — bowl at table_d1 (breakfast at home, work-from-home day)
+- Day 4, 07:36 — tablet at coffee_table_l1 (morning screen time, consistent with work-from-home)
+- Day 5, 06:57 — tablet at table_d1 (weekend morning, relaxed start)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening bath, weekend self-care)
+- Day 6, 10:20 — tablet at craft_desk_s1 (weekend hobby, craft desk used)
+
+## Notes
+Day 7 (Monday) confirms a work-from-home day: no commuting events, morning tablet at table (06:53), dining chair at table (08:45) for breakfast, bed pillow at 10:27 (making bed), floor lamp at 17:20 (evening relaxation), bath mat at 18:35 (bath), remote at 19:45 (TV), phone at 21:45 (bedtime). This matches the hybrid pattern: work-from-home on Day 1, Day 4, and now Day 7. Next: observe Day 8 (Tuesday) to see if commuting pattern repeats (backpack, keys). The craft hobby was not observed today but is part of the weekly pattern. No second-person evidence. The single adult hypothesis is now extremely strong (p=0.98).

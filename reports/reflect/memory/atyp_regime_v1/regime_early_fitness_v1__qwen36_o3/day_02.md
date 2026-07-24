@@ -1,0 +1,15 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Remote worker with a dedicated home office — Consistent evening laptop usage at a specific desk (Day 1) and morning mobile device use (Day 0, 2) suggest a structured but flexible work routine. The lack of morning laptop at the desk on Day 2 might indicate a commute or mobile work start, but the evening return to the desk is strong.
+2. (p=0.08) Standard working professional (WFH hybrid) — The laptop being at 'elsewhere' in the morning (Day 2, 07:59) could imply it was taken to a commute bag or used elsewhere before returning to the home desk in the evening. This fits a hybrid model.
+3. (p=0.02) Student or non-traditional worker — Still possible, but the specific 'desk_o1' fixation and evening timing are more characteristic of professional remote work than typical student patterns, which might show more varied locations or times.
+
+## Selected evidence
+- Day 0, 06:30 — phone at counter_k1 (early morning routine, likely waking up)
+- Day 1, 17:35 — laptop at desk_o1 (establishes fixed home office; evening work/study)
+- Day 2, 07:59 — laptop at elsewhere (suggests mobile use or pre-desk activity; contradicts strict 'laptop always at desk' hypothesis)
+- Day 2, 17:51 — plate at table_d1 (dinner routine, confirms evening presence at home)
+
+## Notes
+Day 2 morning laptop at 'elsewhere' is key: did they leave for work/school? Or just use it elsewhere in the house? Need to check Day 3 (Thursday) for morning laptop location. If laptop is at desk_o1 in the morning on Day 3, it supports remote work. If still elsewhere, might support hybrid/commute. Dinner plate at 17:51 is consistent with evening routine. Bowl at sink in morning is mundane.

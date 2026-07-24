@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) A single working professional who works from home at least part of the week, with a structured evening routine (dinner, then relaxing, then preparing for bed). Weekend pattern shows a later start and relaxed activities, consistent with a professional who has a more leisurely weekend. — Day 13 (Sunday) shows a later start (salsa_container at 07:41, floor_lamp at 13:31 and 20:38, wall_clock at 16:29, phone at 21:16). The phone appears in the evening, consistent with weekend relaxation. No evidence of a second person.
+2. (p=0.01) A couple or family with one person working from home and another returning later, sharing evening chores. — No new evidence of a second person. The single phone, single doormat, and single waste_bin suggest a single resident. Probability remains low.
+3. (p=0.01) A student or freelancer with an irregular schedule, but still maintaining basic evening hygiene and comfort. — The weekday pattern remains structured (order_pad at 07:34, phone at 10:29, dining_chair at 14:07, floor_lamp at 15:25, order_pad at 22:31), which is more consistent with a professional than a student. Probability remains low.
+
+## Selected evidence
+- Day 0, 12:20 — phone at counter_k1 (midday phone presence suggests work-from-home or lunch break at home)
+- Day 1, 18:37 — wall_clock at counter_k1 (likely setting a timer for cooking, consistent with evening meal prep)
+- Day 2, 08:38 — doormat at entry_bench_e1 (morning arrival, consistent with work-from-home start)
+- Day 2, 16:06 — dining_chair at table_d1 (early dinner or snack, earlier than previous days)
+- Day 2, 21:32 — cash_box at table_d1 (unusual evening activity, possibly paying bills or organizing finances)
+- Day 3, 08:57 — dining_chair at table_d1 (morning seating, start of work-from-home day)
+- Day 4, 07:00-07:50 — bowl, waste_bin, phone, salsa_container at counter_k1 (morning breakfast routine, work-from-home start)
+- Day 4, 10:15 — salsa_container at fridge (lunch prep)
+- Day 4, 20:38 — plate at table_d1 (structured dinner routine)
+- Day 5, 07:27 — order_pad at counter_k1 (weekend morning, later start than weekday)
+- Day 5, 20:27 — bath_mat at bathroom_c1 (evening bath, consistent with weekday)
+- Day 5, 22:51 — phone at nightstand_r1 (preparing for bed, consistent with weekday)
+- Day 11, 07:34 — order_pad at counter_k1 (weekday morning start)
+- Day 11, 10:29 — phone at elsewhere (midday errand or work break)
+- Day 12, 21:27 — laptop at table_d1 (weekend evening work or personal use)
+
+## Notes
+Day 13 (Sunday) shows a later start (salsa_container at 07:41, floor_lamp at 13:31 and 20:38, wall_clock at 16:29, phone at 21:16). The phone appears in the evening, consistent with weekend relaxation. The 'elsewhere' location still needs clarification. Next day (Day 14, Monday) will help confirm the weekday pattern.

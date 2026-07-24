@@ -1,0 +1,26 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A person who works from home or has a flexible schedule, as they are home for morning coffee on weekdays and maintain a consistent dog-walking routine. The weekend events (Saturday: dog leash at 07:20, plate at table at 11:54; Sunday: plate at table at 11:58, ball at dog bed at 11:25, chew toy at mudroom at 15:15, cushion at sofa at 17:18) show a relaxed weekend pattern with a later morning walk, home lunch, and afternoon pet play, consistent with a flexible lifestyle. — The Sunday events reinforce a home-based weekend: a midday meal (plate at table at 11:58), dog toys (ball at dog bed, chew toy at mudroom) indicating pet play, and cushion at sofa suggesting relaxation. This aligns with a flexible worker who spends weekends at home with their dog.
+2. (p=0.10) A person with a standard 9-to-5 job who may work from home occasionally, as the weekday morning coffee and dog walk are early enough to allow for a commute. However, the weekend events (Saturday: dog leash at 07:20, plate at table at 11:54; Sunday: plate at table at 11:58, ball at dog bed at 11:25, chew toy at mudroom at 15:15, cushion at sofa at 17:18) show a later start and home activities, which could be a weekend pattern. The probability is reduced because the weekday coffee at 07:46 is later than typical 9-to-5 start times. — The Sunday events (home lunch, dog toys, sofa cushion) are consistent with a weekend at home, but the weekday coffee time still suggests a flexible schedule rather than a strict 9-to-5.
+3. (p=0.05) A person who is retired or not employed, as they are home for morning coffee on weekdays and have a consistent dog routine. The weekend events (Saturday: dog leash at 07:20, plate at table at 11:54; Sunday: plate at table at 11:58, ball at dog bed at 11:25, chew toy at mudroom at 15:15, cushion at sofa at 17:18) show a relaxed day, which is typical for retirees. However, the lack of other evidence (e.g., gardening, social outings) keeps this probability low. — The Sunday events are consistent with a retiree's routine, but the absence of other discriminating evidence (e.g., midday activities, social events) keeps this hypothesis low.
+
+## Selected evidence
+- Day 0, 07:37 — coffee_mug at table_d1 (morning coffee on Monday, suggests resident home at that time)
+- Day 0, 15:38 — cushion at dog_bed_l1 (indicates a dog lives in the household)
+- Day 1, 17:12 — dog_leash at leash_hook_m1 (afternoon dog walk on Tuesday, suggests a routine walk time)
+- Day 2, 15:41 — cushion at dog_bed_l1 (dog bed cushion reappears at 3:41 PM on Wednesday, consistent with dog's presence)
+- Day 3, 09:43 — blanket at dog_bed_l1 (morning pet care on Thursday, suggests consistent morning routine)
+- Day 3, 09:43 — grooming_brush at mudroom_m1 (grooming activity in the morning, further pet care evidence)
+- Day 4, 06:53 — dog_leash at mudroom_m1 (morning dog walk on Friday, suggests a morning routine)
+- Day 4, 07:46 — coffee_mug at table_d1 (morning coffee on Friday, consistent with flexible schedule)
+- Day 4, 21:47 — blanket at dog_bed_l1 (evening pet care on Friday, suggests consistent evening routine)
+- Day 5, 07:20 — dog_leash at leash_hook_m1 (later morning walk on Saturday, shows weekend relaxation)
+- Day 5, 11:54 — plate at table_d1 (midday meal at home on Saturday, suggests home lunch on weekends)
+- Day 5, 21:56 — phone at nightstand_r1 (evening phone use at nightstand, typical winding down)
+- Day 6, 11:25 — ball at dog_bed_l1 (dog toy in bed on Sunday, suggests pet play at home)
+- Day 6, 11:58 — plate at table_d1 (midday meal at home on Sunday, consistent with weekend home lunch)
+- Day 6, 15:15 — chew_toy at mudroom_m1 (dog toy in mudroom on Sunday, suggests afternoon pet play)
+
+## Notes
+Now seven days observed (Monday through Sunday). Weekend pattern confirmed: later morning walk (Saturday 07:20), home lunch both weekend days (11:54 and 11:58), and dog toys (ball, chew toy) on Sunday indicate pet play. The cushion at sofa at 17:18 on Sunday suggests relaxation. Need to observe weekdays for work-related objects (laptop, work bag) to further discriminate between hypotheses. The phone at nightstand on Saturday is a single event; look for more bedtime routine evidence. The plate events are retained because their timing (weekend midday) helps show meal patterns.

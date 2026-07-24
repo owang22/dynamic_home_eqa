@@ -1,0 +1,22 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single person with a dog, working from home or with a flexible schedule, who has a consistent morning and evening routine. — The dog bed cushion and ball in mudroom confirm a dog. Morning coffee mug at sink (08:19) and bowl at table (07:39) suggest breakfast at home. Fork at sink at 12:48 indicates lunch at home, supporting work-from-home. Evening pillow events (18:51, 21:57) show a consistent bedtime routine. The surprising bowl at table (p=0.00) and fork at sink (p=0.00) actually reinforce a home-based lunch pattern.
+2. (p=0.20) A couple with a dog, one working from home and the other possibly out during the day. — The dog and multiple meal events (bowl, coffee mug, fork) could involve two people, but no strong evidence of a second person's distinct routine. The ball in mudroom might be from a single owner. The probability is lowered because the single-person hypothesis fits better.
+3. (p=0.10) A single person without a dog, but the cushion and ball are used for other purposes (e.g., cushion as seat, ball as decoration). — The cushion at dog bed and ball in mudroom could be non-pet uses, but the dog bed itself strongly suggests a dog. This hypothesis is less likely given the consistent dog-related items.
+
+## Selected evidence
+- Day 0, 08:34 — coffee_mug at sink_k1 (morning coffee routine, likely resident)
+- Day 0, 15:03 — cushion at dog_bed_l1 (indicates a dog in the household)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, turning on lamp)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bathing routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (preparing for sleep)
+- Day 3, 07:39 — bowl at table_d1 (breakfast at home, supports work-from-home)
+- Day 3, 08:19 — coffee_mug at sink_k1 (morning coffee, consistent with Day 0)
+- Day 3, 09:26 — ball at mudroom_m1 (dog play, reinforces pet presence)
+- Day 3, 12:48 — fork at sink_k1 (lunch at home, suggests flexible schedule)
+- Day 3, 18:51 — bed_pillow at bed_r1 (early evening pillow, possibly nap or prep)
+- Day 3, 21:45 — coffee_mug at cupboard_k1 (evening coffee or cleanup, unusual timing)
+
+## Notes
+Day 3 (Thursday) shows a clear morning and lunch routine at home, supporting work-from-home. The ball in mudroom confirms dog activity. The evening coffee mug at cupboard (21:45) is surprising and may indicate a late caffeine habit or cleaning. Need to check if weekend patterns differ (e.g., later mornings, outings). The bowl at table (07:39) was surprising but now fits breakfast routine. Verify if the dog bed cushion moves again. Consider if the second pillow event (21:57) is a correction or a separate action.

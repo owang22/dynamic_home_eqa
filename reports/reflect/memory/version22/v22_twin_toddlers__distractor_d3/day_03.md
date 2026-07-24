@@ -1,0 +1,20 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Family with a young child (toddler/preschooler). The sippy cup, board book, and cushion at playmat in the morning (Thursday) confirm a child's play area. The sippy cup at cupboard in the evening suggests a clean-up routine. The dining chair at table and plate at table are consistent with family meals. The bed pillow at bed in the evening is generic but fits an adult bedtime. The doormat at entry hook on previous days (morning and afternoon) likely reflects daycare drop-off/pickup. The diaper caddy and board book at crib earlier strongly indicate a nursery. The child appears to be at home during the day (playmat events at 08:43) and has a structured routine. — The new evidence (cushion and sippy cup at playmat, board book at toy bin, sippy cup at cupboard) reinforces a full-time child with a play area and clean-up routine. The doormat pattern and child items on multiple days make the family hypothesis highly likely.
+2. (p=0.04) Single adult with a child visiting part-time. The child-related items appear on multiple days (Monday, Wednesday, Thursday), but the doormat at entry hook in the morning (Wednesday) could be the adult leaving alone. However, the playmat events on Thursday morning suggest the child is present during the day, which is less typical for part-time care unless the adult works from home or the child is not in daycare. The diaper caddy and board book at crib on Wednesday suggest a nursery, which could be a dedicated space even for a visiting child. Still possible but less likely given the frequency and variety of child items. — The new evidence (playmat events in the morning) suggests the child is present during the day, which is more consistent with full-time care. The doormat pattern could still fit a part-time schedule, but the frequency of child items reduces the probability.
+3. (p=0.01) Couple without children. The child-related items (sippy cup, diaper caddy, board book, cushion at playmat) are very strong indicators of a child, making this hypothesis highly unlikely. The new evidence (playmat, toy bin) further contradicts it. — The new evidence (playmat, toy bin) adds more child-specific objects, making this hypothesis nearly impossible. Only kept for completeness.
+
+## Selected evidence
+- Day 0, 17:16 — sippy_cup at elsewhere (sippy cup indicates a young child in the household)
+- Day 1, 16:12 — doormat at entry_hook_e1 (doormat moved to entry hook in the afternoon could indicate child returning from daycare)
+- Day 2, 08:38 — doormat at entry_hook_e1 (doormat at entry hook in the morning could indicate parent leaving with child or child leaving for daycare)
+- Day 2, 17:54 — diaper_caddy at dresser_n1 (diaper caddy is a strong child indicator, likely in a nursery)
+- Day 2, 19:08 — board_book at crib_n1 (board book at crib confirms a child's bedroom and bedtime routine)
+- Day 3, 08:43 — cushion at playmat_n1 (cushion on playmat suggests a child's play area, active in the morning)
+- Day 3, 08:43 — sippy_cup at playmat_n1 (sippy cup on playmat confirms child's morning playtime)
+- Day 3, 11:13 — board_book at toy_bin_l1 (board book in toy bin indicates child's toy storage)
+- Day 3, 21:45 — sippy_cup at cupboard_k1 (sippy cup in cupboard in the evening suggests clean-up after child's use)
+
+## Notes
+Four days observed (Mon-Thu). Child-related items appear every day (sippy cup Mon, Wed, Thu; diaper caddy Wed; board book Wed, Thu; cushion and playmat Thu). The doormat at entry hook appears on Tue (afternoon) and Wed (morning), suggesting a daycare drop-off/pickup routine. The playmat events on Thursday morning (08:43) indicate the child is at home during the day, possibly not in daycare or the parent works from home. Need to observe Friday and weekend to see if the pattern changes (e.g., doormat not used, child items still present). Also look for other child items like high chair, toys, or stroller. The bed pillow at bed in the evening (Thu) is generic but consistent with adult bedtime. The dining chair and plate at table (Thu) are generic but fit a family meal.

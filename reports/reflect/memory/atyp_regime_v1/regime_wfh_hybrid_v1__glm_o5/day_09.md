@@ -1,0 +1,26 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Single professional working regular office hours — The weekday pattern has resumed with breakfast at 07:29 (similar to previous weekdays 07:31-07:38), dinner preparation around 18:28 (consistent with weekday 18:37), and phone at nightstand at 22:32 (consistent with weekday 22:13-22:43). The weekend pattern (later breakfast, later dinner, earlier cleanup) was distinct but has now reverted to weekday patterns, strongly supporting a work-week routine.
+2. (p=0.01) Student with flexible schedule — The structured weekday pattern and distinct weekend behavior make this hypothesis unlikely. The return to weekday patterns on Monday further reduces probability.
+3. (p=0.01) Retired person with regular routine — The distinct weekend pattern and return to weekday routines on Monday don't align with a retired person who would likely have more consistent daily habits.
+
+## Selected evidence
+- Day 1, 07:38 — bowl at table (indicates breakfast routine before work/school)
+- Day 1, 17:57 — keys at entry (indicates returning from work/school at regular time)
+- Day 1, 18:23 — plate at table (indicates dinner preparation and consumption)
+- Day 1, 22:13 — phone at nightstand (indicates evening routine before bed)
+- Day 2, 08:35 — laptop at desk_o1 (suggests work-from-home or office work starting around 8:30)
+- Day 2, 09:05 — coffee_mug at sink_k1 (morning coffee routine after starting work)
+- Day 2, 12:30 — fork at table_d1 (suggests lunch break around noon)
+- Day 2, 18:37 — plate at table_d1 (dinner routine similar to previous day)
+- Day 2, 22:34 — phone at nightstand_r1 (consistent evening routine before bed)
+- Day 3, 08:26 — coffee_mug at cupboard_k1 (morning coffee routine before work)
+- Day 3, 22:43 — phone at nightstand_r1 (consistent evening routine before bed)
+- Day 4, 07:31 — bowl at table_d1 (consistent breakfast routine before work)
+- Day 4, 08:01 — coffee_mug at sink_k1 (morning coffee routine)
+- Day 4, 18:37 — plate at table_d1 (consistent dinner timing)
+- Day 4, 22:36 — phone at nightstand_r1 (consistent evening routine before bed)
+
+## Notes
+The weekend pattern (Day 5-6) showed significant differences from weekdays: later breakfast (no bowl observed until 11:51), later dinner (18:30-18:38 vs 18:37 on weekdays), and earlier cleanup (19:15-19:23 vs later on weekdays). Day 7 (Monday) has reverted to weekday patterns with breakfast at 07:29, dinner preparation around 18:28, and phone at nightstand at 22:32. This strongly supports a work-week routine with different weekend habits. The weekend pattern was consistent across both days, and the return to weekday patterns on Monday further confirms the work hypothesis. Day 8 (Tuesday) shows consistent weekday pattern with coffee_mug at sink_k1 at 08:31, laptop at desk_o1 at 18:01 (suggesting work continues after typical work hours), plate at table_d1 at 18:26 (consistent dinner timing), and coffee_mug at cupboard_k1 at 21:45 (unusual evening coffee habit). Day 9 (Wednesday) shows coffee_mug at counter_k1 at 07:34 (morning routine), coffee_mug at counter_k1 at 12:30 (unusual midday coffee habit), fork at table_d1 at 12:30 (lunch routine), fork and plate at table_d1 at 18:24 (dinner preparation).

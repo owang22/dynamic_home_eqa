@@ -1,0 +1,14 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) Working professional with regular schedule — Keys seen early morning suggest departure for work, phone movement from sofa to nightstand indicates evening routine
+2. (p=0.20) Student with flexible schedule — Limited observations so far, but early departure could indicate classes or part-time work
+3. (p=0.10) Remote worker with occasional office visits — Keys seen early but not necessarily for work commute, could be for errands or meetings
+
+## Selected evidence
+- Day 0, 05:28 — keys seen at elsewhere (early departure suggests work or regular commitment)
+- Day 0, 14:25 — phone seen at sofa_l1 (relaxing or working from home in afternoon)
+- Day 0, 21:11 — phone seen at nightstand_r1 (evening routine, preparing for sleep)
+
+## Notes
+Need more observations to confirm routine. Monitor if keys appear at consistent times, track phone location patterns throughout the week, watch for weekend behavior differences.

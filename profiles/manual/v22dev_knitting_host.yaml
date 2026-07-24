@@ -1,0 +1,136 @@
+# v22dev_knitting_host -- VERSION22 DEV household (alpha-sweep bank).
+# Persona: retired knitter who hosts a We-evening knitting circle and knits
+#   every afternoon in the armchair by the window.
+# IDIOSYNCRATIC-BUT-REALISTIC: READING_GLASSES live in the YARN BASKET next to
+#   the armchair (always where the knitting is); small SCISSORS hang on a ribbon
+#   tied to the yarn basket handle; the good TEAPOT sits out on the sideboard
+#   because it is used daily (not stored in a cupboard).
+# DIAGNOSTIC: yarn_basket_liner, knitting_needles, pattern_book, row_counter.
+# DEPENDENT targets: reading_glasses (yarn basket at 15:00), scissors (yarn
+#   basket), coffee_mug (armchair side table at 15:00 tea).
+household: v22dev_knitting_host
+status: DRAFT  # version22 authoring 2026-07-22 — needs human anchor verification
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,          room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1,   room: bedroom,  aliases: []}
+  - {id: armchair_l1,     room: living,   aliases: [window_armchair]}
+  - {id: yarn_basket_l1,  room: living,   aliases: [knitting_basket]}
+  - {id: side_table_l1,   room: living,   aliases: [armchair_table]}
+  - {id: sofa_l1,         room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living,   aliases: []}
+  - {id: sideboard_d1,    room: dining,   aliases: [buffet]}
+  - {id: table_d1,        room: dining,   aliases: [dining_table]}
+  - {id: counter_k1,      room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,     room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,         room: kitchen,  aliases: []}
+  - {id: entry_hook_e1,   room: entryway, aliases: [key_hook]}
+  - {id: bathroom_c1,     room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: retired knitter; daily 14:30 armchair knitting, We-evening knitting circle
+    schedule:
+      - {activity: sleep,           days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "22:15", end: "07:00"}
+      - {activity: breakfast,       days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "07:20", end: "08:00"}
+      - {activity: morning_errand,  days: [Mo,Th],                start: "10:00", end: "11:30"}
+      - {activity: lunch,           days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "12:15", end: "12:55"}
+      - {activity: afternoon_knit,  days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "14:30", end: "17:00"}
+      - {activity: dinner,          days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "18:15", end: "18:55"}
+      - {activity: knitting_circle, days: [We],                   start: "19:30", end: "21:30"}
+      - {activity: tv_evening,      days: [Mo,Tu,Th,Fr,Sa,Su],    start: "19:30", end: "21:45"}
+activities:
+  breakfast:
+    jitter_min: 10
+    objects: [bowl, coffee_mug, teapot]
+    during: {bowl: table_d1, coffee_mug: table_d1, teapot: table_d1}
+    after:
+      bowl:       {dest: sink_k1, p: 0.85, else: table_d1}
+      coffee_mug: {dest: sink_k1, p: 0.7, else: table_d1}
+      teapot:     {dest: sideboard_d1, p: 0.9, else: table_d1}   # lives out on the sideboard
+  morning_errand:
+    jitter_min: 20
+    objects: [keys, phone, tote_bag]
+    after:
+      keys:     {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      phone:    {dest: side_table_l1, p: 0.5, else: counter_k1}
+      tote_bag: {dest: entry_hook_e1, p: 0.9}
+  lunch:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  afternoon_knit:
+    jitter_min: 20
+    objects: [knitting_needles, pattern_book, row_counter, reading_glasses,
+              scissors, coffee_mug, teapot]
+    during: {knitting_needles: armchair_l1, pattern_book: side_table_l1,
+             row_counter: side_table_l1, reading_glasses: armchair_l1,
+             scissors: yarn_basket_l1, coffee_mug: side_table_l1,
+             teapot: side_table_l1}
+    after:
+      knitting_needles: {dest: yarn_basket_l1, p: 0.9, else: armchair_l1}
+      pattern_book:     {dest: yarn_basket_l1, p: 0.8, else: side_table_l1}
+      row_counter:      {dest: yarn_basket_l1, p: 0.85, else: side_table_l1}
+      reading_glasses:  {dest: yarn_basket_l1, p: 0.85, else: side_table_l1}  # into the basket
+      scissors:         {dest: yarn_basket_l1, p: 0.95}          # on the ribbon
+      coffee_mug:       {dest: sink_k1, p: 0.7, else: side_table_l1}
+      teapot:           {dest: sideboard_d1, p: 0.85, else: side_table_l1}
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  knitting_circle:
+    jitter_min: 15
+    objects: [knitting_needles, pattern_book, reading_glasses, teapot, coffee_mug]
+    during: {knitting_needles: sofa_l1, pattern_book: coffee_table_l1,
+             reading_glasses: armchair_l1, teapot: coffee_table_l1,
+             coffee_mug: coffee_table_l1}
+    after:
+      knitting_needles: {dest: yarn_basket_l1, p: 0.85, else: sofa_l1}
+      pattern_book:     {dest: yarn_basket_l1, p: 0.8, else: coffee_table_l1}
+      reading_glasses:  {dest: yarn_basket_l1, p: 0.8, else: side_table_l1}
+      teapot:           {dest: sink_k1, p: 0.7, else: sideboard_d1}
+      coffee_mug:       {dest: sink_k1, p: 0.8, else: coffee_table_l1}
+  tv_evening:
+    jitter_min: 20
+    objects: [remote, phone, reading_glasses]
+    during: {remote: armchair_l1, phone: side_table_l1, reading_glasses: armchair_l1}
+    after:
+      remote:          {dest: side_table_l1, p: 0.6, else: armchair_l1}
+      phone:           {dest: nightstand_r1, p: 0.8, else: side_table_l1}
+      reading_glasses: {dest: yarn_basket_l1, p: 0.7, else: nightstand_r1}
+placements:
+  # DIAGNOSTIC
+  yarn_basket_liner: {home: yarn_basket_l1, volatility_class_hint: static}
+  knitting_needles:  {home: yarn_basket_l1, volatility_class_hint: high}
+  pattern_book:      {home: yarn_basket_l1}
+  row_counter:       {home: yarn_basket_l1}
+  # DEPENDENT targets (idiosyncratic homes)
+  reading_glasses: {home: yarn_basket_l1, volatility_class_hint: high} # live with the knitting
+  scissors:        {home: yarn_basket_l1, volatility_class_hint: high} # ribbon on the basket
+  coffee_mug:      {home: cupboard_k1, volatility_class_hint: high}
+  # ordinary
+  bowl:     {home: cupboard_k1}
+  plate:    {home: cupboard_k1}
+  fork:     {home: cupboard_k1}
+  teapot:   {home: sideboard_d1}
+  remote:   {home: side_table_l1}
+  phone:    {home: nightstand_r1, volatility_class_hint: high}
+  keys:     {home: entry_hook_e1, p_misplace: 0.06, misplace_set: [counter_k1, side_table_l1]}
+  tote_bag: {home: entry_hook_e1}
+  # STATIC DISTRACTORS
+  dining_chair:  {home: table_d1,        volatility_class_hint: static}
+  bed_pillow:    {home: bed_r1,          volatility_class_hint: static}
+  wall_clock:    {home: counter_k1,      volatility_class_hint: static}
+  floor_lamp:    {home: armchair_l1,     volatility_class_hint: static}
+  doormat:       {home: entry_hook_e1,   volatility_class_hint: static}
+  waste_bin:     {home: counter_k1,      volatility_class_hint: static}
+  picture_frame: {home: sideboard_d1,    volatility_class_hint: static}
+  bath_mat:      {home: bathroom_c1,     volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9.

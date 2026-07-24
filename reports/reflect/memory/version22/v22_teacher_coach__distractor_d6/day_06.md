@@ -1,0 +1,26 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single working professional with a school-age child, who has a structured weekday routine and a relaxed weekend. — Weekday pattern (child packs laptop, both leave at 07:31, child returns at 16:31) is consistent. Saturday shows no early departures, no school items, and relaxed activities (picture frame, coffee mug, phone at nightstand late). Sunday also shows a relaxed day: no school/work items, only household objects (floor lamp, waste bin, bath mat, coffee mug, plate, wall clock, thermos) at typical weekend times. This strongly supports a single parent with a child who has school weekdays and a calm weekend.
+2. (p=0.07) A person who works from home or has a flexible schedule, with a school-age child, but weekend evidence shows a more relaxed routine. — The weekday pattern (early departures) contradicts a flexible schedule, but the weekend's late start (08:34 picture frame) and lack of work items could be consistent with a parent who works from home on weekdays but has a child's school schedule. However, the child's school items (laptop, grade_folder) leave early, suggesting the child goes to school, not the parent working from home. This hypothesis is weakened further by Sunday's relaxed pattern.
+3. (p=0.03) A couple or family with one adult and one child, but no evidence of a second adult; weekend shows only one adult's activities. — No evidence of a second adult on Saturday or Sunday (only one phone, one coffee mug, etc.). The single parent hypothesis remains more parsimonious.
+
+## Selected evidence
+- Day 0, 07:30 — thermos at elsewhere (leaves early for work, likely parent)
+- Day 1, 21:59 — grade_folder at school_bag_e1 (school item, child in household)
+- Day 2, 07:31 — whistle at elsewhere (morning departure for sports, child's activity)
+- Day 3, 07:27 — track_duffel at elsewhere (sports gear, consistent with child's sports)
+- Day 3, 18:50 — track_duffel at school_bag_e1 (child returns from sports, stores gear)
+- Day 4, 06:22 — laptop at school_bag_e1 (child packs laptop for school)
+- Day 4, 07:31 — grade_folder at elsewhere (child leaves for school)
+- Day 4, 07:31 — keys at elsewhere (parent leaves for work)
+- Day 4, 16:31 — whistle at entry_hook_e1 (child returns from school)
+- Day 5, 08:34 — picture_frame at coffee_table_l1 (weekend relaxed morning, no early departure)
+- Day 5, 10:18 — coffee_mug at kitchen_table_k1 (leisurely weekend breakfast)
+- Day 5, 22:29 — phone at nightstand_r1 (late night, likely parent's bedtime)
+- Day 6, 10:57 — bath_mat at bathroom_c1 (Sunday morning routine, no school/work)
+- Day 6, 11:04 — coffee_mug at sink_k1 (post-breakfast cleanup, relaxed weekend)
+- Day 6, 20:12 — thermos at kitchen_table_k1 (evening use, possibly parent preparing for next day)
+
+## Notes
+Sunday (day 6) shows a relaxed day: no school or work items, only household objects (floor lamp, waste bin, bath mat, coffee mug, plate, wall clock, thermos) at typical weekend times. The thermos appears at 20:12 on the kitchen table, possibly being prepared for Monday morning. No evidence of a second adult. Next: observe Monday (day 7) to confirm the weekday pattern resumes, and check for any additional family members or activities.

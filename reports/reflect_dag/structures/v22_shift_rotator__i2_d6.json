@@ -1,0 +1,127 @@
+{
+ "persona": "Single adult with a regular 9-to-5 job, likely working from home or hybrid, who keeps a tidy home and has a consistent evening routine. The job requires safety gear (hi-vis vest) and involves early starts (05:00) and variable return times (15:01, 23:02). Day 10 (Thursday) shows hi-vis vest leaving at 13:18, which is earlier than usual but still within a work schedule. The bed_pillow at bed at 13:30 suggests the resident made the bed or tidied up after a nap, consistent with a single person. The evening routine (wall_clock, waste_bin) continues. No evidence of a second person. Day 11 (Friday) shows phone at entry_hook at 04:50 and then elsewhere at 05:05, consistent with early departure for work. The dining_chair at table at 14:07 suggests a home office setup after work. The waste_bin events at 15:35 and 18:45 indicate evening cleanup. The bed_pillow at bed at 19:49 suggests making the bed or tidying. The fork at cupboard at 21:45 suggests putting away dishes. No second-person evidence. Day 12 (Saturday) shows a relaxed weekend pattern: picture_frame at coffee_table (multiple times, likely decoration or personal item), wall_clock at counter (midday, not evening cleanup), dining_chair at table (afternoon, possibly home office or dining), phone at nightstand at 21:01 (evening, likely bedtime). No work-related items (hi-vis vest, work_badge) observed, consistent with a day off. Day 13 (Sunday) shows a relaxed weekend pattern: bath_mat at bathroom (morning, likely after shower), floor_lamp at sofa (afternoon and evening, relaxing), wall_clock at counter (afternoon, not evening cleanup), dining_chair at table (afternoon, possibly home office or dining), fork at sink (evening, washing dishes), doormat at entry_hook (evening, possibly after a walk or delivery). No work-related items observed, consistent with a day off.",
+ "llm": {
+  "persona": "Single adult with a regular 9-to-5 job, likely working from home or hybrid, who keeps a tidy home and has a consistent evening routine. The job requires safety gear (hi-vis vest) and involves early starts (05:00) and variable return times (15:01, 23:02). Day 10 (Thursday) shows hi-vis vest leaving at 13:18, which is earlier than usual but still within a work schedule. The bed_pillow at bed at 13:30 suggests the resident made the bed or tidied up after a nap, consistent with a single person. The evening routine (wall_clock, waste_bin) continues. No evidence of a second person. Day 11 (Friday) shows phone at entry_hook at 04:50 and then elsewhere at 05:05, consistent with early departure for work. The dining_chair at table at 14:07 suggests a home office setup after work. The waste_bin events at 15:35 and 18:45 indicate evening cleanup. The bed_pillow at bed at 19:49 suggests making the bed or tidying. The fork at cupboard at 21:45 suggests putting away dishes. No second-person evidence. Day 12 (Saturday) shows a relaxed weekend pattern: picture_frame at coffee_table (multiple times, likely decoration or personal item), wall_clock at counter (midday, not evening cleanup), dining_chair at table (afternoon, possibly home office or dining), phone at nightstand at 21:01 (evening, likely bedtime). No work-related items (hi-vis vest, work_badge) observed, consistent with a day off. Day 13 (Sunday) shows a relaxed weekend pattern: bath_mat at bathroom (morning, likely after shower), floor_lamp at sofa (afternoon and evening, relaxing), wall_clock at counter (afternoon, not evening cleanup), dining_chair at table (afternoon, possibly home office or dining), fork at sink (evening, washing dishes), doormat at entry_hook (evening, possibly after a walk or delivery). No work-related items observed, consistent with a day off.",
+  "activity_objects": {
+   "sleep": [
+    "phone"
+   ],
+   "work_departure": [
+    "work_badge",
+    "hi_vis_vest",
+    "keys",
+    "phone"
+   ],
+   "meal": [
+    "fork",
+    "plate",
+    "coffee_mug",
+    "thermos"
+   ],
+   "leisure": [
+    "phone"
+   ]
+  },
+  "atypical_activities": [],
+  "source": "llm"
+ },
+ "no_persona": {
+  "persona": "(no persona inferred)",
+  "activity_objects": {
+   "sleep": [
+    "phone"
+   ],
+   "work_departure": [
+    "work_badge",
+    "hi_vis_vest",
+    "keys",
+    "phone",
+    "thermos"
+   ],
+   "meal": [
+    "fork",
+    "plate",
+    "coffee_mug"
+   ],
+   "leisure": [
+    "coffee_mug"
+   ]
+  },
+  "atypical_activities": [],
+  "source": "llm"
+ },
+ "scrambled": {
+  "persona": "Single adult with a regular 9-to-5 job, likely working from home or hybrid, who keeps a tidy home and has a consistent evening routine. The job requires safety gear (hi-vis vest) and involves early starts (05:00) and variable return times (15:01, 23:02). Day 10 (Thursday) shows hi-vis vest leaving at 13:18, which is earlier than usual but still within a work schedule. The bed_pillow at bed at 13:30 suggests the resident made the bed or tidied up after a nap, consistent with a single person. The evening routine (wall_clock, waste_bin) continues. No evidence of a second person. Day 11 (Friday) shows phone at entry_hook at 04:50 and then elsewhere at 05:05, consistent with early departure for work. The dining_chair at table at 14:07 suggests a home office setup after work. The waste_bin events at 15:35 and 18:45 indicate evening cleanup. The bed_pillow at bed at 19:49 suggests making the bed or tidying. The fork at cupboard at 21:45 suggests putting away dishes. No second-person evidence. Day 12 (Saturday) shows a relaxed weekend pattern: picture_frame at coffee_table (multiple times, likely decoration or personal item), wall_clock at counter (midday, not evening cleanup), dining_chair at table (afternoon, possibly home office or dining), phone at nightstand at 21:01 (evening, likely bedtime). No work-related items (hi-vis vest, work_badge) observed, consistent with a day off. Day 13 (Sunday) shows a relaxed weekend pattern: bath_mat at bathroom (morning, likely after shower), floor_lamp at sofa (afternoon and evening, relaxing), wall_clock at counter (afternoon, not evening cleanup), dining_chair at table (afternoon, possibly home office or dining), fork at sink (evening, washing dishes), doormat at entry_hook (evening, possibly after a walk or delivery). No work-related items observed, consistent with a day off.",
+  "activity_objects": {
+   "sleep": [
+    "thermos"
+   ],
+   "work_departure": [
+    "hi_vis_vest",
+    "keys",
+    "phone",
+    "fork",
+    "plate",
+    "coffee_mug",
+    "phone"
+   ],
+   "meal": [
+    "phone",
+    "work_badge"
+   ]
+  },
+  "atypical_activities": [],
+  "source": "scrambled"
+ },
+ "contrast": 0.38490625,
+ "cf_details": [
+  {
+   "obs": "Day 0, 05:24 \u2014 phone seen at elsewhere",
+   "p_fact": 0.85,
+   "p_cf": 0.95,
+   "gap": 1.21
+  },
+  {
+   "obs": "Day 0, 18:52 \u2014 fork seen at sink_k1",
+   "p_fact": 0.95,
+   "p_cf": 0.95,
+   "gap": 0.0
+  },
+  {
+   "obs": "Day 1, 22:39 \u2014 keys seen at counter_k1",
+   "p_fact": 0.95,
+   "p_cf": 0.95,
+   "gap": 0.0
+  },
+  {
+   "obs": "Day 1, 22:39 \u2014 thermos seen at sink_k1",
+   "p_fact": 0.8,
+   "p_cf": 0.7,
+   "gap": 0.539
+  },
+  {
+   "obs": "Day 2, 05:07 \u2014 work_badge seen at elsewhere",
+   "p_fact": 0.95,
+   "p_cf": 0.15,
+   "gap": 4.679
+  },
+  {
+   "obs": "Day 2, 15:05 \u2014 work_badge seen at entry_hook_e1",
+   "p_fact": 0.95,
+   "p_cf": 0.05,
+   "gap": 5.889
+  },
+  {
+   "obs": "Day 2, 19:13 \u2014 coffee_mug seen at desk_o1",
+   "p_fact": 0.95,
+   "p_cf": 0.95,
+   "gap": 0.0
+  },
+  {
+   "obs": "Day 2, 21:45 \u2014 fork seen at cupboard_k1",
+   "p_fact": 0.95,
+   "p_cf": 0.95,
+   "gap": 0.0
+  }
+ ]
+}

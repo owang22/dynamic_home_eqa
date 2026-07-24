@@ -1,0 +1,20 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.20) A single adult with a regular 9-to-5 job, commuting to work. — The early badge departure on day 2 (05:07) and return at 15:05 fit a standard workday, but day 3's late return (23:02) and the hi-vis vest contradict a simple 9-to-5. Day 4 shows a very early departure (05:14) with vest, suggesting a shift pattern. This hypothesis is now less likely.
+2. (p=0.75) A single adult working shift work (likely construction, warehouse, or security) with a rotating schedule. — Day 3: work_badge and hi_vis_vest return at 23:02. Day 4: vest and keys leave at 05:14, badge and phone at entry_hook at 04:59. This pattern strongly suggests early morning or night shifts. The singular items (fork, plate, pillow) indicate a single occupant. The waste_bin at counter at 07:09 and 08:41 may be morning cleanup before or after shift. The picture_frame at coffee_table at 18:34 suggests evening relaxation.
+3. (p=0.05) A couple or family with at least one adult, but the single items (fork, plate, pillow) and single badge suggest a single occupant. — No new evidence of multiple residents. All objects remain singular. This hypothesis is nearly ruled out.
+
+## Selected evidence
+- Day 2, 05:07 — work_badge at elsewhere (leaving for work early morning, confirms commute)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (returning from work in mid-afternoon, consistent with standard workday)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (safety vest, suggests manual or outdoor job)
+- Day 3, 23:02 — work_badge at locker_shelf_e1 (returning from work very late, shift work pattern)
+- Day 4, 04:59 — phone at entry_hook_e1 (early morning preparation for work)
+- Day 4, 04:59 — work_badge at entry_hook_e1 (badge ready for departure)
+- Day 4, 05:14 — hi_vis_vest at elsewhere (leaving for work with safety vest, early shift)
+- Day 4, 05:14 — keys at elsewhere (leaving home early morning)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (evening relaxation, personal item)
+
+## Notes
+Day 4 (Friday) shows a very early departure (05:14) with hi-vis vest, consistent with a morning shift. The waste_bin at counter at 07:09 and 08:41 may be morning chores. The picture_frame at coffee_table at 18:34 suggests evening downtime. Weekend days (5-6) will be crucial: if the resident works weekends or has a different pattern, it will clarify shift schedule. Also look for laptop at desk during midday to confirm work-from-home, or suitcase leaving for days to indicate travel. The singular items (fork, plate, pillow) still point to a single adult. The shift pattern appears to rotate: day 2 early departure and mid-afternoon return, day 3 late return, day 4 early departure. Need to confirm if this is a regular rotation or irregular.

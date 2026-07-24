@@ -1,0 +1,26 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Single professional working from home, maintains regular coffee routine at desk — Multiple coffee mug movements to desk suggest remote work. Regular meal timing indicates structured work schedule. Consistent morning routine across weekdays and distinct weekend pattern (later meals, no commute) strongly supports this hypothesis.
+2. (p=0.01) Graduate student with flexible schedule — Desk usage could be for studying, but the regularity suggests more structured work pattern than typical student. Weekend activities don't align with typical student irregular schedule.
+3. (p=0.01) Retired person with active social life — Early morning activity but limited daytime movements could indicate retirement, though desk usage pattern and regular work hours suggest otherwise. Weekend activities don't show increased social engagements typical of retired person.
+
+## Selected evidence
+- Day 0, 07:36 — coffee_mug at counter_k1 (early morning routine suggests regular schedule)
+- Day 0, 08:23 — coffee_mug at desk_o1 (likely working from home)
+- Day 0, 12:30 — fork at table_d1 (lunch break at regular work time)
+- Day 1, 07:38 — coffee_mug at counter_k1 (consistent morning routine on second day)
+- Day 1, 08:26 — laptop at elsewhere (confirms work-from-home setup)
+- Day 1, 17:57 — keys at entry_hook_e1 (return from work at regular time)
+- Day 2, 08:35 — laptop at desk_o1 (third consecutive day of early desk work)
+- Day 3, 18:07 — keys at entry_hook_e1 (consistent return time from work)
+- Day 4, 07:31 — coffee_mug at counter_k1 (consistent morning routine on fifth weekday)
+- Day 4, 12:40 — fork at table_d1 (consistent lunch timing on fifth weekday)
+- Day 4, 20:06 — remote at sofa_l1 (evening entertainment routine)
+- Day 4, 22:36 — phone at nightstand_r1 (consistent bedtime routine)
+- Day 5, 11:51 — keys at counter_k1 (keys not taken on weekend, suggesting no work commute)
+- Day 5, 20:14 — phone at sofa_l1 (weekend relaxation pattern differs from weekday bedtime routine)
+- Day 6, 23:08 — phone at nightstand_r1 (consistent bedtime routine even on weekend)
+
+## Notes
+Consistent morning coffee routine and laptop usage support work-from-home hypothesis. Regular return time from work (keys at entry at 17:57-18:07) suggests 9-5 schedule. Weekend activities show different pattern: keys not taken (no commute), later phone placement, and extended entertainment time. Weekend meals occur later than weekday (18:30-19:00 vs 12:30), supporting work-from-home hypothesis. Sunday follows Saturday pattern with later dinner and consistent bedtime, confirming weekend routine distinction from weekdays. No travel-related objects observed yet.

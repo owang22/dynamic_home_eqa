@@ -1,0 +1,26 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single person with a pet cricket who works from home on weekdays but has a more relaxed weekend routine, with later morning starts and less structured meal times. The weekday pattern includes a midday break at home and evening return (keys at 18:25), but weekend events show later activities (coffee at 07:28, phone at counter at 15:48, phone at nightstand at 22:42) and less movement of work-related items. Sunday observations confirm pet care (cricket_tub at shelf at 08:51, scissors at terrarium at 08:01) and a relaxed day with multiple wall_clock adjustments (cleaning/organizing) and a later plate at table (18:46) suggesting a late dinner. The coffee_mug at sink at 07:57 is surprising but consistent with a weekend morning routine. — Pet care evidence is strong and consistent across weekdays and weekends. Weekend pattern shows later starts, less structured meal times, and more home organization. The surprising coffee_mug at sink and plate at table fit a relaxed Sunday schedule.
+2. (p=0.20) A person who maintains a tidy home with regular adjustments of decorative and functional items, especially on weekends. The picture frame moved twice (08:34 and 18:45 on Saturday, and again at 07:48 on Sunday), wall clock moved multiple times (09:01, 12:31, 17:26 on Saturday, and five times on Sunday between 12:18 and 18:09), and waste bin moved several times (09:01, 09:44, 16:32 on Saturday, and at 10:53 on Sunday) suggest a weekend cleaning or organizing routine. The bath mat at bathroom at 12:41 and 20:27 on Saturday, and at 10:57 and 19:02 on Sunday indicates a regular bathing schedule. — The high frequency of object movements on both weekend days, especially the wall clock and waste bin, suggests a weekend cleaning or redecorating activity. This is consistent with a person who values tidiness, but it is less distinctive than the pet care and work-from-home pattern.
+3. (p=0.10) A person with a consistent evening wind-down routine, as seen by the bed pillow at bed at 13:55 (afternoon nap or bed prep) and phone at nightstand at 22:42 (preparing for sleep) on Saturday. The remote at coffee table at 22:42 suggests evening TV or relaxation. Sunday shows a later plate at table at 18:46 (dinner) and bath mat at bathroom at 19:02 (evening bath), indicating a similar wind-down pattern but with a later dinner time. This pattern is less specific than the others. — The evening wind-down routine is present but not as distinctive as the pet care or cleaning hypotheses. The Sunday observations (late dinner, evening bath) support a consistent but less unique pattern.
+
+## Selected evidence
+- Day 0, 08:39 — floor_lamp at sofa_l1 (morning relaxation, work-from-home indicator)
+- Day 0, 12:30 — dining_chair at table_d1 (midday meal at home, not work desk)
+- Day 3, 08:40 — cricket_tub at cricket_shelf_s1 (pet cricket moved to shelf, confirms pet care)
+- Day 3, 08:40 — scissors at cricket_shelf_s1 (pet care task, e.g., cutting food)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday break on weekday)
+- Day 3, 18:25 — keys at entry_hook_e1 (returning home from work, suggests work outside home or errand)
+- Day 5, 07:28 — coffee_mug at table_d1 (later weekend morning start, surprising)
+- Day 5, 15:48 — phone at counter_k1 (weekend afternoon activity, surprising)
+- Day 5, 22:42 — phone at nightstand_r1 (evening wind-down, surprising)
+- Day 6, 07:48 — picture_frame at coffee_table_l1 (weekend decor adjustment, consistent with Saturday)
+- Day 6, 07:57 — coffee_mug at sink_k1 (surprising, but fits weekend morning routine)
+- Day 6, 08:01 — scissors at terrarium_stand_s1 (pet care task, confirms weekend pet routine)
+- Day 6, 08:51 — cricket_tub at cricket_shelf_s1 (pet care, consistent with weekday pattern)
+- Day 6, 18:46 — plate at table_d1 (late dinner on Sunday, surprising but consistent with relaxed weekend)
+- Day 6, 19:02 — bath_mat at bathroom_c1 (evening bath, part of wind-down routine)
+
+## Notes
+Sunday observations confirm pet care routine continues on weekends (cricket_tub, scissors). The coffee_mug at sink at 07:57 is surprising (p=0.00) but fits a later weekend morning. The plate at table at 18:46 is surprising (p=0.00) and suggests a late dinner on Sunday. Multiple wall_clock movements (5 times) and waste_bin movement (once) indicate continued weekend cleaning/organizing. No keys observed on Sunday, suggesting the resident stayed home. Need to verify if the phone appears on Sunday (not observed today). Day-of-week pattern: weekday vs. weekend differences are becoming clearer; pet care is consistent across all days; work-related items (keys, floor lamp) show weekday pattern; weekend has more home organization and later meal times. Open question: does the resident leave home on weekends? (No keys observed on Saturday or Sunday so far.) Also, the cricket tub was not observed on Saturday but was on Sunday; need to check if pet care is daily or every other day.

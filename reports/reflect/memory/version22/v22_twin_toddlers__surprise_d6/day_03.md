@@ -1,0 +1,21 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A family with a young child (toddler/preschooler) and a structured daily routine. The child engages in play (playmat, cushion, board book) and has a sippy cup. The parent works from home or is home during the day (phone on counter in morning). Evening wind-down includes lamp, pillow, and bath mat. — Today's events strongly confirm a young child: cushion and sippy cup on playmat at 08:43, board book in toy bin at 11:13, and sippy cup in cupboard at 21:45 (likely cleaned and stored). The structured morning (doormat, dining chair) and evening (lamp, pillow) align with a family routine. The surprise events (playmat, toy bin, plate at table) are consistent with a child's day.
+2. (p=0.07) A single adult with a pet (e.g., dog) that might explain some items, but the sippy cup and board book are strong child indicators. Unlikely. — The sippy cup and board book are not typical for a pet. The doormat and dining chair could be for a pet, but the playmat and cushion suggest a child's play area. This hypothesis is weakening.
+3. (p=0.03) A couple without children, but the child items could be for a visiting niece/nephew or a hobby (e.g., board book for art). However, the consistent daily pattern (playmat, sippy cup) suggests a resident child. — The repeated appearance of child-specific items at consistent times (morning play, evening storage) makes a visitor explanation less likely. The structured routine is more typical of a family.
+
+## Selected evidence
+- Day 0, 08:54 — phone at counter_k1 (parent starts day, possibly working from home)
+- Day 0, 17:16 — sippy_cup at elsewhere (young child present, likely toddler)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, reading or TV)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath routine, likely child bath)
+- Day 3, 08:43 — cushion at playmat_n1 (child play area set up in morning)
+- Day 3, 08:43 — sippy_cup at playmat_n1 (child has drink during play)
+- Day 3, 11:13 — board_book at toy_bin_l1 (child reads/plays with books, stored in toy bin)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday lamp use, possibly reading or ambient light)
+- Day 3, 17:40 — plate at table_d1 (dinner preparation or meal)
+- Day 3, 21:45 — sippy_cup at cupboard_k1 (sippy cup cleaned and stored at night)
+
+## Notes
+Day 3 (Thursday) confirms a child's morning play routine (playmat, cushion, sippy cup, board book) and evening storage (sippy cup in cupboard). The plate at table at 17:40 suggests dinner time. Doormat seen twice (07:57, 09:02) may indicate morning cleaning or entry use. Need to check if weekend patterns differ (e.g., later wake-up, different activities). Also verify if phone appears on counter every weekday morning. The surprise events were all consistent with a family with a young child, so the belief model should update to expect these patterns.

@@ -1,0 +1,21 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.50) A person who works from home or has a flexible schedule, with a structured daily routine including meals at home and evening tidying. — Consistent midday meals (Day 0, Day 2) and evening cleanup (Day 2, Day 3) support WFH. The bowl at sink at 07:46 suggests breakfast at home, reinforcing home-based work. The phone at sofa at 13:46 indicates a break or leisure time, typical of flexible work.
+2. (p=0.35) A person who uses reading glasses and has a desk-based work setup, likely older or with presbyopia, and possibly a knowledge worker. — Reading glasses at coffee table (Day 2) and now at desk (Day 3) suggest regular use for near work. Coffee mug at desk (Day 3) indicates working at desk in the morning. This pattern aligns with a professional who works from home.
+3. (p=0.15) A person who reads a physical newspaper in the morning, but not daily; possibly a weekend-only habit or irregular. — Newspaper at coffee table only on Day 0 (Monday). No newspaper on Day 2 or Day 3. This suggests it's not a daily habit; may appear on weekends or occasionally. The probability is reduced as evidence accumulates against daily reading.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading, traditional media; not repeated on Day 2 or 3, suggests irregular habit)
+- Day 0, 12:45 — plate at sink_k1 (lunch at home, flexible schedule)
+- Day 2, 14:03 — reading_glasses at coffee_table_l1 (presbyopia, likely older resident)
+- Day 2, 18:55 — fork at sink_k1 (evening meal cleanup, home dinner routine)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (evening tidying, structured routine)
+- Day 3, 07:46 — bowl at sink_k1 (breakfast at home, morning routine; surprising but fits WFH pattern)
+- Day 3, 07:46 — reading_glasses at desk_o1 (desk work in morning, consistent with WFH knowledge worker)
+- Day 3, 09:01 — coffee_mug at desk_o1 (morning coffee at desk, reinforces desk work)
+- Day 3, 13:46 — phone at sofa_l1 (afternoon break or leisure, flexible schedule)
+- Day 3, 21:45 — fork at cupboard_k1 (evening cleanup, consistent tidy habit)
+
+## Notes
+Surprising events today (bowl at sink, reading_glasses at desk, coffee_mug at desk) were unexpected by the model but actually reinforce the WFH and desk-work hypotheses. The bowl at sink at 07:46 suggests breakfast, which was not previously observed; this adds a morning meal to the routine. The reading_glasses and coffee_mug at desk indicate a morning work session, strengthening the knowledge-worker persona. No newspaper today confirms it's not daily. Need to observe weekend (Day 5-6) to see if newspaper appears or if resident leaves home. Day-of-week pattern: lunch at home on Monday, Wednesday, Thursday suggests regular WFH; evening cleanup consistent. Phone at sofa at 13:46 may indicate a lunch break or phone call; could be a daily pattern to verify.

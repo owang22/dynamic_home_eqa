@@ -1,0 +1,15 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Remote worker with standard 9-5-ish schedule — Consistent morning desk presence (Day 2) and late-night bedroom phone placement (Day 2, Day 3) strongly support a stable diurnal rhythm typical of remote employment. The 'elsewhere' location for laptop/phone at 08:26 on Day 3 suggests they are out of the house or in a different room, consistent with leaving for work or a commute, unlike a student who might linger.
+2. (p=0.05) Student with irregular study hours — Still possible but less likely. The strict timing of the phone to the nightstand and the early morning activity (08:26) is more structured than typical student behavior. However, if the 'elsewhere' location implies a library or cafe, it could still fit a disciplined student.
+3. (p=0.05) Shift worker — Highly unlikely. The consistent 22:30-22:45 phone-to-nightstand pattern across two days indicates a regular sleep schedule, which contradicts rotating or night shifts.
+
+## Selected evidence
+- Day 2, 08:35 — laptop at desk_o1 (confirms work/study activity at workspace, strengthens remote worker hypothesis)
+- Day 2, 22:34 — phone at nightstand_r1 (confirms bedroom as sleep location, rules out sofa sleeping, establishes night routine)
+- Day 3, 08:26 — laptop/phone at elsewhere (suggests departure from home or significant movement, consistent with leaving for work/school)
+- Day 3, 22:43 — phone at nightstand_r1 (confirms return to bedroom for sleep, reinforces stable diurnal rhythm)
+
+## Notes
+Discarded Day 3, 08:26 coffee_mug at cupboard_k1 as mundane (likely cleaning up after morning routine). Discarded Day 3, 18:37 fork at table_d1 as mundane dining event. Key observation: Laptop and phone were not at the desk/nightstand at 08:26 on Day 3, suggesting the resident left the house or moved to a different area before the typical 'desk start' time of Day 2. This might indicate a commute or a different morning routine. Need to check if laptop returns to desk_o1 later in Day 3 to see if they work from home in the afternoon or if the 'elsewhere' location was a temporary spot. Verify if the 08:26 'elsewhere' location is consistent with leaving the house.

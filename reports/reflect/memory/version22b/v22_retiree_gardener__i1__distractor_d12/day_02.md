@@ -1,0 +1,26 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single person with a flexible schedule who works from home or is retired, with a consistent morning routine (floor lamp at sofa, phone on patio) and occasional midday naps (bed_pillow movements). The absence of laptop or work documents suggests a non-desk job or retired status. — The floor lamp at sofa on Day 0, 1, and 2 (09:08) and phone on patio (09:08) and sofa (13:50) are consistent. Bed_pillow at bed on Day 2 (13:52, 16:47) supports napping. No work items observed. The doormat events (08:38, 13:34) may indicate arrivals/departures but not a strict 9-to-5.
+2. (p=0.15) A person who values comfort and relaxation, with multiple lamp and picture frame adjustments, and a habit of moving the dining chair multiple times per day (possibly for meals or reading). — Picture frame moved twice on Day 2 (12:05, 15:08) and dining chair at table at 16:06 and 21:06. Floor lamp at sofa daily. These suggest a focus on ambiance and comfort, but are not unique to a specific work schedule.
+3. (p=0.05) A person who eats meals at home regularly, with lunch and dinner dishes (plate at sink on Day 0 and 1, but no plate on Day 2 yet; coffee mug at cupboard at 21:45 suggests evening coffee). — No plate event on Day 2, but coffee mug at cupboard at 21:45 and fork at cupboard at same time indicate evening kitchen activity. The pattern is weak; may be a non-daily meal habit.
+
+## Selected evidence
+- Day 0, 07:32 — coffee_mug at patio_table_p1 (morning coffee outdoors, suggests a morning routine)
+- Day 0, 08:39 — floor_lamp at sofa_l1 (lamp moved to sofa, likely for reading or ambiance)
+- Day 0, 12:30 — dining_chair at table_d1 (chair moved to table for lunch)
+- Day 0, 12:33 — plate at sink_k1 (lunch dishes, indicates midday meal at home)
+- Day 0, 12:57 — bed_pillow at bed_r1 (pillow moved to bed, possibly for a nap)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening lamp adjustment, routine)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (bath mat moved, likely after shower)
+- Day 0, 20:54 — bed_pillow at bed_r1 (pillow moved to bed for sleep)
+- Day 1, 07:43 — floor_lamp at sofa_l1 (lamp at sofa again, consistent morning routine)
+- Day 1, 11:18 — bed_pillow at bed_r1 (pillow moved to bed, possible nap)
+- Day 1, 13:50 — phone at sofa_l1 (phone on sofa, suggests relaxation or break)
+- Day 1, 18:51 — plate at sink_k1 (dinner dishes, evening meal at home)
+- Day 2, 09:08 — floor_lamp at sofa_l1 (lamp at sofa, consistent morning routine)
+- Day 2, 09:08 — phone at patio_table_p1 (phone on patio, morning outdoor break)
+- Day 2, 13:52 — bed_pillow at bed_r1 (pillow moved to bed, possible nap)
+
+## Notes
+Day 2 is Wednesday. No coffee mug event in the morning; coffee mug appeared at cupboard at 21:45 (evening). No plate event today; maybe not a daily meal at home. Doormat events at 08:38 and 13:34 may indicate arrivals/departures. Reading_glasses at coffee_table at 11:08 is new; suggests reading or close work. Picture frame moved twice (12:05, 15:08) – possibly styling or cleaning. Bath mat at 18:48 is new; not daily. Weekend patterns will be crucial to confirm work-from-home vs. retired. Need to check if floor lamp and phone on patio are daily morning events.

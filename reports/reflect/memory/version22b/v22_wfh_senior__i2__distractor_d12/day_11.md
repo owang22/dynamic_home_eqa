@@ -1,0 +1,25 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single working professional who works from home, has a consistent morning routine (breakfast, reading, coffee at desk), and a structured evening routine (bath mat, lamp, pillow). — Day 11 (Friday) continues the workday pattern: newspaper at table at 07:07 (morning reading), reading glasses at desk at 07:47 (desk work start), picture frame at coffee table at 11:02 (morning decoration), doormat at entry at 12:38 (midday arrival/departure), bath mat at bathroom at 13:52 and 13:55 (hygiene routine), dining chair at table at 14:07 (afternoon work/meal), floor lamp at sofa at 15:25 and 17:05 (afternoon/evening relaxation), waste bin at counter at 15:35 and 18:45 (kitchen cleanup), wall clock at tv stand at 16:00 (afternoon break), bed pillow at bed at 19:49 (bedtime preparation), picture frame at coffee table at 21:30 (evening decoration), phone at nightstand at 21:48 (evening phone use). No evidence of a second person.
+2. (p=0.05) A retiree who enjoys reading and has a structured daily schedule (newspaper, meals, bedtime). — Day 11 shows a workday pattern (desk work, midday lamp) that is less typical for a retiree. The retiree hypothesis remains unlikely given the consistent work-from-home evidence.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading habit)
+- Day 0, 12:30 — dining_chair at table_d1 (midday meal at home, likely work-from-home)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation)
+- Day 1, 10:42 — dining_chair at table_d1 (midday work/meal, repeats pattern)
+- Day 1, 13:51 — phone at sofa_l1 (afternoon break, likely work-from-home)
+- Day 2, 14:03 — reading_glasses at coffee_table_l1 (reading during break, supports work-from-home or retiree)
+- Day 3, 07:46 — reading_glasses at desk_o1 (morning reading at desk, work-from-home start)
+- Day 3, 09:01 — coffee_mug at desk_o1 (morning coffee at desk, work-from-home)
+- Day 4, 06:58 — bowl at table_d1 (breakfast at home, consistent with work-from-home)
+- Day 4, 07:38 — coffee_mug at desk_o1 (morning coffee at desk, work-from-home)
+- Day 11, 07:07 — newspaper at table_d1 (morning reading, consistent with work-from-home)
+- Day 11, 07:47 — reading_glasses at desk_o1 (desk work start, work-from-home)
+- Day 11, 19:49 — bed_pillow at bed_r1 (bedtime preparation, consistent)
+
+## Notes
+Day 11 (Friday) confirms workday pattern: newspaper at table at 07:07 (morning reading), reading glasses at desk at 07:47 (desk work start), picture frame at coffee table at 11:02 (morning decoration), doormat at entry at 12:38 (midday arrival/departure), bath mat at bathroom at 13:52 and 13:55 (hygiene routine), dining chair at table at 14:07 (afternoon work/meal), floor lamp at sofa at 15:25 and 17:05 (afternoon/evening relaxation), waste bin at counter at 15:35 and 18:45 (kitchen cleanup), wall clock at tv stand at 16:00 (afternoon break), bed pillow at bed at 19:49 (bedtime preparation), picture frame at coffee table at 21:30 (evening decoration), phone at nightstand at 21:48 (evening phone use). No newspaper observed on day 10, but present on day 11. Weekend pattern (days 5-6) shows later start and no desk work. No evidence of a second person. Open question: why two bath mat events today? Possibly a second hygiene session or a second person? No evidence of a second person yet.

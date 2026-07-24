@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single professional who works from home or has a home office, uses a headset for calls, and has a structured weekday routine with morning coffee at desk, reading newspaper, and evening relaxation. Weekend mornings show a later start but still at the desk, suggesting a flexible work-from-home schedule that extends into weekends.",
+   "prob": 0.9,
+   "rationale": "Day 6 (Sunday) events show coffee_mug and reading_glasses at desk at 07:40 and 09:12, which is surprising because the model expected them elsewhere (e.g., table on weekday mornings). This indicates the resident works or engages in a similar routine on weekends, but with a later start (07:40 vs. 06:51 on Friday). The floor_lamp at sofa at 09:33 and 10:12 suggests a relaxed morning (reading or lounging), and phone at coffee_table at 10:12 and 16:05 indicates leisure use. The waste_bin at counter at 10:53 is typical kitchen cleanup. This pattern is consistent with a professional who works from home and maintains a similar routine on weekends, possibly catching up on work or personal projects. The lack of multiple residents or social events (e.g., no second coffee mug, no guest items) supports a single resident."
+  },
+  {
+   "persona": "A gamer or streamer who uses a headset at a desk and then moves to the sofa for leisure in the evening, but with a structured morning routine (coffee, newspaper) that suggests a hybrid lifestyle. Weekend events show a later start and more leisure time, but no gaming-specific items have been observed.",
+   "prob": 0.07,
+   "rationale": "The headset at desk on Day 0 could still be for gaming, and the structured morning routine (coffee, newspaper) might be a morning habit before gaming. However, no gaming-specific items (console, gaming chair) have been observed, and the weekend events (coffee_mug and reading_glasses at desk, floor_lamp at sofa, phone at coffee_table) are more consistent with a general leisure routine. The lack of gaming evidence keeps probability low."
+  },
+  {
+   "persona": "A student who studies at a desk with a headset and has a structured morning routine (coffee, newspaper) but also uses the sofa for relaxation. Weekend events show a later start and more leisure time, but no study materials (laptop, books) have been observed.",
+   "prob": 0.03,
+   "rationale": "The headset could be for online classes, and the structured morning routine might be a study habit. However, no laptop, books, or study materials have been observed, and the weekend events (coffee_mug and reading_glasses at desk, floor_lamp at sofa, phone at coffee_table) are more typical of a general leisure routine. The lack of student-specific evidence keeps probability low."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 09:00 \u2014 headset at desk_o1 (suggests work or gaming at a desk in the morning)",
+  "Day 0, 20:06 \u2014 floor_lamp at sofa_l1 (lamp moved to sofa in evening, indicating reading or relaxing)",
+  "Day 0, 20:23 \u2014 bath_mat at bathroom_c1 (evening bath routine)",
+  "Day 2, 08:38 \u2014 doormat at entry_hook_e1 (morning activity: delivery or leaving/returning, suggests weekday routine)",
+  "Day 2, 09:12 \u2014 phone at desk_o1 (phone at desk mid-morning, consistent with work/study)",
+  "Day 3, 07:02 \u2014 reading_glasses at table_d1 (morning reading or breakfast activity)",
+  "Day 3, 07:42 \u2014 coffee_mug at desk_o1 (morning coffee at desk, strong work-from-home signal)",
+  "Day 3, 07:42 \u2014 newspaper at coffee_table_l1 (morning newspaper reading, suggests a routine)",
+  "Day 3, 12:09 \u2014 fork at table_d1 (lunch at table, consistent with weekday meal pattern)",
+  "Day 3, 21:42 \u2014 phone at nightstand_r1 (evening wind-down, phone moved to nightstand for bedtime)",
+  "Day 4, 06:51 \u2014 coffee_mug at table_d1 (morning coffee at table instead of desk, shows routine flexibility)",
+  "Day 4, 06:51 \u2014 newspaper at table_d1 (morning newspaper at table, consistent with reading habit)",
+  "Day 4, 06:51 \u2014 reading_glasses at table_d1 (morning reading at table, reinforces routine)",
+  "Day 6, 07:40 \u2014 coffee_mug at desk_o1 (weekend morning coffee at desk, later start than weekday, suggests work-from-home on weekends)",
+  "Day 6, 09:12 \u2014 reading_glasses at desk_o1 (weekend morning reading at desk, consistent with routine)"
+ ],
+ "notes": "Day 6 (Sunday) events are surprising because the model expected coffee_mug and reading_glasses elsewhere (e.g., table) based on weekday patterns. Instead, they appear at the desk, indicating the resident uses the desk on weekends as well, but with a later start (07:40 vs. 06:51 on Friday). The floor_lamp at sofa at 09:33 and 10:12 suggests a relaxed morning (reading or lounging), and phone at coffee_table at 10:12 and 16:05 indicates leisure use. The waste_bin at counter at 10:53 is typical kitchen cleanup. This pattern is consistent with a single professional who works from home and maintains a similar routine on weekends, possibly catching up on work or personal projects. The absence of multiple residents or social events (e.g., no second coffee mug, no guest items) supports a single resident. Need to observe more weekends to confirm if this is a consistent pattern (e.g., later start, desk use, leisure activities). The bath_mat event on Day 0 was not repeated; it may be a weekly or occasional habit. The doormat event on Day 2 was not repeated; it may be a one-time delivery or departure. The floor_lamp event on Day 0 was not repeated until Day 6, suggesting it may be a weekend or occasional activity. The phone at nightstand on Day 3 was not repeated; it may be a typical bedtime routine but not observed on other days. Overall, the evidence strongly points to a single professional with a structured weekday routine and a similar but later weekend routine. The gamer and student hypotheses are less likely due to lack of supporting evidence. Weekend observations will be crucial to confirm or refine the persona."
+}

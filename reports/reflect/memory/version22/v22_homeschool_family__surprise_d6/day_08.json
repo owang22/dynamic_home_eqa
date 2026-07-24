@@ -1,0 +1,33 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A household with a school-age child (or a student adult) who has a structured morning routine involving school preparation (flashcards, plate for breakfast) and a parent or adult who works from home or is present during the day. The evening routine includes TV, meal cleanup, and occasional decor adjustments.",
+   "prob": 0.6,
+   "rationale": "The flashcards at 08:55 on Friday strongly reinforce a student studying or preparing for school. The plate at 07:09 suggests breakfast before school. The keys at 18:12 indicate someone returning home (likely after work/school). The evening routine (pillow, picture frame, floor lamp, bowl) is consistent with a family winding down. However, today's surprising events (bowl at sink at 08:00, plate at table at 18:14, bowl at cupboard at 21:45) suggest a shift in routine: the bowl was at sink in the morning (unexpected) and later put away at night, while the plate appeared at dinner time. This could indicate a different schedule (e.g., Monday after weekend) or a second resident. The probability is reduced slightly due to the surprise."
+  },
+  {
+   "persona": "A single adult who is a student (e.g., college or adult learner) with a regular study schedule, working from home or attending classes remotely, and maintaining a tidy home with evening relaxation habits.",
+   "prob": 0.3,
+   "rationale": "The flashcards and math_workbook could belong to an adult student. The plate at 07:09 and keys at 18:12 could fit a student's routine. However, the doormat at entry_hook at 08:38 (Day 2) and the consistent evening decor moves (picture frame, floor lamp) are less typical for a single student but still possible. Today's surprising events (bowl at sink at 08:00, plate at table at 18:14, bowl at cupboard at 21:45) could be explained by a single adult with a variable schedule (e.g., Monday morning bowl left from weekend, dinner plate at 18:14, bowl put away after washing). The probability increases slightly as the surprise events are more consistent with a single adult's flexible routine than a family with a child."
+  },
+  {
+   "persona": "A remote worker with flexible hours who has a child or lives with a student, but the primary resident works from home and uses the kitchen timer for work tasks. The student's items (flashcards, workbook) are secondary.",
+   "prob": 0.1,
+   "rationale": "The kitchen_timer at table at 08:55 could be for work timing, but the flashcards and math_workbook are more indicative of a student. The remote worker hypothesis is weakened by the strong student signals. Today's surprising events (bowl at sink at 08:00, plate at table at 18:14, bowl at cupboard at 21:45) do not specifically support or contradict this hypothesis. It is retained as a low-probability alternative in case the student is a visitor or part-time resident."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 09:14 \u2014 kitchen_timer at table_d1 (morning timed activity, possibly breakfast or work timer)",
+  "Day 2, 13:17 \u2014 math_workbook at table_d1 (schoolwork, strong indicator of a student in household)",
+  "Day 4, 07:09 \u2014 plate at table_d1 (breakfast before school/work, morning routine)",
+  "Day 4, 08:55 \u2014 flashcards at table_d1 (school study material, reinforces student presence)",
+  "Day 4, 18:12 \u2014 keys at entry_hook_e1 (someone returning home in the evening)",
+  "Day 4, 20:54 \u2014 floor_lamp at sofa_l1 (evening relaxation, repeated from Day 0)",
+  "Day 4, 21:45 \u2014 bowl at cupboard_k1 (evening meal cleanup, put away after washing)",
+  "Day 7, 08:00 \u2014 bowl at sink_k1 (surprising: bowl at sink in morning, not cupboard; suggests weekend residue or different schedule)",
+  "Day 7, 18:14 \u2014 plate at table_d1 (surprising: plate at dinner time, not breakfast; suggests evening meal routine)",
+  "Day 7, 21:21 \u2014 phone at nightstand_r1 (evening phone use before bed, consistent with relaxation)",
+  "Day 7, 21:45 \u2014 bowl at cupboard_k1 (surprising: bowl put away at night, same as Day 4 but later; reinforces evening cleanup pattern)"
+ ],
+ "notes": "Day 7 is Monday. The surprising events (bowl at sink at 08:00, plate at table at 18:14, bowl at cupboard at 21:45) indicate a shift from previous weekday patterns. The bowl at sink in the morning (p=0.00) suggests it was left from the weekend or a different morning routine. The plate at 18:14 (p=0.13) suggests dinner, not breakfast, which is new. The bowl at cupboard at 21:45 (p=0.00) is similar to Day 4 but later. This could be a Monday effect (post-weekend) or evidence of a second resident with a different schedule. Need to compare with next Monday (Day 14) to see if pattern repeats. The phone at nightstand at 21:21 is a new evening item; may indicate phone use before bed. The wall_clock at tv_stand at 14:10 is unusual; could be a one-time adjustment. The dining_chair at table at 08:45 is typical. The bed_pillow at bed at 10:27 suggests bed-making later in the morning. The picture_frame at bookshelf at 16:43 and floor_lamp at sofa at 17:20 are consistent with evening decor moves. Open questions: Is the student a child or adult? Are there two residents? The bowl at sink in the morning and plate at dinner time could indicate a second person with a different schedule. Weekend data (Day 5-6) was not provided; would help clarify. The doormat at entry_hook on Day 2 at 08:38 was not repeated; may be a one-time event. The scissors at supply_caddy on Day 2 not seen again; may be a craft activity. The kitchen_timer not seen since Day 0; may be used occasionally."
+}

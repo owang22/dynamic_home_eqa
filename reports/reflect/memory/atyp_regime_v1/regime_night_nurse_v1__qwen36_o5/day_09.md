@@ -1,0 +1,16 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Two-person household: Healthcare professional (evening shift) + Remote worker/student (daytime presence). — Day 9 confirms the established pattern. The 08:21 cluster (badge, stethoscope, thermos) indicates the healthcare worker is preparing for a shift or has just returned, while the 17:56 scrubs at bed_r1 and 18:26 badge at elsewhere confirm their evening activity. The distinct timing of these events from any potential 'daytime resident' activity (none observed today, but Day 8 showed plate at 16:16) supports the dual-resident model.
+2. (p=0.01) Healthcare professional with irregular shifts, including daytime work. — The 08:21 activity could theoretically be a day-shift start, but the simultaneous presence of scrubs at 17:56 and badge at 18:26 makes a single-person irregular shift less likely than a two-person household. The lack of daytime resident activity on Day 9 is inconclusive but doesn't contradict the two-person model.
+3. (p=0.00) Healthcare professional with evening shift, returning home around 18:30-19:00. — Contradicted by the 08:21 activity (badge, stethoscope, thermos) which implies a second person or a very unusual schedule. The 17:56 scrubs at bed_r1 also suggests the healthcare worker is present in the evening, consistent with the two-person model.
+
+## Selected evidence
+- Day 9, 08:21 — badge at nightstand_r1 (indicates morning activity by healthcare worker; consistent with Day 8 pattern)
+- Day 9, 08:21 — stethoscope at closet_r1 (confirms healthcare worker's presence; reinforces profession hypothesis)
+- Day 9, 08:21 — thermos at sink_k1 (suggests preparation for a long day/shift; consistent with Day 8 pattern)
+- Day 9, 17:56 — scrubs at bed_r1 (confirms healthcare worker is present in the evening; likely changing for work or just returned)
+- Day 9, 18:26 — badge at elsewhere (confirms healthcare worker's activity; reinforces profession hypothesis)
+
+## Notes
+Day 9 (Wednesday) shows a consistent pattern with Day 8. The healthcare worker is active in the morning (08:21) and evening (17:56-18:26). No evidence of the daytime resident was observed on Day 9, unlike Day 8 (plate at 16:16). Need to verify if the daytime resident's routine shifts to evening on weekdays, or if they are consistently active in the late afternoon. The 08:21 activity by the healthcare worker is consistent with the previous day; need to verify if this is a consistent pattern or an anomaly.

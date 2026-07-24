@@ -1,0 +1,26 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) Single working adult with a strong baking hobby and early-morning routine, likely working from home or with flexible hours. — The early-morning baking pattern is confirmed on Monday (Day 7) and Tuesday (Day 8) with dough_scraper at 05:08 and 07:59 respectively, though the Tuesday timing is later (07:59 vs 05:08) and the object moved to sink_k1 (cleaning up) rather than counter_k1 (prep). This suggests a shift in routine or a different baking phase. The single phone and water_bottle still support a single person. The midday pillow (10:27 on Day 7) and evening relaxation (floor_lamp, bath_mat) are consistent with a flexible schedule. The surprising starter_jar at 17:06 on Day 7 suggests a second baking session, but no similar event on Day 8 yet. The phone at elsewhere at 10:15 is surprising and may indicate a departure or distraction. The waste_bin at counter_k1 multiple times (11:46, 12:25, 21:43) suggests cleaning or food prep activity. The wall_clock at counter_k1 at 16:14 repeats a previous unusual event (Day 7, 14:10), hinting at a pattern of moving the clock for baking or timing. The doormat at entry_hook_e1 at 19:17 suggests an evening arrival or departure. Overall, the single-person hypothesis remains strongest but with slight uncertainty due to timing shifts.
+2. (p=0.15) Couple or family with at least one person who bakes early in the morning and another who works a standard schedule. — The early baking (07:59 on Day 8) and later starter_jar (17:06 on Day 7) could be two different people, but the lack of multiple distinct objects (e.g., two phones, two water bottles) still weakens this. The picture_frame at coffee_table at 16:43 on Day 7 might indicate a decorative touch by another household member, but it's weak evidence. The phone at elsewhere at 10:15 could be a second person's phone, but it's not confirmed. The probability is slightly increased due to the timing shift (dough_scraper at sink_k1 at 07:59 vs earlier 05:08) which could indicate a different person cleaning up after the baker. However, the single-person hypothesis still fits better.
+3. (p=0.05) Retired or unemployed individual with a serious baking hobby and early-morning routine, possibly health-conscious. — The early-morning baking (07:59 on Day 8) and midday pillow (10:27 on Day 7) could fit a retiree with a flexible schedule. However, the consistent early-morning activity (05:08 on Day 7, 07:59 on Day 8) is more typical of a working person or someone with a strict routine. The phone at elsewhere at 10:15 might indicate a mid-morning errand or appointment, which could fit a retiree. The probability remains low as the working adult hypothesis fits better.
+
+## Selected evidence
+- Day 0, 08:04 — bench_knife at sink_k1 (morning breakfast prep, workday routine)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation area use)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening shower/bath routine)
+- Day 2, 13:52 — bed_pillow at bed_r1 (midday pillow, repeats from Day 0)
+- Day 3, 05:06 — water_bottle at counter_k1 (very early morning, exercise or routine)
+- Day 4, 04:50 — bench_knife at counter_k1 (very early baking prep, serious hobby)
+- Day 4, 04:50 — phone at counter_k1 (early phone use, likely for recipes/timers)
+- Day 4, 04:50 — proofing_basket at counter_k1 (sourdough or bread proofing, dedicated baking)
+- Day 7, 05:08 — dough_scraper at counter_k1 (Monday early baking, confirms weekly pattern)
+- Day 7, 10:27 — bed_pillow at bed_r1 (midday pillow on Monday, weekday pattern)
+- Day 7, 17:06 — starter_jar at counter_k1 (afternoon/evening baking prep, second session)
+- Day 8, 07:59 — dough_scraper at sink_k1 (Tuesday baking cleanup, timing shift from Monday)
+- Day 8, 10:15 — phone at elsewhere (mid-morning phone movement, possibly departure)
+- Day 8, 16:14 — wall_clock at counter_k1 (repeated unusual clock movement, likely for baking timing)
+- Day 8, 19:17 — doormat at entry_hook_e1 (evening arrival or departure)
+
+## Notes
+The early-morning baking pattern continues on Tuesday (Day 8) but with a later time (07:59 vs 05:08 on Monday) and the dough_scraper at sink_k1 (cleanup) rather than counter_k1 (prep). This could indicate a different baking phase or a shift in routine. The surprising phone at elsewhere at 10:15 suggests a mid-morning departure or distraction, which is new. The wall_clock at counter_k1 at 16:14 repeats a previous unusual event (Day 7, 14:10), hinting at a pattern of moving the clock for baking or timing. The waste_bin at counter_k1 multiple times (11:46, 12:25, 21:43) suggests cleaning or food prep activity. The doormat at entry_hook_e1 at 19:17 suggests an evening arrival or departure. Need to observe if the second baking session (starter_jar at 17:06) becomes a regular pattern or if the timing shift is a one-off. The midday pillow pattern (Day 0, Day 2, Day 7) suggests a weekday nap or rest. The weekend pattern (Day 6) showed later baking (08:03) and coffee (08:41), consistent with a weekend sleep-in. The single phone and water_bottle still support a single person, but the phone at elsewhere at 10:15 could indicate a second person or a different activity.

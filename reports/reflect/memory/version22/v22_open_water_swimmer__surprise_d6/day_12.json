@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single adult who is a dedicated early morning water sports enthusiast with a flexible weekday routine, including a midday rest and evening relaxation. The weekday pattern involves leaving for water activity around 05:30, returning around 07:30, then a solo breakfast, and possibly a midday rest. The weekend pattern includes bringing the wetsuit home to dry. The surprising events today (swim_cap at drying_rack_u1 at 07:29 and bowl at cupboard_k1 at 21:45) are consistent with the established routine: the swim_cap returning to the drying rack at 07:29 matches the typical post-activity gear storage, and the bowl at cupboard_k1 at 21:45 suggests a late evening snack or meal preparation, which is plausible for a flexible schedule. The picture_frame at dresser_r1 at 11:02 is a personal item moved during morning routine. The dining_chair at table_d1 at 14:07 suggests a late lunch or early dinner. The floor_lamp at sofa_l1 at 15:25 confirms the evening relaxation pattern. The bed_pillow at bed_r1 at 19:49 is an earlier-than-usual bedtime or rest, but still within a flexible routine. The waste_bin events are mundane kitchen cleaning. Overall, the routine remains consistent with a single active adult with a flexible schedule.",
+   "prob": 0.95,
+   "rationale": "The swim_cap at drying_rack_u1 at 07:29 is exactly the expected post-activity gear storage time. The bowl at cupboard_k1 at 21:45 is a slight variation (bowl usually elsewhere at that time) but can be explained by the resident having a late snack or meal. No evidence of multiple residents."
+  },
+  {
+   "persona": "A couple or family with one dedicated morning water sports enthusiast and another person who uses the kitchen or dining area at midday, but the single dining_chair and lack of multiple dining items still suggest solo meals, reducing likelihood. The swim_cap at drying_rack_u1 at 07:29 is from the water sports enthusiast. The bowl at cupboard_k1 at 21:45 could be from a second person, but the single dining_chair at 14:07 and the lack of multiple plates or cups still suggest solo living. The picture_frame at dresser_r1 is a personal item that could belong to either resident. The bed_pillow at bed_r1 at 19:49 is a rest, which could be from the same person. The floor_lamp at sofa_l1 at 15:25 is a single-person activity. The waste_bin events are mundane. The hypothesis remains possible but unlikely.",
+   "prob": 0.03,
+   "rationale": "No new evidence of multiple residents. The single dining_chair and lack of multiple dining items still suggest solo meals. The bowl at cupboard_k1 could be from the same person."
+  },
+  {
+   "persona": "A remote worker or student who lives alone, has a flexible schedule, and engages in morning water sports. The swim_cap at drying_rack_u1 at 07:29 confirms the morning water sport. The bowl at cupboard_k1 at 21:45 suggests the resident is at home in the evening, which is consistent with remote work or study. The picture_frame at dresser_r1 at 11:02 is a personal item moved during morning routine. The dining_chair at table_d1 at 14:07 suggests a late lunch or early dinner. The floor_lamp at sofa_l1 at 15:25 confirms evening relaxation. The bed_pillow at bed_r1 at 19:49 suggests an earlier rest. The waste_bin events are mundane. The probability remains low due to lack of evidence for full remote work (e.g., laptop at desk during work hours), but the evening bowl use at home is consistent.",
+   "prob": 0.02,
+   "rationale": "The bowl at cupboard_k1 at 21:45 suggests the resident is at home in the evening, which is consistent with remote work or study. However, no strong evidence for remote work (e.g., laptop at desk during work hours)."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 05:34 \u2014 wetsuit at elsewhere (early morning water sport, active lifestyle)",
+  "Day 0, 12:57 \u2014 bed_pillow at bed_r1 (midday bed use, flexible schedule)",
+  "Day 2, 17:38 \u2014 keys at entry_hook_e1 (return from outside, suggests commute or errand)",
+  "Day 2, 20:32 \u2014 wetsuit at entry_bench_e1 (anomaly: evening wetsuit, drying after late activity)",
+  "Day 3, 05:30 \u2014 wetsuit at elsewhere (early morning water sport, consistent pattern)",
+  "Day 3, 07:28 \u2014 keys at entry_hook_e1 (return from outside after morning activity)",
+  "Day 3, 07:28 \u2014 mesh_bag at entry_bench_e1 (water sport gear, confirms morning routine)",
+  "Day 3, 07:28 \u2014 swim_cap at drying_rack_u1 (water sport gear, confirms morning routine)",
+  "Day 4, 05:32 \u2014 keys at elsewhere (surprising: departure for early morning water activity)",
+  "Day 4, 05:32 \u2014 swim_goggles at elsewhere (water sport gear, confirms morning routine)",
+  "Day 4, 05:32 \u2014 towel at elsewhere (water sport gear, confirms morning routine)",
+  "Day 4, 17:56 \u2014 phone at counter_k1 (surprising: return or home-based activity in evening)",
+  "Day 4, 18:22 \u2014 dining_chair at table_d1 (solo dinner, single chair)",
+  "Day 5, 07:22 \u2014 wetsuit at drying_rack_u1 (surprising: weekend variation, wetsuit brought home to dry)",
+  "Day 5, 20:35 \u2014 wetsuit at entry_bench_e1 (surprising: weekend evening storage of dried wetsuit)"
+ ],
+ "notes": "Day 11 is Friday. The surprising events: swim_cap at drying_rack_u1 at 07:29 (p=0.00) and bowl at cupboard_k1 at 21:45 (p=0.00). The swim_cap at drying_rack_u1 at 07:29 is exactly the expected post-activity gear storage time, so the surprise may be due to the model's expectation of a different object (e.g., wetsuit) at that time. The bowl at cupboard_k1 at 21:45 is a slight variation (bowl usually elsewhere at that time) but can be explained by the resident having a late snack or meal. The picture_frame at dresser_r1 at 11:02 is a new object; need to see if it becomes a pattern (e.g., moved during morning routine). The dining_chair at table_d1 at 14:07 suggests a late lunch or early dinner; need to check if this is a new pattern or one-time. The floor_lamp at sofa_l1 at 15:25 confirms the evening relaxation pattern observed on days 3,4,6,7 at around 17:20-17:30; today it is earlier, which may be a variation. The bed_pillow at bed_r1 at 19:49 is an earlier-than-usual bedtime or rest; need to see if this becomes a pattern. The waste_bin events at counter_k1 (15:35, 18:45) are mundane kitchen cleaning. The weekend pattern (wetsuit drying at home) should be checked on day 12 (next Saturday). The doormat event from day 3 was not repeated until day 8; may be occasional."
+}

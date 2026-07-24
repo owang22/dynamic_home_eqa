@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A person who works outside the home in an office job requiring a packed lunch or hot drink, and has a regular after-work sports commitment (e.g., coaching or practice).",
+   "prob": 0.95,
+   "rationale": "The weekday pattern of laptop, whistle, and grade_folder leaving at typical commute times and returning in the evening is very consistent. Today (Wednesday) the laptop was packed at 06:25 and the whistle left at 07:35, matching the pattern. The weekend shows no work or sports gear departures, reinforcing a clear weekday work/sports routine."
+  },
+  {
+   "persona": "A person with a consistent evening routine involving phone and laptop use at home, possibly for leisure or personal tasks.",
+   "prob": 0.04,
+   "rationale": "The repeated fork-in-cupboard at 21:45 on weekdays and plate at cupboard at 21:45 on Saturday suggests a stable evening cleanup. Phone at nightstand at 22:29 on Saturday matches the weekday bedtime pattern. However, this is common and less discriminating."
+  },
+  {
+   "persona": "A person who works from home or has a flexible schedule, evidenced by laptop use at kitchen table in the evening and phone on sofa in the afternoon on Wednesday.",
+   "prob": 0.01,
+   "rationale": "The strong weekday departure pattern of laptop and grade_folder at 07:31 on Friday contradicts a full-time WFH hypothesis. The Wednesday evening laptop could be grading or lesson prep, not necessarily WFH. This hypothesis remains very unlikely."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 07:31 \u2014 thermos at backpack (suggests packed lunch/hot drink for work commute)",
+  "Day 1, 07:31 \u2014 thermos at backpack (repeated pattern, likely workday routine)",
+  "Day 3, 07:27 \u2014 track_duffel at elsewhere (morning departure of sports gear, suggests after-work coaching or practice)",
+  "Day 3, 07:27 \u2014 whistle at elsewhere (accompanies track_duffel, reinforces sports/coaching activity)",
+  "Day 3, 18:50 \u2014 track_duffel at school_bag_e1 (return of sports gear in evening, consistent with after-work commitment)",
+  "Day 4, 06:22 \u2014 laptop at school_bag_e1 (laptop packed in school bag early morning, suggests grading or lesson prep for teaching/coaching)",
+  "Day 4, 07:31 \u2014 grade_folder at elsewhere (grade folder leaves at commute time, reinforces teaching/coaching role)",
+  "Day 4, 07:31 \u2014 laptop at elsewhere (laptop leaves at commute time, consistent with out-of-home work)",
+  "Day 4, 16:31 \u2014 whistle at entry_hook_e1 (whistle returns early afternoon, earlier than Thursday, possibly end of school day)",
+  "Day 5, 10:18 \u2014 coffee_mug at kitchen_table_k1 (relaxed weekend morning, no work gear)",
+  "Day 5, 21:45 \u2014 plate at cupboard_k1 (evening cleanup, consistent with weekday pattern)",
+  "Day 5, 22:29 \u2014 phone at nightstand_r1 (bedtime routine, matches weekday pattern)",
+  "Day 6, 20:12 \u2014 thermos at kitchen_table_k1 (thermos appears on Sunday evening, possibly being prepared for Monday workday)",
+  "Day 7, 07:31 \u2014 grade_folder at elsewhere (Monday morning departure, confirms weekly pattern)",
+  "Day 8, 07:35 \u2014 laptop at elsewhere (Tuesday morning departure, consistent with workday routine)"
+ ],
+ "notes": "Wednesday (day 9) confirms the weekday pattern: laptop packed at 06:25 and whistle left at 07:35. No thermos or grade_folder observed today, but that may be due to the specific day's schedule. Need to observe more Wednesdays to see if thermos and grade_folder appear. The WFH hypothesis remains very weak."
+}

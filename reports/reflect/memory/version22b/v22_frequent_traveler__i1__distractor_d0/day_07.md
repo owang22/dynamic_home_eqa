@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) A single professional who works from home or has a home office, with a morning coffee routine and a simple evening meal, and who takes occasional work trips. — The Monday events show a simple breakfast bowl and dinner plate, consistent with a single person. No coffee mug or laptop at desk observed today, but the pattern from previous weekdays (coffee at desk, laptop at desk) is still strong. The laptop packing on Friday without departure remains unexplained, but the occasional trip (day 1-3) is still valid.
+2. (p=0.20) A single person with a flexible routine, possibly working from home but not strictly, who enjoys simple meals and may travel occasionally. — The Monday events (bowl at sink, plate at sink, remote on sofa, plate to cupboard) show a relaxed, simple routine. The lack of coffee mug or laptop at desk today could indicate a flexible work schedule. The occasional travel (day 1-3) fits, but the laptop packing without departure reduces travel frequency.
+3. (p=0.05) A frequent traveler who takes short trips, possibly for work or leisure, with a home office setup. — The laptop packing on Friday evening suggested another trip, but the resident was home all weekend and Monday shows no departure. The previous trip (day 1-3) is still evidence, but the pattern is inconsistent. This hypothesis is now very unlikely.
+
+## Selected evidence
+- Day 0, 09:18 — coffee_mug at desk_o1 (morning coffee at desk suggests work-from-home routine)
+- Day 1, 07:14 — passport at elsewhere (passport leaving early Tuesday, confirms travel)
+- Day 1, 07:14 — suitcase at elsewhere (suitcase leaving early Tuesday, confirms trip)
+- Day 3, 18:35 — neck_pillow at carryon_e1 (packing for return trip, suggests air travel)
+- Day 3, 18:35 — packing_cubes at carryon_e1 (organized packing for return)
+- Day 3, 18:35 — passport at closet_shelf_e1 (passport returned home, trip ended)
+- Day 4, 09:06 — coffee_mug at desk_o1 (morning coffee at desk, work-from-home routine)
+- Day 4, 09:06 — laptop at desk_o1 (workday start at home desk)
+- Day 4, 16:29 — laptop at carryon_e1 (laptop packed into carryon Friday evening, suggests another trip planned)
+- Day 5, 07:39 — coffee_mug at table_d1 (Saturday morning coffee at table, not desk, suggests relaxed weekend)
+- Day 5, 22:27 — phone at nightstand_r1 (phone at nightstand Saturday night, resident likely home)
+- Day 6, 08:03 — bowl at sink_k1 (Sunday morning breakfast bowl at sink, relaxed weekend)
+- Day 6, 18:36 — plate at table_d1 (Sunday evening meal at table, simple dinner)
+- Day 6, 20:09 — phone at sofa_l1 (Sunday evening phone on sofa, relaxing at home)
+- Day 7, 08:08 — bowl at sink_k1 (Monday morning breakfast bowl, simple meal)
+
+## Notes
+Monday (day 7) shows a simple breakfast bowl and dinner plate, but no coffee mug or laptop at desk observed. This could indicate a flexible work schedule or a day off. The laptop packing on Friday without departure remains unexplained; need to check if the carryon leaves on Tuesday (day 8) or if the laptop returns to the desk. Also verify if the coffee mug appears at desk on Tuesday morning to confirm work-from-home routine. The remote on sofa Monday evening is consistent with relaxation.

@@ -1,0 +1,13 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A remote worker or student who works from home, as they use a desk and coffee mug during typical work hours. — The coffee mug at desk in morning and sink in late afternoon on day 0 suggests a workday routine. However, the early morning packing cubes on day 1 (Tuesday) hint at possible travel or early departure, which could be a one-off or part of a weekly pattern.
+2. (p=0.30) A frequent traveler or someone with a variable schedule, as packing cubes appear early on a weekday morning. — Packing cubes at 07:09 on a Tuesday suggest preparation for a trip or a non-routine activity. This could indicate a job that requires travel or a lifestyle with irregular hours.
+
+## Selected evidence
+- Day 0, 08:51 — coffee_mug at desk_o1 (morning coffee at desk suggests work/study from home)
+- Day 0, 16:46 — coffee_mug at sink_k1 (mug moved to sink after work hours, consistent with end-of-workday cleanup)
+- Day 1, 07:09 — packing_cubes at elsewhere (early morning packing cubes on a Tuesday suggests possible travel or non-routine activity)
+
+## Notes
+Only three days observed. No events on day 2 (Wednesday) so no new evidence. Need to see if the coffee mug routine repeats on other weekdays and if packing cubes appear again (e.g., on Fridays or before weekends). Also look for other objects like laptop, yoga mat, or suitcase to confirm travel pattern. Day 1 is Tuesday; check if day-of-week patterns emerge.

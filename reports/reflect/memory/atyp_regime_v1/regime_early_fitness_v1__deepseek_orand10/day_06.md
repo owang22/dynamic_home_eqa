@@ -1,0 +1,26 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single professional who exercises in the morning (yoga/foam rolling/dumbbells at 5am on weekdays, running on weekends), eats a quick breakfast, leaves for work with phone by 8am on weekdays, returns home around 5:30pm, and has a light evening (laptop at desk, dinner, then cleanup). On weekends, the routine shifts: later wake-up (no early exercise observed on Saturday, but a run on Sunday at 07:13), a brunch-like meal around 9:26am, and a relaxed evening with phone and remote use. No evidence of a second person. — Weekday pattern confirmed through day 4; day 5 (Saturday) shows no early exercise, phone departure at 08:14 (later than weekday 07:58), brunch at 09:26, and evening relaxation with remote. Day 6 (Sunday) shows a run at 07:13 (earlier than Saturday but later than weekday 05:00), phone departure at 08:43 (later than weekday), brunch-like meal (mug at 09:39, plate at sink 10:24), afternoon phone use, and evening relaxation. This is consistent with a single professional who sleeps in on weekends but may exercise later in the morning.
+2. (p=0.04) A health-conscious student or freelancer with a morning exercise routine who works/studies from home in the afternoon, but the 07:58 phone departure on weekdays contradicts full-time remote work. Weekend pattern (no early exercise on Saturday, a run on Sunday, later phone departure) suggests a flexible schedule but not fully remote. — Weekday departure with phone is strong evidence against working from home. Weekend later wake-up and brunch are consistent with a student or freelancer, but the weekday departure remains contradictory. The Sunday run at 07:13 is earlier than Saturday but still later than weekday exercise, suggesting a weekend shift.
+3. (p=0.01) A remote worker who exercises early, then works from home, but the 07:58 phone departure (likely leaving home) contradicts this. Weekend pattern (no early exercise on Saturday, a run on Sunday, later phone departure) does not support this hypothesis. — The departure evidence is clear, and weekend observations show no early exercise or work-from-home indicators. The Sunday run at 07:13 is still earlier than weekday departure, but the phone departure at 08:43 suggests leaving home, not staying in.
+
+## Selected evidence
+- Day 0, 05:00 — yoga_mat at coffee_table_l1 (early morning exercise, not typical of all households)
+- Day 0, 07:55 — keys at elsewhere (departure for work/school)
+- Day 1, 05:00 — foam_roller at coffee_table_l1 (consistent early exercise routine)
+- Day 1, 07:59 — keys at elsewhere (departure for work/school)
+- Day 2, 05:00 — foam_roller at coffee_table_l1 (consistent early exercise)
+- Day 2, 07:59 — keys at elsewhere (departure for work/school)
+- Day 3, 05:14 — yoga_mat at coffee_table_l1 (consistent early exercise)
+- Day 3, 08:02 — keys at elsewhere (departure for work/school)
+- Day 4, 05:12 — dumbbells at coffee_table_l1 (strength training added to morning routine)
+- Day 5, 08:14 — phone at elsewhere (weekend departure later than weekday 07:58)
+- Day 5, 09:26 — plate at table_d1 (brunch-like meal, not typical weekday breakfast)
+- Day 6, 07:13 — running_shoes at shoe_rack_e1 (weekend exercise, different from weekday yoga/weights)
+- Day 6, 08:43 — phone at elsewhere (weekend departure later than weekday)
+- Day 6, 09:39 — mug at counter_k1 (brunch-like meal, consistent weekend pattern)
+- Day 6, 21:08 — remote at coffee_table_l1 (evening relaxation, weekend pattern)
+
+## Notes
+Weekend pattern confirmed: Saturday no early exercise, Sunday run at 07:13 (earlier than Saturday but later than weekday 05:00). Brunch-like meal on both weekend days (mug at 09:39, plate at sink 10:24 on Sunday). Evening relaxation with remote. No laptop or backpack events on weekend; resident may stay home or use different items. Next observations (day 7 Monday) will verify weekday pattern resumption. Also note: water_bottle seen at nightstand_r1 at 18:55 suggests hydration before bed. The running_shoes event at 07:13 indicates a different exercise modality on weekends.

@@ -1,0 +1,19 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Frequent International Business Traveler (Weekly) — Day 7 (Monday) shows immediate re-packing of travel gear (suitcase, passport, packing cubes) at 20:12, mirroring the pre-trip behavior of Day 0. The 'passport' and 'travel_adapter' appearing together strongly suggests recurring international business travel, not a one-off event. The weekend was a break from this cycle.
+2. (p=0.04) Remote Worker with Bi-Weekly Travel — If travel were bi-weekly, Day 7 would likely show work equipment (laptop) rather than travel prep. The immediate return to packing mode contradicts a standard remote work week without travel.
+3. (p=0.01) Vacation Planner / Staycationer — The presence of a passport and travel adapter on a Monday evening makes a staycation highly unlikely. The routine is too structured and travel-specific.
+
+## Selected evidence
+- Day 7, 20:12 — packing_cubes at bed_r1 (recurring pre-trip packing, confirms weekly cycle)
+- Day 7, 20:12 — passport at bed_r1 (international travel confirmation, high discriminative value)
+- Day 7, 20:12 — suitcase at bed_r1 (departure preparation, mirrors Day 0)
+- Day 7, 20:57 — passport at entry_hook_e1 (final staging for departure)
+- Day 7, 20:57 — travel_adapter at entry_hook_e1 (tech prep for travel, mirrors Day 4)
+- Day 7, 07:24 — phone at counter_k1 (late start, similar to weekend, suggests travel day or rest day)
+- Day 7, 07:38 — coffee_mug at counter_k1 (morning routine, low discriminative value but confirms wakefulness)
+- Day 7, 16:36 — coffee_mug at sink_k1 (dish cycling, mundane but confirms presence)
+
+## Notes
+Day 7 confirms the weekly travel cycle: packing begins Sunday evening/Monday evening. The 'passport' and 'travel_adapter' appearing together on Day 7 is a strong signal for international business travel. The late start on Day 7 (07:24) might indicate the resident is still traveling or resting before the next trip. Need to monitor Day 8 (Tuesday) for the return of the resident and work equipment (laptop) to confirm the 'work week' pattern resumes after the travel. The 'bowl at table_d1' is mundane and discarded.

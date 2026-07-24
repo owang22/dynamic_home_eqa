@@ -1,0 +1,18 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Pet owner with standard 9-5 job — The invariant 21:45 cleanup and rigid morning departure (07:00-08:30) persist. Tuesday shows no work objects (laptop) during the day, only pet items and standard meal cleanup. The 'hybrid' hypothesis is further weakened by the complete absence of work-related objects on both Monday and Tuesday.
+2. (p=0.10) Pet owner with hybrid/remote work schedule — Still possible if the resident works from a different location or uses a device not detected by current sensors (e.g., tablet in pocket). However, the lack of any work-related object movement (laptop, documents) on weekdays makes this significantly less likely than the standard 9-5 hypothesis.
+3. (p=0.05) Single person living alone — The structured routine and pet care are consistent with a single resident, but the strong routine structure is better explained by the first two hypotheses. No evidence of multiple residents (e.g., multiple sets of keys, varied meal times) has been observed.
+
+## Selected evidence
+- Day 8, 07:00 — phone at entry_hook_e1 (weekday departure prep, confirms rigid morning routine)
+- Day 8, 08:34 — coffee_mug at counter_k1 (morning coffee, standard weekday timing)
+- Day 8, 09:08 — blanket at pet_bed_l1 (pet care routine, consistent with pet owner hypothesis)
+- Day 8, 12:29 — plate at table_d1 (lunch setup, no laptop nearby, weakens hybrid hypothesis)
+- Day 8, 16:24 — chew_toy at toy_basket_l1 (pet activity, consistent with pet owner hypothesis)
+- Day 8, 19:42 — phone at sofa_l1 (evening leisure, no work objects, supports 9-5 hypothesis)
+- Day 8, 21:45 — fork at cupboard_k1 (invariant cleanup time, reinforces rigid habit hypothesis)
+
+## Notes
+Day 8 (Tuesday) confirms the weekly cycle. The absence of work-related objects on Tuesday further weakens the hybrid/remote work hypothesis. The pet's activity remains consistent. Need to observe if any work-related items appear during the day (e.g., laptop on desk) to definitively rule out remote work. The 'single person' hypothesis remains low probability due to the strong routine structure.

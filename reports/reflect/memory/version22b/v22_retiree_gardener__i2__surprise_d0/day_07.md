@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) A person who enjoys a morning coffee and reading, likely a retiree or someone with a flexible schedule who values leisure time. The morning routine shows a clear weekday/weekend split: on weekdays, coffee and reading move to the patio; on weekends, they start indoors (Saturday coffee at dining table, Sunday reading glasses at dining table then patio). The late evening dish cleanup (Day 5) and midday dish cleaning (Day 6) suggest structured household chores, but the timing varies. The absence of newspaper on weekends is notable but not yet conclusive. — The Sunday events reinforce a leisurely morning: reading glasses start indoors (07:02) then move to patio (07:42), matching the weekday pattern of moving reading outdoors but with a later start. The fork at table (12:03) and plate at sink (12:48) indicate a lunch at home with immediate cleaning, consistent with a structured routine. The surprising events (glasses moving to patio, plate at sink) are actually consistent with this hypothesis, as the model may have expected different weekend behavior. The retiree hypothesis remains strong because of the consistent morning reading and coffee ritual, even with weekend variations.
+2. (p=0.25) A person who works from home or has a flexible schedule, with a structured midday break (lunch at home, immediate dish cleaning) and afternoon downtime. The weekend variation (indoor coffee on Saturday, later dish cleanup on Saturday evening) could be a shift from work-week routine. The Sunday reading glasses moving to patio (07:42) might indicate a work-break-like ritual even on weekends. However, the early morning reading on a Sunday (07:02) is more typical of a retiree than a remote worker who might sleep in. — The Sunday events show a lunch pattern (fork at table, plate at sink) that matches the weekday structured lunch, which could be consistent with a work-from-home person who maintains similar meal habits on weekends. However, the early morning reading (07:02) and the move to patio (07:42) suggest a leisurely start that is less typical for a remote worker on a Sunday. The surprising events are not strongly contradictory, but the retiree hypothesis fits better.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading habit, traditional media, suggests leisurely start)
+- Day 0, 12:31 — plate at sink_k1 (lunch at home, immediate cleaning, indicates structured routine)
+- Day 3, 07:47 — coffee_mug at patio_table_p1 (morning coffee outdoors, reinforces leisure morning ritual on weekday)
+- Day 3, 07:47 — reading_glasses at patio_table_p1 (reading outdoors, consistent with newspaper habit)
+- Day 4, 07:09 — newspaper at table_d1 (morning reading starts indoors, then moves to patio on weekday)
+- Day 4, 07:09 — reading_glasses at table_d1 (glasses used for indoor reading before patio)
+- Day 4, 07:49 — coffee_mug at patio_table_p1 (coffee on patio, consistent with Day 3 weekday pattern)
+- Day 4, 16:19 — remote at coffee_table_l1 (afternoon TV or relaxation, suggests downtime)
+- Day 5, 06:56 — coffee_mug at table_d1 (Saturday coffee stays indoors, not patio; weekend variation in morning routine)
+- Day 5, 21:45 — fork at cupboard_k1 (evening dish cleanup, suggests late dinner or household chore)
+- Day 5, 21:45 — plate at cupboard_k1 (evening dish cleanup, paired with fork, indicates structured end-of-day routine)
+- Day 6, 07:02 — reading_glasses at table_d1 (Sunday reading starts indoors, consistent with weekend pattern)
+- Day 6, 07:42 — reading_glasses at patio_table_p1 (Sunday reading moves outdoors, surprising but matches weekday pattern of moving reading to patio)
+- Day 6, 12:03 — fork at table_d1 (lunch at home on Sunday, indicates structured meal)
+- Day 6, 12:48 — plate at sink_k1 (immediate dish cleaning after lunch, consistent with structured routine)
+
+## Notes
+Sunday (Day 6) confirms a weekend pattern: reading glasses start indoors (07:02) then move to patio (07:42), similar to weekday but later start. No coffee observed yet on Sunday; need to check if coffee appears later. The lunch pattern (fork at table, plate at sink) is consistent with weekday lunch, suggesting the resident maintains a structured midday meal even on weekends. The surprising events (glasses moving to patio, plate at sink) are actually consistent with the retiree hypothesis, as the model may have expected different weekend behavior. Need to verify if newspaper appears on weekends (not seen on Saturday or Sunday so far). Also, monitor for any new objects (e.g., yoga mat, suitcase) that could further discriminate between retiree and work-from-home. The weekend pattern is becoming clearer: indoor start, then move to patio for reading, with structured lunch and dish cleaning. The late evening dish cleanup on Saturday (21:45) may be a weekend-specific pattern (e.g., later dinner) or a one-off; need to see if it repeats next Saturday.

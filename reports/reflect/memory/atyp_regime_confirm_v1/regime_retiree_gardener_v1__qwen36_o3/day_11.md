@@ -1,0 +1,23 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Remote worker with health-conscious routine — The newspaper at 07:04 reinforces the structured morning routine. The phone at the patio at 08:45 suggests a leisurely start or work break, consistent with remote work flexibility. The late plate at 21:45 indicates a late dinner, possibly due to work or social habits, but the overall rigidity of the 06:30-07:00 wake-up and midday meal persists.
+2. (p=0.01) Retiree or unemployed with structured routine — The newspaper is a strong signal for retirees, but the strict 06:30 wake-up and midday meal timing are less typical for leisurely retirees. The probability decreases slightly as the 'work' signal (midday home presence) remains strong, but the newspaper adds ambiguity.
+3. (p=0.01) Work-from-home parent/caregiver — No new child-related items or irregular schedules appeared. The routine remains too solitary and rigid for a typical caregiver schedule.
+
+## Selected evidence
+- Day 4, 06:30 — pill_organizer at counter_k1 (indicates health management/medication; suggests adult with chronic condition or preventive care)
+- Day 5, 12:09 — coffee_mug at counter_k1 (confirms midday break persists on Saturday; suggests work break or health habit)
+- Day 6, 12:12 — plate at table_d1 (indicates midday meal; timing aligns with structured break, not leisurely late lunch)
+- Day 7, 17:59 — plate at table_d1 (indicates evening meal; timing suggests a structured dinner, consistent with remote worker schedule)
+- Day 8, 12:04 — plate at table_d1 (confirms midday meal persists on Tuesday; reinforces structured work-life balance)
+- Day 9, 06:30 — reading_glasses at counter_k1 (confirms early wake-up time ~06:30; reinforces rigid morning routine)
+- Day 9, 14:16 — phone at sofa_l1 (indicates home during mid-afternoon; contradicts 9-5 office worker)
+- Day 10, 06:58 — bowl at table_d1 (confirms consistent early morning meal routine on Thursday)
+- Day 10, 17:52 — fork at table_d1 (confirms consistent evening meal timing on Thursday, matching Day 7)
+- Day 11, 07:04 — newspaper at table_d1 (indicates morning routine includes news; supports structured start to day, common in both remote workers and retirees)
+- Day 11, 08:45 — phone at patio_table_p1 (indicates morning leisure or work break outside; suggests flexibility in morning schedule, consistent with remote work)
+- Day 11, 21:45 — plate at cupboard_k1 (indicates late dinner; suggests evening activity or social engagement, deviating from earlier 17:50 pattern)
+
+## Notes
+The newspaper on Day 11 (Friday) is a new signal. While often associated with retirees, it is also common among remote workers who prefer physical media. The phone at the patio at 08:45 suggests a relaxed morning, possibly working from home or taking a break. The late dinner at 21:45 is a significant deviation from the 17:50 pattern seen on Days 7 and 10. This could indicate a social event, a late work session, or a change in routine. Need to observe if this late dinner is an anomaly or a new pattern. The midday meal timing remains consistent across weekdays and weekends, reinforcing the structured nature of the day. The wake-up time on Day 11 is not explicitly observed, but the newspaper at 07:04 suggests an early start. The pill organizer and reading glasses continue to support the health-conscious adult profile.

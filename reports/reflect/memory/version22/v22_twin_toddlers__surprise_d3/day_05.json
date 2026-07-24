@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A family with a young child (toddler/preschooler) and at least one parent who works from home or has a flexible schedule. The child has a consistent bedtime routine (bath mat, sippy cup, bowl) and the parent manages household tasks during the day. The weekend shows a later morning start (bowl at sink at 07:14 vs. earlier weekday breakfast) and evening cleanup (bowl at cupboard at 21:45). The wall clock on the counter at 12:31 suggests a household item being moved, possibly for cleaning or decoration. The waste bin on the counter at 16:32 indicates kitchen tidying. The sippy cup at sink at 12:38 and at cupboard at 21:45 reinforce the child's routine. No work-from-home equipment (laptop, desk) has been observed, but the phone on counter on day 4 remains a weak indicator. The weekend pattern (later morning, more household tasks) is consistent with a family with a young child.",
+   "prob": 0.85,
+   "rationale": "The surprise events (bowl at sink at 07:14, bowl at cupboard at 21:45) are consistent with a weekend routine where breakfast cleanup happens later and evening storage is similar to weekdays. The sippy cup at sink at 12:38 and at cupboard at 21:45 fit the child's routine. The wall clock and waste bin movements are mundane household events. The lack of work-from-home indicators on Saturday (no phone or laptop) is expected for a weekend. The family hypothesis remains strong."
+  },
+  {
+   "persona": "A single adult with a young child visiting or living part-time. The child items (sippy cup, bath mat) appear on both weekdays and weekends, but the adult's routine seems less structured (e.g., bowl at sink at 07:14 on Saturday vs. bowl at table at 06:26 on Friday). The wall clock on counter and waste bin on counter suggest household maintenance. The adult may work outside the home, as no work-from-home equipment is observed on weekdays or weekends. The child's presence on Saturday (sippy cup, bath mat) suggests the child is a regular visitor or lives there part-time.",
+   "prob": 0.1,
+   "rationale": "The weekend events show a later morning (bowl at sink at 07:14) and child items (sippy cup, bath mat) consistent with a child present. The absence of a laptop or desk still leaves open the possibility of a single adult who works outside the home. However, the consistency of child items across weekdays and weekends weakens the part-time hypothesis."
+  },
+  {
+   "persona": "A stay-at-home parent with a young child. The parent manages household tasks throughout the day (bowl at sink, waste bin on counter, wall clock moved) and the child has a consistent routine (sippy cup, bath mat). No work-from-home equipment (laptop, desk) has been observed on any day, and the phone on counter on day 4 could be a personal device. The weekend shows a relaxed morning (bowl at sink at 07:14) and evening cleanup (bowl at cupboard at 21:45). The parent likely does not work outside the home.",
+   "prob": 0.05,
+   "rationale": "The absence of any work-related items (laptop, desk, office chair) across all observed days (including weekday day 4) suggests the parent may not work from home. The phone on counter could be a personal phone. The weekend pattern is consistent with a stay-at-home parent. However, the phone at 08:43 on a Friday could still indicate remote work, so this hypothesis has lower probability."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:54 \u2014 phone at counter_k1 (morning routine, possibly work-from-home or stay-at-home parent)",
+  "Day 0, 17:16 \u2014 sippy_cup at elsewhere (strong indicator of young child)",
+  "Day 0, 20:23 \u2014 bath_mat at bathroom_c1 (bath time, likely child's bedtime routine)",
+  "Day 0, 20:54 \u2014 bed_pillow at bed_r1 (bedtime, consistent with child's schedule)",
+  "Day 3, 08:43 \u2014 cushion at playmat_n1 (child's play area set up in morning)",
+  "Day 3, 08:43 \u2014 sippy_cup at playmat_n1 (child's morning play/feeding routine)",
+  "Day 3, 11:13 \u2014 board_book at toy_bin_l1 (child's play/reading activity, toy bin location)",
+  "Day 3, 17:40 \u2014 plate at table_d1 (evening meal, likely family dinner)",
+  "Day 3, 21:45 \u2014 sippy_cup at cupboard_k1 (child's cup put away after evening use, consistent bedtime routine)",
+  "Day 4, 06:26 \u2014 bowl at table_d1 (morning breakfast, likely family routine)",
+  "Day 4, 07:11 \u2014 sippy_cup at sink_k1 (morning cleanup of child's cup, consistent with child present)",
+  "Day 4, 08:43 \u2014 phone at counter_k1 (work-from-home indicator on a weekday morning)",
+  "Day 4, 17:41 \u2014 sippy_cup at table_d1 (child's cup at dinner time)",
+  "Day 4, 18:34 \u2014 picture_frame at coffee_table_l1 (decorative item, suggests family photos)",
+  "Day 5, 07:14 \u2014 bowl at sink_k1 (weekend morning cleanup, later than weekday breakfast at 06:26)"
+ ],
+ "notes": "Day 5 (Saturday) shows a later morning routine (bowl at sink at 07:14 vs. bowl at table at 06:26 on Friday) and child items (sippy cup at sink at 12:38, bath mat at 20:27, sippy cup at cupboard at 21:45). The wall clock at counter at 12:31 and waste bin at counter at 16:32 are mundane household events. The surprise events (bowl at sink, bowl at cupboard) are consistent with a weekend pattern. Need to observe day 6 (Sunday) to see if routines differ further. Also need to look for a laptop or desk on weekdays to confirm remote work. The absence of work items on Saturday is expected for a weekend. Consider adding a hypothesis about a stay-at-home parent if no work items appear next week."
+}

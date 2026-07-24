@@ -115,7 +115,8 @@ def reflect_day(client, md: str, day: int, event_lines: list[str]):
     failure (caller keeps the previous memory)."""
     try:
         out = json.loads(client.generate(REFLECT_SYS, day_user_msg(md, day, event_lines),
-                                         REFLECT_SCHEMA, seed=7, temperature=0.0))
+                                         REFLECT_SCHEMA, seed=7, temperature=0.0,
+                                         max_tokens=2048))
         hyps = out.get("hypotheses") or []
         for hyp in hyps:
             float(hyp["prob"])                      # validate numerics

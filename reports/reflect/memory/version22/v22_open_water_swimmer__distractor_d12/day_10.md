@@ -1,0 +1,25 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single adult who works from home and has a daily early morning water sports hobby (wetsuit, swim goggles, swim cap, mesh bag). The consistent early morning water activity (05:27-05:34) every day of the week, including weekends, combined with structured meal times (dining chair at breakfast, mid-morning, dinner) and midday nap (pillow), points to a home-based workday with a morning water activity. No evidence of a second person. Day 10 (Thursday) confirms the early morning water activity (swim_goggles at 05:34) and shows typical work-from-home events: wall_clock at counter at 07:19 (morning check), picture_frame at dresser at 07:32 (morning break), dining_chair at table at 09:06 (breakfast), bed_pillow at bed at 13:30 (midday nap), wall_clock at counter at 13:42 (afternoon check), waste_bin at counter at 14:04 (afternoon cleanup), bath_mat at bathroom at 14:07 and 16:12 (bathroom use), doormat at entry at 15:59 (afternoon arrival), phone at table at 18:07 (evening relaxation), wall_clock at counter at 18:28 (evening check), waste_bin at counter at 19:00 (evening cleanup), doormat at entry at 21:46 (nighttime arrival). The structured schedule (morning water, midday nap, evening relaxation) is more parsimoniously explained by a working adult than a retiree. — Day 10 (Thursday) continues the same pattern: early morning water activity, midday nap, and structured meal times. No work-related objects (laptop, desk) are observed, but the consistent schedule and lack of social events (e.g., multiple dining chairs, keys) support a single working adult. The probability remains high.
+2. (p=0.05) A retiree with a flexible schedule who enjoys water sports. The early morning water activity and later evening lamp use could fit a retiree's schedule. However, the structured meal times and midday nap are also consistent with a work-from-home adult. The probability remains low because the pattern is more parsimoniously explained by a single working adult. Day 10 (Thursday) shows the same early morning water activity and typical home events, but no work-related events (laptop, desk) are observed, which could be consistent with retirement. However, the midday nap and structured meal times are also common in retirement. The probability remains low because the pattern is more parsimoniously explained by a working adult. — Day 10 (Thursday) does not provide strong evidence for retirement; the pattern is similar to weekdays. The lack of laptop/desk events could be due to the resident using a phone or tablet, but the structured schedule still suggests a working adult. The probability remains low.
+
+## Selected evidence
+- Day 0, 05:34 — wetsuit at elsewhere (early morning water activity, regular hobby)
+- Day 3, 07:28 — keys at entry_hook_e1 (returning home after early activity)
+- Day 3, 07:28 — mesh_bag at entry_bench_e1 (water gear bag, confirms hobby)
+- Day 4, 05:32 — keys at elsewhere (early morning departure for water activity)
+- Day 5, 05:33 — swim_goggles at elsewhere (Saturday early morning water activity, same pattern)
+- Day 6, 05:27 — water_bottle at elsewhere (Sunday early morning water activity, same pattern)
+- Day 7, 05:33 — mesh_bag at elsewhere (Monday early morning water activity)
+- Day 7, 08:04 — dining_chair at table_d1 (breakfast, work-from-home pattern)
+- Day 7, 10:27 — bed_pillow at bed_b1 (midday nap, work-from-home pattern)
+- Day 7, 12:12 — picture_frame at dresser_r1 (lunch break, work-from-home pattern)
+- Day 7, 19:18 — phone at sofa_l1 (evening relaxation, consistent with single adult)
+- Day 8, 05:34 — wetsuit at elsewhere (Tuesday early morning water activity)
+- Day 8, 08:36 — phone at elsewhere (likely start of work, work-from-home pattern)
+- Day 8, 14:19 — dining_chair at table_d1 (afternoon snack/break, work-from-home pattern)
+- Day 8, 14:45 — floor_lamp at sofa_l1 (afternoon relaxation, work-from-home pattern)
+
+## Notes
+Day 10 (Thursday) confirms the early morning water activity (swim_goggles at 05:34) and provides additional work-from-home evidence: wall_clock at counter at 07:19 (morning check), picture_frame at dresser at 07:32 (morning break), dining_chair at table at 09:06 (breakfast), bed_pillow at bed at 13:30 (midday nap), wall_clock at counter at 13:42 (afternoon check), waste_bin at counter at 14:04 (afternoon cleanup), bath_mat at bathroom at 14:07 and 16:12 (bathroom use), doormat at entry at 15:59 (afternoon arrival), phone at table at 18:07 (evening relaxation), wall_clock at counter at 18:28 (evening check), waste_bin at counter at 19:00 (evening cleanup), doormat at entry at 21:46 (nighttime arrival). The structured schedule (morning water, midday nap, evening relaxation) is more parsimoniously explained by a working adult than a retiree. No evidence of a second person. Need to observe more weekdays to confirm work-from-home pattern (e.g., laptop at desk, midday nap). Also look for any social events (e.g., two dining chairs used simultaneously, multiple sets of keys).

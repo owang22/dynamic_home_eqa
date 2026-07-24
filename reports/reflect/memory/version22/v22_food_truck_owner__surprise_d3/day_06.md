@@ -1,0 +1,20 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) Single small business owner or freelancer who works from home and runs a food-related business (e.g., catering, meal prep, or selling salsa). — The business outing on Day 3 (cash box, keys, order pad) and the salsa container appearing at counter and fridge on Day 4 strongly suggest food preparation for sale. The surprising Saturday events reinforce this: order_pad at counter at 07:27 (early weekend work), cash_box at kitchen shelf at 20:27 and 22:51 (business items stored at home, not taken out on weekend), and phone at nightstand at 22:51 (consistent with single person's bedtime). No evidence of multiple residents.
+2. (p=0.15) Single working professional with a side food business or hobby that involves salsa making, with a structured morning and evening routine. — The morning phone at counter (07:50) and bowl (07:00) could be a standard breakfast before work, but the salsa container and waste bin suggest food prep. The business outing on Day 3 might be a one-off errand. The Saturday order_pad at counter (07:27) could be weekend work, but the cash_box staying home on Saturday (20:27, 22:51) suggests it's not a regular business outing day. Less specific than the first hypothesis.
+3. (p=0.05) Couple or family where one person runs a home-based food business, and another has a separate routine. — The single-person pattern (pillow, apron) still dominates, but the multiple items (bowl, waste bin, salsa container) could indicate two people. However, no strong evidence of multiple residents yet (e.g., two phones, two beds). The Saturday events (order_pad at counter, cash_box at kitchen shelf, phone at nightstand) are all consistent with a single person. Probability remains low.
+
+## Selected evidence
+- Day 3, 10:34 — cash_box at elsewhere (business outing mid-morning)
+- Day 3, 10:34 — keys at elsewhere (accompanying cash box, likely outing)
+- Day 3, 10:34 — order_pad at elsewhere (further evidence of business errand)
+- Day 4, 07:50 — phone at counter_k1 (morning work start at counter)
+- Day 4, 07:50 — salsa_container at counter_k1 (food prep item, likely for business)
+- Day 4, 10:15 — salsa_container at fridge_k1 (storage after prep, consistent with food business)
+- Day 5, 07:27 — order_pad at counter_k1 (surprising: weekend morning work start, business prep)
+- Day 5, 20:27 — cash_box at kitchen_shelf_k1 (surprising: business item stored at home on weekend, not taken out)
+- Day 5, 22:51 — phone at nightstand_r1 (surprising: bedtime routine, single person)
+
+## Notes
+Day 5 (Saturday) shows a weekend pattern: order_pad at counter at 07:27 (early start, likely business prep), cash_box stays at kitchen shelf all evening (20:27, 22:51) — no business outing on Saturday. Phone at nightstand at 22:51 confirms bedtime. The surprising events (order_pad, cash_box, phone) all fit the single food-business owner hypothesis. Need to check Sunday (Day 6) for further weekend patterns (e.g., later wake-up, no business activity). Also watch for laptop or work documents to confirm home office. No evidence of multiple residents yet.

@@ -1,0 +1,21 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) A cyclist who commutes by bike and works a standard daytime job, but with a flexible start time or a mid-morning errand. — The weekday pattern of helmet storage at 10:00-10:09 and evening water bottle/pannier events strongly suggests a bike commute. The Saturday helmet storage at 13:07 indicates a leisure ride on the weekend. The Sunday hex wrench set at the bike rack at 16:05 suggests bike maintenance, consistent with a dedicated cyclist. The absence of work-related objects is still notable, but the consistent weekday pattern outweighs this.
+2. (p=0.15) A person who works from home or has a flexible schedule, as the helmet and pannier are stored at 10:09 (not early morning) and the water bottle is at the sink at 18:09 (could be after a leisure ride). — The Saturday helmet storage at 13:07 could be a leisure ride, and the weekday late morning storage could be a flexible start. However, the pannier at 18:12 on Wednesday still aligns with a commute end, and the pattern of evening water bottle events (18:07, 18:33, 18:09) is more consistent with a commute than a leisure ride. The probability is reduced because the Sunday hex wrench set at 16:05 suggests bike maintenance, which could be done by a commuter or a leisure cyclist, but the consistent evening times still point to a commute.
+3. (p=0.10) A person who does not own a car and relies on a bike for transportation, possibly a student or someone with a non-9-to-5 schedule. — The Saturday helmet storage at 13:07 and the weekday pattern could be for errands or classes. However, the consistent evening water bottle times (18:07, 18:33, 18:09) suggest a regular end-of-day activity, which is more typical of a work commute than a student's variable schedule. The Sunday hex wrench set at 16:05 could be maintenance for a primary mode of transport, but the probability remains low.
+
+## Selected evidence
+- Day 0, 10:00 — helmet at elsewhere (helmet stored mid-morning, not early commute)
+- Day 0, 18:07 — water_bottle at bike_rack_h1 (evening water bottle, suggests bike use after work)
+- Day 1, 18:33 — water_bottle at bike_rack_h1 (similar evening time, reinforces commute pattern)
+- Day 2, 18:12 — pannier at bike_rack_h1 (pannier placed on bike rack, strong evidence for bike commute)
+- Day 3, 10:01 — helmet at elsewhere (helmet stored mid-morning again, pattern with Monday)
+- Day 3, 10:01 — pannier at elsewhere (pannier stored with helmet, reinforces bike commute pattern)
+- Day 3, 18:09 — water_bottle at sink_k1 (water bottle at sink, likely cleaning after commute)
+- Day 4, 10:09 — helmet at elsewhere (helmet stored mid-morning again, consistent pattern)
+- Day 5, 13:07 — helmet at hall_shelf_h1 (helmet stored early afternoon on Saturday, suggests leisure ride)
+- Day 6, 16:05 — hex_wrench_set at bike_rack_h1 (bike maintenance on Sunday, consistent with dedicated cyclist)
+
+## Notes
+Now observed 7 days (Mon-Sun). The Sunday hex wrench set at 16:05 is a new event that suggests bike maintenance, which is consistent with a cyclist who uses the bike regularly. The other Sunday events (coffee mug at sink at 08:10, floor lamp at sofa at 09:33 and 10:12, waste bin at counter at 10:53, fork at table at 18:44, plate at sink at 19:24) are mundane and do not add discriminatory value. The weekday pattern of helmet storage at 10:00-10:09 and evening water bottle/pannier events is now well-established over 5 weekdays. The Saturday helmet storage at 13:07 and Sunday bike maintenance at 16:05 support a leisure cyclist on weekends. Need to observe more weekends to see if the pattern holds. Also, look for work-related objects (laptop, work bag) on weekdays to confirm commute vs. flexible schedule. The doormat events (08:38 Wed, 16:12 Tue) remain isolated and may be deliveries or occasional early returns; they are not included in selected evidence as they are not discriminatory.

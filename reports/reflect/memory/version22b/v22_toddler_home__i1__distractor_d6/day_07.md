@@ -1,0 +1,25 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Family with a young child (toddler/preschooler) who has a consistent daily routine: child uses a sippy cup at high chair in the morning, plays with stacking rings and ball at toy corner, and has a board book at crib in the evening. Adults move household items (pillow, picture frame, dining chairs) at consistent times, suggesting structured meal times and evening relaxation. Weekend events show a later start but still child-related items (sippy cup, bowl, board book, ball, stacking rings) appear, indicating a relaxed but still routine weekend. Day 7 (Monday) events: sippy cup at high chair (06:38) confirms morning routine; sippy cup at sink (07:23, 19:38) shows cleaning after use; dining chair at table (08:45) suggests breakfast setup; bed pillow at bed (10:27) indicates bed-making; wall clock at counter (14:10) and picture frame at coffee table (16:43) are adult decorative moves; floor lamp at sofa (17:20) suggests evening relaxation; plate at sink (18:30) and bath mat at bathroom (18:35) are typical evening cleanup. No child-specific toys today, but the sippy cup and high chair are strong evidence. The child hypothesis remains extremely strong. — Day 7 events reinforce the child hypothesis: sippy cup at high chair (06:38) matches weekday morning routine; sippy cup at sink (07:23, 19:38) shows cleaning. Adult items (dining chair, bed pillow, wall clock, picture frame, floor lamp, plate, bath mat) are mundane but consistent with a family home. No contradictory evidence.
+2. (p=0.01) Single adult or couple without children, with a flexible routine: the stacking rings and ball could be for a pet or hobby, and the board book might be for a pet or personal use. The pillow movements and picture frame suggest a comfortable home office or relaxation setup. Day 7 events show only adult items (dining chair, bed pillow, wall clock, picture frame, floor lamp, plate, bath mat) and a sippy cup (which could be used by an adult for a drink). However, the high chair (sippy cup at high chair) is very hard to explain without a child. This hypothesis remains very unlikely. — Day 7 events include a sippy cup at high chair, which is strong evidence for a toddler. The adult items are mundane and do not outweigh the child evidence.
+
+## Selected evidence
+- Day 0, 08:41 — sippy_cup at play_mat_n1 (indicates young child; play mat suggests dedicated play area)
+- Day 1, 17:18 — ball at toy_corner_l1 (strongly suggests a child's play area)
+- Day 2, 11:34 — stacking_rings at toy_corner_l1 (child's toy, reinforces play area)
+- Day 2, 18:59 — board_book at crib_n1 (child's bedtime reading, strong evidence of infant/toddler)
+- Day 3, 09:04 — board_book at play_mat_n1 (morning reading/play, consistent with child routine)
+- Day 3, 11:34 — ball at toy_corner_l1 (midday play, reinforces child presence)
+- Day 3, 11:34 — board_book at toy_corner_l1 (child moves book to play area)
+- Day 3, 17:13 — board_book at toy_corner_l1 (afternoon play, child's item)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening pillow movement, likely child's bedtime prep)
+- Day 3, 21:57 — bed_pillow at bed_r1 (second pillow movement, consistent with bedtime)
+- Day 4, 06:49 — bowl at high_chair_d1 (breakfast time for child, strong evidence of toddler)
+- Day 4, 08:50 — blanket at play_mat_n1 (morning play setup, child's comfort item)
+- Day 4, 08:50 — sippy_cup at play_mat_n1 (morning drink for child, consistent with play routine)
+- Day 6, 09:18 — board_book at play_mat_n1 (Sunday morning reading, child's routine)
+- Day 6, 11:48 — sippy_cup at high_chair_d1 (pre-lunch drink, child's high chair use)
+
+## Notes
+Day 7 (Monday) shows a typical weekday morning: sippy cup at high chair at 06:38, then at sink at 07:23 (cleaning). No child-specific toys today, but the sippy cup and high chair are strong evidence. Adult items (dining chair, bed pillow, wall clock, picture frame, floor lamp, plate, bath mat) appear at typical times. The child hypothesis remains extremely strong (p=0.99). Need to observe next days to see if child toys reappear and to check for any new items (e.g., suitcase, yoga mat) that might indicate other household members or activities.

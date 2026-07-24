@@ -1,0 +1,25 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single working professional who works from home or has a flexible schedule, with a structured but not rigid routine. The person reads a physical newspaper in the morning, has lunch at home, and winds down in the evening. Weekday mornings involve coffee at the desk, but today's breakfast at the dining table (bowl and coffee mug at table_d1 at 07:07) suggests occasional variation. The afternoon reading glasses at the sofa (15:43) and floor lamp at sofa (17:20) indicate a shift to leisure reading in the living room, possibly after work. The late-evening bowl at cupboard (21:45) is unusual for a weekday and may reflect a later dinner or snack. The picture frame at coffee table (16:43) suggests personal decoration or a recent change. The bath mat at bathroom (18:35) indicates a shower or bath in the early evening, consistent with a post-work routine. The late-night phone use pattern remains strong. The Sunday phone movements (desk, coffee table, sofa) and floor lamp at sofa reinforce a relaxed weekend pattern. The retiree hypothesis is now contradicted by the late-evening bowl storage and the work-from-home indicators. — The new events show a weekday variation (breakfast at dining table instead of desk) but still align with a working professional who has a flexible routine. The afternoon reading glasses at sofa and floor lamp at sofa suggest a transition to leisure after work. The late-evening bowl at cupboard is surprising but could be a one-off. The retiree hypothesis is less likely due to the late-night activity and work-related patterns.
+2. (p=0.05) A retiree or someone with a relaxed schedule who enjoys a structured day with morning reading, a home-cooked lunch, and early evening relaxation, but with occasional late-evening activity. The new events (breakfast at dining table, afternoon reading at sofa, early evening bath, late-evening bowl storage) could fit a retiree's routine, but the consistent late-night phone use and the weekday desk-based coffee mug pattern (from previous days) are less typical. The retiree hypothesis is still possible but less supported by the evidence. — The new events are compatible with a retiree's routine, but the weekday desk-based coffee mug and late-night phone use are more characteristic of a working professional. The retiree hypothesis remains a minor possibility.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading ritual, suggests regular subscriber)
+- Day 0, 12:45 — plate at sink_k1 (lunch at home, likely work-from-home or flexible schedule)
+- Day 2, 21:45 — coffee_mug at cupboard_k1 (late evening hot drink, surprising for early bedtime pattern)
+- Day 2, 21:45 — plate at cupboard_k1 (late evening dish storage, surprising for early bedtime pattern)
+- Day 3, 09:01 — coffee_mug at desk_o1 (morning coffee at desk, reinforces work-from-home routine)
+- Day 4, 06:58 — bowl at table_d1 (morning breakfast at dining table, variation from desk routine)
+- Day 4, 22:10 — phone at nightstand_r1 (late-night phone use, common for working professional)
+- Day 5, 06:57 — coffee_mug at table_d1 (weekend morning coffee at dining table, shift from weekday desk)
+- Day 5, 10:32 — reading_glasses at coffee_table_l1 (weekend morning reading at coffee table, leisure activity)
+- Day 5, 21:47 — phone at nightstand_r1 (consistent late-night phone use, reinforces working professional pattern)
+- Day 6, 07:44 — bowl at sink_k1 (Sunday breakfast cleanup, typical)
+- Day 6, 09:21 — phone at desk_o1 (Sunday morning phone use at desk, possibly planning or browsing)
+- Day 6, 10:21 — phone at coffee_table_l1 (phone moved to coffee table, leisure activity)
+- Day 6, 13:52 — phone at sofa_l1 (phone moved to sofa, afternoon relaxation)
+- Day 7, 07:07 — bowl at table_d1 (weekday breakfast at dining table, variation from desk routine)
+
+## Notes
+Today (Monday) shows a weekday breakfast at the dining table (bowl and coffee mug at table_d1 at 07:07), which is a variation from the previous weekday desk routine. The afternoon reading glasses at sofa (15:43) and floor lamp at sofa (17:20) suggest a shift to leisure reading in the living room after work. The picture frame at coffee table (16:43) may indicate a personal touch or recent change. The bath mat at bathroom (18:35) suggests a shower or bath in the early evening. The late-evening bowl at cupboard (21:45) is surprising for a weekday and may indicate a later dinner or snack. Need to check if newspaper appears on Monday (Day 7) to confirm subscription pattern. Look for work-related objects (laptop, work bag) on weekdays vs. weekends to further discriminate. The retiree hypothesis is now very weak (p=0.05) due to consistent late-night phone use and desk-based weekday routine. Continue to monitor for consistency of bedtime and evening activities across days.

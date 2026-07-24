@@ -1,0 +1,26 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single professional who works from home or has a home office, with a consistent weekday routine of morning reading, work, lunch, and evening relaxation. — Weekday pattern strongly confirmed. Saturday shows a later coffee (07:10 vs 06:51), a fork at table for a late breakfast/brunch (11:50), and a wall clock moved to tv stand (12:31) suggesting weekend leisure. Bath mat at 20:27 and phone at nightstand at 21:50 indicate evening wind-down, consistent with weekday but slightly later. No work-related objects at desk today, supporting a weekend break.
+2. (p=0.12) A single person with a flexible schedule who may work from home but has a distinct weekend routine (later mornings, more leisure activities). — The Saturday events show a later coffee, a fork at table for a late meal, and a wall clock moved to tv stand (likely for entertainment). The bath mat and phone at nightstand are similar to weekday evenings. This could be a remote worker who relaxes more on weekends, but the professional hypothesis still fits better.
+3. (p=0.03) A couple or family where one person uses the desk and another uses the sofa, but the events are sparse and could be from one person. — No new evidence of multiple people. All events on Saturday are consistent with a single person. The wall clock moving to tv stand could be a shared activity, but no other objects suggest a second person. This hypothesis remains very unlikely.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (morning work/study activity)
+- Day 1, 16:12 — doormat at entry_hook_e1 (returning home, suggests leaving during day)
+- Day 2, 08:38 — doormat at entry_hook_e1 (leaving home in morning, consistent with weekday)
+- Day 2, 09:12 — phone at desk_o1 (morning work/study, consistent with Day 0 headset)
+- Day 2, 12:36 — plate at sink_k1 (lunch, midday meal)
+- Day 3, 07:02 — reading_glasses at table_d1 (morning breakfast/reading, new object)
+- Day 3, 07:42 — coffee_mug at desk_o1 (morning work start, consistent with headset/phone at desk)
+- Day 3, 21:42 — phone at nightstand_b1 (evening wind-down, bedtime routine)
+- Day 4, 06:51 — bowl, coffee_mug, newspaper, reading_glasses at table_d1 (consistent morning breakfast/reading routine)
+- Day 4, 12:51 — plate at sink_k1 (lunch, consistent with Day 2)
+- Day 4, 18:34 — picture_frame at coffee_table_l1 (evening decoration/relaxation, consistent with Day 2)
+- Day 5, 07:10 — coffee_mug at table_d1 (later weekend morning coffee, vs 06:51 weekday)
+- Day 5, 11:50 — fork at table_d1 (late breakfast/brunch, weekend pattern)
+- Day 5, 12:31 — wall_clock at tv_stand_l1 (weekend leisure, moving clock to entertainment area)
+- Day 5, 21:50 — phone at nightstand_r1 (evening wind-down, consistent with weekday but slightly later)
+
+## Notes
+Weekend pattern emerging: later coffee (07:10 vs 06:51), fork at table for brunch (11:50), wall clock moved to tv stand (12:31) suggests more leisure. Bath mat at 20:27 and phone at nightstand at 21:50 similar to weekday evenings. No doormat events today, so resident likely stayed home. Next day (Sunday) will help confirm weekend routine. The single professional hypothesis remains strong (p=0.85).

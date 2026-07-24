@@ -1,0 +1,26 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A working professional or student who leaves home early and returns in the evening to engage in hobbies and relax. — Backpack leaving early on Day 0 (Monday) and doormat appearing at 08:38 on Day 2 (Wednesday) suggest a consistent early departure. Keys and doormat returns on Day 1 (Tuesday) at 16:12 and 18:37, and on Day 2, doormat at 08:38 (morning) and dining chair at 16:06 (afternoon) indicate a structured schedule. Evening craft (watercolor set at 17:46 on Day 2) and dining (fork and plate at sink at 13:00 and 19:09) show regular evening activities. The pattern across three weekdays strengthens this hypothesis.
+2. (p=0.10) A home-based worker or retiree with a flexible schedule, who may have left the backpack elsewhere earlier but still engages in evening activities. — The consistent early departure (backpack on Day 0, doormat at 08:38 on Day 2) and return times (keys at 18:37 on Day 1) suggest a regular schedule, which is less typical for a home-based worker or retiree. However, the doormat at 08:38 could indicate a morning routine, and the evening activities are still possible. The probability is reduced due to increasing evidence of a structured weekday routine.
+3. (p=0.05) A parent or caregiver who manages household tasks in the evening and has a craft hobby. — No new evidence of child-related items (e.g., toys, children's books) has been observed. The craft hobby is present (watercolor set on Day 2), but the overall pattern of keys, doormat, and dining chair suggests a single adult returning home, not necessarily a parent. The probability remains low.
+
+## Selected evidence
+- Day 0, 08:40 — backpack at elsewhere (resident leaves home early, likely for work/school)
+- Day 0, 18:18 — scissors at craft_shelf_s1 (craft hobby, possibly sewing or paper crafts)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, reading or screen time)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine, possibly before bed)
+- Day 0, 20:54 — bed_pillow at bed_r1 (bedtime preparation, consistent with regular sleep schedule)
+- Day 1, 16:12 — doormat at entry_hook_e1 (resident returns home in late afternoon)
+- Day 1, 18:37 — keys at entry_hook_e1 (confirms return home around 18:37)
+- Day 1, 21:20 — dining_chair at table_d1 (evening meal or activity at table)
+- Day 1, 21:45 — fork at cupboard_k1 (post-dinner cleanup)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure, consistent with early routine)
+- Day 2, 13:00 — fork at sink_k1 (lunch cleanup, suggests midday meal at home)
+- Day 2, 13:00 — plate at sink_k1 (lunch cleanup, confirms midday meal)
+- Day 2, 16:06 — dining_chair at table_d1 (afternoon return, possibly for snack or work)
+- Day 2, 17:46 — watercolor_set at craft_shelf_s1 (craft hobby, watercolor painting)
+- Day 2, 19:09 — fork at sink_k1 (evening meal cleanup, consistent with dinner around 19:00)
+
+## Notes
+Three weekdays observed (Mon, Tue, Wed). Backpack left early on Mon; doormat at 08:38 on Wed suggests similar morning departure. On Wed, midday meal (fork and plate at sink at 13:00) indicates resident is home for lunch, possibly working from home or on a break. Evening craft (watercolor set at 17:46) and dinner cleanup (fork at sink at 19:09) suggest a structured evening. No weekend data yet. Need to verify if backpack leaves at similar time on Tue (no data) and if craft activity repeats on other days. Consider if picture_frame at coffee_table at 15:08 is significant (maybe decoration or personal item). Remote at coffee_table at 21:26 suggests evening TV or relaxation. Day-of-week patterns: Mon and Wed show early departure; Tue shows late afternoon return. Need more data to confirm consistency.

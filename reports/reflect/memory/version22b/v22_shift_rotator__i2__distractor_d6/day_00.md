@@ -1,0 +1,17 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) Single adult with a regular 9-to-5 job, likely working from home or hybrid, who keeps a tidy home and has a consistent evening routine. — Phone is put away early (05:24) suggesting a morning person or someone who doesn't use it in bed. Pillow is on the bed at 12:57 (midday) and again at 20:54, indicating the bed is made and used only at night. Evening activities (fork to sink, lamp to sofa, bath mat to bathroom, picture frame to coffee table) suggest a structured wind-down: dinner, relaxing on sofa, bath, then tidying up.
+2. (p=0.30) Couple or family with at least one adult who works outside the home, and another who may work from home or be a homemaker. — The presence of a picture frame moved to the coffee table could indicate a shared living space being decorated. The bath mat being moved to the bathroom at 20:23 might be a shared bathroom routine. However, the single pillow and single fork suggest only one person is active, so this is less likely.
+3. (p=0.10) Student or young professional living alone, with a flexible schedule and a tendency to tidy up in the evening. — The phone being elsewhere at 05:24 could be a student waking up early for classes or a late night. The midday pillow on the bed might indicate a nap or a messy bed. The evening tidying (fork to sink, lamp to sofa, bath mat to bathroom) is typical of a young adult living alone. But the consistency of the pillow being on the bed at both midday and evening suggests a more structured routine, leaning away from a student stereotype.
+
+## Selected evidence
+- Day 0, 05:24 — phone at elsewhere (resident is awake and not using phone in bed; suggests early riser or morning routine)
+- Day 0, 12:57 — bed_pillow at bed_r1 (pillow on bed at midday; bed is made or used for nap, not left unmade all day)
+- Day 0, 18:52 — fork at sink_k1 (dinner cleanup; single fork suggests solo meal)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation in living room; lamp moved to sofa area for reading or ambiance)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath or shower; consistent with wind-down routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (pillow back on bed; bed prepared for sleep, indicating structured bedtime)
+
+## Notes
+Only one day observed (Monday). Need to confirm if the early phone event (05:24) is a daily alarm or a one-off. The midday pillow event could be a nap or simply a made bed. The evening routine seems consistent: dinner, sofa, bath, bed. Future days should reveal if this is a weekday pattern or if weekends differ. Also, no evidence of a second person yet (single fork, single pillow). Watch for multiple utensils, extra pillows, or shared items.

@@ -1,0 +1,23 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single person who works from home or has a flexible schedule, with a routine that includes morning coffee at the desk, lunch at the dining table, and evening relaxation in the living room. The travel preparation seen on previous days is now confirmed by packing the laptop into the carryon, suggesting the trip is imminent (likely this weekend). — Day 11 (Friday) shows a clear work-from-home pattern: coffee_mug at dining table (07:28) and laptop at desk (09:11) indicate a morning work routine. The floor_lamp at sofa (15:25, 17:05) and dining_chair at table (14:07) are consistent with home-based work. The absence of carryon events today suggests the trip may have started or is not yet packed. The pattern is strong and consistent. — Day 12 (Saturday) shows a relaxed weekend pattern: picture_frame moved multiple times (decorative attention), floor_lamp at sofa in evening (relaxation), and no work-related items (coffee_mug, laptop) observed. This is consistent with a work-from-home resident who does not work on weekends. The travel hypothesis is subsumed but still plausible given previous packing events.
+2. (p=0.15) A person who values home decor and tidiness, as seen by frequent adjustments of picture frame and consistent placement of bath mat and doormat. — Day 11 shows picture_frame at coffee_table (11:02, 21:30), doormat at entry (12:38), and bath_mat at bathroom (13:52, 13:55). These events support a tidy, decor-conscious routine, but they are less distinctive than the work-from-home pattern. — Day 12 shows picture_frame moved 5 times (10:00, 15:09, 15:37, 17:34, 20:30), indicating ongoing attention to decor. Wall_clock moved twice (11:29, 20:55) and waste_bin moved once (19:26) also suggest tidying. This strengthens the decor-conscious hypothesis, though it remains secondary.
+
+## Selected evidence
+- Day 0, 08:51 — coffee_mug at desk_o1 (morning coffee at desk suggests work/study from home)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch at dining table, typical home routine)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening lamp use, likely reading or relaxing)
+- Day 1, 07:09 — packing_cubes at elsewhere (packing cubes early Tuesday, possible travel prep)
+- Day 2, 12:05 — picture_frame at coffee_table_l1 (decorative item moved, indicates attention to decor)
+- Day 3, 18:48 — neck_pillow at carryon_e1 (travel pillow packed, confirms upcoming trip)
+- Day 3, 18:48 — passport at carryon_e1 (passport packed, indicates international travel)
+- Day 4, 16:34 — laptop at carryon_e1 (laptop packed into carryon, trip imminent)
+- Day 10, 18:41 — laptop at carryon_e1 (laptop packed again, suggests another trip planned)
+- Day 11, 07:28 — coffee_mug at dining_table (morning coffee at dining table, work-from-home pattern)
+- Day 11, 09:11 — laptop at desk (laptop at desk, work-from-home pattern)
+- Day 12, 10:00 — picture_frame at coffee_table_l1 (decorative adjustment on Saturday, consistent with decor-conscious)
+- Day 12, 19:19 — floor_lamp at sofa_l1 (evening lamp use on weekend, consistent relaxation)
+
+## Notes
+Day 12 (Saturday) shows a relaxed weekend pattern: no work items (coffee_mug, laptop) observed, but picture_frame moved multiple times (decorative attention) and floor_lamp at sofa in evening. This supports the work-from-home hypothesis (no work on weekends) and the decor-conscious hypothesis. The travel hypothesis is subsumed but still plausible; need to observe if carryon reappears next week or if laptop is packed again. Also check if coffee_mug and laptop appear on Monday (Day 14) to confirm weekday work routine. The wall_clock and waste_bin movements are new but not yet distinctive; may indicate tidying or adjustment.

@@ -1,0 +1,19 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single person with a regular 9-to-5 job, who comes home for lunch and has a consistent evening routine. — The dining chair is used at 12:30 (lunch) and again at 21:15 (dinner), the coffee mug is at the sink in the morning, and the bed pillow is moved at 12:57 (likely making the bed after lunch) and again at 20:54 (preparing for sleep). The floor lamp is turned on/off at typical evening times (20:06).
+2. (p=0.30) A person who works from home or has a flexible schedule, as they are home during midday and evening. — The presence of the person at 12:30 and 12:57 suggests they are home for lunch, but the lack of a laptop or work-related items in the events makes it less certain. The picture frame being moved twice (13:20 and 21:04) might indicate a decorative adjustment, possibly by someone with time to spare.
+3. (p=0.10) A person who values cleanliness and order, as evidenced by the bath mat being moved to the bathroom twice (13:25 and 20:23) and the bed pillow being adjusted twice. — The bath mat movements suggest a routine of showering or cleaning, but this is common in many households. The low probability reflects that this is not a strong discriminator.
+
+## Selected evidence
+- Day 0, 08:39 — floor_lamp at sofa_l1 (morning lamp use suggests someone is home or awake early)
+- Day 0, 12:30 — dining_chair at table_d1 (lunchtime use, indicates midday meal at home)
+- Day 0, 12:57 — bed_pillow at bed_r1 (likely making bed after lunch, a daily routine)
+- Day 0, 13:25 — bath_mat at bathroom_c1 (afternoon bathroom use, possibly shower)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening lamp use, typical relaxation time)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bathroom use, possibly pre-bed routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (preparing bed for sleep)
+- Day 0, 21:15 — dining_chair at table_d1 (evening meal or activity at table)
+
+## Notes
+Day 0 is Monday. Need to compare with weekend days (5-6) to see if routine changes. No work-related objects (laptop, papers) observed yet, so work-from-home hypothesis is weak. The picture frame moved twice might be a red herring or indicate a hobby. Watch for repeated patterns on subsequent Mondays.

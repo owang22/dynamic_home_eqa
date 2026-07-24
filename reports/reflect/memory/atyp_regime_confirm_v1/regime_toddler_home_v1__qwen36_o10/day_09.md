@@ -1,0 +1,20 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Dual-parent household with a toddler — The 21:45 kitchen activity persists on Day 9, reinforcing the 'relaxed evening' pattern inconsistent with standard 9-5 work. The 07:02 start on Wednesday is closer to Monday's 06:50 than Tuesday's 07:50, suggesting Tuesday was an outlier or staggered schedule. No work-discriminating objects (laptop, briefcase) appear, supporting a shared-care or non-traditional work model over a single remote worker.
+2. (p=0.01) Single parent with a toddler — Still possible if the parent works non-traditional hours. However, the lack of any visible workspace setup during the day (09:00-17:00) makes this less likely than the dual-parent model, which better explains the potential for staggered adult wake times without requiring a hidden work routine.
+3. (p=0.01) Babysitter/Nanny with a toddler — Remains highly unlikely. The 21:45 kitchen activity and 20:20 phone use at nightstand are too late for a standard nanny shift. The 07:02 start is too early for a typical live-in nanny unless they are also the primary caregiver for the parents' morning routine, which is not supported by any other evidence.
+
+## Selected evidence
+- Day 9, 07:02 — sippy_cup at high_chair_d1 (morning routine start, consistent with toddler care)
+- Day 9, 09:06 — toy_blocks at play_mat_l1 (morning play activity, confirms active household)
+- Day 9, 11:06 — sippy_cup at counter_k1 (midday snack/clean-up, routine consistency)
+- Day 9, 15:15 — board_book at play_mat_l1 (afternoon quiet time, consistent with toddler routine)
+- Day 9, 17:15 — blanket at sofa_l1 (evening rest/nap prep, consistent with toddler routine)
+- Day 9, 19:29 — blanket at crib_n1 (bedtime routine, confirms toddler sleep schedule)
+- Day 9, 20:20 — phone at sofa_l1 (evening personal device use, suggests adult presence)
+- Day 9, 21:45 — bowl at cupboard_k1 (late evening kitchen activity, persistent across days)
+- Day 9, 21:45 — sippy_cup at cupboard_k1 (late evening kitchen activity, persistent across days)
+
+## Notes
+Day 9 (Wednesday) confirms the 21:45 kitchen activity is a consistent habit, not an anomaly. The 07:02 start is earlier than Tuesday's 07:50, suggesting Tuesday might have been a 'late start' day or staggered schedule. The 20:20 phone use on the sofa is a new discriminator for adult evening leisure. No work-related objects observed. Need to observe Day 10 (Thursday) to see if the 21:45 activity persists and if any work objects appear. Question: Is the 21:45 activity a consistent habit or an anomaly? Is the 07:50 start a weekday norm or an outlier?

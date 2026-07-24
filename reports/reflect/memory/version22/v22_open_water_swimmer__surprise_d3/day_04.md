@@ -1,0 +1,23 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single adult with a strong early-morning water sports routine (likely surfing or diving) who works a flexible job or is retired. The consistent 05:30 wetsuit events on Monday and Thursday, plus the Friday 05:32 keys, swim goggles, and towel at elsewhere, confirm a daily early-morning water activity. The phone at counter_k1 at 17:56 and dining chair at table at 08:57 suggest home-based activity during typical work hours, consistent with a flexible schedule or retirement. The Wednesday evening wetsuit/towel anomaly remains unexplained but may be a one-off. — The Friday 05:32 events (keys, swim goggles, towel) strongly reinforce the early-morning water sport habit, now observed on three days (Monday, Thursday, Friday). The phone at 17:56 is a new evening location but still consistent with home-based work. The Wednesday evening anomaly is less likely to be a pattern.
+2. (p=0.15) A person who works from home or has a flexible schedule, as evidenced by the phone at counter_k1 at 17:56 and dining chair at table at 08:57, indicating home activity during typical work hours. The early-morning water sport is a consistent habit, but the Wednesday evening anomaly suggests occasional variations. The Friday 05:32 keys and swim goggles further support the water sport routine. — The phone at 17:56 is a new evening location but still at home, supporting a flexible schedule. The early-morning pattern is now dominant, making this hypothesis less likely than the primary one.
+
+## Selected evidence
+- Day 0, 05:34 — wetsuit at elsewhere (early morning water sport, consistent habit)
+- Day 3, 05:30 — wetsuit at elsewhere (early morning water sport, confirms habit)
+- Day 4, 05:32 — keys at elsewhere (early morning water sport preparation, consistent with habit)
+- Day 4, 05:32 — swim_goggles at elsewhere (early morning water sport gear, consistent with habit)
+- Day 4, 05:32 — towel at elsewhere (early morning water sport gear, consistent with habit)
+- Day 3, 07:28 — keys at entry_hook_e1 (return from early outing, likely water activity)
+- Day 3, 07:28 — mesh_bag at entry_bench_e1 (water sport gear preparation)
+- Day 3, 07:28 — swim_cap at drying_rack_u1 (water sport gear drying)
+- Day 3, 08:36 — phone at elsewhere (home activity during work hours, flexible schedule)
+- Day 3, 08:57 — dining_chair at table_d1 (home activity during work hours, flexible schedule)
+- Day 4, 17:56 — phone at counter_k1 (home activity during evening, flexible schedule)
+- Day 2, 20:32 — wetsuit at entry_bench_e1 (surprising evening water-related activity, likely anomaly)
+- Day 2, 20:32 — towel at entry_bench_e1 (surprising evening water-related activity, likely anomaly)
+
+## Notes
+The early-morning water sport pattern is now strongly confirmed on Monday, Thursday, and Friday (Day 0, 3, 4). The Friday 05:32 events (keys, swim goggles, towel) are consistent with preparation for a water activity. The Wednesday evening wetsuit/towel event (Day 2, 20:32) remains an anomaly; it may be a one-off or a weekly pattern (e.g., gear cleaning) but needs more data. The phone at counter_k1 at 17:56 is a new evening location, but still at home, supporting a flexible schedule. No evidence of multiple residents yet. Need to observe more days to see if the Wednesday evening event repeats or if there are other variations. Day of week patterns: Monday, Thursday, Friday show early-morning water sport; Wednesday shows evening anomaly. Check if Tuesday (Day 1) data exists.

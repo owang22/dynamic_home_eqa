@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single working professional who works from home, with a structured weekday routine but a distinct weekend pattern. The Sunday evidence shows coffee_mug at desk (07:44) instead of table (as on previous Sunday Day 6), suggesting a shift in weekend morning routine—possibly a work catch-up or a new habit. The doormat at entry_hook (11:29, 18:39, 20:40) indicates multiple exits/entries, consistent with a flexible weekend. The wall_clock at tv_stand (12:07, 16:29, 21:47) and picture_frame at coffee_table (13:00, 16:34) suggest decorative rearrangements or cleaning, not typical for a rigid routine. The single-person evidence remains strong. — The surprising coffee_mug at desk on Sunday (vs. table on Day 6) and the multiple doormat movements suggest a more active weekend than previously observed. The wall_clock and picture_frame movements are new but could be part of a weekend tidying pattern. The structured weekday pattern (previous weekdays) is still supported, but this Sunday deviates from the earlier weekend pattern, reducing confidence in a fixed weekend routine.
+2. (p=0.30) A single person with a flexible work-from-home schedule, possibly part-time or freelance, who has a distinct weekend pattern that is now evolving. The Sunday evidence: coffee_mug at desk (07:44) instead of table (Day 6), doormat at entry_hook multiple times (11:29, 18:39, 20:40) indicating errands or social outings, and wall_clock/picture_frame movements suggesting home decoration or cleaning. This fits a flexible schedule where weekends are for personal projects and outings. The single-person evidence remains strong. — The surprising coffee_mug at desk on Sunday and the multiple doormat movements support a flexible, non-routine weekend. The wall_clock and picture_frame movements are consistent with a person who engages in home activities on weekends. The previous weekday pattern (bowl at sink, coffee_mug at desk) is still consistent with a work-from-home setup, but the Monday shift (Day 7) and this Sunday shift suggest the routine is not rigid.
+3. (p=0.10) A single retired person who enjoys a structured day but with a distinct weekend pattern, now showing a Sunday that is more active than previously observed. The Sunday evidence: coffee_mug at desk (07:44) instead of table (Day 6), doormat at entry_hook multiple times (11:29, 18:39, 20:40) indicating outings, and wall_clock/picture_frame movements suggesting home maintenance. This could fit a retiree with a flexible weekend, but the lack of newspaper (not seen on this Sunday) and the coffee_mug at desk (instead of table) weaken the retired hypothesis. — The surprising coffee_mug at desk on Sunday and the multiple doormat movements are less typical for a retiree who might have a more consistent morning routine. The wall_clock and picture_frame movements could be part of home care, but the overall pattern is less structured than expected for a retired person. The previous weekday pattern (reading_glasses at desk, coffee_mug at desk) is still possible, but the Monday shift (Day 7) and this Sunday shift reduce confidence.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading habit, weekday pattern)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch at home, work-from-home or retired)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath routine)
+- Day 3, 07:46 — reading_glasses at desk_o1 (morning work-from-home routine, weekday pattern)
+- Day 3, 09:01 — coffee_mug at desk_o1 (morning work-from-home routine, weekday pattern)
+- Day 4, 06:58 — reading_glasses at table_d1 (Friday morning change: breakfast reading instead of desk)
+- Day 4, 14:40 — bath_mat at bathroom_c1 (early bath on Friday, suggesting relaxed afternoon)
+- Day 5, 06:57 — coffee_mug at table_d1 (Saturday morning: weekend shift, coffee at table instead of desk)
+- Day 6, 07:44 — bowl at sink_k1 (Sunday morning: breakfast bowl, new weekend pattern)
+- Day 6, 09:21 — phone at desk_o1 (Sunday morning: phone at desk, brief work/check before relaxation)
+- Day 7, 07:07 — bowl at table_d1 (Monday morning: breakfast at table, not sink or desk, surprising shift)
+- Day 7, 07:15 — doormat at entry_hook_e1 (Monday morning: resident left house, new weekday pattern)
+- Day 7, 15:43 — reading_glasses at sofa_l1 (Monday afternoon: reading on sofa, not desk or coffee_table, surprising shift)
+- Day 13, 07:44 — coffee_mug at desk_o1 (Sunday morning: coffee at desk instead of table, surprising shift from Day 6)
+- Day 13, 11:29 — doormat at entry_hook_e1 (Sunday: multiple exits/entries, active weekend)
+
+## Notes
+Day 13 (Sunday) shows a shift from the previous Sunday (Day 6): coffee_mug at desk (07:44) instead of table, and multiple doormat movements (11:29, 18:39, 20:40) indicating the resident left and returned several times. The wall_clock and picture_frame movements (12:07, 13:00, 16:29, 16:34, 21:47) are new and may indicate home decoration or cleaning on weekends. Need to verify if this Sunday pattern repeats (Day 20) and if the Monday shift (Day 7) repeats on Day 14. Also check if the weekday pattern (reading_glasses at desk, coffee_mug at desk, bowl at sink) returns on Day 8-11. The single-person evidence remains strong.

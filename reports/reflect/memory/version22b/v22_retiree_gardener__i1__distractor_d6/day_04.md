@@ -1,0 +1,25 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.92) A single working professional with a structured morning and evening routine, likely working from home or with a flexible schedule. — Consistent morning coffee/breakfast (bowl, newspaper, glasses at table at 07:04), midday phone break at sofa (13:46 on Day 3, similar pattern), early evening bed preparation (18:25), and evening relaxation (floor_lamp at sofa at 20:54). No evidence of a second person's distinct routine. The Friday pattern matches previous workdays.
+2. (p=0.05) A couple or family with one person working from home and another possibly working outside, sharing household tasks. — Multiple dining_chair events (Day 1, 2, 3, 4) and picture_frame moved to coffee_table (Day 2, 4) could indicate two people, but no clear separate routine. The probability decreases as single-person pattern strengthens.
+3. (p=0.03) A remote worker with a pet, as some objects might be moved by a pet (e.g., pillow, picture frame). — Doormat events (Day 0-3) and picture_frame movement could be pet-related, but no direct evidence. Probability remains low.
+
+## Selected evidence
+- Day 0, 07:32 — coffee_mug at patio_table_p1 (morning coffee routine on Monday)
+- Day 0, 12:33 — plate at sink_k1 (lunch at home on a workday)
+- Day 0, 20:54 — bed_pillow at bed_r1 (evening bed preparation)
+- Day 1, 13:50 — phone at sofa_l1 (midday break at home on Tuesday)
+- Day 1, 18:51 — plate at sink_k1 (dinner plate at home on Tuesday)
+- Day 2, 09:08 — phone at patio_table_p1 (morning work start on Wednesday)
+- Day 2, 13:50 — phone at sofa_l1 (afternoon break on Wednesday)
+- Day 3, 07:44 — coffee_mug at patio_table_p1 (morning coffee routine on Thursday)
+- Day 3, 09:10 — phone and reading_glasses at patio_table_p1 (morning work start on Thursday)
+- Day 4, 07:04 — bowl, newspaper, reading_glasses at table_d1 (Friday morning breakfast/reading routine)
+- Day 4, 07:44 — bowl at sink_k1 (breakfast cleanup)
+- Day 4, 16:10 — reading_glasses at sofa_l1 (afternoon reading/relaxation)
+- Day 4, 18:25 — bed_pillow at bed_r1 (early evening bed preparation)
+- Day 4, 20:54 — floor_lamp at sofa_l1 (evening relaxation area)
+
+## Notes
+Friday pattern shows a morning breakfast/reading routine (bowl, newspaper, glasses at table at 07:04) instead of patio coffee; this may be a weekly variation or a different start to the day. No doormat events today; maybe no morning exit. Evening bed preparation (18:25) and floor_lamp (20:54) consistent with previous days. Weekend (Day 5-6) will be key to see if routine changes (e.g., later wake-up, outings). Still no clear second person; chair movements could be one person. Pet hypothesis remains weak but keep for now.

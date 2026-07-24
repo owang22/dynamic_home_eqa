@@ -1,0 +1,17 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Rotating Shift Worker (Industrial/Logistics) — Strong consistency with hi-vis, badge, and thermos. Day 3 (13:23-22:39) and Day 4 (13:29-22:18) confirm a consistent afternoon-to-night shift pattern. The 05:12 departures on Days 0-2 were likely anomalies, errands, or misidentified events, as the core 'work gear' cluster now appears exclusively in the afternoon block. The laptop at the desk on Day 4 suggests remote administrative tasks or shift prep, not full-time remote work.
+2. (p=0.01) Two-person household (Shift + Remote) — Unlikely. No second set of keys, badges, or distinct morning/night routines observed. The 'second person' hypothesis was already weak (p=0.04) and is further contradicted by the lack of any second-person artifacts on Day 4.
+3. (p=0.01) Remote Worker with Errands — Contradicted by the rigid presence of industrial safety gear (hi-vis, badge) and the specific timing of the 'work' cluster (afternoon). A remote worker would not typically wear hi-vis to a desk or carry a work badge to a cafe.
+
+## Selected evidence
+- Day 4, 13:29 — work_badge at elsewhere (confirms departure for work, consistent with Day 3 pattern)
+- Day 4, 13:29 — hi_vis_vest at elsewhere (implied by 'work' cluster, though not explicitly listed, badge/thermos suffice)
+- Day 4, 13:29 — thermos at elsewhere (portable drink for shift, consistent with Day 3)
+- Day 4, 13:29 — laptop at desk_o1 (suggests pre-shift admin or remote task, distinguishes from pure manual labor)
+- Day 4, 22:18 — work_badge at nightstand_r1 (post-shift routine, consistent with Day 3)
+- Day 4, 22:18 — thermos at sink_k1 (evening cleaning routine, consistent with Day 3 mug at cupboard)
+
+## Notes
+Day 4 confirms the 'afternoon shift' pattern established on Day 3. The 05:12 departure on Days 0-2 is now highly suspect as an outlier or misinterpretation (perhaps a neighbor or delivery?). The laptop at the desk (not sofa) on Day 4 is a new detail: does the resident work from home before the shift? Or is the desk used for shift scheduling? Need to check if the laptop moves to the sofa later in the evening. The 08:07 morning events (bowl, mug, phone) are mundane and do not indicate a second resident. The pattern is now clearly: Leave ~13:30, Return ~22:30. Days 0-2 data should be re-evaluated as noise or different context.

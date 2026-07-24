@@ -1,0 +1,19 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A remote worker or student who uses a headset at a desk in the morning, then relaxes on the sofa with a phone in the afternoon, and later has a coffee mug put away in the evening. — The headset at the desk at 09:00 on day 0 and phone at desk at 09:12 on day 2 suggest a morning work/study routine. The phone on the sofa at 14:17 on day 0 and at the coffee table at 15:50 on day 1 indicates afternoon leisure. The coffee mug put away at 21:45 on day 1 and the fork/plate put away at 21:45 on day 2 suggest an evening cleanup routine. This pattern is consistent with a typical work-from-home or student routine.
+2. (p=0.15) A person who eats lunch at home (plate at sink at 12:36) and dinner at home (fork at sink at 18:54), suggesting they are home during the day and evening, possibly a remote worker or student. — The plate at sink at 12:36 on day 2 and fork at sink at 18:54 on day 2 indicate meals at home, which supports the hypothesis of a remote worker or student who is home during the day. However, this is only one day of evidence, so the probability is lower.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (suggests work/study activity in the morning)
+- Day 0, 14:17 — phone at sofa_l1 (indicates a break or leisure time in the afternoon)
+- Day 1, 15:50 — phone at coffee_table_l1 (reinforces afternoon leisure pattern)
+- Day 1, 21:45 — coffee_mug at cupboard_k1 (evening cleanup routine)
+- Day 2, 09:12 — phone at desk_o1 (morning work/study, phone used at desk)
+- Day 2, 12:36 — plate at sink_k1 (lunch at home, midday meal)
+- Day 2, 18:54 — fork at sink_k1 (dinner at home, evening meal)
+- Day 2, 21:45 — fork at cupboard_k1 (evening cleanup, utensils put away)
+- Day 2, 21:45 — plate at cupboard_k1 (evening cleanup, dishes put away)
+
+## Notes
+Only three days observed. Need to see if the headset appears at similar times on other weekdays, and if there are any weekend differences. The phone at desk in the morning on day 2 is a new pattern (previously phone was on sofa/coffee table in afternoon). This could indicate the phone is used for work/study in the morning. The plate and fork events on day 2 suggest meals at home, which supports the remote worker/student hypothesis. Need to verify if the coffee mug appears again in the evening on other days. Also look for other objects that might indicate specific hobbies or work type.

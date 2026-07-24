@@ -1,0 +1,14 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Remote worker with standard 9-5-ish schedule — The consistent 22:30-22:45 phone-to-nightstand pattern across Days 2, 3, and 4 strongly indicates a fixed sleep schedule. The Day 3 'elsewhere' movement suggests a commute or errand, while Day 4's early morning routine (07:31-08:01) aligns with a pre-work start. No evidence contradicts this stable diurnal rhythm.
+2. (p=0.05) Student with irregular study hours — Still possible but unlikely. The strict regularity of the sleep time (22:30-22:45) and early morning activity is more structured than typical student behavior. The 'elsewhere' event on Day 3 could be a library visit, but the consistency of the sleep window makes this less probable than a employed adult.
+3. (p=0.05) Shift worker — Highly unlikely. The consistent bedtime across three consecutive days (Days 2, 3, 4) directly contradicts the rotating or night-shift patterns associated with this persona. The probability remains low as no new evidence supports shift variability.
+
+## Selected evidence
+- Day 4, 07:31 — bowl at table_d1 (indicates early morning meal, consistent with pre-work routine)
+- Day 4, 08:01 — bowl/mug at sink_k1 (confirms completion of morning routine, suggests departure soon after)
+- Day 4, 22:36 — phone at nightstand_r1 (reinforces fixed 22:30-22:45 sleep window, rules out shift work)
+
+## Notes
+Day 4 confirms the established pattern: early morning activity followed by a likely departure (no laptop/phone seen at desk/elsewhere during day, unlike Day 2 where laptop was at desk). The 18:37 plate event is mundane dining. Key question: Did the resident return home on Day 4? The phone was at nightstand at 22:36, implying they were home. Need to check if laptop/phone were seen at desk_o1 during Day 4 to determine if they worked from home in the afternoon or if the 'elsewhere' pattern from Day 3 was an anomaly.

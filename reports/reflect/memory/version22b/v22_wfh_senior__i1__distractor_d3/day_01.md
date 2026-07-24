@@ -1,0 +1,21 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A single professional who works from home or has a home office, uses a headset for calls, and relaxes on the sofa in the evening. — Day 0 showed headset at desk in morning, sofa relaxation in afternoon/evening, and evening hygiene. Day 1 adds phone at coffee table (afternoon break), doormat at entry (likely returning home), wall clock moved to TV stand (evening TV setup), dining chair at table (dinner), and coffee mug to cupboard (after-dinner cleanup). This reinforces a consistent weekday routine of work, relaxation, and home activities.
+2. (p=0.20) A student or remote worker with a flexible schedule, spending time at desk in the morning and on sofa in the afternoon/evening. — Similar to above but less certainty about professional vs. student; headset could be for gaming or study. The doormat at entry suggests leaving home, which could be for classes or errands. The wall clock to TV stand might indicate evening entertainment, common for students.
+3. (p=0.10) A couple or family where one person uses the desk and another uses the sofa, but the events are sparse and could be from one person. — Multiple objects in different rooms could indicate multiple people, but no strong evidence yet. The doormat at entry could be from one person returning, and the dining chair at table could be a single person eating. Still possible but less likely.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (morning work/study activity)
+- Day 0, 14:17 — phone at sofa_l1 (afternoon break/relaxation)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation lighting)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening hygiene routine)
+- Day 0, 20:54 — bed_pillow at bed_r1 (preparing for sleep)
+- Day 1, 15:50 — phone at coffee_table_l1 (afternoon break, likely same person)
+- Day 1, 16:12 — doormat at entry_hook_e1 (returning home, suggests leaving during day)
+- Day 1, 18:37 — wall_clock at tv_stand_l1 (evening TV setup, consistent with relaxation)
+- Day 1, 21:20 — dining_chair at table_d1 (dinner time, evening meal)
+- Day 1, 21:45 — coffee_mug at cupboard_k1 (after-dinner cleanup)
+
+## Notes
+Day 1 (Tuesday) shows a similar pattern to Monday: afternoon break (phone at coffee table), returning home (doormat), evening TV (wall clock), dinner (dining chair), and cleanup (coffee mug). No morning events observed yet today. Need to check if weekend days (5-6) show different patterns (e.g., later wake-up, more leisure). The doormat at entry suggests the resident leaves home during the day, consistent with a professional or student. The wall clock moving to TV stand is a new object; its usual location is unknown. The coffee mug to cupboard indicates a kitchen activity. Overall, the routine is becoming clearer: work/study in morning, afternoon break, return home, evening relaxation, dinner, and sleep. The single professional hypothesis is strengthened.

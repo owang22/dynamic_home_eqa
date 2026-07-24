@@ -1,0 +1,21 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single professional who commutes to an office job (likely 9-to-5) and lives alone. — Day 3 (Thursday) shows the same morning departure at 08:30 with keys and work_lanyard, and return at 18:14 with travel_mug at sink. The evening meal (plate, fork) and cleanup (22:25 phone at nightstand, remote at coffee table) reinforce a single-person routine. No evidence of a second person or work-from-home activity.
+2. (p=0.04) A hybrid worker who sometimes works from home, but today went to the office. — The consistent departure and return times across four weekdays suggest a regular office schedule. The earlier laptop return on Day 1 (17:36) could be a one-off, but no work-from-home evidence (e.g., laptop staying home) has been observed. This hypothesis is less likely given the strong commuting pattern.
+3. (p=0.01) A student or intern with a structured schedule (classes or internship) and lives alone. — The work_lanyard and transit_card point to a professional job rather than a student. No textbooks or student-specific items have been observed. The routine is more typical of an office worker.
+
+## Selected evidence
+- Day 0, 08:34 — work_lanyard at elsewhere (work identification; confirms office job)
+- Day 0, 18:05 — transit_card at entry_hook_e1 (commute by public transport)
+- Day 1, 17:36 — laptop at desk_o1 (returned earlier than Day 0; possible schedule variation)
+- Day 2, 08:32 — phone, travel_mug, work_lanyard at elsewhere (consistent morning departure with work gear)
+- Day 2, 18:03 — transit_card at entry_hook_e1 (consistent return time with public transport)
+- Day 2, 18:03 — travel_mug at sink_k1 (commute coffee/tea; washed after use)
+- Day 2, 21:45 — plate and travel_mug at cupboard_k1 (evening cleanup; single-person routine)
+- Day 3, 08:30 — keys, work_lanyard at elsewhere (consistent morning departure with keys and lanyard)
+- Day 3, 18:14 — travel_mug at sink_k1 (returned with travel mug; consistent commute pattern)
+- Day 3, 22:25 — phone at nightstand_r1, remote at coffee_table_l1 (evening wind-down; single-person routine)
+
+## Notes
+Day 3 (Thursday) continues the commuting pattern: departure at 08:30, return at 18:14. No laptop movement observed today; it may have been taken to work but not recorded. The work_lanyard and keys were seen leaving together. Weekend days (5-6) will be crucial to see if the routine changes. Also need to check if laptop ever stays home on weekdays to test hybrid hypothesis. The phone was seen at counter_k1 at 07:23, suggesting morning routine before departure. Bowl at sink at 07:47 indicates breakfast. Evening meal (plate at table at 18:35, fork and plate at sink at 19:20) followed by wind-down (phone at nightstand, remote at coffee table at 22:25).

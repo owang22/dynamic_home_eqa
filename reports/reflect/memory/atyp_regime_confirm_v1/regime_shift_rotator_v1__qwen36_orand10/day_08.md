@@ -1,0 +1,18 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Shift Worker (Industrial/Field) with Evening Remote Work — The 'work_badge' at 04:45 confirms employment identity. The 05:08 departure with thermos/badge/keys aligns with a morning shift. The 14:25 return with vest/badge/laptop suggests immediate transition to a second role (remote admin/tech) or shift overlap. The consistent 21:45 thermus usage indicates a long day.
+2. (p=0.01) Hybrid Professional with Field Safety Requirements — Unlikely due to the rigid 04:45 start time and specific 'work_badge' which implies mandatory site access rather than optional safety gear. The laptop appearing at 14:25 on the sofa (not desk) might suggest leisure, but the badge/vest combo strongly points to industrial work.
+3. (p=0.01) Student/Researcher with Early Fieldwork — Fieldwork can require badges and vests, but the daily consistency of the 04:45-14:25 block over two days suggests a job rather than sporadic academic work. The laptop usage post-shift is ambiguous but fits both hypotheses.
+
+## Selected evidence
+- Day 8, 04:45 — work_badge at nightstand_r1 (confirms employment identity, not just hobby gear)
+- Day 8, 05:08 — thermos at elsewhere (consistent morning routine for long shift)
+- Day 8, 05:08 — work_badge at elsewhere (confirms departure for work)
+- Day 8, 05:24 — keys at elsewhere (confirms departure for work)
+- Day 8, 14:25 — hi_vis_vest at closet_r1 (return from morning shift)
+- Day 8, 14:25 — laptop at sofa_l1 (post-shift activity, location suggests casual/remote work)
+- Day 8, 21:45 — thermos at cupboard_k1 (consistent late-day hydration, likely for next morning)
+
+## Notes
+Day 8 (Tuesday) reinforces the Shift Worker hypothesis. The 'work_badge' is a stronger discriminator than the vest alone. The pattern is now clear: Wake 04:45, Leave 05:08, Return 14:25. The laptop is used at 14:25, suggesting a second shift or remote work component. The 'fork/plate' events at 18:21-19:27 indicate dinner preparation, consistent with a late afternoon return. The 'thermos' is used consistently, likely for the long morning shift. Need to observe if the laptop is used for work or leisure on weekends. The 'keys' are used for departure, not just entry. The 'remote' at 19:27 suggests evening relaxation after work.

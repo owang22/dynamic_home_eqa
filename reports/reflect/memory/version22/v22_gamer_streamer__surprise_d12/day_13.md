@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single adult with a flexible or irregular schedule, likely working from home or engaged in remote work/gaming, with a late-night routine and weekend relaxation pattern. — The surprising headset at shelf at 01:18 (expected elsewhere) strongly suggests late-night gaming or work, consistent with the energy can at desk on Day 3. The doormat at entry at 07:15 indicates a morning errand or mail, but no commute. The dining chair at table at 08:04 and 08:45 suggests a morning meal or work setup. The floor lamp at sofa at 08:46 and 17:20 shows daytime and evening relaxation. The bed pillow at bed at 10:27 and 19:24 indicates a late wake-up and early bedtime, but the 01:18 headset contradicts a strict sleep schedule. The plate at sink at 19:54 and cupboard at 21:45 (surprising) suggests a late dinner and cleanup, reinforcing a non-standard meal time. The phone at desk at 21:29 indicates late-night work or leisure. The picture frame at coffee table (12:12, 16:43) is a personal touch but not multiple people. The bath mat at bathroom at 18:35 is mundane. The wall clock at shelf is mundane. This hypothesis is strengthened by the late-night headset and late dinner cleanup.
+2. (p=0.10) A single adult with a 9-to-5 job who works from home on some days, but weekend evidence shows a different routine. — The doormat at entry at 07:15 could be a morning errand before work, but the headset at 01:18 contradicts a standard work schedule. The late wake-up (bed pillow at 10:27) and late dinner (plate at sink at 19:54, cupboard at 21:45) are not typical for a 9-to-5 worker. The lack of work-related items (e.g., laptop, energy can) on this Monday weakens this hypothesis. The surprising headset and plate events make this less likely.
+3. (p=0.05) A couple or family with at least one person home during the day, but evidence remains weak. — No clear signs of multiple residents: single plate, single dining chair movements, single bed pillow. The headset at 01:18 could be for one person. The picture frame at coffee table is a personal touch but not evidence of multiple people. The bath mat and wall clock are mundane. This hypothesis remains unlikely given the consistent single-person evidence.
+
+## Selected evidence
+- Day 0, 11:34 — plate at sink_k1 (midday meal cleanup, home presence during work hours)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch seating, consistent midday home presence)
+- Day 0, 20:54 — bed_pillow at bed_r1 (consistent bedtime, typical sleep schedule)
+- Day 3, 10:46 — coffee_mug at table_d1 (late breakfast, flexible schedule)
+- Day 3, 15:05 — blanket at gaming_chair_o1 (afternoon leisure or nap, non-work activity)
+- Day 3, 21:58 — energy_can at desk_o1 (late-night work or gaming, irregular hours)
+- Day 6, 09:33 — floor_lamp at sofa_l1 (morning relaxation, weekend pattern)
+- Day 6, 10:31 — plate at table_d1 (late breakfast on weekend, consistent with flexible schedule)
+- Day 6, 12:45 — blanket at sofa_l1 (surprising: expected elsewhere; afternoon leisure on weekend)
+- Day 6, 18:51 — fork at table_d1 (surprising: expected elsewhere; late dinner, weekend routine)
+- Day 7, 01:18 — headset at shelf_o1 (surprising: expected elsewhere; late-night gaming or work, irregular hours)
+- Day 7, 07:15 — doormat at entry_hook_e1 (morning errand or mail, no commute)
+- Day 7, 10:27 — bed_pillow at bed_r1 (late wake-up, flexible schedule)
+- Day 7, 19:54 — plate at sink_k1 (late dinner cleanup, non-standard meal time)
+- Day 7, 21:45 — plate at cupboard_k1 (surprising: expected elsewhere; late-night kitchen activity)
+
+## Notes
+Day 7 (Monday) shows a late-night headset at 01:18 (surprising, expected elsewhere), reinforcing a late-night gaming/work routine. The doormat at 07:15 suggests a morning errand, but no commute. The bed pillow at 10:27 indicates a late wake-up, consistent with the late night. The plate at sink at 19:54 and cupboard at 21:45 (surprising) shows a late dinner and cleanup, similar to Day 6's fork at table. The floor lamp at sofa at 08:46 and 17:20 indicates daytime and evening relaxation. The picture frame at coffee table (12:12, 16:43) is a personal touch but not multiple people. The bath mat at 18:35 and wall clock at 14:10 are mundane. Need to observe more weekdays to confirm if the late-night headset and energy can pattern is regular. Also, look for signs of a second person (e.g., multiple plates or mugs at different times) to rule out the family hypothesis. The surprising events (headset at shelf, plate at cupboard) suggest the belief model's expectations about object locations are being updated.

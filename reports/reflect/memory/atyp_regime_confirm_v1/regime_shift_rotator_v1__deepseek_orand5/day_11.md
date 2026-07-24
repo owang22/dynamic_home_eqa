@@ -1,0 +1,26 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A person who works a standard daytime job (likely office or similar) and returns home in the evening, with a consistent morning departure and evening wind-down routine. The later start on Thursdays is now a repeated pattern, but the Friday events show a later start (08:05) and midday departure (13:22), which is similar to the Thursday pattern. This suggests the person may have a flexible schedule or a different shift on some days, but the overall pattern still fits a standard workday with variations. — Day 11 (Friday) shows a later start (08:05) and midday departure (13:22), similar to the Thursday pattern. This reduces the distinctiveness of the Thursday anomaly and suggests the person may have a flexible schedule or a different shift on some days. The early weekday departures (05:17-05:38) were not observed today, so the pattern may be more varied than previously thought. The work_badge and laptop confirm work-related activity.
+2. (p=0.35) A person who works a job requiring safety gear (e.g., construction, warehouse, or outdoor work), with a standard daytime schedule but with a later start on Thursdays and possibly Fridays. The hi_vis_vest from Day 9 is a strong clue, and the work_badge is consistent. The later start on Friday (08:05) and midday departure (13:22) now extend the pattern to another weekday, suggesting the person may have a different shift on some days or a flexible schedule. — The hi_vis_vest from Day 9 remains a strong clue for a job requiring safety gear. The later start on Friday (08:05) and midday departure (13:22) now extend the pattern to another weekday, making the Thursday anomaly less unique. This could indicate a different shift on some days or a flexible schedule. The early weekday departures (05:17-05:38) were not observed today, so the pattern may be more varied.
+3. (p=0.05) A person with a non-standard schedule (e.g., shift worker, freelancer) who has a later start on some weekdays and a midday departure. The early weekday departures (05:17-05:38) were not observed today, and the later start on Friday (08:05) and midday departure (13:22) suggest a pattern of later starts on Thursdays and Fridays. This could indicate a shift worker with a rotating schedule or a freelancer with flexible hours. — The early weekday departures (05:17-05:38) were not observed today, and the later start on Friday (08:05) and midday departure (13:22) suggest a pattern of later starts on Thursdays and Fridays. This could indicate a shift worker with a rotating schedule or a freelancer with flexible hours. However, the consistent pattern of midday returns (14:24-14:35) and the presence of work_badge and laptop still suggest a standard workday with variations. Probability remains low.
+
+## Selected evidence
+- Day 2, 05:29 — laptop at elsewhere (morning departure with work equipment, strong evidence for office job)
+- Day 2, 14:35 — work_badge at entry_hook_e1 (return from work, confirms work-related commute)
+- Day 3, 08:00 — phone at table_d1 (later morning start, possibly a different schedule)
+- Day 3, 13:23 — phone at elsewhere (midday departure, possibly for work or errand)
+- Day 4, 08:07 — phone at table_d1 (later morning start, consistent with Day 3 pattern)
+- Day 4, 13:29 — phone at elsewhere (midday departure, similar to Day 3)
+- Day 5, 10:48 — phone at counter_k1 (relaxed Saturday start, no early departure)
+- Day 6, 11:15 — phone at counter_k1 (relaxed Sunday start, no early departure)
+- Day 7, 04:45 — thermos at counter_k1 (early morning prep, consistent with weekday pattern)
+- Day 8, 05:08 — thermos at elsewhere (morning departure, standard weekday)
+- Day 8, 14:25 — phone at counter (return from work, midday)
+- Day 9, 05:17 — thermos at elsewhere (morning departure, standard weekday)
+- Day 9, 14:24 — hi_vis_vest at closet_r1 (return with safety gear, suggests job type)
+- Day 9, 14:24 — work_badge at nightstand_r1 (return from work, confirms work-related commute)
+- Day 10, 08:00 — phone at table_d1 (later morning start, repeats Thursday pattern)
+
+## Notes
+Day 11 (Friday) shows a later start (08:05) and midday departure (13:22), similar to the Thursday pattern. This suggests the later start may not be specific to Thursdays but could occur on other weekdays. The early weekday departures (05:17-05:38) were not observed today, so the pattern may be more varied. Need to observe more days to see if the early start pattern returns on Monday-Wednesday or if the later start becomes more common. The hi_vis_vest from Day 9 remains a strong clue for a job requiring safety gear. The bowl and coffee_mug events at 08:05 and 08:45 suggest a typical morning routine. The keys and work_badge at 22:16 indicate a late return, which is unusual compared to previous midday returns (14:24-14:35). This could indicate a different schedule or an evening activity. Need to verify if this is a one-off or a pattern.

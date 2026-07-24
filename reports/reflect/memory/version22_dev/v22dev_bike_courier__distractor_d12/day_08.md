@@ -1,0 +1,26 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single adult with a flexible work schedule, likely working from home or commuting by bike, who maintains a tidy home and has a consistent evening routine. Weekend evidence shows relaxed days with late breakfast, midday showers, and no bike rides, consistent with a flexible schedule. — Day 8 (Tuesday) shows helmet and phone at elsewhere at 10:07 (bike commute or errand), doormat at entry_hook at 11:56 (return), pannier at bike_rack at 18:24 (bike errand or commute), and doormat again at 19:17 (evening arrival). This matches the weekday pattern of bike commute and midday rest (bed_pillow not moved today, but waste_bin movements at 08:48, 11:46, 12:25, 21:43 suggest cleaning/trash routine). The midday rest may have been missed or not observed. The flexible schedule hypothesis remains strong.
+2. (p=0.04) A person who works a standard 9-to-5 job, possibly with a flexible schedule, and values home comfort and organization. Weekend evidence shows a relaxed Sunday, but the lack of morning departure or work-related items suggests a non-work day. — Day 8 shows a morning departure (helmet, phone at elsewhere at 10:07) and return (doormat at 11:56), which could be a work commute, but the midday rest and evening shower are consistent with a flexible schedule. The probability remains low.
+3. (p=0.01) A person who is active and health-conscious, possibly a cyclist, and has a structured daily routine. Weekend evidence shows no bike ride (helmet not moved, hex_wrench_set used for maintenance), suggesting a rest day or leisure activity. — Day 8 shows helmet at elsewhere at 10:07 and pannier at bike_rack at 18:24, indicating bike use. This supports the cyclist hypothesis, but the probability remains very low due to limited evidence.
+
+## Selected evidence
+- Day 0, 10:00 — helmet at elsewhere (bike commute or errand, not WFH all day)
+- Day 0, 12:30 — dining_chair at table_d1 (lunch at home, possibly WFH or break)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday rest, nap or WFH break)
+- Day 0, 18:07 — water_bottle at bike_rack_h1 (return from bike ride, after work)
+- Day 1, 08:37 — dining_chair at table_d1 (morning meal, likely breakfast)
+- Day 1, 08:47 — bath_mat at bathroom_c1 (morning shower, different from evening)
+- Day 1, 10:42 — dining_chair at table_d1 (mid-morning meal or break)
+- Day 1, 11:18 — bed_pillow at bed_r1 (midday rest, consistent with Day 0)
+- Day 1, 16:12 — doormat at entry_hook_e1 (early afternoon arrival, possibly from work)
+- Day 1, 18:33 — water_bottle at bike_rack_h1 (return from bike ride, similar to Day 0)
+- Day 1, 20:46 — bike_pump at hall_shelf_h1 (bike maintenance, active cyclist)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure/arrival)
+- Day 2, 10:09 — phone at elsewhere (phone taken on commute or errand)
+- Day 2, 18:12 — pannier at bike_rack_h1 (bike errand or commute)
+- Day 3, 10:01 — helmet at elsewhere (bike commute or errand, consistent pattern)
+
+## Notes
+Day 8 (Tuesday) shows helmet and phone at elsewhere at 10:07 (bike commute/errand), doormat at entry_hook at 11:56 (return), pannier at bike_rack at 18:24 (bike errand/commute), doormat at 19:17 (evening arrival). Waste_bin movements at 08:48, 11:46, 12:25, 21:43 suggest cleaning/trash routine. No bed_pillow movement observed today; midday rest may have been missed or not occurred. Wall_clock at counter at 16:14 (adjusting/cleaning). Bath_mat at bathroom at 15:26 and 17:40 (afternoon and evening showers). Picture_frame at coffee_table at 14:15 (decoration). Floor_lamp at sofa at 14:45 (afternoon relaxation). Dining_chair at table at 14:19 (afternoon meal/break). The weekday pattern of bike commute and midday rest is partially confirmed; need to verify if midday rest is consistent on all weekdays. Weekend pattern confirmed: no bike rides, later breakfast, midday and evening showers.

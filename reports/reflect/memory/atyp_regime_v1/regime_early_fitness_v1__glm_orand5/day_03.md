@@ -1,0 +1,21 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Working professional who leaves home early and returns in the evening — Consistent early departure (keys and laptop at elsewhere at 08:02) and morning protein shake routine strongly support a standard work schedule. The pattern has held across four weekdays.
+2. (p=0.04) Remote worker with flexible schedule — Early morning activity could indicate flexible work hours, but consistent departure/return times suggest more structured routine.
+3. (p=0.01) Student with early classes — Early morning activity could indicate academic commitments, but pattern more consistent with professional work schedule.
+
+## Selected evidence
+- Day 0, 07:55 — laptop seen at elsewhere (suggests work/school departure)
+- Day 0, 19:42 — remote seen at sofa_l1 (indicates evening return home)
+- Day 1, 05:00 — foam_roller seen at coffee_table_l1 (suggests morning fitness routine)
+- Day 1, 07:59 — phone seen at elsewhere (consistent early departure pattern)
+- Day 1, 19:34 — phone seen at sofa_l1 (consistent evening return pattern)
+- Day 2, 07:59 — keys seen at elsewhere (consistent early departure pattern)
+- Day 2, 17:18 — laptop seen at desk_o1 (laptop returning home before 18:00 suggests structured work schedule)
+- Day 3, 06:44 — protein_shaker seen at counter_k1 (morning routine consistent with work schedule)
+- Day 3, 08:02 — keys seen at elsewhere (consistent early departure pattern)
+- Day 3, 08:02 — laptop seen at elsewhere (consistent work departure pattern)
+
+## Notes
+Consistent early departure and return patterns across four weekdays strongly suggest a 9-5 work schedule. Morning protein shake routine observed on multiple days. Weekend patterns will be crucial to confirm work hypothesis. The foam_roller sighting suggests possible fitness routine before work.

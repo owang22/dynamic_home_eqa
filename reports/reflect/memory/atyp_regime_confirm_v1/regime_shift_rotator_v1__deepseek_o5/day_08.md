@@ -1,0 +1,26 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A professional with a hybrid work schedule: early office days Mon-Wed, later start and late return Thu-Fri, and a relaxed weekend at home. — Day 8 (Tuesday) shows early morning thermos and phone departure at 05:08-05:24, matching the Mon-Wed early commute pattern. However, the laptop and work_badge appear at home at 14:25, indicating an early return and remote work in the afternoon. This is a slight deviation from the previous pattern where no work items appeared in the evening on Mon-Wed. It may suggest a flexible office day or a half-day. The overall hybrid schedule remains the best fit.
+2. (p=0.08) A person who works outside the home with occasional remote work in the afternoon, but weekend is free. — The early morning departure on Tuesday is consistent with a commute, and the early return with laptop and work_badge at home suggests remote work in the afternoon. This could be a single pattern rather than a hybrid schedule. However, the previous Mon-Wed pattern showed no such early return, so this hypothesis is less consistent.
+3. (p=0.02) A person with a non-standard work schedule, possibly shift work or irregular hours, but weekend is free. — The early morning departure on Tuesday and the early return with remote work in the afternoon is not typical of a standard shift pattern. The weekend remains free, but the weekday pattern is more consistent with a hybrid office schedule. This hypothesis remains unlikely.
+
+## Selected evidence
+- Day 0, 05:09 — work_badge at elsewhere (early commute to office)
+- Day 0, 14:25 — laptop at desk_o1 (afternoon remote work)
+- Day 1, 04:55 — thermos at counter_k1 (early morning prep for commute)
+- Day 1, 14:23 — phone at counter_k1 (return home)
+- Day 2, 05:29 — laptop at elsewhere (early departure to office)
+- Day 2, 14:35 — keys at entry_hook_e1 (return home)
+- Day 3, 08:36 — phone at counter_k1 (later start, not early departure)
+- Day 3, 13:23 — phone at elsewhere (midday departure)
+- Day 3, 22:39 — thermos at sink_k1 (late return, evening cleanup)
+- Day 4, 08:07 — phone at table_d1 (later start, breakfast)
+- Day 4, 13:29 — phone at elsewhere (midday departure)
+- Day 4, 22:18 — thermos at sink_k1 (late return, evening cleanup)
+- Day 5, 10:48 — phone at counter_k1 (late morning, relaxed start)
+- Day 6, 11:15 — phone at counter_k1 (late morning, relaxed start)
+- Day 7, 04:45 — thermos at counter_k1 (early morning prep for commute, matches Mon-Wed pattern)
+
+## Notes
+Day 8 (Tuesday) shows early departure (05:08-05:24) but early return with laptop and work_badge at home at 14:25, followed by phone at sofa at 19:27. This is a new pattern for a Tuesday: previous Tuesdays (Day 1) had a return at 14:23 but no work items at home. This could indicate a half-day or flexible office day. Need to observe next Tuesday to see if this repeats. The weekend pattern remains free. Single occupant still plausible.

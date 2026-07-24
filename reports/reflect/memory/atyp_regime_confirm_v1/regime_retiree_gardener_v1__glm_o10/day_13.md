@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Professional adult working from home with regular meal times — The consistent morning routine with reading_glasses, newspaper, and coffee_mug, structured meal times, and phone usage patterns throughout the day strongly support this hypothesis. The resident appears to have a regular work schedule with breaks at patio and living areas.
+2. (p=0.01) Retired person with relaxed daily schedule — The early morning pill_organizer and reading_glasses setup could indicate retirement age, but the consistent workday pattern and phone usage during typical work hours make this less likely.
+3. (p=0.00) Student with flexible schedule — The structured morning routine and consistent meal timing are inconsistent with a typical student schedule.
+
+## Selected evidence
+- Day 1, 06:30 — pill_organizer seen at counter_k1 (suggests medication routine, possibly adult)
+- Day 1, 06:30 — reading_glasses seen at counter_k1 (morning reading routine)
+- Day 1, 07:10 — bowl seen at table_d1 (indicates breakfast routine)
+- Day 1, 08:47 — phone seen at patio_table_p1 (suggests leisure time during what might be work hours)
+- Day 1, 17:54 — plate seen at table_d1 (indicates dinner routine)
+- Day 3, 07:04 — newspaper seen at table_d1 (morning reading habit, possibly with coffee)
+- Day 12, 07:05 — coffee_mug seen at table_d1 (weekend morning routine similar to weekdays)
+- Day 12, 07:05 — newspaper seen at table_d1 (consistent weekend reading habit)
+- Day 12, 12:07 — fork seen at table_d1 (lunch timing similar to weekdays)
+- Day 12, 16:11 — phone seen at coffee_table_l1 (afternoon leisure time on weekend)
+- Day 13, 06:30 — reading_glasses seen at counter_k1 (consistent weekend morning routine)
+- Day 13, 06:56 — pill_organizer seen at cupboard_k1 (medication routine maintained on weekend)
+- Day 13, 12:49 — coffee_mug seen at sink_k1 (weekend lunch routine)
+- Day 13, 16:03 — remote seen at coffee_table_l1 (weekend leisure activity)
+- Day 13, 18:48 — plate seen at sink_k1 (dinner preparation or cleanup routine)
+
+## Notes
+The resident maintains a consistent morning routine starting around 6:30-7:30 AM with reading_glasses and coffee_mug, even on weekends (Day 12-13). Meal times remain structured with lunch around 12 PM. The weekend shows similar patterns to weekdays but with some variations in afternoon phone usage location and introduction of remote control usage. The pill_organizer remains a key indicator of middle-aged or older resident. Weekend patterns suggest the resident maintains structure even on non-work days, supporting the professional adult hypothesis. The placement of dishes in sink_k1 on Day 13 may indicate a different cleaning routine compared to Day 12.

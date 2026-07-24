@@ -1,0 +1,25 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single person with a dog, working from home or with a flexible schedule, who has a consistent morning coffee routine and uses the sofa and floor lamp in the evening. — Day 3 shows a doormat at 07:57 and 09:02 (morning dog walk or arrival), bowl at sink at 08:29 (breakfast cleanup), dining chair at 08:57 (morning work/meal), blanket at dog bed at 09:43 (dog comfort), grooming brush at mudroom at 09:43 (dog grooming after walk), floor lamp at sofa at 12:21 (midday relaxation), cushion at sofa at 13:25 (afternoon lounging), bed pillow at 18:51 and 21:57 (evening bed preparation). This pattern strongly suggests a flexible schedule with morning dog care, midday home presence, and evening relaxation. No evidence of a second person.
+2. (p=0.10) A person who works outside the home and returns in the evening, with a dog, and has a structured evening routine. — The doormat events at 07:57 and 09:02 could be a morning departure and return, but the dining chair at 08:57 and floor lamp at 12:21 indicate home presence during typical work hours, contradicting a standard commute. The evening bed pillow events are consistent with a structured evening, but the midday presence weakens this hypothesis.
+3. (p=0.05) A couple or family with a dog, where one person works from home and the other may have a different schedule, with evening activities centered around the living room. — No new evidence of multiple people. Single dining chair moves, single dog cushion, and single grooming brush suggest one person. The doormat events could be one person leaving and returning, but no second person's events observed. Probability remains low.
+
+## Selected evidence
+- Day 0, 07:37 — coffee_mug at table_d1 (morning coffee ritual, likely before work or start of day)
+- Day 0, 15:38 — cushion at dog_bed_l1 (dog present, cushion moved to dog bed)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, lamp moved to sofa area)
+- Day 0, 20:23 — bath_mat at bathroom_c1 (evening bath or shower routine)
+- Day 1, 10:42 — dining_chair at table_d1 (midday use of table, possibly for work or lunch)
+- Day 1, 17:12 — dog_leash at leash_hook_m1 (dog walk after work hours, consistent with pet care)
+- Day 2, 08:38 — doormat at mudroom_m1 (morning arrival or departure, possibly a walk or leaving home)
+- Day 2, 15:41 — cushion at dog_bed_l1 (afternoon dog care, consistent with pet routine)
+- Day 3, 07:57 — doormat at mudroom_m1 (morning dog walk or arrival)
+- Day 3, 08:29 — bowl at sink_k1 (breakfast cleanup, morning routine)
+- Day 3, 08:57 — dining_chair at table_d1 (morning work or meal, flexible schedule)
+- Day 3, 09:43 — grooming_brush at mudroom_m1 (dog grooming after walk, pet care)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday relaxation, home during work hours)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening bed preparation, consistent with bedtime routine)
+
+## Notes
+Day 3 (Thursday) confirms a flexible schedule: morning dog walk (doormat 07:57, 09:02), breakfast cleanup (bowl 08:29), morning work/meal (dining chair 08:57), dog grooming (brush 09:43), midday relaxation (floor lamp 12:21, cushion 13:25), and evening bed prep (pillow 18:51, 21:57). No coffee mug observed today, but morning coffee may have been missed or not moved. Weekend observations (days 5-6) will help confirm if the person stays home or has different routines. The grooming brush is a new diagnostic object indicating dog care. The bed pillow events at 18:51 and 21:57 suggest a consistent evening bedtime routine.

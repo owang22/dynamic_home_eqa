@@ -1,0 +1,23 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single adult with a non-standard work schedule, likely a shift worker (e.g., manual labor or trade) who works early morning shifts and sometimes late evening shifts, but has weekends off or a relaxed weekend routine. — The early morning departures on weekdays (Days 2, 4) and late-night return on Day 3 strongly support shift work. The weekend (Day 5) shows a later wake-up (phone at sofa at 12:44, no work gear movements), consistent with a day off. The single-person evidence (single utensils, plates) remains consistent. The surprising events (phone at sofa, coffee_mug at cupboard) on Saturday are now explained by a weekend routine: the resident sleeps in, uses the sofa, and puts away dishes later in the evening.
+2. (p=0.10) A single adult with a flexible or part-time job who also works from home occasionally, with a clear weekend relaxation pattern. — The midday nap (Day 0) and sofa lamp use (Day 3) suggest flexibility, but the consistent early weekday starts (Days 2, 4) and late-night return (Day 3) are less typical of a flexible schedule. The weekend evidence (late phone use, no work gear) could fit a part-time worker with weekends off, but the shift worker hypothesis better explains the weekday pattern.
+3. (p=0.05) A single adult who works in a trade or manual labor job with irregular hours, possibly including night shifts, but with a consistent weekend off. — The hi-vis vest and late-night return (Day 3) suggest manual labor, but the structured early starts (Days 2, 4) and weekend relaxation (Day 5) are more consistent with a regular shift pattern than irregular hours. This hypothesis is less likely given the accumulating evidence of a predictable weekday routine.
+
+## Selected evidence
+- Day 0, 05:24 — phone at elsewhere (early wake-up, consistent with early work start)
+- Day 0, 12:57 — bed_pillow at bed_r1 (midday nap, suggests flexible schedule or shift work)
+- Day 2, 05:07 — work_badge at elsewhere (early departure for work, likely commute)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (return from work, earlier than 9-to-5, suggests half-day or shift end)
+- Day 3, 13:28 — thermos at elsewhere (packed meal leaving home, suggests work or errand)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (late-night return of work gear, indicates shift work or manual labor job)
+- Day 3, 23:02 — work_badge at locker_shelf_e1 (late-night return of badge, consistent with shift work)
+- Day 4, 04:59 — phone at entry_hook_e1 (phone left at home before early departure, unusual but consistent with early start)
+- Day 4, 04:59 — work_badge at entry_hook_e1 (badge left at home before early departure, suggests rushed morning)
+- Day 4, 05:14 — hi_vis_vest at elsewhere (early departure with vest, confirms manual labor job and early start)
+- Day 5, 12:44 — phone at sofa_l1 (late weekend wake-up, no work gear, indicates day off)
+- Day 5, 21:45 — coffee_mug at cupboard_k1 (evening dish put away, relaxed weekend routine)
+
+## Notes
+Weekend (Day 5, Saturday) shows a clear change: no work gear movements, late phone use (12:44), and relaxed evening (coffee_mug put away at 21:45). This supports a weekday shift worker with weekends off. The surprising events (phone at sofa, coffee_mug at cupboard) are now explained by the weekend routine. Need to observe Day 6 (Sunday) to confirm the weekend pattern. Also, the picture_frame at coffee_table on Day 5 (08:34, 18:45) suggests a personal item on display, possibly for relaxation. No evidence of a second person yet. The wall_clock and waste_bin movements are mundane and dropped.

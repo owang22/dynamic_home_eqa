@@ -1,0 +1,26 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single professional who works from home or has a home office, with a morning coffee routine and a simple evening meal, and who takes occasional work trips. — The new evidence shows laptop still in carryon on Thursday evening, consistent with the trip that started Tuesday. The plate at sink suggests a simple meal at home, but the laptop not yet unpacked indicates the trip may be ongoing or the resident just returned and hasn't unpacked. The overall pattern of work-from-home on non-travel days remains strong, and the Monday anomaly is still unexplained but could be a day off.
+2. (p=0.10) A single person with a flexible routine, possibly working from home but not strictly, who enjoys simple meals and may travel occasionally. — The trip evidence supports occasional travel, but the consistent work-from-home pattern on other weekdays makes this less likely than the professional hypothesis. The Monday anomaly could still indicate flexibility, but the laptop in carryon on Thursday suggests the trip is still active, which is more typical of a professional trip.
+3. (p=0.05) A frequent traveler who takes short trips, possibly for work or leisure, with a home office setup. — The new trip confirms travel, but the frequency (two trips in 10 days) is not extreme. The home office setup and simple meals suggest a professional rather than a leisure traveler. This hypothesis remains unlikely.
+
+## Selected evidence
+- Day 1, 07:14 — passport at elsewhere (passport leaving early Tuesday, confirms trip)
+- Day 1, 07:14 — suitcase at elsewhere (suitcase leaving early Tuesday, confirms trip)
+- Day 3, 18:35 — neck_pillow at carryon_e1 (packing for return trip, suggests air travel)
+- Day 3, 18:35 — packing_cubes at carryon_e1 (organized packing for return)
+- Day 3, 18:35 — passport at closet_shelf_e1 (passport returned home, trip ended)
+- Day 4, 09:06 — coffee_mug at desk_o1 (morning coffee at desk, work-from-home routine)
+- Day 4, 09:06 — laptop at desk_o1 (workday start at home desk)
+- Day 4, 16:29 — laptop at carryon_e1 (laptop packed into carryon Friday evening, suggests another trip planned)
+- Day 5, 07:39 — coffee_mug at table_d1 (Saturday morning coffee at table, not desk, suggests relaxed weekend)
+- Day 5, 22:27 — phone at nightstand_r1 (phone at nightstand Saturday night, resident likely home)
+- Day 6, 08:03 — bowl at sink_k1 (Sunday morning breakfast bowl at sink, relaxed weekend)
+- Day 6, 18:36 — plate at table_d1 (Sunday evening meal at table, simple dinner)
+- Day 6, 20:09 — phone at sofa_l1 (Sunday evening phone on sofa, relaxing at home)
+- Day 8, 06:23 — passport at carryon_e1 (passport packed for new trip Tuesday morning)
+- Day 8, 07:35 — keys at elsewhere (keys leaving, resident departing for trip)
+
+## Notes
+No events observed on Wednesday (day 9). On Thursday (day 10), laptop still in carryon at 18:37 suggests the trip may still be ongoing or the resident just returned and hasn't unpacked. Plate at sink at 19:22 indicates a simple meal at home, possibly the resident returned and ate. Need to check if laptop returns to desk on Friday to confirm trip end. Also verify if coffee mug appears at desk on Friday morning to confirm work-from-home routine on non-travel days. The Monday (day 7) lack of coffee/laptop at desk remains unexplained; could be a day off or flexible schedule.

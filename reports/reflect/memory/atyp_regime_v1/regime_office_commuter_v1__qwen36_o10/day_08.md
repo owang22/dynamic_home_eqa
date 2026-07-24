@@ -1,0 +1,16 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Hybrid professional with fixed weekday commute — Day 8 (Tuesday) replicates the rigid Mon-Fri pattern: laptop/transit_card/lanyard at 'elsewhere' (home office) at 08:30 (work start) and phone at sofa_l1 at 17:46 (post-commute relaxation). The 'work_lanyard' remains a critical discriminator for office-based employment. The consistency across two weekdays strengthens this hypothesis.
+2. (p=0.01) Remote worker with irregular schedule — Discarded as primary. The strict 08:30-17:46 window with specific 'work' artifacts (lanyard, transit card) contradicts an irregular remote schedule. The 'laptop at elsewhere' at 08:30 might suggest working from a different room, but the lanyard implies office attendance.
+3. (p=0.00) Shift worker with fixed weekend off — Discarded. The consistent Monday-Tuesday office pattern and weekend leisure pattern rules out shift work.
+
+## Selected evidence
+- Day 8, 08:30 — laptop at elsewhere (confirms work start; consistent with Day 7 pattern)
+- Day 8, 08:30 — transit_card at elsewhere (confirms public transport commute; supports office-based role)
+- Day 8, 08:30 — work_lanyard at elsewhere (critical: confirms office-based employment, not fully remote)
+- Day 8, 17:46 — phone at sofa_l1 (consistent post-commute relaxation; matches weekday pattern)
+- Day 8, 21:45 — travel_mug at cupboard_k1 (evening routine; suggests coffee/tea consumption after work)
+
+## Notes
+Tuesday (Day 8) confirms the hybrid professional hypothesis. The 'work_lanyard' and 'transit_card' at 'elsewhere' at 08:30 strongly support office attendance. The 'phone at sofa_l1' at 17:46 suggests the resident relaxes on the sofa after returning home. The 'travel_mug at cupboard_k1' at 21:45 indicates an evening routine involving a reusable mug. Need to observe if the laptop moves to the 'home desk' later in the day or if the lanyard is removed immediately upon return. The 07:35 bowl/sink events are mundane but confirm early morning routine. The 18:25 fork/table and 22:22 remote/coffee_table events are mundane but suggest evening meal and relaxation.

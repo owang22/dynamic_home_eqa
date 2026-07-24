@@ -1,0 +1,26 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Standard 9-5 Office Worker",
+   "prob": 0.95,
+   "rationale": "Strong convergence of evidence: early departure (05:29 laptop/keys), midday return (14:35 keys/badge), and evening relaxation (19:18 phone on sofa). The laptop leaving early and returning midday strongly suggests a commute to an office, ruling out remote work. The 14:35 return is consistent with a lunch break or early finish, but the badge presence confirms employment context."
+  },
+  {
+   "persona": "Night Shift Worker",
+   "prob": 0.03,
+   "rationale": "Contradicted by the 14:35 return with work badge and 19:18 evening relaxation. A night shift worker would likely be sleeping or preparing for work at these times, not returning from a 'work' location with a badge in the afternoon."
+  },
+  {
+   "persona": "Remote Worker with Early Gym",
+   "prob": 0.02,
+   "rationale": "Contradicted by the work_badge appearing at the entry hook at 14:35. Remote workers typically do not wear badges. The laptop leaving early is now interpreted as commuting to an office, not a gym."
+  }
+ ],
+ "selected_evidence": [
+  "Day 2, 05:29 \u2014 laptop at elsewhere (leaving for work, confirms commute vs remote)",
+  "Day 2, 14:35 \u2014 keys at entry_hook_e1 (returning home, likely lunch break or early finish)",
+  "Day 2, 14:35 \u2014 work_badge at entry_hook_e1 (confirms office employment, rules out remote/gym)",
+  "Day 2, 19:18 \u2014 phone at sofa_l1 (evening relaxation, consistent with post-work wind-down)"
+ ],
+ "notes": "The work_badge is the critical discriminator here. It confirms the resident works in an office environment. The 14:35 return with keys and badge suggests either a lunch break at home or an early finish on Wednesday. The laptop leaving at 05:29 supports the commute theory. Need to observe if the laptop returns to the home desk later in the day or if the resident stays out. The 19:18 phone on sofa suggests the resident is home and relaxing in the evening."
+}

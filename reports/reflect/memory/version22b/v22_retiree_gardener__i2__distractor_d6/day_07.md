@@ -1,0 +1,26 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.97) A single working professional who values a structured morning routine and unwinds in the evening. The newspaper habit is weekday-only, and weekend days show a relaxed but still structured pattern (later start, lunch at table, evening bath mat, cleanup). No evidence of a second person or children. — Day 7 (Monday) confirms the weekday newspaper at 07:04, consistent with previous weekdays. The bed pillow at 10:27 (mid-morning) is unusual but may indicate a day off or flexible schedule; however, the doormat events are absent today, suggesting the resident may have worked from home or had a late start. The evening bath mat (18:35) and plate at sink (18:37) align with a single person's dinner cleanup. Keys on coffee table at 21:24 suggest arrival home or end-of-day routine. No signs of a second person.
+2. (p=0.02) A couple or family with at least one person who works from home or has a flexible schedule. However, no evidence of multiple residents (e.g., two toothbrushes, multiple plates) has appeared across all days. — Day 7 still shows only single-person activities: one newspaper, one plate, one bowl, one bath mat. No evidence of a second person. The hypothesis is nearly ruled out.
+3. (p=0.01) A retiree or someone with a relaxed schedule, as the newspaper is read on weekdays, and weekend days show a leisurely pace. However, the early bedtime pattern (bed pillow at 18:25 on Day 3) is not observed on weekend days, and the morning coffee at 06:56 on Saturday is earlier than typical for a retiree. — Day 7's bed pillow at 10:27 (mid-morning) is inconsistent with a retiree's typical early bedtime. The weekday newspaper habit could fit a retiree, but the evidence is not strong. The probability remains low.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper at coffee_table_l1 (morning reading routine, print media preference)
+- Day 0, 20:06 — floor_lamp at sofa_l1 (evening relaxation, lamp moved to seating area)
+- Day 1, 16:11 — reading_glasses at sofa_l1 (afternoon reading, likely post-work or leisure)
+- Day 1, 16:12 — doormat at entry_hook_e1 (arrival home, suggests workday return)
+- Day 2, 08:38 — doormat at entry_hook_e1 (morning departure, reinforces workday schedule)
+- Day 2, 15:50 — phone at coffee_table_l1 (afternoon break, likely workday)
+- Day 3, 07:47 — reading_glasses at patio_table_p1 (morning outdoor reading, leisurely start)
+- Day 3, 07:57 — doormat at entry_hook_e1 (morning departure, workday or errand)
+- Day 3, 09:02 — doormat at entry_hook_e1 (return home, short errand or commute)
+- Day 3, 12:21 — floor_lamp at sofa_l1 (midday relaxation, break from work)
+- Day 3, 13:52 — reading_glasses at coffee_table_l1 (afternoon reading, post-lunch)
+- Day 3, 18:51 — bed_pillow at bed_r1 (evening bedtime routine, early wind-down)
+- Day 4, 07:09 — newspaper at table_d1 (weekday morning reading, consistent with print media habit)
+- Day 4, 07:09 — bowl at table_d1 (breakfast, part of morning routine)
+- Day 4, 07:49 — coffee_mug at patio_table_p1 (outdoor morning coffee, leisurely start)
+
+## Notes
+Day 7 (Monday) confirms weekday newspaper at 07:04. No doormat events today, suggesting the resident may have worked from home or had a late start. Bed pillow at 10:27 is unusual; could indicate a day off or flexible schedule. Keys on coffee table at 21:24 suggest arrival home or end-of-day routine. Need to check if newspaper appears on Tuesday (Day 8) to confirm weekday pattern. Also, track any work-related items (laptop, briefcase) and any signs of a second person. The doormat pattern (morning departure/return) was absent on Friday, Saturday, Sunday, and Monday; may be specific to certain weekdays (e.g., Tuesday, Wednesday). Continue to observe weekly routine.

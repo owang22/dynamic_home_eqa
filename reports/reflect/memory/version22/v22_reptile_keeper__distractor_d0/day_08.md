@@ -1,0 +1,26 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A person with a daily morning cricket care routine, likely a hobbyist or pet owner, as evidenced by consistent morning events involving cricket-related items (scissors, calcium powder, cricket tub) on weekdays and weekends. The coffee mug at table at 07:15 on Monday morning suggests a morning coffee before cricket care, consistent with previous days. The pattern is strong across multiple days, including weekends, indicating a daily routine. — Cricket care events observed on Wednesday, Thursday, Friday, Sunday, Monday (coffee), and now Tuesday (cricket_tub at terrarium at 07:52). Saturday had no cricket events, but that may be an exception or later timing. The consistency across weekdays and weekend increases confidence. — The Tuesday morning cricket_tub event at 07:52 reinforces the daily morning cricket care routine. The coffee mug event on Monday morning also supports this. The pattern is now observed on 6 out of 8 days, with only Saturday missing, which could be an anomaly. The probability is increased from 0.80 to 0.85.
+2. (p=0.10) A person who works or studies away from home on weekdays, as indicated by the lunch box returning in the evening on Monday and Tuesday, and keys returning at 18:25 on Thursday. However, no lunch box events on Wednesday or Friday, and no work-related events on Saturday or Sunday. The Monday evening events (fork at sink at 19:53, phone at sofa at 20:40, fork at cupboard at 21:45) suggest a typical weekday evening routine after returning home, but no direct work evidence. The probability is reduced because the evidence is weaker than the cricket care pattern. — The lunch box pattern is inconsistent, but the absence of work-related events on weekend supports a weekday work routine. The Monday evening events are consistent with a home routine after work, but no direct work evidence (e.g., lunch box, keys) was observed today. — No new work-related evidence today (no lunch box or keys events). The Tuesday morning phone at sofa at 09:21 and phone elsewhere at 12:18 suggest the person might be at home during the morning, possibly working from home or not working. This weakens the weekday work-away hypothesis. The probability is reduced from 0.15 to 0.10.
+3. (p=0.05) A person who is organized and tidy, as the phone is placed on the sofa (a designated spot) on weekdays, and the remote is on the coffee table at night. The phone on the sofa at 20:40 on Monday evening follows the pattern of weekday phone placement. These actions show routine placement, but this is common and less discriminating. — The evidence is weak and common to many households. The probability remains low. — No new evidence today that strongly supports or contradicts this hypothesis. The phone at sofa at 09:21 on Tuesday morning is a different time than previous phone-on-sofa events (evening), so it may not be the same routine. The probability remains low at 0.05.
+
+## Selected evidence
+- Day 2, 08:50 — scissors and spray_bottle at cricket_shelf_s1 (strong evidence of cricket care hobby, morning routine)
+- Day 3, 08:40 — cricket_tub and scissors at cricket_shelf_s1 (confirms morning cricket care routine, likely daily)
+- Day 4, 07:55 — calcium_powder at terrarium_stand_s1 (cricket care supplement, morning routine)
+- Day 4, 07:55 — scissors at terrarium_stand_s1 (cricket care tool, morning routine)
+- Day 6, 08:01 — scissors at terrarium_stand_s1 (cricket care on Sunday morning, confirms daily routine)
+- Day 6, 08:51 — cricket_tub at cricket_shelf_s1 (cricket care on Sunday, reinforces daily pattern)
+- Day 7, 07:15 — coffee_mug at table_d1 (Monday morning coffee, before cricket care, consistent with daily routine)
+- Day 8, 07:52 — cricket_tub at terrarium_stand_s1 (Tuesday morning cricket care, reinforces daily pattern)
+- Day 0, 18:32 — lunch_box at sink_k1 (suggests work/school day, returns home in evening, lunch routine)
+- Day 1, 21:45 — lunch_box at cupboard_k1 (lunch box stored away after cleaning, reinforces weekday lunch routine)
+- Day 3, 18:25 — keys at entry_hook_e1 (return home from work, consistent with weekday end of work)
+- Day 5, 15:48 — phone at counter_k1 (weekend afternoon, phone placed in kitchen, possibly during meal prep)
+- Day 5, 22:42 — phone at nightstand_r1 (evening winding down, phone in bedroom)
+- Day 5, 22:42 — remote at coffee_table_l1 (evening relaxation, remote on coffee table)
+- Day 6, 07:57 — coffee_mug at sink_k1 (Sunday morning coffee, before cricket care)
+
+## Notes
+Tuesday morning shows cricket_tub at terrarium at 07:52, confirming the daily morning cricket care routine continues. The phone at sofa at 09:21 and phone elsewhere at 12:18 suggest the person may be at home during the morning, possibly working from home or not working. This weakens the weekday work-away hypothesis. No lunch box or keys events today, so the work routine remains uncertain. Need to observe next week to confirm weekday work pattern. Saturday's lack of cricket events may be an anomaly; continue to monitor weekend patterns. The phone at sofa at 09:21 is a new time for that event; previous phone-on-sofa events were in the evening, so this may indicate a different routine (e.g., morning relaxation or work break).

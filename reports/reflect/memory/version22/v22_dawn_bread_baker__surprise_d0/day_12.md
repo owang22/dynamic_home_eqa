@@ -1,0 +1,26 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single person who works from home or has a flexible schedule, with a dedicated sourdough baking routine (proofing basket, starter jar) and early-morning preparation (bench knife, water bottle at 04:50). The late-evening cleanup pattern continues, but the 04:50 events suggest a shift to very early baking prep, possibly for weekend bread or a Friday baking day. — The new events on Day 11 (Friday) show flour_bin_scoop at counter_k1 at 05:05, then at baking_shelf_k1 at 08:05, and proofing_basket at baking_shelf_k1 at 08:05. This is consistent with a Friday baking day: the scoop is used early (05:05) for measuring flour, then stored on the shelf (08:05) after use, and the proofing basket is also stored on the shelf after the dough is shaped. The timing (05:05) is very early but matches the pattern of early baking prep (Day 4 at 04:50, Day 9 at 04:54). The belief model's surprise is due to insufficient data on these objects' typical locations at these times; the evidence actually strengthens the home-based baker hypothesis. The single set of items (one fork, one mug) still holds, and no evidence of multiple people.
+2. (p=0.15) A person with a non-standard work schedule (e.g., shift worker or freelancer) who bakes very early (04:50) and has a late breakfast. The phone at 04:50 might be for work or a timer. The 17:15 starter jar could be a second feeding before a night shift. The water bottle at 04:50 suggests hydration before activity. — The Day 11 events (flour_bin_scoop at counter_k1 at 05:05, then at baking_shelf_k1 at 08:05) could still fit a shift worker baking before a morning shift, but the timing (05:05) is very early and the scoop's movement to the shelf at 08:05 suggests a post-baking cleanup, which is more consistent with a home-based worker who has time to clean up before starting work. The phone at elsewhere on Day 8 at 10:15 is more consistent with a freelancer leaving for a meeting than a shift worker. This hypothesis remains less likely.
+3. (p=0.05) A couple or family where one person bakes early and another does late cleanup, but the single set of items (one fork, one mug) still suggests a small household. The 04:50 events could be one person starting baking, while the 17:15 starter jar could be another person feeding it. — The Day 11 events (flour_bin_scoop at counter_k1 at 05:05, then at baking_shelf_k1 at 08:05, and proofing_basket at baking_shelf_k1 at 08:05) are all consistent with a single baker. No evidence of multiple people (e.g., two mugs, two plates) has been observed. This hypothesis remains unlikely.
+
+## Selected evidence
+- Day 2, 08:13 — coffee_mug at table_d1 (sit-down breakfast, suggests home-based work)
+- Day 2, 16:47 — flour_bin_scoop at counter_k1 (afternoon baking, distinctive habit)
+- Day 3, 05:06 — water_bottle at counter_k1 (early morning hydration or exercise routine)
+- Day 3, 08:06 — coffee_mug at table_d1 (repeat of sit-down breakfast pattern)
+- Day 3, 08:06 — flour_bin_scoop at baking_shelf_k1 (baking prep starts early, not just afternoon)
+- Day 4, 04:50 — bench_knife at counter_k1 (very early baking prep, likely for sourdough)
+- Day 4, 04:50 — proofing_basket at counter_k1 (sourdough proofing basket, confirms dedicated baking)
+- Day 4, 04:50 — water_bottle at counter_k1 (hydration before early baking session)
+- Day 4, 17:15 — starter_jar at counter_k1 (sourdough starter maintenance, likely feeding)
+- Day 6, 08:03 — bench_knife at sink_k1 (Sunday morning cleanup after baking)
+- Day 6, 08:03 — starter_jar at fridge_k1 (starter stored in fridge after feeding)
+- Day 8, 07:59 — dough_scraper at sink_k1 (cleaning after morning baking)
+- Day 8, 08:19 — plate at table_d1 (breakfast after baking)
+- Day 8, 10:15 — phone at elsewhere (first evidence of leaving the home area during the day)
+- Day 11, 05:05 — flour_bin_scoop at counter_k1 (very early Friday baking prep, scoop used for measuring flour)
+
+## Notes
+Day 11 (Friday) events: flour_bin_scoop at counter_k1 at 05:05 (very early baking prep, consistent with Friday baking day), then at baking_shelf_k1 at 08:05 (stored after use), and proofing_basket at baking_shelf_k1 at 08:05 (stored after dough is shaped). The belief model was surprised because it expected these objects elsewhere (p=0.00), but the evidence is consistent with a Friday baking routine: the scoop is used early for measuring flour, then stored on the shelf, and the proofing basket is also stored on the shelf after use. This pattern matches the early baking prep seen on Day 4 (04:50) and Day 9 (04:54), but with a slightly later time (05:05) and a different object (flour_bin_scoop instead of bench_knife/dough_scraper). Need to track if Friday is a regular baking day with this specific pattern. The phone at elsewhere on Day 8 remains the only evidence of leaving the home area; need to verify if this happens regularly (e.g., weekday errands). The starter_jar at fridge_k1 on Day 6 suggests storage after feeding; consider if it's stored there regularly. The single mug/fork pattern still holds. No evidence of multiple people.

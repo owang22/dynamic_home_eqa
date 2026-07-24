@@ -1,0 +1,32 @@
+{
+ "hypotheses": [
+  {
+   "persona": "A single person with a non-standard work schedule, likely a shift worker (e.g., construction, security) who works variable shifts. The hi_vis_vest and work_badge are consistently used, and the departure/return times vary (early morning on Wednesday, afternoon on Thursday, early morning on Friday). The late dinner on Wednesday and fork at sink on Friday suggest a routine of eating after returning home. The Saturday events show a relaxed day at home (phone on sofa, late coffee and plate cleanup), consistent with a day off.",
+   "prob": 0.8,
+   "rationale": "The hi_vis_vest is a strong indicator of a job requiring safety gear. The variable departure times (05:07, 13:28, 04:59) and return times (15:05, 23:02) are consistent with shift work. The single-person hypothesis is supported by the lack of multiple objects at the same time. The Saturday pattern (phone on sofa, late coffee and plate) suggests a day off, which fits a shift worker's weekend. The standard 9-to-5 hypothesis is contradicted by the Thursday and Friday schedules."
+  },
+  {
+   "persona": "A single person with a standard 9-to-5 job who occasionally works late or has a second activity. The early morning phone and work_badge on Wednesday fit a standard workday, but the Thursday and Friday schedules are outliers that could be one-off events or a different job. The Saturday events show a typical weekend day at home.",
+   "prob": 0.15,
+   "rationale": "The Wednesday pattern (05:07-15:05) could be a standard workday, but the Thursday (13:28-23:02) and Friday (04:59 departure) schedules are very different. The hi_vis_vest on Thursday and Friday suggests a job that requires it, which is less common for a standard 9-to-5 office job. This hypothesis is weakened but not impossible if the person has a second job or a flexible schedule. The Saturday events are consistent with a day off."
+  },
+  {
+   "persona": "A couple or family where one person works a standard job and another works a shift job. The early morning phone and work_badge on Wednesday could be one person, while the hi_vis_vest and late returns on Thursday and Friday could be another. However, no direct evidence of multiple people (e.g., two sets of keys, different objects at the same time) has been observed. The Saturday events could be from either person.",
+   "prob": 0.05,
+   "rationale": "The different schedules could be from different individuals, but the objects (work_badge, hi_vis_vest, keys) could all belong to the same person. The lack of overlapping events or distinct objects for two people keeps this hypothesis low. The Saturday events (phone on sofa, late coffee and plate) are mundane and don't help distinguish."
+  }
+ ],
+ "selected_evidence": [
+  "Day 2, 05:07 \u2014 work_badge at elsewhere (early departure for work, consistent with shift work)",
+  "Day 2, 15:05 \u2014 work_badge at entry_hook_e1 (return from work, early afternoon)",
+  "Day 2, 21:45 \u2014 plate at cupboard_k1 (late dinner cleanup, paired with fork)",
+  "Day 3, 13:28 \u2014 phone at elsewhere (afternoon departure, different from Wednesday's early start)",
+  "Day 3, 23:02 \u2014 hi_vis_vest at locker_shelf_e1 (high-visibility vest returned, indicates job requiring safety gear)",
+  "Day 3, 23:02 \u2014 work_badge at locker_shelf_e1 (work badge returned, confirms work-related activity)",
+  "Day 4, 04:59 \u2014 work_badge at entry_hook_e1 (early departure for work)",
+  "Day 4, 05:14 \u2014 hi_vis_vest at elsewhere (hi_vis_vest taken out, consistent with job requiring safety gear)",
+  "Day 5, 12:44 \u2014 phone at sofa_l1 (relaxed weekend day, phone on sofa)",
+  "Day 5, 21:45 \u2014 coffee_mug at cupboard_k1 (late coffee and plate cleanup, similar to weekday late dinner pattern)"
+ ],
+ "notes": "Saturday shows a relaxed day: phone on sofa at 12:44, fork at sink at 19:05, and coffee_mug and plate at cupboard at 21:45. This is consistent with a day off. The late coffee and plate cleanup (21:45) mirrors the late dinner pattern on Wednesday (21:45). No work-related objects (badge, vest) were moved, confirming no work on Saturday. Need to observe Sunday (day 6) to see if the weekend pattern continues. Also need to check if the fork at sink at 19:05 is a meal time that differs from the late dinner on Wednesday. The hi_vis_vest is a key discriminator; it strongly suggests a job in construction, security, or similar. The variable departure times (04:59, 05:07, 13:28) suggest rotating shifts. The single-person hypothesis is strengthened by the consistent use of the same objects (work_badge, hi_vis_vest, keys) across days. No evidence of multiple people yet."
+}

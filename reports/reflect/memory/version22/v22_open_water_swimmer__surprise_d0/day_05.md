@@ -1,0 +1,25 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.50) A fitness-oriented individual with a consistent early-morning water sport routine (e.g., swimming, surfing) on weekdays, who returns home in the morning and then leaves for work. The evening wetsuit event on Day 2 was likely an anomaly (e.g., a second session or delayed activity). Day 5 (Saturday) shows a similar early-morning pattern (swim_goggles at elsewhere at 05:33), but the wetsuit at drying_rack_u1 at 07:22 and at entry_bench_e1 at 20:35 are surprising—suggesting the resident may have a second session or different weekend routine. The plate at cupboard_k1 at 21:45 is also surprising, possibly indicating a late meal or different schedule. — The early-morning pattern continues on Saturday, but the wetsuit events (drying at 07:22 and evening at 20:35) contradict the expected weekday-only morning pattern. This suggests the weekend routine includes additional water sport sessions or gear maintenance. The plate at 21:45 is unusual but could be a late dinner.
+2. (p=0.35) A person with a flexible schedule who does early-morning water sports on both weekdays and weekends, but may also engage in evening sessions, possibly due to work or personal commitments. The routine is not strictly fixed, and the resident may work from home or have a variable work schedule. Day 5's events (swim_goggles at 05:33, wetsuit at drying_rack at 07:22, wetsuit at entry_bench at 20:35) support a pattern of multiple sessions or gear handling, and the plate at 21:45 suggests a late meal. — The surprising wetsuit events on Saturday (drying and evening) align with a flexible schedule that includes weekend activities. The plate at 21:45 is consistent with a late dinner after an evening session. This hypothesis better accommodates the weekend variability.
+3. (p=0.15) A water sports enthusiast who may have a second job or hobby that causes irregular timing, such as a coach or instructor with variable session times, and who may work from home or have a flexible job. The combination of early-morning and evening wetsuit events (Day 2, Day 5) and the surprising phone location (Day 4) could indicate multiple sessions or a role that requires being at the water at different times. The plate at 21:45 on Saturday suggests a late meal after an evening activity. — The weekend pattern (swim_goggles at 05:33, wetsuit at drying at 07:22, wetsuit at entry_bench at 20:35) supports the idea of multiple sessions or coaching duties. The plate at 21:45 is consistent with a late dinner. This hypothesis remains plausible but less likely than a flexible schedule.
+
+## Selected evidence
+- Day 0, 05:34 — wetsuit at elsewhere (early morning water sport, distinctive habit)
+- Day 2, 17:38 — keys at entry_hook_e1 (return home, confirms workday timing)
+- Day 2, 20:32 — wetsuit at entry_bench_e1 (wetsuit in evening, contradicts expected morning pattern)
+- Day 3, 05:30 — wetsuit at elsewhere (early morning water sport, confirms pattern)
+- Day 3, 07:28 — keys at entry_hook_e1 (return home after morning activity)
+- Day 3, 07:28 — mesh_bag at entry_bench_e1 (water sport gear, consistent with activity)
+- Day 4, 05:32 — keys at elsewhere (surprising: keys not at home during morning activity, may indicate left at activity or second set)
+- Day 4, 05:32 — swim_goggles at elsewhere (water sport gear, consistent with morning activity)
+- Day 4, 07:30 — bowl at counter_k1 (breakfast after morning activity, suggests home routine)
+- Day 4, 17:56 — phone at counter_k1 (surprising: phone at home in evening, may indicate early return or work-from-home)
+- Day 5, 05:33 — swim_goggles at elsewhere (early morning water sport on weekend, confirms pattern)
+- Day 5, 07:22 — wetsuit at drying_rack_u1 (surprising: wetsuit drying at home after morning activity, suggests second session or gear care)
+- Day 5, 20:35 — wetsuit at entry_bench_e1 (surprising: evening wetsuit on weekend, indicates evening session)
+- Day 5, 21:45 — plate at cupboard_k1 (surprising: late meal, possibly after evening activity)
+
+## Notes
+Day 5 (Saturday) shows a consistent early-morning water sport (swim_goggles at elsewhere at 05:33), but the wetsuit at drying_rack_u1 at 07:22 and at entry_bench_e1 at 20:35 are surprising—suggesting the resident may have a second session or different weekend routine. The plate at cupboard_k1 at 21:45 is also surprising, possibly indicating a late dinner. Weekend observations (Day 5-6) are crucial to determine if the routine is strictly weekday morning or has evening/weekend variations. The evening wetsuit on Day 2 and Day 5 suggests a pattern of evening sessions on some days. Need to observe if the resident works from home or has a flexible job; the phone at counter_k1 on Day 4 at 17:56 may indicate a work-from-home day or early return. Consider if the resident is a coach or instructor with variable session times.
