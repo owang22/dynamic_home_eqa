@@ -22,7 +22,10 @@ from __future__ import annotations
 
 V22_BANK = "version22"
 V22_DEV_BANK = "version22_dev"
-V22B_BANK = "version22b"      # bank-expansion (Change 0): 3 NEW confusable pairs,
+V22B_BANK = "version22b"
+V22TYP_BANK = "version22_typ"  # TYPICAL households (P1 contrast class): same
+                               # object vocabulary/layout style, CONVENTIONAL
+                               # placements — a naive prior should be RIGHT.      # bank-expansion (Change 0): 3 NEW confusable pairs,
                              # each persona instantiated at 2 seeds (12 households),
                              # to lift clusters/tercile past 15 so day-14 CIs can
                              # separate. version22 (12 hh) stays FROZEN; the
@@ -107,6 +110,19 @@ V22B_CFG = {
     for p, t in _V22B_TARGETS.items() for i in V22B_INSTANCES
 }
 
+# typical bank: targets are the SAME shared classes used as atypical targets
+# elsewhere (mug/towel/keys/phone/laptop/remote), here conventionally placed.
+_V22TYP_TARGETS = {
+    "typ_office_worker":  [("coffee_mug", 10), ("keys", 20), ("laptop", 20)],
+    "typ_remote_worker":  [("coffee_mug", 10), ("laptop", 14), ("phone", 20)],
+    "typ_school_family":  [("keys", 10), ("remote", 20), ("towel", 9)],
+    "typ_retired_couple": [("remote", 20), ("coffee_mug", 9), ("towel", 9)],
+    "typ_grad_student":   [("laptop", 21), ("keys", 12), ("phone", 22)],
+    "typ_nurse_dayshift": [("keys", 10), ("coffee_mug", 7), ("phone", 20)],
+}
+V22TYP_CFG = {p: {"targets": t, "distractors": _DIST8}
+              for p, t in _V22TYP_TARGETS.items()}
+
 
 def bank_specs():
     """BankSpecs for the version22 banks (seed distinct from the v1 banks)."""
@@ -122,6 +138,9 @@ def bank_specs():
                             [HouseholdSpec(p, instance=i)
                              for p in V22B_PERSONAS for i in V22B_INSTANCES],
                             seed=20260722),
+        V22TYP_BANK: BankSpec(V22TYP_BANK,
+                              [HouseholdSpec(p) for p in V22TYP_CFG],
+                              seed=20260726),
     }
 
 

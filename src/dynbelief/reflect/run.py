@@ -47,13 +47,15 @@ def bank_of(bank_name):
     v22/v22dev are the VERSION22 banks (12 varied households / 4 dev; see
     reflect/v22.py) whose cfgs also carry the static-distractor object pool."""
     from dynbelief.reflect.v22 import (V22_BANK, V22_DEV_BANK, V22B_BANK,
-                                       V22_CFG, V22_DEV_CFG, V22B_CFG)
+                                       V22_CFG, V22_DEV_CFG, V22B_CFG,
+                                       V22TYP_BANK, V22TYP_CFG)
     return {
         "conf":   (CONF_BANK, CONF_CFG, TEST_DAYS_CONF, True),
         "dev":    (DEV_BANK, DEV_CFG, TEST_DAYS_DEV, False),
         "v22":    (V22_BANK, V22_CFG, TEST_DAYS_CONF, True),
         "v22dev": (V22_DEV_BANK, V22_DEV_CFG, TEST_DAYS_DEV, False),
         "v22b":   (V22B_BANK, V22B_CFG, TEST_DAYS_CONF, True),
+        "typ":    (V22TYP_BANK, V22TYP_CFG, TEST_DAYS_CONF, True),
     }[bank_name]
 
 

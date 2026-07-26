@@ -1,0 +1,15 @@
+=== [09:45] serving Qwen/Qwen3.6-35B-A3B-FP8 ===
+GPUs freed (max used: 4 MiB)
+SERVER FAILED: Qwen/Qwen3.6-35B-A3B-FP8
+(EngineCore pid=1494750) ERROR 07-25 09:46:23 [core.py:1231] Exception: WorkerProc initialization failed due to an exception in a background process. See stack trace for root cause.
+(APIServer pid=1494346)     raise RuntimeError(
+(APIServer pid=1494346) RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+SKIP qwen36 (serve failed)
+=== [09:46] serving zai-org/GLM-4.5-Air ===
+GPUs freed (max used: 4 MiB)
+SERVER FAILED: zai-org/GLM-4.5-Air
+(EngineCore pid=1495726) ERROR 07-25 09:47:03 [core.py:1231] Exception: WorkerProc initialization failed due to an exception in a background process. See stack trace for root cause.
+(APIServer pid=1495473)     raise RuntimeError(
+(APIServer pid=1495473) RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+SKIP glm (serve failed)
+MULTIMODEL_COMPLETE

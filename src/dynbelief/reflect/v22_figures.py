@@ -53,6 +53,57 @@ def _arm_label(tag):
             "gate_vs_classical": "surprise-gate vs classical"}.get(tag, tag)
 
 
+# whole-week checkpoints have BALANCED day-of-week coverage under the fixed Monday
+# start, so they are free of the weekly-alignment ripple that produces the day-5
+# hump (see HUMP_DIAGNOSIS.md). The intermediate checkpoints (5, 10) are phase-
+# contaminated. A true phase-AVERAGE of the LLM arm needs re-running reflection at
+# every start weekday (data is Monday-only); restricting to these checkpoints is
+# the free, comparable equivalent that removes the alignment ripple.
+PHASE_CLEAN_CKPTS = [1, 7, 14]
+
+
+def fig_days_phase_clean(arms, field, tag):
+    """days_gate_vs_classical, phase-normalized: the phase-clean whole-week
+    checkpoints (D=7, 14; + D=1 anchor) are drawn BOLD and connected — that is the
+    alignment-ripple-free comparison — while the phase-contaminated intermediate
+    points (D=5, 10) are shown hollow/faint for reference only."""
+    lab = "Receptacle" if field == "correct" else "Room"
+    fig, axes = plt.subplots(1, len(LEVELS), figsize=(4.3 * len(LEVELS), 4.6), sharey=True)
+    for ax, lv in zip(axes, LEVELS):
+        rows = _rows(lv, expanded=True)
+        for arm in arms:
+            allx, ally = [], []
+            for ck in CKPTS:
+                r = _acc(rows, arm, field, [ck])
+                if r:
+                    allx.append(ck); ally.append(r[0])
+            s = STYLE[arm]
+            # faint full curve + hollow contaminated markers
+            ax.plot(allx, ally, s.get("ls", "-"), color=s["color"], lw=1.0, alpha=0.35, zorder=2)
+            cont = [(x, y) for x, y in zip(allx, ally) if x not in PHASE_CLEAN_CKPTS]
+            if cont:
+                ax.scatter(*zip(*cont), facecolors="none", edgecolors=s["color"],
+                           s=34, alpha=0.5, zorder=3)
+            # bold phase-clean curve
+            cx = [x for x in allx if x in PHASE_CLEAN_CKPTS]
+            cy = [y for x, y in zip(allx, ally) if x in PHASE_CLEAN_CKPTS]
+            ax.plot(cx, cy, s.get("ls", "-"), color=s["color"], marker="o",
+                    ms=s["ms"] + 1, lw=s["lw"], zorder=5, label=s["label"])
+        ax.set_title(f"~{OBS_PER_DAY[lv]:.0f} obs/day  ({lv} distractors)", fontsize=10)
+        ax.set_xlabel("days of experience"); ax.grid(alpha=0.25); ax.set_ylim(0, 0.62)
+        for xc in (5, 10):
+            ax.axvline(xc, color="#ccc", ls=":", lw=0.8, zorder=1)
+    axes[0].set_ylabel(f"{lab}-level accuracy")
+    axes[0].legend(fontsize=8.5, loc="upper left")
+    fig.suptitle(f"VERSION22 expanded (24 hh) — {lab.lower()} accuracy vs DAYS, PHASE-NORMALIZED "
+                 f"({_arm_label(tag)})\nbold = phase-clean whole-week checkpoints (D=7,14; balanced "
+                 f"coverage) · hollow = alignment-contaminated D=5,10 (the hump) · dotted lines mark them",
+                 fontsize=10.5)
+    fig.tight_layout(rect=(0, 0, 1, 0.9))
+    out = FIG_DIR / f"days_{tag}_phaseclean_{field}.png"
+    fig.savefig(out, dpi=140); plt.close(fig); print("wrote", out)
+
+
 def _acc(rows, arm, field, ckpts=None):
     """clustered bootstrap mean + 95% CI over (hh, object) clusters."""
     by = defaultdict(list)
