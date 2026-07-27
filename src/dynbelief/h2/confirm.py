@@ -190,7 +190,16 @@ def run(endpoint, model, label):
             rows.append({**base_row, "arm": "class_freq", "correct": int(cf == ep["true_receptacle"])})
             # llm named/anon
             rows.append({**base_row, "arm": "llm_named", "correct": int(named[k][0] == ep["true_receptacle"])})
-            rows.append({**base_row, "arm": "llm_anon", "correct": int(anon[k][0] == ep["true_receptacle"])})
+            # SCORING FIX: the anon arm predicts ANONYMIZED receptacle ids
+            # (recep_N), so it must be scored against the ANONYMIZED truth. The
+            # original code compared it to ep["true_receptacle"] (the ORIGINAL
+            # name), which only ever matched for 'elsewhere' (the one token that
+            # maps to itself) — the arm scored 1/300 and the whole named-vs-anon
+            # contrast was an artifact.
+            a_true = rmap.get(ep["true_receptacle"], ep["true_receptacle"])
+            rows.append({**base_row, "arm": "llm_anon", "anon_pred": anon[k][0],
+                         "anon_true": a_true,
+                         "correct": int(anon[k][0] == a_true)})
             # e4 FUSION: where the LLM flags a regime shift, take its PER-QUERY
             # (regime + time aware) prediction -> inherits the named transfer on
             # shifted objects; otherwise defer to the class-frequency table ->

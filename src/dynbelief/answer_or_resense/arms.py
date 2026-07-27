@@ -192,8 +192,11 @@ class LLMArm:
 
 class HybridArm(_Classical):
     """Tier-3 precision fusion of classical belief with the LLM's per-query
-    belief; threshold decision on the FUSED confidence. kappa = alpha* (6.07,
-    dev-calibrated); n = the object's own resense count."""
+    belief; threshold decision on the FUSED confidence. n = the object's own
+    resense count. NOTE: this arm fuses the RAW-log LLM and is kept as an
+    ablation only — the headline fusion arm is two_capacities.ScaffoldFusion,
+    which fuses the SCAFFOLDED belief. alpha/tau here are the legacy single
+    values; both are per-model in the current protocol."""
     name = "hybrid"
 
     def __init__(self, client, tau, alpha_star=6.07, prompt_key="v1"):

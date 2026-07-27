@@ -1,0 +1,21 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) A single person who works a standard 9-to-5 job, leaves home early and returns in the evening. — Consistent morning departure (phone at 08:19, laptop at 08:19) and evening meal (fork at table 17:58, then fork at cupboard 21:45) across four weekdays. The laptop leaving at 08:19 strongly supports a work commute. Evening wind-down at 21:45 continues.
+2. (p=0.10) A person with a flexible schedule who may work from home or have irregular hours. — The phone at sofa at 15:48 on Wednesday remains the only deviation; no other afternoon breaks observed. The laptop leaving at 08:19 suggests a typical workday, reducing the likelihood of a flexible schedule.
+3. (p=0.05) A couple or family where one person leaves early and another eats later. — No evidence of multiple distinct routines. Single phone, single laptop, single set of meal events. The bowl at sink at 07:32 could be breakfast, but still consistent with one person.
+
+## Selected evidence
+- Day 0, 08:12 — keys at elsewhere (morning departure for work, weekday pattern)
+- Day 1, 18:46 — fork at sink_k1 (dinner cleanup, consistent weekday evening)
+- Day 1, 21:45 — coffee_mug at cupboard_k1 (evening wind-down routine)
+- Day 2, 15:48 — phone at sofa_l1 (afternoon break, possibly work-from-home or early return)
+- Day 2, 18:32 — plate at sink_k1 (dinner cleanup, consistent timing)
+- Day 2, 21:45 — bowl and coffee_mug at cupboard_k1 (evening routine, same time as previous day)
+- Day 3, 08:19 — laptop at elsewhere (morning departure for work, strong workday signal)
+- Day 3, 08:19 — phone at elsewhere (morning departure, consistent with laptop)
+- Day 3, 17:58 — fork at table_d1 (dinner after work hours)
+- Day 3, 21:45 — fork at cupboard_k1 (evening cleanup, consistent wind-down)
+
+## Notes
+Four weekdays observed (Mon-Thu). Morning departure ~08:12-08:19, evening meal ~17:58-18:46, evening wind-down ~21:45. The laptop leaving at 08:19 on Thursday strengthens the standard workday hypothesis. The bowl at sink at 07:32 on Thursday could be breakfast, but not yet a strong pattern. Weekend days (5-6) will be key to see if routine changes (e.g., later wake-up, leisure objects). Look for yoga mat, suitcase, or multiple phones to further refine persona.

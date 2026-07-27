@@ -299,7 +299,8 @@ def main():
     ap.add_argument("--endpoint", default="http://127.0.0.1:8400")
     ap.add_argument("--model", default="deepseek-ai/DeepSeek-V4-Flash")
     ap.add_argument("--label", default="deepseek")
-    ap.add_argument("--bank", choices=["dev", "conf", "v22", "v22dev", "v22b"], required=True)
+    ap.add_argument("--bank", choices=["dev", "conf", "v22", "v22dev", "v22b",
+                                       "typ"], required=True)
     ap.add_argument("--arms", default="direct,nomem",
                     help="comma list from {direct,nomem}")
     ap.add_argument("--out-suffix", default="")

@@ -107,7 +107,7 @@ def main():
           f"(dev reward/hh {sc_:.1f}, oracle {orc_:.1f}, classical rr {rr_cls:.2f})")
     (OUT / "frozen_dev_params.json").write_text(json.dumps({
         "Q": Q_, "B": B_, "r": r_, "wrong": w_, "tau_classical": tau_,
-        "note": "hybrid tau swept separately on dev with LLM; alpha*=6.07 reused"},
+        "note": "hybrid tau swept separately on dev with LLM. SUPERSEDED: tau and alpha are now PER-MODEL (see the per_model key) — a single frozen pair does not transfer across models with different confidence scales."},
         indent=1))
 
 

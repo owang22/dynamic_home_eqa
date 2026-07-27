@@ -1,0 +1,38 @@
+=== [19:08] serving Qwen/Qwen3.6-35B-A3B-FP8 ===
+GPUs freed (max used: 4 MiB)
+SERVER READY: Qwen/Qwen3.6-35B-A3B-FP8
+=== [19:10] anon confirmatory: qwen36-anonfix ===
+[confirm:qwen36-anonfix] regime_frequent_traveler_v1 done
+[confirm:qwen36-anonfix] regime_pet_heavy_v1 done
+[confirm:qwen36-anonfix] regime_retiree_gardener_v1 done
+[confirm:qwen36-anonfix] regime_shift_rotator_v1 done
+[confirm:qwen36-anonfix] regime_toddler_home_v1 done
+[confirm:qwen36-anonfix] regime_wfh_senior_v1 done
+
+========================================================================
+CONFIRMATORY — model=qwen36-anonfix  (n=30 queries/arm)
+========================================================================
+
+  [target objects]   (clustered 95% CI by household)
+    classical    0.000  [0.00,0.00]
+    class_freq   0.106  [0.00,0.25]
+    llm_named    0.389  [0.20,0.56]
+    llm_anon     0.317  [0.07,0.58]
+    e4_hybrid    0.222  [0.03,0.46]
+
+  [conventional objects]   (clustered 95% CI by household)
+    classical    0.000  [0.00,0.00]
+    class_freq   0.783  [0.72,0.87]
+    llm_named    0.283  [0.14,0.42]
+    llm_anon     0.033  [0.00,0.08]
+    e4_hybrid    0.783  [0.72,0.87]
+
+  named-anon gap on TARGETS, by pre-registration:
+    regime_frequent_traveler_v1  pred=structure named-anon=+0.17  [MISS]
+    regime_pet_heavy_v1          pred=semantics named-anon=+0.17  [OK]
+    regime_retiree_gardener_v1   pred=semantics named-anon=+0.00  [MISS]
+    regime_shift_rotator_v1      pred=semantics named-anon=+0.47  [OK]
+    regime_toddler_home_v1       pred=semantics named-anon=-0.40  [MISS]
+    regime_wfh_senior_v1         pred=structure named-anon=+0.03  [OK]
+=== [19:46] serving zai-org/GLM-4.5-Air ===
+GPUs freed (max used: 4 MiB)

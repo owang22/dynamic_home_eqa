@@ -1,0 +1,37 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Single adult with a standard 9-to-5 job, living alone or with minimal others, who eats breakfast at home and returns for dinner, and works from home at least some days.",
+   "prob": 0.95,
+   "rationale": "Weekend and weekday patterns are identical, with no work-from-home indicators on weekends. Single bowl and fork consistently appear. Monday (Day 7) shows same breakfast and dinner times, with remote at sofa in the evening, consistent with a regular routine. Today (Thursday) shows coffee mug at table at breakfast time and plate at sink at dinner time, reinforcing the pattern. No work-from-home indicators today (no coffee mug or phone at desk), suggesting the resident may go to the office on some weekdays."
+  },
+  {
+   "persona": "Couple or family with one person working from home or with flexible hours, who also uses the kitchen for meals at similar times.",
+   "prob": 0.04,
+   "rationale": "Single items (one bowl, one fork) still suggest one person. Weekend pattern identical to weekdays, which could be a shared routine but no evidence of multiple residents. Probability reduced further."
+  },
+  {
+   "persona": "Student or shift worker with irregular schedule, but the observed times are still within normal ranges.",
+   "prob": 0.01,
+   "rationale": "Weekend pattern is consistent with a regular schedule, not irregular. No evidence of late nights or unusual timings. Probability reduced further."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 07:51 \u2014 bowl at sink_k1 (breakfast time, suggests morning routine)",
+  "Day 1, 18:24 \u2014 plate at table_d1 (dinner time, consistent with evening meal)",
+  "Day 2, 13:26 \u2014 coffee_mug at desk_o1 (midday coffee at home desk, suggests work-from-home or flexible schedule)",
+  "Day 2, 22:56 \u2014 phone at nightstand_r1 (bedtime, suggests typical sleep schedule)",
+  "Day 3, 09:07 \u2014 coffee_mug at desk_o1 (morning coffee at home desk, strengthens work-from-home hypothesis)",
+  "Day 3, 09:07 \u2014 phone at desk_o1 (phone at desk indicates start of workday)",
+  "Day 3, 18:20 \u2014 fork at table_d1 (dinner time, consistent with previous evenings)",
+  "Day 3, 22:34 \u2014 remote at coffee_table_l1 (evening relaxation, suggests typical wind-down)",
+  "Day 4, 07:22 \u2014 bowl and coffee_mug at table_d1 (breakfast together, consistent morning routine)",
+  "Day 4, 07:57 \u2014 bowl and coffee_mug at sink_k1 (post-breakfast cleanup, same pattern)",
+  "Day 4, 18:43 \u2014 fork at table_d1 (dinner time, consistent with previous evenings)",
+  "Day 5, 07:13 \u2014 bowl at table_d1 (weekend breakfast same time as weekday, no work-from-home items)",
+  "Day 5, 18:43 \u2014 fork at table_d1 (weekend dinner same time as weekday)",
+  "Day 5, 23:05 \u2014 phone at nightstand_r1 and remote at coffee_table_l1 (weekend evening relaxation, consistent with weekday pattern)",
+  "Day 9, 07:24 \u2014 coffee_mug at table_d1 (breakfast time, consistent with morning routine; no work-from-home indicator today)"
+ ],
+ "notes": "Monday (Day 7) shows same breakfast and dinner times as previous weekdays, with remote at sofa at 19:36 and fork at cupboard at 21:45. No work-from-home indicators on that Monday (no coffee mug or phone at desk). Tuesday (Day 8) shows coffee mug at sink at 07:49 (breakfast) and 12:12 (lunch), and fork at table at 18:36 (dinner). No work-from-home indicators on Tuesday either. Wednesday (Day 9) shows coffee mug at table at 07:24 (breakfast) and at sink at 12:12 (lunch), and fork and plate at table at 18:21 (dinner). No work-from-home indicators on Wednesday. Today (Thursday) shows coffee mug at table at 07:19 (breakfast) and plate at sink at 19:05 (dinner). No work-from-home indicators today. This suggests the resident may go to the office on Mondays, Tuesdays, Wednesdays, and Thursdays, or at least does not work from home on those days. Need to observe Friday to see if a pattern of office days emerges. Still no evidence of multiple residents (single bowl, single fork). Look for objects like yoga mat, suitcase, or laptop to further refine persona."
+}

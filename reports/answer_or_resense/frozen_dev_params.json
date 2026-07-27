@@ -4,8 +4,22 @@
  "r": 0.4,
  "wrong": 0.0,
  "tau_classical": 0.75,
- "note": "prompt v1 frozen (v2/v3 induced near-ceiling resensing on dev \u2014 KARL trap); alpha*=6.07 reused | scaffold_fusion tau=0.45 dev-swept (77.0 vs 74.2/73.9), frozen across ALL models",
+ "note": "prompt v1 frozen (v2/v3 induced near-ceiling resensing on dev \u2014 KARL trap); alpha*=6.07 reused | scaffold_fusion tau=0.45 dev-swept (77.0 vs 74.2/73.9), frozen across ALL models | PER-MODEL tau* dev-swept 2026-07-26 (glm/qwen=0.70 vs deepseek 0.45): the single frozen tau=0.45 sat BELOW the weak models entire confidence distribution (p10~0.50) so their gate never fired. Per-model alpha* from each models own dev prior hit-rate.",
  "tau_hybrid": 0.45,
  "prompt": "v1",
- "tau_scaffold_fusion": 0.45
+ "tau_scaffold_fusion": 0.45,
+ "per_model": {
+  "deepseek": {
+   "tau": 0.45,
+   "alpha_star": 2.72
+  },
+  "glm": {
+   "tau": 0.7,
+   "alpha_star": 0.65
+  },
+  "qwen36": {
+   "tau": 0.7,
+   "alpha_star": 2.75
+  }
+ }
 }

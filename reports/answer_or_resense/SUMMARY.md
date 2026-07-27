@@ -1,5 +1,18 @@
 # Answer-or-Resense — calibration under a scarce-sensing loop (results)
 
+> **UPDATES (2026-07-26).** (1) P1/P2 were originally tested with an OBJECT-level
+> typical/atypical split because the 24-household pool is atypical by
+> construction; a TYPICAL household bank (`version22_typ`, 6 hh) now exists and
+> P1 is tested at the household level — the scaffolded LLM beats classical in
+> BOTH classes, and its edge is LARGER on atypical households (+0.74) than
+> typical (+0.30), contradicting P2's direction. (2) The object-level split
+> suffered a query-ordering confound (atypical queries always drew the earliest
+> hours and so got first claim on the daily budget) — fixed in
+> `env.household_queries`; cross-arm comparisons were unaffected. (3) τ and α are
+> now PER-MODEL (see `frozen_dev_params.json` → `per_model`). See
+> `reports/two_capacities/SUMMARY.md` for the corrected multi-model table.
+
+
 Confirmatory: 24 households (v22 + v22b expanded pool), **staggered start offsets**
 (phase lesson applied — offset (i·3)%7 per household, day-of-week balanced; no
 Monday artifact possible). Scarce mode: zero initial observations; resense is the

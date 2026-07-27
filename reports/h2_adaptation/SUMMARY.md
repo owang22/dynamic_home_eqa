@@ -1,4 +1,38 @@
-# H2 — Does World Knowledge Buy Faster Adaptation in Atypical Households?
+# H2 adaptation — regime inference and adaptation studies
+
+> ## ⚠️ CORRECTION (2026-07-26): the ANONYMIZATION result in this document is INVALID
+>
+> `h2/confirm.py:193` scored the `llm_anon` arm's ANONYMIZED prediction (`recep_12`)
+> against the ORIGINAL receptacle name (`cupboard_k1`). The only token mapping to
+> itself is `elsewhere`, so the arm could score at most by coincidence: it went
+> **1/300 by construction**. Every named-vs-anon number below — including the
+> headline "llm_named 0.50 > llm_anon 0.25" and the per-household
+> semantics-vs-structure verdicts — is a measurement artifact, not a finding.
+>
+> **Fixed** (scores against the anonymized truth; now also stores
+> `anon_pred`/`anon_true` for auditability) and re-run on DeepSeek
+> (`confirm_rows_deepseek-anonfix.jsonl`). Corrected result:
+>
+> | split | llm_named | llm_anon | named − anon (household-clustered) |
+> |---|---|---|---|
+> | target (regime-flipped) | 0.422 | **0.361** | **+0.061 [−0.072,+0.189] — n.s.** |
+> | conventional | 0.450 | 0.050 | **+0.400 [+0.242,+0.558] — separated** |
+>
+> **The pre-registered direction is CONTRADICTED.** Semantics is necessary on
+> CONVENTIONAL objects (object-class world knowledge: "a plate belongs in a
+> cupboard"), but NOT on the regime-flipped targets, where the anonymized model
+> nearly matches the named one — the regime is recoverable from the STRUCTURE of
+> sightings (timing, co-occurrence) alone. For an atypical placement the object
+> name actively misleads, so it is worth little.
+>
+> Caveat: `llm_named` moved 0.483 → 0.422 across the two runs at identical
+> prompt/seed/temperature (vLLM is not bitwise deterministic across runs), so the
+> run-to-run noise floor is ≈0.06 — the same size as the target-split gap. That
+> reinforces "n.s." on targets; the +0.400 conventional gap is well clear of it.
+>
+> Only the DeepSeek arm was re-run. The Qwen3.6 / GLM-4.5 anonymization rows in
+> this directory are still the BUGGED ones — do not cite them.
+
 
 **CONFIRMED (confirmatory run, dev/test wall, 3 models).** On **three new confusable
 persona pairs unseen during design**, with the E5 prompt/schema/digest **frozen and

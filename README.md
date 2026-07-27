@@ -3,8 +3,15 @@
 Dynamic Home EQA. **v2 (current): a profile-driven SYMBOLIC household simulator** —
 a provenance-tagged YAML profile (who lives here + weekly routine) deterministically
 generates receptacle-level object-movement logs, which feed belief-model and
-LLM-routine-knowledge experiments. No Habitat, no scene render, no LLM in the data
-loop. See **Profile system** below.
+LLM-routine-knowledge experiments. No Habitat and no scene render.
+
+**On "no LLM in the data loop":** the DATA GENERATION loop is LLM-free — profiles
+are hand-authored and the simulator is deterministic given (profile, seed), so
+ground truth never depends on a model. But the LLM *is* in the loop downstream:
+in the ACTIVE (answer-or-resense) line the agent's own resense decisions
+determine which observations it ever receives, and in `reflect_dag/` the LLM
+proposes the activity structure that the statistical channel then fits. Only the
+world is model-free; the agent's experience of it is not.
 
 The original **HSSD-scene LLM generation** pipeline (Habitat + HSSD) is **legacy**,
 superseded as the data source by the profile simulator. Its scene-generation,

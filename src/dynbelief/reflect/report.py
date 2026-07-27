@@ -58,6 +58,11 @@ def _bank_pair(bank_key):
         from dynbelief.reflect.v22 import (V22B_BANK, V22_DEV_BANK, V22B_CFG,
                                            V22_DEV_CFG)
         return ("v22b", V22B_BANK, V22B_CFG, "v22dev", V22_DEV_BANK, V22_DEV_CFG)
+    if bank_key == "typ":
+        # TYPICAL households (P1 contrast class); shares the v22dev alpha wall.
+        from dynbelief.reflect.v22 import (V22TYP_BANK, V22TYP_CFG, V22_DEV_BANK,
+                                           V22_DEV_CFG)
+        return ("typ", V22TYP_BANK, V22TYP_CFG, "v22dev", V22_DEV_BANK, V22_DEV_CFG)
     raise ValueError(bank_key)
 
 
@@ -350,7 +355,7 @@ def figures(label, rows, bank_key="conf"):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--label", default="deepseek")
-    ap.add_argument("--bank", choices=["conf", "v22", "v22b"], default="conf")
+    ap.add_argument("--bank", choices=["conf", "v22", "v22b", "typ"], default="conf")
     ap.add_argument("--alpha-max", type=int, default=None,
                     help="skip the dev sweep and use this frozen value")
     ap.add_argument("--obs-per-day", default=None,

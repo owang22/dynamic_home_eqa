@@ -16,7 +16,7 @@ OUT = AOR_OUT          # rows co-located with the aor rows (same report tooling)
 FROZEN = dict(Q=10, B=5, r_resense=0.4, wrong=0.0)
 
 
-def run(bank_key, arm_name, tau, variant, endpoint, model, tag):
+def run(bank_key, arm_name, tau, variant, endpoint, model, tag, alpha=6.07):
     client = OpenAIHTTPClient(endpoint, model)
     hhs = households(bank_key)
 
@@ -25,13 +25,14 @@ def run(bank_key, arm_name, tau, variant, endpoint, model, tag):
         h = core.load_hh(bank_dir, hh)
         arm = (LLMSelfConf(client, tau) if arm_name == "llm_selfconf"
                else LLMScaffold(client) if arm_name == "llm_scaffold"
-               else ScaffoldFusion(client, tau) if arm_name == "scaffold_fusion"
+               else ScaffoldFusion(client, tau, alpha_star=alpha) if arm_name == "scaffold_fusion"
                else LLMVariant(client, variant))
         rows = env.run_episode(arm, i, hh, cfg, h, Q=FROZEN["Q"], B=FROZEN["B"],
                                r_resense=FROZEN["r_resense"], wrong=FROZEN["wrong"])
         for r_ in rows:
             r_.update({"arm": arm.name, "bank": bank_key, "tau": tau,
-                       "variant": variant, **{k: v for k, v in FROZEN.items()}})
+                       "alpha": alpha, "variant": variant,
+                       **{k: v for k, v in FROZEN.items()}})
         import numpy as np
         print(f"[2cap:{arm.name}] {hh} done "
               f"(rr {np.mean([x['action']=='resense' for x in rows]):.2f})", flush=True)
@@ -54,9 +55,13 @@ def main():
                     choices=["v1_recency", "v1_pinned", "v1_explicit"])
     ap.add_argument("--endpoint", default="http://127.0.0.1:8400")
     ap.add_argument("--model", default="deepseek-ai/DeepSeek-V4-Flash")
+    ap.add_argument("--alpha", type=float, default=6.07,
+                    help="alpha* = observations the prior is worth; per-model, from "
+                         "that model's own dev track record")
     ap.add_argument("--tag", required=True)
     args = ap.parse_args()
-    run(args.bank, args.arm, args.tau, args.variant, args.endpoint, args.model, args.tag)
+    run(args.bank, args.arm, args.tau, args.variant, args.endpoint, args.model,
+        args.tag, alpha=args.alpha)
 
 
 if __name__ == "__main__":

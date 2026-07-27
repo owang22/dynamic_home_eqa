@@ -1,5 +1,42 @@
 # Two Capacities — (a) knowing what it doesn't know vs (b) learning from what it gathers
 
+> ## ⚠️ SUPERSEDED (2026-07-26): the multi-model section below is WRONG
+>
+> The three-model table and the "fusion inherits LLM overconfidence" conclusion
+> used a SINGLE frozen τ=0.45 and α=6.07, both derived from DeepSeek. Per-model
+> dev sweeps show τ=0.45 sat **below the entire fused-confidence distribution**
+> of Qwen and GLM (their p10 ≈ 0.50), so their resense gate could never fire —
+> they answered ~96% of queries and starved themselves. That was **my
+> hyperparameter choice, not a model property.**
+>
+> **Corrected confirmatory (per-model τ\*, α\*; classical baseline 5.04):**
+>
+> | model | τ* | α* | OLD (frozen) | **NEW (per-model)** | Δ |
+> |---|---|---|---|---|---|
+> | DeepSeek | 0.45 | 2.72 | 5.73 | **5.26 [5.10,5.43]** | **−0.47** |
+> | Qwen3.6 | 0.70 | 2.75 | 3.34 | **5.42 [5.23,5.59]** | **+2.08** |
+> | GLM-4.5-Air | 0.70 | 0.65 | 3.14 | **5.19 [4.98,5.39]** | **+2.05** |
+>
+> **Both "weak" models now BEAT classical (5.04)**, and all three land in a tight
+> 5.19–5.42 band with healthy resense rates (0.19–0.27). The claim that the
+> scaffold only works on a well-calibrated model does NOT survive.
+>
+> Note the honest cost: **DeepSeek LOSES 0.47** from the α correction. Its τ was
+> already right, so the only change was α 6.07 → 2.72 — trusting its genuinely
+> good prior less lost real reward. Per-model calibration is therefore *not* a
+> free win: it helps models whose priors were over-credited and hurts the one
+> whose prior deserved the credit.
+>
+> Figures: `reports/corrected/C2_per_model_calibration.png`,
+> `C3_P1_accuracy_by_day.png`, `C1_anonymization_corrected.png`.
+>
+> Also superseded here: the object-level typical/atypical split. P1 is now tested
+> at the HOUSEHOLD level against a purpose-built typical bank
+> (`version22_typ`, 6 households); the object-level split additionally suffered a
+> query-ordering confound (atypical queries systematically got first claim on the
+> daily budget), fixed in `env.household_queries`.
+
+
 > **HEADLINE CORRECTION (final).** The "LLM fails to integrate self-gathered
 > evidence" claim was an artifact of a SCAFFOLDING difference between experiments,
 > not a property of the model. When the reflect-style nightly reflection +

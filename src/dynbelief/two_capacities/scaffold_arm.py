@@ -118,8 +118,14 @@ class ScaffoldFusion:
     persona-conditioned belief leads while an object is data-poor and fades as its
     own evidence accumulates. The resense decision thresholds the FUSED confidence.
 
-    alpha* = 6.07 (dev-calibrated in reflect_dag; not re-tuned here); tau swept on
-    the dev bank only.
+    alpha* and tau are PER-MODEL, both swept/estimated on the dev bank only:
+      deepseek tau*=0.45 alpha*=2.72 | qwen36 tau*=0.70 alpha*=2.75
+      glm      tau*=0.70 alpha*=0.65        (reports/answer_or_resense/frozen_dev_params.json)
+    The 6.07 default below is the LEGACY single-value calibration (from the
+    passive reflect_dag setting) kept only for backward compatibility with runs
+    tagged 'frozen'; pass --alpha explicitly. Using one model's constants for
+    another is what produced the retracted 'weak models fail with fusion'
+    result — tau=0.45 sat below Qwen/GLM's entire confidence distribution.
     """
     name = "scaffold_fusion"
 

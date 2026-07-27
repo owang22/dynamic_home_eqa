@@ -12,10 +12,16 @@ Scarce-sensing (primary): the arm starts with ZERO observations; everything it
 learns comes from its own resenses — curiosity is the only teacher. Warm-start
 control: day-0 full snapshot, then scarce.
 
-Typical/atypical is WITHIN-household at the object level: the cfg targets are the
-regime-flipped ATYPICAL objects (a naive prior mislocates them); matched
-conventional objects (plate, fork, bowl, remote...) in the same household are the
-TYPICAL queries. Paired presentation falls out naturally.
+Typical/atypical is tested at TWO levels:
+  HOUSEHOLD (primary, matches the pre-registration): the `typ` bank
+    (version22_typ, 6 conventional-placement households) vs the `conf` bank
+    (version22 + version22b, 24 idiosyncratic households).
+  OBJECT (secondary, paired within household): the cfg targets are the
+    regime-flipped ATYPICAL objects; matched conventional objects (plate, fork,
+    bowl, remote...) in the same household are the TYPICAL queries. Statistically
+    stronger (household variance cancels) but a different unit of atypicality —
+    and note this split previously suffered a query-ordering confound, fixed in
+    household_queries() below.
 
 PHASE LESSON (mandatory, from HUMP_DIAGNOSIS.md): window start days are STAGGERED
 — household i starts its N-day run at calendar-day offset (i*3)%7, so day-of-week
