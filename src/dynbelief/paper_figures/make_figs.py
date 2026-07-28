@@ -346,6 +346,80 @@ def gating_load_sweep():
          "Nightly reflection degrades as noise accumulates; the gate holds because a padded stream rarely fires it.")
 
 
+def distractor_robustness():
+    """Accuracy vs distractor load for EVERY arm, with Classical as the flat
+    reference. Distractors touch only distractor objects, which are never
+    queried, so the per-edge Classical fit is invariant by construction — the
+    flat line is a proof-of-construction, not a measurement. Everything that
+    reads the observation stream semantically degrades."""
+    def all_arms_rows(d):
+        """Like gate_rows but WITHOUT the obs_spec filter: the offline arms
+        (Classical, fusion) are produced by report.py and never carry an
+        obs_spec field, so filtering on it silently drops them. Each distractor
+        file holds exactly one run, so no filter is needed."""
+        sur = [r for b in ("v22", "v22b")
+               for r in L(REP / f"reflect/rows_surprise_{b}_surprise_d{d}.jsonl")]
+        oth = [r for b in ("v22", "v22b")
+               for r in L(REP / f"reflect/all_rows_{b}_distractor_d{d}.jsonl")]
+        return sur + oth
+
+    ARMS = [("llm_surprise", "Surprise-gated reflection", BLUE, "-", "o", 2.8),
+            ("llm_direct", "Nightly reflection", ORANGE, "--", "s", 2.6),
+            ("llm_nomem", "No reflection", YELLOW, "-.", "D", 2.2),
+            ("fusion", "LLM + Classical (fusion)", MAGENTA, "-", "v", 2.4),
+            ("classical_C3g", "Classical", AQUA, ":", "^", 2.6)]
+    fig, ax = fig1(8.0, 5.4)
+    ends = []
+    for m, lab, c, ls, mk, lw in ARMS:
+        ys, lo, hi = [], [], []
+        for d in DISTS:
+            rows = all_arms_rows(d)
+            hhs = sorted({r["hh"] for r in rows})
+            per = [phase_mean([r for r in rows if r["hh"] == hh and r["ckpt"] >= 5
+                               and r["model"] == m]) for hh in hhs]
+            per = [x for x in per if not np.isnan(x)]
+            a_, b_ = boot_vec(per)
+            ys.append(float(np.mean(per))); lo.append(a_); hi.append(b_)
+        draw(ax, np.array(DISTS), np.array(ys), np.array(lo), np.array(hi),
+             c, ls, mk, lab, lw, band=(m != "classical_C3g"), endlab=False)
+        ends.append([DISTS[-1], ys[-1]])
+    end_labels(ax, ends, big=True)
+    ax.set_xticks(DISTS)
+    _big_axes(ax, "Robustness to Distractor Load",
+              xlab="Distractor Objects per Household",
+              ylab="Accuracy (days 5-14)", loc="lower left")
+    save(fig, SUB2, "accuracy_vs_distractor_load_all_arms.png")
+
+
+# Distractor load as the SERIES, days as the x-axis. One arm only (surprise
+# gate, DeepSeek) so the plot isolates what clutter does to a single method.
+# Endpoints only: the intermediate loads sit between these two and crowd the
+# plot without changing the claim.
+LOAD_COLORS = [(0, "0 distractors", "#1baf7a", "-", "o"),
+               (12, "12 distractors", "#eb6834", "--", "v")]
+
+
+def surprise_load_curves(model_tag="deepseek"):
+    fig, ax = fig1(8.0, 5.4)
+    ends = []
+    for d, lab, c, ls, mk in LOAD_COLORS:
+        rows = [r for b in ("v22", "v22b")
+                for r in L(REP / f"reflect/rows_surprise_{b}_surprise_d{d}.jsonl")]
+        xs, ys, lo, hi = hh_curve(rows, "llm_surprise")
+        if not len(xs):
+            continue
+        ax.fill_between(xs, lo, hi, color=c, alpha=0.10, lw=0)
+        ax.plot(xs, ys, ls, color=c, lw=2.8, marker=mk, ms=8, mec=SURF, mew=1.4,
+                label=lab, zorder=3)
+        ends.append([xs[-1], ys[-1]])
+    end_labels(ax, ends, big=True)
+    linx(ax)
+    _big_axes(ax, "Surprise-Gated Reflection vs. Distractor Load\n"
+                  f"{MODEL_DISPLAY.get(model_tag, model_tag)}",
+              ylab="Accuracy", loc="lower right")
+    save(fig, SUB2, f"surprise_gate_by_distractor_load_{model_tag}.png")
+
+
 def gating_paired_by_load():
     fig, ax = fig1()
     ax.axhline(0, color="#9c9b96", lw=1.2, zorder=2)
@@ -665,13 +739,14 @@ def _big_axes(ax, title, xlab="Days of Observation", ylab="Accuracy", loc="best"
         t.set_fontweight("bold")
     ax.set_xlabel(xlab, fontsize=17, fontweight="bold", color=INK, labelpad=5)
     ax.set_ylabel(ylab, fontsize=15.5, fontweight="bold", color=INK, labelpad=5)
-    ax.set_title(title, fontsize=18, fontweight="bold", color=INK, pad=9)
+    ax.set_title(title, fontsize=17 if "\n" in title else 18,
+                 fontweight="bold", color=INK, pad=9)
     leg = ax.legend(frameon=False, fontsize=14.5, loc=loc, labelcolor=INK)
     for t in leg.get_texts():
         t.set_fontweight("bold")
 
 
-def anon_figure(tag, model):
+def anon_figure(tag, model, setting="passive"):
     named, anon = _named_rows(model, tag), _anon_rows(model, tag)
     if not named or not anon:
         print(f"anon {tag} {model}: rows not present yet")
@@ -706,14 +781,18 @@ def anon_figure(tag, model):
                     bbox=dict(boxstyle="round,pad=0.12", fc="white", ec="none",
                               alpha=0.8))
     linx(ax)
-    _big_axes(ax, f"{tag.capitalize()} Households — {MODEL_DISPLAY.get(model, model)}")
-    save(fig, SUBA, f"accuracy_by_day_{tag}_{model}.png")
+    # setting is in BOTH the title and the filename: this folder will hold the
+    # passive (ambient stream) and active (self-gathered, answer-or-resense)
+    # anonymization runs side by side, and they are not comparable.
+    _big_axes(ax, f"{setting.capitalize()} Sensing — {tag.capitalize()} Households\n"
+                  f"{MODEL_DISPLAY.get(model, model)}")
+    save(fig, SUBA, f"anon_{setting}_accuracy_by_day_{tag}_{model}.png")
 
 
 def anon_all():
     for model in ("deepseek", "qwen36", "glm"):
         for tag in ("atypical", "typical"):
-            anon_figure(tag, model)
+            anon_figure(tag, model, setting="passive")
 
 
 def clean_all():
@@ -740,6 +819,8 @@ def main():
     # reflection_gating
     gating_accuracy_by_day(6)
     gating_load_sweep()
+    distractor_robustness()
+    surprise_load_curves()
     gating_paired_by_load()
     gating_paired_by_day(12)
     # active_sensing

@@ -49,12 +49,16 @@ def anon_maps(h, cfg=None):
     """Bijective name map for the ACTIVE loop: object_N / receptacle_N.
     Receptacle ids embed the room code (sink_k1), so mapping them hides rooms too.
 
-    Domain covers every name that can reach a prompt — objects with events AND
-    query targets (a target that never moves is absent from by_obj). Lookups are
-    STRICT: a gap must raise, never fall back to the original name, because a
-    fallback would silently leak a real name into a supposedly anonymized prompt.
+    Domain covers every name that can reach a prompt. That is NOT just the
+    objects with movement events: env.household_queries draws its TYPICAL half
+    from `set(h["by_obj"]) | set(h["init"])`, so an object that is placed at
+    init and never moves (e.g. "keys") is queryable while absent from by_obj.
+    Missing it crashed the first atypical anon run. Lookups are STRICT: a gap
+    must raise, never fall back to the original name, because a fallback would
+    silently leak a real name into a supposedly anonymized prompt.
     """
-    objs = sorted(set(h.get("by_obj", {})) | {o for o, _ in (cfg or {}).get("targets", [])})
+    objs = sorted(set(h.get("by_obj", {})) | set(h.get("init", {}))
+                  | {o for o, _ in (cfg or {}).get("targets", [])})
     omap = {o: f"object_{i+1}" for i, o in enumerate(objs)}
     rmap = {r: f"receptacle_{i+1}" for i, r in enumerate(sorted(h["cands"]))}
     rmap["elsewhere"] = "elsewhere"          # the one token that maps to itself
