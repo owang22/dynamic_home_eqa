@@ -1,0 +1,17 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Shift Worker (Early Morning Start) — The 04:50 cluster on Day 4 confirms the 05:06 event on Day 3 was not an anomaly but a consistent early start. The 17:15 return aligns with a ~12-13 hour shift or a long commute after an early start. This explains the 'standard' evening return but redefines the morning routine.
+2. (p=0.20) Early-Rise Professional / Commuter — Still possible if they work a standard 9-5 but leave extremely early (e.g., 05:30) for a long commute, returning at 17:15. However, the 04:50 activity suggests they are already active/working before typical commute times, making a shift worker or remote early-bird more likely.
+3. (p=0.05) Remote Worker with Irregular Schedule — The strict 04:50 and 17:15 timings are too rigid for a 'fluid' remote schedule. This hypothesis is now highly unlikely.
+
+## Selected evidence
+- Day 3, 05:06 — object_24 at receptacle_5 (Confirmed early start pattern; contradicts standard 9-5 wake time)
+- Day 4, 04:50 — object_3 at receptacle_5 (Reinforces 04:50-05:06 early morning window; suggests multi-object morning prep)
+- Day 4, 04:50 — object_14 at receptacle_5 (Part of the early morning cluster; indicates routine complexity)
+- Day 4, 04:50 — object_17 at receptacle_5 (Part of the early morning cluster; indicates routine complexity)
+- Day 4, 04:50 — object_24 at receptacle_5 (Repeats Day 3 object_24 movement; confirms consistency of early activity)
+- Day 4, 17:15 — object_19 at receptacle_5 (Consistent ~17:00 return; anchors the end of the daily cycle)
+
+## Notes
+The 04:50 cluster on Day 4 is critical: it shows multiple objects moving simultaneously, suggesting a structured morning routine (e.g., grabbing keys, bag, coffee maker) rather than a single isolated event. The 17:15 return remains stable. Hypothesis 3 (Remote/Irregular) is effectively discarded. Need to verify if Day 5 (Saturday) breaks this pattern (e.g., later start, no 17:00 return) to confirm the 'workday' nature of the schedule.

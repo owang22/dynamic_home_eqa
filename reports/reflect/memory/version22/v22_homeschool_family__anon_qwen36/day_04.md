@@ -1,0 +1,20 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Standard 9-5 Office Worker — The 08:55 departure on Friday (Day 4) confirms the consistent morning exit pattern. The 18:12 event suggests an early evening activity (gym/dinner) rather than immediate home return, but the 21:45 home return remains consistent with previous days. The routine holds strong.
+2. (p=0.05) Remote Worker with Errands — Still unlikely due to the rigid 08:55-09:14 morning departure window. The 18:12 event could be a work-related errand, but the lack of midday 'lunch' movement today (only 07:09 and 08:55 before departure) makes the standard lunch break hypothesis weaker, though not disproven.
+3. (p=0.05) Shift Worker / Irregular Schedule — Retained as a low-probability baseline. The consistency over 4 days makes irregularity highly unlikely. Weekend data (Day 5-6) is critical to confirm if the morning departure is work-bound.
+
+## Selected evidence
+- Day 0, 09:14 — object_12 at receptacle_12 (Morning departure cue; likely keys/bag for work)
+- Day 1, 21:18 — object_17 at receptacle_4 (Late evening return; consistent with end of workday)
+- Day 2, 09:14 — object_12 at receptacle_12 (Consistent morning departure; reinforces 9-5 pattern)
+- Day 2, 13:17 — object_13 at receptacle_12 (Midday activity; likely lunch break)
+- Day 3, 08:56 — object_12 at receptacle_12 (Consistent morning departure; slight time variation but same object/receptacle)
+- Day 3, 13:20 — object_13 at receptacle_12 (Consistent midday activity; reinforces lunch break hypothesis)
+- Day 3, 21:45 — object_16 at receptacle_6 (Late evening activity; consistent with late return home)
+- Day 4, 08:55 — object_12 at receptacle_12 (Consistent morning departure; confirms pattern continues into Friday)
+- Day 4, 21:45 — object_3 at receptacle_6 (Late evening return; consistent with previous late return times)
+
+## Notes
+Day 4 (Friday) shows the same morning departure (08:55) and late return (21:45). Notably, the midday 'lunch' event (object_13) was absent today, replaced by an 18:12 event (object_11 at receptacle_7). This could indicate a later lunch, a gym session, or a social event. The 07:09 event (object_16) is ambiguous but precedes the departure. Need to observe Day 5-6 (weekend) to see if the morning departure disappears or changes timing, which would confirm/disconfirm the work-related nature of the routine.

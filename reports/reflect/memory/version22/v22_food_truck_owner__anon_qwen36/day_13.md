@@ -1,0 +1,20 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Disciplined remote worker with flexible weekends — Consistent 07:30-07:40 start on Day 5 (Sat), 7 (Mon), 9 (Wed), 10 (Thu), 11 (Fri), and 13 (Sun). This rigid morning routine across all days strongly supports a single disciplined occupant. Friday's late activity (22:31) is an outlier, but Saturday's earlier wind-down (21:27) and Sunday's standard wind-down (21:16) fit a standard weekend pattern.
+2. (p=0.01) Night-shift worker with adjusted schedule — Contradicted by consistent early morning workspace activity (07:30) every single day observed. No evidence of daytime absence or late-night start.
+3. (p=0.01) Dual-income professional couple — No evidence of a second resident's distinct schedule or object usage. All movements are sequential and sparse, consistent with a single occupant.
+
+## Selected evidence
+- Day 5, 07:27 — object_11 at receptacle_4 (Weekend early start; confirms routine persists on Saturday)
+- Day 7, 07:27 — object_3 at receptacle_4 (Monday morning workspace activity; confirms return to weekday routine after weekend delay)
+- Day 9, 07:34 — object_11 at receptacle_4 (Early morning workspace activity; confirms consistent weekday start)
+- Day 10, 07:32 — object_17 at receptacle_4 (Thursday morning workspace activity; reinforces consistent 07:30 start time)
+- Day 11, 07:34 — object_11 at receptacle_4 (Friday morning workspace activity; reinforces consistent 07:30 start time)
+- Day 11, 22:31 — object_11 at receptacle_9 (Late evening activity at new location; suggests Friday wind-down in a different zone, possibly later than weekdays)
+- Day 12, 21:27 — object_10 at receptacle_13 (Saturday evening activity at tertiary location; suggests weekend wind-down is earlier than Friday's late night, consistent with standard weekend routine)
+- Day 13, 07:41 — object_17 at receptacle_4 (Sunday morning workspace activity; confirms rigid 07:30-07:40 start time persists on Sunday, reinforcing single disciplined occupant hypothesis)
+- Day 13, 21:16 — object_12 at receptacle_13 (Sunday evening activity at tertiary location; aligns with Saturday's earlier wind-down pattern, further distancing from Friday's outlier late night)
+
+## Notes
+The consistent 07:30-07:40 start time on Day 13 (Sunday) solidifies the 'Disciplined remote worker' hypothesis. The Friday outlier (22:31 at receptacle_9) remains unexplained but is isolated; Saturday and Sunday both show wind-downs around 21:15-21:30 at receptacle_13. Need to verify if receptacle_9 is used again on future Fridays or if it was a one-off event. No second resident detected.

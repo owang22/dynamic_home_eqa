@@ -1,0 +1,35 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Standard 9-5 Office Worker",
+   "prob": 0.95,
+   "rationale": "Day 8 (Tuesday) shows a clear departure at 08:09 with keys, followed by a return at 16:01. This restores the strong weekday departure pattern seen in Days 0-4, contradicting the 'Hybrid' hypothesis which predicted Monday might be remote. The 16:01 return is slightly early for a standard 9-5 but consistent with a 4-5 hour break or early finish, or simply the observation window ending before the final evening departure. The key discriminator (keys leaving) is present."
+  },
+  {
+   "persona": "Hybrid Worker (3 days office, 2 days remote)",
+   "prob": 0.05,
+   "rationale": "Monday (Day 7) showed no departure, which could fit a remote day. However, Tuesday (Day 8) shows a full departure. If this is a hybrid schedule, the remote day was Monday. The probability is low because the 'Standard' hypothesis now explains both the Monday anomaly (perhaps a late start or missed observation of early departure) and the Tuesday norm. If Monday was truly remote, we'd expect more remote-work evidence (laptop usage) which is still lacking."
+  },
+  {
+   "persona": "Night Shift Worker",
+   "prob": 0.0,
+   "rationale": "Contradicted by consistent morning activity and daytime departure/return patterns."
+  }
+ ],
+ "selected_evidence": [
+  "Day 8, 08:09 \u2014 keys at elsewhere (critical: confirms weekday departure pattern resumes on Tuesday)",
+  "Day 8, 16:01 \u2014 keys at entry_hook_e1 (indicates return home mid-afternoon, possibly for a break or early finish)",
+  "Day 7, 07:00 \u2014 bowl at table_d1 (Monday morning routine, but no departure items observed by 21:30)",
+  "Day 7, 19:30 \u2014 phone at sofa_l1 (evening leisure, confirms stay-at-home evening on Monday)",
+  "Day 4, 08:09 \u2014 keys at elsewhere (established baseline weekday departure)",
+  "Day 3, 08:19 \u2014 laptop at elsewhere (work equipment leaves, supports office work)",
+  "Day 0, 08:12 \u2014 keys at elsewhere (initial baseline weekday departure)",
+  "Day 1, 08:12 \u2014 keys at elsewhere (reinforced baseline weekday departure)",
+  "Day 2, 08:14 \u2014 phone at elsewhere (consistent morning departure)",
+  "Day 6, 07:34 \u2014 bowl at sink_k1 (weekend breakfast, later than weekday)",
+  "Day 5, 06:54 \u2014 bowl at table_d1 (weekend morning routine, no departure)",
+  "Day 6, 19:30 \u2014 remote at sofa_l1 (weekend evening leisure)",
+  "Day 7, 21:30 \u2014 remote at coffee_table_l1 (late evening leisure, confirms no evening commute on Monday)"
+ ],
+ "notes": "Monday (Day 7) was an outlier with no observed departure items, while Tuesday (Day 8) followed the standard 08:09 departure pattern. This suggests Monday might have been a remote work day (supporting Hybrid hypothesis slightly) OR the resident left very early (before 07:00) and returned late, but the 16:01 return on Tuesday suggests a mid-day break or early finish. The 16:01 return is notable; if this is a daily pattern, the resident might work from home in the afternoons or have a split shift. Need to observe if keys leave again on Wednesday morning and if they return at 16:00 again. Also, check for laptop usage during the day on non-departure days."
+}

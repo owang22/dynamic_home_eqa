@@ -1,0 +1,26 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A single person with a flexible or non-standard schedule, possibly a student or freelancer, who works from home and has a regular midday break and late-night activity. — The midday break pattern (object_10 or object_11) continues, and the morning routine (object_18) is consistent. The work bag (object_1) appears on some weekdays but not all, supporting a flexible schedule. New objects (object_4, object_15) appear at times consistent with a single person's routine. The absence of midday break on Day 7 and Day 8 is now explained by substitution with object_11, and today's events reinforce the pattern.
+2. (p=0.03) A single person who works a standard 9-to-5 job, possibly remote, with a morning routine and evening return. — The midday break on weekends and the flexible work bag pattern weaken this hypothesis. The consistent midday break on weekdays (including today) could still fit a remote worker, but the weekend midday breaks and late-night activity are less typical.
+3. (p=0.02) A household with multiple residents or a shared space, where objects are moved by different people at different times. — The consistent timing of object_18 in the morning and the midday break suggests a single person. However, object_4 and object_15 appearing at different times could be from another person, but no strong evidence of multiple residents yet. The pattern remains largely consistent with one person.
+
+## Selected evidence
+- Day 0, 08:40 — object_1 at elsewhere (work bag departure, reappears Day 3 and Day 8; suggests flexible work schedule)
+- Day 1, 21:45 — object_10 at receptacle_8 (late evening activity, repeated Day 4, Day 5; flexible schedule)
+- Day 2, 13:00 — object_10 at receptacle_11 (midday break, repeated Day 3, Day 4, Day 5; regular midday routine)
+- Day 3, 07:38 — object_18 at receptacle_4 (morning routine, repeated Day 4, Day 5, Day 7, Day 9, Day 11; consistent morning item)
+- Day 5, 12:21 — object_10 at receptacle_13 (weekend midday break, same pattern as weekdays; flexible schedule)
+- Day 7, 19:11 — object_10 at receptacle_13 (evening event, not midday; possible variation in routine)
+- Day 7, 21:45 — object_13 at receptacle_8 (new late-night object; may replace object_10 some days)
+- Day 8, 08:40 — object_1 at elsewhere (work bag departure, reappears after absence; flexible work schedule)
+- Day 8, 16:08 — object_17 at receptacle_6 (new object, moved again at 18:08; possibly after-work routine)
+- Day 9, 12:39 — object_11 at receptacle_5 (midday event, similar timing to previous object_10 breaks; may be alternative break item)
+- Day 9, 18:03 — object_12 at receptacle_7 (evening event, new object; could be part of evening routine)
+- Day 9, 18:03 — object_18 at receptacle_12 (evening move of morning item; suggests same person's routine)
+- Day 10, 07:48 — object_4 at receptacle_11 (new morning object, possibly part of morning routine)
+- Day 10, 18:30 — object_15 at receptacle_13 (evening event, new object; could be part of evening routine)
+- Day 11, 08:32 — object_11 at elsewhere (morning departure of alternative break item, consistent with flexible schedule)
+
+## Notes
+Midday break pattern (object_10 or object_11) continues: object_10 reappeared at midday today after absence on Day 7-8. Object_11 left at 08:32 today, possibly taken to work or elsewhere. Object_18 morning routine consistent. New objects (object_4, object_15) need more observations. Day-of-week: Friday shows same pattern as other weekdays. Next: check if object_1 reappears next week, and if object_4/object_15 become regular. Also monitor object_13 and object_17 for routine patterns. Today (Day 12, Saturday) object_11 seen at receptacle_9 at 18:29 — this is a new location for object_11 on a weekend evening, possibly indicating a different weekend routine or a different person using it.

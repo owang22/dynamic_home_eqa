@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.97) Hybrid Office Worker (Commute + WFH) — Sunday (Day 13) shows object_16 remaining at the home desk (receptacle_11) all day, confirming the weekend 'stay-at-home' pattern. The lack of early departure or midday errand runs reinforces the distinction between weekday work routines and weekend leisure. The previous Friday late return and midday home presence remain consistent with this model.
+2. (p=0.02) Remote Worker with Errands — While the weekend stay-at-home behavior fits, the consistent early departures on Wed/Thu (06:36) and the specific 'work item' (object_10) presence at the desk during weekdays make this less likely than the hybrid model. The probability decreases slightly as the 'work item' distinction persists.
+3. (p=0.01) Shift Worker — Removed as a primary hypothesis. The routine is too consistent with standard business hours (early start, midday home presence, late return) rather than rotating or night shifts. Probability remains low as a residual uncertainty.
+
+## Selected evidence
+- Day 0, 08:00 — object_16 at receptacle_1 (Baseline weekday departure)
+- Day 0, 18:00 — object_16 at receptacle_6 (Baseline weekday return)
+- Day 5, 07:14 — object_4 at receptacle_11 (Weekend sleep-in)
+- Day 5, 12:38 — object_16 at receptacle_11 (Weekend outing)
+- Day 6, 08:59 — object_12 at receptacle_4 (Late Sunday start)
+- Day 6, 17:47 — object_16 at receptacle_14 (Sunday evening return)
+- Day 7, 07:05 — object_4 at receptacle_11 (Monday early start)
+- Day 7, 18:38 — object_16 at receptacle_11 (Monday evening return)
+- Day 8, 12:21 — object_16 at receptacle_11 (Tuesday midday departure)
+- Day 9, 06:36 — object_16 at receptacle_14 (Wednesday early departure)
+- Day 9, 12:26 — object_10 at receptacle_11 (Wednesday work item at desk)
+- Day 9, 18:34 — object_10 at receptacle_11 (Wednesday work item return)
+- Day 10, 06:36 — object_16 at receptacle_14 (Thursday early departure)
+- Day 10, 18:28 — object_10 at receptacle_11 (Thursday work item at desk)
+- Day 13, 07:20 — object_16 at receptacle_11 (Sunday stay-at-home; confirms weekend relaxation pattern)
+
+## Notes
+Day 13 (Sunday) confirms object_16 remains at the home desk (receptacle_11) until 20:00, indicating no morning commute or errand run. This strengthens the distinction between weekday 'work item' (object_10/14) presence and weekend leisure. Need to verify if object_16 is the same as object_10 (work item) or a different bag. The Friday late return (21:45) and mid-morning home presence remain consistent with a hybrid schedule. Weekend patterns (Sat/Sun) remain distinct with later starts.

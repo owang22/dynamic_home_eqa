@@ -1,0 +1,15 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Standard Office Worker with Creative Hobby — The appearance of the tablet at the craft desk (10:20) on Sunday strongly supports the 'creative hobby' aspect of this hypothesis, which was previously unconfirmed. The rigid weekday commute pattern (from previous days) combined with weekend leisure/crafting fits this profile perfectly. Probability increased as the missing hobby evidence is now resolved.
+2. (p=0.01) Freelancer / Work-from-Home — Still unlikely due to the rigid weekday departure pattern observed in Days 0-4. The Sunday craft activity could be a freelancer's schedule, but the lack of laptop usage at the home desk during weekdays (Day 1-4) contradicts a primary WFH role. Probability decreased slightly as the 'leisurely morning' on Saturday was re-evaluated as pre-work routine rather than work.
+3. (p=0.01) Student — Remains highly unlikely. No academic materials observed. The structured weekday schedule is inconsistent with typical student flexibility. No change in evidence.
+
+## Selected evidence
+- Day 6, 10:20 — tablet at craft_desk_s1 (CRITICAL: Confirms creative hobby activity on weekends; distinguishes from pure leisure or WFH)
+- Day 6, 18:28 — keys at entry_hook_e1 (Indicates return from an outing; suggests weekend social or errand activity, not just staying home)
+- Day 6, 07:33 — plate at sink_k1 (Morning cleanup; consistent with breakfast routine, less discriminative but confirms presence)
+- Day 6, 12:28 — plate at table_d1 (Lunch preparation; confirms midday presence, consistent with weekend stay-at-home pattern)
+
+## Notes
+The tablet moving to the craft desk on Sunday morning is the key discriminator for the 'Creative Hobby' hypothesis. The keys at 18:28 suggest the resident leaves the house on Sunday evening, which might indicate a social event or errand, breaking the 'stay-at-home' pattern seen on Saturday. Need to verify if the keys were used for a short trip or if they were just placed there. Also, note the lack of laptop at the home desk on Sunday midday (12:28 plate only) further weakens the WFH hypothesis.

@@ -1,0 +1,19 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Hybrid Worker (Remote/Office Mix) — Friday morning presence (07:05, 09:44) at home receptacle_12 confirms the Wed/Thu pattern extends to Friday. This suggests a 3-day remote work week (Wed-Fri) or a flexible schedule where the resident stays home for the latter half of the week. The absence of a morning departure event on Friday strongly contradicts the standard 9-5 office hypothesis.
+2. (p=0.04) Standard 9-5 Office Worker — Unlikely. Requires assuming object_4 and object_14 are not the resident's primary indicators of presence, or that the resident works from home every day without leaving, which contradicts the clear Mon/Tue departure pattern. The probability drops further as the 'home' streak continues.
+3. (p=0.01) Shift Worker (Evening/Night) — Still unsupported. The evening event (21:56) is consistent with a late return from work or leisure, but the morning presence on Friday does not align with a typical shift start. No evidence of sleeping during the day or leaving for a night shift.
+
+## Selected evidence
+- Day 11, 07:05 — object_4 at receptacle_12 (Friday morning home presence; extends remote work pattern to Fri, reinforcing hybrid schedule)
+- Day 11, 09:44 — object_14 at receptacle_12 (Late morning home presence; confirms resident is still home after typical office start time)
+- Day 11, 21:56 — object_14 at receptacle_8 (Evening movement; likely return from errand/work, consistent with evening routine)
+- Day 10, 07:56 — object_3 at receptacle_10 (Thursday morning home presence; key discriminator for hybrid vs. strict office)
+- Day 9, 12:53 — object_8 at receptacle_12 (Wednesday midday home presence; initial indicator of non-office day)
+- Day 7, 09:48 — object_9 at receptacle_12 (Monday morning departure; baseline 9-5 pattern)
+- Day 7, 17:51 — object_9 at receptacle_7 (Monday return to home desk; baseline 9-5 pattern)
+- Day 8, 09:48 — object_9 at receptacle_12 (Tuesday morning departure; reinforces baseline pattern)
+
+## Notes
+Pattern is now robust: Mon/Tue = Office (leave ~09:48), Wed/Fri = Home (present morning). Thursday was also home. This suggests a 3-day remote work week (Wed-Fri) or a 2-day office week (Mon-Tue). Need to observe next Monday to confirm if the cycle resets. Object_14's movement from receptacle_12 to receptacle_8 in the evening suggests it might be a bag or item taken out, possibly for an evening activity or return from work if the resident left later than observed.

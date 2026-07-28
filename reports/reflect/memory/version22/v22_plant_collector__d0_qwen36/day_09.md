@@ -1,0 +1,16 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Hybrid Worker (WFH + Office) — Day 8 confirmed strict 09:48-17:51 absence via keys. Day 9 shows no key movement, implying the resident is home all day. This shift from 'away' to 'present' without work objects appearing suggests a work-from-home day, fitting the hybrid model. The probability remains high as this is the expected behavior for a hybrid worker on a non-commute day.
+2. (p=0.10) Work-from-home Professional — If the resident is home all day (no keys moved) and no work items appear, this could imply a remote worker who keeps work strictly digital/off-site or is on a day off. However, the previous strong evidence of office commuting on Day 8 makes this less likely than the hybrid explanation. Probability unchanged.
+3. (p=0.05) Student — Still inconsistent. The rigid weekday structure (commute vs. home) is more characteristic of professional employment than typical student schedules. No academic clutter observed. Probability unchanged.
+
+## Selected evidence
+- Day 8, 09:48 — keys at elsewhere (departure for office; confirms weekday commute pattern)
+- Day 8, 17:51 — keys at entry_hook_e1 (return from office; consistent with hybrid schedule)
+- Day 9, 07:40 — bowl at sink_k1 (morning routine; resident is home, no keys moved)
+- Day 9, 12:53 — fork at table_d1 (midday meal; resident home, no work items visible)
+- Day 9, 18:35 — plate at table_d1 (evening meal; resident home, no work items visible)
+
+## Notes
+Day 9 (Wednesday) shows no key movement, indicating the resident is home all day. This contrasts with Day 8 (Tuesday) where keys left/returned. This supports the 'Hybrid' hypothesis: Tuesday was an office day, Wednesday is a WFH day. No work objects (laptop, notebooks) appeared during the day, which is neutral for both Hybrid and WFH hypotheses. Need to observe Day 10 (Thursday) to see if keys move again (returning to office pattern) or if the resident stays home (potential 2-day WFH block). Also, check if any work items appear in the evening.

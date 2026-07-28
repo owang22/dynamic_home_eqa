@@ -1,0 +1,24 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=1.00) Stay-at-home parent with a toddler (under 3) — Day 10 (Thursday) continues the established weekday pattern: morning feeding cleanup (07:20) and mid-day/evening feeding setup (17:39). The consistency of the toddler's schedule across Days 7-10 (Mon-Thu) strongly supports a single primary caregiver managing a young child. No evidence of external employment or other residents has emerged to contradict this.
+
+## Selected evidence
+- Day 10, 07:20 — sippy_cup at sink_k1 (Morning cleanup; confirms weekday feeding routine, consistent with Day 7, 8, 9)
+- Day 10, 17:39 — sippy_cup at high_chair_d1 (Evening meal prep; confirms dinner routine, consistent with Day 7, 8, 9)
+- Day 9, 07:34 — bowl at sink_k1 (Morning cleanup; confirms weekday feeding routine continues)
+- Day 9, 11:23 — stacking_rings at toy_corner_l1 (Mid-day play; suggests child is active and supervised)
+- Day 9, 16:56 — cushion at sofa_l1 (Afternoon rearrangement; suggests adult presence in living area)
+- Day 9, 17:41 — fork at high_chair_d1 (Evening meal prep; confirms dinner routine)
+- Day 7, 06:43 — sippy_cup at high_chair_d1 (Monday morning feeding; confirms weekday routine resumes)
+- Day 7, 07:28 — bowl at sink_k1 (Morning cleanup; confirms active care immediately following feeding)
+- Day 7, 18:35 — fork at sink_k1 (Evening cleanup; confirms dinner routine)
+- Day 7, 19:12 — sippy_cup at crib_n1 (Bedtime routine; confirms child sleeps in this room)
+- Day 8, 08:49 — cushion at play_mat_n1 (Tuesday play setup; confirms continued relaxed morning routine)
+- Day 8, 11:43 — plate at high_chair_d1 (Mid-day feeding; confirms active care mid-day)
+- Day 8, 15:22 — stacking_rings at play_mat_n1 (Afternoon play; suggests structured quiet time)
+- Day 6, 12:59 — blanket at crib_n1 (Nap time; confirms child naps in crib)
+- Day 2, 11:10 — sippy_cup at sink_k1 (Toddler hygiene/feeding routine; confirms active care mid-day)
+
+## Notes
+Day 10 (Thursday) reinforces the 'Stay-at-home parent' hypothesis. The routine remains consistent with previous weekdays. The lack of any adult-specific objects (laptop, coffee mug, work bag) on a Thursday morning makes the 'Working parent' hypothesis effectively impossible. The toddler's schedule (feeding, napping, playing) is consistent across all observed days, suggesting a single primary caregiver. No new hypotheses needed. The cushion on the sofa at 16:56 on Day 9 is a minor deviation but likely indicates adult presence in the living room.

@@ -1,0 +1,19 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) Single working professional with a consistent weekday routine: morning departure (around 08:00-08:46) and evening return (around 16:47-17:13), followed by evening activities (around 21:45). The same object (object_6) appears in both morning and evening movements, suggesting one person's daily cycle. — Day 2 (Wednesday) shows a clear pattern: object_6 moves to receptacle_13 at 08:13 (morning, likely leaving home) and later to receptacle_7 at 21:45 (evening, likely returning). The 16:47 event (object_11 at receptacle_5) aligns with a typical after-work arrival. The 19:09 event (object_12 at receptacle_11) and the simultaneous 21:45 events (object_6 and object_12 at receptacle_7) suggest a single person's evening routine (e.g., moving items to a bedroom or living area). This strengthens the single professional hypothesis.
+2. (p=0.15) Possibly a couple or small family, but the evidence is weaker. The 16:47 and 19:09 events could be different residents, but the 21:45 simultaneous events (two objects to same receptacle) could also be one person multitasking. — The 16:47 and 19:09 events are at different times and involve different objects, which could indicate separate residents. However, the 21:45 simultaneous events (object_6 and object_12 both to receptacle_7) are more consistent with one person moving multiple items at once. The morning event (object_6 at 08:13) matches the previous day's pattern, suggesting a single person's routine. The multiple-resident hypothesis is less likely but not ruled out.
+3. (p=0.05) Retiree or someone with a flexible schedule, but the 08:13 and 16:47 events are typical of a workday, making this less likely. — The 08:13 morning event and 16:47 afternoon event are typical of a standard workday. The 19:09 and 21:45 events could be evening leisure, but the overall pattern is more consistent with a working professional. The retiree hypothesis is now very unlikely.
+
+## Selected evidence
+- Day 0, 08:04 — object_3 at receptacle_11 (morning routine, likely leaving home)
+- Day 0, 08:46 — object_6 at receptacle_11 (second morning movement, same receptacle, possibly a shared drop-off point)
+- Day 1, 17:13 — object_19 at receptacle_5 (after-work return on Tuesday)
+- Day 1, 21:45 — object_4 at receptacle_7 (evening activity, winding down)
+- Day 2, 08:13 — object_6 at receptacle_13 (morning departure, same object as Day 0 morning)
+- Day 2, 16:47 — object_11 at receptacle_5 (after-work return, same receptacle as Day 1 17:13)
+- Day 2, 19:09 — object_12 at receptacle_11 (evening activity, possibly dinner or leisure)
+- Day 2, 21:45 — object_6 and object_12 both at receptacle_7 (simultaneous evening movement, likely one person moving multiple items to bedroom or living area)
+
+## Notes
+Day 2 (Wednesday) confirms a consistent pattern: morning events around 08:00-08:46 (object_6 appears both days), afternoon/early evening events around 16:47-17:13 (receptacle_5 appears both days), and late evening events at 21:45 (receptacle_7 appears both days). The simultaneous movement of two objects to the same receptacle at 21:45 strongly suggests a single person. Need to check weekend data (days 5-6) to see if the pattern changes (e.g., later mornings, different objects). Also, object_6 appears in both morning and evening, suggesting it is a personal item (e.g., bag, keys) that leaves and returns. Receptacle_5 might be a home office or entryway. Receptacle_7 might be a bedroom. Open question: what are the objects? (object_6, object_12, etc.) and receptacles? (receptacle_5, receptacle_7, etc.) — but not needed for persona inference.

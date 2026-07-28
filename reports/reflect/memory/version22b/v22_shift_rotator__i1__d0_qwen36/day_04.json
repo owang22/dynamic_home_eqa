@@ -1,0 +1,32 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Industrial/Construction Worker with Early Start & Late Return",
+   "prob": 0.99,
+   "rationale": "Consistent early morning departure (05:08-05:27) with work gear (badge, vest) and late returns (21:45-22:51). The 'elsewhere' location for work items during the day confirms on-site presence. Weekend shift possibility remains low but unproven."
+  },
+  {
+   "persona": "Shift Worker with Variable Hours",
+   "prob": 0.005,
+   "rationale": "Retained as a low-probability alternative. The consistency of the 05:00-23:00 window makes variable hours unlikely, but the 'elsewhere' timing could theoretically shift if schedules change."
+  },
+  {
+   "persona": "Commuter with Gym/Club Locker",
+   "prob": 0.005,
+   "rationale": "Effectively discarded. 'Hi-vis vest' and 'work_badge' are highly specific to industrial work. The probability is kept non-zero only as a theoretical edge case if the badge is misidentified, but evidence strongly contradicts this."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 05:14 \u2014 thermos at elsewhere (early morning prep for long shift)",
+  "Day 1, 22:47 \u2014 keys at entry_hook_e1 (late return, supports long shift)",
+  "Day 2, 05:27 \u2014 work_badge at elsewhere (confirms work identity, early routine)",
+  "Day 2, 14:42 \u2014 hi_vis_vest at locker_shelf_e1 (strong discriminator: industrial job)",
+  "Day 3, 13:19 \u2014 hi_vis_vest at elsewhere (confirms worker is on-site midday)",
+  "Day 3, 22:51 \u2014 thermos at sink_k1 (late return, consistent with Day 1 pattern)",
+  "Day 4, 05:08 \u2014 phone at entry_hook_e1 (consistent early departure routine)",
+  "Day 4, 05:08 \u2014 work_badge at entry_hook_e1 (confirms work gear retrieval, early start)",
+  "Day 4, 05:23 \u2014 keys at elsewhere (confirms departure with work gear)",
+  "Day 4, 21:45 \u2014 plate at cupboard_k1 (late evening activity, consistent with late return)"
+ ],
+ "notes": "Day 4 (Friday) confirms the early departure pattern (05:08) with work badge and phone. The late evening plate activity (21:45) suggests the resident is home or returning by then, though the exact return time isn't captured by 'plate at cupboard'. Need to observe Day 5 (Saturday) and Day 6 (Sunday) to determine if the worker has weekend shifts or if the 'elsewhere' location for work gear disappears. The 'locker_shelf_e1' on Day 2 was likely a workplace locker, not a home gym locker, given the hi-vis vest context."
+}

@@ -1,0 +1,24 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Hybrid Worker with Morning Errands/Commute — The 'elsewhere' cluster (object_9) on Days 2-4 and now Day 7 confirms a recurring weekday morning departure. The absence of this cluster on Days 5-6 (weekend) strongly supports a work-linked routine. The late returns (19:10-22:10) and flexible weekend timings remain consistent with a hybrid or creative role rather than a rigid 9-5.
+2. (p=0.10) Remote Worker with External Meetings/Errands — Still plausible as a subset. The morning departure could be for client meetings or errands. However, the lack of clear 'home desk' laptop usage data keeps this distinct from a pure WFH model. Probability remains low because the specific 'elsewhere' cluster suggests a physical departure rather than just remote work prep.
+3. (p=0.05) Standard 9-5 Office Worker — Effectively discarded. The late evening returns (19:10, 22:10) and the absence of a morning departure on weekends are inconsistent with a standard 9-5 schedule. Probability kept low only to account for potential data noise or unusual work weeks.
+
+## Selected evidence
+- Day 7, 07:01 — object_4 at receptacle_11 (Monday morning routine; consistent with Day 5 Saturday morning activity, suggesting simple start to day)
+- Day 7, 07:36 — object_3 at receptacle_9 (New object appearing in morning; potential indicator of daily routine item, e.g., coffee maker or bag)
+- Day 7, 19:18 — object_8 at receptacle_9 (Evening return; aligns with Day 4 late return pattern, reinforcing variable/late schedule)
+- Day 7, 19:40 — object_14 at receptacle_10 (New object in evening; suggests post-work activity or item brought home)
+- Day 2, 08:23 — object_9 at receptacle_7 (Early 'elsewhere' event; suggests errands/secondary departure)
+- Day 3, 08:21 — object_9/10/11 at elsewhere (Cluster of 3 objects; confirms morning errand/secondary departure pattern)
+- Day 3, 17:33 — object_11 at receptacle_4 (Early return; reinforces flexible/early finish pattern)
+- Day 4, 08:24 — object_9 at elsewhere (Recurring morning 'elsewhere' event; confirms pattern across 3 days)
+- Day 4, 19:10 — object_8 at receptacle_9 (Evening return; later than previous days, suggesting variable schedule)
+- Day 5, 07:05 — object_4 at receptacle_11 (Saturday morning activity; no 'elsewhere' cluster, suggesting weekday-specific routine)
+- Day 5, 22:10 — object_11 at receptacle_8 (Late Saturday night activity; suggests leisure or late work, inconsistent with strict 9-5)
+- Day 6, 07:27 — object_4 at receptacle_9 (Sunday morning; no 'elsewhere' cluster, further confirming weekday-only routine)
+- Day 6, 18:45 — object_8 at receptacle_11 (Baseline evening return; consistent with Day 0, suggesting weekend stability)
+
+## Notes
+Day 7 (Monday) confirmed the weekday pattern: no 'elsewhere' cluster observed yet (events are early in the day). Object_3 appeared at receptacle_9 in the morning, which may be a daily item (e.g., coffee, keys). Object_14 appeared in the evening, new to the dataset. Need to observe if object_9 (the 'elsewhere' cluster item) appears on Day 7 morning. Open question: What is object_3? Is it related to the morning routine or departure? Also, need to track if object_14 is a recurring evening item.

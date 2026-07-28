@@ -1,0 +1,17 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Rotating Shift Worker (Night/Evening) — The 05:00 wake-up persisted on Sunday (Day 13), breaking the previous Mon-Sat block. This suggests a 7-day shift cycle or a very rigid schedule with no days off, or potentially a shift change. The consistency of the 05:00 anchor across 7 consecutive days makes this the dominant hypothesis.
+2. (p=0.02) Remote Worker with Irregular Sleep — Still technically possible if the 'irregularity' is actually a self-imposed rigid routine, but the lack of any deviation (even on Sunday) makes 'irregular' a poor descriptor. Probability remains low.
+
+## Selected evidence
+- Day 13, 05:00 — object_24 at receptacle_5 (Confirms 05:00 wake-up on Sunday, extending the 7-day early-start block and challenging the '6-day block' theory)
+- Day 12, 05:00 — object_11 at receptacle_5 (Saturday early start; part of the continuous 7-day pattern)
+- Day 11, 05:05 — object_11 at receptacle_1 (Friday early start; part of the continuous 7-day pattern)
+- Day 10, 04:51 — object_17 at receptacle_5 (Thursday early start; part of the continuous 7-day pattern)
+- Day 9, 04:54 — object_9 at receptacle_5 (Wednesday early start; part of the continuous 7-day pattern)
+- Day 7, 05:08 — object_9 at receptacle_5 (Monday early start; part of the continuous 7-day pattern)
+- Day 13, 19:27 — object_14 at receptacle_12 (Sunday evening activity; new data point for weekend routine)
+
+## Notes
+The 05:00 wake-up occurred on Sunday, contradicting the previous hypothesis of a Mon-Sat 6-day block. The resident now shows a 7-day continuous early-start pattern. Need to verify if this is a permanent 7-day shift or if Sunday is an outlier that will revert next week. Object_14 at receptacle_12 on Sunday evening is new; need to determine if this is a leisure item or part of the evening wind-down routine. The 08:05 activity on Friday needs verification on Sunday to see if it's a weekend-specific routine.

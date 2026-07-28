@@ -1,0 +1,13 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Standard working professional with consistent post-work routine — Day 13 (Sunday) shows a 06:06 coffee event, contradicting the 'weekend sleep-in' assumption from Day 12. This suggests either a variable weekend wake time or that Day 12 was an outlier. The 21:27 remote event confirms the persistent late-evening leisure pattern. The hypothesis remains strong as it accommodates both weekday structure and weekend variability, unlike the rigid schedule hypothesis.
+2. (p=0.01) Remote worker with flexible schedule — Still negligible. The 06:06 coffee could be a work-related early start, but without laptop/office object evidence, it's indistinguishable from a standard professional's early weekend habit. The lack of daytime object movement (laptop, documents) keeps this probability low.
+3. (p=0.00) Night-shift worker or late-evening eater — Discarded. The 06:06 coffee event on Sunday morning directly contradicts a night-shift schedule, which would typically involve daytime rest or late-night activity. The late evening remote usage is consistent with leisure, not shift work.
+
+## Selected evidence
+- Day 13, 06:06 — coffee_mug at table_d1 (indicates early morning activity on Sunday; contradicts Day 12 'sleep-in' pattern, suggesting variable weekend wake times or a consistent early riser habit, helping discriminate between rigid vs. flexible routines)
+- Day 13, 21:27 — remote at coffee_table_l1 (confirms persistent late-evening leisure pattern on Sunday, consistent with Day 12's late activity, reinforcing the 'late evening habit' regardless of weekday/weekend)
+
+## Notes
+Day 13 (Sunday) data reveals a 06:06 coffee event, challenging the 'weekend sleep-in' inference from Day 12. This suggests either a variable weekend wake time or that Day 12 was an outlier. The 21:27 remote event confirms the late-evening leisure pattern persists on Sundays. Need to observe Day 14 (Monday) to see if the 06:06 pattern is a weekend anomaly or a consistent early riser trait. The 'no keys' anomaly on Day 7 remains unexplained but isolated.

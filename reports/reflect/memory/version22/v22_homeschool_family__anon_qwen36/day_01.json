@@ -1,0 +1,24 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Standard 9-5 Office Worker",
+   "prob": 0.6,
+   "rationale": "Morning departure at 09:14 and late afternoon/evening activity at 21:18 align with a traditional workday followed by evening wind-down or return. The 15:45 event is ambiguous but could be a delivery or minor errand."
+  },
+  {
+   "persona": "Remote Worker with Errands",
+   "prob": 0.3,
+   "rationale": "The 15:45 event (object_13 at receptacle_11) might indicate a mid-afternoon break or delivery pickup, while 21:18 suggests late evening activity. However, the strong 09:14 departure cue still leans towards office work."
+  },
+  {
+   "persona": "Shift Worker / Irregular Schedule",
+   "prob": 0.1,
+   "rationale": "Unlikely given the consistent morning departure, but remains as a low-probability baseline until weekend data contradicts weekday patterns."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 09:14 \u2014 object_12 at receptacle_12 (Strong morning departure cue; likely keys/bag for work)",
+  "Day 1, 21:18 \u2014 object_17 at receptacle_4 (Late evening activity; suggests return home or late-night routine, consistent with 9-5 worker returning after work)"
+ ],
+ "notes": "Discarded Day 0, 12:48 event as it was too generic (lunch/break) to discriminate between hypotheses. Day 1, 15:45 event (object_13 at receptacle_11) was discarded as it lacks context (unknown object/receptacle) and timing is not distinctive enough for a single day. Need to identify object_17 and receptacle_4 to confirm if 21:18 is a return home or a late-night outing. Weekend data (Day 5-6) is critical to confirm if 09:14 is work-related or a leisure activity."
+}

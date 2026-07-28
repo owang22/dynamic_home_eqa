@@ -1,0 +1,16 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Hybrid Worker (WFH + Office) — Day 8 (Tue) showed clear commute (keys out/in). Day 9 (Wed) and Day 10 (Thu) show no key movement, indicating home presence. The lack of work objects on Wed/Thu is consistent with WFH days where work is digital or off-camera. The pattern suggests a standard M-F work week with 2-3 office days.
+2. (p=0.10) Work-from-home Professional — If Day 8 was an anomaly (e.g., errand, doctor) rather than a commute, the resident might be fully remote. However, the precise 09:48-17:51 absence window on Day 8 strongly mimics office hours, making this less likely than the hybrid model. Probability remains low but non-zero.
+3. (p=0.05) Student — Still inconsistent. The rigid professional commute pattern on Day 8 and lack of academic materials (books, laptops) on home days make this unlikely. Probability unchanged.
+
+## Selected evidence
+- Day 8, 09:48 — keys at elsewhere (departure for office; confirms weekday commute pattern)
+- Day 8, 17:51 — keys at entry_hook_e1 (return from office; consistent with hybrid schedule)
+- Day 11, 07:05 — coffee_mug at table_d1 (morning routine; resident home, no keys moved)
+- Day 11, 09:44 — phone at table_d1 (mid-morning activity; resident home, no keys moved)
+- Day 11, 21:56 — phone at nightstand_r1 (evening wind-down; resident home, no keys moved)
+
+## Notes
+Day 11 (Friday) shows no key movement, continuing the home-bound pattern from Wed-Thu. This suggests a potential 3-day WFH block (Wed-Fri) or a 2-day block if Saturday is also home. The absence of work objects on home days remains neutral. Key observation needed: Day 12 (Saturday) to see if keys move (errand/leisure) or stay (weekend prep). Also, check if 'phone at nightstand' correlates with sleep patterns.

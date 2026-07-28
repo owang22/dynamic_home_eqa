@@ -1,0 +1,15 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard 9-5 Office Worker — Day 7 (Monday) start time (07:07) is significantly earlier than Sunday (07:44) and aligns with a weekday routine. The return to an earlier start confirms the weekday/weekend split, strengthening this hypothesis while further weakening the 'Retiree' hypothesis which would likely maintain a consistent or later schedule.
+2. (p=0.04) Retiree / Stay-at-Home — The distinct shift in morning timing between Day 6 and Day 7 suggests a structured external obligation (work) rather than self-directed leisure. Probability reduced as evidence of rigid weekday structure accumulates.
+3. (p=0.01) Night Shift Worker — Contradicted by the early morning activity on Day 7. Retained only as a negligible baseline for potential data error or extreme schedule irregularity.
+
+## Selected evidence
+- Day 7, 07:07 — object_3 at receptacle_12 (Weekday start; 37 mins earlier than Sunday, confirming return to rigid weekday routine)
+- Day 7, 07:07 — object_4 at receptacle_12 (Co-occurrence with object_3 suggests a paired morning routine, e.g., coffee/tea and phone)
+- Day 7, 15:43 — object_15 at receptacle_11 (Afternoon object movement; object_15 is new, possibly a work-related item or afternoon snack, occurring during typical work hours)
+- Day 7, 21:45 — object_3 at receptacle_5 (Evening return; object_3 moved to a different receptacle, possibly indicating end-of-day wind-down or storage)
+
+## Notes
+Day 7 confirms the weekday/weekend dichotomy. The start time on Monday (07:07) is earlier than Saturday (06:57) but later than the hypothetical 'strict' 6 AM start, suggesting a flexible but structured professional. Object_15 appeared for the first time in the afternoon; need to track if it becomes a regular weekday afternoon item. Object_3 remains the primary tracker for daily start/end times. No evidence of a laptop or home office setup yet, but the timing strongly implies external employment.

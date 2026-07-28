@@ -1,0 +1,14 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Dual-Resident Household (One 9-5 Worker, One Early Riser/Student) — Day 11 confirms the persistent early departure pattern (05:27) for Object_15, reinforcing the 'Early Riser' identity. The late evening appearance of Object_3 (21:45) at a non-desk receptacle suggests a third distinct activity or resident, or a very late return, further complicating the single-resident model and strengthening the multi-resident hypothesis. The separation of Object_15 (early) and Object_3 (late) remains distinct.
+2. (p=0.01) Remote Worker with Gym Routine — Still unlikely. The rigid 05:27 departure of Object_15 followed by its presence at receptacle_7 at 07:29 suggests a commute or travel, not a home-based gym routine. The late Object_3 event does not align with a standard remote work day ending.
+3. (p=0.01) Standard 9-5 Professional (Single Resident) — Contradicted by the simultaneous existence of early departures (Object_15) and late returns (Object_3) that do not overlap in a way typical of a single person's day. The distinct receptacle usage (receptacle_7 vs receptacle_5) further argues against a single resident's consistent habits.
+
+## Selected evidence
+- Day 11, 05:27 — object_15 at elsewhere (early departure, consistent with Day 9/10 pattern, reinforces 'Early Riser' identity)
+- Day 11, 07:29 — object_15 at receptacle_7 (return from early departure, suggests commute/travel rather than home activity)
+- Day 11, 21:45 — object_3 at receptacle_5 (late evening activity, distinct from Object_15's morning routine, suggests separate resident or late-night habit)
+
+## Notes
+Object_15's pattern (05:27 out, 07:29 back at receptacle_7) is now consistent across Days 9, 10, and 11. This suggests a short trip or commute, not a full day away. Object_3's appearance at 21:45 is new; need to determine if this is a new resident or a late-night habit of an existing one. Receptacle_5 is different from the 9-5 worker's typical receptacle_12/13. Need to check if Object_3 appears on weekends. The 'Early Riser' (Object_15) and 'Late Activity' (Object_3) seem to be distinct entities or behaviors.

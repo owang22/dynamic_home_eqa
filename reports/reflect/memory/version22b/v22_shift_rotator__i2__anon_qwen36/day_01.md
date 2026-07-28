@@ -1,0 +1,14 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Remote worker with disciplined morning routine and late-night wind-down — The 05:24 'elsewhere' event suggests early exercise/commute. The new 22:39 events show objects remaining in the home late, consistent with a night owl or remote worker winding down after a full day, rather than a standard 9-5 commuter who would be asleep or have left earlier.
+2. (p=0.20) Two-person household with asynchronous schedules — The late-night activity (22:39) could belong to a second person returning late or staying up late, while the first person follows the 05:24 routine. However, the lack of distinct 'second person' markers (like two sets of keys/coats) keeps this lower probability.
+3. (p=0.05) Night shift worker — If the 05:24 event was actually the end of a night shift (returning home), and 22:39 is going to sleep, this fits. But 'elsewhere' at 05:24 usually implies leaving, not returning, making this unlikely.
+
+## Selected evidence
+- Day 0, 05:24 — object_11 at elsewhere (indicates disciplined early morning activity outside home, e.g., gym/park)
+- Day 1, 22:39 — object_9 at receptacle_4 (late-night object placement suggests active evening routine or remote work wind-down)
+- Day 1, 22:39 — object_14 at receptacle_11 (simultaneous late-night activity reinforces non-standard evening hours)
+
+## Notes
+Need to identify object_9 and object_14. If they are work-related (laptop, notebook), it strongly supports remote work. If they are leisure (book, controller), it supports night owl. Receptacle_4 and 11 need identification. Check if Day 2 (Wednesday) shows similar late-night activity or if it's a weekend pattern anomaly.

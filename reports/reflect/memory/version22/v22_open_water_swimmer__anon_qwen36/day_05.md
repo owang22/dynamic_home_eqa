@@ -1,0 +1,20 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) Standard 9-5 Professional (Single Resident) — The 05:33 departure of object_16 on Saturday (Day 5) strongly contradicts a standard 9-5 work schedule, suggesting the early morning routine is for leisure (gym) rather than work. The 08:36 work bag departure on weekdays remains the primary work signal. Probability reduced because the weekend pattern now shows activity inconsistent with a strict office commute.
+2. (p=0.35) Dual-Resident Household (One 9-5 Worker, One Early Riser/Student) — The appearance of multiple distinct items leaving at 05:30-05:33 on both weekdays (Day 0, 3, 4) and weekends (Day 5) suggests a second person. Object_16 leaving on Saturday implies a non-work-related early routine (e.g., student, shift worker, or dedicated gym-goer). Object_21 returning to receptacle_7 at 07:22 on Saturday suggests a different schedule than the work bag.
+3. (p=0.05) Remote Worker with Gym Routine — Unlikely. The rigid 08:36 departure of object_11 on weekdays and its return to the 'home desk' at 17:56 strongly implies a physical office commute. If remote, object_11 would likely remain at the desk or leave for a co-working space, not return to the home desk specifically at end-of-day.
+
+## Selected evidence
+- Day 0, 05:34 — object_21 at elsewhere (early departure, key discriminator for commute/gym)
+- Day 0, 18:09 — object_7 at receptacle_13 (consistent evening return)
+- Day 1, 18:01 — object_11 at receptacle_4 (evening arrival, confirms object_11 is work bag)
+- Day 3, 05:30 — object_21 at elsewhere (reinforces early routine pattern)
+- Day 3, 08:36 — object_11 at elsewhere (work bag leaving for work, confirms 9-5 start)
+- Day 4, 05:32 — object_8, 16, 17 at elsewhere (multiple items leaving early, suggests shared household or extensive morning routine)
+- Day 4, 17:56 — object_11 at receptacle_4 (work bag returns home, confirms end of workday)
+- Day 5, 05:33 — object_16 at elsewhere (weekend early departure, suggests non-work activity like gym)
+- Day 5, 07:22 — object_21 at receptacle_7 (weekend return, different receptacle than work bag, suggests different user)
+
+## Notes
+Object_16 leaving on Saturday (Day 5) at 05:33 is a critical discriminator: it is not a work bag (no 08:36 departure observed on weekends). This supports the 'Dual-Resident' or 'Gym-Goer' hypothesis. Object_21 returning to receptacle_7 (not the home desk) on Saturday suggests it is not the work bag. Need to verify if object_16 is gym gear or a student bag. The 05:30 cluster of departures (objects 21, 8, 16, 17) appears consistent across days, implying a shared early morning routine or multiple residents. Weekend patterns (Day 5-6) will clarify if object_11 stays home.

@@ -1,0 +1,13 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Commuting Professional with disciplined morning swim routine — Day 10 (Thursday) confirms the 05:30 swim routine (swim_goggles) and evening return signal (phone at table_d1 at 18:07, likely post-work dinner/prep). The consistency across Mon-Thu reinforces this high-probability hypothesis. The 'phone at table' is a stronger domestic anchor than 'keys at hook' for evening presence, suggesting settled routine.
+2. (p=0.01) Professional Athlete/Coach with weekend training — Still unlikely. The strict 05:30 start time on weekdays remains unusual for athletes who might vary intensity or time. No additional athletic gear observed. The evening 'phone at table' is consistent with any resident, not specifically athletic.
+3. (p=0.00) Shift Worker with irregular hours — Contradicted by the consistent 05:30 start and ~18:00 return across Mon-Thu. Shift workers rarely maintain such precision. The pattern is too rigid for irregular shifts.
+
+## Selected evidence
+- Day 10, 05:34 — swim_goggles at elsewhere (confirms Thursday morning swim routine; consistent with Mon-Wed pattern, reinforcing disciplined early start)
+- Day 10, 18:07 — phone at table_d1 (strong signal of returning home and settling in for evening; distinguishes weekday evening routine from potential weekend leisure patterns)
+
+## Notes
+Day 10 (Thursday) adds another data point to the Mon-Thu pattern: 05:30 swim, work day, ~18:00 return. The 'phone at table_d1' is a more specific domestic signal than 'keys at hook', suggesting the resident is present and engaged in evening activities. Next observation should check Day 11 (Friday) to see if the pattern holds, and then Day 12-13 (weekend) to confirm if the 05:30 swim and 18:00 return are unique to weekdays. If the weekend shows different timings or no swim, it will strongly support the 'Commuting Professional' hypothesis over 'Athlete'.

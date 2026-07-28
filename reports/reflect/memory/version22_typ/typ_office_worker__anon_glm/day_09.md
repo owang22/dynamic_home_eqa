@@ -1,0 +1,26 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.96) Single professional working from home occasionally — The consistent evening return times on weekdays (18:45-19:18) strongly suggest a regular work schedule. The earlier departure on Wednesday (17:53) and Thursday (08:24) likely indicate work-from-home days. The late evening activity pattern continues throughout the week. Weekend patterns differ from weekdays, with Saturday showing earlier departure and different return time, while Sunday shows consistent return time but object leaving again shortly after. The presence of object_14 at 22:10 on Saturday and 19:40 on Monday indicates additional household activities or visitors. Tuesday's pattern shows object_3 departing at 07:25 (similar to previous weekdays) and object_11 returning at 17:46 (earlier than typical return time, suggesting a different schedule or possibly working from home). Wednesday's pattern shows object_9 leaving at 17:38 (similar to previous Wednesday's 17:53 departure), confirming a work-from-home day pattern.
+2. (p=0.03) Student with irregular schedule — The consistent evening return could correspond to classes ending, though we haven't seen academic materials yet. The late evening activity might be studying. The variable departure times could indicate different class schedules. The weekend activity patterns differ from weekdays, which could align with a student's weekend schedule. However, the consistent return times and the Wednesday pattern with object_9 leaving at 17:38 (similar to previous Wednesday) don't strongly support this hypothesis.
+3. (p=0.01) Shift worker with non-standard hours — The consistent return times are less typical for shift work, though they could be on a consistent shift pattern. The late evening activity doesn't clearly support shift work patterns. The weekend activity patterns are different from weekdays, but the Sunday return at 18:45 is inconsistent with typical shift work patterns. Wednesday's pattern with object_9 leaving at 17:38 is earlier than typical, which could support shift work but doesn't strongly align with the overall pattern.
+
+## Selected evidence
+- Day 0, 07:26 — object_4 seen at receptacle_9 (departure timing suggests early morning activity)
+- Day 0, 18:45 — object_8 seen at receptacle_11 (evening return timing suggests standard workday length)
+- Day 1, 18:45 — object_8 seen at receptacle_11 (consistent evening return indicates regular schedule)
+- Day 1, 21:45 — object_3 seen at receptacle_5 (late evening activity could be work, study, or leisure)
+- Day 2, 17:53 — object_9 seen at receptacle_7 (earlier departure than previous days suggests different schedule)
+- Day 3, 08:21 — object_9, object_10, object_11 seen at elsewhere (multiple objects leaving together suggests commuting or travel)
+- Day 4, 07:35 — object_4 seen at receptacle_9 (consistent early morning departure pattern)
+- Day 4, 19:10 — object_8 seen at receptacle_9 (slightly later return than previous workdays)
+- Day 5, 07:05 — object_4 seen at receptacle_11 (earlier departure than weekdays, suggesting weekend pattern)
+- Day 5, 22:10 — object_14 seen at receptacle_3 (new object appearing at late hour, suggesting additional household activities or visitors)
+- Day 6, 18:45 — object_8 seen at receptacle_11 (consistent with weekday return pattern, suggesting regular schedule continues on Sunday)
+- Day 6, 19:25 — object_8 seen at receptacle_9 (object leaving shortly after return, suggesting different Sunday activities or social engagements)
+- Day 7, 07:01 — object_4 seen at receptacle_11 (consistent with weekday departure pattern, confirming regular schedule)
+- Day 7, 19:18 — object_8 seen at receptacle_9 (consistent with weekday return pattern, confirming regular schedule)
+- Day 8, 07:25 — object_3 seen at receptacle_9 (consistent with weekday departure pattern, confirming regular schedule)
+
+## Notes
+Consistent evening return pattern (18:45-19:18) on weekdays and Sunday suggests a regular work schedule. Earlier departure on Wednesday (17:53) and Thursday (08:24) likely indicate work-from-home days. Late evening activity pattern (21:45-22:29) continues throughout the week. Weekend patterns differ from weekdays, with Saturday showing earlier departure and different return time, while Sunday shows consistent return time but object leaving again shortly after. The presence of object_14 at 22:10 on Saturday and 19:40 on Monday indicates additional household activities or visitors. Tuesday's pattern shows object_3 departing at 07:25 (similar to previous weekdays) and object_11 returning at 17:46 (earlier than typical return time, suggesting a different schedule or possibly working from home). Wednesday's pattern shows object_9 leaving at 17:38 (similar to previous Wednesday's 17:53 departure), confirming a work-from-home day pattern. Need to identify objects to better understand activities. Watch for next week's patterns to confirm weekly routine assessment.

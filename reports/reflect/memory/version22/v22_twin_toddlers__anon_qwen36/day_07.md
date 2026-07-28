@@ -1,0 +1,19 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Standard 9-5 Office Worker — Day 7 (Monday) shows object_4 at receptacle_11 at 07:05, indicating an earlier start than the weekend sleep-in (Day 5/6). The return of object_16 (keys) at 18:38 aligns with a standard workday commute. The pattern of early weekday departure vs. late weekend start remains robust.
+2. (p=0.01) Remote Worker with Errands — Still contradicted. No work objects (laptop, documents) observed at the home desk during daytime hours on Day 7. The 07:05 activity suggests preparation for leaving the house, not starting work at home.
+3. (p=0.01) Shift Worker / Night Shift — Still contradicted. The 07:05 activity and 18:38 return are consistent with a day-shift schedule. No evidence of night activity or irregular hours.
+
+## Selected evidence
+- Day 0, 08:00 — object_16 at receptacle_1 (Weekday departure; confirms fixed schedule)
+- Day 0, 18:00 — object_16 at receptacle_6 (Weekday return; confirms fixed schedule)
+- Day 5, 07:14 — object_4 at receptacle_11 (Weekend sleep-in; contrasts with weekday 08:00)
+- Day 5, 12:38 — object_16 at receptacle_11 (Weekend midday outing; not work)
+- Day 6, 08:59 — object_12 at receptacle_4 (Late Sunday start; reinforces non-work weekend)
+- Day 6, 17:47 — object_16 at receptacle_14 (Sunday evening return; consistent with leisure/errand)
+- Day 7, 07:05 — object_4 at receptacle_11 (Monday early start; confirms return to weekday routine)
+- Day 7, 18:38 — object_16 at receptacle_11 (Monday evening return; consistent with work shift)
+
+## Notes
+Day 7 confirms the weekly cycle: early start (07:05) and evening return (18:38) on Monday. Object_4 at 07:05 likely represents preparation for departure (e.g., coffee, bag). Object_10 at 18:38 is mundane. Object_3 at 19:41 is likely evening leisure/dinner item. The distinction between weekday (early departure) and weekend (late start) is now firmly established across 3 days (Mon, Sat, Sun). No new hypotheses needed.

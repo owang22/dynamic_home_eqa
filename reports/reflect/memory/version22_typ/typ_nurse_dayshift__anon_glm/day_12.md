@@ -1,0 +1,26 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Single professional working from home occasionally — The consistent evening timing of object_8 at receptacle_11 on weekdays (Day 0-4) and on Day 5 (Saturday) at 18:39 suggests a regular work routine that extends into weekends. The presence of object_8 at receptacle_5 at 21:45 on all observed days (Day 1-5) indicates a consistent late-night activity pattern regardless of weekday/weekend. The appearance of object_13 at receptacle_5 on Day 5 alongside object_8 suggests it's part of the regular evening routine. The reappearance of object_3 at receptacle_11 at 05:55 on Day 7 (Monday) confirms the morning routine continues into the new week. The new observation of object_8 at receptacle_11 at 18:01 on Day 8 (Tuesday) continues this consistent pattern. The observation of object_3 at receptacle_11 at 05:57 on Day 9 (Wednesday) continues the morning routine, while object_8 at receptacle_11 at 18:15 on Day 9 continues the evening pattern. The observation of object_4 at receptacle_11 at 05:53 on Day 10 (Thursday) continues the morning routine, while object_11 at receptacle_8 at 21:26 on Day 10 continues the late-night activity pattern. The observation of object_4 at receptacle_11 at 06:02 on Day 11 (Friday) continues the morning routine, while object_4 at receptacle_5 at 21:45 continues the late-night activity pattern.
+2. (p=0.01) Student with irregular schedule — The evening pattern could be classes or part-time work, while the late night activity might be studying or socializing. However, the consistency of timing across eleven days, including the weekend, makes this extremely unlikely.
+3. (p=0.01) Shift worker with unusual hours — The consistent evening timing doesn't clearly indicate shift work patterns, and the weekend activity further contradicts typical shift work schedules, making this increasingly unlikely as evidence accumulates.
+
+## Selected evidence
+- Day 0, 06:23 — object_4 at receptacle_11 (early activity suggests regular routine)
+- Day 0, 17:46 — object_8 at receptacle_11 (evening activity suggests return or regular routine)
+- Day 1, 18:25 — object_8 at receptacle_9 (consistent evening timing suggests regular routine)
+- Day 1, 21:45 — object_3 at receptacle_5 (late night activity suggests work or leisure)
+- Day 2, 18:10 — object_8 at receptacle_11 (consistent evening timing across three days confirms regular routine)
+- Day 2, 21:45 — object_8 at receptacle_5 (consistent late night activity pattern)
+- Day 3, 17:59 — object_8 at receptacle_11 (consistent evening timing across four days confirms regular routine)
+- Day 3, 17:59 — object_13 at receptacle_11 (new object appearing at same time as object_8 suggests related activity)
+- Day 3, 21:45 — object_8 at receptacle_5 (consistent late night activity pattern across three days)
+- Day 4, 05:56 — object_3 at receptacle_11 (early morning activity suggests preparation for day)
+- Day 4, 06:26 — object_3 at receptacle_9 (consistent morning routine)
+- Day 4, 17:47 — object_13 at receptacle_11 (object_13 now appearing regularly in evening routine)
+- Day 5, 05:58 — object_3 at receptacle_11 (early morning activity on weekend suggests consistent routine)
+- Day 5, 18:39 — object_8 at receptacle_9 (evening activity on weekend suggests regular routine extends to weekends)
+- Day 5, 21:45 — object_8 and object_13 at receptacle_5 (consistent late night activity pattern on weekend)
+
+## Notes
+Consistent evening timing of object_8 on all eleven days, including Saturday, strongly suggests a regular work routine that extends into weekends. The reappearance of object_8 at receptacle_5 at the same time (21:45) on Day 1-5 indicates a consistent late-night activity pattern regardless of weekday/weekend. Object_13 is now appearing in the evening routine on consecutive days (Day 3-5), suggesting it's part of the regular pattern. Object_3 appears in the morning routine on Day 4, Day 5, and Day 7, indicating a consistent morning routine even on weekends. The appearance of object_11 at receptacle_8 at 21:25 on Day 7 and again at 21:26 on Day 10 suggests this is becoming part of the late-night routine. The movement of object_9 from elsewhere to receptacle_7 on Day 8 is a new pattern that needs further observation to understand its significance. The observation of object_10 at elsewhere on Day 9 is a new pattern that needs further observation to understand its significance. The observation of object_4 at receptacle_11 at 05:53 on Day 10 continues the morning routine pattern. The observation of object_4 at receptacle_11 at 06:02 on Day 11 continues the morning routine, while object_4 at receptacle_5 at 21:45 continues the late-night activity pattern. Day 12, 21:45 — object_3 seen at receptacle_5 continues the consistent late-night activity pattern on weekends.

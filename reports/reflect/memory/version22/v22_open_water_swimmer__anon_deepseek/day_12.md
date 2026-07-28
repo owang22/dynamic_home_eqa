@@ -1,0 +1,25 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Early riser with a consistent morning routine (e.g., exercise or work preparation) and a weekly pattern of weekend evening activities — The early morning pattern (05:27-05:34) and second morning routine (07:20-07:31) are confirmed daily, including weekends. Weekend evenings are later than workday evenings, and the new Saturday event at 19:25 is consistent with a relaxed weekend schedule. The Friday 21:45 event suggests a possible Friday-specific late activity.
+2. (p=0.01) Standard 9-to-5 worker with occasional late work or social events — The early morning pattern on weekends contradicts a typical 9-to-5 worker's weekend sleep-in. The Tuesday 08:36 event could be a departure for work, but the dominant early morning routine makes this hypothesis less likely.
+
+## Selected evidence
+- Day 0, 05:34 — object_20 at elsewhere (very early morning activity, repeated daily; likely exercise or work prep)
+- Day 2, 07:31 — object_17 at receptacle_7 (morning event around 7:30, repeated daily; suggests second morning routine like breakfast or getting ready)
+- Day 2, 17:38 — object_8 at receptacle_9 (evening event on workdays, consistent with returning home; repeated on Day 4 at 17:56 and Day 9 at 18:01)
+- Day 3, 07:28 — object_8, object_10, object_15 at receptacle_9, receptacle_8, receptacle_7 (multiple objects moved simultaneously on a workday; suggests coordinated morning routine like leaving for work)
+- Day 5, 20:35 — object_21 at receptacle_8 (evening event on Saturday, later than workday evenings; suggests relaxed weekend schedule)
+- Day 6, 18:51 — object_7 at receptacle_11 (evening event on Sunday, earlier than Saturday but still later than workday evenings; consistent with relaxed weekend schedule)
+- Day 7, 05:33 — object_10 and object_15 at elsewhere (early morning activity on Monday, consistent with daily pattern)
+- Day 7, 19:18 — object_11 at receptacle_12 (evening event on Monday, within workday evening range 17:38-19:18)
+- Day 7, 20:33 — object_16 at receptacle_8 (evening event on Monday, later than typical workday evening; may indicate a Monday-specific activity)
+- Day 8, 05:34 — object_21 at elsewhere (early morning activity on Tuesday, consistent with daily pattern)
+- Day 8, 07:30 — object_20 at receptacle_11 (second morning routine on Tuesday, consistent with daily pattern)
+- Day 8, 08:36 — object_11 at elsewhere (morning departure on Tuesday, possibly for work or errand)
+- Day 9, 05:31 — object_15 at elsewhere (early morning activity on Wednesday, consistent with daily pattern)
+- Day 9, 07:20 — object_20 at receptacle_11 (second morning routine on Wednesday, consistent with daily pattern)
+- Day 9, 18:01 — object_8 at receptacle_9 (evening event on Wednesday, consistent with workday evening pattern)
+
+## Notes
+The early morning pattern is now daily (including weekends), strongly indicating a habitual early riser. The 07:20-07:31 second morning routine also occurs every day. Weekend evenings vary (18:51 Sunday, 20:35 Saturday, 19:25 this Saturday) but are generally later than workday evenings (17:38-19:18). The Monday 20:33 event remains an outlier; need to observe next Monday to see if it repeats. The Friday 21:45 event is a new late evening event, possibly a weekly pattern (e.g., Friday night out or late work). Need to observe next Friday to confirm. The Saturday 19:25 event is consistent with a relaxed weekend evening. Need to identify objects: object_20 (seen at 05:27-05:34) might be a gym bag or water bottle; object_10 and object_15 (seen at 05:33 on Monday) might be exercise or work items. Day 10 (Thursday) events: 05:34 object_16 at elsewhere (consistent with early morning routine), 18:07 object_11 at receptacle_13 (evening event within workday range, similar to other workday evenings). Day 11 (Friday) events: 05:27 object_15 at elsewhere (consistent with early morning routine), 07:29 object_15 at receptacle_7 (consistent with second morning routine), 21:45 object_3 at receptacle_5 (late evening event on Friday, later than typical workday evening; may indicate a Friday-specific activity like socializing or late work).

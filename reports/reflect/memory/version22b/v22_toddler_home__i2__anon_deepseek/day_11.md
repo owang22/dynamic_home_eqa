@@ -1,0 +1,10 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=1.00) likely a remote worker with flexible hours who occasionally goes out midday but returns quickly; lacks strong commuting signals but occasional midday absences hint at midday errands or appointments rather than a fixed lunch break indoors. —  sparse but timed events today: morning coffee-like object at typical start-of-day receptacle, midday something else briefly appears and disappears suggesting midday errand-like behavior, evening something else appears suggesting winding down indoors; lacks strong evidence of weekday-only commitments or absence on weekends yet, but lacks commute-heavy leaving/selected_evidence.json' not found, so defaults to minimal inference.
+
+## Selected evidence
+- Day 11,  same as previous minimal-data inference; insufficiently distinguishing to warrant retention beyond noting lack of weekend-specific or commute-specific markers yet.
+
+## Notes
+Events today are again sparse and generic; cannot yet differentiate between lifestyles beyond noting absence of strong commuting signals or consistent midday absences across multiple days. Need more days, especially weekends, to detect whether midday events vanish on weekends indicative of weekday-only commitments, or conversely whether they persist suggesting flexible schedule regardless of day-of-week pattern verification remains pending due to insufficiently distinguishing weekend vs weekday differences yet.

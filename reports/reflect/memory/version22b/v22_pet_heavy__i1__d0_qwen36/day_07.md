@@ -1,0 +1,15 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Standard working adult with a dog — Day 7 confirms the return to the weekday 07:30-07:40 morning routine (leash/coffee) after the weekend shift. The 18:09 plate suggests a slightly later dinner than Day 0, but still within standard evening bounds. No evidence contradicts this model.
+2. (p=0.01) Remote worker / WFH — Still lacks specific WFH discriminators (laptop, specific work hours). The 18:09 plate is too late for a standard lunch but too early for a typical WFH dinner if they left for work. Without work-device evidence, this remains unlikely.
+3. (p=0.01) Night shift worker — Contradicted by early morning (07:39, 07:42) and midday (18:09) activities. Highly unlikely.
+
+## Selected evidence
+- Day 7, 07:39 — dog_leash at leash_hook_m1 (weekday morning walk; confirms routine reset to weekday pattern)
+- Day 7, 07:42 — coffee_mug at table_d1 (early morning start; consistent with 9-5 schedule)
+- Day 7, 18:09 — plate at table_d1 (evening meal; slightly later than Day 0's 21:45 cleanup, suggests dinner timing variation)
+- Day 7, 19:55 — phone at sofa_l1 (evening leisure; consistent with post-downtime relaxation)
+
+## Notes
+Day 7 (Monday) successfully re-established the weekday routine: early morning leash/coffee sequence. The 18:09 plate indicates dinner is being eaten or cleared around 6 PM, which is earlier than the Day 0 late-night cleanup (21:45), suggesting a more standard dinner time on this Monday. The 19:55 phone on the sofa suggests evening relaxation. Need to observe Day 8 (Tuesday) to see if the 18:09 dinner time persists or if Day 0's 21:45 cleanup was an outlier.

@@ -1,0 +1,22 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) A person who works from home or has a flexible schedule, as object_16 (likely a laptop or work item) is at receptacle_11 (desk) during the workday and then moved to receptacle_13 (living area) in the evening. The pattern on day 0 and day 1 shows the object at receptacle_13 in the evening, consistent with a work-from-home routine where the device is used at a desk during the day and brought to another area in the evening. Day 9 shows object_16 at receptacle_11 at 11:27, reinforcing the daytime desk use. The evening pattern is less consistent (object_16 at receptacle_5 on day 2, object_11 at receptacle_13 on day 9), but the overall daytime presence at home remains strong. — Day 9 provides strong evidence of daytime desk use (object_16 at receptacle_11 at 11:27), which is the core of this hypothesis. The evening location varies, but the person is clearly home during the day. This hypothesis remains the most likely.
+2. (p=0.20) A person with a regular evening routine, possibly a student or professional who uses a laptop or other device in the living area after work or classes. The consistent evening presence of some object (object_16, object_11, object_6) in living areas (receptacle_13, receptacle_5) suggests a habit of using devices for leisure or study in the evening. Day 9 shows object_11 at receptacle_13 at 18:50 and object_6 at receptacle_5 at 21:45, both in the evening, supporting this pattern. — Day 9 adds two evening events, strengthening the evening routine pattern. However, the specific objects and locations vary, so this hypothesis is less specific than the work-from-home one.
+3. (p=0.10) A person who may have a hybrid schedule or leaves home during the day, as object_13 and object_14 were seen at 'elsewhere' at 12:46 on day 2, suggesting they were taken out of the home (e.g., for work or errands). Then object_14 returned to receptacle_4 at 17:49, possibly indicating a return home. Day 9 does not show any objects leaving home, which could mean the person stayed home today, or the objects were not tracked. This hypothesis remains possible but is not strongly supported by recent evidence. — Day 9 lacks evidence of objects leaving home, which weakens this hypothesis. However, the day 2 evidence is still valid, so it remains as a lower-probability alternative.
+
+## Selected evidence
+- Day 0, 11:34 — object_16 at receptacle_11 (likely a desk or workspace, suggesting work-from-home or study during the day)
+- Day 0, 18:47 — object_16 at receptacle_13 (likely a living or dining area, indicating a shift to leisure or dinner in the evening)
+- Day 1, 19:13 — object_16 at receptacle_13 (confirms evening pattern of moving work item to living area)
+- Day 2, 12:46 — object_13 and object_14 at elsewhere (objects taken out of home at midday, possibly for work or errands)
+- Day 2, 17:49 — object_14 at receptacle_4 (return of an object to a likely nightstand or table, suggesting return home)
+- Day 2, 21:45 — object_16 at receptacle_5 (evening use of laptop in a different living area or bedroom, not the usual living area)
+- Day 3, 10:46 — object_16 at receptacle_13 (daytime use of laptop in living area, not at desk; could indicate a break or different work location)
+- Day 3, 11:21 — object_6 at receptacle_11 (a separate work item placed at desk, reinforcing work-from-home setup)
+- Day 9, 11:27 — object_16 at receptacle_11 (daytime desk use, consistent with work-from-home)
+- Day 9, 18:50 — object_11 at receptacle_13 (evening use of another device in living area, supporting evening routine)
+- Day 9, 21:45 — object_6 at receptacle_5 (evening placement of a work item in a different living area, adding to evening pattern)
+
+## Notes
+Day 9 (Wednesday) shows strong daytime desk use (object_16 at receptacle_11 at 11:27) and two evening events (object_11 at receptacle_13 at 18:50, object_6 at receptacle_5 at 21:45). The evening pattern is consistent but with varying objects and locations. No objects left home today, which weakens the hybrid hypothesis. Need to identify objects 3, 6, 9, 11, 12, 13, 14, 16 and receptacles 4, 5, 6, 8, 10, 11, 13. Weekend patterns (days 5-6) will be crucial to distinguish work-from-home from commuting. Also, object_12 at receptacle_10 at 01:23 is a late-night event; need to understand its role.

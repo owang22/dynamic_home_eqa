@@ -1,0 +1,15 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Shift Worker (Fixed Schedule) — The 07:43 departure on Monday (Day 7) closely mirrors the 07:38 Saturday departure, strongly suggesting a consistent early-morning work shift. The Sunday (Day 6) lack of early departure confirms Sunday is a non-work day, fitting a Mon-Sat or rotating shift pattern with Sunday off.
+2. (p=0.10) Remote Worker with Errands — While Sunday showed home activity, the consistent early morning departures on Sat and Mon make a purely home-based routine unlikely. This hypothesis is now very weak as it cannot explain the regular early departures.
+3. (p=0.05) Standard 9-5 Office Worker — Contradicted by the 07:38/07:43 departures. A standard 9-5 worker would not leave at 7:40 AM on a Monday unless commuting from far away, but the Saturday timing makes this less likely than a shift worker.
+
+## Selected evidence
+- Day 7, 07:43 — object_5 at receptacle_14 (Departure at 07:43; confirms early morning routine, mirroring Saturday's 07:38 departure, strongly indicating a fixed work shift)
+- Day 7, 06:58 — object_10 at receptacle_10 (Early morning object movement; suggests resident is active before departure, consistent with a shift worker preparing for work)
+- Day 7, 18:50 — object_14 at receptacle_12 (Evening return activity; object movement late in the day suggests resident is back home, consistent with a standard work day ending around 18:00-19:00)
+- Day 6, 07:38 — object_5 at receptacle_14 (Previous Saturday departure; establishes the baseline early departure time for work days)
+
+## Notes
+Monday (Day 7) confirms the pattern: early departure (~07:40) and evening return (~18:50). This solidifies the 'Shift Worker' hypothesis. The key question now is whether this pattern holds for Tuesday-Friday. Need to observe if the 07:40 departure continues on Days 8-11. If it does, the resident likely works Mon-Sat with Sunday off, or has a rotating shift that includes these days.

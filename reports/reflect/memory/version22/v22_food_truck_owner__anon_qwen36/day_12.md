@@ -1,0 +1,20 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Disciplined remote worker with flexible weekends — Consistent 07:30 start across weekdays and Saturday (Day 5, Day 12). Late evening activity on Friday (22:31) suggests weekend wind-down, but Saturday evening activity (21:27) is earlier, aligning with a standard weekend routine rather than a night shift or couple dynamic.
+2. (p=0.01) Night-shift worker with adjusted schedule — Contradicted by consistent early morning workspace activity (07:30) and lack of daytime absence. The 21:27 Saturday activity is too early for a night-shift start.
+3. (p=0.01) Dual-income professional couple — No evidence of a second resident's distinct schedule or object usage. All movements are sequential and sparse, consistent with a single occupant.
+
+## Selected evidence
+- Day 5, 07:27 — object_11 at receptacle_4 (Weekend early start; confirms routine persists on Saturday)
+- Day 7, 07:27 — object_3 at receptacle_4 (Monday morning workspace activity; confirms return to weekday routine after weekend delay)
+- Day 7, 21:45 — object_18 at receptacle_4 (Late evening workspace activity; suggests evening work or wind-down at desk)
+- Day 9, 07:34 — object_11 at receptacle_4 (Early morning workspace activity; confirms consistent weekday start)
+- Day 10, 07:32 — object_17 at receptacle_4 (Thursday morning workspace activity; reinforces consistent 07:30 start time)
+- Day 10, 21:18 — object_11 at receptacle_13 (Late evening activity at tertiary location; confirms evening wind-down pattern in receptacle_13)
+- Day 11, 07:34 — object_11 at receptacle_4 (Friday morning workspace activity; reinforces consistent 07:30 start time)
+- Day 11, 22:31 — object_11 at receptacle_9 (Late evening activity at new location; suggests Friday wind-down in a different zone, possibly later than weekdays)
+- Day 12, 21:27 — object_10 at receptacle_13 (Saturday evening activity at tertiary location; suggests weekend wind-down is earlier than Friday's late night, consistent with standard weekend routine)
+
+## Notes
+Day 12 (Saturday) shows activity at 21:27 in receptacle_13, which is earlier than Friday's 22:31 in receptacle_9. This suggests Friday is an outlier for late-night activity, or receptacle_9 is a specific Friday leisure spot. The consistent 07:30 start on both Saturday (Day 5) and Monday (Day 7) indicates a rigid morning routine regardless of workday status. No second resident detected. Need to verify if receptacle_9 is used again on future Fridays.

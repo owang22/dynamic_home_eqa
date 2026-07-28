@@ -1,0 +1,19 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Standard 9-5 Office Worker — Day 3 confirms the 08:43 departure and 17:40 return pattern. The consistency across Days 0, 2, and 3 strongly supports a fixed work schedule. The 21:45 activity is consistent with post-work wind-down.
+2. (p=0.10) Remote Worker with Errands — The 11:13 event (object_3) is ambiguous. If object_3 is a work tool, its absence from the 'home desk' area (receptacle_10) at 08:43 and appearance elsewhere at 11:13 might suggest a hybrid model. However, the strict morning departure makes this less likely than the office worker hypothesis.
+3. (p=0.05) Shift Worker / Night Shift — Still contradicted by the consistent morning departure and evening return. The 21:45 activity is too early for a night shift start. Probability remains low but not zero due to the late evening object movement.
+
+## Selected evidence
+- Day 0, 08:54 — object_12 at receptacle_4 (Morning departure; key discriminator for work routine)
+- Day 0, 17:16 — object_16 at elsewhere (Evening return/errand; confirms active evening schedule)
+- Day 1, 21:38 — object_15 at receptacle_6 (Late evening activity; suggests long day or social life)
+- Day 2, 13:11 — object_5 at receptacle_12 (Midday activity; could be lunch/errand, supports active day)
+- Day 2, 17:54 — object_6 at receptacle_7 (Evening return; consistent with workday end)
+- Day 3, 08:43 — object_5 at receptacle_10 (Morning departure; reinforces 9-5 pattern)
+- Day 3, 17:40 — object_14 at receptacle_14 (Evening return; consistent with workday end)
+- Day 3, 21:45 — object_16 at receptacle_6 (Late evening activity; consistent with post-work wind-down)
+
+## Notes
+Object_16 appears to be a high-frequency personal item (keys/wallet) given its presence at departure (Day 0) and return (Day 3). Receptacle_6 is likely a bedroom or living room location for personal items. The 11:13 event on Day 3 (object_3) is uninformative so far; need to track if object_3 is a work tool or leisure item. Weekend days (5-6) remain critical for distinguishing between office worker (sleep in) and remote worker (variable hours).

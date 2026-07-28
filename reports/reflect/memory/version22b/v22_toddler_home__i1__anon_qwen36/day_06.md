@@ -1,0 +1,20 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.65) Hybrid Office Worker (WFH Mon/Wed or Variable) — Day 6 (Sunday) shows no morning departure, reinforcing the 5-day work week. The pattern of non-departure on Day 2 (midday activity) and Day 3 (no departure) combined with rigid departures on Days 0, 1, and 4 strongly suggests a hybrid schedule rather than a standard 9-5 or fully remote role. The 'Standard 9-5' hypothesis is weakened by the unexplained absence on Day 3 without prior notice or sick leave indicators.
+2. (p=0.25) Standard 9-5 Office Worker (Variable Schedule) — Still plausible if Days 2 and 3 were personal leave or sick days. However, the lack of any 'sick' indicators (e.g., medicine, staying in bed) and the specific midday activity on Day 2 makes this less likely than a structured hybrid schedule. The rigid Friday departure supports the office component.
+3. (p=0.10) Remote Worker with Flexible Hours — Remains unlikely due to the rigid 08:50 departure on Day 4. The Sunday events show no work-related object movement at the desk (receptacle_10) in the morning, further contradicting a flexible remote schedule where work might start later or be interspersed.
+
+## Selected evidence
+- Day 0, 08:41 — object_17 at receptacle_10 (Baseline morning departure; establishes office commute start)
+- Day 0, 17:01 — object_7 at receptacle_12 (Baseline evening return; establishes office commute end)
+- Day 2, 11:34 — object_18 at receptacle_14 (Midday home activity; contradicts fixed office presence)
+- Day 3, 09:04 — object_5 at receptacle_10 (No morning departure; object_5 likely work item at desk/entry)
+- Day 4, 08:50 — object_17 at receptacle_10 (Morning departure resumes; contradicts continuous WFH hypothesis)
+- Day 4, 18:30 — object_17 at receptacle_11 (Evening return; 1.5h later than baseline, suggests WFH carryover or traffic)
+- Day 5, 07:39 — object_17 at receptacle_11 (No morning departure; confirms weekend rest pattern)
+- Day 6, 09:18 — object_5 at receptacle_10 (No morning departure; confirms weekend rest pattern continues)
+- Day 6, 11:48 — object_17 at receptacle_8 (Object moved to receptacle_8; likely leisure or household task, not work-related)
+
+## Notes
+Day 6 (Sunday) confirms no morning departure, solidifying the 5-day work week pattern. The movement of object_17 to receptacle_8 at 11:48 suggests leisure activity, further supporting the weekend rest hypothesis. No new hypotheses needed. Need to observe Day 7 (Monday) to see if the hybrid pattern resumes (i.e., no departure or late departure) or if it returns to the rigid 08:50 schedule.

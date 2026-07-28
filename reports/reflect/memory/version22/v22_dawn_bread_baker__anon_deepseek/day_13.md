@@ -1,0 +1,26 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.94) Single working professional with a consistent weekday routine and a more relaxed weekend pattern. The early-morning events (04:54, 04:52, 04:50, 05:06, 04:51, 05:05, 05:00) suggest a habitual early riser, possibly for exercise or personal time, even on weekends. The 08:05 events on Day 11 are simultaneous, likely one person moving multiple items before leaving. The weekday pattern of 08:06 departure and 21:45 return is typical of a working professional, and the weekend pattern (later departure, earlier return) is consistent with a relaxed schedule. The new event (05:00 on Sunday) reinforces the early-morning habit, and the 19:27 event is a single object at a receptacle, consistent with a single person's evening activity. — The early-morning pattern is now observed on 7 days (including weekends), strongly supporting a single early riser. The simultaneous events on Day 11 are still best explained by one person moving multiple items. The weekend pattern (later departure, earlier return) is maintained. The new events do not suggest multiple people.
+2. (p=0.05) Possibly a couple or small family, with one resident having an early-morning routine (05:00 on Sunday, and previous early-morning events) and another leaving around 08:05 on Day 11. The 19:27 event on Sunday could be a different person's evening activity. However, the lack of multiple distinct departure times on weekdays (only one departure around 08:06) and the single evening return on most days (21:45) weakens this hypothesis. The simultaneous events on Day 11 could be two people, but the overall pattern still fits a single person with multiple items. — The new early-morning event on Sunday (05:00) could be one person, and the 19:27 event could be another, but the overall pattern still lacks strong evidence for multiple people. The hypothesis remains possible but unlikely.
+3. (p=0.01) Retiree or someone with a flexible schedule, but the 05:00 early-morning event on Sunday is very early, possibly for a hobby (e.g., gardening, walking). The 08:05 departure on Day 11 is later than typical workday departures, and the 17:25 return on Day 10 is earlier than typical workday returns. However, the consistent weekday pattern of 08:06 departure and 21:45 return is very typical of a working professional, and the retiree hypothesis remains unlikely. The new events (05:00 and 19:27 on Sunday) are consistent with a flexible schedule but not distinctive. — The retiree hypothesis remains the least likely due to the strong weekday pattern of a working professional.
+
+## Selected evidence
+- Day 0, 08:04 — object_3 at receptacle_11 (morning departure, consistent weekday start)
+- Day 1, 21:45 — object_4 at receptacle_7 (evening wind-down, consistent timing)
+- Day 2, 08:13 — object_6 at receptacle_13 (morning departure, same object as Day 0)
+- Day 2, 16:47 — object_11 at receptacle_5 (after-work return, same receptacle as Day 1)
+- Day 3, 05:06 — object_24 at receptacle_5 (early-morning activity, possibly exercise)
+- Day 3, 08:06 — object_6 at receptacle_13 (morning departure, consistent)
+- Day 4, 04:50 — object_3, object_14, object_17, object_24 at receptacle_5 (early-morning preparation with multiple objects, likely one person preparing for day)
+- Day 4, 17:15 — object_19 at receptacle_5 (earlier-than-usual return on Friday, likely early finish)
+- Day 5, 04:52 — object_14 at receptacle_5 (early-morning activity on Saturday, even earlier than weekday, suggests habitual early riser)
+- Day 5, 08:49 — object_6 at receptacle_11 (later weekend departure, consistent with single person sleeping in)
+- Day 6, 08:03 — object_3 at receptacle_11 and object_19 at receptacle_9 (simultaneous morning departure on Sunday, could be two people or one person moving multiple items; but single person more likely given pattern)
+- Day 11, 05:05 — object_11 at receptacle_5 (early-morning activity, consistent with habitual early riser)
+- Day 11, 08:05 — object_11 and object_17 at receptacle_1 (simultaneous departure, likely one person moving multiple items before leaving)
+- Day 13, 05:00 — object_24 at receptacle_5 (early-morning activity on Sunday, reinforces habitual early riser)
+- Day 13, 19:27 — object_14 at receptacle_12 (evening activity on Sunday, consistent with single person's routine)
+
+## Notes
+Day 13 (Sunday) shows early-morning event at 05:00 (object_24 at receptacle_5) and evening event at 19:27 (object_14 at receptacle_12). The early-morning pattern is now observed on 7 days (including weekends), strongly supporting a habitual early riser. The weekend pattern (later departure, earlier return) is maintained. Need to verify if next Monday (Day 14) returns to the typical 08:06 departure and 21:45 return. Object_6 consistently appears in morning departures and evening returns, suggesting it is a personal item (e.g., bag, keys). Receptacle_5 appears in early-morning and afternoon events, possibly a home office or entryway. Receptacle_1 appears in evening events and now a morning departure, possibly a bedroom. Receptacle_13 appears in morning and evening events, possibly a kitchen or living room. Open question: what are the objects and receptacles? — but not needed for persona inference.

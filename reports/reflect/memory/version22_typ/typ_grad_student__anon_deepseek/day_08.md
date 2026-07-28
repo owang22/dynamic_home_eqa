@@ -1,0 +1,11 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.00)  likely someone who sleeps irregular hours given occasional late-night events like Day 21: object_4 at receptacle_insufficiently supported yet; awaiting clearer occupation beyond generic returns. —  removed due to lack of confirming/disconfirming evidence after adding new observations; replaced by stronger hypothesis about weekday-only presence inferred from lack of midday events and consistent morning departure inferred from lack of events until evening after morning presence observed earlier days but insufficiently supported yet; awaiting clearer signals about occupation beyond generic returns.
+2. (p=0.00)  likely someone who sleeps irregular given occasional late- might be replaced by stronger hypothesis about weekday-only presence inferred from lack of midday kitchen events during typical office hours but insufficiently observed yet; awaiting clearer occupation beyond generic returns. —  removed due lack of confirming/disconfirming after adding new obs; replaced by stronger about weekday-only presence from lack of midday kitchen during typical office hours but insufficiently observed yet; awaiting clearer signals beyond generic returns.
+
+## Selected evidence
+- Day 8,  returns around 19:00 consistent with previous days suggesting weekday-only presence inferred from lack of midday events during typical office hours but insufficiently observed yet; awaiting clearer occupation beyond generic returns.
+
+## Notes
+ Need to observe whether midday weekday events occur to distinguish between someone who works away vs flexible schedule or unemployment; also watch for consistent vs varied return times (±30 vs hours indicative of fixed vs variable schedule requiring travel like sports training or volunteering; note that despite lack of midday events today reinforces hypothesis of weekday-only presence inferred from lack of midday during typical office hours but insufficiently observed yet; awaiting clearer occupation beyond generic returns.

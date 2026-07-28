@@ -1,0 +1,21 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Hybrid Office Worker (2-3 days remote) — Day 10 (Thu) shows object_10 (likely work bag/item) at receptacle_12 (commute point) at 07:08, confirming the return to office commute on Thursday. This reinforces the pattern: Mon/Thu commute, Tue/Wed remote. The 21:45 shutdown remains consistent.
+2. (p=0.02) Standard 9-5 Commuter (Hybrid/Commuter) — Still possible if 'remote' days involve working from home but still commuting for other reasons, but the persistence of objects at the home desk on Tue/Wed and departure on Mon/Thu strongly favors a structured hybrid schedule over a standard commuter with occasional errands.
+3. (p=0.00) Night Shift Worker — Discarded. Consistent morning departures and evening shutdowns contradict night shift patterns.
+
+## Selected evidence
+- Day 0, 12:33 — object_13 at receptacle_10 (Midday work device; indicates remote work capability)
+- Day 4, 07:04 — object_14 at receptacle_12 (Morning departure prep; consistent with Monday pattern)
+- Day 4, 16:10 — object_14 at receptacle_11 (Afternoon return; object_14 likely work bag)
+- Day 7, 07:02 — object_4 at receptacle_12 (Morning departure; confirms commute routine on Monday)
+- Day 7, 17:57 — object_13 at receptacle_12 (Evening return; laptop brought home, confirming end of workday)
+- Day 7, 21:45 — object_3 at receptacle_5 (Evening shutdown; consistent across all observed days)
+- Day 8, 07:30 — object_3 at receptacle_10 (Morning home desk activity; suggests remote work start)
+- Day 8, 10:46 — object_4 at receptacle_10 (Keys/bag at home desk; supports hybrid/remote)
+- Day 9, 11:19 — object_4 at receptacle_10 (Keys/bag at home desk; reinforces remote work pattern for Wed)
+- Day 10, 07:08 — object_10 at receptacle_12 (Morning departure; confirms commute routine on Thursday, completing the hybrid pattern)
+
+## Notes
+Pattern confirmed: Mon/Thu commute (receptacle_12), Tue/Wed remote (receptacle_10). Object_10 on Day 10 likely corresponds to object_4 or object_14 (work bag/item) based on timing. Need to verify if object_13 (laptop) stays at receptacle_10 on remote days. Check Day 11 (Fri) to see if it follows Mon/Thu commute pattern or is a remote day. Verify if object_3 (shutdown object) is always at receptacle_5 at 21:45.

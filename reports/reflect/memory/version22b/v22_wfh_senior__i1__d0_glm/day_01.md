@@ -1,0 +1,15 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Remote worker who uses headset for calls and takes phone breaks on the sofa — Headset at desk suggests remote work or frequent calls, while phone on sofa indicates relaxation or social media breaks during work hours.
+2. (p=0.15) Gamer who uses headset for gaming and moves phone to sofa for comfort — Headset placement could indicate gaming sessions, though less likely given the time of day.
+3. (p=0.10) Student attending online classes with headset and using phone for study breaks — Possible but less likely given the limited evidence and Tuesday timing.
+
+## Selected evidence
+- Day 0, 09:00 — headset at desk_o1 (suggests work/study routine starting)
+- Day 0, 14:17 — phone at sofa_l1 (suggests break time or relaxation during workday)
+- Day 1, 15:50 — phone at coffee_table_l1 (continuation of break pattern)
+- Day 1, 21:45 — coffee_mug at cupboard_k1 (evening routine, possibly preparing for next day)
+
+## Notes
+Need more evidence to confirm work/study patterns. Monitor if headset is used consistently on weekdays. Check if weekend patterns differ significantly. Phone movement patterns suggest regular breaks during work hours.

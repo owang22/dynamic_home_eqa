@@ -1,0 +1,26 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.97) Single professional working from home occasionally — The Tuesday pattern continues the established weekday routine with object_9 seen at elsewhere at 09:35 (morning activity), object_9 returning to receptacle_7 at 18:31 (evening return), and object_8 moving to receptacle_11 at 19:15 (evening routine). This consistency with previous weekdays reinforces the hypothesis of a regular professional routine.
+2. (p=0.01) Student with irregular schedule — The consistent Tuesday pattern continues to show regularity rather than the variable schedule typical of students. The timing and activities align more with a professional routine than student life.
+3. (p=0.01) Shift worker with variable schedule — The Tuesday pattern maintains the same general weekday routine without showing dramatic variations that would be expected from a shift worker. The evening timing is consistent with previous weekdays.
+
+## Selected evidence
+- Day 0, 09:35 — object_9 seen at elsewhere (early morning activity suggests person is up and active by mid-morning)
+- Day 0, 18:17 — object_11 seen at receptacle_4 (evening activity indicates return to home later in the day)
+- Day 1, 19:48 — object_8 seen at receptacle_9 (evening activity continues the pattern of late home return)
+- Day 1, 21:45 — object_4 seen at receptacle_5 (late evening activity suggests winding down routine)
+- Day 2, 09:39 — object_10 seen at elsewhere (consistent morning activity pattern across weekdays)
+- Day 2, 18:40 — object_9 seen at receptacle_7 (evening return pattern continues)
+- Day 2, 21:45 — object_8 seen at receptacle_5 (consistent late evening activity across all weekdays)
+- Day 3, 09:36 — object_9 seen at elsewhere (consistent morning activity pattern continues)
+- Day 3, 18:11 — object_11 seen at receptacle_10 (evening return pattern continues with slight timing variation)
+- Day 3, 23:38 — object_11 seen at receptacle_8 (later than usual evening activity, possibly indicating different Thursday routine)
+- Day 4, 08:11 — object_3 seen at receptacle_11 (earlier morning activity on Friday, suggesting possible different routine or preparation for weekend)
+- Day 4, 18:29 — object_9 seen at receptacle_7 (consistent evening return pattern continues)
+- Day 4, 19:59 — object_11 seen at receptacle_10 (typical Friday evening winding down routine)
+- Day 5, 08:16 — object_3 seen at receptacle_11 (weekend morning activity similar to weekdays but slightly later, suggesting relaxed weekend routine)
+- Day 5, 18:45 — object_8 seen at receptacle_11 (weekend evening activity similar to weekday pattern)
+
+## Notes
+The Tuesday observations (Day 8) continue the established weekday pattern with object_9 moving to elsewhere at 09:35, returning to receptacle_7 at 18:31, and object_8 moving to receptacle_11 at 19:15. This maintains the consistent routine observed throughout previous weekdays. Weekend pattern remains distinct with slightly later start times but similar structure. The objects still don't provide clear evidence about specific work-from-home habits or profession.

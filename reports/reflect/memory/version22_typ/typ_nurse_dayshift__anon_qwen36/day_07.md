@@ -1,0 +1,15 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard 9-5 Office Worker with Flexible Evenings — Day 7 (Monday) confirms the weekday pattern: object_3 at entry (receptacle_11) at 05:55, indicating a commute preparation. Object_8 returns at 18:30, slightly later than the weekday average (~18:00) but consistent with Day 5's weekend delay, suggesting evening flexibility. Late evening object movements (21:25, 21:45) indicate leisure time, not sleep.
+2. (p=0.04) Hybrid Worker (3 days office, 2 days remote) — The 18:30 return on Monday is later than the strict 18:00 observed on Days 0-3. If this were a strict 9-5, we might expect a tighter window. However, the early morning departure on Monday strongly suggests office presence. The 'hybrid' label is less likely than 'flexible 9-5' because the morning routine is rigid.
+3. (p=0.01) Night Shift Worker — Contradicted by consistent early morning activity (05:55) and late afternoon returns. No evidence of daytime sleeping or night-time activity peaks.
+
+## Selected evidence
+- Day 7, 05:55 — object_3 at receptacle_11 (Confirms weekday morning routine: personal item at entry for commute; contradicts weekend 'stay-at-home' pattern)
+- Day 7, 18:30 — object_8 at receptacle_9 (Evening return; slightly later than weekday avg (18:00) but consistent with Day 5 (18:39), suggesting flexible evening schedule)
+- Day 7, 21:25 — object_11 at receptacle_8 (Late evening leisure object movement; consistent with Day 6 pattern, reinforcing evening wind-down routine)
+- Day 7, 21:45 — object_8 at receptacle_5 (Late evening personal item movement to living area; confirms resident is active and relaxing late into the night)
+
+## Notes
+Day 7 (Monday) successfully reverts to the weekday pattern with object_3 at the entry (receptacle_11) at 05:55, confirming the commute hypothesis. The return time of 18:30 is an outlier compared to the tight 17:59-18:25 window of Days 0-3, but aligns with Day 5. This suggests the resident has some flexibility in their evening schedule or had a specific delay on Monday. Object_11 (likely a book/tablet) appearing at receptacle_8 (likely a side table or shelf) at 21:25 suggests a dedicated reading/leisure spot. Need to verify if Day 8 (Tuesday) returns to the stricter 18:00 return time or if 18:30 is becoming the new norm.

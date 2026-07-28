@@ -1,0 +1,21 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Remote Worker / Digital Nomad — Travel gear persists. The Monday morning coffee at the dining table (instead of desk) suggests a 'soft start' or hybrid routine, but the lack of immediate laptop deployment keeps the 'strict office worker' hypothesis low. The weekend relaxation pattern is strong.
+2. (p=0.20) Standard Office Worker with Weekend Flexibility — The coffee at the table on Monday morning is a slight deviation from the Day 0 baseline (desk), but could be a one-off. The travel gear still makes this less likely than the remote worker hypothesis, but the lack of visible work gear on Monday morning doesn't rule it out entirely.
+3. (p=0.05) Guest / Temporary Resident — Still unlikely. The establishment of specific routines and personal travel gear suggests a primary resident.
+
+## Selected evidence
+- Day 0, 08:51 — coffee_mug at desk_o1 (baseline weekday morning routine)
+- Day 1, 07:09 — packing_cubes at elsewhere (strong indicator of travel preparation)
+- Day 3, 18:48 — neck_pillow at carryon_e1 (confirms return from travel)
+- Day 3, 18:48 — passport at carryon_e1 (confirms international/business travel context)
+- Day 4, 09:14 — coffee_mug at desk_o1 (resumption of morning desk routine after travel)
+- Day 4, 16:34 — laptop at carryon_e1 (work-related packing or remote work setup)
+- Day 5, 07:25 — coffee_mug at table_d1 (weekend deviation from desk routine; relaxed morning)
+- Day 6, 08:00 — bowl at sink_k1 (weekend meal prep/cleanup; no work items observed)
+- Day 6, 18:38 — fork at table_d1 (evening meal at dining table; consistent with weekend relaxation)
+- Day 7, 07:33 — coffee_mug at table_d1 (Monday morning deviation from desk routine; suggests flexible start or hybrid work)
+
+## Notes
+Day 7 (Monday) coffee was at the dining table, not the desk. This contradicts the strict 'weekday=desk' pattern seen on Day 0 and Day 4. It suggests either a 'soft start' to the week, a hybrid work model where mornings are flexible, or that the resident is currently in a transition phase. The lack of laptop visibility on Monday morning is notable. Need to observe if the laptop appears later in the day on Day 7 to confirm work activity.

@@ -1,0 +1,24 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Disciplined remote worker with flexible weekends — Day 11 (Friday) confirms the persistent 07:30 start at receptacle_4. The late evening activity at receptacle_9 (22:31) suggests a later wind-down on Fridays compared to weekdays, consistent with a flexible weekend schedule. No evidence of a second resident.
+2. (p=0.03) Night-shift worker with adjusted schedule — Still contradicted by the consistent early morning workspace activity. The 22:31 activity is too early for a night-shift start and doesn't align with a standard night-shift end pattern without morning absence.
+3. (p=0.02) Dual-income professional couple — Still no evidence of a second resident. The late evening movements are sparse and sequential, consistent with one person transitioning between leisure zones.
+
+## Selected evidence
+- Day 4, 07:00 — object_3 at receptacle_4 (Early morning workspace activity; indicates disciplined start)
+- Day 5, 07:27 — object_11 at receptacle_4 (Weekend early start; confirms routine persists on Saturday)
+- Day 7, 07:27 — object_3 at receptacle_4 (Monday morning workspace activity; confirms return to weekday routine after weekend delay)
+- Day 7, 21:45 — object_18 at receptacle_4 (Late evening workspace activity; suggests evening work or wind-down at desk)
+- Day 8, 10:07 — object_12 at receptacle_12 (Midday activity at secondary location; suggests flexible work environment or break from primary desk)
+- Day 8, 20:28 — object_12 at receptacle_12 (Late evening activity at secondary location; reinforces evening presence at home)
+- Day 9, 07:34 — object_11 at receptacle_4 (Early morning workspace activity; confirms consistent weekday start)
+- Day 9, 10:31 — object_17 at elsewhere (Midday activity away from primary desk; supports flexible/hybrid work style)
+- Day 9, 20:38 — object_8 at receptacle_13 (Late evening activity at tertiary location; suggests evening routine in a different room)
+- Day 10, 07:32 — object_17 at receptacle_4 (Thursday morning workspace activity; reinforces consistent 07:30 start time)
+- Day 10, 21:18 — object_11 at receptacle_13 (Late evening activity at tertiary location; confirms evening wind-down pattern in receptacle_13)
+- Day 11, 07:34 — object_11 at receptacle_4 (Friday morning workspace activity; reinforces consistent 07:30 start time)
+- Day 11, 22:31 — object_11 at receptacle_9 (Late evening activity at new location; suggests Friday wind-down in a different zone, possibly later than weekdays)
+
+## Notes
+Day 11 (Friday) strongly reinforces the 07:30 morning start at receptacle_4. The late evening activity at receptacle_9 (22:31) on Friday is later than the 21:18 activity on Thursday (receptacle_13), suggesting a potential shift in evening routine for Fridays. Need to verify if receptacle_9 is a new leisure zone or a variation of receptacle_13. Also, track if the Saturday early start (Day 5) is a consistent weekend trait by observing Day 12 (Saturday).

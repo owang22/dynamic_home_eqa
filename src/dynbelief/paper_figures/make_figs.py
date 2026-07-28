@@ -12,7 +12,9 @@ Conventions:
   * classical_C1 is never reported (weak strawman); the classical arm is C3g.
   * Atypical passive pool = the 24-household v22+v22b banks (d0 run), NOT the
     old 6-household atyp_regime_confirm_v1 bank.
-  * One chart per file; minimal text; annotations carry a white bbox.
+  * One chart per file. NO caption text is rendered — titles, axis labels and
+    value labels carry the figure; the caption strings in save() calls are
+    in-code documentation only.
 """
 from __future__ import annotations
 
@@ -34,7 +36,13 @@ BLUE, ORANGE, AQUA, YELLOW = "#2a78d6", "#eb6834", "#1baf7a", "#eda100"
 MAGENTA, VIOLET, GRAY = "#e87ba4", "#4a3aa7", "#52514e"
 CKPTS = [1, 2, 3, 5, 7, 10, 14]
 DISTS = [0, 3, 6, 12]
-BOX = dict(boxstyle="round,pad=0.35", fc="white", ec="#d9d8d3", alpha=0.92)
+BOX = dict(boxstyle="round,pad=0.3", fc="white", ec="#d9d8d3", alpha=0.92)
+# Proper model names for titles (row tags are lowercase keys internally).
+# Draw order: bands/reference lines 1-2, marks/bars 3, errorbar whiskers 4,
+# and ALL numeric labels on Z_TEXT so a whisker can never obscure a value.
+Z_TEXT = 10
+MODEL_DISPLAY = {"deepseek": "DeepSeek-V4-Flash", "qwen36": "Qwen3.6-35B-A3B",
+                 "glm": "GLM-4.5-Air"}
 
 
 def L(p):
@@ -52,32 +60,28 @@ def style(ax, xlab=None, ylab=None, title=None):
         ax.spines[s].set_visible(False)
     for s in ("left", "bottom"):
         ax.spines[s].set_color("#c9c8c3")
-    ax.tick_params(colors=INK2, labelsize=9.5)
+    ax.tick_params(colors=INK2, labelsize=12)
     if xlab:
-        ax.set_xlabel(xlab, fontsize=10.5, color=INK2)
+        ax.set_xlabel(xlab, fontsize=13, color=INK, labelpad=6)
     if ylab:
-        ax.set_ylabel(ylab, fontsize=10.5, color=INK2)
+        ax.set_ylabel(ylab, fontsize=13, color=INK, labelpad=6)
     if title:
-        ax.set_title(title, fontsize=12.5, color=INK, pad=10)
+        ax.set_title(title, fontsize=15, color=INK, pad=8)
 
 
-def fig1(w=7.6, h=5.2):
+def fig1(w=7.4, h=4.9):
     fig, ax = plt.subplots(figsize=(w, h), facecolor=SURF)
     return fig, ax
 
 
 def save(fig, sub, name, caption=None):
-    import textwrap
+    """Write the figure. `caption` is NOT rendered — figures carry no caption
+    text (the paper supplies it). The argument is kept because the strings at
+    the call sites document what each chart shows and what its pitfalls are;
+    dropping the rendering here guarantees no call site can reintroduce one."""
     d = OUT / sub
     d.mkdir(parents=True, exist_ok=True)
-    if caption:
-        wrapped = "\n".join(textwrap.wrap(caption, int(fig.get_figwidth() * 13)))
-        nl = wrapped.count("\n") + 1
-        fig.text(0.5, 0.012, wrapped, ha="center", va="bottom",
-                 fontsize=8.6, color=INK2)
-        fig.tight_layout(rect=[0, 0.035 + 0.03 * nl, 1, 1])
-    else:
-        fig.tight_layout()
+    fig.tight_layout(pad=0.5)
     p = d / name
     fig.savefig(p, dpi=170, facecolor=SURF)
     plt.close(fig)
@@ -141,27 +145,29 @@ def draw(ax, xs, ys, lo, hi, col, ls, mk, lab, lw=2.3, band=True, endlab=True):
             mew=1.2 if mk != "x" else 0, label=lab, zorder=3)
     if endlab and len(xs):
         ax.annotate(f"{ys[-1]:.2f}", (xs[-1], ys[-1]), xytext=(6, 0),
-                    textcoords="offset points", va="center", fontsize=9,
-                    color=INK2, zorder=5,
+                    textcoords="offset points", va="center", fontsize=11.5,
+                    fontweight="bold", color=INK, zorder=Z_TEXT,
                     bbox=dict(boxstyle="round,pad=0.1", fc="white", ec="none",
-                              alpha=0.75))
+                              alpha=0.8))
 
 
-def end_labels(ax, ends):
+def end_labels(ax, ends, big=False):
     """Value labels at the right end of each series, vertically dodged."""
     ends = sorted(ends, key=lambda e: e[1])
     span = ax.get_ylim()[1] - ax.get_ylim()[0]
+    gap = 0.06 if big else 0.045
     shown = [e[1] for e in ends]
     for i in range(1, len(shown)):
-        if shown[i] - shown[i - 1] < 0.045 * span:
-            shown[i] = shown[i - 1] + 0.045 * span
+        if shown[i] - shown[i - 1] < gap * span:
+            shown[i] = shown[i - 1] + gap * span
     h_in = ax.get_position().height * ax.figure.get_figheight()
     for (x_, y_), sy in zip(ends, shown):
-        ax.annotate(f"{y_:.2f}", (x_, y_), xytext=(6, (sy - y_) * 72 * h_in / span),
-                    textcoords="offset points", va="center", fontsize=9,
-                    color=INK2, zorder=5,
+        ax.annotate(f"{y_:.2f}", (x_, y_), xytext=(7, (sy - y_) * 72 * h_in / span),
+                    textcoords="offset points", va="center",
+                    fontsize=16 if big else 11.5,
+                    fontweight="bold", color=INK, zorder=Z_TEXT,
                     bbox=dict(boxstyle="round,pad=0.1", fc="white", ec="none",
-                              alpha=0.75))
+                              alpha=0.8))
 
 
 def logx(ax, cks=CKPTS):
@@ -171,12 +177,23 @@ def logx(ax, cks=CKPTS):
     ax.minorticks_off()
 
 
+def linx(ax, cks=CKPTS):
+    """Linear day axis. Checkpoints are unevenly spaced (1,2,3,5,7,10,14), so a
+    linear scale spreads the late, flat days and compresses the early ones where
+    the arms actually separate — the opposite emphasis to logx."""
+    ax.set_xscale("linear")
+    ax.set_xticks(cks)
+    ax.set_xticklabels([str(c) for c in cks])
+    ax.set_xlim(min(cks) - 0.6, max(cks) + 0.6)
+    ax.minorticks_off()
+
+
 # ══════════════════ passive_adaptation ══════════════════
 SUB1 = "passive_adaptation"
-P_ARMS = [("fusion", "LLM + classical (fusion)", BLUE, "-", "o", 2.6),
+P_ARMS = [("fusion", "LLM + Classical (fusion)", BLUE, "-", "o", 2.6),
           ("llm_direct", "LLM (reflective memory)", ORANGE, "-", "s", 2.2),
           ("llm_nomem", "LLM (no reflection)", YELLOW, "-.", "D", 1.9),
-          ("classical_C3g", "classical", AQUA, "--", "^", 2.0)]
+          ("classical_C3g", "Classical", AQUA, "--", "^", 2.0)]
 
 
 def atyp_rows():
@@ -198,8 +215,8 @@ def passive_curves(rows, tag, title, n_hh):
             ends.append([xs[-1], ys[-1]])
     end_labels(ax, ends)
     logx(ax)
-    style(ax, "days of observation (log)", "accuracy (exact receptacle)", title)
-    ax.legend(frameon=False, fontsize=9.5, loc="best", labelcolor=INK)
+    style(ax, "Days of observation (log)", "Accuracy (exact receptacle)", title)
+    ax.legend(frameon=False, fontsize=12, loc="best", labelcolor=INK)
     save(fig, SUB1, f"accuracy_by_day_{tag}_households.png",
          f"{n_hh} households, obs ~3/day, phase-averaged; bands = bootstrap 95% CI over households.")
 
@@ -218,13 +235,13 @@ def passive_paired(rows, tag, title):
                     f"CI excludes 0 on {nsig}/{len(xs)} days (reflective memory)",
                     xy=(1, ys[0]), xytext=(1.8, float(max(ys)) + 0.09), fontsize=9,
                     color=INK, bbox=BOX,
-                    arrowprops=dict(arrowstyle="->", color=INK2, lw=1))
+                    arrowprops=dict(arrowstyle="->", color=INK2, lw=1), zorder=Z_TEXT)
     logx(ax)
-    style(ax, "days of observation (log)",
-          "accuracy − classical (paired per household)", title)
-    ax.legend(frameon=False, fontsize=9.5, loc="lower right", labelcolor=INK)
+    style(ax, "Days of observation (log)",
+          "Accuracy − Classical (paired per household)", title)
+    ax.legend(frameon=False, fontsize=12, loc="lower right", labelcolor=INK)
     save(fig, SUB1, f"paired_delta_vs_classical_{tag}.png",
-         "Within-household difference vs the classical model (C3g); household variance cancels. Largest on day 1, before the classical model has data.")
+         "Within-household difference vs. the Classical arm; household variance cancels. Largest on day 1, before Classical has any data.")
 
 
 def anonymization_ablation():
@@ -232,8 +249,8 @@ def anonymization_ablation():
               ("glm-anonfix", "GLM-4.5-Air")]
     fig, ax = fig1(8.0, 5.2)
     w, xpos = 0.34, np.arange(len(models))
-    for j, (arm, lab, c) in enumerate([("llm_named", "named receptacles", BLUE),
-                                       ("llm_anon", "names stripped", ORANGE)]):
+    for j, (arm, lab, c) in enumerate([("llm_named", "Named receptacles", BLUE),
+                                       ("llm_anon", "Names stripped", ORANGE)]):
         vals, err = [], [[], []]
         for key, _ in models:
             rr = [r for r in L(REP / f"h2_adaptation/confirm_rows_{key}.jsonl")
@@ -248,28 +265,30 @@ def anonymization_ablation():
         ax.bar(xpos + (j - 0.5) * w, vals, w * 0.92, color=c, label=lab, zorder=3)
         ax.errorbar(xpos + (j - 0.5) * w, vals, yerr=err, fmt="none",
                     ecolor=INK2, elinewidth=1.1, capsize=3, zorder=4)
-        for x_, v, e in zip(xpos + (j - 0.5) * w, vals, err[1]):
-            ax.text(x_, v + e + 0.014, f"{v:.2f}", ha="center", fontsize=9,
-                    color=INK2, bbox=dict(boxstyle="round,pad=0.1", fc="white",
-                                          ec="none", alpha=0.8))
-    ax.axhline(0.065, color="#a8a7a2", lw=1, ls=(0, (1, 3)), zorder=1)
-    ax.annotate("chance", (len(models) - 0.52, 0.075), fontsize=8,
-                color="#a8a7a2", bbox=BOX)
+        for x_, v in zip(xpos + (j - 0.5) * w, vals):
+            # INSIDE the bar: these CIs are wide enough that a label above the
+            # whisker lands outside the axes (and in the title).
+            ax.text(x_, v - 0.018, f"{v:.2f}", ha="center", va="top",
+                    fontsize=13, fontweight="bold", color="white", zorder=Z_TEXT)
+    ax.axhline(0.065, color="#a8a7a2", lw=1.2, ls=(0, (1, 3)), zorder=1)
+    ax.annotate("Chance", (-0.45, 0.075), fontsize=10.5, color="#8d8c88",
+                va="bottom", ha="left", zorder=Z_TEXT)
     ax.set_xticks(xpos)
-    ax.set_xticklabels([m for _, m in models], fontsize=10.5)
-    ax.set_ylim(0, 0.68)
-    style(ax, None, "accuracy on regime-flipped targets",
-          "Ablation: anonymize receptacle names")
-    ax.legend(frameon=False, fontsize=9.5, loc="upper left", labelcolor=INK)
+    ax.set_xticklabels([m for _, m in models], fontsize=13)
+    ax.set_ylim(0, 0.80)
+    style(ax, None, "Accuracy on regime-flipped targets",
+          "Ablation: Anonymize Receptacle Names")
+    ax.legend(frameon=False, fontsize=12.5, loc="upper center", ncol=2,
+              labelcolor=INK, columnspacing=1.6)
     save(fig, SUB1, "anonymization_ablation.png",
          "Stripping names removes semantic priors, evidence digest kept. Costs DeepSeek and Qwen; GLM gains (exception, 2 of 3).")
 
 
 # ══════════════════ reflection_gating ══════════════════
 SUB2 = "reflection_gating"
-G_ARMS = [("llm_surprise", "surprise-gated reflection", BLUE, "-", "o", 2.6),
-          ("llm_direct", "nightly reflection", ORANGE, "--", "s", 2.2),
-          ("llm_nomem", "no reflection", GRAY, ":", "x", 1.9)]
+G_ARMS = [("llm_surprise", "Surprise-gated reflection", BLUE, "-", "o", 2.6),
+          ("llm_direct", "Nightly reflection", ORANGE, "--", "s", 2.2),
+          ("llm_nomem", "No reflection", GRAY, ":", "x", 1.9)]
 
 
 def gate_rows(d):
@@ -291,9 +310,9 @@ def gating_accuracy_by_day(d=6):
         ends.append([xs[-1], ys[-1]])
     end_labels(ax, ends)
     logx(ax)
-    style(ax, "days of observation (log)", "accuracy (exact receptacle)",
-          f"Reflection strategies at distractor load {d}")
-    ax.legend(frameon=False, fontsize=9.5, loc="upper left", labelcolor=INK)
+    style(ax, "Days of observation (log)", "Accuracy (exact receptacle)",
+          f"Reflection Strategies at Distractor Load {d}")
+    ax.legend(frameon=False, fontsize=12, loc="upper left", labelcolor=INK)
     save(fig, SUB2, f"accuracy_by_day_distractor{d}.png",
          "24 households; distractors are static objects reported daily but never queried.")
 
@@ -317,12 +336,12 @@ def gating_load_sweep():
         ends.append([DISTS[-1], ys[-1]])
     end_labels(ax, ends)
     ax.set_xticks(DISTS)
-    ax.annotate(f"LLM calls/household: gate {calls[12]:.1f} vs nightly 14",
+    ax.annotate(f"LLM calls per household: gate {calls[12]:.1f} vs nightly 14",
                 xy=(0.03, 0.04), xycoords="axes fraction", fontsize=9.5,
-                color=INK, bbox=BOX)
-    style(ax, "distractor objects per household", "accuracy (days 5-14, phase-avg)",
-          "Accuracy vs distractor load")
-    ax.legend(frameon=False, fontsize=9.5, loc="upper right", labelcolor=INK)
+                color=INK, bbox=BOX, zorder=Z_TEXT)
+    style(ax, "Distractor objects per household", "Accuracy (days 5-14, phase-averaged)",
+          "Accuracy vs. Distractor Load")
+    ax.legend(frameon=False, fontsize=12, loc="upper right", labelcolor=INK)
     save(fig, SUB2, "accuracy_vs_distractor_load.png",
          "Nightly reflection degrades as noise accumulates; the gate holds because a padded stream rarely fires it.")
 
@@ -330,8 +349,8 @@ def gating_load_sweep():
 def gating_paired_by_load():
     fig, ax = fig1()
     ax.axhline(0, color="#9c9b96", lw=1.2, zorder=2)
-    for ref, lab, c, ls, mk in [("llm_direct", "vs nightly reflection", ORANGE, "-", "o"),
-                                ("llm_nomem", "vs no reflection", GRAY, "--", "D")]:
+    for ref, lab, c, ls, mk in [("llm_direct", "vs. nightly reflection", ORANGE, "-", "o"),
+                                ("llm_nomem", "vs. no reflection", GRAY, "--", "D")]:
         ys, lo, hi = [], [], []
         for d in DISTS:
             rows, _ = gate_rows(d)
@@ -352,13 +371,13 @@ def gating_paired_by_load():
             ax.annotate(f"load 12: {ys[-1]:+.3f} [{lo[-1]:+.3f}, {hi[-1]:+.3f}]\nCI excludes 0",
                         xy=(12, ys[-1]), xytext=(4.7, 0.15), fontsize=9,
                         color=INK, bbox=BOX,
-                        arrowprops=dict(arrowstyle="->", color=INK2, lw=1))
+                        arrowprops=dict(arrowstyle="->", color=INK2, lw=1), zorder=Z_TEXT)
     ax.set_xticks(DISTS)
     ax.set_ylim(-0.14, 0.21)
-    style(ax, "distractor objects per household",
-          "surprise − comparator (paired per household)",
-          "Paired difference vs distractor load (days 5-14)")
-    ax.legend(frameon=False, fontsize=9.5, loc="lower left", labelcolor=INK)
+    style(ax, "Distractor objects per household",
+          "Surprise − comparator (paired per household)",
+          "Paired Difference vs. Distractor Load (days 5-14)")
+    ax.legend(frameon=False, fontsize=12, loc="lower left", labelcolor=INK)
     save(fig, SUB2, "paired_delta_vs_nightly_by_load.png",
          "24 households, paired within household. The gate matches nightly at loads 0-6 and beats it at 12.")
 
@@ -367,8 +386,8 @@ def gating_paired_by_day(d=12):
     rows, _ = gate_rows(d)
     fig, ax = fig1()
     ax.axhline(0, color="#9c9b96", lw=1.2, zorder=2)
-    for ref, lab, c, ls, mk in [("llm_direct", "vs nightly reflection", ORANGE, "-", "o"),
-                                ("llm_nomem", "vs no reflection", GRAY, "--", "D")]:
+    for ref, lab, c, ls, mk in [("llm_direct", "vs. nightly reflection", ORANGE, "-", "o"),
+                                ("llm_nomem", "vs. no reflection", GRAY, "--", "D")]:
         xs, ys, lo, hi = paired_curve(rows, "llm_surprise", ref)
         draw(ax, xs, ys, lo, hi, c, ls, mk, lab, 2.4, endlab=False)
     # pooled days>=5 effect, for reference
@@ -385,13 +404,13 @@ def gating_paired_by_day(d=12):
     ax.axhspan(a_, b_, xmin=0.42, color=ORANGE, alpha=0.10, zorder=1)
     ax.annotate(f"pooled days 5-14: {mu:+.3f} [{a_:+.3f}, {b_:+.3f}]",
                 xy=(0.97, 0.96), xycoords="axes fraction", ha="right", va="top",
-                fontsize=9, color=INK, bbox=BOX)
+                fontsize=9, color=INK, bbox=BOX, zorder=Z_TEXT)
     logx(ax)
     ax.set_ylim(-0.16, 0.26)
-    style(ax, "days of observation (log)",
-          "surprise − comparator (paired per household)",
-          f"Paired difference by day at distractor load {d}")
-    ax.legend(frameon=False, fontsize=9.5, loc="lower right", labelcolor=INK)
+    style(ax, "Days of observation (log)",
+          "Surprise − comparator (paired per household)",
+          f"Paired Difference by Day at Distractor Load {d}")
+    ax.legend(frameon=False, fontsize=12, loc="lower right", labelcolor=INK)
     save(fig, SUB2, f"paired_delta_vs_nightly_by_day_load{d}.png",
          "The gate's edge appears from day 5 on, once nightly reflection has repeatedly rewritten memory over noise.")
 
@@ -399,9 +418,9 @@ def gating_paired_by_day(d=12):
 # ══════════════════ active_sensing ══════════════════
 SUB3 = "active_sensing"
 AOR = REP / "answer_or_resense"
-A_ARMS = [("classical", "rows_classical_conf_frozen.jsonl", AQUA, "--", "^"),
+A_ARMS = [("Classical", "rows_classical_conf_frozen.jsonl", AQUA, "--", "^"),
           ("LLM (scaffold)", "rows_llm_scaffold_conf_frozen.jsonl", BLUE, "-", "o"),
-          ("LLM + classical (fusion)", "rows_scaffold_fusion_conf_permodel_deepseek.jsonl",
+          ("LLM + Classical (fusion)", "rows_scaffold_fusion_conf_permodel_deepseek.jsonl",
            ORANGE, "-", "s")]
 
 
@@ -426,10 +445,10 @@ def active_bar(name, title, ylab, fn, fmt="{:.2f}", ylim=None, caption=None):
                 elinewidth=1.1, capsize=3, zorder=4)
     top = (ylim or [0, max(vals) * 1.2])[1]
     for i, (v, e) in enumerate(zip(vals, err[1])):
-        ax.text(i, v + e + top * 0.018, fmt.format(v), ha="center",
-                fontsize=9.5, color=INK2)
+        ax.text(i, v + e + top * 0.022, fmt.format(v), ha="center",
+                fontsize=12, fontweight="bold", color=INK, zorder=Z_TEXT)
     ax.set_xticks(range(len(labs)))
-    ax.set_xticklabels([l.replace(" (", "\n(") for l in labs], fontsize=9.5)
+    ax.set_xticklabels([l.replace(" (", "\n(") for l in labs], fontsize=11.5)
     if ylim:
         ax.set_ylim(*ylim)
     style(ax, None, ylab, title)
@@ -456,19 +475,71 @@ def active_learning_curves():
         ends.append([days[-1], ys[-1]])
     end_labels(ax, ends)
     ax.set_xticks(range(0, 14, 2))
-    style(ax, "day", "belief accuracy (all queries, counterfactual)",
-          "Learning speed under the sensing budget")
-    ax.legend(frameon=False, fontsize=9.5, loc="lower right", labelcolor=INK)
+    style(ax, "Day", "Belief accuracy (all queries, counterfactual)",
+          "Learning Speed Under the Sensing Budget")
+    ax.legend(frameon=False, fontsize=12, loc="lower right", labelcolor=INK)
     save(fig, SUB3, "belief_accuracy_by_day.png",
-         "Scarce loop (zero prior obs, B=5 looks/day). Scored on every query regardless of answer/resense, so coverage differences cannot inflate an arm.")
+         "Counterfactual: every query is scored against what the arm WOULD have answered, including ones it chose to resense on. Coverage cannot inflate an arm — but correct abstentions are counted as errors, so this UNDER-credits an arm that knows when to look.")
+
+
+def _active_day_curve(ax, sel, val, ylab, title, name, caption):
+    """Per-arm daily curve of `val` over the queries selected by `sel`."""
+    days = list(range(14)); ends = []
+    for lab, f, c, ls, mk in A_ARMS:
+        rows = [x for x in L(AOR / f) if sel(x)]
+        by = defaultdict(lambda: defaultdict(list))
+        for r in rows:
+            by[r["hh"]][r["day"]].append(val(r))
+        ys, lo, hi = [], [], []
+        for d in days:
+            per = [float(np.mean(v[d])) for v in by.values() if v.get(d)]
+            a_, b_ = boot_vec(per)
+            ys.append(float(np.mean(per)) if per else float("nan"))
+            lo.append(a_); hi.append(b_)
+        draw(ax, np.array(days), np.array(ys), np.array(lo), np.array(hi),
+             c, ls, mk, lab, 2.4, endlab=False)
+        ends.append([days[-1], ys[-1]])
+    end_labels(ax, ends, big=True)
+    ax.set_xticks(range(0, 14, 2))
+    _big_axes(ax, title, xlab="Day", ylab=ylab, loc="lower right")
+    save(fig_of(ax), SUB3, name, caption)
+
+
+def fig_of(ax):
+    return ax.figure
+
+
+def active_answered_accuracy():
+    """Accuracy on the queries the arm ACTUALLY ANSWERED — no counterfactual.
+    Must be read next to answer_rate_by_day.png: an arm that abstains on the
+    hard queries scores higher here for free, so coverage is the other half."""
+    fig, ax = fig1()
+    _active_day_curve(ax, lambda x: x["action"] == "answer",
+                      lambda r: r["correct"],
+                      "Accuracy on answered queries",
+                      "Accuracy When the Arm Chose to Answer",
+                      "answered_accuracy_by_day.png", None)
+
+
+def active_answer_rate():
+    """Coverage: the fraction of queries answered rather than resensed."""
+    fig, ax = fig1()
+    _active_day_curve(ax, lambda x: True,
+                      lambda r: int(r["action"] == "answer"),
+                      "Fraction of queries answered",
+                      "Coverage: How Often Each Arm Committed",
+                      "answer_rate_by_day.png", None)
 
 
 def active_calibration():
     fig, ax = fig1(7.0, 5.2)
-    arms = [a for a in A_ARMS if a[0] != "classical"]
+    # keyed off the ROW FILE, not the display label: matching on the label
+    # silently broke when "classical" was capitalized for presentation and
+    # left an empty group on the chart.
+    arms = [a for a in A_ARMS if "rows_classical" not in a[1]]
     w, xp = 0.36, np.arange(len(arms))
-    for j, (fld, lab, c) in enumerate([("verbal_conf", "stated confidence", MAGENTA),
-                                       ("correct", "realized accuracy", VIOLET)]):
+    for j, (fld, lab, c) in enumerate([("verbal_conf", "Stated confidence", MAGENTA),
+                                       ("correct", "Realized accuracy", VIOLET)]):
         vals, err = [], [[], []]
         for albl, f, _, _, _ in arms:
             rows = [r for r in L(AOR / f) if r["action"] == "answer"
@@ -480,26 +551,189 @@ def active_calibration():
         ax.errorbar(xp + (j - 0.5) * w, vals, yerr=err, fmt="none", ecolor=INK2,
                     elinewidth=1.1, capsize=3, zorder=4)
         for x_, v, e in zip(xp + (j - 0.5) * w, vals, err[1]):
-            ax.text(x_, v + e + 0.015, f"{v:.2f}", ha="center", fontsize=9, color=INK2)
+            ax.text(x_, v + e + 0.02, f"{v:.2f}", ha="center", fontsize=11.5, fontweight="bold", color=INK2, zorder=Z_TEXT)
     ax.set_xticks(xp)
-    ax.set_xticklabels([a[0].replace(" (", "\n(") for a in arms], fontsize=9.5)
+    ax.set_xticklabels([a[0].replace(" (", "\n(") for a in arms], fontsize=11.5)
     ax.set_ylim(0, 1.0)
-    style(ax, None, "on answered queries", "Stated confidence vs realized accuracy")
-    ax.legend(frameon=False, fontsize=9.5, loc="upper right", labelcolor=INK)
+    style(ax, None, "On answered queries", "Stated Confidence vs. Realized Accuracy")
+    ax.legend(frameon=False, fontsize=12, loc="upper right", labelcolor=INK)
     save(fig, SUB3, "calibration_stated_vs_realized.png",
-         "Both arms overconfident (gap 0.09 scaffold, 0.12 fusion) — mild, and behaviourally contained (see resense_targeting).")
+         "Both LLM arms overconfident (gap 0.09 scaffold, 0.12 fusion) — mild, and behaviourally contained (see the resense-targeting chart).")
+
+
+# ── clean per-model figures: LLM (reflective memory) vs classical only ──
+def _atyp_of(model):
+    """Prefer the 24-hh v22+v22b pool for the model; fall back to the 6-hh conf
+    bank (rand3) until the v22 runs land."""
+    if model == "deepseek":
+        return atyp_rows()
+    v22 = [r for b in ("v22", "v22b")
+           for r in L(REP / f"reflect/all_rows_{b}_d0_{model}.jsonl")]
+    return v22 or L(REP / f"reflect/all_rows_conf_{model}_orand3.jsonl")
+
+
+CLEAN = [  # (model tag, atypical rows fn, typical rows file)
+    ("deepseek", atyp_rows, "all_rows_typ_typd0.jsonl"),
+    ("qwen36", lambda: _atyp_of("qwen36"), "all_rows_typ_typd0_qwen36.jsonl"),
+    ("glm", lambda: _atyp_of("glm"), "all_rows_typ_typd0_glm.jsonl"),
+]
+
+
+def clean_figure(rows, tag, model):
+    """LLM (reflective memory, labeled just 'LLM') vs. Classical. Big bold text,
+    no caption."""
+    if not rows:
+        print(f"clean {tag} {model}: rows not present yet")
+        return
+    fig, ax = fig1(7.8, 5.2)
+    ends = []
+    for m, lab, c, ls, mk, lw in [("llm_direct", "LLM", ORANGE, "-", "s", 3.2),
+                                  ("classical_C3g", "Classical", AQUA, "--", "^", 2.8)]:
+        xs, ys, lo, hi = hh_curve(rows, m)
+        if not len(xs):
+            return
+        ax.fill_between(xs, lo, hi, color=c, alpha=0.13, lw=0)
+        ax.plot(xs, ys, ls, color=c, lw=lw, marker=mk, ms=9, mec=SURF, mew=1.5,
+                label=lab, zorder=3)
+        ends.append([xs[-1], ys[-1]])
+    # big bold end labels, dodged
+    ends.sort(key=lambda e: e[1])
+    span = ax.get_ylim()[1] - ax.get_ylim()[0]
+    shown = [e[1] for e in ends]
+    for i in range(1, len(shown)):
+        if shown[i] - shown[i - 1] < 0.06 * span:
+            shown[i] = shown[i - 1] + 0.06 * span
+    h_in = ax.get_position().height * ax.figure.get_figheight()
+    for (x_, y_), sy in zip(ends, shown):
+        ax.annotate(f"{y_:.2f}", (x_, y_), xytext=(8, (sy - y_) * 72 * h_in / span),
+                    textcoords="offset points", va="center", fontsize=17.5,
+                    fontweight="bold", color=INK, zorder=Z_TEXT,
+                    bbox=dict(boxstyle="round,pad=0.12", fc="white", ec="none",
+                              alpha=0.8))
+    logx(ax)
+    ax.set_facecolor(SURF)
+    ax.grid(axis="y", color=GRID, lw=0.9)
+    ax.set_axisbelow(True)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+    for sp in ("left", "bottom"):
+        ax.spines[sp].set_color("#c9c8c3")
+    ax.tick_params(colors=INK, labelsize=15.5)
+    for t in ax.get_xticklabels() + ax.get_yticklabels():
+        t.set_fontweight("bold")
+    ax.set_xlabel("Days of Observation", fontsize=17.5, fontweight="bold",
+                  color=INK, labelpad=5)
+    ax.set_ylabel("Accuracy", fontsize=17.5, fontweight="bold", color=INK,
+                  labelpad=5)
+    ax.set_title(f"{tag.capitalize()} Households — {MODEL_DISPLAY.get(model, model)}",
+                 fontsize=19, fontweight="bold", color=INK, pad=9)
+    leg = ax.legend(frameon=False, fontsize=15.5, loc="best", labelcolor=INK)
+    for t in leg.get_texts():
+        t.set_fontweight("bold")
+    save(fig, SUB1, f"clean_llm_vs_classical_{tag}_{model}.png")
+
+
+# ── anon figures: named LLM vs anonymized LLM vs classical, per model ──
+SUBA = "anon"
+
+
+def _anon_rows(model, tag):
+    """rows_{bank}_anon_{model}.jsonl for the banks behind a typical/atypical
+    clean figure. The anon runs score llm_direct against the MAPPED truth."""
+    banks = ["typ"] if tag == "typical" else ["v22", "v22b"]
+    return [r for b in banks for r in L(REP / f"reflect/rows_{b}_anon_{model}.jsonl")]
+
+
+def _named_rows(model, tag):
+    if tag == "typical":
+        f = "all_rows_typ_typd0.jsonl" if model == "deepseek"             else f"all_rows_typ_typd0_{model}.jsonl"
+        return L(REP / f"reflect/{f}")
+    return _atyp_of(model)
+
+
+def _big_axes(ax, title, xlab="Days of Observation", ylab="Accuracy", loc="best"):
+    """Large bold styling shared by the clean, anon, and active day charts."""
+    ax.set_facecolor(SURF)
+    ax.grid(axis="y", color=GRID, lw=0.9)
+    ax.set_axisbelow(True)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+    for sp in ("left", "bottom"):
+        ax.spines[sp].set_color("#c9c8c3")
+    ax.tick_params(colors=INK, labelsize=15.5)
+    for t in ax.get_xticklabels() + ax.get_yticklabels():
+        t.set_fontweight("bold")
+    ax.set_xlabel(xlab, fontsize=17, fontweight="bold", color=INK, labelpad=5)
+    ax.set_ylabel(ylab, fontsize=15.5, fontweight="bold", color=INK, labelpad=5)
+    ax.set_title(title, fontsize=18, fontweight="bold", color=INK, pad=9)
+    leg = ax.legend(frameon=False, fontsize=14.5, loc=loc, labelcolor=INK)
+    for t in leg.get_texts():
+        t.set_fontweight("bold")
+
+
+def anon_figure(tag, model):
+    named, anon = _named_rows(model, tag), _anon_rows(model, tag)
+    if not named or not anon:
+        print(f"anon {tag} {model}: rows not present yet")
+        return
+    for r in anon:
+        r["model"] = "llm_anon"
+    rows = named + anon
+    fig, ax = fig1(7.8, 5.2)
+    ends = []
+    for m, lab, c, ls, mk, lw in [
+            ("llm_direct", "LLM (named)", ORANGE, "-", "s", 3.2),
+            ("llm_anon", "LLM (anonymized)", VIOLET, "-", "o", 3.2)]:
+        xs, ys, lo, hi = hh_curve(rows, m)
+        if not len(xs):
+            print(f"anon {tag} {model}: missing arm {m}")
+            return
+        ax.fill_between(xs, lo, hi, color=c, alpha=0.12, lw=0)
+        ax.plot(xs, ys, ls, color=c, lw=lw, marker=mk, ms=9, mec=SURF, mew=1.5,
+                label=lab, zorder=3)
+        ends.append([xs[-1], ys[-1]])
+    ends.sort(key=lambda e: e[1])
+    span = ax.get_ylim()[1] - ax.get_ylim()[0]
+    shown = [e[1] for e in ends]
+    for i in range(1, len(shown)):
+        if shown[i] - shown[i - 1] < 0.06 * span:
+            shown[i] = shown[i - 1] + 0.06 * span
+    h_in = ax.get_position().height * ax.figure.get_figheight()
+    for (x_, y_), sy in zip(ends, shown):
+        ax.annotate(f"{y_:.2f}", (x_, y_), xytext=(8, (sy - y_) * 72 * h_in / span),
+                    textcoords="offset points", va="center", fontsize=17.5,
+                    fontweight="bold", color=INK, zorder=Z_TEXT,
+                    bbox=dict(boxstyle="round,pad=0.12", fc="white", ec="none",
+                              alpha=0.8))
+    linx(ax)
+    _big_axes(ax, f"{tag.capitalize()} Households — {MODEL_DISPLAY.get(model, model)}")
+    save(fig, SUBA, f"accuracy_by_day_{tag}_{model}.png")
+
+
+def anon_all():
+    for model in ("deepseek", "qwen36", "glm"):
+        for tag in ("atypical", "typical"):
+            anon_figure(tag, model)
+
+
+def clean_all():
+    for model, atyp_fn, typ_file in CLEAN:
+        clean_figure(atyp_fn(), "atypical", model)
+        clean_figure(L(REP / f"reflect/{typ_file}"), "typical", model)
 
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
+    clean_all()
+    anon_all()
     # passive_adaptation
     at = atyp_rows()
-    passive_curves(at, "atypical", "Passive adaptation — ATYPICAL households", 24)
-    passive_paired(at, "atypical", "Paired difference vs classical — ATYPICAL households")
+    passive_curves(at, "atypical", "Passive Adaptation — Atypical Households", 24)
+    passive_paired(at, "atypical", "Paired Difference vs. Classical — Atypical Households")
     ty = typ_rows()
     if ty:
-        passive_curves(ty, "typical", "Passive adaptation — TYPICAL households", 6)
-        passive_paired(ty, "typical", "Paired difference vs classical — TYPICAL households")
+        passive_curves(ty, "typical", "Passive Adaptation — Typical Households", 6)
+        passive_paired(ty, "typical", "Paired Difference vs. Classical — Typical Households")
     else:
         print("typical passive rows not present yet (all_rows_typ_typd0.jsonl)")
     anonymization_ablation()
@@ -511,19 +745,21 @@ def main():
     # active_sensing
     nd = 14
     active_bar("reward_per_household_day.png",
-               "Reward under a scarce sensing budget", "reward per household-day",
+               "Reward Under a Scarce Sensing Budget", "Reward per household-day",
                lambda v: sum(x["reward"] for x in v) / nd,
                ylim=(0, 7.2),
                caption="ANSWER scores 1/0; RESENSE scores 0.4 and reveals the truth. Q=10, B=5. DeepSeek, per-model tau/alpha.")
     active_bar("resense_targeting.png",
-               "Choosing which observation to spend on",
+               "Choosing Which Observation to Spend On",
                "P(would have been wrong | chose to look)",
                lambda v: (float(np.mean([1 - x["cf_correct"] for x in v
                                          if x["action"] == "resense"]))
                           if any(x["action"] == "resense" for x in v) else float("nan")),
                ylim=(0, 1.06),
-               caption="The scaffolded LLM's looks land on its own would-be errors 86% of the time vs 58% for classical: world knowledge locates its ignorance.")
+               caption="The scaffolded LLM's looks land on its own would-be errors 88% of the time vs. 59% for Classical: world knowledge locates its ignorance.")
     active_learning_curves()
+    active_answered_accuracy()
+    active_answer_rate()
     active_calibration()
 
 

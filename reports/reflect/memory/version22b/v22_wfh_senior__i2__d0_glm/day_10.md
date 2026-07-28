@@ -1,0 +1,25 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Retired or semi-retired person who enjoys starting their day with the newspaper — Newspaper consumption at 07:34 suggests a traditional morning routine, common among retirees or those with flexible schedules. Consistent morning routine across days 0, 3, 4, and now 9. Weekend routine differs (coffee at table_d1 instead of desk_o1, reading glasses at coffee_table_l1 later in morning), supporting retirement hypothesis. Sunday phone usage pattern (moving from desk to coffee table to sofa) suggests leisurely device use rather than work. Monday pattern (bowl and coffee at table_d1 instead of desk_o1) further supports retirement hypothesis as it doesn't revert to weekday desk pattern. Tuesday's pattern (reading glasses at table_d1, phone at desk_o1 then sofa_l1) continues to support retirement hypothesis with a relaxed morning routine. Wednesday's newspaper at table_d1 instead of coffee_table_l1 shows slight variation but still within retirement lifestyle patterns. Thursday's reading glasses at table_d1 continues the relaxed morning routine.
+2. (p=0.01) Working professional with a morning routine that includes reading news — Newspaper at 07:34 could indicate someone preparing for work day, though less common in digital age. Reading glasses at desk and table suggest work-related activities. Weekend routine changes but doesn't completely align with typical work patterns. However, Monday's breakfast at table_d1 instead of desk_o1 weakens this hypothesis as a working professional would likely return to desk routine after weekend. Tuesday's pattern (reading glasses at table_d1, phone at desk_o1 then sofa_l1) doesn't strongly contradict this hypothesis but continues to weaken it as it doesn't show a clear work pattern. Wednesday's newspaper at table_d1 instead of coffee_table_l1 further weakens this hypothesis as it doesn't show a consistent work pattern. Thursday's reading glasses at table_d1 continues to weaken this hypothesis as it doesn't show a clear work pattern.
+
+## Selected evidence
+- Day 0, 07:34 — newspaper seen at coffee_table_l1 (suggests a traditional morning routine, possibly retired or someone who values print media)
+- Day 3, 07:46 — reading_glasses seen at desk_o1 (indicates reading activities at desk, possibly work-related or leisure)
+- Day 3, 09:01 — coffee_mug seen at desk_o1 (morning coffee routine at desk, suggesting work or focused activity)
+- Day 4, 06:58 — reading_glasses seen at table_d1 (consistent morning reading routine, possibly breakfast reading)
+- Day 4, 07:38 — coffee_mug seen at desk_o1 (consistent morning coffee routine at desk)
+- Day 5, 06:57 — coffee_mug seen at table_d1 (weekend routine differs from weekday, coffee at dining table instead of desk)
+- Day 5, 10:32 — reading_glasses seen at coffee_table_l1 (later morning reading on weekend, different location from weekday desk reading)
+- Day 6, 07:44 — bowl seen at sink_k1 (indicates breakfast routine, consistent with weekend pattern)
+- Day 6, 09:21 — phone seen at desk_o1 (morning phone activity, possibly checking news or messages)
+- Day 6, 10:21 — phone seen at coffee_table_l1 (phone moving to leisure area, suggesting relaxation)
+- Day 6, 13:52 — phone seen at sofa_l1 (afternoon phone usage on sofa, consistent with leisure weekend activities)
+- Day 7, 07:07 — bowl seen at table_d1 (Monday breakfast at dining table instead of desk, supporting retirement hypothesis)
+- Day 7, 07:07 — coffee_mug seen at table_d1 (Monday coffee at dining table instead of desk, supporting retirement hypothesis)
+- Day 8, 06:58 — reading_glasses seen at table_d1 (Tuesday morning routine continues to support retirement hypothesis with relaxed morning)
+- Day 9, 06:50 — newspaper seen at table_d1 (Wednesday newspaper at dining table instead of coffee table, slight variation but still within retirement lifestyle patterns)
+
+## Notes
+Consistent morning routine across weekdays (newspaper, reading glasses, coffee) suggests either retirement or a structured work-from-home schedule. Weekend changes in routine (coffee at table_d1 instead of desk_o1, reading glasses at coffee_table_l1 later in morning) support retirement hypothesis. Sunday pattern (bowl at sink, phone moving from desk to coffee table to sofa) confirms weekend leisure routine. Monday pattern (bowl and coffee at table_d1 instead of desk_o1) further supports retirement hypothesis as it doesn't revert to weekday desk pattern. Tuesday's pattern (reading glasses at table_d1, phone at desk_o1 then sofa_l1) continues to support retirement hypothesis with a relaxed morning routine. Wednesday's newspaper at table_d1 instead of coffee_table_l1 shows slight variation but still within retirement lifestyle patterns. Thursday's reading glasses at table_d1 continues the relaxed morning routine. Need to observe next week to confirm if pattern repeats.

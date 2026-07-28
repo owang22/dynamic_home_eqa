@@ -1,0 +1,24 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Single professional working from home occasionally — Early morning activity continues on Monday (05:33) with different objects (object_10, object_15), maintaining the weekday pattern. Evening activity (19:18, 20:33) occurs later than previous weekdays but shows a return to weekday structure after weekend variations. The presence of object_16 (seen on Saturday) now appearing on Monday suggests some weekend activities may carry over into the work week.
+2. (p=0.04) Student with irregular schedule — The consistent early morning pattern could be studying, but the clear weekday/weekend distinction doesn't strongly suggest academic patterns. The Monday morning activity with different objects doesn't clearly indicate academic work.
+3. (p=0.01) Parent with early childcare responsibilities — Early morning activity could relate to childcare, but the evening patterns and weekend activities don't clearly support this hypothesis. The Monday evening activity timing doesn't align with typical parenting patterns.
+
+## Selected evidence
+- Day 0, 05:34 — object_21 seen at elsewhere (early morning activity suggests someone starts their day very early)
+- Day 0, 18:09 — object_7 seen at receptacle_13 (evening activity, possibly returning home from work)
+- Day 2, 07:31 — object_17 seen at receptacle_7 (early morning activity continues the pattern of starting the day early)
+- Day 3, 05:30 — object_21 seen at elsewhere (consistent early morning pattern continues on Thursday)
+- Day 4, 05:32 — object_8 seen at elsewhere (multiple objects moved simultaneously, suggesting a morning routine)
+- Day 5, 05:33 — object_16 seen at elsewhere (weekend early morning activity suggests routine continues but with different objects)
+- Day 5, 20:35 — object_21 seen at receptacle_8 (weekend evening activity at different time than weekdays, suggesting different routine)
+- Day 6, 05:27 — object_20 seen at elsewhere (Sunday early morning activity continues the pattern but with different object)
+- Day 6, 18:51 — object_7 seen at receptacle_11 (Sunday evening activity later than weekdays but earlier than Saturday, suggesting a weekend routine with some structure)
+- Day 7, 05:33 — object_10 seen at elsewhere (Monday early morning activity continues the weekday pattern with different objects)
+- Day 7, 05:33 — object_15 seen at elsewhere (multiple objects moved simultaneously, suggesting a morning routine)
+- Day 7, 19:18 — object_11 seen at receptacle_12 (Monday evening activity later than previous weekdays but shows return to weekday structure)
+- Day 7, 20:33 — object_16 seen at receptacle_8 (object_16 seen on Saturday now appearing on Monday, suggesting weekend activities may carry over)
+
+## Notes
+Weekday observations show consistent early morning activity (05:34, 07:31, 05:30, 05:32, 05:33) and evening activity patterns. Weekend shows early morning activity continues (05:33 on Saturday, 05:27 on Sunday) but evening activity occurs at different times (20:35 on Saturday, 18:51 on Sunday vs 17:56-18:09 on weekdays), suggesting a modified weekend routine. Monday shows return to weekday structure with early morning activity (05:33) and evening activity (19:18, 20:33) later than previous weekdays but still structured. The presence of object_16 on both Saturday and Monday suggests some weekend activities may carry over into the work week.

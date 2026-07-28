@@ -1,0 +1,15 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Standard 9-5 Office Worker (Weekend Variation) — The 06:56 activity on Saturday (Day 5) suggests an early start, possibly for chores, exercise, or a weekend errand, rather than a commute. The 12:11 activity suggests a midday break or lunch. The rigid 16:00 return from Day 4 is absent, indicating the workday structure relaxes on weekends. The 21:45 evening activity remains consistent with previous days, suggesting a stable sleep/wind-down routine.
+2. (p=0.10) Night Shift Worker — If the resident sleeps during the day, the 06:56 activity could be waking up. However, the 12:11 activity is early for a night shift worker who might still be sleeping or just waking. The 21:45 activity is too early for a night shift start if they wake at 07:00, or too late if they sleep at 16:00. This hypothesis is increasingly unlikely due to the lack of late-night/early-morning activity spikes typical of night shifts.
+3. (p=0.05) Retiree / Stay-at-Home — The 06:56 activity is consistent with an early riser. However, the previous days' rigid 07:49/09:10 departure and 16:19 return strongly contradicted this. The weekend pattern (06:56 start, no 16:00 return) is more typical of a retiree, but the strong weekday signal makes this less probable than a worker with flexible weekends.
+
+## Selected evidence
+- Day 5, 06:56 — object_4 at receptacle_12 (Early Saturday activity; suggests early start for non-work reasons, e.g., exercise or chores, weakening the strict 9-5 commute hypothesis for weekends)
+- Day 5, 12:11 — object_8 at receptacle_12 (Midday activity; suggests a break or lunch, consistent with a relaxed weekend schedule)
+- Day 5, 21:45 — object_8 at receptacle_5 (Evening activity; consistent with previous days' wind-down routine, suggesting stable evening habits regardless of day of week)
+- Day 5, 21:45 — object_13 at receptacle_5 (Evening activity; reinforces the 21:45 wind-down pattern, indicating a consistent sleep preparation time)
+
+## Notes
+The 16:00 return pattern from weekdays is absent on Saturday, confirming that the rigid schedule is work-dependent. The 06:56 start on Saturday is earlier than the weekday 07:09/07:34 starts, suggesting a different routine for weekends. Object_8 appears in both midday (12:11) and evening (21:45) contexts, possibly a multi-use item like a phone or tablet. Need to observe Day 6 (Sunday) to see if the 06:56 pattern persists or if the resident sleeps in. The 21:45 evening routine seems robust across days.

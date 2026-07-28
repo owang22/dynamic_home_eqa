@@ -1,0 +1,24 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Remote worker with disciplined morning routine and late-night wind-down — Day 4 confirms the 05:00 'elsewhere' departure (objects 8, 9) and early morning return of personal items (11, 17) to receptacle_7. The 18:58 event suggests a standard evening return/home presence, consistent with a flexible but structured remote schedule. The 23:02 late-night activity from Day 3 persists as a secondary trait.
+2. (p=0.04) Two-person household with asynchronous schedules — Still possible but weakening. The simultaneous departure of objects 8 and 9 at 05:14 could imply two people, but they return together or are handled by one person. The lack of distinct 'second person' markers (like separate keys/coats) and the singular nature of the 05:00-05:30 window still favor a single primary actor. The 18:58 event is ambiguous but doesn't strongly suggest a second person.
+3. (p=0.01) Night shift worker — Discarded. The 05:00-05:30 'elsewhere' events are interpreted as leaving for the day (exercise/commute), not returning from a night shift. The 13:28 'elsewhere' event on Day 3 and 18:58 event on Day 4 further contradict a night shift pattern where one would be sleeping or just waking up.
+
+## Selected evidence
+- Day 0, 05:24 — object_11 at elsewhere (establishes early morning discipline, likely exercise)
+- Day 2, 05:07 — object_17 at elsewhere (confirms Day 0 pattern, reinforcing disciplined early routine)
+- Day 3, 05:15 — object_11 at elsewhere (confirms Day 0 and Day 2 pattern, solidifying early morning habit)
+- Day 3, 13:28 — object_11 at elsewhere (midday departure suggests remote work or errands, not 9-5 office)
+- Day 3, 13:28 — object_14 at elsewhere (midday departure, possibly related to object_11, suggests a single person's activity block)
+- Day 3, 23:02 — object_8 at receptacle_8 (late-night activity, supports night owl/remote profile)
+- Day 3, 23:02 — object_9 at receptacle_7 (consistent late-evening activity, reinforces non-standard evening hours)
+- Day 3, 23:02 — object_17 at receptacle_8 (late-night return of object_17, which was seen at elsewhere at 05:07 on Day 2, suggesting it is a personal item like a gym bag or laptop case)
+- Day 4, 05:14 — object_8 at elsewhere (confirms Day 3 late-night activity pattern, objects 8 and 9 leave together early morning)
+- Day 4, 05:14 — object_9 at elsewhere (simultaneous departure with object_8, suggests paired items or two people, but likely one person's routine)
+- Day 4, 04:59 — object_11 at receptacle_7 (early morning return of object_11, consistent with Day 0, 2, 3 pattern)
+- Day 4, 04:59 — object_17 at receptacle_7 (early morning return of object_17, consistent with Day 2/3 pattern)
+- Day 4, 18:58 — object_7 at receptacle_11 (evening home presence, suggests standard evening routine or return from work/errands)
+
+## Notes
+Object_11 and Object_17 return to receptacle_7 by 05:00 on Day 4, confirming they are taken out early and returned early. Object_8 and Object_9 leave together at 05:14 on Day 4, which is a new pattern: they were seen returning late at night on Day 3. This suggests they might be paired items (e.g., headphones and phone, or two pieces of exercise gear). Object_7 appears at receptacle_11 at 18:58 on Day 4. Need to identify object_7 and receptacle_11. Check if Day 5 (Saturday) shows similar 05:00-05:30 'elsewhere' event to solidify the 'disciplined routine' hypothesis. Verify if receptacle_7 and receptacle_8 are home desk or living area to confirm remote work context. The 18:58 event on Day 4 is interesting: it's a standard evening time, which might suggest a more traditional schedule than previously thought, or simply a return from errands. Need more data to distinguish.

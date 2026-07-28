@@ -1,0 +1,21 @@
+# Household memory — after day 11 (12 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Standard 9-5 Office Worker — Consistent morning routine (07:15-07:57), mid-morning departure (~08:40-08:49), and evening return (~18:40-22:55) on all observed weekdays strongly support a standard workday. The late return on Day 11 (22:55) suggests occasional overtime or social activity, but does not contradict the 9-5 structure.
+2. (p=0.01) Remote Worker with Flexible Schedule — Slight variation in morning start times (07:15 vs 07:57) leaves a tiny possibility of flexibility. However, the rigid mid-morning departure pattern and lack of midday laptop usage make this unlikely. The late return on Day 11 could be consistent with flexible hours, but the morning departure is too early for a typical remote start.
+3. (p=0.00) Night Shift Worker — Contradicted by consistent morning activity on Days 7, 8, 9, 10, and 11. Night shift workers would not be active at 07:00-08:00 on consecutive days.
+
+## Selected evidence
+- Day 7, 07:15 — object_5 at receptacle_12 (Monday morning routine; confirms early weekday habit)
+- Day 8, 07:52 — object_6 at receptacle_13 (Tuesday morning routine; slight variation but still early)
+- Day 9, 07:19 — object_5 at receptacle_12 (Wednesday morning routine; consistent with Monday)
+- Day 9, 08:40 — object_18 at receptacle_5 (Mid-morning departure; aligns with 9-5 schedule)
+- Day 9, 18:41 — object_14 at receptacle_11 (Evening return; post-work)
+- Day 10, 07:50 — object_3 at receptacle_10 (Thursday morning routine; consistent with Tuesday's later start)
+- Day 10, 19:00 — object_16 at receptacle_12 (Thursday evening leisure; consistent with post-work wind-down)
+- Day 11, 07:57 — object_3 at receptacle_10 (Friday morning routine; consistent with Tuesday/Thursday pattern)
+- Day 11, 08:49 — object_6 at receptacle_5 (Friday mid-morning departure; confirms consistent departure window)
+- Day 11, 22:55 — object_14 at receptacle_9 (Friday late return; suggests overtime or social event, but still post-work)
+
+## Notes
+Day 11 (Friday) confirms the pattern: morning activity at 07:57 (similar to Tuesday/Thursday) and mid-morning departure at 08:49 (similar to Wednesday). The late return at 22:55 is an outlier compared to previous evenings (18:41, 19:00), possibly indicating a specific Friday evening activity. No evidence of remote work or night shift. Hypothesis 3 remains discarded. Need to observe weekend days (12-13) to see if the pattern breaks or if there are different activities (e.g., leisure, travel).

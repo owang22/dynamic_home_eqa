@@ -1,0 +1,10 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+(none yet)
+
+## Selected evidence
+(none yet)
+
+## Notes
+Only four days with sparse events insufficient to infer any meaningful yet; noting that today's events occurred at times that could correspond to someone being home during typical daytime hours, but lacks enough specificity to diagnose reliably; will continue monitoring especially across weekends and noting whether any objects repeat indicating belonging to routines like leaving/returning or hobbies etcetera; meanwhile keeping Selected Evidence deliberately minimal to avoid clutter until clearer picture emerges; noting that no strong indicators of occupation, pets or children observed yet; will also watch for any signs of regularity across same weekday or time-of-day across weeks once enough days accumulate; overall patience until enough especially across a full week including weekend days 13-14 etcetera before drawing conclusions; meanwhile noting that todays events are still anonymous objects at generic receptacles so cannot yet assign meaning beyond noting timestamp distribution; will continue monitoring whether similar patterns occur especially around typical meal times whether any objects reappear indicating belonging to specific routines like leaving the home or hobbies etcetera; meanwhile keeping deliberately minimal to avoid clutter until clearer emerges; also noting that no events during typical morning rush hour suggesting someone might not commute early or perhaps flexible schedule but insufficiently clear yet; will also watch for signs of multiple occupants like staggered schedules or shared objects reappearing at different times etcetera; overall need more especially across a full week including weekend before hypotheses emerge therefore keeping everything minimal now to avoid false positives and clutter.

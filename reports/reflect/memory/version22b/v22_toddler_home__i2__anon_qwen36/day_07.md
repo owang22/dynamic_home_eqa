@@ -1,0 +1,15 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Remote Worker with Weekend Leisure — Consistent morning laptop usage (Day 4, 6) and evening leisure patterns persist. Day 7 (Monday) shows early morning object movement (06:43) and evening activity (18:35), consistent with a standard work week resuming. The 06:43 event suggests an early start or routine, reinforcing the disciplined remote worker profile.
+2. (p=0.05) Stay-at-Home Parent / Caregiver — Still possible if object_16 is a child's item (seen at receptacle_8 at 06:43, possibly a school bag or toy) and object_6 is a household item. However, the rigid morning laptop schedule on weekends makes this less likely as the primary identity. The 06:43 timing could be a child's wake-up, but the lack of other childcare-specific objects keeps this probability low.
+3. (p=0.00) Night Shift Worker — Contradicted by Day 6 (08:45 laptop) and Day 7 (06:43 activity). A night shift worker would not typically be active with work-related objects at 06:43 on a Monday morning unless working a second job, which is less parsimonious.
+
+## Selected evidence
+- Day 7, 06:43 — object_16 at receptacle_8 (Early morning activity; if object_16 is a bag/item, suggests early start to day, consistent with work routine.)
+- Day 7, 07:28 — object_6 at receptacle_11 (Morning household movement; likely part of the morning routine, less discriminative alone.)
+- Day 7, 18:35 — object_11 at receptacle_11 (Evening activity; consistent with post-work wind-down or dinner prep, aligns with remote worker schedule.)
+- Day 7, 19:12 — object_16 at receptacle_5 (Object_16 moved to kitchen/dining area; if it's a bag, suggests returning from an outing or preparing for next day.)
+
+## Notes
+Day 7 (Monday) confirms the resumption of a structured routine. Object_16's movement from receptacle_8 (06:43) to receptacle_5 (19:12) is notable; if it's a bag, it might have been taken out and brought back, or moved for storage. Object_6 and object_11 movements are less informative but fit the expected daily cycle. Need to identify object_16 to determine if it's a work bag, school bag, or leisure item. The 06:43 timing is early; if object_16 is a work item, it suggests an early start. If it's a child's item, it suggests a child's schedule. The 'Remote Worker' hypothesis remains strong due to the consistency of morning work blocks.

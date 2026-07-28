@@ -1,0 +1,25 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Standard 9-5 Office Worker",
+   "prob": 0.6,
+   "rationale": "Day 0 showed a clear commute pattern (08:51 out, 16:46 in). Day 1 showed early activity (07:09) which could be a gym visit or early prep before the same commute. The consistency of the Day 0 pattern strongly supports this."
+  },
+  {
+   "persona": "Remote Worker with Errands",
+   "prob": 0.25,
+   "rationale": "The 07:09 activity on Day 1 is earlier than the Day 0 departure. If Object_4 (the commute item) is not seen leaving on Day 1 morning, this would support remote work. However, we only see Object_12/14 at 'elsewhere'. We need to check if Object_4 is still at home."
+  },
+  {
+   "persona": "Shift Worker / Night Owl",
+   "prob": 0.15,
+   "rationale": "Unlikely given the Day 0 16:46 return time. The 07:09 activity is too early for a typical night shift start unless it's a post-shift wind-down, but the Day 0 return suggests a standard day cycle."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:51 \u2014 object_4 at receptacle_8 (Morning departure; suggests leaving the house for work/errands)",
+  "Day 0, 16:46 \u2014 object_4 at receptacle_11 (Evening return; suggests coming back home, likely after a workday)",
+  "Day 1, 07:09 \u2014 object_12 at elsewhere (Early morning activity; could be gym, dog walk, or early commute prep. Needs correlation with Object_4 status.)"
+ ],
+ "notes": "Day 2 (Wednesday) had no events. This is a critical data gap. If the resident follows a standard 9-5 routine, we expect to see Object_4 leave around 08:30-09:00 and return around 16:30-17:00. The lack of events might mean the resident is still out (if they left very early or stayed out late), or the sensors failed. Alternatively, if they are remote, the lack of 'elsewhere' movement for Object_4 (if it was at home) would be consistent. Need to verify sensor functionality or wait for Day 3 to see if the pattern resumes. The 'Remote Worker' hypothesis is currently weak because we haven't confirmed Object_4's location on Day 1, but the lack of Day 2 events doesn't help distinguish yet."
+}

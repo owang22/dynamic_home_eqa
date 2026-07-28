@@ -1,0 +1,18 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Standard 9-5 Office Worker (Hybrid/Commuter) — Day 7 (Monday) confirms a strict commute pattern: object_4 (likely keys/bag) at receptacle_12 (departure point) at 07:02, and object_13 (laptop) returning to receptacle_12 (home/entry) at 17:57. The 21:45 shutdown remains rigid. The Sunday work-bag movement was likely Monday prep. Night Shift and Retiree hypotheses are effectively discarded.
+2. (p=0.01) Night Shift Worker — Contradicted by the 07:02 departure and 17:57 return on Monday, which align with standard business hours, not night shifts. The 21:45 shutdown is also inconsistent with a night shift wind-down unless they sleep immediately after work, but the morning activity contradicts this.
+3. (p=0.01) Retiree / Stay-at-Home Parent — Contradicted by the rigid 07:02 departure and 17:57 return on Monday, which indicate a fixed external job schedule. The presence of a 'work bag' (object_14) and laptop (object_13) movements further suggest employment.
+
+## Selected evidence
+- Day 7, 07:02 — object_4 at receptacle_12 (Morning departure; confirms commute routine on Monday)
+- Day 7, 17:57 — object_13 at receptacle_12 (Evening return; laptop brought home, confirming end of workday)
+- Day 7, 21:45 — object_3 at receptacle_5 (Evening shutdown; consistent across all observed days)
+- Day 4, 07:04 — object_14 at receptacle_12 (Morning departure prep; consistent with Monday pattern)
+- Day 4, 16:10 — object_14 at receptacle_11 (Afternoon return; object_14 likely work bag)
+- Day 0, 12:33 — object_13 at receptacle_10 (Midday work device; indicates remote work capability or lunch break)
+- Day 6, 08:41 — object_14 at receptacle_8 (Work bag at desk; likely Monday prep, not Sunday work)
+
+## Notes
+Monday (Day 7) confirms a standard 9-5 commute pattern with object_4 leaving at 07:02 and object_13 returning at 17:57. The Sunday work-bag movement (Day 6, 08:41) is now interpreted as preparation for Monday, not Sunday work. The 21:45 shutdown is a strong anchor for sleep time. Object_15 at receptacle_11 at 13:55 on Monday is unexplained; could be a delivery or lunch item. Need to verify if object_13 stays at receptacle_10 (desk) or moves to receptacle_12 (entry) on future days to distinguish remote vs. hybrid work. Object_16 (leisure) was not seen on Day 7; check if it appears on weekends.

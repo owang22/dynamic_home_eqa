@@ -5,7 +5,9 @@ Source: [`src/dynbelief/paper_figures/make_figs.py`](../../src/dynbelief/paper_f
 
 Conventions: phase-averaged over start weekday; bootstrap 95% CI over households;
 **paired per-household deltas** wherever a claim must separate from zero; "LLM" =
-best scaffolded implementation; classical = C3g (**C1 is never reported**).
+best scaffolded implementation. The statistical baseline is labeled **Classical**
+throughout (internally the held-out-gated periodic GLM; the weaker C1 variant is
+never reported).
 
 ---
 
@@ -30,7 +32,7 @@ only on day 1; the 24-household pool separates on 6-7 of 7 days).
 ## reflection_gating/ — why surprise-gated reflection is the default
 
 24 households; distractors = static objects reported daily but never queried.
-Gate: LLM reflects only when C3g is contradicted (≥2 obs p<0.15 while max_p≥0.55).
+Gate: the LLM reflects only when Classical is contradicted (≥2 obs p<0.15 while max_p≥0.55).
 
 | file | claim |
 |---|---|
@@ -53,8 +55,8 @@ ANSWER 1/0, RESENSE 0.4 + reveals truth. 24 households, DeepSeek, per-model τ/�
 |---|---|
 | `belief_accuracy_by_day.png` | LLM arms start at 0.24-0.29 vs classical's 0.01 and stay ahead through the ramp; fusion is fastest days 2-4. Counterfactual scoring on ALL queries — coverage cannot inflate an arm |
 | `reward_per_household_day.png` | scaffold 5.78 > fusion 5.26 > classical 5.04 |
-| `resense_targeting.png` | **86%** of the LLM's chosen looks were would-be errors vs 58% classical — world knowledge locates its ignorance (spending fewer looks: 18% vs 28%) |
-| `calibration_stated_vs_realized.png` | both LLM arms mildly overconfident (gap 0.09 / 0.12); fusion does NOT improve calibration |
+| `resense_targeting.png` | **88%** of the LLM's chosen looks were would-be errors vs 59% classical — world knowledge locates its ignorance (spending fewer looks: 18% vs 28%) |
+| `calibration_stated_vs_realized.png` | both LLM arms mildly overconfident (gap 0.09 scaffold / 0.12 fusion); fusion does NOT improve calibration |
 
 ---
 

@@ -1,0 +1,15 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard Office Worker with Creative Hobby — Weekend schedule remains consistent with a standard work week (no early departure). The tablet usage at 06:57 suggests a leisurely morning routine rather than a strict commute prep. The creative hobby items (scissors, watercolors) have not appeared yet, but the lack of 'weekend-specific' objects like suitcases or gym gear keeps the office worker profile dominant. The probability slightly decreased due to the lack of hobby evidence on Saturday morning, but the core commute pattern on weekdays is too rigid to discard.
+2. (p=0.03) Freelancer / Work-from-Home — The tablet at 06:57 on a Saturday morning could imply remote work or flexible scheduling, but the absence of a laptop at the home desk during the day (12:21 fork only) makes this less likely. The rigid weekday departure still weighs heavily against this.
+3. (p=0.02) Student — Remains unlikely. No textbooks, library items, or irregular class schedules observed. The rigid 08:40 departure on weekdays is atypical for most student schedules unless it's a very specific program, which hasn't been supported by other evidence.
+
+## Selected evidence
+- Day 5, 06:57 — tablet at table_d1 (suggests leisurely weekend morning routine; no backpack/keys departure, distinguishing from weekday work commute)
+- Day 5, 12:21 — fork at table_d1 (indicates lunch preparation; confirms presence in home during midday, consistent with weekend stay-at-home pattern)
+- Day 5, 21:45 — fork at cupboard_k1 (confirms dinner cleanup; timing similar to Day 1, suggesting a stable evening routine)
+- Day 5, 21:49 — tablet at coffee_table_l1 (evening leisure activity; reinforces the pattern of tablet use for relaxation/news, consistent with office worker wind-down)
+
+## Notes
+Day 5 (Saturday) confirms the resident stays home. The tablet is used in the morning (06:57) and evening (21:49), but no creative hobby items (scissors, watercolors) appeared today. This is notable: if the hobby is strictly post-work on weekdays, it might not happen on weekends, or the resident might have moved the items. Need to observe Day 6 (Sunday) to see if the hobby items appear then, or if the weekend is truly 'quiet' regarding creative activities. Also, check for any changes in meal timing or new objects like gym equipment or books.

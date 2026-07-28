@@ -1,0 +1,19 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) Remote worker with flexible/weekend-late routine — Consistent dinner time (18:38-18:43) across all days suggests stable home presence. Day 6 (Sun) shows late leisure (19:51 remote) and no commute cues. The slight delay in breakfast (07:45 vs 07:13/07:22) and dinner (19:18 fork at sink) supports a relaxed weekend schedule.
+2. (p=0.15) Standard working adult with irregular/late evenings — Still possible if they commute but leave before observation or return late. However, the lack of any 'commute' objects (keys, bag) on Days 4, 5, and 6 makes this less likely than remote work. The 19:51 remote usage is late for a standard 9-5 worker unless they have significant evening leisure habits.
+3. (p=0.05) Night shift worker — Unlikely due to consistent morning breakfast (07:13-07:45) and early evening dinner (18:38-18:43). Night shift workers typically have inverted meal/sleep cycles. The 19:51 activity is too early for a night shift start.
+
+## Selected evidence
+- Day 6, 07:45 — bowl at sink_k1 (weekend breakfast cleanup; slightly later than weekday 07:13/07:22, suggesting relaxed morning routine)
+- Day 6, 18:38 — plate at table_d1 (consistent dinner time ~18:40 across all observed days, including weekend)
+- Day 6, 19:18 — fork at sink_k1 (dinner cleanup ~40 mins after meal start, consistent with previous days' patterns)
+- Day 6, 19:51 — remote at sofa_l1 (evening leisure activity; supports relaxed weekend evening routine, similar to Day 5's 23:05 but earlier)
+- Day 5, 23:05 — phone at nightstand_r1 (late-night device usage; suggests resident is awake late on weekends)
+- Day 5, 23:05 — remote at coffee_table_l1 (late evening leisure activity; supports relaxed weekend evening routine)
+- Day 4, 07:22 — bowl/coffee_mug at table_d1 (established early morning breakfast at table, not desk)
+- Day 4, 18:43 — fork at table_d1 (consistent dinner time)
+
+## Notes
+Day 6 (Sunday) confirms the breakfast location (table_d1) is consistent with previous days. The 19:51 remote usage on Sunday is earlier than Saturday's 23:05, suggesting the 'late night' pattern might be specific to Saturday or that Sunday is a more standard wind-down day. No departure cues observed on Day 6. Need to observe Day 7 (Monday) to see if the routine resets to weekday patterns (e.g., earlier breakfast, potential commute cues).

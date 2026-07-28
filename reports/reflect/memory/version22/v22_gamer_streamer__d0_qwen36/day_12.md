@@ -1,0 +1,26 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Hybrid Worker with Late-Night Leisure — Friday departure (keys) confirms non-strict WFH. Persistent late-night activity (01:43 phone, 21:22 headset) suggests evening wind-down or night-shift work, but the structured daytime routine (meals, desk work) on non-departure days favors a standard worker with irregular sleep/leisure habits.
+2. (p=0.20) Night-Shift Worker — Late-night object movement (headset/phone) combined with daytime inactivity (no keys on Thu/Wed) could indicate a night shift ending in the morning. However, the specific Friday departure at 12:48 is less typical for a rigid night-shift schedule unless it's a day off.
+3. (p=0.05) Student with Irregular Schedule — Remains low probability. The consistency of meal times and desk usage lacks the chaotic variability typical of students. The Friday departure is the only strong discriminator, but it fits both workers and students.
+
+## Selected evidence
+- Day 12, 21:22 — headset at desk_o1 (Weekend late-night activity; reinforces persistent late-night pattern, suggesting leisure or study continues on weekends)
+- Day 11, 12:48 — keys at elsewhere (CRITICAL: First appearance of keys in 5 days, indicates leaving the house, likely for work/errands, contradicting strict WFH)
+- Day 11, 01:43 — phone at nightstand_r1 (Late-night activity continues, consistent with previous late-night patterns)
+- Day 11, 22:08 — phone at desk_o1 (Evening activity, suggests return home and resumption of work/study/leisure)
+- Day 10, 10:48 — coffee_mug at table_d1 (Midday beverage, no keys present, confirms staying home on Thursday)
+- Day 10, 19:47 — fork at sink_k1 (Evening meal cleanup, no keys present, confirms staying home on Thursday)
+- Day 9, 01:23 — headset at shelf_o1 (Late-night activity, consistent with pattern)
+- Day 9, 11:27 — plate at sink_k1 (Midday meal cleanup, no keys present, confirms staying home)
+- Day 9, 18:50 — fork at table_d1 (Evening meal setup, no keys present, confirms staying home)
+- Day 8, 21:29 — phone at desk_o1 (Evening work/study session, no keys present, confirms staying home)
+- Day 8, 19:54 — plate at sink_k1 (Evening meal cleanup, no keys present, confirms staying home)
+- Day 8, 15:25 — remote at coffee_table_l1 (Afternoon leisure, suggests flexible daytime schedule)
+- Day 8, 12:55 — blanket at sofa_l1 (Daytime leisure, suggests staying home during the day)
+- Day 7, 01:18 — headset at shelf_o1 (Late-night activity, reinforces late-night pattern)
+- Day 7, 21:29 — phone at desk_o1 (Evening work/study session, no keys present, confirms staying home)
+
+## Notes
+Day 12 (Saturday) shows late-night headset use at 21:22. This confirms the late-night pattern persists into the weekend. The Friday departure (keys) was a one-off in this short window, but the weekend inactivity (no keys, no morning events) suggests the resident sleeps in or is inactive during the day on weekends. Need to observe if keys appear on Sunday or Monday to confirm if Friday was a weekly pattern or an anomaly. The 'Night-Shift' hypothesis is slightly weakened by the lack of morning activity on Saturday, but the late-night activity remains strong.

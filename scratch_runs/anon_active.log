@@ -1,0 +1,62 @@
+=== [21:30] serving deepseek-ai/DeepSeek-V4-Flash ===
+GPUs freed (max used: 4 MiB)
+SERVER READY: deepseek-ai/DeepSeek-V4-Flash
+[2cap:llm_scaffold] v22_retiree_gardener__i1 done (rr 0.09)
+[2cap:llm_scaffold] v22_artist_kid_family done (rr 0.09)
+[2cap:llm_scaffold] v22_reptile_keeper done (rr 0.11)
+[2cap:llm_scaffold] v22_open_water_swimmer done (rr 0.30)
+[2cap:llm_scaffold] v22_dawn_bread_baker done (rr 0.16)
+[2cap:llm_scaffold] v22_food_truck_owner done (rr 0.16)
+[2cap:llm_scaffold] v22_backyard_astronomer done (rr 0.13)
+[2cap:llm_scaffold] v22_plant_collector done (rr 0.26)
+[2cap:llm_scaffold] v22_teacher_coach done (rr 0.26)
+[2cap:llm_scaffold] v22_twin_toddlers done (rr 0.19)
+[2cap:llm_scaffold] v22_gamer_streamer done (rr 0.26)
+[2cap:llm_scaffold] v22_homeschool_family done (rr 0.18)
+[2cap:llm_scaffold] v22_frequent_traveler__i1 done (rr 0.16)
+[2cap:llm_scaffold] v22_wfh_senior__i2 done (rr 0.17)
+[2cap:llm_scaffold] v22_pet_heavy__i1 done (rr 0.22)
+[2cap:llm_scaffold] v22_pet_heavy__i2 done (rr 0.11)
+[2cap:llm_scaffold] v22_retiree_gardener__i2 done (rr 0.20)
+[2cap:llm_scaffold] v22_frequent_traveler__i2 done (rr 0.28)
+[2cap:llm_scaffold] v22_toddler_home__i1 done (rr 0.29)
+[2cap:llm_scaffold] v22_wfh_senior__i1 done (rr 0.13)
+Traceback (most recent call last):
+  File "/home/nesl/anaconda3/envs/fine-eqa/lib/python3.9/runpy.py", line 197, in _run_module_as_main
+    return _run_code(code, main_globals, None,
+  File "/home/nesl/anaconda3/envs/fine-eqa/lib/python3.9/runpy.py", line 87, in _run_code
+    exec(code, run_globals)
+  File "/data/oliver/robot/dynamic_home_eqa/src/dynbelief/two_capacities/run2.py", line 75, in <module>
+    main()
+  File "/data/oliver/robot/dynamic_home_eqa/src/dynbelief/two_capacities/run2.py", line 70, in main
+    run(args.bank, args.arm, args.tau, args.variant, args.endpoint, args.model,
+  File "/data/oliver/robot/dynamic_home_eqa/src/dynbelief/two_capacities/run2.py", line 46, in run
+    all_rows = [r for rs in ex.map(one, hhs) for r in rs]
+  File "/data/oliver/robot/dynamic_home_eqa/src/dynbelief/two_capacities/run2.py", line 46, in <listcomp>
+    all_rows = [r for rs in ex.map(one, hhs) for r in rs]
+  File "/home/nesl/anaconda3/envs/fine-eqa/lib/python3.9/concurrent/futures/_base.py", line 609, in result_iterator
+    yield fs.pop().result()
+  File "/home/nesl/anaconda3/envs/fine-eqa/lib/python3.9/concurrent/futures/_base.py", line 439, in result
+    return self.__get_result()
+  File "/home/nesl/anaconda3/envs/fine-eqa/lib/python3.9/concurrent/futures/_base.py", line 391, in __get_result
+    raise self._exception
+  File "/home/nesl/anaconda3/envs/fine-eqa/lib/python3.9/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/data/oliver/robot/dynamic_home_eqa/src/dynbelief/two_capacities/run2.py", line 34, in one
+    rows = env.run_episode(arm, i, hh, cfg, h, Q=FROZEN["Q"], B=FROZEN["B"],
+  File "/data/oliver/robot/dynamic_home_eqa/src/dynbelief/answer_or_resense/env.py", line 138, in run_episode
+    decision = arm.decide(q, st, r_resense=r_resense, wrong=wrong)
+  File "/data/oliver/robot/dynamic_home_eqa/src/dynbelief/answer_or_resense/arms.py", line 185, in decide
+    action, top, bel, vconf = self._ask(q, st, r_resense, wrong)
+  File "/data/oliver/robot/dynamic_home_eqa/src/dynbelief/two_capacities/scaffold_arm.py", line 138, in _ask
+    f"where is the {self._o(q.obj)}?"
+  File "/data/oliver/robot/dynamic_home_eqa/src/dynbelief/two_capacities/scaffold_arm.py", line 85, in _o
+    return self.maps[0][o] if self.maps else o
+KeyError: 'keys'
+RUNFAIL conf llm_scaffold deepseek
+=== [21:45] anon-active conf llm_scaffold deepseek done ===
+[2cap:llm_scaffold] typ_office_worker done (rr 0.08)
+[2cap:llm_scaffold] typ_remote_worker done (rr 0.14)
+[2cap:llm_scaffold] typ_nurse_dayshift done (rr 0.09)
+[2cap:llm_scaffold] typ_school_family done (rr 0.29)
+[2cap:llm_scaffold] typ_grad_student done (rr 0.16)

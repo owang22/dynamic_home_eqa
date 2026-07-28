@@ -1,0 +1,13 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) A single working professional who leaves for work in the morning and returns in the evening, with a structured daily routine. — The first event at 08:03 suggests a morning departure (e.g., placing a work bag or keys near the door), and the second at 18:32 suggests an evening return (e.g., putting away a lunch container or work item). This pattern is typical of a 9-to-5 worker.
+2. (p=0.30) A remote worker or student who has a flexible schedule, with the morning event being a casual activity and the evening event being a routine task. — The events could be mundane (e.g., moving a book or a cup) and not necessarily tied to a commute. The times are still consistent with a typical day, but without more context, a remote worker is possible.
+3. (p=0.10) A retiree or homemaker with a relaxed daily pattern, where the events are part of household chores. — The times are not strongly indicative of a work schedule; they could be arbitrary. However, the lack of midday events or weekend data makes this less likely.
+
+## Selected evidence
+- Day 0, 08:03 — object_18 at receptacle_13 (morning event, possibly leaving for work)
+- Day 0, 18:32 — object_12 at receptacle_10 (evening event, possibly returning home)
+
+## Notes
+Only one day observed (Monday). Need to confirm if the 08:03 and 18:32 pattern repeats on weekdays. Weekend data will help distinguish work vs. non-work routines. Object identities unknown; if they are work-related (e.g., laptop, bag), that would strengthen the working professional hypothesis.

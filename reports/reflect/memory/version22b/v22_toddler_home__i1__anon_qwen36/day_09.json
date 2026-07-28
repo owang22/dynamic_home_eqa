@@ -1,0 +1,34 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Hybrid Office Worker (WFH Mon/Wed)",
+   "prob": 0.95,
+   "rationale": "Day 9 (Wednesday) shows no morning departure (06:53 object_17 at receptacle_8, likely kitchen/prep, not exit). This completes the Mon/Wed/WFH block (Days 7, 8, 9). Days 0, 1, 4 were office days. The pattern is now 3 office days, 3 WFH days, 2 weekend days."
+  },
+  {
+   "persona": "Standard 9-5 Office Worker (Variable Schedule)",
+   "prob": 0.04,
+   "rationale": "Requires Days 2-9 to be personal leave. The consistency of the 'no departure' pattern across 6 consecutive days (Days 2-9) makes random absence statistically unlikely compared to a structured hybrid schedule."
+  },
+  {
+   "persona": "Remote Worker with Flexible Hours",
+   "prob": 0.01,
+   "rationale": "Contradicted by the clear, rigid commute pattern on Days 0, 1, and 4. The resident clearly leaves the home for work on specific days."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:41 \u2014 object_17 at receptacle_10 (Baseline office departure; establishes commute start)",
+  "Day 0, 17:01 \u2014 object_7 at receptacle_12 (Baseline evening return; establishes commute end)",
+  "Day 2, 11:34 \u2014 object_18 at receptacle_14 (Midday home activity; contradicts fixed office presence)",
+  "Day 3, 09:04 \u2014 object_5 at receptacle_10 (No morning departure; object_5 likely work item at desk/entry)",
+  "Day 4, 08:50 \u2014 object_17 at receptacle_10 (Morning departure resumes; contradicts continuous WFH)",
+  "Day 4, 18:30 \u2014 object_17 at receptacle_11 (Evening return; 1.5h later than baseline, suggests WFH carryover or traffic)",
+  "Day 5, 07:39 \u2014 object_17 at receptacle_11 (No morning departure; confirms weekend rest pattern)",
+  "Day 6, 09:18 \u2014 object_5 at receptacle_10 (No morning departure; confirms weekend rest pattern continues)",
+  "Day 7, 07:23 \u2014 object_17 at receptacle_11 (Late departure; supports flexible/WFH Monday hypothesis)",
+  "Day 8, 08:49 \u2014 object_5 at receptacle_10 (No morning departure; confirms Tuesday is also a WFH day)",
+  "Day 9, 06:53 \u2014 object_17 at receptacle_8 (No morning departure; confirms Wednesday is WFH day)",
+  "Day 9, 17:55 \u2014 object_11 at receptacle_8 (Evening home activity; consistent with WFH evening routine)"
+ ],
+ "notes": "Day 9 (Wednesday) confirms the 'no departure' pattern. The resident appears to WFH on Mon/Tue/Wed (Days 7, 8, and 9). Days 0, 1, 4 were office days. The weekly pattern seems to be: Office (Mon? No, Day 0 was Mon, Day 7 was Mon... wait. Day 0=Mon, Day 1=Tue, Day 2=Wed, Day 3=Thu, Day 4=Fri, Day 5=Sat, Day 6=Sun, Day 7=Mon, Day 8=Tue, Day 9=Wed. \n\nCorrection on days: \nDay 0 (Mon): Office (08:41 exit)\nDay 1 (Tue): Office (08:49 exit)\nDay 2 (Wed): WFH (No exit)\nDay 3 (Thu): WFH (No exit)\nDay 4 (Fri): Office (08:50 exit)\nDay 5 (Sat): Off\nDay 6 (Sun): Off\nDay 7 (Mon): WFH (No exit)\nDay 8 (Tue): WFH (No exit)\nDay 9 (Wed): WFH (No exit)\n\nThis is inconsistent. \nWeek 1: Mon/Tue Office, Wed/Thu WFH, Fri Office.\nWeek 2: Mon/Tue/Wed WFH.\n\nHypothesis: The resident has a hybrid schedule that shifted or is variable. Or perhaps Day 0-1 were a specific project deadline? \nLet's re-evaluate. \nIf Day 0=Mon, Day 7=Mon. \nWeek 1: Mon(Off), Tue(Off), Wed(WFH), Thu(WFH), Fri(Off). \nWeek 2: Mon(WFH), Tue(WFH), Wed(WFH). \n\nThis suggests the WFH days are expanding or the office days are shrinking. Or perhaps the resident works from home Mon-Wed and goes to office Thu-Fri? \nWeek 1: Mon(Off), Tue(Off), Wed(WFH), Thu(WFH), Fri(Off). This doesn't fit Mon-Wed WFH. \nWeek 1: Mon(Off), Tue(Off), Wed(WFH), Thu(WFH), Fri(Off). \nWeek 2: Mon(WFH), Tue(WFH), Wed(WFH). \n\nMaybe the resident works from home Wed-Fri? \nWeek 1: Wed(WFH), Thu(WFH), Fri(Off). No. \n\nMaybe the resident works from home Tue-Thu? \nWeek 1: Tue(Off), Wed(WFH), Thu(WFH). No. \n\nLet's look at the office days: Mon, Tue, Fri. \nLet's look at the WFH days: Wed, Thu, Mon, Tue, Wed. \n\nThis is messy. \nWeek 1: Office Mon, Tue, Fri. WFH Wed, Thu. \nWeek 2: WFH Mon, Tue, Wed. \n\nHypothesis: The resident's schedule is changing, or I am misinterpreting 'object_17 at receptacle_10' on Day 0 vs Day 7. \nDay 0: object_17 at receptacle_10 (Exit). \nDay 7: object_17 at receptacle_11 (Exit? No, Day 7 note says 'Late departure; supports flexible/WFH Monday hypothesis'. Wait, if object_17 is at receptacle_11, is that exit? \nDay 0: object_17 at receptacle_10 (Exit). \nDay 4: object_17 at receptacle_10 (Exit). \nDay 7: object_17 at receptacle_11. \nDay 8: object_5 at receptacle_10. \nDay 9: object_17 at receptacle_8. \n\nIf receptacle_10 is 'Entry/Exit' and receptacle_11 is 'Kitchen' and receptacle_8 is 'Kitchen'. \nDay 0: object_17 (Bag?) at Entry (Exit). \nDay 4: object_17 at Entry (Exit). \nDay 7: object_17 at Kitchen (No Exit). \nDay 8: object_5 at Entry (No Exit). \nDay 9: object_17 at Kitchen (No Exit). \n\nSo: \nWeek 1: \nMon (Day 0): Exit. \nTue (Day 1): Exit. \nWed (Day 2): No Exit. \nThu (Day 3): No Exit. \nFri (Day 4): Exit. \n\nWeek 2: \nMon (Day 7): No Exit. \nTue (Day 8): No Exit. \nWed (Day 9): No Exit. \n\nThis suggests the resident is shifting to more WFH days. Or perhaps the 'Office' days are Mon/Tue/Fri in Week 1, but Mon/Tue/Wed in Week 2? \n\nNew Hypothesis: The resident is transitioning to a fully remote role, or has a variable schedule based on meetings. \n\nI will update the hypothesis to reflect this shift."
+}

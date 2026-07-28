@@ -1,0 +1,25 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) A person who works from home or has a flexible schedule, with a consistent morning routine on weekdays and a relaxed weekend schedule. — Daytime events on weekdays (Monday, Wednesday, Thursday, Friday) indicate presence during work hours. Weekend events (Saturday, Sunday) show a later start (first event at 07:19 on Saturday, 12:52 on Sunday) and evening activity, consistent with a flexible schedule. The early morning on Friday (07:22, 07:57) suggests a weekday routine, while Saturday's first event at 07:19 is similar but followed by a midday event, indicating a less structured day. Sunday's first event at 12:52 further supports a relaxed weekend pattern.
+2. (p=0.05) A person with a regular 9-to-5 job who is home in the evenings and on weekends. — Evening events on Tuesday, Wednesday, Thursday, and Friday are after typical work hours. Weekend events (Saturday 07:19, 12:37, 21:45, 22:13; Sunday 12:52, 13:27, 14:10, 18:15) could be weekend activities. However, the daytime events on Monday, Wednesday, Thursday, and Friday (especially early morning on Friday) contradict a strict 9-to-5 schedule, making this hypothesis less likely.
+
+## Selected evidence
+- Day 0, 09:10 — object_16 at receptacle_13 (first movement of the day, during typical work hours on a Monday, suggesting daytime presence)
+- Day 0, 13:17 — object_8 at receptacle_10 (second movement, also during work hours, reinforcing daytime presence)
+- Day 1, 19:20 — object_17 at receptacle_10 (evening movement on Tuesday, could be after work routine)
+- Day 1, 21:45 — object_8 at receptacle_6 (late evening movement, possibly part of nightly routine)
+- Day 2, 13:29 — object_8 at receptacle_10 (daytime movement on Wednesday, consistent with work-from-home or flexible schedule)
+- Day 2, 13:33 — object_14 at receptacle_12 (daytime movement on Wednesday, further evidence of daytime presence)
+- Day 2, 18:19 — object_8 at receptacle_12 (early evening movement on Wednesday, could be after work or part of evening routine)
+- Day 2, 21:43 — object_18 at receptacle_4 (late evening movement on Wednesday, possibly nightly routine)
+- Day 2, 21:45 — object_4 at receptacle_6 (late evening movement on Wednesday, same time as previous night, suggesting a consistent nightly routine)
+- Day 3, 09:18 — object_13 at receptacle_4 (daytime movement on Thursday, further evidence of daytime presence)
+- Day 3, 09:40 — object_9 and object_10 at elsewhere (two objects moved to elsewhere in the morning, possibly leaving the house, suggesting a morning routine)
+- Day 3, 19:13 — object_8 at receptacle_10 (evening movement on Thursday, consistent with evening routine)
+- Day 3, 22:04 — object_14 at receptacle_8 (late evening movement on Thursday, possibly part of nightly routine)
+- Day 4, 07:22 — object_3 at receptacle_12 (early morning movement on Friday, suggesting a morning routine before typical work hours)
+- Day 4, 07:57 — object_3 at receptacle_10 (second early morning movement, possibly preparing to leave or start work)
+
+## Notes
+Sunday events: 12:52 (object_17 at receptacle_12), 13:27 (object_17 at receptacle_10), 14:10 (object_22 at receptacle_1), 18:15 (object_8 at receptacle_12). The first event at 12:52 confirms a relaxed weekend pattern (no early morning activity). Object_8 reappears on Sunday (18:15), consistent with its frequent weekday appearances. Object_17 appears on Sunday (12:52, 13:27) and previously on Saturday (12:37) and Tuesday (19:20), suggesting it may be a weekend or evening item. Object_22 appears on Sunday (14:10) and Saturday (21:45), possibly a weekend item. Need to observe next Monday to see if weekday pattern repeats (early morning events, daytime presence). Also check if object_8 continues to appear on weekdays and if object_3 reappears on weekdays.

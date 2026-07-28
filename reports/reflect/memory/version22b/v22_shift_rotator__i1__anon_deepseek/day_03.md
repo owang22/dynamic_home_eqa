@@ -1,0 +1,11 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.50)  likely someone who cooks dinner around 7: dish from earlier in the day reappears at evening hours, suggesting meal preparation or cleanup cycle typical of someone who cooks at home rather than eats out every night. — Day 19:46 sees object_3 at receptacle_21:45 sees same at receptacle_5, indicating movement consistent with cooking/eating routine; lacks enough to distinguish weekday/weekend difference yet but plausible given timing aligns with typical dinner window.
+2. (p=0.00)  someone who也可能 has irregular or staggered schedule given sparse events overall but specifically noting that morning presence of object_5:27 suggests either someone who wakes early or leaves things overnight and clears later; insufficient to confirm either hypothesis yet but worth noting as potential indicator of either disciplined morning routine vs. accidental logging or someone who sleeps irregularly. — Actually discard this as too speculative given only one morning timestamp; replaced by below after considering clearer cooking-related evidence dominates today's observations.
+
+## Selected evidence
+- Day 19: — object_3 at receptacle_ likely indicates evening meal preparation or cleanup, suggesting someone who cooks at home rather than exclusively eats out or uses meal services, differentiating from households that rarely cook weekday dinners.
+
+## Notes
+Observations remain sparse but today's sequence involving object_3 moving between receptacles at typical dinner hour strengthens hypothesis of someone who cooks weekday dinners. Need more days to see if this repeats especially on weekends or mornings to refine persona further; also unclear what constitutes 'normal vs. unusual given limited baseline; continue monitoring especially for signs of occupation like laptop presence during typical working hours or consistent morning patterns beyond solitary timestamp seen today's morning outlier discarded as unreliable until corroborated by subsequent days' similar timing events.

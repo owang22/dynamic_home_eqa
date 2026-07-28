@@ -1,0 +1,19 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Standard 9-5 Office Worker — Weekday rigid departures (07:15-08:49) and weekend leisure presence (Sat 20:54, Sun 21:45) strongly support this. No contradictory evidence found.
+2. (p=0.01) Remote Worker with Flexible Schedule — Unlikely due to consistent morning departures on weekdays. Sunday evening activity is generic and does not distinguish from office worker leisure.
+3. (p=0.00) Night Shift Worker — Discarded. Consistent morning activity on weekdays and evening activity on weekends contradicts night shift patterns.
+
+## Selected evidence
+- Day 7, 07:15 — object_5 at receptacle_12 (Monday morning routine; confirms early weekday habit)
+- Day 9, 08:40 — object_18 at receptacle_5 (Mid-morning departure; aligns with 9-5 schedule)
+- Day 9, 18:41 — object_14 at receptacle_11 (Evening return; post-work)
+- Day 11, 08:49 — object_6 at receptacle_5 (Friday mid-morning departure; confirms consistent departure window)
+- Day 11, 22:55 — object_14 at receptacle_9 (Friday late return; suggests overtime or social event)
+- Day 12, 20:54 — object_14 at receptacle_11 (Saturday evening presence; consistent with weekend social/leisure activity)
+- Day 13, 07:51 — object_3 at receptacle_10 (Sunday morning routine; confirms resident is home on Sunday morning, consistent with weekend rest)
+- Day 13, 21:45 — object_3 at receptacle_6 (Sunday evening leisure; reinforces weekend leisure pattern, no work-related activity observed)
+
+## Notes
+Day 13 (Sunday) confirms the resident is home in the morning (07:51) and evening (21:45). This reinforces the 'weekend leisure' aspect of the 9-5 hypothesis. The object_3 appearing in both morning and evening receptacles suggests it is a personal item (e.g., phone, keys, or book) used throughout the day. No new hypotheses needed. Day 14 (Monday) will be critical to confirm the return to the rigid weekday departure pattern.

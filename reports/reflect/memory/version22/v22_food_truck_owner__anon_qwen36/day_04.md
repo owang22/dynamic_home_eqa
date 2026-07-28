@@ -1,0 +1,21 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Standard remote worker with early start and evening wind-down — Consistent morning activity (07:00-07:50) and late evening activity (20:38) at workspace/receptacle_4 strongly support a standard daily rhythm. The early start (07:00) is more disciplined than the previous 'irregular' assumption.
+2. (p=0.05) Night-shift worker with adjusted schedule — Effectively ruled out by consistent morning activity starting at 07:00 on Day 4. Probability reduced further as evidence accumulates.
+3. (p=0.05) Dual-income professional couple — Still unlikely due to lack of paired items or second-person indicators. The solitary nature of object movements persists.
+
+## Selected evidence
+- Day 0, 12:20 — object_12 at receptacle_4 (Midday work/study activity; distinguishes from early-riser routines)
+- Day 1, 20:26 — object_18 at receptacle_4 (Late evening object placement; reinforces evening presence)
+- Day 2, 20:22 — object_15 at receptacle_4 (Consistent late evening activity at desk/table; reinforces remote work pattern)
+- Day 3, 09:58 — object_12 at receptacle_12 (Morning activity at receptacle_12; contradicts night-shift hypothesis, supports standard/remote schedule)
+- Day 3, 20:10 — object_15 at receptacle_4 (Consistent late evening return to workspace; reinforces remote worker persona)
+- Day 4, 07:00 — object_3 at receptacle_4 (Early morning workspace activity; suggests disciplined start, possibly exercise or prep)
+- Day 4, 07:50 — object_12 at receptacle_4 (Morning workspace activity; reinforces consistent morning routine)
+- Day 4, 07:50 — object_17 at receptacle_4 (Morning workspace activity; reinforces consistent morning routine)
+- Day 4, 10:15 — object_17 at receptacle_8 (Mid-morning movement; suggests transition from morning routine to other tasks)
+- Day 4, 20:38 — object_14 at receptacle_13 (Late evening activity; consistent with evening wind-down pattern)
+
+## Notes
+Day 4 (Friday) shows a very early start (07:00), which is earlier than Day 3 (09:58). This suggests the 'irregular' aspect might be less about sleep cycles and more about variable start times, or perhaps Day 3 was a lighter day. The consistent late evening activity (20:10-20:38) remains a strong signal. Weekend days (5-6) will be critical to see if the early start persists or if the schedule shifts significantly. Object_17 moving from receptacle_4 to receptacle_8 at 10:15 is interesting; it might indicate a break or a different task. Need to verify if this pattern holds on weekends.

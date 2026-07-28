@@ -1,0 +1,23 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.96) Standard 9-5 Office Worker — Day 8 (Tuesday) shows a weekday wake-up at 08:17, consistent with the Day 0/7 pattern (~07:30-08:20). The midday activity (11:58) involves a non-work object, and the afternoon activity (13:18) is leisure/household, reinforcing the absence of remote work indicators during core hours. The distinct weekday/weekend wake-up split remains the strongest discriminator.
+2. (p=0.03) Remote Worker / Stay-at-Home — Still possible if the resident works from home but keeps all work objects hidden or in a separate room not monitored. However, the lack of any 'work' object movement during the day (unlike the clear 'return home' signal on Day 1) makes this increasingly unlikely compared to the 9-5 hypothesis.
+3. (p=0.01) Shift Worker / Night Owl — Contradicted by consistent early morning activity on Day 8 (08:17) and the clear weekday/weekend distinction in wake-up times. No evidence of night activity or late departures.
+
+## Selected evidence
+- Day 0, 07:37 — object_7 at receptacle_14 (Baseline weekday wake-up; anchors standard schedule)
+- Day 1, 17:12 — object_10 at receptacle_9 (Strong return-from-work signal; anchors daily cycle end)
+- Day 3, 08:29 — object_5 at receptacle_12 (Wake-up signal; consistent with 9-5 pattern)
+- Day 4, 06:53 — object_10 at receptacle_10 (Earlier wake-up; suggests variability but still morning-focused)
+- Day 5, 07:20 — object_10 at receptacle_9 (Weekend sleep-in; confirms non-workday status)
+- Day 5, 21:45 — object_19 at receptacle_5 (Consistent wind-down time; reinforces standard routine)
+- Day 6, 11:25 — object_1 at receptacle_6 (Midday leisure/chores; no work activity)
+- Day 6, 17:18 — object_8 at receptacle_13 (Evening activity; likely dinner prep or relaxation)
+- Day 7, 07:39 — object_10 at receptacle_9 (Return to weekday wake-up time; confirms weekly cycle restart)
+- Day 8, 08:17 — object_5 at receptacle_12 (Weekday wake-up; consistent with Day 0/3 pattern)
+- Day 8, 11:58 — object_14 at receptacle_14 (Midday non-work activity; reinforces absence of remote work)
+- Day 8, 13:18 — object_8 at receptacle_13 (Afternoon leisure/household; no work indicators)
+
+## Notes
+Day 8 confirms the weekly pattern: wake-up time is 08:17, slightly later than Day 0/7 but still within the weekday morning window. The midday and afternoon activities on Day 8 involve non-work objects, further weakening the remote worker hypothesis. The 'return home' signal on Day 1 (17:12) remains the key anchor for the end of the workday. Day 9 (Wednesday) should be monitored for consistency in the 17:00-18:00 return window and midday object types.

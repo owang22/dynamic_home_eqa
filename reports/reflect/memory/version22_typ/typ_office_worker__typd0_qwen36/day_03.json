@@ -1,0 +1,29 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Standard working professional with fixed commute",
+   "prob": 0.85,
+   "rationale": "Consistent morning departure (08:21) with work tools (laptop/phone) and evening return (keys at entry previously, phone at counter) strongly indicates a 9-5 job. Dinner stability (18:45) supports this rigid schedule."
+  },
+  {
+   "persona": "Remote worker with flexible hours",
+   "prob": 0.1,
+   "rationale": "Previously plausible due to laptop presence, but the consistent 08:21 departure with all devices suggests leaving the house entirely, making pure remote work unlikely unless hybrid."
+  },
+  {
+   "persona": "Shift worker or irregular schedule",
+   "prob": 0.05,
+   "rationale": "The stability of the 08:21 departure and 18:45 dinner across multiple days contradicts irregularity. This hypothesis is now very weak."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 07:26 \u2014 coffee_mug at sink_k1 (morning routine anchor)",
+  "Day 0, 18:45 \u2014 fork at table_d1 (dinner routine anchor)",
+  "Day 1, 18:45 \u2014 fork at table_d1 (confirms dinner consistency)",
+  "Day 2, 08:23 \u2014 laptop at elsewhere (departure for work)",
+  "Day 2, 17:53 \u2014 keys at entry_hook_e1 (return from work)",
+  "Day 3, 08:21 \u2014 laptop/phone/keys at elsewhere (consistent morning departure)",
+  "Day 3, 17:33 \u2014 phone at counter_k1 (evening arrival/home presence)"
+ ],
+ "notes": "The 08:21 departure is now confirmed for Day 2 and Day 3. The 17:33 phone arrival on Day 3 is slightly earlier than the 17:53 key arrival on Day 2, but both align with the ~18:45 dinner. The 'elsewhere' location for work items is consistent. Need to verify if the laptop returns to the home desk on weekends (Day 5-6) to further rule out remote work. Check if dinner time shifts on weekends."
+}

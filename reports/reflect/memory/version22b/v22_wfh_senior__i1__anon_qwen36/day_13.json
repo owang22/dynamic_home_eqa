@@ -1,0 +1,34 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Remote Worker with Sporadic Errands",
+   "prob": 0.9,
+   "rationale": "Sunday morning departure (D13) breaks the previous 'weekend stay' pattern, but the lack of a fixed office schedule remains the strongest signal. The probability increases as the 'Hybrid' hypothesis loses support due to the irregularity of departures (Mon/Tue/Wed/Fri/Sun all showing departures at different times)."
+  },
+  {
+   "persona": "Hybrid Office Worker (Variable Days)",
+   "prob": 0.07,
+   "rationale": "The Sunday departure is unusual for a standard Mon-Fri hybrid, but if the resident works irregular shifts or has weekend meetings, this could fit. However, the high frequency of departures across all days makes a standard hybrid schedule unlikely. Probability decreases slightly."
+  },
+  {
+   "persona": "Shift Worker (Evening/Night)",
+   "prob": 0.03,
+   "rationale": "The Sunday evening activity (18:55) is consistent with a shift worker's routine, but the morning kitchen activities on other days and the specific timing of departures (early morning) make this less likely than the remote worker hypothesis. Probability remains very low."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 09:00 \u2014 object_9 at receptacle_6 (Morning departure; establishes baseline 'away' event)",
+  "Day 2, 09:12 \u2014 object_12 at receptacle_6 (Morning departure; second 'away' event, suggests sporadic office/errands)",
+  "Day 4, 06:51 \u2014 object_3,4,11,15 at receptacle_12 (Kitchen prep; confirms home presence on a 'stay' day)",
+  "Day 6, 10:12 \u2014 object_12 at receptacle_3 (Work item at home desk; confirms remote work capability on Sunday)",
+  "Day 7, 07:00 \u2014 object_4 at receptacle_12 (Morning kitchen activity; confirms home presence on Monday, contradicting Day 0 pattern)",
+  "Day 8, 07:47 \u2014 object_4 at receptacle_6 (Morning departure; third 'away' event, suggests Tue is also an 'out' day)",
+  "Day 9, 14:17 \u2014 object_16 at receptacle_11 (Afternoon activity; confirms home presence on Wednesday, breaking the Mon/Tue/Wed departure cluster)",
+  "Day 10, 07:09 \u2014 object_15 at receptacle_12 (Morning kitchen activity; confirms home presence on Thursday, extending the 'Stay' streak)",
+  "Day 11, 07:04 \u2014 object_11 at receptacle_12 (Morning kitchen activity; confirms home presence on Friday morning before departure)",
+  "Day 11, 07:44 \u2014 object_15 at receptacle_6 (Morning departure; suggests Friday is an 'out' day, ending the Wed-Thu stay streak)",
+  "Day 12, 18:06 \u2014 object_8 at receptacle_12 (Evening kitchen activity; confirms home presence on Saturday, reinforcing weekend 'Stay' pattern)",
+  "Day 13, 07:39 \u2014 object_4 at receptacle_6 (Morning departure; breaks the 'weekend stay' pattern, suggests Sunday is also an 'out' day or errand day)"
+ ],
+ "notes": "Pattern update: Departures on Mon (D0), Wed (D2), Tue (D8), Fri (D11), Sun (D13). 'Stay' days: Sun (D6), Mon (D7), Wed (D9), Thu (D10), Sat (D12). The schedule appears highly variable with no clear 3-day office pattern. The 'Stay' streak (Wed-Thu) was broken by a departure on Friday, and Saturday showed a return to home presence. The Sunday departure (D13) is notable as it breaks the previous weekend 'Stay' pattern observed on D6 and D12. Key question: Will Day 14 (Mon) show a return to the 'Stay' pattern observed on D7? Need to observe Day 14 to see if the weekend pattern holds. The evening activity on Saturday (18:06) and Sunday (18:55) is notable as it differs from the morning-focused activities on other days, possibly indicating a different routine or activity type."
+}

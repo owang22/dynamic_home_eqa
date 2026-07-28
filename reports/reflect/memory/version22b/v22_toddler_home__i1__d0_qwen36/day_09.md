@@ -1,0 +1,26 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Stay-at-home parent with toddler — Routine remains strictly toddler-centric with no adult-specific objects (laptop, briefcase, adult mugs) appearing even on weekdays. The consistency of early morning feeding (06:38-06:53) and midday meals suggests a primary caregiver present all day.
+2. (p=0.04) Single parent with toddler — Still indistinguishable from Hypothesis 1. No evidence of a second adult, but no evidence excluding one either. Probability slightly decreased as the lack of any adult traces over 10 days makes a hidden second adult less likely.
+3. (p=0.01) Dual-income household with remote work/shift work — Previously 0.05. Now very low. If a working adult exists, they leave before 06:38 and return after 18:40, or use items not tracked. The complete absence of adult artifacts (coffee makers, work bags, adult plates) makes this highly improbable.
+
+## Selected evidence
+- Day 0, 08:41 — sippy_cup at play_mat_n1 (establishes morning toddler routine)
+- Day 2, 18:59 — board_book at crib_n1 (confirms bedtime/crib usage)
+- Day 3, 09:04 — board_book at play_mat_n1 (morning reading routine)
+- Day 4, 06:49 — bowl at high_chair_d1 (early morning feeding; confirms high chair usage)
+- Day 4, 08:50 — sippy_cup at play_mat_n1 (recurring morning play setup)
+- Day 5, 07:39 — sippy_cup at sink_k1 (weekend morning cleanup; routine persists on Sat)
+- Day 5, 12:32 — plate at sink_k1 (midday meal cleanup; likely toddler's lunch)
+- Day 5, 21:45 — bowl at cupboard_k1 (evening storage; confirms post-dinner routine)
+- Day 5, 21:45 — sippy_cup at cupboard_k1 (evening storage; confirms post-dinner routine)
+- Day 6, 09:18 — board_book at play_mat_n1 (Sunday morning reading; confirms weekend routine)
+- Day 6, 11:48 — sippy_cup at high_chair_d1 (Sunday midday feeding; reinforces toddler-centric routine)
+- Day 6, 15:13 — ball at play_mat_n1 (afternoon play; typical toddler activity)
+- Day 6, 16:43 — stacking_rings at toy_corner_l1 (toy storage; confirms play area usage)
+- Day 7, 06:38 — sippy_cup at high_chair_d1 (Monday morning feeding; confirms routine continuity)
+- Day 9, 17:55 — fork at high_chair_d1 (evening feeding; confirms dinner routine at high chair)
+
+## Notes
+Day 9 (Wednesday) confirms the routine holds through the week. The 'fork at high_chair' at 17:55 suggests dinner is served at the high chair, consistent with the toddler-centric model. No adult items observed. The probability of 'Stay-at-home parent' has increased to 0.95. Key open question: Is there a second adult who leaves before 06:38? Need to monitor for any adult-sized dishes or work-related objects in the evening hours.

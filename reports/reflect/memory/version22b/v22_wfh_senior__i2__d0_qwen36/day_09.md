@@ -1,0 +1,16 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.92) Standard working adult with strict weekday/weekend split — The 06:50 newspaper is a strong discriminator for a traditional morning routine, reinforcing the 'Standard Working Adult' profile. The 08:47 phone at the desk (Day 8) and 06:58 glasses (Day 8) remain consistent. The 10:42 and 15:51 phone movements at the coffee table suggest leisure or break times, fitting a structured day with distinct work/leisure boundaries.
+2. (p=0.05) Remote worker with home-office flexibility — The lack of a laptop observed so far keeps this low. However, the phone moving to the coffee table at 10:42 and 15:51 could imply a more fluid, less rigid office setup than a strict commute-based worker. The newspaper might be read at home rather than on a commute.
+3. (p=0.03) Retiree or non-working resident — The 06:50 newspaper is common for retirees, but the specific 08:47 desk engagement on Day 8 was less typical. The rigid timing of the newspaper (06:50) and previous desk usage still leans away from a purely leisurely routine. Probability remains low but non-zero due to the newspaper.
+
+## Selected evidence
+- Day 8, 06:58 — reading_glasses at table_d1 (early morning routine, consistent with weekday start)
+- Day 8, 08:47 — phone at desk_o1 (suggests work-related activity or morning check-in, distinguishing from pure leisure)
+- Day 9, 06:50 — newspaper at table_d1 (strong discriminator for traditional morning routine, reinforces 'Standard Working Adult' or 'Retiree' but combined with Day 8 desk usage, favors worker)
+- Day 9, 10:42 — phone at coffee_table_l1 (mid-morning leisure/break, consistent with workday rhythm)
+- Day 9, 15:51 — phone at coffee_table_l1 (afternoon leisure, consistent with post-work or break time)
+
+## Notes
+The newspaper at 06:50 on Day 9 strongly supports the 'Standard Working Adult' hypothesis, as it suggests a structured morning before work. The phone's presence at the coffee table at 10:42 and 15:51 indicates leisure periods, likely during work breaks or after work. The absence of a laptop remains notable; the phone at the desk on Day 8 might be for communication rather than deep work. Need to observe if the phone returns to the desk later in the day on weekdays, and if any other work-related objects (e.g., documents, laptop) appear. The 13:51 remote at the sofa on Day 9 is mundane and discarded.

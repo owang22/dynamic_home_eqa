@@ -1,0 +1,18 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.65) Single professional working regular office hours — The midday activity (object_18 at receptacle_11 at 11:49) followed by another object movement at 13:17 suggests a lunch break or midday work interruption. The evening activity at 18:53 and 21:14 aligns with returning from work and evening routine. The pattern is consistent with someone who is out during typical work hours but has some flexibility.
+2. (p=0.25) Student with irregular schedule — The midday activity could align with a student's schedule, though the relatively consistent timing (11:49, 13:17) suggests more structure than a typical student might have. The evening pattern is similar to the previous day, indicating some routine.
+3. (p=0.10) Remote worker with flexible hours — The presence of object_18 at receptacle_11 at 11:49 could indicate midday work activity, but the lack of consistent daytime activity makes this less likely. The evening pattern is similar to the previous day, but doesn't strongly support remote work.
+
+## Selected evidence
+- Day 1, 15:45 — object_13 at receptacle_11 (suggests activity in mid-afternoon)
+- Day 1, 21:18 — object_17 at receptacle_4 (evening activity, possibly winding down day)
+- Day 2, 11:49 — object_18 at receptacle_11 (midday activity, possibly lunch break)
+- Day 2, 13:17 — object_13 at receptacle_12 (continuation of midday activity)
+- Day 2, 18:53 — object_9 at receptacle_9 (evening activity, possibly returning from work)
+- Day 2, 21:14 — object_17 at receptacle_4 (consistent evening routine)
+- Day 2, 21:45 — object_9 at receptacle_6 (evening activity, possibly preparing for bed)
+
+## Notes
+The pattern emerging shows midday activity around 11:49-13:17 on both days, followed by evening activity around 18:53-21:45. The consistent timing of object_17 at receptacle_4 around 21:14-21:18 suggests a regular evening routine. Need to observe more days to confirm if this pattern continues, especially on weekends. Should look for differences between weekdays and weekends to better understand the resident's schedule.

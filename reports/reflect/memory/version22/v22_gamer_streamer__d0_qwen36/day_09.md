@@ -1,0 +1,26 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard working adult with WFH/flexible schedule — Day 9 (Wednesday) shows no morning departure, reinforcing the pattern from Days 7-8. The consistent late-night activity (01:18-01:23) and midday/afternoon leisure suggest a non-traditional but stable routine, likely involving evening focus or night-owl habits within a standard work framework.
+2. (p=0.03) Night-shift worker or late-night screener — The persistent late-night activity (headset/energy can) could indicate a shifted circadian rhythm. However, the lack of any morning departure on three consecutive weekdays (Tue-Thu) makes a standard night-shift start (which usually implies a late morning/afternoon wake-up and departure) less likely than a flexible WFH schedule.
+3. (p=0.02) Student with irregular schedule — Late-night activity and midday leisure are consistent with student life. However, the specific 'work-like' late-night desk presence and the consistency of meal times make this less likely than the WFH hypothesis. Kept as a low-probability outlier.
+
+## Selected evidence
+- Day 9, 01:23 — headset at shelf_o1 (late-night activity, consistent with Day 7/8 pattern, suggests work/study/leisure)
+- Day 9, 11:27 — plate at sink_k1 (midday meal cleanup, no keys/phone absence confirms staying home)
+- Day 9, 18:50 — fork at table_d1 (evening meal setup, consistent with standard dinner time)
+- Day 9, 21:45 — coffee_mug at cupboard_k1 (post-evening meal cleanup, suggests winding down)
+- Day 8, 01:18 — headset at shelf_o1 (late-night activity, consistent with Day 7 pattern)
+- Day 8, 21:29 — phone at desk_o1 (evening work/study session, consistent with WFH or late-night routine)
+- Day 8, 19:54 — plate at sink_k1 (evening meal cleanup, no keys/phone absence confirms staying home)
+- Day 8, 15:25 — remote at coffee_table_l1 (afternoon leisure, consistent with weekend-like pattern on a weekday)
+- Day 8, 12:55 — blanket at sofa_l1 (daytime leisure, consistent with Day 6 pattern, suggests staying home during the day)
+- Day 8, 10:57 — plate at table_d1 (midday meal, consistent with non-standard meal times or late breakfast/early lunch)
+- Day 7, 01:18 — headset at shelf_o1 (late-night activity, reinforces late-night pattern from Day 4 energy can)
+- Day 7, 21:29 — phone at desk_o1 (evening work/study session, consistent with WFH or late-night routine)
+- Day 7, 19:54 — plate at sink_k1 (evening meal cleanup, consistent with standard dinner time, no keys/phone absence confirms staying home)
+- Day 2, 12:46 — keys at elsewhere (confirms midday absence, consistent with commuting to work/school)
+- Day 2, 17:49 — phone at counter_k1 (return home, likely after work/school commute)
+
+## Notes
+Day 9 (Wednesday) confirms the resident stayed home (no keys/phone absence in the morning), reinforcing the WFH/flexible schedule hypothesis. The late-night headset (01:23) and phone at desk (21:29) suggest evening work or deep focus. The 01:18-01:23 timing on Days 4, 7, 8, and 9 is a strong pattern for late-night activity. The midday leisure (blanket/remote) on Days 6 (Saturday) and 8 (Tuesday) suggests a flexible schedule where the resident may not follow a strict 9-5 routine. Need to verify if the resident leaves the house on Day 10 (Thursday) to confirm the WFH pattern or if it's a one-off. The 'standard working adult' hypothesis is now dominant due to the lack of morning departure on three consecutive weekdays.

@@ -1,0 +1,15 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.65) Single professional working from home occasionally — The early morning activity (07:14) on both days suggests a regular work routine. The fact that objects are moved to 'elsewhere' rather than specific locations could indicate preparation for the day ahead.
+2. (p=0.25) Retired or unemployed person with minimal activity — Still limited observations, but the early timing could be consistent with someone with a flexible schedule.
+3. (p=0.10) Student with irregular schedule — The consistent early morning activity makes this less likely, as students typically have more varied schedules.
+
+## Selected evidence
+- Day 0, 09:18 — object_4 at receptacle_8 (early morning activity suggests regular routine)
+- Day 0, 18:46 — object_8 at receptacle_13 (evening activity indicates return to home)
+- Day 1, 07:14 — object_13 seen at elsewhere (early morning activity on consecutive days suggests consistent routine)
+- Day 1, 07:14 — object_18 seen at elsewhere (multiple objects moved simultaneously suggests preparation for day)
+
+## Notes
+Consistent early morning activity on both days (Day 0 at 09:18, Day 1 at 07:14) suggests a regular routine. The movement of objects to 'elsewhere' rather than specific locations is notable. Need to observe if this pattern continues and if there's weekend variation. Still need to identify specific objects to better understand their significance.

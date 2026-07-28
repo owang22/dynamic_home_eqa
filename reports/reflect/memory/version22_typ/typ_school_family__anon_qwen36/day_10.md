@@ -1,0 +1,23 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.96) Two-Person Household (Dual Commuters, WFH Friday) — Day 10 confirms Resident A's consistent morning departure (06:50) and Resident B's evening presence (18:01). The rigid Mon-Thu commute pattern + Friday WFH remains the strongest fit. Object_13 at receptacle_11 (B's zone) on Thursday evening reinforces B's return routine.
+2. (p=0.03) Single Resident with Errands + Guest/Partner — Still possible if the 'guest' is a partner who works from home on Fridays and commutes Mon-Thu. However, the distinct separation of departure objects and specific timing of evening returns makes a single resident less likely. Probability decreases slightly as the pattern holds.
+3. (p=0.01) Shift Worker (Single) — Remains low probability. The rigid Monday-Thursday commute pattern with Friday WFH is atypical for a single shift worker, who would likely have more irregular or overlapping schedules. The consistency of the pattern further contradicts this hypothesis.
+
+## Selected evidence
+- Day 10, 06:50 — object_4 at receptacle_11 (Resident A morning departure, confirms Thursday routine matches Mon-Wed)
+- Day 10, 18:01 — object_13 at receptacle_11 (Resident B evening return, confirms B's presence and routine)
+- Day 9, 08:11 — object_11 at elsewhere (Resident A morning departure, confirms Wednesday routine matches Mon/Tue)
+- Day 9, 18:34 — object_13 at receptacle_9 (Resident B evening return, confirms B's presence and routine)
+- Day 8, 08:09 — object_9 at elsewhere (Resident A morning departure, confirms Tuesday routine matches Mon/Wed)
+- Day 8, 16:01 — object_9 at receptacle_7 (Resident A afternoon return, confirms midday presence/WFH or early finish)
+- Day 7, 07:00 — object_3 at receptacle_11 (Resident A morning departure, confirms Monday routine)
+- Day 7, 19:30 — object_11 at receptacle_10 (Resident B evening return, confirms B's presence and routine)
+- Day 4, 08:09 — object_9 at elsewhere (Resident A leaves, B stays home/WFH, key discriminator)
+- Day 5, 06:54 — object_3 at receptacle_11 (Weekend morning activity, Resident A home)
+- Day 6, 07:34 — object_3 at receptacle_9 (Sunday morning activity, Resident A home)
+- Day 6, 18:52 — object_13 at receptacle_9 (Sunday evening return, Resident A home)
+
+## Notes
+Day 10 (Thursday) confirms Resident A's morning departure at 06:50 (slightly earlier than Mon-Wed ~08:00, but consistent with early start). Object_4 is now seen departing with A, whereas it was previously seen with B or elsewhere. This suggests Object_4 might be a shared item (e.g., bag) or A's item that B used previously. Object_13 at receptacle_11 on Thursday evening reinforces B's return routine. Need to verify if Object_4 is consistently A's item now. Day 11 (Friday) should confirm if Object_4 departs with A again and if A stays home (WFH).

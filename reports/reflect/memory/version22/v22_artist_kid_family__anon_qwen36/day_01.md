@@ -1,0 +1,15 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.65) Standard working professional with a flexible or remote schedule, owning a pet or plant (object_17). — Consistent morning departure (08:40) and evening return (18:18-18:37) strongly support a standard work routine. Object_17 placement remains a key identifier for household composition.
+2. (p=0.20) Night shift worker or non-traditional schedule individual. — Evening activity at 21:45 (object_10) is late but not exclusive to night shifts. The morning departure makes this less likely than the standard professional hypothesis, but the late evening object movement keeps it plausible.
+3. (p=0.15) Student or retiree with irregular daily patterns. — The rigid 08:40 departure contradicts 'irregular' patterns. This hypothesis is weakening as evidence points to a structured schedule.
+
+## Selected evidence
+- Day 0, 08:40 — object_1 at elsewhere (indicates departure from home, likely for work/school)
+- Day 0, 18:18 — object_17 at receptacle_7 (indicates return and specific placement, possibly a pet item or plant care)
+- Day 1, 18:37 — object_11 at receptacle_9 (indicates return/home presence, consistent with evening routine)
+- Day 1, 21:45 — object_10 at receptacle_8 (indicates late evening activity, suggests resident is home and active post-work)
+
+## Notes
+Object_11 and object_10 need identification. If object_11 is a work bag/laptop, it reinforces the professional hypothesis. If object_10 is a gaming console or book, it suggests leisure habits. Verify if object_1 is absent on weekends (Day 5-6). Check if 18:37 is a consistent return time or an outlier.

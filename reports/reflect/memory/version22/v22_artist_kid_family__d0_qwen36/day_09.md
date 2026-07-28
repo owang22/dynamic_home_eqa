@@ -1,0 +1,18 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Standard Office Worker with Creative Hobby — Wednesday morning tablet use (06:57) mirrors Monday's pattern, reinforcing the pre-work routine. The paint smock appearing at the craft shelf at 18:03 suggests the hobbyist returned home and stored equipment, consistent with a structured weekday-evening wind-down after office work. No evidence contradicts the rigid commute pattern.
+2. (p=0.01) Freelancer / Work-from-Home — Still unlikely. The consistent weekday departure (backpack) and lack of sustained home-office activity (laptop at desk) during the day contradict WFH. The paint smock appearing only in the evening could imply work-from-home creative tasks, but the morning tablet at the dining table (not a home office) and lack of daytime laptop usage make this less probable than the office worker hypothesis.
+3. (p=0.00) Student — Removed. The rigid 08:40 weekday departure and lack of academic materials (books, laptops in study areas) are inconsistent with student patterns. The creative hobby is more consistent with an adult hobbyist. No new evidence supports this hypothesis.
+
+## Selected evidence
+- Day 9, 06:57 — tablet at table_d1 (Discriminative: Reinforces Monday's morning routine pattern; suggests pre-work leisure/news, not work)
+- Day 9, 18:03 — paint_smock at craft_shelf_s1 (Discriminative: Evening storage of hobby equipment; suggests structured hobbyist routine post-work)
+- Day 8, 08:40 — backpack at elsewhere (Discriminative: Confirms return to rigid weekday commute pattern; strongly supports Office Worker over WFH)
+- Day 7, 06:53 — tablet at table_d1 (Discriminative: Morning routine on Monday; suggests pre-work leisure/news, not work)
+- Day 6, 10:20 — tablet at craft_desk_s1 (Critical: Confirms creative hobby activity on weekends; distinguishes from pure leisure)
+- Day 6, 18:28 — keys at entry_hook_e1 (Indicates return from outing; suggests weekend social/errand activity)
+- Day 0-4, various — rigid weekday departure/return pattern (Establishes baseline office worker routine)
+
+## Notes
+The paint smock appearing at the craft shelf on Wednesday evening is interesting. It suggests the hobbyist may have used the smock during the weekend (Day 6) and stored it, or perhaps used it on Wednesday evening. However, given the smock was at the craft desk on Saturday, it's more likely it was stored after weekend use. The tablet at the sofa at 18:03 on Wednesday suggests evening leisure, consistent with post-work relaxation. Need to verify if the paint smock appears during the day on weekdays, which would support the WFH hypothesis.

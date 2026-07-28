@@ -1,0 +1,16 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Field/Office Hybrid Worker (Early Start) — Strong evidence of early morning departure (04:59-05:14) with field gear (hi-vis, keys, badge). The 15:05 badge event on Day 2 suggests a mid-day break or administrative check-in, consistent with a split shift or long day involving both site and office components.
+2. (p=0.10) Construction/Logistics Supervisor — The combination of hi-vis vest and work badge, plus the late return on Day 3, fits a supervisory role with irregular hours. However, the precise 04:59 start time is less typical for pure logistics drivers who might have more variable starts, and the badge presence at home suggests a specific administrative requirement.
+3. (p=0.05) Utility Worker with On-Call Duties — The late return on Day 3 could be an emergency call, but the consistent early start on Day 4 and the specific badge retrieval suggest a scheduled routine rather than purely on-call unpredictability. Low probability due to the regularity of the morning departure.
+
+## Selected evidence
+- Day 4, 04:59 — work_badge at entry_hook_e1 (confirms early morning work prep; discriminates against standard 9-5 office worker)
+- Day 4, 05:14 — hi_vis_vest at elsewhere (confirms field work attire is taken out early; supports hybrid/field persona)
+- Day 4, 05:14 — keys at elsewhere (confirms departure for work; consistent with early start)
+- Day 2, 15:05 — work_badge at entry_hook_e1 (indicates home presence during day; suggests split shift or mid-day admin task)
+- Day 3, 23:02 — hi_vis_vest at locker_shelf_e1 (strong discriminator: indicates field/site work, not standard office)
+
+## Notes
+The 04:59 badge and 05:14 vest/keys departure on Day 4 strongly confirms the early start routine. The hi-vis vest is now consistently associated with the morning departure, not just the late return. The 15:05 badge event on Day 2 remains a key discriminator for the 'hybrid' nature of the work. Need to observe if the hi-vis vest is still out or moved on Day 5 (Saturday) to confirm if the weekend is off or if there are weekend shifts. The fork at sink on Day 4 is mundane and discarded.

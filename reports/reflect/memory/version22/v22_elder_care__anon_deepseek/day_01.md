@@ -1,0 +1,15 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.50) A single person with a flexible schedule, possibly working from home or a student, as the events are sparse and include a personal item (object_16) appearing at different times (morning and late evening) and a work/leisure item (object_13) in the afternoon, with no family or pet indicators. — The two days show object_16 at 07:38 and 21:45, suggesting it is a personal item (e.g., keys, bag) that moves with the person. Object_13 at 14:18 and object_11 at 18:10 could be work or leisure items. The lack of multiple residents or pets persists.
+2. (p=0.30) A person with a standard 9-to-5 job who is home in the early morning and returns in the afternoon/evening, as object_16 appears at 07:38 (likely departure) and 21:45 (likely return), and object_13 at 14:18 (lunch break) and object_11 at 18:10 (after work). — The timing of object_16 (morning and late evening) fits a work commute. The afternoon events (14:18 and 18:10) could be lunch and after-work activities. However, the 21:45 return is late for a typical 9-to-5, suggesting possible overtime or evening activities.
+3. (p=0.20) A student or part-time worker with irregular hours, as the events are few and at non-standard times (07:38, 14:18, 18:10, 21:45) without a clear pattern. — The varied times could indicate a student with classes or a part-time worker with shifting shifts. The sparse data still supports this, but the 21:45 event is more consistent with a student's late study or social time.
+
+## Selected evidence
+- Day 0, 07:38 — object_16 at receptacle_14 (personal item like keys/bag, likely morning departure)
+- Day 0, 14:18 — object_13 at receptacle_13 (work/leisure item, possibly lunch or break)
+- Day 1, 18:10 — object_11 at receptacle_14 (evening event, could be after-work or leisure item)
+- Day 1, 21:45 — object_16 at receptacle_6 (late evening return of personal item, suggests late activity)
+
+## Notes
+Need to verify if object_16 is consistently a personal item (keys/bag) and if object_13 and object_11 are work or leisure items. Day 2 (Wednesday) will help confirm if the 07:38 and 21:45 pattern repeats. Also check if any weekend events differ.

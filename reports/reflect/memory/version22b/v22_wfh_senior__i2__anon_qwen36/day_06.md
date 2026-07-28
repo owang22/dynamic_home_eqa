@@ -1,0 +1,15 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Standard 9-5 Office Worker — Saturday start time shifted to 07:44 (later than Friday's 06:57), consistent with weekend leisure. Object_12 usage remains consistent with personal/leisure activity rather than strict work hours. Night Shift hypothesis is effectively discarded.
+2. (p=0.08) Retiree / Stay-at-Home — The later Saturday start (07:44) and lack of visible 'work' objects (like a laptop at a desk during day hours) leave room for a structured retiree. However, the rigid morning routine and specific object movements still lean slightly more towards a working professional with a flexible schedule.
+3. (p=0.02) Night Shift Worker — Highly unlikely. Waking at 07:44 on a Sunday contradicts any plausible night shift schedule. Probability retained only as a minimal baseline for error or extreme schedule irregularity.
+
+## Selected evidence
+- Day 6, 07:44 — object_3 at receptacle_10 (Weekend morning start; 47 mins later than Saturday, confirming relaxed weekend routine vs rigid weekday)
+- Day 6, 09:21 — object_12 at receptacle_6 (Morning object movement; object_12 used early, possibly for planning or leisure, not work)
+- Day 6, 10:21 — object_12 at receptacle_3 (Mid-morning movement; reinforces object_12 as a frequent personal item, not tied to 9-5 work hours)
+- Day 6, 13:52 — object_12 at receptacle_11 (Afternoon movement; object_12 persists through the day, suggesting it's a personal accessory or hobby item)
+
+## Notes
+Day 6 (Sunday) shows a later start (07:44) compared to Saturday (06:57), further weakening the 'rigid routine' aspect of the Office Worker hypothesis, or suggesting a very relaxed weekend. Object_12 is the most frequent object, appearing 3 times today. It was used late at night on Day 5, now in the morning/afternoon on Day 6. This suggests it is a personal item (e.g., e-reader, tablet, journal) rather than a work tool. Need to observe if Day 7 (Monday) reverts to the 06:57 start time to confirm the weekday/weekend split.

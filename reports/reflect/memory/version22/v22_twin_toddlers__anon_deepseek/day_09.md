@@ -1,0 +1,26 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A single professional who works from home or has a flexible schedule, with evening relaxation activities. — The weekday pattern (08:40 morning, 11:36 midday, 12:21 early afternoon) is consistent with a work-from-home routine. The 08:40 event matches previous weekday mornings (08:43), and the midday events (11:36, 12:21) suggest a lunch break or flexible schedule. The 21:45 wind-down remains strong on weekdays and Saturday, but Sunday's absence is now confirmed as a weekly pattern. The 19:41 event (object_3 at receptacle_15) may be a dinner or leisure activity, fitting a structured evening.
+2. (p=0.07) A retiree or someone with a relaxed daily routine, with evening activities. — The weekend pattern (Saturday: 07:14, 12:38, 21:45; Sunday: 08:59, 11:39, 13:13, 17:47) still fits a relaxed schedule. However, the consistent weekday 08:40 and midday events suggest a work-like structure, making this less likely. The absence of the 21:45 wind-down on Sunday is now a consistent weekly feature, which could indicate a different weekend activity (e.g., early bedtime or social outing).
+3. (p=0.03) A student with classes and evening study or social activities. — The weekday pattern (08:40, 11:36, 12:21) could be a student's schedule, but the lack of late-night events (e.g., after 23:00) and the consistent 21:45 wind-down make this less probable. No evidence of study materials or social gatherings. The 19:41 event might be a meal, but not distinctive enough.
+
+## Selected evidence
+- Day 0, 08:54 — object_12 at receptacle_4 (mid-morning start, suggests routine)
+- Day 1, 21:38 — object_15 at receptacle_6 (late evening, possibly winding down)
+- Day 2, 13:11 — object_5 at receptacle_12 (midday event, suggests flexible schedule or break)
+- Day 2, 17:54 — object_6 at receptacle_7 (late afternoon, consistent with end of work)
+- Day 2, 21:45 — object_14 at receptacle_6 (late evening, consistent wind-down)
+- Day 3, 08:43 — object_5 and object_16 at receptacle_10 (morning routine, possibly preparing for day)
+- Day 3, 17:40 — object_14 at receptacle_14 (late afternoon, consistent with end of work)
+- Day 3, 21:45 — object_16 at receptacle_6 (late evening, consistent wind-down)
+- Day 4, 06:26 — object_4 at receptacle_14 (early morning event, possibly exercise or early start)
+- Day 4, 08:43 — object_12 at receptacle_4 (morning routine, repeats from day 3)
+- Day 5, 07:14 — object_4 at receptacle_11 (weekend morning, later than weekday 06:26)
+- Day 5, 12:38 — object_16 at receptacle_11 (weekend midday activity)
+- Day 5, 21:45 — object_4 and object_16 at receptacle_6 (weekend evening wind-down, same time as weekday)
+- Day 6, 08:59 — object_12 at receptacle_4 (Sunday morning, later than weekday 08:43, consistent with weekend)
+- Day 7, 07:05 — object_4 at receptacle_11 (Monday morning, earlier than previous weekdays, possibly weekly variation)
+
+## Notes
+The 21:45 wind-down is now confirmed as a weekday and Saturday pattern, but absent on Sunday (day 6). The early Monday event (07:05) is earlier than previous weekdays (08:43), suggesting a possible weekly variation (e.g., exercise class or early meeting). The 19:41 event (object_3 at receptacle_15) on Monday may be a dinner or leisure activity. Need to see if the 07:05 event repeats on future Mondays or if it's a one-off. The 'elsewhere' receptacle appeared only once; may be a one-off. Object types remain generic; specific objects would help identify activities. Sunday's pattern (later morning, midday events, no 21:45) is now consistent across one week; need to verify if it repeats. Today (day 9, Wednesday) events: 06:36 object_16 at receptacle_14 (early morning, similar to day 4's 06:26, possibly exercise or early start), 12:26 object_10 at receptacle_11 (midday event, consistent with lunch break), 17:49 object_11 at receptacle_8 (late afternoon, consistent with end of work), 18:34 object_10 at receptacle_11 (early evening, possibly dinner preparation or leisure). This reinforces the weekday routine with a midday break and early morning variation.

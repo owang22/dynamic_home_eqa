@@ -1,0 +1,10 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+(none yet)
+
+## Selected evidence
+(none yet)
+
+## Notes
+Still insufficiently differentiated to assign meaningful probabilities; need more days especially weekday vs. weekend to see if rhythms shift or remain constant; unclear whether midday presence earlier was anomaly or norm; awaiting clearer markers like consistent time slots for certain IDs repeatedly appearing/disappearing or signs of absence during typical office hours conversely signs of someone who sleeps in or stays late etcetera; also unclear what distinguishes these particular IDs since lacks labels beyond IDs; meanwhile keeping minimal avoiding clutter with generic events such as dishes in evening etcetera; today's few scattered events across different IDs and receptacles don't yet reveal a clear pattern but noting them for future reference especially noting whether tomorrow Sunday yields similar timings or differs markedly from weekday rhythms; also noting absence of previously seen IDs today which could indicate they belong to weekday-only contexts but too soon to tell; overall still awaiting emergence of recognizable distinguishing features before committing to any hypothesis let alone assigning probabilities hence keeping hypotheses empty for now but acknowledging that eventually must choose among plausible alternatives such as someone who works from vs. vs shift vs retiree vs etcetera currently indistinguishable due lack of enough days especially lack of consecutive days showing repeating cycles beyond mere presence absence etcetera; meanwhile keeping minimal selected evidence avoiding clutter with events that any would such as dishes in evening etcetera today's few scattered across different IDs don't warrant inclusion unless they start showing regularity distinguishing them from generic hence暫將其視為潛在而非決定性的觀察結果保留筆錄暫不將其選為證據以免造成不必要的噪音总之仍需更多天数才能做出任何可靠的假设目前仍保持空白。

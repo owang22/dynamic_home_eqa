@@ -1,0 +1,25 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.97) Remote worker with flexible/weekend-late routine — Day 12 (Saturday) shows late-night kitchen activity (21:45) with no departure objects. The consistent absence of commute items and presence of work-related objects (phone at desk) on weekdays strongly supports this. The late Saturday activity aligns with a 'weekend-late' or relaxed weekend profile.
+2. (p=0.02) Standard working adult with irregular/late evenings — Still possible if they leave before 07:22, but the consistent midday kitchen activity and morning desk usage make this increasingly unlikely. Requires evidence of early departure to gain probability.
+3. (p=0.01) Night shift worker — Consistent morning (07:15-07:24) and evening (18:21-19:05) meal times across all observed days make this highly improbable. Retained only as a low-probability outlier.
+
+## Selected evidence
+- Day 12, 21:45 — coffee_mug at cupboard_k1 (late weekend kitchen activity; suggests relaxed evening routine, no departure objects)
+- Day 11, 09:02 — phone at desk_o1 (morning desk usage; discriminates remote worker from commuter who would be away)
+- Day 11, 07:22 — coffee_mug at table_d1 (morning routine; no departure objects, reinforcing remote work)
+- Day 11, 12:17 — coffee_mug at sink_k1 (midday kitchen activity; recurring pattern suggests lunch prep/cleanup at home)
+- Day 10, 19:05 — plate at sink_k1 (dinner cleanup; slightly later than previous days but consistent with evening home routine)
+- Day 10, 07:19 — coffee_mug at table_d1 (morning routine; no departure objects, reinforcing remote work)
+- Day 9, 18:21 — fork at table_d1 (consistent dinner time ~18:20-18:40, stable across all observed days)
+- Day 9, 12:12 — coffee_mug at sink_k1 (midday kitchen activity; recurring pattern suggests lunch prep/cleanup at home)
+- Day 8, 18:36 — fork at table_d1 (consistent dinner time, part of stable evening pattern)
+- Day 8, 12:12 — coffee_mug at sink_k1 (midday kitchen activity; now confirmed as recurring pattern, not outlier)
+- Day 7, 07:15 — bowl at table_d1 (early weekday breakfast; confirms morning routine)
+- Day 6, 18:38 — plate at table_d1 (consistent dinner time on weekend)
+- Day 6, 07:45 — bowl at sink_k1 (weekend breakfast cleanup; later than weekday, supports flexible routine)
+- Day 5, 23:05 — phone at nightstand_r1 (late-night device usage; suggests relaxed weekend routine)
+
+## Notes
+Day 12 (Saturday) confirms late-night activity (21:45) with a coffee mug, reinforcing the 'relaxed weekend' aspect of the remote worker hypothesis. The dinner time drift observed in weekdays (18:21 -> 18:36 -> 19:05) has not been observed on weekends yet, but the late Saturday activity suggests weekends are less structured. No commute objects observed in 12 days. The phone at the desk on Day 11 remains a strong discriminator for remote work. Need to verify if the late Saturday activity is a one-off or a pattern.

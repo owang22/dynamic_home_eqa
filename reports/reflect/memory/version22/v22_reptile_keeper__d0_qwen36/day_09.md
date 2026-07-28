@@ -1,0 +1,19 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.96) Single professional with dedicated insect hobby (crickets) — The cricket tub appeared on Day 8 (Tuesday) and the hobby routine (scissors) persisted on Day 9 (Wednesday). The consistent morning coffee routine and lack of keys on Mon/Tue/Wed mornings strongly suggest a standard work week where keys are taken *after* the morning routine or the observation window misses the departure. The 'remote worker' hypothesis is weakened by the rigid, early morning hobby routine which is less common for pure remote workers who might have more fluid start times, though still possible. The 'shared household' hypothesis remains unsupported.
+2. (p=0.03) Remote worker with irregular schedule — Still possible if the person works from home but maintains a strict hobby routine. However, the absence of keys in the morning for three consecutive days (Mon-Wed) is more consistent with leaving for work *after* the 08:00 observation window than with a purely remote lifestyle where keys might be less relevant or left out. The probability decreases slightly as the pattern holds.
+3. (p=0.01) Shared household with multiple residents — No evidence of multiple residents. All events are consistent with a single occupant's routine. No additional objects or conflicting timings suggest another person.
+
+## Selected evidence
+- Day 0, 08:03 — scissors at terrarium_stand_s1 (establishes morning hobbyist routine)
+- Day 3, 18:25 — keys at entry_hook_e1 (strong indicator of standard workday return)
+- Day 4, 07:55 — calcium_powder at terrarium_stand_s1 (confirms specialized insect feeding routine)
+- Day 5, 07:28 — coffee_mug at table_d1 (weekend morning routine, no keys = staying home)
+- Day 6, 08:01 — scissors at terrarium_stand_s1 (weekend hobby routine, slightly later than weekdays)
+- Day 7, 07:15 — coffee_mug at table_d1 (Monday morning routine, no keys observed = potential remote work or day off)
+- Day 8, 07:52 — cricket_tub at terrarium_stand_s1 (confirms hobby routine continues on Tuesday, no keys observed yet in morning)
+- Day 9, 08:40 — scissors at cricket_shelf_s1 (hobby routine persists on Wednesday, object moved to shelf suggests organization or different tool usage)
+
+## Notes
+Day 9 (Wednesday) shows the hobby routine continuing with scissors at the cricket shelf at 08:40. No keys were observed in the morning, reinforcing the pattern of Mon-Wed mornings having no keys. This could mean the person leaves after 08:40, or the keys are not placed on the hook in the morning. The evening events (phone at sofa, plate at table) are mundane. Need to observe Day 9 evening for keys to confirm if the 'no keys in morning' pattern holds for the work week. The 'Single Professional' hypothesis remains dominant. The move of scissors to 'cricket_shelf_s1' instead of 'terrarium_stand_s1' might indicate a change in hobby activity or organization, but not necessarily a change in persona.

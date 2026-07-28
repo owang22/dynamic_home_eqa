@@ -1,0 +1,16 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Standard 9-5 Office Worker — Day 10 (Thursday) shows evening return activity (18:37, 19:22) consistent with a post-work routine. The lack of daytime events on Day 9 and Day 10 reinforces the 'away during work hours' model. Probability increased due to consistent commute-like departure on Day 8 and evening presence on Day 10.
+2. (p=0.01) Hybrid Worker (Office + Remote) — Still possible if remote days are rare or unobserved. However, the complete silence on Day 9 (Wednesday) and lack of daytime object movement on Day 10 (Thursday) before 18:37 makes this less likely than pure office work. No evidence of remote work setup usage.
+3. (p=0.01) Remote Worker with Errands — Contradicted by the rapid departure on Day 8 and the absence of sustained daytime presence or errand-related object movements on Day 10. The evening activity is too late for typical errand-running patterns if the person was home all day.
+
+## Selected evidence
+- Day 8, 06:23 — object_13 at receptacle_3 (Early morning kitchen activity; suggests a structured routine before departure, typical of office workers preparing for the day.)
+- Day 8, 07:35 — object_9 at elsewhere (Departure with bag/work item; strong indicator of leaving the house for work.)
+- Day 8, 07:35 — object_11 at elsewhere (Departure with keys/companion item; confirms the resident is leaving the premises.)
+- Day 10, 18:37 — object_10 at receptacle_3 (Evening kitchen activity; suggests return from work and preparation for dinner/evening routine.)
+- Day 10, 19:22 — object_16 at receptacle_11 (Late evening activity; possibly settling in for the night, consistent with a post-work schedule.)
+
+## Notes
+Day 9 (Wednesday) had no events, consistent with being at work. Day 10 (Thursday) shows evening return, confirming the resident is home in the evenings. Need to observe Day 11 (Friday) to see if the evening pattern holds and if there are any differences (e.g., earlier return). Also need to observe Day 12 (Saturday) and Day 13 (Sunday) to check for weekend routines, which might differ significantly (e.g., later wake times, different object usage).

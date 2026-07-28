@@ -1,0 +1,20 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Weekday-Only Sourdough Baker with Early Morning Routine — The consistent 04:50-05:10 activity window on Days 0, 3, 4, 5, 6, 7, 11, and now 13 (Sunday) strongly indicates a disciplined routine. The absence of this activity on Day 12 (Saturday) suggests the routine is tied to the work week (Mon-Fri) or specific baking cycles that skip Saturdays, rather than being strictly 'weekend-only' or 'variable'. The Sunday activity confirms the pattern resumes on non-Saturday days.
+2. (p=0.15) Remote Worker with Flexible Weekend Schedule — The break in routine on Saturday (Day 12) could indicate a resident who works from home and chooses to sleep in or take a break on Saturdays, while maintaining a strict schedule on Sundays and weekdays. However, the high specificity of the baking tools and times makes a dedicated hobbyist more likely than a general remote worker.
+3. (p=0.00) Shift Worker with Irregular Baking — Discarded. The recurrence of the 04:50-05:10 window on 8 out of 13 days, including two Sundays (Day 6, Day 13), contradicts an irregular shift pattern. The only outlier was Saturday, which is a single day, not a pattern of variability.
+
+## Selected evidence
+- Day 0, 17:13 — starter_jar at counter_k1 (key discriminator: suggests baking hobby, specifically sourdough)
+- Day 3, 05:06 — water_bottle at counter_k1 (early morning routine, possibly pre-workout or hydration before work; suggests disciplined start)
+- Day 4, 04:50 — proofing_basket at counter_k1 (critical evidence: confirms active sourdough baking process, not just storage)
+- Day 5, 04:52 — phone at counter_k1 (confirms continued early morning routine on Saturday; likely checking time/alarms for baking)
+- Day 6, 08:03 — starter_jar at fridge_k1 (confirms weekly feeding cycle: fed Friday, stored overnight, used Sunday morning)
+- Day 7, 05:08 — dough_scraper at counter_k1 (confirms continued early morning routine on Monday; likely prep or cleanup)
+- Day 11, 05:05 — flour_bin_scoop at counter_k1 (confirms persistent early morning baking routine on Friday; reinforces 04:50-05:05 window)
+- Day 12, 19:05 — plate at sink_k1 (mundane: confirms evening meal cleanup, but no diagnostic value for routine)
+- Day 13, 05:00 — water_bottle at counter_k1 (reinforces early morning routine on Sunday; pattern holds despite Saturday break)
+
+## Notes
+The pattern of early morning activity (04:50-05:10) is now confirmed on 8 days: Mon(0), Wed(3), Thu(4), Sat(5), Sun(6), Mon(7), Fri(11), Sun(13). The only day without this activity was Saturday (Day 12). This suggests the resident bakes on most days except Saturdays, or perhaps the Saturday break was an anomaly. The Sunday activity on Day 13 is crucial as it shows the routine is not strictly 'weekday-only' but rather 'weekend-flexible' or 'Saturday-off'. Need to observe Day 14 (Monday) to see if the routine continues and if any new patterns emerge regarding the Saturday break.

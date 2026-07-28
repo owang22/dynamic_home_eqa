@@ -1,0 +1,14 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Remote Worker with Weekend Leisure — Day 8 (Tuesday) shows object movement at 11:43 (midday), consistent with a flexible work schedule or lunch break. The 08:49 event is late for a strict 9-5 commute but fits a remote worker starting later or finishing morning tasks. The pattern remains consistent with previous days.
+2. (p=0.05) Stay-at-Home Parent / Caregiver — Still possible if object_14 (seen at receptacle_8 at 11:43) is a child's item (e.g., school bag returned from school/daycare). However, the lack of consistent morning childcare cues (like early drop-offs) keeps this probability low. The 15:22 event could be post-school pickup, but without more evidence, it's ambiguous.
+3. (p=0.00) Night Shift Worker — Contradicted by Day 8 activity at 08:49 and 11:43. A night shift worker would typically be sleeping or inactive during these hours unless working a second job, which is less parsimonious.
+
+## Selected evidence
+- Day 8, 08:49 — object_7 at receptacle_10 (Late morning start; if object_7 is a work item, suggests flexible remote work schedule.)
+- Day 8, 11:43 — object_14 at receptacle_8 (Midday activity; if object_14 is a bag, could indicate a break or return from an outing. If it's a child's item, suggests school/daycare schedule.)
+- Day 8, 15:22 — object_17 at receptacle_10 (Afternoon activity; consistent with post-lunch work or leisure. If object_17 is a work item, reinforces remote worker profile.)
+
+## Notes
+Day 8 (Tuesday) continues the pattern of midday and afternoon activity. Object_14's movement at 11:43 is key: if it's a child's item, it supports the 'Stay-at-Home Parent' hypothesis slightly more, but the timing is late for a typical school drop-off. Object_7 at 08:49 is later than the 06:43 start on Day 7, suggesting variability in the morning routine. Need to identify object_14 and object_17 to better discriminate between work and childcare activities. The 'Remote Worker' hypothesis remains strong due to the consistency of midday/afternoon object movements.

@@ -1,0 +1,21 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Single professional working from home occasionally — Early morning weekday pattern continues with weekend sleep-in pattern confirmed. Sunday activity (18:17, 19:02, 19:14, 21:45) is later than weekday times but similar to Saturday, supporting weekend relaxation pattern. Object_7 appears again in evening, consistent with professional routine.
+2. (p=0.04) Student with irregular schedule — Sunday timing could fit student pattern, but consistent weekday early rising and weekend sleep-in pattern strongly suggests professional routine.
+3. (p=0.01) Fitness enthusiast with morning routine — No specific fitness equipment observed. Weekend timing doesn't suggest morning exercise routine.
+
+## Selected evidence
+- Day 0, 05:24 — object_11 seen at elsewhere (early morning activity suggests resident is an early riser)
+- Day 2, 05:07 — object_17 seen at elsewhere (consistent early rising pattern emerging)
+- Day 3, 23:02 — object_8, object_9, and object_17 seen at receptacles (late night activity, possibly working from home today)
+- Day 4, 04:59 — object_11 and object_17 seen at receptacle_7 (continuing early morning pattern, object_17 appears again)
+- Day 4, 18:58 — object_7 seen at receptacle_11 (earlier evening activity than previous days, possibly leaving work early on Friday)
+- Day 5, 12:44 — object_11 seen at receptacle_12 (later timing on Saturday suggests weekend sleep-in pattern)
+- Day 5, 19:05 — object_7 seen at receptacle_11 (evening activity on Saturday, consistent with weekend routine)
+- Day 6, 18:17 — object_13 seen at receptacle_13 (Sunday evening activity, confirming weekend pattern)
+- Day 6, 19:02 — object_7 seen at receptacle_11 (object_7 appears again in evening, consistent with professional routine)
+- Day 6, 21:45 — object_7 seen at receptacle_5 (late evening activity on Sunday, similar to Saturday)
+
+## Notes
+Weekend pattern confirmed: Saturday and Sunday both show later activity (12:44, 18:17, 19:02 vs weekday 05:xx), suggesting resident sleeps in on weekends, supporting professional routine hypothesis. Object_7 appears consistently in evening across days, suggesting it's part of regular routine. Need to observe Monday (day 7) to see if weekday early rising pattern resumes and confirm weekly cycle.

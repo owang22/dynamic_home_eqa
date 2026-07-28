@@ -1,0 +1,21 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard 9-5 Office Worker — Weekend morning activity (12:44) is significantly later than weekday mornings (08:51-09:21), confirming a sleep-in pattern typical of non-shift workers. Evening leisure activity (21:45) is consistent with free time. No evidence of remote work setup or shift patterns.
+2. (p=0.03) Remote Worker / Freelancer — While remote workers also sleep in on weekends, the strict weekday morning departure at ~09:00 and lack of any midday object movement (e.g., laptop usage) during weekdays makes this unlikely. The weekend data does not contradict this, but doesn't support it over the 9-5 hypothesis.
+3. (p=0.02) Shift Worker (Evening/Night) — Contradicted by the 12:44 Saturday midday activity. A night shift worker would likely be sleeping or preparing for work at this time, not engaging with objects in the living area. The weekday return times (18:30-19:30) are also too early for a standard night shift start.
+
+## Selected evidence
+- Day 0, 19:19 — object_15 at receptacle_11 (Evening arrival; consistent with post-work routine)
+- Day 1, 18:46 — object_15 at receptacle_13 (Consistent evening arrival on Tuesday)
+- Day 2, 09:21 — object_5 at receptacle_11 (Morning activity; suggests start of day, possibly commute prep)
+- Day 2, 18:59 — object_10 at receptacle_13 (Evening arrival; consistent with 9-5 return time)
+- Day 3, 08:51 — object_5 at receptacle_13 (Morning activity; earlier than Day 2, suggests commute prep or early start)
+- Day 3, 18:32 — object_15 at receptacle_13 (Evening arrival; consistent with 9-5 return time)
+- Day 4, 08:54 — object_5 at receptacle_13 (Morning activity; consistent with previous days, reinforces morning routine)
+- Day 4, 19:26 — object_10 at receptacle_11 (Evening arrival; consistent with 9-5 return time, slight variation in receptacle)
+- Day 5, 12:44 — object_15 at receptacle_13 (Weekend midday activity; confirms sleep-in pattern, distinguishing from shift work or strict remote work schedules)
+- Day 5, 21:45 — object_4 at receptacle_5 (Weekend evening leisure; consistent with free time, no work-related objects observed)
+
+## Notes
+Object_5 is almost certainly a commute item (keys/wallet/bag) given its consistent morning appearance. Object_15 appears both in the evening (arrival) and midday Saturday, suggesting it might be a bag or item carried throughout the day, or the resident is moving it for leisure. Object_4 is new, appearing late Saturday evening, likely a leisure item (e.g., book, controller, snack). The distinction between 9-5 and remote work is now strongly in favor of 9-5 due to the lack of midday weekday activity and the clear weekend sleep-in pattern. Need to observe Day 6 (Sunday) to confirm if the late morning/afternoon pattern persists.

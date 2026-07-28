@@ -1,0 +1,15 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.70) Remote worker with flexible hours — Laptop at kitchen shelf at 22:52 strongly suggests work or leisure computing in the evening, contradicting the 'standard office worker' who would likely be away or in a dedicated home office earlier. The apron usage at 10:26 and 20:22 suggests cooking/baking habits common in home-centric routines.
+2. (p=0.20) Night owl / Shift worker — Late-night activity (laptop at 22:52, salsa at 21:45) persists. However, the morning apron usage (10:26) makes a pure night-shift worker less likely than a flexible remote worker who stays up late.
+3. (p=0.10) Standard working adult with evening meal routine — Still possible if the laptop is for personal use, but the lack of a dedicated office setup and the late-night kitchen activity make this less probable than the remote worker hypothesis.
+
+## Selected evidence
+- Day 2, 10:26 — prep_apron at elsewhere (indicates morning cooking/baking activity; suggests a home-centric routine rather than commuting)
+- Day 2, 20:22 — prep_apron at counter_k1 (repeated apron usage suggests frequent home cooking; distinguishes from takeout-heavy households)
+- Day 2, 22:52 — laptop at kitchen_shelf_k1 (strong indicator of evening computing; supports remote worker or night owl over standard office worker)
+- Day 2, 21:45 — salsa_container at fridge_k1 (late-night snack preparation; reinforces late-evening activity pattern)
+
+## Notes
+The apron usage on Day 2 (morning and evening) is a strong signal of home cooking. The laptop appearing in the kitchen late at night is the key discriminator against the 'standard office worker' hypothesis. Need to observe Day 3 (Thursday) to see if the laptop appears at a dedicated desk or remains in the kitchen, and if morning activity shifts. Weekend patterns (Days 5-6) will be critical for confirming the 'remote' aspect.

@@ -1,0 +1,25 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single professional who works from home or has a flexible schedule, with evening relaxation activities. — The weekday pattern (08:43 morning, 17:41 afternoon, 21:45 evening) remains strong. The early Friday event (06:26) may be a weekly variation. Saturday shows a later morning start (07:14) and midday activity (12:38), consistent with a weekend routine. The 21:45 wind-down persists on Saturday, reinforcing a structured evening.
+2. (p=0.15) A retiree or someone with a relaxed daily routine, with evening activities. — The Saturday events (07:14, 12:38, 21:45) could fit a relaxed weekend schedule. However, the consistent weekday 08:43 and 17:41 events still suggest a work-like structure, keeping this less likely.
+3. (p=0.05) A student with classes and evening study or social activities. — The Saturday pattern (07:14, 12:38, 21:45) could be a student's weekend, but the lack of late-night events and the consistent weekday 21:45 wind-down make this less probable. No evidence of study materials or social gatherings.
+
+## Selected evidence
+- Day 0, 08:54 — object_12 at receptacle_4 (mid-morning start, suggests routine)
+- Day 0, 17:16 — object_16 at elsewhere (late afternoon transition, possibly end of work)
+- Day 1, 21:38 — object_15 at receptacle_6 (late evening, possibly winding down)
+- Day 2, 13:11 — object_5 at receptacle_12 (midday event, suggests flexible schedule or break)
+- Day 2, 17:54 — object_6 at receptacle_7 (late afternoon, consistent with end of work)
+- Day 2, 21:45 — object_14 at receptacle_6 (late evening, consistent wind-down)
+- Day 3, 08:43 — object_5 and object_16 at receptacle_10 (morning routine, possibly preparing for day)
+- Day 3, 17:40 — object_14 at receptacle_14 (late afternoon, consistent with end of work)
+- Day 3, 21:45 — object_16 at receptacle_6 (late evening, consistent wind-down)
+- Day 4, 06:26 — object_4 at receptacle_14 (early morning event, possibly exercise or early start)
+- Day 4, 08:43 — object_12 at receptacle_4 (morning routine, repeats from day 3)
+- Day 5, 07:14 — object_4 at receptacle_11 (weekend morning, later than weekday 06:26)
+- Day 5, 12:38 — object_16 at receptacle_11 (weekend midday activity)
+- Day 5, 21:45 — object_4 and object_16 at receptacle_6 (weekend evening wind-down, same time as weekday)
+
+## Notes
+Weekend pattern (Saturday) now observed: later morning (07:14 vs 06:26 on Friday), midday activity (12:38), and same 21:45 wind-down. Need to see Sunday (day 6) to confirm weekend routine. The early Friday event (06:26) may be a weekly occurrence (e.g., exercise class) or a one-off. Object types remain generic; specific objects would help identify activities. The 'elsewhere' receptacle appeared only once; may be a one-off.

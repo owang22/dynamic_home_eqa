@@ -1,0 +1,32 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Hybrid Office Worker (4-day WFH, Fri Office)",
+   "prob": 0.95,
+   "rationale": "The consistent Mon-Thu absence of departure objects and Friday departure remains the strongest signal. Saturday activity is consistent with weekend leisure or chores, not contradicting the work pattern."
+  },
+  {
+   "persona": "Remote Worker with Variable Office Days",
+   "prob": 0.04,
+   "rationale": "Still possible if 'office days' are strictly Friday, but the rigidity of the 4-day home block makes this less likely than a fixed schedule."
+  },
+  {
+   "persona": "Standard 9-5 Office Worker (Extended Leave)",
+   "prob": 0.01,
+   "rationale": "Contradicted by Friday departure. No evidence of leave."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:41 \u2014 object_17 at receptacle_10 (Baseline office departure; establishes commute start)",
+  "Day 0, 17:01 \u2014 object_7 at receptacle_12 (Baseline evening return; establishes commute end)",
+  "Day 4, 08:50 \u2014 object_17 at receptacle_10 (Last observed office departure in Week 1; contradicts continuous WFH)",
+  "Day 7, 07:23 \u2014 object_17 at receptacle_8 (No morning departure; confirms Monday is WFH)",
+  "Day 8, 08:49 \u2014 object_5 at receptacle_10 (No morning departure; confirms Tuesday is WFH)",
+  "Day 9, 06:53 \u2014 object_17 at receptacle_8 (No morning departure; confirms Wednesday is WFH)",
+  "Day 10, 07:29 \u2014 object_17 at receptacle_11 (No morning departure; confirms Thursday is WFH)",
+  "Day 11, 11:44 \u2014 object_17 at receptacle_11 (Friday office departure; confirms Mon-Thu WFH, Fri Office pattern)",
+  "Day 11, 09:14 \u2014 object_1 at receptacle_10 (Morning activity at home desk; supports WFH morning routine before late commute)",
+  "Day 12, 18:46 \u2014 object_5 at receptacle_5 (Saturday evening activity; likely leisure/chores, confirms weekend presence)"
+ ],
+ "notes": "Saturday (Day 12) shows object_5 at receptacle_5 in the evening. This is a weekend event, so it doesn't help discriminate work patterns but confirms the resident is home on weekends. The Friday departure time shift (08:41 -> 11:44) is still unexplained; need to check if this is a one-off or a new trend in Week 3. Object_5 appears in multiple contexts (Tuesday WFH, Saturday evening); need to clarify if it's a bag, laptop, or generic item. If it's a bag, its presence on Saturday evening might indicate packing/unpacking or just casual use."
+}

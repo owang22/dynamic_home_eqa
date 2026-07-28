@@ -1,0 +1,20 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard 9-5 Office Worker — The rigid 06:50-07:07 morning start and 17:58 evening return on Day 10 strongly indicate a standard work schedule. Day 12 (Saturday) shows no morning activity, consistent with a weekend sleep-in or leisure day. The 18:44 event on Saturday is likely a leisure activity (e.g., cooking, cleaning, or preparing for Sunday), not a work-related return, as it is too late for a typical 9-5 return and fits weekend evening routines.
+2. (p=0.03) Night Shift Worker — Contradicted by the consistent early morning activity (06:50-07:07) on weekdays. No evidence of daytime sleep or night-time work patterns. The Saturday 18:44 event does not support a night shift pattern.
+3. (p=0.02) Retiree / Stay-at-Home — Unlikely due to the rigid, early, and consistent weekday start times and specific work-related object movements during core business hours. The lack of morning activity on Saturday is consistent with a retiree, but the weekday rigidity is not.
+
+## Selected evidence
+- Day 11, 07:07 — object_11 at receptacle_12 (Morning routine; consistent with previous days, reinforcing rigid schedule)
+- Day 10, 17:58 — object_8 at receptacle_12 (Evening return; object_8 likely a bag/coat, confirming end of workday around 18:00)
+- Day 10, 06:58 — object_15 at receptacle_12 (Morning routine; consistent with previous days, reinforcing rigid schedule)
+- Day 9, 06:50 — object_11 at receptacle_12 (Morning routine; earlier start than previous days, reinforcing rigid schedule)
+- Day 9, 13:51 — object_16 at receptacle_11 (Midday work activity; new object at home desk, consistent with remote work or home office usage)
+- Day 8, 13:43 — object_12 at receptacle_11 (Midday work activity; confirms receptacle_11 is a work zone)
+- Day 8, 06:58 — object_15 at receptacle_12 (Morning routine; object_15 likely a bag/tablet used for departure)
+- Day 7, 07:07 — object_3 at receptacle_12 (Weekday start; confirms rigid routine vs weekend)
+- Day 12, 18:44 — object_8 at receptacle_10 (Weekend evening activity; object_8 previously seen at work return, now at receptacle_10, likely leisure or household task)
+
+## Notes
+Day 12 (Saturday) shows no morning activity, which is consistent with a weekend sleep-in for a 9-5 worker. The 18:44 event with object_8 at receptacle_10 is likely a weekend evening activity. Object_8 was previously seen at the work return (receptacle_12) on Day 10, so its presence at receptacle_10 on Saturday suggests it is a versatile item (e.g., a bag or coat) used for both work and leisure. Need to verify if object_8 is consistently used for work returns and if receptacle_10 is a leisure or household zone. The late evening activity on Day 11 (21:48) remains an outlier; need to see if it recurs on other weekends.

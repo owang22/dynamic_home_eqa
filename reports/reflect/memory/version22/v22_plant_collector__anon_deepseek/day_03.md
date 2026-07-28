@@ -1,0 +1,23 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) A person who works from home or has a flexible schedule, as objects are moved during typical work hours on Monday, Wednesday, and Thursday, and also in the evening on Tuesday, Wednesday, and Thursday, suggesting they are home at various times. — Day 0 events at 09:10 and 13:17 on Monday, Day 2 events at 13:29 and 13:33 on Wednesday, and Day 3 events at 09:18 and 09:40 on Thursday indicate daytime presence. Evening events on Tuesday (19:20, 21:45), Wednesday (18:19, 21:43, 21:45), and Thursday (19:13, 22:04) are consistent with a flexible schedule or work-from-home routine. The consistent daytime presence across multiple weekdays strongly supports this hypothesis.
+2. (p=0.10) A person with a regular 9-to-5 job who is home in the evenings, as the Tuesday, Wednesday, and Thursday events occur after typical work hours. — The Tuesday events at 19:20 and 21:45, Wednesday events at 18:19, 21:43, 21:45, and Thursday events at 19:13 and 22:04 are after standard work hours. However, the Monday and Wednesday and Thursday daytime events contradict this, so this hypothesis is less likely and retained only as a minor possibility.
+
+## Selected evidence
+- Day 0, 09:10 — object_16 at receptacle_13 (first movement of the day, during typical work hours on a Monday, suggesting daytime presence)
+- Day 0, 13:17 — object_8 at receptacle_10 (second movement, also during work hours, reinforcing daytime presence)
+- Day 1, 19:20 — object_17 at receptacle_10 (evening movement on Tuesday, could be after work routine)
+- Day 1, 21:45 — object_8 at receptacle_6 (late evening movement, possibly part of nightly routine)
+- Day 2, 13:29 — object_8 at receptacle_10 (daytime movement on Wednesday, consistent with work-from-home or flexible schedule)
+- Day 2, 13:33 — object_14 at receptacle_12 (daytime movement on Wednesday, further evidence of daytime presence)
+- Day 2, 18:19 — object_8 at receptacle_12 (early evening movement on Wednesday, could be after work or part of evening routine)
+- Day 2, 21:43 — object_18 at receptacle_4 (late evening movement on Wednesday, possibly nightly routine)
+- Day 2, 21:45 — object_4 at receptacle_6 (late evening movement on Wednesday, same time as previous night, suggesting a consistent nightly routine)
+- Day 3, 09:18 — object_13 at receptacle_4 (daytime movement on Thursday, further evidence of daytime presence)
+- Day 3, 09:40 — object_9 and object_10 at elsewhere (two objects moved to elsewhere in the morning, possibly leaving the house, suggesting a morning routine)
+- Day 3, 19:13 — object_8 at receptacle_10 (evening movement on Thursday, consistent with evening routine)
+- Day 3, 22:04 — object_14 at receptacle_8 (late evening movement on Thursday, possibly part of nightly routine)
+
+## Notes
+Four days observed (Monday, Tuesday, Wednesday, Thursday). Object_8 appears frequently (Day 0, 1, 2, 3) and moves between receptacles 10, 6, 12, 10 again, suggesting it might be a portable item like a laptop or tablet. Object_14 appears on Day 2 and Day 3, possibly a book or device. The morning movement of object_9 and object_10 to 'elsewhere' on Thursday might indicate they are taken out of the house (e.g., keys, wallet, or bag). Need to see Friday and weekend patterns to confirm work-from-home hypothesis. Day-of-week patterns to verify: check if daytime events occur on Friday, and if weekend events differ (e.g., later mornings or different objects).

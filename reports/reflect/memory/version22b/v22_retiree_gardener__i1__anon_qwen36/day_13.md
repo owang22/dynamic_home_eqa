@@ -1,0 +1,24 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Hybrid Office Worker (Mon/Thu/Fri commute, Tue/Wed remote) — Day 13 (Sun) shows no morning departure, consistent with weekend. Object_13 (laptop) at receptacle_12 (likely entry/commute spot) in evening suggests return from a short outing or simply being present, but critically, the absence of a 07:00 departure reinforces the non-commute weekend pattern. The strong distinction between commute days (Mon/Thu/Fri) and remote days (Tue/Wed) remains the dominant signal.
+2. (p=0.02) Standard 9-5 Commuter (Daily commute) — Still contradicted by the clear 3-day commute / 2-day remote split observed in Days 4-11. Day 13 shows no morning departure, which is inconsistent with a 'daily' commute unless the person is on leave, but the specific hybrid pattern is too strong to ignore. Probability remains low.
+3. (p=0.00) Night Shift Worker — Discarded. Consistent morning departures and evening shutdowns contradict night shift patterns.
+
+## Selected evidence
+- Day 4, 07:04 — object_14 at receptacle_12 (Morning departure prep; consistent with Monday pattern)
+- Day 4, 16:10 — object_14 at receptacle_11 (Afternoon return; object_14 likely work bag)
+- Day 7, 07:02 — object_4 at receptacle_12 (Morning departure; confirms commute routine on Monday)
+- Day 7, 17:57 — object_13 at receptacle_12 (Evening return; laptop brought home, confirming end of workday)
+- Day 7, 21:45 — object_3 at receptacle_5 (Evening shutdown; consistent across all observed days)
+- Day 8, 07:30 — object_3 at receptacle_10 (Morning home desk activity; suggests remote work start)
+- Day 8, 10:46 — object_4 at receptacle_10 (Keys/bag at home desk; supports hybrid/remote)
+- Day 9, 11:19 — object_4 at receptacle_10 (Keys/bag at home desk; reinforces remote work pattern for Wed)
+- Day 10, 07:08 — object_10 at receptacle_12 (Morning departure; confirms commute routine on Thursday)
+- Day 11, 06:58 — object_4 at receptacle_12 (Morning departure; confirms commute routine on Friday)
+- Day 11, 21:45 — object_13 at receptacle_5 (Evening shutdown; consistent across all observed days)
+- Day 12, 18:43 — object_8 at receptacle_10 (Weekend leisure/personal item at home desk; confirms no commute on Sat)
+- Day 13, 18:08 — object_13 at receptacle_12 (Evening return; laptop at entry/commute spot, consistent with weekend presence/no commute)
+
+## Notes
+Day 13 (Sun) confirmed no morning departure, strengthening the weekend hypothesis. Object_13 (laptop) appearing at receptacle_12 in the evening on Sunday is interesting; it might indicate the person brought the laptop home from a weekend outing or simply moved it from the desk to the entry area. No new hypotheses needed. The pattern of Mon/Thu/Fri commute and Tue/Wed remote is now solidly established over 5 weekdays. Object_10 (seen at receptacle_12 at 07:00 on Day 13) is ambiguous; if it's a bag, its presence without a departure might mean it was just moved, or the person stayed home. However, given the strong prior, I will treat it as non-commute activity or a minor anomaly. Need to verify if Object_10 is the same as Object_4 (keys/bag) or distinct. If Object_10 is a bag, its presence at the entry at 7am on Sunday without a departure is a strong signal of 'no commute'.

@@ -1,0 +1,23 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) Remote worker with a standard 9-to-5 schedule, likely living alone or with minimal household activity during the day. — Consistent morning start (~09:00) and midday breaks (~12:00, ~13:20) across multiple days. Today's earlier morning event (07:09) may be a one-off or a Friday variation, but the core pattern remains strong. No early morning events on other days.
+2. (p=0.15) Student or part-time worker with a flexible schedule, possibly living with others. — Events are spread across the day, including late evening (21:45). Today's 07:09 event could be a class or study session. However, the consistency of midday breaks and morning start still leans more toward a remote worker.
+3. (p=0.05) Retiree or homemaker with a relaxed daily routine, not tied to a strict work schedule. — The late evening events (21:45) and the 07:09 event today are less typical for a retiree. The pattern is still possible but increasingly unlikely.
+
+## Selected evidence
+- Day 0, 09:14 — object_12 at receptacle_12 (morning routine start, consistent with workday)
+- Day 0, 12:48 — object_16 at receptacle_9 (midday break, likely lunch)
+- Day 2, 11:49 — object_18 at receptacle_11 (midday break, consistent with work schedule)
+- Day 2, 13:17 — object_13 at receptacle_12 (post-lunch return to desk)
+- Day 2, 21:45 — object_9 at receptacle_6 (late evening cleaning or prep)
+- Day 3, 08:56 — object_12 and object_19 at receptacle_12 (morning start, two objects suggest work setup)
+- Day 3, 11:56 — object_7 at receptacle_11 (midday break, consistent with previous days)
+- Day 3, 13:20 — object_13 at receptacle_12 (post-lunch return to desk)
+- Day 3, 21:45 — object_16 at receptacle_6 (late evening routine, similar to Day 2)
+- Day 4, 07:09 — object_16 at receptacle_12 (earlier morning event, possibly Friday variation or one-off)
+- Day 4, 08:55 — object_7 and object_12 at receptacle_12 (morning start, consistent with work setup)
+- Day 4, 21:45 — object_3 at receptacle_6 (late evening routine, same time as previous days)
+
+## Notes
+Day 4 (Friday) shows a new earlier event at 07:09, but the core pattern (morning start ~09:00, midday breaks, late evening ~21:45) persists. Weekend days (5-6) will be critical to see if schedule changes. Receptacle_12 appears to be a desk (used morning and post-lunch). Receptacle_11 might be kitchen (used at midday). Receptacle_6 might be bathroom or bedroom (used late evening). Object_12 and object_19 together at desk suggest work items (laptop, notebook?). The 07:09 event could be a Friday-specific routine (e.g., early workout or errand).

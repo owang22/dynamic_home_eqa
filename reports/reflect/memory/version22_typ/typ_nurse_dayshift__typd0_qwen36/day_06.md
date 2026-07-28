@@ -1,0 +1,21 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Standard working professional with consistent post-work routine — Day 6 shows no departure of keys/laptop, reinforcing the weekend stay-at-home pattern. The 19:23 phone on sofa suggests leisure time post-dinner, consistent with a standard work-life balance. The slight delay in morning meal (06:35 vs 05:58 on Day 5) is minor variance within a relaxed weekend routine.
+2. (p=0.01) Remote worker with flexible schedule — Still unlikely due to the strict weekday departure of work items (keys/laptop) on Day 4. The lack of laptop movement on Day 6 does not confirm remote work, but the absence of any work-related object movement on the weekend remains consistent with either hypothesis. However, the rigid weekday structure makes this less probable.
+3. (p=0.01) Night-shift worker or late-evening eater — Discarded. The consistent morning meal times (05:58-06:35) and early dinner cleanup (18:32) strongly contradict a night-shift schedule. The 19:23 phone use is leisure, not work.
+
+## Selected evidence
+- Day 6, 06:35 — bowl at sink_k1 (weekend morning meal, slightly later than Day 5 but still early, consistent with relaxed weekend routine)
+- Day 6, 17:52 — fork at table_d1 (pre-dinner setup, consistent with weekday pattern)
+- Day 6, 18:32 — fork at sink_k1 (dinner cleanup, consistent with weekday timing)
+- Day 6, 19:23 — phone at sofa_l1 (leisure activity post-dinner, no work items observed, supports standard professional routine)
+- Day 4, 07:06 — keys at elsewhere (confirms weekday departure for work)
+- Day 4, 07:06 — laptop at elsewhere (confirms weekday departure for work)
+- Day 4, 17:47 — plate at table_d1 (consistent pre-dinner setup)
+- Day 3, 17:59 — fork/plate at table_d1 (consistent pre-dinner setup)
+- Day 2, 16:40 — keys at entry_hook_e1 (indicates return from work/commute)
+- Day 0, 06:23 — coffee_mug at sink_k1 (establishes early morning routine)
+
+## Notes
+Day 6 (Sunday) confirms the weekend pattern: no keys/laptop departure. Morning meal was slightly later than Day 5 (06:35 vs 05:58), suggesting some variability in weekend wake-up times. Dinner routine remains consistent. The 19:23 phone on the sofa indicates leisure time, not work. No new hypotheses needed. Confidence in 'Standard working professional' hypothesis has increased to 0.98. Need to observe Day 7 (Monday) to see if the weekday routine resumes with keys/laptop departure.

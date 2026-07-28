@@ -1,0 +1,15 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Standard working adult with a dog — Day 8 shows standard meal cleanup (bowl at sink) and midday leisure (cushion on sofa). The 11:58 fork at the table suggests a late lunch or snack, consistent with a 9-5 worker home for lunch or a flexible schedule, but the early morning routine on Day 7 remains the strongest discriminator against night shift or pure WFH without visible work devices.
+2. (p=0.01) Remote worker / WFH — The 11:58 fork at the table could indicate a late lunch typical of WFH, but the lack of laptop/work-device evidence keeps this low. The cushion on the sofa at 13:18 might suggest a break, but it's ambiguous.
+3. (p=0.00) Night shift worker — Contradicted by Day 7 early morning routine and Day 8 daytime activity. Removed from active consideration.
+
+## Selected evidence
+- Day 7, 07:39 — dog_leash at leash_hook_m1 (weekday morning walk; confirms routine reset to weekday pattern)
+- Day 7, 07:42 — coffee_mug at table_d1 (early morning start; consistent with 9-5 schedule)
+- Day 8, 11:58 — fork at table_d1 (late lunch/snack; suggests resident is home midday, possibly WFH or on break, but not definitive)
+- Day 8, 13:18 — cushion at sofa_l1 (afternoon leisure; consistent with post-lunch relaxation or WFH break)
+
+## Notes
+Day 8 (Tuesday) shows midday activity (fork at 11:58, cushion at 13:18). The 11:58 fork is interesting: if it's lunch, it's late for a standard 9-5 worker who might eat earlier or bring lunch to work. If it's a snack, it's less informative. The cushion on the sofa suggests the resident is home and relaxing in the afternoon. Need to observe Day 9 (Wednesday) to see if the midday home presence persists and if any work devices appear. The 18:09 dinner from Day 7 was an outlier compared to Day 0's 21:45; need to see if Day 8 has a similar early dinner.

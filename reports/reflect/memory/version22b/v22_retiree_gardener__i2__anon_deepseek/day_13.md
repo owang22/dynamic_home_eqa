@@ -1,0 +1,10 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.00) Likely someone who sleeps in or has flexible hours possibly unemployed, as evidenced by lack of consistent weekday morning presence beyond occasional glimpses and absence of commute-related absences; todays midday-like events earlier in the week hinted at someone who interacts with tech midday but lacks regularity to confirm remote worker reliably. — Despite earlier midday hints lacked enough regularity especially mornings to confirm occupation reliably; lacks evidence of leaving during typical commute hours which would indicate employment requiring travel; lacks consistent midday presence beyond occasional glimpses; todays reinforces earlier midday hints but still lacks enough to distinguish reliably awaits richer weekday mornings especially to detect consistent indicative of occupation reliably.
+
+## Selected evidence
+- Earlier this midday-like events hinted at someone who sleeps or flexible hours lacked morning confirmation until now but lacks enough to distinguish reliably awaits richer weekday mornings especially to detect consistent indicative of occupation or lack thereof.
+
+## Notes
+todays reinforces earlier midday hints but lacks enough to distinguish reliably awaits richer weekday mornings especially to detect consistent indicative of occupation or lack thereof; noticed cluster of events around midday earlier this suggesting someone who sleeps or flexible hours lacked confirmation from mornings especially until now; lacks evidence of leaving during typical commute hours which would indicate requiring travel; lacks consistent midday presence beyond occasional glimpses; todays reinforces earlier midday hints but still lacks enough to distinguish reliably awaits richer especially to detect consistent indicative of reliably.

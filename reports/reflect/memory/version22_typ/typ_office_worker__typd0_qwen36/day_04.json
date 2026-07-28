@@ -1,0 +1,32 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Standard working professional with fixed commute",
+   "prob": 0.9,
+   "rationale": "Consistent 08:24 departure and 19:10 dinner confirm rigid 9-5 schedule. Late phone arrival (22:11) suggests evening social or work extension, common for professionals."
+  },
+  {
+   "persona": "Remote worker with flexible hours",
+   "prob": 0.05,
+   "rationale": "Unlikely due to consistent physical departure of work tools (keys/laptop) at 08:24. Only plausible if hybrid with strict office days, but current evidence points to full commute."
+  },
+  {
+   "persona": "Shift worker or irregular schedule",
+   "prob": 0.05,
+   "rationale": "Contradicted by high stability of departure (08:21-08:24) and dinner (18:45-19:10) times across 5 days. Probability remains low but non-zero for weekend variance."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 07:26 \u2014 coffee_mug at sink_k1 (morning routine anchor)",
+  "Day 0, 18:45 \u2014 fork at table_d1 (dinner routine anchor)",
+  "Day 1, 18:45 \u2014 fork at table_d1 (confirms dinner consistency)",
+  "Day 2, 08:23 \u2014 laptop at elsewhere (departure for work)",
+  "Day 2, 17:53 \u2014 keys at entry_hook_e1 (return from work)",
+  "Day 3, 08:21 \u2014 laptop/phone/keys at elsewhere (consistent morning departure)",
+  "Day 3, 17:33 \u2014 phone at counter_k1 (evening arrival/home presence)",
+  "Day 4, 08:24 \u2014 keys at elsewhere (confirms consistent 08:20-08:25 departure window)",
+  "Day 4, 19:10 \u2014 fork at sink_k1 (dinner ~18:30-19:00, slightly later than Mon-Wed)",
+  "Day 4, 22:11 \u2014 phone at nightstand_r1 (late evening presence, suggests post-work activity)"
+ ],
+ "notes": "Dinner time shifted slightly later on Friday (19:10 sink vs 18:45 table). Phone arrival at nightstand (22:11) is significantly later than previous evenings, possibly indicating a Friday night routine. Weekend data (Day 5-6) is critical to test if departure time shifts or if laptop stays home. Need to verify if 'elsewhere' keys on weekends indicate no commute."
+}

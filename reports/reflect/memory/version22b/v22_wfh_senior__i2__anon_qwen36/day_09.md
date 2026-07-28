@@ -1,0 +1,16 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Standard 9-5 Office Worker — Consistent early weekday start (06:50-07:07), midday work device usage (object_12 at desk receptacle_11 on Day 8, object_16 on Day 9), and clear weekday/weekend distinction. The morning routine is tightening (07:07 -> 06:58 -> 06:50).
+2. (p=0.01) Retiree / Stay-at-Home — Unlikely due to rigid, early, and consistent weekday start times and specific work-related object movements during core business hours.
+3. (p=0.01) Night Shift Worker — Contradicted by early morning activity (06:50) and midday work patterns.
+
+## Selected evidence
+- Day 9, 06:50 — object_11 at receptacle_12 (Morning routine; earlier start than previous days, reinforcing rigid schedule)
+- Day 9, 13:51 — object_16 at receptacle_11 (Midday work activity; new object at home desk, consistent with remote work or home office usage)
+- Day 8, 13:43 — object_12 at receptacle_11 (Midday work activity; confirms receptacle_11 is a work zone)
+- Day 8, 06:58 — object_15 at receptacle_12 (Morning routine; object_15 likely a bag/tablet used for departure)
+- Day 7, 07:07 — object_3 at receptacle_12 (Weekday start; confirms rigid routine vs weekend)
+
+## Notes
+Object_12 moved from receptacle_11 (desk) to receptacle_3 (likely living area/sofa) on Day 9 at 10:42 and 15:51. This suggests object_12 might be a tablet or phone taken away from the desk, or the resident moved between work and leisure zones. Object_16 appearing at the desk (receptacle_11) on Day 9 suggests a new work-related item or a different device than object_12. The morning start time is consistently early and slightly earlier each observed weekday (07:07 -> 06:58 -> 06:50). No evening return events observed yet for Day 9.

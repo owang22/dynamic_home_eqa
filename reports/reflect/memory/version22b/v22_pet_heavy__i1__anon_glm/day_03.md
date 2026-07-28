@@ -1,0 +1,23 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.75) Single professional working from home occasionally — The consistent afternoon activity (object_8 at receptacle_6) on Day 0 and Day 2 suggests a regular work or study routine. The evening pattern of object_14 moving to receptacle_12 then to receptacle_5 by 21:45 on Day 2 indicates a consistent wind-down routine, possibly after work.
+2. (p=0.20) Student with irregular schedule — The scattered timing of activities could still align with a student's schedule, though the consistency of afternoon activity on Day 0 and Day 2 suggests some regularity.
+3. (p=0.05) Retired person with flexible daily routine — The varied timing of activities could indicate a flexible retirement schedule, though the consistent afternoon activity makes this less likely.
+
+## Selected evidence
+- Day 0, 07:37 — object_7 at receptacle_14 (early morning activity suggests regular routine)
+- Day 0, 15:38 — object_8 at receptacle_6 (afternoon activity indicates regular work/study pattern)
+- Day 1, 17:12 — object_10 at receptacle_9 (evening activity suggests possible work schedule)
+- Day 1, 21:45 — object_14 at receptacle_5 (late evening activity indicates relaxation routine)
+- Day 2, 15:41 — object_8 at receptacle_6 (consistent afternoon activity reinforces work/study pattern)
+- Day 2, 18:58 — object_14 at receptacle_12 (evening transition activity)
+- Day 2, 21:45 — object_14 at receptacle_5 (consistent late evening routine)
+- Day 3, 08:29 — object_5 at receptacle_12 (morning activity suggests preparation for day)
+- Day 3, 09:43 — object_4 at receptacle_6 (morning work/study activity)
+- Day 3, 09:43 — object_15 at receptacle_10 (morning routine activity)
+- Day 3, 13:25 — object_8 at receptacle_13 (afternoon activity indicates work/study pattern)
+- Day 3, 21:45 — object_19 at receptacle_5 (consistent late evening routine)
+
+## Notes
+The consistent afternoon activity (object_8 at receptacle_6) on Day 0 and Day 2 suggests a regular work or study routine. The evening pattern of object_14 moving to receptacle_12 then to receptacle_5 by 21:45 on Day 2 indicates a consistent wind-down routine. On Day 3, object_8 moved to receptacle_13 instead of receptacle_6, suggesting a variation in the work routine. The consistent 21:45 timing of objects moving to receptacle_5 (object_14 on Day 1-2, object_19 on Day 3) indicates a strong evening routine pattern. Need to observe weekend patterns to further refine hypotheses. The objects and receptacles remain unidentified, limiting detailed analysis.

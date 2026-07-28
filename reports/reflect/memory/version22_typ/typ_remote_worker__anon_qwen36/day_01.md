@@ -1,0 +1,15 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.60) Standard 9-5 Office Worker — Day 0 showed a clear morning departure (07:51) and evening return (19:12). Day 1 shows an evening activity (18:24) that could be a post-work errand or dinner prep, and a late-night object movement (21:45) consistent with winding down. The 19:12 return on Day 0 strongly supports a standard commute.
+2. (p=0.25) Remote Worker with Errands — The object at receptacle_11 at 18:24 on Day 1 might be a package or item for a local errand. However, the strict 07:51 departure on Day 0 makes pure remote work less likely unless they commute occasionally. The 21:45 event is too late for typical errands.
+3. (p=0.15) Shift Worker (Evening Start) — The 07:51 departure on Day 0 could be returning from a night shift, but the 19:12 return would then be leaving for work. This contradicts the 'home' nature of receptacle_9 if it's a front door. The 21:45 event on Day 1 is consistent with a night shift worker being awake, but the Day 0 pattern is weak evidence for this.
+
+## Selected evidence
+- Day 0, 07:51 — object_3 at receptacle_9 (Morning departure; discriminates shift vs standard work)
+- Day 0, 19:12 — object_8 at receptacle_9 (Evening return; confirms active household presence and typical commute timing)
+- Day 1, 18:24 — object_13 at receptacle_11 (Evening activity; could be post-work errand or dinner prep, supports active evening routine)
+- Day 1, 21:45 — object_8 at receptacle_5 (Late night object movement; suggests resident is awake and active late, consistent with standard worker winding down or shift worker starting)
+
+## Notes
+Receptacle_11 is likely a kitchen counter or dining table (object_13 at 18:24). Receptacle_5 is likely a bedroom or living room surface (object_8 at 21:45). Need to identify object_13 and object_8 to refine hypotheses. Observe Day 2 (Wednesday) for consistency in morning/evening patterns. Check if Day 0's 07:51 departure is consistent with Day 1's schedule.

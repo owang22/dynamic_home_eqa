@@ -1,0 +1,11 @@
+# Household memory — after day 0 (1 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=1.00) A person who works from home or has a flexible schedule, as objects are moved during typical work hours (09:10 and 13:17) on a Monday. — The two events occur at times when a standard 9-to-5 office worker would likely be away from home. The presence of object movements at 09:10 and 13:17 suggests someone is present and active in the home during the day.
+
+## Selected evidence
+- Day 0, 09:10 — object_16 at receptacle_13 (first movement of the day, during typical work hours on a Monday)
+- Day 0, 13:17 — object_8 at receptacle_10 (second movement, also during work hours, suggesting daytime presence)
+
+## Notes
+Only two events observed on day 0 (Monday). Need more days to identify patterns (e.g., weekend vs weekday, early morning vs late night). Object IDs and receptacle IDs are opaque; future events may reveal function (e.g., if object_8 is a laptop or yoga mat).

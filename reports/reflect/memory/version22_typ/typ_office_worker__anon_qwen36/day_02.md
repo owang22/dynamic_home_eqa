@@ -1,0 +1,19 @@
+# Household memory — after day 2 (3 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.90) Standard 9-5 Office Worker — The 07:26 departure and 18:45 return on Mon/Tue established a strong baseline. Day 2 shows a slight variation in return time (17:53) but maintains the morning departure. The 21:45 activity persists. The 'elsewhere' objects at 08:23 are likely minor errands or commute-related, not contradicting the main work pattern.
+2. (p=0.08) Remote Worker with Commute/Errands — The 08:23 activity on Day 2 (two objects seen 'elsewhere') is unusual for a strict 9-5 if it's not work-related. However, the consistent morning departure and evening return still dominate the signal. This hypothesis is weakened by the lack of laptop/office equipment evidence.
+3. (p=0.02) Night Shift Worker — Contradicted by the consistent morning departure (07:26) and evening return (17:53-18:45). The 21:45 activity is now interpreted as leisure, not work.
+
+## Selected evidence
+- Day 0, 07:26 — object_4 at receptacle_9 (Morning departure; consistent with work start)
+- Day 0, 18:45 — object_8 at receptacle_11 (Evening return; consistent with work end)
+- Day 1, 07:26 — object_4 at receptacle_9 (Repeat departure; confirms routine consistency)
+- Day 1, 18:45 — object_8 at receptacle_11 (Repeat return; reinforces 9-5 pattern)
+- Day 1, 21:45 — object_3 at receptacle_5 (Late evening activity; suggests post-work routine)
+- Day 2, 07:26 — object_4 at receptacle_9 (Repeat departure; solidifies weekday pattern)
+- Day 2, 17:53 — object_9 at receptacle_7 (Early return; possible overtime or flexible schedule)
+- Day 2, 21:45 — object_13 at receptacle_5 (Repeat late activity; confirms post-work leisure/wind-down)
+
+## Notes
+Object_4 (morning departure) and object_8/9 (evening return) are key. Object_13 at 21:45 on Day 2 matches object_3's location on Day 1, suggesting a consistent late-night habit (e.g., reading, TV, or laptop). The 08:23 'elsewhere' events on Day 2 are ambiguous; need to see if this repeats. Receptacle_7 might be a different entry point or a specific storage for the early return item. Verify if Day 3 (Thursday) follows the 17:53 or 18:45 return pattern.

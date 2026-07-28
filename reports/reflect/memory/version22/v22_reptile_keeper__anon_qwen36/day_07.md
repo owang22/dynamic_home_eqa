@@ -1,0 +1,15 @@
+# Household memory — after day 7 (8 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Standard 9-5 Office Worker — Monday morning activity at 07:15 (likely wake-up/prep) aligns with the established weekday pattern. Evening leisure objects (10, 14) appear after typical work hours, reinforcing the standard work week structure. The lack of departure on Sunday and return to morning routine on Monday strongly supports this.
+2. (p=0.04) Remote Worker with Flexible Schedule — While the morning routine is consistent, the specific timing of object_5 at 07:15 is slightly earlier than the Sunday 07:57 wake-up, which could suggest a disciplined remote start. However, the strong correlation with the 'standard' pattern makes this less likely.
+3. (p=0.01) Night Shift Worker — Contradicted by the consistent Monday morning activity at 07:15. Night shift workers would likely be sleeping or winding down at this time, not engaging with receptacle_12.
+
+## Selected evidence
+- Day 7, 07:15 — object_5 at receptacle_12 (Monday morning routine start; confirms return to weekday schedule after weekend, likely wake-up or coffee prep)
+- Day 7, 19:53 — object_10 at receptacle_10 (Evening leisure/prep; appears after typical work hours, consistent with post-work wind-down)
+- Day 7, 20:40 — object_14 at receptacle_11 (Late evening activity; suggests dinner or relaxation routine, reinforcing standard evening schedule)
+- Day 7, 21:45 — object_10 at receptacle_6 (Late night object movement; object_10 moved again, possibly indicating a second round of leisure or preparation for bed)
+
+## Notes
+Monday morning routine confirmed with object_5 at 07:15. Evening pattern shows object_10 appearing twice (19:53 and 21:45), suggesting it might be a multi-use item (e.g., phone, tablet, or drink). Need to track if object_10 is consistently used in the evening. No departure observed on Monday morning yet (events only go up to 21:45), so the 08:00 departure hypothesis remains unconfirmed for this specific day but is strongly implied by the morning routine start.

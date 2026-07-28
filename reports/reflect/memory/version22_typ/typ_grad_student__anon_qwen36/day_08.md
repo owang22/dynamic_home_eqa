@@ -1,0 +1,24 @@
+# Household memory — after day 8 (9 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=1.00) Standard 9-5 Office Worker — Day 8 confirms the rigid 09:35 departure and 18:31 return pattern. No contradictory evidence (e.g., weekend travel, irregular hours) has emerged. The previous low-probability hypotheses are effectively ruled out by the consistency of the commute and lack of alternative lifestyle markers.
+
+## Selected evidence
+- Day 0, 09:35 — object_9 at elsewhere (morning departure; establishes commute baseline)
+- Day 0, 18:17 — object_11 at receptacle_4 (return; establishes post-work baseline)
+- Day 2, 09:39 — object_10, object_11 at elsewhere (second consecutive morning departure; confirms routine)
+- Day 2, 18:40 — object_9 at receptacle_7 (return; confirms post-work timing consistency)
+- Day 3, 09:36 — object_9, object_10 at elsewhere (third consecutive morning departure; solidifies 9-5 pattern)
+- Day 3, 18:11 — object_11 at receptacle_10 (return; confirms post-work timing consistency)
+- Day 4, 08:11 — object_3, object_4 at receptacle_11 (morning prep; precedes departure, suggests breakfast/get-ready routine)
+- Day 4, 18:29 — object_9 at receptacle_7 (return; confirms post-work timing consistency)
+- Day 5, 08:16 — object_3 at receptacle_11 (weekend morning domestic activity; no 'elsewhere' movement confirms weekend rest)
+- Day 6, 08:51 — object_4 at receptacle_9 (Sunday morning domestic activity; reinforces weekend rest pattern)
+- Day 7, 08:30 — object_3, object_4 at receptacle_11 (Monday morning prep; confirms routine consistency across weeks)
+- Day 7, 19:35 — object_13 at receptacle_9 (evening domestic activity; suggests post-work wind-down or leisure)
+- Day 8, 09:35 — object_9 at elsewhere (Tuesday departure; confirms weekly pattern repetition)
+- Day 8, 18:31 — object_9 at receptacle_7 (Tuesday return; confirms post-work timing consistency)
+- Day 8, 19:15 — object_8 at receptacle_11 (evening activity at morning prep station; suggests object_8 is used in evening routine, possibly hygiene or relaxation)
+
+## Notes
+The 9-5 hypothesis is now virtually certain (p=1.0). Object_8 appearing at receptacle_11 (previously associated with morning prep objects 3 and 4) in the evening suggests this location is a multi-purpose 'getting ready' or 'wind-down' station. Need to verify if object_8 is consistently present in the evening or if it's a one-off. Object_13 (Day 7 evening) and Object_8 (Day 8 evening) both appear at receptacle_9 or 11, hinting at a specific evening ritual zone.

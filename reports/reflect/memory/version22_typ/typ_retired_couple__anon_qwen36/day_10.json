@@ -1,0 +1,35 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Hybrid Worker (Office 3 days, Remote 2 days)",
+   "prob": 0.85,
+   "rationale": "Day 10 (Thu) shows object_4 at receptacle_11 at 07:25, confirming a morning departure for office work. This aligns with the pattern of Tue being remote (midday home-desk activity) and Wed being office. The consistent morning departures on Mon, Wed, and Thu strongly support a structured hybrid schedule rather than a standard 9-5 or night shift."
+  },
+  {
+   "persona": "Standard 9-5 Office Worker with Errands",
+   "prob": 0.15,
+   "rationale": "The midday home-desk activity on Day 8 remains the primary outlier for a pure 9-5. However, if Day 8 was an exception (e.g., sick day, personal project), the rest of the week (Mon, Wed, Thu departures) fits a standard office routine. The evening outings (object_8) could be regular gym visits. This hypothesis is weakened by the specific midday signal but not fully discarded."
+  },
+  {
+   "persona": "Night Shift / Irregular Schedule",
+   "prob": 0.0,
+   "rationale": "Discarded. The consistent morning departures (07:06-07:25) on Mon, Wed, and Thu, along with evening leisure patterns, contradict any night-shift or highly irregular schedule."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:07 \u2014 object_4 at receptacle_11 (Baseline Mon departure: establishes rigid morning routine)",
+  "Day 2, 17:46 \u2014 object_8 at receptacle_11 (Pre-evening activity: suggests gym/errand stop on Wed)",
+  "Day 4, 22:04 \u2014 object_10 at receptacle_8 (Fri late return: indicates weekend/social pattern start)",
+  "Day 5, 21:54 \u2014 object_10 at receptacle_8 (Sat late return: confirms weekend leisure pattern)",
+  "Day 6, 21:42 \u2014 object_10 at receptacle_8 (Sun late return: confirms persistent weekend late-night pattern)",
+  "Day 7, 07:06 \u2014 object_3 at receptacle_11 (Mon departure: earlier than Day 0, suggests variable morning routine)",
+  "Day 7, 21:33 \u2014 object_10 at receptacle_8 (Mon late return: suggests weekend-like pattern on Monday now)",
+  "Day 8, 11:38 \u2014 object_9 at receptacle_7 (Tue midday: strong signal for home-desk activity, supports hybrid/remote hypothesis)",
+  "Day 8, 18:45 \u2014 object_8 at receptacle_11 (Tue evening: object_8 at departure receptacle suggests evening outing or gym, consistent with Day 2 pattern)",
+  "Day 9, 07:10 \u2014 object_3 at receptacle_11 (Wed departure: confirms office day, contrasting with Tue remote work)",
+  "Day 9, 18:31 \u2014 object_8 at receptacle_11 (Wed evening: recurring evening activity, likely gym/errand)",
+  "Day 9, 19:16 \u2014 object_13 at receptacle_10 (Wed evening: new object at receptacle_10, possibly dinner/leisure item)",
+  "Day 10, 07:25 \u2014 object_4 at receptacle_11 (Thu departure: confirms office day, consistent with Mon/Wed pattern)"
+ ],
+ "notes": "Day 10 (Thu) confirms the office departure pattern (object_4 at receptacle_11 at 07:25), reinforcing the Hybrid Worker hypothesis. The sequence Mon (office), Tue (remote), Wed (office), Thu (office) suggests a 3-day office week. The evening object_8 at receptacle_11 on Tue/Wed suggests a recurring mid-week gym/errand. Object_13 at receptacle_10 on Wed evening is still unexplained; need to track if it appears on other evenings. The Monday late return (21:33) remains an outlier; verify if this is a weekly social event. Weekend late returns (21:42-21:54) are consistent. No new hypotheses needed."
+}

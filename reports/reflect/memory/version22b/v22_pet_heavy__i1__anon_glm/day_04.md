@@ -1,0 +1,20 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) Single professional working from home occasionally — The consistent afternoon activity (object_8 at receptacle_6 or 13) on Day 0, Day 2, and Day 4 suggests a regular work routine. The evening pattern of objects moving to receptacle_5 by 21:45 on Day 1-2 and object_4 at receptacle_6 at 21:47 on Day 4 indicates a consistent wind-down routine after work.
+2. (p=0.15) Student with irregular schedule — The scattered timing of activities could still align with a student's schedule, though the consistency of afternoon activity on multiple days suggests some regularity that might be less typical for a student.
+3. (p=0.05) Retired person with flexible daily routine — The varied timing of activities could indicate a flexible retirement schedule, though the consistent afternoon activity makes this less likely.
+
+## Selected evidence
+- Day 0, 07:37 — object_7 at receptacle_14 (early morning activity suggests regular routine)
+- Day 0, 15:38 — object_8 at receptacle_6 (afternoon activity indicates regular work/study pattern)
+- Day 2, 15:41 — object_8 at receptacle_6 (consistent afternoon activity reinforces work/study pattern)
+- Day 3, 09:43 — object_4 at receptacle_6 (morning work/study activity)
+- Day 3, 13:25 — object_8 at receptacle_13 (afternoon activity indicates work/study pattern)
+- Day 4, 07:46 — object_7 at receptacle_14 (consistent early morning routine)
+- Day 4, 08:26 — object_7 at receptacle_12 (morning preparation routine)
+- Day 4, 16:49 — object_8 at receptacle_13 (afternoon work/study pattern continues)
+- Day 4, 21:47 — object_4 at receptacle_6 (consistent evening wind-down routine)
+
+## Notes
+The consistent afternoon activity (object_8 at receptacle_6 or 13) on Day 0, Day 2, and Day 4 strongly suggests a regular work routine. The evening pattern of objects moving to receptacle_5 by 21:45 on Day 1-2 and object_4 at receptacle_6 at 21:47 on Day 4 indicates a consistent wind-down routine. The morning routine of object_7 moving between receptacles on Day 0 and Day 4 suggests a consistent preparation pattern. Weekend patterns (Days 5-6) will be crucial to further refine hypotheses. The objects and receptacles remain unidentified, limiting detailed analysis.

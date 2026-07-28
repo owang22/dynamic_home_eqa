@@ -1,0 +1,21 @@
+# Household memory — after day 4 (5 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Parent with School-Aged Child — Evidence continues to strongly support this. The 'laptop' appearing in the 'school_bag' on Friday morning (Day 4) is a critical discriminator: it suggests the child is packing for a school project, presentation, or field trip, or the parent is packing it for them. This reinforces the 'school' context over 'work'. The strict 07:30 departure and 16:30 return remain consistent. The 'whistle' at the entry hook upon return suggests it was taken out with the child or is a pet item kept near the door.
+2. (p=0.01) Remote Worker with Hybrid Schedule — Still weak. The laptop is now associated with the school bag, not the home desk or kitchen table for work. The rigid commute times persist. No evidence of independent adult work hours.
+3. (p=0.01) Night Owl / Shift Worker — No evidence. Routine remains standard daytime/early evening.
+
+## Selected evidence
+- Day 0, 07:30 — thermos at elsewhere (indicates morning departure routine)
+- Day 0, 16:24 — thermos at kitchen_table_k1 (indicates return home/end of workday)
+- Day 1, 21:59 — grade_folder at school_bag_e1 (indicates preparation for next day's school activities)
+- Day 2, 07:31 — whistle at elsewhere (confirms morning departure; likely child's toy or pet item)
+- Day 2, 16:22 — phone at sofa_l1 (confirms return home; immediate relaxation)
+- Day 3, 07:27 — track_duffel at elsewhere (indicates packing for sports/activities)
+- Day 3, 18:50 — track_duffel at school_bag_e1 (confirms duffel is for child's activities)
+- Day 4, 06:22 — laptop at school_bag_e1 (CRITICAL: Laptop packed for school, not work; suggests child's project or parent packing for child)
+- Day 4, 07:31 — keys at elsewhere (confirms standard morning departure routine)
+- Day 4, 16:31 — whistle at entry_hook_e1 (confirms return home; whistle brought in, possibly from child's activity or pet walk)
+
+## Notes
+The 'laptop' in the 'school_bag' on Day 4 is a strong signal for the 'Parent' hypothesis, specifically that the child is involved in school activities requiring tech, or the parent is managing the child's schedule. The 'whistle' appearing at the entry hook on return suggests it's a household item kept near the door, possibly for a pet or child's sports. The routine is extremely stable: ~07:30 departure, ~16:30 return. Need to observe Day 5-6 (weekend) to see if the 'laptop' returns to the home desk or if the 'whistle' and 'duffel' are used for leisure. The 'grade_folder' and 'track_duffel' are key indicators of the child's routine.

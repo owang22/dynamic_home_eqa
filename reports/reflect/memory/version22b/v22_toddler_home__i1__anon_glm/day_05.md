@@ -1,0 +1,21 @@
+# Household memory — after day 5 (6 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Single professional working from home occasionally — The weekend activity pattern (day 5) shows a later morning start (07:39 vs 06:49 on day 4) and no midday work activity, supporting the work-from-home hypothesis. The consistent late evening activity (21:45) continues, suggesting this is part of the person's regular routine regardless of work schedule.
+2. (p=0.03) Retired person with minimal activity — The structured weekday routine and different weekend pattern don't align well with retirement. The person appears to have a clear work schedule with different weekend behavior.
+3. (p=0.03) Student with irregular schedule — The consistent weekday pattern and distinct weekend behavior suggest a more structured professional routine rather than a student's typically more varied schedule.
+
+## Selected evidence
+- Day 0, 08:41 — object_17 at receptacle_10 (early morning activity suggests regular routine)
+- Day 0, 17:01 — object_7 at receptacle_12 (late afternoon/evening activity, possibly returning home)
+- Day 1, 17:18 — object_1 at receptacle_14 (consistent evening return pattern on consecutive days)
+- Day 2, 11:34 — object_18 at receptacle_14 (midday activity suggests possible work-from-home routine)
+- Day 3, 11:34 — object_1 at receptacle_14 (midday work activity continues)
+- Day 4, 06:49 — object_6 at receptacle_8 (early morning activity, possibly exercise or preparation for day)
+- Day 4, 18:30 — object_17 at receptacle_11 (slightly later return on Friday, possibly leaving work earlier)
+- Day 5, 07:39 — object_17 at receptacle_11 (later morning start on weekend, suggesting different routine)
+- Day 5, 12:32 — object_15 at receptacle_11 (midday activity on weekend differs from weekday pattern)
+- Day 5, 21:45 — object_6 at receptacle_6 (consistent late evening activity continues on weekend)
+
+## Notes
+The weekend pattern (day 5) shows a later morning start (07:39 vs 06:49 on day 4) and different midday activity (object_15 at receptacle_11 at 12:32 vs object_18 at receptacle_14 at 11:34 on weekdays), supporting the work-from-home hypothesis. The consistent late evening activity (21:45) continues across both weekdays and weekend, suggesting this is part of the person's regular routine regardless of work schedule. Need to observe day 6 (Sunday) to confirm weekend pattern and see if it differs from day 5.

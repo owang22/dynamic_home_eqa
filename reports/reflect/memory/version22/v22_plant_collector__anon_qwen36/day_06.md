@@ -1,0 +1,19 @@
+# Household memory — after day 6 (7 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Standard 9-5 Office Worker — Weekend departure at 07:19 (Day 5) and return by 18:15 (Day 6) strongly suggest leisure/errands, not work. Late-night device use (Day 5) is likely leisure. No evidence of remote work setup during the day.
+2. (p=0.10) Remote Freelancer with Fixed Hours — Contradicted by the consistent morning departure on weekends and lack of sustained 'work device' presence at a dedicated desk during daytime hours on Day 6.
+3. (p=0.05) Shift Worker (Evening/Night) — Still unlikely. Morning departures and early evening returns do not align with typical shift patterns. Late-night activity is more consistent with socializing.
+
+## Selected evidence
+- Day 0, 09:10 — object_16 at receptacle_13 (Morning routine; establishes baseline early activity)
+- Day 1, 19:20 — object_17 at receptacle_10 (Evening return; confirms 9-5 end time)
+- Day 4, 07:22 — object_3 at receptacle_12 (Morning departure; indicates leaving home)
+- Day 4, 18:58 — object_8 at receptacle_10 (Evening return; consistent 9-5 pattern)
+- Day 5, 07:19 — object_4 at receptacle_12 (Weekend departure; suggests leisure/errands, not work)
+- Day 6, 12:52 — object_17 at receptacle_12 (Midday presence at entry; suggests return from errands/leisure)
+- Day 6, 14:10 — object_22 at receptacle_1 (Device moved to living area; supports leisure use, not work)
+- Day 6, 18:15 — object_8 at receptacle_12 (Evening presence at entry; consistent with weekend leisure return)
+
+## Notes
+Day 6 (Sunday) shows no work-related patterns. Object_17 at receptacle_12 at 12:52 suggests the resident returned home mid-day, possibly after morning errands (following Day 5's 07:19 departure). Object_22 (device) moved to receptacle_1 (likely living room/sofa) at 14:10 reinforces leisure use. The 'Office Worker' hypothesis is now highly probable (0.85). No new hypotheses needed. Key discriminator confirmed: weekends are for leisure/errands, not remote work.

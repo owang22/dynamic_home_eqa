@@ -1,0 +1,18 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.80) A single professional who works from home or has a flexible schedule, with a tendency to work late or have evening activities. — The midday presence on Monday (12:20) and the late evening events on Wednesday (20:22, 21:32, 21:45, 22:52) and Thursday (20:10) suggest someone who is home during typical work hours and also active late into the night, consistent with a remote worker or freelancer. The Thursday morning event (09:58) further supports a work-from-home pattern.
+2. (p=0.15) A student or part-time worker with a varied schedule, possibly attending classes or working shifts, leading to irregular home presence. — The late evening events could be after classes or a shift, but the midday Monday event and the Thursday morning event are less typical for a student with a fixed class schedule. However, the pattern is still possible.
+3. (p=0.05) A retiree or homemaker who is home most of the day, with a routine that includes late evening activities. — The late evening events are less common for retirees, but not impossible. The midday Monday event and Thursday morning event fit, but the overall pattern leans away from this hypothesis.
+
+## Selected evidence
+- Day 0, 12:20 — object_12 at receptacle_4 (midday presence on a Monday suggests work-from-home or flexible schedule)
+- Day 2, 20:22 — object_15 at receptacle_4 (late evening return of an object, indicating evening activity)
+- Day 2, 21:32 — object_4 at receptacle_13 (late evening object movement, possibly a personal item like a phone or book)
+- Day 2, 21:45 — object_17 at receptacle_8 (another late evening event, consistent with evening routine)
+- Day 2, 22:52 — object_10 at receptacle_9 (very late night activity, suggesting a night owl or late worker)
+- Day 3, 09:58 — object_12 at receptacle_12 (morning presence on a Thursday, reinforcing work-from-home pattern)
+- Day 3, 20:10 — object_15 at receptacle_4 (another late evening event, consistent with previous evening pattern)
+
+## Notes
+The late evening events on Wednesday (day 2) and Thursday (day 3) are clustered between 20:10 and 22:52, indicating a pattern of evening activity. The Thursday morning event (09:58) adds a morning presence, strengthening the work-from-home hypothesis. The objects remain generic; future events may reveal specific items (e.g., laptop, gym bag) that clarify the persona. Need to observe more days, especially weekends (days 5-6), to see if the pattern holds or changes. The 'elsewhere' events at 10:34 on Thursday might indicate a departure or cleaning, but without receptacles, they are less informative.

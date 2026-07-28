@@ -1,0 +1,16 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.96) Dual-Resident Household (One Early Commuter, One Late-Night Worker/Student) — The persistence of the 05:27 departure (Object_15/17) and late evening arrivals (Object_3/16) across weekdays and weekends strongly supports two distinct schedules. Object_17's appearance at 05:27 on Sunday reinforces the 'Early Riser' routine is not limited to weekdays.
+2. (p=0.02) Single Resident with Irregular Shift Work — Still unlikely due to the rigid 05:27 timing. However, if Object_17 and Object_16 belong to the same person, it could imply a single person with a very fixed but unusual split schedule (early out, late in). The probability remains low.
+3. (p=0.02) Remote Worker with Gym Routine — Contradicted by the 'commute-like' nature of leaving the house at 05:27 and returning to a specific receptacle later. Object_17's departure does not fit a home-gym routine.
+
+## Selected evidence
+- Day 13, 05:27 — object_17 at elsewhere (Sunday early departure, confirms routine is not weekday-only)
+- Day 13, 20:40 — object_16 at receptacle_8 (Sunday late arrival, confirms late routine persists on weekends)
+- Day 12, 19:25 — object_11 at receptacle_12 (Weekend evening activity, suggests leisure or late routine)
+- Day 11, 05:27 — object_15 at elsewhere (Consistent early departure pattern)
+- Day 11, 21:45 — object_3 at receptacle_5 (Late evening activity, distinct from early riser)
+
+## Notes
+Object_17 replaced Object_15 for the 05:27 departure on Sunday, suggesting either a different object used for the same purpose or a different resident. Object_16 appeared at 20:40 on Sunday, similar to Object_3's late arrival on Friday. Need to verify if Object_17 and Object_16 are linked to the same resident as Object_15 and Object_3 respectively. Check if Object_11 (Saturday evening) correlates with Object_16 or Object_3.

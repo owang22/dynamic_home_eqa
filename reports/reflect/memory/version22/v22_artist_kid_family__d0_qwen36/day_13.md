@@ -1,0 +1,21 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Standard Office Worker with Creative Hobby — Day 13 (Sunday) shows a relaxed morning tablet usage at 07:48 (later than weekday 06:53-07:02), consistent with a weekend sleep-in. The evening remote usage at 19:30 suggests leisure time, aligning with the 'weekend outing/errand' return pattern seen on Day 12. No work-related objects (laptop, backpack) appeared during the day, reinforcing the strict work/weekend split.
+2. (p=0.01) Freelancer / Work-from-Home — Still unlikely. A freelancer might show work activity on Sunday or a more consistent daily rhythm. The distinct shift from rigid weekday departures to relaxed weekend timing, combined with zero work-object visibility on Saturday and Sunday, strongly contradicts the WFH hypothesis.
+3. (p=0.00) Student — Removed. No evidence supports this pattern.
+
+## Selected evidence
+- Day 13, 07:48 — tablet at coffee_table_l1 (Later morning start than weekdays; confirms weekend leisure rhythm vs. rigid work commute)
+- Day 12, 18:29 — keys at entry_hook_e1 (Weekend return time; contrasts with weekday 08:30 departure, confirming distinct work/weekend rhythms)
+- Day 11, 07:02 — tablet at table_d1 (Consistent pre-work morning ritual; discriminates against late-riser)
+- Day 11, 08:32 — keys at elsewhere (Rigid weekday commute; strong discriminator against WFH)
+- Day 9, 06:57 — tablet at table_d1 (Reinforces morning routine pattern)
+- Day 9, 18:03 — paint_smock at craft_shelf_s1 (Evening hobby storage; structured wind-down)
+- Day 8, 08:40 — backpack at elsewhere (Confirms weekday commute)
+- Day 7, 06:53 — tablet at table_d1 (Monday morning routine)
+- Day 6, 10:20 — tablet at craft_desk_s1 (Weekend creative activity)
+- Day 6, 18:28 — keys at entry_hook_e1 (Weekend return)
+
+## Notes
+Day 13 (Sunday) confirms the weekend pattern: later wake-up (07:48 vs ~07:00 weekdays) and leisure activity (tablet on coffee table, remote on sofa). The absence of work objects on both weekend days (Sat/Sun) solidifies the 'Office Worker' hypothesis. The 'Creative Hobby' aspect is supported by the paint smock on Day 9 and tablet at craft desk on Day 6. No new discriminative objects. Ready for Day 14 (Monday) to observe the return to rigid weekday routines.

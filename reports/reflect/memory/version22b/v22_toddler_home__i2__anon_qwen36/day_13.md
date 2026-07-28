@@ -1,0 +1,19 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.98) Remote Worker with Flexible Schedule — Weekend morning desk absence (Day 12, 13) confirms work is weekday-bound. Saturday 19:07 and Sunday 19:33 activities suggest consistent evening leisure/dinner prep, not work. Probability increased due to consistent weekend non-work patterns.
+2. (p=0.01) Night Shift Worker — Contradicted by strict weekday morning start (07:20) and lack of late-night weekday activity. Weekend evening activity is earlier than weekday late-night, suggesting normal sleep cycles.
+3. (p=0.01) Stay-at-Home Parent / Caregiver — Structured, solitary movements and lack of child-specific items persist. Weekend activity is solitary and timed, not erratic or child-centric.
+
+## Selected evidence
+- Day 10, 07:20 — object_16 at receptacle_11 (Morning start at home desk; consistent with remote work routine. Object_16 is likely a laptop/bag.)
+- Day 10, 17:39 — object_16 at receptacle_8 (End of day movement to personal area; mirrors Day 9's 17:41 pattern, reinforcing the end-of-workday routine.)
+- Day 11, 09:01 — object_1 at receptacle_10 (Mid-morning activity; object_1 is new. If it's a coffee mug or book, it suggests leisure during work hours, supporting 'flexible' remote work.)
+- Day 11, 11:31 — object_17 at receptacle_14 (Late morning activity; object_17 is new. Timing suggests a break or task unrelated to the main desk routine. Helps distinguish between 'strict work' and 'flexible work'.)
+- Day 11, 21:45 — object_14 at receptacle_6 (Evening activity; object_14 is new. Later than previous days' end-of-day movements. Suggests evening routine or leisure, not a standard 17:30 finish.)
+- Day 12, 19:07 — object_5 at receptacle_5 (Weekend evening activity. Absence of morning desk routine confirms work is weekday-bound. 19:07 is earlier than weekday late-night activity, suggesting weekend relaxation.)
+- Day 13, 08:49 — object_5 at receptacle_10 (Sunday morning activity. Object_5 moved to receptacle_10 (likely kitchen/dining based on Day 12 context). Suggests breakfast/prep routine, distinct from work desk.)
+- Day 13, 19:33 — object_5 at receptacle_14 (Sunday evening activity. Object_5 moved to receptacle_14 (likely living area). Consistent with Saturday's 19:07 pattern, reinforcing weekend leisure/dinner routine.)
+
+## Notes
+Pattern confirmed: Work routine is strictly weekday (Mon-Fri). Weekend (Sat/Sun) shows no morning desk activity. Object_5 appears to be a multi-purpose item (possibly a mug or small container) moving between kitchen (receptacle_10) and living area (receptacle_14) on weekends. The 19:07 (Sat) and 19:33 (Sun) activities suggest a consistent weekend evening routine, likely dinner or leisure. Need to observe Day 14 (Monday) to see if the 07:20 desk routine resumes.

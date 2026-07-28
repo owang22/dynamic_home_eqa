@@ -1,0 +1,33 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Standard 9-5 Office Worker",
+   "prob": 0.95,
+   "rationale": "Day 7 (Monday) shows no departure by 08:30, breaking the strict 09:30 pattern. However, the evening routine (dishes, kitchen cleanup) remains consistent with a home-bound worker. The lack of morning departure suggests either a later start, remote work hybrid, or a specific Monday schedule deviation. Probability increased slightly as the 'Shift Worker' hypothesis is fully discarded and 'Remote Worker' is less likely given the previous 4 days of commuting."
+  },
+  {
+   "persona": "Remote Worker with Flexible Schedule",
+   "prob": 0.04,
+   "rationale": "The absence of keys/laptop departure on Monday morning contradicts the rigid commute seen on Days 0-4. This could indicate a hybrid schedule where Mondays are remote. However, the strong prior evidence of commuting makes this less likely than a simple schedule variation."
+  },
+  {
+   "persona": "Shift Worker / Night Owl",
+   "prob": 0.01,
+   "rationale": "Still highly unlikely. The consistent weekday return at 18:30-18:17 and weekend inactivity do not fit typical shift patterns. The Monday morning anomaly is more likely a schedule variation than a shift change."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 09:35 \u2014 keys at elsewhere (establishes baseline morning departure for work)",
+  "Day 0, 18:17 \u2014 phone at counter_k1 (establishes baseline evening return)",
+  "Day 2, 09:39 \u2014 laptop at elsewhere (leaving with resident, suggests work-related travel)",
+  "Day 3, 09:36 \u2014 laptop at elsewhere (reinforces commuting pattern)",
+  "Day 3, 23:38 \u2014 phone at nightstand_r1 (late-night leisure/wind-down)",
+  "Day 4, 08:11 \u2014 bowl at table_d1 (early Friday breakfast before early departure)",
+  "Day 5, 08:16 \u2014 bowl at table_d1 (weekend morning routine, no departure observed)",
+  "Day 5, 23:43 \u2014 remote at coffee_table_l1 (weekend leisure activity, confirms non-work day)",
+  "Day 6, 08:51 \u2014 coffee_mug at sink_k1 (Sunday morning cleanup, no departure)",
+  "Day 6, 20:00 \u2014 remote at sofa_l1 (Sunday evening leisure, confirms home-bound status)",
+  "Day 7, 08:30 \u2014 bowl/coffee_mug at table_d1 (Monday morning routine, NO departure observed - anomaly)"
+ ],
+ "notes": "Day 7 (Monday) broke the established 09:30 departure pattern. No keys or laptop were seen leaving. This suggests either a remote work day, a later start time, or a schedule change. The evening routine (dishes at 19:35, mug at 21:45) remains consistent with previous days. Need to observe Day 8 (Tuesday) to see if the 09:30 departure resumes or if Monday was an outlier. The 'Remote Worker' hypothesis gains slight traction due to the Monday anomaly, but the prior 4 days of commuting are strong counter-evidence."
+}

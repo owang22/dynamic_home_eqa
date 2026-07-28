@@ -1,0 +1,19 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.85) Remote worker with consistent late-night hobby — The laptop on Friday morning (Day 11) and the persistent, structured hobby routine (telescope/eyepieces) across Days 8-13 strongly indicate a flexible schedule. The Sunday evening coffee on the patio (Day 13) further supports a leisurely, non-commute-constrained lifestyle. Probability increased as the 'weekend-only' distinction blurred with the Friday work artifact.
+2. (p=0.10) Standard 9-5 worker with weekend-heavy leisure — Still possible if the Friday laptop was an exception or hybrid day. However, the lack of any morning work artifacts on Saturday (Day 12) or Sunday (Day 13) makes a strict 9-5 less likely. The probability decreased as the 'remote' hypothesis gained strength from the consistent evening/weekend patterns.
+3. (p=0.05) Student or part-time worker — Remains a low-probability fallback. The stability of the dinner time (~19:00) and the specific, equipment-heavy hobby (astronomy) feel more like an established adult routine than a student's irregular schedule. No new evidence supports this, so probability remains static.
+
+## Selected evidence
+- Day 13, 22:09 — coffee_mug at patio_table_p1 (Confirms Sunday evening leisure routine; reinforces non-commute lifestyle)
+- Day 12, 21:40 — eyepiece_case at patio_table_p1 (Hobby extends to weekend; confirms dedicated leisure time)
+- Day 11, 09:33 — laptop at table_d1 (Discriminates against rigid 9-5; indicates daytime work/study)
+- Day 11, 00:33 — phone at nightstand_r1 (Consistent late-night cycle end)
+- Day 10, 00:32 — red_flashlight at scope_cabinet_p1 (Confirms hobby engagement)
+- Day 9, 00:48 — eyepiece_case at scope_cabinet_p1 (Confirms hobby engagement)
+- Day 8, 00:17 — telescope_cap at scope_cabinet_p1 (Confirms hobby engagement)
+- Day 8, 19:00 — fork at table_d1 (Stable dinner timing ~19:00)
+
+## Notes
+The Sunday evening coffee on the patio (Day 13) aligns with the Saturday evening patio activity (Day 12), suggesting a consistent weekend leisure pattern. The absence of any work-related artifacts (laptop, documents) on Saturday or Sunday reinforces the 'Remote Worker' hypothesis. The hobby routine (telescope/flashlight/eyepiece) is now confirmed for three consecutive nights (Days 11-13), indicating high engagement. No new hypotheses needed; current evidence strongly favors the remote worker profile.

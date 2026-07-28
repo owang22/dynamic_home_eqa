@@ -1,0 +1,15 @@
+# Household memory — after day 1 (2 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.45) Remote Worker / Digital Nomad — Object 7 (laptop) remained at the desk all day on Day 0. Day 1 shows no new work-related objects, but the evening activity (Object 15 at receptacle 12) is consistent with post-work wind-down or dinner prep, not contradicting the remote work model.
+2. (p=0.30) Night Shift Worker — Still possible if Object 7 is a leisure device used during off-hours. However, the lack of evening/night activity on Day 0 and the specific timing of Day 1 events (17:16, 20:21) aligns more with standard diurnal rhythms than night shifts.
+3. (p=0.25) Stay-at-Home Parent / Caregiver — Object 7 staying at the desk could be for childcare/remote learning. However, the lack of movement to other rooms (kitchen/bedroom) on Day 0 makes this less likely than a dedicated worker. Day 1 events do not provide strong evidence for caregiving routines.
+
+## Selected evidence
+- Day 0, 08:49 — object_7 at receptacle_10 (Start of day presence at desk suggests work/study routine)
+- Day 0, 15:48 — object_7 at receptacle_10 (Sustained presence suggests long-duration activity, not just a quick visit)
+- Day 1, 17:16 — object_17 at receptacle_14 (Evening object movement; if object_17 is kitchenware or a bag, it indicates post-work routine)
+- Day 1, 20:21 — object_15 at receptacle_12 (Late evening object placement; suggests resident is active in the home during standard evening hours)
+
+## Notes
+Object 7 (likely laptop) remained stationary at receptacle_10 (home desk) throughout Day 0, reinforcing the 'Remote Worker' hypothesis. Day 1 introduced new objects: object_17 at receptacle_14 (17:16) and object_15 at receptacle_12 (20:21). Need to identify what object_17 and object_15 are to determine if they relate to cooking, leisure, or preparation for the next day. Receptacle_14 and receptacle_12 locations are unknown; if they are kitchen or living room areas, this supports a standard home routine. Check if object_7 moves on Day 2 to see if the work pattern continues.

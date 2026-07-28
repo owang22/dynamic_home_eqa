@@ -1,0 +1,11 @@
+# Household memory — after day 3 (4 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+(none yet)
+
+## Selected evidence
+- Day 3, 3:35 PM — object_11 at receptacle_1; object_3 at receptacle_1; object_2 at receptacle_1; object_5 at kitchen bin suggests someone cooks dinner early enough to discard packaging mid-afternoon, hinting meal-prep routine or someone who eats dinner unusually early.
+- Day 2, 11:00 AM — object_6 at receptacle_1 suggests midday presence at home consistent with someone who works from or near the home and económizes midday meal prep or tidying then; reinforces weekday daytime presence earlier noted but still weak due to limited days observed.
+
+## Notes
+Still insufficiently differentiated to assign probabilities yet; need more days especially a weekend to see if rhythms shift or remain constant; unclear whether midday presence yesterday was anomaly or norm; awaiting clearer markers like consistent timeslot for certain objects repeatedly appearing/disappearing or signs of absence during typical office hours or conversely signs of someone who sleeps in or stays up late etcetera; also unclear what distinguishes these particular objects from generic ones since lacks labels for them beyond IDs; hoping eventual emergence of recognizable patterns like consistent timing of certain IDs repeatedly appearing/disappearing will eventually allow inference about whether occupant(s) are retirees teleworkers shift workers families etcetera; meanwhile keeping minimal selected evidence avoiding clutter with events that any household would produce such as dishes in evening, remote on sofa etcetera; todays events are too few to warrant adding anything beyond noting它們的存在以防未來成為一個規律例如每天晚上大約6:00左右出現同樣的物品組合但目前還沒有足夠證據將其與其他家庭區分，因此暫不將其納入選定證據除非它們開始顯示出明顯的時間規律性與眾不同例如出現在凌晨時段而非傍晚時段但目前還沒有這種情況所以暫時將其視為潛在而非決定性的觀察結果保留在筆記中以備將來參考但不將其納入選定證據以免造成不必要的噪音；同理對於今晚22:17的事件也是如此將其視為潛在而非決定性的觀察結果保留在筆錄中暫不將其納入選定證據除非將來顯示出明顯的時間規律性與眾例如深夜時段頻繁出現同樣的物品組合但目前還沒有這種情況所以暫時將其視為潛在而非決定性的觀察結果保留筆錄中暫不將其納選定證據以免造成不必要的噪音。总之仍需更多天数才能得出任何可靠的假设概率分配目前仍保持空白。

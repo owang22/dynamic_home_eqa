@@ -45,15 +45,50 @@ _SYS = (
 )
 
 
+def anon_maps(h, cfg=None):
+    """Bijective name map for the ACTIVE loop: object_N / receptacle_N.
+    Receptacle ids embed the room code (sink_k1), so mapping them hides rooms too.
+
+    Domain covers every name that can reach a prompt — objects with events AND
+    query targets (a target that never moves is absent from by_obj). Lookups are
+    STRICT: a gap must raise, never fall back to the original name, because a
+    fallback would silently leak a real name into a supposedly anonymized prompt.
+    """
+    objs = sorted(set(h.get("by_obj", {})) | {o for o, _ in (cfg or {}).get("targets", [])})
+    omap = {o: f"object_{i+1}" for i, o in enumerate(objs)}
+    rmap = {r: f"receptacle_{i+1}" for i, r in enumerate(sorted(h["cands"]))}
+    rmap["elsewhere"] = "elsewhere"          # the one token that maps to itself
+    return omap, rmap
+
+
 class LLMScaffold(LLMArm):
-    """Reflect-style persona memory, rebuilt nightly from self-gathered evidence."""
+    """Reflect-style persona memory, rebuilt nightly from self-gathered evidence.
+
+    maps=(omap, rmap) anonymizes EVERY name crossing into the LLM (observations,
+    memory, candidate list, queried object) and de-anonymizes the prediction on
+    the way back out. Mapping back at the boundary means env scoring and the
+    fusion partner keep working in the original namespace untouched — the
+    anonymized ids never meet the ground truth, so the h2 class of scoring bug
+    (comparing an anonymized prediction to a named truth) cannot arise.
+    """
     name = "llm_scaffold"
 
-    def __init__(self, client, prompt_key="v1"):
+    def __init__(self, client, prompt_key="v1", maps=None):
         super().__init__(client, prompt_key)
+        self.maps = maps
+        self.rev = ({v: k for k, v in maps[1].items()} if maps else {})
         self.mem = dict(M.EMPTY_MEM)
         self.md = M.render_md(M.EMPTY_MEM, -1)
         self.reflect_calls = 0
+
+    def _o(self, o):
+        return self.maps[0][o] if self.maps else o
+
+    def _r(self, r):
+        return self.maps[1][r] if self.maps else r
+
+    def _unr(self, r):
+        return self.rev.get(r, r) if self.maps else r
 
     def reset(self, hh, h, st):
         super().reset(hh, h, st)
@@ -70,7 +105,8 @@ class LLMScaffold(LLMArm):
         prev = [(t, o, rec) for (t, o, rec) in st.history if t // 1440 == day - 1]
         if not prev:
             return
-        lines = [f"  Day {t//1440}, {(t%1440)//60:02d}:{(t%1440)%60:02d} — {o} seen at {rec}"
+        lines = [f"  Day {t//1440}, {(t%1440)//60:02d}:{(t%1440)%60:02d} — "
+                 f"{self._o(o)} seen at {self._r(rec)}"
                  for (t, o, rec) in sorted(prev)]
         new = M.reflect_day(self.client, self.md, day - 1, lines)
         self.reflect_calls += 1
@@ -80,26 +116,39 @@ class LLMScaffold(LLMArm):
 
     def _obs_text(self, st):
         """Memory file FIRST (the reflect scaffold), then the raw log for grounding."""
-        raw = super()._obs_text(st)
+        if self.maps and st.history:
+            from dynbelief.answer_or_resense.arms import OBS_CAP
+            lines = [f"  Day {t//1440}, {(t%1440)//60:02d}:{(t%1440)%60:02d} — "
+                     f"{self._o(o)} seen at {self._r(rec)}"
+                     for (t, o, rec) in sorted(st.history)[-OBS_CAP:]]
+            raw = ("Your observations so far (from your own resensing):\n"
+                   + "\n".join(lines))
+        else:
+            raw = super()._obs_text(st)
         return f"YOUR MEMORY:\n{self.md}\n\n{raw}"
 
     def _ask(self, q, st, r_resense, wrong):
         sys = _SYS.format(one=1, wrong=wrong, r=r_resense, b=st.budget_left)
         clk = f"{(q.t % 1440)//60:02d}:{(q.t % 1440) % 60:02d}"
+        cands = ([self._r(c) for c in self.h["cands"]] if self.maps
+                 else list(self.h["cands"]))
         user = (f"{self._obs_text(st)}\n\nCandidate receptacles: "
-                f"{', '.join(self.h['cands'])}, elsewhere.\n\n"
+                f"{', '.join(cands)}, elsewhere.\n\n"
                 f"Query: on day {q.t//1440} ({M.WEEKDAYS[(q.t//1440) % 7]}) at {clk}, "
-                f"where is the {q.obj}?"
+                f"where is the {self._o(q.obj)}?"
                 + ("" if st.budget_left > 0 else "\n(No resenses left — you must answer.)"))
         try:
             out = json.loads(self.client.generate(sys, user, AOR_SCHEMA, seed=7,
                                                   temperature=0.0, max_tokens=512))
             preds = [p for p in out.get("predictions", []) if p.get("receptacle")]
-            top = preds[0]["receptacle"] if preds else "elsewhere"
+            # de-anonymize IMMEDIATELY: everything downstream (belief keys, the
+            # fused classical partner, env scoring) works in original ids.
+            top = self._unr(preds[0]["receptacle"]) if preds else "elsewhere"
             bel = {c: 0.0 for c in self.cands}
             for p in preds:
-                if p["receptacle"] in bel:
-                    bel[p["receptacle"]] += max(0.0, float(p.get("p", 0)))
+                rec = self._unr(p["receptacle"])
+                if rec in bel:
+                    bel[rec] += max(0.0, float(p.get("p", 0)))
             z = sum(bel.values())
             bel = ({c: v / z for c, v in bel.items()} if z > 0
                    else uniform_belief(self.cands))
@@ -129,10 +178,10 @@ class ScaffoldFusion:
     """
     name = "scaffold_fusion"
 
-    def __init__(self, client, tau, alpha_star=6.07):
+    def __init__(self, client, tau, alpha_star=6.07, maps=None):
         from dynbelief.answer_or_resense.arms import _Classical
         self._c = _Classical()
-        self.llm = LLMScaffold(client)
+        self.llm = LLMScaffold(client, maps=maps)
         self.tau, self.alpha = tau, alpha_star
 
     def reset(self, hh, h, st):

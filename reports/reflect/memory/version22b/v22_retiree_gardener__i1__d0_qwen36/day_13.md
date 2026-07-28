@@ -1,0 +1,17 @@
+# Household memory — after day 13 (14 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.95) Remote worker with structured morning routine — Consistent early morning ritual (07:00 newspaper) and midday/afternoon home presence persist. The newspaper on Day 10 and Day 13 reinforces a structured, non-commuter morning ritual. No departure observed.
+2. (p=0.05) Standard commuter with erratic schedule — Still contradicted by consistent midday/afternoon home presence and lack of morning departure. Probability remains negligible.
+
+## Selected evidence
+- Day 13, 07:00 — newspaper at table_d1 (confirms persistent early morning ritual, consistent with Day 10/11)
+- Day 11, 06:58 — coffee_mug at table_d1 (confirms persistent early morning ritual, consistent with Day 9/10)
+- Day 11, 07:38 — reading_glasses at patio_table_p1 (indicates outdoor leisure activity, distinct from indoor-only patterns)
+- Day 10, 07:08 — newspaper at table_d1 (confirms structured morning routine, distinct from coffee-only days)
+- Day 9, 07:03 — coffee_mug at table_d1 (confirms consistent post-wake-up breakfast/coffee ritual)
+- Day 9, 14:01 — reading_glasses at coffee_table_l1 (indicates afternoon reading/leisure activity)
+- Day 9, 16:01 — reading_glasses at sofa_l1 (suggests movement from coffee table to sofa for continued leisure)
+
+## Notes
+Day 13 (Sunday) observation of a plate at the table at 18:08 is discarded as mundane (dishes cycling). The patio usage pattern remains unverified as weekend-only vs daily; no new discriminative evidence was gathered to update hypotheses or refine the routine. Need to observe Day 14 (Monday) for any changes in morning timing or outdoor activity to confirm if the patio habit is weekend-specific.

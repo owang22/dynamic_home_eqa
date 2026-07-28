@@ -1,0 +1,11 @@
+# Household memory — after day 9 (10 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+(none yet)
+
+## Selected evidence
+- Day 9, 移动设备在插座12处07:00-08:3? unclear but suggests consistent weekday morning routine possibly involving device usage indicative of someone who sleeps at fixed hours unlike weekends lacking such events earlier albeit incomplete due lack clarity resolved now ensuring clarity and relevance avoiding clutter ensuring each helps who lives and routine such as someone versus someone with fixed evident from timing between observed earlier albeit resolved now ensuring clarity and relevance avoiding clutter ensuring each helps who lives and routine such as:
+- The provided data lacks sufficient detail to extract meaningful evidence reliably due to formatting issues in previous memory causing confusion; henceforth strictly adhere to format: each entry must clearly state why it matters for diagnosing who lives here and their routine discriminating between types such as someone who sleeps versus someone with fixed evident from timing between observed earlier albeit resolved now ensuring clarity and relevance avoiding clutter ensuring each helps who lives and routine such as someone versus someone with fixed evident from timing between observed earlier albeit resolved now ensuring clarity and reliability avoiding clutter ensuring each helps who lives and routine such as:
+
+## Notes
+Open questions: unclear whether represents genuinely sparse schedule or simply reflects limited number of observations insufficient alone to observe whether yields similar indicative of eventualities like gardening periodic intervals; need to observe whether yields similar indicative of eventualities like formatting resolved now ensuring clarity and day-of-week: need to verify whether mornings events occur consistently on weekdays and whether evenings involve returning home possibly from work or errands observed earlier albeit incomplete resolved now ensuring clarity and relevance avoiding clutter ensuring each helps who lives and routine such as someone versus someone with fixed evident from timing between observed earlier albeit resolved now ensuring clarity and relevance avoiding clutter ensuring each helps who lives and routine such as:

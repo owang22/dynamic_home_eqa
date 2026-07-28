@@ -1,0 +1,26 @@
+# Household memory — after day 12 (13 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=1.00) Dedicated Sourdough Baker with Early Morning Routine — Day 12 (Saturday) shows no early morning activity (04:50-05:08 window empty), breaking the rigid weekday/weekend pattern. However, the evening plate at the sink (19:05) is consistent with a resident who cooks/bakes during the day or evening on weekends, or simply eats dinner. The core hypothesis of a baker remains strong due to the persistent specific equipment usage on Days 0-11. The lack of activity on Day 12 morning suggests the 'early riser' trait might be work-dependent or the weekend schedule is different. Given the high specificity of previous days, this is still the best fit, though the 'rigid schedule' aspect is now questioned.
+2. (p=0.00) Weekend-Only Baker — Discarded. The evidence from Days 0-11 shows consistent early morning baking activity on weekdays (Mon-Fri) and Saturday morning (Day 5). Day 12 (Saturday) having no activity contradicts a 'weekend-only' profile. The previous pattern was strong across multiple days.
+3. (p=0.00) Shift Worker with Variable Schedule — Discarded. The consistency of the 04:50-05:08 window on Days 0, 3, 4, 5, 6, 7, and 11 suggests a fixed routine, not a variable shift work pattern. Day 12's inactivity is an outlier, not a pattern of variability.
+
+## Selected evidence
+- Day 0, 17:13 — starter_jar at counter_k1 (key discriminator: suggests baking hobby, specifically sourdough)
+- Day 2, 16:47 — flour_bin_scoop at counter_k1 (strong evidence for baking activity, reinforces Day 0 starter observation)
+- Day 3, 05:06 — water_bottle at counter_k1 (early morning routine, possibly pre-workout or hydration before work; suggests disciplined start)
+- Day 3, 08:06 — flour_bin_scoop at baking_shelf_k1 (confirms dedicated baking station; tool returned to specific storage)
+- Day 3, 21:45 — bench_knife at baking_shelf_k1 (evening cleanup of baking tool; reinforces dedicated baking zone and routine)
+- Day 4, 04:50 — proofing_basket at counter_k1 (critical evidence: confirms active sourdough baking process, not just storage)
+- Day 4, 04:50 — bench_knife at counter_k1 (early morning baking prep; reinforces 04:50-05:06 early riser pattern)
+- Day 4, 17:15 — starter_jar at counter_k1 (confirms weekly baking frequency; starter active on Friday)
+- Day 5, 04:52 — phone at counter_k1 (confirms continued early morning routine on Saturday; likely checking time/alarms for baking)
+- Day 5, 21:45 — dough_scraper at baking_shelf_k1 (evening cleanup of baking tool; reinforces dedicated baking zone and routine)
+- Day 6, 08:03 — starter_jar at fridge_k1 (confirms weekly feeding cycle: fed Friday, stored overnight, used Sunday morning)
+- Day 6, 08:03 — bench_knife at sink_k1 (morning cleanup or prep; aligns with Sunday baking session)
+- Day 6, 17:05 — flour_bin_scoop at baking_shelf_k1 (reinforces dedicated baking station usage and routine)
+- Day 7, 05:08 — dough_scraper at counter_k1 (confirms continued early morning routine on Monday; likely prep or cleanup)
+- Day 11, 05:05 — flour_bin_scoop at counter_k1 (confirms persistent early morning baking routine on Friday; reinforces 04:50-05:05 window)
+
+## Notes
+Day 12 (Saturday) showed no early morning activity (04:50-05:08 window empty), which breaks the strong pattern observed on Days 0, 3, 4, 5, 6, 7, and 11. The only event was a plate at the sink at 19:05, which is mundane and doesn't add much diagnostic value. This suggests the early morning routine might be tied to workdays (Mon-Fri) or that the resident took a break on this specific Saturday. The hypothesis of a 'rigid schedule' needs refinement to allow for weekend flexibility or work-dependent timing. Need to observe Day 13 (Sunday) to see if the pattern resumes or if the weekend is truly a break from the early morning routine.

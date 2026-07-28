@@ -9,29 +9,33 @@ from dynbelief.h2 import core
 from dynbelief.answer_or_resense.run_aor import households, OUT as AOR_OUT
 from dynbelief.answer_or_resense import env
 from dynbelief.two_capacities.arms2 import LLMSelfConf, LLMVariant
-from dynbelief.two_capacities.scaffold_arm import LLMScaffold, ScaffoldFusion
+from dynbelief.two_capacities.scaffold_arm import (LLMScaffold, ScaffoldFusion,
+                                                    anon_maps)
 from dynamic_home_eqa.generation.llm_client import OpenAIHTTPClient
 
 OUT = AOR_OUT          # rows co-located with the aor rows (same report tooling)
 FROZEN = dict(Q=10, B=5, r_resense=0.4, wrong=0.0)
 
 
-def run(bank_key, arm_name, tau, variant, endpoint, model, tag, alpha=6.07):
+def run(bank_key, arm_name, tau, variant, endpoint, model, tag, alpha=6.07,
+        anon=False):
     client = OpenAIHTTPClient(endpoint, model)
     hhs = households(bank_key)
 
     def one(item):
         i, hh, cfg, bank_dir = item
         h = core.load_hh(bank_dir, hh)
+        maps = anon_maps(h, cfg) if anon else None
         arm = (LLMSelfConf(client, tau) if arm_name == "llm_selfconf"
-               else LLMScaffold(client) if arm_name == "llm_scaffold"
-               else ScaffoldFusion(client, tau, alpha_star=alpha) if arm_name == "scaffold_fusion"
+               else LLMScaffold(client, maps=maps) if arm_name == "llm_scaffold"
+               else ScaffoldFusion(client, tau, alpha_star=alpha, maps=maps)
+               if arm_name == "scaffold_fusion"
                else LLMVariant(client, variant))
         rows = env.run_episode(arm, i, hh, cfg, h, Q=FROZEN["Q"], B=FROZEN["B"],
                                r_resense=FROZEN["r_resense"], wrong=FROZEN["wrong"])
         for r_ in rows:
             r_.update({"arm": arm.name, "bank": bank_key, "tau": tau,
-                       "alpha": alpha, "variant": variant,
+                       "alpha": alpha, "variant": variant, "anon": int(anon),
                        **{k: v for k, v in FROZEN.items()}})
         import numpy as np
         print(f"[2cap:{arm.name}] {hh} done "
@@ -58,10 +62,13 @@ def main():
     ap.add_argument("--alpha", type=float, default=6.07,
                     help="alpha* = observations the prior is worth; per-model, from "
                          "that model's own dev track record")
+    ap.add_argument("--anon", action="store_true",
+                    help="anonymize all object/receptacle names crossing into the "
+                         "LLM (predictions are mapped back before scoring)")
     ap.add_argument("--tag", required=True)
     args = ap.parse_args()
     run(args.bank, args.arm, args.tau, args.variant, args.endpoint, args.model,
-        args.tag, alpha=args.alpha)
+        args.tag, alpha=args.alpha, anon=args.anon)
 
 
 if __name__ == "__main__":

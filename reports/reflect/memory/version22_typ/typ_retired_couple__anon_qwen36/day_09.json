@@ -1,0 +1,34 @@
+{
+ "hypotheses": [
+  {
+   "persona": "Hybrid Worker (Office 3 days, Remote 2 days)",
+   "prob": 0.75,
+   "rationale": "Day 9 (Wed) shows object_3 (likely work bag/laptop) at receptacle_11 (departure point) at 07:10, indicating an office day. This contrasts with Day 8 (Tue) where object_9 was at the home desk, suggesting a rotating schedule. The consistent evening object_8 at receptacle_9 (gym/errand) on Tue/Wed supports a structured routine."
+  },
+  {
+   "persona": "Standard 9-5 Office Worker with Errands",
+   "prob": 0.2,
+   "rationale": "The presence of object_9 at the home desk on Day 8 could be incidental (e.g., working from home due to illness, or personal project). The strong departure pattern on Day 9 aligns with standard office hours. However, the specific midday home-desk usage on Day 8 is less typical for a pure 9-5 without remote days."
+  },
+  {
+   "persona": "Night Shift / Irregular Schedule",
+   "prob": 0.05,
+   "rationale": "Discarded. The clear morning departure on Day 9 (07:10) and consistent evening patterns contradict irregular/night shift behavior. The late returns on weekends (Days 5-6) are now explained as leisure, not work shifts."
+  }
+ ],
+ "selected_evidence": [
+  "Day 0, 08:07 \u2014 object_4 at receptacle_9 (Baseline Mon departure: establishes rigid morning routine)",
+  "Day 2, 17:46 \u2014 object_8 at receptacle_11 (Pre-evening activity: suggests gym/errand stop on Wed)",
+  "Day 4, 22:04 \u2014 object_10 at receptacle_8 (Fri late return: indicates weekend/social pattern start)",
+  "Day 5, 21:54 \u2014 object_10 at receptacle_8 (Sat late return: confirms weekend leisure pattern)",
+  "Day 6, 21:42 \u2014 object_10 at receptacle_8 (Sun late return: confirms persistent weekend late-night pattern)",
+  "Day 7, 07:06 \u2014 object_3 at receptacle_11 (Mon departure: earlier than Day 0, suggests variable morning routine)",
+  "Day 7, 21:33 \u2014 object_10 at receptacle_8 (Mon late return: suggests weekend-like pattern on Monday now)",
+  "Day 8, 11:38 \u2014 object_9 at receptacle_7 (Tue midday: strong signal for home-desk activity, supports hybrid/remote hypothesis)",
+  "Day 8, 18:45 \u2014 object_8 at receptacle_9 (Tue evening: object_8 at departure receptacle suggests evening outing or gym, consistent with Day 2 pattern)",
+  "Day 9, 07:10 \u2014 object_3 at receptacle_11 (Wed departure: confirms office day, contrasting with Tue remote work)",
+  "Day 9, 18:31 \u2014 object_8 at receptacle_9 (Wed evening: recurring evening activity, likely gym/errand)",
+  "Day 9, 19:16 \u2014 object_13 at receptacle_10 (Wed evening: new object at receptacle_10, possibly dinner/leisure item)"
+ ],
+ "notes": "Day 9 confirms a hybrid schedule: Tue was remote (object_9 at home desk), Wed is office (object_3 at departure point). The 'evening outing' (object_8 at receptacle_9) appears on both Tue and Wed, suggesting a recurring mid-week gym or errand run. Object_13 at receptacle_10 on Wed evening is new; need to track if this is a dinner-related item or a new habit. The Monday return time (21:33) remains an outlier compared to other days; verify if this is a weekly social event or data noise. Weekend late returns (21:42-21:54) are consistent."
+}

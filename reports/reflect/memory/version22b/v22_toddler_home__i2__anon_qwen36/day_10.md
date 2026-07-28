@@ -1,0 +1,13 @@
+# Household memory — after day 10 (11 day(s) observed)
+
+## Persona hypotheses (up to 3, probs sum to 1)
+1. (p=0.99) Remote Worker with Flexible Schedule — Object_16 (likely a work device or bag) appears at the home desk (receptacle_11) at 07:20 and moves to a personal area (receptacle_8) at 17:39. This tight 10-hour window with no midday 'drop-off' or 'pickup' chaos strongly supports a single adult remote worker. The consistency with Day 9's 07:34 start and 17:41 end reinforces this.
+2. (p=0.01) Stay-at-Home Parent / Caregiver — Still theoretically possible if object_16 is a child's item, but the lack of any other child-specific objects (toys, school bags) or erratic timing typical of childcare makes this highly unlikely. The routine is too structured for typical parenting logistics.
+3. (p=0.00) Night Shift Worker — Contradicted by activity at 07:20 and 17:39. A night shift worker would not be active in the morning and early evening in this manner.
+
+## Selected evidence
+- Day 10, 07:20 — object_16 at receptacle_11 (Morning start at home desk; consistent with remote work routine. Object_16 is likely a laptop/bag.)
+- Day 10, 17:39 — object_16 at receptacle_8 (End of day movement to personal area; mirrors Day 9's 17:41 pattern, reinforcing the end-of-workday routine.)
+
+## Notes
+Object_16 is now identified as a key discriminator: it appears at the desk in the morning and leaves in the evening. This strongly suggests a single-person household or a partner who is not present/active during these times. The routine is stabilizing: ~07:20-07:30 start, ~17:39-17:41 end. No new hypotheses needed. Need to confirm if object_16 is indeed a work device.

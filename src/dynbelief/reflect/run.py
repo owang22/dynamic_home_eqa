@@ -172,15 +172,38 @@ def distractor_tuples(h, dist_objs, n_per_day, t_lo=0, t_hi=10 ** 12):
     return out
 
 
-def stream_lines(h, t_lo, t_hi, dist_objs=None):
+def stream_lines(h, t_lo, t_hi, dist_objs=None, maps=None):
     """Frozen-format lines of the thinned event set in [t_lo, t_hi) (uses the module
-    OBS_PER_DAY spec), merged with DISTRACTORS/day static-object sightings."""
+    OBS_PER_DAY spec), merged with DISTRACTORS/day static-object sightings.
+    maps=(omap, rmap) anonymizes every name at this single choke point."""
     ev = thinned_event_tuples(h["by_obj"], OBS_PER_DAY, t_lo, t_hi)
     ev = sorted(ev + distractor_tuples(h, dist_objs, DISTRACTORS, t_lo, t_hi))
+    if maps:
+        omap, rmap = maps
+        ev = [(t, omap.get(o, o), rmap.get(r, r)) for (t, o, r) in ev]
     return [_fmt(t, o, r) for (t, o, r) in ev]
 
 
-def build_memory(client, bank, hh, h, label, dist_objs=None):
+def anon_maps_hh(h, dist_objs=None, extra_objs=()):
+    """Deterministic per-household anonymization: every object -> object_N,
+    every receptacle -> receptacle_N ('elsewhere' maps to itself). Receptacle
+    ids embed the room code (sink_k1, craft_desk_s1), so this also removes room
+    identity. The mapping is the ground-truth table; scoring maps the TRUE
+    receptacle through rmap before comparison (the h2 confirm scoring-bug
+    lesson: never compare an anonymized prediction to a named truth)."""
+    # DOMAIN must cover every name that can reach a prompt: moving objects,
+    # distractors, AND query targets. A target that never moves is absent from
+    # by_obj (the KeyError that killed the first anon run) -- and falling back to
+    # the original name would LEAK it into an "anonymized" prompt, so the map is
+    # widened rather than made forgiving.
+    objs = sorted(set(h["by_obj"]) | set(dist_objs or []) | set(extra_objs))
+    omap = {o: f"object_{i+1}" for i, o in enumerate(objs)}
+    rmap = {r: f"receptacle_{i+1}" for i, r in enumerate(sorted(h["cands"]))}
+    rmap["elsewhere"] = "elsewhere"          # the one token that maps to itself
+    return omap, rmap
+
+
+def build_memory(client, bank, hh, h, label, dist_objs=None, maps=None):
     """Sequential nightly reflection over MEM_DAYS. Saves per-day snapshots
     (json + md) and returns {days_of_experience: (md, H_bits)}."""
     snap_dir = OUT / "memory" / bank / f"{hh}__{label}"
@@ -188,7 +211,7 @@ def build_memory(client, bank, hh, h, label, dist_objs=None):
     mem, md = dict(M.EMPTY_MEM), M.render_md(M.EMPTY_MEM, -1)
     out, metas = {}, []
     for d in range(MEM_DAYS):
-        lines = stream_lines(h, d * 1440, (d + 1) * 1440, dist_objs)
+        lines = stream_lines(h, d * 1440, (d + 1) * 1440, dist_objs, maps)
         new = M.reflect_day(client, md, d, lines)
         failed = new is None
         if not failed:
@@ -226,7 +249,8 @@ def _query(client, sys, context, cands, cand_set, obj, tq, true):
                           "p": float(p.get("p", 0.0))} for p in preds][:3]
 
 
-def run(endpoint, model, label, bank_name, arms=("direct", "nomem"), out_suffix=""):
+def run(endpoint, model, label, bank_name, arms=("direct", "nomem"), out_suffix="",
+        anon=False):
     bank, cfgmap, test_days, nomem_ok = bank_of(bank_name)
     do_direct = "direct" in arms
     do_nomem = "nomem" in arms and nomem_ok
@@ -236,13 +260,16 @@ def run(endpoint, model, label, bank_name, arms=("direct", "nomem"), out_suffix=
     hhs = list(cfgmap)
     data = {hh: core.load_hh(bank, hh) for hh in hhs}
     dist_of = {hh: cfgmap[hh].get("distractors") for hh in hhs}
+    maps_of = {hh: (anon_maps_hh(data[hh], dist_of[hh],
+                                 [o for o, _ in cfgmap[hh]["targets"]])
+                    if anon else None) for hh in hhs}
     # memory building (only the direct arm reads memory): parallel across
     # households, sequential days within
     if do_direct:
         with ThreadPoolExecutor(max_workers=len(hhs)) as ex:
             mems = dict(zip(hhs, ex.map(
                 lambda hh: build_memory(client, bank, hh, data[hh], label,
-                                        dist_of[hh]), hhs)))
+                                        dist_of[hh], maps_of[hh]), hhs)))
     else:
         mems = {hh: {ck: ("", float("nan")) for ck in CKPTS} for hh in hhs}
 
@@ -251,19 +278,33 @@ def run(endpoint, model, label, bank_name, arms=("direct", "nomem"), out_suffix=
     for hh in hhs:
         h = data[hh]; cfg = cfgmap[hh]
         cands, cand_set = h["cands"], h["cand_set"]
+        if anon:
+            omap, rmap_a = maps_of[hh]
+            cands = sorted((rmap_a[c] for c in h["cands"]),
+                           key=lambda x: int(x.split("_")[-1]))
+            cand_set = cands + ["elsewhere"]
         rmap = room_of(hh)
         jobs = []
         for ckpt in CKPTS:
             md, hbits = mems[hh][ckpt]
             raw = "Observations:\n" + "\n".join(
-                stream_lines(h, 0, ckpt * 1440, dist_of[hh]))
-            for (obj, hr) in cfg["targets"]:
-                n_total = len(h["by_obj"].get(obj, []))
+                stream_lines(h, 0, ckpt * 1440, dist_of[hh], maps_of[hh]))
+            for (obj0, hr) in cfg["targets"]:
+                n_total = len(h["by_obj"].get(obj0, []))
                 for qd in test_days:
                     tq = qd * 1440 + hr * 60
-                    true = true_parent_at(h["by_obj"], h["init"], obj, tq)
+                    true = true_parent_at(h["by_obj"], h["init"], obj0, tq)
+                    true_orig, obj_orig = true, obj0
+                    obj = obj0
+                    if anon:
+                        # score against the ANONYMIZED truth (h2 lesson: never
+                        # compare an anonymized prediction to a named truth)
+                        true = maps_of[hh][1].get(true, true)
+                        obj = omap[obj]
                     base = {"bank": bank, "hh": hh, "object": obj, "ckpt": ckpt,
                             "test_day": qd, "t_query": tq, "true": true,
+                            **({"anon": 1, "object_orig": obj_orig,
+                                "true_orig": true_orig} if anon else {}),
                             "rarity": e7._rarity(n_total),
                             "obs_spec": obs_tag(OBS_PER_DAY) or "none",
                             "dist": DISTRACTORS,
@@ -277,11 +318,14 @@ def run(endpoint, model, label, bank_name, arms=("direct", "nomem"), out_suffix=
                             "plus selected evidence",
                             "the full log of observed events"), raw, obj, tq, true, base))
 
+        rev = ({v: k for k, v in maps_of[hh][1].items()} if anon else {})
+
         def do(j):
             arm, sys, ctx, obj, tq, true, base = j
             am, t3, preds = _query(client, sys, ctx, cands, cand_set, obj, tq, true)
+            am_r, true_r = (rev.get(am, am), rev.get(true, true)) if anon else (am, true)
             r = {**base, "model": arm, "pred": am, "correct": int(am == true),
-                 "room_correct": int(rmap.get(am, "x") == rmap.get(true, "y")),
+                 "room_correct": int(rmap.get(am_r, "x") == rmap.get(true_r, "y")),
                  "top3_correct": t3}
             if arm == "llm_direct":
                 r["preds"] = preds                  # stored for offline fusion
@@ -307,6 +351,11 @@ def main():
     ap.add_argument("--obs-per-day", default=None,
                     help="events/day the SYSTEM sees (all arms). 'none' (all), 'N' "
                          "(fixed cap), 'randN' (Poisson mean N). Starves early days.")
+    ap.add_argument("--anon", action="store_true",
+                    help="anonymize ALL object/receptacle names (object_N / "
+                         "receptacle_N; receptacle ids carry the room code, so "
+                         "rooms are hidden too). Ground truth is scored through "
+                         "the same mapping.")
     ap.add_argument("--distractors", type=int, default=0,
                     help="static-distractor sightings/day added to every stream "
                          "(v22 banks; see reflect/v22.py)")
@@ -315,7 +364,8 @@ def main():
     OBS_PER_DAY = parse_obs_spec(args.obs_per_day)
     DISTRACTORS = args.distractors
     run(args.endpoint, args.model, args.label, args.bank,
-        arms=tuple(args.arms.split(",")), out_suffix=args.out_suffix)
+        arms=tuple(args.arms.split(",")), out_suffix=args.out_suffix,
+        anon=args.anon)
 
 
 if __name__ == "__main__":
