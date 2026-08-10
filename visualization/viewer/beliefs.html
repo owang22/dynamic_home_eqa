@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>belief vs truth — baselines run viewer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>belief vs truth</h1>
+  <select id="agent-select" title="agent (belief+policy)"></select>
+  <select id="object-select" title="object"></select>
+  <span id="run-label" class="muted"></span>
+  <span style="margin-left:auto"><a href="index.html" style="color:var(--accent2)">object traces ▸</a></span>
+</header>
+
+<main>
+  <div id="map-wrap">
+    <canvas id="map" width="1200" height="900"></canvas>
+    <div id="hud">
+      <div id="clock">d00 Mon 00:00</div>
+      <div id="whereabouts" class="muted"></div>
+    </div>
+  </div>
+
+  <aside id="panel">
+    <section id="status">
+      <table>
+        <tr><th>truth now</th><td id="st-truth">–</td></tr>
+        <tr><th>last question</th><td id="st-q">–</td></tr>
+        <tr><th>predicted</th><td id="st-pred">–</td></tr>
+        <tr><th>confidence</th><td id="st-conf">–</td></tr>
+        <tr><th>verdict</th><td id="st-verdict">–</td></tr>
+        <tr><th>budget spent</th><td id="st-budget">–</td></tr>
+        <tr><th>accuracy so far</th><td id="st-acc">–</td></tr>
+      </table>
+    </section>
+    <section>
+      <label>prediction distribution (at last question)</label>
+      <div id="dist" class="small muted"></div>
+    </section>
+    <section>
+      <label>legend</label>
+      <div class="small muted">
+        ● gold disc — true location now<br>
+        ◯ ring — predicted at last question (green right / red wrong)<br>
+        dashed line — prediction ↔ truth when they disagree<br>
+        strip ticks — questions (green right / red wrong)
+      </div>
+    </section>
+  </aside>
+</main>
+
+<footer>
+  <button id="play" title="autoplay">▶</button>
+  <select id="speed">
+    <option value="30">0.5 h/s</option>
+    <option value="120" selected>2 h/s</option>
+    <option value="360">6 h/s</option>
+    <option value="900">15 h/s</option>
+  </select>
+  <div id="slider-stack">
+    <canvas id="event-strip" height="14"></canvas>
+    <input type="range" id="time" min="0" max="20160" step="5" value="0">
+  </div>
+</footer>
+
+<script src="beliefs.js"></script>
+</body>
+</html>

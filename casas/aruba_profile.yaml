@@ -1,0 +1,41 @@
+# Extrapolated narrative-lite profile for the CASAS "aruba" testbed resident.
+# The dataset gives us WHO only implicitly: a single older adult living alone
+# (aging-in-place study home, 2010-2011), with regular visits from children
+# that we ignore here. Everything below the residents block is our
+# extrapolation — CASAS provides activities and timestamps, not objects.
+# Object classes come from the revamp_v1 vocabulary.
+
+household_id: casas_aruba
+household_type: casas_free_living_solo
+residents:
+  - id: resident_1
+    name: "aruba resident (anonymous)"
+    age: ~70
+    occupation: retired
+    personality: extrapolated — regular, home-centered, tidy in bursts
+    habits:
+      - "(from data) sleeps one long block with occasional night toilet trips"
+      - "(from data) many short kitchen visits per day rather than long cooking sessions"
+      - "(from data) relaxes in the living room ~13 times a day in short bouts"
+      - "(from data) leaves the house about twice a day, briefly"
+      - "(from data) washes dishes every couple of days, not after every meal"
+      - "(from data) housekeeping sweeps come in bursts days apart"
+      - "(extrapolated) reading glasses migrate wherever she settles and get hunted"
+      - "(extrapolated) hangs her jacket properly on returning, most of the time"
+
+object_inventory:
+  - {id: mug_1,               class: mug,               owner: resident_1}
+  - {id: mug_2,               class: mug,               owner: resident_1}
+  - {id: plate_1,             class: plate,             owner: resident_1}
+  - {id: plate_2,             class: plate,             owner: resident_1}
+  - {id: bowl_1,              class: bowl,              owner: resident_1}
+  - {id: glasses_1,           class: glasses,           owner: resident_1}
+  - {id: book_1,              class: book,              owner: resident_1}
+  - {id: remote_1,            class: remote,            owner: resident_1}
+  - {id: blanket_1,           class: blanket,           owner: resident_1}
+  - {id: notebook_1,          class: notebook,          owner: resident_1}
+  - {id: pen_1,               class: pen,               owner: resident_1}
+  - {id: medication_bottle_1, class: medication_bottle, owner: resident_1}
+  - {id: keys_1,              class: keys,              owner: resident_1}
+  - {id: wallet_1,            class: wallet,            owner: resident_1}
+  - {id: jacket_1,            class: jacket,            owner: resident_1}

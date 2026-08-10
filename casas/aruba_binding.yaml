@@ -1,0 +1,142 @@
+# Activity->object binding for the CASAS aruba resident.
+#
+# The SCHEDULE side of this file is empty on purpose: unlike the revamp_v1
+# specs, the activity stream is REAL (aruba/activities.csv — 11 labeled ADLs
+# over 220 days). This file supplies only the invented layer: which objects
+# each labeled activity touches, and where they end up. Same rule mechanics
+# as revamp_v1 (during/after, p/else, dist, only_from, reset_all), with one
+# extension: `during` entries may carry p / only_from too, because real
+# activities repeat many times a day (7 Meal_Preparation bouts) and not
+# every bout uses every object.
+#
+# Receptacle ids deliberately match hh_001's so the same HSSD-suite anchors
+# serve both — the point is comparing motion patterns, not floor plans.
+#
+# Deliberate contrasts with hh_001 grounded in the data:
+#   - Wash_Dishes fires every ~2 days for real, so dishes pile on real
+#     cadence (hh_001 got this from an invented daysleep rule)
+#   - Housekeeping IS the reset sweep, at its real bursty cadence
+#     (hh_001 invented a weekly one)
+#   - the jacket gets hung properly on return (tidy resident; Marisol's
+#     lands on a kitchen chair)
+
+household: casas_aruba
+source_profile: aruba_profile.yaml
+activities_csv: aruba/activities.csv
+
+receptacles:
+  - {id: bed_b1,            room: bedroom}
+  - {id: nightstand_b1,     room: bedroom}
+  - {id: bedroom_floor_b1,  room: bedroom}
+  - {id: couch_l1,          room: living}
+  - {id: coffee_table_l1,   room: living}
+  - {id: counter_k1,        room: kitchen}
+  - {id: sink_k1,           room: kitchen}
+  - {id: cupboard_k1,       room: kitchen}
+  - {id: chair_k1,          room: kitchen}
+  - {id: bathroom_shelf_ba1, room: bathroom}
+  - {id: entry_table_e1,    room: entry}
+  - {id: entry_hook_e1,     room: entry}
+  - {id: entry_floor_e1,    room: entry}
+
+placements:
+  mug_1:               {home: cupboard_k1}
+  mug_2:               {home: cupboard_k1}
+  plate_1:             {home: cupboard_k1}
+  plate_2:             {home: cupboard_k1}
+  bowl_1:              {home: cupboard_k1}
+  glasses_1:           {home: nightstand_b1, p_misplace: 0.15,
+                        misplace_set: [counter_k1, coffee_table_l1, bathroom_shelf_ba1]}
+  book_1:              {home: nightstand_b1}
+  remote_1:            {home: coffee_table_l1, p_misplace: 0.1, misplace_set: [couch_l1]}
+  blanket_1:           {home: bed_b1}
+  notebook_1:          {home: coffee_table_l1}
+  pen_1:               {home: coffee_table_l1}
+  medication_bottle_1: {home: counter_k1}
+  keys_1:              {home: entry_table_e1}
+  wallet_1:            {home: entry_table_e1}
+  jacket_1:            {home: entry_hook_e1}
+
+activities:
+  Sleeping:
+    at: bed_b1
+    during:
+      glasses_1: {dest: nightstand_b1}          # glasses off at bedtime
+      blanket_1: {dest: bed_b1, p: 0.9, only_from: [couch_l1, bedroom_floor_b1]}
+    after:
+      blanket_1: {dest: bed_b1, p: 0.85, else: bedroom_floor_b1}
+  Bed_to_Toilet: {at: bathroom_shelf_ba1, during: {}, after: {}}  # labeled, but moves no object
+  Meal_Preparation:
+    at: counter_k1
+    during:                                     # ~7 short bouts/day; each bout
+      mug_1:   {dest: counter_k1, p: 0.30}      # only sometimes pulls a dish
+      mug_2:   {dest: counter_k1, p: 0.10, only_from: [cupboard_k1]}  # backup mug
+      plate_2: {dest: counter_k1, p: 0.08, only_from: [cupboard_k1]}  # second plate
+      plate_1: {dest: counter_k1, p: 0.25, only_from: [cupboard_k1]}
+      bowl_1:  {dest: counter_k1, p: 0.20, only_from: [cupboard_k1]}
+    after:
+      mug_1:   {dest: counter_k1, p: 0.7, else: couch_l1,
+                only_from: [counter_k1]}        # coffee travels to the couch
+  Eating:
+    at: coffee_table_l1
+    during:                                     # eats in front of the TV
+      plate_1: {dest: coffee_table_l1, p: 0.6, only_from: [counter_k1, cupboard_k1]}
+      bowl_1:  {dest: coffee_table_l1, p: 0.35, only_from: [counter_k1, cupboard_k1]}
+    after: {}                                   # dishes linger where they landed
+  Wash_Dishes:                                  # real ~2-day cadence drives the pile
+    at: sink_k1
+    during: {}
+    after:
+      mug_1:   {dest: cupboard_k1, p: 0.85, else: sink_k1,
+                only_from: [counter_k1, couch_l1, coffee_table_l1, sink_k1]}
+      mug_2:   {dest: cupboard_k1, p: 0.85, else: sink_k1,
+                only_from: [counter_k1, couch_l1, coffee_table_l1, sink_k1]}
+      plate_1: {dest: cupboard_k1, p: 0.9, else: sink_k1,
+                only_from: [counter_k1, coffee_table_l1, sink_k1]}
+      plate_2: {dest: cupboard_k1, p: 0.9, else: sink_k1,
+                only_from: [counter_k1, coffee_table_l1, sink_k1]}
+      bowl_1:  {dest: cupboard_k1, p: 0.9, else: sink_k1,
+                only_from: [counter_k1, coffee_table_l1, sink_k1]}
+  Relax:                                        # ~13 bouts/day, mostly couch
+    at: couch_l1
+    during:
+      remote_1:  {dest: couch_l1, p: 0.5}
+      glasses_1: {dest: couch_l1, p: 0.45}
+      book_1:    {dest: couch_l1, p: 0.25}
+      blanket_1: {dest: couch_l1, p: 0.10, only_from: [bed_b1]}
+    after:
+      remote_1: {dist: {couch_l1: 0.55, coffee_table_l1: 0.45}}
+      book_1:   {dist: {couch_l1: 0.3, coffee_table_l1: 0.45, nightstand_b1: 0.25},
+                 only_from: [couch_l1]}
+  Work:                                         # bills/puzzles at the coffee table
+    at: coffee_table_l1
+    during:
+      notebook_1: {dest: coffee_table_l1, p: 0.8}
+      pen_1:      {dest: coffee_table_l1, p: 0.8}
+      glasses_1:  {dest: coffee_table_l1, p: 0.5}
+    after:
+      notebook_1: {dist: {coffee_table_l1: 0.6, couch_l1: 0.25, nightstand_b1: 0.15}}
+      pen_1: {dist: {coffee_table_l1: 0.5, couch_l1: 0.25, entry_table_e1: 0.25}}
+  Leave_Home:
+    at: entry_table_e1
+    during: {}
+    after:
+      keys_1:   {dest: ELSEWHERE}
+      wallet_1: {dest: ELSEWHERE}
+      jacket_1: {dest: ELSEWHERE}
+  Enter_Home:
+    at: entry_table_e1
+    during: {}
+    after:
+      keys_1:   {dest: entry_table_e1}
+      wallet_1: {dest: entry_table_e1}
+      jacket_1: {dest: entry_hook_e1, p: 0.85, else: chair_k1}   # tidy, mostly
+  Housekeeping:                                 # the REAL reset sweep
+    at: counter_k1
+    reset_all: {p: 0.85}
+    during: {}
+    after: {}
+  Respirate:                                    # breathing-therapy device sessions
+    at: couch_l1
+    during: {medication_bottle_1: {dest: couch_l1}}
+    after:  {medication_bottle_1: {dest: counter_k1, p: 0.9, else: couch_l1}}

@@ -18,3 +18,9 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+# mypy: the baselines package is checked with --strict; these overrides only
+# silence missing type stubs for third-party libraries.
+[[tool.mypy.overrides]]
+module = ["matplotlib.*", "yaml"]
+ignore_missing_imports = true

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>dynbelief object-trace viewer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>object-trace viewer</h1>
+  <select id="trace-select" title="switch household"></select>
+  <span id="run-label" class="muted"></span>
+  <span style="margin-left:auto"><a href="beliefs.html" style="color:var(--accent2)">belief vs truth ▸</a></span>
+</header>
+
+<main>
+  <div id="map-wrap">
+    <canvas id="map" width="1200" height="900"></canvas>
+    <div id="hud">
+      <div id="clock">d00 Mon 00:00</div>
+      <div id="whereabouts" class="muted"></div>
+    </div>
+  </div>
+
+  <aside id="panel">
+    <section>
+      <label for="object-select">object</label>
+      <select id="object-select"></select>
+    </section>
+
+    <section id="status">
+      <table>
+        <tr><th>room</th><td id="st-room">–</td></tr>
+        <tr><th>receptacle</th><td id="st-rec">–</td></tr>
+        <tr><th>placement</th><td id="st-rel">–</td></tr>
+        <tr><th>caused by</th><td id="st-cause">–</td></tr>
+        <tr><th>since</th><td id="st-since">–</td></tr>
+      </table>
+    </section>
+
+    <section>
+      <label>display</label>
+      <div class="row">
+        <label class="chk"><input type="checkbox" id="show-path" checked> path so far</label>
+        <label class="chk"><input type="checkbox" id="show-trace"> trace build-up</label>
+      </div>
+      <div class="row">
+        <label class="chk"><input type="checkbox" id="show-others"> all objects (faint)</label>
+        <label class="chk"><input type="checkbox" id="show-recs" checked> receptacles</label>
+      </div>
+    </section>
+
+    <section>
+      <label>events (selected object)</label>
+      <div class="row">
+        <button id="prev-event">◀ prev</button>
+        <button id="next-event">next ▶</button>
+      </div>
+      <div id="event-info" class="muted small"></div>
+    </section>
+  </aside>
+</main>
+
+<footer>
+  <button id="play" title="autoplay">▶</button>
+  <select id="speed">
+    <option value="30">0.5 h/s</option>
+    <option value="120" selected>2 h/s</option>
+    <option value="360">6 h/s</option>
+    <option value="900">15 h/s</option>
+  </select>
+  <div id="slider-stack">
+    <canvas id="event-strip" height="14"></canvas>
+    <input type="range" id="time" min="0" max="20160" step="5" value="0">
+  </div>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

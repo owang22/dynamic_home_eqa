@@ -1,0 +1,14 @@
+# Full grid on the hh_001 (night-shift solo) exported bank.
+bank: banks/baselines/hh_001_seed0_bank.jsonl
+seed: 0
+out_dir: smoke_results/baselines_hh001
+agents:
+  beliefs:
+    - {name: last_observation}
+    - {name: most_frequent}
+    - {name: timetable, bin_hours: 2, day_scheme: all}
+  policies:
+    - {name: never_sense}
+    - {name: always_sense}
+    - {name: fixed_schedule, every_hours: 6,
+       rotation: [counter_k1, couch_l1, coffee_table_l1, entry_table_e1]}

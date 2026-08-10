@@ -1,0 +1,180 @@
+# Stage-2 schedule spec for hh_001 (claude-fable-5) — compiled by hand from
+# the narrative profile; every block cites the habit/summary line it encodes.
+# Day 0 = Monday. Blocks whose end <= start wrap past midnight.
+#
+# Marisol works nights Mon-Fri (departs Mo-Fr evening, returns Tu-Sa morning),
+# stays on night hours through the weekend, and does her weekly manic reset on
+# Saturday night — the "first night off" from the profile's quirks. Her sleep
+# pipeline (phone exile, melatonin, blackout daysleep) runs every day; the
+# living spaces silt up between Saturdays.
+#
+# Simplifications, on purpose for the pilot:
+#   - daysleep keeps the same window on nights off (profile: "she stays on
+#     night hours anyway"); no schedule drift within the fortnight
+#   - no weather model: the umbrella stays parked (its role is "leans by the
+#     door"), it only moves if the weekly reset re-stands it
+#   - bowl_1 is the door catch-all and never used for food, per its role;
+#     keys/wallet "in bowl_1" is modeled as sharing its receptacle
+
+household: hh_001
+
+# Start-time jitter tiers (sigma, minutes), calibrated against CASAS
+# free-living homes (casas/README.md): real self-paced activities drift
+# 60-120 min day-to-day; body-clock anchors 20-70; contractual anchors are
+# a domain prior (no employed residents in the CASAS homes). Overlaps
+# resolve by anchor priority: the tighter class keeps its boundary, so a
+# drifting evening_roam gets truncated by the fixed depart_commute.
+jitter_classes: {external: 10, routine: 30, flexible: 75, loose: 110}
+source_profile: ../households/hh_001_night_shift_worker_solo.yaml
+day0: Monday
+
+receptacles:
+  - {id: bed_b1,            room: bedroom}
+  - {id: nightstand_b1,     room: bedroom}
+  - {id: bedroom_floor_b1,  room: bedroom}    # where the book lands mid-sleep
+  - {id: couch_l1,          room: living}
+  - {id: coffee_table_l1,   room: living}
+  - {id: counter_k1,        room: kitchen}    # hosts charger_1, the phone-exile dock
+  - {id: sink_k1,           room: kitchen}
+  - {id: cupboard_k1,       room: kitchen}
+  - {id: chair_k1,          room: kitchen}    # the jacket's actual home
+  - {id: bathroom_shelf_ba1, room: bathroom}
+  - {id: entry_table_e1,    room: entry}      # bowl_1 sits here; keys/wallet land in it
+  - {id: entry_hook_e1,     room: entry}      # the closet hook she bought for the jacket
+  - {id: entry_floor_e1,    room: entry}      # umbrella lean
+
+# Home = where the weekly reset returns an object. p_misplace = daily chance
+# of drifting to a random misplace_set receptacle at a random awake minute.
+placements:
+  bowl_1:              {home: entry_table_e1, static: true}
+  bowl_2:              {home: cupboard_k1}
+  plate_1:             {home: cupboard_k1}
+  mug_1:               {home: cupboard_k1}
+  mug_2:               {home: cupboard_k1}
+  phone_marisol:       {home: 'person:resident_1'}  # phones live on the person
+  charger_1:           {home: counter_k1, static: true}
+  keys_marisol:        {home: entry_table_e1}
+  wallet_marisol:      {home: entry_table_e1}
+  water_bottle_1:      {home: counter_k1, p_misplace: 0.5,
+                        misplace_set: [couch_l1, coffee_table_l1, bathroom_shelf_ba1, nightstand_b1]}
+  book_1:              {home: nightstand_b1}
+  headphones_1:        {home: counter_k1}
+  medication_bottle_1: {home: nightstand_b1, static: true}
+  blanket_1:           {home: couch_l1}
+  jacket_marisol:      {home: entry_hook_e1}
+  remote_1:            {home: coffee_table_l1, p_misplace: 0.15, misplace_set: [couch_l1]}
+  umbrella_1:          {home: entry_floor_e1, static: true}
+
+residents:
+  - id: resident_1
+    jitter_scale: 0.9   # disciplined-side punctuality (calibrated range 0.5-2.0)
+    schedule:
+      # -- work nights (habit: keys/wallet to the door bowl "the moment she
+      #    gets home"; jacket to the kitchen chair "instead of the closet hook")
+      - {activity: depart_commute, days: [Mo,Tu,We,Th,Fr], start: "22:05", end: "22:25"}
+      - {activity: away_shift,     days: [Mo,Tu,We,Th,Fr], start: "22:25", end: "07:05"}
+      - {activity: arrive_home,    days: [Tu,We,Th,Fr,Sa], start: "07:05", end: "07:20"}
+      # -- post-shift meal on the couch; plate camps on the coffee table
+      - {activity: post_shift_meal, days: [Tu,We,Th,Fr,Sa], start: "07:20", end: "08:10"}
+      - {activity: wind_down_couch, days: [Tu,We,Th,Fr,Sa], start: "08:10", end: "09:00"}
+      # -- the strict sleep pipeline, every day (phone exile, melatonin, book)
+      - {activity: bedtime_ritual, days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "09:00", end: "09:20"}
+      - {activity: daysleep,       days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "09:20", end: "16:50"}
+      # -- her "morning" at dusk: coffee + cereal while neighbors eat dinner
+      - {activity: evening_wake,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "17:00", end: "17:45"}
+      - {activity: evening_roam,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "17:45", end: "21:45"}
+      # -- nights off: Saturday-night manic reset, then streaming into the small hours
+      - {activity: weekly_reset,   days: [Sa],    start: "21:50", end: "00:40"}
+      - {activity: night_streaming, days: [Su],   start: "00:50", end: "04:10"}   # Sat night, post-reset
+      - {activity: night_streaming, days: [Su],   start: "22:30", end: "03:40"}   # Sun night, wraps to Mon
+
+activities:
+  depart_commute:
+    jitter: external
+    at: entry_table_e1
+    during: {}          # gather-and-go: moves happen at block end
+    after:              # everything she carries leaves the house
+      keys_marisol:   {dest: ELSEWHERE}
+      wallet_marisol: {dest: ELSEWHERE}
+      water_bottle_1: {dest: ELSEWHERE}
+      jacket_marisol: {dest: ELSEWHERE}
+  away_shift:
+    jitter: external
+    at: ELSEWHERE
+    during: {}
+    after: {}
+  arrive_home:
+    jitter: external
+    at: entry_table_e1
+    during: {}
+    after:
+      keys_marisol:   {dest: entry_table_e1}                      # "the moment she gets home"
+      wallet_marisol: {dest: entry_table_e1}
+      jacket_marisol: {dest: chair_k1, p: 0.8, else: entry_hook_e1}
+      water_bottle_1: {dest: counter_k1, p: 0.6, else: couch_l1}
+  post_shift_meal:
+    jitter: routine
+    at: couch_l1
+    during: {plate_1: coffee_table_l1, mug_1: couch_l1, remote_1: couch_l1}
+    after:
+      plate_1: {dest: coffee_table_l1, p: 0.85, else: sink_k1}    # camps "until she wakes"
+      mug_1:   {dest: coffee_table_l1, p: 0.6, else: couch_l1}
+      remote_1: {dist: {couch_l1: 0.6, coffee_table_l1: 0.4}}     # sinks between cushions
+  wind_down_couch:
+    jitter: routine
+    at: couch_l1
+    during: {blanket_1: couch_l1}
+    after:
+      # "the drowsy hour after a shift before she commits to bed" — most days
+      # the blanket stays on the couch, some days it goes to bed with her
+      blanket_1: {dest: couch_l1, p: 0.7, else: bed_b1}
+      headphones_1: {dist: {couch_l1: 0.45, counter_k1: 0.3, bathroom_shelf_ba1: 0.25}}  # "wherever a chapter ends"
+  bedtime_ritual:
+    jitter: external    # "her strict wind-down" — the one self-imposed ritual
+    at: nightstand_b1
+                        # she runs with contractual precision
+    during: {phone_marisol: counter_k1, book_1: bed_b1}           # THE exile: off her person, onto the charger
+    after: {}
+  daysleep:
+    jitter: routine
+    at: bed_b1
+    during: {}
+    after:
+      book_1: {dist: {nightstand_b1: 0.55, bedroom_floor_b1: 0.45}, only_from: [bed_b1]}  # "slides off the bed"
+      blanket_1: {dist: {bed_b1: 0.55, bedroom_floor_b1: 0.45},     # kicked off in her sleep,
+                  only_from: [bed_b1]}                              # but only if it came to bed
+      plate_1: {dest: sink_k1, p: 0.7, else: coffee_table_l1,      # cleared on waking, usually —
+                only_from: [coffee_table_l1, couch_l1]}            # but only if it's actually out
+      mug_1:   {dest: sink_k1, p: 0.6, else: coffee_table_l1,
+                only_from: [coffee_table_l1, couch_l1]}
+  evening_wake:
+    jitter: flexible
+    at: couch_l1
+    during: {bowl_2: couch_l1, mug_2: couch_l1,                   # cereal + coffee, couch not table
+             phone_marisol: 'person:resident_1'}                  # phone retrieved on waking
+    after:
+      bowl_2: {dest: sink_k1, p: 0.5, else: coffee_table_l1}
+      mug_2:  {dist: {sink_k1: 0.4, couch_l1: 0.3, counter_k1: 0.3}}
+  evening_roam:
+    jitter: flexible
+    at: couch_l1
+    during: {}
+    after:
+      headphones_1: {dist: {couch_l1: 0.4, counter_k1: 0.35, bathroom_shelf_ba1: 0.25}}
+      blanket_1: {dest: couch_l1, p: 0.6, else: bed_b1,           # retrieved to the couch on
+                  only_from: [bed_b1, bedroom_floor_b1]}          # most evenings, not all
+  weekly_reset:                                                   # the Saturday manic sweep
+    jitter: loose
+    at: counter_k1
+    reset_all: {p: 0.95}                                          # everything home, incl. jacket to its hook
+    during: {}
+    after: {}
+  night_streaming:
+    jitter: loose
+    at: couch_l1
+    during: {remote_1: couch_l1, blanket_1: couch_l1, mug_2: couch_l1}
+    after:
+      remote_1: {dist: {couch_l1: 0.6, coffee_table_l1: 0.4}}
+      mug_2:    {dest: coffee_table_l1, p: 0.7, else: sink_k1}
+      phone_marisol: {dest: counter_k1,                           # exile before the late crash
+                      only_from: ['person:resident_1']}

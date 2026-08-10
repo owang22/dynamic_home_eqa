@@ -1,0 +1,112 @@
+# Control file for the revamped household set (revamp_v1).
+# Stage 1 of the revamp: narrative profiles — WHO lives in each home and WHAT
+# objects they own. No clock times at this stage; schedules with times of day
+# are authored in a later step and will be driven by these profiles.
+#
+# The previous household set (v1 + v22 schedule-spec profiles and all built
+# banks) was archived to archive/pre_revamp_2026-08-07/ (also saved on GitHub).
+
+version: revamp_v1
+created: 2026-08-07
+stage: narrative_profiles          # next stage: schedule authoring (clock times)
+generator: claude-fable-5, interactive session
+prompt_file: ../generation_prompt.md  # verbatim generation instructions
+
+object_vocabulary:
+  [mug, bowl, plate, laptop, phone, keys, book, water_bottle, remote,
+   charger, backpack, jacket, headphones, glasses, notebook, pen,
+   medication_bottle, toy, blanket, towel, gaming_controller, dog_leash,
+   lunchbox, umbrella, wallet]
+
+rules:
+  - household_type and headcount are fixed as specified below
+  - 5-8 concrete object habits per resident; in multi-person homes at least
+    2 habits per resident involve another resident (waived for 1-person homes)
+  - no clock times or hour-by-hour routines anywhere in the profiles
+  - object counts scale with household size; phones/keys/wallets exist
+    per resident (adults and teens; not small children)
+  - an object's meaning must come from its "role" (how it is used and moved),
+    not from its class
+  - each household must be clearly different from every other household in
+    personalities, ages, living situations, and habits — not just names
+
+households:
+  - household_id: hh_001
+    household_type: night_shift_worker_solo
+    residents_spec: "1"
+    residents: 1
+    constraints: one-bedroom apartment
+    file: households/hh_001_night_shift_worker_solo.yaml
+    status: GENERATED
+
+  - household_id: hh_002
+    household_type: family_young_children
+    residents_spec: "4-5 (2 adults, 2-3 kids under ~8)"
+    residents: 4
+    constraints: null
+    file: households/hh_002_family_young_children.yaml
+    status: GENERATED
+
+  - household_id: hh_003
+    household_type: retired_couple
+    residents_spec: "2"
+    residents: 2
+    constraints: null
+    file: households/hh_003_retired_couple.yaml
+    status: GENERATED
+
+  - household_id: hh_004
+    household_type: college_roommates
+    residents_spec: "3-4"
+    residents: 4
+    constraints: null
+    file: households/hh_004_college_roommates.yaml
+    status: GENERATED
+
+  - household_id: hh_005
+    household_type: remote_worker_couple
+    residents_spec: "2, both work from home"
+    residents: 2
+    constraints: null
+    file: households/hh_005_remote_worker_couple.yaml
+    status: GENERATED
+
+  - household_id: hh_006
+    household_type: single_parent_teens
+    residents_spec: "3 (1 adult, 2 teenagers)"
+    residents: 3
+    constraints: null
+    file: households/hh_006_single_parent_teens.yaml
+    status: GENERATED
+
+  - household_id: hh_007
+    household_type: multigenerational
+    residents_spec: "5-6 (grandparent, 2 adults, 1-2 kids)"
+    residents: 5
+    constraints: null
+    file: households/hh_007_multigenerational.yaml
+    status: GENERATED
+
+  - household_id: hh_008
+    household_type: shift_worker_couple_opposite
+    residents_spec: "2, opposite schedules (one days, one nights)"
+    residents: 2
+    constraints: null
+    file: households/hh_008_shift_worker_couple_opposite.yaml
+    status: GENERATED
+
+  - household_id: hh_009
+    household_type: grad_student_solo
+    residents_spec: "1"
+    residents: 1
+    constraints: null
+    file: households/hh_009_grad_student_solo.yaml
+    status: GENERATED
+
+  - household_id: hh_010
+    household_type: frequent_traveler_couple
+    residents_spec: "2, one travels for work most weeks"
+    residents: 2
+    constraints: null
+    file: households/hh_010_frequent_traveler_couple.yaml
+    status: GENERATED
