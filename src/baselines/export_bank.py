@@ -146,8 +146,12 @@ def _project_segment(location: str, t0: int, t1: int,
 
 
 def load_truth(timeline: pathlib.Path
-               ) -> Tuple[Dict[str, List[Tuple[int, str]]], int]:
-    """(object -> projected change-points in seconds, n_days) from a timeline.
+               ) -> Tuple[Dict[str, List[Tuple[int, str]]], int,
+                          Dict[Tuple[str, int], str]]:
+    """(object -> projected change-points in seconds, n_days, causes) from a
+    timeline; causes maps (object, t) -> the "by" tag of the event behind
+    the change (activity:name / tidy:name / misplace / person_departure /
+    person_return), for provenance in the bank and visualizations.
 
     Initial positions come from the first hourly row; movements from
     events.jsonl; person-carried dwells are split by the carrier's away
@@ -161,12 +165,14 @@ def load_truth(timeline: pathlib.Path
 
     raw: Dict[str, List[Tuple[int, str]]] = {
         obj: [(0, rows[0][obj])] for obj in objects}
+    causes: Dict[Tuple[str, int], str] = {}
     with open(timeline / "events.jsonl") as f:
         for line in f:
             e = json.loads(line)
             traj = raw[e["object"]]
             if e["to"] != traj[-1][1]:
                 traj.append((e["t"] * 60, str(e["to"])))
+                causes[(e["object"], e["t"] * 60)] = str(e.get("by", ""))
 
     truth: Dict[str, List[Tuple[int, str]]] = {}
     horizon = n_days * DAY_SECONDS
@@ -177,8 +183,13 @@ def load_truth(timeline: pathlib.Path
             for t, receptacle in _project_segment(location, t0, t1, away):
                 if not points or points[-1][1] != receptacle:
                     points.append((t, receptacle))
+                    if (obj, t) not in causes:
+                        # A synthesized boundary: the carrier left/returned.
+                        causes[(obj, t)] = ("person_departure"
+                                            if receptacle == OUT_OF_HOUSE
+                                            else "person_return") if t else ""
         truth[obj] = points
-    return truth, n_days
+    return truth, n_days, causes
 
 
 def truth_at(traj: List[Tuple[int, str]], t: int) -> str:
@@ -244,7 +255,7 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
     object_classes = {o["id"]: o["class"] for o in profile["object_inventory"]}
     receptacles = [r["id"] for r in spec["receptacles"]] + [ON_PERSON, OUT_OF_HOUSE]
 
-    truth, n_days = load_truth(timeline)
+    truth, n_days, causes = load_truth(timeline)
     episode_id = f"{spec['household']}_{timeline.name}"
     # Sightings and questions draw from SEPARATE seeded generators so the
     # question set is invariant under changes to the sighting rate (and
@@ -269,8 +280,11 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
     unobserved = 0
     for obj in objects:
         for t, receptacle in truth[obj]:
-            rows.append({"kind": "truth", "episode_id": episode_id,
-                         "object_id": obj, "t": t, "receptacle_id": receptacle})
+            row = {"kind": "truth", "episode_id": episode_id,
+                   "object_id": obj, "t": t, "receptacle_id": receptacle}
+            if causes.get((obj, t)):
+                row["cause"] = causes[(obj, t)]   # provenance; loader ignores
+            rows.append(row)
         if initial_tour and truth[obj][0][1] != OUT_OF_HOUSE:
             rows.append({"kind": "observation", "episode_id": episode_id,
                          "object_id": obj, "receptacle_id": truth[obj][0][1],
