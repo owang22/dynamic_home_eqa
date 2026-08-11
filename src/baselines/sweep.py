@@ -46,8 +46,14 @@ from baselines.healthcheck import UNLIMITED_BUDGET, run_cell
 
 logger = logging.getLogger(__name__)
 
-# 16/day is the headline bank's real budget; 4 is the scarce condition.
-BUDGET_LEVELS: Tuple[Any, ...] = (0, 4, 16, "unlimited")
+# 16/day is the headline bank's real budget. The low steps are where the
+# learning arc is visible: full-contents senses are so informative (each
+# returns every object in the receptacle, and OUT_OF_HOUSE aggregates all
+# absent carried items) that 16/day assembles a home-base map within ~2
+# days. Unlimited is omitted as a known flat reference — task accuracy is
+# pinned at 1.0 by the search invariant and full-state accuracy sits near
+# 0.9; the healthcheck panel documents both.
+BUDGET_LEVELS: Tuple[Any, ...] = (0, 1, 4, 16)
 BELIEF_SPECS: Tuple[Dict[str, Any], ...] = (
     {"name": "last_observation"},
     {"name": "most_frequent"},

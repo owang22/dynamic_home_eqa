@@ -1,5 +1,30 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-08-11, latest): sweep ramp recalibrated; all-excluded warning deduped
+
+- The blind-start sweep's budget ramp is now {0, 1, 4, 16}: full-contents
+  senses are so informative (~2-4 sightings each; OUT_OF_HOUSE aggregates
+  every absent carried item) that 16/day assembles a home-base map in ~2
+  days — the visible learning arc lives at 1-4 senses/day (budget 1 is
+  still climbing at day 27). Unlimited dropped from the ramp as a known
+  flat reference (task pinned at 1.0 by the invariant; healthcheck
+  documents it). Day-to-day wiggle at fixed budget is ~60% shared world
+  difficulty (cross-belief day correlation 0.54-0.62; sd 0.114 vs
+  binomial 0.044 at n=90), not sampling noise.
+- Timetable's flat curve is a measurement, not a bug: search-generated
+  evidence gives each (object, hour-bin) only ~2-4 observations a month,
+  so it runs its most-frequent fallback almost always (mean daily gap to
+  most_frequent: 0.065), and the world's strongest periodicity — the
+  22:25-07:05 shift absences — lies almost entirely OUTSIDE the
+  08:00-22:00 question window. Time-conditioning has little purchase on
+  what the bank asks; noted for the QA-design discussion.
+- The "every receptacle excluded" warning (the brief-mandated signal that
+  stale negative evidence covered all receptacles and was ignored) now
+  fires once per (object, episode); repeats log at DEBUG. It stays a
+  warning: on healthy runs it is rare, and a run that triggers it
+  constantly is telling you searches exhaust the house without finding
+  the object.
+
 ## Update (2026-08-11, later): displacement persistence + scale — first passing bank
 
 Steps 2-3 of the agreed sequence, iterated against `bankstats` exactly as

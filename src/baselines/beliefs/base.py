@@ -68,6 +68,7 @@ class BeliefModel(abc.ABC):
         self._history: Dict[str, List[Tuple[int, str]]] = {}
         # object_id -> {receptacle_id: newest time O was seen absent from it}
         self._exclusions: Dict[str, Dict[str, int]] = {}
+        self._warned_all_excluded: Set[str] = set()
 
     @property
     def name(self) -> str:
@@ -81,6 +82,7 @@ class BeliefModel(abc.ABC):
         self._context = context
         self._history = {}
         self._exclusions = {}
+        self._warned_all_excluded = set()
 
     def update(self, evidence: Union[Observation, SenseResult]) -> None:
         """Fold one piece of evidence into the belief state.
@@ -199,10 +201,21 @@ class BeliefModel(abc.ABC):
         receptacles = self._receptacles()
         kept = [r for r in receptacles if r not in excluded]
         if not kept:
-            logger.warning(
-                "%s: every receptacle excluded for %s at t=%d; "
-                "ignoring exclusions (stale negative evidence)",
-                self.name, object_id, t)
+            # Warn once per (object, episode): the condition persists across
+            # every predict (including full-state snapshots) until the next
+            # positive sighting, so repeating it would flood the log with
+            # thousands of identical lines per run.
+            if object_id in self._warned_all_excluded:
+                logger.debug(
+                    "%s: every receptacle still excluded for %s at t=%d",
+                    self.name, object_id, t)
+            else:
+                self._warned_all_excluded.add(object_id)
+                logger.warning(
+                    "%s: every receptacle excluded for %s at t=%d; ignoring "
+                    "exclusions (stale negative evidence; repeats of this "
+                    "condition for this object log at DEBUG)",
+                    self.name, object_id, t)
             return base
         excluded_mass = sum(p for r, p in base.distribution.items()
                             if r in excluded)

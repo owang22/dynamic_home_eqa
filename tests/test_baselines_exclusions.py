@@ -89,11 +89,15 @@ def test_all_excluded_falls_back_with_warning(
         model.update(_empty_sense(rec, 20 + i))
     with caplog.at_level(logging.WARNING, logger="baselines.beliefs.base"):
         pred = model.predict("o", 40)
+        model.predict("o", 41)      # condition persists: no second warning
     # Exclusions are ignored entirely (base one-hot on a) and the warning
-    # names the object and query time.
+    # names the object and query time — once per (object, episode); the
+    # persisting condition would otherwise flood the log every predict.
     assert pred.distribution == {"a": 1.0}
-    assert any("o" in rec.message and "t=40" in rec.message
-               for rec in caplog.records)
+    warnings = [rec for rec in caplog.records
+                if "every receptacle excluded" in rec.message]
+    assert len(warnings) == 1
+    assert "o" in warnings[0].message and "t=40" in warnings[0].message
 
 
 def test_renormalization_always_sums_to_one() -> None:
