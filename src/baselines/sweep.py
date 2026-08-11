@@ -25,9 +25,9 @@ plotted; read fine structure off the bottom panels.
 
 Usage:
   python -m baselines.sweep \
-      --timeline profiles/revamp_v1/claude-fable-5/timelines/hh_001_seed0 \
+      --timeline profiles/revamp_v1/claude-fable-5/timelines/hh_001_seed0_28d \
       --spec profiles/revamp_v1/claude-fable-5/schedules/hh_001_schedule.yaml \
-      --out-dir reports/baselines/sweep_hh001
+      --questions-per-day 90 --out-dir reports/baselines/sweep_hh001
 """
 
 from __future__ import annotations
@@ -46,7 +46,8 @@ from baselines.healthcheck import UNLIMITED_BUDGET, run_cell
 
 logger = logging.getLogger(__name__)
 
-BUDGET_LEVELS: Tuple[Any, ...] = (0, 2, 6, "unlimited")
+# 16/day is the headline bank's real budget; 4 is the scarce condition.
+BUDGET_LEVELS: Tuple[Any, ...] = (0, 4, 16, "unlimited")
 BELIEF_SPECS: Tuple[Dict[str, Any], ...] = (
     {"name": "last_observation"},
     {"name": "most_frequent"},
