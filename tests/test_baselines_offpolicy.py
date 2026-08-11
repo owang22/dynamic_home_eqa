@@ -113,3 +113,18 @@ def test_naturalistic_export_is_deterministic_and_biased(
     questions = [q for day in episode.questions_by_day for q in day]
     share_a = sum(q.object_id == "obj_a" for q in questions) / len(questions)
     assert share_a > 0.55
+
+    # Uniform mode draws without replacement (daily pools): with 2 objects
+    # and 30 questions/day every object is asked exactly 15 times per day —
+    # the repeat lottery that plagued with-replacement draws cannot happen.
+    uniform = export(timeline, spec, tmp_path / "bank_u.jsonl", seed=3,
+                     sightings_per_day=2, questions_per_day=30,
+                     first_question_day=2, budget_per_day=2,
+                     query_mode="uniform")
+    for day in next(uniform.episodes()).questions_by_day:
+        if not day:
+            continue
+        counts = {"obj_a": 0, "obj_b": 0}
+        for q in day:
+            counts[q.object_id] += 1
+        assert counts == {"obj_a": 15, "obj_b": 15}

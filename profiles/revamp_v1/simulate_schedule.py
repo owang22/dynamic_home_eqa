@@ -3,7 +3,10 @@
 
 Reads a hand-compiled schedule spec (see claude-fable-5/schedules/*.yaml),
 realizes each resident's weekly activity blocks with per-block start jitter,
-and moves objects at block boundaries:
+and moves objects at block boundaries. A block may carry `p: 0.55` — each
+listed day it then fires only with that probability (seeded), for
+sometimes-things like an occasional weekend outing; omitted means every
+listed day, as before.
 
   during:   at realized block start, each bound object moves to its
             during-receptacle, to ELSEWHERE (carried out of the house), or
@@ -146,6 +149,11 @@ def validate(spec: dict) -> None:
                 assert r in locs, f"{name}.after.{obj}: unknown location {r}"
             reachable[obj] |= targets
 
+    for res in spec["residents"]:
+        for b in res["schedule"]:
+            if "p" in b:
+                assert 0.0 < b["p"] <= 1.0, \
+                    f"block {b['activity']}: p {b['p']} outside (0, 1]"
     scheduled = {b["activity"] for res in spec["residents"] for b in res["schedule"]}
     assert scheduled <= set(spec["activities"]), \
         f"blocks without activity defs: {scheduled - set(spec['activities'])}"
@@ -226,6 +234,8 @@ def simulate(spec: dict, days: int, seed: int,
             for d in range(days):
                 if DAYS[d % 7] not in block["days"]:
                     continue
+                if "p" in block and rng.random() >= block["p"]:
+                    continue                      # sometimes-block skipped today
                 n0 = d * 1440 + start
                 t0 = n0 + sample_jitter(act, classes, rng, scale)
                 jittered.append((n0, t0, t0 + dur, name, act))

@@ -34,8 +34,11 @@ Generated stream and questions (all seeded):
   with the dynamics is an uncontrolled lever on every result:
 
   - ``uniform`` — object and time drawn independently of the dynamics
-    (object uniform over inventory, time uniform in the awake window).
-    The clean scientific condition; headline results belong here.
+    (objects WITHOUT replacement from a per-day shuffled pool — uniform in
+    expectation with per-object repeats capped at ceil(questions/objects),
+    so no single displaced object can dominate a day by draw luck — time
+    uniform in the awake window). The clean scientific condition; headline
+    results belong here.
   - ``naturalistic`` — the realistic condition, deliberately correlated
     with the dynamics in three documented ways: object choice is
     popularity-weighted (weight 1 + number of true movements — busy
@@ -130,10 +133,22 @@ POST_MOVE_LAG_S = (5 * 60, 60 * 60)
 
 def _draw_question(mode: str, day: int, objects: List[str],
                    truth: Dict[str, List[Tuple[int, str]]],
-                   recent: List[str], rng: random.Random) -> Tuple[str, int]:
-    """(object, t_query) for one question under the given query mode."""
+                   recent: List[str], rng: random.Random,
+                   pool: List[str]) -> Tuple[str, int]:
+    """(object, t_query) for one question under the given query mode.
+
+    Uniform mode draws objects WITHOUT replacement from ``pool`` (refilled
+    with a fresh shuffle when empty, reset each day by the caller): every
+    object is asked either floor or ceil of questions_per_day/n_objects
+    times per day. Plain with-replacement sampling over few objects
+    guarantees repeat lotteries — a day that happens to draw one displaced
+    object 4-5 times swings that day's accuracy by whole tenths — which
+    caps per-object repeats while keeping the draw uniform in expectation.
+    """
     if mode == "uniform":
-        return (rng.choice(objects),
+        if not pool:
+            pool += rng.sample(objects, len(objects))
+        return (pool.pop(),
                 day * DAY_SECONDS + rng.randrange(*AWAKE_WINDOW_S))
     # naturalistic: popularity-weighted object, repeat bias, post-move timing
     if recent and rng.random() < REPEAT_PROBABILITY:
@@ -203,9 +218,10 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
     question_number = 0
     recent: List[str] = []
     for day in range(first_question_day, n_days):
+        pool: List[str] = []          # uniform mode: fresh no-repeat pool daily
         for _ in range(questions_per_day):
             obj, t = _draw_question(query_mode, day, objects, truth, recent,
-                                    rng_questions)
+                                    rng_questions, pool)
             recent.append(obj)
             rows.append({"kind": "question", "episode_id": episode_id,
                          "question_id": f"q{question_number:04d}",

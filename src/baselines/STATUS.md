@@ -1,5 +1,62 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-08-11, later): displacement persistence + scale — first passing bank
+
+Steps 2-3 of the agreed sequence, iterated against `bankstats` exactly as
+intended: dwell-weighted modal share 0.701 -> 0.639 (sparse tidy + dish
+stages + outings) -> 0.615 (statics softened, errands) -> **0.571 PASS**
+(phone set-down misplacement, keys/wallet arrival drift). The result is
+`banks/baselines/hh_001_28d_uniform.jsonl` (28 days, 90 questions/day =
+2 250, 10 sightings/day, budget 16/day) — the first bank expected to pass
+all six health gates.
+
+Generator changes (simulator + hh_001 schedule spec):
+
+- `simulate_schedule.py` blocks may carry `p:` — the block fires each
+  listed day only with that probability (seeded). Existing specs are
+  bit-identical without it.
+- Tidying is now unreliable and partial: planned Mo/We/Fr/Su only, skipped
+  outright 15% of those (block p 0.85), each item handled w.p. 0.45, and
+  dishes are OUT of tidy scope — a dirty plate is never teleported clean
+  into the cupboard.
+- Multi-stage dish journey with dwell per stage: use -> sink (hours-days)
+  -> wash night (Tu/Th/Su, p 0.75) -> drying rack (overnight+) -> put-away
+  on a later evening wake (p 0.55/evening).
+- Weekend outings that are fun, not work: Sa 19:00-23:30 (p 0.55) and the
+  odd Su evening (p 0.25), taking keys/wallet/jacket; plus Tu/Th errand
+  runs (p 0.4). Spec comments record the multi-resident convention: who
+  leaves depends on household_type (family = parent+kids subsets,
+  roommates = independent per-resident outing blocks).
+- Longer-lived displacement everywhere: book home-base drift (bedtime
+  retrieval p 0.75, some evenings it migrates to the couch), phone set
+  down astray on 40% of days (retrieved on evening wake), umbrella joins
+  35% of commutes ("rain nights" — the stand-in for a weather model),
+  charger makes couch-side charging trips, blanket homing weakened.
+  `bowl_1` and `medication_bottle_1` remain the only statics.
+
+Exporter: uniform mode now draws objects WITHOUT replacement from a
+per-day shuffled pool — repeats capped at ceil(questions/objects) (= 6
+here), killing the single-object day lotteries diagnosed earlier. The
+naturalistic mode is unchanged and stays the robustness condition;
+uniform is the headline per the standing decision.
+
+Instrument readings on the new bank: NeverSense last_observation 0.630 >
+most_frequent 0.585 > timetable 0.569 (spread 0.061 — discriminative
+finally passes, and recency winning is what a persistence world SHOULD
+reward); SequentialSearch@16 with last_observation 0.811; grid ordering
+is clean (search > fixed patrol > never within every belief). Budget 16
+chosen from a {8, 12, 16} probe: 8 fails not_impossible, 12 is marginal
+(+0.009), 16 comfortable (+0.031). Sighting rate 10/day chosen from a
+{6, 10, 16} probe: 6 leaves the spread at 0.034 (thin), 16 pushes
+last_observation to 0.669 past the not_trivial ceiling.
+
+Standing decisions this round: OUT_OF_HOUSE stays a sensable receptacle
+(explicitly confirmed "for now — may change"); start-weekday staggering
+across households is DEFERRED until multi-household generation (it needs
+a bank-header start_weekday field and a weekday-aware timetable
+convention — noted so the schema change is deliberate, not accidental).
+
+
 ## Update (2026-08-11): bank-intrinsic stats + stationarity gate
 
 Diagnosis that motivated it (sweep on the hh_001 no-tour bank): the
