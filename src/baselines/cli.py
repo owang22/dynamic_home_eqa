@@ -254,6 +254,13 @@ def _bankstats_command(args: argparse.Namespace) -> int:
     if args.out_dir is not None:
         write_report(bank, stats, args.max_modal_share,
                      pathlib.Path(args.out_dir))
+        if args.figs:
+            from baselines.bankstats_figs import write_dynamics_figure
+            write_dynamics_figure(
+                bank, stats, args.max_modal_share,
+                pathlib.Path(args.out_dir) / "bank_dynamics.png")
+    elif args.figs:
+        raise SystemExit("bankstats: --figs requires --out-dir")
     return 0 if stationarity_passes(stats, args.max_modal_share) else 1
 
 
@@ -297,6 +304,9 @@ def main() -> None:
                               help="stationarity ceiling (default 0.60)")
     stats_parser.add_argument("--out-dir", type=pathlib.Path, default=None,
                               help="write bankstats.json + bankstats.txt here")
+    stats_parser.add_argument("--figs", action="store_true",
+                              help="also render bank_dynamics.png (4-panel "
+                                   "dynamics diagnostic) into --out-dir")
 
     args = parser.parse_args()
     logging.basicConfig(

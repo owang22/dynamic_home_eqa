@@ -104,7 +104,9 @@ five gates (thresholds configurable; defaults shown):
 `stationarity` is pure ground-truth arithmetic — `cli bankstats` computes
 it (plus moves/day, the displacement-stint distribution, modal share at
 query times, and the worst per-day question-repeat draw) in well under a
-second with no agents. The intended loop: iterate the generator against
+second with no agents; `--figs` renders a four-panel `bank_dynamics.png`
+diagnostic (per-object modal share vs the gate, stint-length histogram,
+moves/day with weekends marked, per-day query-time modal share). The intended loop: iterate the generator against
 `bankstats`, and pay for the full panel only once the intrinsic stats
 pass.
 

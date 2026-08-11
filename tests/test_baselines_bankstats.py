@@ -82,3 +82,22 @@ def test_report_forms(tmp_path: pathlib.Path) -> None:
     assert d["stationarity_pass"] == (
         stats.modal_share_time <= DEFAULT_MAX_MODAL_SHARE)
     assert d["bank_manifest_hash"] == bank.manifest_hash
+
+
+def test_dynamics_figure_and_daily_series(tmp_path: pathlib.Path) -> None:
+    from baselines.bankstats_figs import (compute_daily_series,
+                                          write_dynamics_figure)
+
+    bank = write_synthetic_bank(tmp_path / "bank.jsonl")
+    series = compute_daily_series(bank)
+    # keys move twice every day; the laptop's single move lands on day 3.
+    assert sum(series.moves_by_day.values()) == 15
+    assert series.moves_by_day[3] == 3
+    # Question days 4-6 each hit home base on 2 of 4 questions.
+    assert series.query_modal_by_day == {4: 0.5, 5: 0.5, 6: 0.5}
+    # Eight stints, sorted hours: seven 9 h + one 84 h.
+    assert series.stint_hours == tuple([9.0] * 7 + [84.0])
+    out = tmp_path / "bank_dynamics.png"
+    write_dynamics_figure(bank, compute_bank_stats(bank),
+                          DEFAULT_MAX_MODAL_SHARE, out)
+    assert out.exists() and out.stat().st_size > 10_000
