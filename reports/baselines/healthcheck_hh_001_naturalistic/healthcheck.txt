@@ -1,0 +1,23 @@
+DATA-HEALTH GATE REPORT — hh_001_14d_naturalistic.jsonl
+  bank:   banks/baselines/hh_001_14d_naturalistic.jsonl  (manifest c8d71c3867b8…)
+  commit: 750c2f8a0194  seed 0  questions 308  budget 2/day
+
+  Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
+    NeverSense (answer from memory, never look) last_observation 0.500  most_frequent 0.500  timetable 0.497
+    SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
+    SequentialSearch @ real budget              last_observation 0.542
+
+  Gates (bank is healthy only if ALL pass):
+    [PASS] solvable         measured   1.000  need == 1.000
+           unlimited-budget search must find every queried object; failure means a bank or harness bug
+    [PASS] not_trivial      measured   0.500  need <= 0.650
+           if passive memory nearly solves the bank, the dynamics are too static to test sensing
+    [FAIL] not_impossible   measured   0.542  need >= 0.650
+           sensing at the real budget must buy meaningful accuracy over the best passive belief
+    [FAIL] discriminative   measured   0.003  need > 0.030
+           different modeling assumptions must score differently somewhere, or the bank cannot rank belief models
+    [PASS] powered          measured 308.000  need >= 300.000
+           too few questions and accuracy differences between agents drown in binomial noise
+    stratified discriminative check: SKIPPED (no household_type in bank metadata)
+
+  OVERALL: FAIL — gates failed: not_impossible, discriminative

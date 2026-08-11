@@ -141,10 +141,15 @@ three; search@24 with last_observation 0.848):
 
 The committed `smoke_results/healthcheck_hh_001_seed0/` report (run
 from a clean tree) is the expected FAILING result for the current
-44-question pilot bank — powered fails outright and the belief
-separation is weak (see the report for exact numbers). That failure is
-the healthcheck doing its job on a bank we already knew was too small,
-not a defect to fix here. The 14-day banks fare better on scale but
+44-question pilot bank: powered FAILS (44 < 300), discriminative FAILS
+(all three NeverSense accuracies 0.545, spread 0.000), not_impossible
+FAILS (search@2 0.614 < 0.545 + 0.15); solvable and not_trivial pass.
+That failure is the healthcheck doing its job on a bank we already knew
+was too small, not a defect to fix here. Reports for the two 14-day
+banks live in `reports/baselines/healthcheck_hh_001_{uniform,
+naturalistic}/`: both PASS solvable and powered and FAIL discriminative
+(spreads 0.000 / 0.003) and not_impossible at budget 2; the uniform
+bank also fails not_trivial (NeverSense 0.724). The 14-day banks fare better on scale but
 still show the known nightly-tidy homogenization (NeverSense 0.724 for
 all three beliefs on the uniform bank — the open bank-design issue
 below, unchanged by this update).
