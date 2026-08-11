@@ -1,13 +1,13 @@
 DATA-HEALTH GATE REPORT — hh_001_28d_uniform.jsonl
-  bank:   banks/baselines/hh_001_28d_uniform.jsonl  (manifest 5521a356974b…)
-  commit: 248477e25c44  seed 0  questions 2250  budget 16/day
+  bank:   banks/baselines/hh_001_28d_uniform.jsonl  (manifest 2efba3682b9a…)
+  commit: 66970a0b7c7a  seed 0  questions 2250  budget 16/day
 
-  Intrinsic (ground truth only — see `cli bankstats`): modal share 0.571 time-weighted / 0.612 at query times; 22.0 moves/day; displacement median 12.1 h, p90 47.2 h
+  Intrinsic (ground truth only — see `cli bankstats`): modal share 0.571 time-weighted / 0.612 at query times; 23.0 moves/day; displacement median 12.1 h, p90 47.2 h
 
   Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
     NeverSense (answer from memory, never look) last_observation 0.630  most_frequent 0.585  timetable 0.569
     SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
-    SequentialSearch @ real budget              last_observation 0.811
+    SequentialSearch @ real budget              last_observation 0.821
 
   Gates (bank is healthy only if ALL pass):
     [PASS] stationarity     measured   0.571  need <= 0.600
@@ -16,7 +16,7 @@ DATA-HEALTH GATE REPORT — hh_001_28d_uniform.jsonl
            unlimited-budget search must find every queried object; failure means a bank or harness bug
     [PASS] not_trivial      measured   0.630  need <= 0.650
            if passive memory nearly solves the bank, the dynamics are too static to test sensing
-    [PASS] not_impossible   measured   0.811  need >= 0.780
+    [PASS] not_impossible   measured   0.821  need >= 0.780
            sensing at the real budget must buy meaningful accuracy over the best passive belief
     [PASS] discriminative   measured   0.061  need > 0.030
            different modeling assumptions must score differently somewhere, or the bank cannot rank belief models
