@@ -1,6 +1,8 @@
 DATA-HEALTH GATE REPORT — hh_001_seed0_bank.jsonl
   bank:   banks/baselines/hh_001_seed0_bank.jsonl  (manifest 0d8a4e365a2e…)
-  commit: 750c2f8a0194  seed 0  questions 44  budget 2/day
+  commit: 221db76781a3  seed 0  questions 44  budget 2/day
+
+  Intrinsic (ground truth only — see `cli bankstats`): modal share 0.635 time-weighted / 0.773 at query times; 17.7 moves/day; displacement median 14.5 h, p90 47.6 h
 
   Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
     NeverSense (answer from memory, never look) last_observation 0.545  most_frequent 0.545  timetable 0.545
@@ -8,6 +10,8 @@ DATA-HEALTH GATE REPORT — hh_001_seed0_bank.jsonl
     SequentialSearch @ real budget              last_observation 0.614
 
   Gates (bank is healthy only if ALL pass):
+    [FAIL] stationarity     measured   0.635  need <= 0.600
+           dwell-weighted modal share: how often a home-base-only model is right at a random moment; computable from ground truth alone (cli bankstats) before paying for the panel
     [PASS] solvable         measured   1.000  need == 1.000
            unlimited-budget search must find every queried object; failure means a bank or harness bug
     [PASS] not_trivial      measured   0.545  need <= 0.650
@@ -20,4 +24,4 @@ DATA-HEALTH GATE REPORT — hh_001_seed0_bank.jsonl
            too few questions and accuracy differences between agents drown in binomial noise
     stratified discriminative check: SKIPPED (no household_type in bank metadata)
 
-  OVERALL: FAIL — gates failed: not_impossible, discriminative, powered
+  OVERALL: FAIL — gates failed: stationarity, not_impossible, discriminative, powered

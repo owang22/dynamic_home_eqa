@@ -4,19 +4,53 @@
   "config": {
     "seed": 0,
     "budget": null,
+    "stationarity_max_modal_share": 0.6,
     "solvable_tolerance": 1e-09,
     "not_trivial_max": 0.65,
     "not_impossible_margin": 0.15,
     "discriminative_band": 0.03,
     "powered_min_questions": 300
   },
-  "config_hash": "8f816e5227726c428d37908120aca69b25f29675cf6998393907e030577eebb6",
-  "git_commit": "750c2f8a01945d58162b73768797dcf6b01c2c5e",
+  "config_hash": "fbf2c99847e1194a778cd0b90c7e37f0d9f142c58846fc0cc63dd5b3662a94ed",
+  "git_commit": "221db76781a3b8e3df4a08d371e1a5ec9caafb35",
   "git_dirty": false,
   "seed": 0,
-  "timestamp": "2026-08-11T02:23:51.051377+00:00",
+  "timestamp": "2026-08-11T19:10:55.820964+00:00",
   "n_questions": 308,
   "real_budget_per_day": 2,
+  "bank_stats": {
+    "n_episodes": 1,
+    "n_objects": 17,
+    "n_receptacles": 15,
+    "n_days": 14,
+    "n_questions": 308,
+    "modal_share_time": 0.7008549253034548,
+    "modal_share_questions": 0.75,
+    "moves_per_day": 17.857142857142858,
+    "displacement_median_h": 9.45,
+    "displacement_p90_h": 33.45,
+    "displaced_time_share": 0.29914507469654517,
+    "max_repeats_per_day": 5,
+    "per_object_modal_share": {
+      "bowl_1": 1.0,
+      "bowl_2": 0.7363,
+      "plate_1": 0.4225,
+      "mug_1": 0.3812,
+      "mug_2": 0.5858,
+      "phone_marisol": 0.687,
+      "charger_1": 1.0,
+      "keys_marisol": 0.7577,
+      "wallet_marisol": 0.7577,
+      "water_bottle_1": 0.2486,
+      "book_1": 0.6307,
+      "headphones_1": 0.6925,
+      "medication_bottle_1": 1.0,
+      "blanket_1": 0.9635,
+      "jacket_marisol": 0.4497,
+      "remote_1": 0.6015,
+      "umbrella_1": 1.0
+    }
+  },
   "panel": {
     "never_sense_task_accuracy": {
       "last_observation": 0.724025974025974,
@@ -36,6 +70,14 @@
   },
   "stratified_discriminative": "SKIPPED (no household_type in bank metadata)",
   "gates": [
+    {
+      "name": "stationarity",
+      "passed": false,
+      "measured": 0.7008549253034548,
+      "threshold": 0.6,
+      "comparison": "<=",
+      "rationale": "dwell-weighted modal share: how often a home-base-only model is right at a random moment; computable from ground truth alone (cli bankstats) before paying for the panel"
+    },
     {
       "name": "solvable",
       "passed": true,
@@ -79,5 +121,5 @@
   ],
   "gates_pass": false,
   "overall_pass": false,
-  "overall_note": "gates failed: not_trivial, not_impossible, discriminative"
+  "overall_note": "gates failed: stationarity, not_trivial, not_impossible, discriminative"
 }
