@@ -8,7 +8,10 @@ and start with its header; a file may hold many episodes):
      "receptacle_ids": [str, ...], "object_classes": {object_id: class},
      "budget_per_day": int, "n_days": int,
      "household_type": str (optional bank metadata; enables the
-      healthcheck's stratified discriminative gate)}
+      healthcheck's stratified discriminative gate),
+     "unsensable_receptacles": [str, ...] (optional, default none: legal
+      ANSWERS that Sense may never target — e.g. OUT_OF_HOUSE; agents can
+      only infer them by eliminating every sensable receptacle)}
 
     {"kind": "truth", "episode_id": str, "object_id": str, "t": int,
      "receptacle_id": str}
@@ -127,6 +130,8 @@ class _EpisodeAccumulator:
             self.n_days = int(header["n_days"])
             raw_type = header.get("household_type")
             self.household_type = None if raw_type is None else str(raw_type)
+            self.unsensable = tuple(
+                str(r) for r in header.get("unsensable_receptacles", []))
         except (KeyError, TypeError, AttributeError) as err:
             raise BankFormatError(
                 f"{path}:{lineno}: bad episode_header: {err}") from err
@@ -197,7 +202,8 @@ class _EpisodeAccumulator:
             budget_per_day=self.budget_per_day,
             trajectories={obj: tuple(sorted(self._truth[obj]))
                           for obj in self.object_classes},
-            household_type=self.household_type)
+            household_type=self.household_type,
+            unsensable_receptacle_ids=self.unsensable)
         logger.debug("loaded episode %s: %d objects, %d questions",
                      episode.episode_id, len(episode.object_classes),
                      sum(len(d) for d in episode.questions_by_day))

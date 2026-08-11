@@ -133,9 +133,12 @@ data-collection quality).
 
 **Bank input** (full spec in `bank.py`'s docstring): line kinds
 `episode_header` (ids, receptacles, object classes, budget, n_days,
-optional `household_type` metadata), `truth` (piecewise-constant ground
+optional `household_type` metadata, optional `unsensable_receptacles` —
+legal answers Sense may never target, reachable only by eliminating
+every sensable receptacle), `truth` (piecewise-constant ground
 truth; every object needs a t=0 row), `observation` (source
-`initial_tour` or `scripted` — the fixed stream), and `question`. The
+`initial_tour` or `scripted` — the fixed stream; never reports an object
+at an unsensable location), and `question`. The
 synthetic fixture builders emit exactly this format, so tests exercise
 the real loader.
 

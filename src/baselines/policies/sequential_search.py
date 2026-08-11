@@ -33,6 +33,12 @@ accuracy 1.0, with every belief model):
   nobody has looked at.
 * Receptacles are never re-sensed within a question (tried set), so the
   search visits each at most once and must reach the object's receptacle.
+* Only SENSABLE receptacles are ever targeted. An unsensable location
+  (e.g. OUT_OF_HOUSE) is answered by elimination: after every sensable
+  receptacle has been tried and missed, the exclusion-updated belief
+  holds all its mass on the unsensable remainder and the exhaustion
+  branch answers from it. With a single unsensable receptacle this is
+  exact, so the unlimited-budget invariant still holds.
 
 Tie-breaking among equal-probability untried receptacles uses the seeded
 generator supplied at construction — no unseeded randomness. All times
@@ -66,7 +72,11 @@ class SequentialSearch(DecisionPolicy):
         self._tried: Set[str] = set()
 
     def reset(self, context: EpisodeContext) -> None:
-        self._receptacles = context.receptacle_ids
+        # Only sensable receptacles are searchable; unsensable ones (e.g.
+        # OUT_OF_HOUSE) are reached by elimination — sweep every sensable
+        # receptacle, miss everywhere, and the belief's exclusion
+        # redistribution concentrates the remaining mass on them.
+        self._receptacles = context.sensable_receptacle_ids
         self._question_id = None
         self._tried = set()
 

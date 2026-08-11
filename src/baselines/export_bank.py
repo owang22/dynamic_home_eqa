@@ -11,11 +11,22 @@ Location projection (the scorer does exact receptacle match, so virtual
 locations must become receptacles):
 
 * ``ELSEWHERE``        -> pseudo-receptacle ``OUT_OF_HOUSE``
-* ``person:<anyone>``  -> pseudo-receptacle ``ON_PERSON``
+* ``person:<anyone>``  -> ``ON_PERSON`` while that resident is home, but
+  ``OUT_OF_HOUSE`` while they are away (from residents.jsonl blocks at
+  ELSEWHERE): a phone in her pocket at work is out of the house, full
+  stop. Timelines without residents.jsonl fall back to always-ON_PERSON.
 
-Both pseudo-receptacles join ``receptacle_ids``, so agents may predict and
-sense them like any other ("is it on somebody / out of the house" are
-legitimate answers and legitimate looks).
+Both pseudo-receptacles join ``receptacle_ids`` as legitimate ANSWERS,
+but ``OUT_OF_HOUSE`` is declared UNSENSABLE in the episode header: the
+robot cannot look outside the house, so "it's out" can only be inferred
+(by exclusion of every sensable receptacle) or guessed — never observed.
+For the same reason neither the initial tour nor drive-by sightings ever
+report an object whose true location is unsensable (you cannot see what
+is not there); such sightings are dropped and the drop count logged.
+``ON_PERSON`` stays sensable — the robot may look at what a resident who
+is HOME is carrying, and while they are away their carried objects are
+OUT_OF_HOUSE by the projection above, so sensing ON_PERSON never leaks
+information about an absent person.
 
 Generated stream and questions (all seeded):
 
@@ -82,13 +93,56 @@ ON_PERSON = "ON_PERSON"
 AWAKE_WINDOW_S = (8 * 3600, 22 * 3600)
 
 
-def project(location: str) -> str:
-    """Timeline location -> bank receptacle (see module docstring)."""
+def _away_intervals(timeline: pathlib.Path) -> Dict[str, List[Tuple[int, int]]]:
+    """resident -> merged [t0, t1) seconds intervals spent at ELSEWHERE.
+
+    Read from residents.jsonl (realized activity blocks); an absent file
+    means no away information, i.e. carried objects always project to
+    ON_PERSON (the pre-person-coupling behaviour, kept for stub timelines).
+    """
+    path = timeline / "residents.jsonl"
+    if not path.exists():
+        return {}
+    raw: Dict[str, List[Tuple[int, int]]] = {}
+    with open(path) as f:
+        for line in f:
+            b = json.loads(line)
+            if b.get("at") == "ELSEWHERE":
+                raw.setdefault(str(b["resident"]), []).append(
+                    (int(b["t0"]) * 60, int(b["t1"]) * 60))
+    merged: Dict[str, List[Tuple[int, int]]] = {}
+    for res, spans in raw.items():
+        spans.sort()
+        out: List[Tuple[int, int]] = []
+        for t0, t1 in spans:
+            if out and t0 <= out[-1][1]:
+                out[-1] = (out[-1][0], max(out[-1][1], t1))
+            else:
+                out.append((t0, t1))
+        merged[res] = out
+    return merged
+
+
+def _project_segment(location: str, t0: int, t1: int,
+                     away: Dict[str, List[Tuple[int, int]]]
+                     ) -> List[Tuple[int, str]]:
+    """Projected change-points for one raw-location dwell [t0, t1)."""
     if location == "ELSEWHERE":
-        return OUT_OF_HOUSE
-    if location.startswith("person:"):
-        return ON_PERSON
-    return location
+        return [(t0, OUT_OF_HOUSE)]
+    if not location.startswith("person:"):
+        return [(t0, location)]
+    # Carried: ON_PERSON at home, OUT_OF_HOUSE while the carrier is away.
+    points = [(t0, ON_PERSON)]
+    for a0, a1 in away.get(location.split(":", 1)[1], []):
+        lo, hi = max(t0, a0), min(t1, a1)
+        if lo < hi:
+            if lo == t0:
+                points[0] = (t0, OUT_OF_HOUSE)
+            else:
+                points.append((lo, OUT_OF_HOUSE))
+            if hi < t1:
+                points.append((hi, ON_PERSON))
+    return sorted(points)
 
 
 def load_truth(timeline: pathlib.Path
@@ -96,23 +150,34 @@ def load_truth(timeline: pathlib.Path
     """(object -> projected change-points in seconds, n_days) from a timeline.
 
     Initial positions come from the first hourly row; movements from
-    events.jsonl. Consecutive change-points that project to the same
-    receptacle are merged.
+    events.jsonl; person-carried dwells are split by the carrier's away
+    intervals. Consecutive same-receptacle change-points are merged.
     """
     with open(timeline / "hourly.csv") as f:
         rows = list(csv.DictReader(f))
     objects = [k for k in rows[0] if k not in ("t", "stamp")]
     n_days = (int(rows[-1]["t"]) // (24 * 60)) + 1
+    away = _away_intervals(timeline)
 
-    truth: Dict[str, List[Tuple[int, str]]] = {
-        obj: [(0, project(rows[0][obj]))] for obj in objects}
+    raw: Dict[str, List[Tuple[int, str]]] = {
+        obj: [(0, rows[0][obj])] for obj in objects}
     with open(timeline / "events.jsonl") as f:
         for line in f:
             e = json.loads(line)
-            dest = project(e["to"])
-            traj = truth[e["object"]]
-            if dest != traj[-1][1]:
-                traj.append((e["t"] * 60, dest))
+            traj = raw[e["object"]]
+            if e["to"] != traj[-1][1]:
+                traj.append((e["t"] * 60, str(e["to"])))
+
+    truth: Dict[str, List[Tuple[int, str]]] = {}
+    horizon = n_days * DAY_SECONDS
+    for obj, segments in raw.items():
+        points: List[Tuple[int, str]] = []
+        for i, (t0, location) in enumerate(segments):
+            t1 = segments[i + 1][0] if i + 1 < len(segments) else horizon
+            for t, receptacle in _project_segment(location, t0, t1, away):
+                if not points or points[-1][1] != receptacle:
+                    points.append((t, receptacle))
+        truth[obj] = points
     return truth, n_days
 
 
@@ -199,12 +264,14 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
         # Optional metadata consumed by the healthcheck's stratified
         # discriminative gate; absent from older schedule specs.
         header["household_type"] = str(spec["household_type"])
+    header["unsensable_receptacles"] = [OUT_OF_HOUSE]
     rows: List[Dict[str, Any]] = [header]
+    unobserved = 0
     for obj in objects:
         for t, receptacle in truth[obj]:
             rows.append({"kind": "truth", "episode_id": episode_id,
                          "object_id": obj, "t": t, "receptacle_id": receptacle})
-        if initial_tour:
+        if initial_tour and truth[obj][0][1] != OUT_OF_HOUSE:
             rows.append({"kind": "observation", "episode_id": episode_id,
                          "object_id": obj, "receptacle_id": truth[obj][0][1],
                          "t": 0, "source": "initial_tour"})
@@ -212,9 +279,16 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
         for _ in range(sightings_per_day):
             obj = rng_sightings.choice(objects)
             t = day * DAY_SECONDS + rng_sightings.randrange(*AWAKE_WINDOW_S)
+            where = truth_at(truth[obj], t)
+            if where == OUT_OF_HOUSE:
+                unobserved += 1      # you cannot sight what is not there
+                continue
             rows.append({"kind": "observation", "episode_id": episode_id,
                          "object_id": obj, "t": t, "source": "scripted",
-                         "receptacle_id": truth_at(truth[obj], t)})
+                         "receptacle_id": where})
+    if unobserved:
+        logger.info("dropped %d sightings of out-of-house objects "
+                    "(unobservable)", unobserved)
     question_number = 0
     recent: List[str] = []
     for day in range(first_question_day, n_days):

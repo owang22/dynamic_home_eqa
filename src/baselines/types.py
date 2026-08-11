@@ -191,6 +191,16 @@ class EpisodeContext:
     object_classes: Mapping[str, str]
     budget_per_day: int
     n_days: int
+    unsensable_receptacle_ids: Tuple[str, ...] = ()
+
+    @property
+    def sensable_receptacle_ids(self) -> Tuple[str, ...]:
+        """Receptacles a Sense action may target. Unsensable ones (e.g. an
+        OUT_OF_HOUSE pseudo-receptacle — the robot cannot look outside the
+        house) are still legitimate ANSWERS; they can only be inferred,
+        never observed directly."""
+        blocked = set(self.unsensable_receptacle_ids)
+        return tuple(r for r in self.receptacle_ids if r not in blocked)
 
 
 @dataclass(frozen=True)
@@ -221,11 +231,17 @@ class Episode:
     budget_per_day: int
     trajectories: Mapping[str, Tuple[Tuple[int, str], ...]] = field(repr=False)
     household_type: Optional[str] = None
+    unsensable_receptacle_ids: Tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if self.budget_per_day < 0:
             raise ValueError(f"Episode {self.episode_id}: negative budget_per_day")
         recs = set(self.receptacle_ids)
+        unknown = set(self.unsensable_receptacle_ids) - recs
+        if unknown:
+            raise ValueError(
+                f"Episode {self.episode_id}: unsensable_receptacle_ids "
+                f"{sorted(unknown)} not in receptacle_ids")
         for obj, traj in self.trajectories.items():
             if not traj or traj[0][0] != 0:
                 raise ValueError(
@@ -278,4 +294,5 @@ class Episode:
             receptacle_ids=self.receptacle_ids,
             object_classes=self.object_classes,
             budget_per_day=self.budget_per_day,
-            n_days=self.n_days)
+            n_days=self.n_days,
+            unsensable_receptacle_ids=self.unsensable_receptacle_ids)

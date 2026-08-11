@@ -8,6 +8,10 @@ The harness owns everything that protects result validity:
 * **Budget accounting** — the harness decrements the per-day budget,
   refuses ``Sense`` at zero (forcing an answer, flagged in the log), and
   records per-question spend. Policies only ever read ``budget_remaining``.
+* **Sensability** — a bank may declare receptacles unsensable (legal
+  answers that can only be inferred, e.g. OUT_OF_HOUSE). Sensing one is a
+  policy contract violation and raises loudly — it is never silently
+  refused, because a policy that tries has misread its context.
 * **Ground-truth isolation** — agents are reset with
   :meth:`~baselines.types.Episode.agent_view`, which has no ground-truth
   accessor; only harness code touches ``true_location``.
@@ -131,6 +135,12 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
             actions.append({"type": "answer"})
             break
         assert isinstance(action, Sense)
+        if action.receptacle_id in episode.unsensable_receptacle_ids:
+            raise ValueError(
+                f"{agent.name} asked to sense unsensable receptacle "
+                f"{action.receptacle_id!r} on {question.question_id} — "
+                f"policies receive the sensable set in their context and "
+                f"must never target an unsensable one")
         if budget <= 0:
             forced = True
             actions.append({"type": "forced_answer",

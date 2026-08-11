@@ -1,5 +1,39 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-08-11, unsensable OUT_OF_HOUSE)
+
+Reverses the earlier "robot can sense OUT_OF_HOUSE" placeholder: banks
+may now declare `unsensable_receptacles` (header field; loader, Episode,
+EpisodeContext.sensable_receptacle_ids). They stay legal ANSWERS but a
+Sense targeting one is a policy contract violation and the harness
+raises loudly. SequentialSearch sweeps sensable receptacles only; an
+unsensable location is reached by ELIMINATION — sweep everything, miss
+everywhere, and the exclusion redistribution concentrates the remaining
+mass on it. With exactly ONE unsensable receptacle this is exact, so
+solvable stays 1.0 (verified: 1.0000 on the 28-day bank); keep it at
+one unless the invariant is deliberately renegotiated.
+
+Consequences implemented with it:
+
+- The exporter projects person-carried objects time-dependently: while
+  the carrier is away (residents.jsonl ELSEWHERE blocks), person:X ->
+  OUT_OF_HOUSE, not ON_PERSON — the phone in her pocket at work is out
+  of the house. ON_PERSON stays sensable (looking at what a HOME
+  resident carries), and sensing it while she is away leaks nothing
+  because nothing is ON_PERSON then.
+- Neither the tour nor drive-by sightings ever report an object whose
+  true location is unsensable (you cannot see what is not there);
+  dropped sightings are counted and logged.
+- The OUT_OF_HOUSE full-contents information leak is closed: one sense
+  used to reveal every absent object at once.
+
+Instrument on the re-exported 28-day bank: unchanged NeverSense floors
+(0.630/0.585/0.569), stationarity 0.571, search@16 0.821 (up from
+0.811 — the leak was not actually helping the searcher), all six gates
+PASS. At real budgets an out-of-house answer now costs a full sensable
+sweep (15 senses) or a guess — "guess it and hope" is literal.
+
+
 ## Update (2026-08-11, latest): sweep ramp recalibrated; all-excluded warning deduped
 
 - The blind-start sweep's budget ramp is now {0, 1, 4, 16}: full-contents
