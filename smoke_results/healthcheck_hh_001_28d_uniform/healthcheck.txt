@@ -1,11 +1,11 @@
 DATA-HEALTH GATE REPORT — hh_001_28d_uniform.jsonl
   bank:   banks/baselines/hh_001_28d_uniform.jsonl  (manifest 2efba3682b9a…)
-  commit: 66970a0b7c7a  seed 0  questions 2250  budget 16/day
+  commit: 7218ed1f55bf  seed 0  questions 2250  budget 16/day
 
   Intrinsic (ground truth only — see `cli bankstats`): modal share 0.571 time-weighted / 0.612 at query times; 23.0 moves/day; displacement median 12.1 h, p90 47.2 h
 
   Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
-    NeverSense (answer from memory, never look) last_observation 0.630  most_frequent 0.585  timetable 0.569
+    NeverSense (answer from memory, never look) last_observation 0.630  most_frequent 0.625  timetable 0.596
     SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
     SequentialSearch @ real budget              last_observation 0.821
 
@@ -18,10 +18,10 @@ DATA-HEALTH GATE REPORT — hh_001_28d_uniform.jsonl
            if passive memory nearly solves the bank, the dynamics are too static to test sensing
     [PASS] not_impossible   measured   0.821  need >= 0.780
            sensing at the real budget must buy meaningful accuracy over the best passive belief
-    [PASS] discriminative   measured   0.061  need > 0.030
+    [PASS] discriminative   measured   0.034  need > 0.030
            different modeling assumptions must score differently somewhere, or the bank cannot rank belief models
     [PASS] powered          measured 2250.000  need >= 300.000
            too few questions and accuracy differences between agents drown in binomial noise
-    stratified discriminative spreads by household_type: night_shift_solo=0.061
+    stratified discriminative spreads by household_type: night_shift_solo=0.034
 
   OVERALL: PASS — all gates passed on a clean git tree

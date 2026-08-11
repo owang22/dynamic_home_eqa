@@ -12,12 +12,27 @@
     "powered_min_questions": 300
   },
   "config_hash": "fbf2c99847e1194a778cd0b90c7e37f0d9f142c58846fc0cc63dd5b3662a94ed",
-  "git_commit": "66970a0b7c7af46c8bc9ba42f59c06cbc11f0f54",
+  "git_commit": "7218ed1f55bf76d992258bb9c138f1fd333cee0e",
   "git_dirty": false,
   "seed": 0,
-  "timestamp": "2026-08-11T20:59:54.314179+00:00",
+  "timestamp": "2026-08-11T21:24:05.094667+00:00",
   "n_questions": 2250,
   "real_budget_per_day": 16,
+  "belief_panel": [
+    {
+      "name": "last_observation"
+    },
+    {
+      "name": "most_frequent",
+      "half_life_h": 24
+    },
+    {
+      "name": "timetable",
+      "bin_hours": 1,
+      "day_scheme": "all",
+      "half_life_h": 24
+    }
+  ],
   "bank_stats": {
     "n_episodes": 1,
     "n_objects": 17,
@@ -54,8 +69,8 @@
   "panel": {
     "never_sense_task_accuracy": {
       "last_observation": 0.6302222222222222,
-      "most_frequent": 0.5853333333333334,
-      "timetable": 0.5693333333333334
+      "most_frequent": 0.6248888888888889,
+      "timetable": 0.596
     },
     "sequential_search_unlimited_task_accuracy": {
       "last_observation": 1.0,
@@ -69,7 +84,7 @@
     }
   },
   "stratified_discriminative": {
-    "night_shift_solo": 0.06088888888888888
+    "night_shift_solo": 0.034222222222222265
   },
   "gates": [
     {
@@ -107,7 +122,7 @@
     {
       "name": "discriminative",
       "passed": true,
-      "measured": 0.06088888888888888,
+      "measured": 0.034222222222222265,
       "threshold": 0.03,
       "comparison": ">",
       "rationale": "different modeling assumptions must score differently somewhere, or the bank cannot rank belief models"
