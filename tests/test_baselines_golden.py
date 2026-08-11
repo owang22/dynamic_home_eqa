@@ -14,14 +14,11 @@ from __future__ import annotations
 
 import json
 import pathlib
-import random
 import tempfile
 
-from baselines.agent import Agent
+from baselines.cli import build_agent
 from baselines.bank import write_synthetic_bank
-from baselines.beliefs import TimetableConfig, TimetableLookup
 from baselines.harness import run_episode
-from baselines.policies import FixedSchedule, FixedScheduleConfig
 
 GOLDEN_PATH = (pathlib.Path(__file__).parent
                / "fixtures" / "baselines_golden_run_log.jsonl")
@@ -29,18 +26,15 @@ GOLDEN_SEED = 20260809
 
 
 def _golden_run_log() -> str:
-    """The canonical run: timetable belief + fixed-schedule policy, seed
-    fixed, on the synthetic bank. Chosen because it exercises binning,
-    rotation state, sensing, and budget accounting in one pass."""
+    """The canonical run: last-observation belief + sequential search on
+    the synthetic bank. Chosen because it exercises exclusion bookkeeping,
+    multi-sense search, sensing, and budget accounting in one pass."""
     with tempfile.TemporaryDirectory() as tmp:
         bank = write_synthetic_bank(pathlib.Path(tmp) / "bank.jsonl")
         episode = next(bank.episodes())
-    agent = Agent(
-        belief=TimetableLookup(random.Random(GOLDEN_SEED),
-                               TimetableConfig(bin_hours=1, day_scheme="all")),
-        policy=FixedSchedule(FixedScheduleConfig(
-            rotation=("counter_k", "desk_o", "entry_e", "shelf_l"),
-            every_hours=6)))
+    agent = build_agent({"name": "last_observation"},
+                        {"name": "sequential_search"}, seed=GOLDEN_SEED,
+                        episode_id=episode.episode_id)
     records = [r.to_json_dict() for r in run_episode(agent, episode)]
     return "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n"
 

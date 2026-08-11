@@ -4,10 +4,11 @@ independent of what is being asked."""
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Tuple
+from typing import Optional, Tuple
 
 from baselines.policies.base import DecisionPolicy
-from baselines.types import Action, AnswerNow, EpisodeContext, Prediction, Question, Sense
+from baselines.types import (Action, AnswerNow, EpisodeContext, Prediction,
+                             Question, Sense, SenseResult)
 
 SECONDS_PER_HOUR = 3600
 
@@ -62,7 +63,8 @@ class FixedSchedule(DecisionPolicy):
         return t - self._last_sense_t >= self._config.every_hours * SECONDS_PER_HOUR
 
     def decide(self, question: Question, prediction: Prediction,
-               budget_remaining: int, t: int) -> Action:
+               budget_remaining: int, t: int,
+               last_sense: Optional[SenseResult] = None) -> Action:
         if budget_remaining > 0 and self._due(t):
             receptacle = self._config.rotation[
                 self._next_index % len(self._config.rotation)]

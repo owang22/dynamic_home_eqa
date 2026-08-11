@@ -10,7 +10,7 @@ from baselines.agent import Agent
 from baselines.bank import write_synthetic_bank
 from baselines.beliefs import LastObservation
 from baselines.harness import run_episode
-from baselines.policies import AlwaysSense, NeverSense
+from baselines.policies import NeverSense, SequentialSearch
 from baselines.policies.base import DecisionPolicy
 from baselines.types import (Action, EpisodeContext, Episode, Prediction,
                              Question, Sense)
@@ -23,7 +23,7 @@ def _episode(tmp_path: pathlib.Path) -> Episode:
 
 def _run_log(episode: Episode, seed: int) -> str:
     agent = Agent(belief=LastObservation(random.Random(seed)),
-                  policy=AlwaysSense())
+                  policy=SequentialSearch(random.Random(seed + 1)))
     records = [r.to_json_dict() for r in run_episode(agent, episode)]
     return "\n".join(json.dumps(r) for r in records)
 
@@ -47,7 +47,8 @@ class _GreedySensor(DecisionPolicy):
     still terminate every question by exhausting the budget."""
 
     def decide(self, question: Question, prediction: Prediction,
-               budget_remaining: int, t: int) -> Action:
+               budget_remaining: int, t: int,
+               last_sense: object = None) -> Action:
         return Sense(receptacle_id=prediction.argmax)
 
 
@@ -73,11 +74,16 @@ def test_budget_accounting_is_per_question_and_recorded(
         tmp_path: pathlib.Path) -> None:
     episode = _episode(tmp_path)
     agent = Agent(belief=LastObservation(random.Random(0)),
-                  policy=AlwaysSense())
+                  policy=SequentialSearch(random.Random(1)))
     records = list(run_episode(agent, episode))
     for r in records:
         assert r.budget_before - r.budget_spent == r.budget_after
-        assert 0 <= r.budget_spent <= 1  # AlwaysSense caps at one per question
+        assert 0 <= r.budget_spent <= r.budget_before
+    # The day's spend never exceeds the day's budget.
+    by_day: dict[int, int] = {}
+    for r in records:
+        by_day[r.day_index] = by_day.get(r.day_index, 0) + r.budget_spent
+    assert all(spent <= episode.budget_per_day for spent in by_day.values())
 
 
 def test_information_diet_is_identical_across_agents(

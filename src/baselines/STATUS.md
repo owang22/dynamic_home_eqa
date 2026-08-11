@@ -1,17 +1,182 @@
 # STATUS — basic baselines for the sense-or-answer study
 
-## Built
+## Update (2026-08-10, baseline repair + data-health gates)
 
-Everything in the brief's scope: the frozen core types
+This update makes the baselines trustworthy as a data-health instrument:
+beliefs consume negative evidence, the incoherent AlwaysSense policy is
+gone, full-state scoring is first-class, and `healthcheck` is the
+acceptance gate the data workstream runs on every candidate bank.
+
+### What changed
+
+1. **Negative evidence (belief base class).** A sense result is now
+   evidence about every known object: contents become positive sightings
+   (as before), and each known object absent from them is *excluded*
+   from the sensed receptacle at that time. All bookkeeping —
+   per-object exclusion sets with timestamps, the recency rule, uniform
+   redistribution of excluded mass, the all-excluded fallback (warning
+   with object id and query time) — lives in `beliefs/base.py`; the
+   three concrete models are untouched by it. Two documented design
+   points:
+   - *Redistribution is uniform over all non-excluded receptacles*, not
+     a renormalization of the surviving support. Renormalizing support
+     alone fabricates certainty (base mass on two receptacles + one
+     exclusion => probability 1.0 on a receptacle nobody checked) and
+     breaks the search invariant. The brief's "uniform over non-excluded"
+     edge case falls out of this rule as the all-support-excluded
+     special case.
+   - *A positive sighting at exactly the prediction instant wins
+     outright* (one-hot). Without this, a frequency belief that just
+     watched the search FIND the object would outvote the sighting with
+     its own history and answer somewhere else — the exclusions that
+     forced the find are invalidated by that same (strictly later)
+     sighting, so exclusions alone cannot save it.
+2. **TimetableLookup restored.** The previous update had dropped it; the
+   healthcheck's fixed panel and the discriminative gate are defined
+   over the three belief models, so the roster is back to
+   last_observation / most_frequent / timetable — and now frozen.
+3. **AlwaysSense and SearchUntilFound are gone; SequentialSearch is the
+   one search policy.** It senses receptacles in belief order (exclusions
+   yield the next-best receptacle automatically), answers on a find, and
+   supports a confidence-threshold early stop (default 1.0). At the
+   default threshold the *only* early stop is a sense this question that
+   returned the object: belief confidence of 1.0 alone is never trusted,
+   because one-hot recency beliefs claim certainty for arbitrarily old
+   sightings and exclusion renormalization can concentrate mass on
+   unchecked receptacles. Sub-1.0 thresholds trust the belief and are
+   only sound for calibrated models (documented in the module). The
+   unlimited-budget invariant (task accuracy 1.0 for every belief on
+   every well-formed bank) is enforced across all four fixture banks x
+   three beliefs in `tests/test_baselines_search.py`.
+4. **Full-state scoring is now named `task_accuracy` vs
+   `belief_accuracy`** everywhere (aggregate.csv column renamed from
+   `accuracy`). Both are recomputable offline from the run log alone via
+   `metrics.load_run_log` (asserted by a round-trip test). The queried
+   object's snapshot entry now reuses the answer prediction instead of
+   re-predicting (an exclusion tie re-broken differently could desync
+   snapshot from answer); `replay.py` mirrors the live loop's
+   generator-consumption pattern exactly, so the diagonal identity holds
+   under the new tie-break-heavy distributions.
+5. **`healthcheck` subcommand** (`python -m baselines.cli healthcheck
+   BANK [--config Y] [--out-dir D]`): fixed panel (NeverSense x 3
+   beliefs, SequentialSearch x 3 @ unlimited, SequentialSearch best
+   belief @ real budget), five gates (solvable / not_trivial /
+   not_impossible / discriminative / powered — thresholds are config
+   values), JSON + stdout reports with full provenance, exit 0 only on
+   overall PASS, and a hard refusal to mark overall PASS from a dirty
+   git tree. `validate_bank.py` is retired — the healthcheck subsumes
+   it (its budget-sensitivity sweep lives on in `sweep.py`, now running
+   sequential_search instead of always_sense).
+6. **Bank metadata**: episode headers may carry optional
+   `household_type`; the loader, `Episode`, and the exporter
+   (`export_bank`, when the schedule spec provides it) pass it through
+   for the stratified discriminative gate. Absent metadata => the
+   stratified check reports SKIPPED and only the global spread counts.
+7. **New fixtures** (`bank.py`): `write_negative_evidence_bank` (all
+   beliefs favor a receptacle the object silently left; a non-empty
+   decoy receptacle proves exclusion comes from absence, not emptiness;
+   post-fix search finds the object in 2-4 senses — asserted),
+   `write_gate_pass_bank` (310 questions, four dynamics families,
+   passes all five gates), `write_gate_fail_static_bank` (static world,
+   fails not_trivial/not_impossible/discriminative). Golden snapshot
+   regenerated (behaviour legitimately changed with negative evidence +
+   the new policy); pinned run is last_observation+SequentialSearch.
+
+### Deviations / judgment calls
+
+- The brief's step-2 reading of the confidence threshold ("meets 1.0 =>
+  answer") is implemented as *grounded* certainty only (see point 3):
+  the literal reading makes SequentialSearch+LastObservation degenerate
+  to NeverSense (its confidence is always 1.0) and violates the
+  invariant the same brief makes primary.
+- "Log the belief's full per-object predictions" was implemented as the
+  existing per-object argmax snapshot (`belief_state`), not full
+  distributions: argmax is sufficient for the accuracy metric, and full
+  distributions would multiply the snapshot by ~n_receptacles.
+- No blanket "search >= never_sense" identity is asserted: at tight
+  budgets, morning senses leave exclusions that are stale by evening on
+  periodic objects (observed on hh_001: LastObservation+SequentialSearch
+  0.688 vs NeverSense 0.724 at budget 2). The asserted identity is
+  "found => answered correctly".
+- `cli.py` became subcommand-based: `run` (old behaviour) and
+  `healthcheck`. Update any scripts calling `python -m baselines.cli
+  <config>` to `python -m baselines.cli run <config>`.
+
+### Task-3 log-size impact
+
+The full-state snapshot (`belief_state` + `belief_accuracy`) accounts
+for ~54% of run-log bytes on the 17-object hh_001 banks (4.3 MiB vs
+2.0 MiB without, 2 772 records) and ~23% on the 3-object smoke bank.
+Logging full distributions instead would have multiplied the snapshot
+by ~n_receptacles (17x here) — hence argmax-only.
+
+### Healthcheck output, synthetic gate-test banks
+
+`write_gate_pass_bank` (panel: NeverSense last_observation 0.539,
+most_frequent 0.323, timetable 0.452; search@unlimited 1.000 for all
+three; search@24 with last_observation 0.848):
+
+    [PASS] solvable         measured   1.000  need == 1.000
+    [PASS] not_trivial      measured   0.539  need <= 0.650
+    [PASS] not_impossible   measured   0.848  need >= 0.689
+    [PASS] discriminative   measured   0.216  need > 0.030
+    [PASS] powered          measured 310.000  need >= 300.000
+    stratified spreads by household_type: synthetic_mixed=0.216
+    OVERALL on a dirty dev tree: FAIL ("REFUSED: all gates passed but
+    the git tree is dirty") — the refusal path working as intended;
+    from a clean tree this bank is overall PASS.
+
+`write_gate_fail_static_bank` (all NeverSense accuracies 1.000):
+
+    [PASS] solvable         measured   1.000  need == 1.000
+    [FAIL] not_trivial      measured   1.000  need <= 0.650
+    [FAIL] not_impossible   measured   1.000  need >= 1.150
+    [FAIL] discriminative   measured   0.000  need > 0.030
+    [PASS] powered          measured 300.000  need >= 300.000
+    stratified check: SKIPPED (no household_type in bank metadata)
+    OVERALL: FAIL — gates failed: not_trivial, not_impossible,
+    discriminative
+
+### hh_001 under the new instrument
+
+The committed `smoke_results/healthcheck_hh_001_seed0/` report (run
+from a clean tree) is the expected FAILING result for the current
+44-question pilot bank — powered fails outright and the belief
+separation is weak (see the report for exact numbers). That failure is
+the healthcheck doing its job on a bank we already knew was too small,
+not a defect to fix here. The 14-day banks fare better on scale but
+still show the known nightly-tidy homogenization (NeverSense 0.724 for
+all three beliefs on the uniform bank — the open bank-design issue
+below, unchanged by this update).
+
+### Carried-over findings (from the earlier confound-fix rounds)
+
+- Off-policy replay on hh_001 (uniform, 308 questions) showed
+  LastObservation is genuinely the best belief there (wins every replay
+  column) and FixedSchedule genuinely collects the best data (its stream
+  tops every column). Basic policies sense indiscriminately (attention
+  gaps within noise) — query-aware sensing remains open headroom.
+- KNOWN OPEN BANK-DESIGN ISSUE (unchanged): the 14-day headline banks
+  (3 sightings/day, tour on, nightly gradual tidy instead of the weekly
+  reset) homogenize the beliefs — NeverSense scores 0.724 for all three
+  on the uniform bank, so the healthcheck's discriminative gate FAILS
+  there. Known lever from the sighting-rate sweep: gaps open at higher
+  sighting rates (0.089 at 16/day pre-change). Bank design decision
+  still pending with the data workstream.
+
+## Built (original tier)
+
+Everything in the original brief's scope: the frozen core types
 (`types.py`), the `EpisodeBank` protocol + strict JSONL loader + synthetic
-fixture builder (`bank.py`), three belief models (last-observation,
+fixture builders (`bank.py`), three belief models (last-observation,
 most-frequent, timetable with configurable bins/day-scheme), three
-policies (never/always/fixed-schedule), the belief×policy `Agent`
-composition, the rule-enforcing harness, metrics (tidy + aggregate CSVs,
-the two plots), a YAML-config CLI with full provenance, 27 tests
-(units, harness invariants, integration grid with hand-derived exact
-scores, golden-file snapshot), and the smoke-run outputs. `pytest` green;
-`mypy --strict` clean over the package.
+policies (now never / sequential-search / fixed-schedule), the
+belief×policy `Agent` composition, the rule-enforcing harness, metrics
+(tidy + aggregate CSVs, the two plots), a YAML-config CLI with full
+provenance, the test suite (units, harness invariants, integration grid
+with hand-derived exact scores, search invariant, healthcheck
+integration, golden-file snapshot — 67 tests), and the smoke-run
+outputs. `pytest` green; `mypy --strict` clean over the package.
 
 ## Deviations from the brief (all follow existing repo conventions)
 
@@ -69,8 +234,13 @@ episode start; `day_index = t // 86400`.
 
 ## Known limitations (in-scope simplifications)
 
-- Basic beliefs ignore the negative information in `SenseResult.contents`
-  (documented contract keeps it available for later model families).
+- Exclusions expire only via a strictly later positive sighting, so a
+  morning miss still zeroes a receptacle the object re-entered by
+  evening (periodic objects); the all-excluded fallback plus the
+  search's tried-set keep this from ever costing correctness at
+  unlimited budget, but at tight budgets stale exclusions can cost the
+  recency belief the occasional blind answer (numbers in the update
+  above).
 - `FixedSchedule` senses at most once per question even if more than one
   cadence period elapsed since the last patrol.
 - The accuracy-vs-budget "curve" currently has one point per run (the

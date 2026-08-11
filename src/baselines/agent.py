@@ -43,7 +43,8 @@ class Agent:
         return self.belief.predict(question.object_id, question.t_query)
 
     def decide(self, question: Question, prediction: Prediction,
-               budget_remaining: int) -> Action:
+               budget_remaining: int,
+               last_sense: Union[SenseResult, None] = None) -> Action:
         """Delegate the sense-or-answer choice to the policy."""
         return self.policy.decide(question, prediction, budget_remaining,
-                                  question.t_query)
+                                  question.t_query, last_sense)

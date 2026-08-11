@@ -16,7 +16,10 @@ from __future__ import annotations
 
 import abc
 
-from baselines.types import Action, EpisodeContext, Prediction, Question
+from typing import Optional
+
+from baselines.types import (Action, EpisodeContext, Prediction, Question,
+                             SenseResult)
 
 
 class DecisionPolicy(abc.ABC):
@@ -32,7 +35,8 @@ class DecisionPolicy(abc.ABC):
 
     @abc.abstractmethod
     def decide(self, question: Question, prediction: Prediction,
-               budget_remaining: int, t: int) -> Action:
+               budget_remaining: int, t: int,
+               last_sense: Optional[SenseResult] = None) -> Action:
         """Answer now, or sense one receptacle first.
 
         Called repeatedly for the same question after each sense; must
@@ -40,4 +44,9 @@ class DecisionPolicy(abc.ABC):
         :class:`~baselines.types.Sense` with ``budget_remaining == 0`` is
         treated by the harness as a forced answer (and logged as such), so
         polite policies check the budget themselves.
+
+        ``last_sense`` is the result of this question's most recent sense
+        (None before the first): search-style policies read it to notice
+        when the queried object has been found. It duplicates what the
+        belief already ingested, so ignoring it is always safe.
         """

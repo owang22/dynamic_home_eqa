@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import bisect
 from dataclasses import dataclass, field
-from typing import Mapping, Tuple, Union
+from typing import Mapping, Optional, Tuple, Union
 
 DAY_SECONDS = 86_400
 """Length of one simulated day, in seconds."""
@@ -59,10 +59,10 @@ class SenseResult:
 
     ``contents`` is the complete tuple of object_ids present. Absence of an
     object from ``contents`` is meaningful *negative* information — the
-    object is definitely not in this receptacle at ``t``. The basic belief
-    models ignore that signal (they only fold in the positive sightings),
-    but the field contract guarantees completeness so later models can
-    exploit it without a schema change.
+    object is definitely not in this receptacle at ``t``. The belief base
+    class consumes both signals: contents become positive sightings, and
+    every known object missing from them is excluded from this receptacle
+    (see :mod:`baselines.beliefs.base` for the recency rule).
     """
 
     receptacle_id: str
@@ -206,7 +206,9 @@ class Episode:
     ``scripted_observations`` (source ``scripted``, sorted by t) together
     form the fixed observation stream every agent receives identically.
     ``questions_by_day`` holds one tuple of questions per simulated day,
-    each tuple sorted by ``t_query``.
+    each tuple sorted by ``t_query``. ``household_type`` is optional bank
+    metadata (e.g. "family_with_kids") used by the healthcheck's
+    stratified gates; agents never see it.
     """
 
     episode_id: str
@@ -218,6 +220,7 @@ class Episode:
     questions_by_day: Tuple[Tuple[Question, ...], ...]
     budget_per_day: int
     trajectories: Mapping[str, Tuple[Tuple[int, str], ...]] = field(repr=False)
+    household_type: Optional[str] = None
 
     def __post_init__(self) -> None:
         if self.budget_per_day < 0:

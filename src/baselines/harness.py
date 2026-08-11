@@ -2,7 +2,7 @@
 
 The harness owns everything that protects result validity:
 
-* **Information diet** — every agent gets the identical stream: the initial
+* **Identical observation streams** — every agent gets the identical stream: the initial
   tour, then per question all scripted observations with ``t <= t_query``
   not yet delivered, in time order. Sensing is the only divergence.
 * **Budget accounting** — the harness decrements the per-day budget,
@@ -13,9 +13,20 @@ The harness owns everything that protects result validity:
   accessor; only harness code touches ``true_location``.
 * **Scoring** — exact receptacle_id match against
   ``true_location(object_id, t_query)``. No aliasing here by contract.
+* **Full-state scoring** — after each question is resolved, the harness
+  snapshots the belief's argmax for EVERY object and scores each against
+  ground truth at that instant (``belief_state`` in the record). This is
+  the probe set nothing can game: sensing cannot react to it because the
+  agent never learns it is being scored on it. Task accuracy (queried
+  objects only) minus belief accuracy (all objects) measures how much a
+  policy steers its budget toward what gets asked. Snapshots use
+  ``predict_readonly`` (tie-break generator state restored afterwards), so
+  scoring a never-observed object cannot perturb the agent's own later
+  fallback answers — banks without an initial tour stay clean.
 * **Logging** — one JSON-serializable record per question with the full
-  prediction, every action and sense result, the answer, correctness, and
-  budget movement, sufficient to replay/debug a run from the log alone.
+  prediction, every action and sense result, the answer, correctness,
+  budget movement, and the full-state snapshot, sufficient to replay/debug
+  a run from the log alone.
 
 All times are seconds since episode start.
 """
@@ -62,6 +73,11 @@ class QuestionRecord:
     budget_spent: int
     budget_after: int
     forced_answer: bool
+    # Full-state snapshot after this question resolved:
+    # object_id -> [object_class, predicted argmax, correct]. The queried
+    # object appears here too (post-sense state, same as the answer).
+    belief_state: Dict[str, Tuple[str, str, bool]]
+    belief_accuracy: float
 
     def to_json_dict(self) -> Dict[str, object]:
         """Plain-dict form for JSONL writing."""
@@ -106,10 +122,11 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
     budget_before = budget
     actions: List[Dict[str, object]] = []
     forced = False
+    last_sense: SenseResult | None = None
 
     while True:
         prediction = agent.predict(question)
-        action = agent.decide(question, prediction, budget)
+        action = agent.decide(question, prediction, budget, last_sense)
         if isinstance(action, AnswerNow):
             actions.append({"type": "answer"})
             break
@@ -125,6 +142,7 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
         result = SenseResult(receptacle_id=action.receptacle_id,
                              t=question.t_query, contents=contents)
         agent.observe(result)
+        last_sense = result
         actions.append({"type": "sense", "receptacle_id": action.receptacle_id,
                         "contents": list(contents)})
 
@@ -133,6 +151,19 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
                     confidence=prediction.confidence,
                     budget_spent=budget_before - budget)
     truth = episode.true_location(question.object_id, question.t_query)
+
+    belief_state: Dict[str, Tuple[str, str, bool]] = {}
+    for obj, obj_class in sorted(episode.object_classes.items()):
+        # The queried object's snapshot IS the answer: re-predicting could
+        # break an exclusion-redistribution tie differently and desync the
+        # snapshot from the recorded answer.
+        guess = (prediction.argmax if obj == question.object_id
+                 else agent.belief.predict_readonly(obj, question.t_query).argmax)
+        belief_state[obj] = (
+            obj_class, guess,
+            guess == episode.true_location(obj, question.t_query))
+    belief_accuracy = (sum(ok for _, _, ok in belief_state.values())
+                       / len(belief_state))
     record = QuestionRecord(
         episode_id=episode.episode_id, household_id=episode.household_id,
         agent=agent.name, belief=agent.belief.name, policy=agent.policy.name,
@@ -147,7 +178,8 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
         truth_receptacle=truth,
         correct=answer.predicted_receptacle_id == truth,
         budget_before=budget_before, budget_spent=answer.budget_spent,
-        budget_after=budget, forced_answer=forced)
+        budget_after=budget, forced_answer=forced,
+        belief_state=belief_state, belief_accuracy=belief_accuracy)
     logger.debug("%s %s: %s (truth %s) spent=%d", agent.name,
                  question.question_id, answer.predicted_receptacle_id,
                  truth, answer.budget_spent)

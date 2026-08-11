@@ -22,7 +22,9 @@ that exact accuracies are derivable by hand:
 Totals over the 12 questions: LastObservation 9/12 = 0.75,
 MostFrequentLocation 6/12 = 0.50, TimetableLookup 9/12 = 0.75 — with the
 required orderings (timetable beats most-frequent on the periodic object;
-last-observation beats most-frequent on the mover).
+last-observation beats most-frequent on the mover). None of these numbers
+move under the negative-evidence machinery: NeverSense never senses, so
+no exclusions ever exist on the pure-belief diagonal.
 """
 
 from __future__ import annotations
@@ -39,28 +41,31 @@ from baselines.beliefs import (LastObservation, MostFrequentLocation,
                                TimetableConfig, TimetableLookup)
 from baselines.beliefs.base import BeliefModel
 from baselines.harness import QuestionRecord, run_episode
-from baselines.policies import (AlwaysSense, FixedSchedule,
-                                FixedScheduleConfig, NeverSense)
+from baselines.policies import (FixedSchedule, FixedScheduleConfig,
+                                NeverSense, SequentialSearch)
 from baselines.policies.base import DecisionPolicy
 
-
-def _beliefs(seed: int) -> Dict[str, BeliefModel]:
-    return {
-        "last": LastObservation(random.Random(seed)),
-        "freq": MostFrequentLocation(random.Random(seed)),
-        "timetable": TimetableLookup(
-            random.Random(seed), TimetableConfig(bin_hours=1, day_scheme="all")),
-    }
+BELIEF_NAMES = ("last", "freq", "timetable")
+POLICY_NAMES = ("never", "search", "fixed")
 
 
-def _policies() -> Dict[str, DecisionPolicy]:
-    return {
-        "never": NeverSense(),
-        "always": AlwaysSense(),
-        "fixed": FixedSchedule(FixedScheduleConfig(
-            rotation=("counter_k", "desk_o", "entry_e", "shelf_l"),
-            every_hours=6)),
-    }
+def _belief(name: str, seed: int) -> BeliefModel:
+    if name == "last":
+        return LastObservation(random.Random(seed))
+    if name == "freq":
+        return MostFrequentLocation(random.Random(seed))
+    return TimetableLookup(
+        random.Random(seed), TimetableConfig(bin_hours=1, day_scheme="all"))
+
+
+def _policy(name: str, seed: int) -> DecisionPolicy:
+    if name == "never":
+        return NeverSense()
+    if name == "search":
+        return SequentialSearch(random.Random(seed))
+    return FixedSchedule(FixedScheduleConfig(
+        rotation=("counter_k", "desk_o", "entry_e", "shelf_l"),
+        every_hours=6))
 
 
 def _accuracy(records: List[QuestionRecord],
@@ -76,11 +81,10 @@ def grid_records(tmp_path_factory: pytest.TempPathFactory
         tmp_path_factory.mktemp("bank") / "bank.jsonl")
     episode = next(bank.episodes())
     out: Dict[str, Dict[str, List[QuestionRecord]]] = {}
-    for bname in ("last", "freq", "timetable"):
+    for bname in BELIEF_NAMES:
         out[bname] = {}
-        for pname in ("never", "always", "fixed"):
-            agent = Agent(belief=_beliefs(0)[bname],
-                          policy=_policies()[pname])
+        for pname in POLICY_NAMES:
+            agent = Agent(belief=_belief(bname, 0), policy=_policy(pname, 1))
             out[bname][pname] = list(run_episode(agent, episode))
     return out
 
@@ -100,11 +104,10 @@ def test_static_object_is_perfect_for_every_belief(
 
 def test_timetable_beats_most_frequent_on_the_periodic_object(
         grid_records: Dict[str, Dict[str, List[QuestionRecord]]]) -> None:
-    tt = _accuracy(grid_records["timetable"]["never"], "keys_periodic")
+    timetable = _accuracy(grid_records["timetable"]["never"], "keys_periodic")
     freq = _accuracy(grid_records["freq"]["never"], "keys_periodic")
-    assert tt == pytest.approx(1.0)
+    assert timetable == pytest.approx(1.0)
     assert freq == pytest.approx(0.5)
-    assert tt > freq
 
 
 def test_last_observation_beats_most_frequent_on_the_mover(
@@ -115,15 +118,25 @@ def test_last_observation_beats_most_frequent_on_the_mover(
     assert freq == pytest.approx(0.0)
 
 
-def test_always_sense_never_hurts_any_belief(
+def test_search_finds_are_always_answered_correctly(
         grid_records: Dict[str, Dict[str, List[QuestionRecord]]]) -> None:
-    # Sensing the predicted receptacle either confirms (object present) or
-    # yields no positive evidence about the queried object; with these
-    # beliefs the answer can only stay or improve. A violation means the
-    # harness corrupted the information flow.
+    # Whenever a search sense returned the queried object, the answer must
+    # be that receptacle — the query-instant sighting outranks any belief
+    # prior. A violation means the harness corrupted the information flow.
+    # (No blanket "search >= never" claim holds at tight budgets: senses
+    # spent in the morning leave exclusions that are stale by evening on
+    # periodic objects, which can cost the recency belief an answer it
+    # would have gotten right blind.)
+    found_any = False
     for bname in grid_records:
-        assert (_accuracy(grid_records[bname]["always"])
-                >= _accuracy(grid_records[bname]["never"]))
+        for r in grid_records[bname]["search"]:
+            senses = [a for a in r.actions if a["type"] == "sense"]
+            found = [a for a in senses
+                     if r.object_id in list(a["contents"])]  # type: ignore[call-overload]
+            if found:
+                found_any = True
+                assert r.correct, (bname, r.question_id)
+    assert found_any, "search never found anything — fixture broken?"
 
 
 def test_loader_round_trip_preserves_question_count(
@@ -133,3 +146,4 @@ def test_loader_round_trip_preserves_question_count(
     assert sum(len(day) for day in episode.questions_by_day) == 12
     assert episode.receptacle_ids == ("counter_k", "desk_o", "entry_e", "shelf_l")
     assert episode.budget_per_day == 2
+    assert episode.household_type is None

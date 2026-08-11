@@ -19,12 +19,33 @@ legitimate answers and legitimate looks).
 
 Generated stream and questions (all seeded):
 
-* initial tour: every object's location at t=0.
+* initial tour (optional, ``--no-initial-tour`` to drop): every object's
+  location at t=0. WITH the tour, a frozen belief starts from a perfect
+  snapshot and scores the world's stationarity (~0.6 on hh_001) with zero
+  learning; WITHOUT it, never-sensed objects sit at the uniform-fallback
+  chance floor (~1/n_receptacles) and every point of accuracy must be
+  earned through sensing.
 * scripted sightings: ``--sightings-per-day`` per day, each a uniformly
   chosen object seen at a uniform time inside the awake window
   (08:00-22:00) at its true location — drive-by observations.
 * questions: ``--questions-per-day`` per day from ``--first-question-day``
-  on, uniform object and awake-window time.
+  on. The query schedule is a controlled experimental axis
+  (``--query-mode``), because a generator whose timing/content correlates
+  with the dynamics is an uncontrolled lever on every result:
+
+  - ``uniform`` — object and time drawn independently of the dynamics
+    (object uniform over inventory, time uniform in the awake window).
+    The clean scientific condition; headline results belong here.
+  - ``naturalistic`` — the realistic condition, deliberately correlated
+    with the dynamics in three documented ways: object choice is
+    popularity-weighted (weight 1 + number of true movements — busy
+    objects get asked about more), with probability 0.3 the question
+    re-asks one of the last 3 queried objects (people re-ask about the
+    same things), and with probability 0.5 the time is placed 5-60
+    minutes AFTER one of the object's true movements that day (people
+    notice things right after they move) instead of uniformly.
+
+  The chosen mode is recorded in the episode header (``query_mode``).
 
 Times in the timeline are minutes; the bank uses seconds (x60).
 
@@ -48,6 +69,7 @@ from typing import Any, Dict, List, Tuple
 import yaml
 
 from baselines.bank import JsonlBank
+from baselines.cli import _derived_rng
 from baselines.types import DAY_SECONDS
 
 logger = logging.getLogger(__name__)
@@ -101,9 +123,40 @@ def truth_at(traj: List[Tuple[int, str]], t: int) -> str:
     return location
 
 
+REPEAT_PROBABILITY = 0.3
+POST_MOVE_PROBABILITY = 0.5
+POST_MOVE_LAG_S = (5 * 60, 60 * 60)
+
+
+def _draw_question(mode: str, day: int, objects: List[str],
+                   truth: Dict[str, List[Tuple[int, str]]],
+                   recent: List[str], rng: random.Random) -> Tuple[str, int]:
+    """(object, t_query) for one question under the given query mode."""
+    if mode == "uniform":
+        return (rng.choice(objects),
+                day * DAY_SECONDS + rng.randrange(*AWAKE_WINDOW_S))
+    # naturalistic: popularity-weighted object, repeat bias, post-move timing
+    if recent and rng.random() < REPEAT_PROBABILITY:
+        obj = rng.choice(recent[-3:])
+    else:
+        weights = [1 + len(truth[o]) - 1 for o in objects]
+        obj = rng.choices(objects, weights=weights, k=1)[0]
+    window = (day * DAY_SECONDS + AWAKE_WINDOW_S[0],
+              day * DAY_SECONDS + AWAKE_WINDOW_S[1])
+    moves_today = [t for t, _ in truth[obj] if window[0] <= t < window[1]]
+    if moves_today and rng.random() < POST_MOVE_PROBABILITY:
+        t = rng.choice(moves_today) + rng.randrange(*POST_MOVE_LAG_S)
+        t = min(t, window[1] - 1)
+    else:
+        t = rng.randrange(*window)
+    return obj, t
+
+
 def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
            seed: int, sightings_per_day: int, questions_per_day: int,
-           first_question_day: int, budget_per_day: int) -> JsonlBank:
+           first_question_day: int, budget_per_day: int,
+           query_mode: str = "uniform",
+           initial_tour: bool = True) -> JsonlBank:
     """Write the bank JSONL and return its loader (which re-validates it)."""
     spec = yaml.safe_load(spec_path.read_text())
     profile = yaml.safe_load(
@@ -113,33 +166,47 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
 
     truth, n_days = load_truth(timeline)
     episode_id = f"{spec['household']}_{timeline.name}"
-    rng = random.Random(seed)
+    # Sightings and questions draw from SEPARATE seeded generators so the
+    # question set is invariant under changes to the sighting rate (and
+    # vice versa) — each axis can be swept without perturbing the other.
+    rng_sightings = _derived_rng(seed, "sightings", episode_id)
+    rng_questions = _derived_rng(seed, "questions", query_mode, episode_id)
     objects = sorted(object_classes)
 
-    rows: List[Dict[str, Any]] = [{
+    if query_mode not in ("uniform", "naturalistic"):
+        raise ValueError(f"unknown query_mode {query_mode!r}")
+    header: Dict[str, Any] = {
         "kind": "episode_header", "episode_id": episode_id,
         "household_id": spec["household"], "receptacle_ids": receptacles,
-        "object_classes": object_classes,
-        "budget_per_day": budget_per_day, "n_days": n_days}]
+        "object_classes": object_classes, "query_mode": query_mode,
+        "budget_per_day": budget_per_day, "n_days": n_days}
+    if "household_type" in spec:
+        # Optional metadata consumed by the healthcheck's stratified
+        # discriminative gate; absent from older schedule specs.
+        header["household_type"] = str(spec["household_type"])
+    rows: List[Dict[str, Any]] = [header]
     for obj in objects:
         for t, receptacle in truth[obj]:
             rows.append({"kind": "truth", "episode_id": episode_id,
                          "object_id": obj, "t": t, "receptacle_id": receptacle})
-        rows.append({"kind": "observation", "episode_id": episode_id,
-                     "object_id": obj, "receptacle_id": truth[obj][0][1],
-                     "t": 0, "source": "initial_tour"})
+        if initial_tour:
+            rows.append({"kind": "observation", "episode_id": episode_id,
+                         "object_id": obj, "receptacle_id": truth[obj][0][1],
+                         "t": 0, "source": "initial_tour"})
     for day in range(n_days):
         for _ in range(sightings_per_day):
-            obj = rng.choice(objects)
-            t = day * DAY_SECONDS + rng.randrange(*AWAKE_WINDOW_S)
+            obj = rng_sightings.choice(objects)
+            t = day * DAY_SECONDS + rng_sightings.randrange(*AWAKE_WINDOW_S)
             rows.append({"kind": "observation", "episode_id": episode_id,
                          "object_id": obj, "t": t, "source": "scripted",
                          "receptacle_id": truth_at(truth[obj], t)})
     question_number = 0
+    recent: List[str] = []
     for day in range(first_question_day, n_days):
         for _ in range(questions_per_day):
-            obj = rng.choice(objects)
-            t = day * DAY_SECONDS + rng.randrange(*AWAKE_WINDOW_S)
+            obj, t = _draw_question(query_mode, day, objects, truth, recent,
+                                    rng_questions)
+            recent.append(obj)
             rows.append({"kind": "question", "episode_id": episode_id,
                          "question_id": f"q{question_number:04d}",
                          "object_id": obj, "t_query": t, "day_index": day})
@@ -169,12 +236,17 @@ def main() -> None:
     parser.add_argument("--questions-per-day", type=int, default=4)
     parser.add_argument("--first-question-day", type=int, default=3)
     parser.add_argument("--budget-per-day", type=int, default=2)
+    parser.add_argument("--query-mode", default="uniform",
+                        choices=("uniform", "naturalistic"))
+    parser.add_argument("--no-initial-tour", action="store_true",
+                        help="omit the t=0 full snapshot; agents start blind")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO,
                         format="%(levelname)s %(name)s: %(message)s")
     export(args.timeline, args.spec, args.out, args.seed,
            args.sightings_per_day, args.questions_per_day,
-           args.first_question_day, args.budget_per_day)
+           args.first_question_day, args.budget_per_day, args.query_mode,
+           initial_tour=not args.no_initial_tour)
 
 
 if __name__ == "__main__":

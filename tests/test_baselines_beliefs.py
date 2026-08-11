@@ -81,26 +81,24 @@ def test_timetable_uses_the_query_bin() -> None:
     model = TimetableLookup(random.Random(0),
                             TimetableConfig(bin_hours=1, day_scheme="all"))
     model.reset(_context())
-    # Sightings: 10:00 both days at a; 20:00 both days at b. A 10:30 query
-    # falls in the 10:00 bin -> a; a 20:30 query -> b, regardless of the
-    # overall mode.
-    for day in (0, 1):
-        model.update(_obs("a", day * DAY_SECONDS + 10 * H))
-        model.update(_obs("b", day * DAY_SECONDS + 20 * H))
-    assert model.predict("o", 10 * H + 1800).argmax == "a"
-    assert model.predict("o", 20 * H + 1800).argmax == "b"
+    # Same clock hour on different days shares a bin: 9:00 sightings say a,
+    # a single 20:00 sighting says b.
+    model.update(_obs("a", 9 * H))
+    model.update(_obs("a", DAY_SECONDS + 9 * H))
+    model.update(_obs("b", 20 * H))
+    assert model.predict("o", DAY_SECONDS + 9 * H + 600).argmax == "a"
+    assert model.predict("o", DAY_SECONDS + 20 * H + 600).argmax == "b"
 
 
 def test_timetable_empty_bin_degrades_to_most_frequent() -> None:
     model = TimetableLookup(random.Random(0),
                             TimetableConfig(bin_hours=1, day_scheme="all"))
     model.reset(_context())
-    # All sightings in the 10:00 bin: a twice, b once. A 03:00 query has an
-    # empty bin, so the whole-history mode (a) answers.
+    model.update(_obs("a", 9 * H))
     model.update(_obs("a", 10 * H))
-    model.update(_obs("b", 10 * H + 60))
-    model.update(_obs("a", DAY_SECONDS + 10 * H))
-    pred = model.predict("o", 3 * H)
+    model.update(_obs("b", 20 * H))
+    # 15:00 was never observed: the whole history votes, mode is a.
+    pred = model.predict("o", DAY_SECONDS + 15 * H)
     assert pred.argmax == "a"
     assert pred.distribution == {"a": pytest.approx(2 / 3),
                                  "b": pytest.approx(1 / 3)}
@@ -111,12 +109,11 @@ def test_timetable_weekday_weekend_scheme_separates_days() -> None:
         random.Random(0),
         TimetableConfig(bin_hours=1, day_scheme="weekday_weekend"))
     model.reset(_context())
-    # 10:00 sightings: weekday (day 0) at a, weekend (day 5 = Saturday) at
-    # b. Queries at 10:30 resolve per category.
-    model.update(_obs("a", 0 * DAY_SECONDS + 10 * H))
-    model.update(_obs("b", 5 * DAY_SECONDS + 10 * H))
-    assert model.predict("o", 1 * DAY_SECONDS + 10 * H + 1800).argmax == "a"
-    assert model.predict("o", 6 * DAY_SECONDS + 10 * H + 1800).argmax == "b"
+    # 9:00 on a weekday (day 0) says a; 9:00 on a weekend (day 5) says b.
+    model.update(_obs("a", 9 * H))
+    model.update(_obs("b", 5 * DAY_SECONDS + 9 * H))
+    assert model.predict("o", 1 * DAY_SECONDS + 9 * H).argmax == "a"
+    assert model.predict("o", 6 * DAY_SECONDS + 9 * H).argmax == "b"
 
 
 def test_timetable_config_validation() -> None:

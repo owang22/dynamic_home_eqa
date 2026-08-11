@@ -72,8 +72,9 @@ class TimetableLookup(BeliefModel):
     behaviour.
     """
 
-    def __init__(self, rng: random.Random, config: TimetableConfig) -> None:
-        super().__init__(rng)
+    def __init__(self, rng: random.Random, config: TimetableConfig,
+                 exclusion_floor: float = 0.0) -> None:
+        super().__init__(rng, exclusion_floor=exclusion_floor)
         self._config = config
 
     @property

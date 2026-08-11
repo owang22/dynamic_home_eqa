@@ -1,41 +1,73 @@
-"""Belief-model interface and the observation bookkeeping every basic model
+"""Belief-model interface and the evidence bookkeeping every basic model
 shares.
 
 A belief model consumes the observation stream (plus any sense results the
 policy pays for) and answers ``predict(object_id, t)`` with a distribution
 over receptacles. All times are seconds since episode start.
 
-Shared bookkeeping lives here so concrete models stay single-idea:
-:class:`BeliefModel` maintains, per object, the chronological list of
-positive sightings ``(t, receptacle_id)``. Sense results are folded in as
-positive sightings of their contents; their negative information (absence
-from the sensed receptacle) is intentionally dropped at this tier — the
-:class:`~baselines.types.SenseResult` contract preserves it for later
-model families.
+Shared bookkeeping lives here so concrete models stay single-idea. The
+base class maintains, per object:
+
+* the chronological list of **positive sightings** ``(t, receptacle_id)``
+  — concrete models build their base distribution from this via
+  :meth:`_predict_from_history`;
+* the set of **exclusions**: a sense of receptacle R at time t whose
+  contents do NOT include object O is evidence that O is not in R at t.
+  Exclusions are recorded here and applied on top of every concrete
+  model's base distribution at prediction time, so no model reimplements
+  (or silently drops) negative evidence.
+
+Exclusion recency rule (the single place timestamps are compared — see
+:meth:`BeliefModel._active_exclusions`): an exclusion of O at R recorded
+at ``t_ex`` applies as long as no positive sighting of O anywhere is
+STRICTLY LATER than ``t_ex``. A later sighting means the object has moved
+since the exclusion was observed, so the exclusion is stale and ignored.
+A positive sighting at exactly ``t_ex`` does not invalidate it: seeing O
+elsewhere at the same instant is consistent with its absence from R.
 """
 
 from __future__ import annotations
 
 import abc
+import logging
 import random
-from typing import Dict, List, Mapping, Tuple, Union
+from typing import Dict, List, Mapping, Set, Tuple, Union
 
-from baselines.types import EpisodeContext, Observation, Prediction, SenseResult
+from baselines.types import (EpisodeContext, Observation, Prediction,
+                             SenseResult)
+
+logger = logging.getLogger(__name__)
+
+MAX_EXCLUSION_FLOOR = 0.01
+"""Upper bound on the per-receptacle probability floor for excluded
+receptacles; large floors would let exclusions dominate the distribution."""
 
 
 class BeliefModel(abc.ABC):
-    """Base class: history bookkeeping, uniform fallback, tie-breaking.
+    """Base class: evidence bookkeeping, exclusion logic, tie-breaking.
 
     Concrete models implement :meth:`_predict_from_history` only. The
-    seeded ``rng`` is the model's *only* source of randomness (used to
-    break argmax ties, e.g. inside the uniform fallback); it is supplied
-    by the harness so runs are fully determined by (bank, config, seed).
+    seeded ``rng`` is the model's *only* source of randomness (argmax
+    tie-breaks); it is supplied by the harness so runs are fully
+    determined by (bank, config, seed).
+
+    ``exclusion_floor`` is the probability an excluded receptacle keeps
+    (default 0.0 — hard exclusion). It must be small (see
+    :data:`MAX_EXCLUSION_FLOOR`) so exclusions actually rule places out.
     """
 
-    def __init__(self, rng: random.Random) -> None:
+    def __init__(self, rng: random.Random,
+                 exclusion_floor: float = 0.0) -> None:
+        if not 0.0 <= exclusion_floor <= MAX_EXCLUSION_FLOOR:
+            raise ValueError(
+                f"{type(self).__name__}: exclusion_floor {exclusion_floor} "
+                f"outside [0, {MAX_EXCLUSION_FLOOR}]")
         self._rng = rng
+        self._exclusion_floor = exclusion_floor
         self._context: EpisodeContext | None = None
         self._history: Dict[str, List[Tuple[int, str]]] = {}
+        # object_id -> {receptacle_id: newest time O was seen absent from it}
+        self._exclusions: Dict[str, Dict[str, int]] = {}
 
     @property
     def name(self) -> str:
@@ -45,36 +77,152 @@ class BeliefModel(abc.ABC):
     # ---------------------------------------------------------------- API
 
     def reset(self, context: EpisodeContext) -> None:
-        """Start a fresh episode: forget all history, remember the context."""
+        """Start a fresh episode: forget all evidence, remember the context."""
         self._context = context
         self._history = {}
+        self._exclusions = {}
 
     def update(self, evidence: Union[Observation, SenseResult]) -> None:
-        """Fold one piece of evidence into the history.
+        """Fold one piece of evidence into the belief state.
 
         An :class:`Observation` is a single positive sighting. A
-        :class:`SenseResult` contributes one positive sighting per object in
-        its contents; its negative information is dropped here (see module
-        docstring).
+        :class:`SenseResult` is evidence about EVERY known object: one
+        positive sighting per object in its contents, and one exclusion
+        (object absent from the sensed receptacle at ``t``) for each known
+        object NOT in its contents.
         """
         if isinstance(evidence, Observation):
-            self._history.setdefault(evidence.object_id, []).append(
-                (evidence.t, evidence.receptacle_id))
-        else:
-            for obj in evidence.contents:
-                self._history.setdefault(obj, []).append(
-                    (evidence.t, evidence.receptacle_id))
+            self._add_sighting(evidence.object_id, evidence.t,
+                               evidence.receptacle_id)
+            return
+        if self._context is None:
+            raise RuntimeError(f"{self.name}: update() before reset()")
+        present = set(evidence.contents)
+        for obj in evidence.contents:
+            self._add_sighting(obj, evidence.t, evidence.receptacle_id)
+        for obj in self._context.object_classes:
+            if obj not in present:
+                by_receptacle = self._exclusions.setdefault(obj, {})
+                previous = by_receptacle.get(evidence.receptacle_id, -1)
+                by_receptacle[evidence.receptacle_id] = max(previous, evidence.t)
+
+    def predict_readonly(self, object_id: str, t: int) -> Prediction:
+        """predict() with the tie-break generator's state restored after.
+
+        Used by the harness for full-state snapshots, which must not
+        perturb the run: without this, snapshotting a never-observed
+        object would consume randomness and shift the agent's own later
+        tie-break answers.
+        """
+        state = self._rng.getstate()
+        try:
+            return self.predict(object_id, t)
+        finally:
+            self._rng.setstate(state)
 
     def predict(self, object_id: str, t: int) -> Prediction:
         """Distribution over receptacles for ``object_id`` at time ``t``.
 
-        A never-observed object gets the uniform fallback over all
-        receptacles (argmax tie broken by the seeded generator).
+        A positive sighting at exactly ``t`` short-circuits everything:
+        an observation of the object AT the prediction instant is ground
+        truth at that instant, and no model prior may outvote it (a
+        frequency belief would otherwise answer from its history right
+        after a search sense returned the object elsewhere). Otherwise
+        the concrete model's base distribution (uniform fallback for a
+        never-observed object) gets current exclusions applied on top —
+        see :meth:`_apply_exclusions` for the exact rule and edge cases.
+        Always sums to 1.
         """
         history = self._history.get(object_id, [])
-        if not history:
-            return self._uniform()
-        return self._predict_from_history(history, t)
+        current = self._sighting_at(history, t)
+        if current is not None:
+            return Prediction(distribution={current: 1.0}, argmax=current)
+        base = (self._predict_from_history(history, t) if history
+                else self._uniform())
+        return self._apply_exclusions(object_id, t, base)
+
+    @staticmethod
+    def _sighting_at(history: List[Tuple[int, str]],
+                     t: int) -> Union[str, None]:
+        """Receptacle of a positive sighting at exactly ``t``, if any
+        (latest-arriving wins; a truthful bank never has two receptacles
+        for one object at one instant)."""
+        for ot, rec in reversed(history):
+            if ot == t:
+                return rec
+        return None
+
+    # ------------------------------------------------- exclusion machinery
+
+    def _add_sighting(self, object_id: str, t: int, receptacle_id: str) -> None:
+        self._history.setdefault(object_id, []).append((t, receptacle_id))
+
+    def _active_exclusions(self, object_id: str) -> Set[str]:
+        """Receptacles currently ruled out for ``object_id``.
+
+        THE recency rule (module docstring) lives here and only here: an
+        exclusion recorded at ``t_ex`` is active iff no positive sighting
+        of the object is strictly later than ``t_ex``.
+        """
+        recorded = self._exclusions.get(object_id)
+        if not recorded:
+            return set()
+        newest_positive = max(
+            (ot for ot, _ in self._history.get(object_id, [])), default=None)
+        return {rec for rec, t_ex in recorded.items()
+                if newest_positive is None or t_ex >= newest_positive}
+
+    def _apply_exclusions(self, object_id: str, t: int,
+                          base: Prediction) -> Prediction:
+        """Zero out excluded receptacles and redistribute their mass.
+
+        The reclaimed mass is spread UNIFORMLY over all non-excluded
+        receptacles — including ones the base distribution gave zero —
+        because a negative result is evidence for every receptacle not yet
+        ruled out, not only for previously-sighted ones. (Renormalizing
+        the surviving support alone would fabricate certainty: with base
+        mass on two receptacles and one excluded, the other would jump to
+        probability 1.0 even though the object may sit somewhere never
+        sighted.) When exclusions cover the entire base support this
+        reduces exactly to a uniform distribution over the non-excluded
+        receptacles.
+
+        Edge case: if EVERY receptacle is excluded (possible with stale
+        exclusions), exclusions are ignored entirely and a warning is
+        logged with the object id and query time. The result always sums
+        to 1 — the :class:`~baselines.types.Prediction` contract is
+        enforced on construction.
+        """
+        excluded = self._active_exclusions(object_id)
+        if not excluded:
+            return base
+        receptacles = self._receptacles()
+        kept = [r for r in receptacles if r not in excluded]
+        if not kept:
+            logger.warning(
+                "%s: every receptacle excluded for %s at t=%d; "
+                "ignoring exclusions (stale negative evidence)",
+                self.name, object_id, t)
+            return base
+        excluded_mass = sum(p for r, p in base.distribution.items()
+                            if r in excluded)
+        share = excluded_mass / len(kept)
+        scale = 1.0 - self._exclusion_floor * len(excluded)
+        dist = {r: (base.distribution.get(r, 0.0) + share) * scale
+                for r in kept}
+        dist.update({r: self._exclusion_floor for r in excluded})
+        return Prediction(distribution=dist,
+                          argmax=self._argmax_of(dist, kept, base.argmax))
+
+    def _argmax_of(self, dist: Mapping[str, float], kept: List[str],
+                   base_argmax: str) -> str:
+        """Argmax over ``kept``; prefer the base argmax if it still tops,
+        otherwise break exact ties with the seeded generator."""
+        top = max(dist[r] for r in kept)
+        tied = [r for r in kept if dist[r] == top]
+        if base_argmax in tied:
+            return base_argmax
+        return tied[0] if len(tied) == 1 else self._rng.choice(tied)
 
     # ------------------------------------------------------------ helpers
 

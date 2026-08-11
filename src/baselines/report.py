@@ -40,7 +40,7 @@ def render(run_dir: pathlib.Path) -> str:
     aggregate = _read_csv(run_dir / "aggregate.csv")
 
     overall = sorted((r for r in aggregate if r["stratum_type"] == "overall"),
-                     key=lambda r: -float(r["accuracy"]))
+                     key=lambda r: -float(r["task_accuracy"]))
     n_questions = len({q["question_id"] for q in questions})
     n_days = len({q["day_index"] for q in questions})
     n_objects = len({q["object_id"] for q in questions})
@@ -67,8 +67,8 @@ def render(run_dir: pathlib.Path) -> str:
         "",
         "## Headline: accuracy by agent",
         "",
-        _table(["agent", "accuracy", "budget/question", "budget/day"],
-               [[r["agent"], f"{float(r['accuracy']):.3f}",
+        _table(["agent", "task accuracy", "budget/question", "budget/day"],
+               [[r["agent"], f"{float(r['task_accuracy']):.3f}",
                  f"{float(r['mean_budget_per_question']):.2f}",
                  f"{float(r['mean_budget_per_day']):.2f}"] for r in overall]),
     ]
@@ -81,7 +81,7 @@ def render(run_dir: pathlib.Path) -> str:
             beliefs.append(r["belief"])
         if r["policy"] not in policies:
             policies.append(r["policy"])
-        pivot[(r["belief"], r["policy"])] = f"{float(r['accuracy']):.3f}"
+        pivot[(r["belief"], r["policy"])] = f"{float(r['task_accuracy']):.3f}"
     parts += [
         "",
         "## Belief × policy accuracy",
@@ -96,7 +96,7 @@ def render(run_dir: pathlib.Path) -> str:
              and r["policy"] == "NeverSense"]
     classes = sorted({r["stratum"] for r in never})
     by_bc = {(r["belief"], r["stratum"]):
-             f"{float(r['accuracy']):.2f} (n={r['n_questions']})"
+             f"{float(r['task_accuracy']):.2f} (n={r['n_questions']})"
              for r in never}
     parts += [
         "",
