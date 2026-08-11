@@ -9,9 +9,8 @@ whole-history most-frequent behaviour when the bin is empty.
 from __future__ import annotations
 
 import random
-from collections import Counter
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from baselines.beliefs.base import BeliefModel
 from baselines.types import DAY_SECONDS, Prediction
@@ -73,14 +72,21 @@ class TimetableLookup(BeliefModel):
     """
 
     def __init__(self, rng: random.Random, config: TimetableConfig,
-                 exclusion_floor: float = 0.0) -> None:
+                 exclusion_floor: float = 0.0,
+                 half_life_h: Optional[float] = None) -> None:
         super().__init__(rng, exclusion_floor=exclusion_floor)
+        if half_life_h is not None and half_life_h <= 0:
+            raise ValueError(
+                f"TimetableLookup: half_life_h {half_life_h} must be > 0")
         self._config = config
+        self._half_life_s = None if half_life_h is None else half_life_h * 3600
 
     @property
     def name(self) -> str:
+        suffix = ("" if self._half_life_s is None
+                  else f",hl={self._half_life_s / 3600:g}h")
         return (f"TimetableLookup(bin={self._config.bin_hours}h,"
-                f"days={self._config.day_scheme})")
+                f"days={self._config.day_scheme}{suffix})")
 
     def _predict_from_history(
             self, history: List[Tuple[int, str]], t: int) -> Prediction:
@@ -88,5 +94,5 @@ class TimetableLookup(BeliefModel):
         in_bin = [(ot, rec) for ot, rec in history
                   if self._config.bin_of(ot) == query_bin]
         pool = in_bin if in_bin else history
-        counts = Counter(receptacle for _, receptacle in pool)
+        counts = self._weighted_counts(pool, t, self._half_life_s)
         return self._normalized(counts, tie_break_recency=pool)

@@ -77,10 +77,18 @@ UNLIMITED_BUDGET = 10_000
 
 BELIEF_PANEL: Tuple[Dict[str, Any], ...] = (
     {"name": "last_observation"},
-    {"name": "most_frequent"},
-    {"name": "timetable", "bin_hours": 1, "day_scheme": "all"},
+    {"name": "most_frequent", "half_life_h": 24},
+    {"name": "timetable", "bin_hours": 1, "day_scheme": "all",
+     "half_life_h": 24},
 )
-"""The frozen instrument: the three basic belief models."""
+"""The frozen instrument: the three basic belief models.
+
+Frequency-style members carry a 24 h count half-life — an infinite-memory
+histogram is a known-broken estimator in a drifting world, so the panel
+compares the honest strong versions. 24 h is the domain's natural cycle,
+fixed a priori; tuning the half-life per bank would be instrument-gaming
+and invalidates gate comparisons across banks.
+"""
 
 _NEVER = {"name": "never_sense"}
 _SEARCH = {"name": "sequential_search"}
@@ -310,6 +318,7 @@ def _assemble(bank: JsonlBank, config: HealthcheckConfig,
             datetime.timezone.utc).isoformat(),
         "n_questions": stats.n_questions,
         "real_budget_per_day": real_budget,
+        "belief_panel": [dict(spec) for spec in BELIEF_PANEL],
         "bank_stats": dataclasses.asdict(stats),
         "panel": {
             "never_sense_task_accuracy": never_accs,

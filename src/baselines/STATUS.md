@@ -1,5 +1,55 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-08-11, decayed frequency beliefs + review-flag resolutions)
+
+**Count decay (the fairness fix).** MostFrequentLocation and
+TimetableLookup take an optional `half_life_h`: sighting counts decay as
+2^(-age/half_life) at prediction time. An infinite-memory histogram is a
+known-broken estimator in a drifting world; the healthcheck panel, sweep,
+and headline grid now run the honest-strong versions at a **frozen 24 h
+half-life** — the domain's natural cycle, chosen a priori. Tuning the
+half-life per bank is instrument-gaming and invalidates cross-bank gate
+comparisons (12 h would score higher here and collapse the discriminative
+spread to the gate edge: fair estimators converge toward recency as the
+half-life shrinks — freq@12h is 0.628 vs last_observation's 0.630).
+Measured decayed-vs-undecayed gap on the 28-day bank — itself the drift
+measurement: most_frequent +0.040 (0.585 -> 0.625), timetable +0.027
+(0.569 -> 0.596). Panel readings: 0.630 / 0.625 / 0.596, spread 0.034
+(discriminative passes, thinly; undecayed spread 0.061 was partly the
+naive estimator's handicap). The gate-pass fixture was re-tuned for the
+stronger instrument (question mix shifted from the timetable-perfect
+periodic pair toward the drifters) and passes all six gates again.
+Incidental fix surfaced by decayed weights: exclusion redistribution now
+renormalizes exactly (float error could push a lone survivor a few ulp
+past probability 1.0, which the strict Answer contract rejects).
+
+**Review flags resolved with receipts:**
+
+1. *Solvability on the repaired bank*: verified everywhere it matters —
+   the clean-tree healthchecks ran SequentialSearch@unlimited = 1.0000
+   for all three beliefs on the headline bank, and the same holds on the
+   sweep's blind no-tour bank (task 1.0000 x3; full-state at unlimited
+   0.959/0.858/0.848). Multi-stage journeys and person-coupled absences
+   did not break findability: OUT_OF_HOUSE answers are proven by
+   elimination (single unsensable receptacle — keep it single).
+2. *Day 22*: intended dynamics, not an artifact. Day 20 (Sunday) rolled
+   every probabilistic block cold — tidy, wash, outing all skipped
+   (8 events vs ~21 typical) — displacement compounded, Monday's 4-item
+   tidy barely dented it, and by Tuesday 35/90 question answers sat on
+   coffee_table/couch: query-time modal share collapsed to 0.34 (vs
+   0.5-0.7 neighbors). Compounding neglect is the mechanism the
+   persistence repair exists to create; agents that sense recently
+   handle it best (budget 16 dips least).
+3. *FixedSchedule dropped from the sweep*: its 6 h/4-stop rotation
+   spends at most 4 senses/day, so budgets >= 4 produced byte-identical
+   columns. The policy class remains in the roster and grid.
+4. *The ~0.77 ceiling at budget 16 is churn, not unfindability* (see 1);
+   the missing points are the world outrunning finite sensing, which is
+   the task. Bank-intrinsic stats on the repaired bank: dwell-weighted
+   modal share 0.571 (was 0.701 pre-repair; the 0.75 figure was the
+   query-time share), displaced 43% of the time, median stint 12.1 h.
+
+
 ## Update (2026-08-11, unsensable OUT_OF_HOUSE)
 
 Reverses the earlier "robot can sense OUT_OF_HOUSE" placeholder: banks

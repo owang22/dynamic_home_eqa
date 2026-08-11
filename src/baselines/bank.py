@@ -439,22 +439,27 @@ def _pass_bank_observations(
 
 _PASS_DAILY_QUESTIONS: Tuple[Tuple[str, int], ...] = (
     # (object, seconds into the day); 31 per day x 10 question days = 310.
+    # The mix is weighted toward the drifters so the passive ceiling stays
+    # under the not_trivial gate even for the decayed (honest-strong)
+    # frequency/timetable beliefs, which nearly solve the periodic pair.
     ("mug_anchor", 11 * 3600), ("mug_anchor", 14 * 3600),
     ("mug_anchor", 16 * 3600),
-    ("keys_shift", 10 * 3600 + 900), ("keys_shift", 10 * 3600 + 2700),
-    ("keys_shift", 20 * 3600 + 900), ("keys_shift", 20 * 3600 + 2700),
-    ("badge_shift", 10 * 3600 + 1200), ("badge_shift", 10 * 3600 + 3000),
-    ("badge_shift", 20 * 3600 + 1200), ("badge_shift", 20 * 3600 + 3000),
+    ("keys_shift", 10 * 3600 + 900), ("keys_shift", 20 * 3600 + 2700),
+    ("badge_shift", 10 * 3600 + 1200), ("badge_shift", 20 * 3600 + 3000),
     ("drift_a", 13 * 3600 + 1800), ("drift_a", 14 * 3600 + 900),
     ("drift_a", 15 * 3600), ("drift_a", 15 * 3600 + 1800),
     ("drift_a", 16 * 3600 + 900), ("drift_a", 16 * 3600 + 1800),
+    ("drift_a", 17 * 3600 + 600),
     ("drift_b", 13 * 3600 + 2100), ("drift_b", 14 * 3600 + 1200),
     ("drift_b", 15 * 3600 + 300), ("drift_b", 15 * 3600 + 2100),
     ("drift_b", 16 * 3600 + 1200), ("drift_b", 16 * 3600 + 2100),
+    ("drift_b", 17 * 3600 + 900),
     ("drift_c", 13 * 3600 + 2400), ("drift_c", 14 * 3600 + 1500),
     ("drift_c", 15 * 3600 + 600), ("drift_c", 15 * 3600 + 2400),
     ("drift_c", 16 * 3600 + 1500), ("drift_c", 16 * 3600 + 2400),
+    ("drift_c", 17 * 3600 + 1200),
     ("roam_fast", 15 * 3600 + 1200), ("roam_fast", 18 * 3600 + 1800),
+    ("roam_fast", 19 * 3600 + 600),
 )
 
 

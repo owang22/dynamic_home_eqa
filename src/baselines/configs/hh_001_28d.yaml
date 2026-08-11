@@ -6,8 +6,8 @@ out_dir: smoke_results/baselines_hh001_28d
 agents:
   beliefs:
     - {name: last_observation}
-    - {name: most_frequent}
-    - {name: timetable, bin_hours: 1, day_scheme: all}
+    - {name: most_frequent, half_life_h: 24}
+    - {name: timetable, bin_hours: 1, day_scheme: all, half_life_h: 24}
   policies:
     - {name: never_sense}
     - {name: sequential_search}

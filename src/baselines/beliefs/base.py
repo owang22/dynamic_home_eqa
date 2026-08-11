@@ -224,6 +224,11 @@ class BeliefModel(abc.ABC):
         dist = {r: (base.distribution.get(r, 0.0) + share) * scale
                 for r in kept}
         dist.update({r: self._exclusion_floor for r in excluded})
+        # Exact renormalization: accumulated float error can push the sum
+        # (and hence a lone survivor's probability) a few ulp past 1.0,
+        # which the strict Answer/Prediction contracts reject.
+        total = sum(dist.values())
+        dist = {r: v / total for r, v in dist.items()}
         return Prediction(distribution=dist,
                           argmax=self._argmax_of(dist, kept, base.argmax))
 
@@ -256,7 +261,24 @@ class BeliefModel(abc.ABC):
         return Prediction(distribution={r: p for r in recs},
                           argmax=self._rng.choice(list(recs)))
 
-    def _normalized(self, counts: Mapping[str, int],
+    @staticmethod
+    def _weighted_counts(history: List[Tuple[int, str]], t: int,
+                         half_life_s: Union[float, None]) -> Dict[str, float]:
+        """Sighting counts, exponentially decayed by age when a half-life
+        is set (weight 2^(-(t - t_obs)/half_life)); plain counts otherwise.
+
+        An infinite-memory histogram is a known-broken estimator in a
+        drifting world — old sightings outvote what the world has since
+        become — so frequency-style beliefs take an optional half-life.
+        """
+        counts: Dict[str, float] = {}
+        for ot, receptacle in history:
+            weight = (1.0 if half_life_s is None
+                      else 2.0 ** (-max(0, t - ot) / half_life_s))
+            counts[receptacle] = counts.get(receptacle, 0.0) + weight
+        return counts
+
+    def _normalized(self, counts: Mapping[str, float],
                     tie_break_recency: List[Tuple[int, str]]) -> Prediction:
         """Frequency-normalize ``counts`` into a Prediction.
 

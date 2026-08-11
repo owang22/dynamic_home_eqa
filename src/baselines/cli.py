@@ -110,15 +110,19 @@ def build_belief(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
     """Instantiate a belief model from its config spec."""
     name = str(spec["name"])
     floor = float(spec.get("exclusion_floor", 0.0))
+    raw_hl = spec.get("half_life_h")
+    half_life = None if raw_hl is None else float(raw_hl)
     if name == "last_observation":
         return LastObservation(rng, exclusion_floor=floor)
     if name == "most_frequent":
-        return MostFrequentLocation(rng, exclusion_floor=floor)
+        return MostFrequentLocation(rng, exclusion_floor=floor,
+                                    half_life_h=half_life)
     if name == "timetable":
         cfg = TimetableConfig(
             bin_hours=int(spec.get("bin_hours", 1)),
             day_scheme=str(spec.get("day_scheme", "all")))
-        return TimetableLookup(rng, cfg, exclusion_floor=floor)
+        return TimetableLookup(rng, cfg, exclusion_floor=floor,
+                               half_life_h=half_life)
     raise ValueError(f"unknown belief {name!r}")
 
 

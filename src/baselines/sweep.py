@@ -54,17 +54,17 @@ logger = logging.getLogger(__name__)
 # pinned at 1.0 by the search invariant and full-state accuracy sits near
 # 0.9; the healthcheck panel documents both.
 BUDGET_LEVELS: Tuple[Any, ...] = (0, 1, 4, 16)
+# Beliefs match the healthcheck panel (frequency members carry the frozen
+# 24 h count half-life). FixedSchedule is dropped from the sweep: its
+# 6 h/4-stop rotation spends at most 4 senses/day, so every budget >= 4
+# produced byte-identical redundant columns.
 BELIEF_SPECS: Tuple[Dict[str, Any], ...] = (
     {"name": "last_observation"},
-    {"name": "most_frequent"},
-    {"name": "timetable"},
+    {"name": "most_frequent", "half_life_h": 24},
+    {"name": "timetable", "half_life_h": 24},
 )
-# FixedSchedule patrols hh_001's busiest receptacles (the strongest blind
-# data collector); SequentialSearch is the question-directed probe.
 POLICY_SPECS: Tuple[Dict[str, Any], ...] = (
     {"name": "sequential_search"},
-    {"name": "fixed_schedule", "every_hours": 6,
-     "rotation": ["counter_k1", "couch_l1", "coffee_table_l1", "entry_table_e1"]},
 )
 
 # Sequential single-hue ramp, light -> dark, for the ordered budget levels.

@@ -32,24 +32,34 @@ FIXTURE_BUILDERS: dict[str, Callable[[pathlib.Path], JsonlBank]] = {
     "gate_fail_static": write_gate_fail_static_bank,
 }
 BELIEFS = ("last_observation", "most_frequent", "timetable")
+BELIEF_SPECS = (
+    {"name": "last_observation"},
+    {"name": "most_frequent"},
+    {"name": "most_frequent", "half_life_h": 24},
+    {"name": "timetable"},
+    {"name": "timetable", "half_life_h": 24},
+)
 
 
-def _run_search(bank: JsonlBank, belief: str,
+def _run_search(bank: JsonlBank, belief: object,
                 budget: int | None = None) -> List[QuestionRecord]:
+    spec = {"name": belief} if isinstance(belief, str) else dict(belief)
     records: List[QuestionRecord] = []
     for episode in bank.episodes():
         if budget is not None:
             episode = dataclasses.replace(episode, budget_per_day=budget)
-        agent = build_agent({"name": belief}, {"name": "sequential_search"},
+        agent = build_agent(spec, {"name": "sequential_search"},
                             seed=0, episode_id=episode.episode_id)
         records += list(run_episode(agent, episode))
     return records
 
 
 @pytest.mark.parametrize("fixture", sorted(FIXTURE_BUILDERS))
-@pytest.mark.parametrize("belief", BELIEFS)
+@pytest.mark.parametrize("belief", BELIEF_SPECS,
+                         ids=lambda s: s["name"] + (
+                             "_decayed" if "half_life_h" in s else ""))
 def test_unlimited_budget_search_is_exact(
-        fixture: str, belief: str, tmp_path: pathlib.Path) -> None:
+        fixture: str, belief: dict, tmp_path: pathlib.Path) -> None:
     bank = FIXTURE_BUILDERS[fixture](tmp_path / f"{fixture}.jsonl")
     records = _run_search(bank, belief, budget=UNLIMITED)
     accuracy = sum(r.correct for r in records) / len(records)

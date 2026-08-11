@@ -121,3 +121,42 @@ def test_timetable_config_validation() -> None:
         TimetableConfig(bin_hours=5)
     with pytest.raises(ValueError, match="day_scheme"):
         TimetableConfig(day_scheme="lunar")
+
+
+def test_decayed_most_frequent_tracks_the_drifting_mode() -> None:
+    # Three stale sightings at a vs one fresh at b: infinite memory keeps
+    # a; a 12 h half-life discounts the two-day-old votes to ~1/16 each
+    # and the fresh sighting wins.
+    naive = MostFrequentLocation(random.Random(0))
+    decayed = MostFrequentLocation(random.Random(0), half_life_h=12)
+    for model in (naive, decayed):
+        model.reset(_context())
+        for t in (0, H, 2 * H):
+            model.update(_obs("a", t))
+        model.update(_obs("b", 2 * DAY_SECONDS))
+    t_query = 2 * DAY_SECONDS + H
+    assert naive.predict("o", t_query).argmax == "a"
+    assert decayed.predict("o", t_query).argmax == "b"
+
+
+def test_decayed_timetable_tracks_bin_drift() -> None:
+    # The 09:00 bin says a for a week, then the routine changes to b: a
+    # 24 h half-life flips the bin within a day; infinite memory holds a.
+    naive = TimetableLookup(random.Random(0), TimetableConfig())
+    decayed = TimetableLookup(random.Random(0), TimetableConfig(),
+                              half_life_h=24)
+    for model in (naive, decayed):
+        model.reset(_context())
+        for d in range(7):
+            model.update(_obs("a", d * DAY_SECONDS + 9 * H))
+        model.update(_obs("b", 7 * DAY_SECONDS + 9 * H))
+    t_query = 8 * DAY_SECONDS + 9 * H
+    assert naive.predict("o", t_query).argmax == "a"
+    assert decayed.predict("o", t_query).argmax == "b"
+
+
+def test_half_life_validation() -> None:
+    with pytest.raises(ValueError, match="half_life_h"):
+        MostFrequentLocation(random.Random(0), half_life_h=0)
+    with pytest.raises(ValueError, match="half_life_h"):
+        TimetableLookup(random.Random(0), TimetableConfig(), half_life_h=-1)

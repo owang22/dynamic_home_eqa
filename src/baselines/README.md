@@ -37,7 +37,11 @@ An `Agent` is exactly one `BeliefModel` plus one `DecisionPolicy`
 
 Beliefs: `last_observation` (one-hot on the newest sighting),
 `most_frequent` (sighting-frequency histogram), `timetable`
-(same-time-of-day histogram with a most-frequent fallback).
+(same-time-of-day histogram with a most-frequent fallback). The
+frequency-style pair take an optional `half_life_h` (exponential count
+decay); the instrument panel runs them at a frozen 24 h half-life — the
+honest strong versions — and the decayed-vs-undecayed gap on a bank is
+itself a measurement of how much that bank drifts.
 
 Policies: `never_sense` (the zero-cost floor), `fixed_schedule` (blind
 patrol on a cadence), `sequential_search` (senses receptacles in belief
