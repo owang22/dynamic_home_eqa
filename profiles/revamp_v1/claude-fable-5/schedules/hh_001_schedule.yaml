@@ -3,10 +3,13 @@
 # Day 0 = Monday. Blocks whose end <= start wrap past midnight.
 #
 # Marisol works nights Mon-Fri (departs Mo-Fr evening, returns Tu-Sa morning),
-# stays on night hours through the weekend, and does her weekly manic reset on
-# Saturday night — the "first night off" from the profile's quirks. Her sleep
-# pipeline (phone exile, melatonin, blackout daysleep) runs every day; the
-# living spaces silt up between Saturdays.
+# and stays on night hours through the weekend. Her sleep pipeline (phone
+# exile, melatonin, blackout daysleep) runs every day. Restoration is
+# GRADUAL by design: a short nightly tidy returns a handful of astray items
+# (the timed walk caps a 15-minute bout at ~3-5 objects), so the home never
+# snaps back in one synchronized sweep. (Replaces the narrative quirk's
+# weekly manic reset — a deliberate benchmark-driven deviation: one weekly
+# whole-house reset makes world state oscillate in lockstep.)
 #
 # Simplifications, on purpose for the pilot:
 #   - daysleep keeps the same window on nights off (profile: "she stays on
@@ -83,9 +86,9 @@ residents:
       # -- her "morning" at dusk: coffee + cereal while neighbors eat dinner
       - {activity: evening_wake,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "17:00", end: "17:45"}
       - {activity: evening_roam,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "17:45", end: "21:45"}
-      # -- nights off: Saturday-night manic reset, then streaming into the small hours
-      - {activity: weekly_reset,   days: [Sa],    start: "21:50", end: "00:40"}
-      - {activity: night_streaming, days: [Su],   start: "00:50", end: "04:10"}   # Sat night, post-reset
+      # -- a short tidy most evenings, before the shift / the couch
+      - {activity: quick_tidy,     days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "21:30", end: "21:45"}
+      - {activity: night_streaming, days: [Su],   start: "00:50", end: "04:10"}   # Sat night
       - {activity: night_streaming, days: [Su],   start: "22:30", end: "03:40"}   # Sun night, wraps to Mon
 
 activities:
@@ -163,10 +166,10 @@ activities:
       headphones_1: {dist: {couch_l1: 0.4, counter_k1: 0.35, bathroom_shelf_ba1: 0.25}}
       blanket_1: {dest: couch_l1, p: 0.6, else: bed_b1,           # retrieved to the couch on
                   only_from: [bed_b1, bedroom_floor_b1]}          # most evenings, not all
-  weekly_reset:                                                   # the Saturday manic sweep
-    jitter: loose
-    at: counter_k1
-    reset_all: {p: 0.95}                                          # everything home, incl. jacket to its hook
+  quick_tidy:                             # nightly 15-minute pass — the timed
+    jitter: routine                       # nearest-first walk caps it at ~3-5
+    at: counter_k1                        # items, so order returns a little
+    reset_all: {p: 0.6}                   # at a time, never all at once
     during: {}
     after: {}
   night_streaming:
