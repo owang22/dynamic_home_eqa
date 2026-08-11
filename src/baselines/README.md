@@ -74,6 +74,10 @@ python -m baselines.cli run src/baselines/configs/smoke.yaml
 # data-health gate report for a candidate bank
 python -m baselines.cli healthcheck banks/baselines/hh_001_seed0_bank.jsonl \
     --out-dir smoke_results/healthcheck_hh_001_seed0
+
+# intrinsic stats + stationarity gate only (no agents, < 1 s) — the fast
+# feedback loop while iterating the generator
+python -m baselines.cli bankstats banks/baselines/hh_001_seed0_bank.jsonl
 ```
 
 The smoke config writes `smoke_results/baselines_smoke/`: `run_log.jsonl`,
@@ -90,11 +94,19 @@ five gates (thresholds configurable; defaults shown):
 
 | gate | default | rationale |
 |---|---|---|
+| `stationarity` | dwell-weighted modal share <= 0.60 | above it, a home-base-only model is right that often at a random moment — scale just tightens error bars around an uninteresting bank |
 | `solvable` | == 1.0 | unlimited-budget search must find everything; failure = bank/harness bug |
 | `not_trivial` | max NeverSense <= 0.65 | if passive memory nearly solves it, the dynamics are too static |
 | `not_impossible` | search@budget >= best NeverSense + 0.15 | sensing must buy real accuracy at the allotted budget |
 | `discriminative` | NeverSense spread > 0.03 (global or per household_type stratum) | different modeling assumptions must score differently somewhere |
 | `powered` | >= 300 questions | fewer and agent differences drown in binomial noise |
+
+`stationarity` is pure ground-truth arithmetic — `cli bankstats` computes
+it (plus moves/day, the displacement-stint distribution, modal share at
+query times, and the worst per-day question-repeat draw) in well under a
+second with no agents. The intended loop: iterate the generator against
+`bankstats`, and pay for the full panel only once the intrinsic stats
+pass.
 
 Output: a self-explanatory stdout summary plus `healthcheck.json` /
 `healthcheck.txt` under `--out-dir`, with all measured values, thresholds,

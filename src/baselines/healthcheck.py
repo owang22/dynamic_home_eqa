@@ -12,8 +12,16 @@ gates; the bank is healthy only if all five pass. The panel:
   buys at the budget agents will actually get.
 
 The gates (thresholds are config values; defaults in
-:class:`HealthcheckConfig`):
+:class:`HealthcheckConfig`). Gate 0 is intrinsic — pure ground-truth
+arithmetic via :mod:`baselines.bankstats` — and needs no agents; the
+generation workstream should iterate against it (``cli bankstats``)
+before ever paying for the panel:
 
+0. **stationarity** — dwell-weighted modal share <= threshold (default
+   0.60). Above it, a model that knows nothing but each object's home
+   base is right that often at a random moment, and no amount of scale
+   makes the bank interesting — scaling a too-stationary bank only buys
+   tighter error bars around an uninteresting result.
 1. **solvable** — SequentialSearch@unlimited task accuracy == 1.0 for
    every belief (floating-point tolerance only). Failure means a bank or
    harness bug: with unlimited budget the search provably visits every
@@ -56,6 +64,8 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 import yaml
 
 from baselines.bank import JsonlBank
+from baselines.bankstats import (BankStats, DEFAULT_MAX_MODAL_SHARE,
+                                 compute_bank_stats)
 from baselines.cli import build_agent, git_state
 from baselines.harness import QuestionRecord, run_episode
 from baselines.types import Episode
@@ -82,6 +92,7 @@ class HealthcheckConfig:
 
     seed: int = 0
     budget: Optional[int] = None          # None -> the bank's budget_per_day
+    stationarity_max_modal_share: float = DEFAULT_MAX_MODAL_SHARE
     solvable_tolerance: float = 1e-9
     not_trivial_max: float = 0.65
     not_impossible_margin: float = 0.15
@@ -175,13 +186,23 @@ def _stratified_spreads(
 
 
 def _evaluate_gates(
-        config: HealthcheckConfig, n_questions: int,
+        config: HealthcheckConfig, stats: BankStats,
         never_accs: Dict[str, float], unlimited_accs: Dict[str, float],
         real_acc: float,
         stratified: Optional[Dict[str, float]]) -> List[GateResult]:
-    """Score all five gates; pure function of the panel numbers."""
+    """Score all six gates; pure function of the panel + intrinsic numbers."""
+    n_questions = stats.n_questions
     best_never = max(never_accs.values())
     gates = [
+        GateResult(
+            name="stationarity", measured=stats.modal_share_time,
+            threshold=config.stationarity_max_modal_share, comparison="<=",
+            passed=stats.modal_share_time
+            <= config.stationarity_max_modal_share,
+            rationale="dwell-weighted modal share: how often a "
+                      "home-base-only model is right at a random moment; "
+                      "computable from ground truth alone (cli bankstats) "
+                      "before paying for the panel"),
         GateResult(
             name="solvable", measured=min(unlimited_accs.values()),
             threshold=1.0, comparison="==",
@@ -227,8 +248,7 @@ def run_healthcheck(bank_path: pathlib.Path, config: HealthcheckConfig,
     """Run the panel, evaluate the gates, and assemble both report forms."""
     bank = JsonlBank(path=bank_path)
     episodes = list(bank.episodes())
-    n_questions = sum(
-        len(day) for e in episodes for day in e.questions_by_day)
+    stats = compute_bank_stats(bank)
     real_budget = (config.budget if config.budget is not None
                    else episodes[0].budget_per_day)
 
@@ -251,9 +271,9 @@ def run_healthcheck(bank_path: pathlib.Path, config: HealthcheckConfig,
                  budget=real_budget))
 
     stratified = _stratified_spreads(never, episodes)
-    gates = _evaluate_gates(config, n_questions, never_accs,
+    gates = _evaluate_gates(config, stats, never_accs,
                             unlimited_accs, real_acc, stratified)
-    return _assemble(bank, config, config_path, n_questions, real_budget,
+    return _assemble(bank, config, config_path, stats, real_budget,
                      str(best_belief["name"]), never_accs, unlimited_accs,
                      real_acc, stratified, gates)
 
@@ -268,7 +288,7 @@ def _config_hash(config: HealthcheckConfig,
 
 
 def _assemble(bank: JsonlBank, config: HealthcheckConfig,
-              config_path: Optional[pathlib.Path], n_questions: int,
+              config_path: Optional[pathlib.Path], stats: BankStats,
               real_budget: int, best_belief: str,
               never_accs: Dict[str, float],
               unlimited_accs: Dict[str, float], real_acc: float,
@@ -288,8 +308,9 @@ def _assemble(bank: JsonlBank, config: HealthcheckConfig,
         "seed": config.seed,
         "timestamp": datetime.datetime.now(
             datetime.timezone.utc).isoformat(),
-        "n_questions": n_questions,
+        "n_questions": stats.n_questions,
         "real_budget_per_day": real_budget,
+        "bank_stats": dataclasses.asdict(stats),
         "panel": {
             "never_sense_task_accuracy": never_accs,
             "sequential_search_unlimited_task_accuracy": unlimited_accs,
@@ -337,6 +358,8 @@ def _render_text(json_dict: Dict[str, Any],
         f"  questions {json_dict['n_questions']}"
         f"  budget {json_dict['real_budget_per_day']}/day",
         "",
+        _intrinsic_line(json_dict),
+        "",
         "  Panel — task accuracy (fraction of questions whose answered "
         "receptacle is exactly right):",
         _panel_line("NeverSense (answer from memory, never look)",
@@ -366,6 +389,16 @@ def _render_text(json_dict: Dict[str, Any],
               f"  OVERALL: {'PASS' if json_dict['overall_pass'] else 'FAIL'}"
               f" — {json_dict['overall_note']}"]
     return "\n".join(lines)
+
+
+def _intrinsic_line(json_dict: Dict[str, Any]) -> str:
+    b = json_dict["bank_stats"]
+    return ("  Intrinsic (ground truth only — see `cli bankstats`): "
+            f"modal share {b['modal_share_time']:.3f} time-weighted / "
+            f"{b['modal_share_questions']:.3f} at query times; "
+            f"{b['moves_per_day']:.1f} moves/day; displacement median "
+            f"{b['displacement_median_h']:.1f} h, p90 "
+            f"{b['displacement_p90_h']:.1f} h")
 
 
 def _panel_line(label: str, accs: Dict[str, float]) -> str:

@@ -37,8 +37,8 @@ def fail_report(tmp_path_factory: pytest.TempPathFactory):  # type: ignore[no-un
 def test_engineered_pass_bank_passes_every_gate(pass_report) -> None:  # type: ignore[no-untyped-def]
     verdicts = _gate_verdicts(pass_report.json_dict)
     assert verdicts == {name: True for name in (
-        "solvable", "not_trivial", "not_impossible", "discriminative",
-        "powered")}
+        "stationarity", "solvable", "not_trivial", "not_impossible",
+        "discriminative", "powered")}
     assert pass_report.gates_pass
     # household_type present -> the stratified check ran (not SKIPPED).
     strat = pass_report.json_dict["stratified_discriminative"]
@@ -48,6 +48,7 @@ def test_engineered_pass_bank_passes_every_gate(pass_report) -> None:  # type: i
 def test_engineered_static_bank_fails_not_trivial(fail_report) -> None:  # type: ignore[no-untyped-def]
     verdicts = _gate_verdicts(fail_report.json_dict)
     assert verdicts["not_trivial"] is False
+    assert verdicts["stationarity"] is False  # intrinsic gate agrees
     assert verdicts["solvable"] is True     # static worlds are solvable
     assert verdicts["powered"] is True      # the failure is dynamics, not scale
     assert not fail_report.gates_pass
@@ -70,8 +71,9 @@ def test_overall_pass_requires_clean_tree(pass_report) -> None:  # type: ignore[
 def test_report_carries_provenance_and_measurements(pass_report) -> None:  # type: ignore[no-untyped-def]
     j = pass_report.json_dict
     for key in ("bank_manifest_hash", "config_hash", "git_commit", "seed",
-                "timestamp", "n_questions", "panel"):
+                "timestamp", "n_questions", "panel", "bank_stats"):
         assert key in j, key
+    assert 0.0 < j["bank_stats"]["modal_share_time"] < 1.0
     panel = j["panel"]
     assert isinstance(panel, dict)
     assert set(panel["never_sense_task_accuracy"]) == {
@@ -86,8 +88,8 @@ def test_write_report_emits_json_and_text(
     write_report(pass_report, tmp_path)
     assert (tmp_path / "healthcheck.json").exists()
     text = (tmp_path / "healthcheck.txt").read_text()
-    for token in ("solvable", "not_trivial", "not_impossible",
-                  "discriminative", "powered", "OVERALL"):
+    for token in ("stationarity", "solvable", "not_trivial",
+                  "not_impossible", "discriminative", "powered", "OVERALL"):
         assert token in text
 
 

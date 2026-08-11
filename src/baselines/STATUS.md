@@ -1,5 +1,41 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-08-11): bank-intrinsic stats + stationarity gate
+
+Diagnosis that motivated it (sweep on the hh_001 no-tour bank): the
+world's dwell-weighted modal share is **0.701** (0.750 at query times) —
+a model knowing nothing but home bases is right ~3/4 of the time at a
+random moment, which is why most_frequent's full-state accuracy catches
+its (low) ceiling within days. Day-to-day wiggles (the day-6 spike /
+day-13 dip, both Sundays) are quiet-weekend dynamics x uniform-draw
+repeat concentration at n=28/day, not schedule events.
+
+- New `python -m baselines.cli bankstats BANK` — ground-truth-only stats
+  (modal share time-weighted and at query times, moves/day, displacement
+  stint median/p90, displaced-time share, worst per-day repeat draw) and
+  a **stationarity** gate: dwell-weighted modal share <= 0.60 (config
+  `stationarity_max_modal_share`). Runs in < 1 s with no agents: the
+  generation workstream's fast loop. The same stats + gate are embedded
+  in the healthcheck (now six gates), so the full instrument enforces it.
+- Current readings: hh_001 banks 0.701 FAIL; synthetic fixture 0.708
+  (hand-derived (1 + 0.625 + 0.5)/3); gate-pass fixture 0.452 PASS;
+  static fixture 1.000 FAIL.
+- **Standing schema decision for the persistence work**: the exporter's
+  `OUT_OF_HOUSE` / `ON_PERSON` pseudo-receptacles remain first-class
+  answer categories (predictable and sensable), so an object is always
+  in *some* receptacle and the `solvable` gate stays meaningful under
+  longer displacements and person-coupled absences. Any new dynamics
+  must still re-run `solvable` before results are trusted.
+- Agreed sequence for the workstream (this update is step 1):
+  (2) generator changes for displacement *persistence* — unreliable /
+  partial tidying, multi-stage journeys with dwell per stage, overnight
+  and multi-day displacements, person-coupled absences — iterated
+  against `bankstats`; (3) scale: ~75-100 questions/day, 28 days,
+  staggered start weekdays across households, and a per-object repeat
+  cap (sample without replacement) in the uniform draw; (4) full panel;
+  only then mass generation. Uniform query times stay the headline
+  condition; naturalistic remains the robustness stress test.
+
 ## Update (2026-08-10, baseline repair + data-health gates)
 
 This update makes the baselines trustworthy as a data-health instrument:

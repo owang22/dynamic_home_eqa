@@ -19,6 +19,11 @@ out_dir, agent grid) and writes, under ``out_dir``:
 pass/fail gate report (see :mod:`baselines.healthcheck`); its exit status
 is 0 only when the report's overall verdict is PASS.
 
+``bankstats`` computes the ground-truth-intrinsic statistics and the
+stationarity gate only (see :mod:`baselines.bankstats`) — no agents, so
+it runs in well under a second. It is the fast feedback loop for the
+data-generation workstream; exit status 0 iff stationarity passes.
+
 Determinism: a run is fully determined by (bank, config, seed). Each
 (agent, episode) pair gets its own generators seeded from a stable hash of
 ``(seed, agent name, episode_id)`` — no module-level RNG state anywhere.
@@ -237,6 +242,21 @@ def _run_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def _bankstats_command(args: argparse.Namespace) -> int:
+    """The ``bankstats`` subcommand; exit 0 iff stationarity passes."""
+    from baselines.bank import JsonlBank
+    from baselines.bankstats import (compute_bank_stats, render_text,
+                                     stationarity_passes, write_report)
+
+    bank = JsonlBank(path=pathlib.Path(args.bank))
+    stats = compute_bank_stats(bank)
+    print(render_text(bank.path, stats, args.max_modal_share))
+    if args.out_dir is not None:
+        write_report(bank, stats, args.max_modal_share,
+                     pathlib.Path(args.out_dir))
+    return 0 if stationarity_passes(stats, args.max_modal_share) else 1
+
+
 def _healthcheck_command(args: argparse.Namespace) -> int:
     """The ``healthcheck`` subcommand; exit 0 only on overall PASS."""
     from baselines.healthcheck import (load_healthcheck_config,
@@ -269,13 +289,25 @@ def main() -> None:
     hc_parser.add_argument("--out-dir", type=pathlib.Path, default=None,
                            help="write healthcheck.json + healthcheck.txt here")
 
+    stats_parser = sub.add_parser(
+        "bankstats", help="ground-truth-intrinsic stats + stationarity gate "
+                          "(no agents; the fast generator feedback loop)")
+    stats_parser.add_argument("bank", type=pathlib.Path)
+    stats_parser.add_argument("--max-modal-share", type=float, default=None,
+                              help="stationarity ceiling (default 0.60)")
+    stats_parser.add_argument("--out-dir", type=pathlib.Path, default=None,
+                              help="write bankstats.json + bankstats.txt here")
+
     args = parser.parse_args()
     logging.basicConfig(
         level=logging.DEBUG if args.verbose else logging.INFO,
         format="%(levelname)s %(name)s: %(message)s")
-    handler = (_run_command if args.command == "run"
-               else _healthcheck_command)
-    sys.exit(handler(args))
+    if args.command == "bankstats" and args.max_modal_share is None:
+        from baselines.bankstats import DEFAULT_MAX_MODAL_SHARE
+        args.max_modal_share = DEFAULT_MAX_MODAL_SHARE
+    handlers = {"run": _run_command, "healthcheck": _healthcheck_command,
+                "bankstats": _bankstats_command}
+    sys.exit(handlers[args.command](args))
 
 
 if __name__ == "__main__":
