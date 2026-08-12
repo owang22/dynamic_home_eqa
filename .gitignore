@@ -20,6 +20,12 @@ third_party/
 # Profile-generated symbolic episode banks (regenerable from profiles+seed;
 # the hash manifest in the bank dir pins provenance).
 banks/
+# Large regenerable run artifacts: a 21-day grid's run log is ~24 MB and a
+# fresh one lands on every rerun. The summaries beside them (aggregate.csv,
+# provenance.json, plots, healthcheck reports) stay tracked, and
+# `python -m baselines.cli run <config>` rebuilds the rest.
+smoke_results/**/run_log.jsonl
+smoke_results/**/questions.csv
 
 # Regenerable per-profile anchor reports (validate_profile.py output).
 profiles/manual/*.anchor_report.md
