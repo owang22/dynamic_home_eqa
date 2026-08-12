@@ -32,6 +32,7 @@ receptacles:
   - {id: coffee_table_l1,   room: living}
   - {id: counter_k1,        room: kitchen}
   - {id: sink_k1,           room: kitchen}
+  - {id: dish_rack_k1,      room: kitchen}   # drying stage, matching hh1's dish journey
   - {id: cupboard_k1,       room: kitchen}
   - {id: chair_k1,          room: kitchen}
   - {id: bathroom_shelf_ba1, room: bathroom}
@@ -70,32 +71,35 @@ activities:
     at: counter_k1
     during:                                     # ~7 short bouts/day; each bout
       mug_1:   {dest: counter_k1, p: 0.30}      # only sometimes pulls a dish
-      mug_2:   {dest: counter_k1, p: 0.10, only_from: [cupboard_k1]}  # backup mug
-      plate_2: {dest: counter_k1, p: 0.08, only_from: [cupboard_k1]}  # second plate
-      plate_1: {dest: counter_k1, p: 0.25, only_from: [cupboard_k1]}
-      bowl_1:  {dest: counter_k1, p: 0.20, only_from: [cupboard_k1]}
+      mug_2:   {dest: counter_k1, p: 0.10, only_from: [cupboard_k1, dish_rack_k1]}  # backup mug
+      plate_2: {dest: counter_k1, p: 0.08, only_from: [cupboard_k1, dish_rack_k1]}  # second plate
+      plate_1: {dest: counter_k1, p: 0.25, only_from: [cupboard_k1, dish_rack_k1]}
+      bowl_1:  {dest: counter_k1, p: 0.20, only_from: [cupboard_k1, dish_rack_k1]}
     after:
       mug_1:   {dest: counter_k1, p: 0.7, else: couch_l1,
                 only_from: [counter_k1]}        # coffee travels to the couch
+      # put-away moment: a meal bout sometimes clears yesterday's rack
+      plate_2: {dest: cupboard_k1, p: 0.4, only_from: [dish_rack_k1]}
+      mug_2:   {dest: cupboard_k1, p: 0.4, only_from: [dish_rack_k1]}
   Eating:
     at: coffee_table_l1
     during:                                     # eats in front of the TV
       plate_1: {dest: coffee_table_l1, p: 0.6, only_from: [counter_k1, cupboard_k1]}
       bowl_1:  {dest: coffee_table_l1, p: 0.35, only_from: [counter_k1, cupboard_k1]}
     after: {}                                   # dishes linger where they landed
-  Wash_Dishes:                                  # real ~2-day cadence drives the pile
-    at: sink_k1
-    during: {}
+  Wash_Dishes:                                  # real ~2-day cadence drives the pile;
+    at: sink_k1                                 # washed items dwell on the RACK (same
+    during: {}                                  # sink -> rack -> cupboard journey as hh1)
     after:
-      mug_1:   {dest: cupboard_k1, p: 0.85, else: sink_k1,
+      mug_1:   {dest: dish_rack_k1, p: 0.85, else: sink_k1,
                 only_from: [counter_k1, couch_l1, coffee_table_l1, sink_k1]}
-      mug_2:   {dest: cupboard_k1, p: 0.85, else: sink_k1,
+      mug_2:   {dest: dish_rack_k1, p: 0.85, else: sink_k1,
                 only_from: [counter_k1, couch_l1, coffee_table_l1, sink_k1]}
-      plate_1: {dest: cupboard_k1, p: 0.9, else: sink_k1,
+      plate_1: {dest: dish_rack_k1, p: 0.9, else: sink_k1,
                 only_from: [counter_k1, coffee_table_l1, sink_k1]}
-      plate_2: {dest: cupboard_k1, p: 0.9, else: sink_k1,
+      plate_2: {dest: dish_rack_k1, p: 0.9, else: sink_k1,
                 only_from: [counter_k1, coffee_table_l1, sink_k1]}
-      bowl_1:  {dest: cupboard_k1, p: 0.9, else: sink_k1,
+      bowl_1:  {dest: dish_rack_k1, p: 0.9, else: sink_k1,
                 only_from: [counter_k1, coffee_table_l1, sink_k1]}
   Relax:                                        # ~13 bouts/day, mostly couch
     at: couch_l1

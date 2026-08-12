@@ -20,9 +20,9 @@ const GOOD = "#7ee08a", BAD = "#ff8a8a", TRUTH = "#ffb84d";
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
 const RUN_URL = params.get("run") ||
-  "../../smoke_results/baselines_hh001/run_log.jsonl";
+  "../../smoke_results/baselines_hh1_21d/run_log.jsonl";
 const TRACE_URL = params.get("trace") ||
-  "../../profiles/revamp_v1/claude-fable-5/timelines/hh_001_seed0/trace.json";
+  "../../profiles/revamp_v1/claude-fable-5/hh1/timeline_seed0/trace.json";
 
 let trace = null, mapImg = null, records = [];
 let t = 0, horizon = 1, playing = false, lastFrame = 0, view = null;

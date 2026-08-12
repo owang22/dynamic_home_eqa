@@ -258,10 +258,13 @@ def main() -> None:
         t0, cause = opened[o]
         segments[o].append((t0, horizon, state[o], cause))
 
-    # object classes come from the narrative profile via the spec's source_profile
+    # Object classes come from the persona/profile the spec points at:
+    # object_motions files say `source_persona`, retired schedule specs said
+    # `source_profile`.
     objects = {}
+    persona_ref = spec.get("source_persona") or spec["source_profile"]
     prof = yaml.safe_load((cfg_dir / cfg["schedule_spec"]).parent.joinpath(
-        spec["source_profile"]).resolve().read_text())
+        persona_ref).resolve().read_text())
     classes = {o["id"]: o["class"] for o in prof["object_inventory"]}
 
     for o, segs in segments.items():

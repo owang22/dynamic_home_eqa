@@ -18,7 +18,7 @@ import http.server
 import pathlib
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
-DEFAULT_TRACE = "/profiles/revamp_v1/claude-fable-5/timelines/hh_001_seed0/trace.json"
+DEFAULT_TRACE = "/profiles/revamp_v1/claude-fable-5/hh1/timeline_seed0/trace.json"
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):

@@ -14,7 +14,9 @@
 
 # Paths are relative to this config file's directory.
 household: hh_001
-schedule_spec: ../../profiles/revamp_v1/claude-fable-5/schedules/hh_001_schedule.yaml
+# The receptacle->room map now comes from the household's object_motions
+# file (the retired one-file schedule spec used to carry it).
+schedule_spec: ../../profiles/revamp_v1/claude-fable-5/hh1/object_motions.yaml
 scene_assets: ../assets/102343992
 
 room_map:                 # symbolic room -> scene region name
@@ -33,6 +35,7 @@ receptacles:              # anchor = [frac_x, frac_z] of the mapped region bbox
   counter_k1:         {anchor: [0.22, 0.42], relation: on_surface}
   sink_k1:            {anchor: [0.42, 0.16], relation: on_surface}
   cupboard_k1:        {anchor: [0.62, 0.16], relation: on_surface}
+  dish_rack_k1:       {anchor: [0.52, 0.16], relation: on_surface}   # between sink and cupboard: the dishes' drying stage
   chair_k1:           {anchor: [0.45, 0.58], relation: on_surface}
   bathroom_shelf_ba1: {anchor: [0.25, 0.68], relation: on_surface}
   entry_table_e1:     {anchor: [0.42, 0.30], relation: on_surface}
