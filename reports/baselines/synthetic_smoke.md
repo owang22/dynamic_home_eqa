@@ -6,8 +6,8 @@ Run directory: `smoke_results/baselines_smoke`
 
 - bank: `smoke_results/baselines_smoke/synthetic_bank.jsonl` (manifest `dc3ae19450db…`)
 - config: `src/baselines/configs/smoke.yaml` (hash `3d4396d965b1…`)
-- git commit: `b595fd7fee91` (dirty tree)
-- seed: 0 · run at 2026-08-11T02:18:33.771578+00:00
+- git commit: `fb725c928cc2` (dirty tree)
+- seed: 0 · run at 2026-08-12T19:31:36.830732+00:00
 
 **12 questions** over 3 question-days, 3 distinct objects queried, budget 2/day, 9 agents.
 

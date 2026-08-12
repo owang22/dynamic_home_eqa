@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Cross-household summary: realized timing marginals + bank-intrinsic stats.
 
-For every household with a 28-day timeline and exported bank, report per
+For every household folder (hh1..hh10) with a realized timeline and an
+exported bank, report per
 resident the realized wake / first-departure / return / bed timings
 (median [p10-p90], from residents.jsonl block realizations, classified by
 activity-name keywords), and per bank the intrinsic dynamics stats
@@ -82,8 +83,9 @@ def resident_timings(blocks: list[dict]) -> dict[str, str]:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--timelines", type=pathlib.Path,
-                    default=pathlib.Path("profiles/revamp_v1/claude-fable-5/timelines"))
+    ap.add_argument("--households", type=pathlib.Path,
+                    default=pathlib.Path("profiles/revamp_v1/claude-fable-5"),
+                    help="dir holding hh*/ folders, each with timeline_seed*/")
     ap.add_argument("--banks", type=pathlib.Path,
                     default=pathlib.Path("banks/baselines"))
     ap.add_argument("--out", type=pathlib.Path, required=True)
@@ -95,18 +97,18 @@ def main() -> None:
     lines = ["# Household summary — realized timings + intrinsic dynamics", "",
              "ATUS survey columns: NEEDS_DATA (bls.gov blocks scripted "
              "downloads; see module docstring for the manual path).", "",
-             "NOTE: specs encode absences two ways — `at: ELSEWHERE` blocks "
-             "(hh_001 style) or named depart/return pairs (hh_002 style). "
-             "Only the former feeds the exporter's person-away projection; "
-             "depart/return-pair households keep carried phones ON_PERSON "
-             "during absences. Standardization candidate.", "",
-             "## Realized timing marginals (median [p10–p90], from 28-day "
-             "block realizations)", "",
+             "Absences come from `at: ELSEWHERE` activity blocks, which is "
+             "also what feeds the exporter's person-away projection (a "
+             "carried object is OUT_OF_HOUSE while its carrier is out). "
+             "Sleep blocks are excluded from awake time, which is where "
+             "questions and sightings are drawn from.", "",
+             "## Realized timing marginals (median [p10–p90], from the "
+             "realized activity blocks)", "",
              "| household | resident | wake | first departure | return | meal starts |",
              "|---|---|---|---|---|---|"]
     stats_rows = []
-    for tdir in sorted(args.timelines.glob("hh_0*_seed0_28d")):
-        hh = tdir.name.split("_seed0")[0]
+    for tdir in sorted(args.households.glob("hh*/timeline_seed*")):
+        hh = tdir.parent.name
         by_res: dict[str, list[dict]] = {}
         for line in open(tdir / "residents.jsonl"):
             b = json.loads(line)
@@ -116,15 +118,15 @@ def main() -> None:
             lines.append(f"| {hh} | {res} | {t['wake']} | "
                          f"{t['first_departure']} | {t['return']} | "
                          f"{t['meal_starts']} |")
-        bank_path = args.banks / f"{hh}_28d_uniform.jsonl"
-        if bank_path.exists():
+        banks = sorted(args.banks.glob(f"{hh}_*_uniform.jsonl"))
+        for bank_path in banks:
             s = compute_bank_stats(JsonlBank(path=bank_path))
             stats_rows.append(
                 f"| {hh} | {s.n_objects} | {s.modal_share_time:.3f} | "
                 f"{s.modal_share_questions:.3f} | {s.moves_per_day:.1f} | "
                 f"{s.displacement_median_h:.1f} / {s.displacement_p90_h:.1f} | "
                 f"{'PASS' if s.modal_share_time <= 0.60 else 'FAIL'} |")
-    lines += ["", "## Bank-intrinsic dynamics (28-day uniform banks)", "",
+    lines += ["", "## Bank-intrinsic dynamics (exported uniform banks)", "",
               "| household | objects | modal share (time) | at query times | "
               "moves/day | stint med/p90 h | stationarity |",
               "|---|---|---|---|---|---|---|"] + stats_rows + [""]
