@@ -20,6 +20,13 @@ third_party/
 # Profile-generated symbolic episode banks (regenerable from profiles+seed;
 # the hash manifest in the bank dir pins provenance).
 banks/
+# IPUMS ATUS microdata: redistribution is restricted by the IPUMS terms of
+# use, so the extract stays local. atus/*.py (the reader/plotter) IS tracked
+# and regenerates everything from a re-downloaded extract.
+atus/*.dat.gz
+atus/*.dat
+atus/*.xml
+atus/*.cbk
 # Large regenerable run artifacts: a 21-day grid's run log is ~24 MB and a
 # fresh one lands on every rerun. The summaries beside them (aggregate.csv,
 # provenance.json, plots, healthcheck reports) stay tracked, and
