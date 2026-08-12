@@ -16,8 +16,29 @@ The two sets share household ids, types, and constraints, so `hh_00N` in
 one directory is the same slot as `hh_00N` in the other — usable as a
 paired comparison across generators.
 
-Each subdirectory has its own `README.md`, a `control.yaml` (household
-list, constraints, per-file generation status), and `households/*.yaml`.
+Each subdirectory has its own `README.md` and a `control.yaml` (household
+list, constraints, per-file authoring status).
+
+**Layout (claude-fable-5, reorganized 2026-08-11).** One folder per
+household, `hh1/` … `hh10/`, each holding the authoring stages in order:
+
+| file | stage | what it fixes |
+|---|---|---|
+| `persona.yaml` | 1 | WHO lives here; what each object MEANS (no times) |
+| `detailed_activities.yaml` | 2a | WHEN activity happens — a DATED calendar (21 days) with a story arc; no object rules |
+| `object_motions.yaml` | 2b | WHAT each activity moves, per object |
+
+Then `simulate_activities.py <hh_dir> --seed N --out <hh_dir>/timeline_seedN`
+realizes the calendar (seeded jitter, order preserved) into the standard
+timeline artifacts, and `python -m baselines.export_bank` turns those into an
+episode bank for the baselines instrument.
+
+Splitting 2a from 2b is deliberate: the activity calendar is reviewable as a
+*story* before any object mechanics exist, and a dated calendar can express
+day-specific beats (a covered double shift, an appointment that splits a
+sleep, a reset abandoned midway) that the retired weekly-pattern schedule
+specs had to average away. `simulate_schedule.py` and the old
+`schedules/*.yaml` are superseded; they live in git history.
 
 ## Canonical profile format
 

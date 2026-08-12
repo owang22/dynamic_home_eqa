@@ -179,7 +179,7 @@ def main() -> int:
     rewritten = unchanged = 0
 
     for gen in SETS:
-        for path in sorted((args.root / gen / "households").glob("*.yaml")):
+        for path in sorted((args.root / gen).glob("hh*/persona.yaml")):
             where = f"{gen}/{path.name}"
             original_text = path.read_text()
             data = yaml.safe_load(original_text)

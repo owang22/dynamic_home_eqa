@@ -250,8 +250,11 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
            initial_tour: bool = True) -> JsonlBank:
     """Write the bank JSONL and return its loader (which re-validates it)."""
     spec = yaml.safe_load(spec_path.read_text())
+    # New-format specs (object_motions.yaml) name it `source_persona`; the
+    # retired schedule specs said `source_profile`. Accept either.
+    persona_ref = spec.get("source_persona") or spec["source_profile"]
     profile = yaml.safe_load(
-        (spec_path.parent / spec["source_profile"]).resolve().read_text())
+        (spec_path.parent / persona_ref).resolve().read_text())
     object_classes = {o["id"]: o["class"] for o in profile["object_inventory"]}
     receptacles = [r["id"] for r in spec["receptacles"]] + [ON_PERSON, OUT_OF_HOUSE]
 

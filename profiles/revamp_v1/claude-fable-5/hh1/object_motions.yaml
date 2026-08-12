@@ -1,0 +1,377 @@
+# Stage-2b OBJECT MOTIONS for hh1 (hh_001, Marisol Reyes) — WHAT each
+# activity in detailed_activities.yaml does to her 17 objects.
+#
+# Authoring chain:  persona.yaml (WHO + what each object MEANS)
+#                -> detailed_activities.yaml (WHEN, 21 dated days, story)
+#                -> object_motions.yaml (WHAT MOVES, this file)
+#
+# Semantics (consumed by simulate_activities.py): `during` fires at the
+# activity's realized start, `after` at its end (= the next activity's
+# start). A destination is a receptacle id, ELSEWHERE (out of the
+# apartment) or person:resident_1 (carried). Rule forms:
+#     {dest: r}                     always r
+#     {dest: r, p: 0.8, else: r2}   r w.p. 0.8, else r2
+#     {dist: {r: 0.5, r2: 0.5}}     categorical
+#     only_from: [locs]             gate: only if the object is there now
+# `reset_all: {p: q, objects: [...]}` is a TIMED nearest-first tidying
+# walk bounded by the block's duration, each candidate handled w.p. q —
+# so day 20's 40-minute abandoned sweep does less than day 6's 105-minute
+# manic one with no rule change.
+#
+# Charter habits cited below as H1-H7:
+#   H1 phone exiled to the kitchen charger before sleep, retrieved on waking
+#   H2 keys + wallet into the door bowl the moment she gets home
+#   H3 post-shift meal on the couch; plate left on the coffee table till she wakes
+#   H4 one water bottle carried room to room, abandoned where she last sat
+#   H5 melatonin from the nightstand bottle last, then reads till the book slides off
+#   H6 headphones worn around her neck, set down wherever the chapter ends
+#   H7 work jacket over the kitchen chair, not the closet hook it owns
+
+household: hh_001
+household_type: night_shift_solo
+source_persona: persona.yaml
+source_activities: detailed_activities.yaml
+residents:
+  - id: resident_1
+    jitter_scale: 0.9        # disciplined-side punctuality (band 0.5-2.0)
+
+receptacles:
+  - {id: bed_b1,             room: bedroom}
+  - {id: nightstand_b1,      room: bedroom}
+  - {id: bedroom_floor_b1,   room: bedroom}   # where the book lands mid-sleep
+  - {id: couch_l1,           room: living}
+  - {id: coffee_table_l1,    room: living}
+  - {id: counter_k1,         room: kitchen}   # hosts charger_1, the exile dock
+  - {id: sink_k1,            room: kitchen}
+  - {id: dish_rack_k1,       room: kitchen}   # the dishes' overnight stage
+  - {id: cupboard_k1,        room: kitchen}
+  - {id: chair_k1,           room: kitchen}   # the jacket's actual home (H7)
+  - {id: bathroom_shelf_ba1, room: bathroom}
+  - {id: entry_table_e1,     room: entry}     # bowl_1 sits here; keys/wallet land in it
+  - {id: entry_hook_e1,      room: entry}     # the hook she bought and ignores
+  - {id: entry_floor_e1,     room: entry}     # umbrella lean
+
+# `home` = where a tidy/reset returns an object. p_misplace = per-day chance
+# of drifting to a random misplace_set receptacle at a random AWAKE minute
+# (awake = inside any non-sleep block, so a night-shifter misplaces at night).
+placements:
+  bowl_1:              {home: entry_table_e1, static: true}   # door catch-all, never food
+  bowl_2:              {home: cupboard_k1}
+  plate_1:             {home: cupboard_k1}
+  mug_1:               {home: cupboard_k1}
+  mug_2:               {home: cupboard_k1}
+  phone_marisol:       {home: 'person:resident_1', p_misplace: 0.4,
+                        misplace_set: [couch_l1, coffee_table_l1, counter_k1, nightstand_b1]}
+  charger_1:           {home: counter_k1, static: true}       # persona: "never moves"
+  keys_marisol:        {home: entry_table_e1}
+  wallet_marisol:      {home: entry_table_e1}
+  water_bottle_1:      {home: counter_k1, p_misplace: 0.55,   # H4: stranded mid-room
+                        misplace_set: [couch_l1, coffee_table_l1, bathroom_shelf_ba1, nightstand_b1]}
+  book_1:              {home: nightstand_b1}
+  headphones_1:        {home: counter_k1}
+  medication_bottle_1: {home: nightstand_b1, static: true}     # persona: never leaves it
+  blanket_1:           {home: couch_l1}
+  jacket_marisol:      {home: entry_hook_e1}                   # official home; H7 says otherwise
+  remote_1:            {home: coffee_table_l1, p_misplace: 0.3, misplace_set: [couch_l1]}
+  umbrella_1:          {home: entry_floor_e1}                  # leans by the door, but gets used
+
+object_motions:
+
+  # ---------------- the invariant sleep pipeline ----------------
+  bedtime_ritual:                       # runs all 21 days; the one thing she polices
+    at: nightstand_b1
+    jitter: external                    # "strict wind-down", contractual precision
+    during:
+      phone_marisol: counter_k1         # H1: THE exile, off her person onto the charger
+    after:
+      # H5: reads until it slides off — but some nights she reads on the
+      # couch instead and the book simply stays there, so her "book home"
+      # drifts for days at a time.
+      book_1: {dest: bed_b1, p: 0.75, else: couch_l1}
+  daysleep:
+    at: bed_b1
+    jitter: routine
+    during: {}
+    after:
+      book_1:   {dist: {nightstand_b1: 0.55, bedroom_floor_b1: 0.45}, only_from: [bed_b1]}
+      blanket_1: {dist: {bed_b1: 0.55, bedroom_floor_b1: 0.45}, only_from: [bed_b1]}
+      # H3: the plate camps on the coffee table "until she wakes" — and only
+      # sometimes gets cleared even then.
+      plate_1: {dest: sink_k1, p: 0.55, else: coffee_table_l1,
+                only_from: [coffee_table_l1, couch_l1]}
+      mug_1:   {dest: sink_k1, p: 0.5, else: coffee_table_l1,
+                only_from: [coffee_table_l1, couch_l1]}
+  evening_wake:                         # her "morning", at dusk
+    at: couch_l1
+    jitter: flexible
+    during:
+      phone_marisol: 'person:resident_1'   # H1: retrieved the moment she wakes
+      mug_1: couch_l1                      # coffee for the start of her 'day'
+      bowl_2: couch_l1                     # cereal on the couch, not the table
+    after:
+      # the cereal bowl and the coffee mug head for the sink (or don't)
+      bowl_2: {dest: sink_k1, p: 0.5, else: coffee_table_l1}
+      mug_1:  {dist: {sink_k1: 0.4, couch_l1: 0.3, counter_k1: 0.3}}
+      # put-away stage (rack -> cupboard) for the dishes THIS activity does
+      # not touch; each dish's put-away lives on an activity that cannot
+      # also dirty it, so no object ever needs two rules here.
+      plate_1: {dest: cupboard_k1, p: 0.55, else: dish_rack_k1, only_from: [dish_rack_k1]}
+      mug_2:   {dest: cupboard_k1, p: 0.55, else: dish_rack_k1, only_from: [dish_rack_k1]}
+
+  # ---------------- the shift cycle ----------------
+  depart_commute:
+    at: entry_table_e1
+    jitter: external                    # contractual anchor
+    during: {}
+    after:                              # everything she carries leaves with her
+      keys_marisol:   {dest: ELSEWHERE}
+      wallet_marisol: {dest: ELSEWHERE}   # persona: only leaves in her jacket pocket
+      jacket_marisol: {dest: ELSEWHERE}
+      water_bottle_1: {dest: ELSEWHERE}
+      umbrella_1: {dest: ELSEWHERE, p: 0.3, else: entry_floor_e1}   # rain nights
+  away_shift:
+    at: ELSEWHERE
+    jitter: external
+    during: {}
+    after: {}                           # the apartment is frozen; she is out
+  arrive_home:
+    at: entry_table_e1
+    jitter: external
+    during: {}
+    after:
+      # H2 "the moment she gets home" — mostly. When her hands are full the
+      # keys hit the counter and the wallet stays in the jacket instead.
+      keys_marisol:   {dest: entry_table_e1, p: 0.75, else: counter_k1}
+      wallet_marisol: {dest: entry_table_e1, p: 0.7, else: chair_k1}
+      jacket_marisol: {dest: chair_k1, p: 0.8, else: entry_hook_e1}   # H7
+      water_bottle_1: {dest: counter_k1, p: 0.6, else: couch_l1}
+      umbrella_1: {dest: entry_floor_e1, p: 0.65, else: entry_table_e1,
+                   only_from: [ELSEWHERE]}    # re-leaned, or dumped wet
+  post_shift_meal:
+    at: couch_l1
+    jitter: routine
+    during:
+      plate_1: coffee_table_l1          # H3
+      mug_1: couch_l1
+      remote_1: couch_l1                # background TV while she eats
+    after:
+      plate_1: {dest: coffee_table_l1, p: 0.85, else: sink_k1}   # H3: it camps
+      mug_1:   {dest: coffee_table_l1, p: 0.6, else: couch_l1}
+      remote_1: {dist: {couch_l1: 0.6, coffee_table_l1: 0.4}}    # sinks between cushions
+      bowl_2:  {dest: cupboard_k1, p: 0.5, else: dish_rack_k1,   # put-away: the cereal
+                only_from: [dish_rack_k1]}                       # bowl is idle at this meal
+  wind_down_couch:
+    at: couch_l1
+    jitter: routine
+    during:
+      blanket_1: couch_l1               # the drowsy hour before she commits to bed
+    after:
+      blanket_1: {dest: couch_l1, p: 0.35, else: bed_b1}
+      headphones_1: {dist: {couch_l1: 0.45, counter_k1: 0.3, bathroom_shelf_ba1: 0.25}}  # H6
+      mug_1: {dest: cupboard_k1, p: 0.5, else: dish_rack_k1,     # put-away: no mug is
+              only_from: [dish_rack_k1]}                         # used winding down
+
+  # ---------------- her evenings at home ----------------
+  evening_roam:
+    at: couch_l1
+    jitter: flexible
+    during: {}
+    after:
+      headphones_1: {dist: {couch_l1: 0.4, counter_k1: 0.35, bathroom_shelf_ba1: 0.25}}  # H6
+      blanket_1: {dest: couch_l1, p: 0.3, else: bed_b1,          # retrieved to the couch
+                  only_from: [bed_b1, bedroom_floor_b1]}         # a minority of evenings
+      book_1: {dest: couch_l1, p: 0.25, else: nightstand_b1,     # sometimes it comes along
+               only_from: [nightstand_b1]}
+  night_streaming:                      # nights off, alone, small hours
+    at: couch_l1
+    jitter: loose
+    during:
+      remote_1: couch_l1
+      blanket_1: couch_l1
+      mug_2: couch_l1                   # mug_2 exists because mug_1 is lost in the sink queue
+    after:
+      remote_1: {dist: {couch_l1: 0.6, coffee_table_l1: 0.4}}
+      mug_2:    {dest: coffee_table_l1, p: 0.7, else: sink_k1}
+      phone_marisol: {dest: counter_k1, only_from: ['person:resident_1']}  # H1 before the crash
+  shower_long:                          # day 2: the chapter finale happens in here
+    at: bathroom_shelf_ba1
+    jitter: flexible
+    during:
+      headphones_1: bathroom_shelf_ba1  # H6: wherever the chapter ends
+    after:
+      headphones_1: {dest: bathroom_shelf_ba1, p: 0.7, else: counter_k1}
+      water_bottle_1: {dest: bathroom_shelf_ba1, p: 0.4, else: counter_k1}  # H4
+  family_video_call:                    # day 13: paces the apartment for 70 minutes
+    at: couch_l1
+    jitter: flexible
+    during:
+      phone_marisol: 'person:resident_1'
+    after:
+      phone_marisol: {dist: {counter_k1: 0.4, couch_l1: 0.35, coffee_table_l1: 0.25}}
+      water_bottle_1: {dist: {couch_l1: 0.4, counter_k1: 0.35, nightstand_b1: 0.25}}  # H4
+  nap_attempt:                          # day 14: fails, after the dentist
+    at: bed_b1
+    jitter: loose
+    during:
+      blanket_1: bed_b1
+    after:
+      book_1: {dest: nightstand_b1, p: 0.5, else: bedroom_floor_b1, only_from: [bed_b1]}
+
+  # ---------------- chores: unreliable and partial by design ----------------
+  quick_tidy:                           # a short pass on SOME evenings only
+    at: counter_k1
+    jitter: routine
+    reset_all:
+      p: 0.45                           # each stray handled w.p. 0.45 within the block
+      objects: [keys_marisol, wallet_marisol, water_bottle_1, book_1,
+                headphones_1, blanket_1, jacket_marisol, remote_1, umbrella_1]
+                                        # dishes deliberately OUT of scope: a dirty
+                                        # plate is never teleported clean into a cupboard
+    during: {}
+    after: {}
+  wash_dishes:                          # the dishes' only way forward
+    at: sink_k1
+    jitter: routine
+    during: {}
+    after:
+      plate_1: {dest: dish_rack_k1, only_from: [sink_k1]}
+      mug_1:   {dest: dish_rack_k1, only_from: [sink_k1]}
+      mug_2:   {dest: dish_rack_k1, only_from: [sink_k1]}
+      bowl_2:  {dest: dish_rack_k1, only_from: [sink_k1]}
+  manic_reset:                          # the CHARTER QUIRK, restored — but irregular:
+    at: counter_k1                      # week 1 full (105 min), week 2 skipped
+    jitter: flexible                    # entirely, week 3 abandoned mid-room (40 min)
+    reset_all:
+      p: 0.9                            # manic: nearly everything she reaches
+      objects: [keys_marisol, wallet_marisol, water_bottle_1, book_1,
+                headphones_1, blanket_1, jacket_marisol, remote_1, umbrella_1,
+                plate_1, mug_1, mug_2, bowl_2]
+                                        # a 90-minute deep clean DOES include washing
+                                        # up, so dishes are in scope here (unlike tidy)
+    during: {}
+    after: {}
+  apartment_prep:                       # day 5: shoves clutter off the couch for company
+    at: couch_l1
+    jitter: flexible
+    reset_all:
+      p: 0.7
+      objects: [water_bottle_1, headphones_1, remote_1, blanket_1, book_1]
+    during: {}
+    after: {}
+  laundry_run:                           # day 13: building laundry room, two trips
+    at: entry_table_e1
+    jitter: loose
+    during:
+      blanket_1: ELSEWHERE               # out of the apartment for the wash
+    after:
+      blanket_1: {dest: couch_l1, p: 0.8, else: bed_b1}
+
+  # ---------------- cooking: every dish deployed ----------------
+  cook_real_dinner:                     # day 5: actual stove cooking, rare
+    at: counter_k1
+    jitter: flexible
+    during:
+      plate_1: counter_k1
+      bowl_2: counter_k1
+    after:
+      plate_1: {dest: coffee_table_l1, p: 0.7, else: sink_k1}
+      bowl_2:  {dest: sink_k1}
+  batch_cooking:                        # day 20: meal prep, everything out at once
+    at: counter_k1
+    jitter: flexible
+    during:
+      plate_1: counter_k1
+      bowl_2: counter_k1
+      mug_1: counter_k1
+      water_bottle_1: counter_k1
+    after:
+      plate_1: {dest: sink_k1, p: 0.8, else: counter_k1}
+      bowl_2:  {dest: sink_k1, p: 0.8, else: counter_k1}
+      mug_1:   {dest: sink_k1, p: 0.6, else: counter_k1}
+  takeout_couch:                        # day 12: too tired to cook; delivery
+    at: couch_l1
+    jitter: loose
+    during:
+      remote_1: couch_l1
+      mug_2: couch_l1
+      blanket_1: couch_l1
+    after:
+      mug_2: {dest: coffee_table_l1, p: 0.75, else: sink_k1}
+      remote_1: {dist: {couch_l1: 0.65, coffee_table_l1: 0.35}}
+  host_dee:                             # day 5, 01:50: movies and leftovers till dawn
+    at: couch_l1
+    jitter: loose
+    during:
+      remote_1: couch_l1
+      mug_1: coffee_table_l1
+      mug_2: coffee_table_l1
+      plate_1: coffee_table_l1
+    after:                              # company means slightly better behaviour
+      plate_1: {dest: sink_k1, p: 0.6, else: coffee_table_l1}
+      mug_1:   {dest: sink_k1, p: 0.55, else: coffee_table_l1}
+      mug_2:   {dest: sink_k1, p: 0.55, else: coffee_table_l1}
+      remote_1: {dist: {couch_l1: 0.5, coffee_table_l1: 0.5}}
+
+  # ---------------- leaving the apartment (not for work) ----------------
+  errand_run:                           # groceries / pharmacy dashes
+    at: ELSEWHERE
+    jitter: flexible
+    during:
+      keys_marisol: ELSEWHERE
+      wallet_marisol: ELSEWHERE
+      jacket_marisol: ELSEWHERE
+    after:
+      keys_marisol:   {dest: entry_table_e1, p: 0.75, else: counter_k1}   # H2
+      wallet_marisol: {dest: entry_table_e1, p: 0.7, else: chair_k1}
+      jacket_marisol: {dest: chair_k1, p: 0.75, else: entry_hook_e1}      # H7
+  dentist_trip:                         # day 14: the hated daytime appointment
+    at: ELSEWHERE
+    jitter: external                    # an appointment is a contractual anchor
+    during:
+      keys_marisol: ELSEWHERE
+      wallet_marisol: ELSEWHERE
+      jacket_marisol: ELSEWHERE
+    after:
+      keys_marisol:   {dest: entry_table_e1, p: 0.6, else: counter_k1}   # groggy: worse aim
+      wallet_marisol: {dest: chair_k1, p: 0.5, else: entry_table_e1}
+      jacket_marisol: {dest: chair_k1, p: 0.85, else: entry_hook_e1}
+  get_ready_out:                        # day 19: the one night she dresses to go out
+    at: entry_hook_e1
+    jitter: flexible
+    during:
+      jacket_marisol: 'person:resident_1'
+    after: {}
+  concert_night:                        # day 19: show + 24h diner, out 20:30-02:40
+    at: ELSEWHERE
+    jitter: flexible
+    during:
+      keys_marisol: ELSEWHERE
+      wallet_marisol: ELSEWHERE
+      jacket_marisol: ELSEWHERE
+    after:
+      keys_marisol:   {dest: entry_table_e1, p: 0.8, else: counter_k1}
+      wallet_marisol: {dest: entry_table_e1, p: 0.75, else: chair_k1}
+      # the ONE time the closet hook she bought actually gets used
+      jacket_marisol: {dest: entry_hook_e1, p: 0.6, else: chair_k1}
+
+# Story beats that per-activity rules cannot express, applied by the
+# compiler as day-scoped overrides (simulate_activities.py --overrides).
+day_overrides:
+  - days: [11, 12, 13]
+    reason: "storm week (detailed_activities W2): the umbrella joins every trip"
+    activity: depart_commute
+    after: {umbrella_1: {dest: ELSEWHERE}}
+
+# Design notes / known tensions, recorded rather than papered over:
+#   * THREE statics (bowl_1, charger_1, medication_bottle_1) are charter
+#     mandates ("never moves", "never leaves the nightstand"), not levers.
+#     They pin ~18% of the inventory at modal share 1.0 and therefore raise
+#     the bank's dwell-weighted modal share. If the stationarity gate fails,
+#     the honest fixes are more journey stages or looser homing for the
+#     mobile 14 — never bolting a fixed charger onto a wandering path.
+#   * The weekly manic reset is charter-faithful and back, but IRREGULAR
+#     (full / skipped / abandoned across the three weeks), which is what
+#     keeps it from resynchronizing the whole world every 7 days — the
+#     failure mode that got it replaced by a nightly tidy in the old spec.
+#   * Dishes are excluded from quick_tidy but included in manic_reset: a
+#     15-minute pass cannot wash up, a 90-minute deep clean can.

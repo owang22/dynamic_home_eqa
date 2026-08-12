@@ -1,0 +1,193 @@
+# Stage-2a ACTIVITY CALENDAR for hh_001 — Marisol Reyes, 21 days.
+# Generated from the narrative charter (households/hh_001_...yaml) BEFORE any
+# object rules: this file fixes WHEN human activity happens and what story it
+# follows; the object-lists (what each activity moves) are authored in the
+# next step, after review. Day 0 = Monday. Times are clock times; activities
+# on shift nights wrap past midnight into the next calendar day.
+#
+# Design intent (charter-faithful):
+#   - The SLEEP PIPELINE is invariant: bedtime ritual ~09:00 and blackout
+#     daysleep ~09:20-16:50 appear every single day, storms or not — the one
+#     thing she polices ("methodical about anything that protects her sleep").
+#   - Everything else varies: which nights she errands, whether the weekly
+#     manic reset happens (charter quirk: first night off), social plans,
+#     a covered double, one forced daytime appointment that wrecks a day.
+#   - Weeks are NOT copies: week 1 is the clean baseline, week 2 is the
+#     fatigue arc (covered shift -> everything slips), week 3 is recovery
+#     plus out-of-house social night instead of hosting.
+
+household: hh_001
+resident: resident_1        # Marisol
+days: 21
+day0: Monday
+
+narrative_arcs:
+  - "W1 baseline: normal shift week; Dee (fellow night tech) visits Sat night; manic reset Sun night."
+  - "W2 fatigue: covers half of Wed's second shift; Thu oversleeps and skips everything; rain Fri; laundry+family-call Sun; NO reset this week — it silts."
+  - "W3 recovery: Mon dentist forces a daytime wake (schedule violation, groggy zombie evening); audiobook finale binge midweek; Sat OUT with Dee (concert); Sun a half-hearted reset abandoned midway + batch cooking for the week."
+
+calendar:
+  # ---------------- WEEK 1 — baseline shift week ----------------
+  - {day: 0, weekday: Mon, story: "clean start; apartment fresh from last night's reset",
+     activities: [
+       {t: "16:50", a: evening_wake, note: "coffee + cereal as neighbors eat dinner"},
+       {t: "17:45", a: evening_roam, note: "audiobook on, headphones around neck"},
+       {t: "21:30", a: quick_tidy, note: "5-minute pass, mugs to sink only"},
+       {t: "22:05", a: depart_commute}, {t: "22:25", a: away_shift},
+       {t: "07:05+1", a: arrive_home}, {t: "07:20+1", a: post_shift_meal},
+       {t: "08:10+1", a: wind_down_couch}, {t: "09:00+1", a: bedtime_ritual},
+       {t: "09:20+1", a: daysleep}]}
+  - {day: 1, weekday: Tue, story: "grocery dash before work — fridge is bare",
+     activities: [
+       {t: "17:05", a: evening_wake}, {t: "18:40", a: errand_run, note: "groceries + pharmacy, 50 min"},
+       {t: "19:40", a: evening_roam}, {t: "22:10", a: depart_commute},
+       {t: "22:25", a: away_shift}, {t: "07:00+1", a: arrive_home},
+       {t: "07:15+1", a: post_shift_meal}, {t: "08:05+1", a: wind_down_couch},
+       {t: "09:00+1", a: bedtime_ritual}, {t: "09:20+1", a: daysleep}]}
+  - {day: 2, weekday: Wed, story: "midweek autopilot; chapter ends in the bathroom",
+     activities: [
+       {t: "16:55", a: evening_wake}, {t: "17:50", a: evening_roam},
+       {t: "20:15", a: shower_long, note: "audiobook chapter finale in the bathroom"},
+       {t: "22:00", a: depart_commute}, {t: "22:25", a: away_shift},
+       {t: "07:10+1", a: arrive_home}, {t: "07:25+1", a: post_shift_meal},
+       {t: "08:15+1", a: wind_down_couch}, {t: "09:00+1", a: bedtime_ritual},
+       {t: "09:20+1", a: daysleep}]}
+  - {day: 3, weekday: Thu, story: "wash-up night — the sink queue finally bothers her",
+     activities: [
+       {t: "17:00", a: evening_wake}, {t: "18:20", a: wash_dishes, note: "the week's mug queue"},
+       {t: "18:50", a: evening_roam}, {t: "21:35", a: quick_tidy},
+       {t: "22:05", a: depart_commute}, {t: "22:25", a: away_shift},
+       {t: "07:05+1", a: arrive_home}, {t: "07:20+1", a: post_shift_meal},
+       {t: "08:10+1", a: wind_down_couch}, {t: "09:00+1", a: bedtime_ritual},
+       {t: "09:20+1", a: daysleep}]}
+  - {day: 4, weekday: Fri, story: "payday; takeout ordered to the lab, lighter meal at home",
+     activities: [
+       {t: "17:10", a: evening_wake}, {t: "17:55", a: evening_roam},
+       {t: "22:00", a: depart_commute}, {t: "22:25", a: away_shift},
+       {t: "07:05+1", a: arrive_home}, {t: "07:20+1", a: post_shift_meal, note: "small: tea + toast"},
+       {t: "08:05+1", a: wind_down_couch}, {t: "09:00+1", a: bedtime_ritual},
+       {t: "09:20+1", a: daysleep}]}
+  - {day: 5, weekday: Sat, story: "first night off; Dee comes over after HER shift — 02:00 movies",
+     activities: [
+       {t: "16:55", a: evening_wake}, {t: "17:45", a: evening_roam},
+       {t: "19:00", a: apartment_prep, note: "shoves clutter off the couch for company"},
+       {t: "20:00", a: cook_real_dinner, note: "actual stove cooking, rare"},
+       {t: "01:50+1", a: host_dee, note: "movies + leftovers till near dawn"},
+       {t: "05:10+1", a: night_streaming, note: "alone again, one more episode"},
+       {t: "09:00+1", a: bedtime_ritual}, {t: "09:20+1", a: daysleep}]}
+  - {day: 6, weekday: Sun, story: "THE WEEKLY MANIC RESET (charter quirk) — whole apartment in one sweep",
+     activities: [
+       {t: "17:00", a: evening_wake}, {t: "17:40", a: evening_roam},
+       {t: "20:30", a: manic_reset, note: "90 min: every stray object to its home, laundry gathered"},
+       {t: "22:15", a: night_streaming, note: "reward: spotless-apartment streaming"},
+       {t: "00:45+1", a: night_streaming}, {t: "09:00+1", a: bedtime_ritual},
+       {t: "09:20+1", a: daysleep}]}
+
+  # ---------------- WEEK 2 — the fatigue arc ----------------
+  - {day: 7, weekday: Mon, story: "back to shifts; apartment starts the week spotless",
+     activities: [
+       {t: "16:50", a: evening_wake}, {t: "17:45", a: evening_roam},
+       {t: "22:05", a: depart_commute}, {t: "22:25", a: away_shift},
+       {t: "07:05+1", a: arrive_home}, {t: "07:20+1", a: post_shift_meal},
+       {t: "08:10+1", a: wind_down_couch}, {t: "09:00+1", a: bedtime_ritual},
+       {t: "09:20+1", a: daysleep}]}
+  - {day: 8, weekday: Tue, story: "lab short-staffed; agrees by text to cover half of Wed's second shift",
+     activities: [
+       {t: "17:05", a: evening_wake}, {t: "18:30", a: errand_run, note: "quick pharmacy only"},
+       {t: "19:20", a: evening_roam}, {t: "22:10", a: depart_commute},
+       {t: "22:25", a: away_shift}, {t: "07:00+1", a: arrive_home},
+       {t: "07:15+1", a: post_shift_meal}, {t: "08:05+1", a: wind_down_couch},
+       {t: "09:00+1", a: bedtime_ritual}, {t: "09:20+1", a: daysleep}]}
+  - {day: 9, weekday: Wed, story: "THE DOUBLE: works 22:25-07:05 plus covers till 11:30 — 13 hours",
+     activities: [
+       {t: "17:00", a: evening_wake}, {t: "17:50", a: evening_roam},
+       {t: "21:55", a: depart_commute}, {t: "22:25", a: away_shift, note: "extended: covers till 11:30"},
+       {t: "11:30+1", a: arrive_home, note: "4.5 h late, wrecked"},
+       {t: "11:45+1", a: post_shift_meal, note: "cereal straight from the box, standing"},
+       {t: "12:10+1", a: bedtime_ritual, note: "ritual COMPRESSED but never skipped"},
+       {t: "12:25+1", a: daysleep, note: "sleeps 12:25-19:40 — pipeline shifted, not broken"}]}
+  - {day: 10, weekday: Thu, story: "aftershock: wakes at 19:40, everything slips, no tidy, no wash",
+     activities: [
+       {t: "19:40", a: evening_wake, note: "3 h late; skips errand, skips dishes"},
+       {t: "20:20", a: evening_roam, note: "zombie roam, leaves things everywhere"},
+       {t: "22:15", a: depart_commute}, {t: "22:25", a: away_shift},
+       {t: "07:05+1", a: arrive_home}, {t: "07:20+1", a: post_shift_meal},
+       {t: "08:10+1", a: wind_down_couch}, {t: "09:00+1", a: bedtime_ritual},
+       {t: "09:20+1", a: daysleep}]}
+  - {day: 11, weekday: Fri, story: "storm week begins — umbrella joins every commute through Sunday",
+     activities: [
+       {t: "17:05", a: evening_wake}, {t: "18:00", a: evening_roam},
+       {t: "21:40", a: quick_tidy, note: "guilt tidy, 3 items, gives up"},
+       {t: "22:00", a: depart_commute, note: "takes umbrella"}, {t: "22:25", a: away_shift},
+       {t: "07:10+1", a: arrive_home, note: "umbrella dumped dripping by the door"},
+       {t: "07:25+1", a: post_shift_meal}, {t: "08:15+1", a: wind_down_couch},
+       {t: "09:00+1", a: bedtime_ritual}, {t: "09:20+1", a: daysleep}]}
+  - {day: 12, weekday: Sat, story: "night off but too tired to host or reset; orders in, streams",
+     activities: [
+       {t: "17:20", a: evening_wake, note: "still paying for the double"},
+       {t: "18:10", a: evening_roam}, {t: "20:00", a: takeout_couch, note: "delivery at the door"},
+       {t: "21:00", a: night_streaming, note: "long binge, blanket cocoon"},
+       {t: "02:30+1", a: night_streaming}, {t: "09:00+1", a: bedtime_ritual},
+       {t: "09:20+1", a: daysleep}]}
+  - {day: 13, weekday: Sun, story: "NO manic reset this week (fatigue) — laundry + video call to her mother instead",
+     activities: [
+       {t: "17:10", a: evening_wake}, {t: "18:00", a: laundry_run, note: "building laundry room, two trips"},
+       {t: "19:30", a: family_video_call, note: "Sunday call, 70 min, paces the apartment"},
+       {t: "21:00", a: evening_roam}, {t: "23:00", a: night_streaming},
+       {t: "09:00+1", a: bedtime_ritual}, {t: "09:20+1", a: daysleep}]}
+
+  # ---------------- WEEK 3 — recovery + broken day ----------------
+  - {day: 14, weekday: Mon, story: "DENTIST 14:30 — the hated daytime wake; sleeps in two broken halves",
+     activities: [
+       {t: "09:20", a: daysleep, note: "only 09:20-13:40 — alarm set, dreads it"},
+       {t: "13:55", a: dentist_trip, note: "out 13:55-16:10, squinting at daylight"},
+       {t: "16:30", a: nap_attempt, note: "fails; gives up, groggy"},
+       {t: "17:30", a: evening_wake, note: "double coffee"},
+       {t: "22:05", a: depart_commute}, {t: "22:25", a: away_shift},
+       {t: "07:05+1", a: arrive_home}, {t: "07:20+1", a: post_shift_meal},
+       {t: "08:10+1", a: wind_down_couch}, {t: "09:00+1", a: bedtime_ritual},
+       {t: "09:20+1", a: daysleep}]}
+  - {day: 15, weekday: Tue, story: "normal night; audiobook reaches its finale stretch — headphones never leave her",
+     activities: [
+       {t: "16:55", a: evening_wake}, {t: "17:45", a: evening_roam, note: "finale part 1"},
+       {t: "18:45", a: errand_run, note: "groceries, listening the whole way"},
+       {t: "19:50", a: evening_roam}, {t: "22:05", a: depart_commute},
+       {t: "22:25", a: away_shift}, {t: "07:05+1", a: arrive_home},
+       {t: "07:20+1", a: post_shift_meal}, {t: "08:10+1", a: wind_down_couch},
+       {t: "09:00+1", a: bedtime_ritual}, {t: "09:20+1", a: daysleep}]}
+  - {day: 16, weekday: Wed, story: "finale night: stays up 40 min past ritual time to finish the book — then starts a NEW paperback",
+     activities: [
+       {t: "17:00", a: evening_wake}, {t: "17:50", a: evening_roam},
+       {t: "18:30", a: wash_dishes}, {t: "22:00", a: depart_commute},
+       {t: "22:25", a: away_shift}, {t: "07:05+1", a: arrive_home},
+       {t: "07:20+1", a: post_shift_meal}, {t: "08:10+1", a: wind_down_couch},
+       {t: "09:40+1", a: bedtime_ritual, note: "40 min late — the one ritual slip, for the finale"},
+       {t: "10:00+1", a: daysleep}]}
+  - {day: 17, weekday: Thu, story: "quiet night, new book, early wash-up",
+     activities: [
+       {t: "16:50", a: evening_wake}, {t: "18:15", a: wash_dishes},
+       {t: "18:45", a: evening_roam}, {t: "21:30", a: quick_tidy},
+       {t: "22:05", a: depart_commute}, {t: "22:25", a: away_shift},
+       {t: "07:05+1", a: arrive_home}, {t: "07:20+1", a: post_shift_meal},
+       {t: "08:10+1", a: wind_down_couch}, {t: "09:00+1", a: bedtime_ritual},
+       {t: "09:20+1", a: daysleep}]}
+  - {day: 18, weekday: Fri, story: "plans locked for tomorrow: Dee got concert tickets",
+     activities: [
+       {t: "17:05", a: evening_wake}, {t: "17:55", a: evening_roam},
+       {t: "22:00", a: depart_commute}, {t: "22:25", a: away_shift},
+       {t: "07:05+1", a: arrive_home}, {t: "07:20+1", a: post_shift_meal},
+       {t: "08:10+1", a: wind_down_couch}, {t: "09:00+1", a: bedtime_ritual},
+       {t: "09:20+1", a: daysleep}]}
+  - {day: 19, weekday: Sat, story: "OUT with Dee: late show + diner after — her one big outbound social night",
+     activities: [
+       {t: "17:00", a: evening_wake}, {t: "18:00", a: get_ready_out, note: "actually uses the closet hook, once"},
+       {t: "20:30", a: concert_night, note: "out 20:30-02:40: show then 24 h diner"},
+       {t: "02:40+1", a: wind_down_couch, note: "ears ringing, tea"},
+       {t: "09:00+1", a: bedtime_ritual}, {t: "09:20+1", a: daysleep}]}
+  - {day: 20, weekday: Sun, story: "half-hearted reset: starts the manic sweep, abandons it mid-room for batch cooking",
+     activities: [
+       {t: "17:10", a: evening_wake}, {t: "18:00", a: manic_reset, note: "ABANDONED at ~35 min — bedroom+kitchen done, living room left silted"},
+       {t: "18:40", a: batch_cooking, note: "meal prep for the week; every pot and plate deployed"},
+       {t: "20:30", a: wash_dishes, note: "partial — the batch-cooking pile wins"},
+       {t: "21:00", a: night_streaming}, {t: "01:10+1", a: night_streaming},
+       {t: "09:00+1", a: bedtime_ritual}, {t: "09:20+1", a: daysleep}]}
