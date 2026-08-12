@@ -1,6 +1,6 @@
 {
   "bank_path": "banks/baselines/hh1_21d_uniform.jsonl",
-  "bank_manifest_hash": "189e1c9480b2a8456670454d7e330ba05086aa69949878c22d121c3efef0f3ff",
+  "bank_manifest_hash": "f8aeb6e26bf0794ebfb899051541b84acc1e59d40cce6b81b9ca78368ab3b742",
   "config": {
     "seed": 0,
     "budget": null,
@@ -12,12 +12,12 @@
     "powered_min_questions": 300
   },
   "config_hash": "fbf2c99847e1194a778cd0b90c7e37f0d9f142c58846fc0cc63dd5b3662a94ed",
-  "git_commit": "7d8032ea8cee8c3ca34943e76817373e1317739d",
+  "git_commit": "5019dd9c8a60dc9ab88d88d3af909ac8f6c0d681",
   "git_dirty": false,
   "seed": 0,
-  "timestamp": "2026-08-12T00:14:14.471141+00:00",
+  "timestamp": "2026-08-12T00:16:16.867687+00:00",
   "n_questions": 1620,
-  "real_budget_per_day": 16,
+  "real_budget_per_day": 24,
   "belief_panel": [
     {
       "name": "last_observation"
@@ -40,7 +40,7 @@
     "n_days": 21,
     "n_questions": 1620,
     "modal_share_time": 0.5726423902894491,
-    "modal_share_questions": 0.6012345679012345,
+    "modal_share_questions": 0.5246913580246914,
     "moves_per_day": 25.38095238095238,
     "displacement_median_h": 15.1,
     "displacement_p90_h": 36.81666666666667,
@@ -68,9 +68,9 @@
   },
   "panel": {
     "never_sense_task_accuracy": {
-      "last_observation": 0.6493827160493827,
-      "most_frequent": 0.6506172839506172,
-      "timetable": 0.6277777777777778
+      "last_observation": 0.5796296296296296,
+      "most_frequent": 0.5666666666666667,
+      "timetable": 0.5277777777777778
     },
     "sequential_search_unlimited_task_accuracy": {
       "last_observation": 1.0,
@@ -78,13 +78,13 @@
       "timetable": 1.0
     },
     "sequential_search_real_budget": {
-      "belief": "most_frequent",
-      "budget_per_day": 16,
-      "task_accuracy": 0.7580246913580246
+      "belief": "last_observation",
+      "budget_per_day": 24,
+      "task_accuracy": 0.7537037037037037
     }
   },
   "stratified_discriminative": {
-    "night_shift_solo": 0.022839506172839474
+    "night_shift_solo": 0.051851851851851816
   },
   "gates": [
     {
@@ -105,24 +105,24 @@
     },
     {
       "name": "not_trivial",
-      "passed": false,
-      "measured": 0.6506172839506172,
+      "passed": true,
+      "measured": 0.5796296296296296,
       "threshold": 0.65,
       "comparison": "<=",
       "rationale": "if passive memory nearly solves the bank, the dynamics are too static to test sensing"
     },
     {
       "name": "not_impossible",
-      "passed": false,
-      "measured": 0.7580246913580246,
-      "threshold": 0.8006172839506173,
+      "passed": true,
+      "measured": 0.7537037037037037,
+      "threshold": 0.7296296296296296,
       "comparison": ">=",
       "rationale": "sensing at the real budget must buy meaningful accuracy over the best passive belief"
     },
     {
       "name": "discriminative",
-      "passed": false,
-      "measured": 0.022839506172839474,
+      "passed": true,
+      "measured": 0.051851851851851816,
       "threshold": 0.03,
       "comparison": ">",
       "rationale": "different modeling assumptions must score differently somewhere, or the bank cannot rank belief models"
@@ -136,7 +136,7 @@
       "rationale": "too few questions and accuracy differences between agents drown in binomial noise"
     }
   ],
-  "gates_pass": false,
-  "overall_pass": false,
-  "overall_note": "gates failed: not_trivial, not_impossible, discriminative"
+  "gates_pass": true,
+  "overall_pass": true,
+  "overall_note": "all gates passed on a clean git tree"
 }

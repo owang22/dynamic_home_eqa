@@ -1,5 +1,41 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-08-11, dated-activity pipeline: hh1 is the new headline bank)
+
+The household authoring chain is now three reviewable stages per
+household folder (profiles/revamp_v1/claude-fable-5/hh1..hh10):
+persona.yaml -> detailed_activities.yaml (a DATED 21-day calendar with a
+story arc — a covered double, a dentist-split sleep, a manic reset that
+happens/skips/gets abandoned) -> object_motions.yaml (per-activity object
+rules citing charter habits). simulate_activities.py realizes the
+calendar into the standard timeline artifacts; export_bank and the whole
+instrument run unchanged. The old weekly-pattern schedule specs,
+simulate_schedule.py timelines, and the 28d banks/reports are retired
+(git history keeps them).
+
+Two exporter-level findings from bringing hh1 through the gates:
+
+- **Duplicate YAML keys silently drop rules**: two `after` rules for one
+  (activity, object) key left the cereal bowl stranded at modal share
+  0.911. The simulator now rejects duplicate mapping keys loudly; each
+  dish's put-away lives on an activity that cannot also dirty it.
+  Stationarity 0.616 FAIL -> 0.573 PASS from this alone.
+- **The fixed 08:00-22:00 question window was not household-agnostic**:
+  for a night-shifter it is mostly blackout sleep, so half the questions
+  probed a frozen world — inflating passive memory (0.651), collapsing
+  belief spread (0.023), and starving not_impossible. Questions and
+  sightings now draw from the household's own awake time
+  (non-sleep resident blocks): query-time modal share 0.601 -> 0.525,
+  NeverSense 0.651 -> 0.580, spread 0.023 -> 0.052. Budget 24/day chosen
+  from a {16, 24} probe (16 clears not_impossible by only 0.003).
+
+hh1 21-day bank: all six gates PASS from a clean tree (stationarity
+0.573, solvable 1.000, not_trivial 0.580, not_impossible 0.754 vs
+0.730, discriminative 0.052, powered 1620). Grid orders cleanly (search
+> patrol > passive; recency > decayed-frequency > decayed-timetable).
+Sweep re-targeted to the hh1 pipeline with ramp {0, 1, 4, 24}.
+
+
 ## Update (2026-08-11, decayed frequency beliefs + review-flag resolutions)
 
 **Count decay (the fairness fix).** MostFrequentLocation and

@@ -25,9 +25,9 @@ plotted; read fine structure off the bottom panels.
 
 Usage:
   python -m baselines.sweep \
-      --timeline profiles/revamp_v1/claude-fable-5/timelines/hh_001_seed0_28d \
-      --spec profiles/revamp_v1/claude-fable-5/schedules/hh_001_schedule.yaml \
-      --questions-per-day 90 --out-dir reports/baselines/sweep_hh001
+      --timeline profiles/revamp_v1/claude-fable-5/hh1/timeline_seed0 \
+      --spec profiles/revamp_v1/claude-fable-5/hh1/object_motions.yaml \
+      --questions-per-day 90 --out-dir reports/baselines/sweep_hh1
 """
 
 from __future__ import annotations
@@ -46,14 +46,14 @@ from baselines.healthcheck import UNLIMITED_BUDGET, run_cell
 
 logger = logging.getLogger(__name__)
 
-# 16/day is the headline bank's real budget. The low steps are where the
+# 24/day is the headline bank's real budget. The low steps are where the
 # learning arc is visible: full-contents senses are so informative (each
 # returns every object in the receptacle, and OUT_OF_HOUSE aggregates all
 # absent carried items) that 16/day assembles a home-base map within ~2
 # days. Unlimited is omitted as a known flat reference — task accuracy is
 # pinned at 1.0 by the search invariant and full-state accuracy sits near
 # 0.9; the healthcheck panel documents both.
-BUDGET_LEVELS: Tuple[Any, ...] = (0, 1, 4, 16)
+BUDGET_LEVELS: Tuple[Any, ...] = (0, 1, 4, 24)
 # Beliefs match the healthcheck panel (frequency members carry the frozen
 # 24 h count half-life). FixedSchedule is dropped from the sweep: its
 # 6 h/4-stop rotation spends at most 4 senses/day, so every budget >= 4
