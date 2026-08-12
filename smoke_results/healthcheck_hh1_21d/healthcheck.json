@@ -1,0 +1,142 @@
+{
+  "bank_path": "banks/baselines/hh1_21d_uniform.jsonl",
+  "bank_manifest_hash": "189e1c9480b2a8456670454d7e330ba05086aa69949878c22d121c3efef0f3ff",
+  "config": {
+    "seed": 0,
+    "budget": null,
+    "stationarity_max_modal_share": 0.6,
+    "solvable_tolerance": 1e-09,
+    "not_trivial_max": 0.65,
+    "not_impossible_margin": 0.15,
+    "discriminative_band": 0.03,
+    "powered_min_questions": 300
+  },
+  "config_hash": "fbf2c99847e1194a778cd0b90c7e37f0d9f142c58846fc0cc63dd5b3662a94ed",
+  "git_commit": "7d8032ea8cee8c3ca34943e76817373e1317739d",
+  "git_dirty": false,
+  "seed": 0,
+  "timestamp": "2026-08-12T00:14:14.471141+00:00",
+  "n_questions": 1620,
+  "real_budget_per_day": 16,
+  "belief_panel": [
+    {
+      "name": "last_observation"
+    },
+    {
+      "name": "most_frequent",
+      "half_life_h": 24
+    },
+    {
+      "name": "timetable",
+      "bin_hours": 1,
+      "day_scheme": "all",
+      "half_life_h": 24
+    }
+  ],
+  "bank_stats": {
+    "n_episodes": 1,
+    "n_objects": 17,
+    "n_receptacles": 16,
+    "n_days": 21,
+    "n_questions": 1620,
+    "modal_share_time": 0.5726423902894491,
+    "modal_share_questions": 0.6012345679012345,
+    "moves_per_day": 25.38095238095238,
+    "displacement_median_h": 15.1,
+    "displacement_p90_h": 36.81666666666667,
+    "displaced_time_share": 0.4273576097105509,
+    "max_repeats_per_day": 6,
+    "per_object_modal_share": {
+      "bowl_1": 1.0,
+      "bowl_2": 0.4432,
+      "plate_1": 0.5453,
+      "mug_1": 0.3159,
+      "mug_2": 0.4301,
+      "phone_marisol": 0.3771,
+      "charger_1": 1.0,
+      "keys_marisol": 0.4246,
+      "wallet_marisol": 0.6071,
+      "water_bottle_1": 0.3713,
+      "book_1": 0.4814,
+      "headphones_1": 0.5387,
+      "medication_bottle_1": 1.0,
+      "blanket_1": 0.5532,
+      "jacket_marisol": 0.5023,
+      "remote_1": 0.548,
+      "umbrella_1": 0.5966
+    }
+  },
+  "panel": {
+    "never_sense_task_accuracy": {
+      "last_observation": 0.6493827160493827,
+      "most_frequent": 0.6506172839506172,
+      "timetable": 0.6277777777777778
+    },
+    "sequential_search_unlimited_task_accuracy": {
+      "last_observation": 1.0,
+      "most_frequent": 1.0,
+      "timetable": 1.0
+    },
+    "sequential_search_real_budget": {
+      "belief": "most_frequent",
+      "budget_per_day": 16,
+      "task_accuracy": 0.7580246913580246
+    }
+  },
+  "stratified_discriminative": {
+    "night_shift_solo": 0.022839506172839474
+  },
+  "gates": [
+    {
+      "name": "stationarity",
+      "passed": true,
+      "measured": 0.5726423902894491,
+      "threshold": 0.6,
+      "comparison": "<=",
+      "rationale": "dwell-weighted modal share: how often a home-base-only model is right at a random moment; computable from ground truth alone (cli bankstats) before paying for the panel"
+    },
+    {
+      "name": "solvable",
+      "passed": true,
+      "measured": 1.0,
+      "threshold": 1.0,
+      "comparison": "==",
+      "rationale": "unlimited-budget search must find every queried object; failure means a bank or harness bug"
+    },
+    {
+      "name": "not_trivial",
+      "passed": false,
+      "measured": 0.6506172839506172,
+      "threshold": 0.65,
+      "comparison": "<=",
+      "rationale": "if passive memory nearly solves the bank, the dynamics are too static to test sensing"
+    },
+    {
+      "name": "not_impossible",
+      "passed": false,
+      "measured": 0.7580246913580246,
+      "threshold": 0.8006172839506173,
+      "comparison": ">=",
+      "rationale": "sensing at the real budget must buy meaningful accuracy over the best passive belief"
+    },
+    {
+      "name": "discriminative",
+      "passed": false,
+      "measured": 0.022839506172839474,
+      "threshold": 0.03,
+      "comparison": ">",
+      "rationale": "different modeling assumptions must score differently somewhere, or the bank cannot rank belief models"
+    },
+    {
+      "name": "powered",
+      "passed": true,
+      "measured": 1620.0,
+      "threshold": 300.0,
+      "comparison": ">=",
+      "rationale": "too few questions and accuracy differences between agents drown in binomial noise"
+    }
+  ],
+  "gates_pass": false,
+  "overall_pass": false,
+  "overall_note": "gates failed: not_trivial, not_impossible, discriminative"
+}

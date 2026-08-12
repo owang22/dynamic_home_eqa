@@ -37,8 +37,9 @@ Generated stream and questions (all seeded):
   chance floor (~1/n_receptacles) and every point of accuracy must be
   earned through sensing.
 * scripted sightings: ``--sightings-per-day`` per day, each a uniformly
-  chosen object seen at a uniform time inside the awake window
-  (08:00-22:00) at its true location — drive-by observations.
+  chosen object seen at a uniform instant inside the household's OWN awake
+  time (non-sleep resident blocks; see :func:`awake_spans`) at its true
+  location — drive-by observations.
 * questions: ``--questions-per-day`` per day from ``--first-question-day``
   on. The query schedule is a controlled experimental axis
   (``--query-mode``), because a generator whose timing/content correlates
@@ -91,6 +92,12 @@ logger = logging.getLogger(__name__)
 OUT_OF_HOUSE = "OUT_OF_HOUSE"
 ON_PERSON = "ON_PERSON"
 AWAKE_WINDOW_S = (8 * 3600, 22 * 3600)
+"""Fallback awake window (seconds into the day) for timelines that carry no
+resident blocks. Real households use their OWN awake time — see
+:func:`awake_spans`."""
+
+SLEEP_KEYWORDS = ("sleep", "nap")
+"""Activity-name substrings that mark a resident as asleep."""
 
 
 def _away_intervals(timeline: pathlib.Path) -> Dict[str, List[Tuple[int, int]]]:
@@ -121,6 +128,64 @@ def _away_intervals(timeline: pathlib.Path) -> Dict[str, List[Tuple[int, int]]]:
                 out.append((t0, t1))
         merged[res] = out
     return merged
+
+
+def awake_spans(timeline: pathlib.Path, n_days: int
+                ) -> Dict[int, List[Tuple[int, int]]]:
+    """day -> merged [t0, t1) second spans when SOMEONE in the house is up.
+
+    Questions and drive-by sightings are drawn from these spans rather than
+    a fixed clock window. A fixed window is not household-agnostic: for a
+    night-shift resident, 08:00-22:00 is mostly blackout sleep, and a
+    question asked five hours into a sleep is degenerate — nothing has
+    moved since she lay down, so every belief scores alike and sensing has
+    nothing to buy. Drawing from awake time asks about the world while it
+    is actually in motion.
+
+    Falls back to :data:`AWAKE_WINDOW_S` per day when the timeline has no
+    ``residents.jsonl`` (stub timelines in tests).
+    """
+    path = timeline / "residents.jsonl"
+    per_day: Dict[int, List[Tuple[int, int]]] = {}
+    if not path.exists():
+        return {d: [(d * DAY_SECONDS + AWAKE_WINDOW_S[0],
+                     d * DAY_SECONDS + AWAKE_WINDOW_S[1])]
+                for d in range(n_days)}
+    spans: List[Tuple[int, int]] = []
+    with open(path) as f:
+        for line in f:
+            b = json.loads(line)
+            if any(k in str(b["activity"]) for k in SLEEP_KEYWORDS):
+                continue
+            spans.append((int(b["t0"]) * 60, int(b["t1"]) * 60))
+    spans.sort()
+    merged: List[Tuple[int, int]] = []
+    for t0, t1 in spans:
+        if merged and t0 <= merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], t1))
+        else:
+            merged.append((t0, t1))
+    for d in range(n_days):
+        lo, hi = d * DAY_SECONDS, (d + 1) * DAY_SECONDS
+        clipped = [(max(t0, lo), min(t1, hi)) for t0, t1 in merged
+                   if t0 < hi and t1 > lo]
+        per_day[d] = [(a, b) for a, b in clipped if b > a + 60]
+    return per_day
+
+
+def _draw_time(spans: List[Tuple[int, int]], day: int,
+               rng: random.Random) -> int:
+    """A uniform instant inside ``spans`` (length-weighted); the fixed
+    window when a day has no awake span (e.g. a 24 h absence)."""
+    total = sum(b - a for a, b in spans)
+    if not total:
+        return day * DAY_SECONDS + rng.randrange(*AWAKE_WINDOW_S)
+    offset = rng.randrange(total)
+    for a, b in spans:
+        if offset < b - a:
+            return a + offset
+        offset -= b - a
+    return spans[-1][1] - 1
 
 
 def _project_segment(location: str, t0: int, t1: int,
@@ -210,7 +275,8 @@ POST_MOVE_LAG_S = (5 * 60, 60 * 60)
 def _draw_question(mode: str, day: int, objects: List[str],
                    truth: Dict[str, List[Tuple[int, str]]],
                    recent: List[str], rng: random.Random,
-                   pool: List[str]) -> Tuple[str, int]:
+                   pool: List[str],
+                   spans: List[Tuple[int, int]]) -> Tuple[str, int]:
     """(object, t_query) for one question under the given query mode.
 
     Uniform mode draws objects WITHOUT replacement from ``pool`` (refilled
@@ -224,22 +290,21 @@ def _draw_question(mode: str, day: int, objects: List[str],
     if mode == "uniform":
         if not pool:
             pool += rng.sample(objects, len(objects))
-        return (pool.pop(),
-                day * DAY_SECONDS + rng.randrange(*AWAKE_WINDOW_S))
+        return pool.pop(), _draw_time(spans, day, rng)
     # naturalistic: popularity-weighted object, repeat bias, post-move timing
     if recent and rng.random() < REPEAT_PROBABILITY:
         obj = rng.choice(recent[-3:])
     else:
         weights = [1 + len(truth[o]) - 1 for o in objects]
         obj = rng.choices(objects, weights=weights, k=1)[0]
-    window = (day * DAY_SECONDS + AWAKE_WINDOW_S[0],
-              day * DAY_SECONDS + AWAKE_WINDOW_S[1])
-    moves_today = [t for t, _ in truth[obj] if window[0] <= t < window[1]]
+    lo = spans[0][0] if spans else day * DAY_SECONDS + AWAKE_WINDOW_S[0]
+    hi = spans[-1][1] if spans else day * DAY_SECONDS + AWAKE_WINDOW_S[1]
+    moves_today = [t for t, _ in truth[obj] if lo <= t < hi]
     if moves_today and rng.random() < POST_MOVE_PROBABILITY:
-        t = rng.choice(moves_today) + rng.randrange(*POST_MOVE_LAG_S)
-        t = min(t, window[1] - 1)
+        t = min(rng.choice(moves_today) + rng.randrange(*POST_MOVE_LAG_S),
+                hi - 1)
     else:
-        t = rng.randrange(*window)
+        t = _draw_time(spans, day, rng)
     return obj, t
 
 
@@ -259,6 +324,7 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
     receptacles = [r["id"] for r in spec["receptacles"]] + [ON_PERSON, OUT_OF_HOUSE]
 
     truth, n_days, causes = load_truth(timeline)
+    awake = awake_spans(timeline, n_days)
     episode_id = f"{spec['household']}_{timeline.name}"
     # Sightings and questions draw from SEPARATE seeded generators so the
     # question set is invariant under changes to the sighting rate (and
@@ -295,7 +361,7 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
     for day in range(n_days):
         for _ in range(sightings_per_day):
             obj = rng_sightings.choice(objects)
-            t = day * DAY_SECONDS + rng_sightings.randrange(*AWAKE_WINDOW_S)
+            t = _draw_time(awake[day], day, rng_sightings)
             where = truth_at(truth[obj], t)
             if where == OUT_OF_HOUSE:
                 unobserved += 1      # you cannot sight what is not there
@@ -312,7 +378,7 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
         pool: List[str] = []          # uniform mode: fresh no-repeat pool daily
         for _ in range(questions_per_day):
             obj, t = _draw_question(query_mode, day, objects, truth, recent,
-                                    rng_questions, pool)
+                                    rng_questions, pool, awake[day])
             recent.append(obj)
             rows.append({"kind": "question", "episode_id": episode_id,
                          "question_id": f"q{question_number:04d}",

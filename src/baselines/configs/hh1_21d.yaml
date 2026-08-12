@@ -1,8 +1,9 @@
-# Full grid on the 28-day hh_001 bank (displacement-persistence world,
-# uniform repeat-capped questions, 10 sightings/day, budget 16/day).
-bank: banks/baselines/hh_001_28d_uniform.jsonl
+# Full grid on the hh1 21-day bank (dated-activity world: persona ->
+# detailed_activities -> object_motions; uniform repeat-capped questions
+# drawn from the household's own awake time; 10 sightings/day, budget 24).
+bank: banks/baselines/hh1_21d_uniform.jsonl
 seed: 0
-out_dir: smoke_results/baselines_hh001_28d
+out_dir: smoke_results/baselines_hh1_21d
 agents:
   beliefs:
     - {name: last_observation}
