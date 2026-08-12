@@ -9,9 +9,12 @@ Absences come from `at: ELSEWHERE` activity blocks, which is also what feeds the
 | household | resident | wake | first departure | return | meal starts |
 |---|---|---|---|---|---|
 | hh1 | resident_1 | 16:45 [14:52–18:09] | 22:16 [16:19–22:25] | 07:12 [07:00–19:17] | 07:29 [07:09–08:08] |
+| hh3 | resident_1 | 07:37 [07:16–08:13] | 08:09 [07:38–08:51] | 09:47 [08:46–11:02] | 13:16 [07:30–18:55] |
+| hh3 | resident_2 | 06:59 [06:39–07:28] | 08:26 [07:49–08:44] | 10:22 [09:16–16:36] | 12:16 [06:40–18:17] |
 
 ## Bank-intrinsic dynamics (exported uniform banks)
 
 | household | objects | modal share (time) | at query times | moves/day | stint med/p90 h | stationarity |
 |---|---|---|---|---|---|---|
 | hh1 | 17 | 0.573 | 0.525 | 25.4 | 15.1 / 36.8 | PASS |
+| hh3 | 26 | 0.685 | 0.654 | 55.2 | 3.9 / 22.5 | FAIL |

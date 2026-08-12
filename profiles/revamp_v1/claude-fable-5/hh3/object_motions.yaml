@@ -1,0 +1,438 @@
+# Stage-2b OBJECT MOTIONS for hh3 — Gordon & Mei-Lin Chu: WHAT each of the
+# 46 calendar activities does to their 24 objects. Chain:
+#   persona.yaml -> detailed_activities.yaml -> this file.
+#
+# The persona's SYSTEMS, cited as S1-S8:
+#   S1 pill relay: Mei-Lin slides the bottle to his breakfast bowl, returns
+#      it to the bathroom cabinet herself
+#   S2 remote border dispute: his chair arm by day, her TV drawer by night
+#   S3 Gordon washes up IMMEDIATELY after every meal (dishes barely dwell)
+#   S4 three rotating pairs of Gordon's glasses; one is always missing
+#   S5 tea delivery: he brings her mug to her HQ mid-morning, unasked
+#   S6 hook board: keys on the same pegs for forty years
+#   S7 her book: nightstand shelf, never face-down, never the floor
+#   S8 blanket refolded into thirds every time she passes
+#
+# CONTRAST WITH hh1 (deliberate): this house is a machine for putting
+# things back — high motion volume, SHORT displacement stints. Its
+# difficulty should come from small-object wander (glasses, pens, phones)
+# and the remote's daily commute, not from neglect pile-up.
+
+household: hh_003
+household_type: retired_couple
+source_persona: persona.yaml
+source_activities: detailed_activities.yaml
+residents:
+  - id: resident_1        # Gordon
+    jitter_scale: 0.7     # creature of exact habit
+  - id: resident_2        # Mei-Lin
+    jitter_scale: 0.6     # precise; believes in one correct home
+
+receptacles:
+  - {id: kitchen_table_k1,    room: kitchen}   # Mei-Lin's headquarters
+  - {id: newspaper_rack_k1,   room: kitchen}   # the crossword pen's home
+  - {id: counter_k1,          room: kitchen}
+  - {id: sink_k1,             room: kitchen}
+  - {id: dish_rack_k1,        room: kitchen}
+  - {id: cupboard_k1,         room: kitchen}
+  - {id: armchair_l1,         room: living}    # Gordon's chair (arm = remote's day post)
+  - {id: side_table_l1,       room: living}    # beside the armchair
+  - {id: tv_drawer_l1,        room: living}    # the remote's LAWFUL home (her law)
+  - {id: couch_l1,            room: living}
+  - {id: sideboard_l1,        room: living}    # the laptop's home
+  - {id: bed_b1,              room: bedroom}
+  - {id: nightstand_b1,       room: bedroom}   # her book shelf, spine out
+  - {id: bathroom_cabinet_ba1, room: bathroom} # the pill bottle's home
+  - {id: hook_board_e1,       room: entry}     # S6
+  - {id: hall_table_e1,       room: entry}     # charger station + his wallet
+  - {id: handbag_e1,          room: entry}     # her bag by the door
+  - {id: umbrella_stand_e1,   room: entry}
+  - {id: shed_bench_s1,       room: shed}      # maps to the scene's garage
+
+placements:
+  glasses_gordon_1:        {home: side_table_l1, p_misplace: 0.35,        # S4: armchair pair
+                            misplace_set: [armchair_l1, kitchen_table_k1, couch_l1]}
+  glasses_gordon_2:        {home: kitchen_table_k1, p_misplace: 0.3,      # S4: kitchen pair,
+                            misplace_set: [shed_bench_s1, counter_k1, side_table_l1]}  # pocket-drifts to the shed
+  glasses_gordon_3:        {home: shed_bench_s1, p_misplace: 0.25,        # S4: shed pair —
+                            misplace_set: [hall_table_e1, kitchen_table_k1, armchair_l1]}  # missing for days
+  glasses_meilin:          {home: 'person:resident_2', static: true}      # chain around her neck; never lost
+  remote_tv:               {home: tv_drawer_l1}                           # S2: HER definition of home
+  pen_crossword:           {home: newspaper_rack_k1}                      # guarded
+  medication_bottle_gordon: {home: bathroom_cabinet_ba1}                  # S1: position IS the reminder
+  mug_gordon:              {home: cupboard_k1}
+  mug_meilin:              {home: cupboard_k1}
+  bowl_1:                  {home: cupboard_k1}
+  bowl_2:                  {home: cupboard_k1}
+  plate_1:                 {home: cupboard_k1}
+  plate_2:                 {home: cupboard_k1}
+  laptop_shared:           {home: sideboard_l1}                           # she carries, he refuses
+  book_meilin:             {home: nightstand_b1}                          # S7
+  book_gordon:             {home: side_table_l1, p_misplace: 0.2,
+                            misplace_set: [shed_bench_s1, armchair_l1]}
+  phone_gordon:            {home: hall_table_e1, p_misplace: 0.3,         # ignored, wanders
+                            misplace_set: [shed_bench_s1, side_table_l1, kitchen_table_k1]}
+  phone_meilin:            {home: 'person:resident_2', p_misplace: 0.2,   # cardigan pocket; set
+                            misplace_set: [kitchen_table_k1, counter_k1, hall_table_e1]}  # down while cooking
+  charger_hall:            {home: hall_table_e1, static: true}            # the station she established
+  keys_gordon:             {home: hook_board_e1}                          # S6, forty years
+  keys_meilin:             {home: hook_board_e1}
+  wallet_gordon:           {home: hall_table_e1}
+  wallet_meilin:           {home: handbag_e1}
+  blanket_couch:           {home: couch_l1}                               # S8
+  umbrella_1:              {home: umbrella_stand_e1}
+  notebook_meilin:         {home: kitchen_table_k1}                       # shopping list HQ
+
+object_motions:
+
+  # ---------------- mornings: the systems boot up ----------------
+  wake_breakfast:                        # S1: she sets the table AND the relay
+    at: kitchen_table_k1
+    jitter: routine
+    during:
+      medication_bottle_gordon: kitchen_table_k1   # slid next to his bowl
+      bowl_1: kitchen_table_k1
+      bowl_2: kitchen_table_k1
+      pen_crossword: kitchen_table_k1              # crossword laid out for later
+    after:
+      bowl_1: {dest: sink_k1}
+      bowl_2: {dest: sink_k1}
+      # S1 second leg: SHE returns the bottle — almost always
+      medication_bottle_gordon: {dest: bathroom_cabinet_ba1, p: 0.9,
+                                 else: kitchen_table_k1}
+  washup_breakfast: &washup             # S3: immediate, every meal, his
+    at: sink_k1
+    jitter: routine
+    during: {}
+    after:
+      bowl_1:  {dest: dish_rack_k1, only_from: [sink_k1]}
+      bowl_2:  {dest: dish_rack_k1, only_from: [sink_k1]}
+      plate_1: {dest: dish_rack_k1, only_from: [sink_k1]}
+      plate_2: {dest: dish_rack_k1, only_from: [sink_k1]}
+      mug_gordon: {dest: dish_rack_k1, only_from: [sink_k1]}
+      mug_meilin: {dest: dish_rack_k1, only_from: [sink_k1]}
+  washup_lunch: *washup
+  washup_dinner: *washup
+  washup_roast: *washup
+  washup_meilin: *washup                # cold week: same sink, other hands
+  morning_walk_g:                       # keys off the peg, back on the peg
+    at: ELSEWHERE
+    jitter: routine
+    during:
+      keys_gordon: ELSEWHERE
+    after:
+      keys_gordon: {dest: hook_board_e1}                       # S6: always
+      umbrella_1: {dest: umbrella_stand_e1, only_from: [ELSEWHERE]}
+  morning_walk_m:
+    at: ELSEWHERE
+    jitter: routine
+    during:
+      keys_meilin: ELSEWHERE
+      umbrella_1: ELSEWHERE             # she carries it when the sky looks wrong
+    after:
+      keys_meilin: {dest: hook_board_e1, p: 0.8, else: handbag_e1}
+
+  # ---------------- his mornings ----------------
+  shed_morning:
+    at: shed_bench_s1
+    jitter: flexible
+    during:
+      book_gordon: shed_bench_s1        # manuals come out to the bench
+    after:
+      book_gordon: {dist: {shed_bench_s1: 0.5, side_table_l1: 0.5}}
+      glasses_gordon_3: {dist: {shed_bench_s1: 0.55, kitchen_table_k1: 0.25,
+                                hall_table_e1: 0.2}}   # S4: the shed pair wanders
+  crossword_time:                       # her HQ; the pen comes out and GOES BACK
+    at: kitchen_table_k1
+    jitter: routine
+    during:
+      pen_crossword: kitchen_table_k1
+      notebook_meilin: kitchen_table_k1
+    after:
+      pen_crossword: {dest: newspaper_rack_k1, p: 0.92, else: kitchen_table_k1}  # guarded
+  tea_delivery:                         # S5: her mug arrives at her HQ, unasked
+    at: kitchen_table_k1
+    jitter: routine
+    during:
+      mug_meilin: kitchen_table_k1
+      mug_gordon: armchair_l1           # his rides along to the chair
+    after:
+      mug_meilin: {dest: sink_k1, p: 0.7, else: kitchen_table_k1}
+      mug_gordon: {dest: sink_k1, p: 0.6, else: side_table_l1}
+  tea_fetch_meilin:                     # cold week inversion: she brings HIS tea
+    at: armchair_l1
+    jitter: routine
+    during:
+      mug_gordon: side_table_l1
+      mug_meilin: kitchen_table_k1
+    after:
+      mug_gordon: {dest: sink_k1, p: 0.7, else: side_table_l1}
+      mug_meilin: {dest: sink_k1, p: 0.7, else: kitchen_table_k1}
+
+  # ---------------- meals ----------------
+  lunch_together: &meal
+    at: kitchen_table_k1
+    jitter: routine
+    during:
+      plate_1: kitchen_table_k1
+      plate_2: kitchen_table_k1
+    after:
+      plate_1: {dest: sink_k1}          # straight to the sink for S3
+      plate_2: {dest: sink_k1}
+  dinner_together: *meal
+  roast_prep:
+    at: counter_k1
+    jitter: flexible
+    during:
+      plate_1: counter_k1
+      plate_2: counter_k1
+      bowl_1: counter_k1
+      bowl_2: counter_k1
+    after: {}
+  sunday_roast:                         # everything out at once
+    at: kitchen_table_k1
+    jitter: routine
+    during:
+      plate_1: kitchen_table_k1
+      plate_2: kitchen_table_k1
+      bowl_1: kitchen_table_k1
+      bowl_2: kitchen_table_k1
+      mug_gordon: kitchen_table_k1
+      mug_meilin: kitchen_table_k1
+    after:
+      plate_1: {dest: sink_k1}
+      plate_2: {dest: sink_k1}
+      bowl_1: {dest: sink_k1}
+      bowl_2: {dest: sink_k1}
+      mug_gordon: {dest: sink_k1}
+      mug_meilin: {dest: sink_k1}
+
+  # ---------------- afternoons ----------------
+  afternoon_nap:                        # S8 setup: he naps under the throw,
+    at: couch_l1                        # telly murmuring — S2: he takes the
+    jitter: flexible                    # remote back out EVERY afternoon
+    during:
+      blanket_couch: couch_l1
+      glasses_gordon_1: side_table_l1   # glasses off to nap
+      remote_tv: armchair_l1            # reclaimed from the drawer
+    after:
+      blanket_couch: {dist: {couch_l1: 0.6, armchair_l1: 0.4}}   # dragged along half the time
+  kitchen_afternoon:                    # her puttering: rack -> cupboard put-away
+    at: kitchen_table_k1
+    jitter: flexible
+    during: {}
+    after:
+      bowl_1:  {dest: cupboard_k1, only_from: [dish_rack_k1]}
+      bowl_2:  {dest: cupboard_k1, only_from: [dish_rack_k1]}
+      plate_1: {dest: cupboard_k1, only_from: [dish_rack_k1]}
+      plate_2: {dest: cupboard_k1, only_from: [dish_rack_k1]}
+      mug_gordon: {dest: cupboard_k1, only_from: [dish_rack_k1]}
+      mug_meilin: {dest: cupboard_k1, only_from: [dish_rack_k1]}
+  blanket_refold:                       # S8: into thirds, every pass
+    at: couch_l1
+    jitter: routine
+    during: {}
+    after:
+      blanket_couch: {dest: couch_l1, p: 0.95, else: armchair_l1}
+  errands_meilin:                       # handbag system: wallet lives in it
+    at: ELSEWHERE
+    jitter: flexible
+    during:
+      keys_meilin: ELSEWHERE
+      wallet_meilin: ELSEWHERE
+      notebook_meilin: ELSEWHERE        # the shopping list goes along
+    after:
+      keys_meilin: {dest: handbag_e1, p: 0.6, else: hook_board_e1}
+      wallet_meilin: {dest: handbag_e1}
+      notebook_meilin: {dest: kitchen_table_k1, p: 0.8, else: handbag_e1}
+  library_run:
+    at: ELSEWHERE
+    jitter: flexible
+    during:
+      keys_meilin: ELSEWHERE
+      wallet_meilin: ELSEWHERE
+      book_meilin: ELSEWHERE            # the novel goes back
+    after:
+      keys_meilin: {dest: hook_board_e1}
+      wallet_meilin: {dest: handbag_e1}
+      book_meilin: {dest: nightstand_b1}   # S7: the NEW novel, straight to its shelf
+  video_call:                           # her laptop protocol, to the letter
+    at: kitchen_table_k1
+    jitter: routine
+    during:
+      laptop_shared: kitchen_table_k1
+    after:
+      laptop_shared: {dest: sideboard_l1}  # "the moment the call ends"
+  garden_afternoon:
+    at: shed_bench_s1
+    jitter: flexible
+    during:
+      keys_gordon: 'person:resident_1'  # shed key on his belt all afternoon
+    after:
+      keys_gordon: {dest: hook_board_e1}
+      glasses_gordon_3: {dist: {shed_bench_s1: 0.6, hall_table_e1: 0.4}}
+  shed_afternoon:
+    at: shed_bench_s1
+    jitter: flexible
+    during: {}
+    after:
+      book_gordon: {dist: {shed_bench_s1: 0.4, side_table_l1: 0.6}}
+      glasses_gordon_2: {dest: kitchen_table_k1, p: 0.6, else: shed_bench_s1,
+                         only_from: [shed_bench_s1]}   # pocket ride home, usually
+  armchair_reading:
+    at: armchair_l1
+    jitter: flexible
+    during:
+      book_gordon: armchair_l1
+      glasses_gordon_1: armchair_l1
+    after:
+      book_gordon: {dist: {side_table_l1: 0.6, armchair_l1: 0.4}}
+      glasses_gordon_1: {dest: side_table_l1, p: 0.7, else: armchair_l1}
+  sick_armchair:                        # the cold: camped with blanket + manuals
+    at: armchair_l1
+    jitter: loose
+    during:
+      blanket_couch: armchair_l1
+      book_gordon: armchair_l1
+      glasses_gordon_1: armchair_l1
+      remote_tv: armchair_l1            # daytime telly rights, uncontested
+    after:
+      glasses_gordon_1: {dist: {side_table_l1: 0.5, armchair_l1: 0.5}}
+  jigsaw_hour:                          # spare room isn't modeled; the table hosts it
+    at: kitchen_table_k1
+    jitter: flexible
+    during:
+      glasses_gordon_2: kitchen_table_k1
+    after:
+      glasses_gordon_2: {dest: kitchen_table_k1, p: 0.7, else: side_table_l1}
+
+  # ---------------- evenings: the remote's commute ----------------
+  tv_evening:                           # S2, his move
+    at: armchair_l1
+    jitter: routine
+    during:
+      remote_tv: armchair_l1            # stationed on the chair arm
+      glasses_gordon_1: armchair_l1
+    after:
+      glasses_gordon_1: {dest: side_table_l1, p: 0.6, else: armchair_l1}
+  remote_repatriation:                  # S2, her countermove, nightly
+    at: tv_drawer_l1
+    jitter: external                    # the one thing she does with contractual precision
+    during: {}
+    after:
+      remote_tv: {dest: tv_drawer_l1, p: 0.95, else: armchair_l1}   # rare surrender
+  bed_reading:                          # S7
+    at: bed_b1
+    jitter: routine
+    during:
+      book_meilin: bed_b1
+      phone_meilin: nightstand_b1       # off the cardigan for the night
+    after:
+      book_meilin: {dest: nightstand_b1}   # never face-down, never the floor
+  gordon_bedtime:
+    at: bed_b1
+    jitter: routine
+    during: {}
+    after:
+      glasses_gordon_1: {dest: side_table_l1, p: 0.8, else: nightstand_b1}
+  sleep_gordon:  {at: bed_b1, jitter: routine, during: {}, after: {}}
+  sleep_meilin:
+    at: bed_b1
+    jitter: routine
+    during: {}
+    after:
+      phone_meilin: {dest: 'person:resident_2', only_from: [nightstand_b1]}  # back in the cardigan at dawn
+
+  # ---------------- weekly outings (both leave) ----------------
+  market_g: &gordon_out
+    at: ELSEWHERE
+    jitter: routine
+    during:
+      keys_gordon: ELSEWHERE
+      wallet_gordon: ELSEWHERE
+    after:
+      keys_gordon: {dest: hook_board_e1}
+      wallet_gordon: {dest: hall_table_e1}
+  doctor_g: *gordon_out
+  anniversary_g: *gordon_out
+  market_m: &meilin_out
+    at: ELSEWHERE
+    jitter: routine
+    during:
+      keys_meilin: ELSEWHERE
+      wallet_meilin: ELSEWHERE
+    after:
+      keys_meilin: {dest: hook_board_e1, p: 0.8, else: handbag_e1}
+      wallet_meilin: {dest: handbag_e1}
+  doctor_m: *meilin_out
+  anniversary_m: *meilin_out
+
+  # ---------------- week 3: the visit ----------------
+  spring_clean:                         # her sweep: near-total, every room
+    at: kitchen_table_k1
+    jitter: routine
+    reset_all:
+      p: 0.9
+      objects: [remote_tv, pen_crossword, blanket_couch, book_meilin,
+                book_gordon, glasses_gordon_1, glasses_gordon_2, phone_gordon,
+                notebook_meilin, laptop_shared, mug_gordon, mug_meilin,
+                bowl_1, bowl_2, plate_1, plate_2, umbrella_1, wallet_gordon,
+                keys_gordon, keys_meilin]
+    during: {}
+    after: {}
+  shed_tidy:                            # his half of the treaty
+    at: shed_bench_s1
+    jitter: flexible
+    during: {}
+    after:
+      glasses_gordon_3: {dest: shed_bench_s1}
+      book_gordon: {dest: side_table_l1, p: 0.6, else: shed_bench_s1}
+  visit_prep:
+    at: sideboard_l1
+    jitter: routine
+    during:
+      laptop_shared: kitchen_table_k1   # out for photos all day
+    after: {}
+  grandkids_visit:                      # his post: the armchair; chaos radiates
+    at: armchair_l1
+    jitter: loose
+    during:
+      remote_tv: couch_l1               # cartoons, then it sinks
+      blanket_couch: couch_l1           # fort material
+    after:
+      remote_tv: {dist: {couch_l1: 0.6, armchair_l1: 0.4}}
+      blanket_couch: {dist: {couch_l1: 0.5, armchair_l1: 0.3, bed_b1: 0.2}}
+      glasses_gordon_1: {dist: {armchair_l1: 0.5, couch_l1: 0.3, kitchen_table_k1: 0.2}}
+  grandkids_hosting:                    # her kitchen never closes
+    at: kitchen_table_k1
+    jitter: loose
+    during:
+      plate_1: kitchen_table_k1
+      plate_2: kitchen_table_k1
+      bowl_1: kitchen_table_k1
+      bowl_2: kitchen_table_k1
+      mug_meilin: kitchen_table_k1
+    after:
+      plate_1: {dest: sink_k1}
+      plate_2: {dest: sink_k1}
+      bowl_1: {dest: sink_k1}
+      bowl_2: {dest: sink_k1}
+  visit_cleanup:                        # partial, unusually for her
+    at: couch_l1
+    jitter: routine
+    reset_all:
+      p: 0.5
+      objects: [remote_tv, blanket_couch, glasses_gordon_1, mug_meilin,
+                laptop_shared, pen_crossword]
+    during: {}
+    after: {}
+  post_visit_reset:                     # the morning after: one correct home each
+    at: kitchen_table_k1
+    jitter: routine
+    reset_all:
+      p: 0.9
+      objects: [remote_tv, blanket_couch, glasses_gordon_1, glasses_gordon_2,
+                book_gordon, book_meilin, laptop_shared, pen_crossword,
+                notebook_meilin, mug_gordon, mug_meilin]
+    during: {}
+    after: {}

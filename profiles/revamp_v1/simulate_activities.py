@@ -14,8 +14,15 @@ Timing model: each activity's realized start is its authored time plus
 seeded jitter (same CASAS-calibrated classes as before, scaled by the
 resident's punctuality persona), CLAMPED to preserve the authored order —
 the calendar is the story, jitter only blurs it. A block runs until the
-next block starts, so the author never writes end times and blocks cannot
-overlap by construction.
+SAME resident's next block starts, so the author never writes end times.
+
+Multi-resident households: each calendar item may carry `r: <resident_id>`
+(default: the first resident). Residents' sequences are realized
+independently, so their blocks overlap freely in time — Gordon can nap
+while Mei-Lin runs errands — and each block's object rules fire with that
+block, tidy walks pacing by the acting resident's own jitter_scale. A
+shared moment is written as one block per participant, owned by whoever's
+objects move (the persona's chore treaty usually decides).
 
 Object rules per activity (`during` at start, `after` at end) use the same
 vocabulary as the retired spec: {dest}, {dest, p, else}, {dist}, optional
@@ -112,6 +119,13 @@ def validate(acts: dict, motions: dict) -> None:
     recs = {r["id"] for r in motions["receptacles"]}
     residents = {r["id"] for r in motions["residents"]}
     locs = recs | {ELSEWHERE} | {PERSON + r for r in residents}
+    default_r = motions["residents"][0]["id"]
+    for day in acts["calendar"]:
+        for item in day["activities"]:
+            rid = item.get("r", default_r)
+            assert rid in residents, (
+                f"day {day['day']}: activity {item['a']} names unknown "
+                f"resident {rid!r}")
     objs = set(motions["placements"])
     defined = set(motions["object_motions"])
     used = {a["a"] for day in acts["calendar"] for a in day["activities"]}
@@ -150,31 +164,43 @@ def validate(acts: dict, motions: dict) -> None:
 
 def realize(acts: dict, motions: dict, rng: random.Random,
             days: int) -> list[dict]:
-    """Authored calendar -> jittered, strictly ordered, end-stamped blocks."""
-    scale = motions["residents"][0].get("jitter_scale", 1.0)
-    assert 0.5 <= scale <= 2.0, f"jitter_scale {scale} outside [0.5, 2.0]"
-    raw: list[tuple[int, str, str]] = []
+    """Authored calendar -> jittered blocks; order preserved PER RESIDENT."""
+    scales = {r["id"]: r.get("jitter_scale", 1.0) for r in motions["residents"]}
+    for rid, scale in scales.items():
+        assert 0.5 <= scale <= 2.0, \
+            f"{rid}: jitter_scale {scale} outside [0.5, 2.0]"
+    default_r = motions["residents"][0]["id"]
+    per_resident: dict[str, list[tuple[int, str, str]]] = {}
     for entry in acts["calendar"]:
         for item in entry["activities"]:
             minute, plus = hhmm(item["t"])
-            raw.append((entry["day"] * 1440 + minute + 1440 * plus,
-                        item["a"], item.get("note", "")))
-    raw.sort(key=lambda b: b[0])
+            per_resident.setdefault(item.get("r", default_r), []).append(
+                (entry["day"] * 1440 + minute + 1440 * plus,
+                 item["a"], item.get("note", "")))
 
     blocks: list[dict] = []
-    for i, (t0, name, note) in enumerate(raw):
-        cls = motions["object_motions"][name].get("jitter", "routine")
-        sigma = JITTER_CLASSES[cls] * scale
-        offset = round(max(-2.5 * sigma, min(2.5 * sigma, rng.gauss(0, sigma))))
-        # Clamp into the open interval between neighbours: the authored
-        # sequence is the story and must survive jitter intact.
-        lo = blocks[-1]["t0"] + 1 if blocks else 0
-        hi = raw[i + 1][0] - 1 if i + 1 < len(raw) else days * 1440
-        blocks.append({"activity": name, "note": note,
-                       "t0": max(lo, min(hi, t0 + offset))})
-    for i, b in enumerate(blocks):
-        b["t1"] = blocks[i + 1]["t0"] if i + 1 < len(blocks) else days * 1440
-        b["at"] = motions["object_motions"][b["activity"]].get("at")
+    # Deterministic resident order; each resident draws from the shared rng
+    # in that order, so runs stay reproducible.
+    for rid in sorted(per_resident):
+        raw = sorted(per_resident[rid], key=lambda b: b[0])
+        mine: list[dict] = []
+        for i, (t0, name, note) in enumerate(raw):
+            cls = motions["object_motions"][name].get("jitter", "routine")
+            sigma = JITTER_CLASSES[cls] * scales[rid]
+            offset = round(max(-2.5 * sigma,
+                               min(2.5 * sigma, rng.gauss(0, sigma))))
+            # Clamp into the open interval between this resident's
+            # neighbours: the authored sequence is the story and must
+            # survive jitter intact.
+            lo = mine[-1]["t0"] + 1 if mine else 0
+            hi = raw[i + 1][0] - 1 if i + 1 < len(raw) else days * 1440
+            mine.append({"activity": name, "note": note, "resident": rid,
+                         "t0": max(lo, min(hi, t0 + offset))})
+        for i, b in enumerate(mine):
+            b["t1"] = mine[i + 1]["t0"] if i + 1 < len(mine) else days * 1440
+            b["at"] = motions["object_motions"][b["activity"]].get("at")
+        blocks += mine
+    blocks.sort(key=lambda b: b["t0"])
     return [b for b in blocks if b["t0"] < days * 1440]
 
 
@@ -207,7 +233,8 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
     pos = {obj: p["home"] for obj, p in placements.items()}
     statics = {o for o, p in placements.items() if p.get("static")}
     rec_order = {r["id"]: i for i, r in enumerate(motions["receptacles"])}
-    scale = motions["residents"][0].get("jitter_scale", 1.0)
+    scales = {r["id"]: r.get("jitter_scale", 1.0)
+              for r in motions["residents"]}
     horizon = days * 1440
     log: list[dict] = []
     stats = {"tidy_bouts": 0, "tidy_moved": 0, "tidy_ran_out_of_time": 0,
@@ -227,23 +254,33 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
                         "from": pos[obj], "to": dest, "by": by})
             pos[obj] = dest
 
+    obj_order = {o: i for i, o in enumerate(placements)}
+
     def plan_tidy(block, cfg):
-        """Timed nearest-first walk, bounded by the block's own duration."""
+        """Timed nearest-first walk, bounded by the block's own duration.
+
+        Candidates keep the placements-declaration order, and distance
+        ties break on it: building the list from a set made the walk
+        depend on interpreter hash randomization — two runs of the same
+        (spec, seed) tidied sink dishes in different orders.
+        """
         scope = set(cfg.get("objects", placements))
-        cands = [o for o in scope
-                 if o not in statics
+        cands = [o for o in placements
+                 if o in scope
+                 and o not in statics
                  and not placements[o]["home"].startswith(PERSON)
                  and pos[o] not in (ELSEWHERE, placements[o]["home"])
                  and not pos[o].startswith(PERSON)]
         stats["tidy_bouts"] += 1
         t, here = block["t0"], block["at"]
         while cands:
-            cands.sort(key=lambda o: abs(rec_order.get(pos[o], 99)
-                                         - rec_order.get(here, 0)))
+            cands.sort(key=lambda o: (abs(rec_order.get(pos[o], 99)
+                                          - rec_order.get(here, 0)),
+                                      obj_order[o]))
             obj = cands.pop(0)
             if rng.random() >= cfg["p"]:
                 continue
-            t += rng.uniform(TIDY_MIN, TIDY_MAX) * scale
+            t += rng.uniform(TIDY_MIN, TIDY_MAX) * scales[block["resident"]]
             if t >= block["t1"]:
                 stats["tidy_ran_out_of_time"] += 1
                 break
@@ -316,11 +353,10 @@ def write_outputs(out: pathlib.Path, motions: dict, log, hourly, blocks,
         w.writerow(["t", "stamp"] + objects)
         for row in hourly:
             w.writerow([row["t"], row["stamp"]] + [row[o] for o in objects])
-    resident = motions["residents"][0]["id"]
     with open(out / "residents.jsonl", "w") as f:
         for b in blocks:
             f.write(json.dumps({
-                "resident": resident, "activity": b["activity"],
+                "resident": b["resident"], "activity": b["activity"],
                 "t0": int(max(b["t0"], 0)), "t1": int(min(b["t1"], days * 1440)),
                 "at": b["at"], "note": b["note"]}) + "\n")
     moves: dict[str, int] = {}

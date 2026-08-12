@@ -1,0 +1,328 @@
+# Stage-2a ACTIVITY CALENDAR for hh3 — Gordon & Mei-Lin Chu, 21 days.
+# Two-resident calendar: each item carries r: resident_1 (Gordon, default)
+# or resident_2 (Mei-Lin). Shared moments are one block per participant,
+# owned by whoever's objects move (the persona's chore treaty decides:
+# Mei-Lin sets the table, pills, laptop, remote-repatriation; Gordon does
+# every washing-up, the shed, the tea delivery). Day 0 = Monday.
+#
+# Design intent (charter-faithful):
+#   - The HOUSEHOLD SYSTEMS are invariant: pill relay at breakfast, Gordon's
+#     immediate washing-up after every meal, tea delivery mid-morning, the
+#     remote's daily commute (his chair arm by day, her drawer by night).
+#   - Variation lives in which pair of Gordon's glasses is missing, her
+#     errand/call days, and three weekly arcs.
+
+household: hh_003
+days: 21
+day0: Monday
+
+narrative_arcs:
+  - "W1 baseline: walks, shed mornings, Tue/Fri errands, Wed video call, Thu library run, Sunday roast."
+  - "W2 disruption: Gordon's cold (days 9-11: no shed, extra naps, Mei-Lin fetches the tea and washes up — treaty suspended); day 10 doctor visit together; shed pair of glasses goes missing all week."
+  - "W3 the grandchildren: spring clean day 16, visit day 17 (Sat, house upended), recovery + long call day 18, anniversary dinner out day 19, quiet Sunday 20."
+
+# Weekday template (varied per day below):
+#  06:45 r2 wake_breakfast (crossword out, pill bottle to the table)
+#  07:35 r1 washup_breakfast     08:05 both morning_walk (own blocks)
+#  09:10 r1 shed_morning | r2 crossword_time
+#  10:30 r1 tea_delivery         12:30 r2 lunch_together  13:20 r1 washup_lunch
+#  14:00 r1 afternoon_nap | r2 errands/call/kitchen
+#  15:45 r2 blanket_refold       16:15 r1 shed_afternoon
+#  18:00 r2 dinner_together      18:50 r1 washup_dinner
+#  19:30 r1 tv_evening           21:45 r2 remote_repatriation
+#  22:00 r2 bed_reading          22:10 r1 gordon_bedtime
+#  22:40 sleep (both)
+
+calendar:
+  - {day: 0, weekday: Mon, story: "clean baseline day",
+     activities: [
+       {t: "06:45", a: wake_breakfast, r: resident_2}, {t: "07:35", a: washup_breakfast},
+       {t: "08:05", a: morning_walk_g}, {t: "08:05", a: morning_walk_m, r: resident_2},
+       {t: "09:10", a: shed_morning}, {t: "09:15", a: crossword_time, r: resident_2},
+       {t: "10:30", a: tea_delivery}, {t: "12:30", a: lunch_together, r: resident_2},
+       {t: "13:20", a: washup_lunch}, {t: "14:00", a: afternoon_nap},
+       {t: "14:10", a: kitchen_afternoon, r: resident_2}, {t: "15:45", a: blanket_refold, r: resident_2},
+       {t: "16:15", a: shed_afternoon}, {t: "18:00", a: dinner_together, r: resident_2},
+       {t: "18:50", a: washup_dinner}, {t: "19:30", a: tv_evening},
+       {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 1, weekday: Tue, story: "her errand day; his kitchen glasses ride to the shed in a shirt pocket",
+     activities: [
+       {t: "06:45", a: wake_breakfast, r: resident_2}, {t: "07:35", a: washup_breakfast},
+       {t: "08:05", a: morning_walk_g}, {t: "08:05", a: morning_walk_m, r: resident_2},
+       {t: "09:10", a: shed_morning, note: "kitchen glasses pocketed to the shed"},
+       {t: "09:15", a: crossword_time, r: resident_2},
+       {t: "10:30", a: tea_delivery}, {t: "12:30", a: lunch_together, r: resident_2},
+       {t: "13:20", a: washup_lunch},
+       {t: "14:00", a: errands_meilin, r: resident_2, note: "shops + library drop, 2h"},
+       {t: "14:05", a: afternoon_nap}, {t: "16:20", a: blanket_refold, r: resident_2},
+       {t: "16:30", a: shed_afternoon}, {t: "18:00", a: dinner_together, r: resident_2},
+       {t: "18:50", a: washup_dinner}, {t: "19:30", a: tv_evening},
+       {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 2, weekday: Wed, story: "video call with the grandchildren",
+     activities: [
+       {t: "06:45", a: wake_breakfast, r: resident_2}, {t: "07:35", a: washup_breakfast},
+       {t: "08:05", a: morning_walk_g}, {t: "08:05", a: morning_walk_m, r: resident_2},
+       {t: "09:10", a: shed_morning}, {t: "09:15", a: crossword_time, r: resident_2},
+       {t: "10:30", a: tea_delivery}, {t: "12:30", a: lunch_together, r: resident_2},
+       {t: "13:20", a: washup_lunch},
+       {t: "14:00", a: video_call, r: resident_2, note: "laptop sideboard -> kitchen table -> back"},
+       {t: "14:05", a: afternoon_nap}, {t: "15:45", a: blanket_refold, r: resident_2},
+       {t: "16:15", a: shed_afternoon}, {t: "18:00", a: dinner_together, r: resident_2},
+       {t: "18:50", a: washup_dinner}, {t: "19:30", a: tv_evening},
+       {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 3, weekday: Thu, story: "library run: her novel swapped; he reads manuals in the armchair instead of shed",
+     activities: [
+       {t: "06:45", a: wake_breakfast, r: resident_2}, {t: "07:35", a: washup_breakfast},
+       {t: "08:05", a: morning_walk_g}, {t: "08:05", a: morning_walk_m, r: resident_2},
+       {t: "09:10", a: armchair_reading, note: "manuals down from the shed"},
+       {t: "09:15", a: crossword_time, r: resident_2},
+       {t: "10:30", a: tea_delivery}, {t: "12:30", a: lunch_together, r: resident_2},
+       {t: "13:20", a: washup_lunch},
+       {t: "14:00", a: library_run, r: resident_2, note: "novel returned, new one home"},
+       {t: "14:05", a: afternoon_nap}, {t: "16:20", a: blanket_refold, r: resident_2},
+       {t: "16:30", a: shed_afternoon}, {t: "18:00", a: dinner_together, r: resident_2},
+       {t: "18:50", a: washup_dinner}, {t: "19:30", a: tv_evening},
+       {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 4, weekday: Fri, story: "errand day again; shed glasses already wandering",
+     activities: [
+       {t: "06:45", a: wake_breakfast, r: resident_2}, {t: "07:35", a: washup_breakfast},
+       {t: "08:05", a: morning_walk_g}, {t: "08:05", a: morning_walk_m, r: resident_2},
+       {t: "09:10", a: shed_morning}, {t: "09:15", a: crossword_time, r: resident_2},
+       {t: "10:30", a: tea_delivery}, {t: "12:30", a: lunch_together, r: resident_2},
+       {t: "13:20", a: washup_lunch},
+       {t: "14:00", a: errands_meilin, r: resident_2}, {t: "14:05", a: afternoon_nap},
+       {t: "16:20", a: blanket_refold, r: resident_2}, {t: "16:30", a: shed_afternoon},
+       {t: "18:00", a: dinner_together, r: resident_2}, {t: "18:50", a: washup_dinner},
+       {t: "19:30", a: tv_evening}, {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 5, weekday: Sat, story: "market morning together; jigsaw hour in the evening",
+     activities: [
+       {t: "07:00", a: wake_breakfast, r: resident_2}, {t: "07:50", a: washup_breakfast},
+       {t: "08:30", a: market_g, note: "both out; he drives"},
+       {t: "08:30", a: market_m, r: resident_2},
+       {t: "10:45", a: tea_delivery}, {t: "11:00", a: crossword_time, r: resident_2},
+       {t: "12:30", a: lunch_together, r: resident_2}, {t: "13:20", a: washup_lunch},
+       {t: "14:00", a: afternoon_nap}, {t: "14:10", a: kitchen_afternoon, r: resident_2},
+       {t: "15:45", a: blanket_refold, r: resident_2}, {t: "16:15", a: shed_afternoon},
+       {t: "18:00", a: dinner_together, r: resident_2}, {t: "18:50", a: washup_dinner},
+       {t: "19:30", a: jigsaw_hour, note: "quietly competitive; nobody admits being stuck"},
+       {t: "20:30", a: tv_evening}, {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 6, weekday: Sun, story: "Sunday roast — every dish out; long washing-up he refuses help with",
+     activities: [
+       {t: "07:00", a: wake_breakfast, r: resident_2}, {t: "07:50", a: washup_breakfast},
+       {t: "08:20", a: morning_walk_g}, {t: "08:20", a: morning_walk_m, r: resident_2},
+       {t: "09:30", a: shed_morning}, {t: "09:35", a: crossword_time, r: resident_2},
+       {t: "10:45", a: tea_delivery},
+       {t: "11:30", a: roast_prep, r: resident_2, note: "the big cook"},
+       {t: "13:00", a: sunday_roast, r: resident_2}, {t: "14:00", a: washup_roast, note: "the full sink, immediately"},
+       {t: "14:45", a: afternoon_nap}, {t: "15:00", a: video_call, r: resident_2},
+       {t: "16:30", a: blanket_refold, r: resident_2},
+       {t: "18:30", a: dinner_together, r: resident_2, note: "leftovers"},
+       {t: "19:10", a: washup_dinner}, {t: "19:40", a: tv_evening},
+       {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  # ---------------- WEEK 2 — the cold ----------------
+  - {day: 7, weekday: Mon, story: "Gordon sniffling on the walk; last normal shed day",
+     activities: [
+       {t: "06:45", a: wake_breakfast, r: resident_2}, {t: "07:35", a: washup_breakfast},
+       {t: "08:05", a: morning_walk_g}, {t: "08:05", a: morning_walk_m, r: resident_2},
+       {t: "09:10", a: shed_morning}, {t: "09:15", a: crossword_time, r: resident_2},
+       {t: "10:30", a: tea_delivery}, {t: "12:30", a: lunch_together, r: resident_2},
+       {t: "13:20", a: washup_lunch}, {t: "14:00", a: afternoon_nap},
+       {t: "14:10", a: kitchen_afternoon, r: resident_2},
+       {t: "15:45", a: blanket_refold, r: resident_2}, {t: "16:15", a: shed_afternoon},
+       {t: "18:00", a: dinner_together, r: resident_2}, {t: "18:50", a: washup_dinner},
+       {t: "19:30", a: tv_evening}, {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 8, weekday: Tue, story: "cold day 1: no walk, no shed; SHE fetches the tea and washes up — treaty suspended",
+     activities: [
+       {t: "07:00", a: wake_breakfast, r: resident_2}, {t: "07:50", a: washup_meilin, r: resident_2},
+       {t: "08:10", a: morning_walk_m, r: resident_2, note: "alone"},
+       {t: "09:15", a: crossword_time, r: resident_2},
+       {t: "09:20", a: sick_armchair, note: "blanket, manuals, dozing"},
+       {t: "10:30", a: tea_fetch_meilin, r: resident_2},
+       {t: "12:30", a: lunch_together, r: resident_2}, {t: "13:10", a: washup_meilin, r: resident_2},
+       {t: "13:30", a: afternoon_nap, note: "long"}, {t: "14:00", a: errands_meilin, r: resident_2, note: "pharmacy"},
+       {t: "16:20", a: blanket_refold, r: resident_2},
+       {t: "18:00", a: dinner_together, r: resident_2}, {t: "18:40", a: washup_meilin, r: resident_2},
+       {t: "19:30", a: tv_evening}, {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "21:50", a: gordon_bedtime, note: "early"},
+       {t: "22:20", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 9, weekday: Wed, story: "cold day 2: doctor visit together, then armchair",
+     activities: [
+       {t: "07:00", a: wake_breakfast, r: resident_2}, {t: "07:50", a: washup_meilin, r: resident_2},
+       {t: "09:40", a: doctor_g, note: "she drives him"}, {t: "09:40", a: doctor_m, r: resident_2},
+       {t: "11:15", a: sick_armchair}, {t: "11:20", a: crossword_time, r: resident_2},
+       {t: "12:30", a: lunch_together, r: resident_2}, {t: "13:10", a: washup_meilin, r: resident_2},
+       {t: "13:30", a: afternoon_nap}, {t: "14:10", a: kitchen_afternoon, r: resident_2},
+       {t: "16:20", a: blanket_refold, r: resident_2},
+       {t: "18:00", a: dinner_together, r: resident_2}, {t: "18:40", a: washup_meilin, r: resident_2},
+       {t: "19:30", a: tv_evening}, {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "21:50", a: gordon_bedtime},
+       {t: "22:20", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 10, weekday: Thu, story: "cold day 3: he insists on washing up again by evening — recovery",
+     activities: [
+       {t: "07:00", a: wake_breakfast, r: resident_2}, {t: "07:50", a: washup_meilin, r: resident_2},
+       {t: "08:10", a: morning_walk_m, r: resident_2},
+       {t: "09:20", a: sick_armchair}, {t: "09:25", a: crossword_time, r: resident_2},
+       {t: "10:30", a: tea_fetch_meilin, r: resident_2},
+       {t: "12:30", a: lunch_together, r: resident_2}, {t: "13:10", a: washup_meilin, r: resident_2},
+       {t: "13:30", a: afternoon_nap}, {t: "14:10", a: kitchen_afternoon, r: resident_2},
+       {t: "16:20", a: blanket_refold, r: resident_2},
+       {t: "18:00", a: dinner_together, r: resident_2},
+       {t: "18:50", a: washup_dinner, note: "back on duty, pointedly"},
+       {t: "19:30", a: tv_evening}, {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 11, weekday: Fri, story: "back to form; shed glasses finally FOUND (under a manual on the hall table)",
+     activities: [
+       {t: "06:45", a: wake_breakfast, r: resident_2}, {t: "07:35", a: washup_breakfast},
+       {t: "08:05", a: morning_walk_g}, {t: "08:05", a: morning_walk_m, r: resident_2},
+       {t: "09:10", a: shed_morning, note: "glasses restored to the shed bench"},
+       {t: "09:15", a: crossword_time, r: resident_2},
+       {t: "10:30", a: tea_delivery}, {t: "12:30", a: lunch_together, r: resident_2},
+       {t: "13:20", a: washup_lunch}, {t: "14:00", a: errands_meilin, r: resident_2},
+       {t: "14:05", a: afternoon_nap}, {t: "16:20", a: blanket_refold, r: resident_2},
+       {t: "16:30", a: shed_afternoon}, {t: "18:00", a: dinner_together, r: resident_2},
+       {t: "18:50", a: washup_dinner}, {t: "19:30", a: tv_evening},
+       {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 12, weekday: Sat, story: "market + garden afternoon (both outside, house still)",
+     activities: [
+       {t: "07:00", a: wake_breakfast, r: resident_2}, {t: "07:50", a: washup_breakfast},
+       {t: "08:30", a: market_g}, {t: "08:30", a: market_m, r: resident_2},
+       {t: "10:45", a: tea_delivery}, {t: "11:00", a: crossword_time, r: resident_2},
+       {t: "12:30", a: lunch_together, r: resident_2}, {t: "13:20", a: washup_lunch},
+       {t: "14:00", a: garden_afternoon, note: "yard is his by treaty"},
+       {t: "14:10", a: kitchen_afternoon, r: resident_2},
+       {t: "16:20", a: blanket_refold, r: resident_2},
+       {t: "18:00", a: dinner_together, r: resident_2}, {t: "18:50", a: washup_dinner},
+       {t: "19:30", a: jigsaw_hour}, {t: "20:30", a: tv_evening},
+       {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 13, weekday: Sun, story: "roast again; long call about NEXT week's visit",
+     activities: [
+       {t: "07:00", a: wake_breakfast, r: resident_2}, {t: "07:50", a: washup_breakfast},
+       {t: "08:20", a: morning_walk_g}, {t: "08:20", a: morning_walk_m, r: resident_2},
+       {t: "09:30", a: shed_morning}, {t: "09:35", a: crossword_time, r: resident_2},
+       {t: "10:45", a: tea_delivery}, {t: "11:30", a: roast_prep, r: resident_2},
+       {t: "13:00", a: sunday_roast, r: resident_2}, {t: "14:00", a: washup_roast},
+       {t: "14:45", a: afternoon_nap}, {t: "15:00", a: video_call, r: resident_2, note: "visit logistics"},
+       {t: "16:30", a: blanket_refold, r: resident_2},
+       {t: "18:30", a: dinner_together, r: resident_2}, {t: "19:10", a: washup_dinner},
+       {t: "19:40", a: tv_evening}, {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  # ---------------- WEEK 3 — the grandchildren ----------------
+  - {day: 14, weekday: Mon, story: "rain sets in (umbrella all week); normal rhythm",
+     activities: [
+       {t: "06:45", a: wake_breakfast, r: resident_2}, {t: "07:35", a: washup_breakfast},
+       {t: "08:05", a: morning_walk_g, note: "umbrella"}, {t: "08:05", a: morning_walk_m, r: resident_2},
+       {t: "09:10", a: shed_morning}, {t: "09:15", a: crossword_time, r: resident_2},
+       {t: "10:30", a: tea_delivery}, {t: "12:30", a: lunch_together, r: resident_2},
+       {t: "13:20", a: washup_lunch}, {t: "14:00", a: afternoon_nap},
+       {t: "14:10", a: kitchen_afternoon, r: resident_2},
+       {t: "15:45", a: blanket_refold, r: resident_2}, {t: "16:15", a: shed_afternoon},
+       {t: "18:00", a: dinner_together, r: resident_2}, {t: "18:50", a: washup_dinner},
+       {t: "19:30", a: tv_evening}, {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 15, weekday: Tue, story: "errands become visit-shopping; he clears shed projects",
+     activities: [
+       {t: "06:45", a: wake_breakfast, r: resident_2}, {t: "07:35", a: washup_breakfast},
+       {t: "08:05", a: morning_walk_g}, {t: "08:05", a: morning_walk_m, r: resident_2},
+       {t: "09:10", a: shed_morning}, {t: "09:15", a: crossword_time, r: resident_2},
+       {t: "10:30", a: tea_delivery}, {t: "12:30", a: lunch_together, r: resident_2},
+       {t: "13:20", a: washup_lunch},
+       {t: "14:00", a: errands_meilin, r: resident_2, note: "big visit shop, 2.5h"},
+       {t: "14:05", a: afternoon_nap}, {t: "16:40", a: blanket_refold, r: resident_2},
+       {t: "16:50", a: shed_afternoon}, {t: "18:00", a: dinner_together, r: resident_2},
+       {t: "18:50", a: washup_dinner}, {t: "19:30", a: tv_evening},
+       {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 16, weekday: Wed, story: "SPRING CLEAN for the visit — her sweep, his shed tidy; house at maximum order",
+     activities: [
+       {t: "06:45", a: wake_breakfast, r: resident_2}, {t: "07:35", a: washup_breakfast},
+       {t: "08:05", a: morning_walk_g}, {t: "08:05", a: morning_walk_m, r: resident_2},
+       {t: "09:00", a: spring_clean, r: resident_2, note: "90 min, every room"},
+       {t: "09:10", a: shed_tidy, note: "even the bench gets cleared"},
+       {t: "10:45", a: tea_delivery}, {t: "12:30", a: lunch_together, r: resident_2},
+       {t: "13:20", a: washup_lunch}, {t: "14:00", a: afternoon_nap},
+       {t: "14:10", a: kitchen_afternoon, r: resident_2},
+       {t: "15:45", a: blanket_refold, r: resident_2},
+       {t: "18:00", a: dinner_together, r: resident_2}, {t: "18:50", a: washup_dinner},
+       {t: "19:30", a: tv_evening}, {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 17, weekday: Thu, story: "THE VISIT: daughter + grandchildren all day; house upended, remote vanishes into the couch",
+     activities: [
+       {t: "06:30", a: wake_breakfast, r: resident_2}, {t: "07:20", a: washup_breakfast},
+       {t: "08:00", a: visit_prep, r: resident_2, note: "laptop out for photos, blanket fort risk assessed"},
+       {t: "10:00", a: grandkids_visit, note: "his post: armchair, storytelling"},
+       {t: "10:05", a: grandkids_hosting, r: resident_2, note: "kitchen never closes"},
+       {t: "13:00", a: lunch_together, r: resident_2, note: "six plates"},
+       {t: "14:00", a: washup_lunch, note: "mountain of dishes, still immediate"},
+       {t: "15:00", a: grandkids_visit, note: "round two"},
+       {t: "17:30", a: visit_cleanup, r: resident_2, note: "partial — she's tired, it can wait (rare)"},
+       {t: "18:30", a: dinner_together, r: resident_2, note: "leftovers, quiet"},
+       {t: "19:10", a: washup_meilin, r: resident_2, note: "he's asleep in the chair"},
+       {t: "19:30", a: tv_evening}, {t: "21:30", a: remote_repatriation, r: resident_2},
+       {t: "21:45", a: bed_reading, r: resident_2}, {t: "21:50", a: gordon_bedtime},
+       {t: "22:15", a: sleep_gordon}, {t: "22:30", a: sleep_meilin, r: resident_2}]}
+  - {day: 18, weekday: Fri, story: "recovery: slow morning, long thank-you call, the house finds its homes again",
+     activities: [
+       {t: "07:30", a: wake_breakfast, r: resident_2}, {t: "08:20", a: washup_breakfast},
+       {t: "09:00", a: morning_walk_g}, {t: "09:00", a: morning_walk_m, r: resident_2},
+       {t: "10:00", a: post_visit_reset, r: resident_2, note: "everything back to its one correct home"},
+       {t: "10:45", a: tea_delivery}, {t: "11:00", a: crossword_time, r: resident_2},
+       {t: "12:30", a: lunch_together, r: resident_2}, {t: "13:20", a: washup_lunch},
+       {t: "14:00", a: afternoon_nap}, {t: "14:30", a: video_call, r: resident_2, note: "long thank-you call"},
+       {t: "16:20", a: blanket_refold, r: resident_2}, {t: "16:30", a: shed_afternoon},
+       {t: "18:00", a: dinner_together, r: resident_2}, {t: "18:50", a: washup_dinner},
+       {t: "19:30", a: tv_evening}, {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
+  - {day: 19, weekday: Sat, story: "ANNIVERSARY: dinner out — both gone all evening, house dark",
+     activities: [
+       {t: "07:00", a: wake_breakfast, r: resident_2}, {t: "07:50", a: washup_breakfast},
+       {t: "08:30", a: market_g}, {t: "08:30", a: market_m, r: resident_2},
+       {t: "10:45", a: tea_delivery}, {t: "11:00", a: crossword_time, r: resident_2},
+       {t: "12:30", a: lunch_together, r: resident_2}, {t: "13:20", a: washup_lunch},
+       {t: "14:00", a: afternoon_nap}, {t: "14:10", a: kitchen_afternoon, r: resident_2},
+       {t: "16:20", a: blanket_refold, r: resident_2},
+       {t: "18:10", a: anniversary_g, note: "46 years; the good jacket"},
+       {t: "18:10", a: anniversary_m, r: resident_2},
+       {t: "21:40", a: tv_evening, note: "nightcap in front of the news"},
+       {t: "22:15", a: remote_repatriation, r: resident_2},
+       {t: "22:25", a: bed_reading, r: resident_2}, {t: "22:30", a: gordon_bedtime},
+       {t: "23:00", a: sleep_gordon}, {t: "23:10", a: sleep_meilin, r: resident_2}]}
+  - {day: 20, weekday: Sun, story: "quiet Sunday: small roast, jigsaw FINISHED (she claims the win)",
+     activities: [
+       {t: "07:00", a: wake_breakfast, r: resident_2}, {t: "07:50", a: washup_breakfast},
+       {t: "08:20", a: morning_walk_g}, {t: "08:20", a: morning_walk_m, r: resident_2},
+       {t: "09:30", a: shed_morning}, {t: "09:35", a: crossword_time, r: resident_2},
+       {t: "10:45", a: tea_delivery}, {t: "11:30", a: roast_prep, r: resident_2},
+       {t: "13:00", a: sunday_roast, r: resident_2}, {t: "14:00", a: washup_roast},
+       {t: "14:45", a: afternoon_nap}, {t: "15:00", a: video_call, r: resident_2},
+       {t: "16:30", a: blanket_refold, r: resident_2},
+       {t: "17:00", a: jigsaw_hour, note: "finished; framed debate begins"},
+       {t: "18:30", a: dinner_together, r: resident_2}, {t: "19:10", a: washup_dinner},
+       {t: "19:40", a: tv_evening}, {t: "21:45", a: remote_repatriation, r: resident_2},
+       {t: "22:00", a: bed_reading, r: resident_2}, {t: "22:10", a: gordon_bedtime},
+       {t: "22:40", a: sleep_gordon}, {t: "22:45", a: sleep_meilin, r: resident_2}]}
