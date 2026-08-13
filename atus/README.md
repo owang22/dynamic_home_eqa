@@ -36,6 +36,43 @@ records at 106, 51 banking at 111, 116 workouts at 112, sleeping at 9999).
 Three low-volume codes — 113, 115, 9998 — are marked `(inferred)` and are
 the ones a codebook should settle.
 
+## Home-collapsed view (`--home-only`)
+
+`home_blocks()` reduces a diary to what the object-tracking task cares
+about: full activity detail INSIDE the home, and everything else merged
+into single "out of house" spans however fragmented the diary was out
+there — the same way the simulated households model absence as one
+ELSEWHERE. Rules:
+
+* location is the respondent's home or yard → **home**;
+* location was not asked AND the activity is personal care (asleep,
+  washing, dressing) → **home** (ATUS never asks WHERE for these);
+* a not-asked record that is *not* personal care is a diary gap or data
+  code — the location **carries forward** from the previous block and the
+  row is flagged `*` / `location_imputed`, so the imputation is visible;
+* everything else → **out of house**, with consecutive spans merged.
+
+The commuter example goes from 25 records to 11 blocks: home until 06:53,
+out for 10.8 h, home for the evening with one 44-minute errand, asleep
+from 21:00.
+
+## No day-of-week in this extract
+
+`plot_diary.py` cannot split weekday from weekend: **the extract has no
+diary-day variable.** Checked three ways — no column in the person record
+carries the 1-7 field with ATUS's characteristic weekend oversampling
+(Sat and Sun each ~25% of diary days); CASEID encodes year and month but
+not a day-of-month (its chars 7-8 only ever run 01-12, and reading them
+as a date yields a weekday distribution nothing like the design); and the
+survey weights are continuous, with no bimodal split to exploit.
+
+To get it, add **DAY** (TUDIARYDAY) to the IPUMS extract and re-download —
+then the day-of-week is one field away and the weekday/weekend panels
+become trivial. Note that even then, ATUS interviews each respondent for a
+SINGLE day, so a weekday *and* weekend diary for the same household does
+not exist in ATUS at all; comparisons across day types are always across
+respondents.
+
 ## Relationship to the rest of the repo
 
 This is the real-data counterpart to `casas/` (CASAS gives labeled

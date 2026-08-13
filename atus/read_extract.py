@@ -185,6 +185,44 @@ ACTIVITY_LABELS: Dict[str, str] = {
 }
 
 
+PERSONAL_CARE = "01"
+"""Major category treated as at-home by definition (sleeping, grooming,
+health self-care): ATUS does not ask WHERE for these."""
+
+
+@dataclass(frozen=True)
+class Block:
+    """A home activity, or one merged span spent out of the house.
+
+    The home/away collapse keeps full activity detail INSIDE the home — the
+    only place object state can change — and reduces everything else to a
+    single "Out of house" span, however fragmented the diary was out there.
+    That matches how the simulated households model absence (one ELSEWHERE),
+    and it is what makes an ATUS day comparable to them.
+    """
+
+    start_min: int
+    stop_min: int
+    at_home: bool
+    code: str = ""
+    label: str = "Out of house"
+    imputed: bool = False        # location carried forward (see home_blocks)
+
+    @property
+    def duration(self) -> int:
+        return self.stop_min - self.start_min
+
+    @property
+    def start_hms(self) -> str:
+        m = self.start_min % DAY_MINUTES
+        return f"{m // 60:02d}:{m % 60:02d}"
+
+    @property
+    def stop_hms(self) -> str:
+        m = min(self.stop_min, DAY_END_MIN) % DAY_MINUTES
+        return f"{m // 60:02d}:{m % 60:02d}"
+
+
 @dataclass(frozen=True)
 class Activity:
     """One diary entry. Times are minutes since midnight of the diary day;
@@ -288,6 +326,65 @@ def validate(diaries: Dict[str, List[Activity]]) -> Dict[str, int]:
     return bad
 
 
+def home_blocks(acts: List[Activity]) -> List[Block]:
+    """Collapse a diary to home-detail plus merged out-of-house spans.
+
+    A record counts as at home when its location is the respondent's home
+    or yard, OR when location was not asked and the activity is personal
+    care (asleep, washing, dressing) — awake or not, that happens at home.
+    A not-asked record that is NOT personal care is a diary gap or data
+    code; its location carries forward from the previous block (the
+    respondent did not teleport) and the block is flagged ``imputed`` so
+    the imputation is never invisible.
+    """
+    blocks: List[Block] = []
+    at_home = True                      # diaries open at 04:00, asleep
+    for a in acts:
+        imputed = False
+        if a.where == HOME:
+            at_home = True
+        elif a.where >= 9000:
+            if a.code[:2] == PERSONAL_CARE:
+                at_home = True
+            else:
+                imputed = True          # keep the previous location
+        else:
+            at_home = False
+        stop = min(a.stop_min, DAY_END_MIN)
+        if at_home:
+            blocks.append(Block(start_min=a.start_min, stop_min=stop,
+                                at_home=True, code=a.code, label=a.label,
+                                imputed=imputed))
+        elif blocks and not blocks[-1].at_home:
+            prev = blocks[-1]           # merge consecutive time away
+            blocks[-1] = Block(start_min=prev.start_min, stop_min=stop,
+                               at_home=False,
+                               imputed=prev.imputed or imputed)
+        else:
+            blocks.append(Block(start_min=a.start_min, stop_min=stop,
+                                at_home=False, imputed=imputed))
+    return blocks
+
+
+def render_home_table(blocks: List[Block]) -> str:
+    """The collapsed view: home activities in detail, away as single spans."""
+    rows = [f"{'START':>5} {'STOP':>5} {'MIN':>4}  {'WHERE':<14} ACTIVITY",
+            "-" * 78]
+    for b in blocks:
+        where = "home/yard" if b.at_home else "OUT OF HOUSE"
+        flag = " *" if b.imputed else ""
+        rows.append(f"{b.start_hms:>5} {b.stop_hms:>5} {b.duration:>4}  "
+                    f"{where:<14} {b.label}{flag}")
+    home = sum(b.duration for b in blocks if b.at_home)
+    rows += ["-" * 78,
+             f"{len(blocks)} blocks · home {home / 60:.1f} h "
+             f"({home / 14.4:.0f}% of the day), out of house "
+             f"{(DAY_MINUTES - home) / 60:.1f} h"]
+    if any(b.imputed for b in blocks):
+        rows.append("* location carried forward across a diary gap/data code")
+    return "\n".join(rows)
+
+
 def render_table(acts: List[Activity]) -> str:
     rows = [f"{'#':>3}  {'START':>5} {'STOP':>5} {'MIN':>4}  "
             f"{'ACTIVITY':<44} {'CODE':<7} WHERE",
@@ -309,6 +406,8 @@ def main() -> None:
     ap.add_argument("--list", action="store_true",
                     help="show candidate diaries (most activities first)")
     ap.add_argument("--csv", type=pathlib.Path, default=None)
+    ap.add_argument("--home-only", action="store_true",
+                    help="collapse to home detail + merged out-of-house spans")
     args = ap.parse_args()
 
     diaries = by_case(args.extract)
@@ -328,6 +427,21 @@ def main() -> None:
             return
 
     acts = diaries[args.caseid]
+    if args.home_only:
+        blocks = home_blocks(acts)
+        print(f"\nDIARY (home-collapsed) — caseid {args.caseid}\n")
+        print(render_home_table(blocks))
+        if args.csv:
+            with open(args.csv, "w", newline="") as f:
+                w = csv.writer(f)
+                w.writerow(["start", "stop", "duration_min", "where",
+                            "activity_code", "activity", "location_imputed"])
+                for b in blocks:
+                    w.writerow([b.start_hms, b.stop_hms, b.duration,
+                                "home/yard" if b.at_home else "out_of_house",
+                                b.code, b.label, b.imputed])
+            print(f"\nwrote {args.csv}")
+        return
     print(f"\nDIARY — caseid {args.caseid} "
           f"({len(acts)} activities, 04:00 to 04:00)\n")
     print(render_table(acts))
