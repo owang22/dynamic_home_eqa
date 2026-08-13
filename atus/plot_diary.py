@@ -154,13 +154,15 @@ def main() -> None:
     ap.add_argument("--out", type=pathlib.Path, required=True)
     args = ap.parse_args()
 
-    diaries = by_case(args.extract)
     if args.panels:
         spec = [p.split("=", 1) for p in args.panels.split(":")]
     elif args.caseid:
         spec = [(f"respondent {args.caseid}", args.caseid)]
     else:
         raise SystemExit("give --caseid or --panels")
+    # Only materialize the requested diaries: the large extract holds 3.8 M
+    # activity records and a figure needs a handful.
+    diaries = by_case(args.extract, keep={c.strip() for _, c in spec})
     panels = []
     for label, caseid in spec:
         caseid = caseid.strip()

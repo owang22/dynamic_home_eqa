@@ -56,22 +56,67 @@ The commuter example goes from 25 records to 11 blocks: home until 06:53,
 out for 10.8 h, home for the evening with one 44-minute errand, asleep
 from 21:00.
 
-## No day-of-week in this extract
+## Two extracts, one reader
 
-`plot_diary.py` cannot split weekday from weekend: **the extract has no
-diary-day variable.** Checked three ways — no column in the person record
-carries the 1-7 field with ATUS's characteristic weekend oversampling
-(Sat and Sun each ~25% of diary days); CASEID encodes year and month but
-not a day-of-month (its chars 7-8 only ever run 01-12, and reading them
-as a date yields a weekday distribution nothing like the design); and the
-survey weights are continuous, with no bimodal split to exploit.
+Column offsets are keyed to the **activity-record width**, so both extracts
+parse without a flag:
 
-To get it, add **DAY** (TUDIARYDAY) to the IPUMS extract and re-download —
-then the day-of-week is one field away and the weekday/weekend panels
-become trivial. Note that even then, ATUS interviews each respondent for a
-SINGLE day, so a weekday *and* weekend diary for the same household does
-not exist in ATUS at all; comparisons across day types are always across
-respondents.
+| extract | respondents | activity records | years | diary date? |
+|---|---|---|---|---|
+| `atus_00001.dat.gz` (55-char activity) | 6,146 | 114,151 | 2025 | no |
+| `atus_00002.dat.gz` (82-char activity) | 198,090 | 3,778,113 | 2006–2025 | **yes** |
+
+`DEFAULT_EXTRACT` is the larger one. Validation on it: all 198,090 diaries
+start at 04:00, tile contiguously, and use in-lexicon codes; 16 diaries
+(0.008%) do not sum to 1440 minutes. The richer layout also carries its own
+duration field, which matches `stop - start` on **199,999 of 200,000**
+sampled records — an independent confirmation of the inferred offsets.
+
+The larger extract adds RECTYPE 5 (35,303 records, first seen in year 2011)
+— the eldercare module, not used here.
+
+## Activity labels: three-tier fallback
+
+ATUS codes are hierarchical (2-digit major → 4-digit subcategory → 6-digit
+detail) and this extract uses **461 distinct detail codes**. Labels resolve
+6 → 4 → 2, so every record reads as something meaningful:
+
+* **83.2%** of records have an exact 6-digit label;
+* **16.8%** fall back to their 4-digit subcategory (e.g. code 180704 shows
+  as "Travel: consumer purchases");
+* **0%** are unlabeled.
+
+The subcategory tier is the published lexicon's second level and is stated
+with confidence. The exact 6-digit meanings of the high-volume codes in the
+fallback group are the one thing worth confirming against the ATUS coding
+lexicon — the biggest are 180704 (81k records), 180302 (52k), 180703 (38k),
+020602 (37k), 030112 (27k).
+
+## Day-of-week: present in the second extract only
+
+The person record of `atus_00002` carries the diary date as `YYYYMMDD` at
+offset 40. That was confirmed, not assumed: reading it as a date yields
+Sat 24.2% / Sun 25.8% / weekdays ~10% each — ATUS's deliberate weekend
+oversampling. (The first extract has no such field: no person-record
+column showed that signature, CASEID encodes year and month but not a
+day-of-month, and the survey weights are continuous with no bimodal split
+to exploit.)
+
+One structural limit remains whatever the extract: ATUS interviews each
+respondent for a **single** day, so a weekday *and* a weekend diary for
+the same household does not exist. Day-type comparisons are always across
+respondents — which is why `plot_occupancy.py` exists.
+
+## Two views
+
+* `plot_diary.py` — individual days as timelines. Answers "what did this
+  day look like". With one diary per cell it cannot show a weekday/weekend
+  *effect*: individual variation swamps it.
+* `plot_occupancy.py` — the population curve: share of respondents at home
+  by clock time, weekday against weekend, split by household type read
+  from diary content. This is where the day-of-week effect is visible
+  (families with children: 43% home at midday on a weekday vs 55% on a
+  weekend, and the weekday exodus is ~90 minutes earlier).
 
 ## Relationship to the rest of the repo
 

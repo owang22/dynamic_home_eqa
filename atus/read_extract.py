@@ -36,16 +36,37 @@ from __future__ import annotations
 
 import argparse
 import csv
+import datetime
 import gzip
 import pathlib
 from dataclasses import dataclass
-from typing import Dict, Iterator, List
+from typing import Dict, Iterator, List, Optional, Set, Tuple
 
-DEFAULT_EXTRACT = pathlib.Path(__file__).with_name("atus_00001.dat.gz")
+DEFAULT_EXTRACT = pathlib.Path(__file__).with_name("atus_00002.dat.gz")
+"""The richer extract (all years, with diary dates). The first extract
+(atus_00001.dat.gz, 2025 only, no date field) still parses — the layout is
+chosen from the record width."""
 
-COL = {"year": (1, 6), "caseid": (6, 20), "counters": (20, 29),
-       "activity": (29, 35), "where": (35, 39),
-       "start": (39, 47), "stop": (47, 55)}
+# Two extracts, two variable sets, so column offsets are keyed by the
+# ACTIVITY record's width. Shared prefix in both: RECTYPE(1) YEAR(5)
+# CASEID(14) counters(9) ACTIVITY(6) WHERE(4).
+LAYOUTS = {
+    55: {"year": (1, 6), "caseid": (6, 20), "counters": (20, 29),
+         "activity": (29, 35), "where": (35, 39),
+         "start": (39, 47), "stop": (47, 55)},
+    # The richer extract inserts duration/other variables before the times.
+    # Verified: the record's own duration field equals stop - start on
+    # 199,999 of 200,000 sampled records.
+    82: {"year": (1, 6), "caseid": (6, 20), "counters": (20, 29),
+         "activity": (29, 35), "where": (35, 39), "duration": (39, 43),
+         "start": (66, 74), "stop": (74, 82)},
+}
+
+# Person-record widths that carry the DIARY DATE (YYYYMMDD). Confirmed by
+# ATUS's sampling design: reading offset 40 as a date yields Sat 25.8% /
+# Sun 25.1% / weekdays ~10% each — the survey's deliberate weekend
+# oversampling. The small extract's 69-char person record has no date.
+PERSON_DATE_AT = {662: 40}
 
 DAY_START_MIN = 4 * 60          # ATUS diaries run 04:00 -> 04:00 next day
 DAY_MINUTES = 1440
@@ -97,8 +118,108 @@ MAJOR_LABELS: Dict[str, str] = {
     "50": "Data codes (unable to code / gap)",
 }
 
-# Detailed labels for the codes this extract actually uses most; anything
-# else falls back to its major category so a row is never unlabeled.
+# ATUS codes are hierarchical: 2-digit major, 4-digit subcategory, 6-digit
+# detail. Labelling falls back 6 -> 4 -> 2, so an unlabelled detail code
+# still reads as its subcategory ("Travel related to consumer purchases")
+# rather than the near-useless major ("Travel"). The 4-digit tier below is
+# the published ATUS lexicon's second level.
+TIER2_LABELS: Dict[str, str] = {
+    "0101": "Sleeping", "0102": "Grooming",
+    "0103": "Health-related self care", "0104": "Personal activities",
+    "0105": "Personal care emergencies", "0199": "Personal care, n.e.c.",
+    "0201": "Housework", "0202": "Food and drink prep, presentation, clean-up",
+    "0203": "Interior maintenance, repair, decoration",
+    "0204": "Exterior maintenance, repair, decoration",
+    "0205": "Lawn, garden, houseplants", "0206": "Animals and pets",
+    "0207": "Vehicles", "0208": "Appliances, tools, toys",
+    "0209": "Household management", "0299": "Household activities, n.e.c.",
+    "0301": "Caring for and helping household children",
+    "0302": "Household children's education",
+    "0303": "Household children's health",
+    "0304": "Caring for household adults",
+    "0305": "Helping household adults",
+    "0399": "Caring for household members, n.e.c.",
+    "0401": "Caring for and helping non-household children",
+    "0402": "Non-household children's education",
+    "0403": "Non-household children's health",
+    "0404": "Caring for non-household adults",
+    "0405": "Helping non-household adults",
+    "0499": "Caring for non-household members, n.e.c.",
+    "0501": "Working", "0502": "Work-related activities",
+    "0503": "Other income-generating activities",
+    "0504": "Job search and interviewing", "0599": "Work, n.e.c.",
+    "0601": "Taking class", "0602": "Extracurricular school activities",
+    "0603": "Research and homework", "0604": "Registration, administrative",
+    "0699": "Education, n.e.c.",
+    "0701": "Shopping (store, telephone, internet)",
+    "0702": "Comparison shopping, researching purchases",
+    "0703": "Security procedures (consumer purchases)",
+    "0799": "Consumer purchases, n.e.c.",
+    "0801": "Using childcare services",
+    "0802": "Using financial services and banking",
+    "0803": "Using legal services", "0804": "Using medical services",
+    "0805": "Using personal care services", "0806": "Using real estate services",
+    "0807": "Using veterinary services",
+    "0808": "Security procedures (professional services)",
+    "0899": "Using professional services, n.e.c.",
+    "0901": "Using household services",
+    "0902": "Using home maintenance/repair/construction services",
+    "0903": "Using pet services", "0904": "Using lawn and garden services",
+    "0905": "Using vehicle maintenance and repair services",
+    "0999": "Using household services, n.e.c.",
+    "1001": "Using government services",
+    "1002": "Civic obligations and participation",
+    "1003": "Waiting (government services)",
+    "1004": "Security procedures (government services)",
+    "1099": "Government services, n.e.c.",
+    "1101": "Eating and drinking", "1102": "Waiting (eating and drinking)",
+    "1199": "Eating and drinking, n.e.c.",
+    "1201": "Socializing and communicating",
+    "1202": "Attending or hosting social events",
+    "1203": "Relaxing and leisure",
+    "1204": "Arts and entertainment (other than sports)",
+    "1205": "Waiting (socializing, leisure)",
+    "1299": "Socializing and leisure, n.e.c.",
+    "1301": "Participating in sports, exercise, recreation",
+    "1302": "Attending sporting or recreational events",
+    "1303": "Waiting (sports, exercise, recreation)",
+    "1304": "Security procedures (sports)",
+    "1399": "Sports and recreation, n.e.c.",
+    "1401": "Religious and spiritual practices",
+    "1499": "Religious and spiritual activities, n.e.c.",
+    "1501": "Administrative and support (volunteer)",
+    "1502": "Social service and care (volunteer)",
+    "1503": "Maintenance, building, clean-up (volunteer)",
+    "1504": "Performance and cultural activities (volunteer)",
+    "1505": "Meetings, conferences, training (volunteer)",
+    "1506": "Public health and safety (volunteer)",
+    "1507": "Waiting (volunteer activities)",
+    "1508": "Security procedures (volunteer)",
+    "1599": "Volunteer activities, n.e.c.",
+    "1601": "Telephone calls", "1602": "Waiting (telephone calls)",
+    "1699": "Telephone calls, n.e.c.",
+    "1801": "Travel: personal care", "1802": "Travel: household activities",
+    "1803": "Travel: caring for household members",
+    "1804": "Travel: caring for non-household members",
+    "1805": "Travel: work", "1806": "Travel: education",
+    "1807": "Travel: consumer purchases",
+    "1808": "Travel: professional and personal care services",
+    "1809": "Travel: household services",
+    "1810": "Travel: government services and civic obligations",
+    "1811": "Travel: eating and drinking",
+    "1812": "Travel: socializing, relaxing, leisure",
+    "1813": "Travel: sports, exercise, recreation",
+    "1814": "Travel: religious and spiritual activities",
+    "1815": "Travel: volunteer activities",
+    "1816": "Travel: telephone calls",
+    "1818": "Security procedures related to travelling",
+    "1899": "Travel, n.e.c.",
+    "5001": "Data codes (gap, refusal, unable to code)",
+    "5099": "Data codes, n.e.c.",
+}
+
+# Exact 6-digit labels for the codes that carry most of the minutes; the
+# tier-2 map above covers the long tail.
 ACTIVITY_LABELS: Dict[str, str] = {
     "010101": "Sleeping", "010102": "Sleeplessness",
     "010201": "Washing, dressing, grooming", "010299": "Personal care, n.e.c.",
@@ -190,6 +311,15 @@ PERSONAL_CARE = "01"
 health self-care): ATUS does not ask WHERE for these."""
 
 
+def label_for(code: str) -> str:
+    """Best available label: exact detail, else subcategory, else major."""
+    if code in ACTIVITY_LABELS:
+        return ACTIVITY_LABELS[code]
+    if code[:4] in TIER2_LABELS:
+        return TIER2_LABELS[code[:4]]
+    return MAJOR_LABELS.get(code[:2], "?") + " (uncoded detail)"
+
+
 @dataclass(frozen=True)
 class Block:
     """A home activity, or one merged span spent out of the house.
@@ -253,8 +383,7 @@ class Activity:
 
     @property
     def label(self) -> str:
-        return ACTIVITY_LABELS.get(
-            self.code, MAJOR_LABELS.get(self.code[:2], "?") + " (detail n.e.c.)")
+        return label_for(self.code)
 
     @property
     def major(self) -> str:
@@ -270,15 +399,62 @@ def _hms_to_min(hms: str) -> int:
     return int(h) * 60 + int(m)
 
 
-def read_activities(path: pathlib.Path) -> Iterator[Activity]:
-    """Yield every activity record, unwrapping past-midnight times."""
-    opener = gzip.open if path.suffix == ".gz" else open
-    with opener(path, "rt") as f:
+def _open(path: pathlib.Path):
+    return (gzip.open if path.suffix == ".gz" else open)(path, "rt")
+
+
+def layout_of(path: pathlib.Path) -> Dict[str, Tuple[int, int]]:
+    """Column spec for this extract, chosen by its activity-record width."""
+    with _open(path) as f:
+        for raw in f:
+            if raw.startswith("3"):
+                width = len(raw.rstrip("\n"))
+                if width not in LAYOUTS:
+                    raise SystemExit(
+                        f"{path}: unknown activity-record width {width}; "
+                        f"known: {sorted(LAYOUTS)}. A DDI codebook would "
+                        f"settle the layout — add the .xml alongside the .dat")
+                return LAYOUTS[width]
+    raise SystemExit(f"{path}: no activity records found")
+
+
+def diary_dates(path: pathlib.Path) -> Dict[str, datetime.date]:
+    """caseid -> the date the diary describes; empty if the extract lacks it.
+
+    ATUS asks about "yesterday", so this is the diary day itself, and its
+    weekday distribution is the survey's weekend-oversampled design.
+    """
+    out: Dict[str, datetime.date] = {}
+    with _open(path) as f:
+        for raw in f:
+            if not raw.startswith("2"):
+                continue
+            width = len(raw.rstrip("\n"))
+            at = PERSON_DATE_AT.get(width)
+            if at is None:
+                return {}
+            caseid, d = raw[6:20], raw[at:at + 8]
+            out[caseid] = datetime.date(int(d[:4]), int(d[4:6]), int(d[6:8]))
+    return out
+
+
+def read_activities(path: pathlib.Path,
+                    keep: Optional[Set[str]] = None) -> Iterator[Activity]:
+    """Yield activity records, unwrapping past-midnight times.
+
+    ``keep`` restricts to a set of caseids — worth using on the large
+    extract, whose 3.8 M activity records do not need to be materialized to
+    look at a handful of diaries.
+    """
+    col = layout_of(path)
+    with _open(path) as f:
         prev_case, offset, prev_stop = None, 0, 0
         for raw in f:
             if not raw.startswith("3"):
                 continue
-            g = {k: raw[a:b] for k, (a, b) in COL.items()}
+            if keep is not None and raw[6:20] not in keep:
+                continue
+            g = {k: raw[a:b] for k, (a, b) in col.items()}
             caseid = g["caseid"]
             if caseid != prev_case:
                 prev_case, offset, prev_stop = caseid, 0, 0
@@ -298,10 +474,75 @@ def read_activities(path: pathlib.Path) -> Iterator[Activity]:
                            start_min=start, stop_min=stop)
 
 
-def by_case(path: pathlib.Path) -> Dict[str, List[Activity]]:
+def by_case(path: pathlib.Path,
+            keep: Optional[Set[str]] = None) -> Dict[str, List[Activity]]:
     out: Dict[str, List[Activity]] = {}
-    for a in read_activities(path):
+    for a in read_activities(path, keep=keep):
         out.setdefault(a.caseid, []).append(a)
+    return out
+
+
+@dataclass(frozen=True)
+class Profile:
+    """Per-diary summary from one streaming pass (no diaries materialized)."""
+
+    caseid: str
+    n_activities: int
+    work_min: int
+    home_min: int
+    n_home_activities: int
+    n_away_spans: int
+
+
+def scan_profiles(path: pathlib.Path) -> Dict[str, Profile]:
+    """Summarize every diary in one pass — cheap enough for 3.8 M records."""
+    col = layout_of(path)
+    cur: Dict[str, object] = {}
+    out: Dict[str, Profile] = {}
+
+    def flush() -> None:
+        if not cur:
+            return
+        out[str(cur["caseid"])] = Profile(
+            caseid=str(cur["caseid"]), n_activities=int(cur["n"]),
+            work_min=int(cur["work"]), home_min=int(cur["home"]),
+            n_home_activities=len(cur["labels"]),      # type: ignore[arg-type]
+            n_away_spans=int(cur["spans"]))
+
+    with _open(path) as f:
+        at_home, prev_away = True, False
+        for raw in f:
+            if not raw.startswith("3"):
+                continue
+            caseid = raw[6:20]
+            if caseid != cur.get("caseid"):
+                flush()
+                cur = {"caseid": caseid, "n": 0, "work": 0, "home": 0,
+                       "labels": set(), "spans": 0}
+                at_home, prev_away = True, False
+            code = raw[col["activity"][0]:col["activity"][1]]
+            where = int(raw[col["where"][0]:col["where"][1]])
+            start = _hms_to_min(raw[col["start"][0]:col["start"][1]])
+            stop = _hms_to_min(raw[col["stop"][0]:col["stop"][1]])
+            dur = (stop - start) % DAY_MINUTES or DAY_MINUTES
+            if where == HOME:
+                at_home = True
+            elif where >= 9000:
+                at_home = at_home if code[:2] != PERSONAL_CARE else True
+            else:
+                at_home = False
+            cur["n"] = int(cur["n"]) + 1                     # type: ignore[call-overload]
+            if code[:2] == "05":
+                cur["work"] = int(cur["work"]) + dur         # type: ignore[call-overload]
+            if at_home:
+                cur["home"] = int(cur["home"]) + dur         # type: ignore[call-overload]
+                cur["labels"].add(label_for(code))            # type: ignore[union-attr]
+                prev_away = False
+            else:
+                if not prev_away:
+                    cur["spans"] = int(cur["spans"]) + 1     # type: ignore[call-overload]
+                prev_away = True
+        flush()
     return out
 
 
@@ -410,22 +651,33 @@ def main() -> None:
                     help="collapse to home detail + merged out-of-house spans")
     args = ap.parse_args()
 
-    diaries = by_case(args.extract)
-    bad = validate(diaries)
-    print(f"{len(diaries)} respondent-days parsed; layout validation: "
-          + ("ALL PASS" if not any(bad.values()) else f"FAILURES {bad}"))
-
+    dates = diary_dates(args.extract)
     if args.list or not args.caseid:
-        ranked = sorted(diaries.items(), key=lambda kv: -len(kv[1]))
-        print("\ncaseid           n_act  distinct places  n_travel  first activity")
-        for caseid, acts in ranked[:15]:
-            places = len({a.where for a in acts if a.where != 9999})
-            travel = sum(a.code[:2] == "18" for a in acts)
-            print(f"{caseid}  {len(acts):>5}  {places:>15}  {travel:>8}  "
-                  f"{acts[0].label}")
+        profiles = scan_profiles(args.extract)
+        ranked = sorted(profiles.values(),
+                        key=lambda p: -p.n_home_activities)
+        print(f"{len(profiles)} respondent-days"
+              + (f"; diary dates {min(dates.values())} .. {max(dates.values())}"
+                 if dates else "; no diary-date field in this extract"))
+        print("\ncaseid           date        day  n_act  home_h  work_h  "
+              "home_acts  away_spans")
+        for p in ranked[:15]:
+            d = dates.get(p.caseid)
+            print(f"{p.caseid}  {d or '—':<10}  "
+                  f"{d.strftime('%a') if d else '—':<3}  {p.n_activities:>5}  "
+                  f"{p.home_min / 60:>6.1f}  {p.work_min / 60:>6.1f}  "
+                  f"{p.n_home_activities:>9}  {p.n_away_spans:>10}")
         if not args.caseid:
             return
 
+    diaries = by_case(args.extract, keep={args.caseid})
+    if args.caseid not in diaries:
+        raise SystemExit(f"caseid {args.caseid} not in extract")
+    bad = validate(diaries)
+    when = dates.get(args.caseid)
+    print(f"layout validation on this diary: "
+          + ("PASS" if not any(bad.values()) else f"FAILURES {bad}")
+          + (f"; diary day {when} ({when.strftime('%A')})" if when else ""))
     acts = diaries[args.caseid]
     if args.home_only:
         blocks = home_blocks(acts)
