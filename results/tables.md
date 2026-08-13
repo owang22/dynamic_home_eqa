@@ -25,3 +25,23 @@ Unit of analysis: the household (n=3). Aggregates are descriptive; no CIs are qu
 | persistence | 0.864 [0.471–1.000] | 0.895 [0.750–0.962] | 0.881 [0.500–0.994] | 0.880 |
 | pooled | 0.844 [0.553–1.000] | 0.752 [0.500–0.932] | 0.692 [0.000–0.994] | 0.763 |
 | uniform | 0.200 [0.000–0.500] | 0.000 [0.000–0.000] | 0.200 [0.000–0.500] | 0.133 |
+
+## E2 supplementary — moved-only slice
+
+Restricting E2 scoring to the query instants where the held-out object is
+AWAY from its initial placement (12.0% of instants) isolates transfer from
+inertia:
+
+| method | E2 all | E2 moved-only |
+|---|---|---|
+| every per-object method (shared fallback) | 0.880 | 0.000 |
+| pooled | 0.763 | 0.196 |
+| uniform | 0.133 | 0.278 |
+
+The shared fallback never leaves the initial placement, so it scores zero
+exactly where localization is non-trivial; pooled recovers a fifth of
+those instants at the cost of the easy 88%. Note uniform beats pooled on
+this slice: displaced objects visit receptacles roughly uniformly often
+enough that pooled's popularity-shaped guesses are WORSE than flat — the
+transferred (initial-receptacle, hour) structure is pointing at the wrong
+receptacles, not merely diluted.
