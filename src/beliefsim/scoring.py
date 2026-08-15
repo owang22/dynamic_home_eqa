@@ -127,6 +127,35 @@ def aggregate(rows: Iterable[Mapping[str, object]], value: str, *,
     raise ValueError(f"mode must be 'micro' or 'macro', got {mode!r}")
 
 
+def aggregate_ratio(rows: Iterable[Mapping[str, object]], numerator: str,
+                    denominator: str, *, mode: str,
+                    unit: str = "household") -> float:
+    """Ratio of summed columns, micro or macro. No default mode.
+
+    The loop emits per-timestep SUMS and COUNTS rather than per-timestep
+    means, so an accuracy is always sum(correct)/sum(n). Micro sums both
+    columns over every row; macro forms that ratio within each unit and then
+    averages the ratios. Rows whose denominator is zero contribute nothing
+    and cannot make a unit exist — a unit with no denominator anywhere is
+    absent from the macro average rather than counted as zero.
+    """
+    rows = [r for r in rows if float(r[denominator] or 0) > 0]
+    if not rows:
+        return float("nan")
+    if mode == "micro":
+        num = sum(float(r[numerator]) for r in rows)
+        den = sum(float(r[denominator]) for r in rows)
+        return num / den
+    if mode == "macro":
+        by_unit: Dict[object, list] = {}
+        for r in rows:
+            by_unit.setdefault(r[unit], [0.0, 0.0])
+            by_unit[r[unit]][0] += float(r[numerator])
+            by_unit[r[unit]][1] += float(r[denominator])
+        return sum(n / d for n, d in by_unit.values()) / len(by_unit)
+    raise ValueError(f"mode must be 'micro' or 'macro', got {mode!r}")
+
+
 def unit_counts(rows: Iterable[Mapping[str, object]], value: str, *,
                 unit: str = "household") -> Dict[object, int]:
     """Rows contributing to ``value`` per unit — the audit companion to
