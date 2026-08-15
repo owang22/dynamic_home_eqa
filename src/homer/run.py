@@ -1,5 +1,14 @@
 """Phase 4 — run every baseline through E1 and E2, emit the tidy results.
 
+SUPERSEDED. This module produced the pilot archived in
+``superseded/homer_pilot_2026_08/`` and is retained unchanged so that
+directory can be regenerated; its ``_score`` tie-break defect is documented
+there rather than patched here, because patching it would silently change
+the archived numbers. Live work uses ``src/beliefsim/`` (budgeted
+whole-house belief tracking), whose scoring path breaks ties with a seeded
+RNG. The loader, protocol, baselines and FreMEn modules beside this one are
+NOT superseded.
+
     PYTHONPATH=src python -m homer.run --out results
 
 All numbers downstream (tables, the report) derive from

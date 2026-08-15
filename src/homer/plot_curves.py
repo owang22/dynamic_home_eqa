@@ -1,5 +1,8 @@
 """Render the learning-curve figures from results/learning_curves.csv.
 
+SUPERSEDED: produced output archived in
+``superseded/homer_pilot_2026_08/``; retained for regeneration.
+
 Figure 1 (E1): accuracy on the fixed test queries vs number of training
 days, one panel per household, hue = method (fixed assignment so a method
 keeps its colour everywhere), mean over day-order permutations.

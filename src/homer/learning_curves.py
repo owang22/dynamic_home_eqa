@@ -1,5 +1,8 @@
 """Learning curves: accuracy on the FIXED test queries as training grows.
 
+SUPERSEDED: produced output archived in
+``superseded/homer_pilot_2026_08/``; retained for regeneration.
+
 For each prefix size N, methods are fitted on N training days and scored
 on the same fixed query set as the headline tables (hourly, all test
 days). HOMER+ training days are independently sampled schedule variations
