@@ -1,0 +1,169 @@
+# v22_elder_care -- VERSION22 confirmatory household (pair F with
+# v22_twin_toddlers: same shared classes relocated -- remote/cushion/tablet --
+#   but TOWARD the cared-for person instead of away from them).
+# Persona: adult caring for their 84-year-old mother; recliner is the hub.
+# IDIOSYNCRATIC-BUT-REALISTIC: the TV REMOTE lives in the walker's pouch (rides
+#   with the walker between the recliner and the bedroom); a firm CUSHION rides
+#   the recliner as a lumbar support all day; the TABLET is docked on the
+#   recliner side table for 10:00 video calls with family.
+# DIAGNOSTIC: pill_organizer, walker_pouch, bp_cuff, hearing_aid_case.
+# DEPENDENT targets: remote (walker_pouch spot / recliner at 11:00),
+#   cushion (recliner_l1 at 11:00), tablet (side_table_l1 at 10:00).
+# STATIC DISTRACTORS: dining_chair, bed_pillow, wall_clock, floor_lamp, doormat,
+#   waste_bin, picture_frame, bath_mat.
+household: v22_elder_care
+status: DRAFT  # version22 authoring 2026-07-22 — needs human anchor verification
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,          room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1,   room: bedroom,  aliases: []}
+  - {id: bed_r2,          room: guest_bedroom, aliases: [mothers_bed]}
+  - {id: nightstand_r2,   room: guest_bedroom, aliases: [mothers_nightstand]}
+  - {id: recliner_l1,     room: living,   aliases: [armchair]}
+  - {id: side_table_l1,   room: living,   aliases: [recliner_table]}
+  - {id: sofa_l1,         room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living,   aliases: []}
+  - {id: counter_k1,      room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,     room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,         room: kitchen,  aliases: []}
+  - {id: table_d1,        room: dining,   aliases: [dining_table]}
+  - {id: entry_hook_e1,   room: entryway, aliases: [key_hook]}
+  - {id: bathroom_c1,     room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: caregiver + 84-year-old mother; recliner-centered day, 10:00 video calls
+    schedule:
+      - {activity: sleep,          days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "22:30", end: "06:45"}
+      - {activity: morning_meds,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "07:00", end: "07:30"}
+      - {activity: breakfast,      days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "07:35", end: "08:15"}
+      - {activity: settle_recliner, days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "08:30", end: "09:00"}
+      - {activity: video_call,     days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "10:00", end: "10:45"}
+      - {activity: lunch,          days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "12:00", end: "12:45"}
+      - {activity: pharmacy_run,   days: [Tu,Fr],                start: "14:00", end: "15:30"}
+      - {activity: afternoon_tv,   days: [Mo,We,Th,Sa,Su],       start: "14:00", end: "16:30"}
+      - {activity: bp_check,       days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "17:00", end: "17:20"}
+      - {activity: dinner,         days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "18:00", end: "18:45"}
+      - {activity: evening_tv,     days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "19:15", end: "21:30"}
+      - {activity: bedtime_walk,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "21:35", end: "22:00"}
+activities:
+  morning_meds:
+    jitter_min: 10
+    objects: [pill_organizer, hearing_aid_case, reading_glasses]
+    during: {pill_organizer: counter_k1, hearing_aid_case: counter_k1,
+             reading_glasses: counter_k1}
+    after:
+      pill_organizer:   {dest: counter_k1, p: 0.8, else: cupboard_k1}
+      hearing_aid_case: {dest: side_table_l1, p: 0.8, else: counter_k1}
+      reading_glasses:  {dest: side_table_l1, p: 0.7, else: counter_k1}
+  breakfast:
+    jitter_min: 10
+    objects: [bowl, plate, coffee_mug]
+    during: {bowl: table_d1, plate: table_d1, coffee_mug: table_d1}
+    after:
+      bowl:       {dest: sink_k1, p: 0.85, else: table_d1}
+      plate:      {dest: sink_k1, p: 0.8, else: table_d1}
+      coffee_mug: {dest: side_table_l1, p: 0.6, else: sink_k1}  # second cup by the recliner
+  settle_recliner:
+    jitter_min: 10
+    objects: [cushion, remote, walker_pouch, blanket]
+    during: {cushion: recliner_l1, remote: recliner_l1, walker_pouch: recliner_l1,
+             blanket: recliner_l1}
+    after:
+      cushion:      {dest: recliner_l1, p: 0.9}                # lumbar support stays
+      remote:       {dest: recliner_l1, p: 0.7, else: side_table_l1}  # in the walker pouch
+      walker_pouch: {dest: recliner_l1, p: 0.85}
+      blanket:      {dest: recliner_l1, p: 0.8, else: sofa_l1}
+  video_call:
+    jitter_min: 10
+    objects: [tablet, reading_glasses, hearing_aid_case]
+    during: {tablet: side_table_l1, reading_glasses: side_table_l1,
+             hearing_aid_case: side_table_l1}
+    after:
+      tablet:           {dest: side_table_l1, p: 0.85, else: coffee_table_l1}  # docked
+      reading_glasses:  {dest: side_table_l1, p: 0.8}
+      hearing_aid_case: {dest: side_table_l1, p: 0.85}
+  lunch:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  pharmacy_run:
+    jitter_min: 20
+    objects: [keys, phone, pill_organizer]
+    after:
+      keys:           {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      phone:          {dest: sofa_l1, p: 0.5, else: counter_k1}
+      pill_organizer: {dest: counter_k1, p: 0.85, else: cupboard_k1}
+  afternoon_tv:
+    jitter_min: 20
+    objects: [remote, blanket, phone]
+    during: {remote: recliner_l1, blanket: recliner_l1, phone: sofa_l1}
+    after:
+      remote:  {dest: recliner_l1, p: 0.8, else: side_table_l1}
+      blanket: {dest: recliner_l1, p: 0.8, else: sofa_l1}
+      phone:   {dest: sofa_l1, p: 0.6, else: coffee_table_l1}
+  bp_check:
+    jitter_min: 10
+    objects: [bp_cuff, tablet]
+    during: {bp_cuff: side_table_l1, tablet: side_table_l1}
+    after:
+      bp_cuff: {dest: bathroom_c1, p: 0.7, else: side_table_l1}
+      tablet:  {dest: side_table_l1, p: 0.9}       # readings logged on the tablet
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  evening_tv:
+    jitter_min: 15
+    objects: [remote, cushion, blanket, phone]
+    during: {remote: recliner_l1, cushion: recliner_l1, blanket: recliner_l1,
+             phone: sofa_l1}
+    after:
+      remote:  {dest: recliner_l1, p: 0.75, else: coffee_table_l1}
+      cushion: {dest: recliner_l1, p: 0.9}
+      blanket: {dest: recliner_l1, p: 0.75, else: sofa_l1}
+      phone:   {dest: nightstand_r1, p: 0.8, else: sofa_l1}
+  bedtime_walk:
+    jitter_min: 10
+    objects: [remote, walker_pouch, hearing_aid_case]
+    during: {remote: recliner_l1, walker_pouch: recliner_l1,
+             hearing_aid_case: side_table_l1}
+    after:
+      remote:           {dest: nightstand_r2, p: 0.6, else: recliner_l1}  # rides the walker to bed
+      walker_pouch:     {dest: nightstand_r2, p: 0.85, else: recliner_l1}
+      hearing_aid_case: {dest: nightstand_r2, p: 0.85, else: side_table_l1}
+placements:
+  # DIAGNOSTIC
+  pill_organizer:   {home: counter_k1, volatility_class_hint: high}
+  walker_pouch:     {home: recliner_l1, volatility_class_hint: high}
+  bp_cuff:          {home: bathroom_c1, volatility_class_hint: high}
+  hearing_aid_case: {home: nightstand_r2, volatility_class_hint: high}
+  # DEPENDENT targets (idiosyncratic homes)
+  remote:  {home: recliner_l1, volatility_class_hint: high}   # lives in the walker pouch
+  cushion: {home: recliner_l1, volatility_class_hint: high}   # lumbar support
+  tablet:  {home: side_table_l1, volatility_class_hint: high} # video-call dock
+  # ordinary
+  bowl:            {home: cupboard_k1}
+  plate:           {home: cupboard_k1}
+  fork:            {home: cupboard_k1}
+  coffee_mug:      {home: cupboard_k1}
+  blanket:         {home: recliner_l1}
+  reading_glasses: {home: side_table_l1, volatility_class_hint: high}
+  phone:           {home: nightstand_r1, volatility_class_hint: high}
+  keys:            {home: entry_hook_e1, p_misplace: 0.06, misplace_set: [counter_k1, side_table_l1]}
+  # STATIC DISTRACTORS
+  dining_chair:  {home: table_d1,        volatility_class_hint: static}
+  bed_pillow:    {home: bed_r2,          volatility_class_hint: static}
+  wall_clock:    {home: counter_k1,      volatility_class_hint: static}
+  floor_lamp:    {home: recliner_l1,     volatility_class_hint: static}
+  doormat:       {home: entry_hook_e1,   volatility_class_hint: static}
+  waste_bin:     {home: counter_k1,      volatility_class_hint: static}
+  picture_frame: {home: side_table_l1,   volatility_class_hint: static}
+  bath_mat:      {home: bathroom_c1,     volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9.

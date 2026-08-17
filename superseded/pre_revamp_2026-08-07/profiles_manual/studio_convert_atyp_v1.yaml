@@ -1,0 +1,195 @@
+# studio_convert_atyp_v1 -- ATYPICAL base (room repurposing)
+#
+# METHODOLOGY DEPARTURE (read before treating this as a normal profile):
+# The registered atypicality transforms (transforms.py) are TIMING-ONLY --
+# they inherit object affinities and placements byte-for-byte and only edit
+# schedule timing/roles. This profile attacks the axis those transforms
+# cannot reach: WHERE classes of object live. It is therefore hand-authored
+# (model DRAFT by Claude, outside the evaluated set), NOT a transforms.py
+# output, and stays status: DRAFT until a human verifies it. Its whole point
+# is to break the "homes are right" class-location prior while keeping the
+# receptacle VOCABULARY intact (a sofa is still a sofa) -- so the atypicality
+# is spatial/semantic, not temporal.
+#
+# Story: Maya, a single freelance illustrator, has repurposed every room of a
+# nominal 1-bed + dining apartment away from its default use:
+#   * the BEDROOM is her paint STUDIO (easel, tablet, brushes on a worktable);
+#     she never sleeps there.
+#   * she SLEEPS ON THE LIVING-ROOM SOFA -- so the "bed" IS the sofa, bedding
+#     (blanket) accumulates on it, and her phone charges on the COFFEE TABLE
+#     at night because there is no nightstand.
+#   * the DINING TABLE is her admin DESK (laptop, mail, sketchbook live there);
+#     there is no office and no desk furniture at all.
+# The repurposing is encoded at the vocabulary level too: `bed` is an alias of
+# sofa_l1 and `desk` is an alias of table_d1, so any reference to a bed or a
+# desk normalizes (V5) to the receptacle that actually plays that role here.
+#
+# Provenance key: [ATUS] [BEHAV] [HOMER] [HKEEP] [DESIGN] (see single_adult).
+# Deliberately-atypical placements/bindings are tagged [DESIGN] -- they are
+# the experimental manipulation, exempt from the [HKEEP]/[BEHAV] anchor checks
+# by design (a "correct home" anchor is exactly what this profile violates).
+
+household: studio_convert_atyp_v1
+# DRAFT: hand-authored atypical, awaiting researcher verification. Not a
+# registered transform (derived_from/transformation stay null by construction).
+status: VERIFIED  # verified by researcher (Oliver, 2026-07-21)
+derived_from: null
+transformation: null
+
+receptacles:
+  # studio == the repurposed bedroom (no bed here)
+  - {id: worktable_st1,   room: studio,   aliases: []}
+  - {id: easel_st1,       room: studio,   aliases: []}
+  - {id: shelf_st1,       room: studio,   aliases: []}
+  # living room == where she sleeps; sofa doubles as the bed
+  - {id: sofa_l1,         room: living,   aliases: [couch, bed]}       # [DESIGN] bed==sofa
+  - {id: coffee_table_l1, room: living,   aliases: []}
+  - {id: tv_stand_l1,     room: living,   aliases: []}
+  # dining room == her admin desk; table doubles as the desk
+  - {id: table_d1,        room: dining,   aliases: [dining_table, desk]}  # [DESIGN] desk==table
+  - {id: counter_k1,      room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,     room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,         room: kitchen,  aliases: []}
+  - {id: stove_k1,        room: kitchen,  aliases: []}
+  - {id: fridge_k1,       room: kitchen,  aliases: []}
+  - {id: entry_hook_e1,   room: entryway, aliases: [key_hook]}
+  - {id: shelf_e1,        room: entryway, aliases: []}
+  - {id: bathroom_c1,     room: bathroom, aliases: [bathroom_cabinet]}
+
+residents:
+  - id: R1
+    description: single freelance illustrator, irregular self-directed day
+    schedule:
+      - {activity: sleep_sofa,   days: [Mo,Tu,We,Th,Fr], start: "00:30", end: "08:30"}  # [DESIGN] sleeps on sofa
+      - {activity: morning_prep, days: [Mo,Tu,We,Th,Fr], start: "08:30", end: "09:00"}  # [ATUS]
+      - {activity: breakfast,    days: [Mo,Tu,We,Th,Fr], start: "09:00", end: "09:30"}  # [ATUS]
+      - {activity: studio_paint, days: [Mo,Tu,We,Th,Fr], start: "10:00", end: "13:00"}  # [DESIGN]
+      - {activity: lunch,        days: [Mo,Tu,We,Th,Fr], start: "13:00", end: "13:30"}  # [ATUS]
+      - {activity: admin_desk,   days: [Mo,Tu,We,Th,Fr], start: "14:00", end: "16:30"}  # [DESIGN]
+      - {activity: errand_out,   days: [Mo,Tu,We,Th,Fr], start: "16:30", end: "17:15"}  # [DESIGN]
+      - {activity: return_home,  days: [Mo,Tu,We,Th,Fr], start: "17:15", end: "17:35"}  # [DESIGN]
+      - {activity: cook_dinner,  days: [Mo,Tu,We,Th,Fr], start: "18:30", end: "19:15"}  # [ATUS]
+      - {activity: dinner,       days: [Mo,Tu,We,Th,Fr], start: "19:15", end: "19:45"}  # [ATUS]
+      - {activity: sofa_evening, days: [Mo,Tu,We,Th,Fr], start: "20:30", end: "23:30"}  # [ATUS]
+      - {activity: sleep_sofa,   days: [Sa,Su],          start: "01:30", end: "09:30"}  # [DESIGN] weekend
+      - {activity: studio_paint, days: [Sa,Su],          start: "11:00", end: "13:30"}  # [DESIGN]
+      - {activity: errand_out,   days: [Sa,Su],          start: "15:00", end: "16:00"}  # [DESIGN]
+      - {activity: return_home,  days: [Sa,Su],          start: "16:00", end: "16:20"}  # [DESIGN]
+      - {activity: cook_dinner,  days: [Sa,Su],          start: "18:30", end: "19:15"}  # [ATUS]
+      - {activity: sofa_evening, days: [Sa,Su],          start: "20:00", end: "23:30"}  # [ATUS]
+
+activities:
+  morning_prep:
+    jitter_min: 15                                   # [HOMER]
+    objects: [phone, glasses]
+    during: {phone: coffee_table_l1, glasses: coffee_table_l1}   # [DESIGN] charges on coffee table, no nightstand
+    after:
+      phone:   {dest: counter_k1, p: 0.85, else: coffee_table_l1}
+      glasses: {dest: null, p: 1.0}
+  breakfast:
+    jitter_min: 10                                   # [HOMER]
+    objects: [mug, bowl, spoon]
+    during: {mug: counter_k1, bowl: table_d1, spoon: table_d1}   # [BEHAV]
+    after:
+      mug:   {dest: sink_k1, p: 0.7, else: counter_k1}           # [HKEEP]
+      bowl:  {dest: sink_k1, p: 0.8, else: table_d1}             # [HKEEP]
+      spoon: {dest: sink_k1, p: 0.8, else: table_d1}             # [HKEEP]
+  studio_paint:
+    jitter_min: 40                                   # [DESIGN] loose creative block
+    objects: [tablet, sketchbook, brushes, mug]
+    during: {tablet: worktable_st1, sketchbook: worktable_st1, brushes: worktable_st1, mug: worktable_st1}
+    after:
+      tablet:     {dest: worktable_st1, p: 0.9, else: shelf_st1}
+      sketchbook: {dest: worktable_st1, p: 0.7, else: shelf_st1}
+      brushes:    {dest: sink_k1, p: 0.5, else: worktable_st1}   # [DESIGN] rinses brushes in kitchen sink
+      mug:        {dest: sink_k1, p: 0.6, else: worktable_st1}
+  lunch:
+    jitter_min: 20
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  admin_desk:
+    jitter_min: 30                                   # [DESIGN]
+    objects: [laptop, mail, phone, mug]
+    during: {laptop: table_d1, mail: table_d1, phone: table_d1, mug: table_d1}   # [DESIGN] dining table IS the desk
+    after:
+      laptop: {dest: table_d1, p: 0.85, else: sofa_l1}           # [DESIGN] laptop's home is the dining table
+      mail:   {dest: shelf_e1, p: 0.5, else: table_d1}
+      phone:  {dest: sofa_l1, p: 0.5, else: table_d1}
+      mug:    {dest: sink_k1, p: 0.6, else: table_d1}
+  errand_out:
+    jitter_min: 10                                   # [DESIGN]
+    objects: [keys, tote, phone]
+    after:
+      keys:  {dest: null, p: 1.0}
+      tote:  {dest: null, p: 1.0}
+      phone: {dest: null, p: 1.0}
+  return_home:
+    jitter_min: 20                                   # [DESIGN] commute variance
+    objects: [keys, tote, phone]
+    after:
+      keys:  {dest: entry_hook_e1, p: 0.8, else: table_d1}       # [HKEEP]
+      tote:  {dest: shelf_e1, p: 0.7, else: sofa_l1}             # [HKEEP]
+      phone: {dest: sofa_l1, p: 0.5, else: coffee_table_l1}
+  cook_dinner:
+    jitter_min: 25                                   # [HOMER]
+    objects: [pan, cutting_board, knife]
+    during:
+      pan:           stove_k1     # [BEHAV]
+      cutting_board: counter_k1   # [DESIGN] BEHAVIOR-1K models 'countertop', not a distinct board synset
+      knife:         counter_k1   # [BEHAV]
+    after:
+      pan:           {dest: sink_k1, p: 0.6, else: stove_k1}     # [HKEEP]
+      cutting_board: {dest: sink_k1, p: 0.7, else: counter_k1}
+      knife:         {dest: sink_k1, p: 0.9, else: counter_k1}
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork, water_glass]
+    during: {plate: table_d1, fork: table_d1, water_glass: table_d1}
+    after:
+      plate:       {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:        {dest: sink_k1, p: 0.85, else: table_d1}
+      water_glass: {dest: sink_k1, p: 0.5,  else: table_d1}
+  sofa_evening:
+    jitter_min: 20
+    objects: [remote_control, phone, blanket]
+    during: {remote_control: sofa_l1, phone: sofa_l1, blanket: sofa_l1}
+    after:
+      remote_control: {dest: coffee_table_l1, p: 0.4, else: sofa_l1}
+      phone:          {dest: coffee_table_l1, p: 0.9, else: sofa_l1}   # [DESIGN] night charge on coffee table
+      blanket:        {dest: sofa_l1, p: 1.0}                          # [DESIGN] bedding, stays on the sofa-bed
+
+placements:
+  # personal high-volatility -- note the ATYPICAL homes (no nightstand exists)
+  phone:          {home: coffee_table_l1, volatility_class_hint: high}   # [DESIGN] charges on coffee table
+  glasses:        {home: coffee_table_l1}                                # [DESIGN]
+  tablet:         {home: worktable_st1, volatility_class_hint: high}     # [DESIGN] lives in the studio
+  sketchbook:     {home: worktable_st1, volatility_class_hint: high}     # [DESIGN]
+  # admin objects home to the DINING TABLE (her desk), not an office desk
+  laptop:         {home: table_d1}                                       # [DESIGN]
+  mail:           {home: shelf_e1}
+  keys:           {home: entry_hook_e1, p_misplace: 0.10, misplace_set: [table_d1, counter_k1]}  # [HKEEP]
+  tote:           {home: shelf_e1, p_misplace: 0.10, misplace_set: [sofa_l1, entry_hook_e1]}
+  brushes:        {home: worktable_st1}
+  blanket:        {home: sofa_l1}                                        # [DESIGN] bedding on the sofa-bed
+  mug:            {home: cupboard_k1}
+  bowl:           {home: cupboard_k1}
+  spoon:          {home: cupboard_k1}
+  plate:          {home: cupboard_k1}
+  fork:           {home: cupboard_k1}
+  water_glass:    {home: cupboard_k1}
+  pan:            {home: cupboard_k1}
+  cutting_board:  {home: counter_k1}
+  knife:          {home: cupboard_k1}
+  remote_control: {home: coffee_table_l1}
+  # static low-volatility tercile (never activity-bound)
+  canvas:         {home: easel_st1,       volatility_class_hint: static}  # [DESIGN] on the easel
+  paints_tray:    {home: worktable_st1,   volatility_class_hint: static}
+  router:         {home: tv_stand_l1,     volatility_class_hint: static}
+  vase:           {home: coffee_table_l1, volatility_class_hint: static}
+  first_aid_kit:  {home: bathroom_c1,     volatility_class_hint: static}
+
+# Dish-cycle rule (generator-level, all profiles): objects sitting on sink_k1
+# at 21:30 return to their placement home at 21:45 with p=0.9. [DESIGN]

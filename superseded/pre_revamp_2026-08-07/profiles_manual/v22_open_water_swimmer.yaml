@@ -1,0 +1,160 @@
+# v22_open_water_swimmer -- VERSION22 confirmatory household (pair B with
+# v22_dawn_bread_baker: both up ~05:00, but this one LEAVES the house).
+# Persona: open-water swimmer, daily 05:30 lake swim, back ~07:30; office job
+#   Mo-Fr. Gear staged at the entry bench the night before.
+# IDIOSYNCRATIC-BUT-REALISTIC: bath towels live in the swim MESH BAG on the entry
+#   bench (not the bathroom); the water_bottle is staged on the entry bench at
+#   dawn; goggles hang on the key hook overnight.
+# DIAGNOSTIC: swim_goggles, wetsuit, mesh_bag, swim_cap.
+# DEPENDENT targets: towel (entry bench 06:00, not bathroom), water_bottle
+#   (entry bench 05:30), keys (gone during swim + workday).
+# STATIC DISTRACTORS: dining_chair, bed_pillow, wall_clock, floor_lamp, doormat,
+#   waste_bin, picture_frame, bath_mat.
+household: v22_open_water_swimmer
+status: DRAFT  # version22 authoring 2026-07-22 — needs human anchor verification
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,          room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1,   room: bedroom,  aliases: []}
+  - {id: dresser_r1,      room: bedroom,  aliases: []}
+  - {id: sofa_l1,         room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living,   aliases: []}
+  - {id: drying_rack_u1,  room: utility,  aliases: [laundry_rack]}
+  - {id: counter_k1,      room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,     room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,         room: kitchen,  aliases: []}
+  - {id: table_d1,        room: dining,   aliases: [dining_table]}
+  - {id: entry_bench_e1,  room: entryway, aliases: [mudroom_bench]}
+  - {id: entry_hook_e1,   room: entryway, aliases: [key_hook]}
+  - {id: bathroom_c1,     room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: open-water swimmer; 05:30 daily lake swim, office job on weekdays
+    schedule:
+      - {activity: sleep,        days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "21:45", end: "05:00"}
+      - {activity: swim_prep,    days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "05:05", end: "05:30"}
+      - {activity: lake_swim,    days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "05:30", end: "07:20"}
+      - {activity: post_swim,    days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "07:25", end: "08:00"}
+      - {activity: leave_work,   days: [Mo,Tu,We,Th,Fr],       start: "08:20", end: "08:35"}
+      - {activity: away_work,    days: [Mo,Tu,We,Th,Fr],       start: "08:35", end: "17:30"}
+      - {activity: return_work,  days: [Mo,Tu,We,Th,Fr],       start: "17:30", end: "17:50"}
+      - {activity: weekend_errands, days: [Sa],                start: "10:00", end: "12:30"}
+      - {activity: dinner,       days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "18:15", end: "18:55"}
+      - {activity: gear_staging, days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "20:30", end: "20:50"}
+      - {activity: tv_evening,   days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "19:10", end: "20:25"}
+activities:
+  swim_prep:
+    jitter_min: 5
+    objects: [swim_goggles, swim_cap, wetsuit, water_bottle, towel, mesh_bag, keys]
+    during: {swim_goggles: entry_bench_e1, swim_cap: entry_bench_e1,
+             wetsuit: entry_bench_e1, water_bottle: entry_bench_e1,
+             towel: entry_bench_e1, mesh_bag: entry_bench_e1, keys: entry_hook_e1}
+    after:
+      swim_goggles: {dest: null, p: 0.95}   # all leave for the lake
+      swim_cap:     {dest: null, p: 0.95}
+      wetsuit:      {dest: null, p: 0.95}
+      water_bottle: {dest: null, p: 0.9, else: entry_bench_e1}
+      towel:        {dest: null, p: 0.9, else: entry_bench_e1}
+      mesh_bag:     {dest: null, p: 0.95}
+      keys:         {dest: null, p: 0.95}
+  lake_swim:
+    jitter_min: 10
+    objects: []
+    during: {}
+    after: {}
+  post_swim:
+    jitter_min: 10
+    objects: [swim_goggles, swim_cap, wetsuit, water_bottle, towel, mesh_bag, keys, bowl]
+    during: {swim_goggles: entry_hook_e1, swim_cap: drying_rack_u1,
+             wetsuit: drying_rack_u1, water_bottle: sink_k1,
+             towel: drying_rack_u1, mesh_bag: entry_bench_e1,
+             keys: entry_hook_e1, bowl: counter_k1}
+    after:
+      swim_goggles: {dest: entry_hook_e1, p: 0.9}
+      swim_cap:     {dest: drying_rack_u1, p: 0.9}
+      wetsuit:      {dest: drying_rack_u1, p: 0.95}
+      water_bottle: {dest: sink_k1, p: 0.7, else: counter_k1}
+      towel:        {dest: drying_rack_u1, p: 0.85, else: entry_bench_e1}
+      mesh_bag:     {dest: entry_bench_e1, p: 0.9}
+      keys:         {dest: entry_hook_e1, p: 0.8, else: counter_k1}
+      bowl:         {dest: sink_k1, p: 0.8, else: counter_k1}
+  leave_work:
+    jitter_min: 5
+    objects: [keys, laptop_bag, phone]
+    after:
+      keys:       {dest: null, p: 1.0}
+      laptop_bag: {dest: null, p: 1.0}
+      phone:      {dest: null, p: 1.0}
+  return_work:
+    jitter_min: 20
+    objects: [keys, laptop_bag, phone]
+    after:
+      keys:       {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      laptop_bag: {dest: entry_bench_e1, p: 0.9, else: sofa_l1}
+      phone:      {dest: sofa_l1, p: 0.5, else: counter_k1}
+  weekend_errands:
+    jitter_min: 20
+    objects: [keys, phone]
+    during: {keys: entry_hook_e1, phone: coffee_table_l1}
+    after:
+      keys:  {dest: null, p: 0.9, else: entry_hook_e1}
+      phone: {dest: null, p: 0.85, else: coffee_table_l1}
+  dinner:
+    jitter_min: 15
+    objects: [plate, fork, keys, laptop_bag, phone]
+    during: {plate: table_d1, fork: table_d1, keys: entry_hook_e1,
+             laptop_bag: entry_bench_e1, phone: table_d1}
+    after:
+      plate:      {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:       {dest: sink_k1, p: 0.85, else: table_d1}
+      keys:       {dest: entry_hook_e1, p: 0.9}
+      laptop_bag: {dest: entry_bench_e1, p: 0.9}
+      phone:      {dest: sofa_l1, p: 0.6, else: table_d1}
+  gear_staging:
+    jitter_min: 10
+    objects: [swim_goggles, swim_cap, wetsuit, mesh_bag, water_bottle, towel]
+    during: {swim_goggles: entry_bench_e1, swim_cap: entry_bench_e1,
+             wetsuit: entry_bench_e1, mesh_bag: entry_bench_e1,
+             water_bottle: entry_bench_e1, towel: entry_bench_e1}
+    after:
+      swim_goggles: {dest: entry_bench_e1, p: 0.9}
+      swim_cap:     {dest: entry_bench_e1, p: 0.9}
+      wetsuit:      {dest: entry_bench_e1, p: 0.9}
+      mesh_bag:     {dest: entry_bench_e1, p: 0.95}     # towel packed IN the mesh bag
+      water_bottle: {dest: entry_bench_e1, p: 0.9}
+      towel:        {dest: entry_bench_e1, p: 0.9}
+  tv_evening:
+    jitter_min: 15
+    objects: [remote, phone]
+    during: {remote: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+      phone:  {dest: nightstand_r1, p: 0.85, else: sofa_l1}
+placements:
+  # DIAGNOSTIC
+  swim_goggles: {home: entry_hook_e1, volatility_class_hint: high}
+  swim_cap:     {home: entry_bench_e1}
+  wetsuit:      {home: drying_rack_u1, volatility_class_hint: high}
+  mesh_bag:     {home: entry_bench_e1}
+  # DEPENDENT targets (idiosyncratic homes)
+  towel:        {home: entry_bench_e1, volatility_class_hint: high}  # lives with swim gear
+  water_bottle: {home: entry_bench_e1, volatility_class_hint: high}
+  keys:         {home: entry_hook_e1, volatility_class_hint: high}
+  # ordinary
+  bowl:       {home: cupboard_k1}
+  plate:      {home: cupboard_k1}
+  fork:       {home: cupboard_k1}
+  remote:     {home: coffee_table_l1}
+  phone:      {home: nightstand_r1, volatility_class_hint: high}
+  laptop_bag: {home: entry_bench_e1}
+  # STATIC DISTRACTORS
+  dining_chair:  {home: table_d1,        volatility_class_hint: static}
+  bed_pillow:    {home: bed_r1,          volatility_class_hint: static}
+  wall_clock:    {home: counter_k1,      volatility_class_hint: static}
+  floor_lamp:    {home: sofa_l1,         volatility_class_hint: static}
+  doormat:       {home: entry_bench_e1,  volatility_class_hint: static}
+  waste_bin:     {home: counter_k1,      volatility_class_hint: static}
+  picture_frame: {home: dresser_r1,      volatility_class_hint: static}
+  bath_mat:      {home: bathroom_c1,     volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9.

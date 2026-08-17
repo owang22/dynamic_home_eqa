@@ -46,22 +46,43 @@ rewritten). habitat_sim is needed **only** by the offline bake step.
 
        python serve.py            # -> http://127.0.0.1:8710/
 
-   Redirects to the hh_001 pilot. The header dropdown switches between the
-   households listed in `traces.json` — add a line there when you publish a
-   new timeline. Arbitrary traces also work via
-   `viewer/index.html?trace=/profiles/.../trace.json`.
-
    A second page, **`viewer/beliefs.html`**, overlays a baselines run
    (src/baselines) on the same map: gold disc = the object's true location
    now, ring = the agent's prediction at the last question (green right /
    red wrong, dashed line on a miss), with per-question readout
    (distribution, budget, running accuracy) and a correctness strip under
-   the slider. Defaults to the hh_001 grid run
-   (`smoke_results/baselines_hh001/`, bank exported by
-   `python -m baselines.export_bank`); override via
-   `?run=<run_log.jsonl>&trace=<trace.json>&agent=...&object=...`.
-   Pseudo-receptacles map back for drawing: OUT_OF_HOUSE at the AWAY
-   circle, ON_PERSON at the resident's current position.
+   the slider. Pseudo-receptacles map back for drawing: OUT_OF_HOUSE at the
+   AWAY circle, ON_PERSON at the resident's current position.
+
+### Publishing a dataset — `traces.json` is the only place
+
+Both pages read `visualization/traces.json` (via `viewer/datasets.js`) and
+build their header dropdown from it; neither has a hardcoded path, and
+`serve.py` pins no trace either. Nothing is selected by hand-editing a URL.
+One entry per timeline, each listing the baselines runs recorded against it:
+
+```json
+{"label": "hh1 — night-shift solo (Marisol), 21-day ...",
+ "trace": "/profiles/revamp_v1/claude-fable-5/hh1/timeline_seed0/trace.json",
+ "runs": [{"label": "baselines grid — 9 agents × 17 objects, 21d",
+           "run": "/archive/smoke_results/baselines_hh1_21d/run_log.jsonl"}]}
+```
+
+- `index.html` — one dropdown row per entry; the first is the default. The
+  **belief vs truth ▸** link carries the current household over, using its
+  first run.
+- `beliefs.html` — one row per (timeline, run) pair, so a timeline with no
+  `runs` is not offered (nothing to overlay); the picker greys out when
+  only one pair is published. Run logs come from
+  `python -m baselines.cli run <config.yaml>`, their banks from
+  `python -m baselines.export_bank`.
+
+Unpublished files still load through `?trace=`, or `?run=&trace=` on the
+belief page (plus optional `&agent=&object=` preselects) — the picker then
+shows that file as a `(not in traces.json)` row so the dropdown always
+reflects what is on screen. Paths may be repo-absolute or relative; the
+picker matches either spelling. A missing or broken manifest is not fatal:
+the pages fall back to their URL params.
 
 ## Viewer features
 

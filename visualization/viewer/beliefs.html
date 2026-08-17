@@ -8,10 +8,11 @@
 <body>
 <header>
   <h1>belief vs truth</h1>
+  <select id="dataset-select" title="household + baselines run"></select>
   <select id="agent-select" title="agent (belief+policy)"></select>
   <select id="object-select" title="object"></select>
   <span id="run-label" class="muted"></span>
-  <span style="margin-left:auto"><a href="index.html" style="color:var(--accent2)">object traces ▸</a></span>
+  <span style="margin-left:auto"><a id="traces-link" href="index.html" style="color:var(--accent2)">object traces ▸</a></span>
 </header>
 
 <main>
@@ -65,6 +66,7 @@
   </div>
 </footer>
 
+<script src="datasets.js"></script>
 <script src="beliefs.js"></script>
 </body>
 </html>

@@ -1,0 +1,133 @@
+# v22_artist_kid_family -- VERSION22 confirmatory household (pair A with
+# v22_homeschool_family: both "home-with-kid afternoons", different room).
+# Persona: parent + 9-year-old who paints at a craft desk every day after school.
+# IDIOSYNCRATIC-BUT-REALISTIC: the household coffee_mug lives at the CRAFT DESK
+#   holding the kid's paintbrushes (not in the kitchen cupboard); painters' tape
+#   and household scissors migrate to the craft desk during the daily session.
+# DIAGNOSTIC (persona-exclusive): easel, watercolor_set, paint_smock, brush_jar.
+# DEPENDENT targets (shared classes a prior would place conventionally):
+#   coffee_mug -> craft_desk (brush holder), scissors -> craft_desk at 17:00,
+#   tablet -> craft_desk at 17:00 (reference photos).
+# STATIC DISTRACTORS (never move; sighted only by the distractor system):
+#   dining_chair, bed_pillow, wall_clock, floor_lamp, doormat, waste_bin,
+#   picture_frame, bath_mat.
+household: v22_artist_kid_family
+status: DRAFT  # version22 authoring 2026-07-22 — needs human anchor verification
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,          room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1,   room: bedroom,  aliases: []}
+  - {id: sofa_l1,         room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living,   aliases: []}
+  - {id: tv_stand_l1,     room: living,   aliases: []}
+  - {id: craft_desk_s1,   room: study,    aliases: [art_desk]}
+  - {id: craft_shelf_s1,  room: study,    aliases: [art_shelf]}
+  - {id: counter_k1,      room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,     room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,         room: kitchen,  aliases: []}
+  - {id: table_d1,        room: dining,   aliases: [dining_table]}
+  - {id: entry_hook_e1,   room: entryway, aliases: [key_hook]}
+  - {id: backpack_rack_e1, room: entryway, aliases: []}
+  - {id: bathroom_c1,     room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: parent and artistic 9-year-old; daily after-school painting session
+    schedule:
+      - {activity: sleep,          days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "22:00", end: "06:45"}
+      - {activity: breakfast,      days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "07:00", end: "07:40"}
+      - {activity: school_run,     days: [Mo,Tu,We,Th,Fr],       start: "08:00", end: "08:40"}
+      - {activity: lunch,          days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "12:15", end: "12:50"}
+      - {activity: painting_session, days: [Mo,Tu,We,Th,Fr],     start: "16:00", end: "18:00"}
+      - {activity: painting_session, days: [Sa,Su],              start: "10:00", end: "12:00"}
+      - {activity: weekend_park,   days: [Sa],                   start: "14:00", end: "16:30"}
+      - {activity: dinner,         days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "18:30", end: "19:10"}
+      - {activity: tv_evening,     days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "19:30", end: "21:30"}
+activities:
+  breakfast:
+    jitter_min: 10
+    objects: [bowl, plate, tablet]
+    during: {bowl: table_d1, plate: table_d1, tablet: table_d1}
+    after:
+      bowl:   {dest: sink_k1, p: 0.85, else: table_d1}
+      plate:  {dest: sink_k1, p: 0.8, else: table_d1}
+      tablet: {dest: coffee_table_l1, p: 0.6, else: table_d1}
+  school_run:
+    jitter_min: 10
+    objects: [backpack, keys]
+    during: {backpack: backpack_rack_e1, keys: entry_hook_e1}
+    after:
+      backpack: {dest: null, p: 0.95, else: backpack_rack_e1}   # leaves with the kid
+      keys:     {dest: null, p: 0.9, else: entry_hook_e1}
+  lunch:
+    jitter_min: 15
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  painting_session:
+    jitter_min: 20
+    objects: [watercolor_set, paint_smock, coffee_mug, scissors, tablet, easel_pad]
+    during: {watercolor_set: craft_desk_s1, paint_smock: craft_desk_s1,
+             coffee_mug: craft_desk_s1, scissors: craft_desk_s1,
+             tablet: craft_desk_s1, easel_pad: craft_desk_s1}
+    after:
+      watercolor_set: {dest: craft_shelf_s1, p: 0.8, else: craft_desk_s1}
+      paint_smock:    {dest: craft_shelf_s1, p: 0.7, else: craft_desk_s1}
+      coffee_mug:     {dest: craft_desk_s1, p: 0.9}          # brush holder STAYS
+      scissors:       {dest: craft_desk_s1, p: 0.6, else: craft_shelf_s1}
+      tablet:         {dest: sofa_l1, p: 0.6, else: craft_desk_s1}
+      easel_pad:      {dest: craft_shelf_s1, p: 0.75, else: craft_desk_s1}
+  weekend_park:
+    jitter_min: 20
+    objects: [keys, backpack]
+    during: {keys: entry_hook_e1, backpack: backpack_rack_e1}
+    after:
+      keys:     {dest: null, p: 0.9, else: entry_hook_e1}
+      backpack: {dest: null, p: 0.9, else: backpack_rack_e1}
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork, keys, backpack]
+    during: {plate: table_d1, fork: table_d1, keys: entry_hook_e1, backpack: backpack_rack_e1}
+    after:
+      plate:    {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:     {dest: sink_k1, p: 0.85, else: table_d1}
+      keys:     {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      backpack: {dest: backpack_rack_e1, p: 0.9}
+  tv_evening:
+    jitter_min: 20
+    objects: [remote, tablet, phone]
+    during: {remote: sofa_l1, tablet: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+      tablet: {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+      phone:  {dest: nightstand_r1, p: 0.85, else: sofa_l1}
+placements:
+  # DIAGNOSTIC (persona-exclusive)
+  watercolor_set: {home: craft_shelf_s1, volatility_class_hint: high}
+  paint_smock:    {home: craft_shelf_s1}
+  easel_pad:      {home: craft_shelf_s1}
+  brush_jar_lid:  {home: craft_shelf_s1, volatility_class_hint: static}
+  # DEPENDENT targets (idiosyncratic homes)
+  coffee_mug: {home: craft_desk_s1, volatility_class_hint: high}   # holds paintbrushes
+  scissors:   {home: craft_desk_s1, volatility_class_hint: high}
+  tablet:     {home: coffee_table_l1, volatility_class_hint: high}
+  # ordinary
+  bowl:     {home: cupboard_k1}
+  plate:    {home: cupboard_k1}
+  fork:     {home: cupboard_k1}
+  remote:   {home: coffee_table_l1}
+  phone:    {home: nightstand_r1, volatility_class_hint: high}
+  keys:     {home: entry_hook_e1, p_misplace: 0.08, misplace_set: [counter_k1, coffee_table_l1]}
+  backpack: {home: backpack_rack_e1}
+  # STATIC DISTRACTORS (never bound by any activity)
+  dining_chair:  {home: table_d1,        volatility_class_hint: static}
+  bed_pillow:    {home: bed_r1,          volatility_class_hint: static}
+  wall_clock:    {home: tv_stand_l1,     volatility_class_hint: static}
+  floor_lamp:    {home: sofa_l1,         volatility_class_hint: static}
+  doormat:       {home: entry_hook_e1,   volatility_class_hint: static}
+  waste_bin:     {home: counter_k1,      volatility_class_hint: static}
+  picture_frame: {home: coffee_table_l1, volatility_class_hint: static}
+  bath_mat:      {home: bathroom_c1,     volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9.

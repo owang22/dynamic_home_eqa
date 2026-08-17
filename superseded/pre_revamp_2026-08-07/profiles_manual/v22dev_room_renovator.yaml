@@ -1,0 +1,119 @@
+# v22dev_room_renovator -- VERSION22 DEV household (alpha-sweep bank).
+# Persona: office worker renovating the spare room; DIY sessions every evening
+#   and most of the weekend for the 30-day horizon.
+# IDIOSYNCRATIC-BUT-REALISTIC: an old COFFEE_MUG on the workbench holds screws
+#   and drill bits; the kitchen RADIO rides to the spare room for every session;
+#   the PHONE props on a paint tin as the how-to-video screen.
+# DIAGNOSTIC: paint_roller, drop_cloth, toolbox, sanding_block.
+# DEPENDENT targets: coffee_mug (workbench screw cup), radio (spare room 20:00),
+#   phone (workbench 20:00).
+household: v22dev_room_renovator
+status: DRAFT  # version22 authoring 2026-07-22 — needs human anchor verification
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,          room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1,   room: bedroom,  aliases: []}
+  - {id: sofa_l1,         room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living,   aliases: []}
+  - {id: workbench_s1,    room: spare_room, aliases: [sawhorse_table]}
+  - {id: paint_shelf_s1,  room: spare_room, aliases: [supply_shelf]}
+  - {id: counter_k1,      room: kitchen,  aliases: [kitchen_counter]}
+  - {id: cupboard_k1,     room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,         room: kitchen,  aliases: []}
+  - {id: table_d1,        room: dining,   aliases: [dining_table]}
+  - {id: entry_hook_e1,   room: entryway, aliases: [key_hook]}
+  - {id: bathroom_c1,     room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: office worker mid-renovation; nightly + weekend DIY in the spare room
+    schedule:
+      - {activity: sleep,        days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "23:15", end: "06:45"}
+      - {activity: breakfast,    days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "07:00", end: "07:35"}
+      - {activity: leave_office, days: [Mo,Tu,We,Th,Fr],       start: "08:00", end: "08:15"}
+      - {activity: away_office,  days: [Mo,Tu,We,Th,Fr],       start: "08:15", end: "17:15"}
+      - {activity: return_office, days: [Mo,Tu,We,Th,Fr],      start: "17:15", end: "17:35"}
+      - {activity: dinner,       days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "18:00", end: "18:40"}
+      - {activity: diy_session,  days: [Mo,Tu,We,Th,Fr],       start: "19:15", end: "22:00"}
+      - {activity: diy_session,  days: [Sa,Su],                start: "10:00", end: "16:30"}
+      - {activity: tv_evening,   days: [Sa,Su],                start: "19:30", end: "22:30"}
+activities:
+  breakfast:
+    jitter_min: 10
+    objects: [bowl, coffee_mug_b, radio]
+    during: {bowl: table_d1, coffee_mug_b: table_d1, radio: counter_k1}
+    after:
+      bowl:         {dest: sink_k1, p: 0.85, else: table_d1}
+      coffee_mug_b: {dest: sink_k1, p: 0.7, else: table_d1}
+      radio:        {dest: counter_k1, p: 0.9}
+  leave_office:
+    jitter_min: 5
+    objects: [keys, phone, laptop_bag]
+    after:
+      keys:       {dest: null, p: 1.0}
+      phone:      {dest: null, p: 1.0}
+      laptop_bag: {dest: null, p: 1.0}
+  return_office:
+    jitter_min: 20
+    objects: [keys, phone, laptop_bag]
+    after:
+      keys:       {dest: entry_hook_e1, p: 0.85, else: counter_k1}
+      phone:      {dest: sofa_l1, p: 0.5, else: counter_k1}
+      laptop_bag: {dest: entry_hook_e1, p: 0.85, else: sofa_l1}
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  diy_session:
+    jitter_min: 20
+    objects: [toolbox, paint_roller, drop_cloth, sanding_block, coffee_mug,
+              radio, phone]
+    during: {toolbox: workbench_s1, paint_roller: paint_shelf_s1,
+             drop_cloth: workbench_s1, sanding_block: workbench_s1,
+             coffee_mug: workbench_s1, radio: workbench_s1, phone: workbench_s1}
+    after:
+      toolbox:       {dest: workbench_s1, p: 0.9}
+      paint_roller:  {dest: paint_shelf_s1, p: 0.85, else: workbench_s1}
+      drop_cloth:    {dest: workbench_s1, p: 0.9}
+      sanding_block: {dest: paint_shelf_s1, p: 0.7, else: workbench_s1}
+      coffee_mug:    {dest: workbench_s1, p: 0.95}          # screw cup NEVER leaves
+      radio:         {dest: workbench_s1, p: 0.7, else: counter_k1}
+      phone:         {dest: nightstand_r1, p: 0.75, else: workbench_s1}
+  tv_evening:
+    jitter_min: 20
+    objects: [remote, phone]
+    during: {remote: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+      phone:  {dest: nightstand_r1, p: 0.85, else: sofa_l1}
+placements:
+  # DIAGNOSTIC
+  paint_roller:  {home: paint_shelf_s1}
+  drop_cloth:    {home: workbench_s1, volatility_class_hint: static}
+  toolbox:       {home: workbench_s1, volatility_class_hint: high}
+  sanding_block: {home: paint_shelf_s1}
+  # DEPENDENT targets (idiosyncratic homes)
+  coffee_mug: {home: workbench_s1, volatility_class_hint: high}  # screw/bit cup
+  radio:      {home: counter_k1, volatility_class_hint: high}    # commutes to the spare room
+  phone:      {home: nightstand_r1, volatility_class_hint: high}
+  # ordinary
+  bowl:         {home: cupboard_k1}
+  plate:        {home: cupboard_k1}
+  fork:         {home: cupboard_k1}
+  coffee_mug_b: {home: cupboard_k1}
+  remote:       {home: coffee_table_l1}
+  keys:         {home: entry_hook_e1, p_misplace: 0.08, misplace_set: [counter_k1, coffee_table_l1]}
+  laptop_bag:   {home: entry_hook_e1}
+  # STATIC DISTRACTORS
+  dining_chair:  {home: table_d1,        volatility_class_hint: static}
+  bed_pillow:    {home: bed_r1,          volatility_class_hint: static}
+  wall_clock:    {home: counter_k1,      volatility_class_hint: static}
+  floor_lamp:    {home: sofa_l1,         volatility_class_hint: static}
+  doormat:       {home: entry_hook_e1,   volatility_class_hint: static}
+  waste_bin:     {home: counter_k1,      volatility_class_hint: static}
+  picture_frame: {home: coffee_table_l1, volatility_class_hint: static}
+  bath_mat:      {home: bathroom_c1,     volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9.

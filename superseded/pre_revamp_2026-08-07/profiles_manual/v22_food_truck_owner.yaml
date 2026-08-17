@@ -1,0 +1,152 @@
+# v22_food_truck_owner -- VERSION22 confirmatory household (pair E with
+# v22_teacher_coach: both leave daily with a work kit; this one leaves LATE
+#   MORNING and returns LATE EVENING, and preps in the home kitchen first).
+# Persona: taco-truck owner; home-kitchen prep 07:30-10:00, truck service
+#   10:30-20:00 (Tu-Su; Mo closed), accounts at the dining table late evening.
+# IDIOSYNCRATIC-BUT-REALISTIC: the LAPTOP (menu + accounts) lives on a KITCHEN
+#   shelf next to recipe binders; the THERMOS rides to the truck daily and lands
+#   in the sink at night; KEYS include the truck keys and hang on a cabinet
+#   knob by the prep counter, not the entry hook.
+# DIAGNOSTIC: cash_box, prep_apron, salsa_container, order_pad.
+# DEPENDENT targets: keys (prep-counter cabinet knob), thermos (away 12:00, sink
+#   21:00), laptop (kitchen shelf; dining table at 21:30 for accounts).
+# STATIC DISTRACTORS: dining_chair, bed_pillow, wall_clock, floor_lamp, doormat,
+#   waste_bin, picture_frame, bath_mat.
+household: v22_food_truck_owner
+status: DRAFT  # version22 authoring 2026-07-22 — needs human anchor verification
+derived_from: null
+transformation: null
+receptacles:
+  - {id: bed_r1,          room: bedroom,  aliases: [bed]}
+  - {id: nightstand_r1,   room: bedroom,  aliases: []}
+  - {id: sofa_l1,         room: living,   aliases: [couch]}
+  - {id: coffee_table_l1, room: living,   aliases: []}
+  - {id: counter_k1,      room: kitchen,  aliases: [kitchen_counter, prep_counter]}
+  - {id: kitchen_shelf_k1, room: kitchen, aliases: [recipe_shelf]}
+  - {id: cupboard_k1,     room: kitchen,  aliases: [cabinet_k1]}
+  - {id: sink_k1,         room: kitchen,  aliases: []}
+  - {id: fridge_k1,       room: kitchen,  aliases: []}
+  - {id: table_d1,        room: dining,   aliases: [dining_table]}
+  - {id: entry_hook_e1,   room: entryway, aliases: [key_hook]}
+  - {id: entry_bench_e1,  room: entryway, aliases: [mudroom_bench]}
+  - {id: bathroom_c1,     room: bathroom, aliases: [bathroom_cabinet]}
+residents:
+  - id: R1
+    description: food-truck owner; morning home prep, Tu-Su truck service, late accounts
+    schedule:
+      - {activity: sleep,          days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "23:30", end: "07:00"}
+      - {activity: breakfast,      days: [Mo,Tu,We,Th,Fr,Sa,Su], start: "07:05", end: "07:30"}
+      - {activity: prep_session,   days: [Tu,We,Th,Fr,Sa,Su],    start: "07:35", end: "10:00"}
+      - {activity: leave_truck,    days: [Tu,We,Th,Fr,Sa,Su],    start: "10:15", end: "10:30"}
+      - {activity: away_truck,     days: [Tu,We,Th,Fr,Sa,Su],    start: "10:30", end: "20:00"}
+      - {activity: return_truck,   days: [Tu,We,Th,Fr,Sa,Su],    start: "20:00", end: "20:30"}
+      - {activity: supply_run,     days: [Mo],                   start: "09:30", end: "12:00"}
+      - {activity: deep_clean,     days: [Mo],                   start: "13:30", end: "15:30"}
+      - {activity: dinner,         days: [Tu,We,Th,Fr,Sa,Su],    start: "20:40", end: "21:10"}
+      - {activity: dinner,         days: [Mo],                   start: "19:00", end: "19:25"}
+      - {activity: accounts,       days: [Tu,We,Th,Fr,Sa,Su],    start: "21:20", end: "22:40"}
+      - {activity: tv_evening,     days: [Mo],                   start: "19:40", end: "22:30"}
+activities:
+  breakfast:
+    jitter_min: 5
+    objects: [bowl, thermos]
+    during: {bowl: counter_k1, thermos: counter_k1}
+    after:
+      bowl:    {dest: sink_k1, p: 0.8, else: counter_k1}
+      thermos: {dest: counter_k1, p: 0.9}          # filled for the truck day
+  prep_session:
+    jitter_min: 15
+    objects: [prep_apron, salsa_container, order_pad, keys, phone]
+    during: {prep_apron: counter_k1, salsa_container: counter_k1,
+             order_pad: counter_k1, keys: cupboard_k1, phone: counter_k1}
+    after:
+      prep_apron:      {dest: counter_k1, p: 0.9}
+      salsa_container: {dest: fridge_k1, p: 0.9, else: counter_k1}
+      order_pad:       {dest: counter_k1, p: 0.8, else: kitchen_shelf_k1}
+      keys:            {dest: cupboard_k1, p: 0.9}        # truck keys on the cabinet knob
+      phone:           {dest: counter_k1, p: 0.8, else: sofa_l1}
+  leave_truck:
+    jitter_min: 5
+    objects: [keys, phone, thermos, cash_box, prep_apron, salsa_container, order_pad]
+    after:
+      keys:            {dest: null, p: 1.0}
+      phone:           {dest: null, p: 1.0}
+      thermos:         {dest: null, p: 1.0}
+      cash_box:        {dest: null, p: 1.0}
+      prep_apron:      {dest: null, p: 1.0}
+      salsa_container: {dest: null, p: 1.0}
+      order_pad:       {dest: null, p: 1.0}
+  return_truck:
+    jitter_min: 20
+    objects: [keys, phone, thermos, cash_box, prep_apron, salsa_container, order_pad]
+    after:
+      keys:            {dest: cupboard_k1, p: 0.85, else: counter_k1}
+      phone:           {dest: sofa_l1, p: 0.5, else: counter_k1}
+      thermos:         {dest: sink_k1, p: 0.85, else: counter_k1}
+      cash_box:        {dest: kitchen_shelf_k1, p: 0.85, else: table_d1}
+      prep_apron:      {dest: counter_k1, p: 0.8, else: entry_bench_e1}
+      salsa_container: {dest: sink_k1, p: 0.8, else: fridge_k1}
+      order_pad:       {dest: kitchen_shelf_k1, p: 0.8, else: counter_k1}
+  supply_run:
+    jitter_min: 20
+    objects: [keys, phone, cash_box]
+    after:
+      keys:     {dest: cupboard_k1, p: 0.85, else: counter_k1}
+      phone:    {dest: sofa_l1, p: 0.5, else: counter_k1}
+      cash_box: {dest: kitchen_shelf_k1, p: 0.9}
+  deep_clean:
+    jitter_min: 20
+    objects: [prep_apron, thermos]
+    during: {prep_apron: counter_k1, thermos: sink_k1}
+    after:
+      prep_apron: {dest: counter_k1, p: 0.9}
+      thermos:    {dest: cupboard_k1, p: 0.7, else: sink_k1}
+  dinner:
+    jitter_min: 10
+    objects: [plate, fork]
+    during: {plate: table_d1, fork: table_d1}
+    after:
+      plate: {dest: sink_k1, p: 0.85, else: table_d1}
+      fork:  {dest: sink_k1, p: 0.85, else: table_d1}
+  accounts:
+    jitter_min: 15
+    objects: [laptop, order_pad, cash_box, phone]
+    during: {laptop: table_d1, order_pad: table_d1, cash_box: table_d1, phone: table_d1}
+    after:
+      laptop:    {dest: kitchen_shelf_k1, p: 0.75, else: table_d1}  # back to the recipe shelf
+      order_pad: {dest: kitchen_shelf_k1, p: 0.8, else: table_d1}
+      cash_box:  {dest: kitchen_shelf_k1, p: 0.9}
+      phone:     {dest: nightstand_r1, p: 0.85, else: table_d1}
+  tv_evening:
+    jitter_min: 20
+    objects: [remote, phone]
+    during: {remote: sofa_l1, phone: sofa_l1}
+    after:
+      remote: {dest: coffee_table_l1, p: 0.5, else: sofa_l1}
+      phone:  {dest: nightstand_r1, p: 0.85, else: sofa_l1}
+placements:
+  # DIAGNOSTIC
+  cash_box:        {home: kitchen_shelf_k1, volatility_class_hint: high}
+  prep_apron:      {home: counter_k1}
+  salsa_container: {home: fridge_k1, volatility_class_hint: high}
+  order_pad:       {home: kitchen_shelf_k1}
+  # DEPENDENT targets (idiosyncratic homes)
+  keys:    {home: cupboard_k1, volatility_class_hint: high}     # truck keys on a cabinet knob
+  thermos: {home: counter_k1, volatility_class_hint: high}
+  laptop:  {home: kitchen_shelf_k1, volatility_class_hint: high} # lives with recipe binders
+  # ordinary
+  bowl:   {home: cupboard_k1}
+  plate:  {home: cupboard_k1}
+  fork:   {home: cupboard_k1}
+  remote: {home: coffee_table_l1}
+  phone:  {home: nightstand_r1, volatility_class_hint: high}
+  # STATIC DISTRACTORS
+  dining_chair:  {home: table_d1,        volatility_class_hint: static}
+  bed_pillow:    {home: bed_r1,          volatility_class_hint: static}
+  wall_clock:    {home: counter_k1,      volatility_class_hint: static}
+  floor_lamp:    {home: sofa_l1,         volatility_class_hint: static}
+  doormat:       {home: entry_bench_e1,  volatility_class_hint: static}
+  waste_bin:     {home: counter_k1,      volatility_class_hint: static}
+  picture_frame: {home: coffee_table_l1, volatility_class_hint: static}
+  bath_mat:      {home: bathroom_c1,     volatility_class_hint: static}
+# Dish-cycle: sink_k1 at 21:30 -> home at 21:45, p=0.9.

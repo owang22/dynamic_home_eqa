@@ -18,7 +18,7 @@ import http.server
 import pathlib
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
-DEFAULT_TRACE = "/profiles/revamp_v1/claude-fable-5/hh1/timeline_seed0/trace.json"
+VIEWER = "/visualization/viewer/index.html"
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
@@ -27,10 +27,11 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         super().end_headers()
 
     def do_GET(self):
+        # No trace pinned here: the viewer opens the first entry of
+        # visualization/traces.json, which is the one manifest both pages read.
         if self.path in ("/", "/index.html"):
             self.send_response(302)
-            self.send_header(
-                "Location", f"/visualization/viewer/index.html?trace={DEFAULT_TRACE}")
+            self.send_header("Location", VIEWER)
             self.end_headers()
             return
         super().do_GET()

@@ -5,8 +5,9 @@
  * through the days with a time slider, its path so far, a dwell-weighted
  * trace build-up ("which locations does it frequent"), and autoplay.
  *
- * URL params:
- *   ?trace=<url of trace.json>   default: the hh_001_seed0 pilot
+ * The household picker in the header is driven by visualization/traces.json
+ * (see datasets.js); ?trace=<url of trace.json> overrides it for a timeline
+ * that has not been published to the manifest yet.
  */
 "use strict";
 
@@ -17,8 +18,7 @@ const SEG = {T0: 0, T1: 1, REC: 2, ROOM: 3, REL: 4, X: 5, Z: 6, CAUSE: 7};
 
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const TRACE_URL = params.get("trace") ||
-  "../../profiles/revamp_v1/claude-fable-5/timelines/hh_001_seed0/trace.json";
+let TRACE_URL = params.get("trace");   // resolved against the manifest in boot()
 
 let trace = null, mapImg = null;
 let t = 0, horizon = 1;
@@ -334,32 +334,51 @@ function jumpEvent(dir) {
 
 // ---------------------------------------------------------------- boot
 
-async function populateTracePicker() {
-  // Household switcher: manifest lists every published trace. Fails soft —
-  // a missing manifest just leaves the picker with the current trace only.
-  const sel = $("trace-select");
-  let entries = [];
-  try {
-    const manifest = await (await fetch(new URL("../traces.json", location.href))).json();
-    entries = manifest.traces || [];
-  } catch (e) { /* no manifest: picker shows current trace only */ }
-  const currentPath = new URL(TRACE_URL, location.href).pathname;
-  if (!entries.some(t => new URL(t.trace, location.origin).pathname === currentPath))
-    entries.unshift({label: currentPath, trace: TRACE_URL});
-  for (const t of entries) {
-    const opt = document.createElement("option");
-    opt.value = t.trace;
-    opt.textContent = t.label;
-    opt.selected = new URL(t.trace, location.origin).pathname === currentPath;
-    sel.appendChild(opt);
+function populateTracePicker(datasets) {
+  // Household switcher: every timeline published in traces.json, plus — when
+  // the page was opened on an unpublished one via ?trace= — that trace as its
+  // own row, so the picker always shows what is actually on screen.
+  const rows = datasets.map(d => ({
+    label: d.label,
+    search: `?trace=${encodeURIComponent(d.trace)}`,
+  }));
+  let current = datasets.findIndex(d => samePath(d.trace, TRACE_URL));
+  if (current < 0) {
+    rows.unshift({
+      label: `${new URL(TRACE_URL, location.href).pathname} (not in traces.json)`,
+      search: `?trace=${encodeURIComponent(TRACE_URL)}`,
+    });
+    current = 0;
   }
-  sel.addEventListener("change", () => {
-    location.search = `?trace=${encodeURIComponent(sel.value)}`;
-  });
+  wirePicker($("trace-select"), rows, current);
+}
+
+function linkToBeliefs(datasets) {
+  // Carry the household across to the belief page instead of making the user
+  // retype it. Households with no run recorded against them just link over
+  // plainly and let that page open on its own first dataset.
+  const d = datasets.find(x => samePath(x.trace, TRACE_URL));
+  const run = d && d.runs && d.runs.length ? d.runs[0] : null;
+  const link = $("beliefs-link");
+  if (!run) {
+    link.title = "no baselines run published for this household";
+    return;
+  }
+  link.href = `beliefs.html?run=${encodeURIComponent(run.run)}` +
+              `&trace=${encodeURIComponent(d.trace)}`;
+  link.title = run.label;
 }
 
 async function boot() {
-  await populateTracePicker();
+  const datasets = await loadDatasets();
+  if (!TRACE_URL) {
+    if (!datasets.length)
+      throw new Error("no ?trace= given and visualization/traces.json is missing or empty");
+    TRACE_URL = datasets[0].trace;
+  }
+  populateTracePicker(datasets);
+  linkToBeliefs(datasets);
+
   trace = await (await fetch(TRACE_URL)).json();
   horizon = trace.days * 1440;
 
@@ -404,6 +423,6 @@ async function boot() {
 boot().catch(err => {
   document.body.innerHTML =
     `<pre style="padding:2em;color:#ff8a8a">failed to load trace:\n${err}\n\n` +
-    `URL tried: ${TRACE_URL}\nServe via visualization/serve.py, ` +
-    `not file://</pre>`;
+    `URL tried: ${TRACE_URL || "(none — no manifest entry, no ?trace=)"}\n` +
+    `Serve via visualization/serve.py, not file://</pre>`;
 });

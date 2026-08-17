@@ -2,9 +2,11 @@
  * question times) on the household topdown map, against the object's true
  * trajectory from the same timeline's trace.json.
  *
- * URL params:
- *   ?run=<url of baselines run_log.jsonl>   (default: hh_001 grid run)
- *   &trace=<url of trace.json>              (default: hh_001 timeline)
+ * The dataset picker in the header is driven by visualization/traces.json
+ * (see datasets.js): one row per (timeline, run) pair published there.
+ *
+ * URL params — only needed for a pair not in the manifest:
+ *   ?run=<url of baselines run_log.jsonl>&trace=<url of trace.json>
  *   &agent=<agent name>&object=<object id>  (optional preselects)
  *
  * The run's bank projects virtual locations to pseudo-receptacles; this
@@ -19,10 +21,8 @@ const GOOD = "#7ee08a", BAD = "#ff8a8a", TRUTH = "#ffb84d";
 
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-const RUN_URL = params.get("run") ||
-  "../../smoke_results/baselines_hh1_21d/run_log.jsonl";
-const TRACE_URL = params.get("trace") ||
-  "../../profiles/revamp_v1/claude-fable-5/hh1/timeline_seed0/trace.json";
+let RUN_URL = params.get("run");        // both resolved against the manifest
+let TRACE_URL = params.get("trace");    // in boot()
 
 let trace = null, mapImg = null, records = [];
 let t = 0, horizon = 1, playing = false, lastFrame = 0, view = null;
@@ -279,7 +279,47 @@ function jumpQuestion(dir) {
 
 // -------------------------------------------------------------------- boot
 
+/* One picker row per (timeline, run) pair in the manifest. A household with
+ * no run recorded against it has nothing to overlay, so it is not offered. */
+function runRows(datasets) {
+  const rows = [];
+  for (const d of datasets)
+    for (const r of d.runs || [])
+      rows.push({
+        label: `${d.label.split(" — ")[0]} · ${r.label}`,
+        trace: d.trace,
+        run: r.run,
+        search: `?run=${encodeURIComponent(r.run)}&trace=${encodeURIComponent(d.trace)}`,
+      });
+  return rows;
+}
+
+function populateDatasetPicker(rows) {
+  let current = rows.findIndex(
+    r => samePath(r.run, RUN_URL) && samePath(r.trace, TRACE_URL));
+  if (current < 0) {
+    rows.unshift({
+      label: `${new URL(RUN_URL, location.href).pathname} (not in traces.json)`,
+      trace: TRACE_URL, run: RUN_URL,
+      search: `?run=${encodeURIComponent(RUN_URL)}&trace=${encodeURIComponent(TRACE_URL)}`,
+    });
+    current = 0;
+  }
+  wirePicker($("dataset-select"), rows, current);
+  $("traces-link").href = `index.html?trace=${encodeURIComponent(TRACE_URL)}`;
+}
+
 async function boot() {
+  const rows = runRows(await loadDatasets());
+  if (!RUN_URL || !TRACE_URL) {
+    if (!rows.length)
+      throw new Error("no ?run=/?trace= given and visualization/traces.json " +
+                      "publishes no runs");
+    RUN_URL = rows[0].run;
+    TRACE_URL = rows[0].trace;
+  }
+  populateDatasetPicker(rows);
+
   trace = await (await fetch(TRACE_URL)).json();
   horizon = trace.days * 1440;
   const runText = await (await fetch(RUN_URL)).text();
@@ -326,6 +366,6 @@ async function boot() {
 boot().catch(err => {
   document.body.innerHTML =
     `<pre style="padding:2em;color:#ff8a8a">failed to load:\n${err}\n\n` +
-    `run URL: ${RUN_URL}\ntrace URL: ${TRACE_URL}\n` +
+    `run URL: ${RUN_URL || "(none)"}\ntrace URL: ${TRACE_URL || "(none)"}\n` +
     `Serve via visualization/serve.py, not file://</pre>`;
 });

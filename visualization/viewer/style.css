@@ -18,10 +18,12 @@ header {
   padding: 10px 16px; border-bottom: 1px solid var(--edge);
 }
 header h1 { font-size: 16px; font-weight: 600; }
-#trace-select {
+header select {
   background: var(--panel); color: var(--fg); border: 1px solid var(--edge);
   border-radius: 6px; padding: 5px 8px; font: inherit; max-width: 46ch;
 }
+header select:hover:enabled { border-color: var(--accent); }
+header select:disabled { opacity: .6; }   /* only one dataset published */
 .muted { color: var(--muted); }
 .small { font-size: 12px; }
 
@@ -45,7 +47,7 @@ main { flex: 1; display: flex; min-height: 0; }
   background: var(--bg); color: var(--fg); border: 1px solid var(--edge);
   border-radius: 6px; padding: 6px 8px; font: inherit;
 }
-#object-select { width: 100%; }
+#panel #object-select { width: 100%; }
 #panel button { cursor: pointer; }
 #panel button:hover { border-color: var(--accent); }
 .row { display: flex; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
