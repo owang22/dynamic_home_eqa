@@ -1,0 +1,116 @@
+{
+  "household": "hh_003",
+  "household_type": "retired_couple",
+  "source": "profiles/revamp_v2/qwen3.6-35b-a3b-fp8/hh3",
+  "days": 21,
+  "seed": 0,
+  "n_events": 834,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 34,
+    "tidy_moved": 24,
+    "tidy_ran_out_of_time": 10,
+    "blocks": 733,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [
+      "breakfast.mug_1",
+      "gaming.mug_2",
+      "gaming.water_bottle_2",
+      "gaming__entry_table_e1.mug_2",
+      "gaming__entry_table_e1.water_bottle_2",
+      "reading.book_1",
+      "reading__armchair_l1.book_1"
+    ],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [
+      "book_2",
+      "glasses_2",
+      "jacket_1",
+      "jacket_2",
+      "pen_1",
+      "water_bottle_1"
+    ],
+    "carried_on_departure": [],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [
+      "glasses_1@reading",
+      "glasses_1@reading__armchair_l1",
+      "phone_1@reading",
+      "phone_1@reading__armchair_l1",
+      "phone_2@gaming",
+      "phone_2@gaming__entry_table_e1"
+    ],
+    "skips_per_activity": {
+      "tidy_up": 4,
+      "tidy_up__kitchen_table_k1": 4
+    },
+    "fragment_bouts_per_activity": {
+      "breakfast": 53,
+      "dinner": 68,
+      "gaming": 42,
+      "gaming__entry_table_e1": 1,
+      "lunch": 50,
+      "reading": 77,
+      "reading__armchair_l1": 2
+    }
+  },
+  "moves_per_object": {
+    "book_1": 121,
+    "mug_1": 101,
+    "keys_2": 69,
+    "keys_1": 65,
+    "notebook_1": 62,
+    "wallet_1": 61,
+    "wallet_2": 61,
+    "water_bottle_2": 60,
+    "medication_bottle_1": 52,
+    "medication_bottle_2": 52,
+    "mug_2": 42,
+    "laptop_1": 42,
+    "remote_1": 39,
+    "phone_2": 5,
+    "phone_1": 1,
+    "glasses_1": 1
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3.6-35B-A3B-FP8",
+    "prompts": {
+      "persona_v2": "134f5bfb",
+      "routine_program": "b33a1768",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b3",
+    "accepted_attempt": 1,
+    "n_attempts": 2
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.6
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    }
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_rule_based_qwen3.6-35b-a3b-fp8_hh3_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom_1": "bedroom.004",
+      "bedroom_2": "bedroom",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

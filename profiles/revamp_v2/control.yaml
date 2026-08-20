@@ -1,0 +1,96 @@
+# Control file for revamp_v2 — the third-generation household pipeline.
+# 10 household slots. Types started as a verbatim copy of revamp_v1's, but
+# that set skewed to the unusual (night shift, opposite-shift couple,
+# multigenerational, frequent traveller) with no plain family or working
+# couple in it. Rebalanced 2026-08-18 towards ordinary homes WITH VARIANTS
+# — three families at different child ages, three couples at different
+# life stages — keeping two atypical homes for contrast, because a
+# night-shift resident is the case that breaks any fixed "awake 8am-10pm"
+# assumption downstream. hh_00N therefore no longer matches revamp_v1's
+# hh_00N for slots 7, 8 and 10. `bedrooms` is the only new per-slot field: it
+# scales the symbolic L0 receptacle template (src/revamp_v2/generate.py)
+# and nothing else — receptacle lists must not otherwise vary by type.
+#
+# Code lives in src/revamp_v2/; this directory holds only authored control
+# data and generated artifacts (<model_slug>/hh<N>/).
+
+version: revamp_v2
+days: 21
+day0: Monday
+
+object_vocabulary:
+  [mug, bowl, plate, laptop, phone, keys, book, water_bottle, remote,
+   charger, backpack, jacket, headphones, glasses, notebook, pen,
+   medication_bottle, toy, blanket, towel, gaming_controller, dog_leash,
+   lunchbox, umbrella, wallet]
+
+households:
+  - household_id: hh_001
+    household_type: night_shift_worker_solo
+    residents_spec: "1"
+    residents: 1
+    constraints: one-bedroom apartment
+    bedrooms: 1
+
+  - household_id: hh_002
+    household_type: family_young_children
+    residents_spec: "4-5 (2 adults, 2-3 kids under ~8)"
+    residents: 4
+    constraints: null
+    bedrooms: 3
+
+  - household_id: hh_003
+    household_type: retired_couple
+    residents_spec: "2"
+    residents: 2
+    constraints: null
+    bedrooms: 2
+
+  - household_id: hh_004
+    household_type: college_roommates
+    residents_spec: "3-4"
+    residents: 4
+    constraints: null
+    bedrooms: 4
+
+  - household_id: hh_005
+    household_type: remote_worker_couple
+    residents_spec: "2, both work from home"
+    residents: 2
+    constraints: null
+    bedrooms: 2
+
+  - household_id: hh_006
+    household_type: single_parent_teens
+    residents_spec: "3 (1 adult, 2 teenagers)"
+    residents: 3
+    constraints: null
+    bedrooms: 3
+
+  - household_id: hh_007
+    household_type: family_school_age_children
+    residents_spec: "4 (2 working parents, 2 children aged ~6-12)"
+    residents: 4
+    constraints: null
+    bedrooms: 3
+
+  - household_id: hh_008
+    household_type: working_couple_no_children
+    residents_spec: "2, both out at work on weekdays"
+    residents: 2
+    constraints: null
+    bedrooms: 2
+
+  - household_id: hh_009
+    household_type: grad_student_solo
+    residents_spec: "1"
+    residents: 1
+    constraints: null
+    bedrooms: 1
+
+  - household_id: hh_010
+    household_type: couple_with_toddler
+    residents_spec: "3 (2 adults, 1 child under 4)"
+    residents: 3
+    constraints: null
+    bedrooms: 2

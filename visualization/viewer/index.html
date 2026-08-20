@@ -8,6 +8,7 @@
 <body>
 <header>
   <h1>object-trace viewer</h1>
+  <select id="source-select" title="which generated set"></select>
   <select id="trace-select" title="switch household"></select>
   <span id="run-label" class="muted"></span>
   <span style="margin-left:auto"><a id="beliefs-link" href="beliefs.html" style="color:var(--accent2)">belief vs truth ▸</a></span>
@@ -20,16 +21,14 @@
       <div id="clock">d00 Mon 00:00</div>
       <div id="whereabouts" class="muted"></div>
     </div>
+    <div id="live-note"></div>
   </div>
 
   <aside id="panel">
     <section>
-      <label for="object-select">object</label>
+      <label for="object-select"><span class="dot obj"></span> object</label>
       <select id="object-select"></select>
-    </section>
-
-    <section id="status">
-      <table>
+      <table class="status" id="obj-status">
         <tr><th>room</th><td id="st-room">–</td></tr>
         <tr><th>receptacle</th><td id="st-rec">–</td></tr>
         <tr><th>placement</th><td id="st-rel">–</td></tr>
@@ -39,21 +38,41 @@
     </section>
 
     <section>
+      <label for="resident-select"><span class="dot res"></span> resident</label>
+      <select id="resident-select"></select>
+      <table class="status" id="res-status">
+        <tr><th>room</th><td id="rs-room">–</td></tr>
+        <tr><th>where</th><td id="rs-rec">–</td></tr>
+        <tr><th>doing</th><td id="rs-activity">–</td></tr>
+        <tr><th>since</th><td id="rs-since">–</td></tr>
+        <tr><th>carrying</th><td id="rs-carrying">–</td></tr>
+      </table>
+    </section>
+
+    <section>
       <label>display</label>
       <div class="row">
-        <label class="chk"><input type="checkbox" id="show-path" checked> path so far</label>
-        <label class="chk"><input type="checkbox" id="show-trace"> trace build-up</label>
+        <label class="chk"><input type="checkbox" id="show-path" checked> object path</label>
+        <label class="chk"><input type="checkbox" id="show-res-path"> resident path</label>
       </div>
       <div class="row">
+        <label class="chk"><input type="checkbox" id="show-trace"> trace build-up</label>
         <label class="chk"><input type="checkbox" id="show-others"> all objects (faint)</label>
+      </div>
+      <div class="row">
+        <label class="chk"><input type="checkbox" id="show-all-res" checked> all residents</label>
         <label class="chk"><input type="checkbox" id="show-recs" checked> receptacles</label>
       </div>
     </section>
 
     <section>
-      <label>events (selected object)</label>
+      <label>jump between events</label>
       <div class="row">
         <button id="prev-event">◀ prev</button>
+        <select id="jump-what" title="which events the arrows follow">
+          <option value="object" selected>object moves</option>
+          <option value="resident">resident activities</option>
+        </select>
         <button id="next-event">next ▶</button>
       </div>
       <div id="event-info" class="muted small"></div>

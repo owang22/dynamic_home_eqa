@@ -1,0 +1,480 @@
+household: hh_001
+household_type: night_shift_worker_solo
+source_persona: persona.yaml
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 1.8
+receptacles:
+- id: bed_b1
+  room: bedroom
+- id: nightstand_b1
+  room: bedroom
+- id: desk_b1
+  room: bedroom
+- id: bedroom_floor_b1
+  room: bedroom
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: night_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '14:00'
+  end: 22:00+1
+  at: bed_b1
+  jitter: routine
+weekly_blocks:
+- resident: resident_1
+  activity: wake_up
+  start: '14:00'
+  end: '14:30'
+  at: bed_b1
+  jitter: routine
+  skip_p: 0.05
+  sleep: false
+  cites: Elias wakes up in the late afternoon, groggy and disoriented, and quickly prepares a meal or
+    snack in the kitchen.
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: shower
+  start: '14:30'
+  end: '15:00'
+  at: sink_k1
+  jitter: routine
+  skip_p: 0.1
+  sleep: false
+  cites: Before his shift starts, he rushes through a shower and gets dressed, leaving a trail of used
+    items behind.
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: work_home
+  start: '15:00'
+  end: '18:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.2
+  sleep: false
+  cites: He spends the evening hours either working remotely on his laptop or relaxing in the living room
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: lunch
+  start: '16:00'
+  end: '16:30'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.3
+  sleep: false
+  cites: eats lunch from a container in the living room while watching TV
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: get_ready
+  start: '18:00'
+  end: '18:45'
+  at: bed_b1
+  jitter: external
+  skip_p: 0.0
+  sleep: false
+  cites: Before his shift starts, he rushes through a shower and gets dressed
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: work_away
+  start: '19:00'
+  end: 03:00+1
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+  sleep: false
+  cites: He leaves for work in the early evening
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: dinner
+  start: 03:30
+  end: 04:00
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.2
+  sleep: false
+  cites: eats dinner standing up at the kitchen counter while checking phone notifications
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: tidy_up
+  start: 04:00
+  end: 04:30
+  at: ELSEWHERE
+  jitter: loose
+  skip_p: 0.5
+  sleep: false
+  cites: He tends to let small messes accumulate because he prioritizes sleep over tidiness
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: night_sleep
+  start: '14:00'
+  end: 22:00+1
+  at: bed_b1
+  jitter: routine
+  skip_p: 0.0
+  sleep: true
+  cites: Elias wakes up in the late afternoon... leaves the living room lights on for hours while he sleeps
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+object_rules:
+- object: keys_1
+  home: counter_k1
+  p_misplace: 0.2
+  misplace_set:
+  - entry_table_e1
+  rules:
+  - activity: work_away
+    phase: during
+    dest: entry_table_e1
+  - activity: dinner
+    phase: after
+    dest: counter_k1
+- object: phone_1
+  home: person:resident_1
+  p_misplace: 0.1
+  misplace_set:
+  - couch_l1
+  rules:
+  - activity: night_sleep
+    phase: during
+    dest: nightstand_b1
+  - activity: wake_up
+    phase: after
+    dest: person:resident_1
+  - activity: lunch
+    phase: during
+    dest: couch_l1
+  - activity: work_away
+    phase: during
+    dest: person:resident_1
+  - activity: dinner
+    phase: during
+    dest: counter_k1
+  - activity: tidy_up
+    phase: after
+    dest: person:resident_1
+- object: mug_1
+  home: nightstand_b1
+  p_misplace: 0.0
+  misplace_set:
+  - counter_k1
+  rules:
+  - activity: wake_up
+    phase: during
+    dest: counter_k1
+  - activity: dinner
+    phase: after
+    dest: nightstand_b1
+- object: charger_1
+  home: nightstand_b1
+  p_misplace: 0.15
+  misplace_set:
+  - counter_k1
+  rules:
+  - activity: night_sleep
+    phase: during
+    dest: nightstand_b1
+  - activity: dinner
+    phase: after
+    dest: counter_k1
+- object: laptop_1
+  home: desk_b1
+  p_misplace: 0.1
+  misplace_set:
+  - couch_l1
+  rules:
+  - activity: work_home
+    phase: during
+    dest: couch_l1
+  - activity: lunch
+    phase: after
+    dest: couch_l1
+  - activity: get_ready
+    phase: after
+    dest: desk_b1
+- object: jacket_1
+  home: armchair_l1
+  p_misplace: 0.2
+  misplace_set:
+  - bedroom_floor_b1
+  rules:
+  - activity: work_away
+    phase: during
+    dest: person:resident_1
+  - activity: dinner
+    phase: after
+    dest: armchair_l1
+- object: towel_1
+  home: towel_rack_ba1
+  p_misplace: 0.4
+  misplace_set:
+  - bathroom_shelf_ba1
+  rules:
+  - activity: shower
+    phase: during
+    dest: towel_rack_ba1
+  - activity: shower
+    phase: after
+    dest: bedroom_floor_b1
+- object: notebook_1
+  home: kitchen_table_k1
+  p_misplace: 0.1
+  misplace_set:
+  - counter_k1
+  rules:
+  - activity: work_home
+    phase: during
+    dest: counter_k1
+  - activity: dinner
+    phase: after
+    dest: kitchen_table_k1
+- object: pen_1
+  home: kitchen_table_k1
+  p_misplace: 0.3
+  misplace_set:
+  - couch_l1
+  rules:
+  - activity: work_home
+    phase: during
+    dest: counter_k1
+  - activity: lunch
+    phase: after
+    dest: couch_l1
+activities:
+- name: night_sleep
+  reset_all:
+    p: 0.0
+    objects:
+    - laptop_1
+- name: wake_up
+  fragment:
+    mean_bouts: 2
+- name: shower
+  reset_all:
+    p: 0.0
+    objects:
+    - towel_1
+- name: work_home
+  fragment:
+    mean_bouts: 3
+- name: lunch
+  fragment:
+    mean_bouts: 2
+- name: get_ready
+  reset_all:
+    p: 0.0
+    objects:
+    - jacket_1
+- name: work_away
+  reset_all:
+    p: 0.0
+    objects:
+    - laptop_1
+- name: dinner
+  fragment:
+    mean_bouts: 2
+- name: tidy_up
+  reset_all:
+    p: 0.6
+    objects:
+    - keys_1
+    - laptop_1
+    - notebook_1
+    - pen_1
+    - jacket_1
+    - towel_1
+arc_events:
+- day: 2
+  note: Shift cancelled due to equipment failure; Elias sleeps through the night.
+  patch:
+    drop:
+    - work_away
+    add:
+    - resident: resident_1
+      activity: lunch
+      start: '16:00'
+      end: '17:00'
+      at: couch_l1
+      jitter: loose
+      skip_p: 0.0
+      sleep: false
+      cites: eats lunch from a container in the living room while watching TV
+- day: 5
+  note: Late night grocery run; returns at 05:00.
+  patch:
+    add:
+    - resident: resident_1
+      activity: dinner
+      start: 05:00
+      end: 05:30
+      at: counter_k1
+      jitter: loose
+      skip_p: 0.0
+      sleep: false
+      cites: eats dinner standing up at the kitchen counter while checking phone notifications
+- day: 10
+  note: Exhaustion leads to skipping the morning shower routine.
+  patch:
+    drop:
+    - shower
+- day: 11
+  note: Exhaustion continues; sleeps until 16:00.
+  patch:
+    add:
+    - resident: resident_1
+      activity: night_sleep
+      start: '16:00'
+      end: 23:00+1
+      at: bed_b1
+      jitter: loose
+      skip_p: 0.0
+      sleep: true
+      cites: Elias wakes up in the late afternoon, groggy and disoriented
+- day: 12
+  note: Recovery day; stays in bed late.
+  patch:
+    add:
+    - resident: resident_1
+      activity: night_sleep
+      start: '15:00'
+      end: 22:00+1
+      at: bed_b1
+      jitter: loose
+      skip_p: 0.0
+      sleep: true
+      cites: Elias wakes up in the late afternoon, groggy and disoriented
+- day: 15
+  note: Forgot to lock the door after taking out trash.
+  patch:
+    drop:
+    - tidy_up
+- day: 18
+  note: Work overtime; returns at 04:30.
+  patch:
+    add:
+    - resident: resident_1
+      activity: dinner
+      start: 04:30
+      end: 05:00
+      at: counter_k1
+      jitter: loose
+      skip_p: 0.0
+      sleep: false
+      cites: eats dinner standing up at the kitchen counter while checking phone notifications
+- day: 20
+  note: Sunday reset; heavy tidying.
+  patch:
+    add:
+    - resident: resident_1
+      activity: tidy_up
+      start: '14:30'
+      end: '15:30'
+      at: ELSEWHERE
+      jitter: loose
+      skip_p: 0.0
+      sleep: false
+      cites: He tends to let small messes accumulate because he prioritizes sleep over tidiness

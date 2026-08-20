@@ -1,0 +1,928 @@
+household: hh_004
+household_type: college_roommates
+source_persona: persona.yaml
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 1.6
+- id: resident_2
+  jitter_scale: 1.8
+- id: resident_3
+  jitter_scale: 0.7
+- id: resident_4
+  jitter_scale: 1.9
+receptacles:
+- id: bed_b1
+  room: bedroom_1
+- id: nightstand_b1
+  room: bedroom_1
+- id: desk_b1
+  room: bedroom_1
+- id: bedroom_floor_b1
+  room: bedroom_1
+- id: bed_b2
+  room: bedroom_2
+- id: nightstand_b2
+  room: bedroom_2
+- id: desk_b2
+  room: bedroom_2
+- id: bedroom_floor_b2
+  room: bedroom_2
+- id: bed_b3
+  room: bedroom_3
+- id: nightstand_b3
+  room: bedroom_3
+- id: desk_b3
+  room: bedroom_3
+- id: bedroom_floor_b3
+  room: bedroom_3
+- id: bed_b4
+  room: bedroom_4
+- id: nightstand_b4
+  room: bedroom_4
+- id: desk_b4
+  room: bedroom_4
+- id: bedroom_floor_b4
+  room: bedroom_4
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 02:30
+  end: '10:30'
+  at: bed_b1
+  jitter: routine
+  cites: keeps his laptop open on the desk even when sleeping
+- resident: resident_2
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 01:00
+  end: 08:30
+  at: bed_b2
+  jitter: routine
+  cites: Maya's early mornings
+- resident: resident_3
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:00'
+  end: 07:00
+  at: bed_b3
+  jitter: external
+  cites: tidy, irritable, efficient
+- resident: resident_4
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 03:00
+  end: '11:00'
+  at: bed_b4
+  jitter: loose
+  cites: Jade's late-night calls
+weekly_blocks:
+- cites: Leo spends most of his time in his room
+  resident: resident_1
+  activity: study
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '10:30'
+  end: '13:00'
+  at: desk_b1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Leo spends most of his time in his room
+  resident: resident_1
+  activity: study
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '12:00'
+  end: '18:00'
+  at: desk_b1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Leo and Maya often overlap in the kitchen
+  resident: resident_1
+  activity: snack
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '13:00'
+  end: '14:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.2
+- cites: Leo and Maya are close friends
+  resident: resident_1
+  activity: socialise_home
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  start: '18:00'
+  end: '22:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.4
+- cites: Leo and Maya are close friends
+  resident: resident_1
+  activity: socialise_home
+  sleep: false
+  days:
+  - Tu
+  - Th
+  - Sa
+  - Su
+  start: '20:00'
+  end: '23:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.5
+- cites: Maya often gathers with friends
+  resident: resident_2
+  activity: socialise_home
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '18:00'
+  end: '23:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.2
+- cites: Maya's early mornings
+  resident: resident_2
+  activity: study
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 09:00
+  end: '13:00'
+  at: desk_b2
+  jitter: flexible
+  skip_p: 0.1
+- cites: Maya's early mornings
+  resident: resident_2
+  activity: study
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '10:00'
+  end: '14:00'
+  at: desk_b2
+  jitter: flexible
+  skip_p: 0.3
+- cites: Maya often gathers with friends
+  resident: resident_2
+  activity: socialise_home
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '16:00'
+  end: '22:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.3
+- cites: Sam tries to maintain order by cleaning
+  resident: resident_3
+  activity: tidy_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '13:00'
+  end: '14:00'
+  at: kitchen_table_k1
+  jitter: external
+  skip_p: 0.0
+- cites: Sam tries to maintain order by cleaning
+  resident: resident_3
+  activity: tidy_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '21:00'
+  end: '22:00'
+  at: couch_l1
+  jitter: external
+  skip_p: 0.1
+- cites: Sam is a senior who is trying to maintain a professional
+  resident: resident_3
+  activity: study
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:00
+  end: '12:00'
+  at: desk_b3
+  jitter: routine
+  skip_p: 0.0
+- cites: Sam is a senior who is trying to maintain a professional
+  resident: resident_3
+  activity: study
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 09:00
+  end: '13:00'
+  at: desk_b3
+  jitter: flexible
+  skip_p: 0.2
+- cites: uses the gaming controller to play in the living room
+  resident: resident_3
+  activity: gaming
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  start: '15:00'
+  end: '19:00'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.2
+- cites: Jade is often in the living room or hallway
+  resident: resident_4
+  activity: study
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '11:00'
+  end: '15:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.3
+- cites: Jade is often in the living room or hallway
+  resident: resident_4
+  activity: study
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '12:00'
+  end: '16:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.4
+- cites: Jade is often in the living room or hallway
+  resident: resident_4
+  activity: socialise_home
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:00'
+  end: 01:00+1
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.2
+- cites: Jade and Maya share a bedroom
+  resident: resident_4
+  activity: snack
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '16:00'
+  end: '17:00'
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.3
+object_rules:
+- object: mug_1
+  cites: Leo's coffee mug, often left in the sink
+  home: cupboard_k1
+  p_misplace: 0.3
+  misplace_set:
+  - counter_k1
+  - desk_b1
+  rules:
+  - cites: Leo's coffee mug, often left in the sink
+    activity: snack
+    phase: during
+    dest: counter_k1
+  - cites: Leo's coffee mug, often left in the sink
+    activity: snack
+    phase: after
+    dest: sink_k1
+    p: 0.8
+    else: cupboard_k1
+  - cites: keeps his laptop open on the desk even when sleeping
+    activity: study
+    phase: during
+    dest: desk_b1
+  - cites: keeps his laptop open on the desk even when sleeping
+    activity: study
+    phase: after
+    dest: desk_b1
+    p: 0.6
+    else: sink_k1
+- object: mug_2
+  cites: Shared mug, used by all, often stolen by Maya
+  home: cupboard_k1
+  p_misplace: 0.2
+  misplace_set:
+  - counter_k1
+  - kitchen_table_k1
+  rules:
+  - cites: Shared mug, used by all, often stolen by Maya
+    activity: snack
+    phase: during
+    dest: counter_k1
+    dist:
+    - dest: counter_k1
+      p: 0.5
+    - dest: kitchen_table_k1
+      p: 0.5
+  - cites: Shared mug, used by all, often stolen by Maya
+    activity: snack
+    phase: after
+    dest: sink_k1
+    p: 0.7
+    else: cupboard_k1
+- object: laptop_leo
+  cites: Leo's laptop, always open on his desk
+  home: desk_b1
+  rules:
+  - cites: Leo's laptop, always open on his desk
+    activity: study
+    phase: during
+    dest: desk_b1
+  - cites: Leo's laptop, always open on his desk
+    activity: study
+    phase: after
+    dest: desk_b1
+    p: 0.9
+    else: bed_b1
+- object: phone_maya
+  cites: Maya's phone, often dropped on the floor
+  home: person:resident_2
+  p_misplace: 0.4
+  misplace_set:
+  - bedroom_floor_b2
+  - entry_floor_e1
+  - couch_l1
+  rules:
+  - cites: drops her phone on the floor while dancing
+    activity: socialise_home
+    phase: during
+    dest: couch_l1
+    p: 0.3
+    else: person:resident_2
+  - cites: drops her phone on the floor while dancing
+    activity: socialise_home
+    phase: after
+    dest: couch_l1
+    p: 0.5
+    else: person:resident_2
+  - cites: Maya's phone, often dropped on the floor
+    activity: bedtime_routine
+    phase: during
+    dest: nightstand_b2
+  - cites: Maya's phone, often dropped on the floor
+    activity: bedtime_routine
+    phase: after
+    dest: person:resident_2
+- object: keys_leo
+  cites: Leo's keys, lost in the couch cushions
+  home: person:resident_1
+  p_misplace: 0.5
+  misplace_set:
+  - couch_l1
+  - entry_floor_e1
+  - desk_b1
+  rules:
+  - cites: loses his keys in the couch cushions every single day
+    activity: socialise_home
+    phase: during
+    dest: couch_l1
+    p: 0.6
+    else: person:resident_1
+  - cites: loses his keys in the couch cushions every single day
+    activity: socialise_home
+    phase: after
+    dest: couch_l1
+    p: 0.7
+    else: person:resident_1
+  - cites: Leo's keys, lost in the couch cushions
+    activity: study
+    phase: during
+    dest: desk_b1
+    p: 0.4
+    else: person:resident_1
+- object: book_jade
+  cites: Jade's book, left on the shared sofa
+  home: desk_b4
+  p_misplace: 0.2
+  misplace_set:
+  - couch_l1
+  - bedroom_floor_b4
+  rules:
+  - cites: leaves her book on the shared sofa for days
+    activity: study
+    phase: during
+    dest: couch_l1
+    p: 0.8
+    else: desk_b4
+  - cites: leaves her book on the shared sofa for days
+    activity: study
+    phase: after
+    dest: couch_l1
+    p: 0.9
+    else: desk_b4
+  - cites: Jade's book, left on the shared sofa
+    activity: socialise_home
+    phase: during
+    dest: couch_l1
+    p: 0.5
+    else: desk_b4
+- object: water_bottle_maya
+  cites: Maya's water bottle, left on the counter
+  home: cupboard_k1
+  p_misplace: 0.3
+  misplace_set:
+  - counter_k1
+  - desk_b2
+  rules:
+  - cites: leaves her water bottle on the kitchen counter for days
+    activity: study
+    phase: during
+    dest: counter_k1
+    p: 0.7
+    else: desk_b2
+  - cites: leaves her water bottle on the kitchen counter for days
+    activity: study
+    phase: after
+    dest: counter_k1
+    p: 0.9
+    else: cupboard_k1
+  - cites: leaves her water bottle on the kitchen counter for days
+    activity: snack
+    phase: during
+    dest: counter_k1
+    p: 0.5
+    else: kitchen_table_k1
+- object: remote_shared
+  cites: Shared remote, used by Maya and Sam
+  home: tv_stand_l1
+  p_misplace: 0.3
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  rules:
+  - cites: uses the shared remote to switch channels while eating
+    activity: snack
+    phase: during
+    dest: coffee_table_l1
+    p: 0.6
+    else: tv_stand_l1
+  - cites: uses the shared remote to switch channels while eating
+    activity: snack
+    phase: after
+    dest: couch_l1
+    p: 0.5
+    else: tv_stand_l1
+  - cites: Shared remote, used by Maya and Sam
+    activity: socialise_home
+    phase: during
+    dest: couch_l1
+    p: 0.4
+    else: tv_stand_l1
+- object: charger_maya
+  cites: Maya's charger, borrowed by Leo
+  home: desk_b2
+  p_misplace: 0.4
+  misplace_set:
+  - desk_b1
+  - entry_table_e1
+  rules:
+  - cites: borrows resident_2's charger when his own is in the lab
+    activity: study
+    phase: during
+    dest: desk_b1
+    p: 0.4
+    else: desk_b2
+  - cites: borrows resident_2's charger when his own is in the lab
+    activity: study
+    phase: after
+    dest: desk_b1
+    p: 0.6
+    else: desk_b2
+- object: backpack_maya
+  cites: Maya's backpack, left in the hallway
+  home: desk_b2
+  p_misplace: 0.2
+  misplace_set:
+  - entry_floor_e1
+  - entry_table_e1
+  rules:
+  - cites: leaves her backpack in the hallway entryway after coming home
+    activity: socialise_home
+    phase: during
+    dest: entry_floor_e1
+    p: 0.7
+    else: desk_b2
+  - cites: leaves her backpack in the hallway entryway after coming home
+    activity: socialise_home
+    phase: after
+    dest: entry_floor_e1
+    p: 0.8
+    else: desk_b2
+- object: jacket_leo
+  cites: Leo's jacket, borrowed by Maya
+  home: entry_hook_e1
+  p_misplace: 0.3
+  misplace_set:
+  - couch_l1
+  - entry_floor_e1
+  rules:
+  - cites: borrows resident_1's jacket when it gets cold
+    activity: socialise_home
+    phase: during
+    dest: couch_l1
+    p: 0.5
+    else: entry_hook_e1
+  - cites: borrows resident_1's jacket when it gets cold
+    activity: socialise_home
+    phase: after
+    dest: couch_l1
+    p: 0.6
+    else: entry_hook_e1
+- object: headphones_leo
+  cites: Leo's headphones, tangled around his neck
+  home: desk_b1
+  p_misplace: 0.4
+  misplace_set:
+  - desk_b1
+  - bed_b1
+  - couch_l1
+  rules:
+  - cites: leaves his headphones tangled around his neck after every lecture
+    activity: study
+    phase: during
+    dest: person:resident_1
+    p: 0.7
+    else: desk_b1
+  - cites: leaves his headphones tangled around his neck after every lecture
+    activity: study
+    phase: after
+    dest: desk_b1
+    p: 0.5
+    else: bed_b1
+- object: glasses_sam
+  cites: Sam's glasses, left on the bathroom counter
+  home: bathroom_shelf_ba1
+  p_misplace: 0.2
+  misplace_set:
+  - bathroom_shelf_ba1
+  - desk_b3
+  rules:
+  - cites: leaves his glasses on the bathroom counter
+    activity: tidy_up
+    phase: during
+    dest: bathroom_shelf_ba1
+    p: 0.4
+    else: desk_b3
+  - cites: leaves his glasses on the bathroom counter
+    activity: tidy_up
+    phase: after
+    dest: bathroom_shelf_ba1
+    p: 0.8
+    else: desk_b3
+- object: notebook_jade
+  cites: Jade's notebook, scattered on the floor
+  home: desk_b4
+  p_misplace: 0.5
+  misplace_set:
+  - couch_l1
+  - bedroom_floor_b4
+  - entry_floor_e1
+  rules:
+  - cites: scatters her notebooks and pens across the living room floor
+    activity: study
+    phase: during
+    dest: couch_l1
+    p: 0.8
+    else: desk_b4
+  - cites: scatters her notebooks and pens across the living room floor
+    activity: study
+    phase: after
+    dest: couch_l1
+    p: 0.9
+    else: desk_b4
+- object: pen_jade
+  cites: Jade's pen, lost in the couch cushions
+  home: desk_b4
+  p_misplace: 0.6
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  - desk_b4
+  rules:
+  - cites: scatters her notebooks and pens across the living room floor
+    activity: study
+    phase: during
+    dest: couch_l1
+    p: 0.7
+    else: desk_b4
+  - cites: scatters her notebooks and pens across the living room floor
+    activity: study
+    phase: after
+    dest: couch_l1
+    p: 0.8
+    else: desk_b4
+- object: medication_bottle_sam
+  cites: Sam's medication, left on the nightstand
+  home: nightstand_b3
+  rules:
+  - cites: puts his medication bottle on the nightstand
+    activity: bedtime_routine
+    phase: during
+    dest: nightstand_b3
+  - cites: puts his medication bottle on the nightstand
+    activity: bedtime_routine
+    phase: after
+    dest: nightstand_b3
+    p: 0.9
+    else: desk_b3
+- object: gaming_controller_sam
+  cites: Sam's gaming controller, used in the living room
+  home: tv_stand_l1
+  rules:
+  - cites: uses the gaming controller to play in the living room
+    activity: gaming
+    phase: during
+    dest: couch_l1
+  - cites: uses the gaming controller to play in the living room
+    activity: gaming
+    phase: after
+    dest: tv_stand_l1
+    p: 0.8
+    else: couch_l1
+- object: umbrella_jade
+  cites: Jade's umbrella, left in the hallway
+  home: entry_hook_e1
+  p_misplace: 0.5
+  misplace_set:
+  - entry_floor_e1
+  - entry_table_e1
+  rules:
+  - cites: drops her umbrella in the hallway and forgets to take it
+    activity: socialise_home
+    phase: during
+    dest: entry_floor_e1
+    p: 0.6
+    else: entry_hook_e1
+  - cites: drops her umbrella in the hallway and forgets to take it
+    activity: socialise_home
+    phase: after
+    dest: entry_floor_e1
+    p: 0.8
+    else: entry_hook_e1
+- object: wallet_jade
+  cites: Jade's wallet, used for shared snacks
+  home: person:resident_4
+  p_misplace: 0.3
+  misplace_set:
+  - couch_l1
+  - desk_b4
+  - entry_table_e1
+  rules:
+  - cites: uses the shared wallet to buy snacks
+    activity: snack
+    phase: during
+    dest: person:resident_4
+    p: 0.8
+    else: couch_l1
+  - cites: uses the shared wallet to buy snacks
+    activity: snack
+    phase: after
+    dest: person:resident_4
+    p: 0.6
+    else: couch_l1
+activities:
+- name: study
+  fragment:
+    mean_bouts: 3
+  cites: Leo spends most of his time in his room, working
+- name: socialise_home
+  fragment:
+    mean_bouts: 2
+  cites: Maya often gathers with friends
+- name: snack
+  cites: Leo and Maya often overlap in the kitchen
+- name: tidy_up
+  reset_all:
+    p: 0.8
+    objects:
+    - mug_1
+    - mug_2
+    - book_jade
+    - notebook_jade
+    - pen_jade
+    - remote_shared
+    - backpack_maya
+    - umbrella_jade
+  cites: clears the kitchen table immediately after meals
+- name: gaming
+  cites: uses the gaming controller to play in the living room
+- name: bedtime_routine
+  cites: keeps his laptop open on the desk even when sleeping
+arc_events:
+- day: 3
+  note: Leo skips his study block to sleep in after a late night
+  patch:
+    drop:
+    - study
+    add:
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '12:00'
+      end: '16:00'
+      at: bed_b1
+      jitter: loose
+- day: 7
+  note: Sam is at a job interview, violating his home routine
+  patch:
+    drop:
+    - study
+    - tidy_up
+    add:
+    - resident: resident_3
+      activity: work_away
+      start: 08:00
+      end: '17:00'
+      at: ELSEWHERE
+      jitter: external
+- day: 10
+  note: Maya has a party and forgets her charger and jacket
+  patch:
+    drop:
+    - study
+    add:
+    - resident: resident_2
+      activity: socialise_home
+      start: '19:00'
+      end: 02:00+1
+      at: ELSEWHERE
+      jitter: loose
+- day: 12
+  note: Jade is distracted by a creative project, ignoring tidying
+  patch:
+    drop:
+    - tidy_up
+    add:
+    - resident: resident_4
+      activity: study
+      start: '10:00'
+      end: '22:00'
+      at: couch_l1
+      jitter: loose
+- day: 15
+  note: Leo is sick and stays in bed, skipping socialising
+  patch:
+    drop:
+    - socialise_home
+    - study
+    add:
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '10:00'
+      end: '18:00'
+      at: bed_b1
+      jitter: loose
+- day: 18
+  note: Sam is tired from a week of strict tidying and skips his evening sweep
+  patch:
+    drop:
+    - tidy_up
+    add:
+    - resident: resident_3
+      activity: gaming
+      start: '20:00'
+      end: '23:00'
+      at: couch_l1
+      jitter: loose
+- day: 20
+  note: Maya is exhausted from early mornings and sleeps in late
+  patch:
+    drop:
+    - study
+    add:
+    - resident: resident_2
+      activity: bedtime_routine
+      start: 09:00
+      end: '14:00'
+      at: bed_b2
+      jitter: loose

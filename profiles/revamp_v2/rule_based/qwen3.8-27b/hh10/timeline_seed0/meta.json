@@ -1,0 +1,132 @@
+{
+  "household": "hh_010",
+  "household_type": "couple_with_toddler",
+  "source": "profiles/revamp_v2/qwen3.8-27b/hh10",
+  "days": 21,
+  "seed": 0,
+  "n_events": 617,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 0,
+    "tidy_moved": 0,
+    "tidy_ran_out_of_time": 0,
+    "blocks": 708,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [
+      "play_with_kids.pen_1",
+      "play_with_kids.water_bottle_1",
+      "play_with_kids__coffee_table_l1.pen_1",
+      "play_with_kids__coffee_table_l1.water_bottle_1",
+      "work_away.glasses_1",
+      "work_away.keys_2",
+      "work_away.laptop_1",
+      "work_away.mug_1",
+      "work_away__resident_1.glasses_1",
+      "work_away__resident_1.keys_2",
+      "work_away__resident_1.laptop_1",
+      "work_away__resident_1.mug_1",
+      "work_away__resident_1.notebook_1",
+      "work_away__resident_2.glasses_1",
+      "work_away__resident_2.keys_2",
+      "work_away__resident_2.laptop_1",
+      "work_away__resident_2.mug_1",
+      "work_away__resident_2.notebook_1"
+    ],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [
+      "keys_1",
+      "wallet_1",
+      "wallet_2"
+    ],
+    "carried_on_departure": [
+      "notebook_1@work_away__resident_2",
+      "phone_1@work_away__resident_1",
+      "phone_2@walk",
+      "phone_2@work_away__resident_2",
+      "wallet_1@work_away__resident_1",
+      "wallet_2@work_away__resident_2"
+    ],
+    "left_behind_by_trip": [
+      "notebook_1@walk",
+      "wallet_2@walk"
+    ],
+    "carried_putdowns_at_start": [
+      "notebook_1@work_away",
+      "phone_1@reading",
+      "phone_2@dinner"
+    ],
+    "skips_per_activity": {
+      "nap": 2,
+      "reading": 2,
+      "tidy_up": 12,
+      "tidy_up__counter_k1": 2,
+      "walk": 3,
+      "watch_tv": 5
+    },
+    "fragment_bouts_per_activity": {
+      "play_with_kids": 10,
+      "play_with_kids__coffee_table_l1": 92,
+      "work_away": 56,
+      "work_away__resident_1": 1,
+      "work_away__resident_2": 30
+    }
+  },
+  "moves_per_object": {
+    "water_bottle_1": 153,
+    "mug_1": 102,
+    "notebook_1": 58,
+    "mug_2": 56,
+    "jacket_1": 54,
+    "phone_2": 44,
+    "remote_1": 38,
+    "toy_1": 33,
+    "blanket_1": 31,
+    "keys_2": 15,
+    "book_1": 14,
+    "glasses_1": 8,
+    "pen_1": 7,
+    "phone_1": 3,
+    "laptop_1": 1
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3.8-27B",
+    "prompts": {
+      "persona_v2": "134f5bfb",
+      "routine_program": "e63834f9",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b4",
+    "accepted_attempt": 1,
+    "n_attempts": 2
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.6
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    }
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_rule_based_qwen3.8-27b_hh10_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom_1": "bedroom.004",
+      "bedroom_2": "bedroom",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

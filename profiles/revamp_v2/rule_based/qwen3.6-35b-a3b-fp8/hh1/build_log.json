@@ -1,0 +1,38 @@
+{
+  "household": "hh_001",
+  "household_type": "night_shift_worker_solo",
+  "model": "Qwen/Qwen3.6-35B-A3B-FP8",
+  "model_slug": "qwen3.6-35b-a3b-fp8",
+  "builder_version": "rv2-b3",
+  "prompts": {
+    "persona_v2": "134f5bfb",
+    "routine_program": "b33a1768",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 9176527784730162629,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 9176527784730162629,
+      "leak_prediction": {
+        "predicted_type": "remote_worker_couple",
+        "confidence": 0.75,
+        "reason": "The presence of a dedicated desk (desk_b1) with work-related items (laptop_1, notebook_1, pen_1) alongside standard living room and kitchen furniture suggests a home office setup within a shared residence. The absence of children's toys, school supplies, or specific infant/toddler gear rules out the",
+        "actual_type": "night_shift_worker_solo",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 1,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 7858806478794154655,
+      "failures": []
+    }
+  ]
+}

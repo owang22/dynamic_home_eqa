@@ -1,0 +1,60 @@
+{
+  "household": "hh_007",
+  "household_type": "family_school_age_children",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b4",
+  "prompts": {
+    "persona_v2": "134f5bfb",
+    "routine_program": "e63834f9",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 13221647659267497799,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 10873299662249585747,
+      "leak_prediction": {
+        "predicted_type": "family_school_age_children",
+        "confidence": 0.85,
+        "reason": "The presence of three distinct bedrooms (b1, b2, b3) indicates a family unit. The specific combination of two lunchboxes, a toy, and a gaming controller strongly suggests children of school age (old enough for lunchboxes and gaming, young enough for toys), rather than teens or toddlers. The three m/",
+        "actual_type": "family_school_age_children",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 8793688386798237274,
+      "leak_prediction": {
+        "predicted_type": "family_school_age_children",
+        "confidence": 0.65,
+        "reason": "The presence of three distinct bedrooms (b1, b2, b3) indicates a family unit. The specific combination of 'lunchbox' (x2) and 'toy' (x1) strongly suggests children of school age, as opposed to toddlers (who would have more toys/diapers) or teens (who might have more personal tech/less shared toys).",
+        "actual_type": "family_school_age_children",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 2,
+      "seed": 13221647659267497799,
+      "leak_prediction": {
+        "predicted_type": "college_roommates",
+        "confidence": 0.92,
+        "reason": "The presence of three distinct bedrooms (b1, b2, b3) each with a bed, nightstand, and desk strongly indicates a shared living arrangement for three individuals, such as college roommates. The high count of personal items (4 mugs, 4 phones, 4 water bottles, 4 jackets, 4 notebooks) supports a group of",
+        "actual_type": "family_school_age_children",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 1,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 12014269497988907472,
+      "failures": []
+    }
+  ]
+}

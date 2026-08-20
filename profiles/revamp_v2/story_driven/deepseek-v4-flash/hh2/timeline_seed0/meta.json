@@ -1,0 +1,205 @@
+{
+  "household": "hh_002",
+  "household_type": "family_young_children",
+  "source": "profiles/revamp_v2/story_driven/deepseek-v4-flash/hh2",
+  "engine": "story_driven_llm",
+  "model": "deepseek-ai/DeepSeek-V4-Flash",
+  "single_pass": true,
+  "failed_weeks": [
+    {
+      "week": 0,
+      "error": "<ValidationError: \"'Sam' is not one of ['resident_1', 'resident_2', 'resident_3', 'resident_4']\">"
+    },
+    {
+      "week": 1,
+      "error": "<ValidationError: \"[{'resident': 'resident_1', 'activity': 'night_sleep', 'start': '00:00', 'end': '06:00', 'at': 'bed_b1'}, {'resident': 'resident_1', 'activity': 'wake_up', 'start': '06:00', 'end': "
+    },
+    {
+      "week": 2,
+      "error": "JSONDecodeError('Expecting value: line 1240 column 9 (char 27616)')"
+    }
+  ],
+  "failed_days": [
+    {
+      "day": 0,
+      "error": "no story"
+    },
+    {
+      "day": 0,
+      "error": "<ValidationError: '\"Sam pulls Marcus\\'s notebook off the dining table and drops it on his bedroom floor\" is too long'>"
+    },
+    {
+      "day": 1,
+      "error": "no story"
+    },
+    {
+      "day": 1,
+      "error": "<ValidationError: \"'evening routine' is not one of ['other']\">"
+    },
+    {
+      "day": 2,
+      "error": "no story"
+    },
+    {
+      "day": 3,
+      "error": "no story"
+    },
+    {
+      "day": 3,
+      "error": "<ValidationError: \"'Marcus picks up controller from coffee table to play on couch' is too long\">"
+    },
+    {
+      "day": 4,
+      "error": "no story"
+    },
+    {
+      "day": 5,
+      "error": "no story"
+    },
+    {
+      "day": 6,
+      "error": "no story"
+    },
+    {
+      "day": 7,
+      "error": "no story"
+    },
+    {
+      "day": 8,
+      "error": "no story"
+    },
+    {
+      "day": 9,
+      "error": "no story"
+    },
+    {
+      "day": 9,
+      "error": "JSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
+    },
+    {
+      "day": 10,
+      "error": "no story"
+    },
+    {
+      "day": 11,
+      "error": "no story"
+    },
+    {
+      "day": 12,
+      "error": "no story"
+    },
+    {
+      "day": 13,
+      "error": "no story"
+    },
+    {
+      "day": 13,
+      "error": "<ValidationError: '\"Emma picks up Sam\\'s bowl from the couch and puts it in the sink\" is too long'>"
+    },
+    {
+      "day": 14,
+      "error": "no story"
+    },
+    {
+      "day": 15,
+      "error": "no story"
+    },
+    {
+      "day": 16,
+      "error": "no story"
+    },
+    {
+      "day": 17,
+      "error": "no story"
+    },
+    {
+      "day": 17,
+      "error": "<ValidationError: \"'Emma finishes reading and puts the book back on the coffee table' is too long\">"
+    },
+    {
+      "day": 18,
+      "error": "no story"
+    },
+    {
+      "day": 18,
+      "error": "<ValidationError: '\"Emma takes Sam\\'s bowl from sink to counter for breakfast prep\" is too long'>"
+    },
+    {
+      "day": 19,
+      "error": "no story"
+    },
+    {
+      "day": 19,
+      "error": "<ValidationError: \"'Emma sets the medication back on the shelf after giving it to Sam' is too long\">"
+    },
+    {
+      "day": 20,
+      "error": "no story"
+    },
+    {
+      "day": 20,
+      "error": "<ValidationError: \"'Sam carries his toy car to the kitchen and leaves it on the table' is too long\">"
+    }
+  ],
+  "n_failed_days": 30,
+  "days": 21,
+  "seed": 0,
+  "n_events": 455,
+  "story_activities": [],
+  "n_story_activities": 0,
+  "moves_per_object": {
+    "bowl_1": 32,
+    "plate_2": 30,
+    "charger_1": 28,
+    "dog_leash_1": 27,
+    "toy_1": 26,
+    "blanket_1": 25,
+    "book_1": 24,
+    "plate_1": 23,
+    "mug_2": 22,
+    "backpack_1": 22,
+    "jacket_2": 22,
+    "toy_2": 22,
+    "lunchbox_1": 22,
+    "gaming_controller_1": 22,
+    "bowl_2": 21,
+    "water_bottle_1": 18,
+    "jacket_1": 17,
+    "notebook_1": 14,
+    "phone_1": 9,
+    "phone_2": 9,
+    "keys_1": 7,
+    "mug_1": 2,
+    "water_bottle_2": 2,
+    "pen_1": 2,
+    "lunchbox_2": 2,
+    "book_2": 1,
+    "charger_2": 1,
+    "blanket_2": 1,
+    "wallet_2": 1,
+    "remote_1": 1,
+    "laptop_1": 0,
+    "laptop_2": 0,
+    "keys_2": 0,
+    "backpack_2": 0,
+    "medication_bottle_1": 0,
+    "towel_1": 0,
+    "towel_2": 0,
+    "wallet_1": 0,
+    "umbrella_1": 0,
+    "headphones_1": 0
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_story_driven_deepseek-v4-flash_hh2_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom_1": "bedroom.004",
+      "bedroom_2": "bedroom",
+      "bedroom_3": "bedroom.001",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

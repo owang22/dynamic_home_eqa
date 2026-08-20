@@ -16,7 +16,10 @@
 
 async function loadDatasets() {
   try {
-    const url = new URL("../traces.json", location.href);
+    // repo-absolute, not relative to the page: the viewer is reachable
+    // both at /visualization/viewer/ and at the short / URL, and a
+    // relative path resolves to the wrong place from the latter
+    const url = "/visualization/traces.json";
     const manifest = await (await fetch(url)).json();
     return (manifest.traces || []).filter(d => d && d.trace);
   } catch (e) {

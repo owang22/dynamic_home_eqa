@@ -1,0 +1,161 @@
+{
+  "household": "hh_006",
+  "household_type": "single_parent_teens",
+  "source": "profiles/revamp_v2/qwen3.8-27b/hh6",
+  "days": 21,
+  "seed": 0,
+  "n_events": 784,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 20,
+    "tidy_moved": 67,
+    "tidy_ran_out_of_time": 4,
+    "blocks": 657,
+    "vacuous_arc_drops": [
+      {
+        "day": 2,
+        "activity": "groceries"
+      },
+      {
+        "day": 5,
+        "activity": "school_run"
+      }
+    ],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [
+      "breakfast.lunchbox_1",
+      "breakfast__kitchen_table_k1.lunchbox_1",
+      "coffee.mug_2",
+      "coffee.phone_1",
+      "commute_home.keys_1",
+      "commute_home.umbrella_1",
+      "gaming.gaming_controller_1",
+      "gaming.headphones_1",
+      "gaming.laptop_1",
+      "gaming.laptop_2",
+      "gaming.phone_2",
+      "gaming.water_bottle_1",
+      "gaming__resident_2.gaming_controller_1",
+      "gaming__resident_2.headphones_1",
+      "gaming__resident_2.laptop_1",
+      "gaming__resident_2.laptop_2",
+      "gaming__resident_2.phone_2",
+      "gaming__resident_2.water_bottle_1",
+      "groceries.wallet_1",
+      "reading.blanket_1",
+      "reading.book_1",
+      "reading.glasses_1",
+      "reading.phone_3",
+      "school_run.backpack_1",
+      "school_run.backpack_2",
+      "school_run__resident_1.backpack_1",
+      "school_run__resident_1.backpack_2",
+      "school_run__resident_3.backpack_1",
+      "school_run__resident_3.backpack_2",
+      "study.charger_1",
+      "study.notebook_1",
+      "study__desk_b3.charger_1",
+      "study__desk_b3.notebook_1",
+      "watch_tv.remote_1"
+    ],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [],
+    "carried_on_departure": [],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [],
+    "skips_per_activity": {
+      "breakfast": 5,
+      "coffee": 3,
+      "commute_home": 2,
+      "commute_out": 1,
+      "gaming": 9,
+      "reading": 3,
+      "study": 5,
+      "study__desk_b3": 8,
+      "watch_tv": 3,
+      "work_away": 4,
+      "work_home": 5
+    },
+    "fragment_bouts_per_activity": {
+      "breakfast": 23,
+      "breakfast__kitchen_table_k1": 15,
+      "coffee": 30,
+      "commute_home": 25,
+      "commute_out": 9,
+      "gaming": 31,
+      "gaming__resident_2": 2,
+      "groceries": 6,
+      "reading": 31,
+      "school_run": 44,
+      "school_run__resident_1": 1,
+      "school_run__resident_3": 42,
+      "study": 19,
+      "study__desk_b3": 46,
+      "watch_tv": 24,
+      "work_away": 25,
+      "work_home": 24
+    }
+  },
+  "moves_per_object": {
+    "backpack_1": 138,
+    "backpack_2": 138,
+    "lunchbox_1": 80,
+    "headphones_1": 69,
+    "phone_2": 64,
+    "mug_2": 40,
+    "water_bottle_1": 36,
+    "phone_1": 36,
+    "keys_1": 35,
+    "umbrella_1": 35,
+    "charger_1": 35,
+    "laptop_1": 24,
+    "gaming_controller_1": 23,
+    "glasses_1": 12,
+    "towel_1": 8,
+    "wallet_1": 8,
+    "phone_3": 1,
+    "book_1": 1,
+    "laptop_2": 1
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3.8-27B",
+    "prompts": {
+      "persona_v2": "134f5bfb",
+      "routine_program": "e63834f9",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b4",
+    "accepted_attempt": 0,
+    "n_attempts": 1
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.6
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    }
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_rule_based_qwen3.8-27b_hh6_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom_1": "bedroom.004",
+      "bedroom_2": "bedroom",
+      "bedroom_3": "bedroom.001",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

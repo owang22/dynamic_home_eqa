@@ -1,0 +1,423 @@
+household: hh_001
+household_type: night_shift_worker_solo
+source_persona: persona.yaml
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 1.2
+  cites: methodical, high energy, empathetic
+receptacles:
+- id: bed_b1
+  room: bedroom
+- id: nightstand_b1
+  room: bedroom
+- id: desk_b1
+  room: bedroom
+- id: bedroom_floor_b1
+  room: bedroom
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+placements:
+- object: mug_1
+  home: cupboard_k1
+  p_misplace: 0.05
+  misplace_set:
+  - coffee_table_l1
+  - counter_k1
+- object: laptop_1
+  home: bedroom_floor_b1
+  p_misplace: 0.1
+  misplace_set:
+  - coffee_table_l1
+  - bookshelf_l1
+- object: phone_1
+  home: entry_hook_e1
+  p_misplace: 0.07
+  misplace_set:
+  - armchair_l1
+  - counter_k1
+- object: keys_1
+  home: entry_hook_e1
+  p_misplace: 0.0
+  misplace_set:
+  - entry_hook_e1
+- object: book_1
+  home: bookshelf_l1
+  p_misplace: 0.05
+  misplace_set:
+  - coffee_table_l1
+- object: water_bottle_1
+  home: cupboard_k1
+  p_misplace: 0.0
+  misplace_set:
+  - cupboard_k1
+- object: charger_1
+  home: counter_k1
+  p_misplace: 0.0
+  misplace_set:
+  - counter_k1
+- object: blanket_1
+  home: bed_b1
+  p_misplace: 0.1
+  misplace_set:
+  - couch_l1
+  - armchair_l1
+sleep_schedule:
+- resident: resident_1
+  activity: sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '10:00'
+  end: '15:00'
+  at: bed_b1
+  jitter: routine
+weekly_blocks:
+- resident: resident_1
+  activity: morning_departure
+  start: 05:00
+  end: 05:30
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+  sleep: false
+  cites: prepares meals in the early morning before leaving
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+- resident: resident_1
+  activity: prep_meal
+  start: 04:00
+  end: 05:00
+  at: counter_k1
+  jitter: external
+  skip_p: 0.0
+  sleep: false
+  cites: prepares meals in the early morning before leaving
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+- resident: resident_1
+  activity: arrival_home
+  start: '23:00'
+  end: '23:30'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+  sleep: false
+  cites: wash and organize work scrubs immediately upon returning home
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+- resident: resident_1
+  activity: post_work_routine
+  start: '22:00'
+  end: '23:00'
+  at: counter_k1
+  jitter: external
+  skip_p: 0.0
+  sleep: false
+  cites: wash and organize work scrubs immediately upon returning home
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+- resident: resident_1
+  activity: rest_break
+  start: '15:00'
+  end: '16:00'
+  at: bed_b1
+  jitter: routine
+  skip_p: 0.1
+  sleep: false
+  cites: read in bed during brief breaks between shifts
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+- resident: resident_1
+  activity: daytime_rest
+  start: '16:00'
+  end: '18:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.2
+  sleep: false
+  cites: rests and prepares for the next shift
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+- resident: resident_1
+  activity: midnight_crisis
+  start: '23:30'
+  end: 00:00+1
+  at: coffee_table_l1
+  jitter: external
+  skip_p: 0.05
+  sleep: false
+  cites: keeps a stash of snacks in the living room for midnight cravings
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+- resident: resident_1
+  activity: video_call
+  start: '17:00'
+  end: '17:30'
+  at: armchair_l1
+  jitter: flexible
+  skip_p: 0.2
+  sleep: false
+  cites: occasionally video calls her sister during the day when she’s awake
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+object_rules:
+- object: mug_1
+  rules:
+  - activity: prep_meal
+    phase: during
+    dest: counter_k1
+    only_from:
+    - cupboard_k1
+  - activity: prep_meal
+    phase: after
+    dest: cupboard_k1
+  - activity: midnight_crisis
+    phase: during
+    dest: coffee_table_l1
+    only_from:
+    - cupboard_k1
+  - activity: midnight_crisis
+    phase: after
+    dest: cupboard_k1
+- object: laptop_1
+  rules:
+  - activity: rest_break
+    phase: during
+    dest: bed_b1
+    only_from:
+    - bedroom_floor_b1
+  - activity: rest_break
+    phase: after
+    dest: bedroom_floor_b1
+- object: phone_1
+  rules:
+  - activity: rest_break
+    phase: during
+    dest: armchair_l1
+    only_from:
+    - entry_hook_e1
+  - activity: rest_break
+    phase: after
+    dest: entry_hook_e1
+  - activity: post_work_routine
+    phase: during
+    dest: counter_k1
+    only_from:
+    - entry_hook_e1
+  - activity: post_work_routine
+    phase: after
+    dest: entry_hook_e1
+- object: keys_1
+  rules:
+  - activity: morning_departure
+    phase: after
+    dest: entry_hook_e1
+  - activity: arrival_home
+    phase: after
+    dest: entry_hook_e1
+- object: book_1
+  rules:
+  - activity: rest_break
+    phase: during
+    dest: coffee_table_l1
+    only_from:
+    - bookshelf_l1
+  - activity: rest_break
+    phase: after
+    dest: bookshelf_l1
+- object: water_bottle_1
+  rules:
+  - activity: prep_meal
+    phase: during
+    dest: counter_k1
+    only_from:
+    - cupboard_k1
+  - activity: prep_meal
+    phase: after
+    dest: cupboard_k1
+- object: charger_1
+  rules:
+  - activity: post_work_routine
+    phase: during
+    dest: counter_k1
+    only_from:
+    - counter_k1
+  - activity: post_work_routine
+    phase: after
+    dest: counter_k1
+- object: blanket_1
+  rules:
+  - activity: daytime_rest
+    phase: during
+    dest: couch_l1
+    only_from:
+    - bed_b1
+  - activity: daytime_rest
+    phase: after
+    dest: bed_b1
+activities:
+- name: post_work_routine
+  reset_all:
+    p: 0.3
+    objects:
+    - phone_1
+    - charger_1
+    - blanket_1
+  fragment:
+    mean_bouts: 2
+- name: daytime_rest
+  reset_all:
+    p: 0.2
+    objects:
+    - laptop_1
+    - book_1
+  fragment:
+    mean_bouts: 3
+arc_events:
+- day: 5
+  note: Maya skips her video call and naps instead due to exhaustion after a difficult shift
+  patch:
+    drop:
+    - video_call
+    - daytime_rest
+    add:
+    - resident: resident_1
+      activity: overnight_sleep
+      start: '16:00'
+      end: '19:00'
+      at: bed_b1
+      jitter: routine
+      sleep: true
+- day: 11
+  note: Maya has an unexpected appointment with her doctor at 15:30, conflicting with her usual rest period
+  patch:
+    drop:
+    - rest_break
+    - daytime_rest
+    add:
+    - resident: resident_1
+      activity: doctor_visit
+      start: '15:30'
+      end: '16:30'
+      at: ELSEWHERE
+      jitter: external
+      sleep: false
+- day: 16
+  note: Maya suffers from a virus and is too weak to leave the bed for two consecutive days
+  patch:
+    drop:
+    - morning_departure
+    - arrival_home
+    - post_work_routine
+    - rest_break
+    - daytime_rest
+    add:
+    - resident: resident_1
+      activity: bed_rest
+      start: 00:00
+      end: 23:59+1
+      at: bed_b1
+      jitter: routine
+      sleep: false
+    - resident: resident_1
+      activity: bed_rest
+      start: 23:59+1
+      end: 23:59+1
+      at: bed_b1
+      jitter: routine
+      sleep: false
+- day: 20
+  note: Maya recovers and starts a new routine to reset her sleep schedule
+  patch:
+    drop:
+    - morning_departure
+    - arrival_home
+    - post_work_routine
+    - rest_break
+    - daytime_rest
+    add:
+    - resident: resident_1
+      activity: new_schedule_prep
+      start: 06:00
+      end: 07:00
+      at: counter_k1
+      jitter: external
+      sleep: false
+    - resident: resident_1
+      activity: new_schedule_rest
+      start: '20:00'
+      end: '21:00'
+      at: bed_b1
+      jitter: routine
+      sleep: false

@@ -1,0 +1,130 @@
+{
+  "household": "hh_003",
+  "household_type": "retired_couple",
+  "source": "profiles/revamp_v2/deepseek-v4-flash/hh3",
+  "days": 21,
+  "seed": 0,
+  "n_events": 1513,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 0,
+    "tidy_moved": 0,
+    "tidy_ran_out_of_time": 0,
+    "blocks": 611,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [
+      "nap",
+      "night_sleep",
+      "night_sleep__bed_b2"
+    ],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [
+      "tidy_up"
+    ],
+    "inert_objects": [
+      "charger_1",
+      "laptop_1",
+      "medication_bottle_1"
+    ],
+    "carried_on_departure": [
+      "phone_1@put_away_dishes",
+      "phone_1@put_away_dishes__resident_1",
+      "phone_2@put_away_dishes__resident_2",
+      "phone_2@reading__resident_2"
+    ],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [
+      "phone_1@wake_up",
+      "phone_1@wake_up__bed_b2",
+      "phone_1@wake_up__couch_l1",
+      "phone_2@reading",
+      "phone_2@reading__armchair_l1"
+    ],
+    "skips_per_activity": {
+      "breakfast__couch_l1": 3,
+      "lunch": 2,
+      "nap": 5,
+      "put_away_dishes": 2,
+      "put_away_dishes__sink_k1": 3,
+      "reading__armchair_l1": 5,
+      "reading__resident_2": 3
+    },
+    "fragment_bouts_per_activity": {
+      "breakfast": 29,
+      "breakfast__couch_l1": 29,
+      "lunch": 46,
+      "medication": 18,
+      "put_away_dishes": 29,
+      "put_away_dishes__resident_1": 1,
+      "put_away_dishes__resident_2": 2,
+      "put_away_dishes__sink_k1": 19,
+      "reading": 24,
+      "reading__armchair_l1": 27,
+      "reading__resident_2": 23,
+      "wake_up": 11,
+      "wake_up__bed_b2": 14,
+      "wake_up__couch_l1": 57
+    }
+  },
+  "moves_per_object": {
+    "keys_2": 115,
+    "jacket_1": 111,
+    "glasses_2": 109,
+    "book_1": 108,
+    "mug_2": 94,
+    "phone_2": 94,
+    "jacket_2": 93,
+    "bowl_1": 90,
+    "water_bottle_2": 86,
+    "umbrella_1": 85,
+    "remote_1": 85,
+    "keys_1": 82,
+    "water_bottle_1": 76,
+    "glasses_1": 60,
+    "towel_1": 55,
+    "mug_1": 54,
+    "phone_1": 48,
+    "plate_1": 42,
+    "blanket_1": 26
+  },
+  "provenance": {
+    "model": "deepseek-ai/DeepSeek-V4-Flash",
+    "prompts": {
+      "persona_v2": "134f5bfb",
+      "routine_program": "fe6d4df3",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b5",
+    "accepted_attempt": 0,
+    "n_attempts": 1
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.6
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    }
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_rule_based_deepseek-v4-flash_hh3_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom_1": "bedroom.004",
+      "bedroom_2": "bedroom",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

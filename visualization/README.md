@@ -46,6 +46,24 @@ rewritten). habitat_sim is needed **only** by the offline bake step.
 
        python serve.py            # -> http://127.0.0.1:8710/
 
+   No flags, nothing to register, and no restarting. The household list is
+   rebuilt from disk on every request, labelled from the trace itself
+   (household, type, object and resident counts), and the viewer polls it
+   every 5s: a household that finishes while you watch appears by itself,
+   and the one you are looking at reloads in place when it is rebuilt
+   (a green note says which happened). Starting a second copy simply
+   takes the port over from the older one — pass `--keep-existing` if you
+   would rather it refuse.
+
+   The panel carries TWO pickers, an object and a resident, each with its
+   own live readout — where it is, what it is doing, since when, and for a
+   resident what they are carrying. The selected resident is drawn larger
+   with an optional dashed path; the strip under the slider shows that
+   object's moves (blue, upper) against that resident's activity changes
+   (green, lower), so "did she move it, or did it drift while she was out"
+   is answerable by eye. The ◀/▶ buttons follow whichever track the little
+   dropdown between them names.
+
    A second page, **`viewer/beliefs.html`**, overlays a baselines run
    (src/baselines) on the same map: gold disc = the object's true location
    now, ring = the agent's prediction at the last question (green right /
@@ -54,12 +72,14 @@ rewritten). habitat_sim is needed **only** by the offline bake step.
    the slider. Pseudo-receptacles map back for drawing: OUT_OF_HOUSE at the
    AWAY circle, ON_PERSON at the resident's current position.
 
-### Publishing a dataset — `traces.json` is the only place
+### The dataset list — `traces.json`, rebuilt by `serve.py`
 
 Both pages read `visualization/traces.json` (via `viewer/datasets.js`) and
 build their header dropdown from it; neither has a hardcoded path, and
 `serve.py` pins no trace either. Nothing is selected by hand-editing a URL.
-One entry per timeline, each listing the baselines runs recorded against it:
+`serve.py` regenerates the file at startup, so the only thing worth editing
+by hand is a `runs` list (belief overlays), which it preserves. One entry
+per timeline:
 
 ```json
 {"label": "hh1 — night-shift solo (Marisol), 21-day ...",

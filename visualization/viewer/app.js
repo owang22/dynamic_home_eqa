@@ -15,6 +15,9 @@ const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const ROOM_FILLS = ["#3d5a80", "#5a8a5e", "#8a5a72", "#7a6a3d", "#5a7a8a",
                     "#6a5a8a", "#8a6a4a"];
 const SEG = {T0: 0, T1: 1, REC: 2, ROOM: 3, REL: 4, X: 5, Z: 6, CAUSE: 7};
+// resident tracks are shorter: no placement relation, and the last field is
+// the activity they are doing rather than what caused a move
+const RSEG = {T0: 0, T1: 1, REC: 2, ROOM: 3, X: 4, Z: 5, ACT: 6};
 
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -44,13 +47,59 @@ function worldToCanvas(x, z) {
 
 function segmentsOf(obj) { return trace.objects[obj].segments; }
 
+/* A carried object gets a new SEGMENT every time its carrier walks to a new
+ * spot, but it has only MOVED when its receptacle changes (put down, picked
+ * up, taken out). Everything user-facing — the tick strip, the ◀/▶ jumps,
+ * the "N moves" labels — counts receptacle transitions, or a wallet riding
+ * in a pocket all week claims hundreds of moves while its strip stays
+ * blank. */
+function transitionsOf(obj) {
+  const segs = segmentsOf(obj), times = [];
+  for (let i = 1; i < segs.length; i++)
+    if (segs[i][SEG.REC] !== segs[i - 1][SEG.REC]) times.push(segs[i][SEG.T0]);
+  return times;
+}
+
 function segmentAt(obj, time) {
   const segs = segmentsOf(obj);
   for (const s of segs) if (time >= s[SEG.T0] && time < s[SEG.T1]) return s;
   return segs[segs.length - 1];
 }
 
+/* Two expander artifacts should not reach the reader:
+ *   linger_<receptacle>  — a synthesized block holding a resident in place
+ *                          between authored activities; nobody "does" it
+ *   <activity>__<rec>    — a per-location variant, split so four people can
+ *                          share one "sleep" in four different beds
+ * Both name a place the panel already shows on the row below. */
+function prettyActivity(name) {
+  const s = String(name);
+  if (s.startsWith("linger_")) return "idle";
+  const cut = s.indexOf("__");
+  return cut > 0 ? s.slice(0, cut) : s;
+}
+
 function currentObject() { return $("object-select").value; }
+function currentResident() { return $("resident-select").value; }
+
+function residentTracks() { return trace.residents || {}; }
+
+function residentSegmentAt(res, time) {
+  const segs = residentTracks()[res] || [];
+  for (const s of segs) if (time >= s[RSEG.T0] && time < s[RSEG.T1]) return s;
+  return segs[segs.length - 1] || null;
+}
+
+/* Which objects is this resident holding right now — the readout answer to
+ * "what has she got on her", which the object list alone cannot give. */
+function carriedBy(res, time) {
+  const held = [];
+  for (const obj of Object.keys(trace.objects)) {
+    const seg = segmentAt(obj, time);
+    if (seg && seg[SEG.REC] === `person:${res}`) held.push(obj);
+  }
+  return held;
+}
 
 // ---------------------------------------------------------------- layout
 
@@ -173,28 +222,56 @@ function drawPath(ctx, obj) {
   }
 }
 
-function drawResidents(ctx) {
-  // small diamonds: where each resident is right now (from their realized
-  // activity blocks; carried objects ride these positions)
+function drawResidentMarker(ctx, res, seg, selected) {
+  // diamonds: where a resident is now, from their realized activity blocks.
+  // The selected one is drawn larger and fully opaque so it can be followed
+  // through a busy household without hunting for it.
   const dpr = window.devicePixelRatio || 1;
-  for (const [res, segs] of Object.entries(trace.residents || {})) {
-    const seg = segs.find(s => t >= s[0] && t < s[1]) || segs[segs.length - 1];
-    if (!seg) continue;
-    const [, , , , x, z, activity] = seg;
-    const [cx, cy] = worldToCanvas(x, z);
-    const r = 5 * dpr;
-    ctx.fillStyle = "#7ee08a";
-    ctx.strokeStyle = "#14161a";
-    ctx.lineWidth = 1.2 * dpr;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy - r); ctx.lineTo(cx + r, cy); ctx.lineTo(cx, cy + r);
-    ctx.lineTo(cx - r, cy); ctx.closePath();
-    ctx.fill(); ctx.stroke();
-    ctx.fillStyle = "#7ee08a";
-    ctx.font = `${9 * dpr}px system-ui`;
-    ctx.textAlign = "center";
-    ctx.fillText(`${res.replace("resident_", "R")}·${activity}`, cx, cy + r + 9 * dpr);
+  const [cx, cy] = worldToCanvas(seg[RSEG.X], seg[RSEG.Z]);
+  const r = (selected ? 8 : 5) * dpr;
+  ctx.globalAlpha = selected ? 1 : 0.5;
+  ctx.fillStyle = "#7ee08a";
+  ctx.strokeStyle = selected ? "#e6ffe9" : "#14161a";
+  ctx.lineWidth = (selected ? 2 : 1.2) * dpr;
+  ctx.beginPath();
+  ctx.moveTo(cx, cy - r); ctx.lineTo(cx + r, cy); ctx.lineTo(cx, cy + r);
+  ctx.lineTo(cx - r, cy); ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = selected ? "#c9f7d0" : "#7ee08a";
+  ctx.font = `${(selected ? 10 : 9) * dpr}px system-ui`;
+  ctx.textAlign = "center";
+  ctx.fillText(`${res.replace("resident_", "R")}·${prettyActivity(seg[RSEG.ACT])}`,
+               cx, cy + r + 10 * dpr);
+  ctx.globalAlpha = 1;
+}
+
+function drawResidents(ctx) {
+  const selected = currentResident();
+  const showAll = $("show-all-res").checked;
+  for (const [res, segs] of Object.entries(residentTracks())) {
+    if (!showAll && res !== selected) continue;
+    const seg = residentSegmentAt(res, t);
+    if (seg) drawResidentMarker(ctx, res, seg, res === selected);
   }
+}
+
+function drawResidentPath(ctx) {
+  const res = currentResident();
+  const segs = residentTracks()[res] || [];
+  const dpr = window.devicePixelRatio || 1;
+  const pts = [];
+  for (const s of segs) {
+    if (s[RSEG.T0] > t) break;
+    pts.push(worldToCanvas(s[RSEG.X], s[RSEG.Z]));
+  }
+  if (pts.length < 2) return;
+  ctx.strokeStyle = "rgba(126,224,138,0.5)";
+  ctx.lineWidth = 1.5 * dpr;
+  ctx.setLineDash([4, 3]);
+  ctx.beginPath();
+  pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
+  ctx.stroke();
+  ctx.setLineDash([]);
 }
 
 function drawMarker(ctx, seg, faint, label) {
@@ -227,18 +304,21 @@ function draw() {
   ctx.fillStyle = "#14161a";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  ctx.globalAlpha = 0.55;
-  ctx.drawImage(mapImg, view.px0, view.py0, view.pw, view.ph,
-                view.ox, view.oy, view.pw * view.scale, view.ph * view.scale);
-  ctx.globalAlpha = 1;
+  if (mapImg) {
+    ctx.globalAlpha = 0.55;
+    ctx.drawImage(mapImg, view.px0, view.py0, view.pw, view.ph,
+                  view.ox, view.oy, view.pw * view.scale, view.ph * view.scale);
+    ctx.globalAlpha = 1;
+  }
 
   drawRooms(ctx);
   if ($("show-recs").checked) drawReceptacles(ctx);
-  drawResidents(ctx);
 
   const obj = currentObject();
   if ($("show-trace").checked) drawTraceBuildup(ctx, obj);
+  if ($("show-res-path").checked) drawResidentPath(ctx);
   if ($("show-path").checked) drawPath(ctx, obj);
+  drawResidents(ctx);
 
   if ($("show-others").checked)
     for (const o of Object.keys(trace.objects))
@@ -266,10 +346,39 @@ function updateReadout() {
                                             .replace("reset:", "reset: ");
   $("st-since").textContent = fmtTime(seg[SEG.T0]);
 
+  updateResidentReadout();
+
+  const following = $("jump-what").value;
+  if (following === "resident") {
+    const rsegs = residentTracks()[currentResident()] || [];
+    const rseg = residentSegmentAt(currentResident(), t);
+    const j = rsegs.indexOf(rseg);
+    $("event-info").textContent = rseg
+      ? `activity ${j + 1}/${rsegs.length} · ${fmtTime(rseg[RSEG.T0])} → ${fmtTime(rseg[RSEG.T1])}`
+      : "no resident blocks";
+    return;
+  }
   const segs = segmentsOf(obj);
   const i = segs.indexOf(seg);
   $("event-info").textContent =
     `segment ${i + 1}/${segs.length} · ${fmtTime(seg[SEG.T0])} → ${fmtTime(seg[SEG.T1])}`;
+}
+
+function updateResidentReadout() {
+  const res = currentResident();
+  const seg = residentSegmentAt(res, t);
+  if (!seg) {
+    for (const id of ["rs-room", "rs-rec", "rs-activity", "rs-since", "rs-carrying"])
+      $(id).textContent = "–";
+    return;
+  }
+  const away = seg[RSEG.REC] === "ELSEWHERE";
+  $("rs-room").textContent = away ? "out of the house" : seg[RSEG.ROOM];
+  $("rs-rec").textContent = away ? trace.elsewhere.label : seg[RSEG.REC];
+  $("rs-activity").textContent = prettyActivity(seg[RSEG.ACT]);
+  $("rs-since").textContent = fmtTime(seg[RSEG.T0]);
+  const held = carriedBy(res, t);
+  $("rs-carrying").textContent = held.length ? held.join(", ") : "nothing";
 }
 
 function drawEventStrip() {
@@ -285,12 +394,27 @@ function drawEventStrip() {
     ctx.fillStyle = d % 7 >= 5 ? "#5a5340" : "#2c313a";   // weekend tint
     ctx.fillRect(x, 0, 1.5, strip.height);
   }
-  // one tick per segment start (an event that moved this object)
+  // upper half: one tick per receptacle change of the selected object
   ctx.fillStyle = "#6ec1ff";
-  for (const s of segmentsOf(currentObject())) {
-    if (s[SEG.CAUSE] === "initial") continue;
-    const x = (s[SEG.T0] / horizon) * strip.width;
-    ctx.fillRect(x, 2 * dpr, 1.5 * dpr, 10 * dpr);
+  const moves = transitionsOf(currentObject());
+  for (const t0 of moves) {
+    const x = (t0 / horizon) * strip.width;
+    ctx.fillRect(x, 2 * dpr, 1.5 * dpr, 5 * dpr);
+  }
+  if (!moves.length) {
+    ctx.fillStyle = "#8b93a1";
+    ctx.font = `${9 * dpr}px system-ui`;
+    ctx.textAlign = "left";
+    ctx.fillText("(this object never changes receptacle)", 4 * dpr, 11 * dpr);
+  }
+  // lower half: one tick per activity change of the selected resident, so
+  // the two tracks can be read against each other — did she move it, or did
+  // it drift while she was out?
+  ctx.fillStyle = "#7ee08a";
+  for (const s of residentTracks()[currentResident()] || []) {
+    if (!s[RSEG.T0]) continue;
+    const x = (s[RSEG.T0] / horizon) * strip.width;
+    ctx.fillRect(x, 7 * dpr, 1.5 * dpr, 5 * dpr);
   }
 }
 
@@ -325,8 +449,10 @@ function togglePlay(on = !playing) {
 }
 
 function jumpEvent(dir) {
-  const segs = segmentsOf(currentObject());
-  const times = segs.filter(s => s[SEG.CAUSE] !== "initial").map(s => s[SEG.T0]);
+  const times = $("jump-what").value === "resident"
+    ? (residentTracks()[currentResident()] || [])
+        .map(s => s[RSEG.T0]).filter(Boolean)
+    : transitionsOf(currentObject());
   const next = dir > 0 ? times.find(x => x > t)
                        : [...times].reverse().find(x => x < t);
   if (next !== undefined) setTime(next);
@@ -334,15 +460,118 @@ function jumpEvent(dir) {
 
 // ---------------------------------------------------------------- boot
 
+/* Follow the build while it runs.
+ *
+ * serve.py rebuilds the dataset list from disk on every request, so polling
+ * it picks up a household the moment its timeline lands — and re-fetching
+ * the open trace when its file changes means a household you are LOOKING at
+ * updates in place when it is rebuilt. Both are cheap (the list is a few KB,
+ * the trace check is a HEAD), and without them the only way to see new work
+ * was to restart the server and reload the page.
+ */
+/* Fill the object and resident pickers from the loaded trace, keeping the
+ * current selections when they still exist (a rebuilt household usually
+ * keeps most of its objects, and losing your place on every refresh would
+ * make the live updating worse than useless). */
+function rebuildPickers(keepObject, keepResident) {
+  const sel = $("object-select"), rsel = $("resident-select");
+  sel.innerHTML = "";
+  // busiest objects first: with 40 in a household, the ones worth watching
+  // should not be buried alphabetically behind the ones that never move
+  const objects = Object.keys(trace.objects)
+    .map(oid => [oid, transitionsOf(oid).length])
+    .sort((a, b) => b[1] - a[1]);
+  for (const [oid, n] of objects) {
+    const opt = document.createElement("option");
+    opt.value = oid;
+    opt.textContent = `${oid} (${trace.objects[oid].class}) · ` +
+      (n ? `${n} moves` : "never moves");
+    sel.appendChild(opt);
+  }
+  if (keepObject && trace.objects[keepObject]) sel.value = keepObject;
+
+  rsel.innerHTML = "";
+  for (const res of Object.keys(residentTracks()).sort()) {
+    const opt = document.createElement("option");
+    opt.value = res;
+    opt.textContent = res;
+    rsel.appendChild(opt);
+  }
+  if (keepResident && residentTracks()[keepResident])
+    rsel.value = keepResident;
+}
+
+const WATCH_INTERVAL_MS = 5000;
+let knownDatasets = "";      // JSON of the last list, to spot changes
+let traceStamp = null;       // Last-Modified of the open trace
+
+async function watchForChanges() {
+  try {
+    const datasets = await loadDatasets();
+    const signature = JSON.stringify(
+        datasets.map(d => [d.label, d.trace, d.source]));
+    if (knownDatasets && signature !== knownDatasets) {
+      populateTracePicker(datasets);      // rebuilds source + household
+      flash(`household list updated (${datasets.length} timelines)`);
+    }
+    knownDatasets = signature;
+
+    const head = await fetch(TRACE_URL, {method: "HEAD"});
+    const stamp = head.headers.get("Last-Modified");
+    if (traceStamp && stamp && stamp !== traceStamp) {
+      const fresh = await (await fetch(TRACE_URL)).json();
+      const wasObject = currentObject(), wasResident = currentResident();
+      trace = fresh;
+      horizon = trace.days * 1440;
+      rebuildPickers(wasObject, wasResident);
+      computeView(); drawEventStrip(); setTime(Math.min(t, horizon - 1));
+      flash("this household was rebuilt — reloaded");
+    }
+    traceStamp = stamp;
+  } catch (e) {
+    /* a mid-build moment can 404 or serve half a file; try again next tick */
+  }
+}
+
+function flash(message) {
+  const el = $("live-note");
+  el.textContent = message;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 4000);
+}
+
 function populateTracePicker(datasets) {
-  // Household switcher: every timeline published in traces.json, plus — when
-  // the page was opened on an unpublished one via ?trace= — that trace as its
-  // own row, so the picker always shows what is actually on screen.
-  const rows = datasets.map(d => ({
+  // TWO pickers, source then household: every set numbers its households
+  // hh1..hh10, so a flat list offers three rows called hh_001 with nothing
+  // to tell them apart. Pick the set first, then the home within it.
+  const open = datasets.find(d => samePath(d.trace, TRACE_URL));
+  const sourceOf = d => d.source || "other";
+  const sources = [...new Set(datasets.map(sourceOf))];
+  const currentSource = open ? sourceOf(open) : sources[0];
+
+  const srcSel = $("source-select");
+  srcSel.innerHTML = "";
+  sources.forEach(src => {
+    const n = datasets.filter(d => sourceOf(d) === src).length;
+    const opt = document.createElement("option");
+    opt.value = src;
+    opt.textContent = `${src} (${n})`;
+    opt.selected = src === currentSource;
+    srcSel.appendChild(opt);
+  });
+  srcSel.disabled = sources.length < 2;
+  srcSel.onchange = () => {
+    // jump to the first household of the newly chosen set
+    const first = datasets.find(d => sourceOf(d) === srcSel.value);
+    if (first) location.search = `?trace=${encodeURIComponent(first.trace)}`;
+  };
+
+  const mine = datasets.filter(d => sourceOf(d) === currentSource);
+  const rows = mine.map(d => ({
     label: d.label,
     search: `?trace=${encodeURIComponent(d.trace)}`,
   }));
-  let current = datasets.findIndex(d => samePath(d.trace, TRACE_URL));
+  let current = mine.findIndex(d => samePath(d.trace, TRACE_URL));
   if (current < 0) {
     rows.unshift({
       label: `${new URL(TRACE_URL, location.href).pathname} (not in traces.json)`,
@@ -350,7 +579,9 @@ function populateTracePicker(datasets) {
     });
     current = 0;
   }
-  wirePicker($("trace-select"), rows, current);
+  const sel = $("trace-select");
+  sel.innerHTML = "";
+  wirePicker(sel, rows, current);
 }
 
 function linkToBeliefs(datasets) {
@@ -370,6 +601,8 @@ function linkToBeliefs(datasets) {
 }
 
 async function boot() {
+  const say = msg => { $("run-label").textContent = msg; };
+  say("loading household list…");
   const datasets = await loadDatasets();
   if (!TRACE_URL) {
     if (!datasets.length)
@@ -379,31 +612,44 @@ async function boot() {
   populateTracePicker(datasets);
   linkToBeliefs(datasets);
 
-  trace = await (await fetch(TRACE_URL)).json();
+  say(`loading ${TRACE_URL}…`);
+  const res = await fetch(TRACE_URL);
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${TRACE_URL}`);
+  trace = await res.json();
   horizon = trace.days * 1440;
 
   const traceDirNote = `${trace.household} · scene ${trace.scene_id} · ` +
     `${trace.days} days · seed ${trace.seed}`;
-  $("run-label").textContent = traceDirNote;
+  say(traceDirNote);
   document.title = `${trace.household} — object-trace viewer`;
 
+  const mapUrl = `/visualization/assets/${trace.scene_id}/map.png`;
+  say(`loading map ${trace.scene_id}…`);
   mapImg = new Image();
-  mapImg.src = new URL(`../assets/${trace.scene_id}/map.png`,
-                       location.href).href;
-  await mapImg.decode();
+  mapImg.src = mapUrl;
+  try {
+    await mapImg.decode();
+  } catch (e) {
+    // draw the household without its floor plan rather than not at all
+    console.warn("map failed to decode", mapUrl, e);
+    mapImg = null;
+  }
 
   const sel = $("object-select");
-  for (const [oid, o] of Object.entries(trace.objects)) {
-    const opt = document.createElement("option");
-    opt.value = oid;
-    opt.textContent = `${oid} (${o.class})`;
-    sel.appendChild(opt);
+  const rsel = $("resident-select");
+  rebuildPickers();
+  if (!rsel.options.length) {         // a timeline with no resident track
+    rsel.appendChild(new Option("(none in this timeline)", ""));
+    rsel.disabled = true;
   }
 
   $("time").max = horizon;
   $("time").addEventListener("input", e => setTime(Number(e.target.value), true));
   sel.addEventListener("change", () => { drawEventStrip(); draw(); });
-  for (const id of ["show-path", "show-trace", "show-others", "show-recs"])
+  rsel.addEventListener("change", () => { drawEventStrip(); draw(); });
+  $("jump-what").addEventListener("change", draw);
+  for (const id of ["show-path", "show-res-path", "show-trace", "show-others",
+                    "show-recs", "show-all-res"])
     $(id).addEventListener("change", draw);
   $("play").addEventListener("click", () => togglePlay());
   $("prev-event").addEventListener("click", () => jumpEvent(-1));
@@ -418,7 +664,26 @@ async function boot() {
   computeView();
   drawEventStrip();
   setTime(0);
+
+  // follow the build: new households appear, and a household that gets
+  // rebuilt while you are watching it reloads in place
+  setInterval(watchForChanges, WATCH_INTERVAL_MS);
+  watchForChanges();
 }
+
+/* A blank dark page is the worst possible failure report: it looks the
+ * same whether the trace 404'd, the JSON was half-written, or a draw threw.
+ * Anything that escapes gets painted where it can be read. */
+function fatal(what, err) {
+  document.body.innerHTML =
+    `<pre style="padding:2em;color:#ff8a8a;white-space:pre-wrap">` +
+    `${what}\n\n${(err && err.stack) || err}\n\n` +
+    `trace: ${TRACE_URL || "(none — no manifest entry, no ?trace=)"}\n` +
+    `Serve via visualization/serve.py, not file://</pre>`;
+}
+window.addEventListener("error", e => fatal("viewer error", e.error || e.message));
+window.addEventListener("unhandledrejection",
+                        e => fatal("viewer error (async)", e.reason));
 
 boot().catch(err => {
   document.body.innerHTML =

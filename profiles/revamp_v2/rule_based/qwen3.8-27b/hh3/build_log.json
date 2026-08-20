@@ -1,0 +1,38 @@
+{
+  "household": "hh_003",
+  "household_type": "retired_couple",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b5",
+  "prompts": {
+    "persona_v2": "134f5bfb",
+    "routine_program": "fe6d4df3",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 14546646790778818281,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 14546646790778818281,
+      "leak_prediction": {
+        "predicted_type": "working_couple_no_children",
+        "confidence": 0.85,
+        "reason": "The presence of two distinct bedrooms (b1, b2) with matching furniture (bed, nightstand, desk) and two wallets/keys indicates a couple. The absence of any child-specific items (toys, cribs, high chairs) or family-sized dining sets rules out households with children. The inclusion of desks in both\u5367\u5ba4s",
+        "actual_type": "retired_couple",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 1,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 12572051497059373491,
+      "failures": []
+    }
+  ]
+}

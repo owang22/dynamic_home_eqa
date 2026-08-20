@@ -1,0 +1,45 @@
+{
+  "household": "hh_010",
+  "household_type": "couple_with_toddler",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b4",
+  "prompts": {
+    "persona_v2": "134f5bfb",
+    "routine_program": "e63834f9",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 5484485689578621752,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 5484485689578621752,
+      "leak_prediction": {
+        "predicted_type": "working_couple_no_children",
+        "confidence": 0.65,
+        "reason": "The presence of two distinct bedrooms (b1, b2) with matching furniture (bed, nightstand, desk) and two sets of personal items (keys, wallets, phones) strongly indicates a couple. The absence of any child-specific items (diapers, high chairs, extensive toys, school supplies) rules out families with a",
+        "actual_type": "couple_with_toddler",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 2,
+  "accepted_attempt": 1,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 918986393335275724,
+      "failures": [
+        "reachability: 5 of 18 objects wrote movement rules that only ever name their own home (['glasses_1', 'keys_1', 'mug_2', 'wallet_1', 'wallet_2']) \u2014 fake movement, not declared stillness; use `rules: []` for an object that genuinely stays put"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 337822876801648086,
+      "failures": []
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "household": "hh_008",
+  "household_type": "working_couple_no_children",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b4",
+  "prompts": {
+    "persona_v2": "134f5bfb",
+    "routine_program": "e63834f9",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 15889283852806422498,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 10058024459513116423,
+      "leak_prediction": {
+        "predicted_type": "working_couple_no_children",
+        "confidence": 0.85,
+        "reason": "The presence of two distinct bedrooms (b1, b2) with full furniture sets (bed, desk, nightstand) indicates a couple. The high volume of work-related items (two laptops, two phones, two sets of keys, wallets, jackets, notebooks, pens) strongly suggests both individuals are working professionals. The '",
+        "actual_type": "working_couple_no_children",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 11398213966048751242,
+      "leak_prediction": {
+        "predicted_type": "working_couple_no_children",
+        "confidence": 0.85,
+        "reason": "The presence of two distinct bedrooms (b1, b2) with full furniture sets (bed, desk, nightstand) indicates a couple. The high number of work-related items (2 laptops, 2 phones, 2 jackets, 2 wallets, 2 keys) suggests both partners are working. The absence of any child-specific items (toys, cribs, high",
+        "actual_type": "working_couple_no_children",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 2,
+      "seed": 5091241838579601435,
+      "leak_prediction": {
+        "predicted_type": "working_couple_no_children",
+        "confidence": 0.85,
+        "reason": "The presence of two distinct bedrooms (b1, b2) with full furniture sets (bed, desk, nightstand) indicates a couple. The absence of any child-specific items (toys, cribs, high chairs, school supplies) rules out families with children. The inclusion of two laptops, two phones, and two wallets suggests",
+        "actual_type": "working_couple_no_children",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 3,
+      "seed": 3040989572096441971,
+      "leak_prediction": {
+        "predicted_type": "working_couple_no_children",
+        "confidence": 0.85,
+        "reason": "The presence of two distinct bedrooms (b1, b2) with full furniture sets (bed, desk, nightstand) indicates a couple. The absence of any child-specific items (toys, cribs, high chairs, school supplies) rules out families with children. The inclusion of two laptops, two phones, and two wallets suggests",
+        "actual_type": "working_couple_no_children",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 4,
+      "seed": 15889283852806422498,
+      "leak_prediction": {
+        "predicted_type": "working_couple_no_children",
+        "confidence": 0.92,
+        "reason": "The presence of two distinct bedrooms (b1, b2) with full furniture sets (bed, desk, nightstand) indicates a couple. The high volume of work-related items (2 laptops, 2 phones, 2 notebooks, 2 wallets, 2 jackets) suggests both partners are working adults. The absence of any child-specific items (toys,",
+        "actual_type": "working_couple_no_children",
+        "correct": true
+      }
+    }
+  ],
+  "leak_unresolved": true,
+  "n_attempts": 2,
+  "accepted_attempt": 1,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 1568648231673834856,
+      "failures": [
+        "referential: sleep block 'snack' has skip_p 0.3 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'snack' has skip_p 0.2 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'snack' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'snack' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'snack' has skip_p 0.2 \u2014 a resident does not skip sleeping"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 14837587104201491760,
+      "failures": []
+    }
+  ]
+}

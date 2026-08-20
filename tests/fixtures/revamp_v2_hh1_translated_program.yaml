@@ -1,0 +1,1577 @@
+# NOTE: its activity names (daysleep, bedtime_ritual, ...) predate the
+# closed ACTIVITY_VOCAB the generator now draws on. That is deliberate: the
+# vocabulary constrains what the MODEL may write, while the expander and
+# simulator accept any name, so a hand-authored or translated program is
+# never locked out.
+# Hand-translated regression fixture: revamp_v1 hh1 (Marisol) as a
+# revamp_v2 routine program. Built once by a mechanical translation of
+# profiles/revamp_v1/claude-fable-5/hh1/{detailed_activities,object_motions}.yaml;
+# with skip/fragmentation absent it must reproduce the v1 timeline
+# byte-for-byte (tests/test_revamp_v2_regression.py).
+household: hh_001
+household_type: night_shift_solo
+source_persona: persona.yaml
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 0.9
+receptacles:
+- id: bed_b1
+  room: bedroom
+- id: nightstand_b1
+  room: bedroom
+- id: bedroom_floor_b1
+  room: bedroom
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: daysleep
+  days:
+  - Mo
+  - Tu
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 09:20+1
+  at: bed_b1
+  jitter: routine
+weekly_blocks:
+- resident: resident_1
+  activity: arrive_home
+  days:
+  - Mo
+  - Th
+  start: 07:05+1
+  at: entry_table_e1
+  jitter: external
+  sleep: false
+- resident: resident_1
+  activity: post_shift_meal
+  days:
+  - Mo
+  - Th
+  start: 07:20+1
+  at: couch_l1
+  jitter: routine
+  sleep: false
+- resident: resident_1
+  activity: wind_down_couch
+  days:
+  - Mo
+  - Th
+  start: 08:10+1
+  at: couch_l1
+  jitter: routine
+  sleep: false
+- resident: resident_1
+  activity: bedtime_ritual
+  days:
+  - Mo
+  - Tu
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 09:00+1
+  at: nightstand_b1
+  jitter: external
+  sleep: false
+- resident: resident_1
+  activity: depart_commute
+  days:
+  - Mo
+  start: '22:05'
+  at: entry_table_e1
+  jitter: external
+  sleep: false
+- resident: resident_1
+  activity: away_shift
+  days:
+  - Mo
+  - Tu
+  - Th
+  - Fr
+  start: '22:25'
+  at: ELSEWHERE
+  jitter: external
+  sleep: false
+- resident: resident_1
+  activity: evening_roam
+  days:
+  - We
+  start: '17:50'
+  at: couch_l1
+  jitter: flexible
+  sleep: false
+object_rules:
+- object: bowl_1
+  rules: []
+  home: entry_table_e1
+- object: bowl_2
+  rules:
+  - activity: evening_wake
+    phase: during
+    dest: couch_l1
+    seq: 2
+  - activity: evening_wake
+    phase: after
+    seq: 3
+    dest: sink_k1
+    p: 0.5
+    else: coffee_table_l1
+  - activity: post_shift_meal
+    phase: after
+    seq: 6
+    dest: cupboard_k1
+    p: 0.5
+    else: dish_rack_k1
+    only_from:
+    - dish_rack_k1
+  - activity: wash_dishes
+    phase: after
+    seq: 3
+    dest: dish_rack_k1
+    only_from:
+    - sink_k1
+  - activity: cook_real_dinner
+    phase: during
+    dest: counter_k1
+    seq: 1
+  - activity: cook_real_dinner
+    phase: after
+    seq: 3
+    dest: sink_k1
+  - activity: batch_cooking
+    phase: during
+    dest: counter_k1
+    seq: 1
+  - activity: batch_cooking
+    phase: after
+    seq: 5
+    dest: sink_k1
+    p: 0.8
+    else: counter_k1
+  home: cupboard_k1
+- object: plate_1
+  rules:
+  - activity: daysleep
+    phase: after
+    seq: 2
+    dest: sink_k1
+    p: 0.55
+    else: coffee_table_l1
+    only_from:
+    - coffee_table_l1
+    - couch_l1
+  - activity: evening_wake
+    phase: after
+    seq: 5
+    dest: cupboard_k1
+    p: 0.55
+    else: dish_rack_k1
+    only_from:
+    - dish_rack_k1
+  - activity: post_shift_meal
+    phase: during
+    dest: coffee_table_l1
+    seq: 0
+  - activity: post_shift_meal
+    phase: after
+    seq: 3
+    dest: coffee_table_l1
+    p: 0.85
+    else: sink_k1
+  - activity: wash_dishes
+    phase: after
+    seq: 0
+    dest: dish_rack_k1
+    only_from:
+    - sink_k1
+  - activity: cook_real_dinner
+    phase: during
+    dest: counter_k1
+    seq: 0
+  - activity: cook_real_dinner
+    phase: after
+    seq: 2
+    dest: coffee_table_l1
+    p: 0.7
+    else: sink_k1
+  - activity: batch_cooking
+    phase: during
+    dest: counter_k1
+    seq: 0
+  - activity: batch_cooking
+    phase: after
+    seq: 4
+    dest: sink_k1
+    p: 0.8
+    else: counter_k1
+  - activity: host_dee
+    phase: during
+    dest: coffee_table_l1
+    seq: 3
+  - activity: host_dee
+    phase: after
+    seq: 4
+    dest: sink_k1
+    p: 0.6
+    else: coffee_table_l1
+  home: cupboard_k1
+- object: mug_1
+  rules:
+  - activity: daysleep
+    phase: after
+    seq: 3
+    dest: sink_k1
+    p: 0.5
+    else: coffee_table_l1
+    only_from:
+    - coffee_table_l1
+    - couch_l1
+  - activity: evening_wake
+    phase: during
+    dest: couch_l1
+    seq: 1
+  - activity: evening_wake
+    phase: after
+    seq: 4
+    dist:
+    - dest: sink_k1
+      p: 0.4
+    - dest: couch_l1
+      p: 0.3
+    - dest: counter_k1
+      p: 0.3
+  - activity: post_shift_meal
+    phase: during
+    dest: couch_l1
+    seq: 1
+  - activity: post_shift_meal
+    phase: after
+    seq: 4
+    dest: coffee_table_l1
+    p: 0.6
+    else: couch_l1
+  - activity: wind_down_couch
+    phase: after
+    seq: 3
+    dest: cupboard_k1
+    p: 0.5
+    else: dish_rack_k1
+    only_from:
+    - dish_rack_k1
+  - activity: wash_dishes
+    phase: after
+    seq: 1
+    dest: dish_rack_k1
+    only_from:
+    - sink_k1
+  - activity: batch_cooking
+    phase: during
+    dest: counter_k1
+    seq: 2
+  - activity: batch_cooking
+    phase: after
+    seq: 6
+    dest: sink_k1
+    p: 0.6
+    else: counter_k1
+  - activity: host_dee
+    phase: during
+    dest: coffee_table_l1
+    seq: 1
+  - activity: host_dee
+    phase: after
+    seq: 5
+    dest: sink_k1
+    p: 0.55
+    else: coffee_table_l1
+  home: cupboard_k1
+- object: mug_2
+  rules:
+  - activity: evening_wake
+    phase: after
+    seq: 6
+    dest: cupboard_k1
+    p: 0.55
+    else: dish_rack_k1
+    only_from:
+    - dish_rack_k1
+  - activity: night_streaming
+    phase: during
+    dest: couch_l1
+    seq: 2
+  - activity: night_streaming
+    phase: after
+    seq: 4
+    dest: coffee_table_l1
+    p: 0.7
+    else: sink_k1
+  - activity: wash_dishes
+    phase: after
+    seq: 2
+    dest: dish_rack_k1
+    only_from:
+    - sink_k1
+  - activity: takeout_couch
+    phase: during
+    dest: couch_l1
+    seq: 1
+  - activity: takeout_couch
+    phase: after
+    seq: 3
+    dest: coffee_table_l1
+    p: 0.75
+    else: sink_k1
+  - activity: host_dee
+    phase: during
+    dest: coffee_table_l1
+    seq: 2
+  - activity: host_dee
+    phase: after
+    seq: 6
+    dest: sink_k1
+    p: 0.55
+    else: coffee_table_l1
+  home: cupboard_k1
+- object: phone_marisol
+  rules:
+  - activity: bedtime_ritual
+    phase: during
+    dest: counter_k1
+    seq: 0
+  - activity: evening_wake
+    phase: during
+    dest: person:resident_1
+    seq: 0
+  - activity: night_streaming
+    phase: after
+    seq: 5
+    dest: counter_k1
+    only_from:
+    - person:resident_1
+  - activity: family_video_call
+    phase: during
+    dest: person:resident_1
+    seq: 0
+  - activity: family_video_call
+    phase: after
+    seq: 1
+    dist:
+    - dest: counter_k1
+      p: 0.4
+    - dest: couch_l1
+      p: 0.35
+    - dest: coffee_table_l1
+      p: 0.25
+  home: person:resident_1
+  p_misplace: 0.4
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  - counter_k1
+  - nightstand_b1
+- object: charger_1
+  rules: []
+  home: counter_k1
+- object: keys_marisol
+  rules:
+  - activity: depart_commute
+    phase: after
+    seq: 0
+    dest: ELSEWHERE
+  - activity: arrive_home
+    phase: after
+    seq: 0
+    dest: entry_table_e1
+    p: 0.75
+    else: counter_k1
+  - activity: errand_run
+    phase: during
+    dest: ELSEWHERE
+    seq: 0
+  - activity: errand_run
+    phase: after
+    seq: 3
+    dest: entry_table_e1
+    p: 0.75
+    else: counter_k1
+  - activity: dentist_trip
+    phase: during
+    dest: ELSEWHERE
+    seq: 0
+  - activity: dentist_trip
+    phase: after
+    seq: 3
+    dest: entry_table_e1
+    p: 0.6
+    else: counter_k1
+  - activity: concert_night
+    phase: during
+    dest: ELSEWHERE
+    seq: 0
+  - activity: concert_night
+    phase: after
+    seq: 3
+    dest: entry_table_e1
+    p: 0.8
+    else: counter_k1
+  home: entry_table_e1
+- object: wallet_marisol
+  rules:
+  - activity: depart_commute
+    phase: after
+    seq: 1
+    dest: ELSEWHERE
+  - activity: arrive_home
+    phase: after
+    seq: 1
+    dest: entry_table_e1
+    p: 0.7
+    else: chair_k1
+  - activity: errand_run
+    phase: during
+    dest: ELSEWHERE
+    seq: 1
+  - activity: errand_run
+    phase: after
+    seq: 4
+    dest: entry_table_e1
+    p: 0.7
+    else: chair_k1
+  - activity: dentist_trip
+    phase: during
+    dest: ELSEWHERE
+    seq: 1
+  - activity: dentist_trip
+    phase: after
+    seq: 4
+    dest: chair_k1
+    p: 0.5
+    else: entry_table_e1
+  - activity: concert_night
+    phase: during
+    dest: ELSEWHERE
+    seq: 1
+  - activity: concert_night
+    phase: after
+    seq: 4
+    dest: entry_table_e1
+    p: 0.75
+    else: chair_k1
+  home: entry_table_e1
+- object: water_bottle_1
+  rules:
+  - activity: depart_commute
+    phase: after
+    seq: 3
+    dest: ELSEWHERE
+  - activity: arrive_home
+    phase: after
+    seq: 3
+    dest: counter_k1
+    p: 0.6
+    else: couch_l1
+  - activity: shower_long
+    phase: after
+    seq: 2
+    dest: bathroom_shelf_ba1
+    p: 0.4
+    else: counter_k1
+  - activity: family_video_call
+    phase: after
+    seq: 2
+    dist:
+    - dest: couch_l1
+      p: 0.4
+    - dest: counter_k1
+      p: 0.35
+    - dest: nightstand_b1
+      p: 0.25
+  - activity: batch_cooking
+    phase: during
+    dest: counter_k1
+    seq: 3
+  home: counter_k1
+  p_misplace: 0.55
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  - bathroom_shelf_ba1
+  - nightstand_b1
+- object: book_1
+  rules:
+  - activity: bedtime_ritual
+    phase: after
+    seq: 1
+    dest: bed_b1
+    p: 0.75
+    else: couch_l1
+  - activity: daysleep
+    phase: after
+    seq: 0
+    dist:
+    - dest: nightstand_b1
+      p: 0.55
+    - dest: bedroom_floor_b1
+      p: 0.45
+    only_from:
+    - bed_b1
+  - activity: evening_roam
+    phase: after
+    seq: 2
+    dest: couch_l1
+    p: 0.25
+    else: nightstand_b1
+    only_from:
+    - nightstand_b1
+  - activity: nap_attempt
+    phase: after
+    seq: 1
+    dest: nightstand_b1
+    p: 0.5
+    else: bedroom_floor_b1
+    only_from:
+    - bed_b1
+  home: nightstand_b1
+- object: headphones_1
+  rules:
+  - activity: wind_down_couch
+    phase: after
+    seq: 2
+    dist:
+    - dest: couch_l1
+      p: 0.45
+    - dest: counter_k1
+      p: 0.3
+    - dest: bathroom_shelf_ba1
+      p: 0.25
+  - activity: evening_roam
+    phase: after
+    seq: 0
+    dist:
+    - dest: couch_l1
+      p: 0.4
+    - dest: counter_k1
+      p: 0.35
+    - dest: bathroom_shelf_ba1
+      p: 0.25
+  - activity: shower_long
+    phase: during
+    dest: bathroom_shelf_ba1
+    seq: 0
+  - activity: shower_long
+    phase: after
+    seq: 1
+    dest: bathroom_shelf_ba1
+    p: 0.7
+    else: counter_k1
+  home: counter_k1
+- object: medication_bottle_1
+  rules: []
+  home: nightstand_b1
+- object: blanket_1
+  rules:
+  - activity: daysleep
+    phase: after
+    seq: 1
+    dist:
+    - dest: bed_b1
+      p: 0.55
+    - dest: bedroom_floor_b1
+      p: 0.45
+    only_from:
+    - bed_b1
+  - activity: wind_down_couch
+    phase: during
+    dest: couch_l1
+    seq: 0
+  - activity: wind_down_couch
+    phase: after
+    seq: 1
+    dest: couch_l1
+    p: 0.35
+    else: bed_b1
+  - activity: evening_roam
+    phase: after
+    seq: 1
+    dest: couch_l1
+    p: 0.3
+    else: bed_b1
+    only_from:
+    - bed_b1
+    - bedroom_floor_b1
+  - activity: night_streaming
+    phase: during
+    dest: couch_l1
+    seq: 1
+  - activity: nap_attempt
+    phase: during
+    dest: bed_b1
+    seq: 0
+  - activity: laundry_run
+    phase: during
+    dest: ELSEWHERE
+    seq: 0
+  - activity: laundry_run
+    phase: after
+    seq: 1
+    dest: couch_l1
+    p: 0.8
+    else: bed_b1
+  - activity: takeout_couch
+    phase: during
+    dest: couch_l1
+    seq: 2
+  home: couch_l1
+- object: jacket_marisol
+  rules:
+  - activity: depart_commute
+    phase: after
+    seq: 2
+    dest: ELSEWHERE
+  - activity: arrive_home
+    phase: after
+    seq: 2
+    dest: chair_k1
+    p: 0.8
+    else: entry_hook_e1
+  - activity: errand_run
+    phase: during
+    dest: ELSEWHERE
+    seq: 2
+  - activity: errand_run
+    phase: after
+    seq: 5
+    dest: chair_k1
+    p: 0.75
+    else: entry_hook_e1
+  - activity: dentist_trip
+    phase: during
+    dest: ELSEWHERE
+    seq: 2
+  - activity: dentist_trip
+    phase: after
+    seq: 5
+    dest: chair_k1
+    p: 0.85
+    else: entry_hook_e1
+  - activity: get_ready_out
+    phase: during
+    dest: person:resident_1
+    seq: 0
+  - activity: concert_night
+    phase: during
+    dest: ELSEWHERE
+    seq: 2
+  - activity: concert_night
+    phase: after
+    seq: 5
+    dest: entry_hook_e1
+    p: 0.6
+    else: chair_k1
+  home: entry_hook_e1
+- object: remote_1
+  rules:
+  - activity: post_shift_meal
+    phase: during
+    dest: couch_l1
+    seq: 2
+  - activity: post_shift_meal
+    phase: after
+    seq: 5
+    dist:
+    - dest: couch_l1
+      p: 0.6
+    - dest: coffee_table_l1
+      p: 0.4
+  - activity: night_streaming
+    phase: during
+    dest: couch_l1
+    seq: 0
+  - activity: night_streaming
+    phase: after
+    seq: 3
+    dist:
+    - dest: couch_l1
+      p: 0.6
+    - dest: coffee_table_l1
+      p: 0.4
+  - activity: takeout_couch
+    phase: during
+    dest: couch_l1
+    seq: 0
+  - activity: takeout_couch
+    phase: after
+    seq: 4
+    dist:
+    - dest: couch_l1
+      p: 0.65
+    - dest: coffee_table_l1
+      p: 0.35
+  - activity: host_dee
+    phase: during
+    dest: couch_l1
+    seq: 0
+  - activity: host_dee
+    phase: after
+    seq: 7
+    dist:
+    - dest: couch_l1
+      p: 0.5
+    - dest: coffee_table_l1
+      p: 0.5
+  home: coffee_table_l1
+  p_misplace: 0.3
+  misplace_set:
+  - couch_l1
+- object: umbrella_1
+  rules:
+  - activity: depart_commute
+    phase: after
+    seq: 4
+    dest: ELSEWHERE
+    p: 0.3
+    else: entry_floor_e1
+  - activity: arrive_home
+    phase: after
+    seq: 4
+    dest: entry_floor_e1
+    p: 0.65
+    else: entry_table_e1
+    only_from:
+    - ELSEWHERE
+  home: entry_floor_e1
+activities:
+- name: bedtime_ritual
+- name: daysleep
+- name: evening_wake
+- name: depart_commute
+- name: away_shift
+- name: arrive_home
+- name: post_shift_meal
+- name: wind_down_couch
+- name: evening_roam
+- name: night_streaming
+- name: shower_long
+- name: family_video_call
+- name: nap_attempt
+- name: quick_tidy
+  reset_all:
+    p: 0.45
+    objects:
+    - keys_marisol
+    - wallet_marisol
+    - water_bottle_1
+    - book_1
+    - headphones_1
+    - blanket_1
+    - jacket_marisol
+    - remote_1
+    - umbrella_1
+- name: wash_dishes
+- name: manic_reset
+  reset_all:
+    p: 0.9
+    objects:
+    - keys_marisol
+    - wallet_marisol
+    - water_bottle_1
+    - book_1
+    - headphones_1
+    - blanket_1
+    - jacket_marisol
+    - remote_1
+    - umbrella_1
+    - plate_1
+    - mug_1
+    - mug_2
+    - bowl_2
+- name: apartment_prep
+  reset_all:
+    p: 0.7
+    objects:
+    - water_bottle_1
+    - headphones_1
+    - remote_1
+    - blanket_1
+    - book_1
+- name: laundry_run
+- name: cook_real_dinner
+- name: batch_cooking
+- name: takeout_couch
+- name: host_dee
+- name: errand_run
+- name: dentist_trip
+- name: get_ready_out
+- name: concert_night
+arc_events:
+- day: 0
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '16:50'
+      at: couch_l1
+      jitter: flexible
+      note: coffee + cereal as neighbors eat dinner
+    - resident: resident_1
+      activity: evening_roam
+      start: '17:45'
+      at: couch_l1
+      jitter: flexible
+      note: audiobook on, headphones around neck
+    - resident: resident_1
+      activity: quick_tidy
+      start: '21:30'
+      at: counter_k1
+      jitter: routine
+      note: 5-minute pass, mugs to sink only
+  note: clean start; apartment fresh from last night's reset
+- day: 1
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:05'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: errand_run
+      start: '18:40'
+      at: ELSEWHERE
+      jitter: flexible
+      note: groceries + pharmacy, 50 min
+    - resident: resident_1
+      activity: evening_roam
+      start: '19:40'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: depart_commute
+      start: '22:10'
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: arrive_home
+      start: 07:00+1
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: post_shift_meal
+      start: 07:15+1
+      at: couch_l1
+      jitter: routine
+    - resident: resident_1
+      activity: wind_down_couch
+      start: 08:05+1
+      at: couch_l1
+      jitter: routine
+  note: "grocery dash before work \u2014 fridge is bare"
+- day: 2
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '16:55'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: shower_long
+      start: '20:15'
+      at: bathroom_shelf_ba1
+      jitter: flexible
+      note: audiobook chapter finale in the bathroom
+    - resident: resident_1
+      activity: depart_commute
+      start: '22:00'
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: away_shift
+      start: '22:25'
+      at: ELSEWHERE
+      jitter: external
+    - resident: resident_1
+      activity: arrive_home
+      start: 07:10+1
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: post_shift_meal
+      start: 07:25+1
+      at: couch_l1
+      jitter: routine
+    - resident: resident_1
+      activity: wind_down_couch
+      start: 08:15+1
+      at: couch_l1
+      jitter: routine
+    - resident: resident_1
+      activity: bedtime_ritual
+      start: 09:00+1
+      at: nightstand_b1
+      jitter: external
+    - resident: resident_1
+      activity: daysleep
+      start: 09:20+1
+      at: bed_b1
+      jitter: routine
+  note: midweek autopilot; chapter ends in the bathroom
+- day: 3
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:00'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: wash_dishes
+      start: '18:20'
+      at: sink_k1
+      jitter: routine
+      note: the week's mug queue
+    - resident: resident_1
+      activity: evening_roam
+      start: '18:50'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: quick_tidy
+      start: '21:35'
+      at: counter_k1
+      jitter: routine
+    - resident: resident_1
+      activity: depart_commute
+      start: '22:05'
+      at: entry_table_e1
+      jitter: external
+  note: "wash-up night \u2014 the sink queue finally bothers her"
+- day: 4
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:10'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: evening_roam
+      start: '17:55'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: depart_commute
+      start: '22:00'
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: arrive_home
+      start: 07:05+1
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: post_shift_meal
+      start: 07:20+1
+      at: couch_l1
+      jitter: routine
+      note: 'small: tea + toast'
+    - resident: resident_1
+      activity: wind_down_couch
+      start: 08:05+1
+      at: couch_l1
+      jitter: routine
+  note: payday; takeout ordered to the lab, lighter meal at home
+- day: 5
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '16:55'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: evening_roam
+      start: '17:45'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: apartment_prep
+      start: '19:00'
+      at: couch_l1
+      jitter: flexible
+      note: shoves clutter off the couch for company
+    - resident: resident_1
+      activity: cook_real_dinner
+      start: '20:00'
+      at: counter_k1
+      jitter: flexible
+      note: actual stove cooking, rare
+    - resident: resident_1
+      activity: host_dee
+      start: 01:50+1
+      at: couch_l1
+      jitter: loose
+      note: movies + leftovers till near dawn
+    - resident: resident_1
+      activity: night_streaming
+      start: 05:10+1
+      at: couch_l1
+      jitter: loose
+      note: alone again, one more episode
+  note: "first night off; Dee comes over after HER shift \u2014 02:00 movies"
+- day: 6
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:00'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: evening_roam
+      start: '17:40'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: manic_reset
+      start: '20:30'
+      at: counter_k1
+      jitter: flexible
+      note: '90 min: every stray object to its home, laundry gathered'
+    - resident: resident_1
+      activity: night_streaming
+      start: '22:15'
+      at: couch_l1
+      jitter: loose
+      note: 'reward: spotless-apartment streaming'
+    - resident: resident_1
+      activity: night_streaming
+      start: 00:45+1
+      at: couch_l1
+      jitter: loose
+  note: "THE WEEKLY MANIC RESET (charter quirk) \u2014 whole apartment in one sweep"
+- day: 7
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '16:50'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: evening_roam
+      start: '17:45'
+      at: couch_l1
+      jitter: flexible
+  note: back to shifts; apartment starts the week spotless
+- day: 8
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:05'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: errand_run
+      start: '18:30'
+      at: ELSEWHERE
+      jitter: flexible
+      note: quick pharmacy only
+    - resident: resident_1
+      activity: evening_roam
+      start: '19:20'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: depart_commute
+      start: '22:10'
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: arrive_home
+      start: 07:00+1
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: post_shift_meal
+      start: 07:15+1
+      at: couch_l1
+      jitter: routine
+    - resident: resident_1
+      activity: wind_down_couch
+      start: 08:05+1
+      at: couch_l1
+      jitter: routine
+  note: lab short-staffed; agrees by text to cover half of Wed's second shift
+- day: 9
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:00'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: depart_commute
+      start: '21:55'
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: away_shift
+      start: '22:25'
+      at: ELSEWHERE
+      jitter: external
+      note: 'extended: covers till 11:30'
+    - resident: resident_1
+      activity: arrive_home
+      start: 11:30+1
+      at: entry_table_e1
+      jitter: external
+      note: 4.5 h late, wrecked
+    - resident: resident_1
+      activity: post_shift_meal
+      start: 11:45+1
+      at: couch_l1
+      jitter: routine
+      note: cereal straight from the box, standing
+    - resident: resident_1
+      activity: bedtime_ritual
+      start: 12:10+1
+      at: nightstand_b1
+      jitter: external
+      note: ritual COMPRESSED but never skipped
+    - resident: resident_1
+      activity: daysleep
+      start: 12:25+1
+      at: bed_b1
+      jitter: routine
+      note: "sleeps 12:25-19:40 \u2014 pipeline shifted, not broken"
+  note: "THE DOUBLE: works 22:25-07:05 plus covers till 11:30 \u2014 13 hours"
+- day: 10
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '19:40'
+      at: couch_l1
+      jitter: flexible
+      note: 3 h late; skips errand, skips dishes
+    - resident: resident_1
+      activity: evening_roam
+      start: '20:20'
+      at: couch_l1
+      jitter: flexible
+      note: zombie roam, leaves things everywhere
+    - resident: resident_1
+      activity: depart_commute
+      start: '22:15'
+      at: entry_table_e1
+      jitter: external
+  note: 'aftershock: wakes at 19:40, everything slips, no tidy, no wash'
+- day: 11
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:05'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: evening_roam
+      start: '18:00'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: quick_tidy
+      start: '21:40'
+      at: counter_k1
+      jitter: routine
+      note: guilt tidy, 3 items, gives up
+    - resident: resident_1
+      activity: depart_commute
+      start: '22:00'
+      at: entry_table_e1
+      jitter: external
+      note: takes umbrella
+    - resident: resident_1
+      activity: arrive_home
+      start: 07:10+1
+      at: entry_table_e1
+      jitter: external
+      note: umbrella dumped dripping by the door
+    - resident: resident_1
+      activity: post_shift_meal
+      start: 07:25+1
+      at: couch_l1
+      jitter: routine
+    - resident: resident_1
+      activity: wind_down_couch
+      start: 08:15+1
+      at: couch_l1
+      jitter: routine
+  note: "storm week begins \u2014 umbrella joins every commute through Sunday"
+- day: 11
+  patch:
+    after_override:
+    - activity: depart_commute
+      rule:
+        object: umbrella_1
+        dest: ELSEWHERE
+  note: 'storm week (detailed_activities W2): the umbrella joins every trip'
+- day: 12
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:20'
+      at: couch_l1
+      jitter: flexible
+      note: still paying for the double
+    - resident: resident_1
+      activity: evening_roam
+      start: '18:10'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: takeout_couch
+      start: '20:00'
+      at: couch_l1
+      jitter: loose
+      note: delivery at the door
+    - resident: resident_1
+      activity: night_streaming
+      start: '21:00'
+      at: couch_l1
+      jitter: loose
+      note: long binge, blanket cocoon
+    - resident: resident_1
+      activity: night_streaming
+      start: 02:30+1
+      at: couch_l1
+      jitter: loose
+  note: night off but too tired to host or reset; orders in, streams
+- day: 12
+  patch:
+    after_override:
+    - activity: depart_commute
+      rule:
+        object: umbrella_1
+        dest: ELSEWHERE
+  note: 'storm week (detailed_activities W2): the umbrella joins every trip'
+- day: 13
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:10'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: laundry_run
+      start: '18:00'
+      at: entry_table_e1
+      jitter: loose
+      note: building laundry room, two trips
+    - resident: resident_1
+      activity: family_video_call
+      start: '19:30'
+      at: couch_l1
+      jitter: flexible
+      note: Sunday call, 70 min, paces the apartment
+    - resident: resident_1
+      activity: evening_roam
+      start: '21:00'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: night_streaming
+      start: '23:00'
+      at: couch_l1
+      jitter: loose
+  note: "NO manic reset this week (fatigue) \u2014 laundry + video call to her mother instead"
+- day: 13
+  patch:
+    after_override:
+    - activity: depart_commute
+      rule:
+        object: umbrella_1
+        dest: ELSEWHERE
+  note: 'storm week (detailed_activities W2): the umbrella joins every trip'
+- day: 14
+  patch:
+    add:
+    - resident: resident_1
+      activity: daysleep
+      start: 09:20
+      at: bed_b1
+      jitter: routine
+      note: "only 09:20-13:40 \u2014 alarm set, dreads it"
+    - resident: resident_1
+      activity: dentist_trip
+      start: '13:55'
+      at: ELSEWHERE
+      jitter: external
+      note: out 13:55-16:10, squinting at daylight
+    - resident: resident_1
+      activity: nap_attempt
+      start: '16:30'
+      at: bed_b1
+      jitter: loose
+      note: fails; gives up, groggy
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:30'
+      at: couch_l1
+      jitter: flexible
+      note: double coffee
+  note: "DENTIST 14:30 \u2014 the hated daytime wake; sleeps in two broken halves"
+- day: 15
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '16:55'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: evening_roam
+      start: '17:45'
+      at: couch_l1
+      jitter: flexible
+      note: finale part 1
+    - resident: resident_1
+      activity: errand_run
+      start: '18:45'
+      at: ELSEWHERE
+      jitter: flexible
+      note: groceries, listening the whole way
+    - resident: resident_1
+      activity: evening_roam
+      start: '19:50'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: depart_commute
+      start: '22:05'
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: arrive_home
+      start: 07:05+1
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: post_shift_meal
+      start: 07:20+1
+      at: couch_l1
+      jitter: routine
+    - resident: resident_1
+      activity: wind_down_couch
+      start: 08:10+1
+      at: couch_l1
+      jitter: routine
+  note: "normal night; audiobook reaches its finale stretch \u2014 headphones never leave her"
+- day: 16
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:00'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: wash_dishes
+      start: '18:30'
+      at: sink_k1
+      jitter: routine
+    - resident: resident_1
+      activity: depart_commute
+      start: '22:00'
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: away_shift
+      start: '22:25'
+      at: ELSEWHERE
+      jitter: external
+    - resident: resident_1
+      activity: arrive_home
+      start: 07:05+1
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: post_shift_meal
+      start: 07:20+1
+      at: couch_l1
+      jitter: routine
+    - resident: resident_1
+      activity: wind_down_couch
+      start: 08:10+1
+      at: couch_l1
+      jitter: routine
+    - resident: resident_1
+      activity: bedtime_ritual
+      start: 09:40+1
+      at: nightstand_b1
+      jitter: external
+      note: "40 min late \u2014 the one ritual slip, for the finale"
+    - resident: resident_1
+      activity: daysleep
+      start: 10:00+1
+      at: bed_b1
+      jitter: routine
+  note: "finale night: stays up 40 min past ritual time to finish the book \u2014 then starts a NEW paperback"
+- day: 17
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '16:50'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: wash_dishes
+      start: '18:15'
+      at: sink_k1
+      jitter: routine
+    - resident: resident_1
+      activity: evening_roam
+      start: '18:45'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: quick_tidy
+      start: '21:30'
+      at: counter_k1
+      jitter: routine
+    - resident: resident_1
+      activity: depart_commute
+      start: '22:05'
+      at: entry_table_e1
+      jitter: external
+  note: quiet night, new book, early wash-up
+- day: 18
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:05'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: evening_roam
+      start: '17:55'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: depart_commute
+      start: '22:00'
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: arrive_home
+      start: 07:05+1
+      at: entry_table_e1
+      jitter: external
+    - resident: resident_1
+      activity: post_shift_meal
+      start: 07:20+1
+      at: couch_l1
+      jitter: routine
+    - resident: resident_1
+      activity: wind_down_couch
+      start: 08:10+1
+      at: couch_l1
+      jitter: routine
+  note: 'plans locked for tomorrow: Dee got concert tickets'
+- day: 19
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:00'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: get_ready_out
+      start: '18:00'
+      at: entry_hook_e1
+      jitter: flexible
+      note: actually uses the closet hook, once
+    - resident: resident_1
+      activity: concert_night
+      start: '20:30'
+      at: ELSEWHERE
+      jitter: flexible
+      note: 'out 20:30-02:40: show then 24 h diner'
+    - resident: resident_1
+      activity: wind_down_couch
+      start: 02:40+1
+      at: couch_l1
+      jitter: routine
+      note: ears ringing, tea
+  note: "OUT with Dee: late show + diner after \u2014 her one big outbound social night"
+- day: 20
+  patch:
+    add:
+    - resident: resident_1
+      activity: evening_wake
+      start: '17:10'
+      at: couch_l1
+      jitter: flexible
+    - resident: resident_1
+      activity: manic_reset
+      start: '18:00'
+      at: counter_k1
+      jitter: flexible
+      note: "ABANDONED at ~35 min \u2014 bedroom+kitchen done, living room left silted"
+    - resident: resident_1
+      activity: batch_cooking
+      start: '18:40'
+      at: counter_k1
+      jitter: flexible
+      note: meal prep for the week; every pot and plate deployed
+    - resident: resident_1
+      activity: wash_dishes
+      start: '20:30'
+      at: sink_k1
+      jitter: routine
+      note: "partial \u2014 the batch-cooking pile wins"
+    - resident: resident_1
+      activity: night_streaming
+      start: '21:00'
+      at: couch_l1
+      jitter: loose
+    - resident: resident_1
+      activity: night_streaming
+      start: 01:10+1
+      at: couch_l1
+      jitter: loose
+  note: 'half-hearted reset: starts the manic sweep, abandons it mid-room for batch cooking'

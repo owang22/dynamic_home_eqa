@@ -1,0 +1,90 @@
+{
+  "household": "hh_001",
+  "household_type": "night_shift_worker_solo",
+  "model": "claude-fable-5",
+  "model_slug": "claude-fable-5",
+  "builder_version": "rv2-b3",
+  "prompts": {
+    "persona_v2": "134f5bfb",
+    "routine_program": "b33a1768",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 17422112981290156015,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 9176527784730162629,
+      "leak_prediction": {
+        "predicted_type": "night_shift_worker_solo",
+        "confidence": 0.75,
+        "reason": "All personal items belong to a single person (dana), and one bedroom implies a solo household. The melatonin bottle, weighted blanket, lunchbox, and headphones point to daytime sleep support for shift work rather than a grad student setup (no textbooks/laptop bag).",
+        "actual_type": "night_shift_worker_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 14454947664284488932,
+      "leak_prediction": {
+        "predicted_type": "night_shift_worker_solo",
+        "confidence": 0.45,
+        "reason": "Single named owner (maya) with one bedroom implies a solo household. Lunchbox, medication bottle, blanket, and gaming/relaxation items fit a shift worker packing meals; only one notebook/book makes grad_student less likely, though it remains the main alternative.",
+        "actual_type": "night_shift_worker_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 2,
+      "seed": 10945170772143122942,
+      "leak_prediction": {
+        "predicted_type": "night_shift_worker_solo",
+        "confidence": 0.6,
+        "reason": "Single adult (only dariusz's keys/wallet/phone), one bedroom with desk, and a lunchbox + work jacket + weighted blanket + medication combo suggests shift work with daytime sleep; grad_student_solo is the main alternative but lunchbox/work jacket tilt toward night shift worker.",
+        "actual_type": "night_shift_worker_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 3,
+      "seed": 2171277028935429936,
+      "leak_prediction": {
+        "predicted_type": "night_shift_worker_solo",
+        "confidence": 0.9,
+        "reason": "All personal items belong to one person (marisol), and sleep-management vocabulary leaks strongly: headphones_sleep, medication_bottle_melatonin, mug_decaf, plus lunchbox_marisol implying shift work. Solo worker with daytime-sleep aids fits night_shift_worker_solo over grad_student_solo.",
+        "actual_type": "night_shift_worker_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 4,
+      "seed": 17422112981290156015,
+      "leak_prediction": {
+        "predicted_type": "night_shift_worker_solo",
+        "confidence": 0.75,
+        "reason": "All personal items belong to one person (dario), single set of dishes indicates solo living. The melatonin medication bottle strongly signals disrupted sleep from night shifts, and a lunchbox suggests a worker rather than a grad student (no textbooks/laptop/study gear).",
+        "actual_type": "night_shift_worker_solo",
+        "correct": true
+      }
+    }
+  ],
+  "leak_unresolved": true,
+  "n_attempts": 2,
+  "accepted_attempt": 1,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 14792136994646148675,
+      "failures": [
+        "schema: arc_events/6/patch: Additional properties are not allowed ('note_only' was unexpected)",
+        "reachability: expansion failed: 'dest'"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 1011028311419226628,
+      "failures": []
+    }
+  ]
+}

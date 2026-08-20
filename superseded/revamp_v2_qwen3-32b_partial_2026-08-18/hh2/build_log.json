@@ -1,0 +1,54 @@
+{
+  "household": "hh_002",
+  "household_type": "family_young_children",
+  "model": "Qwen/Qwen3-32B",
+  "model_slug": "qwen3-32b",
+  "builder_version": "rv2-b2",
+  "prompts": {
+    "persona_v2": "23d14254",
+    "routine_program": "27f45369",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 14856853335235030253,
+  "n_attempts": 5,
+  "accepted_attempt": null,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 13165706964882319961,
+      "failures": [
+        "referential: duplicate activity binding names"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 6934289936109560403,
+      "failures": [
+        "reachability: 12 of 15 objects never move (of those, ['book_1', 'bowl_1', 'keys_1', 'laptop_1', 'lunchbox_1', 'mug_2', 'phone_1', 'phone_2', 'plate_1', 'remote_1', 'toy_2', 'wallet_1'] had rules that only ever named their own home) \u2014 more than 40% of this household is furniture"
+      ]
+    },
+    {
+      "attempt": 2,
+      "seed": 765910590699502844,
+      "failures": [
+        "reachability: 11 of 15 objects never move (of those, ['bowl_1', 'keys_1', 'laptop_1', 'lunchbox_1', 'mug_1', 'mug_2', 'phone_1', 'phone_2', 'toy_1', 'toy_2', 'wallet_1'] had rules that only ever named their own home) \u2014 more than 40% of this household is furniture"
+      ]
+    },
+    {
+      "attempt": 3,
+      "seed": 10984778024151632995,
+      "failures": [
+        "reachability: expansion failed: arc day 15: drop 'after_dinner_clean' names no activity in this program"
+      ]
+    },
+    {
+      "attempt": 4,
+      "seed": 11468149198612687219,
+      "failures": [
+        "reachability: 12 of 15 objects never move (of those, ['blanket_1', 'book_1', 'bowl_1', 'keys_1', 'laptop_1', 'mug_2', 'phone_1', 'phone_2', 'plate_1', 'remote_1', 'toy_2', 'wallet_1'] had rules that only ever named their own home) \u2014 more than 40% of this household is furniture"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,109 @@
+{
+  "household": "hh_001",
+  "household_type": "night_shift_worker_solo",
+  "source": "profiles/revamp_v2/qwen3.6-35b-a3b-fp8/hh1",
+  "days": 21,
+  "seed": 0,
+  "n_events": 428,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 68,
+    "tidy_moved": 12,
+    "tidy_ran_out_of_time": 1,
+    "blocks": 281,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [
+      "night_sleep",
+      "night_sleep__bed_b1"
+    ],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [
+      "dinner.charger_1",
+      "dinner.jacket_1",
+      "dinner.keys_1",
+      "dinner.mug_1",
+      "dinner.notebook_1",
+      "dinner__counter_k1.charger_1",
+      "dinner__counter_k1.jacket_1",
+      "dinner__counter_k1.keys_1",
+      "dinner__counter_k1.mug_1",
+      "dinner__counter_k1.notebook_1",
+      "lunch.laptop_1",
+      "lunch.pen_1"
+    ],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [],
+    "carried_on_departure": [
+      "phone_1@tidy_up",
+      "phone_1@work_away"
+    ],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [
+      "phone_1@wake_up"
+    ],
+    "skips_per_activity": {
+      "dinner": 2,
+      "lunch": 7,
+      "shower": 4,
+      "tidy_up": 10,
+      "wake_up": 2,
+      "work_home": 8
+    },
+    "fragment_bouts_per_activity": {
+      "dinner": 30,
+      "dinner__counter_k1": 2,
+      "lunch": 7,
+      "wake_up": 11,
+      "work_home": 22
+    }
+  },
+  "moves_per_object": {
+    "phone_1": 128,
+    "charger_1": 54,
+    "jacket_1": 41,
+    "towel_1": 40,
+    "keys_1": 39,
+    "mug_1": 36,
+    "laptop_1": 36,
+    "pen_1": 29,
+    "notebook_1": 25
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3.6-35B-A3B-FP8",
+    "prompts": {
+      "persona_v2": "134f5bfb",
+      "routine_program": "b33a1768",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b3",
+    "accepted_attempt": 0,
+    "n_attempts": 1
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.6
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    }
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_rule_based_qwen3.6-35b-a3b-fp8_hh1_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom": "bedroom.004",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

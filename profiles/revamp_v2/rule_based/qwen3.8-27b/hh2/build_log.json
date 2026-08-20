@@ -1,0 +1,45 @@
+{
+  "household": "hh_002",
+  "household_type": "family_young_children",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b5",
+  "prompts": {
+    "persona_v2": "134f5bfb",
+    "routine_program": "fe6d4df3",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 7786112889293700357,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 7786112889293700357,
+      "leak_prediction": {
+        "predicted_type": "college_roommates",
+        "confidence": 0.85,
+        "reason": "The presence of three distinct bedrooms (b1, b2, b3) with individual desks and beds strongly indicates a shared living arrangement for three people, such as college roommates. The object list supports this with multiple mugs, phones, keys, and wallets (3 sets), plus student-specific items like a 'l'",
+        "actual_type": "family_young_children",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 2,
+  "accepted_attempt": 1,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 15276438000305333831,
+      "failures": [
+        "reachability: 10 of 26 objects wrote movement rules that only ever name their own home (['backpack_1', 'headphones_1', 'laptop_1', 'mug_1', 'mug_2', 'mug_3']...) \u2014 fake movement, not declared stillness; use `rules: []` for an object that genuinely stays put"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 8631273848882398170,
+      "failures": []
+    }
+  ]
+}

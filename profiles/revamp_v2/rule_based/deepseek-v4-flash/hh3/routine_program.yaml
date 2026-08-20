@@ -1,0 +1,941 @@
+household: hh_003
+household_type: retired_couple
+source_persona: persona.yaml
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 0.7
+- id: resident_2
+  jitter_scale: 1.3
+receptacles:
+- id: bed_b1
+  room: bedroom_1
+- id: nightstand_b1
+  room: bedroom_1
+- id: desk_b1
+  room: bedroom_1
+- id: bedroom_floor_b1
+  room: bedroom_1
+- id: bed_b2
+  room: bedroom_2
+- id: nightstand_b2
+  room: bedroom_2
+- id: desk_b2
+  room: bedroom_2
+- id: bedroom_floor_b2
+  room: bedroom_2
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: night_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:30'
+  end: 06:30+1
+  at: bed_b1
+  jitter: external
+  cites: creature of habit, early riser
+- resident: resident_2
+  activity: night_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:00'
+  end: 07:30+1
+  at: bed_b2
+  jitter: routine
+  cites: spontaneous, sleeps later
+weekly_blocks:
+- cites: handles morning routine
+  resident: resident_1
+  activity: wake_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 06:30
+  end: 07:00
+  at: bed_b1
+  jitter: external
+  skip_p: 0
+- cites: makes coffee, tidies kitchen
+  resident: resident_1
+  activity: breakfast
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:00
+  end: 08:00
+  at: counter_k1
+  jitter: routine
+  skip_p: 0
+- cites: reads newspaper at kitchen table
+  resident: resident_1
+  activity: reading
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 08:00
+  end: 09:00
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0
+- cites: takes medication after breakfast
+  resident: resident_1
+  activity: medication
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 09:00
+  end: 09:10
+  at: counter_k1
+  jitter: external
+  skip_p: 0
+- cites: potters in yard or does small repairs
+  resident: resident_1
+  activity: put_away_dishes
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 09:10
+  end: '11:30'
+  at: ELSEWHERE
+  jitter: flexible
+  skip_p: 0.2
+- cites: lunch together at dining table
+  resident: resident_1
+  activity: lunch
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '12:00'
+  end: '13:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.05
+- cites: afternoon nap in armchair
+  resident: resident_1
+  activity: nap
+  sleep: true
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '14:00'
+  end: '15:00'
+  at: armchair_l1
+  jitter: flexible
+  skip_p: 0.3
+- cites: evening television together
+  resident: resident_1
+  activity: wake_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:00'
+  end: '22:00'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0
+- cites: fills water bottles each evening
+  resident: resident_1
+  activity: medication
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:00'
+  end: '22:10'
+  at: counter_k1
+  jitter: external
+  skip_p: 0
+- cites: wakes later, makes tea
+  resident: resident_2
+  activity: wake_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:30
+  end: 08:00
+  at: bed_b2
+  jitter: routine
+  skip_p: 0
+- cites: watches morning shows in living room
+  resident: resident_2
+  activity: breakfast
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 08:00
+  end: 09:00
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.1
+- cites: knits in armchair or sits in sunroom
+  resident: resident_2
+  activity: reading
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 09:00
+  end: '11:30'
+  at: armchair_l1
+  jitter: flexible
+  skip_p: 0.15
+- cites: lunch together at dining table
+  resident: resident_2
+  activity: lunch
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '12:00'
+  end: '13:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.05
+- cites: knits or calls family in sunroom
+  resident: resident_2
+  activity: reading
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '14:00'
+  end: '16:00'
+  at: ELSEWHERE
+  jitter: flexible
+  skip_p: 0.1
+- cites: does evening dishes
+  resident: resident_2
+  activity: put_away_dishes
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '18:30'
+  at: sink_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: evening television together
+  resident: resident_2
+  activity: wake_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:00'
+  end: '22:30'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0
+object_rules:
+- object: mug_1
+  cites: sits on kitchen counter after morning coffee
+  home: counter_k1
+  p_misplace: 0.0
+  misplace_set:
+  - counter_k1
+  rules:
+  - activity: wake_up
+    phase: during
+    cites: Arthur starts coffee
+    only_from:
+    - counter_k1
+    dest: counter_k1
+  - activity: breakfast
+    phase: after
+    cites: moved to sink by Arthur after lunch
+    only_from:
+    - counter_k1
+    dest: sink_k1
+- object: mug_2
+  cites: left on coffee table or end table
+  home: coffee_table_l1
+  p_misplace: 0.25
+  misplace_set:
+  - coffee_table_l1
+  - armchair_l1
+  rules:
+  - activity: breakfast
+    phase: during
+    cites: Marilyn makes tea
+    only_from:
+    - coffee_table_l1
+    - armchair_l1
+    - counter_k1
+    dest: counter_k1
+  - activity: breakfast
+    phase: after
+    cites: sets mug down wherever she is
+    only_from:
+    - counter_k1
+    dest: coffee_table_l1
+    p: 0.6
+    else: armchair_l1
+- object: bowl_1
+  cites: used at breakfast, moved to sink
+  home: sink_k1
+  p_misplace: 0.0
+  misplace_set:
+  - sink_k1
+  rules:
+  - activity: breakfast
+    phase: during
+    cites: shared cereal bowl
+    only_from:
+    - cupboard_k1
+    - sink_k1
+    dest: kitchen_table_k1
+  - activity: breakfast
+    phase: after
+    cites: moved to sink by whoever finishes last
+    only_from:
+    - kitchen_table_k1
+    dest: sink_k1
+- object: plate_1
+  cites: washed by Marilyn and placed in drying rack
+  home: dish_rack_k1
+  p_misplace: 0.0
+  misplace_set:
+  - dish_rack_k1
+  rules:
+  - activity: lunch
+    phase: during
+    cites: used at evening meal
+    only_from:
+    - cupboard_k1
+    - dish_rack_k1
+    dest: kitchen_table_k1
+  - activity: put_away_dishes
+    phase: after
+    cites: Marilyn does evening dishes
+    only_from:
+    - kitchen_table_k1
+    - sink_k1
+    dest: dish_rack_k1
+- object: laptop_1
+  cites: kept on dining table, plugged in there
+  home: kitchen_table_k1
+  p_misplace: 0.0
+  misplace_set:
+  - kitchen_table_k1
+  rules:
+  - activity: reading
+    phase: during
+    cites: uses laptop to video-call daughter
+    only_from:
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+  - activity: reading
+    phase: after
+    cites: leaves it plugged in there
+    only_from:
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+- object: phone_1
+  cites: kept in his shirt pocket or on nightstand
+  home: person:resident_1
+  p_misplace: 0.15
+  misplace_set:
+  - nightstand_b1
+  - coffee_table_l1
+  rules:
+  - activity: night_sleep
+    phase: during
+    cites: set on nightstand at night
+    only_from:
+    - person:resident_1
+    - nightstand_b1
+    dest: nightstand_b1
+  - activity: wake_up
+    phase: after
+    cites: picks up in morning
+    only_from:
+    - nightstand_b1
+    dest: person:resident_1
+- object: phone_2
+  cites: often left on armchair cushion or dining table
+  home: person:resident_2
+  p_misplace: 0.3
+  misplace_set:
+  - armchair_l1
+  - kitchen_table_k1
+  - coffee_table_l1
+  rules:
+  - activity: breakfast
+    phase: during
+    cites: Marilyn carries phone
+    only_from:
+    - person:resident_2
+    - armchair_l1
+    - coffee_table_l1
+    - kitchen_table_k1
+    dest: person:resident_2
+  - activity: reading
+    phase: after
+    cites: left on armchair or table
+    only_from:
+    - person:resident_2
+    dest: armchair_l1
+    p: 0.5
+    else: kitchen_table_k1
+- object: keys_1
+  cites: hung on hook by the front door
+  home: entry_hook_e1
+  p_misplace: 0.05
+  misplace_set:
+  - entry_hook_e1
+  - entry_table_e1
+  rules:
+  - activity: put_away_dishes
+    phase: during
+    cites: Arthur goes out to yard
+    only_from:
+    - entry_hook_e1
+    - entry_table_e1
+    dest: person:resident_1
+  - activity: put_away_dishes
+    phase: after
+    cites: returns and hangs keys
+    only_from:
+    - person:resident_1
+    dest: entry_hook_e1
+- object: keys_2
+  cites: often misplaced in her knitting bag or on coffee table
+  home: entry_table_e1
+  p_misplace: 0.35
+  misplace_set:
+  - armchair_l1
+  - coffee_table_l1
+  - entry_table_e1
+  rules:
+  - activity: reading
+    phase: during
+    cites: Marilyn goes out to sunroom
+    only_from:
+    - entry_table_e1
+    - armchair_l1
+    - coffee_table_l1
+    dest: person:resident_2
+  - activity: reading
+    phase: after
+    cites: returns and drops keys
+    only_from:
+    - person:resident_2
+    dest: entry_table_e1
+    p: 0.6
+    else: armchair_l1
+- object: book_1
+  cites: read in armchair, left on side table
+  home: bookshelf_l1
+  p_misplace: 0.0
+  misplace_set:
+  - bookshelf_l1
+  rules:
+  - activity: reading
+    phase: during
+    cites: Arthur reads in armchair
+    only_from:
+    - bookshelf_l1
+    - armchair_l1
+    dest: armchair_l1
+  - activity: reading
+    phase: after
+    cites: left on side table
+    only_from:
+    - armchair_l1
+    dest: bookshelf_l1
+- object: water_bottle_1
+  cites: filled each evening and placed on nightstand
+  home: nightstand_b1
+  p_misplace: 0.0
+  misplace_set:
+  - nightstand_b1
+  rules:
+  - activity: medication
+    phase: during
+    cites: Arthur fills both bottles
+    only_from:
+    - nightstand_b1
+    - counter_k1
+    dest: counter_k1
+  - activity: medication
+    phase: after
+    cites: placed on nightstand
+    only_from:
+    - counter_k1
+    dest: nightstand_b1
+- object: water_bottle_2
+  cites: filled by Arthur and left on kitchen counter
+  home: counter_k1
+  p_misplace: 0.2
+  misplace_set:
+  - counter_k1
+  - coffee_table_l1
+  rules:
+  - activity: medication
+    phase: during
+    cites: Arthur fills both bottles
+    only_from:
+    - counter_k1
+    - coffee_table_l1
+    - armchair_l1
+    dest: counter_k1
+  - activity: medication
+    phase: after
+    cites: Marilyn carries it to sunroom
+    only_from:
+    - counter_k1
+    dest: person:resident_2
+  - activity: reading
+    phase: after
+    cites: left in sunroom
+    only_from:
+    - person:resident_2
+    dest: coffee_table_l1
+    p: 0.5
+    else: counter_k1
+- object: remote_1
+  cites: often lost in sofa cushions by Marilyn
+  home: couch_l1
+  p_misplace: 0.3
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  rules:
+  - activity: wake_up
+    phase: during
+    cites: Arthur adjusts volume before handing to Marilyn
+    only_from:
+    - couch_l1
+    - coffee_table_l1
+    - armchair_l1
+    dest: couch_l1
+  - activity: wake_up
+    phase: after
+    cites: lost in sofa cushions
+    only_from:
+    - couch_l1
+    dest: couch_l1
+    p: 0.6
+    else: coffee_table_l1
+- object: charger_1
+  cites: plugged in near nightstand, used nightly
+  home: nightstand_b1
+  p_misplace: 0.0
+  misplace_set:
+  - nightstand_b1
+  rules:
+  - activity: night_sleep
+    phase: during
+    cites: Arthur charges phone
+    only_from:
+    - nightstand_b1
+    dest: nightstand_b1
+  - activity: wake_up
+    phase: after
+    cites: phone unplugged
+    only_from:
+    - nightstand_b1
+    dest: nightstand_b1
+- object: jacket_1
+  cites: hung in hall closet, sometimes borrowed by Marilyn
+  home: entry_hook_e1
+  p_misplace: 0.15
+  misplace_set:
+  - entry_hook_e1
+  - entry_table_e1
+  rules:
+  - activity: reading
+    phase: during
+    cites: Marilyn borrows jacket for walk
+    only_from:
+    - entry_hook_e1
+    - entry_table_e1
+    dest: person:resident_2
+  - activity: reading
+    phase: after
+    cites: returned to wrong hook
+    only_from:
+    - person:resident_2
+    dest: entry_table_e1
+    p: 0.4
+    else: entry_hook_e1
+- object: jacket_2
+  cites: draped over dining chair or armchair, rarely hung up
+  home: armchair_l1
+  p_misplace: 0.2
+  misplace_set:
+  - armchair_l1
+  - chair_k1
+  - chair_k2
+  rules:
+  - activity: breakfast
+    phase: during
+    cites: Marilyn wears cardigan
+    only_from:
+    - armchair_l1
+    - chair_k1
+    - chair_k2
+    dest: person:resident_2
+  - activity: breakfast
+    phase: after
+    cites: draped over chair
+    only_from:
+    - person:resident_2
+    dest: armchair_l1
+    p: 0.5
+    else: chair_k1
+- object: glasses_1
+  cites: polished and set on nightstand each night
+  home: nightstand_b1
+  p_misplace: 0.0
+  misplace_set:
+  - nightstand_b1
+  rules:
+  - activity: night_sleep
+    phase: during
+    cites: sets on nightstand
+    only_from:
+    - person:resident_1
+    - nightstand_b1
+    dest: nightstand_b1
+  - activity: wake_up
+    phase: after
+    cites: polishes with shirt and puts on
+    only_from:
+    - nightstand_b1
+    dest: person:resident_1
+- object: glasses_2
+  cites: left on end table or in knitting bag
+  home: coffee_table_l1
+  p_misplace: 0.25
+  misplace_set:
+  - coffee_table_l1
+  - armchair_l1
+  rules:
+  - activity: reading
+    phase: during
+    cites: Marilyn knits in armchair
+    only_from:
+    - coffee_table_l1
+    - armchair_l1
+    dest: person:resident_2
+  - activity: reading
+    phase: after
+    cites: leaves glasses on end table
+    only_from:
+    - person:resident_2
+    dest: coffee_table_l1
+- object: medication_bottle_1
+  cites: kept on kitchen counter, taken after breakfast
+  home: counter_k1
+  p_misplace: 0.0
+  misplace_set:
+  - counter_k1
+  rules:
+  - activity: medication
+    phase: during
+    cites: takes medication bottle from counter
+    only_from:
+    - counter_k1
+    dest: counter_k1
+  - activity: medication
+    phase: after
+    cites: places it back in same spot
+    only_from:
+    - counter_k1
+    dest: counter_k1
+- object: blanket_1
+  cites: kept on sofa, borrowed by Arthur for naps
+  home: couch_l1
+  p_misplace: 0.0
+  misplace_set:
+  - couch_l1
+  rules:
+  - activity: nap
+    phase: during
+    cites: borrows blanket when napping
+    only_from:
+    - couch_l1
+    dest: armchair_l1
+  - activity: nap
+    phase: after
+    cites: folds it neatly before returning
+    only_from:
+    - armchair_l1
+    dest: couch_l1
+- object: towel_1
+  cites: hung on oven handle, moved to sink when wet
+  home: counter_k1
+  p_misplace: 0.0
+  misplace_set:
+  - counter_k1
+  rules:
+  - activity: put_away_dishes
+    phase: during
+    cites: Arthur moves wet towel to sink
+    only_from:
+    - counter_k1
+    dest: sink_k1
+  - activity: breakfast
+    phase: after
+    cites: Arthur hangs dry towel
+    only_from:
+    - sink_k1
+    dest: counter_k1
+- object: umbrella_1
+  cites: kept in hall closet, taken in rain
+  home: entry_hook_e1
+  p_misplace: 0.1
+  misplace_set:
+  - entry_hook_e1
+  - entry_table_e1
+  rules:
+  - activity: put_away_dishes
+    phase: during
+    cites: taken by whoever goes out
+    only_from:
+    - entry_hook_e1
+    - entry_table_e1
+    dest: person:resident_1
+  - activity: put_away_dishes
+    phase: after
+    cites: returned to closet
+    only_from:
+    - person:resident_1
+    dest: entry_hook_e1
+activities:
+- name: night_sleep
+  fragment:
+    mean_bouts: 1
+- name: wake_up
+  fragment:
+    mean_bouts: 1
+  cites: Arthur's morning routine, Marilyn's morning shows
+- name: breakfast
+  fragment:
+    mean_bouts: 3
+  cites: Arthur makes coffee, Marilyn makes tea, then they sit
+- name: reading
+  fragment:
+    mean_bouts: 2
+  cites: Arthur reads newspaper, Marilyn knits or calls
+- name: medication
+  fragment:
+    mean_bouts: 1
+- name: put_away_dishes
+  fragment:
+    mean_bouts: 2
+  cites: Arthur potters, Marilyn does dishes
+- name: lunch
+  fragment:
+    mean_bouts: 2
+  cites: they have lunch together
+- name: nap
+  fragment:
+    mean_bouts: 1
+- name: tidy_up
+  fragment:
+    mean_bouts: 1
+  cites: Arthur tidies kitchen after breakfast
+arc_events:
+- day: 3
+  note: Arthur skips his afternoon nap because he is out running an errand.
+  patch:
+    drop:
+    - nap
+- day: 6
+  note: Marilyn has a dentist appointment at 10:00, adding an ELSEWHERE block during her usual knitting
+    time.
+  patch:
+    drop:
+    - reading
+    add:
+    - resident: resident_2
+      activity: put_away_dishes
+      sleep: false
+      start: 09:45
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: external
+      skip_p: 0
+      note: dentist appointment
+- day: 10
+  note: Arthur feels under the weather and stays in bed all day, skipping breakfast, reading, lunch, and
+    nap.
+  patch:
+    drop:
+    - breakfast
+    - reading
+    - lunch
+    - nap
+    - medication
+    - put_away_dishes
+- day: 11
+  note: Arthur still recovering, skips morning routine but is up for lunch and evening TV.
+  patch:
+    drop:
+    - breakfast
+    - reading
+    - medication
+- day: 14
+  note: Marilyn forgets to do the evening dishes because she is engrossed in a phone call, skipping put_away_dishes.
+  patch:
+    drop:
+    - put_away_dishes
+- day: 16
+  note: Arthur has a doctor's appointment at 14:00, adding an ELSEWHERE block during his nap time.
+  patch:
+    drop:
+    - nap
+    add:
+    - resident: resident_1
+      activity: put_away_dishes
+      sleep: false
+      start: '13:30'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: external
+      skip_p: 0
+      note: doctor appointment
+- day: 18
+  note: Marilyn skips her morning shows because she is tidying up early for a visitor.
+  patch:
+    drop:
+    - breakfast

@@ -1,0 +1,60 @@
+{
+  "household": "hh_003",
+  "household_type": "retired_couple",
+  "model": "deepseek-ai/DeepSeek-V4-Flash",
+  "model_slug": "deepseek-v4-flash",
+  "builder_version": "rv2-b5",
+  "prompts": {
+    "persona_v2": "134f5bfb",
+    "routine_program": "fe6d4df3",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 16051881467303446223,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 14546646790778818281,
+      "leak_prediction": {
+        "predicted_type": "retired_couple",
+        "confidence": 0.85,
+        "reason": "Two of each personal item (mugs, phones, glasses, medication bottles, keys, jackets) and two beds/nightstands/desks suggest a couple. Medication bottles and glasses are common for older adults. No children's items or work-from-home gear. Blanket and remote suggest leisure.",
+        "actual_type": "retired_couple",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 4124964585103191078,
+      "leak_prediction": {
+        "predicted_type": "retired_couple",
+        "confidence": 0.7,
+        "reason": "Two beds, two nightstands, two desks, two glasses, two medication bottles, two phones, two water bottles, two mugs, two chairs at kitchen table, and an umbrella/towel/wallet suggest a couple with health/medication needs and a settled, routine lifestyle. No children's items or work-from-home gear (e.",
+        "actual_type": "retired_couple",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 2,
+      "seed": 16051881467303446223,
+      "leak_prediction": {
+        "predicted_type": "working_couple_no_children",
+        "confidence": 0.85,
+        "reason": "Two beds, two nightstands, two desks, two phones, two keys, two jackets, two glasses, two water bottles, two chairs at kitchen table, plus laptop, remote, charger, medication bottle, blanket, towel, umbrella \u2014 suggests a couple without children, both working (laptop, phones, keys, jackets). No child",
+        "actual_type": "retired_couple",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 1,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 13770852437920822539,
+      "failures": []
+    }
+  ]
+}

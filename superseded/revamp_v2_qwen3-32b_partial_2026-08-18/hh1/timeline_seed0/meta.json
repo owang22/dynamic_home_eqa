@@ -1,0 +1,111 @@
+{
+  "household": "hh_001",
+  "household_type": "night_shift_worker_solo",
+  "source": "profiles/revamp_v2/qwen3-32b/hh1",
+  "days": 21,
+  "seed": 0,
+  "n_events": 211,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 37,
+    "tidy_moved": 5,
+    "tidy_ran_out_of_time": 2,
+    "blocks": 195,
+    "vacuous_arc_drops": [
+      {
+        "day": 5,
+        "activity": "video_call"
+      },
+      {
+        "day": 5,
+        "activity": "daytime_rest"
+      },
+      {
+        "day": 20,
+        "activity": "morning_departure"
+      },
+      {
+        "day": 20,
+        "activity": "arrival_home"
+      },
+      {
+        "day": 20,
+        "activity": "post_work_routine"
+      },
+      {
+        "day": 20,
+        "activity": "rest_break"
+      },
+      {
+        "day": 20,
+        "activity": "daytime_rest"
+      }
+    ],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [
+      "daytime_rest.blanket_1",
+      "post_work_routine.phone_1"
+    ],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [
+      "charger_1",
+      "keys_1"
+    ],
+    "skips_per_activity": {
+      "daytime_rest": 2,
+      "rest_break": 4,
+      "video_call": 3
+    },
+    "fragment_bouts_per_activity": {
+      "daytime_rest": 12,
+      "post_work_routine": 22
+    }
+  },
+  "moves_per_object": {
+    "mug_1": 60,
+    "phone_1": 54,
+    "water_bottle_1": 30,
+    "blanket_1": 27,
+    "laptop_1": 22,
+    "book_1": 18
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3-32B",
+    "prompts": {
+      "persona_v2": "23d14254",
+      "routine_program": "27f45369",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b2",
+    "accepted_attempt": 0,
+    "n_attempts": 1
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.6
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    }
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_hh1_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom": "bedroom.004",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

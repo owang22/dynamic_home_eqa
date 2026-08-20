@@ -1,0 +1,92 @@
+{
+  "household": "hh_002",
+  "household_type": "family_young_children",
+  "model": "Qwen/Qwen3.6-35B-A3B-FP8",
+  "model_slug": "qwen3.6-35b-a3b-fp8",
+  "builder_version": "rv2-b3",
+  "prompts": {
+    "persona_v2": "134f5bfb",
+    "routine_program": "b33a1768",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 2014072705298268385,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 12075404248394482559,
+      "leak_prediction": {
+        "predicted_type": "family_young_children",
+        "confidence": 0.85,
+        "reason": "The presence of three beds (bed_b1, bed_b2, bed_b3) suggests a household with at least three occupants or a need for separate sleeping arrangements (e.g., parents and child). The presence of multiple toys (toy_1, toy_2), lunchboxes (lunchbox_1, lunchbox_2), and backpacks (backpack_1, backpack_2) is\u5f3a",
+        "actual_type": "family_young_children",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 7858643903810013221,
+      "leak_prediction": {
+        "predicted_type": "family_young_children",
+        "confidence": 0.85,
+        "reason": "The presence of three bedrooms (bed_b1, bed_b2, bed_b3) suggests a household with at least three occupants or space for guests/children. The key differentiator is the presence of 'toy_1', 'toy_2', and 'lunchbox_1', which strongly indicate the presence of young children. The multiple mugs, water_bott",
+        "actual_type": "family_young_children",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 2,
+      "seed": 2014072705298268385,
+      "leak_prediction": {
+        "predicted_type": "family_school_age_children",
+        "confidence": 0.85,
+        "reason": "The presence of three beds (bed_b1, bed_b2, bed_b3) and three desks (desk_b1, desk_b2, desk_b3) strongly suggests a household with three occupants, likely parents and one child, or two parents and one older child. The presence of multiple backpacks, lunchboxes, toys, and school-related items (note,\u7b14",
+        "actual_type": "family_young_children",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 5,
+  "accepted_attempt": null,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 8276325861361459071,
+      "failures": [
+        "reachability: 27 of 30 objects wrote movement rules that only ever name their own home (['backpack_1', 'backpack_2', 'blanket_1', 'book_1', 'bowl_1', 'bowl_2']...) \u2014 fake movement, not declared stillness; use `rules: []` for an object that genuinely stays put"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 5306415886393514113,
+      "failures": [
+        "reachability: 13 of 30 objects wrote movement rules that only ever name their own home (['backpack_1', 'backpack_2', 'bowl_1', 'charger_1', 'gaming_controller_1', 'headphones_1']...) \u2014 fake movement, not declared stillness; use `rules: []` for an object that genuinely stays put"
+      ]
+    },
+    {
+      "attempt": 2,
+      "seed": 194572194604664852,
+      "failures": [
+        "referential: charger_1 is planned as never moving yet declares p_misplace",
+        "referential: umbrella_1 is planned as never moving yet declares p_misplace",
+        "reachability: 13 of 30 objects wrote movement rules that only ever name their own home (['backpack_1', 'backpack_2', 'blanket_1', 'bowl_1', 'gaming_controller_1', 'headphones_1']...) \u2014 fake movement, not declared stillness; use `rules: []` for an object that genuinely stays put"
+      ]
+    },
+    {
+      "attempt": 3,
+      "seed": 8816905688439668354,
+      "failures": [
+        "reachability: 17 of 30 objects wrote movement rules that only ever name their own home (['backpack_2', 'blanket_1', 'bowl_1', 'bowl_2', 'charger_1', 'gaming_controller_1']...) \u2014 fake movement, not declared stillness; use `rules: []` for an object that genuinely stays put"
+      ]
+    },
+    {
+      "attempt": 4,
+      "seed": 9862656893409265126,
+      "failures": [
+        "reachability: 9 of 30 objects wrote movement rules that only ever name their own home (['backpack_2', 'bowl_1', 'gaming_controller_1', 'jacket_2', 'keys_1', 'lunchbox_1']...) \u2014 fake movement, not declared stillness; use `rules: []` for an object that genuinely stays put"
+      ]
+    }
+  ]
+}

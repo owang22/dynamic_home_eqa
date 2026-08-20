@@ -1,0 +1,66 @@
+{
+  "household": "hh_001",
+  "household_type": "night_shift_worker_solo",
+  "source": "profiles/revamp_v2/story_driven/deepseek-v4-flash/hh1",
+  "engine": "story_driven_llm",
+  "model": "deepseek-ai/DeepSeek-V4-Flash",
+  "single_pass": true,
+  "failed_weeks": [],
+  "failed_days": [
+    {
+      "day": 19,
+      "error": "<ValidationError: \"'Alex grabs water bottle from nightstand as he gets out of bed' is too long\">"
+    }
+  ],
+  "n_failed_days": 1,
+  "days": 21,
+  "seed": 0,
+  "n_events": 509,
+  "story_activities": [
+    "appointment",
+    "bedtime_routine",
+    "breakfast",
+    "coffee",
+    "commute_home",
+    "commute_out",
+    "day_sleep",
+    "dinner",
+    "errands",
+    "get_ready",
+    "groceries",
+    "laundry",
+    "lunch",
+    "night_sleep",
+    "reading",
+    "relax",
+    "snack",
+    "socialise_home",
+    "tidy_up",
+    "video_call",
+    "wake_up",
+    "walk",
+    "work_away"
+  ],
+  "n_story_activities": 23,
+  "moves_per_object": {
+    "water_bottle_1": 162,
+    "phone_1": 113,
+    "bowl_1": 62,
+    "book_1": 51,
+    "blanket_1": 37,
+    "keys_1": 36,
+    "mug_1": 34,
+    "laptop_1": 14
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_story_driven_deepseek-v4-flash_hh1_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom": "bedroom.004",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

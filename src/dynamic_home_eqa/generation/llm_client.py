@@ -387,7 +387,11 @@ def generate_json_thinking(
                 stage, attempt + 1, max_retries, seed + attempt, e, payload[:500],
             )
             continue
-        think = think[:2000]
+        # 20k, not 2k: at 2000 chars the freeform day-planner's trace was
+        # cut mid-sentence and the model's actual reasoning was lost to
+        # review. Storage is a JSON file per call; the extra chars are
+        # noise-level on disk and priceless when auditing a bad day.
+        think = think[:20000]
         if cache:
             cache.put(seed, user, payload, think=think)
         return (result, think) if return_think else result

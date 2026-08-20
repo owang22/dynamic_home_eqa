@@ -1,0 +1,562 @@
+household: hh_001
+household_type: night_shift_worker_solo
+source_persona: persona.yaml
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 1.0
+receptacles:
+- id: bed_b1
+  room: bedroom
+- id: nightstand_b1
+  room: bedroom
+- id: desk_b1
+  room: bedroom
+- id: bedroom_floor_b1
+  room: bedroom
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: night_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 09:30
+  end: '17:00'
+  at: bed_b1
+  jitter: routine
+  cites: sleeps through the day
+weekly_blocks:
+- cites: makes coffee in the same mug every evening
+  resident: resident_1
+  activity: coffee
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '17:15'
+  end: '17:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.0
+- cites: eats a quick meal then leaves for hospital
+  resident: resident_1
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '17:30'
+  end: '18:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.0
+- cites: leaves for the hospital before most people are eating dinner
+  resident: resident_1
+  activity: commute_out
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:15'
+  end: '18:45'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: overnight shift in the lab
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:45'
+  end: 06:00+1
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: returns home around sunrise
+  resident: resident_1
+  activity: commute_home
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 06:00+1
+  end: 06:30+1
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: eats a small snack
+  resident: resident_1
+  activity: snack
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 06:30+1
+  end: 06:45+1
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: winds down on the couch with a book or phone before falling asleep
+  resident: resident_1
+  activity: wake_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 06:45+1
+  end: 09:30+1
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.0
+- cites: clutter accumulates because Alex is too tired after shifts to clean thoroughly
+  resident: resident_1
+  activity: tidy_up
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '17:00'
+  end: '17:45'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.4
+object_rules:
+- object: mug_1
+  cites: used every night, left in sink until next evening
+  home: cupboard_k1
+  p_misplace: 0.0
+  misplace_set:
+  - counter_k1
+  rules:
+  - activity: coffee
+    phase: during
+    cites: makes coffee in the same mug every evening
+    only_from:
+    - cupboard_k1
+    - sink_k1
+    dest: counter_k1
+  - activity: coffee
+    phase: after
+    cites: leaves it in the sink unwashed
+    only_from:
+    - counter_k1
+    dest: sink_k1
+  - activity: tidy_up
+    phase: after
+    cites: cleans the kitchen
+    only_from:
+    - sink_k1
+    - counter_k1
+    dest: cupboard_k1
+- object: bowl_1
+  cites: used for cereal and quick meals; left on counter after eating
+  home: cupboard_k1
+  p_misplace: 0.0
+  misplace_set:
+  - counter_k1
+  rules:
+  - activity: dinner
+    phase: during
+    cites: eats a quick meal
+    only_from:
+    - cupboard_k1
+    - sink_k1
+    dest: counter_k1
+  - activity: dinner
+    phase: after
+    cites: left on counter after eating
+    only_from:
+    - counter_k1
+    dest: counter_k1
+  - activity: snack
+    phase: during
+    cites: eats a small snack
+    only_from:
+    - cupboard_k1
+    - counter_k1
+    dest: counter_k1
+  - activity: tidy_up
+    phase: after
+    cites: cleans the kitchen
+    only_from:
+    - counter_k1
+    - sink_k1
+    dest: cupboard_k1
+- object: phone_1
+  cites: moved from nightstand to bathroom to pocket
+  home: person:resident_1
+  p_misplace: 0.3
+  misplace_set:
+  - bathroom_shelf_ba1
+  - coffee_table_l1
+  - counter_k1
+  rules:
+  - activity: wake_up
+    phase: during
+    cites: charges phone in the bathroom while showering
+    only_from:
+    - nightstand_b1
+    - bathroom_shelf_ba1
+    - counter_k1
+    - person:resident_1
+    dest: bathroom_shelf_ba1
+  - activity: wake_up
+    phase: after
+    cites: forgets it there sometimes
+    only_from:
+    - bathroom_shelf_ba1
+    - person:resident_1
+    dest: person:resident_1
+    p: 0.7
+    else: bathroom_shelf_ba1
+  - activity: commute_out
+    phase: during
+    cites: always takes phone to work
+    only_from:
+    - person:resident_1
+    - bathroom_shelf_ba1
+    - counter_k1
+    - nightstand_b1
+    dest: person:resident_1
+  - activity: commute_home
+    phase: after
+    cites: puts phone on nightstand when home
+    only_from:
+    - person:resident_1
+    dest: nightstand_b1
+- object: keys_1
+  cites: always dropped on kitchen counter upon entry
+  home: counter_k1
+  p_misplace: 0.2
+  misplace_set:
+  - entry_floor_e1
+  - coffee_table_l1
+  rules:
+  - activity: commute_home
+    phase: during
+    cites: always dropped on kitchen counter upon entry
+    only_from:
+    - counter_k1
+    - entry_floor_e1
+    - coffee_table_l1
+    - person:resident_1
+    dest: counter_k1
+  - activity: commute_out
+    phase: after
+    cites: takes keys when leaving
+    only_from:
+    - counter_k1
+    - entry_floor_e1
+    - coffee_table_l1
+    dest: person:resident_1
+- object: water_bottle_1
+  cites: carried from bedroom to kitchen to couch during the night
+  home: counter_k1
+  p_misplace: 0.1
+  misplace_set:
+  - couch_l1
+  - bedroom_floor_b1
+  rules:
+  - activity: wake_up
+    phase: during
+    cites: carried from bedroom to kitchen
+    only_from:
+    - counter_k1
+    - couch_l1
+    - bedroom_floor_b1
+    - nightstand_b1
+    dest: sink_k1
+  - activity: wake_up
+    phase: after
+    cites: refilled at kitchen sink
+    only_from:
+    - sink_k1
+    dest: counter_k1
+  - activity: coffee
+    phase: during
+    cites: carried to couch
+    only_from:
+    - counter_k1
+    - couch_l1
+    dest: couch_l1
+  - activity: wake_up
+    phase: after
+    cites: left on couch
+    only_from:
+    - couch_l1
+    dest: couch_l1
+    p: 0.7
+    else: counter_k1
+  - activity: night_sleep
+    phase: during
+    cites: taken to bedroom
+    only_from:
+    - couch_l1
+    - counter_k1
+    - sink_k1
+    dest: nightstand_b1
+- object: book_1
+  cites: left face-down on couch armrest or nightstand
+  home: bookshelf_l1
+  p_misplace: 0.0
+  misplace_set:
+  - couch_l1
+  - nightstand_b1
+  rules:
+  - activity: wake_up
+    phase: during
+    cites: reads on the couch
+    only_from:
+    - bookshelf_l1
+    - nightstand_b1
+    - couch_l1
+    dest: couch_l1
+  - activity: wake_up
+    phase: after
+    cites: left face-down on couch armrest
+    only_from:
+    - couch_l1
+    dest: couch_l1
+    p: 0.8
+    else: nightstand_b1
+  - activity: night_sleep
+    phase: after
+    cites: put back on shelf
+    only_from:
+    - couch_l1
+    - nightstand_b1
+    dest: bookshelf_l1
+    p: 0.2
+    else: nightstand_b1
+- object: blanket_1
+  cites: left crumpled on couch all day
+  home: couch_l1
+  p_misplace: 0.0
+  misplace_set:
+  - couch_l1
+  - bedroom_floor_b1
+  rules:
+  - activity: wake_up
+    phase: during
+    cites: used on couch
+    only_from:
+    - couch_l1
+    - bedroom_floor_b1
+    dest: couch_l1
+  - activity: wake_up
+    phase: after
+    cites: left crumpled on couch
+    only_from:
+    - couch_l1
+    dest: couch_l1
+  - activity: tidy_up
+    phase: after
+    cites: folds blanket
+    only_from:
+    - couch_l1
+    - bedroom_floor_b1
+    dest: couch_l1
+    p: 0.5
+    else: bedroom_floor_b1
+- object: laptop_1
+  cites: stays on coffee table mostly
+  home: coffee_table_l1
+  p_misplace: 0.0
+  misplace_set:
+  - coffee_table_l1
+  rules:
+  - activity: wake_up
+    phase: during
+    cites: used for streaming
+    only_from:
+    - coffee_table_l1
+    dest: coffee_table_l1
+  - activity: wake_up
+    phase: after
+    cites: stays on coffee table
+    only_from:
+    - coffee_table_l1
+    dest: coffee_table_l1
+activities:
+- name: tidy_up
+  reset_all:
+    p: 0.8
+    objects:
+    - mug_1
+    - bowl_1
+    - blanket_1
+    - water_bottle_1
+arc_events:
+- day: 1
+  note: Maintenance knocks at 10 AM; Alex sleeps through first two alarms and is woken groggily. Skips
+    morning wind-down.
+  patch:
+    drop:
+    - wake_up
+- day: 3
+  note: Forgot to set alarm; wakes late at 16:30, rushes to shift without coffee.
+  patch:
+    drop:
+    - coffee
+    - dinner
+- day: 5
+  note: Saturday; Alex has a dentist appointment at 11 AM (added block), disrupting sleep. Sleeps 09:30-10:30
+    instead.
+  patch:
+    drop:
+    - night_sleep
+    add:
+    - resident: resident_1
+      activity: night_sleep
+      sleep: false
+      start: 09:30
+      end: '10:30'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+      note: short sleep before appointment
+    - resident: resident_1
+      activity: commute_out
+      sleep: false
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: external
+      skip_p: 0.0
+      note: dentist trip
+- day: 7
+  note: Exhausted after a long weekend; sleeps 09:30-18:00, skips morning routine entirely.
+  patch:
+    drop:
+    - coffee
+    - dinner
+    - commute_out
+    - work_away
+    - commute_home
+    - snack
+    - wake_up
+- day: 10
+  note: A rare day off; Alex takes a nap in the afternoon.
+  patch:
+    drop:
+    - commute_out
+    - work_away
+    - commute_home
+    add:
+    - resident: resident_1
+      activity: nap
+      sleep: true
+      start: '14:00'
+      end: '16:00'
+      at: couch_l1
+      jitter: flexible
+      skip_p: 0.0
+      note: afternoon nap on day off
+- day: 14
+  note: Missed the bus; Alex arrives home 30 min late, eats snack at 07:00.
+  patch:
+    drop:
+    - commute_home
+    - snack
+    add:
+    - resident: resident_1
+      activity: commute_home
+      sleep: false
+      start: 06:30+1
+      end: 07:00+1
+      at: ELSEWHERE
+      jitter: external
+      skip_p: 0.0
+      note: late bus
+    - resident: resident_1
+      activity: snack
+      sleep: false
+      start: 07:00+1
+      end: 07:15+1
+      at: counter_k1
+      jitter: flexible
+      skip_p: 0.0
+      note: delayed snack
+- day: 18
+  note: A three-day fatigue stretch starts; Alex skips morning wind-down and snack.
+  patch:
+    drop:
+    - wake_up
+    - snack

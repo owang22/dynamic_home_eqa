@@ -1,0 +1,125 @@
+{
+  "household": "hh_003",
+  "household_type": "retired_couple",
+  "source": "profiles/revamp_v2/story_driven/deepseek-v4-flash/hh3",
+  "engine": "story_driven_llm",
+  "model": "deepseek-ai/DeepSeek-V4-Flash",
+  "single_pass": true,
+  "failed_weeks": [
+    {
+      "week": 0,
+      "error": "JSONDecodeError('Unterminated string starting at: line 161 column 98 (char 14744)')"
+    }
+  ],
+  "failed_days": [
+    {
+      "day": 0,
+      "error": "no story"
+    },
+    {
+      "day": 1,
+      "error": "no story"
+    },
+    {
+      "day": 2,
+      "error": "no story"
+    },
+    {
+      "day": 2,
+      "error": "<ValidationError: \"'Arthur polishes and sets his glasses on the nightstand before bed' is too long\">"
+    },
+    {
+      "day": 3,
+      "error": "no story"
+    },
+    {
+      "day": 4,
+      "error": "no story"
+    },
+    {
+      "day": 4,
+      "error": "<ValidationError: '\"Arthur collects Marilyn\\'s mug from coffee table and puts in sink\" is too long'>"
+    },
+    {
+      "day": 5,
+      "error": "no story"
+    },
+    {
+      "day": 6,
+      "error": "no story"
+    },
+    {
+      "day": 8,
+      "error": "<ValidationError: '\"Arthur sets Marilyn\\'s filled water bottle back on the counter.\" is too long'>"
+    }
+  ],
+  "n_failed_days": 10,
+  "days": 21,
+  "seed": 0,
+  "n_events": 733,
+  "story_activities": [
+    "appointment",
+    "bedtime_routine",
+    "breakfast",
+    "coffee",
+    "deep_clean",
+    "dinner",
+    "errands",
+    "get_ready",
+    "groceries",
+    "hobby",
+    "lunch",
+    "meal_prep",
+    "medication",
+    "nap",
+    "night_sleep",
+    "put_away_dishes",
+    "reading",
+    "relax",
+    "snack",
+    "socialise_home",
+    "tidy_up",
+    "video_call",
+    "wake_up",
+    "walk",
+    "wash_dishes",
+    "watch_tv"
+  ],
+  "n_story_activities": 26,
+  "moves_per_object": {
+    "mug_2": 102,
+    "bowl_1": 86,
+    "plate_1": 84,
+    "mug_1": 73,
+    "water_bottle_1": 56,
+    "remote_1": 56,
+    "glasses_2": 38,
+    "water_bottle_2": 34,
+    "glasses_1": 34,
+    "medication_bottle_1": 34,
+    "blanket_1": 34,
+    "jacket_1": 30,
+    "book_1": 28,
+    "keys_1": 20,
+    "keys_2": 14,
+    "jacket_2": 8,
+    "towel_1": 2,
+    "laptop_1": 0,
+    "phone_1": 0,
+    "phone_2": 0,
+    "charger_1": 0,
+    "umbrella_1": 0
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_story_driven_deepseek-v4-flash_hh3_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom_1": "bedroom.004",
+      "bedroom_2": "bedroom",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "household": "hh_009",
+  "household_type": "grad_student_solo",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b4",
+  "prompts": {
+    "persona_v2": "134f5bfb",
+    "routine_program": "e63834f9",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 4612639059879382338,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 12943409647800849142,
+      "leak_prediction": {
+        "predicted_type": "grad_student_solo",
+        "confidence": 0.65,
+        "reason": "The object list is minimal and heavily skewed towards academic and solitary items (laptop, notebook, pen, book, glasses) with no family-specific markers (toys, multiple personal items, baby gear). The presence of a single bed, a desk, and a small kitchen setup (counter, sink, cupboard) suggests a 1-",
+        "actual_type": "grad_student_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 7393567756474614813,
+      "leak_prediction": {
+        "predicted_type": "grad_student_solo",
+        "confidence": 0.95,
+        "reason": "The object list contains exactly one set of personal items all named 'arjun' (laptop, phone, keys, book, notebook, pen, water bottle, jacket, blanket), indicating a single occupant. The presence of a laptop, notebook, and book alongside a single bed and desk strongly suggests a student living alone.",
+        "actual_type": "grad_student_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 2,
+      "seed": 15434294250880325542,
+      "leak_prediction": {
+        "predicted_type": "grad_student_solo",
+        "confidence": 0.65,
+        "reason": "The object list is dominated by study and work items (laptop, notebook, pen, two books, charger) alongside basic personal items (mug, water bottle, jacket). The receptacles show a standard 1-bedroom layout (bedroom, living room, kitchen, bathroom, entry) with no second bed, no children's items (toys",
+        "actual_type": "grad_student_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 3,
+      "seed": 12193594758548146501,
+      "leak_prediction": {
+        "predicted_type": "grad_student_solo",
+        "confidence": 0.95,
+        "reason": "The object list contains items exclusively associated with a single individual named 'Elara' (laptop, phone, keys, glasses, jacket), with no second person's items present. The presence of a laptop, multiple books, and a desk in a single-bedroom setup (bed_b1, desk_b1) strongly suggests a student or ",
+        "actual_type": "grad_student_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 4,
+      "seed": 4612639059879382338,
+      "leak_prediction": {
+        "predicted_type": "grad_student_solo",
+        "confidence": 0.65,
+        "reason": "The object list is dominated by academic and solo-living items (laptop, notebook, pen, book, backpack, glasses, headphones) with no family-specific items (toys, multiple beds, baby gear). The receptacles show a single bedroom (b1) and a compact living/kitchen setup, consistent with a single occupant",
+        "actual_type": "grad_student_solo",
+        "correct": true
+      }
+    }
+  ],
+  "leak_unresolved": true,
+  "n_attempts": 2,
+  "accepted_attempt": 1,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 9078465601371950764,
+      "failures": [
+        "reachability: expansion failed: 'dest'"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 15815221615205491828,
+      "failures": []
+    }
+  ]
+}

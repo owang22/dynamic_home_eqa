@@ -1,0 +1,76 @@
+{
+  "household": "hh_001",
+  "household_type": "night_shift_worker_solo",
+  "source": "profiles/revamp_v2/qwen3.8-27b/hh1",
+  "days": 21,
+  "seed": 0,
+  "n_events": 404,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 0,
+    "tidy_moved": 0,
+    "tidy_ran_out_of_time": 0,
+    "blocks": 168,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [],
+    "carried_on_departure": [],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [],
+    "skips_per_activity": {
+      "coffee": 3
+    },
+    "fragment_bouts_per_activity": {}
+  },
+  "moves_per_object": {
+    "headphones_1": 84,
+    "phone_1": 78,
+    "pen_1": 42,
+    "jacket_1": 42,
+    "keys_1": 42,
+    "wallet_1": 42,
+    "water_bottle_1": 40,
+    "mug_1": 34
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3.8-27B",
+    "prompts": {
+      "persona_v2": "134f5bfb",
+      "routine_program": "fe6d4df3",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b5",
+    "accepted_attempt": 0,
+    "n_attempts": 1
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.6
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    }
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_rule_based_qwen3.8-27b_hh1_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom": "bedroom.004",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

@@ -1,0 +1,865 @@
+household: hh_001
+household_type: night_shift_worker_solo
+source_persona: persona.yaml
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 1.2
+  cites: methodical at work but drops things wherever he lands at home
+receptacles:
+- id: bed_b1
+  room: bedroom
+- id: nightstand_b1
+  room: bedroom
+- id: desk_b1
+  room: bedroom
+- id: bedroom_floor_b1
+  room: bedroom
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: day_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 09:30
+  end: '16:30'
+  at: bed_b1
+  jitter: routine
+  cites: sleeps through the loud middle of the day behind blackout curtains
+weekly_blocks:
+- resident: resident_1
+  activity: arrive_home
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:40
+  end: 07:00
+  at: entry_table_e1
+  jitter: external
+  skip_p: 0.0
+  sleep: false
+  cites: comes home at dawn and sheds his jacket, keys, and wallet in a pile on the entry table
+- resident: resident_1
+  activity: shower
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:00
+  end: 07:25
+  at: towel_rack_ba1
+  jitter: routine
+  skip_p: 0.1
+  sleep: false
+  cites: post-shift shower
+- resident: resident_1
+  activity: breakfast
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:30
+  end: 08:10
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.0
+  sleep: false
+  cites: eats his 'dinner' breakfast on the couch from a bowl, wrapped in the couch blanket
+- resident: resident_1
+  activity: gaming
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:10
+  end: 08:50
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.25
+  sleep: false
+  cites: plays a quiet hour of games before bed
+- resident: resident_1
+  activity: reading
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:55
+  end: 09:15
+  at: bed_b1
+  jitter: flexible
+  skip_p: 0.3
+  sleep: false
+  cites: reads a few pages of a paperback under the blackout curtains
+- resident: resident_1
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 09:15
+  end: 09:30
+  at: nightstand_b1
+  jitter: routine
+  skip_p: 0.0
+  sleep: false
+  cites: takes melatonin from the medication bottle on the nightstand and puts his phone face-down next
+    to it
+- resident: resident_1
+  activity: wake_up
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '16:30'
+  end: '16:50'
+  at: sink_k1
+  jitter: routine
+  skip_p: 0.0
+  sleep: false
+  cites: refills the same dented water bottle every wake-up
+- resident: resident_1
+  activity: coffee
+  days:
+  - Su
+  - Mo
+  - Tu
+  - We
+  - Th
+  start: '17:15'
+  end: '18:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.15
+  sleep: false
+  cites: evening 'morning coffee' mug before shifts
+- resident: resident_1
+  activity: watch_tv
+  days:
+  - Su
+  - Mo
+  - Tu
+  - We
+  - Th
+  start: '18:00'
+  end: '20:15'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.1
+  sleep: false
+  cites: a living room where he actually lives (couch, coffee table, TV corner)
+- resident: resident_1
+  activity: meal_prep
+  days:
+  - Su
+  - Mo
+  - Tu
+  - We
+  - Th
+  start: '20:30'
+  end: '21:15'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.05
+  sleep: false
+  cites: packs his lunchbox the evening before a shift and stages it on the kitchen counter by the door
+- resident: resident_1
+  activity: get_ready
+  days:
+  - Su
+  - Mo
+  - Tu
+  - We
+  - Th
+  start: '21:45'
+  end: '22:10'
+  at: entry_table_e1
+  jitter: external
+  skip_p: 0.0
+  sleep: false
+  cites: pre-shift Dario stages objects by the door
+- resident: resident_1
+  activity: commute_out
+  days:
+  - Su
+  - Mo
+  - Tu
+  - We
+  - Th
+  start: '22:10'
+  end: '22:40'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+  sleep: false
+  cites: he leaves for the hospital when the building is settling down for the night
+- resident: resident_1
+  activity: work_away
+  days:
+  - Su
+  - Mo
+  - Tu
+  - We
+  - Th
+  start: '22:40'
+  end: 06:15+1
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+  sleep: false
+  cites: hospital sterile-processing technician (overnight shift)
+- resident: resident_1
+  activity: commute_home
+  days:
+  - Su
+  - Mo
+  - Tu
+  - We
+  - Th
+  start: 06:15+1
+  end: 06:40+1
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+  sleep: false
+  cites: worn on the walk home
+- resident: resident_1
+  activity: batch_cooking
+  days:
+  - Fr
+  - Sa
+  start: '18:30'
+  end: '20:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+  sleep: false
+  cites: on his nights off he cooks elaborate meals
+- resident: resident_1
+  activity: dinner
+  days:
+  - Fr
+  - Sa
+  start: '20:00'
+  end: '20:45'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.0
+  sleep: false
+  cites: used on nights off for real cooked meals at the kitchen counter
+- resident: resident_1
+  activity: video_call
+  days:
+  - Fr
+  - Sa
+  start: '20:45'
+  end: '21:45'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.2
+  sleep: false
+  cites: video-calls family from the kitchen counter
+- resident: resident_1
+  activity: wash_dishes
+  days:
+  - Fr
+  - Sa
+  start: '21:50'
+  end: '22:15'
+  at: sink_k1
+  jitter: flexible
+  skip_p: 0.15
+  sleep: false
+  cites: washed and reshelved the same night
+- resident: resident_1
+  activity: tidy_up
+  days:
+  - Fr
+  - Sa
+  start: '22:15'
+  end: '22:45'
+  at: sink_k1
+  jitter: flexible
+  skip_p: 0.25
+  sleep: false
+  cites: does one fast tidy pass on his nights off, ferrying stray mugs and the bowl back to the kitchen
+    sink
+- resident: resident_1
+  activity: watch_tv
+  days:
+  - Fr
+  - Sa
+  start: '22:45'
+  end: 01:30+1
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.2
+  sleep: false
+  cites: his two nights off feel like visiting a different, sunlit apartment
+object_rules:
+- object: phone_dario
+  home: person:resident_1
+  p_misplace: 0.15
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  - counter_k1
+  cites: travels from pocket to nightstand at dawn, charges there while he sleeps
+  rules:
+  - activity: bedtime_routine
+    phase: during
+    dest: nightstand_b1
+    cites: puts his phone face-down next to it before blacking out the bedroom
+  - activity: wake_up
+    phase: after
+    dest: person:resident_1
+    cites: alarm and shift-schedule lifeline
+- object: keys_dario
+  home: entry_table_e1
+  p_misplace: 0.15
+  misplace_set:
+  - couch_l1
+  - kitchen_table_k1
+  - coffee_table_l1
+  cites: the object he most often pats his pockets hunting for
+  rules:
+  - activity: commute_out
+    phase: during
+    dest: person:resident_1
+    cites: snatched up again at dusk
+  - activity: commute_home
+    phase: after
+    dest: entry_table_e1
+    p: 0.85
+    else: counter_k1
+    cites: dropped on the entry table at dawn
+- object: wallet_dario
+  home: entry_table_e1
+  cites: rides in his jacket pocket to work and lands on the entry table with the keys
+  rules:
+  - activity: commute_out
+    phase: during
+    dest: person:resident_1
+    cites: rides in his jacket pocket to work
+  - activity: commute_home
+    phase: after
+    dest: entry_table_e1
+    p: 0.95
+    else: entry_floor_e1
+    cites: lands on the entry table with the keys after every shift
+- object: jacket_dario
+  home: entry_hook_e1
+  cites: slung over the entry chair after shifts instead of the closet hook
+  rules:
+  - activity: commute_out
+    phase: during
+    dest: person:resident_1
+    cites: commute layer against the pre-dawn chill
+  - activity: commute_home
+    phase: after
+    dest: entry_table_e1
+    p: 0.75
+    else: entry_hook_e1
+    cites: sheds his jacket, keys, and wallet in a pile on the entry table
+  - activity: tidy_up
+    phase: after
+    dest: entry_hook_e1
+    only_from:
+    - entry_table_e1
+    - entry_floor_e1
+    cites: one fast tidy pass on his nights off
+- object: lunchbox_dario
+  home: counter_k1
+  cites: packed the evening before, staged on the counter by the door, dumped by the sink at dawn
+  rules:
+  - activity: commute_out
+    phase: during
+    dest: person:resident_1
+    cites: grab it half-asleep
+  - activity: commute_home
+    phase: after
+    dest: sink_k1
+    cites: dumped by the sink at dawn
+  - activity: meal_prep
+    phase: during
+    dest: counter_k1
+    only_from:
+    - sink_k1
+    - dish_rack_k1
+    cites: packs his lunchbox the evening before a shift and stages it on the kitchen counter
+- object: medication_bottle_melatonin
+  home: nightstand_b1
+  cites: lives on the nightstand, occasionally carried to the kitchen and stranded there
+  rules:
+  - activity: coffee
+    phase: during
+    dest: counter_k1
+    p: 0.1
+    else: nightstand_b1
+    cites: occasionally carried to the kitchen and stranded there
+  - activity: bedtime_routine
+    phase: after
+    dest: nightstand_b1
+    p: 0.7
+    else: counter_k1
+    only_from:
+    - counter_k1
+    - kitchen_table_k1
+    cites: the last thing he touches before bed
+- object: water_bottle_dario
+  home: counter_k1
+  p_misplace: 0.15
+  misplace_set:
+  - couch_l1
+  - nightstand_b1
+  - coffee_table_l1
+  - entry_table_e1
+  cites: losing track of it about once a week
+  rules:
+  - activity: wake_up
+    phase: during
+    dest: sink_k1
+    cites: refilled at the kitchen sink each wake-up
+  - activity: wake_up
+    phase: after
+    dest: person:resident_1
+    cites: carries it room to room
+  - activity: watch_tv
+    phase: after
+    dest: coffee_table_l1
+    only_from:
+    - person:resident_1
+    cites: migrates to the couch
+  - activity: commute_out
+    phase: during
+    dest: counter_k1
+    p: 0.55
+    else: person:resident_1
+    only_from:
+    - person:resident_1
+    cites: migrates to the couch, nightstand, or work bag
+  - activity: bedtime_routine
+    phase: after
+    dest: nightstand_b1
+    p: 0.6
+    else: coffee_table_l1
+    only_from:
+    - person:resident_1
+    cites: migrates to the couch, nightstand, or work bag
+- object: bowl_1
+  home: cupboard_k1
+  cites: the dawn-dinner bowl; travels kitchen to coffee table almost daily
+  rules:
+  - activity: breakfast
+    phase: during
+    dest: couch_l1
+    cites: eats his 'dinner' breakfast on the couch from a bowl
+  - activity: breakfast
+    phase: after
+    dest: coffee_table_l1
+    p: 0.8
+    else: sink_k1
+    cites: often leaves the bowl on the coffee table until he wakes
+  - activity: tidy_up
+    phase: after
+    dest: sink_k1
+    only_from:
+    - coffee_table_l1
+    - couch_l1
+    cites: ferrying stray mugs and the bowl back to the kitchen sink
+  - activity: wash_dishes
+    phase: after
+    dest: dish_rack_k1
+    only_from:
+    - sink_k1
+    cites: back to the sink only on tidy nights
+- object: mug_1
+  home: cupboard_k1
+  cites: often abandoned half-full on the counter or coffee table
+  rules:
+  - activity: coffee
+    phase: during
+    dest: counter_k1
+    cites: evening 'morning coffee' mug before shifts
+  - activity: coffee
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.55
+    - dest: coffee_table_l1
+      p: 0.35
+    - dest: sink_k1
+      p: 0.1
+    only_from:
+    - counter_k1
+    cites: abandoned half-full on the counter or coffee table
+  - activity: tidy_up
+    phase: after
+    dest: sink_k1
+    only_from:
+    - counter_k1
+    - coffee_table_l1
+    cites: ferrying stray mugs and the bowl back to the kitchen sink
+  - activity: wash_dishes
+    phase: after
+    dest: cupboard_k1
+    only_from:
+    - sink_k1
+    cites: washed and reshelved the same night
+- object: plate_1
+  home: cupboard_k1
+  cites: used on nights off for real cooked meals at the kitchen counter
+  rules:
+  - activity: dinner
+    phase: during
+    dest: counter_k1
+    cites: real cooked meals at the kitchen counter
+  - activity: dinner
+    phase: after
+    dest: sink_k1
+    cites: washed and reshelved the same night
+  - activity: wash_dishes
+    phase: after
+    dest: cupboard_k1
+    only_from:
+    - sink_k1
+    cites: washed and reshelved the same night
+- object: blanket_couch
+  home: couch_l1
+  cites: couch cocoon for post-shift decompression; left rumpled on the couch
+  rules:
+  - activity: breakfast
+    phase: during
+    dest: person:resident_1
+    cites: wrapped in the couch blanket
+  - activity: breakfast
+    phase: after
+    dest: couch_l1
+    cites: left rumpled on the couch, refolded only during tidy passes
+- object: remote_tv
+  home: tv_stand_l1
+  cites: vanishes into couch cushions under the blanket
+  rules:
+  - activity: watch_tv
+    phase: during
+    dest: couch_l1
+    cites: retrieved every wind-down session
+  - activity: watch_tv
+    phase: after
+    dest: couch_l1
+    p: 0.8
+    else: coffee_table_l1
+    only_from:
+    - couch_l1
+    cites: vanishes into couch cushions under the blanket
+  - activity: tidy_up
+    phase: after
+    dest: tv_stand_l1
+    only_from:
+    - couch_l1
+    - coffee_table_l1
+    cites: one fast tidy pass on his nights off
+- object: gaming_controller_1
+  home: tv_stand_l1
+  cites: abandoned on the cushion when melatonin kicks in
+  rules:
+  - activity: gaming
+    phase: during
+    dest: couch_l1
+    cites: picked up on the couch after dawn dinner
+  - activity: gaming
+    phase: after
+    dest: couch_l1
+    p: 0.85
+    else: coffee_table_l1
+    cites: abandons the gaming controller on the couch cushion where the remote also hides
+  - activity: tidy_up
+    phase: after
+    dest: tv_stand_l1
+    only_from:
+    - couch_l1
+    - coffee_table_l1
+    cites: one fast tidy pass on his nights off
+- object: headphones_dario
+  home: entry_hook_e1
+  cites: hung on the entry hook or forgotten around his neck
+  rules:
+  - activity: commute_out
+    phase: during
+    dest: person:resident_1
+    cites: worn on the walk home
+  - activity: commute_home
+    phase: after
+    dest: entry_hook_e1
+    p: 0.6
+    else: person:resident_1
+    cites: hung on the entry hook or forgotten around his neck
+  - activity: breakfast
+    phase: after
+    dest: coffee_table_l1
+    only_from:
+    - person:resident_1
+    cites: forgotten around his neck
+  - activity: gaming
+    phase: during
+    dest: person:resident_1
+    cites: worn for quiet late-night gaming so neighbors sleep
+  - activity: gaming
+    phase: after
+    dest: couch_l1
+    p: 0.5
+    else: entry_hook_e1
+    only_from:
+    - person:resident_1
+    cites: hung on the entry hook or forgotten
+- object: book_paperback
+  home: nightstand_b1
+  cites: found splayed face-down on the bed or nightstand
+  rules:
+  - activity: reading
+    phase: during
+    dest: bed_b1
+    cites: reads a few pages of a paperback under the blackout curtains
+  - activity: reading
+    phase: after
+    dest: bed_b1
+    p: 0.7
+    else: nightstand_b1
+    cites: leaving the book splayed open on the bed when sleep hits
+  - activity: wake_up
+    phase: after
+    dest: nightstand_b1
+    p: 0.5
+    else: bed_b1
+    only_from:
+    - bed_b1
+    cites: found splayed face-down on the bed or nightstand
+- object: glasses_dario
+  home: nightstand_b1
+  cites: shuttle between nightstand and coffee table depending on where he last read or gamed
+  rules:
+  - activity: gaming
+    phase: during
+    dest: person:resident_1
+    cites: where he last read or gamed
+  - activity: gaming
+    phase: after
+    dest: coffee_table_l1
+    p: 0.6
+    else: person:resident_1
+    cites: shuttle between nightstand and coffee table
+  - activity: reading
+    phase: during
+    dest: person:resident_1
+    only_from:
+    - person:resident_1
+    - nightstand_b1
+    - bed_b1
+    cites: reading glasses
+  - activity: reading
+    phase: after
+    dest: nightstand_b1
+    p: 0.75
+    else: bed_b1
+    only_from:
+    - person:resident_1
+    cites: nightstand holds phone, medication, glasses
+- object: charger_bedroom
+  home: nightstand_b1
+  cites: occasionally uprooted to the living room outlet on days off and forgotten there
+  rules:
+  - activity: watch_tv
+    phase: during
+    dest: tv_stand_l1
+    p: 0.12
+    else: nightstand_b1
+    only_from:
+    - nightstand_b1
+    cites: occasionally uprooted to the living room outlet on days off
+  - activity: bedtime_routine
+    phase: after
+    dest: nightstand_b1
+    only_from:
+    - tv_stand_l1
+    - coffee_table_l1
+    cites: forcing a bedtime hunt
+- object: towel_1
+  home: towel_rack_ba1
+  cites: hung on the bathroom rack but sometimes left on the bedroom doorknob when he's too tired
+  rules:
+  - activity: shower
+    phase: during
+    dest: person:resident_1
+    cites: post-shift shower towel
+  - activity: shower
+    phase: after
+    dest: towel_rack_ba1
+    p: 0.7
+    else: bedroom_floor_b1
+    cites: sometimes left on the bedroom doorknob when he's too tired
+  - activity: tidy_up
+    phase: after
+    dest: towel_rack_ba1
+    only_from:
+    - bedroom_floor_b1
+    cites: one fast tidy pass on his nights off
+activities:
+- name: tidy_up
+  reset_all:
+    p: 0.85
+    objects:
+    - bowl_1
+    - mug_1
+    - remote_tv
+    - gaming_controller_1
+    - blanket_couch
+    - jacket_dario
+    - towel_1
+    - water_bottle_dario
+  cites: one fast tidy pass on his nights off, ferrying stray mugs and the bowl back to the kitchen sink
+    in a single armload
+- name: coffee
+  fragment:
+    mean_bouts: 2
+  cites: often abandoned half-full on the counter or coffee table
+- name: watch_tv
+  fragment:
+    mean_bouts: 3
+  cites: a living room where he actually lives
+arc_events:
+- day: 4
+  patch:
+    drop:
+    - tidy_up
+    - wash_dishes
+  note: Wrecked after his fifth straight shift, Dario skips the Friday tidy pass and dish wash entirely;
+    the coffee-table bowl and stray mugs stand over the weekend.
+- day: 8
+  patch:
+    add:
+    - resident: resident_1
+      activity: appointment
+      start: '10:45'
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: external
+      note: dental appointment booked mid-day-sleep
+      cites: protective of his sleep
+  note: A dentist appointment falls in the loud middle of his day, dragging him out of the blackout cave
+    mid-sleep — the one schedule violation he dreads most.
+- day: 9
+  patch:
+    drop:
+    - gaming
+    - reading
+  note: 'Sleep debt from the broken Tuesday sleep: he skips games and the paperback and blacks out early.'
+- day: 10
+  patch:
+    drop:
+    - gaming
+    - reading
+    - coffee
+  note: Second fatigue day — straight from shower to bed, no controller, no book, no evening coffee ritual.
+- day: 11
+  patch:
+    drop:
+    - gaming
+  note: Still recovering; he keeps the few pages of reading but the controller stays on the TV stand.
+- day: 12
+  patch:
+    add:
+    - resident: resident_1
+      activity: groceries
+      start: '17:15'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: flexible
+      note: restocking for the elaborate night-off cooking
+      cites: on his nights off he cooks elaborate meals
+  note: Saturday grocery run in the sunlit hours to stock the elaborate night-off dinner.
+- day: 19
+  patch:
+    drop:
+    - watch_tv
+    - tidy_up
+    - video_call
+    - batch_cooking
+    - dinner
+    - wash_dishes
+    add:
+    - resident: resident_1
+      activity: work_away
+      start: '22:40'
+      end: 06:15+1
+      at: ELSEWHERE
+      jitter: external
+      note: overtime shift picked up on a night off
+      cites: hospital sterile-processing technician (overnight shift)
+    - resident: resident_1
+      activity: commute_out
+      start: '22:10'
+      end: '22:40'
+      at: ELSEWHERE
+      jitter: external
+      cites: he leaves for the hospital when the building is settling down for the night
+  note: 'Called in for Saturday overtime: the whole night-off ritual — cooking, family call, tidy pass
+    — collapses, and pre-shift Dario stages the door pile instead.'

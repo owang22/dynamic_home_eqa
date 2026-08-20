@@ -1,0 +1,767 @@
+household: hh_003
+household_type: retired_couple
+source_persona: persona.yaml
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 0.8
+- id: resident_2
+  jitter_scale: 0.6
+receptacles:
+- id: bed_b1
+  room: bedroom_1
+- id: nightstand_b1
+  room: bedroom_1
+- id: desk_b1
+  room: bedroom_1
+- id: bedroom_floor_b1
+  room: bedroom_1
+- id: bed_b2
+  room: bedroom_2
+- id: nightstand_b2
+  room: bedroom_2
+- id: desk_b2
+  room: bedroom_2
+- id: bedroom_floor_b2
+  room: bedroom_2
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '21:30'
+  end: 07:00+1
+  at: bed_b1
+  jitter: routine
+- resident: resident_2
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:00'
+  end: 07:30+1
+  at: bed_b2
+  jitter: routine
+weekly_blocks:
+- resident: resident_1
+  activity: wake_up
+  start: 07:00
+  end: 07:45
+  at: bed_b1
+  jitter: routine
+  skip_p: 0
+  sleep: true
+  cites: sleep block 07:00-07:45 for Arthur, slow-paced wake up implied by age and persona.
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: breakfast
+  start: 07:45
+  end: 08:30
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0
+  sleep: false
+  cites: They share meals... Arthur reading in living room while Eleanor prepares breakfast
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: reading
+  start: 08:30
+  end: '10:30'
+  at: armchair_l1
+  jitter: flexible
+  skip_p: 0
+  sleep: false
+  cites: Arthur tends to leave his books and glasses in the living room
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: tidy_up
+  start: '10:30'
+  end: '11:00'
+  at: armchair_l1
+  jitter: loose
+  skip_p: 0.2
+  sleep: false
+  cites: Eleanor sometimes trips over his stuff... gently tidy his corner
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: lunch
+  start: '12:30'
+  end: '13:15'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0
+  sleep: false
+  cites: sharing meals
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: reading
+  start: '13:15'
+  end: '16:00'
+  at: armchair_l1
+  jitter: flexible
+  skip_p: 0
+  sleep: false
+  cites: Arthur reading in living room
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: medication
+  start: '16:00'
+  end: '16:15'
+  at: kitchen_table_k1
+  jitter: external
+  skip_p: 0
+  sleep: false
+  cites: asks Eleanor to read labels on medication bottles
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: dinner
+  start: '18:30'
+  end: '19:30'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0
+  sleep: false
+  cites: sharing meals
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_1
+  activity: bedtime_routine
+  start: '21:30'
+  end: '22:00'
+  at: bed_b1
+  jitter: routine
+  skip_p: 0
+  sleep: true
+  cites: sleep block start 21:30
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_2
+  activity: wake_up
+  start: 07:30
+  end: 08:15
+  at: bed_b2
+  jitter: routine
+  skip_p: 0
+  sleep: true
+  cites: sleep block 07:30-08:15 for Eleanor
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_2
+  activity: breakfast
+  start: 08:15
+  end: 09:00
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0
+  sleep: false
+  cites: Eleanor prepares breakfast
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_2
+  activity: tidy_up
+  start: 09:00
+  end: 09:45
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.1
+  sleep: false
+  cites: organized... manages household inventory
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_2
+  activity: gaming
+  start: 09:45
+  end: '11:45'
+  at: entry_table_e1
+  jitter: flexible
+  skip_p: 0
+  sleep: false
+  cites: tends the flowers
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_2
+  activity: lunch
+  start: '12:30'
+  end: '13:15'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0
+  sleep: false
+  cites: sharing meals
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_2
+  activity: hobby
+  start: '13:15'
+  end: '15:30'
+  at: desk_b2
+  jitter: flexible
+  skip_p: 0
+  sleep: false
+  cites: Eleanor's sewing table
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_2
+  activity: medication
+  start: '16:00'
+  end: '16:15'
+  at: kitchen_table_k1
+  jitter: external
+  skip_p: 0
+  sleep: false
+  cites: Eleanor opens medication bottles
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_2
+  activity: dinner
+  start: '18:30'
+  end: '19:30'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0
+  sleep: false
+  cites: sharing meals
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+- resident: resident_2
+  activity: bedtime_routine
+  start: '22:00'
+  end: '22:30'
+  at: bed_b2
+  jitter: routine
+  skip_p: 0
+  sleep: true
+  cites: sleep block start 22:00
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+object_rules:
+- object: mug_1
+  home: cupboard_k1
+  p_misplace: 0.0
+  misplace_set:
+  - counter_k1
+  rules:
+  - activity: breakfast
+    phase: during
+    dest: kitchen_table_k1
+  - activity: breakfast
+    phase: after
+    dest: sink_k1
+- object: mug_2
+  home: cupboard_k1
+  p_misplace: 0.1
+  misplace_set:
+  - kitchen_table_k1
+  rules:
+  - activity: breakfast
+    phase: during
+    dest: kitchen_table_k1
+  - activity: gaming
+    phase: after
+    dest: counter_k1
+- object: laptop_1
+  home: tv_stand_l1
+  p_misplace: 0.0
+  misplace_set:
+  - couch_l1
+  rules:
+  - activity: hobby
+    phase: during
+    dest: desk_b2
+  - activity: hobby
+    phase: after
+    dest: tv_stand_l1
+- object: phone_1
+  home: person:resident_1
+  p_misplace: 0.15
+  misplace_set:
+  - armchair_l1
+  rules:
+  - activity: reading
+    phase: during
+    dest: armchair_l1
+  - activity: reading
+    phase: after
+    dest: nightstand_b1
+- object: phone_2
+  home: person:resident_2
+  p_misplace: 0.1
+  misplace_set:
+  - desk_b2
+  rules:
+  - activity: gaming
+    phase: during
+    dest: entry_table_e1
+  - activity: gaming
+    phase: after
+    dest: person:resident_2
+- object: keys_1
+  home: entry_hook_e1
+  p_misplace: 0.2
+  misplace_set:
+  - entry_table_e1
+  rules:
+  - activity: wake_up
+    phase: during
+    dest: entry_hook_e1
+  - activity: wake_up
+    phase: after
+    dest: person:resident_1
+- object: keys_2
+  home: entry_hook_e1
+  p_misplace: 0.3
+  misplace_set:
+  - desk_b2
+  rules:
+  - activity: wake_up
+    phase: during
+    dest: entry_hook_e1
+  - activity: wake_up
+    phase: after
+    dest: person:resident_2
+- object: book_1
+  home: armchair_l1
+  p_misplace: 0.0
+  misplace_set:
+  - armchair_l1
+  rules:
+  - activity: reading
+    phase: during
+    dest: armchair_l1
+  - activity: reading
+    phase: after
+    dest: nightstand_b1
+- object: book_2
+  home: kitchen_table_k1
+  p_misplace: 0.0
+  misplace_set:
+  - counter_k1
+  rules:
+  - activity: tidy_up
+    phase: during
+    dest: kitchen_table_k1
+  - activity: tidy_up
+    phase: after
+    dest: kitchen_table_k1
+- object: water_bottle_1
+  home: couch_l1
+  p_misplace: 0.0
+  misplace_set:
+  - couch_l1
+  rules:
+  - activity: reading
+    phase: during
+    dest: couch_l1
+  - activity: reading
+    phase: after
+    dest: couch_l1
+- object: water_bottle_2
+  home: kitchen_table_k1
+  p_misplace: 0.0
+  misplace_set:
+  - entry_table_e1
+  rules:
+  - activity: gaming
+    phase: during
+    dest: entry_table_e1
+  - activity: gaming
+    phase: after
+    dest: kitchen_table_k1
+- object: remote_1
+  home: couch_l1
+  p_misplace: 0.2
+  misplace_set:
+  - couch_l1
+  rules:
+  - activity: reading
+    phase: during
+    dest: couch_l1
+  - activity: hobby
+    phase: after
+    dest: person:resident_2
+- object: charger_1
+  home: tv_stand_l1
+  p_misplace: 0.0
+  misplace_set:
+  - tv_stand_l1
+  rules: []
+- object: charger_2
+  home: nightstand_b1
+  p_misplace: 0.0
+  misplace_set:
+  - nightstand_b1
+  rules: []
+- object: glasses_1
+  home: person:resident_1
+  p_misplace: 0.4
+  misplace_set:
+  - armchair_l1
+  rules:
+  - activity: reading
+    phase: during
+    dest: armchair_l1
+  - activity: reading
+    phase: after
+    dest: person:resident_1
+- object: glasses_2
+  home: counter_k1
+  p_misplace: 0.0
+  misplace_set:
+  - counter_k1
+  rules:
+  - activity: tidy_up
+    phase: during
+    dest: counter_k1
+  - activity: tidy_up
+    phase: after
+    dest: counter_k1
+- object: notebook_1
+  home: cupboard_k1
+  p_misplace: 0.1
+  misplace_set:
+  - kitchen_table_k1
+  rules:
+  - activity: tidy_up
+    phase: during
+    dest: kitchen_table_k1
+  - activity: tidy_up
+    phase: after
+    dest: cupboard_k1
+- object: pen_1
+  home: kitchen_table_k1
+  p_misplace: 0.2
+  misplace_set:
+  - kitchen_table_k1
+  rules:
+  - activity: tidy_up
+    phase: during
+    dest: kitchen_table_k1
+  - activity: tidy_up
+    phase: after
+    dest: kitchen_table_k1
+- object: medication_bottle_1
+  home: cupboard_k1
+  p_misplace: 0.0
+  misplace_set:
+  - kitchen_table_k1
+  rules:
+  - activity: medication
+    phase: during
+    dest: kitchen_table_k1
+  - activity: medication
+    phase: after
+    dest: cupboard_k1
+- object: medication_bottle_2
+  home: cupboard_k1
+  p_misplace: 0.0
+  misplace_set:
+  - kitchen_table_k1
+  rules:
+  - activity: medication
+    phase: during
+    dest: kitchen_table_k1
+  - activity: medication
+    phase: after
+    dest: cupboard_k1
+- object: jacket_1
+  home: entry_hook_e1
+  p_misplace: 0.0
+  misplace_set:
+  - entry_hook_e1
+  rules:
+  - activity: wake_up
+    phase: during
+    dest: entry_hook_e1
+  - activity: wake_up
+    phase: after
+    dest: entry_hook_e1
+- object: jacket_2
+  home: entry_hook_e1
+  p_misplace: 0.0
+  misplace_set:
+  - entry_hook_e1
+  rules:
+  - activity: wake_up
+    phase: during
+    dest: entry_hook_e1
+  - activity: wake_up
+    phase: after
+    dest: entry_hook_e1
+- object: wallet_1
+  home: entry_hook_e1
+  p_misplace: 0.0
+  misplace_set:
+  - entry_hook_e1
+  rules:
+  - activity: wake_up
+    phase: during
+    dest: entry_hook_e1
+  - activity: wake_up
+    phase: after
+    dest: person:resident_1
+- object: wallet_2
+  home: entry_hook_e1
+  p_misplace: 0.0
+  misplace_set:
+  - entry_hook_e1
+  rules:
+  - activity: wake_up
+    phase: during
+    dest: entry_hook_e1
+  - activity: wake_up
+    phase: after
+    dest: person:resident_2
+activities:
+- name: breakfast
+  fragment:
+    mean_bouts: 2
+- name: lunch
+  fragment:
+    mean_bouts: 2
+- name: dinner
+  fragment:
+    mean_bouts: 2
+- name: reading
+  fragment:
+    mean_bouts: 3
+- name: gaming
+  fragment:
+    mean_bouts: 3
+- name: tidy_up
+  reset_all:
+    p: 0.8
+    objects:
+    - book_1
+    - mug_1
+    - water_bottle_1
+    - remote_1
+    - glasses_1
+arc_events:
+- day: 2
+  note: Arthur forgets to take his morning meds; Eleanor has to remind him.
+  patch:
+    add:
+    - resident: resident_1
+      activity: medication
+      start: 08:00
+      end: 08:20
+      at: kitchen_table_k1
+      jitter: external
+- day: 5
+  note: Grandchildren visit for dinner; Eleanor cooks extra.
+  patch:
+    add:
+    - resident: resident_2
+      activity: coffee
+      start: '15:00'
+      end: '16:00'
+      at: kitchen_table_k1
+      jitter: flexible
+- day: 7
+  note: Arthur stays up late reading; sleeps in.
+  patch:
+    drop:
+    - bedtime_routine
+    add:
+    - resident: resident_1
+      activity: reading
+      start: '22:00'
+      end: '23:30'
+      at: armchair_l1
+      jitter: loose
+- day: 10
+  note: Eleanor goes to the garden early for flowers.
+  patch:
+    add:
+    - resident: resident_2
+      activity: gaming
+      start: 06:30
+      end: 08:00
+      at: entry_table_e1
+      jitter: external
+- day: 14
+  note: Power outage; no TV, they read by candlelight.
+  patch:
+    drop:
+    - reading
+    add:
+    - resident: resident_1
+      activity: reading
+      start: '19:30'
+      end: '21:00'
+      at: armchair_l1
+      jitter: flexible
+- day: 18
+  note: Arthur feels tired; skips afternoon reading.
+  patch:
+    drop:
+    - reading
+    add:
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '16:30'
+      end: '18:00'
+      at: bed_b1
+      jitter: flexible
+      sleep: true

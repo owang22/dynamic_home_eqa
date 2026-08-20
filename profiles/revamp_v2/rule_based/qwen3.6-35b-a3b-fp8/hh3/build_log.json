@@ -1,0 +1,45 @@
+{
+  "household": "hh_003",
+  "household_type": "retired_couple",
+  "model": "Qwen/Qwen3.6-35B-A3B-FP8",
+  "model_slug": "qwen3.6-35b-a3b-fp8",
+  "builder_version": "rv2-b3",
+  "prompts": {
+    "persona_v2": "134f5bfb",
+    "routine_program": "b33a1768",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 1312696364936065354,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 1312696364936065354,
+      "leak_prediction": {
+        "predicted_type": "remote_worker_couple",
+        "confidence": 0.85,
+        "reason": "The presence of two distinct workspaces (desk_b1, desk_b2) with associated work items (laptop_1, notebook_1, pen_1) alongside personal items (medication, glasses) strongly suggests a couple working from home. The lack of children's furniture (cribs, toys) or specific student indicators (textbooks, d",
+        "actual_type": "retired_couple",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 2,
+  "accepted_attempt": 1,
+  "attempts": [
+    {
+      "attempt": 0,
+      "seed": 609720279743231906,
+      "failures": [
+        "reachability: 11 of 24 objects wrote movement rules that only ever name their own home (['book_1', 'book_2', 'charger_1', 'charger_2', 'glasses_1', 'glasses_2']...) \u2014 fake movement, not declared stillness; use `rules: []` for an object that genuinely stays put"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 5201189054852459029,
+      "failures": []
+    }
+  ]
+}
