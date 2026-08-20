@@ -1,0 +1,191 @@
+{
+  "household": "hh_003",
+  "household_type": "retired_couple",
+  "source": "profiles/revamp_v2/rule_based/deepseek-v4-flash/hh3",
+  "days": 21,
+  "seed": 0,
+  "n_events": 739,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 0,
+    "tidy_moved": 0,
+    "tidy_ran_out_of_time": 0,
+    "blocks": 718,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [
+      "nap",
+      "night_sleep",
+      "night_sleep__bed_b2"
+    ],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [
+      "charger_1",
+      "laptop_1",
+      "medication_bottle_1"
+    ],
+    "carried_on_departure": [
+      "phone_1@appointment",
+      "phone_1@errands",
+      "phone_1@groceries",
+      "phone_1@lunch__resident_1",
+      "phone_2@lunch__resident_2"
+    ],
+    "left_behind_by_trip": [
+      "phone_1@hobby__resident_1",
+      "phone_1@walk",
+      "phone_2@errands__resident_2",
+      "phone_2@walk__resident_2"
+    ],
+    "carried_putdowns_at_start": [
+      "phone_1@wake_up",
+      "phone_1@wake_up__bed_b2",
+      "phone_2@reading",
+      "phone_2@reading__kitchen_table_k1"
+    ],
+    "skips_per_activity": {
+      "lunch": 1,
+      "put_away_dishes": 1
+    },
+    "fragment_bouts_per_activity": {
+      "breakfast": 51,
+      "lunch": 37,
+      "lunch__resident_1": 1,
+      "lunch__resident_2": 2,
+      "medication": 5,
+      "reading": 26,
+      "reading__kitchen_table_k1": 8,
+      "tidy_up": 11,
+      "tidy_up__couch_l1": 4,
+      "wake_up": 11,
+      "wake_up__bed_b2": 10
+    },
+    "carry_rehome_suppressed": 43
+  },
+  "moves_per_object": {
+    "mug_2": 95,
+    "bowl_1": 94,
+    "mug_1": 55,
+    "jacket_2": 54,
+    "keys_2": 52,
+    "book_1": 50,
+    "glasses_2": 46,
+    "jacket_1": 45,
+    "phone_1": 43,
+    "glasses_1": 42,
+    "remote_1": 36,
+    "water_bottle_2": 34,
+    "phone_2": 33,
+    "water_bottle_1": 28,
+    "blanket_1": 26,
+    "umbrella_1": 3,
+    "keys_1": 2,
+    "plate_1": 1
+  },
+  "engine": "story_rules",
+  "model": "deepseek-ai/DeepSeek-V4-Flash",
+  "builder_version": "story-rules-b1",
+  "prompts": {
+    "story": "2ad4cbac"
+  },
+  "story_call_stats": {
+    "granularity": "week",
+    "tag": "story_v1_think",
+    "n_calls": 3,
+    "n_failed_calls": 0,
+    "max_retries": 3,
+    "max_tokens": 32000
+  },
+  "failed_story_calls": [],
+  "fallback_days": [],
+  "n_fallback_days": 0,
+  "not_story_driven": false,
+  "story_activities": [
+    "appointment",
+    "bedtime_routine",
+    "breakfast",
+    "coffee",
+    "deep_clean",
+    "dinner",
+    "errands",
+    "get_ready",
+    "groceries",
+    "hobby",
+    "laundry",
+    "lunch",
+    "meal_prep",
+    "medication",
+    "nap",
+    "night_sleep",
+    "put_away_dishes",
+    "reading",
+    "relax",
+    "snack",
+    "socialise_home",
+    "tidy_up",
+    "video_call",
+    "wake_up",
+    "walk",
+    "wash_dishes",
+    "watch_tv"
+  ],
+  "n_story_activities": 27,
+  "unbound_story_activities": [
+    "appointment",
+    "bedtime_routine",
+    "coffee",
+    "deep_clean",
+    "dinner",
+    "errands",
+    "get_ready",
+    "groceries",
+    "hobby",
+    "laundry",
+    "meal_prep",
+    "relax",
+    "snack",
+    "socialise_home",
+    "tidy_up",
+    "video_call",
+    "walk",
+    "wash_dishes",
+    "watch_tv"
+  ],
+  "n_unbound_story_activities": 19,
+  "orphaned_rules_story": [],
+  "n_orphaned_rules_story": 0,
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.6
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
+    }
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_story_rules_deepseek-v4-flash_hh3_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom_1": "bedroom.004",
+      "bedroom_2": "bedroom",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

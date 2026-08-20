@@ -2,163 +2,133 @@ household_id: hh_008
 household_type: working_couple_no_children
 residents:
   - id: resident_1
-    name: Elena
+    name: Julian
     age: 34
-    occupation: Architect
-    personality: meticulous, visual, impatient with clutter
+    occupation: Data Analyst
+    personality: obsessive organizer, forgetful about small items, detail-oriented
     habits:
-      - leaves architectural sketches and pencils on the kitchen island for review
-      - wipes down the desk surface before sitting down to work on personal projects
-      - borrows resident_2's umbrella when it starts raining and forgets to return
-        it to the hall closet
-      - places her reading glasses on top of her laptop when she takes a break
-      - organizes her shoes by color in the entryway but leaves her work bag on
-        the floor next to them
+      - keeps his laptop on the dining table for 30 minutes after work before moving
+        it to the office
+      - loses his house keys in the hallway shoe rack daily, forcing resident_2
+        to retrieve them
+      - leaves his reading glasses on the kitchen counter after breakfast, where
+        resident_2 usually finds them
+      - stores his water bottle in the fridge door, but forgets it there for days
+        until resident_1 notices the condensation
+      - borrows resident_2's notebook for quick calculations and rarely returns
+        it to the bookshelf
+      - clears the coffee maker drip tray every morning without fail
+      - leaves his work jacket on the back of the dining chair until resident_2
+        hangs it up
   - id: resident_2
-    name: Marcus
-    age: 37
-    occupation: High School History Teacher
-    personality: relaxed, forgetful, sentimental
+    name: Elena
+    age: 32
+    occupation: Graphic Designer
+    personality: spontaneous, clutter-averse, creative
     habits:
-      - leaves his keys in the same bowl on the counter every single day
-      - keeps a stack of old textbooks on the coffee table for reference
-      - uses resident_1's water bottle because he forgets to fill his own
-      - drops his gym clothes in a pile by the laundry basket instead of in it
-      - leaves his phone charging on the nightstand even when he is in the living
-        room
+      - leaves her sketchbook open on the coffee table with a pen resting on top
+      - hangs her coat on the doorknob instead of the hook, creating a visual trip
+        hazard
+      - moves her phone from the kitchen island to the living room couch while waiting
+        for coffee
+      - keeps her headphones around her neck all day, often forgetting to put them
+        in the charging dock
+      - uses resident_1's mug for tea, causing a recurring dispute over 'my mug'
+        vs 'your mug'
+      - leaves her keys in the front pocket of her jeans until she sits down, then
+        loses them in the couch cushions
+      - puts her notebook in her bag without checking if she has the pen inside
 relationships: >-
-  Elena and Marcus are married and share a practical, low-drama partnership where
-  Elena handles the visual aesthetics of the home while Marcus manages the logistical
-  routines like grocery lists and bills. They often cross paths in the kitchen in
-  the evening, where Elena critiques the placement of items while Marcus tries to
-  relax with his books. The main friction point is Marcus's tendency to leave his
-  teaching materials and personal items scattered in shared spaces, which Elena
-  frequently reorganizes without asking.
+  Julian and Elena are married and share a routine of early mornings and late evenings,
+  often missing each other for dinner. Julian handles the mechanical chores like
+  dishes and laundry, while Elena manages the aesthetic aspects like tidying and
+  decorating, though they frequently clash over where items are 'supposed' to go.
+  The main friction point is Julian's tendency to leave technical items in the kitchen
+  while Elena is trying to keep that space clear for her creative work.
 home_layout_notes: >-
-  The kitchen is the central hub where both residents spend the most time, with
-  the island serving as Elena's workspace and the counter as Marcus's drop zone.
-  The living room is shared but dominated by Marcus's reading materials and Elena's
-  occasional project displays. The bedroom is strictly for sleep, with both keeping
-  their sides of the bed organized according to their respective standards.
+  The kitchen is the primary shared space, with the island serving as a drop zone
+  for both their work items and personal belongings. The living room is Elena's
+  domain for sketching, while the dining table is Julian's temporary office extension.
+  The hallway is a bottleneck for keys and jackets, leading to daily minor conflicts.
 object_inventory:
   - id: mug_1
     class: mug
     owner: resident_1
-    role: Elena's ceramic mug for coffee, kept on the counter and moved to the island
-      for sketching
+    role: Julian's morning coffee vessel, left on the counter until Elena washes
+      it
   - id: mug_2
     class: mug
     owner: resident_2
-    role: Marcus's travel mug, used for coffee on the way to school and left in
-      the sink
-  - id: laptop_1
+    role: Elena's tea mug, frequently stolen by Julian for coffee, causing minor
+      disputes
+  - id: laptop_julian
     class: laptop
     owner: resident_1
-    role: Elena's work laptop, used at the kitchen island and carried to the study
-      for late nights
-  - id: laptop_2
+    role: Julian's work device, moved from dining table to office after his post-work
+      decompression
+  - id: laptop_elena
     class: laptop
     owner: resident_2
-    role: Marcus's old laptop, used for grading and left on the coffee table
-  - id: phone_1
+    role: Elena's design laptop, left on the couch while she sketches on paper
+  - id: phone_julian
     class: phone
     owner: resident_1
-    role: Elena's phone, kept in her pocket and charged on the nightstand
-  - id: phone_2
+    role: Julian's communication device, charged on the kitchen island overnight
+  - id: phone_elena
     class: phone
     owner: resident_2
-    role: Marcus's phone, left on the nightstand and often forgotten in the living
-      room
-  - id: keys_1
+    role: Elena's communication device, moved from kitchen to couch as she settles
+      in
+  - id: keys_julian
     class: keys
     owner: resident_1
-    role: Elena's car keys, hung on the hook by the door and sometimes moved to
-      the counter
-  - id: keys_2
+    role: Julian's house keys, perpetually lost in the shoe rack, retrieved by Elena
+  - id: keys_elena
     class: keys
     owner: resident_2
-    role: Marcus's car keys, dropped in the bowl on the counter every day
-  - id: book_1
-    class: book
-    owner: resident_1
-    role: Elena's current novel, read in bed and left on the nightstand
-  - id: book_2
+    role: Elena's house keys, hidden in her jeans pocket until she sits down
+  - id: book_elena
     class: book
     owner: resident_2
-    role: Marcus's textbook, kept on the coffee table for quick reference
-  - id: water_bottle_1
-    class: water_bottle
-    owner: resident_1
-    role: Elena's reusable bottle, kept in the fridge and filled at the sink
-  - id: water_bottle_2
-    class: water_bottle
-    owner: resident_2
-    role: Marcus's bottle, often empty and left on the counter
-  - id: remote_1
-    class: remote
-    owner: shared
-    role: Shared TV remote, kept on the coffee table and often moved by both residents
-  - id: charger_1
-    class: charger
-    owner: resident_1
-    role: Elena's phone charger, kept on the nightstand and sometimes borrowed by
-      Marcus
-  - id: jacket_1
-    class: jacket
-    owner: resident_1
-    role: Elena's work jacket, hung on the hook and sometimes left on the chair
-  - id: jacket_2
-    class: jacket
-    owner: resident_2
-    role: Marcus's jacket, hung on the hook and sometimes left on the floor
-  - id: glasses_1
-    class: glasses
-    owner: resident_1
-    role: Elena's reading glasses, placed on the laptop or nightstand
-  - id: notebook_1
+    role: Elena's sketchbook, left open on the coffee table with a pen
+  - id: notebook_julian
     class: notebook
     owner: resident_1
-    role: Elena's sketchbook, kept on the island and moved to the study
-  - id: pen_1
-    class: pen
+    role: Julian's calculation notebook, borrowed by Elena and rarely returned
+  - id: water_bottle_julian
+    class: water_bottle
     owner: resident_1
-    role: Elena's pencil, used for sketches and left on the island
-  - id: umbrella_1
-    class: umbrella
-    owner: shared
-    role: Shared umbrella, kept in the hall closet and often borrowed by Elena
-  - id: wallet_1
-    class: wallet
-    owner: resident_1
-    role: Elena's wallet, kept in her work bag and carried daily
-  - id: wallet_2
-    class: wallet
+    role: Julian's hydration vessel, forgotten in the fridge for days
+  - id: headphones_elena
+    class: headphones
     owner: resident_2
-    role: Marcus's wallet, kept in his pocket and sometimes left on the counter
-  - id: towel_1
-    class: towel
-    owner: shared
-    role: Shared kitchen towel, hung on the stove and used by both residents
-  - id: plate_1
-    class: plate
-    owner: shared
-    role: Shared dinner plate, used by both residents and washed after meals
-  - id: bowl_1
-    class: bowl
-    owner: shared
-    role: Shared cereal bowl, used by both residents for breakfast and left in the
-      sink
+    role: Elena's audio device, worn around her neck and rarely docked
+  - id: glasses_julian
+    class: glasses
+    owner: resident_1
+    role: Julian's reading glasses, left on the kitchen counter after breakfast
+  - id: jacket_julian
+    class: jacket
+    owner: resident_1
+    role: Julian's work jacket, left on the dining chair until Elena hangs it
+  - id: charger_julian
+    class: charger
+    owner: resident_1
+    role: Julian's phone charger, plugged into the kitchen island outlet
+  - id: pen_elena
+    class: pen
+    owner: resident_2
+    role: Elena's sketching pen, left on the open sketchbook
 daily_life_summary: >-
-  Both residents leave the house at similar times for work, resulting in a quiet
-  home during the day where objects remain static. They return in the late afternoon
-  and spend the evening in the kitchen and living room, where they cook together
-  and discuss their days. Elena often tidies the living room while Marcus reads,
-  leading to a gentle dance of reorganization and relaxation. They rarely have guests,
-  so the home remains intimate and focused on their immediate needs.
+  Julian and Elena both leave for work early, often one leaving before the other
+  is fully awake, resulting in a quiet morning routine where they coordinate over
+  the kitchen island. They are both out during the day, leaving the home empty and
+  still, with objects left in their morning states. They cross paths in the evening
+  when they return, usually coordinating dinner in the kitchen and then splitting
+  up—one working on the couch, the other in the dining nook—until they retire to
+  their separate bedrooms.
 quirks: >-
-  Elena's architectural background makes her treat the home as a design project,
-  constantly adjusting object placement for visual harmony, while Marcus's teaching
-  career makes him treat the home as a resource for professional reference, leading
-  to a unique tension between aesthetic order and functional utility. They do not
-  have a dedicated home office, so the kitchen island serves as both a dining surface
-  and a workspace, blurring the lines between domestic and professional life.
+  Despite being a 'no children' household, they treat the empty home like a shared
+  studio, with work materials constantly migrating between rooms, blurring the line
+  between professional and domestic space. Their conflict is not about chores but
+  about the 'correct' location of creative vs. analytical tools.

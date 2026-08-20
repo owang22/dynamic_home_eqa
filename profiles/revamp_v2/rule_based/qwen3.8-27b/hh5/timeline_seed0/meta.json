@@ -1,10 +1,10 @@
 {
   "household": "hh_005",
   "household_type": "remote_worker_couple",
-  "source": "profiles/revamp_v2/qwen3.8-27b/hh5",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh5",
   "days": 21,
   "seed": 0,
-  "n_events": 1817,
+  "n_events": 798,
   "jitter_classes": {
     "external": 10,
     "routine": 30,
@@ -12,154 +12,70 @@
     "loose": 110
   },
   "activity_stats": {
-    "tidy_bouts": 0,
-    "tidy_moved": 0,
-    "tidy_ran_out_of_time": 0,
-    "blocks": 516,
-    "vacuous_arc_drops": [],
+    "tidy_bouts": 36,
+    "tidy_moved": 19,
+    "tidy_ran_out_of_time": 3,
+    "blocks": 465,
+    "vacuous_arc_drops": [
+      {
+        "day": 12,
+        "activity": "work_away"
+      }
+    ],
     "dropped_sleep_resets": [],
     "dropped_sleep_fragments": [],
-    "derived_only_from": [
-      "coffee.blanket_shared",
-      "coffee.bowl_shared",
-      "coffee.keys_elena",
-      "coffee.laptop_elena",
-      "coffee.laptop_marcus",
-      "coffee.mug_1",
-      "coffee.phone_marcus",
-      "coffee.remote_shared",
-      "coffee__couch_l1.blanket_shared",
-      "coffee__couch_l1.bowl_shared",
-      "coffee__couch_l1.keys_elena",
-      "coffee__couch_l1.laptop_elena",
-      "coffee__couch_l1.laptop_marcus",
-      "coffee__couch_l1.mug_1",
-      "coffee__couch_l1.phone_marcus",
-      "coffee__couch_l1.remote_shared",
-      "work_away.book_elena",
-      "work_away.charger_elena",
-      "work_away.charger_marcus",
-      "work_away.glasses_elena",
-      "work_away.jacket_marcus",
-      "work_away.keys_elena",
-      "work_away.laptop_elena",
-      "work_away.laptop_marcus",
-      "work_away.mug_2",
-      "work_away.phone_elena",
-      "work_away.phone_marcus",
-      "work_away.plate_shared",
-      "work_away.water_bottle_marcus",
-      "work_away__armchair_l1.book_elena",
-      "work_away__armchair_l1.charger_elena",
-      "work_away__armchair_l1.charger_marcus",
-      "work_away__armchair_l1.glasses_elena",
-      "work_away__armchair_l1.jacket_marcus",
-      "work_away__armchair_l1.keys_elena",
-      "work_away__armchair_l1.laptop_elena",
-      "work_away__armchair_l1.laptop_marcus",
-      "work_away__armchair_l1.mug_2",
-      "work_away__armchair_l1.phone_elena",
-      "work_away__armchair_l1.phone_marcus",
-      "work_away__armchair_l1.plate_shared",
-      "work_away__armchair_l1.water_bottle_marcus",
-      "work_away__kitchen_table_k1.book_elena",
-      "work_away__kitchen_table_k1.charger_elena",
-      "work_away__kitchen_table_k1.charger_marcus",
-      "work_away__kitchen_table_k1.glasses_elena",
-      "work_away__kitchen_table_k1.jacket_marcus",
-      "work_away__kitchen_table_k1.keys_elena",
-      "work_away__kitchen_table_k1.laptop_elena",
-      "work_away__kitchen_table_k1.laptop_marcus",
-      "work_away__kitchen_table_k1.mug_2",
-      "work_away__kitchen_table_k1.phone_elena",
-      "work_away__kitchen_table_k1.phone_marcus",
-      "work_away__kitchen_table_k1.plate_shared",
-      "work_away__kitchen_table_k1.water_bottle_marcus",
-      "work_away__resident_2.book_elena",
-      "work_away__resident_2.charger_elena",
-      "work_away__resident_2.charger_marcus",
-      "work_away__resident_2.glasses_elena",
-      "work_away__resident_2.jacket_marcus",
-      "work_away__resident_2.keys_elena",
-      "work_away__resident_2.keys_marcus",
-      "work_away__resident_2.laptop_elena",
-      "work_away__resident_2.laptop_marcus",
-      "work_away__resident_2.mug_2",
-      "work_away__resident_2.notebook_marcus",
-      "work_away__resident_2.pen_marcus",
-      "work_away__resident_2.phone_elena",
-      "work_away__resident_2.phone_marcus",
-      "work_away__resident_2.plate_shared",
-      "work_away__resident_2.water_bottle_marcus"
-    ],
+    "derived_only_from": [],
     "orphaned_rules": [],
     "unscheduled_activities": [],
-    "inert_objects": [],
+    "inert_objects": [
+      "mug_sara",
+      "pen_sara"
+    ],
     "carried_on_departure": [
-      "keys_marcus@work_away__resident_2",
-      "notebook_marcus@work_away__resident_2",
-      "pen_marcus@work_away__resident_2"
+      "phone_elias@work_away"
     ],
     "left_behind_by_trip": [],
     "carried_putdowns_at_start": [
-      "keys_marcus@tidy_up",
-      "keys_marcus@tidy_up__kitchen_table_k1",
-      "keys_marcus@work_away",
-      "keys_marcus@work_away__armchair_l1",
-      "keys_marcus@work_away__kitchen_table_k1",
-      "notebook_marcus@tidy_up",
-      "notebook_marcus@tidy_up__kitchen_table_k1",
-      "notebook_marcus@work_away",
-      "notebook_marcus@work_away__armchair_l1",
-      "notebook_marcus@work_away__kitchen_table_k1",
-      "pen_marcus@tidy_up",
-      "pen_marcus@tidy_up__kitchen_table_k1",
-      "pen_marcus@work_away",
-      "pen_marcus@work_away__armchair_l1",
-      "pen_marcus@work_away__kitchen_table_k1"
+      "phone_elias@relax",
+      "phone_elias@relax__bed_b1",
+      "phone_elias@relax__couch_l1"
     ],
     "skips_per_activity": {
-      "coffee__couch_l1": 2,
-      "tidy_up__kitchen_table_k1": 9
+      "tidy_up": 8,
+      "work_home__couch_l1": 1,
+      "work_home__desk_b2": 3,
+      "work_home__kitchen_table_k1": 1
     },
     "fragment_bouts_per_activity": {
-      "coffee": 59,
-      "coffee__couch_l1": 74,
-      "work_away": 133,
-      "work_away__armchair_l1": 76,
-      "work_away__kitchen_table_k1": 17,
-      "work_away__resident_2": 1
-    }
+      "work_home": 22,
+      "work_home__couch_l1": 120,
+      "work_home__desk_b2": 57,
+      "work_home__kitchen_table_k1": 10
+    },
+    "carry_rehome_suppressed": 0
   },
   "moves_per_object": {
-    "phone_elena": 396,
-    "mug_2": 355,
-    "phone_marcus": 340,
-    "mug_1": 225,
-    "bowl_shared": 67,
-    "remote_shared": 64,
-    "water_bottle_marcus": 43,
-    "glasses_elena": 43,
-    "book_elena": 33,
-    "charger_elena": 33,
-    "keys_marcus": 33,
-    "notebook_marcus": 33,
-    "pen_marcus": 33,
-    "blanket_shared": 33,
-    "plate_shared": 32,
-    "jacket_marcus": 27,
-    "charger_marcus": 27
+    "laptop_sara": 304,
+    "laptop_elias": 231,
+    "phone_elias": 65,
+    "water_bottle_sara": 64,
+    "notebook_sara": 40,
+    "glasses_elias": 27,
+    "gaming_controller_sara": 27,
+    "mug_elias": 22,
+    "phone_sara": 14,
+    "charger_elias": 4
   },
   "provenance": {
     "model": "Qwen/Qwen3.8-27B",
     "prompts": {
       "persona_v2": "134f5bfb",
-      "routine_program": "e63834f9",
+      "routine_program": "e35c6d66",
       "leak_audit": "051fa759"
     },
-    "builder_version": "rv2-b4",
-    "accepted_attempt": 0,
-    "n_attempts": 1
+    "builder_version": "rv2-b5",
+    "accepted_attempt": 4,
+    "n_attempts": 5
   },
   "realization_params": {
     "skip": {
@@ -169,6 +85,11 @@
       "min_mean_bouts": 1.0,
       "max_mean_bouts": 6.0,
       "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
     }
   },
   "spatialization": {

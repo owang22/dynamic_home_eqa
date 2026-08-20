@@ -9,7 +9,10 @@
   3. reachability — the v1 simulator's own lint, run on the expanded
                     program (every non-static object reaches >= 2
                     receptacles, statics appear in no rule), plus the
-                    fragmentation `only_from` requirement.
+                    fragmentation `only_from` requirement, plus at-home
+                    coverage (an at-home, non-sleep weekly block whose
+                    activity no object rule or reset_all names fails,
+                    named in the reason).
   4. leak audit   — strip `cites`, show only object ids + receptacle ids
                     to the generation LLM under a fixed classification
                     prompt; a correct household-type guess (chance 1/10)
@@ -184,7 +187,19 @@ def program_home(program: dict, obj: str) -> str:
 
 
 def check_reachability(program: dict) -> list[str]:
-    """Expansion + the ported v1 lint; every failure is one message."""
+    """Expansion + the ported v1 lint; every failure is one message.
+
+    Broadened (still the same named check — reachability is about rules
+    reaching the life the blocks describe, in both directions): an at-home,
+    non-sleep weekly block whose activity has zero bindings across all
+    object_rules AND no reset_all fails, with the activity named. Rule
+    sets that cluster on commute transitions leave at-home days with 1-3
+    events where a real home-all-day resident produces ~49; an at-home
+    block that touches no object is that gap, one activity at a time.
+    Sleep blocks are exempt by name/flag (their stillness is real);
+    linger names are reserved and already rejected by referential; a
+    reset_all counts as a binding because a tidy walk moves objects —
+    that is the hh1 fixture's own pattern for its tidying blocks."""
     try:
         acts, motions = xc.expand(program)
     except (ValueError, KeyError) as e:
@@ -216,6 +231,26 @@ def check_reachability(program: dict) -> list[str]:
             f"({inert[:6]}{'...' if len(inert) > 6 else ''}) — fake "
             f"movement, not declared stillness; use `rules: []` for an "
             f"object that genuinely stays put")
+    # At-home coverage (see docstring): weekly_blocks only — sleep_schedule
+    # is exempt wholesale and arc `add` blocks are one-offs, not the
+    # routine the rules are supposed to serve.
+    bound = {r["activity"] for e in program.get("object_rules") or []
+             for r in e.get("rules") or []}
+    bound |= {a["name"] for a in program.get("activities") or []
+              if a.get("reset_all")}
+    uncovered = sorted({
+        b["activity"] for b in program["weekly_blocks"]
+        if b["at"] != xc.ELSEWHERE
+        and not b.get("sleep")
+        and not any(s in b["activity"] for s in xc.SLEEP_TOKENS)
+        and b["activity"] not in bound})
+    for name in uncovered:
+        problems.append(
+            f"reachability: at-home activity {name!r} is scheduled by "
+            f"weekly_blocks but appears in no object rule (and carries no "
+            f"reset_all) — a home block that touches nothing; objects move "
+            f"because of what people do at home, not only because they "
+            f"leave")
     # Fragmented activities' after-rules still need an `only_from` gate,
     # but it is DERIVED by the expander when absent (see its comment), so
     # by the time the expansion above succeeded every such rule has one.

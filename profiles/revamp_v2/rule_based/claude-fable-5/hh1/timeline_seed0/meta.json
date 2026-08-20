@@ -1,0 +1,99 @@
+{
+  "household": "hh_001",
+  "household_type": "night_shift_worker_solo",
+  "source": "profiles/revamp_v2/rule_based/claude-fable-5/hh1",
+  "days": 21,
+  "seed": 0,
+  "n_events": 504,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 3,
+    "tidy_moved": 3,
+    "tidy_ran_out_of_time": 2,
+    "blocks": 351,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [],
+    "carried_on_departure": [
+      "phone_dario@commute_home",
+      "phone_dario@commute_out",
+      "phone_dario@groceries"
+    ],
+    "left_behind_by_trip": [
+      "phone_dario@appointment",
+      "phone_dario@work_away"
+    ],
+    "carried_putdowns_at_start": [
+      "phone_dario@wake_up"
+    ],
+    "skips_per_activity": {
+      "batch_cooking": 1,
+      "coffee": 3,
+      "gaming": 2,
+      "reading": 5,
+      "shower": 3,
+      "tidy_up": 1,
+      "watch_tv": 4
+    },
+    "fragment_bouts_per_activity": {
+      "coffee": 10,
+      "watch_tv": 27
+    },
+    "carry_rehome_suppressed": 9
+  },
+  "moves_per_object": {
+    "water_bottle_dario": 78,
+    "phone_dario": 45,
+    "lunchbox_dario": 44,
+    "headphones_dario": 35,
+    "bowl_1": 32,
+    "keys_dario": 31,
+    "charger_bedroom": 31,
+    "blanket_couch": 30,
+    "jacket_dario": 30,
+    "wallet_dario": 29,
+    "towel_1": 24,
+    "glasses_dario": 22,
+    "plate_1": 14,
+    "remote_tv": 13,
+    "medication_bottle_melatonin": 13,
+    "mug_1": 13,
+    "book_paperback": 12,
+    "gaming_controller_1": 8
+  },
+  "provenance": {
+    "model": "claude-fable-5",
+    "prompts": {
+      "persona_v2": "134f5bfb",
+      "routine_program": "b33a1768",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b3",
+    "accepted_attempt": 1,
+    "n_attempts": 2
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.6
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
+    }
+  }
+}

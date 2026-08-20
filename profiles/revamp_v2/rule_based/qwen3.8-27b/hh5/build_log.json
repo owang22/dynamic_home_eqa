@@ -3,35 +3,67 @@
   "household_type": "remote_worker_couple",
   "model": "Qwen/Qwen3.8-27B",
   "model_slug": "qwen3.8-27b",
-  "builder_version": "rv2-b4",
+  "builder_version": "rv2-b5",
   "prompts": {
     "persona_v2": "134f5bfb",
-    "routine_program": "e63834f9",
+    "routine_program": "e35c6d66",
     "leak_audit": "051fa759"
   },
   "scene": "symbolic",
   "days": 21,
-  "persona_seed": 11738833220856364761,
+  "persona_seed": 12086487513829928913,
   "persona_attempts": [
     {
       "attempt": 0,
-      "seed": 11738833220856364761,
+      "seed": 12086487513829928913,
       "leak_prediction": {
         "predicted_type": "working_couple_no_children",
         "confidence": 0.95,
-        "reason": "The presence of two distinct personal laptops, phones, and keys for 'Elena' and 'Marcus' indicates a couple. The layout features two separate bedrooms (b1, b2) with desks, suggesting a dual-income household where both partners work (likely remote or hybrid given the laptops). Crucially, there are no",
+        "reason": "The presence of two distinct personal items (laptops, mugs, phones) for 'Elias' and 'Sara' indicates a couple. The absence of any child-specific items (toys, cribs, high chairs, school supplies) rules out families with children. The presence of two desks and laptops suggests both are working, likely",
         "actual_type": "remote_worker_couple",
         "correct": false
       }
     }
   ],
   "leak_unresolved": false,
-  "n_attempts": 1,
-  "accepted_attempt": 0,
+  "n_attempts": 5,
+  "accepted_attempt": 4,
   "attempts": [
     {
       "attempt": 0,
-      "seed": 14745748362284015914,
+      "seed": 10712969562970722521,
+      "failures": [
+        "referential: laptop_elias is planned as never moving yet declares p_misplace",
+        "reachability: at-home activity 'dinner' is scheduled by weekly_blocks but appears in no object rule (and carries no reset_all) \u2014 a home block that touches nothing; objects move because of what people do at home, not only because they leave"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 11129640579734927981,
+      "failures": [
+        "referential: sleep block 'work_away' has skip_p 0.2 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.2 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.1 \u2014 a resident does not skip sleeping"
+      ]
+    },
+    {
+      "attempt": 2,
+      "seed": 10373639320176371719,
+      "failures": [
+        "reachability: at-home activity 'tidy_up' is scheduled by weekly_blocks but appears in no object rule (and carries no reset_all) \u2014 a home block that touches nothing; objects move because of what people do at home, not only because they leave"
+      ]
+    },
+    {
+      "attempt": 3,
+      "seed": 18112147326557805363,
+      "failures": [
+        "reachability: expansion failed: 'dest'"
+      ]
+    },
+    {
+      "attempt": 4,
+      "seed": 10583583634524980645,
       "failures": []
     }
   ]

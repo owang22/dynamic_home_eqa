@@ -6,7 +6,7 @@
   "builder_version": "rv2-b5",
   "prompts": {
     "persona_v2": "134f5bfb",
-    "routine_program": "fe6d4df3",
+    "routine_program": "e35c6d66",
     "leak_audit": "051fa759"
   },
   "scene": "symbolic",
@@ -26,12 +26,19 @@
     }
   ],
   "leak_unresolved": false,
-  "n_attempts": 1,
-  "accepted_attempt": 0,
+  "n_attempts": 2,
+  "accepted_attempt": 1,
   "attempts": [
     {
       "attempt": 0,
-      "seed": 2410818687505288314,
+      "seed": 17812292643122955611,
+      "failures": [
+        "reachability: at-home activity 'tidy_up' is scheduled by weekly_blocks but appears in no object rule (and carries no reset_all) \u2014 a home block that touches nothing; objects move because of what people do at home, not only because they leave"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 12076301182701393775,
       "failures": []
     }
   ]

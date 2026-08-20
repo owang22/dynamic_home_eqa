@@ -26,6 +26,32 @@ SEED="${SEED:-0}"
 SLUG=$(python3 -c "from dynamic_home_eqa.generation.llm_client import model_slug; print(model_slug('$MODEL'))")
 OUT="profiles/revamp_v2/$SLUG"
 
+# --arm story_rules: build the story-calendar + rules-engine cell instead
+# of the default rule_based pipeline. Sources are the rule_based
+# households (shared world); remaining args pass to story_rules.py
+# (e.g. --per-week, --force).
+if [ "${1:-}" = "--arm" ] && [ "${2:-}" = "story_rules" ]; then
+    shift 2
+    SRC="profiles/revamp_v2/rule_based/$SLUG"
+    OUT="profiles/revamp_v2/story_rules/$SLUG"
+    python3 src/revamp_v2/story_rules.py \
+        --households "$SRC"/hh1 "$SRC"/hh2 "$SRC"/hh3 \
+        --out-root "$OUT" --model "$MODEL" --seed "$SEED" "$@"
+    python3 src/revamp_v2/make_viewer_configs.py \
+        --slug "story_rules/$SLUG" --seed "$SEED"
+    for hh in "$OUT"/hh*/; do
+        name=$(basename "$hh")
+        cfg="visualization/configs/revamp_v2_story_rules_${SLUG}_${name}_102343992.yaml"
+        [ -f "$cfg" ] && [ -d "$hh/timeline_seed$SEED" ] && \
+            python3 visualization/spatialize.py "$cfg" \
+                --timeline "$hh/timeline_seed$SEED"
+    done
+    python3 src/revamp_v2/realism_panel.py \
+        "$OUT"/hh*/timeline_seed"$SEED" --out "$OUT/realism_panel.md"
+    echo "story_rules build complete -> $OUT"
+    exit 0
+fi
+
 # Generation failures are recorded, not fatal here: the surviving
 # households still build, and the script exits nonzero at the end so a
 # partial set can never be mistaken for a complete one.

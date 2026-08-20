@@ -1,10 +1,10 @@
 {
   "household": "hh_003",
   "household_type": "retired_couple",
-  "source": "profiles/revamp_v2/qwen3.6-35b-a3b-fp8/hh3",
+  "source": "profiles/revamp_v2/rule_based/qwen3.6-35b-a3b-fp8/hh3",
   "days": 21,
   "seed": 0,
-  "n_events": 834,
+  "n_events": 632,
   "jitter_classes": {
     "external": 10,
     "routine": 30,
@@ -60,22 +60,23 @@
       "lunch": 50,
       "reading": 77,
       "reading__armchair_l1": 2
-    }
+    },
+    "carry_rehome_suppressed": 101
   },
   "moves_per_object": {
     "book_1": 121,
     "mug_1": 101,
-    "keys_2": 69,
-    "keys_1": 65,
     "notebook_1": 62,
-    "wallet_1": 61,
-    "wallet_2": 61,
     "water_bottle_2": 60,
     "medication_bottle_1": 52,
     "medication_bottle_2": 52,
     "mug_2": 42,
     "laptop_1": 42,
     "remote_1": 39,
+    "keys_2": 27,
+    "keys_1": 17,
+    "wallet_1": 5,
+    "wallet_2": 5,
     "phone_2": 5,
     "phone_1": 1,
     "glasses_1": 1
@@ -99,18 +100,11 @@
       "min_mean_bouts": 1.0,
       "max_mean_bouts": 6.0,
       "min_bout_minutes": 10
-    }
-  },
-  "spatialization": {
-    "config": "visualization/configs/revamp_v2_rule_based_qwen3.6-35b-a3b-fp8_hh3_102343992.yaml",
-    "scene_id": "102343992",
-    "room_map": {
-      "bathroom": "bathroom.001",
-      "bedroom_1": "bedroom.004",
-      "bedroom_2": "bedroom",
-      "entry": "hallway.003",
-      "kitchen": "kitchen",
-      "living": "tv"
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
     }
   }
 }

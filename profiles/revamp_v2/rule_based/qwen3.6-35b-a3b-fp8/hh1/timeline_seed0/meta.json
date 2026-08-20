@@ -1,10 +1,10 @@
 {
   "household": "hh_001",
   "household_type": "night_shift_worker_solo",
-  "source": "profiles/revamp_v2/qwen3.6-35b-a3b-fp8/hh1",
+  "source": "profiles/revamp_v2/rule_based/qwen3.6-35b-a3b-fp8/hh1",
   "days": 21,
   "seed": 0,
-  "n_events": 428,
+  "n_events": 400,
   "jitter_classes": {
     "external": 10,
     "routine": 30,
@@ -61,10 +61,11 @@
       "lunch": 7,
       "wake_up": 11,
       "work_home": 22
-    }
+    },
+    "carry_rehome_suppressed": 14
   },
   "moves_per_object": {
-    "phone_1": 128,
+    "phone_1": 100,
     "charger_1": 54,
     "jacket_1": 41,
     "towel_1": 40,
@@ -93,17 +94,11 @@
       "min_mean_bouts": 1.0,
       "max_mean_bouts": 6.0,
       "min_bout_minutes": 10
-    }
-  },
-  "spatialization": {
-    "config": "visualization/configs/revamp_v2_rule_based_qwen3.6-35b-a3b-fp8_hh1_102343992.yaml",
-    "scene_id": "102343992",
-    "room_map": {
-      "bathroom": "bathroom.001",
-      "bedroom": "bedroom.004",
-      "entry": "hallway.003",
-      "kitchen": "kitchen",
-      "living": "tv"
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
     }
   }
 }

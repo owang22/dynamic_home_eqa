@@ -1,10 +1,10 @@
 {
   "household": "hh_009",
   "household_type": "grad_student_solo",
-  "source": "profiles/revamp_v2/qwen3.8-27b/hh9",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh9",
   "days": 21,
   "seed": 0,
-  "n_events": 877,
+  "n_events": 481,
   "jitter_classes": {
     "external": 10,
     "routine": 30,
@@ -63,15 +63,16 @@
       "meal_prep__kitchen_table_k1": 53,
       "work_away": 68,
       "work_away__resident_1": 23
-    }
+    },
+    "carry_rehome_suppressed": 198
   },
   "moves_per_object": {
-    "keys_1": 140,
-    "jacket_1": 139,
-    "water_bottle_1": 137,
-    "wallet_1": 137,
-    "backpack_1": 136,
-    "headphones_1": 136,
+    "keys_1": 74,
+    "jacket_1": 73,
+    "water_bottle_1": 71,
+    "wallet_1": 71,
+    "backpack_1": 70,
+    "headphones_1": 70,
     "towel_1": 43,
     "book_1": 4,
     "remote_1": 3,
@@ -96,6 +97,11 @@
       "min_mean_bouts": 1.0,
       "max_mean_bouts": 6.0,
       "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
     }
   },
   "spatialization": {

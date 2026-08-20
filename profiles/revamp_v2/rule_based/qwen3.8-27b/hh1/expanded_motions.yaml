@@ -5,7 +5,7 @@ household_type: night_shift_worker_solo
 source_persona: persona.yaml
 residents:
 - id: resident_1
-  jitter_scale: 0.7
+  jitter_scale: 0.6
 receptacles:
 - id: bed_b1
   room: bedroom
@@ -52,10 +52,19 @@ receptacles:
 placements:
   keys_1:
     home: counter_k1
+    p_misplace: 0.1
+    misplace_set:
+    - entry_table_e1
+    - kitchen_table_k1
   wallet_1:
     home: counter_k1
+    static: true
   headphones_1:
     home: tv_stand_l1
+    p_misplace: 0.2
+    misplace_set:
+    - couch_l1
+    - coffee_table_l1
   pen_1:
     home: desk_b1
   mug_1:
@@ -66,133 +75,97 @@ placements:
     home: entry_hook_e1
   phone_1:
     home: counter_k1
-    p_misplace: 0.2
-    misplace_set:
-    - kitchen_table_k1
-    - coffee_table_l1
 object_motions:
-  sleep_work_away:
-    at: bed_b1
-    jitter: external
-    during: {}
-    after: {}
+  sleep_bedtime_routine:
+    at: kitchen_table_k1
+    jitter: routine
+    during:
+      headphones_1: counter_k1
+      mug_1: kitchen_table_k1
+      water_bottle_1: counter_k1
+      phone_1: kitchen_table_k1
+    after:
+      headphones_1:
+        dest: tv_stand_l1
+        only_from:
+        - counter_k1
+      mug_1:
+        dest: counter_k1
+        only_from:
+        - kitchen_table_k1
+      water_bottle_1:
+        dest: nightstand_b1
+        only_from:
+        - counter_k1
+      phone_1:
+        dest: counter_k1
+        only_from:
+        - kitchen_table_k1
   commute_home:
     at: ELSEWHERE
     jitter: external
     during:
       keys_1: counter_k1
-      wallet_1: counter_k1
     after:
+      keys_1:
+        dest: counter_k1
+        only_from:
+        - counter_k1
+        - entry_table_e1
       pen_1:
         dest: desk_b1
-        only_from: &id004
+        only_from:
         - ELSEWHERE
-        - counter_k1
       jacket_1:
         dest: entry_hook_e1
-        only_from: &id005
+        only_from:
         - ELSEWHERE
-        - entry_floor_e1
-  deep_clean:
-    at: counter_k1
-    jitter: external
-    during:
-      headphones_1: person:resident_1
-      phone_1: person:resident_1
-    after:
-      headphones_1:
-        dist:
-          tv_stand_l1: 0.6
-          counter_k1: 0.4
-        only_from:
-        - person:resident_1
-      phone_1:
-        dest: counter_k1
-        only_from:
-        - person:resident_1
-  gaming:
+  sleep_deep_clean:
     at: bed_b1
     jitter: routine
+    during: {}
+    after: {}
+  reading:
+    at: couch_l1
+    jitter: flexible
     during:
-      headphones_1: person:resident_1
-      water_bottle_1: nightstand_b1
+      headphones_1: couch_l1
+      mug_1: coffee_table_l1
+      phone_1: couch_l1
     after:
       headphones_1:
-        dist: &id001
-          tv_stand_l1: 0.7
-          coffee_table_l1: 0.3
-        only_from: &id002
-        - person:resident_1
-      water_bottle_1:
-        dest: counter_k1
-        only_from: &id003
-        - nightstand_b1
-        - bed_b1
-  coffee:
-    at: counter_k1
-    jitter: routine
-    during:
-      mug_1: person:resident_1
-      phone_1: person:resident_1
-    after:
-      mug_1:
-        dist:
-          counter_k1: 0.8
-          sink_k1: 0.2
+        dest: tv_stand_l1
         only_from:
-        - person:resident_1
+        - couch_l1
+        - coffee_table_l1
+      mug_1:
+        dest: counter_k1
+        only_from:
+        - coffee_table_l1
       phone_1:
         dest: counter_k1
         only_from:
-        - person:resident_1
+        - couch_l1
+    fragment:
+      mean_bouts: 3
+  shower:
+    at: ELSEWHERE
+    jitter: routine
+    during: {}
+    after: {}
   commute_out:
     at: ELSEWHERE
     jitter: external
     during:
+      keys_1: ELSEWHERE
       pen_1: ELSEWHERE
       jacket_1: ELSEWHERE
-    after:
-      keys_1:
-        dest: ELSEWHERE
-        only_from:
-        - counter_k1
-        - kitchen_table_k1
-      wallet_1:
-        dest: ELSEWHERE
-        only_from:
-        - counter_k1
-        - kitchen_table_k1
-  sleep_work_away__resident_1:
+    after: {}
+  work_away:
     at: ELSEWHERE
     jitter: external
     during: {}
     after: {}
-  gaming__couch_l1:
-    at: couch_l1
-    jitter: loose
-    during:
-      headphones_1: person:resident_1
-      water_bottle_1: nightstand_b1
-    after:
-      headphones_1:
-        dist: *id001
-        only_from: *id002
-      water_bottle_1:
-        dest: counter_k1
-        only_from: *id003
-  commute_home__counter_k1:
-    at: counter_k1
-    jitter: external
-    during:
-      keys_1: counter_k1
-      wallet_1: counter_k1
-    after:
-      pen_1:
-        dest: desk_b1
-        only_from: *id004
-      jacket_1:
-        dest: entry_hook_e1
-        only_from: *id005
   linger_out:
     at: ELSEWHERE
     jitter: routine

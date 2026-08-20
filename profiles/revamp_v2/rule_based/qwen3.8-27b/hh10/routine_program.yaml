@@ -5,11 +5,11 @@ days: 21
 day0: Monday
 residents:
 - id: resident_1
-  jitter_scale: 0.6
+  jitter_scale: 1.6
 - id: resident_2
-  jitter_scale: 1.4
+  jitter_scale: 0.7
 - id: resident_3
-  jitter_scale: 1.8
+  jitter_scale: 1.2
 receptacles:
 - id: bed_b1
   room: bedroom_1
@@ -73,10 +73,9 @@ sleep_schedule:
   - Sa
   - Su
   start: '22:30'
-  end: 06:30+1
+  end: 06:45+1
   at: bed_b1
   jitter: routine
-  cites: bedroom is a sanctuary
 - resident: resident_2
   activity: bedtime_routine
   days:
@@ -87,11 +86,10 @@ sleep_schedule:
   - Fr
   - Sa
   - Su
-  start: '23:00'
-  end: 06:45+1
+  start: '22:00'
+  end: 06:15+1
   at: bed_b2
-  jitter: routine
-  cites: bedroom is a sanctuary
+  jitter: external
 - resident: resident_3
   activity: bedtime_routine
   days:
@@ -102,13 +100,12 @@ sleep_schedule:
   - Fr
   - Sa
   - Su
-  start: '20:00'
-  end: 06:00+1
-  at: bed_b2
+  start: '20:30'
+  end: 06:15+1
+  at: bed_b1
   jitter: routine
-  cites: Leo eventually falling asleep
 weekly_blocks:
-- cites: Elena works from the dining table
+- cites: Elena works from home in the living room
   resident: resident_1
   activity: work_away
   sleep: false
@@ -118,12 +115,24 @@ weekly_blocks:
   - We
   - Th
   - Fr
-  start: 07:30
+  start: 08:00
   end: '12:00'
-  at: kitchen_table_k1
+  at: ELSEWHERE
   jitter: external
   skip_p: 0.0
-- cites: Elena works from the dining table
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 09:00
+  end: '11:00'
+  at: ELSEWHERE
+  jitter: flexible
+  skip_p: 0.4
+- cites: Elena works from home in the living room
   resident: resident_1
   activity: work_away
   sleep: false
@@ -133,12 +142,41 @@ weekly_blocks:
   - We
   - Th
   - Fr
-  start: '13:30'
-  end: '17:30'
-  at: kitchen_table_k1
+  start: '13:00'
+  end: '17:00'
+  at: ELSEWHERE
   jitter: external
   skip_p: 0.0
-- cites: Marcus drops Leo off at playgroup
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '12:00'
+  end: '14:00'
+  at: ELSEWHERE
+  jitter: flexible
+  skip_p: 0.4
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '20:00'
+  at: ELSEWHERE
+  jitter: flexible
+  skip_p: 0.1
+- cites: Marcus is at the office until late afternoon
   resident: resident_2
   activity: work_away
   sleep: false
@@ -149,30 +187,35 @@ weekly_blocks:
   - Th
   - Fr
   start: 07:00
-  end: '15:30'
+  end: '17:00'
   at: ELSEWHERE
   jitter: external
   skip_p: 0.0
-- cites: Leo naps
-  resident: resident_3
-  activity: nap
-  sleep: true
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  - Sa
-  - Su
-  start: '12:30'
-  end: '14:30'
-  at: couch_l1
-  jitter: routine
-  skip_p: 0.1
-- cites: Marcus takes Leo for a walk
+- cites: Marcus is at the office until late afternoon
   resident: resident_2
-  activity: walk
+  activity: work_away
+  sleep: false
+  days:
+  - Sa
+  start: 08:00
+  end: '12:00'
+  at: ELSEWHERE
+  jitter: flexible
+  skip_p: 0.3
+- cites: Marcus is at the office until late afternoon
+  resident: resident_2
+  activity: work_away
+  sleep: false
+  days:
+  - Su
+  start: 09:00
+  end: '11:00'
+  at: ELSEWHERE
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena provides flexible, creative play
+  resident: resident_1
+  activity: play_with_kids
   sleep: false
   days:
   - Mo
@@ -182,12 +225,216 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: '16:00'
-  end: '17:30'
-  at: ELSEWHERE
+  start: '10:00'
+  end: '12:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Elena provides flexible, creative play
+  resident: resident_1
+  activity: play_with_kids
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '17:00'
+  end: '18:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Marcus handles the more structured routines
+  resident: resident_2
+  activity: play_with_kids
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '10:00'
+  end: '12:00'
+  at: couch_l1
   jitter: routine
   skip_p: 0.1
-- cites: Elena reads before bed
+- cites: Marcus handles the more structured routines
+  resident: resident_2
+  activity: play_with_kids
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '17:00'
+  end: '18:00'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.1
+- cites: Marcus handles the more structured routines
+  resident: resident_2
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '17:00'
+  end: '18:30'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.0
+- cites: Marcus handles the more structured routines
+  resident: resident_2
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:00
+  end: 08:00
+  at: counter_k1
+  jitter: external
+  skip_p: 0.0
+- cites: Marcus handles the more structured routines
+  resident: resident_2
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '11:00'
+  end: '11:30'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 08:00
+  end: 08:30
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '12:00'
+  end: '12:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '12:00'
+  end: '12:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:30'
+  end: '19:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Marcus handles the more structured routines
+  resident: resident_2
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:30'
+  end: '20:00'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.0
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: watch_tv
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '20:00'
+  end: '21:30'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Marcus handles the more structured routines
+  resident: resident_2
+  activity: watch_tv
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '20:00'
+  end: '21:30'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.2
+- cites: Elena works from home in the living room
   resident: resident_1
   activity: reading
   sleep: false
@@ -200,13 +447,13 @@ weekly_blocks:
   - Sa
   - Su
   start: '21:30'
-  end: '22:15'
-  at: couch_l1
-  jitter: routine
-  skip_p: 0.1
-- cites: Elena tidies the living room
-  resident: resident_1
-  activity: tidy_up
+  end: '22:30'
+  at: bed_b1
+  jitter: flexible
+  skip_p: 0.4
+- cites: Marcus handles the more structured routines
+  resident: resident_2
+  activity: reading
   sleep: false
   days:
   - Mo
@@ -216,12 +463,54 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: '16:00'
-  end: '17:00'
-  at: couch_l1
+  start: '21:30'
+  end: '22:00'
+  at: bed_b2
+  jitter: routine
+  skip_p: 0.3
+- cites: Marcus handles the more structured routines
+  resident: resident_2
+  activity: nap
+  sleep: true
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '13:00'
+  end: '13:30'
+  at: bed_b2
+  jitter: routine
+  skip_p: 0.3
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: nap
+  sleep: true
+  days:
+  - Sa
+  - Su
+  start: '14:00'
+  end: '15:00'
+  at: bed_b1
   jitter: flexible
-  skip_p: 0.2
-- cites: Marcus puts away toys in bulk
+  skip_p: 0.4
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: tidy_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '20:00'
+  end: '21:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.4
+- cites: Marcus handles the more structured routines
   resident: resident_2
   activity: tidy_up
   sleep: false
@@ -233,14 +522,223 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: '18:00'
-  end: '18:45'
-  at: couch_l1
-  jitter: flexible
-  skip_p: 0.2
-- cites: Elena wipes down the counter
+  start: '21:00'
+  end: '21:30'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: Elena works from home in the living room
   resident: resident_1
   activity: tidy_up
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '15:00'
+  end: '16:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '12:30'
+  end: '13:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '14:00'
+  end: '15:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:30'
+  end: '20:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '21:30'
+  end: '22:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:30'
+  end: '23:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:00'
+  end: '23:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.4
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:30'
+  end: '23:59'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.5
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 00:00
+  end: 06:45
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.0
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 06:45
+  end: 07:00
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:00
+  end: 08:00
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 08:00
+  end: '10:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '10:00'
+  end: '12:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.4
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
   sleep: false
   days:
   - Mo
@@ -253,11 +751,11 @@ weekly_blocks:
   start: '12:00'
   end: '12:30'
   at: counter_k1
-  jitter: routine
-  skip_p: 0.0
-- cites: Elena manages physical order
+  jitter: flexible
+  skip_p: 0.5
+- cites: Elena works from home in the living room
   resident: resident_1
-  activity: tidy_up
+  activity: work_away
   sleep: false
   days:
   - Mo
@@ -267,60 +765,65 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: 07:00
-  end: 07:30
+  start: '12:30'
+  end: '13:00'
   at: counter_k1
-  jitter: routine
-  skip_p: 0.1
-- cites: Marcus handles toddler care
-  resident: resident_2
-  activity: play_with_kids
+  jitter: flexible
+  skip_p: 0.6
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
   sleep: false
   days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
   - Sa
   - Su
-  start: 09:00
-  end: '12:00'
-  at: couch_l1
+  start: '13:00'
+  end: '17:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.0
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '17:00'
+  end: '18:00'
+  at: counter_k1
   jitter: flexible
   skip_p: 0.1
-- cites: Leo grabs small objects
-  resident: resident_3
-  activity: play_with_kids
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  - Sa
-  - Su
-  start: 09:00
-  end: '12:00'
-  at: coffee_table_l1
-  jitter: loose
-  skip_p: 0.0
-- cites: Leo grabs small objects
-  resident: resident_3
-  activity: play_with_kids
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  - Sa
-  - Su
-  start: '15:00'
-  end: '18:00'
-  at: coffee_table_l1
-  jitter: loose
-  skip_p: 0.0
-- cites: Elena prepares dinner
+- cites: Elena works from home in the living room
   resident: resident_1
-  activity: dinner
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '18:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
   sleep: false
   days:
   - Mo
@@ -332,12 +835,12 @@ weekly_blocks:
   - Su
   start: '18:30'
   end: '19:30'
-  at: kitchen_table_k1
-  jitter: routine
-  skip_p: 0.0
-- cites: They share the couch in late evening
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena works from home in the living room
   resident: resident_1
-  activity: watch_tv
+  activity: work_away
   sleep: false
   days:
   - Mo
@@ -347,14 +850,14 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: '20:30'
-  end: '21:30'
-  at: couch_l1
-  jitter: routine
-  skip_p: 0.2
-- cites: They share the couch in late evening
-  resident: resident_2
-  activity: watch_tv
+  start: '19:30'
+  end: '20:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.4
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
   sleep: false
   days:
   - Mo
@@ -364,356 +867,1154 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: '20:30'
+  start: '20:00'
   end: '21:30'
-  at: couch_l1
-  jitter: routine
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.5
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '21:30'
+  end: '22:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.6
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:30'
+  end: '23:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.0
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:00'
+  end: '23:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:30'
+  end: '23:59'
+  at: counter_k1
+  jitter: flexible
   skip_p: 0.2
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 00:00
+  end: 06:45
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 06:45
+  end: 07:00
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.4
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:00
+  end: 08:00
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.5
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 08:00
+  end: '10:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.0
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '10:00'
+  end: '12:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '12:00'
+  end: '12:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '12:30'
+  end: '13:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '13:00'
+  end: '17:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.4
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '17:00'
+  end: '18:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.0
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '18:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:30'
+  end: '19:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:30'
+  end: '20:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '20:00'
+  end: '21:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.4
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '21:30'
+  end: '22:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.5
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:30'
+  end: '23:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.0
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:00'
+  end: '23:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:30'
+  end: '23:59'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 00:00
+  end: 06:45
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 06:45
+  end: 07:00
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.4
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:00
+  end: 08:00
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.5
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 08:00
+  end: '10:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.0
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '10:00'
+  end: '12:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '12:00'
+  end: '12:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '12:30'
+  end: '13:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '13:00'
+  end: '17:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.4
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '17:00'
+  end: '18:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.0
+- cites: Elena works from home in the living room
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '18:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
 object_rules:
 - object: mug_1
-  cites: moved to dining table during work
+  cites: Elena's coffee mug, which she carries from kitchen to living room
   home: counter_k1
+  p_misplace: 0.2
+  misplace_set:
+  - kitchen_table_k1
+  - couch_l1
   rules:
-  - cites: moved to dining table during work
-    activity: work_away
+  - activity: work_away
     phase: during
+    cites: Elena's coffee mug, which she carries from kitchen to living room
+    only_from:
+    - counter_k1
+    - kitchen_table_k1
     dest: kitchen_table_k1
-    p: 1.0
-  - cites: Elena wipes counter immediately
-    activity: work_away
+  - activity: work_away
     phase: after
+    cites: Elena's coffee mug, which she carries from kitchen to living room
+    only_from:
+    - kitchen_table_k1
     dest: counter_k1
-    p: 1.0
 - object: mug_2
-  cites: often left on the island
+  cites: Marcus's mug, kept in the kitchen or home office
   home: counter_k1
+  p_misplace: 0.1
+  misplace_set:
+  - counter_k1
+  - desk_b2
   rules:
-  - cites: often left on the island
-    activity: work_away
+  - activity: meal_prep
     phase: during
+    cites: Marcus's mug, kept in the kitchen or home office
+    only_from:
+    - counter_k1
+    - desk_b2
     dest: counter_k1
-    p: 0.8
-    else: kitchen_table_k1
-  - cites: Elena washes it
-    activity: tidy_up
+  - activity: meal_prep
     phase: after
-    dest: dish_rack_k1
-    p: 0.5
-    else: counter_k1
-    dist:
-    - dest: counter_k1
-      p: 0.5
-    - dest: dish_rack_k1
-      p: 0.5
-- object: keys_1
-  cites: consistently placed in entryway basket
-  home: entry_table_e1
+    cites: Marcus's mug, kept in the kitchen or home office
+    only_from:
+    - counter_k1
+    dest: counter_k1
+- object: bowl_1
+  cites: Leo's high-chair bowl, which is used for every meal
+  home: cupboard_k1
+  p_misplace: 0.3
+  misplace_set:
+  - sink_k1
+  - counter_k1
   rules:
-  - cites: consistently placed in entryway basket
-    activity: work_away
+  - activity: meal_prep
     phase: during
-    dest: entry_table_e1
-    p: 1.0
-  - cites: consistently placed in entryway basket
-    activity: work_away
+    cites: Leo's high-chair bowl, which is used for every meal
+    only_from:
+    - cupboard_k1
+    - sink_k1
+    - counter_k1
+    dest: kitchen_table_k1
+  - activity: meal_prep
     phase: after
-    dest: entry_table_e1
-    p: 1.0
-- object: keys_2
-  cites: frequently misplaced on kitchen island
+    cites: Leo's high-chair bowl, which is used for every meal
+    only_from:
+    - kitchen_table_k1
+    dest: sink_k1
+- object: plate_1
+  cites: Shared dinner plate, moved from kitchen to dining table by Marcus
+  home: cupboard_k1
+  p_misplace: 0.2
+  misplace_set:
+  - kitchen_table_k1
+  - sink_k1
+  rules:
+  - activity: meal_prep
+    phase: during
+    cites: Shared dinner plate, moved from kitchen to dining table by Marcus
+    only_from:
+    - cupboard_k1
+    - sink_k1
+    dest: kitchen_table_k1
+  - activity: meal_prep
+    phase: after
+    cites: Shared dinner plate, moved from kitchen to dining table by Marcus
+    only_from:
+    - kitchen_table_k1
+    dest: sink_k1
+- object: laptop_1
+  cites: Elena's work laptop, which she moves from the home office to the living room sofa
+  home: desk_b1
+  p_misplace: 0.1
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  rules:
+  - activity: work_away
+    phase: during
+    cites: Elena's work laptop, which she moves from the home office to the living room sofa
+    only_from:
+    - desk_b1
+    - couch_l1
+    dest: couch_l1
+  - activity: work_away
+    phase: after
+    cites: Elena's work laptop, which she moves from the home office to the living room sofa
+    only_from:
+    - couch_l1
+    dest: desk_b1
+- object: phone_1
+  cites: Elena's phone, which she keeps in her pocket or on the dining table
+  home: person:resident_1
+  p_misplace: 0.3
+  misplace_set:
+  - kitchen_table_k1
+  - couch_l1
+  - bed_b1
+  rules:
+  - activity: work_away
+    phase: during
+    cites: Elena's phone, which she keeps in her pocket or on the dining table
+    only_from:
+    - person:resident_1
+    - kitchen_table_k1
+    - couch_l1
+    dest: kitchen_table_k1
+  - activity: work_away
+    phase: after
+    cites: Elena's phone, which she keeps in her pocket or on the dining table
+    only_from:
+    - kitchen_table_k1
+    dest: person:resident_1
+- object: phone_2
+  cites: Marcus's phone, which he keeps in his pocket or on the kitchen counter
+  home: person:resident_2
+  p_misplace: 0.2
+  misplace_set:
+  - counter_k1
+  - desk_b2
+  rules:
+  - activity: work_away
+    phase: during
+    cites: Marcus's phone, which he keeps in his pocket or on the kitchen counter
+    only_from:
+    - person:resident_2
+    - counter_k1
+    dest: counter_k1
+  - activity: work_away
+    phase: after
+    cites: Marcus's phone, which he keeps in his pocket or on the kitchen counter
+    only_from:
+    - counter_k1
+    dest: person:resident_2
+- object: keys_1
+  cites: Elena's keys, which she often forgets in the hallway or on the dining table
   home: entry_table_e1
+  p_misplace: 0.4
+  misplace_set:
+  - entry_floor_e1
+  - kitchen_table_k1
+  rules:
+  - activity: work_away
+    phase: during
+    cites: Elena's keys, which she often forgets in the hallway or on the dining table
+    only_from:
+    - entry_table_e1
+    - entry_floor_e1
+    - kitchen_table_k1
+    dest: person:resident_1
+  - activity: work_away
+    phase: after
+    cites: Elena's keys, which she often forgets in the hallway or on the dining table
+    only_from:
+    - person:resident_1
+    dest: entry_table_e1
+- object: keys_2
+  cites: Marcus's keys, which he always hangs on the specific hook by the door
+  home: entry_hook_e1
+  p_misplace: 0.05
+  misplace_set:
+  - entry_table_e1
+  rules:
+  - activity: work_away
+    phase: during
+    cites: Marcus's keys, which he always hangs on the specific hook by the door
+    only_from:
+    - entry_hook_e1
+    - entry_table_e1
+    dest: person:resident_2
+  - activity: work_away
+    phase: after
+    cites: Marcus's keys, which he always hangs on the specific hook by the door
+    only_from:
+    - person:resident_2
+    dest: entry_hook_e1
+- object: book_1
+  cites: Leo's picture book, which he carries around the house
+  home: bookshelf_l1
+  p_misplace: 0.4
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  - bedroom_floor_b1
+  rules:
+  - activity: play_with_kids
+    phase: during
+    cites: Leo's picture book, which he carries around the house
+    only_from:
+    - bookshelf_l1
+    - couch_l1
+    - coffee_table_l1
+    dest: couch_l1
+  - activity: play_with_kids
+    phase: after
+    cites: Leo's picture book, which he carries around the house
+    only_from:
+    - couch_l1
+    dest: bookshelf_l1
+- object: water_bottle_1
+  cites: Leo's sippy cup, which is filled by Marcus and often left on the floor
+  home: counter_k1
+  p_misplace: 0.5
+  misplace_set:
+  - bedroom_floor_b1
+  - entry_floor_e1
+  - kitchen_table_k1
+  rules:
+  - activity: meal_prep
+    phase: during
+    cites: Leo's sippy cup, which is filled by Marcus and often left on the floor
+    only_from:
+    - counter_k1
+    - bedroom_floor_b1
+    - entry_floor_e1
+    dest: counter_k1
+  - activity: meal_prep
+    phase: after
+    cites: Leo's sippy cup, which is filled by Marcus and often left on the floor
+    only_from:
+    - counter_k1
+    dest: bedroom_floor_b1
+- object: remote_1
+  cites: Shared TV remote, which Leo frequently grabs and hides under the sofa
+  home: tv_stand_l1
+  p_misplace: 0.4
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  rules:
+  - activity: watch_tv
+    phase: during
+    cites: Shared TV remote, which Leo frequently grabs and hides under the sofa
+    only_from:
+    - tv_stand_l1
+    - couch_l1
+    - coffee_table_l1
+    dest: tv_stand_l1
+  - activity: watch_tv
+    phase: after
+    cites: Shared TV remote, which Leo frequently grabs and hides under the sofa
+    only_from:
+    - tv_stand_l1
+    dest: couch_l1
+- object: charger_1
+  cites: Elena's laptop charger, which she moves between the home office and living room
+  home: desk_b1
+  p_misplace: 0.2
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  rules:
+  - activity: work_away
+    phase: during
+    cites: Elena's laptop charger, which she moves between the home office and living room
+    only_from:
+    - desk_b1
+    - couch_l1
+    dest: couch_l1
+  - activity: work_away
+    phase: after
+    cites: Elena's laptop charger, which she moves between the home office and living room
+    only_from:
+    - couch_l1
+    dest: desk_b1
+- object: jacket_1
+  cites: Leo's jacket, which Marcus puts on him before going out
+  home: entry_hook_e1
+  p_misplace: 0.3
+  misplace_set:
+  - entry_floor_e1
+  - couch_l1
+  rules:
+  - activity: work_away
+    phase: during
+    cites: Leo's jacket, which Marcus puts on him before going out
+    only_from:
+    - entry_hook_e1
+    - entry_floor_e1
+    dest: person:resident_3
+  - activity: work_away
+    phase: after
+    cites: Leo's jacket, which Marcus puts on him before going out
+    only_from:
+    - person:resident_3
+    dest: entry_hook_e1
+- object: headphones_1
+  cites: Elena's noise-canceling headphones, which she uses to focus on work
+  home: desk_b1
+  p_misplace: 0.2
+  misplace_set:
+  - couch_l1
+  - kitchen_table_k1
+  rules:
+  - activity: work_away
+    phase: during
+    cites: Elena's noise-canceling headphones, which she uses to focus on work
+    only_from:
+    - desk_b1
+    - couch_l1
+    dest: couch_l1
+  - activity: work_away
+    phase: after
+    cites: Elena's noise-canceling headphones, which she uses to focus on work
+    only_from:
+    - couch_l1
+    dest: desk_b1
+- object: glasses_1
+  cites: Elena's reading glasses, which she keeps on the dining table or in her pocket
+  home: kitchen_table_k1
+  p_misplace: 0.4
+  misplace_set:
+  - couch_l1
+  - bed_b1
+  rules:
+  - activity: reading
+    phase: during
+    cites: Elena's reading glasses, which she keeps on the dining table or in her pocket
+    only_from:
+    - kitchen_table_k1
+    - couch_l1
+    - bed_b1
+    dest: bed_b1
+  - activity: reading
+    phase: after
+    cites: Elena's reading glasses, which she keeps on the dining table or in her pocket
+    only_from:
+    - bed_b1
+    dest: kitchen_table_k1
+- object: notebook_1
+  cites: Marcus's work notebook, which he keeps in the home office, rarely moved
+  home: desk_b2
+  motion: rarely_moved
+  rules: []
+- object: pen_1
+  cites: Elena's pen, which she uses to mark up printouts and often leaves on the dining table
+  home: kitchen_table_k1
+  p_misplace: 0.5
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  - desk_b1
+  rules:
+  - activity: work_away
+    phase: during
+    cites: Elena's pen, which she uses to mark up printouts and often leaves on the dining table
+    only_from:
+    - kitchen_table_k1
+    - couch_l1
+    - desk_b1
+    dest: kitchen_table_k1
+  - activity: work_away
+    phase: after
+    cites: Elena's pen, which she uses to mark up printouts and often leaves on the dining table
+    only_from:
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+- object: toy_1
+  cites: Leo's favorite block, which he carries around the house
+  home: bedroom_floor_b1
+  p_misplace: 0.6
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  - entry_floor_e1
+  rules:
+  - activity: play_with_kids
+    phase: during
+    cites: Leo's favorite block, which he carries around the house
+    only_from:
+    - bedroom_floor_b1
+    - couch_l1
+    - coffee_table_l1
+    dest: couch_l1
+  - activity: play_with_kids
+    phase: after
+    cites: Leo's favorite block, which he carries around the house
+    only_from:
+    - couch_l1
+    dest: bedroom_floor_b1
+- object: blanket_1
+  cites: Leo's comfort blanket, which he carries to the sofa or bedroom
+  home: bed_b1
+  p_misplace: 0.4
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  rules:
+  - activity: nap
+    phase: during
+    cites: Leo's comfort blanket, which he carries to the sofa or bedroom
+    only_from:
+    - bed_b1
+    - couch_l1
+    dest: couch_l1
+  - activity: nap
+    phase: after
+    cites: Leo's comfort blanket, which he carries to the sofa or bedroom
+    only_from:
+    - couch_l1
+    dest: bed_b1
+- object: towel_1
+  cites: Kitchen towel, which Marcus uses to dry dishes and often hangs on the oven handle
+  home: counter_k1
+  p_misplace: 0.2
+  misplace_set:
+  - sink_k1
+  - counter_k1
+  rules:
+  - activity: tidy_up
+    phase: during
+    cites: Kitchen towel, which Marcus uses to dry dishes and often hangs on the oven handle
+    only_from:
+    - counter_k1
+    - sink_k1
+    dest: counter_k1
+  - activity: tidy_up
+    phase: after
+    cites: Kitchen towel, which Marcus uses to dry dishes and often hangs on the oven handle
+    only_from:
+    - counter_k1
+    dest: counter_k1
+- object: lunchbox_1
+  cites: Leo's snack box, which Marcus packs in the morning and Elena retrieves
+  home: cupboard_k1
   p_misplace: 0.3
   misplace_set:
   - counter_k1
-  - couch_l1
-  - coffee_table_l1
+  - kitchen_table_k1
   rules:
-  - cites: leaves car keys on kitchen island
-    activity: work_away
+  - activity: meal_prep
     phase: during
+    cites: Leo's snack box, which Marcus packs in the morning and Elena retrieves
+    only_from:
+    - cupboard_k1
+    - counter_k1
     dest: counter_k1
-    p: 0.6
-    else: ELSEWHERE
-  - cites: Elena to remind him to grab them
-    activity: work_away
+  - activity: meal_prep
     phase: after
-    dest: counter_k1
-    p: 0.4
-    else: entry_table_e1
-- object: laptop_1
-  cites: used at dining table and moved to bedroom
-  home: desk_b1
-  rules:
-  - cites: used at dining table
-    activity: work_away
-    phase: during
-    dest: kitchen_table_k1
-    p: 1.0
-  - cites: moved to bedroom for late-night reviews
-    activity: work_away
-    phase: after
-    dest: desk_b1
-    p: 0.7
-    else: kitchen_table_k1
-- object: phone_1
-  cites: kept in her pocket or on side table
-  home: person:resident_1
-  rules:
-  - cites: kept on the side table
-    activity: reading
-    phase: during
-    dest: coffee_table_l1
-    p: 0.8
-    else: person:resident_1
-  - cites: kept on the side table
-    activity: reading
-    phase: after
-    dest: nightstand_b1
-    p: 1.0
-- object: phone_2
-  cites: face down on nightstand during dinner
-  home: person:resident_2
-  p_misplace: 0.2
-  misplace_set:
-  - desk_b2
-  - kitchen_table_k1
-  rules:
-  - cites: face down on nightstand during dinner
-    activity: dinner
-    phase: during
-    dest: nightstand_b2
-    p: 1.0
-  - cites: forgets to turn it off
-    activity: dinner
-    phase: after
-    dest: nightstand_b2
-    p: 0.8
-    else: person:resident_2
-- object: book_1
-  cites: left on couch side table
-  home: bookshelf_l1
-  rules:
-  - cites: reads one chapter on the couch
-    activity: reading
-    phase: during
-    dest: coffee_table_l1
-    p: 1.0
-  - cites: vulnerable to Leo's chewing
-    activity: reading
-    phase: after
-    dest: coffee_table_l1
-    p: 0.6
-    else: bookshelf_l1
-- object: notebook_1
-  cites: carried in shirt pocket
-  home: person:resident_2
-  p_misplace: 0.3
-  misplace_set:
-  - kitchen_table_k1
-  - desk_b2
-  rules:
-  - cites: carried in shirt pocket
-    activity: work_away
-    phase: during
-    dest: ELSEWHERE
-    p: 1.0
-  - cites: often losing pages
-    activity: work_away
-    phase: after
-    dest: person:resident_2
-    p: 0.9
-    else: kitchen_table_k1
-- object: pen_1
-  cites: kept in dining table drawer
-  home: kitchen_table_k1
-  p_misplace: 0.2
-  misplace_set:
-  - coffee_table_l1
-  - couch_l1
-  rules:
-  - cites: frequently stolen by Leo
-    activity: play_with_kids
-    phase: during
-    dest: coffee_table_l1
-    p: 0.5
-    else: kitchen_table_k1
-  - cites: frequently stolen by Leo
-    activity: play_with_kids
-    phase: after
-    dest: kitchen_table_k1
-    p: 0.8
-    else: coffee_table_l1
-- object: remote_1
-  cites: kept on coffee table, moved by Leo
-  home: coffee_table_l1
-  p_misplace: 0.4
-  misplace_set:
-  - tv_stand_l1
-  - couch_l1
-  - bedroom_floor_b2
-  rules:
-  - cites: returned by Marcus
-    activity: watch_tv
-    phase: during
-    dest: coffee_table_l1
-    p: 0.5
-    else: tv_stand_l1
-  - cites: returned by Marcus
-    activity: watch_tv
-    phase: after
-    dest: coffee_table_l1
-    p: 0.7
-    else: tv_stand_l1
-- object: blanket_1
-  cites: dragged from crib to living room floor
-  home: bed_b2
-  rules:
-  - cites: dragged from crib to living room
-    activity: nap
-    phase: during
-    dest: coffee_table_l1
-    p: 0.7
-    else: couch_l1
-  - cites: returned by Marcus at bedtime
-    activity: bedtime_routine
-    phase: after
-    dest: bed_b2
-    p: 1.0
-- object: toy_1
-  cites: placed in crib by Elena
-  home: bed_b2
-  rules:
-  - cites: carried to couch by Leo
-    activity: play_with_kids
-    phase: during
-    dest: couch_l1
-    p: 0.8
-    else: coffee_table_l1
-  - cites: placed in crib at nap time
-    activity: nap
-    phase: after
-    dest: bed_b2
-    p: 1.0
-- object: water_bottle_1
-  cites: filled by Elena, carried by Leo
-  home: counter_k1
-  p_misplace: 0.3
-  misplace_set:
-  - bathroom_shelf_ba1
-  - sink_k1
-  rules:
-  - cites: carried by Leo to various rooms
-    activity: play_with_kids
-    phase: during
-    dest: coffee_table_l1
-    p: 0.5
-    else: counter_k1
-  - cites: often flushed in the toilet
-    activity: play_with_kids
-    phase: after
-    dest: sink_k1
-    p: 0.3
-    else: counter_k1
-- object: jacket_1
-  cites: draped over dining chair
-  home: entry_hook_e1
-  rules:
-  - cites: draped over back of dining chair
-    activity: work_away
-    phase: during
-    dest: chair_k1
-    p: 0.7
-    else: ELSEWHERE
-  - cites: Elena regularly re-hangs
-    activity: tidy_up
-    phase: after
-    dest: entry_hook_e1
-    p: 0.6
-    else: chair_k1
-- object: glasses_1
-  cites: borrowed by Marcus for grading
-  home: desk_b1
-  p_misplace: 0.2
-  misplace_set:
-  - kitchen_table_k1
-  - desk_b2
-  rules:
-  - cites: borrowed by Marcus for grading
-    activity: work_away
-    phase: during
-    dest: kitchen_table_k1
-    p: 0.5
-    else: desk_b1
-  - cites: returning them only when he remembers
-    activity: work_away
-    phase: after
-    dest: kitchen_table_k1
-    p: 0.4
-    else: desk_b1
+    cites: Leo's snack box, which Marcus packs in the morning and Elena retrieves
+    only_from:
+    - counter_k1
+    dest: cupboard_k1
 - object: wallet_1
-  cites: kept in her purse
-  home: person:resident_1
+  cites: Elena's wallet, which she keeps in her bag or on the dining table
+  home: entry_table_e1
+  p_misplace: 0.3
+  misplace_set:
+  - kitchen_table_k1
+  - couch_l1
   rules:
-  - cites: kept in her purse
-    activity: work_away
+  - activity: work_away
     phase: during
+    cites: Elena's wallet, which she keeps in her bag or on the dining table
+    only_from:
+    - entry_table_e1
+    - kitchen_table_k1
+    - couch_l1
     dest: person:resident_1
-    p: 1.0
-  - cites: kept in her purse
-    activity: work_away
+  - activity: work_away
     phase: after
-    dest: person:resident_1
-    p: 1.0
+    cites: Elena's wallet, which she keeps in her bag or on the dining table
+    only_from:
+    - person:resident_1
+    dest: entry_table_e1
 - object: wallet_2
-  cites: kept in his jacket pocket
+  cites: Marcus's wallet, which he keeps in his pocket or on the kitchen counter
   home: person:resident_2
+  p_misplace: 0.1
+  misplace_set:
+  - counter_k1
+  - desk_b2
   rules:
-  - cites: kept in his jacket pocket
-    activity: work_away
+  - activity: work_away
     phase: during
-    dest: person:resident_2
-    p: 1.0
-  - cites: kept in his jacket pocket
-    activity: work_away
+    cites: Marcus's wallet, which he keeps in his pocket or on the kitchen counter
+    only_from:
+    - person:resident_2
+    - counter_k1
+    dest: counter_k1
+  - activity: work_away
     phase: after
+    cites: Marcus's wallet, which he keeps in his pocket or on the kitchen counter
+    only_from:
+    - counter_k1
     dest: person:resident_2
-    p: 1.0
 activities:
-- name: play_with_kids
-  fragment:
-    mean_bouts: 3
+- name: bedtime_routine
+  reset_all:
+    p: 0.3
+    objects:
+    - book_1
+    - toy_1
+    - water_bottle_1
+    - remote_1
 - name: work_away
   fragment:
+    mean_bouts: 3
+- name: play_with_kids
+  fragment:
+    mean_bouts: 4
+- name: meal_prep
+  reset_all:
+    p: 0.4
+    objects:
+    - bowl_1
+    - plate_1
+    - towel_1
+    - lunchbox_1
+- name: watch_tv
+  fragment:
     mean_bouts: 2
+- name: reading
+  fragment:
+    mean_bouts: 2
+- name: nap
+  fragment:
+    mean_bouts: 1
+- name: tidy_up
+  reset_all:
+    p: 0.8
+    objects:
+    - mug_1
+    - mug_2
+    - bowl_1
+    - plate_1
+    - laptop_1
+    - phone_1
+    - phone_2
+    - keys_1
+    - keys_2
+    - book_1
+    - water_bottle_1
+    - remote_1
+    - charger_1
+    - jacket_1
+    - headphones_1
+    - glasses_1
+    - pen_1
+    - toy_1
+    - blanket_1
+    - towel_1
+    - lunchbox_1
+    - wallet_1
+    - wallet_2
 arc_events:
 - day: 3
-  note: Marcus skips the walk to rest
+  note: Elena skips her tidy up to work late
   patch:
     drop:
-    - walk
+    - tidy_up
 - day: 5
-  note: Elena has a late design meeting
+  note: Marcus has an emergency site visit
+  patch:
+    add:
+    - resident: resident_2
+      activity: work_away
+      start: '14:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: external
+- day: 10
+  note: Leo has a fever, everyone is tired
+  patch:
+    drop:
+    - work_away
+    - play_with_kids
+    add:
+    - resident: resident_1
+      activity: nap
+      sleep: true
+      start: '14:00'
+      end: '16:00'
+      at: bed_b1
+      jitter: flexible
+    - resident: resident_2
+      activity: nap
+      sleep: true
+      start: '15:00'
+      end: '17:00'
+      at: bed_b2
+      jitter: flexible
+- day: 11
+  note: Leo still sick, Marcus stays home
+  patch:
+    drop:
+    - work_away
+- day: 12
+  note: Leo recovering, Elena works from bed
+  patch:
+    drop:
+    - tidy_up
+- day: 17
+  note: Elena goes to a gallery opening
   patch:
     add:
     - resident: resident_1
       activity: work_away
-      start: '20:00'
+      start: '18:00'
       end: '21:00'
       at: ELSEWHERE
       jitter: external
-      skip_p: 0.0
-- day: 10
-  note: Leo is teething and cranky
-  patch:
-    drop:
-    - nap
-- day: 11
-  note: Leo is teething and cranky
-  patch:
-    drop:
-    - nap
-- day: 12
-  note: Leo is teething and cranky
-  patch:
-    drop:
-    - nap

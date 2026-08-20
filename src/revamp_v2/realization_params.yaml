@@ -65,3 +65,15 @@ carry_on_departure:
   # every household still has a few signature gaps. Per-day forgetting
   # comes from p_misplace, not from this.
   carry_p: 0.85
+  # Two ELSEWHERE bouts of one resident closer together than this (minutes
+  # at home between trips) do NOT re-fire pickup/putdown for items that
+  # never moved in between: the person plausibly kept the bag packed.
+  # Without it, departure carries fire per fragmented bout and daily event
+  # counts scale with bout_count x carried_items (measured on
+  # rule_based/qwen3.8-27b hh9: 12-bout days emitted ~98 events vs 1-3 on
+  # 0-bout days, daily Fano 19 vs the real reference's 5). 90 min is the
+  # errand-chain scale: CASAS session-merge treats sub-30-min gaps as one
+  # session, and a >1.5 h stay at home is long enough that unpacking and
+  # re-packing pocket items is the realistic reading. Suppressed pairs are
+  # counted in meta.json (carry_rehome_suppressed), never silent.
+  carry_rehome_min: 90

@@ -3,57 +3,60 @@
   "household_type": "family_school_age_children",
   "model": "Qwen/Qwen3.8-27B",
   "model_slug": "qwen3.8-27b",
-  "builder_version": "rv2-b4",
+  "builder_version": "rv2-b5",
   "prompts": {
     "persona_v2": "134f5bfb",
-    "routine_program": "e63834f9",
+    "routine_program": "e35c6d66",
     "leak_audit": "051fa759"
   },
   "scene": "symbolic",
   "days": 21,
-  "persona_seed": 13221647659267497799,
+  "persona_seed": 16734849540807802,
   "persona_attempts": [
     {
       "attempt": 0,
-      "seed": 10873299662249585747,
+      "seed": 14604956663790870954,
       "leak_prediction": {
         "predicted_type": "family_school_age_children",
-        "confidence": 0.85,
-        "reason": "The presence of three distinct bedrooms (b1, b2, b3) indicates a family unit. The specific combination of two lunchboxes, a toy, and a gaming controller strongly suggests children of school age (old enough for lunchboxes and gaming, young enough for toys), rather than teens or toddlers. The three m/",
+        "confidence": 0.65,
+        "reason": "The presence of three distinct bedrooms (b1, b2, b3) indicates a family unit. The specific combination of a 'lunchbox', 'backpack_1', 'backpack_2', and 'toy_1' strongly suggests school-age children rather than toddlers (who would have more diapers/crawling items) or teens (who might have more tech/\u5c11",
         "actual_type": "family_school_age_children",
         "correct": true
       }
     },
     {
       "attempt": 1,
-      "seed": 8793688386798237274,
-      "leak_prediction": {
-        "predicted_type": "family_school_age_children",
-        "confidence": 0.65,
-        "reason": "The presence of three distinct bedrooms (b1, b2, b3) indicates a family unit. The specific combination of 'lunchbox' (x2) and 'toy' (x1) strongly suggests children of school age, as opposed to toddlers (who would have more toys/diapers) or teens (who might have more personal tech/less shared toys).",
-        "actual_type": "family_school_age_children",
-        "correct": true
-      }
-    },
-    {
-      "attempt": 2,
-      "seed": 13221647659267497799,
+      "seed": 16734849540807802,
       "leak_prediction": {
         "predicted_type": "college_roommates",
         "confidence": 0.92,
-        "reason": "The presence of three distinct bedrooms (b1, b2, b3) each with a bed, nightstand, and desk strongly indicates a shared living arrangement for three individuals, such as college roommates. The high count of personal items (4 mugs, 4 phones, 4 water bottles, 4 jackets, 4 notebooks) supports a group of",
+        "reason": "The presence of three distinct bedrooms (b1, b2, b3) each with a bed, nightstand, and desk strongly indicates a shared living arrangement for three individuals, which aligns with the 'college_roommates' profile. The high count of personal items (4 mugs, 4 phones, 4 water bottles, 4 jackets) supports",
         "actual_type": "family_school_age_children",
         "correct": false
       }
     }
   ],
   "leak_unresolved": false,
-  "n_attempts": 1,
-  "accepted_attempt": 0,
+  "n_attempts": 3,
+  "accepted_attempt": 2,
   "attempts": [
     {
       "attempt": 0,
-      "seed": 12014269497988907472,
+      "seed": 1077763211130331260,
+      "failures": [
+        "reachability: at-home activity 'homework' is scheduled by weekly_blocks but appears in no object rule (and carries no reset_all) \u2014 a home block that touches nothing; objects move because of what people do at home, not only because they leave"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 373014094525544159,
+      "failures": [
+        "reachability: at-home activity 'relax' is scheduled by weekly_blocks but appears in no object rule (and carries no reset_all) \u2014 a home block that touches nothing; objects move because of what people do at home, not only because they leave"
+      ]
+    },
+    {
+      "attempt": 2,
+      "seed": 5676464624213139851,
       "failures": []
     }
   ]

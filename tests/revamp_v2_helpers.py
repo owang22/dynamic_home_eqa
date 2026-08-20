@@ -77,7 +77,14 @@ def mini_program(**overrides) -> dict:
                  "dest": "table_a", "cites": "coffee"},
                 {"activity": "breakfast", "phase": "after", "dest": "sink_k",
                  "p": 0.8, "else": "table_a", "only_from": ["table_a"],
-                 "cites": "coffee"}]},
+                 "cites": "coffee"},
+                # at-home coverage (broadened check 3): every at-home,
+                # non-sleep weekly activity needs at least one binding —
+                # "relax" gets the mug within reach, same as a real
+                # evening.
+                {"activity": "relax", "phase": "during", "dest": "table_a",
+                 "only_from": ["shelf_b", "sink_k"],
+                 "cites": "simple days"}]},
             {"object": "book_1", "home": "table_a", "cites": "never moves",
              "motion": "rarely_moved", "rules": []},   # declared static
         ],

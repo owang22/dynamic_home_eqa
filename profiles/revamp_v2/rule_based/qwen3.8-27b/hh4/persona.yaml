@@ -3,163 +3,237 @@ household_type: college_roommates
 residents:
   - id: resident_1
     name: Leo
-    age: 21
-    occupation: student
-    personality: anxious, detail-oriented, messy
-    habits:
-      - keeps his laptop open on the desk even when sleeping, often spilling coffee
-        on it
-      - leaves his headphones tangled around his neck after every lecture
-      - borrows resident_2's charger when his own is in the lab and rarely returns
-        it
-      - stacks empty coffee mugs in the sink until resident_3 yells at him
-      - loses his keys in the couch cushions every single day
-  - id: resident_2
-    name: Maya
     age: 20
     occupation: student
-    personality: social, forgetful, energetic
+    personality: anxious, detail-oriented, chaotic
     habits:
-      - leaves her backpack in the hallway entryway after coming home from parties
-      - uses the shared remote to switch channels while eating, then forgets to
-        put it back
-      - leaves her water bottle on the kitchen counter for days until it grows mold
-      - borrows resident_1's jacket when it gets cold and forgets to return it for
-        a week
-      - drops her phone on the floor while dancing in the living room
-  - id: resident_3
-    name: Sam
-    age: 22
-    occupation: student
-    personality: tidy, irritable, efficient
-    habits:
-      - clears the kitchen table immediately after meals, moving everyone's plates
-        to the dishwasher
-      - keeps a strict inventory of shared items like the umbrella and towels
-      - leaves his glasses on the bathroom counter, which annoys resident_1 who
-        needs them for reading
-      - puts his medication bottle on the nightstand and forgets to take it if he
-        is not in his room
-      - uses the gaming controller to play in the living room, blocking resident_2
-        from using the couch
-  - id: resident_4
-    name: Jade
+      - leaves highlighters scattered across the desk after late-night study sessions
+      - borrows resident_2's hoodie when he feels cold and forgets to return it
+        for days
+      - keeps his laptop charger coiled tightly on the desk to avoid tripping
+      - moves his water bottle from the desk to the nightstand when he starts reading
+      - loses his keys in the bottom of his backpack constantly
+      - clears his own plate but leaves resident_3's empty mug on the counter out
+        of politeness
+  - id: resident_2
+    name: Maya
     age: 19
     occupation: student
-    personality: creative, distracted, sentimental
+    personality: social, energetic, messy
     habits:
-      - scatters her notebooks and pens across the living room floor while brainstorming
-      - keeps her phone on the nightstand in the shared bedroom, leading to late-night
-        calls that wake resident_1
-      - leaves her book on the shared sofa for days, becoming a permanent fixture
-      - uses the shared wallet to buy snacks and forgets to reimburse the group
-        fund
-      - drops her umbrella in the hallway and forgets to take it, leaving it there
-        for a week
+      - drinks from resident_1's mug when she is too lazy to wash her own
+      - leaves her phone charging on the shared living room table overnight
+      - hangs her jacket on the back of her chair rather than in the closet
+      - uses the shared notebook for class notes and then forgets to put it back
+        on the shelf
+      - moves the remote to the sofa cushion when watching movies with others
+      - leaves her water bottle in the fridge and drinks from it throughout the
+        day
+  - id: resident_3
+    name: Sam
+    age: 21
+    occupation: student
+    personality: lazy, humorous, disorganized
+    habits:
+      - sleeps in his clothes and leaves his backpack on the floor by the door
+      - borrows resident_4's headphones for music and returns them with the volume
+        maxed out
+      - eats snacks from the shared bowl and leaves crumbs on the table
+      - puts his keys in his pocket and forgets where he put them
+      - moves his laptop to the bed when he is tired and leaves it there for hours
+      - uses the shared towel to dry his hands and leaves it on the sink edge
+  - id: resident_4
+    name: Eli
+    age: 20
+    occupation: student
+    personality: calm, tidy, introverted
+    habits:
+      - washes his own dishes immediately after eating
+      - organizes the shared bookshelf every weekend
+      - keeps his phone in his pocket and never leaves it on the table
+      - moves his water bottle to his desk only when he is working
+      - returns borrowed items like resident_2's hoodie promptly
+      - clears the shared table after group study sessions
 relationships: >-
-  Leo and Maya are close friends who often borrow each other's items without asking,
-  leading to frequent conflicts over missing chargers and jackets. Sam is the de
-  facto house manager, enforcing cleanliness and order, which creates friction with
-  Leo's messiness and Jade's scattered creativity. Jade and Maya share a bedroom,
-  but their different sleep schedules and habits (Jade's late-night calls vs. Maya's
-  early mornings) lead to constant negotiation over noise and space. The shared
-  living room is a battleground for the remote control, the sofa, and the floor
-  space, with Sam often clearing it out and Jade immediately cluttering it again.
+  Leo and Maya are close friends who often study together, while Sam and Eli are
+  newer to the group and still figuring out the social dynamics. Leo and Sam constantly
+  clash over cleanliness, with Leo complaining about Sam's mess and Sam mocking
+  Leo's rigidity. Eli acts as a mediator, often cleaning up after others without
+  complaint, while Maya tries to keep the mood light and often ignores the tension.
 home_layout_notes: >-
-  The living room is the central shared space, with a sofa, a coffee table, and
-  a TV, where all four residents gather, eat, and argue. The kitchen is a high-traffic
-  area, with a sink that Leo clogs with mugs and a counter where Maya leaves her
-  water bottle. The hallway is a catch-all for forgotten items like Jade's umbrella
-  and Maya's backpack. The bedrooms are private, but Jade's phone calls and Leo's
-  laptop noise often bleed into the shared space.
+  The apartment has a shared living room with a sofa and a large table used for
+  eating and studying. Each resident has a small bedroom with a desk and bed. The
+  kitchen is small and shared, with a limited number of mugs and plates. The bathroom
+  is also shared and often gets crowded in the mornings.
 object_inventory:
   - id: mug_1
     class: mug
     owner: resident_1
-    role: Leo's coffee mug, often left in the sink
+    role: Leo's primary coffee mug, often left on his desk after use
   - id: mug_2
     class: mug
+    owner: resident_2
+    role: Maya's favorite mug, frequently borrowed by Leo when he is in a hurry
+  - id: mug_3
+    class: mug
+    owner: resident_3
+    role: Sam's mug, often found in the sink unwashed
+  - id: mug_4
+    class: mug
+    owner: resident_4
+    role: Eli's mug, always washed and returned to the cabinet
+  - id: bowl_1
+    class: bowl
     owner: shared
-    role: Shared mug, used by all, often stolen by Maya
-  - id: laptop_leo
+    role: Shared cereal bowl, used by whoever eats breakfast first
+  - id: plate_1
+    class: plate
+    owner: shared
+    role: Shared dinner plate, moved to the sink after meals
+  - id: laptop_1
     class: laptop
     owner: resident_1
-    role: Leo's laptop, always open on his desk
-  - id: phone_maya
+    role: Leo's laptop, stays on his desk unless he moves to the bed
+  - id: laptop_2
+    class: laptop
+    owner: resident_2
+    role: Maya's laptop, often left on the shared table during group study
+  - id: laptop_3
+    class: laptop
+    owner: resident_3
+    role: Sam's laptop, moved to his bed when he is tired
+  - id: laptop_4
+    class: laptop
+    owner: resident_4
+    role: Eli's laptop, kept in his room or on his desk
+  - id: phone_1
+    class: phone
+    owner: resident_1
+    role: Leo's phone, kept in his pocket or on his desk
+  - id: phone_2
     class: phone
     owner: resident_2
-    role: Maya's phone, often dropped on the floor
-  - id: keys_leo
+    role: Maya's phone, often left charging on the shared table
+  - id: phone_3
+    class: phone
+    owner: resident_3
+    role: Sam's phone, kept in his pocket or on the sofa
+  - id: phone_4
+    class: phone
+    owner: resident_4
+    role: Eli's phone, kept in his pocket
+  - id: keys_1
     class: keys
     owner: resident_1
-    role: Leo's keys, lost in the couch cushions
-  - id: book_jade
+    role: Leo's keys, often lost in his backpack
+  - id: keys_2
+    class: keys
+    owner: resident_2
+    role: Maya's keys, kept on the hook by the door
+  - id: keys_3
+    class: keys
+    owner: resident_3
+    role: Sam's keys, often forgotten in his pocket
+  - id: keys_4
+    class: keys
+    owner: resident_4
+    role: Eli's keys, kept in his wallet
+  - id: book_1
+    class: book
+    owner: resident_1
+    role: Leo's textbook, left on his desk or the shared table
+  - id: book_2
+    class: book
+    owner: resident_2
+    role: Maya's novel, often moved to the sofa for reading
+  - id: book_3
+    class: book
+    owner: resident_3
+    role: Sam's textbook, rarely used and left on his bed
+  - id: book_4
     class: book
     owner: resident_4
-    role: Jade's book, left on the shared sofa
-  - id: water_bottle_maya
+    role: Eli's study guide, kept on his desk or the shared shelf
+  - id: water_bottle_1
+    class: water_bottle
+    owner: resident_1
+    role: Leo's bottle, moved from desk to nightstand when reading
+  - id: water_bottle_2
     class: water_bottle
     owner: resident_2
-    role: Maya's water bottle, left on the counter
-  - id: remote_shared
+    role: Maya's bottle, kept in the fridge and carried around
+  - id: water_bottle_3
+    class: water_bottle
+    owner: resident_3
+    role: Sam's bottle, often left on the table after drinking
+  - id: water_bottle_4
+    class: water_bottle
+    owner: resident_4
+    role: Eli's bottle, kept on his desk while working
+  - id: remote_1
     class: remote
     owner: shared
-    role: Shared remote, used by Maya and Sam
-  - id: charger_maya
+    role: Shared TV remote, moved to the sofa cushion by Maya during movie nights
+  - id: charger_1
+    class: charger
+    owner: resident_1
+    role: Leo's laptop charger, coiled tightly on his desk
+  - id: charger_2
     class: charger
     owner: resident_2
-    role: Maya's charger, borrowed by Leo
-  - id: backpack_maya
+    role: Maya's phone charger, left on the shared table
+  - id: charger_3
+    class: charger
+    owner: resident_3
+    role: Sam's laptop charger, often tangled on his desk
+  - id: charger_4
+    class: charger
+    owner: resident_4
+    role: Eli's phone charger, kept in his room
+  - id: backpack_1
+    class: backpack
+    owner: resident_1
+    role: Leo's backpack, left by the door or on his desk
+  - id: backpack_2
     class: backpack
     owner: resident_2
-    role: Maya's backpack, left in the hallway
-  - id: jacket_leo
+    role: Maya's backpack, often left on the sofa
+  - id: backpack_3
+    class: backpack
+    owner: resident_3
+    role: Sam's backpack, left on the floor by the door
+  - id: backpack_4
+    class: backpack
+    owner: resident_4
+    role: Eli's backpack, hung on the hook by the door
+  - id: jacket_1
     class: jacket
     owner: resident_1
-    role: Leo's jacket, borrowed by Maya
-  - id: headphones_leo
+    role: Leo's jacket, hung on the back of his chair
+  - id: jacket_2
+    class: jacket
+    owner: resident_2
+    role: Maya's jacket, hung on the back of her chair
+  - id: jacket_3
+    class: jacket
+    owner: resident_3
+    role: Sam's jacket, often left on the sofa
+  - id: jacket_4
+    class: jacket
+    owner: resident_4
+    role: Eli's jacket, hung in the closet
+  - id: headphones_1
     class: headphones
     owner: resident_1
-    role: Leo's headphones, tangled around his neck
-  - id: glasses_sam
-    class: glasses
-    owner: resident_3
-    role: Sam's glasses, left on the bathroom counter
-  - id: notebook_jade
-    class: notebook
-    owner: resident_4
-    role: Jade's notebook, scattered on the floor
-  - id: pen_jade
-    class: pen
-    owner: resident_4
-    role: Jade's pen, lost in the couch cushions
-  - id: medication_bottle_sam
-    class: medication_bottle
-    owner: resident_3
-    role: Sam's medication, left on the nightstand
-  - id: gaming_controller_sam
-    class: gaming_controller
-    owner: resident_3
-    role: Sam's gaming controller, used in the living room
-  - id: umbrella_jade
-    class: umbrella
-    owner: resident_4
-    role: Jade's umbrella, left in the hallway
-  - id: wallet_jade
-    class: wallet
-    owner: resident_4
-    role: Jade's wallet, used for shared snacks
+    role: Leo's headphones, kept on his desk
 daily_life_summary: >-
-  Leo spends most of his time in his room, working on his laptop, but his mess spills
-  into the shared living room, where Maya often gathers with friends. Sam tries
-  to maintain order by cleaning the kitchen and living room, but his efforts are
-  constantly undone by Jade's scattered notebooks and Maya's forgotten items. Jade
-  is often in the living room or hallway, brainstorming or socializing, while Leo
-  and Maya often overlap in the kitchen, leading to conflicts over the sink and
-  counter. The days are a cycle of chaos and cleanup, with Sam constantly tidying
-  and the others constantly creating mess.
+  The day starts with a rush to the bathroom, where Sam often lingers while Leo
+  hurries. During the day, they are mostly at different lectures, but they converge
+  in the apartment in the evenings. Maya and Leo often study together at the shared
+  table, while Sam relaxes on the sofa and Eli works in his room. They often miss
+  each other for meals, leading to a chaotic dinner schedule where they eat whenever
+  they are all home.
 quirks: >-
-  This household is not a typical college roommate group because Sam is a senior
-  who is trying to maintain a professional and tidy environment, while the others
-  are younger and more chaotic. The shared wallet used by Jade for snacks is a unique
-  dynamic that leads to constant financial negotiations.
+  Despite being college roommates, they have a strict 'no sharing food' rule to
+  avoid arguments, but they constantly share drinks and mugs. Eli has a hidden talent
+  for organizing the shared spaces, which the others reluctantly rely on.

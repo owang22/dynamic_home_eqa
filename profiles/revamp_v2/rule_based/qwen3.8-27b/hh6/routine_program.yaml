@@ -5,11 +5,11 @@ days: 21
 day0: Monday
 residents:
 - id: resident_1
-  jitter_scale: 0.6
+  jitter_scale: 0.7
 - id: resident_2
-  jitter_scale: 1.8
+  jitter_scale: 1.5
 - id: resident_3
-  jitter_scale: 0.8
+  jitter_scale: 0.9
 receptacles:
 - id: bed_b1
   room: bedroom_1
@@ -81,10 +81,10 @@ sleep_schedule:
   - Sa
   - Su
   start: '22:30'
-  end: 05:45+1
+  end: 06:00+1
   at: bed_b1
   jitter: routine
-  cites: household is quiet in the late evening
+  cites: Sarah leaves for work before the teens wake up
 - resident: resident_2
   activity: bedtime_routine
   days:
@@ -95,11 +95,11 @@ sleep_schedule:
   - Fr
   - Sa
   - Su
-  start: '23:30'
-  end: 06:30+1
+  start: '23:00'
+  end: 07:00+1
   at: bed_b2
-  jitter: routine
-  cites: Marcus usually wakes up last
+  jitter: flexible
+  cites: Leo and Maya wake up at different times
 - resident: resident_3
   activity: bedtime_routine
   days:
@@ -110,28 +110,13 @@ sleep_schedule:
   - Fr
   - Sa
   - Su
-  start: '21:45'
-  end: 05:30+1
+  start: '22:00'
+  end: 06:30+1
   at: bed_b3
   jitter: routine
-  cites: Maya rises early to study or work on art
+  cites: Maya is exceptionally tidy and artistic
 weekly_blocks:
-- cites: Elena leaves for work early
-  resident: resident_1
-  activity: commute_out
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  start: 05:45
-  end: 07:30
-  at: ELSEWHERE
-  jitter: external
-  skip_p: 0
-- cites: Elena leaves for work early
+- cites: Sarah leaves for work before the teens wake up
   resident: resident_1
   activity: work_away
   sleep: false
@@ -141,29 +126,14 @@ weekly_blocks:
   - We
   - Th
   - Fr
-  start: 07:30
-  end: '16:30'
+  start: 06:15
+  end: '17:30'
   at: ELSEWHERE
   jitter: external
-  skip_p: 0
-- cites: Elena leaves for work early
+  skip_p: 0.0
+- cites: Sarah leaves for work before the teens wake up
   resident: resident_1
-  activity: commute_home
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  start: '16:30'
-  end: '17:45'
-  at: ELSEWHERE
-  jitter: external
-  skip_p: 0
-- cites: Elena prepares food
-  resident: resident_1
-  activity: coffee
+  activity: homework
   sleep: false
   days:
   - Mo
@@ -173,12 +143,29 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: 05:45
-  end: 06:15
+  start: 06:15
+  end: 06:45
   at: kitchen_table_k1
-  jitter: routine
-  skip_p: 0
-- cites: Clears the kitchen counter every night
+  jitter: external
+  skip_p: 0.0
+- cites: leaves a sticky note on the fridge
+  resident: resident_1
+  activity: homework
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 06:45
+  end: 07:15
+  at: counter_k1
+  jitter: external
+  skip_p: 0.0
+- cites: tidies the living room at the end of the day
   resident: resident_1
   activity: tidy_up
   sleep: false
@@ -190,44 +177,14 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: '21:45'
-  end: '22:30'
-  at: counter_k1
+  start: '17:45'
+  end: '18:30'
+  at: couch_l1
   jitter: routine
-  skip_p: 0
-- cites: Leaves a stack of graded essays
+  skip_p: 0.2
+- cites: clears all dirty dishes from the kitchen counter immediately after dinner
   resident: resident_1
-  activity: work_home
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  start: '18:00'
-  end: '20:00'
-  at: kitchen_table_k1
-  jitter: flexible
-  skip_p: 0.1
-- cites: Elena prepares food
-  resident: resident_1
-  activity: coffee
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  start: '14:30'
-  end: '15:00'
-  at: kitchen_table_k1
-  jitter: routine
-  skip_p: 0.1
-- cites: Marcus usually wakes up last
-  resident: resident_2
-  activity: breakfast
+  activity: dinner
   sleep: false
   days:
   - Mo
@@ -237,12 +194,63 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: 06:30
-  end: 07:15
+  start: '18:30'
+  end: '19:30'
   at: kitchen_table_k1
-  jitter: loose
-  skip_p: 0.2
-- cites: Marcus and Maya have a sibling dynamic
+  jitter: routine
+  skip_p: 0.0
+- cites: clears all dirty dishes from the kitchen counter immediately after dinner
+  resident: resident_1
+  activity: tidy_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:30'
+  end: '20:00'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.0
+- cites: borrows resident_2's headphones to listen to podcasts
+  resident: resident_1
+  activity: reading
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '20:00'
+  end: '22:30'
+  at: desk_b1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Leo and Maya wake up at different times
+  resident: resident_2
+  activity: homework
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:00
+  end: 07:30
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.0
+- cites: student
   resident: resident_2
   activity: school_run
   sleep: false
@@ -252,12 +260,12 @@ weekly_blocks:
   - We
   - Th
   - Fr
-  start: 07:15
+  start: 07:30
   end: 08:00
   at: ELSEWHERE
   jitter: external
-  skip_p: 0
-- cites: Marcus and Maya have a sibling dynamic
+  skip_p: 0.0
+- cites: student
   resident: resident_2
   activity: school_run
   sleep: false
@@ -271,23 +279,8 @@ weekly_blocks:
   end: '15:30'
   at: ELSEWHERE
   jitter: external
-  skip_p: 0
-- cites: Marcus and Maya have a sibling dynamic
-  resident: resident_2
-  activity: school_run
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  start: '15:30'
-  end: '16:15'
-  at: ELSEWHERE
-  jitter: external
-  skip_p: 0
-- cites: Marcus uses the armchair for gaming
+  skip_p: 0.0
+- cites: uses resident_3's laptop for gaming
   resident: resident_2
   activity: gaming
   sleep: false
@@ -299,14 +292,14 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: '16:15'
-  end: '20:00'
-  at: armchair_l1
-  jitter: loose
+  start: '15:30'
+  end: '19:00'
+  at: couch_l1
+  jitter: flexible
   skip_p: 0.2
-- cites: Marcus and Maya have a sibling dynamic
-  resident: resident_3
-  activity: breakfast
+- cites: Leo's tea mug, often left on the dining table
+  resident: resident_2
+  activity: dinner
   sleep: false
   days:
   - Mo
@@ -316,14 +309,14 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: 05:30
-  end: 06:15
+  start: '19:00'
+  end: '20:00'
   at: kitchen_table_k1
-  jitter: routine
-  skip_p: 0
-- cites: Marcus and Maya have a sibling dynamic
-  resident: resident_3
-  activity: school_run
+  jitter: flexible
+  skip_p: 0.1
+- cites: gaming controller on the sofa after every session
+  resident: resident_2
+  activity: gaming
   sleep: false
   days:
   - Mo
@@ -331,12 +324,31 @@ weekly_blocks:
   - We
   - Th
   - Fr
-  start: 06:15
+  - Sa
+  - Su
+  start: '20:00'
+  end: '22:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Maya is exceptionally tidy and artistic
+  resident: resident_3
+  activity: homework
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 06:30
   end: 07:00
-  at: ELSEWHERE
-  jitter: external
-  skip_p: 0
-- cites: Marcus and Maya have a sibling dynamic
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.0
+- cites: student
   resident: resident_3
   activity: school_run
   sleep: false
@@ -347,11 +359,11 @@ weekly_blocks:
   - Th
   - Fr
   start: 07:00
-  end: '15:30'
+  end: 07:30
   at: ELSEWHERE
   jitter: external
-  skip_p: 0
-- cites: Marcus and Maya have a sibling dynamic
+  skip_p: 0.0
+- cites: student
   resident: resident_3
   activity: school_run
   sleep: false
@@ -361,12 +373,12 @@ weekly_blocks:
   - We
   - Th
   - Fr
-  start: '15:30'
-  end: '16:15'
+  start: 07:30
+  end: '15:00'
   at: ELSEWHERE
   jitter: external
-  skip_p: 0
-- cites: Maya claiming the couch
+  skip_p: 0.0
+- cites: keeps a specific spot on the dining table for sketching
   resident: resident_3
   activity: reading
   sleep: false
@@ -378,46 +390,14 @@ weekly_blocks:
   - Fr
   - Sa
   - Su
-  start: '16:15'
+  start: '15:00'
   end: '18:30'
-  at: couch_l1
-  jitter: flexible
-  skip_p: 0.2
-- cites: Maya claims the couch
-  resident: resident_3
-  activity: watch_tv
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  - Sa
-  - Su
-  start: '18:30'
-  end: '21:00'
-  at: couch_l1
-  jitter: flexible
-  skip_p: 0.3
-- cites: Maya rises early to study or work on art
-  resident: resident_3
-  activity: study
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  start: 05:30
-  end: 06:15
-  at: desk_b3
+  at: kitchen_table_k1
   jitter: routine
   skip_p: 0.1
-- cites: Maya claims the couch
+- cites: Maya's hot chocolate mug, kept in the kitchen sink
   resident: resident_3
-  activity: study
+  activity: dinner
   sleep: false
   days:
   - Mo
@@ -428,600 +408,669 @@ weekly_blocks:
   - Sa
   - Su
   start: '18:30'
-  end: '21:00'
-  at: desk_b3
-  jitter: flexible
-  skip_p: 0.3
-- cites: Maya rises early to study or work on art
-  resident: resident_3
-  activity: study
-  sleep: false
-  days:
-  - Sa
-  - Su
-  start: 09:00
-  end: '12:00'
-  at: desk_b3
-  jitter: flexible
-  skip_p: 0.2
-- cites: Elena leaves for work early
-  resident: resident_1
-  activity: groceries
-  sleep: false
-  days:
-  - Sa
-  start: '10:00'
-  end: '11:30'
-  at: ELSEWHERE
-  jitter: external
-  skip_p: 0.2
-- cites: Borrows resident_3's charger from the bedroom
-  resident: resident_1
-  activity: work_home
-  sleep: false
-  days:
-  - Sa
-  - Su
-  start: '14:00'
-  end: '16:00'
+  end: '19:30'
   at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.0
+- cites: organizes books in the living room by color
+  resident: resident_3
+  activity: reading
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:30'
+  end: '22:00'
+  at: couch_l1
   jitter: flexible
-  skip_p: 0.4
-- cites: Elena leaves for work early
-  resident: resident_1
-  activity: commute_out
-  sleep: false
-  days:
-  - Sa
-  - Su
-  start: 08:00
-  end: 09:00
-  at: ELSEWHERE
-  jitter: external
-  skip_p: 0.3
-- cites: Elena leaves for work early
-  resident: resident_1
-  activity: work_away
-  sleep: false
-  days:
-  - Sa
-  - Su
-  start: 09:00
-  end: '14:00'
-  at: ELSEWHERE
-  jitter: external
-  skip_p: 0.3
-- cites: Elena leaves for work early
-  resident: resident_1
-  activity: commute_home
-  sleep: false
-  days:
-  - Sa
-  - Su
-  start: '14:00'
-  end: '15:00'
-  at: ELSEWHERE
-  jitter: external
-  skip_p: 0.3
+  skip_p: 0.2
 object_rules:
 - object: mug_1
-  cites: keeps in the bottom cabinet
-  home: cupboard_k1
-  motion: rarely_moved
-  rules: []
-- object: mug_2
-  cites: often left on the counter by Marcus
-  home: cupboard_k1
-  p_misplace: 0.3
-  misplace_set:
-  - counter_k1
-  - kitchen_table_k1
+  cites: Sarah's morning coffee mug, left on the counter
+  home: counter_k1
   rules:
-  - cites: often left on the counter by Marcus
-    activity: gaming
+  - activity: homework
     phase: during
+    cites: Sarah's morning coffee mug
+    only_from:
+    - counter_k1
+    - sink_k1
     dest: counter_k1
-    p: 0.5
-    else: kitchen_table_k1
-  - cites: Elena prepares food
-    activity: coffee
+  - activity: dinner
     phase: after
-    dest: cupboard_k1
+    cites: clears all dirty dishes
+    only_from:
+    - counter_k1
+    - kitchen_table_k1
+    dest: sink_k1
+- object: mug_2
+  cites: Leo's tea mug, often left on the dining table
+  home: counter_k1
+  rules:
+  - activity: homework
+    phase: during
+    cites: Leo's tea mug, often left on the dining table
+    only_from:
+    - counter_k1
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+  - activity: dinner
+    phase: after
+    cites: daily silent negotiations over who clears the table
+    only_from:
+    - kitchen_table_k1
+    - counter_k1
+    dest: sink_k1
     p: 0.4
-    else: sink_k1
+    else: kitchen_table_k1
+- object: mug_3
+  cites: Maya's hot chocolate mug, kept in the kitchen sink
+  home: sink_k1
+  rules:
+  - activity: dinner
+    phase: during
+    cites: Maya's hot chocolate mug
+    only_from:
+    - sink_k1
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+  - activity: dinner
+    phase: after
+    cites: kept in the kitchen sink until Sarah washes it
+    only_from:
+    - kitchen_table_k1
+    dest: sink_k1
 - object: laptop_1
-  cites: frequently borrowed by Marcus for 'schoolwork'
+  cites: Sarah's work laptop, taken to the office
   home: desk_b1
   rules:
-  - cites: frequently borrowed by Marcus for 'schoolwork'
-    activity: gaming
+  - activity: work_away
     phase: during
-    dest: kitchen_table_k1
-    p: 0.6
-    else: desk_b1
-  - cites: frequently borrowed by Marcus for 'schoolwork'
-    activity: gaming
+    cites: taken to the office and returned to the desk
+    only_from:
+    - desk_b1
+    dest: ELSEWHERE
+  - activity: work_away
     phase: after
-    dest: kitchen_table_k1
-    p: 0.8
-    else: desk_b1
-  - cites: Elena leaves for work early
-    activity: work_home
-    phase: during
-    dest: kitchen_table_k1
-    p: 0.7
-    else: desk_b1
+    cites: returned to the desk
+    only_from:
+    - ELSEWHERE
+    dest: desk_b1
 - object: laptop_2
-  cites: kept in his bedroom but sometimes moved to the living room
-  home: desk_b2
+  cites: Maya's school laptop, used for homework and art projects
+  home: desk_b3
   rules:
-  - cites: kept in his bedroom but sometimes moved to the living room
-    activity: gaming
+  - activity: reading
     phase: during
-    dest: armchair_l1
-    p: 0.6
-    else: desk_b2
-  - cites: kept in his bedroom but sometimes moved to the living room
-    activity: gaming
+    cites: used for homework and art projects
+    only_from:
+    - desk_b3
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+  - activity: reading
     phase: after
-    dest: desk_b2
-    p: 0.7
-    else: armchair_l1
+    cites: left on the dining table
+    only_from:
+    - kitchen_table_k1
+    dest: kitchen_table_k1
 - object: phone_1
-  cites: kept on the kitchen counter
-  home: counter_k1
-  p_misplace: 0.2
-  misplace_set:
-  - nightstand_b1
-  - kitchen_table_k1
+  cites: Sarah's phone, kept in her pocket or on the desk
+  home: person:resident_1
   rules:
-  - cites: kept on the kitchen counter
-    activity: bedtime_routine
+  - activity: work_away
     phase: during
-    dest: nightstand_b1
-    p: 0.8
-    else: counter_k1
-  - cites: kept on the kitchen counter
-    activity: coffee
+    cites: kept in her pocket
+    only_from:
+    - nightstand_b1
+    - desk_b1
+    - counter_k1
+    dest: ELSEWHERE
+  - activity: work_away
     phase: after
-    dest: counter_k1
-    p: 0.9
-    else: nightstand_b1
-- object: phone_2
-  cites: constantly in his hand or charging on the kitchen counter
-  home: counter_k1
-  p_misplace: 0.4
-  misplace_set:
-  - armchair_l1
-  - bed_b2
-  rules:
-  - cites: constantly in his hand or charging on the kitchen counter
-    activity: gaming
+    cites: kept in her pocket or on the desk
+    only_from:
+    - ELSEWHERE
+    dest: desk_b1
+  - activity: bedtime_routine
     phase: during
-    dest: armchair_l1
+    cites: kept in her pocket or on the desk
+    only_from:
+    - desk_b1
+    - counter_k1
+    dest: nightstand_b1
+- object: phone_2
+  cites: Leo's phone, often left on the kitchen counter or sofa
+  home: counter_k1
+  rules:
+  - activity: gaming
+    phase: during
+    cites: often left on the kitchen counter or sofa
+    only_from:
+    - counter_k1
+    - couch_l1
+    - nightstand_b2
+    dest: couch_l1
+  - activity: gaming
+    phase: after
+    cites: often left on the kitchen counter or sofa
+    only_from:
+    - couch_l1
+    dest: couch_l1
     p: 0.5
     else: counter_k1
-  - cites: constantly in his hand or charging on the kitchen counter
-    activity: gaming
-    phase: after
-    dest: counter_k1
-    p: 0.7
-    else: bed_b2
-- object: phone_3
-  cites: kept in her pocket or on her desk, rarely left out
-  home: desk_b3
-  p_misplace: 0.1
-  misplace_set:
-  - couch_l1
-  rules:
-  - cites: kept in her pocket or on her desk, rarely left out
-    activity: reading
+  - activity: homework
     phase: during
-    dest: couch_l1
-    p: 0.3
-    else: desk_b3
-  - cites: kept in her pocket or on her desk, rarely left out
-    activity: reading
+    cites: often left on the kitchen counter
+    only_from:
+    - couch_l1
+    - counter_k1
+    dest: counter_k1
+- object: phone_3
+  cites: Maya's phone, kept in her backpack or on the charger
+  home: nightstand_b3
+  rules:
+  - activity: school_run
+    phase: during
+    cites: kept in her backpack
+    only_from:
+    - nightstand_b3
+    - desk_b3
+    dest: ELSEWHERE
+  - activity: school_run
     phase: after
-    dest: desk_b3
-    p: 0.8
-    else: couch_l1
+    cites: kept in her backpack or on the charger
+    only_from:
+    - ELSEWHERE
+    dest: nightstand_b3
+  - activity: bedtime_routine
+    phase: during
+    cites: leaves phone on the charger in the bedroom overnight
+    only_from:
+    - nightstand_b3
+    - desk_b3
+    dest: nightstand_b3
 - object: keys_1
-  cites: hung on the hook by the door but often borrowed by Maya
+  cites: Sarah's house keys, kept on the hallway hook
   home: entry_hook_e1
   rules:
-  - cites: hung on the hook by the door but often borrowed by Maya
-    activity: commute_out
+  - activity: work_away
     phase: during
+    cites: kept on the hallway hook
+    only_from:
+    - entry_hook_e1
+    - entry_table_e1
     dest: ELSEWHERE
-    p: 0.9
-    else: entry_hook_e1
-  - cites: hung on the hook by the door but often borrowed by Maya
-    activity: commute_home
+  - activity: work_away
     phase: after
+    cites: kept on the hallway hook
+    only_from:
+    - ELSEWHERE
     dest: entry_hook_e1
-    p: 0.8
-    else: counter_k1
-- object: book_1
-  cites: kept on her bed or the couch, moved to the bathroom
-  home: bed_b3
+- object: keys_2
+  cites: Leo's bike and house keys, often lost in his backpack
+  home: entry_hook_e1
   rules:
-  - cites: kept on her bed or the couch, moved to the bathroom
-    activity: reading
+  - activity: school_run
     phase: during
-    dest: couch_l1
-    p: 0.7
-    else: bed_b3
-  - cites: kept on her bed or the couch, moved to the bathroom
-    activity: reading
+    cites: often lost in his backpack or left in the hallway
+    only_from:
+    - entry_hook_e1
+    - entry_floor_e1
+    - desk_b2
+    dest: ELSEWHERE
+  - activity: school_run
     phase: after
-    dest: bed_b3
+    cites: forgets to return keys to the hook
+    only_from:
+    - ELSEWHERE
+    dest: entry_floor_e1
     p: 0.6
+    else: entry_hook_e1
+- object: keys_3
+  cites: Maya's house keys, kept in her jacket pocket or on the hook
+  home: entry_hook_e1
+  rules:
+  - activity: school_run
+    phase: during
+    cites: kept in her jacket pocket or on the hook
+    only_from:
+    - entry_hook_e1
+    - desk_b3
+    dest: ELSEWHERE
+  - activity: school_run
+    phase: after
+    cites: kept in her jacket pocket or on the hook
+    only_from:
+    - ELSEWHERE
+    dest: entry_hook_e1
+- object: book_1
+  cites: Maya's art book, left on the dining table or living room floor
+  home: bookshelf_l1
+  rules:
+  - activity: reading
+    phase: during
+    cites: left on the dining table or living room floor
+    only_from:
+    - bookshelf_l1
+    - kitchen_table_k1
+    - couch_l1
+    dest: kitchen_table_k1
+    p: 0.5
+    else: couch_l1
+  - activity: reading
+    phase: after
+    cites: left on the dining table or living room floor
+    only_from:
+    - kitchen_table_k1
+    - couch_l1
+    dest: kitchen_table_k1
+    p: 0.4
     else: couch_l1
 - object: water_bottle_1
-  cites: left in the fridge until empty, then washed and put back
-  home: cupboard_k1
+  cites: Leo's water bottle, left on the nightstand or sofa
+  home: nightstand_b2
   rules:
-  - cites: left in the fridge until empty, then washed and put back
-    activity: breakfast
+  - activity: gaming
     phase: during
-    dest: counter_k1
-    p: 0.8
-    else: cupboard_k1
-  - cites: left in the fridge until empty, then washed and put back
-    activity: gaming
+    cites: left on the nightstand or sofa
+    only_from:
+    - nightstand_b2
+    - couch_l1
+    dest: couch_l1
+  - activity: gaming
     phase: after
-    dest: sink_k1
-    p: 0.5
-    else: counter_k1
+    cites: left on the nightstand or sofa
+    only_from:
+    - couch_l1
+    dest: couch_l1
+    p: 0.7
+    else: nightstand_b2
+- object: water_bottle_2
+  cites: Maya's water bottle, kept in her backpack
+  home: person:resident_3
+  rules:
+  - activity: school_run
+    phase: during
+    cites: kept in her backpack at all times
+    only_from:
+    - desk_b3
+    - kitchen_table_k1
+    dest: ELSEWHERE
+  - activity: school_run
+    phase: after
+    cites: kept in her backpack at all times
+    only_from:
+    - ELSEWHERE
+    dest: desk_b3
 - object: remote_1
-  cites: moved between the coffee table and the living room chair
+  cites: Living room TV remote, left on the sofa or coffee table
   home: coffee_table_l1
   rules:
-  - cites: moved between the coffee table and the living room chair
-    activity: watch_tv
+  - activity: gaming
     phase: during
-    dest: coffee_table_l1
-    p: 0.7
-    else: armchair_l1
-  - cites: moved between the coffee table and the living room chair
-    activity: watch_tv
+    cites: left on the sofa or coffee table
+    only_from:
+    - coffee_table_l1
+    - couch_l1
+    dest: couch_l1
+  - activity: gaming
     phase: after
-    dest: coffee_table_l1
-    p: 0.5
-    else: armchair_l1
-- object: charger_1
-  cites: often borrowed by Marcus or Maya, leading to a search
-  home: nightstand_b1
-  p_misplace: 0.3
-  misplace_set:
-  - desk_b2
-  - desk_b3
-  - counter_k1
-  rules:
-  - cites: often borrowed by Marcus or Maya, leading to a search
-    activity: gaming
-    phase: during
-    dest: desk_b2
-    p: 0.4
-    else: nightstand_b1
-  - cites: often borrowed by Marcus or Maya, leading to a search
-    activity: study
-    phase: after
-    dest: nightstand_b1
-    p: 0.6
-    else: desk_b3
-- object: backpack_1
-  cites: dumped in the hallway corner every afternoon
-  home: entry_floor_e1
-  rules:
-  - cites: dumped in the hallway corner every afternoon
-    activity: school_run
-    phase: during
-    dest: ELSEWHERE
-    p: 0.9
-    else: entry_floor_e1
-  - cites: dumped in the hallway corner every afternoon
-    activity: school_run
-    phase: after
-    dest: entry_floor_e1
-    p: 0.8
-    else: bed_b2
-- object: backpack_2
-  cites: hung neatly on the hook by her door or placed in her room
-  home: desk_b3
-  rules:
-  - cites: hung neatly on the hook by her door or placed in her room
-    activity: school_run
-    phase: during
-    dest: ELSEWHERE
-    p: 0.9
-    else: desk_b3
-  - cites: hung neatly on the hook by her door or placed in her room
-    activity: school_run
-    phase: after
-    dest: desk_b3
-    p: 0.9
-    else: entry_hook_e1
-- object: headphones_1
-  cites: often tangled around his neck or left on the couch
-  home: desk_b2
-  p_misplace: 0.4
-  misplace_set:
-  - couch_l1
-  - bed_b2
-  rules:
-  - cites: often tangled around his neck or left on the couch
-    activity: gaming
-    phase: during
-    dest: armchair_l1
-    p: 0.7
-    else: desk_b2
-  - cites: often tangled around his neck or left on the couch
-    activity: gaming
-    phase: after
+    cites: left on the sofa or coffee table
+    only_from:
+    - couch_l1
     dest: couch_l1
     p: 0.6
-    else: desk_b2
-- object: glasses_1
-  cites: left on the bathroom counter or her desk
-  home: desk_b3
-  p_misplace: 0.2
-  misplace_set:
-  - counter_k1
+    else: coffee_table_l1
+- object: charger_1
+  cites: Leo's phone charger, often left on the kitchen counter or sofa
+  home: counter_k1
   rules:
-  - cites: left on the bathroom counter or her desk
-    activity: reading
+  - activity: gaming
     phase: during
-    dest: desk_b3
-    p: 0.8
-    else: counter_k1
-  - cites: left on the bathroom counter or her desk
-    activity: reading
+    cites: often left on the kitchen counter or sofa
+    only_from:
+    - counter_k1
+    - couch_l1
+    dest: couch_l1
+  - activity: gaming
     phase: after
-    dest: desk_b3
-    p: 0.7
+    cites: often left on the kitchen counter or sofa
+    only_from:
+    - couch_l1
+    dest: couch_l1
+    p: 0.5
     else: counter_k1
-- object: notebook_1
-  cites: kept in her room but sometimes taken to the dining table
+- object: charger_2
+  cites: Maya's phone charger, kept in her bedroom or on the dining table
+  home: nightstand_b3
+  rules:
+  - activity: reading
+    phase: during
+    cites: kept in her bedroom or on the dining table
+    only_from:
+    - nightstand_b3
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+  - activity: reading
+    phase: after
+    cites: kept in her bedroom or on the dining table
+    only_from:
+    - kitchen_table_k1
+    dest: nightstand_b3
+- object: backpack_1
+  cites: Leo's school backpack, left in the hallway or living room
+  home: entry_floor_e1
+  rules:
+  - activity: school_run
+    phase: during
+    cites: left in the hallway or living room
+    only_from:
+    - entry_floor_e1
+    - couch_l1
+    - desk_b2
+    dest: ELSEWHERE
+  - activity: school_run
+    phase: after
+    cites: left in the hallway or living room
+    only_from:
+    - ELSEWHERE
+    dest: couch_l1
+    p: 0.6
+    else: entry_floor_e1
+- object: backpack_2
+  cites: Maya's school backpack, kept in her bedroom or hallway
   home: desk_b3
   rules:
-  - cites: kept in her room but sometimes taken to the dining table
-    activity: study
+  - activity: school_run
     phase: during
-    dest: desk_b3
-    p: 0.7
-    else: kitchen_table_k1
-  - cites: kept in her room but sometimes taken to the dining table
-    activity: study
+    cites: kept in her bedroom or hallway
+    only_from:
+    - desk_b3
+    - entry_floor_e1
+    dest: ELSEWHERE
+  - activity: school_run
     phase: after
+    cites: kept in her bedroom or hallway
+    only_from:
+    - ELSEWHERE
     dest: desk_b3
-    p: 0.8
-    else: kitchen_table_k1
-- object: pen_1
-  cites: kept in her notebook pocket, rarely lost
-  home: desk_b3
-  motion: rarely_moved
-  rules: []
-- object: toy_1
-  cites: kept on her bed as a comfort object
-  home: bed_b3
-  motion: rarely_moved
-  rules: []
-- object: blanket_1
-  cites: pulled over Maya when she reads, often left askew
+- object: jacket_1
+  cites: Leo's winter jacket, often left on the sofa or hallway floor
+  home: entry_hook_e1
+  rules:
+  - activity: school_run
+    phase: during
+    cites: often left on the sofa or hallway floor
+    only_from:
+    - entry_hook_e1
+    - couch_l1
+    - entry_floor_e1
+    dest: ELSEWHERE
+  - activity: school_run
+    phase: after
+    cites: often left on the sofa or hallway floor
+    only_from:
+    - ELSEWHERE
+    dest: couch_l1
+    p: 0.5
+    else: entry_floor_e1
+- object: jacket_2
+  cites: Maya's winter jacket, kept in the hallway closet
+  home: entry_hook_e1
+  rules:
+  - activity: school_run
+    phase: during
+    cites: kept in the hallway closet
+    only_from:
+    - entry_hook_e1
+    dest: ELSEWHERE
+  - activity: school_run
+    phase: after
+    cites: kept in the hallway closet
+    only_from:
+    - ELSEWHERE
+    dest: entry_hook_e1
+- object: headphones_1
+  cites: Leo's gaming headphones, left on the sofa or nightstand
   home: couch_l1
   rules:
-  - cites: pulled over Maya when she reads, often left askew
-    activity: reading
+  - activity: gaming
     phase: during
+    cites: left on the sofa or nightstand
+    only_from:
+    - couch_l1
+    - nightstand_b2
     dest: couch_l1
-    p: 0.9
-    else: armchair_l1
-  - cites: pulled over Maya when she reads, often left askew
-    activity: reading
+  - activity: gaming
     phase: after
+    cites: left on the sofa or nightstand
+    only_from:
+    - couch_l1
     dest: couch_l1
-    p: 0.7
-    else: armchair_l1
-- object: towel_1
-  cites: hung on the rack in the bathroom, replaced weekly
-  home: towel_rack_ba1
-  rules:
-  - cites: hung on the rack in the bathroom, replaced weekly
-    activity: bedtime_routine
-    phase: during
-    dest: towel_rack_ba1
-    p: 0.5
-    else: sink_k1
-  - cites: hung on the rack in the bathroom, replaced weekly
-    activity: tidy_up
-    phase: after
-    dest: towel_rack_ba1
     p: 0.8
-    else: sink_k1
-- object: gaming_controller_1
-  cites: left on the armchair or the floor after gaming sessions
-  home: desk_b2
+    else: nightstand_b2
+- object: glasses_1
+  cites: Maya's reading glasses, kept on the dining table or in her backpack
+  home: desk_b3
   rules:
-  - cites: left on the armchair or the floor after gaming sessions
-    activity: gaming
+  - activity: reading
     phase: during
-    dest: armchair_l1
-    p: 0.8
-    else: desk_b2
-  - cites: left on the armchair or the floor after gaming sessions
-    activity: gaming
+    cites: kept on the dining table or in her backpack
+    only_from:
+    - desk_b3
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+  - activity: reading
     phase: after
-    dest: armchair_l1
+    cites: kept on the dining table or in her backpack
+    only_from:
+    - kitchen_table_k1
+    dest: kitchen_table_k1
     p: 0.6
-    else: bedroom_floor_b2
+    else: desk_b3
+- object: notebook_1
+  cites: Maya's sketchbook, left on the dining table or living room floor
+  home: desk_b3
+  rules:
+  - activity: reading
+    phase: during
+    cites: left on the dining table or living room floor
+    only_from:
+    - desk_b3
+    - kitchen_table_k1
+    - couch_l1
+    dest: kitchen_table_k1
+  - activity: reading
+    phase: after
+    cites: left on the dining table or living room floor
+    only_from:
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+    p: 0.7
+    else: couch_l1
+- object: pen_1
+  cites: Sarah's pen, kept in her desk drawer
+  home: desk_b1
+  rules:
+  - activity: reading
+    phase: during
+    cites: sometimes borrowed by Maya
+    only_from:
+    - desk_b1
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+    p: 0.3
+    else: desk_b1
+  - activity: reading
+    phase: after
+    cites: returns it to the desk drawer
+    only_from:
+    - kitchen_table_k1
+    dest: desk_b1
+- object: blanket_1
+  cites: Living room blanket, used by Leo for gaming or Maya for sketching
+  home: couch_l1
+  rules:
+  - activity: gaming
+    phase: during
+    cites: used by Leo for gaming
+    only_from:
+    - couch_l1
+    - coffee_table_l1
+    dest: couch_l1
+  - activity: gaming
+    phase: after
+    cites: used by Leo for gaming
+    only_from:
+    - couch_l1
+    dest: couch_l1
+    p: 0.6
+    else: coffee_table_l1
+- object: towel_1
+  cites: Kitchen towel, used by Sarah for cleaning, kept on the counter
+  home: counter_k1
+  rules:
+  - activity: tidy_up
+    phase: during
+    cites: used by Sarah for cleaning
+    only_from:
+    - counter_k1
+    - sink_k1
+    dest: counter_k1
+  - activity: tidy_up
+    phase: after
+    cites: kept on the counter
+    only_from:
+    - counter_k1
+    dest: counter_k1
+- object: gaming_controller_1
+  cites: Leo's gaming controller, left on the sofa after gaming
+  home: couch_l1
+  rules:
+  - activity: gaming
+    phase: during
+    cites: left on the sofa after every session
+    only_from:
+    - couch_l1
+    - desk_b2
+    dest: couch_l1
+  - activity: gaming
+    phase: after
+    cites: left on the sofa after every session
+    only_from:
+    - couch_l1
+    dest: couch_l1
 - object: lunchbox_1
-  cites: left in the fridge overnight, prepared by Elena
+  cites: Maya's lunchbox, prepared by Sarah and taken to school
   home: cupboard_k1
   rules:
-  - cites: left in the fridge overnight, prepared by Elena
-    activity: breakfast
+  - activity: school_run
     phase: during
-    dest: counter_k1
-    p: 0.8
-    else: cupboard_k1
-  - cites: left in the fridge overnight, prepared by Elena
-    activity: breakfast
+    cites: prepared by Sarah and taken to school
+    only_from:
+    - cupboard_k1
+    - counter_k1
+    dest: ELSEWHERE
+  - activity: school_run
     phase: after
-    dest: sink_k1
-    p: 0.7
-    else: cupboard_k1
+    cites: prepared by Sarah and taken to school
+    only_from:
+    - ELSEWHERE
+    dest: cupboard_k1
 - object: umbrella_1
-  cites: kept in the stand by the door, grabbed by whoever leaves first
+  cites: Shared umbrella, kept in the hallway
   home: entry_floor_e1
   rules:
-  - cites: kept in the stand by the door, grabbed by whoever leaves first
-    activity: commute_out
+  - activity: work_away
     phase: during
+    cites: used by whoever leaves in the rain
+    only_from:
+    - entry_floor_e1
     dest: ELSEWHERE
     p: 0.3
     else: entry_floor_e1
-  - cites: kept in the stand by the door, grabbed by whoever leaves first
-    activity: commute_home
+  - activity: work_away
     phase: after
+    cites: kept in the hallway
+    only_from:
+    - ELSEWHERE
     dest: entry_floor_e1
-    p: 0.8
-    else: counter_k1
 - object: wallet_1
-  cites: kept in her handbag or the kitchen drawer, used for groceries
-  home: counter_k1
+  cites: Sarah's wallet, kept in her handbag or desk drawer
+  home: desk_b1
   rules:
-  - cites: kept in her handbag or the kitchen drawer, used for groceries
-    activity: groceries
+  - activity: work_away
     phase: during
+    cites: kept in her handbag
+    only_from:
+    - desk_b1
+    - counter_k1
     dest: ELSEWHERE
-    p: 0.9
-    else: counter_k1
-  - cites: kept in her handbag or the kitchen drawer, used for groceries
-    activity: groceries
+  - activity: work_away
     phase: after
-    dest: counter_k1
-    p: 0.8
-    else: cupboard_k1
+    cites: kept in her handbag or desk drawer
+    only_from:
+    - ELSEWHERE
+    dest: desk_b1
 activities:
-- name: commute_out
-  fragment:
-    mean_bouts: 1
-  cites: Elena leaves for work early
 - name: work_away
-  fragment:
-    mean_bouts: 1
-  cites: Elena leaves for work early
-- name: commute_home
-  fragment:
-    mean_bouts: 1
-  cites: Elena leaves for work early
-- name: coffee
-  fragment:
-    mean_bouts: 2
-  cites: Elena prepares food
+  reset_all:
+    p: 0.0
+    objects:
+    - mug_1
+    - phone_1
+    - keys_1
+    - laptop_1
+    - wallet_1
 - name: tidy_up
   reset_all:
-    p: 0.9
+    p: 0.6
     objects:
-    - phone_1
-    - mug_2
-    - laptop_1
-    - water_bottle_1
+    - book_1
+    - notebook_1
+    - remote_1
     - blanket_1
-    - gaming_controller_1
-  cites: Clears the kitchen counter every night
-- name: work_home
-  fragment:
-    mean_bouts: 3
-  cites: Leaves a stack of graded essays
-- name: breakfast
-  fragment:
-    mean_bouts: 2
-  cites: Marcus usually wakes up last
-- name: school_run
-  fragment:
-    mean_bouts: 1
-  cites: Marcus and Maya have a sibling dynamic
+    - mug_2
 - name: gaming
   fragment:
     mean_bouts: 3
-  cites: Marcus uses the armchair for gaming
 - name: reading
   fragment:
     mean_bouts: 2
-  cites: Maya claiming the couch
-- name: watch_tv
-  fragment:
-    mean_bouts: 2
-  cites: Maya claims the couch
-- name: study
-  fragment:
-    mean_bouts: 3
-  cites: Maya rises early to study or work on art
-- name: groceries
-  fragment:
-    mean_bouts: 1
-  cites: Elena leaves for work early
 arc_events:
-- day: 2
-  note: Elena skips grocery run due to grading deadline
+- day: 3
+  note: Sarah skips her evening tidy-up to help Leo with a tech issue
   patch:
     drop:
-    - groceries
-- day: 5
-  note: Marcus goes to friend's house for gaming, skipping school
+    - tidy_up
+- day: 8
+  note: Leo stays out late for a friend's birthday, violating his bedtime
   patch:
-    drop:
-    - school_run
     add:
     - resident: resident_2
-      activity: gaming
-      start: 08:00
-      end: '20:00'
+      activity: work_away
+      start: '19:00'
+      end: '23:00'
       at: ELSEWHERE
       jitter: loose
-      skip_p: 0
-- day: 10
-  note: Maya falls ill, staying in bed all day
+- day: 14
+  note: Maya is sick and stays home, skipping school and sketching
   patch:
     drop:
     - school_run
     - reading
-    - watch_tv
-    add:
-    - resident: resident_3
-      activity: bedtime_routine
-      start: 09:00
-      end: '18:00'
-      at: bed_b3
-      jitter: routine
-      skip_p: 0
-- day: 14
-  note: Elena works late, missing dinner prep
+- day: 15
+  note: Maya is still recovering, skipping school
   patch:
     drop:
-    - work_home
-    - tidy_up
-    add:
-    - resident: resident_1
-      activity: work_away
-      start: '16:30'
-      end: '21:00'
-      at: ELSEWHERE
-      jitter: external
-      skip_p: 0
-- day: 18
-  note: Marcus forgets backpack, Elena drives him to school
+    - school_run
+- day: 16
+  note: Maya returns to school but skips her evening reading to rest
   patch:
     drop:
-    - commute_out
-    add:
-    - resident: resident_1
-      activity: school_run
-      start: 07:00
-      end: 08:00
-      at: ELSEWHERE
-      jitter: external
-      skip_p: 0
+    - reading

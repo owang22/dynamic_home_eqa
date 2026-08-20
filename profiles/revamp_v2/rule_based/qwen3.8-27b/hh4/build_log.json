@@ -3,68 +3,79 @@
   "household_type": "college_roommates",
   "model": "Qwen/Qwen3.8-27B",
   "model_slug": "qwen3.8-27b",
-  "builder_version": "rv2-b4",
+  "builder_version": "rv2-b5",
   "prompts": {
     "persona_v2": "134f5bfb",
-    "routine_program": "e63834f9",
+    "routine_program": "e35c6d66",
     "leak_audit": "051fa759"
   },
   "scene": "symbolic",
   "days": 21,
-  "persona_seed": 17854256081139434047,
+  "persona_seed": 3847879413304067133,
   "persona_attempts": [
     {
       "attempt": 0,
-      "seed": 4866608393061377516,
+      "seed": 686152279513878153,
       "leak_prediction": {
         "predicted_type": "college_roommates",
-        "confidence": 0.92,
-        "reason": "The presence of four distinct bedrooms (bed_b1 through bed_b4), each with a desk, strongly indicates a shared living arrangement for four individuals, which aligns perfectly with the 'college_roommates' profile. The lack of child-specific items (toys, cribs) or extensive family amenities further nar",
+        "confidence": 0.95,
+        "reason": "The presence of four distinct bedrooms (bed_b1 through bed_b4) with corresponding desks and nightstands strongly indicates a shared living arrangement for four individuals. The high count of backpacks (4), laptops (2), and phones (4), combined with the absence of family-specific items (like toys, st",
         "actual_type": "college_roommates",
         "correct": true
       }
     },
     {
       "attempt": 1,
-      "seed": 7732979319268303791,
+      "seed": 9680704206184648015,
       "leak_prediction": {
         "predicted_type": "college_roommates",
         "confidence": 0.95,
-        "reason": "The presence of four distinct bedrooms (b1-b4) each with a bed, nightstand, and desk, combined with four laptops, four backpacks, and four sets of keys, strongly indicates a shared living arrangement for four individuals. The lack of family-specific items (diapers, toys, high chairs) and the high-to",
+        "reason": "The presence of four distinct bedrooms (bed_b1 through bed_b4) with corresponding desks and nightstands strongly indicates a shared living arrangement for four individuals. The object list reinforces this with four sets of personal items (mugs, phones, keys, water bottles, backpacks, jackets) and a ",
         "actual_type": "college_roommates",
         "correct": true
       }
     },
     {
       "attempt": 2,
-      "seed": 17345539382585765199,
+      "seed": 179045062937333548,
       "leak_prediction": {
         "predicted_type": "college_roommates",
         "confidence": 0.92,
-        "reason": "The presence of four distinct bedrooms (bed_b1 through bed_b4) with corresponding desks and nightstands strongly indicates a shared living arrangement for four individuals. The high count of personal items (4 phones, 4 keys, 4 wallets, 4 backpacks) confirms four occupants. The inclusion of a gaming,",
+        "reason": "The presence of four distinct bedrooms (b1-b4) with individual desks and beds, combined with four sets of personal items (keys, jackets, backpacks, phones) and a shared living space, strongly indicates a group of four individuals. The specific combination of gaming controllers, multiple laptops, and",
         "actual_type": "college_roommates",
         "correct": true
       }
     },
     {
       "attempt": 3,
-      "seed": 17854256081139434047,
+      "seed": 11115321108293052096,
       "leak_prediction": {
-        "predicted_type": "family_school_age_children",
-        "confidence": 0.92,
-        "reason": "The presence of four distinct bedrooms (b1-b4) indicates a family of at least 4-5 people. The object list contains items associated with four different individuals: Leo, Maya, Jade, and Sam. The specific items for Sam (medication_bottle, gaming_controller) and Jade (notebook, pen, umbrella) suggest ",
+        "predicted_type": "college_roommates",
+        "confidence": 0.95,
+        "reason": "The presence of four distinct bedrooms (b1-b4) each with a bed, nightstand, and desk, combined with four identical sets of personal items (mugs, laptops, phones, keys, backpacks, jackets), strongly indicates a shared living arrangement for four individuals. The lack of family-specific items (diapers",
         "actual_type": "college_roommates",
-        "correct": false
+        "correct": true
+      }
+    },
+    {
+      "attempt": 4,
+      "seed": 3847879413304067133,
+      "leak_prediction": {
+        "predicted_type": "college_roommates",
+        "confidence": 0.95,
+        "reason": "The presence of four distinct bedrooms (b1-b4) each with a bed, nightstand, and desk, combined with four sets of personal items (mugs, laptops, phones, keys, backpacks, jackets), strongly indicates a shared living arrangement for four individuals. The specific combination of four separate bedrooms (",
+        "actual_type": "college_roommates",
+        "correct": true
       }
     }
   ],
-  "leak_unresolved": false,
+  "leak_unresolved": true,
   "n_attempts": 1,
   "accepted_attempt": 0,
   "attempts": [
     {
       "attempt": 0,
-      "seed": 83577442332713823,
+      "seed": 16550020034568220756,
       "failures": []
     }
   ]

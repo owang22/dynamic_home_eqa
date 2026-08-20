@@ -2,140 +2,106 @@ household_id: hh_005
 household_type: remote_worker_couple
 residents:
   - id: resident_1
-    name: Elena
+    name: Elias
     age: 34
-    occupation: UX Designer
-    personality: visually sensitive, perfectionist, tactile
+    occupation: Data Scientist
+    personality: methodical, hoarder of tech, easily distracted
     habits:
-      - arranges her desk accessories in strict geometric patterns every morning
-      - leaves her sketchbook open on the coffee table when taking a break
-      - steals resident_2's favorite blue mug for her morning coffee without asking
-      - keeps her laptop closed on her lap when working in the living room to avoid
-        distraction
-      - organizes shared pantry items by color, which annoys resident_2
-      - puts her reading glasses on the back of her head, causing them to slide
-        off and land on the floor frequently
+      - Leaves his laptop open on the kitchen table even when working from the sofa
+      - Buries his phone under a stack of technical notebooks until he needs it
+      - Steals resident_2's water bottle when his runs dry
+      - Keeps a dedicated 'work zone' on the desk but lets it bleed into the living
+        room with cables
+      - Forgets to put his glasses in the case, leaving them on the armchair
   - id: resident_2
-    name: Marcus
-    age: 36
-    occupation: Data Analyst
-    personality: pragmatic, disorganized, tech-reliant
+    name: Sara
+    age: 31
+    occupation: UX Designer
+    personality: aesthetic-focused, organized, short-tempered about clutter
     habits:
-      - leaves his phone on the kitchen counter charging while he cooks
-      - keeps his notebook and pen in his jacket pocket until they are needed, then
-        loses them
-      - borrows Elena's charger when his own is not found, leaving it tangled on
-        his desk
-      - sits in the armchair with his laptop, causing his jacket to pile up on the
-        backrest
-      - forgets to return the remote to the media console after watching a video
-      - keeps his water bottle on the edge of the desk, knocking it over when reaching
-        for his keyboard
+      - Uses a specific color-coded pen for each project, keeping them in a jar
+        on her desk
+      - Moves her laptop to the bedroom window for better light during afternoon
+        design sessions
+      - Clears the kitchen counter of any food items within minutes of eating
+      - Borrows Elias's gaming controller to play casual puzzles when stuck on a
+        design problem
+      - Leaves her sketchbook open on the couch, often with a pencil resting on
+        the page
 relationships: >-
-  Elena and Marcus are married and have been working from home together for three
-  years. They share the kitchen and living room but have established strict boundaries
-  around their desks to maintain focus. The main point of friction is the bathroom
-  and kitchen counters, where Marcus's tendency to leave items out clashes with
-  Elena's need for visual order, leading to silent negotiations about who cleans
-  up first each morning.
+  Elias and Sara are partners of five years who share a studio apartment. They have
+  a fragile peace about space: Elias tolerates Sara's strict organization of shared
+  areas, while Sara tolerates Elias's tech clutter in his 'zone,' though it frequently
+  encroaches on hers. Their main friction is the kitchen table; Elias uses it as
+  a secondary desk, while Sara wants it kept clear for meals and her occasional
+  paper prototypes. They coordinate by a silent agreement that whoever finishes
+  their meal first clears the table, though Elias often forgets this rule.
 home_layout_notes: >-
-  The home has an open-plan living and dining area where both work, with a dedicated
-  kitchen island that serves as a shared workspace. Elena uses the left side of
-  the long dining table for her design work, while Marcus occupies the right side.
-  The living room sofa is a shared relaxation zone, but the armchair is Marcus's
-  personal spot for quick breaks.
+  The studio is divided by an invisible line: the left side (bedroom and desk area)
+  is Sara's domain, kept minimalist and bright. The right side (sofa and kitchen
+  nook) is Elias's chaotic workspace. The kitchen counter is the primary shared
+  surface, used for meals and quick snacks, and is the site of most daily negotiations.
+  The sofa is neutral ground where both often end up working or relaxing in the
+  evening.
 object_inventory:
-  - id: mug_1
-    class: mug
-    owner: resident_1
-    role: Elena's primary coffee mug, often stolen by Marcus
-  - id: mug_2
-    class: mug
-    owner: resident_2
-    role: Marcus's preferred mug, left on the kitchen counter
-  - id: laptop_elena
+  - id: laptop_elias
     class: laptop
     owner: resident_1
-    role: Elena's work device, kept at the dining table
-  - id: laptop_marcus
+    role: Primary work tool for Elias, moves between kitchen table and sofa
+  - id: laptop_sara
     class: laptop
     owner: resident_2
-    role: Marcus's work device, kept at the dining table
-  - id: phone_elena
+    role: Primary work tool for Sara, moves between bedroom desk and living room
+  - id: phone_elias
     class: phone
     owner: resident_1
-    role: Elena's personal device, kept on the nightstand
-  - id: phone_marcus
+    role: Personal device for Elias, often buried under notebooks
+  - id: phone_sara
     class: phone
     owner: resident_2
-    role: Marcus's personal device, charged on the kitchen counter
-  - id: keys_elena
-    class: keys
+    role: Personal device for Sara, kept in a designated dock on the desk
+  - id: mug_elias
+    class: mug
     owner: resident_1
-    role: Elena's car keys, hung on the hallway hook
-  - id: keys_marcus
-    class: keys
+    role: Coffee mug for Elias, left on the kitchen table
+  - id: mug_sara
+    class: mug
     owner: resident_2
-    role: Marcus's car keys, often left in his jacket pocket
-  - id: book_elena
-    class: book
-    owner: resident_1
-    role: Elena's design reference book, left open on the coffee table
-  - id: water_bottle_marcus
+    role: Tea mug for Sara, cleared to the sink immediately after use
+  - id: water_bottle_sara
     class: water_bottle
     owner: resident_2
-    role: Marcus's hydration tool, prone to falling off the desk
-  - id: remote_shared
-    class: remote
-    owner: shared
-    role: Shared media remote, often misplaced in the living room
-  - id: charger_elena
-    class: charger
-    owner: resident_1
-    role: Elena's phone charger, frequently borrowed by Marcus
-  - id: charger_marcus
-    class: charger
-    owner: resident_2
-    role: Marcus's phone charger, usually found under his desk
-  - id: notebook_marcus
+    role: Reusable bottle for Sara, often borrowed by Elias
+  - id: notebook_sara
     class: notebook
     owner: resident_2
-    role: Marcus's jotting pad, kept in his jacket pocket
-  - id: pen_marcus
+    role: Sketchbook for Sara, left open on the sofa
+  - id: pen_sara
     class: pen
     owner: resident_2
-    role: Marcus's writing instrument, often lost with the notebook
-  - id: glasses_elena
+    role: Color-coded pen for Sara, kept in a jar on the desk
+  - id: glasses_elias
     class: glasses
     owner: resident_1
-    role: Elena's reading glasses, frequently slid down her head
-  - id: jacket_marcus
-    class: jacket
+    role: Reading glasses for Elias, left on the armchair
+  - id: gaming_controller_sara
+    class: gaming_controller
     owner: resident_2
-    role: Marcus's work jacket, draped over the armchair
-  - id: blanket_shared
-    class: blanket
-    owner: shared
-    role: Shared throw blanket, used for naps in the living room
-  - id: bowl_shared
-    class: bowl
-    owner: shared
-    role: Shared cereal bowl, washed by whoever finishes first
-  - id: plate_shared
-    class: plate
-    owner: shared
-    role: Shared snack plate, left on the coffee table
+    role: Casual puzzle controller for Sara, borrowed from Elias's collection
+  - id: charger_elias
+    class: charger
+    owner: resident_1
+    role: Laptop charger for Elias, tangled on the kitchen table
 daily_life_summary: >-
-  Both residents start their days by preparing coffee in the kitchen, often bumping
-  into each other as they reach for mugs and bowls. They work side-by-side at the
-  dining table for several hours, occasionally stepping into the living room to
-  stretch or take calls. In the afternoon, their routines diverge slightly as Elena
-  moves to her armchair for sketching, while Marcus remains at the table for data
-  entry. They converge in the evening to cook dinner together, clearing the workspace
-  of laptops and notebooks before sitting down to eat.
+  Sara typically starts her day by setting up her laptop at the bedroom window,
+  while Elias remains at the kitchen table, juggling data tasks. They cross paths
+  during mid-morning coffee breaks, where Sara usually clears the table before Elias
+  can leave his mug. Afternoons see Sara moving to the living room for collaborative
+  reviews, while Elias migrates to the sofa, often leaving his laptop open. Their
+  days overlap significantly, leading to frequent interruptions and a shared rhythm
+  of working, pausing for food, and tidying the shared spaces together in the evening.
 quirks: >-
-  Despite both working from home, they have developed a 'silent office' culture
-  where they do not speak unless necessary, communicating primarily through text
-  messages sent to each other's phones while sitting across from one another. They
-  also have a ritual of 'desk clearing' where they compete to see who can organize
-  their workspace the most minimally before leaving for the evening.
+  They have a 'digital sunset' where both devices are silenced after a certain point,
+  but Elias often violates this by checking data alerts. They share a single high-end
+  gaming controller that Sara uses for work breaks, blurring the line between work
+  and leisure tools.

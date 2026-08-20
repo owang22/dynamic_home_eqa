@@ -1,10 +1,10 @@
 {
   "household": "hh_008",
   "household_type": "working_couple_no_children",
-  "source": "profiles/revamp_v2/qwen3.8-27b/hh8",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh8",
   "days": 21,
   "seed": 0,
-  "n_events": 1069,
+  "n_events": 622,
   "jitter_classes": {
     "external": 10,
     "routine": 30,
@@ -12,115 +12,63 @@
     "loose": 110
   },
   "activity_stats": {
-    "tidy_bouts": 13,
-    "tidy_moved": 18,
+    "tidy_bouts": 48,
+    "tidy_moved": 32,
     "tidy_ran_out_of_time": 3,
-    "blocks": 351,
+    "blocks": 376,
     "vacuous_arc_drops": [],
     "dropped_sleep_resets": [],
     "dropped_sleep_fragments": [],
-    "derived_only_from": [
-      "coffee.bowl_1",
-      "coffee.jacket_2",
-      "coffee.keys_1",
-      "coffee.mug_1",
-      "coffee.mug_2",
-      "coffee.notebook_1",
-      "coffee.towel_1",
-      "coffee.water_bottle_1",
-      "coffee__armchair_l1.bowl_1",
-      "coffee__armchair_l1.jacket_2",
-      "coffee__armchair_l1.keys_1",
-      "coffee__armchair_l1.mug_1",
-      "coffee__armchair_l1.mug_2",
-      "coffee__armchair_l1.notebook_1",
-      "coffee__armchair_l1.towel_1",
-      "coffee__armchair_l1.water_bottle_1",
-      "reading.book_1",
-      "reading.charger_1",
-      "reading.glasses_1",
-      "reading.phone_2",
-      "reading.remote_1",
-      "reading__couch_l1.book_1",
-      "reading__couch_l1.charger_1",
-      "reading__couch_l1.glasses_1",
-      "reading__couch_l1.phone_2",
-      "reading__couch_l1.remote_1"
-    ],
+    "derived_only_from": [],
     "orphaned_rules": [],
     "unscheduled_activities": [],
     "inert_objects": [
-      "book_2",
-      "laptop_2",
-      "pen_1",
-      "water_bottle_2"
+      "keys_elena"
     ],
-    "carried_on_departure": [
-      "phone_1@commute_home",
-      "phone_1@commute_out",
-      "phone_1@work_away",
-      "wallet_2@commute_out__resident_2",
-      "wallet_2@work_away__resident_2"
-    ],
-    "left_behind_by_trip": [
-      "wallet_2@commute_home__resident_2"
-    ],
-    "carried_putdowns_at_start": [
-      "phone_1@sleep_bedtime_routine",
-      "phone_1@sleep_bedtime_routine__bed_b2",
-      "wallet_2@coffee",
-      "wallet_2@coffee__armchair_l1"
-    ],
+    "carried_on_departure": [],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [],
     "skips_per_activity": {
-      "coffee": 2,
-      "coffee__armchair_l1": 3,
-      "dinner": 5,
-      "reading": 2,
-      "reading__couch_l1": 4,
-      "tidy_up": 3,
-      "work_home": 4,
-      "work_home__coffee_table_l1": 2
+      "tidy_up": 4,
+      "tidy_up__coffee_table_l1": 5,
+      "work_home__couch_l1": 3,
+      "work_home__kitchen_table_k1": 3
     },
     "fragment_bouts_per_activity": {
-      "coffee": 15,
-      "coffee__armchair_l1": 5,
-      "reading": 9,
-      "reading__couch_l1": 13
-    }
+      "get_ready": 36,
+      "work_home": 22,
+      "work_home__couch_l1": 45,
+      "work_home__kitchen_table_k1": 12,
+      "work_home__resident_2": 4
+    },
+    "carry_rehome_suppressed": 0
   },
   "moves_per_object": {
-    "wallet_2": 86,
-    "water_bottle_1": 80,
-    "mug_2": 79,
-    "towel_1": 78,
-    "keys_1": 69,
-    "bowl_1": 66,
-    "jacket_2": 58,
-    "laptop_1": 55,
-    "mug_1": 50,
-    "glasses_1": 49,
-    "book_1": 48,
-    "plate_1": 47,
-    "phone_1": 45,
-    "phone_2": 40,
-    "charger_1": 40,
-    "keys_2": 38,
-    "jacket_1": 34,
-    "remote_1": 34,
-    "wallet_1": 30,
-    "notebook_1": 27,
-    "umbrella_1": 16
+    "notebook_julian": 122,
+    "laptop_julian": 119,
+    "mug_1": 61,
+    "jacket_julian": 44,
+    "mug_2": 37,
+    "pen_elena": 35,
+    "glasses_julian": 32,
+    "phone_julian": 31,
+    "keys_julian": 29,
+    "phone_elena": 28,
+    "laptop_elena": 24,
+    "water_bottle_julian": 23,
+    "book_elena": 22,
+    "headphones_elena": 15
   },
   "provenance": {
     "model": "Qwen/Qwen3.8-27B",
     "prompts": {
       "persona_v2": "134f5bfb",
-      "routine_program": "e63834f9",
+      "routine_program": "e35c6d66",
       "leak_audit": "051fa759"
     },
-    "builder_version": "rv2-b4",
-    "accepted_attempt": 1,
-    "n_attempts": 2
+    "builder_version": "rv2-b5",
+    "accepted_attempt": 0,
+    "n_attempts": 1
   },
   "realization_params": {
     "skip": {
@@ -130,6 +78,11 @@
       "min_mean_bouts": 1.0,
       "max_mean_bouts": 6.0,
       "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
     }
   },
   "spatialization": {

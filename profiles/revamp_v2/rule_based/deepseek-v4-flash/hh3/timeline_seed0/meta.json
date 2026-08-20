@@ -1,10 +1,10 @@
 {
   "household": "hh_003",
   "household_type": "retired_couple",
-  "source": "profiles/revamp_v2/deepseek-v4-flash/hh3",
+  "source": "profiles/revamp_v2/rule_based/deepseek-v4-flash/hh3",
   "days": 21,
   "seed": 0,
-  "n_events": 1513,
+  "n_events": 1261,
   "jitter_classes": {
     "external": 10,
     "routine": 30,
@@ -71,27 +71,28 @@
       "wake_up": 11,
       "wake_up__bed_b2": 14,
       "wake_up__couch_l1": 57
-    }
+    },
+    "carry_rehome_suppressed": 126
   },
   "moves_per_object": {
-    "keys_2": 115,
-    "jacket_1": 111,
-    "glasses_2": 109,
     "book_1": 108,
     "mug_2": 94,
-    "phone_2": 94,
-    "jacket_2": 93,
     "bowl_1": 90,
-    "water_bottle_2": 86,
-    "umbrella_1": 85,
     "remote_1": 85,
-    "keys_1": 82,
+    "keys_2": 81,
+    "jacket_1": 77,
     "water_bottle_1": 76,
-    "glasses_1": 60,
+    "glasses_2": 75,
+    "umbrella_1": 71,
+    "phone_2": 70,
+    "keys_1": 68,
+    "water_bottle_2": 58,
     "towel_1": 55,
     "mug_1": 54,
     "phone_1": 48,
+    "glasses_1": 42,
     "plate_1": 42,
+    "jacket_2": 41,
     "blanket_1": 26
   },
   "provenance": {
@@ -113,18 +114,11 @@
       "min_mean_bouts": 1.0,
       "max_mean_bouts": 6.0,
       "min_bout_minutes": 10
-    }
-  },
-  "spatialization": {
-    "config": "visualization/configs/revamp_v2_rule_based_deepseek-v4-flash_hh3_102343992.yaml",
-    "scene_id": "102343992",
-    "room_map": {
-      "bathroom": "bathroom.001",
-      "bedroom_1": "bedroom.004",
-      "bedroom_2": "bedroom",
-      "entry": "hallway.003",
-      "kitchen": "kitchen",
-      "living": "tv"
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
     }
   }
 }

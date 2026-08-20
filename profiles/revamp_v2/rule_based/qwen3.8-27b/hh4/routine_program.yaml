@@ -5,13 +5,13 @@ days: 21
 day0: Monday
 residents:
 - id: resident_1
-  jitter_scale: 1.6
+  jitter_scale: 1.0
 - id: resident_2
-  jitter_scale: 1.8
+  jitter_scale: 1.4
 - id: resident_3
-  jitter_scale: 0.7
+  jitter_scale: 1.6
 - id: resident_4
-  jitter_scale: 1.9
+  jitter_scale: 0.6
 receptacles:
 - id: bed_b1
   room: bedroom_1
@@ -90,11 +90,11 @@ sleep_schedule:
   - Fr
   - Sa
   - Su
-  start: 02:30
-  end: '10:30'
+  start: 01:00
+  end: 07:00
   at: bed_b1
   jitter: routine
-  cites: keeps his laptop open on the desk even when sleeping
+  cites: late-night study sessions
 - resident: resident_2
   activity: bedtime_routine
   days:
@@ -105,11 +105,11 @@ sleep_schedule:
   - Fr
   - Sa
   - Su
-  start: 01:00
+  start: 01:30
   end: 08:30
   at: bed_b2
   jitter: routine
-  cites: Maya's early mornings
+  cites: energetic, messy
 - resident: resident_3
   activity: bedtime_routine
   days:
@@ -120,11 +120,11 @@ sleep_schedule:
   - Fr
   - Sa
   - Su
-  start: '23:00'
-  end: 07:00
+  start: 02:00
+  end: '10:00'
   at: bed_b3
-  jitter: external
-  cites: tidy, irritable, efficient
+  jitter: flexible
+  cites: lazy, humorous
 - resident: resident_4
   activity: bedtime_routine
   days:
@@ -135,15 +135,15 @@ sleep_schedule:
   - Fr
   - Sa
   - Su
-  start: 03:00
-  end: '11:00'
+  start: '23:30'
+  end: 06:30
   at: bed_b4
-  jitter: loose
-  cites: Jade's late-night calls
+  jitter: external
+  cites: calm, tidy, introverted
 weekly_blocks:
-- cites: Leo spends most of his time in his room
+- cites: mostly at different lectures
   resident: resident_1
-  activity: study
+  activity: commute_out
   sleep: false
   days:
   - Mo
@@ -151,26 +151,29 @@ weekly_blocks:
   - We
   - Th
   - Fr
-  start: '10:30'
-  end: '13:00'
-  at: desk_b1
-  jitter: flexible
-  skip_p: 0.1
-- cites: Leo spends most of his time in his room
+  start: 07:00
+  end: 08:30
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: converge in the apartment in the evenings
   resident: resident_1
-  activity: study
+  activity: commute_home
   sleep: false
   days:
-  - Sa
-  - Su
-  start: '12:00'
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '17:00'
   end: '18:00'
-  at: desk_b1
-  jitter: flexible
-  skip_p: 0.3
-- cites: Leo and Maya often overlap in the kitchen
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: converge in the apartment in the evenings
   resident: resident_1
-  activity: snack
+  activity: study
   sleep: false
   days:
   - Mo
@@ -178,97 +181,83 @@ weekly_blocks:
   - We
   - Th
   - Fr
-  - Sa
-  - Su
-  start: '13:00'
-  end: '14:00'
+  start: '18:00'
+  end: '23:00'
   at: kitchen_table_k1
   jitter: routine
-  skip_p: 0.2
-- cites: Leo and Maya are close friends
-  resident: resident_1
-  activity: socialise_home
-  sleep: false
-  days:
-  - Mo
-  - We
-  - Fr
-  start: '18:00'
-  end: '22:00'
-  at: couch_l1
-  jitter: loose
-  skip_p: 0.4
-- cites: Leo and Maya are close friends
-  resident: resident_1
-  activity: socialise_home
-  sleep: false
-  days:
-  - Tu
-  - Th
-  - Sa
-  - Su
-  start: '20:00'
-  end: '23:00'
-  at: couch_l1
-  jitter: loose
-  skip_p: 0.5
-- cites: Maya often gathers with friends
-  resident: resident_2
-  activity: socialise_home
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  start: '18:00'
-  end: '23:00'
-  at: couch_l1
-  jitter: loose
-  skip_p: 0.2
-- cites: Maya's early mornings
-  resident: resident_2
-  activity: study
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  start: 09:00
-  end: '13:00'
-  at: desk_b2
-  jitter: flexible
   skip_p: 0.1
-- cites: Maya's early mornings
-  resident: resident_2
-  activity: study
+- cites: late-night study sessions
+  resident: resident_1
+  activity: reading
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '23:00'
+  end: 01:00
+  at: bed_b1
+  jitter: flexible
+  skip_p: 0.2
+- cites: mostly at different lectures
+  resident: resident_1
+  activity: commute_out
   sleep: false
   days:
   - Sa
   - Su
-  start: '10:00'
-  end: '14:00'
-  at: desk_b2
+  start: 09:00
+  end: '10:00'
+  at: ELSEWHERE
   jitter: flexible
   skip_p: 0.3
-- cites: Maya often gathers with friends
-  resident: resident_2
-  activity: socialise_home
+- cites: converge in the apartment in the evenings
+  resident: resident_1
+  activity: study
   sleep: false
   days:
   - Sa
   - Su
+  start: '14:00'
+  end: '18:00'
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: mostly at different lectures
+  resident: resident_2
+  activity: commute_out
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:30
+  end: '10:00'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: converge in the apartment in the evenings
+  resident: resident_2
+  activity: commute_home
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
   start: '16:00'
-  end: '22:00'
-  at: couch_l1
-  jitter: loose
-  skip_p: 0.3
-- cites: Sam tries to maintain order by cleaning
-  resident: resident_3
-  activity: tidy_up
+  end: '17:00'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: converge in the apartment in the evenings
+  resident: resident_2
+  activity: study
   sleep: false
   days:
   - Mo
@@ -276,86 +265,29 @@ weekly_blocks:
   - We
   - Th
   - Fr
-  - Sa
-  - Su
-  start: '13:00'
-  end: '14:00'
+  start: '17:00'
+  end: '22:00'
   at: kitchen_table_k1
-  jitter: external
-  skip_p: 0.0
-- cites: Sam tries to maintain order by cleaning
-  resident: resident_3
-  activity: tidy_up
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  start: '21:00'
-  end: '22:00'
-  at: couch_l1
-  jitter: external
-  skip_p: 0.1
-- cites: Sam is a senior who is trying to maintain a professional
-  resident: resident_3
-  activity: study
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  start: 08:00
-  end: '12:00'
-  at: desk_b3
   jitter: routine
-  skip_p: 0.0
-- cites: Sam is a senior who is trying to maintain a professional
-  resident: resident_3
-  activity: study
+  skip_p: 0.1
+- cites: social, energetic
+  resident: resident_2
+  activity: watch_tv
   sleep: false
   days:
-  - Sa
-  - Su
-  start: 09:00
-  end: '13:00'
-  at: desk_b3
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '22:00'
+  end: 01:30
+  at: couch_l1
   jitter: flexible
   skip_p: 0.2
-- cites: uses the gaming controller to play in the living room
-  resident: resident_3
-  activity: gaming
-  sleep: false
-  days:
-  - Mo
-  - We
-  - Fr
-  start: '15:00'
-  end: '19:00'
-  at: couch_l1
-  jitter: routine
-  skip_p: 0.2
-- cites: Jade is often in the living room or hallway
-  resident: resident_4
-  activity: study
-  sleep: false
-  days:
-  - Mo
-  - Tu
-  - We
-  - Th
-  - Fr
-  start: '11:00'
-  end: '15:00'
-  at: couch_l1
-  jitter: loose
-  skip_p: 0.3
-- cites: Jade is often in the living room or hallway
-  resident: resident_4
-  activity: study
+- cites: social, energetic
+  resident: resident_2
+  activity: watch_tv
   sleep: false
   days:
   - Sa
@@ -363,11 +295,11 @@ weekly_blocks:
   start: '12:00'
   end: '16:00'
   at: couch_l1
-  jitter: loose
-  skip_p: 0.4
-- cites: Jade is often in the living room or hallway
-  resident: resident_4
-  activity: socialise_home
+  jitter: flexible
+  skip_p: 0.2
+- cites: mostly at different lectures
+  resident: resident_3
+  activity: commute_out
   sleep: false
   days:
   - Mo
@@ -375,16 +307,56 @@ weekly_blocks:
   - We
   - Th
   - Fr
+  start: '10:00'
+  end: '11:30'
+  at: ELSEWHERE
+  jitter: loose
+  skip_p: 0.1
+- cites: converge in the apartment in the evenings
+  resident: resident_3
+  activity: commute_home
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '18:00'
+  end: '19:00'
+  at: ELSEWHERE
+  jitter: loose
+  skip_p: 0.1
+- cites: Sam relaxes on the sofa
+  resident: resident_3
+  activity: watch_tv
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '19:00'
+  end: 02:00
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.2
+- cites: lazy, humorous
+  resident: resident_3
+  activity: watch_tv
+  sleep: false
+  days:
   - Sa
   - Su
-  start: '19:00'
-  end: 01:00+1
+  start: '12:00'
+  end: '18:00'
   at: couch_l1
   jitter: loose
-  skip_p: 0.2
-- cites: Jade and Maya share a bedroom
+  skip_p: 0.1
+- cites: mostly at different lectures
   resident: resident_4
-  activity: snack
+  activity: commute_out
   sleep: false
   days:
   - Mo
@@ -392,537 +364,877 @@ weekly_blocks:
   - We
   - Th
   - Fr
+  start: 07:30
+  end: 08:30
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: converge in the apartment in the evenings
+  resident: resident_4
+  activity: commute_home
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '17:30'
+  end: '18:30'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: Eli works in his room
+  resident: resident_4
+  activity: study
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '18:30'
+  end: '23:30'
+  at: desk_b4
+  jitter: routine
+  skip_p: 0.0
+- cites: organizes the shared bookshelf every weekend
+  resident: resident_4
+  activity: tidy_up
+  sleep: false
+  days:
   - Sa
   - Su
-  start: '16:00'
-  end: '17:00'
-  at: kitchen_table_k1
+  start: '10:00'
+  end: '12:00'
+  at: bookshelf_l1
+  jitter: routine
+  skip_p: 0.1
+- cites: Eli works in his room
+  resident: resident_4
+  activity: study
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '14:00'
+  end: '18:00'
+  at: desk_b4
   jitter: flexible
-  skip_p: 0.3
+  skip_p: 0.1
 object_rules:
 - object: mug_1
-  cites: Leo's coffee mug, often left in the sink
-  home: cupboard_k1
-  p_misplace: 0.3
-  misplace_set:
-  - counter_k1
-  - desk_b1
-  rules:
-  - cites: Leo's coffee mug, often left in the sink
-    activity: snack
-    phase: during
-    dest: counter_k1
-  - cites: Leo's coffee mug, often left in the sink
-    activity: snack
-    phase: after
-    dest: sink_k1
-    p: 0.8
-    else: cupboard_k1
-  - cites: keeps his laptop open on the desk even when sleeping
-    activity: study
-    phase: during
-    dest: desk_b1
-  - cites: keeps his laptop open on the desk even when sleeping
-    activity: study
-    phase: after
-    dest: desk_b1
-    p: 0.6
-    else: sink_k1
+  cites: often left on his desk after use
+  home: desk_b1
+  motion: rarely_moved
+  rules: []
 - object: mug_2
-  cites: Shared mug, used by all, often stolen by Maya
+  cites: drinks from resident_1's mug when she is too lazy
+  home: cupboard_k1
+  p_misplace: 0.1
+  misplace_set:
+  - kitchen_table_k1
+  - counter_k1
+  rules:
+  - activity: study
+    phase: during
+    cites: drinks from resident_1's mug when she is too lazy
+    only_from:
+    - cupboard_k1
+    - kitchen_table_k1
+    - counter_k1
+    dest: kitchen_table_k1
+  - activity: study
+    phase: after
+    cites: drinks from resident_1's mug when she is too lazy
+    only_from:
+    - kitchen_table_k1
+    - counter_k1
+    dest: sink_k1
+    p: 0.3
+    else: cupboard_k1
+- object: mug_3
+  cites: often found in the sink unwashed
   home: cupboard_k1
   p_misplace: 0.2
   misplace_set:
+  - sink_k1
   - counter_k1
-  - kitchen_table_k1
   rules:
-  - cites: Shared mug, used by all, often stolen by Maya
-    activity: snack
+  - activity: watch_tv
     phase: during
+    cites: often found in the sink unwashed
+    only_from:
+    - cupboard_k1
+    - counter_k1
     dest: counter_k1
-    dist:
-    - dest: counter_k1
-      p: 0.5
-    - dest: kitchen_table_k1
-      p: 0.5
-  - cites: Shared mug, used by all, often stolen by Maya
-    activity: snack
+  - activity: watch_tv
     phase: after
+    cites: often found in the sink unwashed
+    only_from:
+    - counter_k1
     dest: sink_k1
     p: 0.7
     else: cupboard_k1
-- object: laptop_leo
-  cites: Leo's laptop, always open on his desk
-  home: desk_b1
-  rules:
-  - cites: Leo's laptop, always open on his desk
-    activity: study
-    phase: during
-    dest: desk_b1
-  - cites: Leo's laptop, always open on his desk
-    activity: study
-    phase: after
-    dest: desk_b1
-    p: 0.9
-    else: bed_b1
-- object: phone_maya
-  cites: Maya's phone, often dropped on the floor
-  home: person:resident_2
-  p_misplace: 0.4
-  misplace_set:
-  - bedroom_floor_b2
-  - entry_floor_e1
-  - couch_l1
-  rules:
-  - cites: drops her phone on the floor while dancing
-    activity: socialise_home
-    phase: during
-    dest: couch_l1
-    p: 0.3
-    else: person:resident_2
-  - cites: drops her phone on the floor while dancing
-    activity: socialise_home
-    phase: after
-    dest: couch_l1
-    p: 0.5
-    else: person:resident_2
-  - cites: Maya's phone, often dropped on the floor
-    activity: bedtime_routine
-    phase: during
-    dest: nightstand_b2
-  - cites: Maya's phone, often dropped on the floor
-    activity: bedtime_routine
-    phase: after
-    dest: person:resident_2
-- object: keys_leo
-  cites: Leo's keys, lost in the couch cushions
-  home: person:resident_1
-  p_misplace: 0.5
-  misplace_set:
-  - couch_l1
-  - entry_floor_e1
-  - desk_b1
-  rules:
-  - cites: loses his keys in the couch cushions every single day
-    activity: socialise_home
-    phase: during
-    dest: couch_l1
-    p: 0.6
-    else: person:resident_1
-  - cites: loses his keys in the couch cushions every single day
-    activity: socialise_home
-    phase: after
-    dest: couch_l1
-    p: 0.7
-    else: person:resident_1
-  - cites: Leo's keys, lost in the couch cushions
-    activity: study
-    phase: during
-    dest: desk_b1
-    p: 0.4
-    else: person:resident_1
-- object: book_jade
-  cites: Jade's book, left on the shared sofa
-  home: desk_b4
-  p_misplace: 0.2
-  misplace_set:
-  - couch_l1
-  - bedroom_floor_b4
-  rules:
-  - cites: leaves her book on the shared sofa for days
-    activity: study
-    phase: during
-    dest: couch_l1
-    p: 0.8
-    else: desk_b4
-  - cites: leaves her book on the shared sofa for days
-    activity: study
-    phase: after
-    dest: couch_l1
-    p: 0.9
-    else: desk_b4
-  - cites: Jade's book, left on the shared sofa
-    activity: socialise_home
-    phase: during
-    dest: couch_l1
-    p: 0.5
-    else: desk_b4
-- object: water_bottle_maya
-  cites: Maya's water bottle, left on the counter
+- object: mug_4
+  cites: always washed and returned to the cabinet
   home: cupboard_k1
-  p_misplace: 0.3
-  misplace_set:
-  - counter_k1
-  - desk_b2
   rules:
-  - cites: leaves her water bottle on the kitchen counter for days
-    activity: study
+  - activity: study
     phase: during
-    dest: counter_k1
-    p: 0.7
-    else: desk_b2
-  - cites: leaves her water bottle on the kitchen counter for days
-    activity: study
+    cites: always washed and returned to the cabinet
+    only_from:
+    - cupboard_k1
+    dest: desk_b4
+  - activity: study
     phase: after
+    cites: always washed and returned to the cabinet
+    only_from:
+    - desk_b4
+    dest: cupboard_k1
+- object: bowl_1
+  cites: Shared cereal bowl, used by whoever eats breakfast first
+  home: cupboard_k1
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: Shared cereal bowl, used by whoever eats breakfast first
+    only_from:
+    - cupboard_k1
     dest: counter_k1
-    p: 0.9
+  - activity: commute_out
+    phase: after
+    cites: Shared cereal bowl, used by whoever eats breakfast first
+    only_from:
+    - counter_k1
+    dest: sink_k1
+    p: 0.5
     else: cupboard_k1
-  - cites: leaves her water bottle on the kitchen counter for days
-    activity: snack
-    phase: during
-    dest: counter_k1
-    p: 0.5
-    else: kitchen_table_k1
-- object: remote_shared
-  cites: Shared remote, used by Maya and Sam
-  home: tv_stand_l1
-  p_misplace: 0.3
-  misplace_set:
-  - couch_l1
-  - coffee_table_l1
+- object: plate_1
+  cites: Shared dinner plate, moved to the sink after meals
+  home: cupboard_k1
   rules:
-  - cites: uses the shared remote to switch channels while eating
-    activity: snack
+  - activity: study
     phase: during
-    dest: coffee_table_l1
-    p: 0.6
-    else: tv_stand_l1
-  - cites: uses the shared remote to switch channels while eating
-    activity: snack
+    cites: Shared dinner plate, moved to the sink after meals
+    only_from:
+    - cupboard_k1
+    dest: kitchen_table_k1
+  - activity: study
     phase: after
-    dest: couch_l1
-    p: 0.5
-    else: tv_stand_l1
-  - cites: Shared remote, used by Maya and Sam
-    activity: socialise_home
-    phase: during
-    dest: couch_l1
-    p: 0.4
-    else: tv_stand_l1
-- object: charger_maya
-  cites: Maya's charger, borrowed by Leo
-  home: desk_b2
-  p_misplace: 0.4
-  misplace_set:
-  - desk_b1
-  - entry_table_e1
-  rules:
-  - cites: borrows resident_2's charger when his own is in the lab
-    activity: study
-    phase: during
-    dest: desk_b1
-    p: 0.4
-    else: desk_b2
-  - cites: borrows resident_2's charger when his own is in the lab
-    activity: study
-    phase: after
-    dest: desk_b1
-    p: 0.6
-    else: desk_b2
-- object: backpack_maya
-  cites: Maya's backpack, left in the hallway
-  home: desk_b2
-  p_misplace: 0.2
-  misplace_set:
-  - entry_floor_e1
-  - entry_table_e1
-  rules:
-  - cites: leaves her backpack in the hallway entryway after coming home
-    activity: socialise_home
-    phase: during
-    dest: entry_floor_e1
-    p: 0.7
-    else: desk_b2
-  - cites: leaves her backpack in the hallway entryway after coming home
-    activity: socialise_home
-    phase: after
-    dest: entry_floor_e1
-    p: 0.8
-    else: desk_b2
-- object: jacket_leo
-  cites: Leo's jacket, borrowed by Maya
-  home: entry_hook_e1
-  p_misplace: 0.3
-  misplace_set:
-  - couch_l1
-  - entry_floor_e1
-  rules:
-  - cites: borrows resident_1's jacket when it gets cold
-    activity: socialise_home
-    phase: during
-    dest: couch_l1
-    p: 0.5
-    else: entry_hook_e1
-  - cites: borrows resident_1's jacket when it gets cold
-    activity: socialise_home
-    phase: after
-    dest: couch_l1
-    p: 0.6
-    else: entry_hook_e1
-- object: headphones_leo
-  cites: Leo's headphones, tangled around his neck
+    cites: Shared dinner plate, moved to the sink after meals
+    only_from:
+    - kitchen_table_k1
+    dest: sink_k1
+- object: laptop_1
+  cites: stays on his desk unless he moves to the bed
   home: desk_b1
-  p_misplace: 0.4
+  rules:
+  - activity: study
+    phase: during
+    cites: stays on his desk unless he moves to the bed
+    only_from:
+    - desk_b1
+    dest: desk_b1
+  - activity: reading
+    phase: after
+    cites: stays on his desk unless he moves to the bed
+    only_from:
+    - desk_b1
+    dest: bed_b1
+    p: 0.3
+    else: desk_b1
+- object: laptop_2
+  cites: often left on the shared table during group study
+  home: desk_b2
+  p_misplace: 0.1
+  misplace_set:
+  - kitchen_table_k1
+  - couch_l1
+  rules:
+  - activity: study
+    phase: during
+    cites: often left on the shared table during group study
+    only_from:
+    - desk_b2
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+  - activity: watch_tv
+    phase: after
+    cites: often left on the shared table during group study
+    only_from:
+    - kitchen_table_k1
+    - couch_l1
+    dest: desk_b2
+    p: 0.4
+    else: kitchen_table_k1
+- object: laptop_3
+  cites: moved to his bed when he is tired
+  home: desk_b3
+  rules:
+  - activity: watch_tv
+    phase: during
+    cites: moved to his bed when he is tired
+    only_from:
+    - desk_b3
+    - bed_b3
+    dest: bed_b3
+  - activity: commute_out
+    phase: after
+    cites: moved to his bed when he is tired
+    only_from:
+    - bed_b3
+    dest: desk_b3
+    p: 0.3
+    else: bed_b3
+- object: laptop_4
+  cites: kept in his room or on his desk
+  home: desk_b4
+  rules:
+  - activity: study
+    phase: during
+    cites: kept in his room or on his desk
+    only_from:
+    - desk_b4
+    dest: desk_b4
+  - activity: study
+    phase: after
+    cites: kept in his room or on his desk
+    only_from:
+    - desk_b4
+    dest: desk_b4
+- object: phone_1
+  cites: kept in his pocket or on his desk
+  home: person:resident_1
+  p_misplace: 0.2
   misplace_set:
   - desk_b1
   - bed_b1
-  - couch_l1
   rules:
-  - cites: leaves his headphones tangled around his neck after every lecture
-    activity: study
+  - activity: study
     phase: during
-    dest: person:resident_1
-    p: 0.7
-    else: desk_b1
-  - cites: leaves his headphones tangled around his neck after every lecture
-    activity: study
-    phase: after
+    cites: kept in his pocket or on his desk
+    only_from:
+    - person:resident_1
+    - desk_b1
     dest: desk_b1
-    p: 0.5
-    else: bed_b1
-- object: glasses_sam
-  cites: Sam's glasses, left on the bathroom counter
-  home: bathroom_shelf_ba1
-  p_misplace: 0.2
-  misplace_set:
-  - bathroom_shelf_ba1
-  - desk_b3
-  rules:
-  - cites: leaves his glasses on the bathroom counter
-    activity: tidy_up
-    phase: during
-    dest: bathroom_shelf_ba1
-    p: 0.4
-    else: desk_b3
-  - cites: leaves his glasses on the bathroom counter
-    activity: tidy_up
+  - activity: bedtime_routine
     phase: after
-    dest: bathroom_shelf_ba1
-    p: 0.8
-    else: desk_b3
-- object: notebook_jade
-  cites: Jade's notebook, scattered on the floor
-  home: desk_b4
-  p_misplace: 0.5
-  misplace_set:
-  - couch_l1
-  - bedroom_floor_b4
-  - entry_floor_e1
-  rules:
-  - cites: scatters her notebooks and pens across the living room floor
-    activity: study
-    phase: during
-    dest: couch_l1
-    p: 0.8
-    else: desk_b4
-  - cites: scatters her notebooks and pens across the living room floor
-    activity: study
-    phase: after
-    dest: couch_l1
-    p: 0.9
-    else: desk_b4
-- object: pen_jade
-  cites: Jade's pen, lost in the couch cushions
-  home: desk_b4
-  p_misplace: 0.6
-  misplace_set:
-  - couch_l1
-  - coffee_table_l1
-  - desk_b4
-  rules:
-  - cites: scatters her notebooks and pens across the living room floor
-    activity: study
-    phase: during
-    dest: couch_l1
-    p: 0.7
-    else: desk_b4
-  - cites: scatters her notebooks and pens across the living room floor
-    activity: study
-    phase: after
-    dest: couch_l1
-    p: 0.8
-    else: desk_b4
-- object: medication_bottle_sam
-  cites: Sam's medication, left on the nightstand
-  home: nightstand_b3
-  rules:
-  - cites: puts his medication bottle on the nightstand
-    activity: bedtime_routine
-    phase: during
-    dest: nightstand_b3
-  - cites: puts his medication bottle on the nightstand
-    activity: bedtime_routine
-    phase: after
-    dest: nightstand_b3
-    p: 0.9
-    else: desk_b3
-- object: gaming_controller_sam
-  cites: Sam's gaming controller, used in the living room
-  home: tv_stand_l1
-  rules:
-  - cites: uses the gaming controller to play in the living room
-    activity: gaming
-    phase: during
-    dest: couch_l1
-  - cites: uses the gaming controller to play in the living room
-    activity: gaming
-    phase: after
-    dest: tv_stand_l1
-    p: 0.8
-    else: couch_l1
-- object: umbrella_jade
-  cites: Jade's umbrella, left in the hallway
-  home: entry_hook_e1
-  p_misplace: 0.5
-  misplace_set:
-  - entry_floor_e1
-  - entry_table_e1
-  rules:
-  - cites: drops her umbrella in the hallway and forgets to take it
-    activity: socialise_home
-    phase: during
-    dest: entry_floor_e1
-    p: 0.6
-    else: entry_hook_e1
-  - cites: drops her umbrella in the hallway and forgets to take it
-    activity: socialise_home
-    phase: after
-    dest: entry_floor_e1
-    p: 0.8
-    else: entry_hook_e1
-- object: wallet_jade
-  cites: Jade's wallet, used for shared snacks
-  home: person:resident_4
+    cites: kept in his pocket or on his desk
+    only_from:
+    - desk_b1
+    - bed_b1
+    dest: nightstand_b1
+- object: phone_2
+  cites: often left charging on the shared table
+  home: person:resident_2
   p_misplace: 0.3
   misplace_set:
   - couch_l1
-  - desk_b4
-  - entry_table_e1
+  - kitchen_table_k1
   rules:
-  - cites: uses the shared wallet to buy snacks
-    activity: snack
+  - activity: watch_tv
     phase: during
-    dest: person:resident_4
-    p: 0.8
-    else: couch_l1
-  - cites: uses the shared wallet to buy snacks
-    activity: snack
+    cites: often left charging on the shared table
+    only_from:
+    - person:resident_2
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+  - activity: commute_out
     phase: after
+    cites: often left charging on the shared table
+    only_from:
+    - kitchen_table_k1
+    - couch_l1
+    dest: person:resident_2
+    p: 0.5
+    else: kitchen_table_k1
+- object: phone_3
+  cites: kept in his pocket or on the sofa
+  home: person:resident_3
+  p_misplace: 0.3
+  misplace_set:
+  - couch_l1
+  - bed_b3
+  rules:
+  - activity: watch_tv
+    phase: during
+    cites: kept in his pocket or on the sofa
+    only_from:
+    - person:resident_3
+    - couch_l1
+    dest: couch_l1
+  - activity: bedtime_routine
+    phase: after
+    cites: kept in his pocket or on the sofa
+    only_from:
+    - couch_l1
+    - bed_b3
+    dest: bed_b3
+- object: phone_4
+  cites: kept in his pocket
+  home: person:resident_4
+  rules:
+  - activity: study
+    phase: during
+    cites: kept in his pocket
+    only_from:
+    - person:resident_4
+    dest: desk_b4
+  - activity: study
+    phase: after
+    cites: kept in his pocket
+    only_from:
+    - desk_b4
     dest: person:resident_4
+- object: keys_1
+  cites: often lost in his backpack
+  home: entry_hook_e1
+  p_misplace: 0.4
+  misplace_set:
+  - entry_floor_e1
+  - desk_b1
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: often lost in his backpack
+    only_from:
+    - entry_hook_e1
+    - entry_floor_e1
+    - desk_b1
+    dest: person:resident_1
+  - activity: commute_home
+    phase: after
+    cites: often lost in his backpack
+    only_from:
+    - person:resident_1
+    dest: entry_floor_e1
+    p: 0.4
+    else: entry_hook_e1
+- object: keys_2
+  cites: kept on the hook by the door
+  home: entry_hook_e1
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: kept on the hook by the door
+    only_from:
+    - entry_hook_e1
+    dest: person:resident_2
+  - activity: commute_home
+    phase: after
+    cites: kept on the hook by the door
+    only_from:
+    - person:resident_2
+    dest: entry_hook_e1
+- object: keys_3
+  cites: often forgotten in his pocket
+  home: person:resident_3
+  p_misplace: 0.3
+  misplace_set:
+  - bed_b3
+  - couch_l1
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: often forgotten in his pocket
+    only_from:
+    - person:resident_3
+    - bed_b3
+    - couch_l1
+    dest: person:resident_3
+  - activity: commute_home
+    phase: after
+    cites: often forgotten in his pocket
+    only_from:
+    - person:resident_3
+    dest: bed_b3
+    p: 0.5
+    else: person:resident_3
+- object: keys_4
+  cites: kept in his wallet
+  home: person:resident_4
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: kept in his wallet
+    only_from:
+    - person:resident_4
+    dest: person:resident_4
+  - activity: commute_home
+    phase: after
+    cites: kept in his wallet
+    only_from:
+    - person:resident_4
+    dest: person:resident_4
+- object: book_1
+  cites: left on his desk or the shared table
+  home: desk_b1
+  p_misplace: 0.2
+  misplace_set:
+  - kitchen_table_k1
+  - desk_b1
+  rules:
+  - activity: study
+    phase: during
+    cites: left on his desk or the shared table
+    only_from:
+    - desk_b1
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+  - activity: reading
+    phase: after
+    cites: left on his desk or the shared table
+    only_from:
+    - kitchen_table_k1
+    dest: desk_b1
+    p: 0.4
+    else: kitchen_table_k1
+- object: book_2
+  cites: often moved to the sofa for reading
+  home: bookshelf_l1
+  p_misplace: 0.2
+  misplace_set:
+  - couch_l1
+  - armchair_l1
+  rules:
+  - activity: watch_tv
+    phase: during
+    cites: often moved to the sofa for reading
+    only_from:
+    - bookshelf_l1
+    - couch_l1
+    dest: couch_l1
+  - activity: study
+    phase: after
+    cites: often moved to the sofa for reading
+    only_from:
+    - couch_l1
+    - armchair_l1
+    dest: bookshelf_l1
+    p: 0.3
+    else: couch_l1
+- object: book_3
+  cites: rarely used and left on his bed
+  home: bed_b3
+  motion: rarely_moved
+  rules: []
+- object: book_4
+  cites: kept on his desk or the shared shelf
+  home: bookshelf_l1
+  rules:
+  - activity: study
+    phase: during
+    cites: kept on his desk or the shared shelf
+    only_from:
+    - bookshelf_l1
+    - desk_b4
+    dest: desk_b4
+  - activity: study
+    phase: after
+    cites: kept on his desk or the shared shelf
+    only_from:
+    - desk_b4
+    dest: bookshelf_l1
+- object: water_bottle_1
+  cites: moved from desk to nightstand when reading
+  home: desk_b1
+  rules:
+  - activity: study
+    phase: during
+    cites: moved from desk to nightstand when reading
+    only_from:
+    - desk_b1
+    dest: desk_b1
+  - activity: reading
+    phase: after
+    cites: moved from desk to nightstand when reading
+    only_from:
+    - desk_b1
+    dest: nightstand_b1
+- object: water_bottle_2
+  cites: kept in the fridge and carried around
+  home: counter_k1
+  p_misplace: 0.2
+  misplace_set:
+  - couch_l1
+  - kitchen_table_k1
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: kept in the fridge and carried around
+    only_from:
+    - counter_k1
+    - couch_l1
+    - kitchen_table_k1
+    dest: person:resident_2
+  - activity: commute_home
+    phase: after
+    cites: kept in the fridge and carried around
+    only_from:
+    - person:resident_2
+    dest: counter_k1
     p: 0.6
     else: couch_l1
+- object: water_bottle_3
+  cites: often left on the table after drinking
+  home: desk_b3
+  p_misplace: 0.3
+  misplace_set:
+  - kitchen_table_k1
+  - couch_l1
+  rules:
+  - activity: watch_tv
+    phase: during
+    cites: often left on the table after drinking
+    only_from:
+    - desk_b3
+    - kitchen_table_k1
+    - couch_l1
+    dest: kitchen_table_k1
+  - activity: commute_out
+    phase: after
+    cites: often left on the table after drinking
+    only_from:
+    - kitchen_table_k1
+    - couch_l1
+    dest: desk_b3
+    p: 0.3
+    else: kitchen_table_k1
+- object: water_bottle_4
+  cites: kept on his desk while working
+  home: desk_b4
+  rules:
+  - activity: study
+    phase: during
+    cites: kept on his desk while working
+    only_from:
+    - desk_b4
+    dest: desk_b4
+  - activity: study
+    phase: after
+    cites: kept on his desk while working
+    only_from:
+    - desk_b4
+    dest: desk_b4
+- object: remote_1
+  cites: moved to the sofa cushion by Maya during movie nights
+  home: tv_stand_l1
+  p_misplace: 0.2
+  misplace_set:
+  - couch_l1
+  - coffee_table_l1
+  rules:
+  - activity: watch_tv
+    phase: during
+    cites: moved to the sofa cushion by Maya during movie nights
+    only_from:
+    - tv_stand_l1
+    - couch_l1
+    dest: couch_l1
+  - activity: commute_out
+    phase: after
+    cites: moved to the sofa cushion by Maya during movie nights
+    only_from:
+    - couch_l1
+    - coffee_table_l1
+    dest: tv_stand_l1
+    p: 0.4
+    else: couch_l1
+- object: charger_1
+  cites: coiled tightly on his desk
+  home: desk_b1
+  motion: rarely_moved
+  rules: []
+- object: charger_2
+  cites: left on the shared table
+  home: kitchen_table_k1
+  p_misplace: 0.1
+  misplace_set:
+  - kitchen_table_k1
+  rules:
+  - activity: watch_tv
+    phase: during
+    cites: left on the shared table
+    only_from:
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+  - activity: commute_out
+    phase: after
+    cites: left on the shared table
+    only_from:
+    - kitchen_table_k1
+    dest: kitchen_table_k1
+- object: charger_3
+  cites: often tangled on his desk
+  home: desk_b3
+  motion: rarely_moved
+  rules: []
+- object: charger_4
+  cites: kept in his room
+  home: desk_b4
+  motion: rarely_moved
+  rules: []
+- object: backpack_1
+  cites: left by the door or on his desk
+  home: entry_floor_e1
+  p_misplace: 0.2
+  misplace_set:
+  - desk_b1
+  - entry_floor_e1
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: left by the door or on his desk
+    only_from:
+    - entry_floor_e1
+    - desk_b1
+    dest: person:resident_1
+  - activity: commute_home
+    phase: after
+    cites: left by the door or on his desk
+    only_from:
+    - person:resident_1
+    dest: desk_b1
+    p: 0.4
+    else: entry_floor_e1
+- object: backpack_2
+  cites: often left on the sofa
+  home: entry_floor_e1
+  p_misplace: 0.3
+  misplace_set:
+  - couch_l1
+  - entry_floor_e1
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: often left on the sofa
+    only_from:
+    - entry_floor_e1
+    - couch_l1
+    dest: person:resident_2
+  - activity: commute_home
+    phase: after
+    cites: often left on the sofa
+    only_from:
+    - person:resident_2
+    dest: couch_l1
+    p: 0.5
+    else: entry_floor_e1
+- object: backpack_3
+  cites: left on the floor by the door
+  home: entry_floor_e1
+  p_misplace: 0.2
+  misplace_set:
+  - entry_floor_e1
+  - bed_b3
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: left on the floor by the door
+    only_from:
+    - entry_floor_e1
+    - bed_b3
+    dest: person:resident_3
+  - activity: commute_home
+    phase: after
+    cites: left on the floor by the door
+    only_from:
+    - person:resident_3
+    dest: entry_floor_e1
+- object: backpack_4
+  cites: hung on the hook by the door
+  home: entry_hook_e1
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: hung on the hook by the door
+    only_from:
+    - entry_hook_e1
+    dest: person:resident_4
+  - activity: commute_home
+    phase: after
+    cites: hung on the hook by the door
+    only_from:
+    - person:resident_4
+    dest: entry_hook_e1
+- object: jacket_1
+  cites: hung on the back of his chair
+  home: chair_k1
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: hung on the back of his chair
+    only_from:
+    - chair_k1
+    dest: person:resident_1
+  - activity: commute_home
+    phase: after
+    cites: hung on the back of his chair
+    only_from:
+    - person:resident_1
+    dest: chair_k1
+- object: jacket_2
+  cites: hung on the back of her chair
+  home: chair_k2
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: hung on the back of her chair
+    only_from:
+    - chair_k2
+    dest: person:resident_2
+  - activity: commute_home
+    phase: after
+    cites: hung on the back of her chair
+    only_from:
+    - person:resident_2
+    dest: chair_k2
+- object: jacket_3
+  cites: often left on the sofa
+  home: couch_l1
+  p_misplace: 0.2
+  misplace_set:
+  - couch_l1
+  - bed_b3
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: often left on the sofa
+    only_from:
+    - couch_l1
+    - bed_b3
+    dest: person:resident_3
+  - activity: commute_home
+    phase: after
+    cites: often left on the sofa
+    only_from:
+    - person:resident_3
+    dest: couch_l1
+- object: jacket_4
+  cites: hung in the closet
+  home: entry_hook_e1
+  rules:
+  - activity: commute_out
+    phase: during
+    cites: hung in the closet
+    only_from:
+    - entry_hook_e1
+    dest: person:resident_4
+  - activity: commute_home
+    phase: after
+    cites: hung in the closet
+    only_from:
+    - person:resident_4
+    dest: entry_hook_e1
+- object: headphones_1
+  cites: kept on his desk
+  home: desk_b1
+  rules:
+  - activity: study
+    phase: during
+    cites: kept on his desk
+    only_from:
+    - desk_b1
+    dest: desk_b1
+  - activity: study
+    phase: after
+    cites: kept on his desk
+    only_from:
+    - desk_b1
+    dest: desk_b1
 activities:
 - name: study
   fragment:
     mean_bouts: 3
-  cites: Leo spends most of his time in his room, working
-- name: socialise_home
+- name: watch_tv
   fragment:
     mean_bouts: 2
-  cites: Maya often gathers with friends
-- name: snack
-  cites: Leo and Maya often overlap in the kitchen
 - name: tidy_up
   reset_all:
     p: 0.8
     objects:
+    - book_1
+    - book_2
+    - book_4
+    - remote_1
     - mug_1
     - mug_2
-    - book_jade
-    - notebook_jade
-    - pen_jade
-    - remote_shared
-    - backpack_maya
-    - umbrella_jade
-  cites: clears the kitchen table immediately after meals
-- name: gaming
-  cites: uses the gaming controller to play in the living room
-- name: bedtime_routine
-  cites: keeps his laptop open on the desk even when sleeping
+    - mug_3
+    - mug_4
 arc_events:
 - day: 3
-  note: Leo skips his study block to sleep in after a late night
+  note: Leo stays up all night for a deadline
   patch:
     drop:
     - study
+    - reading
     add:
     - resident: resident_1
-      activity: bedtime_routine
-      start: '12:00'
-      end: '16:00'
-      at: bed_b1
-      jitter: loose
-- day: 7
-  note: Sam is at a job interview, violating his home routine
-  patch:
-    drop:
-    - study
-    - tidy_up
-    add:
-    - resident: resident_3
-      activity: work_away
-      start: 08:00
-      end: '17:00'
-      at: ELSEWHERE
-      jitter: external
-- day: 10
-  note: Maya has a party and forgets her charger and jacket
+      activity: study
+      start: '18:00'
+      end: 02:00+1
+      at: desk_b1
+      jitter: flexible
+- day: 5
+  note: Maya goes to a party, misses dinner
   patch:
     drop:
     - study
     add:
     - resident: resident_2
-      activity: socialise_home
-      start: '19:00'
+      activity: commute_out
+      start: '18:00'
       end: 02:00+1
       at: ELSEWHERE
       jitter: loose
-- day: 12
-  note: Jade is distracted by a creative project, ignoring tidying
+- day: 8
+  note: Sam is sick and stays in bed
   patch:
     drop:
-    - tidy_up
-    add:
-    - resident: resident_4
-      activity: study
-      start: '10:00'
-      end: '22:00'
-      at: couch_l1
-      jitter: loose
-- day: 15
-  note: Leo is sick and stays in bed, skipping socialising
-  patch:
-    drop:
-    - socialise_home
-    - study
-    add:
-    - resident: resident_1
-      activity: bedtime_routine
-      start: '10:00'
-      end: '18:00'
-      at: bed_b1
-      jitter: loose
-- day: 18
-  note: Sam is tired from a week of strict tidying and skips his evening sweep
-  patch:
-    drop:
-    - tidy_up
+    - commute_out
+    - watch_tv
     add:
     - resident: resident_3
-      activity: gaming
-      start: '20:00'
-      end: '23:00'
+      activity: bedtime_routine
+      start: 09:00
+      end: '18:00'
+      at: bed_b3
+      jitter: loose
+- day: 9
+  note: Sam still recovering
+  patch:
+    drop:
+    - commute_out
+    add:
+    - resident: resident_3
+      activity: watch_tv
+      start: '12:00'
+      end: '20:00'
       at: couch_l1
       jitter: loose
-- day: 20
-  note: Maya is exhausted from early mornings and sleeps in late
+- day: 10
+  note: Sam back but tired
+  patch:
+    drop:
+    - commute_out
+    add:
+    - resident: resident_3
+      activity: watch_tv
+      start: '10:00'
+      end: '16:00'
+      at: couch_l1
+      jitter: loose
+- day: 14
+  note: Eli organizes the apartment deeply
   patch:
     drop:
     - study
     add:
-    - resident: resident_2
-      activity: bedtime_routine
-      start: 09:00
-      end: '14:00'
-      at: bed_b2
-      jitter: loose
+    - resident: resident_4
+      activity: tidy_up
+      start: '10:00'
+      end: '18:00'
+      at: bookshelf_l1
+      jitter: routine

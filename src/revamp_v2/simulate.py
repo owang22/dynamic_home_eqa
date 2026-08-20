@@ -185,6 +185,85 @@ def simulate_program(program: dict, days: int, seed: int,
     return log, hourly, blocks, stats, acts, motions
 
 
+def tag_event_kinds(log: list[dict]) -> list[dict]:
+    """Additive `kind` on every event, by MECHANISM rather than by count:
+    `carry_pickup` for an activity rule landing an object ON a person,
+    `carry_putdown` for one taking it OFF a person, `misplace` for
+    p_misplace drift, `tidy` for tidy-walk returns, `rule` for everything
+    else the program's rules did. Purely additive JSONL field — every
+    downstream consumer (export_bank, spatialize, the viewer) reads the
+    existing keys and must run unchanged; the regression fixture bypasses
+    this (it calls write_outputs on the raw simulate output), so v1
+    byte-equality holds.
+
+    The carry cycle is classified by what the event DOES (on/off a
+    person), not by which code injected it: the expander's
+    carry-on-departure pickups and an authored take-along rule ("backpack
+    goes to work") are the same pick-up-set-down cycle, and the measured
+    storm (hh9: fragmented work_away bouts re-firing authored person
+    rules, ~98 events on 12-bout days) was entirely authored. A
+    person-to-person move is a handoff, not a carry leg — `rule`."""
+    for e in log:
+        by = e.get("by", "")
+        from_person = str(e["from"]).startswith(xc.PERSON)
+        to_person = str(e["to"]).startswith(xc.PERSON)
+        if by == "misplace":
+            kind = "misplace"
+        elif by.startswith("tidy:"):
+            kind = "tidy"
+        elif by.startswith("activity:") and to_person and not from_person:
+            kind = "carry_pickup"
+        elif by.startswith("activity:") and from_person and not to_person:
+            kind = "carry_putdown"
+        else:
+            kind = "rule"
+        e["kind"] = kind
+    return log
+
+
+CARRY_KINDS = ("carry_pickup", "carry_putdown")
+
+
+def suppress_carry_rehome(log: list[dict], hourly: list[dict],
+                          rehome_min: float) -> int:
+    """Kill the bout×items carry storm at its source: within one calendar
+    day, a carry_putdown followed by that same object's very next event
+    being the inverse carry_pickup (same person, same spot, nothing moved
+    it in between — adjacency in the object's own event chain proves
+    that), less than `rehome_min` minutes later, means the person
+    plausibly kept the bag packed between two close trips. Both events
+    are removed and the hourly snapshots in the gap are patched to keep
+    the item on its person, so events.jsonl and hourly.csv stay one
+    consistent story. Returns the number of suppressed pairs; call AFTER
+    tag_event_kinds."""
+    if rehome_min <= 0:
+        return 0
+    by_obj: dict[str, list[int]] = {}
+    for i, e in enumerate(log):
+        by_obj.setdefault(e["object"], []).append(i)
+    drop: set[int] = set()
+    for obj, idxs in by_obj.items():
+        j = 0
+        while j + 1 < len(idxs):
+            a, b = log[idxs[j]], log[idxs[j + 1]]
+            if (a["kind"] == "carry_putdown" and b["kind"] == "carry_pickup"
+                    and b["to"] == a["from"]          # back on the same person
+                    and b["from"] == a["to"]          # from the same spot
+                    and b["t"] - a["t"] < rehome_min
+                    and b["t"] // 1440 == a["t"] // 1440):
+                drop.add(idxs[j])
+                drop.add(idxs[j + 1])
+                for row in hourly:
+                    if a["t"] < row["t"] <= b["t"]:
+                        row[obj] = a["from"]
+                j += 2
+            else:
+                j += 1
+    if drop:
+        log[:] = [e for i, e in enumerate(log) if i not in drop]
+    return len(drop) // 2
+
+
 def write_timeline(hh_dir: pathlib.Path, out: pathlib.Path, days: int,
                    seed: int) -> dict:
     """Full L3 for one household dir; returns the final meta dict."""
@@ -192,8 +271,12 @@ def write_timeline(hh_dir: pathlib.Path, out: pathlib.Path, days: int,
     params = load_params()
     program = yaml.safe_load((hh_dir / "routine_program.yaml").read_text())
     days = days or int(program["days"])
-    log, hourly, blocks, stats, _, motions = simulate_program(
+    log, hourly, blocks, stats, acts, motions = simulate_program(
         program, days, seed, sa=sa, params=params)
+    tag_event_kinds(log)
+    carry_cfg = params.get("carry_on_departure", {})
+    stats["carry_rehome_suppressed"] = suppress_carry_rehome(
+        log, hourly, float(carry_cfg.get("carry_rehome_min", 0)))
     sa.write_outputs(out, motions, log, hourly, blocks, stats, days, seed,
                      hh_dir)
     # The expanded program in revamp_v1's own object_motions shape: a
@@ -215,7 +298,8 @@ def write_timeline(hh_dir: pathlib.Path, out: pathlib.Path, days: int,
                                "accepted_attempt", "n_attempts")
                               if k in b}
     meta["realization_params"] = {
-        "skip": params["skip"], "fragmentation": params["fragmentation"]}
+        "skip": params["skip"], "fragmentation": params["fragmentation"],
+        "carry_on_departure": params.get("carry_on_departure", {})}
     (out / "meta.json").write_text(json.dumps(meta, indent=2))
     return meta
 

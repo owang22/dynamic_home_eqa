@@ -3,172 +3,187 @@ household_type: couple_with_toddler
 residents:
   - id: resident_1
     name: Elena
-    age: 34
-    occupation: Landscape Architect
-    personality: meticulous, sensory-sensitive, patient
+    age: 32
+    occupation: Graphic Designer
+    personality: visually driven, chaotic, empathetic
     habits:
-      - Keeps a dedicated 'drop zone' basket by the front door for all incoming
-        items (keys, wallets, jackets) to prevent clutter from spreading.
-      - Wipes down the kitchen counter immediately after any meal or snack, refusing
-        to let crumbs remain.
-      - Borrows resident_2's gardening gloves from the hall shelf when working on
-        the balcony plants, often leaving them damp on the counter.
-      - Moves the toddler's high chair to the dining table only when needed, then
-        pushes it back against the wall to keep the floor clear.
-      - Reads one chapter of a book on the couch before bed, leaving it open on
-        the side table.
-      - Places resident_3's favorite stuffed animal in the crib at nap time, ensuring
-        it is always in the same spot.
+      - scatters design printouts and swatches across the dining table when working
+      - leaves toddler toys in the hallway to keep them away from her desk
+      - uses the living room sofa as a makeshift nap spot for the toddler during
+        work hours
+      - borrows resident_2's water bottle when hers is empty and forgets to return
+        it
+      - keeps a dedicated 'landing zone' by the front door for keys and wallets
+        but rarely uses it
   - id: resident_2
     name: Marcus
-    age: 36
-    occupation: High School History Teacher
-    personality: relaxed, forgetful, enthusiastic
+    age: 34
+    occupation: Civil Engineer
+    personality: structured, practical, patient
     habits:
-      - Leaves his car keys on the kitchen island while making coffee, relying on
-        Elena to remind him to grab them.
-      - Carries a notebook in his shirt pocket for lesson ideas, often losing pages
-        which he later finds in his jacket pockets.
-      - Leaves his work jacket draped over the back of the dining chair, creating
-        a tripping hazard that Elena regularly re-hangs.
-      - Borrows resident_1's reading glasses to mark up grading papers, returning
-        them only when he remembers.
-      - Places his phone face down on the nightstand to avoid notifications during
-        dinner, but forgets to turn it off.
-      - Puts away resident_3's toys in bulk at the end of the day, mixing them into
-        a single bin rather than sorting by type.
+      - maintains a strict routine for the toddler's meals and naps
+      - organizes the kitchen by color-coding plates and bowls
+      - leaves his work laptop in the home office to avoid distraction
+      - puts the toddler's blanket in the laundry basket only after it has been
+        used for a full day
+      - keeps his keys in a specific hook by the door and expects others to do the
+        same
   - id: resident_3
     name: Leo
     age: 2
-    occupation: student
-    personality: curious, mobile, destructive
+    occupation: toddler
+    personality: curious, mobile, object-obsessed
     habits:
-      - Grabs any small object (pens, keys, remote) and carries it to the corner
-        of the room to hide or drop.
-      - Drags his blanket from the crib to the living room floor during nap time,
-        then falls asleep on the rug.
-      - Chews on the edge of resident_1's book pages when they are left within reach.
-      - Pushes resident_2's phone off the nightstand while trying to climb out of
-        the crib.
-      - Uses the kitchen table as a drawing surface, leaving crayon marks that require
-        immediate cleaning.
-      - Carries his water bottle to the bathroom and attempts to flush it, requiring
-        constant supervision.
+      - carries a single toy or block around the house for hours
+      - attempts to put small objects like keys or pens in his mouth
+      - drags the remote control under the sofa when he wants attention
+      - throws plates on the floor when frustrated during mealtime
+      - holds onto the water bottle and refuses to let go during transitions
 relationships: >-
-  Elena and Marcus are partners who share domestic labor with an uneven but functional
-  split: Elena manages the physical order and sensory environment of the home, while
-  Marcus handles the bulk of the toddler's direct care and educational stimulation.
-  Their main point of friction is the 'drop zone' discipline; Marcus frequently
-  bypasses it, leaving items scattered, which causes Elena significant stress. They
-  coordinate on Leo's schedule, with Marcus taking over bath time and bedtime stories
-  to allow Elena to decompress in the evening.
+  Elena and Marcus are partners who share parenting duties, with Marcus handling
+  the more structured routines while Elena provides flexible, creative play. Leo
+  is their son, who acts as the primary disruptor of both their personal spaces.
+  The main point of friction is Elena's tendency to let work materials spill into
+  shared living areas, which Marcus counters by enforcing a 'clean table' rule before
+  meals.
 home_layout_notes: >-
-  The kitchen and living room are the primary shared spaces, heavily trafficked
-  by Leo's movements. The dining table is used for meals, Elena's work, and Marcus's
-  grading, but is often covered in Leo's toys or drawings. The bedroom is a sanctuary
-  for Elena and Marcus, but Leo's blanket and toys frequently invade it. The front
-  entryway is strictly controlled by Elena to maintain order, while the balcony
-  is Marcus's personal space for gardening.
+  The home features an open-plan living and dining area where the toddler's play
+  mat is permanently set up, creating a barrier between the dining table and the
+  sofa. The kitchen is a high-traffic zone for Marcus's meal prep and Leo's snack
+  demands, while the home office is Elena's sanctuary that she often has to leave
+  to supervise Leo. The bedroom is shared by all three, with Leo in a crib that
+  is gradually being converted to a toddler bed.
 object_inventory:
   - id: mug_1
     class: mug
     owner: resident_1
-    role: Elena's primary coffee vessel, kept on the kitchen counter and moved to
-      the dining table during work hours.
+    role: Elena's coffee mug, which she carries from kitchen to living room and
+      back, often left on the dining table with printouts.
   - id: mug_2
     class: mug
     owner: resident_2
-    role: Marcus's tea mug, often left on the island and forgotten until Elena washes
-      it.
-  - id: keys_1
-    class: keys
-    owner: resident_1
-    role: Elena's car keys, consistently placed in the entryway basket, serving
-      as a model for household order.
-  - id: keys_2
-    class: keys
-    owner: resident_2
-    role: Marcus's car keys, frequently misplaced on the kitchen island or couch,
-      requiring Elena's intervention to locate.
+    role: Marcus's mug, kept in the kitchen or home office, rarely moved unless
+      he is drinking tea while supervising Leo.
+  - id: bowl_1
+    class: bowl
+    owner: resident_3
+    role: Leo's high-chair bowl, which is used for every meal and often left in
+      the sink by Marcus if he is tired.
+  - id: plate_1
+    class: plate
+    owner: shared
+    role: Shared dinner plate, moved from kitchen to dining table by Marcus and
+      then washed by Elena.
   - id: laptop_1
     class: laptop
     owner: resident_1
-    role: Elena's work device, used at the dining table and moved to the bedroom
-      for late-night design reviews.
+    role: Elena's work laptop, which she moves from the home office to the living
+      room sofa when she needs to escape the quiet of the office.
   - id: phone_1
     class: phone
     owner: resident_1
-    role: Elena's phone, kept in her pocket or on the side table, rarely left unattended.
+    role: Elena's phone, which she keeps in her pocket or on the dining table, often
+      used to take photos of Leo's antics.
   - id: phone_2
     class: phone
     owner: resident_2
-    role: Marcus's phone, often face-down on the nightstand or lost in his jacket
-      pocket, a source of minor conflict.
+    role: Marcus's phone, which he keeps in his pocket or on the kitchen counter,
+      used for work emails and coordinating with Elena.
+  - id: keys_1
+    class: keys
+    owner: resident_1
+    role: Elena's keys, which she often forgets in the hallway or on the dining
+      table, leading to a search when she needs to go out.
+  - id: keys_2
+    class: keys
+    owner: resident_2
+    role: Marcus's keys, which he always hangs on the specific hook by the door,
+      maintaining order in the entryway.
   - id: book_1
     class: book
-    owner: resident_1
-    role: Elena's current read, left on the couch side table, vulnerable to Leo's
-      chewing.
-  - id: notebook_1
-    class: notebook
-    owner: resident_2
-    role: Marcus's lesson planner, carried in his shirt pocket, with loose pages
-      often found in his jacket.
-  - id: pen_1
-    class: pen
-    owner: resident_1
-    role: Elena's architectural pen, kept in the dining table drawer, frequently
-      stolen by Leo for 'drawing'.
-  - id: remote_1
-    class: remote
-    owner: shared
-    role: Shared TV remote, kept on the coffee table, constantly moved by Leo and
-      returned by Marcus.
-  - id: blanket_1
-    class: blanket
     owner: resident_3
-    role: Leo's comfort item, dragged from the crib to the living room floor, then
-      returned by Marcus at bedtime.
-  - id: toy_1
-    class: toy
-    owner: resident_3
-    role: Leo's favorite stuffed animal, placed in the crib by Elena, carried to
-      the couch by Leo during play.
+    role: Leo's picture book, which he carries around the house and shows to Elena
+      or Marcus for attention.
   - id: water_bottle_1
     class: water_bottle
     owner: resident_3
-    role: Leo's sippy cup, filled by Elena, carried by Leo to various rooms, often
-      flushed in the toilet.
+    role: Leo's sippy cup, which is filled by Marcus and often left on the floor
+      by Leo as he moves around.
+  - id: remote_1
+    class: remote
+    owner: shared
+    role: Shared TV remote, which Leo frequently grabs and hides under the sofa,
+      causing friction when Elena or Marcus want to watch something.
+  - id: charger_1
+    class: charger
+    owner: resident_1
+    role: Elena's laptop charger, which she moves between the home office and living
+      room, often tangled in cables.
   - id: jacket_1
     class: jacket
-    owner: resident_2
-    role: Marcus's work jacket, draped over the dining chair, a recurring tripping
-      hazard for Leo.
+    owner: resident_3
+    role: Leo's jacket, which Marcus puts on him before going out and hangs on the
+      hook by the door, though Leo often drags it to the floor.
+  - id: headphones_1
+    class: headphones
+    owner: resident_1
+    role: Elena's noise-canceling headphones, which she uses to focus on work while
+      Leo is playing nearby.
   - id: glasses_1
     class: glasses
     owner: resident_1
-    role: Elena's reading glasses, borrowed by Marcus for grading, often left on
-      the dining table.
+    role: Elena's reading glasses, which she keeps on the dining table or in her
+      pocket, often lost when she is in a hurry.
+  - id: notebook_1
+    class: notebook
+    owner: resident_2
+    role: Marcus's work notebook, which he keeps in the home office, rarely moved
+      unless he is taking notes during a call.
+  - id: pen_1
+    class: pen
+    owner: resident_1
+    role: Elena's pen, which she uses to mark up printouts and often leaves on the
+      dining table or sofa.
+  - id: toy_1
+    class: toy
+    owner: resident_3
+    role: Leo's favorite block, which he carries around the house and uses to build
+      small towers on the floor.
+  - id: blanket_1
+    class: blanket
+    owner: resident_3
+    role: Leo's comfort blanket, which he carries to the sofa or bedroom, and which
+      Marcus puts in the laundry basket only after it has been used for a full day.
+  - id: towel_1
+    class: towel
+    owner: shared
+    role: Kitchen towel, which Marcus uses to dry dishes and often hangs on the
+      oven handle, where Elena sometimes forgets to move it.
+  - id: lunchbox_1
+    class: lunchbox
+    owner: shared
+    role: Leo's snack box, which Marcus packs in the morning and Elena retrieves
+      when Leo is hungry.
   - id: wallet_1
     class: wallet
     owner: resident_1
-    role: Elena's wallet, kept in her purse, rarely left out in the open.
+    role: Elena's wallet, which she keeps in her bag or on the dining table, often
+      left behind when she rushes out.
   - id: wallet_2
     class: wallet
     owner: resident_2
-    role: Marcus's wallet, kept in his jacket pocket, occasionally forgotten at
-      the grocery store.
+    role: Marcus's wallet, which he keeps in his pocket or on the kitchen counter,
+      always accessible for quick purchases.
 daily_life_summary: >-
-  A typical day involves Marcus dropping Leo off at a nearby playgroup in the morning,
-  leaving Elena to work from the dining table while Leo naps. They cross paths in
-  the kitchen during lunch, where Marcus often leaves his keys and notebook on the
-  counter, requiring Elena to reset the space. In the evening, Marcus takes Leo
-  for a walk, allowing Elena to tidy the living room and prepare dinner. They share
-  the couch in the late evening, with Leo eventually falling asleep on the floor
-  rug, requiring Marcus to carry him back to the crib.
+  Elena works from home in the living room, often with Leo playing on the mat nearby,
+  while Marcus is at the office until late afternoon. When Marcus returns, he takes
+  over dinner prep and Leo's bath, allowing Elena to finish her design work in the
+  home office. Their days overlap in the evenings when they both wind down with
+  Leo, often resulting in a chaotic but warm atmosphere as they navigate the toddler's
+  needs and their own fatigue.
 quirks: >-
-  This household is unusually orderly for a family with a toddler, due to Elena's
-  strong need for spatial control, which contrasts with the typical chaos associated
-  with this demographic. Marcus's role as the primary 'cleaner' of Leo's messes,
-  rather than the 'organizer,' creates a dynamic where the toddler's actions are
-  seen as temporary disruptions to be reset, rather than a permanent state of disarray.
+  This household is notably more visually chaotic than the typical tidy young family,
+  with Elena's creative work materials constantly competing for space with Leo's
+  toys. The dynamic is less about strict routine and more about a flexible, adaptive
+  system where Marcus provides structure only when necessary, allowing Elena to
+  work in bursts of creativity.

@@ -1,0 +1,146 @@
+{
+  "household": "hh_001",
+  "household_type": "night_shift_worker_solo",
+  "source": "profiles/revamp_v2/rule_based/deepseek-v4-flash/hh1",
+  "days": 21,
+  "seed": 0,
+  "n_events": 128,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 2,
+    "tidy_moved": 5,
+    "tidy_ran_out_of_time": 0,
+    "blocks": 210,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [
+      "laptop_1"
+    ],
+    "carried_on_departure": [
+      "phone_1@appointment",
+      "phone_1@commute_home",
+      "phone_1@commute_out",
+      "phone_1@errands",
+      "phone_1@groceries",
+      "phone_1@walk",
+      "phone_1@work_away"
+    ],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [
+      "phone_1@wake_up"
+    ],
+    "skips_per_activity": {
+      "snack": 1,
+      "tidy_up": 1
+    },
+    "fragment_bouts_per_activity": {},
+    "carry_rehome_suppressed": 0
+  },
+  "moves_per_object": {
+    "phone_1": 42,
+    "water_bottle_1": 32,
+    "keys_1": 22,
+    "book_1": 20,
+    "mug_1": 10,
+    "bowl_1": 2
+  },
+  "engine": "story_rules",
+  "model": "deepseek-ai/DeepSeek-V4-Flash",
+  "builder_version": "story-rules-b1",
+  "prompts": {
+    "story": "2ad4cbac"
+  },
+  "story_call_stats": {
+    "granularity": "week",
+    "tag": "story_v1_think",
+    "n_calls": 3,
+    "n_failed_calls": 0,
+    "max_retries": 3,
+    "max_tokens": 32000
+  },
+  "failed_story_calls": [],
+  "fallback_days": [],
+  "n_fallback_days": 0,
+  "not_story_driven": false,
+  "story_activities": [
+    "appointment",
+    "bedtime_routine",
+    "breakfast",
+    "coffee",
+    "commute_home",
+    "commute_out",
+    "day_sleep",
+    "dinner",
+    "errands",
+    "get_ready",
+    "groceries",
+    "laundry",
+    "lunch",
+    "night_sleep",
+    "reading",
+    "relax",
+    "snack",
+    "socialise_home",
+    "tidy_up",
+    "video_call",
+    "wake_up",
+    "walk",
+    "work_away"
+  ],
+  "n_story_activities": 23,
+  "unbound_story_activities": [
+    "appointment",
+    "bedtime_routine",
+    "breakfast",
+    "day_sleep",
+    "errands",
+    "get_ready",
+    "groceries",
+    "laundry",
+    "lunch",
+    "reading",
+    "relax",
+    "socialise_home",
+    "video_call",
+    "walk",
+    "work_away"
+  ],
+  "n_unbound_story_activities": 15,
+  "orphaned_rules_story": [],
+  "n_orphaned_rules_story": 0,
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.6
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
+    }
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_story_rules_deepseek-v4-flash_hh1_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom": "bedroom.004",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}

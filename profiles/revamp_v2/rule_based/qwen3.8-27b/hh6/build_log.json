@@ -3,35 +3,42 @@
   "household_type": "single_parent_teens",
   "model": "Qwen/Qwen3.8-27B",
   "model_slug": "qwen3.8-27b",
-  "builder_version": "rv2-b4",
+  "builder_version": "rv2-b5",
   "prompts": {
     "persona_v2": "134f5bfb",
-    "routine_program": "e63834f9",
+    "routine_program": "e35c6d66",
     "leak_audit": "051fa759"
   },
   "scene": "symbolic",
   "days": 21,
-  "persona_seed": 8117211353406130140,
+  "persona_seed": 8815340711132785302,
   "persona_attempts": [
     {
       "attempt": 0,
-      "seed": 8117211353406130140,
+      "seed": 8815340711132785302,
       "leak_prediction": {
         "predicted_type": "college_roommates",
-        "confidence": 0.85,
-        "reason": "The presence of three distinct bedrooms (b1, b2, b3) with individual desks and beds strongly suggests a shared living arrangement for three people, such as college roommates. The object list includes multiple laptops, backpacks, and gaming controllers, which aligns with a student demographic. The 'b",
+        "confidence": 0.92,
+        "reason": "The presence of three distinct bedrooms (b1, b2, b3) with matching furniture sets (bed, nightstand, desk) strongly indicates a shared living arrangement for three individuals, which rules out couples and single-person households. The object list reinforces this: three phones, three key sets, two mup",
         "actual_type": "single_parent_teens",
         "correct": false
       }
     }
   ],
   "leak_unresolved": false,
-  "n_attempts": 1,
-  "accepted_attempt": 0,
+  "n_attempts": 2,
+  "accepted_attempt": 1,
   "attempts": [
     {
       "attempt": 0,
-      "seed": 9947686500047673389,
+      "seed": 2458283345579060620,
+      "failures": [
+        "reachability: 11 of 31 objects wrote movement rules that only ever name their own home (['blanket_1', 'charger_2', 'gaming_controller_1', 'glasses_1', 'headphones_1', 'lunchbox_1']...) \u2014 fake movement, not declared stillness; use `rules: []` for an object that genuinely stays put"
+      ]
+    },
+    {
+      "attempt": 1,
+      "seed": 3743083143653339714,
       "failures": []
     }
   ]

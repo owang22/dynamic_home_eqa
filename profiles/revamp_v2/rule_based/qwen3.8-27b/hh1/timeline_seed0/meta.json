@@ -1,10 +1,10 @@
 {
   "household": "hh_001",
   "household_type": "night_shift_worker_solo",
-  "source": "profiles/revamp_v2/qwen3.8-27b/hh1",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh1",
   "days": 21,
   "seed": 0,
-  "n_events": 404,
+  "n_events": 428,
   "jitter_classes": {
     "external": 10,
     "routine": 30,
@@ -15,42 +15,49 @@
     "tidy_bouts": 0,
     "tidy_moved": 0,
     "tidy_ran_out_of_time": 0,
-    "blocks": 168,
+    "blocks": 160,
     "vacuous_arc_drops": [],
-    "dropped_sleep_resets": [],
+    "dropped_sleep_resets": [
+      "sleep_bedtime_routine"
+    ],
     "dropped_sleep_fragments": [],
     "derived_only_from": [],
     "orphaned_rules": [],
     "unscheduled_activities": [],
-    "inert_objects": [],
+    "inert_objects": [
+      "wallet_1"
+    ],
     "carried_on_departure": [],
     "left_behind_by_trip": [],
     "carried_putdowns_at_start": [],
     "skips_per_activity": {
-      "coffee": 3
+      "reading": 4,
+      "shower": 1
     },
-    "fragment_bouts_per_activity": {}
+    "fragment_bouts_per_activity": {
+      "reading": 31
+    },
+    "carry_rehome_suppressed": 0
   },
   "moves_per_object": {
-    "headphones_1": 84,
-    "phone_1": 78,
-    "pen_1": 42,
-    "jacket_1": 42,
-    "keys_1": 42,
-    "wallet_1": 42,
-    "water_bottle_1": 40,
-    "mug_1": 34
+    "headphones_1": 91,
+    "mug_1": 86,
+    "phone_1": 86,
+    "keys_1": 43,
+    "pen_1": 41,
+    "jacket_1": 41,
+    "water_bottle_1": 40
   },
   "provenance": {
     "model": "Qwen/Qwen3.8-27B",
     "prompts": {
       "persona_v2": "134f5bfb",
-      "routine_program": "fe6d4df3",
+      "routine_program": "e35c6d66",
       "leak_audit": "051fa759"
     },
     "builder_version": "rv2-b5",
-    "accepted_attempt": 0,
-    "n_attempts": 1
+    "accepted_attempt": 1,
+    "n_attempts": 2
   },
   "realization_params": {
     "skip": {
@@ -60,6 +67,11 @@
       "min_mean_bouts": 1.0,
       "max_mean_bouts": 6.0,
       "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
     }
   },
   "spatialization": {

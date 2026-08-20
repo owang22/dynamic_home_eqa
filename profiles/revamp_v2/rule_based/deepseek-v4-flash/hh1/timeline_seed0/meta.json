@@ -1,7 +1,7 @@
 {
   "household": "hh_001",
   "household_type": "night_shift_worker_solo",
-  "source": "profiles/revamp_v2/deepseek-v4-flash/hh1",
+  "source": "profiles/revamp_v2/rule_based/deepseek-v4-flash/hh1",
   "days": 21,
   "seed": 0,
   "n_events": 242,
@@ -38,7 +38,8 @@
       "snack": 3,
       "tidy_up": 2
     },
-    "fragment_bouts_per_activity": {}
+    "fragment_bouts_per_activity": {},
+    "carry_rehome_suppressed": 0
   },
   "moves_per_object": {
     "water_bottle_1": 60,
@@ -68,17 +69,11 @@
       "min_mean_bouts": 1.0,
       "max_mean_bouts": 6.0,
       "min_bout_minutes": 10
-    }
-  },
-  "spatialization": {
-    "config": "visualization/configs/revamp_v2_rule_based_deepseek-v4-flash_hh1_102343992.yaml",
-    "scene_id": "102343992",
-    "room_map": {
-      "bathroom": "bathroom.001",
-      "bedroom": "bedroom.004",
-      "entry": "hallway.003",
-      "kitchen": "kitchen",
-      "living": "tv"
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
     }
   }
 }

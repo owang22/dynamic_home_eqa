@@ -353,6 +353,13 @@ Each entry carries everything about that object:
   clear-to-the-sink rule should not fire on a day nothing was used.
 - Every `activity` you name here must be one your sleep_schedule or
   weekly_blocks actually runs — check back against them.
+- The reverse also holds: every AT-HOME activity in your weekly_blocks
+  (anything not at ELSEWHERE, sleep excepted) must appear in at least one
+  object rule phase (or carry a reset_all below) — objects move because
+  of what people do at home, not only because they leave. A home block
+  that touches nothing is a person frozen in a room; find what THIS
+  person's hands are on during it (the mug at breakfast, the remote for
+  TV, the notebook while studying) and write that rule.
 activities — per-activity extras only (the object rules live above):
 - `reset_all: {p, objects}` is a timed tidying walk: the resident walks
   the home putting strays back, one item at a time, for as long as the

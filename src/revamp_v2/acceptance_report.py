@@ -33,12 +33,35 @@ def main() -> None:
     args = ap.parse_args()
     root = REPO / "profiles" / "revamp_v2" / args.slug
     # A household mid-generation has no build_log yet; report what exists
-    # rather than crashing on a partially built set.
+    # rather than crashing on a partially built set. Story arms
+    # (story_driven/, story_rules/) have no build_log at all — for them
+    # the report is the realism-panel table alone, which carries the
+    # fallback-day counts and the NOT-story-driven marking.
     hh_dirs = sorted((d for d in root.glob("hh*")
                       if d.is_dir() and (d / "build_log.json").exists()),
                      key=lambda p: int(p.name[2:]))
     if not hh_dirs:
-        raise SystemExit(f"no built households under {root}")
+        hh_dirs = []
+        panel_only = sorted(
+            (d for d in root.glob("hh*")
+             if (d / f"timeline_seed{args.seed}" / "meta.json").exists()),
+            key=lambda p: int(p.name[2:]))
+        if not panel_only:
+            raise SystemExit(f"no built households under {root}")
+        rows = [realism_panel.timeline_stats(
+            d / f"timeline_seed{args.seed}") for d in panel_only]
+        ref_dir = REPO / "casas" / "aruba" / "timeline_21d"
+        ref = (realism_panel.timeline_stats(ref_dir) if ref_dir.exists()
+               else None)
+        lines = ["# revamp_v2 acceptance report", "",
+                 f"Model slug: `{args.slug}`; seed {args.seed}.", "",
+                 "## Realism panel (reporting only, never a gate)", "",
+                 realism_panel.render(rows, ref), ""]
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text("\n".join(lines) + "\n")
+        print("\n".join(lines))
+        print(f"\nwrote {args.out}")
+        return
 
     build_rows, timelines = [], []
     for d in hh_dirs:

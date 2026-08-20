@@ -1,10 +1,10 @@
 {
   "household": "hh_003",
   "household_type": "retired_couple",
-  "source": "profiles/revamp_v2/qwen3.8-27b/hh3",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh3",
   "days": 21,
   "seed": 0,
-  "n_events": 1339,
+  "n_events": 2331,
   "jitter_classes": {
     "external": 10,
     "routine": 30,
@@ -12,10 +12,10 @@
     "loose": 110
   },
   "activity_stats": {
-    "tidy_bouts": 12,
-    "tidy_moved": 5,
+    "tidy_bouts": 4,
+    "tidy_moved": 3,
     "tidy_ran_out_of_time": 2,
-    "blocks": 354,
+    "blocks": 609,
     "vacuous_arc_drops": [],
     "dropped_sleep_resets": [],
     "dropped_sleep_fragments": [],
@@ -23,46 +23,47 @@
     "orphaned_rules": [],
     "unscheduled_activities": [],
     "inert_objects": [],
-    "carried_on_departure": [
-      "wallet_1@work_away__resident_1"
-    ],
+    "carried_on_departure": [],
     "left_behind_by_trip": [],
-    "carried_putdowns_at_start": [
-      "wallet_1@work_away"
-    ],
+    "carried_putdowns_at_start": [],
     "skips_per_activity": {
-      "dinner": 2,
-      "hobby": 5,
-      "lunch": 4,
-      "tidy_up": 3,
-      "watch_tv": 10
+      "hobby": 1,
+      "lunch": 6,
+      "reading": 1,
+      "reading__couch_l1": 7,
+      "tidy_up": 1,
+      "watch_tv": 8
     },
     "fragment_bouts_per_activity": {
-      "hobby": 91,
-      "work_away": 82,
-      "work_away__resident_1": 1
-    }
+      "hobby": 73,
+      "hobby__desk_b1": 23,
+      "hobby__resident_1": 2,
+      "hobby__resident_2": 80,
+      "reading": 12,
+      "reading__couch_l1": 55
+    },
+    "carry_rehome_suppressed": 0
   },
   "moves_per_object": {
-    "water_bottle_1": 139,
-    "mug_2": 135,
-    "glasses_2": 134,
-    "notebook_1": 134,
-    "wallet_2": 134,
-    "keys_2": 134,
-    "glasses_1": 120,
-    "book_1": 120,
-    "keys_1": 120,
-    "mug_1": 86,
-    "remote_1": 40,
-    "blanket_1": 40,
-    "wallet_1": 3
+    "water_bottle_1": 284,
+    "mug_2": 283,
+    "notebook_1": 282,
+    "wallet_2": 279,
+    "keys_2": 246,
+    "glasses_2": 236,
+    "mug_1": 200,
+    "glasses_1": 151,
+    "book_1": 138,
+    "keys_1": 74,
+    "wallet_1": 72,
+    "remote_1": 43,
+    "blanket_1": 43
   },
   "provenance": {
     "model": "Qwen/Qwen3.8-27B",
     "prompts": {
       "persona_v2": "134f5bfb",
-      "routine_program": "fe6d4df3",
+      "routine_program": "e35c6d66",
       "leak_audit": "051fa759"
     },
     "builder_version": "rv2-b5",
@@ -77,6 +78,11 @@
       "min_mean_bouts": 1.0,
       "max_mean_bouts": 6.0,
       "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
     }
   },
   "spatialization": {

@@ -93,9 +93,13 @@ calibration sources cited per value.
    block is never skipped and never carries a tidy walk; every resident
    has one; a `p` branch has an `else`).
 3. **reachability** — the v1 lint on the expanded program (mobile objects
-   reach ≥2 receptacles; statics appear in no rule). How MANY objects are
-   static is reported (panel `never_move`, meta `inert_objects`), never
-   gated: static objects are a welcome part of a household.
+   reach ≥2 receptacles; statics appear in no rule), and its inverse for
+   the calendar: an at-home, non-sleep activity scheduled by
+   `weekly_blocks` that appears in no object rule and carries no
+   `reset_all` fails, with the activity named — objects move because of
+   what people do at home, not only because they leave. How MANY objects
+   are static is reported (panel `never_move`, meta `inert_objects`),
+   never gated: static objects are a welcome part of a household.
 4. **leak audit** — the generation LLM must NOT be able to classify the
    household type from bare object + receptacle ids (chance = 0.1). Run at
    L1, not L2: those ids come from the persona and the scene, so a correct

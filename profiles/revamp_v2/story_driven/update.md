@@ -57,7 +57,7 @@ fine but *content* drifted (invented names, shape drift) — the known
 prose-constraints-don't-bind failure; only grammar-enforced stages hold
 the vocabulary. Plus one probable length truncation.
 
-## Proposed fixes (not yet applied)
+## Proposed fixes (APPLIED 2026-08-19 — see below)
 
 - Truncation guard: raise `STORY_MAX_TOKENS`; better, detect
   `finish_reason == "length"` / missing `</think>` and retry instead of
@@ -68,3 +68,30 @@ the vocabulary. Plus one probable length truncation.
   whole-week, so thinking fits in budget and one bad sample loses a day.
 - Refuse-to-ship: if all weeks fail, error out instead of writing a
   fallback-only household that looks healthy downstream (the hh2 trap).
+
+## Applied (2026-08-19)
+
+All four fixes landed in the shared story stage
+(`src/revamp_v2/story_driven.py`, used by both story arms):
+
+1. Truncation guard — `generate_story_json` sees `finish_reason` over
+   HTTP (a direct `_post_chat`), treats `length` / unterminated-think
+   responses as failed attempts (never parsed, never cached), and clamps
+   the budget against the SERVED `max_model_len`. `STORY_MAX_TOKENS` is
+   32000.
+2. `max_retries=3` (shifted seed per attempt), replacing the old
+   `max_retries=1`.
+3. Per-day story calls are the default (`story_v2_day_think` tag); the
+   per-week shape survives behind `--per-week` (legacy `story_v1_think`
+   tag, so existing per-week caches replay byte-identically).
+4. Refuse-to-ship — a household whose every story call fails writes no
+   timeline and exits nonzero. Fallback days land in meta.json
+   (`fallback_days` / `n_fallback_days`); > 30% marks the household
+   `not_story_driven` in meta, the realism panel, and the acceptance /
+   factorial reports. The existing deepseek metas were backfilled: hh1
+   0/21 fallback, hh2 21/21 (NOT story-driven), hh3 7/21 (NOT
+   story-driven).
+
+The fourth 2x2 cell (`story_rules/`, story calendar + rules engine) is
+`src/revamp_v2/story_rules.py`; the 2x2 comparison is
+`src/revamp_v2/factorial_report.py` -> `reports/revamp_v2/factorial.md`.
