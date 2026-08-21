@@ -1,0 +1,196 @@
+{
+  "household": "hh_001",
+  "household_type": "night_shift_worker_solo",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh1",
+  "days": 21,
+  "seed": 0,
+  "n_events": 373,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 21,
+    "tidy_moved": 46,
+    "tidy_ran_out_of_time": 1,
+    "blocks": 340,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [
+      "wallet_1"
+    ],
+    "carried_on_departure": [],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [],
+    "skips_per_activity": {
+      "reading": 1,
+      "shower": 3
+    },
+    "fragment_bouts_per_activity": {
+      "reading": 5,
+      "reading__kitchen_table_k1": 4
+    },
+    "carry_rehome_suppressed": 0
+  },
+  "moves_per_object": {
+    "mug_1": 85,
+    "headphones_1": 68,
+    "water_bottle_1": 63,
+    "phone_1": 60,
+    "keys_1": 35,
+    "pen_1": 31,
+    "jacket_1": 31
+  },
+  "engine": "story_rules",
+  "model": "Qwen/Qwen3.8-27B",
+  "builder_version": "story-rules-b2",
+  "prompts": {
+    "story": "a2351b5a"
+  },
+  "story_call_stats": {
+    "granularity": "day",
+    "tag": "story_day_think_pa2351b5a",
+    "n_calls": 21,
+    "n_failed_calls": 0,
+    "max_retries": 3,
+    "max_tokens": 20000,
+    "n_repairs": 0,
+    "repairs": []
+  },
+  "failed_story_calls": [],
+  "fallback_days": [],
+  "n_fallback_days": 0,
+  "not_story_driven": false,
+  "story_activities": [
+    "appointment",
+    "arrive_home",
+    "batch_cooking",
+    "bath",
+    "bedtime_routine",
+    "breakfast",
+    "coffee",
+    "commute_home",
+    "commute_out",
+    "day_sleep",
+    "deep_clean",
+    "dinner",
+    "errands",
+    "get_ready",
+    "groceries",
+    "gym",
+    "laundry",
+    "lie_down",
+    "lunch",
+    "meal_prep",
+    "medication",
+    "music",
+    "nap",
+    "phone_time",
+    "put_away_dishes",
+    "reading",
+    "relax",
+    "shower",
+    "snack",
+    "take_out_bins",
+    "tidy_up",
+    "video_call",
+    "wake_up",
+    "walk",
+    "wash_dishes",
+    "watch_tv",
+    "work_away"
+  ],
+  "n_story_activities": 37,
+  "unbound_story_activities": [
+    "appointment",
+    "batch_cooking",
+    "bath",
+    "day_sleep",
+    "deep_clean",
+    "errands",
+    "get_ready",
+    "groceries",
+    "gym",
+    "laundry",
+    "lie_down",
+    "meal_prep",
+    "medication",
+    "nap",
+    "put_away_dishes",
+    "shower",
+    "snack",
+    "take_out_bins",
+    "tidy_up",
+    "walk",
+    "wash_dishes",
+    "work_away"
+  ],
+  "n_unbound_story_activities": 22,
+  "orphaned_rules_story": [],
+  "n_orphaned_rules_story": 0,
+  "binding_pass": {
+    "n_unbound_targeted": 26,
+    "targeted_activities": [
+      "appointment",
+      "arrive_home",
+      "batch_cooking",
+      "bath",
+      "breakfast",
+      "coffee",
+      "deep_clean",
+      "dinner",
+      "get_ready",
+      "laundry",
+      "lie_down",
+      "lunch",
+      "meal_prep",
+      "medication",
+      "music",
+      "phone_time",
+      "put_away_dishes",
+      "relax",
+      "shower",
+      "snack",
+      "take_out_bins",
+      "tidy_up",
+      "video_call",
+      "wake_up",
+      "wash_dishes",
+      "watch_tv"
+    ],
+    "n_rules_added": 13,
+    "tag": "story_bind_p4fb7c97a"
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.6
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
+    }
+  },
+  "spatialization": {
+    "config": "visualization/configs/revamp_v2_story_calendar_qwen3.8-27b_hh1_102343992.yaml",
+    "scene_id": "102343992",
+    "room_map": {
+      "bathroom": "bathroom.001",
+      "bedroom": "bedroom.004",
+      "entry": "hallway.003",
+      "kitchen": "kitchen",
+      "living": "tv"
+    }
+  }
+}
