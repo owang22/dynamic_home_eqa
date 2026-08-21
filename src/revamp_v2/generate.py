@@ -185,54 +185,164 @@ def _inject(raw: dict, slot: dict, receptacles: list[dict]) -> dict:
     program = {"household": raw["household"],
                "household_type": slot["household_type"],
                "source_persona": raw["source_persona"],
+               # v3 object semantics (after-only dists, NO_OP, synthesized
+               # during legs and misplace spots) — pipeline data the model
+               # never authors, same as receptacles/household_type.
+               "object_semantics": "after_only_v3",
                "days": raw["days"], "day0": raw["day0"],
                "residents": raw["residents"],
                "receptacles": copy.deepcopy(receptacles)}
     for key in ("sleep_schedule", "weekly_blocks", "object_rules",
-                "activities", "arc_events"):
+                "activities"):
         program[key] = raw[key]
+    # special events are a second call, made once the program is accepted
+    program["arc_events"] = raw.get("arc_events") or []
     return program
+
+
+# Failures that indict the CALENDAR rather than the object rules: on one
+# of these the objects loop stops burning attempts against a schedule
+# that is itself wrong. Everything else (coverage, inert objects, dist
+# arithmetic, reachability) is the objects call's to fix.
+_CALENDAR_FAILURES = ("sleep", "weekday", "resident", "linger",
+                      "weekly_block", "skip_p")
+
+
+def _is_calendar_failure(msg: str) -> bool:
+    return any(k in msg for k in _CALENDAR_FAILURES)
 
 
 def generate_program(slot: dict, control: dict, persona: dict,
                      persona_text: str, receptacles: list[dict], days: int,
                      client, cache, force: bool,
-                     max_attempts: int = MAX_ATTEMPTS
+                     max_attempts: int = 3
                      ) -> tuple[dict | None, list[dict]]:
-    """(accepted_program | None, attempt_records)."""
+    """(accepted_program | None, attempt_records).
+
+    Three sequential calls, each conditioned on the accepted output of
+    the previous and each with the tightest grammar that output allows:
+    CALENDAR (blocks) -> OBJECT_RULES (activity enum pinned to what the
+    calendar actually scheduled, so an orphaned rule is unwritable) ->
+    SPECIAL_EVENTS (drop enum pinned the same way). Splitting also makes
+    a rejection cheap: a bad object set resamples the objects, not the
+    week."""
     params = sim.load_params()
     inventory = persona["object_inventory"]
-    schema = schemas.build_program_schema(
-        slot["household_id"],
-        [r["id"] for r in persona["residents"]],
-        [o["id"] for o in inventory],
-        [r["id"] for r in receptacles], days, params,
-        object_owners={o["id"]: o["owner"] for o in inventory},
-        object_classes={o["id"]: o["class"] for o in inventory})
-    tag = prompts.ROUTINE_PROGRAM.tag("routine_program", builder=True,
-                                      schema=schema)
-    user = prompts.program_user_prompt(persona_text, receptacles, days,
-                                       "Monday")
+    resident_ids = [r["id"] for r in persona["residents"]]
+    receptacle_ids = [r["id"] for r in receptacles]
+    cal_schema = schemas.build_calendar_schema(
+        slot["household_id"], resident_ids, receptacle_ids, days, params)
+    cal_tag = prompts.CALENDAR.tag("calendar", builder=True,
+                                   schema=cal_schema)
+    cal_user = prompts.program_user_prompt(persona_text, receptacles, days,
+                                           "Monday")
     attempts: list[dict] = []
-    for attempt in range(max_attempts):
-        seed = make_seed(slot["household_id"], 0, tag, attempt)
-        record: dict = {"attempt": attempt, "seed": seed}
+    for cal_attempt in range(max_attempts):
+        seed = make_seed(slot["household_id"], 0, cal_tag, cal_attempt)
+        record: dict = {"attempt": cal_attempt, "stage": "calendar",
+                        "seed": seed}
         try:
-            raw = llm_client.generate_json(
+            cal_raw = llm_client.generate_json(
                 _LongFormClient(client, PROGRAM_MAX_TOKENS),
-                prompts.ROUTINE_PROGRAM.text, user, schema,
-                seed=seed, stage=tag, cache=cache, force=force)
+                prompts.CALENDAR.text, cal_user, cal_schema,
+                seed=seed, stage=cal_tag, cache=cache, force=force)
         except Exception as e:                      # guided-JSON exhaustion
             record["failures"] = [f"generation: {e!r}"]
             attempts.append(record)
             continue
-        program = _inject(raw, slot, receptacles)
-        record["failures"] = failures = v2v.static_checks(
-            raw, program, persona, schema)
+        record["failures"] = v2v.check_schema(cal_raw, cal_schema)
         attempts.append(record)
-        if not failures:
-            return program, attempts
+        if record["failures"]:
+            continue
+        scheduled = sorted({b["activity"]
+                            for b in (cal_raw.get("sleep_schedule") or [])
+                            + cal_raw["weekly_blocks"]})
+        obj_schema = schemas.build_objects_schema(
+            slot["household_id"], resident_ids,
+            [o["id"] for o in inventory], receptacle_ids, days, params,
+            scheduled,
+            object_owners={o["id"]: o["owner"] for o in inventory},
+            object_classes={o["id"]: o["class"] for o in inventory})
+        obj_tag = prompts.OBJECT_RULES.tag("object_rules", builder=True,
+                                           schema=obj_schema)
+        obj_user = prompts.objects_user_prompt(persona_text, receptacles,
+                                               cal_raw)
+        calendar_bad = False
+        for obj_attempt in range(max_attempts):
+            seed = make_seed(slot["household_id"], 0, obj_tag,
+                             cal_attempt * max_attempts + obj_attempt)
+            record = {"attempt": obj_attempt, "stage": "objects",
+                      "calendar_attempt": cal_attempt, "seed": seed}
+            try:
+                obj_raw = llm_client.generate_json(
+                    _LongFormClient(client, PROGRAM_MAX_TOKENS),
+                    prompts.OBJECT_RULES.text, obj_user, obj_schema,
+                    seed=seed, stage=obj_tag, cache=cache, force=force)
+            except Exception as e:
+                record["failures"] = [f"generation: {e!r}"]
+                attempts.append(record)
+                continue
+            raw = dict(cal_raw, object_rules=obj_raw["object_rules"])
+            program = _inject(raw, slot, receptacles)
+            failures = (v2v.check_schema(obj_raw, obj_schema)
+                        + v2v.check_referential(program, persona)
+                        + v2v.check_reachability(program))
+            record["failures"] = failures
+            attempts.append(record)
+            if not failures:
+                _add_special_events(program, slot, persona, client, cache,
+                                    force, record)
+                return program, attempts
+            if any(_is_calendar_failure(f) for f in failures):
+                calendar_bad = True     # the schedule itself is wrong:
+                break                   # resample IT, not the objects
+        if not calendar_bad:
+            # objects exhausted their attempts against a sane calendar —
+            # a fresh calendar reshuffles the whole problem anyway
+            continue
     return None, attempts
+
+
+def _add_special_events(program, slot, persona, client, cache, force,
+                        record, max_attempts: int = 3) -> None:
+    """The story layer, authored AFTER the program exists so it can react
+    to the calendar (and so `drop` is grammar-pinned to activities the
+    program actually schedules). Failures are recorded and cost the arcs,
+    never the household: a program with no exceptions is dull, a
+    household lost over its exceptions is worse."""
+    days = int(program["days"])
+    scheduled = sorted({b["activity"]
+                        for b in (program.get("sleep_schedule") or [])
+                        + program["weekly_blocks"]})
+    schema = schemas.build_special_schema(
+        days, scheduled,
+        [r["id"] for r in program["residents"]],
+        [r["id"] for r in program["receptacles"]],
+        [e["object"] for e in program["object_rules"]], {})
+    tag = prompts.SPECIAL_EVENTS.tag("special_events", builder=True,
+                                     schema=schema)
+    user = prompts.special_user_prompt(program, days)
+    for attempt in range(max_attempts):
+        seed = make_seed(slot["household_id"], 1, tag, attempt)
+        try:
+            raw = llm_client.generate_json(
+                _LongFormClient(client, 8192), prompts.SPECIAL_EVENTS.text,
+                user, schema, seed=seed, stage=tag, cache=cache,
+                force=force)
+        except Exception as e:
+            record.setdefault("special_failures", []).append(
+                f"generation: {e!r}"[:200])
+            continue
+        candidate = [dict(ev) for ev in raw["special_events"]]
+        program["arc_events"] = candidate
+        problems = v2v.check_reachability(program)
+        if not problems:
+            record["special_attempt"] = attempt
+            return
+        record.setdefault("special_failures", []).append(
+            [p[:150] for p in problems[:3]])
+        program["arc_events"] = []
+    record["special_attempt"] = None
 
 
 # ------------------------------------------------------------- driver ----
@@ -300,7 +410,8 @@ def build_household(slot: dict, control: dict, out_root: pathlib.Path,
         "model": model, "model_slug": llm_client.model_slug(model),
         "builder_version": prompts.BUILDER_VERSION,
         "prompts": {t.name: t.version for t in
-                    (prompts.PERSONA, prompts.ROUTINE_PROGRAM,
+                    (prompts.PERSONA, prompts.CALENDAR,
+                     prompts.OBJECT_RULES, prompts.SPECIAL_EVENTS,
                      prompts.LEAK_AUDIT)},
         "scene": scene or "symbolic",
         "days": days,

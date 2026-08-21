@@ -6,7 +6,8 @@ from __future__ import annotations
 import copy
 import json
 
-from revamp_v2_helpers import PERSONA, RECEPTACLES, mini_program
+from revamp_v2_helpers import (PERSONA, RECEPTACLES, mini_program,
+                               mini_program_v3)
 
 import generate as gen
 import validate as v2v
@@ -39,26 +40,44 @@ def test_synthetic_receptacles_scale_only_with_bedrooms():
 
 
 class ScriptedClient:
-    """Returns persona / program / leak responses keyed off the schema."""
+    """Returns persona / calendar / objects / special / leak responses
+    keyed off the schema. Scripted content stays a list of FULL raw
+    programs; the client splits each into its calendar and objects halves
+    as the two-stage pipeline asks for them."""
 
     def __init__(self, program_responses, leak_prediction="type_1"):
         self.program_responses = list(program_responses)
         self.leak_prediction = leak_prediction
         self.program_calls = 0
+        self._pending_objects = []
 
-    def generate(self, system, user, schema, seed=None, temperature=0.7):
+    def generate(self, system, user, schema, seed=None, temperature=0.7,
+                 max_tokens=4096):
         props = schema.get("properties", {})
         if "predicted_type" in props:
             return json.dumps({"predicted_type": self.leak_prediction,
                                "confidence": 0.3, "reason": "stub"})
         if "object_inventory" in props:
             return json.dumps(PERSONA)
-        self.program_calls += 1
-        return json.dumps(self.program_responses.pop(0))
+        if "special_events" in props:      # the third (story-layer) call
+            return json.dumps({"special_events": [
+                {"note": f"beat {i}", "day": 3 + i,
+                 "patch": {"drop": ["relax"]}} for i in range(4)]})
+        if "object_rules" in props and "weekly_blocks" not in props:
+            if not self._pending_objects:  # an objects RETRY: consume the
+                full = self.program_responses.pop(0)   # next script entry
+                self._pending_objects.append(full["object_rules"])
+            return json.dumps(
+                {"object_rules": self._pending_objects.pop(0)})
+        self.program_calls += 1            # the calendar call
+        full = self.program_responses.pop(0)
+        self._pending_objects.append(full["object_rules"])
+        return json.dumps({k: v for k, v in full.items()
+                           if k != "object_rules"})
 
 
 def _raw_program():
-    return v2v.strip_injected(mini_program())
+    return v2v.strip_injected(mini_program_v3())
 
 
 def test_persona_written_canonically():
@@ -86,19 +105,26 @@ def test_program_accepted_first_attempt():
     assert len(program["sleep_schedule"]) == len(PERSONA["residents"])
     assert [r["id"] for r in program["receptacles"]] == \
         [r["id"] for r in RECEPTACLES]
-    assert len(attempts) == 1 and attempts[0]["failures"] == []
+    # two-stage pipeline: one calendar record, one objects record
+    assert [a["stage"] for a in attempts] == ["calendar", "objects"]
+    assert all(a["failures"] == [] for a in attempts)
 
 
-def test_program_retries_on_failure_with_distinct_seed():
+def test_bad_objects_retry_the_objects_call_not_the_calendar():
     bad = _raw_program()
     bad["object_rules"] = bad["object_rules"][:1]     # inventory mismatch
     client = ScriptedClient([bad, _raw_program()])
     program, attempts = gen.generate_program(
         SLOT, CONTROL, PERSONA, "persona text", copy.deepcopy(RECEPTACLES),
         21, client, None, False)
-    assert program is not None and len(attempts) == 2
-    assert attempts[0]["failures"] and not attempts[1]["failures"]
-    assert attempts[0]["seed"] != attempts[1]["seed"]
+    assert program is not None
+    # calendar accepted once; the OBJECTS stage retried with a new seed
+    assert [a["stage"] for a in attempts] == \
+        ["calendar", "objects", "objects"]
+    obj_a, obj_b = attempts[1], attempts[2]
+    assert obj_a["failures"] and not obj_b["failures"]
+    assert obj_a["seed"] != obj_b["seed"]
+    assert client.program_calls == 1      # the week was never regenerated
 
 
 def test_leaking_persona_is_resampled_not_the_program(tmp_path, monkeypatch):

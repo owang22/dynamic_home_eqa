@@ -160,11 +160,26 @@ def simulate_program(program: dict, days: int, seed: int,
         return fragment_blocks(blocks, motions_, frag_rng, min_bout,
                                frag_stats)
 
+    original_sample_after = sa.sample_after
+
+    def sample_after_with_noop(rule, rng_):
+        # v3 rules carry `noop_p`: the chance this firing leaves the
+        # object where it is (the NO_OP mass of the authored dist, lifted
+        # out by the expander). v1's own move() treats a None destination
+        # as "no move", so the wrapper needs no other support. Rules
+        # without noop_p draw NOTHING extra — the v1 RNG stream is
+        # untouched and the byte-for-byte regression holds.
+        if "noop_p" in rule and rng_.random() < rule["noop_p"]:
+            return None
+        return original_sample_after(rule, rng_)
+
     sa.realize = realize_with_fragments
+    sa.sample_after = sample_after_with_noop
     try:
         log, hourly, blocks, stats = sa.simulate(acts, motions, days, seed)
     finally:
         sa.realize = original_realize
+        sa.sample_after = original_sample_after
 
     # Every deterministic normalization the expander applied, reported
     # rather than silent — a reader of a timeline can see exactly what the

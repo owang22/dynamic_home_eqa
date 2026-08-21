@@ -32,7 +32,13 @@ skip:
   # happens roughly half the time it plausibly could; contractual anchors
   # (sleep, shifts) are effectively never skipped and the prompt pins them
   # to skip_p 0.
-  max_skip_p: 0.6
+  # Raised 0.6 -> 0.9 for the Recurring/Occasional split: the 0.6 bound
+  # was calibrated on RECURRING chores (real Wash_Dishes still runs every
+  # ~2 days), but an Occasional activity (a hobby night, a deep clean) is
+  # scheduled as a standing possibility and skipped most weeks — its
+  # realistic rate is the INVERSE of a chore's. The prompt keeps
+  # recurring blocks at <= 0.4 and reserves 0.5-0.9 for occasionals.
+  max_skip_p: 0.9
 
 fragmentation:
   # Bout fragmentation: N ~ max(1, Poisson(mean_bouts)) non-overlapping

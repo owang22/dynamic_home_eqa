@@ -8,18 +8,26 @@ tag via .tag(), so cached responses can never silently survive a wording
 change. BUILDER_VERSION covers the user-message assembly done by the
 builder functions below — bump it by hand whenever that assembly changes.
 
-Three templates (the pipeline's entire LLM surface):
-  PERSONA          L1 — ported essentially verbatim from
-                   profiles/revamp_v1/generation_prompt.md; only the output
-                   transport changed (guided JSON instead of pasted YAML).
-  ROUTINE_PROGRAM  L2 — the one new prompt: compiles a persona into a
-                   weekly-pattern + arc-exceptions routine program.
-                   Deliberately contains NO example content (objects, rooms,
-                   story beats) that could prime uniform outputs across
-                   households — the legacy DAY_PLAN storm-priming bug
-                   (reports/stage1c/dataset_report.md) is the cautionary case.
-  LEAK_AUDIT       validation check 4 — household-type classification from
-                   object/receptacle ids alone; chance = 1/len(types).
+The pipeline's LLM surface, one template per sequential call — each call
+conditioned on the accepted output of the previous, each with the
+tightest grammar that output allows:
+  PERSONA        L1 — ported essentially verbatim from
+                 profiles/revamp_v1/generation_prompt.md; only the output
+                 transport changed (guided JSON instead of pasted YAML).
+  CALENDAR       L2a — persona -> the weekly schedule (sleep_schedule,
+                 weekly_blocks, activity extras). No object content.
+  OBJECT_RULES   L2b — schedule -> after-only object dists. The rule
+                 activity enum is PINNED to what the calendar actually
+                 scheduled, so an orphaned rule is unwritable.
+  SPECIAL_EVENTS L2c — schedule -> 4-8 dated exceptions; `drop` pinned
+                 the same way, retiring vacuous/unknown drops.
+  BINDING        story arms — adds rules for a story's unbound at-home
+                 activities, same rule grammar as L2b.
+  LEAK_AUDIT     validation check 4 — household-type classification from
+                 object/receptacle ids alone; chance = 1/len(types).
+The L2 prompts deliberately contain NO example content (objects, rooms,
+story beats) that could prime uniform outputs across households — the
+legacy DAY_PLAN storm-priming bug is the cautionary case.
 """
 from __future__ import annotations
 
@@ -189,22 +197,27 @@ quirks: ...                # 1-2 ways this household differs from the
                            # stereotype of its type
 
 Object vocabulary (choose from these; do not invent new classes):
-[mug, bowl, plate, laptop, phone, keys, book, water_bottle, remote,
-charger, backpack, jacket, headphones, glasses, notebook, pen,
-medication_bottle, toy, blanket, towel, gaming_controller, dog_leash,
-lunchbox, umbrella, wallet]
+[mug, bowl, plate, laptop, phone, tablet, keys, wallet, book,
+water_bottle, remote, charger, backpack, jacket, headphones, glasses,
+notebook, pen, medication_bottle, toy, blanket, towel, gaming_controller,
+dog_leash, lunchbox, umbrella, laundry_basket, vacuum_cleaner, pot, pan,
+suitcase, hairbrush, makeup_kit, watering_can, yoga_mat]
 
 Inventory rules:
-- Not every household owns every class. Small households own few objects.
-- Every object must have a MOMENT in this household's week — a point where
-  someone picks it up, puts it down, or carries it somewhere. A later step
-  has to say what moves each object and where; an object nobody in this
-  particular home ever handles (a backpack in a household with no student
-  or commuter, a dog leash with no dog) has no such moment, so leave it
-  out. Fewer objects that all live are better than more that sit.
-- Object counts should match household size (a family of five owns more
+- Not every household owns every class of object, the residents own what makes sense for their lifestyle.
+  Aim for 12-18 objects for a solo resident matching with their persona and add roughly 4-6 per
+  additional resident that would make sense as personal belongings aligning with their personas.
+- Objects have events where someone picks it up for use in an activity, puts it down afterwards, or carries it somewhere. A later step
+  has to say what moves each object and where. Think about what each object is for, and how it is used in the household's daily life.
+- Object counts should match household size (a family of three owns more
   bowls and backpacks than a person living alone). Per-person items like
-  phones, keys, and wallets should exist per resident.
+  phones, keys, and wallets should exist per resident, and for each one
+  the `role` must say HOW IT TRAVELS: an item the person takes out of the
+  house moves WITH them. People who leave the house usually take their phone and
+  keys with them unless the persona says otherwise (eg. they are extremely forgetful).
+  Other objects tend to stay in particular spots in the home, or have a few locations that make sense
+  to inhabit based off of activities (eg. a plate is stored in a dishwasher, drying rack, or cupboard,
+  but some people might leave plates in the sink overnight). The `role` field should describe how the object is used and where it tends to be left.
 - Suggestive objects are allowed (medication_bottle, toy, dog_leash), but
   write the "role" field so the object's meaning comes from how it is
   used, not from the fact that it exists. The same object class could
@@ -215,29 +228,22 @@ Inventory rules:
 Respond only with valid JSON matching the provided schema. No commentary.
 """)
 
-ROUTINE_PROGRAM = PromptTemplate("routine_program", """\
-You are compiling a household ROUTINE PROGRAM: the complete machine-readable
-weekly pattern of one household, derived strictly from its persona (in the
-request). A deterministic simulator — not you — realizes the program into
-weeks of object movements, so you author the judgment (times, bindings,
-probabilities) once, and the simulator does all the bookkeeping.
+CALENDAR = PromptTemplate("calendar_program", """\
+You are compiling the CALENDAR half of a household routine program: the
+complete machine-readable weekly schedule of one household, derived
+strictly from its persona (in the request). A deterministic simulator —
+not you — realizes it; a SECOND step will author what the schedule does
+to the household's objects, and a THIRD adds the special events — do not
+write either here.
 
-Use ONLY the resident ids, object ids, receptacle ids and ACTIVITY NAMES
-offered by the schema. Activity names come from one closed list shared by
-every section: the block that schedules an activity and the object rule
-that fires with it must name the SAME one, and a rule naming an activity
-your household never schedules simply never happens. Pick the closest name
-from the list rather than inventing one — a household's character comes
-from its times, its probabilities and what its objects do, not from what
-its activities are called. Every rule and block must encode something the persona states or
-clearly implies. `cites` comes FIRST in every rule and block, and it is
-written BEFORE you choose a destination, a time or a probability: name the
-persona phrase that licenses what you are about to write, then write it.
-It is a reason to decide from, not a note explaining a decision already
-made — if you cannot state the licence first, the rule does not belong.
-Keep it to ONE short clause, ten words or so, quoting the persona; the
-field is hard-capped, and long early citations crowd out later objects
-until the program runs out of room and truncates.
+Use ONLY the resident ids, receptacle ids and ACTIVITY NAMES offered by
+the schema. Pick the closest name from the closed list rather than
+inventing one — a household's character comes from its times, its
+probabilities and its objects, not from what its activities are called.
+Every block must encode something the persona states or clearly implies.
+`cites` comes FIRST in every block, written BEFORE you choose a time or a
+probability: name the persona phrase that licenses what you are about to
+write, then write it. Keep it to ONE short clause, ten words or so.
 Do not invent occupations, rooms, or habits the persona does not support.
 
 sleep_schedule — one entry per resident, before anything else: where and
@@ -258,149 +264,193 @@ LATER than `start` on that same "+1"-extended timeline: a block starting
 one that already starts "07:45+1" cannot end "12:00" — it ends
 "12:00+1". `at` is the
 receptacle where the resident is during the block, or ELSEWHERE when out
-of the house. Blocks of the same activity must all share one `at` and one
-`jitter`.
+of the house. 
 - `sleep: true` marks an OPTIONAL nap here (the real sleep is above). Set
   it only on a block where the person is genuinely asleep.
 - Each activity name appears ONCE in `activities`, however many blocks
   use it.
-- Decide what is INVARIANT for this household (skip_p: 0, tight jitter)
-  versus variable (skip_p 0.1-0.4, looser jitter). Real people skip chores
-  and optional meals, never contractual anchors, and never their actual
-  sleep: a sleep block takes skip_p 0, whatever else slips that day. An
-  optional NAP is different — that one is skippable, and often should be. Most
-  households should end up with HALF or more of their non-anchor blocks
-  (chores, optional meals, leisure, tidying) carrying a nonzero skip_p; a
-  home where every planned thing happens every single day is a timetable,
-  not a household.
-- jitter classes, calibrated on real free-living homes — external: σ10 min
+- Decide how variable different Recurring activities are (skip_p: 0, tight jitter)
+  or (skip_p 0.1-0.4, looser jitter). Real people skip chores
+  and optional meals, and may put off other activities like laundry or gaming. 
+  Unless otherwise mentioned, a person won't skip work or sleep. 
+- In contrast to Recurring activities, there are some Occasional activities that happen
+  only when appropriate and are not scheduled for fixed times each week. 
+  These activities have high skip rates (0.5-0.9) and should be enumerated as possible activities
+  based on the persona/hobbies/interests of the person. For example, someone who likes to 
+  game may find time on some nights of the week, maybe more on weekends, but not at regular times.
+- Different people may consider the same activity (like tidying) to be Recurring or Occasional, depending on their persona.
+- Most households should have a realistic mix of Recurring and Occasional activities, and the program should reflect that.
+- jitter classes, calibrated on real free-living homes — external: 10 min
   (contractual: shifts, commutes, school runs, self-imposed strict
-  rituals); routine: σ30 (body-clock: sleep onset, household meals);
-  flexible: σ75 (self-paced); loose: σ110 (whim). Nothing real is tighter
-  than external; per-resident `jitter_scale` (0.5 tidy-punctual to 2.0
-  scattered) sets how punctual each person is overall.
+  rituals); routine: 30 (body-clock: sleep onset, household meals);
+  flexible: 75 (self-paced); loose: 110 (whim).
+  A per-resident `jitter_scale` (0.5 tidy-punctual to 2.0
+  scattered) derived from persona info determines how punctual each person is overall.
 
-object_rules — one entry per inventory object, in the same order, and this
-section is the POINT of the program: the blocks say where people are, the
-rules say what that does to their things. Take the objects ONE AT A TIME
-and ask what this household actually does with this thing across a week.
-Each entry carries everything about that object:
-- `home` — where it belongs and where a tidy-up returns it, from its
-  `role`. For a pocket item — a phone, keys, a wallet, headphones, glasses
-  — THINK about whether this particular person keeps it ON them: if so,
-  its home is `person:<owner>`, it automatically goes along whenever they
-  leave the house, and your rules should say where it gets SET DOWN (the
-  nightstand overnight, the desk while working, the counter on the way
-  past) and picked back up. Decide per item and per person, not as a
-  blanket: most people's phone rides with them, but a wallet may live in a
-  bag by the door all day, reading glasses may never leave the desk, and a
-  forgetful teenager's keys might be wherever they last landed. A home
-  where every pocket item is glued to its owner all week is as wrong as
-  one where phones sit on shelves — mix it, following each `role`.
-- `p_misplace` (per day) + `misplace_set` — when the role describes
-  absent-minded drift: the object gets set down at a random moment, on top
-  of whatever its rules do. This is how a carried thing gets forgotten and
-  left behind, so pocket items usually deserve one (0.1-0.4, at the spots
-  this person actually abandons things). Omit both for objects that do not
-  drift; never write a zero probability, and never give them to an object
-  with no rules.
-- An object that genuinely stays put is declared, not left blank: give
-  it `motion: rarely_moved` with empty `rules` and cite the persona phrase
-  that says so — a charger on its dock, a bowl by the door, a decorative
-  thing nobody touches. This is a legitimate answer and you should use it
-  whenever it is the truth: a home is allowed static objects. What is NOT
-  legitimate is faking motion instead — writing two rules that both point
-  at the object's own home says "it never moves" in a way that reads as
-  movement and will be rejected. If it stays, say it stays.
-  It is not available for things people carry (phones, keys, wallets,
-  bags): a phone that sits on one charger for three weeks is a broken
-  household, not a static object, whatever the persona implies.
-- Otherwise its first two rules are the two legs of a journey, in order:
-  a `during` rule naming the activity that picks the object UP and where
-  it is taken — somewhere OTHER than its home, which is the whole point —
-  then an `after` rule saying where it is left when that activity ends.
-  Add further rules after those for whatever else happens to it. Each rule
-  names the `activity` it fires with, a `phase` (`during` = when that
-  activity starts, `after` = when it ends), and where the object ends up:
-  `{dest}` (always there), `{dest, p, else}` (dest with probability p,
-  otherwise the other named place — p and else come as a PAIR), or
-  `{dist}` (2-5 places whose probabilities sum to 1). Probabilities are
-  how reliably the persona's habit actually happens.
-- Read every rule you write as a sentence: "because <cites>, when
-  <activity> <starts/ends>, this goes from <only_from> to <dest>". If the
-  from and the to are the same place, you have written "from the desk to
-  the desk", which is not a journey — either give it somewhere real to go,
-  or stop and declare it `motion: rarely_moved` instead. An object whose
-  every destination is its own home has not moved, however many rules it
-  has.
-- NO TWO OBJECTS share one story. If phone_2 and wallet_2 get the same
-  activities and the same destinations they will trace identical paths for
-  three weeks, which real homes never produce. Give each object its own
-  pattern — different set-down spots, different activities, different
-  probabilities — drawn from ITS role, not its neighbour's.
-- Things that are WORN or TAKEN ALONG move by definition: a jacket is worn
-  out and hung up (or dumped on a chair), a backpack goes to work or
-  school and comes back, an umbrella leaves on wet-weather trips, a laptop
-  commutes between desk and couch or bag, a towel cycles through the wash.
-  Declaring one of these `rules: []` says this household never wears the
-  jacket — write that only when the persona actually says so.
-- `only_from` names where the journey STARTS: the pick-up rule of every
-  moving object states the places it might be resting when the activity
-  begins. List every plausible origin, not just the home — if the object
-  drifts (p_misplace) or its evening rule leaves it out, the pick-up must
-  still fire from THOSE spots, or the object strands there for the rest
-  of the run. It also stops a rule firing from its own result — a
-  clear-to-the-sink rule should not fire on a day nothing was used.
-- Every `activity` you name here must be one your sleep_schedule or
-  weekly_blocks actually runs — check back against them.
-- The reverse also holds: every AT-HOME activity in your weekly_blocks
-  (anything not at ELSEWHERE, sleep excepted) must appear in at least one
-  object rule phase (or carry a reset_all below) — objects move because
-  of what people do at home, not only because they leave. A home block
-  that touches nothing is a person frozen in a room; find what THIS
-  person's hands are on during it (the mug at breakfast, the remote for
-  TV, the notebook while studying) and write that rule.
-activities — per-activity extras only (the object rules live above):
-- `reset_all: {p, objects}` is a timed tidying walk: the resident walks
-  the home putting strays back, one item at a time, for as long as the
-  block lasts. It belongs ONLY on a block where someone is awake and
-  actually tidying (a sweep, a reset, a wash-up), scoped by `objects` to
-  what that sweep plausibly touches. Two consequences worth stating:
-  - NEVER on a sleep or nap block — nobody walks the house while asleep.
-    If you want the home to be tidier after a sleep, that is an `after`
-    rule (or a reset_all) on the WAKING block that precedes or follows it:
-    the clearing-up happens while someone is up, which is also when a real
-    person does it.
-  - Not on every activity either: a household that tidies constantly never
-    accumulates the clutter the tidying is for. One or two tidying
-    activities per household is normal.
-- `fragment: {mean_bouts: k}` on activities that really happen as several
-  short bouts spread over the block rather than one sitting. Give AT LEAST
-  TWO activities a `fragment` with mean_bouts 2-5 — measured against real
-  homes this is the single biggest gap in authored routines (a real
-  kitchen sees ~4 separate sessions a day where a schedule writes one), so
-  pick the household's own bursty behaviour: kitchen trips, checking a
-  phone, puttering, going in and out. Never fragment sleep. EVERY `after`
-  rule of a fragmented activity needs `only_from`, since those rules fire
-  once per bout and would otherwise re-trigger all evening.
+special_events are authored in a SEPARATE later step, after this
+calendar exists — do not include any here.
 
-arc_events — the story layer: 4-8 dated exceptions across the episode,
-each a patch (`drop` block realizations that day, and/or `add` one-off
-blocks) with a `note` telling the beat. Check the calendar above before
-writing a `drop`: it only bites if that activity's weekly block lists
-that day's code, so dropping a weekday-only shift on a Saturday changes
-nothing. An `add` block needs no `days` — its day is the arc event's own. Together they must span at least:
-one skipped recurring chore, one schedule-violating appointment (an added
-ELSEWHERE block at a time the routine says the resident is home or
-asleep), and one multi-day fatigue or recovery stretch (several
-consecutive days patched). Make the exceptions THIS household's — what
-would actually go wrong in this life.
-
-No example content is provided, deliberately: invent this household's
-pattern from ITS persona, not from a template.
+Reason about the household's pattern from its own persona.
 
 Respond only with valid JSON matching the provided schema. No commentary.
 """)
+
+
+OBJECT_RULES = PromptTemplate("object_rules", """\
+You are compiling the OBJECT half of a household routine program. The
+calendar half already exists — the request shows the full weekly schedule
+— and your job is what that schedule DOES to the household's things: the
+blocks say where people are, the rules say what happens to their objects.
+
+The activity names offered by the schema are EXACTLY the ones this
+household's calendar schedules — nothing else exists to bind to, so a
+rule can never name an activity that never happens. Every rule must
+encode something the persona states or clearly implies. `cites` comes
+FIRST in every rule, written BEFORE you choose a destination or a
+probability. Keep it to ONE short clause, ten words or so; the field is
+hard-capped, and long early citations crowd out later objects until the
+response runs out of room.
+
+object_rules — one entry per inventory object, in the same order: 
+the blocks say where people are, the
+rules say what that does to their things. Take the objects ONE AT A TIME
+and ask what the resident actually does with this thing based on their activities.
+Each entry contains everything about that object:
+- `home` — where it can often be found, eg. where a tidy-up returns it, from its
+  `role`. For a CARRIED item (a phone, keys, a wallet, sometimes headphones, glasses),
+  even though it is usually carried with the person, they may still have homes like
+  "desk" or "bedside table" where it is set down when not in use.
+- `p_misplace` (per day) — when the role describes absent-minded drift:
+  the object gets set down at a random moment, on top of whatever its
+  rules do. You author only the RATE — the simulator picks the spot from
+  wherever the household actually spends its time, so a forgotten thing
+  turns up on the counters and tables its owner really passes. CARRIED
+  items usually deserve one (0.1-0.4); larger objects are less likely to
+  be forgotten. Omit it for objects that do not drift; never write a
+  zero probability.
+- An object that rarely moves needs no special flag: give the few
+  activities that could plausibly touch it a dist with heavy NO_OP mass
+  (0.8-0.95) — a vacuum that comes out for deep_clean one time in five,
+  a charger that almost never leaves the wall. `rules: []` remains the
+  honest answer for an object truly nothing in this life touches.
+- Rules are AFTER-only. While an activity is underway, an object it uses
+  is simply WITH the resident — at their spot in the home, or out of the
+  house with them — and the simulator handles that leg automatically. You
+  author only where the object LANDS when the activity ends: each rule
+  names the `activity` it fires with, `phase: after`, and a `dist` of 2-5
+  outcomes whose probabilities sum to 1. For example, a plate is with
+  whoever is eating, wherever they eat; when dinner ends it is possibly
+  left in the sink, on the table, or put straight into the drying rack.
+  One outcome may be NO_OP: this firing left the object where it already
+  was (the activity happened without moving this object). NO_OP mass is
+  how "sometimes" and "rarely" are written — a book that usually stays
+  put during relax is `NO_OP: 0.8`, not a missing rule. Keep the persona
+  in mind: some people put things in many different places, and their
+  dists should say so.
+- NO TWO OBJECTS share identical rules. Give each object its own
+  pattern — different set-down spots, different activities, different
+  probabilities — drawn from its role and the persona/activities.
+- More items that can be CARRIED include backpacks, jackets, laptops etc. 
+  Recognize that these are sometimes carried (eg. AWAY to work), and sometimes 
+  may be left in a few reasonable locations when not in use/returning to home. To decide, think about the persona and their activities.
+- Every `activity` you name here must be one your sleep_schedule or
+  weekly_blocks actually runs — check back against them.
+- The reverse also holds: every AT-HOME activity in your weekly_blocks
+  must appear in at least one object rule phase.
+
+- Tidying is an ordinary activity: an object that
+  someone tidies simply declares tidy_up (or deep_clean) like any other
+  activity, with an `after` dist over the places this household actually
+  returns it to — a plate may equally end in the cupboard or the drying
+  rack, and the dist says so. `home` is where the object starts on day 0
+  and its single most natural resting place; the tidy dist is allowed to
+  disagree with it. Depending on the persona, tidying can be Recurring or
+  Occasional like anything else. Meanwhile, use your judgement, as a child likely won't tidy.
+
+Respond only with valid JSON matching the provided schema. No commentary.
+""")
+
+SPECIAL_EVENTS = PromptTemplate("special_events", """\
+You are adding the story layer to a simulated household whose routine
+program already exists — the full weekly calendar is in the request.
+Author 4-8 dated special events: the exceptions that make three weeks a
+lived stretch of life instead of a repeating template.
+
+Make the exceptions THIS household's, from its personas: a student stays
+out late and is wrecked the next morning; a worker's business trip empties
+the home for two days; a sick child keeps a parent home from work; a
+friend's dinner invitation simply wipes out cooking that evening. Small
+is good; connected-across-days is better.
+
+Each event names its `note` (the beat, in one line), its `day`, and a
+`patch` over that day's calendar:
+- `drop` removes that day's runs of an activity — the list offers ONLY
+  activities this program actually schedules, and a drop only bites on a
+  day the activity actually runs (the calendar in the request shows which
+  weekdays each block lists).
+- `add` inserts one-off blocks (an appointment, the trip out, the sick
+  day at home). An added block needs no weekday list — its day is the
+  event's own.
+- `after_override` (optional, rare) changes where an object lands after
+  an activity on that day only.
+
+Together the events should include at least one dropped routine, one
+schedule-violating ELSEWHERE addition, and one stretch of several
+consecutive patched days (an illness, a visit, a heavy week).
+
+Respond only with valid JSON matching the provided schema. No
+commentary.
+""")
+
+
+BINDING = PromptTemplate("story_binding", """\
+You are extending a simulated household's object-rule program. The
+household's three weeks were authored as a story; the activities listed
+in the request appear in that story, but NO object rule fires with them —
+people do these things, yet nothing in the home moves.
+
+For each object, add `after` rules describing where it ends up when one
+of these activities ENDS. While an activity is underway, assume the
+object is simply WITH the resident using it; what you author is where it
+gets LEFT afterwards — the plate to the sink or the drying rack, the
+controller back on the shelf or abandoned on the couch. Each rule names
+`cites` FIRST (one short clause grounded in the persona), the `activity`,
+`phase: after`, and a `dist` of 2-5 outcomes whose probabilities sum
+to 1. One outcome may be NO_OP — this firing left the object where it
+was — which is how "sometimes" and "rarely" are written.
+`person:<resident_id>` is a valid destination for something the resident
+keeps on them. A dist whose every real outcome is the object's own home
+is not a journey and will be discarded.
+
+Most objects are untouched by most activities: an empty `rules` list for
+an object is the normal, correct answer. NO TWO OBJECTS share identical
+rules — each object's set-down spots and probabilities come from ITS
+role and the persona, not its neighbour's.
+
+Respond only with valid JSON matching the provided schema. No
+commentary.
+""")
+
+BINDING_USER = """\
+The household (persona, verbatim):
+
+{persona}
+
+Story activities with NO object rule (bind these and no others; the
+place after each name is where the story puts the resident during it):
+{activities}
+
+The objects, their homes, and the rules they ALREADY have (do not repeat
+these; your additions compose with them):
+{objects}
+
+Places in this home:
+{places}
+
+For each object in order, give `rules` (possibly empty) for the unbound
+activities above.
+"""
+
 
 LEAK_AUDIT = PromptTemplate("leak_audit", """\
 You are auditing a simulated household for vocabulary leaks. You get the
@@ -441,7 +491,7 @@ def calendar_table(days: int) -> str:
     """day index -> weekday, spelled out. Arc events name a day NUMBER
     while weekly blocks name weekday CODES; making the model derive that
     mapping itself was the single largest source of rejected programs
-    (arc events dropping activities that do not run on that day)."""
+    (special events dropping activities that do not run on that day)."""
     return "\n".join(
         "  " + "   ".join(
             f"day {d:>2} = {DAY_FULL[d % 7][:3]} ({DAY_ABBREV[d % 7]})"
@@ -456,13 +506,55 @@ def program_user_prompt(persona_text: str, receptacles: list[dict],
     return (
         f"Author the routine program for the household below: {days} days, "
         f"day 0 = {day0}.\n\n"
-        f"This episode's calendar — an arc event's `day` is an index here, "
+        f"This episode's calendar — a special event's `day` is an index here, "
         f"and it may only drop an activity whose weekly block lists that "
         f"day's code:\n{calendar_table(days)}\n\n"
         f"Receptacles in this home (the only places objects can be):\n"
         f"{rec_lines}\n\n"
         f"PERSONA (the ground truth to encode):\n\n{persona_text}"
     )
+
+
+def render_calendar(program: dict) -> str:
+    """The accepted calendar rendered compactly (resident, weekdays, time,
+    activity, place) — the shared context for the objects call and the
+    special-events call."""
+    lines = []
+    for b in (program.get("sleep_schedule") or []):
+        lines.append(f"  {b['resident']}  {','.join(b['days'])}  "
+                     f"{b['start']}-{b.get('end', '?')}  {b['activity']} "
+                     f"@ {b['at']}  [sleep]")
+    for b in program.get("weekly_blocks") or []:
+        lines.append(f"  {b['resident']}  {','.join(b['days'])}  "
+                     f"{b['start']}-{b.get('end', '?')}  {b['activity']} "
+                     f"@ {b['at']}  skip_p={b.get('skip_p', 0)}")
+    return "\n".join(lines)
+
+
+def objects_user_prompt(persona_text: str, receptacles: list[dict],
+                        program: dict) -> str:
+    rec_lines = "\n".join(f"  - {r['id']} (room: {r['room']})"
+                          for r in receptacles)
+    return (
+        f"Author the object rules for the household below.\n\n"
+        f"The weekly calendar these rules fire with (resident, weekdays, "
+        f"time, activity, place):\n{render_calendar(program)}\n\n"
+        f"Receptacles in this home (the only places objects can be):\n"
+        f"{rec_lines}\n\n"
+        f"PERSONA (the ground truth to encode):\n\n{persona_text}"
+    )
+
+
+def special_user_prompt(program: dict, days: int) -> str:
+    """The accepted program rendered compactly: the calendar the events
+    patch, with weekday lists visible so a drop can be aimed at a day the
+    activity actually runs."""
+    return (
+        f"The household's routine program ({days} days, day 0 = Monday).\n\n"
+        f"This episode's calendar — an event's `day` is an index here:\n"
+        f"{calendar_table(days)}\n\n"
+        f"The weekly calendar (resident, weekdays, time, activity, place):\n"
+        + render_calendar(program))
 
 
 def leak_user_prompt(object_ids: list[str], receptacle_ids: list[str],

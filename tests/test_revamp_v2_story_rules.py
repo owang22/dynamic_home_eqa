@@ -130,8 +130,9 @@ def test_binding_pass_targets_only_unbound_at_home_activities():
             {"object": "mug_1", "rules": []},
             {"object": "book_1", "rules": [
                 {"cites": "evenings on the couch", "activity": "watch_tv",
-                 "phase": "during", "dest": "table_a",
-                 "only_from": ["shelf_b"]}]},
+                 "phase": "after",
+                 "dist": [{"dest": "shelf_b", "p": 0.6},
+                          {"dest": "NO_OP", "p": 0.4}]}]},
         ]})
     merged, stats = sr.bind_unbound(program, story, "persona", client,
                                     None, force=True)
@@ -161,19 +162,16 @@ def test_bound_story_realizes_the_new_rule():
             {"object": "mug_1", "rules": []},
             {"object": "book_1", "rules": [
                 {"cites": "evenings", "activity": "watch_tv",
-                 "phase": "during", "dest": "table_a",
-                 "only_from": ["shelf_b"]},
-                {"cites": "tidied later", "activity": "watch_tv",
-                 "phase": "after", "dest": "shelf_b",
-                 "only_from": ["table_a"]}]},
+                 "phase": "after",
+                 "dist": [{"dest": "sink_k", "p": 0.7},
+                          {"dest": "shelf_b", "p": 0.3}]}]},
         ]})
     merged, _ = sr.bind_unbound(program, story, "persona", client,
                                 None, force=True)
     synth = sr.story_to_arc_program(merged, story, 3)
     log, _, _, _, acts, motions = sim.simulate_program(synth, 3, 0)
-    # watch_tv is no longer an empty entry, and it fires
-    assert motions["object_motions"]["watch_tv"]["during"] == \
-        {"book_1": "table_a"}
+    # watch_tv is no longer an empty entry, and its after rule fires
+    assert "book_1" in motions["object_motions"]["watch_tv"]["after"]
     assert any(e["by"] == "activity:watch_tv" for e in log)
 
 
@@ -187,3 +185,49 @@ def test_nothing_unbound_means_no_call():
                                     None, force=True)
     assert stats["n_rules_added"] == 0 and client.calls == []
     assert merged is program
+
+
+def test_binding_pass_drops_rules_that_point_at_the_objects_own_home():
+    """hh1's wallet_1 got three rules all naming its own home; the
+    expander then marked it inert and stripped every rule, freezing it
+    for 504 h. A no-op rule must never reach the merged program."""
+    program = mini_program()
+    home = next(e for e in program["object_rules"]
+                if e["object"] == "book_1")["home"]
+    client = _StubGuidedClient(
+        {"bindings": [
+            {"object": "mug_1", "rules": []},
+            {"object": "book_1", "rules": [
+                {"cites": "put back", "activity": "watch_tv",
+                 "phase": "after",                          # all real mass
+                 "dist": [{"dest": home, "p": 0.7},         # points home:
+                          {"dest": "NO_OP", "p": 0.3}]},    # fake movement
+                {"cites": "left out", "activity": "watch_tv",
+                 "phase": "after",                          # real journey
+                 "dist": [{"dest": "sink_k", "p": 0.5},
+                          {"dest": home, "p": 0.5}]},       # home as ONE
+            ]},                                             # outcome is ok
+        ]})
+    merged, stats = sr.bind_unbound(program, _story(), "persona", client,
+                                    None, force=True)
+    assert stats["n_rules_added"] == 1
+    assert stats["n_dropped_noop_rules"] == 1
+    book = next(e for e in merged["object_rules"] if e["object"] == "book_1")
+    kept = [r for r in book["rules"] if r.get("activity") == "watch_tv"]
+    assert len(kept) == 1                          # the all-home rule is gone
+    assert any(d["dest"] != home for d in kept[0]["dist"])
+
+
+def test_binding_prompt_lives_in_the_registry_after_only():
+    """One source of truth: the binding prompt is prompts.BINDING (the
+    registry), no inline copy in this module; and the schema makes
+    `during` unwritable rather than advising against it."""
+    import prompts as _prompts
+    assert not hasattr(sr, "BIND_SYSTEM")
+    assert "person:<resident_id>" in _prompts.BINDING.text
+    assert "after" in _prompts.BINDING.text
+    schema = sr.build_binding_schema(["mug_1"], ["watch_tv"],
+                                     ["table_a"], ["resident_1"])
+    phase = schema["properties"]["bindings"]["prefixItems"][0][
+        "properties"]["rules"]["items"]["properties"]["phase"]
+    assert phase == {"const": "after"}

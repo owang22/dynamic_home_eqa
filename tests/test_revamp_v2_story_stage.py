@@ -114,9 +114,16 @@ def test_exhausted_retries_raise():
     assert len(client.calls) == 3
 
 
-def test_max_tokens_is_32k_and_retries_default_3():
-    assert sd.STORY_MAX_TOKENS == 32000
+def test_token_cap_sits_below_the_http_timeout_and_retries_default_3():
+    # The cap must be reachable INSIDE the HTTP window, or a runaway think
+    # block dies with no finish_reason and the truncation guard never
+    # reseeds (hh1 day 14: 32000 tokens needed 653 s against a 600 s
+    # timeout). ~49 tok/s single-stream is the measured throughput.
+    assert sd.STORY_MAX_TOKENS == 20000
+    assert sd.STORY_MAX_TOKENS / 49.0 < sd.STORY_HTTP_TIMEOUT
     assert sd.STORY_MAX_RETRIES == 3
+    import requests
+    assert requests.Timeout in sd.RETRYABLE      # a slow sample reseeds
 
 
 def test_effective_max_tokens_clamps_to_served_model_len():
@@ -146,7 +153,8 @@ def test_per_day_is_the_default_and_covers_every_day():
     story, failed, stats = sd.generate_story(program, "persona text", None,
                                              client, 6, force=True)
     assert stats["granularity"] == "day"
-    assert stats["tag"] == sd.STORY_TAG_DAY
+    # tag = template hash + persona/places hash (see the tag comment)
+    assert stats["tag"].startswith(sd.STORY_TAG_DAY)
     assert stats["n_calls"] == 6 and len(client.calls) == 6
     assert failed == []
     assert [d["day"] for d in story] == list(range(6))
@@ -323,3 +331,162 @@ def test_recap_names_unused_activities():
     # used activities are absent from the unused tail
     unused_tail = recap.split("NOT used yet")[1]
     assert " coffee," not in unused_tail
+
+
+# ------------------------------------------- per-resident (anchor coherence)
+
+def _multi_program(n=3):
+    program = mini_program()
+    program["residents"] = [{"id": f"resident_{i}", "jitter_scale": 1.0}
+                            for i in range(1, n + 1)]
+    return program
+
+
+def _one_resident_day(day, rid):
+    return json.dumps({"days": [{
+        "day": day, "summary": f"day {day}",
+        "blocks": [{"resident": rid, "activity": a, "start": s,
+                    "end": e, "at": at}
+                   for a, s, e, at in _BLOCKS]}]})
+
+
+def test_multi_resident_splits_per_resident_and_merges_in_order():
+    program = _multi_program(3)
+    seen = []
+
+    def responder(user):
+        d = int(re.search(r"Write day (\d+)", user).group(1))
+        rid = re.search(r"for (resident_\d+) ONLY", user).group(1)
+        seen.append((d, rid))
+        return _one_resident_day(d, rid), "t"
+
+    client = StubThinkingClient([responder])
+    story, failed, stats = sd.generate_story(program, "persona", None,
+                                             client, 2, force=True)
+    assert stats["granularity"] == "day_resident"
+    assert stats["n_calls"] == 6                     # 2 days x 3 residents
+    assert failed == []
+    # every resident present on every day, merged in resident order
+    for d in story:
+        assert {b["resident"] for b in d["blocks"]} == \
+            {"resident_1", "resident_2", "resident_3"}
+    assert [d["day"] for d in story] == [0, 1]
+
+
+def test_anchor_is_written_first_and_seen_by_the_others():
+    program = _multi_program(3)
+    prompts_by_rid = {}
+
+    def responder(user):
+        d = int(re.search(r"Write day (\d+)", user).group(1))
+        rid = re.search(r"for (resident_\d+) ONLY", user).group(1)
+        prompts_by_rid[rid] = user
+        return _one_resident_day(d, rid), "t"
+
+    client = StubThinkingClient([responder])
+    sd.generate_story(program, "persona", None, client, 1, force=True)
+    # the anchor writes blind...
+    assert "first person written for this day" in prompts_by_rid["resident_1"]
+    # ...and the others see the anchor's blocks for coordination
+    for rid in ("resident_2", "resident_3"):
+        assert "Already written for TODAY" in prompts_by_rid[rid]
+        assert "resident_1" in prompts_by_rid[rid]
+
+
+def test_single_resident_household_keeps_the_plain_per_day_path():
+    program = mini_program()                          # 1 resident
+    client = _story_client()
+    _, _, stats = sd.generate_story(program, "persona", None, client, 3,
+                                    force=True)
+    assert stats["granularity"] == "day"
+    assert stats["n_calls"] == 3
+
+
+def test_one_resident_failing_does_not_lose_the_whole_day():
+    program = _multi_program(3)
+
+    def responder(user):
+        d = int(re.search(r"Write day (\d+)", user).group(1))
+        rid = re.search(r"for (resident_\d+) ONLY", user).group(1)
+        if rid == "resident_2":
+            return "not json", ""                     # always fails
+        return _one_resident_day(d, rid), "t"
+
+    client = StubThinkingClient([responder])
+    story, failed, stats = sd.generate_story(program, "persona", None,
+                                             client, 1, force=True,
+                                             max_retries=1)
+    assert [f["resident"] for f in failed] == ["resident_2"]
+    assert {b["resident"] for b in story[0]["blocks"]} == \
+        {"resident_1", "resident_3"}                  # the day survives
+
+
+# ------------------------------------------------------------- repairs ----
+
+def test_repair_fixes_the_measured_drift():
+    reps = []
+    parsed = {"days": [{
+        "day": "d04", "summary": "s",
+        "blocks": [
+            {"resident": "Eleanor", "activity": "night_sleep",
+             "start": "8:00", "end": "24:00", "at": "BED_B1"},
+            {"resident": "resident_1", "activity": "watch tv",
+             "start": "08:00:00", "end": "9:30 PM", "at": "table_a"},
+        ]}]}
+    out = sd.repair_story(parsed, ["resident_1", "resident_2"],
+                          ["bed_b1", "table_a"],
+                          {"eleanor": "resident_2"}, reps)
+    d = out["days"][0]
+    assert d["day"] == 4
+    b0, b1 = d["blocks"]
+    assert b0["resident"] == "resident_2"      # persona name -> id
+    assert b0["start"] == "08:00"              # unpadded hour
+    assert b0["end"] == "00:00"                # 24:00 is midnight
+    assert b0["at"] == "bed_b1"                # case
+    assert b1["activity"] == "watch_tv"        # space -> underscore
+    assert b1["start"] == "08:00"              # seconds stripped
+    assert b1["end"] == "21:30"                # 12-hour clock
+    assert len(reps) == 8      # day, resident, 2x start, 2x end, at, activity
+
+
+def test_bare_day_object_gets_its_wrapper():
+    out = sd._normalize_story({"day": 3, "summary": "s", "blocks": []})
+    assert out == {"days": [{"day": 3, "summary": "s", "blocks": []}]}
+
+
+def test_repair_leaves_unrepairable_alone_for_the_validator():
+    reps = []
+    parsed = {"days": [{"day": 1, "summary": "s", "blocks": [
+        {"resident": "Nobody", "activity": "night_sleep",
+         "start": "99:99", "end": "08:00", "at": "nowhere"}]}]}
+    out = sd.repair_story(parsed, ["resident_1"], ["bed_b1"], {}, reps)
+    b = out["days"][0]["blocks"][0]
+    assert b["resident"] == "Nobody" and b["start"] == "99:99"
+    assert reps == []
+
+
+def test_persona_change_invalidates_the_story_cache():
+    """The persona is an INPUT to every story prompt. If it is not in the
+    cache key, a reworked persona replays the story written for the old
+    one — an inventory-mismatched calendar, produced silently."""
+    program = mini_program()
+    tags = {}
+    for persona in ("persona A: owns a mug", "persona B: owns 15 things"):
+        client = _story_client()
+        _, _, stats = sd.generate_story(program, persona, None, client, 1,
+                                        force=True)
+        tags[persona] = stats["tag"]
+    a, b = tags.values()
+    assert a != b, "different personas must not share a cache tag"
+    assert a.startswith(sd.STORY_TAG_DAY) and b.startswith(sd.STORY_TAG_DAY)
+
+
+def test_same_persona_keeps_a_stable_tag():
+    program = mini_program()
+    seen = set()
+    for _ in range(2):
+        client = _story_client()
+        _, _, stats = sd.generate_story(program, "persona A", None, client,
+                                        1, force=True)
+        seen.add(stats["tag"])
+    assert len(seen) == 1                 # determinism preserved

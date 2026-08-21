@@ -76,64 +76,30 @@ except ImportError:                                   # pragma: no cover
 # are excluded (departure-carry already covers them; authored ELSEWHERE
 # rules are the hh5 churn pattern), as are sleep blocks.
 
-BIND_SYSTEM = """\
-You are extending a simulated household's object-rule program. The
-household's three weeks were authored as a concrete story; the activities
-listed in the request appear in that story, but NO object rule fires with
-them — so while people do these things, nothing in the home moves.
-
-For each object, add the rules describing what ACTUALLY happens to it
-during these activities, exactly as the existing rules do: each rule
-names the `activity`, a `phase` (`during` = when it starts, `after` =
-when it ends), where the object ends up (`dest`), and `cites` — the
-persona phrase that licenses it, written FIRST. `only_from` lists where
-the object might be resting when the rule fires.
-
-Most objects are untouched by most activities: an empty `rules` list for
-an object is the normal, correct answer. Add a rule only where THIS
-persona's hands are plausibly on THIS object during THAT activity — the
-mug at coffee, the remote for watch_tv, the notebook while studying, the
-medication bottle at medication time. NO TWO OBJECTS may share one story:
-different destinations, different activities, different probabilities.
-
-Respond only with valid JSON matching the provided schema. No
-commentary."""
-
-BIND_USER = """\
-The household (persona, verbatim):
-
-{persona}
-
-Story activities with NO object rule (bind these and no others; the
-place after each name is where the story puts the resident during it):
-{activities}
-
-The objects, their homes, and the rules they ALREADY have (do not repeat
-these; your additions compose with them):
-{objects}
-
-Places in this home:
-{places}
-
-For each object in order, give `rules` (possibly empty) for the unbound
-activities above.
-"""
+import prompts as _prompts                                    # noqa: E402
 
 
 def build_binding_schema(object_ids, activities, receptacles, residents):
     dests = receptacles + [f"person:{r}" for r in residents]
+    # The SAME rule grammar the routine program uses (after-only dist
+    # with NO_OP) — one contract, not a dialect per stage.
     rule = {
         "type": "object", "additionalProperties": False,
-        "required": ["cites", "activity", "phase", "dest"],
+        "required": ["cites", "activity", "phase", "dist"],
         "properties": {
             "cites": {"type": "string", "maxLength": 90},
             "activity": {"enum": activities},
-            "phase": {"enum": ["during", "after"]},
-            "dest": {"enum": dests},
+            "phase": {"const": "after"},
             "only_from": {"type": "array", "minItems": 1, "maxItems": 6,
                           "items": {"enum": dests}},
-            "p": {"type": "number", "minimum": 0.1, "maximum": 0.95},
-            "else": {"enum": dests},
+            "dist": {"type": "array", "minItems": 2, "maxItems": 6,
+                     "items": {"type": "object",
+                               "additionalProperties": False,
+                               "required": ["dest", "p"],
+                               "properties": {
+                                   "dest": {"enum": dests + ["NO_OP"]},
+                                   "p": {"type": "number", "minimum": 0.0,
+                                         "maximum": 1.0}}}},
         },
     }
     # One entry per object, in inventory order — the fixed-length
@@ -208,14 +174,13 @@ def bind_unbound(program, story, persona_text, client, cache, force):
                                  (e.get("rules") or [])})) or "none"
         obj_lines.append(f"  {e['object']} (home: {e['home']}; "
                          f"already bound to: {have})")
-    user = BIND_USER.format(
+    user = _prompts.BINDING_USER.format(
         persona=persona_text,
         activities="\n".join(f"  {a} @ {at_of[a]}" for a in unbound),
         objects="\n".join(obj_lines),
         places="\n".join(f"  {r}" for r in receptacles))
-    tag = ("story_bind_p" + hashlib.sha256(
-        (BIND_SYSTEM + BIND_USER + json.dumps(schema, sort_keys=True))
-        .encode()).hexdigest()[:8])
+    tag = _prompts.BINDING.tag("story_bind", schema=schema) + "_u" + \
+        hashlib.sha256(_prompts.BINDING_USER.encode()).hexdigest()[:8]
     seed = make_seed(program["household"], 0, tag)
 
     def _validate(parsed):
@@ -224,19 +189,39 @@ def bind_unbound(program, story, persona_text, client, cache, force):
         return parsed
 
     parsed = generate_json(
-        _LongForm(client, 12288), BIND_SYSTEM, user, schema,
+        _LongForm(client, 12288), _prompts.BINDING.text, user, schema,
         seed=seed, stage=tag, cache=cache, force=force, validate=_validate)
 
     merged = copy.deepcopy(program)
     by_obj = {e["object"]: e for e in merged["object_rules"]}
     n_added = 0
+    dropped_noop: list[str] = []
     for entry in parsed["bindings"]:
+        obj = entry["object"]
+        home = by_obj[obj]["home"]
         for rule in entry.get("rules") or []:
-            by_obj[entry["object"]].setdefault("rules", []).append(rule)
+            # A rule whose every REAL outcome (NO_OP aside) is the
+            # object's own home is fake movement: the expander would mark
+            # the object inert and strip ALL its rules, freezing it for
+            # the whole run (measured on hh1's wallet_1 — three
+            # home-pointing rules, 504 h at the counter). Home as ONE
+            # outcome among others is fine — that is what a tidy dist
+            # looks like.
+            real = [d for d in (rule.get("dist") or [])
+                    if d["dest"] != "NO_OP"]
+            if not real or all(d["dest"] == home for d in real):
+                dropped_noop.append(f"{obj}@{rule['activity']}")
+                continue
+            by_obj[obj].setdefault("rules", []).append(rule)
             n_added += 1
+    if dropped_noop:
+        print(f"  binding pass: dropped {len(dropped_noop)} no-op rule(s) "
+              f"whose dest was the object's own home: {dropped_noop[:6]}")
     stats = {"n_unbound_targeted": len(unbound),
              "targeted_activities": unbound,
-             "n_rules_added": n_added, "tag": tag}
+             "n_rules_added": n_added,
+             "n_dropped_noop_rules": len(dropped_noop),
+             "dropped_noop_rules": dropped_noop, "tag": tag}
     return merged, stats
 
 

@@ -103,3 +103,26 @@ def mini_program(**overrides) -> dict:
     }
     program.update(overrides)
     return copy.deepcopy(program)
+
+
+def mini_program_v3(**overrides) -> dict:
+    """The v3-shape sibling of mini_program: after-only dist rules with
+    NO_OP mass (the shape build_program_schema now enforces). mini_program
+    stays old-style on purpose — the expander must keep realizing every
+    program already on disk byte-identically."""
+    program = mini_program()
+    program["object_rules"] = [
+        {"object": "mug_1", "cites": "coffee", "home": "shelf_b",
+         "p_misplace": 0.1,
+         "rules": [
+             {"cites": "coffee", "activity": "breakfast", "phase": "after",
+              "dist": [{"dest": "sink_k", "p": 0.7},
+                       {"dest": "table_a", "p": 0.3}]},
+             {"cites": "simple days", "activity": "relax", "phase": "after",
+              "dist": [{"dest": "NO_OP", "p": 0.8},
+                       {"dest": "shelf_b", "p": 0.2}]}]},
+        {"object": "book_1", "cites": "never moves", "home": "table_a",
+         "rules": []},
+    ]
+    program.update(overrides)
+    return copy.deepcopy(program)

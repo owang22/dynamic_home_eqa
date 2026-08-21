@@ -46,7 +46,10 @@ import simulate as sim         # noqa: E402
 # Keys generate.py injects into the program AFTER the LLM call (they are
 # deterministic pipeline data, not model output, so the model never has to
 # echo them and the schema never has to admit them).
-INJECTED_KEYS = ("receptacles", "household_type")
+INJECTED_KEYS = ("receptacles", "household_type", "object_semantics",
+                 "arc_events")   # arc_events: authored by the SECOND call
+                                 # (special events), never by the program
+                                 # response the schema check replays
 
 # Fake-movement (inert) objects tolerated per program before rejection.
 # Authored statics (`rules: []`) are never counted against this — the gate
@@ -168,6 +171,14 @@ def check_referential(program: dict, persona: dict) -> list[str]:
                     problems.append(
                         f"referential: {obj}'s dist on {r['activity']} sums "
                         f"to {total}")
+                # A dist that is entirely NO_OP is a rule that never does
+                # anything — the expander drops it; naming it here keeps
+                # the author honest rather than silently thinning rules.
+                real = [d for d in r["dist"] if d["dest"] != "NO_OP"]
+                if not real:
+                    problems.append(
+                        f"referential: {obj}'s dist on {r['activity']} is "
+                        f"pure NO_OP — a rule that never moves anything")
             elif r.get("dest") is None:
                 problems.append(
                     f"referential: {obj}'s rule on {r['activity']} has "

@@ -48,8 +48,21 @@ except ImportError:                                           # pragma: no cover
 # _effective_max_tokens verifies the request against the SERVED
 # max_model_len — vLLM rejects (400), never truncates, a request whose
 # prompt + max_tokens exceeds it — and clamps with a warning.
-STORY_MAX_TOKENS = 32000
+# 20000, not 32000, and the number is set by an INTERACTION rather than
+# by what a story needs (a good day costs ~14k, of which ~12.5k is the
+# think block). A runaway think block must hit this cap BEFORE the HTTP
+# read timeout, or the request dies with no finish_reason and the
+# truncation guard never gets to reseed: at ~49 tok/s single-stream,
+# 32000 needs 653 s and the old 600 s timeout fired first, so a bad day
+# burned 3 x 600 s retrying the SAME seed (measured on hh1 day 14).
+# 20000 caps a runaway at ~408 s, inside the window, so `length` is
+# reported and the attempt reseeds. STORY_HTTP_TIMEOUT then covers the
+# concurrent case, where per-stream throughput is ~1/N.
+STORY_MAX_TOKENS = 20000
 STORY_MAX_RETRIES = 3
+# Generous, because the failure it guards against is now the cap, not the
+# clock: 20k tokens at 3-4 concurrent streams needs ~1200 s.
+STORY_HTTP_TIMEOUT = 1800
 # What a retryable bad sample looks like. jsonschema.ValidationError is
 # NOT a ValueError (it derives straight from Exception), so the obvious
 # (json.JSONDecodeError, KeyError, ValueError, TypeError) tuple — the one
@@ -60,6 +73,11 @@ STORY_MAX_RETRIES = 3
 RETRYABLE = (json.JSONDecodeError, KeyError, ValueError, TypeError)
 if jsonschema is not None:
     RETRYABLE = RETRYABLE + (jsonschema.ValidationError,)
+try:                                   # a slow sample is a bad sample:
+    import requests as _requests       # reseed rather than re-ask for it
+    RETRYABLE = RETRYABLE + (_requests.Timeout, _requests.ConnectionError)
+except ImportError:                                   # pragma: no cover
+    pass
 STORY_TAG_WEEK = "story_v1_think"      # legacy per-week path (cache-compat)
 # The per-day tag folds the prompt content hash — the same reason
 # PromptTemplate.tag does: seeds derive from the tag, so without it a
@@ -122,16 +140,53 @@ long blocks is a summary, not a day. Cover each resident's whole day
 including sleep, at least 8 blocks per resident.
 """
 
-import hashlib as _hashlib
-STORY_TAG_DAY += _hashlib.sha256(
-    (STORY_SYSTEM + STORY_USER).encode()).hexdigest()[:8]
-
 # Lever 3 (soft floor): a day with fewer blocks than this for any resident
 # is a FAILED attempt (reroll at a shifted seed), not an accepted thin day.
 # Thinking mode has no grammar to enforce a minimum, so the enforcement
 # ladder is prompt -> recap steering -> this validator; ATUS puts the
 # median at ~18 episodes/person-day, so 8 is a floor, not a target.
 MIN_BLOCKS_PER_RESIDENT = 8
+
+
+STORY_USER_ONE = """\
+The household (persona, verbatim):
+
+{persona}
+
+Places in this home (`at` for each block; ELSEWHERE = out of the house):
+{locations}
+
+Activity names (the closed list — use the range of it where the persona
+supports it; occasional chores and outings belong somewhere in three
+weeks):
+{vocab}
+
+{recap}
+
+{today}
+
+Write day {lo} for {resident} ONLY (day 0 is a Monday; {weekday_map}).
+Give `day`, a one-line `summary` of what this day is in the household's
+story, and `blocks` — {resident}'s whole day in 8-16 blocks: `resident`
+(always {resident}), `activity`, `start`, `end` (HH:MM), `at`. Write the
+anchors (sleep, work, meals) AND the small connective activities a real
+day is full of — a coffee, a snack, medication, a shower, taking out the
+bins, a quick tidy, ten minutes of phone_time. Small blocks may be 5-20
+minutes. Cover the whole day including sleep, at least 8 blocks.
+"""
+
+
+# One tag per PROMPT ACTUALLY USED, not one tag for the module: the
+# single-resident per-day path renders STORY_USER and the per-(day,
+# resident) path renders STORY_USER_ONE, so mixing both into one hash
+# invalidates every cached single-resident day the moment the
+# multi-resident template is touched (measured the hard way: adding
+# STORY_USER_ONE silently forced hh1 to regenerate all 21 days).
+import hashlib as _hashlib
+STORY_TAG_DAY += _hashlib.sha256(
+    (STORY_SYSTEM + STORY_USER).encode()).hexdigest()[:8]
+STORY_TAG_DAY_RES = "story_dayres_think_p" + _hashlib.sha256(
+    (STORY_SYSTEM + STORY_USER_ONE).encode()).hexdigest()[:8]
 
 
 def build_story_schema(resident_ids, receptacles, lo, hi):
@@ -164,6 +219,127 @@ def build_story_schema(resident_ids, receptacles, lo, hi):
                                     "maxItems": n, "items": day}}}
 
 
+def _persona_name_map(persona_text: str, residents: list[str]) -> dict:
+    """{lowercased persona name (and first name) -> resident id}. The
+    calendar stage runs WITHOUT guided decoding (the JSON grammar
+    suppresses the think block), so the resident-id enum is only checked,
+    never enforced — and the model reliably writes the person's NAME.
+    Measured: deepseek hh2 lost all three weeks to `Sam`, qwen hh3 a day
+    to `Eleanor`. The map is what lets that be repaired instead of
+    rerolled."""
+    out: dict = {}
+    try:
+        persona = yaml.safe_load(persona_text)
+    except Exception:                                  # pragma: no cover
+        return out
+    if not isinstance(persona, dict):                  # not a persona YAML
+        return out
+    for r in persona.get("residents") or []:
+        if not isinstance(r, dict):
+            continue
+        rid, name = r.get("id"), str(r.get("name") or "").strip()
+        if rid in residents and name:
+            out[name.lower()] = rid
+            out[name.split()[0].lower()] = rid
+    return out
+
+
+def _repair_time(text) -> str | None:
+    """Clock-time drift the pattern rejects: '24:00' (midnight written as
+    the end of the day), '8:00' (unpadded), '08:00:00' (seconds), and
+    '8:00 AM'. Returns None when nothing sane can be recovered."""
+    if not isinstance(text, str):
+        return None
+    s = text.strip().upper()
+    plus = "+1" if s.endswith("+1") else ""
+    s = s[:-2].strip() if plus else s
+    ampm = ""
+    for suffix in ("AM", "PM"):
+        if s.endswith(suffix):
+            ampm, s = suffix, s[:-len(suffix)].strip()
+    parts = s.split(":")
+    if len(parts) < 2 or not parts[0].isdigit() or not parts[1].isdigit():
+        return None
+    h, m = int(parts[0]), int(parts[1])
+    if ampm == "PM" and h < 12:
+        h += 12
+    elif ampm == "AM" and h == 12:
+        h = 0
+    if h == 24 and m == 0:            # "24:00" IS midnight; the block's
+        h = 0                         # own end<=start rule rolls the day
+    if not (0 <= h <= 23 and 0 <= m <= 59):
+        return None
+    return f"{h:02d}:{m:02d}{plus}"
+
+
+def _repair_day_index(value):
+    """'d04' / 'day 4' / '04' -> 4."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    if isinstance(value, str):
+        digits = "".join(c for c in value if c.isdigit())
+        if digits:
+            return int(digits)
+    return None
+
+
+def repair_story(parsed, residents, receptacles, name_map, repairs):
+    """Deterministic repair of the format drift that guided decoding would
+    have made unwritable, appending one line per fix to `repairs` so no
+    change is silent. Follows the expander's five-normalizations
+    precedent: the thing the model wrote describes something real, it just
+    wrote it wrong, and rejecting a whole day over it protects no
+    invariant. Anything NOT repairable is left alone for the validator to
+    reject, which reseeds the attempt."""
+    parsed = _normalize_story(parsed)
+    rec_ok = set(receptacles) | {"ELSEWHERE"}
+    res_ok = set(residents)
+    for d in parsed.get("days") or []:
+        if not isinstance(d, dict):
+            continue
+        fixed = _repair_day_index(d.get("day"))
+        if fixed is not None and fixed != d.get("day"):
+            repairs.append(f"day_index {d.get('day')!r}->{fixed}")
+            d["day"] = fixed
+        if isinstance(d.get("summary"), (list, dict)):
+            repairs.append("summary_not_a_string")
+            d["summary"] = str(d["summary"])[:200]
+        for b in d.get("blocks") or []:
+            if not isinstance(b, dict):
+                continue
+            r = b.get("resident")
+            if r not in res_ok and isinstance(r, str):
+                hit = name_map.get(r.strip().lower()) or \
+                    name_map.get(r.strip().split()[0].lower()) if r.strip() \
+                    else None
+                if hit:
+                    repairs.append(f"resident {r!r}->{hit}")
+                    b["resident"] = hit
+            for key in ("start", "end"):
+                v = b.get(key)
+                fixed_t = _repair_time(v)
+                if fixed_t is not None and fixed_t != v:
+                    repairs.append(f"{key} {v!r}->{fixed_t!r}")
+                    b[key] = fixed_t
+            at = b.get("at")
+            if at not in rec_ok and isinstance(at, str):
+                cand = {x.lower(): x for x in rec_ok}.get(at.strip().lower())
+                if cand:
+                    repairs.append(f"at {at!r}->{cand!r}")
+                    b["at"] = cand
+            act = b.get("activity")
+            if isinstance(act, str) and act not in ACTIVITY_VOCAB:
+                cand = act.strip().lower().replace(" ", "_").replace("-", "_")
+                if cand in ACTIVITY_VOCAB:
+                    repairs.append(f"activity {act!r}->{cand!r}")
+                    b["activity"] = cand
+    return parsed
+
+
 def _normalize_story(parsed):
     if isinstance(parsed, list):
         parsed = {"days": parsed}
@@ -172,6 +348,11 @@ def _normalize_story(parsed):
             if k in parsed and isinstance(parsed[k], list):
                 parsed = {"days": parsed[k]}
                 break
+        else:
+            # a BARE day object, written without its wrapper — the
+            # "Additional properties ('blocks','day','summary')" failure
+            if "blocks" in parsed and ("day" in parsed or "summary" in parsed):
+                parsed = {"days": [parsed]}
     return parsed
 
 
@@ -269,6 +450,15 @@ def _thinking_call(client, system: str, user: str, seed: int,
     generate_thinking with finish_reason None."""
     if hasattr(client, "_post_chat") and getattr(client, "base", None):
         import re
+        # The client's transient-failure loop retries the SAME request
+        # (same seed) up to 3 times, which is exactly wrong for a
+        # too-long generation: the identical sample is regenerated and
+        # times out again (measured: hh1 day 14 burned 3 x 600 s). One
+        # attempt here; reseeding is generate_story_json's job.
+        if getattr(client, "_HTTP_RETRIES", 1) != 1:
+            client._HTTP_RETRIES = 1
+        if getattr(client, "timeout", 0) < STORY_HTTP_TIMEOUT:
+            client.timeout = STORY_HTTP_TIMEOUT
         body = {
             "model": client.model,
             "messages": [{"role": "system", "content": system},
@@ -357,42 +547,86 @@ def generate_story_json(client, system, user, *, seed, stage, cache=None,
     raise last_err
 
 
+def _today_context(day_blocks: list[dict]) -> str:
+    """What the household's OTHER residents already have on this day —
+    the anchor-coherence mechanism. Without it, per-resident calls write N
+    parallel solo lives: nobody drives anyone to school, no meal is
+    shared. Residents after the first write against a FIXED anchor day,
+    which is what lets them run concurrently and still coordinate."""
+    if not day_blocks:
+        return ("You are the first person written for this day; the rest of "
+                "the household will be written around you.")
+    lines = ["Already written for TODAY by the other residents — coordinate "
+             "with it (shared meals, lifts, handovers, who is home when):"]
+    for b in sorted(day_blocks, key=lambda b: b["start"]):
+        lines.append(f"  {b['resident']} {b['start']}-{b['end']} "
+                     f"{b['activity']} @ {b['at']}")
+    return "\n".join(lines)
+
+
 def generate_story(program, persona_text, cache, client, days_total,
                    force, out_hh=None, per_week=False,
-                   max_retries=STORY_MAX_RETRIES):
-    """The shared story stage (both story arms). Default is one call PER
-    DAY — a day's story fits the thinking budget where a week's often did
-    not, and one bad sample now loses a day, not a week — re-reading the
-    recap of everything already written. per_week=True keeps the original
-    one-call-per-week shape (its own cache tag, so existing per-week
-    caches replay byte-identically) for A/B.
+                   max_retries=STORY_MAX_RETRIES, per_resident=None,
+                   max_workers=4):
+    """The shared story stage (both story arms).
+
+    Default granularity is one call PER DAY; for a MULTI-RESIDENT
+    household it is one call per (day, resident), because a whole
+    household-day does not fit the budget: measured on hh2 (4 residents,
+    8-16 blocks each), the monolithic call exceeded the client's 600 s
+    read timeout on every attempt and the days were lost outright. The
+    think block is ~12.5k of the ~14k tokens a call spends and is largely
+    fixed per call, so splitting trades N x that overhead for calls that
+    actually finish.
+
+    Coherence is preserved by ANCHOR ordering: residents[0] is written
+    first, sequentially, and the rest are written against that fixed
+    anchor day — so they can be issued CONCURRENTLY (vLLM serves
+    --max-num-seqs in parallel) without any of them depending on another
+    concurrent result. Order of completion therefore cannot change the
+    output: each call's prompt is fully determined before the batch
+    starts, and blocks are merged back in resident order.
+
+    per_week=True keeps the original one-call-per-week shape (its own
+    frozen cache tag, so existing per-week caches replay byte-identically).
 
     Returns (story, failed_calls, call_stats)."""
-    tag = STORY_TAG_WEEK if per_week else STORY_TAG_DAY
     residents = [r["id"] for r in program["residents"]]
     receptacles = [r["id"] for r in program["receptacles"]]
     loc_lines = "\n".join(f"  {x}" for x in receptacles + ["ELSEWHERE"])
     wmap = ", ".join(f"{i}={n}" for i, n in enumerate(fm.DAY_NAMES))
-    if per_week:
-        units = [(w, lo, min(lo + 6, days_total - 1))
-                 for w, lo in enumerate(range(0, days_total, 7))]
-    else:
-        units = [(d, d, d) for d in range(days_total)]
+    name_map = _persona_name_map(persona_text, residents)
+    if per_resident is None:
+        per_resident = (not per_week) and len(residents) > 1
+    tag = (STORY_TAG_WEEK if per_week
+           else (STORY_TAG_DAY_RES if per_resident else STORY_TAG_DAY))
+    # ...and fold the persona + the household's own places into the tag.
+    # Seeds derive from it, and the persona is an INPUT to every story
+    # prompt: without this a reworked persona (more objects, different
+    # habits) reuses the same seed, hits the cache, and silently replays
+    # the story written for the OLD persona — describing an inventory
+    # that no longer exists. The template hash alone cannot catch that,
+    # because the template did not change. Same reasoning as
+    # PromptTemplate.tag folding the schema; the week tag is exempt so
+    # the frozen legacy per-week caches still replay.
+    if not per_week:
+        tag += "_i" + _hashlib.sha256(
+            (persona_text + "|".join(receptacles)).encode()).hexdigest()[:8]
     story: list[dict] = []
     failed_calls: list[dict] = []
-    n_attempts = 0
-    for idx, lo, hi in units:
-        schema = build_story_schema(residents, receptacles, lo, hi)
+    repairs: list[str] = []
 
+    def _make_validator(who: list[str], schema):
         def _validate(parsed):
-            parsed = _normalize_story(parsed)
+            parsed = repair_story(parsed, residents, receptacles, name_map,
+                                  repairs)
             if jsonschema is not None:
                 jsonschema.validate(parsed, schema)
             for d in parsed["days"]:
                 per: dict = {}
                 for b in d["blocks"]:
                     per[b["resident"]] = per.get(b["resident"], 0) + 1
-                thin = [r for r in residents
+                thin = [r for r in who
                         if per.get(r, 0) < MIN_BLOCKS_PER_RESIDENT]
                 if thin:
                     raise ValueError(
@@ -400,38 +634,125 @@ def generate_story(program, persona_text, cache, client, days_total,
                         f"{MIN_BLOCKS_PER_RESIDENT} blocks for {thin} — "
                         f"a day written that thin is a summary, not a day")
             return parsed
+        return _validate
 
-        user = STORY_USER.format(persona=persona_text, locations=loc_lines,
-                                 vocab=", ".join(ACTIVITY_VOCAB),
-                                 recap=_recap(story), lo=lo, hi=hi,
-                                 weekday_map=wmap)
-        seed = make_seed(program["household"], idx, tag)
-        n_attempts += 1
-        try:
-            parsed = generate_story_json(
-                client, STORY_SYSTEM, user, seed=seed, stage=tag,
-                cache=cache, force=force, validate=_validate,
-                max_tokens=STORY_MAX_TOKENS, max_retries=max_retries)
-        except Exception as e:
-            unit = {"week" if per_week else "day": idx,
-                    "error": repr(e)[:200]}
-            failed_calls.append(unit)
-            print(f"  {'week' if per_week else 'day'} {idx}: STORY FAILED "
-                  f"({type(e).__name__})")
-            continue
-        got = sorted(parsed["days"], key=lambda d: d["day"])
-        story.extend(got)
-        if out_hh is not None:
-            _write_story(out_hh, program["household"], story)
-        acts = {b["activity"] for d in got for b in d["blocks"]}
-        print(f"  {'week' if per_week else 'day'} {idx}: days {lo}-{hi}, "
-              f"{sum(len(d['blocks']) for d in got)} blocks, "
-              f"{len(acts)} activities")
-    call_stats = {"granularity": "week" if per_week else "day",
-                  "tag": tag, "n_calls": len(units),
+    def _call(seed, system, user, who, schema):
+        return generate_story_json(
+            client, system, user, seed=seed, stage=tag, cache=cache,
+            force=force, validate=_make_validator(who, schema),
+            max_tokens=STORY_MAX_TOKENS, max_retries=max_retries)
+
+    # ---------------------------------------------------------- per week --
+    if per_week or not per_resident:
+        units = ([(w, lo, min(lo + 6, days_total - 1))
+                  for w, lo in enumerate(range(0, days_total, 7))]
+                 if per_week else [(d, d, d) for d in range(days_total)])
+        label = "week" if per_week else "day"
+        for idx, lo, hi in units:
+            schema = build_story_schema(residents, receptacles, lo, hi)
+            user = STORY_USER.format(
+                persona=persona_text, locations=loc_lines,
+                vocab=", ".join(ACTIVITY_VOCAB), recap=_recap(story),
+                lo=lo, hi=hi, weekday_map=wmap)
+            try:
+                parsed = _call(make_seed(program["household"], idx, tag),
+                               STORY_SYSTEM, user, residents, schema)
+            except Exception as e:
+                failed_calls.append({label: idx, "error": repr(e)[:200]})
+                print(f"  {label} {idx}: STORY FAILED ({type(e).__name__})")
+                continue
+            got = sorted(parsed["days"], key=lambda d: d["day"])
+            story.extend(got)
+            if out_hh is not None:
+                _write_story(out_hh, program["household"], story)
+            acts = {b["activity"] for d in got for b in d["blocks"]}
+            print(f"  {label} {idx}: days {lo}-{hi}, "
+                  f"{sum(len(d['blocks']) for d in got)} blocks, "
+                  f"{len(acts)} activities")
+        n_calls = len(units)
+    # ------------------------------------------------- per (day, resident) --
+    else:
+        from concurrent.futures import ThreadPoolExecutor
+        n_calls = 0
+
+        def _one(day, rid, today):
+            """One resident's day. Seed folds the resident index so each
+            (day, resident) has its own cache entry."""
+            schema = build_story_schema([rid], receptacles, day, day)
+            user = STORY_USER_ONE.format(
+                persona=persona_text, locations=loc_lines,
+                vocab=", ".join(ACTIVITY_VOCAB), recap=_recap(story),
+                today=today, lo=day, resident=rid, weekday_map=wmap)
+            seed = make_seed(program["household"], day, tag,
+                             residents.index(rid))
+            return _call(seed, STORY_SYSTEM, user, [rid], schema)
+
+        for day in range(days_total):
+            day_blocks: list[dict] = []
+            summary = None
+            n_calls += 1
+            try:                                    # anchor, sequential
+                parsed = _one(day, residents[0], _today_context([]))
+                d0 = parsed["days"][0]
+                summary = d0.get("summary", "")
+                day_blocks += [dict(b, resident=residents[0])
+                               for b in d0["blocks"]]
+            except Exception as e:
+                failed_calls.append({"day": day, "resident": residents[0],
+                                     "error": repr(e)[:200]})
+                print(f"  day {day} {residents[0]}: STORY FAILED "
+                      f"({type(e).__name__})")
+            anchor_ctx = _today_context(day_blocks)
+            rest = residents[1:]
+            n_calls += len(rest)
+            results: dict = {}
+            if rest:
+                with ThreadPoolExecutor(
+                        max_workers=min(max_workers, len(rest))) as ex:
+                    futs = {ex.submit(_one, day, rid, anchor_ctx): rid
+                            for rid in rest}
+                    for fut, rid in futs.items():
+                        try:
+                            results[rid] = fut.result()
+                        except Exception as e:
+                            results[rid] = e
+            for rid in rest:                        # merge in RESIDENT order
+                got = results.get(rid)
+                if isinstance(got, Exception) or got is None:
+                    failed_calls.append({"day": day, "resident": rid,
+                                         "error": repr(got)[:200]})
+                    print(f"  day {day} {rid}: STORY FAILED "
+                          f"({type(got).__name__})")
+                    continue
+                dd = got["days"][0]
+                if summary is None:
+                    summary = dd.get("summary", "")
+                day_blocks += [dict(b, resident=rid) for b in dd["blocks"]]
+            if not day_blocks:
+                continue                            # whole day lost
+            day_blocks.sort(key=lambda b: (b["start"], b["resident"]))
+            story.append({"day": day, "summary": summary or "",
+                          "blocks": day_blocks})
+            if out_hh is not None:
+                _write_story(out_hh, program["household"], story)
+            acts = {b["activity"] for b in day_blocks}
+            print(f"  day {day}: {len(day_blocks)} blocks across "
+                  f"{len({b['resident'] for b in day_blocks})} resident(s), "
+                  f"{len(acts)} activities")
+
+    call_stats = {"granularity": ("week" if per_week
+                                  else ("day_resident" if per_resident
+                                        else "day")),
+                  "tag": tag, "n_calls": n_calls,
                   "n_failed_calls": len(failed_calls),
                   "max_retries": max_retries,
-                  "max_tokens": STORY_MAX_TOKENS}
+                  "max_tokens": STORY_MAX_TOKENS,
+                  "n_repairs": len(repairs),
+                  "repairs": repairs[:80]}
+    if repairs:
+        print(f"  [repair] {len(repairs)} deterministic fix(es) applied "
+              f"(guided decoding would have made these unwritable): "
+              f"{repairs[:6]}{'...' if len(repairs) > 6 else ''}")
     return story, failed_calls, call_stats
 
 

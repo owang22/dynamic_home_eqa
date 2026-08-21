@@ -97,7 +97,9 @@ def build_program_schema(household_id: str, resident_ids: list[str],
                          object_ids: list[str], receptacle_ids: list[str],
                          days: int, params: dict,
                          object_owners: dict | None = None,
-                         object_classes: dict | None = None) -> dict:
+                         object_classes: dict | None = None,
+                         scheduled_activities: list[str] | None = None
+                         ) -> dict:
     """The L2 contract. Every id is enum-constrained and every probability
     bounded, so the model cannot name something that does not exist.
 
@@ -153,118 +155,64 @@ def build_program_schema(household_id: str, resident_ids: list[str],
             "type": "array", "minItems": 1, "maxItems": 7,
             "items": {"enum": DAY_ABBREV}}),
     }
-    arc_block = {
-        "type": "object", "additionalProperties": False,
-        "required": ["resident", "activity", "start", "at", "jitter"],
-        "properties": dict(block_core),
-    }
-
+    # After-only rules (the v3 object semantics): while an activity is
+    # underway the object is simply WITH the resident using it — the
+    # expander synthesizes that leg — so the model authors only where the
+    # object LANDS when the activity ends, always as a distribution.
+    # "NO_OP" is a first-class outcome: the mass on it is the chance this
+    # firing leaves the object where it is (for a rarely-handled object,
+    # most of the mass). dest/p/else and the during phase are gone from
+    # the grammar entirely — unwritable beats advised-against.
     rule = {
         "type": "object", "additionalProperties": False,
-        "required": ["activity", "phase", "cites"],
+        "required": ["cites", "activity", "phase", "dist"],
         "properties": {
-            # Order is background -> reasoning -> decision. `cites` is
-            # required (optional, it appeared on 20.5% of rules, and the
-            # no-op legs were the ones that skipped it) and sits after the
-            # activity it licenses but BEFORE every choice it is supposed
-            # to inform — declared last, it was a post-hoc caption on a
-            # destination already fixed.
-            "activity": {"enum": ACTIVITY_VOCAB},
-            "phase": {"enum": ["during", "after"]},
+            # Order is background -> reasoning -> decision: `cites` first,
+            # then the activity it licenses, then the outcome distribution.
+            # When the calendar is authored FIRST (the split pipeline),
+            # the enum is pinned to activities it actually schedules — an
+            # orphaned rule becomes unwritable, the same grammar trick
+            # that killed vacuous special-event drops.
             "cites": rule_cites,
-            # Origin before destination, so a rule is authored as "from X
-            # to Y" rather than a bare Y. Declared after `dest`, this only
-            # gated a journey whose end had already been chosen.
+            "activity": {"enum": (scheduled_activities or ACTIVITY_VOCAB)},
+            "phase": {"const": "after"},
             "only_from": {"type": "array", "minItems": 1, "maxItems": 8,
                           "items": {"enum": locations}},
-            "dest": {"enum": locations},
-            "p": prob,
-            "else": {"enum": locations},
-            "dist": {"type": "array", "minItems": 2, "maxItems": 5,
+            "dist": {"type": "array", "minItems": 2, "maxItems": 6,
                      "items": {"type": "object",
                                "additionalProperties": False,
                                "required": ["dest", "p"],
-                               "properties": {"dest": {"enum": locations},
-                                              "p": prob}}},
+                               "properties": {
+                                   "dest": {"enum": locations + ["NO_OP"]},
+                                   "p": prob}}},
             # Authoring-order hint: the model never writes it (order is
             # derived), the revamp_v1 translation uses it to reproduce that
             # world's per-activity rule order, which its RNG depends on.
             "seq": {"type": "integer", "minimum": 0},
-            "cites": cites,
         },
     }
 
-    def object_entry(lo: int, hi: int, only: str | None = None) -> dict:
-        # One shape for every object. Carrying is a CHOICE the model makes
-        # by homing an item at `person:<owner>` (the prompt encourages it
-        # for pocket items where the persona supports it) — an earlier
-        # design PINNED pocket items to their owner with mandatory pick-up
-        # legs and mandatory drift, and overshot: wallets and glasses rode
-        # their owners for 21 straight days without one put-down, tracing
-        # zero receptacle changes. Structure forces what must ALWAYS hold;
-        # who carries what, and when, is judgment.
+    def object_rule(only: str | None = None) -> dict:
+        # ONE shape for every object. The old static/mobile oneOf (and the
+        # `motion: rarely_moved` flag) is retired: with NO_OP a rarely
+        # moved object is a dist with most of its mass on NO_OP — a
+        # probability statement instead of a special case. `rules: []`
+        # stays legal for an object genuinely nothing touches.
+        # `misplace_set` is gone too: drift lands near wherever the owner
+        # actually is (the expander derives candidate spots from the
+        # household's own occupied rooms); the model authors only the RATE.
         return {
             "type": "object", "additionalProperties": False,
-            "required": (["object", "cites", "home", "motion", "rules"]
-                         if lo == 0 else ["object", "cites", "home", "rules"]),
+            "required": ["object", "cites", "home", "rules"],
             "properties": {
                 "object": {"const": only} if only else {"enum": object_ids},
-                # Before `home`, which is the most consequential field in
-                # the entry: it defines what counts as movement at all, and
-                # was previously chosen with nothing reasoned in front of
-                # it.
                 "cites": cites,
                 "home": {"enum": locations},
-                # Staying put has to be something the model can SAY. Left
-                # as the mere absence of rules, `rules: []` was chosen 0
-                # times in 180 object entries: an absence is not an option
-                # a generator picks. Asked instead to declare
-                # `motion: rarely_moved`, it has a name for the honest
-                # answer and stops faking movement to avoid the empty
-                # array. NOTE: today this is still exactly "never" in
-                # L3 — validate.py rejects p_misplace on a static and the
-                # expander strips it — so the name currently buys honesty
-                # and auditability, not motion. Giving `rarely` real
-                # occasional displacement is a separate L3 change.
-                **({"motion": {"const": "rarely_moved"}} if lo == 0 else {}),
                 "p_misplace": prob,
-                "misplace_set": {"type": "array", "minItems": 1,
-                                 "maxItems": 6,
-                                 "items": {"enum": receptacle_ids}},
-                # For a moving object the first two rules are pinned to
-                # the two legs of a journey: a `during` rule that takes it
-                # somewhere when an activity starts, and an `after` rule
-                # that says where it is left. Unpinned, the model wrote two
-                # "put it back home" rules and the object never moved.
-                "rules": ({"type": "array", "minItems": lo, "maxItems": hi,
-                           "items": rule}
-                          if lo == 0 else
-                          {"type": "array", "minItems": lo, "maxItems": hi,
-                           "prefixItems": [
-                               dict(rule,
-                                    required=rule["required"] + ["only_from"],
-                                    properties=dict(
-                                        rule["properties"],
-                                        phase={"const": "during"})),
-                               dict(rule, properties=dict(
-                                   rule["properties"],
-                                   phase={"const": "after"}))],
-                           "items": rule}),
+                "rules": {"type": "array", "minItems": 0, "maxItems": 8,
+                          "items": rule},
             },
         }
-
-    # An object either never moves (no rules) or has AT LEAST TWO rules —
-    # one taking it away from home, one bringing it back. A single rule is
-    # almost always a homing rule pointing at the object's own home, which
-    # reads as movement and is not: measured on a real generation, a third
-    # of a 25-object household came back that way.
-    def object_rule(only: str | None = None) -> dict:
-        # A phone or a wallet that never moves is a broken household, not a
-        # static object — no persona licenses it, so the static shape is
-        # simply not offered for the classes people carry.
-        if (object_classes or {}).get(only) in CARRIED_CLASSES:
-            return object_entry(2, 8, only)
-        return {"oneOf": [object_entry(0, 0, only), object_entry(2, 8, only)]}
 
     activity = {
         "type": "object", "additionalProperties": False,
@@ -287,44 +235,16 @@ def build_program_schema(household_id: str, resident_ids: list[str],
             "cites": cites,
         },
     }
-    arc_event = {
-        "type": "object", "additionalProperties": False,
-        "required": ["day", "patch", "note"],
-        "properties": {
-            "day": {"type": "integer", "minimum": 0, "maximum": days - 1},
-            "note": {"type": "string", "minLength": 1, "maxLength": 300},
-            "patch": {
-                "type": "object", "additionalProperties": False,
-                "properties": {
-                    "drop": {"type": "array", "minItems": 1,
-                             "items": {"enum": ACTIVITY_VOCAB}},
-                    "add": {"type": "array", "minItems": 1,
-                            "items": arc_block},
-                    "after_override": {
-                        "type": "array", "minItems": 1,
-                        "items": {"type": "object",
-                                  "additionalProperties": False,
-                                  "required": ["activity", "rule"],
-                                  "properties": {
-                                      "activity": {"enum": ACTIVITY_VOCAB},
-                                      "rule": dict(
-                                          rule,
-                                          required=["object", "activity",
-                                                    "phase"],
-                                          properties=dict(
-                                              rule["properties"],
-                                              object={"enum": object_ids}))}}},
-                },
-            },
-        },
-    }
-
     js = params["jitter_scale"]
     return {
         "type": "object", "additionalProperties": False,
+        # arc_events (special events) moved to their OWN call
+        # (build_special_schema): they are authored AFTER the calendar
+        # exists, conditioned on it, so the drop enum can be pinned to
+        # activities that actually run.
         "required": ["household", "source_persona", "days", "day0",
                      "residents", "sleep_schedule", "weekly_blocks",
-                     "object_rules", "activities", "arc_events"],
+                     "object_rules", "activities"],
         "properties": {
             "household": {"const": household_id},
             "source_persona": {"const": "persona.yaml"},
@@ -388,10 +308,121 @@ def build_program_schema(household_id: str, resident_ids: list[str],
                              "items": False},
             "activities": {"type": "array", "minItems": 1, "maxItems": 40,
                            "items": activity},
-            "arc_events": {"type": "array", "minItems": 4, "maxItems": 8,
-                           "items": arc_event},
         },
     }
+
+
+def build_calendar_schema(household_id: str, resident_ids: list[str],
+                          receptacle_ids: list[str], days: int,
+                          params: dict) -> dict:
+    """Stage 1 of the split pipeline: the schedule alone — the program
+    schema with object_rules carved out. One source of truth: carved from
+    build_program_schema rather than restated."""
+    full = build_program_schema(household_id, resident_ids, ["_none_"],
+                                receptacle_ids, days, params)
+    props = {k: v for k, v in full["properties"].items()
+             if k != "object_rules"}
+    return dict(full, properties=props,
+                required=[k for k in full["required"] if k != "object_rules"])
+
+
+def build_objects_schema(household_id: str, resident_ids: list[str],
+                         object_ids: list[str], receptacle_ids: list[str],
+                         days: int, params: dict,
+                         scheduled_activities: list[str],
+                         object_owners: dict | None = None,
+                         object_classes: dict | None = None) -> dict:
+    """Stage 2: object_rules alone, with the rule activity enum PINNED to
+    what stage 1 actually scheduled."""
+    full = build_program_schema(household_id, resident_ids, object_ids,
+                                receptacle_ids, days, params,
+                                object_owners=object_owners,
+                                object_classes=object_classes,
+                                scheduled_activities=sorted(
+                                    set(scheduled_activities)))
+    return {"type": "object", "additionalProperties": False,
+            "required": ["object_rules"],
+            "properties": {"object_rules":
+                           full["properties"]["object_rules"]}}
+
+
+def build_special_schema(days: int, scheduled_activities: list[str],
+                         resident_ids: list[str],
+                         receptacle_ids: list[str], object_ids: list[str],
+                         params: dict) -> dict:
+    """The special-events contract — its OWN call, made AFTER the routine
+    program is accepted, so it conditions on the calendar that actually
+    exists: `drop` is enum-pinned to activities the program schedules
+    (a vacuous or unknown drop is unwritable, retiring the single largest
+    historical source of rejected programs), while `add` may introduce any
+    vocabulary activity (an appointment the routine never runs is exactly
+    the point of an exception)."""
+    locations = receptacle_ids + ["ELSEWHERE"] + \
+        [f"person:{r}" for r in resident_ids]
+    prob = {"type": "number", "minimum": 0.0, "maximum": 1.0}
+    add_block = {
+        "type": "object", "additionalProperties": False,
+        "required": ["cites", "resident", "activity", "start", "at",
+                     "jitter"],
+        "properties": {
+            "cites": {"type": "string", "maxLength": 120},
+            "resident": {"enum": resident_ids},
+            "activity": {"enum": ACTIVITY_VOCAB},
+            "start": {"type": "string", "pattern": TIME_PATTERN},
+            "end": {"type": "string", "pattern": TIME_PATTERN},
+            "at": {"enum": receptacle_ids + ["ELSEWHERE"]},
+            "jitter": {"enum": JITTER_CLASS_NAMES},
+            "note": {"type": "string", "maxLength": 200},
+        },
+    }
+    override_rule = {
+        "type": "object", "additionalProperties": False,
+        "required": ["object", "dist"],
+        "properties": {
+            "object": {"enum": object_ids},
+            "dist": {"type": "array", "minItems": 2, "maxItems": 6,
+                     "items": {"type": "object",
+                               "additionalProperties": False,
+                               "required": ["dest", "p"],
+                               "properties": {
+                                   "dest": {"enum": locations + ["NO_OP"]},
+                                   "p": prob}}},
+        },
+    }
+    event = {
+        "type": "object", "additionalProperties": False,
+        "required": ["note", "day", "patch"],
+        "properties": {
+            # note first: the beat is the reason the patch exists.
+            "note": {"type": "string", "minLength": 1, "maxLength": 300},
+            "day": {"type": "integer", "minimum": 0, "maximum": days - 1},
+            "patch": {
+                "type": "object", "additionalProperties": False,
+                "properties": {
+                    "drop": {"type": "array", "minItems": 1,
+                             "items": {"enum": (scheduled_activities
+                                                or ACTIVITY_VOCAB)}},
+                    "add": {"type": "array", "minItems": 1,
+                            "items": add_block},
+                    "after_override": {
+                        "type": "array", "minItems": 1,
+                        "items": {"type": "object",
+                                  "additionalProperties": False,
+                                  "required": ["activity", "rule"],
+                                  "properties": {
+                                      "activity": {
+                                          "enum": (scheduled_activities
+                                                   or ACTIVITY_VOCAB)},
+                                      "rule": override_rule}}},
+                },
+            },
+        },
+    }
+    return {"type": "object", "additionalProperties": False,
+            "required": ["special_events"],
+            "properties": {"special_events": {
+                "type": "array", "minItems": 4, "maxItems": 8,
+                "items": event}}}
 
 
 def build_leak_schema(household_types: list[str]) -> dict:

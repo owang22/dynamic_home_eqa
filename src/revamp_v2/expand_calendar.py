@@ -62,13 +62,38 @@ def sleep_activity_name(name: str) -> str:
     return name if any(s in name for s in SLEEP_TOKENS) else f"sleep_{name}"
 
 
-def _rule_to_v1(rule: dict) -> dict:
+NO_OP = "NO_OP"
+
+
+def _rule_to_v1(rule: dict) -> dict | None:
     """One object_rules entry -> the v1 rule dict, cites/activity/phase
     stripped. A `p` with no `else` would be a branch that resolves to
-    `dest` either way, so it is dropped rather than kept as a no-op."""
+    `dest` either way, so it is dropped rather than kept as a no-op.
+
+    v3 rules carry NO_OP mass in their dist: the chance this firing
+    leaves the object where it is. The v1 sampler knows only locations,
+    so the NO_OP mass is lifted out into `noop_p` (an extra key v1's
+    validate ignores) and the remaining dist renormalized to sum to 1;
+    simulate.py wraps sample_after to draw the no-op branch first. A dist
+    that is ENTIRELY NO_OP describes a rule that never does anything and
+    returns None (dropped, counted by the caller)."""
     out: dict = {}
     if rule.get("dist"):
-        out["dist"] = {d["dest"]: d["p"] for d in rule["dist"]}
+        dist = {d["dest"]: d["p"] for d in rule["dist"]}
+        noop = dist.pop(NO_OP, 0.0)
+        if not dist or noop >= 1.0:
+            return None
+        total = sum(dist.values())
+        if total <= 0:
+            return None
+        if len(dist) == 1 and noop <= 0:
+            out["dest"] = next(iter(dist))
+        else:
+            # real destinations renormalized to sum to 1; the no-op
+            # branch is drawn separately by the simulate wrapper.
+            out["dist"] = {k: round(v / total, 6) for k, v in dist.items()}
+            if noop > 0:
+                out["noop_p"] = round(noop / (noop + total), 6)
     else:
         out["dest"] = rule["dest"]
         if rule.get("p") is not None and rule.get("else") is not None:
@@ -125,7 +150,10 @@ def pivot_object_rules(program: dict, known: set | None = None,
             if rule["phase"] == "during":
                 slot["during"][obj] = rule["dest"]
             else:
-                slot["after"][obj] = _rule_to_v1(rule)
+                v1 = _rule_to_v1(rule)
+                if v1 is None:      # a dist that is entirely NO_OP: the
+                    continue        # rule never does anything — dropped
+                slot["after"][obj] = v1
     return per_activity
 
 
@@ -180,10 +208,23 @@ def takes_along(household: str, obj: str, activity: str,
         < carry_p * 1000
 
 
+AFTER_ONLY_V3 = "after_only_v3"
+
+
 def expand(program: dict, carry_on_departure: bool = True,
            carry_p: float = 0.85) -> tuple[dict, dict]:
-    """routine_program dict -> (acts, motions) for the v1 simulator."""
+    """routine_program dict -> (acts, motions) for the v1 simulator.
+
+    Programs marked `object_semantics: after_only_v3` (stamped by
+    generate.py, never authored) get the v3 behaviours: the during leg is
+    SYNTHESIZED (an object with an after rule on an activity is with the
+    resident while it runs — at the block's receptacle at home, on the
+    person out of the house), and `misplace_set` is DERIVED from the
+    rooms the household actually occupies rather than authored. Unmarked
+    programs — every existing household and the v1 regression fixture —
+    expand exactly as before, byte for byte."""
     days = int(program["days"])
+    v3 = program.get("object_semantics") == AFTER_ONLY_V3
 
     # -- occurrences ------------------------------------------------------
     occs: list[dict] = []          # insertion order is the tie-break order
@@ -406,9 +447,35 @@ def expand(program: dict, carry_on_departure: bool = True,
     all_locations = ([r["id"] for r in program["receptacles"]] + [ELSEWHERE]
                      + [f"person:{r['id']}" for r in program["residents"]])
     program_homes = {e["object"]: e["home"] for e in entries}
+    if v3:
+        # Drift needs somewhere to drift TO, and under v3 the model
+        # authors only the RATE: the candidate spots are derived from the
+        # rooms this household actually occupies (the `at` receptacles of
+        # its own blocks), most-lived-in first, minus the object's home —
+        # an approximation of "set down near wherever the owner is" that
+        # stays inside the unforked v1 simulator (whose misplace draw is
+        # pre-scheduled; truly time-correlated placement needs a new
+        # engine). Deterministic: frequency then receptacle order.
+        room_of = {r["id"]: r["room"] for r in program["receptacles"]}
+        room_use: dict[str, int] = {}
+        for o in occs:
+            room = room_of.get(o["at"])
+            if room:
+                room_use[room] = room_use.get(room, 0) + 1
+        rec_rank = {r["id"]: i for i, r in enumerate(program["receptacles"])}
+        lived = sorted((r["id"] for r in program["receptacles"]
+                        if room_use.get(r["room"])),
+                       key=lambda rid: (-room_use[room_of[rid]],
+                                        rec_rank[rid]))
+        entries = [dict(e) for e in entries]        # never mutate input
+        for e in entries:
+            if (e.get("p_misplace") or 0) > 0 and not e.get("misplace_set"):
+                e["misplace_set"] = [r for r in lived
+                                     if r != e.get("home")][:6]
     picked_up: list[str] = []
     left_behind: list[str] = []
     putdown_normalized: list[str] = []
+    synthesized_during: list[str] = []
     object_motions: dict[str, dict] = {}
     dropped_sleep_resets: list[str] = []
     dropped_sleep_fragments: list[str] = []
@@ -449,7 +516,7 @@ def expand(program: dict, carry_on_departure: bool = True,
         # back on the nightstand. Away activities keep their put-down at
         # the end — that is the return home. Stochastic put-downs use their
         # modal destination; drift stays with p_misplace.
-        if carry_on_departure and info["at"] != ELSEWHERE:
+        if carry_on_departure and info["at"] != ELSEWHERE and not v3:
             for obj in list(entry["after"]):
                 if not str(program_homes.get(obj, "")).startswith(PERSON):
                     continue
@@ -458,6 +525,23 @@ def expand(program: dict, carry_on_departure: bool = True,
                         max(rule["dist"], key=rule["dist"].get))
                 entry["during"].setdefault(obj, dest)
                 putdown_normalized.append(f"{obj}@{name}")
+        if v3:
+            # v3 during synthesis: an object with an after rule on this
+            # activity is WITH the resident while it runs — visible at
+            # the block's receptacle at home, on the person when out —
+            # then the authored after-dist decides where it lands.
+            # NO_OP-heavy rules (>= 0.5) skip the leg: the object is
+            # usually untouched by this activity, so parading it to the
+            # site most firings would overstate its life.
+            site = (f"{PERSON}{away_resident[name]}"
+                    if info["at"] == ELSEWHERE and name in away_resident
+                    else info["at"] if info["at"] != ELSEWHERE else None)
+            if site:
+                for obj, rule in entry["after"].items():
+                    if rule.get("noop_p", 0) >= 0.5:
+                        continue
+                    entry["during"].setdefault(obj, site)
+                    synthesized_during.append(f"{obj}@{name}")
         if carry_on_departure and info["at"] == ELSEWHERE \
                 and name in away_resident:
             carrier = f"{PERSON}{away_resident[name]}"
@@ -518,6 +602,7 @@ def expand(program: dict, carry_on_departure: bool = True,
     acts["carried_on_departure"] = sorted(set(picked_up))
     acts["left_behind_by_trip"] = sorted(set(left_behind))
     acts["carried_putdowns_at_start"] = sorted(set(putdown_normalized))
+    acts["synthesized_during"] = sorted(set(synthesized_during))
     return acts, motions
 
 
