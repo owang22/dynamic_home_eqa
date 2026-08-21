@@ -84,3 +84,17 @@ def test_regression_fixture_is_untouched_by_v3_machinery():
     p_old = mini_program()
     acts, motions = xc.expand(p_old)
     assert "synthesized_during" in acts and acts["synthesized_during"] == []
+
+
+def test_three_way_dist_survives_v1_tolerance():
+    """round(1/3, 6) * 3 = 0.999999 fails v1 validate's `< 1e-6` check
+    exactly at the boundary — hh2's toy_1 lost a 2-hour build to it. No
+    per-entry rounding: the renormalized dist must sum to 1 in float."""
+    r = xc._rule_to_v1({"dist": [{"dest": "a", "p": 1}, {"dest": "b", "p": 1},
+                                 {"dest": "c", "p": 1}]})
+    assert abs(sum(r["dist"].values()) - 1.0) < 1e-9
+    r = xc._rule_to_v1({"dist": [{"dest": "NO_OP", "p": 0.25},
+                                 {"dest": "a", "p": 0.25},
+                                 {"dest": "b", "p": 0.25},
+                                 {"dest": "c", "p": 0.25}]})
+    assert abs(sum(r["dist"].values()) - 1.0) < 1e-9

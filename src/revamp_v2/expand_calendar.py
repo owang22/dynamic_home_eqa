@@ -90,10 +90,13 @@ def _rule_to_v1(rule: dict) -> dict | None:
             out["dest"] = next(iter(dist))
         else:
             # real destinations renormalized to sum to 1; the no-op
-            # branch is drawn separately by the simulate wrapper.
-            out["dist"] = {k: round(v / total, 6) for k, v in dist.items()}
+            # branch is drawn separately by the simulate wrapper. NO
+            # per-entry rounding: round(1/3, 6) * 3 = 0.999999 sits
+            # exactly ON v1 validate's 1e-6 tolerance and fails it
+            # (measured: hh2's toy_1 relax dist, three equal outcomes).
+            out["dist"] = {k: v / total for k, v in dist.items()}
             if noop > 0:
-                out["noop_p"] = round(noop / (noop + total), 6)
+                out["noop_p"] = noop / (noop + total)
     else:
         out["dest"] = rule["dest"]
         if rule.get("p") is not None and rule.get("else") is not None:
