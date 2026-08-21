@@ -4,7 +4,7 @@
   "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh1",
   "days": 21,
   "seed": 0,
-  "n_events": 428,
+  "n_events": 1295,
   "jitter_classes": {
     "external": 10,
     "routine": 30,
@@ -12,56 +12,63 @@
     "loose": 110
   },
   "activity_stats": {
-    "tidy_bouts": 0,
+    "tidy_bouts": 217,
     "tidy_moved": 0,
     "tidy_ran_out_of_time": 0,
-    "blocks": 160,
+    "blocks": 282,
     "vacuous_arc_drops": [],
     "dropped_sleep_resets": [
-      "sleep_bedtime_routine"
+      "sleep_snack",
+      "sleep_snack__bed_b1"
     ],
     "dropped_sleep_fragments": [],
     "derived_only_from": [],
     "orphaned_rules": [],
     "unscheduled_activities": [],
-    "inert_objects": [
-      "wallet_1"
-    ],
+    "inert_objects": [],
     "carried_on_departure": [],
     "left_behind_by_trip": [],
     "carried_putdowns_at_start": [],
     "skips_per_activity": {
       "reading": 4,
-      "shower": 1
+      "reading__armchair_l1": 1,
+      "watch_tv": 3,
+      "watch_tv__couch_l1": 2
     },
-    "fragment_bouts_per_activity": {
-      "reading": 31
-    },
+    "fragment_bouts_per_activity": {},
     "carry_rehome_suppressed": 0
   },
   "moves_per_object": {
-    "headphones_1": 91,
-    "mug_1": 86,
-    "phone_1": 86,
-    "keys_1": 43,
-    "pen_1": 41,
-    "jacket_1": 41,
-    "water_bottle_1": 40
+    "phone_1": 156,
+    "water_bottle_1": 131,
+    "mug_1": 117,
+    "jacket_1": 115,
+    "keys_1": 112,
+    "glasses_1": 103,
+    "laptop_1": 100,
+    "book_1": 99,
+    "notebook_1": 91,
+    "medication_bottle_1": 81,
+    "remote_1": 71,
+    "blanket_1": 66,
+    "hairbrush_1": 53
   },
   "provenance": {
     "model": "Qwen/Qwen3.8-27B",
     "prompts": {
-      "persona_v2": "134f5bfb",
-      "routine_program": "e35c6d66",
+      "persona_v2": "26773b41",
+      "calendar_program": "bb623651",
+      "object_rules": "c17ddb91",
+      "special_events": "dee8230e",
       "leak_audit": "051fa759"
     },
     "builder_version": "rv2-b5",
-    "accepted_attempt": 1,
+    "accepted_attempt": 0,
     "n_attempts": 2
   },
   "realization_params": {
     "skip": {
-      "max_skip_p": 0.6
+      "max_skip_p": 0.9
     },
     "fragmentation": {
       "min_mean_bouts": 1.0,
@@ -72,17 +79,6 @@
       "enabled": true,
       "carry_p": 0.85,
       "carry_rehome_min": 90
-    }
-  },
-  "spatialization": {
-    "config": "visualization/configs/revamp_v2_rule_based_qwen3.8-27b_hh1_102343992.yaml",
-    "scene_id": "102343992",
-    "room_map": {
-      "bathroom": "bathroom.001",
-      "bedroom": "bedroom.004",
-      "entry": "hallway.003",
-      "kitchen": "kitchen",
-      "living": "tv"
     }
   }
 }

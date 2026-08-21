@@ -5,17 +5,19 @@
   "model_slug": "qwen3.8-27b",
   "builder_version": "rv2-b5",
   "prompts": {
-    "persona_v2": "134f5bfb",
-    "routine_program": "e35c6d66",
+    "persona_v2": "26773b41",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
     "leak_audit": "051fa759"
   },
   "scene": "symbolic",
   "days": 21,
-  "persona_seed": 18301401584226530953,
+  "persona_seed": 8360691127139102063,
   "persona_attempts": [
     {
       "attempt": 0,
-      "seed": 18301401584226530953,
+      "seed": 8360691127139102063,
       "leak_prediction": {
         "predicted_type": "grad_student_solo",
         "confidence": 0.65,
@@ -27,19 +29,21 @@
   ],
   "leak_unresolved": false,
   "n_attempts": 2,
-  "accepted_attempt": 1,
+  "accepted_attempt": 0,
   "attempts": [
     {
       "attempt": 0,
-      "seed": 17812292643122955611,
-      "failures": [
-        "reachability: at-home activity 'tidy_up' is scheduled by weekly_blocks but appears in no object rule (and carries no reset_all) \u2014 a home block that touches nothing; objects move because of what people do at home, not only because they leave"
-      ]
+      "stage": "calendar",
+      "seed": 2575595297371264383,
+      "failures": []
     },
     {
-      "attempt": 1,
-      "seed": 12076301182701393775,
-      "failures": []
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 8870039844734452893,
+      "failures": [],
+      "special_attempt": 0
     }
   ]
 }

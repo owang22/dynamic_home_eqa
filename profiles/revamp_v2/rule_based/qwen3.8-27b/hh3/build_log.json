@@ -5,17 +5,19 @@
   "model_slug": "qwen3.8-27b",
   "builder_version": "rv2-b5",
   "prompts": {
-    "persona_v2": "134f5bfb",
-    "routine_program": "e35c6d66",
+    "persona_v2": "26773b41",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
     "leak_audit": "051fa759"
   },
   "scene": "symbolic",
   "days": 21,
-  "persona_seed": 14546646790778818281,
+  "persona_seed": 10282232768808639976,
   "persona_attempts": [
     {
       "attempt": 0,
-      "seed": 14546646790778818281,
+      "seed": 10282232768808639976,
       "leak_prediction": {
         "predicted_type": "working_couple_no_children",
         "confidence": 0.85,
@@ -26,13 +28,22 @@
     }
   ],
   "leak_unresolved": false,
-  "n_attempts": 1,
+  "n_attempts": 2,
   "accepted_attempt": 0,
   "attempts": [
     {
       "attempt": 0,
-      "seed": 6932876341144442837,
+      "stage": "calendar",
+      "seed": 14000536027442540493,
       "failures": []
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 17362352365270893926,
+      "failures": [],
+      "special_attempt": 0
     }
   ]
 }

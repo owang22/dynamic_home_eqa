@@ -4,7 +4,7 @@
   "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh3",
   "days": 21,
   "seed": 0,
-  "n_events": 2331,
+  "n_events": 1622,
   "jitter_classes": {
     "external": 10,
     "routine": 30,
@@ -12,12 +12,15 @@
     "loose": 110
   },
   "activity_stats": {
-    "tidy_bouts": 4,
-    "tidy_moved": 3,
-    "tidy_ran_out_of_time": 2,
-    "blocks": 609,
+    "tidy_bouts": 166,
+    "tidy_moved": 0,
+    "tidy_ran_out_of_time": 0,
+    "blocks": 382,
     "vacuous_arc_drops": [],
-    "dropped_sleep_resets": [],
+    "dropped_sleep_resets": [
+      "sleep_snack",
+      "sleep_snack__bed_b2"
+    ],
     "dropped_sleep_fragments": [],
     "derived_only_from": [],
     "orphaned_rules": [],
@@ -27,52 +30,48 @@
     "left_behind_by_trip": [],
     "carried_putdowns_at_start": [],
     "skips_per_activity": {
-      "hobby": 1,
-      "lunch": 6,
-      "reading": 1,
-      "reading__couch_l1": 7,
-      "tidy_up": 1,
-      "watch_tv": 8
+      "gaming": 4,
+      "gym": 1,
+      "socialise_home": 2,
+      "socialise_home__resident_1": 2,
+      "socialise_home__resident_2": 6
     },
-    "fragment_bouts_per_activity": {
-      "hobby": 73,
-      "hobby__desk_b1": 23,
-      "hobby__resident_1": 2,
-      "hobby__resident_2": 80,
-      "reading": 12,
-      "reading__couch_l1": 55
-    },
+    "fragment_bouts_per_activity": {},
     "carry_rehome_suppressed": 0
   },
   "moves_per_object": {
-    "water_bottle_1": 284,
-    "mug_2": 283,
-    "notebook_1": 282,
-    "wallet_2": 279,
-    "keys_2": 246,
-    "glasses_2": 236,
-    "mug_1": 200,
-    "glasses_1": 151,
-    "book_1": 138,
-    "keys_1": 74,
-    "wallet_1": 72,
-    "remote_1": 43,
-    "blanket_1": 43
+    "glasses_1": 137,
+    "keys_1": 130,
+    "phone_1": 128,
+    "book_1": 127,
+    "medication_bottle_1": 124,
+    "mug_1": 119,
+    "mug_2": 119,
+    "towel_2": 118,
+    "phone_2": 117,
+    "keys_2": 115,
+    "blanket_1": 111,
+    "watering_can_1": 87,
+    "toy_1": 77,
+    "laptop_1": 58,
+    "towel_1": 55
   },
   "provenance": {
     "model": "Qwen/Qwen3.8-27B",
     "prompts": {
-      "persona_v2": "134f5bfb",
-      "routine_program": "e35c6d66",
+      "persona_v2": "26773b41",
+      "calendar_program": "bb623651",
+      "object_rules": "c17ddb91",
+      "special_events": "dee8230e",
       "leak_audit": "051fa759"
     },
     "builder_version": "rv2-b5",
     "accepted_attempt": 0,
-    "n_attempts": 1
+    "n_attempts": 2
   },
   "realization_params": {
     "skip": {
-      "max_skip_p": 0.6
+      "max_skip_p": 0.9
     },
     "fragmentation": {
       "min_mean_bouts": 1.0,
@@ -83,18 +82,6 @@
       "enabled": true,
       "carry_p": 0.85,
       "carry_rehome_min": 90
-    }
-  },
-  "spatialization": {
-    "config": "visualization/configs/revamp_v2_rule_based_qwen3.8-27b_hh3_102343992.yaml",
-    "scene_id": "102343992",
-    "room_map": {
-      "bathroom": "bathroom.001",
-      "bedroom_1": "bedroom.004",
-      "bedroom_2": "bedroom",
-      "entry": "hallway.003",
-      "kitchen": "kitchen",
-      "living": "tv"
     }
   }
 }
