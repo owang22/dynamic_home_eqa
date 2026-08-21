@@ -77,6 +77,20 @@ class _LongFormClient:
                                        temperature=temperature)
 
 
+def _take_reasoning(raw: dict, record: dict, key: str) -> dict:
+    """Pull the scratchpad out of a stage response: kept in the build log
+    for audit, never allowed into the artifact. The program schema does
+    not admit `reasoning`, so leaving it in would fail validate's
+    re-check — and routine_program.yaml is read by the whole pipeline."""
+    if not isinstance(raw, dict):
+        return raw
+    raw = dict(raw)
+    if raw.get("reasoning"):
+        record[key] = str(raw["reasoning"])[:2000]
+    raw.pop("reasoning", None)
+    return raw
+
+
 def _load_normalizer():
     """profiles/revamp_v1/normalize_profiles.py — the canonical-style
     authority; its functions are reused, its rules never duplicated."""
@@ -264,6 +278,7 @@ def generate_program(slot: dict, control: dict, persona: dict,
             attempts.append(record)
             continue
         record["failures"] = v2v.check_schema(cal_raw, cal_schema)
+        cal_raw = _take_reasoning(cal_raw, record, "reasoning")
         attempts.append(record)
         if record["failures"]:
             continue
@@ -293,9 +308,11 @@ def generate_program(slot: dict, control: dict, persona: dict,
                 record["failures"] = [f"generation: {e!r}"]
                 attempts.append(record)
                 continue
+            obj_failures = v2v.check_schema(obj_raw, obj_schema)
+            obj_raw = _take_reasoning(obj_raw, record, "reasoning")
             raw = dict(cal_raw, object_rules=obj_raw["object_rules"])
             program = _inject(raw, slot, receptacles)
-            failures = (v2v.check_schema(obj_raw, obj_schema)
+            failures = (obj_failures
                         + v2v.check_referential(program, persona)
                         + v2v.check_reachability(program))
             record["failures"] = failures
@@ -344,6 +361,7 @@ def _add_special_events(program, slot, persona, client, cache, force,
             record.setdefault("special_failures", []).append(
                 f"generation: {e!r}"[:200])
             continue
+        raw = _take_reasoning(raw, record, "special_reasoning")
         candidate = [dict(ev) for ev in raw["special_events"]]
         program["arc_events"] = candidate
         problems = v2v.check_reachability(program)

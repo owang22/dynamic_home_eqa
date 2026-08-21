@@ -207,14 +207,10 @@ Inventory rules:
   Other objects tend to stay in particular spots in the home, or have a few locations that make sense
   to inhabit based off of activities (eg. a plate is stored in a dishwasher, drying rack, or cupboard,
   but some people might leave plates in the sink overnight). The `role` field should describe how the object is used and where it tends to be left.
-- A household that eats at home OWNS THE DISHES IT EATS FROM: bowls,
-  plates, a pot or a pan, whatever this kitchen actually uses. These are
-  the best objects in the whole inventory — their cycle is daily and
-  multi-stop (cupboard -> table -> sink -> drying rack -> cupboard) and
-  it differs per person: one household washes up immediately, another
-  leaves plates in the sink overnight, a third eats off the same bowl
-  every morning. Do not skip them because they are ordinary; ordinary is
-  what moves.
+- Dishware like plates and bowls have a cycle that can be
+  multi-stop (cupboard -> table (for dinner) -> sink (put_away_dishes) -> drying rack (wash_dishes) -> cupboard),
+  though not always in that order or so consistent. Habits also differ per person: one washes up immediately, another
+  leaves plates in the sink overnight.
 - Suggestive objects are allowed (medication_bottle, toy, dog_leash), but
   write the "role" field so the object's meaning comes from how it is
   used, not from the fact that it exists. The same object class could

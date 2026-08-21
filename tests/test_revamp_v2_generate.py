@@ -60,20 +60,21 @@ class ScriptedClient:
         if "object_inventory" in props:
             return json.dumps(PERSONA)
         if "special_events" in props:      # the third (story-layer) call
-            return json.dumps({"special_events": [
+            return json.dumps({"reasoning": "stub beats", "special_events": [
                 {"note": f"beat {i}", "day": 3 + i,
                  "patch": {"drop": ["relax"]}} for i in range(4)]})
         if "object_rules" in props and "weekly_blocks" not in props:
             if not self._pending_objects:  # an objects RETRY: consume the
                 full = self.program_responses.pop(0)   # next script entry
                 self._pending_objects.append(full["object_rules"])
-            return json.dumps(
-                {"object_rules": self._pending_objects.pop(0)})
+            return json.dumps({"reasoning": "stub object judgment",
+                               "object_rules": self._pending_objects.pop(0)})
         self.program_calls += 1            # the calendar call
         full = self.program_responses.pop(0)
         self._pending_objects.append(full["object_rules"])
-        return json.dumps({k: v for k, v in full.items()
-                           if k != "object_rules"})
+        return json.dumps(dict({"reasoning": "stub calendar judgment"},
+                               **{k: v for k, v in full.items()
+                                  if k != "object_rules"}))
 
 
 def _raw_program():
@@ -111,6 +112,14 @@ def test_program_accepted_first_attempt():
     # two-stage pipeline: one calendar record, one objects record
     assert [a["stage"] for a in attempts] == ["calendar", "objects"]
     assert all(a["failures"] == [] for a in attempts)
+    # the judgment blocks are captured for audit...
+    assert attempts[0]["reasoning"] == "stub calendar judgment"
+    assert attempts[1]["reasoning"] == "stub object judgment"
+    assert attempts[1]["special_reasoning"] == "stub beats"
+    # ...and never reach the artifact (the program schema forbids the key,
+    # so a leak would fail validate's re-check of routine_program.yaml)
+    assert "reasoning" not in program
+    assert all("reasoning" not in e for e in program["object_rules"])
 
 
 def test_bad_objects_retry_the_objects_call_not_the_calendar():

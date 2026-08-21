@@ -32,6 +32,20 @@ def _insert_after(props: dict, anchor: str, **extra) -> dict:
     return out
 
 
+# Reasoning INSIDE guided decoding. The guided path sends
+# enable_thinking=False (the JSON grammar suppresses a think block
+# anyway), so without this every field is a first-token commitment with
+# no deliberation behind it. Property order IS generation order — verified
+# on 12,226 generated rules, zero deviations — so a field declared first
+# is genuinely written first and everything after is conditioned on it.
+# This is `cites` generalized from one clause to a whole stage. It is a
+# SCRATCHPAD: generate.py captures it into build_log.json and strips it
+# before the response becomes an artifact.
+def _judgment(prompt: str, max_length: int = 2000) -> dict:
+    return {"type": "string", "maxLength": max_length,
+            "description": prompt}
+
+
 def build_persona_schema(household_id: str, household_type: str,
                          n_residents: int, vocabulary: list[str]) -> dict:
     resident_ids = [f"resident_{i + 1}" for i in range(n_residents)]
@@ -323,10 +337,15 @@ def build_calendar_schema(household_id: str, resident_ids: list[str],
     build_program_schema rather than restated."""
     full = build_program_schema(household_id, resident_ids, ["_none_"],
                                 receptacle_ids, days, params)
-    props = {k: v for k, v in full["properties"].items()
-             if k != "object_rules"}
+    props = {"reasoning": _judgment(
+        "Think first: this household's weekly shape. Who is out and when, "
+        "what anchors the week, which activities are Recurring versus "
+        "Occasional for THESE people, and where each one happens.")}
+    props.update({k: v for k, v in full["properties"].items()
+                  if k != "object_rules"})
     return dict(full, properties=props,
-                required=[k for k in full["required"] if k != "object_rules"])
+                required=["reasoning"] + [k for k in full["required"]
+                                          if k != "object_rules"])
 
 
 def build_objects_schema(household_id: str, resident_ids: list[str],
@@ -340,9 +359,15 @@ def build_objects_schema(household_id: str, resident_ids: list[str],
                                 scheduled_activities=sorted(
                                     set(scheduled_activities)))
     return {"type": "object", "additionalProperties": False,
-            "required": ["object_rules"],
-            "properties": {"object_rules":
-                           full["properties"]["object_rules"]}}
+            "required": ["reasoning", "object_rules"],
+            "properties": {
+                "reasoning": _judgment(
+                    "Think first: walk the calendar above and say what each "
+                    "activity DOES to this household's things — which "
+                    "objects it touches, where they end up afterwards and "
+                    "how reliably, and which objects it usually leaves "
+                    "alone (NO_OP mass)."),
+                "object_rules": full["properties"]["object_rules"]}}
 
 
 def build_special_schema(days: int, scheduled_activities: list[str],
@@ -418,10 +443,15 @@ def build_special_schema(days: int, scheduled_activities: list[str],
         },
     }
     return {"type": "object", "additionalProperties": False,
-            "required": ["special_events"],
-            "properties": {"special_events": {
-                "type": "array", "minItems": 4, "maxItems": 8,
-                "items": event}}}
+            "required": ["reasoning", "special_events"],
+            "properties": {
+                "reasoning": _judgment(
+                    "Think first: what would actually go wrong, or simply "
+                    "happen, in THIS household over three weeks — and which "
+                    "days it lands on, given the calendar above.", 1200),
+                "special_events": {
+                    "type": "array", "minItems": 4, "maxItems": 8,
+                    "items": event}}}
 
 
 def build_leak_schema(household_types: list[str]) -> dict:
