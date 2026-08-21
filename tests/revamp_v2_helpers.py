@@ -20,6 +20,8 @@ RECEPTACLES = [
 ]
 
 PERSONA = {
+    # no `reasoning` key: the scratchpad is stripped before the persona
+    # ever becomes an artifact (see generate_persona)
     "household_id": "hh_test",
     "household_type": "test_type",
     "residents": [

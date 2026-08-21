@@ -169,9 +169,7 @@ def test_pocket_items_may_choose_their_owner_as_home():
     the homes (and among every dist's destinations), never forced."""
     schema = schemas.build_program_schema(
         "hh_test", ["resident_1"], ["phone_1", "mug_1"], ["table_a", "shelf_b"],
-        21, sim.load_params(),
-        object_owners={"phone_1": "resident_1", "mug_1": "resident_1"},
-        object_classes={"phone_1": "phone", "mug_1": "mug"})
+        21, sim.load_params())
     for slot in schema["properties"]["object_rules"]["prefixItems"]:
         assert "person:resident_1" in slot["properties"]["home"]["enum"]
         assert "const" not in slot["properties"]["home"]
@@ -216,8 +214,7 @@ def test_cites_is_required_and_declared_before_the_decision():
     justification declared last is written after the choice it explains."""
     schema = schemas.build_program_schema(
         "hh_test", ["resident_1"], ["mug_1"], ["table_a", "shelf_b"],
-        21, sim.load_params(),
-        object_owners={"mug_1": "resident_1"}, object_classes={"mug_1": "mug"})
+        21, sim.load_params())
     entry = schema["properties"]["object_rules"]["prefixItems"][0]
     assert list(entry["properties"])[:3] == ["object", "cites", "home"]
     rule = entry["properties"]["rules"]["items"]

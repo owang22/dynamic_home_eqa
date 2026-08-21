@@ -54,24 +54,6 @@ BUILDER_VERSION = "rv2-b5"   # b3 -> b4: `cites` is required and
 
 JITTER_CLASS_NAMES = ["external", "routine", "flexible", "loose"]
 
-# Object classes a person keeps ON them rather than in a place. Their home
-# is the OWNER, not a receptacle: they ride along all day, out of the house
-# included, and reach a receptacle only by being put down — which is how a
-# phone actually behaves, and how revamp_v1's hh1 modelled Marisol's.
-# Measured before this existed: not one object in ten households ever sat
-# on a person, so the banks contained no ON_PERSON state at all, and a
-# grad student's phone moved less than her mug and never left with her.
-CARRIED_CLASSES = ["phone", "keys", "wallet", "headphones", "glasses"]
-
-# The activities that take somebody OUT of the house. A carried item gets a
-# pinned pick-up on one of these, because "on the person" has to include
-# the moments they leave: with only a morning pick-up, the model put the
-# phone down at the desk by mid-morning and the errand went without it.
-LEAVING_ACTIVITIES = [
-    "commute_out", "work_away", "school_run", "school", "errands",
-    "groceries", "appointment", "night_out", "walk", "gym", "travel_away",
-]
-
 # A CLOSED activity vocabulary, drawn on by weekly_blocks, sleep_schedule,
 # the per-activity extras AND every object rule. Activity names are the one
 # cross-reference the schema could not otherwise constrain — they are free
@@ -81,7 +63,7 @@ LEAVING_ACTIVITIES = [
 # Drawing both sections from one enum makes a dangling reference
 # unwritable. Household character lives in the times, the jitter, the
 # probabilities and the object rules — not in the activity's name — the
-# same reasoning the closed 25-class object vocabulary already applies.
+# same reasoning the closed object vocabulary already applies.
 ACTIVITY_VOCAB = [
     # sleep and rest
     "night_sleep", "day_sleep", "nap", "lie_down", "bedtime_routine",
@@ -90,9 +72,9 @@ ACTIVITY_VOCAB = [
     "breakfast", "lunch", "dinner", "snack", "meal_prep", "batch_cooking",
     "coffee", "wash_dishes", "put_away_dishes",
     # out of the house
-    "commute_out", "commute_home", "work_away", "school_run", "school",
+    "work_away", "school",
     "errands", "groceries", "appointment", "night_out", "walk", "gym",
-    "travel_away", "arrive_home",
+    "traveling",
     # work and study at home
     "work_home", "homework", "study", "video_call",
     # leisure at home
@@ -100,7 +82,7 @@ ACTIVITY_VOCAB = [
     "play_with_kids", "socialise_home", "phone_time",
     # chores and care
     "tidy_up", "deep_clean", "laundry", "take_out_bins", "pet_care",
-    "medication", "shower", "bath", "get_ready",
+    "take_medication", "shower", "bath", "get_ready",
 ]
 DAY_ABBREV = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]  # day 0 = Monday
 TIME_PATTERN = r"^([01]?\d|2[0-3]):[0-5]\d(\+1)?$"
@@ -164,36 +146,40 @@ residents:
     personality: ...       # 2-3 traits that affect how they treat objects
                            # (e.g. tidy, forgetful, always in a hurry)
     habits:                # 5-8 concrete habits about how they use and
-                           # leave objects around the home. At least 2 must
+                           # leave objects around the home. If appropriate,
+                           # these habits can
                            # involve another resident. Examples:
                            # - "reads in bed, leaves the book on the
                            #    nightstand"
                            # - "borrows resident_2's charger from the desk
                            #    and rarely returns it"
-                           # - "clears everyone's mugs to the kitchen when
-                           #    tidying in the evening"
+                           # - "clears everyone's plates and does the dishes after dinner"
 relationships: ...         # 2-3 sentences: who these people are to each
                            # other, and how they divide or share chores,
                            # spaces, and belongings. Include at least one
-                           # point of friction or coordination (e.g. who
-                           # does dishes, who loses the remote, whose stuff
+                           # point of friction or coordination (e.g. which people
+                           # do which dishes, who loses the remote, whose stuff
                            # spreads into shared spaces).
 home_layout_notes: ...     # 2-3 sentences: rooms and surfaces each person
-                           # uses most, and which spaces are shared.
+                           # uses most, and which spaces are shared, eg. reason about
+                           # people who are likely to share a bedroom.
 object_inventory:
-  - id: mug_1              # indexed ids: mug_1, mug_2, laptop_sam. The id
-                           # MUST begin with its class ("mug_1", not "cup_1")
+  - id: mug_marie          # indexed ids: bowl_1, bowl_2, laptop_sam, laptop_mia. 
+                           # Note shared (interchangeable) objects have number index, but personal
+                           # objects carry the id of their owner. The id
+                           # MUST begin with its class ("mug_marie", not "marie's_mug")
     class: mug             # pick classes from the vocabulary below
-    owner: resident_1      # or "shared"
-    role: ...              # one short phrase: what this object is FOR in
-                           # this household and how it tends to move. For
+    owner: resident_1      # or "shared: [resident_1, resident_2]", like a list of residents who often use it
+    role: ...              # one short phrase: what activities this object is often used for, 
+                           # and where it tends to be left when not in use.
+                           # this household. For
                            # shared objects, say who moves it and why.
 daily_life_summary: ...    # 3-4 sentences describing a typical day in
                            # plain words, still without clock times.
                            # Mention how the residents' days overlap or
                            # miss each other (who is home when others are
                            # out, who crosses paths where).
-quirks: ...                # 1-2 ways this household differs from the
+quirks: ...                # 0-2 ways this household differs from the
                            # stereotype of its type
 
 Object vocabulary (choose from these; do not invent new classes):
@@ -205,7 +191,7 @@ suitcase, hairbrush, makeup_kit, watering_can, yoga_mat]
 
 Inventory rules:
 - Not every household owns every class of object, the residents own what makes sense for their lifestyle.
-  Aim for 12-18 objects for a solo resident matching with their persona and add roughly 4-6 per
+  Aim for 15-20 objects for a solo resident matching with their persona and add roughly 4-6 per
   additional resident that would make sense as personal belongings aligning with their personas.
 - Objects have events where someone picks it up for use in an activity, puts it down afterwards, or carries it somewhere. A later step
   has to say what moves each object and where. Think about what each object is for, and how it is used in the household's daily life.
@@ -213,11 +199,22 @@ Inventory rules:
   bowls and backpacks than a person living alone). Per-person items like
   phones, keys, and wallets should exist per resident, and for each one
   the `role` must say HOW IT TRAVELS: an item the person takes out of the
-  house moves WITH them. People who leave the house usually take their phone and
+  house moves WITH them. Be conscious that people must have a good reason to
+  move another resident's per-person object (eg. its plausible to ocassionally bring
+  someone's phone to them, but unlikely to take someone else's glasses out on a walk).
+  People who leave the house usually take their phone and
   keys with them unless the persona says otherwise (eg. they are extremely forgetful).
   Other objects tend to stay in particular spots in the home, or have a few locations that make sense
   to inhabit based off of activities (eg. a plate is stored in a dishwasher, drying rack, or cupboard,
   but some people might leave plates in the sink overnight). The `role` field should describe how the object is used and where it tends to be left.
+- A household that eats at home OWNS THE DISHES IT EATS FROM: bowls,
+  plates, a pot or a pan, whatever this kitchen actually uses. These are
+  the best objects in the whole inventory — their cycle is daily and
+  multi-stop (cupboard -> table -> sink -> drying rack -> cupboard) and
+  it differs per person: one household washes up immediately, another
+  leaves plates in the sink overnight, a third eats off the same bowl
+  every morning. Do not skip them because they are ordinary; ordinary is
+  what moves.
 - Suggestive objects are allowed (medication_bottle, toy, dog_leash), but
   write the "role" field so the object's meaning comes from how it is
   used, not from the fact that it exists. The same object class could
@@ -406,8 +403,7 @@ commentary.
 BINDING = PromptTemplate("story_binding", """\
 You are extending a simulated household's object-rule program. The
 household's three weeks were authored as a story; the activities listed
-in the request appear in that story, but NO object rule fires with them —
-people do these things, yet nothing in the home moves.
+in the request appear in that story.
 
 For each object, add `after` rules describing where it ends up when one
 of these activities ENDS. While an activity is underway, assume the
@@ -419,7 +415,8 @@ controller back on the shelf or abandoned on the couch. Each rule names
 to 1. One outcome may be NO_OP — this firing left the object where it
 was — which is how "sometimes" and "rarely" are written.
 `person:<resident_id>` is a valid destination for something the resident
-keeps on them. A dist whose every real outcome is the object's own home
+keeps on them after the activity (for instance, after commuting to work, jacket and keys may
+stay on the person). A dist whose every real outcome is the object's own home
 is not a journey and will be discarded.
 
 Most objects are untouched by most activities: an empty `rules` list for

@@ -25,7 +25,7 @@ times (normalized by log 24), Fano factor (var/mean) of daily move counts,
 `dead_days` (days with < 3 non-carry events while a resident was home
 awake >= 6 h). Acceptance expectations (checked by the caller, reported
 here): non-carry daily Fano in [1, 6] for >= 8 of 10 households,
-hour-entropy >= 0.75, top2 <= 0.40 for the story_rules arm.
+hour-entropy >= 0.75, top2 <= 0.40 for the story_calendar arm.
 
 Usage:
   python src/revamp_v2/realism_panel.py profiles/revamp_v2/<slug>/hh*/timeline_seed0 \

@@ -82,8 +82,11 @@ def _raw_program():
 
 def test_persona_written_canonically():
     client = ScriptedClient([])
-    persona, text, seed = gen.generate_persona(SLOT, CONTROL, client, None,
-                                               False)
+    persona, text, seed, reasoning = gen.generate_persona(
+        SLOT, CONTROL, client, None, False)
+    # the scratchpad never reaches persona.yaml (revamp_v1's normalizer
+    # rejects unknown keys, and the canonical artifact stays canonical)
+    assert "reasoning" not in persona and "reasoning:" not in text
     assert persona["household_id"] == "hh_test"
     # canonical style: block sequences indented, folded prose keys
     assert "residents:\n  - id: resident_1" in text

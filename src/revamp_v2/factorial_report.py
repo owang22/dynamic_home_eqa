@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """The 2x2 factorial table: one markdown table over the four generation
-arms (rule_based / freeform / story_driven / story_rules), per household
+arms (rule_based / freeform / story_driven / story_calendar), per household
 and model where built, plus the casas/aruba comparator row (real ADL
 activity stream, INVENTED object layer — see the legend; it is a timing-
 scatter comparator, not ground truth for move volume or which objects
@@ -28,7 +28,7 @@ if str(HERE) not in sys.path:
 import realism_panel  # noqa: E402
 
 REPO = HERE.parent.parent
-ARMS = ["rule_based", "freeform", "story_driven", "story_rules"]
+ARMS = ["rule_based", "freeform", "story_driven", "story_calendar"]
 
 COLS = ["arm", "model", "household", "n_events", "events_per_day",
         "moves_per_object_day", "hour_entropy", "daily_fano", "fano_all",
@@ -66,7 +66,7 @@ pickups/putdowns excluded; `carry_frac` is their share of all events and
 def _row(arm: str, model: str, hh: str, tl: pathlib.Path) -> dict:
     s = realism_panel.timeline_stats(tl)
     meta = json.loads((tl / "meta.json").read_text())
-    has_story = arm in ("story_driven", "story_rules")
+    has_story = arm in ("story_driven", "story_calendar")
     hh_label = hh + (" (NOT story-driven)"
                      if s.get("not_story_driven") else "")
     return {

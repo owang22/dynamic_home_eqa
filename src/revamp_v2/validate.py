@@ -329,9 +329,7 @@ def _main() -> None:
         [r["id"] for r in program["residents"]],
         [p["object"] for p in xc.placements_of(program)],
         [r["id"] for r in program["receptacles"]],
-        int(program["days"]), params,
-        object_owners={o["id"]: o["owner"] for o in inventory},
-        object_classes={o["id"]: o["class"] for o in inventory})
+        int(program["days"]), params)
     problems = static_checks(strip_injected(copy.deepcopy(program)),
                              program, persona, schema)
     if args.leak:

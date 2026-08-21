@@ -34,7 +34,7 @@ def main() -> None:
     root = REPO / "profiles" / "revamp_v2" / args.slug
     # A household mid-generation has no build_log yet; report what exists
     # rather than crashing on a partially built set. Story arms
-    # (story_driven/, story_rules/) have no build_log at all — for them
+    # (story_driven/, story_calendar/) have no build_log at all — for them
     # the report is the realism-panel table alone, which carries the
     # fallback-day counts and the NOT-story-driven marking.
     hh_dirs = sorted((d for d in root.glob("hh*")

@@ -290,6 +290,42 @@ def expand(program: dict, carry_on_departure: bool = True,
                 "reason": arc.get("note", ""),
                 "after": {rule["object"]: _rule_to_v1(rule)}})
 
+    # -- away-chain merge (v3) --------------------------------------------
+    # An `after` rule fires when its block ENDS, so a resident whose next
+    # block is ALSO away gets their things put down mid-trip: measured on
+    # hh1, commute_out ended 20:18, work_away ran to 07:00, and keys_1
+    # jumped off its owner onto the entry hook for the whole night shift.
+    # 36-44% of away blocks are followed by more away time, so this is the
+    # common case. Consecutive ELSEWHERE occurrences of one resident are
+    # therefore merged into a single away block, keeping the FIRST one
+    # (the trip's own reason: work_away, errands) and dropping the rest —
+    # the survivor's `after` then fires at the true homecoming. Counted in
+    # `merged_away_blocks`, never silent, and v3-only so unmarked
+    # programs keep v1 behaviour byte for byte.
+    merged_away: list[str] = []
+    if v3:
+        keep: list[dict] = []
+        by_res: dict[str, list[dict]] = {}
+        for o in occs:
+            by_res.setdefault(o["resident"], []).append(o)
+        drop_uids: set[str] = set()
+        for rid in sorted(by_res):
+            mine = sorted(by_res[rid], key=lambda o: o["abs"])
+            i = 0
+            while i < len(mine):
+                if mine[i]["at"] != ELSEWHERE:
+                    i += 1
+                    continue
+                j = i + 1
+                while j < len(mine) and mine[j]["at"] == ELSEWHERE:
+                    drop_uids.add(mine[j]["uid"])
+                    merged_away.append(
+                        f"{mine[j]['activity']}->{mine[i]['activity']}")
+                    j += 1
+                i = j
+        if drop_uids:
+            occs = [o for o in occs if o["uid"] not in drop_uids]
+
     # -- activity table ---------------------------------------------------
     # The v1 simulator reads one `at`/`jitter` per activity NAME, but a
     # multi-resident household legitimately shares one activity across
@@ -606,6 +642,7 @@ def expand(program: dict, carry_on_departure: bool = True,
     acts["left_behind_by_trip"] = sorted(set(left_behind))
     acts["carried_putdowns_at_start"] = sorted(set(putdown_normalized))
     acts["synthesized_during"] = sorted(set(synthesized_during))
+    acts["merged_away_blocks"] = sorted(merged_away) if v3 else []
     return acts, motions
 
 

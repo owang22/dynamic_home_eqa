@@ -1,4 +1,4 @@
-"""Part-A tests: the story_rules cell — story calendar bound to the
+"""The story_calendar arm — story calendar bound to the
 rule_based object_rules and realized by the unchanged rules engine."""
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from revamp_v2_helpers import mini_program
 
 import expand_calendar as xc
 import simulate as sim
-import story_rules as sr
+import story_calendar as sr
 
 
 def _story():

@@ -98,3 +98,49 @@ def test_three_way_dist_survives_v1_tolerance():
                                  {"dest": "b", "p": 0.25},
                                  {"dest": "c", "p": 0.25}]})
     assert abs(sum(r["dist"].values()) - 1.0) < 1e-9
+
+
+def test_away_chain_merges_so_things_come_home_once():
+    """hh1's keys jumped off their owner at 20:18 (commute_out's end) and
+    sat on the entry hook through a night shift, because work_away
+    followed. Consecutive away blocks merge into one, so the after-rule
+    fires at the real homecoming."""
+    program = _v3()
+    program["weekly_blocks"] = [
+        {"resident": "resident_1", "activity": "commute_out",
+         "days": ["Mo"], "start": "08:00", "end": "08:30", "at": "ELSEWHERE",
+         "jitter": "external", "skip_p": 0.0, "sleep": False, "cites": "c"},
+        {"resident": "resident_1", "activity": "work_away",
+         "days": ["Mo"], "start": "08:30", "end": "17:00", "at": "ELSEWHERE",
+         "jitter": "external", "skip_p": 0.0, "sleep": False, "cites": "c"},
+        {"resident": "resident_1", "activity": "relax",
+         "days": ["Mo"], "start": "17:00", "end": "21:00", "at": "table_a",
+         "jitter": "flexible", "skip_p": 0.0, "sleep": False, "cites": "c"},
+    ]
+    program["object_rules"][0]["rules"] = [
+        {"cites": "c", "activity": "commute_out", "phase": "after",
+         "dist": [{"dest": "shelf_b", "p": 0.5}, {"dest": "sink_k", "p": 0.5}]}]
+    acts, motions = xc.expand(program)
+    merged = acts["merged_away_blocks"]
+    assert merged and all("work_away->commute_out" == m for m in merged)
+    # only ONE away block survives per trip, per day
+    mon = [e for e in acts["calendar"] if e["weekday"] == "Mon"]
+    away = [i for d in mon for i in d["activities"]
+            if i["a"].startswith(("commute_out", "work_away"))]
+    assert all(i["a"].startswith("commute_out") for i in away)
+    assert "work_away" not in motions["object_motions"]
+
+
+def test_unmarked_program_keeps_both_away_blocks():
+    program = mini_program_v3()          # no v3 marker
+    program["weekly_blocks"].append(
+        {"resident": "resident_1", "activity": "commute_out",
+         "days": ["Mo"], "start": "09:00", "end": "09:30", "at": "ELSEWHERE",
+         "jitter": "external", "skip_p": 0.0, "sleep": False, "cites": "c"})
+    program["weekly_blocks"].append(
+        {"resident": "resident_1", "activity": "work_away",
+         "days": ["Mo"], "start": "09:30", "end": "17:00", "at": "ELSEWHERE",
+         "jitter": "external", "skip_p": 0.0, "sleep": False, "cites": "c"})
+    acts, motions = xc.expand(program)
+    assert acts["merged_away_blocks"] == []
+    assert "work_away" in motions["object_motions"]

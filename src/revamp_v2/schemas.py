@@ -13,7 +13,7 @@ emit an id that does not exist.
 """
 from __future__ import annotations
 
-from prompts import (ACTIVITY_VOCAB, CARRIED_CLASSES, DAY_ABBREV,
+from prompts import (ACTIVITY_VOCAB, DAY_ABBREV,
                      JITTER_CLASS_NAMES, NAME_PATTERN, TIME_PATTERN)
 
 
@@ -64,30 +64,35 @@ def build_persona_schema(household_id: str, household_type: str,
     }
     return {
         "type": "object", "additionalProperties": False,
-        "required": ["household_id", "household_type", "residents",
-                     "relationships", "home_layout_notes",
-                     "daily_life_summary", "object_inventory", "quirks"],
+        "required": ["reasoning", "household_id", "household_type",
+                     "residents", "relationships", "home_layout_notes",
+                     "daily_life_summary", "quirks", "object_inventory"],
         "properties": {
+            # Reasoning INSIDE guided decoding. The guided path sends
+            # enable_thinking=False (the JSON grammar suppresses a think
+            # block anyway), so without this the persona is written with
+            # no deliberation at all — every other field is a first-token
+            # commitment. Property order IS generation order, so a field
+            # declared first is genuinely written first and everything
+            # after it is conditioned on it. This is `cites` generalized
+            # from one clause to the whole household.
+            "reasoning": {"type": "string", "maxLength": 2000},
             "household_id": {"const": household_id},
             "household_type": {"const": household_type},
             "residents": {"type": "array", "minItems": n_residents,
                           "maxItems": n_residents, "items": resident},
             "relationships": {"type": "string", "maxLength": 900},
             "home_layout_notes": {"type": "string", "maxLength": 900},
-            # Floor stays low and lets the persona prompt's own "object
-            # counts should match household size" do the scaling (measured:
-            # 8 objects for a solo home, 25 for a family of four). Forcing
-            # a higher floor was tried and reverted — it does not make the
-            # persona richer so much as it makes the L2 program harder to
-            # get right, and every extra object is another chance for the
-            # reachability lint to reject the whole program.
-            # Declared BEFORE the inventory: what this household DOES
-            # should choose what it owns. Written after, the objects were
-            # picked first and the routine then described around them.
             "daily_life_summary": {"type": "string", "maxLength": 1200},
-            "object_inventory": {"type": "array", "minItems": 8,
-                                 "maxItems": 40, "items": obj},
             "quirks": {"type": "string", "maxLength": 600},
+            # LAST, deliberately: everything above describes what this
+            # household IS and DOES, and the inventory is chosen with all
+            # of it already written. Declared earlier, the objects were
+            # picked first and the life was then described around them —
+            # which is also how a home ends up with a laptop and a
+            # medication bottle but no plates.
+            "object_inventory": {"type": "array", "minItems": 8,
+                                 "maxItems": 60, "items": obj},
         },
     }
 
@@ -96,8 +101,6 @@ def build_persona_schema(household_id: str, household_type: str,
 def build_program_schema(household_id: str, resident_ids: list[str],
                          object_ids: list[str], receptacle_ids: list[str],
                          days: int, params: dict,
-                         object_owners: dict | None = None,
-                         object_classes: dict | None = None,
                          scheduled_activities: list[str] | None = None
                          ) -> dict:
     """The L2 contract. Every id is enum-constrained and every probability
@@ -329,15 +332,11 @@ def build_calendar_schema(household_id: str, resident_ids: list[str],
 def build_objects_schema(household_id: str, resident_ids: list[str],
                          object_ids: list[str], receptacle_ids: list[str],
                          days: int, params: dict,
-                         scheduled_activities: list[str],
-                         object_owners: dict | None = None,
-                         object_classes: dict | None = None) -> dict:
+                         scheduled_activities: list[str]) -> dict:
     """Stage 2: object_rules alone, with the rule activity enum PINNED to
     what stage 1 actually scheduled."""
     full = build_program_schema(household_id, resident_ids, object_ids,
                                 receptacle_ids, days, params,
-                                object_owners=object_owners,
-                                object_classes=object_classes,
                                 scheduled_activities=sorted(
                                     set(scheduled_activities)))
     return {"type": "object", "additionalProperties": False,

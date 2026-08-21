@@ -143,7 +143,7 @@ def census_receptacles(scene_id: str) -> list[dict]:
 
 def generate_persona(slot: dict, control: dict, client, cache,
                      force: bool, attempt: int = 0) -> tuple[dict, str, int]:
-    """(persona_data, canonical_yaml_text, seed). One call; the validate
+    """(persona_data, canonical_yaml_text, seed, reasoning). One call; the validate
     callback inside generate_json retries (distinct seeds) on canonical-
     style problems the normalizer reports. `attempt` folds into the seed so
     the leak audit (which tests the persona's OWN vocabulary) can ask for a
@@ -157,8 +157,20 @@ def generate_persona(slot: dict, control: dict, client, cache,
     tag = prompts.PERSONA.tag("persona", builder=True, schema=schema)
     seed = make_seed(slot["household_id"], 0, tag, attempt)
 
+    reasoning_seen: list[str] = []
+
     def _validate(parsed: dict) -> dict:
         log: list[str] = []
+        # The reasoning field is a SCRATCHPAD, not persona content: it is
+        # declared first so the model deliberates before committing (see
+        # build_persona_schema), then dropped here. revamp_v1's
+        # normalizer rejects unknown keys outright, and persona.yaml is a
+        # canonical-style artifact the whole pipeline reads — the
+        # thinking belongs in build_log.json, not in it.
+        parsed = dict(parsed)
+        if parsed.get("reasoning"):
+            reasoning_seen.append(str(parsed["reasoning"])[:2000])
+        parsed.pop("reasoning", None)
         canonical = np_mod.canonicalize(parsed, log, slot["household_id"])
         problems = np_mod.validate(np_mod.strip_styles(canonical),
                                    slot["household_id"])
@@ -174,7 +186,8 @@ def generate_persona(slot: dict, control: dict, client, cache,
     text = yaml.dump(canonical, Dumper=np_mod.Dumper, sort_keys=False,
                      allow_unicode=True, width=78, indent=2,
                      default_flow_style=False)
-    return np_mod.strip_styles(canonical), text, seed
+    return (np_mod.strip_styles(canonical), text, seed,
+            reasoning_seen[-1] if reasoning_seen else "")
 
 
 # ---------------------------------------------------------------- L2 -----
@@ -260,9 +273,7 @@ def generate_program(slot: dict, control: dict, persona: dict,
         obj_schema = schemas.build_objects_schema(
             slot["household_id"], resident_ids,
             [o["id"] for o in inventory], receptacle_ids, days, params,
-            scheduled,
-            object_owners={o["id"]: o["owner"] for o in inventory},
-            object_classes={o["id"]: o["class"] for o in inventory})
+            scheduled)
         obj_tag = prompts.OBJECT_RULES.tag("object_rules", builder=True,
                                            schema=obj_schema)
         obj_user = prompts.objects_user_prompt(persona_text, receptacles,
@@ -368,8 +379,9 @@ def build_household(slot: dict, control: dict, out_root: pathlib.Path,
     persona = persona_text = None
     leak_unresolved = False
     for attempt in range(max_attempts):
-        persona, persona_text, persona_seed = generate_persona(
-            slot, control, client, cache, force, attempt=attempt)
+        persona, persona_text, persona_seed, persona_reasoning = \
+            generate_persona(slot, control, client, cache, force,
+                             attempt=attempt)
         leak_seed = make_seed(slot["household_id"], 0, leak_tag, attempt)
         leak_problems, leak_record = v2v.check_leak(
             {"object_rules": [{"object": o["id"]}
@@ -378,6 +390,7 @@ def build_household(slot: dict, control: dict, out_root: pathlib.Path,
              "household_type": slot["household_type"]},
             types, client, cache, leak_seed, leak_tag, force=force)
         persona_attempts.append({"attempt": attempt, "seed": persona_seed,
+                                 "reasoning": persona_reasoning,
                                  "leak_prediction": leak_record})
         if not leak_problems:
             break
