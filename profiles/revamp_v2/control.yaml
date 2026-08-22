@@ -3,13 +3,43 @@
 # that set skewed to the unusual (night shift, opposite-shift couple,
 # multigenerational, frequent traveller) with no plain family or working
 # couple in it. Rebalanced 2026-08-18 towards ordinary homes WITH VARIANTS
-# — three families at different child ages, three couples at different
-# life stages — keeping two atypical homes for contrast, because a
-# night-shift resident is the case that breaks any fixed "awake 8am-10pm"
-# assumption downstream. hh_00N therefore no longer matches revamp_v1's
-# hh_00N for slots 7, 8 and 10. `bedrooms` is the only new per-slot field: it
-# scales the symbolic L0 receptacle template (src/revamp_v2/generate.py)
-# and nothing else — receptacle lists must not otherwise vary by type.
+# — families at different child ages, couples at different life stages —
+# keeping atypical homes for contrast, because a night-shift resident is
+# the case that breaks any fixed "awake 8am-10pm" assumption downstream.
+#
+# Rebalanced again 2026-08-22 and RENUMBERED, because the previous set
+# still had a hole where the most ordinary homes should be: BOTH one-person
+# slots were atypical (night shift, grad student), so the commonest
+# household in the real world — one working adult, weekday commute — had no
+# slot at all. That household is now hh_001, and the set is ordered
+# TYPICAL -> ATYPICAL so the unusual homes read as deliberate contrast
+# rather than as the centre of gravity.
+#   - grad_student_solo dropped (student life is already covered by
+#     college_roommates, and it was the more atypical of two solo slots).
+#   - family_young_children dropped: three young-family variants
+#     (under-8s, school age, toddler) was one too many for ten slots.
+#   - family_school_age_children became family_teen_and_child — a
+#     high-schooler and a younger child under one roof, which gives two
+#     genuinely different daily shapes (late nights, own devices vs. early
+#     bedtime, shared toys) instead of two children who differ only in age.
+#   - single_adult_wfh added: home essentially all day, the occupancy
+#     mirror-image of hh_002 (empty on weekdays). It is the case where
+#     "objects move because someone left" contributes almost nothing, so
+#     at-home binding coverage has nowhere to hide.
+#   - night_shift_worker_solo moved to hh_010, kept for one reason: it
+#     breaks any fixed "awake 8am-10pm" assumption downstream.
+# Changing ANY slot changes the assembled persona prompt for EVERY slot
+# (persona_user_prompt shows each household the other types for contrast),
+# so BUILDER_VERSION must be bumped whenever this list is edited or every
+# cached persona replays under the old contrast set.
+#
+# hh_00N matches NEITHER revamp_v1's hh_00N nor the pre-2026-08-22
+# revamp_v2 numbering: every slot was renumbered by this rebalance, so any
+# generated household directory older than it describes a different home
+# than its slot now names.
+# `bedrooms` is the only non-persona per-slot field: it scales the symbolic
+# L0 receptacle template (src/revamp_v2/generate.py) and nothing else —
+# receptacle lists must not otherwise vary by type.
 #
 # Code lives in src/revamp_v2/; this directory holds only authored control
 # data and generated artifacts (<model_slug>/hh<N>/).
@@ -27,19 +57,25 @@ object_vocabulary:
    watering_can, yoga_mat]
 
 households:
+  # Ordered typical -> atypical. The first slots are the homes a reader
+  # should recognise immediately; the unusual ones sit at the end, where
+  # they read as deliberate contrast rather than as the set's centre of
+  # gravity. night_shift_worker_solo is last on purpose and is kept for
+  # one reason: it is the case that breaks any fixed "awake 8am-10pm"
+  # assumption downstream.
   - household_id: hh_001
-    household_type: night_shift_worker_solo
-    residents_spec: "1"
+    household_type: working_professional_solo
+    residents_spec: "1, out at work on weekdays"
     residents: 1
-    constraints: one-bedroom apartment
+    constraints: null
     bedrooms: 1
 
   - household_id: hh_002
-    household_type: family_young_children
-    residents_spec: "4-5 (2 adults, 2-3 kids under ~8)"
-    residents: 4
+    household_type: working_couple_no_children
+    residents_spec: "2, both out at work on weekdays"
+    residents: 2
     constraints: null
-    bedrooms: 3
+    bedrooms: 2
 
   - household_id: hh_003
     household_type: retired_couple
@@ -49,16 +85,16 @@ households:
     bedrooms: 2
 
   - household_id: hh_004
-    household_type: college_roommates
-    residents_spec: "3-4"
+    household_type: family_teen_and_child
+    residents_spec: "4 (2 working parents, 1 high-schooler ~15-17, 1 child ~7-10)"
     residents: 4
     constraints: null
-    bedrooms: 4
+    bedrooms: 3
 
   - household_id: hh_005
-    household_type: remote_worker_couple
-    residents_spec: "2, both work from home"
-    residents: 2
+    household_type: couple_with_toddler
+    residents_spec: "3 (2 adults, 1 child under 4)"
+    residents: 3
     constraints: null
     bedrooms: 2
 
@@ -70,29 +106,29 @@ households:
     bedrooms: 3
 
   - household_id: hh_007
-    household_type: family_school_age_children
-    residents_spec: "4 (2 working parents, 2 children aged ~6-12)"
-    residents: 4
+    household_type: single_adult_wfh
+    residents_spec: "1, works from home most days"
+    residents: 1
     constraints: null
-    bedrooms: 3
+    bedrooms: 1
 
   - household_id: hh_008
-    household_type: working_couple_no_children
-    residents_spec: "2, both out at work on weekdays"
+    household_type: remote_worker_couple
+    residents_spec: "2, both work from home"
     residents: 2
     constraints: null
     bedrooms: 2
 
   - household_id: hh_009
-    household_type: grad_student_solo
-    residents_spec: "1"
-    residents: 1
+    household_type: college_roommates
+    residents_spec: "3-4"
+    residents: 4
     constraints: null
-    bedrooms: 1
+    bedrooms: 4
 
   - household_id: hh_010
-    household_type: couple_with_toddler
-    residents_spec: "3 (2 adults, 1 child under 4)"
-    residents: 3
-    constraints: null
-    bedrooms: 2
+    household_type: night_shift_worker_solo
+    residents_spec: "1"
+    residents: 1
+    constraints: one-bedroom apartment
+    bedrooms: 1

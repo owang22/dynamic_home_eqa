@@ -34,7 +34,15 @@ from __future__ import annotations
 import hashlib
 import json
 
-BUILDER_VERSION = "rv2-b5"   # b3 -> b4: `cites` is required and
+BUILDER_VERSION = "rv2-b6"   # b5 -> b6: control.yaml's household set was
+                             # rebalanced towards ordinary homes and
+                             # RENUMBERED typical-first (a plain working
+                             # solo adult is now hh_001, night shift moved
+                             # to hh_010). persona_user_prompt shows every
+                             # household the OTHER types for contrast, so
+                             # the assembled prompt changed for every slot
+                             # including the ones whose own type did not.
+                             # b3 -> b4: `cites` is required and
                              # declared FIRST everywhere (property
                              # order is generation order, so a
                              # justification written last is
@@ -208,9 +216,10 @@ Inventory rules:
   to inhabit based off of activities (eg. a plate is stored in a dishwasher, drying rack, or cupboard,
   but some people might leave plates in the sink overnight). The `role` field should describe how the object is used and where it tends to be left.
 - Dishware like plates and bowls have a cycle that can be
-  multi-stop (cupboard -> table (for dinner) -> sink (put_away_dishes) -> drying rack (wash_dishes) -> cupboard),
-  though not always in that order or so consistent. Habits also differ per person: one washes up immediately, another
-  leaves plates in the sink overnight.
+  multi-stop [cupboard -> table (for dinner) -> sink (put_away_dishes) -> drying rack (wash_dishes) -> cupboard (tidy_up)]. 
+  This is just an example cycle, and the object may be left in a few different places depending on the resident's habits.
+  Habits differ per person: people may wash up immediately, or
+  leaves plates in the sink overnight, etc.
 - Suggestive objects are allowed (medication_bottle, toy, dog_leash), but
   write the "role" field so the object's meaning comes from how it is
   used, not from the fact that it exists. The same object class could

@@ -47,6 +47,19 @@ TRACE_GLOBS = ("profiles/*/*/*/*/timeline_seed*/trace.json",
                "profiles/*/*/timeline_seed*/trace.json",
                "casas/*/timeline_*/trace.json")
 
+# Directories the dropdown never offers. `_archive/` holds households kept
+# for provenance whose hhN names no longer match the slot of the same
+# number (see profiles/revamp_v2/_archive/*/README.md) — listing them means
+# hunting past a dozen dead rows for the one that is current, and picking
+# the wrong one is silent.
+HIDDEN_PARTS = ("_archive",)
+
+# The set currently being worked on. Its rows are marked with a leading
+# marker and sort to the top, so "the one I am generating right now" is
+# the first thing in the dropdown rather than something to search for.
+# A plain string match on the trace url; empty disables the marking.
+CURRENT_SET = "/revamp_v2/story_calendar/"
+
 
 def _household_type(household_dir: pathlib.Path) -> str:
     """The household type, from whichever program file the set uses.
@@ -98,7 +111,10 @@ def _source_of(trace_path: pathlib.Path) -> str:
 def _sort_key(url: str) -> tuple:
     """revamp_v2 first, then by household NUMBER (hh2 before hh10)."""
     in_v2 = "/revamp_v2/" in url
-    group = (0 if in_v2 and "/rule_based/" in url
+    # The set under active work sorts above everything else; after that,
+    # revamp_v2 methods, then other sets, then the real-data reference.
+    group = (-1 if CURRENT_SET and CURRENT_SET in url
+             else 0 if in_v2 and "/rule_based/" in url
              else 1 if in_v2 and "/freeform/" in url
              else 2 if in_v2                      # other revamp_v2 methods
              else 4 if "/casas/" in url else 3)
@@ -124,7 +140,10 @@ def build_rows() -> list[dict]:
         except ValueError:
             old = {}
     for path in found:
-        url = "/" + str(path.relative_to(REPO_ROOT))
+        rel = path.relative_to(REPO_ROOT)
+        if any(part in HIDDEN_PARTS for part in rel.parts):
+            continue
+        url = "/" + str(rel)
         if url in seen:
             continue
         seen.add(url)
@@ -132,8 +151,10 @@ def build_rows() -> list[dict]:
         # label outlives the household it described (a rebuilt home with a
         # new object count kept advertising the old one).
         prior = old.get(url, {})
-        row = {"label": _label_for(path), "trace": url,
-               "source": _source_of(path)}
+        source = _source_of(path)
+        if CURRENT_SET and CURRENT_SET in url:
+            source = f"★ CURRENT · {source}"
+        row = {"label": _label_for(path), "trace": url, "source": source}
         if prior.get("runs"):
             row["runs"] = prior["runs"]           # keep published belief runs
         rows.append(row)
