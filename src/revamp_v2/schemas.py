@@ -337,6 +337,21 @@ def build_calendar_schema(household_id: str, resident_ids: list[str],
     build_program_schema rather than restated."""
     full = build_program_schema(household_id, resident_ids, ["_none_"],
                                 receptacle_ids, days, params)
+    # The object-id placeholder must not LEAK into the calendar's own
+    # grammar. `reset_all.objects` is an enum of object ids, and at this
+    # stage there are none — the objects call has not run. Left in, the
+    # placeholder becomes writable, and a calendar that scopes a tidy walk
+    # to ["_none_"] fails reachability on every subsequent objects attempt
+    # ("get_ready.reset_all: unknown object _none_"), burning the whole
+    # retry budget on a schedule that is otherwise fine (measured on hh2:
+    # 3 objects attempts + a calendar resample, ~11 minutes). Scoping a
+    # tidy walk needs to know the objects, so it belongs to the objects
+    # stage; the calendar keeps only the probability.
+    act = full["properties"]["activities"]["items"]
+    reset = act["properties"].get("reset_all")
+    if reset:
+        reset["properties"] = {k: v for k, v in reset["properties"].items()
+                               if k != "objects"}
     props = {"reasoning": _judgment(
         "Think first: this household's weekly shape. Who is out and when, "
         "what anchors the week, which activities are Recurring versus "

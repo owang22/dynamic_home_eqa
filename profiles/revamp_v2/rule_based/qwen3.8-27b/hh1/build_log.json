@@ -1,0 +1,52 @@
+{
+  "household": "hh_001",
+  "household_type": "working_professional_solo",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b6",
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 1387783969514361124,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 1387783969514361124,
+      "reasoning": "The user wants a JSON profile for a solo working professional household (hh_001). The resident is away on weekdays, implying a routine focused on efficiency, hygiene, and self-care upon return. To distinguish this from other types (like remote workers or couples), the persona should be a highly structured, perhaps slightly rigid, professional who values order and specific rituals (like a morning routine that happens quickly before leaving). The inventory should reflect a single person's needs: work essentials, self-care items, and minimal shared objects (none, since it's solo). The habits should focus on how objects are managed when alone: e.g., immediate tidying, specific storage spots for work gear, and a distinct 'wind-down' routine. I will create a character named Elias, an architect, who is meticulous and uses specific objects for his creative work and relaxation. The daily life summary will highlight the long absence and the solitary evening routine.",
+      "leak_prediction": {
+        "predicted_type": "single_adult_wfh",
+        "confidence": 0.95,
+        "reason": "The object list contains items exclusively named 'elias', indicating a single occupant. The presence of a 'laptop', 'desk', and 'notebook' strongly suggests work-from-home activity. The inclusion of a 'yoga_mat' and 'water_bottle' alongside basic living items (mug, blanket) fits the profile of a 'w'",
+        "actual_type": "working_professional_solo",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 2,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "stage": "calendar",
+      "seed": 759595379169426117,
+      "failures": [],
+      "reasoning": "Elias is a meticulous, solitary architect who works a standard 9-5 schedule. His routine is highly structured: he wakes at 06:30, prepares coffee, and leaves by 08:00. He returns home around 17:30, changes into lounge wear, and performs a strict kitchen cleaning ritual. Evenings involve a simple dinner, stretching in the living room, and reading in bed. He maintains a pristine home by vacuuming weekly (Saturday) and polishing architectural models weekly (Sunday). He uses an espresso machine only on weekends. He sleeps 8 hours, from 23:00 to 07:00. All activities are recurring with low skip probabilities and tight jitter, reflecting his personality."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 15399782162848578110,
+      "reasoning": "Elias is a meticulous, solitary architect with a strict routine. The rules below map his specific habits (laptop on desk, jacket on hook, immediate mug washing, etc.) to the available receptacles. Probabilities reflect his 'meticulous' nature: high NO_OP or specific placement rates, with low drift for carried items like keys/phone.",
+      "failures": [],
+      "special_attempt": 0
+    }
+  ]
+}

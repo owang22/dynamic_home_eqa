@@ -247,3 +247,20 @@ def test_special_schema_pins_drop_to_the_scheduled_calendar():
     dests = patch["after_override"]["items"]["properties"]["rule"][
         "properties"]["dist"]["items"]["properties"]["dest"]["enum"]
     assert "NO_OP" in dests
+
+
+def test_calendar_schema_never_exposes_the_object_placeholder():
+    """build_calendar_schema borrows the program schema with a dummy
+    object list, and `reset_all.objects` is an enum of object ids — so the
+    placeholder was WRITABLE, and a calendar that scoped a tidy walk to
+    ["_none_"] failed reachability on every following objects attempt,
+    burning the retry budget on a schedule that was otherwise fine."""
+    import json as _json
+    schema = schemas.build_calendar_schema(
+        "hh_test", ["resident_1"], ["table_a", "shelf_b"], 21,
+        sim.load_params())
+    assert "_none_" not in _json.dumps(schema)
+    reset = schema["properties"]["activities"]["items"][
+        "properties"]["reset_all"]
+    assert "objects" not in reset["properties"]   # scoping needs objects
+    assert "p" in reset["properties"]             # the rate does not

@@ -1,0 +1,89 @@
+{
+  "household": "hh_001",
+  "household_type": "working_professional_solo",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh1",
+  "days": 21,
+  "seed": 0,
+  "n_events": 1041,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 0,
+    "tidy_moved": 0,
+    "tidy_ran_out_of_time": 0,
+    "blocks": 252,
+    "vacuous_arc_drops": [
+      {
+        "day": 15,
+        "activity": "tidy_up"
+      }
+    ],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [
+      "blanket_elias",
+      "jacket_elias",
+      "laundry_basket_elias",
+      "notebook_elias",
+      "pen_elias"
+    ],
+    "carried_on_departure": [],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [],
+    "skips_per_activity": {},
+    "fragment_bouts_per_activity": {},
+    "carry_rehome_suppressed": 71
+  },
+  "moves_per_object": {
+    "pot_elias": 109,
+    "glasses_elias": 92,
+    "charger_elias": 91,
+    "towel_elias": 80,
+    "water_bottle_elias": 80,
+    "backpack_elias": 79,
+    "yoga_mat_elias": 79,
+    "hairbrush_elias": 76,
+    "keys_elias": 72,
+    "wallet_elias": 71,
+    "book_elias": 51,
+    "laptop_elias": 49,
+    "phone_elias": 48,
+    "mug_elias": 34,
+    "vacuum_cleaner_elias": 30
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3.8-27B",
+    "prompts": {
+      "persona_v2": "6f60fb77",
+      "calendar_program": "bb623651",
+      "object_rules": "c17ddb91",
+      "special_events": "dee8230e",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b6",
+    "accepted_attempt": 0,
+    "n_attempts": 2
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.9
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
+    }
+  }
+}
