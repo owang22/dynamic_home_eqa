@@ -162,7 +162,10 @@ def test_every_row_names_the_set_it_came_from():
             # (rule_based / freeform / ...) is the discriminator now — the
             # same model builds the same household under several methods.
             parts = r["trace"].split("/")
-            assert r["source"] == f"{parts[3]} · {parts[4]}"
+            # the set under active work carries a leading marker so it
+            # sorts and reads first; the identity behind it is unchanged
+            assert r["source"].removeprefix("★ CURRENT · ") == \
+                f"{parts[3]} · {parts[4]}"
         elif r["trace"].startswith("/casas/"):
             assert r["source"] == "casas (real ADLs)"
     # two households sharing a number must differ by source
@@ -173,3 +176,24 @@ def test_every_row_names_the_set_it_came_from():
         assert len(sources) == len([r for r in rows
                                     if r["label"].startswith(household + " ")]), \
             f"{household} appears twice within one source"
+
+
+def test_archived_households_never_reach_the_dropdown():
+    """Renumbering the household slots left every older directory
+    describing a different home than its hhN name — listing them means
+    hunting past a dozen dead rows, and picking the wrong one is silent.
+    _archive/ is skipped outright."""
+    serve = _load_serve()
+    rows = serve.build_rows()
+    assert not any("_archive" in r["trace"] for r in rows)
+    assert "_archive" in serve.HIDDEN_PARTS
+
+
+def test_the_working_set_sorts_first_and_is_marked():
+    serve = _load_serve()
+    rows = serve.build_rows()
+    current = [r for r in rows if serve.CURRENT_SET in r["trace"]]
+    if not current:
+        return                      # nothing generated in that set yet
+    assert all(r["source"].startswith("★ CURRENT · ") for r in current)
+    assert rows[0]["source"].startswith("★ CURRENT · ")
