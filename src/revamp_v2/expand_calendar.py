@@ -467,6 +467,36 @@ def expand(program: dict, carry_on_departure: bool = True,
     entries = placements_of(program)
     homes = {p["object"]: p["home"] for p in entries}
     dests_by_obj: dict[str, set] = {p["object"]: set() for p in entries}
+    # ---- v3 person invariant (pre-pass) --------------------------------
+    # THE invariant the cross-resident teleports violated: an object ON a
+    # person may only be moved by that person's own activity. Measured
+    # before this existed: 340 of 349 mid-trip teleports were another
+    # resident's shared-name block (resident_1's tidy_up yanking
+    # phone_elena off resident_2 at work). Three consequences below:
+    #   (a) travellers are never paraded to HOME activity sites (a home
+    #       `during` is unguardable in the v1 loop, so the only safe home
+    #       during entries are for objects that can never be person-held);
+    #   (b) home-variant `after` rules get only_from restricted to
+    #       receptacles (a person-held or out-of-house object is out of
+    #       reach of anyone's home activity);
+    #   (c) person legs are OWNER-AWARE, and an object that rides one kind
+    #       of trip rides ALL its owner's trips (keys go along on the walk,
+    #       not only to work — per-person behaviour, which per-activity
+    #       rules cannot express), with a synthesized homecoming putdown to
+    #       `home` on trips whose activity has no authored after rule.
+    owners = program.get("object_owners") or {}
+    away_base = {o.get("base_activity", o["activity"])
+                 for o in occs if o["at"] == ELSEWHERE}
+    travellers: dict[str, set] = {}       # obj -> owners' ids that carry it
+    if v3:
+        for entry_ in placements_of(program):
+            obj_ = entry_["object"]
+            for r_ in entry_.get("rules") or []:
+                if r_["activity"] in away_base:
+                    own = owners.get(obj_)
+                    if own and own != "shared":
+                        travellers.setdefault(obj_, set()).add(own)
+
     for name, act in raw_pivot.items():
         if name == "__orphaned__":
             continue
@@ -477,6 +507,16 @@ def expand(program: dict, carry_on_departure: bool = True,
                                   else {rule["dest"]}
                                   | ({rule["else"]} if "else" in rule
                                      else set()))
+    if v3:
+        # An object that rides its owner's trips reaches person:<owner> by
+        # synthesis, so it is MOBILE even when its authored rules all name
+        # its own home — that is the homecoming putdown ("worn out, hung
+        # up on return"), not fake movement. Without this, jacket_elias
+        # was classed static, then carried, and the v1 lint rightly
+        # objected to a moving static.
+        for obj_, rid_set in travellers.items():
+            for rid_ in rid_set:
+                dests_by_obj.setdefault(obj_, set()).add(f"{PERSON}{rid_}")
     statics = {o for o, d in dests_by_obj.items() if not d - {homes.get(o)}}
     inert = sorted(statics & {e["object"] for e in entries if e.get("rules")})
     # An inert object must appear in NO rule (the v1 lint's contract for a
@@ -531,35 +571,6 @@ def expand(program: dict, carry_on_departure: bool = True,
     left_behind: list[str] = []
     putdown_normalized: list[str] = []
     synthesized_during: list[str] = []
-    # ---- v3 person invariant (pre-pass) --------------------------------
-    # THE invariant the cross-resident teleports violated: an object ON a
-    # person may only be moved by that person's own activity. Measured
-    # before this existed: 340 of 349 mid-trip teleports were another
-    # resident's shared-name block (resident_1's tidy_up yanking
-    # phone_elena off resident_2 at work). Three consequences below:
-    #   (a) travellers are never paraded to HOME activity sites (a home
-    #       `during` is unguardable in the v1 loop, so the only safe home
-    #       during entries are for objects that can never be person-held);
-    #   (b) home-variant `after` rules get only_from restricted to
-    #       receptacles (a person-held or out-of-house object is out of
-    #       reach of anyone's home activity);
-    #   (c) person legs are OWNER-AWARE, and an object that rides one kind
-    #       of trip rides ALL its owner's trips (keys go along on the walk,
-    #       not only to work — per-person behaviour, which per-activity
-    #       rules cannot express), with a synthesized homecoming putdown to
-    #       `home` on trips whose activity has no authored after rule.
-    owners = program.get("object_owners") or {}
-    away_base = {o.get("base_activity", o["activity"])
-                 for o in occs if o["at"] == ELSEWHERE}
-    travellers: dict[str, set] = {}       # obj -> owners' ids that carry it
-    if v3:
-        for entry_ in placements_of(program):
-            obj_ = entry_["object"]
-            for r_ in entry_.get("rules") or []:
-                if r_["activity"] in away_base:
-                    own = owners.get(obj_)
-                    if own and own != "shared":
-                        travellers.setdefault(obj_, set()).add(own)
     object_motions: dict[str, dict] = {}
     dropped_sleep_resets: list[str] = []
     dropped_sleep_fragments: list[str] = []

@@ -253,3 +253,26 @@ def test_person_invariant_holds_through_realization():
            and e["by"] != "misplace"
            and any(a < e["t"] < b for a, b in trips)]
     assert bad == [], bad[:3]
+
+
+def test_home_pointing_away_rule_is_a_homecoming_not_fake_movement():
+    """jacket case: an after rule on an AWAY activity whose dest is the
+    object's own home is 'worn out, hung up on return' — under v3 the
+    object rides its owner (reaching person:<owner>), so it is mobile and
+    the rule survives. The old inert logic classed it static, the
+    synthesis then carried it, and the v1 lint rejected the household."""
+    program = _two_res_program()
+    program["object_owners"]["jacket_1"] = "resident_2"
+    program["object_rules"].append(
+        {"object": "jacket_1", "cites": "c", "home": "shelf_b",
+         "rules": [{"cites": "worn out, hung up on return",
+                    "activity": "work_away", "phase": "after",
+                    "dist": [{"dest": "shelf_b", "p": 0.9},
+                             {"dest": "NO_OP", "p": 0.1}]}]})
+    acts, motions = xc.expand(program)
+    assert "jacket_1" not in acts["inert_objects"]
+    assert not motions["placements"]["jacket_1"].get("static")
+    assert motions["object_motions"]["work_away"]["during"]["jacket_1"] == \
+        "person:resident_2"
+    # the whole program still passes the v1 lint
+    sim.load_v1().validate(acts, motions)
