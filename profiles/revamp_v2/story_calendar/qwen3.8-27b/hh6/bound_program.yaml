@@ -291,42 +291,44 @@ object_rules:
       p: 0.8
     - dest: sink_k1
       p: 0.2
-  - cites: Elena sets her coffee down by the tap to free her hands for chopping.
-    activity: batch_cooking
+  - cites: Elena leaves her mug on the counter after her morning coffee
+    activity: coffee
     phase: after
     dist:
     - dest: counter_k1
-      p: 0.6
+      p: 0.7
     - dest: sink_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: Elena's mug often ends up in the sink after a quick meal
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.5
+    - dest: counter_k1
+      p: 0.4
+    - dest: NO_OP
+      p: 0.1
+  - cites: Elena puts her mug in the sink after dinner
+    activity: dinner
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.6
+    - dest: counter_k1
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Elena leaves her morning tea on the counter while she rushes out the door.
-    activity: breakfast
+  - cites: Elena's mug stays on the counter during a snack
+    activity: snack
     phase: after
     dist:
     - dest: counter_k1
       p: 0.8
     - dest: sink_k1
       p: 0.2
-  - cites: Elena drinks her tea while she preps the next day's meals.
-    activity: meal_prep
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.7
-    - dest: sink_k1
-      p: 0.3
-  - cites: Elena uses the mug for water while she eats her quick meal.
-    activity: snack
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.5
-    - dest: sink_k1
-      p: 0.4
-    - dest: NO_OP
-      p: 0.1
 - object: mug_leo
   cites: Leo leaves mugs on table
   home: kitchen_table_k1
@@ -350,37 +352,43 @@ object_rules:
       p: 0.7
     - dest: counter_k1
       p: 0.3
-  - cites: Leo leaves his water mug on the table next to his laptop while he cooks.
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.7
-    - dest: counter_k1
-      p: 0.3
-  - cites: Leo leaves his cereal mug on the table, too lazy to wash it up.
+  - cites: Leo leaves his mug on the table after eating
     activity: breakfast
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.9
+      p: 0.7
     - dest: sink_k1
+      p: 0.2
+    - dest: NO_OP
       p: 0.1
-  - cites: Leo leaves his drink on the table while he works on his project.
-    activity: meal_prep
+  - cites: Leo leaves his mug on the table after lunch
+    activity: lunch
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.8
-    - dest: counter_k1
+      p: 0.7
+    - dest: sink_k1
       p: 0.2
-  - cites: Leo leaves his snack drink on the table.
+    - dest: NO_OP
+      p: 0.1
+  - cites: Leo leaves his mug on the table after dinner
+    activity: dinner
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.7
+    - dest: sink_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: Leo's mug is often left on the table after a snack
     activity: snack
     phase: after
     dist:
     - dest: kitchen_table_k1
       p: 0.8
-    - dest: counter_k1
+    - dest: sink_k1
       p: 0.2
 - object: mug_maya
   cites: Maya keeps tea in room
@@ -403,40 +411,26 @@ object_rules:
       p: 0.8
     - dest: dish_rack_k1
       p: 0.2
-  - cites: Maya brings her tea to the table to eat, keeping her room clear.
+  - cites: Maya brings her mug to the living room for a snack
+    activity: snack
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.6
+    - dest: couch_l1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: Maya leaves her mug on the table if she eats in the kitchen
     activity: breakfast
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.6
     - dest: desk_b3
-      p: 0.4
-  - cites: Maya uses her mug for water while she eats.
-    activity: dinner
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
       p: 0.5
-    - dest: sink_k1
-      p: 0.3
-    - dest: desk_b3
-      p: 0.2
-  - cites: Maya leaves her tea on the coffee table while she reads on the sofa.
-    activity: reading
-    phase: after
-    dist:
-    - dest: coffee_table_l1
-      p: 0.6
-    - dest: desk_b3
+    - dest: kitchen_table_k1
       p: 0.4
-  - cites: Maya leaves her tea on the coffee table while she studies.
-    activity: study
-    phase: after
-    dist:
-    - dest: coffee_table_l1
-      p: 0.6
-    - dest: desk_b3
-      p: 0.4
+    - dest: NO_OP
+      p: 0.1
 - object: bowl_1
   cites: Shared snack bowl on counter
   home: counter_k1
@@ -460,31 +454,7 @@ object_rules:
       p: 0.3
     - dest: sink_k1
       p: 0.2
-  - cites: Elena leaves the snack bowl on the counter while she cooks.
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.8
-    - dest: cupboard_k1
-      p: 0.2
-  - cites: Elena leaves the fruit bowl on the counter after eating.
-    activity: breakfast
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.7
-    - dest: sink_k1
-      p: 0.3
-  - cites: Elena uses the bowl for prep ingredients.
-    activity: meal_prep
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.6
-    - dest: cupboard_k1
-      p: 0.4
-  - cites: Elena leaves the snack bowl on the counter.
+  - cites: The snack bowl is left on the counter
     activity: snack
     phase: after
     dist:
@@ -492,6 +462,14 @@ object_rules:
       p: 0.9
     - dest: sink_k1
       p: 0.1
+  - cites: The bowl is left on the counter after breakfast
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.8
+    - dest: sink_k1
+      p: 0.2
 - object: bowl_2
   cites: Cereal bowl often in sink
   home: sink_k1
@@ -513,7 +491,7 @@ object_rules:
       p: 0.8
     - dest: cupboard_k1
       p: 0.2
-  - cites: Leo leaves his cereal bowl in the sink, as usual.
+  - cites: Leo leaves his cereal bowl in the sink
     activity: breakfast
     phase: after
     dist:
@@ -521,14 +499,14 @@ object_rules:
       p: 0.8
     - dest: kitchen_table_k1
       p: 0.2
-  - cites: Maya washes her bowl and puts it in the rack.
+  - cites: Maya puts her bowl in the sink immediately
     activity: breakfast
     phase: after
     dist:
-    - dest: dish_rack_k1
-      p: 0.6
     - dest: sink_k1
-      p: 0.4
+      p: 0.9
+    - dest: kitchen_table_k1
+      p: 0.1
 - object: plate_1
   cites: Dinner plate left by Leo
   home: kitchen_table_k1
@@ -550,21 +528,21 @@ object_rules:
       p: 0.8
     - dest: dish_rack_k1
       p: 0.2
-  - cites: Leo leaves his dinner plate on the table, creating clutter.
-    activity: dinner
+  - cites: Leo leaves his plate on the table
+    activity: lunch
     phase: after
     dist:
     - dest: kitchen_table_k1
       p: 0.8
     - dest: sink_k1
       p: 0.2
-  - cites: Maya puts her plate in the sink after eating.
+  - cites: Leo leaves his plate on the table after dinner
     activity: dinner
     phase: after
     dist:
-    - dest: sink_k1
+    - dest: kitchen_table_k1
       p: 0.8
-    - dest: dish_rack_k1
+    - dest: sink_k1
       p: 0.2
 - object: plate_2
   cites: Dinner plate left by Leo
@@ -587,21 +565,21 @@ object_rules:
       p: 0.9
     - dest: dish_rack_k1
       p: 0.1
-  - cites: Leo leaves his second plate on the table.
-    activity: dinner
+  - cites: Maya puts her plate in the sink after lunch
+    activity: lunch
     phase: after
     dist:
+    - dest: sink_k1
+      p: 0.9
     - dest: kitchen_table_k1
-      p: 0.9
-    - dest: sink_k1
       p: 0.1
-  - cites: Maya puts her plate in the sink.
+  - cites: Maya puts her plate in the sink after dinner
     activity: dinner
     phase: after
     dist:
     - dest: sink_k1
       p: 0.9
-    - dest: dish_rack_k1
+    - dest: kitchen_table_k1
       p: 0.1
 - object: laptop_leo
   cites: Leo's laptop on table or desk
@@ -624,15 +602,15 @@ object_rules:
       p: 0.6
     - dest: desk_b2
       p: 0.4
-  - cites: Leo leaves his laptop on the table while he works on music.
-    activity: music
+  - cites: Leo leaves his laptop on the table after studying
+    activity: study
     phase: after
     dist:
     - dest: kitchen_table_k1
       p: 0.7
     - dest: desk_b2
       p: 0.3
-  - cites: Leo leaves his laptop on the table during a call.
+  - cites: Leo leaves his laptop on the table after a video call
     activity: video_call
     phase: after
     dist:
@@ -640,14 +618,14 @@ object_rules:
       p: 0.8
     - dest: desk_b2
       p: 0.2
-  - cites: Leo uses his laptop for schoolwork at the table.
-    activity: study
+  - cites: Leo leaves his laptop on the table after mixing music
+    activity: music
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.6
+      p: 0.8
     - dest: desk_b2
-      p: 0.4
+      p: 0.2
 - object: laptop_maya
   cites: Maya's laptop in room or living
   home: desk_b3
@@ -669,30 +647,22 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Maya brings her laptop to the sofa to study.
+  - cites: Maya takes her laptop back to her desk after studying
     activity: study
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.5
     - dest: desk_b3
-      p: 0.5
-  - cites: Maya uses her laptop for art or reading on the sofa.
-    activity: reading
-    phase: after
-    dist:
+      p: 0.9
     - dest: couch_l1
-      p: 0.4
-    - dest: desk_b3
-      p: 0.6
-  - cites: Maya uses her laptop for a video call from the sofa.
+      p: 0.1
+  - cites: Maya takes her laptop back to her desk after a video call
     activity: video_call
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.3
     - dest: desk_b3
-      p: 0.7
+      p: 0.9
+    - dest: couch_l1
+      p: 0.1
 - object: phone_elena
   cites: Elena charges phone on counter
   home: counter_k1
@@ -714,29 +684,29 @@ object_rules:
       p: 0.7
     - dest: counter_k1
       p: 0.3
-  - cites: Elena leaves her phone on the counter while she cooks.
+  - cites: Elena leaves her phone on the counter during phone time
+    activity: phone_time
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.9
+    - dest: desk_b1
+      p: 0.1
+  - cites: Elena's phone stays on the counter while she cooks
     activity: batch_cooking
     phase: after
     dist:
     - dest: counter_k1
       p: 0.9
-    - dest: sink_k1
+    - dest: desk_b1
       p: 0.1
-  - cites: Elena leaves her phone on the counter while she eats.
-    activity: breakfast
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.9
-    - dest: kitchen_table_k1
-      p: 0.1
-  - cites: Elena leaves her phone on the counter while she preps.
+  - cites: Elena's phone stays on the counter while she preps meals
     activity: meal_prep
     phase: after
     dist:
     - dest: counter_k1
       p: 0.9
-    - dest: sink_k1
+    - dest: desk_b1
       p: 0.1
 - object: phone_leo
   cites: Leo rarely returns phone
@@ -763,37 +733,29 @@ object_rules:
       p: 0.3
     - dest: entry_table_e1
       p: 0.2
-  - cites: Leo leaves his phone on the table while he cooks.
-    activity: batch_cooking
+  - cites: Leo leaves his phone on the table after a video call
+    activity: video_call
     phase: after
     dist:
     - dest: kitchen_table_k1
       p: 0.7
     - dest: desk_b2
       p: 0.3
-  - cites: Leo leaves his phone on the table while he eats.
-    activity: breakfast
+  - cites: Leo's phone stays with him during errands
+    activity: errands
     phase: after
     dist:
-    - dest: kitchen_table_k1
+    - dest: NO_OP
       p: 0.8
-    - dest: desk_b2
+    - dest: kitchen_table_k1
       p: 0.2
-  - cites: Leo leaves his phone on the table while he works on music.
-    activity: music
+  - cites: Leo's phone stays with him during a walk
+    activity: walk
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.8
-    - dest: desk_b2
-      p: 0.2
-  - cites: Leo leaves his phone on the table after a call.
-    activity: video_call
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
+    - dest: NO_OP
       p: 0.9
-    - dest: desk_b2
+    - dest: kitchen_table_k1
       p: 0.1
 - object: phone_maya
   cites: Maya keeps phone on person
@@ -813,30 +775,6 @@ object_rules:
     phase: after
     dist:
     - dest: nightstand_b3
-      p: 0.8
-    - dest: desk_b3
-      p: 0.2
-  - cites: Maya keeps her phone with her while she studies.
-    activity: study
-    phase: after
-    dist:
-    - dest: person:resident_3
-      p: 0.6
-    - dest: desk_b3
-      p: 0.4
-  - cites: Maya keeps her phone with her while she reads.
-    activity: reading
-    phase: after
-    dist:
-    - dest: person:resident_3
-      p: 0.7
-    - dest: couch_l1
-      p: 0.3
-  - cites: Maya keeps her phone with her during a call.
-    activity: video_call
-    phase: after
-    dist:
-    - dest: person:resident_3
       p: 0.8
     - dest: desk_b3
       p: 0.2
@@ -861,8 +799,24 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Elena leaves her keys on the hook while she does housework.
-    activity: deep_clean
+  - cites: Elena hangs her keys on the hook after groceries
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: counter_k1
+      p: 0.1
+  - cites: Elena hangs her keys on the hook after errands
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: counter_k1
+      p: 0.1
+  - cites: Elena hangs her keys on the hook after a walk
+    activity: walk
     phase: after
     dist:
     - dest: entry_hook_e1
@@ -892,22 +846,22 @@ object_rules:
       p: 0.5
     - dest: NO_OP
       p: 0.5
-  - cites: Leo leaves his keys on the table after coming home.
-    activity: get_ready
+  - cites: Leo leaves his keys on the table after school-related activities
+    activity: errands
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.7
-    - dest: desk_b2
-      p: 0.3
-  - cites: Leo leaves his keys on the table while he works.
-    activity: hobby
+      p: 0.8
+    - dest: entry_hook_e1
+      p: 0.2
+  - cites: Leo leaves his keys on the table after a walk
+    activity: walk
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.6
-    - dest: desk_b2
-      p: 0.4
+      p: 0.8
+    - dest: entry_hook_e1
+      p: 0.2
 - object: keys_maya
   cites: Maya keeps keys in bag
   home: desk_b3
@@ -971,22 +925,30 @@ object_rules:
       p: 0.8
     - dest: bookshelf_l1
       p: 0.2
-  - cites: Maya leaves her book on the sofa after reading.
+  - cites: Maya leaves her book on the sofa after reading
     activity: reading
     phase: after
     dist:
     - dest: couch_l1
-      p: 0.8
+      p: 0.7
     - dest: desk_b3
-      p: 0.2
-  - cites: Maya leaves her book on the sofa while she relaxes.
-    activity: relax
+      p: 0.3
+  - cites: Maya leaves her book on the sofa after studying
+    activity: study
     phase: after
     dist:
     - dest: couch_l1
       p: 0.6
     - dest: desk_b3
       p: 0.4
+  - cites: Maya leaves her book on the sofa after relaxing
+    activity: relax
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.7
+    - dest: desk_b3
+      p: 0.3
 - object: notebook_elena
   cites: Elena loses notebook in couch
   home: desk_b1
@@ -1010,34 +972,36 @@ object_rules:
       p: 0.6
     - dest: couch_l1
       p: 0.4
-  - cites: Elena pulls her notebook from her pocket to jot down notes while cooking.
-    activity: batch_cooking
+  - cites: Elena's notebook gets lost in the couch cushions after relaxing
+    activity: relax
     phase: after
     dist:
-    - dest: counter_k1
-      p: 0.4
-    - dest: person:resident_1
+    - dest: couch_l1
       p: 0.4
     - dest: desk_b1
-      p: 0.2
-  - cites: Elena uses her notebook while she preps meals.
-    activity: meal_prep
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.5
-    - dest: person:resident_1
-      p: 0.3
-    - dest: desk_b1
-      p: 0.2
-  - cites: Elena checks her notebook for med reminders.
-    activity: take_medication
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.6
-    - dest: person:resident_1
       p: 0.4
+    - dest: NO_OP
+      p: 0.2
+  - cites: Elena's notebook stays in her pocket during a walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: NO_OP
+      p: 0.8
+    - dest: couch_l1
+      p: 0.1
+    - dest: desk_b1
+      p: 0.1
+  - cites: Elena's notebook stays in her pocket during an appointment
+    activity: appointment
+    phase: after
+    dist:
+    - dest: NO_OP
+      p: 0.8
+    - dest: couch_l1
+      p: 0.1
+    - dest: desk_b1
+      p: 0.1
 - object: headphones_leo
   cites: Leo leaves headphones on floor
   home: bedroom_floor_b2
@@ -1059,30 +1023,22 @@ object_rules:
       p: 0.5
     - dest: desk_b2
       p: 0.5
-  - cites: Leo leaves his headphones on the table while he cooks.
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.7
-    - dest: bedroom_floor_b2
-      p: 0.3
-  - cites: Leo leaves his headphones on the table while he works on music.
+  - cites: Leo leaves his headphones on the table after music
     activity: music
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.8
+      p: 0.6
     - dest: bedroom_floor_b2
-      p: 0.2
-  - cites: Leo leaves his headphones on the table after a call.
+      p: 0.4
+  - cites: Leo leaves his headphones on the table after a video call
     activity: video_call
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.9
+      p: 0.6
     - dest: bedroom_floor_b2
-      p: 0.1
+      p: 0.4
 - object: water_bottle_maya
   cites: Maya's bottle in swim bag
   home: desk_b3
@@ -1104,22 +1060,6 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Maya keeps her bottle with her while she studies.
-    activity: study
-    phase: after
-    dist:
-    - dest: person:resident_3
-      p: 0.5
-    - dest: desk_b3
-      p: 0.5
-  - cites: Maya keeps her bottle with her while she reads.
-    activity: reading
-    phase: after
-    dist:
-    - dest: person:resident_3
-      p: 0.6
-    - dest: couch_l1
-      p: 0.4
 - object: towel_maya
   cites: Maya leaves towel on rack
   home: towel_rack_ba1
@@ -1141,8 +1081,16 @@ object_rules:
       p: 0.8
     - dest: towel_rack_ba1
       p: 0.2
-  - cites: Maya leaves her towel on the rack after showering.
+  - cites: Maya leaves her towel on the rack after showering
     activity: shower
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.9
+    - dest: bathroom_shelf_ba1
+      p: 0.1
+  - cites: Maya leaves her towel on the rack after getting ready
+    activity: get_ready
     phase: after
     dist:
     - dest: towel_rack_ba1
@@ -1170,22 +1118,22 @@ object_rules:
       p: 0.7
     - dest: bedroom_floor_b2
       p: 0.3
-  - cites: Leo hangs his jacket on his chair after getting ready.
-    activity: get_ready
+  - cites: Leo hangs his jacket on the chair after a walk
+    activity: walk
     phase: after
     dist:
     - dest: chair_k1
       p: 0.8
-    - dest: bedroom_floor_b2
+    - dest: entry_floor_e1
       p: 0.2
-  - cites: Leo leaves his jacket on his chair while he works.
-    activity: hobby
+  - cites: Leo hangs his jacket on the chair after errands
+    activity: errands
     phase: after
     dist:
     - dest: chair_k1
-      p: 0.9
-    - dest: bedroom_floor_b2
-      p: 0.1
+      p: 0.8
+    - dest: entry_floor_e1
+      p: 0.2
 - object: backpack_leo
   cites: Leo leaves backpack on floor
   home: entry_floor_e1
@@ -1207,21 +1155,21 @@ object_rules:
       p: 0.9
     - dest: entry_floor_e1
       p: 0.1
-  - cites: Leo leaves his backpack on the hallway floor after coming home.
-    activity: get_ready
-    phase: after
-    dist:
-    - dest: entry_floor_e1
-      p: 0.9
-    - dest: kitchen_table_k1
-      p: 0.1
-  - cites: Leo leaves his backpack on the floor while he works.
-    activity: hobby
+  - cites: Leo leaves his backpack on the floor after coming home from errands
+    activity: errands
     phase: after
     dist:
     - dest: entry_floor_e1
       p: 0.8
-    - dest: bedroom_floor_b2
+    - dest: kitchen_table_k1
+      p: 0.2
+  - cites: Leo leaves his backpack on the floor after a walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.8
+    - dest: kitchen_table_k1
       p: 0.2
 - object: backpack_maya
   cites: Maya keeps backpack in room
@@ -1244,13 +1192,21 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Maya keeps her backpack in her room after getting ready.
-    activity: get_ready
+  - cites: Maya takes her backpack back to her room after the gym
+    activity: gym
     phase: after
     dist:
     - dest: desk_b3
       p: 0.9
-    - dest: bedroom_floor_b3
+    - dest: entry_floor_e1
+      p: 0.1
+  - cites: Maya takes her backpack back to her room after an appointment
+    activity: appointment
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.9
+    - dest: entry_floor_e1
       p: 0.1
 - object: gaming_controller_leo
   cites: Leo leaves controller on floor
@@ -1273,22 +1229,22 @@ object_rules:
       p: 0.9
     - dest: bedroom_floor_b2
       p: 0.1
-  - cites: Leo leaves his controller on the floor after a quick game during a break.
-    activity: snack
+  - cites: Leo leaves his controller on the floor after studying
+    activity: study
     phase: after
     dist:
     - dest: bedroom_floor_b2
-      p: 0.7
+      p: 0.8
     - dest: kitchen_table_k1
-      p: 0.3
-  - cites: Leo leaves his controller on the floor while he watches TV.
-    activity: watch_tv
+      p: 0.2
+  - cites: Leo leaves his controller on the floor after a video call
+    activity: video_call
     phase: after
     dist:
     - dest: bedroom_floor_b2
-      p: 0.6
-    - dest: couch_l1
-      p: 0.4
+      p: 0.8
+    - dest: kitchen_table_k1
+      p: 0.2
 - object: blanket_elena
   cites: Elena drapes blanket on chair
   home: armchair_l1
@@ -1310,7 +1266,15 @@ object_rules:
       p: 0.6
     - dest: desk_b1
       p: 0.4
-  - cites: Elena drapes her blanket over the armchair while she relaxes.
+  - cites: Elena leaves her blanket on the armchair after lying down
+    activity: lie_down
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.9
+    - dest: couch_l1
+      p: 0.1
+  - cites: Elena leaves her blanket on the armchair after relaxing
     activity: relax
     phase: after
     dist:
@@ -1318,6 +1282,14 @@ object_rules:
       p: 0.9
     - dest: couch_l1
       p: 0.1
+  - cites: Elena leaves her blanket on the couch after watching TV
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.6
+    - dest: armchair_l1
+      p: 0.4
 - object: lunchbox_bag_maya
   cites: Maya's swim bag in room
   home: desk_b3
@@ -1339,13 +1311,21 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Maya keeps her swim bag in her room after packing it.
-    activity: get_ready
+  - cites: Maya takes her bag back to her room after the gym
+    activity: gym
     phase: after
     dist:
     - dest: desk_b3
       p: 0.9
-    - dest: bedroom_floor_b3
+    - dest: entry_floor_e1
+      p: 0.1
+  - cites: Maya takes her bag back to her room after an appointment
+    activity: appointment
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.9
+    - dest: entry_floor_e1
       p: 0.1
 activities:
 - name: bedtime_routine
@@ -1426,3 +1406,31 @@ arc_events:
       end: '20:00'
       at: ELSEWHERE
       jitter: routine
+object_owners:
+  mug_elena: resident_1
+  mug_leo: resident_2
+  mug_maya: resident_3
+  bowl_1: shared
+  bowl_2: shared
+  plate_1: shared
+  plate_2: shared
+  laptop_leo: resident_2
+  laptop_maya: resident_3
+  phone_elena: resident_1
+  phone_leo: resident_2
+  phone_maya: resident_3
+  keys_elena: resident_1
+  keys_leo: resident_2
+  keys_maya: resident_3
+  wallet_elena: resident_1
+  book_maya: resident_3
+  notebook_elena: resident_1
+  headphones_leo: resident_2
+  water_bottle_maya: resident_3
+  towel_maya: resident_3
+  jacket_leo: resident_2
+  backpack_leo: resident_2
+  backpack_maya: resident_3
+  gaming_controller_leo: resident_2
+  blanket_elena: resident_1
+  lunchbox_bag_maya: resident_3

@@ -507,14 +507,24 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.2
-  - cites: Arthur wakes up and checks work on his laptop
-    activity: wake_up
+  - cites: Arthur often moves his laptop to the bedroom desk for focused work, leaving it open and un
+    activity: work_home
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.6
-    - dest: bed_b1
-      p: 0.3
+      p: 0.7
+    - dest: desk_b2
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: After a video call, Arthur tends to close the laptop and slide it to the side of the desk,
+    activity: video_call
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.8
+    - dest: desk_b2
+      p: 0.1
     - dest: NO_OP
       p: 0.1
 - object: phone_arthur
@@ -544,46 +554,16 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
-  - cites: Arthur checks his phone on the desk during work
-    activity: work_home
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.7
-    - dest: person:resident_1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Arthur takes a phone break during study
-    activity: study
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.5
-    - dest: person:resident_1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.2
-  - cites: Arthur keeps his phone in his pocket during video calls
+  - cites: Arthur keeps his phone in his back pocket, but often knocks it onto the table during v
     activity: video_call
     phase: after
     dist:
-    - dest: person:resident_1
-      p: 0.6
     - dest: desk_b1
+      p: 0.5
+    - dest: desk_b2
       p: 0.3
     - dest: NO_OP
-      p: 0.1
-  - cites: Arthur grabs his phone to check messages after waking
-    activity: wake_up
-    phase: after
-    dist:
-    - dest: person:resident_1
-      p: 0.5
-    - dest: nightstand_b1
-      p: 0.4
-    - dest: NO_OP
-      p: 0.1
+      p: 0.2
 - object: keys_arthur
   cites: Arthur keeps keys by door
   home: entry_table_e1
@@ -609,6 +589,36 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
+  - cites: 'Arthur forgets to put his keys in the dish, often leaving them on the entry table or '
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.4
+    - dest: entry_floor_e1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.3
+  - cites: After going to the gym, Arthur tends to drop his keys on the floor near the entryway
+    activity: gym
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.5
+    - dest: entry_table_e1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.2
+  - cites: Grocery runs often end with Arthur tossing his keys onto the entry table in a hurry.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.6
+    - dest: entry_floor_e1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.2
 - object: glasses_arthur
   cites: Glasses left on monitor stand
   home: desk_b1
@@ -634,23 +644,23 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.2
-  - cites: Arthur leaves his glasses on the desk while working
+  - cites: 'Arthur forgets to put his glasses in the case, leaving them on the monitor stand or '
+    activity: video_call
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.6
+    - dest: desk_b2
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: After a long work session, Arthur often leaves his glasses on the desk, forgetting t
     activity: work_home
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.8
-    - dest: person:resident_1
-      p: 0.1
-    - dest: NO_OP
-      p: 0.1
-  - cites: Arthur uses his glasses for studying
-    activity: study
-    phase: after
-    dist:
-    - dest: desk_b1
       p: 0.7
-    - dest: person:resident_1
+    - dest: desk_b2
       p: 0.2
     - dest: NO_OP
       p: 0.1
@@ -678,36 +688,26 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.2
-  - cites: Arthur keeps his water bottle on the desk while working
+  - cites: Arthur moves his water bottle from the fridge to his desk, often leaving it half-full
     activity: work_home
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.6
-    - dest: counter_k1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Arthur drinks from his bottle during study
-    activity: study
-    phase: after
-    dist:
-    - dest: desk_b1
       p: 0.5
+    - dest: desk_b2
+      p: 0.3
     - dest: counter_k1
-      p: 0.4
-    - dest: NO_OP
-      p: 0.1
-  - cites: Arthur keeps his water bottle nearby during video calls
+      p: 0.2
+  - cites: After a video call, Arthur might move his water bottle to the coffee table if he mov
     activity: video_call
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.7
-    - dest: counter_k1
-      p: 0.2
+      p: 0.4
+    - dest: coffee_table_l1
+      p: 0.3
     - dest: NO_OP
-      p: 0.1
+      p: 0.3
 - object: tablet_elena
   cites: Elena loses tablet in couch
   home: couch_l1
@@ -733,36 +733,16 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.2
-  - cites: Elena uses her tablet for design work at the kitchen table
+  - cites: Elena carries her tablet around to show Leo pictures, often losing track of it in the
     activity: hobby
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.6
     - dest: couch_l1
+      p: 0.5
+    - dest: kitchen_table_k1
       p: 0.3
     - dest: NO_OP
-      p: 0.1
-  - cites: Elena checks her tablet on the couch during phone time
-    activity: phone_time
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.7
-    - dest: kitchen_table_k1
       p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elena uses her tablet for casual relaxation
-    activity: relax
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.6
-    - dest: kitchen_table_k1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
 - object: phone_elena
   cites: Elena forgets phone on sofa
   home: kitchen_table_k1
@@ -788,46 +768,24 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.2
-  - cites: Elena leaves her phone on the couch armrest while working from the desk
-    activity: work_home
+  - cites: Elena leaves her phone on the sofa armrest while working, often forgetting to charge
+    activity: hobby
     phase: after
     dist:
     - dest: couch_l1
-      p: 0.4
+      p: 0.6
     - dest: kitchen_table_k1
       p: 0.3
-    - dest: person:resident_2
-      p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Elena checks her phone on the couch during phone time
-    activity: phone_time
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.8
-    - dest: kitchen_table_k1
-      p: 0.1
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elena keeps her phone in her hand during socializing
+  - cites: After a social visit, Elena tends to leave her phone on the kitchen table, distracted
     activity: socialise_home
     phase: after
     dist:
-    - dest: person:resident_2
+    - dest: kitchen_table_k1
       p: 0.5
     - dest: couch_l1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.2
-  - cites: Elena uses her phone while relaxing on the couch
-    activity: relax
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.7
-    - dest: kitchen_table_k1
-      p: 0.2
+      p: 0.4
     - dest: NO_OP
       p: 0.1
 - object: keys_elena
@@ -857,6 +815,28 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
+  - cites: 'Elena forgets to put her keys in the dish, searching for them throughout the hallway '
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.3
+    - dest: entry_floor_e1
+      p: 0.3
+    - dest: couch_l1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.2
+  - cites: After groceries, Elena often tosses her keys onto the kitchen table or leaves them i
+    activity: groceries
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.4
+    - dest: entry_table_e1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.3
 - object: makeup_kit_elena
   cites: Makeup kit on bathroom counter
   home: bathroom_shelf_ba1
@@ -881,6 +861,16 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.2
+  - cites: 'Elena leaves her makeup kit on the bathroom counter, often running out of space for '
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.8
+    - dest: counter_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
 - object: notebook_elena
   cites: Sketchbook scattered on table
   home: kitchen_table_k1
@@ -906,7 +896,7 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.2
-  - cites: Elena sketches on her notebook at the kitchen table during her hobby
+  - cites: Elena scatters her sketchbook on the kitchen table while brainstorming, leaving it o
     activity: hobby
     phase: after
     dist:
@@ -916,14 +906,14 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Elena flips through her notebook while relaxing
-    activity: relax
+  - cites: After a meal, Elena might move her notebook to the sofa if she continues sketching t
+    activity: lunch
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.5
     - dest: kitchen_table_k1
-      p: 0.4
+      p: 0.6
+    - dest: couch_l1
+      p: 0.3
     - dest: NO_OP
       p: 0.1
 - object: pen_elena
@@ -951,23 +941,23 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
-  - cites: Elena uses her pen to sketch during her hobby
+  - cites: Elena's pen is found in the notebook, on the table, or in the sofa cushions, often l
     activity: hobby
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.6
+      p: 0.5
     - dest: couch_l1
       p: 0.3
     - dest: NO_OP
-      p: 0.1
-  - cites: Elena uses her pen for quick notes during socializing
-    activity: socialise_home
+      p: 0.2
+  - cites: After relaxing, Elena often leaves her pen on the coffee table or sofa, losing track
+    activity: relax
     phase: after
     dist:
-    - dest: couch_l1
+    - dest: coffee_table_l1
       p: 0.4
-    - dest: kitchen_table_k1
+    - dest: couch_l1
       p: 0.4
     - dest: NO_OP
       p: 0.2
@@ -998,36 +988,26 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
-  - cites: Leo brings his toy to the kitchen table during snack time
-    activity: snack
+  - cites: 'Leo carries one toy from the living room to the kitchen to ''show'' the parents, then '
+    activity: batch_cooking
     phase: after
     dist:
+    - dest: counter_k1
+      p: 0.4
     - dest: kitchen_table_k1
-      p: 0.5
+      p: 0.3
     - dest: couch_l1
       p: 0.3
-    - dest: NO_OP
-      p: 0.2
-  - cites: Leo plays with his toy on the couch during phone time
-    activity: phone_time
+  - cites: During a deep clean, Leo often drops his toy on the rug, and it stays there until no
+    activity: deep_clean
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.6
     - dest: coffee_table_l1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Leo grabs his toy while relaxing on the couch
-    activity: relax
-    phase: after
-    dist:
+      p: 0.2
     - dest: couch_l1
       p: 0.5
-    - dest: coffee_table_l1
-      p: 0.3
     - dest: NO_OP
-      p: 0.2
+      p: 0.3
 - object: blanket_leo
   cites: Blanket dragged to bedroom
   home: bed_b2
@@ -1052,26 +1032,26 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.4
-  - cites: Leo drags his blanket to the bedroom floor to lie down
+  - cites: Leo lies on the rug with a blanket, dragging it across the floor to the bedroom, of
     activity: lie_down
     phase: after
     dist:
     - dest: bedroom_floor_b2
-      p: 0.6
-    - dest: bed_b2
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Leo brings his blanket to the couch for a nap
-    activity: relax
-    phase: after
-    dist:
-    - dest: couch_l1
       p: 0.5
-    - dest: bedroom_floor_b2
+    - dest: couch_l1
       p: 0.3
     - dest: NO_OP
       p: 0.2
+  - cites: After a bath, Leo often drags his blanket back to the living room, leaving it on the
+    activity: bath
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.4
+    - dest: coffee_table_l1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.3
 - object: water_bottle_leo
   cites: Leo leaves bottle on table
   home: counter_k1
@@ -1097,36 +1077,26 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
-  - cites: Leo leaves his water bottle on the kitchen table during lunch
+  - cites: Leo holds a water bottle everywhere, leaving small puddles on the coffee table, ofte
+    activity: snack
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.5
+    - dest: kitchen_table_k1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.2
+  - cites: 'After a meal, Leo often leaves his water bottle on the high chair or kitchen table, '
     activity: lunch
     phase: after
     dist:
     - dest: kitchen_table_k1
       p: 0.6
-    - dest: counter_k1
+    - dest: coffee_table_l1
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Leo holds his water bottle while snacking
-    activity: snack
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.5
-    - dest: coffee_table_l1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.2
-  - cites: Leo leaves his water bottle on the couch during phone time
-    activity: phone_time
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.5
-    - dest: coffee_table_l1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.2
 - object: plate_shared
   cites: Plate moves to sink
   home: cupboard_k1
@@ -1151,34 +1121,26 @@ object_rules:
       p: 0.4
     - dest: NO_OP
       p: 0.2
-  - cites: The plate is used for lunch at the kitchen table
-    activity: lunch
+  - cites: The shared dinner plate moves from cupboard to table to sink, often left in the sink
+    activity: batch_cooking
     phase: after
     dist:
     - dest: sink_k1
       p: 0.6
-    - dest: kitchen_table_k1
+    - dest: counter_k1
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: The plate is used for a snack at the kitchen table
-    activity: snack
+  - cites: After lunch, the plate is usually placed in the sink or on the counter, waiting for
+    activity: lunch
     phase: after
     dist:
     - dest: sink_k1
       p: 0.5
-    - dest: kitchen_table_k1
+    - dest: counter_k1
       p: 0.4
     - dest: NO_OP
       p: 0.1
-  - cites: The plate is washed during dish time
-    activity: wash_dishes
-    phase: after
-    dist:
-    - dest: cupboard_k1
-      p: 0.8
-    - dest: dish_rack_k1
-      p: 0.2
 - object: bowl_shared
   cites: Bowl used for cereal
   home: cupboard_k1
@@ -1203,34 +1165,26 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
-  - cites: The bowl is used for lunch at the kitchen table
-    activity: lunch
-    phase: after
-    dist:
-    - dest: sink_k1
-      p: 0.6
-    - dest: kitchen_table_k1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: The bowl is used for a snack at the kitchen table
+  - cites: The shared breakfast bowl moves from cupboard to table to sink, often left in the si
     activity: snack
     phase: after
     dist:
     - dest: sink_k1
       p: 0.5
-    - dest: kitchen_table_k1
+    - dest: counter_k1
       p: 0.4
     - dest: NO_OP
       p: 0.1
-  - cites: The bowl is washed during dish time
-    activity: wash_dishes
+  - cites: After a meal, the bowl is typically placed in the sink, sometimes forgotten until th
+    activity: lunch
     phase: after
     dist:
-    - dest: cupboard_k1
-      p: 0.8
-    - dest: dish_rack_k1
+    - dest: sink_k1
+      p: 0.7
+    - dest: counter_k1
       p: 0.2
+    - dest: NO_OP
+      p: 0.1
 - object: mug_arthur
   cites: Mug left on counter
   home: counter_k1
@@ -1255,34 +1209,24 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
-  - cites: Arthur leaves his mug on the desk while working
+  - cites: Arthur's coffee mug is left on the kitchen counter or desk, often with a stain ring
     activity: work_home
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.7
+      p: 0.5
+    - dest: desk_b2
+      p: 0.3
     - dest: counter_k1
       p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Arthur drinks from his mug during study
-    activity: study
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.6
-    - dest: counter_k1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Arthur keeps his mug nearby during video calls
+  - cites: After a video call, Arthur often leaves his mug on the desk, forgetting to wash it u
     activity: video_call
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.8
-    - dest: counter_k1
-      p: 0.1
+      p: 0.6
+    - dest: desk_b2
+      p: 0.3
     - dest: NO_OP
       p: 0.1
 - object: mug_elena
@@ -1309,24 +1253,24 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
-  - cites: Elena leaves her mug on the kitchen table during her hobby
+  - cites: Elena's tea mug is left on the kitchen table or sofa side table, often with a lipsti
     activity: hobby
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.6
+      p: 0.5
     - dest: couch_l1
       p: 0.3
     - dest: NO_OP
-      p: 0.1
-  - cites: Elena leaves her mug on the couch while relaxing
+      p: 0.2
+  - cites: After relaxing, Elena often leaves her mug on the coffee table, forgetting to move i
     activity: relax
     phase: after
     dist:
+    - dest: coffee_table_l1
+      p: 0.6
     - dest: couch_l1
-      p: 0.5
-    - dest: kitchen_table_k1
-      p: 0.4
+      p: 0.3
     - dest: NO_OP
       p: 0.1
 - object: remote_shared
@@ -1354,34 +1298,24 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
-  - cites: Leo grabs the remote during phone time on the couch
-    activity: phone_time
+  - cites: Leo grabs the remote from the coffee table and drops it on the rug, often leaving it
+    activity: relax
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.4
+    - dest: couch_l1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.3
+  - cites: During a deep clean, the remote might be moved to the sofa or left on the rug if Le
+    activity: deep_clean
     phase: after
     dist:
     - dest: couch_l1
       p: 0.5
     - dest: coffee_table_l1
       p: 0.3
-    - dest: NO_OP
-      p: 0.2
-  - cites: The remote is left on the couch during relaxation
-    activity: relax
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.6
-    - dest: coffee_table_l1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: The remote is grabbed during socializing on the couch
-    activity: socialise_home
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.4
-    - dest: coffee_table_l1
-      p: 0.4
     - dest: NO_OP
       p: 0.2
 - object: laundry_basket_shared
@@ -1408,6 +1342,16 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
+  - cites: After a deep clean, the laundry basket might be moved to the bedroom if it is overf
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.7
+    - dest: bedroom_floor_b2
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
 activities:
 - name: breakfast
   reset_all:
@@ -1509,3 +1453,24 @@ arc_events:
       end: '22:00'
       at: desk_b1
       jitter: external
+object_owners:
+  laptop_arthur: resident_1
+  phone_arthur: resident_1
+  keys_arthur: resident_1
+  glasses_arthur: resident_1
+  water_bottle_arthur: resident_1
+  tablet_elena: resident_2
+  phone_elena: resident_2
+  keys_elena: resident_2
+  makeup_kit_elena: resident_2
+  notebook_elena: resident_2
+  pen_elena: resident_2
+  toy_leo: resident_3
+  blanket_leo: resident_3
+  water_bottle_leo: resident_3
+  plate_shared: shared
+  bowl_shared: shared
+  mug_arthur: resident_1
+  mug_elena: resident_2
+  remote_shared: shared
+  laundry_basket_shared: shared

@@ -88,6 +88,26 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
+  - cites: Arthur leaves his coffee on the desk after eating
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.8
+    - dest: counter_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: Arthur's mug is left on the desk after dinner
+    activity: dinner
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.8
+    - dest: counter_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
 - object: mug_martha
   cites: Martha drinks coffee in the kitchen
   home: counter_k1
@@ -115,25 +135,41 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Martha's tea stays on the counter while she prepares the morning meal.
+  - cites: Martha leaves her mug on the counter after breakfast
     activity: breakfast
     phase: after
     dist:
     - dest: counter_k1
       p: 0.8
     - dest: kitchen_table_k1
-      p: 0.15
+      p: 0.1
     - dest: NO_OP
-      p: 0.05
-  - cites: Martha's coffee sits on the counter while she launders clothes.
-    activity: laundry
+      p: 0.1
+  - cites: Martha's mug ends up on the counter after lunch
+    activity: lunch
     phase: after
     dist:
     - dest: counter_k1
-      p: 0.7
+      p: 0.9
     - dest: kitchen_table_k1
-      p: 0.2
+      p: 0.1
+  - cites: Martha leaves her mug on the counter after dinner
+    activity: dinner
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.8
+    - dest: kitchen_table_k1
+      p: 0.1
     - dest: NO_OP
+      p: 0.1
+  - cites: Martha's mug is left on the counter after a snack
+    activity: snack
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.9
+    - dest: kitchen_table_k1
       p: 0.1
 - object: mug_shared_1
   cites: Guest mug kept in cupboard
@@ -158,24 +194,44 @@ object_rules:
       p: 0.8
     - dest: dish_rack_k1
       p: 0.2
-  - cites: The guest mug is brought to the table for a shared snack.
+  - cites: Guest mug is returned to the cupboard after breakfast
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.7
+    - dest: counter_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: Guest mug goes back to the cupboard after lunch
+    activity: lunch
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.8
+    - dest: counter_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: Guest mug is put away after dinner
+    activity: dinner
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.7
+    - dest: counter_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: Guest mug is left on the counter after a snack
     activity: snack
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.4
-    - dest: cupboard_k1
-      p: 0.5
-    - dest: NO_OP
-      p: 0.1
-  - cites: The guest mug is used for tea during a home social gathering.
-    activity: socialise_home
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.3
     - dest: cupboard_k1
       p: 0.6
+    - dest: counter_k1
+      p: 0.3
     - dest: NO_OP
       p: 0.1
 - object: phone_arthur
@@ -203,46 +259,6 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Arthur keeps his phone in his pocket while cooking.
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: person:resident_1
-      p: 0.8
-    - dest: desk_b1
-      p: 0.15
-    - dest: NO_OP
-      p: 0.05
-  - cites: Arthur carries his phone while getting ready.
-    activity: get_ready
-    phase: after
-    dist:
-    - dest: person:resident_1
-      p: 0.7
-    - dest: desk_b1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Arthur's phone stays in his pocket during a bath.
-    activity: bath
-    phase: after
-    dist:
-    - dest: person:resident_1
-      p: 0.6
-    - dest: desk_b1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Arthur's phone is with him while deep cleaning.
-    activity: deep_clean
-    phase: after
-    dist:
-    - dest: person:resident_1
-      p: 0.7
-    - dest: desk_b1
-      p: 0.25
-    - dest: NO_OP
-      p: 0.05
 - object: phone_martha
   cites: Martha leaves phone on dining table
   home: kitchen_table_k1
@@ -268,18 +284,18 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Martha leaves her phone on the dining table while cooking.
-    activity: batch_cooking
+  - cites: Martha leaves her phone on the table after breakfast
+    activity: breakfast
     phase: after
     dist:
     - dest: kitchen_table_k1
       p: 0.7
-    - dest: counter_k1
+    - dest: couch_l1
       p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Martha's phone stays on the table while she gets ready.
-    activity: get_ready
+  - cites: Martha's phone is on the table after lunch
+    activity: lunch
     phase: after
     dist:
     - dest: kitchen_table_k1
@@ -288,26 +304,26 @@ object_rules:
       p: 0.1
     - dest: NO_OP
       p: 0.1
-  - cites: Martha leaves her phone on the table while doing laundry.
-    activity: laundry
+  - cites: Martha leaves her phone on the table after dinner
+    activity: dinner
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.7
+    - dest: couch_l1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: Martha takes her phone with her on errands
+    activity: errands
     phase: after
     dist:
     - dest: kitchen_table_k1
       p: 0.6
-    - dest: counter_k1
+    - dest: couch_l1
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Martha's phone is left on the table while prepping meals.
-    activity: meal_prep
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.75
-    - dest: counter_k1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.05
 - object: keys_arthur
   cites: Keys kept in kitchen drawer
   home: cupboard_k1
@@ -331,6 +347,16 @@ object_rules:
       p: 0.95
     - dest: NO_OP
       p: 0.05
+  - cites: Arthur takes his keys for errands
+    activity: errands
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.7
+    - dest: desk_b1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
 - object: keys_martha
   cites: Keys in wallet in jacket
   home: entry_hook_e1
@@ -354,46 +380,16 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Martha's keys are in her jacket pocket while cooking.
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.8
-    - dest: person:resident_2
-      p: 0.1
-    - dest: NO_OP
-      p: 0.1
-  - cites: Martha's keys are with her while getting ready.
-    activity: get_ready
+  - cites: Martha takes her keys for errands
+    activity: errands
     phase: after
     dist:
     - dest: entry_hook_e1
       p: 0.6
-    - dest: person:resident_2
+    - dest: kitchen_table_k1
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Martha's keys stay in her jacket while doing laundry.
-    activity: laundry
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.7
-    - dest: person:resident_2
-      p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Martha's keys are in her jacket while prepping meals.
-    activity: meal_prep
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.85
-    - dest: person:resident_2
-      p: 0.1
-    - dest: NO_OP
-      p: 0.05
 - object: wallet_arthur
   cites: Wallet in kitchen drawer
   home: cupboard_k1
@@ -417,6 +413,16 @@ object_rules:
       p: 0.95
     - dest: NO_OP
       p: 0.05
+  - cites: Arthur takes his wallet for errands
+    activity: errands
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.7
+    - dest: desk_b1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
 - object: wallet_martha
   cites: Wallet in jacket pocket
   home: entry_hook_e1
@@ -440,46 +446,16 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Martha's wallet is in her jacket while cooking.
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.8
-    - dest: person:resident_2
-      p: 0.1
-    - dest: NO_OP
-      p: 0.1
-  - cites: Martha's wallet is with her while getting ready.
-    activity: get_ready
+  - cites: Martha takes her wallet for errands
+    activity: errands
     phase: after
     dist:
     - dest: entry_hook_e1
       p: 0.6
-    - dest: person:resident_2
+    - dest: kitchen_table_k1
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Martha's wallet stays in her jacket while doing laundry.
-    activity: laundry
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.7
-    - dest: person:resident_2
-      p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Martha's wallet is in her jacket while prepping meals.
-    activity: meal_prep
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.85
-    - dest: person:resident_2
-      p: 0.1
-    - dest: NO_OP
-      p: 0.05
 - object: glasses_arthur
   cites: Glasses kept on armchair
   home: armchair_l1
@@ -505,26 +481,6 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Arthur's glasses stay on the armchair while he cooks.
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: armchair_l1
-      p: 0.9
-    - dest: desk_b1
-      p: 0.05
-    - dest: NO_OP
-      p: 0.05
-  - cites: Arthur's glasses remain on the armchair during breakfast.
-    activity: breakfast
-    phase: after
-    dist:
-    - dest: armchair_l1
-      p: 0.85
-    - dest: desk_b1
-      p: 0.1
-    - dest: NO_OP
-      p: 0.05
 - object: glasses_martha
   cites: Glasses left on sofa cushion
   home: couch_l1
@@ -550,8 +506,8 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Martha leaves her glasses on the sofa while cooking.
-    activity: batch_cooking
+  - cites: Martha leaves her glasses on the sofa after breakfast
+    activity: breakfast
     phase: after
     dist:
     - dest: couch_l1
@@ -560,8 +516,8 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Martha's glasses stay on the sofa while getting ready.
-    activity: get_ready
+  - cites: Martha's glasses end up on the sofa after lunch
+    activity: lunch
     phase: after
     dist:
     - dest: couch_l1
@@ -570,26 +526,16 @@ object_rules:
       p: 0.1
     - dest: NO_OP
       p: 0.1
-  - cites: Martha leaves her glasses on the sofa while doing laundry.
-    activity: laundry
+  - cites: Martha leaves her glasses on the sofa after dinner
+    activity: dinner
     phase: after
     dist:
     - dest: couch_l1
-      p: 0.6
-    - dest: kitchen_table_k1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Martha's glasses are on the sofa while prepping meals.
-    activity: meal_prep
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.75
+      p: 0.7
     - dest: kitchen_table_k1
       p: 0.2
     - dest: NO_OP
-      p: 0.05
+      p: 0.1
 - object: book_arthur_1
   cites: Book read in study
   home: desk_b1
@@ -638,13 +584,33 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Martha's biography stays on the sofa table while cooking.
-    activity: batch_cooking
+  - cites: Martha's book is left on the sofa table after breakfast
+    activity: breakfast
     phase: after
     dist:
-    - dest: couch_l1
+    - dest: coffee_table_l1
       p: 0.8
-    - dest: kitchen_table_k1
+    - dest: couch_l1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: Martha's book ends up on the sofa table after lunch
+    activity: lunch
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.8
+    - dest: couch_l1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: Martha's book is on the sofa table after dinner
+    activity: dinner
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.8
+    - dest: couch_l1
       p: 0.1
     - dest: NO_OP
       p: 0.1
@@ -696,14 +662,34 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.2
-  - cites: Martha's notebook stays on the island while she cooks.
-    activity: batch_cooking
+  - cites: Martha leaves her notebook on the island after breakfast
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: kitchen_table_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: Martha's notebook ends up on the island after lunch
+    activity: lunch
     phase: after
     dist:
     - dest: counter_k1
       p: 0.8
     - dest: kitchen_table_k1
       p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: Martha leaves her notebook on the island after dinner
+    activity: dinner
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: kitchen_table_k1
+      p: 0.2
     - dest: NO_OP
       p: 0.1
 - object: water_bottle_arthur
@@ -729,36 +715,30 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Arthur's water bottle stays on the desk while he cooks.
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.8
-    - dest: counter_k1
-      p: 0.15
-    - dest: NO_OP
-      p: 0.05
-  - cites: Arthur's bottle remains on the desk during breakfast.
+  - cites: Arthur's water bottle stays on the desk during breakfast
     activity: breakfast
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.7
+      p: 0.9
     - dest: counter_k1
-      p: 0.25
-    - dest: NO_OP
-      p: 0.05
-  - cites: Arthur's water bottle is on the desk while he does laundry.
-    activity: laundry
+      p: 0.1
+  - cites: Arthur's water bottle remains on the desk during lunch
+    activity: lunch
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.8
+      p: 0.9
     - dest: counter_k1
-      p: 0.15
-    - dest: NO_OP
-      p: 0.05
+      p: 0.1
+  - cites: Arthur's water bottle is on the desk after dinner
+    activity: dinner
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: counter_k1
+      p: 0.1
 - object: water_bottle_martha
   cites: Water bottle moved between kitchen and living
   home: counter_k1
@@ -784,8 +764,28 @@ object_rules:
       p: 0.4
     - dest: counter_k1
       p: 0.2
-  - cites: Martha's water bottle stays on the counter while she cooks.
-    activity: batch_cooking
+  - cites: Martha's water bottle is on the counter after breakfast
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.8
+    - dest: couch_l1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: Martha's water bottle ends up on the counter after lunch
+    activity: lunch
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.8
+    - dest: couch_l1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: Martha's water bottle is on the counter after dinner
+    activity: dinner
     phase: after
     dist:
     - dest: counter_k1
@@ -842,16 +842,6 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Martha's laptop stays on the dining table while she cooks.
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.8
-    - dest: counter_k1
-      p: 0.1
-    - dest: NO_OP
-      p: 0.1
 - object: watering_can_shared
   cites: Watering can in hallway closet
   home: entry_table_e1
@@ -896,46 +886,16 @@ object_rules:
       p: 0.95
     - dest: NO_OP
       p: 0.05
-  - cites: Martha's jacket hangs on the hook while she cooks.
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.8
-    - dest: person:resident_2
-      p: 0.1
-    - dest: NO_OP
-      p: 0.1
-  - cites: Martha's jacket is on the hook while getting ready.
-    activity: get_ready
+  - cites: Martha takes her jacket for errands
+    activity: errands
     phase: after
     dist:
     - dest: entry_hook_e1
       p: 0.6
-    - dest: person:resident_2
+    - dest: couch_l1
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: Martha's jacket hangs on the hook while doing laundry.
-    activity: laundry
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.7
-    - dest: person:resident_2
-      p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Martha's jacket is on the hook while prepping meals.
-    activity: meal_prep
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.85
-    - dest: person:resident_2
-      p: 0.1
-    - dest: NO_OP
-      p: 0.05
 - object: blanket_shared
   cites: Blanket kept on sofa
   home: couch_l1
@@ -5853,3 +5813,28 @@ arc_events:
       at: bed_b2
       jitter: routine
       skip_p: 0.0
+object_owners:
+  mug_arthur: resident_1
+  mug_martha: resident_2
+  mug_shared_1: shared
+  phone_arthur: resident_1
+  phone_martha: resident_2
+  keys_arthur: resident_1
+  keys_martha: resident_2
+  wallet_arthur: resident_1
+  wallet_martha: resident_2
+  glasses_arthur: resident_1
+  glasses_martha: resident_2
+  book_arthur_1: resident_1
+  book_martha_1: resident_2
+  notebook_arthur: resident_1
+  notebook_martha: resident_2
+  water_bottle_arthur: resident_1
+  water_bottle_martha: resident_2
+  remote_shared: shared
+  laptop_martha: resident_2
+  watering_can_shared: shared
+  jacket_martha: resident_2
+  blanket_shared: shared
+  pen_arthur: resident_1
+  vacuum_cleaner_shared: shared

@@ -205,135 +205,442 @@ object_motions:
   wake_up:
     at: bed_b1
     jitter: routine
-    during:
-      laptop_arthur: bed_b1
-      phone_arthur: bed_b1
-    after:
-      laptop_arthur:
-        dist: &id001
-          desk_b1: 0.6666666666666667
-          bed_b1: 0.33333333333333337
-        noop_p: 0.10000000000000002
-      phone_arthur:
-        dist: &id002
-          person:resident_1: 0.5555555555555556
-          nightstand_b1: 0.4444444444444445
-        noop_p: 0.1
+    during: {}
+    after: {}
   wake_up__bed_b2:
     at: bed_b2
     jitter: routine
-    during:
-      laptop_arthur: bed_b2
-      phone_arthur: bed_b2
-    after:
-      laptop_arthur:
-        dist: *id001
-        noop_p: 0.10000000000000002
-      phone_arthur:
-        dist: *id002
-        noop_p: 0.1
+    during: {}
+    after: {}
   play_with_kids:
     at: kitchen_table_k1
     jitter: flexible
     during:
-      water_bottle_arthur: kitchen_table_k1
-      tablet_elena: kitchen_table_k1
-      pen_elena: kitchen_table_k1
       toy_leo: kitchen_table_k1
       blanket_leo: kitchen_table_k1
       water_bottle_leo: kitchen_table_k1
       bowl_shared: kitchen_table_k1
-      mug_arthur: kitchen_table_k1
-      mug_elena: kitchen_table_k1
       remote_shared: kitchen_table_k1
     after:
       water_bottle_arthur:
-        dist: &id008
+        dist: &id005
           coffee_table_l1: 0.625
           couch_l1: 0.37499999999999994
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       tablet_elena:
-        dist: &id009
+        dist: &id006
           couch_l1: 0.5714285714285715
           coffee_table_l1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       pen_elena:
-        dist: &id010
+        dist: &id007
           coffee_table_l1: 0.5714285714285715
           couch_l1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       toy_leo:
-        dist: &id011
+        dist: &id008
           counter_k1: 0.37499999999999994
           kitchen_table_k1: 0.37499999999999994
           couch_l1: 0.25
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       blanket_leo:
-        dist: &id012
+        dist: &id009
           bed_b2: 0.5
           couch_l1: 0.5
         noop_p: 0.4
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       water_bottle_leo:
-        dist: &id013
+        dist: &id010
           coffee_table_l1: 0.5714285714285715
           counter_k1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       bowl_shared:
-        dist: &id014
+        dist: &id011
           counter_k1: 0.5714285714285715
           sink_k1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       mug_arthur:
-        dist: &id015
+        dist: &id012
           coffee_table_l1: 0.5714285714285715
           counter_k1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       mug_elena:
-        dist: &id016
+        dist: &id013
           coffee_table_l1: 0.5714285714285715
           kitchen_table_k1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       remote_shared:
-        dist: &id017
+        dist: &id014
           couch_l1: 0.5714285714285715
           coffee_table_l1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
     reset_all:
       p: 0.4
   get_ready:
     at: bathroom_shelf_ba1
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      makeup_kit_elena: bathroom_shelf_ba1
+    after:
+      makeup_kit_elena:
+        dist:
+          bathroom_shelf_ba1: 0.888888888888889
+          counter_k1: 0.11111111111111112
+        noop_p: 0.1
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   snack:
     at: kitchen_table_k1
     jitter: routine
     during:
-      toy_leo: kitchen_table_k1
       water_bottle_leo: kitchen_table_k1
-      plate_shared: kitchen_table_k1
       bowl_shared: kitchen_table_k1
     after:
-      toy_leo:
-        dist:
-          kitchen_table_k1: 0.625
-          couch_l1: 0.37499999999999994
-        noop_p: 0.2
       water_bottle_leo:
         dist:
-          kitchen_table_k1: 0.625
-          coffee_table_l1: 0.37499999999999994
+          coffee_table_l1: 0.625
+          kitchen_table_k1: 0.37499999999999994
         noop_p: 0.2
-      plate_shared:
-        dist:
-          sink_k1: 0.5555555555555556
-          kitchen_table_k1: 0.4444444444444445
-        noop_p: 0.1
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       bowl_shared:
         dist:
           sink_k1: 0.5555555555555556
-          kitchen_table_k1: 0.4444444444444445
+          counter_k1: 0.4444444444444445
         noop_p: 0.1
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   coffee:
     at: kitchen_table_k1
     jitter: routine
@@ -353,166 +660,915 @@ object_motions:
           sink_k1: 0.5
           dish_rack_k1: 0.5
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       bowl_shared:
         dist:
           sink_k1: 0.5
           dish_rack_k1: 0.3
           kitchen_table_k1: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
     reset_all:
       p: 0.8
   work_home:
     at: desk_b1
     jitter: routine
-    during:
-      phone_arthur: desk_b1
-      glasses_arthur: desk_b1
-      water_bottle_arthur: desk_b1
-      phone_elena: desk_b1
-      mug_arthur: desk_b1
+    during: {}
     after:
-      phone_arthur:
-        dist: &id003
+      laptop_arthur:
+        dist: &id001
           desk_b1: 0.7777777777777778
-          person:resident_1: 0.22222222222222227
+          desk_b2: 0.22222222222222227
         noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       glasses_arthur:
-        dist: &id004
-          desk_b1: 0.888888888888889
-          person:resident_1: 0.11111111111111112
-        noop_p: 0.1
-      water_bottle_arthur:
-        dist: &id005
-          desk_b1: 0.6666666666666667
-          counter_k1: 0.33333333333333337
-        noop_p: 0.10000000000000002
-      phone_elena:
-        dist: &id006
-          couch_l1: 0.44444444444444453
-          kitchen_table_k1: 0.33333333333333337
-          person:resident_2: 0.22222222222222227
-        noop_p: 0.10000000000000002
-      mug_arthur:
-        dist: &id007
+        dist: &id002
           desk_b1: 0.7777777777777778
-          counter_k1: 0.22222222222222227
+          desk_b2: 0.22222222222222227
         noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      water_bottle_arthur:
+        dist: &id003
+          desk_b1: 0.5
+          desk_b2: 0.3
+          counter_k1: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      mug_arthur:
+        dist: &id004
+          desk_b1: 0.5
+          desk_b2: 0.3
+          counter_k1: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   work_home__kitchen_table_k1:
     at: kitchen_table_k1
     jitter: routine
-    during:
-      phone_arthur: kitchen_table_k1
-      glasses_arthur: kitchen_table_k1
-      water_bottle_arthur: kitchen_table_k1
-      phone_elena: kitchen_table_k1
-      mug_arthur: kitchen_table_k1
+    during: {}
     after:
-      phone_arthur:
-        dist: *id003
+      laptop_arthur:
+        dist: *id001
         noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       glasses_arthur:
-        dist: *id004
-        noop_p: 0.1
+        dist: *id002
+        noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       water_bottle_arthur:
-        dist: *id005
-        noop_p: 0.10000000000000002
-      phone_elena:
-        dist: *id006
-        noop_p: 0.10000000000000002
+        dist: *id003
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       mug_arthur:
-        dist: *id007
-        noop_p: 0.10000000000000002
+        dist: *id004
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   play_with_kids__coffee_table_l1:
     at: coffee_table_l1
     jitter: flexible
     during:
-      water_bottle_arthur: coffee_table_l1
-      tablet_elena: coffee_table_l1
-      pen_elena: coffee_table_l1
       toy_leo: coffee_table_l1
       blanket_leo: coffee_table_l1
       water_bottle_leo: coffee_table_l1
       bowl_shared: coffee_table_l1
-      mug_arthur: coffee_table_l1
-      mug_elena: coffee_table_l1
       remote_shared: coffee_table_l1
     after:
       water_bottle_arthur:
+        dist: *id005
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      tablet_elena:
+        dist: *id006
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      pen_elena:
+        dist: *id007
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      toy_leo:
         dist: *id008
         noop_p: 0.2
-      tablet_elena:
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      blanket_leo:
         dist: *id009
-        noop_p: 0.3
-      pen_elena:
+        noop_p: 0.4
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      water_bottle_leo:
         dist: *id010
         noop_p: 0.3
-      toy_leo:
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      bowl_shared:
         dist: *id011
-        noop_p: 0.2
-      blanket_leo:
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      mug_arthur:
         dist: *id012
-        noop_p: 0.4
-      water_bottle_leo:
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      mug_elena:
         dist: *id013
         noop_p: 0.3
-      bowl_shared:
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      remote_shared:
         dist: *id014
         noop_p: 0.3
-      mug_arthur:
-        dist: *id015
-        noop_p: 0.3
-      mug_elena:
-        dist: *id016
-        noop_p: 0.3
-      remote_shared:
-        dist: *id017
-        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
     reset_all:
       p: 0.4
   play_with_kids__couch_l1:
     at: couch_l1
     jitter: flexible
     during:
-      water_bottle_arthur: couch_l1
-      tablet_elena: couch_l1
-      pen_elena: couch_l1
       toy_leo: couch_l1
       blanket_leo: couch_l1
       water_bottle_leo: couch_l1
       bowl_shared: couch_l1
-      mug_arthur: couch_l1
-      mug_elena: couch_l1
       remote_shared: couch_l1
     after:
       water_bottle_arthur:
+        dist: *id005
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      tablet_elena:
+        dist: *id006
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      pen_elena:
+        dist: *id007
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      toy_leo:
         dist: *id008
         noop_p: 0.2
-      tablet_elena:
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      blanket_leo:
         dist: *id009
-        noop_p: 0.3
-      pen_elena:
+        noop_p: 0.4
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      water_bottle_leo:
         dist: *id010
         noop_p: 0.3
-      toy_leo:
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      bowl_shared:
         dist: *id011
-        noop_p: 0.2
-      blanket_leo:
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      mug_arthur:
         dist: *id012
-        noop_p: 0.4
-      water_bottle_leo:
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      mug_elena:
         dist: *id013
         noop_p: 0.3
-      bowl_shared:
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      remote_shared:
         dist: *id014
         noop_p: 0.3
-      mug_arthur:
-        dist: *id015
-        noop_p: 0.3
-      mug_elena:
-        dist: *id016
-        noop_p: 0.3
-      remote_shared:
-        dist: *id017
-        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
     reset_all:
       p: 0.4
   meal_prep:
@@ -528,44 +1584,290 @@ object_motions:
       plate_shared: kitchen_table_k1
       bowl_shared: kitchen_table_k1
     after:
+      notebook_elena:
+        dist:
+          kitchen_table_k1: 0.6666666666666667
+          couch_l1: 0.33333333333333337
+        noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       water_bottle_leo:
         dist:
           kitchen_table_k1: 0.6666666666666667
-          counter_k1: 0.33333333333333337
+          coffee_table_l1: 0.33333333333333337
         noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       plate_shared:
         dist:
-          sink_k1: 0.6666666666666667
-          kitchen_table_k1: 0.33333333333333337
-        noop_p: 0.10000000000000002
+          sink_k1: 0.5555555555555556
+          counter_k1: 0.4444444444444445
+        noop_p: 0.1
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       bowl_shared:
         dist:
-          sink_k1: 0.6666666666666667
-          kitchen_table_k1: 0.33333333333333337
+          sink_k1: 0.7777777777777778
+          counter_k1: 0.22222222222222227
         noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   video_call:
     at: desk_b1
     jitter: routine
-    during:
-      phone_arthur: desk_b1
-      water_bottle_arthur: desk_b1
-      mug_arthur: desk_b1
+    during: {}
     after:
-      phone_arthur:
-        dist:
-          person:resident_1: 0.6666666666666667
-          desk_b1: 0.33333333333333337
-        noop_p: 0.10000000000000002
-      water_bottle_arthur:
-        dist:
-          desk_b1: 0.7777777777777778
-          counter_k1: 0.22222222222222227
-        noop_p: 0.10000000000000002
-      mug_arthur:
+      laptop_arthur:
         dist:
           desk_b1: 0.888888888888889
-          counter_k1: 0.11111111111111112
+          desk_b2: 0.11111111111111112
         noop_p: 0.1
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      phone_arthur:
+        dist:
+          desk_b1: 0.625
+          desk_b2: 0.37499999999999994
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      glasses_arthur:
+        dist:
+          desk_b1: 0.6666666666666667
+          desk_b2: 0.33333333333333337
+        noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      water_bottle_arthur:
+        dist:
+          desk_b1: 0.5714285714285715
+          coffee_table_l1: 0.4285714285714286
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      mug_arthur:
+        dist:
+          desk_b1: 0.6666666666666667
+          desk_b2: 0.33333333333333337
+        noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   nap:
     at: bed_b2
     jitter: routine
@@ -577,6 +1879,32 @@ object_motions:
           bed_b2: 0.5714285714285715
           couch_l1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   laundry:
     at: counter_k1
     jitter: flexible
@@ -584,42 +1912,194 @@ object_motions:
       laundry_basket_shared: counter_k1
     after:
       laundry_basket_shared:
-        dist: &id019
+        dist: &id018
           entry_floor_e1: 0.625
           bedroom_floor_b1: 0.37499999999999994
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
     reset_all:
       p: 0.5
   work_home__desk_b2:
     at: desk_b2
     jitter: routine
-    during:
-      phone_arthur: desk_b2
-      glasses_arthur: desk_b2
-      water_bottle_arthur: desk_b2
-      phone_elena: desk_b2
-      mug_arthur: desk_b2
+    during: {}
     after:
-      phone_arthur:
-        dist: *id003
+      laptop_arthur:
+        dist: *id001
         noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       glasses_arthur:
-        dist: *id004
-        noop_p: 0.1
+        dist: *id002
+        noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       water_bottle_arthur:
-        dist: *id005
-        noop_p: 0.10000000000000002
-      phone_elena:
-        dist: *id006
-        noop_p: 0.10000000000000002
+        dist: *id003
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       mug_arthur:
-        dist: *id007
-        noop_p: 0.10000000000000002
+        dist: *id004
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   bath:
     at: bathroom_shelf_ba1
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      blanket_leo: bathroom_shelf_ba1
+    after:
+      blanket_leo:
+        dist:
+          couch_l1: 0.5714285714285715
+          coffee_table_l1: 0.4285714285714286
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   dinner:
     at: kitchen_table_k1
     jitter: routine
@@ -633,16 +2113,94 @@ object_motions:
           counter_k1: 0.5714285714285715
           sink_k1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       water_bottle_leo:
         dist:
           kitchen_table_k1: 0.5714285714285715
           counter_k1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       plate_shared:
         dist:
           sink_k1: 0.5
           dish_rack_k1: 0.3
           kitchen_table_k1: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
     reset_all:
       p: 0.8
   bedtime_routine:
@@ -656,16 +2214,38 @@ object_motions:
           bathroom_shelf_ba1: 0.625
           nightstand_b1: 0.37499999999999994
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
     reset_all:
       p: 0.9
   watch_tv:
     at: couch_l1
     jitter: loose
     during:
-      phone_arthur: couch_l1
-      glasses_arthur: couch_l1
-      phone_elena: couch_l1
-      notebook_elena: couch_l1
       remote_shared: couch_l1
     after:
       phone_arthur:
@@ -673,26 +2253,156 @@ object_motions:
           armchair_l1: 0.5714285714285715
           coffee_table_l1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       glasses_arthur:
         dist:
           armchair_l1: 0.625
           coffee_table_l1: 0.37499999999999994
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       phone_elena:
         dist:
           couch_l1: 0.625
           armchair_l1: 0.37499999999999994
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       notebook_elena:
         dist:
           couch_l1: 0.625
           coffee_table_l1: 0.37499999999999994
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       remote_shared:
         dist:
           couch_l1: 0.4
           coffee_table_l1: 0.3
           armchair_l1: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
     reset_all:
       p: 0.5
   tidy_up:
@@ -702,32 +2412,78 @@ object_motions:
       laundry_basket_shared: entry_table_e1
     after:
       laundry_basket_shared:
-        dist: &id018
+        dist: &id015
           entry_floor_e1: 0.5714285714285715
           bedroom_floor_b1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
     reset_all:
       p: 0.6
   wash_dishes:
     at: sink_k1
     jitter: routine
-    during:
-      plate_shared: sink_k1
-      bowl_shared: sink_k1
-    after:
-      plate_shared:
-        dist:
-          cupboard_k1: 0.8
-          dish_rack_k1: 0.2
-      bowl_shared:
-        dist:
-          cupboard_k1: 0.8
-          dish_rack_k1: 0.2
+    during: {}
+    after: {}
   walk:
     at: ELSEWHERE
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      laptop_arthur: person:resident_1
+      phone_arthur: person:resident_1
+      keys_arthur: person:resident_1
+      glasses_arthur: person:resident_1
+      water_bottle_arthur: person:resident_1
+      mug_arthur: person:resident_1
+    after:
+      laptop_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      phone_arthur:
+        dest: nightstand_b1
+        only_from:
+        - person:resident_1
+      keys_arthur:
+        dest: entry_table_e1
+        only_from:
+        - person:resident_1
+      glasses_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      water_bottle_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
+      mug_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
   put_away_dishes:
     at: kitchen_table_k1
     jitter: routine
@@ -736,43 +2492,105 @@ object_motions:
   phone_time:
     at: couch_l1
     jitter: routine
-    during:
-      tablet_elena: couch_l1
-      phone_elena: couch_l1
-      toy_leo: couch_l1
-      water_bottle_leo: couch_l1
-      remote_shared: couch_l1
-    after:
-      tablet_elena:
-        dist:
-          couch_l1: 0.7777777777777778
-          kitchen_table_k1: 0.22222222222222227
-        noop_p: 0.10000000000000002
-      phone_elena:
-        dist:
-          couch_l1: 0.888888888888889
-          kitchen_table_k1: 0.11111111111111112
-        noop_p: 0.1
-      toy_leo:
-        dist:
-          couch_l1: 0.6666666666666667
-          coffee_table_l1: 0.33333333333333337
-        noop_p: 0.10000000000000002
-      water_bottle_leo:
-        dist:
-          couch_l1: 0.625
-          coffee_table_l1: 0.37499999999999994
-        noop_p: 0.2
-      remote_shared:
-        dist:
-          couch_l1: 0.625
-          coffee_table_l1: 0.37499999999999994
-        noop_p: 0.2
+    during: {}
+    after: {}
   groceries:
     at: ELSEWHERE
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      tablet_elena: person:resident_2
+      phone_elena: person:resident_2
+      keys_elena: person:resident_2
+      notebook_elena: person:resident_2
+      pen_elena: person:resident_2
+      mug_elena: person:resident_2
+    after:
+      keys_arthur:
+        dist: &id016
+          entry_table_e1: 0.7499999999999999
+          entry_floor_e1: 0.25
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
+      keys_elena:
+        dist: &id017
+          kitchen_table_k1: 0.5714285714285715
+          entry_table_e1: 0.4285714285714286
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
+      tablet_elena:
+        dest: couch_l1
+        only_from:
+        - person:resident_2
+      phone_elena:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_2
+      notebook_elena:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_2
+      pen_elena:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_2
+      mug_elena:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_2
   take_out_bins:
     at: entry_floor_e1
     jitter: routine
@@ -786,9 +2604,35 @@ object_motions:
     after:
       blanket_leo:
         dist:
-          bedroom_floor_b2: 0.6666666666666667
-          bed_b2: 0.33333333333333337
-        noop_p: 0.10000000000000002
+          bedroom_floor_b2: 0.625
+          couch_l1: 0.37499999999999994
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   shower:
     at: bathroom_shelf_ba1
     jitter: routine
@@ -806,91 +2650,393 @@ object_motions:
       laundry_basket_shared: entry_floor_e1
     after:
       laundry_basket_shared:
-        dist: *id018
+        dist: *id015
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
     reset_all:
       p: 0.6
   hobby:
     at: kitchen_table_k1
     jitter: routine
-    during:
-      tablet_elena: kitchen_table_k1
-      notebook_elena: kitchen_table_k1
-      pen_elena: kitchen_table_k1
-      mug_elena: kitchen_table_k1
+    during: {}
     after:
       tablet_elena:
         dist:
-          kitchen_table_k1: 0.6666666666666667
-          couch_l1: 0.33333333333333337
+          couch_l1: 0.625
+          kitchen_table_k1: 0.37499999999999994
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      phone_elena:
+        dist:
+          couch_l1: 0.6666666666666667
+          kitchen_table_k1: 0.33333333333333337
         noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       notebook_elena:
         dist:
           kitchen_table_k1: 0.7777777777777778
           couch_l1: 0.22222222222222227
         noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       pen_elena:
         dist:
-          kitchen_table_k1: 0.6666666666666667
-          couch_l1: 0.33333333333333337
-        noop_p: 0.10000000000000002
+          kitchen_table_k1: 0.625
+          couch_l1: 0.37499999999999994
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       mug_elena:
         dist:
-          kitchen_table_k1: 0.6666666666666667
-          couch_l1: 0.33333333333333337
-        noop_p: 0.10000000000000002
+          kitchen_table_k1: 0.625
+          couch_l1: 0.37499999999999994
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   relax:
     at: couch_l1
     jitter: routine
     during:
-      tablet_elena: couch_l1
-      phone_elena: couch_l1
-      notebook_elena: couch_l1
-      toy_leo: couch_l1
-      blanket_leo: couch_l1
-      mug_elena: couch_l1
       remote_shared: couch_l1
     after:
-      tablet_elena:
+      pen_elena:
         dist:
-          couch_l1: 0.6666666666666667
-          kitchen_table_k1: 0.33333333333333337
-        noop_p: 0.10000000000000002
-      phone_elena:
-        dist:
-          couch_l1: 0.7777777777777778
-          kitchen_table_k1: 0.22222222222222227
-        noop_p: 0.10000000000000002
-      notebook_elena:
-        dist:
-          couch_l1: 0.5555555555555556
-          kitchen_table_k1: 0.4444444444444445
-        noop_p: 0.1
-      toy_leo:
-        dist:
-          couch_l1: 0.625
-          coffee_table_l1: 0.37499999999999994
+          coffee_table_l1: 0.5
+          couch_l1: 0.5
         noop_p: 0.2
-      blanket_leo:
-        dist:
-          couch_l1: 0.625
-          bedroom_floor_b2: 0.37499999999999994
-        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       mug_elena:
         dist:
-          couch_l1: 0.5555555555555556
-          kitchen_table_k1: 0.4444444444444445
-        noop_p: 0.1
+          coffee_table_l1: 0.6666666666666667
+          couch_l1: 0.33333333333333337
+        noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
       remote_shared:
         dist:
-          couch_l1: 0.6666666666666667
-          coffee_table_l1: 0.33333333333333337
-        noop_p: 0.10000000000000002
+          coffee_table_l1: 0.5714285714285715
+          couch_l1: 0.4285714285714286
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   errands:
     at: ELSEWHERE
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      laptop_arthur: person:resident_1
+      phone_arthur: person:resident_1
+      keys_arthur: person:resident_1
+      glasses_arthur: person:resident_1
+      water_bottle_arthur: person:resident_1
+      mug_arthur: person:resident_1
+    after:
+      keys_arthur:
+        dist:
+          entry_table_e1: 0.5714285714285715
+          entry_floor_e1: 0.4285714285714286
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_1
+      keys_elena:
+        dist:
+          entry_table_e1: 0.37499999999999994
+          entry_floor_e1: 0.37499999999999994
+          couch_l1: 0.25
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_1
+      laptop_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      phone_arthur:
+        dest: nightstand_b1
+        only_from:
+        - person:resident_1
+      glasses_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      water_bottle_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
+      mug_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
   walk__resident_3:
     at: ELSEWHERE
     jitter: routine
@@ -899,41 +3045,244 @@ object_motions:
   batch_cooking:
     at: counter_k1
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      toy_leo: counter_k1
+      plate_shared: counter_k1
+    after:
+      toy_leo:
+        dist:
+          counter_k1: 0.4
+          kitchen_table_k1: 0.3
+          couch_l1: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      plate_shared:
+        dist:
+          sink_k1: 0.6666666666666667
+          counter_k1: 0.33333333333333337
+        noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   deep_clean:
     at: coffee_table_l1
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      toy_leo: coffee_table_l1
+      remote_shared: coffee_table_l1
+      laundry_basket_shared: coffee_table_l1
+    after:
+      toy_leo:
+        dist:
+          coffee_table_l1: 0.28571428571428575
+          couch_l1: 0.7142857142857143
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      remote_shared:
+        dist:
+          couch_l1: 0.625
+          coffee_table_l1: 0.37499999999999994
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+      laundry_basket_shared:
+        dist:
+          entry_floor_e1: 0.7777777777777778
+          bedroom_floor_b2: 0.22222222222222227
+        noop_p: 0.10000000000000002
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   socialise_home:
     at: couch_l1
     jitter: routine
-    during:
-      phone_elena: couch_l1
-      pen_elena: couch_l1
-      remote_shared: couch_l1
+    during: {}
     after:
       phone_elena:
         dist:
-          person:resident_2: 0.625
-          couch_l1: 0.37499999999999994
-        noop_p: 0.2
-      pen_elena:
-        dist:
-          couch_l1: 0.5
-          kitchen_table_k1: 0.5
-        noop_p: 0.2
-      remote_shared:
-        dist:
-          couch_l1: 0.5
-          coffee_table_l1: 0.5
-        noop_p: 0.2
+          kitchen_table_k1: 0.5555555555555556
+          couch_l1: 0.4444444444444445
+        noop_p: 0.1
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
   appointment:
     at: ELSEWHERE
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      laptop_arthur: person:resident_1
+      phone_arthur: person:resident_1
+      keys_arthur: person:resident_1
+      glasses_arthur: person:resident_1
+      water_bottle_arthur: person:resident_1
+      mug_arthur: person:resident_1
+    after:
+      laptop_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      phone_arthur:
+        dest: nightstand_b1
+        only_from:
+        - person:resident_1
+      keys_arthur:
+        dest: entry_table_e1
+        only_from:
+        - person:resident_1
+      glasses_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      water_bottle_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
+      mug_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
   take_medication:
     at: kitchen_table_k1
     jitter: routine
@@ -942,23 +3291,76 @@ object_motions:
   gym:
     at: ELSEWHERE
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      laptop_arthur: person:resident_1
+      phone_arthur: person:resident_1
+      keys_arthur: person:resident_1
+      glasses_arthur: person:resident_1
+      water_bottle_arthur: person:resident_1
+      mug_arthur: person:resident_1
+    after:
+      keys_arthur:
+        dist:
+          entry_floor_e1: 0.625
+          entry_table_e1: 0.37499999999999994
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_1
+      laptop_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      phone_arthur:
+        dest: nightstand_b1
+        only_from:
+        - person:resident_1
+      glasses_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      water_bottle_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
+      mug_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
   work_away:
     at: ELSEWHERE
     jitter: external
     during:
-      laptop_arthur: person:resident_2
-      phone_arthur: person:resident_2
-      keys_arthur: person:resident_2
-      glasses_arthur: person:resident_2
-      water_bottle_arthur: person:resident_2
       tablet_elena: person:resident_2
       phone_elena: person:resident_2
       keys_elena: person:resident_2
       notebook_elena: person:resident_2
       pen_elena: person:resident_2
-      mug_arthur: person:resident_2
       mug_elena: person:resident_2
     after:
       laptop_arthur:
@@ -966,69 +3368,493 @@ object_motions:
           desk_b1: 0.625
           bed_b1: 0.37499999999999994
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
       phone_arthur:
         dist:
           kitchen_table_k1: 0.37499999999999994
           desk_b1: 0.37499999999999994
           counter_k1: 0.25
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
       keys_arthur:
         dist:
           entry_table_e1: 0.5714285714285715
           kitchen_table_k1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
       glasses_arthur:
         dist:
           desk_b1: 0.5714285714285715
           kitchen_table_k1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
       water_bottle_arthur:
         dist:
           desk_b1: 0.4
           kitchen_table_k1: 0.3
           counter_k1: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
       tablet_elena:
         dist:
           couch_l1: 0.625
           kitchen_table_k1: 0.37499999999999994
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
       phone_elena:
         dist:
           couch_l1: 0.5714285714285715
           kitchen_table_k1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
       keys_elena:
         dist:
           entry_table_e1: 0.5714285714285715
           kitchen_table_k1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
       notebook_elena:
         dist:
           kitchen_table_k1: 0.5714285714285715
           couch_l1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
       pen_elena:
         dist:
           kitchen_table_k1: 0.5714285714285715
           couch_l1: 0.4285714285714286
         noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
       mug_arthur:
         dist:
           counter_k1: 0.4
           desk_b1: 0.3
           kitchen_table_k1: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
       mug_elena:
         dist:
           kitchen_table_k1: 0.4
           counter_k1: 0.3
           couch_l1: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_2
     reset_all:
       p: 0.6
   groceries__resident_1:
     at: ELSEWHERE
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      laptop_arthur: person:resident_1
+      phone_arthur: person:resident_1
+      keys_arthur: person:resident_1
+      glasses_arthur: person:resident_1
+      water_bottle_arthur: person:resident_1
+      mug_arthur: person:resident_1
+    after:
+      keys_arthur:
+        dist: *id016
+        noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_1
+      keys_elena:
+        dist: *id017
+        noop_p: 0.3
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
+        - ELSEWHERE
+        - person:resident_1
+      laptop_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      phone_arthur:
+        dest: nightstand_b1
+        only_from:
+        - person:resident_1
+      glasses_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      water_bottle_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
+      mug_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
   laundry__entry_floor_e1:
     at: entry_floor_e1
     jitter: flexible
@@ -1036,49 +3862,111 @@ object_motions:
       laundry_basket_shared: entry_floor_e1
     after:
       laundry_basket_shared:
-        dist: *id019
+        dist: *id018
         noop_p: 0.2
+        only_from:
+        - bed_b1
+        - nightstand_b1
+        - desk_b1
+        - bedroom_floor_b1
+        - bed_b2
+        - nightstand_b2
+        - desk_b2
+        - bedroom_floor_b2
+        - couch_l1
+        - coffee_table_l1
+        - tv_stand_l1
+        - bookshelf_l1
+        - armchair_l1
+        - counter_k1
+        - sink_k1
+        - cupboard_k1
+        - dish_rack_k1
+        - kitchen_table_k1
+        - chair_k1
+        - chair_k2
+        - bathroom_shelf_ba1
+        - towel_rack_ba1
+        - entry_table_e1
+        - entry_hook_e1
+        - entry_floor_e1
     reset_all:
       p: 0.5
   walk__resident_2:
     at: ELSEWHERE
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      tablet_elena: person:resident_2
+      phone_elena: person:resident_2
+      keys_elena: person:resident_2
+      notebook_elena: person:resident_2
+      pen_elena: person:resident_2
+      mug_elena: person:resident_2
+    after:
+      tablet_elena:
+        dest: couch_l1
+        only_from:
+        - person:resident_2
+      phone_elena:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_2
+      keys_elena:
+        dest: entry_table_e1
+        only_from:
+        - person:resident_2
+      notebook_elena:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_2
+      pen_elena:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_2
+      mug_elena:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_2
   take_out_bins__resident_1:
     at: ELSEWHERE
     jitter: routine
-    during: {}
-    after: {}
+    during:
+      laptop_arthur: person:resident_1
+      phone_arthur: person:resident_1
+      keys_arthur: person:resident_1
+      glasses_arthur: person:resident_1
+      water_bottle_arthur: person:resident_1
+      mug_arthur: person:resident_1
+    after:
+      laptop_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      phone_arthur:
+        dest: nightstand_b1
+        only_from:
+        - person:resident_1
+      keys_arthur:
+        dest: entry_table_e1
+        only_from:
+        - person:resident_1
+      glasses_arthur:
+        dest: desk_b1
+        only_from:
+        - person:resident_1
+      water_bottle_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
+      mug_arthur:
+        dest: counter_k1
+        only_from:
+        - person:resident_1
   study:
     at: desk_b1
     jitter: routine
-    during:
-      phone_arthur: desk_b1
-      glasses_arthur: desk_b1
-      water_bottle_arthur: desk_b1
-      mug_arthur: desk_b1
-    after:
-      phone_arthur:
-        dist:
-          desk_b1: 0.625
-          person:resident_1: 0.37499999999999994
-        noop_p: 0.2
-      glasses_arthur:
-        dist:
-          desk_b1: 0.7777777777777778
-          person:resident_1: 0.22222222222222227
-        noop_p: 0.10000000000000002
-      water_bottle_arthur:
-        dist:
-          desk_b1: 0.5555555555555556
-          counter_k1: 0.4444444444444445
-        noop_p: 0.1
-      mug_arthur:
-        dist:
-          desk_b1: 0.6666666666666667
-          counter_k1: 0.33333333333333337
-        noop_p: 0.10000000000000002
+    during: {}
+    after: {}
   day_sleep:
     at: couch_l1
     jitter: routine

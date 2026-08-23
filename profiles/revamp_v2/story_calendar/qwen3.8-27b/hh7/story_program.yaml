@@ -86,26 +86,8 @@ object_rules:
       p: 0.7
     - dest: desk_b1
       p: 0.3
-  - cites: Elara drags the laptop to the dining table to work on digital illustrations
+  - cites: Her digital workspace anchors to the table during work bursts.
     activity: work_home
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.6
-    - dest: couch_l1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elara uses the laptop for video calls at the dining table
-    activity: video_call
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.8
-    - dest: couch_l1
-      p: 0.2
-  - cites: Elara sketches on the laptop while studying at the dining table
-    activity: study
     phase: after
     dist:
     - dest: kitchen_table_k1
@@ -114,6 +96,16 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.1
+  - cites: She often abandons the laptop on the couch when shifting to video calls.
+    activity: video_call
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.5
+    - dest: couch_l1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.2
 - object: phone_elara
   cites: Travels with Elara; often forgotten
   home: couch_l1
@@ -147,50 +139,24 @@ object_rules:
       p: 0.8
     - dest: bed_b1
       p: 0.2
-  - cites: Elara checks her phone for inspiration while working at the dining table
-    activity: work_home
+  - cites: It travels with her for appointments.
+    activity: appointment
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.4
+    - dest: NO_OP
+      p: 0.5
     - dest: couch_l1
       p: 0.3
-    - dest: person:resident_1
+    - dest: entry_table_e1
       p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elara uses her phone during video calls at the dining table
+  - cites: It is used for calls and left on the table.
     activity: video_call
     phase: after
     dist:
     - dest: kitchen_table_k1
       p: 0.5
-    - dest: couch_l1
-      p: 0.3
-    - dest: person:resident_1
-      p: 0.2
-  - cites: Elara scrolls through social media while relaxing on the couch
-    activity: phone_time
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.6
-    - dest: person:resident_1
-      p: 0.2
-    - dest: kitchen_table_k1
-      p: 0.1
     - dest: NO_OP
-      p: 0.1
-  - cites: Elara listens to music on her phone while lounging on the couch
-    activity: music
-    phase: after
-    dist:
-    - dest: couch_l1
       p: 0.5
-    - dest: person:resident_1
-      p: 0.3
-    - dest: kitchen_table_k1
-      p: 0.2
 - object: keys_elara
   cites: Kept in bowl; taken for errands
   home: entry_table_e1
@@ -244,7 +210,17 @@ object_rules:
       p: 0.3
     - dest: sink_k1
       p: 0.1
-  - cites: Elara forgets to wash her coffee mug after breakfast
+  - cites: She forgets to wash it, leaving it on the table.
+    activity: coffee
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.6
+    - dest: couch_l1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: It is left on the counter after breakfast.
     activity: breakfast
     phase: after
     dist:
@@ -252,37 +228,25 @@ object_rules:
       p: 0.5
     - dest: sink_k1
       p: 0.3
-    - dest: couch_l1
+    - dest: NO_OP
       p: 0.2
-  - cites: Elara drinks coffee at the counter and leaves the mug there
-    activity: coffee
+  - cites: It is washed and put away.
+    activity: wash_dishes
     phase: after
     dist:
-    - dest: counter_k1
-      p: 0.6
-    - dest: sink_k1
+    - dest: dish_rack_k1
+      p: 0.4
+    - dest: cupboard_k1
       p: 0.3
-    - dest: kitchen_table_k1
-      p: 0.1
-  - cites: Elara eats dinner on the couch and leaves the mug on the cushion
-    activity: dinner
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.6
-    - dest: kitchen_table_k1
-      p: 0.2
-    - dest: sink_k1
-      p: 0.2
-  - cites: Elara has a snack on the couch and leaves the mug nearby
-    activity: snack
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.5
-    - dest: kitchen_table_k1
+    - dest: NO_OP
       p: 0.3
-    - dest: sink_k1
+  - cites: It is stored in the cupboard.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.8
+    - dest: dish_rack_k1
       p: 0.2
 - object: bowl_1
   cites: Snacks and microwave meals
@@ -307,46 +271,38 @@ object_rules:
       p: 0.5
     - dest: cupboard_k1
       p: 0.5
-  - cites: Elara eats breakfast from a bowl and leaves it on the table
+  - cites: It is left on the table after eating.
     activity: breakfast
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.5
+      p: 0.7
     - dest: sink_k1
       p: 0.3
-    - dest: couch_l1
-      p: 0.2
-  - cites: Elara eats lunch at the dining table and leaves the bowl there
-    activity: lunch
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.6
-    - dest: sink_k1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elara eats dinner on the couch and leaves the bowl on the cushion
+  - cites: It ends up on the couch after dinner.
     activity: dinner
     phase: after
     dist:
     - dest: couch_l1
       p: 0.6
-    - dest: sink_k1
-      p: 0.2
     - dest: kitchen_table_k1
-      p: 0.2
-  - cites: Elara has a snack on the couch and leaves the bowl there
-    activity: snack
+      p: 0.4
+  - cites: It is washed in the sink.
+    activity: wash_dishes
     phase: after
     dist:
-    - dest: couch_l1
+    - dest: dish_rack_k1
       p: 0.5
-    - dest: kitchen_table_k1
-      p: 0.3
-    - dest: sink_k1
-      p: 0.2
+    - dest: NO_OP
+      p: 0.5
+  - cites: It is put away in the cupboard.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
 - object: plate_1
   cites: Occasional plated meals
   home: cupboard_k1
@@ -370,26 +326,22 @@ object_rules:
       p: 0.8
     - dest: dish_rack_k1
       p: 0.2
-  - cites: Elara eats lunch from a plate and leaves it on the dining table
-    activity: lunch
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.6
-    - dest: sink_k1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elara eats dinner on the couch and leaves the plate on the coffee table
+  - cites: It is left on the table after dinner.
     activity: dinner
     phase: after
     dist:
-    - dest: coffee_table_l1
+    - dest: couch_l1
       p: 0.5
     - dest: kitchen_table_k1
-      p: 0.3
-    - dest: sink_k1
-      p: 0.2
+      p: 0.5
+  - cites: It is washed and dried.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.6
+    - dest: NO_OP
+      p: 0.4
 - object: book_1
   cites: Art reference; kept on table
   home: kitchen_table_k1
@@ -411,26 +363,30 @@ object_rules:
       p: 0.6
     - dest: kitchen_table_k1
       p: 0.4
-  - cites: Elara uses her art reference book while working at the dining table
+  - cites: It stays on the table for reference during work.
     activity: work_home
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.7
+    - dest: NO_OP
+      p: 0.8
     - dest: couch_l1
       p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elara reads her art reference book on the armchair
+  - cites: It is left in the armchair after reading.
     activity: reading
     phase: after
     dist:
     - dest: armchair_l1
-      p: 0.5
+      p: 0.7
     - dest: couch_l1
       p: 0.3
-    - dest: kitchen_table_k1
-      p: 0.2
+  - cites: It is used for sketches during the hobby.
+    activity: hobby
+    phase: after
+    dist:
+    - dest: NO_OP
+      p: 0.9
+    - dest: couch_l1
+      p: 0.1
 - object: notebook_elara
   cites: Initial sketches; carried or on table
   home: kitchen_table_k1
@@ -454,38 +410,22 @@ object_rules:
       p: 0.7
     - dest: couch_l1
       p: 0.3
-  - cites: Elara sketches in her notebook while working at the dining table
+  - cites: It is central to her work at the table.
     activity: work_home
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.6
-    - dest: couch_l1
-      p: 0.2
-    - dest: person:resident_1
-      p: 0.1
     - dest: NO_OP
-      p: 0.1
-  - cites: Elara takes notes during video calls at the dining table
-    activity: video_call
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
       p: 0.7
     - dest: couch_l1
-      p: 0.2
-    - dest: person:resident_1
-      p: 0.1
-  - cites: Elara studies from her notebook at the dining table
-    activity: study
+      p: 0.3
+  - cites: It is used for ideas during the hobby.
+    activity: hobby
     phase: after
     dist:
-    - dest: kitchen_table_k1
+    - dest: NO_OP
       p: 0.8
     - dest: couch_l1
-      p: 0.1
-    - dest: person:resident_1
-      p: 0.1
+      p: 0.2
 - object: pen_elara
   cites: Quick notes; travels with notebook
   home: kitchen_table_k1
@@ -509,38 +449,22 @@ object_rules:
       p: 0.7
     - dest: kitchen_table_k1
       p: 0.3
-  - cites: Elara uses her pen for notes while working at the dining table
+  - cites: It stays with the notebook during work.
     activity: work_home
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.5
-    - dest: couch_l1
-      p: 0.2
-    - dest: person:resident_1
-      p: 0.2
     - dest: NO_OP
-      p: 0.1
-  - cites: Elara uses her pen during video calls at the dining table
-    activity: video_call
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.6
+      p: 0.8
     - dest: couch_l1
       p: 0.2
-    - dest: person:resident_1
-      p: 0.2
-  - cites: Elara takes notes while studying at the dining table
-    activity: study
+  - cites: It is used for sketching during the hobby.
+    activity: hobby
     phase: after
     dist:
-    - dest: kitchen_table_k1
+    - dest: NO_OP
       p: 0.7
-    - dest: person:resident_1
-      p: 0.2
     - dest: couch_l1
-      p: 0.1
+      p: 0.3
 - object: water_bottle_elara
   cites: Hydration; left where work stops
   home: kitchen_table_k1
@@ -564,38 +488,14 @@ object_rules:
       p: 0.3
     - dest: kitchen_table_k1
       p: 0.7
-  - cites: Elara forgets to drink water while working at the dining table
-    activity: work_home
+  - cites: It is left on the couch after a snack.
+    activity: snack
     phase: after
     dist:
-    - dest: kitchen_table_k1
+    - dest: couch_l1
       p: 0.6
-    - dest: couch_l1
-      p: 0.2
-    - dest: counter_k1
-      p: 0.1
     - dest: NO_OP
-      p: 0.1
-  - cites: Elara drinks water during video calls at the dining table
-    activity: video_call
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.7
-    - dest: couch_l1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elara drinks water while studying at the dining table
-    activity: study
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.8
-    - dest: couch_l1
-      p: 0.1
-    - dest: NO_OP
-      p: 0.1
+      p: 0.4
 - object: charger_elara
   cites: Left plugged in; rarely moves
   home: kitchen_table_k1
@@ -617,26 +517,22 @@ object_rules:
       p: 0.5
     - dest: kitchen_table_k1
       p: 0.5
-  - cites: Elara plugs in her laptop charger while working at the dining table
+  - cites: It stays plugged in or on the table during work.
     activity: work_home
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.8
+    - dest: NO_OP
+      p: 0.9
     - dest: couch_l1
       p: 0.1
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elara charges her phone during video calls at the dining table
+  - cites: It is left on the table during video calls.
     activity: video_call
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.7
+    - dest: NO_OP
+      p: 0.8
     - dest: couch_l1
       p: 0.2
-    - dest: NO_OP
-      p: 0.1
 - object: blanket_elara
   cites: Comfort on couch; draped or floor
   home: couch_l1
@@ -660,36 +556,6 @@ object_rules:
       p: 0.6
     - dest: couch_l1
       p: 0.4
-  - cites: Elara uses the blanket for comfort while watching TV on the couch
-    activity: watch_tv
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.6
-    - dest: coffee_table_l1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.2
-  - cites: Elara uses the blanket while lying down on the couch
-    activity: lie_down
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.7
-    - dest: coffee_table_l1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elara uses the blanket while listening to music on the couch
-    activity: music
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.6
-    - dest: coffee_table_l1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.2
 - object: laundry_basket_elara
   cites: Migrates from bedroom to living
   home: bedroom_floor_b1
@@ -711,6 +577,14 @@ object_rules:
       p: 0.4
     - dest: bedroom_floor_b1
       p: 0.6
+  - cites: It is dragged to the living room during deep cleaning.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.6
+    - dest: NO_OP
+      p: 0.4
 - object: yoga_mat_elara
   cites: Unrolled on floor; leaned against couch
   home: couch_l1
@@ -732,26 +606,6 @@ object_rules:
       p: 0.8
     - dest: bed_b1
       p: 0.2
-  - cites: Elara stretches on the yoga mat during work breaks in the living room
-    activity: work_home
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.5
-    - dest: coffee_table_l1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.3
-  - cites: Elara stretches on the yoga mat before or after a video call
-    activity: video_call
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.4
-    - dest: coffee_table_l1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.4
 - object: glasses_elara
   cites: Worn while working; left on table
   home: kitchen_table_k1
@@ -775,46 +629,22 @@ object_rules:
       p: 0.7
     - dest: kitchen_table_k1
       p: 0.3
-  - cites: Elara wears glasses while working at the dining table
-    activity: work_home
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.6
-    - dest: couch_l1
-      p: 0.2
-    - dest: person:resident_1
-      p: 0.2
-  - cites: Elara wears glasses during video calls at the dining table
-    activity: video_call
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.7
-    - dest: couch_l1
-      p: 0.2
-    - dest: person:resident_1
-      p: 0.1
-  - cites: Elara wears glasses while studying at the dining table
-    activity: study
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.8
-    - dest: couch_l1
-      p: 0.1
-    - dest: person:resident_1
-      p: 0.1
-  - cites: Elara wears glasses while reading on the armchair
+  - cites: They are left in the armchair after reading.
     activity: reading
     phase: after
     dist:
     - dest: armchair_l1
       p: 0.5
-    - dest: couch_l1
+    - dest: NO_OP
+      p: 0.5
+  - cites: They are on the nightstand after getting ready.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.7
+    - dest: NO_OP
       p: 0.3
-    - dest: person:resident_1
-      p: 0.2
 - object: hairbrush_elara
   cites: Kept in bathroom; occasional drift
   home: bathroom_shelf_ba1
@@ -835,36 +665,6 @@ object_rules:
     - dest: bathroom_shelf_ba1
       p: 0.9
     - dest: nightstand_b1
-      p: 0.1
-  - cites: Elara brushes her hair before getting ready at the nightstand
-    activity: get_ready
-    phase: after
-    dist:
-    - dest: bathroom_shelf_ba1
-      p: 0.6
-    - dest: nightstand_b1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elara brushes her hair after taking a shower
-    activity: shower
-    phase: after
-    dist:
-    - dest: bathroom_shelf_ba1
-      p: 0.7
-    - dest: nightstand_b1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Elara brushes her hair after a bath
-    activity: bath
-    phase: after
-    dist:
-    - dest: bathroom_shelf_ba1
-      p: 0.7
-    - dest: nightstand_b1
-      p: 0.2
-    - dest: NO_OP
       p: 0.1
 - object: makeup_kit_elara
   cites: Sporadic use; bathroom or nightstand
@@ -887,28 +687,14 @@ object_rules:
       p: 0.8
     - dest: nightstand_b1
       p: 0.2
-  - cites: Elara applies light makeup before getting ready at the nightstand
+  - cites: It is left on the nightstand after getting ready.
     activity: get_ready
     phase: after
     dist:
     - dest: nightstand_b1
-      p: 0.6
-    - dest: bathroom_shelf_ba1
-      p: 0.3
+      p: 0.8
     - dest: NO_OP
-      p: 0.1
-  - cites: Elara does a quick touch-up before a video call at the dining table
-    activity: video_call
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.4
-    - dest: bathroom_shelf_ba1
-      p: 0.3
-    - dest: nightstand_b1
       p: 0.2
-    - dest: NO_OP
-      p: 0.1
 - object: umbrella_elara
   cites: Entryway closet; taken for errands
   home: entry_floor_e1
@@ -3403,3 +3189,24 @@ arc_events:
       at: bed_b1
       jitter: routine
       skip_p: 0.0
+object_owners:
+  laptop_elara: resident_1
+  phone_elara: resident_1
+  keys_elara: resident_1
+  wallet_elara: resident_1
+  mug_elara: resident_1
+  bowl_1: resident_1
+  plate_1: resident_1
+  book_1: resident_1
+  notebook_elara: resident_1
+  pen_elara: resident_1
+  water_bottle_elara: resident_1
+  charger_elara: resident_1
+  blanket_elara: resident_1
+  laundry_basket_elara: resident_1
+  yoga_mat_elara: resident_1
+  glasses_elara: resident_1
+  hairbrush_elara: resident_1
+  makeup_kit_elara: resident_1
+  umbrella_elara: resident_1
+  jacket_elara: resident_1

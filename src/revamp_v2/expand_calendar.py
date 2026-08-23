@@ -634,6 +634,22 @@ def expand(program: dict, carry_on_departure: bool = True,
                 # rides one kind of its owner's trip rides them ALL —
                 # "takes the keys when leaving" is a property of the
                 # person, which no per-activity rule set expresses.
+                # An away variant belongs to ONE resident, but its after
+                # rules are inherited from the BASE activity — shared by
+                # every resident's variant. Unrestricted, roommate B's
+                # homecoming fired rules over roommate A's keys while A
+                # was still out (hh9: 4 residents sharing work_away, 516
+                # mid-trip teleports). A variant's after may reach
+                # receptacles, ELSEWHERE, and ITS OWN resident's person —
+                # never someone else's pocket.
+                allowed = ([r["id"] for r in program["receptacles"]]
+                           + [ELSEWHERE, carrier])
+                for obj, rule in entry["after"].items():
+                    if "only_from" in rule:
+                        kept = [x for x in rule["only_from"] if x in allowed]
+                        rule["only_from"] = kept or list(allowed)
+                    else:
+                        rule["only_from"] = list(allowed)
                 for obj, rid_set in travellers.items():
                     if rid not in rid_set:
                         continue

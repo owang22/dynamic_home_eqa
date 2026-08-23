@@ -81,22 +81,46 @@ object_rules:
       p: 0.4
     - dest: NO_OP
       p: 0.1
-  - cites: Post-shift tea left in the sink to cool
-    activity: dinner
+  - cites: Elara drinks coffee while standing at the counter, then leaves the mug in the sink as per
+    activity: coffee
     phase: after
     dist:
     - dest: sink_k1
       p: 0.8
     - dest: counter_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: She eats standing at the counter, scrolling on her tablet, and often forgets the mug on
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.6
+    - dest: counter_k1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: Quick meals at the counter during the night hours usually end with the mug in the
+    activity: lunch
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.7
+    - dest: counter_k1
       p: 0.2
-  - cites: Evening snack cup set down by the drain
-    activity: snack
+    - dest: NO_OP
+      p: 0.1
+  - cites: Dinner is eaten standing up, and the methodical routine dictates the mug goes to the
+    activity: dinner
     phase: after
     dist:
     - dest: sink_k1
       p: 0.75
     - dest: counter_k1
-      p: 0.25
+      p: 0.15
+    - dest: NO_OP
+      p: 0.1
 - object: tablet_elara
   cites: charged on the nightstand
   home: nightstand_b1
@@ -122,46 +146,46 @@ object_rules:
       p: 0.4
     - dest: NO_OP
       p: 0.1
-  - cites: Scrolling through news while eating standing up
+  - cites: She scrolls through news on the tablet while eating, then usually leaves it on the
     activity: breakfast
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.5
+    - dest: nightstand_b1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.2
+  - cites: Lunch is a quick affair, and the tablet often stays on the counter if she is still
+    activity: lunch
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.6
+    - dest: nightstand_b1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.2
+  - cites: Dinner is accompanied by news scrolling, and the tablet ends up on the counter or
+    activity: dinner
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.4
+    - dest: nightstand_b1
+      p: 0.4
+    - dest: NO_OP
+      p: 0.2
+  - cites: Relaxing on the couch involves the tablet for entertainment, which she often leaves on
+    activity: relax
     phase: after
     dist:
     - dest: coffee_table_l1
       p: 0.6
-    - dest: counter_k1
-      p: 0.25
-    - dest: NO_OP
-      p: 0.15
-  - cites: Quick check of headlines before the night shift
-    activity: lunch
-    phase: after
-    dist:
-    - dest: coffee_table_l1
-      p: 0.55
     - dest: nightstand_b1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.15
-  - cites: Relaxing with entertainment while seated
-    activity: dinner
-    phase: after
-    dist:
-    - dest: coffee_table_l1
-      p: 0.7
-    - dest: couch_l1
       p: 0.2
     - dest: NO_OP
-      p: 0.1
-  - cites: Casual browsing during a quiet moment
-    activity: snack
-    phase: after
-    dist:
-    - dest: coffee_table_l1
-      p: 0.65
-    - dest: counter_k1
       p: 0.2
-    - dest: NO_OP
-      p: 0.15
 - object: laptop_elara
   cites: stored in the studio area
   home: desk_b1
@@ -183,14 +207,6 @@ object_rules:
       p: 0.8
     - dest: NO_OP
       p: 0.2
-  - cites: Video call with family during relaxation
-    activity: video_call
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.75
-    - dest: coffee_table_l1
-      p: 0.25
 - object: phone_elara
   cites: charged on the nightstand
   home: nightstand_b1
@@ -214,22 +230,26 @@ object_rules:
       p: 0.8
     - dest: NO_OP
       p: 0.2
-  - cites: Checking messages upon waking
-    activity: phone_time
+  - cites: Going out for an appointment, she takes her phone, but usually returns it to the
+    activity: appointment
     phase: after
     dist:
     - dest: nightstand_b1
-      p: 0.8
-    - dest: desk_b1
+      p: 0.7
+    - dest: counter_k1
       p: 0.2
-  - cites: Answering calls during a video call
-    activity: video_call
+    - dest: NO_OP
+      p: 0.1
+  - cites: Errands require the phone, and she is methodical enough to return it to the
+    activity: errands
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.4
     - dest: nightstand_b1
-      p: 0.6
+      p: 0.75
+    - dest: counter_k1
+      p: 0.15
+    - dest: NO_OP
+      p: 0.1
 - object: keys_elara
   cites: hung on a hook by the door
   home: entry_hook_e1
@@ -255,33 +275,43 @@ object_rules:
       p: 0.4
     - dest: NO_OP
       p: 0.1
-  - cites: Hung on the hook immediately after entering
+  - cites: Getting ready involves grabbing keys from the hook, and returning home, she hangs
     activity: get_ready
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.8
+    - dest: counter_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: After an appointment, she hangs the keys on the hook by the door
+    activity: appointment
     phase: after
     dist:
     - dest: entry_hook_e1
       p: 0.85
     - dest: counter_k1
-      p: 0.15
-  - cites: Left on the counter if distracted by cooking
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.6
-    - dest: counter_k1
-      p: 0.3
-    - dest: NO_OP
       p: 0.1
-  - cites: Forgotten on the counter while bathing
-    activity: bath
+    - dest: NO_OP
+      p: 0.05
+  - cites: Errands end with the keys on the hook, though fatigue can lead to them being
+    activity: errands
     phase: after
     dist:
     - dest: entry_hook_e1
-      p: 0.7
+      p: 0.8
     - dest: counter_k1
-      p: 0.2
+      p: 0.15
     - dest: NO_OP
+      p: 0.05
+  - cites: Groceries are carried in, and the keys are hung up immediately to start the
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: counter_k1
       p: 0.1
 - object: wallet_elara
   cites: kept in the bag by the door
@@ -304,6 +334,16 @@ object_rules:
       p: 0.8
     - dest: NO_OP
       p: 0.2
+  - cites: Groceries require payment, so the wallet is used, but it returns to the bag on the
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.85
+    - dest: counter_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.05
 - object: book_elara
   cites: read before sleep in the early morning
   home: nightstand_b1
@@ -329,38 +369,16 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Left on the nightstand before sleep
-    activity: bedtime_routine
-    phase: after
-    dist:
-    - dest: nightstand_b1
-      p: 0.85
-    - dest: bed_b1
-      p: 0.15
-  - cites: Placed on the desk during study
-    activity: study
+  - cites: If she reads during the hobby time at the desk, the book might end up there, but
+    activity: hobby
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.7
-    - dest: nightstand_b1
-      p: 0.3
-  - cites: Left on the couch after reading
-    activity: relax
-    phase: after
-    dist:
-    - dest: couch_l1
       p: 0.6
     - dest: nightstand_b1
-      p: 0.4
-  - cites: Set down on the coffee table during TV
-    activity: watch_tv
-    phase: after
-    dist:
-    - dest: coffee_table_l1
-      p: 0.5
-    - dest: nightstand_b1
-      p: 0.5
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
 - object: water_bottle_elara
   cites: kept in the kitchen
   home: counter_k1
@@ -386,30 +404,16 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Filled and kept at the counter
-    activity: batch_cooking
+  - cites: Gym requires hydration, and the bottle is left in the kitchen after returning
+    activity: gym
     phase: after
     dist:
     - dest: counter_k1
-      p: 0.9
+      p: 0.7
     - dest: sink_k1
+      p: 0.2
+    - dest: NO_OP
       p: 0.1
-  - cites: Left on the counter after breakfast
-    activity: breakfast
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.85
-    - dest: sink_k1
-      p: 0.15
-  - cites: Set down near the sink after dinner
-    activity: dinner
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.75
-    - dest: sink_k1
-      p: 0.25
 - object: remote_elara
   cites: left on the coffee table
   home: coffee_table_l1
@@ -435,7 +439,7 @@ object_rules:
       p: 0.1
     - dest: NO_OP
       p: 0.1
-  - cites: Left on the coffee table after watching
+  - cites: Watching TV on the couch involves the remote, which is often left on the coffee
     activity: watch_tv
     phase: after
     dist:
@@ -445,7 +449,7 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Set down on the couch during relaxation
+  - cites: Relaxing might involve the TV, and the remote is left on the coffee table or
     activity: relax
     phase: after
     dist:
@@ -453,16 +457,6 @@ object_rules:
       p: 0.6
     - dest: couch_l1
       p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Forgotten on the couch during socializing
-    activity: socialise_home
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.5
-    - dest: coffee_table_l1
-      p: 0.4
     - dest: NO_OP
       p: 0.1
 - object: charger_elara
@@ -486,22 +480,16 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Left plugged in during phone time
+  - cites: Phone time involves the charger if the battery is low, leaving it on the
     activity: phone_time
     phase: after
     dist:
     - dest: nightstand_b1
-      p: 0.9
+      p: 0.8
     - dest: desk_b1
       p: 0.1
-  - cites: Tangled on the desk during study
-    activity: study
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.6
-    - dest: nightstand_b1
-      p: 0.4
+    - dest: NO_OP
+      p: 0.1
 - object: backpack_elara
   cites: hung on a hook by the door
   home: entry_hook_e1
@@ -525,30 +513,26 @@ object_rules:
       p: 0.8
     - dest: NO_OP
       p: 0.2
-  - cites: Hung on the hook after getting ready
+  - cites: Getting ready involves packing the bag, which is then hung on the hook by the
     activity: get_ready
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.9
-    - dest: desk_b1
-      p: 0.1
-  - cites: Left in the studio area during cleaning
-    activity: deep_clean
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.7
-    - dest: desk_b1
-      p: 0.3
-  - cites: Placed by the door before cooking
-    activity: batch_cooking
     phase: after
     dist:
     - dest: entry_hook_e1
       p: 0.85
     - dest: desk_b1
-      p: 0.15
+      p: 0.1
+    - dest: NO_OP
+      p: 0.05
+  - cites: Errands might use the backpack, which returns to the hook
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.8
+    - dest: desk_b1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
 - object: jacket_elara
   cites: hung on a hook by the door
   home: entry_hook_e1
@@ -574,32 +558,36 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Hung on the hook after getting ready
+  - cites: Getting ready involves putting on the jacket, which is hung on the hook by the
     activity: get_ready
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.8
+    - dest: bedroom_floor_b1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: Work away involves the jacket, which is hung up or sometimes forgotten in the
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.7
+    - dest: bedroom_floor_b1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: Gym involves the jacket, which is hung up upon return
+    activity: gym
     phase: after
     dist:
     - dest: entry_hook_e1
       p: 0.85
     - dest: bedroom_floor_b1
-      p: 0.15
-  - cites: Left in the bedroom if forgotten during bath
-    activity: bath
-    phase: after
-    dist:
-    - dest: entry_hook_e1
-      p: 0.6
-    - dest: bedroom_floor_b1
-      p: 0.3
-    - dest: NO_OP
       p: 0.1
-  - cites: Left on the couch during relaxation
-    activity: relax
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.5
-    - dest: entry_hook_e1
-      p: 0.5
+    - dest: NO_OP
+      p: 0.05
 - object: headphones_elara
   cites: often left on the desk
   home: desk_b1
@@ -623,30 +611,26 @@ object_rules:
       p: 0.8
     - dest: NO_OP
       p: 0.2
-  - cites: Stored on the desk after study
-    activity: study
+  - cites: Music time on the couch involves headphones, which are often left on the desk or
+    activity: music
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.8
-    - dest: coffee_table_l1
-      p: 0.2
-  - cites: Placed on the coffee table during TV
-    activity: watch_tv
-    phase: after
-    dist:
-    - dest: coffee_table_l1
       p: 0.6
-    - dest: desk_b1
-      p: 0.4
-  - cites: Left on the couch during relaxation
+    - dest: coffee_table_l1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: Relaxing might involve headphones, which are left on the desk
     activity: relax
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.5
     - dest: desk_b1
-      p: 0.5
+      p: 0.7
+    - dest: couch_l1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
 - object: glasses_elara
   cites: kept in a case on the nightstand
   home: nightstand_b1
@@ -672,36 +656,24 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Placed in the case on the nightstand
-    activity: bedtime_routine
-    phase: after
-    dist:
-    - dest: nightstand_b1
-      p: 0.85
-    - dest: desk_b1
-      p: 0.15
-  - cites: Left on the desk during study
+  - cites: Study time involves the glasses for screen use, which are left on the desk
     activity: study
     phase: after
     dist:
     - dest: desk_b1
       p: 0.7
     - dest: nightstand_b1
-      p: 0.3
-  - cites: Forgotten on the coffee table during TV
-    activity: watch_tv
-    phase: after
-    dist:
-    - dest: coffee_table_l1
-      p: 0.5
-    - dest: nightstand_b1
-      p: 0.5
-  - cites: Set down on the desk during hobby
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: Hobby time at the desk involves the glasses, left on the desk
     activity: hobby
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.9
+      p: 0.8
+    - dest: nightstand_b1
+      p: 0.1
     - dest: NO_OP
       p: 0.1
 - object: notebook_elara
@@ -727,30 +699,6 @@ object_rules:
       p: 0.8
     - dest: NO_OP
       p: 0.2
-  - cites: Left open on the desk during study
-    activity: study
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.85
-    - dest: bedroom_floor_b1
-      p: 0.15
-  - cites: Used for journaling during hobby
-    activity: hobby
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.75
-    - dest: nightstand_b1
-      p: 0.25
-  - cites: Placed on the desk during phone time
-    activity: phone_time
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.6
-    - dest: nightstand_b1
-      p: 0.4
 - object: pen_elara
   cites: kept in the notebook or on the desk
   home: desk_b1
@@ -776,22 +724,6 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Kept in the notebook on the desk
-    activity: study
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.8
-    - dest: bedroom_floor_b1
-      p: 0.2
-  - cites: Forgotten on the nightstand
-    activity: bedtime_routine
-    phase: after
-    dist:
-    - dest: nightstand_b1
-      p: 0.4
-    - dest: desk_b1
-      p: 0.6
 - object: medication_bottle_elara
   cites: kept in the bedroom
   home: nightstand_b1
@@ -815,14 +747,6 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Kept on the nightstand during phone time
-    activity: phone_time
-    phase: after
-    dist:
-    - dest: nightstand_b1
-      p: 0.9
-    - dest: desk_b1
-      p: 0.1
 - object: blanket_elara
   cites: kept in the bedroom
   home: bed_b1
@@ -844,22 +768,6 @@ object_rules:
       p: 0.95
     - dest: NO_OP
       p: 0.05
-  - cites: Left on the bed after relaxation
-    activity: relax
-    phase: after
-    dist:
-    - dest: bed_b1
-      p: 0.6
-    - dest: couch_l1
-      p: 0.4
-  - cites: Used for warmth during TV
-    activity: watch_tv
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.5
-    - dest: bed_b1
-      p: 0.5
 - object: towel_elara
   cites: hung in the bathroom
   home: towel_rack_ba1
@@ -883,17 +791,7 @@ object_rules:
       p: 0.8
     - dest: NO_OP
       p: 0.2
-  - cites: Hung on the rack after bathing
-    activity: bath
-    phase: after
-    dist:
-    - dest: towel_rack_ba1
-      p: 0.8
-    - dest: bathroom_shelf_ba1
-      p: 0.1
-    - dest: NO_OP
-      p: 0.1
-  - cites: Left on the floor if rushed
+  - cites: Bath involves the towel, which is hung in the bathroom, sometimes left on the
     activity: bath
     phase: after
     dist:
@@ -903,14 +801,26 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Placed on the shelf during laundry
+  - cites: Laundry involves the towel for drying hands, left on the shelf
     activity: laundry
     phase: after
     dist:
     - dest: bathroom_shelf_ba1
       p: 0.6
     - dest: towel_rack_ba1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: Putting away dishes involves the towel for drying, left on the dish rack or
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.5
+    - dest: counter_k1
       p: 0.4
+    - dest: NO_OP
+      p: 0.1
 - object: lunchbox_elara
   cites: kept in the refrigerator
   home: cupboard_k1
@@ -934,30 +844,24 @@ object_rules:
       p: 0.8
     - dest: NO_OP
       p: 0.2
-  - cites: Packed and stored in the cupboard
+  - cites: Batch cooking involves packing the lunchbox, which is kept in the refrigerator
     activity: batch_cooking
     phase: after
     dist:
     - dest: cupboard_k1
-      p: 0.9
-    - dest: counter_k1
-      p: 0.1
-  - cites: Left on the counter after packing
-    activity: breakfast
-    phase: after
-    dist:
-    - dest: cupboard_k1
-      p: 0.7
+      p: 0.6
     - dest: counter_k1
       p: 0.3
-  - cites: Stored in the cupboard after lunch
-    activity: lunch
+    - dest: NO_OP
+      p: 0.1
+  - cites: Getting ready for work involves the lunchbox, which is packed in the evening and
+    activity: get_ready
     phase: after
     dist:
     - dest: cupboard_k1
-      p: 0.85
+      p: 0.8
     - dest: counter_k1
-      p: 0.15
+      p: 0.2
 activities:
 - name: bedtime_routine
   cites: Sleeps during daylight hours
@@ -3442,3 +3346,24 @@ arc_events:
       at: bed_b1
       jitter: routine
       skip_p: 0.0
+object_owners:
+  mug_elara: resident_1
+  tablet_elara: resident_1
+  laptop_elara: resident_1
+  phone_elara: resident_1
+  keys_elara: resident_1
+  wallet_elara: resident_1
+  book_elara: resident_1
+  water_bottle_elara: resident_1
+  remote_elara: resident_1
+  charger_elara: resident_1
+  backpack_elara: resident_1
+  jacket_elara: resident_1
+  headphones_elara: resident_1
+  glasses_elara: resident_1
+  notebook_elara: resident_1
+  pen_elara: resident_1
+  medication_bottle_elara: resident_1
+  blanket_elara: resident_1
+  towel_elara: resident_1
+  lunchbox_elara: resident_1

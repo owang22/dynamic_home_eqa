@@ -90,48 +90,36 @@ object_rules:
       p: 0.8
     - dest: NO_OP
       p: 0.2
-  - cites: Elias migrates to the kitchen table when his energy shifts during batch cooking
-    activity: batch_cooking
+  - cites: Elias migrates to the kitchen table when his energy shifts during work
+    activity: work_home
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.6
+      p: 0.4
     - dest: desk_b1
-      p: 0.3
-    - dest: couch_l1
-      p: 0.1
-  - cites: Elias often hunches over his laptop at the kitchen table during breakfast
-    activity: breakfast
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.7
-    - dest: desk_b1
-      p: 0.2
+      p: 0.4
     - dest: NO_OP
-      p: 0.1
-  - cites: Elias struggles to mentally clock out and clear his workspace when relaxing
+      p: 0.2
+  - cites: He often leaves his laptop open with code on screen even when he steps away for a break
     activity: relax
     phase: after
     dist:
     - dest: desk_b1
-      p: 0.4
+      p: 0.6
     - dest: kitchen_table_k1
       p: 0.3
-    - dest: couch_l1
-      p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Elias works from a desk in the living room and often migrates to the kitchen table
-    activity: work_home
+  - cites: Elias struggles to mentally clock out, often leaving work items on the coffee table
+    activity: hobby
     phase: after
     dist:
+    - dest: coffee_table_l1
+      p: 0.3
     - dest: desk_b1
       p: 0.5
-    - dest: kitchen_table_k1
-      p: 0.4
     - dest: NO_OP
-      p: 0.1
+      p: 0.2
 - object: laptop_priya
   cites: Priya's laptop stays in her sanctuary
   home: desk_b2
@@ -185,45 +173,45 @@ object_rules:
       p: 0.7
     - dest: bed_b1
       p: 0.3
-  - cites: Elias drops his phone on the sofa cushion while watching TV or relaxing
+  - cites: Elias drops his phone on the sofa cushion while watching TV or relaxing, often forgetting
     activity: relax
     phase: after
     dist:
     - dest: couch_l1
       p: 0.6
-    - dest: counter_k1
-      p: 0.2
     - dest: NO_OP
       p: 0.2
-  - cites: Elias forgets his phone on the sofa when he goes to get a snack
+    - dest: counter_k1
+      p: 0.2
+  - cites: He travels with his phone throughout the house, often leaving it on the kitchen counter
     activity: snack
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.5
     - dest: counter_k1
+      p: 0.5
+    - dest: couch_l1
       p: 0.3
-    - dest: kitchen_table_k1
+    - dest: NO_OP
       p: 0.2
-  - cites: Elias is often typing at the kitchen table during breakfast with his phone nearby
-    activity: breakfast
+  - cites: Phone is often left on the nightstand before bed, but he might be on the couch
+    activity: wake_up
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.5
-    - dest: counter_k1
-      p: 0.3
-    - dest: couch_l1
-      p: 0.2
-  - cites: Elias keeps his phone in his pocket or on the desk while getting ready
-    activity: get_ready
-    phase: after
-    dist:
-    - dest: person:resident_1
-      p: 0.5
-    - dest: counter_k1
-      p: 0.3
     - dest: nightstand_b1
+      p: 0.4
+    - dest: couch_l1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.3
+  - cites: Elias uses his phone for quick checks during video calls, leaving it on the desk
+    activity: video_call
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.5
+    - dest: couch_l1
+      p: 0.3
+    - dest: NO_OP
       p: 0.2
 - object: phone_priya
   cites: Priya keeps phone on kitchen stand
@@ -253,38 +241,26 @@ object_rules:
       p: 0.8
     - dest: desk_b2
       p: 0.2
-  - cites: Priya places her phone on a stand in the kitchen when not in use
-    activity: batch_cooking
+  - cites: Priya keeps her phone on a stand in the kitchen when not in use
+    activity: relax
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: desk_b2
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: She uses her phone for scheduling during video calls, returning it to the kitchen stand
+    activity: video_call
     phase: after
     dist:
     - dest: counter_k1
       p: 0.8
     - dest: desk_b2
-      p: 0.2
-  - cites: Priya keeps her phone within arm's reach during breakfast
-    activity: breakfast
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.6
-    - dest: kitchen_table_k1
-      p: 0.4
-  - cites: Priya uses her phone for quick notes while working from home
-    activity: work_home
-    phase: after
-    dist:
-    - dest: desk_b2
-      p: 0.7
-    - dest: counter_k1
-      p: 0.3
-  - cites: Priya keeps her phone on the kitchen stand during her morning routine
-    activity: wake_up
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.7
-    - dest: desk_b2
-      p: 0.3
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
 - object: mug_elias_1
   cites: Elias's favorite black mug for coffee
   home: counter_k1
@@ -316,34 +292,38 @@ object_rules:
       p: 0.5
     - dest: counter_k1
       p: 0.5
-  - cites: 'Elias uses a new mug when the current one gets too hot, often leaving the old one on the '
-    activity: breakfast
+  - cites: Elias uses a new mug when the current one gets too hot, leaving the old one on the counter
+    activity: work_home
     phase: after
     dist:
     - dest: counter_k1
       p: 0.6
-    - dest: sink_k1
+    - dest: desk_b1
       p: 0.3
-    - dest: kitchen_table_k1
+    - dest: NO_OP
       p: 0.1
-  - cites: Elias has three mugs out at once, often leaving his favorite on the living room desk
-    activity: work_home
+  - cites: Mugs are often found on the living room desk or kitchen counter
+    activity: relax
     phase: after
     dist:
+    - dest: counter_k1
+      p: 0.4
     - dest: desk_b1
+      p: 0.3
+    - dest: couch_l1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: He drinks coffee while working at the kitchen table
+    activity: lunch
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
       p: 0.5
     - dest: counter_k1
       p: 0.3
-    - dest: sink_k1
+    - dest: NO_OP
       p: 0.2
-  - cites: Elias might leave his mug on the counter while getting ready
-    activity: get_ready
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.7
-    - dest: sink_k1
-      p: 0.3
 - object: mug_elias_2
   cites: Blue mug often left in sink
   home: counter_k1
@@ -364,22 +344,26 @@ object_rules:
       p: 0.5
     - dest: sink_k1
       p: 0.5
-  - cites: Elias often leaves his second mug in the sink with other dishes
-    activity: breakfast
+  - cites: His second mug is often left in the sink with other dishes
+    activity: wash_dishes
     phase: after
     dist:
     - dest: sink_k1
-      p: 0.7
-    - dest: counter_k1
-      p: 0.3
-  - cites: Elias might use his blue mug for a snack, leaving it on the counter
+      p: 0.6
+    - dest: dish_rack_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.2
+  - cites: Used when the first is in use, often left on the counter
     activity: snack
     phase: after
     dist:
     - dest: counter_k1
-      p: 0.6
+      p: 0.5
     - dest: sink_k1
-      p: 0.4
+      p: 0.3
+    - dest: NO_OP
+      p: 0.2
 - object: mug_elias_3
   cites: Travel mug for moving between rooms
   home: counter_k1
@@ -402,25 +386,25 @@ object_rules:
       p: 0.6
     - dest: counter_k1
       p: 0.4
-  - cites: Elias uses his travel mug when moving between rooms, often leaving it on the kitchen table
-    activity: breakfast
+  - cites: His travel mug is used when moving between rooms, often left on the kitchen table or sofa
+    activity: work_home
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.5
+      p: 0.4
+    - dest: couch_l1
+      p: 0.3
     - dest: counter_k1
       p: 0.3
-    - dest: couch_l1
-      p: 0.2
-  - cites: Elias might bring his travel mug to the living room to relax
+  - cites: He brings it to the couch for a break
     activity: relax
     phase: after
     dist:
     - dest: couch_l1
       p: 0.5
-    - dest: coffee_table_l1
+    - dest: kitchen_table_k1
       p: 0.3
-    - dest: counter_k1
+    - dest: NO_OP
       p: 0.2
 - object: mug_priya
   cites: Priya washes mugs immediately
@@ -442,21 +426,25 @@ object_rules:
       p: 0.9
     - dest: dish_rack_k1
       p: 0.1
-  - cites: Priya washes her dishes immediately after use and returns her mug to the cupboard
-    activity: breakfast
+  - cites: She drinks tea while working, returning it to the cupboard afterwards
+    activity: work_home
     phase: after
     dist:
     - dest: cupboard_k1
       p: 0.8
     - dest: counter_k1
-      p: 0.2
-  - cites: Priya keeps her mug in the cupboard when not in use during work
-    activity: work_home
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: She clears the table immediately after lunch
+    activity: lunch
     phase: after
     dist:
     - dest: cupboard_k1
-      p: 0.9
-    - dest: counter_k1
+      p: 0.7
+    - dest: sink_k1
+      p: 0.2
+    - dest: NO_OP
       p: 0.1
 - object: headphones_elias
   cites: Headphones snagged on furniture
@@ -479,7 +467,17 @@ object_rules:
       p: 0.8
     - dest: desk_b1
       p: 0.2
-  - cites: 'Elias wears his headphones around his neck even when not listening, often leaving them on '
+  - cites: Elias wears headphones around his neck, leading to them getting snagged or left on the des
+    activity: work_home
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.6
+    - dest: couch_l1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.2
+  - cites: He leaves them on his desk or sofa when he takes a break
     activity: relax
     phase: after
     dist:
@@ -489,14 +487,16 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.2
-  - cites: Elias might leave his headphones on the desk while getting ready
-    activity: get_ready
+  - cites: Headphones are used for focus during video calls, often left on the desk
+    activity: video_call
     phase: after
     dist:
     - dest: desk_b1
       p: 0.6
-    - dest: couch_l1
-      p: 0.4
+    - dest: desk_b2
+      p: 0.2
+    - dest: NO_OP
+      p: 0.2
 - object: headphones_priya
   cites: Headphones always returned to drawer
   home: desk_b2
@@ -540,22 +540,26 @@ object_rules:
       p: 0.6
     - dest: desk_b1
       p: 0.4
-  - cites: Elias keeps his keys in a bowl on the entryway table, often moving them when getting ready
+  - cites: Elias's car keys are kept in a bowl on the entryway table, often moved by Priya
     activity: get_ready
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.7
+    - dest: person:resident_1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: He leaves the house for errands, taking his keys with him
+    activity: errands
     phase: after
     dist:
     - dest: entry_table_e1
       p: 0.8
     - dest: person:resident_1
-      p: 0.2
-  - cites: Elias might leave his keys on the kitchen counter while batch cooking
-    activity: batch_cooking
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.4
-    - dest: entry_table_e1
-      p: 0.6
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
 - object: keys_priya
   cites: Priya's keys in specific dish
   home: entry_table_e1
@@ -576,7 +580,7 @@ object_rules:
       p: 0.9
     - dest: desk_b2
       p: 0.1
-  - cites: Priya is meticulous about returning her keys to the exact same spot on the entryway table
+  - cites: Priya's car keys are kept in a separate small dish, and she is meticulous about returning
     activity: get_ready
     phase: after
     dist:
@@ -607,23 +611,35 @@ object_rules:
       p: 0.6
     - dest: counter_k1
       p: 0.4
-  - cites: Elias leaves his wallet on the kitchen counter or desk when home, often with receipts
-    activity: get_ready
+  - cites: Elias's wallet is left on the kitchen counter or desk when home, often with receipts
+    activity: snack
     phase: after
     dist:
     - dest: counter_k1
       p: 0.5
     - dest: desk_b1
       p: 0.3
-    - dest: person:resident_1
+    - dest: NO_OP
       p: 0.2
-  - cites: Elias might leave his wallet on the counter while batch cooking
-    activity: batch_cooking
+  - cites: Wallet is kept in his pants pocket when out, but left on the counter when home
+    activity: errands
     phase: after
     dist:
     - dest: counter_k1
-      p: 0.7
+      p: 0.6
     - dest: desk_b1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.2
+  - cites: He might leave his wallet on the coffee table while relaxing
+    activity: relax
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.4
+    - dest: counter_k1
+      p: 0.3
+    - dest: NO_OP
       p: 0.3
 - object: wallet_priya
   cites: Priya's wallet in entryway drawer
@@ -645,14 +661,14 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Priya keeps her wallet in a specific drawer in the entryway, organized with no loose rece
+  - cites: Priya's wallet is kept in her handbag or a specific drawer in the entryway
     activity: get_ready
     phase: after
     dist:
     - dest: entry_table_e1
-      p: 0.9
+      p: 0.8
     - dest: person:resident_2
-      p: 0.1
+      p: 0.2
 - object: remote_shared
   cites: Remote in living room tray
   home: coffee_table_l1
@@ -676,32 +692,26 @@ object_rules:
       p: 0.6
     - dest: coffee_table_l1
       p: 0.4
-  - cites: Priya organizes shared items like the remote into a designated living room tray
+  - cites: The remote is moved by both residents when watching TV, and often misplaced by Elias
     activity: relax
     phase: after
     dist:
     - dest: coffee_table_l1
-      p: 0.8
+      p: 0.5
     - dest: couch_l1
+      p: 0.3
+    - dest: NO_OP
       p: 0.2
-  - cites: Elias often misplaces the remote, leaving it on the sofa or coffee table
+  - cites: Remote is often left on the sofa after gaming or relaxing
     activity: hobby
     phase: after
     dist:
     - dest: couch_l1
-      p: 0.4
+      p: 0.5
     - dest: coffee_table_l1
-      p: 0.4
-    - dest: tv_stand_l1
+      p: 0.3
+    - dest: NO_OP
       p: 0.2
-  - cites: Priya tidies up the living room, returning the remote to the tray
-    activity: tidy_up
-    phase: after
-    dist:
-    - dest: coffee_table_l1
-      p: 0.9
-    - dest: couch_l1
-      p: 0.1
 - object: blanket_shared
   cites: Blanket bunched on sofa by Elias
   home: couch_l1
@@ -721,14 +731,6 @@ object_rules:
     - dest: couch_l1
       p: 0.8
     - dest: bed_b1
-      p: 0.2
-  - cites: Priya might tidy up the blanket, returning it to a neat fold on the sofa
-    activity: tidy_up
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.8
-    - dest: armchair_l1
       p: 0.2
 - object: book_elias_1
   cites: Technical book on coffee table stack
@@ -750,34 +752,36 @@ object_rules:
       p: 0.5
     - dest: coffee_table_l1
       p: 0.5
-  - cites: Elias stacks technical books on the coffee table as a reading queue
-    activity: study
-    phase: after
-    dist:
-    - dest: coffee_table_l1
-      p: 0.7
-    - dest: armchair_l1
-      p: 0.2
-    - dest: couch_l1
-      p: 0.1
-  - cites: Elias might move the book to the coffee table if he falls asleep while reading
+  - cites: Elias stacks technical books on the coffee table as a 'reading queue'
     activity: relax
     phase: after
     dist:
     - dest: coffee_table_l1
-      p: 0.6
+      p: 0.7
     - dest: couch_l1
-      p: 0.3
-    - dest: armchair_l1
+      p: 0.2
+    - dest: NO_OP
       p: 0.1
-  - cites: Elias tidies up the coffee table, possibly moving the book to the shelf
-    activity: tidy_up
+  - cites: Book is moved by Elias as he reads it in bed or on the sofa
+    activity: wake_up
     phase: after
     dist:
-    - dest: bookshelf_l1
-      p: 0.5
     - dest: coffee_table_l1
       p: 0.5
+    - dest: bed_b1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.2
+  - cites: He might take the book to the armchair for study
+    activity: study
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.5
+    - dest: coffee_table_l1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.2
 - object: book_elias_2
   cites: Fiction novel on nightstand
   home: nightstand_b1
@@ -798,33 +802,35 @@ object_rules:
       p: 0.9
     - dest: bed_b1
       p: 0.1
-  - cites: Elias reads his fiction novel in the evening, leaving it on the nightstand
-    activity: relax
+  - cites: A fiction novel, left on the nightstand, read by Elias in the evening
+    activity: wake_up
     phase: after
     dist:
     - dest: nightstand_b1
-      p: 0.6
-    - dest: couch_l1
-      p: 0.3
-    - dest: coffee_table_l1
+      p: 0.7
+    - dest: bed_b1
+      p: 0.2
+    - dest: NO_OP
       p: 0.1
-  - cites: Elias might move the book to the coffee table if he falls asleep
-    activity: lie_down
+  - cites: Moved to the coffee table if he falls asleep
+    activity: relax
     phase: after
     dist:
     - dest: coffee_table_l1
       p: 0.5
     - dest: couch_l1
       p: 0.3
-    - dest: nightstand_b1
+    - dest: NO_OP
       p: 0.2
-  - cites: Elias tidies up the coffee table, returning the book to the nightstand
-    activity: tidy_up
+  - cites: He might read in the armchair during study
+    activity: study
     phase: after
     dist:
-    - dest: nightstand_b1
-      p: 0.8
-    - dest: bookshelf_l1
+    - dest: armchair_l1
+      p: 0.5
+    - dest: coffee_table_l1
+      p: 0.3
+    - dest: NO_OP
       p: 0.2
 - object: notebook_priya
   cites: Notebook in office drawer
@@ -846,22 +852,6 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Priya uses her notebook for quick notes during video calls
-    activity: video_call
-    phase: after
-    dist:
-    - dest: desk_b2
-      p: 0.8
-    - dest: counter_k1
-      p: 0.2
-  - cites: Priya might use her notebook while studying, keeping it on the desk
-    activity: study
-    phase: after
-    dist:
-    - dest: desk_b2
-      p: 0.7
-    - dest: armchair_l1
-      p: 0.3
 - object: gaming_controller_shared
   cites: Controller in living room drawer
   home: tv_stand_l1
@@ -882,7 +872,7 @@ object_rules:
       p: 0.9
     - dest: couch_l1
       p: 0.1
-  - cites: Elias often leaves the controller on the sofa after use
+  - cites: The controller is often left on the sofa after use
     activity: hobby
     phase: after
     dist:
@@ -890,24 +880,18 @@ object_rules:
       p: 0.6
     - dest: tv_stand_l1
       p: 0.3
-    - dest: coffee_table_l1
+    - dest: NO_OP
       p: 0.1
-  - cites: Priya organizes shared items, returning the controller to the drawer or stand
-    activity: tidy_up
-    phase: after
-    dist:
-    - dest: tv_stand_l1
-      p: 0.8
-    - dest: coffee_table_l1
-      p: 0.2
-  - cites: Elias might use the controller while relaxing, leaving it on the sofa
+  - cites: Controller is used for evening gaming, often left on the sofa
     activity: relax
     phase: after
     dist:
     - dest: couch_l1
-      p: 0.7
+      p: 0.5
     - dest: tv_stand_l1
       p: 0.3
+    - dest: NO_OP
+      p: 0.2
 - object: yoga_mat_priya
   cites: Mat rolled in living room corner
   home: couch_l1
@@ -928,22 +912,6 @@ object_rules:
       p: 0.95
     - dest: NO_OP
       p: 0.05
-  - cites: Priya uses the living room rug for a 15-minute yoga session, leaving the mat rolled up in
-    activity: wake_up
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.8
-    - dest: coffee_table_l1
-      p: 0.2
-  - cites: Priya might use the mat for a quick stretch while getting ready
-    activity: get_ready
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.7
-    - dest: entry_floor_e1
-      p: 0.3
 activities:
 - name: bedtime_routine
   cites: strictly for sleep, no work devices
@@ -5763,3 +5731,25 @@ arc_events:
       at: bed_b2
       jitter: routine
       skip_p: 0.0
+object_owners:
+  laptop_elias: resident_1
+  laptop_priya: resident_2
+  phone_elias: resident_1
+  phone_priya: resident_2
+  mug_elias_1: resident_1
+  mug_elias_2: resident_1
+  mug_elias_3: resident_1
+  mug_priya: resident_2
+  headphones_elias: resident_1
+  headphones_priya: resident_2
+  keys_elias: resident_1
+  keys_priya: resident_2
+  wallet_elias: resident_1
+  wallet_priya: resident_2
+  remote_shared: shared
+  blanket_shared: shared
+  book_elias_1: resident_1
+  book_elias_2: resident_1
+  notebook_priya: resident_2
+  gaming_controller_shared: shared
+  yoga_mat_priya: resident_2

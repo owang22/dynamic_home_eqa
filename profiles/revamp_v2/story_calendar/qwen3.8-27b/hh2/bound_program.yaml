@@ -448,30 +448,22 @@ object_rules:
       p: 0.9
     - dest: counter_k1
       p: 0.1
-  - cites: Elena rinses her mug immediately after her morning coffee
+  - cites: Elena uses her mug for coffee, which is a core part of her morning routine.
     activity: coffee
     phase: after
     dist:
     - dest: sink_k1
-      p: 0.4
-    - dest: counter_k1
       p: 0.6
-  - cites: Elena washes her own dishes immediately after eating
-    activity: wash_dishes
+    - dest: counter_k1
+      p: 0.4
+  - cites: Elena is methodical and washes dishes immediately, so she clears her mug after a snack.
+    activity: snack
     phase: after
     dist:
+    - dest: sink_k1
+      p: 0.5
     - dest: counter_k1
-      p: 0.7
-    - dest: dish_rack_k1
-      p: 0.3
-  - cites: Elena leaves the sink empty after putting away dishes
-    activity: put_away_dishes
-    phase: after
-    dist:
-    - dest: counter_k1
-      p: 0.9
-    - dest: dish_rack_k1
-      p: 0.1
+      p: 0.5
 - object: mug_marcus
   cites: often left in sink
   home: cupboard_k1
@@ -495,44 +487,22 @@ object_rules:
       p: 0.9
     - dest: sink_k1
       p: 0.1
-  - cites: Marcus often leaves his mug in the sink if he is in a hurry
+  - cites: Marcus often leaves his mug in the sink if he is in a hurry after coffee.
     activity: coffee
     phase: after
     dist:
     - dest: sink_k1
-      p: 0.4
+      p: 0.5
     - dest: cupboard_k1
-      p: 0.4
-    - dest: kitchen_table_k1
-      p: 0.2
-  - cites: Marcus tends to leave items on the table after work
+      p: 0.5
+  - cites: Marcus might use his mug for a quick drink during a snack.
     activity: snack
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.5
     - dest: sink_k1
-      p: 0.3
-    - dest: cupboard_k1
-      p: 0.2
-  - cites: Marcus sometimes forgets to unplug or return items during cleaning
-    activity: wash_dishes
-    phase: after
-    dist:
-    - dest: cupboard_k1
       p: 0.4
-    - dest: sink_k1
-      p: 0.3
-    - dest: kitchen_table_k1
-      p: 0.3
-  - cites: Marcus puts away his mug when clearing the counter
-    activity: put_away_dishes
-    phase: after
-    dist:
     - dest: cupboard_k1
-      p: 0.7
-    - dest: sink_k1
-      p: 0.3
+      p: 0.6
 - object: laptop_elena
   cites: stays on living room desk
   home: desk_b1
@@ -575,6 +545,14 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
+  - cites: Marcus might check emails or work on his laptop during a video call from the couch.
+    activity: video_call
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.7
+    - dest: couch_l1
+      p: 0.3
 - object: phone_elena
   cites: charged on kitchen counter
   home: counter_k1
@@ -604,24 +582,22 @@ object_rules:
       p: 0.8
     - dest: counter_k1
       p: 0.2
-  - cites: Elena keeps her phone in her pocket or bag during socializing
-    activity: socialise_home
-    phase: after
-    dist:
-    - dest: person:resident_1
-      p: 0.5
-    - dest: counter_k1
-      p: 0.3
-    - dest: couch_l1
-      p: 0.2
-  - cites: Elena charges her phone on the kitchen counter at night
-    activity: wake_up
+  - cites: 'Elena is easily distracted by clutter but keeps her phone on the counter at night; she''ll '
+    activity: phone_time
     phase: after
     dist:
     - dest: counter_k1
       p: 0.8
-    - dest: person:resident_1
+    - dest: kitchen_table_k1
       p: 0.2
+  - cites: Elena might use her phone during a video call.
+    activity: video_call
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.5
+    - dest: couch_l1
+      p: 0.5
 - object: phone_marcus
   cites: left on dining table
   home: kitchen_table_k1
@@ -653,34 +629,22 @@ object_rules:
       p: 0.9
     - dest: kitchen_table_k1
       p: 0.1
-  - cites: Marcus often leaves his phone on the dining table after work
-    activity: snack
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.6
-    - dest: counter_k1
-      p: 0.3
-    - dest: person:resident_2
-      p: 0.1
-  - cites: Marcus uses his phone for navigation and calls during video chats
-    activity: video_call
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.4
-    - dest: couch_l1
-      p: 0.3
-    - dest: person:resident_2
-      p: 0.3
-  - cites: Marcus forgets his phone on the table while on the phone
+  - cites: Marcus is forgetful with small items and often leaves his phone on the dining table.
     activity: phone_time
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.7
-    - dest: counter_k1
-      p: 0.3
+      p: 0.8
+    - dest: couch_l1
+      p: 0.2
+  - cites: Marcus might use his phone for a video call.
+    activity: video_call
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.6
+    - dest: couch_l1
+      p: 0.4
 - object: keys_elena
   cites: hung on front door hook
   home: entry_hook_e1
@@ -702,6 +666,38 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
+  - cites: Elena is methodical and hangs her keys on the hook when coming home from an appointment.
+    activity: appointment
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: counter_k1
+      p: 0.1
+  - cites: Elena hangs her keys on the hook after running errands.
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: counter_k1
+      p: 0.1
+  - cites: Elena hangs her keys on the hook after a night out.
+    activity: night_out
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.8
+    - dest: counter_k1
+      p: 0.2
+  - cites: Elena hangs her keys on the hook after a walk.
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: counter_k1
+      p: 0.1
 - object: keys_marcus
   cites: left on dining table
   home: kitchen_table_k1
@@ -725,22 +721,38 @@ object_rules:
       p: 0.8
     - dest: kitchen_table_k1
       p: 0.2
-  - cites: Marcus leaves his keys on the dining table after coming home
-    activity: wake_up
+  - cites: Marcus leaves his keys on the dining table after coming home, forgetting them until the
+    activity: appointment
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.8
+      p: 0.7
     - dest: entry_hook_e1
-      p: 0.2
-  - cites: Marcus forgets his keys on the table during socializing
-    activity: socialise_home
+      p: 0.3
+  - cites: Marcus leaves his keys on the dining table after errands.
+    activity: errands
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.7
+    - dest: entry_hook_e1
+      p: 0.3
+  - cites: Marcus leaves his keys on the dining table after a night out.
+    activity: night_out
     phase: after
     dist:
     - dest: kitchen_table_k1
       p: 0.6
-    - dest: person:resident_2
+    - dest: entry_hook_e1
       p: 0.4
+  - cites: Marcus leaves his keys on the dining table after a walk.
+    activity: walk
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.7
+    - dest: entry_hook_e1
+      p: 0.3
 - object: wallet_elena
   cites: kept in work bag
   home: entry_hook_e1
@@ -762,6 +774,22 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
+  - cites: Elena keeps her wallet in her bag or on the hook; she might take it out during errands.
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.8
+    - dest: counter_k1
+      p: 0.2
+  - cites: Elena might use her wallet for a night out.
+    activity: night_out
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.7
+    - dest: counter_k1
+      p: 0.3
 - object: wallet_marcus
   cites: kept in work pants
   home: kitchen_table_k1
@@ -783,14 +811,6 @@ object_rules:
       p: 0.9
     - dest: kitchen_table_k1
       p: 0.1
-  - cites: Marcus checks receipts on the dining table after work
-    activity: snack
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.5
-    - dest: person:resident_2
-      p: 0.5
 - object: book_elena
   cites: returned to bookshelf
   home: bookshelf_l1
@@ -814,24 +834,22 @@ object_rules:
       p: 0.9
     - dest: couch_l1
       p: 0.1
-  - cites: Elena reads in the evening and leaves her book on the counter
+  - cites: Elena reads in the evening, often leaving her book on the sofa or counter.
     activity: hobby
     phase: after
     dist:
-    - dest: counter_k1
+    - dest: armchair_l1
       p: 0.4
-    - dest: couch_l1
-      p: 0.3
     - dest: bookshelf_l1
-      p: 0.3
-  - cites: Elena leaves her book on the sofa while relaxing
+      p: 0.6
+  - cites: Elena might read while lying down.
     activity: lie_down
     phase: after
     dist:
     - dest: couch_l1
-      p: 0.6
+      p: 0.5
     - dest: bookshelf_l1
-      p: 0.4
+      p: 0.5
 - object: book_marcus
   cites: left on nightstand
   home: nightstand_b2
@@ -855,24 +873,22 @@ object_rules:
       p: 0.8
     - dest: couch_l1
       p: 0.2
-  - cites: Marcus reads on the sofa and leaves his book there
+  - cites: Marcus reads novels, often leaving them on the nightstand or sofa.
     activity: hobby
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.3
+    - dest: nightstand_b2
+      p: 0.7
+  - cites: Marcus might read while lying down.
+    activity: lie_down
     phase: after
     dist:
     - dest: couch_l1
       p: 0.5
     - dest: nightstand_b2
-      p: 0.3
-    - dest: coffee_table_l1
-      p: 0.2
-  - cites: Marcus often leaves his book on the sofa when he lies down
-    activity: lie_down
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.7
-    - dest: nightstand_b2
-      p: 0.3
+      p: 0.5
 - object: water_bottle_elena
   cites: kept on living room desk
   home: desk_b1
@@ -894,22 +910,22 @@ object_rules:
       p: 0.9
     - dest: counter_k1
       p: 0.1
-  - cites: Elena keeps her water bottle on the desk during work
-    activity: hobby
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.8
-    - dest: counter_k1
-      p: 0.2
-  - cites: Elena moves her bottle to the kitchen for refilling
+  - cites: Elena keeps her water bottle on her desk, but might move it to the kitchen for refilling.
     activity: coffee
     phase: after
     dist:
     - dest: counter_k1
-      p: 0.6
+      p: 0.3
     - dest: desk_b1
+      p: 0.7
+  - cites: Elena might refill her water bottle during meal prep.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
       p: 0.4
+    - dest: desk_b1
+      p: 0.6
 - object: water_bottle_marcus
   cites: kept on dining table
   home: kitchen_table_k1
@@ -931,24 +947,22 @@ object_rules:
       p: 0.8
     - dest: counter_k1
       p: 0.2
-  - cites: Marcus keeps his bottle on the dining table
-    activity: snack
+  - cites: Marcus keeps his water bottle on the dining table, but might move it to the kitchen.
+    activity: coffee
     phase: after
     dist:
-    - dest: kitchen_table_k1
-      p: 0.7
     - dest: counter_k1
       p: 0.3
-  - cites: Marcus forgets his bottle on the table during socializing
-    activity: socialise_home
+    - dest: kitchen_table_k1
+      p: 0.7
+  - cites: Marcus might refill his water bottle during meal prep.
+    activity: meal_prep
     phase: after
     dist:
+    - dest: counter_k1
+      p: 0.4
     - dest: kitchen_table_k1
       p: 0.6
-    - dest: couch_l1
-      p: 0.2
-    - dest: counter_k1
-      p: 0.2
 - object: remote_shared
   cites: left on sofa
   home: couch_l1
@@ -972,7 +986,7 @@ object_rules:
       p: 0.7
     - dest: coffee_table_l1
       p: 0.3
-  - cites: The remote is left on the sofa or coffee table after TV
+  - cites: The remote is left on the sofa or coffee table after watching TV.
     activity: watch_tv
     phase: after
     dist:
@@ -980,22 +994,14 @@ object_rules:
       p: 0.5
     - dest: coffee_table_l1
       p: 0.5
-  - cites: Elena moves the remote to the coffee table during socializing
-    activity: socialise_home
-    phase: after
-    dist:
-    - dest: coffee_table_l1
-      p: 0.4
-    - dest: couch_l1
-      p: 0.6
-  - cites: Marcus often leaves the remote on the sofa when lying down
-    activity: lie_down
+  - cites: The remote might be used during a video call if the TV is used as a screen.
+    activity: video_call
     phase: after
     dist:
     - dest: couch_l1
-      p: 0.7
+      p: 0.5
     - dest: coffee_table_l1
-      p: 0.3
+      p: 0.5
 - object: charger_elena
   cites: kept on living room desk
   home: desk_b1
@@ -1038,22 +1044,14 @@ object_rules:
       p: 0.8
     - dest: kitchen_table_k1
       p: 0.2
-  - cites: Marcus forgets to unplug his charger, leaving it on the nightstand
+  - cites: Marcus charges his phone on the nightstand but forgets to unplug it, leaving the charger
     activity: wake_up
     phase: after
     dist:
     - dest: nightstand_b2
-      p: 0.9
+      p: 0.8
     - dest: kitchen_table_k1
-      p: 0.1
-  - cites: Marcus moves his charger to the dining table if his phone is there
-    activity: snack
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.4
-    - dest: nightstand_b2
-      p: 0.6
+      p: 0.2
 - object: backpack_elena
   cites: hung on front door hook
   home: entry_hook_e1
@@ -1075,6 +1073,38 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
+  - cites: Elena hangs her work bag on the front door hook after an appointment.
+    activity: appointment
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: desk_b1
+      p: 0.1
+  - cites: Elena hangs her work bag on the front door hook after errands.
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: desk_b1
+      p: 0.1
+  - cites: Elena hangs her work bag on the front door hook after a night out.
+    activity: night_out
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.8
+    - dest: desk_b1
+      p: 0.2
+  - cites: Elena hangs her work bag on the front door hook after a walk.
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: desk_b1
+      p: 0.1
 - object: backpack_marcus
   cites: left on dining chair
   home: chair_k1
@@ -1098,6 +1128,38 @@ object_rules:
       p: 0.7
     - dest: chair_k1
       p: 0.3
+  - cites: Marcus leaves his work bag on the dining chair or floor after coming home.
+    activity: appointment
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.6
+    - dest: entry_floor_e1
+      p: 0.4
+  - cites: Marcus leaves his work bag on the dining chair or floor after errands.
+    activity: errands
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.6
+    - dest: entry_floor_e1
+      p: 0.4
+  - cites: Marcus leaves his work bag on the dining chair or floor after a night out.
+    activity: night_out
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.5
+    - dest: entry_floor_e1
+      p: 0.5
+  - cites: Marcus leaves his work bag on the dining chair or floor after a walk.
+    activity: walk
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.6
+    - dest: entry_floor_e1
+      p: 0.4
 - object: jacket_elena
   cites: hung in closet
   home: entry_hook_e1
@@ -1140,30 +1202,38 @@ object_rules:
       p: 0.8
     - dest: chair_k2
       p: 0.2
-  - cites: Marcus leaves his jacket on the dining chair
-    activity: wake_up
-    phase: after
-    dist:
-    - dest: chair_k2
-      p: 0.8
-    - dest: couch_l1
-      p: 0.2
-  - cites: Marcus often leaves his jacket on the chair during socializing
-    activity: socialise_home
+  - cites: Marcus leaves his work jacket on the back of the dining chair instead of the closet.
+    activity: appointment
     phase: after
     dist:
     - dest: chair_k2
       p: 0.7
-    - dest: couch_l1
+    - dest: entry_hook_e1
       p: 0.3
-  - cites: Marcus leaves his jacket on the chair when lying down
-    activity: lie_down
+  - cites: Marcus leaves his work jacket on the back of the dining chair after errands.
+    activity: errands
     phase: after
     dist:
     - dest: chair_k2
-      p: 0.9
-    - dest: couch_l1
-      p: 0.1
+      p: 0.7
+    - dest: entry_hook_e1
+      p: 0.3
+  - cites: Marcus leaves his work jacket on the back of the dining chair after a night out.
+    activity: night_out
+    phase: after
+    dist:
+    - dest: chair_k2
+      p: 0.6
+    - dest: entry_hook_e1
+      p: 0.4
+  - cites: Marcus leaves his work jacket on the back of the dining chair after a walk.
+    activity: walk
+    phase: after
+    dist:
+    - dest: chair_k2
+      p: 0.7
+    - dest: entry_hook_e1
+      p: 0.3
 - object: headphones_elena
   cites: kept on living room desk
   home: desk_b1
@@ -1185,14 +1255,22 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Elena keeps her headphones on the desk during focus
+  - cites: Elena uses her headphones for focus during work or breaks, kept on the desk.
     activity: hobby
     phase: after
     dist:
     - dest: desk_b1
       p: 0.8
-    - dest: couch_l1
+    - dest: armchair_l1
       p: 0.2
+  - cites: Elena might use her headphones while lying down.
+    activity: lie_down
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.4
+    - dest: desk_b1
+      p: 0.6
 - object: glasses_elena
   cites: kept on kitchen counter
   home: counter_k1
@@ -1224,22 +1302,22 @@ object_rules:
       p: 0.8
     - dest: counter_k1
       p: 0.2
-  - cites: Elena leaves her glasses on the kitchen counter while reading
+  - cites: Elena leaves her glasses on the kitchen counter while reading in the evening.
     activity: hobby
     phase: after
     dist:
     - dest: counter_k1
-      p: 0.6
+      p: 0.5
     - dest: desk_b1
-      p: 0.4
-  - cites: Elena moves her glasses to the nightstand for sleep
-    activity: wake_up
+      p: 0.5
+  - cites: Elena might leave her glasses on the couch while lying down.
+    activity: lie_down
     phase: after
     dist:
+    - dest: couch_l1
+      p: 0.5
     - dest: counter_k1
-      p: 0.7
-    - dest: nightstand_b1
-      p: 0.3
+      p: 0.5
 - object: notebook_marcus
   cites: kept in work bag
   home: chair_k1
@@ -1261,22 +1339,14 @@ object_rules:
       p: 0.8
     - dest: kitchen_table_k1
       p: 0.2
-  - cites: Marcus reviews his notes on the dining table after work
-    activity: snack
+  - cites: Marcus keeps his notebook in his work bag, moved to the dining table for review.
+    activity: video_call
     phase: after
     dist:
     - dest: kitchen_table_k1
       p: 0.6
     - dest: chair_k1
       p: 0.4
-  - cites: Marcus leaves his notebook on the table during socializing
-    activity: socialise_home
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.5
-    - dest: chair_k1
-      p: 0.5
 - object: pen_marcus
   cites: often lost on table
   home: kitchen_table_k1
@@ -1300,24 +1370,12 @@ object_rules:
       p: 0.7
     - dest: kitchen_table_k1
       p: 0.3
-  - cites: Marcus often loses his pen on the dining table
-    activity: snack
+  - cites: Marcus is forgetful with small items, often losing his pen on the dining table.
+    activity: video_call
     phase: after
     dist:
     - dest: kitchen_table_k1
-      p: 0.6
-    - dest: chair_k1
-      p: 0.2
-    - dest: counter_k1
-      p: 0.2
-  - cites: Marcus forgets his pen on the table during socializing
-    activity: socialise_home
-    phase: after
-    dist:
-    - dest: kitchen_table_k1
-      p: 0.5
-    - dest: couch_l1
-      p: 0.2
+      p: 0.7
     - dest: chair_k1
       p: 0.3
 - object: blanket_shared
@@ -1340,30 +1398,6 @@ object_rules:
     - dest: couch_l1
       p: 0.9
     - dest: armchair_l1
-      p: 0.1
-  - cites: The blanket is left on the sofa after TV
-    activity: watch_tv
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.8
-    - dest: entry_floor_e1
-      p: 0.2
-  - cites: The blanket stays on the sofa during socializing
-    activity: socialise_home
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.9
-    - dest: entry_floor_e1
-      p: 0.1
-  - cites: The blanket is left on the sofa when lying down
-    activity: lie_down
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.9
-    - dest: entry_floor_e1
       p: 0.1
 - object: towel_shared
   cites: kept on bathroom rack
@@ -1388,34 +1422,22 @@ object_rules:
       p: 0.8
     - dest: bathroom_shelf_ba1
       p: 0.2
-  - cites: Marcus often leaves the towel balled up on the floor
+  - cites: Marcus uses the shared bathroom towel for his face and often leaves it balled up on
+    activity: bath
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.3
+    - dest: towel_rack_ba1
+      p: 0.7
+  - cites: Marcus uses the shared bathroom towel for his face and often leaves it balled up on
     activity: shower
     phase: after
     dist:
     - dest: bathroom_shelf_ba1
       p: 0.3
     - dest: towel_rack_ba1
-      p: 0.4
-    - dest: NO_OP
-      p: 0.3
-  - cites: Marcus uses the shared towel for his face and leaves it on the floor
-    activity: bath
-    phase: after
-    dist:
-    - dest: bathroom_shelf_ba1
-      p: 0.2
-    - dest: towel_rack_ba1
-      p: 0.4
-    - dest: NO_OP
-      p: 0.4
-  - cites: Elena hangs the towel on the rack after deep cleaning
-    activity: deep_clean
-    phase: after
-    dist:
-    - dest: towel_rack_ba1
-      p: 0.9
-    - dest: bathroom_shelf_ba1
-      p: 0.1
+      p: 0.7
 - object: laundry_basket_shared
   cites: kept in hallway
   home: entry_floor_e1
@@ -1437,22 +1459,14 @@ object_rules:
       p: 0.8
     - dest: bedroom_floor_b1
       p: 0.2
-  - cites: The laundry basket is moved to the bedroom when full
+  - cites: The laundry basket is kept in the hallway, moved to the bedroom when full.
     activity: laundry
     phase: after
     dist:
     - dest: bedroom_floor_b1
-      p: 0.5
+      p: 0.6
     - dest: entry_floor_e1
-      p: 0.5
-  - cites: The basket stays in the hallway during deep cleaning
-    activity: deep_clean
-    phase: after
-    dist:
-    - dest: entry_floor_e1
-      p: 0.8
-    - dest: bedroom_floor_b1
-      p: 0.2
+      p: 0.4
 - object: pot_shared
   cites: kept in cupboard
   home: cupboard_k1
@@ -1474,38 +1488,22 @@ object_rules:
       p: 0.9
     - dest: sink_k1
       p: 0.1
-  - cites: The pot is moved to the sink for washing after cooking
+  - cites: The pot is kept in the cupboard, moved to the stove for cooking and to the sink
     activity: batch_cooking
     phase: after
     dist:
     - dest: sink_k1
-      p: 0.6
+      p: 0.5
     - dest: cupboard_k1
-      p: 0.4
-  - cites: The pot is moved to the sink after meal prep
+      p: 0.5
+  - cites: The pot is kept in the cupboard, moved to the stove for cooking and to the sink
     activity: meal_prep
     phase: after
     dist:
     - dest: sink_k1
-      p: 0.7
+      p: 0.5
     - dest: cupboard_k1
-      p: 0.3
-  - cites: The pot is returned to the cupboard after washing
-    activity: wash_dishes
-    phase: after
-    dist:
-    - dest: cupboard_k1
-      p: 0.8
-    - dest: sink_k1
-      p: 0.2
-  - cites: The pot is put away after clearing the sink
-    activity: put_away_dishes
-    phase: after
-    dist:
-    - dest: cupboard_k1
-      p: 0.9
-    - dest: sink_k1
-      p: 0.1
+      p: 0.5
 - object: pan_shared
   cites: kept in cupboard
   home: cupboard_k1
@@ -1527,7 +1525,7 @@ object_rules:
       p: 0.9
     - dest: sink_k1
       p: 0.1
-  - cites: The pan is moved to the sink for washing after cooking
+  - cites: The pan is kept in the cupboard, moved to the stove for cooking and to the sink
     activity: batch_cooking
     phase: after
     dist:
@@ -1535,30 +1533,14 @@ object_rules:
       p: 0.5
     - dest: cupboard_k1
       p: 0.5
-  - cites: The pan is moved to the sink after meal prep
+  - cites: The pan is kept in the cupboard, moved to the stove for cooking and to the sink
     activity: meal_prep
     phase: after
     dist:
     - dest: sink_k1
-      p: 0.6
+      p: 0.5
     - dest: cupboard_k1
-      p: 0.4
-  - cites: The pan is returned to the cupboard after washing
-    activity: wash_dishes
-    phase: after
-    dist:
-    - dest: cupboard_k1
-      p: 0.9
-    - dest: sink_k1
-      p: 0.1
-  - cites: The pan is put away after clearing the sink
-    activity: put_away_dishes
-    phase: after
-    dist:
-    - dest: cupboard_k1
-      p: 0.9
-    - dest: sink_k1
-      p: 0.1
+      p: 0.5
 - object: lunchbox_marcus
   cites: kept in fridge
   home: counter_k1
@@ -1580,6 +1562,22 @@ object_rules:
       p: 0.9
     - dest: sink_k1
       p: 0.1
+  - cites: Marcus takes his lunchbox to work every day, bringing it home empty to be refilled.
+    activity: lunch
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.8
+    - dest: cupboard_k1
+      p: 0.2
+  - cites: Marcus might use his lunchbox for a snack.
+    activity: snack
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: cupboard_k1
+      p: 0.3
 - object: umbrella_shared
   cites: kept by front door
   home: entry_hook_e1
@@ -1688,3 +1686,36 @@ arc_events:
       end: '14:00'
       at: armchair_l1
       jitter: flexible
+object_owners:
+  mug_elena: resident_1
+  mug_marcus: resident_2
+  laptop_elena: resident_1
+  laptop_marcus: resident_2
+  phone_elena: resident_1
+  phone_marcus: resident_2
+  keys_elena: resident_1
+  keys_marcus: resident_2
+  wallet_elena: resident_1
+  wallet_marcus: resident_2
+  book_elena: resident_1
+  book_marcus: resident_2
+  water_bottle_elena: resident_1
+  water_bottle_marcus: resident_2
+  remote_shared: shared
+  charger_elena: resident_1
+  charger_marcus: resident_2
+  backpack_elena: resident_1
+  backpack_marcus: resident_2
+  jacket_elena: resident_1
+  jacket_marcus: resident_2
+  headphones_elena: resident_1
+  glasses_elena: resident_1
+  notebook_marcus: resident_2
+  pen_marcus: resident_2
+  blanket_shared: shared
+  towel_shared: shared
+  laundry_basket_shared: shared
+  pot_shared: shared
+  pan_shared: shared
+  lunchbox_marcus: resident_2
+  umbrella_shared: shared

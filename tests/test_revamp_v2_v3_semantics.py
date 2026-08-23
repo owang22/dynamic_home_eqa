@@ -276,3 +276,35 @@ def test_home_pointing_away_rule_is_a_homecoming_not_fake_movement():
         "person:resident_2"
     # the whole program still passes the v1 lint
     sim.load_v1().validate(acts, motions)
+
+
+def test_another_residents_homecoming_cannot_reach_my_pocket():
+    """Away variants inherit the base activity's after rules, so roommate
+    B's homecoming used to fire rules over roommate A's held keys (hh9:
+    four residents sharing work_away, 516 mid-trip teleports). A variant's
+    after may reach receptacles, ELSEWHERE, and its OWN resident's person
+    — never someone else's."""
+    program = _two_res_program()
+    # resident_1 ALSO works away, so both variants exist
+    program["weekly_blocks"].append(
+        {"resident": "resident_1", "activity": "work_away",
+         "days": ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+         "start": "09:30", "end": "16:30", "at": "ELSEWHERE",
+         "jitter": "external", "skip_p": 0.0, "sleep": False, "cites": "c"})
+    _, motions = xc.expand(program)
+    variants = [n for n in motions["object_motions"]
+                if n.startswith("work_away")]
+    assert len(variants) == 2
+    persons_per_variant = {}
+    for name in variants:
+        act = motions["object_motions"][name]
+        persons = set()
+        for obj, rule in act.get("after", {}).items():
+            persons |= {x for x in rule.get("only_from", [])
+                        if str(x).startswith("person:")}
+        # a variant's rules may reach at most ONE person — its own
+        assert len(persons) <= 1, (name, persons)
+        persons_per_variant[name] = persons
+    # and the two variants reach DIFFERENT persons (each its own)
+    reached = [p for s in persons_per_variant.values() for p in s]
+    assert len(reached) == len(set(reached)) == 2, persons_per_variant

@@ -578,24 +578,38 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.3
-  - cites: Alex rinses his mug immediately after his morning coffee, leaving it to dry on the rack.
+  - cites: Dana washes her mug immediately after coffee
     activity: coffee
     phase: after
     dist:
-    - dest: dish_rack_k1
-      p: 0.7
+    - dest: cupboard_k1
+      p: 0.85
     - dest: sink_k1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Dana wipes the counter clean after batch cooking, ensuring no mugs are left behind.
-    activity: batch_cooking
+      p: 0.15
+  - cites: Alex packs his lunchbox and mug for the day
+    activity: school
     phase: after
     dist:
     - dest: cupboard_k1
-      p: 0.8
-    - dest: dish_rack_k1
-      p: 0.2
+      p: 0.9
+    - dest: sink_k1
+      p: 0.1
+  - cites: Left on the counter after the meal
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.6
+    - dest: sink_k1
+      p: 0.4
+  - cites: Left on the counter after the meal
+    activity: lunch
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: sink_k1
+      p: 0.3
 - object: mug_2
   cites: Washed by Dana after use
   home: cupboard_k1
@@ -619,23 +633,29 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.3
-  - cites: Bella often forgets to wash her mug, leaving it on the counter until Dana cleans it.
+  - cites: Bella forgets to put her mug in the sink
     activity: coffee
     phase: after
     dist:
     - dest: counter_k1
-      p: 0.5
+      p: 0.8
     - dest: sink_k1
-      p: 0.3
-    - dest: dish_rack_k1
       p: 0.2
-  - cites: Chad drinks from the shared mug while cooking, leaving it near the sink.
-    activity: batch_cooking
+  - cites: Chad leaves his mug on the table
+    activity: breakfast
     phase: after
     dist:
-    - dest: sink_k1
-      p: 0.6
+    - dest: kitchen_table_k1
+      p: 0.7
     - dest: counter_k1
+      p: 0.3
+  - cites: Left on the counter after the meal
+    activity: lunch
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.6
+    - dest: kitchen_table_k1
       p: 0.4
 - object: laptop_alex
   cites: Alex studies at desk
@@ -658,6 +678,22 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
+  - cites: Alex keeps his laptop in his bag for school
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: person:resident_1
+      p: 0.1
+  - cites: Laptop stays in his bag during the walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.95
+    - dest: person:resident_1
+      p: 0.05
 - object: laptop_bella
   cites: Bella leaves laptop scattered
   home: bed_b2
@@ -681,25 +717,21 @@ object_rules:
       p: 0.7
     - dest: bedroom_floor_b2
       p: 0.3
-  - cites: Bella leaves her laptop on her bed or floor after creative work, rarely closing it neatly.
-    activity: hobby
+  - cites: Bella leaves her laptop on the bed when she goes to school
+    activity: school
     phase: after
     dist:
     - dest: bed_b2
-      p: 0.6
-    - dest: bedroom_floor_b2
-      p: 0.3
+      p: 0.7
     - dest: desk_b2
-      p: 0.1
-  - cites: Bella forgets where she left her laptop after studying, often finding it on her bed.
-    activity: homework
+      p: 0.3
+  - cites: Laptop is left behind when she goes out
+    activity: errands
     phase: after
     dist:
     - dest: bed_b2
-      p: 0.5
+      p: 0.8
     - dest: desk_b2
-      p: 0.3
-    - dest: bedroom_floor_b2
       p: 0.2
 - object: laptop_chad
   cites: Chad moves laptop to living room
@@ -724,25 +756,21 @@ object_rules:
       p: 0.6
     - dest: desk_b3
       p: 0.4
-  - cites: Chad leaves his laptop in the living room after gaming sessions, often on the couch.
-    activity: gaming
+  - cites: Chad leaves his laptop in his room for school
+    activity: school
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.5
     - dest: desk_b3
-      p: 0.3
-    - dest: coffee_table_l1
+      p: 0.8
+    - dest: couch_l1
       p: 0.2
-  - cites: Chad uses his laptop for social media while watching TV, leaving it on the coffee table.
-    activity: watch_tv
+  - cites: Laptop stays put during the walk
+    activity: walk
     phase: after
     dist:
-    - dest: coffee_table_l1
-      p: 0.6
-    - dest: couch_l1
-      p: 0.3
     - dest: desk_b3
+      p: 0.9
+    - dest: couch_l1
       p: 0.1
 - object: laptop_dana
   cites: Dana moves laptop for group work
@@ -765,14 +793,22 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Dana uses her laptop for planning after deep cleaning, keeping it organized in her room.
-    activity: deep_clean
+  - cites: Dana takes her laptop to school
+    activity: school
     phase: after
     dist:
     - dest: desk_b4
-      p: 0.8
-    - dest: couch_l1
-      p: 0.2
+      p: 0.9
+    - dest: person:resident_4
+      p: 0.1
+  - cites: Laptop stays in her bag during the walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.95
+    - dest: person:resident_4
+      p: 0.05
 - object: phone_alex
   cites: Alex charges phone on nightstand
   home: nightstand_b1
@@ -794,14 +830,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Alex checks his phone while reading, placing it back on the nightstand when done.
-    activity: reading
+  - cites: Alex keeps his phone on him
+    activity: school
     phase: after
     dist:
     - dest: nightstand_b1
       p: 0.8
     - dest: person:resident_1
       p: 0.2
+  - cites: Phone stays in pocket during the walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.9
+    - dest: person:resident_1
+      p: 0.1
+  - cites: Phone is on the nightstand when he takes meds
+    activity: take_medication
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.95
+    - dest: person:resident_1
+      p: 0.05
 - object: phone_bella
   cites: Bella leaves phone on desk or bed
   home: desk_b2
@@ -825,26 +877,30 @@ object_rules:
       p: 0.8
     - dest: bedroom_floor_b2
       p: 0.2
-  - cites: Bella leaves her phone on her desk or bed after scrolling through social media.
+  - cites: Bella forgets her phone at home when going to school
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.6
+    - dest: bed_b2
+      p: 0.4
+  - cites: Phone left on the desk during errands
+    activity: errands
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.7
+    - dest: bed_b2
+      p: 0.3
+  - cites: Phone is used during phone time
     activity: phone_time
     phase: after
     dist:
     - dest: desk_b2
       p: 0.5
     - dest: bed_b2
-      p: 0.4
-    - dest: person:resident_2
-      p: 0.1
-  - cites: Bella uses her phone for photos while doing her hobby, leaving it on the desk.
-    activity: hobby
-    phase: after
-    dist:
-    - dest: desk_b2
-      p: 0.6
-    - dest: bed_b2
-      p: 0.3
-    - dest: person:resident_2
-      p: 0.1
+      p: 0.5
 - object: phone_chad
   cites: Chad keeps phone in pocket
   home: desk_b3
@@ -868,22 +924,30 @@ object_rules:
       p: 0.7
     - dest: desk_b3
       p: 0.3
-  - cites: Chad keeps his phone in his pocket during gaming sessions, rarely taking it out.
-    activity: gaming
+  - cites: Chad keeps his phone in his pocket
+    activity: school
     phase: after
     dist:
-    - dest: person:resident_3
-      p: 0.8
     - dest: desk_b3
-      p: 0.2
-  - cites: Chad uses his phone for social media while watching TV, keeping it in his pocket.
-    activity: watch_tv
+      p: 0.7
+    - dest: person:resident_3
+      p: 0.3
+  - cites: Phone stays in pocket during the walk
+    activity: walk
     phase: after
     dist:
+    - dest: desk_b3
+      p: 0.8
     - dest: person:resident_3
-      p: 0.9
+      p: 0.2
+  - cites: Phone is used during phone time
+    activity: phone_time
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.6
     - dest: couch_l1
-      p: 0.1
+      p: 0.4
 - object: phone_dana
   cites: Dana keeps phone in bag
   home: nightstand_b4
@@ -905,22 +969,30 @@ object_rules:
       p: 0.9
     - dest: desk_b4
       p: 0.1
-  - cites: Dana keeps her phone in her bag while organizing the common area, checking it briefly.
-    activity: deep_clean
+  - cites: Dana keeps her phone in her bag
+    activity: school
     phase: after
     dist:
-    - dest: person:resident_4
+    - dest: nightstand_b4
       p: 0.8
-    - dest: desk_b4
+    - dest: person:resident_4
       p: 0.2
-  - cites: Dana uses her phone for notes while reading, placing it back in her bag.
-    activity: reading
+  - cites: Phone stays in bag during the walk
+    activity: walk
     phase: after
     dist:
-    - dest: person:resident_4
+    - dest: nightstand_b4
       p: 0.9
-    - dest: desk_b4
+    - dest: person:resident_4
       p: 0.1
+  - cites: Phone is used during phone time
+    activity: phone_time
+    phase: after
+    dist:
+    - dest: nightstand_b4
+      p: 0.7
+    - dest: desk_b4
+      p: 0.3
 - object: keys_alex
   cites: Alex keeps keys in pocket
   home: entry_table_e1
@@ -942,22 +1014,30 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Alex keeps his keys in his pocket throughout his morning routine, never losing them.
-    activity: get_ready
+  - cites: Alex returns his keys to the entry table
+    activity: school
     phase: after
     dist:
-    - dest: person:resident_1
+    - dest: entry_table_e1
       p: 0.9
-    - dest: desk_b1
+    - dest: person:resident_1
       p: 0.1
-  - cites: Alex takes his keys with him when leaving for work, keeping them secure.
-    activity: wake_up
+  - cites: Keys are returned after the walk
+    activity: walk
     phase: after
     dist:
+    - dest: entry_table_e1
+      p: 0.95
     - dest: person:resident_1
-      p: 1.0
-    - dest: NO_OP
-      p: 0.0
+      p: 0.05
+  - cites: Keys are returned after the appointment
+    activity: appointment
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: person:resident_1
+      p: 0.1
 - object: keys_bella
   cites: Bella loses keys on counter
   home: entry_table_e1
@@ -981,26 +1061,32 @@ object_rules:
       p: 0.5
     - dest: entry_table_e1
       p: 0.5
-  - cites: Bella often leaves her keys on the kitchen counter or loses them in her room.
-    activity: get_ready
+  - cites: Bella often loses her keys or leaves them on the counter
+    activity: school
     phase: after
     dist:
     - dest: counter_k1
       p: 0.4
-    - dest: bed_b2
+    - dest: entry_table_e1
       p: 0.3
-    - dest: person:resident_2
+    - dest: desk_b2
       p: 0.3
-  - cites: Bella forgets her keys on the desk while getting ready, leaving them there.
-    activity: wake_up
+  - cites: Keys are left behind when going out
+    activity: errands
     phase: after
     dist:
-    - dest: desk_b2
+    - dest: counter_k1
       p: 0.5
-    - dest: bed_b2
-      p: 0.3
-    - dest: person:resident_2
-      p: 0.2
+    - dest: entry_table_e1
+      p: 0.5
+  - cites: Keys are returned after the walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.6
+    - dest: counter_k1
+      p: 0.4
 - object: keys_chad
   cites: Chad keeps keys in pocket
   home: entry_table_e1
@@ -1024,22 +1110,30 @@ object_rules:
       p: 0.6
     - dest: entry_table_e1
       p: 0.4
-  - cites: Chad keeps his keys in his pocket, rarely losing them despite his messy habits.
-    activity: get_ready
+  - cites: Chad keeps his keys in his pocket
+    activity: school
     phase: after
     dist:
+    - dest: entry_table_e1
+      p: 0.8
     - dest: person:resident_3
+      p: 0.2
+  - cites: Keys stay in pocket during the walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_table_e1
       p: 0.9
-    - dest: desk_b3
+    - dest: person:resident_3
       p: 0.1
-  - cites: Chad takes his keys with him when leaving for gaming sessions, keeping them in his pocket.
-    activity: wake_up
+  - cites: Keys are returned after the night out
+    activity: night_out
     phase: after
     dist:
+    - dest: entry_table_e1
+      p: 0.7
     - dest: person:resident_3
-      p: 1.0
-    - dest: NO_OP
-      p: 0.0
+      p: 0.3
 - object: keys_dana
   cites: Dana keeps keys in bag
   home: entry_table_e1
@@ -1061,22 +1155,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Dana keeps her keys in her bag, ensuring they are always accessible and organized.
-    activity: get_ready
+  - cites: Dana keeps her keys in her bag
+    activity: school
     phase: after
     dist:
-    - dest: person:resident_4
+    - dest: entry_table_e1
       p: 0.9
-    - dest: desk_b4
+    - dest: person:resident_4
       p: 0.1
-  - cites: Dana places her keys in her bag after waking up, ready for the day.
-    activity: wake_up
+  - cites: Keys stay in bag during the walk
+    activity: walk
     phase: after
     dist:
+    - dest: entry_table_e1
+      p: 0.95
     - dest: person:resident_4
-      p: 1.0
-    - dest: NO_OP
-      p: 0.0
+      p: 0.05
+  - cites: Keys are returned after the appointment
+    activity: appointment
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: person:resident_4
+      p: 0.1
 - object: wallet_alex
   cites: Alex keeps wallet in pocket
   home: desk_b1
@@ -1098,22 +1200,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Alex keeps his wallet in his pocket, maintaining a minimalist and organized approach.
-    activity: get_ready
+  - cites: Alex keeps his wallet in his pocket
+    activity: school
     phase: after
     dist:
-    - dest: person:resident_1
-      p: 0.9
     - dest: desk_b1
-      p: 0.1
-  - cites: Alex takes his wallet with him when leaving for work, keeping it secure in his pocket.
-    activity: wake_up
+      p: 0.8
+    - dest: person:resident_1
+      p: 0.2
+  - cites: Wallet stays in pocket during the walk
+    activity: walk
     phase: after
     dist:
+    - dest: desk_b1
+      p: 0.9
     - dest: person:resident_1
-      p: 1.0
-    - dest: NO_OP
-      p: 0.0
+      p: 0.1
+  - cites: Wallet is used for groceries
+    activity: groceries
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.85
+    - dest: person:resident_1
+      p: 0.15
 - object: wallet_bella
   cites: Bella leaves wallet in room
   home: desk_b2
@@ -1137,26 +1247,30 @@ object_rules:
       p: 0.7
     - dest: desk_b2
       p: 0.3
-  - cites: Bella often leaves her wallet in her room, forgetting to take it with her.
-    activity: get_ready
+  - cites: Bella leaves her wallet in her room
+    activity: school
     phase: after
     dist:
     - dest: desk_b2
+      p: 0.6
+    - dest: bed_b2
       p: 0.4
-    - dest: bed_b2
-      p: 0.3
-    - dest: person:resident_2
-      p: 0.3
-  - cites: Bella forgets her wallet on her bed while getting ready, leaving it there.
-    activity: wake_up
+  - cites: Wallet is left behind when going out
+    activity: errands
     phase: after
     dist:
-    - dest: bed_b2
-      p: 0.5
     - dest: desk_b2
+      p: 0.7
+    - dest: bed_b2
       p: 0.3
-    - dest: person:resident_2
-      p: 0.2
+  - cites: Wallet is used for groceries
+    activity: groceries
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.6
+    - dest: counter_k1
+      p: 0.4
 - object: wallet_chad
   cites: Chad keeps wallet in pocket
   home: desk_b3
@@ -1180,22 +1294,30 @@ object_rules:
       p: 0.8
     - dest: desk_b3
       p: 0.2
-  - cites: Chad keeps his wallet in his pocket, rarely losing it despite his messy habits.
-    activity: get_ready
+  - cites: Chad keeps his wallet in his pocket
+    activity: school
     phase: after
     dist:
-    - dest: person:resident_3
-      p: 0.9
     - dest: desk_b3
-      p: 0.1
-  - cites: Chad takes his wallet with him when leaving for gaming sessions, keeping it in his pocket.
-    activity: wake_up
+      p: 0.8
+    - dest: person:resident_3
+      p: 0.2
+  - cites: Wallet stays in pocket during the walk
+    activity: walk
     phase: after
     dist:
+    - dest: desk_b3
+      p: 0.9
     - dest: person:resident_3
-      p: 1.0
-    - dest: NO_OP
-      p: 0.0
+      p: 0.1
+  - cites: Wallet is used for groceries
+    activity: groceries
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.85
+    - dest: person:resident_3
+      p: 0.15
 - object: wallet_dana
   cites: Dana keeps wallet in bag
   home: desk_b4
@@ -1217,22 +1339,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Dana keeps her wallet in her bag, ensuring it is always organized and accessible.
-    activity: get_ready
+  - cites: Dana keeps her wallet in her bag
+    activity: school
     phase: after
     dist:
-    - dest: person:resident_4
-      p: 0.9
     - dest: desk_b4
-      p: 0.1
-  - cites: Dana places her wallet in her bag after waking up, ready for the day.
-    activity: wake_up
+      p: 0.8
+    - dest: person:resident_4
+      p: 0.2
+  - cites: Wallet stays in bag during the walk
+    activity: walk
     phase: after
     dist:
+    - dest: desk_b4
+      p: 0.9
     - dest: person:resident_4
-      p: 1.0
-    - dest: NO_OP
-      p: 0.0
+      p: 0.1
+  - cites: Wallet is used for groceries
+    activity: groceries
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.85
+    - dest: person:resident_4
+      p: 0.15
 - object: book_alex
   cites: Alex stacks textbooks neatly
   home: desk_b1
@@ -1254,6 +1384,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
+  - cites: Alex takes his book to school
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: person:resident_1
+      p: 0.1
+  - cites: Book is read during reading time
+    activity: reading
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.8
+    - dest: bed_b1
+      p: 0.2
+  - cites: Book is used for homework
+    activity: homework
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: bed_b1
+      p: 0.1
 - object: book_bella
   cites: Bella leaves sketchbooks scattered
   home: bed_b2
@@ -1277,18 +1431,8 @@ object_rules:
       p: 0.6
     - dest: bedroom_floor_b2
       p: 0.4
-  - cites: Bella leaves her sketchbook on the floor or bed after sketching, rarely putting it away.
-    activity: hobby
-    phase: after
-    dist:
-    - dest: bedroom_floor_b2
-      p: 0.5
-    - dest: bed_b2
-      p: 0.4
-    - dest: desk_b2
-      p: 0.1
-  - cites: Bella forgets her sketchbook on her bed while studying, leaving it scattered.
-    activity: homework
+  - cites: Bella leaves her sketchbook at home
+    activity: school
     phase: after
     dist:
     - dest: bed_b2
@@ -1296,6 +1440,26 @@ object_rules:
     - dest: bedroom_floor_b2
       p: 0.3
     - dest: desk_b2
+      p: 0.2
+  - cites: Sketchbook is used during hobby
+    activity: hobby
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.4
+    - dest: bedroom_floor_b2
+      p: 0.4
+    - dest: desk_b2
+      p: 0.2
+  - cites: Sketchbook is used for homework
+    activity: homework
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.5
+    - dest: bed_b2
+      p: 0.3
+    - dest: bedroom_floor_b2
       p: 0.2
 - object: book_chad
   cites: Chad reads in living room
@@ -1320,26 +1484,32 @@ object_rules:
       p: 0.5
     - dest: desk_b3
       p: 0.5
-  - cites: Chad leaves his novel on the couch or coffee table after reading, rarely returning it to
+  - cites: Chad leaves his novel in his room
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.7
+    - dest: bed_b3
+      p: 0.3
+  - cites: Novel is read during reading time
     activity: reading
     phase: after
     dist:
     - dest: couch_l1
       p: 0.5
-    - dest: coffee_table_l1
-      p: 0.3
     - dest: desk_b3
+      p: 0.3
+    - dest: bed_b3
       p: 0.2
-  - cites: Chad uses his novel for relaxation while gaming, leaving it on the couch.
+  - cites: Novel is left on the couch during gaming
     activity: gaming
     phase: after
     dist:
     - dest: couch_l1
       p: 0.6
-    - dest: coffee_table_l1
-      p: 0.3
     - dest: desk_b3
-      p: 0.1
+      p: 0.4
 - object: book_dana
   cites: Dana writes notes in common area
   home: desk_b4
@@ -1361,21 +1531,29 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Dana keeps her notebook in her bag, writing down schedules and reminders while reading.
+  - cites: Dana takes her notebook to school
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: person:resident_4
+      p: 0.1
+  - cites: Notebook is used for reading
     activity: reading
     phase: after
     dist:
-    - dest: person:resident_4
-      p: 0.8
     - dest: desk_b4
+      p: 0.8
+    - dest: couch_l1
       p: 0.2
-  - cites: Dana uses her notebook for planning after deep cleaning, keeping it organized in her bag.
-    activity: deep_clean
+  - cites: Notebook is used for homework
+    activity: homework
     phase: after
     dist:
-    - dest: person:resident_4
-      p: 0.9
     - dest: desk_b4
+      p: 0.9
+    - dest: couch_l1
       p: 0.1
 - object: water_bottle_alex
   cites: Alex keeps bottle in room
@@ -1398,14 +1576,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Alex takes his water bottle with him to the kitchen for coffee, placing it on the counter.
+  - cites: Alex takes his water bottle to school
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: person:resident_1
+      p: 0.1
+  - cites: Bottle is used during coffee
     activity: coffee
     phase: after
     dist:
-    - dest: counter_k1
-      p: 0.5
     - dest: desk_b1
-      p: 0.5
+      p: 0.8
+    - dest: counter_k1
+      p: 0.2
+  - cites: Bottle is used during snack
+    activity: snack
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: counter_k1
+      p: 0.1
 - object: water_bottle_bella
   cites: Bella leaves bottle on desk
   home: desk_b2
@@ -1429,8 +1623,24 @@ object_rules:
       p: 0.5
     - dest: desk_b2
       p: 0.5
-  - cites: Bella forgets to move her water bottle, leaving it on her desk while getting ready.
-    activity: wake_up
+  - cites: Bella leaves her water bottle on her desk
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.8
+    - dest: bed_b2
+      p: 0.2
+  - cites: Bottle is used during coffee
+    activity: coffee
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.7
+    - dest: counter_k1
+      p: 0.3
+  - cites: Bottle is used during snack
+    activity: snack
     phase: after
     dist:
     - dest: desk_b2
@@ -1460,26 +1670,30 @@ object_rules:
       p: 0.6
     - dest: desk_b3
       p: 0.4
-  - cites: Chad keeps his water bottle in his room, moving it with him when gaming.
+  - cites: Chad takes his water bottle with him
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.8
+    - dest: person:resident_3
+      p: 0.2
+  - cites: Bottle is used during gaming
     activity: gaming
     phase: after
     dist:
     - dest: couch_l1
-      p: 0.5
+      p: 0.6
     - dest: desk_b3
-      p: 0.3
-    - dest: coffee_table_l1
-      p: 0.2
-  - cites: Chad takes his water bottle to the living room for gaming, leaving it on the couch.
-    activity: watch_tv
+      p: 0.4
+  - cites: Bottle is used during snack
+    activity: snack
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.6
-    - dest: coffee_table_l1
-      p: 0.3
     - dest: desk_b3
-      p: 0.1
+      p: 0.7
+    - dest: couch_l1
+      p: 0.3
 - object: water_bottle_dana
   cites: Dana keeps bottle in bag
   home: desk_b4
@@ -1501,22 +1715,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Dana keeps her water bottle in her bag, ensuring it is always accessible and organized.
-    activity: get_ready
+  - cites: Dana takes her water bottle to school
+    activity: school
     phase: after
     dist:
-    - dest: person:resident_4
-      p: 0.9
     - dest: desk_b4
+      p: 0.9
+    - dest: person:resident_4
       p: 0.1
-  - cites: Dana places her water bottle in her bag after waking up, ready for the day.
-    activity: wake_up
+  - cites: Bottle is used during coffee
+    activity: coffee
     phase: after
     dist:
-    - dest: person:resident_4
-      p: 1.0
-    - dest: NO_OP
-      p: 0.0
+    - dest: desk_b4
+      p: 0.8
+    - dest: counter_k1
+      p: 0.2
+  - cites: Bottle is used during snack
+    activity: snack
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: counter_k1
+      p: 0.1
 - object: remote_1
   cites: Chad leaves remote on coffee table
   home: tv_stand_l1
@@ -1540,24 +1762,30 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Chad leaves the remote on the coffee table after changing channels, often forgetting to
+  - cites: Chad leaves the remote on the coffee table
     activity: watch_tv
     phase: after
     dist:
     - dest: coffee_table_l1
-      p: 0.7
-    - dest: couch_l1
-      p: 0.2
+      p: 0.8
     - dest: tv_stand_l1
-      p: 0.1
-  - cites: Dana picks up the remote to organize the common area, placing it back on the TV stand.
-    activity: deep_clean
+      p: 0.2
+  - cites: Dana puts the remote back on the TV stand
+    activity: watch_tv
     phase: after
     dist:
     - dest: tv_stand_l1
-      p: 0.8
+      p: 0.7
     - dest: coffee_table_l1
-      p: 0.2
+      p: 0.3
+  - cites: Remote is left on the couch during gaming
+    activity: gaming
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.5
+    - dest: coffee_table_l1
+      p: 0.5
 - object: charger_alex
   cites: Alex keeps charger in room
   home: nightstand_b1
@@ -1579,14 +1807,22 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Alex places his charger back on the nightstand after taking his medication, maintaining
+  - cites: Charger stays on the nightstand
     activity: take_medication
     phase: after
     dist:
     - dest: nightstand_b1
-      p: 0.8
+      p: 0.95
     - dest: desk_b1
-      p: 0.2
+      p: 0.05
+  - cites: Charger is left on the nightstand when he wakes up
+    activity: wake_up
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.9
+    - dest: desk_b1
+      p: 0.1
 - object: charger_bella
   cites: Bella loses charger on counter
   home: desk_b2
@@ -1610,26 +1846,24 @@ object_rules:
       p: 0.5
     - dest: desk_b2
       p: 0.5
-  - cites: Bella often loses her charger or leaves it on the counter, rarely returning it to her room
+  - cites: Bella loses her charger or leaves it on the desk
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.6
+    - dest: bed_b2
+      p: 0.3
+    - dest: counter_k1
+      p: 0.1
+  - cites: Charger is left on the desk during get ready
     activity: get_ready
     phase: after
     dist:
-    - dest: counter_k1
-      p: 0.4
     - dest: desk_b2
-      p: 0.3
+      p: 0.7
     - dest: bed_b2
       p: 0.3
-  - cites: Bella forgets her charger on her desk while getting ready, leaving it there.
-    activity: wake_up
-    phase: after
-    dist:
-    - dest: desk_b2
-      p: 0.5
-    - dest: bed_b2
-      p: 0.3
-    - dest: counter_k1
-      p: 0.2
 - object: charger_chad
   cites: Chad keeps charger in room
   home: desk_b3
@@ -1653,25 +1887,21 @@ object_rules:
       p: 0.6
     - dest: desk_b3
       p: 0.4
-  - cites: Chad keeps his charger in his room, moving it with him when gaming.
+  - cites: Charger stays in his room
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.9
+    - dest: bed_b3
+      p: 0.1
+  - cites: Charger is left on the desk during gaming
     activity: gaming
     phase: after
     dist:
     - dest: desk_b3
-      p: 0.7
+      p: 0.8
     - dest: couch_l1
-      p: 0.2
-    - dest: coffee_table_l1
-      p: 0.1
-  - cites: Chad takes his charger to the living room for gaming, leaving it on the couch.
-    activity: watch_tv
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.5
-    - dest: coffee_table_l1
-      p: 0.3
-    - dest: desk_b3
       p: 0.2
 - object: charger_dana
   cites: Dana keeps charger in room
@@ -1694,14 +1924,22 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Dana keeps her charger in her room, ensuring it is always organized and accessible.
-    activity: get_ready
+  - cites: Charger stays on the nightstand
+    activity: school
     phase: after
     dist:
     - dest: nightstand_b4
       p: 0.9
     - dest: desk_b4
       p: 0.1
+  - cites: Charger is left on the desk during get ready
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.7
+    - dest: nightstand_b4
+      p: 0.3
 - object: backpack_alex
   cites: Alex keeps backpack in room
   home: desk_b1
@@ -1723,14 +1961,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Alex places his backpack by the door after getting ready, ready for the day.
-    activity: get_ready
+  - cites: Alex takes his backpack to school
+    activity: school
     phase: after
     dist:
-    - dest: entry_floor_e1
-      p: 0.8
     - dest: desk_b1
-      p: 0.2
+      p: 0.9
+    - dest: person:resident_1
+      p: 0.1
+  - cites: Backpack is left in his room when he goes out
+    activity: errands
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.95
+    - dest: person:resident_1
+      p: 0.05
+  - cites: Backpack is used for groceries
+    activity: groceries
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.85
+    - dest: entry_floor_e1
+      p: 0.15
 - object: backpack_bella
   cites: Bella leaves backpack in hallway
   home: entry_floor_e1
@@ -1754,23 +2008,31 @@ object_rules:
       p: 0.5
     - dest: entry_floor_e1
       p: 0.5
-  - cites: Bella often leaves her backpack in the hallway, forgetting to take it with her.
-    activity: get_ready
+  - cites: Bella leaves her backpack in the hallway
+    activity: school
     phase: after
     dist:
     - dest: entry_floor_e1
-      p: 0.5
-    - dest: bed_b2
-      p: 0.3
+      p: 0.6
     - dest: desk_b2
-      p: 0.2
-  - cites: Bella forgets her backpack on her bed while getting ready, leaving it there.
-    activity: wake_up
+      p: 0.3
+    - dest: bed_b2
+      p: 0.1
+  - cites: Backpack is left in the hallway when she goes out
+    activity: errands
     phase: after
     dist:
-    - dest: bed_b2
-      p: 0.5
     - dest: entry_floor_e1
+      p: 0.7
+    - dest: desk_b2
+      p: 0.3
+  - cites: Backpack is used for groceries
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.5
+    - dest: counter_k1
       p: 0.3
     - dest: desk_b2
       p: 0.2
@@ -1797,26 +2059,30 @@ object_rules:
       p: 0.6
     - dest: desk_b3
       p: 0.4
-  - cites: Chad keeps his backpack in his room, moving it with him when gaming.
-    activity: gaming
+  - cites: Chad takes his backpack to school
+    activity: school
     phase: after
     dist:
     - dest: desk_b3
-      p: 0.7
-    - dest: couch_l1
+      p: 0.8
+    - dest: person:resident_3
       p: 0.2
-    - dest: coffee_table_l1
+  - cites: Backpack is left in his room when he goes out
+    activity: errands
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.9
+    - dest: couch_l1
       p: 0.1
-  - cites: Chad takes his backpack to the living room for gaming, leaving it on the couch.
-    activity: watch_tv
+  - cites: Backpack is used for groceries
+    activity: groceries
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.5
-    - dest: coffee_table_l1
-      p: 0.3
     - dest: desk_b3
-      p: 0.2
+      p: 0.85
+    - dest: entry_floor_e1
+      p: 0.15
 - object: backpack_dana
   cites: Dana keeps backpack in room
   home: desk_b4
@@ -1838,22 +2104,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Dana keeps her backpack in her room, ensuring it is always organized and accessible.
-    activity: get_ready
+  - cites: Dana takes her backpack to school
+    activity: school
     phase: after
     dist:
     - dest: desk_b4
       p: 0.9
-    - dest: entry_floor_e1
+    - dest: person:resident_4
       p: 0.1
-  - cites: Dana places her backpack by the door after waking up, ready for the day.
-    activity: wake_up
+  - cites: Backpack is left in her room when she goes out
+    activity: errands
     phase: after
     dist:
-    - dest: entry_floor_e1
-      p: 0.8
     - dest: desk_b4
-      p: 0.2
+      p: 0.95
+    - dest: person:resident_4
+      p: 0.05
+  - cites: Backpack is used for groceries
+    activity: groceries
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.85
+    - dest: entry_floor_e1
+      p: 0.15
 - object: jacket_alex
   cites: Alex keeps jacket in closet
   home: desk_b1
@@ -1875,14 +2149,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Alex places his jacket in his closet after getting ready, ready for the day.
-    activity: get_ready
+  - cites: Alex takes his jacket to school
+    activity: school
     phase: after
     dist:
     - dest: desk_b1
       p: 0.8
-    - dest: entry_hook_e1
+    - dest: person:resident_1
       p: 0.2
+  - cites: Jacket is taken during the walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: person:resident_1
+      p: 0.1
+  - cites: Jacket is taken during the appointment
+    activity: appointment
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.85
+    - dest: person:resident_1
+      p: 0.15
 - object: jacket_bella
   cites: Bella leaves jacket on chair
   home: chair_k1
@@ -1906,26 +2196,32 @@ object_rules:
       p: 0.5
     - dest: chair_k1
       p: 0.5
-  - cites: Bella often leaves her jacket on the chair or floor, forgetting to put it away.
-    activity: get_ready
+  - cites: Bella leaves her jacket on the chair
+    activity: school
     phase: after
     dist:
     - dest: chair_k1
-      p: 0.5
-    - dest: bedroom_floor_b2
-      p: 0.3
+      p: 0.6
     - dest: bed_b2
-      p: 0.2
-  - cites: Bella forgets her jacket on her bed while getting ready, leaving it there.
-    activity: wake_up
+      p: 0.3
+    - dest: bedroom_floor_b2
+      p: 0.1
+  - cites: Jacket is left on the chair when she goes out
+    activity: errands
     phase: after
     dist:
-    - dest: bed_b2
-      p: 0.5
     - dest: chair_k1
+      p: 0.7
+    - dest: bed_b2
       p: 0.3
-    - dest: bedroom_floor_b2
-      p: 0.2
+  - cites: Jacket is taken during the walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.6
+    - dest: entry_hook_e1
+      p: 0.4
 - object: jacket_chad
   cites: Chad drapes jacket over chair
   home: chair_k1
@@ -1949,26 +2245,30 @@ object_rules:
       p: 0.5
     - dest: chair_k1
       p: 0.5
-  - cites: Chad drapes his jacket over the back of his chair in the living room, often forgetting
-    activity: gaming
+  - cites: Chad drapes his jacket over the chair
+    activity: school
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.7
+    - dest: couch_l1
+      p: 0.3
+  - cites: Jacket is draped over the chair during the walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.8
+    - dest: couch_l1
+      p: 0.2
+  - cites: Jacket is taken during the night out
+    activity: night_out
     phase: after
     dist:
     - dest: chair_k1
       p: 0.6
     - dest: couch_l1
-      p: 0.3
-    - dest: desk_b3
-      p: 0.1
-  - cites: Chad leaves his jacket on the couch after watching TV, rarely moving it to his room.
-    activity: watch_tv
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.6
-    - dest: chair_k1
-      p: 0.3
-    - dest: desk_b3
-      p: 0.1
+      p: 0.4
 - object: jacket_dana
   cites: Dana keeps jacket in closet
   home: desk_b4
@@ -1990,14 +2290,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Dana keeps her jacket in her closet, ensuring it is always organized and accessible.
-    activity: get_ready
+  - cites: Dana takes her jacket to school
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.8
+    - dest: person:resident_4
+      p: 0.2
+  - cites: Jacket is taken during the walk
+    activity: walk
     phase: after
     dist:
     - dest: desk_b4
       p: 0.9
-    - dest: entry_hook_e1
+    - dest: person:resident_4
       p: 0.1
+  - cites: Jacket is taken during the appointment
+    activity: appointment
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.85
+    - dest: person:resident_4
+      p: 0.15
 - object: headphones_bella
   cites: Bella loses one earcup
   home: desk_b2
@@ -2021,7 +2337,17 @@ object_rules:
       p: 0.6
     - dest: bed_b2
       p: 0.4
-  - cites: Bella often loses one earcup of her headphones, leaving them on her bed or desk.
+  - cites: Bella leaves her headphones on her bed
+    activity: school
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.6
+    - dest: desk_b2
+      p: 0.3
+    - dest: bedroom_floor_b2
+      p: 0.1
+  - cites: Headphones are used during music
     activity: music
     phase: after
     dist:
@@ -2031,14 +2357,14 @@ object_rules:
       p: 0.3
     - dest: bedroom_floor_b2
       p: 0.2
-  - cites: Bella forgets her headphones on her desk while doing her hobby, leaving them scattered.
-    activity: hobby
+  - cites: Headphones are lost during gaming
+    activity: gaming
     phase: after
     dist:
-    - dest: desk_b2
-      p: 0.5
+    - dest: couch_l1
+      p: 0.4
     - dest: bed_b2
-      p: 0.3
+      p: 0.4
     - dest: bedroom_floor_b2
       p: 0.2
 - object: headphones_chad
@@ -2064,26 +2390,30 @@ object_rules:
       p: 0.6
     - dest: desk_b3
       p: 0.4
-  - cites: Chad keeps his headphones in his room, moving them with him when gaming.
+  - cites: Chad takes his headphones with him
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.8
+    - dest: person:resident_3
+      p: 0.2
+  - cites: Headphones are used during gaming
     activity: gaming
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.6
+    - dest: couch_l1
+      p: 0.4
+  - cites: Headphones are used during music
+    activity: music
     phase: after
     dist:
     - dest: desk_b3
       p: 0.7
     - dest: couch_l1
-      p: 0.2
-    - dest: coffee_table_l1
-      p: 0.1
-  - cites: Chad takes his headphones to the living room for gaming, leaving them on the couch.
-    activity: watch_tv
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.5
-    - dest: coffee_table_l1
       p: 0.3
-    - dest: desk_b3
-      p: 0.2
 - object: glasses_alex
   cites: Alex keeps glasses in room
   home: desk_b1
@@ -2105,14 +2435,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Alex places his glasses back on his desk after taking his medication, maintaining his ti
-    activity: take_medication
+  - cites: Alex keeps his glasses on him
+    activity: school
     phase: after
     dist:
     - dest: desk_b1
       p: 0.8
-    - dest: nightstand_b1
+    - dest: person:resident_1
       p: 0.2
+  - cites: Glasses are used during reading
+    activity: reading
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: bed_b1
+      p: 0.1
+  - cites: Glasses are used for homework
+    activity: homework
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.95
+    - dest: bed_b1
+      p: 0.05
 - object: glasses_dana
   cites: Dana keeps glasses in bag
   home: desk_b4
@@ -2134,22 +2480,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Dana keeps her glasses in her bag, ensuring they are always organized and accessible.
-    activity: get_ready
+  - cites: Dana keeps her glasses in her bag
+    activity: school
     phase: after
     dist:
-    - dest: person:resident_4
-      p: 0.9
     - dest: desk_b4
-      p: 0.1
-  - cites: Dana places her glasses in her bag after waking up, ready for the day.
-    activity: wake_up
+      p: 0.8
+    - dest: person:resident_4
+      p: 0.2
+  - cites: Glasses are used during reading
+    activity: reading
     phase: after
     dist:
-    - dest: person:resident_4
-      p: 1.0
-    - dest: NO_OP
-      p: 0.0
+    - dest: desk_b4
+      p: 0.9
+    - dest: couch_l1
+      p: 0.1
+  - cites: Glasses are used for homework
+    activity: homework
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.95
+    - dest: couch_l1
+      p: 0.05
 - object: notebook_bella
   cites: Bella leaves notebook on floor
   home: bed_b2
@@ -2173,25 +2527,35 @@ object_rules:
       p: 0.5
     - dest: bedroom_floor_b2
       p: 0.5
-  - cites: Bella leaves her notebook on the floor or bed after sketching, rarely putting it away.
+  - cites: Bella leaves her notebook on the floor
+    activity: school
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.5
+    - dest: bed_b2
+      p: 0.3
+    - dest: desk_b2
+      p: 0.2
+  - cites: Notebook is used during hobby
     activity: hobby
     phase: after
     dist:
-    - dest: bedroom_floor_b2
-      p: 0.5
     - dest: bed_b2
       p: 0.4
+    - dest: bedroom_floor_b2
+      p: 0.4
     - dest: desk_b2
-      p: 0.1
-  - cites: Bella forgets her notebook on her bed while studying, leaving it scattered.
+      p: 0.2
+  - cites: Notebook is used for homework
     activity: homework
     phase: after
     dist:
-    - dest: bed_b2
-      p: 0.5
-    - dest: bedroom_floor_b2
-      p: 0.3
     - dest: desk_b2
+      p: 0.5
+    - dest: bed_b2
+      p: 0.3
+    - dest: bedroom_floor_b2
       p: 0.2
 - object: notebook_dana
   cites: Dana writes notes in common area
@@ -2214,21 +2578,29 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Dana keeps her notebook in her bag, writing down schedules and reminders while reading.
+  - cites: Dana takes her notebook to school
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: person:resident_4
+      p: 0.1
+  - cites: Notebook is used for reading
     activity: reading
     phase: after
     dist:
-    - dest: person:resident_4
-      p: 0.8
     - dest: desk_b4
+      p: 0.8
+    - dest: couch_l1
       p: 0.2
-  - cites: Dana uses her notebook for planning after deep cleaning, keeping it organized in her bag.
-    activity: deep_clean
+  - cites: Notebook is used for homework
+    activity: homework
     phase: after
     dist:
-    - dest: person:resident_4
-      p: 0.9
     - dest: desk_b4
+      p: 0.9
+    - dest: couch_l1
       p: 0.1
 - object: pen_1
   cites: Bella leaves pen on desk
@@ -2253,24 +2625,30 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Bella often leaves her pen on the counter or desk, rarely putting it away.
-    activity: hobby
+  - cites: Bella leaves the pen on the counter
+    activity: coffee
     phase: after
     dist:
     - dest: counter_k1
-      p: 0.5
+      p: 0.7
     - dest: desk_b2
       p: 0.3
-    - dest: bed_b2
-      p: 0.2
-  - cites: Dana picks up the pen to organize the common area, placing it back on the counter.
-    activity: deep_clean
+  - cites: Pen is used during snack
+    activity: snack
     phase: after
     dist:
     - dest: counter_k1
-      p: 0.8
-    - dest: desk_b4
-      p: 0.2
+      p: 0.6
+    - dest: desk_b2
+      p: 0.4
+  - cites: Pen is left on the desk during get ready
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.7
+    - dest: counter_k1
+      p: 0.3
 - object: pen_2
   cites: Dana leaves pen on desk
   home: desk_b4
@@ -2294,22 +2672,30 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Dana keeps her pen in her bag, ensuring it is always organized and accessible.
+  - cites: Dana keeps her pen in her bag
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.8
+    - dest: person:resident_4
+      p: 0.2
+  - cites: Pen is used for reading
     activity: reading
     phase: after
     dist:
-    - dest: person:resident_4
-      p: 0.8
     - dest: desk_b4
-      p: 0.2
-  - cites: Dana uses her pen for notes while deep cleaning, placing it back in her bag.
-    activity: deep_clean
+      p: 0.9
+    - dest: couch_l1
+      p: 0.1
+  - cites: Pen is used for homework
+    activity: homework
     phase: after
     dist:
-    - dest: person:resident_4
-      p: 0.9
     - dest: desk_b4
-      p: 0.1
+      p: 0.95
+    - dest: couch_l1
+      p: 0.05
 - object: medication_bottle_alex
   cites: Alex keeps supplements in room
   home: desk_b1
@@ -2331,22 +2717,22 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Alex takes his medication from the nightstand, placing the bottle back neatly.
+  - cites: Alex takes his medication from the nightstand
     activity: take_medication
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.95
+    - dest: desk_b1
+      p: 0.05
+  - cites: Bottle stays on the nightstand when he wakes up
+    activity: wake_up
     phase: after
     dist:
     - dest: nightstand_b1
       p: 0.9
     - dest: desk_b1
       p: 0.1
-  - cites: Alex keeps his medication bottle on his nightstand, ensuring it is always within reach.
-    activity: wake_up
-    phase: after
-    dist:
-    - dest: nightstand_b1
-      p: 1.0
-    - dest: NO_OP
-      p: 0.0
 - object: toy_chad
   cites: Chad keeps figure in room
   home: desk_b3
@@ -2370,26 +2756,30 @@ object_rules:
       p: 0.6
     - dest: desk_b3
       p: 0.4
-  - cites: Chad leaves his gaming figure on the desk or couch after playing, rarely putting it away.
+  - cites: Chad leaves his toy on the desk
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.8
+    - dest: bed_b3
+      p: 0.2
+  - cites: Toy is left on the couch during gaming
     activity: gaming
     phase: after
     dist:
-    - dest: desk_b3
-      p: 0.5
     - dest: couch_l1
-      p: 0.3
-    - dest: coffee_table_l1
-      p: 0.2
-  - cites: Chad takes his gaming figure to the living room for gaming, leaving it on the couch.
-    activity: watch_tv
+      p: 0.6
+    - dest: desk_b3
+      p: 0.4
+  - cites: Toy is left on the bed during lie down
+    activity: lie_down
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.5
-    - dest: coffee_table_l1
-      p: 0.3
+    - dest: bed_b3
+      p: 0.7
     - dest: desk_b3
-      p: 0.2
+      p: 0.3
 - object: blanket_1
   cites: Chad leaves blanket on couch
   home: couch_l1
@@ -2413,16 +2803,30 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: Chad drapes the blanket over the couch after gaming, rarely folding it neatly.
+  - cites: Chad pulls the blanket onto the couch
     activity: gaming
     phase: after
     dist:
     - dest: couch_l1
-      p: 0.7
-    - dest: coffee_table_l1
+      p: 0.8
+    - dest: armchair_l1
       p: 0.2
-    - dest: NO_OP
+  - cites: Dana tucks the blanket in during deep clean
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.9
+    - dest: armchair_l1
       p: 0.1
+  - cites: Blanket is pulled onto the couch during watch tv
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.7
+    - dest: armchair_l1
+      p: 0.3
 - object: towel_1
   cites: Residents use towels in bathroom
   home: towel_rack_ba1
@@ -2444,24 +2848,22 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Bella leaves the towel on the bathroom shelf after showering, rarely hanging it on the r
+  - cites: Towel is left on the shelf after shower
     activity: shower
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.7
+    - dest: towel_rack_ba1
+      p: 0.3
+  - cites: Towel is left on the shelf after bath
+    activity: bath
     phase: after
     dist:
     - dest: bathroom_shelf_ba1
       p: 0.6
     - dest: towel_rack_ba1
-      p: 0.3
-    - dest: NO_OP
-      p: 0.1
-  - cites: Dana hangs the towel on the rack after bathing, ensuring it is neatly placed.
-    activity: bath
-    phase: after
-    dist:
-    - dest: towel_rack_ba1
-      p: 0.9
-    - dest: bathroom_shelf_ba1
-      p: 0.1
+      p: 0.4
 - object: towel_2
   cites: Residents use towels in bathroom
   home: towel_rack_ba1
@@ -2483,24 +2885,22 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Chad leaves the towel on the bathroom shelf after showering, rarely hanging it on the rack
+  - cites: Towel is left on the shelf after shower
     activity: shower
     phase: after
     dist:
     - dest: bathroom_shelf_ba1
       p: 0.7
     - dest: towel_rack_ba1
-      p: 0.2
-    - dest: NO_OP
-      p: 0.1
-  - cites: Dana hangs the towel on the rack after bathing, ensuring it is neatly placed.
+      p: 0.3
+  - cites: Towel is left on the shelf after bath
     activity: bath
     phase: after
     dist:
-    - dest: towel_rack_ba1
-      p: 0.8
     - dest: bathroom_shelf_ba1
-      p: 0.2
+      p: 0.6
+    - dest: towel_rack_ba1
+      p: 0.4
 - object: gaming_controller_chad
   cites: Chad leaves controller on bed
   home: desk_b3
@@ -2524,26 +2924,32 @@ object_rules:
       p: 0.7
     - dest: desk_b3
       p: 0.3
-  - cites: Chad leaves the controller on the bed or sofa after gaming, rarely putting it away.
+  - cites: Chad leaves the controller on the bed
     activity: gaming
     phase: after
     dist:
-    - dest: couch_l1
-      p: 0.5
     - dest: bed_b3
+      p: 0.5
+    - dest: couch_l1
       p: 0.3
-    - dest: coffee_table_l1
+    - dest: desk_b3
       p: 0.2
-  - cites: Chad uses the controller for gaming while watching TV, leaving it on the couch.
+  - cites: Controller is left on the couch during watch tv
     activity: watch_tv
     phase: after
     dist:
     - dest: couch_l1
-      p: 0.6
+      p: 0.7
     - dest: coffee_table_l1
       p: 0.3
+  - cites: Controller is left on the bed during lie down
+    activity: lie_down
+    phase: after
+    dist:
     - dest: bed_b3
-      p: 0.1
+      p: 0.8
+    - dest: desk_b3
+      p: 0.2
 - object: dog_leash_none
   cites: No pets in household
   home: entry_table_e1
@@ -2570,13 +2976,21 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Alex takes his lunchbox from the fridge for breakfast, placing it back neatly after use.
-    activity: breakfast
+  - cites: Alex packs his lunchbox for school
+    activity: school
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.9
+    - dest: counter_k1
+      p: 0.1
+  - cites: Lunchbox is used for lunch
+    activity: lunch
     phase: after
     dist:
     - dest: cupboard_k1
       p: 0.8
-    - dest: sink_k1
+    - dest: counter_k1
       p: 0.2
 - object: lunchbox_dana
   cites: Dana keeps lunchbox in fridge
@@ -2599,13 +3013,21 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Dana takes her lunchbox from the fridge for breakfast, placing it back neatly after use.
-    activity: breakfast
+  - cites: Dana packs her lunchbox for school
+    activity: school
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.9
+    - dest: counter_k1
+      p: 0.1
+  - cites: Lunchbox is used for lunch
+    activity: lunch
     phase: after
     dist:
     - dest: cupboard_k1
       p: 0.8
-    - dest: sink_k1
+    - dest: counter_k1
       p: 0.2
 - object: umbrella_dana
   cites: Dana leaves umbrella by door
@@ -2628,22 +3050,30 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Dana leaves her umbrella by the door when it rains, remembering to bring it back.
-    activity: get_ready
+  - cites: Dana takes her umbrella for the walk
+    activity: walk
     phase: after
     dist:
     - dest: entry_table_e1
       p: 0.8
     - dest: entry_hook_e1
       p: 0.2
-  - cites: Dana places her umbrella by the door after waking up, ready for the day.
-    activity: wake_up
+  - cites: Umbrella is taken for the appointment
+    activity: appointment
     phase: after
     dist:
     - dest: entry_table_e1
-      p: 0.9
+      p: 0.85
     - dest: entry_hook_e1
-      p: 0.1
+      p: 0.15
+  - cites: Umbrella is taken for errands
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.8
+    - dest: entry_hook_e1
+      p: 0.2
 - object: laundry_basket_1
   cites: Bella overflows basket
   home: entry_floor_e1
@@ -2665,7 +3095,7 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Bella leaves laundry in the hamper until it overflows, rarely moving it.
+  - cites: Laundry is done in the bedroom
     activity: laundry
     phase: after
     dist:
@@ -2673,6 +3103,14 @@ object_rules:
       p: 0.9
     - dest: bedroom_floor_b2
       p: 0.1
+  - cites: Basket is moved during deep clean
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.95
+    - dest: couch_l1
+      p: 0.05
 - object: laundry_basket_2
   cites: Chad adds laundry
   home: entry_floor_e1
@@ -2694,14 +3132,22 @@ object_rules:
       p: 1.0
     - dest: NO_OP
       p: 0.0
-  - cites: Bella leaves laundry in the hamper until it overflows, rarely moving it.
+  - cites: Laundry is done in the bedroom
     activity: laundry
     phase: after
     dist:
     - dest: entry_floor_e1
-      p: 0.8
+      p: 0.9
     - dest: bedroom_floor_b2
-      p: 0.2
+      p: 0.1
+  - cites: Basket is moved during deep clean
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.95
+    - dest: couch_l1
+      p: 0.05
 - object: vacuum_cleaner_1
   cites: Dana stores vacuum in closet
   home: entry_table_e1
@@ -2723,13 +3169,21 @@ object_rules:
       p: 0.5
     - dest: NO_OP
       p: 0.5
-  - cites: Dana moves the vacuum cleaner to the common area for cleaning, then returns it to the clo
-    activity: wash_dishes
+  - cites: Dana stores the vacuum in the closet after deep clean
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: couch_l1
+      p: 0.1
+  - cites: Vacuum is left in the entryway after taking out bins
+    activity: take_out_bins
     phase: after
     dist:
     - dest: entry_table_e1
       p: 0.8
-    - dest: couch_l1
+    - dest: entry_floor_e1
       p: 0.2
 activities:
 - name: bedtime_routine
@@ -2807,3 +3261,64 @@ arc_events:
       end: 02:00
       at: desk_b1
       jitter: flexible
+object_owners:
+  mug_1: shared
+  mug_2: shared
+  laptop_alex: resident_1
+  laptop_bella: resident_2
+  laptop_chad: resident_3
+  laptop_dana: resident_4
+  phone_alex: resident_1
+  phone_bella: resident_2
+  phone_chad: resident_3
+  phone_dana: resident_4
+  keys_alex: resident_1
+  keys_bella: resident_2
+  keys_chad: resident_3
+  keys_dana: resident_4
+  wallet_alex: resident_1
+  wallet_bella: resident_2
+  wallet_chad: resident_3
+  wallet_dana: resident_4
+  book_alex: resident_1
+  book_bella: resident_2
+  book_chad: resident_3
+  book_dana: resident_4
+  water_bottle_alex: resident_1
+  water_bottle_bella: resident_2
+  water_bottle_chad: resident_3
+  water_bottle_dana: resident_4
+  remote_1: shared
+  charger_alex: resident_1
+  charger_bella: resident_2
+  charger_chad: resident_3
+  charger_dana: resident_4
+  backpack_alex: resident_1
+  backpack_bella: resident_2
+  backpack_chad: resident_3
+  backpack_dana: resident_4
+  jacket_alex: resident_1
+  jacket_bella: resident_2
+  jacket_chad: resident_3
+  jacket_dana: resident_4
+  headphones_bella: resident_2
+  headphones_chad: resident_3
+  glasses_alex: resident_1
+  glasses_dana: resident_4
+  notebook_bella: resident_2
+  notebook_dana: resident_4
+  pen_1: shared
+  pen_2: shared
+  medication_bottle_alex: resident_1
+  toy_chad: resident_3
+  blanket_1: shared
+  towel_1: shared
+  towel_2: shared
+  gaming_controller_chad: resident_3
+  dog_leash_none: shared
+  lunchbox_alex: resident_1
+  lunchbox_dana: resident_4
+  umbrella_dana: resident_4
+  laundry_basket_1: shared
+  laundry_basket_2: shared
+  vacuum_cleaner_1: shared
