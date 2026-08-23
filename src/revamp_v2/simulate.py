@@ -195,6 +195,10 @@ def simulate_program(program: dict, days: int, seed: int,
     stats["left_behind_by_trip"] = acts.get("left_behind_by_trip", [])
     stats["carried_putdowns_at_start"] = acts.get(
         "carried_putdowns_at_start", [])
+    # v3 accounting, previously computed but never surfaced in meta.json
+    stats["synthesized_during"] = acts.get("synthesized_during", [])
+    stats["merged_away_blocks"] = acts.get("merged_away_blocks", [])
+    stats["skipped_away_lingers"] = acts.get("skipped_away_lingers", [])
     stats["skips_per_activity"] = dict(sorted(skips.items()))
     stats["fragment_bouts_per_activity"] = dict(sorted(frag_stats.items()))
     return log, hourly, blocks, stats, acts, motions

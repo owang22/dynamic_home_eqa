@@ -1,0 +1,134 @@
+{
+  "household": "hh_005",
+  "household_type": "couple_with_toddler",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b6",
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 11178032005411850452,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 14811656639792289910,
+      "reasoning": "I need to create a 'couple_with_toddler' household that is distinct from the other types listed. To ensure it is clearly unlike 'retired_couple' or 'night_shift_worker_solo', I will focus on the high-energy, chaotic, and nurturing aspects of young parenthood. To differ from 'single_parent_teens', I will include two adults with a shared but uneven division of labor. To differ from 'family_teen_and_child', the child is very young (toddler), meaning no school backpacks or complex electronics for the child, but many toys and safety-related items. The adults should have distinct personalities: one is a meticulous planner (tidy), and the other is a spontaneous creator (messy/creative). The toddler is active and sticky. I will avoid any time-specific routines. The inventory will reflect a home centered around a crib, a play mat, and a kitchen that sees frequent use for snacks. Objects will include toddler-specific items like a sippy cup (mapped to 'mug' or 'bowl' if no sippy class exists - I will use 'mug' for the toddler's cup as it's the closest fit, or 'bowl' for food, but 'mug' is better for drinking. Actually, the vocabulary has 'mug', 'bowl', 'plate'. A toddler cup is essentially a mug. I will use 'mug_toddler' and 'bowl_toddler'. I will also include 'toy' items extensively. The parents will have their own distinct items: one has a laptop for work, the other has art supplies (notebook/pen). The friction point will be the toddler's mess spreading into the parents' spaces. The home layout will emphasize the living room as a play zone and the kitchen as the hub. The daily life summary will highlight the overlap of the toddler's nap time with the parents' brief moments of peace, and the chaos of the toddler being awake. Quirks: The parents have a 'quiet hour' system where they take turns being on duty, and the toddler has a specific stuffed animal that is never washed.",
+      "leak_prediction": {
+        "predicted_type": "couple_with_toddler",
+        "confidence": 0.95,
+        "reason": "The presence of two adult names (Elena, Marcus) and a third name (Leo) associated with a mug, bowl, and blanket suggests a family unit. The specific inclusion of 'toy_bear' and 'toy_blocks' strongly indicates a young child (toddler) rather than a teen or adult roommate. The layout includes two full-",
+        "actual_type": "couple_with_toddler",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 11180880614946343904,
+      "reasoning": "Analyzing the household type 'couple_with_toddler' with 3 residents (2 adults, 1 child under 4). To distinguish this from other types (like 'family_teen_and_child' or 'single_parent_teens'), the focus must be on the specific chaos and needs of a toddler (under 4), not a teenager. The adults should be a working couple, but the toddler's presence dictates the object inventory (toys, high-chair items, specific clothing) and habits (constant movement of small objects, messes). The friction point will likely revolve around the division of childcare and the resulting clutter. I will create a couple, one slightly more organized but overwhelmed, the other more laid-back but active, and a toddler who is a 'thrower' of objects.",
+      "leak_prediction": {
+        "predicted_type": "couple_with_toddler",
+        "confidence": 0.95,
+        "reason": "The presence of two adult-specific mugs (Elena, Marcus) and a third child-specific mug (Leo) indicates a family unit. The inclusion of 'toy_leo_1', 'toy_leo_2', 'blanket_leo', and 'water_bottle_leo' strongly suggests a young child (toddler) rather than a teen, as the items are basic play/comfort/ess",
+        "actual_type": "couple_with_toddler",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 2,
+      "seed": 2224765769968110270,
+      "reasoning": "Thinking Process: 1. **Analyze Request:** Household hh_005, type 'couple_with_toddler', 3 residents (2 adults, 1 child <4). Must be distinct from other types (no teens, no solo, no retirees). Need JSON output with specific fields: residents (id, name, age, occupation, personality, habits), relationships, home_layout_notes, object_inventory (15-20 items, specific IDs, classes, owners, roles), daily_life_summary, quirks. No times of day allowed in text. 2. **Define Residents:** *   Resident 1 (Adult 1): 'Elara', 32, stay-at-home parent (or part-time freelance to contrast with full-time workers). Let's make her a freelance graphic designer to add some object movement (laptop/tablet). Personality: Creative, scattered, protective of the child. *   Resident 2 (Adult 2): 'Julian', 34, Corporate Accountant (regular office job, leaves for work). Personality: Structured, tidy, efficient. *   Resident 3 (Child): 'Leo', 3 years old. Personality: Energetic, sticky, curious, drops things. 3. **Draft Habits:** *   Elara: Works from home, leaves laptop on kitchen table. Leaves sketchbooks everywhere. Feeds Leo, leaves high chair tray dirty. *   Julian: Leaves for work, takes keys/wallet/phone. Comes home, puts shoes by door. Uses bathroom, leaves towel. *   Leo: Carries toys everywhere. Leaves sippy cup in random places. Grabs parents' phones/keys by accident. 4. **Relationships:** Elara and Julian are parents. Julian handles heavy chores (laundry, trash) when home; Elara handles daily care and cooking. Friction: Leo's toys invade Julian's clean spaces; Elara's work mess vs Julian's need for order. 5. **Home Layout:** Open plan kitchen/living room (shared, high traffic). Elara's desk in corner of living room. Leo's playpen/rug in center. Bedrooms: Master (Julian/Elara), Nursery (Leo). 6. **Object Inventory (15-20 items):** *   Personal: Elara (laptop, tablet, notebook, pen, glasses, mug, water_bottle), Julian (phone, keys, wallet, laptop? no, office job, maybe just phone/keys/water",
+      "leak_prediction": {
+        "predicted_type": "couple_with_toddler",
+        "confidence": 0.95,
+        "reason": "The presence of three distinct names (Elara, Julian, Leo) indicates a family unit. The specific items associated with 'Leo' (toy, blanket, bowl_cup) strongly suggest a young child or toddler, rather than a teen (who would likely have a phone, laptop, or more complex personal items). The two adults (",
+        "actual_type": "couple_with_toddler",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 3,
+      "seed": 13808941750506268481,
+      "reasoning": "Thinking Process: 1.  **Analyze Request**: Create a JSON profile for household `hh_005` (couple_with_toddler, 3 residents). No specific constraints. Must be distinct from other types (e.g., not retired, not single parent, not remote workers). 2.  **Define Residents**: Two adults (parents) and one toddler (under 4). Need distinct personalities to drive object movement. Adult 1: Organized but exhausted. Adult 2: Creative/Cluttered. Toddler: Mobile, grabby, spills things. 3.  **Draft Residents**: `resident_1` (Elena, 34, Nurse, organized/stressed), `resident_2` (Marcus, 36, Woodworker, creative/leaves tools), `resident_3` (Leo, 3, Toddler, curious/messy). 4.  **Relationships**: Shared parenting but different styles. Elena cleans up; Marcus leaves wood shavings. Leo moves things. 5.  **Home Layout**: Open plan living/kitchen. Bedroom shared by parents. Toddler's room nearby. 6.  **Object Inventory**: ~18-20 objects. Mix of personal (phones, keys), shared (dishes, toys), and specific (stroller, high chair items). 7.  **Daily Life**: Overlap in evenings. Elena home from shift, Marcus finishing work. Leo naps/play. 8.  **Quirks**: Marcus builds things in the kitchen; Elena uses color-coded bins. 9.  **JSON Construction**: Ensure valid JSON, correct schema, no times.",
+      "leak_prediction": {
+        "predicted_type": "couple_with_toddler",
+        "confidence": 0.95,
+        "reason": "The presence of two adult names (Elena, Marcus) and a third name (Leo) with a water bottle suggests a family unit. The key differentiator is the 'suitcase_stroller' object, which explicitly indicates a toddler/infant, ruling out other family types like teens or children. The two bedrooms (b1, b2) in",
+        "actual_type": "couple_with_toddler",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 4,
+      "seed": 11178032005411850452,
+      "reasoning": "Reasoning: 1. **Household Identity**: `hh_005` is a `couple_with_toddler`. To distinguish from `family_teen_and_child` (school-focused) and `working_couple_no_children` (career-focused), this household centers on the chaotic, domestic rhythm of raising a 3-year-old. The adults are likely working but with significant domestic overlap or one parent on leave/flexible hours to manage the toddler. Let's make the father a remote software engineer (high screen time, sedentary) and the mother a freelance graphic designer (creative, messy, flexible hours). This contrasts with the rigid schedules of `working_professional_solo` or `night_shift_worker_solo`.",
+      "leak_prediction": {
+        "predicted_type": "couple_with_toddler",
+        "confidence": 0.95,
+        "reason": "The presence of two distinct adult owners (Arthur and Elena) indicates a couple. The third owner, Leo, has a 'toy' and a 'blanket' but lacks a dedicated bedroom (only two bedrooms exist for the adults), which is characteristic of a toddler sleeping in a crib or shared space rather than a teen or an ",
+        "actual_type": "couple_with_toddler",
+        "correct": true
+      }
+    }
+  ],
+  "leak_unresolved": true,
+  "n_attempts": 4,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "stage": "calendar",
+      "seed": 3989531411633473354,
+      "failures": [],
+      "reasoning": "The household consists of Arthur (remote engineer, systematic), Elena (freelance designer, creative), and Leo (toddler). Arthur works mornings at the kitchen table, moving to the bedroom for focused work later. Elena handles Leo in the morning and works from the sofa/kitchen in the afternoon. Leo follows a play-nap-play cycle, often moving between the living room rug and bedroom. The couple shares evening duties: dinner, bath/bedtime for Leo, and decompressing on the couch. Arthur is punctual (jitter_scale 0.6); Elena is scattered (jitter_scale 1.5); Leo is erratic (jitter_scale 2.0)."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 16122484162596005890,
+      "reasoning": "The household consists of Arthur (systematic, tech-focused), Elena (creative, forgetful), and Leo (toddler, mobile). The schedule shows all three residents are 'work_away' (remote work) for most of the day, with specific locations like kitchen_table_k1, desk_b1, couch_l1, and bed_b2. The objects reflect their habits: Arthur's laptop moves between kitchen and desk; Elena's tablet and notebook scatter on the kitchen table or sofa; Leo's toys migrate from the living room to the kitchen/bedroom. Shared items like plates and mugs follow meal patterns, often ending in the sink or on the counter. Tidying is minimal for the toddler but systematic for Arthur (blocks) and absent for Elena (clutter). Rules are generated to reflect these specific movement patterns and misplacement habits.",
+      "failures": [
+        "referential: sleep block 'work_away' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.2 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.4 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.3 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.2 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.2 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.3 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.4 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.2 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.2 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'work_away' has skip_p 0.3 \u2014 a resident does not skip sleeping"
+      ]
+    },
+    {
+      "attempt": 1,
+      "stage": "calendar",
+      "seed": 4400950753443873601,
+      "failures": [],
+      "reasoning": "The household consists of Arthur (Remote Engineer), Elena (Freelance Designer), and Leo (Toddler). Arthur is systematic (jitter_scale 0.7) and works mornings; Elena is creative/energetic (jitter_scale 1.2) and works afternoons. They take shifts with Leo. Leo has a predictable nap and bedtime. The schedule reflects the 'shift' pattern: Arthur works 08:00-13:00, Elena handles Leo. Elena works 14:00-18:00, Arthur handles Leo. Leo naps 13:00-15:00. Bedtime routine is shared. Meals are routine. Chores like laundry and tidying are occasional/flexible. Arthur's tidying is systematic but Leo's mess is constant."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 1,
+      "seed": 18414439592896919232,
+      "reasoning": "The household consists of Arthur (systematic but distracted), Elena (creative and forgetful), and Leo (messy toddler). The rules map their specific habits to the weekly schedule: Arthur's laptop moves between kitchen/desk; Elena's sketchbook scatters in the kitchen; Leo's toys migrate to the kitchen; shared dishes end up in the sink or drying rack. Misplacement probabilities are set high for small carried items (keys, phones) and low for larger items.",
+      "failures": [],
+      "special_reasoning": "Household consists of resident_1 (working parent), resident_2 (working parent), and resident_3 (child). I am authoring four events to create a 'lived' 3-week stretch. 1. Day 4 (Fri): resident_1 has a late-night social event, delaying sleep and causing exhaustion. 2. Day 5 (Sat): resident_1 is wrecked from the previous night, dropping their Saturday work block. 3. Day 6 (Sun): resident_3 is sick, keeping resident_1 home from their Sunday work and altering the family routine. 4. Days 10-11 (Thu-Fri): resident_2 goes on a business trip, emptying the home for two days and disrupting the routine.",
+      "special_attempt": 0
+    }
+  ]
+}

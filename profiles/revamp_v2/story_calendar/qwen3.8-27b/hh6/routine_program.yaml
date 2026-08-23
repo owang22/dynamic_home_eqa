@@ -1,0 +1,927 @@
+household: hh_006
+household_type: single_parent_teens
+source_persona: persona.yaml
+object_semantics: after_only_v3
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 1.0
+- id: resident_2
+  jitter_scale: 1.5
+- id: resident_3
+  jitter_scale: 0.7
+receptacles:
+- id: bed_b1
+  room: bedroom_1
+- id: nightstand_b1
+  room: bedroom_1
+- id: desk_b1
+  room: bedroom_1
+- id: bedroom_floor_b1
+  room: bedroom_1
+- id: bed_b2
+  room: bedroom_2
+- id: nightstand_b2
+  room: bedroom_2
+- id: desk_b2
+  room: bedroom_2
+- id: bedroom_floor_b2
+  room: bedroom_2
+- id: bed_b3
+  room: bedroom_3
+- id: nightstand_b3
+  room: bedroom_3
+- id: desk_b3
+  room: bedroom_3
+- id: bedroom_floor_b3
+  room: bedroom_3
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:30
+  end: '10:00'
+  at: bed_b1
+  jitter: routine
+  cites: returns in the morning
+- resident: resident_2
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '23:00'
+  end: 06:00+1
+  at: bed_b2
+  jitter: loose
+  cites: late-night sessions
+- resident: resident_3
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '21:30'
+  end: 06:00+1
+  at: bed_b3
+  jitter: routine
+  cites: focused, anxious
+weekly_blocks:
+- cites: leaves for work late at night
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '22:00'
+  end: 07:00+1
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: day off
+  resident: resident_1
+  activity: homework
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 09:00
+  end: '12:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.1
+- cites: nap spot if she has a day off
+  resident: resident_1
+  activity: nap
+  sleep: true
+  days:
+  - Sa
+  - Su
+  start: '13:00'
+  end: '15:00'
+  at: armchair_l1
+  jitter: flexible
+  skip_p: 0.3
+- cites: single large load of laundry every weekend
+  resident: resident_1
+  activity: laundry
+  sleep: false
+  days:
+  - Sa
+  start: '16:00'
+  end: '18:00'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: school and activities
+  resident: resident_2
+  activity: school
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:00
+  end: '15:00'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: stays in his room or the kitchen
+  resident: resident_2
+  activity: gaming
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '18:00'
+  end: '22:00'
+  at: bedroom_floor_b2
+  jitter: loose
+  skip_p: 0.2
+- cites: uses the kitchen table as a workspace
+  resident: resident_2
+  activity: homework
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '16:00'
+  end: '18:00'
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: swim practice
+  resident: resident_3
+  activity: school
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:00
+  end: '14:00'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: swim practice
+  resident: resident_3
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  start: '16:00'
+  end: '18:00'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.1
+- cites: study in the living room
+  resident: resident_3
+  activity: homework
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '19:00'
+  end: '21:00'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.1
+- cites: wash face and brush hair immediately after school
+  resident: resident_3
+  activity: bath
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '14:30'
+  end: '15:00'
+  at: towel_rack_ba1
+  jitter: routine
+  skip_p: 0.0
+object_rules:
+- object: mug_elena
+  cites: Elena leaves coffee on counter
+  home: counter_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Left on counter after tea
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.6
+    - dest: sink_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.2
+  - cites: Carried to work
+    activity: work_away
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.8
+    - dest: sink_k1
+      p: 0.2
+- object: mug_leo
+  cites: Leo leaves mugs on table
+  home: kitchen_table_k1
+  p_misplace: 0.2
+  rules:
+  - cites: Left near laptop after gaming
+    activity: gaming
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.5
+    - dest: desk_b2
+      p: 0.3
+    - dest: sink_k1
+      p: 0.2
+  - cites: Used during homework
+    activity: homework
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.7
+    - dest: counter_k1
+      p: 0.3
+- object: mug_maya
+  cites: Maya keeps tea in room
+  home: desk_b3
+  p_misplace: 0.05
+  rules:
+  - cites: Brought to couch for study
+    activity: homework
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.4
+    - dest: desk_b3
+      p: 0.6
+  - cites: Washed after use
+    activity: bath
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.8
+    - dest: dish_rack_k1
+      p: 0.2
+- object: bowl_1
+  cites: Shared snack bowl on counter
+  home: counter_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Elena uses for quick meals
+    activity: work_away
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: sink_k1
+      p: 0.3
+  - cites: Leo eats snacks from it
+    activity: gaming
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.5
+    - dest: counter_k1
+      p: 0.3
+    - dest: sink_k1
+      p: 0.2
+- object: bowl_2
+  cites: Cereal bowl often in sink
+  home: sink_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Leo leaves bowl in sink
+    activity: school
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.6
+    - dest: dish_rack_k1
+      p: 0.4
+  - cites: Maya washes bowl promptly
+    activity: school
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.8
+    - dest: cupboard_k1
+      p: 0.2
+- object: plate_1
+  cites: Dinner plate left by Leo
+  home: kitchen_table_k1
+  p_misplace: 0.2
+  rules:
+  - cites: Leo leaves plate on table
+    activity: homework
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.7
+    - dest: sink_k1
+      p: 0.3
+  - cites: Maya puts plate in sink
+    activity: homework
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.8
+    - dest: dish_rack_k1
+      p: 0.2
+- object: plate_2
+  cites: Dinner plate left by Leo
+  home: kitchen_table_k1
+  p_misplace: 0.2
+  rules:
+  - cites: Leo leaves plate on table
+    activity: gaming
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.6
+    - dest: sink_k1
+      p: 0.4
+  - cites: Maya puts plate in sink
+    activity: bath
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.9
+    - dest: dish_rack_k1
+      p: 0.1
+- object: laptop_leo
+  cites: Leo's laptop on table or desk
+  home: kitchen_table_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Used for gaming
+    activity: gaming
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.5
+    - dest: desk_b2
+      p: 0.5
+  - cites: Used for homework
+    activity: homework
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.6
+    - dest: desk_b2
+      p: 0.4
+- object: laptop_maya
+  cites: Maya's laptop in room or living
+  home: desk_b3
+  p_misplace: 0.05
+  rules:
+  - cites: Brought to couch for study
+    activity: homework
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.4
+    - dest: desk_b3
+      p: 0.6
+  - cites: Packed away after use
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: phone_elena
+  cites: Elena charges phone on counter
+  home: counter_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Left on counter when home
+    activity: work_away
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.8
+    - dest: nightstand_b1
+      p: 0.2
+  - cites: Taken to bed
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.7
+    - dest: counter_k1
+      p: 0.3
+- object: phone_leo
+  cites: Leo rarely returns phone
+  home: desk_b2
+  p_misplace: 0.3
+  rules:
+  - cites: Left on floor after gaming
+    activity: gaming
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.4
+    - dest: desk_b2
+      p: 0.3
+    - dest: kitchen_table_k1
+      p: 0.3
+  - cites: Taken to school
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.5
+    - dest: bedroom_floor_b2
+      p: 0.3
+    - dest: entry_table_e1
+      p: 0.2
+- object: phone_maya
+  cites: Maya keeps phone on person
+  home: desk_b3
+  p_misplace: 0.05
+  rules:
+  - cites: Set down during study
+    activity: homework
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.4
+    - dest: desk_b3
+      p: 0.6
+  - cites: Charged in room
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b3
+      p: 0.8
+    - dest: desk_b3
+      p: 0.2
+- object: keys_elena
+  cites: Elena hangs keys on hook
+  home: entry_hook_e1
+  p_misplace: 0.1
+  rules:
+  - cites: Hung on hook after work
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.8
+    - dest: entry_table_e1
+      p: 0.2
+  - cites: Taken out for work
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: keys_leo
+  cites: Leo leaves keys on table
+  home: kitchen_table_k1
+  p_misplace: 0.2
+  rules:
+  - cites: Dropped on table after school
+    activity: school
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.6
+    - dest: entry_table_e1
+      p: 0.3
+    - dest: desk_b2
+      p: 0.1
+  - cites: Used during gaming
+    activity: gaming
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.5
+    - dest: NO_OP
+      p: 0.5
+- object: keys_maya
+  cites: Maya keeps keys in bag
+  home: desk_b3
+  p_misplace: 0.05
+  rules:
+  - cites: Kept in swim bag
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+  - cites: Stored in room
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: wallet_elena
+  cites: Wallet in work bag
+  home: desk_b1
+  p_misplace: 0.05
+  rules:
+  - cites: In bag after work
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.7
+    - dest: entry_table_e1
+      p: 0.3
+  - cites: Not used at home
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: NO_OP
+      p: 0.9
+    - dest: desk_b1
+      p: 0.1
+- object: book_maya
+  cites: Maya leaves book on sofa
+  home: desk_b3
+  p_misplace: 0.1
+  rules:
+  - cites: Left open on couch
+    activity: homework
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.6
+    - dest: coffee_table_l1
+      p: 0.4
+  - cites: Returned to desk
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.8
+    - dest: bookshelf_l1
+      p: 0.2
+- object: notebook_elena
+  cites: Elena loses notebook in couch
+  home: desk_b1
+  p_misplace: 0.3
+  rules:
+  - cites: Lost in couch cushions
+    activity: nap
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.5
+    - dest: armchair_l1
+      p: 0.3
+    - dest: desk_b1
+      p: 0.2
+  - cites: Jotted during work return
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.6
+    - dest: couch_l1
+      p: 0.4
+- object: headphones_leo
+  cites: Leo leaves headphones on floor
+  home: bedroom_floor_b2
+  p_misplace: 0.2
+  rules:
+  - cites: Dropped after gaming
+    activity: gaming
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.6
+    - dest: desk_b2
+      p: 0.4
+  - cites: Used during homework
+    activity: homework
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.5
+    - dest: desk_b2
+      p: 0.5
+- object: water_bottle_maya
+  cites: Maya's bottle in swim bag
+  home: desk_b3
+  p_misplace: 0.05
+  rules:
+  - cites: Taken to practice
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+  - cites: Stored in room
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: towel_maya
+  cites: Maya leaves towel on rack
+  home: towel_rack_ba1
+  p_misplace: 0.1
+  rules:
+  - cites: Left on rack after bath
+    activity: bath
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.7
+    - dest: counter_k1
+      p: 0.3
+  - cites: Moved to laundry
+    activity: laundry
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.8
+    - dest: towel_rack_ba1
+      p: 0.2
+- object: jacket_leo
+  cites: Leo hangs jacket on chair
+  home: chair_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Hung on chair after school
+    activity: school
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.6
+    - dest: chair_k2
+      p: 0.4
+  - cites: Worn during gaming
+    activity: gaming
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.7
+    - dest: bedroom_floor_b2
+      p: 0.3
+- object: backpack_leo
+  cites: Leo leaves backpack on floor
+  home: entry_floor_e1
+  p_misplace: 0.2
+  rules:
+  - cites: Dropped in hallway
+    activity: school
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.7
+    - dest: bedroom_floor_b2
+      p: 0.3
+  - cites: Not used at home
+    activity: gaming
+    phase: after
+    dist:
+    - dest: NO_OP
+      p: 0.9
+    - dest: entry_floor_e1
+      p: 0.1
+- object: backpack_maya
+  cites: Maya keeps backpack in room
+  home: desk_b3
+  p_misplace: 0.05
+  rules:
+  - cites: Stored in room
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.8
+    - dest: bedroom_floor_b3
+      p: 0.2
+  - cites: Packed for next day
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: gaming_controller_leo
+  cites: Leo leaves controller on floor
+  home: bedroom_floor_b2
+  p_misplace: 0.2
+  rules:
+  - cites: Dropped after gaming
+    activity: gaming
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.7
+    - dest: desk_b2
+      p: 0.3
+  - cites: Not used during homework
+    activity: homework
+    phase: after
+    dist:
+    - dest: NO_OP
+      p: 0.9
+    - dest: bedroom_floor_b2
+      p: 0.1
+- object: blanket_elena
+  cites: Elena drapes blanket on chair
+  home: armchair_l1
+  p_misplace: 0.1
+  rules:
+  - cites: Left on armchair after nap
+    activity: nap
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.8
+    - dest: couch_l1
+      p: 0.2
+  - cites: Folded away at night
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.6
+    - dest: desk_b1
+      p: 0.4
+- object: lunchbox_bag_maya
+  cites: Maya's swim bag in room
+  home: desk_b3
+  p_misplace: 0.05
+  rules:
+  - cites: Taken to practice
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+  - cites: Packed night before
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+activities:
+- name: bedtime_routine
+  reset_all:
+    p: 0.0
+- name: work_away
+  reset_all:
+    p: 0.0
+- name: homework
+  reset_all:
+    p: 0.1
+- name: nap
+  reset_all:
+    p: 0.0
+- name: laundry
+  reset_all:
+    p: 0.2
+- name: school
+  reset_all:
+    p: 0.0
+- name: gaming
+  reset_all:
+    p: 0.3
+- name: bath
+  reset_all:
+    p: 0.1
+arc_events:
+- note: Adult is sick and stays home, skipping work and bath.
+  day: 7
+  patch:
+    drop:
+    - work_away
+    - bath
+    add:
+    - cites: resident_3
+      resident: resident_3
+      activity: school
+      start: 09:00
+      end: '17:00'
+      at: couch_l1
+      jitter: routine
+- note: Adult still home from illness; teen goes on school trip.
+  day: 8
+  patch:
+    drop:
+    - work_away
+    add:
+    - cites: resident_2
+      resident: resident_2
+      activity: school
+      start: 09:00
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+- note: Teen is wrecked from the trip, gaming late into the night.
+  day: 9
+  patch:
+    drop:
+    - bedtime_routine
+    add:
+    - cites: resident_2
+      resident: resident_2
+      activity: gaming
+      start: '22:00'
+      end: 02:00
+      at: bedroom_floor_b2
+      jitter: routine
+- note: Adult has a business trip, leaving the home empty for two days.
+  day: 14
+  patch:
+    drop:
+    - work_away
+    add:
+    - cites: resident_3
+      resident: resident_3
+      activity: work_away
+      start: 08:00
+      end: '20:00'
+      at: ELSEWHERE
+      jitter: routine

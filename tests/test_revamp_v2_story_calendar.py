@@ -119,14 +119,14 @@ class _StubGuidedClient:
         return json.dumps(self.payload)
 
 
-def test_binding_pass_targets_only_unbound_at_home_activities():
+def test_binding_pass_targets_unbound_activities_home_and_away():
     program = mini_program()
     story = _story()   # breakfast (bound), watch_tv (unbound, at shelf_b)
     story[0]["blocks"].append(
         {"resident": "resident_1", "activity": "errands",
          "start": "10:00", "end": "11:00", "at": "ELSEWHERE"})
     client = _StubGuidedClient(
-        {"bindings": [
+        {"reasoning": "stub binding judgment", "bindings": [
             {"object": "mug_1", "rules": []},
             {"object": "book_1", "rules": [
                 {"cites": "evenings on the couch", "activity": "watch_tv",
@@ -139,9 +139,10 @@ def test_binding_pass_targets_only_unbound_at_home_activities():
     schema = client.calls[0]["schema"]
     acts = schema["properties"]["bindings"]["prefixItems"][0][
         "properties"]["rules"]["items"]["properties"]["activity"]["enum"]
-    assert acts == ["watch_tv"]            # not breakfast (bound),
-                                           # not errands (away),
-                                           # not night_sleep (sleep)
+    # away activities ARE targets now (an away rule says where the
+    # object lands at the homecoming; excluded, hh8's keys left only for
+    # work and never the walk) — bound and sleep activities are not.
+    assert acts == ["errands", "watch_tv"]
     assert stats["n_rules_added"] == 1
     # merged copy carries the new rule; the source program is untouched
     book = next(e for e in merged["object_rules"]
@@ -158,7 +159,7 @@ def test_bound_story_realizes_the_new_rule():
     program = mini_program()
     story = _story()
     client = _StubGuidedClient(
-        {"bindings": [
+        {"reasoning": "stub binding judgment", "bindings": [
             {"object": "mug_1", "rules": []},
             {"object": "book_1", "rules": [
                 {"cites": "evenings", "activity": "watch_tv",
@@ -195,7 +196,7 @@ def test_binding_pass_drops_rules_that_point_at_the_objects_own_home():
     home = next(e for e in program["object_rules"]
                 if e["object"] == "book_1")["home"]
     client = _StubGuidedClient(
-        {"bindings": [
+        {"reasoning": "stub binding judgment", "bindings": [
             {"object": "mug_1", "rules": []},
             {"object": "book_1", "rules": [
                 {"cites": "put back", "activity": "watch_tv",

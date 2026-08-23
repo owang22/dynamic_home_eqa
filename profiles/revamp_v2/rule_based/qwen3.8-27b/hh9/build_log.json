@@ -1,0 +1,101 @@
+{
+  "household": "hh_009",
+  "household_type": "college_roommates",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b6",
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 16300282288802813320,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 18334169209022133975,
+      "reasoning": "The user wants a JSON profile for a household of 4 college roommates (hh_009). The other household types are working professionals, couples, families, and singles. To ensure distinctness, I will focus on the chaotic, transient, and shared nature of student life, contrasting with the stability of working families or the privacy of solo living. The residents will have distinct personalities that affect how they handle shared spaces and objects (e.g., one is a hoarder, one is a germaphobe, one is a night owl, one is a social butterfly). I will ensure object counts reflect a shared living situation with individual needs (laptops, phones, toiletries) and shared resources (kitchenware, entertainment). No specific times will be used, only relative activities. The JSON structure will strictly follow the provided schema.",
+      "leak_prediction": {
+        "predicted_type": "college_roommates",
+        "confidence": 0.95,
+        "reason": "The presence of four distinct individuals (Leo, Sarah, Maya, Ben) each with their own bedroom (b1-b4), laptop, and backpack strongly indicates a shared living arrangement of four people. The specific combination of four separate bedrooms in a single household unit, along with the age-appropriate mix",
+        "actual_type": "college_roommates",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 11794785885075643291,
+      "reasoning": "The user requested a profile for a college roommate household (hh_009) with 4 residents. I will create a diverse group of undergraduates with distinct personalities that affect their object management: one tidy artist, one chaotic gamer, one forgetful athlete, and one organized pre-med student. The home layout is a standard 2-bedroom apartment. The object inventory will reflect student life: shared kitchenware, personal electronics, study materials, and gym gear. I will ensure no specific times are mentioned, focusing on the flow of objects and interactions between roommates.",
+      "leak_prediction": {
+        "predicted_type": "college_roommates",
+        "confidence": 0.95,
+        "reason": "The presence of four distinct bedrooms (b1-b4) each with a bed, nightstand, and desk, combined with four distinct personal names (Elara, Priya, Jax, Marcus) and shared living/kitchen spaces, strongly indicates a group of four roommates. The specific items like gaming controllers, multiple laptops, a",
+        "actual_type": "college_roommates",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 2,
+      "seed": 10149579766700792521,
+      "reasoning": "Generated a household of 4 college roommates (3-4 residents) for hh_009. The personas are distinct: one is a disciplined athlete, one is a chaotic artist, one is a forgetful gamer, and one is a tidy but passive observer. This contrasts with the other household types (which are mostly family units or couples) by focusing on shared living without romantic or parental bonds, high noise levels, and distinct, often conflicting, object management habits. The inventory includes shared communal items (like the vacuum and shared mugs) alongside distinct personal items (laptops, gaming controllers, art supplies represented by notebooks/pen). The relationships highlight friction over cleanliness and shared resource usage (chargers, remote control). No clock times are included.",
+      "leak_prediction": {
+        "predicted_type": "college_roommates",
+        "confidence": 0.95,
+        "reason": "The presence of four distinct individuals (Leo, Sasha, Jax, Priya) each with their own bed, desk, and personal items (laptops, backpacks, mugs) strongly indicates a shared living arrangement for four people. The specific combination of backpacks, gaming controllers, and the lack of family-specific '",
+        "actual_type": "college_roommates",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 3,
+      "seed": 12755681180982024804,
+      "reasoning": "Generated profile for hh_009 (college_roommates). Created 4 distinct residents: a disciplined athlete, a messy artist, a social gamer, and a studious introvert. Defined specific habits that create object friction (e.g., shared mugs, tangled chargers, dirty laundry). Selected 18 objects from the allowed vocabulary, ensuring per-person items like phones and keys are included with clear travel rules (taken out of the house), and shared items like the gaming controller and remote are marked as shared. Daily life summary highlights overlapping schedules (class vs. gym vs. gaming) and coordination points (dishes, cleaning). Quirks highlight the lack of a traditional 'head of household' and the communal nature of their food.",
+      "leak_prediction": {
+        "predicted_type": "college_roommates",
+        "confidence": 0.95,
+        "reason": "The presence of four distinct individuals (Leo, Maya, Jordan, Sam) each with their own bedroom (b1-b4) and personal items (mugs, phones, keys, wallets) strongly indicates a shared living arrangement for four people. The specific combination of a gaming controller, backpack, and the sheer number of '",
+        "actual_type": "college_roommates",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 4,
+      "seed": 16300282288802813320,
+      "reasoning": "I am constructing a profile for a college roommates household (hh_009) with 4 residents. The goal is to contrast this with other types like working professionals or families by focusing on the chaotic, shared, and transient nature of student life. The residents will be distinct: a disciplined athlete, a disorganized artist, a tech-focused gamer, and a social butterfly. This ensures varied object handling habits (e.g., strict vs. messy, digital vs. physical). I will assign specific roles and friction points, such as shared bathroom items and kitchen messes, to drive object movement in the simulation. No clock times will be used, only relative timing and habits. Object inventory will reflect student needs: laptops, gaming controllers, art supplies (using notebook/pen), and basic kitchenware, with specific ownership tags to track movement.",
+      "leak_prediction": {
+        "predicted_type": "family_teen_and_child",
+        "confidence": 0.95,
+        "reason": "The presence of four distinct individuals (Alex, Bella, Chad, Dana) with personal items like laptops, phones, and backpacks indicates a multi-person household. The specific combination of 'toy_chad' and 'gaming_controller_chad' strongly suggests Chad is a child or young teen. The presence of 'medicb",
+        "actual_type": "college_roommates",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 2,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "stage": "calendar",
+      "seed": 8705155287862180251,
+      "failures": [],
+      "reasoning": "Alex (disciplined, punctual) wakes at 06:30, makes his bed, and studies in his room (bedroom_1) with tight jitter. He avoids the shared kitchen, eating at his desk. He packs his gym bag the previous evening (daily life summary) and maintains a strict routine. Bella (creative, disorganized) sleeps in until 09:00, studies/sketches in her room (bedroom_2) with loose jitter, and frequently leaves items scattered. She uses the shared bathroom and kitchen but leaves messes. Chad (social, tech-oriented, messy) also sleeps in until 09:00, plays video games in the living room (couch_l1) or his room (bedroom_3), and eats snacks at his desk. He is messy and social. Dana (organized, social, clean) wakes at 06:30, organizes the common area, does dishes, and studies in her room (bedroom_4). She mediates and cleans up after others. All four gather in the living room for dinner in the evening. Alex and Dana go to bed early (22:30), while Bella and Chad stay up later (23:30)."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 17206777066753776078,
+      "reasoning": "The household consists of four college students with distinct personalities: Alex (disciplined/minimalist), Bella (creative/disorganized), Chad (social/messy/gamer), and Dana (organized/cleaner). The rules are derived from their specific habits and the scheduled activities (study, meal_prep, dinner, relax, tidy_up, socialise_home, video_call, bedtime_routine). Alex and Dana's items tend to return to organized locations (desks, bags, shelves) after activities, while Bella and Chad's items often end up in scattered or shared locations (floors, beds, coffee tables) due to their messy habits. Dana's `tidy_up` and `deep_clean` (implied by vacuuming) activities frequently result in NO_OP for her own items but reset shared items to their proper homes. Misplacement probabilities are high for Bella and Chad's carried items (keys, phones) and low for Alex and Dana's.",
+      "failures": [],
+      "special_reasoning": "The household consists of four residents: R1 (Student, Mon-Fri study, Tue/Thu gym), R2 (Worker, Mon-Fri study/office hours), R3 (Student/Remote, Mon-Fri video calls), and R4 (Worker, Mon-Fri work hours). To create a lived stretch, I will introduce a multi-day illness affecting R3, which disrupts the family routine. On Day 2 (Wednesday), R3 falls ill. This forces R4 (the other worker) to drop their study/work block to care for R3, and R1 (the student) to skip their gym session to help out. On Day 3 (Thursday), R3 is still sick, so R4 continues to stay home, dropping their work block again. R1 is exhausted from the previous night's caretaking and late study, so they drop their gym session again. On Day 4 (Friday), R3 recovers but the family decides to order takeout (wiping out cooking) to celebrate the recovery, dropping the meal prep for everyone. This creates a connected 3-day arc (Days 2-4) with specific drops and one 'elsewhere' addition (a pharmacy run by R4 on Day 2).",
+      "special_attempt": 0
+    }
+  ]
+}

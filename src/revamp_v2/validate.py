@@ -47,7 +47,7 @@ import simulate as sim         # noqa: E402
 # deterministic pipeline data, not model output, so the model never has to
 # echo them and the schema never has to admit them).
 INJECTED_KEYS = ("receptacles", "household_type", "object_semantics",
-                 "arc_events")   # arc_events: authored by the SECOND call
+                 "object_owners", "arc_events")   # arc_events: authored by the SECOND call
                                  # (special events), never by the program
                                  # response the schema check replays
 

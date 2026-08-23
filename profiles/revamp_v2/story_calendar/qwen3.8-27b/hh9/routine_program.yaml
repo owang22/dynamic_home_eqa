@@ -1,0 +1,1932 @@
+household: hh_009
+household_type: college_roommates
+source_persona: persona.yaml
+object_semantics: after_only_v3
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 0.5
+- id: resident_2
+  jitter_scale: 1.8
+- id: resident_3
+  jitter_scale: 1.6
+- id: resident_4
+  jitter_scale: 0.6
+receptacles:
+- id: bed_b1
+  room: bedroom_1
+- id: nightstand_b1
+  room: bedroom_1
+- id: desk_b1
+  room: bedroom_1
+- id: bedroom_floor_b1
+  room: bedroom_1
+- id: bed_b2
+  room: bedroom_2
+- id: nightstand_b2
+  room: bedroom_2
+- id: desk_b2
+  room: bedroom_2
+- id: bedroom_floor_b2
+  room: bedroom_2
+- id: bed_b3
+  room: bedroom_3
+- id: nightstand_b3
+  room: bedroom_3
+- id: desk_b3
+  room: bedroom_3
+- id: bedroom_floor_b3
+  room: bedroom_3
+- id: bed_b4
+  room: bedroom_4
+- id: nightstand_b4
+  room: bedroom_4
+- id: desk_b4
+  room: bedroom_4
+- id: bedroom_floor_b4
+  room: bedroom_4
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:30'
+  end: 06:30+1
+  at: bed_b1
+  jitter: external
+  cites: Alex wakes early, disciplined
+- resident: resident_2
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:30'
+  end: 09:00+1
+  at: bed_b2
+  jitter: routine
+  cites: Bella sleeps in
+- resident: resident_3
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:30'
+  end: 09:00+1
+  at: bed_b3
+  jitter: routine
+  cites: Chad sleeps in
+- resident: resident_4
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:30'
+  end: 06:30+1
+  at: bed_b4
+  jitter: external
+  cites: Dana wakes early, organized
+weekly_blocks:
+- cites: Alex studies in his room
+  resident: resident_1
+  activity: study
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:00
+  end: '12:00'
+  at: desk_b1
+  jitter: routine
+  skip_p: 0.0
+- cites: Alex avoids shared kitchen, eats at desk
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '12:00'
+  end: '13:00'
+  at: desk_b1
+  jitter: routine
+  skip_p: 0.0
+- cites: Alex studies in his room
+  resident: resident_1
+  activity: study
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '13:00'
+  end: '17:00'
+  at: desk_b1
+  jitter: routine
+  skip_p: 0.0
+- cites: Alex packs gym bag previous evening
+  resident: resident_1
+  activity: gym
+  sleep: false
+  days:
+  - Tu
+  - Th
+  start: '17:00'
+  end: '19:00'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: All four gather in living room for meal
+  resident: resident_1
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:00'
+  end: '20:00'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.0
+- cites: Alex tidies his room at night
+  resident: resident_1
+  activity: tidy_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '20:00'
+  end: '22:30'
+  at: bedroom_floor_b1
+  jitter: routine
+  skip_p: 0.0
+- cites: Bella studies/sketches in her room
+  resident: resident_2
+  activity: study
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '10:00'
+  end: '13:00'
+  at: desk_b2
+  jitter: loose
+  skip_p: 0.2
+- cites: Bella uses shared kitchen, leaves mess
+  resident: resident_2
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '13:00'
+  end: '14:00'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Bella studies/sketches in her room
+  resident: resident_2
+  activity: study
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '14:00'
+  end: '18:00'
+  at: desk_b2
+  jitter: loose
+  skip_p: 0.2
+- cites: Bella socializes in common area
+  resident: resident_2
+  activity: socialise_home
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '19:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.1
+- cites: All four gather in living room for meal
+  resident: resident_2
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:00'
+  end: '20:00'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.0
+- cites: Bella leaves items scattered, no tidy
+  resident: resident_2
+  activity: relax
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '20:00'
+  end: '23:30'
+  at: bed_b2
+  jitter: loose
+  skip_p: 0.0
+- cites: Chad plays video games in living room
+  resident: resident_3
+  activity: video_call
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '10:00'
+  end: '13:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Chad eats snacks at desk
+  resident: resident_3
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '13:00'
+  end: '14:00'
+  at: desk_b3
+  jitter: flexible
+  skip_p: 0.2
+- cites: Chad plays video games in living room
+  resident: resident_3
+  activity: video_call
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '14:00'
+  end: '18:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Chad socializes in common area
+  resident: resident_3
+  activity: socialise_home
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '19:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.1
+- cites: All four gather in living room for meal
+  resident: resident_3
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:00'
+  end: '20:00'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.0
+- cites: Chad leaves items scattered, no tidy
+  resident: resident_3
+  activity: relax
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '20:00'
+  end: '23:30'
+  at: bed_b3
+  jitter: loose
+  skip_p: 0.0
+- cites: Dana organizes common area
+  resident: resident_4
+  activity: tidy_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:00
+  end: 08:00
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.0
+- cites: Dana studies in her room
+  resident: resident_4
+  activity: study
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:00
+  end: '12:00'
+  at: desk_b4
+  jitter: routine
+  skip_p: 0.0
+- cites: Dana does dishes after everyone else
+  resident: resident_4
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '12:00'
+  end: '13:00'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.0
+- cites: Dana does dishes after everyone else
+  resident: resident_4
+  activity: tidy_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '13:00'
+  end: '14:00'
+  at: sink_k1
+  jitter: routine
+  skip_p: 0.0
+- cites: Dana studies in her room
+  resident: resident_4
+  activity: study
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '14:00'
+  end: '18:00'
+  at: desk_b4
+  jitter: routine
+  skip_p: 0.0
+- cites: Dana socializes in common area
+  resident: resident_4
+  activity: socialise_home
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '19:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.1
+- cites: All four gather in living room for meal
+  resident: resident_4
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:00'
+  end: '20:00'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.0
+- cites: Dana tidies her room at night
+  resident: resident_4
+  activity: tidy_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '20:00'
+  end: '22:30'
+  at: bedroom_floor_b4
+  jitter: routine
+  skip_p: 0.0
+object_rules:
+- object: mug_1
+  cites: Washed by Dana after use
+  home: cupboard_k1
+  p_misplace: 0.0
+  rules:
+  - cites: Dana washes dishes
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.7
+    - dest: dish_rack_k1
+      p: 0.3
+  - cites: Bella forgets dishes
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.4
+    - dest: sink_k1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.3
+- object: mug_2
+  cites: Washed by Dana after use
+  home: cupboard_k1
+  p_misplace: 0.0
+  rules:
+  - cites: Dana washes dishes
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.8
+    - dest: dish_rack_k1
+      p: 0.2
+  - cites: Chad leaves snacks
+    activity: dinner
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.5
+    - dest: sink_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.3
+- object: laptop_alex
+  cites: Alex studies at desk
+  home: desk_b1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex stacks items neatly
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Alex keeps room tidy
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: laptop_bella
+  cites: Bella leaves laptop scattered
+  home: bed_b2
+  p_misplace: 0.2
+  rules:
+  - cites: Bella works on bed
+    activity: study
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.5
+    - dest: bedroom_floor_b2
+      p: 0.3
+    - dest: desk_b2
+      p: 0.2
+  - cites: Bella relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.7
+    - dest: bedroom_floor_b2
+      p: 0.3
+- object: laptop_chad
+  cites: Chad moves laptop to living room
+  home: desk_b3
+  p_misplace: 0.1
+  rules:
+  - cites: Chad games in living room
+    activity: video_call
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.4
+    - dest: desk_b3
+      p: 0.4
+    - dest: coffee_table_l1
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.6
+    - dest: desk_b3
+      p: 0.4
+- object: laptop_dana
+  cites: Dana moves laptop for group work
+  home: desk_b4
+  p_misplace: 0.0
+  rules:
+  - cites: Dana studies at desk
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.8
+    - dest: couch_l1
+      p: 0.2
+  - cites: Dana tidies common area
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: phone_alex
+  cites: Alex charges phone on nightstand
+  home: nightstand_b1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex keeps phone with him
+    activity: study
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.7
+    - dest: desk_b1
+      p: 0.3
+  - cites: Alex goes to bed
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: phone_bella
+  cites: Bella leaves phone on desk or bed
+  home: desk_b2
+  p_misplace: 0.3
+  rules:
+  - cites: Bella forgets phone
+    activity: study
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.4
+    - dest: desk_b2
+      p: 0.3
+    - dest: bedroom_floor_b2
+      p: 0.3
+  - cites: Bella relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.8
+    - dest: bedroom_floor_b2
+      p: 0.2
+- object: phone_chad
+  cites: Chad keeps phone in pocket
+  home: desk_b3
+  p_misplace: 0.2
+  rules:
+  - cites: Chad leaves phone on bed
+    activity: video_call
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.5
+    - dest: couch_l1
+      p: 0.3
+    - dest: desk_b3
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.7
+    - dest: desk_b3
+      p: 0.3
+- object: phone_dana
+  cites: Dana keeps phone in bag
+  home: nightstand_b4
+  p_misplace: 0.0
+  rules:
+  - cites: Dana studies at desk
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.6
+    - dest: nightstand_b4
+      p: 0.4
+  - cites: Dana tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: nightstand_b4
+      p: 0.9
+    - dest: desk_b4
+      p: 0.1
+- object: keys_alex
+  cites: Alex keeps keys in pocket
+  home: entry_table_e1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex returns to room
+    activity: study
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.8
+    - dest: desk_b1
+      p: 0.2
+  - cites: Alex goes to bed
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: keys_bella
+  cites: Bella loses keys on counter
+  home: entry_table_e1
+  p_misplace: 0.4
+  rules:
+  - cites: Bella forgets keys
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.4
+    - dest: entry_table_e1
+      p: 0.3
+    - dest: desk_b2
+      p: 0.3
+  - cites: Bella relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.5
+    - dest: entry_table_e1
+      p: 0.5
+- object: keys_chad
+  cites: Chad keeps keys in pocket
+  home: entry_table_e1
+  p_misplace: 0.3
+  rules:
+  - cites: Chad leaves keys on couch
+    activity: video_call
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.4
+    - dest: entry_table_e1
+      p: 0.4
+    - dest: desk_b3
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.6
+    - dest: entry_table_e1
+      p: 0.4
+- object: keys_dana
+  cites: Dana keeps keys in bag
+  home: entry_table_e1
+  p_misplace: 0.0
+  rules:
+  - cites: Dana tidies entryway
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: desk_b4
+      p: 0.1
+  - cites: Dana goes to bed
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: wallet_alex
+  cites: Alex keeps wallet in pocket
+  home: desk_b1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex stores wallet at desk
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Alex tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: wallet_bella
+  cites: Bella leaves wallet in room
+  home: desk_b2
+  p_misplace: 0.2
+  rules:
+  - cites: Bella forgets wallet
+    activity: study
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.4
+    - dest: desk_b2
+      p: 0.3
+    - dest: bedroom_floor_b2
+      p: 0.3
+  - cites: Bella relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.7
+    - dest: desk_b2
+      p: 0.3
+- object: wallet_chad
+  cites: Chad keeps wallet in pocket
+  home: desk_b3
+  p_misplace: 0.2
+  rules:
+  - cites: Chad leaves wallet on bed
+    activity: video_call
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.5
+    - dest: desk_b3
+      p: 0.3
+    - dest: couch_l1
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.8
+    - dest: desk_b3
+      p: 0.2
+- object: wallet_dana
+  cites: Dana keeps wallet in bag
+  home: desk_b4
+  p_misplace: 0.0
+  rules:
+  - cites: Dana stores wallet at desk
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Dana tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: book_alex
+  cites: Alex stacks textbooks neatly
+  home: desk_b1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex studies at desk
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Alex tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: book_bella
+  cites: Bella leaves sketchbooks scattered
+  home: bed_b2
+  p_misplace: 0.3
+  rules:
+  - cites: Bella works on bed
+    activity: study
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.5
+    - dest: bedroom_floor_b2
+      p: 0.3
+    - dest: desk_b2
+      p: 0.2
+  - cites: Bella relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.6
+    - dest: bedroom_floor_b2
+      p: 0.4
+- object: book_chad
+  cites: Chad reads in living room
+  home: desk_b3
+  p_misplace: 0.1
+  rules:
+  - cites: Chad moves book to couch
+    activity: video_call
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.4
+    - dest: desk_b3
+      p: 0.4
+    - dest: coffee_table_l1
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.5
+    - dest: desk_b3
+      p: 0.5
+- object: book_dana
+  cites: Dana writes notes in common area
+  home: desk_b4
+  p_misplace: 0.0
+  rules:
+  - cites: Dana studies at desk
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.7
+    - dest: couch_l1
+      p: 0.3
+  - cites: Dana tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: water_bottle_alex
+  cites: Alex keeps bottle in room
+  home: desk_b1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex drinks at desk
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Alex tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: water_bottle_bella
+  cites: Bella leaves bottle on desk
+  home: desk_b2
+  p_misplace: 0.1
+  rules:
+  - cites: Bella forgets bottle
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.5
+    - dest: bed_b2
+      p: 0.3
+    - dest: bedroom_floor_b2
+      p: 0.2
+  - cites: Bella relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.5
+    - dest: desk_b2
+      p: 0.5
+- object: water_bottle_chad
+  cites: Chad keeps bottle in room
+  home: desk_b3
+  p_misplace: 0.1
+  rules:
+  - cites: Chad drinks at desk
+    activity: video_call
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.5
+    - dest: bed_b3
+      p: 0.3
+    - dest: couch_l1
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.6
+    - dest: desk_b3
+      p: 0.4
+- object: water_bottle_dana
+  cites: Dana keeps bottle in bag
+  home: desk_b4
+  p_misplace: 0.0
+  rules:
+  - cites: Dana drinks at desk
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Dana tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: remote_1
+  cites: Chad leaves remote on coffee table
+  home: tv_stand_l1
+  p_misplace: 0.2
+  rules:
+  - cites: Chad uses remote
+    activity: video_call
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.6
+    - dest: couch_l1
+      p: 0.3
+    - dest: tv_stand_l1
+      p: 0.1
+  - cites: Dana tidies living room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: tv_stand_l1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: charger_alex
+  cites: Alex keeps charger in room
+  home: nightstand_b1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex charges phone
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.9
+    - dest: desk_b1
+      p: 0.1
+  - cites: Alex tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: charger_bella
+  cites: Bella loses charger on counter
+  home: desk_b2
+  p_misplace: 0.3
+  rules:
+  - cites: Bella forgets charger
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.4
+    - dest: desk_b2
+      p: 0.3
+    - dest: bed_b2
+      p: 0.3
+  - cites: Bella relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.5
+    - dest: desk_b2
+      p: 0.5
+- object: charger_chad
+  cites: Chad keeps charger in room
+  home: desk_b3
+  p_misplace: 0.1
+  rules:
+  - cites: Chad charges console
+    activity: video_call
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.5
+    - dest: bed_b3
+      p: 0.3
+    - dest: couch_l1
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.6
+    - dest: desk_b3
+      p: 0.4
+- object: charger_dana
+  cites: Dana keeps charger in room
+  home: nightstand_b4
+  p_misplace: 0.0
+  rules:
+  - cites: Dana charges phone
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b4
+      p: 0.9
+    - dest: desk_b4
+      p: 0.1
+  - cites: Dana tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: nightstand_b4
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: backpack_alex
+  cites: Alex keeps backpack in room
+  home: desk_b1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex returns from study
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Alex tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: backpack_bella
+  cites: Bella leaves backpack in hallway
+  home: entry_floor_e1
+  p_misplace: 0.2
+  rules:
+  - cites: Bella forgets backpack
+    activity: study
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.4
+    - dest: bed_b2
+      p: 0.3
+    - dest: bedroom_floor_b2
+      p: 0.3
+  - cites: Bella relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.5
+    - dest: entry_floor_e1
+      p: 0.5
+- object: backpack_chad
+  cites: Chad keeps backpack in room
+  home: desk_b3
+  p_misplace: 0.1
+  rules:
+  - cites: Chad returns from video call
+    activity: video_call
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.5
+    - dest: bed_b3
+      p: 0.3
+    - dest: couch_l1
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.6
+    - dest: desk_b3
+      p: 0.4
+- object: backpack_dana
+  cites: Dana keeps backpack in room
+  home: desk_b4
+  p_misplace: 0.0
+  rules:
+  - cites: Dana returns from study
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Dana tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: jacket_alex
+  cites: Alex keeps jacket in closet
+  home: desk_b1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex hangs jacket
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Alex tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: jacket_bella
+  cites: Bella leaves jacket on chair
+  home: chair_k1
+  p_misplace: 0.3
+  rules:
+  - cites: Bella forgets jacket
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.4
+    - dest: bed_b2
+      p: 0.3
+    - dest: bedroom_floor_b2
+      p: 0.3
+  - cites: Bella relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.5
+    - dest: chair_k1
+      p: 0.5
+- object: jacket_chad
+  cites: Chad drapes jacket over chair
+  home: chair_k1
+  p_misplace: 0.2
+  rules:
+  - cites: Chad leaves jacket on chair
+    activity: video_call
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.5
+    - dest: couch_l1
+      p: 0.3
+    - dest: bed_b3
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.5
+    - dest: chair_k1
+      p: 0.5
+- object: jacket_dana
+  cites: Dana keeps jacket in closet
+  home: desk_b4
+  p_misplace: 0.0
+  rules:
+  - cites: Dana hangs jacket
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Dana tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: headphones_bella
+  cites: Bella loses one earcup
+  home: desk_b2
+  p_misplace: 0.3
+  rules:
+  - cites: Bella listens to music
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.5
+    - dest: desk_b2
+      p: 0.3
+    - dest: bedroom_floor_b2
+      p: 0.2
+  - cites: Bella studies
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.6
+    - dest: bed_b2
+      p: 0.4
+- object: headphones_chad
+  cites: Chad uses headphones for gaming
+  home: desk_b3
+  p_misplace: 0.2
+  rules:
+  - cites: Chad games
+    activity: video_call
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.5
+    - dest: bed_b3
+      p: 0.3
+    - dest: couch_l1
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.6
+    - dest: desk_b3
+      p: 0.4
+- object: glasses_alex
+  cites: Alex keeps glasses in room
+  home: desk_b1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex reads
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Alex tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: glasses_dana
+  cites: Dana keeps glasses in bag
+  home: desk_b4
+  p_misplace: 0.0
+  rules:
+  - cites: Dana reads
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Dana tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: notebook_bella
+  cites: Bella leaves notebook on floor
+  home: bed_b2
+  p_misplace: 0.3
+  rules:
+  - cites: Bella sketches
+    activity: study
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.4
+    - dest: bedroom_floor_b2
+      p: 0.4
+    - dest: desk_b2
+      p: 0.2
+  - cites: Bella relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.5
+    - dest: bedroom_floor_b2
+      p: 0.5
+- object: notebook_dana
+  cites: Dana writes notes in common area
+  home: desk_b4
+  p_misplace: 0.0
+  rules:
+  - cites: Dana plans
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.7
+    - dest: couch_l1
+      p: 0.3
+  - cites: Dana tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: pen_1
+  cites: Bella leaves pen on desk
+  home: counter_k1
+  p_misplace: 0.2
+  rules:
+  - cites: Bella writes
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.4
+    - dest: counter_k1
+      p: 0.3
+    - dest: bed_b2
+      p: 0.3
+  - cites: Dana tidies kitchen
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: pen_2
+  cites: Dana leaves pen on desk
+  home: desk_b4
+  p_misplace: 0.1
+  rules:
+  - cites: Dana writes
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.6
+    - dest: counter_k1
+      p: 0.2
+    - dest: couch_l1
+      p: 0.2
+  - cites: Dana tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b4
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: medication_bottle_alex
+  cites: Alex keeps supplements in room
+  home: desk_b1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex takes supplements
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.9
+    - dest: nightstand_b1
+      p: 0.1
+  - cites: Alex tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: toy_chad
+  cites: Chad keeps figure in room
+  home: desk_b3
+  p_misplace: 0.1
+  rules:
+  - cites: Chad plays
+    activity: video_call
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.5
+    - dest: bed_b3
+      p: 0.3
+    - dest: couch_l1
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.6
+    - dest: desk_b3
+      p: 0.4
+- object: blanket_1
+  cites: Chad leaves blanket on couch
+  home: couch_l1
+  p_misplace: 0.1
+  rules:
+  - cites: Chad watches TV
+    activity: video_call
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.6
+    - dest: bed_b3
+      p: 0.3
+    - dest: armchair_l1
+      p: 0.1
+  - cites: Dana tidies living room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: towel_1
+  cites: Residents use towels in bathroom
+  home: towel_rack_ba1
+  p_misplace: 0.0
+  rules:
+  - cites: Residents dry off
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.7
+    - dest: bathroom_shelf_ba1
+      p: 0.3
+  - cites: Dana tidies bathroom
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: towel_2
+  cites: Residents use towels in bathroom
+  home: towel_rack_ba1
+  p_misplace: 0.0
+  rules:
+  - cites: Residents dry off
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.6
+    - dest: bathroom_shelf_ba1
+      p: 0.4
+  - cites: Dana tidies bathroom
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: gaming_controller_chad
+  cites: Chad leaves controller on bed
+  home: desk_b3
+  p_misplace: 0.2
+  rules:
+  - cites: Chad games
+    activity: video_call
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.5
+    - dest: couch_l1
+      p: 0.3
+    - dest: desk_b3
+      p: 0.2
+  - cites: Chad relaxes in bed
+    activity: relax
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.7
+    - dest: desk_b3
+      p: 0.3
+- object: dog_leash_none
+  cites: No pets in household
+  home: entry_table_e1
+  p_misplace: 0.0
+  rules: []
+- object: lunchbox_alex
+  cites: Alex keeps lunchbox in fridge
+  home: cupboard_k1
+  p_misplace: 0.0
+  rules:
+  - cites: Alex packs lunch
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.8
+    - dest: counter_k1
+      p: 0.2
+  - cites: Alex tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: lunchbox_dana
+  cites: Dana keeps lunchbox in fridge
+  home: cupboard_k1
+  p_misplace: 0.0
+  rules:
+  - cites: Dana packs lunch
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.8
+    - dest: counter_k1
+      p: 0.2
+  - cites: Dana tidies room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: umbrella_dana
+  cites: Dana leaves umbrella by door
+  home: entry_table_e1
+  p_misplace: 0.0
+  rules:
+  - cites: Dana goes out
+    activity: study
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: desk_b4
+      p: 0.1
+  - cites: Dana tidies entryway
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: laundry_basket_1
+  cites: Bella overflows basket
+  home: entry_floor_e1
+  p_misplace: 0.0
+  rules:
+  - cites: Bella adds laundry
+    activity: relax
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Dana tidies hallway
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: laundry_basket_2
+  cites: Chad adds laundry
+  home: entry_floor_e1
+  p_misplace: 0.0
+  rules:
+  - cites: Chad adds laundry
+    activity: relax
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Dana tidies hallway
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 1.0
+    - dest: NO_OP
+      p: 0.0
+- object: vacuum_cleaner_1
+  cites: Dana stores vacuum in closet
+  home: entry_table_e1
+  p_misplace: 0.0
+  rules:
+  - cites: Dana vacuums
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: Dana deep cleans
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.5
+    - dest: NO_OP
+      p: 0.5
+activities:
+- name: bedtime_routine
+  reset_all:
+    p: 0.0
+  cites: Everyone goes to bed
+- name: study
+  reset_all:
+    p: 0.0
+  cites: Students study
+- name: meal_prep
+  reset_all:
+    p: 0.0
+  cites: Residents eat meals
+- name: gym
+  reset_all:
+    p: 0.0
+  cites: Alex goes to gym
+- name: dinner
+  reset_all:
+    p: 0.0
+  cites: Household eats together
+- name: tidy_up
+  reset_all:
+    p: 0.0
+  cites: Clean residents tidy up
+- name: socialise_home
+  reset_all:
+    p: 0.0
+  cites: Residents socialize
+- name: relax
+  reset_all:
+    p: 0.0
+  cites: Residents relax
+- name: video_call
+  reset_all:
+    p: 0.0
+  cites: Chad plays games
+arc_events:
+- note: R3 wakes up with a high fever; R4 drops work to stay home, R1 skips gym to help.
+  day: 2
+  patch:
+    drop:
+    - study
+    - gym
+    add:
+    - cites: resident_4
+      resident: resident_4
+      activity: phone_time
+      start: '10:00'
+      end: '10:15'
+      at: ELSEWHERE
+      jitter: flexible
+- note: R3 is still sick; R4 stays home again, R1 is wrecked and skips gym.
+  day: 3
+  patch:
+    drop:
+    - study
+    - gym
+- note: R3 feels better; family orders takeout instead of cooking.
+  day: 4
+  patch:
+    drop:
+    - meal_prep
+- note: R1 stays out late studying for a deadline, wrecked the next morning.
+  day: 11
+  patch:
+    drop:
+    - tidy_up
+    add:
+    - cites: resident_1
+      resident: resident_1
+      activity: study
+      start: '22:30'
+      end: 02:00
+      at: desk_b1
+      jitter: flexible

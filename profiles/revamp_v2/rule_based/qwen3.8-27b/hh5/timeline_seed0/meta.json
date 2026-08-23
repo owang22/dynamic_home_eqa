@@ -1,0 +1,98 @@
+{
+  "household": "hh_005",
+  "household_type": "couple_with_toddler",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh5",
+  "days": 21,
+  "seed": 0,
+  "n_events": 3311,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 269,
+    "tidy_moved": 1031,
+    "tidy_ran_out_of_time": 48,
+    "blocks": 542,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [
+      "nap",
+      "sleep_bedtime_routine",
+      "sleep_bedtime_routine__bathroom_shelf_ba1",
+      "sleep_bedtime_routine__bed_b2"
+    ],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [],
+    "carried_on_departure": [],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [],
+    "skips_per_activity": {
+      "coffee": 1,
+      "dinner": 1,
+      "laundry": 1,
+      "nap": 1,
+      "play_with_kids": 3,
+      "tidy_up": 3,
+      "watch_tv": 6,
+      "work_away__couch_l1": 3,
+      "work_away__desk_b1": 2
+    },
+    "fragment_bouts_per_activity": {},
+    "carry_rehome_suppressed": 0
+  },
+  "moves_per_object": {
+    "bowl_shared": 251,
+    "water_bottle_leo": 238,
+    "plate_shared": 231,
+    "water_bottle_arthur": 226,
+    "mug_arthur": 209,
+    "toy_leo": 209,
+    "phone_arthur": 195,
+    "mug_elena": 195,
+    "remote_shared": 195,
+    "pen_elena": 184,
+    "phone_elena": 171,
+    "glasses_arthur": 162,
+    "notebook_elena": 151,
+    "makeup_kit_elena": 139,
+    "blanket_leo": 126,
+    "tablet_elena": 120,
+    "keys_elena": 111,
+    "keys_arthur": 108,
+    "laptop_arthur": 72,
+    "laundry_basket_shared": 18
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3.8-27B",
+    "prompts": {
+      "persona_v2": "6f60fb77",
+      "calendar_program": "bb623651",
+      "object_rules": "c17ddb91",
+      "special_events": "dee8230e",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b6",
+    "accepted_attempt": 0,
+    "n_attempts": 4
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.9
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
+    }
+  }
+}

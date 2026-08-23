@@ -144,3 +144,112 @@ def test_unmarked_program_keeps_both_away_blocks():
     acts, motions = xc.expand(program)
     assert acts["merged_away_blocks"] == []
     assert "work_away" in motions["object_motions"]
+
+
+# ------------------------------------------------ the person invariant --
+
+def _two_res_program():
+    program = _v3()
+    program["residents"] = [{"id": "resident_1", "jitter_scale": 1.0},
+                            {"id": "resident_2", "jitter_scale": 1.0}]
+    program["object_owners"] = {"mug_1": "resident_1",
+                                "keys_1": "resident_2"}
+    program["sleep_schedule"].append(
+        {"resident": "resident_2", "activity": "night_sleep",
+         "days": ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+         "start": "22:00", "end": "07:30+1", "at": "bed_b1",
+         "jitter": "routine", "cites": "c"})
+    # resident_2 goes to work; resident_1 tidies at home meanwhile
+    program["weekly_blocks"] = [
+        {"resident": "resident_2", "activity": "work_away",
+         "days": ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+         "start": "09:00", "end": "17:00", "at": "ELSEWHERE",
+         "jitter": "external", "skip_p": 0.0, "sleep": False, "cites": "c"},
+        # a home block between work and the walk, or the away-chain
+        # merge (correctly) reads them as one continuous outing
+        {"resident": "resident_2", "activity": "dinner",
+         "days": ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+         "start": "17:15", "end": "17:45", "at": "table_a",
+         "jitter": "routine", "skip_p": 0.0, "sleep": False, "cites": "c"},
+        {"resident": "resident_2", "activity": "walk",
+         "days": ["Mo"], "start": "18:00", "end": "18:30",
+         "at": "ELSEWHERE", "jitter": "loose", "skip_p": 0.0,
+         "sleep": False, "cites": "c"},
+        {"resident": "resident_1", "activity": "tidy_up",
+         "days": ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+         "start": "10:00", "end": "10:30", "at": "table_a",
+         "jitter": "flexible", "skip_p": 0.0, "sleep": False, "cites": "c"},
+    ]
+    program["object_rules"] = [
+        {"object": "mug_1", "cites": "c", "home": "shelf_b",
+         "rules": [{"cites": "c", "activity": "tidy_up", "phase": "after",
+                    "dist": [{"dest": "shelf_b", "p": 0.6},
+                             {"dest": "sink_k", "p": 0.4}]}]},
+        # keys: away-bound via work_away, and a shared home-activity rule
+        # that USED to be able to yank them off their absent owner
+        {"object": "keys_1", "cites": "c", "home": "table_a",
+         "rules": [
+             {"cites": "c", "activity": "work_away", "phase": "after",
+              "dist": [{"dest": "table_a", "p": 0.7},
+                       {"dest": "shelf_b", "p": 0.3}]},
+             {"cites": "c", "activity": "tidy_up", "phase": "after",
+              "dist": [{"dest": "table_a", "p": 0.9},
+                       {"dest": "NO_OP", "p": 0.1}]}]},
+    ]
+    program["activities"] = [{"name": "tidy_up", "cites": "c"}]
+    program["arc_events"] = []
+    return program
+
+
+def test_home_after_rules_cannot_reach_a_person_or_elsewhere():
+    _, motions = xc.expand(_two_res_program())
+    tidy = motions["object_motions"]["tidy_up"]
+    for obj, rule in tidy["after"].items():
+        assert rule["only_from"], (obj, rule)
+        assert all(not str(x).startswith("person:") and x != "ELSEWHERE"
+                   for x in rule["only_from"]), (obj, rule)
+
+
+def test_travellers_are_not_paraded_to_home_sites():
+    _, motions = xc.expand(_two_res_program())
+    tidy = motions["object_motions"]["tidy_up"]
+    assert "keys_1" not in tidy["during"]      # away-bound: never paraded
+    assert tidy["during"].get("mug_1") == "table_a"   # homebody: paraded
+
+
+def test_pocket_items_ride_every_trip_of_their_owner_only():
+    _, motions = xc.expand(_two_res_program())
+    # keys ride the owner's work trip AND the walk (no authored walk rule)
+    for act in ("work_away", "walk"):
+        assert motions["object_motions"][act]["during"].get("keys_1") == \
+            "person:resident_2", act
+    # the walk got a synthesized homecoming putdown to the keys' home
+    walk_after = motions["object_motions"]["walk"]["after"]["keys_1"]
+    assert walk_after["dest"] == "table_a"
+    assert walk_after["only_from"] == ["person:resident_2"]
+    # and nothing puts resident_1's mug on resident_2
+    assert "mug_1" not in motions["object_motions"]["work_away"]["during"]
+
+
+def test_no_owner_data_means_no_person_legs():
+    program = _two_res_program()
+    del program["object_owners"]
+    _, motions = xc.expand(program)
+    assert motions["object_motions"]["work_away"]["during"] == {}
+
+
+def test_person_invariant_holds_through_realization():
+    """End to end: with resident_2 at work 09:00-17:00 daily, no event may
+    take keys_1 off person:resident_2 during the trip's interior."""
+    program = _two_res_program()
+    log, hourly, blocks, stats, acts, motions = sim.simulate_program(
+        program, 21, 0)
+    trips = [(b["t0"], b["t1"]) for b in blocks
+             if b["resident"] == "resident_2" and b["at"] == "ELSEWHERE"]
+    bad = [e for e in log
+           if e["from"] == "person:resident_2"
+           and not str(e["to"]).startswith("person:")
+           and e["to"] != "ELSEWHERE"
+           and e["by"] != "misplace"
+           and any(a < e["t"] < b for a, b in trips)]
+    assert bad == [], bad[:3]

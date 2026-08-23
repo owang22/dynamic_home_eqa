@@ -1,0 +1,988 @@
+household: hh_008
+household_type: remote_worker_couple
+source_persona: persona.yaml
+object_semantics: after_only_v3
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 1.8
+  cites: chaotic, focused, forgetful
+- id: resident_2
+  jitter_scale: 0.6
+  cites: structured, tidy, analytical
+receptacles:
+- id: bed_b1
+  room: bedroom_1
+- id: nightstand_b1
+  room: bedroom_1
+- id: desk_b1
+  room: bedroom_1
+- id: bedroom_floor_b1
+  room: bedroom_1
+- id: bed_b2
+  room: bedroom_2
+- id: nightstand_b2
+  room: bedroom_2
+- id: desk_b2
+  room: bedroom_2
+- id: bedroom_floor_b2
+  room: bedroom_2
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:30'
+  end: 06:30+1
+  at: bed_b1
+  jitter: routine
+  cites: strictly for sleep, no work devices
+- resident: resident_2
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:30'
+  end: 06:00+1
+  at: bed_b2
+  jitter: routine
+  cites: structured, tidy, analytical
+weekly_blocks:
+- cites: Elias works from living room desk
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:30
+  end: '12:00'
+  at: desk_b1
+  jitter: flexible
+  skip_p: 0.05
+- cites: Elias migrates to kitchen table
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '12:00'
+  end: '14:00'
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.05
+- cites: Silent hour for deep work
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '14:00'
+  end: '15:00'
+  at: desk_b1
+  jitter: external
+  skip_p: 0.0
+- cites: Elias struggles to clock out
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '15:00'
+  end: '18:00'
+  at: desk_b1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Elias works weekends
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 09:00
+  end: '13:00'
+  at: desk_b1
+  jitter: loose
+  skip_p: 0.3
+- cites: Elias watches TV in living room
+  resident: resident_1
+  activity: watch_tv
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '21:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.2
+- cites: Elias reads in bed
+  resident: resident_1
+  activity: reading
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '21:00'
+  end: '23:00'
+  at: bed_b1
+  jitter: loose
+  skip_p: 0.3
+- cites: Elias plays games occasionally
+  resident: resident_1
+  activity: gaming
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  - Sa
+  - Su
+  start: '19:00'
+  end: '21:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.6
+- cites: Priya does yoga before work
+  resident: resident_2
+  activity: gym
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:00
+  end: 06:30
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.05
+- cites: Priya works in home office
+  resident: resident_2
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:30
+  end: '12:00'
+  at: desk_b2
+  jitter: routine
+  skip_p: 0.05
+- cites: Silent hour for deep work
+  resident: resident_2
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '14:00'
+  end: '15:00'
+  at: desk_b2
+  jitter: external
+  skip_p: 0.0
+- cites: Priya works in home office
+  resident: resident_2
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '15:00'
+  end: '18:00'
+  at: desk_b2
+  jitter: routine
+  skip_p: 0.05
+- cites: Priya works weekends
+  resident: resident_2
+  activity: work_away
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 08:00
+  end: '12:00'
+  at: desk_b2
+  jitter: flexible
+  skip_p: 0.2
+- cites: Priya watches TV in living room
+  resident: resident_2
+  activity: watch_tv
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '21:00'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.1
+- cites: Priya reads in bed
+  resident: resident_2
+  activity: reading
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '21:00'
+  end: '22:00'
+  at: bed_b2
+  jitter: routine
+  skip_p: 0.1
+- cites: Priya plays games occasionally
+  resident: resident_2
+  activity: gaming
+  sleep: false
+  days:
+  - Tu
+  - Th
+  - Sa
+  - Su
+  start: '19:00'
+  end: '21:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.6
+- cites: Both eat lunch in kitchen
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '12:00'
+  end: '13:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.0
+- cites: Both eat lunch in kitchen
+  resident: resident_2
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '12:00'
+  end: '13:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.0
+- cites: Both eat dinner in kitchen
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '19:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.0
+- cites: Both eat dinner in kitchen
+  resident: resident_2
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '19:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.0
+- cites: Priya washes dishes immediately
+  resident: resident_2
+  activity: coffee
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:00
+  end: 06:15
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: Priya washes dishes immediately
+  resident: resident_2
+  activity: coffee
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '12:30'
+  end: '12:45'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: Priya washes dishes immediately
+  resident: resident_2
+  activity: coffee
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '18:30'
+  end: '18:45'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.1
+object_rules:
+- object: laptop_elias
+  cites: Elias migrates work between desk and kitchen table
+  home: desk_b1
+  p_misplace: 0.1
+  rules:
+  - cites: Work ends, laptop often left open
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.5
+    - dest: kitchen_table_k1
+      p: 0.3
+    - dest: couch_l1
+      p: 0.2
+  - cites: Charger coiled loosely on desk
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+- object: laptop_priya
+  cites: Priya's laptop stays in her sanctuary
+  home: desk_b2
+  rules:
+  - cites: Covered and returned to desk
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.95
+    - dest: NO_OP
+      p: 0.05
+  - cites: Rarely moves during leisure
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: phone_elias
+  cites: Elias forgets phone on sofa cushions
+  home: nightstand_b1
+  p_misplace: 0.3
+  rules:
+  - cites: Drops phone on sofa while watching
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.6
+    - dest: coffee_table_l1
+      p: 0.3
+    - dest: desk_b1
+      p: 0.1
+  - cites: Phone travels with him to kitchen
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.5
+    - dest: counter_k1
+      p: 0.4
+    - dest: desk_b1
+      p: 0.1
+  - cites: Phone left on nightstand before sleep
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.7
+    - dest: bed_b1
+      p: 0.3
+- object: phone_priya
+  cites: Priya keeps phone on kitchen stand
+  home: counter_k1
+  rules:
+  - cites: Phone returns to kitchen stand
+    activity: work_away
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: desk_b2
+      p: 0.3
+  - cites: Phone stays in workspace during TV
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.6
+    - dest: desk_b2
+      p: 0.4
+  - cites: Phone placed on nightstand for sleep
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b2
+      p: 0.8
+    - dest: desk_b2
+      p: 0.2
+- object: mug_elias_1
+  cites: Elias's favorite black mug for coffee
+  home: counter_k1
+  p_misplace: 0.2
+  rules:
+  - cites: Mug left on desk during work
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.5
+    - dest: counter_k1
+      p: 0.3
+    - dest: sink_k1
+      p: 0.2
+  - cites: Mug often left on coffee table
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.6
+    - dest: counter_k1
+      p: 0.4
+  - cites: Mug left on kitchen table at lunch
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.5
+    - dest: counter_k1
+      p: 0.5
+- object: mug_elias_2
+  cites: Blue mug often left in sink
+  home: counter_k1
+  rules:
+  - cites: Mug left in sink after use
+    activity: work_away
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.6
+    - dest: counter_k1
+      p: 0.4
+  - cites: Mug left on table during meals
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.5
+    - dest: sink_k1
+      p: 0.5
+- object: mug_elias_3
+  cites: Travel mug for moving between rooms
+  home: counter_k1
+  rules:
+  - cites: Travel mug left on sofa
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.5
+    - dest: coffee_table_l1
+      p: 0.3
+    - dest: counter_k1
+      p: 0.2
+  - cites: Travel mug on kitchen table
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.6
+    - dest: counter_k1
+      p: 0.4
+- object: mug_priya
+  cites: Priya washes mugs immediately
+  home: cupboard_k1
+  rules:
+  - cites: Mug returned to cupboard after coffee
+    activity: coffee
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.95
+    - dest: dish_rack_k1
+      p: 0.05
+  - cites: Mug cleaned after meals
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.9
+    - dest: dish_rack_k1
+      p: 0.1
+- object: headphones_elias
+  cites: Headphones snagged on furniture
+  home: desk_b1
+  p_misplace: 0.2
+  rules:
+  - cites: Headphones left on desk after work
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.7
+    - dest: couch_l1
+      p: 0.3
+  - cites: Headphones left on sofa during TV
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.8
+    - dest: desk_b1
+      p: 0.2
+- object: headphones_priya
+  cites: Headphones always returned to drawer
+  home: desk_b2
+  rules:
+  - cites: Headphones put away after work
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.95
+    - dest: NO_OP
+      p: 0.05
+  - cites: Headphones stay in office during TV
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: keys_elias
+  cites: Elias's keys in entryway bowl
+  home: entry_table_e1
+  p_misplace: 0.1
+  rules:
+  - cites: Keys moved by Priya during tidying
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.7
+    - dest: kitchen_table_k1
+      p: 0.2
+    - dest: counter_k1
+      p: 0.1
+  - cites: Keys left on desk when home
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.6
+    - dest: desk_b1
+      p: 0.4
+- object: keys_priya
+  cites: Priya's keys in specific dish
+  home: entry_table_e1
+  rules:
+  - cites: Keys returned to exact spot
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.95
+    - dest: NO_OP
+      p: 0.05
+  - cites: Keys stay in entryway
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: desk_b2
+      p: 0.1
+- object: wallet_elias
+  cites: Elias's wallet on counter or desk
+  home: counter_k1
+  p_misplace: 0.2
+  rules:
+  - cites: Wallet left on desk during work
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.5
+    - dest: counter_k1
+      p: 0.3
+    - dest: kitchen_table_k1
+      p: 0.2
+  - cites: Wallet left on coffee table
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.6
+    - dest: counter_k1
+      p: 0.4
+- object: wallet_priya
+  cites: Priya's wallet in entryway drawer
+  home: entry_table_e1
+  rules:
+  - cites: Wallet stays in entryway
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.95
+    - dest: NO_OP
+      p: 0.05
+  - cites: Wallet stays in entryway
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: remote_shared
+  cites: Remote in living room tray
+  home: coffee_table_l1
+  p_misplace: 0.3
+  rules:
+  - cites: Elias misplaces remote on sofa
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.5
+    - dest: coffee_table_l1
+      p: 0.4
+    - dest: tv_stand_l1
+      p: 0.1
+  - cites: Remote left on sofa during gaming
+    activity: gaming
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.6
+    - dest: coffee_table_l1
+      p: 0.4
+- object: blanket_shared
+  cites: Blanket bunched on sofa by Elias
+  home: couch_l1
+  rules:
+  - cites: Blanket left on sofa after TV
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.9
+    - dest: armchair_l1
+      p: 0.1
+  - cites: Blanket left on sofa after gaming
+    activity: gaming
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.8
+    - dest: bed_b1
+      p: 0.2
+- object: book_elias_1
+  cites: Technical book on coffee table stack
+  home: coffee_table_l1
+  rules:
+  - cites: Book moved to bed for reading
+    activity: reading
+    phase: after
+    dist:
+    - dest: bed_b1
+      p: 0.6
+    - dest: coffee_table_l1
+      p: 0.4
+  - cites: Book left on desk during work
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.5
+    - dest: coffee_table_l1
+      p: 0.5
+- object: book_elias_2
+  cites: Fiction novel on nightstand
+  home: nightstand_b1
+  rules:
+  - cites: Book moved to coffee table if asleep
+    activity: reading
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.4
+    - dest: coffee_table_l1
+      p: 0.6
+  - cites: Book stays on nightstand
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.9
+    - dest: bed_b1
+      p: 0.1
+- object: notebook_priya
+  cites: Notebook in office drawer
+  home: desk_b2
+  rules:
+  - cites: Notebook moved to desk for work
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+  - cites: Notebook stays in office
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: gaming_controller_shared
+  cites: Controller in living room drawer
+  home: tv_stand_l1
+  rules:
+  - cites: Controller left on sofa after gaming
+    activity: gaming
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.7
+    - dest: tv_stand_l1
+      p: 0.3
+  - cites: Controller stays in drawer during TV
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: tv_stand_l1
+      p: 0.9
+    - dest: couch_l1
+      p: 0.1
+- object: yoga_mat_priya
+  cites: Mat rolled in living room corner
+  home: couch_l1
+  rules:
+  - cites: Mat rolled up after yoga
+    activity: gym
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.9
+    - dest: armchair_l1
+      p: 0.1
+  - cites: Mat stays in living room
+    activity: work_away
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.95
+    - dest: NO_OP
+      p: 0.05
+activities:
+- name: bedtime_routine
+  cites: strictly for sleep, no work devices
+- name: work_away
+  cites: remote_worker_couple
+- name: watch_tv
+  cites: drops his phone on the sofa cushion while watching TV
+- name: reading
+  cites: read by Elias in the evening
+- name: gaming
+  cites: evening gaming sessions
+- name: gym
+  cites: 15-minute yoga session before work
+- name: meal_prep
+  cites: cross paths in the kitchen for lunch
+- name: coffee
+  cites: washes her dishes immediately after use
+arc_events:
+- note: resident_2 wakes up with a fever and stays home from work.
+  day: 3
+  patch:
+    drop:
+    - work_away
+    add:
+    - cites: resident_2
+      resident: resident_2
+      activity: snack
+      start: 07:00
+      end: '19:00'
+      at: bed_b2
+      jitter: loose
+- note: resident_1 stays out late at a friend's party and is wrecked the next morning.
+  day: 4
+  patch:
+    add:
+    - cites: resident_1
+      resident: resident_1
+      activity: socialise_home
+      start: '21:00'
+      end: 02:00
+      at: couch_l1
+      jitter: loose
+- note: resident_1 is exhausted from staying out late and sleeps through the morning.
+  day: 5
+  patch:
+    drop:
+    - work_away
+    - meal_prep
+    add:
+    - cites: resident_1
+      resident: resident_1
+      activity: nap
+      start: 07:30
+      end: '14:00'
+      at: bed_b1
+      jitter: loose
+- note: The household goes to a friend's dinner party, skipping cooking and TV.
+  day: 11
+  patch:
+    drop:
+    - meal_prep
+    - watch_tv
+    add:
+    - cites: resident_1, resident_2
+      resident: resident_1
+      activity: dinner
+      start: '18:30'
+      end: '22:00'
+      at: couch_l1
+      jitter: loose

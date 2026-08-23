@@ -1,0 +1,104 @@
+{
+  "household": "hh_006",
+  "household_type": "single_parent_teens",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh6",
+  "days": 21,
+  "seed": 0,
+  "n_events": 1692,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 102,
+    "tidy_moved": 74,
+    "tidy_ran_out_of_time": 5,
+    "blocks": 282,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [
+      "nap",
+      "sleep_bedtime_routine",
+      "sleep_bedtime_routine__bed_b2",
+      "sleep_bedtime_routine__bed_b3"
+    ],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [
+      "keys_elena",
+      "keys_maya",
+      "lunchbox_bag_maya",
+      "water_bottle_maya"
+    ],
+    "carried_on_departure": [],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [],
+    "skips_per_activity": {
+      "gaming": 6,
+      "homework": 1,
+      "homework__couch_l1": 3,
+      "homework__kitchen_table_k1": 5,
+      "laundry": 1,
+      "nap": 3,
+      "work_away__resident_3": 1
+    },
+    "fragment_bouts_per_activity": {},
+    "carry_rehome_suppressed": 0
+  },
+  "moves_per_object": {
+    "phone_maya": 124,
+    "book_maya": 124,
+    "laptop_maya": 113,
+    "phone_elena": 112,
+    "backpack_maya": 111,
+    "mug_elena": 103,
+    "mug_maya": 84,
+    "phone_leo": 81,
+    "blanket_elena": 77,
+    "headphones_leo": 76,
+    "jacket_leo": 74,
+    "mug_leo": 69,
+    "laptop_leo": 67,
+    "backpack_leo": 66,
+    "keys_leo": 61,
+    "bowl_1": 58,
+    "bowl_2": 57,
+    "plate_1": 56,
+    "plate_2": 55,
+    "notebook_elena": 52,
+    "wallet_elena": 42,
+    "towel_maya": 20,
+    "gaming_controller_leo": 10
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3.8-27B",
+    "prompts": {
+      "persona_v2": "6f60fb77",
+      "calendar_program": "bb623651",
+      "object_rules": "c17ddb91",
+      "special_events": "dee8230e",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b6",
+    "accepted_attempt": 0,
+    "n_attempts": 2
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.9
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
+    }
+  }
+}

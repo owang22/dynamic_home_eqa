@@ -1,0 +1,98 @@
+{
+  "household": "hh_003",
+  "household_type": "retired_couple",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh3",
+  "days": 21,
+  "seed": 0,
+  "n_events": 2971,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 295,
+    "tidy_moved": 0,
+    "tidy_ran_out_of_time": 0,
+    "blocks": 433,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [
+      "sleep_bedtime_routine",
+      "sleep_bedtime_routine__bed_b2",
+      "sleep_bedtime_routine__couch_l1",
+      "sleep_bedtime_routine__desk_b1"
+    ],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [
+      "watering_can_shared"
+    ],
+    "carried_on_departure": [],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [],
+    "skips_per_activity": {
+      "coffee__counter_k1": 1,
+      "gym": 3,
+      "gym__resident_2": 5,
+      "video_call": 21
+    },
+    "fragment_bouts_per_activity": {},
+    "carry_rehome_suppressed": 44
+  },
+  "moves_per_object": {
+    "mug_shared_1": 316,
+    "vacuum_cleaner_shared": 302,
+    "water_bottle_martha": 257,
+    "keys_arthur": 190,
+    "mug_arthur": 184,
+    "water_bottle_arthur": 172,
+    "keys_martha": 149,
+    "jacket_martha": 141,
+    "notebook_martha": 135,
+    "mug_martha": 131,
+    "wallet_arthur": 112,
+    "remote_shared": 110,
+    "glasses_martha": 100,
+    "book_martha_1": 98,
+    "phone_martha": 94,
+    "laptop_martha": 86,
+    "wallet_martha": 70,
+    "glasses_arthur": 65,
+    "phone_arthur": 65,
+    "notebook_arthur": 50,
+    "pen_arthur": 50,
+    "blanket_shared": 47,
+    "book_arthur_1": 47
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3.8-27B",
+    "prompts": {
+      "persona_v2": "6f60fb77",
+      "calendar_program": "bb623651",
+      "object_rules": "c17ddb91",
+      "special_events": "dee8230e",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b6",
+    "accepted_attempt": 0,
+    "n_attempts": 2
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.9
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "household": "hh_008",
+  "household_type": "remote_worker_couple",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b6",
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 17293617725857812574,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 17293617725857812574,
+      "reasoning": "1. **Analyze Constraints & Context**: The household is a `remote_worker_couple` (2 residents). Must contrast with other types like `working_couple_no_children` (implies this one might be older, or have a specific hobby/focus like gardening or pets to distinguish, or just different personalities), `retired_couple` (implies they are active professionals), and `family` types (no kids). I will define them as a mid-30s couple who are both tech-adjacent remote workers but have distinct, contrasting personalities: one is a high-energy, messy 'flow-state' coder, the other is a structured, tidy UX researcher. They have no kids, but they share a cat (implied by `toy`/`blanket` usage, though I won't list the cat as an object, just the objects associated with it or their routines). To make them distinct from a generic 'working couple', I'll emphasize their *home* as their primary office, with specific friction points about workspace boundaries and shared resources like the living room TV/remote or kitchen sink. 2. **Define Residents**: `resident_1` (Elias, 34, Backend Developer): Chaotic good, leaves things in 'stacks', forgets to put away mugs, works in bursts. `resident_2` (Priya, 36, UX Researcher): Analytical, color-codes, keeps a strict 'clear desk' policy, uses the shared space for focus. 3. **Object Inventory**: Need ~15-20 objects. Per-person: phones, laptops, mugs, headphones, keys, wallets. Shared: remote, blanket, books, notebooks, water bottles (maybe separate), gaming controller (shared leisure), dog_leash (no dog, maybe skip), watering_can (Priya's hobby). I'll include a `gaming_controller` for shared leisure and a `yoga_mat` for Priya's morning routine. 4. **Habits & Relationships**: Elias leaves his laptop charger tangled. Priya washes dishes immediately. They clash over who uses the living room desk vs. the dining table. 5. **Daily Life**: Both home all day. Overlap is constant. Friction is about noise and visual clutter. 6. **Quirks**: They have a 'silent hour",
+      "leak_prediction": {
+        "predicted_type": "working_couple_no_children",
+        "confidence": 0.95,
+        "reason": "The presence of two distinct personal laptops, phones, and work-related items (notebooks, multiple mugs) for 'Elias' and 'Priya' indicates a couple. The lack of children's items (toys, cribs, baby gear) and the presence of adult leisure items (gaming controller, yoga mat) points to a childless adult",
+        "actual_type": "remote_worker_couple",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 4,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "stage": "calendar",
+      "seed": 6081519788176229077,
+      "failures": [],
+      "reasoning": "Elias and Priya are a remote-working couple. Elias is chaotic, working from the living room desk or kitchen table, with irregular sleep and frequent naps. Priya is structured, working from a dedicated home office (mapped to Bedroom 1 desk for privacy), with a strict morning yoga routine and immediate dishwashing. Both work weekdays 9-5 (approx), with a 'silent hour' 14:00-15:00. Leisure includes gaming and reading in the evenings. Elias's messiness is reflected in his lingering at the coffee table and kitchen counter, while Priya's tidiness is reflected in her quick transitions and specific cleaning blocks."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 7527826249700863244,
+      "reasoning": "The household consists of Elias (chaotic, forgetful, mobile) and Priya (structured, tidy, static). Elias's items (laptop, phone, mugs, headphones, books) exhibit high mobility and misplacement rates, reflecting his tendency to move between the living room desk, kitchen table, and couch. Priya's items (laptop, phone, headphones, notebook) are largely static within her bedroom/office space, with strict tidy-up rules ensuring they return to specific drawers or stands. Shared items like the remote and blanket show mixed behavior: the remote is frequently misplaced by Elias but tidied by Priya, while the blanket remains mostly on the couch. The rules encode Elias's drift (high p_misplace) versus Priya's precision (low/no p_misplace, high NO_OP or specific return destinations).",
+      "failures": [
+        "referential: sleep block 'deep_clean' has skip_p 0.6 \u2014 a resident does not skip sleeping"
+      ]
+    },
+    {
+      "attempt": 1,
+      "stage": "calendar",
+      "seed": 15655551982654969402,
+      "failures": [],
+      "reasoning": "Household hh_008 consists of Elias (chaotic, remote backend engineer) and Priya (structured, remote UX researcher). They work from home all week. Priya maintains a strict morning routine including yoga in the living room and immediate dishwashing. Elias is less punctual, working from the living room desk or kitchen table, and struggles with 'clocking out'. Both have a 'silent hour' for deep work from 14:00 to 15:00. Leisure activities like gaming and reading are occasional and occur in the evenings. Sleep is in separate bedrooms."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 1,
+      "seed": 17282240705670636187,
+      "reasoning": "Elias is chaotic and forgetful; his objects (laptop, phone, mugs, books) drift between the living room, kitchen, and bedroom, often ending up on the sofa or coffee table. Priya is structured and tidy; her objects (laptop, phone, mugs, keys) have fixed homes (office, kitchen stand, cupboard, entryway) and return there reliably after use. Shared items (remote, blanket, controller) are contested: Elias misplaces the remote and bunches the blanket, while Priya returns the controller to its drawer. The 'gym' block is mapped to Priya's yoga routine in the living room.",
+      "failures": [],
+      "special_reasoning": "1. **Event 1 (Day 3, Thu):** `resident_2` has a sudden illness. This requires dropping their scheduled work blocks for the day (06:30-12:00, 14:00-15:00, 15:00-18:00) and adding a 'sick_day' block at home. This satisfies the 'dropped routine' and 'addition' requirements for a single day. Note: `resident_2`'s 06:00 gym is also dropped to maintain the 'sick' narrative consistency, though the prompt allows for selective drops. I will drop the main work blocks. The gym is 06:00-06:30, work starts 06:30. I will drop the work blocks. The sick day addition covers the bulk of the day. The bedtime routine remains as it is a separate block and the person is still at home (just sick). Actually, the prompt says `drop` removes runs. I will drop the three work_away blocks for resident_2 on Thursday. I will add a `sick_day` block from 07:00 to 19:00 to cover the time they would have been working. This creates a 'patched day'.",
+      "special_attempt": 0
+    }
+  ]
+}

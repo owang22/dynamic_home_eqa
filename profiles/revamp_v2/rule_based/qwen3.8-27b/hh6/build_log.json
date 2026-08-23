@@ -1,0 +1,53 @@
+{
+  "household": "hh_006",
+  "household_type": "single_parent_teens",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b6",
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 4251456551663477234,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 4251456551663477234,
+      "reasoning": "Household hh_006 is a single parent with two teenagers. The parent, Elena (42), is a shift nurse, meaning her schedule is unpredictable and often inverted, leading to a home that is often quiet during the day and chaotic at night. The teenagers are distinct: Leo (17) is an aspiring DJ and gamer, messy and tech-focused, while Maya (15) is a disciplined swimmer and artist, neat but intense. The friction arises from the shared living space where Leo's noise and mess clash with Maya's need for quiet focus, and the parent's absence during the day forces the teens to self-regulate. Elena manages the household logistics but struggles to keep up with the mess left by the teens, creating a dynamic of negotiated boundaries rather than strict enforcement.",
+      "leak_prediction": {
+        "predicted_type": "college_roommates",
+        "confidence": 0.95,
+        "reason": "Three distinct individuals (Elena, Leo, Maya) each have their own bedroom (b1, b2, b3) and personal items (laptops, phones, keys). The presence of three separate bedrooms in a single household strongly suggests a shared living arrangement like college roommates or a shared apartment, rather than a 3",
+        "actual_type": "single_parent_teens",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 2,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "stage": "calendar",
+      "seed": 440957254248955212,
+      "failures": [],
+      "reasoning": "Elena is a nurse with irregular shifts; the persona states she leaves late at night and returns in the morning. I model a representative night shift (22:00 to 07:00+1) for weekdays and a day off for weekends. Leo is a chaotic student who spends the day at school and the evening in his room or kitchen. Maya is a neat student with a strict routine involving school, swim practice, and study. The household has a messy dynamic in shared spaces. Elena naps in the living room on days off. Leo games at night. Maya studies in the living room."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 18444140497110806578,
+      "reasoning": "I analyzed the household of Elena (nurse, exhausted), Leo (chaotic teen), and Maya (neat teen). The rules encode specific habits: Elena's items drift to the kitchen/entry; Leo's items scatter in the kitchen/bedroom; Maya's items stay in her room or living room. I ensured every at-home activity in the schedule (bedtime_routine, homework, nap, laundry, gaming, bath) is referenced by at least one object rule. I used NO_OP for objects that rarely move and distinct distributions to avoid identical rule sets.",
+      "failures": [],
+      "special_reasoning": "The household consists of three residents: a young child (resident_1), a teenager (resident_2), and an adult worker (resident_3). The story focuses on a 'heavy week' in the middle of the episode (days 7-13). On day 7 (Monday), the adult (resident_3) is sick, causing them to stay home and drop their work_away and bath routines. This illness carries over to day 8 (Tuesday), where the adult is still home, dropping their work_away, but the teenager (resident_2) has a school trip (adding a 'school_trip' block). On day 9 (Wednesday), the adult recovers but the teenager is exhausted from the trip, resulting in a late night gaming session that violates the usual 22:00 bedtime (adding a 'late_night_gaming' block and dropping the standard bedtime_routine). This creates a connected three-day stretch of exceptions affecting multiple residents.",
+      "special_attempt": 0
+    }
+  ]
+}

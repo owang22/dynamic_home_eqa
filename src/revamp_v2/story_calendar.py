@@ -110,11 +110,19 @@ def build_binding_schema(object_ids, activities, receptacles, residents):
                                          "items": rule}}}
                for oid in object_ids]
     return {"type": "object", "additionalProperties": False,
-            "required": ["bindings"],
-            "properties": {"bindings": {
-                "type": "array", "minItems": len(object_ids),
-                "maxItems": len(object_ids), "prefixItems": entries,
-                "items": False}}}
+            "required": ["reasoning", "bindings"],
+            "properties": {
+                # Same judgment-block pattern as every other stage —
+                # previously the binding pass was the ONLY caller with no
+                # deliberation, and its rules were the ones that read
+                # strangest (keys bound to five home activities with
+                # cites saying "stays in her jacket" and numbers saying
+                # the opposite).
+                "reasoning": {"type": "string", "maxLength": 1600},
+                "bindings": {
+                    "type": "array", "minItems": len(object_ids),
+                    "maxItems": len(object_ids), "prefixItems": entries,
+                    "items": False}}}
 
 
 class _LongForm:
@@ -156,8 +164,14 @@ def bind_unbound(program, story, persona_text, client, cache, force):
                 away.add(b["activity"])
             else:
                 at_of.setdefault(b["activity"], b["at"])
-    unbound = sorted(a for a in at_of
-                     if a not in bound and a not in away
+    # Away activities are TARGETS too. They were excluded on the theory
+    # that departure-carry covers them — a stale assumption from when
+    # pocket items were person-homed; under v3 nothing is, so an away
+    # activity with no rule means nothing rides along and nothing comes
+    # home (hh8's keys left only for work, never the walk). An away rule's
+    # dist is where the object LANDS at the homecoming.
+    unbound = sorted(a for a in set(at_of) | away
+                     if a not in bound
                      and not any(s in a for s in xc.SLEEP_TOKENS))
     if not unbound:
         return program, {"n_unbound_targeted": 0, "n_rules_added": 0}
@@ -167,6 +181,7 @@ def bind_unbound(program, story, persona_text, client, cache, force):
     residents = [r["id"] for r in program["residents"]]
     schema = build_binding_schema(object_ids, unbound, receptacles,
                                   residents)
+    away_note = sorted(a for a in unbound if a in away)
     obj_lines = []
     for e in program["object_rules"]:
         have = ", ".join(sorted({r["activity"] for r in
@@ -175,7 +190,9 @@ def bind_unbound(program, story, persona_text, client, cache, force):
                          f"already bound to: {have})")
     user = _prompts.BINDING_USER.format(
         persona=persona_text,
-        activities="\n".join(f"  {a} @ {at_of[a]}" for a in unbound),
+        activities="\n".join(
+            f"  {a} @ {at_of.get(a, 'ELSEWHERE (out of the house)')}"
+            for a in unbound),
         objects="\n".join(obj_lines),
         places="\n".join(f"  {r}" for r in receptacles))
     tag = _prompts.BINDING.tag("story_bind", schema=schema) + "_u" + \
@@ -187,9 +204,12 @@ def bind_unbound(program, story, persona_text, client, cache, force):
             _jsonschema.validate(parsed, schema)
         return parsed
 
+    del away_note   # rendered into the user prompt only
+
     parsed = generate_json(
         _LongForm(client, 12288), _prompts.BINDING.text, user, schema,
         seed=seed, stage=tag, cache=cache, force=force, validate=_validate)
+    bind_reasoning = str(parsed.get("reasoning") or "")[:1600]
 
     merged = copy.deepcopy(program)
     by_obj = {e["object"]: e for e in merged["object_rules"]}
@@ -217,6 +237,7 @@ def bind_unbound(program, story, persona_text, client, cache, force):
         print(f"  binding pass: dropped {len(dropped_noop)} no-op rule(s) "
               f"whose dest was the object's own home: {dropped_noop[:6]}")
     stats = {"n_unbound_targeted": len(unbound),
+             "reasoning": bind_reasoning,
              "targeted_activities": unbound,
              "n_rules_added": n_added,
              "n_dropped_noop_rules": len(dropped_noop),

@@ -1,0 +1,53 @@
+{
+  "household": "hh_003",
+  "household_type": "retired_couple",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b6",
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 17714838222488818338,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 17714838222488818338,
+      "reasoning": "Generating profile for hh_003: Retired Couple. Residents: Arthur (72, retired engineer, meticulous) and Martha (70, retired teacher, sentimental). Focus on slow-paced routines, shared domestic spaces, and specific object habits (gardening, reading, puzzles). Ensure distinctiveness from working/parenting households by emphasizing leisure, hobbies, and lack of commute items.",
+      "leak_prediction": {
+        "predicted_type": "working_couple_no_children",
+        "confidence": 0.95,
+        "reason": "The presence of two distinct personal items for 'Arthur' and 'Martha' (mugs, phones, keys, wallets, glasses, books, notebooks, water bottles) indicates a couple. The absence of any child-specific items (toys, baby gear, school supplies) rules out families with children. The presence of a 'laptop_mar",
+        "actual_type": "retired_couple",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 2,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "stage": "calendar",
+      "seed": 174371228970594559,
+      "failures": [],
+      "reasoning": "Arthur is a meticulous, solitary retired engineer who spends his days in the study (bedroom_1) working on crosswords and reading, with strict morning and evening rituals. He is punctual (jitter_scale 0.5). Martha is a social, disorganized retired teacher who moves between the kitchen (breakfast, cleaning) and the living room (TV, video calls, reading). She is scattered (jitter_scale 1.5). They share a bedroom (bedroom_2) and sleep early. Arthur's 'study' maps to bedroom_1 as it contains his desk and bookshelf. Martha's 'dining table' maps to kitchen_table_k1. Arthur goes to the community center on weekdays. Martha has occasional video calls. Both have naps in the afternoon."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 15983967639349162432,
+      "reasoning": "I am mapping the daily routines of Arthur and Martha to the 24 objects in their home. Arthur is meticulous and solitary, keeping his items (phone, glasses, notebook, book, pen, water bottle) primarily in his study or armchair, with low misplacement rates but high NO_OP mass in his rules as he keeps things in specific spots. Martha is social and disorganized; her items (phone, glasses, notebook, laptop, water bottle, wallet, keys) drift between the kitchen, living room, and dining table. Her items have higher misplacement probabilities and more varied destination distributions, reflecting her tendency to leave things in common areas. Shared items like the mugs, remote, and blanket follow the flow of the respective residents using them. The vacuum cleaner is a large, infrequent item with high NO_OP mass. The watering can is kept in the hallway closet as per Arthur's habit, rarely moved. I ensure every activity in the schedule (phone_time, gym, coffee, reading, watch_tv, video_call, bedtime_routine) is covered by at least one object rule, and that no two objects share identical rule sets.",
+      "failures": [],
+      "special_reasoning": "The household consists of two residents, resident_1 and resident_2. To create a lived stretch, I have selected three events that interact with their specific routines. First, resident_1 (a student) stays out late on Friday (day 4), which causes them to be wrecked on Saturday (day 5), resulting in the dropping of their morning gym and phone time. Second, resident_2 (a worker) goes on a business trip from Wednesday to Friday (days 9-11), which empties the home and removes their daily routines (gym, TV, video calls) for those days. Finally, on Sunday (day 13), a friend's dinner invitation wipes out resident_1's evening routine and replaces it with an ELSEWHERE activity. These events satisfy the requirements for dropped routines, an ELSEWHERE addition, and a multi-day stretch (the trip).",
+      "special_attempt": 0
+    }
+  ]
+}

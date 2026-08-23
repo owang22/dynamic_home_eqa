@@ -206,9 +206,11 @@ def generate_persona(slot: dict, control: dict, client, cache,
 
 # ---------------------------------------------------------------- L2 -----
 
-def _inject(raw: dict, slot: dict, receptacles: list[dict]) -> dict:
+def _inject(raw: dict, slot: dict, receptacles: list[dict],
+            slot_inventory: list[dict] | None = None) -> dict:
     """Add the deterministic pipeline fields the LLM never authors, in a
     stable key order."""
+    slot_inventory = slot_inventory or []
     program = {"household": raw["household"],
                "household_type": slot["household_type"],
                "source_persona": raw["source_persona"],
@@ -216,6 +218,11 @@ def _inject(raw: dict, slot: dict, receptacles: list[dict]) -> dict:
                # during legs and misplace spots) — pipeline data the model
                # never authors, same as receptacles/household_type.
                "object_semantics": "after_only_v3",
+               # Ownership, from the persona: the expander needs it to put
+               # the RIGHT person's things on the right person (owner-blind
+               # synthesis put keys_elias on whoever left the house first).
+               "object_owners": {o["id"]: o["owner"]
+                                 for o in slot_inventory},
                "days": raw["days"], "day0": raw["day0"],
                "residents": raw["residents"],
                "receptacles": copy.deepcopy(receptacles)}
@@ -311,7 +318,8 @@ def generate_program(slot: dict, control: dict, persona: dict,
             obj_failures = v2v.check_schema(obj_raw, obj_schema)
             obj_raw = _take_reasoning(obj_raw, record, "reasoning")
             raw = dict(cal_raw, object_rules=obj_raw["object_rules"])
-            program = _inject(raw, slot, receptacles)
+            program = _inject(raw, slot, receptacles,
+                              persona["object_inventory"])
             failures = (obj_failures
                         + v2v.check_referential(program, persona)
                         + v2v.check_reachability(program))

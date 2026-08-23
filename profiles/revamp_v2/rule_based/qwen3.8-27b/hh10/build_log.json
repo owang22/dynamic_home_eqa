@@ -1,0 +1,52 @@
+{
+  "household": "hh_010",
+  "household_type": "night_shift_worker_solo",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b6",
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 3261374295012409468,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 3261374295012409468,
+      "reasoning": "Constructing a profile for a solo night-shift worker in a one-bedroom apartment. The persona focuses on the inversion of the day-night cycle, leading to specific object usage patterns (e.g., heavy use of blackout curtains, reliance on instant food or specific cooking habits during 'night' hours, sleeping during the day). The inventory includes items that reflect this lifestyle, such as a weighted blanket for sleep quality, a specific mug for the 'wake-up' coffee, and a laptop used for work during the night. The habits emphasize the isolation and the specific timing of activities relative to the sun, without using explicit clock times as per instructions.",
+      "leak_prediction": {
+        "predicted_type": "single_adult_wfh",
+        "confidence": 0.95,
+        "reason": "The presence of a single name suffix ('elara') across all personal items indicates a single-person household. The combination of a laptop, tablet, and notebook suggests work-from-home activity. The inclusion of a medication bottle and a single bed (b1) without a second bed or couple-specific items (",
+        "actual_type": "night_shift_worker_solo",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 2,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "stage": "calendar",
+      "seed": 15791059558910586756,
+      "failures": [],
+      "reasoning": "Elara is a solo night-shift nurse. Her sleep schedule is inverted: she sleeps from 07:00 to 15:00 daily. Her wake-up involves checking the weather and taking medication. Her active hours are 15:00 to 23:00. She walks in the late evening (20:00-20:45) to see the sun. She returns home at 07:00, changes, eats standing at the counter (07:30-08:00), and goes back to sleep. She works (ELSEWHERE) from 23:00 to 07:00 (+1). She maintains a 'daylight journal' (writing) in the evening. She packs her bag before leaving. She is methodical, so jitter is low (scale 0.5). Activities: sleep, wake_up, take_medication, walk, eat, journal, pack_bag, work, shower, tidy."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 5033038936310475972,
+      "reasoning": "Elara is a night-shift nurse living alone. Her routine is inverted: she sleeps from 23:00 to 07:00 (work_home), wakes at 15:00 (wake_up), takes meds (take_medication), showers (shower), tidies (tidy_up), reads (reading), walks (walk), and preps meals (meal_prep). Objects are handled based on this specific rhythm. CARRIED items (phone, keys, wallet, jacket, backpack) have high misplacement rates or specific 'after' rules tied to her entry/exit points. Stationary items (medication, blanket, charger) have high NO_OP mass. The 'tidy_up' activity is frequent (daily at 22:00 and 16:30), so many objects have rules that return them to their home or nearby spots during these windows. The 'walk' activity often involves the jacket, water bottle, and phone, leading to rules that place them back at the entry or kitchen upon return. The 'meal_prep' activity involves the mug, lunchbox, and water bottle, placing them in the kitchen sink/counter area. The 'reading' activity involves the book, glasses, and tablet, placing them on the desk or nightstand.",
+      "failures": [],
+      "special_attempt": 0
+    }
+  ]
+}

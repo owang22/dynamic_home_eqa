@@ -424,6 +424,18 @@ keeps on them after the activity (for instance, after commuting to work, jacket 
 stay on the person). A dist whose every real outcome is the object's own home
 is not a journey and will be discarded.
 
+Begin with `reasoning`: walk the unbound activities and say which
+objects each one actually touches, and what it usually does to them.
+
+THE NUMBERS MUST MATCH THE SENTENCE. If your cites says the object
+"stays in her jacket" or "stays with him", the dist must be MOSTLY NO_OP
+(0.8-0.95) — writing "stays put" in words while giving 0.9 of the mass to
+a destination makes the object do the opposite of what you said. An
+activity OUT OF THE HOUSE (shown as ELSEWHERE) takes the object along
+automatically; its dist says where the object lands when the person gets
+back — or NO_OP-heavy if it usually stays in their pocket through the
+door.
+
 Most objects are untouched by most activities: an empty `rules` list for
 an object is the normal, correct answer. NO TWO OBJECTS share identical
 rules — each object's set-down spots and probabilities come from ITS

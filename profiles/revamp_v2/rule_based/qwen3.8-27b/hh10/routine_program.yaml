@@ -1,0 +1,816 @@
+household: hh_010
+household_type: night_shift_worker_solo
+source_persona: persona.yaml
+object_semantics: after_only_v3
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 0.5
+  cites: Exhausted, methodical night shift nurse
+receptacles:
+- id: bed_b1
+  room: bedroom
+- id: nightstand_b1
+  room: bedroom
+- id: desk_b1
+  room: bedroom
+- id: bedroom_floor_b1
+  room: bedroom
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: bedtime_routine
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:00
+  end: '15:00'
+  at: bed_b1
+  jitter: external
+  cites: Sleeps during daylight hours
+weekly_blocks:
+- cites: Wakes up, checks weather, takes meds
+  resident: resident_1
+  activity: wake_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '15:00'
+  end: '15:30'
+  at: bed_b1
+  jitter: routine
+  skip_p: 0.0
+- cites: Takes sleep aids and vitamins
+  resident: resident_1
+  activity: take_medication
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '15:30'
+  end: '15:45'
+  at: bedroom_floor_b1
+  jitter: routine
+  skip_p: 0.1
+- cites: Walks in late evening to see sun
+  resident: resident_1
+  activity: walk
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '20:00'
+  end: '20:45'
+  at: ELSEWHERE
+  jitter: routine
+  skip_p: 0.2
+- cites: Eats standing at kitchen counter
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:30
+  end: 08:00
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.0
+- cites: Maintains daylight journal
+  resident: resident_1
+  activity: reading
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:00'
+  end: '19:30'
+  at: desk_b1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Packs night shift bag by door
+  resident: resident_1
+  activity: tidy_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:00'
+  end: '22:30'
+  at: entry_hook_e1
+  jitter: external
+  skip_p: 0.0
+- cites: Emergency Room Nurse
+  resident: resident_1
+  activity: work_home
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:00'
+  end: 07:00+1
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.0
+- cites: Showering routine
+  resident: resident_1
+  activity: shower
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '15:45'
+  end: '16:30'
+  at: bathroom_shelf_ba1
+  jitter: routine
+  skip_p: 0.1
+- cites: Methodical cleaning habits
+  resident: resident_1
+  activity: tidy_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '16:30'
+  end: '17:30'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.4
+object_rules:
+- object: mug_elara
+  cites: used for tea when waking up
+  home: sink_k1
+  p_misplace: 0.1
+  rules:
+  - cites: waking up tea
+    activity: wake_up
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.6
+    - dest: counter_k1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: night shift coffee
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.5
+    - dest: counter_k1
+      p: 0.4
+    - dest: NO_OP
+      p: 0.1
+- object: tablet_elara
+  cites: charged on the nightstand
+  home: nightstand_b1
+  p_misplace: 0.2
+  rules:
+  - cites: scrolling while eating
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.6
+    - dest: nightstand_b1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: entertainment while reading
+    activity: reading
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.5
+    - dest: coffee_table_l1
+      p: 0.4
+    - dest: NO_OP
+      p: 0.1
+- object: laptop_elara
+  cites: stored in the studio area
+  home: desk_b1
+  p_misplace: 0.05
+  rules:
+  - cites: work-related tasks
+    activity: work_home
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.7
+    - dest: NO_OP
+      p: 0.3
+  - cites: tidying the studio
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+- object: phone_elara
+  cites: charged on the nightstand
+  home: nightstand_b1
+  p_misplace: 0.3
+  rules:
+  - cites: checked upon waking
+    activity: wake_up
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.7
+    - dest: desk_b1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: communication during shift
+    activity: work_home
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+- object: keys_elara
+  cites: hung on a hook by the door
+  home: entry_hook_e1
+  p_misplace: 0.4
+  rules:
+  - cites: entering the apartment
+    activity: wake_up
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.6
+    - dest: counter_k1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: returning from walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.5
+    - dest: entry_table_e1
+      p: 0.4
+    - dest: NO_OP
+      p: 0.1
+- object: wallet_elara
+  cites: kept in the bag by the door
+  home: entry_hook_e1
+  p_misplace: 0.1
+  rules:
+  - cites: packed in night shift bag
+    activity: work_home
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: tidying entry area
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+- object: book_elara
+  cites: read before sleep in the early morning
+  home: nightstand_b1
+  p_misplace: 0.15
+  rules:
+  - cites: reading activity
+    activity: reading
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.6
+    - dest: desk_b1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: tidying bedroom
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.7
+    - dest: bookshelf_l1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+- object: water_bottle_elara
+  cites: kept in the kitchen
+  home: counter_k1
+  p_misplace: 0.2
+  rules:
+  - cites: hydration during walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.6
+    - dest: sink_k1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: filled in the evening
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: sink_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+- object: remote_elara
+  cites: left on the coffee table
+  home: coffee_table_l1
+  p_misplace: 0.3
+  rules:
+  - cites: controlling TV in studio
+    activity: reading
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.6
+    - dest: couch_l1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: tidying living room
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.8
+    - dest: tv_stand_l1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+- object: charger_elara
+  cites: plugged into the nightstand outlet
+  home: nightstand_b1
+  p_misplace: 0.0
+  rules:
+  - cites: charging phone and tablet
+    activity: wake_up
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.95
+    - dest: NO_OP
+      p: 0.05
+  - cites: tidying bedroom
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: backpack_elara
+  cites: hung on a hook by the door
+  home: entry_hook_e1
+  p_misplace: 0.1
+  rules:
+  - cites: packed in studio area
+    activity: work_home
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.7
+    - dest: desk_b1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: tidying entry area
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+- object: jacket_elara
+  cites: hung on a hook by the door
+  home: entry_hook_e1
+  p_misplace: 0.2
+  rules:
+  - cites: worn during evening walk
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.6
+    - dest: bedroom_floor_b1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: tidying entry area
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.7
+    - dest: bedroom_floor_b1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+- object: headphones_elara
+  cites: often left on the desk
+  home: desk_b1
+  p_misplace: 0.25
+  rules:
+  - cites: listening to music during commute
+    activity: work_home
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.6
+    - dest: coffee_table_l1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: tidying studio area
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+- object: glasses_elara
+  cites: kept in a case on the nightstand
+  home: nightstand_b1
+  p_misplace: 0.3
+  rules:
+  - cites: worn for reading
+    activity: reading
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.5
+    - dest: coffee_table_l1
+      p: 0.4
+    - dest: NO_OP
+      p: 0.1
+  - cites: tidying bedroom
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.7
+    - dest: desk_b1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+- object: notebook_elara
+  cites: often left open on the desk
+  home: desk_b1
+  p_misplace: 0.1
+  rules:
+  - cites: writing in daylight journal
+    activity: reading
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.6
+    - dest: nightstand_b1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.1
+  - cites: tidying studio area
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+- object: pen_elara
+  cites: kept in the notebook or on the desk
+  home: desk_b1
+  p_misplace: 0.4
+  rules:
+  - cites: writing in notebook
+    activity: reading
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.5
+    - dest: bedroom_floor_b1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.2
+  - cites: tidying studio area
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.7
+    - dest: bedroom_floor_b1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+- object: medication_bottle_elara
+  cites: kept in the bedroom
+  home: nightstand_b1
+  p_misplace: 0.05
+  rules:
+  - cites: taken during early morning routine
+    activity: take_medication
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.8
+    - dest: bedroom_floor_b1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: tidying bedroom
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: blanket_elara
+  cites: kept in the bedroom
+  home: bed_b1
+  p_misplace: 0.0
+  rules:
+  - cites: used for sleep
+    activity: wake_up
+    phase: after
+    dist:
+    - dest: bed_b1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+  - cites: tidying bedroom
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: bed_b1
+      p: 0.95
+    - dest: NO_OP
+      p: 0.05
+- object: towel_elara
+  cites: hung in the bathroom
+  home: towel_rack_ba1
+  p_misplace: 0.2
+  rules:
+  - cites: used for bathing
+    activity: shower
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.5
+    - dest: bathroom_shelf_ba1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.2
+  - cites: tidying bathroom
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+- object: lunchbox_elara
+  cites: kept in the refrigerator
+  home: cupboard_k1
+  p_misplace: 0.1
+  rules:
+  - cites: packed in the evening
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.7
+    - dest: counter_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+  - cites: tidying kitchen
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+activities:
+- name: bedtime_routine
+  cites: Sleeps during daylight hours
+- name: wake_up
+  cites: Wakes up late afternoon
+- name: take_medication
+  cites: Takes sleep aids and vitamins
+- name: walk
+  cites: Walks in late evening to see sun
+- name: meal_prep
+  cites: Eats standing at kitchen counter
+- name: reading
+  cites: Maintains daylight journal
+- name: tidy_up
+  cites: Methodical cleaning and packing
+- name: work_home
+  cites: Emergency Room Nurse
+- name: shower
+  cites: Personal hygiene routine
+arc_events:
+- note: Resident 1 takes a sick day from work to rest and manage symptoms.
+  day: 3
+  patch:
+    drop:
+    - work_home
+    add:
+    - cites: resident_1
+      resident: resident_1
+      activity: snack
+      start: '10:00'
+      end: '10:30'
+      at: couch_l1
+      jitter: flexible
+      note: Eating crackers and soup on the couch.
+    - cites: resident_1
+      resident: resident_1
+      activity: watch_tv
+      start: '11:00'
+      end: '14:00'
+      at: couch_l1
+      jitter: flexible
+      note: Binge-watching a comfort show.
+- note: A friend invites Resident 1 to dinner, replacing the usual meal prep and home cooking.
+  day: 10
+  patch:
+    drop:
+    - meal_prep
+    add:
+    - cites: resident_1
+      resident: resident_1
+      activity: dinner
+      start: '18:00'
+      end: '20:00'
+      at: ELSEWHERE
+      jitter: flexible
+      note: Dinner at a local bistro with a friend.
+- note: Resident 1 goes to a business conference for two days, leaving the house empty.
+  day: 14
+  patch:
+    drop:
+    - work_home
+    - bedtime_routine
+    - wake_up
+    - take_medication
+    - meal_prep
+    - reading
+    - tidy_up
+    - shower
+    - walk
+    add:
+    - cites: resident_1
+      resident: resident_1
+      activity: traveling
+      start: 06:00
+      end: '23:59'
+      at: ELSEWHERE
+      jitter: flexible
+      note: At a hotel for a business conference.
+- note: Continuing the business conference, Resident 1 is away from home again.
+  day: 15
+  patch:
+    drop:
+    - work_home
+    - bedtime_routine
+    - wake_up
+    - take_medication
+    - meal_prep
+    - reading
+    - tidy_up
+    - shower
+    - walk
+    add:
+    - cites: resident_1
+      resident: resident_1
+      activity: traveling
+      start: 00:00
+      end: '23:59'
+      at: ELSEWHERE
+      jitter: flexible
+      note: Second day at the business conference.
+- note: Resident 1 stays out late returning from the conference and is wrecked the next morning.
+  day: 16
+  patch:
+    drop:
+    - work_home
+    add:
+    - cites: resident_1
+      resident: resident_1
+      activity: nap
+      start: '15:30'
+      end: '18:00'
+      at: bed_b1
+      jitter: flexible
+      note: Asleep on the bed, exhausted from travel and late nights.
+    - cites: resident_1
+      resident: resident_1
+      activity: work_home
+      start: '19:00'
+      end: '22:00'
+      at: ELSEWHERE
+      jitter: flexible
+      note: Catching up on work late in the evening.

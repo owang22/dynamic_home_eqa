@@ -303,6 +303,7 @@ def expand(program: dict, carry_on_departure: bool = True,
     # `merged_away_blocks`, never silent, and v3-only so unmarked
     # programs keep v1 behaviour byte for byte.
     merged_away: list[str] = []
+    skipped_away_lingers: list[str] = []
     if v3:
         keep: list[dict] = []
         by_res: dict[str, list[dict]] = {}
@@ -381,6 +382,21 @@ def expand(program: dict, carry_on_departure: bool = True,
             nxt = mine[i + 1]["abs"] if i + 1 < len(mine) else horizon
             if end_abs >= min(nxt, horizon):
                 continue                     # truncated by the next block
+            if v3 and o["at"] == ELSEWHERE:
+                # A linger after an AWAY block splits one trip in two: the
+                # away activity ends at its authored `end` and a
+                # `linger_out` covers the rest, so the activity's `after`
+                # rules fire mid-trip and put things down at home while
+                # their owner is still out (measured on hh1: work_away
+                # ended 12:03, linger_out ran to 17:45, and the phone was
+                # "put on the desk" at 12:03 from four hours away).
+                # Occupancy is unchanged either way — both blocks are
+                # ELSEWHERE — so the away block simply runs to the
+                # resident's next block, and its `after` fires at the real
+                # homecoming. This is the away-chain merge above, for the
+                # chain the expander itself creates.
+                skipped_away_lingers.append(o["activity"])
+                continue
             at = o["at"] if o["at"] != ELSEWHERE else None
             name = f"{LINGER_PREFIX}{at}" if at else f"{LINGER_PREFIX}out"
             activity_info.setdefault(
@@ -515,6 +531,35 @@ def expand(program: dict, carry_on_departure: bool = True,
     left_behind: list[str] = []
     putdown_normalized: list[str] = []
     synthesized_during: list[str] = []
+    # ---- v3 person invariant (pre-pass) --------------------------------
+    # THE invariant the cross-resident teleports violated: an object ON a
+    # person may only be moved by that person's own activity. Measured
+    # before this existed: 340 of 349 mid-trip teleports were another
+    # resident's shared-name block (resident_1's tidy_up yanking
+    # phone_elena off resident_2 at work). Three consequences below:
+    #   (a) travellers are never paraded to HOME activity sites (a home
+    #       `during` is unguardable in the v1 loop, so the only safe home
+    #       during entries are for objects that can never be person-held);
+    #   (b) home-variant `after` rules get only_from restricted to
+    #       receptacles (a person-held or out-of-house object is out of
+    #       reach of anyone's home activity);
+    #   (c) person legs are OWNER-AWARE, and an object that rides one kind
+    #       of trip rides ALL its owner's trips (keys go along on the walk,
+    #       not only to work — per-person behaviour, which per-activity
+    #       rules cannot express), with a synthesized homecoming putdown to
+    #       `home` on trips whose activity has no authored after rule.
+    owners = program.get("object_owners") or {}
+    away_base = {o.get("base_activity", o["activity"])
+                 for o in occs if o["at"] == ELSEWHERE}
+    travellers: dict[str, set] = {}       # obj -> owners' ids that carry it
+    if v3:
+        for entry_ in placements_of(program):
+            obj_ = entry_["object"]
+            for r_ in entry_.get("rules") or []:
+                if r_["activity"] in away_base:
+                    own = owners.get(obj_)
+                    if own and own != "shared":
+                        travellers.setdefault(obj_, set()).add(own)
     object_motions: dict[str, dict] = {}
     dropped_sleep_resets: list[str] = []
     dropped_sleep_fragments: list[str] = []
@@ -569,18 +614,67 @@ def expand(program: dict, carry_on_departure: bool = True,
             # activity is WITH the resident while it runs — visible at
             # the block's receptacle at home, on the person when out —
             # then the authored after-dist decides where it lands.
-            # NO_OP-heavy rules (>= 0.5) skip the leg: the object is
-            # usually untouched by this activity, so parading it to the
-            # site most firings would overstate its life.
-            site = (f"{PERSON}{away_resident[name]}"
-                    if info["at"] == ELSEWHERE and name in away_resident
-                    else info["at"] if info["at"] != ELSEWHERE else None)
-            if site:
+            if info["at"] == ELSEWHERE and name in away_resident:
+                rid = away_resident[name]
+                carrier = f"{PERSON}{rid}"
+                # (c) owner-aware person legs: only the OWNER's variant
+                # carries the object (owner-blind synthesis put keys_elias
+                # on whoever left the house first), and an object that
+                # rides one kind of its owner's trip rides them ALL —
+                # "takes the keys when leaving" is a property of the
+                # person, which no per-activity rule set expresses.
+                for obj, rid_set in travellers.items():
+                    if rid not in rid_set:
+                        continue
+                    entry["during"].setdefault(obj, carrier)
+                    synthesized_during.append(f"{obj}@{name}")
+                    if obj not in entry["after"]:
+                        # homecoming putdown for trips whose activity has
+                        # no authored after rule: the thing comes off the
+                        # person when they walk in, to its usual spot.
+                        entry["after"][obj] = {"dest": homes.get(obj)
+                                               or program_homes.get(obj),
+                                               "only_from": [carrier]}
+                        synthesized_during.append(f"{obj}@{name}:putdown")
+            elif info["at"] != ELSEWHERE:
+                site = info["at"]
                 for obj, rule in entry["after"].items():
+                    # (a) travellers are NEVER paraded to home sites: a
+                    # home `during` fires unguarded in the v1 loop, so it
+                    # would yank a person-held object off an absent owner
+                    # (and "keys follow her to watch_tv" reads wrong even
+                    # when she is home). Non-travellers can never be
+                    # person-held, so their parade is provably safe.
+                    if obj in travellers:
+                        continue
                     if rule.get("noop_p", 0) >= 0.5:
                         continue
                     entry["during"].setdefault(obj, site)
                     synthesized_during.append(f"{obj}@{name}")
+                # (b) a home activity's after rules reach RECEPTACLES
+                # only: an object on a person, or out of the house, is out
+                # of anyone's reach at home. Synthesize the gate when the
+                # author left it off; intersect when present.
+                receptacle_only = [r["id"] for r in program["receptacles"]]
+                fragmented = bool(b.get("fragment")) and \
+                    not any(s in name for s in SLEEP_TOKENS)
+                for obj, rule in entry["after"].items():
+                    targets = (set(rule["dist"]) if "dist" in rule
+                               else {rule.get("dest")}
+                               | ({rule["else"]} if "else" in rule
+                                  else set()))
+                    base_from = (receptacle_only if not fragmented
+                                 # a fragmented rule fires once per bout:
+                                 # keep the derived no-refire property by
+                                 # excluding its own destinations too
+                                 else [x for x in receptacle_only
+                                       if x not in targets])
+                    if "only_from" in rule:
+                        kept = [x for x in rule["only_from"]
+                                if x in base_from]
+                        rule["only_from"] = kept or list(base_from)
+                    else:
+                        rule["only_from"] = list(base_from)
         if carry_on_departure and info["at"] == ELSEWHERE \
                 and name in away_resident:
             carrier = f"{PERSON}{away_resident[name]}"
@@ -643,6 +737,7 @@ def expand(program: dict, carry_on_departure: bool = True,
     acts["carried_putdowns_at_start"] = sorted(set(putdown_normalized))
     acts["synthesized_during"] = sorted(set(synthesized_during))
     acts["merged_away_blocks"] = sorted(merged_away) if v3 else []
+    acts["skipped_away_lingers"] = sorted(set(skipped_away_lingers))
     return acts, motions
 
 

@@ -1,0 +1,125 @@
+{
+  "household": "hh_007",
+  "household_type": "single_adult_wfh",
+  "model": "Qwen/Qwen3.8-27B",
+  "model_slug": "qwen3.8-27b",
+  "builder_version": "rv2-b6",
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 9442484876573352549,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 17255705008171229467,
+      "reasoning": "The user wants a profile for a single adult working from home (hh_007). I need to ensure this household is distinct from the other listed types, particularly 'working_professional_solo' and 'night_shift_worker_solo'. To differentiate from a typical 'working professional' (who might be more corporate/office-bound or have a stricter routine), I will make this character a creative freelancer (e.g., illustrator or writer) with a more irregular, passion-driven schedule. To distinguish from 'night_shift_worker', I will keep their hours generally diurnal but emphasize the 'WFH' aspect with a strong home-office setup and specific habits around workspace organization (or lack thereof). The character will be a 34-year-old freelance graphic designer named Elena. She is meticulous about her creative tools but messy with general household items. She lives alone, so all objects are personal. I will include objects that reflect her work (laptop, tablet, notebook, pen) and her lifestyle (yoga mat, plant care, coffee mug). The inventory will be sized for one person (15-20 items). No times of day will be mentioned.",
+      "leak_prediction": {
+        "predicted_type": "single_adult_wfh",
+        "confidence": 0.95,
+        "reason": "All objects are named 'elena', indicating a single occupant. The presence of a laptop, tablet, and desk in the bedroom suggests working from home. The lack of a second person's items (e.g., 'mug_john') and the specific combination of solo living items (yoga mat, single bed) strongly points to a solo",
+        "actual_type": "single_adult_wfh",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 14952090253009636842,
+      "reasoning": "Household hh_007 is a single adult working from home. To distinguish this from the 'working_professional_solo' (likely office-bound, more formal gear) and 'remote_worker_couple' (two people, shared dynamics), this resident is a creative freelance illustrator. The persona is 'messy genius'\u2014highly focused but physically disorganized, leaving creative tools scattered. Unlike the 'night_shift_worker_solo', this person has a standard diurnal rhythm but with blurred boundaries between work and rest. The home is a studio-apartment hybrid. Key objects include digital art tools (tablet, stylus/pen), physical art supplies (watercolor set implied by water_bottle/brushes if allowed, but sticking to vocabulary: notebook, pen, tablet), and comfort items for long sessions (blanket, specific mug). The 'laptop' is the primary work tool, but a 'tablet' is used for sketching. The 'phone' is kept on silent but checked often. 'Glasses' are for reading/drawing. 'Headphones' are essential for focus. 'Water_bottle' is constantly refilled. 'Charger' is a tangle of cables. 'Notebook' is filled with ideas. 'Pen' is everywhere. 'Mug' is the primary vessel, often cold. 'Blanket' is used for naps. 'Towel' is for the quick shower. 'Keys' are minimal (apartment). 'Wallet' is small. 'Jacket' is light, for short errands. 'Umbrella' is rarely used but present. 'Laundry_basket' is overflowing. 'Vacuum_cleaner' is ignored. 'Remote' is for the TV in the corner. 'Book' is a reference book or novel left open. 'Gaming_controller' is absent (not a gamer). 'Toy' is absent. 'Dog_leash' is absent. 'Lunchbox' is not used (eats snacks). 'Suitcase' is absent. 'Hairbrush' is in the bathroom. 'Makeup_kit' is absent. 'Watering_can' is for a single plant. 'Yoga_mat' is rolled up in the corner.",
+      "leak_prediction": {
+        "predicted_type": "single_adult_wfh",
+        "confidence": 0.95,
+        "reason": "The object list is exclusively tagged with a single name ('elara'), indicating a solo household. The presence of a laptop, tablet, and notebook alongside a dedicated desk in the bedroom suggests a work-from-home setup. The inclusion of a yoga mat and a single bed further supports a single adult's un",
+        "actual_type": "single_adult_wfh",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 2,
+      "seed": 1429737697397552530,
+      "reasoning": "Generating profile for hh_007: single_adult_wfh. Distinct from 'working_professional_solo' (office-bound) by emphasizing home-based workflows and domestic integration. Distinct from 'night_shift_worker_solo' by maintaining a standard diurnal rhythm. Persona: Elena, 34, freelance graphic designer. Traits: Visual organizer, perfectionist, prone to snack grazing. Habits focus on the desk area, kitchen grazing, and specific object placement (e.g., leaving sketches on the floor). Inventory includes digital tools (laptop, tablet), creative tools (pen, notebook), and domestic items (mug, water bottle, plants via watering can).",
+      "leak_prediction": {
+        "predicted_type": "single_adult_wfh",
+        "confidence": 0.95,
+        "reason": "The object list contains items exclusively named 'elena' (laptop, tablet, phone, keys, wallet, mug, water_bottle, notebook, pen, blanket, jacket, headphones, glasses, backpack, hairbrush, towel), indicating a single occupant. The presence of a laptop, tablet, and notebook strongly suggests work-from",
+        "actual_type": "single_adult_wfh",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 3,
+      "seed": 8090392697462148363,
+      "reasoning": "The household is hh_007, a single adult working from home. To distinguish this from 'working_professional_solo' (who likely commutes) and 'night_shift_worker_solo' (who has inverted hours), this resident, Elias, is a freelance graphic designer who works during standard daytime hours but stays home. His personality is creative but messy, leading to a cluttered desk and scattered art supplies. He is home almost all day, so object movement is driven by his workflow and personal routines rather than commuting. He is distinct from 'remote_worker_couple' as he is single, and 'college_roommates' as he is an established professional in his own home. The object inventory reflects a WFH lifestyle: a high-end laptop, multiple mugs for coffee breaks, a gaming controller for evening relaxation, and personal items that stay within the home boundaries. There are no children, pets, or commuting-related items like backpacks or heavy jackets (unless for a quick walk).",
+      "leak_prediction": {
+        "predicted_type": "single_adult_wfh",
+        "confidence": 0.95,
+        "reason": "The presence of a single name 'Elias' across all personal items (laptop, phone, keys, wallet, etc.) indicates a single-person household. The inclusion of a desk, laptop, and notebook strongly suggests work-from-home activity. The presence of a gaming controller and headphones supports a solo adult's",
+        "actual_type": "single_adult_wfh",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 4,
+      "seed": 9442484876573352549,
+      "reasoning": "The household type is single_adult_wfh. I need to create a specific persona that differs from the other types (e.g., not a night shift worker, not a professional in a suit, not a remote worker couple). I will choose a creative professional, specifically a freelance illustrator who is somewhat disorganized but deeply focused. This contrasts with the 'tidy' stereotype of a working professional and the 'chaotic' nature of college roommates or families. The single resident will have specific habits related to digital art and home comfort. The object inventory will reflect a digital-first lifestyle with specific needs for ergonomics and relaxation.",
+      "leak_prediction": {
+        "predicted_type": "single_adult_wfh",
+        "confidence": 0.95,
+        "reason": "The object list contains items exclusively named 'elara' (laptop, phone, keys, wallet, mug, notebook, pen, water_bottle, charger, blanket, laundry_basket, yoga_mat, glasses, hairbrush, makeup_kit, umbrella, jacket), indicating a single occupant. The presence of a laptop, notebook, and pen alongside ",
+        "actual_type": "single_adult_wfh",
+        "correct": true
+      }
+    }
+  ],
+  "leak_unresolved": true,
+  "n_attempts": 4,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "stage": "calendar",
+      "seed": 7625245950734084256,
+      "failures": [],
+      "reasoning": "Elara is a freelance illustrator living alone. Her schedule is characterized by a lack of rigid external constraints (no commute, no fixed office hours), leading to high variability and flexible timing. She works in long bursts, often mixing work and rest in the living room (couch) and dining area (table). Her sleep is likely irregular (night owl tendencies implied by long bursts and late winding down). Meals are quick (microwave) and often skipped or eaten while working. She has a specific 'thinking' ritual on the balcony (mapped to armchair_l1 as the closest indoor receptacle, or simply 'ELSEWHERE' if balcony isn't a receptacle, but since it's not in the list, I will map her 'thinking' to the armchair or couch as a contemplative spot, or note that she is 'at' the armchair). Laundry is sporadic. The 'disorganized' trait suggests she lingers in locations rather than moving efficiently. I will use 'flexible' and 'loose' jitter classes to reflect her free-lance, self-paced nature. Her sleep schedule will be late start and late end."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 15646380031765773321,
+      "reasoning": "Elara is a disorganized freelance illustrator who works from home, primarily using the living room (couch) and kitchen table (dining) as workspaces. Her objects tend to drift between these two areas and the bedroom. She rarely tidies, so objects often remain where they were last used (NO_OP is high). Key items like the laptop, mug, and sketchbooks are central to her workflow and move frequently between the couch and kitchen table. Larger items like the laundry basket and yoga mat have specific migration patterns. The calendar shows she spends most of her day in the living room and kitchen table, with sleep in the bedroom. I have mapped each object's rules to reflect her 'creative mess' philosophy, ensuring that items end up on the couch, kitchen table, or in the bedroom based on her activities.",
+      "failures": [
+        "referential: sleep block 'snack' has skip_p 0.3 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'snack' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'snack' has skip_p 0.2 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'snack' has skip_p 0.4 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'snack' has skip_p 0.1 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'snack' has skip_p 0.6 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'snack' has skip_p 0.5 \u2014 a resident does not skip sleeping",
+        "referential: sleep block 'snack' has skip_p 0.7 \u2014 a resident does not skip sleeping"
+      ]
+    },
+    {
+      "attempt": 1,
+      "stage": "calendar",
+      "seed": 9449530242285995194,
+      "failures": [],
+      "reasoning": "Elara is a freelance illustrator who works from home, living alone. Her routine is driven by creative bursts rather than a strict 9-5. She sleeps in her bedroom but spends most of her waking hours in the living room (couch) or at the dining table (sketching). She has a habit of slow mornings, often starting with thinking on the balcony (modeled as lingering in the living room or bedroom before moving to work spots). Meals are quick and often eaten at the desk (dining table) or on the couch. She rarely leaves the house except for occasional errands. Laundry is a periodic, high-effort task she puts off. Cleaning is occasional and frantic. Her 'work' is the primary recurring activity, occurring in long, variable blocks. She naps occasionally when exhausted. The schema requires mapping 'balcony' to the closest available receptacle; given the layout, the living room is the primary hub, so pre-work thinking is located in the living room. 'Errands' are occasional events. 'Gaming' is not mentioned, but 'Relaxing' or 'Reading' are implied by the homebody nature and book inventory."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 1,
+      "seed": 14799070740715972429,
+      "reasoning": "Elara is a disorganized freelance illustrator who works from home. Her objects are heavily influenced by her 'creative mess' workflow. The laptop, phone, and sketching tools (notebook, pen, book) are central to her work_away blocks (which are actually at-home work at the kitchen table/couch). She moves between the kitchen table (sketching) and couch (digital work). The water bottle and mug are left wherever she stops working, reflecting her habit of forgetting to hydrate. The laundry basket migrates between bedroom and living room. Tidying is rare and frantic (Saturday), while deep cleaning (Sunday laundry) is the primary reset. Carried items like keys, wallet, and jacket are only active during the occasional errands block. Most objects have a high probability of staying where they are (NO_OP) because Elara rarely moves things unless she is changing workstations or doing a specific task.",
+      "failures": [],
+      "special_reasoning": "The household consists of a single resident, 'resident_1', who works weekdays and has a structured routine including errands, naps, and meal prep. To create a lived-in feel, I will introduce three connected events: a sick child (implied by the parent staying home) that disrupts the work schedule for two days, a subsequent business trip that empties the house, and a social dinner that overrides cooking. This creates a stretch of consecutive patched days (days 2-4) and includes a dropped routine (work) and an 'ELSEWHERE' addition (dinner).",
+      "special_attempt": 0
+    }
+  ]
+}

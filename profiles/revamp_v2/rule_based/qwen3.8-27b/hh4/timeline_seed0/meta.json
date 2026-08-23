@@ -1,0 +1,106 @@
+{
+  "household": "hh_004",
+  "household_type": "family_teen_and_child",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh4",
+  "days": 21,
+  "seed": 0,
+  "n_events": 3794,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 262,
+    "tidy_moved": 0,
+    "tidy_ran_out_of_time": 0,
+    "blocks": 576,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [
+      "sleep_bedtime_routine",
+      "sleep_bedtime_routine__bed_b2",
+      "sleep_bedtime_routine__bed_b3"
+    ],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [
+      "mug_shared_1",
+      "vacuum_cleaner_shared"
+    ],
+    "carried_on_departure": [],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [],
+    "skips_per_activity": {
+      "gaming": 6,
+      "homework__kitchen_table_k1": 2,
+      "play_with_kids": 3,
+      "watch_tv": 1
+    },
+    "fragment_bouts_per_activity": {},
+    "carry_rehome_suppressed": 0
+  },
+  "moves_per_object": {
+    "keys_sarah": 241,
+    "phone_sarah": 223,
+    "wallet_sarah": 213,
+    "headphones_leo": 172,
+    "gaming_controller_leo": 156,
+    "laptop_sarah": 156,
+    "mug_sarah": 152,
+    "glasses_sarah": 150,
+    "pen_mia": 146,
+    "keys_leo": 142,
+    "backpack_leo": 141,
+    "phone_david": 140,
+    "toy_mia": 140,
+    "blanket_mia": 138,
+    "phone_leo": 136,
+    "wallet_david": 135,
+    "notebook_mia": 135,
+    "bowl_shared_1": 127,
+    "keys_david": 127,
+    "phone_mia": 106,
+    "jacket_david": 105,
+    "backpack_mia": 99,
+    "water_bottle_shared": 94,
+    "laundry_basket_shared": 93,
+    "mug_david": 59,
+    "plate_shared_1": 55,
+    "bowl_shared_2": 50,
+    "laptop_leo": 47,
+    "remote_shared": 45,
+    "plate_shared_2": 39,
+    "tablet_david": 32
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3.8-27B",
+    "prompts": {
+      "persona_v2": "6f60fb77",
+      "calendar_program": "bb623651",
+      "object_rules": "c17ddb91",
+      "special_events": "dee8230e",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b6",
+    "accepted_attempt": 0,
+    "n_attempts": 2
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.9
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
+    }
+  }
+}

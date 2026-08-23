@@ -1,0 +1,149 @@
+{
+  "household": "hh_010",
+  "household_type": "night_shift_worker_solo",
+  "source": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh10",
+  "days": 21,
+  "seed": 0,
+  "n_events": 1217,
+  "jitter_classes": {
+    "external": 10,
+    "routine": 30,
+    "flexible": 75,
+    "loose": 110
+  },
+  "activity_stats": {
+    "tidy_bouts": 0,
+    "tidy_moved": 0,
+    "tidy_ran_out_of_time": 0,
+    "blocks": 240,
+    "vacuous_arc_drops": [],
+    "dropped_sleep_resets": [],
+    "dropped_sleep_fragments": [],
+    "derived_only_from": [],
+    "orphaned_rules": [],
+    "unscheduled_activities": [],
+    "inert_objects": [
+      "blanket_elara",
+      "charger_elara",
+      "laptop_elara",
+      "wallet_elara"
+    ],
+    "carried_on_departure": [],
+    "left_behind_by_trip": [],
+    "carried_putdowns_at_start": [],
+    "synthesized_during": [
+      "backpack_elara@tidy_up",
+      "backpack_elara@tidy_up__couch_l1",
+      "backpack_elara@work_home",
+      "backpack_elara@work_home__resident_1",
+      "book_elara@reading",
+      "book_elara@tidy_up",
+      "book_elara@tidy_up__couch_l1",
+      "glasses_elara@reading",
+      "glasses_elara@tidy_up",
+      "glasses_elara@tidy_up__couch_l1",
+      "headphones_elara@tidy_up",
+      "headphones_elara@tidy_up__couch_l1",
+      "headphones_elara@work_home",
+      "headphones_elara@work_home__resident_1",
+      "jacket_elara@tidy_up",
+      "jacket_elara@tidy_up__couch_l1",
+      "jacket_elara@walk",
+      "keys_elara@wake_up",
+      "keys_elara@walk",
+      "lunchbox_elara@meal_prep",
+      "lunchbox_elara@tidy_up",
+      "lunchbox_elara@tidy_up__couch_l1",
+      "medication_bottle_elara@take_medication",
+      "medication_bottle_elara@tidy_up",
+      "medication_bottle_elara@tidy_up__couch_l1",
+      "mug_elara@meal_prep",
+      "mug_elara@wake_up",
+      "notebook_elara@reading",
+      "notebook_elara@tidy_up",
+      "notebook_elara@tidy_up__couch_l1",
+      "pen_elara@reading",
+      "pen_elara@tidy_up",
+      "pen_elara@tidy_up__couch_l1",
+      "phone_elara@wake_up",
+      "phone_elara@work_home",
+      "phone_elara@work_home__resident_1",
+      "remote_elara@reading",
+      "remote_elara@tidy_up",
+      "remote_elara@tidy_up__couch_l1",
+      "tablet_elara@meal_prep",
+      "tablet_elara@reading",
+      "towel_elara@shower",
+      "towel_elara@tidy_up",
+      "towel_elara@tidy_up__couch_l1",
+      "water_bottle_elara@meal_prep",
+      "water_bottle_elara@walk"
+    ],
+    "merged_away_blocks": [
+      "traveling->work_home",
+      "traveling->work_home",
+      "walk->dinner",
+      "walk->work_home"
+    ],
+    "skipped_away_lingers": [
+      "dinner",
+      "walk",
+      "work_home"
+    ],
+    "skips_per_activity": {
+      "reading": 2,
+      "shower": 2,
+      "take_medication": 1,
+      "tidy_up__couch_l1": 8,
+      "walk": 2
+    },
+    "fragment_bouts_per_activity": {},
+    "carry_rehome_suppressed": 0
+  },
+  "moves_per_object": {
+    "remote_elara": 94,
+    "glasses_elara": 93,
+    "headphones_elara": 92,
+    "medication_bottle_elara": 90,
+    "book_elara": 89,
+    "lunchbox_elara": 88,
+    "towel_elara": 87,
+    "pen_elara": 80,
+    "phone_elara": 73,
+    "keys_elara": 69,
+    "jacket_elara": 68,
+    "tablet_elara": 67,
+    "backpack_elara": 64,
+    "mug_elara": 62,
+    "notebook_elara": 62,
+    "water_bottle_elara": 39
+  },
+  "provenance": {
+    "model": "Qwen/Qwen3.8-27B",
+    "prompts": {
+      "persona_v2": "6f60fb77",
+      "calendar_program": "bb623651",
+      "object_rules": "c17ddb91",
+      "special_events": "dee8230e",
+      "leak_audit": "051fa759"
+    },
+    "builder_version": "rv2-b6",
+    "accepted_attempt": 0,
+    "n_attempts": 2
+  },
+  "realization_params": {
+    "skip": {
+      "max_skip_p": 0.9
+    },
+    "fragmentation": {
+      "min_mean_bouts": 1.0,
+      "max_mean_bouts": 6.0,
+      "min_bout_minutes": 10
+    },
+    "carry_on_departure": {
+      "enabled": true,
+      "carry_p": 0.85,
+      "carry_rehome_min": 90
+    }
+  }
+}
