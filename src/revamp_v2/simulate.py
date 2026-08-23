@@ -289,6 +289,17 @@ def write_timeline(hh_dir: pathlib.Path, out: pathlib.Path, days: int,
     sa = load_v1()
     params = load_params()
     program = yaml.safe_load((hh_dir / "routine_program.yaml").read_text())
+    # owners fallback for pre-injection programs (see story_calendar):
+    # without object_owners the v3 expander synthesizes no person legs.
+    persona_path = hh_dir / "persona.yaml"
+    if not program.get("object_owners") and persona_path.exists():
+        try:
+            _per = yaml.safe_load(persona_path.read_text())
+            program["object_owners"] = {
+                o["id"]: o["owner"]
+                for o in (_per.get("object_inventory") or [])}
+        except Exception:
+            pass
     days = days or int(program["days"])
     log, hourly, blocks, stats, acts, motions = simulate_program(
         program, days, seed, sa=sa, params=params)

@@ -302,6 +302,19 @@ def run_household(hh_src: pathlib.Path, out_hh: pathlib.Path, model: str,
     Returns the final meta dict, or None when refused (no story)."""
     program = yaml.safe_load((hh_src / "routine_program.yaml").read_text())
     persona_text = (hh_src / "persona.yaml").read_text()
+    # Programs generated before owner-injection lack `object_owners`, and
+    # without it the expander (correctly, conservatively) synthesizes NO
+    # person legs — nothing rides anyone anywhere. The persona sitting
+    # next to the program is the source of truth either way; derive from
+    # it whenever the program does not carry the key itself.
+    if not program.get("object_owners"):
+        try:
+            _per = yaml.safe_load(persona_text)
+            program["object_owners"] = {
+                o["id"]: o["owner"]
+                for o in (_per.get("object_inventory") or [])}
+        except Exception:
+            pass
     client = llm_client._get_client(model)
 
     story, failed_calls, call_stats = sd.generate_story(

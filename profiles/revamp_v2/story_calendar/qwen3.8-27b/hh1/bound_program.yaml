@@ -319,14 +319,6 @@ object_rules:
       p: 0.95
     - dest: NO_OP
       p: 0.05
-  - cites: He places the phone on the desk to keep it nearby during the call
-    activity: video_call
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.6
-    - dest: nightstand_b1
-      p: 0.4
 - object: keys_elias
   cites: Kept in key bowl by the door
   home: entry_table_e1
@@ -350,6 +342,38 @@ object_rules:
       p: 0.8
     - dest: NO_OP
       p: 0.2
+  - cites: keys returned to their place by the door
+    activity: appointment
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: person:resident_1
+      p: 0.1
+  - cites: keys back in the bowl after errands
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.95
+    - dest: person:resident_1
+      p: 0.05
+  - cites: keys placed in bowl after groceries
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: person:resident_1
+      p: 0.1
+  - cites: keys home from the gym
+    activity: gym
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.85
+    - dest: person:resident_1
+      p: 0.15
 - object: wallet_elias
   cites: Left in jacket pocket when home
   home: entry_hook_e1
@@ -442,30 +466,16 @@ object_rules:
       p: 0.2
     - dest: NO_OP
       p: 0.1
-  - cites: Elias rinses the mug and places it in the dish rack after his morning meal
+  - cites: mug set in sink after morning coffee
     activity: breakfast
     phase: after
     dist:
-    - dest: dish_rack_k1
-      p: 0.8
     - dest: sink_k1
-      p: 0.2
-  - cites: He washes the mug immediately after finishing his evening meal
-    activity: dinner
-    phase: after
-    dist:
-    - dest: cupboard_k1
       p: 0.7
     - dest: dish_rack_k1
-      p: 0.3
-  - cites: He places the mug in the sink to be washed after the snack
-    activity: snack
-    phase: after
-    dist:
-    - dest: sink_k1
-      p: 0.6
-    - dest: dish_rack_k1
-      p: 0.4
+      p: 0.2
+    - dest: cupboard_k1
+      p: 0.1
 - object: notebook_elias
   cites: Kept in breast pocket, moved to desk
   home: desk_b1
@@ -487,14 +497,6 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: He keeps the notebook in his pocket while on the video call, rarely setting it down
-    activity: video_call
-    phase: after
-    dist:
-    - dest: person:resident_1
-      p: 0.8
-    - dest: desk_b1
-      p: 0.2
 - object: pen_elias
   cites: Kept in breast pocket, rarely set down
   home: desk_b1
@@ -516,22 +518,6 @@ object_rules:
       p: 0.8
     - dest: NO_OP
       p: 0.2
-  - cites: Elias sets the pen down on the desk next to the notebook after working
-    activity: work_home
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.7
-    - dest: person:resident_1
-      p: 0.3
-  - cites: He keeps the pen in his breast pocket during the video call
-    activity: video_call
-    phase: after
-    dist:
-    - dest: person:resident_1
-      p: 0.9
-    - dest: desk_b1
-      p: 0.1
 - object: water_bottle_elias
   cites: Sits on desk, refilled in kitchen
   home: desk_b1
@@ -601,14 +587,6 @@ object_rules:
       p: 0.3
     - dest: NO_OP
       p: 0.1
-  - cites: He places the book on the nightstand to reach it easily while lying down
-    activity: lie_down
-    phase: after
-    dist:
-    - dest: nightstand_b1
-      p: 0.7
-    - dest: bed_b1
-      p: 0.3
 - object: glasses_elias
   cites: Folded and placed in case on desk
   home: desk_b1
@@ -631,14 +609,6 @@ object_rules:
     - dest: nightstand_b1
       p: 0.8
     - dest: desk_b1
-      p: 0.2
-  - cites: Elias folds his glasses and places them in the case on the desk after reading
-    activity: reading
-    phase: after
-    dist:
-    - dest: desk_b1
-      p: 0.8
-    - dest: nightstand_b1
       p: 0.2
 - object: charger_elias
   cites: Plugged into wall outlet near desk
@@ -682,22 +652,6 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
-  - cites: He leaves the blanket on the couch after a long period of relaxation
-    activity: relax
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.6
-    - dest: bed_b1
-      p: 0.4
-  - cites: Elias drapes the blanket over the couch while watching TV
-    activity: watch_tv
-    phase: after
-    dist:
-    - dest: couch_l1
-      p: 0.7
-    - dest: bed_b1
-      p: 0.3
 - object: towel_elias
   cites: Hung on rack in bathroom
   home: towel_rack_ba1
@@ -719,7 +673,7 @@ object_rules:
       p: 0.95
     - dest: NO_OP
       p: 0.05
-  - cites: Elias hangs the towel on the rack after his shower
+  - cites: towel hung on rack after shower
     activity: shower
     phase: after
     dist:
@@ -727,14 +681,14 @@ object_rules:
       p: 0.9
     - dest: bathroom_shelf_ba1
       p: 0.1
-  - cites: He places the towel on the shelf after bathing
+  - cites: towel returned to rack after bath
     activity: bath
     phase: after
     dist:
     - dest: towel_rack_ba1
-      p: 0.8
+      p: 0.85
     - dest: bathroom_shelf_ba1
-      p: 0.2
+      p: 0.15
 - object: hairbrush_elias
   cites: Left on bathroom counter
   home: bathroom_shelf_ba1
@@ -758,6 +712,14 @@ object_rules:
       p: 0.9
     - dest: NO_OP
       p: 0.1
+  - cites: brush left on shelf after grooming
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.95
+    - dest: sink_k1
+      p: 0.05
 - object: laundry_basket_elias
   cites: Collects dirty clothes in bedroom
   home: bedroom_floor_b1
@@ -823,38 +785,14 @@ object_rules:
       p: 0.7
     - dest: cupboard_k1
       p: 0.3
-  - cites: Elias places the pot in the cupboard after batch cooking
+  - cites: pot set in sink after cooking
     activity: batch_cooking
     phase: after
     dist:
-    - dest: cupboard_k1
+    - dest: sink_k1
       p: 0.8
-    - dest: sink_k1
+    - dest: counter_k1
       p: 0.2
-  - cites: He puts the pot away in the cupboard after making breakfast
-    activity: breakfast
-    phase: after
-    dist:
-    - dest: cupboard_k1
-      p: 0.9
-    - dest: sink_k1
-      p: 0.1
-  - cites: Elias places the pot in the sink to be washed after dinner
-    activity: dinner
-    phase: after
-    dist:
-    - dest: sink_k1
-      p: 0.7
-    - dest: cupboard_k1
-      p: 0.3
-  - cites: He puts the pot in the sink after preparing a snack
-    activity: snack
-    phase: after
-    dist:
-    - dest: sink_k1
-      p: 0.6
-    - dest: cupboard_k1
-      p: 0.4
 activities:
 - name: wake_up
   cites: Leaves the apartment early
