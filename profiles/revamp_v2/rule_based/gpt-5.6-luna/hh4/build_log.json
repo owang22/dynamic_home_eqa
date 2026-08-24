@@ -1,0 +1,246 @@
+{
+  "household": "hh_004",
+  "household_type": "family_teen_and_child",
+  "model": "gpt-5.6-luna",
+  "model_slug": "gpt-5.6-luna",
+  "builder_version": "rv2-b6",
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": null,
+  "persona_attempts": [
+    {
+      "persona_from": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh4/persona.yaml",
+      "leak_audit": "skipped (reused persona; audited in its source build)"
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 6,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "stage": "calendar",
+      "seed": 17778990455977104084,
+      "hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-luna",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 5815,
+            "completion_tokens": 2707,
+            "total_tokens": 8522,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 5812,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.004411399999999999
+        }
+      ],
+      "failures": [],
+      "reasoning": "Parents work weekdays; children attend school, with shared meals, homework, gaming, drawing, and household chores."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 9370666394935524847,
+      "hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-luna",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 16730,
+            "completion_tokens": 4313,
+            "total_tokens": 21043,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 16727,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.008521599999999999
+        }
+      ],
+      "reasoning": "Meals move dishes to sink or rack; homework uses table laptops and stationery; gaming leaves Leo's gear in living room; TV moves tablet, remote, and Mia's blanket; laundry and tidying relocate household items; work and school carry personal items away and return them to stated homes.",
+      "failures": [
+        "reachability: at-home activity 'reading' is scheduled by weekly_blocks but appears in no object rule (and carries no reset_all) \u2014 a home block that touches nothing; objects move because of what people do at home, not only because they leave",
+        "reachability: at-home activity 'wash_dishes' is scheduled by weekly_blocks but appears in no object rule (and carries no reset_all) \u2014 a home block that touches nothing; objects move because of what people do at home, not only because they leave"
+      ]
+    },
+    {
+      "attempt": 1,
+      "stage": "calendar",
+      "seed": 5881643262421957833,
+      "hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-luna",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 5815,
+            "completion_tokens": 2258,
+            "total_tokens": 8073,
+            "prompt_tokens_details": {
+              "cached_tokens": 5812,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.00282644
+        }
+      ],
+      "failures": [],
+      "reasoning": "Parents work weekdays; children attend school; evenings center on shared meals, homework, gaming, and television."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 1,
+      "seed": 8616407521179639353,
+      "hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-luna",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 16512,
+            "completion_tokens": 3626,
+            "total_tokens": 20138,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 16509,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.0076536
+        }
+      ],
+      "failures": [
+        "reachability: at-home activity 'get_ready' is scheduled by weekly_blocks but appears in no object rule (and carries no reset_all) \u2014 a home block that touches nothing; objects move because of what people do at home, not only because they leave"
+      ]
+    },
+    {
+      "attempt": 2,
+      "stage": "calendar",
+      "seed": 12092857404423260818,
+      "hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-luna",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 5815,
+            "completion_tokens": 2421,
+            "total_tokens": 8236,
+            "prompt_tokens_details": {
+              "cached_tokens": 5812,
+              "cache_write_tokens": 0,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.00302204
+        }
+      ],
+      "failures": [],
+      "reasoning": "Parents work weekdays; children attend school; evenings center on shared meals, homework, television, gaming, and household reset."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 2,
+      "seed": 15147272817431141643,
+      "hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-luna",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 16579,
+            "completion_tokens": 4256,
+            "total_tokens": 20835,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 16576,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.008423
+        }
+      ],
+      "reasoning": "Dinner, homework, gaming, television, laundry, tidying, and sleep move household objects; work and school mainly carry personal items away and return them to their stated homes.",
+      "failures": [],
+      "special_hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-luna",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 2528,
+            "completion_tokens": 1043,
+            "total_tokens": 3571,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 2525,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 0,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.0017571999999999998
+        }
+      ],
+      "special_reasoning": "Across the three weeks, Leo's late gaming night makes the next school morning rough; David takes a two-day business trip; Mia gets sick over a connected school-and-work stretch; and a friend's dinner invitation replaces the household meal. These create dropped routines, an ELSEWHERE addition, and consecutive patched days.",
+      "special_attempt": 0
+    }
+  ],
+  "persona_from": "profiles/revamp_v2/rule_based/qwen3.8-27b/hh4/persona.yaml",
+  "hosted": {
+    "model_snapshot": "gpt-5.6-luna",
+    "n_live_calls": 7,
+    "spend": "hosted spend $0.0500 of $5.00 cap across 53 call(s) [gpt-5.6-luna: $0.0500 (53 calls)]"
+  }
+}

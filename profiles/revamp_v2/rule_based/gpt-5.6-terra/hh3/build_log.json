@@ -1,0 +1,151 @@
+{
+  "household": "hh_003",
+  "household_type": "retired_couple",
+  "model": "gpt-5.6-terra",
+  "model_slug": "gpt-5.6-terra",
+  "builder_version": "rv2-b6",
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 3952282761588502381,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 17714838222488818338,
+      "reasoning": "A retired couple with an active, bookish and gardening-oriented home life, distinct from working households and child-focused homes.",
+      "leak_prediction": {
+        "predicted_type": "retired_couple",
+        "confidence": 0.88,
+        "reason": "Two named adults with paired personal items, glasses and medication for both, and a two-bedroom household strongly indicate a retired couple.",
+        "actual_type": "retired_couple",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 12503768201455781714,
+      "reasoning": "A socially active retired couple with separate volunteer interests, an orderly but occasionally cluttered shared kitchen, and personal belongings that move between home, walks, the garden, and community activities.",
+      "leak_prediction": {
+        "predicted_type": "retired_couple",
+        "confidence": 0.84,
+        "reason": "Two named adults with two bedrooms and shared household items; paired medication, glasses, book/tablet, and watering can suggest a retired couple more than working or child-containing households.",
+        "actual_type": "retired_couple",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 2,
+      "seed": 3952282761588502381,
+      "reasoning": "A compact, civic-minded retired couple who use shared household objects deliberately but maintain separate volunteer interests and personal work surfaces.",
+      "leak_prediction": {
+        "predicted_type": "working_couple_no_children",
+        "confidence": 0.72,
+        "reason": "Two named adults with paired personal items, two bedrooms/desks, and no child-specific or retirement-specific objects; the laptop/notebook set suggests standard work use but not clearly two remote workers.",
+        "actual_type": "retired_couple",
+        "correct": false
+      }
+    }
+  ],
+  "leak_unresolved": false,
+  "n_attempts": 2,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "stage": "calendar",
+      "seed": 174371228970594559,
+      "hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-terra",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 4976,
+            "completion_tokens": 7776,
+            "total_tokens": 12752,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 4973,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 4337,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.103264
+        }
+      ],
+      "failures": [],
+      "reasoning": "June keeps a methodical home-centered rhythm around library/book-exchange volunteering, reading, immediate dish care, and shared herb care. Arturo alternates repair-cafe shifts with desk correspondence, practical cooking, occasional errands and contingent vacuuming. They share regular meals, walks, herb tending, and evenings in the sitting room; optional meetings, errands, television, and cleaning retain looser attendance."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 11552830524072411169,
+      "hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-terra",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 14627,
+            "completion_tokens": 9660,
+            "total_tokens": 24287,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 14624,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 2255,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.145174
+        }
+      ],
+      "reasoning": "June\u2019s orderly reading, tablet, dish, and blanket routines return items predictably; Arturo\u2019s outings, notes, mug, and remote create more varied resting spots. Meals move shared dishes through sink, rack, and cupboard; cooking leaves cookware soaking; cleaning restores household tools.",
+      "failures": [],
+      "special_hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-terra",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 2836,
+            "completion_tokens": 4390,
+            "total_tokens": 7226,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 2833,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 3226,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.058352
+        }
+      ],
+      "special_reasoning": "Resident_2's midweek work trip creates a three-day connected disruption, including two hotel nights and a delayed return. Resident_1 then has a late off-campus study session that causes a missed work morning, and both residents later accept a Friday dinner invitation instead of eating and watching television at home.",
+      "special_attempt": 0
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "n_live_calls": 27,
+    "spend": "hosted spend $1.1072 of $35.00 cap across 27 call(s) [gpt-5.6-terra: $1.1072 (27 calls)]"
+  }
+}

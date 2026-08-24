@@ -36,6 +36,8 @@ from prompts import ACTIVITY_VOCAB, TIME_PATTERN              # noqa: E402
 from dynamic_home_eqa.generation import llm_client            # noqa: E402
 from dynamic_home_eqa.generation.cache import (               # noqa: E402
     ResponseCache, make_seed)
+from dynamic_home_eqa.generation.hosted_spend import (        # noqa: E402
+    SpendCapExceeded)
 
 try:
     import jsonschema
@@ -217,6 +219,25 @@ def build_story_schema(resident_ids, receptacles, lo, hi):
             "required": ["days"],
             "properties": {"days": {"type": "array", "minItems": n,
                                     "maxItems": n, "items": day}}}
+
+
+def widen_day_bounds(schema: dict, lo: int, hi: int) -> dict:
+    """Cache-friendly twin of a story schema: the SAME shape and the SAME
+    array length, with only the `day` INDEX bounds widened to the whole
+    run, so every call of a household presents one identical schema.
+
+    The array length must not move: build_story_schema derives
+    minItems/maxItems from (hi - lo + 1), so rebuilding it over the full
+    range demands 21 days per call instead of one — measured the
+    expensive way (every response failed the narrow validator, ~10x cost
+    per call, read timeouts). Only the bounds are relaxed here, and the
+    NARROW schema still validates the response, so the exact day index
+    stays enforced end to end."""
+    import copy
+    out = copy.deepcopy(schema)
+    out["properties"]["days"]["items"]["properties"]["day"].update(
+        {"minimum": lo, "maximum": hi})
+    return out
 
 
 def _persona_name_map(persona_text: str, residents: list[str]) -> dict:
@@ -505,22 +526,40 @@ def _looks_truncated(payload: str, think: str,
 def generate_story_json(client, system, user, *, seed, stage, cache=None,
                         force=False, validate=lambda r: r,
                         max_tokens=STORY_MAX_TOKENS,
-                        max_retries=STORY_MAX_RETRIES):
+                        max_retries=STORY_MAX_RETRIES, schema=None):
     """The story stage's own cache/retry/validate loop — the same contract
     as llm_client.generate_json_thinking (cache checked at `seed`, live
     attempts at seed+attempt, successes cached under `seed`) plus the
     truncation guard above, which that shared helper cannot host because
     finish_reason dies inside generate_thinking. Raises the last error
     after max_retries failed attempts; truncated responses are never
-    parsed and never cached."""
+    parsed and never cached.
+
+    HOSTED path (client.hosted, hosted-generation pilot): hosted models
+    expose no think block, so the thinking path is NOT ported. The call
+    routes through the structured-outputs path (client.generate with
+    `schema` — the same per-day story schema the local validator already
+    checks), and the truncation guard reduces to finish_reason ==
+    "length". The local thinking path below is untouched."""
+    hosted = getattr(client, "hosted", False) and schema is not None
     if cache and not force:
         record = cache.get_record(seed)
         if record is not None and record.get("raw") is not None:
             try:
-                return validate(json.loads(record["raw"]))
+                parsed = json.loads(record["raw"])
+                if hosted:
+                    from dynamic_home_eqa.generation.hosted_schema import \
+                        drop_nulls
+                    parsed = drop_nulls(parsed)
+                return validate(parsed)
             except RETRYABLE as e:
                 print(f"  [{stage}] cached response failed validation "
                       f"(seed={seed}): {e} — regenerating")
+    if hosted:
+        return _hosted_story_json(client, system, user, schema, seed=seed,
+                                  stage=stage, cache=cache,
+                                  validate=validate, max_tokens=max_tokens,
+                                  max_retries=max_retries)
     eff = _effective_max_tokens(client, system, user, max_tokens)
     last_err: Exception = RuntimeError(
         f"generate_story_json: max_retries={max_retries} is not positive")
@@ -543,6 +582,47 @@ def generate_story_json(client, system, user, *, seed, stage, cache=None,
             continue
         if cache:
             cache.put(seed, user, payload, think=think[:20000])
+        return result
+    raise last_err
+
+
+def _hosted_story_json(client, system, user, schema, *, seed, stage, cache,
+                       validate, max_tokens, max_retries):
+    """The hosted arm of generate_story_json: structured outputs, no think
+    block, finish_reason=="length" as the whole truncation guard. Usage/
+    snapshot/cost provenance rides into the cache record (Task 1.4)."""
+    from dynamic_home_eqa.generation.hosted_schema import drop_nulls
+    last_err: Exception = RuntimeError(
+        f"_hosted_story_json: max_retries={max_retries} is not positive")
+    for attempt in range(max_retries):
+        try:
+            raw = client.generate(system, user, schema,
+                                  seed=seed + attempt, max_tokens=max_tokens)
+        except RETRYABLE as e:               # transport-level bad sample
+            last_err = e
+            print(f"  [{stage}] attempt {attempt + 1}/{max_retries} "
+                  f"(seed={seed + attempt}): {type(e).__name__}: "
+                  f"{str(e)[:160]} — retrying")
+            continue
+        meta = getattr(client, "last_meta", None)
+        if meta is not None and meta.get("finish_reason") == "length":
+            last_err = RuntimeError(
+                "truncated response: finish_reason=length")
+            print(f"  [{stage}] attempt {attempt + 1}/{max_retries} "
+                  f"(seed={seed + attempt}): finish_reason=length — "
+                  f"retrying")
+            continue
+        try:
+            result = validate(drop_nulls(json.loads(raw)))
+        except RETRYABLE as e:
+            last_err = e
+            print(f"  [{stage}] attempt {attempt + 1}/{max_retries} "
+                  f"(seed={seed + attempt}): {type(e).__name__}: "
+                  f"{str(e)[:160]} — retrying")
+            continue
+        if cache:
+            cache.put(seed, user, raw,
+                      extra=dict(meta) if meta else None)
         return result
     raise last_err
 
@@ -636,11 +716,18 @@ def generate_story(program, persona_text, cache, client, days_total,
             return parsed
         return _validate
 
-    def _call(seed, system, user, who, schema):
+    def _call(seed, system, user, who, schema, request_schema=None):
+        # request_schema (hosted only): the grammar actually SENT may be
+        # day-widened so all of a household's story calls share one
+        # schema — OpenAI's prompt cache keys on the full request prefix,
+        # schema included, and per-day bounds gave 0% cache hits across
+        # 84 calls (measured). Validation stays on the NARROW schema, so
+        # the day index is still enforced end-to-end.
         return generate_story_json(
             client, system, user, seed=seed, stage=tag, cache=cache,
             force=force, validate=_make_validator(who, schema),
-            max_tokens=STORY_MAX_TOKENS, max_retries=max_retries)
+            max_tokens=STORY_MAX_TOKENS, max_retries=max_retries,
+            schema=request_schema or schema)
 
     # ---------------------------------------------------------- per week --
     if per_week or not per_resident:
@@ -650,13 +737,19 @@ def generate_story(program, persona_text, cache, client, days_total,
         label = "week" if per_week else "day"
         for idx, lo, hi in units:
             schema = build_story_schema(residents, receptacles, lo, hi)
+            wide = (widen_day_bounds(schema, 0, days_total - 1)
+                    if getattr(client, "hosted", False) and not per_week
+                    else None)
             user = STORY_USER.format(
                 persona=persona_text, locations=loc_lines,
                 vocab=", ".join(ACTIVITY_VOCAB), recap=_recap(story),
                 lo=lo, hi=hi, weekday_map=wmap)
             try:
                 parsed = _call(make_seed(program["household"], idx, tag),
-                               STORY_SYSTEM, user, residents, schema)
+                               STORY_SYSTEM, user, residents, schema,
+                               request_schema=wide)
+            except SpendCapExceeded:        # cap abort: never a failed call
+                raise
             except Exception as e:
                 failed_calls.append({label: idx, "error": repr(e)[:200]})
                 print(f"  {label} {idx}: STORY FAILED ({type(e).__name__})")
@@ -679,13 +772,16 @@ def generate_story(program, persona_text, cache, client, days_total,
             """One resident's day. Seed folds the resident index so each
             (day, resident) has its own cache entry."""
             schema = build_story_schema([rid], receptacles, day, day)
+            wide = (widen_day_bounds(schema, 0, days_total - 1)
+                    if getattr(client, "hosted", False) else None)
             user = STORY_USER_ONE.format(
                 persona=persona_text, locations=loc_lines,
                 vocab=", ".join(ACTIVITY_VOCAB), recap=_recap(story),
                 today=today, lo=day, resident=rid, weekday_map=wmap)
             seed = make_seed(program["household"], day, tag,
                              residents.index(rid))
-            return _call(seed, STORY_SYSTEM, user, [rid], schema)
+            return _call(seed, STORY_SYSTEM, user, [rid], schema,
+                         request_schema=wide)
 
         for day in range(days_total):
             day_blocks: list[dict] = []
@@ -697,6 +793,8 @@ def generate_story(program, persona_text, cache, client, days_total,
                 summary = d0.get("summary", "")
                 day_blocks += [dict(b, resident=residents[0])
                                for b in d0["blocks"]]
+            except SpendCapExceeded:
+                raise
             except Exception as e:
                 failed_calls.append({"day": day, "resident": residents[0],
                                      "error": repr(e)[:200]})
@@ -718,6 +816,8 @@ def generate_story(program, persona_text, cache, client, days_total,
                             results[rid] = e
             for rid in rest:                        # merge in RESIDENT order
                 got = results.get(rid)
+                if isinstance(got, SpendCapExceeded):
+                    raise got
                 if isinstance(got, Exception) or got is None:
                     failed_calls.append({"day": day, "resident": rid,
                                          "error": repr(got)[:200]})

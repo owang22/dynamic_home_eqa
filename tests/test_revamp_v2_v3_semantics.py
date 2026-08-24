@@ -122,13 +122,23 @@ def test_away_chain_merges_so_things_come_home_once():
          "dist": [{"dest": "shelf_b", "p": 0.5}, {"dest": "sink_k", "p": 0.5}]}]
     acts, motions = xc.expand(program)
     merged = acts["merged_away_blocks"]
-    assert merged and all("work_away->commute_out" == m for m in merged)
-    # only ONE away block survives per trip, per day
+    assert merged                        # the chain merged into one trip
+    # Only ONE away block survives per trip, per day — named for the
+    # DOMINANT member (the trip's reason: eight hours of work_away, not
+    # the half-hour commute that begins it), starting at the commute's
+    # own start (the true departure).
     mon = [e for e in acts["calendar"] if e["weekday"] == "Mon"]
     away = [i for d in mon for i in d["activities"]
             if i["a"].startswith(("commute_out", "work_away"))]
-    assert all(i["a"].startswith("commute_out") for i in away)
-    assert "work_away" not in motions["object_motions"]
+    assert away and all(i["a"].startswith("work_away") for i in away)
+    assert away[0]["t"] == "08:00"
+    # ...and the commute's OWN after-rule still fires at the homecoming:
+    # the chain union attaches every member's rules to the survivor.
+    entry = motions["object_motions"]["work_away"]
+    assert "mug_1" in entry["after"]
+    assert set(entry["after"]["mug_1"]["dist"]) == {"shelf_b", "sink_k"}
+    assert any("mug_1@work_away<-commute_out" == c
+               for c in acts["chain_inherited_after"])
 
 
 def test_unmarked_program_keeps_both_away_blocks():

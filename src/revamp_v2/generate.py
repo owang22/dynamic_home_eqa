@@ -45,6 +45,8 @@ import validate as v2v             # noqa: E402
 from dynamic_home_eqa.generation import llm_client          # noqa: E402
 from dynamic_home_eqa.generation.cache import (             # noqa: E402
     ResponseCache, make_seed)
+from dynamic_home_eqa.generation.hosted_spend import (       # noqa: E402
+    SpendCapExceeded)
 
 REPO_ROOT = HERE.parent.parent
 MAX_ATTEMPTS = 5
@@ -75,6 +77,27 @@ class _LongFormClient:
         except TypeError:
             return self.inner.generate(system, user, schema, seed=seed,
                                        temperature=temperature)
+
+    def __getattr__(self, name):
+        # Capability flags and provenance (hosted, last_meta, usage_log)
+        # must survive the wrapper — generate_json branches on them.
+        if name == "inner":                        # recursion guard
+            raise AttributeError(name)
+        return getattr(self.inner, name)
+
+
+def _usage_mark(client) -> int:
+    """Position in the hosted client's usage_log (0 for local clients) —
+    pair with _usage_since to attach per-attempt usage to build logs."""
+    return len(getattr(client, "usage_log", ()) or ())
+
+
+def _usage_since(client, mark: int, record: dict) -> None:
+    """Attach the usage entries this attempt generated (hosted only) to
+    the attempt record — calls, tokens and priced cost per response."""
+    log = getattr(client, "usage_log", None)
+    if log and len(log) > mark:
+        record["hosted_usage"] = [dict(u) for u in log[mark:]]
 
 
 def _take_reasoning(raw: dict, record: dict, key: str) -> dict:
@@ -243,6 +266,15 @@ _CALENDAR_FAILURES = ("sleep", "weekday", "resident", "linger",
 
 
 def _is_calendar_failure(msg: str) -> bool:
+    # The at-home coverage failure ("scheduled by weekly_blocks but
+    # appears in no object rule") mentions weekly_blocks INCIDENTALLY and
+    # is the OBJECTS call's to fix (see the comment above) — the
+    # substring match must not let it indict the calendar. Measured on
+    # the hosted pilot: terra authored rich calendars, every coverage
+    # miss burned a whole calendar attempt, and the objects call never
+    # saw its own 3-attempt budget.
+    if "appears in no object rule" in msg:
+        return False
     return any(k in msg for k in _CALENDAR_FAILURES)
 
 
@@ -271,19 +303,40 @@ def generate_program(slot: dict, control: dict, persona: dict,
     cal_user = prompts.program_user_prompt(persona_text, receptacles, days,
                                            "Monday")
     attempts: list[dict] = []
+    try:
+        return _generate_program_loop(
+            slot, persona, persona_text, receptacles, days, client, cache,
+            force, max_attempts, params, inventory, resident_ids,
+            receptacle_ids, cal_schema, cal_tag, cal_user, attempts)
+    except SpendCapExceeded as e:
+        # Hand the attempt records so far to build_household: the build
+        # log must survive a cap abort (partial evidence IS the pilot).
+        e.attempts = attempts                      # type: ignore[attr-defined]
+        raise
+
+
+def _generate_program_loop(slot, persona, persona_text, receptacles, days,
+                           client, cache, force, max_attempts, params,
+                           inventory, resident_ids, receptacle_ids,
+                           cal_schema, cal_tag, cal_user, attempts):
     for cal_attempt in range(max_attempts):
         seed = make_seed(slot["household_id"], 0, cal_tag, cal_attempt)
         record: dict = {"attempt": cal_attempt, "stage": "calendar",
                         "seed": seed}
+        mark = _usage_mark(client)
         try:
             cal_raw = llm_client.generate_json(
                 _LongFormClient(client, PROGRAM_MAX_TOKENS),
                 prompts.CALENDAR.text, cal_user, cal_schema,
                 seed=seed, stage=cal_tag, cache=cache, force=force)
+        except SpendCapExceeded:                    # cap abort: never a
+            raise                                   # retryable "failure"
         except Exception as e:                      # guided-JSON exhaustion
             record["failures"] = [f"generation: {e!r}"]
+            _usage_since(client, mark, record)
             attempts.append(record)
             continue
+        _usage_since(client, mark, record)
         record["failures"] = v2v.check_schema(cal_raw, cal_schema)
         cal_raw = _take_reasoning(cal_raw, record, "reasoning")
         attempts.append(record)
@@ -306,15 +359,20 @@ def generate_program(slot: dict, control: dict, persona: dict,
                              cal_attempt * max_attempts + obj_attempt)
             record = {"attempt": obj_attempt, "stage": "objects",
                       "calendar_attempt": cal_attempt, "seed": seed}
+            mark = _usage_mark(client)
             try:
                 obj_raw = llm_client.generate_json(
                     _LongFormClient(client, PROGRAM_MAX_TOKENS),
                     prompts.OBJECT_RULES.text, obj_user, obj_schema,
                     seed=seed, stage=obj_tag, cache=cache, force=force)
+            except SpendCapExceeded:
+                raise
             except Exception as e:
                 record["failures"] = [f"generation: {e!r}"]
+                _usage_since(client, mark, record)
                 attempts.append(record)
                 continue
+            _usage_since(client, mark, record)
             obj_failures = v2v.check_schema(obj_raw, obj_schema)
             obj_raw = _take_reasoning(obj_raw, record, "reasoning")
             raw = dict(cal_raw, object_rules=obj_raw["object_rules"])
@@ -326,6 +384,9 @@ def generate_program(slot: dict, control: dict, persona: dict,
             record["failures"] = failures
             attempts.append(record)
             if not failures:
+                # Tolerated-but-real coverage gaps are logged, never
+                # silent (validate.MAX_UNCOVERED_FRACTION).
+                record["uncovered_at_home"] = v2v.uncovered_at_home(program)
                 _add_special_events(program, slot, persona, client, cache,
                                     force, record)
                 return program, attempts
@@ -358,6 +419,7 @@ def _add_special_events(program, slot, persona, client, cache, force,
     tag = prompts.SPECIAL_EVENTS.tag("special_events", builder=True,
                                      schema=schema)
     user = prompts.special_user_prompt(program, days)
+    mark = _usage_mark(client)
     for attempt in range(max_attempts):
         seed = make_seed(slot["household_id"], 1, tag, attempt)
         try:
@@ -365,10 +427,17 @@ def _add_special_events(program, slot, persona, client, cache, force,
                 _LongFormClient(client, 8192), prompts.SPECIAL_EVENTS.text,
                 user, schema, seed=seed, stage=tag, cache=cache,
                 force=force)
+        except SpendCapExceeded:
+            raise
         except Exception as e:
             record.setdefault("special_failures", []).append(
                 f"generation: {e!r}"[:200])
             continue
+        finally:
+            log = getattr(client, "usage_log", None)
+            if log and len(log) > mark:
+                record["special_hosted_usage"] = \
+                    [dict(u) for u in log[mark:]]
         raw = _take_reasoning(raw, record, "special_reasoning")
         candidate = [dict(ev) for ev in raw["special_events"]]
         program["arc_events"] = candidate
@@ -387,7 +456,8 @@ def _add_special_events(program, slot, persona, client, cache, force,
 def build_household(slot: dict, control: dict, out_root: pathlib.Path,
                     model: str, scene: str | None, days: int, client,
                     cache, force: bool,
-                    max_attempts: int = MAX_ATTEMPTS) -> bool:
+                    max_attempts: int = MAX_ATTEMPTS,
+                    persona_from: pathlib.Path | None = None) -> bool:
     hh_dir = out_root / f"hh{int(slot['household_id'].split('_')[-1])}"
     hh_dir.mkdir(parents=True, exist_ok=True)
     receptacles = (census_receptacles(scene) if scene
@@ -404,6 +474,22 @@ def build_household(slot: dict, control: dict, out_root: pathlib.Path,
     persona_attempts: list[dict] = []
     persona = persona_text = None
     leak_unresolved = False
+    if persona_from is not None:
+        # PILOT ONLY (hosted-generation pilot, Task 3): reuse a committed
+        # persona verbatim and skip L1 generation AND the leak audit —
+        # the persona was audited in its source build, and re-auditing an
+        # unchanged inventory tests nothing about the backend under test
+        # while burning a metered call per attempt.
+        src = persona_from / "persona.yaml"
+        persona_text = src.read_text()
+        persona = yaml.safe_load(persona_text)
+        persona_seed = None
+        persona_attempts = [{"persona_from": str(src),
+                             "leak_audit": "skipped (reused persona; "
+                                           "audited in its source build)"}]
+        # the L1 loop below never runs (and its for/else "exhausted"
+        # branch must not fire on a zero-iteration loop)
+        max_attempts = 0
     for attempt in range(max_attempts):
         persona, persona_text, persona_seed, persona_reasoning = \
             generate_persona(slot, control, client, cache, force,
@@ -428,11 +514,20 @@ def build_household(slot: dict, control: dict, out_root: pathlib.Path,
         # it. The household is still built, flagged here and surfaced in
         # the acceptance report, rather than silently passing or silently
         # dropping a slot from the set.
-        leak_unresolved = True
+        # (A --persona-from build runs this loop ZERO times — the for/else
+        # branch fires vacuously and must not flag anything.)
+        leak_unresolved = persona_from is None
     (hh_dir / "persona.yaml").write_text(persona_text)
-    program, attempts = generate_program(
-        slot, control, persona, persona_text, receptacles, days, client,
-        cache, force)
+    aborted = None
+    try:
+        program, attempts = generate_program(
+            slot, control, persona, persona_text, receptacles, days, client,
+            cache, force)
+    except SpendCapExceeded as e:
+        # Cap abort: the build log below is still written (partial
+        # evidence is the pilot's deliverable), then the abort propagates.
+        aborted, program = e, None
+        attempts = getattr(e, "attempts", [])
     program_path = hh_dir / "routine_program.yaml"
     if program is not None:
         program_path.write_text(
@@ -462,7 +557,19 @@ def build_household(slot: dict, control: dict, out_root: pathlib.Path,
                              if program is not None else None),
         "attempts": attempts,
     }
+    if persona_from is not None:
+        build_log["persona_from"] = str(persona_from / "persona.yaml")
+    if getattr(client, "hosted", False):
+        build_log["hosted"] = {
+            "model_snapshot": getattr(client, "snapshot", None),
+            "n_live_calls": len(getattr(client, "usage_log", []) or []),
+            "spend": client.guard.summary(),
+        }
+    if aborted is not None:
+        build_log["aborted"] = str(aborted)
     (hh_dir / "build_log.json").write_text(json.dumps(build_log, indent=2))
+    if aborted is not None:
+        raise aborted
     status = "OK" if program is not None else "FAILED"
     flag = " [LEAKS TYPE]" if leak_unresolved else ""
     print(f"{slot['household_id']}: {status} after {len(attempts)} "
@@ -489,7 +596,15 @@ def _main() -> None:
                     help="default: control.yaml `days`")
     ap.add_argument("--force", action="store_true",
                     help="bypass the response cache")
+    ap.add_argument("--persona-from", type=pathlib.Path, default=None,
+                    help="PILOT ONLY: household dir whose committed "
+                         "persona.yaml is reused verbatim — skips L1 "
+                         "generation and the leak audit (only meaningful "
+                         "with --household)")
     args = ap.parse_args()
+    if args.persona_from is not None and args.all:
+        raise SystemExit("--persona-from names ONE household's persona; "
+                         "it cannot be combined with --all")
 
     control = yaml.safe_load(
         (sim.PROFILES_DIR / "control.yaml").read_text())
@@ -514,9 +629,17 @@ def _main() -> None:
                  if int(s["household_id"].split("_")[-1]) == int(digits)]
         if not slots:
             raise SystemExit(f"no household slot matches {args.household!r}")
-    ok = all([build_household(s, control, out_root, args.model, args.scene,
-                              days, client, cache, args.force)
-              for s in slots])
+    try:
+        ok = all([build_household(s, control, out_root, args.model,
+                                  args.scene, days, client, cache,
+                                  args.force,
+                                  persona_from=args.persona_from)
+                  for s in slots])
+    except SpendCapExceeded as e:
+        # The abort the spend guard promises: loud, with the summary, and
+        # everything already written (build logs, cache) left intact.
+        print(f"ABORTED: {e}")
+        raise SystemExit(2)
     raise SystemExit(0 if ok else 1)
 
 

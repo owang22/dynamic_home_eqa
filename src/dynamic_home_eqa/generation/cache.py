@@ -64,14 +64,21 @@ class ResponseCache:
             return json.loads(p.read_text())
         return None
 
-    def put(self, seed: int, prompt: str, raw: str, think: str | None = None) -> None:
+    def put(self, seed: int, prompt: str, raw: str, think: str | None = None,
+            extra: dict | None = None) -> None:
         """Persist a raw LLM response alongside its prompt for auditability.
 
         `think` (thinking-mode calls only): the reasoning trace, truncated
         by the caller (~2000 chars) — stored for eval-log review, never
         read back on cache hits (`raw` alone must stay directly
-        json-parseable; the trace is provenance, not payload)."""
-        record = {"seed": seed, "prompt": prompt, "raw": raw}
+        json-parseable; the trace is provenance, not payload).
+
+        `extra` (hosted calls only): provenance merged into the record —
+        the response's usage block, snapshot model id, finish_reason and
+        priced cost. Never read back on cache hits; the reserved keys
+        (seed/prompt/raw/think) win on collision."""
+        record = dict(extra or {})
+        record.update({"seed": seed, "prompt": prompt, "raw": raw})
         if think is not None:
             record["think"] = think
         self._path(seed).write_text(json.dumps(record, indent=2))

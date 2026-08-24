@@ -55,6 +55,8 @@ import story_driven as sd                                     # noqa: E402
 
 from dynamic_home_eqa.generation import llm_client            # noqa: E402
 from dynamic_home_eqa.generation.cache import ResponseCache   # noqa: E402
+from dynamic_home_eqa.generation.hosted_spend import (        # noqa: E402
+    SpendCapExceeded)
 
 BUILDER_VERSION = "story-calendar-b3"   # b1 -> b2: optional story-aware
                                      # binding pass (--bind-unbound)
@@ -143,6 +145,13 @@ class _LongForm:
             return self.inner.generate(system, user, schema, seed=seed,
                                        temperature=temperature)
 
+    def __getattr__(self, name):
+        # Capability flags and provenance (hosted, last_meta, usage_log)
+        # must survive the wrapper — generate_json branches on them.
+        if name == "inner":                        # recursion guard
+            raise AttributeError(name)
+        return getattr(self.inner, name)
+
 
 def bind_unbound(program, story, persona_text, client, cache, force):
     """(merged_program, bind_stats). One guided-JSON call authoring rules
@@ -220,15 +229,23 @@ def bind_unbound(program, story, persona_text, client, cache, force):
         home = by_obj[obj]["home"]
         for rule in entry.get("rules") or []:
             # A rule whose every REAL outcome (NO_OP aside) is the
-            # object's own home is fake movement: the expander would mark
-            # the object inert and strip ALL its rules, freezing it for
-            # the whole run (measured on hh1's wallet_1 — three
-            # home-pointing rules, 504 h at the counter). Home as ONE
-            # outcome among others is fine — that is what a tidy dist
-            # looks like.
+            # object's own home is fake movement — FOR AN AT-HOME
+            # activity: the expander would mark the object inert and
+            # strip ALL its rules, freezing it for the whole run
+            # (measured on hh1's wallet_1 — three home-pointing rules,
+            # 504 h at the counter). Home as ONE outcome among others is
+            # fine — that is what a tidy dist looks like.
+            #
+            # An AWAY activity is the opposite case: a home-pointing away
+            # rule means "carried out, set back on its spot at
+            # homecoming" — real out-and-back movement (the rule is what
+            # makes the object ride the trip at all), and dropping it
+            # froze the pilot's wallets and keys. Kept, unless the dist
+            # is ALL NO_OP (which would strand the object on the person).
             real = [d for d in (rule.get("dist") or [])
                     if d["dest"] != "NO_OP"]
-            if not real or all(d["dest"] == home for d in real):
+            if not real or (rule["activity"] not in away
+                            and all(d["dest"] == home for d in real)):
                 dropped_noop.append(f"{obj}@{rule['activity']}")
                 continue
             by_obj[obj].setdefault("rules", []).append(rule)
@@ -447,9 +464,16 @@ def _main() -> None:
         hh_src = pathlib.Path(hh)
         out_hh = args.out_root / hh_src.name
         print(f"{hh_src.name}: story_calendar, {args.days} days")
-        meta = run_household(hh_src, out_hh, args.model, cache, args.days,
-                             args.seed, args.force, per_week=args.per_week,
-                             bind=args.bind_unbound)
+        try:
+            meta = run_household(hh_src, out_hh, args.model, cache,
+                                 args.days, args.seed, args.force,
+                                 per_week=args.per_week,
+                                 bind=args.bind_unbound)
+        except SpendCapExceeded as e:
+            # The spend guard's promised abort: loud, summarized, with
+            # story.yaml already persisted per-day by _write_story.
+            print(f"ABORTED: {e}")
+            raise SystemExit(2)
         if meta is None:
             failed.append(hh_src.name)
             continue

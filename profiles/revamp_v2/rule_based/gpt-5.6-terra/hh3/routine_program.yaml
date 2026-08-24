@@ -1,0 +1,1849 @@
+household: hh_003
+household_type: retired_couple
+source_persona: persona.yaml
+object_semantics: after_only_v3
+object_owners:
+  phone_june: resident_1
+  keys_june: resident_1
+  wallet_june: resident_1
+  glasses_june: resident_1
+  tablet_june: resident_1
+  book_june: resident_1
+  mug_june: resident_1
+  water_bottle_june: resident_1
+  phone_arturo: resident_2
+  keys_arturo: resident_2
+  wallet_arturo: resident_2
+  glasses_arturo: resident_2
+  laptop_arturo: resident_2
+  notebook_arturo: resident_2
+  pen_arturo: resident_2
+  water_bottle_arturo: resident_2
+  plate_1: shared
+  plate_2: shared
+  bowl_1: shared
+  bowl_2: shared
+  pot_1: shared
+  pan_1: shared
+  remote_1: shared
+  blanket_1: shared
+  watering_can_1: shared
+  vacuum_cleaner_1: shared
+  towel_1: shared
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 0.65
+  cites: methodical, quietly social, protective of books
+- id: resident_2
+  jitter_scale: 1.25
+  cites: hands-on, genial, mildly absent-minded
+receptacles:
+- id: bed_b1
+  room: bedroom_1
+- id: nightstand_b1
+  room: bedroom_1
+- id: desk_b1
+  room: bedroom_1
+- id: bedroom_floor_b1
+  room: bedroom_1
+- id: bed_b2
+  room: bedroom_2
+- id: nightstand_b2
+  room: bedroom_2
+- id: desk_b2
+  room: bedroom_2
+- id: bedroom_floor_b2
+  room: bedroom_2
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: night_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:30'
+  end: 07:00+1
+  at: bed_b1
+  jitter: routine
+  cites: married couple live in a one-bedroom apartment
+- resident: resident_2
+  activity: night_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:30'
+  end: 07:00+1
+  at: bed_b1
+  jitter: routine
+  cites: married couple live in a one-bedroom apartment
+weekly_blocks:
+- cites: June is methodical
+  resident: resident_1
+  activity: wake_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:00
+  end: 07:20
+  at: bed_b1
+  jitter: routine
+  skip_p: 0
+- cites: June is methodical
+  resident: resident_1
+  activity: get_ready
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:20
+  end: 08:00
+  at: bathroom_shelf_ba1
+  jitter: routine
+  skip_p: 0
+- cites: They cross paths most reliably in the kitchen
+  resident: resident_1
+  activity: breakfast
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 08:00
+  end: 08:40
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.05
+- cites: Washes her mug and bowl immediately
+  resident: resident_1
+  activity: wash_dishes
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 08:40
+  end: 08:55
+  at: sink_k1
+  jitter: external
+  skip_p: 0.05
+- cites: Leaves washed dishes on the drying rack
+  resident: resident_1
+  activity: put_away_dishes
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 08:55
+  end: 09:10
+  at: dish_rack_k1
+  jitter: flexible
+  skip_p: 0.15
+- cites: Carries materials to the library branch
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  start: 09:45
+  end: '13:00'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.05
+  note: Library and book-exchange volunteer outing.
+- cites: Uses her tablet for book-exchange messages
+  resident: resident_1
+  activity: work_home
+  sleep: false
+  days:
+  - Tu
+  - Th
+  start: 09:30
+  end: '10:30'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.1
+  note: Book-exchange coordination.
+- cites: They regroup over meals
+  resident: resident_1
+  activity: lunch
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '13:15'
+  end: '14:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: Leaves her current book beside her armchair
+  resident: resident_1
+  activity: reading
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '14:30'
+  end: '16:30'
+  at: armchair_l1
+  jitter: flexible
+  skip_p: 0.1
+- cites: Waters the balcony herbs with Arturo
+  resident: resident_1
+  activity: tidy_up
+  sleep: false
+  days:
+  - Tu
+  - Sa
+  start: '16:30'
+  end: '17:00'
+  at: sink_k1
+  jitter: flexible
+  skip_p: 0.2
+  note: Fills watering can and checks herb pots.
+- cites: Arturo carries water for walks
+  resident: resident_1
+  activity: walk
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  start: '16:45'
+  end: '17:30'
+  at: ELSEWHERE
+  jitter: flexible
+  skip_p: 0.2
+  note: Neighborhood walk together.
+- cites: They regroup over Arturo's cooking
+  resident: resident_1
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:30'
+  end: '19:10'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.05
+- cites: June manages most dishwashing
+  resident: resident_1
+  activity: wash_dishes
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:10'
+  end: '19:35'
+  at: sink_k1
+  jitter: routine
+  skip_p: 0.05
+  note: Post-dinner dishes and soaked cookware.
+- cites: Goes to neighborhood meetings
+  resident: resident_1
+  activity: appointment
+  sleep: false
+  days:
+  - Tu
+  start: '19:45'
+  end: '21:00'
+  at: ELSEWHERE
+  jitter: loose
+  skip_p: 0.6
+  note: Neighborhood meeting.
+- cites: Shared blanket is used while watching television
+  resident: resident_1
+  activity: watch_tv
+  sleep: false
+  days:
+  - Mo
+  - Fr
+  - Su
+  start: '20:00'
+  end: '21:30'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.3
+- cites: June reads in her armchair or bed
+  resident: resident_1
+  activity: reading
+  sleep: false
+  days:
+  - Tu
+  - We
+  - Th
+  - Sa
+  start: '20:00'
+  end: '21:30'
+  at: armchair_l1
+  jitter: flexible
+  skip_p: 0.15
+- cites: June reads in her armchair or bed
+  resident: resident_1
+  activity: reading
+  sleep: false
+  days:
+  - Tu
+  start: '21:10'
+  end: '22:00'
+  at: armchair_l1
+  jitter: flexible
+  skip_p: 0.15
+  note: Quiet return after a possible meeting.
+- cites: Arturo is mildly absent-minded
+  resident: resident_2
+  activity: wake_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:00
+  end: 07:25
+  at: bed_b1
+  jitter: routine
+  skip_p: 0
+- cites: Arturo wears glasses for cooking
+  resident: resident_2
+  activity: get_ready
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 07:25
+  end: 08:00
+  at: bathroom_shelf_ba1
+  jitter: routine
+  skip_p: 0
+- cites: They cross paths most reliably in the kitchen
+  resident: resident_2
+  activity: breakfast
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: 08:00
+  end: 08:40
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.05
+- cites: Uses his laptop for repair-cafe correspondence
+  resident: resident_2
+  activity: work_home
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  start: 09:30
+  end: '11:30'
+  at: desk_b2
+  jitter: routine
+  skip_p: 0.1
+  note: Repair-cafe messages and volunteer notes.
+- cites: Takes essentials to repair-cafe work
+  resident: resident_2
+  activity: work_away
+  sleep: false
+  days:
+  - Tu
+  - Th
+  - Sa
+  start: 09:30
+  end: '14:00'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0.1
+  note: Community repair-cafe volunteer shift.
+- cites: Makes tea in June's absence
+  resident: resident_2
+  activity: coffee
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  start: '11:30'
+  end: '11:50'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.25
+- cites: They regroup over meals
+  resident: resident_2
+  activity: lunch
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  - Su
+  start: '13:15'
+  end: '14:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: They regroup over meals
+  resident: resident_2
+  activity: lunch
+  sleep: false
+  days:
+  - Tu
+  - Th
+  - Sa
+  start: '14:15'
+  end: '14:50'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.1
+  note: Lunch after repair-cafe work.
+- cites: Uses armchair and sofa for the remote
+  resident: resident_2
+  activity: relax
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Sa
+  - Su
+  start: '15:00'
+  end: '16:30'
+  at: armchair_l1
+  jitter: flexible
+  skip_p: 0.15
+- cites: Runs repair-cafe work or errands
+  resident: resident_2
+  activity: errands
+  sleep: false
+  days:
+  - Fr
+  start: '14:30'
+  end: '15:30'
+  at: ELSEWHERE
+  jitter: loose
+  skip_p: 0.55
+- cites: Uses vacuum for quick passes under the table
+  resident: resident_2
+  activity: deep_clean
+  sleep: false
+  days:
+  - Sa
+  start: '14:30'
+  end: '15:00'
+  at: kitchen_table_k1
+  jitter: loose
+  skip_p: 0.65
+  note: Quick vacuum pass when soil or crumbs collect.
+- cites: Waters the balcony herbs with June
+  resident: resident_2
+  activity: tidy_up
+  sleep: false
+  days:
+  - Tu
+  - Sa
+  start: '16:30'
+  end: '17:00'
+  at: sink_k1
+  jitter: flexible
+  skip_p: 0.2
+  note: Fills watering can and checks herb pots.
+- cites: Carries water bottle for walks
+  resident: resident_2
+  activity: walk
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  start: '16:45'
+  end: '17:30'
+  at: ELSEWHERE
+  jitter: flexible
+  skip_p: 0.2
+  note: Neighborhood walk together.
+- cites: Cooks one-pot meals in the shared pot
+  resident: resident_2
+  activity: meal_prep
+  sleep: false
+  days:
+  - Tu
+  - Th
+  - Sa
+  start: '17:30'
+  end: '18:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+  note: One-pot dinner and counter cleaning.
+- cites: Handles larger cooking projects
+  resident: resident_2
+  activity: batch_cooking
+  sleep: false
+  days:
+  - Su
+  start: '16:30'
+  end: '18:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.25
+  note: Larger shared cooking project.
+- cites: They regroup over Arturo's cooking
+  resident: resident_2
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:30'
+  end: '19:10'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.05
+- cites: Moves the remote between armchair and sofa
+  resident: resident_2
+  activity: watch_tv
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '20:00'
+  end: '21:30'
+  at: armchair_l1
+  jitter: flexible
+  skip_p: 0.15
+object_rules:
+- object: phone_june
+  cites: June sets it beside her book or tablet at home.
+  home: coffee_table_l1
+  p_misplace: 0.12
+  rules:
+  - cites: June carries her phone on all outings.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.45
+    - dest: coffee_table_l1
+      p: 0.3
+    - dest: counter_k1
+      p: 0.15
+    - dest: person:resident_1
+      p: 0.1
+  - cites: June carries her phone on all outings.
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.5
+    - dest: coffee_table_l1
+      p: 0.25
+    - dest: counter_k1
+      p: 0.15
+    - dest: NO_OP
+      p: 0.1
+  - cites: June sets it beside her tablet at home.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.5
+    - dest: kitchen_table_k1
+      p: 0.25
+    - dest: coffee_table_l1
+      p: 0.15
+    - dest: NO_OP
+      p: 0.1
+- object: keys_june
+  cites: June returns her keys to a hook by the door.
+  home: entry_hook_e1
+  rules:
+  - cites: June takes keys whenever she leaves.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.8
+    - dest: entry_table_e1
+      p: 0.15
+    - dest: person:resident_1
+      p: 0.05
+  - cites: June takes keys whenever she leaves.
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.75
+    - dest: entry_table_e1
+      p: 0.2
+    - dest: entry_floor_e1
+      p: 0.05
+  - cites: June takes keys whenever she leaves.
+    activity: appointment
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.82
+    - dest: entry_table_e1
+      p: 0.1
+    - dest: person:resident_1
+      p: 0.08
+- object: wallet_june
+  cites: June keeps her wallet in the top dresser drawer.
+  home: nightstand_b1
+  rules:
+  - cites: June carries her wallet for errands.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.65
+    - dest: entry_table_e1
+      p: 0.2
+    - dest: person:resident_1
+      p: 0.15
+  - cites: June carries her wallet for errands.
+    activity: appointment
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.7
+    - dest: entry_table_e1
+      p: 0.18
+    - dest: coffee_table_l1
+      p: 0.12
+- object: glasses_june
+  cites: June leaves glasses beside her book or bedroom dresser.
+  home: nightstand_b1
+  p_misplace: 0.14
+  rules:
+  - cites: June wears glasses for reading.
+    activity: reading
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.48
+    - dest: nightstand_b1
+      p: 0.22
+    - dest: armchair_l1
+      p: 0.18
+    - dest: person:resident_1
+      p: 0.12
+  - cites: June keeps glasses on her bedroom dresser.
+    activity: night_sleep
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.72
+    - dest: bed_b1
+      p: 0.18
+    - dest: coffee_table_l1
+      p: 0.1
+  - cites: June wears glasses during her morning routine.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.55
+    - dest: nightstand_b1
+      p: 0.3
+    - dest: bathroom_shelf_ba1
+      p: 0.15
+  - cites: June puts glasses on after waking.
+    activity: wake_up
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.7
+    - dest: nightstand_b1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+- object: tablet_june
+  cites: June uses her tablet at the kitchen table.
+  home: counter_k1
+  rules:
+  - cites: June coordinates book exchange on her tablet.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.68
+    - dest: kitchen_table_k1
+      p: 0.2
+    - dest: coffee_table_l1
+      p: 0.07
+    - dest: NO_OP
+      p: 0.05
+  - cites: June plugs her tablet into the counter charger.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.78
+    - dest: kitchen_table_k1
+      p: 0.12
+    - dest: NO_OP
+      p: 0.1
+- object: book_june
+  cites: June returns borrowed books to a labeled shelf.
+  home: bookshelf_l1
+  rules:
+  - cites: June leaves her current book open beside armchair.
+    activity: reading
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.52
+    - dest: armchair_l1
+      p: 0.22
+    - dest: bookshelf_l1
+      p: 0.16
+    - dest: nightstand_b1
+      p: 0.1
+  - cites: June reads in her armchair or bed.
+    activity: night_sleep
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.56
+    - dest: bed_b1
+      p: 0.18
+    - dest: bookshelf_l1
+      p: 0.16
+    - dest: NO_OP
+      p: 0.1
+  - cites: June clears sorted books from shared surfaces.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: bookshelf_l1
+      p: 0.6
+    - dest: coffee_table_l1
+      p: 0.2
+    - dest: nightstand_b1
+      p: 0.12
+    - dest: NO_OP
+      p: 0.08
+- object: mug_june
+  cites: June promptly moves her mug through the drying rack.
+  home: cupboard_k1
+  rules:
+  - cites: June uses tea at the table or armchair.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.55
+    - dest: dish_rack_k1
+      p: 0.25
+    - dest: kitchen_table_k1
+      p: 0.12
+    - dest: coffee_table_l1
+      p: 0.08
+  - cites: June washes her mug immediately.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.74
+    - dest: sink_k1
+      p: 0.14
+    - dest: cupboard_k1
+      p: 0.08
+    - dest: NO_OP
+      p: 0.04
+  - cites: June puts dried dishes away.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.82
+    - dest: dish_rack_k1
+      p: 0.13
+    - dest: NO_OP
+      p: 0.05
+  - cites: Arturo sometimes leaves his used mug on side table.
+    activity: coffee
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.42
+    - dest: sink_k1
+      p: 0.3
+    - dest: counter_k1
+      p: 0.2
+    - dest: dish_rack_k1
+      p: 0.08
+- object: water_bottle_june
+  cites: June refills it before outings and leaves it drying.
+  home: sink_k1
+  p_misplace: 0.1
+  rules:
+  - cites: June carries her water bottle on outings.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.45
+    - dest: counter_k1
+      p: 0.25
+    - dest: entry_table_e1
+      p: 0.15
+    - dest: person:resident_1
+      p: 0.15
+  - cites: June carries her water bottle on outings.
+    activity: walk
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.5
+    - dest: counter_k1
+      p: 0.25
+    - dest: coffee_table_l1
+      p: 0.15
+    - dest: NO_OP
+      p: 0.1
+  - cites: June refills it before leaving.
+    activity: appointment
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.4
+    - dest: counter_k1
+      p: 0.3
+    - dest: entry_table_e1
+      p: 0.2
+    - dest: person:resident_1
+      p: 0.1
+- object: phone_arturo
+  cites: Arturo leaves his phone charging beside the desk.
+  home: desk_b2
+  p_misplace: 0.26
+  rules:
+  - cites: Arturo carries his phone to repair work.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.44
+    - dest: entry_table_e1
+      p: 0.22
+    - dest: counter_k1
+      p: 0.16
+    - dest: person:resident_2
+      p: 0.18
+  - cites: Arturo carries his phone for errands.
+    activity: errands
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.35
+    - dest: entry_table_e1
+      p: 0.3
+    - dest: coffee_table_l1
+      p: 0.2
+    - dest: person:resident_2
+      p: 0.15
+  - cites: Arturo leaves his phone charging beside desk.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.65
+    - dest: counter_k1
+      p: 0.15
+    - dest: nightstand_b2
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+- object: keys_arturo
+  cites: Arturo usually drops keys in the shallow entry bowl.
+  home: entry_table_e1
+  p_misplace: 0.28
+  rules:
+  - cites: Arturo takes keys whenever he leaves.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.58
+    - dest: entry_floor_e1
+      p: 0.17
+    - dest: desk_b2
+      p: 0.1
+    - dest: person:resident_2
+      p: 0.15
+  - cites: Arturo takes keys whenever he leaves.
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.5
+    - dest: entry_floor_e1
+      p: 0.25
+    - dest: counter_k1
+      p: 0.12
+    - dest: person:resident_2
+      p: 0.13
+  - cites: Arturo takes keys on neighborhood walks.
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.55
+    - dest: entry_floor_e1
+      p: 0.2
+    - dest: desk_b2
+      p: 0.15
+    - dest: NO_OP
+      p: 0.1
+- object: wallet_arturo
+  cites: Arturo puts his wallet on the bedroom dresser.
+  home: nightstand_b1
+  p_misplace: 0.2
+  rules:
+  - cites: Arturo carries wallet in his jacket on outings.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.48
+    - dest: entry_table_e1
+      p: 0.2
+    - dest: desk_b2
+      p: 0.12
+    - dest: person:resident_2
+      p: 0.2
+  - cites: Arturo carries wallet in his jacket on outings.
+    activity: errands
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.42
+    - dest: entry_table_e1
+      p: 0.25
+    - dest: bed_b1
+      p: 0.13
+    - dest: person:resident_2
+      p: 0.2
+- object: glasses_arturo
+  cites: Arturo leaves glasses on the desk or kitchen counter.
+  home: desk_b2
+  p_misplace: 0.23
+  rules:
+  - cites: Arturo wears glasses for repair notes.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.55
+    - dest: counter_k1
+      p: 0.18
+    - dest: nightstand_b2
+      p: 0.12
+    - dest: person:resident_2
+      p: 0.15
+  - cites: Arturo wears glasses while cooking.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.46
+    - dest: desk_b2
+      p: 0.2
+    - dest: kitchen_table_k1
+      p: 0.18
+    - dest: person:resident_2
+      p: 0.16
+  - cites: Arturo wears glasses while cooking.
+    activity: batch_cooking
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.5
+    - dest: desk_b2
+      p: 0.18
+    - dest: kitchen_table_k1
+      p: 0.17
+    - dest: NO_OP
+      p: 0.15
+- object: laptop_arturo
+  cites: Arturo uses his laptop at the narrow desk.
+  home: desk_b2
+  rules:
+  - cites: Arturo leaves laptop closed with its cable.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.86
+    - dest: kitchen_table_k1
+      p: 0.07
+    - dest: nightstand_b2
+      p: 0.03
+    - dest: NO_OP
+      p: 0.04
+  - cites: Arturo clears the desk during tidying.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.68
+    - dest: nightstand_b2
+      p: 0.12
+    - dest: NO_OP
+      p: 0.2
+- object: notebook_arturo
+  cites: Arturo’s notebook migrates between desk, table, and jacket.
+  home: desk_b2
+  p_misplace: 0.34
+  rules:
+  - cites: Arturo writes repair notes at his desk.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.42
+    - dest: kitchen_table_k1
+      p: 0.25
+    - dest: person:resident_2
+      p: 0.2
+    - dest: nightstand_b2
+      p: 0.13
+  - cites: Arturo carries notebook to volunteer work.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: person:resident_2
+      p: 0.3
+    - dest: desk_b2
+      p: 0.3
+    - dest: kitchen_table_k1
+      p: 0.25
+    - dest: entry_hook_e1
+      p: 0.15
+  - cites: Arturo’s notes can take over shared table.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.45
+    - dest: kitchen_table_k1
+      p: 0.22
+    - dest: person:resident_2
+      p: 0.18
+    - dest: NO_OP
+      p: 0.15
+- object: pen_arturo
+  cites: Arturo leaves his pen clipped in notebook or desk.
+  home: desk_b2
+  p_misplace: 0.18
+  rules:
+  - cites: Arturo uses pen with his notebook.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.5
+    - dest: person:resident_2
+      p: 0.25
+    - dest: kitchen_table_k1
+      p: 0.15
+    - dest: NO_OP
+      p: 0.1
+  - cites: Arturo carries notes for volunteer work.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: person:resident_2
+      p: 0.4
+    - dest: desk_b2
+      p: 0.32
+    - dest: entry_table_e1
+      p: 0.14
+    - dest: kitchen_table_k1
+      p: 0.14
+- object: water_bottle_arturo
+  cites: Arturo leaves his bottle near the sink for refilling.
+  home: sink_k1
+  p_misplace: 0.22
+  rules:
+  - cites: Arturo carries bottle for walks and errands.
+    activity: walk
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.46
+    - dest: counter_k1
+      p: 0.24
+    - dest: entry_table_e1
+      p: 0.16
+    - dest: person:resident_2
+      p: 0.14
+  - cites: Arturo carries bottle for volunteer errands.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.38
+    - dest: counter_k1
+      p: 0.25
+    - dest: desk_b2
+      p: 0.17
+    - dest: person:resident_2
+      p: 0.2
+  - cites: Arturo carries bottle for walks and errands.
+    activity: errands
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.42
+    - dest: counter_k1
+      p: 0.2
+    - dest: coffee_table_l1
+      p: 0.18
+    - dest: person:resident_2
+      p: 0.2
+- object: plate_1
+  cites: June moves meal plates from table through washing.
+  home: cupboard_k1
+  rules:
+  - cites: Both take plates from cupboard for meals.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.62
+    - dest: kitchen_table_k1
+      p: 0.2
+    - dest: dish_rack_k1
+      p: 0.13
+    - dest: NO_OP
+      p: 0.05
+  - cites: June usually moves plates from table to sink.
+    activity: lunch
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.66
+    - dest: dish_rack_k1
+      p: 0.16
+    - dest: kitchen_table_k1
+      p: 0.12
+    - dest: NO_OP
+      p: 0.06
+  - cites: June manages most dishwashing.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.68
+    - dest: sink_k1
+      p: 0.16
+    - dest: cupboard_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.06
+  - cites: June returns dried dishes to cupboard.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.84
+    - dest: dish_rack_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.06
+- object: plate_2
+  cites: Arturo may leave a meal plate in the sink.
+  home: cupboard_k1
+  rules:
+  - cites: Either partner uses this plate at table.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.58
+    - dest: kitchen_table_k1
+      p: 0.24
+    - dest: dish_rack_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.08
+  - cites: Either partner uses this plate at table.
+    activity: lunch
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.52
+    - dest: kitchen_table_k1
+      p: 0.26
+    - dest: dish_rack_k1
+      p: 0.14
+    - dest: cupboard_k1
+      p: 0.08
+  - cites: June restores dishes to order after meals.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.52
+    - dest: dish_rack_k1
+      p: 0.27
+    - dest: sink_k1
+      p: 0.13
+    - dest: NO_OP
+      p: 0.08
+- object: bowl_1
+  cites: Breakfast and soup bowls move through sink and rack.
+  home: cupboard_k1
+  rules:
+  - cites: This bowl is used for breakfast or soup.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.61
+    - dest: dish_rack_k1
+      p: 0.2
+    - dest: kitchen_table_k1
+      p: 0.14
+    - dest: NO_OP
+      p: 0.05
+  - cites: June washes bowls after use.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.76
+    - dest: sink_k1
+      p: 0.12
+    - dest: cupboard_k1
+      p: 0.07
+    - dest: NO_OP
+      p: 0.05
+  - cites: June puts washed bowls away.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.8
+    - dest: dish_rack_k1
+      p: 0.15
+    - dest: NO_OP
+      p: 0.05
+- object: bowl_2
+  cites: This bowl may wait on the side table before washing.
+  home: cupboard_k1
+  rules:
+  - cites: This bowl is used interchangeably for snacks or soup.
+    activity: lunch
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.46
+    - dest: coffee_table_l1
+      p: 0.22
+    - dest: kitchen_table_k1
+      p: 0.2
+    - dest: dish_rack_k1
+      p: 0.12
+  - cites: This bowl is used interchangeably for snacks or soup.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.5
+    - dest: kitchen_table_k1
+      p: 0.22
+    - dest: coffee_table_l1
+      p: 0.16
+    - dest: dish_rack_k1
+      p: 0.12
+  - cites: June washes bowls after use.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.63
+    - dest: sink_k1
+      p: 0.18
+    - dest: cupboard_k1
+      p: 0.1
+    - dest: coffee_table_l1
+      p: 0.09
+- object: pot_1
+  cites: Arturo leaves one-pot meals soaking in the sink.
+  home: cupboard_k1
+  rules:
+  - cites: Arturo cooks one-pot meals in this pot.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.67
+    - dest: counter_k1
+      p: 0.17
+    - dest: dish_rack_k1
+      p: 0.08
+    - dest: NO_OP
+      p: 0.08
+  - cites: Arturo handles larger cooking projects.
+    activity: batch_cooking
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.72
+    - dest: counter_k1
+      p: 0.15
+    - dest: dish_rack_k1
+      p: 0.08
+    - dest: cupboard_k1
+      p: 0.05
+  - cites: The pot soaks until someone washes it.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.46
+    - dest: sink_k1
+      p: 0.34
+    - dest: cupboard_k1
+      p: 0.12
+    - dest: NO_OP
+      p: 0.08
+- object: pan_1
+  cites: The pan travels cabinet, sink, and drying rack.
+  home: cupboard_k1
+  rules:
+  - cites: Arturo uses this pan for smaller cooked meals.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.5
+    - dest: dish_rack_k1
+      p: 0.22
+    - dest: counter_k1
+      p: 0.18
+    - dest: cupboard_k1
+      p: 0.1
+  - cites: Arturo handles larger cooking projects.
+    activity: batch_cooking
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.54
+    - dest: counter_k1
+      p: 0.2
+    - dest: dish_rack_k1
+      p: 0.16
+    - dest: NO_OP
+      p: 0.1
+  - cites: The pan travels cabinet, sink, and drying rack.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.57
+    - dest: dish_rack_k1
+      p: 0.25
+    - dest: sink_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.08
+- object: remote_1
+  cites: Arturo moves the remote between armchair and sofa.
+  home: coffee_table_l1
+  p_misplace: 0.3
+  rules:
+  - cites: Arturo moves remote between armchair and sofa.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.33
+    - dest: couch_l1
+      p: 0.28
+    - dest: coffee_table_l1
+      p: 0.22
+    - dest: tv_stand_l1
+      p: 0.17
+  - cites: June returns remote to side table when found.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.62
+    - dest: tv_stand_l1
+      p: 0.16
+    - dest: couch_l1
+      p: 0.12
+    - dest: NO_OP
+      p: 0.1
+  - cites: Arturo asks June where remote went.
+    activity: relax
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.3
+    - dest: couch_l1
+      p: 0.24
+    - dest: coffee_table_l1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.26
+- object: blanket_1
+  cites: June folds the shared blanket onto the sofa.
+  home: couch_l1
+  rules:
+  - cites: Both use blanket while reading or television.
+    activity: reading
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.36
+    - dest: couch_l1
+      p: 0.33
+    - dest: coffee_table_l1
+      p: 0.16
+    - dest: NO_OP
+      p: 0.15
+  - cites: Both use blanket while reading or television.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.4
+    - dest: armchair_l1
+      p: 0.28
+    - dest: coffee_table_l1
+      p: 0.17
+    - dest: tv_stand_l1
+      p: 0.15
+  - cites: June folds blanket after sitting-room use.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.78
+    - dest: armchair_l1
+      p: 0.1
+    - dest: coffee_table_l1
+      p: 0.06
+    - dest: NO_OP
+      p: 0.06
+  - cites: Both use blanket while relaxing.
+    activity: relax
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.31
+    - dest: couch_l1
+      p: 0.3
+    - dest: coffee_table_l1
+      p: 0.14
+    - dest: NO_OP
+      p: 0.25
+- object: watering_can_1
+  cites: The watering can rests beneath the balcony plant stand.
+  home: ELSEWHERE
+  rules: []
+- object: vacuum_cleaner_1
+  cites: Arturo vacuums quick passes under the kitchen table.
+  home: entry_floor_e1
+  rules:
+  - cites: Arturo makes quick passes under the kitchen table.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: NO_OP
+      p: 0.65
+    - dest: entry_floor_e1
+      p: 0.25
+    - dest: counter_k1
+      p: 0.06
+    - dest: kitchen_table_k1
+      p: 0.04
+- object: towel_1
+  cites: June hangs the kitchen towel by the sink after dishes.
+  home: towel_rack_ba1
+  rules:
+  - cites: Both use this towel for kitchen drying.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.58
+    - dest: counter_k1
+      p: 0.2
+    - dest: sink_k1
+      p: 0.14
+    - dest: NO_OP
+      p: 0.08
+  - cites: June replaces towel when it is damp.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.48
+    - dest: counter_k1
+      p: 0.18
+    - dest: sink_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.24
+  - cites: June restores kitchen order during tidying.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.66
+    - dest: counter_k1
+      p: 0.14
+    - dest: sink_k1
+      p: 0.08
+    - dest: NO_OP
+      p: 0.12
+activities:
+- name: night_sleep
+  cites: everyone sleeps nightly
+- name: wake_up
+  cites: retired couple maintain a shared home rhythm
+- name: get_ready
+  cites: both prepare for practical outings
+- name: breakfast
+  cites: they cross paths in the kitchen
+- name: wash_dishes
+  cites: June manages most dishwashing
+- name: put_away_dishes
+  cites: June returns dishes after drying
+- name: work_away
+  cites: both maintain separate volunteer roles
+- name: work_home
+  cites: both coordinate volunteer work at home
+- name: lunch
+  cites: they regroup over meals
+- name: reading
+  fragment:
+    mean_bouts: 2
+  cites: June protects and regularly reads books
+- name: tidy_up
+  cites: they water balcony herbs together
+- name: walk
+  cites: Arturo carries water for walks
+- name: dinner
+  cites: they regroup over Arturo's cooking
+- name: appointment
+  cites: June attends neighborhood meetings
+- name: watch_tv
+  cites: they share one television remote
+- name: relax
+  fragment:
+    mean_bouts: 2
+  cites: Arturo uses his armchair and the sofa
+- name: coffee
+  cites: Arturo makes tea in June's absence
+- name: errands
+  cites: Arturo leaves for errands
+- name: deep_clean
+  cites: Arturo vacuums under the kitchen table
+- name: meal_prep
+  cites: Arturo cooks one-pot meals
+- name: batch_cooking
+  cites: Arturo handles larger cooking projects
+arc_events:
+- note: Resident_2 leaves for a two-night regional work conference and stays at the hotel.
+  day: 2
+  patch:
+    drop:
+    - work_home
+    - coffee
+    - lunch
+    - relax
+    - walk
+    - dinner
+    - watch_tv
+    - night_sleep
+    add:
+    - cites: regional work conference
+      resident: resident_2
+      activity: traveling
+      start: 08:45
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: external
+      note: Train to the conference city.
+    - cites: regional work conference
+      resident: resident_2
+      activity: appointment
+      start: '11:00'
+      end: '17:00'
+      at: ELSEWHERE
+      jitter: external
+      note: First afternoon of conference sessions.
+    - cites: regional work conference
+      resident: resident_2
+      activity: night_sleep
+      start: '22:30'
+      end: 07:00+1
+      at: ELSEWHERE
+      jitter: external
+      note: Hotel night.
+- note: Resident_2 remains away for the conference's full second day.
+  day: 3
+  patch:
+    drop:
+    - wake_up
+    - get_ready
+    - breakfast
+    - work_away
+    - lunch
+    - relax
+    - walk
+    - dinner
+    - watch_tv
+    - night_sleep
+    add:
+    - cites: regional work conference
+      resident: resident_2
+      activity: appointment
+      start: 09:00
+      end: '17:00'
+      at: ELSEWHERE
+      jitter: external
+      note: Conference sessions and meetings.
+    - cites: regional work conference
+      resident: resident_2
+      activity: lunch
+      start: '12:30'
+      end: '13:10'
+      at: ELSEWHERE
+      jitter: external
+      note: Lunch provided at the conference.
+    - cites: regional work conference
+      resident: resident_2
+      activity: dinner
+      start: '19:00'
+      end: '20:00'
+      at: ELSEWHERE
+      jitter: external
+      note: Dinner with conference colleagues.
+    - cites: regional work conference
+      resident: resident_2
+      activity: night_sleep
+      start: '22:30'
+      end: 07:00+1
+      at: ELSEWHERE
+      jitter: external
+      note: Second hotel night.
+- note: Resident_2 travels home after the conference and works a short afternoon from home.
+  day: 4
+  patch:
+    drop:
+    - wake_up
+    - get_ready
+    - breakfast
+    - work_away
+    - lunch
+    - relax
+    add:
+    - cites: return from regional work conference
+      resident: resident_2
+      activity: traveling
+      start: 07:00
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: external
+      note: Morning train home from the conference.
+    - cites: return from regional work conference
+      resident: resident_2
+      activity: work_home
+      start: '13:00'
+      end: '16:00'
+      at: desk_b2
+      jitter: external
+      note: Catches up on urgent work after getting home.
+- note: Resident_1's off-campus study group runs late, replacing the usual Tuesday evening.
+  day: 8
+  patch:
+    drop:
+    - appointment
+    - reading
+    - night_sleep
+    add:
+    - cites: late study-group session
+      resident: resident_1
+      activity: study
+      start: '19:30'
+      end: '23:45'
+      at: ELSEWHERE
+      jitter: external
+      note: Final project review with classmates.
+    - cites: late study-group session
+      resident: resident_1
+      activity: night_sleep
+      start: '23:45'
+      end: 09:00+1
+      at: bed_b1
+      jitter: external
+      note: Late sleep after getting home.
+- note: Wrecked after the late study session, resident_1 misses the morning commute and catches up at
+    home.
+  day: 9
+  patch:
+    drop:
+    - wake_up
+    - get_ready
+    - breakfast
+    - work_away
+    add:
+    - cites: late study-group session
+      resident: resident_1
+      activity: work_home
+      start: '11:00'
+      end: '13:00'
+      at: kitchen_table_k1
+      jitter: flexible
+      note: Quiet catch-up work after sleeping in.
+- note: Friends invite both residents to Friday dinner, so there is no dinner cleanup or television night
+    at home.
+  day: 18
+  patch:
+    drop:
+    - dinner
+    - wash_dishes
+    - watch_tv
+    add:
+    - cites: friends' dinner invitation
+      resident: resident_1
+      activity: night_out
+      start: '18:15'
+      end: '22:00'
+      at: ELSEWHERE
+      jitter: external
+      note: Dinner at friends' place.
+    - cites: friends' dinner invitation
+      resident: resident_2
+      activity: night_out
+      start: '18:15'
+      end: '22:00'
+      at: ELSEWHERE
+      jitter: external
+      note: Dinner at friends' place.

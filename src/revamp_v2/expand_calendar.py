@@ -304,6 +304,22 @@ def expand(program: dict, carry_on_departure: bool = True,
     # programs keep v1 behaviour byte for byte.
     merged_away: list[str] = []
     skipped_away_lingers: list[str] = []
+    # Away activities as AUTHORED, captured BEFORE the merge: traveller
+    # detection must see the whole chain, not just its first block. The
+    # story arm writes realistic commutes (traveling -> work_away ->
+    # lunch), the merge names the trip after `traveling`, and computing
+    # away_base post-merge orphaned every rule on the destination
+    # activity — measured on the hosted pilot's hh4: wallet_sarah's ONLY
+    # rule (after work_away) orphaned, object classed static, 0 moves in
+    # 21 days, same story for phones/keys across both models.
+    premerge_away_base: set = {o["activity"] for o in occs
+                               if o["at"] == ELSEWHERE}
+    # dominant base activity -> every base activity ever merged into it.
+    # The trip fires the after-rules of ALL its chain members at
+    # homecoming (dominant's rule winning per object): named for one
+    # block, a chain is still one trip that ends once, and a rule on any
+    # of its legs describes that homecoming.
+    away_chain_bases: dict[str, set] = {}
     if v3:
         keep: list[dict] = []
         by_res: dict[str, list[dict]] = {}
@@ -319,10 +335,37 @@ def expand(program: dict, carry_on_departure: bool = True,
                     continue
                 j = i + 1
                 while j < len(mine) and mine[j]["at"] == ELSEWHERE:
-                    drop_uids.add(mine[j]["uid"])
-                    merged_away.append(
-                        f"{mine[j]['activity']}->{mine[i]['activity']}")
                     j += 1
+                # The surviving block keeps the FIRST member's start (the
+                # true departure — pickups fire when the person actually
+                # leaves) but takes the DOMINANT member's activity name:
+                # the trip's reason is its longest block (work_away, a
+                # school day), not the commute that begins it. Named for
+                # the commute, every rule on the destination activity
+                # orphaned and its authored homecoming dists never fired
+                # (the hosted pilot's static wallets); the merge comment
+                # always intended "the trip's own reason".
+                chain = mine[i:j]
+                if len(chain) > 1:
+                    def _dur(o: dict) -> int:
+                        if not o.get("end"):
+                            return 0
+                        d = _minutes(o["end"]) - _minutes(o["t"])
+                        return d + 1440 if d <= 0 else d
+                    dom = max(chain, key=_dur)
+                    away_chain_bases.setdefault(
+                        dom["activity"], set()).update(
+                            o["activity"] for o in chain)
+                    for o in chain[1:]:
+                        drop_uids.add(o["uid"])
+                        merged_away.append(
+                            f"{o['activity']}->{dom['activity']}")
+                    if dom is not chain[0]:
+                        merged_away.append(
+                            f"{chain[0]['activity']}=>{dom['activity']}"
+                            " (renamed to dominant)")
+                        chain[0]["activity"] = dom["activity"]
+                        chain[0]["note"] = dom.get("note", "")
                 i = j
         if drop_uids:
             occs = [o for o in occs if o["uid"] not in drop_uids]
@@ -462,7 +505,13 @@ def expand(program: dict, carry_on_departure: bool = True,
         merged = dict(bindings.get(name, {}))
         merged.update(a)
         bindings[name] = merged
-    raw_pivot = pivot_object_rules(program, known=set(variants),
+    # Chain members count as known: a rule on a merged-away leg is not
+    # orphaned — the chain union below attaches it to the surviving
+    # trip's homecoming.
+    member_known = (set().union(*away_chain_bases.values())
+                    if away_chain_bases else set())
+    raw_pivot = pivot_object_rules(program,
+                                   known=set(variants) | member_known,
                                    renames=renames)
     entries = placements_of(program)
     homes = {p["object"]: p["home"] for p in entries}
@@ -485,8 +534,9 @@ def expand(program: dict, carry_on_departure: bool = True,
     #       rules cannot express), with a synthesized homecoming putdown to
     #       `home` on trips whose activity has no authored after rule.
     owners = program.get("object_owners") or {}
-    away_base = {o.get("base_activity", o["activity"])
-                 for o in occs if o["at"] == ELSEWHERE}
+    # Pre-merge (see above): an object whose rule names ANY activity of a
+    # trip's chain rides that trip.
+    away_base = premerge_away_base
     travellers: dict[str, set] = {}       # obj -> owners' ids that carry it
     if v3:
         for entry_ in placements_of(program):
@@ -532,7 +582,10 @@ def expand(program: dict, carry_on_departure: bool = True,
     # (a tidy walk, a fragment) for an activity that never happens —
     # vacuous in exactly the way an orphaned object rule is. Dropped and
     # counted, same as the rest.
-    unused = sorted((set(bindings) | set(pivoted)) - set(variants))
+    member_bases = (set().union(*away_chain_bases.values())
+                    if away_chain_bases else set())
+    unused = sorted((set(bindings) | set(pivoted)) - set(variants)
+                    - member_bases)
     for name in unused:
         bindings.pop(name, None)
         pivoted.pop(name, None)
@@ -569,6 +622,7 @@ def expand(program: dict, carry_on_departure: bool = True,
                                      if r != e.get("home")][:6]
     picked_up: list[str] = []
     left_behind: list[str] = []
+    chain_inherited: list[str] = []
     putdown_normalized: list[str] = []
     synthesized_during: list[str] = []
     object_motions: dict[str, dict] = {}
@@ -650,6 +704,25 @@ def expand(program: dict, carry_on_departure: bool = True,
                         rule["only_from"] = kept or list(allowed)
                     else:
                         rule["only_from"] = list(allowed)
+                # Chain-member union (see away_chain_bases): a rule on
+                # any leg of this trip fires at its homecoming, unless
+                # the dominant activity already rules that object.
+                for b_ in sorted(away_chain_bases.get(base, ()) or ()):
+                    if b_ == base:
+                        continue
+                    member_after = (pivoted.get(b_) or {}).get("after") or {}
+                    for obj, rule in member_after.items():
+                        if obj in entry["after"]:
+                            continue
+                        r2 = dict(rule)
+                        if "only_from" in r2:
+                            kept = [x for x in r2["only_from"]
+                                    if x in allowed]
+                            r2["only_from"] = kept or list(allowed)
+                        else:
+                            r2["only_from"] = list(allowed)
+                        entry["after"][obj] = r2
+                        chain_inherited.append(f"{obj}@{name}<-{b_}")
                 for obj, rid_set in travellers.items():
                     if rid not in rid_set:
                         continue
@@ -764,6 +837,7 @@ def expand(program: dict, carry_on_departure: bool = True,
     acts["carried_putdowns_at_start"] = sorted(set(putdown_normalized))
     acts["synthesized_during"] = sorted(set(synthesized_during))
     acts["merged_away_blocks"] = sorted(merged_away) if v3 else []
+    acts["chain_inherited_after"] = sorted(chain_inherited)
     acts["skipped_away_lingers"] = sorted(set(skipped_away_lingers))
     return acts, motions
 

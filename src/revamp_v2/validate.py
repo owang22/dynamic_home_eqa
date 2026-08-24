@@ -58,6 +58,17 @@ INJECTED_KEYS = ("receptacles", "household_type", "object_semantics",
 MAX_INERT_FRACTION = 0.25
 MIN_ALLOWED_INERT = 2
 
+# At-home activities allowed to move nothing, before the program is
+# rejected. Same rationale as the inert tolerance: the gate filters the
+# degenerate case, not the occasional considered miss (measured on the
+# hosted set: gpt-5.6-terra at reasoning=medium leaves exactly one — a
+# meal_prep that relocates no tracked object — while at reasoning=none it
+# leaves three). Fraction of the household's own at-home activity count,
+# with a floor, so a small household is not held to a stricter standard
+# than a large one.
+MAX_UNCOVERED_FRACTION = 0.15
+MIN_ALLOWED_UNCOVERED = 1
+
 
 def strip_injected(program: dict) -> dict:
     return {k: v for k, v in program.items() if k not in INJECTED_KEYS}
@@ -197,6 +208,22 @@ def program_home(program: dict, obj: str) -> str:
                 if p["object"] == obj)
 
 
+def uncovered_at_home(program: dict) -> list[str]:
+    """At-home activities the program's object rules never name. Reported
+    in every build log (see the tolerance in check_reachability): a
+    tolerated miss must still be visible, never silent."""
+    bound = {r["activity"] for e in program.get("object_rules") or []
+             for r in e.get("rules") or []}
+    bound |= {a["name"] for a in program.get("activities") or []
+              if a.get("reset_all")}
+    return sorted({
+        b["activity"] for b in program["weekly_blocks"]
+        if b["at"] != xc.ELSEWHERE
+        and not b.get("sleep")
+        and not any(s in b["activity"] for s in xc.SLEEP_TOKENS)
+        and b["activity"] not in bound})
+
+
 def check_reachability(program: dict) -> list[str]:
     """Expansion + the ported v1 lint; every failure is one message.
 
@@ -255,13 +282,32 @@ def check_reachability(program: dict) -> list[str]:
         and not b.get("sleep")
         and not any(s in b["activity"] for s in xc.SLEEP_TOKENS)
         and b["activity"] not in bound})
-    for name in uncovered:
+    # Tolerance, same shape as the inert gate above: this check exists to
+    # catch the DEGENERATE habit (a generator binding 5 of 19 at-home
+    # activities, leaving a near-static home), not to insist every last
+    # activity moves something. A considered miss is legitimate content —
+    # a snack or a meal_prep genuinely need not relocate any tracked
+    # object — and rejecting a whole program over one costs a resample of
+    # everything. The story arm already takes this position on its own
+    # calendar (`unbound_story_activities` is counted, never fatal) and
+    # its bind pass authors rules for exactly these gaps downstream.
+    # The count is ALWAYS reported (see uncovered_at_home in the build
+    # log); only crossing the tolerance rejects.
+    n_at_home = len({b["activity"] for b in program["weekly_blocks"]
+                     if b["at"] != xc.ELSEWHERE and not b.get("sleep")
+                     and not any(s in b["activity"]
+                                 for s in xc.SLEEP_TOKENS)})
+    allowed_uncovered = max(MIN_ALLOWED_UNCOVERED,
+                            MAX_UNCOVERED_FRACTION * n_at_home)
+    if len(uncovered) > allowed_uncovered:
         problems.append(
-            f"reachability: at-home activity {name!r} is scheduled by "
-            f"weekly_blocks but appears in no object rule (and carries no "
-            f"reset_all) — a home block that touches nothing; objects move "
-            f"because of what people do at home, not only because they "
-            f"leave")
+            f"reachability: {len(uncovered)} of {n_at_home} at-home "
+            f"activities are scheduled by weekly_blocks but appear in no "
+            f"object rule (and carry no reset_all) — {uncovered[:6]}"
+            f"{'...' if len(uncovered) > 6 else ''}; home blocks that "
+            f"touch nothing. Objects move because of what people do at "
+            f"home, not only because they leave "
+            f"(tolerance: {allowed_uncovered:.1f})")
     # Fragmented activities' after-rules still need an `only_from` gate,
     # but it is DERIVED by the expander when absent (see its comment), so
     # by the time the expansion above succeeded every such rule has one.

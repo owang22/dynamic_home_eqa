@@ -189,12 +189,23 @@ class OpenAIHTTPClient(HTTPThinkingClient):
     (Llama etc.) simply ignore it.
     """
 
+    # Capability flag: False = a served vLLM endpoint (loopback, unmetered,
+    # vLLM-dialect request body). HostedOpenAIClient flips it. Call sites
+    # branch on THIS, never on URL string matching.
+    hosted = False
+
     # Transient-failure retries live HERE, not in generate_json's loop:
     # that loop treats a failure as "resample with seed+attempt", which is
     # the wrong medicine for a connection blip (and generate_json doesn't
     # catch requests exceptions anyway — a dead server should abort the
     # scene loudly, not burn MAX_RETRIES reseeding into the void).
     _HTTP_RETRIES = 3
+
+    def _adapt_body(self, body: dict) -> dict:
+        """Backend-dialect hook: identity for vLLM (the request body stays
+        byte-identical to what this client always sent), overridden by
+        HostedOpenAIClient to speak api.openai.com's dialect."""
+        return body
 
     def _post_chat(self, body: dict) -> dict:
         import requests
@@ -239,8 +250,210 @@ class OpenAIHTTPClient(HTTPThinkingClient):
             # validates seed as signed int64 — mask to 63 bits (same as
             # HTTPThinkingClient.generate_thinking).
             body["seed"] = seed & 0x7FFFFFFFFFFFFFFF
-        data = self._post_chat(body)
+        data = self._post_chat(self._adapt_body(body))
         return (data["choices"][0]["message"].get("content") or "").strip()
+
+
+class HostedOpenAIClient(OpenAIHTTPClient):
+    """api.openai.com backend for the hosted-generation pilot.
+
+    Same call sites as OpenAIHTTPClient (generate() with a guided-JSON
+    schema); the differences are all here, gated on `hosted`:
+
+      - auth: `Authorization: Bearer $OPENAI_API_KEY` when the key is set,
+        read from the environment per request and NEVER logged, cached, or
+        embedded in an exception;
+      - body dialect (_adapt_body): `chat_template_kwargs` stripped
+        (vLLM-only; OpenAI rejects unrecognized arguments),
+        `max_completion_tokens` instead of `max_tokens`,
+        `reasoning_effort: none` (the API's renamed minimum — see
+        _adapt_body) on every structured-output call, and
+        the guided schema run through to_hosted_schema() with
+        `strict: true`; `temperature`/`top_p` pass through unchanged
+        (probed accepted on gpt-5.6-luna — evidence in
+        reports/hosted_pilot/schema_compat.md);
+      - 429 (and 500/502/503) retried with exponential backoff honoring
+        Retry-After; every OTHER 4xx still fails fast;
+      - usage capture: every response's usage block, snapshot model id and
+        finish_reason land in `last_meta` (and `usage_log`), priced and
+        accumulated by the SpendGuard, which aborts the run at the cap;
+      - snapshot pinning: the alias resolves on the first response; a
+        mid-run snapshot change fails loudly.
+
+    Seed caveat: hosted `seed` is BEST-EFFORT (OpenAI documents no
+    determinism guarantee). It is still sent — it measurably improves
+    stability — but the ResponseCache is the source of truth for
+    reproducibility of a finished run.
+    """
+
+    hosted = True
+    _RETRYABLE_STATUS = frozenset({429, 500, 502, 503})
+    _HTTP_RETRIES = 6
+    _BACKOFF_BASE_S = 2.0
+    _BACKOFF_MAX_S = 120.0
+
+    def __init__(self, endpoint: str, model: str,
+                 timeout: float = 600.0) -> None:
+        super().__init__(endpoint, model, timeout)
+        import threading
+        from .hosted_spend import SpendGuard
+        self.guard = SpendGuard.from_env()
+        self.snapshot: Optional[str] = None   # pinned from first response
+        self.usage_log: list[dict] = []       # one entry per live response
+        self._lock = threading.Lock()         # snapshot pin + usage_log
+        # last_meta is THREAD-LOCAL: the story stage issues per-resident
+        # calls concurrently, and a caller reading last_meta right after
+        # its own generate() must never see a sibling thread's response.
+        self._tls = threading.local()
+
+    @property
+    def last_meta(self) -> Optional[dict]:
+        return getattr(self._tls, "meta", None)
+
+    def _adapt_body(self, body: dict) -> dict:
+        from .hosted_schema import to_hosted_schema
+        body = dict(body)
+        body.pop("chat_template_kwargs", None)
+        # HOSTED_REASONING_EFFORT: none|low|medium|high|xhigh. The brief
+        # pinned "minimal", which the gpt-5.6 API retired (probed
+        # 2026-08-23); "none" is its literal floor and the default here.
+        # It is a KNOB, not a prompt or schema change — raising it leaves
+        # the generation contract untouched.
+        effort = os.environ.get("HOSTED_REASONING_EFFORT", "none")
+        # temperature/top_p are accepted ONLY with reasoning off (probed:
+        # with any reasoning effort the API rejects a non-default
+        # temperature outright). With reasoning on they are dropped and
+        # sampling rides the model's default.
+        if effort != "none":
+            body.pop("temperature", None)
+            body.pop("top_p", None)
+        if "max_tokens" in body:
+            body["max_completion_tokens"] = body.pop("max_tokens")
+        # The brief pinned "minimal"; the gpt-5.6 API renamed the scale
+        # (probed 2026-08-23: minimal is gone, supported values are
+        # none/low/medium/high/xhigh — see reports/hosted_pilot/). "none"
+        # is its successor and the literal minimum.
+        body["reasoning_effort"] = effort
+        rf = body.get("response_format")
+        if rf and rf.get("type") == "json_schema":
+            js = dict(rf["json_schema"])
+            # HOSTED_SCHEMA_REMOVE: comma-separated extra keywords for
+            # to_hosted_schema (e.g. "prefixItems"), set from probe
+            # evidence when the default transform is still rejected.
+            extra = frozenset(
+                k for k in os.environ.get("HOSTED_SCHEMA_REMOVE",
+                                          "").split(",") if k)
+            js["schema"], _ = to_hosted_schema(js["schema"], extra)
+            js["strict"] = True
+            body["response_format"] = dict(rf, json_schema=js)
+        return body
+
+    def _post_chat(self, body: dict) -> dict:
+        import requests
+        self.guard.preflight()
+        headers = {}
+        key = os.environ.get("OPENAI_API_KEY", "")
+        if key:
+            headers["Authorization"] = f"Bearer {key}"
+        last_err: Exception = RuntimeError("unreachable")
+        delay = self._BACKOFF_BASE_S
+        for attempt in range(self._HTTP_RETRIES):
+            if attempt:
+                time.sleep(min(delay, self._BACKOFF_MAX_S))
+                delay *= 2
+            try:
+                resp = requests.post(f"{self.base}/v1/chat/completions",
+                                     json=body, headers=headers,
+                                     timeout=self.timeout)
+            except (requests.ConnectionError, requests.Timeout) as e:
+                last_err = e
+                _logger.warning("hosted call failed (attempt %d/%d): %s",
+                                attempt + 1, self._HTTP_RETRIES,
+                                type(e).__name__)
+                continue
+            if resp.status_code in self._RETRYABLE_STATUS:
+                retry_after = resp.headers.get("Retry-After")
+                try:
+                    wait = float(retry_after) if retry_after else 0.0
+                except ValueError:
+                    wait = 0.0
+                if wait > 0:
+                    delay = max(delay, wait)
+                last_err = RuntimeError(
+                    f"hosted API transient {resp.status_code}")
+                _logger.warning(
+                    "hosted API %d (attempt %d/%d, retry-after=%s)",
+                    resp.status_code, attempt + 1, self._HTTP_RETRIES,
+                    retry_after)
+                continue
+            if resp.status_code >= 400:
+                # Fail fast, error body verbatim. Deliberately a fresh
+                # exception (not requests' HTTPError): it carries only the
+                # SERVER's response text, never the outbound request or
+                # its auth header.
+                raise RuntimeError(
+                    f"hosted API {resp.status_code}: {resp.text[:2000]}")
+            data = resp.json()
+            self._note_response(data)
+            return data
+        raise last_err
+
+    def _note_response(self, data: dict) -> None:
+        model = data.get("model") or ""
+        with self._lock:
+            if self.snapshot is None:
+                self.snapshot = model
+                _logger.info("hosted model alias %s resolved to snapshot %s",
+                             self.model, model)
+            elif model != self.snapshot:
+                raise RuntimeError(
+                    f"hosted model snapshot changed mid-run: pinned "
+                    f"{self.snapshot!r}, this response came from {model!r} "
+                    f"— aborting; a pilot must not mix snapshots silently")
+        usage = data.get("usage") or {}
+        choices = data.get("choices") or [{}]
+        meta = {
+            "model_snapshot": model,
+            "finish_reason": choices[0].get("finish_reason"),
+            "usage": usage,
+            "cost_usd": None,
+        }
+        self._tls.meta = meta
+        with self._lock:
+            self.usage_log.append(meta)
+        # charge LAST: SpendCapExceeded must not lose the meta record.
+        meta["cost_usd"] = self.guard.charge(model, usage)
+
+
+def _is_hosted_endpoint(endpoint: str) -> bool:
+    from urllib.parse import urlparse
+    host = urlparse(endpoint).hostname or ""
+    return host == "api.openai.com" or host.endswith(".api.openai.com")
+
+
+def _hosted_check(client, schema: dict, parsed, live: bool = True):
+    """The hosted umbrella (applied by generate_json when client.hosted):
+    truncation guard (live calls only — a cached hit has no fresh
+    finish_reason), null-stripping, and re-validation of the response
+    against the ORIGINAL schema — the downstream re-check that makes
+    to_hosted_schema()'s keyword removals safe at every call site.
+    Raises ValueError (the retry trigger) on any violation."""
+    from .hosted_schema import drop_nulls
+    meta = getattr(client, "last_meta", None)
+    if live and meta is not None and meta.get("finish_reason") == "length":
+        raise ValueError("hosted truncation: finish_reason=length")
+    parsed = drop_nulls(parsed)
+    try:
+        import jsonschema
+    except ImportError:                                # pragma: no cover
+        return parsed
+    try:
+        jsonschema.validate(parsed, schema)
+    except jsonschema.ValidationError as e:
+        raise ValueError(f"original-schema violation "
+                         f"(constraint lost to the hosted transform?): "
+                         f"{e.message[:300]}") from None
+    return parsed
 
 
 _client = None  # _LLMClient | OpenAIHTTPClient — whichever _get_client last built
@@ -254,10 +467,15 @@ def _get_client(model: str):
     global _client
     endpoint = os.environ.get("GENERATION_ENDPOINT", "").strip()
     if endpoint:
-        if (not isinstance(_client, OpenAIHTTPClient)
+        # api.openai.com -> the metered hosted adapter (pilot); anything
+        # else -> the served-vLLM client, exactly as before. The check
+        # lives HERE, once — call sites branch on client.hosted only.
+        cls = (HostedOpenAIClient if _is_hosted_endpoint(endpoint)
+               else OpenAIHTTPClient)
+        if (type(_client) is not cls
                 or _client.model != model
                 or _client.base != endpoint.rstrip("/")):
-            _client = OpenAIHTTPClient(endpoint, model)
+            _client = cls(endpoint, model)
     else:
         if not isinstance(_client, _LLMClient) or _client.model != model:
             _client = _LLMClient(model)
@@ -299,11 +517,16 @@ def generate_json(
         repeat the identical call and (depending on decoder internals)
         reproduce the same malformed output.
     """
+    hosted = getattr(client, "hosted", False)
     if cache and not force:
         raw = cache.get(seed)
         if raw is not None:
             try:
-                return validate(json.loads(raw))
+                parsed = json.loads(raw)
+                if hosted:
+                    parsed = _hosted_check(client, schema, parsed,
+                                           live=False)
+                return validate(parsed)
             except (json.JSONDecodeError, KeyError, ValueError) as e:
                 # A cached response the current validate rejects (e.g. a
                 # partial-coverage judge response cached before coverage
@@ -318,7 +541,10 @@ def generate_json(
     for attempt in range(max_retries):
         raw = client.generate(system, user, schema, seed=seed + attempt, temperature=temperature)
         try:
-            result = validate(json.loads(raw))
+            parsed = json.loads(raw)
+            if hosted:
+                parsed = _hosted_check(client, schema, parsed)
+            result = validate(parsed)
         except (json.JSONDecodeError, KeyError, ValueError) as e:
             last_err = e
             _logger.warning(
@@ -327,7 +553,13 @@ def generate_json(
             )
             continue
         if cache:
-            cache.put(seed, user, raw)
+            # Hosted: the usage block, snapshot id and finish_reason ride
+            # in the cache record (Task 1.4) — the raw data the pilot
+            # report is built from.
+            extra = (dict(client.last_meta)
+                     if hosted and getattr(client, "last_meta", None)
+                     else None)
+            cache.put(seed, user, raw, extra=extra)
         return result
     raise last_err
 

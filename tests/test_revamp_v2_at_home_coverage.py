@@ -14,15 +14,36 @@ def test_covered_program_passes():
     assert v2v.check_reachability(mini_program()) == []
 
 
-def test_at_home_activity_with_no_binding_fails_named():
+def _unbound_block(activity: str, day: str = "Mo") -> dict:
+    return {"resident": "resident_1", "activity": activity,
+            "days": [day], "start": "19:00", "end": "20:00",
+            "at": "table_a", "jitter": "flexible", "skip_p": 0.0,
+            "sleep": False, "cites": "evenings"}
+
+
+def test_one_uncovered_at_home_activity_is_tolerated_but_reported():
+    """The gate filters the degenerate habit, not a single considered
+    miss: an at-home activity that genuinely moves no tracked object is
+    legitimate content (measured on the hosted set — gpt-5.6-terra leaves
+    exactly one at reasoning=medium). It is REPORTED, never silent."""
     program = mini_program()
-    program["weekly_blocks"].append(
-        {"resident": "resident_1", "activity": "watch_tv",
-         "days": ["Mo", "Tu"], "start": "19:00", "end": "20:00",
-         "at": "table_a", "jitter": "flexible", "skip_p": 0.0,
-         "sleep": False, "cites": "evenings"})
-    problems = v2v.check_reachability(program)
-    assert any("watch_tv" in p and "at-home" in p for p in problems)
+    program["weekly_blocks"].append(_unbound_block("watch_tv"))
+    assert v2v.uncovered_at_home(program) == ["watch_tv"]
+    assert not [p for p in v2v.check_reachability(program) if "at-home" in p]
+
+
+def test_too_many_uncovered_at_home_activities_fail_named():
+    """Past the tolerance the program is rejected, and the message names
+    the offenders — the near-static home this gate exists to catch."""
+    program = mini_program()
+    extra = ["watch_tv", "reading", "gaming", "hobby", "study", "music"]
+    for i, act in enumerate(extra):
+        program["weekly_blocks"].append(
+            _unbound_block(act, day=["Mo", "Tu", "We", "Th", "Fr", "Sa"][i]))
+    problems = [p for p in v2v.check_reachability(program) if "at-home" in p]
+    assert problems, "a near-static home must reject"
+    assert any("watch_tv" in p for p in problems)
+    assert set(extra) <= set(v2v.uncovered_at_home(program))
 
 
 def test_elsewhere_blocks_are_exempt():

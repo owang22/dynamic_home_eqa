@@ -1,0 +1,175 @@
+{
+  "household": "hh_001",
+  "household_type": "working_professional_solo",
+  "model": "gpt-5.6-terra",
+  "model_slug": "gpt-5.6-terra",
+  "builder_version": "rv2-b6",
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "calendar_program": "bb623651",
+    "object_rules": "c17ddb91",
+    "special_events": "dee8230e",
+    "leak_audit": "051fa759"
+  },
+  "scene": "symbolic",
+  "days": 21,
+  "persona_seed": 16233847487220177123,
+  "persona_attempts": [
+    {
+      "attempt": 0,
+      "seed": 1387783969514361124,
+      "reasoning": "A commuter-facing civil engineer who keeps a compact apartment orderly but accumulates project materials near the door.",
+      "leak_prediction": {
+        "predicted_type": "working_professional_solo",
+        "confidence": 0.93,
+        "reason": "All personal items are labeled for a single adult (Leah), with a commuting/work set including keys, wallet, laptop, charger, backpack, lunchbox, notebook, and jacket. The one-bedroom, single-place household inventory lacks signs of children, partners, roommates, or dedicated work-from-home equipment",
+        "actual_type": "working_professional_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 12990338444227195789,
+      "reasoning": "A one-person, office-based household centered on a conscientious transit planner who spends weekdays away from home, keeps a compact apartment orderly, and uses a small set of practical objects repeatedly rather than maintaining a highly social or remote-work-oriented home.",
+      "leak_prediction": {
+        "predicted_type": "working_professional_solo",
+        "confidence": 0.84,
+        "reason": "Single named occupant (nico) with one bedroom and a typical solo working-professional set of laptop, keys, wallet, backpack, charger, notebook, and yoga mat; household supplies are sized for one.",
+        "actual_type": "working_professional_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 2,
+      "seed": 193049048915417866,
+      "reasoning": "A single office-based professional with orderly departure and return rituals, distinct from remote workers, couples, students, families, and night-shift households.",
+      "leak_prediction": {
+        "predicted_type": "working_professional_solo",
+        "confidence": 0.9,
+        "reason": "Single-person possessions are all labeled Imani, and the laptop, backpack, keys, lunchbox, commute items, and professional accessories strongly indicate a solo working professional rather than a work-from-home household.",
+        "actual_type": "working_professional_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 3,
+      "seed": 13327988609741810274,
+      "reasoning": "A commuter-oriented solo professional with deliberate routines, a compact apartment setup, and a small set of practical objects that circulate between home and office.",
+      "leak_prediction": {
+        "predicted_type": "working_professional_solo",
+        "confidence": 0.98,
+        "reason": "All personal items are labeled for a single adult (Nadia), with commute/work items such as keys, wallet, backpack, lunchbox, laptop, charger, jacket, umbrella, notebook, and pen. The receptacles indicate a one-bedroom home with one primary occupant and no child-, roommate-, retiree-, or night-shift-",
+        "actual_type": "working_professional_solo",
+        "correct": true
+      }
+    },
+    {
+      "attempt": 4,
+      "seed": 16233847487220177123,
+      "reasoning": "A single, office-based municipal transit planner who is consistently away from home on weekdays, maintains an orderly compact apartment, and uses a few portable work and exercise items rather than maintaining a home office.",
+      "leak_prediction": {
+        "predicted_type": "working_professional_solo",
+        "confidence": 0.93,
+        "reason": "Single named resident with commute/work items (laptop, backpack, lunchbox, keys, wallet) and a one-person bedroom setup strongly indicates a working professional living alone.",
+        "actual_type": "working_professional_solo",
+        "correct": true
+      }
+    }
+  ],
+  "leak_unresolved": true,
+  "n_attempts": 2,
+  "accepted_attempt": 0,
+  "attempts": [
+    {
+      "attempt": 0,
+      "stage": "calendar",
+      "seed": 17448944360325941843,
+      "hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-terra",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 3985,
+            "completion_tokens": 6771,
+            "total_tokens": 10756,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 3982,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 3583,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.089222
+        }
+      ],
+      "failures": [],
+      "reasoning": "Leah has a regular office-week rhythm anchored by weekday departures, office lunch, and quiet evenings at home. Her methodical temperament supports a punctual morning sequence, nightly dishes, and a Sunday reset, while yoga, laundry, groceries, and bringing planning work to the dining table remain genuinely occasional. Weekends are slower but retain meals, reading, and bedtime."
+    },
+    {
+      "attempt": 0,
+      "stage": "objects",
+      "calendar_attempt": 0,
+      "seed": 1799006731807709599,
+      "hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-terra",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 11064,
+            "completion_tokens": 6580,
+            "total_tokens": 17644,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 11061,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 2364,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.101088
+        }
+      ],
+      "reasoning": "Leah resets commute items at the entry, reviews portable work materials at the dining table, cycles dishes through sink and drying rack, and keeps reading, exercise, and laundry items in their stated living, bedroom, and kitchen routines. Light drift is limited to small portable items she can set down between designated resets.",
+      "failures": [],
+      "special_hosted_usage": [
+        {
+          "model_snapshot": "gpt-5.6-terra",
+          "finish_reason": "stop",
+          "usage": {
+            "prompt_tokens": 2641,
+            "completion_tokens": 4426,
+            "total_tokens": 7067,
+            "prompt_tokens_details": {
+              "cached_tokens": 0,
+              "cache_write_tokens": 2638,
+              "audio_tokens": 0
+            },
+            "completion_tokens_details": {
+              "reasoning_tokens": 3011,
+              "audio_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "cost_usd": 0.058394
+        }
+      ],
+      "special_reasoning": "Leah has a two-day client training trip in the middle week, then later loses three workdays to a flu-like illness before easing back in remotely; a Friday dinner invitation closes the stretch with an easy social evening away from home.",
+      "special_attempt": 0
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "n_live_calls": 13,
+    "spend": "hosted spend $0.3705 of $35.00 cap across 13 call(s) [gpt-5.6-terra: $0.3705 (13 calls)]"
+  }
+}

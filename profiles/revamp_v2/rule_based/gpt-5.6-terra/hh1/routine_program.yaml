@@ -1,0 +1,1387 @@
+household: hh_001
+household_type: working_professional_solo
+source_persona: persona.yaml
+object_semantics: after_only_v3
+object_owners:
+  phone_leah: resident_1
+  keys_leah: resident_1
+  wallet_leah: resident_1
+  laptop_leah: resident_1
+  charger_leah: resident_1
+  backpack_leah: resident_1
+  jacket_leah: resident_1
+  lunchbox_leah: resident_1
+  water_bottle_leah: resident_1
+  notebook_leah: resident_1
+  pen_leah: resident_1
+  mug_leah: resident_1
+  bowl_1: resident_1
+  plate_1: resident_1
+  pot_1: resident_1
+  book_1: resident_1
+  blanket_leah: resident_1
+  yoga_mat_leah: resident_1
+  laundry_basket_1: resident_1
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 0.6
+  cites: methodical and prone to designated places
+receptacles:
+- id: bed_b1
+  room: bedroom
+- id: nightstand_b1
+  room: bedroom
+- id: desk_b1
+  room: bedroom
+- id: bedroom_floor_b1
+  room: bedroom
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: night_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '23:00'
+  end: 06:30+1
+  at: bed_b1
+  jitter: routine
+  cites: keeps work portable and out of the bedroom
+weekly_blocks:
+- cites: weekday workplace departures
+  resident: resident_1
+  activity: wake_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:30
+  end: 06:40
+  at: bed_b1
+  jitter: external
+  skip_p: 0
+- cites: leaves the apartment for her workplace weekdays
+  resident: resident_1
+  activity: shower
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:40
+  end: 06:55
+  at: bathroom_shelf_ba1
+  jitter: routine
+  skip_p: 0.1
+- cites: makes tea in one favorite mug
+  resident: resident_1
+  activity: coffee
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:55
+  end: 07:05
+  at: counter_k1
+  jitter: routine
+  skip_p: 0
+  note: Tea is represented by the closest available activity.
+- cites: simple daily meals
+  resident: resident_1
+  activity: breakfast
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:05
+  end: 07:25
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.05
+- cites: packs leftovers and fills water bottle for office
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:25
+  end: 07:45
+  at: counter_k1
+  jitter: external
+  skip_p: 0
+- cites: tea mug is rinsed before leaving
+  resident: resident_1
+  activity: wash_dishes
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:45
+  end: 07:50
+  at: sink_k1
+  jitter: external
+  skip_p: 0
+- cites: entryway is her departure-and-return station
+  resident: resident_1
+  activity: get_ready
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:50
+  end: 08:00
+  at: entry_hook_e1
+  jitter: external
+  skip_p: 0
+- cites: leaves for her workplace on weekdays
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:00
+  end: '12:00'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0
+- cites: takes packed leftovers to the workplace
+  resident: resident_1
+  activity: lunch
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '12:00'
+  end: '12:30'
+  at: ELSEWHERE
+  jitter: routine
+  skip_p: 0.1
+- cites: leaves for her workplace on weekdays
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '12:30'
+  end: '17:30'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0
+- cites: sometimes opens planning materials at the dining table
+  resident: resident_1
+  activity: work_home
+  sleep: false
+  days:
+  - Mo
+  - We
+  start: '17:30'
+  end: '18:00'
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.65
+  note: Optional review after bringing office materials home.
+- cites: prepares a simple meal after returning
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '18:00'
+  end: '18:35'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: prepares a simple meal after returning
+  resident: resident_1
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '18:35'
+  end: '19:05'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.05
+- cites: cleans dishes before relaxing
+  resident: resident_1
+  activity: wash_dishes
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '19:05'
+  end: '19:20'
+  at: sink_k1
+  jitter: routine
+  skip_p: 0.05
+- cites: uses her yoga mat in the living room
+  resident: resident_1
+  activity: gym
+  sleep: false
+  days:
+  - Tu
+  - Th
+  start: '19:30'
+  end: '20:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.6
+  note: Short yoga session.
+- cites: relaxes after cleaning dinner dishes
+  resident: resident_1
+  activity: relax
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  start: '19:20'
+  end: '21:30'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.05
+- cites: relaxes after short living-room yoga
+  resident: resident_1
+  activity: relax
+  sleep: false
+  days:
+  - Tu
+  - Th
+  start: '20:00'
+  end: '21:30'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.05
+- cites: reads library books on the sofa
+  resident: resident_1
+  activity: reading
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '21:30'
+  end: '22:15'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.2
+- cites: keeps work portable and out of the bedroom
+  resident: resident_1
+  activity: bedtime_routine
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '22:15'
+  end: '23:00'
+  at: nightstand_b1
+  jitter: routine
+  skip_p: 0
+- cites: quiet weekend mornings at home
+  resident: resident_1
+  activity: wake_up
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 07:30
+  end: 07:45
+  at: bed_b1
+  jitter: routine
+  skip_p: 0
+- cites: makes tea in one favorite mug
+  resident: resident_1
+  activity: coffee
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 07:45
+  end: 08:00
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+  note: Tea is represented by the closest available activity.
+- cites: simple daily meals
+  resident: resident_1
+  activity: breakfast
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 08:00
+  end: 08:30
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: favorite mug goes to drying rack after rinsing
+  resident: resident_1
+  activity: wash_dishes
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 08:30
+  end: 08:40
+  at: sink_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: simple meals require household provisions
+  resident: resident_1
+  activity: groceries
+  sleep: false
+  days:
+  - Sa
+  start: '10:00'
+  end: '11:00'
+  at: ELSEWHERE
+  jitter: loose
+  skip_p: 0.55
+- cites: does laundry when the basket is full
+  resident: resident_1
+  activity: laundry
+  sleep: false
+  days:
+  - Su
+  start: '10:00'
+  end: '11:30'
+  at: bedroom_floor_b1
+  jitter: loose
+  skip_p: 0.7
+  note: Only run when the basket has filled.
+- cites: keeps the kitchen counter mostly open
+  resident: resident_1
+  activity: tidy_up
+  sleep: false
+  days:
+  - Su
+  start: '11:30'
+  end: '12:00'
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.3
+  note: Weekly reset of shared surfaces.
+- cites: quiet weekends at home
+  resident: resident_1
+  activity: lunch
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '12:30'
+  end: '13:00'
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.15
+- cites: reads library books on the sofa
+  resident: resident_1
+  activity: reading
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '13:00'
+  end: '14:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.35
+- cites: quiet weekends at home
+  resident: resident_1
+  activity: relax
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '14:00'
+  end: '17:30'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.1
+- cites: uses her yoga mat in the living room
+  resident: resident_1
+  activity: gym
+  sleep: false
+  days:
+  - Sa
+  start: '16:30'
+  end: '17:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.65
+  note: Short yoga session.
+- cites: prepares a simple evening meal
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '18:00'
+  end: '18:40'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: prepares a simple evening meal
+  resident: resident_1
+  activity: dinner
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '18:40'
+  end: '19:15'
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.05
+- cites: cleans dishes before relaxing
+  resident: resident_1
+  activity: wash_dishes
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '19:15'
+  end: '19:30'
+  at: sink_k1
+  jitter: flexible
+  skip_p: 0.05
+- cites: reads library books on the sofa
+  resident: resident_1
+  activity: reading
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '20:30'
+  end: '22:15'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.25
+- cites: keeps work portable and out of the bedroom
+  resident: resident_1
+  activity: bedtime_routine
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '22:15'
+  end: '23:00'
+  at: nightstand_b1
+  jitter: routine
+  skip_p: 0
+object_rules:
+- object: phone_leah
+  cites: Returns to the entry tray for charging.
+  home: entry_table_e1
+  p_misplace: 0.22
+  rules:
+  - cites: Sets her phone aside for a morning shower.
+    activity: shower
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.85
+    - dest: bathroom_shelf_ba1
+      p: 0.15
+  - cites: Phone travels whenever Leah leaves home.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.94
+    - dest: entry_table_e1
+      p: 0.06
+  - cites: Returns to the entry tray for charging.
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.8
+    - dest: nightstand_b1
+      p: 0.15
+    - dest: NO_OP
+      p: 0.05
+- object: keys_leah
+  cites: Placed beside her wallet in the entry tray.
+  home: entry_table_e1
+  p_misplace: 0.12
+  rules:
+  - cites: Keys travel with Leah on every outing.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.97
+    - dest: entry_table_e1
+      p: 0.03
+  - cites: Places keys in the tray after errands.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.91
+    - dest: person:resident_1
+      p: 0.09
+- object: wallet_leah
+  cites: Wallet rests in the entry tray at home.
+  home: entry_table_e1
+  p_misplace: 0.1
+  rules:
+  - cites: Wallet travels in jacket pocket or backpack.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.9
+    - dest: entry_table_e1
+      p: 0.1
+  - cites: Empties jacket pockets at the entry.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.84
+    - dest: entry_hook_e1
+      p: 0.06
+    - dest: person:resident_1
+      p: 0.1
+- object: laptop_leah
+  cites: Opened on the dining table for plan review.
+  home: desk_b1
+  p_misplace: 0.1
+  rules:
+  - cites: Laptop travels in her backpack to the office.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.88
+    - dest: kitchen_table_k1
+      p: 0.08
+    - dest: NO_OP
+      p: 0.04
+  - cites: Reviews plans on the dining table.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.7
+    - dest: desk_b1
+      p: 0.2
+    - dest: person:resident_1
+      p: 0.1
+  - cites: Clears work materials before hosting anyone.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.58
+    - dest: kitchen_table_k1
+      p: 0.17
+    - dest: NO_OP
+      p: 0.25
+- object: charger_leah
+  cites: Charges her phone from the entry-side outlet.
+  home: entry_table_e1
+  p_misplace: 0.05
+  rules:
+  - cites: Phone charging uses the entry-side outlet.
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.86
+    - dest: nightstand_b1
+      p: 0.08
+    - dest: NO_OP
+      p: 0.06
+  - cites: Sometimes moves charger to the dining table.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: NO_OP
+      p: 0.67
+    - dest: kitchen_table_k1
+      p: 0.25
+    - dest: entry_table_e1
+      p: 0.08
+- object: backpack_leah
+  cites: Hangs from the hallway hook at home.
+  home: entry_hook_e1
+  p_misplace: 0.08
+  rules:
+  - cites: Carries work items out to the office.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.95
+    - dest: entry_hook_e1
+      p: 0.05
+  - cites: Unpacks work materials onto the dining table.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.62
+    - dest: kitchen_table_k1
+      p: 0.27
+    - dest: person:resident_1
+      p: 0.11
+  - cites: Returns home to the hallway hook.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.78
+    - dest: entry_floor_e1
+      p: 0.14
+    - dest: person:resident_1
+      p: 0.08
+- object: jacket_leah
+  cites: Hung on the entry hook after commuting.
+  home: entry_hook_e1
+  p_misplace: 0.06
+  rules:
+  - cites: Worn for commuting and errands.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.92
+    - dest: entry_hook_e1
+      p: 0.08
+  - cites: Hangs her jacket after errands.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: entry_floor_e1
+      p: 0.05
+    - dest: NO_OP
+      p: 0.05
+- object: lunchbox_leah
+  cites: Carries packed leftovers to Leah's workplace.
+  home: cupboard_k1
+  p_misplace: 0.08
+  rules:
+  - cites: Packs leftovers into a lunchbox for work.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.54
+    - dest: counter_k1
+      p: 0.31
+    - dest: NO_OP
+      p: 0.15
+  - cites: Rinsed in the kitchen sink after returning.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.62
+    - dest: sink_k1
+      p: 0.25
+    - dest: cupboard_k1
+      p: 0.13
+- object: water_bottle_leah
+  cites: Filled at the kitchen sink for workdays.
+  home: dish_rack_k1
+  p_misplace: 0.14
+  rules:
+  - cites: Takes a filled bottle to the office.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.83
+    - dest: counter_k1
+      p: 0.12
+    - dest: dish_rack_k1
+      p: 0.05
+  - cites: Fills the bottle at the kitchen sink.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.46
+    - dest: sink_k1
+      p: 0.3
+    - dest: counter_k1
+      p: 0.24
+  - cites: Bottle dries beside the sink afterward.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.73
+    - dest: sink_k1
+      p: 0.17
+    - dest: NO_OP
+      p: 0.1
+- object: notebook_leah
+  cites: Lies beside her laptop on the dining table.
+  home: desk_b1
+  p_misplace: 0.15
+  rules:
+  - cites: Notebook travels in Leah's backpack for work.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.86
+    - dest: kitchen_table_k1
+      p: 0.1
+    - dest: desk_b1
+      p: 0.04
+  - cites: Uses planning notes during home plan review.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.76
+    - dest: desk_b1
+      p: 0.16
+    - dest: NO_OP
+      p: 0.08
+  - cites: Clears the dining-table work pile.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.64
+    - dest: kitchen_table_k1
+      p: 0.11
+    - dest: person:resident_1
+      p: 0.25
+- object: pen_leah
+  cites: Returned to the small drawer under the dining table.
+  home: desk_b1
+  p_misplace: 0.23
+  rules:
+  - cites: Pen travels clipped to her notebook.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: person:resident_1
+      p: 0.8
+    - dest: kitchen_table_k1
+      p: 0.15
+    - dest: desk_b1
+      p: 0.05
+  - cites: Uses a pen with transit-planning notes.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.55
+    - dest: desk_b1
+      p: 0.34
+    - dest: NO_OP
+      p: 0.11
+  - cites: Returns the pen to its table drawer.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.72
+    - dest: kitchen_table_k1
+      p: 0.18
+    - dest: NO_OP
+      p: 0.1
+- object: mug_leah
+  cites: Favorite mug is rinsed onto the drying rack.
+  home: cupboard_k1
+  p_misplace: 0.05
+  rules:
+  - cites: Uses her favorite mug for morning tea.
+    activity: coffee
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.4
+    - dest: counter_k1
+      p: 0.29
+    - dest: dish_rack_k1
+      p: 0.31
+  - cites: Tea mug can follow her to the sofa.
+    activity: relax
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.38
+    - dest: dish_rack_k1
+      p: 0.19
+    - dest: NO_OP
+      p: 0.43
+  - cites: Rinses the mug upside down after use.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.81
+    - dest: cupboard_k1
+      p: 0.11
+    - dest: sink_k1
+      p: 0.08
+- object: bowl_1
+  cites: Used for breakfast or soup.
+  home: cupboard_k1
+  p_misplace: 0.04
+  rules:
+  - cites: Uses the bowl for breakfast.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.53
+    - dest: sink_k1
+      p: 0.34
+    - dest: dish_rack_k1
+      p: 0.13
+  - cites: Uses the bowl for a simple lunch.
+    activity: lunch
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.48
+    - dest: kitchen_table_k1
+      p: 0.32
+    - dest: dish_rack_k1
+      p: 0.2
+  - cites: Bowl cycles through washing and drying.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.59
+    - dest: cupboard_k1
+      p: 0.27
+    - dest: sink_k1
+      p: 0.14
+- object: plate_1
+  cites: Usually goes straight to the sink after dinner.
+  home: cupboard_k1
+  p_misplace: 0.03
+  rules:
+  - cites: Uses the plate for simple evening meals.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.76
+    - dest: kitchen_table_k1
+      p: 0.18
+    - dest: dish_rack_k1
+      p: 0.06
+  - cites: Washes the dinner plate after eating.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.69
+    - dest: cupboard_k1
+      p: 0.23
+    - dest: sink_k1
+      p: 0.08
+- object: pot_1
+  cites: Used for soups and grains on the stove.
+  home: cupboard_k1
+  p_misplace: 0.02
+  rules:
+  - cites: Uses a pot while preparing soups or grains.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.51
+    - dest: counter_k1
+      p: 0.36
+    - dest: cupboard_k1
+      p: 0.13
+  - cites: Washes and stores the pot after cooking.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.62
+    - dest: dish_rack_k1
+      p: 0.23
+    - dest: sink_k1
+      p: 0.15
+- object: book_1
+  cites: Reads library books on the sofa and in bed.
+  home: bookshelf_l1
+  p_misplace: 0.07
+  rules:
+  - cites: Leaves library books by the sofa between chapters.
+    activity: reading
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.56
+    - dest: nightstand_b1
+      p: 0.33
+    - dest: couch_l1
+      p: 0.11
+  - cites: May take her library book to bed.
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.65
+    - dest: coffee_table_l1
+      p: 0.22
+    - dest: NO_OP
+      p: 0.13
+  - cites: Returns reading items during a small tidy.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: bookshelf_l1
+      p: 0.4
+    - dest: coffee_table_l1
+      p: 0.39
+    - dest: nightstand_b1
+      p: 0.21
+- object: blanket_leah
+  cites: Kept folded over the sofa arm for reading.
+  home: armchair_l1
+  p_misplace: 0.03
+  rules:
+  - cites: Sometimes carries the blanket to bed on cool nights.
+    activity: night_sleep
+    phase: after
+    dist:
+    - dest: bed_b1
+      p: 0.37
+    - dest: armchair_l1
+      p: 0.56
+    - dest: NO_OP
+      p: 0.07
+  - cites: Returns a cool-night blanket after waking.
+    activity: wake_up
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.61
+    - dest: bed_b1
+      p: 0.22
+    - dest: couch_l1
+      p: 0.17
+  - cites: Uses the folded blanket while relaxing.
+    activity: relax
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.49
+    - dest: armchair_l1
+      p: 0.42
+    - dest: NO_OP
+      p: 0.09
+- object: yoga_mat_leah
+  cites: Rolls it beside the media console afterward.
+  home: tv_stand_l1
+  p_misplace: 0.03
+  rules:
+  - cites: Unrolls her mat in front of the sofa.
+    activity: gym
+    phase: after
+    dist:
+    - dest: tv_stand_l1
+      p: 0.84
+    - dest: couch_l1
+      p: 0.09
+    - dest: NO_OP
+      p: 0.07
+  - cites: Keeps the living room orderly after exercise.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: tv_stand_l1
+      p: 0.36
+    - dest: NO_OP
+      p: 0.64
+- object: laundry_basket_1
+  cites: Collects Leah's clothes in the bedroom.
+  home: bedroom_floor_b1
+  p_misplace: 0.02
+  rules:
+  - cites: Travels to the laundry area when full.
+    activity: laundry
+    phase: after
+    dist:
+    - dest: bedroom_floor_b1
+      p: 0.57
+    - dest: ELSEWHERE
+      p: 0.24
+    - dest: NO_OP
+      p: 0.19
+  - cites: Returns for folded laundry after washing.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: bedroom_floor_b1
+      p: 0.68
+    - dest: NO_OP
+      p: 0.24
+    - dest: ELSEWHERE
+      p: 0.08
+activities:
+- name: night_sleep
+  cites: regular overnight sleep
+- name: wake_up
+  cites: weekday workplace rhythm
+- name: shower
+  cites: prepares to leave for work
+- name: coffee
+  cites: makes tea in a favorite mug
+- name: breakfast
+  cites: simple daily meals
+- name: meal_prep
+  cites: packs leftovers and prepares simple meals
+- name: wash_dishes
+  cites: rinses mug and cleans dishes
+- name: get_ready
+  cites: entryway departure station
+- name: work_away
+  cites: municipal transit planner workplace
+- name: lunch
+  cites: takes packed leftovers to work
+- name: work_home
+  cites: sometimes reviews plans at dining table
+- name: dinner
+  cites: simple evening meals
+- name: gym
+  cites: uses yoga mat in living room
+- name: relax
+  fragment:
+    mean_bouts: 2
+  cites: relaxes after dinner
+- name: reading
+  fragment:
+    mean_bouts: 2
+  cites: reads library books on sofa
+- name: bedtime_routine
+  cites: keeps work out of bedroom
+- name: groceries
+  cites: household meals need provisions
+- name: laundry
+  cites: laundry when basket is full
+- name: tidy_up
+  cites: keeps shared surfaces orderly
+arc_events:
+- note: Leah leaves early for an overnight client-training trip and sleeps at the hotel.
+  day: 8
+  patch:
+    drop:
+    - breakfast
+    - meal_prep
+    - wash_dishes
+    - get_ready
+    - work_away
+    - lunch
+    - dinner
+    - gym
+    - relax
+    - reading
+    - bedtime_routine
+    - night_sleep
+    add:
+    - cites: client-training itinerary
+      resident: resident_1
+      activity: traveling
+      start: 07:05
+      end: '10:00'
+      at: ELSEWHERE
+      jitter: external
+      note: Early train to the client site.
+    - cites: client-training itinerary
+      resident: resident_1
+      activity: appointment
+      start: '10:00'
+      end: '17:30'
+      at: ELSEWHERE
+      jitter: external
+      note: First day of client training.
+    - cites: client-training itinerary
+      resident: resident_1
+      activity: traveling
+      start: '17:30'
+      end: '19:00'
+      at: ELSEWHERE
+      jitter: external
+      note: Transfer to the hotel after training.
+    - cites: client-training itinerary
+      resident: resident_1
+      activity: night_sleep
+      start: '23:00'
+      end: 06:30+1
+      at: ELSEWHERE
+      jitter: external
+      note: Hotel night during the trip.
+- note: The training runs through Wednesday, and Leah returns home late that evening.
+  day: 9
+  patch:
+    drop:
+    - wake_up
+    - shower
+    - coffee
+    - breakfast
+    - meal_prep
+    - wash_dishes
+    - get_ready
+    - work_away
+    - lunch
+    - work_home
+    - dinner
+    - relax
+    add:
+    - cites: client-training itinerary
+      resident: resident_1
+      activity: appointment
+      start: 08:30
+      end: '16:00'
+      at: ELSEWHERE
+      jitter: external
+      note: Second day of client training.
+    - cites: client-training itinerary
+      resident: resident_1
+      activity: traveling
+      start: '16:00'
+      end: '21:00'
+      at: ELSEWHERE
+      jitter: external
+      note: Train home after the final session.
+- note: Leah wakes feeling feverish, sees a clinician, and is told to rest at home.
+  day: 14
+  patch:
+    drop:
+    - shower
+    - coffee
+    - breakfast
+    - meal_prep
+    - wash_dishes
+    - get_ready
+    - work_away
+    - lunch
+    - work_home
+    - dinner
+    - relax
+    - reading
+    add:
+    - cites: same-day clinic booking
+      resident: resident_1
+      activity: appointment
+      start: 09:15
+      end: 09:45
+      at: ELSEWHERE
+      jitter: external
+      note: Brief acute-care appointment for fever symptoms.
+    - cites: clinician advice
+      resident: resident_1
+      activity: day_sleep
+      start: '10:30'
+      end: '12:30'
+      at: bed_b1
+      jitter: flexible
+      note: She sleeps after getting home from the clinic.
+    - cites: clinician advice
+      resident: resident_1
+      activity: take_medication
+      start: '10:00'
+      end: '10:05'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      note: First dose of the prescribed symptom relief.
+    - cites: sick-day meal
+      resident: resident_1
+      activity: lunch
+      start: '13:00'
+      end: '13:20'
+      at: kitchen_table_k1
+      jitter: flexible
+      note: A simple lunch at home instead of the office lunch.
+- note: The fever persists on Tuesday, so Leah calls out and spends most of the day sleeping.
+  day: 15
+  patch:
+    drop:
+    - wake_up
+    - shower
+    - coffee
+    - breakfast
+    - meal_prep
+    - wash_dishes
+    - get_ready
+    - work_away
+    - lunch
+    - dinner
+    - gym
+    - relax
+    - reading
+    add:
+    - cites: sick leave message
+      resident: resident_1
+      activity: day_sleep
+      start: 07:00
+      end: '11:00'
+      at: bed_b1
+      jitter: flexible
+      note: She sleeps through the usual morning routine.
+    - cites: clinician advice
+      resident: resident_1
+      activity: take_medication
+      start: '11:15'
+      end: '11:20'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      note: Medication and water before more rest.
+    - cites: sick leave message
+      resident: resident_1
+      activity: day_sleep
+      start: '13:00'
+      end: '16:30'
+      at: bed_b1
+      jitter: flexible
+      note: Afternoon recovery sleep.
+- note: Feeling better but still contagious, Leah works remotely rather than returning to the office.
+  day: 16
+  patch:
+    drop:
+    - work_away
+    - lunch
+    - work_home
+    add:
+    - cites: remote-work arrangement
+      resident: resident_1
+      activity: work_home
+      start: 09:00
+      end: '12:00'
+      at: kitchen_table_k1
+      jitter: external
+      note: Recovery-day remote work from the kitchen table.
+    - cites: remote-work arrangement
+      resident: resident_1
+      activity: lunch
+      start: '12:00'
+      end: '12:30'
+      at: kitchen_table_k1
+      jitter: flexible
+      note: Lunch at home between remote work blocks.
+    - cites: remote-work arrangement
+      resident: resident_1
+      activity: work_home
+      start: '13:00'
+      end: '16:00'
+      at: kitchen_table_k1
+      jitter: external
+      note: A shortened afternoon of remote work.
+- note: A friend invites Leah to dinner on Friday, so there is no cooking or cleanup at home.
+  day: 18
+  patch:
+    drop:
+    - meal_prep
+    - dinner
+    - wash_dishes
+    - relax
+    - reading
+    - bedtime_routine
+    add:
+    - cites: friend dinner invitation
+      resident: resident_1
+      activity: socialise_home
+      start: '18:15'
+      end: '22:30'
+      at: ELSEWHERE
+      jitter: external
+      note: Dinner and a long catch-up at a friend's place.

@@ -264,3 +264,46 @@ def test_calendar_schema_never_exposes_the_object_placeholder():
         "properties"]["reset_all"]
     assert "objects" not in reset["properties"]   # scoping needs objects
     assert "p" in reset["properties"]             # the rate does not
+
+
+def test_at_home_coverage_gate_tolerates_a_considered_miss():
+    """The coverage gate filters the DEGENERATE habit (a near-static home),
+    not the occasional at-home activity that genuinely moves nothing —
+    measured on the hosted set, gpt-5.6-terra leaves exactly one such
+    activity at reasoning=medium and three at reasoning=none. The count is
+    always reported via validate.uncovered_at_home()."""
+    import copy
+    from revamp_v2_helpers import PERSONA, mini_program_v3
+    import validate as v2v
+
+    program = mini_program_v3()
+    at_home = sorted({b["activity"] for b in program["weekly_blocks"]
+                      if b["at"] != "ELSEWHERE" and not b.get("sleep")})
+    assert at_home, "fixture must schedule at-home activities"
+
+    # baseline: fully covered, nothing reported
+    assert v2v.uncovered_at_home(program) == []
+
+    # strip every rule naming ONE at-home activity: tolerated (<= floor)
+    victim = at_home[0]
+    one_gap = copy.deepcopy(program)
+    for entry in one_gap["object_rules"]:
+        entry["rules"] = [r for r in (entry.get("rules") or [])
+                          if r["activity"] != victim]
+    one_gap["activities"] = [a for a in one_gap.get("activities") or []
+                             if a["name"] != victim]
+    assert v2v.uncovered_at_home(one_gap) == [victim]
+    assert not [p for p in v2v.check_reachability(one_gap)
+                if "at-home" in p], "one considered miss must not reject"
+
+    # strip EVERY at-home activity's rules: degenerate, must reject
+    all_gaps = copy.deepcopy(program)
+    for entry in all_gaps["object_rules"]:
+        entry["rules"] = [r for r in (entry.get("rules") or [])
+                          if r["activity"] not in at_home]
+    all_gaps["activities"] = [a for a in all_gaps.get("activities") or []
+                              if a["name"] not in at_home]
+    if len(at_home) > max(v2v.MIN_ALLOWED_UNCOVERED,
+                          v2v.MAX_UNCOVERED_FRACTION * len(at_home)):
+        assert [p for p in v2v.check_reachability(all_gaps)
+                if "at-home" in p], "a near-static home must still reject"

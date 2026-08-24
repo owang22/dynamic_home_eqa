@@ -1,0 +1,1811 @@
+household: hh_004
+household_type: family_teen_and_child
+source_persona: persona.yaml
+object_semantics: after_only_v3
+object_owners:
+  mug_sarah: resident_1
+  mug_david: resident_2
+  mug_shared_1: shared
+  bowl_shared_1: shared
+  bowl_shared_2: shared
+  plate_shared_1: shared
+  plate_shared_2: shared
+  laptop_sarah: resident_1
+  laptop_leo: resident_3
+  phone_sarah: resident_1
+  phone_david: resident_2
+  phone_leo: resident_3
+  phone_mia: resident_4
+  tablet_david: resident_2
+  keys_sarah: resident_1
+  keys_david: resident_2
+  keys_leo: resident_3
+  wallet_sarah: resident_1
+  wallet_david: resident_2
+  backpack_leo: resident_3
+  backpack_mia: resident_4
+  headphones_leo: resident_3
+  gaming_controller_leo: resident_3
+  glasses_sarah: resident_1
+  notebook_mia: resident_4
+  pen_mia: resident_4
+  toy_mia: resident_4
+  blanket_mia: resident_4
+  water_bottle_shared: shared
+  jacket_david: resident_2
+  vacuum_cleaner_shared: shared
+  laundry_basket_shared: shared
+  remote_shared: shared
+days: 21
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 0.7
+  cites: Sarah is organized and manages household logistics.
+- id: resident_2
+  jitter_scale: 1.4
+  cites: David is laid-back and forgetful.
+- id: resident_3
+  jitter_scale: 1.15
+  cites: Leo is focused but messy.
+- id: resident_4
+  jitter_scale: 1.5
+  cites: Mia is energetic and forgetful.
+receptacles:
+- id: bed_b1
+  room: bedroom_1
+- id: nightstand_b1
+  room: bedroom_1
+- id: desk_b1
+  room: bedroom_1
+- id: bedroom_floor_b1
+  room: bedroom_1
+- id: bed_b2
+  room: bedroom_2
+- id: nightstand_b2
+  room: bedroom_2
+- id: desk_b2
+  room: bedroom_2
+- id: bedroom_floor_b2
+  room: bedroom_2
+- id: bed_b3
+  room: bedroom_3
+- id: nightstand_b3
+  room: bedroom_3
+- id: desk_b3
+  room: bedroom_3
+- id: bedroom_floor_b3
+  room: bedroom_3
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule:
+- resident: resident_1
+  activity: night_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:30'
+  end: 06:15+1
+  at: bed_b1
+  jitter: routine
+  cites: Sarah keeps an organized household routine.
+- resident: resident_2
+  activity: night_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:30'
+  end: 06:15+1
+  at: bed_b1
+  jitter: routine
+  cites: David shares the parents' tidy bedroom.
+- resident: resident_3
+  activity: night_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '22:45'
+  end: 06:45+1
+  at: bed_b2
+  jitter: routine
+  cites: Leo retreats to his room at day's end.
+- resident: resident_4
+  activity: night_sleep
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '21:00'
+  end: 06:45+1
+  at: bed_b3
+  jitter: routine
+  cites: Mia is the household's eight-year-old child.
+weekly_blocks:
+- cites: The day starts with a hallway rush.
+  resident: resident_1
+  activity: get_ready
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:15
+  end: 06:35
+  at: entry_floor_e1
+  jitter: external
+  skip_p: 0
+- cites: Sarah's mug is for morning coffee.
+  resident: resident_1
+  activity: coffee
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:35
+  end: 06:50
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: The kitchen table is the shared meal hub.
+  resident: resident_1
+  activity: breakfast
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:50
+  end: 07:10
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: Sarah is an accountant.
+  resident: resident_1
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:00
+  end: '17:30'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0
+- cites: Sarah manages the household logistics.
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '17:45'
+  end: '18:30'
+  at: counter_k1
+  jitter: routine
+  skip_p: 0.05
+- cites: Sarah manages the household logistics.
+  resident: resident_1
+  activity: meal_prep
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '17:45'
+  end: '18:30'
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.1
+- cites: The family converges in kitchen evenings.
+  resident: resident_1
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:30'
+  end: '19:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.05
+- cites: She clears the table immediately after dinner.
+  resident: resident_1
+  activity: tidy_up
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:00'
+  end: '19:15'
+  at: kitchen_table_k1
+  jitter: external
+  skip_p: 0.02
+- cites: Sarah clears her dinner plate to the sink.
+  resident: resident_1
+  activity: wash_dishes
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:15'
+  end: '19:30'
+  at: sink_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: Sarah checks emails with glasses on the counter.
+  resident: resident_1
+  activity: work_home
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  start: '20:00'
+  end: '20:45'
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.3
+- cites: Sarah puts the laundry basket in the hallway.
+  resident: resident_1
+  activity: laundry
+  sleep: false
+  days:
+  - Sa
+  start: '10:00'
+  end: '11:00'
+  at: entry_floor_e1
+  jitter: flexible
+  skip_p: 0.2
+- cites: The kitchen table is the shared meal hub.
+  resident: resident_1
+  activity: breakfast
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 08:00
+  end: 08:30
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: The day starts with a hallway rush.
+  resident: resident_2
+  activity: get_ready
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:20
+  end: 06:50
+  at: entry_floor_e1
+  jitter: external
+  skip_p: 0
+- cites: David's mug is used for tea.
+  resident: resident_2
+  activity: coffee
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:50
+  end: 07:00
+  at: counter_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: The kitchen table is the shared meal hub.
+  resident: resident_2
+  activity: breakfast
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:00
+  end: 07:20
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.15
+- cites: David is a sales manager.
+  resident: resident_2
+  activity: work_away
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:00
+  end: '17:30'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0
+- cites: David relaxes on the sofa in evenings.
+  resident: resident_2
+  activity: relax
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '17:45'
+  end: '18:30'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.15
+- cites: The family converges in kitchen evenings.
+  resident: resident_2
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:30'
+  end: '19:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: David uses the tablet for streaming movies.
+  resident: resident_2
+  activity: watch_tv
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:30'
+  end: '22:00'
+  at: couch_l1
+  jitter: flexible
+  skip_p: 0.1
+- cites: David takes the vacuum cleaner out.
+  resident: resident_2
+  activity: deep_clean
+  sleep: false
+  days:
+  - Sa
+  start: '10:30'
+  end: '11:30'
+  at: coffee_table_l1
+  jitter: loose
+  skip_p: 0.7
+- cites: The kitchen table is the shared meal hub.
+  resident: resident_2
+  activity: breakfast
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 08:00
+  end: 08:30
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: The day starts with a hallway rush.
+  resident: resident_3
+  activity: get_ready
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:45
+  end: 07:05
+  at: entry_floor_e1
+  jitter: external
+  skip_p: 0
+- cites: The kitchen table is the shared meal hub.
+  resident: resident_3
+  activity: breakfast
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:05
+  end: 07:25
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.15
+- cites: Leo is a student.
+  resident: resident_3
+  activity: school
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:00
+  end: '15:30'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0
+- cites: Leo uses his laptop for homework.
+  resident: resident_3
+  activity: homework
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '16:00'
+  end: '17:30'
+  at: desk_b2
+  jitter: routine
+  skip_p: 0.1
+- cites: The family converges in kitchen evenings.
+  resident: resident_3
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:30'
+  end: '19:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: Leo games in the living room.
+  resident: resident_3
+  activity: gaming
+  sleep: false
+  days:
+  - Mo
+  - We
+  - Fr
+  start: '19:30'
+  end: '21:45'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.55
+- cites: Leo retreats to his room at day's end.
+  resident: resident_3
+  activity: relax
+  sleep: false
+  days:
+  - Tu
+  - Th
+  start: '19:15'
+  end: '22:15'
+  at: desk_b2
+  jitter: flexible
+  skip_p: 0.25
+- cites: Leo games in the living room.
+  resident: resident_3
+  activity: gaming
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '14:30'
+  end: '17:00'
+  at: couch_l1
+  jitter: loose
+  skip_p: 0.6
+- cites: The kitchen table is the shared meal hub.
+  resident: resident_3
+  activity: breakfast
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 08:30
+  end: 09:00
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.2
+- cites: The day starts with a hallway rush.
+  resident: resident_4
+  activity: get_ready
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 06:50
+  end: 07:15
+  at: entry_floor_e1
+  jitter: external
+  skip_p: 0
+- cites: Mia uses a cereal bowl for breakfast.
+  resident: resident_4
+  activity: breakfast
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 07:15
+  end: 07:35
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: Mia is a student.
+  resident: resident_4
+  activity: school
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: 08:00
+  end: '15:15'
+  at: ELSEWHERE
+  jitter: external
+  skip_p: 0
+- cites: Sarah resets the table for homework.
+  resident: resident_4
+  activity: homework
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '15:45'
+  end: '16:30'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.1
+- cites: Mia draws at the kitchen table.
+  resident: resident_4
+  activity: hobby
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  start: '16:30'
+  end: '17:15'
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.25
+- cites: The family converges in kitchen evenings.
+  resident: resident_4
+  activity: dinner
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '18:30'
+  end: '19:00'
+  at: kitchen_table_k1
+  jitter: routine
+  skip_p: 0.08
+- cites: Mia brings her blanket for TV time.
+  resident: resident_4
+  activity: watch_tv
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '19:15'
+  end: '20:15'
+  at: couch_l1
+  jitter: routine
+  skip_p: 0.1
+- cites: Mia has a final story before bed.
+  resident: resident_4
+  activity: bedtime_routine
+  sleep: false
+  days:
+  - Mo
+  - Tu
+  - We
+  - Th
+  - Fr
+  - Sa
+  - Su
+  start: '20:15'
+  end: '21:00'
+  at: bed_b3
+  jitter: routine
+  skip_p: 0
+- cites: Mia draws at the kitchen table.
+  resident: resident_4
+  activity: hobby
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '10:30'
+  end: '11:30'
+  at: kitchen_table_k1
+  jitter: loose
+  skip_p: 0.55
+- cites: Mia plays with blocks in the living room.
+  resident: resident_4
+  activity: hobby
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: '14:00'
+  end: '15:00'
+  at: coffee_table_l1
+  jitter: loose
+  skip_p: 0.55
+- cites: Mia uses a cereal bowl for breakfast.
+  resident: resident_4
+  activity: breakfast
+  sleep: false
+  days:
+  - Sa
+  - Su
+  start: 08:30
+  end: 09:00
+  at: kitchen_table_k1
+  jitter: flexible
+  skip_p: 0.15
+object_rules:
+- object: mug_sarah
+  cites: Sarah leaves her coffee mug on the counter.
+  home: counter_k1
+  rules:
+  - cites: Sarah leaves her coffee mug on the counter.
+    activity: coffee
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.8
+    - dest: sink_k1
+      p: 0.15
+    - dest: NO_OP
+      p: 0.05
+  - cites: Sarah clears kitchen items after dinner.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.65
+    - dest: cupboard_k1
+      p: 0.25
+    - dest: NO_OP
+      p: 0.1
+- object: mug_david
+  cites: David often leaves his tea mug in the sink.
+  home: cupboard_k1
+  rules:
+  - cites: David often leaves his tea mug in the sink.
+    activity: coffee
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.75
+    - dest: counter_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.05
+  - cites: David's mug may remain overnight in the sink.
+    activity: night_sleep
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.85
+    - dest: dish_rack_k1
+      p: 0.05
+    - dest: NO_OP
+      p: 0.1
+- object: mug_shared_1
+  cites: The guest mug is kept in the cupboard.
+  home: cupboard_k1
+  rules:
+  - cites: A spare mug is occasionally used at breakfast.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.55
+    - dest: sink_k1
+      p: 0.25
+    - dest: kitchen_table_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+- object: bowl_shared_1
+  cites: Mia leaves her cereal bowl in the sink.
+  home: cupboard_k1
+  rules:
+  - cites: Mia leaves her cereal bowl in the sink.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.8
+    - dest: kitchen_table_k1
+      p: 0.12
+    - dest: dish_rack_k1
+      p: 0.08
+  - cites: Dishwashing clears breakfast bowls.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.7
+    - dest: cupboard_k1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.1
+- object: bowl_shared_2
+  cites: Leo uses this soup bowl for dinner.
+  home: cupboard_k1
+  rules:
+  - cites: Leo uses this soup bowl for dinner.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.55
+    - dest: kitchen_table_k1
+      p: 0.25
+    - dest: dish_rack_k1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.1
+  - cites: The soup bowl goes through dishwashing.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.75
+    - dest: cupboard_k1
+      p: 0.15
+    - dest: NO_OP
+      p: 0.1
+- object: plate_shared_1
+  cites: Sarah clears her dinner plate immediately.
+  home: cupboard_k1
+  rules:
+  - cites: Sarah clears her dinner plate immediately.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.88
+    - dest: dish_rack_k1
+      p: 0.07
+    - dest: NO_OP
+      p: 0.05
+  - cites: Sarah resets the table after dinner.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.7
+    - dest: dish_rack_k1
+      p: 0.2
+    - dest: cupboard_k1
+      p: 0.1
+- object: plate_shared_2
+  cites: David's dinner plate stays until Sarah clears it.
+  home: cupboard_k1
+  rules:
+  - cites: David's dinner plate stays until Sarah clears it.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.72
+    - dest: sink_k1
+      p: 0.18
+    - dest: NO_OP
+      p: 0.1
+  - cites: Sarah clears the kitchen table immediately.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.82
+    - dest: dish_rack_k1
+      p: 0.1
+    - dest: cupboard_k1
+      p: 0.08
+- object: laptop_sarah
+  cites: Sarah keeps her laptop strictly on the dining table.
+  home: kitchen_table_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Sarah works from the kitchen table.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.75
+    - dest: desk_b1
+      p: 0.15
+    - dest: nightstand_b1
+      p: 0.05
+    - dest: NO_OP
+      p: 0.05
+  - cites: Sarah closes her laptop at night.
+    activity: night_sleep
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.55
+    - dest: kitchen_table_k1
+      p: 0.3
+    - dest: nightstand_b1
+      p: 0.15
+- object: laptop_leo
+  cites: Leo leaves his school laptop open on his desk.
+  home: desk_b2
+  p_misplace: 0.12
+  rules:
+  - cites: Leo leaves his school laptop open on his desk.
+    activity: homework
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.85
+    - dest: bed_b2
+      p: 0.08
+    - dest: NO_OP
+      p: 0.07
+  - cites: Leo relaxes at his desk on weekdays.
+    activity: relax
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.7
+    - dest: bed_b2
+      p: 0.15
+    - dest: NO_OP
+      p: 0.15
+- object: phone_sarah
+  cites: Sarah's work phone is left on its charging dock.
+  home: nightstand_b1
+  p_misplace: 0.16
+  rules:
+  - cites: Sarah takes her work phone to the office.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.55
+    - dest: counter_k1
+      p: 0.25
+    - dest: kitchen_table_k1
+      p: 0.12
+    - dest: NO_OP
+      p: 0.08
+  - cites: Sarah charges her phone overnight.
+    activity: night_sleep
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.82
+    - dest: bed_b1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.08
+- object: phone_david
+  cites: David leaves his phone on the sofa or jacket.
+  home: couch_l1
+  p_misplace: 0.35
+  rules:
+  - cites: David leaves his phone on the sofa or jacket.
+    activity: relax
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.5
+    - dest: armchair_l1
+      p: 0.22
+    - dest: coffee_table_l1
+      p: 0.18
+    - dest: NO_OP
+      p: 0.1
+  - cites: David takes his phone to the office.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.3
+    - dest: entry_hook_e1
+      p: 0.2
+    - dest: couch_l1
+      p: 0.3
+    - dest: NO_OP
+      p: 0.2
+- object: phone_leo
+  cites: Leo leaves his phone on his desk or backpack.
+  home: desk_b2
+  p_misplace: 0.28
+  rules:
+  - cites: Leo takes his phone to school.
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.48
+    - dest: bedroom_floor_b2
+      p: 0.25
+    - dest: nightstand_b2
+      p: 0.12
+    - dest: NO_OP
+      p: 0.15
+  - cites: Leo uses his desk during homework.
+    activity: homework
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.72
+    - dest: bed_b2
+      p: 0.12
+    - dest: NO_OP
+      p: 0.16
+- object: phone_mia
+  cites: Mia leaves her simple phone in her backpack.
+  home: entry_hook_e1
+  p_misplace: 0.3
+  rules:
+  - cites: Mia takes her phone to school.
+    activity: school
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.5
+    - dest: entry_floor_e1
+      p: 0.25
+    - dest: bed_b3
+      p: 0.1
+    - dest: NO_OP
+      p: 0.15
+  - cites: Mia puts belongings near bed at bedtime.
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b3
+      p: 0.45
+    - dest: bed_b3
+      p: 0.25
+    - dest: entry_hook_e1
+      p: 0.15
+    - dest: NO_OP
+      p: 0.15
+- object: tablet_david
+  cites: David uses the tablet for living room streaming.
+  home: coffee_table_l1
+  p_misplace: 0.18
+  rules:
+  - cites: David uses the tablet for living room streaming.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.7
+    - dest: couch_l1
+      p: 0.18
+    - dest: tv_stand_l1
+      p: 0.06
+    - dest: NO_OP
+      p: 0.06
+  - cites: David occasionally tidies living room electronics.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: tv_stand_l1
+      p: 0.35
+    - dest: coffee_table_l1
+      p: 0.25
+    - dest: NO_OP
+      p: 0.4
+- object: keys_sarah
+  cites: Sarah leaves her car keys on the kitchen hook.
+  home: entry_hook_e1
+  p_misplace: 0.12
+  rules:
+  - cites: Sarah takes her car keys to the office.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.8
+    - dest: entry_table_e1
+      p: 0.12
+    - dest: counter_k1
+      p: 0.05
+    - dest: NO_OP
+      p: 0.03
+  - cites: Sarah gathers keys while getting ready.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.65
+    - dest: entry_table_e1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.15
+- object: keys_david
+  cites: David's car keys are often lost in his coat pocket.
+  home: entry_hook_e1
+  p_misplace: 0.36
+  rules:
+  - cites: David's car keys are often lost in his coat pocket.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.28
+    - dest: armchair_l1
+      p: 0.22
+    - dest: entry_table_e1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.3
+  - cites: David rushes through the hallway to get ready.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.42
+    - dest: entry_floor_e1
+      p: 0.2
+    - dest: entry_hook_e1
+      p: 0.23
+    - dest: NO_OP
+      p: 0.15
+- object: keys_leo
+  cites: Leo leaves his house keys on his desk.
+  home: desk_b2
+  p_misplace: 0.24
+  rules:
+  - cites: Leo takes house keys to school.
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.66
+    - dest: bedroom_floor_b2
+      p: 0.18
+    - dest: nightstand_b2
+      p: 0.06
+    - dest: NO_OP
+      p: 0.1
+- object: wallet_sarah
+  cites: Sarah keeps her wallet in her work bag.
+  home: entry_table_e1
+  p_misplace: 0.1
+  rules:
+  - cites: Sarah rarely removes her work wallet.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.18
+    - dest: nightstand_b1
+      p: 0.04
+    - dest: NO_OP
+      p: 0.78
+- object: wallet_david
+  cites: David's wallet stays in his car or coat pocket.
+  home: entry_hook_e1
+  p_misplace: 0.38
+  rules:
+  - cites: David's wallet stays in his car or coat pocket.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: ELSEWHERE
+      p: 0.48
+    - dest: entry_hook_e1
+      p: 0.2
+    - dest: armchair_l1
+      p: 0.12
+    - dest: NO_OP
+      p: 0.2
+  - cites: David relaxes with wallet still in his jacket.
+    activity: relax
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.36
+    - dest: couch_l1
+      p: 0.18
+    - dest: entry_hook_e1
+      p: 0.14
+    - dest: NO_OP
+      p: 0.32
+- object: backpack_leo
+  cites: Leo leaves his school backpack on the bedroom floor.
+  home: bedroom_floor_b2
+  p_misplace: 0.2
+  rules:
+  - cites: Leo leaves his school backpack on the bedroom floor.
+    activity: school
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.82
+    - dest: desk_b2
+      p: 0.08
+    - dest: bed_b2
+      p: 0.04
+    - dest: NO_OP
+      p: 0.06
+  - cites: Leo keeps textbooks nearby during homework.
+    activity: homework
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.55
+    - dest: desk_b2
+      p: 0.32
+    - dest: NO_OP
+      p: 0.13
+- object: backpack_mia
+  cites: Mia leaves her backpack in the hallway closet.
+  home: entry_hook_e1
+  p_misplace: 0.26
+  rules:
+  - cites: Mia leaves her backpack in the hallway closet.
+    activity: school
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.62
+    - dest: entry_floor_e1
+      p: 0.22
+    - dest: armchair_l1
+      p: 0.05
+    - dest: NO_OP
+      p: 0.11
+  - cites: Mia fumbles with her backpack before school.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.42
+    - dest: entry_hook_e1
+      p: 0.4
+    - dest: kitchen_table_k1
+      p: 0.07
+    - dest: NO_OP
+      p: 0.11
+- object: headphones_leo
+  cites: Leo keeps headphones around his neck even sleeping.
+  home: couch_l1
+  p_misplace: 0.22
+  rules:
+  - cites: Leo wears headphones while gaming.
+    activity: gaming
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.45
+    - dest: bed_b2
+      p: 0.25
+    - dest: desk_b2
+      p: 0.15
+    - dest: NO_OP
+      p: 0.15
+  - cites: Leo keeps headphones around his neck even sleeping.
+    activity: night_sleep
+    phase: after
+    dist:
+    - dest: bed_b2
+      p: 0.7
+    - dest: nightstand_b2
+      p: 0.12
+    - dest: NO_OP
+      p: 0.18
+- object: gaming_controller_leo
+  cites: Leo leaves his controller on the sofa arm.
+  home: couch_l1
+  p_misplace: 0.18
+  rules:
+  - cites: Leo leaves his controller on the sofa arm.
+    activity: gaming
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.76
+    - dest: coffee_table_l1
+      p: 0.12
+    - dest: tv_stand_l1
+      p: 0.05
+    - dest: NO_OP
+      p: 0.07
+  - cites: Leo retreats after gaming.
+    activity: relax
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.34
+    - dest: couch_l1
+      p: 0.42
+    - dest: bed_b2
+      p: 0.09
+    - dest: NO_OP
+      p: 0.15
+- object: glasses_sarah
+  cites: Sarah leaves reading glasses on the kitchen counter.
+  home: counter_k1
+  p_misplace: 0.25
+  rules:
+  - cites: Sarah checks emails with glasses at the table.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.68
+    - dest: kitchen_table_k1
+      p: 0.17
+    - dest: nightstand_b1
+      p: 0.07
+    - dest: NO_OP
+      p: 0.08
+  - cites: Sarah removes reading glasses before sleep.
+    activity: night_sleep
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.63
+    - dest: counter_k1
+      p: 0.22
+    - dest: bed_b1
+      p: 0.05
+    - dest: NO_OP
+      p: 0.1
+- object: notebook_mia
+  cites: Mia draws in her notebook at the kitchen table.
+  home: desk_b3
+  p_misplace: 0.16
+  rules:
+  - cites: Mia draws in her notebook at the kitchen table.
+    activity: hobby
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.62
+    - dest: coffee_table_l1
+      p: 0.16
+    - dest: desk_b3
+      p: 0.1
+    - dest: NO_OP
+      p: 0.12
+  - cites: Sarah clears the table for homework.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.48
+    - dest: kitchen_table_k1
+      p: 0.22
+    - dest: bed_b3
+      p: 0.15
+    - dest: NO_OP
+      p: 0.15
+- object: pen_mia
+  cites: Mia leaves her colored pen on the kitchen table.
+  home: desk_b3
+  p_misplace: 0.34
+  rules:
+  - cites: Mia leaves her colored pen on the kitchen table.
+    activity: hobby
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.65
+    - dest: entry_hook_e1
+      p: 0.12
+    - dest: coffee_table_l1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.13
+  - cites: Mia uses table space for homework.
+    activity: homework
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.58
+    - dest: desk_b3
+      p: 0.13
+    - dest: NO_OP
+      p: 0.29
+- object: toy_mia
+  cites: Mia scatters building blocks on the living room rug.
+  home: bedroom_floor_b3
+  p_misplace: 0.3
+  rules:
+  - cites: Mia scatters building blocks on the living room rug.
+    activity: hobby
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.34
+    - dest: couch_l1
+      p: 0.2
+    - dest: bedroom_floor_b3
+      p: 0.16
+    - dest: NO_OP
+      p: 0.3
+  - cites: Sarah moves toys before guests arrive.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: bedroom_floor_b3
+      p: 0.55
+    - dest: bookshelf_l1
+      p: 0.1
+    - dest: NO_OP
+      p: 0.35
+- object: blanket_mia
+  cites: Mia brings her blanket to the living room for TV.
+  home: bed_b3
+  p_misplace: 0.14
+  rules:
+  - cites: Mia brings her blanket to the living room for TV.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.68
+    - dest: armchair_l1
+      p: 0.1
+    - dest: bed_b3
+      p: 0.08
+    - dest: NO_OP
+      p: 0.14
+  - cites: Mia returns to bed during bedtime routine.
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: bed_b3
+      p: 0.58
+    - dest: bedroom_floor_b3
+      p: 0.17
+    - dest: couch_l1
+      p: 0.08
+    - dest: NO_OP
+      p: 0.17
+- object: water_bottle_shared
+  cites: Leo leaves the shared bottle on the fridge door.
+  home: counter_k1
+  p_misplace: 0.2
+  rules:
+  - cites: Leo leaves the shared bottle on the fridge door.
+    activity: gaming
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.48
+    - dest: coffee_table_l1
+      p: 0.22
+    - dest: desk_b2
+      p: 0.1
+    - dest: NO_OP
+      p: 0.2
+  - cites: Sarah fills the family bottle during meal prep.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: kitchen_table_k1
+      p: 0.15
+    - dest: NO_OP
+      p: 0.15
+- object: jacket_david
+  cites: David leaves his work jacket over the sofa chair.
+  home: armchair_l1
+  p_misplace: 0.17
+  rules:
+  - cites: David leaves his work jacket over the sofa chair.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.72
+    - dest: entry_hook_e1
+      p: 0.16
+    - dest: couch_l1
+      p: 0.05
+    - dest: NO_OP
+      p: 0.07
+  - cites: David relaxes with his jacket over the chair.
+    activity: relax
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.68
+    - dest: couch_l1
+      p: 0.1
+    - dest: entry_hook_e1
+      p: 0.05
+    - dest: NO_OP
+      p: 0.17
+- object: vacuum_cleaner_shared
+  cites: David forgets vacuum attachments on the floor.
+  home: entry_floor_e1
+  rules:
+  - cites: David forgets vacuum attachments on the floor.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.32
+    - dest: bedroom_floor_b1
+      p: 0.14
+    - dest: NO_OP
+      p: 0.54
+- object: laundry_basket_shared
+  cites: Sarah puts the laundry basket in the hallway.
+  home: entry_floor_e1
+  rules:
+  - cites: Sarah puts the laundry basket in the hallway.
+    activity: laundry
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.62
+    - dest: bedroom_floor_b1
+      p: 0.25
+    - dest: NO_OP
+      p: 0.13
+  - cites: Sarah moves laundry toward the parents' bedroom.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: bedroom_floor_b1
+      p: 0.42
+    - dest: entry_floor_e1
+      p: 0.35
+    - dest: NO_OP
+      p: 0.23
+- object: remote_shared
+  cites: The TV remote is left on coffee table or sofa.
+  home: coffee_table_l1
+  p_misplace: 0.24
+  rules:
+  - cites: The TV remote is left on coffee table or sofa.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.52
+    - dest: couch_l1
+      p: 0.31
+    - dest: tv_stand_l1
+      p: 0.06
+    - dest: NO_OP
+      p: 0.11
+  - cites: David sometimes resets the living room while cleaning.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: tv_stand_l1
+      p: 0.28
+    - dest: coffee_table_l1
+      p: 0.22
+    - dest: NO_OP
+      p: 0.5
+activities:
+- name: night_sleep
+  cites: Everyone has a regular overnight sleep period.
+- name: get_ready
+  cites: Mornings begin with everyone getting ready.
+- name: coffee
+  cites: Sarah has morning coffee and David has tea.
+- name: breakfast
+  cites: Mia uses a cereal bowl for breakfast.
+- name: work_away
+  cites: Sarah and David have office occupations.
+- name: meal_prep
+  cites: Sarah manages the household logistics.
+- name: dinner
+  cites: The family converges in kitchen evenings.
+- name: tidy_up
+  cites: Sarah clears the kitchen table after dinner.
+- name: wash_dishes
+  cites: Dinner plates and mugs are left for washing.
+- name: work_home
+  cites: Sarah checks emails at the kitchen table.
+- name: laundry
+  cites: Sarah uses the hallway laundry basket as reminder.
+- name: relax
+  cites: David relaxes on the sofa; Leo retreats.
+- name: watch_tv
+  cites: David streams movies and Mia watches TV.
+- name: deep_clean
+  cites: David takes out the vacuum cleaner.
+- name: school
+  cites: Leo and Mia are students.
+- name: homework
+  cites: The kitchen table is reset for homework.
+- name: gaming
+  fragment:
+    mean_bouts: 2
+  cites: Leo has a living-room gaming station.
+- name: hobby
+  fragment:
+    mean_bouts: 2
+  cites: Mia draws and plays with building blocks.
+- name: bedtime_routine
+  cites: Mia has a final story before sleep.
+arc_events:
+- note: Leo stays out late for a school-club performance and misses his usual Tuesday wind-down.
+  day: 8
+  patch:
+    drop:
+    - relax
+    add:
+    - cites: school-club performance
+      resident: resident_3
+      activity: night_out
+      start: '19:15'
+      end: '23:30'
+      at: ELSEWHERE
+      jitter: external
+      note: Late performance and cast celebration.
+- note: Wrecked after the late performance, Leo naps after school and skips his usual gaming night.
+  day: 9
+  patch:
+    drop:
+    - gaming
+    add:
+    - cites: late school-club performance
+      resident: resident_3
+      activity: day_sleep
+      start: '16:00'
+      end: '18:00'
+      at: bed_b2
+      jitter: flexible
+      note: He falls asleep as soon as he gets home.
+- note: Friends invite the whole family to dinner, so there is no cooking or dinner at home Saturday evening.
+  day: 12
+  patch:
+    drop:
+    - meal_prep
+    - dinner
+    add:
+    - cites: friends' dinner invitation
+      resident: resident_1
+      activity: dinner
+      start: '18:30'
+      end: '20:15'
+      at: ELSEWHERE
+      jitter: external
+      note: Dinner at friends' house.
+    - cites: friends' dinner invitation
+      resident: resident_2
+      activity: dinner
+      start: '18:30'
+      end: '20:15'
+      at: ELSEWHERE
+      jitter: external
+      note: Dinner at friends' house.
+    - cites: friends' dinner invitation
+      resident: resident_3
+      activity: dinner
+      start: '18:30'
+      end: '20:15'
+      at: ELSEWHERE
+      jitter: external
+      note: Dinner at friends' house.
+    - cites: friends' dinner invitation
+      resident: resident_4
+      activity: dinner
+      start: '18:30'
+      end: '20:15'
+      at: ELSEWHERE
+      jitter: external
+      note: Dinner at friends' house.
+- note: A stomach bug keeps both children home Monday; resident_1 clears the office day and works remotely
+    around caring for them.
+  day: 14
+  patch:
+    drop:
+    - school
+    - homework
+    - hobby
+    - work_away
+    add:
+    - cites: stomach-bug sick day
+      resident: resident_4
+      activity: appointment
+      start: 09:30
+      end: '10:00'
+      at: ELSEWHERE
+      jitter: external
+      note: Brief same-day clinic check.
+    - cites: stomach-bug sick day
+      resident: resident_4
+      activity: lie_down
+      start: '10:30'
+      end: '15:15'
+      at: bed_b3
+      jitter: flexible
+      note: Resting after the clinic visit.
+    - cites: stomach-bug sick day
+      resident: resident_1
+      activity: work_home
+      start: 08:00
+      end: '17:30'
+      at: kitchen_table_k1
+      jitter: external
+      note: Remote work while covering the first sick day.
+- note: The bug continues Tuesday, so the adults trade coverage and resident_2 works from home while the
+    children rest.
+  day: 15
+  patch:
+    drop:
+    - school
+    - homework
+    - hobby
+    - work_away
+    add:
+    - cites: continuing stomach-bug sick day
+      resident: resident_4
+      activity: lie_down
+      start: 08:30
+      end: '15:30'
+      at: bed_b3
+      jitter: flexible
+      note: A quiet recovery day in bed.
+    - cites: continuing stomach-bug sick day
+      resident: resident_2
+      activity: work_home
+      start: 08:00
+      end: '17:30'
+      at: kitchen_table_k1
+      jitter: external
+      note: Remote work while taking the second coverage shift.
+- note: Both children need one final recovery day Wednesday, and resident_1 again works remotely instead
+    of going to the office.
+  day: 16
+  patch:
+    drop:
+    - school
+    - homework
+    - hobby
+    - work_away
+    add:
+    - cites: final stomach-bug recovery day
+      resident: resident_4
+      activity: lie_down
+      start: 09:00
+      end: '14:30'
+      at: bed_b3
+      jitter: flexible
+      note: Resting until the fever fully settles.
+    - cites: final stomach-bug recovery day
+      resident: resident_1
+      activity: work_home
+      start: 08:00
+      end: '17:30'
+      at: kitchen_table_k1
+      jitter: external
+      note: Remote work during the final home day.
