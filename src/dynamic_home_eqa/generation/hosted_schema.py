@@ -31,12 +31,55 @@ from typing import Any
 # Keywords OpenAI strict mode rejects, to be CONFIRMED (and extended if
 # the probe finds more) by probe_hosted_schemas.py — seeded with the ones
 # that are documented as unsupported, not trusted from memory.
+# ---------------------------------------------------------- dialects --
+# Hosted backends enforce DIFFERENT JSON-Schema subsets, so the transform
+# is parameterised rather than special-cased. Every value here is probed
+# (src/revamp_v2/probe_hosted_schemas.py), never remembered.
+#
+#   openai — strict structured outputs: KEEPS prefixItems (slot pinning
+#            survives), demands every property in `required` (optionals
+#            become required+nullable), demands additionalProperties
+#            false, wants a `type` beside every `const`, caps a schema at
+#            1000 enum values (repeated enums hoisted into $defs/$ref).
+#   gemini — the OpenAI-compatibility layer, whose schema subset descends
+#            from OpenAPI 3.0: no prefixItems, no const, and NO
+#            all-required rule (an optional property may simply be
+#            omitted), so the nullable rewrite is skipped entirely.
+DIALECT_OPENAI = "openai"
+DIALECT_GEMINI = "gemini"
+
+DIALECTS = {
+    DIALECT_OPENAI: {
+        "keep_prefix_items": True,
+        "all_required": True,
+        "close_objects": True,
+        "type_beside_const": True,
+        "const_to_enum": False,
+        "dedup_enums": True,
+    },
+    DIALECT_GEMINI: {
+        "keep_prefix_items": False,
+        "all_required": False,
+        "close_objects": False,
+        "type_beside_const": False,
+        "const_to_enum": True,
+        "dedup_enums": False,
+    },
+}
+
 UNSUPPORTED_KEYWORDS = frozenset({
     "uniqueItems", "contains", "minContains", "maxContains",
     "dependentRequired", "dependentSchemas", "if", "then", "else",
     "not", "oneOf", "allOf", "patternProperties", "propertyNames",
     "unevaluatedProperties", "unevaluatedItems", "default",
 })
+
+
+# Keywords the Gemini subset does not accept, on top of the shared set.
+# Each is re-checked downstream by the original-schema re-validation in
+# llm_client._hosted_check, exactly like every other removal.
+GEMINI_EXTRA_REMOVE = frozenset({"additionalProperties", "$defs", "$ref",
+                                 "exclusiveMinimum", "exclusiveMaximum"})
 
 
 def _nullable(sub: dict) -> dict:
@@ -83,13 +126,17 @@ def _typed_const(sub: dict, path: str, removals: list) -> dict:
 
 
 def to_hosted_schema(schema: dict,
-                     extra_remove: frozenset = frozenset()
+                     extra_remove: frozenset = frozenset(),
+                     dialect: str = DIALECT_OPENAI
                      ) -> tuple[dict, list[str]]:
     """(hosted_schema, removals). Removals are human-readable
     "path: keyword" strings for the compat report. Idempotent: applying
     the transform to its own output changes nothing and reports no new
     removals beyond re-noting nothing."""
+    cfg = DIALECTS[dialect]
     remove = UNSUPPORTED_KEYWORDS | extra_remove
+    if dialect == DIALECT_GEMINI:
+        remove = remove | GEMINI_EXTRA_REMOVE
     removals: list[str] = []
     nullable_paths: list[str] = []
 
@@ -106,7 +153,15 @@ def to_hosted_schema(schema: dict,
                 removals.append(f"{path or '<root>'}: {k}")
                 continue
             out[k] = v
-        out = _typed_const(out, path or "<root>", removals)
+        if cfg["type_beside_const"]:
+            out = _typed_const(out, path or "<root>", removals)
+        elif cfg["const_to_enum"] and "const" in out:
+            # `const` is not in the Gemini subset; a single-value enum
+            # says exactly the same thing.
+            _v = out.pop("const")
+            out["enum"] = [_v]
+            out.setdefault("type", _JSON_TYPE.get(type(_v), "string"))
+            removals.append(f"{path or '<root>'}: const->enum")
         # prefixItems (the slot-pinning shape): KEPT by default — the
         # probe showed OpenAI's schema validator recursing into it, and
         # keeping it preserves the one-entry-per-id guarantee that killed
@@ -135,7 +190,7 @@ def to_hosted_schema(schema: dict,
                 # no position, and the original-schema re-check still
                 # enforces items:false downstream.
                 removals.append(f"{path or '<root>'}: items=false")
-            if "prefixItems" in remove:
+            if "prefixItems" in remove or not cfg["keep_prefix_items"]:
                 out.pop("prefixItems")
                 removals.append(f"{path or '<root>'}: prefixItems")
                 out["items"] = union
@@ -159,20 +214,24 @@ def to_hosted_schema(schema: dict,
             props = {k: walk(v, f"{path}/{k}")
                      for k, v in out["properties"].items()}
             required = list(out.get("required") or [])
-            for name in props:
-                if name not in required:
-                    props[name] = _nullable(props[name])
-                    required.append(name)
-                    nullable_paths.append(f"{path}/{name}")
+            if cfg["all_required"]:
+                for name in props:
+                    if name not in required:
+                        props[name] = _nullable(props[name])
+                        required.append(name)
+                        nullable_paths.append(f"{path}/{name}")
             out["properties"] = props
-            out["required"] = required
-            out["additionalProperties"] = False
+            if required:
+                out["required"] = required
+            if cfg["close_objects"]:
+                out["additionalProperties"] = False
         return out
 
     hosted = walk(copy.deepcopy(schema), "")
     for p in nullable_paths:
         removals.append(f"{p}: optional->required+nullable")
-    hosted = _dedup_enums(hosted, removals)
+    if cfg["dedup_enums"]:
+        hosted = _dedup_enums(hosted, removals)
     return hosted, removals
 
 

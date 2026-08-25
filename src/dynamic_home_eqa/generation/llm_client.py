@@ -287,6 +287,30 @@ class HostedOpenAIClient(OpenAIHTTPClient):
     """
 
     hosted = True
+    # Which JSON-Schema subset this backend enforces, and which env var
+    # carries its key. Subclasses override; everything else is shared.
+    schema_dialect = "openai"
+    key_env = "OPENAI_API_KEY"
+    # One-line keyfile read when key_env is unset, so a key can live on
+    # disk (mode 600) and never pass through a shell history, a process
+    # listing, or a chat transcript. Same convention as
+    # src/dynbelief/llm_agent/clients.py. Overridable per backend.
+    key_file = "~/.config/dynamic_eqa/openai_key"
+    chat_path = "/v1/chat/completions"
+
+    def _api_key(self) -> str:
+        """$KEY_ENV first (a real env var always wins), else the keyfile.
+        Never logged, never cached on the instance, never in an
+        exception — read fresh per request."""
+        key = os.environ.get(self.key_env, "").strip()
+        if key:
+            return key
+        try:
+            path = os.path.expanduser(self.key_file)
+            with open(path) as fh:
+                return fh.read().strip()
+        except OSError:
+            return ""
     _RETRYABLE_STATUS = frozenset({429, 500, 502, 503})
     _HTTP_RETRIES = 6
     _BACKOFF_BASE_S = 2.0
@@ -343,7 +367,8 @@ class HostedOpenAIClient(OpenAIHTTPClient):
             extra = frozenset(
                 k for k in os.environ.get("HOSTED_SCHEMA_REMOVE",
                                           "").split(",") if k)
-            js["schema"], _ = to_hosted_schema(js["schema"], extra)
+            js["schema"], _ = to_hosted_schema(js["schema"], extra,
+                                               self.schema_dialect)
             js["strict"] = True
             body["response_format"] = dict(rf, json_schema=js)
         return body
@@ -352,7 +377,7 @@ class HostedOpenAIClient(OpenAIHTTPClient):
         import requests
         self.guard.preflight()
         headers = {}
-        key = os.environ.get("OPENAI_API_KEY", "")
+        key = self._api_key()
         if key:
             headers["Authorization"] = f"Bearer {key}"
         last_err: Exception = RuntimeError("unreachable")
@@ -362,7 +387,7 @@ class HostedOpenAIClient(OpenAIHTTPClient):
                 time.sleep(min(delay, self._BACKOFF_MAX_S))
                 delay *= 2
             try:
-                resp = requests.post(f"{self.base}/v1/chat/completions",
+                resp = requests.post(f"{self.base}{self.chat_path}",
                                      json=body, headers=headers,
                                      timeout=self.timeout)
             except (requests.ConnectionError, requests.Timeout) as e:
@@ -425,10 +450,54 @@ class HostedOpenAIClient(OpenAIHTTPClient):
         meta["cost_usd"] = self.guard.charge(model, usage)
 
 
+class GeminiOpenAIClient(HostedOpenAIClient):
+    """Google Gemini through its OpenAI-compatibility layer
+    (https://generativelanguage.googleapis.com/v1beta/openai/).
+
+    Same call sites, same spend guard, same usage capture. The
+    differences, all probed rather than assumed:
+
+      - key from $GEMINI_API_KEY (Bearer, same header shape);
+      - the compat layer takes `max_tokens`, NOT OpenAI's
+        `max_completion_tokens` — the base class rewrites one into the
+        other, so this rewrites it back;
+      - `reasoning_effort` IS supported (Google maps it onto
+        thinking_level/thinking_budget) and must never be sent alongside
+        thinking_level;
+      - the schema subset descends from OpenAPI 3.0 — no prefixItems, no
+        const, no all-required rule — hence schema_dialect="gemini";
+      - documented behaviour of the compat layer: unrecognised
+        parameters are SILENTLY IGNORED rather than rejected, so a
+        missing feature shows up as a quality regression, never a 400.
+        That is why `strict` is not relied on and every response is
+        re-validated against the original schema downstream.
+    """
+
+    schema_dialect = "gemini"
+    key_env = "GEMINI_API_KEY"
+    key_file = "~/.config/dynamic_eqa/gemini_key"
+    # the compat layer mounts the OpenAI surface under this prefix; the
+    # endpoint is given as the bare host root.
+    chat_path = "/v1beta/openai/chat/completions"
+
+    def _adapt_body(self, body: dict) -> dict:
+        body = super()._adapt_body(body)
+        if "max_completion_tokens" in body:
+            body["max_tokens"] = body.pop("max_completion_tokens")
+        return body
+
+
+def _is_gemini_endpoint(endpoint: str) -> bool:
+    from urllib.parse import urlparse
+    host = urlparse(endpoint).hostname or ""
+    return host.endswith("generativelanguage.googleapis.com")
+
+
 def _is_hosted_endpoint(endpoint: str) -> bool:
     from urllib.parse import urlparse
     host = urlparse(endpoint).hostname or ""
-    return host == "api.openai.com" or host.endswith(".api.openai.com")
+    return (host == "api.openai.com" or host.endswith(".api.openai.com")
+            or _is_gemini_endpoint(endpoint))
 
 
 def _hosted_check(client, schema: dict, parsed, live: bool = True):
@@ -470,7 +539,8 @@ def _get_client(model: str):
         # api.openai.com -> the metered hosted adapter (pilot); anything
         # else -> the served-vLLM client, exactly as before. The check
         # lives HERE, once — call sites branch on client.hosted only.
-        cls = (HostedOpenAIClient if _is_hosted_endpoint(endpoint)
+        cls = (GeminiOpenAIClient if _is_gemini_endpoint(endpoint)
+               else HostedOpenAIClient if _is_hosted_endpoint(endpoint)
                else OpenAIHTTPClient)
         if (type(_client) is not cls
                 or _client.model != model

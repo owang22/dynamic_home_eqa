@@ -34,12 +34,25 @@ Stages, one household:
       story_calendar arm used), expand_calendar + the unchanged v1
       simulator produce timeline_seed<N>/.
 
-Hosted-only: the per-resident story call relies on strict structured
-outputs (a thinking-mode month does not fit a local think budget).
+Hosted-only: the per-resident story call relies on server-side
+structured outputs (a thinking-mode month does not fit a local think
+budget). Both hosted backends work — OpenAI and Gemini's
+OpenAI-compatibility layer — and the client picks its own schema dialect,
+so nothing in this module is backend-specific.
+
+NOTE for the Gemini dialect: its schema subset has no prefixItems, so the
+day-slot pinning below degrades to a plain array of days whose `day`
+index is a bounded integer. Missing or duplicated days therefore become
+possible again and are caught by the ORIGINAL-schema re-validation in
+llm_client._hosted_check (a retry, never a bad artifact) plus the
+explicit day-coverage check in generate_story().
 
 Usage:
   GENERATION_ENDPOINT=https://api.openai.com OPENAI_API_KEY=... \
       python src/revamp_v2/storyfirst.py --household hh2 --model gpt-5.6-terra
+  GENERATION_ENDPOINT=https://generativelanguage.googleapis.com \
+      GEMINI_API_KEY=... python src/revamp_v2/storyfirst.py \
+      --household hh2 --model gemini-3.7-flash
 """
 from __future__ import annotations
 
@@ -236,6 +249,17 @@ def generate_story(slot, persona, persona_text, receptacles, days,
         def _validate(parsed, _rid=rid):
             import jsonschema
             jsonschema.validate(parsed, schema)
+            # Day coverage, explicitly: prefixItems pins day i to slot i
+            # on the OpenAI dialect, but the Gemini subset has no
+            # prefixItems, so the guarantee must also be checked here —
+            # a missing or duplicated day is a retryable bad sample, not
+            # a silently short month.
+            got = [d["day"] for d in parsed["days"]]
+            if sorted(got) != list(range(days)):
+                raise ValueError(
+                    f"month for {_rid} covers {sorted(set(got))[:5]}... "
+                    f"({len(got)} entries) — expected exactly days "
+                    f"0..{days - 1}")
             return parsed
 
         parsed = sd.generate_story_json(
@@ -608,8 +632,11 @@ def _main() -> None:
     if not getattr(client, "hosted", False):
         raise SystemExit(
             "storyfirst is hosted-only (per-resident story calls need "
-            "strict structured outputs) — set "
-            "GENERATION_ENDPOINT=https://api.openai.com")
+            "server-side structured outputs) — set GENERATION_ENDPOINT "
+            "to https://api.openai.com or "
+            "https://generativelanguage.googleapis.com")
+    print(f"backend: {type(client).__name__} "
+          f"(schema dialect {client.schema_dialect})")
     slots = control["households"]
     if not args.all:
         digits = "".join(c for c in args.household if c.isdigit())

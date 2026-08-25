@@ -34,6 +34,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import pathlib
 import sys
 import time
@@ -52,8 +53,17 @@ import story_driven as sd                                      # noqa: E402
 from dynamic_home_eqa.generation.hosted_schema import (        # noqa: E402
     to_hosted_schema)
 from dynamic_home_eqa.generation.llm_client import (           # noqa: E402
-    HostedOpenAIClient)
+    GeminiOpenAIClient, HostedOpenAIClient)
 
+# Backends the probe can target. The endpoint is the bare host root; each
+# client knows its own chat path, key env var and schema dialect.
+BACKENDS = {
+    "openai": (HostedOpenAIClient, "https://api.openai.com",
+               "gpt-5.6-terra"),
+    "gemini": (GeminiOpenAIClient,
+               "https://generativelanguage.googleapis.com",
+               "gemini-3.7-flash"),
+}
 ENDPOINT = "https://api.openai.com"
 TRIVIAL_SYSTEM = "Return any minimal instance that satisfies the schema."
 TRIVIAL_USER = "Any valid instance. Content does not matter."
@@ -82,6 +92,17 @@ KEYWORD_COVERAGE = {
                           "enforce it; profiles/revamp_v2/README.md) — "
                           "validate.py's jsonschema pass enforces it where "
                           "declared"),
+    "const->enum": ("a single-value enum says exactly what `const` said "
+                    "(the Gemini subset has no const) — semantically "
+                    "identical, nothing to re-check"),
+    "additionalProperties": ("the Gemini subset has no "
+                             "additionalProperties; unknown keys are "
+                             "rejected downstream by the original-schema "
+                             "re-validation in _hosted_check"),
+    "$defs": "enum-dedup is off for this dialect; enums are inlined",
+    "$ref": "enum-dedup is off for this dialect; enums are inlined",
+    "exclusiveMinimum": "validate.py's jsonschema pass (original schema)",
+    "exclusiveMaximum": "validate.py's jsonschema pass (original schema)",
     "const+=type": ("purely ADDITIVE (strict mode wants a type key beside "
                     "every const; the inferred type is the const value's "
                     "own) — nothing removed, nothing to re-check"),
@@ -128,12 +149,14 @@ def probe_once(client: HostedOpenAIClient, name: str, schema: dict,
         "messages": [{"role": "system", "content": TRIVIAL_SYSTEM},
                      {"role": "user", "content": TRIVIAL_USER}],
         "max_completion_tokens": PROBE_MAX_COMPLETION,
-        "reasoning_effort": "none",
+        "reasoning_effort": os.environ.get("HOSTED_REASONING_EFFORT",
+                                           "none"),
         "response_format": {"type": "json_schema",
                             "json_schema": {"name": "probe", "strict": True,
                                             "schema": schema}},
     }
     body.update(extra_body or {})
+    body = client._adapt_body(body)   # backend dialect (max_tokens etc.)
     t0 = time.time()
     try:
         data = client._post_chat(body)
@@ -254,7 +277,10 @@ def render_report(rows: list[dict], behavior: list[dict],
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--model", default="gpt-5.6-luna")
+    ap.add_argument("--backend", default="openai",
+                    choices=sorted(BACKENDS))
+    ap.add_argument("--model", default=None,
+                    help="default: the backend's own default model")
     ap.add_argument("--hh-src", type=pathlib.Path,
                     default=REPO_ROOT / "profiles" / "revamp_v2"
                     / "rule_based" / "qwen3.8-27b" / "hh4")
@@ -262,11 +288,16 @@ def main() -> None:
                     default=REPO_ROOT / "reports" / "hosted_pilot")
     args = ap.parse_args()
 
-    client = HostedOpenAIClient(ENDPOINT, args.model)
+    cls, endpoint, default_model = BACKENDS[args.backend]
+    args.model = args.model or default_model
+    client = cls(endpoint, args.model)
+    print(f"probing {args.backend} ({endpoint}) with {args.model}, "
+          f"schema dialect {client.schema_dialect}")
     all_schemas = build_all_schemas(args.hh_src)
     rows = []
     for name, schema in all_schemas.items():
-        hosted_schema, removals = to_hosted_schema(schema)
+        hosted_schema, removals = to_hosted_schema(
+            schema, dialect=client.schema_dialect)
         row = {"name": name,
                "stats_raw": schema_stats(schema),
                "stats_hosted": schema_stats(hosted_schema),
@@ -283,7 +314,8 @@ def main() -> None:
             # to_hosted_schema) — records whether the slot-pinning shape
             # is the remaining blocker.
             nop_schema, nop_removals = to_hosted_schema(
-                schema, extra_remove=frozenset({"prefixItems"}))
+                schema, extra_remove=frozenset({"prefixItems"}),
+                dialect=client.schema_dialect)
             row["hosted_noprefix"] = probe_once(
                 client, f"{name} (transformed, no prefixItems)", nop_schema)
             row["removals_noprefix"] = nop_removals
@@ -291,7 +323,8 @@ def main() -> None:
                   f"{'accepted' if row['hosted_noprefix']['accepted'] else 'REJECTED'}")
         rows.append(row)
 
-    leak = to_hosted_schema(all_schemas["leak_audit"])[0]
+    leak = to_hosted_schema(all_schemas["leak_audit"],
+                            dialect=client.schema_dialect)[0]
     behavior = [
         probe_once(client, "temperature=0.7 alongside strict outputs",
                    leak, {"temperature": 0.7}),
@@ -303,12 +336,14 @@ def main() -> None:
               f"{'accepted' if b['accepted'] else 'rejected'}")
 
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    (args.out_dir / "schema_compat.json").write_text(
-        json.dumps({"model": args.model, "snapshot": client.snapshot,
+    suffix = "" if args.backend == "openai" else f"_{args.backend}"
+    (args.out_dir / f"schema_compat{suffix}.json").write_text(
+        json.dumps({"backend": args.backend, "model": args.model,
+                    "snapshot": client.snapshot,
                     "rows": rows, "behavior": behavior}, indent=2))
     report = render_report(rows, behavior, args.model)
-    (args.out_dir / "schema_compat.md").write_text(report)
-    print(f"\nwrote {args.out_dir / 'schema_compat.md'}")
+    (args.out_dir / f"schema_compat{suffix}.md").write_text(report)
+    print(f"\nwrote {args.out_dir / f'schema_compat{suffix}.md'}")
     print(client.guard.summary())
 
 

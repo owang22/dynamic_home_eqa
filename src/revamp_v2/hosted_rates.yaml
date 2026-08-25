@@ -19,3 +19,18 @@ gpt-5.6-terra:
   input_per_1m: 2.00
   cached_input_per_1m: 0.20
   output_per_1m: 12.00
+
+# Google Gemini via its OpenAI-compatibility layer. Source:
+# https://ai.google.dev/gemini-api/docs/pricing, retrieved 2026-08-24.
+# PROMOTIONAL: these are the "through December 31, 2026" rates; from
+# 2027-01-01 both double (1.50 / 7.50, cached 0.15). Batch tier is half
+# again (0.375 / 1.875) and is NOT modelled here — no Batch API use.
+# `cached_input_per_1m` is Gemini's context-caching rate.
+gemini-3.7-flash:
+  input_per_1m: 0.75
+  cached_input_per_1m: 0.075
+  output_per_1m: 3.75
+gemini-3.6-flash:
+  input_per_1m: 0.75
+  cached_input_per_1m: 0.075
+  output_per_1m: 3.75

@@ -7,11 +7,20 @@
 #   OPENAI_API_KEY=... HOSTED_SPEND_CAP=15 bash src/revamp_v2/run_storyfirst_set.sh
 set -uo pipefail
 cd "$(dirname "$0")/../.."
-: "${OPENAI_API_KEY:?set OPENAI_API_KEY}"
 : "${HOSTED_SPEND_CAP:?set HOSTED_SPEND_CAP explicitly — no default spend}"
-export GENERATION_ENDPOINT="https://api.openai.com"
-export HOSTED_SPEND_LEDGER="${HOSTED_SPEND_LEDGER:-/tmp/dynamic-home-eqa-hosted-spend-storyfirst.json}"
-M="${PILOT_MODEL:-gpt-5.6-terra}"
+# Backend: openai (default) or gemini. Each needs its own key env var.
+BACKEND="${BACKEND:-openai}"
+if [ "$BACKEND" = "gemini" ]; then
+    : "${GEMINI_API_KEY:?set GEMINI_API_KEY}"
+    export GENERATION_ENDPOINT="https://generativelanguage.googleapis.com"
+    DEFAULT_MODEL=gemini-3.7-flash
+else
+    : "${OPENAI_API_KEY:?set OPENAI_API_KEY}"
+    export GENERATION_ENDPOINT="https://api.openai.com"
+    DEFAULT_MODEL=gpt-5.6-terra
+fi
+export HOSTED_SPEND_LEDGER="${HOSTED_SPEND_LEDGER:-/tmp/dynamic-home-eqa-hosted-spend-storyfirst-$BACKEND.json}"
+M="${PILOT_MODEL:-$DEFAULT_MODEL}"
 SLUG=$(python3 -c "from dynamic_home_eqa.generation.llm_client import model_slug; print(model_slug('$M'))")
 OUT="profiles/revamp_v2/storyfirst/$SLUG"
 CANARY=hh2

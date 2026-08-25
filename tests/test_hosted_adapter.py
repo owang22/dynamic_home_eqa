@@ -134,7 +134,11 @@ def test_auth_header_iff_key_set_and_never_in_logs(hosted, monkeypatch,
     monkeypatch.setenv("OPENAI_API_KEY", key)
     hosted.generate("s", "u", SCHEMA, seed=1)
     assert sent_headers[-1]["Authorization"] == f"Bearer {key}"
+    # No env var AND no keyfile -> no header at all. (The keyfile
+    # fallback is a real source, so it must be pointed away for this
+    # leg; see test_keyfile_fallback below for its own coverage.)
     monkeypatch.delenv("OPENAI_API_KEY")
+    monkeypatch.setattr(type(hosted), "key_file", "/nonexistent/key")
     hosted.generate("s", "u", SCHEMA, seed=2)
     assert "Authorization" not in sent_headers[-1]
     # ...and the key reaches no log line and no exception text, even
@@ -192,3 +196,89 @@ def test_spend_guard_aborts_at_cap(tmp_path):
     assert other_process.spent() == pytest.approx(0.006)
     with pytest.raises(SpendCapExceeded, match="before the call"):
         other_process.preflight()
+
+
+def test_gemini_backend_dialect(monkeypatch, tmp_path):
+    """Gemini via the OpenAI-compat layer: its own key env, its own chat
+    path, `max_tokens` (NOT max_completion_tokens — the compat layer
+    takes the classic field), and the gemini schema dialect (no
+    prefixItems, no const, no additionalProperties)."""
+    rates = tmp_path / "rates.yaml"
+    rates.write_text("gemini-3.7-flash: {input_per_1m: 0.75, "
+                     "output_per_1m: 3.75, cached_input_per_1m: 0.075}\n")
+    monkeypatch.setenv("HOSTED_RATES_YAML", str(rates))
+    monkeypatch.setenv("HOSTED_SPEND_CAP", "5.0")
+    monkeypatch.setenv("HOSTED_SPEND_LEDGER", str(tmp_path / "l.json"))
+    monkeypatch.setenv("GEMINI_API_KEY", "gk-test-KEY")
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    client = llm_client.GeminiOpenAIClient(
+        "https://generativelanguage.googleapis.com", "gemini-3.7-flash")
+
+    seen = {}
+
+    def fake_post(url, json=None, headers=None, **kw):
+        seen["url"], seen["body"] = url, json
+        seen["headers"] = dict(headers or {})
+        return FakeResp(200, {
+            "model": "gemini-3.7-flash",
+            "choices": [{"message": {"content": '{"a": "x"}'},
+                         "finish_reason": "stop"}],
+            "usage": {"prompt_tokens": 100, "completion_tokens": 50}})
+
+    monkeypatch.setattr(requests, "post", fake_post)
+    schema = {"type": "object", "additionalProperties": False,
+              "required": ["a"],
+              "properties": {"a": {"type": "string"},
+                             "b": {"const": "fixed"},
+                             "opt": {"type": "integer"}}}
+    client.generate("sys", "usr", schema, seed=7)
+
+    assert seen["url"].endswith("/v1beta/openai/chat/completions")
+    assert seen["headers"]["Authorization"] == "Bearer gk-test-KEY"
+    body = seen["body"]
+    assert body["max_tokens"] == 4096            # compat-layer field
+    assert "max_completion_tokens" not in body
+    sent = body["response_format"]["json_schema"]["schema"]
+    assert "additionalProperties" not in sent    # gemini dialect
+    assert sent["properties"]["b"] == {"enum": ["fixed"], "type": "string"}
+    assert "opt" not in sent["required"]         # optionals stay optional
+    assert sent["properties"]["opt"]["type"] == "integer"   # not nullable
+    # priced off the gemini row: 100 in @0.75/M + 50 out @3.75/M
+    assert client.last_meta["cost_usd"] == pytest.approx(
+        (100 * 0.75 + 50 * 3.75) / 1e6)
+
+
+def test_endpoint_routing_picks_the_right_client(monkeypatch):
+    for endpoint, cls in (
+            ("https://generativelanguage.googleapis.com",
+             llm_client.GeminiOpenAIClient),
+            ("https://api.openai.com", llm_client.HostedOpenAIClient),
+            ("http://127.0.0.1:8300", llm_client.OpenAIHTTPClient)):
+        monkeypatch.setenv("GENERATION_ENDPOINT", endpoint)
+        llm_client._client = None
+        try:
+            assert type(llm_client._get_client("m")) is cls, endpoint
+        finally:
+            llm_client._client = None
+
+
+def test_keyfile_fallback_when_env_unset(hosted, monkeypatch, tmp_path):
+    """A key may live in a 600 file instead of the environment, so it
+    need never pass through a shell history or a transcript. The env var
+    still wins when both are present."""
+    kf = tmp_path / "key"
+    kf.write_text("sk-from-FILE\n")
+    monkeypatch.setattr(type(hosted), "key_file", str(kf))
+    seen = []
+
+    def fake_post(url, json=None, headers=None, **kw):
+        seen.append(dict(headers or {}))
+        return ok_response()
+
+    monkeypatch.setattr(requests, "post", fake_post)
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    hosted.generate("s", "u", SCHEMA, seed=1)
+    assert seen[-1]["Authorization"] == "Bearer sk-from-FILE"
+    monkeypatch.setenv("OPENAI_API_KEY", "sk-from-ENV")
+    hosted.generate("s", "u", SCHEMA, seed=2)
+    assert seen[-1]["Authorization"] == "Bearer sk-from-ENV"
