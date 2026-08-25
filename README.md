@@ -1,5 +1,21 @@
 # dynamic_home_eqa
 
+## The synthetic household dataset
+
+**`data/household_dataset.jsonl`** — ten simulated households over 21
+days each: residents, possessions, every activity, and every object
+movement. 23,212 movements across 8,399 activity blocks in one file.
+
+- what is in it: `profiles/revamp_v2/storyfirst/README.md`
+- how it is generated: `docs/dataset_pipeline.md`
+- the generator: `src/revamp_v2/generate_dataset.py`
+- browse a household in the scene viewer: `python visualization/serve.py`
+
+Everything below describes the wider research repository.
+
+---
+
+
 Dynamic Home EQA. **v2 (current): a profile-driven SYMBOLIC household simulator** —
 a provenance-tagged YAML profile (who lives here + weekly routine) deterministically
 generates receptacle-level object-movement logs, which feed belief-model and

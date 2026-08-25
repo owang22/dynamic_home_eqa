@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# SUPERSEDED by generate_dataset.py — kept because the sets it
+# produced (profiles/revamp_v2/rule_based, story_calendar) are still
+# on disk. New work should use the current pipeline.
 # End-to-end revamp_v2 build: L1+L2 generation (all four checks inside the
 # accept/reject loop) -> L3 simulation -> L4 bank export -> viewer configs
 # -> realism panel (reporting only).

@@ -1,3 +1,6 @@
+# SUPERSEDED by generate_dataset.py — kept because the sets it
+# produced (profiles/revamp_v2/rule_based, story_calendar) are still
+# on disk. New work should use the current pipeline.
 """Story-driven generation: the LLM writes the household's three weeks as
 a STORY first, then does object-level freeform movement against it.
 

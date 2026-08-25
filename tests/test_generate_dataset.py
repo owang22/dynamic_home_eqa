@@ -1,6 +1,6 @@
-"""storyfirst pipeline: one offline end-to-end build (scripted hosted
-client, no API), plus the trip-merge helper and the month schema's
-structural guarantees. Minimum for explainability."""
+"""The dataset pipeline, end to end with a scripted client and no API:
+persona -> story -> movement -> realized timeline, plus the trip-merge
+helper and the story schema's structural guarantees."""
 from __future__ import annotations
 
 import json
@@ -16,7 +16,7 @@ for p in (REPO / "src", REPO / "src" / "revamp_v2"):
 
 from revamp_v2_helpers import PERSONA  # noqa: E402
 
-import storyfirst as sf  # noqa: E402
+import generate_dataset as sf  # noqa: E402
 
 # The real persona schema demands >= 8 inventory objects; pad the shared
 # 2-object fixture with declared statics (rules: [] downstream).
@@ -131,7 +131,7 @@ def test_trip_merge_names_the_dominant_leg():
 
 
 def test_month_schema_pins_every_day_and_the_block_floor():
-    schema = sf.build_month_schema("resident_1", ["bed_b1"], 5)
+    schema = sf.build_story_schema("resident_1", ["bed_b1"], 5)
     days = schema["properties"]["days"]
     assert (days["minItems"], days["maxItems"]) == (5, 5)
     assert [s["properties"]["day"]["const"]

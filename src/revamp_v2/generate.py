@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""revamp_v2 generation CLI: L0 (receptacles) + L1 (persona, one LLM call)
+"""SUPERSEDED by generate_dataset.py — kept because the sets it produced
+(profiles/revamp_v2/rule_based, story_calendar) are still on disk. New
+work should use the current pipeline.
+
+revamp_v2 generation CLI: L0 (receptacles) + L1 (persona, one LLM call)
 + L2 (routine program, one LLM call per accepted attempt) for one household
 or --all. Everything downstream of the accepted program is deterministic.
 
