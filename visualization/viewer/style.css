@@ -97,3 +97,17 @@ footer {
   opacity: 0; transition: opacity .25s;
 }
 #live-note.show { opacity: 1; }
+
+/* Household roster: who resident_N is. The ids are positional, so
+   without names/ages/roles a 4-resident timeline is four anonymous
+   dots. Occupation wraps rather than truncating — it is usually the
+   most identifying field after the name. */
+table.roster { width: 100%; border-collapse: collapse; }
+table.roster td { vertical-align: top; padding: 3px 4px; }
+table.roster tr + tr td { border-top: 1px solid var(--line, #2a2a33); }
+table.roster .who { white-space: nowrap; }
+table.roster .rid { font-size: 11px; opacity: 0.55; }
+table.roster .name { font-weight: 600; }
+table.roster .age { opacity: 0.7; }
+table.roster .role { font-size: 12px; opacity: 0.8; }
+table.roster tr.sel .name { color: var(--accent2, #7fd1ff); }

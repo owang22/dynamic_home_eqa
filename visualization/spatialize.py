@@ -201,6 +201,32 @@ def locate(rec: str, obj: str, world: dict, cfg: dict,
                                       round(r["pos"][1] + dz, 3)]
 
 
+def _resident_info(timeline: pathlib.Path) -> dict:
+    """{resident_id: {name, age, occupation, personality}} from the
+    household's persona.yaml (the timeline dir's parent). Missing or
+    unreadable persona -> {}, never fatal: the viewer degrades to bare
+    ids and everything else still renders."""
+    import yaml
+    path = timeline.parent / "persona.yaml"
+    try:
+        persona = yaml.safe_load(path.read_text())
+    except (OSError, ValueError):
+        return {}
+    if not isinstance(persona, dict):
+        return {}
+    out = {}
+    for r in persona.get("residents") or []:
+        if not isinstance(r, dict) or not r.get("id"):
+            continue
+        out[r["id"]] = {
+            "name": str(r.get("name") or "").strip(),
+            "age": r.get("age"),
+            "occupation": str(r.get("occupation") or "").strip(),
+            "personality": str(r.get("personality") or "").strip(),
+        }
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("config", type=pathlib.Path)
@@ -305,6 +331,12 @@ def main() -> None:
                       "label": cfg["elsewhere"]["label"]},
         "objects": objects,
         "residents": tracks,
+        # Who resident_N actually IS. The ids are positional and carry no
+        # meaning on their own, so the viewer cannot label a track, a
+        # carry or an owner without this. Read from the persona sitting
+        # beside the timeline; absent for sets built before it existed,
+        # which the viewer renders as a plain id list.
+        "resident_info": _resident_info(args.timeline),
     }
     (args.timeline / "trace.json").write_text(json.dumps(trace))
 

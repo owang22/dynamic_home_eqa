@@ -473,6 +473,52 @@ function jumpEvent(dir) {
  * current selections when they still exist (a rebuilt household usually
  * keeps most of its objects, and losing your place on every refresh would
  * make the live updating worse than useless). */
+/* The household roster: who resident_N is. Ids are positional and mean
+ * nothing on their own, so a multi-resident timeline is otherwise a set
+ * of anonymous tracks. Rows are clickable — picking a person here is the
+ * same action as choosing them in the resident dropdown. Sets built
+ * before trace.resident_info existed fall back to the bare id list. */
+function renderRoster() {
+  const el = $("roster");
+  if (!el) return;
+  const info = trace.resident_info || {};
+  const ids = Object.keys(residentTracks()).sort();
+  el.innerHTML = "";
+  const current = currentResident();
+  for (const rid of ids) {
+    const r = info[rid] || {};
+    const tr = document.createElement("tr");
+    if (rid === current) tr.className = "sel";
+    tr.title = r.personality || "";
+    const who = document.createElement("td");
+    who.className = "who";
+    const name = r.name || rid;
+    const age = (r.age === 0 || r.age) ? ` · ${r.age}` : "";
+    who.innerHTML = `<div class="name">${escapeHtml(name)}` +
+      `<span class="age">${escapeHtml(age)}</span></div>` +
+      `<div class="rid">${escapeHtml(rid)}</div>`;
+    const role = document.createElement("td");
+    role.className = "role";
+    role.textContent = r.occupation || "";
+    tr.appendChild(who); tr.appendChild(role);
+    tr.addEventListener("click", () => {
+      const rsel = $("resident-select");
+      if (rsel && residentTracks()[rid]) {
+        rsel.value = rid;
+        rsel.dispatchEvent(new Event("change"));
+        renderRoster();
+      }
+    });
+    el.appendChild(tr);
+  }
+}
+
+function escapeHtml(v) {
+  return String(v == null ? "" : v).replace(/[&<>"']/g, c => (
+    {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;",
+     "'": "&#39;"}[c]));
+}
+
 function rebuildPickers(keepObject, keepResident) {
   const sel = $("object-select"), rsel = $("resident-select");
   sel.innerHTML = "";
@@ -491,15 +537,19 @@ function rebuildPickers(keepObject, keepResident) {
   if (keepObject && trace.objects[keepObject]) sel.value = keepObject;
 
   rsel.innerHTML = "";
+  const rinfo = trace.resident_info || {};
   for (const res of Object.keys(residentTracks()).sort()) {
     const opt = document.createElement("option");
     opt.value = res;
-    opt.textContent = res;
+    const nm = (rinfo[res] || {}).name;
+    opt.textContent = nm ? `${nm} (${res})` : res;
     rsel.appendChild(opt);
   }
   if (keepResident && residentTracks()[keepResident])
     rsel.value = keepResident;
+  renderRoster();
 }
+
 
 const WATCH_INTERVAL_MS = 5000;
 let knownDatasets = "";      // JSON of the last list, to spot changes
@@ -646,7 +696,8 @@ async function boot() {
   $("time").max = horizon;
   $("time").addEventListener("input", e => setTime(Number(e.target.value), true));
   sel.addEventListener("change", () => { drawEventStrip(); draw(); });
-  rsel.addEventListener("change", () => { drawEventStrip(); draw(); });
+  rsel.addEventListener("change", () => {
+    renderRoster(); drawEventStrip(); draw(); });
   $("jump-what").addEventListener("change", draw);
   for (const id of ["show-path", "show-res-path", "show-trace", "show-others",
                     "show-recs", "show-all-res"])
