@@ -58,7 +58,7 @@ HIDDEN_PARTS = ("_archive",)
 # marker and sort to the top, so "the one I am generating right now" is
 # the first thing in the dropdown rather than something to search for.
 # A plain string match on the trace url; empty disables the marking.
-CURRENT_SET = "/revamp_v2/story_calendar/"
+CURRENT_SET = "/revamp_v2/storyfirst/"
 
 
 def _household_type(household_dir: pathlib.Path) -> str:
@@ -68,7 +68,12 @@ def _household_type(household_dir: pathlib.Path) -> str:
     two rows apart at a glance ("hh_004" means nothing; "college_roommates"
     does), so it is worth reading the sibling program for.
     """
-    for name in ("routine_program.yaml", "object_motions.yaml"):
+    # storyfirst names its assembled program program.yaml; the earlier
+    # arms use routine_program.yaml. Without it the row fell back to the
+    # parent dir name and read "hh_002 · gpt-5.6-terra" instead of the
+    # household type, which is the one field that tells rows apart.
+    for name in ("routine_program.yaml", "program.yaml",
+                 "object_motions.yaml"):
         path = household_dir / name
         if not path.exists():
             continue

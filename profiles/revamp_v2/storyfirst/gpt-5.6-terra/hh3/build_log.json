@@ -1,0 +1,145 @@
+{
+  "household": "hh_003",
+  "household_type": "retired_couple",
+  "model": "gpt-5.6-terra",
+  "pipeline": "storyfirst-a1",
+  "days": 21,
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 17714838222488818338,
+  "persona_reasoning": "A retired couple with an active community-oriented life, distinct from working and child-centered households. Their objects reflect gardening, reading, shared meals, medication routines, and occasional local outings rather than employment or childcare.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 7991362303560338597,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 7835,
+          "completion_tokens": 11774,
+          "total_tokens": 19609,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 7832,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.156958
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 6093231975099359945,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 14144,
+          "completion_tokens": 12129,
+          "total_tokens": 26273,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 14141,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.173836
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 594003354375948777,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Meals cycle dishes through table, sink, rack, and cupboard; Elaine restores order while Martin leaves occasional trails. Their carried essentials return from trips to their entry or bedside routines. Reading, television, calls, laundry, cleaning, gardening, medication, and nightly routines each shift the matching household objects, while infrequent tools retain substantial NO_OP mass.",
+      "failures": [
+        "coverage: 6 of 27 at-home story activities appear in no object rule (['get_ready', 'lie_down', 'lunch', 'snack', 'take_out_bins', 'wake_up']; tolerance 4.0)"
+      ],
+      "uncovered_at_home": [
+        "get_ready",
+        "lie_down",
+        "lunch",
+        "snack",
+        "take_out_bins",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 18198,
+          "completion_tokens": 5990,
+          "total_tokens": 24188,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 18195,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 97,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.108276
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 13913426716096022172,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Meals cycle crockery through table, sink, rack, and cupboard; Elaine is prompt after breakfast while visitor dinners can leave dishes behind. Personal outing items travel with their owner and land at their usual return spots. Elaine's reading and list-making are orderly, whereas Martin's sofa, jacket, towels, and remote create the small recurring trails corrected by tidy-up. Bedroom, bathroom, laundry, patio, cleaning, calls, and occasional travel each touch their dedicated household items.",
+      "failures": [],
+      "uncovered_at_home": [
+        "get_ready",
+        "snack",
+        "take_out_bins"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 18293,
+          "completion_tokens": 7385,
+          "total_tokens": 25678,
+          "prompt_tokens_details": {
+            "cached_tokens": 14510,
+            "cache_write_tokens": 3780,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 224,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.099088
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $2.0218 of $15.00 cap across 19 call(s) [gpt-5.6-terra: $2.0218 (19 calls)]"
+  }
+}

@@ -60,7 +60,14 @@ def relation_for(rid: str) -> str:
 
 
 def make_config(hh_dir: pathlib.Path) -> pathlib.Path:
-    program = yaml.safe_load((hh_dir / "routine_program.yaml").read_text())
+    # rule_based/story_calendar write routine_program.yaml; storyfirst
+    # writes program.yaml (its story days ARE the schedule). Either is
+    # the same shape from `receptacles` down, which is all this needs.
+    spec = next((hh_dir / n for n in ("routine_program.yaml",
+                                      "program.yaml")
+                 if (hh_dir / n).exists()), None)
+    assert spec is not None, f"{hh_dir}: no program file"
+    program = yaml.safe_load(spec.read_text())
     rooms_used = {r["room"] for r in program["receptacles"]}
     unknown = rooms_used - set(ROOM_MAP)
     assert not unknown, f"{hh_dir.name}: no scene mapping for rooms {unknown}"
@@ -116,7 +123,8 @@ def main() -> None:
     for slug in slugs:
         for hh_dir in sorted((root / slug).glob("hh*"),
                              key=lambda p: int(p.name[2:])):
-            if not (hh_dir / "routine_program.yaml").exists():
+            if not any((hh_dir / n).exists() for n in
+                       ("routine_program.yaml", "program.yaml")):
                 continue
             cfg = make_config(hh_dir)
             timeline = hh_dir / f"timeline_seed{args.seed}"

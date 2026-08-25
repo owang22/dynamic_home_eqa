@@ -1,0 +1,142 @@
+{
+  "household": "hh_002",
+  "household_type": "working_couple_no_children",
+  "model": "gpt-5.6-terra",
+  "pipeline": "storyfirst-a1",
+  "days": 21,
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 4408146823813615037,
+  "persona_reasoning": "A child-free working couple who both commute, with contrasting approaches to tidiness and shared household logistics.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 8260942450207519821,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 14089,
+          "completion_tokens": 5043,
+          "total_tokens": 19132,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 14086,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 364,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.088694
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 14348863832767570809,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 14089,
+          "completion_tokens": 5043,
+          "total_tokens": 19132,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 14086,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 364,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.088694
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 15238905834284315457,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Weekday trips carry each resident's essentials out and place them back in their habitual landing zones. Maya resets things promptly: entry shelf, hook, drying rack, counter, nightstand, or cupboard. Elliot's work and leisure objects more often remain around the table, sofa, chair, or sink until a meal cleanup or tidy-up. Meals circulate cookware and tableware through table, sink, drying rack, and cupboard; cleaning, laundry, plant care, bathing, television, reading, and work-at-home each touch their relevant household objects. Low-frequency tools retain substantial NO_OP mass when an activity only sometimes uses them.",
+      "failures": [
+        "coverage: 7 of 28 at-home story activities appear in no object rule (['bath', 'lie_down', 'shower', 'take_medication', 'take_out_bins', 'video_call']...; tolerance 4.2)"
+      ],
+      "uncovered_at_home": [
+        "bath",
+        "lie_down",
+        "shower",
+        "take_medication",
+        "take_out_bins",
+        "video_call",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 16861,
+          "completion_tokens": 7222,
+          "total_tokens": 24083,
+          "prompt_tokens_details": {
+            "cached_tokens": 16858,
+            "cache_write_tokens": 0,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 244,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.0900416
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 16401173495143427670,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Commutes carry each person's essentials out and reset them at their characteristic landing spots on return. Maya reliably restores her things, while Elliot leaves work and leisure items in shared spaces. Meals cycle cookware and dishes through table, sink, rack, and cupboard; cleaning resets scattered items. Bedroom, bathing, television, laundry, plant care, medication, bins, and calls each touch a small appropriate set of belongings.",
+      "failures": [],
+      "uncovered_at_home": [],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 16961,
+          "completion_tokens": 7402,
+          "total_tokens": 24363,
+          "prompt_tokens_details": {
+            "cached_tokens": 13417,
+            "cache_write_tokens": 3541,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 257,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.0985954
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $1.4513 of $15.00 cap across 14 call(s) [gpt-5.6-terra: $1.4513 (14 calls)]"
+  }
+}

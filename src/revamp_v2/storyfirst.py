@@ -58,6 +58,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import hashlib
 import json
 import os
 import pathlib
@@ -463,8 +464,15 @@ def story_to_program(slot, persona, receptacles, story, object_rules,
 def generate_movement(slot, persona, persona_text, receptacles, story,
                       days, client, cache, force, log,
                       effort: str = "medium"):
-    """The movement pass: one call, retried with distinct seeds on gate
-    failure. Returns (object_rules, program) or (None, None)."""
+    """The movement pass: one call, retried on gate failure with the gap
+    NAMED. Returns (object_rules, program) or (None, None).
+
+    effort="medium" on evidence, not caution: the hh2 canary ran this
+    stage at both tiers and `high` returned the IDENTICAL six uncovered
+    activities that `medium` did, so the extra reasoning bought nothing
+    here (unlike the retired L2 objects stage, where none/medium/high
+    gave 3/1/0). What actually closes the gap is the retry hint below —
+    measured 6 -> 2 -> 0 uncovered across three hinted attempts."""
     at_home, trips = effective_activities(story)
     scheduled = sorted(at_home | trips)
     params = sim.load_params()
@@ -474,20 +482,40 @@ def generate_movement(slot, persona, persona_text, receptacles, story,
     schema = schemas.build_objects_schema(
         slot["household_id"], resident_ids, object_ids, rec_ids, days,
         params, scheduled)
-    tag = MOVEMENT.tag("movement", builder=True, schema=schema)
+    # The reasoning effort and the retry hint BOTH shape the response, so
+    # both must fold into the cache key. Neither is covered by
+    # PromptTemplate.tag (which folds template text, builder version and
+    # schema) — measured the confusing way: raising the effort and adding
+    # a hint changed nothing at all, because every attempt replayed its
+    # old cached response at the identical seed. Only the movement stage
+    # varies its effort, so only its tag carries it; the persona and
+    # story tags stay untouched and their caches keep replaying free.
+    tag = (MOVEMENT.tag("movement", builder=True, schema=schema)
+           + f"_r{effort}")
     user = MOVEMENT_USER.format(
         persona=persona_text, days=days,
         digest=activity_digest(story, persona),
         places="\n".join(f"  {r}" for r in rec_ids))
+    uncovered_hint = ""
     for attempt in range(MOVEMENT_MAX_ATTEMPTS):
-        seed = make_seed(slot["household_id"], 0, tag, attempt)
-        record: dict = {"attempt": attempt, "seed": seed}
+        attempt_tag = tag + (
+            "_h" + hashlib.sha256(uncovered_hint.encode()).hexdigest()[:8]
+            if uncovered_hint else "")
+        seed = make_seed(slot["household_id"], 0, attempt_tag, attempt)
+        record: dict = {"attempt": attempt, "seed": seed,
+                        "effort": effort,
+                        "hinted": bool(uncovered_hint)}
+        # A coverage gap is a NAMED, identified cause, so the retry says
+        # what was missed rather than rerolling blind: measured on the
+        # hh2 canary, two blind attempts returned the identical uncovered
+        # set, which is the definition of a wasted resample.
+        attempt_user = user + uncovered_hint
         try:
             with _reasoning(effort):
                 raw = llm_client.generate_json(
                     gen._LongFormClient(client, gen.PROGRAM_MAX_TOKENS),
-                    MOVEMENT.text, user, schema, seed=seed, stage=tag,
-                    cache=cache, force=force)
+                    MOVEMENT.text, attempt_user, schema, seed=seed,
+                    stage=attempt_tag, cache=cache, force=force)
         except SpendCapExceeded:
             raise
         except Exception as e:
@@ -511,6 +539,18 @@ def generate_movement(slot, persona, persona_text, receptacles, story,
         log.setdefault("movement_attempts", []).append(record)
         if not failures:
             return object_rules, program
+        missed = record["uncovered_at_home"]
+        if missed:
+            uncovered_hint = (
+                "\n\nA previous attempt left these at-home activities "
+                "with NO object rule at all:\n"
+                + "\n".join(f"  {a}" for a in missed)
+                + "\nFor each, either give some object a rule naming it "
+                  "(a shower moves a towel; a video_call moves a laptop; "
+                  "waking moves a phone off the nightstand), or leave it "
+                  "out only because this household owns nothing that "
+                  "activity would touch. Keep everything else as you had "
+                  "it.\n")
     return None, None
 
 
@@ -592,6 +632,13 @@ def build_household(slot, control, out_root: pathlib.Path, model: str,
     out_tl = hh_dir / f"timeline_seed{seed}"
     sa.write_outputs(out_tl, motions, tl_log, hourly, blocks, stats, days,
                      seed, hh_dir)
+    # The revamp_v1 object_motions shape the viewer's spatialize.py
+    # reads (same artifact the story_calendar arm writes).
+    (hh_dir / "expanded_motions.yaml").write_text(
+        "# GENERATED by src/revamp_v2/storyfirst.py from the story days\n"
+        "# + the movement pass (revamp_v1 shape, for spatialize.py).\n"
+        + yaml.safe_dump(motions, sort_keys=False, width=100,
+                         allow_unicode=True))
     meta = json.loads((out_tl / "meta.json").read_text())
     at_home, trips = effective_activities(story)
     meta.update({

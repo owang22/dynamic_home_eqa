@@ -1,0 +1,167 @@
+{
+  "household": "hh_006",
+  "household_type": "single_parent_teens",
+  "model": "gpt-5.6-terra",
+  "pipeline": "storyfirst-a1",
+  "days": 21,
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 4251456551663477234,
+  "persona_reasoning": "A practical single-parent household with two teenagers whose school, work, and extracurricular belongings create managed clutter in shared spaces.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 14055541417857360886,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 8230,
+          "completion_tokens": 11696,
+          "total_tokens": 19926,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 8227,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.156812
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 6680476790345655043,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 14436,
+          "completion_tokens": 10594,
+          "total_tokens": 25030,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 14433,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.156
+      }
+    },
+    {
+      "resident": "resident_3",
+      "seed": 15026666145898399268,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 20103,
+          "completion_tokens": 11368,
+          "total_tokens": 31471,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 20100,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.176622
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 4039296321622816810,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Dana\u2019s work, meals, and resets center her belongings at the entry, counter, and sink; Maya\u2019s schoolwork accumulates at the dining table and bedroom; Eli\u2019s sports and gaming leave gear at the entry and couch. Meals cycle dishes through sink and rack, while cleaning, laundry, and bathroom routines restore the household\u2019s shared items.",
+      "failures": [
+        "coverage: 5 of 30 at-home story activities appear in no object rule (['bedtime_routine', 'hobby', 'socialise_home', 'take_out_bins', 'wake_up']; tolerance 4.5)"
+      ],
+      "uncovered_at_home": [
+        "bedtime_routine",
+        "hobby",
+        "socialise_home",
+        "take_out_bins",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 20030,
+          "completion_tokens": 6622,
+          "total_tokens": 26652,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 20027,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 221,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.119524
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 16124318117310579069,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Trips return each person's carried essentials to their characteristic landing zones: Dana's entry bowl/table, Maya's bedroom or school-bag areas, and Eli's entry clutter. Kitchen work cycles dishes between cupboard, table, sink, and rack; Dana's resets restore surfaces. Bedroom, bathroom, gaming, reading, laundry, and cleaning habits create the remaining small drifts. Every previously uncovered at-home activity is represented through a relevant object.",
+      "failures": [],
+      "uncovered_at_home": [
+        "take_out_bins"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 20124,
+          "completion_tokens": 9639,
+          "total_tokens": 29763,
+          "prompt_tokens_details": {
+            "cached_tokens": 15885,
+            "cache_write_tokens": 4236,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 235,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.127323
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $4.5310 of $15.00 cap across 38 call(s) [gpt-5.6-terra: $4.5310 (38 calls)]"
+  }
+}

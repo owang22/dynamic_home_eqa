@@ -1,0 +1,167 @@
+{
+  "household": "hh_005",
+  "household_type": "couple_with_toddler",
+  "model": "gpt-5.6-terra",
+  "pipeline": "storyfirst-a1",
+  "days": 21,
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 14811656639792289910,
+  "persona_reasoning": "A compact, hands-on family with a preschool-age child, organized around shared meals, art play, and practical handoffs rather than work-from-home routines.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 15930124493597434432,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 7746,
+          "completion_tokens": 11542,
+          "total_tokens": 19288,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 7743,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.153996
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 13952464250915384320,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 13869,
+          "completion_tokens": 12015,
+          "total_tokens": 25884,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 13866,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.171918
+      }
+    },
+    {
+      "resident": "resident_3",
+      "seed": 16191548251165669351,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 20317,
+          "completion_tokens": 9888,
+          "total_tokens": 30205,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 20314,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.15929
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 12896926716773650807,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Leaving trips carry each adult's essentials and Milo's outing gear before resetting them at entry or kitchen homes. Meals and cooking circulate dishes through table, sink, rack, and cupboards; evening care spreads books, toys, towels, and blankets before partial resets. Jonah's routines create entry, chair, sink, and toy-rug clutter, while Elena's washing, laundry, and tidying restore many items.",
+      "failures": [
+        "coverage: 4 of 25 at-home story activities appear in no object rule (['lie_down', 'shower', 'take_medication', 'wake_up']; tolerance 3.8)"
+      ],
+      "uncovered_at_home": [
+        "lie_down",
+        "shower",
+        "take_medication",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 16754,
+          "completion_tokens": 6721,
+          "total_tokens": 23475,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 16751,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 130,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.11416
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 12541849685857567532,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Elena's leaving set returns to the counter or entry area after trips, while her work and list items cycle through the table and kitchen. Jonah's daily carry items collect at the entry and his cooking, bath, and cleanup habits leave kitchen and bathroom objects in use until reset. Milo's belongings drift among the shared rooms, bedroom, and entry, with bedtime and tidying providing partial resets. Meals generate the dish cycle; laundry, washing, and dish-putaway return household goods to their usual storage.",
+      "failures": [],
+      "uncovered_at_home": [
+        "lunch",
+        "take_medication"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 16842,
+          "completion_tokens": 6278,
+          "total_tokens": 23120,
+          "prompt_tokens_details": {
+            "cached_tokens": 13096,
+            "cache_write_tokens": 3743,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 118,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.0854472
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $3.7586 of $15.00 cap across 32 call(s) [gpt-5.6-terra: $3.7586 (32 calls)]"
+  }
+}

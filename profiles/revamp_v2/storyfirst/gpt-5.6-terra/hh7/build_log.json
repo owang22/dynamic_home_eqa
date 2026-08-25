@@ -1,0 +1,119 @@
+{
+  "household": "hh_007",
+  "household_type": "single_adult_wfh",
+  "model": "gpt-5.6-terra",
+  "pipeline": "storyfirst-a1",
+  "days": 21,
+  "prompts": {
+    "persona_v2": "6f60fb77",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 17255705008171229467,
+  "persona_reasoning": "A single, home-based ceramic illustrator whose work materials are represented through the allowed object vocabulary. Her home is organized around a compact studio corner and frequent tea breaks, creating a distinct work-from-home pattern without relying on clock-time schedules.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 8367129732047349177,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 7427,
+          "completion_tokens": 10878,
+          "total_tokens": 18305,
+          "prompt_tokens_details": {
+            "cached_tokens": 4626,
+            "cache_write_tokens": 2798,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.13706320000000002
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 349939543862439459,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Work shifts laptop, notes, drink, and focus gear between desk and kitchen table; meals accumulate dishes at the sink until washing and put-away. Trips return essentials to the entry or work surfaces. Quiet evenings move reading, television, and bedroom items among couch, bed, and nightstand; cleaning resets scattered work and kitchen items.",
+      "failures": [
+        "coverage: 5 of 29 at-home story activities appear in no object rule (['relax', 'snack', 'take_medication', 'take_out_bins', 'wake_up']; tolerance 4.3)"
+      ],
+      "uncovered_at_home": [
+        "relax",
+        "snack",
+        "take_medication",
+        "take_out_bins",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 15155,
+          "completion_tokens": 5737,
+          "total_tokens": 20892,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 15152,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 165,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.099154
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 17233646596039136214,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Leena's work items circulate between desk and kitchen table, with deliberate tidy-ups restoring the desk and dishes progressing through sink, rack, and cupboard. Essentials return through the entry after trips; quiet evening items collect around sofa, bed, and nightstand. Cleaning and reset activities reliably return the few temporarily displaced household tools.",
+      "failures": [],
+      "uncovered_at_home": [
+        "snack",
+        "take_medication",
+        "take_out_bins"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 15247,
+          "completion_tokens": 5169,
+          "total_tokens": 20416,
+          "prompt_tokens_details": {
+            "cached_tokens": 11969,
+            "cache_write_tokens": 3275,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 96,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.07097780000000001
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $4.8671 of $15.00 cap across 42 call(s) [gpt-5.6-terra: $4.8671 (42 calls)]"
+  }
+}
