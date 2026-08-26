@@ -42,6 +42,9 @@ MANIFEST_URL = "/visualization/traces.json"
 # produced a household (rule_based / freeform / freeform_grammar) sits
 # above the model slug, because the same model generates the same
 # household under both methods and the rows are otherwise indistinguishable.
+BELIEF_TRACE_NAME = "belief_trace.json"
+"""Written beside trace.json by `python -m baselines.belief_trace`; its
+presence is what publishes a household to the belief-vs-truth page."""
 TRACE_GLOBS = ("profiles/*/*/*/*/timeline_seed*/trace.json",
                "profiles/*/*/*/timeline_seed*/trace.json",
                "profiles/*/*/timeline_seed*/trace.json",
@@ -162,6 +165,13 @@ def build_rows() -> list[dict]:
         row = {"label": _label_for(path), "trace": url, "source": source}
         if prior.get("runs"):
             row["runs"] = prior["runs"]           # keep published belief runs
+        # Belief traces are DISCOVERED, not published by hand: one sits
+        # next to trace.json whenever `python -m baselines.belief_trace`
+        # has been run for that household, so the belief-vs-truth page
+        # offers exactly the households that have one.
+        belief = path.with_name(BELIEF_TRACE_NAME)
+        if belief.exists():
+            row["belief_trace"] = "/" + str(belief.relative_to(REPO_ROOT))
         rows.append(row)
     # revamp_v2 first (newest set), then the rest, real-data traces last
     rows.sort(key=lambda r: _sort_key(r["trace"]))

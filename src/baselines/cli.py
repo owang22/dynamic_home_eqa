@@ -50,10 +50,8 @@ import yaml
 from baselines.agent import Agent
 from baselines.bank import EpisodeBank, JsonlBank, write_synthetic_bank
 from baselines.beliefs.base import BeliefModel
-from baselines.beliefs.last_observation import LastObservation
-from baselines.beliefs.most_frequent import MostFrequentLocation
-from baselines.beliefs.timetable import TimetableConfig, TimetableLookup
 from baselines.harness import QuestionRecord, run_episode
+from baselines.registry import build_registered_belief
 from baselines.metrics import (aggregate, plot_accuracy_bar,
                                plot_accuracy_by_day, write_aggregate_csv,
                                write_questions_csv)
@@ -107,23 +105,13 @@ def _derived_rng(seed: int, *parts: str) -> random.Random:
 
 
 def build_belief(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
-    """Instantiate a belief model from its config spec."""
-    name = str(spec["name"])
-    floor = float(spec.get("exclusion_floor", 0.0))
-    raw_hl = spec.get("half_life_h")
-    half_life = None if raw_hl is None else float(raw_hl)
-    if name == "last_observation":
-        return LastObservation(rng, exclusion_floor=floor)
-    if name == "most_frequent":
-        return MostFrequentLocation(rng, exclusion_floor=floor,
-                                    half_life_h=half_life)
-    if name == "timetable":
-        cfg = TimetableConfig(
-            bin_hours=int(spec.get("bin_hours", 1)),
-            day_scheme=str(spec.get("day_scheme", "all")))
-        return TimetableLookup(rng, cfg, exclusion_floor=floor,
-                               half_life_h=half_life)
-    raise ValueError(f"unknown belief {name!r}")
+    """Instantiate a belief model from its config spec.
+
+    Delegates to :mod:`baselines.registry`, which knows every buildable
+    model (frozen panel members and bake-off candidates alike) and their
+    ``panel`` tags.
+    """
+    return build_registered_belief(spec, rng)
 
 
 def build_policy(spec: Dict[str, Any], rng: random.Random) -> DecisionPolicy:
@@ -268,6 +256,33 @@ def _bankstats_command(args: argparse.Namespace) -> int:
     return 0 if stationarity_passes(stats, args.max_modal_share) else 1
 
 
+def _fleet_command(args: argparse.Namespace) -> int:
+    """The ``fleet`` subcommand: export + healthcheck every household."""
+    import baselines.fleet as fleet
+
+    export_cfg, hc_cfg = fleet.load_fleet_config(args.config)
+    sources = fleet.discover_households(tuple(args.roots))
+    rows = fleet.run_fleet(sources, export_cfg, hc_cfg, args.banks_dir,
+                           args.out_dir)
+    provenance = fleet.provenance_block(args.config, export_cfg.seed)
+    args.out_dir.mkdir(parents=True, exist_ok=True)
+    (args.out_dir / "fleet_summary.json").write_text(json.dumps(
+        {"provenance": provenance, "banks": rows}, indent=2) + "\n")
+    (args.out_dir / "fleet_summary.md").write_text(
+        fleet.render_summary_md(rows, provenance))
+    passing = [r for r in rows
+               if r["status"] == "ok" and r["gates_pass"]]
+    print(f"fleet: {len(rows)} banks, {len(passing)} pass all gates "
+          f"-> {args.out_dir}/fleet_summary.{{md,json}}")
+    for row in rows:
+        verdict = (row["error"] if row["status"] != "ok"
+                   else "PASS" if row["gates_pass"]
+                   else "FAIL " + ",".join(g for g, v in row["gates"].items()
+                                           if not v["passed"]))
+        print(f"  {row['household']}: {verdict}")
+    return 0 if all(r["status"] == "ok" for r in rows) else 1
+
+
 def _healthcheck_command(args: argparse.Namespace) -> int:
     """The ``healthcheck`` subcommand; exit 0 only on overall PASS."""
     from baselines.healthcheck import (load_healthcheck_config,
@@ -300,6 +315,24 @@ def main() -> None:
     hc_parser.add_argument("--out-dir", type=pathlib.Path, default=None,
                            help="write healthcheck.json + healthcheck.txt here")
 
+    fleet_parser = sub.add_parser(
+        "fleet", help="export + healthcheck every realized household under "
+                      "one shared config; write the fleet summary")
+    fleet_parser.add_argument(
+        "--roots", type=pathlib.Path, nargs="+",
+        default=None,
+        help="profile roots to scan (default: the revamp_v1 and "
+             "revamp_v2/storyfirst sets)")
+    fleet_parser.add_argument(
+        "--config", type=pathlib.Path,
+        default=pathlib.Path("src/baselines/configs/fleet.yaml"))
+    fleet_parser.add_argument(
+        "--banks-dir", type=pathlib.Path,
+        default=pathlib.Path("banks/baselines/fleet"))
+    fleet_parser.add_argument(
+        "--out-dir", type=pathlib.Path,
+        default=pathlib.Path("reports/baselines/fleet"))
+
     stats_parser = sub.add_parser(
         "bankstats", help="ground-truth-intrinsic stats + stationarity gate "
                           "(no agents; the fast generator feedback loop)")
@@ -319,8 +352,11 @@ def main() -> None:
     if args.command == "bankstats" and args.max_modal_share is None:
         from baselines.bankstats import DEFAULT_MAX_MODAL_SHARE
         args.max_modal_share = DEFAULT_MAX_MODAL_SHARE
+    if args.command == "fleet" and args.roots is None:
+        from baselines.fleet import DEFAULT_ROOTS
+        args.roots = [pathlib.Path(r) for r in DEFAULT_ROOTS]
     handlers = {"run": _run_command, "healthcheck": _healthcheck_command,
-                "bankstats": _bankstats_command}
+                "bankstats": _bankstats_command, "fleet": _fleet_command}
     sys.exit(handlers[args.command](args))
 
 

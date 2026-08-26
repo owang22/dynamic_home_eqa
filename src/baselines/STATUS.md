@@ -1,5 +1,171 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-08-25, later: sighting-scale experiment + viewer belief traces)
+
+**The Cause-1 diagnosis was tested and holds, with a corrected dosage.**
+`export_bank.export` gained two size-scaling rules —
+`sightings_per_object_day` and `budget_per_sensable_receptacle` — which
+replace the absolute per-day settings with rules proportional to the
+household (fleet config passes them through). A rate probe over four
+banks shows belief spread rising monotonically with evidence
+(hh4: 0.011 -> 0.034 -> 0.070 -> 0.165 at 0.5/1/2/4 per object per day),
+so the panel beliefs were being STARVED into agreement, not inherently
+alike. Full fleet at 1.0/object/day + 1.6 senses/sensable receptacle:
+**discriminative failures 11/12 -> 1/12, passing banks 1 -> 2**
+(revamp_v1 hh1 restored, storyfirst hh10 newly passing). Two corrections
+to the earlier write-up, both recorded in
+`reports/baselines/fleet/sighting_scale_experiment.md`: the originally
+proposed 0.5/object/day is BELOW the gate on every probed bank (and
+regresses hh1 from PASS to FAIL — the 0.51 arithmetic ignored the ~15%
+of sightings dropped as unobservable while an object is out), and the
+fix is not free — more evidence raises passive accuracy, which pushes
+three already-stationary banks (revamp_v1 hh3, hh7, hh9) past the
+`not_trivial` ceiling and raises the bar `not_impossible` must clear
+(10/12 still fail it). Stationarity is upstream of both survivors, so
+the recommended order is: repair the dead-inventory content first, then
+adopt 1.0/object/day, then re-tune budget. `configs/fleet.yaml` is
+deliberately NOT changed yet — switching the shared config rewrites what
+every recorded gate reading means, and the content fixes will move these
+numbers again; adopting it is then a two-line edit.
+
+**Belief traces for the viewer.** New `baselines/belief_trace.py` writes
+`belief_trace.json` beside a household's `trace.json`: per belief model
+and per object, run-length-encoded segments of the model's argmax under
+the PASSIVE diet (tour + scripted sightings, no sensing), plus the
+bank's own truth segments. Predictions are sampled on a 15-minute grid
+because a belief's argmax moves with time even without new evidence
+(decayed counts re-weight, timetable bins roll over, hazards decay);
+RLE keeps a 7-model, 53-object household at ~270 KB. Built for all 12
+fleet households (~2 s each). `visualization/serve.py` DISCOVERS these
+files and publishes them in `traces.json`, which is what brings the
+belief-vs-truth page back — it had gone dark because its `runs` entries
+pointed at archived run logs from the retired dataset. The page
+(`viewer/beliefs.html`) is rebuilt around three tabs: the focus object
+on the map (belief ring vs truth disc, joined when they disagree, now
+resolvable at ANY slider moment rather than only at question times), a
+table of every object right now sorted wrong-first, and the same instant
+scored across all seven models. Six new tests
+(`tests/test_baselines_belief_trace.py`) assert the traced argmax equals
+the live model's prediction at every grid point for every model, that
+truth matches the bank exactly, byte-determinism, and refusal of
+multi-episode banks; the page's own segment-lookup logic was exercised
+against real data under node (13 260 lookups, 0 outside their segment).
+
+## Update (2026-08-25, fleet health run + horizon-controlled passive protocol + candidate bake-off)
+
+Three additions, all passive-side; the frozen instrument panel, gate
+thresholds, and 24 h half-life are untouched.
+
+**Fleet (Task 1).** New `python -m baselines.cli fleet`: exports every
+realized household under one shared config
+(`configs/fleet.yaml` = the hh1 gate-passing recipe: 90 q/day from day
+3, 10 sightings/day, budget 24, uniform, tour on, seed 0) and runs
+healthcheck + bankstats on each. Results
+(`reports/baselines/fleet/`): **12 banks, 1 passes all six gates**
+(revamp_v1 hh1 — the calibration bank). Both precedent failure classes
+were checked explicitly and are clean (zero duplicate YAML mapping keys
+fleet-wide; 0.000 of question times inside whole-household sleep on
+every bank). The three real causes, diagnosed in `fleet/failures.md`:
+(1) discriminative collapse on 11/12 banks — the fixed 10 sightings/day
+starves per-object evidence on 26-53-object inventories (spread tracks
+sightings/object/day; hh1 passes at 0.51, everything under ~0.3
+collapses) — an instrument-scale mismatch needing one deliberate global
+config revision (e.g. sightings ~ 0.5 x n_objects), not per-bank
+tuning; (2) not_impossible on 10/12 — budget 24 vs 22-35 sensable
+receptacles and 100-210 moves/day, plus 11-19% OUT_OF_HOUSE questions
+that cost a full sweep to prove; (3) stationarity on 6/12 — inventory
+objects whose movement rules never fire (laundry baskets, vacuum
+cleaners, yoga mats, watering cans at modal share ~1.0), flagged as
+generator CONTENT per bank in failures.md; no household YAML edited.
+No exporter/simulator defect surfaced (solvable 1.000 everywhere).
+
+**Horizon-controlled passive protocol (Task 2).**
+`baselines/passive_eval.py`: per checkpoint day D the belief consumes
+tour + sightings with t < D*86 400 only, then answers bank questions at
+horizons h past D, scored per (D, h) cell (never pooled across h), with
+per-question time-since-last-sighting recency bins, top-1 AND epsilon-
+floored natural-log loss, household-unit aggregation (unweighted mean,
+seeded bootstrap over households, sample sizes everywhere). The old
+per-day curve is retained and now labeled DESCRIPTIVE ONLY in
+`metrics.plot_accuracy_by_day` and the report header.
+
+**Candidates + bake-off (Task 3).** New registry
+(`baselines/registry.py`) tags every belief `frozen|candidate`;
+`cli.build_belief` delegates to it and the healthcheck asserts its panel
+is all-frozen (a candidate in the panel raises — tested). Four
+candidates under `beliefs/`: `markov1`, `periodic_persistence` (hazard
+estimator unit-tested on hand-computed censored dwells),
+`daytype_mixture` (seeded k-means day-types + naive-Bayes type
+inference + per-type timetables), `hierarchy_backoff` (object -> class
+-> global). `python -m baselines.bakeoff` runs panel + candidates under
+the Task-2 protocol on gate-passing banks
+(`reports/baselines/bakeoff/`; an `exploratory_all_banks/` run covers
+all 12 since only one bank passes). Findings (`recommendation.md`):
+promote periodic_persistence (strongest classical per-object
+comparator) and hierarchy_backoff (wins log-loss on 10/12 households —
+top-1 and calibration genuinely dissociate); keep daytype_mixture as a
+regime probe only — **it separates on no bank** (its wins are within
+noise), while it is perfect on the synthetic two-regime fixture, so the
+finding is that current banks do not reward cross-object regime
+inference and generation must couple routines before LLM comparisons
+are worth running; drop markov1 (indistinguishable from most_frequent
+at realistic sighting rates).
+
+**Tests (Task 4).** 21 new tests (111 total, all passing; mypy --strict
+clean): hazard hand-computations, markov1 row arithmetic, backoff
+pooling, registry tags, healthcheck panel refusal, the three analytic
+fixture banks (strict-periodic -> timetable & periodic_persistence 1.0
+at h <= 1; two-regime -> daytype 1.0 vs frequency 0.0; fast churn ->
+every model within 0.2 of the frequency floor in the stalest bin), the
+poisoned post-checkpoint sighting barrier (whole scored output
+byte-equal), and bake-off JSON byte-determinism across runs.
+
+Deviations / judgment calls this round:
+
+1. *Fleet roots*: the brief's `profiles/revamp_v1/*/hh*` glob predates
+   the dataset reorganization; only hh1/hh3 are realized there. The
+   fleet default scans revamp_v1 AND `profiles/revamp_v2/storyfirst`
+   (the current 10-household set); `--roots` overrides.
+2. *Belief base hook*: cross-object candidates needed the shared
+   evidence store, so `BeliefModel` gained an overridable
+   `_predict_for_object` (default = old behavior); exclusions,
+   renormalization, and the at-instant override remain base-only.
+   `_predict_from_history` is no longer abstract (cross-object models
+   never reach it).
+3. *Log-loss floor*: the brief says "the belief's configured floor",
+   but the panel runs exclusion_floor = 0 (hard exclusions + one-hot
+   recency), where one confident miss makes the mean infinite. The
+   protocol floors every model at the same configured epsilon
+   (default 1e-3) instead — same floor for every model, so the
+   comparison stays fair.
+4. *daytype_mixture type inference* adds a day-of-week term to the
+   brief's "sightings seen so far today" naive Bayes: under the frozen
+   checkpoint there are never same-day sightings, so day-of-week is
+   the regime evidence the model always has.
+5. *Horizon cells are bins*: questions come from the bank, so each is
+   assigned the smallest configured h covering its lag past D (0.25 ->
+   (0, 6 h], 1 -> (6 h, 1 d], ...), rather than being generated at
+   exact horizons.
+6. *Bake-off household unit is the bank* (filename-stem label):
+   household_ids collide across profile sets (both hh1s are
+   `hh_001`).
+7. *hierarchy_backoff global fix* (recorded per the "clearly broken
+   default" rule): backoff WEIGHTS now use raw sighting counts, not
+   24 h-decayed counts — decay-gated weights abandoned old-but-
+   plentiful own evidence for the global histogram (stale-bin accuracy
+   0.105 -> 0.432). Level distributions still use the frozen decay.
+8. *Exploratory bake-off*: only one bank passes gates, so the official
+   run has n_households = 1; a clearly-labeled
+   `exploratory_all_banks/` run over all 12 provides the
+   multi-resident evidence the daytype question needs. Official
+   conclusions cite the official run; the daytype non-separation holds
+   in both.
+9. *Dirty-tree runs*: fleet/bake-off reports were produced from the
+   working tree of this change; healthchecks record gates_pass with
+   `overall_pass` correctly REFUSED-dirty. Committing (owner's call)
+   and re-running `cli fleet` + `bakeoff` reproduces them with clean
+   provenance.
+
 ## Update (2026-08-11, dated-activity pipeline: hh1 is the new headline bank)
 
 The household authoring chain is now three reviewable stages per

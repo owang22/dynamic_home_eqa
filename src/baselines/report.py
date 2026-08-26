@@ -51,6 +51,11 @@ def render(run_dir: pathlib.Path) -> str:
         "",
         f"Run directory: `{run_dir}`",
         "",
+        "Per-day passive numbers in this report are DESCRIPTIVE ONLY: "
+        "later days conflate more history, fresher sightings, and shorter "
+        "horizons. Learning-curve claims use the horizon-controlled "
+        "protocol (`baselines.passive_eval` / the bake-off reports).",
+        "",
         "## Provenance",
         "",
         f"- bank: `{provenance['bank_path']}` "

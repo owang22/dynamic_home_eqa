@@ -241,6 +241,11 @@ def plot_accuracy_by_day(rows: Sequence[AggregateRow],
                          path: pathlib.Path) -> None:
     """Line chart: accuracy vs day_index, hue = belief, dash = policy.
 
+    DESCRIPTIVE ONLY: a later day simultaneously has more history, more
+    recent sightings, and a shorter forecast horizon, so a rising curve
+    here cannot be attributed to adaptation. Learning-curve claims use
+    the horizon-controlled protocol in :mod:`baselines.passive_eval`.
+
     Agents frequently score identically on small banks, which would hide
     coincident series entirely; a small per-agent horizontal dodge
     (< 0.1 day) keeps every series visible without misstating any value.

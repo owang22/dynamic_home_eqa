@@ -1,0 +1,161 @@
+{
+  "bank_path": "banks/baselines/fleet/revamp_v2__storyfirst__gpt-5.6-terra__hh8_bank.jsonl",
+  "bank_manifest_hash": "cc2e49f10107e5acc41162a8e7a5f2c9f68d8ba66c7cfcb0b73c2f6286609ed2",
+  "config": {
+    "seed": 0,
+    "budget": null,
+    "stationarity_max_modal_share": 0.6,
+    "solvable_tolerance": 1e-09,
+    "not_trivial_max": 0.65,
+    "not_impossible_margin": 0.15,
+    "discriminative_band": 0.03,
+    "powered_min_questions": 300
+  },
+  "config_hash": "fbf2c99847e1194a778cd0b90c7e37f0d9f142c58846fc0cc63dd5b3662a94ed",
+  "git_commit": "27ae5272a275cb4bd2254d1d763c79af866b02fc",
+  "git_dirty": true,
+  "seed": 0,
+  "timestamp": "2026-08-25T21:22:02.833833+00:00",
+  "n_questions": 1620,
+  "real_budget_per_day": 24,
+  "belief_panel": [
+    {
+      "name": "last_observation"
+    },
+    {
+      "name": "most_frequent",
+      "half_life_h": 24
+    },
+    {
+      "name": "timetable",
+      "bin_hours": 1,
+      "day_scheme": "all",
+      "half_life_h": 24
+    }
+  ],
+  "bank_stats": {
+    "n_episodes": 1,
+    "n_objects": 36,
+    "n_receptacles": 27,
+    "n_days": 21,
+    "n_questions": 1620,
+    "modal_share_time": 0.6231554967666081,
+    "modal_share_questions": 0.6222222222222222,
+    "moves_per_day": 98.57142857142857,
+    "displacement_median_h": 1.9166666666666667,
+    "displacement_p90_h": 23.833333333333332,
+    "displaced_time_share": 0.3768445032333919,
+    "max_repeats_per_day": 3,
+    "per_object_modal_share": {
+      "laptop_nadia": 1.0,
+      "phone_nadia": 0.8211,
+      "keys_nadia": 0.9575,
+      "wallet_nadia": 0.8345,
+      "mug_nadia": 0.8193,
+      "water_bottle_nadia": 0.4676,
+      "notebook_nadia": 0.8111,
+      "pen_nadia": 0.6384,
+      "charger_nadia": 0.4898,
+      "glasses_nadia": 0.5413,
+      "jacket_nadia": 0.8682,
+      "yoga_mat_nadia": 1.0,
+      "laptop_eli": 0.7875,
+      "phone_eli": 0.3941,
+      "keys_eli": 0.6289,
+      "wallet_eli": 0.3595,
+      "headphones_eli": 0.6028,
+      "backpack_eli": 0.7716,
+      "notebook_eli": 0.3258,
+      "water_bottle_eli": 0.4228,
+      "charger_eli": 0.4243,
+      "gaming_controller_eli": 0.5958,
+      "mug_1": 0.4802,
+      "mug_2": 0.5498,
+      "plate_1": 0.5699,
+      "plate_2": 0.5062,
+      "plate_3": 0.7296,
+      "bowl_1": 0.4447,
+      "bowl_2": 0.3583,
+      "remote_1": 0.394,
+      "blanket_1": 0.5264,
+      "pot_1": 0.3941,
+      "pan_1": 0.5712,
+      "laundry_basket_1": 0.7397,
+      "vacuum_cleaner_1": 1.0,
+      "umbrella_1": 0.6076
+    }
+  },
+  "panel": {
+    "never_sense_task_accuracy": {
+      "last_observation": 0.5382716049382716,
+      "most_frequent": 0.5407407407407407,
+      "timetable": 0.5308641975308642
+    },
+    "sequential_search_unlimited_task_accuracy": {
+      "last_observation": 1.0,
+      "most_frequent": 1.0,
+      "timetable": 1.0
+    },
+    "sequential_search_real_budget": {
+      "belief": "most_frequent",
+      "budget_per_day": 24,
+      "task_accuracy": 0.678395061728395
+    }
+  },
+  "stratified_discriminative": {
+    "remote_worker_couple": 0.00987654320987652
+  },
+  "gates": [
+    {
+      "name": "stationarity",
+      "passed": false,
+      "measured": 0.6231554967666081,
+      "threshold": 0.6,
+      "comparison": "<=",
+      "rationale": "dwell-weighted modal share: how often a home-base-only model is right at a random moment; computable from ground truth alone (cli bankstats) before paying for the panel"
+    },
+    {
+      "name": "solvable",
+      "passed": true,
+      "measured": 1.0,
+      "threshold": 1.0,
+      "comparison": "==",
+      "rationale": "unlimited-budget search must find every queried object; failure means a bank or harness bug"
+    },
+    {
+      "name": "not_trivial",
+      "passed": true,
+      "measured": 0.5407407407407407,
+      "threshold": 0.65,
+      "comparison": "<=",
+      "rationale": "if passive memory nearly solves the bank, the dynamics are too static to test sensing"
+    },
+    {
+      "name": "not_impossible",
+      "passed": false,
+      "measured": 0.678395061728395,
+      "threshold": 0.6907407407407408,
+      "comparison": ">=",
+      "rationale": "sensing at the real budget must buy meaningful accuracy over the best passive belief"
+    },
+    {
+      "name": "discriminative",
+      "passed": false,
+      "measured": 0.00987654320987652,
+      "threshold": 0.03,
+      "comparison": ">",
+      "rationale": "different modeling assumptions must score differently somewhere, or the bank cannot rank belief models"
+    },
+    {
+      "name": "powered",
+      "passed": true,
+      "measured": 1620.0,
+      "threshold": 300.0,
+      "comparison": ">=",
+      "rationale": "too few questions and accuracy differences between agents drown in binomial noise"
+    }
+  ],
+  "gates_pass": false,
+  "overall_pass": false,
+  "overall_note": "gates failed: stationarity, not_impossible, discriminative"
+}

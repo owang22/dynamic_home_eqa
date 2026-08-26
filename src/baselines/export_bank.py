@@ -77,9 +77,10 @@ import argparse
 import csv
 import json
 import logging
+import math
 import pathlib
 import random
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
 
@@ -312,8 +313,25 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
            seed: int, sightings_per_day: int, questions_per_day: int,
            first_question_day: int, budget_per_day: int,
            query_mode: str = "uniform",
-           initial_tour: bool = True) -> JsonlBank:
-    """Write the bank JSONL and return its loader (which re-validates it)."""
+           initial_tour: bool = True,
+           sightings_per_object_day: Optional[float] = None,
+           budget_per_sensable_receptacle: Optional[float] = None
+           ) -> JsonlBank:
+    """Write the bank JSONL and return its loader (which re-validates it).
+
+    ``sightings_per_object_day`` and ``budget_per_sensable_receptacle``,
+    when set, REPLACE the corresponding absolute setting with a rule
+    scaled to the household's size:
+    ``sightings_per_day = ceil(rate * n_objects)`` and
+    ``budget_per_day = ceil(rate * n_sensable_receptacles)``. A flat
+    absolute rate is not household-agnostic — the same 10 sightings/day
+    is 0.6 per object in a 17-object house and 0.19 in a 53-object one,
+    so beliefs in the large house never accumulate enough evidence per
+    object to differ from each other. Scaling rules keep the per-object
+    evidence budget (and the per-receptacle search budget) constant
+    across household sizes, which is what makes gate readings comparable
+    across a fleet.
+    """
     spec = yaml.safe_load(spec_path.read_text())
     # New-format specs (object_motions.yaml) name it `source_persona`; the
     # retired schedule specs said `source_profile`. Accept either.
@@ -322,6 +340,16 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
         (spec_path.parent / persona_ref).resolve().read_text())
     object_classes = {o["id"]: o["class"] for o in profile["object_inventory"]}
     receptacles = [r["id"] for r in spec["receptacles"]] + [ON_PERSON, OUT_OF_HOUSE]
+    if sightings_per_object_day is not None:
+        sightings_per_day = math.ceil(
+            sightings_per_object_day * len(object_classes))
+    if budget_per_sensable_receptacle is not None:
+        # OUT_OF_HOUSE is unsensable; every other receptacle is a target.
+        budget_per_day = math.ceil(
+            budget_per_sensable_receptacle * (len(receptacles) - 1))
+    logger.info("export sizing: %d objects, %d receptacles -> %d "
+                "sightings/day, budget %d/day", len(object_classes),
+                len(receptacles), sightings_per_day, budget_per_day)
 
     truth, n_days, causes = load_truth(timeline)
     awake = awake_spans(timeline, n_days)

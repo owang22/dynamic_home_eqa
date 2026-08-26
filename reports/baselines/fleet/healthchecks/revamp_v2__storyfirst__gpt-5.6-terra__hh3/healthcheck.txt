@@ -1,0 +1,27 @@
+DATA-HEALTH GATE REPORT — revamp_v2__storyfirst__gpt-5.6-terra__hh3_bank.jsonl
+  bank:   banks/baselines/fleet/revamp_v2__storyfirst__gpt-5.6-terra__hh3_bank.jsonl  (manifest 6a6cbee7d8e4…)
+  commit: 27ae5272a275 (DIRTY TREE)  seed 0  questions 1620  budget 24/day
+
+  Intrinsic (ground truth only — see `cli bankstats`): modal share 0.613 time-weighted / 0.598 at query times; 105.4 moves/day; displacement median 2.2 h, p90 25.3 h
+
+  Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
+    NeverSense (answer from memory, never look) last_observation 0.506  most_frequent 0.507  timetable 0.494
+    SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
+    SequentialSearch @ real budget              most_frequent 0.588
+
+  Gates (bank is healthy only if ALL pass):
+    [FAIL] stationarity     measured   0.613  need <= 0.600
+           dwell-weighted modal share: how often a home-base-only model is right at a random moment; computable from ground truth alone (cli bankstats) before paying for the panel
+    [PASS] solvable         measured   1.000  need == 1.000
+           unlimited-budget search must find every queried object; failure means a bank or harness bug
+    [PASS] not_trivial      measured   0.507  need <= 0.650
+           if passive memory nearly solves the bank, the dynamics are too static to test sensing
+    [FAIL] not_impossible   measured   0.588  need >= 0.657
+           sensing at the real budget must buy meaningful accuracy over the best passive belief
+    [FAIL] discriminative   measured   0.012  need > 0.030
+           different modeling assumptions must score differently somewhere, or the bank cannot rank belief models
+    [PASS] powered          measured 1620.000  need >= 300.000
+           too few questions and accuracy differences between agents drown in binomial noise
+    stratified discriminative spreads by household_type: retired_couple=0.012
+
+  OVERALL: FAIL — gates failed: stationarity, not_impossible, discriminative

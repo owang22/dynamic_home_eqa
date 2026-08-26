@@ -2,18 +2,24 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>belief vs truth — baselines run viewer</title>
+<title>belief vs truth — baselines viewer</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
   <h1>belief vs truth</h1>
-  <select id="dataset-select" title="household + baselines run"></select>
-  <select id="agent-select" title="agent (belief+policy)"></select>
-  <select id="object-select" title="object"></select>
+  <select id="dataset-select" title="household"></select>
+  <select id="model-select" title="belief model"></select>
+  <select id="object-select" title="focus object"></select>
   <span id="run-label" class="muted"></span>
   <span style="margin-left:auto"><a id="traces-link" href="index.html" style="color:var(--accent2)">object traces ▸</a></span>
 </header>
+
+<nav id="tabs">
+  <button class="tab active" data-tab="map">map — focus object</button>
+  <button class="tab" data-tab="table">all objects now</button>
+  <button class="tab" data-tab="models">model comparison</button>
+</nav>
 
 <main>
   <div id="map-wrap">
@@ -22,32 +28,50 @@
       <div id="clock">d00 Mon 00:00</div>
       <div id="whereabouts" class="muted"></div>
     </div>
+    <div id="sheet">
+      <div id="sheet-head"></div>
+      <div id="sheet-body"></div>
+    </div>
   </div>
 
   <aside id="panel">
     <section id="status">
+      <label>focus object, right now</label>
       <table>
-        <tr><th>truth now</th><td id="st-truth">–</td></tr>
-        <tr><th>last question</th><td id="st-q">–</td></tr>
-        <tr><th>predicted</th><td id="st-pred">–</td></tr>
-        <tr><th>confidence</th><td id="st-conf">–</td></tr>
+        <tr><th>truth</th><td id="st-truth">–</td></tr>
+        <tr><th>belief</th><td id="st-belief">–</td></tr>
         <tr><th>verdict</th><td id="st-verdict">–</td></tr>
-        <tr><th>budget spent</th><td id="st-budget">–</td></tr>
-        <tr><th>accuracy so far</th><td id="st-acc">–</td></tr>
+        <tr><th>confidence</th><td id="st-conf">–</td></tr>
+        <tr><th>last seen</th><td id="st-seen">–</td></tr>
       </table>
     </section>
     <section>
-      <label>prediction distribution (at last question)</label>
-      <div id="dist" class="small muted"></div>
+      <label>this model, whole house, right now</label>
+      <table class="status">
+        <tr><th>objects right</th><td id="st-house">–</td></tr>
+      </table>
+    </section>
+    <section>
+      <div class="row">
+        <label class="chk"><input type="checkbox" id="show-all"> draw every object</label>
+        <label class="chk"><input type="checkbox" id="only-wrong"> wrong only</label>
+      </div>
     </section>
     <section>
       <label>legend</label>
       <div class="small muted">
-        ● gold disc — true location now<br>
-        ◯ ring — predicted at last question (green right / red wrong)<br>
-        dashed line — prediction ↔ truth when they disagree<br>
-        strip ticks — questions (green right / red wrong)
+        ● gold disc — where the object truly is now<br>
+        ◯ ring — where this model believes it is<br>
+        green ring = belief matches truth, red = wrong<br>
+        dashed line — belief ↔ truth when they disagree<br>
+        strip — green line: share of objects this model has right,
+        over the whole episode; gold ticks: when the focus object was
+        actually seen
       </div>
+    </section>
+    <section>
+      <label>belief source</label>
+      <div id="src-note" class="small muted"></div>
     </section>
   </aside>
 </main>
@@ -62,7 +86,8 @@
   </select>
   <div id="slider-stack">
     <canvas id="event-strip" height="14"></canvas>
-    <input type="range" id="time" min="0" max="20160" step="5" value="0">
+    <input type="range" id="time" min="0" max="30240" step="5" value="0">
+    <div id="strip-caption" class="small muted"></div>
   </div>
 </footer>
 

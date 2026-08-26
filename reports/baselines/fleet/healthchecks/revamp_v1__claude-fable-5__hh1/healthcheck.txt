@@ -1,0 +1,27 @@
+DATA-HEALTH GATE REPORT — revamp_v1__claude-fable-5__hh1_bank.jsonl
+  bank:   banks/baselines/fleet/revamp_v1__claude-fable-5__hh1_bank.jsonl  (manifest a06f90e5d96d…)
+  commit: 27ae5272a275 (DIRTY TREE)  seed 0  questions 1620  budget 24/day
+
+  Intrinsic (ground truth only — see `cli bankstats`): modal share 0.573 time-weighted / 0.525 at query times; 25.4 moves/day; displacement median 15.1 h, p90 36.8 h
+
+  Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
+    NeverSense (answer from memory, never look) last_observation 0.580  most_frequent 0.567  timetable 0.528
+    SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
+    SequentialSearch @ real budget              last_observation 0.754
+
+  Gates (bank is healthy only if ALL pass):
+    [PASS] stationarity     measured   0.573  need <= 0.600
+           dwell-weighted modal share: how often a home-base-only model is right at a random moment; computable from ground truth alone (cli bankstats) before paying for the panel
+    [PASS] solvable         measured   1.000  need == 1.000
+           unlimited-budget search must find every queried object; failure means a bank or harness bug
+    [PASS] not_trivial      measured   0.580  need <= 0.650
+           if passive memory nearly solves the bank, the dynamics are too static to test sensing
+    [PASS] not_impossible   measured   0.754  need >= 0.730
+           sensing at the real budget must buy meaningful accuracy over the best passive belief
+    [PASS] discriminative   measured   0.052  need > 0.030
+           different modeling assumptions must score differently somewhere, or the bank cannot rank belief models
+    [PASS] powered          measured 1620.000  need >= 300.000
+           too few questions and accuracy differences between agents drown in binomial noise
+    stratified discriminative spreads by household_type: night_shift_solo=0.052
+
+  OVERALL: FAIL — REFUSED: all gates passed but the git tree is dirty — commit first so the result is reproducible, then re-run

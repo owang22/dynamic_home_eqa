@@ -1,0 +1,19 @@
+# The ONE shared fleet configuration: every household bank is exported and
+# gated with exactly these settings. Per-bank knob tuning is
+# instrument-gaming — a bank that fails a gate under this config is a
+# finding about the bank, not a reason to touch this file.
+#
+# The export settings are the hh1 21-day recipe that first passed all six
+# gates (reports/baselines/hh1_21d_grid.md: 90 questions/day from day 3 =
+# 1620 questions, 10 sightings/day, budget 24/day, uniform repeat-capped
+# queries drawn from the household's own awake time, initial tour on).
+export:
+  seed: 0
+  sightings_per_day: 10
+  questions_per_day: 90
+  first_question_day: 3
+  budget_per_day: 24
+  query_mode: uniform
+  initial_tour: true
+# Healthcheck gates run at their standard defaults (no overrides).
+healthcheck: {}

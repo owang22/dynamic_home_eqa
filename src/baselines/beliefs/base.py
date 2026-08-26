@@ -139,8 +139,7 @@ class BeliefModel(abc.ABC):
         current = self._sighting_at(history, t)
         if current is not None:
             return Prediction(distribution={current: 1.0}, argmax=current)
-        base = (self._predict_from_history(history, t) if history
-                else self._uniform())
+        base = self._predict_for_object(object_id, history, t)
         return self._apply_exclusions(object_id, t, base)
 
     @staticmethod
@@ -244,10 +243,33 @@ class BeliefModel(abc.ABC):
 
     # ------------------------------------------------------------ helpers
 
-    @abc.abstractmethod
+    def _predict_for_object(self, object_id: str,
+                            history: List[Tuple[int, str]],
+                            t: int) -> Prediction:
+        """Base distribution before exclusions are applied.
+
+        The default routes a non-empty history to
+        :meth:`_predict_from_history` and a never-observed object to the
+        uniform fallback. Models that pool evidence ACROSS objects (and so
+        can say something useful even about a never-sighted object)
+        override this method instead of ``_predict_from_history``; the
+        exclusion machinery, renormalization, and the
+        sighting-at-prediction-instant override still come from
+        :meth:`predict` and are never reimplemented.
+        """
+        return (self._predict_from_history(history, t) if history
+                else self._uniform())
+
     def _predict_from_history(
             self, history: List[Tuple[int, str]], t: int) -> Prediction:
-        """Predict from a non-empty chronological sighting list."""
+        """Predict from a non-empty chronological sighting list.
+
+        Per-object models implement this; cross-object models override
+        :meth:`_predict_for_object` instead and never reach it.
+        """
+        raise NotImplementedError(
+            f"{self.name}: implement _predict_from_history or override "
+            f"_predict_for_object")
 
     def _receptacles(self) -> Tuple[str, ...]:
         if self._context is None:

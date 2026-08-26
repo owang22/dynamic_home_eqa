@@ -1,0 +1,27 @@
+DATA-HEALTH GATE REPORT — revamp_v1__claude-fable-5__hh3_bank.jsonl
+  bank:   banks/baselines/fleet/revamp_v1__claude-fable-5__hh3_bank.jsonl  (manifest bf31e2c39f29…)
+  commit: 27ae5272a275 (DIRTY TREE)  seed 0  questions 1620  budget 24/day
+
+  Intrinsic (ground truth only — see `cli bankstats`): modal share 0.685 time-weighted / 0.654 at query times; 55.2 moves/day; displacement median 3.9 h, p90 22.5 h
+
+  Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
+    NeverSense (answer from memory, never look) last_observation 0.614  most_frequent 0.614  timetable 0.619
+    SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
+    SequentialSearch @ real budget              timetable 0.631
+
+  Gates (bank is healthy only if ALL pass):
+    [FAIL] stationarity     measured   0.685  need <= 0.600
+           dwell-weighted modal share: how often a home-base-only model is right at a random moment; computable from ground truth alone (cli bankstats) before paying for the panel
+    [PASS] solvable         measured   1.000  need == 1.000
+           unlimited-budget search must find every queried object; failure means a bank or harness bug
+    [PASS] not_trivial      measured   0.619  need <= 0.650
+           if passive memory nearly solves the bank, the dynamics are too static to test sensing
+    [FAIL] not_impossible   measured   0.631  need >= 0.769
+           sensing at the real budget must buy meaningful accuracy over the best passive belief
+    [FAIL] discriminative   measured   0.006  need > 0.030
+           different modeling assumptions must score differently somewhere, or the bank cannot rank belief models
+    [PASS] powered          measured 1620.000  need >= 300.000
+           too few questions and accuracy differences between agents drown in binomial noise
+    stratified discriminative spreads by household_type: retired_couple=0.006
+
+  OVERALL: FAIL — gates failed: stationarity, not_impossible, discriminative

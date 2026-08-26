@@ -64,45 +64,55 @@ rewritten). habitat_sim is needed **only** by the offline bake step.
    is answerable by eye. The ◀/▶ buttons follow whichever track the little
    dropdown between them names.
 
-   A second page, **`viewer/beliefs.html`**, overlays a baselines run
-   (src/baselines) on the same map: gold disc = the object's true location
-   now, ring = the agent's prediction at the last question (green right /
-   red wrong, dashed line on a miss), with per-question readout
-   (distribution, budget, running accuracy) and a correctness strip under
-   the slider. Pseudo-receptacles map back for drawing: OUT_OF_HOUSE at the
-   AWAY circle, ON_PERSON at the resident's current position.
+   A second page, **`viewer/beliefs.html`**, answers "where does the model
+   think this is, and where is it really?" at **any** moment on the slider
+   — not only at question times. It reads `belief_trace.json` from beside
+   the household's trace.json (written by `python -m baselines.belief_trace`;
+   `serve.py` discovers it and publishes the household automatically, so
+   there is nothing to register). Three tabs: the focus object on the map
+   (gold disc = truth now, ring = what the selected model believes, green
+   when they agree and red plus a dashed link when they do not, with an
+   optional every-object overlay), a table of all objects scored right now
+   sorted wrong-first, and the same instant scored across every model in
+   the trace. The strip under the slider plots the share of objects the
+   model has right over the whole episode — dips are where the house got
+   ahead of what the model had been told. Beliefs are PASSIVE (tour +
+   scripted sightings, no sensing), so the picture is the model's own, not
+   an artifact of which objects some policy chose to look at.
+   Pseudo-receptacles map back for drawing: OUT_OF_HOUSE at the AWAY
+   circle, ON_PERSON at the resident's current position.
 
 ### The dataset list — `traces.json`, rebuilt by `serve.py`
 
 Both pages read `visualization/traces.json` (via `viewer/datasets.js`) and
 build their header dropdown from it; neither has a hardcoded path, and
 `serve.py` pins no trace either. Nothing is selected by hand-editing a URL.
-`serve.py` regenerates the file at startup, so the only thing worth editing
-by hand is a `runs` list (belief overlays), which it preserves. One entry
-per timeline:
+`serve.py` regenerates the file at startup and per request. One entry per
+timeline; `belief_trace` appears on its own whenever that file exists next
+to the trace (a hand-maintained `runs` list, from the older run-log
+overlay, is still preserved if present):
 
 ```json
-{"label": "hh1 — night-shift solo (Marisol), 21-day ...",
- "trace": "/profiles/revamp_v1/claude-fable-5/hh1/timeline_seed0/trace.json",
- "runs": [{"label": "baselines grid — 9 agents × 17 objects, 21d",
-           "run": "/archive/smoke_results/baselines_hh1_21d/run_log.jsonl"}]}
+{"label": "hh_001 · working_professional_solo · 30 objects, 1 resident · 21d seed 0",
+ "trace": "/profiles/revamp_v2/storyfirst/gpt-5.6-terra/hh1/timeline_seed0/trace.json",
+ "belief_trace": "/profiles/revamp_v2/storyfirst/gpt-5.6-terra/hh1/timeline_seed0/belief_trace.json"}
 ```
 
 - `index.html` — one dropdown row per entry; the first is the default. The
-  **belief vs truth ▸** link carries the current household over, using its
-  first run.
-- `beliefs.html` — one row per (timeline, run) pair, so a timeline with no
-  `runs` is not offered (nothing to overlay); the picker greys out when
-  only one pair is published. Run logs come from
-  `python -m baselines.cli run <config.yaml>`, their banks from
-  `python -m baselines.export_bank`.
+  **belief vs truth ▸** link carries the current household AND the object
+  you are looking at across, and is inert (with a tooltip saying how to
+  generate one) for a household with no belief trace.
+- `beliefs.html` — one row per household that has a belief trace, so a
+  household with nothing to show is not offered. Generate one with
+  `python -m baselines.belief_trace`; its bank comes from
+  `python -m baselines.export_bank` or a `baselines.cli fleet` run.
 
-Unpublished files still load through `?trace=`, or `?run=&trace=` on the
-belief page (plus optional `&agent=&object=` preselects) — the picker then
-shows that file as a `(not in traces.json)` row so the dropdown always
-reflects what is on screen. Paths may be repo-absolute or relative; the
-picker matches either spelling. A missing or broken manifest is not fatal:
-the pages fall back to their URL params.
+Unpublished files still load through `?trace=&belief=` (plus optional
+`&model=&object=` preselects) — the picker then shows that file as a
+`(not in traces.json)` row so the dropdown always reflects what is on
+screen. Paths may be repo-absolute or relative; the picker matches either
+spelling. A missing or broken manifest is not fatal: the pages fall back
+to their URL params.
 
 ## Viewer features
 

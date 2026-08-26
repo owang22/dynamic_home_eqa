@@ -68,6 +68,7 @@ from baselines.bankstats import (BankStats, DEFAULT_MAX_MODAL_SHARE,
                                  compute_bank_stats)
 from baselines.cli import build_agent, git_state
 from baselines.harness import QuestionRecord, run_episode
+from baselines.registry import assert_frozen_panel
 from baselines.types import Episode
 
 logger = logging.getLogger(__name__)
@@ -254,6 +255,9 @@ def _evaluate_gates(
 def run_healthcheck(bank_path: pathlib.Path, config: HealthcheckConfig,
                     config_path: Optional[pathlib.Path]) -> HealthcheckReport:
     """Run the panel, evaluate the gates, and assemble both report forms."""
+    # Candidate-tagged beliefs may never enter the instrument: a changed
+    # panel silently changes what every gate measures.
+    assert_frozen_panel(BELIEF_PANEL)
     bank = JsonlBank(path=bank_path)
     episodes = list(bank.episodes())
     stats = compute_bank_stats(bank)

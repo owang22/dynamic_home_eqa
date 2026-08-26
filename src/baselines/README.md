@@ -1,5 +1,11 @@
 # baselines — sense-or-answer baseline study
 
+Package map beyond the core (see sections below): `fleet.py` (fleet
+health run over every realized household), `passive_eval.py` (the
+horizon-controlled passive protocol), `bakeoff.py` (candidate belief
+bake-off), `registry.py` (belief registry with `frozen|candidate`
+panel tags).
+
 Agents hold a memory of timestamped object sightings and answer
 object-localization questions ("where is mug_2 right now?") under a
 per-day sensing budget: for each question they either answer from belief
@@ -32,6 +38,22 @@ An `Agent` is exactly one `BeliefModel` plus one `DecisionPolicy`
   prediction, and the (read-only) remaining budget, returns `AnswerNow`
   or `Sense(receptacle_id)`. After a sense the harness updates the belief
   and asks again, so policies bound their senses per question.
+
+### Registry: frozen panel vs candidates
+
+Every buildable belief is registered in `registry.py` with a `panel`
+tag. `frozen` members are the three-model instrument panel below;
+`candidate` members (currently `markov1`, `periodic_persistence`,
+`daytype_mixture`, `hierarchy_backoff` — the bake-off slate, see
+`bakeoff.py` and `reports/baselines/bakeoff/recommendation.md`) are
+buildable from any config but the healthcheck REFUSES to run a panel
+containing one — the instrument stays frozen by construction, not
+convention. Candidates that pool evidence across objects override the
+base class's `_predict_for_object` hook; exclusion machinery,
+renormalization, and the sighting-at-instant override stay base-only
+either way. All candidates use the frozen 24 h count half-life where
+they use counts; every hyperparameter is fixed a priori (values in each
+model's config dataclass).
 
 ### Roster (frozen)
 
@@ -82,7 +104,58 @@ python -m baselines.cli healthcheck banks/baselines/hh_001_seed0_bank.jsonl \
 # intrinsic stats + stationarity gate only (no agents, < 1 s) — the fast
 # feedback loop while iterating the generator
 python -m baselines.cli bankstats banks/baselines/hh_001_seed0_bank.jsonl
+
+# fleet: export + healthcheck EVERY realized household under the one
+# shared config (configs/fleet.yaml — the hh1 recipe; never tuned per
+# bank); writes reports/baselines/fleet/fleet_summary.{md,json}
+python -m baselines.cli fleet
+
+# candidate bake-off under the horizon-controlled passive protocol,
+# on the fleet's gate-passing banks
+python -m baselines.bakeoff
+
+# belief trace for the viewer: what every model believes about every
+# object at every moment, against truth (see "Belief traces" below)
+python -m baselines.belief_trace --candidates \
+    --bank banks/baselines/fleet/<household>_bank.jsonl \
+    --out profiles/<household>/timeline_seed0/belief_trace.json
 ```
+
+## Belief traces (the viewer's belief-vs-truth page)
+
+`belief_trace.py` writes `belief_trace.json` beside a household's
+`trace.json`: per belief model and per object, run-length-encoded
+segments of that model's argmax under the PASSIVE diet (initial tour +
+the bank's scripted sightings, no sensing at all), plus the bank's own
+truth segments. Because a belief's argmax moves with time even when no
+new evidence arrives — decayed counts re-weight continuously, timetable
+bins roll over, hazards decay — predictions are sampled on a fixed grid
+(15 min) and then RLE'd, which is exact at grid resolution and small on
+disk (~100-270 KB for 7 models over 17-53 objects).
+
+`visualization/serve.py` discovers these files and publishes them, so
+running the generator is what makes a household appear on
+`viewer/beliefs.html`. That page compares belief against truth at ANY
+slider moment (not only at question times) with three tabs: the focus
+object on the map, every object scored right now, and the same instant
+across all models. Correctness there means exactly what it means in the
+harness — identical receptacle ids, exact match — because the truth
+segments come from the bank, not from the spatialized timeline.
+
+## Horizon-controlled passive evaluation
+
+The per-day passive curves from `run` are DESCRIPTIVE ONLY: a later day
+has more history, fresher sightings, and a shorter forecast horizon all
+at once. Learning-curve claims use `passive_eval.py`: evidence frozen at
+checkpoint day D (tour + sightings with t < D·86 400, no sensing),
+questions scored at horizons h past D per (D, h) cell — never pooled
+across h — plus recency stratification (accuracy vs
+time-since-last-sighting), top-1 AND epsilon-floored log-loss, and
+household-unit aggregation (unweighted mean over households, seeded
+bootstrap intervals, sample sizes printed). `bakeoff.py` runs the frozen
+panel + candidate slate under this protocol and writes the leaderboard,
+recency curves, per-household winners, and a byte-deterministic
+`bakeoff_results.json`.
 
 The smoke config writes `smoke_results/baselines_smoke/`: `run_log.jsonl`,
 `questions.csv`, `aggregate.csv`, the two plots, and `provenance.json`

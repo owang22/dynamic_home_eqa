@@ -562,3 +562,168 @@ def write_gate_fail_static_bank(path: pathlib.Path) -> JsonlBank:
             f.write(json.dumps(row) + "\n")
     logger.info("wrote gate-fail bank: %d rows -> %s", len(rows), path)
     return JsonlBank(path=path)
+
+
+# --------------------------------------------------------------------------
+# Passive-protocol fixture banks (analytically known answers)
+# --------------------------------------------------------------------------
+
+_PROBE_RECEPTACLES = ("entry_e", "desk_d", "shelf_s")
+
+
+def write_periodic_probe_bank(path: pathlib.Path) -> JsonlBank:
+    """A strictly periodic object with dense sightings: the analytic case
+    where time-conditioned models must be perfect at short horizons.
+
+    ``badge_shift`` follows the same schedule every one of 14 days —
+    ``entry_e`` overnight, ``desk_d`` 09:00-18:00 — and is sighted every
+    day at 10:00 (desk) and 20:00 (entry). Questions on days 7-9 at 10:30
+    and 20:30. At a checkpoint with several observed days of history and
+    horizons <= 1 day, ``timetable`` answers from the exactly-matching
+    time-of-day bin and ``periodic_persistence`` puts its post-hazard
+    remainder on that bin's receptacle, so BOTH must score 1.0 (asserted
+    in tests). ``mug_static`` never moves (tour only); ``shelf_s`` stays
+    empty so wrong mass has somewhere to sit.
+    """
+    h, n_days, episode_id = 3600, 14, "periodic_probe_ep0"
+    rows: List[Dict[str, Any]] = [{
+        "kind": "episode_header", "episode_id": episode_id,
+        "household_id": "periodic_probe_hh",
+        "receptacle_ids": list(_PROBE_RECEPTACLES),
+        "object_classes": {"badge_shift": "badge", "mug_static": "mug"},
+        "budget_per_day": 2, "n_days": n_days}]
+
+    def add(kind: str, **fields: Any) -> None:
+        rows.append({"kind": kind, "episode_id": episode_id, **fields})
+
+    add("truth", object_id="mug_static", t=0, receptacle_id="shelf_s")
+    add("observation", object_id="mug_static", t=0,
+        receptacle_id="shelf_s", source="initial_tour")
+    add("observation", object_id="badge_shift", t=0,
+        receptacle_id="entry_e", source="initial_tour")
+    for d in range(n_days):
+        base = d * DAY_SECONDS
+        add("truth", object_id="badge_shift", t=base,
+            receptacle_id="entry_e")
+        add("truth", object_id="badge_shift", t=base + 9 * h,
+            receptacle_id="desk_d")
+        add("truth", object_id="badge_shift", t=base + 18 * h,
+            receptacle_id="entry_e")
+        add("observation", object_id="badge_shift", t=base + 10 * h,
+            receptacle_id="desk_d", source="scripted")
+        add("observation", object_id="badge_shift", t=base + 20 * h,
+            receptacle_id="entry_e", source="scripted")
+    qn = 0
+    for d in range(7, 10):
+        for offset in (10 * h + 1800, 20 * h + 1800):
+            add("question", question_id=f"q{qn:03d}",
+                object_id="badge_shift", t_query=d * DAY_SECONDS + offset,
+                day_index=d)
+            qn += 1
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        for row in rows:
+            f.write(json.dumps(row) + "\n")
+    return JsonlBank(path=path)
+
+
+_REGIME_RECEPTACLES = ("desk_d", "couch_c", "shelf_s")
+_REGIME_OBJECTS = ("laptop_1", "book_1", "headphones_1", "charger_1")
+
+
+def write_two_regime_bank(path: pathlib.Path) -> JsonlBank:
+    """A weekday/weekend household: regime inference is the whole game.
+
+    Four objects sit on ``desk_d`` all day on weekdays and on ``couch_c``
+    all weekend (day 0 = Monday; weekends are day % 7 in {5, 6}), for 28
+    days, each sighted daily at noon. Questions are on days 26 (Saturday)
+    and 27 (Sunday). At a checkpoint frozen before day 26, a
+    24 h-half-life frequency model is dominated by Friday's desk
+    sightings and answers desk (wrong all weekend), while a day-type
+    model that clusters weekend days together and reads the query's
+    day-of-week must answer couch — the margin a test asserts.
+    """
+    h, n_days, episode_id = 3600, 28, "two_regime_ep0"
+    rows: List[Dict[str, Any]] = [{
+        "kind": "episode_header", "episode_id": episode_id,
+        "household_id": "two_regime_hh",
+        "receptacle_ids": list(_REGIME_RECEPTACLES),
+        "object_classes": {o: o.rsplit("_", 1)[0] for o in _REGIME_OBJECTS},
+        "budget_per_day": 2, "n_days": n_days}]
+
+    def add(kind: str, **fields: Any) -> None:
+        rows.append({"kind": kind, "episode_id": episode_id, **fields})
+
+    for obj in _REGIME_OBJECTS:
+        add("observation", object_id=obj, t=0, receptacle_id="desk_d",
+            source="initial_tour")
+        for d in range(n_days):
+            where = "couch_c" if d % 7 in (5, 6) else "desk_d"
+            add("truth", object_id=obj, t=d * DAY_SECONDS if d else 0,
+                receptacle_id=where)
+            add("observation", object_id=obj, t=d * DAY_SECONDS + 12 * h,
+                receptacle_id=where, source="scripted")
+    qn = 0
+    for d in (26, 27):
+        for i, obj in enumerate(_REGIME_OBJECTS):
+            add("question", question_id=f"q{qn:03d}", object_id=obj,
+                t_query=d * DAY_SECONDS + (10 + i) * h, day_index=d)
+            qn += 1
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        for row in rows:
+            f.write(json.dumps(row) + "\n")
+    return JsonlBank(path=path)
+
+
+_CHURN_RECEPTACLES = ("bin_a", "bin_b", "bin_c", "bin_d")
+
+
+def write_fast_churn_bank(path: pathlib.Path, seed: int = 7) -> JsonlBank:
+    """An object that outruns every model: seeded aperiodic churn.
+
+    ``toy_churn`` jumps to a uniformly drawn receptacle every 3 h for 10
+    days (seeded, so the bank is reproducible but carries no learnable
+    period). Sightings are dense on days 0-2 (8/day) and absent
+    afterwards; questions cover days 3-9, so time-since-last-sighting
+    grows to a week. As it grows, no model can beat the ~1/4 frequency
+    floor — a test asserts every model converges to the frequency
+    model's stale-bin accuracy.
+    """
+    h, n_days, episode_id = 3600, 10, f"fast_churn_ep{seed}"
+    rng = random.Random(seed)
+    rows: List[Dict[str, Any]] = [{
+        "kind": "episode_header", "episode_id": episode_id,
+        "household_id": "fast_churn_hh",
+        "receptacle_ids": list(_CHURN_RECEPTACLES),
+        "object_classes": {"toy_churn": "toy"},
+        "budget_per_day": 2, "n_days": n_days}]
+    trajectory: List[Tuple[int, str]] = [(0, rng.choice(_CHURN_RECEPTACLES))]
+    for t in range(3 * h, n_days * DAY_SECONDS, 3 * h):
+        trajectory.append((t, rng.choice(_CHURN_RECEPTACLES)))
+
+    def add(kind: str, **fields: Any) -> None:
+        rows.append({"kind": kind, "episode_id": episode_id, **fields})
+
+    for t, rec in trajectory:
+        add("truth", object_id="toy_churn", t=t, receptacle_id=rec)
+    add("observation", object_id="toy_churn", t=0,
+        receptacle_id=trajectory[0][1], source="initial_tour")
+    for d in range(3):
+        for k in range(8):
+            t = d * DAY_SECONDS + (2 + 2 * k) * h + 900
+            add("observation", object_id="toy_churn", t=t,
+                receptacle_id=_loc_at(trajectory, t), source="scripted")
+    qn = 0
+    for d in range(3, n_days):
+        for k in range(6):
+            add("question", question_id=f"q{qn:03d}",
+                object_id="toy_churn",
+                t_query=d * DAY_SECONDS + (3 * k + 5) * h + 600,
+                day_index=d)
+            qn += 1
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        for row in rows:
+            f.write(json.dumps(row) + "\n")
+    return JsonlBank(path=path)

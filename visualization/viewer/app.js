@@ -635,19 +635,28 @@ function populateTracePicker(datasets) {
 }
 
 function linkToBeliefs(datasets) {
-  // Carry the household across to the belief page instead of making the user
-  // retype it. Households with no run recorded against them just link over
-  // plainly and let that page open on its own first dataset.
+  // Carry the household — and the object being looked at — across to the
+  // belief page instead of making the user retype either. A household with
+  // no belief_trace.json on disk links over plainly and that page opens on
+  // its own first dataset (and says how to generate one).
   const d = datasets.find(x => samePath(x.trace, TRACE_URL));
-  const run = d && d.runs && d.runs.length ? d.runs[0] : null;
   const link = $("beliefs-link");
-  if (!run) {
-    link.title = "no baselines run published for this household";
+  if (!d || !d.belief_trace) {
+    link.title = "no belief trace for this household — generate one with " +
+                 "python -m baselines.belief_trace";
     return;
   }
-  link.href = `beliefs.html?run=${encodeURIComponent(run.run)}` +
-              `&trace=${encodeURIComponent(d.trace)}`;
-  link.title = run.label;
+  // Resolved at click time, not at boot: the object picker moves while the
+  // page is open, and a href frozen at load would carry the wrong object.
+  const href = () => {
+    const obj = $("object-select") ? $("object-select").value : "";
+    return `beliefs.html?trace=${encodeURIComponent(d.trace)}` +
+           `&belief=${encodeURIComponent(d.belief_trace)}` +
+           (obj ? `&object=${encodeURIComponent(obj)}` : "");
+  };
+  link.href = href();
+  link.addEventListener("mousedown", () => { link.href = href(); });
+  link.title = "belief vs truth for this household";
 }
 
 async function boot() {

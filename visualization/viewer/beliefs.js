@@ -1,17 +1,25 @@
-/* belief-vs-truth viewer — overlays a baselines run (predicted locations at
- * question times) on the household topdown map, against the object's true
- * trajectory from the same timeline's trace.json.
+/* belief-vs-truth viewer — what each belief model thinks, at any moment,
+ * against where the object actually is.
  *
- * The dataset picker in the header is driven by visualization/traces.json
- * (see datasets.js): one row per (timeline, run) pair published there.
+ * Data source: `belief_trace.json` beside the household's trace.json,
+ * written by `python -m baselines.belief_trace`. It holds, per belief
+ * model and per object, run-length-encoded segments of the model's argmax
+ * under the PASSIVE observation diet (initial tour + the bank's scripted
+ * sightings, no sensing), plus the bank's own truth segments. Both are
+ * piecewise-constant in minutes, so any slider position resolves to an
+ * exact (belief, truth) pair — the comparison is available at every
+ * moment, not only at the instants the bank asked a question.
  *
- * URL params — only needed for a pair not in the manifest:
- *   ?run=<url of baselines run_log.jsonl>&trace=<url of trace.json>
- *   &agent=<agent name>&object=<object id>  (optional preselects)
+ * Correctness here means exactly what it means in the harness: identical
+ * receptacle ids, exact match, including the pseudo-receptacles
+ * OUT_OF_HOUSE and ON_PERSON. Those two have no anchor of their own on
+ * the map and are drawn at the AWAY circle / the resident's position.
  *
- * The run's bank projects virtual locations to pseudo-receptacles; this
- * page maps them back for drawing: OUT_OF_HOUSE at the AWAY circle,
- * ON_PERSON at the (solo) resident's current position.
+ * Three tabs: the focus object on the map, a table of every object right
+ * now, and the same instant scored across all models at once.
+ *
+ * URL params (optional): ?trace=<trace.json>&belief=<belief_trace.json>
+ * &model=<model name>&object=<object id>
  */
 "use strict";
 
@@ -21,11 +29,13 @@ const GOOD = "#7ee08a", BAD = "#ff8a8a", TRUTH = "#ffb84d";
 
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
-let RUN_URL = params.get("run");        // both resolved against the manifest
-let TRACE_URL = params.get("trace");    // in boot()
+let TRACE_URL = params.get("trace");
+let BELIEF_URL = params.get("belief");
 
-let trace = null, mapImg = null, records = [];
+let trace = null, belief = null, mapImg = null;
 let t = 0, horizon = 1, playing = false, lastFrame = 0, view = null;
+let tab = "map";
+let accuracySeries = null;      // per-model share-correct over the grid
 
 function fmtTime(min) {
   const d = Math.floor(min / 1440), m = Math.floor(min % 1440);
@@ -33,6 +43,51 @@ function fmtTime(min) {
          `${String(Math.floor(m / 60)).padStart(2, "0")}:` +
          `${String(m % 60).padStart(2, "0")}`;
 }
+
+function fmtAge(min) {
+  if (min == null) return "never seen";
+  if (min < 60) return `${Math.round(min)} min ago`;
+  if (min < 1440) return `${(min / 60).toFixed(1)} h ago`;
+  return `${(min / 1440).toFixed(1)} days ago`;
+}
+
+// ------------------------------------------------------------ data access
+
+/* Segments are [t0, t1, value, ...] sorted and gapless, so a linear scan
+ * from the end is enough; the arrays are short (a stable belief is one
+ * segment) and this runs per object per frame. */
+function segAt(segments, min) {
+  for (let i = segments.length - 1; i >= 0; i--)
+    if (min >= segments[i][0]) return segments[i];
+  return segments[0];
+}
+
+const currentModel = () =>
+  belief.models.find(m => m.name === $("model-select").value) ||
+  belief.models[0];
+
+function beliefAt(model, object, min) { return segAt(model.objects[object], min); }
+function truthAt(object, min) { return segAt(belief.truth[object], min); }
+
+/* The last time this object was actually SEEN, and where. Belief segment
+ * boundaries are not sightings (a belief also shifts as counts decay and
+ * time-of-day bins roll over), so this reads the trace's own evidence
+ * stream. Returns null before the object's first sighting. */
+function lastSighting(object, min) {
+  const seen = (belief.sightings || {})[object] || [];
+  let last = null;
+  for (const s of seen) { if (s[0] <= min) last = s; else break; }
+  return last;
+}
+
+function houseScore(model, min) {
+  let right = 0;
+  for (const o of belief.objects)
+    if (beliefAt(model, o, min)[2] === truthAt(o, min)[2]) right++;
+  return {right, total: belief.objects.length};
+}
+
+// ------------------------------------------------------------- geometry
 
 function worldToCanvas(x, z) {
   const m = trace.map;
@@ -58,14 +113,6 @@ function computeView() {
           oy: (canvas.height - ph * scale) / 2};
 }
 
-// ------------------------------------------------------------ data access
-
-function selectedRecords() {
-  const agent = $("agent-select").value, obj = $("object-select").value;
-  return records.filter(r => r.agent === agent && r.object_id === obj)
-                .sort((a, b) => a.t_query - b.t_query);
-}
-
 function residentPosAt(min) {
   const residents = Object.values(trace.residents || {});
   if (!residents.length) return trace.elsewhere.pos;
@@ -74,34 +121,20 @@ function residentPosAt(min) {
   return [s[4], s[5]];
 }
 
-function anchorOf(receptacle, questionMin) {
+/* Pseudo-receptacles have no anchor of their own: OUT_OF_HOUSE draws at
+ * the AWAY circle, ON_PERSON at the resident the viewer tracks. */
+function anchorOf(receptacle, min) {
   if (receptacle === "OUT_OF_HOUSE") return trace.elsewhere.pos;
-  if (receptacle === "ON_PERSON") return residentPosAt(questionMin);
+  if (receptacle === "ON_PERSON") return residentPosAt(min);
   const r = trace.receptacles[receptacle];
   return r ? r.pos : trace.elsewhere.pos;
-}
-
-function truthSegAt(obj, min) {
-  const segs = trace.objects[obj].segments;
-  return segs.find(s => min >= s[SEG.T0] && min < s[SEG.T1]) ||
-         segs[segs.length - 1];
-}
-
-function lastQuestionAt(min) {
-  const rs = selectedRecords();
-  let last = null;
-  for (const r of rs) {
-    if (r.t_query / 60 <= min) last = r;
-    else break;
-  }
-  return last;
 }
 
 // ---------------------------------------------------------------- drawing
 
 function drawRooms(ctx) {
   const dpr = window.devicePixelRatio || 1;
-  trace.rooms.forEach((room, i) => {
+  trace.rooms.forEach(room => {
     if (!room.poly.length) return;
     ctx.beginPath();
     room.poly.forEach(([x, z], j) => {
@@ -146,6 +179,37 @@ function drawReceptacles(ctx) {
   }
 }
 
+/* Small marker per object: gold dot at truth, hollow ring at the belief,
+ * joined when they disagree. Deliberately unlabeled — with 30-50 objects
+ * labels overlap into mush; the table tab is where names are read. */
+function drawAllObjects(ctx, model) {
+  const dpr = window.devicePixelRatio || 1;
+  const focus = $("object-select").value;
+  const onlyWrong = $("only-wrong").checked;
+  for (const o of belief.objects) {
+    if (o === focus) continue;
+    const truth = truthAt(o, t)[2], guess = beliefAt(model, o, t)[2];
+    const ok = truth === guess;
+    if (onlyWrong && ok) continue;
+    const [tx, ty] = worldToCanvas(...anchorOf(truth, t));
+    const [bx, by] = worldToCanvas(...anchorOf(guess, t));
+    ctx.globalAlpha = 0.55;
+    if (!ok) {
+      ctx.setLineDash([3, 3]);
+      ctx.strokeStyle = BAD;
+      ctx.lineWidth = 1 * dpr;
+      ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(tx, ty); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.fillStyle = TRUTH;
+    ctx.beginPath(); ctx.arc(tx, ty, 2.5 * dpr, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = ok ? GOOD : BAD;
+    ctx.lineWidth = 1.5 * dpr;
+    ctx.beginPath(); ctx.arc(bx, by, 5 * dpr, 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+}
+
 function draw() {
   const canvas = $("map"), ctx = canvas.getContext("2d");
   const dpr = window.devicePixelRatio || 1;
@@ -158,30 +222,52 @@ function draw() {
   drawRooms(ctx);
   drawReceptacles(ctx);
 
-  const obj = $("object-select").value;
-  const truthSeg = truthSegAt(obj, t);
-  const [tx, ty] = worldToCanvas(truthSeg[SEG.X], truthSeg[SEG.Z]);
-  const q = lastQuestionAt(t);
+  const model = currentModel();
+  if ($("show-all").checked) drawAllObjects(ctx, model);
 
-  if (q) {
-    const [px, py] = worldToCanvas(...anchorOf(q.answer_receptacle,
-                                              q.t_query / 60));
-    const color = q.correct ? GOOD : BAD;
-    if (!q.correct) {
-      ctx.setLineDash([6, 5]);
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 1.5 * dpr;
-      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(tx, ty); ctx.stroke();
-      ctx.setLineDash([]);
-    }
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 3 * dpr;
-    ctx.beginPath(); ctx.arc(px, py, 10 * dpr, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = color;
-    ctx.font = `600 ${10 * dpr}px system-ui`;
+  const obj = $("object-select").value;
+  const truthRec = truthAt(obj, t)[2];
+  const guess = beliefAt(model, obj, t);
+  const ok = truthRec === guess[2];
+  const [tx, ty] = worldToCanvas(...anchorOf(truthRec, t));
+  const [bx, by] = worldToCanvas(...anchorOf(guess[2], t));
+
+  // Where the object was last actually SEEN — the evidence every model in
+  // this file is working from. Drawn faintly and behind the two live
+  // markers: when it coincides with the belief the model is simply
+  // trusting its last look, and when it coincides with neither, the
+  // object has moved twice since anyone saw it.
+  const seen = lastSighting(obj, t);
+  if (seen) {
+    const [sx, sy] = worldToCanvas(...anchorOf(seen[1], seen[0]));
+    ctx.globalAlpha = 0.75;
+    ctx.strokeStyle = TRUTH;
+    ctx.lineWidth = 1.2 * dpr;
+    ctx.setLineDash([2, 2]);
+    const r = 13 * dpr;
+    ctx.strokeRect(sx - r, sy - r, 2 * r, 2 * r);
+    ctx.setLineDash([]);
+    ctx.fillStyle = TRUTH;
+    ctx.font = `${9 * dpr}px system-ui`;
     ctx.textAlign = "center";
-    ctx.fillText(`predicted: ${q.answer_receptacle}`, px, py - 14 * dpr);
+    ctx.fillText(`last seen ${fmtAge(t - seen[0])}`, sx, sy + r + 10 * dpr);
+    ctx.globalAlpha = 1;
   }
+
+  if (!ok) {
+    ctx.setLineDash([6, 5]);
+    ctx.strokeStyle = BAD;
+    ctx.lineWidth = 1.5 * dpr;
+    ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(tx, ty); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  ctx.strokeStyle = ok ? GOOD : BAD;
+  ctx.lineWidth = 3 * dpr;
+  ctx.beginPath(); ctx.arc(bx, by, 10 * dpr, 0, Math.PI * 2); ctx.stroke();
+  ctx.fillStyle = ok ? GOOD : BAD;
+  ctx.font = `600 ${10 * dpr}px system-ui`;
+  ctx.textAlign = "center";
+  ctx.fillText(`believes: ${guess[2]}`, bx, by - 14 * dpr);
 
   ctx.fillStyle = TRUTH;
   ctx.strokeStyle = "#14161a";
@@ -190,37 +276,99 @@ function draw() {
   ctx.fill(); ctx.stroke();
   ctx.fillStyle = "#ffe1b3";
   ctx.font = `600 ${10 * dpr}px system-ui`;
-  ctx.textAlign = "center";
   ctx.fillText(obj, tx, ty + 20 * dpr);
 
-  updateReadout(truthSeg, q);
+  updateReadout(model, obj, truthRec, guess, ok);
+  captionStrip(model);
+  if (tab !== "map") renderSheet(model);
 }
 
-function updateReadout(truthSeg, q) {
-  const obj = $("object-select").value;
+function updateReadout(model, obj, truthRec, guess, ok) {
   $("clock").textContent = fmtTime(t);
   $("whereabouts").textContent =
-    `${obj} — truth: ${truthSeg[SEG.ROOM]} / ${truthSeg[SEG.REC]}`;
-  $("st-truth").textContent = `${truthSeg[SEG.REC]} (${truthSeg[SEG.ROOM]})`;
-  if (!q) {
-    for (const id of ["st-q", "st-pred", "st-conf", "st-verdict", "st-budget", "st-acc"])
-      $(id).textContent = "–";
-    $("dist").textContent = "no question asked yet";
+    `${obj} — truth ${truthRec} · ${model.display} says ${guess[2]}`;
+  $("st-truth").textContent = truthRec;
+  $("st-belief").textContent = guess[2];
+  $("st-verdict").innerHTML = ok
+    ? `<span style="color:${GOOD}">correct</span>`
+    : `<span style="color:${BAD}">wrong</span>`;
+  $("st-conf").textContent = guess[3] == null ? "–" : guess[3].toFixed(2);
+  // The evidence behind the belief: a model is rarely "wrong" so much as
+  // working from a sighting that has gone stale, and the staleness is the
+  // number that explains the verdict above.
+  const seen = lastSighting(obj, t);
+  const moved = seen && seen[1] !== truthRec;
+  $("st-seen").innerHTML = !seen
+    ? `<span class="muted">never seen yet</span>`
+    : `${seen[1]} · ${fmtAge(t - seen[0])}` +
+      (moved ? `<br><span class="muted">it has moved since</span>`
+             : `<br><span class="muted">still there</span>`);
+  const {right, total} = houseScore(model, t);
+  $("st-house").innerHTML =
+    `${right}/${total} <span class="muted">(${(right / total * 100).toFixed(0)}%)</span>`;
+}
+
+// ------------------------------------------------------------- the sheet
+
+function renderSheet(model) {
+  const head = $("sheet-head"), body = $("sheet-body");
+  if (tab === "table") {
+    const onlyWrong = $("only-wrong").checked;
+    const rows = belief.objects.map(o => {
+      const truth = truthAt(o, t)[2], g = beliefAt(model, o, t);
+      return {o, truth, guess: g[2], conf: g[3], ok: truth === g[2]};
+    }).filter(r => !onlyWrong || !r.ok)
+      // wrong first: the interesting rows should never need scrolling to
+      .sort((a, b) => (a.ok - b.ok) || a.o.localeCompare(b.o));
+    const {right, total} = houseScore(model, t);
+    head.innerHTML =
+      `<strong>${model.display}</strong> at ${fmtTime(t)} — ` +
+      `<span style="color:${GOOD}">${right}</span>/${total} objects right` +
+      (onlyWrong ? ` · showing the ${total - right} wrong` : "");
+    body.innerHTML =
+      `<table class="sheet"><tr><th>object</th><th>truth now</th>` +
+      `<th>belief now</th><th>conf</th></tr>` +
+      rows.map(r =>
+        `<tr class="${r.ok ? "ok" : "bad"}"><td>${r.o}</td>` +
+        `<td>${r.truth}</td><td>${r.guess}</td>` +
+        `<td>${r.conf == null ? "–" : r.conf.toFixed(2)}</td></tr>`).join("") +
+      `</table>`;
     return;
   }
-  $("st-q").textContent = `${q.question_id} @ ${fmtTime(q.t_query / 60)}`;
-  $("st-pred").textContent = q.answer_receptacle;
-  $("st-conf").textContent = q.confidence.toFixed(2);
-  $("st-verdict").innerHTML = q.correct
-    ? `<span style="color:${GOOD}">correct</span>`
-    : `<span style="color:${BAD}">wrong — was ${q.truth_receptacle}</span>`;
-  $("st-budget").textContent = `${q.budget_spent} (day budget left: ${q.budget_after})`;
-  const asked = selectedRecords().filter(r => r.t_query <= q.t_query);
-  const right = asked.filter(r => r.correct).length;
-  $("st-acc").textContent = `${right}/${asked.length} (${(right / asked.length).toFixed(2)})`;
-  const top = Object.entries(q.distribution).sort((a, b) => b[1] - a[1]).slice(0, 4);
-  $("dist").innerHTML = top.map(([r, p]) =>
-    `${r}: ${p.toFixed(2)}`).join("<br>");
+  // models tab: the same instant scored across every model in the trace
+  const scored = belief.models.map(m => ({m, ...houseScore(m, t)}))
+                              .sort((a, b) => b.right - a.right);
+  head.innerHTML = `every model at ${fmtTime(t)} — objects located correctly`;
+  body.innerHTML =
+    `<table class="sheet"><tr><th>model</th><th>panel</th><th>right</th>` +
+    `<th>share</th><th>focus object</th></tr>` +
+    scored.map(({m, right, total}) => {
+      const obj = $("object-select").value;
+      const g = beliefAt(m, obj, t)[2], truth = truthAt(obj, t)[2];
+      const ok = g === truth;
+      return `<tr><td>${m.display}</td>` +
+             `<td class="muted small">${m.panel}</td>` +
+             `<td>${right}/${total}</td>` +
+             `<td>${(right / total * 100).toFixed(0)}%</td>` +
+             `<td class="${ok ? "ok" : "bad"}">${g}</td></tr>`;
+    }).join("") + `</table>`;
+}
+
+// ---------------------------------------------------------------- strip
+
+/* Share of objects the model has right, sampled on the belief grid. This
+ * is the belief's health over the episode: dips are moments the house got
+ * ahead of what the model had been told. Computed once per model. */
+function accuracyFor(model) {
+  if (!accuracySeries[model.name]) {
+    const step = belief.grid_minutes, out = [];
+    for (let min = 0; min <= horizon; min += step) {
+      const {right, total} = houseScore(model, min);
+      out.push(right / total);
+    }
+    accuracySeries[model.name] = out;
+  }
+  return accuracySeries[model.name];
 }
 
 function drawEventStrip() {
@@ -229,16 +377,47 @@ function drawEventStrip() {
   strip.width = strip.clientWidth * dpr;
   strip.height = 14 * dpr;
   const ctx = strip.getContext("2d");
+  ctx.fillStyle = "#191c22";
+  ctx.fillRect(0, 0, strip.width, strip.height);
   for (let d = 0; d <= trace.days; d++) {
     const x = (d * 1440 / horizon) * strip.width;
     ctx.fillStyle = d % 7 >= 5 ? "#5a5340" : "#2c313a";
     ctx.fillRect(x, 0, 1.5, strip.height);
   }
-  for (const r of selectedRecords()) {
-    ctx.fillStyle = r.correct ? GOOD : BAD;
-    const x = (r.t_query / 60 / horizon) * strip.width;
-    ctx.fillRect(x, 2 * dpr, 2 * dpr, 10 * dpr);
+  const model = currentModel();
+  const series = accuracyFor(model);
+  ctx.strokeStyle = GOOD;
+  ctx.lineWidth = 1.2 * dpr;
+  ctx.beginPath();
+  series.forEach((v, i) => {
+    const x = (i * belief.grid_minutes / horizon) * strip.width;
+    const y = strip.height - v * strip.height;
+    i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  });
+  ctx.stroke();
+
+  // Gold ticks: when the focus object was actually seen. Read together
+  // with the line, this is the whole passive story — accuracy for this
+  // object can only be earned just after a tick, and decays between them.
+  const obj = $("object-select").value;
+  ctx.fillStyle = TRUTH;
+  for (const [minute] of (belief.sightings || {})[obj] || []) {
+    const x = (minute / horizon) * strip.width;
+    ctx.fillRect(x, strip.height - 4 * dpr, 1.5 * dpr, 4 * dpr);
   }
+}
+
+/* The strip is two unrelated series in one lane, so it says what it is
+ * rather than relying on the legend in the side panel. */
+function captionStrip(model) {
+  const nowShare = houseScore(model, t);
+  const sightings = ((belief.sightings || {})[$("object-select").value] || []).length;
+  $("strip-caption").innerHTML =
+    `<span style="color:${GOOD}">▬</span> share of all ${belief.objects.length} ` +
+    `objects ${model.display} has right (0–100%), over the ${belief.days} days ` +
+    `— now ${(nowShare.right / nowShare.total * 100).toFixed(0)}% &nbsp;·&nbsp; ` +
+    `<span style="color:${TRUTH}">▮</span> the ${sightings} times ` +
+    `${$("object-select").value} was actually seen`;
 }
 
 // ---------------------------------------------------------------- control
@@ -270,38 +449,49 @@ function togglePlay(on = !playing) {
   }
 }
 
-function jumpQuestion(dir) {
-  const times = selectedRecords().map(r => r.t_query / 60);
-  const next = dir > 0 ? times.find(x => x > t)
-                       : [...times].reverse().find(x => x < t);
-  if (next !== undefined) setTime(next + 1);
+/* ←/→ jump to the focus object's next belief OR truth change — the moments
+ * where the comparison actually changes are what one wants to step through. */
+function jumpChange(dir) {
+  const obj = $("object-select").value;
+  const times = [...currentModel().objects[obj].map(s => s[0]),
+                 ...belief.truth[obj].map(s => s[0])]
+    .sort((a, b) => a - b);
+  const next = dir > 0 ? times.find(x => x > t + 1)
+                       : [...times].reverse().find(x => x < t - 1);
+  if (next !== undefined) setTime(next);
+}
+
+function setTab(name) {
+  tab = name;
+  document.querySelectorAll(".tab").forEach(
+    b => b.classList.toggle("active", b.dataset.tab === name));
+  $("sheet").classList.toggle("open", name !== "map");
+  draw();
 }
 
 // -------------------------------------------------------------------- boot
 
-/* One picker row per (timeline, run) pair in the manifest. A household with
- * no run recorded against it has nothing to overlay, so it is not offered. */
-function runRows(datasets) {
-  const rows = [];
-  for (const d of datasets)
-    for (const r of d.runs || [])
-      rows.push({
-        label: `${d.label.split(" — ")[0]} · ${r.label}`,
-        trace: d.trace,
-        run: r.run,
-        search: `?run=${encodeURIComponent(r.run)}&trace=${encodeURIComponent(d.trace)}`,
-      });
-  return rows;
+/* One row per household that has a belief trace on disk. serve.py adds
+ * `belief_trace` to a manifest row whenever belief_trace.json sits beside
+ * that household's trace.json, so publishing is running the generator. */
+function beliefRows(datasets) {
+  return datasets.filter(d => d.belief_trace).map(d => ({
+    label: d.label,
+    trace: d.trace,
+    belief: d.belief_trace,
+    search: `?trace=${encodeURIComponent(d.trace)}` +
+            `&belief=${encodeURIComponent(d.belief_trace)}`,
+  }));
 }
 
 function populateDatasetPicker(rows) {
-  let current = rows.findIndex(
-    r => samePath(r.run, RUN_URL) && samePath(r.trace, TRACE_URL));
+  let current = rows.findIndex(r => samePath(r.trace, TRACE_URL));
   if (current < 0) {
     rows.unshift({
-      label: `${new URL(RUN_URL, location.href).pathname} (not in traces.json)`,
-      trace: TRACE_URL, run: RUN_URL,
-      search: `?run=${encodeURIComponent(RUN_URL)}&trace=${encodeURIComponent(TRACE_URL)}`,
+      label: `${new URL(TRACE_URL, location.href).pathname} (not in traces.json)`,
+      trace: TRACE_URL, belief: BELIEF_URL,
+      search: `?trace=${encodeURIComponent(TRACE_URL)}` +
+              `&belief=${encodeURIComponent(BELIEF_URL)}`,
     });
     current = 0;
   }
@@ -309,63 +499,78 @@ function populateDatasetPicker(rows) {
   $("traces-link").href = `index.html?trace=${encodeURIComponent(TRACE_URL)}`;
 }
 
+function fillSelect(sel, values, labels, preset) {
+  values.forEach((v, i) => {
+    const opt = document.createElement("option");
+    opt.value = v;
+    opt.textContent = labels ? labels[i] : v;
+    sel.appendChild(opt);
+  });
+  if (preset && values.includes(preset)) sel.value = preset;
+}
+
 async function boot() {
-  const rows = runRows(await loadDatasets());
-  if (!RUN_URL || !TRACE_URL) {
+  const rows = beliefRows(await loadDatasets());
+  if (!TRACE_URL || !BELIEF_URL) {
     if (!rows.length)
-      throw new Error("no ?run=/?trace= given and visualization/traces.json " +
-                      "publishes no runs");
-    RUN_URL = rows[0].run;
+      throw new Error(
+        "no household has a belief trace yet.\n\n" +
+        "Generate one:\n  python -m baselines.belief_trace \\\n" +
+        "      --bank banks/baselines/fleet/<household>_bank.jsonl \\\n" +
+        "      --out <that household>/timeline_seed0/belief_trace.json");
     TRACE_URL = rows[0].trace;
+    BELIEF_URL = rows[0].belief;
   }
   populateDatasetPicker(rows);
 
-  trace = await (await fetch(TRACE_URL)).json();
+  [trace, belief] = await Promise.all(
+    [TRACE_URL, BELIEF_URL].map(u => fetch(u).then(r => r.json())));
   horizon = trace.days * 1440;
-  const runText = await (await fetch(RUN_URL)).text();
-  records = runText.trim().split("\n").map(line => JSON.parse(line));
+  accuracySeries = {};
+  $("time").max = horizon;
 
   mapImg = new Image();
   mapImg.src = new URL(`../assets/${trace.scene_id}/map.png`, location.href).href;
   await mapImg.decode();
 
-  const agents = [...new Set(records.map(r => r.agent))].sort();
-  const objects = [...new Set(records.map(r => r.object_id))].sort();
-  for (const [sel, values, preset] of
-       [[$("agent-select"), agents, params.get("agent")],
-        [$("object-select"), objects, params.get("object")]]) {
-    for (const v of values) {
-      const opt = document.createElement("option");
-      opt.value = opt.textContent = v;
-      sel.appendChild(opt);
-    }
-    if (preset && values.includes(preset)) sel.value = preset;
-    sel.addEventListener("change", () => { drawEventStrip(); draw(); });
-  }
-  $("run-label").textContent =
-    `${trace.household} · ${records.length} answers · ` +
-    `${agents.length} agents · ${objects.length} objects`;
+  fillSelect($("model-select"), belief.models.map(m => m.name),
+             belief.models.map(m => `${m.display}${m.panel === "candidate" ? " ·cand" : ""}`),
+             params.get("model"));
+  fillSelect($("object-select"), belief.objects, null, params.get("object"));
+  $("model-select").addEventListener("change", () => { drawEventStrip(); draw(); });
+  $("object-select").addEventListener("change", () => { drawEventStrip(); draw(); });
+  for (const id of ["show-all", "only-wrong"])
+    $(id).addEventListener("change", draw);
+  document.querySelectorAll(".tab").forEach(
+    b => b.addEventListener("click", () => setTab(b.dataset.tab)));
 
-  $("time").max = horizon;
+  $("run-label").textContent =
+    `${belief.household} · ${belief.objects.length} objects · ` +
+    `${belief.models.length} models · ${belief.days}d`;
+  $("src-note").innerHTML =
+    `passive diet (tour + scripted sightings, no sensing)<br>` +
+    `sampled every ${belief.grid_minutes} min · seed ${belief.seed}<br>` +
+    `bank <span class="muted">${belief.bank_manifest_hash.slice(0, 12)}…</span>`;
+
   $("time").addEventListener("input", e => setTime(Number(e.target.value), true));
   $("play").addEventListener("click", () => togglePlay());
   window.addEventListener("resize", () => { computeView(); drawEventStrip(); draw(); });
   document.addEventListener("keydown", e => {
+    if (e.target.tagName === "SELECT") return;
     if (e.key === " ") { e.preventDefault(); togglePlay(); }
-    if (e.key === "ArrowRight") jumpQuestion(+1);
-    if (e.key === "ArrowLeft") jumpQuestion(-1);
+    if (e.key === "ArrowRight") jumpChange(+1);
+    if (e.key === "ArrowLeft") jumpChange(-1);
   });
 
   computeView();
   drawEventStrip();
-  // Open on the first question so the page never starts empty.
-  const first = selectedRecords()[0];
-  setTime(first ? first.t_query / 60 + 1 : 0);
+  // Open on the first question day, when the belief has some history.
+  setTime(3 * 1440 + 600);
 }
 
 boot().catch(err => {
   document.body.innerHTML =
-    `<pre style="padding:2em;color:#ff8a8a">failed to load:\n${err}\n\n` +
-    `run URL: ${RUN_URL || "(none)"}\ntrace URL: ${TRACE_URL || "(none)"}\n` +
+    `<pre style="padding:2em;color:#ff8a8a;white-space:pre-wrap">failed to load:\n${err.message || err}\n\n` +
+    `trace URL: ${TRACE_URL || "(none)"}\nbelief URL: ${BELIEF_URL || "(none)"}\n` +
     `Serve via visualization/serve.py, not file://</pre>`;
 });
