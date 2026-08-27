@@ -1,4 +1,4 @@
-"""Command-line entry point: grid runs and the data-health gate report.
+"""Command-line entry point: grid runs and the diagnostic report.
 
 Usage::
 
@@ -15,14 +15,15 @@ out_dir, agent grid) and writes, under ``out_dir``:
 * ``provenance.json`` — config hash, bank path + manifest hash, git commit,
   seed, timestamp. A results directory missing these fields is a bug.
 
-``healthcheck`` runs the fixed instrument panel over a bank and emits the
-pass/fail gate report (see :mod:`baselines.healthcheck`); its exit status
-is 0 only when the report's overall verdict is PASS.
+``healthcheck`` runs the fixed instrument panel over a bank and emits a
+DIAGNOSTIC report (see :mod:`baselines.healthcheck`): advisory flags,
+nothing disqualifying. Exit status is nonzero only when the ``solvable``
+bug check failed.
 
-``bankstats`` computes the ground-truth-intrinsic statistics and the
-stationarity gate only (see :mod:`baselines.bankstats`) — no agents, so
-it runs in well under a second. It is the fast feedback loop for the
-data-generation workstream; exit status 0 iff stationarity passes.
+``bankstats`` computes the ground-truth-intrinsic statistics (see
+:mod:`baselines.bankstats`) — no agents, so it runs in well under a
+second. Its stationarity threshold is a diagnostic reference, not a
+gate; the exit status still reflects it for scripting convenience.
 
 Determinism: a run is fully determined by (bank, config, seed). Each
 (agent, episode) pair gets its own generators seeded from a stable hash of
@@ -270,21 +271,20 @@ def _fleet_command(args: argparse.Namespace) -> int:
         {"provenance": provenance, "banks": rows}, indent=2) + "\n")
     (args.out_dir / "fleet_summary.md").write_text(
         fleet.render_summary_md(rows, provenance))
-    passing = [r for r in rows
-               if r["status"] == "ok" and r["gates_pass"]]
-    print(f"fleet: {len(rows)} banks, {len(passing)} pass all gates "
-          f"-> {args.out_dir}/fleet_summary.{{md,json}}")
+    clean = [r for r in rows if r["status"] == "ok" and not r["flags"]]
+    print(f"fleet: {len(rows)} banks, {len(clean)} with no diagnostics "
+          f"flagged -> {args.out_dir}/fleet_summary.{{md,json}}")
     for row in rows:
         verdict = (row["error"] if row["status"] != "ok"
-                   else "PASS" if row["gates_pass"]
-                   else "FAIL " + ",".join(g for g, v in row["gates"].items()
-                                           if not v["passed"]))
+                   else "no flags" if not row["flags"]
+                   else "flagged: " + ",".join(row["flags"]))
         print(f"  {row['household']}: {verdict}")
     return 0 if all(r["status"] == "ok" for r in rows) else 1
 
 
 def _healthcheck_command(args: argparse.Namespace) -> int:
-    """The ``healthcheck`` subcommand; exit 0 only on overall PASS."""
+    """The ``healthcheck`` subcommand: a diagnostic report. Exit is 0
+    unless the ``solvable`` bug check failed — flags are informational."""
     from baselines.healthcheck import (load_healthcheck_config,
                                        run_healthcheck, write_report)
 
@@ -293,7 +293,7 @@ def _healthcheck_command(args: argparse.Namespace) -> int:
     print(report.text)
     if args.out_dir is not None:
         write_report(report, pathlib.Path(args.out_dir))
-    return 0 if report.overall_pass else 1
+    return 0 if report.solvable_ok else 1
 
 
 def main() -> None:

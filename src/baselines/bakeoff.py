@@ -1,12 +1,10 @@
 """Candidate belief bake-off under the horizon-controlled passive protocol.
 
 Runs the frozen instrument panel PLUS the candidate belief slate (see
-:mod:`baselines.registry`) over every gate-passing bank from the fleet
-run, entirely passively (:mod:`baselines.passive_eval` — no sensing
+:mod:`baselines.registry`) over the fleet's banks, entirely passively (:mod:`baselines.passive_eval` — no sensing
 anywhere; every belief sees the identical tour + scripted sighting
-stream, frozen per checkpoint). Candidates never enter the healthcheck:
-gate verdicts come from the fleet summary, computed by the frozen panel
-alone.
+stream, frozen per checkpoint). Candidates never enter the diagnostic
+panel, which stays the frozen three-model instrument.
 
 Outputs under the report directory:
 
@@ -105,7 +103,7 @@ def run_model_on_episode(episode: Episode, spec: Dict[str, Any], seed: int,
 
 @dataclasses.dataclass(frozen=True)
 class ModelResult:
-    """One model's scores across the fleet's gate-passing banks."""
+    """One model's scores across the fleet's banks."""
 
     spec_name: str                 # registry/config name
     display_name: str              # the belief's self-reported name
@@ -386,13 +384,15 @@ def plot_recency_curves(results: Sequence[ModelResult], seed: int,
 # ------------------------------------------------------------------ CLI
 
 
-def _passing_banks(fleet_summary: pathlib.Path) -> List[pathlib.Path]:
-    """Bank paths of every gate-passing fleet row."""
+def _fleet_banks(fleet_summary: pathlib.Path) -> List[pathlib.Path]:
+    """Bank paths of every fleet row whose run completed and whose
+    ``solvable`` bug check held. Diagnostic flags never exclude a bank —
+    they ride along in the fleet summary for the reader."""
     summary = json.loads(fleet_summary.read_text())
     paths = [pathlib.Path(row["bank_path"]) for row in summary["banks"]
-             if row["status"] == "ok" and row["gates_pass"]]
+             if row["status"] == "ok" and row["solvable_ok"]]
     if not paths:
-        raise ValueError(f"{fleet_summary}: no gate-passing banks")
+        raise ValueError(f"{fleet_summary}: no usable banks")
     return paths
 
 
@@ -423,7 +423,8 @@ def main() -> None:
     parser.add_argument("--fleet-summary", type=pathlib.Path,
                         default=pathlib.Path(
                             "reports/baselines/fleet/fleet_summary.json"),
-                        help="gate verdicts source; only passing banks run")
+                        help="bank list source; every completed bank runs "
+                             "(diagnostic flags never exclude a bank)")
     parser.add_argument("--banks", type=pathlib.Path, nargs="*",
                         default=None,
                         help="explicit bank list (overrides --fleet-summary)")
@@ -434,7 +435,7 @@ def main() -> None:
     logging.basicConfig(level=logging.INFO,
                         format="%(levelname)s %(name)s: %(message)s")
     banks = (list(args.banks) if args.banks
-             else _passing_banks(args.fleet_summary))
+             else _fleet_banks(args.fleet_summary))
     config = PassiveProtocolConfig(seed=args.seed)
     results = run_bakeoff(banks, args.seed, config)
     write_reports(results, banks, args.seed, config, args.out_dir)

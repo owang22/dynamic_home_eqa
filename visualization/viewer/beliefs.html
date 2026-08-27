@@ -16,9 +16,16 @@
 </header>
 
 <nav id="tabs">
-  <button class="tab active" data-tab="map">map — focus object</button>
-  <button class="tab" data-tab="table">all objects now</button>
-  <button class="tab" data-tab="models">model comparison</button>
+  <button class="tab active" data-tab="map"
+          title="the map view: one object's belief vs truth, drawn on the floor plan">◀ map</button>
+  <button class="tab" data-tab="table"
+          title="table over the map: where every object is vs where this model thinks it is, at the current slider time">all objects now</button>
+  <button class="tab" data-tab="models"
+          title="table over the map: how many objects each model has right at the current slider time">model comparison</button>
+  <button class="tab" data-tab="patrols"
+          title="the ambient observation schedules compared: what each patrol route does to belief accuracy, at one shared visit budget">active (patrols)</button>
+  <button class="tab" data-tab="sweep"
+          title="accuracy of every belief model vs the observation budget (room visits per day) — floor, separation, saturation">budget sweep</button>
 </nav>
 
 <main>
@@ -29,7 +36,10 @@
       <div id="whereabouts" class="muted"></div>
     </div>
     <div id="sheet">
-      <div id="sheet-head"></div>
+      <div id="sheet-bar">
+        <div id="sheet-head"></div>
+        <button id="sheet-close" title="close (Esc)">✕ close</button>
+      </div>
       <div id="sheet-body"></div>
     </div>
   </div>

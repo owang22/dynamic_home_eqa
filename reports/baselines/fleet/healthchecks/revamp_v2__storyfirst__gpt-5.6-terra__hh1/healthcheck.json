@@ -1,6 +1,6 @@
 {
   "bank_path": "banks/baselines/fleet/revamp_v2__storyfirst__gpt-5.6-terra__hh1_bank.jsonl",
-  "bank_manifest_hash": "2949a87a665700f6391c6598db9fd3038c2e7ae1ecb82937bd8ac404604100cc",
+  "bank_manifest_hash": "438341e9fd51ef739f5a44525d892cb60c508860a9394470486b059439932473",
   "config": {
     "seed": 0,
     "budget": null,
@@ -12,10 +12,10 @@
     "powered_min_questions": 300
   },
   "config_hash": "fbf2c99847e1194a778cd0b90c7e37f0d9f142c58846fc0cc63dd5b3662a94ed",
-  "git_commit": "27ae5272a275cb4bd2254d1d763c79af866b02fc",
+  "git_commit": "d57e83fe734236c4c761bd10a0561326f3d99bb2",
   "git_dirty": true,
   "seed": 0,
-  "timestamp": "2026-08-25T21:20:09.299166+00:00",
+  "timestamp": "2026-08-27T00:28:10.136930+00:00",
   "n_questions": 1620,
   "real_budget_per_day": 24,
   "belief_panel": [
@@ -81,9 +81,9 @@
   },
   "panel": {
     "never_sense_task_accuracy": {
-      "last_observation": 0.5166666666666667,
-      "most_frequent": 0.5030864197530864,
-      "timetable": 0.49506172839506174
+      "last_observation": 0.6685185185185185,
+      "most_frequent": 0.6469135802469136,
+      "timetable": 0.558641975308642
     },
     "sequential_search_unlimited_task_accuracy": {
       "last_observation": 1.0,
@@ -93,63 +93,72 @@
     "sequential_search_real_budget": {
       "belief": "last_observation",
       "budget_per_day": 24,
-      "task_accuracy": 0.6524691358024691
+      "task_accuracy": 0.695679012345679
     }
   },
   "stratified_discriminative": {
-    "working_professional_solo": 0.02160493827160498
+    "working_professional_solo": 0.1098765432098765
   },
-  "gates": [
+  "diagnostics": [
     {
       "name": "stationarity",
-      "passed": false,
+      "flagged": true,
       "measured": 0.6220293209876544,
       "threshold": 0.6,
       "comparison": "<=",
-      "rationale": "dwell-weighted modal share: how often a home-base-only model is right at a random moment; computable from ground truth alone (cli bankstats) before paying for the panel"
+      "rationale": "mean dwell-weighted modal share; high values mean objects mostly sit at their usual spots \u2014 read the per-object distribution before concluding anything",
+      "is_bug_check": false
     },
     {
       "name": "solvable",
-      "passed": true,
+      "flagged": false,
       "measured": 1.0,
       "threshold": 1.0,
       "comparison": "==",
-      "rationale": "unlimited-budget search must find every queried object; failure means a bank or harness bug"
+      "rationale": "unlimited-budget search must find every queried object; failure means a bank or harness BUG, not a data property",
+      "is_bug_check": true
     },
     {
       "name": "not_trivial",
-      "passed": true,
-      "measured": 0.5166666666666667,
+      "flagged": true,
+      "measured": 0.6685185185185185,
       "threshold": 0.65,
       "comparison": "<=",
-      "rationale": "if passive memory nearly solves the bank, the dynamics are too static to test sensing"
+      "rationale": "passive memory alone nearly solves the bank at this observation rate; paid sensing has little to prove",
+      "is_bug_check": false
     },
     {
       "name": "not_impossible",
-      "passed": false,
-      "measured": 0.6524691358024691,
-      "threshold": 0.6666666666666667,
+      "flagged": true,
+      "measured": 0.695679012345679,
+      "threshold": 0.8185185185185185,
       "comparison": ">=",
-      "rationale": "sensing at the real budget must buy meaningful accuracy over the best passive belief"
+      "rationale": "sensing bought little over passive at the configured budget; may reflect the budget rather than the bank",
+      "is_bug_check": false
     },
     {
       "name": "discriminative",
-      "passed": false,
-      "measured": 0.02160493827160498,
+      "flagged": false,
+      "measured": 0.1098765432098765,
       "threshold": 0.03,
       "comparison": ">",
-      "rationale": "different modeling assumptions must score differently somewhere, or the bank cannot rank belief models"
+      "rationale": "all passive models answer alike; usually the observation stream is too sparse for them to differ",
+      "is_bug_check": false
     },
     {
       "name": "powered",
-      "passed": true,
+      "flagged": false,
       "measured": 1620.0,
       "threshold": 300.0,
       "comparison": ">=",
-      "rationale": "too few questions and accuracy differences between agents drown in binomial noise"
+      "rationale": "few questions; small accuracy differences drown in binomial noise",
+      "is_bug_check": false
     }
   ],
-  "gates_pass": false,
-  "overall_pass": false,
-  "overall_note": "gates failed: stationarity, not_impossible, discriminative"
+  "flags": [
+    "stationarity",
+    "not_trivial",
+    "not_impossible"
+  ],
+  "solvable_ok": true
 }

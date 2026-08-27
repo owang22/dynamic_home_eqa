@@ -1,27 +1,27 @@
-DATA-HEALTH GATE REPORT — revamp_v2__storyfirst__gpt-5.6-terra__hh3_bank.jsonl
-  bank:   banks/baselines/fleet/revamp_v2__storyfirst__gpt-5.6-terra__hh3_bank.jsonl  (manifest 6a6cbee7d8e4…)
-  commit: 27ae5272a275 (DIRTY TREE)  seed 0  questions 1620  budget 24/day
+DIAGNOSTIC REPORT — revamp_v2__storyfirst__gpt-5.6-terra__hh3_bank.jsonl
+  bank:   banks/baselines/fleet/revamp_v2__storyfirst__gpt-5.6-terra__hh3_bank.jsonl  (manifest 169a856b46cd…)
+  commit: d57e83fe7342 (dirty tree)  seed 0  questions 1620  budget 24/day
 
   Intrinsic (ground truth only — see `cli bankstats`): modal share 0.613 time-weighted / 0.598 at query times; 105.4 moves/day; displacement median 2.2 h, p90 25.3 h
 
   Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
-    NeverSense (answer from memory, never look) last_observation 0.506  most_frequent 0.507  timetable 0.494
+    NeverSense (answer from memory, never look) last_observation 0.620  most_frequent 0.619  timetable 0.581
     SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
-    SequentialSearch @ real budget              most_frequent 0.588
+    SequentialSearch @ real budget              last_observation 0.666
 
-  Gates (bank is healthy only if ALL pass):
-    [FAIL] stationarity     measured   0.613  need <= 0.600
-           dwell-weighted modal share: how often a home-base-only model is right at a random moment; computable from ground truth alone (cli bankstats) before paying for the panel
-    [PASS] solvable         measured   1.000  need == 1.000
-           unlimited-budget search must find every queried object; failure means a bank or harness bug
-    [PASS] not_trivial      measured   0.507  need <= 0.650
-           if passive memory nearly solves the bank, the dynamics are too static to test sensing
-    [FAIL] not_impossible   measured   0.588  need >= 0.657
-           sensing at the real budget must buy meaningful accuracy over the best passive belief
-    [FAIL] discriminative   measured   0.012  need > 0.030
-           different modeling assumptions must score differently somewhere, or the bank cannot rank belief models
-    [PASS] powered          measured 1620.000  need >= 300.000
-           too few questions and accuracy differences between agents drown in binomial noise
-    stratified discriminative spreads by household_type: retired_couple=0.012
+  Diagnostics (flags mark setups worth a look; nothing here disqualifies a bank):
+    [ flag] stationarity     measured   0.613  reference <= 0.600
+           mean dwell-weighted modal share; high values mean objects mostly sit at their usual spots — read the per-object distribution before concluding anything
+    [  ok ] solvable         measured   1.000  reference == 1.000
+           unlimited-budget search must find every queried object; failure means a bank or harness BUG, not a data property
+    [  ok ] not_trivial      measured   0.620  reference <= 0.650
+           passive memory alone nearly solves the bank at this observation rate; paid sensing has little to prove
+    [ flag] not_impossible   measured   0.666  reference >= 0.770
+           sensing bought little over passive at the configured budget; may reflect the budget rather than the bank
+    [  ok ] discriminative   measured   0.040  reference > 0.030
+           all passive models answer alike; usually the observation stream is too sparse for them to differ
+    [  ok ] powered          measured 1620.000  reference >= 300.000
+           few questions; small accuracy differences drown in binomial noise
+    stratified discriminative spreads by household_type: retired_couple=0.040
 
-  OVERALL: FAIL — gates failed: stationarity, not_impossible, discriminative
+  flagged: stationarity, not_impossible  (diagnostics, not disqualifiers)

@@ -1,12 +1,22 @@
 #!/usr/bin/env python3
-"""Serve the object-trace viewer. Stdlib only, no flags needed.
+"""Serve the two viewers, each on its own port. Stdlib only, no flags needed.
 
-    python serve.py            # -> http://127.0.0.1:8710/
+    python serve.py            # -> object traces:   http://127.0.0.1:8710/
+                               #    belief vs truth: http://127.0.0.1:8711/
 
-Serves the dynamic_home_eqa repo root (so both /visualization/viewer/ and
-the trace.json files under /profiles/... are reachable) with no-store cache
-headers — regenerated traces and re-baked maps must never be served stale.
-Binds to 127.0.0.1 unless --host is given explicitly.
+One process, two listeners: the object-trace viewer answers `/` on the
+first port and the belief-vs-truth viewer answers `/` on the second, so
+each can live in its own browser tab and be reloaded independently. Both
+ports serve the same tree (either page is still reachable on either port
+by its full path); only what `/` means differs. Cross-links between the
+pages point at the OTHER port, via a window.VIEWER_PORTS global injected
+into the served HTML.
+
+Both listeners serve the dynamic_home_eqa repo root (so both
+/visualization/viewer/ and the trace.json files under /profiles/... are
+reachable) with no-store cache headers — regenerated traces and re-baked
+maps must never be served stale. Binds to 127.0.0.1 unless --host is
+given explicitly.
 
 The household list is rebuilt from disk on EVERY request for
 /visualization/traces.json — every `*/timeline_seed*/trace.json` under
@@ -32,10 +42,13 @@ import json
 import os
 import pathlib
 import signal
+import threading
 import time
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
-VIEWER = "/visualization/viewer/index.html"
+VIEWER_DIR = "/visualization/viewer"
+# The two pages, one per port: short name -> file under viewer/.
+PAGES = {"index.html": "index.html", "beliefs.html": "beliefs.html"}
 MANIFEST = pathlib.Path(__file__).resolve().parent / "traces.json"
 MANIFEST_URL = "/visualization/traces.json"
 # revamp_v2 nests one level deeper than the older sets: the METHOD that
@@ -188,16 +201,29 @@ def refresh_manifest() -> int:
 
 
 class Handler(http.server.SimpleHTTPRequestHandler):
+    # Which page `/` means on THIS port, and where the two viewers live —
+    # filled in per listener by make_handler(). The ports dict is injected
+    # into every served page as window.VIEWER_PORTS so cross-links between
+    # the two viewers can point at the other port.
+    ROOT_PAGE = "index.html"
+    PORTS: dict = {}
+
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")
         super().end_headers()
+
+    def _short_page(self) -> str | None:
+        """The viewer page a short URL names, or None for anything else."""
+        path = self.path.split("?")[0]
+        if path == "/":
+            return self.ROOT_PAGE
+        return PAGES.get(path.lstrip("/"))
 
     def do_HEAD(self):
         # HEAD must answer for the same routes as GET (the viewer polls the
         # open trace with HEAD to notice a rebuild); without this, HEAD /
         # served a directory listing while GET / redirected.
-        if self.path in ("/", "/index.html") or \
-                self.path.split("?")[0] == MANIFEST_URL:
+        if self._short_page() or self.path.split("?")[0] == MANIFEST_URL:
             self.send_response(200)
             self.send_header("Content-Type", "text/html")
             self.send_header("Content-Length", "0")
@@ -213,18 +239,23 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         # blank tab. A redirect buys nothing here (the viewer is the only
         # thing to serve) and browsers cache them, so the failure could
         # outlive the fix. Serving the bytes removes the whole class.
-        if self.path.split("?")[0] in ("/", "/index.html"):
-            return self._serve_viewer()
+        page = self._short_page()
+        if page:
+            return self._serve_viewer(page)
         if self.path.split("?")[0] == MANIFEST_URL:
             return self._serve_manifest()
         super().do_GET()
 
-    def _serve_viewer(self):
-        """The viewer page itself, with a <base> so its relative assets
-        (style.css, app.js) still resolve from the short URL."""
-        html = (REPO_ROOT / VIEWER.lstrip("/")).read_text()
+    def _serve_viewer(self, page: str):
+        """A viewer page, with a <base> so its relative assets (style.css,
+        app.js) still resolve from the short URL, and the port map so its
+        cross-link can target the other viewer's port."""
+        html = (REPO_ROOT / f"{VIEWER_DIR.lstrip('/')}/{page}").read_text()
+        ports = json.dumps(self.PORTS)
         html = html.replace(
-            "<head>", f'<head>\n<base href="{VIEWER.rsplit("/", 1)[0]}/">', 1)
+            "<head>",
+            f'<head>\n<base href="{VIEWER_DIR}/">\n'
+            f"<script>window.VIEWER_PORTS = {ports};</script>", 1)
         body = html.encode()
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -328,25 +359,48 @@ def take_port(host: str, port: int) -> None:
     raise SystemExit(f"could not free port {port} (pid {pid} still listening)")
 
 
+def make_handler(root_page: str, ports: dict):
+    """A Handler subclass bound to one listener: `/` on that listener
+    serves `root_page`, and every served page learns the full port map."""
+    return type(f"Handler_{root_page}", (Handler,),
+                {"ROOT_PAGE": root_page, "PORTS": ports})
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--host", default="127.0.0.1")
-    ap.add_argument("--port", type=int, default=8710)
+    ap.add_argument("--port", type=int, default=8710,
+                    help="object-trace viewer port (default 8710)")
+    ap.add_argument("--beliefs-port", type=int, default=8711,
+                    help="belief-vs-truth viewer port (default 8711)")
     ap.add_argument("--keep-existing", action="store_true",
-                    help="fail if the port is busy instead of replacing an "
+                    help="fail if a port is busy instead of replacing an "
                          "older viewer on it")
     args = ap.parse_args()
 
     if not args.keep_existing:
         take_port(args.host, args.port)
+        take_port(args.host, args.beliefs_port)
     n = refresh_manifest()
-    handler = functools.partial(Handler, directory=str(REPO_ROOT))
-    with Server((args.host, args.port), handler) as srv:
-        print(f"serving {REPO_ROOT} (pid {os.getpid()})")
-        print(f"{n} timeline(s) in the household dropdown, refreshed per request")
-        print(f"viewer: http://{args.host}:{args.port}/")
-        srv.serve_forever()
+    ports = {"traces": args.port, "beliefs": args.beliefs_port}
+    servers = []
+    for root_page, port in (("index.html", args.port),
+                            ("beliefs.html", args.beliefs_port)):
+        handler = functools.partial(make_handler(root_page, ports),
+                                    directory=str(REPO_ROOT))
+        servers.append(Server((args.host, port), handler))
+    print(f"serving {REPO_ROOT} (pid {os.getpid()})")
+    print(f"{n} timeline(s) in the household dropdown, refreshed per request")
+    print(f"object traces:   http://{args.host}:{args.port}/")
+    print(f"belief vs truth: http://{args.host}:{args.beliefs_port}/")
+    for srv in servers[1:]:
+        threading.Thread(target=srv.serve_forever, daemon=True).start()
+    try:
+        servers[0].serve_forever()
+    finally:
+        for srv in servers:
+            srv.server_close()
 
 
 if __name__ == "__main__":

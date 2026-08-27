@@ -111,3 +111,66 @@ table.roster .name { font-weight: 600; }
 table.roster .age { opacity: 0.7; }
 table.roster .role { font-size: 12px; opacity: 0.8; }
 table.roster tr.sel .name { color: var(--accent2, #7fd1ff); }
+
+/* ---- belief page: tabs + the slide-over sheet ------------------------
+   The two table views overlay the map rather than replacing it, so
+   switching to a table never loses the spatial context the map just
+   gave you. The sheet lives INSIDE #map-wrap: it can never reach the
+   footer, so the timeline slider below stays visible and interactive
+   while a table is open. */
+#tabs { display: flex; gap: 2px; padding: 0 16px; border-bottom: 1px solid var(--edge); }
+#tabs .tab {
+  background: none; color: var(--muted); border: none; cursor: pointer;
+  padding: 8px 14px; font: inherit; font-size: 13px;
+  border-bottom: 2px solid transparent;
+}
+#tabs .tab:hover { color: var(--fg); }
+#tabs .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* Inset on every side: the HUD clock stays readable above it (a table of
+   "right now" is meaningless without the time) and a wide margin at the
+   bottom keeps the last rows well clear of the footer's slider. */
+#sheet {
+  position: absolute; left: 12px; right: 12px; top: 64px; bottom: 26px;
+  overflow-y: auto;
+  background: rgba(20,22,26,.96);
+  border: 1px solid var(--edge); border-radius: 10px;
+  padding: 12px 16px 18px;
+  display: none;
+}
+#sheet.open { display: block; }
+#sheet-bar { display: flex; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+#sheet-head { font-size: 13px; flex: 1; }
+#sheet-close {
+  background: var(--panel); color: var(--fg); cursor: pointer;
+  border: 1px solid var(--edge); border-radius: 6px;
+  font: inherit; font-size: 12px; padding: 3px 10px; white-space: nowrap;
+}
+#sheet-close:hover { border-color: var(--accent); color: var(--accent); }
+table.sheet { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.sheet th {
+  text-align: left; color: var(--muted); font-weight: 500; font-size: 11px;
+  text-transform: uppercase; letter-spacing: .06em;
+  padding: 4px 10px 4px 0; border-bottom: 1px solid var(--edge);
+  /* -12px matches the sheet's top padding, so scrolled rows disappear
+     under the header rather than beside it */
+  position: sticky; top: -12px; background: #171a1f;
+}
+table.sheet td { padding: 3px 10px 3px 0; font-variant-numeric: tabular-nums; }
+table.sheet tr + tr td { border-top: 1px solid #23262d; }
+/* verdict is carried by the row tint AND the label text, never colour alone */
+table.sheet tr.ok td:nth-child(3) { color: var(--res); }
+table.sheet tr.bad td:nth-child(3) { color: #ff8a8a; }
+table.sheet td.ok { color: var(--res); }
+table.sheet td.bad { color: #ff8a8a; }
+
+/* patrol / budget-sweep charts inside the sheet (inline SVG) */
+.chart-block { margin: 14px 0 20px; }
+.chart-block h3 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.chart-block .sub { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 4px 14px;
+  font-size: 11px; color: var(--muted); margin: 6px 0 10px; }
+.chart-legend .swatch { display: inline-block; width: 14px; height: 3px;
+  vertical-align: middle; margin-right: 5px; border-radius: 2px; }
+svg.chart { display: block; width: 100%; height: auto;
+  background: #171a1f; border: 1px solid var(--edge); border-radius: 6px; }

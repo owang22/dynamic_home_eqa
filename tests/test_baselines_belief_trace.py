@@ -7,6 +7,7 @@ harness never made.
 """
 from __future__ import annotations
 
+import dataclasses
 import json
 import random
 
@@ -98,6 +99,98 @@ def test_trace_is_passive_and_deterministic(tmp_path):
     assert seen <= sighted | set(episode.receptacle_ids)
     assert first["models"][0]["panel"] == "frozen"
     assert any(m["panel"] == "candidate" for m in first["models"])
+
+
+def test_sighting_stream_is_the_passive_evidence_in_time_order(tmp_path):
+    """The viewer's "last seen" readout and its strip ticks read this, so
+    it must be exactly the diet the models consumed — tour included, no
+    sense results, sorted, and never missing an object."""
+    bank = write_periodic_probe_bank(tmp_path / "probe.jsonl")
+    episode = next(JsonlBank(path=bank.path).episodes())
+    payload = build_trace(bank.path, 0, 60, resolve_specs(False))
+    stream = payload["sightings"]
+
+    assert set(stream) == set(episode.object_classes)
+    expected = (len(episode.initial_observations)
+                + len(episode.scripted_observations))
+    assert sum(len(v) for v in stream.values()) == expected
+    for object_id, entries in stream.items():
+        assert [e[0] for e in entries] == sorted(e[0] for e in entries)
+        for minute, receptacle in entries:
+            # Every sighting is truthful: the bank never reports an object
+            # anywhere but where it actually was.
+            assert episode.true_location(object_id, minute * 60) == receptacle
+
+    def last_seen(object_id, minute):
+        seen = [e for e in stream[object_id] if e[0] <= minute]
+        return seen[-1] if seen else None
+
+    badge = "badge_shift"
+    assert last_seen(badge, 0)[1] == "entry_e"          # the initial tour
+    # Sighted at 10:00 (desk) and 20:00 (entry) daily, so at noon on day 5
+    # the freshest sighting is that morning's desk look.
+    assert last_seen(badge, 5 * 1440 + 12 * 60) == [5 * 1440 + 10 * 60,
+                                                    "desk_d"]
+    assert last_seen(badge, 5 * 1440 + 21 * 60) == [5 * 1440 + 20 * 60,
+                                                    "entry_e"]
+
+
+def test_last_seen_never_runs_ahead_of_the_belief(tmp_path):
+    """LastObservation predicts precisely the last-sighted receptacle, so
+    the viewer's "last seen" row and its belief ring must agree at EVERY
+    grid point. This is the sharp end of rounding sighting seconds to
+    minutes: flooring made the readout advertise a sighting one grid step
+    before the models could act on it, and the page showed a "last seen"
+    that contradicted the belief beside it.
+    """
+    bank = write_gate_pass_bank(tmp_path / "bank.jsonl")
+    grid = DEFAULT_GRID_MINUTES
+    payload = build_trace(bank.path, 0, grid, resolve_specs(False))
+    last_obs = next(m for m in payload["models"]
+                    if m["name"] == "last_observation")
+    checked = 0
+    for object_id in payload["objects"]:
+        seen = payload["sightings"][object_id]
+        for minute in range(0, payload["days"] * 1440 + 1, grid):
+            before = [e for e in seen if e[0] <= minute]
+            if not before:
+                continue          # never-sighted: belief is the uniform fallback
+            assert _seg_at(last_obs["objects"][object_id], minute)[2] == \
+                before[-1][1], (object_id, minute)
+            checked += 1
+    assert checked > 1000, "fixture too small to be evidence"
+
+
+def test_sighting_minutes_round_up_from_seconds(tmp_path):
+    """The synthetic fixtures all sight on whole minutes, so the agreement
+    test above cannot see the rounding direction — real banks draw
+    sightings at arbitrary seconds. Pin it directly: a sighting at
+    12 345 s must publish as minute 206 (ceil), not 205 (floor), because a
+    belief sampled at minute 205 (t = 12 300 s) has NOT yet consumed it.
+    """
+    from baselines.belief_trace import sighting_stream
+    from baselines.types import Observation
+
+    bank = write_periodic_probe_bank(tmp_path / "probe.jsonl")
+    episode = next(JsonlBank(path=bank.path).episodes())
+    offset = Observation(object_id="mug_static", object_class="mug",
+                         receptacle_id="desk_d", t=12_345, source="scripted")
+    episode = dataclasses.replace(
+        episode,
+        scripted_observations=tuple(
+            sorted((*episode.scripted_observations, offset),
+                   key=lambda o: o.t)))
+    minutes = [m for m, _ in sighting_stream(episode)["mug_static"]]
+    assert 206 in minutes and 205 not in minutes
+
+
+def test_sighting_stream_covers_every_object(tmp_path):
+    """An object nobody ever sees still gets a key, so the viewer can say
+    'never seen yet' without a missing-key check."""
+    bank = write_gate_pass_bank(tmp_path / "bank.jsonl")
+    payload = build_trace(bank.path, 0, 120, resolve_specs(False))
+    assert set(payload["sightings"]) == set(payload["objects"])
+    assert all(isinstance(v, list) for v in payload["sightings"].values())
 
 
 def test_trace_payload_carries_what_the_viewer_needs(tmp_path):

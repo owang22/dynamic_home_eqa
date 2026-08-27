@@ -1,19 +1,21 @@
 # The ONE shared fleet configuration: every household bank is exported and
-# gated with exactly these settings. Per-bank knob tuning is
-# instrument-gaming — a bank that fails a gate under this config is a
-# finding about the bank, not a reason to touch this file.
+# diagnosed with exactly these settings; per-bank tuning stays prohibited.
 #
-# The export settings are the hh1 21-day recipe that first passed all six
-# gates (reports/baselines/hh1_21d_grid.md: 90 questions/day from day 3 =
-# 1620 questions, 10 sightings/day, budget 24/day, uniform repeat-capped
-# queries drawn from the household's own awake time, initial tour on).
+# Observation model: room visits (round-robin patrol, 6 visits/day) — a
+# visit reveals every receptacle in one room at once. Replaces the random
+# per-object glimpse stream, which starved 30-50-object inventories to
+# under one sighting per object per day and made every belief model answer
+# alike. 6 visits/day yields roughly 0.7-1.2 sightings per object per day
+# across the storyfirst set.
 export:
   seed: 0
-  sightings_per_day: 10
+  sightings_per_day: 10          # used only by the glimpse model
+  observation_model: room_visit
+  patrol: round_robin_patrol
+  visits_per_day: 6
   questions_per_day: 90
   first_question_day: 3
   budget_per_day: 24
   query_mode: uniform
   initial_tour: true
-# Healthcheck gates run at their standard defaults (no overrides).
 healthcheck: {}

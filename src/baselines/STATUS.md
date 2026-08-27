@@ -1,5 +1,170 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-08-27: negative evidence flows passively; patrol + budget-sweep viewer tabs)
+
+**Negative evidence, implemented with no new belief code.** Room-visit
+banks now write each visit as one ``room_visit`` row whose ``contents``
+map EVERY inspected receptacle (empty ones included) to the objects
+found there. The loader replays a visit as one ``SenseResult`` per
+receptacle — the evidence type the belief base class already consumes
+for paid senses — so positive sightings and exclusions arrive through
+the existing machinery. ``Episode`` gained ``scripted_evidence`` and a
+single ``evidence_stream()`` accessor; the harness, passive evaluation,
+belief traces, and off-policy replay all deliver through it, so
+positive-only and visit-based banks cannot diverge in delivery.
+``scripted_observations`` still exposes the positive half for recency
+readouts and the viewer. Tests cover the two payoff cases: a visit
+finding a receptacle empty rules it out, and visits covering every
+sensable receptacle drive a passive belief to answer OUT_OF_HOUSE —
+an answer no positive-only diet could ever reach.
+
+**Negative evidence reorders the models.** On the budget sweep (below),
+frequency-style models now benefit most: an excluded receptacle costs a
+recency model its whole belief (uniform fallback) but costs a frequency
+model only its top choice (mass moves to the next-most-frequent spot).
+On hh1 at 24 visits/day: most_frequent/hierarchy_backoff 0.860 vs
+last_observation 0.748.
+
+**Viewer: two new tabs** on the belief-vs-truth page, fed by two new
+sections `belief_trace.py` computes when given ``--timeline/--spec``:
+``active (patrols)`` — every patrol schedule at one shared visit budget,
+with the visit timeline and house-wide accuracy series per panel model —
+and ``budget sweep`` — question-set accuracy per registered model per
+observation budget (1..24 room visits/day), the
+floor/separation/saturation picture. Traces regenerated for all ten
+storyfirst households (~45 s, 300-600 KB each).
+
+**Candidate slate verdict on this setup** (mean question-set accuracy
+over the ten households, negative evidence on): last_observation and
+hierarchy_backoff are effectively tied at every budget (hierarchy
++0.005 at 6 visits/day, -0.019 at 24; it wins at most 3/10 households);
+every other candidate trails at every budget, timetable badly (-0.07 to
+-0.16). markov1 remains indistinguishable-or-worse vs most_frequent.
+The pragmatic roster for now: last_observation as the common-sense
+baseline, most_frequent as the frequency representative — the other
+candidates stay registered but out of headline tables until some
+household regime rewards them.
+
+Fleet re-exported with the new rows (flags shift slightly: hh2 now also
+flags discriminative at 6 visits/day; hh9 no longer flags not_trivial).
+135 tests pass; mypy --strict clean.
+
+
+## Update (2026-08-26, later: nothing disqualifies — the healthcheck is a diagnostic report; fleet re-run on room visits)
+
+Direction set explicitly by the owner: dataset acceptance happens once,
+at generation time (`src/revamp_v2/validate.py`); anything the
+instrument computes afterwards is about the EXPERIMENT built on the
+dataset (observation stream, question sample, budget), which is iterated
+on freely. So the healthcheck no longer gates anything. All six checks
+are now DIAGNOSTICS — measured, compared to a reference threshold, and
+reported as flags for a human to look at. The one exception is
+`solvable`, kept as a hard bug check (unlimited-budget search failing to
+find a queried object means the bank or harness is broken, and every
+other number in the report is suspect); the CLI exits nonzero only on
+it. Gone with the gating: the `overall PASS/FAIL` verdict, the
+dirty-git-tree refusal (tree state is still recorded in provenance), the
+two-tier advisory scheme from earlier today, and the bake-off's
+passing-banks filter (it now runs every completed bank). The earlier
+note that the healthcheck "must refuse room-visit banks until its gates
+are re-derived" is withdrawn — it came from a draft integration note and
+was never implemented; nothing refuses any observation model.
+`HealthcheckReport` now carries `diagnostics` / `flags` / `solvable_ok`;
+`fleet_summary` rows carry the same.
+
+The shared fleet config now uses the room-visit observation model
+(round-robin patrol, 6 visits/day — roughly 0.7-1.2 sightings per object
+per day across the set). Fleet re-run on the ten storyfirst households
+under the new semantics: discriminative is flagged NOWHERE (it was
+flagged on all ten under the glimpse stream); `not_impossible` is
+flagged everywhere (24 receptacle-senses/day next to a room-bundled
+ambient stream buys little — the sense budget's granularity is now the
+odd one out, a known open question for the active-side work);
+`not_trivial` flags the five stickiest households, as the stationarity
+diagnostic predicts.
+
+With adequate observations the passive models finally separate for real:
+against the best-possible "always guess each object's usual spot"
+strategy (computed from ground truth), most_frequent lands about +0.06
+above it on average — it IS that strategy, learned from observations —
+while last_observation adds another +0.03 on top by tracking recent
+moves (household means 0.567 usual-spot / 0.622 most_frequent / 0.655
+last_observation / 0.565 timetable at 8 visits/day).
+
+
+## Update (2026-08-26: room-visit observations; two gates demoted to advisory)
+
+**Two gates no longer disqualify** (`ADVISORY_GATES` in healthcheck.py;
+both still measured and printed). `stationarity` averages each object's
+dwell-weighted modal share over ALL objects, so a permanently-parked
+object contributes exactly 1.0 and the statistic charges a household for
+owning realistic furniture — the worst storyfirst household still has 18
+of 32 objects below 0.7 modal share, so it cannot detect degeneracy on
+its own. `not_impossible` presumes the configured sense budget is near
+the ceiling of what sensing can buy, which 24/day over 22-35 receptacles
+is not, and it rejects precisely the banks where sensing is hard — the
+interesting ones for an active-sensing study.
+
+**The observation model is now room visits.** New
+`baselines/room_observations.py` replaces the random-glimpse process (one
+random object at one random instant, no spatial structure) with a room
+visit: at time t the contents of every receptacle in one room are
+revealed at once. Five deterministic patrol schedules —
+`morning_evening_sweep`, `round_robin_patrol`, `random_room_walk`,
+`stationed_observer`, `follow_the_person` — after the STRANDS
+long-term-autonomy line (Santos et al. RA-L 2016; Krajnik et al. ECMR
+2015); adaptive/information-driven scheduling is deliberately absent
+because in this codebase that is an ACTIVE policy, not a scripted stream.
+`export_bank` takes `--observation-model room_visit --patrol P
+--visits-per-day N`; the header records all three. Only the POSITIVE half
+is written so far, as ordinary `observation` rows, so every belief model
+and the harness consume it unchanged.
+
+The efficiency is the point: **8 visits/day yields 0.87-1.53 sightings
+per object per day, where 10 glimpses/day yielded 0.15-0.32** — fewer
+events, ~10x the evidence, because one visit reports a whole room. Median
+gap between sightings of one object drops from 2-3 DAYS to 6-16 h.
+Passive panel spread on the storyfirst set goes from **0/10 banks
+clearing the discriminative gate to 10/10**.
+
+**The binding constraint moved, and stationarity turns out to predict
+it.** With adequate evidence, passive accuracy rises until `not_trivial`
+(<= 0.65) binds: at 6 visits/day 10/10 clear discriminative but 5/10
+exceed the passive ceiling. Which 5 is almost perfectly predicted by
+stationarity (Spearman rho = 0.96, Pearson r = 0.94 against passive
+accuracy at 6 visits/day: hh7 0.668 -> 0.756, hh9 0.653 -> 0.686, hh8
+0.623 -> 0.694, hh1 0.622 -> 0.679, hh10 0.582 -> 0.671). So the
+stationarity statistic was measuring something real; its error was the
+consequence it drew. A sticky world does not need disqualifying on its
+own arithmetic — once the observation stream is adequate, `not_trivial`
+catches the same banks directly and for the right reason.
+
+No single global visit budget satisfies both gates on all ten households
+(hh7 exceeds the passive ceiling by 3 visits/day; hh4 and hh6 need 6 to
+open any spread), and per-bank tuning stays prohibited — so the choice of
+budget is a deliberate global trade, not a fit.
+
+Three bugs in the proposed module were fixed rather than reproduced, each
+noted at its site: `follow_the_person` merged every resident's blocks and
+picked whichever sorted first, making the followed person depend on file
+order (now follows one named resident); a person-check was dropped
+whenever nothing was carried, conflating "the person is out, cannot be
+inspected" with "the person is home carrying nothing", which is valid
+negative evidence (now uses away intervals); and `stationed_observer`
+defaulted its home base to the spec's first room, typically a bedroom
+(now the busiest room by resident presence). `draw_time` was made public
+in export_bank for reuse. 11 new tests
+(`tests/test_baselines_room_observations.py`) cover schedule determinism
+and seed sensitivity, the round-robin revisit bound, that realization
+never invents evidence, and that a visit reports EVERY object in the
+room. 132 tests pass; mypy --strict clean.
+
+NOT yet done, in order: the `room_visit` row kind and header `rooms`
+mapping (the negative-evidence half — a bank schema change, with the
+healthcheck refusing room-visit banks until its gates are re-derived);
+belief-side consumption of that negative evidence; and the whole active
+policy roster.
+
 ## Update (2026-08-25, later: sighting-scale experiment + viewer belief traces)
 
 **The Cause-1 diagnosis was tested and holds, with a corrected dosage.**
@@ -44,12 +209,43 @@ pointed at archived run logs from the retired dataset. The page
 on the map (belief ring vs truth disc, joined when they disagree, now
 resolvable at ANY slider moment rather than only at question times), a
 table of every object right now sorted wrong-first, and the same instant
-scored across all seven models. Six new tests
+scored across all seven models. Ten tests
 (`tests/test_baselines_belief_trace.py`) assert the traced argmax equals
 the live model's prediction at every grid point for every model, that
 truth matches the bank exactly, byte-determinism, and refusal of
 multi-episode banks; the page's own segment-lookup logic was exercised
 against real data under node (13 260 lookups, 0 outside their segment).
+
+Follow-up in the same session, from viewer feedback: the trace now also
+carries the EVIDENCE (`sightings`: every observation the passive diet
+delivered, per object), which the page reads for a "last seen — where,
+how long ago, has it moved since" row, a dashed marker on the map at the
+last-seen receptacle, and gold ticks on the strip. This closed a real
+gap — the panel had a last-sighting row wired to a field the generator
+never emitted, so it always read "–". Rounding matters here and is
+tested: sighting seconds round UP to the minute, because a belief
+sampled at grid minute m has consumed exactly the observations with
+t <= m*60, and flooring advertised a sighting one grid step before the
+models could act on it (4 disagreements per household between
+LastObservation's belief and its own last-seen row; now 270 144/270 144
+agree across hh1/hh4/hh9). The synthetic fixtures all sight on whole
+minutes and so cannot see the rounding direction — a dedicated test
+pins it with a 12 345 s sighting. The strip also gained a caption: it
+plots two unrelated series (share-of-objects-correct, and this object's
+sightings) and was unreadable without one.
+
+Second round of viewer feedback found the real layout bug: ALL of the
+tab/sheet CSS had been written to `visualization/style.css`, a file no
+page loads (the pages link `viewer/style.css`, and the short-URL route
+injects a `<base>` to the same place) — so the table views rendered as
+unstyled always-visible blocks that flowed over the timeline slider and
+could not be dismissed. The styles now live in `viewer/style.css` (the
+stray file is deleted) with the sheet inset inside the map area on all
+four sides, where it structurally cannot reach the footer's slider.
+Dismissal has three paths — a ✕ button in the sheet, Esc, and clicking
+the open tab again toggles it closed — and the tabs are renamed
+("◀ map" / "all objects now" / "model comparison") with title tooltips
+saying what each shows.
 
 ## Update (2026-08-25, fleet health run + horizon-controlled passive protocol + candidate bake-off)
 

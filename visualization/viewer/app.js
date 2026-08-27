@@ -650,13 +650,39 @@ function linkToBeliefs(datasets) {
   // page is open, and a href frozen at load would carry the wrong object.
   const href = () => {
     const obj = $("object-select") ? $("object-select").value : "";
-    return `beliefs.html?trace=${encodeURIComponent(d.trace)}` +
+    return peerViewer("beliefs", "beliefs.html") +
+           `?trace=${encodeURIComponent(d.trace)}` +
            `&belief=${encodeURIComponent(d.belief_trace)}` +
            (obj ? `&object=${encodeURIComponent(obj)}` : "");
   };
   link.href = href();
   link.addEventListener("mousedown", () => { link.href = href(); });
   link.title = "belief vs truth for this household";
+}
+
+/* Load TRACE_URL, falling back to the first live household when the URL's
+ * ?trace= has gone stale — the household was rebuilt, renamed or archived
+ * since the URL was minted, which is exactly the state a reload lands in
+ * after regenerating a set. Dying here (the old behaviour) looked like the
+ * whole viewer being broken and got everything restarted for nothing.
+ * The address bar is rewritten to the household actually shown, so the
+ * NEXT reload starts from a URL that works. */
+async function loadTraceWithFallback(datasets) {
+  const load = async url => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`);
+    return res.json();
+  };
+  try {
+    return await load(TRACE_URL);
+  } catch (err) {
+    const fallback = datasets.find(d => !samePath(d.trace, TRACE_URL));
+    if (!fallback) throw err;
+    console.warn(`stale ?trace= (${err.message}) — showing ${fallback.trace}`);
+    TRACE_URL = fallback.trace;
+    history.replaceState(null, "", `?trace=${encodeURIComponent(TRACE_URL)}`);
+    return load(TRACE_URL);
+  }
 }
 
 async function boot() {
@@ -668,14 +694,14 @@ async function boot() {
       throw new Error("no ?trace= given and visualization/traces.json is missing or empty");
     TRACE_URL = datasets[0].trace;
   }
+  say(`loading ${TRACE_URL}…`);
+  trace = await loadTraceWithFallback(datasets);
+  horizon = trace.days * 1440;
+
+  // After the fallback above TRACE_URL is final, so the pickers and the
+  // cross-link mark the household actually being shown.
   populateTracePicker(datasets);
   linkToBeliefs(datasets);
-
-  say(`loading ${TRACE_URL}…`);
-  const res = await fetch(TRACE_URL);
-  if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${TRACE_URL}`);
-  trace = await res.json();
-  horizon = trace.days * 1440;
 
   const traceDirNote = `${trace.household} · scene ${trace.scene_id} · ` +
     `${trace.days} days · seed ${trace.seed}`;

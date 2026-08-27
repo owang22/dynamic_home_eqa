@@ -77,12 +77,12 @@ def replay_stream(episode: Episode, records: Sequence[Dict[str, Any]],
         belief.update(obs)
 
     cursor = 0
-    scripted = episode.scripted_observations
+    evidence = episode.evidence_stream()
     hits = total = 0
     for record in records:
         t_query = int(record["t_query"])
-        while cursor < len(scripted) and scripted[cursor].t <= t_query:
-            belief.update(scripted[cursor])
+        while cursor < len(evidence) and evidence[cursor].t <= t_query:
+            belief.update(evidence[cursor])
             cursor += 1
         # Replicate the live decision loop's generator consumption exactly:
         # the harness called predict() once before every action (including

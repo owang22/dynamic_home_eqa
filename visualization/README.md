@@ -44,16 +44,23 @@ rewritten). habitat_sim is needed **only** by the offline bake step.
 
 3. **`serve.py` + `viewer/`** (static HTML/JS/CSS, no external libraries):
 
-       python serve.py            # -> http://127.0.0.1:8710/
+       python serve.py            # -> object traces:   http://127.0.0.1:8710/
+                                  #    belief vs truth: http://127.0.0.1:8711/
 
-   No flags, nothing to register, and no restarting. The household list is
-   rebuilt from disk on every request, labelled from the trace itself
-   (household, type, object and resident counts), and the viewer polls it
-   every 5s: a household that finishes while you watch appears by itself,
-   and the one you are looking at reloads in place when it is rebuilt
-   (a green note says which happened). Starting a second copy simply
-   takes the port over from the older one — pass `--keep-existing` if you
-   would rather it refuse.
+   One process, two ports: the object-trace viewer on 8710 and the
+   belief-vs-truth viewer on 8711 (`--port` / `--beliefs-port`), so each
+   lives in its own tab and reloads independently; the cross-links in the
+   page headers jump between the ports. No flags, nothing to register,
+   and no restarting. The household list is rebuilt from disk on every
+   request, labelled from the trace itself (household, type, object and
+   resident counts), and the viewer polls it every 5s: a household that
+   finishes while you watch appears by itself, and the one you are looking
+   at reloads in place when it is rebuilt (a green note says which
+   happened). A reload whose URL still names a household that has since
+   been rebuilt or renamed falls back to the first live household and
+   rewrites the address bar, instead of dying on the stale `?trace=`.
+   Starting a second copy simply takes both ports over from the older
+   one — pass `--keep-existing` if you would rather it refuse.
 
    The panel carries TWO pickers, an object and a resident, each with its
    own live readout — where it is, what it is doing, since when, and for a
@@ -69,14 +76,25 @@ rewritten). habitat_sim is needed **only** by the offline bake step.
    — not only at question times. It reads `belief_trace.json` from beside
    the household's trace.json (written by `python -m baselines.belief_trace`;
    `serve.py` discovers it and publishes the household automatically, so
-   there is nothing to register). Three tabs: the focus object on the map
+   there is nothing to register). Three tabs — the two table views overlay
+   the map inside its own area (the timeline slider below stays live) and
+   close via their ✕, Esc, or clicking the open tab again: the focus
+   object on the map
    (gold disc = truth now, ring = what the selected model believes, green
    when they agree and red plus a dashed link when they do not, with an
    optional every-object overlay), a table of all objects scored right now
    sorted wrong-first, and the same instant scored across every model in
-   the trace. The strip under the slider plots the share of objects the
-   model has right over the whole episode — dips are where the house got
-   ahead of what the model had been told. Beliefs are PASSIVE (tour +
+   the trace. Each view also shows **where the object was last actually
+   seen** — a dashed gold square on the map with its age, and a "last
+   seen" row in the panel saying whether it has moved since — which is
+   what turns a wrong belief from a mystery into a reading (the model is
+   not confused, it is working from a six-hour-old look). The strip under
+   the slider carries two series, captioned beneath it: a green line for
+   the share of all objects the selected model has right across the
+   episode (dips are where the house got ahead of what the model had been
+   told), and gold ticks marking every sighting of the focus object —
+   read together, accuracy for that object is earned just after a tick
+   and decays between them. Beliefs are PASSIVE (tour +
    scripted sightings, no sensing), so the picture is the model's own, not
    an artifact of which objects some policy chose to look at.
    Pseudo-receptacles map back for drawing: OUT_OF_HOUSE at the AWAY

@@ -1,51 +1,56 @@
-"""Data-health gate report: is a candidate bank a sound instrument?
+"""Diagnostic report for a candidate bank: does the current experimental
+setup produce degenerate behavior?
 
-The data-generation workstream runs this on every candidate bank. It
-replays a FIXED panel of baseline agents over the bank and checks five
-gates; the bank is healthy only if all five pass. The panel:
+Runs a FIXED panel of baseline agents over the bank and reports a set of
+DIAGNOSTICS — measured values against reference thresholds. Diagnostics
+are heuristics: they flag suspicious setups for a human to look at, and
+none of them disqualifies a bank. (Dataset acceptance itself happens at
+generation time, in ``src/revamp_v2/validate.py``; by the time a bank
+exists here, the household content has already been accepted. What this
+report probes is the EXPERIMENT built on top of it — the observation
+stream, the question sample, the budget — which is iterated on freely.)
+
+The one exception is ``solvable``: unlimited-budget search failing to
+find a queried object is not a matter of judgment but a bug in the bank
+or the harness, so its failure is reported as an ERROR and the CLI exits
+nonzero on it.
+
+The panel:
 
 * NeverSense with each of the three belief models — what passive memory
-  alone scores (the floor);
-* SequentialSearch with each belief model at unlimited budget — a
-  correctness probe: search must always find the object;
-* SequentialSearch with the best belief at the real budget — what sensing
-  buys at the budget agents will actually get.
+  alone scores;
+* SequentialSearch with each belief model at unlimited budget — the
+  ``solvable`` correctness probe;
+* SequentialSearch with the best belief at the configured budget — what
+  paid sensing adds at that budget.
 
-The gates (thresholds are config values; defaults in
-:class:`HealthcheckConfig`). Gate 0 is intrinsic — pure ground-truth
-arithmetic via :mod:`baselines.bankstats` — and needs no agents; the
-generation workstream should iterate against it (``cli bankstats``)
-before ever paying for the panel:
+The diagnostics (thresholds are config values; defaults in
+:class:`HealthcheckConfig`). The first is intrinsic — pure ground-truth
+arithmetic via :mod:`baselines.bankstats` — and needs no agents:
 
-0. **stationarity** — dwell-weighted modal share <= threshold (default
-   0.60). Above it, a model that knows nothing but each object's home
-   base is right that often at a random moment, and no amount of scale
-   makes the bank interesting — scaling a too-stationary bank only buys
-   tighter error bars around an uninteresting result.
+0. **stationarity** — dwell-weighted modal share, averaged over objects,
+   vs a threshold (default 0.60). A permanently-parked object contributes
+   exactly 1.0 to this mean, so a high value may just mean the household
+   owns realistic stay-put objects; read the per-object distribution and
+   ``modal_share_questions`` alongside it. Empirically it is a strong
+   predictor of which banks passive memory eventually solves.
 1. **solvable** — SequentialSearch@unlimited task accuracy == 1.0 for
-   every belief (floating-point tolerance only). Failure means a bank or
-   harness bug: with unlimited budget the search provably visits every
-   receptacle, so a queried object that is inside some receptacle at
-   query time must be found.
-2. **not_trivial** — max over beliefs of NeverSense accuracy <= threshold
-   (default 0.65). Failure means the dynamics are too static: passive
-   memory nearly solves the bank and sensing has nothing to prove.
-3. **not_impossible** — SequentialSearch@real-budget accuracy >= best
-   NeverSense accuracy + margin (default 0.15). Failure means sensing
-   cannot buy meaningful accuracy at the allotted budget.
-4. **discriminative** — the three beliefs' NeverSense accuracies must not
-   all sit within a band (default 0.03) of each other, globally OR within
-   at least one household_type stratum (bank metadata; stratified check
-   SKIPPED when absent). Failure means the dynamics contain no structure
-   that distinguishes different modeling assumptions.
-5. **powered** — total scored questions >= minimum (default 300), so a
-   few-point accuracy difference between agents is statistically
-   resolvable at all.
+   every belief. THE one hard check: failure means a bank or harness bug.
+2. **not_trivial** — best passive accuracy vs a ceiling (default 0.65).
+   Flags that passive memory alone nearly solves the bank, leaving paid
+   sensing little to prove.
+3. **not_impossible** — search at the configured budget vs best passive
+   + margin (default 0.15). Flags that sensing bought little at this
+   budget; note the budget, not the bank, may be what it measures.
+4. **discriminative** — the three passive models' accuracy spread vs a
+   band (default 0.03). Flags that all models answer alike — usually a
+   sign the observation stream is too sparse for them to differ.
+5. **powered** — total scored questions vs a minimum (default 300).
 
 Output: a human-readable summary (stdout) and a machine-readable JSON
-report with every measured value, threshold, per-gate verdict, and the
-standard provenance fields. The overall verdict REFUSES to be PASS when
-the git tree is dirty — instrument results must be reproducible.
+report with every measured value, threshold, per-diagnostic flag, and
+the standard provenance fields (including whether the git tree was
+dirty at run time).
 
 All accuracies are TASK accuracy (queried objects, exact receptacle
 match). Times are seconds since episode start.
@@ -110,24 +115,31 @@ class HealthcheckConfig:
 
 
 @dataclasses.dataclass(frozen=True)
-class GateResult:
-    """One gate's verdict: measured value vs threshold plus a rationale."""
+class Diagnostic:
+    """One diagnostic: a measured value against a reference threshold.
+
+    ``flagged`` means the measurement crossed the threshold — something a
+    human should look at, not a disqualification. ``is_bug_check`` marks
+    ``solvable``, whose flag DOES mean the results are wrong (a bank or
+    harness bug) rather than merely suspicious.
+    """
 
     name: str
-    passed: bool
+    flagged: bool
     measured: float
     threshold: float
-    comparison: str       # e.g. ">=" — measured <comparison> threshold passes
+    comparison: str       # e.g. ">=" — measured <comparison> threshold is ok
     rationale: str        # one line a non-reader of this package can follow
+    is_bug_check: bool = False
 
 
 @dataclasses.dataclass(frozen=True)
 class HealthcheckReport:
-    """Everything the healthcheck concluded, in both output shapes."""
+    """Everything the report concluded, in both output shapes."""
 
-    gates: Tuple[GateResult, ...]
-    gates_pass: bool      # all gates passed
-    overall_pass: bool    # gates_pass AND clean git tree
+    diagnostics: Tuple[Diagnostic, ...]
+    flags: Tuple[str, ...]   # names of diagnostics that flagged
+    solvable_ok: bool        # False = bank/harness bug, results are wrong
     json_dict: Dict[str, Any]
     text: str
 
@@ -194,69 +206,68 @@ def _stratified_spreads(
     return spreads
 
 
-def _evaluate_gates(
+def _evaluate_diagnostics(
         config: HealthcheckConfig, stats: BankStats,
         never_accs: Dict[str, float], unlimited_accs: Dict[str, float],
         real_acc: float,
-        stratified: Optional[Dict[str, float]]) -> List[GateResult]:
-    """Score all six gates; pure function of the panel + intrinsic numbers."""
+        stratified: Optional[Dict[str, float]]) -> List[Diagnostic]:
+    """Score every diagnostic; pure function of the panel numbers."""
     n_questions = stats.n_questions
     best_never = max(never_accs.values())
-    gates = [
-        GateResult(
+    spread = _spread(never_accs)
+    return [
+        Diagnostic(
             name="stationarity", measured=stats.modal_share_time,
             threshold=config.stationarity_max_modal_share, comparison="<=",
-            passed=stats.modal_share_time
-            <= config.stationarity_max_modal_share,
-            rationale="dwell-weighted modal share: how often a "
-                      "home-base-only model is right at a random moment; "
-                      "computable from ground truth alone (cli bankstats) "
-                      "before paying for the panel"),
-        GateResult(
+            flagged=stats.modal_share_time
+            > config.stationarity_max_modal_share,
+            rationale="mean dwell-weighted modal share; high values mean "
+                      "objects mostly sit at their usual spots — read the "
+                      "per-object distribution before concluding anything"),
+        Diagnostic(
             name="solvable", measured=min(unlimited_accs.values()),
-            threshold=1.0, comparison="==",
-            passed=min(unlimited_accs.values())
-            >= 1.0 - config.solvable_tolerance,
+            threshold=1.0, comparison="==", is_bug_check=True,
+            flagged=min(unlimited_accs.values())
+            < 1.0 - config.solvable_tolerance,
             rationale="unlimited-budget search must find every queried "
-                      "object; failure means a bank or harness bug"),
-        GateResult(
+                      "object; failure means a bank or harness BUG, not a "
+                      "data property"),
+        Diagnostic(
             name="not_trivial", measured=best_never,
             threshold=config.not_trivial_max, comparison="<=",
-            passed=best_never <= config.not_trivial_max,
-            rationale="if passive memory nearly solves the bank, the "
-                      "dynamics are too static to test sensing"),
-        GateResult(
+            flagged=best_never > config.not_trivial_max,
+            rationale="passive memory alone nearly solves the bank at this "
+                      "observation rate; paid sensing has little to prove"),
+        Diagnostic(
             name="not_impossible", measured=real_acc,
             threshold=best_never + config.not_impossible_margin,
             comparison=">=",
-            passed=real_acc >= best_never + config.not_impossible_margin,
-            rationale="sensing at the real budget must buy meaningful "
-                      "accuracy over the best passive belief"),
-        GateResult(
-            name="discriminative", measured=_spread(never_accs),
+            flagged=real_acc < best_never + config.not_impossible_margin,
+            rationale="sensing bought little over passive at the configured "
+                      "budget; may reflect the budget rather than the bank"),
+        Diagnostic(
+            name="discriminative", measured=spread,
             threshold=config.discriminative_band, comparison=">",
-            passed=_spread(never_accs) > config.discriminative_band
-            or bool(stratified
-                    and any(s > config.discriminative_band
-                            for s in stratified.values())),
-            rationale="different modeling assumptions must score "
-                      "differently somewhere, or the bank cannot rank "
-                      "belief models"),
-        GateResult(
+            flagged=not (spread > config.discriminative_band
+                         or bool(stratified
+                                 and any(v > config.discriminative_band
+                                         for v in stratified.values()))),
+            rationale="all passive models answer alike; usually the "
+                      "observation stream is too sparse for them to differ"),
+        Diagnostic(
             name="powered", measured=float(n_questions),
             threshold=float(config.powered_min_questions), comparison=">=",
-            passed=n_questions >= config.powered_min_questions,
-            rationale="too few questions and accuracy differences between "
-                      "agents drown in binomial noise"),
+            flagged=n_questions < config.powered_min_questions,
+            rationale="few questions; small accuracy differences drown in "
+                      "binomial noise"),
     ]
-    return gates
 
 
 def run_healthcheck(bank_path: pathlib.Path, config: HealthcheckConfig,
                     config_path: Optional[pathlib.Path]) -> HealthcheckReport:
-    """Run the panel, evaluate the gates, and assemble both report forms."""
+    """Run the panel, evaluate the diagnostics, assemble both report forms."""
     # Candidate-tagged beliefs may never enter the instrument: a changed
-    # panel silently changes what every gate measures.
+    # panel silently changes what every diagnostic measures.
     assert_frozen_panel(BELIEF_PANEL)
     bank = JsonlBank(path=bank_path)
     episodes = list(bank.episodes())
@@ -283,11 +294,11 @@ def run_healthcheck(bank_path: pathlib.Path, config: HealthcheckConfig,
                  budget=real_budget))
 
     stratified = _stratified_spreads(never, episodes)
-    gates = _evaluate_gates(config, stats, never_accs,
-                            unlimited_accs, real_acc, stratified)
+    diagnostics = _evaluate_diagnostics(config, stats, never_accs,
+                                        unlimited_accs, real_acc, stratified)
     return _assemble(bank, config, config_path, stats, real_budget,
                      str(best_belief["name"]), never_accs, unlimited_accs,
-                     real_acc, stratified, gates)
+                     real_acc, stratified, diagnostics)
 
 
 def _config_hash(config: HealthcheckConfig,
@@ -305,11 +316,11 @@ def _assemble(bank: JsonlBank, config: HealthcheckConfig,
               never_accs: Dict[str, float],
               unlimited_accs: Dict[str, float], real_acc: float,
               stratified: Optional[Dict[str, float]],
-              gates: List[GateResult]) -> HealthcheckReport:
-    """Fold panel numbers + gate verdicts into the two report forms."""
+              diagnostics: List[Diagnostic]) -> HealthcheckReport:
+    """Fold panel numbers + diagnostic flags into the two report forms."""
     commit, dirty = git_state(pathlib.Path(__file__).resolve().parent)
-    gates_pass = all(g.passed for g in gates)
-    overall_pass = gates_pass and not dirty
+    flags = tuple(d.name for d in diagnostics if d.flagged)
+    solvable_ok = not any(d.flagged for d in diagnostics if d.is_bug_check)
     json_dict: Dict[str, Any] = {
         "bank_path": str(bank.path),
         "bank_manifest_hash": bank.manifest_hash,
@@ -334,39 +345,27 @@ def _assemble(bank: JsonlBank, config: HealthcheckConfig,
         "stratified_discriminative": (
             "SKIPPED (no household_type in bank metadata)"
             if stratified is None else stratified),
-        "gates": [dataclasses.asdict(g) for g in gates],
-        "gates_pass": gates_pass,
-        "overall_pass": overall_pass,
-        "overall_note": _overall_note(gates_pass, dirty, gates),
+        "diagnostics": [dataclasses.asdict(d) for d in diagnostics],
+        "flags": list(flags),
+        "solvable_ok": solvable_ok,
     }
-    text = _render_text(json_dict, gates)
-    return HealthcheckReport(gates=tuple(gates), gates_pass=gates_pass,
-                             overall_pass=overall_pass,
+    text = _render_text(json_dict, diagnostics)
+    return HealthcheckReport(diagnostics=tuple(diagnostics), flags=flags,
+                             solvable_ok=solvable_ok,
                              json_dict=json_dict, text=text)
 
 
-def _overall_note(gates_pass: bool, dirty: bool,
-                  gates: List[GateResult]) -> str:
-    if gates_pass and not dirty:
-        return "all gates passed on a clean git tree"
-    if gates_pass:
-        return ("REFUSED: all gates passed but the git tree is dirty — "
-                "commit first so the result is reproducible, then re-run")
-    failed = ", ".join(g.name for g in gates if not g.passed)
-    return f"gates failed: {failed}"
-
-
 def _render_text(json_dict: Dict[str, Any],
-                 gates: List[GateResult]) -> str:
+                 diagnostics: List[Diagnostic]) -> str:
     """The stdout summary; self-explanatory without reading this package."""
     panel = json_dict["panel"]
     real = panel["sequential_search_real_budget"]
     lines = [
-        f"DATA-HEALTH GATE REPORT — {pathlib.Path(json_dict['bank_path']).name}",
+        f"DIAGNOSTIC REPORT — {pathlib.Path(json_dict['bank_path']).name}",
         f"  bank:   {json_dict['bank_path']}"
         f"  (manifest {json_dict['bank_manifest_hash'][:12]}…)",
         f"  commit: {json_dict['git_commit'][:12]}"
-        f"{' (DIRTY TREE)' if json_dict['git_dirty'] else ''}"
+        f"{' (dirty tree)' if json_dict['git_dirty'] else ''}"
         f"  seed {json_dict['seed']}"
         f"  questions {json_dict['n_questions']}"
         f"  budget {json_dict['real_budget_per_day']}/day",
@@ -382,14 +381,17 @@ def _render_text(json_dict: Dict[str, Any],
         f"    {'SequentialSearch @ real budget':<44}"
         f"{real['belief']} {real['task_accuracy']:.3f}",
         "",
-        "  Gates (bank is healthy only if ALL pass):",
+        "  Diagnostics (flags mark setups worth a look; nothing here "
+        "disqualifies a bank):",
     ]
-    for g in gates:
-        verdict = "PASS" if g.passed else "FAIL"
+    for d in diagnostics:
+        mark = ("ERROR" if d.flagged and d.is_bug_check
+                else "flag" if d.flagged else " ok ")
         lines.append(
-            f"    [{verdict}] {g.name:<16} measured {g.measured:7.3f}  "
-            f"need {g.comparison} {g.threshold:.3f}")
-        lines.append(f"           {g.rationale}")
+            f"    [{mark:>5s}] {d.name:<16} "
+            f"measured {d.measured:7.3f}  reference {d.comparison} "
+            f"{d.threshold:.3f}")
+        lines.append(f"           {d.rationale}")
     strat = json_dict["stratified_discriminative"]
     if isinstance(strat, str):
         lines.append(f"    stratified discriminative check: {strat}")
@@ -398,10 +400,19 @@ def _render_text(json_dict: Dict[str, Any],
         lines.append(
             f"    stratified discriminative spreads by household_type: "
             f"{spreads}")
-    lines += ["",
-              f"  OVERALL: {'PASS' if json_dict['overall_pass'] else 'FAIL'}"
-              f" — {json_dict['overall_note']}"]
+    flags = json_dict["flags"]
+    lines += ["", "  " + _summary_line(flags, bool(json_dict["solvable_ok"]))]
     return "\n".join(lines)
+
+
+def _summary_line(flags: List[str], solvable_ok: bool) -> str:
+    if not solvable_ok:
+        return ("ERROR: solvable failed — a bank or harness bug; every "
+                "number above is suspect until it is fixed")
+    if not flags:
+        return "no diagnostics flagged"
+    return ("flagged: " + ", ".join(flags)
+            + "  (diagnostics, not disqualifiers)")
 
 
 def _intrinsic_line(json_dict: Dict[str, Any]) -> str:

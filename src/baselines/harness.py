@@ -39,7 +39,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import asdict, dataclass
-from typing import Dict, Iterator, List, Tuple
+from typing import Dict, Iterator, List, Tuple, Union
 
 from baselines.agent import Agent
 from baselines.types import (Answer, AnswerNow, Episode, Observation,
@@ -88,11 +88,17 @@ class QuestionRecord:
         return asdict(self)
 
 
-def _stream_until(observations: Tuple[Observation, ...], cursor: int,
-                  t: int, agent: Agent) -> int:
-    """Deliver scripted observations with ``obs.t <= t``; return new cursor."""
-    while cursor < len(observations) and observations[cursor].t <= t:
-        agent.observe(observations[cursor])
+def _stream_until(evidence: Tuple[Union[Observation, SenseResult], ...],
+                  cursor: int, t: int, agent: Agent) -> int:
+    """Deliver ambient evidence with ``.t <= t``; return the new cursor.
+
+    Evidence is what :meth:`Episode.evidence_stream` yields: plain
+    observations for glimpse banks, per-receptacle sense results for
+    room-visit banks (whose emptiness is exclusion evidence the belief
+    base class already understands).
+    """
+    while cursor < len(evidence) and evidence[cursor].t <= t:
+        agent.observe(evidence[cursor])
         cursor += 1
     return cursor
 
@@ -110,11 +116,11 @@ def run_episode(agent: Agent, episode: Episode) -> Iterator[QuestionRecord]:
         agent.observe(obs)
 
     cursor = 0
+    evidence = episode.evidence_stream()
     for day_index, day_questions in enumerate(episode.questions_by_day):
         budget = episode.budget_per_day
         for question in day_questions:
-            cursor = _stream_until(
-                episode.scripted_observations, cursor, question.t_query, agent)
+            cursor = _stream_until(evidence, cursor, question.t_query, agent)
             record = _run_question(agent, episode, question, day_index, budget)
             budget = record.budget_after
             yield record

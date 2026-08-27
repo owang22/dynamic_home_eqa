@@ -52,7 +52,7 @@ import random
 from typing import Dict, List, Mapping, Optional, Sequence, Tuple
 
 from baselines.beliefs.base import BeliefModel
-from baselines.types import DAY_SECONDS, Episode
+from baselines.types import DAY_SECONDS, Episode, Observation
 
 BOOTSTRAP_RESAMPLES = 1000
 """Bootstrap resamples over households for aggregate intervals."""
@@ -163,16 +163,22 @@ def evaluate_checkpoint(episode: Episode, belief: BeliefModel,
     cutoff = checkpoint_day * DAY_SECONDS
     belief.reset(episode.agent_view())
     last_sighting: Dict[str, int] = {}
+
+    def saw(object_id: str, t: int) -> None:
+        last_sighting[object_id] = max(last_sighting.get(object_id, t), t)
+
     for obs in episode.initial_observations:
         belief.update(obs)
-        last_sighting[obs.object_id] = max(
-            last_sighting.get(obs.object_id, obs.t), obs.t)
-    for obs in episode.scripted_observations:
-        if obs.t >= cutoff:
+        saw(obs.object_id, obs.t)
+    for event in episode.evidence_stream():
+        if event.t >= cutoff:
             break
-        belief.update(obs)
-        last_sighting[obs.object_id] = max(
-            last_sighting.get(obs.object_id, obs.t), obs.t)
+        belief.update(event)
+        if isinstance(event, Observation):
+            saw(event.object_id, event.t)
+        else:                        # a room visit's per-receptacle result
+            for object_id in event.contents:
+                saw(object_id, event.t)
 
     scored: List[ScoredQuestion] = []
     for day in episode.questions_by_day:

@@ -33,6 +33,18 @@ function samePath(a, b) {
   return new URL(a, location.href).pathname === new URL(b, location.href).pathname;
 }
 
+/* Base for a link to the OTHER viewer page. serve.py runs the two pages on
+ * two ports (object traces / belief vs truth) and injects window.VIEWER_PORTS
+ * into the pages it serves at `/`; the cross-link must switch PORT, so each
+ * viewer keeps its own tab and its own URL. Opened by full file path (no
+ * injection, e.g. straight off disk paths on either port), the plain
+ * relative page name still works. Append a query string directly. */
+function peerViewer(which, fallbackPage) {
+  if (window.VIEWER_PORTS && window.VIEWER_PORTS[which])
+    return `${location.protocol}//${location.hostname}:${window.VIEWER_PORTS[which]}/`;
+  return fallbackPage;
+}
+
 /* Fill a <select> with rows [{label, search}], preselect `currentIndex`, and
  * reload the page with that row's query string on change. */
 function wirePicker(sel, rows, currentIndex) {

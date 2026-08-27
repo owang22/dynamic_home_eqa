@@ -123,8 +123,13 @@ def sighting_stream(episode: Episode) -> Dict[str, List[List[Any]]]:
         object_id: [] for object_id in episode.object_classes}
     for observation in (*episode.initial_observations,
                         *episode.scripted_observations):
+        # Round the second UP to a minute. A belief sampled at grid minute
+        # m has consumed exactly the observations with t <= m * 60, so
+        # flooring would advertise a sighting one grid step before the
+        # models in this same file could act on it — and the viewer would
+        # show "last seen: shelf" beside a belief that had not yet heard.
         stream[observation.object_id].append(
-            [observation.t // 60, observation.receptacle_id])
+            [-(-observation.t // 60), observation.receptacle_id])
     for entries in stream.values():
         entries.sort(key=lambda e: e[0])
     return stream
@@ -150,11 +155,11 @@ def trace_one_model(episode: Episode, spec: Dict[str, Any], seed: int,
     objects = sorted(episode.object_classes)
     samples: Dict[str, List[Tuple[int, str, float]]] = {o: [] for o in objects}
     cursor = 0
-    scripted = episode.scripted_observations
+    evidence = episode.evidence_stream()
     for minute in range(0, end_minute + 1, grid_minutes):
         t = minute * 60
-        while cursor < len(scripted) and scripted[cursor].t <= t:
-            belief.update(scripted[cursor])
+        while cursor < len(evidence) and evidence[cursor].t <= t:
+            belief.update(evidence[cursor])
             cursor += 1
         for object_id in objects:
             prediction = belief.predict_readonly(object_id, t)
@@ -164,8 +169,19 @@ def trace_one_model(episode: Episode, spec: Dict[str, Any], seed: int,
 
 
 def build_trace(bank_path: pathlib.Path, seed: int, grid_minutes: int,
-                specs: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
-    """The full belief_trace payload for a single-episode bank."""
+                specs: Sequence[Dict[str, Any]],
+                timeline: Optional[pathlib.Path] = None,
+                spec_path: Optional[pathlib.Path] = None,
+                patrol_visits_per_day: int = 6) -> Dict[str, Any]:
+    """The full belief_trace payload for a single-episode bank.
+
+    With ``timeline`` and ``spec_path`` given, two extra viewer sections
+    are computed from the raw household (they need schedules re-realized,
+    which a bank alone cannot provide): ``patrols`` (every schedule at a
+    shared visit budget, with house-wide accuracy series per panel model)
+    and ``budget_sweep`` (question-set accuracy per model per
+    observation budget).
+    """
     episodes = list(JsonlBank(path=bank_path).episodes())
     if len(episodes) != 1:
         raise ValueError(
@@ -184,7 +200,7 @@ def build_trace(bank_path: pathlib.Path, seed: int, grid_minutes: int,
             "objects": trace_one_model(episode, dict(spec), seed,
                                        grid_minutes)})
         logger.info("belief trace: %s done", display)
-    return {
+    payload: Dict[str, Any] = {
         "household": episode.household_id,
         "household_type": episode.household_type,
         "episode_id": episode.episode_id,
@@ -202,6 +218,12 @@ def build_trace(bank_path: pathlib.Path, seed: int, grid_minutes: int,
         "sightings": sighting_stream(episode),
         "models": models,
     }
+    if timeline is not None and spec_path is not None:
+        payload["patrols"] = build_patrol_section(
+            episode, timeline, spec_path, seed, patrol_visits_per_day)
+        payload["budget_sweep"] = build_budget_sweep(
+            episode, timeline, spec_path, seed, list(specs))
+    return payload
 
 
 def resolve_specs(include_candidates: bool) -> Tuple[Dict[str, Any], ...]:
@@ -220,16 +242,197 @@ def main() -> None:
                         default=DEFAULT_GRID_MINUTES)
     parser.add_argument("--candidates", action="store_true",
                         help="also trace the candidate belief slate")
+    parser.add_argument("--timeline", type=pathlib.Path, default=None,
+                        help="household timeline dir; with --spec, adds the "
+                             "patrol-comparison and budget-sweep sections")
+    parser.add_argument("--spec", type=pathlib.Path, default=None,
+                        help="program/motions spec with receptacle rooms")
+    parser.add_argument("--patrol-visits-per-day", type=int, default=6)
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO,
                         format="%(levelname)s %(name)s: %(message)s")
     payload = build_trace(args.bank, args.seed, args.grid_minutes,
-                          resolve_specs(args.candidates))
+                          resolve_specs(args.candidates),
+                          timeline=args.timeline, spec_path=args.spec,
+                          patrol_visits_per_day=args.patrol_visits_per_day)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(payload) + "\n")
     size_kb = args.out.stat().st_size / 1024
     print(f"belief trace: {len(payload['models'])} models x "
           f"{len(payload['objects'])} objects -> {args.out} ({size_kb:.0f} KB)")
+
+
+
+
+# ---------------------------------------------------------------------------
+# Patrol-schedule comparison and observation-budget sweep (viewer sections)
+# ---------------------------------------------------------------------------
+
+PATROL_MODELS: Tuple[Dict[str, Any], ...] = tuple(BELIEF_PANEL)
+"""Models traced per patrol schedule: the frozen panel. The candidate
+slate stays out of the per-schedule traces to bound artifact size; the
+budget sweep below covers every registered model."""
+
+SWEEP_VISIT_BUDGETS = (1, 2, 3, 4, 6, 8, 12, 24)
+"""Room visits per day swept for the accuracy-vs-observation-budget
+curves. The top end is deliberately far past any realistic patrol so the
+curves can show convergence when evidence saturates."""
+
+ACCURACY_GRID_MINUTES = 60
+"""Sampling grid for house-wide accuracy series (share of all objects the
+model localizes correctly). Coarser than the belief segments: these are
+plot points, not lookups."""
+
+
+def _accuracy_series(episode: "Episode", spec: Dict[str, Any], seed: int,
+                     evidence: Sequence[Any]) -> List[float]:
+    """House-wide accuracy over time for one model on one evidence stream.
+
+    Each point is the share of ALL objects whose predicted receptacle
+    matches ground truth at that instant, sampled every
+    :data:`ACCURACY_GRID_MINUTES`. The evidence stream is whatever the
+    caller realized (a patrol schedule at some budget), delivered in time
+    order exactly as the harness would.
+    """
+    rng = _derived_rng(seed, "belief_trace", str(spec["name"]),
+                       episode.episode_id)
+    belief = build_registered_belief(dict(spec), rng)
+    belief.reset(episode.agent_view())
+    for observation in episode.initial_observations:
+        belief.update(observation)
+    objects = sorted(episode.object_classes)
+    series: List[float] = []
+    cursor = 0
+    end_minute = episode.n_days * DAY_SECONDS // 60
+    for minute in range(0, end_minute + 1, ACCURACY_GRID_MINUTES):
+        t = minute * 60
+        while cursor < len(evidence) and evidence[cursor].t <= t:
+            belief.update(evidence[cursor])
+            cursor += 1
+        right = sum(
+            belief.predict_readonly(o, t).argmax
+            == episode.true_location(o, t) for o in objects)
+        series.append(round(right / len(objects), 4))
+    return series
+
+
+def _question_accuracy(episode: "Episode", spec: Dict[str, Any], seed: int,
+                       evidence: Sequence[Any]) -> float:
+    """Accuracy on the bank's own question set for one evidence stream."""
+    rng = _derived_rng(seed, "belief_trace", str(spec["name"]),
+                       episode.episode_id)
+    belief = build_registered_belief(dict(spec), rng)
+    belief.reset(episode.agent_view())
+    for observation in episode.initial_observations:
+        belief.update(observation)
+    cursor = 0
+    hits = total = 0
+    for day in episode.questions_by_day:
+        for question in day:
+            while (cursor < len(evidence)
+                   and evidence[cursor].t <= question.t_query):
+                belief.update(evidence[cursor])
+                cursor += 1
+            prediction = belief.predict_readonly(question.object_id,
+                                                 question.t_query)
+            hits += prediction.argmax == episode.true_location(
+                question.object_id, question.t_query)
+            total += 1
+    return round(hits / total, 4) if total else 0.0
+
+
+def _visit_evidence(visits: Sequence[Any], room_map: Any,
+                    truth: Dict[str, Any], away: Any) -> List[Any]:
+    """Realize a schedule into the per-receptacle sense results the
+    beliefs consume (positives and exclusions alike)."""
+    from baselines.room_observations import realize
+    from baselines.types import SenseResult
+
+    stream = realize(visits, room_map, truth, "trace", away)
+    events: List[Any] = []
+    for row in stream.visit_rows:
+        t = int(str(row["t"]))
+        contents = row["contents"]
+        assert isinstance(contents, dict)
+        for receptacle, objs in sorted(contents.items()):
+            events.append(SenseResult(receptacle_id=str(receptacle), t=t,
+                                      contents=tuple(str(o) for o in objs)))
+    events.sort(key=lambda e: e.t)
+    return events
+
+
+def build_patrol_section(episode: "Episode", timeline: pathlib.Path,
+                         spec_path: pathlib.Path, seed: int,
+                         visits_per_day: int) -> Dict[str, Any]:
+    """Per-schedule visit timelines + house-wide accuracy series.
+
+    Every schedule runs at the same shared visit budget (where it takes
+    one) over the same household, so the section answers "what does the
+    CHOICE of patrol route do to belief quality" with everything else
+    held fixed.
+    """
+    from baselines.export_bank import (_away_intervals, awake_spans,
+                                       load_truth)
+    from baselines.room_observations import RoomMap, build_schedules
+
+    room_map = RoomMap.from_spec(spec_path)
+    truth, n_days, _ = load_truth(timeline)
+    awake = awake_spans(timeline, n_days)
+    away = _away_intervals(timeline)
+    schedules = build_schedules(room_map, n_days, awake, timeline,
+                                visits_per_day, seed)
+    section: Dict[str, Any] = {
+        "visits_per_day": visits_per_day,
+        "accuracy_grid_minutes": ACCURACY_GRID_MINUTES,
+        "models": [str(m["name"]) for m in PATROL_MODELS],
+        "schedules": {},
+    }
+    for name, visits in sorted(schedules.items()):
+        evidence = _visit_evidence(visits, room_map, truth, away)
+        section["schedules"][name] = {
+            "visits": [[v.t // 60, v.room] for v in visits],
+            "accuracy": {
+                str(m["name"]): _accuracy_series(episode, dict(m), seed,
+                                                 evidence)
+                for m in PATROL_MODELS},
+        }
+        logger.info("patrol section: %s done", name)
+    return section
+
+
+def build_budget_sweep(episode: "Episode", timeline: pathlib.Path,
+                       spec_path: pathlib.Path, seed: int,
+                       specs: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
+    """Question-set accuracy per model per observation budget.
+
+    One round-robin patrol per budget level; every model consumes the
+    identical stream at each level, so the curves are comparable point
+    by point. This is the floor/separation/convergence picture: at tiny
+    budgets every model sits near the same floor, models separate as
+    evidence grows, and saturate when everything is fresh.
+    """
+    from baselines.export_bank import (_away_intervals, awake_spans,
+                                       load_truth)
+    from baselines.room_observations import RoomMap, round_robin_patrol
+
+    room_map = RoomMap.from_spec(spec_path)
+    truth, n_days, _ = load_truth(timeline)
+    awake = awake_spans(timeline, n_days)
+    away = _away_intervals(timeline)
+    accuracy: Dict[str, List[float]] = {str(m["name"]): [] for m in specs}
+    for budget in SWEEP_VISIT_BUDGETS:
+        visits = round_robin_patrol(room_map, n_days, awake, budget, seed)
+        evidence = _visit_evidence(visits, room_map, truth, away)
+        for model in specs:
+            accuracy[str(model["name"])].append(
+                _question_accuracy(episode, dict(model), seed, evidence))
+        logger.info("budget sweep: %d visits/day done", budget)
+    return {
+        "visit_budgets": list(SWEEP_VISIT_BUDGETS),
+        "patrol": "round_robin_patrol",
+        "n_questions": sum(len(d) for d in episode.questions_by_day),
+        "accuracy": accuracy,
+    }
 
 
 if __name__ == "__main__":

@@ -232,6 +232,18 @@ class Episode:
     trajectories: Mapping[str, Tuple[Tuple[int, str], ...]] = field(repr=False)
     household_type: Optional[str] = None
     unsensable_receptacle_ids: Tuple[str, ...] = ()
+    scripted_evidence: Optional[Tuple[Union["Observation", "SenseResult"],
+                                      ...]] = None
+    """The ambient stream as the beliefs should CONSUME it, time-ordered.
+
+    For a room-visit bank this holds one :class:`SenseResult` per
+    inspected receptacle per visit — positive sightings and exclusions in
+    one event — while ``scripted_observations`` keeps only the positive
+    half for recency readouts. ``None`` (glimpse banks, hand-built
+    fixtures) means the two streams coincide: consume
+    ``scripted_observations``. Use :meth:`evidence_stream`, which hides
+    the distinction.
+    """
 
     def __post_init__(self) -> None:
         if self.budget_per_day < 0:
@@ -285,6 +297,19 @@ class Episode:
         return tuple(sorted(
             obj for obj in self.trajectories
             if self.true_location(obj, t) == receptacle_id))
+
+    def evidence_stream(self) -> Tuple[Union["Observation", "SenseResult"],
+                                       ...]:
+        """The ambient evidence to feed beliefs, in time order.
+
+        Every consumer that replays the passive stream (harness, passive
+        evaluation, belief traces, off-policy replay) goes through this
+        one accessor so positive-only and visit-based banks cannot
+        diverge in delivery order or content.
+        """
+        if self.scripted_evidence is not None:
+            return self.scripted_evidence
+        return self.scripted_observations
 
     def agent_view(self) -> EpisodeContext:
         """The narrowed, ground-truth-free view handed to agents."""

@@ -26,6 +26,9 @@
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const SEG = {T0: 0, T1: 1, REC: 2, ROOM: 3, REL: 4, X: 5, Z: 6};
 const GOOD = "#7ee08a", BAD = "#ff8a8a", TRUTH = "#ffb84d";
+// one hue per belief model, panel first — same order as the reports
+const MODEL_HUES = ["#4d9de0", "#eb6834", "#1baf7a", "#8a5cd6", "#c2312e",
+                    "#d8a015", "#9aa0a6"];
 
 const $ = id => document.getElementById(id);
 const params = new URLSearchParams(location.search);
@@ -215,10 +218,12 @@ function draw() {
   const dpr = window.devicePixelRatio || 1;
   ctx.fillStyle = "#14161a";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.globalAlpha = 0.5;
-  ctx.drawImage(mapImg, view.px0, view.py0, view.pw, view.ph,
-                view.ox, view.oy, view.pw * view.scale, view.ph * view.scale);
-  ctx.globalAlpha = 1;
+  if (mapImg) {
+    ctx.globalAlpha = 0.5;
+    ctx.drawImage(mapImg, view.px0, view.py0, view.pw, view.ph,
+                  view.ox, view.oy, view.pw * view.scale, view.ph * view.scale);
+    ctx.globalAlpha = 1;
+  }
   drawRooms(ctx);
   drawReceptacles(ctx);
 
@@ -312,6 +317,8 @@ function updateReadout(model, obj, truthRec, guess, ok) {
 
 function renderSheet(model) {
   const head = $("sheet-head"), body = $("sheet-body");
+  if (tab === "patrols") { renderPatrols(head, body); return; }
+  if (tab === "sweep") { renderBudgetSweep(head, body); return; }
   if (tab === "table") {
     const onlyWrong = $("only-wrong").checked;
     const rows = belief.objects.map(o => {
@@ -352,6 +359,132 @@ function renderSheet(model) {
              `<td>${(right / total * 100).toFixed(0)}%</td>` +
              `<td class="${ok ? "ok" : "bad"}">${g}</td></tr>`;
     }).join("") + `</table>`;
+}
+
+// ------------------------------------------------- patrol & sweep charts
+
+function modelHue(name) {
+  const order = belief.models.map(m => m.name);
+  const i = order.indexOf(name);
+  return MODEL_HUES[(i >= 0 ? i : order.length) % MODEL_HUES.length];
+}
+
+/* Minimal inline SVG line chart. xs/series values are plotted in a fixed
+ * viewBox and the element scales to the sheet's width; no libraries. */
+function lineChartSVG(xs, seriesByName, yMin, yMax, xLabel) {
+  const W = 860, H = 190, L = 44, R = 12, T = 10, B = 30;
+  const px = i => L + (W - L - R) * (xs.length < 2 ? 0 : i / (xs.length - 1));
+  const py = v => T + (H - T - B) * (1 - (v - yMin) / (yMax - yMin));
+  let grid = "";
+  for (let v = Math.ceil(yMin * 10) / 10; v <= yMax + 1e-9; v += 0.1) {
+    const y = py(v);
+    grid += `<line x1="${L}" y1="${y}" x2="${W - R}" y2="${y}"
+             stroke="#2c313a" stroke-width="1"/>` +
+            `<text x="${L - 6}" y="${y + 3}" text-anchor="end"
+             font-size="10" fill="#8b93a1">${v.toFixed(1)}</text>`;
+  }
+  let ticks = "";
+  xs.forEach((x, i) => {
+    ticks += `<text x="${px(i)}" y="${H - 10}" text-anchor="middle"
+              font-size="10" fill="#8b93a1">${x}</text>`;
+  });
+  let paths = "";
+  for (const [name, values] of Object.entries(seriesByName)) {
+    const d = values.map((v, i) =>
+      `${i ? "L" : "M"}${px(i).toFixed(1)},${py(v).toFixed(1)}`).join(" ");
+    paths += `<path d="${d}" fill="none" stroke="${modelHue(name)}"
+              stroke-width="2"/>`;
+    values.forEach((v, i) => {
+      paths += `<circle cx="${px(i)}" cy="${py(v)}" r="2.6"
+                fill="${modelHue(name)}"/>`;
+    });
+  }
+  return `<svg class="chart" viewBox="0 0 ${W} ${H}"
+          role="img">${grid}${ticks}${paths}
+          <text x="${(L + W - R) / 2}" y="${H - 0.5}" text-anchor="middle"
+          font-size="10" fill="#8b93a1">${xLabel}</text></svg>`;
+}
+
+function legendHTML(names) {
+  return `<div class="chart-legend">` + names.map(n =>
+    `<span><span class="swatch" style="background:${modelHue(n)}"></span>` +
+    `${n}</span>`).join("") + `</div>`;
+}
+
+/* One row per patrol schedule: the accuracy-over-time chart for the panel
+ * models, with the schedule's visit count and mean accuracy in the
+ * heading. The section exists in the trace only when it was generated
+ * with --timeline/--spec. */
+function renderPatrols(head, body) {
+  const section = belief.patrols;
+  if (!section) {
+    head.textContent = "patrol comparison";
+    body.innerHTML = `<p class="muted">This trace has no patrol section. ` +
+      `Regenerate it with:<br><code>python -m baselines.belief_trace ` +
+      `--candidates --bank &lt;bank&gt; --timeline &lt;timeline_dir&gt; ` +
+      `--spec &lt;program.yaml&gt; --out &lt;belief_trace.json&gt;</code></p>`;
+    return;
+  }
+  head.innerHTML =
+    `<strong>ambient observation schedules</strong> — every schedule at ` +
+    `${section.visits_per_day} visits/day (where it takes a budget); ` +
+    `curves are the share of all ${belief.objects.length} objects each ` +
+    `model localizes correctly, over the ${belief.days} days`;
+  let html = legendHTML(section.models);
+  const G = section.accuracy_grid_minutes;
+  for (const [name, sch] of Object.entries(section.schedules)) {
+    const means = section.models.map(m => {
+      const s = sch.accuracy[m];
+      return `${m.split("_")[0]} ${(s.reduce((a, b) => a + b, 0)
+              / s.length).toFixed(3)}`;
+    }).join(" · ");
+    // x labels at three-day marks; series plotted at full resolution
+    const stride = Math.round(1440 * 3 / G);
+    const xs = sch.accuracy[section.models[0]].map((_, i) =>
+      (i % stride === 0) ? "d" + Math.round(i * G / 1440) : "");
+    html += `<div class="chart-block"><h3>${name}</h3>` +
+      `<div class="sub">${sch.visits.length} visits over the episode · ` +
+      `mean accuracy: ${means}</div>` +
+      lineChartSVG(xs, Object.fromEntries(
+        section.models.map(m => [m, sch.accuracy[m]])), 0, 1, "time") +
+      `</div>`;
+  }
+  body.innerHTML = html;
+}
+
+/* Accuracy on the bank's questions vs the observation budget, every
+ * registered model — the floor / separation / saturation picture. */
+function renderBudgetSweep(head, body) {
+  const sweep = belief.budget_sweep;
+  if (!sweep) {
+    head.textContent = "observation-budget sweep";
+    body.innerHTML = `<p class="muted">This trace has no budget-sweep ` +
+      `section. Regenerate it with --timeline/--spec (see the patrol ` +
+      `tab's note).</p>`;
+    return;
+  }
+  const names = Object.keys(sweep.accuracy);
+  head.innerHTML =
+    `<strong>observation budget vs accuracy</strong> — each point: one ` +
+    `${sweep.patrol.replace(/_/g, " ")} stream at that many room visits ` +
+    `per day; y = accuracy on the bank's ${sweep.n_questions} questions, ` +
+    `answered passively (no paid senses)`;
+  let lo = 1, hi = 0;
+  for (const vs of Object.values(sweep.accuracy)) {
+    lo = Math.min(lo, ...vs); hi = Math.max(hi, ...vs);
+  }
+  let html = legendHTML(names);
+  html += lineChartSVG(sweep.visit_budgets, sweep.accuracy,
+                       Math.max(0, lo - 0.05), Math.min(1, hi + 0.05),
+                       "room visits per day");
+  html += `<table class="sheet" style="margin-top:12px"><tr><th>model</th>` +
+    sweep.visit_budgets.map(b => `<th>${b}/day</th>`).join("") + `</tr>` +
+    names.map(n => `<tr><td>` +
+      `<span class="swatch" style="background:${modelHue(n)};display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px"></span>` +
+      `${n}</td>` +
+      sweep.accuracy[n].map(v => `<td>${v.toFixed(3)}</td>`).join("") +
+      `</tr>`).join("") + `</table>`;
+  body.innerHTML = html;
 }
 
 // ---------------------------------------------------------------- strip
@@ -461,11 +594,15 @@ function jumpChange(dir) {
   if (next !== undefined) setTime(next);
 }
 
+/* The two table views are overlays; "map" is the closed state. Clicking
+ * an already-open table tab closes it again (a toggle), and Esc / the
+ * sheet's ✕ button do the same — three ways out, because an overlay a
+ * viewer cannot dismiss reads as the page being stuck. */
 function setTab(name) {
-  tab = name;
+  tab = (name === tab && name !== "map") ? "map" : name;
   document.querySelectorAll(".tab").forEach(
-    b => b.classList.toggle("active", b.dataset.tab === name));
-  $("sheet").classList.toggle("open", name !== "map");
+    b => b.classList.toggle("active", b.dataset.tab === tab));
+  $("sheet").classList.toggle("open", tab !== "map");
   draw();
 }
 
@@ -496,7 +633,8 @@ function populateDatasetPicker(rows) {
     current = 0;
   }
   wirePicker($("dataset-select"), rows, current);
-  $("traces-link").href = `index.html?trace=${encodeURIComponent(TRACE_URL)}`;
+  $("traces-link").href = peerViewer("traces", "index.html") +
+                          `?trace=${encodeURIComponent(TRACE_URL)}`;
 }
 
 function fillSelect(sel, values, labels, preset) {
@@ -521,17 +659,49 @@ async function boot() {
     TRACE_URL = rows[0].trace;
     BELIEF_URL = rows[0].belief;
   }
-  populateDatasetPicker(rows);
 
-  [trace, belief] = await Promise.all(
-    [TRACE_URL, BELIEF_URL].map(u => fetch(u).then(r => r.json())));
+  const load = async url => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`${res.status} ${res.statusText} for ${url}`);
+    return res.json();
+  };
+  try {
+    [trace, belief] = await Promise.all([load(TRACE_URL), load(BELIEF_URL)]);
+  } catch (err) {
+    // The URL's ?trace=/?belief= have gone stale — the household (or its
+    // belief trace) was rebuilt or renamed since the URL was minted, which
+    // is exactly the state a reload lands in after regenerating. Fall back
+    // to the first live household and rewrite the address bar to it, so
+    // the next reload starts from a URL that works, instead of dying and
+    // looking like the whole viewer needs restarting.
+    const fallback = rows.find(r => !samePath(r.trace, TRACE_URL));
+    if (!fallback) throw err;
+    console.warn(`stale trace/belief URL (${err.message}) — showing ${fallback.trace}`);
+    TRACE_URL = fallback.trace;
+    BELIEF_URL = fallback.belief;
+    history.replaceState(null, "", fallback.search);
+    [trace, belief] = await Promise.all([load(TRACE_URL), load(BELIEF_URL)]);
+  }
+  populateDatasetPicker(rows);
   horizon = trace.days * 1440;
   accuracySeries = {};
   $("time").max = horizon;
 
+  // Repo-absolute, NOT relative to the page: this viewer is reachable both
+  // at /visualization/viewer/beliefs.html and at the short / URL on its own
+  // port, and a relative `../assets/` resolves against location.href — from
+  // the short URL that is /assets/…, which 404s and surfaces as the
+  // baffling "source image cannot be decoded".
+  const mapUrl = `/visualization/assets/${trace.scene_id}/map.png`;
   mapImg = new Image();
-  mapImg.src = new URL(`../assets/${trace.scene_id}/map.png`, location.href).href;
-  await mapImg.decode();
+  mapImg.src = mapUrl;
+  try {
+    await mapImg.decode();
+  } catch (e) {
+    // the belief comparison is readable without the floor plan behind it
+    console.warn("map failed to decode", mapUrl, e);
+    mapImg = null;
+  }
 
   fillSelect($("model-select"), belief.models.map(m => m.name),
              belief.models.map(m => `${m.display}${m.panel === "candidate" ? " ·cand" : ""}`),
@@ -555,8 +725,10 @@ async function boot() {
   $("time").addEventListener("input", e => setTime(Number(e.target.value), true));
   $("play").addEventListener("click", () => togglePlay());
   window.addEventListener("resize", () => { computeView(); drawEventStrip(); draw(); });
+  $("sheet-close").addEventListener("click", () => setTab("map"));
   document.addEventListener("keydown", e => {
     if (e.target.tagName === "SELECT") return;
+    if (e.key === "Escape" && tab !== "map") { setTab("map"); return; }
     if (e.key === " ") { e.preventDefault(); togglePlay(); }
     if (e.key === "ArrowRight") jumpChange(+1);
     if (e.key === "ArrowLeft") jumpChange(-1);

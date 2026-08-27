@@ -2,9 +2,8 @@
 household, under ONE shared configuration.
 
 Discovers every household folder with realized timeline artifacts under
-the configured profile roots (default: the revamp_v1 authored set and the
-current revamp_v2 storyfirst set — the brief's ``profiles/revamp_v1``
-glob predates the dataset reorganization), exports each with the standard
+the configured profile roots (default: the storyfirst set, which is the
+project's sole synthetic data source), exports each with the standard
 exporter settings from ``configs/fleet.yaml`` (the hh1 gate-passing
 recipe — never tuned per bank), runs the six-gate healthcheck and the
 intrinsic bank statistics, and writes one summary row per bank:
@@ -15,11 +14,11 @@ intrinsic bank statistics, and writes one summary row per bank:
   and the standard provenance fields;
 * one full healthcheck report per bank under ``healthchecks/<slug>/``.
 
-A bank whose export or gate run raises is recorded as an ``error`` row
-(with the exception text) and the fleet continues — one broken household
-must not hide the other nine. Gate verdicts are read from ``gates_pass``
-(all six gates); the separate ``overall_pass`` field additionally
-requires a clean git tree, exactly as the healthcheck defines it.
+A bank whose export or diagnostic run raises is recorded as an
+``error`` row (with the exception text) and the fleet continues — one
+broken household must not hide the other nine. Diagnostics never
+disqualify a bank; each row carries the list of flags raised plus
+``solvable_ok`` (False = bank/harness bug).
 
 All times are seconds since episode start; a day is 86 400 s.
 """
@@ -43,8 +42,13 @@ from baselines.healthcheck import write_report as write_healthcheck_report
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_ROOTS = ("profiles/revamp_v1", "profiles/revamp_v2/storyfirst")
-"""Profile roots scanned for household folders (relative to the repo cwd)."""
+DEFAULT_ROOTS = ("profiles/revamp_v2/storyfirst",)
+"""Profile roots scanned for household folders (relative to the repo cwd).
+
+The storyfirst set is the project's sole synthetic data source; earlier
+profile lines (revamp_v1 and the sets it superseded) remain on disk for
+provenance only and are never a data choice. Pass ``--roots`` to point the
+fleet at something else deliberately."""
 
 SPEC_FILENAMES = ("object_motions.yaml", "program.yaml",
                   "routine_program.yaml")
@@ -72,6 +76,12 @@ class FleetExportConfig:
     # household-agnostic once inventories differ by 3x.
     sightings_per_object_day: Optional[float] = None
     budget_per_sensable_receptacle: Optional[float] = None
+    # Observation model selection (see baselines.export_bank.export):
+    # "glimpse" draws single random objects; "room_visit" runs a patrol
+    # schedule from baselines.room_observations.
+    observation_model: str = "glimpse"
+    patrol: str = "round_robin_patrol"
+    visits_per_day: int = 8
 
 
 @dataclasses.dataclass(frozen=True)
@@ -147,12 +157,12 @@ def _summary_row(source: HouseholdSource,
         "bank_manifest_hash": healthcheck_json["bank_manifest_hash"],
         "household_type": stats.get("household_type"),
         "n_questions": healthcheck_json["n_questions"],
-        "gates": {g["name"]: {"passed": g["passed"],
-                              "measured": g["measured"],
-                              "threshold": g["threshold"]}
-                  for g in healthcheck_json["gates"]},
-        "gates_pass": healthcheck_json["gates_pass"],
-        "overall_pass": healthcheck_json["overall_pass"],
+        "diagnostics": {d["name"]: {"flagged": d["flagged"],
+                                    "measured": d["measured"],
+                                    "threshold": d["threshold"]}
+                        for d in healthcheck_json["diagnostics"]},
+        "flags": healthcheck_json["flags"],
+        "solvable_ok": healthcheck_json["solvable_ok"],
         "never_sense_accuracy":
             healthcheck_json["panel"]["never_sense_task_accuracy"],
         "search_real_budget":
@@ -194,7 +204,10 @@ def _run_one(source: HouseholdSource, export_cfg: FleetExportConfig,
            export_cfg.query_mode, initial_tour=export_cfg.initial_tour,
            sightings_per_object_day=export_cfg.sightings_per_object_day,
            budget_per_sensable_receptacle=(
-               export_cfg.budget_per_sensable_receptacle))
+               export_cfg.budget_per_sensable_receptacle),
+           observation_model=export_cfg.observation_model,
+           patrol=export_cfg.patrol,
+           visits_per_day=export_cfg.visits_per_day)
     report = run_healthcheck(bank_path, hc_cfg, None)
     slug_dir = out_dir / "healthchecks" / _bank_name(source).removesuffix(
         "_bank.jsonl")
@@ -231,15 +244,15 @@ def render_summary_md(rows: List[Dict[str, Any]],
         f"{' (dirty tree)' if provenance['git_dirty'] else ''}, "
         f"run {provenance['timestamp']}.",
         "",
-        "`gates` = the six healthcheck gates in order: stationarity / "
-        "solvable / not_trivial / not_impossible / discriminative / "
-        "powered. NeverSense columns are passive task accuracy for the "
-        "frozen panel beliefs. Failing banks are diagnosed in "
-        "`failures.md`.",
+        "`diagnostics` = flags in order: stationarity / solvable / "
+        "not_trivial / not_impossible / discriminative / powered "
+        "(`.` = not flagged, letter = flagged; flags are advisory, "
+        "nothing disqualifies). NeverSense columns are passive task "
+        "accuracy for the frozen panel beliefs.",
         "",
-        "| household | type | questions | gates | pass | NS last_obs | "
-        "NS most_freq | NS timetable | search@budget | modal share "
-        "(time/query) | moves/day |",
+        "| household | type | questions | diagnostics | flags | "
+        "NS last_obs | NS most_freq | NS timetable | search@budget "
+        "| modal share (time/query) | moves/day |",
         "|---|---|---|---|---|---|---|---|---|---|---|",
     ]
     for row in rows:
@@ -247,16 +260,16 @@ def render_summary_md(rows: List[Dict[str, Any]],
             lines.append(f"| {row['household']} | — | — | ERROR | — | — | "
                          f"— | — | — | {row['error']} | — |")
             continue
-        gates = "".join("P" if row["gates"][g]["passed"] else "F"
-                        for g in ("stationarity", "solvable", "not_trivial",
-                                  "not_impossible", "discriminative",
-                                  "powered"))
+        marks = "".join(g[0].upper() if row["diagnostics"][g]["flagged"]
+                        else "." for g in
+                        ("stationarity", "solvable", "not_trivial",
+                         "not_impossible", "discriminative", "powered"))
         ns = row["never_sense_accuracy"]
         search = row["search_real_budget"]
         lines.append(
             f"| {row['household']} | {row['household_type'] or '—'} "
-            f"| {row['n_questions']} | `{gates}` "
-            f"| {'PASS' if row['gates_pass'] else 'FAIL'} "
+            f"| {row['n_questions']} | `{marks}` "
+            f"| {len(row['flags'])} "
             f"| {ns['last_observation']:.3f} | {ns['most_frequent']:.3f} "
             f"| {ns['timetable']:.3f} | {search['task_accuracy']:.3f} "
             f"| {row['modal_share_time']:.3f}/"

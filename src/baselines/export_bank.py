@@ -174,8 +174,8 @@ def awake_spans(timeline: pathlib.Path, n_days: int
     return per_day
 
 
-def _draw_time(spans: List[Tuple[int, int]], day: int,
-               rng: random.Random) -> int:
+def draw_time(spans: List[Tuple[int, int]], day: int,
+              rng: random.Random) -> int:
     """A uniform instant inside ``spans`` (length-weighted); the fixed
     window when a day has no awake span (e.g. a 24 h absence)."""
     total = sum(b - a for a, b in spans)
@@ -291,7 +291,7 @@ def _draw_question(mode: str, day: int, objects: List[str],
     if mode == "uniform":
         if not pool:
             pool += rng.sample(objects, len(objects))
-        return pool.pop(), _draw_time(spans, day, rng)
+        return pool.pop(), draw_time(spans, day, rng)
     # naturalistic: popularity-weighted object, repeat bias, post-move timing
     if recent and rng.random() < REPEAT_PROBABILITY:
         obj = rng.choice(recent[-3:])
@@ -305,8 +305,40 @@ def _draw_question(mode: str, day: int, objects: List[str],
         t = min(rng.choice(moves_today) + rng.randrange(*POST_MOVE_LAG_S),
                 hi - 1)
     else:
-        t = _draw_time(spans, day, rng)
+        t = draw_time(spans, day, rng)
     return obj, t
+
+
+
+def _room_visit_rows(spec_path: pathlib.Path, timeline: pathlib.Path,
+                     truth: Dict[str, List[Tuple[int, str]]], n_days: int,
+                     awake: Dict[int, List[Tuple[int, int]]],
+                     episode_id: str, patrol: str, visits_per_day: int,
+                     seed: int) -> List[Dict[str, Any]]:
+    """Observation rows produced by a room-visit patrol.
+
+    Each visit is written as one ``room_visit`` row whose ``contents``
+    map every inspected receptacle (empty ones included) to the objects
+    found in it. The loader replays a visit to the beliefs as one sense
+    result per receptacle, so a visit delivers positive sightings AND
+    exclusions through the machinery the belief base class already has.
+    """
+    from baselines.room_observations import (RoomMap, build_schedules,
+                                             realize)
+
+    room_map = RoomMap.from_spec(spec_path)
+    schedules = build_schedules(room_map, n_days, awake, timeline,
+                                visits_per_day, seed)
+    if patrol not in schedules:
+        raise ValueError(f"unknown patrol {patrol!r}; "
+                         f"known: {sorted(schedules)}")
+    visits = schedules[patrol]
+    stream = realize(visits, room_map, truth, episode_id,
+                     _away_intervals(timeline))
+    logger.info("patrol %s: %d visits -> %d sightings (%.2f per object-day)",
+                patrol, len(visits), len(stream.sightings),
+                len(stream.sightings) / max(1, len(truth) * n_days))
+    return stream.visit_rows
 
 
 def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
@@ -315,9 +347,26 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
            query_mode: str = "uniform",
            initial_tour: bool = True,
            sightings_per_object_day: Optional[float] = None,
-           budget_per_sensable_receptacle: Optional[float] = None
-           ) -> JsonlBank:
+           budget_per_sensable_receptacle: Optional[float] = None,
+           observation_model: str = "glimpse",
+           patrol: str = "round_robin_patrol",
+           visits_per_day: int = 8) -> JsonlBank:
     """Write the bank JSONL and return its loader (which re-validates it).
+
+    ``observation_model`` selects how the ambient stream is produced:
+
+    * ``glimpse`` (the original) draws one random object at one random
+      awake instant, ``sightings_per_day`` times — an omniscient but
+      extremely sparse observer with no spatial structure. Over a
+      30-50-object inventory it delivers well under one sighting per
+      object per DAY, so most beliefs run on days-old evidence.
+    * ``room_visit`` runs a patrol schedule from
+      :mod:`baselines.room_observations`: each visit reveals every
+      receptacle in one room at once, which is both physically grounded
+      and far more informative per event (a visit yields several
+      sightings, and the same primitive serves an active policy's paid
+      sense). ``patrol`` names the schedule and ``visits_per_day`` its
+      budget where the schedule takes one.
 
     ``sightings_per_object_day`` and ``budget_per_sensable_receptacle``,
     when set, REPLACE the corresponding absolute setting with a rule
@@ -367,7 +416,11 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
         "kind": "episode_header", "episode_id": episode_id,
         "household_id": spec["household"], "receptacle_ids": receptacles,
         "object_classes": object_classes, "query_mode": query_mode,
-        "budget_per_day": budget_per_day, "n_days": n_days}
+        "budget_per_day": budget_per_day, "n_days": n_days,
+        "observation_model": observation_model}
+    if observation_model == "room_visit":
+        header["patrol"] = patrol
+        header["visits_per_day"] = visits_per_day
     if "household_type" in spec:
         # Optional metadata consumed by the healthcheck's stratified
         # discriminative gate; absent from older schedule specs.
@@ -386,17 +439,23 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
             rows.append({"kind": "observation", "episode_id": episode_id,
                          "object_id": obj, "receptacle_id": truth[obj][0][1],
                          "t": 0, "source": "initial_tour"})
-    for day in range(n_days):
-        for _ in range(sightings_per_day):
-            obj = rng_sightings.choice(objects)
-            t = _draw_time(awake[day], day, rng_sightings)
-            where = truth_at(truth[obj], t)
-            if where == OUT_OF_HOUSE:
-                unobserved += 1      # you cannot sight what is not there
-                continue
-            rows.append({"kind": "observation", "episode_id": episode_id,
-                         "object_id": obj, "t": t, "source": "scripted",
-                         "receptacle_id": where})
+    if observation_model == "room_visit":
+        rows += _room_visit_rows(spec_path, timeline, truth, n_days, awake,
+                                 episode_id, patrol, visits_per_day, seed)
+    elif observation_model == "glimpse":
+        for day in range(n_days):
+            for _ in range(sightings_per_day):
+                obj = rng_sightings.choice(objects)
+                t = draw_time(awake[day], day, rng_sightings)
+                where = truth_at(truth[obj], t)
+                if where == OUT_OF_HOUSE:
+                    unobserved += 1  # you cannot sight what is not there
+                    continue
+                rows.append({"kind": "observation", "episode_id": episode_id,
+                             "object_id": obj, "t": t, "source": "scripted",
+                             "receptacle_id": where})
+    else:
+        raise ValueError(f"unknown observation_model {observation_model!r}")
     if unobserved:
         logger.info("dropped %d sightings of out-of-house objects "
                     "(unobservable)", unobserved)
@@ -441,13 +500,21 @@ def main() -> None:
                         choices=("uniform", "naturalistic"))
     parser.add_argument("--no-initial-tour", action="store_true",
                         help="omit the t=0 full snapshot; agents start blind")
+    parser.add_argument("--observation-model", default="glimpse",
+                        choices=("glimpse", "room_visit"))
+    parser.add_argument("--patrol", default="round_robin_patrol",
+                        help="patrol schedule for --observation-model "
+                             "room_visit (see baselines.room_observations)")
+    parser.add_argument("--visits-per-day", type=int, default=8)
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO,
                         format="%(levelname)s %(name)s: %(message)s")
     export(args.timeline, args.spec, args.out, args.seed,
            args.sightings_per_day, args.questions_per_day,
            args.first_question_day, args.budget_per_day, args.query_mode,
-           initial_tour=not args.no_initial_tour)
+           initial_tour=not args.no_initial_tour,
+           observation_model=args.observation_model, patrol=args.patrol,
+           visits_per_day=args.visits_per_day)
 
 
 if __name__ == "__main__":

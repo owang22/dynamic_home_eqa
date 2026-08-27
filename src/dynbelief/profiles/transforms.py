@@ -1,7 +1,9 @@
 """The four REGISTERED atypicality transformations (profile -> profile).
 
-Per the hard rules, these pure functions are the ONLY sanctioned way to
-produce atypical profiles — never hand- or model-authored. Each transform:
+Within this (legacy) profile line, these pure functions are the sanctioned
+way to produce atypical profiles. (The current revamp_v2 pipeline
+LLM-authors its households, atypical ones included, and does not use these
+transforms.) Each transform:
 
   * operates on the normalized dict form (profile.raw) and returns a new
     Profile via profile_from_dict (so V5 normalization has already run),

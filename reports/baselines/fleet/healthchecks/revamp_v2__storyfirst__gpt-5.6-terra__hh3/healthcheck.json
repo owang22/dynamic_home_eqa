@@ -1,6 +1,6 @@
 {
   "bank_path": "banks/baselines/fleet/revamp_v2__storyfirst__gpt-5.6-terra__hh3_bank.jsonl",
-  "bank_manifest_hash": "6a6cbee7d8e49d206db8ac7be8facd8fccf995b0ae839a79f0970ab90fb9968c",
+  "bank_manifest_hash": "169a856b46cd1824618bfedfe591635533323d3159a0f36bd70829316b79a7cb",
   "config": {
     "seed": 0,
     "budget": null,
@@ -12,10 +12,10 @@
     "powered_min_questions": 300
   },
   "config_hash": "fbf2c99847e1194a778cd0b90c7e37f0d9f142c58846fc0cc63dd5b3662a94ed",
-  "git_commit": "27ae5272a275cb4bd2254d1d763c79af866b02fc",
+  "git_commit": "d57e83fe734236c4c761bd10a0561326f3d99bb2",
   "git_dirty": true,
   "seed": 0,
-  "timestamp": "2026-08-25T21:20:46.486701+00:00",
+  "timestamp": "2026-08-27T00:29:07.508731+00:00",
   "n_questions": 1620,
   "real_budget_per_day": 24,
   "belief_panel": [
@@ -90,9 +90,9 @@
   },
   "panel": {
     "never_sense_task_accuracy": {
-      "last_observation": 0.5061728395061729,
-      "most_frequent": 0.5067901234567901,
-      "timetable": 0.49444444444444446
+      "last_observation": 0.6203703703703703,
+      "most_frequent": 0.6185185185185185,
+      "timetable": 0.5808641975308642
     },
     "sequential_search_unlimited_task_accuracy": {
       "last_observation": 1.0,
@@ -100,65 +100,73 @@
       "timetable": 1.0
     },
     "sequential_search_real_budget": {
-      "belief": "most_frequent",
+      "belief": "last_observation",
       "budget_per_day": 24,
-      "task_accuracy": 0.5882716049382716
+      "task_accuracy": 0.6660493827160494
     }
   },
   "stratified_discriminative": {
-    "retired_couple": 0.012345679012345623
+    "retired_couple": 0.03950617283950619
   },
-  "gates": [
+  "diagnostics": [
     {
       "name": "stationarity",
-      "passed": false,
+      "flagged": true,
       "measured": 0.6130613213946546,
       "threshold": 0.6,
       "comparison": "<=",
-      "rationale": "dwell-weighted modal share: how often a home-base-only model is right at a random moment; computable from ground truth alone (cli bankstats) before paying for the panel"
+      "rationale": "mean dwell-weighted modal share; high values mean objects mostly sit at their usual spots \u2014 read the per-object distribution before concluding anything",
+      "is_bug_check": false
     },
     {
       "name": "solvable",
-      "passed": true,
+      "flagged": false,
       "measured": 1.0,
       "threshold": 1.0,
       "comparison": "==",
-      "rationale": "unlimited-budget search must find every queried object; failure means a bank or harness bug"
+      "rationale": "unlimited-budget search must find every queried object; failure means a bank or harness BUG, not a data property",
+      "is_bug_check": true
     },
     {
       "name": "not_trivial",
-      "passed": true,
-      "measured": 0.5067901234567901,
+      "flagged": false,
+      "measured": 0.6203703703703703,
       "threshold": 0.65,
       "comparison": "<=",
-      "rationale": "if passive memory nearly solves the bank, the dynamics are too static to test sensing"
+      "rationale": "passive memory alone nearly solves the bank at this observation rate; paid sensing has little to prove",
+      "is_bug_check": false
     },
     {
       "name": "not_impossible",
-      "passed": false,
-      "measured": 0.5882716049382716,
-      "threshold": 0.6567901234567901,
+      "flagged": true,
+      "measured": 0.6660493827160494,
+      "threshold": 0.7703703703703704,
       "comparison": ">=",
-      "rationale": "sensing at the real budget must buy meaningful accuracy over the best passive belief"
+      "rationale": "sensing bought little over passive at the configured budget; may reflect the budget rather than the bank",
+      "is_bug_check": false
     },
     {
       "name": "discriminative",
-      "passed": false,
-      "measured": 0.012345679012345623,
+      "flagged": false,
+      "measured": 0.03950617283950619,
       "threshold": 0.03,
       "comparison": ">",
-      "rationale": "different modeling assumptions must score differently somewhere, or the bank cannot rank belief models"
+      "rationale": "all passive models answer alike; usually the observation stream is too sparse for them to differ",
+      "is_bug_check": false
     },
     {
       "name": "powered",
-      "passed": true,
+      "flagged": false,
       "measured": 1620.0,
       "threshold": 300.0,
       "comparison": ">=",
-      "rationale": "too few questions and accuracy differences between agents drown in binomial noise"
+      "rationale": "few questions; small accuracy differences drown in binomial noise",
+      "is_bug_check": false
     }
   ],
-  "gates_pass": false,
-  "overall_pass": false,
-  "overall_note": "gates failed: stationarity, not_impossible, discriminative"
+  "flags": [
+    "stationarity",
+    "not_impossible"
+  ],
+  "solvable_ok": true
 }

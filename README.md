@@ -21,13 +21,18 @@ a provenance-tagged YAML profile (who lives here + weekly routine) deterministic
 generates receptacle-level object-movement logs, which feed belief-model and
 LLM-routine-knowledge experiments. No Habitat and no scene render.
 
-**On "no LLM in the data loop":** the DATA GENERATION loop is LLM-free — profiles
-are hand-authored and the simulator is deterministic given (profile, seed), so
-ground truth never depends on a model. But the LLM *is* in the loop downstream:
-in the ACTIVE (answer-or-resense) line the agent's own resense decisions
-determine which observations it ever receives, and in `reflect_dag/` the LLM
-proposes the activity structure that the statistical channel then fits. Only the
-world is model-free; the agent's experience of it is not.
+**On the LLM's place in the data loop:** in the CURRENT pipeline
+(`src/revamp_v2/generate_dataset.py` -> `profiles/revamp_v2/storyfirst/`) an
+LLM authors the households end to end — persona, story, activity program,
+object-movement rules — and only the REALIZATION is model-free: the simulator
+is deterministic given (program, seed), so a household's ground truth is
+reproducible even though its content is model-written. (The retired
+`dynbelief` profile line was stricter — hand-authored profiles, LLM-free
+generation — and older documents describe that regime.) Downstream the LLM
+is in the loop twice more: in the ACTIVE (sense-or-answer) line the agent's
+own sense decisions determine which observations it ever receives, and in
+`reflect_dag/` the LLM proposes the activity structure that the statistical
+channel then fits.
 
 The original **HSSD-scene LLM generation** pipeline (Habitat + HSSD) is **legacy**,
 superseded as the data source by the profile simulator. Its scene-generation,
@@ -107,13 +112,17 @@ After that, every script runs from any working directory.
 
 ## Profile system (v2 — the current data source)
 
-A profile is a provenance-tagged YAML in `profiles/manual/` (schema:
+A profile is a provenance-tagged YAML (schema:
 `dynbelief/profiles/schema.py`). Values carry anchor tags `[ATUS] [BEHAV]
 [HOMER] [HKEEP] [DESIGN]`; a human verifies them and flips `status: DRAFT ->
-VERIFIED` once `validate_profile.py` reports no FAIL. **Atypical profiles are
-never hand- or model-authored** — they are produced only by the registered
-transforms (`phase_shift`, `block_permutation`, `role_reassignment`,
-`compression`) in `dynbelief/profiles/transforms.py`.
+VERIFIED` once `validate_profile.py` reports no FAIL. In this legacy line,
+atypical profiles were produced by the registered transforms
+(`phase_shift`, `block_permutation`, `role_reassignment`, `compression`) in
+`dynbelief/profiles/transforms.py` rather than authored directly. The
+CURRENT pipeline (`src/revamp_v2/`, dataset under
+`profiles/revamp_v2/storyfirst/`) works differently: households — typical
+and atypical alike — are LLM-authored and pass acceptance gates
+(`src/revamp_v2/validate.py`) instead of transform provenance.
 
 ### 1. Anchors (once per machine / when mappings change)
 

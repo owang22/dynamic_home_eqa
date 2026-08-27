@@ -11,10 +11,12 @@ episode format ReplayWorld consumes — no Habitat, no LLM in the loop.
   generator.py   profile -> N-day event/snapshot logs (jitter, during/after
                  branches, misplacement noise, dish-cycle)
 
-Profiles live in profiles/manual/*.yaml at the repo root. Typical profiles
-may be model-drafted but count only once a human verifies provenance tags
-and flips status to VERIFIED; atypical profiles are NEVER hand- or
-model-authored — transforms.py only.
+In this package's (legacy) profile line, typical profiles may be
+model-drafted but count only once a human verifies provenance tags and
+flips status to VERIFIED, and atypical profiles come from transforms.py.
+The current dataset pipeline (src/revamp_v2/) does not follow these rules:
+its households are LLM-authored end to end and gated by
+src/revamp_v2/validate.py instead.
 """
 from dynbelief.profiles.schema import (  # noqa: F401
     Profile, Finding, load_profile, profile_from_dict, validate_structural,

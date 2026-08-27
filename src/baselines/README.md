@@ -133,6 +133,13 @@ bins roll over, hazards decay — predictions are sampled on a fixed grid
 (15 min) and then RLE'd, which is exact at grid resolution and small on
 disk (~100-270 KB for 7 models over 17-53 objects).
 
+The file also carries the evidence itself (`sightings`: every observation
+the passive diet delivered, per object), because a belief is only
+readable next to it — a model is rarely simply "wrong", it is working
+from a sighting that has gone stale, and only the sighting stream can
+say so. Sighting seconds round UP to the minute, so a sighting is never
+advertised before the grid step at which the models could act on it.
+
 `visualization/serve.py` discovers these files and publishes them, so
 running the generator is what makes a household appear on
 `viewer/beliefs.html`. That page compares belief against truth at ANY

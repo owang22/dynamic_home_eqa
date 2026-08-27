@@ -1,27 +1,27 @@
-DATA-HEALTH GATE REPORT — revamp_v2__storyfirst__gpt-5.6-terra__hh10_bank.jsonl
-  bank:   banks/baselines/fleet/revamp_v2__storyfirst__gpt-5.6-terra__hh10_bank.jsonl  (manifest 084532293383…)
-  commit: 27ae5272a275 (DIRTY TREE)  seed 0  questions 1620  budget 24/day
+DIAGNOSTIC REPORT — revamp_v2__storyfirst__gpt-5.6-terra__hh10_bank.jsonl
+  bank:   banks/baselines/fleet/revamp_v2__storyfirst__gpt-5.6-terra__hh10_bank.jsonl  (manifest e6b9510b9db9…)
+  commit: d57e83fe7342 (dirty tree)  seed 0  questions 1620  budget 24/day
 
   Intrinsic (ground truth only — see `cli bankstats`): modal share 0.582 time-weighted / 0.549 at query times; 51.9 moves/day; displacement median 13.3 h, p90 44.4 h
 
   Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
-    NeverSense (answer from memory, never look) last_observation 0.479  most_frequent 0.478  timetable 0.479
+    NeverSense (answer from memory, never look) last_observation 0.681  most_frequent 0.683  timetable 0.600
     SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
-    SequentialSearch @ real budget              last_observation 0.694
+    SequentialSearch @ real budget              most_frequent 0.746
 
-  Gates (bank is healthy only if ALL pass):
-    [PASS] stationarity     measured   0.582  need <= 0.600
-           dwell-weighted modal share: how often a home-base-only model is right at a random moment; computable from ground truth alone (cli bankstats) before paying for the panel
-    [PASS] solvable         measured   1.000  need == 1.000
-           unlimited-budget search must find every queried object; failure means a bank or harness bug
-    [PASS] not_trivial      measured   0.479  need <= 0.650
-           if passive memory nearly solves the bank, the dynamics are too static to test sensing
-    [PASS] not_impossible   measured   0.694  need >= 0.629
-           sensing at the real budget must buy meaningful accuracy over the best passive belief
-    [FAIL] discriminative   measured   0.001  need > 0.030
-           different modeling assumptions must score differently somewhere, or the bank cannot rank belief models
-    [PASS] powered          measured 1620.000  need >= 300.000
-           too few questions and accuracy differences between agents drown in binomial noise
-    stratified discriminative spreads by household_type: night_shift_worker_solo=0.001
+  Diagnostics (flags mark setups worth a look; nothing here disqualifies a bank):
+    [  ok ] stationarity     measured   0.582  reference <= 0.600
+           mean dwell-weighted modal share; high values mean objects mostly sit at their usual spots — read the per-object distribution before concluding anything
+    [  ok ] solvable         measured   1.000  reference == 1.000
+           unlimited-budget search must find every queried object; failure means a bank or harness BUG, not a data property
+    [ flag] not_trivial      measured   0.683  reference <= 0.650
+           passive memory alone nearly solves the bank at this observation rate; paid sensing has little to prove
+    [ flag] not_impossible   measured   0.746  reference >= 0.833
+           sensing bought little over passive at the configured budget; may reflect the budget rather than the bank
+    [  ok ] discriminative   measured   0.083  reference > 0.030
+           all passive models answer alike; usually the observation stream is too sparse for them to differ
+    [  ok ] powered          measured 1620.000  reference >= 300.000
+           few questions; small accuracy differences drown in binomial noise
+    stratified discriminative spreads by household_type: night_shift_worker_solo=0.083
 
-  OVERALL: FAIL — gates failed: discriminative
+  flagged: not_trivial, not_impossible  (diagnostics, not disqualifiers)

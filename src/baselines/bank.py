@@ -29,6 +29,18 @@ and start with its header; a file may hold many episodes):
     {"kind": "question", "episode_id": str, "question_id": str,
      "object_id": str, "t_query": int, "day_index": int}
 
+    {"kind": "room_visit", "episode_id": str, "t": int, "room": str,
+     "contents": {receptacle_id: [object_id, ...]}}
+        One room visit from the ambient observation stream: at ``t``,
+        every receptacle in ``contents`` was inspected and found to hold
+        exactly the listed objects (empty lists included — that emptiness
+        is evidence). The loader delivers a visit to the beliefs as one
+        sense result per receptacle, so it carries positive sightings and
+        exclusions at once; ``Episode.scripted_observations`` still
+        exposes the positive half as ordinary observations for consumers
+        that only need sightings (the viewer's "last seen", recency
+        statistics).
+
 The loader is strict: unknown kinds, out-of-order episode_ids, references
 to undeclared receptacles/objects, missing t=0 truth, or day_index
 disagreeing with t_query all raise ``BankFormatError`` with the offending
@@ -44,9 +56,11 @@ import logging
 import pathlib
 import random
 from dataclasses import dataclass
-from typing import Any, Dict, Iterator, List, Protocol, Tuple
+from typing import (Any, Dict, Iterator, List, Protocol, Tuple,
+                    Union)
 
-from baselines.types import DAY_SECONDS, Episode, Observation, Question
+from baselines.types import (DAY_SECONDS, Episode, Observation, Question,
+                             SenseResult)
 
 logger = logging.getLogger(__name__)
 
@@ -104,7 +118,8 @@ class JsonlBank:
                     raise BankFormatError(
                         f"{self.path}:{lineno}: {kind!r} row before any "
                         f"episode_header")
-                elif kind in ("truth", "observation", "question"):
+                elif kind in ("truth", "observation", "question",
+                              "room_visit"):
                     current.add(kind, row, lineno)
                 else:
                     raise BankFormatError(
@@ -138,6 +153,7 @@ class _EpisodeAccumulator:
         self._truth: Dict[str, List[Tuple[int, str]]] = {}
         self._observations: List[Observation] = []
         self._questions: List[Question] = []
+        self._room_visits: List[Tuple[int, Dict[str, List[str]]]] = []
 
     def _check(self, cond: bool, lineno: int, msg: str) -> None:
         if not cond:
@@ -164,6 +180,19 @@ class _EpisodeAccumulator:
             self._observations.append(Observation(
                 object_id=obj, object_class=self.object_classes[obj],
                 receptacle_id=rec, t=int(row["t"]), source=source))
+        elif kind == "room_visit":
+            contents = row["contents"]
+            self._check(bool(isinstance(contents, dict) and contents), lineno,
+                        "room_visit needs a non-empty contents mapping")
+            for rec, objs in contents.items():
+                self._check(str(rec) in self.receptacles, lineno,
+                            f"unknown receptacle {rec!r}")
+                for obj in objs:
+                    self._check(str(obj) in self.object_classes, lineno,
+                                f"unknown object {obj!r}")
+            self._room_visits.append(
+                (int(row["t"]), {str(r): [str(o) for o in objs]
+                                 for r, objs in contents.items()}))
         else:  # question
             obj = str(row["object_id"])
             self._check(obj in self.object_classes, lineno, f"unknown object {obj!r}")
@@ -190,9 +219,32 @@ class _EpisodeAccumulator:
         for q in self._questions:
             by_day[q.day_index].append(q)
         initial = tuple(o for o in self._observations if o.source == "initial_tour")
+        # Room visits contribute their positive half to scripted_observations
+        # (so recency readouts and the viewer keep working unchanged), and
+        # their full evidence — one SenseResult per inspected receptacle,
+        # emptiness included — to scripted_evidence, which is what belief
+        # models are fed. A bank never mixes duplicated information: an
+        # explicit "observation" row and a room_visit sighting are distinct
+        # events, and room-visit exports write only the visit rows.
+        visit_positives = tuple(
+            Observation(object_id=obj, object_class=self.object_classes[obj],
+                        receptacle_id=rec, t=t, source="scripted")
+            for t, contents in self._room_visits
+            for rec, objs in sorted(contents.items()) for obj in objs)
         scripted = tuple(sorted(
-            (o for o in self._observations if o.source == "scripted"),
-            key=lambda o: o.t))
+            (*(o for o in self._observations if o.source == "scripted"),
+             *visit_positives), key=lambda o: o.t))
+        explicit = tuple(o for o in self._observations
+                         if o.source == "scripted")
+        visit_evidence = tuple(
+            SenseResult(receptacle_id=rec, t=t, contents=tuple(objs))
+            for t, contents in sorted(self._room_visits,
+                                      key=lambda v: v[0])
+            for rec, objs in sorted(contents.items()))
+        merged: List[Union[Observation, SenseResult]] = [*explicit,
+                                                         *visit_evidence]
+        merged.sort(key=lambda e: e.t)
+        evidence = tuple(merged)
         episode = Episode(
             episode_id=self.episode_id, household_id=self.household_id,
             receptacle_ids=self.receptacles, object_classes=self.object_classes,
@@ -203,7 +255,8 @@ class _EpisodeAccumulator:
             trajectories={obj: tuple(sorted(self._truth[obj]))
                           for obj in self.object_classes},
             household_type=self.household_type,
-            unsensable_receptacle_ids=self.unsensable)
+            unsensable_receptacle_ids=self.unsensable,
+            scripted_evidence=evidence)
         logger.debug("loaded episode %s: %d objects, %d questions",
                      episode.episode_id, len(episode.object_classes),
                      sum(len(d) for d in episode.questions_by_day))
