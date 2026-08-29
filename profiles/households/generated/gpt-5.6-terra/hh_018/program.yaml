@@ -1,0 +1,7672 @@
+# GENERATED — the realization input: the story's days as dated
+# entries, plus the movement rules.
+household: hh_018
+household_type: working_couple_no_children
+source_persona: persona.yaml
+object_semantics: after_only_v3
+object_owners:
+  phone_mara: resident_1
+  keys_mara: resident_1
+  wallet_mara: resident_1
+  laptop_mara: resident_1
+  charger_mara: resident_1
+  backpack_mara: resident_1
+  mug_mara: resident_1
+  notebook_mara: resident_1
+  pen_mara: resident_1
+  book_mara: resident_1
+  yoga_mat_mara: resident_1
+  hairbrush_mara: resident_1
+  makeup_kit_mara: resident_1
+  glasses_mara: resident_1
+  phone_theo: resident_2
+  keys_theo: resident_2
+  wallet_theo: resident_2
+  water_bottle_theo: resident_2
+  lunchbox_theo: resident_2
+  backpack_theo: resident_2
+  jacket_theo: resident_2
+  headphones_theo: resident_2
+  book_theo: resident_2
+  gaming_controller_theo: resident_2
+  umbrella_theo: resident_2
+  mug_shared_1: shared
+  bowl_shared_1: shared
+  bowl_shared_2: shared
+  plate_shared_1: shared
+  plate_shared_2: shared
+  tablet_shared_1: shared
+  remote_shared_1: shared
+  charger_shared_1: shared
+  blanket_shared_1: shared
+  towel_shared_1: shared
+  towel_shared_2: shared
+  laundry_basket_shared_1: shared
+  vacuum_cleaner_shared_1: shared
+  pot_shared_1: shared
+  pan_shared_1: shared
+  watering_can_shared_1: shared
+  suitcase_shared_1: shared
+days: 28
+day0: Monday
+residents:
+- id: resident_1
+  jitter_scale: 1.0
+- id: resident_2
+  jitter_scale: 1.0
+receptacles:
+- id: bed_b1
+  room: bedroom_1
+- id: nightstand_b1
+  room: bedroom_1
+- id: desk_b1
+  room: bedroom_1
+- id: bedroom_floor_b1
+  room: bedroom_1
+- id: bed_b2
+  room: bedroom_2
+- id: nightstand_b2
+  room: bedroom_2
+- id: desk_b2
+  room: bedroom_2
+- id: bedroom_floor_b2
+  room: bedroom_2
+- id: couch_l1
+  room: living
+- id: coffee_table_l1
+  room: living
+- id: tv_stand_l1
+  room: living
+- id: bookshelf_l1
+  room: living
+- id: armchair_l1
+  room: living
+- id: counter_k1
+  room: kitchen
+- id: sink_k1
+  room: kitchen
+- id: cupboard_k1
+  room: kitchen
+- id: dish_rack_k1
+  room: kitchen
+- id: kitchen_table_k1
+  room: kitchen
+- id: chair_k1
+  room: kitchen
+- id: chair_k2
+  room: kitchen
+- id: bathroom_shelf_ba1
+  room: bathroom
+- id: towel_rack_ba1
+  room: bathroom
+- id: entry_table_e1
+  room: entry
+- id: entry_hook_e1
+  room: entry
+- id: entry_floor_e1
+  room: entry
+sleep_schedule: []
+weekly_blocks: []
+object_rules:
+- object: phone_mara
+  cites: Mara sets it on the entry shelf after returning.
+  home: entry_table_e1
+  p_misplace: 0.2
+  rules:
+  - cites: Her commute ends with the phone on the entry shelf.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: nightstand_b1
+      p: 0.1
+  - cites: Messages at night leave it by the sofa or bedside.
+    activity: phone_time
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.55
+    - dest: nightstand_b1
+      p: 0.45
+- object: keys_mara
+  cites: Mara uses the door catchall for her keys.
+  home: entry_table_e1
+  p_misplace: 0.18
+  rules:
+  - cites: Office return puts the keys in the catchall.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.94
+    - dest: counter_k1
+      p: 0.06
+  - cites: Surface clearing can shift keys slightly.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.82
+    - dest: entry_floor_e1
+      p: 0.18
+- object: wallet_mara
+  cites: Mara keeps wallet and phone together after outings.
+  home: entry_table_e1
+  p_misplace: 0.16
+  rules:
+  - cites: A work return reunites it with the entry essentials.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.92
+    - dest: counter_k1
+      p: 0.08
+  - cites: Errand return usually restores the entry pair.
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.88
+    - dest: kitchen_table_k1
+      p: 0.12
+- object: laptop_mara
+  cites: Her payroll laptop alternates between dining table and backpack.
+  home: kitchen_table_k1
+  p_misplace: 0.12
+  rules:
+  - cites: Commuting ends with the laptop ready at the dining workspace.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.7
+    - dest: chair_k1
+      p: 0.3
+  - cites: Home work leaves it at the table or desk.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.8
+    - dest: desk_b1
+      p: 0.2
+  - cites: Shared viewing can leave it by the couch.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.65
+    - dest: kitchen_table_k1
+      p: 0.35
+- object: charger_mara
+  cites: Mara keeps the cable by the dining-table outlet.
+  home: kitchen_table_k1
+  p_misplace: 0.11
+  rules:
+  - cites: After commuting it is unpacked near the dining outlet.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.76
+    - dest: chair_k1
+      p: 0.24
+  - cites: Home work leaves the charging lead at the workspace.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.86
+    - dest: desk_b1
+      p: 0.14
+- object: backpack_mara
+  cites: Mara often leaves her pack beside a dining chair.
+  home: chair_k1
+  p_misplace: 0.22
+  rules:
+  - cites: The office commute ends with the bag beside the dining chair.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.78
+    - dest: entry_floor_e1
+      p: 0.22
+  - cites: Groceries return with the bag by the door or chair.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.58
+    - dest: chair_k1
+      p: 0.42
+- object: mug_mara
+  cites: Her tea mug is promptly rinsed but dries overnight.
+  home: counter_k1
+  rules:
+  - cites: Tea-making leaves the mug on the drying area.
+    activity: coffee
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.76
+    - dest: counter_k1
+      p: 0.24
+  - cites: Dish washing returns the rinsed mug to rack or counter.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.82
+    - dest: counter_k1
+      p: 0.18
+- object: notebook_mara
+  cites: Her running household list lives on the counter.
+  home: counter_k1
+  p_misplace: 0.14
+  rules:
+  - cites: Work return leaves notes with the bag or planning counter.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.46
+    - dest: counter_k1
+      p: 0.54
+  - cites: Meal planning puts the notebook on the counter.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.88
+    - dest: kitchen_table_k1
+      p: 0.12
+- object: pen_mara
+  cites: The list pen is clipped to the notebook or left on the counter.
+  home: counter_k1
+  p_misplace: 0.3
+  rules:
+  - cites: Planning lists leave the pen on the counter or table.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.67
+    - dest: kitchen_table_k1
+      p: 0.33
+  - cites: Tidy-up reunites it with the household-list area.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.73
+    - dest: chair_k1
+      p: 0.27
+- object: book_mara
+  cites: Mara reads her novel before sleeping.
+  home: nightstand_b1
+  p_misplace: 0.12
+  rules:
+  - cites: Bedtime reading returns the novel beside Mara's bed.
+    activity: reading
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.84
+    - dest: bed_b1
+      p: 0.16
+  - cites: Lying down can leave the book on the bed.
+    activity: lie_down
+    phase: after
+    dist:
+    - dest: bed_b1
+      p: 0.62
+    - dest: nightstand_b1
+      p: 0.38
+- object: yoga_mat_mara
+  cites: Mara rolls her mat beside the media console after use.
+  home: tv_stand_l1
+  rules:
+  - cites: Her hobby stretch ends with the mat against the console.
+    activity: hobby
+    phase: after
+    dist:
+    - dest: tv_stand_l1
+      p: 0.9
+    - dest: couch_l1
+      p: 0.1
+  - cites: Deep cleaning occasionally shifts the rolled mat.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: tv_stand_l1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.8
+- object: hairbrush_mara
+  cites: Mara brushes her hair at the bathroom counter.
+  home: bathroom_shelf_ba1
+  p_misplace: 0.1
+  rules:
+  - cites: Getting ready returns the brush to the bathroom shelf.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.91
+    - dest: bedroom_floor_b1
+      p: 0.09
+- object: makeup_kit_mara
+  cites: Her workday kit is stored at the bathroom shelf area.
+  home: bathroom_shelf_ba1
+  p_misplace: 0.13
+  rules:
+  - cites: Morning preparation leaves the kit in the bathroom.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.79
+    - dest: entry_table_e1
+      p: 0.21
+  - cites: Night-out return leaves it near the entry or bathroom.
+    activity: night_out
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.64
+    - dest: entry_table_e1
+      p: 0.36
+- object: glasses_mara
+  cites: Mara uses glasses for screens and bedtime reading.
+  home: nightstand_b1
+  p_misplace: 0.24
+  rules:
+  - cites: Reading ends with glasses at the bedside or on the bed.
+    activity: reading
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.74
+    - dest: bed_b1
+      p: 0.26
+  - cites: Video calls leave them by the sofa table.
+    activity: video_call
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.7
+    - dest: nightstand_b1
+      p: 0.3
+- object: phone_theo
+  cites: Theo leaves his phone on the entry shelf or sofa table.
+  home: entry_table_e1
+  p_misplace: 0.28
+  rules:
+  - cites: Shop return ends with a casual entry drop.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.72
+    - dest: coffee_table_l1
+      p: 0.28
+  - cites: Couch messaging leaves it on the table or cushion.
+    activity: phone_time
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.61
+    - dest: couch_l1
+      p: 0.39
+- object: keys_theo
+  cites: Theo empties his clipped keys onto the entry shelf.
+  home: entry_table_e1
+  p_misplace: 0.33
+  rules:
+  - cites: Work return mixes the keys into the entry pocket dump.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.79
+    - dest: entry_floor_e1
+      p: 0.21
+  - cites: Getting ready gathers them at the door.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.87
+    - dest: entry_hook_e1
+      p: 0.13
+- object: wallet_theo
+  cites: Theo leaves his wallet with the keys near the door.
+  home: entry_table_e1
+  p_misplace: 0.27
+  rules:
+  - cites: A shop day ends with wallet at the entry dump.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.83
+    - dest: chair_k2
+      p: 0.17
+  - cites: A walk return leaves it by the door or sofa.
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.68
+    - dest: coffee_table_l1
+      p: 0.32
+- object: water_bottle_theo
+  cites: Theo leaves his work bottle by the sink on return.
+  home: sink_k1
+  p_misplace: 0.16
+  rules:
+  - cites: The repair-shop commute ends with the bottle by the sink.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.87
+    - dest: counter_k1
+      p: 0.13
+  - cites: Dinner prep may refill it on the counter.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.57
+    - dest: sink_k1
+      p: 0.43
+- object: lunchbox_theo
+  cites: Theo sets the used lunchbox beside the sink.
+  home: sink_k1
+  p_misplace: 0.15
+  rules:
+  - cites: Work return leaves the lunchbox awaiting cleanup.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.81
+    - dest: counter_k1
+      p: 0.19
+  - cites: Meal prep moves it to the packing counter.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.78
+    - dest: sink_k1
+      p: 0.22
+- object: backpack_theo
+  cites: Theo's backpack rests near his bed or by the entry.
+  home: bedroom_floor_b2
+  p_misplace: 0.25
+  rules:
+  - cites: The shop commute ends with the pack by the entry or bed.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.52
+    - dest: bedroom_floor_b2
+      p: 0.48
+  - cites: Bedtime puts the pack near Theo's side.
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.77
+    - dest: entry_floor_e1
+      p: 0.23
+- object: jacket_theo
+  cites: Theo habitually drapes his work jacket over a dining chair.
+  home: chair_k2
+  p_misplace: 0.22
+  rules:
+  - cites: Returning from work leaves it on the chair-back.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: chair_k2
+      p: 0.82
+    - dest: entry_hook_e1
+      p: 0.18
+  - cites: Tidy-up sometimes gets the jacket onto its hook.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.62
+    - dest: chair_k2
+      p: 0.38
+- object: headphones_theo
+  cites: Theo leaves headphones beside the sofa after videos and games.
+  home: coffee_table_l1
+  p_misplace: 0.3
+  rules:
+  - cites: Gaming ends with headphones on the table or couch.
+    activity: gaming
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.71
+    - dest: couch_l1
+      p: 0.29
+  - cites: Relaxing leaves them at the sofa setup.
+    activity: relax
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.54
+    - dest: coffee_table_l1
+      p: 0.46
+- object: book_theo
+  cites: Theo keeps his paperback in his pack or by his bed.
+  home: nightstand_b2
+  p_misplace: 0.13
+  rules:
+  - cites: Reading before sleep puts it at Theo's bedside.
+    activity: reading
+    phase: after
+    dist:
+    - dest: nightstand_b2
+      p: 0.69
+    - dest: bed_b2
+      p: 0.31
+  - cites: Work breaks return the paperback in the bedroom pack area.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.55
+    - dest: nightstand_b2
+      p: 0.45
+- object: gaming_controller_theo
+  cites: Theo's controller remains at the living-room game setup.
+  home: coffee_table_l1
+  p_misplace: 0.2
+  rules:
+  - cites: Gaming leaves it on the coffee table or sofa.
+    activity: gaming
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.63
+    - dest: couch_l1
+      p: 0.37
+  - cites: Deep cleaning restores it to the table when handled.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.25
+    - dest: NO_OP
+      p: 0.75
+- object: umbrella_theo
+  cites: Theo stores the compact umbrella in the entry corner.
+  home: entry_floor_e1
+  p_misplace: 0.18
+  rules:
+  - cites: A walk return leaves the umbrella at the entry.
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.83
+    - dest: entry_hook_e1
+      p: 0.17
+  - cites: Wet errands can leave it on the entry floor.
+    activity: errands
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.74
+    - dest: bathroom_shelf_ba1
+      p: 0.26
+- object: mug_shared_1
+  cites: The spare mug alternates between cupboard and drying area.
+  home: cupboard_k1
+  rules:
+  - cites: Coffee use leaves the spare mug rinsed or drying.
+    activity: coffee
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.62
+    - dest: cupboard_k1
+      p: 0.38
+- object: bowl_shared_1
+  cites: This bowl serves breakfast and snacks before washing.
+  home: cupboard_k1
+  rules:
+  - cites: Breakfast leaves the bowl on table or in sink.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.46
+    - dest: sink_k1
+      p: 0.54
+  - cites: Washing moves it to the rack or cupboard.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.7
+    - dest: cupboard_k1
+      p: 0.3
+- object: bowl_shared_2
+  cites: The second bowl is used for snacks and leftovers.
+  home: cupboard_k1
+  rules:
+  - cites: A snack leaves it at the table or drying rack.
+    activity: snack
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.58
+    - dest: dish_rack_k1
+      p: 0.42
+  - cites: Putting dishes away restores it to the cupboard.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.86
+    - dest: dish_rack_k1
+      p: 0.14
+- object: plate_shared_1
+  cites: The first plate is used at shared dinners.
+  home: cupboard_k1
+  rules:
+  - cites: Dinner leaves it on the dining table or in the sink.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.51
+    - dest: sink_k1
+      p: 0.49
+  - cites: Cleanup leaves the plate drying or stored.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.66
+    - dest: cupboard_k1
+      p: 0.34
+- object: plate_shared_2
+  cites: The second plate follows the other dinner plate through cleanup.
+  home: cupboard_k1
+  rules:
+  - cites: Lunch at home leaves it on the table or sink.
+    activity: lunch
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.44
+    - dest: sink_k1
+      p: 0.56
+  - cites: Dish put-away returns this plate to storage.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.91
+    - dest: dish_rack_k1
+      p: 0.09
+- object: tablet_shared_1
+  cites: The tablet serves recipes, calls, and sofa streaming.
+  home: coffee_table_l1
+  p_misplace: 0.17
+  rules:
+  - cites: Video calling leaves it at the sofa table or counter.
+    activity: video_call
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.66
+    - dest: counter_k1
+      p: 0.34
+  - cites: Recipe use leaves it on the kitchen counter.
+    activity: batch_cooking
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.73
+    - dest: coffee_table_l1
+      p: 0.27
+  - cites: Social visits return it to the couch setup or counter.
+    activity: socialise_home
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.6
+    - dest: counter_k1
+      p: 0.4
+- object: remote_shared_1
+  cites: The streaming remote drifts around the sofa.
+  home: coffee_table_l1
+  p_misplace: 0.32
+  rules:
+  - cites: Shared viewing leaves it on table, arm, or cushions.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.48
+    - dest: couch_l1
+      p: 0.52
+- object: charger_shared_1
+  cites: The shared cable stays near the sofa or kitchen counter.
+  home: coffee_table_l1
+  p_misplace: 0.2
+  rules:
+  - cites: Evening viewing leaves the cable near the sofa.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.77
+    - dest: counter_k1
+      p: 0.23
+  - cites: Night-out packing sometimes takes the cable out.
+    activity: night_out
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.7
+    - dest: NO_OP
+      p: 0.3
+- object: blanket_shared_1
+  cites: The throw is folded on the sofa arm or bunched during games.
+  home: couch_l1
+  rules:
+  - cites: Gaming leaves the blanket bunched or folded on sofa.
+    activity: gaming
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.73
+    - dest: armchair_l1
+      p: 0.27
+  - cites: Tidy-up folds it onto the sofa arm.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.89
+    - dest: armchair_l1
+      p: 0.11
+- object: towel_shared_1
+  cites: The kitchen towel is left at the drying area after dishes.
+  home: counter_k1
+  rules:
+  - cites: Mara's rinsed mug leaves the towel at the counter or rack.
+    activity: coffee
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.71
+    - dest: dish_rack_k1
+      p: 0.29
+  - cites: Dish washing leaves the drying towel in use.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.83
+    - dest: sink_k1
+      p: 0.17
+- object: towel_shared_2
+  cites: The bath towel rotates between the rack and laundry basket.
+  home: towel_rack_ba1
+  rules:
+  - cites: Showering leaves it hung up or awaiting laundry.
+    activity: shower
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.74
+    - dest: bedroom_floor_b1
+      p: 0.26
+  - cites: Laundry returns the bath towel to the rack or basket.
+    activity: laundry
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.69
+    - dest: bedroom_floor_b1
+      p: 0.31
+- object: laundry_basket_shared_1
+  cites: Mara leaves the basket in the bedroom until the next load.
+  home: bedroom_floor_b1
+  rules:
+  - cites: Laundry ends with the basket in Mara's bedroom area.
+    activity: laundry
+    phase: after
+    dist:
+    - dest: bedroom_floor_b1
+      p: 0.81
+    - dest: bedroom_floor_b2
+      p: 0.19
+- object: vacuum_cleaner_shared_1
+  cites: Theo parks the vacuum after spot cleaning.
+  home: entry_floor_e1
+  rules:
+  - cites: Deep cleaning uses it occasionally, then parks it by entry storage.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.8
+  - cites: Tidy-up sometimes triggers a quick vacuum reset.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.32
+    - dest: NO_OP
+      p: 0.68
+- object: pot_shared_1
+  cites: Theo often leaves the pot soaking after dinner cleanup.
+  home: cupboard_k1
+  rules:
+  - cites: Batch cooking leaves the pot soaking or stored.
+    activity: batch_cooking
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.72
+    - dest: cupboard_k1
+      p: 0.28
+  - cites: Dinner cleanup keeps the pot in the sink or rack.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.58
+    - dest: dish_rack_k1
+      p: 0.42
+- object: pan_shared_1
+  cites: The frying pan is used for breakfasts and quick dinners.
+  home: cupboard_k1
+  rules:
+  - cites: Breakfast leaves the pan on the counter or stovetop area.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.57
+    - dest: sink_k1
+      p: 0.43
+  - cites: Dinner prep leaves it drying or back in storage.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.45
+    - dest: cupboard_k1
+      p: 0.55
+- object: watering_can_shared_1
+  cites: The watering can stays beneath the sink unless plants are tended.
+  home: sink_k1
+  rules:
+  - cites: Deep cleaning occasionally includes watering plants.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.16
+    - dest: NO_OP
+      p: 0.84
+- object: suitcase_shared_1
+  cites: The carry-on is stored in the bedroom between short trips.
+  home: bedroom_floor_b2
+  rules:
+  - cites: Night-out travel almost always ends with suitcase stored again.
+    activity: night_out
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.86
+    - dest: NO_OP
+      p: 0.14
+  - cites: Groceries rarely involve the suitcase.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.05
+    - dest: NO_OP
+      p: 0.95
+activities: []
+arc_events:
+- day: 0
+  note: Monday office day; Mara starts the payroll week and has a quiet tea-and-reading evening.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:45
+      end: 06:55
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:55
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: tidy_up
+      start: '18:30'
+      end: '18:40'
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: '18:40'
+      end: '19:10'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:40'
+      end: '19:10'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '19:10'
+      end: '19:40'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '19:10'
+      end: '19:40'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: '19:40'
+      end: '19:50'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '19:40'
+      end: '19:55'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: phone_time
+      start: '19:50'
+      end: '20:05'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 1
+  note: Tuesday office day with an evening yoga session and a small reset of the kitchen list.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:45
+      end: 06:55
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:55
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: '18:30'
+      end: '19:00'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:30'
+      end: '19:00'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '19:00'
+      end: '19:30'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '19:00'
+      end: '19:30'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: tidy_up
+      start: '19:30'
+      end: '19:45'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '19:30'
+      end: '19:45'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: hobby
+      start: '19:45'
+      end: '20:20'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:20'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 2
+  note: Wednesday is a routine office day; Mara calls her sister after dinner and reads before bed.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:30'
+      end: '18:45'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '18:45'
+      end: '19:20'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '18:45'
+      end: '19:20'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: '19:20'
+      end: '19:30'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: video_call
+      start: '19:30'
+      end: '20:00'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: gaming
+      start: '19:30'
+      end: '20:30'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: reading
+      start: '20:00'
+      end: '20:30'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:30'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 3
+  note: Thursday office day; Mara picks up groceries on the way home and makes a simple dinner.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: relax
+      start: '16:45'
+      end: '18:45'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: groceries
+      start: '18:00'
+      end: '18:25'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:25'
+      end: '18:45'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: put_away_dishes
+      start: '18:45'
+      end: '18:55'
+      at: cupboard_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: '18:55'
+      end: '19:25'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:55'
+      end: '19:25'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '19:25'
+      end: '19:55'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '19:25'
+      end: '19:55'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: relax
+      start: '19:55'
+      end: '20:30'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:30'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 4
+  note: Friday office day; she finishes a busy payroll run and has a low-key film night at home with Theo.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '18:45'
+      end: '19:20'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '18:45'
+      end: '19:20'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: '19:20'
+      end: '19:30'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '19:20'
+      end: '19:30'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: watch_tv
+      start: '19:30'
+      end: '20:45'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: watch_tv
+      start: '19:30'
+      end: '20:45'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:45'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 5
+  note: Saturday off; Mara runs errands, folds the laundry, and meets a friend for coffee.
+  patch:
+    add:
+    - resident: resident_1
+      activity: wake_up
+      start: 05:00
+      end: 05:15
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 05:15
+      end: 05:30
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: phone_time
+      start: 05:30
+      end: 05:45
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 05:30
+      end: 05:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 05:45
+      end: 06:10
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: coffee
+      start: 05:45
+      end: 06:00
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 06:00
+      end: 06:20
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: laundry
+      start: 06:10
+      end: 06:35
+      at: bedroom_floor_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: laundry
+      start: 06:20
+      end: 06:40
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:35
+      end: 06:55
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: tidy_up
+      start: 06:40
+      end: 07:00
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:55
+      end: 07:15
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: 07:00
+      end: 09:00
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: errands
+      start: 07:15
+      end: 08:30
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 08:30
+      end: 08:50
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: laundry
+      start: 08:50
+      end: 09:15
+      at: bedroom_floor_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: deep_clean
+      start: 09:00
+      end: 09:35
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: tidy_up
+      start: 09:15
+      end: 09:35
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 09:35
+      end: 09:55
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: 09:35
+      end: 09:50
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: gaming
+      start: 09:50
+      end: '11:30'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: socialise_home
+      start: 09:55
+      end: '11:15'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '11:15'
+      end: '11:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '11:45'
+      end: '12:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '11:45'
+      end: '12:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: relax
+      start: '12:15'
+      end: '13:00'
+      at: armchair_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: relax
+      start: '12:15'
+      end: '13:00'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: batch_cooking
+      start: '13:00'
+      end: '14:00'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: batch_cooking
+      start: '13:00'
+      end: '14:00'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '14:00'
+      end: '14:30'
+      at: armchair_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '18:00'
+      end: '18:30'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: bedtime_routine
+      start: '18:30'
+      end: '20:00'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: night_sleep
+      start: '20:00'
+      end: 05:30
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:00'
+      end: 05:00
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 6
+  note: Sunday off; she does a deeper apartment reset, plans the week, and has an early night.
+  patch:
+    add:
+    - resident: resident_1
+      activity: wake_up
+      start: 05:00
+      end: 05:15
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 05:15
+      end: 05:30
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 05:30
+      end: 06:00
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 05:30
+      end: 05:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: coffee
+      start: 05:45
+      end: 06:00
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 06:00
+      end: 06:05
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 06:00
+      end: 06:20
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: deep_clean
+      start: 06:05
+      end: 07:00
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: deep_clean
+      start: 06:20
+      end: 07:00
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: laundry
+      start: 07:00
+      end: 07:25
+      at: bedroom_floor_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: laundry
+      start: 07:00
+      end: 07:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: walk
+      start: 07:25
+      end: 08:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: walk
+      start: 07:25
+      end: 08:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: 08:05
+      end: 08:35
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 08:05
+      end: 08:35
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: 08:35
+      end: 09:05
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: 08:35
+      end: 09:05
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: tidy_up
+      start: 09:05
+      end: 09:25
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: tidy_up
+      start: 09:05
+      end: 09:25
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: hobby
+      start: 09:25
+      end: '10:00'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: gaming
+      start: 09:25
+      end: '10:20'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: phone_time
+      start: '10:00'
+      end: '10:20'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: '10:20'
+      end: '11:00'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '10:20'
+      end: '11:00'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '11:00'
+      end: '11:30'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '11:00'
+      end: '11:30'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: '11:30'
+      end: '11:45'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '11:30'
+      end: '11:45'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: reading
+      start: '11:45'
+      end: '12:15'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:45'
+      end: '12:15'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '12:15'
+      end: '21:00'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: bedtime_routine
+      start: '12:15'
+      end: '20:00'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: night_sleep
+      start: '20:00'
+      end: 05:30
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:00'
+      end: 05:00
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 7
+  note: Monday office day; Mara begins a deadline-heavy payroll week and works carefully through the evening.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:30'
+      end: '18:45'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_home
+      start: '19:15'
+      end: '20:00'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: '20:00'
+      end: '20:10'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '20:00'
+      end: '20:10'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:10'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 8
+  note: Tuesday office day; the payroll deadline continues, so Mara brings work home after dinner.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: gaming
+      start: '16:45'
+      end: '18:30'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: snack
+      start: '18:30'
+      end: '18:40'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_home
+      start: '18:40'
+      end: '19:40'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '19:10'
+      end: '19:40'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '19:40'
+      end: '20:10'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '19:40'
+      end: '20:10'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: relax
+      start: '20:10'
+      end: '20:30'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:30'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 9
+  note: Wednesday office day; she completes the urgent work and takes a restorative yoga session afterward.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:30'
+      end: '18:45'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: hobby
+      start: '19:15'
+      end: '19:50'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: '19:50'
+      end: '20:00'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '19:50'
+      end: '20:00'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: reading
+      start: '20:00'
+      end: '20:30'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:30'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 10
+  note: Thursday office day; Mara has a morning dental appointment before work and keeps dinner easy.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 05:45
+      end: 06:05
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:05
+      end: 06:15
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:15
+      end: 06:30
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: appointment
+      start: 06:30
+      end: 06:50
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:50
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: phone_time
+      start: '19:15'
+      end: '19:30'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: watch_tv
+      start: '19:30'
+      end: '20:15'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: watch_tv
+      start: '19:30'
+      end: '20:15'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:15'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: bedtime_routine
+      start: '20:15'
+      end: 00:15
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 11
+  note: Friday office day; Mara feels a sore throat coming on and skips plans for a very early night.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: groceries
+      start: '15:00'
+      end: '15:25'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '15:25'
+      end: '15:40'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:40'
+      end: '17:15'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:20'
+      end: '18:45'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '18:45'
+      end: '19:10'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '18:45'
+      end: '19:10'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: '19:10'
+      end: '19:15'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lie_down
+      start: '19:15'
+      end: '20:00'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:00'
+      end: '21:00'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:00'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 12
+  note: Saturday off; Mara's cold worsens, so she stays home resting while Theo handles the practical
+    chores.
+  patch:
+    add:
+    - resident: resident_1
+      activity: wake_up
+      start: 05:00
+      end: 05:15
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:15
+      end: 05:20
+      at: nightstand_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 05:20
+      end: 05:35
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 05:30
+      end: 05:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 05:35
+      end: 05:55
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: coffee
+      start: 05:45
+      end: 06:00
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lie_down
+      start: 05:55
+      end: 07:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 06:00
+      end: 06:20
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: groceries
+      start: 06:20
+      end: 07:00
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 07:00
+      end: 07:15
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 07:15
+      end: 07:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: snack
+      start: 07:30
+      end: 07:45
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: phone_time
+      start: 07:45
+      end: 08:00
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: deep_clean
+      start: 07:45
+      end: 08:15
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: day_sleep
+      start: 08:00
+      end: 09:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: laundry
+      start: 08:15
+      end: 08:40
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: 09:30
+      end: '10:00'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: 09:30
+      end: '10:00'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: watch_tv
+      start: '10:00'
+      end: '10:45'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '10:00'
+      end: '10:15'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: gaming
+      start: '10:15'
+      end: '11:15'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: '10:45'
+      end: '10:50'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lie_down
+      start: '10:50'
+      end: '12:00'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '11:15'
+      end: '12:00'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '12:00'
+      end: '12:30'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '12:00'
+      end: '12:30'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '12:30'
+      end: '21:00'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '12:30'
+      end: '13:00'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: bedtime_routine
+      start: '13:00'
+      end: '20:00'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: night_sleep
+      start: '20:00'
+      end: 05:30
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:00'
+      end: 05:00
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 13
+  note: Sunday off; still recovering from the cold, Mara rests most of the day but makes a short weekly
+    list.
+  patch:
+    add:
+    - resident: resident_1
+      activity: wake_up
+      start: 05:00
+      end: 05:15
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:15
+      end: 05:20
+      at: nightstand_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 05:20
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 05:30
+      end: 05:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: coffee
+      start: 05:45
+      end: 06:00
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lie_down
+      start: 05:55
+      end: 07:00
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 06:00
+      end: 06:20
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 06:20
+      end: 07:00
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: tidy_up
+      start: 07:00
+      end: 07:15
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: 07:00
+      end: 07:15
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: reading
+      start: 07:15
+      end: 07:40
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: tidy_up
+      start: 07:15
+      end: 07:40
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: day_sleep
+      start: 07:40
+      end: 08:45
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: 07:40
+      end: 08:20
+      at: armchair_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: 08:45
+      end: 09:15
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: 08:45
+      end: 09:15
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: watch_tv
+      start: 09:15
+      end: '10:00'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: watch_tv
+      start: 09:15
+      end: '10:00'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: '10:00'
+      end: '10:05'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: '10:05'
+      end: '10:25'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '10:05'
+      end: '10:25'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '10:25'
+      end: '10:55'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '10:25'
+      end: '10:55'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '10:55'
+      end: '21:00'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '10:55'
+      end: '11:10'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: bedtime_routine
+      start: '11:10'
+      end: '20:00'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: night_sleep
+      start: '20:00'
+      end: 05:30
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:00'
+      end: 05:00
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 14
+  note: Monday office day; Mara is well enough to return, though she takes the evening gently.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:30'
+      end: '18:45'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: relax
+      start: '19:15'
+      end: '19:50'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: relax
+      start: '19:15'
+      end: '19:50'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: '19:50'
+      end: '19:55'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: reading
+      start: '19:55'
+      end: '20:25'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:25'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 15
+  note: Tuesday office day; recovery continues and Mara resumes her normal yoga routine after dinner.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: '18:30'
+      end: '19:00'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:30'
+      end: '19:00'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '19:00'
+      end: '19:30'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '19:00'
+      end: '19:30'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: hobby
+      start: '19:30'
+      end: '20:00'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: '20:00'
+      end: '20:10'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '20:00'
+      end: '20:10'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:10'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 16
+  note: Wednesday office day; Mara meets a former colleague briefly after work, then returns for dinner.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: gaming
+      start: '16:45'
+      end: '18:45'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: socialise_home
+      start: '18:00'
+      end: '18:50'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:50'
+      end: '19:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '19:15'
+      end: '19:45'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '19:15'
+      end: '19:45'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: phone_time
+      start: '19:45'
+      end: '20:00'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: phone_time
+      start: '19:45'
+      end: '20:00'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:00'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 17
+  note: Thursday office day; Mara does the weekly grocery run and updates the household notebook.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: groceries
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:30'
+      end: '18:50'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: '18:50'
+      end: '19:20'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: put_away_dishes
+      start: '18:50'
+      end: '19:00'
+      at: cupboard_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '19:00'
+      end: '19:20'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '19:20'
+      end: '19:50'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '19:20'
+      end: '19:50'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: tidy_up
+      start: '19:50'
+      end: '20:10'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:10'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 18
+  note: Friday office day; Mara and Theo go out for a casual date night after work.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:00'
+      end: '16:30'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: '16:30'
+      end: '17:00'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: relax
+      start: '17:00'
+      end: '18:00'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:25'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '18:00'
+      end: '18:25'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_out
+      start: '18:25'
+      end: '20:40'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: night_out
+      start: '18:25'
+      end: '20:40'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '20:40'
+      end: '21:05'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '21:05'
+      end: '22:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '22:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 19
+  note: Saturday off; Mara sleeps lightly after date night, then helps host Theo's friend for lunch at
+    home.
+  patch:
+    add:
+    - resident: resident_1
+      activity: wake_up
+      start: 05:00
+      end: 05:15
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 05:15
+      end: 05:30
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 05:30
+      end: 05:55
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 05:30
+      end: 05:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: coffee
+      start: 05:45
+      end: 06:00
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: tidy_up
+      start: 05:55
+      end: 06:20
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 06:00
+      end: 06:20
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: 06:20
+      end: 07:10
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: tidy_up
+      start: 06:20
+      end: 06:40
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 06:40
+      end: 07:10
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: socialise_home
+      start: 07:10
+      end: 09:00
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: socialise_home
+      start: 07:10
+      end: 09:00
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: 09:00
+      end: 09:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: 09:00
+      end: 09:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: 09:35
+      end: 09:55
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: 09:35
+      end: 09:55
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: relax
+      start: 09:55
+      end: '10:40'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: relax
+      start: 09:55
+      end: '10:40'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: walk
+      start: '10:40'
+      end: '11:15'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: walk
+      start: '10:40'
+      end: '11:15'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: reading
+      start: '11:15'
+      end: '11:45'
+      at: armchair_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: gaming
+      start: '11:15'
+      end: '11:45'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '11:45'
+      end: '12:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '11:45'
+      end: '12:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '12:15'
+      end: '21:00'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: bedtime_routine
+      start: '12:15'
+      end: '20:30'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: night_sleep
+      start: '20:30'
+      end: 05:30
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '22:30'
+      end: 05:00
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 20
+  note: Sunday off; Mara launders towels, batch cooks for the week, and gets the entryway back in order.
+  patch:
+    add:
+    - resident: resident_1
+      activity: wake_up
+      start: 05:00
+      end: 05:15
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 05:15
+      end: 05:30
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 05:30
+      end: 06:00
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 05:30
+      end: 05:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: coffee
+      start: 05:45
+      end: 06:00
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: laundry
+      start: 06:00
+      end: 06:30
+      at: bedroom_floor_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 06:00
+      end: 06:20
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: laundry
+      start: 06:20
+      end: 06:40
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_out_bins
+      start: 06:30
+      end: 06:40
+      at: entry_floor_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: batch_cooking
+      start: 06:40
+      end: 07:40
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: take_out_bins
+      start: 06:40
+      end: 06:50
+      at: entry_floor_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: batch_cooking
+      start: 06:50
+      end: 07:40
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: 07:40
+      end: 08:10
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: 07:40
+      end: 08:10
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: laundry
+      start: 08:10
+      end: 08:35
+      at: bedroom_floor_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: laundry
+      start: 08:10
+      end: 08:35
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: tidy_up
+      start: 08:35
+      end: 08:55
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: tidy_up
+      start: 08:35
+      end: 08:55
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: walk
+      start: 08:55
+      end: 09:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: walk
+      start: 08:55
+      end: 09:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: relax
+      start: 09:35
+      end: '10:15'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: gaming
+      start: 09:35
+      end: '10:15'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: '10:15'
+      end: '10:45'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '10:15'
+      end: '10:45'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '10:45'
+      end: '11:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '10:45'
+      end: '11:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: '11:15'
+      end: '11:30'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '11:15'
+      end: '11:30'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '11:30'
+      end: '21:00'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: bedtime_routine
+      start: '11:30'
+      end: '20:00'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: night_sleep
+      start: '20:00'
+      end: 05:30
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:00'
+      end: 05:00
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 21
+  note: Monday office day; Mara has a standard start to the week and catches up on personal messages at
+    night.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:30'
+      end: '18:45'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: '19:15'
+      end: '19:25'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '19:15'
+      end: '19:25'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: phone_time
+      start: '19:25'
+      end: '19:50'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: reading
+      start: '19:50'
+      end: '20:20'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:20'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 22
+  note: Tuesday office day; Mara attends an evening yoga class and returns home for a late light meal.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: gaming
+      start: '16:45'
+      end: '18:45'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:20'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: gym
+      start: '18:20'
+      end: '19:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '19:10'
+      end: '19:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '19:35'
+      end: '20:00'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '19:35'
+      end: '20:00'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: '20:00'
+      end: '20:15'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '20:00'
+      end: '20:15'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:15'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 23
+  note: Wednesday office day; Mara works from home for a short late-evening payroll check after dinner.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:30'
+      end: '18:45'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '18:45'
+      end: '19:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_home
+      start: '19:15'
+      end: '19:50'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '19:15'
+      end: '19:50'
+      at: armchair_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: tidy_up
+      start: '19:50'
+      end: '20:05'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: relax
+      start: '20:05'
+      end: '20:25'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:25'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 24
+  note: Thursday office day; Mara runs a pharmacy errand on the way home and keeps the evening domestic.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: errands
+      start: '18:00'
+      end: '18:20'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:20'
+      end: '18:40'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: '18:40'
+      end: '19:10'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:40'
+      end: '19:10'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '19:10'
+      end: '19:40'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '19:10'
+      end: '19:40'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: '19:40'
+      end: '19:50'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: watch_tv
+      start: '19:50'
+      end: '20:30'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: watch_tv
+      start: '19:50'
+      end: '20:30'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:30'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 25
+  note: Friday office day; Mara finishes the month-end checklist and stays in for a relaxed evening.
+  patch:
+    add:
+    - resident: resident_2
+      activity: night_sleep
+      start: 00:15
+      end: 04:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 04:45
+      end: 04:55
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: shower
+      start: 04:55
+      end: 05:10
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:10
+      end: 05:25
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 05:25
+      end: 05:40
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wake_up
+      start: 05:30
+      end: 05:40
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: take_medication
+      start: 05:40
+      end: 05:45
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 05:40
+      end: 05:55
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: shower
+      start: 05:45
+      end: 06:00
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: get_ready
+      start: 05:55
+      end: 06:10
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 06:00
+      end: 06:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: 06:10
+      end: 06:35
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 06:20
+      end: 06:35
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 06:35
+      end: 06:45
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: 06:35
+      end: '10:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 06:45
+      end: 07:05
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: 07:05
+      end: '12:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:30'
+      end: '11:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:00'
+      end: '11:10'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: work_away
+      start: '11:10'
+      end: '14:35'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '12:30'
+      end: '13:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: work_away
+      start: '13:00'
+      end: '18:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: traveling
+      start: '14:35'
+      end: '15:00'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: snack
+      start: '15:00'
+      end: '15:15'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: nap
+      start: '15:15'
+      end: '16:45'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '18:00'
+      end: '18:30'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: '18:30'
+      end: '18:45'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '18:45'
+      end: '19:20'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '18:45'
+      end: '19:20'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: relax
+      start: '19:20'
+      end: '20:00'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: relax
+      start: '19:20'
+      end: '20:00'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: reading
+      start: '20:00'
+      end: '20:30'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '20:30'
+      end: '21:30'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:30'
+      end: 05:30
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 26
+  note: Saturday off; Mara joins Theo on a practical apartment reset, then visits her parents for the
+    afternoon.
+  patch:
+    add:
+    - resident: resident_1
+      activity: wake_up
+      start: 05:00
+      end: 05:15
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 05:15
+      end: 05:30
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 05:30
+      end: 05:55
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 05:30
+      end: 05:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: coffee
+      start: 05:45
+      end: 06:00
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: deep_clean
+      start: 05:55
+      end: 06:40
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 06:00
+      end: 06:20
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: deep_clean
+      start: 06:20
+      end: 06:40
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: tidy_up
+      start: 06:40
+      end: 07:00
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: tidy_up
+      start: 06:40
+      end: 07:00
+      at: entry_table_e1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: get_ready
+      start: 07:00
+      end: 07:20
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: walk
+      start: 07:00
+      end: 07:30
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: 07:20
+      end: 07:50
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: gaming
+      start: 07:30
+      end: '10:15'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: socialise_home
+      start: 07:50
+      end: '10:15'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: '10:15'
+      end: '10:45'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: '10:15'
+      end: '10:45'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: traveling
+      start: '10:45'
+      end: '11:15'
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '10:45'
+      end: '11:15'
+      at: armchair_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: relax
+      start: '11:15'
+      end: '11:45'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: relax
+      start: '11:15'
+      end: '11:45'
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '11:45'
+      end: '12:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '11:45'
+      end: '12:15'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '12:15'
+      end: '21:00'
+      at: bathroom_shelf_ba1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '12:15'
+      end: '12:30'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: bedtime_routine
+      start: '12:30'
+      end: '20:00'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: night_sleep
+      start: '20:00'
+      end: 05:30
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:00'
+      end: 05:00
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+- day: 27
+  note: Sunday off; Mara plans the next month, cooks a freezer batch, and settles in early before Monday.
+  patch:
+    add:
+    - resident: resident_1
+      activity: wake_up
+      start: 05:00
+      end: 05:15
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: coffee
+      start: 05:15
+      end: 05:30
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: breakfast
+      start: 05:30
+      end: 06:00
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wake_up
+      start: 05:30
+      end: 05:45
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: coffee
+      start: 05:45
+      end: 06:00
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: tidy_up
+      start: 06:00
+      end: 06:20
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: breakfast
+      start: 06:00
+      end: 06:20
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: batch_cooking
+      start: 06:20
+      end: 07:20
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: tidy_up
+      start: 06:20
+      end: 06:40
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: batch_cooking
+      start: 06:40
+      end: 07:20
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: lunch
+      start: 07:20
+      end: 07:50
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: lunch
+      start: 07:20
+      end: 07:50
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: laundry
+      start: 07:50
+      end: 08:20
+      at: bedroom_floor_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: laundry
+      start: 07:50
+      end: 08:20
+      at: bedroom_floor_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: walk
+      start: 08:20
+      end: 09:00
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: walk
+      start: 08:20
+      end: 09:00
+      at: ELSEWHERE
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: phone_time
+      start: 09:00
+      end: 09:20
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: gaming
+      start: 09:00
+      end: 09:55
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: hobby
+      start: 09:20
+      end: 09:55
+      at: couch_l1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: meal_prep
+      start: 09:55
+      end: '10:25'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: meal_prep
+      start: 09:55
+      end: '10:25'
+      at: counter_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: dinner
+      start: '10:25'
+      end: '10:55'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: dinner
+      start: '10:25'
+      end: '10:55'
+      at: kitchen_table_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: wash_dishes
+      start: '10:55'
+      end: '11:10'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: wash_dishes
+      start: '10:55'
+      end: '11:10'
+      at: sink_k1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: reading
+      start: '11:10'
+      end: '11:40'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: reading
+      start: '11:10'
+      end: '11:40'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: bedtime_routine
+      start: '11:40'
+      end: '21:00'
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: bedtime_routine
+      start: '11:40'
+      end: '20:00'
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_2
+      activity: night_sleep
+      start: '20:00'
+      end: 05:30
+      at: bed_b2
+      jitter: routine
+      skip_p: 0.0
+    - resident: resident_1
+      activity: night_sleep
+      start: '21:00'
+      end: 05:00
+      at: bed_b1
+      jitter: routine
+      skip_p: 0.0

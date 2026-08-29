@@ -1,0 +1,891 @@
+# GENERATED — per object: where it lives, how often it drifts,
+# and where it lands after each activity.
+object_rules:
+- object: phone_leena
+  cites: Phone is set down after returning home.
+  home: entry_table_e1
+  p_misplace: 0.3
+  rules:
+  - cites: Office return puts it by the entry bowl.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.78
+    - dest: person:resident_1
+      p: 0.22
+  - cites: Errand return usually reaches the entry bowl.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.83
+    - dest: person:resident_1
+      p: 0.17
+  - cites: Evening phone use leaves it at the sofa.
+    activity: phone_time
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.72
+    - dest: nightstand_b1
+      p: 0.28
+  - cites: Bedtime moves the alarm phone beside bed.
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.88
+    - dest: NO_OP
+      p: 0.12
+- object: keys_leena
+  cites: Keys belong in Leena's entry bowl.
+  home: entry_table_e1
+  p_misplace: 0.25
+  rules:
+  - cites: Work return clips keys back at entry.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.92
+    - dest: person:resident_1
+      p: 0.08
+  - cites: Walk return usually ends at the entry.
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.87
+    - dest: entry_floor_e1
+      p: 0.13
+  - cites: Groceries return leaves keys with bags briefly.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.76
+    - dest: counter_k1
+      p: 0.24
+  - cites: Tidying restores stray keys to the bowl.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: wallet_leena
+  cites: Wallet is kept with commuting essentials.
+  home: entry_table_e1
+  p_misplace: 0.2
+  rules:
+  - cites: Office return brings wallet back inside.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.62
+    - dest: kitchen_table_k1
+      p: 0.38
+  - cites: Shopping return leaves wallet near unpacking.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.55
+    - dest: entry_table_e1
+      p: 0.45
+  - cites: Gym return restores wallet with entry items.
+    activity: gym
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.81
+    - dest: person:resident_1
+      p: 0.19
+- object: laptop_leena
+  cites: Laptop is normally left on the dining table.
+  home: kitchen_table_k1
+  p_misplace: 0.18
+  rules:
+  - cites: Home work finishes with laptop on table.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.9
+    - dest: couch_l1
+      p: 0.1
+  - cites: Office day returns laptop to work surface.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.8
+    - dest: desk_b1
+      p: 0.2
+  - cites: Video calls leave it at the active seat.
+    activity: video_call
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.65
+    - dest: coffee_table_l1
+      p: 0.35
+  - cites: Tidying consolidates laptop at the table.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.94
+    - dest: NO_OP
+      p: 0.06
+- object: charger_leena
+  cites: Charger stays near table or bedside.
+  home: desk_b1
+  p_misplace: 0.14
+  rules:
+  - cites: Home work leaves cable at dining table.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.78
+    - dest: desk_b1
+      p: 0.22
+  - cites: Bedtime charging leaves it near bed.
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.61
+    - dest: NO_OP
+      p: 0.39
+  - cites: Office use returns charger with work gear.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.58
+    - dest: desk_b1
+      p: 0.42
+- object: backpack_leena
+  cites: Backpack is habitually parked beside dining table.
+  home: chair_k1
+  p_misplace: 0.28
+  rules:
+  - cites: Office commute ends with bag beside table.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.82
+    - dest: kitchen_table_k1
+      p: 0.18
+  - cites: Groceries return leaves bag by the entry.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.58
+    - dest: chair_k1
+      p: 0.42
+  - cites: Gym bag comes home to dining chair.
+    activity: gym
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.7
+    - dest: entry_floor_e1
+      p: 0.3
+  - cites: Tidying moves the bag to its chair.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.91
+    - dest: NO_OP
+      p: 0.09
+- object: jacket_leena
+  cites: Jacket is draped over a dining chair.
+  home: chair_k2
+  p_misplace: 0.17
+  rules:
+  - cites: Office return leaves jacket on chair.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: chair_k2
+      p: 0.75
+    - dest: entry_hook_e1
+      p: 0.25
+  - cites: Walk return hangs or drapes the jacket.
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.52
+    - dest: chair_k2
+      p: 0.48
+  - cites: Laundry finally returns jacket to bedroom storage.
+    activity: laundry
+    phase: after
+    dist:
+    - dest: bedroom_floor_b1
+      p: 0.7
+    - dest: chair_k2
+      p: 0.3
+- object: headphones_leena
+  cites: Headphones rest beside active laptop.
+  home: kitchen_table_k1
+  p_misplace: 0.22
+  rules:
+  - cites: Home work leaves headphones by laptop.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.77
+    - dest: couch_l1
+      p: 0.23
+  - cites: Music session leaves them on the sofa.
+    activity: music
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.84
+    - dest: coffee_table_l1
+      p: 0.16
+  - cites: Office day returns them to work area.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.66
+    - dest: chair_k1
+      p: 0.34
+- object: glasses_leena
+  cites: Glasses alternate between work surface and bedside.
+  home: nightstand_b1
+  p_misplace: 0.24
+  rules:
+  - cites: Reading ends with glasses by book.
+    activity: reading
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.54
+    - dest: coffee_table_l1
+      p: 0.46
+  - cites: Home work leaves glasses at laptop.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.81
+    - dest: nightstand_b1
+      p: 0.19
+  - cites: Office use returns glasses with bag contents.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.57
+    - dest: nightstand_b1
+      p: 0.43
+- object: notebook_leena
+  cites: Notebook remains open beside laptop overnight.
+  home: kitchen_table_k1
+  p_misplace: 0.25
+  rules:
+  - cites: Home work leaves notes open on table.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.93
+    - dest: coffee_table_l1
+      p: 0.07
+  - cites: Meal planning leaves notebook at counter.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.52
+    - dest: kitchen_table_k1
+      p: 0.48
+  - cites: Office notes come back to the table.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.86
+    - dest: chair_k1
+      p: 0.14
+- object: pen_leena
+  cites: Pen follows notebook and food labels.
+  home: kitchen_table_k1
+  p_misplace: 0.35
+  rules:
+  - cites: Meal prep leaves pen on the counter.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.64
+    - dest: kitchen_table_k1
+      p: 0.36
+  - cites: Work notes leave pen beside notebook.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.74
+    - dest: chair_k1
+      p: 0.26
+  - cites: Tidying reunites pen with table notes.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.82
+    - dest: NO_OP
+      p: 0.18
+- object: water_bottle_leena
+  cites: Bottle moves between desk work and bedside reading.
+  home: kitchen_table_k1
+  p_misplace: 0.18
+  rules:
+  - cites: Home work leaves bottle at desk table.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.91
+    - dest: counter_k1
+      p: 0.09
+  - cites: Reading shifts bottle toward bedside.
+    activity: reading
+    phase: after
+    dist:
+    - dest: nightstand_b1
+      p: 0.68
+    - dest: coffee_table_l1
+      p: 0.32
+  - cites: Office return sets bottle by the table.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.69
+    - dest: counter_k1
+      p: 0.31
+  - cites: Yoga leaves bottle near the sofa.
+    activity: hobby
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.46
+    - dest: kitchen_table_k1
+      p: 0.54
+- object: lunchbox_leena
+  cites: Lunchbox is packed or drying on counter.
+  home: counter_k1
+  p_misplace: 0.12
+  rules:
+  - cites: Meal prep leaves packed lunch at counter.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.88
+    - dest: kitchen_table_k1
+      p: 0.12
+  - cites: Office return leaves lunchbox for washing.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.65
+    - dest: counter_k1
+      p: 0.35
+  - cites: Dishwashing puts lunchbox on rack.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.78
+    - dest: NO_OP
+      p: 0.22
+- object: mug_leena
+  cites: Preferred tea mug is rinsed onto drying towel.
+  home: dish_rack_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Coffee ends with rinsed mug drying.
+    activity: coffee
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.92
+    - dest: sink_k1
+      p: 0.08
+  - cites: Breakfast tea mug is left to dry.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.86
+    - dest: kitchen_table_k1
+      p: 0.14
+  - cites: Reading tea leaves mug by sofa sometimes.
+    activity: reading
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.57
+    - dest: coffee_table_l1
+      p: 0.43
+- object: mug_shared_1
+  cites: Extra mug is used for guests or coffee.
+  home: cupboard_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Social visit leaves extra mug at sink.
+    activity: socialise_home
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.74
+    - dest: coffee_table_l1
+      p: 0.26
+  - cites: Dishwashing sends extra mug to rack.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.69
+    - dest: NO_OP
+      p: 0.31
+  - cites: Putting dishes away restores cabinet mug.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.9
+    - dest: NO_OP
+      p: 0.1
+- object: bowl_leena
+  cites: Bowl is used for breakfast and grain bowls.
+  home: cupboard_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Breakfast leaves bowl awaiting washing.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.71
+    - dest: counter_k1
+      p: 0.29
+  - cites: Batch cooking leaves bowl on counter.
+    activity: batch_cooking
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.67
+    - dest: sink_k1
+      p: 0.33
+  - cites: Putting dishes away returns bowl to cupboard.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.87
+    - dest: NO_OP
+      p: 0.13
+- object: plate_leena
+  cites: Plate stays near sink after meals.
+  home: cupboard_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Dinner leaves plate by the sink.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.83
+    - dest: kitchen_table_k1
+      p: 0.17
+  - cites: Snack plate is often left on counter.
+    activity: snack
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.59
+    - dest: sink_k1
+      p: 0.41
+  - cites: Washup places plate on drying rack.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.83
+    - dest: NO_OP
+      p: 0.17
+- object: pot_shared_1
+  cites: Pot supports larger batches and reheating.
+  home: cupboard_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Batch cooking leaves pot cooling at counter.
+    activity: batch_cooking
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.79
+    - dest: sink_k1
+      p: 0.21
+  - cites: Dinner cooking leaves pot ready to wash.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.56
+    - dest: counter_k1
+      p: 0.44
+  - cites: Washing returns pot to drying area.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.63
+    - dest: NO_OP
+      p: 0.37
+- object: pan_shared_1
+  cites: Pan is used for quick weekday cooking.
+  home: cupboard_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Dinner leaves pan on the counter to cool.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.62
+    - dest: sink_k1
+      p: 0.38
+  - cites: Breakfast cooking leaves pan for cleaning.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.49
+    - dest: counter_k1
+      p: 0.51
+  - cites: Deep clean returns pan to its cupboard.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.35
+    - dest: NO_OP
+      p: 0.65
+- object: book_leena
+  cites: Current book follows Leena between sofa and bed.
+  home: bookshelf_l1
+  p_misplace: 0.2
+  rules:
+  - cites: Reading leaves book at the current rest spot.
+    activity: reading
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.55
+    - dest: nightstand_b1
+      p: 0.45
+  - cites: Lie-down reading leaves book on bed.
+    activity: lie_down
+    phase: after
+    dist:
+    - dest: bed_b1
+      p: 0.63
+    - dest: couch_l1
+      p: 0.37
+  - cites: Tidying returns book to bookshelf sometimes.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: bookshelf_l1
+      p: 0.57
+    - dest: NO_OP
+      p: 0.43
+- object: remote_shared_1
+  cites: Remote remains around the television seating.
+  home: tv_stand_l1
+  p_misplace: 0.22
+  rules:
+  - cites: Television watching leaves remote on sofa.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.69
+    - dest: coffee_table_l1
+      p: 0.31
+  - cites: Relaxing leaves remote on the coffee table.
+    activity: relax
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.58
+    - dest: couch_l1
+      p: 0.42
+  - cites: Deep clean restores remote to TV stand.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: tv_stand_l1
+      p: 0.77
+    - dest: NO_OP
+      p: 0.23
+- object: blanket_leena
+  cites: Blanket is folded over the sofa arm.
+  home: armchair_l1
+  p_misplace: 0.12
+  rules:
+  - cites: Reading leaves blanket on sofa.
+    activity: reading
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.72
+    - dest: armchair_l1
+      p: 0.28
+  - cites: Television leaves blanket rumpled on couch.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.81
+    - dest: coffee_table_l1
+      p: 0.19
+  - cites: Tidying refolds blanket over the arm.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.84
+    - dest: NO_OP
+      p: 0.16
+- object: yoga_mat_leena
+  cites: Yoga mat is stored rolled beside sofa.
+  home: armchair_l1
+  p_misplace: 0.12
+  rules:
+  - cites: Hobby yoga may leave mat unrolled overnight.
+    activity: hobby
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.41
+    - dest: armchair_l1
+      p: 0.59
+  - cites: Deep cleaning rolls the mat aside.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.68
+    - dest: NO_OP
+      p: 0.32
+- object: laundry_basket_leena
+  cites: Laundry basket stays beside the bedroom closet.
+  home: bedroom_floor_b1
+  p_misplace: 0.1
+  rules:
+  - cites: Laundry leaves basket in bedroom after sorting.
+    activity: laundry
+    phase: after
+    dist:
+    - dest: bedroom_floor_b1
+      p: 0.88
+    - dest: bed_b1
+      p: 0.12
+  - cites: Deep clean puts basket back by closet.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: bedroom_floor_b1
+      p: 0.46
+    - dest: NO_OP
+      p: 0.54
+- object: towel_leena
+  cites: Bath towel is rehung after showering.
+  home: towel_rack_ba1
+  p_misplace: 0.1
+  rules:
+  - cites: Shower ends with towel on its rack.
+    activity: shower
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.94
+    - dest: bedroom_floor_b1
+      p: 0.06
+  - cites: Laundry returns a clean towel to bathroom.
+    activity: laundry
+    phase: after
+    dist:
+    - dest: towel_rack_ba1
+      p: 0.81
+    - dest: bed_b1
+      p: 0.19
+- object: vacuum_cleaner_shared_1
+  cites: Vacuum only comes out for deeper weekly cleaning.
+  home: entry_floor_e1
+  p_misplace: 0.1
+  rules:
+  - cites: Deep clean returns vacuum to storage.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.8
+    - dest: NO_OP
+      p: 0.2
+- object: watering_can_leena
+  cites: Watering can stores under the kitchen sink.
+  home: sink_k1
+  p_misplace: 0.1
+  rules:
+  - cites: Plant care returns can beneath sink.
+    activity: hobby
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.45
+    - dest: counter_k1
+      p: 0.55
+  - cites: Tidying puts watering can back under sink.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.63
+    - dest: NO_OP
+      p: 0.37
+- object: medication_bottle_leena
+  cites: Medication is kept in the bathroom cabinet area.
+  home: bathroom_shelf_ba1
+  p_misplace: 0.12
+  rules:
+  - cites: Daily medication returns bottle to shelf.
+    activity: take_medication
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.95
+    - dest: nightstand_b1
+      p: 0.05
+  - cites: Bedtime sometimes leaves medication beside bed.
+    activity: bedtime_routine
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.72
+    - dest: nightstand_b1
+      p: 0.28
+- object: hairbrush_leena
+  cites: Hairbrush moves between grooming shelf and dresser.
+  home: bathroom_shelf_ba1
+  p_misplace: 0.17
+  rules:
+  - cites: Getting ready leaves brush on bathroom shelf.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.76
+    - dest: desk_b1
+      p: 0.24
+  - cites: Shower grooming leaves brush near bathroom.
+    activity: shower
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.67
+    - dest: bedroom_floor_b1
+      p: 0.33
+- object: makeup_kit_leena
+  cites: Makeup kit returns to bathroom drawer area.
+  home: bathroom_shelf_ba1
+  p_misplace: 0.16
+  rules:
+  - cites: Getting ready restores makeup to bathroom.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.83
+    - dest: kitchen_table_k1
+      p: 0.17
+  - cites: Work return leaves kit in its bag sometimes.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.59
+    - dest: chair_k1
+      p: 0.41
+- object: suitcase_leena
+  cites: Suitcase is stored beneath Leena's bed.
+  home: bed_b1
+  p_misplace: 0.1
+  rules:
+  - cites: Laundry can leave suitcase accessible for packing.
+    activity: laundry
+    phase: after
+    dist:
+    - dest: bed_b1
+      p: 0.24
+    - dest: NO_OP
+      p: 0.76
+  - cites: Tidying pushes suitcase back under bed.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: bed_b1
+      p: 0.36
+    - dest: NO_OP
+      p: 0.64
+- object: umbrella_leena
+  cites: Umbrella dries by entry or stays in bag.
+  home: entry_floor_e1
+  p_misplace: 0.21
+  rules:
+  - cites: Office return leaves umbrella drying at entry.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.48
+    - dest: chair_k1
+      p: 0.52
+  - cites: Walk return puts umbrella by the door.
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.73
+    - dest: entry_hook_e1
+      p: 0.27
+  - cites: Tidying hangs a dry umbrella at entry.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.61
+    - dest: NO_OP
+      p: 0.39

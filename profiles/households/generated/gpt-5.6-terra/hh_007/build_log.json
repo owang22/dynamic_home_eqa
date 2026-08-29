@@ -1,0 +1,145 @@
+{
+  "household": "hh_007",
+  "household_type": "college_roommates",
+  "archetype": "college_roommates",
+  "overlay": null,
+  "variant": 1,
+  "wave": "wave1",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 8512787850614209633,
+  "persona_reasoning": "Three college roommates in a compact off-campus apartment, with two primarily student-focused residents and one student balancing classes with a fixed-evening retail food-service job.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 3443788074248812087,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 10247,
+          "completion_tokens": 14836,
+          "total_tokens": 25083,
+          "prompt_tokens_details": {
+            "cached_tokens": 5986,
+            "cache_write_tokens": 4258,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.1877512
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 11446326516127385443,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 18150,
+          "completion_tokens": 14894,
+          "total_tokens": 33044,
+          "prompt_tokens_details": {
+            "cached_tokens": 5986,
+            "cache_write_tokens": 12161,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.20425320000000002
+      }
+    },
+    {
+      "resident": "resident_3",
+      "seed": 5309906511236646646,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 26093,
+          "completion_tokens": 12618,
+          "total_tokens": 38711,
+          "prompt_tokens_details": {
+            "cached_tokens": 5986,
+            "cache_write_tokens": 20104,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.1928272
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 3268092400753573916,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Mara resets her work and kitchen items promptly, while Leo's media gear, dishes, bag, and keys drift through the living room and entry. Sofia keeps personal grooming and medication supplies private, but her packed work items return to the kitchen after trips. Shared cookware cycles through table, sink, rack, and cupboards; periodic tidying and cleaning reset clutter.",
+      "failures": [],
+      "uncovered_at_home": [
+        "lie_down",
+        "shower",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 21010,
+          "completion_tokens": 7329,
+          "total_tokens": 28339,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 21007,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 240,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.129968
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $0.7554 of $1.50 cap across 5 call(s) [gpt-5.6-terra: $0.7554 (5 calls)]"
+  },
+  "uncovered_at_home": [
+    "lie_down",
+    "shower",
+    "wake_up"
+  ],
+  "attribute_advisories": [
+    "resident_2: wake_median_abs_dev = 323 min (proposed cap 45)",
+    "resident_3: work_start_median_abs_dev = 56 min (proposed cap 45)",
+    "resident_3: wake_median_abs_dev = 226 min (proposed cap 45)"
+  ]
+}

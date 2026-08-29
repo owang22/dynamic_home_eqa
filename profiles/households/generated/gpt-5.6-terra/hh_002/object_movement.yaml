@@ -1,0 +1,890 @@
+# GENERATED — per object: where it lives, how often it drifts,
+# and where it lands after each activity.
+object_rules:
+- object: glasses_elena
+  cites: Elena keeps them beside her book.
+  home: reading_table_l1
+  p_misplace: 0.12
+  rules:
+  - cites: Reading ends with glasses by her chair.
+    activity: reading
+    phase: after
+    dist:
+    - dest: reading_table_l1
+      p: 0.8
+    - dest: armchair_l1
+      p: 0.2
+  - cites: Appointments return the case to her side table.
+    activity: appointment
+    phase: after
+    dist:
+    - dest: reading_table_l1
+      p: 0.85
+    - dest: NO_OP
+      p: 0.15
+- object: book_elena
+  cites: Her current novel stays in the living room.
+  home: reading_table_l1
+  p_misplace: 0.1
+  rules:
+  - cites: Reading leaves the novel at the chair or table.
+    activity: reading
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.55
+    - dest: reading_table_l1
+      p: 0.45
+  - cites: Errands bring the tote book back inside.
+    activity: errands
+    phase: after
+    dist:
+    - dest: reading_table_l1
+      p: 0.7
+    - dest: armchair_l1
+      p: 0.3
+- object: mug_elena
+  cites: Elena rinses her tea mug immediately.
+  home: cupboard_k1
+  rules:
+  - cites: Coffee ends with the mug rinsed or awaiting rinse.
+    activity: coffee
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.8
+    - dest: armchair_l1
+      p: 0.2
+  - cites: Dishwashing returns the mug toward storage.
+    activity: wash_dishes
+    phase: after
+    dist:
+    - dest: dish_rack_k1
+      p: 0.65
+    - dest: cupboard_k1
+      p: 0.35
+- object: blanket_elena
+  cites: Her lap blanket belongs over the armchair.
+  home: armchair_l1
+  rules:
+  - cites: Relaxing sometimes carries it to the sofa.
+    activity: relax
+    phase: after
+    dist:
+    - dest: armchair_l1
+      p: 0.65
+    - dest: couch_l1
+      p: 0.35
+- object: medication_bottle_elena_1
+  cites: Medicine is sorted on the counter then cabinet.
+  home: medicine_cabinet_ba1
+  rules:
+  - cites: Taking medication leaves the bottle out briefly.
+    activity: take_medication
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.35
+    - dest: medicine_cabinet_ba1
+      p: 0.65
+- object: notebook_elena
+  cites: Her reminder notebook stays by the charger.
+  home: counter_k1
+  p_misplace: 0.12
+  rules:
+  - cites: Groceries return the list from her tote.
+    activity: groceries
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: kitchen_table_k1
+      p: 0.3
+  - cites: Tidy-up puts the list beside the charger.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.85
+    - dest: NO_OP
+      p: 0.15
+- object: watering_can_elena
+  cites: Plant watering leaves it by the back-door area.
+  home: entry_floor_e1
+  rules:
+  - cites: Hobby time includes tending the plants.
+    activity: hobby
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.75
+    - dest: counter_k1
+      p: 0.25
+- object: phone_elena
+  cites: Elena's phone usually rests on the side table.
+  home: reading_table_l1
+  p_misplace: 0.22
+  rules:
+  - cites: Phone time ends at her reading table.
+    activity: phone_time
+    phase: after
+    dist:
+    - dest: reading_table_l1
+      p: 0.75
+    - dest: armchair_l1
+      p: 0.25
+  - cites: Walking returns her phone from a pocket.
+    activity: walk
+    phase: after
+    dist:
+    - dest: reading_table_l1
+      p: 0.7
+    - dest: NO_OP
+      p: 0.3
+- object: keys_elena
+  cites: Her wrist-loop keys belong in the entry bowl.
+  home: entry_table_e1
+  p_misplace: 0.18
+  rules:
+  - cites: An appointment ends with keys at the entry.
+    activity: appointment
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.85
+    - dest: counter_k1
+      p: 0.15
+- object: wallet_elena
+  cites: Her wallet returns to the bedroom drawer area.
+  home: desk_b1
+  p_misplace: 0.14
+  rules:
+  - cites: Errands bring the wallet home in her tote.
+    activity: errands
+    phase: after
+    dist:
+    - dest: desk_b1
+      p: 0.75
+    - dest: entry_table_e1
+      p: 0.25
+- object: laptop_marco
+  cites: Marco stores the laptop in the main bedroom.
+  home: desk_b2
+  p_misplace: 0.1
+  rules:
+  - cites: Home work leaves it on the bedroom desk.
+    activity: work_home
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.8
+    - dest: kitchen_table_k1
+      p: 0.2
+  - cites: Video calls use the laptop in the living room.
+    activity: video_call
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.65
+    - dest: armchair_l1
+      p: 0.35
+- object: phone_marco
+  cites: Marco leaves his phone by the sofa or counter.
+  home: coffee_table_l1
+  p_misplace: 0.3
+  rules:
+  - cites: Work returns his pocket phone indoors.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.55
+    - dest: counter_k1
+      p: 0.45
+  - cites: Watching television leaves it by the sofa.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.8
+    - dest: couch_l1
+      p: 0.2
+- object: keys_marco
+  cites: Marco misses the entry bowl sometimes.
+  home: entry_table_e1
+  p_misplace: 0.35
+  rules:
+  - cites: Work homecoming drops keys by entry or kitchen.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.55
+    - dest: counter_k1
+      p: 0.45
+- object: wallet_marco
+  cites: His wallet is kept on the bedroom dresser.
+  home: desk_b2
+  p_misplace: 0.26
+  rules:
+  - cites: Work returns the wallet from his back pocket.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: desk_b2
+      p: 0.7
+    - dest: entry_table_e1
+      p: 0.3
+- object: backpack_marco
+  cites: His packed work bag waits at the entry.
+  home: entry_floor_e1
+  p_misplace: 0.16
+  rules:
+  - cites: Work brings the backpack back to the entry.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.85
+    - dest: chair_k1
+      p: 0.15
+- object: lunchbox_marco
+  cites: Marco's lunchbox is filled on the counter.
+  home: cupboard_k1
+  p_misplace: 0.12
+  rules:
+  - cites: Meal prep leaves his lunchbox ready to pack.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: person:resident_2
+      p: 0.3
+  - cites: Work returns the lunchbox to the kitchen.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.65
+    - dest: counter_k1
+      p: 0.35
+- object: water_bottle_marco
+  cites: His bottle is refilled at the sink.
+  home: counter_k1
+  p_misplace: 0.18
+  rules:
+  - cites: Work brings the bottle back for refilling.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.75
+    - dest: counter_k1
+      p: 0.25
+- object: jacket_marco
+  cites: His work jacket airs on a dining chair.
+  home: entry_hook_e1
+  p_misplace: 0.18
+  rules:
+  - cites: Work homecoming leaves the jacket airing.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: chair_k1
+      p: 0.65
+    - dest: entry_hook_e1
+      p: 0.35
+- object: phone_priya
+  cites: Priya's phone is used for family coordination.
+  home: counter_k1
+  p_misplace: 0.28
+  rules:
+  - cites: Her shift returns the phone to kitchen or bedside.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: nightstand_b2
+      p: 0.3
+- object: keys_priya
+  cites: Priya sets her keys in the entry bowl.
+  home: entry_table_e1
+  p_misplace: 0.16
+  rules:
+  - cites: Work ends with keys returned at entry.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.9
+    - dest: counter_k1
+      p: 0.1
+- object: wallet_priya
+  cites: Her wallet stays in backpack or drawer.
+  home: desk_b2
+  p_misplace: 0.2
+  rules:
+  - cites: Work brings the wallet back in her backpack.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.55
+    - dest: desk_b2
+      p: 0.45
+- object: backpack_priya
+  cites: Priya's work backpack rests by entry.
+  home: entry_floor_e1
+  p_misplace: 0.15
+  rules:
+  - cites: Her bakery shift returns the bag by the door.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.9
+    - dest: chair_k2
+      p: 0.1
+- object: lunchbox_priya
+  cites: Her lunchbox is packed at the counter.
+  home: cupboard_k1
+  p_misplace: 0.11
+  rules:
+  - cites: Meal prep packs Priya's lunchbox.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.6
+    - dest: person:resident_3
+      p: 0.4
+  - cites: Work returns the lunchbox for washing.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.75
+    - dest: counter_k1
+      p: 0.25
+- object: water_bottle_priya
+  cites: Her bottle is left beside the sink.
+  home: sink_k1
+  p_misplace: 0.17
+  rules:
+  - cites: Her shift returns the bottle for a refill.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.85
+    - dest: counter_k1
+      p: 0.15
+- object: jacket_priya
+  cites: Her bakery jacket hangs by the entry.
+  home: entry_hook_e1
+  p_misplace: 0.12
+  rules:
+  - cites: Work ends with the jacket on its hook.
+    activity: work_away
+    phase: after
+    dist:
+    - dest: entry_hook_e1
+      p: 0.9
+    - dest: entry_floor_e1
+      p: 0.1
+- object: makeup_kit_priya
+  cites: Priya's makeup shifts from dresser to bathroom.
+  home: desk_b2
+  p_misplace: 0.2
+  rules:
+  - cites: Getting ready leaves the kit by mirror or dresser.
+    activity: get_ready
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.55
+    - dest: desk_b2
+      p: 0.45
+- object: hairbrush_priya
+  cites: Her brush is often left in the shared bathroom.
+  home: desk_b2
+  p_misplace: 0.22
+  rules:
+  - cites: Showering leaves the brush on bathroom shelf.
+    activity: shower
+    phase: after
+    dist:
+    - dest: bathroom_shelf_ba1
+      p: 0.7
+    - dest: desk_b2
+      p: 0.3
+- object: notebook_priya
+  cites: Planning notes sit on table or counter.
+  home: kitchen_table_k1
+  p_misplace: 0.22
+  rules:
+  - cites: Batch cooking leaves planning notes on the table.
+    activity: batch_cooking
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.75
+    - dest: counter_k1
+      p: 0.25
+- object: laptop_sofia
+  cites: Sofia keeps her laptop at her desk.
+  home: desk_b3
+  p_misplace: 0.15
+  rules:
+  - cites: Study returns the laptop to her desk.
+    activity: study
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.9
+    - dest: bed_b3
+      p: 0.1
+  - cites: School brings laptop back in the school bag.
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.75
+    - dest: kitchen_table_k1
+      p: 0.25
+- object: phone_sofia
+  cites: Sofia charges her phone beside her bed.
+  home: nightstand_b3
+  p_misplace: 0.3
+  rules:
+  - cites: Wake-up takes the phone off the nightstand.
+    activity: wake_up
+    phase: after
+    dist:
+    - dest: person:resident_4
+      p: 0.65
+    - dest: desk_b3
+      p: 0.35
+  - cites: School returns her phone to her room.
+    activity: school
+    phase: after
+    dist:
+    - dest: nightstand_b3
+      p: 0.6
+    - dest: desk_b3
+      p: 0.4
+- object: keys_sofia
+  cites: Her keys stay in her backpack pocket.
+  home: desk_b3
+  p_misplace: 0.18
+  rules:
+  - cites: School returns keys with the backpack.
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.8
+    - dest: entry_table_e1
+      p: 0.2
+- object: backpack_sofia
+  cites: Her school bag rests beside the desk.
+  home: desk_b3
+  p_misplace: 0.18
+  rules:
+  - cites: School ends with the backpack by her desk.
+    activity: school
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.8
+    - dest: kitchen_table_k1
+      p: 0.2
+- object: water_bottle_sofia
+  cites: Sofia's bottle is filled at the kitchen sink.
+  home: sink_k1
+  p_misplace: 0.18
+  rules:
+  - cites: School returns the bottle to refill.
+    activity: school
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.7
+    - dest: desk_b3
+      p: 0.3
+- object: headphones_sofia
+  cites: Her headphones form part of the desk cluster.
+  home: desk_b3
+  p_misplace: 0.22
+  rules:
+  - cites: Music leaves headphones at desk or bed.
+    activity: music
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.65
+    - dest: bed_b3
+      p: 0.35
+- object: notebook_sofia
+  cites: Her notebook moves between desk and dining table.
+  home: desk_b3
+  p_misplace: 0.2
+  rules:
+  - cites: Homework leaves Sofia's notebook at the work surface.
+    activity: homework
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.55
+    - dest: desk_b3
+      p: 0.45
+- object: pen_sofia
+  cites: Her gel pen belongs with notebook or desk.
+  home: desk_b3
+  p_misplace: 0.32
+  rules:
+  - cites: Tidy-up returns school pens to bags or desks.
+    activity: tidy_up
+    phase: after
+    dist:
+    - dest: desk_b3
+      p: 0.6
+    - dest: person:resident_4
+      p: 0.4
+- object: jacket_sofia
+  cites: Sofia drapes her jacket over desk chair.
+  home: chair_k2
+  p_misplace: 0.2
+  rules:
+  - cites: School returns her jacket to the chair or entry.
+    activity: school
+    phase: after
+    dist:
+    - dest: chair_k2
+      p: 0.7
+    - dest: entry_hook_e1
+      p: 0.3
+- object: gaming_controller_sofia
+  cites: Sofia hides her controller under a sofa cushion.
+  home: game_shelf_l1
+  p_misplace: 0.2
+  rules:
+  - cites: Gaming ends with her controller concealed nearby.
+    activity: gaming
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.8
+    - dest: game_shelf_l1
+      p: 0.2
+- object: phone_leo
+  cites: Leo's phone charges on the kitchen counter.
+  home: counter_k1
+  p_misplace: 0.35
+  rules:
+  - cites: School returns Leo's phone with his things.
+    activity: school
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.6
+    - dest: person:resident_2
+      p: 0.4
+- object: keys_leo
+  cites: His child-safe keys are attached inside his bag.
+  home: entry_table_e1
+  p_misplace: 0.25
+  rules:
+  - cites: School returns the keys with Leo's backpack.
+    activity: school
+    phase: after
+    dist:
+    - dest: entry_table_e1
+      p: 0.45
+    - dest: person:resident_5
+      p: 0.55
+- object: backpack_leo
+  cites: Leo drops his school bag by the entry.
+  home: entry_floor_e1
+  p_misplace: 0.3
+  rules:
+  - cites: School ends with the backpack dumped at entry.
+    activity: school
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.8
+    - dest: kitchen_table_k1
+      p: 0.2
+- object: lunchbox_leo
+  cites: Leo's lunchbox is packed on the counter.
+  home: cupboard_k1
+  p_misplace: 0.2
+  rules:
+  - cites: School returns the lunchbox dirty to the kitchen.
+    activity: school
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.7
+    - dest: counter_k1
+      p: 0.3
+- object: water_bottle_leo
+  cites: Leo's bottle travels in his backpack pocket.
+  home: sink_k1
+  p_misplace: 0.26
+  rules:
+  - cites: School returns his bottle for filling.
+    activity: school
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.75
+    - dest: kitchen_table_k1
+      p: 0.25
+- object: tablet_leo
+  cites: Leo carries the tablet between sofa and table.
+  home: coffee_table_l1
+  p_misplace: 0.32
+  rules:
+  - cites: Play time leaves the tablet in the common room.
+    activity: play_with_kids
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.55
+    - dest: kitchen_table_k1
+      p: 0.45
+  - cites: Long travel returns the tablet from an adult bag.
+    activity: traveling
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.6
+    - dest: person:resident_2
+      p: 0.4
+- object: toy_leo_1
+  cites: Leo spreads toy cars and figures across the rug.
+  home: toy_chest_l1
+  rules:
+  - cites: Play leaves some toys out and some stored.
+    activity: play_with_kids
+    phase: after
+    dist:
+    - dest: couch_l1
+      p: 0.65
+    - dest: toy_chest_l1
+      p: 0.35
+- object: blanket_leo
+  cites: Leo carries his blanket between bed and sofa.
+  home: bed_b4
+  rules:
+  - cites: Reading moves his blanket to bed or sofa.
+    activity: reading
+    phase: after
+    dist:
+    - dest: bed_b4
+      p: 0.5
+    - dest: couch_l1
+      p: 0.5
+- object: notebook_leo
+  cites: Leo leaves homework pages across the table.
+  home: desk_b4
+  p_misplace: 0.3
+  rules:
+  - cites: Homework leaves his notebook on the dining table.
+    activity: homework
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.8
+    - dest: person:resident_5
+      p: 0.2
+- object: pen_leo
+  cites: Leo leaves washable pens among his papers.
+  home: desk_b4
+  p_misplace: 0.4
+  rules:
+  - cites: Homework scatters the pen at his work area.
+    activity: homework
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.7
+    - dest: bedroom_floor_b4
+      p: 0.3
+- object: jacket_leo
+  cites: Leo drops his jacket near the entry.
+  home: entry_hook_e1
+  p_misplace: 0.32
+  rules:
+  - cites: School ends with the jacket on floor or hook.
+    activity: school
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.65
+    - dest: entry_hook_e1
+      p: 0.35
+- object: remote_shared_1
+  cites: The family remote moves among sofa, table, and floor.
+  home: tv_stand_l1
+  p_misplace: 0.3
+  rules:
+  - cites: Television viewing leaves the remote nearby.
+    activity: watch_tv
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.5
+    - dest: couch_l1
+      p: 0.5
+- object: gaming_controller_shared_1
+  cites: The shared controller is left by television or sofa.
+  home: game_shelf_l1
+  p_misplace: 0.3
+  rules:
+  - cites: Leo leaves the shared controller near the screen.
+    activity: gaming
+    phase: after
+    dist:
+    - dest: bedroom_floor_b4
+      p: 0.15
+    - dest: tv_stand_l1
+      p: 0.85
+- object: charger_shared_1
+  cites: The shared cable is normally beside the sofa.
+  home: coffee_table_l1
+  p_misplace: 0.18
+  rules:
+  - cites: Phone use leaves the cable at sofa or bedside.
+    activity: phone_time
+    phase: after
+    dist:
+    - dest: coffee_table_l1
+      p: 0.75
+    - dest: nightstand_b3
+      p: 0.25
+- object: bowl_shared_1
+  cites: The snack bowl moves from table or sofa to sink.
+  home: cupboard_k1
+  rules:
+  - cites: Breakfast leaves the bowl at table or sink.
+    activity: breakfast
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.55
+    - dest: sink_k1
+      p: 0.45
+  - cites: Snack use sometimes carries the bowl to sofa.
+    activity: snack
+    phase: after
+    dist:
+    - dest: sink_k1
+      p: 0.45
+    - dest: coffee_table_l1
+      p: 0.55
+- object: plate_shared_1
+  cites: Dinner plates move from table toward washing.
+  home: cupboard_k1
+  rules:
+  - cites: Dinner leaves the plate on table or sink.
+    activity: dinner
+    phase: after
+    dist:
+    - dest: kitchen_table_k1
+      p: 0.45
+    - dest: sink_k1
+      p: 0.55
+  - cites: Putting dishes away returns the plate to cupboard.
+    activity: put_away_dishes
+    phase: after
+    dist:
+    - dest: cupboard_k1
+      p: 0.85
+    - dest: dish_rack_k1
+      p: 0.15
+- object: pot_shared_1
+  cites: The soup pot cools on the counter.
+  home: cupboard_k1
+  rules:
+  - cites: Batch cooking leaves the pot cooling or stored.
+    activity: batch_cooking
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.7
+    - dest: cupboard_k1
+      p: 0.3
+- object: pan_shared_1
+  cites: Marco often leaves the frying pan on the stove.
+  home: cupboard_k1
+  rules:
+  - cites: Meal prep leaves the pan out briefly.
+    activity: meal_prep
+    phase: after
+    dist:
+    - dest: counter_k1
+      p: 0.55
+    - dest: sink_k1
+      p: 0.45
+- object: vacuum_cleaner_shared_1
+  cites: Marco uses the vacuum for hall and rug debris.
+  home: entry_floor_e1
+  rules:
+  - cites: Deep cleaning returns the vacuum to storage area.
+    activity: deep_clean
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.2
+    - dest: NO_OP
+      p: 0.8
+- object: laundry_basket_shared_1
+  cites: The basket collects bedroom and bathroom clothing.
+  home: bedroom_floor_b2
+  rules:
+  - cites: Laundry leaves the basket in the main bedroom area.
+    activity: laundry
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.65
+    - dest: bedroom_floor_b1
+      p: 0.35
+- object: umbrella_shared_1
+  cites: The shared umbrella stands near the entry.
+  home: entry_hook_e1
+  p_misplace: 0.16
+  rules:
+  - cites: Walking returns the umbrella wet to entry.
+    activity: walk
+    phase: after
+    dist:
+    - dest: entry_floor_e1
+      p: 0.35
+    - dest: NO_OP
+      p: 0.65
+- object: suitcase_shared_1
+  cites: The family suitcase is stored between overnight trips.
+  home: bedroom_floor_b2
+  rules:
+  - cites: Traveling returns the suitcase to the main bedroom.
+    activity: traveling
+    phase: after
+    dist:
+    - dest: bedroom_floor_b2
+      p: 0.65
+    - dest: entry_floor_e1
+      p: 0.35
+  - cites: Social visits rarely require the suitcase.
+    activity: socialise_home
+    phase: after
+    dist:
+    - dest: NO_OP
+      p: 0.85
+    - dest: bedroom_floor_b2
+      p: 0.15

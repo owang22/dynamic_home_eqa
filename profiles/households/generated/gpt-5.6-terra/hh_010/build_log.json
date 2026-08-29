@@ -1,0 +1,207 @@
+{
+  "household": "hh_010",
+  "household_type": "family_teen_and_child",
+  "archetype": "family_teen_and_child",
+  "overlay": null,
+  "variant": 1,
+  "wave": "wave1",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 3138142750822975403,
+  "persona_reasoning": "A four-person family with two fixed-daytime working adults, a high-school student, and an elementary-school child. The inventory emphasizes school and work carry items, shared kitchen cleanup, and a modest amount of recreation without adding objects outside the allowed vocabulary.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 12062880842051294087,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 11177,
+          "completion_tokens": 15626,
+          "total_tokens": 26803,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 11174,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.209866
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 10139922145957362610,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 19506,
+          "completion_tokens": 15356,
+          "total_tokens": 34862,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 19503,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.223284
+      }
+    },
+    {
+      "resident": "resident_3",
+      "seed": 16193376150787292523,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 27750,
+          "completion_tokens": 15227,
+          "total_tokens": 42977,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 27747,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.238224
+      }
+    },
+    {
+      "resident": "resident_4",
+      "seed": 15830954615839290122,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 35863,
+          "completion_tokens": 15319,
+          "total_tokens": 51182,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 35860,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.255554
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 883747732895395191,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Trips return each person's carried essentials to their habitual landing zones: Nikhil resets entry items, Marisol leaves her bag by a chair, Tessa drops hers by her door, and Owen's school things collect at the entry or kitchen. Kitchen and table activities leave dishes, bottles, mugs, and papers out until cleanup; reading, games, and screen time spread books, blankets, toys, remotes, and controllers through the living room. Bathroom routines expose Marisol's grooming items, while laundry, deep cleaning, and tidy-up supply the household's periodic resets.",
+      "failures": [
+        "coverage: 8 of 32 at-home story activities appear in no object rule (['lie_down', 'lunch', 'socialise_home', 'take_medication', 'take_out_bins', 'tidy_up']...; tolerance 4.8)"
+      ],
+      "uncovered_at_home": [
+        "lie_down",
+        "lunch",
+        "socialise_home",
+        "take_medication",
+        "take_out_bins",
+        "tidy_up",
+        "wake_up",
+        "wash_dishes"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 25556,
+          "completion_tokens": 5943,
+          "total_tokens": 31499,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 25553,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 260,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.122428
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 14924554589896516723,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Commute and school gear returns through the entry, work alcove, dining table, or bedroom desks; carried essentials have homecoming rules for their owners' trips. Meals concentrate dishes at the sink or counter, schoolwork spreads across the dining table, and evening recreation shifts books, blankets, toys, remotes, and controllers onto the sofa. The adults' cleanup, laundry, and tidying routines restore kitchenware, bags, toys, and household equipment, while several child items reliably remain in shared spaces until prompted.",
+      "failures": [],
+      "uncovered_at_home": [
+        "lie_down",
+        "take_medication"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 25663,
+          "completion_tokens": 9040,
+          "total_tokens": 34703,
+          "prompt_tokens_details": {
+            "cached_tokens": 19805,
+            "cache_write_tokens": 5855,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 298,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.124157
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $1.2240 of $1.50 cap across 7 call(s) [gpt-5.6-terra: $1.2240 (7 calls)]"
+  },
+  "uncovered_at_home": [
+    "lie_down",
+    "take_medication"
+  ],
+  "attribute_advisories": [
+    "resident_2: work_start_median_abs_dev = 74 min (proposed cap 45)"
+  ]
+}

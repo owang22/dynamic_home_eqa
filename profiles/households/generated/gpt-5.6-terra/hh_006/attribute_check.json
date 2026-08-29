@@ -1,0 +1,43 @@
+{
+  "household": "hh_006",
+  "household_type": "working_professional_solo__irregular_gig",
+  "archetype": "working_professional_solo",
+  "overlay": "irregular_gig",
+  "variant": 1,
+  "days": 28,
+  "proposed_thresholds": {
+    "work_start_median_abs_dev_min": 45,
+    "work_end_median_abs_dev_min": 60,
+    "gig_dev_min": 120,
+    "wake_median_abs_dev_min": 45,
+    "workday_out_span_coverage": 0.8,
+    "shifts_per_week": [
+      4,
+      6
+    ],
+    "gig_days_per_week": [
+      3,
+      5
+    ]
+  },
+  "residents": {
+    "resident_1": {
+      "schedule_type": "irregular_gig",
+      "role": "adult",
+      "wfh": false,
+      "sleep_min_mean": 447,
+      "shifts_per_week": 3.5,
+      "declared_work": [
+        400,
+        400
+      ],
+      "work_start_median_abs_dev": 28,
+      "work_end_median_abs_dev": 620,
+      "wake_workday_median_abs_dev": 6,
+      "wake_dayoff_median_abs_dev": 6
+    }
+  },
+  "advisories": [
+    "resident_1: work_end_median_abs_dev = 620 min (proposed cap 120)"
+  ]
+}

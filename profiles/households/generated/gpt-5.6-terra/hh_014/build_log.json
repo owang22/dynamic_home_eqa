@@ -1,0 +1,91 @@
+{
+  "household": "hh_014",
+  "household_type": "single_adult_wfh",
+  "archetype": "single_adult_wfh",
+  "overlay": null,
+  "variant": 1,
+  "wave": "wave1",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 10981071712259729021,
+  "persona_reasoning": "Single adult household centered on a full-time remote tech worker, with a compact but lived-in inventory that supports work, cooking, exercise, reading, and occasional trips out.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 16128492995695645122,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 8982,
+          "completion_tokens": 14558,
+          "total_tokens": 23540,
+          "prompt_tokens_details": {
+            "cached_tokens": 5942,
+            "cache_write_tokens": 3037,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.1819644
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 1061629095420832520,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Mara\u2019s remote work repeatedly spreads her laptop, notes, pen, glasses, favorite mug, bottle and charger between the office desk and dining table; tidy-up pulls much of that visible project material back to the desk. Meals and cooking cycle dishes and cookware through table/counter, sink, rack and cupboards. Living-room leisure leaves reading, television, gaming and yoga things around the couch. Her purposeful trips return the core carry set to entry or work locations, while showers, laundry, medication and plant care create smaller stable routines.",
+      "failures": [],
+      "uncovered_at_home": [
+        "pet_care",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 15378,
+          "completion_tokens": 6172,
+          "total_tokens": 21550,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 15375,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 255,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.10482
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $0.3154 of $1.50 cap across 3 call(s) [gpt-5.6-terra: $0.3154 (3 calls)]"
+  },
+  "uncovered_at_home": [
+    "pet_care",
+    "wake_up"
+  ],
+  "attribute_advisories": [
+    "resident_1: wake_median_abs_dev = 49 min (proposed cap 45)"
+  ]
+}

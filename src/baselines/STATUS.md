@@ -1,5 +1,129 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-08-27, later: patrol volume reported, routine oracle, recency strata, smoothed recency)
+
+Four additions closing out the classical-baseline side. Three are
+evaluation infrastructure reused by everything downstream; the fourth is
+one belief model, and it did not win.
+
+**Patrol comparison now reports observation volume.** `build_patrol_section`
+attached each schedule's realized `stream_stats` (visits and sightings per
+day among them). This was needed because the section claimed to hold
+everything but the route fixed while `morning_evening_sweep` and
+`stationed_observer` ignore `visits_per_day` and generate their own visit
+counts — so route and volume moved together and no difference was
+attributable. On hh4 at a nominal 6 visits/day the realized counts are
+`random_room_walk` 6.0, `round_robin_patrol` 6.0, `follow_the_person` 9.5,
+`stationed_observer` 13.3, `morning_evening_sweep` 14.0 — a 2.3x spread.
+The viewer plots mean accuracy against realized visits/day, so
+same-x comparisons isolate the route and different-x ones do not.
+Plotting rather than subsampling: thinning a full sweep or a stationed
+observer destroys the structure those schedules exist to model, so the
+compared objects would stop being the named schedules.
+
+**Monte-Carlo routine oracle** (`routine_oracle.py`). The storyfirst
+pipeline separates authorship from realization — an LLM writes the story
+days and probabilistic movement rules into `program.yaml` once, and a
+seeded local simulator turns them into a timeline. All the object-position
+randomness (misplace draws, rule destination draws, tidy races, activity
+skips, jitter, bout fragmentation) is realization randomness. The oracle
+re-realizes the same program at seeds 1..N (seed 0 excluded: it is the
+bank's own world) and answers each question with the modal receptacle
+across realizations. That is perfect routine knowledge with zero
+observations, and it needed no simulator reimplementation. Verified the
+seed-0 re-realization reproduces the shipped `hourly.csv` byte-for-byte
+and every event field the truth loader reads.
+
+Fleet mean 0.718. Headroom (oracle minus best model) per visits/day:
+
+    1      2      3      4      6      8     12     24
+    +0.254 +0.201 +0.164 +0.142 +0.083 +0.052 -0.000 -0.096
+
+The oracle is a diagnostic, not a competitor, and NOT a hard ceiling: it
+sees no observations, so a model with a fresh sighting can beat it, which
+is what the negative values from 12 visits/day up are. Positive headroom
+is residual error explainable by routine knowledge alone; negative
+headroom means recency is carrying the load instead. It renders as a
+dashed gray reference line, never in the model palette.
+
+**Seed count is 800, set from a measurement.** Eight INDEPENDENT 200-seed
+blocks per household put the per-household sd of oracle accuracy at
+0.003-0.008 (worst hh7 0.0080, hh2 0.0076). Since sd falls as
+1/sqrt(seeds), 800 seeds put every household at sd <= 0.004 — 2 sd of
+0.008, inside the 0.02 this fleet treats as noise. Realized disjoint-half
+deltas at 800 seeds: worst 0.0105 (hh10), median 0.0031. A realization
+costs ~0.02 s, so 800 seeds is ~16 s per household.
+
+Two corrections recorded because both changed conclusions mid-run. (1)
+The first stability check compared the full estimate against its own
+first half — a subset of itself at half the sample — so it reported the
+prefix's noise, not the estimate's. It flagged hh7 as unstable at 50 AND
+at 100 seeds when the 50-seed value was the outlier and the 100-seed one
+sat within 0.005 of its plateau. The check is now two DISJOINT halves
+(`accuracy_halves`, `half_split_delta`), which are independent. (2) A
+cumulative accuracy-vs-seed-count curve cannot establish convergence:
+successive points share most of their samples, so a monotone run over
+several checkpoints is ordinary correlated noise. hh9 and hh10 looked
+like they were drifting upward through 400 seeds and were flat by 1600;
+hh7 and hh8 then moved instead. Only disjoint blocks answer the question.
+A hypothesis that did NOT survive: near-ties in the modal estimator do
+not explain which households are noisy (correlation between near-tie
+share and sd is -0.06; hh1 has the most near-ties at 8.1% and one of the
+smallest spreads). The mechanism is unexplained and left that way.
+
+**Recency stratification in the budget sweep.** `passive_eval`'s existing
+bins were reusable as-is, so `belief_trace` imports `PassiveProtocolConfig`
+rather than duplicating the binning; the sweep, the bake-off, and any
+passive-eval table now stratify time-since-last-sighting identically.
+Every cell carries its question count. Pooled over the ten households at
+6 visits/day the bins are very uneven — 897 questions in [0h,1h) against
+8 539 in [6h,24h) and 590 in [72h,inf) — which is exactly why the counts
+travel with the accuracies. The stratification is where the models
+actually differ:
+
+    model              [0h,1h)    [1h,6h)   [6h,24h)  [24h,72h)  [72h,inf)
+    last_observation     0.940      0.790      0.632      0.284      0.297
+    most_frequent        0.915      0.772      0.631      0.272      0.153
+    smoothed_recency     0.940      0.790      0.638      0.306      0.214
+    n                      897       3427       8539       2747        590
+
+**Smoothed recency** (`beliefs/smoothed_recency.py`, registered
+`candidate`). Weight 2^(-elapsed/half_life) on the last-seen receptacle,
+the rest on the object's decayed frequency histogram: last-observation
+when fresh, most-frequent when stale, a proper distribution throughout so
+log loss and calibration are finite. Smoothing half-life 6 h, chosen once
+on a three-household dev split (hh1/hh2/hh3, candidates {2, 6, 12, 24, 48}
+h) and frozen. One pass, no variants, no per-bank tuning.
+
+The exclusion collapse it was also meant to fix is fixed without touching
+the shared rule: `BeliefModel._exclusion_backoff` is a new hook returning
+None by default (uniform redistribution, so no existing model changed
+behavior), and smoothed recency returns its frequency histogram, so
+"not where I last saw it" means "probably at one of its usual spots"
+rather than "anywhere in the house".
+
+**It did not beat the naive rows, and the honest sentence is that the
+difference is noise.** Fleet mean over ten households, smoothed recency
+minus last_observation, is +0.004 to +0.009 at every budget — all under
+the 0.02 threshold. On the seven households outside the dev split it is
+BELOW last_observation at every budget (0.605 vs 0.613 at 6 visits/day;
+0.768 vs 0.783 at 24). It does beat most_frequent by more than noise from
+8 visits/day up (+0.028, +0.036, +0.054 at 8/12/24). So it succeeds at
+being a proper-distribution comparator nobody can call a strawman, and
+fails to be a better predictor than naive recency. Per the scope limit it
+was not tuned further; last_observation and most_frequent stay the
+comparators.
+
+**Reporting convention** (applies wherever these numbers are used):
+last_observation stays in accuracy tables and is excluded from any
+calibration, log-loss, confidence, or regret analysis, where a one-hot
+belief is meaningless. That exclusion is noted at every site rather than
+applied silently.
+
+All ten storyfirst traces regenerated (~2 min each). 144 tests pass
+(9 new in `tests/test_baselines_smoothed_recency.py`); mypy --strict
+clean; viewer JS syntax-checked.
+
 ## Update (2026-08-27: negative evidence flows passively; patrol + budget-sweep viewer tabs)
 
 **Negative evidence, implemented with no new belief code.** Room-visit

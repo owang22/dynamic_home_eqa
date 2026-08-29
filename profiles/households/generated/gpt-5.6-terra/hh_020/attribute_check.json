@@ -1,0 +1,43 @@
+{
+  "household": "hh_020",
+  "household_type": "working_professional_solo__night_shift",
+  "archetype": "working_professional_solo",
+  "overlay": "night_shift",
+  "variant": 1,
+  "days": 28,
+  "proposed_thresholds": {
+    "work_start_median_abs_dev_min": 45,
+    "work_end_median_abs_dev_min": 60,
+    "gig_dev_min": 120,
+    "wake_median_abs_dev_min": 45,
+    "workday_out_span_coverage": 0.8,
+    "shifts_per_week": [
+      4,
+      6
+    ],
+    "gig_days_per_week": [
+      3,
+      5
+    ]
+  },
+  "residents": {
+    "resident_1": {
+      "schedule_type": "fixed_night_shift",
+      "role": "adult",
+      "wfh": false,
+      "sleep_min_mean": 589,
+      "shifts_per_week": 3.75,
+      "declared_work": [
+        1257,
+        360
+      ],
+      "work_start_median_abs_dev": 178,
+      "work_end_median_abs_dev": 17,
+      "wake_dayoff_median_abs_dev": 9
+    }
+  },
+  "advisories": [
+    "resident_1: work_start_median_abs_dev = 178 min (proposed cap 45)",
+    "resident_1: 3.75 shifts/week (contract 4-6)"
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "household": "hh_003",
+  "household_type": "single_parent_teens__rotating_shift",
+  "archetype": "single_parent_teens",
+  "overlay": "rotating_shift",
+  "variant": 1,
+  "wave": "hard5",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 2722177080139643494,
+  "persona_reasoning": "Fictional household profile generated within the fixed structure, using only the provided object vocabulary.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 15047765907990471090,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 10498,
+          "completion_tokens": 14852,
+          "total_tokens": 25350,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 10495,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.19922
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 18293208287902881420,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 18575,
+          "completion_tokens": 14422,
+          "total_tokens": 32997,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 18572,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.210214
+      }
+    },
+    {
+      "resident": "resident_3",
+      "seed": 6572543616265783896,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 26314,
+          "completion_tokens": 14767,
+          "total_tokens": 41081,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 26311,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.229832
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 8440439425518087340,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Marisol resets arrivals to the entry, kitchen, and bedside; her shifts carry core items out and return them home. Talia reliably organizes school materials after schoolwork, while Nico leaves active gear in common spaces or at his desk. Meals, dishes, laundry, bathroom routines, games, dog walks, and periodic resets all leave characteristic objects behind; infrequent tools retain NO_OP mass when an activity often does not use them.",
+      "failures": [
+        "coverage: 7 of 29 at-home story activities appear in no object rule (['lie_down', 'lunch', 'relax', 'socialise_home', 'tidy_up', 'video_call']...; tolerance 4.3)"
+      ],
+      "uncovered_at_home": [
+        "lie_down",
+        "lunch",
+        "relax",
+        "socialise_home",
+        "tidy_up",
+        "video_call",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 21623,
+          "completion_tokens": 5629,
+          "total_tokens": 27252,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 21620,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 373,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.110794
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 1906396978941416936,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Entry items return to their usual console, hook, charger, desk, or bag after trips; Marisol resets kitchen and living-room clutter, Talia returns school things to her organized desk/backpack, and Nico's gear commonly remains at the last shared surface. Meals and washing move dishes through sink, rack, and cupboard; bedtime, waking, calls, relaxing, and tidying affect the personal devices and comfort items they actually use.",
+      "failures": [],
+      "uncovered_at_home": [
+        "breakfast",
+        "lunch",
+        "pet_care",
+        "relax"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 21722,
+          "completion_tokens": 5283,
+          "total_tokens": 27005,
+          "prompt_tokens_details": {
+            "cached_tokens": 16632,
+            "cache_write_tokens": 5087,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 316,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.0769024
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $0.8694 of $1.50 cap across 6 call(s) [gpt-5.6-terra: $0.8694 (6 calls)]"
+  },
+  "uncovered_at_home": [
+    "breakfast",
+    "lunch",
+    "pet_care",
+    "relax"
+  ],
+  "attribute_advisories": [
+    "resident_1: out-of-home span on only 75% of declared workdays (proposed floor 80%)",
+    "resident_2: wake_median_abs_dev = 364 min (proposed cap 45)"
+  ]
+}

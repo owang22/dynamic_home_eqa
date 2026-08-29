@@ -1,0 +1,70 @@
+{
+  "household": "hh_003",
+  "household_type": "single_parent_teens__rotating_shift",
+  "archetype": "single_parent_teens",
+  "overlay": "rotating_shift",
+  "variant": 1,
+  "days": 28,
+  "proposed_thresholds": {
+    "work_start_median_abs_dev_min": 45,
+    "work_end_median_abs_dev_min": 60,
+    "gig_dev_min": 120,
+    "wake_median_abs_dev_min": 45,
+    "workday_out_span_coverage": 0.8,
+    "shifts_per_week": [
+      4,
+      6
+    ],
+    "gig_days_per_week": [
+      3,
+      5
+    ]
+  },
+  "residents": {
+    "resident_1": {
+      "schedule_type": "rotating_shift",
+      "role": "adult",
+      "wfh": false,
+      "sleep_min_mean": 565,
+      "shifts_per_week": 4.25,
+      "phases": {
+        "daytime": {
+          "n": 6,
+          "start_dev_median": 12,
+          "end_dev_median": 28
+        },
+        "evening": {
+          "n": 6,
+          "start_dev_median": 42,
+          "end_dev_median": 34
+        },
+        "night": {
+          "n": 6,
+          "start_dev_median": 20,
+          "end_dev_median": 30
+        }
+      },
+      "phases_present": [
+        "daytime",
+        "evening",
+        "night"
+      ],
+      "wake_dayoff_median_abs_dev": 8
+    },
+    "resident_2": {
+      "schedule_type": "none",
+      "role": "teen",
+      "wfh": false,
+      "sleep_min_mean": 726,
+      "wake_workday_median_abs_dev": 2
+    },
+    "resident_3": {
+      "schedule_type": "none",
+      "role": "teen",
+      "wfh": false,
+      "sleep_min_mean": 685,
+      "wake_workday_median_abs_dev": 7
+    }
+  },
+  "advisories": []
+}

@@ -1,0 +1,36 @@
+# Hosted-generation pilot rate table (Task 1.5), read by
+# dynamic_home_eqa.generation.hosted_spend.SpendGuard.
+#
+# Source: https://developers.openai.com/api/docs/pricing (the URL
+# https://platform.openai.com/docs/pricing 301-redirects there),
+# retrieved 2026-08-23. Values are the STANDARD tier, SHORT-context
+# rates in $ per 1M tokens; both models also list a long-context tier
+# (luna 0.40/0.04/1.80, terra 4.00/0.40/18.00) that no pilot prompt
+# comes near, so it is deliberately not modeled. Reasoning tokens are
+# billed inside completion_tokens (output rate) — see hosted_spend.py.
+#
+# Keys are the model ALIASES; the guard prefix-matches response `model`
+# snapshot ids (e.g. gpt-5.6-luna-2026-XX-XX) against them.
+gpt-5.6-luna:
+  input_per_1m: 0.20
+  cached_input_per_1m: 0.02
+  output_per_1m: 1.20
+gpt-5.6-terra:
+  input_per_1m: 2.00
+  cached_input_per_1m: 0.20
+  output_per_1m: 12.00
+
+# Google Gemini via its OpenAI-compatibility layer. Source:
+# https://ai.google.dev/gemini-api/docs/pricing, retrieved 2026-08-24.
+# PROMOTIONAL: these are the "through December 31, 2026" rates; from
+# 2027-01-01 both double (1.50 / 7.50, cached 0.15). Batch tier is half
+# again (0.375 / 1.875) and is NOT modelled here — no Batch API use.
+# `cached_input_per_1m` is Gemini's context-caching rate.
+gemini-3.7-flash:
+  input_per_1m: 0.75
+  cached_input_per_1m: 0.075
+  output_per_1m: 3.75
+gemini-3.6-flash:
+  input_per_1m: 0.75
+  cached_input_per_1m: 0.075
+  output_per_1m: 3.75

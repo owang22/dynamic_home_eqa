@@ -1,0 +1,118 @@
+{
+  "household": "hh_011",
+  "household_type": "remote_worker_couple",
+  "archetype": "remote_worker_couple",
+  "overlay": null,
+  "variant": 1,
+  "wave": "wave1",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 3447768290652937542,
+  "persona_reasoning": "Two full-time remote workers need distinct work zones, portable personal essentials, and a shared set of kitchen and maintenance objects. The inventory emphasizes realistic movement between a desk, common areas, and occasional trips out while staying within the supplied vocabulary.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 13795117090313683266,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 9727,
+          "completion_tokens": 15200,
+          "total_tokens": 24927,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 9724,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.201854
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 14803565599761256325,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 17838,
+          "completion_tokens": 14840,
+          "total_tokens": 32678,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 17835,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.213756
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 5530856798659202154,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Workdays reset Mara's equipment to her office desk while Leon's work spreads across the dining table and studio desk. Meals create a steady kitchen-to-sink/drying flow; washing and putting away restore it. Evening reading, games, calls, and relaxing leave a small layer of sofa and bedside clutter. Trips return the residents' carried essentials to entry storage, jackets, or bags. Mara's tidy-ups restore her systems more reliably than Leon's active-project habits, while cleaning and laundry reset shared household tools.",
+      "failures": [],
+      "uncovered_at_home": [
+        "get_ready",
+        "lunch",
+        "take_medication",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 18593,
+          "completion_tokens": 6566,
+          "total_tokens": 25159,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 18590,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 90,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.115978
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $0.5674 of $1.50 cap across 4 call(s) [gpt-5.6-terra: $0.5674 (4 calls)]"
+  },
+  "uncovered_at_home": [
+    "get_ready",
+    "lunch",
+    "take_medication",
+    "wake_up"
+  ],
+  "attribute_advisories": []
+}

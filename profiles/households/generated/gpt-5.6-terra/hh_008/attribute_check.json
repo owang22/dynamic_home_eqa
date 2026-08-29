@@ -1,0 +1,58 @@
+{
+  "household": "hh_008",
+  "household_type": "college_roommates__irregular_gig",
+  "archetype": "college_roommates",
+  "overlay": "irregular_gig",
+  "variant": 1,
+  "days": 28,
+  "proposed_thresholds": {
+    "work_start_median_abs_dev_min": 45,
+    "work_end_median_abs_dev_min": 60,
+    "gig_dev_min": 120,
+    "wake_median_abs_dev_min": 45,
+    "workday_out_span_coverage": 0.8,
+    "shifts_per_week": [
+      4,
+      6
+    ],
+    "gig_days_per_week": [
+      3,
+      5
+    ]
+  },
+  "residents": {
+    "resident_1": {
+      "schedule_type": "none",
+      "role": "adult",
+      "wfh": false,
+      "sleep_min_mean": 682,
+      "wake_workday_median_abs_dev": 14
+    },
+    "resident_2": {
+      "schedule_type": "none",
+      "role": "adult",
+      "wfh": false,
+      "sleep_min_mean": 495,
+      "wake_workday_median_abs_dev": 14
+    },
+    "resident_3": {
+      "schedule_type": "irregular_gig",
+      "role": "adult",
+      "wfh": false,
+      "sleep_min_mean": 415,
+      "shifts_per_week": 3.75,
+      "declared_work": [
+        990,
+        210
+      ],
+      "work_start_median_abs_dev": 29,
+      "work_end_median_abs_dev": 210,
+      "wake_workday_median_abs_dev": 609,
+      "wake_dayoff_median_abs_dev": 3
+    }
+  },
+  "advisories": [
+    "resident_3: work_end_median_abs_dev = 210 min (proposed cap 120)",
+    "resident_3: wake_workday_median_abs_dev = 609 min (proposed cap 45)"
+  ]
+}

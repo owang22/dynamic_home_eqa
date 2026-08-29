@@ -1,0 +1,151 @@
+{
+  "household": "hh_005",
+  "household_type": "working_couple_no_children__opposite_schedules",
+  "archetype": "working_couple_no_children",
+  "overlay": "opposite_schedules",
+  "variant": 1,
+  "wave": "hard5",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 17293256751582705613,
+  "persona_reasoning": "A two-adult household designed around a fixed daytime office role and a fixed night-shift skilled manual role, with separate wind-down zones and carefully tracked work items.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 17158956455400663935,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 9721,
+          "completion_tokens": 15316,
+          "total_tokens": 25037,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 9718,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.203234
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 11042899136421989698,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 17928,
+          "completion_tokens": 14134,
+          "total_tokens": 32062,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 17925,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.205464
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 2788963971386936459,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Mara\u2019s work and planning objects circulate between the dining table, bed, entry, and backpack; her reset habits return them nightly or during tidy-ups. Darren\u2019s shift gear returns through the entry and kitchen, while his quiet downtime objects settle around the sofa and armchair. Meals keep dishes, cookware, towel, and bottles moving through counter, sink, rack, and cupboards. Trips return genuinely carried essentials to their usual landing zones, and low-frequency cleaning uses NO_OP where appropriate.",
+      "failures": [
+        "coverage: 6 of 29 at-home story activities appear in no object rule (['bath', 'lie_down', 'lunch', 'shower', 'take_medication', 'wake_up']; tolerance 4.3)"
+      ],
+      "uncovered_at_home": [
+        "bath",
+        "lie_down",
+        "lunch",
+        "shower",
+        "take_medication",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 17888,
+          "completion_tokens": 6627,
+          "total_tokens": 24515,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 17885,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 107,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.1153
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 5379390608198613624,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Mara\u2019s work and planning items cycle between the dining table, bedside shelf, and her entry-staged backpack; her bedtime reset reliably clears laptop and notebook from the table. Both residents\u2019 core carry gear returns from trips to their established entry or charging drop zones. Darren\u2019s shift gear collects at the entry, counter, and laundry basket, while his quiet leisure items stay around the sofa and armchair. Meals create dishes at the counter, table, sink, and rack; washing and the rare dish put-away restore them. Laundry, cleaning, bathing, waking, and medication each touch the relevant household item rather than remaining object-free.",
+      "failures": [],
+      "uncovered_at_home": [
+        "hobby"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 17982,
+          "completion_tokens": 7138,
+          "total_tokens": 25120,
+          "prompt_tokens_details": {
+            "cached_tokens": 13768,
+            "cache_write_tokens": 4211,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 251,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.09683760000000001
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $1.2372 of $1.50 cap across 10 call(s) [gpt-5.6-terra: $1.2372 (10 calls)]"
+  },
+  "uncovered_at_home": [
+    "hobby"
+  ],
+  "attribute_advisories": []
+}

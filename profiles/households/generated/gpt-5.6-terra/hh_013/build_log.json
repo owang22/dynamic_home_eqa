@@ -1,0 +1,151 @@
+{
+  "household": "hh_013",
+  "household_type": "retired_couple",
+  "archetype": "retired_couple",
+  "overlay": null,
+  "variant": 1,
+  "wave": "wave1",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 14957842231171929613,
+  "persona_reasoning": "A retired couple with complementary, object-oriented routines: one maintains a small balcony garden and local history projects, while the other cooks, reads, and manages household paperwork. Their inventory supports independent errands, shared domestic tasks, and a home that is lived in rather than staged.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 11095527864060974013,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 9837,
+          "completion_tokens": 15382,
+          "total_tokens": 25219,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 9834,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.204258
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 17448968233185085675,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 18052,
+          "completion_tokens": 15566,
+          "total_tokens": 33618,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 18049,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.222896
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 7810392857460691391,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Meals move dishes and mugs through the kitchen; Theo's cooking keeps cookware and notes on shared surfaces until cleanup. Reading, television, notes, medication, laundry, showering, gardening, and cleaning each leave characteristic traces. Carried essentials return from every owner trip to entry, counter, charger, or backpack locations, with Theo's returns less orderly. Tidy-up restores many portable household items to their stated homes.",
+      "failures": [
+        "coverage: 6 of 28 at-home story activities appear in no object rule (['lie_down', 'lunch', 'shower', 'snack', 'take_out_bins', 'wake_up']; tolerance 4.2)"
+      ],
+      "uncovered_at_home": [
+        "lie_down",
+        "lunch",
+        "shower",
+        "snack",
+        "take_out_bins",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 19040,
+          "completion_tokens": 7452,
+          "total_tokens": 26492,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 19037,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 214,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.127504
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 9682877207020670463,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Meals and cooking keep dishes and Theo's cooking gear cycling through the kitchen; Marian's notes, glasses, and pen settle back at the table. Reading, television, and relaxing pull books, blankets, mugs, and the remote to their favored living-room seats. Outings carry each person's essentials and bags out, then return them to their established entry, counter, or bag locations. Cleaning, laundry, washing, medication, gardening, and bedtime each create the smaller predictable household movements, with Theo's improvisation leaving some items on shared surfaces until tidy-up.",
+      "failures": [],
+      "uncovered_at_home": [
+        "take_out_bins"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 19134,
+          "completion_tokens": 8421,
+          "total_tokens": 27555,
+          "prompt_tokens_details": {
+            "cached_tokens": 14824,
+            "cache_write_tokens": 4307,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 280,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.11263680000000001
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $0.7046 of $1.50 cap across 5 call(s) [gpt-5.6-terra: $0.7046 (5 calls)]"
+  },
+  "uncovered_at_home": [
+    "take_out_bins"
+  ],
+  "attribute_advisories": []
+}

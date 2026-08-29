@@ -1,0 +1,85 @@
+# Realization-layer (L3) parameters for revamp_v2 — the single home for
+# every numeric knob the simulator extensions and the L2 schema bounds use.
+# Each value cites its calibration source. Authored per-household numbers
+# (each block's skip_p, each activity's mean_bouts, each resident's
+# jitter_scale) are LLM judgment bounded by these ranges; nothing here is
+# tuned per household.
+
+jitter_classes:
+  # Day-to-day sigma (minutes) of block starts, by class. MUST equal
+  # profiles/revamp_v1/simulate_activities.py JITTER_CLASSES — simulate.py
+  # asserts this at load; the values are calibrated, not free.
+  # Source: casas/README.md "Jitter calibration" (CASAS aruba/cairo/milan/
+  # tulum2 anchor-start sigmas; `external` remains a domain prior — no
+  # employed-outside-the-home resident exists in those datasets).
+  external: 10
+  routine: 30
+  flexible: 75
+  loose: 110
+
+jitter_scale:
+  # Per-resident punctuality multiplier bounds. Source: revamp_v1 README
+  # ("hard-bounded to [0.5, 2.0] so households stay inside the spread
+  # observed across real homes").
+  min: 0.5
+  max: 2.0
+
+skip:
+  # Per-realization block drop, applied BEFORE jitter, counted per activity
+  # in meta.json. Upper bound: casas/README.md "What the real grounding
+  # changes" — real Wash_Dishes runs every ~2 days and Housekeeping bouts
+  # have ~2-day gaps, i.e. even the flakiest real recurring chore still
+  # happens roughly half the time it plausibly could; contractual anchors
+  # (sleep, shifts) are effectively never skipped and the prompt pins them
+  # to skip_p 0.
+  # Raised 0.6 -> 0.9 for the Recurring/Occasional split: the 0.6 bound
+  # was calibrated on RECURRING chores (real Wash_Dishes still runs every
+  # ~2 days), but an Occasional activity (a hobby night, a deep clean) is
+  # scheduled as a standing possibility and skipped most weeks — its
+  # realistic rate is the INVERSE of a chore's. The prompt keeps
+  # recurring blocks at <= 0.4 and reserves 0.5-0.9 for occasionals.
+  max_skip_p: 0.9
+
+fragmentation:
+  # Bout fragmentation: N ~ max(1, Poisson(mean_bouts)) non-overlapping
+  # sub-bouts within the realized block window. Calibration anchor:
+  # casas/README.md fragmentation caveat — merged real sessions run ~16/day
+  # vs ~11 authored blocks, and Meal_Preparation is 4.1 kitchen
+  # sessions/day where authored specs run 1; sub-30-min splits are
+  # annotator noise, so bounds stay at session scale.
+  min_mean_bouts: 1.0
+  max_mean_bouts: 6.0
+  # A sub-bout shorter than this collapses into its neighbour (matches the
+  # <30 min session-merge rule used for the CASAS calibration).
+  min_bout_minutes: 10
+
+carry_on_departure:
+  # Every block that starts at ELSEWHERE picks up the departing resident's
+  # person-homed items (a phone, keys, a wallet). Authored rules can only
+  # name the going-out activities the author thought of, and a household
+  # has several: measured on the grad-student home, her phone was on her
+  # for 1 of 8 trips out with rules alone. Forgetting is still modelled —
+  # `p_misplace` can leave an item on a table before the trip and it stays
+  # there. Disabled for the revamp_v1 regression fixture, whose timeline
+  # predates this mechanism (same treatment as skip and fragmentation).
+  enabled: true
+  # ...but not every item on every kind of trip: each (item, trip-type)
+  # pair is a stable hash-derived choice, so with 0.85 roughly one pairing
+  # in seven is a standing omission (she never takes her wallet on the
+  # morning walk). A judgment default — no free-living dataset observes
+  # pocket contents — chosen so most trips look fully equipped while
+  # every household still has a few signature gaps. Per-day forgetting
+  # comes from p_misplace, not from this.
+  carry_p: 0.85
+  # Two ELSEWHERE bouts of one resident closer together than this (minutes
+  # at home between trips) do NOT re-fire pickup/putdown for items that
+  # never moved in between: the person plausibly kept the bag packed.
+  # Without it, departure carries fire per fragmented bout and daily event
+  # counts scale with bout_count x carried_items (measured on
+  # rule_based/qwen3.8-27b hh9: 12-bout days emitted ~98 events vs 1-3 on
+  # 0-bout days, daily Fano 19 vs the real reference's 5). 90 min is the
+  # errand-chain scale: CASAS session-merge treats sub-30-min gaps as one
+  # session, and a >1.5 h stay at home is long enough that unpacking and
+  # re-packing pocket items is the realistic reading. Suppressed pairs are
+  # counted in meta.json (carry_rehome_suppressed), never silent.
+  carry_rehome_min: 90

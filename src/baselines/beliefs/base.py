@@ -173,20 +173,42 @@ class BeliefModel(abc.ABC):
         return {rec for rec, t_ex in recorded.items()
                 if newest_positive is None or t_ex >= newest_positive}
 
+    def _exclusion_backoff(self, object_id: str, t: int
+                           ) -> Union[Dict[str, float], None]:
+        """Distribution the exclusion machinery redistributes reclaimed
+        mass by, or None for the uniform default.
+
+        A one-hot belief whose single receptacle gets excluded would
+        otherwise collapse to uniform — a self-inflicted loss of
+        everything else the model knows. A model that keeps a secondary
+        estimate (e.g. a frequency histogram) can return it here so an
+        exclusion falls back on that estimate instead. The returned
+        mapping need not be normalized or cover every receptacle;
+        :meth:`_apply_exclusions` restricts it to the non-excluded
+        receptacles and renormalizes, falling back to uniform when it
+        puts no mass on any of them.
+        """
+        return None
+
     def _apply_exclusions(self, object_id: str, t: int,
                           base: Prediction) -> Prediction:
         """Zero out excluded receptacles and redistribute their mass.
 
-        The reclaimed mass is spread UNIFORMLY over all non-excluded
-        receptacles — including ones the base distribution gave zero —
-        because a negative result is evidence for every receptacle not yet
-        ruled out, not only for previously-sighted ones. (Renormalizing
-        the surviving support alone would fabricate certainty: with base
-        mass on two receptacles and one excluded, the other would jump to
-        probability 1.0 even though the object may sit somewhere never
-        sighted.) When exclusions cover the entire base support this
-        reduces exactly to a uniform distribution over the non-excluded
-        receptacles.
+        By default the reclaimed mass is spread UNIFORMLY over all
+        non-excluded receptacles — including ones the base distribution
+        gave zero — because a negative result is evidence for every
+        receptacle not yet ruled out, not only for previously-sighted
+        ones. (Renormalizing the surviving support alone would fabricate
+        certainty: with base mass on two receptacles and one excluded,
+        the other would jump to probability 1.0 even though the object
+        may sit somewhere never sighted.) When exclusions cover the
+        entire base support this reduces exactly to a uniform
+        distribution over the non-excluded receptacles.
+
+        A model may override :meth:`_exclusion_backoff` to redistribute
+        the reclaimed mass by its own secondary distribution instead of
+        uniformly; the uniform default leaves every model without an
+        override exactly as before.
 
         Edge case: if EVERY receptacle is excluded (possible with stale
         exclusions), exclusions are ignored entirely and a warning is
@@ -218,9 +240,16 @@ class BeliefModel(abc.ABC):
             return base
         excluded_mass = sum(p for r, p in base.distribution.items()
                             if r in excluded)
-        share = excluded_mass / len(kept)
+        backoff = self._exclusion_backoff(object_id, t)
+        kept_backoff = (sum(backoff.get(r, 0.0) for r in kept)
+                        if backoff else 0.0)
+        if backoff and kept_backoff > 0.0:
+            share_of = {r: excluded_mass * backoff.get(r, 0.0) / kept_backoff
+                        for r in kept}
+        else:
+            share_of = {r: excluded_mass / len(kept) for r in kept}
         scale = 1.0 - self._exclusion_floor * len(excluded)
-        dist = {r: (base.distribution.get(r, 0.0) + share) * scale
+        dist = {r: (base.distribution.get(r, 0.0) + share_of[r]) * scale
                 for r in kept}
         dist.update({r: self._exclusion_floor for r in excluded})
         # Exact renormalization: accumulated float error can push the sum

@@ -14,8 +14,11 @@ Regenerates the timeline dir in place, room-level:
   hourly_rooms.csv  same shape as hourly.csv but values are rooms, with
                     ELSEWHERE -> "outside"
   trace.json        everything the web viewer consumes: map transform, room
-                    polygons, receptacle anchors, and per-object segment
-                    lists [t0, t1, receptacle, room, relation, x, z, cause]
+                    polygons, receptacle anchors, per-object segment lists
+                    [t0, t1, receptacle, room, relation, x, z, cause, kind]
+                    (kind: rule / misplace / carry_pickup / carry_putdown),
+                    and a `provenance` block carrying the authored `cites`
+                    behind each object's rules
 
 Placement semantics carried per receptacle (`relation`): on_surface (object
 sits ON the receptacle), floor (on the floor beside things), hook (hung).
@@ -41,6 +44,16 @@ import yaml
 ELSEWHERE = "ELSEWHERE"
 PERSON = "person:"
 OUTSIDE_ROOM = "outside"
+
+# The assembled program that DROVE the simulation, most recent pipeline
+# first. Order matters and "first file that exists" is not enough:
+# story_calendar writes three programs into one household dir and only
+# story_program.yaml is the one simulate_program() was handed, so picking
+# bound_program.yaml there would quote rules this timeline never ran.
+PROGRAM_FILES = ("program.yaml",         # storyfirst
+                 "story_program.yaml",   # story_calendar
+                 "bound_program.yaml",   # rule_based / freeform
+                 "routine_program.yaml")
 
 
 # ---------------------------------------------------------------- geometry
@@ -227,6 +240,105 @@ def _resident_info(timeline: pathlib.Path) -> dict:
     return out
 
 
+def _provenance(timeline: pathlib.Path, spec: dict) -> dict:
+    """Why each object moves, in the generator's own words.
+
+    The timeline records WHAT moved and which activity moved it; the
+    RATIONALE lives a level up, in the assembled program's `object_rules`
+    — a `cites` line per object and per rule, written by the model that
+    authored the movement pass — plus the household-level reasoning in
+    build_log.json. Baked in here rather than fetched by the viewer: the
+    viewer has no YAML parser, and the program files are ~75 kB of mostly
+    calendar it would have to sift on every household switch.
+
+    Also recorded is which activities are TRIPS (`at: ELSEWHERE`). Most
+    carries are not authored at all — an object whose rule names any leg
+    of its owner's trips is promoted to a "traveller" and then rides ALL
+    of them, so `suitcase_elena` leaves with work_away on the strength of
+    a rule about `study`. Without the trip list the viewer can only shrug
+    at the majority of carries; with it, it can name the rule that made
+    the object a traveller.
+
+    Best-effort throughout: sets built before the movement pass existed
+    (revamp_v1, casas) get no provenance block at all, and the viewer says
+    the set carries no rationale rather than inventing one.
+    """
+    import yaml
+    hh_dir = timeline.parent
+    program, used = None, None
+    for name in PROGRAM_FILES:
+        path = hh_dir / name
+        if not path.exists():
+            continue
+        try:
+            cand = yaml.safe_load(path.read_text())
+        except (OSError, ValueError):
+            continue
+        # `object_rules` is the whole point; a program without it (an early
+        # calendar-only draft) is no more use here than no program at all.
+        if isinstance(cand, dict) and cand.get("object_rules"):
+            program, used = cand, name
+            break
+    if program is None:
+        return {}
+
+    owners = program.get("object_owners") or {}
+    objects = {}
+    for entry in program["object_rules"]:
+        if not isinstance(entry, dict) or not entry.get("object"):
+            continue
+        rules = []
+        for r in entry.get("rules") or []:
+            if not isinstance(r, dict):
+                continue
+            # dist is [{dest, p}, ...]; flattened to pairs because the
+            # viewer only ever renders it as a list of "dest — p" lines.
+            dist = [[d.get("dest"), d.get("p")]
+                    for d in (r.get("dist") or []) if isinstance(d, dict)]
+            if not dist and r.get("dest"):
+                dist = [[r["dest"], 1.0]]
+            rules.append({"activity": r.get("activity"),
+                          "phase": r.get("phase"),
+                          "cites": r.get("cites"),
+                          "dist": dist})
+        # `misplace_set` — where drift can actually put it — is added by the
+        # expander and never appears in the program, so it comes from the
+        # spec. Without it the panel can say an object drifted but not that
+        # it drifted into one of six kitchen surfaces by design.
+        placed = (spec.get("placements") or {}).get(entry["object"]) or {}
+        objects[entry["object"]] = {
+            "cites": entry.get("cites"),
+            "home": entry.get("home"),
+            "p_misplace": entry.get("p_misplace"),
+            "misplace_set": placed.get("misplace_set") or [],
+            "owner": owners.get(entry["object"]),
+            "rules": rules,
+        }
+
+    # Trips, by their FULL expanded names: `study` can be a home activity
+    # and `study__resident_1` a trip in the same household, so collapsing
+    # to the base here would mislabel both.
+    motions = spec.get("object_motions") or {}
+    away = sorted(name for name, info in motions.items()
+                  if isinstance(info, dict) and info.get("at") == ELSEWHERE)
+
+    out = {"program": used, "away_activities": away, "objects": objects}
+    try:
+        log = json.loads((hh_dir / "build_log.json").read_text())
+    except (OSError, ValueError):
+        return out
+    # The movement pass reasons once for the whole household before it
+    # writes any per-object rule; that paragraph is the context the
+    # per-rule cites are written against.
+    attempts = [a for a in (log.get("movement_attempts") or [])
+                if isinstance(a, dict) and a.get("reasoning")]
+    if attempts:
+        out["movement_reasoning"] = attempts[-1]["reasoning"]
+    if log.get("persona_reasoning"):
+        out["persona_reasoning"] = log["persona_reasoning"]
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("config", type=pathlib.Path)
@@ -273,16 +385,20 @@ def main() -> None:
     horizon = meta["days"] * 1440
     segments = {o: [] for o in spec["placements"]}
     state = {o: p["home"] for o, p in spec["placements"].items()}
-    opened = {o: (0, "initial") for o in state}
+    # `kind` rides along with the cause: the activity alone cannot tell a
+    # rule-driven move from a carry or a random misplace, and those are
+    # three different answers to "why did this move" (an authored rule, a
+    # traveller riding its owner's trip, and no reason at all).
+    opened = {o: (0, "initial", "initial") for o in state}
     for e in events:
         o = e["object"]
-        t0, cause = opened[o]
-        segments[o].append((t0, e["t"], state[o], cause))
+        t0, cause, kind = opened[o]
+        segments[o].append((t0, e["t"], state[o], cause, kind))
         state[o] = e["to"]
-        opened[o] = (e["t"], e["by"])
+        opened[o] = (e["t"], e["by"], e.get("kind") or "rule")
     for o in state:
-        t0, cause = opened[o]
-        segments[o].append((t0, horizon, state[o], cause))
+        t0, cause, kind = opened[o]
+        segments[o].append((t0, horizon, state[o], cause, kind))
 
     # Object classes come from the persona/profile the spec points at:
     # object_motions files say `source_persona`, retired schedule specs said
@@ -295,7 +411,7 @@ def main() -> None:
 
     for o, segs in segments.items():
         out = []
-        for t0, t1, rec, cause in segs:
+        for t0, t1, rec, cause, kind in segs:
             if t1 <= t0:
                 continue
             if rec.startswith(PERSON):
@@ -307,10 +423,12 @@ def main() -> None:
                           if s0 < t1 and s1 > t0] or [(t0, t1)]
                 for s0, s1 in slices:
                     room, rel, pos = locate(rec, o, world, cfg, tracks, s0)
-                    out.append([s0, s1, rec, room, rel, pos[0], pos[1], cause])
+                    out.append([s0, s1, rec, room, rel, pos[0], pos[1],
+                                cause, kind])
             else:
                 room, rel, pos = locate(rec, o, world, cfg)
-                out.append([t0, t1, rec, room, rel, pos[0], pos[1], cause])
+                out.append([t0, t1, rec, room, rel, pos[0], pos[1],
+                            cause, kind])
         objects[o] = {"class": classes.get(o, "?"), "segments": out}
 
     trace = {
@@ -337,6 +455,10 @@ def main() -> None:
         # beside the timeline; absent for sets built before it existed,
         # which the viewer renders as a plain id list.
         "resident_info": _resident_info(args.timeline),
+        # Why each object moves, in the generator's own words — the
+        # per-object and per-rule `cites` behind every segment's cause.
+        # {} for sets built before the movement pass wrote any.
+        "provenance": _provenance(args.timeline, spec),
     }
     (args.timeline / "trace.json").write_text(json.dumps(trace))
 

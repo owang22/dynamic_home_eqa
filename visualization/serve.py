@@ -61,6 +61,12 @@ presence is what publishes a household to the belief-vs-truth page."""
 TRACE_GLOBS = ("profiles/*/*/*/*/timeline_seed*/trace.json",
                "profiles/*/*/*/timeline_seed*/trace.json",
                "profiles/*/*/timeline_seed*/trace.json",
+               # The superseded sets moved to old_profiles/ (2026-08-28).
+               # Only storyfirst is listed from there — it is the
+               # comparison set; revamp_v1, story_calendar, rule_based
+               # and freeform stay off the dropdown deliberately.
+               "old_profiles/revamp_v2/storyfirst/*/*/timeline_seed*/"
+               "trace.json",
                "casas/*/timeline_*/trace.json")
 
 # Directories the dropdown never offers. `_archive/` holds households kept
@@ -74,7 +80,7 @@ HIDDEN_PARTS = ("_archive",)
 # marker and sort to the top, so "the one I am generating right now" is
 # the first thing in the dropdown rather than something to search for.
 # A plain string match on the trace url; empty disables the marking.
-CURRENT_SET = "/revamp_v2/storyfirst/"
+CURRENT_SET = "/profiles/households/"
 
 
 def _household_type(household_dir: pathlib.Path) -> str:
@@ -122,6 +128,12 @@ def _source_of(trace_path: pathlib.Path) -> str:
     rel = trace_path.relative_to(REPO_ROOT).parts
     if rel[0] == "casas":
         return "casas (real ADLs)"
+    # profiles/households/generated/<model slug>/<hh_id>/...
+    if (len(rel) >= 4 and rel[0] == "profiles"
+            and rel[1] == "households"):
+        return f"households · {rel[3]}"
+    if len(rel) >= 5 and rel[0] == "old_profiles":
+        return f"{rel[2]} · {rel[3]} (comparison set)"
     if len(rel) >= 5 and rel[0] == "profiles" and rel[1] == "revamp_v2":
         return f"{rel[2]} · {rel[3]}"          # <method> · <model slug>
     if len(rel) >= 3 and rel[0] == "profiles":
@@ -131,7 +143,7 @@ def _source_of(trace_path: pathlib.Path) -> str:
 
 def _sort_key(url: str) -> tuple:
     """revamp_v2 first, then by household NUMBER (hh2 before hh10)."""
-    in_v2 = "/revamp_v2/" in url
+    in_v2 = "/revamp_v2/" in url and "/old_profiles/" not in url
     # The set under active work sorts above everything else; after that,
     # revamp_v2 methods, then other sets, then the real-data reference.
     group = (-1 if CURRENT_SET and CURRENT_SET in url

@@ -370,8 +370,10 @@ function modelHue(name) {
 }
 
 /* Minimal inline SVG line chart. xs/series values are plotted in a fixed
- * viewBox and the element scales to the sheet's width; no libraries. */
-function lineChartSVG(xs, seriesByName, yMin, yMax, xLabel) {
+ * viewBox and the element scales to the sheet's width; no libraries.
+ * refLine ({value, label}) draws one dashed gray horizontal reference —
+ * used for the routine oracle, which must not look like a model curve. */
+function lineChartSVG(xs, seriesByName, yMin, yMax, xLabel, refLine) {
   const W = 860, H = 190, L = 44, R = 12, T = 10, B = 30;
   const px = i => L + (W - L - R) * (xs.length < 2 ? 0 : i / (xs.length - 1));
   const py = v => T + (H - T - B) * (1 - (v - yMin) / (yMax - yMin));
@@ -399,8 +401,16 @@ function lineChartSVG(xs, seriesByName, yMin, yMax, xLabel) {
                 fill="${modelHue(name)}"/>`;
     });
   }
+  let ref = "";
+  if (refLine && refLine.value >= yMin && refLine.value <= yMax) {
+    const y = py(refLine.value);
+    ref = `<line x1="${L}" y1="${y}" x2="${W - R}" y2="${y}"
+           stroke="#8b93a1" stroke-width="1.5" stroke-dasharray="7 5"/>` +
+          `<text x="${W - R - 4}" y="${y - 4}" text-anchor="end"
+           font-size="10" fill="#8b93a1">${refLine.label}</text>`;
+  }
   return `<svg class="chart" viewBox="0 0 ${W} ${H}"
-          role="img">${grid}${ticks}${paths}
+          role="img">${grid}${ticks}${paths}${ref}
           <text x="${(L + W - R) / 2}" y="${H - 0.5}" text-anchor="middle"
           font-size="10" fill="#8b93a1">${xLabel}</text></svg>`;
 }
@@ -426,11 +436,16 @@ function renderPatrols(head, body) {
     return;
   }
   head.innerHTML =
-    `<strong>ambient observation schedules</strong> — every schedule at ` +
-    `${section.visits_per_day} visits/day (where it takes a budget); ` +
-    `curves are the share of all ${belief.objects.length} objects each ` +
-    `model localizes correctly, over the ${belief.days} days`;
+    `<strong>ambient observation schedules</strong> — the three ` +
+    `budget-taking schedules run at ${section.visits_per_day} visits/day, ` +
+    `but morning_evening_sweep and stationed_observer set their own visit ` +
+    `counts by construction, so schedules differ in OBSERVATION VOLUME as ` +
+    `well as route; read accuracy against each schedule's realized ` +
+    `visits/day, not its name alone. Curves are the share of all ` +
+    `${belief.objects.length} objects each model localizes correctly, ` +
+    `over the ${belief.days} days`;
   let html = legendHTML(section.models);
+  html += accuracyVsVolumeSVG(section);
   const G = section.accuracy_grid_minutes;
   for (const [name, sch] of Object.entries(section.schedules)) {
     const means = section.models.map(m => {
@@ -438,18 +453,68 @@ function renderPatrols(head, body) {
       return `${m.split("_")[0]} ${(s.reduce((a, b) => a + b, 0)
               / s.length).toFixed(3)}`;
     }).join(" · ");
+    const st = sch.stats || {};
+    const realized = st.visits_per_day == null ? "" :
+      `realized ${st.visits_per_day} visits/day · ` +
+      `${st.sightings_per_day} sightings/day · `;
     // x labels at three-day marks; series plotted at full resolution
     const stride = Math.round(1440 * 3 / G);
     const xs = sch.accuracy[section.models[0]].map((_, i) =>
       (i % stride === 0) ? "d" + Math.round(i * G / 1440) : "");
     html += `<div class="chart-block"><h3>${name}</h3>` +
-      `<div class="sub">${sch.visits.length} visits over the episode · ` +
-      `mean accuracy: ${means}</div>` +
+      `<div class="sub">${realized}${sch.visits.length} visits over the ` +
+      `episode · mean accuracy: ${means}</div>` +
       lineChartSVG(xs, Object.fromEntries(
         section.models.map(m => [m, sch.accuracy[m]])), 0, 1, "time") +
       `</div>`;
   }
   body.innerHTML = html;
+}
+
+/* Mean accuracy against realized visits/day, one point per
+ * (schedule, model): the volume-fairness view of the patrol comparison.
+ * Two schedules generate their own visit counts, so same-colored points
+ * at different x ARE the same model under different observation volume —
+ * vertical spread at one x is what the route itself contributes. */
+function accuracyVsVolumeSVG(section) {
+  const entries = Object.entries(section.schedules)
+    .filter(([, s]) => s.stats && s.stats.visits_per_day != null);
+  if (!entries.length) return "";
+  const W = 860, H = 230, L = 44, R = 12, T = 26, B = 34;
+  const xsAll = entries.map(([, s]) => s.stats.visits_per_day);
+  const xMin = Math.min(...xsAll) - 1, xMax = Math.max(...xsAll) + 1;
+  const px = x => L + (W - L - R) * (x - xMin) / (xMax - xMin);
+  const py = v => T + (H - T - B) * (1 - v);
+  let grid = "";
+  for (let v = 0; v <= 1.001; v += 0.2) {
+    const y = py(v);
+    grid += `<line x1="${L}" y1="${y}" x2="${W - R}" y2="${y}"
+             stroke="#2c313a" stroke-width="1"/>` +
+            `<text x="${L - 6}" y="${y + 3}" text-anchor="end"
+             font-size="10" fill="#8b93a1">${v.toFixed(1)}</text>`;
+  }
+  let marks = "";
+  for (const [name, sch] of entries) {
+    const x = px(sch.stats.visits_per_day);
+    marks += `<line x1="${x}" y1="${T}" x2="${x}" y2="${H - B}"
+              stroke="#2c313a" stroke-width="1" stroke-dasharray="2 4"/>` +
+             `<text x="${x}" y="${T - 6}" text-anchor="middle"
+              font-size="9" fill="#8b93a1">${name.split("_")[0]}</text>` +
+             `<text x="${x}" y="${H - B + 12}" text-anchor="middle"
+              font-size="10" fill="#8b93a1">${sch.stats.visits_per_day}</text>`;
+    for (const m of section.models) {
+      const s = sch.accuracy[m];
+      const mean = s.reduce((a, b) => a + b, 0) / s.length;
+      marks += `<circle cx="${x}" cy="${py(mean)}" r="4"
+                fill="${modelHue(m)}"><title>${name} · ${m}: ` +
+               `${mean.toFixed(3)}</title></circle>`;
+    }
+  }
+  return `<div class="chart-block"><h3>mean accuracy vs realized ` +
+    `observation volume</h3>` +
+    `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img">${grid}${marks}
+     <text x="${(L + W - R) / 2}" y="${H - 2}" text-anchor="middle"
+     font-size="10" fill="#8b93a1">realized visits per day</text></svg></div>`;
 }
 
 /* Accuracy on the bank's questions vs the observation budget, every
@@ -473,18 +538,89 @@ function renderBudgetSweep(head, body) {
   for (const vs of Object.values(sweep.accuracy)) {
     lo = Math.min(lo, ...vs); hi = Math.max(hi, ...vs);
   }
+  const oracle = sweep.oracle;
+  if (oracle) { lo = Math.min(lo, oracle.accuracy); hi = Math.max(hi, oracle.accuracy); }
   let html = legendHTML(names);
   html += lineChartSVG(sweep.visit_budgets, sweep.accuracy,
                        Math.max(0, lo - 0.05), Math.min(1, hi + 0.05),
-                       "room visits per day");
+                       "room visits per day",
+                       oracle && {value: oracle.accuracy,
+                                  label: `routine oracle ${oracle.accuracy.toFixed(3)} (no observations)`});
   html += `<table class="sheet" style="margin-top:12px"><tr><th>model</th>` +
     sweep.visit_budgets.map(b => `<th>${b}/day</th>`).join("") + `</tr>` +
     names.map(n => `<tr><td>` +
       `<span class="swatch" style="background:${modelHue(n)};display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px"></span>` +
       `${n}</td>` +
       sweep.accuracy[n].map(v => `<td>${v.toFixed(3)}</td>`).join("") +
-      `</tr>`).join("") + `</table>`;
+      `</tr>`).join("");
+  if (oracle) {
+    html +=
+      `<tr><td class="muted">routine oracle (${oracle.n_seeds} MC seeds)</td>` +
+      sweep.visit_budgets.map(() =>
+        `<td class="muted">${oracle.accuracy.toFixed(3)}</td>`).join("") +
+      `</tr>` +
+      `<tr><td class="muted">headroom (oracle − best model)</td>` +
+      oracle.headroom_per_budget.map(v =>
+        `<td class="muted">${v >= 0 ? "+" : ""}${v.toFixed(3)}</td>`)
+        .join("") + `</tr>`;
+  }
+  html += `</table>`;
+  if (oracle) {
+    html += `<p class="muted small">The routine oracle is a diagnostic, ` +
+      `not a competitor: the modal receptacle over ${oracle.n_seeds} ` +
+      `re-realizations of the household's own program (seeds ` +
+      `${oracle.seed_range[0]}–${oracle.seed_range[1]}) — perfect routine ` +
+      `knowledge, zero observations, so it is flat across budgets and is ` +
+      `NOT a hard ceiling. Positive headroom is residual error ` +
+      `explainable by routine knowledge alone; negative headroom means ` +
+      `observation-fed models beat routine knowledge there (recency is ` +
+      `carrying the load). Stability: the two disjoint halves of the seed ` +
+      `set score ${oracle.accuracy_halves[0].toFixed(3)} and ` +
+      `${oracle.accuracy_halves[1].toFixed(3)} ` +
+      `(delta ${oracle.half_split_delta.toFixed(3)}).</p>`;
+  }
+  html += recencyTableHTML(sweep, names);
   body.innerHTML = html;
+  const select = body.querySelector("#recency-budget");
+  if (select) select.addEventListener("change", () => {
+    sweepRecencyBudget = Number(select.value);
+    renderBudgetSweep(head, body);
+  });
+}
+
+let sweepRecencyBudget = null;   // sticky across re-renders of the sheet
+
+/* Accuracy by time-since-last-sighting at one budget level, with the
+ * question count beside every accuracy — bins with tiny counts are the
+ * usual way this kind of table lies, so n never leaves the number. */
+function recencyTableHTML(sweep, names) {
+  if (!sweep.recency) return "";
+  const budgets = sweep.visit_budgets;
+  if (sweepRecencyBudget == null || !budgets.includes(sweepRecencyBudget)) {
+    sweepRecencyBudget = budgets.includes(6) ? 6 : budgets[0];
+  }
+  const bi = budgets.indexOf(sweepRecencyBudget);
+  const bins = sweep.recency_bins.filter(label =>
+    names.some(n => sweep.recency[n][bi][label]));
+  let html = `<h3 style="margin-top:16px">accuracy by time since last ` +
+    `sighting · <select id="recency-budget">` +
+    budgets.map(b => `<option value="${b}"` +
+      (b === sweepRecencyBudget ? " selected" : "") +
+      `>${b} visits/day</option>`).join("") + `</select></h3>` +
+    `<table class="sheet"><tr><th>model</th>` +
+    bins.map(label => `<th>${label}</th>`).join("") + `</tr>`;
+  for (const n of names) {
+    html += `<tr><td>` +
+      `<span class="swatch" style="background:${modelHue(n)};display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px"></span>` +
+      `${n}</td>` +
+      bins.map(label => {
+        const cell = sweep.recency[n][bi][label];
+        return cell == null ? `<td class="muted">–</td>`
+          : `<td>${cell.accuracy.toFixed(3)} ` +
+            `<span class="muted small">(n=${cell.n})</span></td>`;
+      }).join("") + `</tr>`;
+  }
+  return html + `</table>`;
 }
 
 // ---------------------------------------------------------------- strip

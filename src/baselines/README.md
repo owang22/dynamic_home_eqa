@@ -140,6 +140,22 @@ from a sighting that has gone stale, and only the sighting stream can
 say so. Sighting seconds round UP to the minute, so a sighting is never
 advertised before the grid step at which the models could act on it.
 
+With `--timeline`/`--spec` the file gains two more viewer sections.
+`patrols` compares the five schedules, each carrying its realized stream
+statistics (visits and sightings per day among them) — two schedules set
+their own visit counts by construction, so accuracy is read against
+realized observation volume, not schedule name alone. `budget_sweep`
+holds question-set accuracy per model per visit budget, stratified by
+time since the queried object's last sighting (bins shared with
+`passive_eval`, counts alongside every accuracy), plus the Monte-Carlo
+routine oracle (`--oracle-seeds`, default 50; see
+`routine_oracle.py`): the modal receptacle over re-realizations of the
+household's own program — perfect routine knowledge, zero observations.
+It is a diagnostic, not a competitor, and NOT a hard ceiling; the
+per-budget `headroom_per_budget` (oracle minus best model) says how much
+residual error routine knowledge alone explains, and goes negative where
+fresh sightings beat routine knowledge.
+
 `visualization/serve.py` discovers these files and publishes them, so
 running the generator is what makes a household appear on
 `viewer/beliefs.html`. That page compares belief against truth at ANY

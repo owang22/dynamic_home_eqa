@@ -174,3 +174,38 @@ table.sheet td.bad { color: #ff8a8a; }
   vertical-align: middle; margin-right: 5px; border-radius: 2px; }
 svg.chart { display: block; width: 100%; height: auto;
   background: #171a1f; border: 1px solid var(--edge); border-radius: 6px; }
+
+/* ------------------------------------------------- "why it moved" panel
+ * The provenance behind the segment the slider is sitting in: the
+ * mechanism that moved the object, and the rule the generator wrote to
+ * justify it. Quoted text is the model's own words and is marked as a
+ * quote so it never reads as the viewer's own description. */
+#why { font-size: 12px; line-height: 1.5; }
+#why .why-how {
+  display: inline-block; font-size: 10px; text-transform: uppercase;
+  letter-spacing: .04em; padding: 1px 6px; border-radius: 999px;
+  border: 1px solid var(--edge); color: var(--muted); margin-bottom: 6px;
+}
+#why .why-how.authored { color: var(--accent); border-color: var(--accent); }
+#why .why-how.derived { color: var(--accent2); border-color: var(--accent2); }
+#why .why-how.chance { color: var(--res); border-color: var(--res); }
+#why q {
+  display: block; quotes: none; color: var(--fg);
+  border-left: 2px solid var(--edge); padding: 2px 0 2px 8px; margin: 5px 0;
+}
+#why .why-line { margin: 4px 0; }
+/* The draw the simulator actually made: the chosen destination is the one
+ * worth spotting, so it is the only row that is not muted. */
+#why table.dist { width: 100%; border-collapse: collapse; margin: 4px 0 2px; }
+#why table.dist td { padding: 1px 0; color: var(--muted); }
+#why table.dist td.p {
+  text-align: right; width: 5ch; font-variant-numeric: tabular-nums;
+}
+#why table.dist tr.took td { color: var(--fg); }
+#why table.dist tr.took td.p { color: var(--accent); }
+#why .why-plan { margin-top: 8px; border-top: 1px solid var(--edge); padding-top: 6px; }
+#why .why-plan summary {
+  cursor: pointer; color: var(--muted); font-size: 11px;
+  text-transform: uppercase; letter-spacing: .04em;
+}
+#why .why-plan summary:hover { color: var(--accent); }

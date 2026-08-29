@@ -62,9 +62,11 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 from baselines.bank import JsonlBank
 from baselines.cli import _derived_rng
 from baselines.healthcheck import BELIEF_PANEL
+from baselines.passive_eval import PassiveProtocolConfig
 from baselines.registry import (BELIEF_REGISTRY, CANDIDATE_SLATE,
                                 build_registered_belief)
-from baselines.types import DAY_SECONDS, Episode
+from baselines.routine_oracle import DEFAULT_ORACLE_SEEDS
+from baselines.types import DAY_SECONDS, Episode, Observation
 
 logger = logging.getLogger(__name__)
 
@@ -172,7 +174,8 @@ def build_trace(bank_path: pathlib.Path, seed: int, grid_minutes: int,
                 specs: Sequence[Dict[str, Any]],
                 timeline: Optional[pathlib.Path] = None,
                 spec_path: Optional[pathlib.Path] = None,
-                patrol_visits_per_day: int = 6) -> Dict[str, Any]:
+                patrol_visits_per_day: int = 6,
+                oracle_seeds: int = 0) -> Dict[str, Any]:
     """The full belief_trace payload for a single-episode bank.
 
     With ``timeline`` and ``spec_path`` given, two extra viewer sections
@@ -222,7 +225,8 @@ def build_trace(bank_path: pathlib.Path, seed: int, grid_minutes: int,
         payload["patrols"] = build_patrol_section(
             episode, timeline, spec_path, seed, patrol_visits_per_day)
         payload["budget_sweep"] = build_budget_sweep(
-            episode, timeline, spec_path, seed, list(specs))
+            episode, timeline, spec_path, seed, list(specs),
+            oracle_seeds=oracle_seeds)
     return payload
 
 
@@ -248,13 +252,18 @@ def main() -> None:
     parser.add_argument("--spec", type=pathlib.Path, default=None,
                         help="program/motions spec with receptacle rooms")
     parser.add_argument("--patrol-visits-per-day", type=int, default=6)
+    parser.add_argument("--oracle-seeds", type=int,
+                        default=DEFAULT_ORACLE_SEEDS,
+                        help="Monte-Carlo realizations behind the budget "
+                             "sweep's routine oracle (0 disables it)")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO,
                         format="%(levelname)s %(name)s: %(message)s")
     payload = build_trace(args.bank, args.seed, args.grid_minutes,
                           resolve_specs(args.candidates),
                           timeline=args.timeline, spec_path=args.spec,
-                          patrol_visits_per_day=args.patrol_visits_per_day)
+                          patrol_visits_per_day=args.patrol_visits_per_day,
+                          oracle_seeds=args.oracle_seeds)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(payload) + "\n")
     size_kb = args.out.stat().st_size / 1024
@@ -282,6 +291,11 @@ ACCURACY_GRID_MINUTES = 60
 """Sampling grid for house-wide accuracy series (share of all objects the
 model localizes correctly). Coarser than the belief segments: these are
 plot points, not lookups."""
+
+RECENCY_CONFIG = PassiveProtocolConfig()
+"""Recency binning for the budget sweep's accuracy-by-recency strata:
+the passive protocol's own bins, reused so the sweep, the bake-off, and
+any passive-eval table stratify time-since-last-sighting identically."""
 
 
 def _accuracy_series(episode: "Episode", spec: Dict[str, Any], seed: int,
@@ -316,39 +330,70 @@ def _accuracy_series(episode: "Episode", spec: Dict[str, Any], seed: int,
     return series
 
 
-def _question_accuracy(episode: "Episode", spec: Dict[str, Any], seed: int,
-                       evidence: Sequence[Any]) -> float:
-    """Accuracy on the bank's own question set for one evidence stream."""
+def _question_scores(episode: "Episode", spec: Dict[str, Any], seed: int,
+                     evidence: Sequence[Any]
+                     ) -> Tuple[float, Dict[str, Dict[str, Any]]]:
+    """(overall accuracy, accuracy by recency bin) on the bank's questions.
+
+    Recency is time since the belief's last sighting of the queried
+    object, binned with the passive protocol's bins
+    (:data:`RECENCY_CONFIG`) so the sweep's strata line up with the
+    bake-off's recency tables. Each bin carries its question count —
+    thin bins are where accuracy-by-recency tables usually mislead, so
+    the count travels with the number.
+    """
     rng = _derived_rng(seed, "belief_trace", str(spec["name"]),
                        episode.episode_id)
     belief = build_registered_belief(dict(spec), rng)
     belief.reset(episode.agent_view())
+    last_sighting: Dict[str, int] = {}
+
+    def saw(object_id: str, t: int) -> None:
+        last_sighting[object_id] = max(last_sighting.get(object_id, t), t)
+
     for observation in episode.initial_observations:
         belief.update(observation)
+        saw(observation.object_id, observation.t)
     cursor = 0
     hits = total = 0
+    bin_hits: Dict[str, int] = {}
+    bin_totals: Dict[str, int] = {}
     for day in episode.questions_by_day:
         for question in day:
             while (cursor < len(evidence)
                    and evidence[cursor].t <= question.t_query):
-                belief.update(evidence[cursor])
+                event = evidence[cursor]
+                belief.update(event)
+                if isinstance(event, Observation):
+                    saw(event.object_id, event.t)
+                else:               # a room visit's per-receptacle result
+                    for object_id in event.contents:
+                        saw(object_id, event.t)
                 cursor += 1
             prediction = belief.predict_readonly(question.object_id,
                                                  question.t_query)
-            hits += prediction.argmax == episode.true_location(
+            correct = prediction.argmax == episode.true_location(
                 question.object_id, question.t_query)
+            since = (question.t_query - last_sighting[question.object_id]
+                     if question.object_id in last_sighting else None)
+            label = RECENCY_CONFIG.recency_bin(since)
+            hits += correct
             total += 1
-    return round(hits / total, 4) if total else 0.0
+            bin_hits[label] = bin_hits.get(label, 0) + correct
+            bin_totals[label] = bin_totals.get(label, 0) + 1
+    recency = {label: {"n": bin_totals[label],
+                       "accuracy": round(bin_hits[label]
+                                         / bin_totals[label], 4)}
+               for label in RECENCY_CONFIG.recency_bin_labels()
+               if label in bin_totals}
+    return (round(hits / total, 4) if total else 0.0), recency
 
 
-def _visit_evidence(visits: Sequence[Any], room_map: Any,
-                    truth: Dict[str, Any], away: Any) -> List[Any]:
-    """Realize a schedule into the per-receptacle sense results the
-    beliefs consume (positives and exclusions alike)."""
-    from baselines.room_observations import realize
+def _sense_events(stream: Any) -> List[Any]:
+    """A realized stream's per-receptacle sense results, in time order —
+    the form the beliefs consume (positives and exclusions alike)."""
     from baselines.types import SenseResult
 
-    stream = realize(visits, room_map, truth, "trace", away)
     events: List[Any] = []
     for row in stream.visit_rows:
         t = int(str(row["t"]))
@@ -361,19 +406,35 @@ def _visit_evidence(visits: Sequence[Any], room_map: Any,
     return events
 
 
+def _json_finite(stats: Dict[str, float]) -> Dict[str, Any]:
+    """Stats with non-finite values replaced by None: ``inf`` (a schedule
+    that never revisits, an object never sighted twice) is representable
+    in Python's json output but not in JSON itself, and the viewer's
+    JSON.parse would reject the whole artifact."""
+    import math
+    return {k: (v if isinstance(v, str) or math.isfinite(v) else None)
+            for k, v in stats.items()}
+
+
 def build_patrol_section(episode: "Episode", timeline: pathlib.Path,
                          spec_path: pathlib.Path, seed: int,
                          visits_per_day: int) -> Dict[str, Any]:
     """Per-schedule visit timelines + house-wide accuracy series.
 
-    Every schedule runs at the same shared visit budget (where it takes
-    one) over the same household, so the section answers "what does the
-    CHOICE of patrol route do to belief quality" with everything else
-    held fixed.
+    The three budget-taking schedules run at the shared visit budget,
+    but ``morning_evening_sweep`` and ``stationed_observer`` set their
+    own visit counts by construction — so the schedules differ in
+    OBSERVATION VOLUME as well as route shape, and a raw accuracy
+    comparison across them confounds the two. Each schedule therefore
+    carries its realized stream statistics (``stats``: visits and
+    sightings per day among them, from
+    :func:`~baselines.room_observations.stream_stats`), and accuracy
+    must be read against realized volume, not schedule name alone.
     """
     from baselines.export_bank import (_away_intervals, awake_spans,
                                        load_truth)
-    from baselines.room_observations import RoomMap, build_schedules
+    from baselines.room_observations import (RoomMap, build_schedules,
+                                             realize, stream_stats)
 
     room_map = RoomMap.from_spec(spec_path)
     truth, n_days, _ = load_truth(timeline)
@@ -388,9 +449,12 @@ def build_patrol_section(episode: "Episode", timeline: pathlib.Path,
         "schedules": {},
     }
     for name, visits in sorted(schedules.items()):
-        evidence = _visit_evidence(visits, room_map, truth, away)
+        stream = realize(visits, room_map, truth, "trace", away)
+        evidence = _sense_events(stream)
         section["schedules"][name] = {
             "visits": [[v.t // 60, v.room] for v in visits],
+            "stats": _json_finite(stream_stats(stream, visits, truth,
+                                               n_days)),
             "accuracy": {
                 str(m["name"]): _accuracy_series(episode, dict(m), seed,
                                                  evidence)
@@ -402,7 +466,8 @@ def build_patrol_section(episode: "Episode", timeline: pathlib.Path,
 
 def build_budget_sweep(episode: "Episode", timeline: pathlib.Path,
                        spec_path: pathlib.Path, seed: int,
-                       specs: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
+                       specs: Sequence[Dict[str, Any]],
+                       oracle_seeds: int = 0) -> Dict[str, Any]:
     """Question-set accuracy per model per observation budget.
 
     One round-robin patrol per budget level; every model consumes the
@@ -410,29 +475,60 @@ def build_budget_sweep(episode: "Episode", timeline: pathlib.Path,
     by point. This is the floor/separation/convergence picture: at tiny
     budgets every model sits near the same floor, models separate as
     evidence grows, and saturate when everything is fresh.
+
+    ``recency`` stratifies each model's accuracy at each budget by time
+    since the queried object was last sighted (bins + counts from
+    :data:`RECENCY_CONFIG`).
+
+    With ``oracle_seeds`` > 0, the sweep also carries the Monte-Carlo
+    routine oracle (see :mod:`baselines.routine_oracle`): perfect
+    routine knowledge, no observations, so its accuracy is a single
+    budget-independent number. ``headroom_per_budget`` is oracle minus
+    the best model at each budget — the share of residual error
+    explainable by routine knowledge alone. It is NOT a hard ceiling:
+    negative values mean observation-fed models beat routine knowledge
+    there, i.e. recency is carrying the load.
     """
     from baselines.export_bank import (_away_intervals, awake_spans,
                                        load_truth)
-    from baselines.room_observations import RoomMap, round_robin_patrol
+    from baselines.room_observations import (RoomMap, realize,
+                                             round_robin_patrol)
+    from baselines.routine_oracle import build_oracle_section
 
     room_map = RoomMap.from_spec(spec_path)
     truth, n_days, _ = load_truth(timeline)
     awake = awake_spans(timeline, n_days)
     away = _away_intervals(timeline)
     accuracy: Dict[str, List[float]] = {str(m["name"]): [] for m in specs}
+    recency: Dict[str, List[Dict[str, Dict[str, Any]]]] = {
+        str(m["name"]): [] for m in specs}
     for budget in SWEEP_VISIT_BUDGETS:
         visits = round_robin_patrol(room_map, n_days, awake, budget, seed)
-        evidence = _visit_evidence(visits, room_map, truth, away)
+        evidence = _sense_events(
+            realize(visits, room_map, truth, "trace", away))
         for model in specs:
-            accuracy[str(model["name"])].append(
-                _question_accuracy(episode, dict(model), seed, evidence))
+            overall, by_bin = _question_scores(episode, dict(model), seed,
+                                               evidence)
+            accuracy[str(model["name"])].append(overall)
+            recency[str(model["name"])].append(by_bin)
         logger.info("budget sweep: %d visits/day done", budget)
-    return {
+    sweep: Dict[str, Any] = {
         "visit_budgets": list(SWEEP_VISIT_BUDGETS),
         "patrol": "round_robin_patrol",
         "n_questions": sum(len(d) for d in episode.questions_by_day),
         "accuracy": accuracy,
+        "recency_bins": list(RECENCY_CONFIG.recency_bin_labels()),
+        "recency": recency,
     }
+    if oracle_seeds > 0:
+        oracle = build_oracle_section(timeline, episode, oracle_seeds)
+        if oracle is not None:
+            oracle["headroom_per_budget"] = [
+                round(oracle["accuracy"]
+                      - max(accuracy[m][i] for m in accuracy), 4)
+                for i in range(len(SWEEP_VISIT_BUDGETS))]
+            sweep["oracle"] = oracle
+    return sweep
 
 
 if __name__ == "__main__":

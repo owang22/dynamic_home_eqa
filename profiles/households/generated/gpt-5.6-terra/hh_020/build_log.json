@@ -1,0 +1,94 @@
+{
+  "household": "hh_020",
+  "household_type": "working_professional_solo__night_shift",
+  "archetype": "working_professional_solo",
+  "overlay": "night_shift",
+  "variant": 1,
+  "wave": "wave1",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 1822060355103132605,
+  "persona_reasoning": "Single-resident night-shift healthcare household with a practical, quiet home setup and enough personal objects to support work, recovery, cooking, reading, and occasional travel.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 15524944275448996953,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 9017,
+          "completion_tokens": 15156,
+          "total_tokens": 24173,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 9014,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.199906
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 4602046398825441861,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Marie resets work gear at the counter after night shifts, while comfort and reading items linger around the sofa and bed. Kitchen use repeatedly sends dishes to the sink or rack; cleaning returns them to cupboards. Personal departure gear travels for work and selected trips, then lands at the entry or counter on return. Bath, sleep, laundry, recovery, and plant-care routines move their dedicated home objects, with occasional NO_OP where the activity commonly leaves an item in place.",
+      "failures": [],
+      "uncovered_at_home": [
+        "take_out_bins",
+        "wake_up",
+        "work_home"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 14599,
+          "completion_tokens": 6091,
+          "total_tokens": 20690,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 14596,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 139,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.10229
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $0.6446 of $1.50 cap across 6 call(s) [gpt-5.6-terra: $0.6446 (6 calls)]"
+  },
+  "uncovered_at_home": [
+    "take_out_bins",
+    "wake_up",
+    "work_home"
+  ],
+  "attribute_advisories": [
+    "resident_1: work_start_median_abs_dev = 178 min (proposed cap 45)",
+    "resident_1: 3.75 shifts/week (contract 4-6)"
+  ]
+}

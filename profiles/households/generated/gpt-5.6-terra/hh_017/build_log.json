@@ -1,0 +1,150 @@
+{
+  "household": "hh_017",
+  "household_type": "working_couple_no_children",
+  "archetype": "working_couple_no_children",
+  "overlay": null,
+  "variant": 1,
+  "wave": "wave1",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 16279165232963963435,
+  "persona_reasoning": "Fictional two-adult household profile with fixed ages, full-time daytime work, and occupations within the required categories.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 11557814530460620735,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 9788,
+          "completion_tokens": 15044,
+          "total_tokens": 24832,
+          "prompt_tokens_details": {
+            "cached_tokens": 5961,
+            "cache_write_tokens": 3824,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.18937420000000002
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 18068524993563427811,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 17816,
+          "completion_tokens": 15082,
+          "total_tokens": 32898,
+          "prompt_tokens_details": {
+            "cached_tokens": 5961,
+            "cache_write_tokens": 11852,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.20588620000000002
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 10508281778332848694,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Work trips return Elena's work kit to her desk/table and Marcus's pocket items to the entry cluster; their bags land by the hook or entry floor. At home, Elena's paperwork and tea spread across the desk and dining table, while Marcus's coffee, projector use, and cooking leave objects in the living room or kitchen. Meals create sink and rack accumulations, and the weekly reset returns these small piles to their storage homes. Bedroom and bathroom routines anchor personal grooming, glasses, chargers, medication, and laundry; cleaning, plant care, and laundry briefly pull out the shared utility items.",
+      "failures": [
+        "coverage: 5 of 29 at-home story activities appear in no object rule (['lie_down', 'lunch', 'shower', 'video_call', 'wake_up']; tolerance 4.3)"
+      ],
+      "uncovered_at_home": [
+        "lie_down",
+        "lunch",
+        "shower",
+        "video_call",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 19299,
+          "completion_tokens": 7348,
+          "total_tokens": 26647,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 19296,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 107,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.126774
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 15863718739879146379,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Workdays return Elena's carried work items to the dining-table/office pattern and Marcus's daily carry to the entry cluster; both reset these accumulations during tidy_up. Meals create the kitchen sink, rack, and cabinet flow, while evening reading, projector use, and relaxing spread a few personal things through the living room. Bedroom and bathroom routines return glasses, chargers, grooming items, medication, towel, and laundry to their habitual spots. Occasional plant care, laundry, cleaning, and trips activate the larger shared household items, with NO_OP expressing infrequent use.",
+      "failures": [],
+      "uncovered_at_home": [
+        "hobby"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 19389,
+          "completion_tokens": 8572,
+          "total_tokens": 27961,
+          "prompt_tokens_details": {
+            "cached_tokens": 15166,
+            "cache_write_tokens": 4220,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 177,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.11434319999999999
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $0.6729 of $1.50 cap across 5 call(s) [gpt-5.6-terra: $0.6729 (5 calls)]"
+  },
+  "uncovered_at_home": [
+    "hobby"
+  ],
+  "attribute_advisories": []
+}

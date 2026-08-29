@@ -1,3 +1,4 @@
+*.zip
 __pycache__/
 *.pyc
 *.pyo
@@ -16,6 +17,10 @@ archive/
 # ARE committed (small, reviewable, cited).
 data/anchors/
 third_party/
+# HOMER: the raw upstream dataset (12 GB) as downloaded. Same hard rule —
+# the loader in src/homer/ and the small derived traces under
+# data/homer_traces/ ARE tracked and rebuild from a re-downloaded copy.
+HOMER/
 
 # Profile-generated symbolic episode banks (regenerable from profiles+seed;
 # the hash manifest in the bank dir pins provenance).

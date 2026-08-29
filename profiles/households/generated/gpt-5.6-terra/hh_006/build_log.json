@@ -1,0 +1,137 @@
+{
+  "household": "hh_006",
+  "household_type": "working_professional_solo__irregular_gig",
+  "archetype": "working_professional_solo",
+  "overlay": "irregular_gig",
+  "variant": 1,
+  "wave": "hard5",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 15773766564206913037,
+  "persona_reasoning": "Single-resident gig household centered on a part-time mobile bicycle-repair technician whose work kit and personal items circulate between a compact apartment and changing service calls.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 5799133162004930042,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 8807,
+          "completion_tokens": 15025,
+          "total_tokens": 23832,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 8804,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.197914
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 316268929168013390,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Service-call travel repeatedly returns Marie's daily carry to the entry, chair, or dispatch table. Work-home and reading leave electronics and papers around the dining/sofa areas; meals generate dishes that progress through sink, rack, and cupboard. Bathroom, laundry, entertainment, and periodic resets move the remaining household items, while rare-use luggage is honestly mostly unchanged.",
+      "failures": [
+        "coverage: 7 of 29 at-home story activities appear in no object rule (['hobby', 'lunch', 'snack', 'socialise_home', 'take_medication', 'take_out_bins']...; tolerance 4.3)"
+      ],
+      "uncovered_at_home": [
+        "hobby",
+        "lunch",
+        "snack",
+        "socialise_home",
+        "take_medication",
+        "take_out_bins",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 12676,
+          "completion_tokens": 6120,
+          "total_tokens": 18796,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 12673,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 128,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.098792
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 8982009463861712813,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Marie\u2019s mobile work makes the entry floor, entry bowl, dining table, and nearby chair active staging points. Her daily carry returns from service calls in predictable but slightly untidy patterns; the kitchen accumulates mealware until washing resets it. Sofa activities spread reading, tea, blankets, and entertainment items, while bathroom and laundry routines shift towels and grooming items. Tidy-ups restore several objects to their normal homes, but infrequent or conditional uses retain substantial NO_OP mass.",
+      "failures": [],
+      "uncovered_at_home": [
+        "lie_down",
+        "snack",
+        "take_medication",
+        "take_out_bins"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 12776,
+          "completion_tokens": 5706,
+          "total_tokens": 18482,
+          "prompt_tokens_details": {
+            "cached_tokens": 9557,
+            "cache_write_tokens": 3216,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 189,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.0768214
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $0.4000 of $1.50 cap across 4 call(s) [gpt-5.6-terra: $0.4000 (4 calls)]"
+  },
+  "uncovered_at_home": [
+    "lie_down",
+    "snack",
+    "take_medication",
+    "take_out_bins"
+  ],
+  "attribute_advisories": [
+    "resident_1: work_end_median_abs_dev = 600 min (proposed cap 60)",
+    "resident_1: wake_median_abs_dev = 62 min (proposed cap 45)",
+    "resident_1: out-of-home span on only 54% of declared workdays (proposed floor 80%)"
+  ]
+}

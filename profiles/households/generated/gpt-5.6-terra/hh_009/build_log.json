@@ -1,0 +1,178 @@
+{
+  "household": "hh_009",
+  "household_type": "couple_with_toddler",
+  "archetype": "couple_with_toddler",
+  "overlay": null,
+  "variant": 1,
+  "wave": "wave1",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 13667670402316550591,
+  "persona_reasoning": "A three-person household with a full-time tech worker, a part-time healthcare worker, and a preschool-aged child. The inventory emphasizes portable work, childcare transitions, shared meals, and a small apartment's limited surfaces.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 12037422080586114421,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 10241,
+          "completion_tokens": 15590,
+          "total_tokens": 25831,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 10238,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.207562
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 17521874095906873969,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 18559,
+          "completion_tokens": 14895,
+          "total_tokens": 33454,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 18556,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.215858
+      }
+    },
+    {
+      "resident": "resident_3",
+      "seed": 9339643172990406368,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 26573,
+          "completion_tokens": 14908,
+          "total_tokens": 41481,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 26570,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.232042
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 15714059593622236044,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Trips reset carried work, school, and outing items on return. Elias maintains an entry tray and alternating dining-table/bedroom-desk work stations; Priya stages packed things visibly in the kitchen and backpack; Noa's comfort and play things spread through the living areas until family resets. Meals create a steady sink/dish-rack cycle, while bath, laundry, play, reading, and occasional cleaning produce the other recurring movements.",
+      "failures": [
+        "coverage: 6 of 31 at-home story activities appear in no object rule (['lie_down', 'lunch', 'shower', 'socialise_home', 'take_out_bins', 'wake_up']; tolerance 4.6)"
+      ],
+      "uncovered_at_home": [
+        "lie_down",
+        "lunch",
+        "shower",
+        "socialise_home",
+        "take_out_bins",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 19949,
+          "completion_tokens": 7404,
+          "total_tokens": 27353,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 19946,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 151,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.128746
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 14781578871579141592,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Trips reset the adults' carried essentials at their established staging spots, while Elias's work setup cycles between the dining table and bedroom desk. Priya's packed items gather visibly on the kitchen counter and her personal small items stay in or beside her backpack. Noa's comfort things, books, and toys migrate through the living room and bedroom, with tidy-up and deep-clean restoring the main shared systems. Meals create sink, rack, counter, and table clutter; bathing, laundry, and bedtime move the child-care items through bathroom and bedroom locations. Less frequent home activities still touch a phone, towel, remote, laptop, or entryway item rather than leaving the home wholly static.",
+      "failures": [],
+      "uncovered_at_home": [
+        "lie_down",
+        "shower"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 20045,
+          "completion_tokens": 8000,
+          "total_tokens": 28045,
+          "prompt_tokens_details": {
+            "cached_tokens": 15214,
+            "cache_write_tokens": 4828,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 421,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.1087048
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $0.9341 of $1.50 cap across 6 call(s) [gpt-5.6-terra: $0.9341 (6 calls)]"
+  },
+  "uncovered_at_home": [
+    "lie_down",
+    "shower"
+  ],
+  "attribute_advisories": []
+}

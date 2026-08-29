@@ -14,7 +14,8 @@
 const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const ROOM_FILLS = ["#3d5a80", "#5a8a5e", "#8a5a72", "#7a6a3d", "#5a7a8a",
                     "#6a5a8a", "#8a6a4a"];
-const SEG = {T0: 0, T1: 1, REC: 2, ROOM: 3, REL: 4, X: 5, Z: 6, CAUSE: 7};
+const SEG = {T0: 0, T1: 1, REC: 2, ROOM: 3, REL: 4, X: 5, Z: 6, CAUSE: 7,
+             KIND: 8};
 // resident tracks are shorter: no placement relation, and the last field is
 // the activity they are doing rather than what caused a move
 const RSEG = {T0: 0, T1: 1, REC: 2, ROOM: 3, X: 4, Z: 5, ACT: 6};
@@ -328,6 +329,265 @@ function draw() {
   updateReadout();
 }
 
+// -------------------------------------------------------- why it moved
+
+/* The provenance behind the segment the slider is sitting in.
+ *
+ * trace.json records WHAT moved and which activity moved it; spatialize.py
+ * bakes in the RATIONALE beside it (trace.provenance) — the `cites` line
+ * the generator wrote for each object and each rule, plus which activities
+ * are trips. This turns "caused by: work_away" into the actual answer.
+ *
+ * The distinction that matters, and the reason `kind` is carried on every
+ * segment: most carries are NOT authored. An object whose rule names any
+ * leg of its owner's trips is promoted to a "traveller" and then rides
+ * every trip that owner takes — which is why suitcase_elena leaves with
+ * work_away on the strength of a rule about study. Reporting the trip's
+ * own (nonexistent) rule there would be a fabrication, so a derived move
+ * is labelled derived and names the rule that actually qualified it.
+ */
+
+function provenance() { return (trace && trace.provenance) || {}; }
+function objProvenance(obj) { return (provenance().objects || {})[obj] || null; }
+
+/* Trips, as the set of names a rule might use: the expander splits
+ * per-person variants ("study__resident_1"), but a rule names the base
+ * ("study"), and the same household can run `study` at home too. */
+function tripNames() {
+  const out = new Set();
+  for (const a of provenance().away_activities || []) {
+    out.add(a);
+    out.add(prettyActivity(a));
+  }
+  return out;
+}
+
+/* Matched the way the expander matched it: on the activity base, since
+ * rules name `study` while the timeline runs `study__resident_1`. */
+function ruleFor(info, activity, phase) {
+  const base = prettyActivity(activity);
+  return (info.rules || []).find(
+    r => (r.activity === activity || r.activity === base) &&
+         (!phase || r.phase === phase)) || null;
+}
+
+function residentName(rid) {
+  const r = (trace.resident_info || {})[rid] || {};
+  return r.name || rid;
+}
+
+/* The rule's destinations, with the one this move actually took marked.
+ * A rule is a weighted draw, so the odds are half the explanation: "it
+ * went to the entry" reads very differently at p=0.15 than at p=0.85. */
+function distTable(rule, took) {
+  if (!rule.dist || !rule.dist.length) return "";
+  const rows = rule.dist.map(([dest, p]) => {
+    const hit = dest === took;
+    const label = dest === "NO_OP" ? "stay where it is" : dest;
+    return `<tr class="${hit ? "took" : ""}"><td>${escapeHtml(label)}` +
+           `${hit ? " ←" : ""}</td>` +
+           `<td class="p">${p == null ? "" : Number(p).toFixed(2)}</td></tr>`;
+  }).join("");
+  return `<table class="dist">${rows}</table>`;
+}
+
+function badge(cls, text) {
+  return `<span class="why-how ${cls}">${escapeHtml(text)}</span>`;
+}
+
+function line(html) { return `<div class="why-line">${html}</div>`; }
+
+function quote(text) { return `<q>${escapeHtml(text)}</q>`; }
+
+/* Everything the generator said about this object, as the closing note —
+ * the per-object `cites` is the standing intent ("keys belong in the entry
+ * dish") that the per-rule cites are variations on. */
+function objectNote(info) {
+  if (!info.cites) return "";
+  return line(`<span class="muted">about this object:</span>`) +
+         quote(info.cites);
+}
+
+function explainSegment(obj, seg) {
+  const info = objProvenance(obj);
+  if (!info) {
+    const pv = provenance();
+    return `<div class="muted small">` +
+      (pv.program
+        ? `no movement rules were authored for ${escapeHtml(obj)}.`
+        : `this set carries no authored rationale — its households were ` +
+          `built before the movement pass wrote one.`) + `</div>`;
+  }
+  const cause = String(seg[SEG.CAUSE] || "");
+  const kind = String(seg[SEG.KIND] || "");
+  // Causes are "<mechanism>:<activity>" — activity: for a rule or a carry,
+  // tidy: for a tidy-walk return. Both name the activity that was running.
+  const activity = cause.includes(":") ? cause.slice(cause.indexOf(":") + 1) : "";
+  const act = prettyActivity(activity);
+  const landed = seg[SEG.REC];
+
+  if (kind === "initial" || cause === "initial")
+    return badge("", "starting placement") +
+      line(`It began the episode at its home, ` +
+           `<strong>${escapeHtml(info.home || landed)}</strong>, and had not ` +
+           `been moved yet.`) +
+      objectNote(info);
+
+  if (kind === "misplace") {
+    // Once per day, at a random waking minute, into a random member of the
+    // object's misplace_set — see the drift block in
+    // profiles/revamp_v1/simulate_activities.py. Not tied to an activity,
+    // which is exactly why the cause column reads "misplace" and no rule
+    // can be quoted for it.
+    const p = info.p_misplace;
+    const set = info.misplace_set || [];
+    return badge("chance", "chance drift") +
+      line(`No rule and no activity put it here. ${escapeHtml(obj)} is ` +
+           `absent-minded: on any given day it has a ` +
+           `<strong>${p == null ? "small" : Number(p).toFixed(2)}</strong> ` +
+           `chance of being set down at a random waking moment somewhere ` +
+           `other than home. Today it was, so it is at ` +
+           `<strong>${escapeHtml(landed)}</strong> instead of ` +
+           `<strong>${escapeHtml(info.home || "?")}</strong>.`) +
+      (set.length
+        ? line(`<span class="muted">drifts only into: ` +
+               `${escapeHtml(set.join(", "))}</span>`)
+        : "") +
+      objectNote(info);
+  }
+
+  if (kind === "tidy")
+    // The tidy walk is a property of the ACTIVITY, not of the object: any
+    // out-of-place thing in scope gets walked home during it, so there is
+    // no per-object rule to quote and the object's own `cites` (which
+    // names its home) is the whole of the rationale.
+    return badge("derived", `tidied during ${act}`) +
+      line(`No rule of ${escapeHtml(obj)}'s fired. ` +
+           `<strong>${escapeHtml(act)}</strong> includes a tidy walk, which ` +
+           `collects whatever is out of place and puts it back — so it was ` +
+           `carried home to <strong>${escapeHtml(landed)}</strong>.`) +
+      objectNote(info);
+
+  if (kind === "carry_pickup") {
+    const who = info.owner ? residentName(info.owner) : "its owner";
+    // A pickup can only be AUTHORED by a `during` rule ("this thing is with
+    // her while she does X"). Every rule these sets carry is `after`, which
+    // describes the homecoming, not the leaving — quoting one here would
+    // credit the model with a decision the expander actually made.
+    const authored = ruleFor(info, activity, "during");
+    const trips = tripNames();
+    const own = (info.rules || []).filter(r => trips.has(r.activity));
+    // Prefer the rule for THIS trip when it has one: "its own work_away
+    // rule" is a better answer than some other trip that also qualifies.
+    const qualifier = own.find(r => r.activity === activity ||
+                                    r.activity === act) || own[0];
+    let html = badge(authored ? "authored" : "derived",
+                     authored ? "carried · authored" : "carried · derived") +
+      line(`<strong>${escapeHtml(who)}</strong> took it along on ` +
+           `<strong>${escapeHtml(act)}</strong>.`);
+    if (authored) {
+      html += quote(authored.cites || "(no cites on that rule)");
+    } else if (qualifier) {
+      const sameTrip = qualifier.activity === activity ||
+                       qualifier.activity === act;
+      html += line(`No rule says to take it: rules only say where things ` +
+                   `LAND. ${escapeHtml(obj)} is one of ` +
+                   `${escapeHtml(who)}'s <em>travelling</em> things — it has ` +
+                   `a rule about a trip, so it rides <em>every</em> trip ` +
+                   `${escapeHtml(who)} takes` +
+                   (sameTrip
+                     ? `, this one included:`
+                     : `. Here it is riding <strong>${escapeHtml(act)}</strong>` +
+                       ` on the strength of its rule for ` +
+                       `<strong>${escapeHtml(qualifier.activity)}</strong>:`)) +
+              quote(qualifier.cites || "(no cites on that rule)");
+    } else {
+      // It travels, but no rule of its own names a trip in the FINAL
+      // calendar. That is the chain merge: legs get folded into the trip
+      // they happened on (a coffee stop absorbed into the walk), and the
+      // absorbed leg is what the object was promoted on. The qualifying
+      // occurrence no longer exists to point at, so say that plainly
+      // rather than inventing a rule for it.
+      const named = (info.rules || []).map(r => r.activity);
+      html += line(`<span class="muted">It travels, but no rule of ` +
+                   `${escapeHtml(obj)}'s names a trip in the final ` +
+                   `calendar` +
+                   (named.length
+                     ? ` (its rules are for ${escapeHtml(named.join(", "))})`
+                     : ``) +
+                   `. It was promoted on a trip leg that the expander ` +
+                   `merged into a larger trip — a coffee stop folded into ` +
+                   `the walk it happened on — so the occurrence that ` +
+                   `qualified it is no longer in the calendar to point ` +
+                   `at.</span>`);
+    }
+    return html + objectNote(info);
+  }
+
+  if (kind === "carry_putdown") {
+    const rule = ruleFor(info, activity, "after");
+    const who = info.owner ? residentName(info.owner) : "its owner";
+    let html = badge(rule ? "authored" : "derived",
+                     rule ? "homecoming · authored" : "homecoming · derived") +
+      line(`It came off ${escapeHtml(who)} on the way back in from ` +
+           `<strong>${escapeHtml(act)}</strong>, and was left at ` +
+           `<strong>${escapeHtml(landed)}</strong>.`);
+    if (rule) {
+      if (rule.cites) html += quote(rule.cites);
+      html += distTable(rule, landed);
+    } else {
+      html += line(`No after-rule was written for ${escapeHtml(act)}, so the ` +
+                   `expander synthesized the putdown: a travelling object ` +
+                   `goes back to its home, ` +
+                   `<strong>${escapeHtml(info.home || landed)}</strong>, when ` +
+                   `its owner comes home.`);
+    }
+    return html + objectNote(info);
+  }
+
+  // kind "rule" (and anything a future engine adds): an authored after-rule
+  const rule = ruleFor(info, activity, "after") || ruleFor(info, activity, null);
+  if (rule) {
+    let html = badge("authored", `after ${act}`) +
+      line(`<strong>${escapeHtml(act)}</strong> fired ${escapeHtml(obj)}'s ` +
+           `own rule, which drew ` +
+           `<strong>${escapeHtml(landed)}</strong>:`);
+    if (rule.cites) html += quote(rule.cites);
+    return html + distTable(rule, landed) + objectNote(info);
+  }
+  return badge("", prettyActivity(cause)) +
+    line(`<span class="muted">${escapeHtml(act || cause)} moved it to ` +
+         `${escapeHtml(landed)}, but no rule of ${escapeHtml(obj)}'s names ` +
+         `that activity.</span>`) +
+    objectNote(info);
+}
+
+/* The movement pass reasons once about the whole household before it
+ * writes a single rule; the per-rule cites are notes against that plan.
+ * Folded away because it is the same paragraph for every object and every
+ * moment — worth reading once, not worth re-reading on every move. */
+function householdPlan() {
+  const why = provenance().movement_reasoning;
+  if (!why) return "";
+  return `<details class="why-plan"><summary>the plan for this household` +
+         `</summary>${quote(why)}</details>`;
+}
+
+function updateWhy() {
+  const section = $("why-section");
+  if (!section) return;
+  if (!$("show-why").checked) { section.style.display = "none"; return; }
+  section.style.display = "";
+  const obj = currentObject();
+  // The <details> is rebuilt with the rest of the panel, so its open/closed
+  // state is remembered here rather than lost on every slider tick.
+  const open = section.querySelector("details");
+  const wasOpen = open ? open.open : false;
+  $("why").innerHTML = explainSegment(obj, segmentAt(obj, t)) + householdPlan();
+  const now = section.querySelector("details");
+  if (now) now.open = wasOpen;
+}
+
 // ---------------------------------------------------------------- readout
 
 function updateReadout() {
@@ -346,6 +606,7 @@ function updateReadout() {
                                             .replace("reset:", "reset: ");
   $("st-since").textContent = fmtTime(seg[SEG.T0]);
 
+  updateWhy();
   updateResidentReadout();
 
   const following = $("jump-what").value;
@@ -735,7 +996,7 @@ async function boot() {
     renderRoster(); drawEventStrip(); draw(); });
   $("jump-what").addEventListener("change", draw);
   for (const id of ["show-path", "show-res-path", "show-trace", "show-others",
-                    "show-recs", "show-all-res"])
+                    "show-recs", "show-all-res", "show-why"])
     $(id).addEventListener("change", draw);
   $("play").addEventListener("click", () => togglePlay());
   $("prev-event").addEventListener("click", () => jumpEvent(-1));

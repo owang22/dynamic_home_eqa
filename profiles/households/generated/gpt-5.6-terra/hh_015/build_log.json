@@ -1,0 +1,179 @@
+{
+  "household": "hh_015",
+  "household_type": "single_parent_teens",
+  "archetype": "single_parent_teens",
+  "overlay": null,
+  "variant": 1,
+  "wave": "wave1",
+  "model": "gpt-5.6-terra",
+  "pipeline": "households-b1",
+  "days": 28,
+  "prompts": {
+    "persona_households_v1": "bba65295",
+    "storyfirst_month": "9437033d",
+    "storyfirst_movement": "666685c5"
+  },
+  "persona_seed": 16873641732089890726,
+  "persona_reasoning": "A single parent working a fixed daytime healthcare schedule shares a compact home with two close-in-age teens whose school materials, devices, and differing tidiness levels create believable object movement.",
+  "story_calls": [
+    {
+      "resident": "resident_1",
+      "seed": 5253926015436130806,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 9877,
+          "completion_tokens": 14790,
+          "total_tokens": 24667,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 9874,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.197234
+      }
+    },
+    {
+      "resident": "resident_2",
+      "seed": 13346484991464960672,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 17777,
+          "completion_tokens": 15157,
+          "total_tokens": 32934,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 17774,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.217438
+      }
+    },
+    {
+      "resident": "resident_3",
+      "seed": 8995031501908497228,
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 25888,
+          "completion_tokens": 15872,
+          "total_tokens": 41760,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 25885,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 0,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.24224
+      }
+    }
+  ],
+  "movement_attempts": [
+    {
+      "attempt": 0,
+      "seed": 14791074452570925704,
+      "effort": "medium",
+      "hinted": false,
+      "reasoning": "Trips return carried personal items to their habitual landing points: Marisol resets phone and keys at the entry, the teens unload school gear around the kitchen table or shared bedroom. At home, the kitchen table and counter repeatedly collect homework, dishes, bottles, and meal equipment; bedtime returns Marisol's reading items to her bedside. Bathroom routines leave Nia's bottle and borrowed brush out, and Tessa's towel hangs until laundry. Marisol's tidying, dish work, laundry, and occasional deep cleaning restore shared items with some realistic NO_OP mass.",
+      "failures": [
+        "coverage: 9 of 33 at-home story activities appear in no object rule (['breakfast', 'lie_down', 'lunch', 'music', 'snack', 'socialise_home']...; tolerance 5.0)"
+      ],
+      "uncovered_at_home": [
+        "breakfast",
+        "lie_down",
+        "lunch",
+        "music",
+        "snack",
+        "socialise_home",
+        "take_out_bins",
+        "video_call",
+        "wake_up"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 18229,
+          "completion_tokens": 6494,
+          "total_tokens": 24723,
+          "prompt_tokens_details": {
+            "cached_tokens": 0,
+            "cache_write_tokens": 18226,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 225,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.114386
+      }
+    },
+    {
+      "attempt": 1,
+      "seed": 14391742519989955782,
+      "effort": "medium",
+      "hinted": true,
+      "reasoning": "Marisol's entry bowl, bedroom chair, bedside table, and kitchen counter are stable reset points; her work trips bring carried essentials back to those anchors. The teens' school gear repeatedly returns from trips to the kitchen-table/bedroom zone, while homework and meals displace it around the contested table. Bathroom routines leave bottles, towels, and occasionally the borrowed brush out; laundry, dish work, and tidying restore shared household items. Living-room viewing, gaming, and social time leave the remote, controller, blanket, and devices around the sofa until a tidy-up or clean.",
+      "failures": [],
+      "uncovered_at_home": [
+        "bath"
+      ],
+      "usage": {
+        "model_snapshot": "gpt-5.6-terra",
+        "finish_reason": "stop",
+        "usage": {
+          "prompt_tokens": 18335,
+          "completion_tokens": 6709,
+          "total_tokens": 25044,
+          "prompt_tokens_details": {
+            "cached_tokens": 13855,
+            "cache_write_tokens": 4477,
+            "audio_tokens": 0
+          },
+          "completion_tokens_details": {
+            "reasoning_tokens": 359,
+            "audio_tokens": 0,
+            "accepted_prediction_tokens": 0,
+            "rejected_prediction_tokens": 0
+          }
+        },
+        "cost_usd": 0.092239
+      }
+    }
+  ],
+  "hosted": {
+    "model_snapshot": "gpt-5.6-terra",
+    "spend": "hosted spend $0.9002 of $1.50 cap across 6 call(s) [gpt-5.6-terra: $0.9002 (6 calls)]"
+  },
+  "uncovered_at_home": [
+    "bath"
+  ],
+  "attribute_advisories": []
+}

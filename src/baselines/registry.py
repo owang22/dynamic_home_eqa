@@ -29,6 +29,8 @@ from baselines.beliefs.markov1 import Markov1, Markov1Config
 from baselines.beliefs.most_frequent import MostFrequentLocation
 from baselines.beliefs.periodic_persistence import (PeriodicPersistence,
                                                     PeriodicPersistenceConfig)
+from baselines.beliefs.smoothed_recency import (SmoothedRecency,
+                                                SmoothedRecencyConfig)
 from baselines.beliefs.timetable import TimetableConfig, TimetableLookup
 
 PANEL_TAGS = ("frozen", "candidate")
@@ -110,6 +112,17 @@ def _build_daytype_mixture(spec: Dict[str, Any],
     return DaytypeMixture(rng, cfg, exclusion_floor=_floor(spec))
 
 
+def _build_smoothed_recency(spec: Dict[str, Any],
+                            rng: random.Random) -> BeliefModel:
+    d = SmoothedRecencyConfig
+    cfg = SmoothedRecencyConfig(
+        smoothing_half_life_h=float(spec.get("smoothing_half_life_h",
+                                             d.smoothing_half_life_h)),
+        frequency_half_life_h=float(spec.get("frequency_half_life_h",
+                                             d.frequency_half_life_h)))
+    return SmoothedRecency(rng, cfg, exclusion_floor=_floor(spec))
+
+
 def _build_hierarchy_backoff(spec: Dict[str, Any],
                              rng: random.Random) -> BeliefModel:
     d = HierarchyBackoffConfig
@@ -133,6 +146,8 @@ BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
         BeliefEntry("daytype_mixture", "candidate", _build_daytype_mixture),
         BeliefEntry("hierarchy_backoff", "candidate",
                     _build_hierarchy_backoff),
+        BeliefEntry("smoothed_recency", "candidate",
+                    _build_smoothed_recency),
     )
 }
 """All buildable belief models, keyed by config name."""
@@ -142,6 +157,7 @@ CANDIDATE_SLATE: Tuple[Dict[str, Any], ...] = (
     {"name": "periodic_persistence"},
     {"name": "daytype_mixture"},
     {"name": "hierarchy_backoff"},
+    {"name": "smoothed_recency"},
 )
 """The bake-off candidate belief specs, at their fixed a-priori defaults."""
 
