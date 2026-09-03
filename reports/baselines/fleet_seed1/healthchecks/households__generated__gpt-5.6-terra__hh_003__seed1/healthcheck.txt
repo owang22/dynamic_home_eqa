@@ -1,0 +1,27 @@
+DIAGNOSTIC REPORT — households__generated__gpt-5.6-terra__hh_003__seed1_bank.jsonl
+  bank:   banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_003__seed1_bank.jsonl  (manifest c765d3a547a6…)
+  commit: 9e4120296a86 (dirty tree)  seed 0  questions 2250  budget 24/day
+
+  Intrinsic (ground truth only — see `cli bankstats`): modal share 0.625 time-weighted / 0.607 at query times; 96.2 moves/day; displacement median 7.5 h, p90 24.3 h
+
+  Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
+    NeverSense (answer from memory, never look) last_observation 0.668  most_frequent 0.657  timetable 0.591
+    SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
+    SequentialSearch @ real budget              last_observation 0.712
+
+  Diagnostics (flags mark setups worth a look; nothing here disqualifies a bank):
+    [ flag] stationarity     measured   0.625  reference <= 0.600
+           mean dwell-weighted modal share; high values mean objects mostly sit at their usual spots — read the per-object distribution before concluding anything
+    [  ok ] solvable         measured   1.000  reference == 1.000
+           unlimited-budget search must find every queried object; failure means a bank or harness BUG, not a data property
+    [ flag] not_trivial      measured   0.668  reference <= 0.650
+           passive memory alone nearly solves the bank at this observation rate; paid sensing has little to prove
+    [ flag] not_impossible   measured   0.712  reference >= 0.818
+           sensing bought little over passive at the configured budget; may reflect the budget rather than the bank
+    [  ok ] discriminative   measured   0.078  reference > 0.030
+           all passive models answer alike; usually the observation stream is too sparse for them to differ
+    [  ok ] powered          measured 2250.000  reference >= 300.000
+           few questions; small accuracy differences drown in binomial noise
+    stratified discriminative spreads by household_type: single_parent_teens__rotating_shift=0.078
+
+  flagged: stationarity, not_trivial, not_impossible  (diagnostics, not disqualifiers)

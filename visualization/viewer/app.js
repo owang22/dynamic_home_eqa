@@ -822,7 +822,8 @@ async function watchForChanges() {
     const signature = JSON.stringify(
         datasets.map(d => [d.label, d.trace, d.source]));
     if (knownDatasets && signature !== knownDatasets) {
-      populateTracePicker(datasets);      // rebuilds source + household
+      lastDatasets = datasets;
+      populateTracePicker(datasets);      // rebuilds source + household + seed
       flash(`household list updated (${datasets.length} timelines)`);
     }
     knownDatasets = signature;
@@ -833,6 +834,7 @@ async function watchForChanges() {
       const fresh = await (await fetch(TRACE_URL)).json();
       const wasObject = currentObject(), wasResident = currentResident();
       trace = fresh;
+      traceCache.set(TRACE_URL, fresh);   // keep the cache truthful
       horizon = trace.days * 1440;
       rebuildPickers(wasObject, wasResident);
       computeView(); drawEventStrip(); setTime(Math.min(t, horizon - 1));
@@ -851,12 +853,75 @@ function flash(message) {
   setTimeout(() => el.classList.remove("show"), 4000);
 }
 
+/* Seeds of one household are the SAME home with different jitter draws:
+ * same scene, same objects, same residents, same length. Switching between
+ * them should feel like flipping a page, not like opening a new dataset —
+ * so sibling seeds are prefetched into memory and swapped IN PLACE, keeping
+ * the clock position, the selected object and the selected resident. A full
+ * page reload (what the household picker still does, correctly — a different
+ * home is a different dataset) would throw all three away. */
+const traceCache = new Map();          // url -> parsed trace.json
+let siblingSeeds = [];                 // rows for the open household
+
+async function fetchTrace(url) {
+  if (traceCache.has(url)) return traceCache.get(url);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${res.status} for ${url}`);
+  const parsed = await res.json();
+  traceCache.set(url, parsed);
+  return parsed;
+}
+
+function prefetchSiblings(rows) {
+  // fire-and-forget: a failed prefetch just means the swap fetches later
+  rows.filter(d => !samePath(d.trace, TRACE_URL))
+      .forEach(d => { fetchTrace(d.trace).catch(() => {}); });
+}
+
+async function switchSeed(url) {
+  if (samePath(url, TRACE_URL)) return;
+  const keptTime = t, keptObject = currentObject();
+  const keptResident = currentResident();
+  const seedSel = $("seed-select");
+  try {
+    const fresh = await fetchTrace(url);
+    trace = fresh;
+    TRACE_URL = url;
+    traceStamp = null;                 // re-baseline the rebuild watcher
+    horizon = trace.days * 1440;
+    $("time").max = horizon;
+    rebuildPickers(keptObject, keptResident);
+    computeView();
+    drawEventStrip();
+    setTime(Math.min(keptTime, horizon - 1));
+    history.replaceState(null, "", `?trace=${encodeURIComponent(url)}`);
+    $("run-label").textContent =
+      `${trace.household} · scene ${trace.scene_id} · ${trace.days} days · ` +
+      `seed ${trace.seed}`;
+    document.title = `${trace.household} — object-trace viewer`;
+    if (lastDatasets) linkToBeliefs(lastDatasets);
+    flash(`seed ${trace.seed}`);
+  } catch (e) {
+    console.warn("seed switch failed", url, e);
+    if (seedSel) seedSel.value = TRACE_URL;   // put the picker back
+    flash("could not load that seed");
+  }
+}
+
+let lastDatasets = null;               // for linkToBeliefs after a swap
+
 function populateTracePicker(datasets) {
-  // TWO pickers, source then household: every set numbers its households
-  // hh1..hh10, so a flat list offers three rows called hh_001 with nothing
-  // to tell them apart. Pick the set first, then the home within it.
+  // THREE pickers, source then household then seed: every set numbers its
+  // households hh1..hh10, so a flat list offers three rows called hh_001
+  // with nothing to tell them apart; and one household realized under
+  // several seeds is ONE home with several histories, so its seeds belong
+  // in their own menu rather than as extra household rows.
   const open = datasets.find(d => samePath(d.trace, TRACE_URL));
   const sourceOf = d => d.source || "other";
+  // group key: the household directory when serve.py provides it, else
+  // the trace url (older manifests, and any row without the field, then
+  // behave exactly as before — one row per timeline)
+  const homeOf = d => d.household || d.trace;
   const sources = [...new Set(datasets.map(sourceOf))];
   const currentSource = open ? sourceOf(open) : sources[0];
 
@@ -871,18 +936,43 @@ function populateTracePicker(datasets) {
     srcSel.appendChild(opt);
   });
   srcSel.disabled = sources.length < 2;
+  const openSeed = open ? (open.seed ?? 0) : 0;
   srcSel.onchange = () => {
-    // jump to the first household of the newly chosen set
-    const first = datasets.find(d => sourceOf(d) === srcSel.value);
+    // jump to the first household of the newly chosen set, keeping the
+    // seed being looked at when that household has one
+    const inSet = datasets.filter(d => sourceOf(d) === srcSel.value);
+    const first = inSet.find(d => (d.seed ?? 0) === openSeed) || inSet[0];
     if (first) location.search = `?trace=${encodeURIComponent(first.trace)}`;
   };
 
   const mine = datasets.filter(d => sourceOf(d) === currentSource);
-  const rows = mine.map(d => ({
-    label: d.label,
-    search: `?trace=${encodeURIComponent(d.trace)}`,
-  }));
-  let current = mine.findIndex(d => samePath(d.trace, TRACE_URL));
+
+  // one entry per HOME, holding its seeds in order
+  const homes = [];
+  const byHome = new Map();
+  mine.forEach(d => {
+    const key = homeOf(d);
+    if (!byHome.has(key)) {
+      const entry = {key, seeds: []};
+      byHome.set(key, entry);
+      homes.push(entry);
+    }
+    byHome.get(key).seeds.push(d);
+  });
+  homes.forEach(h => h.seeds.sort(
+      (a, b) => (a.seed ?? 0) - (b.seed ?? 0)));
+
+  const openHome = open ? homeOf(open) : null;
+  // The household row is labelled by its FIRST seed, with the seed suffix
+  // dropped: the seed lives in its own menu now, so repeating it here
+  // would say the same thing twice and misname the other seeds.
+  const stripSeed = label => label.replace(/\s*seed\s*\d+\s*$/i, "").trim();
+  const rows = homes.map(h => {
+    const keep = h.seeds.find(d => (d.seed ?? 0) === openSeed) || h.seeds[0];
+    return {label: stripSeed(h.seeds[0].label),
+            search: `?trace=${encodeURIComponent(keep.trace)}`};
+  });
+  let current = homes.findIndex(h => h.key === openHome);
   if (current < 0) {
     rows.unshift({
       label: `${new URL(TRACE_URL, location.href).pathname} (not in traces.json)`,
@@ -893,6 +983,32 @@ function populateTracePicker(datasets) {
   const sel = $("trace-select");
   sel.innerHTML = "";
   wirePicker(sel, rows, current);
+
+  // Seed picker: the seeds of the household currently open. Switching
+  // household keeps the seed when that home has one of the same number,
+  // so stepping through households at seed 2 stays at seed 2.
+  const seedSel = $("seed-select");
+  if (seedSel) {
+    const here = homes.find(h => h.key === openHome);
+    const seeds = here ? here.seeds : [];
+    seedSel.innerHTML = "";
+    seeds.forEach(d => {
+      const opt = document.createElement("option");
+      opt.value = d.trace;
+      opt.textContent = `seed ${d.seed ?? "?"}`;
+      opt.selected = samePath(d.trace, TRACE_URL);
+      seedSel.appendChild(opt);
+    });
+    seedSel.disabled = seeds.length < 2;
+    if (!seeds.length) {
+      const opt = document.createElement("option");
+      opt.textContent = "seed —";
+      seedSel.appendChild(opt);
+    }
+    seedSel.onchange = () => { switchSeed(seedSel.value); };
+    siblingSeeds = seeds;
+    prefetchSiblings(seeds);
+  }
 }
 
 function linkToBeliefs(datasets) {
@@ -961,6 +1077,7 @@ async function boot() {
 
   // After the fallback above TRACE_URL is final, so the pickers and the
   // cross-link mark the household actually being shown.
+  lastDatasets = datasets;
   populateTracePicker(datasets);
   linkToBeliefs(datasets);
 

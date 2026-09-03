@@ -45,3 +45,12 @@ results/raw_results.csv
 
 # The budgeted-sweep raw results: 63 MB, regenerable in ~20 s by
 # `python -m beliefsim.run`. The gzipped copy beside it IS tracked.
+
+# Re-realized household timelines under extra simulator seeds. Seed 0 is
+# the canonical realization and stays tracked; seeds 1+ are byte-
+# deterministic from the tracked program.yaml plus the seed (no LLM) and
+# ~40 MB apiece across the set, so `python -m households.reseed --seeds
+# 1 2 3 4 --spatialize` rebuilds them exactly instead of git carrying
+# them. Their fleet/bake-off reports under reports/baselines/*_seed<N>
+# ARE tracked — those are the results, the timelines are the inputs.
+profiles/households/generated/*/*/timeline_seed[1-9]*/

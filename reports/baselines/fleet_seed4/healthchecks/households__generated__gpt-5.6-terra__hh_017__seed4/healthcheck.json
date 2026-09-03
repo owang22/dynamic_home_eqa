@@ -1,0 +1,173 @@
+{
+  "bank_path": "banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_017__seed4_bank.jsonl",
+  "bank_manifest_hash": "d91c08b499368c691b19462047ec5269a29f31850f77d4a1cd240c657b61cc90",
+  "config": {
+    "seed": 0,
+    "budget": null,
+    "stationarity_max_modal_share": 0.6,
+    "solvable_tolerance": 1e-09,
+    "not_trivial_max": 0.65,
+    "not_impossible_margin": 0.15,
+    "discriminative_band": 0.03,
+    "powered_min_questions": 300
+  },
+  "config_hash": "fbf2c99847e1194a778cd0b90c7e37f0d9f142c58846fc0cc63dd5b3662a94ed",
+  "git_commit": "9e4120296a86f2ffd8c39f320aaeafd8f8959bd5",
+  "git_dirty": true,
+  "seed": 0,
+  "timestamp": "2026-09-03T06:14:36.303950+00:00",
+  "n_questions": 2250,
+  "real_budget_per_day": 24,
+  "belief_panel": [
+    {
+      "name": "last_observation"
+    },
+    {
+      "name": "most_frequent",
+      "half_life_h": 24
+    },
+    {
+      "name": "timetable",
+      "bin_hours": 1,
+      "day_scheme": "all",
+      "half_life_h": 24
+    }
+  ],
+  "bank_stats": {
+    "n_episodes": 1,
+    "n_objects": 41,
+    "n_receptacles": 27,
+    "n_days": 28,
+    "n_questions": 2250,
+    "modal_share_time": 0.5688552555168408,
+    "modal_share_questions": 0.5586666666666666,
+    "moves_per_day": 101.46428571428571,
+    "displacement_median_h": 7.683333333333334,
+    "displacement_p90_h": 28.883333333333333,
+    "displaced_time_share": 0.4311447444831592,
+    "max_repeats_per_day": 3,
+    "per_object_modal_share": {
+      "laptop_elena": 0.5296,
+      "phone_elena": 0.2613,
+      "keys_elena": 0.6148,
+      "wallet_elena": 0.4458,
+      "backpack_elena": 0.4723,
+      "charger_elena": 0.581,
+      "notebook_elena": 0.5389,
+      "pen_elena": 0.5367,
+      "water_bottle_elena": 0.5706,
+      "mug_elena": 0.4507,
+      "book_elena": 0.396,
+      "glasses_elena": 0.6752,
+      "jacket_elena": 0.2876,
+      "lunchbox_elena": 0.4123,
+      "hairbrush_elena": 0.6723,
+      "makeup_kit_elena": 0.5786,
+      "yoga_mat_elena": 0.4654,
+      "phone_marcus": 0.3889,
+      "keys_marcus": 0.6046,
+      "wallet_marcus": 0.6783,
+      "backpack_marcus": 0.5979,
+      "water_bottle_marcus": 0.5069,
+      "jacket_marcus": 0.3871,
+      "mug_marcus": 0.4711,
+      "charger_marcus": 0.6844,
+      "headphones_marcus": 0.4093,
+      "lunchbox_marcus": 0.5317,
+      "umbrella_marcus": 0.4419,
+      "medication_bottle_marcus": 0.7154,
+      "remote_shared": 0.666,
+      "blanket_shared": 0.5621,
+      "plate_shared_1": 0.6365,
+      "plate_shared_2": 0.5314,
+      "bowl_shared_1": 0.5474,
+      "pot_shared_1": 0.5007,
+      "pan_shared_1": 0.682,
+      "towel_shared_1": 0.5015,
+      "laundry_basket_shared": 1.0,
+      "vacuum_cleaner_shared": 0.7897,
+      "watering_can_shared": 0.9989,
+      "suitcase_shared": 1.0
+    }
+  },
+  "panel": {
+    "never_sense_task_accuracy": {
+      "last_observation": 0.5946666666666667,
+      "most_frequent": 0.5937777777777777,
+      "timetable": 0.5595555555555556
+    },
+    "sequential_search_unlimited_task_accuracy": {
+      "last_observation": 1.0,
+      "most_frequent": 1.0,
+      "timetable": 1.0
+    },
+    "sequential_search_real_budget": {
+      "belief": "last_observation",
+      "budget_per_day": 24,
+      "task_accuracy": 0.6191111111111111
+    }
+  },
+  "stratified_discriminative": {
+    "working_couple_no_children": 0.03511111111111109
+  },
+  "diagnostics": [
+    {
+      "name": "stationarity",
+      "flagged": false,
+      "measured": 0.5688552555168408,
+      "threshold": 0.6,
+      "comparison": "<=",
+      "rationale": "mean dwell-weighted modal share; high values mean objects mostly sit at their usual spots \u2014 read the per-object distribution before concluding anything",
+      "is_bug_check": false
+    },
+    {
+      "name": "solvable",
+      "flagged": false,
+      "measured": 1.0,
+      "threshold": 1.0,
+      "comparison": "==",
+      "rationale": "unlimited-budget search must find every queried object; failure means a bank or harness BUG, not a data property",
+      "is_bug_check": true
+    },
+    {
+      "name": "not_trivial",
+      "flagged": false,
+      "measured": 0.5946666666666667,
+      "threshold": 0.65,
+      "comparison": "<=",
+      "rationale": "passive memory alone nearly solves the bank at this observation rate; paid sensing has little to prove",
+      "is_bug_check": false
+    },
+    {
+      "name": "not_impossible",
+      "flagged": true,
+      "measured": 0.6191111111111111,
+      "threshold": 0.7446666666666667,
+      "comparison": ">=",
+      "rationale": "sensing bought little over passive at the configured budget; may reflect the budget rather than the bank",
+      "is_bug_check": false
+    },
+    {
+      "name": "discriminative",
+      "flagged": false,
+      "measured": 0.03511111111111109,
+      "threshold": 0.03,
+      "comparison": ">",
+      "rationale": "all passive models answer alike; usually the observation stream is too sparse for them to differ",
+      "is_bug_check": false
+    },
+    {
+      "name": "powered",
+      "flagged": false,
+      "measured": 2250.0,
+      "threshold": 300.0,
+      "comparison": ">=",
+      "rationale": "few questions; small accuracy differences drown in binomial noise",
+      "is_bug_check": false
+    }
+  ],
+  "flags": [
+    "not_impossible"
+  ],
+  "solvable_ok": true
+}

@@ -262,7 +262,8 @@ def _fleet_command(args: argparse.Namespace) -> int:
     import baselines.fleet as fleet
 
     export_cfg, hc_cfg = fleet.load_fleet_config(args.config)
-    sources = fleet.discover_households(tuple(args.roots))
+    sources = fleet.discover_households(
+        tuple(args.roots), timeline_dirname=f"timeline_seed{args.seed}")
     rows = fleet.run_fleet(sources, export_cfg, hc_cfg, args.banks_dir,
                            args.out_dir)
     provenance = fleet.provenance_block(args.config, export_cfg.seed)
@@ -321,8 +322,14 @@ def main() -> None:
     fleet_parser.add_argument(
         "--roots", type=pathlib.Path, nargs="+",
         default=None,
-        help="profile roots to scan (default: the revamp_v1 and "
-             "revamp_v2/storyfirst sets)")
+        help="profile roots to scan (default: the attribute-first "
+             "households set, profiles/households/generated; pass "
+             "old_profiles/revamp_v2/storyfirst for the comparison set)")
+    fleet_parser.add_argument(
+        "--seed", type=int, default=0,
+        help="which realization of each household to scan "
+             "(timeline_seed<N>); the export RNG seed stays the "
+             "config's own")
     fleet_parser.add_argument(
         "--config", type=pathlib.Path,
         default=pathlib.Path("src/baselines/configs/fleet.yaml"))

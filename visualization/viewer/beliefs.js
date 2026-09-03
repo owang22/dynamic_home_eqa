@@ -752,23 +752,124 @@ function beliefRows(datasets) {
     label: d.label,
     trace: d.trace,
     belief: d.belief_trace,
+    household: d.household,
+    seed: d.seed,
     search: `?trace=${encodeURIComponent(d.trace)}` +
             `&belief=${encodeURIComponent(d.belief_trace)}`,
   }));
 }
 
-function populateDatasetPicker(rows) {
-  let current = rows.findIndex(r => samePath(r.trace, TRACE_URL));
+/* Seeds of one household are the same home under different jitter draws,
+ * so they get their OWN picker and swap IN PLACE — keeping the clock, the
+ * model and the object being compared. The household picker still reloads
+ * (a different home is a different dataset, with different objects). */
+const beliefCache = new Map();          // url -> parsed json
+
+async function fetchJson(url) {
+  if (beliefCache.has(url)) return beliefCache.get(url);
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${res.status} for ${url}`);
+  const parsed = await res.json();
+  beliefCache.set(url, parsed);
+  return parsed;
+}
+
+async function switchSeed(row) {
+  if (samePath(row.trace, TRACE_URL)) return;
+  const keptTime = t;
+  const keptModel = $("model-select").value;
+  const keptObject = $("object-select").value;
+  try {
+    const [freshTrace, freshBelief] = await Promise.all(
+        [fetchJson(row.trace), fetchJson(row.belief)]);
+    trace = freshTrace; belief = freshBelief;
+    TRACE_URL = row.trace; BELIEF_URL = row.belief;
+    horizon = trace.days * 1440;
+    accuracySeries = {};
+    $("time").max = horizon;
+    // models and objects are identical across seeds of one home, so the
+    // selections carry over; refill anyway in case a seed was rebuilt
+    const modelSel = $("model-select"), objSel = $("object-select");
+    modelSel.innerHTML = ""; objSel.innerHTML = "";
+    fillSelect(modelSel, belief.models.map(m => m.name),
+               belief.models.map(m => `${m.display}` +
+                   (m.panel === "candidate" ? " ·cand" : "")), keptModel);
+    fillSelect(objSel, belief.objects, null, keptObject);
+    $("run-label").textContent =
+      `${belief.household} · ${belief.objects.length} objects · ` +
+      `${belief.models.length} models · ${belief.days}d · seed ${belief.seed}`;
+    $("src-note").innerHTML =
+      `passive diet (tour + scripted sightings, no sensing)<br>` +
+      `sampled every ${belief.grid_minutes} min · seed ${belief.seed}<br>` +
+      `bank <span class="muted">${belief.bank_manifest_hash.slice(0, 12)}…</span>`;
+    history.replaceState(null, "",
+        `?trace=${encodeURIComponent(TRACE_URL)}` +
+        `&belief=${encodeURIComponent(BELIEF_URL)}`);
+    $("traces-link").href = peerViewer("traces", "index.html") +
+                            `?trace=${encodeURIComponent(TRACE_URL)}`;
+    computeView(); drawEventStrip(); setTime(Math.min(keptTime, horizon - 1));
+  } catch (e) {
+    console.warn("seed switch failed", row, e);
+    $("seed-select").value = TRACE_URL;
+  }
+}
+
+function populateDatasetPicker(allRows) {
+  // group by home; a row without serve.py's `household` field stands alone
+  const homeOf = r => r.household || r.trace;
+  const homes = [];
+  const byHome = new Map();
+  allRows.forEach(r => {
+    const key = homeOf(r);
+    if (!byHome.has(key)) { const e = {key, seeds: []}; byHome.set(key, e); homes.push(e); }
+    byHome.get(key).seeds.push(r);
+  });
+  homes.forEach(h => h.seeds.sort((a, b) => (a.seed ?? 0) - (b.seed ?? 0)));
+
+  const openRow = allRows.find(r => samePath(r.trace, TRACE_URL));
+  const openHome = openRow ? homeOf(openRow) : null;
+  const openSeed = openRow ? (openRow.seed ?? 0) : 0;
+  const stripSeed = label => label.replace(/\s*seed\s*\d+\s*$/i, "").trim();
+
+  const rows = homes.map(h => {
+    const keep = h.seeds.find(r => (r.seed ?? 0) === openSeed) || h.seeds[0];
+    return {label: stripSeed(h.seeds[0].label), search: keep.search};
+  });
+  let current = homes.findIndex(h => h.key === openHome);
   if (current < 0) {
     rows.unshift({
       label: `${new URL(TRACE_URL, location.href).pathname} (not in traces.json)`,
-      trace: TRACE_URL, belief: BELIEF_URL,
       search: `?trace=${encodeURIComponent(TRACE_URL)}` +
               `&belief=${encodeURIComponent(BELIEF_URL)}`,
     });
     current = 0;
   }
   wirePicker($("dataset-select"), rows, current);
+
+  const seedSel = $("seed-select");
+  if (seedSel) {
+    const here = homes.find(h => h.key === openHome);
+    const seeds = here ? here.seeds : [];
+    seedSel.innerHTML = "";
+    seeds.forEach(r => {
+      const opt = document.createElement("option");
+      opt.value = r.trace;
+      opt.textContent = `seed ${r.seed ?? "?"}`;
+      opt.selected = samePath(r.trace, TRACE_URL);
+      seedSel.appendChild(opt);
+    });
+    if (!seeds.length) seedSel.appendChild(new Option("seed —", ""));
+    seedSel.disabled = seeds.length < 2;
+    seedSel.onchange = () => {
+      const row = seeds.find(r => samePath(r.trace, seedSel.value));
+      if (row) switchSeed(row);
+    };
+    // prefetch the siblings so the swap is instant
+    seeds.filter(r => !samePath(r.trace, TRACE_URL)).forEach(r => {
+      fetchJson(r.trace).catch(() => {});
+      fetchJson(r.belief).catch(() => {});
+    });
+  }
   $("traces-link").href = peerViewer("traces", "index.html") +
                           `?trace=${encodeURIComponent(TRACE_URL)}`;
 }

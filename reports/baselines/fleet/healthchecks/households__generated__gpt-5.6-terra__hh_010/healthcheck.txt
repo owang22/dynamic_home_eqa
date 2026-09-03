@@ -1,0 +1,27 @@
+DIAGNOSTIC REPORT — households__generated__gpt-5.6-terra__hh_010_bank.jsonl
+  bank:   banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_010_bank.jsonl  (manifest 3ac7877d45e7…)
+  commit: 9e4120296a86 (dirty tree)  seed 0  questions 2250  budget 24/day
+
+  Intrinsic (ground truth only — see `cli bankstats`): modal share 0.543 time-weighted / 0.521 at query times; 158.6 moves/day; displacement median 8.3 h, p90 23.8 h
+
+  Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
+    NeverSense (answer from memory, never look) last_observation 0.511  most_frequent 0.518  timetable 0.482
+    SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
+    SequentialSearch @ real budget              most_frequent 0.545
+
+  Diagnostics (flags mark setups worth a look; nothing here disqualifies a bank):
+    [  ok ] stationarity     measured   0.543  reference <= 0.600
+           mean dwell-weighted modal share; high values mean objects mostly sit at their usual spots — read the per-object distribution before concluding anything
+    [  ok ] solvable         measured   1.000  reference == 1.000
+           unlimited-budget search must find every queried object; failure means a bank or harness BUG, not a data property
+    [  ok ] not_trivial      measured   0.518  reference <= 0.650
+           passive memory alone nearly solves the bank at this observation rate; paid sensing has little to prove
+    [ flag] not_impossible   measured   0.545  reference >= 0.668
+           sensing bought little over passive at the configured budget; may reflect the budget rather than the bank
+    [  ok ] discriminative   measured   0.036  reference > 0.030
+           all passive models answer alike; usually the observation stream is too sparse for them to differ
+    [  ok ] powered          measured 2250.000  reference >= 300.000
+           few questions; small accuracy differences drown in binomial noise
+    stratified discriminative spreads by household_type: family_teen_and_child=0.036
+
+  flagged: not_impossible  (diagnostics, not disqualifiers)

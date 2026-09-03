@@ -61,13 +61,13 @@ presence is what publishes a household to the belief-vs-truth page."""
 TRACE_GLOBS = ("profiles/*/*/*/*/timeline_seed*/trace.json",
                "profiles/*/*/*/timeline_seed*/trace.json",
                "profiles/*/*/timeline_seed*/trace.json",
-               # The superseded sets moved to old_profiles/ (2026-08-28).
-               # Only storyfirst is listed from there — it is the
-               # comparison set; revamp_v1, story_calendar, rule_based
-               # and freeform stay off the dropdown deliberately.
-               "old_profiles/revamp_v2/storyfirst/*/*/timeline_seed*/"
-               "trace.json",
                "casas/*/timeline_*/trace.json")
+# old_profiles/ is NOT scanned: the superseded 21-day sets (storyfirst
+# included) are off the viewer entirely as of 2026-08-30 — the dropdown
+# offers the current 28-day households only. They remain on disk, and
+# `python -m baselines.cli fleet --roots old_profiles/revamp_v2/
+# storyfirst` still reproduces their numbers; this is a viewer choice,
+# not a data deletion.
 
 # Directories the dropdown never offers. `_archive/` holds households kept
 # for provenance whose hhN names no longer match the slot of the same
@@ -103,6 +103,26 @@ def _household_type(household_dir: pathlib.Path) -> str:
             if line.startswith("household_type:"):
                 return line.split(":", 1)[1].strip().strip("'\"")
     return household_dir.parent.name
+
+
+
+def _household_and_seed(trace_path: pathlib.Path) -> tuple:
+    """(household key, seed). The key identifies the HOME across seeds —
+    its directory — so rows differing only by timeline_seed<N> collapse
+    into one household with several seeds."""
+    timeline_dir = trace_path.parent
+    household_dir = timeline_dir.parent
+    seed = None
+    name = timeline_dir.name
+    digits = "".join(c for c in name.split("seed")[-1] if c.isdigit())
+    if "seed" in name and digits:
+        seed = int(digits)
+    else:
+        try:
+            seed = int(json.loads(trace_path.read_text()).get("seed"))
+        except (OSError, ValueError, TypeError):
+            seed = None
+    return "/" + str(household_dir.relative_to(REPO_ROOT)), seed
 
 
 def _label_for(trace_path: pathlib.Path) -> str:
@@ -153,7 +173,10 @@ def _sort_key(url: str) -> tuple:
              else 4 if "/casas/" in url else 3)
     digits = "".join(c for c in url.split("/hh")[-1].split("/")[0]
                      if c.isdigit())
-    return (group, int(digits) if digits else 999, url)
+    seed_part = url.rsplit("timeline_seed", 1)[-1].split("/")[0]
+    seed = int(seed_part) if seed_part.isdigit() else 0
+    return (group, int(digits) if digits else 999, url.rsplit(
+        "/timeline_seed", 1)[0], seed)
 
 
 def build_rows() -> list[dict]:
@@ -187,7 +210,14 @@ def build_rows() -> list[dict]:
         source = _source_of(path)
         if CURRENT_SET and CURRENT_SET in url:
             source = f"★ CURRENT · {source}"
-        row = {"label": _label_for(path), "trace": url, "source": source}
+        # `household` and `seed` are STRUCTURED so the viewer can offer a
+        # separate seed picker: the same home realized under several
+        # seeds is one household with several histories, not several
+        # households. Parsing them back out of the label would break the
+        # first time a label changed.
+        household, seed = _household_and_seed(path)
+        row = {"label": _label_for(path), "trace": url, "source": source,
+               "household": household, "seed": seed}
         if prior.get("runs"):
             row["runs"] = prior["runs"]           # keep published belief runs
         # Belief traces are DISCOVERED, not published by hand: one sits

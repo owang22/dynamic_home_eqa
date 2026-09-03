@@ -42,20 +42,30 @@ from baselines.healthcheck import write_report as write_healthcheck_report
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_ROOTS = ("profiles/revamp_v2/storyfirst",)
+DEFAULT_ROOTS = ("profiles/households/generated",)
 """Profile roots scanned for household folders (relative to the repo cwd).
 
-The storyfirst set is the project's sole synthetic data source; earlier
+The attribute-first households set (``profiles/households/``) is the
+current data source: whole-unit archetypes with census/ATUS-grounded
+schedules, 20 households built as of 2026-08-28. The storyfirst set it
+replaces moved to ``old_profiles/revamp_v2/storyfirst`` and stays the
+COMPARISON set — point the fleet at it deliberately with ``--roots
+old_profiles/revamp_v2/storyfirst`` to reproduce the old numbers. Earlier
 profile lines (revamp_v1 and the sets it superseded) remain on disk for
-provenance only and are never a data choice. Pass ``--roots`` to point the
-fleet at something else deliberately."""
+provenance only and are never a data choice."""
 
 SPEC_FILENAMES = ("object_motions.yaml", "program.yaml",
                   "routine_program.yaml")
 """Exporter spec filenames, tried in order, per pipeline generation."""
 
 TIMELINE_DIRNAME = "timeline_seed0"
-"""The realized-timeline directory a household must carry to be exported."""
+"""The realized-timeline directory a household must carry to be exported.
+
+The default is seed 0; ``discover_households(..., timeline_dirname=...)``
+scans another realization. A household realized under several seeds is
+ONE home with several histories — same persona, story and object rules,
+different jitter/misplacement draws — so seeded runs are repeats for
+variance, never extra households."""
 
 _TIMELINE_FILES = ("events.jsonl", "hourly.csv")
 
@@ -110,7 +120,8 @@ def load_fleet_config(path: pathlib.Path
     return export_cfg, hc_cfg
 
 
-def discover_households(roots: Tuple[pathlib.Path, ...]
+def discover_households(roots: Tuple[pathlib.Path, ...],
+                        timeline_dirname: str = TIMELINE_DIRNAME
                         ) -> List[HouseholdSource]:
     """Every ``<root>/**/hh*`` folder with a realized timeline and a spec.
 
@@ -123,7 +134,7 @@ def discover_households(roots: Tuple[pathlib.Path, ...]
         if not root.is_dir():
             raise FileNotFoundError(f"fleet root {root} does not exist")
         for household in sorted(root.glob("*/hh*")):
-            timeline = household / TIMELINE_DIRNAME
+            timeline = household / timeline_dirname
             if not all((timeline / f).exists() for f in _TIMELINE_FILES):
                 continue
             spec = next((household / name for name in SPEC_FILENAMES
@@ -136,14 +147,20 @@ def discover_households(roots: Tuple[pathlib.Path, ...]
                 slug=str(household), timeline=timeline, spec=spec))
     if not sources:
         raise FileNotFoundError(
-            f"no realized households under roots {[str(r) for r in roots]}")
+            f"no {timeline_dirname} households under roots "
+            f"{[str(r) for r in roots]}")
     return sources
 
 
 def _bank_name(source: HouseholdSource) -> str:
-    """Filesystem-safe bank filename from the household path."""
+    """Filesystem-safe bank filename from the household path AND its
+    realization: two seeds of one household are different banks, and a
+    name without the seed silently overwrote one with the other."""
     slug = source.slug.replace("profiles/", "", 1).replace("/", "__")
-    return f"{slug}_bank.jsonl"
+    seed_dir = source.timeline.name
+    suffix = ("" if seed_dir == TIMELINE_DIRNAME
+              else "__" + seed_dir.replace("timeline_", ""))
+    return f"{slug}{suffix}_bank.jsonl"
 
 
 def _summary_row(source: HouseholdSource,
