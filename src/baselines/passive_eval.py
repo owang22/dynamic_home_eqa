@@ -209,6 +209,99 @@ def evaluate_checkpoint(episode: Episode, belief: BeliefModel,
     return scored
 
 
+CONTINUOUS_HORIZON = 0.0
+"""``horizon_days`` value marking a continuous-mode score: the belief
+was updated with every sighting strictly before the query, so the only
+"forecast" is the age of its evidence, recorded per question."""
+
+
+def question_ages(episode: Episode, cutoff: Optional[int] = None
+                  ) -> Dict[str, Optional[int]]:
+    """question_id -> seconds since the ambient stream last showed that
+    object before the query (None: never). A property of the episode,
+    not of any belief — every model in continuous mode has exactly this
+    evidence when it answers. With ``cutoff`` (seconds), evidence stops
+    there: the ages a belief frozen at that checkpoint answers with."""
+    last_sighting: Dict[str, int] = {}
+    events = [e for e in episode.evidence_stream()
+              if cutoff is None or e.t < cutoff]
+    questions = sorted((q for day in episode.questions_by_day for q in day),
+                       key=lambda q: q.t_query)
+    for obs in episode.initial_observations:
+        last_sighting[obs.object_id] = max(
+            last_sighting.get(obs.object_id, obs.t), obs.t)
+    ages: Dict[str, Optional[int]] = {}
+    i = 0
+    for q in questions:
+        while i < len(events) and events[i].t < q.t_query:
+            ev = events[i]
+            ids = ([ev.object_id] if isinstance(ev, Observation)
+                   else list(ev.contents))
+            for object_id in ids:
+                last_sighting[object_id] = max(
+                    last_sighting.get(object_id, ev.t), ev.t)
+            i += 1
+        ages[q.question_id] = (q.t_query - last_sighting[q.object_id]
+                               if q.object_id in last_sighting else None)
+    return ages
+
+
+def evaluate_continuous(episode: Episode, belief: BeliefModel,
+                        config: PassiveProtocolConfig
+                        ) -> List[ScoredQuestion]:
+    """Score one belief on one episode with evidence applied up to each
+    query: "how good is the belief right now", as opposed to
+    :func:`evaluate_checkpoint`'s frozen-at-D forecast. Evidence and
+    questions are merged in time order; a sighting at exactly the query
+    instant is NOT applied first (strict <), so no question is answered
+    by the observation that would make it trivial. ``checkpoint_day`` is
+    the query's own day (history length), ``horizon_days`` is
+    :data:`CONTINUOUS_HORIZON`, and the age of the object's last
+    sighting is recorded per question."""
+    belief.reset(episode.agent_view())
+    last_sighting: Dict[str, int] = {}
+
+    def saw(object_id: str, t: int) -> None:
+        last_sighting[object_id] = max(last_sighting.get(object_id, t), t)
+
+    for obs in episode.initial_observations:
+        belief.update(obs)
+        saw(obs.object_id, obs.t)
+    events = list(episode.evidence_stream())
+    questions = sorted((q for day in episode.questions_by_day for q in day),
+                       key=lambda q: q.t_query)
+    scored: List[ScoredQuestion] = []
+    i = 0
+    for question in questions:
+        while i < len(events) and events[i].t < question.t_query:
+            event = events[i]
+            belief.update(event)
+            if isinstance(event, Observation):
+                saw(event.object_id, event.t)
+            else:
+                for object_id in event.contents:
+                    saw(object_id, event.t)
+            i += 1
+        prediction = belief.predict_readonly(question.object_id,
+                                             question.t_query)
+        truth = episode.true_location(question.object_id, question.t_query)
+        p_truth = prediction.distribution.get(truth, 0.0)
+        since = (question.t_query - last_sighting[question.object_id]
+                 if question.object_id in last_sighting else None)
+        scored.append(ScoredQuestion(
+            household_id=episode.household_id,
+            episode_id=episode.episode_id, belief=belief.name,
+            checkpoint_day=question.t_query // DAY_SECONDS,
+            horizon_days=CONTINUOUS_HORIZON,
+            question_id=question.question_id,
+            object_id=question.object_id, t_query=question.t_query,
+            correct=prediction.argmax == truth,
+            log_loss=-math.log(max(p_truth, config.log_loss_epsilon)),
+            time_since_sighting_s=since,
+            recency_bin=config.recency_bin(since)))
+    return scored
+
+
 def score_cell(questions: Sequence[ScoredQuestion]) -> CellScore:
     """Mean top-1 accuracy and log-loss over a non-empty question set."""
     if not questions:

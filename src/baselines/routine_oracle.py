@@ -71,25 +71,22 @@ disjoint blocks give independent estimates, which is what
 """
 
 _REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
-_REALIZER_DIR = _REPO_ROOT / "src" / "revamp_v2"
+
+ORACLE_SEED_BASE = 1000
+"""First realization seed the oracle draws from. Bank worlds are the
+seed-0 realization plus the reseeded 1-4 (households.reseed), so the
+oracle's seeds start well above them: it must never average in the
+answer's own coin flips. Per-bank runs offset further by the bank's
+seed so five seeds of one home get disjoint oracle draws."""
 
 
 def _load_realizer() -> Any:
-    """The revamp_v2 realization module, loaded from its directory.
-
-    ``src/revamp_v2`` is a directory of scripts, not an installed
-    package; it is loaded here the same way it loads the v1 engine
-    itself (path insertion + spec_from_file_location).
-    """
-    if str(_REALIZER_DIR) not in sys.path:
-        sys.path.insert(0, str(_REALIZER_DIR))
-    spec = importlib.util.spec_from_file_location(
-        "rv2_simulate_for_oracle", _REALIZER_DIR / "simulate.py")
-    if spec is None or spec.loader is None:
-        raise ImportError(f"cannot load {_REALIZER_DIR / 'simulate.py'}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    """The realization engine: the self-contained households package
+    (households.simulate wraps the vendored simulator). A plain import —
+    the old importlib load of src/revamp_v2/simulate.py pulled the v1
+    engine out of profiles/revamp_v1, which no longer exists."""
+    from households import simulate
+    return simulate
 
 
 def _realized_truth(sim: Any, engine: Any, params: Dict[str, Any],
@@ -126,19 +123,14 @@ def _modal_receptacle(counter: "collections.Counter[str]") -> str:
     return min(r for r, c in counter.items() if c == top)
 
 
-def build_oracle_section(timeline: pathlib.Path, episode: Episode,
-                         n_seeds: int = DEFAULT_ORACLE_SEEDS
-                         ) -> Optional[Dict[str, Any]]:
-    """The budget sweep's oracle entry, or None when not computable.
-
-    Requires the household's ``program.yaml`` next to the timeline (the
-    storyfirst layout); households realized by other pipelines have no
-    stored program to re-realize and are skipped with a log line rather
-    than an error.
-
-    Seeds 1..n_seeds are used — seed 0 is the bank's own world and is
-    excluded so the oracle never reads the answer's own realization.
-    """
+def oracle_predictions(timeline: pathlib.Path, episode: Episode,
+                       n_seeds: int = DEFAULT_ORACLE_SEEDS,
+                       seed_base: int = ORACLE_SEED_BASE
+                       ) -> Optional[Tuple[List[str], Dict[str, Any]]]:
+    """(modal receptacle per bank question in question order, stats), or
+    None when the household has no stored program to re-realize. Seeds
+    seed_base+1 .. seed_base+n_seeds; the bank's own world is never one
+    of them."""
     hh_dir = timeline.resolve().parent
     program_path = hh_dir / "program.yaml"
     if not program_path.exists():
@@ -159,13 +151,12 @@ def build_oracle_section(timeline: pathlib.Path, episode: Episode,
     counts: List["collections.Counter[str]"] = [
         collections.Counter() for _ in questions]
     # Two DISJOINT halves, not a prefix and the whole: the stability
-    # figure must compare independent estimates. A prefix-vs-full delta
-    # is dominated by the (smaller, contained) prefix's own noise and
-    # says nothing about the reported number.
+    # figure must compare independent estimates.
     half_counts: List[List["collections.Counter[str]"]] = [
         [collections.Counter() for _ in questions] for _ in range(2)]
     half = n_seeds // 2
-    for seed in range(1, n_seeds + 1):
+    for k in range(1, n_seeds + 1):
+        seed = seed_base + k
         truth = _realized_truth(sim, engine, params, program, hh_dir, seed)
         for i, (object_id, t_query) in enumerate(questions):
             if object_id not in truth:
@@ -175,24 +166,26 @@ def build_oracle_section(timeline: pathlib.Path, episode: Episode,
                     f"program has drifted from the bank")
             receptacle = truth_at(truth[object_id], t_query)
             counts[i][receptacle] += 1
-            half_counts[0 if seed <= half else 1][i][receptacle] += 1
+            half_counts[0 if k <= half else 1][i][receptacle] += 1
 
-    def accuracy(cs: List["collections.Counter[str]"]) -> float:
-        hits = sum(
-            _modal_receptacle(c) == episode.true_location(obj, t)
-            for c, (obj, t) in zip(cs, questions))
+    modal = [_modal_receptacle(c) for c in counts]
+
+    def accuracy(preds: List[str]) -> float:
+        hits = sum(pred == episode.true_location(obj, t)
+                   for pred, (obj, t) in zip(preds, questions))
         return round(hits / len(questions), 4) if questions else 0.0
 
-    full = accuracy(counts)
-    halves = [accuracy(cs) for cs in half_counts]
+    full = accuracy(modal)
+    halves = [accuracy([_modal_receptacle(c) for c in cs])
+              for cs in half_counts]
     delta = round(abs(halves[0] - halves[1]), 4)
     logger.info(
         "routine oracle: %s — accuracy %.4f over %d seeds "
         "(disjoint halves %.4f / %.4f, delta %.4f)",
         hh_dir.name, full, n_seeds, halves[0], halves[1], delta)
-    return {
+    stats = {
         "n_seeds": n_seeds,
-        "seed_range": [1, n_seeds],
+        "seed_range": [seed_base + 1, seed_base + n_seeds],
         "n_questions": len(questions),
         "accuracy": full,
         "accuracy_halves": [halves[0], halves[1]],
@@ -200,3 +193,12 @@ def build_oracle_section(timeline: pathlib.Path, episode: Episode,
         "note": ("perfect routine knowledge, no observations; NOT a hard "
                  "ceiling — models with fresh sightings can exceed it"),
     }
+    return modal, stats
+
+
+def build_oracle_section(timeline: pathlib.Path, episode: Episode,
+                         n_seeds: int = DEFAULT_ORACLE_SEEDS
+                         ) -> Optional[Dict[str, Any]]:
+    """The budget sweep's oracle entry, or None when not computable."""
+    result = oracle_predictions(timeline, episode, n_seeds)
+    return None if result is None else result[1]
