@@ -1,5 +1,156 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-09-03: Perpetua and Perpetua* ported as candidates, run on the full 20x5 fleet; the exclusion rule audited)
+
+Two survival-analysis belief models from the Montreal robotics group,
+registered as candidates `perpetua`, `perpetua_star`, and the
+`perpetua_star` flat-switching-prior ablation (display names Perpetua,
+PerpetuaStar, PerpetuaStarFlat), all appended to the bake-off slate. Each
+(object, receptacle) pair an object has ever been sighted at is one
+binary feature tracked by a mixture of persistence filters (present
+until a survival time elapses) and a mixture of emergence filters (absent
+until it reappears); the prediction is the normalised vector of per-edge
+presence beliefs over the object's support. OUT_OF_HOUSE is never sighted,
+so it never enters any support: both models are structurally wrong there
+(14-31% of the truth at ages of a day and more).
+
+**Faithfulness.** `beliefs/perpetua_filters.py` is a numpy port of
+montrealrobotics/perpetua-code (JAX) with its numerical conventions
+mirrored (clip bounds, the `logdiff` floor, the two-level interpolation
+of the switching simulation, EM E/M steps for exponential and lognormal
+families, AIC model selection). `tests/test_perpetua_filters.py` checks
+it against outputs captured from the JAX code on 12 deterministic cases
+(`tests/fixtures/perpetua_reference_targets.json`, driver and patched
+clone under `third_party/perpetua_reference/`, gitignored): single and
+mixture filters, the state machine at num_steps 1 and 10 including a
+3000 s forecast tail, and 30-iteration EM traces all agree to float32
+precision. Perpetua* (arXiv 2605.00121) has no public code; equations
+2-15 are ported from the paper.
+
+**Deviations, each documented in the module docstrings:**
+
+- Perpetua* resets. The paper never says whether the mixtures are ever
+  re-initialised; run literally from a fixed origin, hour-scale survival
+  priors lose all mass within days and the posterior collapses. Default
+  `reset_mode="belief"`: after each observation, when the eq. 13 presence
+  belief crosses 0.5 against the current phase, BOTH mixtures restart at
+  that time with eq. 18's eps-mixed weights and are seeded with the
+  observation (both restart so the eq. 12 evidences cover the same
+  window). The first proposal, `model_posterior` (restart the newly
+  dominant mixture when the eq. 12 posterior flips), ping-pongs on our
+  sparse streams because the model posterior names the story that
+  explains the window that just ended, not the phase that begins; it is
+  kept as a diagnostic, as is `none` (literal). Every reset is logged.
+- Time-of-day switching prior with Laplace pseudo-count 1: without it a
+  freshly created edge's prior is exactly 1 (its only sighting created
+  it) and the prior alone flips the edge.
+- Segments cut at observed flips (no PELT; the stream is noise-free);
+  persistence segment = presence run plus the following absence run,
+  origin at the head's first observation time.
+- EM: deterministic starts (the reference's grid quantiles, a
+  data-driven quantile start, and the previous day's fit as a warm start)
+  instead of random perturbation restarts; stopping tolerance 1e-4 on the
+  float64 log-evidence, the float32 resolution the reference's 1e-6
+  effectively is. Edges without new observations since their last fit
+  are not refit.
+- Exclusions: `_apply_exclusions` is the identity in the Perpetua base
+  (negative evidence enters the filters as y=0, so the base rule would
+  count it twice); base sighting bookkeeping and the sighting-at-instant
+  short circuit stay.
+
+**Hyperparameters** (signed off): P_M = P_F = 0.01, lognormal family
+(exponential via config), K in {1, 2, 3} by AIC, delta 0.05/0.95, eps 0.1,
+num_steps 10, gamma 0.99, alpha0 0.01 per hour, refit at the first update
+after each day boundary, fallback single-component prior (median 12 h)
+below 2 completed segments per filter kind.
+
+**Instrumentation.** `BeliefModel.last_prediction_diagnostics()` (None by
+default) rides on `ScoredQuestion.diagnostics`; the household analysis
+writes `absence_signal.csv.gz` (largest per-edge belief per question,
+with where the object really was), `perpetua_resets.csv.gz`,
+`perpetua_edges.csv.gz` (completed segments, fitted K, fallback flags per
+edge) and `perpetua_fallback.csv.gz` (fallback share per query day);
+`household_report.py` renders them in a new section.
+
+**Full run (20 homes x 5 seeds, 11 models + oracle, 100 workers):**
+23 min 49 s wall, 31 CPU-hours; the three survival models are 24 of the
+~35 CPU-minutes a bank costs. The report gained two per-home figures
+(`perpetua_by_home.png`, `perpetua_long_age_delta.png`) with Wilson 95%
+bands, per-bin question counts on the ticks, and a MIN_N = 30 rule: no
+cell under 30 questions is drawn or quoted (hh_016's "1.000 at 3d+" was 3
+questions). Never pool homes; the per-home rows are the result.
+
+**What the survival models do, per home.** At a day and older every
+home shows the same shape: LastObs and MostFreq coincide (the exclusion
+rule dominates both) and Perpetua* sits above them by 0.05 to 0.30
+except in hh_012 and hh_019, where it loses. `perpetua_cases.py`
+explains it with a four-case split of each long-age question by (object
+MOVED since its last sighting) x (a later visit EXCLUDED the last-seen
+receptacle). Fleet totals for orientation, per-home tables in
+`perpetua_cases.md`:
+
+    case                      n      LastObs  MostFreq  PerpetuaStar
+    stayed, not excluded    5874     1.00     1.00      0.69
+    stayed, EXCLUDED       12272     0.00     0.00      0.64
+    moved, not excluded     3904     0.00     0.00      0.23
+    moved, EXCLUDED        28738     0.42     0.42      0.14
+
+The whole gain is the second row: the object left, a patrol found the
+spot empty, the object came back unobserved. The base class's exclusion
+is permanent until the next sighting, so no classical model can ever
+re-answer that receptacle; the Perpetua models feed the same negative
+evidence into their filters and the emergence filter re-admits the
+receptacle after the expected absence. hh_016 (single senior) is the
+extreme: 100% of its long-age questions have the last-seen receptacle
+excluded (a sparse home where the patrol always catches the absence),
+93% of them are still in the house, and 35% are "came back" cases, so
+LastObs/MostFreq score 0.03 and Perpetua* 0.36. The survival models pay
+for it in the other rows: 0.69 where the object simply stayed put, and
+at 12-24 h they lose 0.24 on the 46 629 stayed-and-not-excluded
+questions (0.76 vs 1.00) because the fallback prior (median 12 h, still
+in use for 54% of edge beliefs on day 27) decays the last-seen edge too
+fast. 97% of hh_016's long-age predictions used the fallback prior: the
+learned mixtures barely act; the structure does the work.
+
+**Audit of the exclusion rule itself, prompted by the above.** The rule
+(`BeliefModel._active_exclusions`) drops an exclusion only when a later
+positive sighting of that object arrives. At long ages there is by
+definition no later sighting, so exclusions accumulate and never age.
+Replaying LastObs on all 100 banks with and without the rule (the
+counterfactual is simply "answer the last sighting"):
+
+    age of last sighting      n     LastObs now  rule removed   delta   last-seen excluded
+    3-6h                   24504      0.767        0.767       +0.000        0.00
+    12-24h                 78956      0.603        0.595       +0.008        0.04
+    1 day and older        50788      0.353        0.357       -0.004        0.81
+
+So the rule is not buggy and it is not free money: it is worth +0.008 at
+12-24 h and -0.004 at a day and older. What it buys is the only route any
+model has to OUT_OF_HOUSE, which is unsensable and therefore never
+sighted and never excluded — at long ages LastObs answers OUT_OF_HOUSE
+41 010 times and is right 12 045 of them, catching 94% of the 12 777 true
+out-of-house questions. What it costs is that by then 81% of questions
+have their last-seen receptacle ruled out and 24.2% have the object
+sitting at a receptacle the rule has ruled out (it left, was seen gone,
+and came back unobserved). Elimination has effectively collapsed into
+"answer OUT_OF_HOUSE", firing 3.2x more often than the truth warrants.
+
+The real asymmetry is that positive evidence decays in the models that
+model decay, while negative evidence never decays and is enforced in the
+base class ABOVE every model, so no model can opt out of it — which is
+exactly what the Perpetua models had to bypass to get their long-age
+gain. An exclusion with an expiry (or a decay to the model's own prior)
+would be the principled fix and the cheap comparator at once; it changes
+the frozen panel's numbers, so it is the owner's call, not a silent edit.
+
+The obvious cheap comparator this implies -- LastObs or MostFreq with an
+exclusion that expires -- is not implemented and not on the slate; it is
+a decision for the owner. The absence signal separates a little at long
+ages fleet-wide (mean max edge belief 0.51 in-house vs 0.37 out-of-house
+at 1-2d for Perpetua*) but is not thresholdable. Frozen-forecast
+(D=7, h=1) headline: Perpetua* is best on 4 of 20 homes. 58 new tests
+pass; mypy --strict clean on the new and touched code.
+
 ## Update (2026-08-27, later: patrol volume reported, routine oracle, recency strata, smoothed recency)
 
 Four additions closing out the classical-baseline side. Three are

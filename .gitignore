@@ -54,3 +54,15 @@ results/raw_results.csv
 # them. Their fleet/bake-off reports under reports/baselines/*_seed<N>
 # ARE tracked — those are the results, the timelines are the inputs.
 profiles/households/generated/*/*/timeline_seed[1-9]*/
+
+# Per-row dumps from the household analysis: one row per question per
+# model (absence_signal, ~1.8 M rows / 33 MB) and one per filter reset
+# (perpetua_resets, ~230 k rows). The AGGREGATES beside them stay tracked
+# — cells.csv.gz, perpetua_edges.csv.gz, perpetua_fallback.csv.gz,
+# households.json, provenance.json, the plots and the reports — and those
+# are what every table and figure is built from. To rebuild the dumps:
+# `python -m baselines.household_analysis` (~24 min on 100 workers), then
+# `python -m baselines.perpetua_cases` for perpetua_cases.md, which reads
+# absence_signal.csv.gz.
+reports/baselines/**/absence_signal.csv.gz
+reports/baselines/**/perpetua_resets.csv.gz

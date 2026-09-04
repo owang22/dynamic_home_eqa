@@ -20,7 +20,8 @@ import gzip
 import json
 import pathlib
 import statistics
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import (Dict, Iterator, List, Optional, Sequence,
+                    Tuple)
 
 import matplotlib
 matplotlib.use("Agg")
@@ -38,19 +39,53 @@ LAST_OBS = "LastObservation"
 # follows the model, never its rank in a table.
 MODEL_ORDER = ("LastObservation", "MostFrequentLocation", "TimetableLookup",
                "Markov1", "PeriodicPersistence", "DaytypeMixture",
-               "HierarchyBackoff", "SmoothedRecency")
+               "HierarchyBackoff", "SmoothedRecency", "Perpetua",
+               "PerpetuaStar", "PerpetuaStarFlat")
 SHORT = {"LastObservation": "LastObs", "MostFrequentLocation": "MostFreq",
          "TimetableLookup": "Timetable", "Markov1": "Markov1",
          "PeriodicPersistence": "Periodic", "DaytypeMixture": "DaytypeMix",
-         "HierarchyBackoff": "HierBackoff", "SmoothedRecency": "SmoothedRec"}
+         "HierarchyBackoff": "HierBackoff", "SmoothedRecency": "SmoothedRec",
+         "Perpetua": "Perpetua", "PerpetuaStar": "PerpetuaStar",
+         "PerpetuaStarFlat": "PerpStarFlat"}
 PALETTE = ("#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4",
-           "#008300", "#4a3aa7", "#e34948")
+           "#008300", "#4a3aa7", "#e34948", "#00838f", "#6d4c41", "#9e9d24")
+PERPETUA_MODELS = ("Perpetua", "PerpetuaStar", "PerpetuaStarFlat")
+PERPETUA_FOCUS = ("MostFrequentLocation", "Markov1", "Perpetua",
+                  "PerpetuaStar", "PerpetuaStarFlat")
+"""The survival models against the two frequency comparators, for the
+focused per-home figure. The full per-home figure carries every model;
+this one carries the five that the Perpetua question is about."""
+LONG_AGES = ("[24h,48h)", "[48h,72h)", "[72h,inf)")
+MIN_N = 30
+"""Fewest questions a (home, age bin) cell needs before a figure draws it
+or a table quotes it as a number. hh_016 has 3 questions with a sighting
+3 days old; an accuracy of 1.000 on those is not a result."""
+
+
+def wilson(correct: int, n: int, z: float = 1.96) -> Tuple[float, float]:
+    """Wilson 95% interval for a binomial proportion. Questions of one
+    home's seeds are pooled, so this is the sampling noise of the
+    question set; seed-to-seed spread is reported separately."""
+    if n == 0:
+        return (0.0, 1.0)
+    p = correct / n
+    denom = 1 + z * z / n
+    centre = (p + z * z / (2 * n)) / denom
+    half = z * ((p * (1 - p) / n + z * z / (4 * n * n)) ** 0.5) / denom
+    return (max(0.0, centre - half), min(1.0, centre + half))
+AGE_RAMP = {"[24h,48h)": "#7ecdd3", "[48h,72h)": "#2a9aa4",
+            "[72h,inf)": "#00646d"}
+"""One hue, light to dark, for the three long-age bins: age is ordered,
+so it takes a sequential ramp, never categorical hues."""
 ROUTINE_MODELS = ("MostFrequentLocation", "TimetableLookup", "Markov1",
                   "PeriodicPersistence", "DaytypeMixture",
                   "HierarchyBackoff")
 """Models whose answer comes from the routine they inferred, as opposed to
-the two that lean on the freshest sighting (LastObservation,
-SmoothedRecency)."""
+the ones that lean on the freshest sighting (LastObservation,
+SmoothedRecency, and the three Perpetua survival models, whose belief
+decays from the last observation). Membership is deliberately unchanged
+by the Perpetua additions so the "routine > LastObs" column keeps the
+meaning it had in earlier reports."""
 
 SURFACE, INK, INK2, GRID, ORACLE_GRAY = ("#fcfcfb", "#0b0b0b", "#52514e",
                                          "#e8e7e2", "#8a8983")
@@ -236,7 +271,8 @@ def long_age_table(rows, meta, models) -> str:
     ages they all sit on LastObs; the informative comparison is at 1-2d
     and 3d+ against the oracle (routine only). The last column is the
     first age bin where the best routine model beats LastObs by at least
-    0.02 — a margin above the paired seed noise, not a tie."""
+    0.02 — a margin above the paired seed noise, not a tie. Cells with
+    fewer than MIN_N questions are not quoted."""
     routine = [m for m in models if base_name(m) in ROUTINE_MODELS]
     sel = [r for r in rows if r["mode"] == "continuous"]
     a = Agg(sel, lambda r: (r["household"], r["model"], r["age_bin"]))
@@ -269,14 +305,27 @@ def long_age_table(rows, meta, models) -> str:
                 cross = AGE_LABEL[b]
                 break
 
+        def n_of(b):
+            return a.n.get((hh, LAST_OBS, b), 0)
+
+        def guarded(v, b):
+            n = n_of(b)
+            return "-" if v is None else (f"n={n}<{MIN_N}" if n < MIN_N
+                                          else f3(v))
+
         def cell(b):
             v, name = best_any(b)
-            return "-" if v is None else f"{f3(v)} ({label_of(name)})"
+            if v is None or n_of(b) < MIN_N:
+                return guarded(v, b)
+            return f"{f3(v)} ({label_of(name)}, n={n_of(b)})"
         lines.append("| " + " | ".join([
             hh, m["household_type"], str(m["residents"]),
-            f3(lo("[12h,24h)")), f3(lo("[24h,48h)")), cell("[24h,48h)"),
-            f3(a.acc((hh, ORACLE, "[24h,48h)"))), f3(lo("[72h,inf)")),
-            cell("[72h,inf)"), f3(a.acc((hh, ORACLE, "[72h,inf)"))),
+            guarded(lo("[12h,24h)"), "[12h,24h)"),
+            guarded(lo("[24h,48h)"), "[24h,48h)"), cell("[24h,48h)"),
+            guarded(a.acc((hh, ORACLE, "[24h,48h)")), "[24h,48h)"),
+            guarded(lo("[72h,inf)"), "[72h,inf)"),
+            cell("[72h,inf)"),
+            guarded(a.acc((hh, ORACLE, "[72h,inf)")), "[72h,inf)"),
             cross]) + " |")
     return "\n".join(lines)
 
@@ -552,6 +601,123 @@ def fig_modes_by_group(rows, meta, models, out: pathlib.Path) -> None:
     plt.close(fig)
 
 
+def fig_perpetua_by_home(rows, meta, models, out: pathlib.Path) -> None:
+    """The Perpetua question, one panel per home: the three survival
+    models against the two frequency comparators. Seeds are pooled within
+    a home; homes are never pooled with each other."""
+    focus = [m for m in models if base_name(m) in PERPETUA_FOCUS]
+    if not any(base_name(m) in PERPETUA_MODELS for m in focus):
+        return
+    homes, nr, nc = _grid_of_homes(meta)
+    fig, axes = plt.subplots(nr, nc, figsize=(3.4 * nc, 2.7 * nr),
+                             squeeze=False, facecolor=SURFACE)
+    sel = [r for r in rows if r["mode"] == "continuous"]
+    a = Agg(sel, lambda r: (r["household"], r["model"], r["age_bin"]))
+    bins = AGE_ORDER[:-1]
+    xs = list(range(len(bins)))
+    for i, hh in enumerate(homes):
+        ax = axes[i // nc][i % nc]
+        counts = [a.n.get((hh, focus[0], b), 0) for b in bins]
+        for m in focus + [ORACLE]:
+            ys = [a.acc((hh, m, b)) if n >= MIN_N else None
+                  for b, n in zip(bins, counts)]
+            _line(ax, xs, ys, m)
+            if m == ORACLE:
+                continue
+            band = [wilson(a.c[(hh, m, b)], a.n[(hh, m, b)])
+                    if n >= MIN_N else None for b, n in zip(bins, counts)]
+            keep = [(x, lo, hi) for x, bd in zip(xs, band) if bd
+                    for lo, hi in [bd]]
+            if keep:
+                ax.fill_between([k[0] for k in keep], [k[1] for k in keep],
+                                [k[2] for k in keep], color=color_of(m),
+                                alpha=0.12, linewidth=0, zorder=1)
+        mt = meta[hh]
+        _style(ax, f"{hh} · {mt['household_type'][:38]} · {mt['residents']}r")
+        ax.set_xticks(xs)
+        ax.set_xticklabels([f"{AGE_LABEL[b]}\nn={n}" for b, n in zip(bins, counts)],
+                           rotation=45, ha="right", fontsize=5.5)
+        ax.axvspan(len(bins) - 3.5, len(bins) - 0.5, color="#f2f1ec",
+                   zorder=0)
+    for j in range(len(homes), nr * nc):
+        axes[j // nc][j % nc].axis("off")
+    _legend(fig, axes[0][0].get_legend_handles_labels())
+    fig.suptitle("Perpetua models vs the frequency comparators, per home "
+                 "(belief kept current, seeds pooled; shading = Wilson 95% "
+                 f"interval; bins under {MIN_N} questions not drawn; grey "
+                 "band = 1 day and older)", fontsize=10, color=INK, x=0.01,
+                 ha="left")
+    fig.tight_layout(rect=(0, 0.04, 1, 0.97))
+    fig.savefig(out, dpi=140, facecolor=SURFACE)
+    plt.close(fig)
+
+
+def fig_perpetua_long_age_delta(rows, meta, models, out: pathlib.Path
+                                ) -> None:
+    """Per home, at the three long-age bins: each survival model's
+    accuracy minus MostFreq's. One row per home, never a fleet mean — the
+    question is which homes it helps, and a mean over homes would hide
+    exactly that."""
+    present = {base_name(m): m for m in models}
+    ref = present.get("MostFrequentLocation")
+    variants = [present[b] for b in PERPETUA_MODELS if b in present]
+    if ref is None or not variants:
+        return
+    sel = [r for r in rows if r["mode"] == "continuous"]
+    a = Agg(sel, lambda r: (r["household"], r["model"], r["age_bin"]))
+    homes = sorted(meta, key=lambda h: (meta[h]["resident_group"], h))
+    ys = list(range(len(homes)))[::-1]
+    fig, axes = plt.subplots(1, len(variants),
+                             figsize=(3.6 * len(variants), 0.42 * len(homes) + 2.0),
+                             squeeze=False, sharey=True, facecolor=SURFACE)
+    for ax, model in zip(axes[0], variants):
+        ax.set_facecolor(SURFACE)
+        ax.axvline(0, color=INK2, linewidth=1.2, zorder=1)
+        ax.grid(True, axis="x", color=GRID, linewidth=1)
+        ax.set_axisbelow(True)
+        for side in ("top", "right", "left"):
+            ax.spines[side].set_visible(False)
+        ax.spines["bottom"].set_color(GRID)
+        ax.tick_params(colors=INK2, labelsize=7, length=0)
+        for y, hh in zip(ys, homes):
+            for k, b in enumerate(LONG_AGES):
+                n = a.n.get((hh, model, b), 0)
+                v, r0 = a.acc((hh, model, b)), a.acc((hh, ref, b))
+                if v is None or r0 is None or n < MIN_N:
+                    continue
+                # Unpaired normal interval for the difference of two
+                # proportions on the same n. The two models answer the
+                # SAME questions, so the paired interval is narrower;
+                # this one is the conservative bound.
+                se = ((v * (1 - v) + r0 * (1 - r0)) / n) ** 0.5
+                yy = y + (1 - k) * 0.22       # three bins spread within the row
+                ax.plot([v - r0 - 1.96 * se, v - r0 + 1.96 * se], [yy, yy],
+                        color=AGE_RAMP[b], linewidth=1.4, zorder=2,
+                        solid_capstyle="butt")
+                ax.plot(v - r0, yy, marker="o", markersize=7,
+                        color=AGE_RAMP[b], markeredgecolor=SURFACE,
+                        markeredgewidth=1.2, linestyle="none", zorder=3)
+        ax.set_title(f"{label_of(model)} − MostFreq", fontsize=9, color=INK,
+                     loc="left")
+        ax.set_xlabel("top-1 accuracy difference", fontsize=8, color=INK2)
+    axes[0][0].set_yticks(ys)
+    axes[0][0].set_yticklabels(
+        [f"{h} · {meta[h]['residents']}r" for h in homes], fontsize=7)
+    handles = [plt.Line2D([], [], marker="o", markersize=8, linestyle="none",
+                          color=AGE_RAMP[b], markeredgecolor=SURFACE,
+                          markeredgewidth=1.2) for b in LONG_AGES]
+    _legend(fig, (handles, [AGE_LABEL[b] for b in LONG_AGES]))
+    fig.suptitle("Where the survival models beat frequency: per-home "
+                 "difference at long ages (belief kept current, seeds "
+                 "pooled; bars = conservative 95% interval of the "
+                 f"difference; bins under {MIN_N} questions not drawn; "
+                 "right of the line = the survival model wins)",
+                 fontsize=9.5, color=INK, x=0.01, ha="left")
+    fig.tight_layout(rect=(0, 0.06, 1, 0.95))
+    fig.savefig(out, dpi=150, facecolor=SURFACE)
+    plt.close(fig)
+
+
 def fig_separation(recs: List[dict], out: pathlib.Path) -> None:
     """Dot plot per home: LastObs, best model, oracle on one accuracy
     axis, homes sorted by oracle within resident group."""
@@ -599,6 +765,129 @@ def fig_separation(recs: List[dict], out: pathlib.Path) -> None:
     plt.close(fig)
 
 
+# ------------------------------------------------------ perpetua side --
+
+def _stream_side(in_dir: pathlib.Path, name: str) -> Iterator[dict]:
+    """Rows of one gzipped side file, one at a time. The absence-signal
+    file is one row per question per model per mode — millions of rows on
+    the full fleet — so every consumer here accumulates counters in a
+    single pass and never holds the file in memory."""
+    path = in_dir / name
+    if not path.exists():
+        return
+    with gzip.open(path, "rt") as fh:
+        yield from csv.DictReader(fh)
+
+
+def perpetua_section(in_dir: pathlib.Path) -> Optional[str]:
+    """Tables from the Perpetua side files: the absence signal by age bin
+    and where the object really was (kept-current mode), fallback use by
+    query day, and how much training data the edges had. Pooling here is
+    across questions of one model, not across homes: these are properties
+    of the estimator, not household comparisons."""
+    cats = ("ordinary receptacle", "out of house", "on a person")
+    # model -> age bin -> category -> [n, sum of max belief]
+    belief: Dict[str, Dict[str, Dict[str, List[float]]]] = {}
+    # model -> age bin -> [questions, questions with a fallback edge]
+    fb_q: Dict[str, Dict[str, List[int]]] = {}
+    for r in _stream_side(in_dir, "absence_signal.csv.gz"):
+        if r["mode"] != "continuous":
+            continue
+        m, b = r["model"], r["age_bin"]
+        cell = belief.setdefault(m, {}).setdefault(b, {})
+        acc = cell.setdefault(r["truth_category"], [0.0, 0.0])
+        acc[0] += 1
+        acc[1] += float(r["max_edge_belief"])
+        q = fb_q.setdefault(m, {}).setdefault(b, [0, 0])
+        q[0] += 1
+        q[1] += int(int(r["n_fallback_edges"]) > 0)
+    # model -> day -> [edge beliefs, fallback edge beliefs]
+    fallback: Dict[str, Dict[int, List[int]]] = {}
+    for r in _stream_side(in_dir, "perpetua_fallback.csv.gz"):
+        cell = fallback.setdefault(r["model"], {}).setdefault(int(r["day"]),
+                                                              [0, 0])
+        cell[0] += int(r["n_edge_beliefs"])
+        cell[1] += int(r["n_fallback_edge_beliefs"])
+    # model -> lists over edges
+    edges: Dict[str, Dict[str, List[int]]] = {}
+    for r in _stream_side(in_dir, "perpetua_edges.csv.gz"):
+        cell = edges.setdefault(r["model"], {"ps": [], "es": [], "rs": [],
+                                             "ks": []})
+        cell["ps"].append(int(r["n_persistence_segments"]))
+        cell["es"].append(int(r["n_emergence_segments"]))
+        cell["rs"].append(int(r["n_resets"]))
+        cell["ks"].append(int(r["pf_components"]))
+    if not belief and not edges:
+        return None
+    models = sorted(set(belief) | set(edges),
+                    key=lambda m: (MODEL_ORDER.index(base_name(m))
+                                   if base_name(m) in MODEL_ORDER else 99, m))
+    md: List[str] = []
+    if belief:
+        md += ["Absence signal (kept current, every home and seed): mean of "
+               "the largest per-edge presence belief, split by where the "
+               "object really was. A usable not-in-the-house threshold needs "
+               "the out-of-house column well below the ordinary one. `n` "
+               "counts questions; `fallback` is the share of predictions "
+               "with at least one edge still on the fallback prior.", ""]
+        head = (["model", "age of last sighting", "n"]
+                + [f"max belief, {c}" for c in cats] + ["fallback"])
+        lines = ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
+        for m in models:
+            for b in AGE_ORDER:
+                cell = belief.get(m, {}).get(b)
+                if not cell:
+                    continue
+                cells = []
+                for c in cats:
+                    acc = cell.get(c)
+                    cells.append(f"{acc[1] / acc[0]:.3f} ({int(acc[0])})"
+                                 if acc else "-")
+                q = fb_q[m][b]
+                lines.append("| " + " | ".join(
+                    [label_of(m), AGE_LABEL.get(b, b), str(q[0])]
+                    + cells + [f"{q[1] / q[0]:.2f}"]) + " |")
+        md += lines + [""]
+    if fallback:
+        md += ["Fallback use by query day: share of edge beliefs computed "
+               "from the fallback single-component prior rather than a "
+               "fitted mixture.", ""]
+        days = sorted({d for v in fallback.values() for d in v})
+        shown = [d for d in days if d % 3 == 0 or d == days[-1]]
+        head = ["model"] + [f"day {d}" for d in shown]
+        lines = ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
+        for m in models:
+            if m not in fallback:
+                continue
+            cells = []
+            for d in shown:
+                n, k = fallback[m].get(d, [0, 0])
+                cells.append(f"{k / n:.2f}" if n else "-")
+            lines.append("| " + " | ".join([label_of(m)] + cells) + " |")
+        md += lines + [""]
+    if edges:
+        md += ["Training data per edge at the end of the kept-current run: "
+               "completed segments are what the EM fits on; an edge needs 2 "
+               "of a kind to leave the fallback prior for that filter.", ""]
+        head = ["model", "edges", "median persistence segs",
+                "median emergence segs", "share < 2 persistence",
+                "share < 2 emergence", "median resets", "mean K persistence"]
+        lines = ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
+        for m in models:
+            if m not in edges:
+                continue
+            e = edges[m]
+            n = len(e["ps"])
+            ps, es, rs = sorted(e["ps"]), sorted(e["es"]), sorted(e["rs"])
+            lines.append("| " + " | ".join([
+                label_of(m), str(n), str(ps[n // 2]), str(es[n // 2]),
+                f"{sum(v < 2 for v in ps) / n:.2f}",
+                f"{sum(v < 2 for v in es) / n:.2f}", str(rs[n // 2]),
+                f"{sum(e['ks']) / n:.2f}"]) + " |")
+        md += lines + [""]
+    return "\n".join(md)
+
+
 # -------------------------------------------------------------- report --
 
 def build(in_dir: pathlib.Path, out_dir: pathlib.Path) -> pathlib.Path:
@@ -619,12 +908,16 @@ def build(in_dir: pathlib.Path, out_dir: pathlib.Path) -> pathlib.Path:
     t_long = long_age_table(rows, meta, models)
     t_truth = truth_by_age_table(meta)
     hist, t_hist = history_stats(rows, meta, models)
+    t_perpetua = perpetua_section(in_dir)
 
     fig_age_by_group(rows, meta, models, out_dir / "age_by_group.png")
     fig_age_by_home(rows, meta, models, out_dir / "age_by_home.png")
     fig_history_by_home(hist, meta, models, out_dir / "history_by_home.png")
     fig_modes_by_group(rows, meta, models, out_dir / "modes_by_group.png")
     fig_separation(recs_c, out_dir / "separation_by_home.png")
+    fig_perpetua_by_home(rows, meta, models, out_dir / "perpetua_by_home.png")
+    fig_perpetua_long_age_delta(rows, meta, models,
+                                out_dir / "perpetua_long_age_delta.png")
 
     seeds = sorted({r["seed"] for r in rows})
     md = [
@@ -708,6 +1001,29 @@ def build(in_dir: pathlib.Path, out_dir: pathlib.Path) -> pathlib.Path:
         "",
         "![](history_by_home.png)",
         "",
+    ]
+    if t_perpetua:
+        md += [
+            "## Perpetua and Perpetua*: survival models vs frequency",
+            "",
+            "The three survival models against the two frequency "
+            "comparators the question is about, one panel per home. Homes "
+            "are never pooled: a fleet mean would hide which homes the "
+            "survival machinery helps.",
+            "",
+            "![](perpetua_by_home.png)",
+            "",
+            "The same comparison as a per-home difference at the three "
+            "long-age bins, where the models actually diverge:",
+            "",
+            "![](perpetua_long_age_delta.png)",
+            "",
+            "### Absence signal, fallback, training data",
+            "",
+            t_perpetua,
+            "",
+        ]
+    md += [
         "Figures are static; every plotted value appears in the tables "
         "above, which are the table view.",
     ]

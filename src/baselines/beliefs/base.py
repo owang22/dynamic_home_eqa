@@ -108,6 +108,14 @@ class BeliefModel(abc.ABC):
                 previous = by_receptacle.get(evidence.receptacle_id, -1)
                 by_receptacle[evidence.receptacle_id] = max(previous, evidence.t)
 
+    def last_prediction_diagnostics(self) -> Union[Dict[str, float], None]:
+        """Optional side channel: numbers about the most recent
+        :meth:`predict` that an evaluation may log next to the score
+        (e.g. the largest per-edge presence belief of an edge model, its
+        absence signal). None for models without one -- the default. Never
+        part of the prediction itself."""
+        return None
+
     def predict_readonly(self, object_id: str, t: int) -> Prediction:
         """predict() with the tie-break generator's state restored after.
 

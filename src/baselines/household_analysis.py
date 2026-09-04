@@ -74,6 +74,80 @@ per routine_oracle's measured 1/sqrt(n) spread)."""
 COLUMNS = ("household", "seed", "model", "mode", "day", "horizon",
            "age_bin", "n", "correct", "logloss")
 
+ABSENCE_COLUMNS = ("household", "seed", "model", "mode", "day", "horizon",
+                   "question_id", "object_id", "t_query", "age_bin",
+                   "truth_category", "correct", "max_edge_belief",
+                   "sum_edge_belief", "n_edges", "n_fallback_edges")
+"""``absence_signal.csv.gz``: one row per scored question of every model
+that offers prediction diagnostics (the Perpetua edge models): the
+largest per-edge presence belief is the signal a future "not in the
+house" answer would threshold, logged next to where the object really
+was so its calibration can be read off by age bin."""
+RESET_COLUMNS = ("household", "seed", "model", "object_id", "receptacle_id",
+                 "t", "direction")
+"""``perpetua_resets.csv.gz``: every filter reset of the continuous run."""
+EDGE_COLUMNS = ("household", "seed", "model", "object_id", "receptacle_id",
+                "t0", "n_events", "n_sightings", "n_persistence_segments",
+                "n_emergence_segments", "pf_components", "ef_components",
+                "pf_fallback", "ef_fallback", "n_resets")
+"""``perpetua_edges.csv.gz``: per-edge state at the end of the continuous
+run: how much training data each edge had and whether it was still on the
+fallback prior."""
+FALLBACK_COLUMNS = ("household", "seed", "model", "day", "n_predictions",
+                    "n_predictions_any_fallback", "n_edge_beliefs",
+                    "n_fallback_edge_beliefs")
+"""``perpetua_fallback.csv.gz``: per query day of the continuous run, how
+many predictions (and edge beliefs) came from the fallback prior."""
+SIDE_FILES = {"absence": ("absence_signal.csv.gz", ABSENCE_COLUMNS),
+              "resets": ("perpetua_resets.csv.gz", RESET_COLUMNS),
+              "edges": ("perpetua_edges.csv.gz", EDGE_COLUMNS),
+              "fallback": ("perpetua_fallback.csv.gz", FALLBACK_COLUMNS)}
+
+
+def truth_category(receptacle_id: str) -> str:
+    """Where an object really is, coarsely: ``out of house``, ``on a
+    person`` or ``ordinary receptacle`` (the report's grouping)."""
+    upper = receptacle_id.upper()
+    if "OUT" in upper:
+        return "out of house"
+    if "PERSON" in upper:
+        return "on a person"
+    return "ordinary receptacle"
+
+
+def _absence_rows(scored: Sequence[Any], episode: Any, household: str,
+                  seed: int, mode: str) -> List[Tuple[Any, ...]]:
+    rows = []
+    for q in scored:
+        d = q.diagnostics
+        if d is None:
+            continue
+        truth = episode.true_location(q.object_id, q.t_query)
+        rows.append((household, seed, q.belief, mode, q.checkpoint_day,
+                     q.horizon_days, q.question_id, q.object_id, q.t_query,
+                     q.recency_bin, truth_category(truth), int(q.correct),
+                     round(d["max_edge_belief"], 6),
+                     round(d["sum_edge_belief"], 6), int(d["n_edges"]),
+                     int(d["n_fallback_edges"])))
+    return rows
+
+
+def _perpetua_rows(belief: Any, household: str, seed: int
+                   ) -> Dict[str, List[Tuple[Any, ...]]]:
+    """Reset, edge and fallback rows of a finished continuous run, for
+    models that keep them (duck-typed on the Perpetua diagnostics)."""
+    if not all(hasattr(belief, a) for a in
+               ("reset_events", "edge_summary", "fallback_summary")):
+        return {}
+    name = belief.name
+    resets = [(household, seed, name, e["object_id"], e["receptacle_id"],
+               e["t"], e["direction"]) for e in belief.reset_events]
+    edges = [(household, seed, name, *(e[c] for c in EDGE_COLUMNS[3:]))
+             for e in belief.edge_summary()]
+    fallback = [(household, seed, name, day, *(v[c] for c in FALLBACK_COLUMNS[4:]))
+                for day, v in belief.fallback_summary().items()]
+    return {"resets": resets, "edges": edges, "fallback": fallback}
+
 
 def bank_path(household: str, seed: int) -> pathlib.Path:
     suffix = "" if seed == 0 else f"__seed{seed}"
@@ -105,7 +179,7 @@ def household_meta() -> Dict[str, Dict[str, Any]]:
     return out
 
 
-def _agg_rows(agg: Dict[Tuple, List], household: str, seed: int) -> List[Tuple]:
+def _agg_rows(agg: Dict[Tuple, List], household: str, seed: int) -> List[Tuple[Any, ...]]:
     rows = []
     for (model, mode, day, horizon, age_bin), (n, c, ll) in sorted(
             agg.items(), key=lambda kv: tuple(map(str, kv[0]))):
@@ -125,6 +199,7 @@ def analyze_bank(task: Dict[str, Any]) -> Dict[str, Any]:
     episodes = list(JsonlBank(path=path).episodes())
     agg: Dict[Tuple, List] = collections.defaultdict(lambda: [0, 0, 0.0])
     oracle_stats: Optional[Dict[str, Any]] = None
+    side: Dict[str, List[Tuple[Any, ...]]] = {k: [] for k in SIDE_FILES}
 
     def add(key: Tuple, correct: bool, logloss: Optional[float]) -> None:
         cell = agg[key]
@@ -142,19 +217,27 @@ def analyze_bank(task: Dict[str, Any]) -> Dict[str, Any]:
                                "continuous")
             belief = build_registered_belief(dict(spec), rng)
             name = belief.name
-            for q in evaluate_continuous(episode, belief, config):
+            scored = evaluate_continuous(episode, belief, config)
+            for q in scored:
                 add((name, "continuous", q.checkpoint_day,
                      CONTINUOUS_HORIZON, q.recency_bin),
                     q.correct, q.log_loss)
+            side["absence"] += _absence_rows(scored, episode, household,
+                                             seed, "continuous")
+            for key, rows in _perpetua_rows(belief, household, seed).items():
+                side[key] += rows
             for checkpoint in config.checkpoint_days:
                 rng = _derived_rng(task["rng_seed"], "household_analysis",
                                    str(spec["name"]), episode.episode_id,
                                    str(checkpoint))
                 belief = build_registered_belief(dict(spec), rng)
-                for q in evaluate_checkpoint(episode, belief, checkpoint,
-                                             config):
+                scored = evaluate_checkpoint(episode, belief, checkpoint,
+                                             config)
+                for q in scored:
                     add((name, "frozen", checkpoint, q.horizon_days,
                          q.recency_bin), q.correct, q.log_loss)
+                side["absence"] += _absence_rows(scored, episode, household,
+                                                 seed, "frozen")
 
         if task["oracle_seeds"] > 0:
             result = oracle_predictions(
@@ -187,7 +270,7 @@ def analyze_bank(task: Dict[str, Any]) -> Dict[str, Any]:
                             correct, None)
     return {"household": household, "seed": seed,
             "rows": _agg_rows(agg, household, seed),
-            "oracle": oracle_stats}
+            "oracle": oracle_stats, "side": side}
 
 
 def main() -> None:
@@ -234,20 +317,33 @@ def main() -> None:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     oracle: Dict[str, Dict[str, Any]] = {}
     n_rows = 0
-    with gzip.open(args.out_dir / "cells.csv.gz", "wt", newline="") as fh, \
-            concurrent.futures.ProcessPoolExecutor(
-                max_workers=args.workers) as pool:
-        writer = csv.writer(fh)
-        writer.writerow(COLUMNS)
-        futures = {pool.submit(analyze_bank, t): t for t in tasks}
-        for fut in concurrent.futures.as_completed(futures):
-            res = fut.result()
-            writer.writerows(res["rows"])
-            n_rows += len(res["rows"])
-            if res["oracle"]:
-                oracle[f"{res['household']}:{res['seed']}"] = res["oracle"]
-            logger.info("done %s seed %s (%d cells)", res["household"],
-                        res["seed"], len(res["rows"]))
+    side_handles = {key: gzip.open(args.out_dir / fname, "wt", newline="")
+                    for key, (fname, _) in SIDE_FILES.items()}
+    side_writers = {key: csv.writer(fh) for key, fh in side_handles.items()}
+    for key, (_, columns) in SIDE_FILES.items():
+        side_writers[key].writerow(columns)
+    n_side = {key: 0 for key in SIDE_FILES}
+    try:
+        with gzip.open(args.out_dir / "cells.csv.gz", "wt", newline="") as fh, \
+                concurrent.futures.ProcessPoolExecutor(
+                    max_workers=args.workers) as pool:
+            writer = csv.writer(fh)
+            writer.writerow(COLUMNS)
+            futures = {pool.submit(analyze_bank, t): t for t in tasks}
+            for fut in concurrent.futures.as_completed(futures):
+                res = fut.result()
+                writer.writerows(res["rows"])
+                n_rows += len(res["rows"])
+                for key, rows in res["side"].items():
+                    side_writers[key].writerows(rows)
+                    n_side[key] += len(rows)
+                if res["oracle"]:
+                    oracle[f"{res['household']}:{res['seed']}"] = res["oracle"]
+                logger.info("done %s seed %s (%d cells)", res["household"],
+                            res["seed"], len(res["rows"]))
+    finally:
+        for fh in side_handles.values():
+            fh.close()
 
     (args.out_dir / "households.json").write_text(json.dumps(
         {"households": meta, "oracle_per_bank": oracle}, indent=2))
@@ -262,7 +358,9 @@ def main() -> None:
         "checkpoint_days": list(PassiveProtocolConfig().checkpoint_days),
         "horizons_days": list(PassiveProtocolConfig().horizons_days),
         "oracle_seeds_per_bank": args.oracle_seeds,
-        "n_cells": n_rows}, indent=2))
+        "n_cells": n_rows,
+        "side_files": {SIDE_FILES[k][0]: n for k, n in n_side.items()}},
+        indent=2))
     print(f"household_analysis: {len(tasks)} banks, {n_rows} cells -> "
           f"{args.out_dir}")
 

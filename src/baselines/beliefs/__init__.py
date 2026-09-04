@@ -10,10 +10,16 @@ from baselines.beliefs.markov1 import Markov1, Markov1Config
 from baselines.beliefs.most_frequent import MostFrequentLocation
 from baselines.beliefs.periodic_persistence import (PeriodicPersistence,
                                                     PeriodicPersistenceConfig)
+from baselines.beliefs.perpetua_belief import (PerpetuaBelief,
+                                               PerpetuaConfig,
+                                               PerpetuaStarBelief,
+                                               PerpetuaStarConfig)
 from baselines.beliefs.timetable import TimetableConfig, TimetableLookup
 
 __all__ = ["BeliefModel", "DaytypeMixture", "DaytypeMixtureConfig",
            "HierarchyBackoff", "HierarchyBackoffConfig", "LastObservation",
            "Markov1", "Markov1Config", "MostFrequentLocation",
            "PeriodicPersistence", "PeriodicPersistenceConfig",
+           "PerpetuaBelief", "PerpetuaConfig", "PerpetuaStarBelief",
+           "PerpetuaStarConfig",
            "TimetableConfig", "TimetableLookup"]

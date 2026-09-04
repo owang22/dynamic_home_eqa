@@ -127,6 +127,9 @@ class ScoredQuestion:
     log_loss: float                 # -ln(max(p(truth), epsilon))
     time_since_sighting_s: Optional[int]   # None = never sighted
     recency_bin: str
+    diagnostics: Optional[Dict[str, float]] = None
+    """The belief's :meth:`last_prediction_diagnostics` for this
+    prediction, when it offers one (edge models' absence signal)."""
 
 
 @dataclasses.dataclass(frozen=True)
@@ -205,7 +208,8 @@ def evaluate_checkpoint(episode: Episode, belief: BeliefModel,
                 correct=prediction.argmax == truth,
                 log_loss=-math.log(max(p_truth, config.log_loss_epsilon)),
                 time_since_sighting_s=since,
-                recency_bin=config.recency_bin(since)))
+                recency_bin=config.recency_bin(since),
+                diagnostics=belief.last_prediction_diagnostics()))
     return scored
 
 
@@ -298,7 +302,8 @@ def evaluate_continuous(episode: Episode, belief: BeliefModel,
             correct=prediction.argmax == truth,
             log_loss=-math.log(max(p_truth, config.log_loss_epsilon)),
             time_since_sighting_s=since,
-            recency_bin=config.recency_bin(since)))
+            recency_bin=config.recency_bin(since),
+            diagnostics=belief.last_prediction_diagnostics()))
     return scored
 
 

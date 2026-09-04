@@ -29,6 +29,10 @@ from baselines.beliefs.markov1 import Markov1, Markov1Config
 from baselines.beliefs.most_frequent import MostFrequentLocation
 from baselines.beliefs.periodic_persistence import (PeriodicPersistence,
                                                     PeriodicPersistenceConfig)
+from baselines.beliefs.perpetua_belief import (PerpetuaBelief,
+                                               PerpetuaConfig,
+                                               PerpetuaStarBelief,
+                                               PerpetuaStarConfig)
 from baselines.beliefs.smoothed_recency import (SmoothedRecency,
                                                 SmoothedRecencyConfig)
 from baselines.beliefs.timetable import TimetableConfig, TimetableLookup
@@ -135,6 +139,49 @@ def _build_hierarchy_backoff(spec: Dict[str, Any],
     return HierarchyBackoff(rng, cfg, exclusion_floor=_floor(spec))
 
 
+def _perpetua_common(spec: Dict[str, Any], d: Any) -> Dict[str, Any]:
+    """Config fields shared by Perpetua and Perpetua*, from the spec."""
+    return dict(
+        family=str(spec.get("family", d.family)),
+        p_m=float(spec.get("p_m", d.p_m)), p_f=float(spec.get("p_f", d.p_f)),
+        k_range=tuple(int(k) for k in spec.get("k_range", d.k_range)),
+        em_max_iter=int(spec.get("em_max_iter", d.em_max_iter)),
+        em_tol=float(spec.get("em_tol", d.em_tol)),
+        prune_threshold=float(spec.get("prune_threshold", d.prune_threshold)),
+        refit_every_days=int(spec.get("refit_every_days", d.refit_every_days)),
+        min_segments=int(spec.get("min_segments", d.min_segments)),
+        fallback_median_h=float(spec.get("fallback_median_h",
+                                         d.fallback_median_h)),
+        eps=float(spec.get("eps", d.eps)))
+
+
+def _build_perpetua(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
+    d = PerpetuaConfig
+    cfg = PerpetuaConfig(
+        **_perpetua_common(spec, d),
+        delta_low=float(spec.get("delta_low", d.delta_low)),
+        delta_high=float(spec.get("delta_high", d.delta_high)),
+        num_steps=int(spec.get("num_steps", d.num_steps)))
+    return PerpetuaBelief(rng, cfg, exclusion_floor=_floor(spec))
+
+
+def _build_perpetua_star(spec: Dict[str, Any],
+                         rng: random.Random) -> BeliefModel:
+    d = PerpetuaStarConfig
+    cfg = PerpetuaStarConfig(
+        **_perpetua_common(spec, d),
+        gamma=float(spec.get("gamma", d.gamma)),
+        alpha0_per_h=float(spec.get("alpha0_per_h", d.alpha0_per_h)),
+        switching_prior=str(spec.get("switching_prior", d.switching_prior)),
+        prior_bin_hours=int(spec.get("prior_bin_hours", d.prior_bin_hours)),
+        prior_half_life_h=float(spec.get("prior_half_life_h",
+                                         d.prior_half_life_h)),
+        prior_pseudocount=float(spec.get("prior_pseudocount",
+                                         d.prior_pseudocount)),
+        reset_mode=str(spec.get("reset_mode", d.reset_mode)))
+    return PerpetuaStarBelief(rng, cfg, exclusion_floor=_floor(spec))
+
+
 BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
     entry.name: entry for entry in (
         BeliefEntry("last_observation", "frozen", _build_last_observation),
@@ -148,6 +195,8 @@ BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
                     _build_hierarchy_backoff),
         BeliefEntry("smoothed_recency", "candidate",
                     _build_smoothed_recency),
+        BeliefEntry("perpetua", "candidate", _build_perpetua),
+        BeliefEntry("perpetua_star", "candidate", _build_perpetua_star),
     )
 }
 """All buildable belief models, keyed by config name."""
@@ -158,8 +207,13 @@ CANDIDATE_SLATE: Tuple[Dict[str, Any], ...] = (
     {"name": "daytype_mixture"},
     {"name": "hierarchy_backoff"},
     {"name": "smoothed_recency"},
+    {"name": "perpetua"},
+    {"name": "perpetua_star"},
+    {"name": "perpetua_star", "switching_prior": "flat"},
 )
-"""The bake-off candidate belief specs, at their fixed a-priori defaults."""
+"""The bake-off candidate belief specs, at their fixed a-priori defaults.
+The second ``perpetua_star`` entry is the flat-switching-prior ablation
+(distinct display name ``PerpetuaStarFlat``)."""
 
 
 def build_registered_belief(spec: Dict[str, Any],
