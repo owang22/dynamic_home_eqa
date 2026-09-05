@@ -149,24 +149,28 @@ def _perpetua_rows(belief: Any, household: str, seed: int
     return {"resets": resets, "edges": edges, "fallback": fallback}
 
 
-def bank_path(household: str, seed: int) -> pathlib.Path:
+def bank_path(household: str, seed: int,
+              bank_dir: Optional[pathlib.Path] = None) -> pathlib.Path:
+    """The fleet's bank for one (household, seed); ``bank_dir`` points a
+    sweep at its own exported banks (same naming)."""
     suffix = "" if seed == 0 else f"__seed{seed}"
-    return (BANK_DIR / f"households__generated__{MODEL_SLUG}__"
-                       f"{household}{suffix}_bank.jsonl")
+    return ((bank_dir or BANK_DIR) / f"households__generated__{MODEL_SLUG}__"
+                                     f"{household}{suffix}_bank.jsonl")
 
 
 def timeline_dir(household: str, seed: int) -> pathlib.Path:
     return GENERATED / MODEL_SLUG / household / f"timeline_seed{seed}"
 
 
-def household_meta() -> Dict[str, Dict[str, Any]]:
-    """Built households (a seed-0 bank exists) with the control-file
-    fields the report groups on."""
+def household_meta(bank_dir: Optional[pathlib.Path] = None
+                   ) -> Dict[str, Dict[str, Any]]:
+    """Built households (a seed-0 bank exists in ``bank_dir``) with the
+    control-file fields the report groups on."""
     control = yaml.safe_load(CONTROL.read_text())
     out = {}
     for rec in control["households"]:
         hid = rec["household_id"]
-        if not bank_path(hid, 0).exists():
+        if not bank_path(hid, 0, bank_dir).exists():
             continue
         out[hid] = {
             "household_type": rec["household_type"],
@@ -195,7 +199,9 @@ def analyze_bank(task: Dict[str, Any]) -> Dict[str, Any]:
     specs: Sequence[Dict[str, Any]] = task["specs"]
     config = PassiveProtocolConfig(seed=task["rng_seed"],
                                    recency_bin_edges_h=FINE_AGE_EDGES_H)
-    path = bank_path(household, seed)
+    bank_dir = task.get("bank_dir")
+    path = bank_path(household, seed,
+                     pathlib.Path(bank_dir) if bank_dir else None)
     episodes = list(JsonlBank(path=path).episodes())
     agg: Dict[Tuple, List] = collections.defaultdict(lambda: [0, 0, 0.0])
     oracle_stats: Optional[Dict[str, Any]] = None
@@ -290,43 +296,67 @@ def main() -> None:
     ap.add_argument("--out-dir", type=pathlib.Path,
                     default=REPO_ROOT / "reports" / "baselines"
                     / "household_analysis")
+    ap.add_argument("--bank-dir", type=pathlib.Path, default=None,
+                    help="banks to analyse (default: the fleet's)")
     args = ap.parse_args()
+    specs = select_specs(args.models)
+    run_analysis(households=args.households, seeds=args.seeds, specs=specs,
+                 oracle_seeds=args.oracle_seeds, rng_seed=args.rng_seed,
+                 workers=args.workers, out_dir=args.out_dir,
+                 bank_dir=args.bank_dir)
 
-    meta = household_meta()
-    households = args.households or sorted(meta)
+
+def select_specs(names: Optional[Sequence[str]]) -> List[Dict[str, Any]]:
+    """The bake-off specs, optionally restricted to the given spec names
+    (a name with several variants, e.g. the two perpetua_star entries,
+    keeps all of them)."""
+    specs = list(bakeoff_specs())
+    if names:
+        specs = [s for s in specs if s["name"] in names]
+        missing = set(names) - {s["name"] for s in specs}
+        if missing:
+            raise SystemExit(f"unknown model specs {sorted(missing)}")
+    return specs
+
+
+def run_analysis(households: Optional[Sequence[str]], seeds: Sequence[int],
+                 specs: Sequence[Dict[str, Any]], oracle_seeds: int,
+                 rng_seed: int, workers: int, out_dir: pathlib.Path,
+                 bank_dir: Optional[pathlib.Path] = None,
+                 extra_provenance: Optional[Dict[str, Any]] = None) -> int:
+    """Analyse every (household, seed) bank under ``bank_dir`` with the
+    given specs; write cells, side files, households.json and
+    provenance.json into ``out_dir``. Returns the cell count."""
+    meta = household_meta(bank_dir)
+    households = list(households) if households else sorted(meta)
     unknown = [h for h in households if h not in meta]
     if unknown:
         raise SystemExit(f"no seed-0 bank for {unknown}")
-    specs = list(bakeoff_specs())
-    if args.models:
-        specs = [s for s in specs if s["name"] in args.models]
-        missing = set(args.models) - {s["name"] for s in specs}
-        if missing:
-            raise SystemExit(f"unknown model specs {sorted(missing)}")
-    tasks = [{"household": h, "seed": s, "specs": specs,
-              "oracle_seeds": args.oracle_seeds, "rng_seed": args.rng_seed}
-             for h in households for s in args.seeds
-             if bank_path(h, s).exists()]
-    skipped = [(h, s) for h in households for s in args.seeds
-               if not bank_path(h, s).exists()]
+    tasks = [{"household": h, "seed": s, "specs": list(specs),
+              "oracle_seeds": oracle_seeds, "rng_seed": rng_seed,
+              "bank_dir": str(bank_dir) if bank_dir else None}
+             for h in households for s in seeds
+             if bank_path(h, s, bank_dir).exists()]
+    skipped = [(h, s) for h in households for s in seeds
+               if not bank_path(h, s, bank_dir).exists()]
     if skipped:
         logger.warning("no bank for %s — skipped", skipped)
     logger.info("%d banks x %d models, %d workers", len(tasks),
-                len(specs), args.workers)
+                len(specs), workers)
 
-    args.out_dir.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
     oracle: Dict[str, Dict[str, Any]] = {}
     n_rows = 0
-    side_handles = {key: gzip.open(args.out_dir / fname, "wt", newline="")
+    side_handles = {key: gzip.open(out_dir / fname, "wt", newline="")
                     for key, (fname, _) in SIDE_FILES.items()}
     side_writers = {key: csv.writer(fh) for key, fh in side_handles.items()}
     for key, (_, columns) in SIDE_FILES.items():
         side_writers[key].writerow(columns)
     n_side = {key: 0 for key in SIDE_FILES}
     try:
-        with gzip.open(args.out_dir / "cells.csv.gz", "wt", newline="") as fh, \
+        with gzip.open(out_dir / "cells.csv.gz", "wt", newline="") as fh, \
                 concurrent.futures.ProcessPoolExecutor(
-                    max_workers=args.workers) as pool:
+                    max_workers=workers) as pool:
             writer = csv.writer(fh)
             writer.writerow(COLUMNS)
             futures = {pool.submit(analyze_bank, t): t for t in tasks}
@@ -345,24 +375,26 @@ def main() -> None:
         for fh in side_handles.values():
             fh.close()
 
-    (args.out_dir / "households.json").write_text(json.dumps(
+    (out_dir / "households.json").write_text(json.dumps(
         {"households": meta, "oracle_per_bank": oracle}, indent=2))
-    (args.out_dir / "provenance.json").write_text(json.dumps({
+    (out_dir / "provenance.json").write_text(json.dumps({
         "generated_at": datetime.datetime.now(
             datetime.timezone.utc).isoformat(),
-        "git": git_state(REPO_ROOT), "rng_seed": args.rng_seed,
-        "seeds": args.seeds, "households": households,
+        "git": git_state(REPO_ROOT), "rng_seed": rng_seed,
+        "seeds": list(seeds), "households": households,
         "models": [s["name"] for s in specs],
         "modes": ["continuous", "frozen"],
         "age_bin_edges_h": list(FINE_AGE_EDGES_H),
         "checkpoint_days": list(PassiveProtocolConfig().checkpoint_days),
         "horizons_days": list(PassiveProtocolConfig().horizons_days),
-        "oracle_seeds_per_bank": args.oracle_seeds,
+        "oracle_seeds_per_bank": oracle_seeds,
+        "bank_dir": str(bank_dir) if bank_dir else str(BANK_DIR),
         "n_cells": n_rows,
-        "side_files": {SIDE_FILES[k][0]: n for k, n in n_side.items()}},
-        indent=2))
+        "side_files": {SIDE_FILES[k][0]: n for k, n in n_side.items()},
+        **(extra_provenance or {})}, indent=2))
     print(f"household_analysis: {len(tasks)} banks, {n_rows} cells -> "
-          f"{args.out_dir}")
+          f"{out_dir}")
+    return n_rows
 
 
 if __name__ == "__main__":

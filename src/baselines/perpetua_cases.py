@@ -34,7 +34,7 @@ import json
 import logging
 import pathlib
 import random
-from typing import Any, Dict, List, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from baselines.bank import JsonlBank
 from baselines.household_analysis import (FINE_AGE_EDGES_H, SEEDS, bank_path,
@@ -69,7 +69,9 @@ def replay_bank(task: Dict[str, Any]) -> List[Dict[str, Any]]:
     its last sighting, whether the last-seen receptacle is under an active
     exclusion, and the LastObs / MostFreq answers. Runs in a worker."""
     household, seed = task["household"], task["seed"]
-    episode = next(iter(JsonlBank(path=bank_path(household, seed)).episodes()))
+    bank_dir = task.get("bank_dir")
+    episode = next(iter(JsonlBank(path=bank_path(
+        household, seed, pathlib.Path(bank_dir) if bank_dir else None)).episodes()))
     cfg = PassiveProtocolConfig(seed=0, recency_bin_edges_h=FINE_AGE_EDGES_H)
     ages = question_ages(episode)
     questions = sorted((q for day in episode.questions_by_day for q in day),
@@ -175,6 +177,19 @@ def tabulate(rows: Sequence[Dict[str, Any]],
     return lines, cnt
 
 
+def case_totals(cnt: Dict[str, Dict[str, Dict[str, int]]]
+                ) -> Dict[str, Dict[str, int]]:
+    """Counters summed over homes, per case (orientation only; the
+    per-home table is the result)."""
+    out: Dict[str, Dict[str, int]] = {}
+    for cases in cnt.values():
+        for label, c in cases.items():
+            t = out.setdefault(label, collections.defaultdict(int))
+            for k, v in c.items():
+                t[k] += v
+    return {k: dict(v) for k, v in out.items()}
+
+
 def fig_cases_by_home(cnt: Dict[str, Dict[str, Dict[str, int]]],
                       meta: Dict[str, Dict[str, Any]], out: pathlib.Path,
                       title: str) -> None:
@@ -218,10 +233,11 @@ def fig_cases_by_home(cnt: Dict[str, Dict[str, Dict[str, int]]],
 
 
 def build(in_dir: pathlib.Path, workers: int, seeds: Sequence[int],
-          households: Sequence[str]) -> pathlib.Path:
-    meta = {h: m for h, m in household_meta().items() if h in households}
-    tasks = [{"household": h, "seed": s} for h in sorted(meta) for s in seeds
-             if bank_path(h, s).exists()]
+          households: Sequence[str],
+          bank_dir: Optional[pathlib.Path] = None) -> pathlib.Path:
+    meta = {h: m for h, m in household_meta(bank_dir).items() if h in households}
+    tasks = [{"household": h, "seed": s, "bank_dir": str(bank_dir) if bank_dir else None}
+             for h in sorted(meta) for s in seeds if bank_path(h, s, bank_dir).exists()]
     rows: List[Dict[str, Any]] = []
     with concurrent.futures.ProcessPoolExecutor(max_workers=workers) as pool:
         for res in pool.map(replay_bank, tasks):
@@ -245,6 +261,9 @@ def build(in_dir: pathlib.Path, workers: int, seeds: Sequence[int],
     ]
     for title, bins in AGE_BLOCKS:
         lines, cnt = tabulate(rows, correct, meta, bins)
+        totals = case_totals(cnt)
+        (in_dir / f"perpetua_cases_totals_{'long' if bins == LONG_AGES else 'mid'}.json"
+         ).write_text(json.dumps(totals, indent=1))
         slug = "long" if bins == LONG_AGES else "mid"
         fig_path = in_dir / f"perpetua_cases_by_home_{slug}.png"
         fig_cases_by_home(cnt, meta, fig_path,
@@ -266,9 +285,11 @@ def main() -> None:
     ap.add_argument("--workers", type=int, default=32)
     ap.add_argument("--seeds", type=int, nargs="*", default=list(SEEDS))
     ap.add_argument("--households", nargs="*", default=None)
+    ap.add_argument("--bank-dir", type=pathlib.Path, default=None)
     args = ap.parse_args()
-    households = args.households or sorted(household_meta())
-    path = build(args.in_dir, args.workers, args.seeds, households)
+    households = args.households or sorted(household_meta(args.bank_dir))
+    path = build(args.in_dir, args.workers, args.seeds, households,
+                 args.bank_dir)
     print(f"-> {path}")
 
 

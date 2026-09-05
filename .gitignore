@@ -66,3 +66,10 @@ profiles/households/generated/*/*/timeline_seed[1-9]*/
 # absence_signal.csv.gz.
 reports/baselines/**/absence_signal.csv.gz
 reports/baselines/**/perpetua_resets.csv.gz
+
+# Rate-sweep per-rate figures: four copies of the household report's
+# plots, ~3 MB a rate, rebuilt in seconds from the tracked cells.csv.gz by
+# `python -m baselines.household_report --in-dir reports/baselines/rate_sweep/visits<v>`.
+# The cross-rate summary, its figures, findings.md and each rate's
+# markdown, cells and small aggregates stay tracked.
+reports/baselines/rate_sweep/visits*/*.png

@@ -394,7 +394,7 @@ def test_perpetua_cases_split_and_report(tmp_path, monkeypatch) -> None:
 
     path = tmp_path / "bank.jsonl"
     write_gate_pass_bank(path, seed=0)
-    monkeypatch.setattr(pc, "bank_path", lambda h, s: path)
+    monkeypatch.setattr(pc, "bank_path", lambda h, s, bank_dir=None: path)
     rows = pc.replay_bank({"household": "hh_x", "seed": 0})
     assert rows and {r["age_bin"] for r in rows}
     assert all(r["answers"].keys() == {"last_observation", "most_frequent"}
@@ -421,3 +421,69 @@ def test_perpetua_cases_split_and_report(tmp_path, monkeypatch) -> None:
     # an empty counter set draws nothing
     pc.fig_cases_by_home({}, meta, tmp_path / "none.png", "t")
     assert not (tmp_path / "none.png").exists()
+
+
+def test_rate_sweep_summary_pieces(tmp_path, monkeypatch) -> None:
+    """The sweep's cross-rate tables and figures build from synthetic
+    cells and side files; pairs and cells under MIN_N are masked."""
+    import csv
+    import gzip
+    from baselines import rate_sweep as rs
+    from baselines.household_report import AGE_ORDER
+
+    models = ["LastObservation", "PeriodicPersistence(x)", "DaytypeMixture(x)",
+              "SmoothedRecency(x)", "Perpetua(x)", "PerpetuaStar(x)",
+              "PerpetuaStarFlat(x)", "routine_oracle"]
+    meta = {f"hh_{i:03d}": {"residents": 1 + i % 3, "resident_group": "1",
+                            "household_type": "t"} for i in range(1, 4)}
+    per_rate = {}
+    dirs = {}
+    for k, label in enumerate(("0.5x", "1x")):
+        rows = []
+        for hh in meta:
+            for seed in (0, 1):
+                for m in models:
+                    for i, age in enumerate(AGE_ORDER[:-1]):
+                        n = 5 if (hh == "hh_003" and age == "[72h,inf)") else 60
+                        rows.append({"household": hh, "seed": seed, "model": m,
+                                     "mode": "continuous", "age_bin": age,
+                                     "n": n, "correct": max(0, int(n * (0.9 - 0.1 * i
+                                                                 + (0.1 if "Perpetua" in m and i > 5 else 0)
+                                                                 + 0.05 * k)))})
+        per_rate[label] = rows
+        d = tmp_path / label
+        d.mkdir()
+        with gzip.open(d / "perpetua_fallback.csv.gz", "wt", newline="") as fh:
+            w = csv.writer(fh)
+            w.writerow(["household", "seed", "model", "day", "n_predictions",
+                        "n_predictions_any_fallback", "n_edge_beliefs",
+                        "n_fallback_edge_beliefs"])
+            for day in range(3, 28):
+                w.writerow(["hh_001", 0, "PerpetuaStar(x)", day, 90, 60, 300,
+                            int(300 * max(0.1, 1 - 0.04 * day * (k + 1)))])
+        with gzip.open(d / "perpetua_edges.csv.gz", "wt", newline="") as fh:
+            w = csv.writer(fh)
+            w.writerow(["household", "seed", "model", "object_id", "receptacle_id",
+                        "t0", "n_events", "n_sightings", "n_persistence_segments",
+                        "n_emergence_segments", "pf_components", "ef_components",
+                        "pf_fallback", "ef_fallback", "n_resets"])
+            for e in range(10):
+                w.writerow(["hh_001", 0, "PerpetuaStar(x)", f"o{e}", "r", 0, 20, 5,
+                            e % 4, e % 3, 1 + e % 2, 1, e % 4 < 2, e % 3 < 2, e])
+        dirs[label] = d
+    ordered = [m for m in models if m != "routine_oracle"]
+    lines = rs.paired_table(per_rate)
+    assert lines[0].startswith("| rate |") and len(lines) > 10
+    # hh_003's 3d+ cell is under MIN_N, so the 2d+ pairs exclude it only
+    # where it dominates; every row still parses
+    assert all(l.count("|") == 10 for l in lines)
+    group = rs.age_by_group_tables(per_rate, meta, ordered)
+    assert any("0.5x" in l for l in group) and any("1x" in l for l in group)
+    fb, curves = rs.fallback_tables(dirs)
+    assert set(curves) == {"0.5x", "1x"} and "first day" in fb[0]
+    seg = rs.segment_table(dirs)
+    assert len(seg) == 4
+    rs.fig_learning_curve(curves, tmp_path / "lc.png")
+    rs.fig_paired_by_home(per_rate, meta, tmp_path / "pb.png", "PerpetuaStar")
+    assert (tmp_path / "lc.png").stat().st_size > 5000
+    assert (tmp_path / "pb.png").stat().st_size > 5000

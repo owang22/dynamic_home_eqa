@@ -1,5 +1,53 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-09-04: observation-rate sweep — more sensing helps the classical models and cannot help Perpetua)
+
+`baselines.rate_sweep` re-exports every household at 0.5x / 1x / 2x / 4x
+of the fleet's passive patrol density (`visits_per_day` 3 / 6 / 12 / 24;
+the 1x export is byte-identical to the fleet bank) and re-runs the
+household analysis (now parametrised by `--bank-dir`) with LastObs,
+Periodic, DaytypeMix, SmoothedRec, the three survival models and the
+oracle, 20 homes x seeds {0, 1}, 28 days. A 56-day arm was NOT run:
+these programs have no weekly routine (`weekly_blocks` empty, every day
+an authored arc event), so extending needs a program transform; owner
+deferred. Under `reports/baselines/rate_sweep/`: a full household report
+per rate, `summary.md` and `explainer.md` (generated) and `findings.md`
+(authored). `--stage explain` builds the glossary, the per-home mix and
+per-situation accuracy figures, and a Oaxaca decomposition of the
+headline difference with a household bootstrap.
+
+**The result, and a correction.** The first pass claimed "per-case
+accuracies do not move with the rate; only the case mix does". The
+decomposition refutes it: at 12-24 h the move from 1x to 4x (-0.223) is
+-0.231 from accuracy changing WITHIN situations and only +0.009 from the
+mix. The corrected mechanism is sharper. Whenever a later visit has found
+the last-seen receptacle empty, elimination has ruled out every sensable
+receptacle and LastObs answers OUT_OF_HOUSE — in 100% of such questions,
+at every rate — and is right exactly as often as the object really is
+out: 0.41 / 0.56 / 0.69 at 1x / 2x / 4x. Perpetua has no OUT_OF_HOUSE
+edge (unsensable, never sighted, so no edge is ever created) and falls
+0.21 / 0.14 / 0.09 in the same situation as it swells to 69% of the
+band. So the PerpetuaStar minus LastObs difference at 12-24 h widens:
+-0.092, -0.089, -0.137, -0.311, with separating household bootstrap
+intervals. At 1-2d and 2d+ the move IS mostly the mix (2d+ at 4x: -0.284
+of a -0.246 move), because the in-house share of those bands falls 0.87 /
+0.76 / 0.64 / 0.29.
+
+Two situations are genuinely rate-invariant and bracket the model class:
+object still at its last-seen spot with no re-check, PerpetuaStar
+0.68-0.76 against LastObs's structural 1.00 (the survival prior decays an
+edge nobody contradicted); object left, seen gone, came back,
+PerpetuaStar 0.35-0.61 against every classical model's structural 0.00.
+Learning is not the bottleneck on either count: fallback share never
+reaches 0.25 at any rate (day 27: 0.61 / 0.54 / 0.53 / 0.52), edges never
+completing two persistence segments 0.48 / 0.42 / 0.41 / 0.39, and
+in-house-only accuracy is flat at 0.45-0.58 in every band at every rate.
+The blocking gap is the missing absence hypothesis — the paper's
+threshold δ on the belief, which our measured absence signal does not
+currently support — and that is a model change, so it is a decision.
+160 banks, 71 min wall on four 40-worker pools; per-rate figure copies
+gitignored.
+
 ## Update (2026-09-03: Perpetua and Perpetua* ported as candidates, run on the full 20x5 fleet; the exclusion rule audited)
 
 Two survival-analysis belief models from the Montreal robotics group,
