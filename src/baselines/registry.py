@@ -22,9 +22,13 @@ from typing import Any, Callable, Dict, Mapping, Tuple
 from baselines.beliefs.base import BeliefModel
 from baselines.beliefs.daytype_mixture import (DaytypeMixture,
                                                DaytypeMixtureConfig)
+from baselines.beliefs.expiring_exclusion import \
+    ExpiringExclusionLastObservation
 from baselines.beliefs.hierarchy_backoff import (HierarchyBackoff,
                                                  HierarchyBackoffConfig)
 from baselines.beliefs.last_observation import LastObservation
+from baselines.beliefs.llm_belief import (LLMBelief, LLMBeliefConfig,
+                                          PromptCache)
 from baselines.beliefs.markov1 import Markov1, Markov1Config
 from baselines.beliefs.most_frequent import MostFrequentLocation
 from baselines.beliefs.periodic_persistence import (PeriodicPersistence,
@@ -71,6 +75,28 @@ def _floor(spec: Dict[str, Any]) -> float:
 def _build_last_observation(spec: Dict[str, Any],
                             rng: random.Random) -> BeliefModel:
     return LastObservation(rng, exclusion_floor=_floor(spec))
+
+
+def _build_last_observation_expiring(spec: Dict[str, Any],
+                                     rng: random.Random) -> BeliefModel:
+    return ExpiringExclusionLastObservation(
+        rng, expiry_h=float(spec["expiry_h"]), exclusion_floor=_floor(spec))
+
+
+def _build_llm(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
+    """The LLM belief answers from a :class:`PromptCache` filled by an
+    offline generation run (``baselines.llm_floor``); the driver puts the
+    cache object into the spec under ``cache``. Without one the model
+    records prompts and answers as LastObs (collect mode)."""
+    d = LLMBeliefConfig
+    cfg = LLMBeliefConfig(
+        model=str(spec.get("model", d.model)),
+        max_history=int(spec.get("max_history", d.max_history)),
+        max_ranking=int(spec.get("max_ranking", d.max_ranking)),
+        geometric_ratio=float(spec.get("geometric_ratio", d.geometric_ratio)),
+        hour_bucket_s=int(spec.get("hour_bucket_s", d.hour_bucket_s)))
+    cache = spec.get("cache") or PromptCache(collect=True)
+    return LLMBelief(rng, cfg, cache, rooms=spec.get("rooms"))
 
 
 def _build_most_frequent(spec: Dict[str, Any],
@@ -197,6 +223,9 @@ BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
                     _build_smoothed_recency),
         BeliefEntry("perpetua", "candidate", _build_perpetua),
         BeliefEntry("perpetua_star", "candidate", _build_perpetua_star),
+        BeliefEntry("last_observation_expiring", "candidate",
+                    _build_last_observation_expiring),
+        BeliefEntry("llm", "candidate", _build_llm),
     )
 }
 """All buildable belief models, keyed by config name."""

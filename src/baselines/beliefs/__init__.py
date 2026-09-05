@@ -3,9 +3,13 @@
 from baselines.beliefs.base import BeliefModel
 from baselines.beliefs.daytype_mixture import (DaytypeMixture,
                                                DaytypeMixtureConfig)
+from baselines.beliefs.expiring_exclusion import \
+    ExpiringExclusionLastObservation
 from baselines.beliefs.hierarchy_backoff import (HierarchyBackoff,
                                                  HierarchyBackoffConfig)
 from baselines.beliefs.last_observation import LastObservation
+from baselines.beliefs.llm_belief import (LLMBelief, LLMBeliefConfig,
+                                          PromptCache)
 from baselines.beliefs.markov1 import Markov1, Markov1Config
 from baselines.beliefs.most_frequent import MostFrequentLocation
 from baselines.beliefs.periodic_persistence import (PeriodicPersistence,
@@ -17,6 +21,8 @@ from baselines.beliefs.perpetua_belief import (PerpetuaBelief,
 from baselines.beliefs.timetable import TimetableConfig, TimetableLookup
 
 __all__ = ["BeliefModel", "DaytypeMixture", "DaytypeMixtureConfig",
+           "ExpiringExclusionLastObservation", "LLMBelief",
+           "LLMBeliefConfig", "PromptCache",
            "HierarchyBackoff", "HierarchyBackoffConfig", "LastObservation",
            "Markov1", "Markov1Config", "MostFrequentLocation",
            "PeriodicPersistence", "PeriodicPersistenceConfig",

@@ -166,12 +166,16 @@ class BeliefModel(abc.ABC):
     def _add_sighting(self, object_id: str, t: int, receptacle_id: str) -> None:
         self._history.setdefault(object_id, []).append((t, receptacle_id))
 
-    def _active_exclusions(self, object_id: str) -> Set[str]:
+    def _active_exclusions(self, object_id: str,
+                           t: Union[int, None] = None) -> Set[str]:
         """Receptacles currently ruled out for ``object_id``.
 
         THE recency rule (module docstring) lives here and only here: an
         exclusion recorded at ``t_ex`` is active iff no positive sighting
-        of the object is strictly later than ``t_ex``.
+        of the object is strictly later than ``t_ex``. ``t`` is the query
+        time; the base rule ignores it (an exclusion never ages), and it
+        exists so a subclass can let exclusions lapse with time (see
+        :mod:`baselines.beliefs.expiring_exclusion`).
         """
         recorded = self._exclusions.get(object_id)
         if not recorded:
@@ -224,7 +228,7 @@ class BeliefModel(abc.ABC):
         to 1 — the :class:`~baselines.types.Prediction` contract is
         enforced on construction.
         """
-        excluded = self._active_exclusions(object_id)
+        excluded = self._active_exclusions(object_id, t)
         if not excluded:
             return base
         receptacles = self._receptacles()

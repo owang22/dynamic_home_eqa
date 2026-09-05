@@ -73,3 +73,12 @@ reports/baselines/**/perpetua_resets.csv.gz
 # The cross-rate summary, its figures, findings.md and each rate's
 # markdown, cells and small aggregates stay tracked.
 reports/baselines/rate_sweep/visits*/*.png
+# LLM belief floor: the sampled prompts / questions / completions are
+# regenerable (python -m baselines.llm_floor --stage sample prompts generate)
+# and prompts.jsonl alone is ~125 MB; only the summaries beside them are
+# tracked.
+reports/baselines/llm_floor/prompts.jsonl
+reports/baselines/llm_floor/questions.jsonl
+reports/baselines/llm_floor/completions.jsonl
+reports/baselines/llm_floor/sample.json
+reports/baselines/llm_floor/*.log
