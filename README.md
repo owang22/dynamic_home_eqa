@@ -281,14 +281,14 @@ they inflate observations/day without adding information.
 **Phase policy (mandatory).** Learning curves are reported phase-averaged over
 start weekday, or only at whole-week checkpoints (D=1,7,14). A fixed Monday
 start produces a spurious day-5 peak / day-10 dip; see
-`reports/reflect/HUMP_DIAGNOSIS.md`.
+`archive/reports/pre_revamp_2026-07/reflect/HUMP_DIAGNOSIS.md`.
 
 ### ACTIVE line (`dynbelief/answer_or_resense/`, `dynbelief/two_capacities/`)
 Scarce sensing: the agent starts with ZERO observations and per query must either
 ANSWER (+1 correct / 0 wrong) or RESENSE (+0.4, consumes 1 of B=5 daily budget,
 and reveals the true location — its ONLY way to learn). Q=10 queries/day x 14
 days = 140 queries/household. Frozen params in
-`reports/answer_or_resense/frozen_dev_params.json`.
+`archive/reports/pre_revamp_2026-07/answer_or_resense/frozen_dev_params.json`.
 
 ```bash
 # offline arms (no server)
@@ -325,15 +325,27 @@ python -m pytest tests/test_classical.py -q            # frozen classical model
 ## Documentation map
 
 - `TRANSFER.md` — moving the code to a new machine (the `.env` checklist).
-- `reports/two_capacities/SUMMARY.md` — **current headline**: active-sensing
-  results, the scaffold control, the three-model replication.
-- `reports/answer_or_resense/SUMMARY.md` — the scarce-sensing protocol, frozen
-  parameters, P1–P4 verdicts, the KARL abstention-trap table.
-- `reports/reflect/HUMP_DIAGNOSIS.md` — why learning curves must be
-  phase-averaged (the Monday-start artifact).
-- `reports/reflect_dag/SUMMARY.md` — activity-DAG variant (largely null; the
-  CounterfactCoT calibration result is the positive part).
-- `reports/h2_adaptation/SUMMARY.md` — regime adaptation + the named-vs-anonymized
-  study (a NEGATIVE result: the pre-registered target was not met).
-- `src/dynamic_home_eqa/generation/README.md`, `results/reports/INDEX.md` —
+- `src/baselines/STATUS.md` — the decision log of the current sense-or-answer
+  baseline study; its results live under `reports/baselines/`.
+- `results/conformal_sweep_v1/` — conformal-triggered sensing sweep on the
+  fleet banks (`python -m baselines.conformal.sweep`).
+
+### Archived diagnostic runs (on disk only)
+
+Older diagnostic runs are filed under `archive/`, which is gitignored: the
+files stay on this machine but are no longer tracked. Every one of them is
+still in git history and can be restored with
+`git checkout 046d6762 -- <original path>`.
+
+- `archive/reports/pre_revamp_2026-07/` — the July 2026 reports of the
+  retired dynbelief line (`reflect/`, `reflect_dag/`, `answer_or_resense/`,
+  `two_capacities/`, `h2_adaptation/`, `stage0..stage1c`, `paper_figures/`,
+  ...). Headlines from that era: `two_capacities/SUMMARY.md`,
+  `answer_or_resense/SUMMARY.md`, `reflect/HUMP_DIAGNOSIS.md` (why learning
+  curves must be phase-averaged), `reflect_dag/SUMMARY.md`,
+  `h2_adaptation/SUMMARY.md`.
+- `archive/results/beliefsim_budget_sweep_2026-08-14/` — the
+  `python -m beliefsim.run` budget-sweep outputs (raw_results.csv,
+  tables.md, budget_curves_*.png).
+- `src/dynamic_home_eqa/generation/README.md`, `archive/results/reports/INDEX.md` —
   LEGACY HSSD generation design + report index.
