@@ -116,6 +116,22 @@ class BeliefModel(abc.ABC):
         part of the prediction itself."""
         return None
 
+    def last_positive_sighting_time(self, object_id: str,
+                                    t: int) -> Union[int, None]:
+        """Time of the newest positive sighting of ``object_id`` at or
+        before ``t``, or None if none has arrived by then.
+
+        The public readout of the base-class history for consumers that
+        need a belief's AGE (time since the evidence its answer rests on)
+        without touching the bookkeeping — e.g. age-binned conformal
+        calibration. Sightings arrive in time order, so the scan runs
+        from the newest end.
+        """
+        for ot, _ in reversed(self._history.get(object_id, [])):
+            if ot <= t:
+                return ot
+        return None
+
     def predict_readonly(self, object_id: str, t: int) -> Prediction:
         """predict() with the tie-break generator's state restored after.
 

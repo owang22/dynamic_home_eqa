@@ -82,3 +82,11 @@ reports/baselines/llm_floor/questions.jsonl
 reports/baselines/llm_floor/completions.jsonl
 reports/baselines/llm_floor/sample.json
 reports/baselines/llm_floor/*.log
+
+# Conformal sweep: the per-question dumps (~130 MB a run, one
+# jsonl.gz per belief x policy) and run logs are regenerable by
+# `python -m baselines.conformal.sweep`; the csvs, plots, calibration
+# tables and provenance beside them stay tracked.
+results/conformal_sweep_v1/**/questions/
+results/conformal_sweep_v1/**/run.log
+results/conformal_sweep_v1/**/demo_bank.jsonl
