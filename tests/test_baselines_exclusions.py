@@ -208,15 +208,3 @@ def test_negative_half_life_defaults_to_the_models_own() -> None:
     assert MostFrequentLocation(
         random.Random(0), half_life_h=6,
         negative_half_life_h=1.5).negative_half_life_h == 1.5
-
-
-def test_legacy_veto_flag_reproduces_the_old_rule() -> None:
-    # Replay-only: hard permanent veto, uniform redistribution, no floor.
-    model = _last_obs(legacy_exclusion_veto=True)
-    model.update(_obs("a", 10))
-    model.update(_empty_sense("a", 20))
-    pred = model.predict("o", 20 + 10 * 24 * H)      # never decays
-    assert pred.distribution["a"] == 0.0
-    for rec in ("b", "c", OUT):
-        assert pred.distribution[rec] == pytest.approx(1 / 3)
-    assert pred.argmax in ("b", "c", OUT)

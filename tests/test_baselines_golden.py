@@ -25,12 +25,7 @@ GOLDEN_PATH = (pathlib.Path(__file__).parent
 GOLDEN_SEED = 20260809
 
 
-LEGACY_GOLDEN_PATH = GOLDEN_PATH.with_name("baselines_golden_run_log_legacy.jsonl")
-"""The pre-migration snapshot, reproduced by the replay-only
-``legacy_exclusion_veto`` flag; deleted together with the flag."""
-
-
-def _golden_run_log(legacy: bool = False) -> str:
+def _golden_run_log() -> str:
     """The canonical run: last-observation belief + sequential search on
     the synthetic bank. Chosen because it exercises negative-evidence
     bookkeeping, multi-sense search, sensing, and budget accounting in
@@ -38,17 +33,11 @@ def _golden_run_log(legacy: bool = False) -> str:
     with tempfile.TemporaryDirectory() as tmp:
         bank = write_synthetic_bank(pathlib.Path(tmp) / "bank.jsonl")
         episode = next(bank.episodes())
-    spec = {"name": "last_observation"}
-    if legacy:
-        spec["legacy_exclusion_veto"] = True
-    agent = build_agent(spec, {"name": "sequential_search"}, seed=GOLDEN_SEED,
+    agent = build_agent({"name": "last_observation"},
+                        {"name": "sequential_search"}, seed=GOLDEN_SEED,
                         episode_id=episode.episode_id)
     records = [r.to_json_dict() for r in run_episode(agent, episode)]
     return "\n".join(json.dumps(r, sort_keys=True) for r in records) + "\n"
-
-
-def test_legacy_flag_reproduces_the_pre_migration_snapshot() -> None:
-    assert _golden_run_log(legacy=True) == LEGACY_GOLDEN_PATH.read_text()
 
 
 def test_run_log_matches_golden_snapshot() -> None:

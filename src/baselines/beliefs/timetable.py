@@ -74,11 +74,9 @@ class TimetableLookup(BeliefModel):
     def __init__(self, rng: random.Random, config: TimetableConfig,
                  half_life_h: Optional[float] = None,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None,
-                 legacy_exclusion_veto: bool = False) -> None:
+                 negative_half_life_h: Optional[float] = None) -> None:
         super().__init__(rng, floor_mass=floor_mass,
-                         negative_half_life_h=negative_half_life_h,
-                         legacy_exclusion_veto=legacy_exclusion_veto)
+                         negative_half_life_h=negative_half_life_h)
         if half_life_h is not None and half_life_h <= 0:
             raise ValueError(
                 f"TimetableLookup: half_life_h {half_life_h} must be > 0")

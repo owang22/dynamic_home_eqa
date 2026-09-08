@@ -68,14 +68,11 @@ def _optional_half_life(spec: Dict[str, Any]) -> float | None:
 
 def _base_kwargs(spec: Dict[str, Any]) -> Dict[str, Any]:
     """The base-class pipeline knobs every model takes: ``floor_mass``
-    (default the package constant), ``negative_half_life_h`` (default:
-    the model's own half-life), and the replay-only
-    ``legacy_exclusion_veto``."""
+    (default the package constant) and ``negative_half_life_h`` (default:
+    the model's own half-life)."""
     raw_hl = spec.get("negative_half_life_h")
     return {"floor_mass": float(spec.get("floor_mass", DEFAULT_FLOOR_MASS)),
-            "negative_half_life_h": None if raw_hl is None else float(raw_hl),
-            "legacy_exclusion_veto": bool(spec.get("legacy_exclusion_veto",
-                                                   False))}
+            "negative_half_life_h": None if raw_hl is None else float(raw_hl)}
 
 
 def _build_last_observation(spec: Dict[str, Any],

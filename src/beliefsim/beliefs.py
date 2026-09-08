@@ -131,9 +131,10 @@ class BaselineBelief(Belief):
     Observations are delivered as :class:`~baselines.types.Observation`
     (a positive sighting), never as ``SenseResult``: object-level sensing
     reveals one object's location and says nothing about any other object,
-    so there is no negative evidence to record. The exclusion machinery in
-    the base class therefore stays inert here, and will become live if and
-    when the receptacle-level observation model is added.
+    so there is no negative evidence to record. The base pipeline's
+    negative-evidence step therefore never fires here (its floor mix
+    still does), and it will become live if and when the
+    receptacle-level observation model is added.
     """
 
     def __init__(self, name: str,

@@ -1,13 +1,25 @@
 """Paired replay: the negative-evidence migration's evidence.
 
-Runs the frozen panel plus PerpetuaStar under NeverSense and
+Ran the frozen panel plus PerpetuaStar under NeverSense and
 SequentialSearch, at the bank budget, over the 20 seed-0 fleet banks,
 TWICE: with the pre-migration semantics (a hard, permanent veto on every
-looked-at receptacle, uniform redistribution, no floor; reproduced by
-the replay-only ``legacy_exclusion_veto`` flag on the belief base class)
-and with the migrated pipeline (floor mix plus decaying soft suppression,
-:mod:`baselines.beliefs.base`). Same banks, same seeds, same policies:
-the only difference is the belief's treatment of an empty look.
+looked-at receptacle, uniform redistribution, no floor; reproduced at
+the time by a replay-only ``legacy_exclusion_veto`` flag on the belief
+base class) and with the migrated pipeline (floor mix plus decaying soft
+suppression, :mod:`baselines.beliefs.base`). Same banks, same seeds,
+same policies: the only difference was the belief's treatment of an
+empty look.
+
+HISTORICAL RECORD. The flag and the old code path were deleted in the
+migration's cleanup phase (commit history: "Beliefs: soft negative
+evidence over the full location space" added them, the cleanup commit
+removed them), so the ``old`` arm can no longer be reproduced from the
+current tree; :func:`run_task` refuses it loudly rather than silently
+running the new semantics under the old label. The committed report
+under ``reports/baselines/exclusion_migration/`` is the permanent
+record of the comparison. ``--render-only`` (rebuild ``README.md`` from
+the committed csvs) still works; the module is kept so the exact
+procedure that produced the report stays readable.
 
 Every split is computed from bank DATA, never from the veto:
 
@@ -123,12 +135,21 @@ def question_facts(episode: Episode) -> Dict[str, QuestionFacts]:
 
 def run_task(task: Dict[str, Any]) -> Dict[str, Any]:
     """One (bank, belief, policy, semantics) replay; returns compact
-    per-question outcomes plus the bank's question facts."""
+    per-question outcomes plus the bank's question facts.
+
+    The ``old`` arm is refused: the flag it needed is gone (module
+    docstring). Running it silently under the new pipeline would file
+    new-semantics numbers under the old label.
+    """
+    if task["semantics"] == "old":
+        raise RuntimeError(
+            "the old-semantics arm needs the legacy_exclusion_veto flag, "
+            "deleted in the migration's cleanup phase; the committed report "
+            "under reports/baselines/exclusion_migration/ is the record, and "
+            "--render-only rebuilds it from the csvs")
     episode = next(iter(JsonlBank(path=pathlib.Path(task["bank"])).episodes()))
     facts = question_facts(episode)
     spec = dict(task["belief_spec"])
-    if task["semantics"] == "old":
-        spec["legacy_exclusion_veto"] = True
     agent = build_agent(spec, {"name": task["policy"]}, SEED,
                         episode.episode_id)
     unsensable = set(episode.unsensable_receptacle_ids)

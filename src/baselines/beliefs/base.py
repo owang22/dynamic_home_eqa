@@ -58,14 +58,11 @@ consistent with its absence from R.
 from __future__ import annotations
 
 import abc
-import logging
 import random
-from typing import Dict, List, Mapping, Optional, Set, Tuple, Union
+from typing import Dict, List, Mapping, Optional, Tuple, Union
 
 from baselines.types import (EpisodeContext, Observation, Prediction,
                              SenseResult)
-
-logger = logging.getLogger(__name__)
 
 DEFAULT_FLOOR_MASS = 0.02
 """Share of every prediction spread uniformly over all locations (step 2
@@ -93,12 +90,6 @@ class BeliefModel(abc.ABC):
     overrides the model's negative-evidence half-life (default: the
     model's own half-life where it has one, else
     :data:`DEFAULT_NEGATIVE_HALF_LIFE_H`).
-
-    ``legacy_exclusion_veto`` reproduces the pre-migration semantics (no
-    floor, a hard permanent veto on looked-at receptacles with uniform
-    redistribution, an all-excluded fallback). It exists ONLY for the
-    paired migration replay (:mod:`baselines.exclusion_migration_replay`)
-    and is deleted with it.
     """
 
     consumes_negative_evidence_natively: bool = False
@@ -108,8 +99,7 @@ class BeliefModel(abc.ABC):
 
     def __init__(self, rng: random.Random,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None,
-                 legacy_exclusion_veto: bool = False) -> None:
+                 negative_half_life_h: Optional[float] = None) -> None:
         if not 0.0 <= floor_mass < 1.0:
             raise ValueError(
                 f"{type(self).__name__}: floor_mass {floor_mass} outside [0, 1)")
@@ -120,12 +110,10 @@ class BeliefModel(abc.ABC):
         self._rng = rng
         self._floor_mass = float(floor_mass)
         self._negative_half_life_override = negative_half_life_h
-        self._legacy_exclusion_veto = legacy_exclusion_veto
         self._context: EpisodeContext | None = None
         self._history: Dict[str, List[Tuple[int, str]]] = {}
         # object_id -> {receptacle_id: newest time O was seen absent from it}
         self._exclusions: Dict[str, Dict[str, int]] = {}
-        self._warned_all_excluded: Set[str] = set()
 
     @property
     def name(self) -> str:
@@ -158,7 +146,6 @@ class BeliefModel(abc.ABC):
         self._context = context
         self._history = {}
         self._exclusions = {}
-        self._warned_all_excluded = set()
 
     def update(self, evidence: Union[Observation, SenseResult]) -> None:
         """Fold one piece of evidence into the belief state.
@@ -252,12 +239,6 @@ class BeliefModel(abc.ABC):
         if current is not None:
             return Prediction(distribution={current: 1.0}, argmax=current)
         base = self._predict_for_object(object_id, history, t)
-        if self._legacy_exclusion_veto:
-            # Pre-migration: models that ingest negatives natively had an
-            # identity override; everything else got the hard veto.
-            if self._consumes_negative_evidence_natively():
-                return base
-            return self._legacy_apply_veto(object_id, t, base)
         return self._compose(object_id, t, base)
 
     @staticmethod
@@ -330,43 +311,6 @@ class BeliefModel(abc.ABC):
         if base_argmax in tied:
             return base_argmax
         return tied[0] if len(tied) == 1 else self._rng.choice(tied)
-
-    # ----------------------------------------------- legacy (replay only)
-
-    def _legacy_apply_veto(self, object_id: str, t: int,
-                           base: Prediction) -> Prediction:
-        """The pre-migration rule, kept verbatim for the paired replay:
-        zero out every receptacle with a counting empty look (the look
-        never ages) and spread the reclaimed mass uniformly over the
-        rest; if every receptacle is excluded, ignore the exclusions and
-        warn once per (object, episode). No floor anywhere."""
-        excluded = set(self.negative_observations(object_id, t))
-        if not excluded:
-            return base
-        receptacles = self._receptacles()
-        kept = [r for r in receptacles if r not in excluded]
-        if not kept:
-            if object_id in self._warned_all_excluded:
-                logger.debug(
-                    "%s: every receptacle still excluded for %s at t=%d",
-                    self.name, object_id, t)
-            else:
-                self._warned_all_excluded.add(object_id)
-                logger.warning(
-                    "%s: every receptacle excluded for %s at t=%d; ignoring "
-                    "exclusions (stale negative evidence; repeats of this "
-                    "condition for this object log at DEBUG)",
-                    self.name, object_id, t)
-            return base
-        excluded_mass = sum(p for r, p in base.distribution.items()
-                            if r in excluded)
-        share = excluded_mass / len(kept)
-        dist = {r: base.distribution.get(r, 0.0) + share for r in kept}
-        dist.update({r: 0.0 for r in excluded})
-        total = sum(dist.values())
-        dist = {r: v / total for r, v in dist.items()}
-        return Prediction(distribution=dist,
-                          argmax=self._argmax_of(dist, kept, base.argmax))
 
     # ------------------------------------------------------------ helpers
 

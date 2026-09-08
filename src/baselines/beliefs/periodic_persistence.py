@@ -126,11 +126,9 @@ class PeriodicPersistence(BeliefModel):
     def __init__(self, rng: random.Random,
                  config: PeriodicPersistenceConfig,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None,
-                 legacy_exclusion_veto: bool = False) -> None:
+                 negative_half_life_h: Optional[float] = None) -> None:
         super().__init__(rng, floor_mass=floor_mass,
-                         negative_half_life_h=negative_half_life_h,
-                         legacy_exclusion_veto=legacy_exclusion_veto)
+                         negative_half_life_h=negative_half_life_h)
         self._cfg = config
 
     def _default_negative_half_life_h(self) -> float:

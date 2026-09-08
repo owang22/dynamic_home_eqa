@@ -109,12 +109,54 @@ PR workflow on this repo):**
 5. The decay-aware room-visit test needs "fresh" to mean one minute
    after the last look (the arithmetic above); it asserts the stale
    case three days later.
-6. The pre-migration golden log is kept as
-   `tests/fixtures/baselines_golden_run_log_legacy.jsonl` and a test
-   asserts the legacy flag reproduces it; both go with the flag in
-   Phase C.
+6. The pre-migration golden log was kept as
+   `tests/fixtures/baselines_golden_run_log_legacy.jsonl` with a test
+   asserting the legacy flag reproduced it byte for byte; both were
+   deleted with the flag in the cleanup below, as planned.
 7. Three pre-existing `mypy --strict` errors in `llm_floor.py` were
    fixed in passing (touched file).
+
+**Conformal program on the new semantics.** `results/conformal_sweep_v2/`
+reruns v1's alpha range (0.02-0.5) at budgets {24, 45, 90} and adds two
+policies: `ResolvableMassSense` (sense only while the conformal set has
+more than one member AND its mass on sensable untried members is at
+least tau) and `ACISense` (alpha updated online by
+`alpha += gamma * (target - err)`, the error judged on the set formed at
+the question's first decision, fed either by ground truth every question
+or only when the question's own senses revealed the truth). Four
+findings, with numbers in `findings.md`: (1) the achievable alpha floor
+barely moves (0.4 old -> 0.4 new for three of five beliefs, 0.4 -> 0.3
+for two) — OUT_OF_HOUSE's floor share is too small to shift calibration
+until alpha is already near 0.4-0.5, the same arithmetic as the replay's
+caveat; (2) the mechanism table's expectations hold except truly_out
+passive reachability, which a second independent measurement confirms
+does NOT hold (memory-answer accuracy on truly_out 0.21 old -> 0.000
+new for every belief); (3) ResolvableMassSense beats conformal-global's
+own best frontier point for three of five beliefs at budget 90
+(LastObs +0.020, Timetable +0.067, Periodic +0.002), loses at budget 45,
+ties at 24 — no uniform winner; (4) ACI with oracle feedback holds the
+target coverage tighter than static calibration everywhere (day-to-day
+sd 0.012-0.017 vs 0.030-0.065) and corrects a real 0.03-0.05 static
+miscalibration for two beliefs, but with sensed-only feedback — the
+deployable mode — it undercovers badly (0.54-0.63 against a 0.70
+target) because only 1-4% of questions ever produce feedback and those
+are the ones that got swept.
+
+**Cleanup.** `legacy_exclusion_veto`, its old-semantics branch, the
+`_legacy_apply_veto` method and the all-excluded warning state are gone
+from the base class and from all eleven concrete constructors and the
+registry; the two tests and the fixture that exercised the flag are
+deleted with it. `exclusion_migration_replay.py` stays as the readable
+record of how the paired comparison was produced and now refuses its
+`old` arm loudly rather than silently filing new-semantics numbers under
+the old label (`--render-only` still rebuilds the report from the
+committed csvs). Stale exclusion-application prose fixed in
+`README.md`, `bank.py`, `passive_eval.py`, `perpetua_cases.py`,
+`llm_floor.py` and `beliefsim/beliefs.py`. `mypy --strict` is clean on
+all 26 touched files; the 92 remaining errors in the package are
+pre-existing in three untouched report modules (`household_report.py`,
+`household_analysis.py`, `multiseed_report.py`) and predate this work
+(96 errors in five files at the base commit).
 
 ## Update (2026-09-04: observation-rate sweep — more sensing helps the classical models and cannot help Perpetua)
 

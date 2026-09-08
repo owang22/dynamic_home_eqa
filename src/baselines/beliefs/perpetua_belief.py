@@ -212,11 +212,9 @@ class _PerpetuaBase(BeliefModel):
 
     def __init__(self, rng: random.Random, config: PerpetuaConfig,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None,
-                 legacy_exclusion_veto: bool = False) -> None:
+                 negative_half_life_h: Optional[float] = None) -> None:
         super().__init__(rng, floor_mass=floor_mass,
-                         negative_half_life_h=negative_half_life_h,
-                         legacy_exclusion_veto=legacy_exclusion_veto)
+                         negative_half_life_h=negative_half_life_h)
         self._cfg = config
         self._edges: Dict[str, Dict[str, Edge]] = {}
         self._last_refit_day = -1
@@ -427,12 +425,10 @@ class PerpetuaBelief(_PerpetuaBase):
 
     def __init__(self, rng: random.Random, config: PerpetuaConfig,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None,
-                 legacy_exclusion_veto: bool = False) -> None:
+                 negative_half_life_h: Optional[float] = None) -> None:
         config._check_perpetua()
         super().__init__(rng, config, floor_mass=floor_mass,
-                         negative_half_life_h=negative_half_life_h,
-                         legacy_exclusion_veto=legacy_exclusion_veto)
+                         negative_half_life_h=negative_half_life_h)
 
     @property
     def name(self) -> str:
@@ -477,11 +473,9 @@ class PerpetuaStarBelief(_PerpetuaBase):
 
     def __init__(self, rng: random.Random, config: PerpetuaStarConfig,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None,
-                 legacy_exclusion_veto: bool = False) -> None:
+                 negative_half_life_h: Optional[float] = None) -> None:
         super().__init__(rng, config, floor_mass=floor_mass,
-                         negative_half_life_h=negative_half_life_h,
-                         legacy_exclusion_veto=legacy_exclusion_veto)
+                         negative_half_life_h=negative_half_life_h)
         self._scfg = config
 
     @property
