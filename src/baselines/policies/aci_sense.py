@@ -96,10 +96,13 @@ class ACISense(DecisionPolicy):
         return self._gamma
 
     def qhat(self) -> float:
-        """The quantile at the current alpha (clipped to [0, 1))."""
+        """The quantile at the current alpha, clipped: at or above 1 the
+        set is empty (qhat 0), at or below 0 it is vacuous (qhat 1)."""
         if self.alpha >= 1.0:
             return 0.0
-        return conformal_qhat(self._scores, max(0.0, self.alpha))
+        if self.alpha <= 0.0:
+            return 1.0
+        return conformal_qhat(self._scores, self.alpha)
 
     def reset(self, context: EpisodeContext) -> None:
         self._receptacles = context.sensable_receptacle_ids

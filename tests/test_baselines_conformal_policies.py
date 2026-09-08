@@ -89,6 +89,8 @@ def test_aci_recursion_and_first_set() -> None:
     # Above 1 the set is empty; the recursion itself is unclipped.
     policy.alpha = 1.2
     assert policy.qhat() == 0.0
+    policy.alpha = -0.05
+    assert policy.qhat() == 1.0
     assert policy.name == "ACISense(alpha=0.2,gamma=0.1,oracle)"
     with pytest.raises(ValueError):
         ACISense(random.Random(0), scores, 0.2, 0.1, _age, "guess")
