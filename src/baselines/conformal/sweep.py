@@ -257,76 +257,69 @@ def wilson_interval(k: int, n: int, z: float = 1.96) -> Tuple[float, float]:
 
 def plot_coverage_by_age(rows: Sequence[Dict[str, Any]], beliefs: Sequence[str],
                          alphas: Sequence[float], labels: Sequence[str],
-                         path: pathlib.Path, min_n: int = MIN_BIN_N) -> None:
-    """Coverage bars per belief (rows) x alpha (columns): global vs
-    age-binned per age bin, Wilson 95% bars, target line at 1 - alpha,
-    bin counts on the ticks. Cells thinner than ``min_n`` are left empty."""
+                         path: pathlib.Path, min_n: int = MIN_BIN_N,
+                         plot_alpha: Optional[float] = None) -> None:
+    """One panel per belief, for ONE alpha (the largest by default; every
+    alpha is in the csv): how often the true receptacle was inside the
+    prediction set, per belief-age bin, with one global threshold versus
+    one threshold per age bin. Dashed line = the promised rate 1 - alpha.
+    Bin sizes sit on the ticks; bins thinner than ``min_n`` are skipped."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    from matplotlib.patches import Patch
 
-    n_rows, n_cols = len(beliefs), len(alphas)
-    fig, axes = plt.subplots(n_rows, n_cols, sharey=True,
-                             figsize=(3.4 * n_cols + 1.2, 2.6 * n_rows + 1.0),
+    alpha = max(alphas) if plot_alpha is None else plot_alpha
+    n = len(beliefs)
+    fig, axes = plt.subplots(1, n, sharey=True, figsize=(3.0 * n + 0.8, 3.6),
                              squeeze=False)
-    width = 0.36
-    for i, belief in enumerate(beliefs):
-        for j, alpha in enumerate(alphas):
-            ax = axes[i][j]
-            for k, mode in enumerate(MODES):
-                cells = {r["age_bin"]: r for r in rows
-                         if r["belief"] == belief and r["alpha"] == alpha
-                         and r["mode"] == mode}
-                xs, hs, err_lo, err_hi = [], [], [], []
-                for b, label in enumerate(labels):
-                    cell = cells.get(label)
-                    if cell is None or cell["n"] < min_n:
-                        continue
-                    lo, hi = wilson_interval(cell["n_covered"], cell["n"])
-                    xs.append(b + (k - 0.5) * (width + 0.02))
-                    hs.append(cell["coverage"])
-                    # Clamp: at coverage 0 or 1 the bound equals the
-                    # estimate up to float rounding, which errorbar rejects.
-                    err_lo.append(max(0.0, cell["coverage"] - lo))
-                    err_hi.append(max(0.0, hi - cell["coverage"]))
-                ax.bar(xs, hs, width=width, color=_MODE_HUES[mode],
-                       linewidth=0, label=mode)
-                if xs:
-                    ax.errorbar(xs, hs, yerr=[err_lo, err_hi], fmt="none",
-                                ecolor=_INK, elinewidth=0.8, capsize=2)
-            ax.axhline(1 - alpha, color=_INK, linewidth=1.0, linestyle="--")
-            ax.set_ylim(0, 1.02)
-            ax.set_xticks(range(len(labels)))
-            counts = []
-            for label in labels:
-                cell = next((r for r in rows if r["belief"] == belief
-                             and r["alpha"] == alpha and r["mode"] == "global"
-                             and r["age_bin"] == label), None)
-                counts.append(0 if cell is None else cell["n"])
-            ax.set_xticklabels([f"{lab}\nn={n}" for lab, n in
-                                zip(labels, counts)], fontsize=7.5)
-            ax.tick_params(colors=_INK, labelsize=8)
-            ax.yaxis.grid(True, color=_GRID, linewidth=0.8)
-            ax.set_axisbelow(True)
-            for spine in ("top", "right", "left"):
-                ax.spines[spine].set_visible(False)
-            ax.spines["bottom"].set_color(_MUTED)
-            if i == 0:
-                ax.set_title(f"alpha = {alpha:g} (target {1 - alpha:.2f})",
-                             color=_INK, fontsize=9, loc="left")
-            if j == 0:
-                ax.set_ylabel(f"{_short(belief)}\ncoverage", color=_INK,
-                              fontsize=9)
-    handles = [Patch(color=_MODE_HUES[m], label=m) for m in MODES]
-    handles.append(plt.Line2D([], [], color=_INK, linestyle="--",
-                              label="target 1 - alpha"))
-    fig.legend(handles=handles, loc="lower center", ncol=3, frameon=False,
+    xs = list(range(len(labels)))
+    for idx, belief in enumerate(beliefs):
+        ax = axes[0][idx]
+        for mode in MODES:
+            cells = {r["age_bin"]: r for r in rows
+                     if r["belief"] == belief and r["alpha"] == alpha
+                     and r["mode"] == mode}
+            pts = [(x, cells[lab]) for x, lab in zip(xs, labels)
+                   if lab in cells and cells[lab]["n"] >= min_n]
+            ys = [c["coverage"] for _, c in pts]
+            lo = [max(0.0, c["coverage"] - wilson_interval(c["n_covered"], c["n"])[0])
+                  for _, c in pts]
+            hi = [max(0.0, wilson_interval(c["n_covered"], c["n"])[1] - c["coverage"])
+                  for _, c in pts]
+            ax.errorbar([x for x, _ in pts], ys, yerr=[lo, hi],
+                        color=_MODE_HUES[mode], marker="o", markersize=6,
+                        linewidth=2, capsize=3,
+                        label={"global": "one threshold for all ages",
+                               "age_binned": "one threshold per age bin"}[mode])
+        ax.axhline(1 - alpha, color=_INK, linewidth=1.0, linestyle="--",
+                   label=f"promised rate {1 - alpha:.2f}")
+        counts = [next((r["n"] for r in rows if r["belief"] == belief
+                        and r["alpha"] == alpha and r["mode"] == "global"
+                        and r["age_bin"] == lab), 0) for lab in labels]
+        ax.set_xticks(xs)
+        ax.set_xticklabels([f"{lab}\nn={c}" for lab, c in zip(labels, counts)],
+                           fontsize=8)
+        ax.set_xlim(-0.5, len(labels) - 0.5)
+        ax.set_ylim(0, 1.04)
+        ax.set_title(_short(belief), color=_INK, fontsize=10, loc="left")
+        if idx == 0:
+            ax.set_ylabel("share of questions whose true place\nwas inside "
+                          "the prediction set", color=_INK, fontsize=9)
+        ax.set_xlabel("time since the object was last seen", color=_INK,
+                      fontsize=9)
+        ax.tick_params(colors=_INK, labelsize=8)
+        ax.yaxis.grid(True, color=_GRID, linewidth=0.8)
+        ax.set_axisbelow(True)
+        for spine in ("top", "right"):
+            ax.spines[spine].set_visible(False)
+        ax.spines["left"].set_color(_MUTED)
+        ax.spines["bottom"].set_color(_MUTED)
+    handles, names = axes[0][0].get_legend_handles_labels()
+    fig.legend(handles, names, loc="lower center", ncol=3, frameon=False,
                fontsize=9)
-    fig.suptitle("Prediction-set coverage by belief age on the test "
-                 f"households (bins with n < {min_n} omitted)",
-                 color=_INK, fontsize=10, x=0.01, ha="left")
-    fig.tight_layout(rect=(0, 0.05, 1, 0.97))
+    fig.suptitle(f"Does the prediction set contain the truth? alpha = {alpha:g}, "
+                 "test households", color=_INK, fontsize=11, x=0.01, ha="left")
+    fig.tight_layout(rect=(0, 0.1, 1, 0.94))
     fig.savefig(path, dpi=150)
     plt.close(fig)
 
@@ -334,47 +327,55 @@ def plot_coverage_by_age(rows: Sequence[Dict[str, Any]], beliefs: Sequence[str],
 def plot_accuracy_vs_budget(rows: Sequence[Dict[str, Any]],
                             beliefs: Sequence[str], alphas: Sequence[float],
                             path: pathlib.Path) -> None:
-    """Task accuracy against mean senses per question, one panel per
-    belief; circles = global, squares = age-binned, alpha on a single-hue
-    ramp; NeverSense (star) and SequentialSearch (triangle) in ink."""
+    """One panel per belief: accuracy against senses per question. The two
+    calibration modes are two lines through their alpha points (alpha
+    written next to each point); NeverSense (star) and SequentialSearch
+    (triangle) are the two reference policies."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     from matplotlib.lines import Line2D
 
     n = len(beliefs)
-    n_cols = min(3, n)
-    n_rows = math.ceil(n / n_cols)
-    fig, axes = plt.subplots(n_rows, n_cols, sharey=True,
-                             figsize=(4.0 * n_cols + 0.5, 3.2 * n_rows + 1.0),
+    fig, axes = plt.subplots(1, n, sharey=True, figsize=(3.2 * n + 0.8, 3.8),
                              squeeze=False)
-    ramp = {a: _ALPHA_RAMP[min(i, len(_ALPHA_RAMP) - 1)]
-            for i, a in enumerate(sorted(alphas))}
-    markers = {"global": "o", "age_binned": "s"}
     for idx, belief in enumerate(beliefs):
-        ax = axes[idx // n_cols][idx % n_cols]
-        for row in rows:
-            if row["belief"] != belief:
-                continue
-            x, y = row["mean_budget"], row["task_accuracy"]
-            if row["mode"] == NEVER_SENSE:
-                ax.scatter([x], [y], marker="*", s=110, color=_INK, zorder=4)
-                ax.annotate("NeverSense", (x, y), xytext=(5, 4),
-                            textcoords="offset points", fontsize=7.5,
-                            color=_INK)
-            elif row["mode"] == SEQUENTIAL_SEARCH:
-                ax.scatter([x], [y], marker="^", s=70, color=_INK, zorder=4)
-                ax.annotate("SequentialSearch", (x, y), xytext=(5, -9),
-                            textcoords="offset points", fontsize=7.5,
-                            color=_INK)
-            else:
-                ax.scatter([x], [y], marker=markers[row["mode"]], s=46,
-                           color=ramp[row["alpha"]], edgecolors="white",
-                           linewidths=0.8, zorder=3)
-        ax.set_title(_short(belief), color=_INK, fontsize=9, loc="left")
-        ax.set_xlabel("mean senses per question", color=_INK, fontsize=9)
-        if idx % n_cols == 0:
-            ax.set_ylabel("task accuracy", color=_INK, fontsize=9)
+        ax = axes[0][idx]
+        mine = [r for r in rows if r["belief"] == belief]
+        for mode in MODES:
+            pts = sorted((r for r in mine if r["mode"] == mode),
+                         key=lambda r: r["alpha"])
+            ax.plot([r["mean_budget"] for r in pts],
+                    [r["task_accuracy"] for r in pts], color=_MODE_HUES[mode],
+                    marker="o", markersize=5, linewidth=1.6, zorder=3)
+            # Alphas whose points coincide (vacuous thresholds all land on
+            # "always sense") share one range label instead of a pile-up.
+            groups: List[List[Dict[str, Any]]] = []
+            for r in pts:
+                if groups and abs(groups[-1][0]["mean_budget"] - r["mean_budget"]) < 0.02 \
+                        and abs(groups[-1][0]["task_accuracy"] - r["task_accuracy"]) < 0.01:
+                    groups[-1].append(r)
+                else:
+                    groups.append([r])
+            for group in groups:
+                text = (f"{group[0]['alpha']:g}" if len(group) == 1 else
+                        f"{group[0]['alpha']:g}-{group[-1]['alpha']:g}")
+                ax.annotate(text, (group[0]["mean_budget"], group[0]["task_accuracy"]),
+                            xytext=(4, 3 if mode == "global" else -9),
+                            textcoords="offset points", fontsize=7,
+                            color=_MODE_HUES[mode])
+        for r in mine:
+            if r["mode"] == NEVER_SENSE:
+                ax.scatter([r["mean_budget"]], [r["task_accuracy"]], marker="*",
+                           s=120, color=_INK, zorder=4)
+            elif r["mode"] == SEQUENTIAL_SEARCH:
+                ax.scatter([r["mean_budget"]], [r["task_accuracy"]], marker="^",
+                           s=70, color=_INK, zorder=4)
+        ax.set_title(_short(belief), color=_INK, fontsize=10, loc="left")
+        ax.set_xlabel("senses per question (cost)", color=_INK, fontsize=9)
+        if idx == 0:
+            ax.set_ylabel("share of questions answered right", color=_INK,
+                          fontsize=9)
         ax.tick_params(colors=_INK, labelsize=8)
         ax.grid(True, color=_GRID, linewidth=0.8)
         ax.set_axisbelow(True)
@@ -382,23 +383,20 @@ def plot_accuracy_vs_budget(rows: Sequence[Dict[str, Any]],
             ax.spines[spine].set_visible(False)
         ax.spines["left"].set_color(_MUTED)
         ax.spines["bottom"].set_color(_MUTED)
-    for idx in range(n, n_rows * n_cols):
-        axes[idx // n_cols][idx % n_cols].axis("off")
-    handles = [Line2D([], [], marker="o", linestyle="", color=ramp[a],
-                      label=f"alpha = {a:g}") for a in sorted(alphas)]
-    handles += [Line2D([], [], marker="o", linestyle="", color=_MUTED,
-                       label="global"),
-                Line2D([], [], marker="s", linestyle="", color=_MUTED,
-                       label="age_binned"),
-                Line2D([], [], marker="*", linestyle="", color=_INK,
-                       markersize=10, label="NeverSense"),
-                Line2D([], [], marker="^", linestyle="", color=_INK,
-                       label="SequentialSearch")]
-    fig.legend(handles=handles, loc="lower center", ncol=min(8, len(handles)),
-               frameon=False, fontsize=8)
-    fig.suptitle("Task accuracy vs sensing budget on the test households",
-                 color=_INK, fontsize=10, x=0.01, ha="left")
-    fig.tight_layout(rect=(0, 0.08, 1, 0.96))
+    handles = [
+        Line2D([], [], color=_MODE_HUES["global"], marker="o",
+               label="one threshold for all ages (number = alpha)"),
+        Line2D([], [], color=_MODE_HUES["age_binned"], marker="o",
+               label="one threshold per age bin (number = alpha)"),
+        Line2D([], [], marker="*", linestyle="", color=_INK, markersize=11,
+               label="never sense"),
+        Line2D([], [], marker="^", linestyle="", color=_INK,
+               label="always search until found")]
+    fig.legend(handles=handles, loc="lower center", ncol=2, frameon=False,
+               fontsize=9)
+    fig.suptitle("Accuracy bought per sense, test households", color=_INK,
+                 fontsize=11, x=0.01, ha="left")
+    fig.tight_layout(rect=(0, 0.14, 1, 0.94))
     fig.savefig(path, dpi=150)
     plt.close(fig)
 
