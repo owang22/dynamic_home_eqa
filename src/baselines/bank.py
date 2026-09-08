@@ -370,13 +370,13 @@ def write_negative_evidence_bank(path: pathlib.Path) -> JsonlBank:
     empty-bin fallback. A search that ignores negative evidence senses
     ``shelf_a`` (whose contents are non-empty: the static ``coin_decoy``
     is there), learns nothing, and answers ``shelf_a`` — wrong even at
-    unlimited budget. With exclusions, the miss zeroes ``shelf_a`` and the
-    search sweeps the remaining three receptacles, finding the wallet in
-    at most four senses total.
+    unlimited budget. With negative evidence, the fresh miss suppresses
+    ``shelf_a`` fully and the search sweeps the remaining three
+    receptacles, finding the wallet in at most four senses total.
 
     ``coin_decoy`` stays at ``shelf_a`` forever, so the sensed receptacle
-    is never empty — exclusion must come from the wallet's absence, not
-    from an empty result.
+    is never empty — the negative evidence must come from the wallet's
+    absence, not from an empty result.
     """
     rows: List[Dict[str, Any]] = [{
         "kind": "episode_header", "episode_id": "negative_ep0",

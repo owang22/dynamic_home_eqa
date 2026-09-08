@@ -27,11 +27,11 @@ the controlled protocol that replaces it for any learning-curve claim:
   decays — the single most informative passive plot.
 * **Proper scores.** Each cell reports top-1 accuracy AND mean negative
   log-likelihood (natural log) of the true receptacle, with the
-  probability floored at ``log_loss_epsilon`` before the log. The frozen
-  panel runs hard exclusions and one-hot recency beliefs whose configured
-  probability floor is 0, where a single confident miss would make the
-  mean infinite, so the protocol floors every model at the same
-  configured epsilon.
+  probability floored at ``log_loss_epsilon`` before the log. Every
+  model carries the base pipeline's small uniform floor, but a fresh
+  empty look drives a receptacle to exactly 0, where a confident miss
+  would make the mean infinite, so the protocol floors every model at
+  the same configured epsilon.
 * **Unit of analysis.** The household is the independent unit:
   :func:`aggregate_households` averages per-household cell values with
   equal weight per household (never per question) and bootstraps over

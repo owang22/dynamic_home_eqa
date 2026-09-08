@@ -27,13 +27,18 @@ An `Agent` is exactly one `BeliefModel` plus one `DecisionPolicy`
 
 - **BeliefModel** (`beliefs/base.py`): consumes the observation stream and
   sense results, answers `predict(object_id, t)` with a distribution over
-  receptacles plus its argmax. Shared bookkeeping lives in the base class;
-  a concrete model implements one method, `_predict_from_history`. The
-  base class also owns **negative evidence**: a sense whose contents omit
-  a known object excludes that object from the sensed receptacle, the
-  exclusion is invalidated by any strictly later positive sighting, and a
-  positive sighting at exactly the prediction instant outranks every
-  model prior. Concrete models never reimplement any of this.
+  locations (every receptacle plus OUT_OF_HOUSE) plus its argmax. Shared
+  bookkeeping lives in the base class; a concrete model implements one
+  method, `_predict_from_history`. The base class also owns the
+  **prediction pipeline**: a uniform floor over every location, then
+  **negative evidence** (a sense whose contents omit a known object is an
+  empty look at that receptacle, which multiplies its mass by
+  `1 - 2^(-age/half_life)` until a strictly later positive sighting
+  supersedes it; OUT_OF_HOUSE can never be looked at, so its floor mass
+  is what survives a full sweep), then renormalization; a positive
+  sighting at exactly the prediction instant outranks every model
+  prior. Concrete models never reimplement any of this; models that
+  ingest negatives natively (Perpetua) opt out of the suppression step.
 - **DecisionPolicy** (`policies/base.py`): given a question, the current
   prediction, and the (read-only) remaining budget, returns `AnswerNow`
   or `Sense(receptacle_id)`. After a sense the harness updates the belief
@@ -49,7 +54,7 @@ tag. `frozen` members are the three-model instrument panel below;
 buildable from any config but the healthcheck REFUSES to run a panel
 containing one — the instrument stays frozen by construction, not
 convention. Candidates that pool evidence across objects override the
-base class's `_predict_for_object` hook; exclusion machinery,
+base class's `_predict_for_object` hook; the floor, negative evidence,
 renormalization, and the sighting-at-instant override stay base-only
 either way. All candidates use the frozen 24 h count half-life where
 they use counts; every hyperparameter is fixed a priori (values in each
@@ -68,9 +73,11 @@ itself a measurement of how much that bank drifts.
 Policies: `never_sense` (the zero-cost floor), `fixed_schedule` (blind
 patrol on a cadence), `sequential_search` (senses receptacles in belief
 order until the object is found, the budget runs out, or a configured
-confidence threshold is met; misses become exclusions, so the belief
-itself yields the next-best receptacle). **Invariant**: on any bank whose
-queried objects are each inside some receptacle at query time,
+confidence threshold is met; a miss is a fresh empty look inside the
+belief, so the belief itself yields the next-best receptacle, and after
+a full sweep its surviving floor mass on OUT_OF_HOUSE answers "it left"
+with no elimination logic in the policy). **Invariant**: on any bank
+whose queried objects are each somewhere at query time,
 `sequential_search` at unlimited budget scores task accuracy 1.0 with
 every belief model — enforced by tests and by the healthcheck's
 `solvable` gate.
@@ -254,8 +261,9 @@ before/spent/after plus a `forced_answer` flag, and the full-state
 - `write_synthetic_bank` — the 7-day, 3-object bank with hand-derivable
   accuracies (derivation in `tests/test_baselines_integration.py`).
 - `write_negative_evidence_bank` — negative evidence is decisive: every
-  belief favors a receptacle the object silently left; only the
-  exclusion machinery finds it (`tests/test_baselines_search.py`).
+  belief favors a receptacle the object silently left; only the miss's
+  suppression lets the search move on and find it
+  (`tests/test_baselines_search.py`).
 - `write_gate_pass_bank` / `write_gate_fail_static_bank` — engineered to
   PASS all five healthcheck gates / FAIL `not_trivial` (a static world),
   used by `tests/test_baselines_healthcheck.py`.
