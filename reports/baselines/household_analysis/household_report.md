@@ -127,7 +127,19 @@ All homes pooled:
 | 2-3d | 4926 | 0.156 | 0.174 | 0.176 | 0.132 | 0.187 | 0.226 | 0.203 | 0.202 | 0.300 | 0.303 | 0.299 | 0.766 |
 | 3d+ | 3873 | 0.173 | 0.184 | 0.190 | 0.163 | 0.201 | 0.242 | 0.238 | 0.215 | 0.306 | 0.308 | 0.305 | 0.782 |
 
+Three basic models only (one frequency, one periodic, one survival) with Wilson 95% bands; every model is in the tables above and in the per-home figure below. All query days are pooled here.
+
 ![](age_by_group.png)
+
+## Learning over days of observation
+
+The same three models by query day, all ages of last sighting pooled. Banks start on a Monday, so query day and weekday are tied: weekend query days are shaded and the weekly ripple is the weekday mix, not learning.
+
+![](learning_by_group.png)
+
+History length and age of the last sighting are confounded: a 3-day-old sighting can only occur late in the history, and a late query day pools more stale sightings. The grid below crosses the two, all homes pooled. Top row: hold the age fixed and let the history grow (a rise is learning). Bottom row: hold the history window fixed and let the age grow (a fall is staleness). Windows from day 7 on are whole weeks, so each holds every weekday once.
+
+![](learning_vs_age.png)
 
 Kept current versus frozen forecast at matched ages, LastObs and the best routine model per group:
 

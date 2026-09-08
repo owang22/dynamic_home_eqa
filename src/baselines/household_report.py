@@ -55,6 +55,9 @@ PERPETUA_FOCUS = ("MostFrequentLocation", "Markov1", "Perpetua",
 """The survival models against the two frequency comparators, for the
 focused per-home figure. The full per-home figure carries every model;
 this one carries the five that the Perpetua question is about."""
+BASIC_FOCUS = ("MostFrequentLocation", "PeriodicPersistence", "Perpetua")
+"""The three basic models the group-level figures carry: one frequency,
+one periodic, one survival. Fewer lines, with bands, beats eleven."""
 LONG_AGES = ("[24h,48h)", "[48h,72h)", "[72h,inf)")
 MIN_N = 30
 """Fewest questions a (home, age bin) cell needs before a figure draws it
@@ -454,8 +457,9 @@ def _line(ax, xs, ys, model: str, **kw) -> None:
                 linewidth=2, linestyle=(0, (4, 3)), label="routine oracle",
                 **kw)
         return
+    kw.setdefault("markersize", 5.5)
     ax.plot([p[0] for p in pts], [p[1] for p in pts], color=color_of(model),
-            linewidth=2, marker="o", markersize=5.5, markeredgecolor=SURFACE,
+            linewidth=2, marker="o", markeredgecolor=SURFACE,
             markeredgewidth=1.5, solid_capstyle="round",
             solid_joinstyle="round", label=label_of(model), **kw)
 
@@ -467,28 +471,218 @@ def _legend(fig, handles_labels) -> None:
                bbox_to_anchor=(0.5, -0.01))
 
 
+def _band(ax, xs, cells, model: str) -> None:
+    """Wilson 95% shading for one model. ``cells`` is a list of
+    (correct, n) or None per x; cells under MIN_N are skipped."""
+    keep = [(x, *wilson(c, n)) for x, cn in zip(xs, cells)
+            if cn is not None and cn[1] >= MIN_N for c, n in [cn]]
+    if keep:
+        ax.fill_between([k[0] for k in keep], [k[1] for k in keep],
+                        [k[2] for k in keep], color=color_of(model),
+                        alpha=0.15, linewidth=0, zorder=1)
+
+
+def _focus(models: Sequence[str]) -> List[str]:
+    return [m for m in models if base_name(m) in BASIC_FOCUS]
+
+
+def _groups(meta) -> List[str]:
+    return [g for g in ("1", "2", "3+")
+            if any(m["resident_group"] == g for m in meta.values())]
+
+
 def fig_age_by_group(rows, meta, models, out: pathlib.Path) -> None:
-    groups = [g for g in ("1", "2", "3+")
-              if any(m["resident_group"] == g for m in meta.values())]
-    fig, axes = plt.subplots(1, len(groups), figsize=(4.2 * len(groups), 3.6),
+    """Accuracy by age of the last sighting, per resident group, for the
+    three basic models only (frequency, periodic, survival) and the
+    oracle; Wilson bands, counts on the ticks, MIN_N gate. All query days
+    are pooled, so each point mixes early and late history; the
+    learning-vs-age figure separates the two."""
+    focus = _focus(models)
+    if not focus:
+        return
+    groups = _groups(meta)
+    fig, axes = plt.subplots(1, len(groups), figsize=(4.2 * len(groups), 3.8),
                              squeeze=False, facecolor=SURFACE)
     for ax, g in zip(axes[0], groups):
         sel = [r for r in rows if r["mode"] == "continuous"
                and meta[r["household"]]["resident_group"] == g]
         a = Agg(sel, lambda r: (r["model"], r["age_bin"]))
-        bins = [b for b in AGE_ORDER[:-1] if a.n.get((models[0], b))]
+        bins = [b for b in AGE_ORDER[:-1] if a.n.get((focus[0], b))]
         xs = list(range(len(bins)))
-        for m in models + [ORACLE]:
-            _line(ax, xs, [a.acc((m, b)) for b in bins], m)
+        counts = [a.n.get((focus[0], b), 0) for b in bins]
+        for m in focus + [ORACLE]:
+            ys = [a.acc((m, b)) if n >= MIN_N else None
+                  for b, n in zip(bins, counts)]
+            _line(ax, xs, ys, m)
+            if m != ORACLE:
+                _band(ax, xs, [(a.c[(m, b)], a.n[(m, b)]) for b in bins], m)
         n_homes = sum(1 for m in meta.values() if m["resident_group"] == g)
         _style(ax, f"{g}-resident homes (n={n_homes}), belief kept current")
         ax.set_xticks(xs)
-        ax.set_xticklabels([AGE_LABEL[b] for b in bins], rotation=0)
+        ax.set_xticklabels([f"{AGE_LABEL[b]}\nn={n}"
+                            for b, n in zip(bins, counts)], fontsize=6.5)
         ax.set_xlabel("age of the object's last sighting", fontsize=8,
                       color=INK2)
     axes[0][0].set_ylabel("top-1 accuracy", fontsize=8, color=INK2)
     _legend(fig, axes[0][0].get_legend_handles_labels())
-    fig.tight_layout(rect=(0, 0.08, 1, 1))
+    fig.suptitle("Accuracy by age of last sighting (all query days pooled, "
+                 "seeds pooled; shading = Wilson 95% interval; bins under "
+                 f"{MIN_N} questions not drawn)", fontsize=9.5, color=INK,
+                 x=0.01, ha="left")
+    fig.tight_layout(rect=(0, 0.08, 1, 0.95))
+    fig.savefig(out, dpi=150, facecolor=SURFACE)
+    plt.close(fig)
+
+
+def fig_learning_by_group(rows, meta, models, out: pathlib.Path) -> None:
+    """Accuracy by query day (history length), per resident group, same
+    three models and the oracle; Wilson bands per day. Every bank starts
+    on a Monday, so a query day is also a weekday: weekend query days
+    are shaded, and the weekly ripple is that, not learning. Each day
+    pools every age of last sighting, so the curve is learning plus a
+    (roughly stable) age mix; the learning-vs-age figure holds age
+    fixed."""
+    focus = _focus(models)
+    if not focus:
+        return
+    groups = _groups(meta)
+    fig, axes = plt.subplots(1, len(groups), figsize=(4.2 * len(groups), 3.8),
+                             squeeze=False, facecolor=SURFACE)
+    sel_all = [r for r in rows if r["mode"] == "continuous"]
+    days = sorted({r["day"] for r in sel_all})
+    for ax, g in zip(axes[0], groups):
+        sel = [r for r in sel_all
+               if meta[r["household"]]["resident_group"] == g]
+        a = Agg(sel, lambda r: (r["model"], r["day"]))
+        counts = [a.n.get((focus[0], d), 0) for d in days]
+        for d in days:
+            if d % 7 in (5, 6):
+                ax.axvspan(d - 0.5, d + 0.5, color="#f2f1ec", zorder=0)
+        for m in focus + [ORACLE]:
+            ys = [a.acc((m, d)) if n >= MIN_N else None
+                  for d, n in zip(days, counts)]
+            _line(ax, days, ys, m, markersize=3.5)
+            if m != ORACLE:
+                _band(ax, days, [(a.c[(m, d)], a.n[(m, d)]) for d in days], m)
+        n_homes = sum(1 for m in meta.values() if m["resident_group"] == g)
+        per_day = counts[0] if counts else 0
+        _style(ax, f"{g}-resident homes (n={n_homes}), {per_day} questions "
+                   "per day")
+        ax.set_xticks([d for d in days if d % 7 == 0 or d == days[0]])
+        ax.set_xlabel("query day (days of observation; grey = weekend)",
+                      fontsize=8, color=INK2)
+    axes[0][0].set_ylabel("top-1 accuracy", fontsize=8, color=INK2)
+    _legend(fig, axes[0][0].get_legend_handles_labels())
+    fig.suptitle("Accuracy by days of observation (belief kept current, "
+                 "seeds pooled, all ages of last sighting pooled; shading = "
+                 "Wilson 95% interval; banks start on a Monday)",
+                 fontsize=9.5, color=INK, x=0.01, ha="left")
+    fig.tight_layout(rect=(0, 0.08, 1, 0.95))
+    fig.savefig(out, dpi=150, facecolor=SURFACE)
+    plt.close(fig)
+
+
+COARSE_AGE = (("<1h", ("[0h,0.25h)", "[0.25h,1h)")),
+              ("1-6h", ("[1h,3h)", "[3h,6h)")),
+              ("6-12h", ("[6h,12h)",)),
+              ("12-24h", ("[12h,24h)",)),
+              ("1-2d", ("[24h,48h)",)),
+              ("2d+", ("[48h,72h)", "[72h,inf)")))
+"""Six age bins for the day x age cross: the fine bins merged at both
+ends so every (week, age) cell keeps enough questions."""
+WEEKS = (("days 3-6", (3, 6)), ("days 7-13", (7, 13)),
+         ("days 14-20", (14, 20)), ("days 21-27", (21, 27)))
+"""History windows. Whole weeks from day 7 on, so each window holds every
+weekday once (phase-balanced); days 3-6 is the partial first week."""
+AGE_RAMP6 = ("#b3e0e3", "#7ecdd3", "#4bb3bb", "#2a9aa4", "#127a83",
+             "#00646d")
+WEEK_RAMP = ("#f4c28a", "#eb9a4c", "#d9702a", "#a94a12")
+
+
+def fig_learning_vs_age(rows, meta, models, out: pathlib.Path) -> None:
+    """Separating history length from age of the last sighting. Both
+    move accuracy and the two headline figures each pool the other, so
+    this one crosses them, all homes pooled. Top row: accuracy by history
+    window at a FIXED age of last sighting (one line per age); a rise
+    along x is learning. Bottom row: accuracy by age at a FIXED history
+    window (one line per window); a fall along x is staleness. One
+    column per model."""
+    focus = _focus(models)
+    if not focus:
+        return
+    sel = [r for r in rows if r["mode"] == "continuous"]
+    fine_to_coarse = {f: c for c, fines in COARSE_AGE for f in fines}
+
+    def week_of(day: int) -> Optional[str]:
+        return next((w for w, (lo, hi) in WEEKS if lo <= day <= hi), None)
+
+    a = Agg(sel, lambda r: (r["model"], week_of(r["day"]),
+                            fine_to_coarse.get(r["age_bin"])))
+    ages = [c for c, _ in COARSE_AGE]
+    weeks = [w for w, _ in WEEKS]
+    fig, axes = plt.subplots(2, len(focus), figsize=(4.0 * len(focus), 6.6),
+                             squeeze=False, facecolor=SURFACE)
+    for j, m in enumerate(focus):
+        # top: x = history window, one line per age
+        ax = axes[0][j]
+        xs = list(range(len(weeks)))
+        for age, col in zip(ages, AGE_RAMP6):
+            cells = [(a.c[(m, w, age)], a.n[(m, w, age)]) for w in weeks]
+            ys = [c / n if n >= MIN_N else None for c, n in cells]
+            pts = [(x, y) for x, y in zip(xs, ys) if y is not None]
+            if not pts:
+                continue
+            ax.plot([p[0] for p in pts], [p[1] for p in pts], color=col,
+                    linewidth=2, marker="o", markersize=5,
+                    markeredgecolor=SURFACE, markeredgewidth=1.2,
+                    label=f"last seen {age}")
+            keep = [(x, *wilson(c, n)) for x, (c, n) in zip(xs, cells)
+                    if n >= MIN_N]
+            ax.fill_between([k[0] for k in keep], [k[1] for k in keep],
+                            [k[2] for k in keep], color=col, alpha=0.15,
+                            linewidth=0, zorder=1)
+        _style(ax, f"{label_of(m)}: fixed age, history grows")
+        ax.set_xticks(xs)
+        ax.set_xticklabels(weeks, fontsize=7)
+        ax.set_xlabel("history window (query days)", fontsize=8, color=INK2)
+        # bottom: x = age, one line per history window
+        ax = axes[1][j]
+        xs = list(range(len(ages)))
+        for w, col in zip(weeks, WEEK_RAMP):
+            cells = [(a.c[(m, w, age)], a.n[(m, w, age)]) for age in ages]
+            ys = [c / n if n >= MIN_N else None for c, n in cells]
+            pts = [(x, y) for x, y in zip(xs, ys) if y is not None]
+            if not pts:
+                continue
+            ax.plot([p[0] for p in pts], [p[1] for p in pts], color=col,
+                    linewidth=2, marker="s", markersize=5,
+                    markeredgecolor=SURFACE, markeredgewidth=1.2,
+                    label=w)
+            keep = [(x, *wilson(c, n)) for x, (c, n) in zip(xs, cells)
+                    if n >= MIN_N]
+            ax.fill_between([k[0] for k in keep], [k[1] for k in keep],
+                            [k[2] for k in keep], color=col, alpha=0.15,
+                            linewidth=0, zorder=1)
+        _style(ax, f"{label_of(m)}: fixed history, age grows")
+        counts = [sum(a.n.get((m, w, age), 0) for w in weeks) for age in ages]
+        ax.set_xticks(xs)
+        ax.set_xticklabels([f"{age}\nn={n}" for age, n in zip(ages, counts)],
+                           fontsize=6.5)
+        ax.set_xlabel("age of the object's last sighting", fontsize=8,
+                      color=INK2)
+    for row in axes:
+        row[0].set_ylabel("top-1 accuracy", fontsize=8, color=INK2)
+    h0, l0 = axes[0][0].get_legend_handles_labels()
+    h1, l1 = axes[1][0].get_legend_handles_labels()
+    fig.legend(h0, l0, loc="lower center", ncol=len(l0), frameon=False,
+               fontsize=7.5, labelcolor=INK2, bbox_to_anchor=(0.5, 0.035))
+    fig.legend(h1, l1, loc="lower center", ncol=len(l1), frameon=False,
+               fontsize=7.5, labelcolor=INK2, bbox_to_anchor=(0.5, -0.005))
+    fig.suptitle("History length vs age of last sighting, all homes and "
+                 "seeds pooled (shading = Wilson 95% interval; cells under "
+                 f"{MIN_N} questions not drawn)", fontsize=9.5, color=INK,
+                 x=0.01, ha="left")
+    fig.tight_layout(rect=(0, 0.075, 1, 0.96))
     fig.savefig(out, dpi=150, facecolor=SURFACE)
     plt.close(fig)
 
@@ -911,6 +1105,9 @@ def build(in_dir: pathlib.Path, out_dir: pathlib.Path) -> pathlib.Path:
     t_perpetua = perpetua_section(in_dir)
 
     fig_age_by_group(rows, meta, models, out_dir / "age_by_group.png")
+    fig_learning_by_group(rows, meta, models,
+                          out_dir / "learning_by_group.png")
+    fig_learning_vs_age(rows, meta, models, out_dir / "learning_vs_age.png")
     fig_age_by_home(rows, meta, models, out_dir / "age_by_home.png")
     fig_history_by_home(hist, meta, models, out_dir / "history_by_home.png")
     fig_modes_by_group(rows, meta, models, out_dir / "modes_by_group.png")
@@ -969,7 +1166,32 @@ def build(in_dir: pathlib.Path, out_dir: pathlib.Path) -> pathlib.Path:
     for g, t in t_age.items():
         md += [f"{g}-resident homes:", "", t, ""]
     md += [
+        "Three basic models only (one frequency, one periodic, one "
+        "survival) with Wilson 95% bands; every model is in the tables "
+        "above and in the per-home figure below. All query days are "
+        "pooled here.",
+        "",
         "![](age_by_group.png)",
+        "",
+        "## Learning over days of observation",
+        "",
+        "The same three models by query day, all ages of last sighting "
+        "pooled. Banks start on a Monday, so query day and weekday are "
+        "tied: weekend query days are shaded and the weekly ripple is "
+        "the weekday mix, not learning.",
+        "",
+        "![](learning_by_group.png)",
+        "",
+        "History length and age of the last sighting are confounded: a "
+        "3-day-old sighting can only occur late in the history, and a "
+        "late query day pools more stale sightings. The grid below "
+        "crosses the two, all homes pooled. Top row: hold the age fixed "
+        "and let the history grow (a rise is learning). Bottom row: hold "
+        "the history window fixed and let the age grow (a fall is "
+        "staleness). Windows from day 7 on are whole weeks, so each holds "
+        "every weekday once.",
+        "",
+        "![](learning_vs_age.png)",
         "",
         "Kept current versus frozen forecast at matched ages, LastObs and "
         "the best routine model per group:",

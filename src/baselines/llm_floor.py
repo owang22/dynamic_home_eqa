@@ -92,15 +92,16 @@ LLM = "LLMBelief"
 ORACLE = "routine_oracle"
 EXPIRY_HOURS = (6.0, 24.0)
 LABEL = {LLM: "LLM", "LastObservation": "LastObs",
+         "TimetableLookup": "Timetable",
          "DaytypeMixture": "DaytypeMix", "Perpetua": "Perpetua",
+         "PerpetuaStar": "PerpetuaStar",
          "LastObsExpiring6h": "LastObs+expire6h",
          "LastObsExpiring24h": "LastObs+expire24h", ORACLE: "oracle"}
-MODEL_ORDER = (LLM, "LastObservation", "DaytypeMixture", "Perpetua",
-               "LastObsExpiring6h", "LastObsExpiring24h", ORACLE)
-COMPARATORS = ("LastObservation", "DaytypeMixture", "Perpetua",
-               "LastObsExpiring6h", "LastObsExpiring24h", ORACLE)
-DIST_MODELS = (LLM, "LastObservation", "DaytypeMixture", "Perpetua",
-               "LastObsExpiring6h", "LastObsExpiring24h")
+MODEL_ORDER = (LLM, "LastObservation", "TimetableLookup", "DaytypeMixture",
+               "Perpetua", "PerpetuaStar", "LastObsExpiring6h",
+               "LastObsExpiring24h", ORACLE)
+COMPARATORS = MODEL_ORDER[1:]
+DIST_MODELS = MODEL_ORDER[:-1]
 """Models with a distribution (log-loss is defined); the oracle is a
 modal answer only."""
 
@@ -124,7 +125,9 @@ SCORED_COLUMNS = ("household", "seed", "qid", "object", "t_query",
 
 SURFACE, INK, INK2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e8e7e2"
 COLOR = {LLM: "#e34948", "LastObservation": "#2a78d6",
+         "TimetableLookup": "#e87ba4",
          "DaytypeMixture": "#eda100", "Perpetua": "#1baf7a",
+         "PerpetuaStar": "#0f7a52",
          "LastObsExpiring6h": "#7ecdd3", "LastObsExpiring24h": "#00646d",
          ORACLE: "#8a8983"}
 
@@ -479,8 +482,11 @@ def score_bank(task: Dict[str, Any]) -> List[Dict[str, Any]]:
     llm = _build(_llm_spec(cache, bank_rooms(household, seed)),
                  episode.episode_id, "score")
     beliefs[LLM] = llm
-    for spec in select_specs(["last_observation", "daytype_mixture",
-                              "perpetua"]):
+    for spec in select_specs(["last_observation", "timetable",
+                              "daytype_mixture", "perpetua",
+                              "perpetua_star"]):
+        if spec.get("switching_prior") == "flat":
+            continue            # the PerpetuaStarFlat ablation is not a comparator here
         b = _build(spec, episode.episode_id, "score")
         beliefs[b.name] = b
     for h in EXPIRY_HOURS:
@@ -949,8 +955,16 @@ def write_inspection(out_dir: pathlib.Path, rows: Sequence[Dict[str, Any]]
     return path
 
 
-def stage_report(out_dir: pathlib.Path) -> pathlib.Path:
+def stage_report(out_dir: pathlib.Path, burn_in_days: int = 0
+                 ) -> pathlib.Path:
+    """``burn_in_days`` > 0 drops sampled questions asked before that day
+    (the plan's shared burn-in for the LLM arms that need a digest of the
+    first days) and writes ``summary_burnin<N>.md`` beside the full one."""
     rows = load_scored(out_dir)
+    if burn_in_days:
+        rows = [r for r in rows
+                if int(r["t_query"]) >= burn_in_days * DAY_SECONDS]
+    suffix = f"_burnin{burn_in_days}" if burn_in_days else ""
     meta = {h: m for h, m in household_meta(BANK_DIR).items()
             if any(r["household"] == h for r in rows)}
     sample = json.loads((out_dir / "sample.json").read_text())
@@ -961,12 +975,13 @@ def stage_report(out_dir: pathlib.Path) -> pathlib.Path:
             break
     n_q = len({(r["household"], r["seed"], r["qid"]) for r in rows})
     n_homes = len(meta)
-    fig_accuracy_by_age(rows, out_dir / "accuracy_by_age.png", n_homes)
-    fig_paired_by_home(rows, meta, out_dir / "paired_by_home_lastobs.png")
-    fig_paired_by_home(rows, meta, out_dir / "paired_by_home_perpetua.png",
+    fig_accuracy_by_age(rows, out_dir / f"accuracy_by_age{suffix}.png", n_homes)
+    fig_paired_by_home(rows, meta, out_dir / f"paired_by_home_lastobs{suffix}.png")
+    fig_paired_by_home(rows, meta, out_dir / f"paired_by_home_perpetua{suffix}.png",
                        comp="Perpetua")
-    fig_cases(rows, out_dir / "cases.png")
-    inspection = write_inspection(out_dir, rows)
+    fig_cases(rows, out_dir / f"cases{suffix}.png")
+    inspection = (write_inspection(out_dir, rows) if not burn_in_days
+                  else out_dir / "inspection.md")
     commit, dirty = git_state(REPO_ROOT)
     md = [
         "# Naive LLM belief floor (local vLLM) on a stratified sample of "
@@ -983,7 +998,10 @@ def stage_report(out_dir: pathlib.Path) -> pathlib.Path:
         f"pooled-over-bins accuracies are therefore NOT comparable to the "
         f"rate sweep's, per-bin ones are. Every comparator is scored on "
         f"exactly the same sampled questions. Cells under {MIN_N} questions "
-        f"are masked.", "",
+        f"are masked."
+        + (f" **Burn-in: questions asked before day {burn_in_days} are "
+           f"excluded from this view** (the full-sample view is summary.md)."
+           if burn_in_days else ""), "",
         f"LLM: {gen_stats.get('model', MODEL)}, one vLLM instance, "
         f"tensor parallel {gen_stats.get('tensor_parallel', '?')}, greedy, "
         f"seed {gen_stats.get('seed', 0)}, guided JSON "
@@ -1002,15 +1020,15 @@ def stage_report(out_dir: pathlib.Path) -> pathlib.Path:
                                      key=lambda kv: AGE_ORDER.index(kv[0]))])
     md += ["", "## LLM output handling", ""] + fallback_lines(rows, out_dir)
     md += ["", "## 1. Accuracy by age of last sighting", "",
-           "![](accuracy_by_age.png)", ""] + age_tables(rows, meta)
+           f"![](accuracy_by_age{suffix}.png)", ""] + age_tables(rows, meta)
     md += ["## 2. Log-loss by age of last sighting (all homes; eps 1e-3; "
            "oracle has no distribution)", ""] + logloss_table(rows)
     md += ["", "## 3. Paired per-home-seed comparisons (LLM minus "
            "comparator; a pair counts when the home-seed cell has >= "
            f"{MIN_N} sampled questions)", "",
-           "![](paired_by_home_lastobs.png)", "",
-           "![](paired_by_home_perpetua.png)", ""] + paired_table(rows)
-    md += ["", "## 4. The four-case split", "", "![](cases.png)", ""]
+           f"![](paired_by_home_lastobs{suffix}.png)", "",
+           f"![](paired_by_home_perpetua{suffix}.png)", ""] + paired_table(rows)
+    md += ["", "## 4. The four-case split", "", f"![](cases{suffix}.png)", ""]
     md += case_tables(rows)
     md += ["## 5. OUT_OF_HOUSE and ON_PERSON", ""] + special_truth_tables(rows)
     md += ["", "## 6. Expiring-exclusion comparator (LastObs whose "
@@ -1023,13 +1041,14 @@ def stage_report(out_dir: pathlib.Path) -> pathlib.Path:
            f"sampled questions with prompt, completion, truth and verdict. "
            f"The single test run is in test/test_run.md; warmup numbers in "
            f"warmup.md.", ""]
-    path = out_dir / "summary.md"
+    path = out_dir / f"summary{suffix}.md"
     path.write_text("\n".join(md) + "\n")
-    (out_dir / "provenance.json").write_text(json.dumps({
+    (out_dir / f"provenance{suffix}.json").write_text(json.dumps({
         "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "git": [commit, dirty], "bank_dir": str(BANK_DIR),
         "seeds": list(SEEDS), "cap_per_cell": sample["cap_per_cell"],
         "n_questions": n_q, "households": sorted(meta),
+        "burn_in_days": burn_in_days,
         "models": list(MODEL_ORDER), "generation": gen_stats,
         "oracle_seeds_per_bank": ORACLE_SEEDS}, indent=2))
     return path
@@ -1055,6 +1074,9 @@ def main() -> None:
     ap.add_argument("--tensor-parallel", type=int, default=2)
     ap.add_argument("--gpus", default=GPUS)
     ap.add_argument("--oracle-seeds", type=int, default=ORACLE_SEEDS)
+    ap.add_argument("--burn-in-days", type=int, default=0,
+                    help="report: also write a view excluding questions "
+                         "asked before this day (0 = full sample only)")
     args = ap.parse_args()
     args.out_dir.mkdir(parents=True, exist_ok=True)
     for stage in args.stage:
@@ -1075,6 +1097,8 @@ def main() -> None:
             stage_score(args.out_dir, args.workers, args.oracle_seeds)
         elif stage == "report":
             print(f"-> {stage_report(args.out_dir)}")
+            if args.burn_in_days:
+                print(f"-> {stage_report(args.out_dir, args.burn_in_days)}")
 
 
 if __name__ == "__main__":

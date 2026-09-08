@@ -128,6 +128,17 @@ bands, per-bin question counts on the ticks, and a MIN_N = 30 rule: no
 cell under 30 questions is drawn or quoted (hh_016's "1.000 at 3d+" was 3
 questions). Never pool homes; the per-home rows are the result.
 
+**Group-level figures (2026-09-05).** `age_by_group.png` now carries only
+the three basic models (MostFreq, Periodic, Perpetua) plus the oracle,
+with Wilson bands and per-bin counts. Two figures were added:
+`learning_by_group.png` (accuracy by query day, weekend query days
+shaded because every bank starts on a Monday) and `learning_vs_age.png`,
+which crosses history window (days 3-6, then whole weeks) with a
+six-bin age of last sighting, all homes pooled, so learning and
+staleness can be read separately. At fixed age, MostFreq and Periodic
+are flat across the four weeks; Perpetua drifts down at ages of a day
+or more.
+
 **What the survival models do, per home.** At a day and older every
 home shows the same shape: LastObs and MostFreq coincide (the exclusion
 rule dominates both) and Perpetua* sits above them by 0.05 to 0.30
