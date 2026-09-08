@@ -12,7 +12,7 @@ from __future__ import annotations
 import random
 from typing import List, Optional, Tuple
 
-from baselines.beliefs.base import BeliefModel
+from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
 from baselines.types import Prediction
 
 
@@ -25,9 +25,14 @@ class MostFrequentLocation(BeliefModel):
     objects fall back to the uniform distribution.
     """
 
-    def __init__(self, rng: random.Random, exclusion_floor: float = 0.0,
-                 half_life_h: Optional[float] = None) -> None:
-        super().__init__(rng, exclusion_floor=exclusion_floor)
+    def __init__(self, rng: random.Random,
+                 half_life_h: Optional[float] = None,
+                 floor_mass: float = DEFAULT_FLOOR_MASS,
+                 negative_half_life_h: Optional[float] = None,
+                 legacy_exclusion_veto: bool = False) -> None:
+        super().__init__(rng, floor_mass=floor_mass,
+                         negative_half_life_h=negative_half_life_h,
+                         legacy_exclusion_veto=legacy_exclusion_veto)
         if half_life_h is not None and half_life_h <= 0:
             raise ValueError(
                 f"MostFrequentLocation: half_life_h {half_life_h} must be > 0")
@@ -38,6 +43,12 @@ class MostFrequentLocation(BeliefModel):
         if self._half_life_s is None:
             return "MostFrequentLocation"
         return f"MostFrequentLocation(hl={self._half_life_s / 3600:g}h)"
+
+    def _default_negative_half_life_h(self) -> float:
+        """The count half-life when set; the package default otherwise."""
+        if self._half_life_s is None:
+            return super()._default_negative_half_life_h()
+        return self._half_life_s / 3600
 
     def _predict_from_history(
             self, history: List[Tuple[int, str]], t: int) -> Prediction:

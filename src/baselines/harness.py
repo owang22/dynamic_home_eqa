@@ -94,7 +94,7 @@ def _stream_until(evidence: Tuple[Union[Observation, SenseResult], ...],
 
     Evidence is what :meth:`Episode.evidence_stream` yields: plain
     observations for glimpse banks, per-receptacle sense results for
-    room-visit banks (whose emptiness is exclusion evidence the belief
+    room-visit banks (whose emptiness is negative evidence the belief
     base class already understands).
     """
     while cursor < len(evidence) and evidence[cursor].t <= t:
@@ -171,8 +171,8 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
     belief_state: Dict[str, Tuple[str, str, bool]] = {}
     for obj, obj_class in sorted(episode.object_classes.items()):
         # The queried object's snapshot IS the answer: re-predicting could
-        # break an exclusion-redistribution tie differently and desync the
-        # snapshot from the recorded answer.
+        # break a floor-level tie differently and desync the snapshot
+        # from the recorded answer.
         guess = (prediction.argmax if obj == question.object_id
                  else agent.belief.predict_readonly(obj, question.t_query).argmax)
         belief_state[obj] = (

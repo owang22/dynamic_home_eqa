@@ -1,29 +1,58 @@
-"""Belief-model interface and the evidence bookkeeping every basic model
+"""Belief-model interface and the one prediction pipeline every model
 shares.
 
 A belief model consumes the observation stream (plus any sense results the
 policy pays for) and answers ``predict(object_id, t)`` with a distribution
-over receptacles. All times are seconds since episode start.
+over locations. All times are seconds since episode start.
+
+The design, in three sentences:
+
+1. The belief state space is all receptacles plus OUT_OF_HOUSE (unchanged
+   vocabulary); every model outputs one distribution over it with a small
+   floor everywhere, so no location is ever impossible.
+2. An empty look at receptacle r at time t is an observation: evidence
+   the object was not at r at t, decaying with age like any observation,
+   and superseded by any strictly later positive sighting of the object.
+3. There is no elimination rule anywhere: fresh empty looks crush sensed
+   receptacles' mass, OUT_OF_HOUSE can never receive negative evidence
+   (it cannot be looked at), so its floor mass survives renormalization
+   and wins exactly when everything else has been seen empty.
 
 Shared bookkeeping lives here so concrete models stay single-idea. The
-base class maintains, per object:
+base class maintains, per object, the chronological list of positive
+sightings ``(t, receptacle_id)`` (concrete models build their base
+distribution from this via :meth:`_predict_from_history`) and the newest
+empty look per receptacle (a sense of R at t whose contents do NOT
+include O). :meth:`negative_observations` is the public readout of the
+latter.
 
-* the chronological list of **positive sightings** ``(t, receptacle_id)``
-  — concrete models build their base distribution from this via
-  :meth:`_predict_from_history`;
-* the set of **exclusions**: a sense of receptacle R at time t whose
-  contents do NOT include object O is evidence that O is not in R at t.
-  Exclusions are recorded here and applied on top of every concrete
-  model's base distribution at prediction time, so no model reimplements
-  (or silently drops) negative evidence.
+:meth:`BeliefModel.predict` composes, in this fixed order:
 
-Exclusion recency rule (the single place timestamps are compared — see
-:meth:`BeliefModel._active_exclusions`): an exclusion of O at R recorded
-at ``t_ex`` applies as long as no positive sighting of O anywhere is
-STRICTLY LATER than ``t_ex``. A later sighting means the object has moved
-since the exclusion was observed, so the exclusion is stale and ignored.
-A positive sighting at exactly ``t_ex`` does not invalidate it: seeing O
-elsewhere at the same instant is consistent with its absence from R.
+1. the concrete model's distribution ``p_model`` (models may put zero on
+   OUT_OF_HOUSE, or on anything);
+2. the floor mix ``p = (1 - floor_mass) * p_model + floor_mass * uniform``
+   over ALL locations including OUT_OF_HOUSE;
+3. negative evidence: for each sensable receptacle r whose newest empty
+   look at ``t_obs`` is not superseded by a later sighting, ``p(r)`` is
+   multiplied by ``1 - w(t - t_obs)`` with ``w(d) = 2^(-d / half_life)``,
+   so a look at the query instant suppresses fully (``w(0) = 1``) and one
+   a half-life old suppresses by half. Unsensable locations never receive
+   a factor. Models that ingest negatives themselves (class attribute
+   :attr:`BeliefModel.consumes_negative_evidence_natively`) skip this
+   step and keep steps 2 and 4;
+4. renormalization.
+
+A positive sighting AT the prediction instant short-circuits all of it
+(one-hot on that receptacle): an observation of the object at the query
+instant is ground truth then, and no model prior may outvote it.
+
+Supersession rule (the single place timestamps are compared, in
+:meth:`negative_observations`): an empty look at R recorded at ``t_ex``
+counts as long as no positive sighting of O anywhere is STRICTLY LATER
+than ``t_ex``. A later sighting means the object has moved since the
+look, so the look is stale and ignored. A positive sighting at exactly
+``t_ex`` does not supersede it: seeing O elsewhere at the same instant is
+consistent with its absence from R.
 """
 
 from __future__ import annotations
@@ -31,39 +60,67 @@ from __future__ import annotations
 import abc
 import logging
 import random
-from typing import Dict, List, Mapping, Set, Tuple, Union
+from typing import Dict, List, Mapping, Optional, Set, Tuple, Union
 
 from baselines.types import (EpisodeContext, Observation, Prediction,
                              SenseResult)
 
 logger = logging.getLogger(__name__)
 
-MAX_EXCLUSION_FLOOR = 0.01
-"""Upper bound on the per-receptacle probability floor for excluded
-receptacles; large floors would let exclusions dominate the distribution."""
+DEFAULT_FLOOR_MASS = 0.02
+"""Share of every prediction spread uniformly over all locations (step 2
+of the pipeline). Fixed a priori for every model; never tuned per bank."""
+
+DEFAULT_NEGATIVE_HALF_LIFE_H = 24.0
+"""Negative-evidence half-life for models without a half-life of their
+own (a model with one uses it, see :meth:`BeliefModel.negative_half_life_h`)."""
+
+SECONDS_PER_HOUR = 3600.0
 
 
 class BeliefModel(abc.ABC):
-    """Base class: evidence bookkeeping, exclusion logic, tie-breaking.
+    """Base class: evidence bookkeeping, the prediction pipeline,
+    tie-breaking.
 
     Concrete models implement :meth:`_predict_from_history` only. The
     seeded ``rng`` is the model's *only* source of randomness (argmax
     tie-breaks); it is supplied by the harness so runs are fully
     determined by (bank, config, seed).
 
-    ``exclusion_floor`` is the probability an excluded receptacle keeps
-    (default 0.0 — hard exclusion). It must be small (see
-    :data:`MAX_EXCLUSION_FLOOR`) so exclusions actually rule places out.
+    ``floor_mass`` is the uniform share of step 2 (default
+    :data:`DEFAULT_FLOOR_MASS`; 0.0 is allowed so unit tests can check a
+    model's own arithmetic, and is never what runs). ``negative_half_life_h``
+    overrides the model's negative-evidence half-life (default: the
+    model's own half-life where it has one, else
+    :data:`DEFAULT_NEGATIVE_HALF_LIFE_H`).
+
+    ``legacy_exclusion_veto`` reproduces the pre-migration semantics (no
+    floor, a hard permanent veto on looked-at receptacles with uniform
+    redistribution, an all-excluded fallback). It exists ONLY for the
+    paired migration replay (:mod:`baselines.exclusion_migration_replay`)
+    and is deleted with it.
     """
 
+    consumes_negative_evidence_natively: bool = False
+    """True for models whose own machinery ingests empty looks (the
+    Perpetua family feeds them to its filters as ``y = 0``); the pipeline
+    then skips step 3 so negatives are not counted twice."""
+
     def __init__(self, rng: random.Random,
-                 exclusion_floor: float = 0.0) -> None:
-        if not 0.0 <= exclusion_floor <= MAX_EXCLUSION_FLOOR:
+                 floor_mass: float = DEFAULT_FLOOR_MASS,
+                 negative_half_life_h: Optional[float] = None,
+                 legacy_exclusion_veto: bool = False) -> None:
+        if not 0.0 <= floor_mass < 1.0:
             raise ValueError(
-                f"{type(self).__name__}: exclusion_floor {exclusion_floor} "
-                f"outside [0, {MAX_EXCLUSION_FLOOR}]")
+                f"{type(self).__name__}: floor_mass {floor_mass} outside [0, 1)")
+        if negative_half_life_h is not None and negative_half_life_h <= 0:
+            raise ValueError(
+                f"{type(self).__name__}: negative_half_life_h "
+                f"{negative_half_life_h} must be positive")
         self._rng = rng
-        self._exclusion_floor = exclusion_floor
+        self._floor_mass = float(floor_mass)
+        self._negative_half_life_override = negative_half_life_h
+        self._legacy_exclusion_veto = legacy_exclusion_veto
         self._context: EpisodeContext | None = None
         self._history: Dict[str, List[Tuple[int, str]]] = {}
         # object_id -> {receptacle_id: newest time O was seen absent from it}
@@ -74,6 +131,25 @@ class BeliefModel(abc.ABC):
     def name(self) -> str:
         """Stable identifier used in logs and result tables."""
         return type(self).__name__
+
+    @property
+    def floor_mass(self) -> float:
+        return self._floor_mass
+
+    @property
+    def negative_half_life_h(self) -> float:
+        """Half-life (hours) of an empty look's suppression: the
+        constructor override, else the model's own half-life
+        (:meth:`_default_negative_half_life_h`)."""
+        if self._negative_half_life_override is not None:
+            return float(self._negative_half_life_override)
+        return float(self._default_negative_half_life_h())
+
+    def _default_negative_half_life_h(self) -> float:
+        """The model's own evidence half-life, for models that have one;
+        the package default otherwise. Read lazily so a subclass can
+        answer from fields set after ``super().__init__``."""
+        return DEFAULT_NEGATIVE_HALF_LIFE_H
 
     # ---------------------------------------------------------------- API
 
@@ -89,7 +165,7 @@ class BeliefModel(abc.ABC):
 
         An :class:`Observation` is a single positive sighting. A
         :class:`SenseResult` is evidence about EVERY known object: one
-        positive sighting per object in its contents, and one exclusion
+        positive sighting per object in its contents, and one empty look
         (object absent from the sensed receptacle at ``t``) for each known
         object NOT in its contents.
         """
@@ -132,6 +208,22 @@ class BeliefModel(abc.ABC):
                 return ot
         return None
 
+    def negative_observations(self, object_id: str, t: int) -> Dict[str, int]:
+        """Receptacle -> time of its newest empty look for ``object_id``
+        that counts at ``t``: looks at or before ``t`` not superseded by a
+        strictly later positive sighting (module docstring). Models that
+        want negative evidence read this; the pipeline's step 3 is built
+        from it. Empty when nothing has been looked at."""
+        recorded = self._exclusions.get(object_id)
+        if not recorded:
+            return {}
+        newest_positive = max(
+            (ot for ot, _ in self._history.get(object_id, []) if ot <= t),
+            default=None)
+        return {rec: t_ex for rec, t_ex in recorded.items()
+                if t_ex <= t and (newest_positive is None
+                                  or t_ex >= newest_positive)}
+
     def predict_readonly(self, object_id: str, t: int) -> Prediction:
         """predict() with the tie-break generator's state restored after.
 
@@ -147,24 +239,26 @@ class BeliefModel(abc.ABC):
             self._rng.setstate(state)
 
     def predict(self, object_id: str, t: int) -> Prediction:
-        """Distribution over receptacles for ``object_id`` at time ``t``.
+        """Distribution over all locations for ``object_id`` at time ``t``.
 
-        A positive sighting at exactly ``t`` short-circuits everything:
-        an observation of the object AT the prediction instant is ground
-        truth at that instant, and no model prior may outvote it (a
-        frequency belief would otherwise answer from its history right
-        after a search sense returned the object elsewhere). Otherwise
-        the concrete model's base distribution (uniform fallback for a
-        never-observed object) gets current exclusions applied on top —
-        see :meth:`_apply_exclusions` for the exact rule and edge cases.
-        Always sums to 1.
+        A positive sighting at exactly ``t`` short-circuits everything
+        (one-hot on that receptacle). Otherwise the concrete model's
+        distribution (uniform fallback for a never-observed object) goes
+        through the pipeline of the module docstring: floor mix,
+        negative-evidence factors, renormalization. Always sums to 1.
         """
         history = self._history.get(object_id, [])
         current = self._sighting_at(history, t)
         if current is not None:
             return Prediction(distribution={current: 1.0}, argmax=current)
         base = self._predict_for_object(object_id, history, t)
-        return self._apply_exclusions(object_id, t, base)
+        if self._legacy_exclusion_veto:
+            # Pre-migration: models that ingest negatives natively had an
+            # identity override; everything else got the hard veto.
+            if self._consumes_negative_evidence_natively():
+                return base
+            return self._legacy_apply_veto(object_id, t, base)
+        return self._compose(object_id, t, base)
 
     @staticmethod
     def _sighting_at(history: List[Tuple[int, str]],
@@ -177,83 +271,81 @@ class BeliefModel(abc.ABC):
                 return rec
         return None
 
-    # ------------------------------------------------- exclusion machinery
+    # ------------------------------------------------------- the pipeline
 
     def _add_sighting(self, object_id: str, t: int, receptacle_id: str) -> None:
         self._history.setdefault(object_id, []).append((t, receptacle_id))
 
-    def _active_exclusions(self, object_id: str,
-                           t: Union[int, None] = None) -> Set[str]:
-        """Receptacles currently ruled out for ``object_id``.
+    def _consumes_negative_evidence_natively(self) -> bool:
+        """Whether step 3 is skipped for the prediction being assembled.
+        The class attribute by default; a model whose native handling is
+        per-prediction (the LLM belief's fallback path) overrides this."""
+        return self.consumes_negative_evidence_natively
 
-        THE recency rule (module docstring) lives here and only here: an
-        exclusion recorded at ``t_ex`` is active iff no positive sighting
-        of the object is strictly later than ``t_ex``. ``t`` is the query
-        time; the base rule ignores it (an exclusion never ages), and it
-        exists so a subclass can let exclusions lapse with time (see
-        :mod:`baselines.beliefs.expiring_exclusion`).
+    def negative_factors(self, object_id: str, t: int) -> Dict[str, float]:
+        """Step 3's multipliers: sensable receptacle -> ``1 - w(age)`` for
+        every empty look that counts at ``t`` (see
+        :meth:`negative_observations`); receptacles without one are
+        absent (factor 1). Unsensable locations never appear."""
+        looks = self.negative_observations(object_id, t)
+        if not looks:
+            return {}
+        assert self._context is not None
+        sensable = set(self._context.sensable_receptacle_ids)
+        half_life_s = self.negative_half_life_h * SECONDS_PER_HOUR
+        return {rec: 1.0 - 2.0 ** (-max(0, t - t_obs) / half_life_s)
+                for rec, t_obs in looks.items() if rec in sensable}
+
+    def _compose(self, object_id: str, t: int, base: Prediction) -> Prediction:
+        """Steps 2-4 of the pipeline on the model's distribution ``base``.
+
+        The result always covers every location (the floor puts mass on
+        each) and sums to 1. Argmax: the model's own argmax if it still
+        tops, else exact ties break with the seeded generator. With
+        ``floor_mass`` 0 and every massive receptacle freshly seen empty
+        the total can be 0; that degenerate case (unit tests only) falls
+        back to uniform.
         """
-        recorded = self._exclusions.get(object_id)
-        if not recorded:
-            return set()
-        newest_positive = max(
-            (ot for ot, _ in self._history.get(object_id, [])), default=None)
-        return {rec for rec, t_ex in recorded.items()
-                if newest_positive is None or t_ex >= newest_positive}
+        receptacles = self._receptacles()
+        floor = self._floor_mass / len(receptacles)
+        dist = {r: (1.0 - self._floor_mass) * base.distribution.get(r, 0.0)
+                + floor for r in receptacles}
+        if not self._consumes_negative_evidence_natively():
+            for rec, factor in self.negative_factors(object_id, t).items():
+                dist[rec] *= factor
+        total = sum(dist.values())
+        if total <= 0.0:
+            return self._uniform()
+        dist = {r: v / total for r, v in dist.items()}
+        return Prediction(distribution=dist,
+                          argmax=self._argmax_of(dist, list(receptacles),
+                                                 base.argmax))
 
-    def _exclusion_backoff(self, object_id: str, t: int
-                           ) -> Union[Dict[str, float], None]:
-        """Distribution the exclusion machinery redistributes reclaimed
-        mass by, or None for the uniform default.
+    def _argmax_of(self, dist: Mapping[str, float], kept: List[str],
+                   base_argmax: str) -> str:
+        """Argmax over ``kept``; prefer the base argmax if it still tops,
+        otherwise break exact ties with the seeded generator."""
+        top = max(dist[r] for r in kept)
+        tied = [r for r in kept if dist[r] == top]
+        if base_argmax in tied:
+            return base_argmax
+        return tied[0] if len(tied) == 1 else self._rng.choice(tied)
 
-        A one-hot belief whose single receptacle gets excluded would
-        otherwise collapse to uniform — a self-inflicted loss of
-        everything else the model knows. A model that keeps a secondary
-        estimate (e.g. a frequency histogram) can return it here so an
-        exclusion falls back on that estimate instead. The returned
-        mapping need not be normalized or cover every receptacle;
-        :meth:`_apply_exclusions` restricts it to the non-excluded
-        receptacles and renormalizes, falling back to uniform when it
-        puts no mass on any of them.
-        """
-        return None
+    # ----------------------------------------------- legacy (replay only)
 
-    def _apply_exclusions(self, object_id: str, t: int,
-                          base: Prediction) -> Prediction:
-        """Zero out excluded receptacles and redistribute their mass.
-
-        By default the reclaimed mass is spread UNIFORMLY over all
-        non-excluded receptacles — including ones the base distribution
-        gave zero — because a negative result is evidence for every
-        receptacle not yet ruled out, not only for previously-sighted
-        ones. (Renormalizing the surviving support alone would fabricate
-        certainty: with base mass on two receptacles and one excluded,
-        the other would jump to probability 1.0 even though the object
-        may sit somewhere never sighted.) When exclusions cover the
-        entire base support this reduces exactly to a uniform
-        distribution over the non-excluded receptacles.
-
-        A model may override :meth:`_exclusion_backoff` to redistribute
-        the reclaimed mass by its own secondary distribution instead of
-        uniformly; the uniform default leaves every model without an
-        override exactly as before.
-
-        Edge case: if EVERY receptacle is excluded (possible with stale
-        exclusions), exclusions are ignored entirely and a warning is
-        logged with the object id and query time. The result always sums
-        to 1 — the :class:`~baselines.types.Prediction` contract is
-        enforced on construction.
-        """
-        excluded = self._active_exclusions(object_id, t)
+    def _legacy_apply_veto(self, object_id: str, t: int,
+                           base: Prediction) -> Prediction:
+        """The pre-migration rule, kept verbatim for the paired replay:
+        zero out every receptacle with a counting empty look (the look
+        never ages) and spread the reclaimed mass uniformly over the
+        rest; if every receptacle is excluded, ignore the exclusions and
+        warn once per (object, episode). No floor anywhere."""
+        excluded = set(self.negative_observations(object_id, t))
         if not excluded:
             return base
         receptacles = self._receptacles()
         kept = [r for r in receptacles if r not in excluded]
         if not kept:
-            # Warn once per (object, episode): the condition persists across
-            # every predict (including full-state snapshots) until the next
-            # positive sighting, so repeating it would flood the log with
-            # thousands of identical lines per run.
             if object_id in self._warned_all_excluded:
                 logger.debug(
                     "%s: every receptacle still excluded for %s at t=%d",
@@ -268,49 +360,27 @@ class BeliefModel(abc.ABC):
             return base
         excluded_mass = sum(p for r, p in base.distribution.items()
                             if r in excluded)
-        backoff = self._exclusion_backoff(object_id, t)
-        kept_backoff = (sum(backoff.get(r, 0.0) for r in kept)
-                        if backoff else 0.0)
-        if backoff and kept_backoff > 0.0:
-            share_of = {r: excluded_mass * backoff.get(r, 0.0) / kept_backoff
-                        for r in kept}
-        else:
-            share_of = {r: excluded_mass / len(kept) for r in kept}
-        scale = 1.0 - self._exclusion_floor * len(excluded)
-        dist = {r: (base.distribution.get(r, 0.0) + share_of[r]) * scale
-                for r in kept}
-        dist.update({r: self._exclusion_floor for r in excluded})
-        # Exact renormalization: accumulated float error can push the sum
-        # (and hence a lone survivor's probability) a few ulp past 1.0,
-        # which the strict Answer/Prediction contracts reject.
+        share = excluded_mass / len(kept)
+        dist = {r: base.distribution.get(r, 0.0) + share for r in kept}
+        dist.update({r: 0.0 for r in excluded})
         total = sum(dist.values())
         dist = {r: v / total for r, v in dist.items()}
         return Prediction(distribution=dist,
                           argmax=self._argmax_of(dist, kept, base.argmax))
-
-    def _argmax_of(self, dist: Mapping[str, float], kept: List[str],
-                   base_argmax: str) -> str:
-        """Argmax over ``kept``; prefer the base argmax if it still tops,
-        otherwise break exact ties with the seeded generator."""
-        top = max(dist[r] for r in kept)
-        tied = [r for r in kept if dist[r] == top]
-        if base_argmax in tied:
-            return base_argmax
-        return tied[0] if len(tied) == 1 else self._rng.choice(tied)
 
     # ------------------------------------------------------------ helpers
 
     def _predict_for_object(self, object_id: str,
                             history: List[Tuple[int, str]],
                             t: int) -> Prediction:
-        """Base distribution before exclusions are applied.
+        """The model's own distribution, before the pipeline.
 
         The default routes a non-empty history to
         :meth:`_predict_from_history` and a never-observed object to the
         uniform fallback. Models that pool evidence ACROSS objects (and so
         can say something useful even about a never-sighted object)
         override this method instead of ``_predict_from_history``; the
-        exclusion machinery, renormalization, and the
+        floor, negative evidence, renormalization and the
         sighting-at-prediction-instant override still come from
         :meth:`predict` and are never reimplemented.
         """
@@ -334,7 +404,7 @@ class BeliefModel(abc.ABC):
         return self._context.receptacle_ids
 
     def _uniform(self) -> Prediction:
-        """Uniform distribution over all receptacles; random tied argmax."""
+        """Uniform distribution over all locations; random tied argmax."""
         recs = self._receptacles()
         p = 1.0 / len(recs)
         return Prediction(distribution={r: p for r in recs},

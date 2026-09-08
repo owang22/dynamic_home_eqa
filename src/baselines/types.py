@@ -59,10 +59,12 @@ class SenseResult:
 
     ``contents`` is the complete tuple of object_ids present. Absence of an
     object from ``contents`` is meaningful *negative* information — the
-    object is definitely not in this receptacle at ``t``. The belief base
-    class consumes both signals: contents become positive sightings, and
-    every known object missing from them is excluded from this receptacle
-    (see :mod:`baselines.beliefs.base` for the recency rule).
+    object was not in this receptacle at ``t``. The belief base class
+    consumes both signals: contents become positive sightings, and every
+    known object missing from them gets an empty look at this receptacle,
+    an observation that suppresses the receptacle with a weight decaying
+    in age (see :mod:`baselines.beliefs.base` for the pipeline and the
+    supersession rule).
     """
 
     receptacle_id: str

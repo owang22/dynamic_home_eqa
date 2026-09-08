@@ -69,7 +69,7 @@ def test_periodic_persistence_stay_probability_hand_computed():
     # time-of-day histogram.
     belief = PeriodicPersistence(
         random.Random(0),
-        PeriodicPersistenceConfig(min_departures=1))
+        PeriodicPersistenceConfig(min_departures=1), floor_mass=0.0)
     belief.reset(_context())
     for t, rec in ((0, "a"), (100, "b"), (300, "a")):
         belief.update(_obs("obj", t, rec))
@@ -83,7 +83,7 @@ def test_periodic_persistence_stay_probability_hand_computed():
 
 def test_periodic_persistence_few_transitions_degrades_to_frequency():
     belief = PeriodicPersistence(random.Random(0),
-                                 PeriodicPersistenceConfig())
+                                 PeriodicPersistenceConfig(), floor_mass=0.0)
     belief.reset(_context())
     belief.update(_obs("obj", 0, "a"))
     belief.update(_obs("obj", 100, "a"))    # zero departures anywhere
@@ -98,7 +98,8 @@ def test_periodic_persistence_few_transitions_degrades_to_frequency():
 def test_markov1_transition_row_within_cutoff():
     belief = Markov1(random.Random(0),
                      Markov1Config(alpha=1.0, mixing_cutoff_h=24,
-                                   half_life_h=1e9))  # decay off in effect
+                                   half_life_h=1e9),  # decay off in effect
+                     floor_mass=0.0)
     belief.reset(_context())
     # Pairs from a: (0,a)->(10,b) and (20,a)->(30,b); last sighting at a.
     for t, rec in ((0, "a"), (10, "b"), (20, "a"), (30, "b"), (40, "a")):
@@ -112,7 +113,8 @@ def test_markov1_transition_row_within_cutoff():
 
 
 def test_markov1_backs_off_to_frequency_beyond_cutoff():
-    belief = Markov1(random.Random(0), Markov1Config(mixing_cutoff_h=1))
+    belief = Markov1(random.Random(0), Markov1Config(mixing_cutoff_h=1),
+                     floor_mass=0.0)
     belief.reset(_context())
     for t, rec in ((0, "a"), (10, "b"), (20, "a")):
         belief.update(_obs("obj", t, rec))
@@ -120,7 +122,7 @@ def test_markov1_backs_off_to_frequency_beyond_cutoff():
     # Beyond the cutoff: the decayed frequency histogram (a twice, b once).
     assert prediction.argmax == "a"
     assert prediction.distribution["b"] < prediction.distribution["a"]
-    assert "c" not in prediction.distribution
+    assert prediction.distribution.get("c", 0.0) == 0.0
 
 
 # ------------------------------------------------------- hierarchy_backoff

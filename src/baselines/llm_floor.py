@@ -90,16 +90,12 @@ GPUS = "0,1"
 
 LLM = "LLMBelief"
 ORACLE = "routine_oracle"
-EXPIRY_HOURS = (6.0, 24.0)
 LABEL = {LLM: "LLM", "LastObservation": "LastObs",
          "TimetableLookup": "Timetable",
          "DaytypeMixture": "DaytypeMix", "Perpetua": "Perpetua",
-         "PerpetuaStar": "PerpetuaStar",
-         "LastObsExpiring6h": "LastObs+expire6h",
-         "LastObsExpiring24h": "LastObs+expire24h", ORACLE: "oracle"}
+         "PerpetuaStar": "PerpetuaStar", ORACLE: "oracle"}
 MODEL_ORDER = (LLM, "LastObservation", "TimetableLookup", "DaytypeMixture",
-               "Perpetua", "PerpetuaStar", "LastObsExpiring6h",
-               "LastObsExpiring24h", ORACLE)
+               "Perpetua", "PerpetuaStar", ORACLE)
 COMPARATORS = MODEL_ORDER[1:]
 DIST_MODELS = MODEL_ORDER[:-1]
 """Models with a distribution (log-loss is defined); the oracle is a
@@ -127,9 +123,7 @@ SURFACE, INK, INK2, GRID = "#fcfcfb", "#0b0b0b", "#52514e", "#e8e7e2"
 COLOR = {LLM: "#e34948", "LastObservation": "#2a78d6",
          "TimetableLookup": "#e87ba4",
          "DaytypeMixture": "#eda100", "Perpetua": "#1baf7a",
-         "PerpetuaStar": "#0f7a52",
-         "LastObsExpiring6h": "#7ecdd3", "LastObsExpiring24h": "#00646d",
-         ORACLE: "#8a8983"}
+         "PerpetuaStar": "#0f7a52", ORACLE: "#8a8983"}
 
 
 def bank_key(household: str, seed: int) -> str:
@@ -209,7 +203,9 @@ def stage_sample(out_dir: pathlib.Path, households: Sequence[str],
 
 
 def _load_sample(out_dir: pathlib.Path) -> Dict[str, Dict[str, List[str]]]:
-    return json.loads((out_dir / "sample.json").read_text())["sample"]
+    sample: Dict[str, Dict[str, List[str]]] = json.loads(
+        (out_dir / "sample.json").read_text())["sample"]
+    return sample
 
 
 # --------------------------------------------------------------- replay --
@@ -246,7 +242,8 @@ def replay(episode: Episode, beliefs: Dict[str, BeliefModel],
         history = probe._history.get(q.object_id, [])
         last_seen = history[-1][1] if history else None
         moved = truth != last_seen
-        excluded = last_seen in probe._active_exclusions(q.object_id)
+        excluded = last_seen in probe.negative_observations(
+            q.object_id, q.t_query)
         case = next(label for label, m, e in CASES
                     if m == moved and e == excluded)
         facts[q.question_id] = {
@@ -418,7 +415,7 @@ def stage_test(out_dir: pathlib.Path, tp: int, gpus: str, model: str,
 def completion_stats(out_dir: pathlib.Path) -> Dict[str, Any]:
     prompts = {p["key"]: p for p in _read_jsonl(out_dir / "prompts.jsonl")}
     comps = _read_jsonl(out_dir / "completions.jsonl")
-    status = collections.Counter()
+    status: collections.Counter[str] = collections.Counter()
     ranked = []
     for c in comps:
         allowed = prompts.get(c["key"], {}).get("allowed", [])
@@ -481,6 +478,7 @@ def score_bank(task: Dict[str, Any]) -> List[Dict[str, Any]]:
     beliefs: Dict[str, BeliefModel] = {}
     llm = _build(_llm_spec(cache, bank_rooms(household, seed)),
                  episode.episode_id, "score")
+    assert isinstance(llm, LLMBelief)
     beliefs[LLM] = llm
     for spec in select_specs(["last_observation", "timetable",
                               "daytype_mixture", "perpetua",
@@ -488,10 +486,6 @@ def score_bank(task: Dict[str, Any]) -> List[Dict[str, Any]]:
         if spec.get("switching_prior") == "flat":
             continue            # the PerpetuaStarFlat ablation is not a comparator here
         b = _build(spec, episode.episode_id, "score")
-        beliefs[b.name] = b
-    for h in EXPIRY_HOURS:
-        b = _build({"name": "last_observation_expiring", "expiry_h": h},
-                   episode.episode_id, "score")
         beliefs[b.name] = b
     facts, results = replay(episode, beliefs, wanted)
     rows: List[Dict[str, Any]] = []
@@ -754,31 +748,6 @@ def fallback_lines(rows: Sequence[Dict[str, Any]], out_dir: pathlib.Path
     return lines
 
 
-def expiring_table(rows: Sequence[Dict[str, Any]]) -> List[str]:
-    models = ("LastObservation", "LastObsExpiring6h", "LastObsExpiring24h")
-    acc = Acc(rows, lambda r: (r["model"], r["age_bin"]))
-    body = []
-    for b in bins_present(rows):
-        body.append([AGE_LABEL[b], str(acc.n.get((LLM, b), 0))]
-                    + [_f(acc.acc((m, b))) for m in models]
-                    + [_f(acc.mean_ll((m, b))) for m in models])
-    head = (["age of last sighting", "n (sample)"]
-            + [f"{LABEL[m]} acc" for m in models]
-            + [f"{LABEL[m]} logloss" for m in models])
-    lines = _table(head, body)
-    for title, bins in CASE_BLOCKS:
-        sel = [r for r in rows if r["age_bin"] in bins]
-        cacc = Acc(sel, lambda r: (r["model"], r["case"]))
-        body = []
-        for c, _, _ in CASES:
-            n = cacc.n.get((LLM, c), 0)
-            if n:
-                body.append([c, str(n)] + [_f(cacc.acc((m, c))) for m in models])
-        lines += ["", f"By situation, {title}:", ""]
-        lines += _table(["situation", "n"] + [LABEL[m] for m in models], body)
-    return lines
-
-
 def fig_accuracy_by_age(rows: Sequence[Dict[str, Any]], out: pathlib.Path,
                         n_homes: int) -> None:
     import matplotlib
@@ -1031,12 +1000,7 @@ def stage_report(out_dir: pathlib.Path, burn_in_days: int = 0
     md += ["", "## 4. The four-case split", "", f"![](cases{suffix}.png)", ""]
     md += case_tables(rows)
     md += ["## 5. OUT_OF_HOUSE and ON_PERSON", ""] + special_truth_tables(rows)
-    md += ["", "## 6. Expiring-exclusion comparator (LastObs whose "
-           "exclusions lapse N hours after the inspection)", "",
-           "Classical LastObs with the base class's permanent exclusion "
-           "against the same belief with an exclusion that expires after "
-           "6 h or 24 h. Same sampled questions.", ""] + expiring_table(rows)
-    md += ["", "## 7. Prompts and completions to read", "",
+    md += ["", "## 6. Prompts and completions to read", "",
            f"[{inspection.name}]({inspection.name}): {INSPECT_N} random "
            f"sampled questions with prompt, completion, truth and verdict. "
            f"The single test run is in test/test_run.md; warmup numbers in "

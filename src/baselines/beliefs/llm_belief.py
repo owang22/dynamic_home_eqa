@@ -13,9 +13,11 @@ OUT_OF_HOUSE and ON_PERSON are offered as first-class answers, and the
 weekday and time of day are in the prompt.
 
 Interface. This is an ordinary :class:`BeliefModel`; the evidence
-bookkeeping is the base class's. Negative evidence goes into the prompt,
-so the base class's hard exclusion is bypassed exactly as the Perpetua
-models bypass it (:meth:`LLMBelief._apply_exclusions` is the identity).
+bookkeeping is the base class's. Negative evidence goes into the prompt
+(read through :meth:`BeliefModel.negative_observations`), so the base
+pipeline's negative-evidence step is skipped for an LLM answer exactly
+as the Perpetua models skip it; the floor mix still applies. The
+fallback below is the plain LastObs answer and runs the whole pipeline.
 Generation is offline and batched, so the model does not call the LLM
 itself: it asks a :class:`PromptCache` for the answer to a prompt key.
 In *collect* mode the cache records the prompt and answers None (the
@@ -32,8 +34,8 @@ Output handling: the ranking becomes a distribution by fixed geometric
 weights (0.5, 0.25, ...) renormalized over the ranked names, so log-loss
 is defined; ``p_top`` is logged, never used. A completion that does not
 parse, ranks nothing, or names a receptacle outside the offered list
-falls back to the LastObs answer (one-hot last sighting with the base
-class's exclusions) and is counted.
+falls back to the LastObs answer (one-hot last sighting through the
+base pipeline) and is counted.
 """
 
 from __future__ import annotations
@@ -44,7 +46,7 @@ import random
 import re
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
-from baselines.beliefs.base import BeliefModel
+from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
 from baselines.types import DAY_SECONDS, Prediction
 
 DAY_NAMES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
@@ -287,8 +289,13 @@ class LLMBelief(BeliefModel):
 
     def __init__(self, rng: random.Random, config: LLMBeliefConfig,
                  cache: PromptCache,
-                 rooms: Optional[Mapping[str, str]] = None) -> None:
-        super().__init__(rng)
+                 rooms: Optional[Mapping[str, str]] = None,
+                 floor_mass: float = DEFAULT_FLOOR_MASS,
+                 negative_half_life_h: Optional[float] = None,
+                 legacy_exclusion_veto: bool = False) -> None:
+        super().__init__(rng, floor_mass=floor_mass,
+                         negative_half_life_h=negative_half_life_h,
+                         legacy_exclusion_veto=legacy_exclusion_veto)
         self.config = config
         self.cache = cache
         self.rooms = dict(rooms) if rooms else None
@@ -304,20 +311,21 @@ class LLMBelief(BeliefModel):
     def last_prediction_diagnostics(self) -> Optional[Dict[str, float]]:
         return self._last
 
-    def _apply_exclusions(self, object_id: str, t: int,
-                          base: Prediction) -> Prediction:
-        # Negative evidence is in the prompt; the LLM's answer stands.
-        return base
+    def _consumes_negative_evidence_natively(self) -> bool:
+        # An LLM answer saw the negative evidence in its prompt and
+        # stands; the LastObs fallback did not and gets the pipeline's
+        # suppression like any classical model.
+        return self._last is not None and self._last["fallback"] == 0.0
 
     def _count(self, what: str) -> None:
         self.counts[what] = self.counts.get(what, 0) + 1
 
-    def _fallback(self, object_id: str, history: List[Tuple[int, str]],
-                  t: int) -> Prediction:
-        """The LastObs answer: one-hot last sighting, base exclusions."""
+    @staticmethod
+    def _fallback(history: List[Tuple[int, str]]) -> Prediction:
+        """The LastObs answer: one-hot on the last sighting (the base
+        pipeline adds the floor and the negative evidence)."""
         last = history[-1][1]
-        base = Prediction(distribution={last: 1.0}, argmax=last)
-        return BeliefModel._apply_exclusions(self, object_id, t, base)
+        return Prediction(distribution={last: 1.0}, argmax=last)
 
     def _predict_for_object(self, object_id: str,
                             history: List[Tuple[int, str]],
@@ -327,11 +335,9 @@ class LLMBelief(BeliefModel):
             return self._uniform()
         assert self._context is not None
         recs = self._context.receptacle_ids
-        newest_positive = max(ot for ot, _ in history)
         exclusions = sorted(
             (t_ex, rec) for rec, t_ex in
-            self._exclusions.get(object_id, {}).items()
-            if t_ex >= newest_positive)
+            self.negative_observations(object_id, t).items())
         newest_exclusion = exclusions[-1] if exclusions else None
         key = cache_key(self._context.episode_id, object_id, history[-1],
                         newest_exclusion, t, self.config)
@@ -347,7 +353,7 @@ class LLMBelief(BeliefModel):
             self._count("pending")
             self._last = {"p_top": float("nan"), "fallback": 1.0,
                           "pending": 1.0, "n_ranked": 0.0}
-            return self._fallback(object_id, history, t)
+            return self._fallback(history)
         ranking, p_top, status = parse_completion(
             text, recs, self.config.max_ranking)
         if ranking is None:
@@ -355,7 +361,7 @@ class LLMBelief(BeliefModel):
             self._count(f"fallback_{status}")
             self._last = {"p_top": float("nan") if p_top is None else p_top,
                           "fallback": 1.0, "pending": 0.0, "n_ranked": 0.0}
-            return self._fallback(object_id, history, t)
+            return self._fallback(history)
         self._count("answered")
         self._last = {"p_top": float("nan") if p_top is None else p_top,
                       "fallback": 0.0, "pending": 0.0,

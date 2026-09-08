@@ -19,11 +19,9 @@ import dataclasses
 import random
 from typing import Any, Callable, Dict, Mapping, Tuple
 
-from baselines.beliefs.base import BeliefModel
+from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
 from baselines.beliefs.daytype_mixture import (DaytypeMixture,
                                                DaytypeMixtureConfig)
-from baselines.beliefs.expiring_exclusion import \
-    ExpiringExclusionLastObservation
 from baselines.beliefs.hierarchy_backoff import (HierarchyBackoff,
                                                  HierarchyBackoffConfig)
 from baselines.beliefs.last_observation import LastObservation
@@ -68,19 +66,21 @@ def _optional_half_life(spec: Dict[str, Any]) -> float | None:
     return None if raw is None else float(raw)
 
 
-def _floor(spec: Dict[str, Any]) -> float:
-    return float(spec.get("exclusion_floor", 0.0))
+def _base_kwargs(spec: Dict[str, Any]) -> Dict[str, Any]:
+    """The base-class pipeline knobs every model takes: ``floor_mass``
+    (default the package constant), ``negative_half_life_h`` (default:
+    the model's own half-life), and the replay-only
+    ``legacy_exclusion_veto``."""
+    raw_hl = spec.get("negative_half_life_h")
+    return {"floor_mass": float(spec.get("floor_mass", DEFAULT_FLOOR_MASS)),
+            "negative_half_life_h": None if raw_hl is None else float(raw_hl),
+            "legacy_exclusion_veto": bool(spec.get("legacy_exclusion_veto",
+                                                   False))}
 
 
 def _build_last_observation(spec: Dict[str, Any],
                             rng: random.Random) -> BeliefModel:
-    return LastObservation(rng, exclusion_floor=_floor(spec))
-
-
-def _build_last_observation_expiring(spec: Dict[str, Any],
-                                     rng: random.Random) -> BeliefModel:
-    return ExpiringExclusionLastObservation(
-        rng, expiry_h=float(spec["expiry_h"]), exclusion_floor=_floor(spec))
+    return LastObservation(rng, **_base_kwargs(spec))
 
 
 def _build_llm(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
@@ -96,19 +96,20 @@ def _build_llm(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
         geometric_ratio=float(spec.get("geometric_ratio", d.geometric_ratio)),
         hour_bucket_s=int(spec.get("hour_bucket_s", d.hour_bucket_s)))
     cache = spec.get("cache") or PromptCache(collect=True)
-    return LLMBelief(rng, cfg, cache, rooms=spec.get("rooms"))
+    return LLMBelief(rng, cfg, cache, rooms=spec.get("rooms"),
+                     **_base_kwargs(spec))
 
 
 def _build_most_frequent(spec: Dict[str, Any],
                          rng: random.Random) -> BeliefModel:
-    return MostFrequentLocation(rng, exclusion_floor=_floor(spec),
+    return MostFrequentLocation(rng, **_base_kwargs(spec),
                                 half_life_h=_optional_half_life(spec))
 
 
 def _build_timetable(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
     cfg = TimetableConfig(bin_hours=int(spec.get("bin_hours", 1)),
                           day_scheme=str(spec.get("day_scheme", "all")))
-    return TimetableLookup(rng, cfg, exclusion_floor=_floor(spec),
+    return TimetableLookup(rng, cfg, **_base_kwargs(spec),
                            half_life_h=_optional_half_life(spec))
 
 
@@ -118,7 +119,7 @@ def _build_markov1(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
         mixing_cutoff_h=float(spec.get("mixing_cutoff_h",
                                        Markov1Config.mixing_cutoff_h)),
         half_life_h=float(spec.get("half_life_h", Markov1Config.half_life_h)))
-    return Markov1(rng, cfg, exclusion_floor=_floor(spec))
+    return Markov1(rng, cfg, **_base_kwargs(spec))
 
 
 def _build_periodic_persistence(spec: Dict[str, Any],
@@ -128,7 +129,7 @@ def _build_periodic_persistence(spec: Dict[str, Any],
         min_departures=int(spec.get("min_departures", d.min_departures)),
         bin_hours=int(spec.get("bin_hours", d.bin_hours)),
         half_life_h=float(spec.get("half_life_h", d.half_life_h)))
-    return PeriodicPersistence(rng, cfg, exclusion_floor=_floor(spec))
+    return PeriodicPersistence(rng, cfg, **_base_kwargs(spec))
 
 
 def _build_daytype_mixture(spec: Dict[str, Any],
@@ -139,7 +140,7 @@ def _build_daytype_mixture(spec: Dict[str, Any],
         bin_hours=int(spec.get("bin_hours", d.bin_hours)),
         half_life_h=float(spec.get("half_life_h", d.half_life_h)),
         kmeans_seed=int(spec.get("kmeans_seed", d.kmeans_seed)))
-    return DaytypeMixture(rng, cfg, exclusion_floor=_floor(spec))
+    return DaytypeMixture(rng, cfg, **_base_kwargs(spec))
 
 
 def _build_smoothed_recency(spec: Dict[str, Any],
@@ -150,7 +151,7 @@ def _build_smoothed_recency(spec: Dict[str, Any],
                                              d.smoothing_half_life_h)),
         frequency_half_life_h=float(spec.get("frequency_half_life_h",
                                              d.frequency_half_life_h)))
-    return SmoothedRecency(rng, cfg, exclusion_floor=_floor(spec))
+    return SmoothedRecency(rng, cfg, **_base_kwargs(spec))
 
 
 def _build_hierarchy_backoff(spec: Dict[str, Any],
@@ -162,7 +163,7 @@ def _build_hierarchy_backoff(spec: Dict[str, Any],
         class_pseudocount=float(spec.get("class_pseudocount",
                                          d.class_pseudocount)),
         half_life_h=float(spec.get("half_life_h", d.half_life_h)))
-    return HierarchyBackoff(rng, cfg, exclusion_floor=_floor(spec))
+    return HierarchyBackoff(rng, cfg, **_base_kwargs(spec))
 
 
 def _perpetua_common(spec: Dict[str, Any], d: Any) -> Dict[str, Any]:
@@ -188,7 +189,7 @@ def _build_perpetua(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
         delta_low=float(spec.get("delta_low", d.delta_low)),
         delta_high=float(spec.get("delta_high", d.delta_high)),
         num_steps=int(spec.get("num_steps", d.num_steps)))
-    return PerpetuaBelief(rng, cfg, exclusion_floor=_floor(spec))
+    return PerpetuaBelief(rng, cfg, **_base_kwargs(spec))
 
 
 def _build_perpetua_star(spec: Dict[str, Any],
@@ -205,7 +206,7 @@ def _build_perpetua_star(spec: Dict[str, Any],
         prior_pseudocount=float(spec.get("prior_pseudocount",
                                          d.prior_pseudocount)),
         reset_mode=str(spec.get("reset_mode", d.reset_mode)))
-    return PerpetuaStarBelief(rng, cfg, exclusion_floor=_floor(spec))
+    return PerpetuaStarBelief(rng, cfg, **_base_kwargs(spec))
 
 
 BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
@@ -223,8 +224,6 @@ BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
                     _build_smoothed_recency),
         BeliefEntry("perpetua", "candidate", _build_perpetua),
         BeliefEntry("perpetua_star", "candidate", _build_perpetua_star),
-        BeliefEntry("last_observation_expiring", "candidate",
-                    _build_last_observation_expiring),
         BeliefEntry("llm", "candidate", _build_llm),
     )
 }

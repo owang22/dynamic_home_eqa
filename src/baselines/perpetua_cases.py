@@ -3,13 +3,15 @@
 A question whose last sighting is a day or more old falls into one of
 four cases, by whether the object has MOVED since that sighting and by
 whether a later room visit EXCLUDED the last-seen receptacle (found it
-without the object). The base class's exclusion rule
-(:mod:`baselines.beliefs.base`) is hard and permanent until the next
-sighting, so every classical model is structurally unable to answer an
-excluded receptacle even after the object has come back to it. The
-Perpetua models bypass that rule (negative evidence enters their filters
-as ``y = 0`` and the emergence filter re-admits the receptacle after the
-expected absence), which is where their long-age gain comes from.
+without the object, and no sighting since). Under the pre-migration
+base rule that look was a hard, permanent veto, so every classical model
+was structurally unable to answer an excluded receptacle even after the
+object had come back to it; the Perpetua models bypassed that rule
+(negative evidence enters their filters as ``y = 0`` and the emergence
+filter re-admits the receptacle after the expected absence), which is
+where their long-age gain came from. Since the migration
+(``reports/baselines/exclusion_migration/``) the look is soft evidence
+that decays; the split is kept as a diagnostic of the same situations.
 
 This module replays LastObs and MostFreq per question on every bank --
 cheap, a few seconds per bank -- to get each question's case and those
@@ -98,7 +100,8 @@ def replay_bank(task: Dict[str, Any]) -> List[Dict[str, Any]]:
             "household": household, "seed": seed, "qid": q.question_id,
             "age_bin": cfg.recency_bin(ages[q.question_id]),
             "moved": truth != last_seen,
-            "excluded": last_seen in probe._active_exclusions(q.object_id),
+            "excluded": last_seen in probe.negative_observations(
+                q.object_id, q.t_query),
             "truth": truth,
             "answers": {name: b.predict_readonly(q.object_id, q.t_query).argmax
                         for name, b in beliefs.items()}})

@@ -23,20 +23,19 @@ mean question-set accuracy over the budget-sweep levels, candidates
 {2, 6, 12, 24, 48} h; 6 h won at 0.6371 with 2 h at 0.6359) and then
 frozen — it is deliberately not tuned per bank.
 
-When negative evidence excludes the last-seen receptacle, the reclaimed
-mass falls back on the same frequency distribution rather than uniform
-(see :meth:`~baselines.beliefs.base.BeliefModel._exclusion_backoff`):
-"not where I last saw it" should mean "probably at one of its usual
-spots", not "anywhere in the house".
+Negative evidence comes from the base pipeline like every other model
+(an empty look suppresses its receptacle by a factor decaying with age);
+the suppression half-life is this model's smoothing half-life, the knob
+that already says how fast its recency evidence ages.
 """
 
 from __future__ import annotations
 
 import dataclasses
 import random
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Optional, Tuple
 
-from baselines.beliefs.base import BeliefModel
+from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
 from baselines.types import Prediction
 
 
@@ -66,8 +65,12 @@ class SmoothedRecency(BeliefModel):
     """
 
     def __init__(self, rng: random.Random, config: SmoothedRecencyConfig,
-                 exclusion_floor: float = 0.0) -> None:
-        super().__init__(rng, exclusion_floor=exclusion_floor)
+                 floor_mass: float = DEFAULT_FLOOR_MASS,
+                 negative_half_life_h: Optional[float] = None,
+                 legacy_exclusion_veto: bool = False) -> None:
+        super().__init__(rng, floor_mass=floor_mass,
+                         negative_half_life_h=negative_half_life_h,
+                         legacy_exclusion_veto=legacy_exclusion_veto)
         self._config = config
         self._smoothing_s = config.smoothing_half_life_h * 3600
         self._frequency_s = config.frequency_half_life_h * 3600
@@ -76,6 +79,10 @@ class SmoothedRecency(BeliefModel):
     def name(self) -> str:
         return (f"SmoothedRecency(hl={self._config.smoothing_half_life_h:g}h,"
                 f"freq={self._config.frequency_half_life_h:g}h)")
+
+    def _default_negative_half_life_h(self) -> float:
+        """The smoothing half-life: how fast this model's evidence ages."""
+        return self._config.smoothing_half_life_h
 
     def _frequency_distribution(
             self, history: List[Tuple[int, str]], t: int) -> Dict[str, float]:
@@ -91,12 +98,3 @@ class SmoothedRecency(BeliefModel):
         dist = {r: (1.0 - weight) * p for r, p in frequency.items()}
         dist[last_receptacle] = dist.get(last_receptacle, 0.0) + weight
         return self._normalized(dist, tie_break_recency=history)
-
-    def _exclusion_backoff(self, object_id: str, t: int
-                           ) -> Union[Dict[str, float], None]:
-        """The frequency histogram: an excluded last-seen receptacle
-        sends its mass to the object's other usual spots, not uniform."""
-        history = self._history.get(object_id, [])
-        if not history:
-            return None
-        return self._frequency_distribution(history, t)

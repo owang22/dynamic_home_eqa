@@ -9,7 +9,7 @@ import pytest
 
 from baselines.beliefs import (LastObservation, MostFrequentLocation,
                                TimetableConfig, TimetableLookup)
-from baselines.types import DAY_SECONDS, EpisodeContext, Observation, SenseResult
+from baselines.types import Prediction, DAY_SECONDS, EpisodeContext, Observation, SenseResult
 
 H = 3600
 RECS = ("a", "b", "c")
@@ -21,25 +21,31 @@ def _context() -> EpisodeContext:
         object_classes={"o": "mug"}, budget_per_day=1, n_days=2)
 
 
+def _nonzero(pred: Prediction) -> dict[str, float]:
+    """The model's own support (the tests run at floor_mass 0, where the
+    pipeline is the identity and unseen locations carry exactly 0)."""
+    return {r: p for r, p in pred.distribution.items() if p != 0.0}
+
+
 def _obs(rec: str, t: int) -> Observation:
     return Observation(object_id="o", object_class="mug", receptacle_id=rec,
                        t=t, source="scripted")
 
 
 def test_last_observation_tracks_most_recent_sighting() -> None:
-    model = LastObservation(random.Random(0))
+    model = LastObservation(random.Random(0), floor_mass=0.0)
     model.reset(_context())
     model.update(_obs("a", 10))
     model.update(_obs("b", 20))
     # Last sighting is b@t=20, so the prediction is one-hot on b.
     pred = model.predict("o", 100)
     assert pred.argmax == "b"
-    assert pred.distribution == {"b": 1.0}
+    assert _nonzero(pred) == {"b": 1.0}
     assert pred.confidence == 1.0
 
 
 def test_never_observed_falls_back_to_uniform() -> None:
-    model = LastObservation(random.Random(0))
+    model = LastObservation(random.Random(0), floor_mass=0.0)
     model.reset(_context())
     pred = model.predict("ghost", 0)
     # Uniform over the three receptacles; argmax is one of them.
@@ -48,19 +54,19 @@ def test_never_observed_falls_back_to_uniform() -> None:
 
 
 def test_most_frequent_prefers_the_mode() -> None:
-    model = MostFrequentLocation(random.Random(0))
+    model = MostFrequentLocation(random.Random(0), floor_mass=0.0)
     model.reset(_context())
     # a seen twice, b once: distribution 2/3 vs 1/3, argmax a.
     for rec, t in (("a", 10), ("b", 20), ("a", 30)):
         model.update(_obs(rec, t))
     pred = model.predict("o", 100)
     assert pred.argmax == "a"
-    assert pred.distribution == {"a": pytest.approx(2 / 3),
-                                 "b": pytest.approx(1 / 3)}
+    assert _nonzero(pred) == {"a": pytest.approx(2 / 3),
+                              "b": pytest.approx(1 / 3)}
 
 
 def test_most_frequent_breaks_ties_by_recency() -> None:
-    model = MostFrequentLocation(random.Random(0))
+    model = MostFrequentLocation(random.Random(0), floor_mass=0.0)
     model.reset(_context())
     # a and b tie 1-1; b was seen later, so recency breaks the tie to b.
     model.update(_obs("a", 10))
@@ -69,7 +75,7 @@ def test_most_frequent_breaks_ties_by_recency() -> None:
 
 
 def test_sense_result_contents_count_as_positive_sightings() -> None:
-    model = LastObservation(random.Random(0))
+    model = LastObservation(random.Random(0), floor_mass=0.0)
     model.reset(_context())
     model.update(_obs("a", 10))
     model.update(SenseResult(receptacle_id="c", t=50, contents=("o",)))
@@ -79,7 +85,8 @@ def test_sense_result_contents_count_as_positive_sightings() -> None:
 
 def test_timetable_uses_the_query_bin() -> None:
     model = TimetableLookup(random.Random(0),
-                            TimetableConfig(bin_hours=1, day_scheme="all"))
+                            TimetableConfig(bin_hours=1, day_scheme="all"),
+                            floor_mass=0.0)
     model.reset(_context())
     # Same clock hour on different days shares a bin: 9:00 sightings say a,
     # a single 20:00 sighting says b.
@@ -92,7 +99,8 @@ def test_timetable_uses_the_query_bin() -> None:
 
 def test_timetable_empty_bin_degrades_to_most_frequent() -> None:
     model = TimetableLookup(random.Random(0),
-                            TimetableConfig(bin_hours=1, day_scheme="all"))
+                            TimetableConfig(bin_hours=1, day_scheme="all"),
+                            floor_mass=0.0)
     model.reset(_context())
     model.update(_obs("a", 9 * H))
     model.update(_obs("a", 10 * H))
@@ -100,14 +108,15 @@ def test_timetable_empty_bin_degrades_to_most_frequent() -> None:
     # 15:00 was never observed: the whole history votes, mode is a.
     pred = model.predict("o", DAY_SECONDS + 15 * H)
     assert pred.argmax == "a"
-    assert pred.distribution == {"a": pytest.approx(2 / 3),
-                                 "b": pytest.approx(1 / 3)}
+    assert _nonzero(pred) == {"a": pytest.approx(2 / 3),
+                              "b": pytest.approx(1 / 3)}
 
 
 def test_timetable_weekday_weekend_scheme_separates_days() -> None:
     model = TimetableLookup(
         random.Random(0),
-        TimetableConfig(bin_hours=1, day_scheme="weekday_weekend"))
+        TimetableConfig(bin_hours=1, day_scheme="weekday_weekend"),
+        floor_mass=0.0)
     model.reset(_context())
     # 9:00 on a weekday (day 0) says a; 9:00 on a weekend (day 5) says b.
     model.update(_obs("a", 9 * H))
@@ -127,8 +136,8 @@ def test_decayed_most_frequent_tracks_the_drifting_mode() -> None:
     # Three stale sightings at a vs one fresh at b: infinite memory keeps
     # a; a 12 h half-life discounts the two-day-old votes to ~1/16 each
     # and the fresh sighting wins.
-    naive = MostFrequentLocation(random.Random(0))
-    decayed = MostFrequentLocation(random.Random(0), half_life_h=12)
+    naive = MostFrequentLocation(random.Random(0), floor_mass=0.0)
+    decayed = MostFrequentLocation(random.Random(0), half_life_h=12, floor_mass=0.0)
     for model in (naive, decayed):
         model.reset(_context())
         for t in (0, H, 2 * H):

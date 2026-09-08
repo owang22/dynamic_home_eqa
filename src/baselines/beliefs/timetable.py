@@ -12,7 +12,7 @@ import random
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
-from baselines.beliefs.base import BeliefModel
+from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
 from baselines.types import DAY_SECONDS, Prediction
 
 HOURS_PER_DAY = 24
@@ -72,14 +72,24 @@ class TimetableLookup(BeliefModel):
     """
 
     def __init__(self, rng: random.Random, config: TimetableConfig,
-                 exclusion_floor: float = 0.0,
-                 half_life_h: Optional[float] = None) -> None:
-        super().__init__(rng, exclusion_floor=exclusion_floor)
+                 half_life_h: Optional[float] = None,
+                 floor_mass: float = DEFAULT_FLOOR_MASS,
+                 negative_half_life_h: Optional[float] = None,
+                 legacy_exclusion_veto: bool = False) -> None:
+        super().__init__(rng, floor_mass=floor_mass,
+                         negative_half_life_h=negative_half_life_h,
+                         legacy_exclusion_veto=legacy_exclusion_veto)
         if half_life_h is not None and half_life_h <= 0:
             raise ValueError(
                 f"TimetableLookup: half_life_h {half_life_h} must be > 0")
         self._config = config
         self._half_life_s = None if half_life_h is None else half_life_h * 3600
+
+    def _default_negative_half_life_h(self) -> float:
+        """The count half-life when set; the package default otherwise."""
+        if self._half_life_s is None:
+            return super()._default_negative_half_life_h()
+        return self._half_life_s / 3600
 
     @property
     def name(self) -> str:

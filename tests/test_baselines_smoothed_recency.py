@@ -1,5 +1,5 @@
-"""Unit tests for the smoothed recency belief, its exclusion backoff, and
-the budget sweep's recency stratification. Times are seconds since
+"""Unit tests for the smoothed recency belief, its positive-evidence
+regression, and the budget sweep's recency stratification. Times are seconds since
 episode start."""
 
 from __future__ import annotations
@@ -38,7 +38,7 @@ def _obs(rec: str, t: int, obj: str = "o") -> Observation:
 
 
 def _model(config: SmoothedRecencyConfig = FLAT_FREQ) -> SmoothedRecency:
-    model = SmoothedRecency(random.Random(0), config)
+    model = SmoothedRecency(random.Random(0), config, floor_mass=0.0)
     model.reset(_context())
     for t, rec in [(0, "a"), (3600, "a"), (7200, "b")]:
         model.update(_obs(rec, t))
@@ -67,30 +67,42 @@ def test_interpolation_at_one_half_life_is_exact() -> None:
     assert sum(pred.distribution.values()) == pytest.approx(1.0)
 
 
-def test_excluded_last_receptacle_backs_off_to_frequency() -> None:
-    # The self-inflicted collapse this model exists to avoid: negative
-    # evidence on the last-seen receptacle must send its mass to the
-    # object's other usual spots, not spread it uniformly.
-    model = _model()
-    model.update(SenseResult(receptacle_id="b", t=8000, contents=()))
-    pred = model.predict("o", 9000)
-    assert pred.argmax == "a"
-    assert pred.distribution["b"] == 0.0
-    assert pred.distribution["a"] == pytest.approx(1.0)
-    assert pred.distribution["c"] == 0.0 and pred.distribution["d"] == 0.0
-
-
-def test_backoff_with_no_mass_on_kept_receptacles_is_uniform() -> None:
-    # Every receptacle the object was ever seen at is ruled out: the
-    # frequency backoff has nothing to say and the uniform default of the
-    # base machinery takes over.
-    model = _model()
-    model.update(SenseResult(receptacle_id="a", t=8000, contents=()))
-    model.update(SenseResult(receptacle_id="b", t=8000, contents=()))
-    pred = model.predict("o", 9000)
-    assert pred.distribution["a"] == 0.0 and pred.distribution["b"] == 0.0
-    assert pred.distribution["c"] == pytest.approx(0.5)
-    assert pred.distribution["d"] == pytest.approx(0.5)
+def test_positive_path_matches_pre_migration_fixture() -> None:
+    """Regression: on a positive-only stream (no empty looks) the model's
+    own distribution is what it was before the negative-evidence
+    migration. The fixture was dumped from the pre-migration code on the
+    gate-pass bank; the model runs here with floor_mass 0 so the pipeline
+    is the identity up to renormalization round-off (1e-12)."""
+    import json
+    import pathlib
+    import tempfile
+    from baselines.types import Observation
+    fixture = json.loads(pathlib.Path(
+        "tests/fixtures/smoothed_recency_positive_path.json").read_text())
+    with tempfile.TemporaryDirectory() as tmp:
+        episode = next(write_gate_pass_bank(
+            pathlib.Path(tmp) / "b.jsonl", seed=0).episodes())
+    model = SmoothedRecency(random.Random(0), SmoothedRecencyConfig(),
+                            floor_mass=0.0)
+    model.reset(episode.agent_view())
+    for obs in episode.initial_observations:
+        model.update(obs)
+    stream = [e for e in episode.evidence_stream()
+              if isinstance(e, Observation)]
+    assert len(stream) == len(episode.evidence_stream())
+    rows = iter(fixture)
+    cursor = 0
+    for day in episode.questions_by_day:
+        for q in day:
+            while cursor < len(stream) and stream[cursor].t <= q.t_query:
+                model.update(stream[cursor])
+                cursor += 1
+            expected = next(rows)
+            assert expected["question_id"] == q.question_id
+            pred = model.predict_readonly(q.object_id, q.t_query)
+            assert pred.argmax == expected["argmax"]
+            nonzero = {k: v for k, v in pred.distribution.items() if v != 0.0}
+            assert nonzero == pytest.approx(expected["distribution"], abs=1e-12)
 
 
 def test_config_validation() -> None:

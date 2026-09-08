@@ -1,15 +1,16 @@
 """Unit tests for the naive LLM belief (prompt, parsing, fallback, cache
-key) and the expiring-exclusion LastObs. Times are seconds since
-episode start."""
+key) and its byte-identical prompt regression against the committed
+completions fixture. Times are seconds since episode start."""
 
 from __future__ import annotations
 
+import pathlib
 import random
 
 import pytest
 
-from baselines.beliefs import (ExpiringExclusionLastObservation, LLMBelief,
-                               LLMBeliefConfig, LastObservation, PromptCache)
+from baselines.beliefs import (LLMBelief, LLMBeliefConfig, LastObservation,
+                               PromptCache)
 from baselines.beliefs.llm_belief import (build_messages, cache_key,
                                           format_time, parse_completion,
                                           ranking_distribution, room_groups)
@@ -39,8 +40,11 @@ def _empty(rec: str, t: int) -> SenseResult:
     return SenseResult(receptacle_id=rec, t=t, contents=())
 
 
-def _llm(cache: PromptCache) -> LLMBelief:
-    model = LLMBelief(random.Random(0), LLMBeliefConfig(), cache, rooms=ROOMS)
+def _llm(cache: PromptCache, floor_mass: float = 0.0) -> LLMBelief:
+    """floor_mass 0 keeps the ranking arithmetic hand-checkable; the
+    pipeline tests below pass the real floor explicitly."""
+    model = LLMBelief(random.Random(0), LLMBeliefConfig(), cache, rooms=ROOMS,
+                      floor_mass=floor_mass)
     model.reset(_context())
     return model
 
@@ -122,12 +126,13 @@ def test_ranking_distribution_is_geometric_and_normalized() -> None:
 
 def test_collect_mode_records_prompt_and_falls_back_to_lastobs() -> None:
     cache = PromptCache(collect=True)
-    model = _llm(cache)
+    model = _llm(cache, floor_mass=0.02)
     model.update(_obs("bed_b1", 10))
     model.update(_empty("bed_b1", 20))
     pred = model.predict("keys_a", 30)
-    # LastObs fallback: bed_b1 excluded, mass spread over the rest.
-    assert pred.distribution["bed_b1"] == 0.0
+    # LastObs fallback through the pipeline: the ten-second-old empty
+    # look all but erases bed_b1, and the floor holds the rest.
+    assert pred.distribution["bed_b1"] < 0.01
     assert pred.argmax != "bed_b1"
     assert len(cache.prompts) == 1
     assert model.counts == {"predictions": 1, "pending": 1}
@@ -206,28 +211,75 @@ def test_registry_builds_llm_with_rooms_and_cache() -> None:
     assert model.cache is cache
 
 
-# ------------------------------------------------- expiring exclusions
+# ------------------------------------------- fallback and the pipeline
 
-def test_expiring_exclusion_lapses_after_expiry() -> None:
+def test_fallback_is_last_obs_through_the_pipeline() -> None:
+    # Pending (collect mode): the answer is LastObs, and it gets the base
+    # pipeline's negative evidence like any classical model.
+    model = _llm(PromptCache(collect=True), floor_mass=0.02)
     plain = LastObservation(random.Random(0))
-    expiring = ExpiringExclusionLastObservation(random.Random(0), expiry_h=6)
-    for m in (plain, expiring):
-        m.reset(_context())
+    plain.reset(_context())
+    for m in (model, plain):
         m.update(_obs("bed_b1", 10 * H))
         m.update(_empty("bed_b1", 12 * H))
-    # Inside the window both rule bed_b1 out.
-    assert plain.predict("keys_a", 15 * H).distribution["bed_b1"] == 0.0
-    assert expiring.predict("keys_a", 15 * H).distribution["bed_b1"] == 0.0
-    # After 6 h the expiring variant re-admits the last-seen receptacle;
-    # the base class never does.
-    assert plain.predict("keys_a", 19 * H).distribution["bed_b1"] == 0.0
-    assert expiring.predict("keys_a", 19 * H).argmax == "bed_b1"
-    assert expiring.name == "LastObsExpiring6h"
+    assert model.predict("keys_a", 12 * H).distribution == pytest.approx(
+        plain.predict("keys_a", 12 * H).distribution)
+    assert model.predict("keys_a", 12 * H).distribution["bed_b1"] == 0.0
+    assert model.counts["pending"] == 2
 
 
-def test_expiring_exclusion_registry_and_validation() -> None:
-    model = build_registered_belief(
-        {"name": "last_observation_expiring", "expiry_h": 24}, random.Random(0))
-    assert model.name == "LastObsExpiring24h"
-    with pytest.raises(ValueError):
-        ExpiringExclusionLastObservation(random.Random(0), expiry_h=0)
+def test_llm_answer_gets_floor_but_not_suppression() -> None:
+    cache = PromptCache(collect=True)
+    probe = _llm(cache)
+    probe.update(_obs("bed_b1", 10 * H))
+    probe.update(_empty("bed_b1", 12 * H))
+    probe.predict("keys_a", 12 * H)
+    key = next(iter(cache.prompts))
+    model = _llm(PromptCache(answers={key: '{"ranking": ["bed_b1", "desk_b1"], "p_top": 0.9}'}),
+                 floor_mass=0.02)
+    model.update(_obs("bed_b1", 10 * H))
+    model.update(_empty("bed_b1", 12 * H))
+    pred = model.predict("keys_a", 12 * H)
+    f = model.floor_mass
+    n = len(RECS)
+    assert pred.argmax == "bed_b1"
+    assert pred.distribution["bed_b1"] == pytest.approx((1 - f) * 2 / 3 + f / n)
+    assert pred.distribution["OUT_OF_HOUSE"] == pytest.approx(f / n)
+
+
+FIXTURE_DIR = pathlib.Path("reports/baselines/llm_floor/test")
+FIXTURE_BANK = pathlib.Path(
+    "banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_001_bank.jsonl")
+
+
+@pytest.mark.skipif(not (FIXTURE_DIR / "prompt.jsonl").exists()
+                    or not FIXTURE_BANK.exists(),
+                    reason="llm_floor test fixture or hh_001 bank not present")
+def test_prompt_and_key_match_the_committed_fixture() -> None:
+    """The prompt and cache key the belief builds for the fixture question
+    must be byte-identical to the committed ``test/prompt.jsonl`` (the
+    one the completions cache was generated against); a drift here would
+    silently orphan every offline completion."""
+    import json
+    from baselines.bank import JsonlBank
+    from baselines.llm_floor import bank_rooms
+    fixture = json.loads((FIXTURE_DIR / "prompt.jsonl").read_text().splitlines()[0])
+    episode_id, object_id, _, _, bucket = fixture["key"].split("|")
+    episode = next(e for e in JsonlBank(path=FIXTURE_BANK).episodes()
+                   if e.episode_id == episode_id)
+    cache = PromptCache(collect=True)
+    model = LLMBelief(random.Random(0), LLMBeliefConfig(), cache,
+                      rooms=bank_rooms("hh_001", 0))
+    model.reset(episode.agent_view())
+    for obs in episode.initial_observations:
+        model.update(obs)
+    # "day 4 (Friday) 18:20" in the fixture's user message.
+    t = 4 * 86400 + 18 * H + 20 * 60
+    assert t // 3600 == int(bucket)
+    for event in episode.evidence_stream():
+        if event.t > t:
+            break
+        model.update(event)
+    model.predict(object_id, t)
+    assert model.last_key == fixture["key"]
+    assert model.last_messages == fixture["messages"]

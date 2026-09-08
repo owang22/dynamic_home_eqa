@@ -39,9 +39,9 @@ from __future__ import annotations
 import math
 import random
 from dataclasses import dataclass
-from typing import Dict, FrozenSet, List, Mapping, Sequence, Tuple
+from typing import Dict, FrozenSet, List, Mapping, Optional, Sequence, Tuple
 
-from baselines.beliefs.base import BeliefModel
+from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
 from baselines.types import DAY_SECONDS, Prediction
 
 HOURS_PER_DAY = 24
@@ -153,12 +153,20 @@ class DaytypeMixture(BeliefModel):
     """
 
     def __init__(self, rng: random.Random, config: DaytypeMixtureConfig,
-                 exclusion_floor: float = 0.0) -> None:
-        super().__init__(rng, exclusion_floor=exclusion_floor)
+                 floor_mass: float = DEFAULT_FLOOR_MASS,
+                 negative_half_life_h: Optional[float] = None,
+                 legacy_exclusion_veto: bool = False) -> None:
+        super().__init__(rng, floor_mass=floor_mass,
+                         negative_half_life_h=negative_half_life_h,
+                         legacy_exclusion_veto=legacy_exclusion_veto)
         self._cfg = config
         self._cached_at_count = -1
         self._day_types: Dict[int, int] = {}
         self._n_types_fit = 0
+
+    def _default_negative_half_life_h(self) -> float:
+        """The model's count half-life (frozen, panel-wide)."""
+        return float(self._cfg.half_life_h)
 
     @property
     def name(self) -> str:

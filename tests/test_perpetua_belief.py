@@ -45,7 +45,7 @@ FAST = dict(k_range=(1, 2), em_max_iter=30, num_steps=3)
 
 def _perpetua(**kw) -> PerpetuaBelief:
     cfg = PerpetuaConfig(**{**FAST, **kw})
-    m = PerpetuaBelief(random.Random(0), cfg)
+    m = PerpetuaBelief(random.Random(0), cfg, floor_mass=0.0)
     m.reset(_context())
     return m
 
@@ -53,7 +53,7 @@ def _perpetua(**kw) -> PerpetuaBelief:
 def _star(**kw) -> PerpetuaStarBelief:
     base = {k: v for k, v in FAST.items() if k != "num_steps"}
     cfg = PerpetuaStarConfig(**{**base, **kw})
-    m = PerpetuaStarBelief(random.Random(0), cfg)
+    m = PerpetuaStarBelief(random.Random(0), cfg, floor_mass=0.0)
     m.reset(_context())
     return m
 
@@ -93,7 +93,8 @@ def test_prediction_is_normalised_over_support(make) -> None:
     m.update(_obs("b", 3 * H))
     m.update(_obs("a", 6 * H))
     pred = m.predict("o", 7 * H)
-    assert set(pred.distribution) == {"a", "b"}
+    # floor_mass 0 in these tests: unseen locations carry exactly 0.
+    assert {r for r, p in pred.distribution.items() if p > 0} == {"a", "b"}
     assert sum(pred.distribution.values()) == pytest.approx(1.0)
     assert pred.argmax == "a"
     diag = m.last_prediction_diagnostics()
@@ -117,19 +118,24 @@ def test_fresh_sighting_dominates(make) -> None:
 
 @pytest.mark.parametrize("make", [_perpetua, _star])
 def test_exclusion_is_not_double_counted(make) -> None:
-    # The base class would zero an excluded receptacle; here the sense
-    # result reaches the filter as y=0 and the base machinery is bypassed:
-    # the excluded receptacle keeps whatever the filter says (non-zero),
-    # and the distribution is untouched by _apply_exclusions.
+    # The base pipeline would suppress a looked-at receptacle; here the
+    # sense result reaches the filter as y=0 and the pipeline's negative
+    # step is skipped: the receptacle keeps whatever the filter says
+    # (non-zero), and the distribution is the model's own after the
+    # floor mix only.
     m = make()
     m.update(_obs("a", 0))
     m.update(_obs("b", H))
     m.update(_obs("a", 2 * H))
     m.update(_sense("a", 3 * H))                       # o not in a at 3h
-    assert m._active_exclusions("o") == {"a"}          # base recorded it ...
+    assert set(m.negative_observations("o", 3 * H + 600)) == {"a"}  # recorded ...
     pred = m.predict("o", 3 * H + 600)
     base = m._predict_for_object("o", m._history["o"], 3 * H + 600)
-    assert pred.distribution == base.distribution      # ... but did not rezero
+    n = len(pred.distribution)
+    for rec, p in pred.distribution.items():            # ... but not suppressed
+        assert p == pytest.approx(
+            (1 - m.floor_mass) * base.distribution.get(rec, 0.0)
+            + m.floor_mass / n)
     assert pred.distribution["a"] > 0.0
     assert m._edges["o"]["a"].ys[-1] is False          # the filter saw the y=0
 
@@ -233,7 +239,8 @@ def test_argmax_ties_prefer_last_sighted_then_lexicographic(monkeypatch) -> None
     m.update(_obs("a", H))
     monkeypatch.setattr(m, "_edge_belief", lambda edge, t: 0.3)   # exact tie
     pred = m.predict("o", 2 * H)
-    assert all(p == pytest.approx(1 / 3) for p in pred.distribution.values())
+    assert all(p == pytest.approx(1 / 3)
+               for p in pred.distribution.values() if p > 0)
     assert pred.argmax == "a"          # a and b share the newest sighting
     m._edges["o"]["b"].last_sighting_t = 2 * H - 1
     assert m.predict("o", 2 * H).argmax == "b"

@@ -14,10 +14,10 @@ persistence/emergence machinery from :mod:`perpetua_filters`:
 of R at t whose contents lack O is ``y = 0`` for edge (O, R) if that edge
 exists. A first sighting at a new receptacle creates the edge, initialised
 at that instant; nothing is fed retroactively. Negative evidence enters
-the filters directly, so the base class's exclusion machinery is switched
-off here (:meth:`_PerpetuaBase._apply_exclusions` is the identity) to
-avoid counting it twice; the base's sighting bookkeeping and its
-sighting-at-the-prediction-instant short circuit are kept.
+the filters directly, so the base pipeline's negative-evidence step is
+switched off here (``consumes_negative_evidence_natively``) to avoid
+counting it twice; the base's sighting bookkeeping, its floor mix and
+its sighting-at-the-prediction-instant short circuit are kept.
 
 **Online fitting.** The original pipeline fits the survival mixtures
 offline by EM on a training split. Here every edge's observation stream
@@ -64,7 +64,7 @@ from dataclasses import dataclass, field, replace
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from baselines.beliefs import perpetua_filters as pfl
-from baselines.beliefs.base import BeliefModel
+from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
 from baselines.types import (DAY_SECONDS, Observation, Prediction,
                              SenseResult)
 
@@ -206,9 +206,17 @@ class _PerpetuaBase(BeliefModel):
     """Shared edge-stream construction, online EM, prediction assembly
     and diagnostics; subclasses supply the per-edge machine."""
 
+    consumes_negative_evidence_natively = True
+    """Empty looks reach the edge filters as ``y = 0`` observations
+    (decided 2026-09-03); the base pipeline must not suppress again."""
+
     def __init__(self, rng: random.Random, config: PerpetuaConfig,
-                 exclusion_floor: float = 0.0) -> None:
-        super().__init__(rng, exclusion_floor=exclusion_floor)
+                 floor_mass: float = DEFAULT_FLOOR_MASS,
+                 negative_half_life_h: Optional[float] = None,
+                 legacy_exclusion_veto: bool = False) -> None:
+        super().__init__(rng, floor_mass=floor_mass,
+                         negative_half_life_h=negative_half_life_h,
+                         legacy_exclusion_veto=legacy_exclusion_veto)
         self._cfg = config
         self._edges: Dict[str, Dict[str, Edge]] = {}
         self._last_refit_day = -1
@@ -270,13 +278,6 @@ class _PerpetuaBase(BeliefModel):
             edge = self._edges.get(obj, {}).get(evidence.receptacle_id)
             if edge is not None:
                 self._observe(edge, False, evidence.t)
-
-    def _apply_exclusions(self, object_id: str, t: int,
-                          base: Prediction) -> Prediction:
-        """Identity: negative evidence already went into the edge filters
-        as ``y = 0`` observations, so re-zeroing excluded receptacles here
-        would count it twice (decided 2026-09-03)."""
-        return base
 
     # --------------------------------------------------- edge streams
 
@@ -425,9 +426,13 @@ class PerpetuaBelief(_PerpetuaBase):
     the belief-threshold state machine, one machine per edge."""
 
     def __init__(self, rng: random.Random, config: PerpetuaConfig,
-                 exclusion_floor: float = 0.0) -> None:
+                 floor_mass: float = DEFAULT_FLOOR_MASS,
+                 negative_half_life_h: Optional[float] = None,
+                 legacy_exclusion_veto: bool = False) -> None:
         config._check_perpetua()
-        super().__init__(rng, config, exclusion_floor=exclusion_floor)
+        super().__init__(rng, config, floor_mass=floor_mass,
+                         negative_half_life_h=negative_half_life_h,
+                         legacy_exclusion_veto=legacy_exclusion_veto)
 
     @property
     def name(self) -> str:
@@ -471,8 +476,12 @@ class PerpetuaStarBelief(_PerpetuaBase):
     model selection with an annealed likelihood and a switching prior."""
 
     def __init__(self, rng: random.Random, config: PerpetuaStarConfig,
-                 exclusion_floor: float = 0.0) -> None:
-        super().__init__(rng, config, exclusion_floor=exclusion_floor)
+                 floor_mass: float = DEFAULT_FLOOR_MASS,
+                 negative_half_life_h: Optional[float] = None,
+                 legacy_exclusion_veto: bool = False) -> None:
+        super().__init__(rng, config, floor_mass=floor_mass,
+                         negative_half_life_h=negative_half_life_h,
+                         legacy_exclusion_veto=legacy_exclusion_veto)
         self._scfg = config
 
     @property
