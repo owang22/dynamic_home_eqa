@@ -1,5 +1,97 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-09-08: the exclusion veto is gone; negative evidence is a soft, decaying observation over the full location space)
+
+Owner decision, implemented in `beliefs/base.py` and documented at the
+top of that module: every model now outputs one distribution over all
+receptacles plus OUT_OF_HOUSE with a uniform floor (`floor_mass` 0.02),
+an empty look at a sensable receptacle multiplies that receptacle by
+`1 - 2^(-age / half_life)` using its newest look not superseded by a
+strictly later sighting (`negative_half_life_h`: the model's own
+half-life where it has one, else 24 h), and the result is renormalised.
+No veto, no uniform redistribution, no all-excluded fallback, no
+elimination logic in any policy: OUT_OF_HOUSE never receives a factor,
+so after a full sensable sweep at the query instant its floor mass is
+all that survives and the belief's own argmax answers it (the solvable
+invariant still holds everywhere without the policy naming anything).
+`negative_observations(object_id, t)` is the public readout of the
+recorded looks. Perpetua opts out of the suppression step (its filters
+already ingest the looks); the LLM belief's own answers opt out too (the
+looks are in its prompt) while its LastObs fallback does not.
+`exclusion_floor`, `MAX_EXCLUSION_FLOOR`, SmoothedRecency's histogram
+backoff and `ExpiringExclusionLastObservation` are gone (the pipeline
+now IS expiring soft exclusion; its scenarios moved to the base
+pipeline tests); the LLM-floor report lost its expiring-comparator
+section. The paired replay (`exclusion_migration_replay.py`, report
+under `reports/baselines/exclusion_migration/`) runs the frozen panel
+and PerpetuaStar under NeverSense and SequentialSearch on the 20 seed-0
+fleet banks at the bank budget with the old rule (the replay-only
+`legacy_exclusion_veto` flag, which reproduces the pre-migration golden
+log byte for byte) and the new pipeline.
+
+**Headline (45 000 questions, old -> new).** Passive: LastObs 0.592 ->
+0.618, MostFreq 0.586 -> 0.622, Timetable 0.531 -> 0.560. With
+SequentialSearch at 24 senses/day: 0.651 -> 0.671, 0.636 -> 0.673,
+0.578 -> 0.598. PerpetuaStar is identical under both (control). Every
+gain is at ages of a day and more (+0.11 to +0.19 passive), and all of
+it comes from one regime: `came_back` (truth equals the last-seen
+receptacle and an ambient visit had found it empty since; 2 633
+questions) goes from 0.00 to 0.95-1.00 passive, because the look
+decays and the last sighting wins back the argmax. The price is the
+other regime: `truly_out` (6 195 questions, 14% of the set) passive
+accuracy falls from 0.205 to 0.000, and with SequentialSearch from
+0.26 to 0.02. Passive OUT_OF_HOUSE answers all but vanish: 4 395 fired
+(1 270 right) -> 8 fired (4 right) for LastObs, and the same for the
+other two. `stale_in_house` moves by at most +0.01 passive and +0.03
+to +0.04 with search.
+
+**Which parts of the expected signature held.** came_back rises for the
+graded models: held. truly_out passive accuracy dips: it did, to zero.
+Search accuracy holds or rises: held. OUT_OF_HOUSE over-firing "shrinks
+toward the truth rate": did NOT hold; it shrank past it to nothing.
+This is arithmetic, flagged before the run and confirmed by it: OUT's
+share of the floor is 0.02/N (about 0.0009 on a 23-receptacle bank)
+while the last-seen receptacle keeps about 0.98 * (1 - w); with a 24 h
+half-life OUT can only win when the last-seen receptacle was looked at
+empty within about two minutes of the query, and only the newest look
+counts, so negatives do not accumulate. Passive out-of-house answering
+is therefore not reachable under this design; within-question
+elimination by a sweep is exact. If passive reachability is wanted, the
+knob is a separate OUT_OF_HOUSE prior share, not the uniform floor;
+that is a design decision, not made here.
+
+**Reports regenerated under the new semantics (A5):** fleet
+healthchecks, the household analysis and the LLM-floor scoring; see the
+next entry for their movements. rate_sweep and the bake-offs were not
+rerun; their findings files carry a one-line notice that they predate
+this migration.
+
+**Deviations from the brief, logged here per the repo convention (no
+PR workflow on this repo):**
+
+1. The LLM belief's own answers skip the suppression step like
+   Perpetua (the negatives are in its prompt); only its LastObs
+   fallback runs the full pipeline. The brief listed only Perpetua.
+2. `llm_floor`'s expiring-exclusion comparator rows and report section
+   are dropped with the retired model rather than re-expressed.
+3. SmoothedRecency's negative half-life is its smoothing half-life
+   (6 h), the knob that already says how fast its evidence ages; the
+   brief said "the model's own half-life parameter" and it has two.
+4. The supersession rule keeps the existing equal-time convention: a
+   look at exactly the instant of a sighting elsewhere still counts
+   (the brief's sentence 2 says "strictly later sighting", its step 3
+   "look strictly later than the sighting"; the code and its tests
+   follow sentence 2, unchanged from before).
+5. The decay-aware room-visit test needs "fresh" to mean one minute
+   after the last look (the arithmetic above); it asserts the stale
+   case three days later.
+6. The pre-migration golden log is kept as
+   `tests/fixtures/baselines_golden_run_log_legacy.jsonl` and a test
+   asserts the legacy flag reproduces it; both go with the flag in
+   Phase C.
+7. Three pre-existing `mypy --strict` errors in `llm_floor.py` were
+   fixed in passing (touched file).
+
 ## Update (2026-09-04: observation-rate sweep — more sensing helps the classical models and cannot help Perpetua)
 
 `baselines.rate_sweep` re-exports every household at 0.5x / 1x / 2x / 4x
