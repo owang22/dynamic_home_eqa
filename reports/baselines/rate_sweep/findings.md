@@ -1,5 +1,7 @@
 # Rate sweep findings: more observation does not help Perpetua, and widens the gap
 
+> Numbers here predate the negative-evidence migration of 2026-09-08 (the belief-side exclusion veto was replaced by soft, decaying negative evidence over the full location space; see `reports/baselines/exclusion_migration/` and the STATUS entry). They stay valid as history and were not rerun.
+
 Authored analysis of `summary.md` and `explainer.md` (both generated) and
 the per-rate reports beside them. 2026-09-04. Grid: 0.5x / 1x / 2x / 4x
 of the fleet's passive patrol density (3 / 6 / 12 / 24 room visits a

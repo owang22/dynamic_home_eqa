@@ -1,5 +1,7 @@
 # Passive belief bake-off — horizon-controlled protocol
 
+> Numbers here predate the negative-evidence migration of 2026-09-08 (the belief-side exclusion veto was replaced by soft, decaying negative evidence over the full location space; see `reports/baselines/exclusion_migration/` and the STATUS entry). They stay valid as history and were not rerun.
+
 Frozen panel + candidate slate, evaluated with NO sensing: per checkpoint day D the belief sees the tour plus sightings from days before D only, and answers questions at forecast horizons h days past D. Cells are never pooled across h. The household is the unit of analysis throughout. (The old per-day passive curve is descriptive-only — it conflates history, recency, and horizon; this protocol replaces it for any learning-curve claim.)
 
 ## Headline cell D=7,h=1

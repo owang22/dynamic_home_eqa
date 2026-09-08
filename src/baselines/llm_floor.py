@@ -17,12 +17,12 @@ The pipeline is split so the GPU work is one offline batch:
   warmup    tokens/question, parse-failure rate and the wall-clock
             projection for the rest, from what has been answered so far.
   score     replay every bank again with the completions in the cache,
-            beside LastObs, DaytypeMix, Perpetua, the two expiring-
-            exclusion LastObs variants and the routine oracle, all on the
-            same sampled questions -> scored.csv.gz.
+            beside LastObs, Timetable, DaytypeMix, Perpetua, PerpetuaStar
+            and the routine oracle, all on the same sampled questions
+            -> scored.csv.gz.
   report    age-bin tables, paired per-home-seed stats, four-case split,
-            OUT_OF_HOUSE / ON_PERSON accuracy, the expiring-exclusion
-            table, figures, and 100 prompt/completion pairs to read.
+            OUT_OF_HOUSE / ON_PERSON accuracy, figures, and 100
+            prompt/completion pairs to read.
 
 Every number in the report is computed on the stratified sample, and
 every table and figure says so with its n. Homes are never pooled with
@@ -549,6 +549,9 @@ def load_scored(out_dir: pathlib.Path) -> List[Dict[str, Any]]:
     with gzip.open(out_dir / "scored.csv.gz", "rt") as fh:
         rows = []
         for r in csv.DictReader(fh):
+            # Rows carry the belief's full display name (with its
+            # parameter suffix); the tables key on the bare class name.
+            r["model"] = r["model"].split("(", 1)[0]
             r["seed"] = int(r["seed"])
             r["correct"] = int(r["correct"])
             r["fallback"] = int(r["fallback"])

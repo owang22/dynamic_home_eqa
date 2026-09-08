@@ -1,0 +1,66 @@
+{
+  "generated_at": "2026-09-08T18:22:29.521033+00:00",
+  "git": [
+    "37c2a3c3b81a670837fcb5df026018e57d59c1bd",
+    true
+  ],
+  "bank_dir": "/data/oliver/robot/dynamic_home_eqa/banks/baselines/sweep/visits6",
+  "seeds": [
+    0,
+    1
+  ],
+  "cap_per_cell": 150,
+  "n_questions": 40993,
+  "households": [
+    "hh_001",
+    "hh_002",
+    "hh_003",
+    "hh_004",
+    "hh_005",
+    "hh_006",
+    "hh_007",
+    "hh_008",
+    "hh_009",
+    "hh_010",
+    "hh_011",
+    "hh_012",
+    "hh_013",
+    "hh_014",
+    "hh_015",
+    "hh_016",
+    "hh_017",
+    "hh_018",
+    "hh_019",
+    "hh_020"
+  ],
+  "burn_in_days": 0,
+  "models": [
+    "LLMBelief",
+    "LastObservation",
+    "TimetableLookup",
+    "DaytypeMixture",
+    "Perpetua",
+    "PerpetuaStar",
+    "routine_oracle"
+  ],
+  "generation": {
+    "model": "Qwen/Qwen3.8-27B",
+    "tensor_parallel": 1,
+    "guided_json": true,
+    "seed": 0,
+    "max_tokens": 160,
+    "cuda_visible_devices": "0",
+    "n_answered": 39873,
+    "n_previously_done": 200,
+    "n_truncated": 0,
+    "prompt_tokens": 39586014,
+    "completion_tokens": 1696204,
+    "prompt_tokens_per_question": 992.8024979309307,
+    "completion_tokens_per_question": 42.54016502395105,
+    "load_seconds": 44.2,
+    "generate_seconds": 6828.0,
+    "questions_per_second": 5.8396685031833,
+    "tokens_per_second": 6046.057938859546
+  },
+  "oracle_seeds_per_bank": 200
+}

@@ -249,16 +249,17 @@ def build(in_dir: pathlib.Path, workers: int, seeds: Sequence[int],
     all_bins = tuple(b for _, bins in AGE_BLOCKS for b in bins)
     correct = perpetua_correctness(in_dir, all_bins)
     md = [
-        "# Why the survival models win at long ages: the four-case split",
+        "# Long ages, the four-case split: survival models vs the classical pair",
         "",
         "Each question is classed by whether the object MOVED since its last "
         "sighting and whether a later room visit EXCLUDED the last-seen "
-        "receptacle (found it without the object). The base class's "
-        "exclusion is hard and permanent until the next sighting, so LastObs "
-        "and MostFreq can never re-answer an excluded receptacle; the "
-        "Perpetua models feed the same negative evidence into their filters "
-        "and the emergence filter re-admits the receptacle after the "
-        "expected absence. Seeds of a home are pooled; homes are not. "
+        "receptacle (found it without the object, no sighting since). Since "
+        "the 2026-09-08 migration that look is soft evidence that decays "
+        "with age (LastObs and MostFreq re-answer the receptacle once the "
+        "look is stale; before, it was a permanent veto); the Perpetua "
+        "models feed the same negative evidence into their filters and the "
+        "emergence filter re-admits the receptacle after the expected "
+        "absence. Seeds of a home are pooled; homes are not. "
         f"Cells under {MIN_N} questions are not quoted.",
         "",
     ]

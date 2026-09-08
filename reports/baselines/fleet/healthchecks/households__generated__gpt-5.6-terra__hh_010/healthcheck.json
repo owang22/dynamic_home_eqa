@@ -12,10 +12,10 @@
     "powered_min_questions": 300
   },
   "config_hash": "fbf2c99847e1194a778cd0b90c7e37f0d9f142c58846fc0cc63dd5b3662a94ed",
-  "git_commit": "9e4120296a86f2ffd8c39f320aaeafd8f8959bd5",
+  "git_commit": "ff83c0ba40f5d460482523ba96efb890a11fb425",
   "git_dirty": true,
   "seed": 0,
-  "timestamp": "2026-08-30T00:25:31.656885+00:00",
+  "timestamp": "2026-09-08T08:37:41.310863+00:00",
   "n_questions": 2250,
   "real_budget_per_day": 24,
   "belief_panel": [
@@ -105,9 +105,9 @@
   },
   "panel": {
     "never_sense_task_accuracy": {
-      "last_observation": 0.5106666666666667,
-      "most_frequent": 0.5182222222222223,
-      "timetable": 0.4822222222222222
+      "last_observation": 0.5422222222222223,
+      "most_frequent": 0.5506666666666666,
+      "timetable": 0.5146666666666667
     },
     "sequential_search_unlimited_task_accuracy": {
       "last_observation": 1.0,
@@ -117,11 +117,11 @@
     "sequential_search_real_budget": {
       "belief": "most_frequent",
       "budget_per_day": 24,
-      "task_accuracy": 0.5453333333333333
+      "task_accuracy": 0.5911111111111111
     }
   },
   "stratified_discriminative": {
-    "family_teen_and_child": 0.03600000000000003
+    "family_teen_and_child": 0.03599999999999992
   },
   "diagnostics": [
     {
@@ -145,7 +145,7 @@
     {
       "name": "not_trivial",
       "flagged": false,
-      "measured": 0.5182222222222223,
+      "measured": 0.5506666666666666,
       "threshold": 0.65,
       "comparison": "<=",
       "rationale": "passive memory alone nearly solves the bank at this observation rate; paid sensing has little to prove",
@@ -154,8 +154,8 @@
     {
       "name": "not_impossible",
       "flagged": true,
-      "measured": 0.5453333333333333,
-      "threshold": 0.6682222222222223,
+      "measured": 0.5911111111111111,
+      "threshold": 0.7006666666666667,
       "comparison": ">=",
       "rationale": "sensing bought little over passive at the configured budget; may reflect the budget rather than the bank",
       "is_bug_check": false
@@ -163,7 +163,7 @@
     {
       "name": "discriminative",
       "flagged": false,
-      "measured": 0.03600000000000003,
+      "measured": 0.03599999999999992,
       "threshold": 0.03,
       "comparison": ">",
       "rationale": "all passive models answer alike; usually the observation stream is too sparse for them to differ",

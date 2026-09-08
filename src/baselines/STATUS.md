@@ -60,11 +60,35 @@ elimination by a sweep is exact. If passive reachability is wanted, the
 knob is a separate OUT_OF_HOUSE prior share, not the uniform floor;
 that is a design decision, not made here.
 
-**Reports regenerated under the new semantics (A5):** fleet
-healthchecks, the household analysis and the LLM-floor scoring; see the
-next entry for their movements. rate_sweep and the bake-offs were not
-rerun; their findings files carry a one-line notice that they predate
-this migration.
+**Reports regenerated under the new semantics (A5).** Fleet
+healthchecks (`reports/baselines/fleet/`, banks re-exported byte
+identical): NeverSense accuracy rises on every home, mean +0.026 LastObs,
++0.036 MostFreq, +0.030 Timetable (smallest +0.004, largest +0.064);
+search at the bank budget mean +0.024 (range -0.034 to +0.060);
+`solvable` passes everywhere; three advisory flags moved (hh_003 now
+also flags not_trivial, hh_017 no longer flags discriminative, hh_018
+now does). Household analysis (`reports/baselines/household_analysis/`,
+100 banks, 11 models): at a day and older the classical models now sit
+above the survival models where they sat below them (all homes pooled,
+1-2d: LastObs 0.287 -> 0.371, MostFreq 0.284 -> 0.415, Timetable 0.284
+-> 0.400, PerpetuaStar 0.352 unchanged; 3d+: LastObs 0.168 -> 0.339,
+MostFreq 0.195 -> 0.357); the two time-of-day models lose a little at
+short ages (DaytypeMix 3-6 h 0.709 -> 0.670, 1-3 h 0.782 -> 0.752;
+Timetable about -0.01) because a strong time-of-day prior on a
+receptacle that was looked at empty an hour ago is now suppressed by a
+factor of a few percent rather than vetoed. The `perpetua_cases` split
+is kept as a diagnostic of the same situations; its "stayed, EXCLUDED"
+row is now 1.00 for LastObs. LLM floor (`reports/baselines/llm_floor/`,
+score and report stages rerun on the cached completions; every prompt
+key hit): the classical comparators answer OUT_OF_HOUSE on 0.0-0.1% of
+questions (LastObs 0.001 recall on the 5 729 true out-of-house
+questions in the sample; the LLM stays at 0.370 recall, 0.620 at a day
+and older), and at a day and older LastObs is now above the LLM (0.352
+vs 0.325 at 1-2d, 0.356 vs 0.282 at 3d+). The report's comparator
+columns key on bare class names; the loader now strips the parameter
+suffix, which the previous report had not done. rate_sweep and the
+bake-offs were not rerun; their findings and summary files carry a
+one-line notice that they predate this migration.
 
 **Deviations from the brief, logged here per the repo convention (no
 PR workflow on this repo):**

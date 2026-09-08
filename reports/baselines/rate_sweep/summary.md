@@ -1,5 +1,7 @@
 # Observation-rate sweep: model limit or data limit?
 
+> Numbers here predate the negative-evidence migration of 2026-09-08 (the belief-side exclusion veto was replaced by soft, decaying negative evidence over the full location space; see `reports/baselines/exclusion_migration/` and the STATUS entry). They stay valid as history and were not rerun.
+
 Rates 0.5x = 3 visits/day, 1x = 6 visits/day, 2x = 12 visits/day, 4x = 24 visits/day of the round-robin room patrol; 28-day episodes; 20 homes x seeds [0, 1]; models LastObs, Periodic, DaytypeMix, SmoothedRec, Perpetua, PerpetuaStar, PerpStarFlat + the routine oracle. Every table compares within a fixed age-of-last-sighting bin, homes are never pooled with each other, and cells under 30 questions are masked. Per-rate full reports live in the visits<v>/ directories beside this file.
 
 ## 1. Accuracy by age of last sighting, per resident group and rate

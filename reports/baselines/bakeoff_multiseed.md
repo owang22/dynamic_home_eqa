@@ -1,5 +1,7 @@
 # Bake-off across 5 realizations (seeds 0, 1, 2, 3, 4)
 
+> Numbers here predate the negative-evidence migration of 2026-09-08 (the belief-side exclusion veto was replaced by soft, decaying negative evidence over the full location space; see `reports/baselines/exclusion_migration/` and the STATUS entry). They stay valid as history and were not rerun.
+
 Headline cell D=7,h=1. Each seed re-runs the SAME households through the seeded simulator: same personas, stories and object rules, different jitter and misplacement draws. Accuracy is the mean over realizations; +/- is half the seed range, so it is the spread a single-seed number hides, not a bootstrap interval.
 
 | model | accuracy (mean +/- half-range) | per-seed | mean log-loss |

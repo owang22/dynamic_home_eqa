@@ -1,5 +1,7 @@
 # Bake-off recommendation — candidate beliefs for the paper baselines
 
+> Numbers here predate the negative-evidence migration of 2026-09-08 (the belief-side exclusion veto was replaced by soft, decaying negative evidence over the full location space; see `reports/baselines/exclusion_migration/` and the STATUS entry). They stay valid as history and were not rerun.
+
 Evidence: `leaderboard.md` / `bakeoff_results.json` in this directory
 (the OFFICIAL run: the one gate-passing bank from the fleet, revamp_v1
 hh1) and `exploratory_all_banks/` (the same protocol over all 12 fleet
