@@ -12,15 +12,29 @@ household level into calibration and test (``--split-seed``,
 2. For every alpha, a global quantile and an age-binned quantile table
    are fitted on the calibration households' pairs.
 3. On the test households, every conformal policy (alpha x {global,
-   age_binned}) and the two reference policies (NeverSense from step 1,
-   SequentialSearch) are replayed by the harness.
+   age_binned}), the value-of-sensing variants
+   (:class:`~baselines.policies.resolvable_mass_sense.ResolvableMassSense`,
+   tau x alpha), the adaptive variants
+   (:class:`~baselines.policies.aci_sense.ACISense` at ``--aci-alpha``,
+   gamma x feedback mode, plus gamma 0 as the static reference with the
+   same bookkeeping) and the two reference policies (NeverSense from step
+   1, SequentialSearch) are replayed by the harness. ACI feedback is
+   computed by this driver from each question's record (the policy
+   never sees the truth): ``err_t`` is whether the truth lay outside the
+   set formed at the question's FIRST decision (from memory), fed back
+   on every question in ``oracle`` mode and only on questions whose own
+   senses revealed the truth in ``sensed`` mode.
 
 Outputs under ``--out``:
 
   sweep_results.csv       one row per (belief, policy): task accuracy,
                           full-state belief accuracy, mean senses per
                           question and per day, forced-answer rate, on
-                          the TEST households
+                          the TEST households (tau / gamma / feedback
+                          columns for the variants)
+  aci_coverage.csv        per belief x gamma x feedback mode: first-set
+                          coverage, update rate and mean alpha per query
+                          day and overall, on the test households
   coverage_by_age.csv     empirical coverage of the prediction set on the
                           test households per belief x alpha x mode x age
                           bin, with the quantile used and the target
@@ -75,8 +89,11 @@ from baselines.conformal.calibration import (DEFAULT_AGE_EDGES_H,
                                              household_split)
 from baselines.harness import QuestionRecord, run_episode
 from baselines.healthcheck import BELIEF_PANEL
+from baselines.policies.aci_sense import (FEEDBACK_MODES, ACISense,
+                                          truth_revealed)
 from baselines.policies.conformal_sense import (ConformalSense,
                                                 belief_age_fn)
+from baselines.policies.resolvable_mass_sense import ResolvableMassSense
 from baselines.registry import build_registered_belief
 from baselines.types import Episode
 
@@ -101,6 +118,11 @@ candidates at their registry defaults."""
 NEVER_SENSE = "NeverSense"
 SEQUENTIAL_SEARCH = "SequentialSearch"
 MODES = ("global", "age_binned")
+DEFAULT_TAUS: Tuple[float, ...] = (0.2, 0.4, 0.6, 0.8)
+DEFAULT_GAMMAS: Tuple[float, ...] = (0.01, 0.05, 0.1)
+DEFAULT_ACI_ALPHA = 0.3
+"""ACI runs at one target (the v1 sweep's best static point); gamma 0 is
+the static reference run through the same bookkeeping."""
 
 # Plot styling: the package's ink/grid tokens and the validated palette's
 # first two categorical slots (identity of the two calibration modes).
@@ -108,6 +130,8 @@ _INK = "#33322e"
 _MUTED = "#6f6d64"
 _GRID = "#dddbd2"
 _MODE_HUES = {"global": "#2a78d6", "age_binned": "#eb6834"}
+_EXTRA_STYLE = {"resolvable": ("#1baf7a", "s"), "aci_oracle": ("#8a4fd1", "D"),
+                "aci_sensed": ("#c4257c", "x"), "aci_static": ("#6f6d64", "P")}
 _ALPHA_RAMP = ("#9ec2ee", "#5f9be2", "#2a78d6", "#1a4f93")   # blue, light->dark
 
 
@@ -117,20 +141,31 @@ _ALPHA_RAMP = ("#9ec2ee", "#5f9be2", "#2a78d6", "#1a4f93")   # blue, light->dark
 class PolicySpec:
     """One policy to replay on the test households."""
 
-    kind: str                     # "sequential_search" | "conformal"
+    kind: str          # "sequential_search" | "conformal" | "resolvable" | "aci"
     alpha: Optional[float] = None
     binned: bool = False
+    tau: Optional[float] = None         # resolvable only
+    gamma: Optional[float] = None       # aci only (0 = static reference)
+    feedback: Optional[str] = None      # aci only
 
     @property
     def mode(self) -> str:
         if self.kind == "sequential_search":
             return SEQUENTIAL_SEARCH
+        if self.kind == "resolvable":
+            return "resolvable"
+        if self.kind == "aci":
+            return "aci_static" if not self.gamma else f"aci_{self.feedback}"
         return "age_binned" if self.binned else "global"
 
     @property
     def slug(self) -> str:
         if self.kind == "sequential_search":
             return "sequential_search"
+        if self.kind == "resolvable":
+            return f"resolvable_{'age_binned' if self.binned else 'global'}_alpha{self.alpha:g}_tau{self.tau:g}"
+        if self.kind == "aci":
+            return f"{self.mode}_alpha{self.alpha:g}_gamma{self.gamma:g}"
         return f"conformal_{self.mode}_alpha{self.alpha:g}"
 
 
@@ -195,24 +230,78 @@ def policy_task(task: Dict[str, Any]) -> Dict[str, Any]:
     spec: PolicySpec = task["policy"]
     belief_spec = task["belief_spec"]
     seed = task["seed"]
+    aci_days: List[Dict[str, Any]] = []
     if spec.kind == "sequential_search":
         agent = build_agent(belief_spec, {"name": "sequential_search"},
                             seed, episode.episode_id)
+        records = list(run_episode(agent, episode))
     else:
-        table: QhatTable = task["table"]
         belief_name = str(belief_spec["name"])
         policy_rng = _derived_rng(seed, "policy", belief_name, spec.slug,
                                   episode.episode_id)
         belief_rng = _derived_rng(seed, belief_name, spec.slug,
                                   episode.episode_id)
         belief = build_registered_belief(dict(belief_spec), belief_rng)
-        policy = ConformalSense(policy_rng, table, belief_age_fn(belief),
-                                binned=spec.binned)
-        agent = Agent(belief=belief, policy=policy)
-    records = list(run_episode(agent, episode))
+        age_fn = belief_age_fn(belief)
+        if spec.kind == "aci":
+            assert spec.alpha is not None and spec.gamma is not None
+            assert spec.feedback is not None
+            aci = ACISense(policy_rng, task["scores"], spec.alpha, spec.gamma,
+                           age_fn, spec.feedback)
+            agent = Agent(belief=belief, policy=aci)
+            records, aci_days = _run_aci(agent, aci, episode)
+        else:
+            table: QhatTable = task["table"]
+            if spec.kind == "resolvable":
+                assert spec.tau is not None
+                policy: Any = ResolvableMassSense(
+                    policy_rng, table, age_fn, spec.binned, spec.tau)
+            else:
+                policy = ConformalSense(policy_rng, table, age_fn,
+                                        binned=spec.binned)
+            agent = Agent(belief=belief, policy=policy)
+            records = list(run_episode(agent, episode))
     _write_part(records, pathlib.Path(task["part_path"]))
     return {"belief": agent.belief.name, "policy": agent.policy.name,
-            "episode_id": episode.episode_id, "summaries": _summaries(records)}
+            "episode_id": episode.episode_id, "summaries": _summaries(records),
+            "aci_days": aci_days}
+
+
+def _run_aci(agent: Agent, policy: ACISense, episode: Episode
+             ) -> Tuple[List[QuestionRecord], List[Dict[str, Any]]]:
+    """Replay with the ACI feedback loop; per-day coverage aggregates.
+
+    ``err`` is judged on the set the policy formed at the question's
+    first decision; feedback is applied on every question (oracle) or
+    only when the question's senses revealed the truth (sensed). With
+    gamma 0 the policy never moves: the static reference."""
+    sensable = episode.agent_view().sensable_receptacle_ids
+    records: List[QuestionRecord] = []
+    days: Dict[int, Dict[str, float]] = {}
+    for record in run_episode(agent, episode):
+        records.append(record)
+        err = record.truth_receptacle not in policy.first_set
+        revealed = truth_revealed(list(record.actions), record.object_id,
+                                  sensable)
+        allowed = policy.feedback_mode == "oracle" or revealed
+        cell = days.setdefault(record.day_index, {
+            "n": 0.0, "covered": 0.0, "updated": 0.0, "alpha_sum": 0.0,
+            "qhat_sum": 0.0})
+        cell["n"] += 1
+        cell["covered"] += float(not err)
+        cell["alpha_sum"] += policy.first_alpha
+        cell["qhat_sum"] += policy.first_qhat
+        if allowed:
+            cell["updated"] += 1
+            if policy_gamma_positive(policy):
+                policy.feedback(err)
+    rows = [{"household_id": episode.household_id, "day_index": day,
+             **cell} for day, cell in sorted(days.items())]
+    return records, rows
+
+
+def policy_gamma_positive(policy: ACISense) -> bool:
+    return policy.gamma > 0.0
 
 
 # --------------------------------------------------------------- aggregate
@@ -371,6 +460,10 @@ def plot_accuracy_vs_budget(rows: Sequence[Dict[str, Any]],
             elif r["mode"] == SEQUENTIAL_SEARCH:
                 ax.scatter([r["mean_budget"]], [r["task_accuracy"]], marker="^",
                            s=70, color=_INK, zorder=4)
+            elif r["mode"] in _EXTRA_STYLE:
+                hue, marker = _EXTRA_STYLE[r["mode"]]
+                ax.scatter([r["mean_budget"]], [r["task_accuracy"]],
+                           marker=marker, s=28, color=hue, zorder=3, alpha=0.85)
         ax.set_title(_short(belief), color=_INK, fontsize=10, loc="left")
         ax.set_xlabel("senses per question (cost)", color=_INK, fontsize=9)
         if idx == 0:
@@ -391,12 +484,20 @@ def plot_accuracy_vs_budget(rows: Sequence[Dict[str, Any]],
         Line2D([], [], marker="*", linestyle="", color=_INK, markersize=11,
                label="never sense"),
         Line2D([], [], marker="^", linestyle="", color=_INK,
-               label="always search until found")]
+               label="always search until found"),
+        Line2D([], [], marker="s", linestyle="", color=_EXTRA_STYLE["resolvable"][0],
+               label="resolvable-mass gate (tau x alpha)"),
+        Line2D([], [], marker="D", linestyle="", color=_EXTRA_STYLE["aci_oracle"][0],
+               label="ACI, oracle feedback (diagnostic)"),
+        Line2D([], [], marker="x", linestyle="", color=_EXTRA_STYLE["aci_sensed"][0],
+               label="ACI, sensed feedback"),
+        Line2D([], [], marker="P", linestyle="", color=_EXTRA_STYLE["aci_static"][0],
+               label="ACI bookkeeping, gamma 0 (static)")]
     fig.legend(handles=handles, loc="lower center", ncol=2, frameon=False,
-               fontsize=9)
+               fontsize=8)
     fig.suptitle("Accuracy bought per sense, test households", color=_INK,
                  fontsize=11, x=0.01, ha="left")
-    fig.tight_layout(rect=(0, 0.14, 1, 0.94))
+    fig.tight_layout(rect=(0, 0.2, 1, 0.94))
     fig.savefig(path, dpi=150)
     plt.close(fig)
 
@@ -416,6 +517,10 @@ class SweepConfig:
     min_bin_n: int
     workers: int
     budget: Optional[int] = None      # None: the bank's own budget_per_day
+    taus: Tuple[float, ...] = DEFAULT_TAUS
+    gammas: Tuple[float, ...] = DEFAULT_GAMMAS
+    aci_alpha: float = DEFAULT_ACI_ALPHA
+    resolvable_alphas: Tuple[float, ...] = ()   # subset of alphas; () = all
 
     def __post_init__(self) -> None:
         unknown = [b for b in self.beliefs if b not in BELIEF_SPECS]
@@ -424,6 +529,12 @@ class SweepConfig:
                              f"{sorted(BELIEF_SPECS)}")
         if not self.alphas or any(not 0 < a < 1 for a in self.alphas):
             raise ValueError(f"alphas must lie in (0, 1): {self.alphas}")
+        if any(not 0 < t <= 1 for t in self.taus):
+            raise ValueError(f"taus must lie in (0, 1]: {self.taus}")
+        if any(g < 0 for g in self.gammas):
+            raise ValueError(f"gammas must be non-negative: {self.gammas}")
+        if not self.resolvable_alphas:
+            object.__setattr__(self, "resolvable_alphas", self.alphas)
 
 
 def _episode_index(bank_paths: Sequence[pathlib.Path]
@@ -523,8 +634,18 @@ def run_sweep(config: SweepConfig) -> List[Dict[str, str]]:
     policy_specs = [PolicySpec("sequential_search")] + [
         PolicySpec("conformal", alpha, binned)
         for alpha in config.alphas for binned in (False, True)]
+    policy_specs += [PolicySpec("resolvable", alpha, False, tau=tau)
+                     for alpha in config.alphas if alpha in config.resolvable_alphas
+                     for tau in config.taus]
+    if config.gammas:
+        policy_specs.append(PolicySpec("aci", config.aci_alpha, gamma=0.0,
+                                       feedback="oracle"))
+        policy_specs += [PolicySpec("aci", config.aci_alpha, gamma=gamma,
+                                    feedback=mode)
+                         for gamma in config.gammas for mode in FEEDBACK_MODES]
     policy_tasks = []
     for b in config.beliefs:
+        scores = tuple(p.score for p in pairs_calib[b])
         for spec in policy_specs:
             for bp, eid, _ in test_index:
                 task = {"bank_path": bp, "episode_id": eid,
@@ -532,8 +653,16 @@ def run_sweep(config: SweepConfig) -> List[Dict[str, str]]:
                         "budget": config.budget, "policy": spec,
                         "part_path": str(parts_dir /
                                          f"{b}__{spec.slug}__{eid}.jsonl.gz")}
-                if spec.kind == "conformal":
-                    task["table"] = tables[(b, spec.alpha, spec.mode)]
+                if spec.kind in ("conformal", "resolvable"):
+                    assert spec.alpha is not None
+                    mode = "age_binned" if spec.binned else "global"
+                    task["table"] = tables[(b, spec.alpha, mode)]
+                elif spec.kind == "aci":
+                    assert spec.alpha is not None
+                    if (b, spec.alpha, "global") not in tables:
+                        tables[(b, spec.alpha, "global")] = fit_global_qhat(
+                            pairs_calib[b], spec.alpha, config.age_edges_h)
+                    task["scores"] = scores
                 policy_tasks.append(task)
     replays = _run_pool(policy_task, policy_tasks, config.workers)
 
@@ -541,7 +670,8 @@ def run_sweep(config: SweepConfig) -> List[Dict[str, str]]:
     result_rows: List[Dict[str, Any]] = []
     for b in config.beliefs:
         row = {"belief": display[b], "policy": NEVER_SENSE, "mode": NEVER_SENSE,
-               "alpha": None, "qhat_global": ""}
+               "alpha": None, "tau": None, "gamma": None, "feedback": "",
+               "qhat_global": ""}
         row.update(aggregate(never_summaries[b], budget_per_day))
         result_rows.append(row)
         for spec in policy_specs:
@@ -551,20 +681,59 @@ def run_sweep(config: SweepConfig) -> List[Dict[str, str]]:
                 if task["belief_spec"] is BELIEF_SPECS[b] and task["policy"] == spec:
                     summaries.extend(res["summaries"])
                     policy_name = res["policy"]
+            table_mode = ("global" if spec.kind in ("aci", "resolvable")
+                          or not spec.binned else "age_binned")
             row = {"belief": display[b], "policy": policy_name,
-                   "mode": spec.mode, "alpha": spec.alpha,
+                   "mode": spec.mode, "alpha": spec.alpha, "tau": spec.tau,
+                   "gamma": spec.gamma, "feedback": spec.feedback or "",
                    "qhat_global": "" if spec.alpha is None else
-                   f"{tables[(b, spec.alpha, spec.mode)].global_qhat:.6f}"}
+                   f"{tables[(b, spec.alpha, table_mode)].global_qhat:.6f}"}
             row.update(aggregate(summaries, budget_per_day))
             result_rows.append(row)
-    result_fields = ["belief", "policy", "mode", "alpha", "n_households",
-                     "n_questions", "task_accuracy", "belief_accuracy",
-                     "mean_budget", "mean_budget_per_day",
-                     "forced_answer_rate", "budget_per_day", "qhat_global"]
+    result_fields = ["belief", "policy", "mode", "alpha", "tau", "gamma",
+                     "feedback", "n_households", "n_questions",
+                     "task_accuracy", "belief_accuracy", "mean_budget",
+                     "mean_budget_per_day", "forced_answer_rate",
+                     "budget_per_day", "qhat_global"]
     with open(out / "sweep_results.csv", "w", newline="") as fh:
         writer = csv.DictWriter(fh, fieldnames=result_fields)
         writer.writeheader()
         writer.writerows(_csv_row(r) for r in result_rows)
+
+    # ACI: first-set coverage per query day, update rate, mean alpha.
+    aci_rows: List[Dict[str, Any]] = []
+    for b in config.beliefs:
+        for spec in policy_specs:
+            if spec.kind != "aci":
+                continue
+            per_day: Dict[str, Dict[str, float]] = {}
+            for task, res in zip(policy_tasks, replays):
+                if task["belief_spec"] is BELIEF_SPECS[b] and task["policy"] == spec:
+                    for cell in res["aci_days"]:
+                        for key in (str(cell["day_index"]), "all"):
+                            acc = per_day.setdefault(key, {
+                                "n": 0.0, "covered": 0.0, "updated": 0.0,
+                                "alpha_sum": 0.0, "qhat_sum": 0.0})
+                            for field in acc:
+                                acc[field] += float(cell[field])
+            for key, acc in sorted(per_day.items(),
+                                   key=lambda kv: (kv[0] == "all",
+                                                   int(kv[0]) if kv[0] != "all" else 0)):
+                n = int(acc["n"])
+                aci_rows.append({
+                    "belief": display[b], "alpha_target": spec.alpha,
+                    "gamma": spec.gamma, "feedback": spec.feedback,
+                    "mode": spec.mode, "day": key, "n": n,
+                    "coverage": round(acc["covered"] / n, 6) if n else "",
+                    "target": round(1 - float(spec.alpha or 0), 6),
+                    "update_rate": round(acc["updated"] / n, 6) if n else "",
+                    "mean_alpha": round(acc["alpha_sum"] / n, 6) if n else "",
+                    "mean_qhat": round(acc["qhat_sum"] / n, 6) if n else ""})
+    if aci_rows:
+        with open(out / "aci_coverage.csv", "w", newline="") as fh:
+            writer = csv.DictWriter(fh, fieldnames=list(aci_rows[0]))
+            writer.writeheader()
+            writer.writerows(aci_rows)
 
     # Coverage by age on the test households (passive prediction sets).
     coverage_rows: List[Dict[str, Any]] = []
@@ -625,7 +794,9 @@ def run_sweep(config: SweepConfig) -> List[Dict[str, str]]:
         "calib_frac": config.calib_frac, "alphas": list(config.alphas),
         "age_edges_h": list(config.age_edges_h),
         "beliefs": list(config.beliefs), "min_bin_n": config.min_bin_n,
-        "budget_override": config.budget,
+        "budget_override": config.budget, "taus": list(config.taus),
+        "gammas": list(config.gammas), "aci_alpha": config.aci_alpha,
+        "resolvable_alphas": list(config.resolvable_alphas),
         "n_episodes": len(index), "n_test_episodes": len(test_index)},
         indent=2))
     belief_names = [display[b] for b in config.beliefs]
@@ -640,10 +811,12 @@ def run_sweep(config: SweepConfig) -> List[Dict[str, str]]:
 
 
 def _csv_row(row: Dict[str, Any]) -> Dict[str, Any]:
-    """Alpha is numeric in memory (the plots key on it) and ``%g`` text
-    in the csv; baselines carry an empty alpha."""
+    """Alpha / tau / gamma are numeric in memory (the plots key on them)
+    and ``%g`` text in the csv; baselines carry them empty."""
     out = dict(row)
-    out["alpha"] = "" if row["alpha"] is None else f"{row['alpha']:g}"
+    for key in ("alpha", "tau", "gamma"):
+        value = row.get(key)
+        out[key] = "" if value is None else f"{value:g}"
     return out
 
 
@@ -655,7 +828,8 @@ def replot(out: pathlib.Path) -> List[Dict[str, str]]:
     with open(out / "coverage_by_age.csv") as fh:
         coverage_rows: List[Dict[str, Any]] = list(csv.DictReader(fh))
     for row in result_rows:
-        row["alpha"] = float(row["alpha"]) if row["alpha"] else None
+        for key in ("alpha", "tau", "gamma"):
+            row[key] = float(row[key]) if row.get(key) else None
         for key in ("task_accuracy", "belief_accuracy", "mean_budget"):
             row[key] = float(row[key])
     for row in coverage_rows:
@@ -741,11 +915,19 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--budget", type=int, default=None,
                         help="override every episode's budget_per_day "
                              "(default: the bank's own)")
+    parser.add_argument("--taus", default=",".join(f"{t:g}" for t in DEFAULT_TAUS),
+                        help="ResolvableMassSense thresholds; empty = none")
+    parser.add_argument("--resolvable-alphas", default="",
+                        help="alphas the resolvable variants run at "
+                             "(subset of --alphas; default all)")
+    parser.add_argument("--gammas", default=",".join(f"{g:g}" for g in DEFAULT_GAMMAS),
+                        help="ACI step sizes; empty = no ACI runs")
+    parser.add_argument("--aci-alpha", type=float, default=DEFAULT_ACI_ALPHA)
     parser.add_argument("--workers", type=int, default=8)
     parser.add_argument("-v", "--verbose", action="store_true")
     args = parser.parse_args(argv)
-    # Non-verbose runs hide the beliefs' per-object stale-exclusion warnings
-    # (a sensing sweep triggers thousands); -v shows them plus progress.
+    # Non-verbose runs hide per-object belief warnings; -v shows them plus
+    # progress.
     logging.basicConfig(level=logging.INFO if args.verbose else logging.ERROR,
                         format="%(asctime)s %(levelname)s %(message)s")
     if args.plots_only:
@@ -761,7 +943,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         split_seed=args.split_seed, calib_frac=args.calib_frac,
         alphas=_floats(args.alphas), age_edges_h=_floats(args.age_edges),
         beliefs=tuple(b.strip() for b in args.beliefs.split(",") if b.strip()),
-        min_bin_n=args.min_bin_n, workers=args.workers, budget=args.budget)
+        min_bin_n=args.min_bin_n, workers=args.workers, budget=args.budget,
+        taus=_floats(args.taus), gammas=_floats(args.gammas),
+        aci_alpha=args.aci_alpha,
+        resolvable_alphas=_floats(args.resolvable_alphas))
     rows = run_sweep(config)
     print(summary_table(rows))
     return 0
