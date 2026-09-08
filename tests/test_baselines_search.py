@@ -73,10 +73,10 @@ def test_unlimited_budget_search_is_exact(
 def test_negative_evidence_is_decisive(
         belief: str, tmp_path: pathlib.Path) -> None:
     # Every belief favors shelf_a for the wallet (its three sightings),
-    # but the wallet moved to shelf_c unseen. Without exclusions a search
-    # senses shelf_a, sees the wallet is absent, and still answers
-    # shelf_a — wrong at unlimited budget. With exclusions the miss rules
-    # shelf_a out and the sweep must find shelf_c within the remaining
+    # but the wallet moved to shelf_c unseen. Without negative evidence a
+    # search senses shelf_a, sees the wallet is absent, and still answers
+    # shelf_a — wrong at unlimited budget. The fresh empty look suppresses
+    # shelf_a fully and the sweep must find shelf_c within the remaining
     # three receptacles: <= 4 senses total, >= 2 (the first must miss).
     bank = write_negative_evidence_bank(tmp_path / "neg.jsonl")
     records = {r.question_id: r for r in _run_search(bank, belief)}

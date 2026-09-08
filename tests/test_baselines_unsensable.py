@@ -2,9 +2,10 @@
 
 The core property: with OUT_OF_HOUSE unsensable, "it's out" can only be
 inferred. Unlimited-budget SequentialSearch sweeps every sensable
-receptacle, misses everywhere, the exclusion redistribution concentrates
-all mass on the unsensable remainder, and the exhaustion branch answers
-it — so the solvability invariant survives with a single unsensable
+receptacle, misses everywhere, each fresh empty look suppresses its
+receptacle fully inside the belief, and the floor mass on the unsensable
+remainder is all that survives — so the belief's own argmax answers it
+and the solvability invariant survives with a single unsensable
 receptacle, while real budgets must pay the full sweep (or guess).
 """
 
@@ -70,7 +71,7 @@ def test_out_of_house_is_answered_by_elimination(
     records = {r.question_id: r for r in run_episode(agent, episode)}
     keys = records["q_keys"]
     # The full sensable sweep (3 receptacles), never a sense of OUT, then
-    # the exclusion-updated belief holds all mass on OUT and answers it.
+    # the belief holds all its surviving mass on OUT and answers it.
     assert keys.answer_receptacle == OUT and keys.correct
     assert keys.budget_spent == 3
     sensed = [a["receptacle_id"] for a in keys.actions if a["type"] == "sense"]

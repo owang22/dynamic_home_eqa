@@ -21,9 +21,11 @@ from baselines.types import DAY_SECONDS
 
 _H = 3600
 HH = pathlib.Path("profiles/revamp_v2/storyfirst/gpt-5.6-terra/hh4")
-pytestmark = pytest.mark.skipif(
+needs_household = pytest.mark.skipif(
     not (HH / "program.yaml").exists(),
     reason="storyfirst household not present")
+"""Tests that read the storyfirst hh4 realization; the hand-built visit
+bank tests below run everywhere."""
 
 
 @pytest.fixture(scope="module")
@@ -36,6 +38,7 @@ def household():
     return room_map, truth, n_days, awake, away
 
 
+@needs_household
 def test_room_map_partitions_receptacles(household):
     room_map, *_ = household
     spec = yaml.safe_load((HH / "program.yaml").read_text())
@@ -55,6 +58,7 @@ def test_room_map_requires_a_room_field(tmp_path):
         RoomMap.from_spec(spec)
 
 
+@needs_household
 def test_schedules_are_deterministic_and_seed_sensitive(household):
     room_map, truth, n_days, awake, _ = household
     a = round_robin_patrol(room_map, n_days, awake, 8, seed=0)
@@ -65,6 +69,7 @@ def test_schedules_are_deterministic_and_seed_sensitive(household):
         assert visits == sorted(visits, key=lambda v: v.t)
 
 
+@needs_household
 def test_round_robin_bounds_the_revisit_gap(household):
     """The point of a round robin: no room is starved. Every room is seen
     at least once per ceil(n_rooms / visits_per_day) days."""
@@ -81,6 +86,7 @@ def test_round_robin_bounds_the_revisit_gap(household):
         assert max(gaps) <= (cycle_days + 1) * DAY_SECONDS, room
 
 
+@needs_household
 def test_sweep_covers_every_room_twice_a_day(household):
     room_map, truth, n_days, awake, _ = household
     visits = morning_evening_sweep(room_map, n_days)
@@ -89,6 +95,7 @@ def test_sweep_covers_every_room_twice_a_day(household):
     assert {v.room for v in day0} == set(room_map.physical_rooms)
 
 
+@needs_household
 def test_stationed_observer_skews_evidence_toward_its_home(household):
     room_map, truth, n_days, awake, _ = household
     home = room_map.physical_rooms[0]
@@ -100,6 +107,7 @@ def test_stationed_observer_skews_evidence_toward_its_home(household):
     assert any(v.room != home for v in visits)      # excursions happen
 
 
+@needs_household
 def test_follow_the_person_tracks_one_resident(household):
     """Following must be a function of the followed resident alone —
     with several residents in the house, a schedule that merged all their
@@ -116,6 +124,7 @@ def test_follow_the_person_tracks_one_resident(household):
     assert [v.room for v in first] != [v.room for v in other]
 
 
+@needs_household
 def test_realize_never_invents_evidence(household):
     """Every emitted sighting is true at its instant, and nothing at
     OUT_OF_HOUSE is ever reported."""
@@ -132,6 +141,7 @@ def test_realize_never_invents_evidence(household):
         assert rec != "OUT_OF_HOUSE"
 
 
+@needs_household
 def test_realize_reports_every_object_present_in_the_visited_room(household):
     """The defining property of a room visit: it reveals the WHOLE room,
     so no object present in it at that instant may be missed."""
@@ -162,6 +172,7 @@ def test_realize_reports_every_object_present_in_the_visited_room(household):
                 assert truth_at(truth[o], visit.t) == receptacle
 
 
+@needs_household
 def test_room_visit_export_beats_glimpse_on_evidence(tmp_path, household):
     """The whole reason for the change: one visit yields many sightings,
     so a smaller event budget delivers far more evidence per object."""
@@ -180,6 +191,7 @@ def test_room_visit_export_beats_glimpse_on_evidence(tmp_path, household):
     assert len(seen_r) >= len(seen_g)
 
 
+@needs_household
 def test_unknown_patrol_is_refused(tmp_path):
     from baselines.export_bank import export
     with pytest.raises(ValueError, match="unknown patrol"):
@@ -214,8 +226,9 @@ def _write_visit_bank(path, visits_contents, truth_rows, objects,
 
 def test_room_visit_emptiness_is_exclusion_evidence(tmp_path):
     """An object last seen at shelf_a silently moves; a later visit finds
-    shelf_a empty. A positive-only diet keeps believing shelf_a; the visit
-    evidence must rule it out."""
+    shelf_a empty. The visit must be recorded as an empty look (the base
+    pipeline turns it into suppression), where a positive-only diet would
+    record nothing."""
     import random
     from baselines.registry import build_registered_belief
     truth = [
@@ -239,15 +252,19 @@ def test_room_visit_emptiness_is_exclusion_evidence(tmp_path):
         belief.update(obs)
     for event in episode.evidence_stream():
         belief.update(event)
+    assert belief.negative_observations("wallet", 10800) == {"shelf_a": 7200}
+    # and the look bites: shelf_a is below what an unlooked-at one-hot
+    # would hold, though an hour-old look does not move the argmax.
     prediction = belief.predict("wallet", 10800)
-    assert prediction.distribution.get("shelf_a", 0.0) == 0.0
-    assert prediction.argmax != "shelf_a"
+    assert prediction.distribution["shelf_a"] < 1 - belief.floor_mass
 
 
 def test_room_visits_let_passive_beliefs_infer_out_of_house(tmp_path):
     """The payoff case: visits that cover every sensable receptacle and
-    find the object nowhere must concentrate belief on OUT_OF_HOUSE —
-    an answer a positive-only passive diet can never reach."""
+    find the object nowhere push a passive LastObs to OUT_OF_HOUSE while
+    the looks are fresh (its floor mass is the only thing not
+    suppressed); the same looks aged well past the negative half-life do
+    not, and the belief returns to the last sighting."""
     import random
     from baselines.registry import build_registered_belief
     truth = [
@@ -272,8 +289,12 @@ def test_room_visits_let_passive_beliefs_infer_out_of_house(tmp_path):
         belief.update(obs)
     for event in episode.evidence_stream():
         belief.update(event)
-    prediction = belief.predict("keys", 9000)
-    assert prediction.argmax == "OUT_OF_HOUSE"
+    # Fresh: one minute after the last visit (the shelf_a look is six
+    # minutes old, factor ~0.003 against OUT's untouched floor share).
+    assert belief.predict("keys", 7560).argmax == "OUT_OF_HOUSE"
+    # Stale: three days later (24 h half-life) the looks have decayed and
+    # the last sighting wins back the argmax.
+    assert belief.predict("keys", 7560 + 3 * 86400).argmax == "shelf_a"
 
 
 def test_positive_half_still_flows_to_scripted_observations(tmp_path):
