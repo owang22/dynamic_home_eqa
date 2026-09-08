@@ -1,4 +1,4 @@
-"""Policy: sense until the conformal prediction set is a single receptacle.
+"""Policy: sense until the conformal prediction set is a single location.
 
 Per question the loop is:
 
@@ -7,22 +7,27 @@ Per question the loop is:
 2. Look up the calibrated quantile ``qhat`` for that age from a
    :class:`~baselines.conformal.calibration.QhatTable` — one global value,
    or the value of the question's age bin in age-binned mode.
-3. Form the prediction set ``{r : 1 - p(r) <= qhat}``. A singleton means
-   the calibrated belief is confident enough at the target coverage:
-   answer. Anything else (several plausible receptacles, or an empty set
-   when the belief is unusually spread out) means sense.
-4. Sense the highest-probability sensable receptacle not yet tried this
-   question (seeded tie-break). A miss becomes an exclusion inside the
-   belief and shrinks the set; a hit is a sighting at query time and the
-   next call answers.
+3. Form the prediction set ``{r : 1 - p(r) <= qhat}`` over every
+   location, from the belief as it stands now (it already reflects this
+   question's misses: an empty look at the query instant suppresses its
+   receptacle fully). A singleton means the calibrated belief is
+   confident enough at the target coverage: answer. ``{OUT_OF_HOUSE}`` is
+   just a singleton.
+4. Several members: sense the highest-probability sensable receptacle
+   not yet tried this question (seeded tie-break). A hit is a sighting
+   at query time and the next call answers. An EMPTY set (the belief is
+   too flat for the threshold) is maximal uncertainty: sense the
+   belief's argmax if budget remains and it is sensable and untried,
+   else answer.
 5. With no budget left, or every sensable receptacle tried, answer from
-   the current exclusion-updated belief.
+   the current belief.
 
 Termination: receptacles are never re-sensed within a question, so a
 question costs at most one sense per sensable receptacle — a belief that
-never concentrates (a uniform one) sweeps the house once and then answers.
-Unsensable receptacles (OUT_OF_HOUSE) are reached by elimination exactly
-as in :mod:`baselines.policies.sequential_search`.
+never concentrates (a uniform one) sweeps the house once and then
+answers. No elimination logic lives here; OUT_OF_HOUSE is answered when
+the belief's floor mass on it is what survives a sweep, exactly as in
+:mod:`baselines.policies.sequential_search`.
 
 All times are seconds since episode start.
 """
@@ -96,14 +101,22 @@ class ConformalSense(DecisionPolicy):
             return AnswerNow()          # found at query time: certain
         qhat = self._table.qhat_for(self._age_fn(question.object_id, t),
                                     self._binned)
-        if len(prediction_set(prediction.distribution, qhat,
-                              self._all_receptacles)) == 1:
+        members = prediction_set(prediction.distribution, qhat,
+                                 self._all_receptacles)
+        if len(members) == 1:
             return AnswerNow()          # calibrated-confident
         if budget_remaining <= 0:
-            return AnswerNow()          # forced: exclusion-updated belief
+            return AnswerNow()          # forced: answer the current belief
         untried = [r for r in self._receptacles if r not in self._tried]
         if not untried:
             return AnswerNow()          # searched everywhere
+        if not members:
+            # Too flat for the threshold: the one sense that can help is
+            # the belief's own best guess, if it can be looked at.
+            if prediction.argmax not in untried:
+                return AnswerNow()
+            self._tried.add(prediction.argmax)
+            return Sense(receptacle_id=prediction.argmax)
         choice = self._best_untried(prediction, untried)
         self._tried.add(choice)
         return Sense(receptacle_id=choice)

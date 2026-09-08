@@ -77,7 +77,7 @@ def test_sequential_search_stops_when_object_found() -> None:
     q = _question()
     # First decide: senses the top-probability receptacle.
     assert policy.decide(q, PRED, 5, 10 * H) == Sense("a")
-    # Miss: the exclusion-updated belief now ranks b; the search follows.
+    # Miss: the suppressed belief now ranks b; the search follows.
     empty = SenseResult(receptacle_id="a", t=10 * H, contents=())
     after_miss = Prediction(distribution={"a": 0.0, "b": 1.0}, argmax="b")
     assert policy.decide(q, after_miss, 4, 10 * H, empty) == Sense("b")

@@ -6,39 +6,35 @@ Per question the loop is:
 2. If the top receptacle's probability meets ``confidence_threshold``,
    answer. At the default threshold of 1.0 this early stop is deliberately
    restricted to certainty grounded at query time — a sense THIS question
-   that returned the object (see the guard notes below). Sub-1.0
-   thresholds instead trust the belief's stated confidence and answer
-   without confirmation; that is only sound for calibrated beliefs (the
-   basic one-hot recency belief claims probability 1.0 for arbitrarily old
-   sightings), so the panel and all defaults use 1.0.
+   that returned the object. Sub-1.0 thresholds instead trust the
+   belief's stated confidence and answer without confirmation; that is
+   only sound for calibrated beliefs (the basic one-hot recency belief
+   claims near-certainty for arbitrarily old sightings), so the panel and
+   all defaults use 1.0.
 3. Otherwise, if budget remains, sense the highest-probability receptacle
-   not yet tried this question. A miss becomes an exclusion inside the
-   belief (base-class negative evidence), so the next prediction naturally
-   ranks the next-best receptacle. A hit answers immediately.
-4. With no budget left (or every receptacle tried), answer from the
-   current exclusion-updated belief.
+   not yet tried this question. A miss is an empty look at the query
+   instant inside the belief (base pipeline, weight 1: full suppression),
+   so the next prediction naturally ranks the next-best receptacle. A hit
+   answers immediately.
+4. With no budget left (or every sensable receptacle tried), answer from
+   the current belief.
 
-Guards that make the unlimited-budget invariant hold (any bank whose
-queried objects are each inside some receptacle at query time scores task
-accuracy 1.0, with every belief model):
+There is no elimination logic here. An unsensable location (OUT_OF_HOUSE)
+is answered because the belief's floor mass on it survives when every
+sensable receptacle has been looked at empty this question: after a full
+sweep the belief's own argmax is the unsensable remainder. With a single
+unsensable receptacle this is exact, so the unlimited-budget invariant
+(any bank whose queried objects are each somewhere at query time scores
+task accuracy 1.0, with every belief model) holds without the policy
+naming anything.
 
-* The early stop never fires on a receptacle already sensed empty this
-  question — a belief can claim certainty about such a receptacle when
-  stale exclusions force its all-excluded fallback, and same-timestamp
-  evidence outranks any prediction.
-* The early stop at threshold 1.0 requires the queried object to have
-  been in this question's most recent sense result. Belief confidence of
-  1.0 alone is not proof: one-hot beliefs emit it for stale sightings,
-  and exclusion renormalization can concentrate mass on a receptacle
-  nobody has looked at.
-* Receptacles are never re-sensed within a question (tried set), so the
-  search visits each at most once and must reach the object's receptacle.
-* Only SENSABLE receptacles are ever targeted. An unsensable location
-  (e.g. OUT_OF_HOUSE) is answered by elimination: after every sensable
-  receptacle has been tried and missed, the exclusion-updated belief
-  holds all its mass on the unsensable remainder and the exhaustion
-  branch answers from it. With a single unsensable receptacle this is
-  exact, so the unlimited-budget invariant still holds.
+The tried set is cheap insurance against re-sensing and bounds the loop
+(each receptacle at most once per question); in principle it is
+redundant, because a within-question empty look is fresh, its factor is
+0, and the argmax has already moved off that receptacle. The one guard
+that remains is the found-this-question early stop: a hit at the query
+instant is ground truth, and the belief's one-hot override at that
+instant agrees with it.
 
 Tie-breaking among equal-probability untried receptacles uses the seeded
 generator supplied at construction — no unseeded randomness. All times
@@ -72,10 +68,8 @@ class SequentialSearch(DecisionPolicy):
         self._tried: Set[str] = set()
 
     def reset(self, context: EpisodeContext) -> None:
-        # Only sensable receptacles are searchable; unsensable ones (e.g.
-        # OUT_OF_HOUSE) are reached by elimination — sweep every sensable
-        # receptacle, miss everywhere, and the belief's exclusion
-        # redistribution concentrates the remaining mass on them.
+        # Only sensable receptacles are searchable; an unsensable one
+        # (OUT_OF_HOUSE) is answered when the belief's mass ends up there.
         self._receptacles = context.sensable_receptacle_ids
         self._question_id = None
         self._tried = set()
@@ -91,7 +85,7 @@ class SequentialSearch(DecisionPolicy):
         if self._answer_early(prediction):
             return AnswerNow()
         if budget_remaining <= 0:
-            return AnswerNow()          # forced: exclusion-updated belief
+            return AnswerNow()          # forced: answer the current belief
         untried = [r for r in self._receptacles if r not in self._tried]
         if not untried:
             return AnswerNow()          # searched everywhere
@@ -100,7 +94,7 @@ class SequentialSearch(DecisionPolicy):
         return Sense(receptacle_id=choice)
 
     def _answer_early(self, prediction: Prediction) -> bool:
-        """Confidence early stop; never on a receptacle sensed empty this
+        """Confidence early stop; never on a receptacle sensed this
         question, and never at the certainty-only default threshold (the
         found-check in ``decide`` is the sole 1.0-grounded stop)."""
         if self._threshold > 1.0 - PROBABILITY_TOLERANCE:

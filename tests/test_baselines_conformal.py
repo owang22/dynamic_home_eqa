@@ -24,7 +24,7 @@ from baselines.policies.conformal_sense import (ConformalSense,
                                                 belief_age_fn)
 from baselines.policies.never_sense import NeverSense
 from baselines.types import (AnswerNow, EpisodeContext, Observation,
-                             Prediction, Question, Sense)
+                             Prediction, Question, Sense, SenseResult)
 
 H = 3600
 TEN_SCORES = [0.05, 0.15, 0.25, 0.35, 0.45, 0.55, 0.65, 0.75, 0.85, 0.95]
@@ -123,21 +123,35 @@ def test_policy_answers_on_singleton_set_and_on_found() -> None:
     belief.reset(context)
     belief.update(Observation(object_id="o", object_class="mug",
                               receptacle_id="a", t=0, source="initial_tour"))
-    policy = ConformalSense(random.Random(1), _table(qhat=0.0),
+    policy = ConformalSense(random.Random(1), _table(qhat=0.05),
                             belief_age_fn(belief), binned=False)
     policy.reset(context)
     q = Question(question_id="q0", object_id="o", t_query=5 * H, day_index=0)
-    # One-hot on a, qhat 0 -> singleton set -> answer without sensing.
+    # 0.99 on a (one-hot through the floor), qhat 0.05 -> singleton set
+    # -> answer without sensing.
     assert isinstance(policy.decide(q, belief.predict("o", q.t_query), 2,
                                     q.t_query), AnswerNow)
     assert policy.name == "ConformalSense(alpha=0.1,global)"
-    # A one-hot belief carries a single key; with the vacuous qhat = 1 the
-    # set spans every receptacle (the omitted ones at p = 0), so it senses.
+    # With the vacuous qhat = 1 the set spans every receptacle (the floor
+    # puts mass on each), so it senses.
     vacuous = ConformalSense(random.Random(1), _table(qhat=1.0),
                              belief_age_fn(belief), binned=False)
     vacuous.reset(context)
     assert isinstance(vacuous.decide(q, belief.predict("o", q.t_query), 2,
                                      q.t_query), Sense)
+    # An EMPTY set (qhat below every nonconformity) senses the belief's
+    # argmax while it is sensable and untried, then answers.
+    flat = ConformalSense(random.Random(1), _table(qhat=0.0),
+                          belief_age_fn(belief), binned=False)
+    flat.reset(context)
+    first = flat.decide(q, belief.predict("o", q.t_query), 2, q.t_query)
+    assert first == Sense("a")
+    empty = SenseResult(receptacle_id="a", t=q.t_query, contents=())
+    belief.update(empty)
+    # a is now fully suppressed: b holds probability 1, the set {b} is a
+    # singleton and the policy answers.
+    assert isinstance(flat.decide(q, belief.predict("o", q.t_query), 1,
+                                  q.t_query, empty), AnswerNow)
 
 
 def test_policy_runs_through_harness(tmp_path: pathlib.Path) -> None:
