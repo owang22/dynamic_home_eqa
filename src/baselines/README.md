@@ -5,6 +5,14 @@ health run over every realized household), `passive_eval.py` (the
 horizon-controlled passive protocol), `bakeoff.py` (candidate belief
 bake-off), `registry.py` (belief registry with `frozen|candidate`
 panel tags).
+Representative-grid studies (shared runner `representative_grid.py`):
+`oracle_posterior_study.py` (OracleBelief, `beliefs/oracle_program_posterior.py`:
+the routine oracle's realization ensemble weighted by the observation
+history, with its ESS degeneracy gate), `voi_study.py`
+(value-of-information policies, `policies/voi_sense.py`) and
+`delayed_label_study.py` (mined delayed labels for adaptive conformal
+feedback, `conformal/delayed_labels.py`). Outputs under `results/`;
+findings and deviations in `STATUS.md`.
 
 Agents hold a memory of timestamped object sightings and answer
 object-localization questions ("where is mug_2 right now?") under a

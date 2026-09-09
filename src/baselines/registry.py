@@ -16,6 +16,7 @@ without further wiring.
 from __future__ import annotations
 
 import dataclasses
+import pathlib
 import random
 from typing import Any, Callable, Dict, Mapping, Tuple
 
@@ -29,6 +30,9 @@ from baselines.beliefs.llm_belief import (LLMBelief, LLMBeliefConfig,
                                           PromptCache)
 from baselines.beliefs.markov1 import Markov1, Markov1Config
 from baselines.beliefs.most_frequent import MostFrequentLocation
+from baselines.beliefs.oracle_program_posterior import (
+    DEFAULT_EPS, DEFAULT_REALIZATION_CACHE, OracleProgramPosterior,
+    default_loader)
 from baselines.beliefs.periodic_persistence import (PeriodicPersistence,
                                                     PeriodicPersistenceConfig)
 from baselines.beliefs.perpetua_belief import (PerpetuaBelief,
@@ -206,6 +210,29 @@ def _build_perpetua_star(spec: Dict[str, Any],
     return PerpetuaStarBelief(rng, cfg, **_base_kwargs(spec))
 
 
+def _build_oracle_program_posterior(spec: Dict[str, Any],
+                                    rng: random.Random) -> BeliefModel:
+    """The routine oracle's realization ensemble weighted by the
+    observation history (display name ``OracleBelief``). ``n_seeds``
+    defaults to the routine oracle's count; ``cache_dir`` (None disables)
+    and ``household_dir`` point the loader elsewhere; a driver may pass a
+    built ``ensemble`` instead."""
+    from baselines.routine_oracle import DEFAULT_ORACLE_SEEDS
+    ensemble = spec.get("ensemble")
+    if ensemble is None:
+        cache = spec.get("cache_dir", "default")
+        ensemble = default_loader(
+            n_seeds=int(spec.get("n_seeds", DEFAULT_ORACLE_SEEDS)),
+            cache_dir=(None if cache is None else
+                       pathlib.Path(cache) if cache != "default"
+                       else DEFAULT_REALIZATION_CACHE),
+            household_dir=(pathlib.Path(spec["household_dir"])
+                           if spec.get("household_dir") else None))
+    return OracleProgramPosterior(rng, ensemble,
+                                  eps=float(spec.get("eps", DEFAULT_EPS)),
+                                  **_base_kwargs(spec))
+
+
 BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
     entry.name: entry for entry in (
         BeliefEntry("last_observation", "frozen", _build_last_observation),
@@ -222,6 +249,8 @@ BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
         BeliefEntry("perpetua", "candidate", _build_perpetua),
         BeliefEntry("perpetua_star", "candidate", _build_perpetua_star),
         BeliefEntry("llm", "candidate", _build_llm),
+        BeliefEntry("oracle_program_posterior", "candidate",
+                    _build_oracle_program_posterior),
     )
 }
 """All buildable belief models, keyed by config name."""

@@ -1,5 +1,59 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-09-08, later: OracleBelief stopped at the ESS gate; value-of-information policies; delayed-label conformal feedback)
+
+Three parts of one brief, committed separately in order. Shared
+machinery: `representative_grid.py` (the representative grid every part
+runs: beliefs LastObservation, PeriodicPersistence, PerpetuaStar,
+LLMBelief, OracleBelief; policies NeverSense, SequentialSearch plus the
+part's own; budgets 24 and 90; the 20 fleet banks and the
+calibration/test split of `results/conformal_sweep_v2/`, re-derived and
+checked against its `calibration.json`; per-day accuracy written for
+every cell). LLMBelief cells are skipped in every part: the only
+completions that exist (`reports/baselines/llm_floor/`) cover a
+stratified sample of the passive questions, so a passive replay already
+leaves most queried predictions unanswered and any sensing changes the
+prompts further; each part's findings carry the measured unanswered
+fraction.
+
+**Part A — OracleProgramPosterior (`beliefs/oracle_program_posterior.py`,
+registry `oracle_program_posterior`, display name OracleBelief).** The
+routine oracle's 800 re-realizations (seeds 1001-1800; seed 0, the
+bank's world, never included) kept alive for the episode as a
+minute-resolution location grid per object (change points from the
+same truth loader the bank export uses; cached under
+`banks/baselines/oracle_realizations/`, regenerable, ~30 s per
+household), each realization log-weighted by consistency with every
+observation (positive sighting or empty look: log(1) on agreement,
+log(0.05) on disagreement, incremental, never a hard filter);
+`predict` is the weighted location distribution; opts out of the base
+negative-evidence step; floor mix and the query-instant sighting
+short-circuit as for every model; `effective_sample_size()` and
+`last_prediction_diagnostics()["ess"]` expose the degeneracy
+diagnostic. Driver `oracle_posterior_study.py` (stages realize,
+ess_gate, grid, report). **The ESS gate stopped the study**: under the
+passive diet the fleet median ESS is 1.00 on every bank (maximum 3.41
+over 45 000 questions), so the grid was not run, per the brief. A
+diagnostic run explains it (`results/oracle_program_posterior/findings.md`):
+the seed-0 control realization agrees with every observation on 18 of
+20 banks (11-12 disagreements on hh_004/hh_005), so matching is right;
+but the BEST of 800 realizations disagrees with 480-846 of the 18-47
+thousand object-level observations per bank and the second-best is
+1-15 disagreements behind, each worth a factor 0.05 — ESS 1 by
+arithmetic. No eps gives a middle ground on whole-episode
+realizations; windowed matching or re-realizing from the observed state
+are the candidate fixes, and that choice is the owner's. Parts B and C
+run their grids without OracleBelief and say so.
+
+Deviations (Part A): (1) "routine_oracle's default seed count, excluding
+seed 0" is satisfied by construction — the routine oracle's seed range
+starts at 1001 (per-bank offset as `llm_floor`/`household_analysis`);
+no seed was removed. (2) The per-question ESS is read after the
+question resolves (post-sense for sensing policies) and, for the gate,
+under NeverSense, where the two coincide. (3) The realization cache
+lives under the gitignored `banks/` tree rather than in the results
+directory, because it is 5 MB per household and regenerable.
+
 ## Update (2026-09-08: the exclusion veto is gone; negative evidence is a soft, decaying observation over the full location space)
 
 Owner decision, implemented in `beliefs/base.py` and documented at the
