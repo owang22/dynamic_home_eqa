@@ -16,6 +16,66 @@ leaves most queried predictions unanswered and any sensing changes the
 prompts further; each part's findings carry the measured unanswered
 fraction.
 
+**Part B — value-of-information policies (`policies/voi_sense.py`,
+driver `voi_study.py`, results `results/voi_policies/`).** At a decision
+point the value of answering now is `max(p)`; sensing a sensable untried
+receptacle r is worth `p(r) + (1 - p(r)) * max(p') - max(p)`, where p'
+is p with r zeroed and renormalised (a fresh empty look suppresses fully
+in the base pipeline). Exact one-step lookahead, arithmetic on the
+belief's own distribution, no cloning and no mutation; the greedy form
+of the classical search-and-stop rule (Ross 1969; Weitzman 1979), valid
+because senses within a question are at the query instant.
+`VoIThresholdSense` senses the argmax-voi receptacle while max voi >=
+lambda; `VoIBudgetPriceSense` moves lambda by
+`gamma * (spend_rate - budget_rate)` after each question, clipped to
+[0.001, 0.5]. Run at lambda in {0.01, 0.02, 0.05, 0.1, 0.2, 0.3} under
+the caps and with the cap removed (the price-based frontier), gamma in
+{0.01, 0.05, 0.1}, against ResolvableMassSense and conformal-global at
+the v2 sweep's best configuration per (belief, budget). The refit global
+quantiles reproduce the v2 sweep's stored values exactly on every shared
+(belief, alpha), which pins the two studies to the same calibration.
+
+*Headline.* Each cell is 22 500 questions (95% Wilson interval about
++/-0.006), so the read-out uses a 0.01 resolution. VoI is AHEAD in one
+cell: PerpetuaStar at 90/day, VoIThresholdSense(lambda=0.05) 0.719 at
+0.84 senses/q against the resolvable-mass gate's 0.681 at 0.99 (+0.038,
+and cheaper). It is BEHIND in two: LastObservation at 90/day 0.705 vs
+0.806 (-0.100) and PeriodicPersistence at 90/day 0.776 vs 0.853
+(-0.076). The other three cells are within noise (all |delta| <= 0.009).
+The mechanism is visible in `budget_reallocation.png`: the two classical
+beliefs are 0.95+ confident on 73-93% of questions, so one-step voi is
+below every lambda there and the policy under-spends on exactly the
+stale-but-confident questions the conformal gate catches. VoI is only as
+good as the calibration of the belief it reads, and it wins on the one
+graded belief in the panel.
+
+*Reallocation (question 2) held.* VoIBudgetPriceSense spends 9-39 times
+more on the least-confident bin than on the most-confident one, against
+4-15 for SequentialSearch, and accuracy in the hard bins rises with it
+(LastObservation at 90/day: 0.64 -> 0.72 in [0, 0.5), 0.49 -> 0.76 in
+[0.5, 0.8)). It tracks any cap without tuning (0.25-0.26 senses/q
+against a 0.27 allowance, 0.81-0.99 against 1.00). Gamma made no
+difference anywhere (0.01/0.05/0.1 within 0.002), so this run says
+nothing about the right adaptation speed. Question 3 (does VoI reach the
+oracle ceiling with fewer senses) is unanswerable: OracleBelief is not
+in the grid, per Part A's gate.
+
+*Soft-budget arm.* With the cap removed the frontier keeps climbing:
+PeriodicPersistence reaches 0.929 at 2.56 senses/q (lambda 0.01) and
+0.872 at 1.36 (lambda 0.02), both far above anything the capped runs
+reach. The ceiling is high and the price rule finds it; the caps, not
+the rule, are what bind at 24 and 90.
+
+Deviations (Part B): (1) the reference sweep never ran PerpetuaStar, so
+its comparators use the configuration most v2 beliefs preferred at that
+budget ("consensus" in `comparators.json` and in the findings tables);
+its +0.038 is against those settings, not against a gate tuned for it.
+(2) The soft-budget arm runs the threshold policy only: the price
+controller needs a budget to track, and with the cap removed there is
+none. (3) `frontier.png` carries Wilson intervals and the cap-removed
+frontier in one figure per (belief, budget) rather than the v2 sweep's
+one-panel-per-belief layout, and `budget_reallocation.png` is new.
+
 **Part A — OracleProgramPosterior (`beliefs/oracle_program_posterior.py`,
 registry `oracle_program_posterior`, display name OracleBelief).** The
 routine oracle's 800 re-realizations (seeds 1001-1800; seed 0, the

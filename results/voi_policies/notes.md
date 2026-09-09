@@ -1,0 +1,2 @@
+- LLMBelief cells skipped: the cached completions leave 49%-58% of a passive replay's queried predictions unanswered per test household, and sensing changes the prompts further; every cell would need new LLM calls.
+- OracleBelief cells not run: the oracle-posterior study stopped at its ESS gate (fleet median ESS 1.00; `results/oracle_program_posterior/`).

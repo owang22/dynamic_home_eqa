@@ -1,0 +1,75 @@
+{
+  "generated": "2026-09-08T20:33:40",
+  "git_commit": "eb731bcd37d2209f91c6f7392aae385549f123b6",
+  "git_dirty": true,
+  "reference_sweep": "results/conformal_sweep_v2",
+  "banks": [
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_001_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_002_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_003_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_004_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_005_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_006_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_007_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_008_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_009_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_010_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_011_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_012_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_013_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_014_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_015_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_016_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_017_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_018_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_019_bank.jsonl",
+    "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_020_bank.jsonl"
+  ],
+  "split": {
+    "hh_001": "test",
+    "hh_002": "test",
+    "hh_003": "calibration",
+    "hh_004": "test",
+    "hh_005": "test",
+    "hh_006": "test",
+    "hh_007": "calibration",
+    "hh_008": "test",
+    "hh_009": "calibration",
+    "hh_010": "test",
+    "hh_011": "calibration",
+    "hh_012": "calibration",
+    "hh_013": "test",
+    "hh_014": "calibration",
+    "hh_015": "test",
+    "hh_016": "calibration",
+    "hh_017": "calibration",
+    "hh_018": "test",
+    "hh_019": "calibration",
+    "hh_020": "calibration"
+  },
+  "seed": 0,
+  "beliefs": [
+    "LastObservation",
+    "PeriodicPersistence",
+    "PerpetuaStar"
+  ],
+  "lambdas": [
+    0.01,
+    0.02,
+    0.05,
+    0.1,
+    0.2,
+    0.3
+  ],
+  "gammas": [
+    0.01,
+    0.05,
+    0.1
+  ],
+  "lambda0": 0.05,
+  "questions_per_day": 90,
+  "notes": [
+    "LLMBelief cells skipped: the cached completions leave 49%-58% of a passive replay's queried predictions unanswered per test household, and sensing changes the prompts further; every cell would need new LLM calls.",
+    "OracleBelief cells not run: the oracle-posterior study stopped at its ESS gate (fleet median ESS 1.00; `results/oracle_program_posterior/`)."
+  ]
+}
