@@ -1,0 +1,263 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "family_with_kids",
+  "seed": 10,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "sarah_laptop": "laptop_a031287e7b68",
+    "david_laptop": "laptop_a031287e7b68",
+    "emma_laptop": "laptop_a031287e7b68",
+    "sarah_phone": "phone_223b376823b5",
+    "sarah_wallet": "wallet_4eb66e5c0b4f",
+    "sarah_keys": "keys_92167e12a3f0",
+    "sarah_sunglasses": "sunglasses_1145d066f664",
+    "david_phone": "phone_7f658554a385",
+    "david_wallet": "wallet_4e2567974149",
+    "david_keys": "keys_aaccd2b9848d",
+    "emma_phone": "phone_708c7214aa7f",
+    "emma_headphones": "headphones_8a0c9d1a4da7",
+    "emma_backpack": "backpack_f129ca7ee93d",
+    "leo_backpack": "backpack_390164707739"
+  },
+  "day_context": {
+    "Sarah": {
+      "day_type": "weekday",
+      "day_scenario": "Sarah wakes at 6:30 AM to review project timelines before heading to the office, then returns home to finalize deliverables on her laptop at the dining table. She completes her nightly administrative routine and powers down by 10:30 PM."
+    },
+    "David": {
+      "day_type": "weekday",
+      "day_scenario": "David leaves for his IT support job at 7:00 AM and returns late to remotely troubleshoot an urgent ticket at the kitchen counter. He leaves his work shoes by the front door instead of the rack, then runs a final system check until his 11:00 PM bedtime."
+    },
+    "Emma": {
+      "day_type": "weekday",
+      "day_scenario": "Emma listens to a history podcast while getting ready at 7:30 AM, then heads to school for her junior classes before afternoon varsity soccer practice. She returns home to drop her muddy cleats in the hallway, finishes her coursework, and relaxes until her 11:30 PM sleep time."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "Leo spends his morning stacking wooden blocks in the living room, happily scattering them across the rug once he finishes building his tallest tower. His parents help him sort the scattered pieces and tuck his favorite books onto the low shelf before he settles in for his 8:00 PM bedtime."
+    }
+  },
+  "changes": [
+    {
+      "t": 6.872,
+      "label": "jewelry_box_1",
+      "change_type": "move_existing",
+      "object_category": "jewelry_box",
+      "from_semantic": "bedroom_1.chest_of_drawers_2",
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "inside",
+      "mover": "Sarah",
+      "activity": "waking_up_and_grooming",
+      "reason": "The jewelry box is currently on the chest of drawers; she may pick it up to check for earrings or a watch before leaving the bedroom.",
+      "object_handle": null
+    },
+    {
+      "t": 7.268,
+      "label": "sarah_laptop",
+      "change_type": "insert_new",
+      "object_category": "laptop",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Sarah",
+      "activity": "breakfast",
+      "reason": "Sarah often leaves her laptop on the dining table after evening planning, but since it is currently 'put away', she is likely retrieving it to check emails or work briefly during breakfast. The laptop is brought out and placed on the table.",
+      "object_handle": null
+    },
+    {
+      "t": 7.275,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Sarah",
+      "activity": "breakfast",
+      "reason": "Stools tucked under the counter are pulled out to provide seating for the breakfast activity at the counter or nearby. Stool_1 is moved next to the counter to allow Sarah to sit while eating.",
+      "object_handle": null
+    },
+    {
+      "t": 7.277,
+      "label": "bowl_3",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Sarah",
+      "activity": "breakfast",
+      "reason": "Sarah is starting her morning meal and will need a place to put her food, so she moves the available bowl from the counter to the dining table. The bowl is then placed on the table surface to be used for eating.",
+      "object_handle": null
+    },
+    {
+      "t": 7.502,
+      "label": "david_laptop",
+      "change_type": "insert_new",
+      "object_category": "laptop",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "David",
+      "activity": "breakfast",
+      "reason": "Since David is eating breakfast, he may want to bring his laptop to check emails or work briefly before starting his day, as he often brings work home.",
+      "object_handle": null
+    },
+    {
+      "t": 8.636,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "living_room.couch_1",
+      "to_semantic": "living_room.couch_2",
+      "target_relationship": "near",
+      "mover": "Leo",
+      "activity": "playing",
+      "reason": "Leo is playing and loves building blocks, so he likely grabs the available toys from their current scattered locations to bring them into his play area. He moves toy_2 from the table to the floor near the couch where he is sitting to continue his block building.",
+      "object_handle": null
+    },
+    {
+      "t": 8.994,
+      "label": "emma_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "bedroom_2.bed_1",
+      "target_relationship": "on",
+      "mover": "Emma",
+      "activity": "getting_dressed",
+      "reason": "Her phone is also put away. She might take it out to check messages or use it as part of her morning routine while getting dressed.",
+      "object_handle": null
+    },
+    {
+      "t": 9.186,
+      "label": "toy_3",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "living_room.couch_2",
+      "target_relationship": "near",
+      "mover": "Leo",
+      "activity": "playing",
+      "reason": "As a toddler who scatters toys, Leo may also bring toy_1 from the other couch into the active play zone to have multiple blocks available.",
+      "object_handle": null
+    },
+    {
+      "t": 11.125,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "living_room.couch_2",
+      "target_relationship": "on_top",
+      "mover": "Leo",
+      "activity": "reading",
+      "reason": "Leo is a toddler who needs help putting away books, and he is now starting a reading activity which likely involves clearing his current space or bringing a book to a comfortable spot. He will move the book from the table to the couch where he can sit and read comfortably.",
+      "object_handle": null
+    },
+    {
+      "t": 14.637,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "living_room.couch_2",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "next_to",
+      "mover": "Leo",
+      "activity": "playing",
+      "reason": "Toys are often moved closer to where the child is sitting or playing to facilitate building. He moves a toy that was near the couch to the floor area next to his new chair position.",
+      "object_handle": null
+    },
+    {
+      "t": 16.219,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.couch_2",
+      "target_relationship": "next_to",
+      "mover": "Leo",
+      "activity": "playing",
+      "reason": "Leo loves building blocks and scatters toys, so he will likely pull out a chair from the table to use as a seat or base for his play area. He moves one of the currently tucked-in chairs to sit next to the open space on the floor.",
+      "object_handle": null
+    },
+    {
+      "t": 16.866,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "living_room.couch_2",
+      "target_relationship": "inside",
+      "mover": "Leo",
+      "activity": "cleaning",
+      "reason": "Leo is tidying up the living room after playtime, so he should put the toy scattered near the table back into storage to clear the floor. The wardrobe is the appropriate storage furniture for toys in this context.",
+      "object_handle": null
+    },
+    {
+      "t": 18.642,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "kitchen.counter_1.tucked",
+      "target_relationship": "tucked_under",
+      "mover": "David",
+      "activity": "tidy_kitchen",
+      "reason": "The stool next to the counter is currently pulled out; tidying involves pushing it back under the counter to clear the floor space.",
+      "object_handle": null
+    },
+    {
+      "t": 18.935,
+      "label": "bowl_4",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "inside",
+      "mover": "David",
+      "activity": "tidy_kitchen",
+      "reason": "The bowl on the counter needs to be put away to tidy the surface. He will place it inside a cabinet or dishwasher.",
+      "object_handle": null
+    },
+    {
+      "t": 21.315,
+      "label": "nightlight_1",
+      "change_type": "move_existing",
+      "object_category": "nightlight",
+      "from_semantic": "bedroom_1.chest_of_drawers_1",
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "inside",
+      "mover": "Sarah",
+      "activity": "bedtime_routine",
+      "reason": "As part of her bedtime routine, Sarah will likely tidy up personal items she currently has out in the bedroom to ensure a clean sleep environment. The nightlight_1 is currently on the chest of drawers and should be put away or stored to conserve energy or simply for tidiness before sleep.",
+      "object_handle": null
+    },
+    {
+      "t": 23.379,
+      "label": "pillow_1",
+      "change_type": "move_existing",
+      "object_category": "pillow",
+      "from_semantic": "bedroom_1.bed_1",
+      "to_semantic": "bedroom_2.bed_1",
+      "target_relationship": "on",
+      "mover": "Emma",
+      "activity": "winding_down",
+      "reason": "Emma is in bedroom 2 for bedtime. The nightlight is currently inside bedroom 1 bed_1 (likely stored or misplaced). For winding down in her own room, she might place a light source nearby if one is available, but the only listed nightlight is in room 1. However, she might move a pillow to make her bed more comfortable for sleep. Pillow_1 is listed as 'out in this room' but currently on bedroom_1,em",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 1,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 3,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

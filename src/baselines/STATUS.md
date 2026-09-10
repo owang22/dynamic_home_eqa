@@ -1,5 +1,78 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-09-09: STAR-style indexed memory + LLM decision loop — code landed, runs pending banks)
+
+An exploration per the STAR brief (Chen et al., arXiv:2511.14004): does
+an LLM reasoning over retrieved memory beat a script that mimics it?
+New files only — `memory/indexed_observation_log.py` (exact-match
+spatial/semantic/temporal record store over the agent's own stream),
+`memory/recall_tools.py` (the three free recall actions as ~15-line
+prompt blocks), `policies/star_memory_loop.py` (one loop, pluggable
+selector: `ScriptedRecallThenVerify` control and `QwenSelector`),
+`memory/serving.py` (served-vLLM HTTP glue + full-request-hash prompt
+cache), `star_study.py` (subset/offline/llm/report stages, outputs
+`results/star_memory_loop/`), `tests/test_baselines_star_memory.py`
+(19 tests). Registry entry: `star_memory_loop` in `cli.build_policy`
+(scripted selector only; the LLM selector needs a served endpoint and
+is wired by the study driver). All new files `mypy --strict` clean.
+
+Deviations and design decisions:
+
+1. **Study-local runner, not the harness.** Two harness contracts make
+   the STAR arms impossible under `run_episode` as-is: policies never
+   receive the ambient observation stream (only beliefs do), and the
+   final `Answer` is always assembled from the standing prediction's
+   argmax, so a policy cannot commit a location of its own. Editing the
+   harness is out of scope for this brief, so `star_study.run_star_episode`
+   mirrors it exactly (delivery order, per-day budget accounting,
+   forced-answer flag, unsensable check, exact-match scoring) plus the
+   two additions: every piece of evidence also feeds the policy's
+   memory index, and the selector's `answer_override` is committed when
+   present. Baseline arms run through the real harness unchanged.
+2. **Sampled questions, full-episode replay.** Every arm replays FULL
+   episodes (identical diet, real shared budget); records are kept for
+   the 400 sampled questions only. In the LLM cells the LLM selector
+   engages only on sampled questions; elsewhere the scripted control
+   acts (and spends) in its place, so a sampled question sees a
+   realistic budget state without ~22k LLM calls per cell. The two STAR
+   arms therefore face identical non-sampled spending by construction.
+3. **Subset stratification uses ground truth.** Regime labels
+   (`stale_in_house`/`came_back`/`truly_out`) come from
+   `exclusion_migration_replay.question_facts`, which reads truth.
+   Legitimate: the sampler is evaluation design, not an agent. 400 =
+   200 per budget x ~67 per regime; ids in
+   `results/star_memory_loop/subset.json`. Household split read from
+   `results/voi_policies/provenance.json` and cross-checked against the
+   re-derived reference split (drift is a hard error).
+4. **Found-at-query-instant auto-answers.** In both STAR arms a sense
+   that returns the queried object ends the question (a hit at the
+   query instant is ground truth; the belief one-hots on it anyway).
+   Saves one LLM call per hit and keeps the two selectors comparable.
+5. **`answered_from_memory` accounting.** A selector `AnswerCall` that
+   merely copies the fallback argmax (`from_fallback=True`) is NOT
+   counted as answering from memory; only genuine memory-grounded
+   answers with zero senses are.
+6. **mypy**: `requests` added to the existing untyped-third-party
+   override block in `pyproject.toml` (`memory/serving.py` imports it
+   for the provenance probe). Package-wide `--strict` is NOT currently
+   clean (pre-existing drift in `household_report.py`,
+   `household_analysis.py`, `multiseed_report.py`, `perpetua_filters.py`
+   — untouched here); the brief's requirement is enforced per new file.
+7. **Banks**: `banks/baselines/fleet/` was absent on this machine
+   (gitignored). Regeneration was prepared but the owner is supplying
+   the generated banks instead; the hash check against
+   `reports/baselines/fleet/fleet_summary.json` (`bank_manifest_hash`
+   per bank) decides comparability before any run. Note the committed
+   fleet summary already flags every bank (`not_impossible` at the
+   24-budget default everywhere, plus `stationarity`/`not_trivial` on
+   hh_003/011/013/014/016); those flags predate this study and did not
+   stop the VoI runs, so they are treated as data-source properties,
+   not stop conditions — the hash match is the gate.
+
+Runs pending: subset -> offline arms -> LLM arm (served model; default
+flag `Qwen/Qwen3.8-27B` per `llm_generate.py`, actual serving model on
+this box to be recorded in `llm_run.json`) -> findings.
+
 ## Update (2026-09-08, later: OracleBelief stopped at the ESS gate; value-of-information policies; delayed-label conformal feedback)
 
 Three parts of one brief, committed separately in order. Shared

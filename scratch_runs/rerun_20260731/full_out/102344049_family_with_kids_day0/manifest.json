@@ -1,0 +1,185 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "family_with_kids",
+  "seed": 1,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "sarah_laptop": "laptop_a031287e7b68",
+    "david_laptop": "laptop_a031287e7b68",
+    "emma_laptop": "laptop_a031287e7b68",
+    "sarah_phone": "phone_223b376823b5",
+    "sarah_wallet": "wallet_4eb66e5c0b4f",
+    "sarah_keys": "keys_92167e12a3f0",
+    "sarah_sunglasses": "sunglasses_1145d066f664",
+    "david_phone": "phone_7f658554a385",
+    "david_wallet": "wallet_4e2567974149",
+    "david_keys": "keys_aaccd2b9848d",
+    "emma_phone": "phone_708c7214aa7f",
+    "emma_headphones": "headphones_8a0c9d1a4da7",
+    "emma_backpack": "backpack_f129ca7ee93d",
+    "leo_backpack": "backpack_390164707739"
+  },
+  "day_context": {
+    "Sarah": {
+      "day_type": "weekday",
+      "day_scenario": "Waking at 6:30 AM, Sarah reviews her project timelines over a quick cup of coffee in the kitchen before heading to the office. She returns home this evening to finalize the quarterly report at the dining table, leaving her laptop open overnight as she heads to bed at 10:30 PM."
+    },
+    "David": {
+      "day_type": "weekday",
+      "day_scenario": "David wakes at 7:00 AM and heads to his IT support office, but an urgent server ticket forces him to stay logged in and resolve the issue remotely from his home desk late into the evening. After finishing the system checks, he kicks off his shoes and leaves them by the front door before finally resting at 11:00 PM."
+    },
+    "Emma": {
+      "day_type": "weekday",
+      "day_scenario": "After tuning into a podcast while brushing her teeth at 7:30 AM, Emma heads to high school for her morning classes and returns later for varsity soccer practice. She tosses her cleats and water bottle into the hallway pile before settling in for homework and sleep at 11:30 PM."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "Leo spends his morning stacking colorful building blocks in the living room, happily scattering them across the rug when playtime ends. Sarah helps him sort the wooden pieces into the toy bin and tucks his picture books away on the low shelf before he is asleep by 8:00 PM."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.355,
+      "label": "bowl_3",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Sarah",
+      "activity": "breakfast",
+      "reason": "Sarah is starting breakfast in the kitchen and needs a clean bowl for her food, avoiding the used bowl already on the counter.",
+      "object_handle": null
+    },
+    {
+      "t": 7.356,
+      "label": "bowl_4",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "breakfast",
+      "reason": "Leo is a toddler who needs help putting away books, but breakfast is the primary activity here. More importantly, he needs a bowl for his breakfast food, and the current bowl_1 is already in use or occupied by other items like a pencil. Bringing a fresh bowl from storage is standard for a new meal.",
+      "object_handle": null
+    },
+    {
+      "t": 7.531,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "David",
+      "activity": "breakfast",
+      "reason": "David is starting breakfast and likely needs a place to set his food, so he will pull out a stool to sit at the counter.",
+      "object_handle": null
+    },
+    {
+      "t": 8.683,
+      "label": "stool_2",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Emma",
+      "activity": "breakfast",
+      "reason": "Emma is having breakfast in the kitchen and likely needs a place to sit at the counter where her bowl is already placed. She will move a stool from its tucked-away position to sit at the counter.",
+      "object_handle": null
+    },
+    {
+      "t": 10.102,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "living_room.couch_1",
+      "to_semantic": "living_room.table_3",
+      "target_relationship": "on_top",
+      "mover": "Leo",
+      "activity": "playtime",
+      "reason": "Leo loves building blocks and scatters toys during playtime, so he likely brings out more toys from storage to add to his pile. He places the additional toy on the floor or low surface in the living room where he is currently playing.",
+      "object_handle": null
+    },
+    {
+      "t": 14.035,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "living_room.table_3",
+      "to_semantic": "bedroom_3.bed_1",
+      "target_relationship": "near",
+      "mover": "Leo",
+      "activity": "waking_up",
+      "reason": "Leo is a toddler who loves building blocks and scatters toys, so he likely wakes up near his toys in the living room or bedroom. Since he is waking up, he might reach for a toy to play with immediately upon waking.",
+      "object_handle": null
+    },
+    {
+      "t": 14.983,
+      "label": "toy_2",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "living_room.table_3",
+      "to_semantic": "living_room.table_2",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "playtime",
+      "reason": "Leo loves building blocks and scatters toys after playtime, so he likely brings a toy out to the living room to play. toy_2 is currently on a table, but toys are often moved to the floor or low surfaces for play; however, since no floor anchor is listed and tables are full, we look for a surface to place the toy he is actively using or moving. Given he scatters them, moving a toy to a nearby low-s",
+      "object_handle": null
+    },
+    {
+      "t": 15.839,
+      "label": "book_2",
+      "change_type": "insert_new",
+      "object_category": "book",
+      "from_semantic": null,
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "playtime",
+      "reason": "Leo needs help putting away books, but this is playtime, not cleanup. However, if he is reading or playing near books, he might move the book to a more accessible spot or just leave it. The prompt says he scatters toys. Let's focus on the toy. He owns a backpack, but it's put away. He might take it out to store his toys? No, backpack is not out. Let's look at the inventory. There is only 1 book. ",
+      "object_handle": null
+    },
+    {
+      "t": 18.498,
+      "label": "jewelry_box_1",
+      "change_type": "remove",
+      "object_category": "jewelry_box",
+      "from_semantic": "bedroom_1.chest_of_drawers_2",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Sarah",
+      "activity": "changing_clothes",
+      "reason": "Sarah is in her bedroom to change clothes, and the jewelry box is currently on her chest of drawers. She will likely move it to a safer or more convenient spot within the bedroom, such as inside the wardrobe, to clear the surface or keep it secure while changing.",
+      "object_handle": null
+    },
+    {
+      "t": 22.947,
+      "label": "book_3",
+      "change_type": "insert_new",
+      "object_category": "book",
+      "from_semantic": null,
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Emma",
+      "activity": "relaxing",
+      "reason": "Emma is relaxing in the living room and likely wants to read or listen to a podcast, so she retrieves a book from storage to use. She places it on the table within easy reach of the couch where she is resting.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 4,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 2,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

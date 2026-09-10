@@ -45,7 +45,8 @@
     "smoothed_recency",
     "perpetua",
     "perpetua_star",
-    "perpetua_star"
+    "perpetua_star",
+    "oracle_program_posterior"
   ],
   "modes": [
     "continuous",
@@ -77,11 +78,25 @@
   ],
   "oracle_seeds_per_bank": 200,
   "bank_dir": "/data/oliver/robot/dynamic_home_eqa/banks/baselines/fleet",
-  "n_cells": 305172,
+  "n_cells": 310294,
   "side_files": {
     "absence_signal.csv.gz": 1754997,
     "perpetua_resets.csv.gz": 229906,
     "perpetua_edges.csv.gz": 41775,
     "perpetua_fallback.csv.gz": 7500
+  },
+  "oracle_belief_merge": {
+    "spec": {
+      "name": "oracle_program_posterior",
+      "eps": 0.4,
+      "half_life_h": 12.0
+    },
+    "merged_at": "2026-09-10T04:42:05.873402+00:00",
+    "source": "/home/oliver/robot/dynamic_home_eqa/scratch_runs/oracle_v2/household_analysis_oracle",
+    "selected_json": "/home/oliver/robot/dynamic_home_eqa/results/oracle_program_posterior/selected.json",
+    "seeds": [
+      0
+    ],
+    "note": "OracleBelief cells cover seed-0 banks only; seed 1-4 banks are not on this machine"
   }
 }

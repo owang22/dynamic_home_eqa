@@ -40,24 +40,28 @@ LAST_OBS = "LastObservation"
 MODEL_ORDER = ("LastObservation", "MostFrequentLocation", "TimetableLookup",
                "Markov1", "PeriodicPersistence", "DaytypeMixture",
                "HierarchyBackoff", "SmoothedRecency", "Perpetua",
-               "PerpetuaStar", "PerpetuaStarFlat")
+               "PerpetuaStar", "PerpetuaStarFlat", "OracleBelief")
 SHORT = {"LastObservation": "LastObs", "MostFrequentLocation": "MostFreq",
          "TimetableLookup": "Timetable", "Markov1": "Markov1",
          "PeriodicPersistence": "Periodic", "DaytypeMixture": "DaytypeMix",
          "HierarchyBackoff": "HierBackoff", "SmoothedRecency": "SmoothedRec",
          "Perpetua": "Perpetua", "PerpetuaStar": "PerpetuaStar",
-         "PerpetuaStarFlat": "PerpStarFlat"}
+         "PerpetuaStarFlat": "PerpStarFlat", "OracleBelief": "OracleBelief"}
 PALETTE = ("#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4",
-           "#008300", "#4a3aa7", "#e34948", "#00838f", "#6d4c41", "#9e9d24")
+           "#008300", "#4a3aa7", "#e34948", "#00838f", "#6d4c41", "#9e9d24",
+           "#b0308f")
 PERPETUA_MODELS = ("Perpetua", "PerpetuaStar", "PerpetuaStarFlat")
 PERPETUA_FOCUS = ("MostFrequentLocation", "Markov1", "Perpetua",
                   "PerpetuaStar", "PerpetuaStarFlat")
 """The survival models against the two frequency comparators, for the
 focused per-home figure. The full per-home figure carries every model;
 this one carries the five that the Perpetua question is about."""
-BASIC_FOCUS = ("MostFrequentLocation", "PeriodicPersistence", "Perpetua")
-"""The three basic models the group-level figures carry: one frequency,
-one periodic, one survival. Fewer lines, with bands, beats eleven."""
+BASIC_FOCUS = ("LastObservation", "MostFrequentLocation", "Perpetua",
+               "OracleBelief")
+"""The representative models the group-level and per-home figures carry:
+recency (LastObs), frequency (MostFreq), survival (Perpetua) and the
+observation-weighted routine ensemble (OracleBelief). Fewer lines, with
+bands, beats twelve; every model stays in the tables."""
 LONG_AGES = ("[24h,48h)", "[48h,72h)", "[72h,inf)")
 MIN_N = 30
 """Fewest questions a (home, age bin) cell needs before a figure draws it
@@ -146,6 +150,8 @@ def models_in(rows: Sequence[dict]) -> List[str]:
 
 
 def color_of(model: str) -> str:
+    if model == ORACLE:
+        return ORACLE_GRAY
     base = base_name(model)
     return (PALETTE[MODEL_ORDER.index(base)] if base in MODEL_ORDER
             else INK2)
@@ -197,6 +203,9 @@ def per_home_overview(rows, meta, models, mode: str,
             "household": hh, "type": m["household_type"],
             "residents": m["residents"], "group": m["resident_group"],
             "acc": accs, "oracle": a.acc((hh, ORACLE)),
+            "counts": {mod: (a.c[(hh, mod)], a.n[(hh, mod)])
+                       for mod in models},
+            "oracle_counts": (a.c[(hh, ORACLE)], a.n[(hh, ORACLE)]),
             "best": best, "best_acc": accs[best],
             "best_minus_median": accs[best] - statistics.median(vals),
             "best_minus_lastobs": (accs[best] - accs[LAST_OBS]
@@ -511,11 +520,10 @@ def fig_age_by_group(rows, meta, models, out: pathlib.Path) -> None:
         xs = list(range(len(bins)))
         counts = [a.n.get((focus[0], b), 0) for b in bins]
         for m in focus + [ORACLE]:
-            ys = [a.acc((m, b)) if n >= MIN_N else None
-                  for b, n in zip(bins, counts)]
+            ys = [a.acc((m, b)) if a.n.get((m, b), 0) >= MIN_N else None
+                  for b in bins]
             _line(ax, xs, ys, m)
-            if m != ORACLE:
-                _band(ax, xs, [(a.c[(m, b)], a.n[(m, b)]) for b in bins], m)
+            _band(ax, xs, [(a.c[(m, b)], a.n[(m, b)]) for b in bins], m)
         n_homes = sum(1 for m in meta.values() if m["resident_group"] == g)
         _style(ax, f"{g}-resident homes (n={n_homes}), belief kept current")
         ax.set_xticks(xs)
@@ -559,11 +567,10 @@ def fig_learning_by_group(rows, meta, models, out: pathlib.Path) -> None:
             if d % 7 in (5, 6):
                 ax.axvspan(d - 0.5, d + 0.5, color="#f2f1ec", zorder=0)
         for m in focus + [ORACLE]:
-            ys = [a.acc((m, d)) if n >= MIN_N else None
-                  for d, n in zip(days, counts)]
+            ys = [a.acc((m, d)) if a.n.get((m, d), 0) >= MIN_N else None
+                  for d in days]
             _line(ax, days, ys, m, markersize=3.5)
-            if m != ORACLE:
-                _band(ax, days, [(a.c[(m, d)], a.n[(m, d)]) for d in days], m)
+            _band(ax, days, [(a.c[(m, d)], a.n[(m, d)]) for d in days], m)
         n_homes = sum(1 for m in meta.values() if m["resident_group"] == g)
         per_day = counts[0] if counts else 0
         _style(ax, f"{g}-resident homes (n={n_homes}), {per_day} questions "
@@ -695,6 +702,10 @@ def _grid_of_homes(meta):
 
 
 def fig_age_by_home(rows, meta, models, out: pathlib.Path) -> None:
+    """Representative models only (BASIC_FOCUS) plus the routine oracle;
+    twelve lines per tile were unreadable and hid the bands. Every model
+    is still in the age tables."""
+    focus = _focus(models)
     homes, nr, nc = _grid_of_homes(meta)
     fig, axes = plt.subplots(nr, nc, figsize=(3.4 * nc, 2.7 * nr),
                              squeeze=False, facecolor=SURFACE)
@@ -704,8 +715,12 @@ def fig_age_by_home(rows, meta, models, out: pathlib.Path) -> None:
     xs = list(range(len(bins)))
     for i, hh in enumerate(homes):
         ax = axes[i // nc][i % nc]
-        for m in models + [ORACLE]:
-            _line(ax, xs, [a.acc((hh, m, b)) for b in bins], m)
+        for m in focus + [ORACLE]:
+            ys = [a.acc((hh, m, b))
+                  if a.n.get((hh, m, b), 0) >= MIN_N else None for b in bins]
+            _line(ax, xs, ys, m)
+            _band(ax, xs, [(a.c[(hh, m, b)], a.n[(hh, m, b)])
+                           for b in bins], m)
         mt = meta[hh]
         _style(ax, f"{hh} · {mt['household_type'][:38]} · {mt['residents']}r")
         ax.set_xticks(xs)
@@ -714,15 +729,22 @@ def fig_age_by_home(rows, meta, models, out: pathlib.Path) -> None:
     for j in range(len(homes), nr * nc):
         axes[j // nc][j % nc].axis("off")
     _legend(fig, axes[0][0].get_legend_handles_labels())
-    fig.suptitle("Accuracy by age of last sighting, per home "
-                 "(belief kept current, seeds pooled)", fontsize=10,
+    fig.suptitle("Accuracy by age of last sighting, per home, "
+                 "representative models (belief kept current, seeds pooled; "
+                 "shading = Wilson 95% interval; bins under "
+                 f"{MIN_N} questions not drawn)", fontsize=10,
                  color=INK, x=0.01, ha="left")
     fig.tight_layout(rect=(0, 0.04, 1, 0.97))
     fig.savefig(out, dpi=140, facecolor=SURFACE)
     plt.close(fig)
 
 
-def fig_history_by_home(hist: Dict, meta, models, out: pathlib.Path) -> None:
+def fig_history_by_home(rows, hist: Dict, meta, models,
+                        out: pathlib.Path) -> None:
+    """Representative models only (BASIC_FOCUS) plus the routine oracle,
+    with Wilson bands per day. Per-day cells per home are small, so the
+    bands are wide; that width IS the message about single-day reads."""
+    focus = _focus(models)
     homes = [h for h in sorted(meta, key=lambda h: (
         meta[h]["resident_group"], h)) if h in hist["homes"]]
     if not homes:
@@ -731,21 +753,26 @@ def fig_history_by_home(hist: Dict, meta, models, out: pathlib.Path) -> None:
     nr = -(-len(homes) // nc)
     fig, axes = plt.subplots(nr, nc, figsize=(3.4 * nc, 2.7 * nr),
                              squeeze=False, facecolor=SURFACE)
+    sel = [r for r in rows if r["mode"] == "continuous"]
+    a = Agg(sel, lambda r: (r["household"], r["model"], r["day"]))
     days = hist["days"]
     for i, hh in enumerate(homes):
         ax = axes[i // nc][i % nc]
-        curves = hist["homes"][hh]["curves"]
-        for m in models + [ORACLE]:
-            _line(ax, days, curves[m], m)
+        for m in focus + [ORACLE]:
+            _line(ax, days, [a.acc((hh, m, d)) for d in days], m,
+                  markersize=3.5)
+            _band(ax, days, [(a.c[(hh, m, d)], a.n[(hh, m, d)])
+                             for d in days], m)
         mt = meta[hh]
         _style(ax, f"{hh} · {mt['household_type'][:38]} · {mt['residents']}r")
         ax.set_xlabel("query day (history length)", fontsize=7, color=INK2)
     for j in range(len(homes), nr * nc):
         axes[j // nc][j % nc].axis("off")
     _legend(fig, axes[0][0].get_legend_handles_labels())
-    fig.suptitle("Accuracy by query day, per home (belief kept current, "
-                 "seeds pooled; 90 questions per day)", fontsize=10,
-                 color=INK, x=0.01, ha="left")
+    fig.suptitle("Accuracy by query day, per home, representative models "
+                 "(belief kept current, seeds pooled; shading = Wilson 95% "
+                 f"interval, drawn from {MIN_N} questions per day)",
+                 fontsize=10, color=INK, x=0.01, ha="left")
     fig.tight_layout(rect=(0, 0.04, 1, 0.97))
     fig.savefig(out, dpi=140, facecolor=SURFACE)
     plt.close(fig)
@@ -774,6 +801,8 @@ def fig_modes_by_group(rows, meta, models, out: pathlib.Path) -> None:
             if m not in models:
                 continue
             _line(ax, xs, [a.acc(("continuous", m, b)) for b in bins], m)
+            _band(ax, xs, [(a.c[("continuous", m, b)],
+                            a.n[("continuous", m, b)]) for b in bins], m)
             pts = [a.acc(("frozen", m, b)) for b in bins]
             keep = [(x, y) for x, y in zip(xs, pts) if y is not None]
             if keep:
@@ -782,6 +811,8 @@ def fig_modes_by_group(rows, meta, models, out: pathlib.Path) -> None:
                         marker="s", markersize=5, markeredgecolor=SURFACE,
                         markeredgewidth=1.5,
                         label=f"{label_of(m)} (frozen forecast)")
+            _band(ax, xs, [(a.c[("frozen", m, b)],
+                            a.n[("frozen", m, b)]) for b in bins], m)
         _style(ax, f"{g}-resident homes: kept current (solid) vs frozen "
                    f"forecast (dotted)")
         ax.set_xticks(xs)
@@ -790,7 +821,10 @@ def fig_modes_by_group(rows, meta, models, out: pathlib.Path) -> None:
                       color=INK2)
     axes[0][0].set_ylabel("top-1 accuracy", fontsize=8, color=INK2)
     _legend(fig, axes[0][0].get_legend_handles_labels())
-    fig.tight_layout(rect=(0, 0.1, 1, 1))
+    fig.suptitle("Kept current vs frozen forecast at matched ages "
+                 "(seeds pooled; shading = Wilson 95% interval)",
+                 fontsize=9.5, color=INK, x=0.01, ha="left")
+    fig.tight_layout(rect=(0, 0.1, 1, 0.94))
     fig.savefig(out, dpi=150, facecolor=SURFACE)
     plt.close(fig)
 
@@ -816,8 +850,6 @@ def fig_perpetua_by_home(rows, meta, models, out: pathlib.Path) -> None:
             ys = [a.acc((hh, m, b)) if n >= MIN_N else None
                   for b, n in zip(bins, counts)]
             _line(ax, xs, ys, m)
-            if m == ORACLE:
-                continue
             band = [wilson(a.c[(hh, m, b)], a.n[(hh, m, b)])
                     if n >= MIN_N else None for b, n in zip(bins, counts)]
             keep = [(x, lo, hi) for x, bd in zip(xs, band) if bd
@@ -922,6 +954,13 @@ def fig_separation(recs: List[dict], out: pathlib.Path) -> None:
     fig, ax = plt.subplots(figsize=(7, 0.32 * len(order) + 1.6),
                            facecolor=SURFACE)
     ys = list(range(len(order)))[::-1]
+
+    def whisker(y, counts, color, dy):
+        if not counts or not counts[1]:
+            return
+        lo, hi = wilson(*counts)
+        ax.plot([lo, hi], [y + dy, y + dy], color=color, linewidth=1.4,
+                alpha=0.55, solid_capstyle="butt", zorder=2)
     for y, r in zip(ys, order):
         ax.plot([r["acc"].get(LAST_OBS), r["best_acc"]], [y, y],
                 color=GRID, linewidth=2, zorder=1)
@@ -929,19 +968,22 @@ def fig_separation(recs: List[dict], out: pathlib.Path) -> None:
             ax.plot(r["acc"][LAST_OBS], y, "o", color=color_of(LAST_OBS),
                     markersize=7, markeredgecolor=SURFACE, markeredgewidth=1.5,
                     label="LastObs", zorder=3)
+            whisker(y, r["counts"].get(LAST_OBS), color_of(LAST_OBS), 0.22)
         ax.plot(r["best_acc"], y, "o", color=color_of(r["best"]),
                 markersize=7, markeredgecolor=SURFACE, markeredgewidth=1.5,
                 zorder=3)
+        whisker(y, r["counts"].get(r["best"]), color_of(r["best"]), -0.22)
         ax.plot(r["oracle"], y, "|", color=ORACLE_GRAY, markersize=12,
                 markeredgewidth=2, label="routine oracle", zorder=2)
+        whisker(y, r.get("oracle_counts"), ORACLE_GRAY, 0.0)
         ax.text(1.005, y, f"{label_of(r['best'])}", fontsize=7, color=INK2,
                 va="center", transform=ax.get_yaxis_transform())
     ax.set_yticks(ys)
     ax.set_yticklabels([f"{r['household']} · {r['type'][:30]} · "
                         f"{r['residents']}r" for r in order], fontsize=7,
                        color=INK)
-    _style(ax, "Per home: LastObs (blue) to best model (its own hue), "
-               "routine oracle as gray tick")
+    _style(ax, "Per home: LastObs → best model; gray tick = routine "
+               "oracle; thin bars = Wilson 95%")
     ax.set_ylim(-1, len(order))
     ax.set_xlim(0.2, 1.0)
     ax.set_xlabel("top-1 accuracy, belief kept current, all questions",
@@ -1109,7 +1151,8 @@ def build(in_dir: pathlib.Path, out_dir: pathlib.Path) -> pathlib.Path:
                           out_dir / "learning_by_group.png")
     fig_learning_vs_age(rows, meta, models, out_dir / "learning_vs_age.png")
     fig_age_by_home(rows, meta, models, out_dir / "age_by_home.png")
-    fig_history_by_home(hist, meta, models, out_dir / "history_by_home.png")
+    fig_history_by_home(rows, hist, meta, models,
+                        out_dir / "history_by_home.png")
     fig_modes_by_group(rows, meta, models, out_dir / "modes_by_group.png")
     fig_separation(recs_c, out_dir / "separation_by_home.png")
     fig_perpetua_by_home(rows, meta, models, out_dir / "perpetua_by_home.png")
@@ -1143,6 +1186,21 @@ def build(in_dir: pathlib.Path, out_dir: pathlib.Path) -> pathlib.Path:
         "re-realized under many seeds, with no observations: routine "
         "knowledge alone. Not a hard ceiling; a fresh sighting beats it.",
         "",
+    ]
+    ob = prov.get("oracle_belief_merge")
+    if ob:
+        md += [
+            f"**OracleBelief** (`{ob['spec']['name']}`, eps "
+            f"{ob['spec']['eps']:g}, forgetting half-life "
+            f"{ob['spec']['half_life_h']:g} h — the sweep-selected "
+            "config) is the same realization ensemble reweighted by the "
+            "observation history: routine knowledge plus observations. "
+            f"Its cells cover the seed-{'/'.join(map(str, ob.get('seeds', [0])))} "
+            "banks only (the other seed banks are not on this machine), "
+            "so its per-bin counts are smaller than the other models'.",
+            "",
+        ]
+    md += [
         "## Which homes separate the models (belief kept current)",
         "",
         "Sorted by the oracle within resident group, so the most "
@@ -1166,17 +1224,17 @@ def build(in_dir: pathlib.Path, out_dir: pathlib.Path) -> pathlib.Path:
     for g, t in t_age.items():
         md += [f"{g}-resident homes:", "", t, ""]
     md += [
-        "Three basic models only (one frequency, one periodic, one "
-        "survival) with Wilson 95% bands; every model is in the tables "
-        "above and in the per-home figure below. All query days are "
+        "Representative models only (recency, frequency, survival, and "
+        "the observation-weighted oracle ensemble) with Wilson 95% "
+        "bands; every model is in the tables above. All query days are "
         "pooled here.",
         "",
         "![](age_by_group.png)",
         "",
         "## Learning over days of observation",
         "",
-        "The same three models by query day, all ages of last sighting "
-        "pooled. Banks start on a Monday, so query day and weekday are "
+        "The same representative models by query day, all ages of last "
+        "sighting pooled. Banks start on a Monday, so query day and weekday are "
         "tied: weekend query days are shaded and the weekly ripple is "
         "the weekday mix, not learning.",
         "",
@@ -1243,6 +1301,25 @@ def build(in_dir: pathlib.Path, out_dir: pathlib.Path) -> pathlib.Path:
             "### Absence signal, fallback, training data",
             "",
             t_perpetua,
+            "",
+        ]
+    if (in_dir / "stationarity" / "summary.md").exists():
+        md += [
+            "## Stationarity: accuracy by how much the object moves",
+            "",
+            "Questions binned by a ground-truth property of the queried "
+            "object's own trajectory (moves per day, share of time away "
+            "from its home receptacle) — does the stationary tail carry "
+            "the aggregate number? Full tables in "
+            "[stationarity/summary.md](stationarity/summary.md).",
+            "",
+            "![](stationarity/accuracy_by_object_mobility.png)",
+            "",
+            "The same data as one row per model — accuracy on "
+            "low-mobility (light) vs high-mobility (dark) objects, "
+            "black tick = all questions:",
+            "",
+            "![](stationarity/overall_by_model.png)",
             "",
         ]
     md += [

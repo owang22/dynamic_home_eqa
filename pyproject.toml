@@ -22,5 +22,5 @@ testpaths = ["tests"]
 # mypy: the baselines package is checked with --strict; these overrides only
 # silence missing type stubs for third-party libraries.
 [[tool.mypy.overrides]]
-module = ["matplotlib.*", "yaml"]
+module = ["matplotlib.*", "yaml", "requests"]
 ignore_missing_imports = true

@@ -1,6 +1,6 @@
 # Fleet health run
 
-One shared config (`src/baselines/configs/fleet.yaml`, hash `7ba2efcf3915…`), seed 0, commit `37c2a3c3b81a` (dirty tree), run 2026-09-08T08:42:43.302784+00:00.
+One shared config (`src/baselines/configs/fleet.yaml`, hash `7ba2efcf3915…`), seed 0, commit `230a2701c4d8` (dirty tree), run 2026-09-09T22:20:18.774883+00:00.
 
 `diagnostics` = flags in order: stationarity / solvable / not_trivial / not_impossible / discriminative / powered (`.` = not flagged, letter = flagged; flags are advisory, nothing disqualifies). NeverSense columns are passive task accuracy for the frozen panel beliefs.
 

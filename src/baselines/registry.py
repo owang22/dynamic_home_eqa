@@ -31,8 +31,8 @@ from baselines.beliefs.llm_belief import (LLMBelief, LLMBeliefConfig,
 from baselines.beliefs.markov1 import Markov1, Markov1Config
 from baselines.beliefs.most_frequent import MostFrequentLocation
 from baselines.beliefs.oracle_program_posterior import (
-    DEFAULT_EPS, DEFAULT_REALIZATION_CACHE, OracleProgramPosterior,
-    default_loader)
+    DEFAULT_EPS, DEFAULT_HALF_LIFE_H, DEFAULT_REALIZATION_CACHE,
+    OracleProgramPosterior, default_loader)
 from baselines.beliefs.periodic_persistence import (PeriodicPersistence,
                                                     PeriodicPersistenceConfig)
 from baselines.beliefs.perpetua_belief import (PerpetuaBelief,
@@ -213,7 +213,8 @@ def _build_perpetua_star(spec: Dict[str, Any],
 def _build_oracle_program_posterior(spec: Dict[str, Any],
                                     rng: random.Random) -> BeliefModel:
     """The routine oracle's realization ensemble weighted by the
-    observation history (display name ``OracleBelief``). ``n_seeds``
+    observation history (display name ``OracleBelief``). ``eps`` and
+    ``half_life_h`` (None: never forget) are the weighting knobs; ``n_seeds``
     defaults to the routine oracle's count; ``cache_dir`` (None disables)
     and ``household_dir`` point the loader elsewhere; a driver may pass a
     built ``ensemble`` instead."""
@@ -228,9 +229,11 @@ def _build_oracle_program_posterior(spec: Dict[str, Any],
                        else DEFAULT_REALIZATION_CACHE),
             household_dir=(pathlib.Path(spec["household_dir"])
                            if spec.get("household_dir") else None))
-    return OracleProgramPosterior(rng, ensemble,
-                                  eps=float(spec.get("eps", DEFAULT_EPS)),
-                                  **_base_kwargs(spec))
+    raw_hl = spec.get("half_life_h", DEFAULT_HALF_LIFE_H)
+    return OracleProgramPosterior(
+        rng, ensemble, eps=float(spec.get("eps", DEFAULT_EPS)),
+        half_life_h=None if raw_hl is None else float(raw_hl),
+        **_base_kwargs(spec))
 
 
 BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {

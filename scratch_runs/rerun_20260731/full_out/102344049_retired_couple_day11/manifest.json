@@ -1,0 +1,197 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "retired_couple",
+  "seed": 12,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "arthur_phone": "phone_a022864ae7b6",
+    "arthur_wallet": "wallet_4bc4176c10b9",
+    "arthur_keys": "keys_92167e12a3f0",
+    "arthur_medicine": "medicine_429536ff8dd8",
+    "martha_phone": "phone_15c2adf9af7a",
+    "martha_wallet": "wallet_4d63cef3d4c3",
+    "martha_keys": "keys_aaccd2b9848d",
+    "martha_medicine": "medicine_d83f35ad19e8"
+  },
+  "day_context": {
+    "Arthur": {
+      "day_type": "weekday",
+      "day_scenario": "Arthur rises at 6:00 AM to water the tomato vines and check the soil moisture before the morning light breaks. Later, he settles into his usual spot at the kitchen table to pore over a biography of the Roman Empire, and after dinner he turns off the overhead lights to enjoy a quiet evening before bed by ten."
+    },
+    "Martha": {
+      "day_type": "weekday",
+      "day_scenario": "Martha steps onto the back porch at 6:30 AM with a mug of dark roast while the classical music station plays a Mozart symphony in the crisp morning air. She spends her afternoon untangling a particularly tricky daily crossword and arranging vintage wedding photos into a new scrapbook, then rests her eyes for a brief nap around two before settling into a peaceful evening."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.538,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "tidying_up",
+      "reason": "Martha is tidying the living room, so she will pull out one of the chairs tucked under the table to sit down and organize items like the remote or vase.",
+      "object_handle": null
+    },
+    {
+      "t": 7.574,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Arthur",
+      "activity": "kitchen",
+      "reason": "The stools are currently tucked under the counter. As Arthur prepares to spend time in the kitchen, he might pull one out to sit on while he works or reads, or leave them tucked if he is just passing through. However, given his habit of reading at the table, pulling a stool out is a plausible setup action.",
+      "object_handle": null
+    },
+    {
+      "t": 7.96,
+      "label": "potted_plant_1",
+      "change_type": "move_existing",
+      "object_category": "potted_plant",
+      "from_semantic": "living_room.corner",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "kitchen",
+      "reason": "Arthur tends to his vegetable garden early in the morning and often brings fresh herbs or small potted plants into the kitchen to care for or display. He is likely to move one of the abundant potted plants to a surface where he can access water or sunlight.",
+      "object_handle": null
+    },
+    {
+      "t": 8.453,
+      "label": "book_2",
+      "change_type": "insert_new",
+      "object_category": "book",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "inside",
+      "mover": "Martha",
+      "activity": "cooking",
+      "reason": "Martha is starting to cook and needs ingredients from the fridge, so she should retrieve a fresh bowl to prepare food in. The existing book on the counter is in the way, so she should put it away to clear workspace.",
+      "object_handle": null
+    },
+    {
+      "t": 9.926,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Martha",
+      "activity": "reading",
+      "reason": "The book is currently stored inside a kitchen counter, so Martha needs to bring it to the living room where she is reading. She will place the book on the table to begin reading.",
+      "object_handle": null
+    },
+    {
+      "t": 11.412,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "living_room.table_1.tucked",
+      "target_relationship": "tucked_under",
+      "mover": "Martha",
+      "activity": "tidying_up",
+      "reason": "Chairs are tidied by tucking them under the table or pulling them out neatly. Chair 1 is currently next to the table but not tucked. Tidying involves tucking it back in to clear the floor space.",
+      "object_handle": null
+    },
+    {
+      "t": 11.43,
+      "label": "book_3",
+      "change_type": "insert_new",
+      "object_category": "book",
+      "from_semantic": null,
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Martha",
+      "activity": "tidying_up",
+      "reason": "The book is tidied from the table into a more appropriate storage location, such as a cabinet or shelf. Since no specific bookshelf is listed, and the table is being cleared, it might be moved to a side surface or stored. However, the only 'inside' targets are kitchen counter (not living room) or bedroom wardrobe. Given the constraint that targets must be in the current room (living room), and no\u67dc",
+      "object_handle": null
+    },
+    {
+      "t": 15.661,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "organizing_photo_albums",
+      "reason": "She needs a comfortable seat to sit at the table while sorting through albums. The chairs are currently tucked under the table, so she will pull one out to sit on.",
+      "object_handle": null
+    },
+    {
+      "t": 16.552,
+      "label": "book_4",
+      "change_type": "insert_new",
+      "object_category": "book",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on_top",
+      "mover": "Arthur",
+      "activity": "kitchen",
+      "reason": "Arthur spends afternoons reading at the kitchen table, so he is likely moving a book from storage to the table to continue his afternoon reading session.",
+      "object_handle": null
+    },
+    {
+      "t": 18.509,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "kitchen.counter_1.tucked",
+      "target_relationship": "tucked_under",
+      "mover": "Arthur",
+      "activity": "kitchen",
+      "reason": "Stool_1 is currently positioned next to the counter, potentially blocking workflow or used for previous tasks; tidying it back under the counter clears the floor space.",
+      "object_handle": null
+    },
+    {
+      "t": 22.181,
+      "label": "slippers_1",
+      "change_type": "remove",
+      "object_category": "slippers",
+      "from_semantic": "bedroom_1.chest_of_drawers_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Martha",
+      "activity": "sleeping",
+      "reason": "Martha is tidying up her nightstand area before sleeping; the jewelry box and slippers are currently on the chest of drawers and should be put away into the wardrobe to clear the space. These items are stored inside the wardrobe for the night.",
+      "object_handle": null
+    },
+    {
+      "t": 22.287,
+      "label": "jewelry_box_1",
+      "change_type": "remove",
+      "object_category": "jewelry_box",
+      "from_semantic": "bedroom_1.chest_of_drawers_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Martha",
+      "activity": "sleeping",
+      "reason": "Martha is tidying up her nightstand area before sleeping; the jewelry box and slippers are currently on the chest of drawers and should be put away into the wardrobe to clear the space. These items are stored inside the wardrobe for the night.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 2,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 3,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

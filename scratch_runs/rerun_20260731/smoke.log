@@ -1,0 +1,23 @@
+Scenes       : 1
+Profile      : family_with_kids
+Day          : 0
+Variants     : 1
+Days         : 1
+Model        : Qwen/Qwen3.6-35B-A3B
+Backend      : http://127.0.0.1:8300
+Output       : /home/oliver/robot/dynamic_home_eqa/scratch_runs/rerun_20260731/smoke_out
+Cache        : disabled (--no-cache)
+Force regen  : False
+Semantic gnd : True
+Trace gate   : True
+Reachability filtering: False
+Judge        : guided / style=asis
+
+  [ERROR] 102343992: No module named 'dynamic_home_eqa.trace_validate'
+
+════════════════════════════════════════════════════════════
+Grounding survival     : 0.0%  (0/0 proposals)
+Infra rejection rate   : 0.0%  (no_anchor=0 — region/anchor data gap, not model error)
+Model rejection rate   : 0.0%  (no_object=0, no_placement=0, bad_relation=0)
+Mean realism (selected): 0.000  (behavioral plausibility of the final selected displacements, independent of grounding)
+════════════════════════════════════════════════════════════

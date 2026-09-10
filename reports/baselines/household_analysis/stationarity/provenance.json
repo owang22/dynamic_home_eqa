@@ -1,0 +1,95 @@
+{
+  "timestamp": "2026-09-10T05:01:40+00:00",
+  "git": {
+    "commit": "230a2701c4d874b84f9f2f2c400d6eb354a56fd6",
+    "dirty": true
+  },
+  "households": [
+    "hh_001",
+    "hh_002",
+    "hh_003",
+    "hh_004",
+    "hh_005",
+    "hh_006",
+    "hh_007",
+    "hh_008",
+    "hh_009",
+    "hh_010",
+    "hh_011",
+    "hh_012",
+    "hh_013",
+    "hh_014",
+    "hh_015",
+    "hh_016",
+    "hh_017",
+    "hh_018",
+    "hh_019",
+    "hh_020"
+  ],
+  "n_households": 20,
+  "specs": [
+    {
+      "name": "last_observation"
+    },
+    {
+      "name": "most_frequent",
+      "half_life_h": 24
+    },
+    {
+      "name": "timetable",
+      "bin_hours": 1,
+      "day_scheme": "all",
+      "half_life_h": 24
+    },
+    {
+      "name": "markov1"
+    },
+    {
+      "name": "periodic_persistence"
+    },
+    {
+      "name": "daytype_mixture"
+    },
+    {
+      "name": "hierarchy_backoff"
+    },
+    {
+      "name": "smoothed_recency"
+    },
+    {
+      "name": "perpetua"
+    },
+    {
+      "name": "perpetua_star"
+    },
+    {
+      "name": "perpetua_star",
+      "switching_prior": "flat"
+    },
+    {
+      "name": "oracle_program_posterior",
+      "eps": 0.4,
+      "half_life_h": 12.0
+    }
+  ],
+  "oracle_seeds": 50,
+  "rng_seed": 0,
+  "bank_dir": "fleet",
+  "measures": {
+    "moves_per_day": [
+      0.5,
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      6.0
+    ],
+    "displaced_share": [
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5
+    ]
+  }
+}

@@ -1,0 +1,249 @@
+{
+  "scene_id": "102343992",
+  "resident_profile": "single_parent_young_kids",
+  "seed": 11,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "alex_laptop": "laptop_a031287e7b68",
+    "alex_phone": "phone_223b376823b5",
+    "alex_wallet": "wallet_4eb66e5c0b4f",
+    "alex_keys": "keys_92167e12a3f0"
+  },
+  "day_context": {
+    "Alex": {
+      "day_type": "weekday",
+      "day_scenario": "Alex wakes at 6:30 AM to tackle morning project deadlines from her home office before heading out. After returning home, she settles into the kitchen to organize the next day's school lunches and quietly reviews work emails on her laptop until she finally powers down at 23:00."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "Leo wakes at 7:00 AM and immediately begins stacking wooden blocks along the upstairs hallway, carefully leaving his creations standing until they inevitably tumble. After a quiet snack and story, he climbs into his crib at 20:00 with a few favorite toys tucked under his arm."
+    },
+    "Mia": {
+      "day_type": "weekday",
+      "day_scenario": "Mia wakes at 7:00 AM and scours the living room for scrap paper, her pockets already jingling with every crayon she could find. She spends the afternoon coloring elaborate pictures on the dining table before a gentle bath ushers her into bed at 20:00."
+    }
+  },
+  "changes": [
+    {
+      "t": 6.917,
+      "label": "alex_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "wake_up",
+      "reason": "Alex is waking up in the bedroom, so she will retrieve her phone from its stored location to check the time or notifications. Since it is not currently out, she brings it into use.",
+      "object_handle": null
+    },
+    {
+      "t": 7.253,
+      "label": "toy_2",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "playing_with_blocks",
+      "reason": "Leo is playing with blocks, which are often kept in or near the toy container; he is likely to retrieve a block to add to his current play.",
+      "object_handle": null
+    },
+    {
+      "t": 7.653,
+      "label": "bowl_2",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "breakfast",
+      "reason": "Mia needs a place to eat her breakfast, so a bowl should be placed on the table where meals are served. The current bowl is already on the table, but bringing a fresh one or ensuring the surface is ready for her specific meal is standard.",
+      "object_handle": null
+    },
+    {
+      "t": 8.655,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "tv_room.table_1",
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "eating_snack",
+      "reason": "Leo loves building block towers and had been playing with them earlier; he might place his snack tray near his blocks or keep the blocks nearby while eating.",
+      "object_handle": null
+    },
+    {
+      "t": 8.759,
+      "label": "bowl_3",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "eating_snack",
+      "reason": "Leo is eating a snack in the kitchen, so he likely needs a bowl to hold the food. Since bowl_1 and bowl_2 are already on the table, he would bring out another bowl (from the abundant supply in cabinets) for himself.",
+      "object_handle": null
+    },
+    {
+      "t": 8.889,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_tucked",
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "next_to",
+      "mover": "Leo",
+      "activity": "eating_snack",
+      "reason": "Stool_1 is currently tucked under the counter, which is not an ideal seating position for a toddler to eat at the table. Leo would pull the stool out to sit at the table.",
+      "object_handle": null
+    },
+    {
+      "t": 10.512,
+      "label": "toy_3",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "near",
+      "mover": "Leo",
+      "activity": "resting",
+      "reason": "Leo is resting in the tv_room, where he is currently surrounded by soft items on the couch. He will likely settle in by pulling the nearby stool closer to himself for better comfort or support. The stool is a floor object, so it is moved via proximity rather than placed on furniture.",
+      "object_handle": null
+    },
+    {
+      "t": 13.579,
+      "label": "blanket_1",
+      "change_type": "move_existing",
+      "object_category": "blanket",
+      "from_semantic": "tv_room.couch_1",
+      "to_semantic": "bedroom_2.bed_1",
+      "target_relationship": "on_top",
+      "mover": "Leo",
+      "activity": "sleeping",
+      "reason": "Leo is going to sleep in bedroom 2, but the current state shows items in bedroom 1; however, the inventory lists a blanket and pillow which are typically associated with sleeping. Since Leo is a toddler who loves blocks and leaves them in the hallway, and the activity is sleeping, he likely needs to get into bed. The current state lists items in bedroom_1, but the prompt says he sleeps in bedroom ",
+      "object_handle": null
+    },
+    {
+      "t": 13.967,
+      "label": "toy_1",
+      "change_type": "remove",
+      "object_category": "toy",
+      "from_semantic": "kitchen.table_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Leo",
+      "activity": "sleeping",
+      "reason": "The current state lists items in bedroom_1 (alex_phone, jewelry_box, nightlight), but Leo sleeps in bedroom 2. The nightlight is currently out in bedroom 1. If Leo is moving to his room for the long sleep, he might bring his own nightlight if he had one, but the inventory shows nightlight_1 is in bedroom 1. Since the prompt states he sleeps in bedroom 2 and the current state only lists bedroom 1/2",
+      "object_handle": null
+    },
+    {
+      "t": 14.243,
+      "label": "pillow_1",
+      "change_type": "move_existing",
+      "object_category": "pillow",
+      "from_semantic": "tv_room.couch_1",
+      "to_semantic": "bedroom_2.bed_1",
+      "target_relationship": "on_top",
+      "mover": "Leo",
+      "activity": "sleeping",
+      "reason": "Leo is going to sleep and will need a pillow to rest his head on. As a toddler, he likely uses a pillow provided by his parents or one already in his room. The inventory includes a pillow, which should be placed on the bed for comfort.",
+      "object_handle": null
+    },
+    {
+      "t": 16.325,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "tv_room.cabinet_1",
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "playing",
+      "reason": "Mia often carries crayons in her pockets, which might fall out or be placed on a surface during play. If she has been drawing earlier, she might place a book (book_1 is currently on tv_room.cabinet_1 in the tv_room, but the activity is in the living_room/tv_room area) or simply interact with the table. However, book_1 is already in the relevant vicinity (tv_room). Let's look for other objects. The",
+      "object_handle": null
+    },
+    {
+      "t": 16.796,
+      "label": "toy_4",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "near",
+      "mover": "Mia",
+      "activity": "playing",
+      "reason": "Mia is playing in the living room and may want to bring a toy from another room to entertain herself. Since toy_1 is stored away and toy_2/3 are in the tv_room, bringing the single available toy from the kitchen inventory (if implied by the general pool) or simply interacting with existing items is key; however, looking at the inventory, there is only 1 'toy' category listed in the scene inventory",
+      "object_handle": null
+    },
+    {
+      "t": 19.234,
+      "label": "nightlight_1",
+      "change_type": "move_existing",
+      "object_category": "nightlight",
+      "from_semantic": "bedroom_1.bed_1",
+      "to_semantic": "bedroom_3.bed_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "bedtime_routine",
+      "reason": "The nightlight is currently out on the bed but may be moved to a safer or more convenient spot on a bedside surface or put away if not needed immediately, though typically left on; however, given the inventory lists it as 'out in this room' on the bed, and bedtime involves settling, moving it to a stable surface is plausible if the bed is being prepped.",
+      "object_handle": null
+    },
+    {
+      "t": 19.25,
+      "label": "tray_1",
+      "change_type": "remove",
+      "object_category": "tray",
+      "from_semantic": "kitchen.table_1",
+      "to_semantic": "away",
+      "target_relationship": "inside",
+      "mover": "Alex",
+      "activity": "cleaning",
+      "reason": "The tray on the kitchen table is part of the clutter being cleaned up and should be stored away in a cabinet to clear the workspace.",
+      "object_handle": null
+    },
+    {
+      "t": 19.404,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.table_1",
+      "to_semantic": "kitchen.table_1.tucked",
+      "target_relationship": "tucked_under",
+      "mover": "Alex",
+      "activity": "cleaning",
+      "reason": "Stool_1 is next to the kitchen table in the middle of the cleaning area; it should be tucked under the table or moved to a cleaner position to allow for thorough cleaning of the floor and table.",
+      "object_handle": null
+    },
+    {
+      "t": 20.891,
+      "label": "tray_1",
+      "change_type": "move_existing",
+      "object_category": "tray",
+      "from_semantic": "away",
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "organizing_school_lunches",
+      "reason": "Alex is preparing lunches, so she likely retrieves a tray from storage to organize the food items efficiently on the kitchen table. The tray is currently stored in kitchen.cabinet_1, so she brings it out.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 5,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "scene_id": "102343992",
+  "resident_profile": "single_parent_young_kids",
+  "seed": 12,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "alex_laptop": "laptop_a031287e7b68",
+    "alex_phone": "phone_223b376823b5",
+    "alex_wallet": "wallet_4eb66e5c0b4f",
+    "alex_keys": "keys_92167e12a3f0"
+  },
+  "day_context": {
+    "Alex": {
+      "day_type": "weekday",
+      "day_scenario": "After managing project deadlines all day, Alex returns home to pack tomorrow\u2019s school lunches while the children are in bed. She keeps her work laptop propped on the dining table to review pending emails just before her 23:00 bedtime."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "Leo spends his Friday afternoon carefully stacking wooden blocks into a leaning tower right in the hallway. He heads to bed at 20:00, leaving the precarious structure standing until it inevitably tumbles over later."
+    },
+    "Mia": {
+      "day_type": "weekday",
+      "day_scenario": "Mia wanders through the house with her pockets stuffed with crayons, happily filling any scrap of paper she finds with fresh drawings. She trades her art supplies for pajamas at 20:00, ready for a quiet night\u2019s sleep."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.153,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "tv_room.table_1",
+      "to_semantic": "bedroom_3.bed_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "waking_up",
+      "reason": "As Mia wakes up, she may reach for the toy nearby to start her day with play. The toy is moved from its current spot to the bed where she is waking up.",
+      "object_handle": null
+    },
+    {
+      "t": 7.377,
+      "label": "bowl_2",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on_top",
+      "mover": "Alex",
+      "activity": "breakfast",
+      "reason": "Alex is preparing to eat breakfast, so she needs a place for her food; she brings out a fresh bowl from storage since the one on the table is likely not intended for her current meal or is already in use by a child.",
+      "object_handle": null
+    },
+    {
+      "t": 7.488,
+      "label": "bowl_3",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "eating_breakfast",
+      "reason": "Leo is eating breakfast and needs a place to put his food or drink. There are bowls already on the table, but as a toddler, he might need a specific bowl for his breakfast items, or the existing bowls might be used by others. However, since bowl_1 and bowl_2 are already on the table, and the inventory only lists one bowl category, we assume the existing bowls are sufficient for the activity or are",
+      "object_handle": null
+    },
+    {
+      "t": 7.646,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_tucked",
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "next_to",
+      "mover": "Alex",
+      "activity": "breakfast",
+      "reason": "The stool is currently tucked under the counter, which is appropriate for tidiness but not for sitting at the table during breakfast; Alex pulls it out to sit down.",
+      "object_handle": null
+    },
+    {
+      "t": 8.62,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "bedroom_3.bed_1",
+      "to_semantic": "tv_room.couch_1",
+      "target_relationship": "near",
+      "mover": "Leo",
+      "activity": "playing_with_blocks",
+      "reason": "Leo loves building block towers and leaves them standing in the hallway until they fall, but here he is playing with the only toy available in the inventory. He will likely take the toy from where it is currently resting to use it.",
+      "object_handle": null
+    },
+    {
+      "t": 9.237,
+      "label": "tray_1",
+      "change_type": "move_existing",
+      "object_category": "tray",
+      "from_semantic": "kitchen.table_1",
+      "to_semantic": "tv_room.couch_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "drawing",
+      "reason": "Although not explicitly listed in the inventory counts, drawing requires paper. A tray or a flat surface on the couch provides a stable place for her to work given the limited furniture in the room.",
+      "object_handle": null
+    },
+    {
+      "t": 10.212,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "tv_room.couch_1",
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "drawing",
+      "reason": "Mia enjoys drawing and previously carried crayons, so she likely retrieves them to start her activity. Since she has no carried items currently, she may have put them away earlier or they are stored in the kitchen drawer/cabinet, but without a specific 'drawer' anchor, we look for placement of the drawing materials themselves.",
+      "object_handle": null
+    },
+    {
+      "t": 11.769,
+      "label": "bowl_4",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "eating",
+      "reason": "Mia is eating in the kitchen, so she likely needs a bowl to hold her food. Since the existing bowls are already on the table, she might retrieve another one from storage or simply use one of the available ones if the count allows, but given the 'abundant' rule and the fact that bowl_1/2/3 are already there, she might interact with a specific one. However, looking at the inventory, there is only 1 ",
+      "object_handle": null
+    },
+    {
+      "t": 14.676,
+      "label": "pillow_1",
+      "change_type": "move_existing",
+      "object_category": "pillow",
+      "from_semantic": "tv_room.couch_1",
+      "to_semantic": "bedroom_3.bed_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "sleeping",
+      "reason": "Mia is going to sleep in her bed, so she will likely bring a pillow from storage to the bed for comfort. The bedroom has a wardrobe which is the logical storage location for a spare pillow.",
+      "object_handle": null
+    },
+    {
+      "t": 14.985,
+      "label": "blanket_1",
+      "change_type": "move_existing",
+      "object_category": "blanket",
+      "from_semantic": "tv_room.couch_1",
+      "to_semantic": "bedroom_3.bed_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "sleeping",
+      "reason": "To stay warm while sleeping, Mia will take the blanket from its storage location in the bedroom and place it on her bed.",
+      "object_handle": null
+    },
+    {
+      "t": 18.051,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "kitchen.table_1",
+      "to_semantic": "tv_room.cabinet_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "playing",
+      "reason": "Mia is playing and often carries crayons in her pockets, so she likely pulls a crayon out to use for drawing or play.",
+      "object_handle": null
+    },
+    {
+      "t": 18.751,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "tv_room.cabinet_1",
+      "to_semantic": "bedroom_3.bed_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "drawing",
+      "reason": "Mia enjoys drawing on any available paper, and the kitchen table is currently clear of her specific materials, so she will likely bring a fresh sheet of paper from storage to the table to start her session.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 3,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 3,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

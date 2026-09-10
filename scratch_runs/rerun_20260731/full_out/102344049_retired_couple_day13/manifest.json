@@ -1,0 +1,210 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "retired_couple",
+  "seed": 14,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "arthur_phone": "phone_a022864ae7b6",
+    "arthur_wallet": "wallet_4bc4176c10b9",
+    "arthur_keys": "keys_92167e12a3f0",
+    "arthur_medicine": "medicine_429536ff8dd8",
+    "martha_phone": "phone_15c2adf9af7a",
+    "martha_wallet": "wallet_4d63cef3d4c3",
+    "martha_keys": "keys_aaccd2b9848d",
+    "martha_medicine": "medicine_d83f35ad19e8"
+  },
+  "day_context": {
+    "Arthur": {
+      "day_type": "weekend",
+      "day_scenario": "Arthur rises before dawn to prune the tomato vines and check the soil moisture in his backyard plot, savoring the quiet morning air. Later, he settles at the kitchen table with a biography of the Roman Empire, and as evening falls, he retreats to his favorite armchair to enjoy the house\u2019s peaceful silence before his 10 PM bedtime."
+    },
+    "Martha": {
+      "day_type": "weekend",
+      "day_scenario": "Martha steps onto the back porch at 6:30 AM with a steaming mug of dark roast, letting the strings of a Vivaldi concerto fill the crisp morning air. After a brief nap around two, she spends the rest of the afternoon untangling a particularly stubborn newspaper crossword and carefully arranging vintage wedding photographs into a new leather album before winding down for bed at 10:30."
+    }
+  },
+  "changes": [
+    {
+      "t": 8.733,
+      "label": "martha_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Martha",
+      "activity": "tidying",
+      "reason": "Martha owns a phone, but it is currently put away. Tidying might involve checking notifications, but since the activity is general tidying and the phone is not out, she is less likely to bring it out unless she is about to listen to music. Given she enjoys music, she might bring it out to play classical music.",
+      "object_handle": null
+    },
+    {
+      "t": 9.07,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Arthur",
+      "activity": "breakfast",
+      "reason": "Arthur is eating breakfast at the kitchen table, so he needs a place to sit. He pulls out a stool that is currently tucked under the counter to use as his seat.",
+      "object_handle": null
+    },
+    {
+      "t": 9.586,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "reading",
+      "reason": "Martha is settling in for a long reading session and needs comfortable seating. She pulls out one of the chairs from under the living room table to sit on.",
+      "object_handle": null
+    },
+    {
+      "t": 9.737,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "kitchen.counter_1.tucked",
+      "target_relationship": "tucked_under",
+      "mover": "Arthur",
+      "activity": "tidying",
+      "reason": "Arthur is tidying the kitchen after his morning activities, so he will put away the stool that was used at the counter. He will move the specific stool currently next to the counter back to its tucked-under position.",
+      "object_handle": null
+    },
+    {
+      "t": 10.224,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Martha",
+      "activity": "reading",
+      "reason": "She has a book to read, and while only one is listed as out, bringing it to her seat is necessary. Since the book is likely on the table or nearby, she takes it with her to the chair.",
+      "object_handle": null
+    },
+    {
+      "t": 12.17,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "reading",
+      "reason": "Arthur is starting his afternoon reading session at the kitchen table, so he will likely bring a book from the living room to the table. The book currently sits on the living room table, so he picks it up and moves it to the kitchen table to read there.",
+      "object_handle": null
+    },
+    {
+      "t": 14.752,
+      "label": "chair_2",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "crossword_puzzles",
+      "reason": "Martha is starting her afternoon crossword puzzle session, which requires a suitable seat at a surface. She will pull out a chair from under the table to sit and work.",
+      "object_handle": null
+    },
+    {
+      "t": 16.652,
+      "label": "blanket_1",
+      "change_type": "move_existing",
+      "object_category": "blanket",
+      "from_semantic": "bedroom_1.bed_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "resting",
+      "reason": "Arthur prefers silence in the evenings and is resting in the living room, so he likely retrieves the blanket to stay comfortable. He places it on the chair or sofa area where he is sitting.",
+      "object_handle": null
+    },
+    {
+      "t": 17.089,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "resting",
+      "reason": "Arthur spends his afternoons reading historical non-fiction, and since he is resting in the evening, he might pick up the book from the kitchen counter to read while resting. He moves it to the table where he is currently situated.",
+      "object_handle": null
+    },
+    {
+      "t": 20.391,
+      "label": "book_2",
+      "change_type": "insert_new",
+      "object_category": "book",
+      "from_semantic": null,
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Martha",
+      "activity": "light_reading",
+      "reason": "She has books on the table already, but for a dedicated reading session, she might prefer a specific book she intends to read rather than the pile. Since book_1, book_2, and book_3 are all on the table, she might rearrange them to have the active book on top.",
+      "object_handle": null
+    },
+    {
+      "t": 20.43,
+      "label": "book_3",
+      "change_type": "insert_new",
+      "object_category": "book",
+      "from_semantic": null,
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "reading",
+      "reason": "He brings out a book for his evening reading; since book_1 is currently on the table, he likely has another book nearby or brings one from a shelf to avoid using the one potentially associated with his earlier day activities or Martha's items.",
+      "object_handle": null
+    },
+    {
+      "t": 21.548,
+      "label": "slippers_1",
+      "change_type": "move_existing",
+      "object_category": "slippers",
+      "from_semantic": "bedroom_1.chest_of_drawers_1",
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "near",
+      "mover": "Martha",
+      "activity": "bedroom",
+      "reason": "Martha is preparing for bed in bedroom 1, and her slippers are currently on the chest of drawers; she will likely move them to the floor near the bed or wardrobe for easy access upon waking or for tidiness.",
+      "object_handle": null
+    },
+    {
+      "t": 21.823,
+      "label": "martha_phone",
+      "change_type": "move_existing",
+      "object_category": "phone",
+      "from_semantic": "living_room.table_1",
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "near",
+      "mover": "Martha",
+      "activity": "bedroom",
+      "reason": "Martha is tidying up before sleep. The jewelry box is currently open/on the chest. She might close it and leave it, or if she needs to store other items, she might use the wardrobe. However, without a clear item to store in the wardrobe, and given her high tidiness, she might just ensure the jewelry box is secure. Let's look at the phone. The phone is in the living room, but she is in the bedroom.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 2,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 4,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

@@ -1,0 +1,42 @@
+manifest: dropping unattributable displacement cat=phone None->dining_room.counter_1 @t=9.39 (dest_room=dining_room src_room=None; no occupant present)
+manifest: dropping unattributable displacement cat=bowl None->dining_room.counter_1 @t=9.41 (dest_room=dining_room src_room=None; no occupant present)
+Scenes       : 1
+Profile      : roommates_shared_house
+Day          : 0
+Variants     : 1
+Days         : 18
+Model        : Qwen/Qwen3.6-35B-A3B
+Backend      : http://127.0.0.1:8300
+Output       : /home/oliver/robot/dynamic_home_eqa/scratch_runs/rerun_20260731/full_out
+Cache        : /home/oliver/robot/dynamic_home_eqa/scratch_runs/rerun_20260731/cache
+Force regen  : False
+Semantic gnd : True
+Trace gate   : True
+Reachability filtering: False
+Judge        : guided / style=asis
+
+  102344022 day 0  survival=100.0%  (24/24 proposals)  realism=0.78  10 changes  → 102344022_roommates_shared_house_day0/
+  102344022 day 1  survival=100.0%  (42/42 proposals)  realism=0.68  20 changes  → 102344022_roommates_shared_house_day1/
+  102344022 day 2  survival=100.0%  (46/46 proposals)  realism=0.78  21 changes  → 102344022_roommates_shared_house_day2/
+  102344022 day 3  survival=100.0%  (36/36 proposals)  realism=0.71  23 changes  → 102344022_roommates_shared_house_day3/
+  102344022 day 4  survival=100.0%  (29/29 proposals)  realism=0.77  15 changes  → 102344022_roommates_shared_house_day4/
+  102344022 day 5  survival=100.0%  (70/70 proposals)  realism=0.74  35 changes  → 102344022_roommates_shared_house_day5/
+  102344022 day 6  survival=100.0%  (35/35 proposals)  realism=0.80  25 changes  → 102344022_roommates_shared_house_day6/
+  [ERROR] 102344022 day 7: trace_validate failed: 14 events — chain_breaks=0 re_inserts=0 no_ops=0 unattended=1
+  102344022 day 8  survival=100.0%  (40/40 proposals)  realism=0.81  19 changes  → 102344022_roommates_shared_house_day8/
+  102344022 day 9  survival=100.0%  (58/58 proposals)  realism=0.81  19 changes  → 102344022_roommates_shared_house_day9/
+  102344022 day 10  survival=100.0%  (33/33 proposals)  realism=0.68  22 changes  → 102344022_roommates_shared_house_day10/
+  102344022 day 11  survival=100.0%  (30/30 proposals)  realism=0.73  16 changes  → 102344022_roommates_shared_house_day11/
+  102344022 day 12  survival=100.0%  (78/78 proposals)  realism=0.71  30 changes  → 102344022_roommates_shared_house_day12/
+  102344022 day 13  survival=100.0%  (72/72 proposals)  realism=0.75  45 changes  → 102344022_roommates_shared_house_day13/
+  102344022 day 14  survival=100.0%  (23/23 proposals)  realism=0.79  16 changes  → 102344022_roommates_shared_house_day14/
+  102344022 day 15  survival=100.0%  (29/29 proposals)  realism=0.71  13 changes  → 102344022_roommates_shared_house_day15/
+  102344022 day 16  survival=100.0%  (59/59 proposals)  realism=0.72  22 changes  → 102344022_roommates_shared_house_day16/
+  102344022 day 17  survival=100.0%  (41/41 proposals)  realism=0.80  23 changes  → 102344022_roommates_shared_house_day17/
+
+════════════════════════════════════════════════════════════
+Grounding survival     : 100.0%  (745/745 proposals)
+Infra rejection rate   : 0.0%  (no_anchor=0 — region/anchor data gap, not model error)
+Model rejection rate   : 0.0%  (no_object=0, no_placement=0, bad_relation=0)
+Mean realism (selected): 0.748  (behavioral plausibility of the final selected displacements, independent of grounding)
+════════════════════════════════════════════════════════════

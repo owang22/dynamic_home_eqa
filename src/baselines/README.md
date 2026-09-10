@@ -8,7 +8,9 @@ panel tags).
 Representative-grid studies (shared runner `representative_grid.py`):
 `oracle_posterior_study.py` (OracleBelief, `beliefs/oracle_program_posterior.py`:
 the routine oracle's realization ensemble weighted by the observation
-history, with its ESS degeneracy gate), `voi_study.py`
+history with a per-disagreement `eps` and a forgetting half-life, the
+weighting sweep that picks them on the calibration households, and the
+ESS degeneracy gate), `voi_study.py`
 (value-of-information policies, `policies/voi_sense.py`) and
 `delayed_label_study.py` (mined delayed labels for adaptive conformal
 feedback, `conformal/delayed_labels.py`). Outputs under `results/`;

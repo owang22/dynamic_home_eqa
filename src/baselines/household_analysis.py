@@ -120,7 +120,9 @@ def _absence_rows(scored: Sequence[Any], episode: Any, household: str,
     rows = []
     for q in scored:
         d = q.diagnostics
-        if d is None:
+        if d is None or "max_edge_belief" not in d:
+            # only the Perpetua edge models carry the absence-signal
+            # fields; OracleBelief reports ess/max_weight instead
             continue
         truth = episode.true_location(q.object_id, q.t_query)
         rows.append((household, seed, q.belief, mode, q.checkpoint_day,

@@ -60,6 +60,8 @@ from baselines.policies.base import DecisionPolicy
 from baselines.policies.fixed_schedule import FixedSchedule, FixedScheduleConfig
 from baselines.policies.never_sense import NeverSense
 from baselines.policies.sequential_search import SequentialSearch
+from baselines.policies.star_memory_loop import (ScriptedRecallThenVerify,
+                                                 StarMemoryLoopPolicy)
 
 logger = logging.getLogger(__name__)
 
@@ -133,6 +135,18 @@ def build_policy(spec: Dict[str, Any], rng: random.Random) -> DecisionPolicy:
             rotation=tuple(str(r) for r in spec["rotation"]),
             every_hours=float(spec["every_hours"]))
         return FixedSchedule(cfg)
+    if name == "star_memory_loop":
+        # Scripted selector only from configs; the LLM selector needs a
+        # served endpoint and is wired by baselines.star_study. Note the
+        # standard harness neither feeds this policy's memory index nor
+        # honours its answer override (see the policy's module
+        # docstring) -- star_study's runner is the supported home.
+        return StarMemoryLoopPolicy(
+            ScriptedRecallThenVerify(
+                fresh_age_s=int(spec.get("fresh_age_s", 3600))),
+            rooms=spec.get("rooms"),
+            max_steps=int(spec.get("max_steps", 8)),
+            max_recalls=int(spec.get("max_recalls", 4)))
     raise ValueError(f"unknown policy {name!r}")
 
 

@@ -1,0 +1,223 @@
+{
+  "scene_id": "102344049",
+  "resident_profile": "retired_couple",
+  "seed": 10,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "arthur_phone": "phone_a022864ae7b6",
+    "arthur_wallet": "wallet_4bc4176c10b9",
+    "arthur_keys": "keys_92167e12a3f0",
+    "arthur_medicine": "medicine_429536ff8dd8",
+    "martha_phone": "phone_15c2adf9af7a",
+    "martha_wallet": "wallet_4d63cef3d4c3",
+    "martha_keys": "keys_aaccd2b9848d",
+    "martha_medicine": "medicine_d83f35ad19e8"
+  },
+  "day_context": {
+    "Arthur": {
+      "day_type": "weekday",
+      "day_scenario": "Arthur rises at 6:00 AM to carefully water the tomato and pepper beds before dawn breaks, then returns inside to spend his afternoons reading historical non-fiction at the kitchen table. He honors his preference for silence as he reviews the day\u2019s newspaper before heading to bed at 10:00 PM."
+    },
+    "Martha": {
+      "day_type": "weekday",
+      "day_scenario": "Martha steps onto the back porch at 6:30 AM with a mug of dark roast, letting the classical music radio broadcasts fill the morning air. She spends her afternoons tackling a tricky crossword puzzle and organizing family photo albums, taking a short nap on the living room sofa around 2 PM before settling in for her 10:30 PM bedtime."
+    }
+  },
+  "changes": [
+    {
+      "t": 4.065,
+      "label": "book_2",
+      "change_type": "insert_new",
+      "object_category": "book",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "eating_breakfast",
+      "reason": "Arthur has a habit of reading historical non-fiction at the kitchen table in the afternoons, and it is plausible he might bring his book out early or keep it nearby while eating. The book is currently on the counter, so leaving it there or moving it slightly is consistent with his routine.",
+      "object_handle": null
+    },
+    {
+      "t": 6.616,
+      "label": "slippers_1",
+      "change_type": "move_existing",
+      "object_category": "slippers",
+      "from_semantic": "bedroom_1.chest_of_drawers_1",
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "near",
+      "mover": "Martha",
+      "activity": "waking_up",
+      "reason": "Martha is just waking up and needs to put on her footwear to get out of bed. The slippers are currently on the chest of drawers, so she will move them to the floor near the bed to step into them.",
+      "object_handle": null
+    },
+    {
+      "t": 8.797,
+      "label": "book_3",
+      "change_type": "insert_new",
+      "object_category": "book",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "on",
+      "mover": "Arthur",
+      "activity": "reading",
+      "reason": "Arthur spends his afternoons reading at the kitchen table, so he will bring a book out from storage to read. The book is placed on the table where he can comfortably access it.",
+      "object_handle": null
+    },
+    {
+      "t": 9.24,
+      "label": "book_4",
+      "change_type": "insert_new",
+      "object_category": "book",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "inside",
+      "mover": "Martha",
+      "activity": "tidying_kitchen",
+      "reason": "After clearing space, she will tidy the books currently cluttering the counter by placing them inside the wardrobe for organized storage.",
+      "object_handle": null
+    },
+    {
+      "t": 10.029,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Arthur",
+      "activity": "reading",
+      "reason": "Arthur is reading historical non-fiction at the kitchen table, so he needs a comfortable seat; he pulls out one of the stools tucked under the counter to sit at the table.",
+      "object_handle": null
+    },
+    {
+      "t": 11.32,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Martha",
+      "activity": "reading",
+      "reason": "Martha is starting a reading session and needs a book; since book_2 and book_3 are on the kitchen counter and book_4 is stored inside, she will retrieve one to read in the living room.",
+      "object_handle": null
+    },
+    {
+      "t": 15.218,
+      "label": "chair_1",
+      "change_type": "move_existing",
+      "object_category": "chair",
+      "from_semantic": "living_room.table_1.tucked",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "crossword_puzzles",
+      "reason": "Since the remote control is already on the table but not needed for crosswords, she might move it slightly aside or leave it; however, to clear space, she might not move it. Instead, she might retrieve a fresh book or puzzle piece if available, but given the inventory, she likely uses the existing book_1. To make room, she might not move anything else. Let's assume she just uses the table as is. A",
+      "object_handle": null
+    },
+    {
+      "t": 17.135,
+      "label": "arthur_medicine",
+      "change_type": "insert_new",
+      "object_category": "medicine",
+      "from_semantic": null,
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "inside",
+      "mover": "Arthur",
+      "activity": "tidying_up",
+      "reason": "Arthur is tidying up in the evening and needs to put away his personal items that are currently stored away but may have been accessed or need to be secured for the night. The medicine, keys, wallet, and phone are listed as 'put away / not out yet', implying they are in their designated storage spots. However, the activity is 'tidying_up' which often involves ensuring carried items are properly st",
+      "object_handle": null
+    },
+    {
+      "t": 17.19,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "kitchen.counter_1.tucked",
+      "target_relationship": "tucked_under",
+      "mover": "Arthur",
+      "activity": "tidying_up",
+      "reason": "Arthur is tidying up in the kitchen. The stool_1 is currently next to the counter, which might be considered cluttered or out of place during a general tidying session. Tucking it back under the counter aligns with tidying.",
+      "object_handle": null
+    },
+    {
+      "t": 18.883,
+      "label": "martha_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on",
+      "mover": "Martha",
+      "activity": "watching_tv",
+      "reason": "Martha is settling in to watch TV and may want to listen to music or adjust volume without disturbing the radio, so she retrieves her phone to control audio or check something. She will place it on the table within easy reach.",
+      "object_handle": null
+    },
+    {
+      "t": 19.423,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1.tucked",
+      "to_semantic": "kitchen.counter_1",
+      "target_relationship": "next_to",
+      "mover": "Martha",
+      "activity": "preparing_dinner",
+      "reason": "Martha is preparing dinner in the kitchen, so she will likely need a place to sit or rest while cooking or eating. She will pull out a stool from its tucked position to use at the counter.",
+      "object_handle": null
+    },
+    {
+      "t": 19.738,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_1",
+      "to_semantic": "kitchen.counter_1.tucked",
+      "target_relationship": "tucked_under",
+      "mover": "Arthur",
+      "activity": "tidying_up",
+      "reason": "Arthur tidies up after dinner, so he will put away the stool he used at the kitchen counter to clear the workspace.",
+      "object_handle": null
+    },
+    {
+      "t": 21.119,
+      "label": "blanket_1",
+      "change_type": "move_existing",
+      "object_category": "blanket",
+      "from_semantic": "bedroom_1.bed_1",
+      "to_semantic": "living_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Martha",
+      "activity": "reading",
+      "reason": "She is settling in for a long reading session (almost an hour) in the living room and may want to use the blanket for comfort or warmth while relaxing.",
+      "object_handle": null
+    },
+    {
+      "t": 21.611,
+      "label": "nightlight_1",
+      "change_type": "move_existing",
+      "object_category": "nightlight",
+      "from_semantic": "bedroom_1.chest_of_drawers_1",
+      "to_semantic": "bedroom_1.bed_1",
+      "target_relationship": "inside",
+      "mover": "Martha",
+      "activity": "winding_down",
+      "reason": "The nightlight is currently on the dresser and should be turned off and put away or placed near the bed for bedtime use, disappearing from the main surface view.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 3,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}

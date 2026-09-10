@@ -1,0 +1,223 @@
+{
+  "scene_id": "102343992",
+  "resident_profile": "single_parent_young_kids",
+  "seed": 2,
+  "model": "Qwen/Qwen3.6-35B-A3B",
+  "asset_bindings": {
+    "alex_laptop": "laptop_a031287e7b68",
+    "alex_phone": "phone_223b376823b5",
+    "alex_wallet": "wallet_4eb66e5c0b4f",
+    "alex_keys": "keys_92167e12a3f0"
+  },
+  "day_context": {
+    "Alex": {
+      "day_type": "weekday",
+      "day_scenario": "After waking at 6:30 AM to coordinate the morning drop-off, Alex returns home and keeps her work laptop readily accessible on the dining table to review client emails while the house settles. Once the children are finally in bed, she moves to the kitchen to organize tomorrow's packed lunches, staying focused on her tasks until her 23:00 bedtime."
+    },
+    "Leo": {
+      "day_type": "weekday",
+      "day_scenario": "Waking at 7:00 AM, Leo carries his favorite plastic bricks into the hallway where he spends the day stacking them into a tall, winding tower. He carefully leaves the completed structure standing against the baseboard before wandering off to play, fully expecting it to tumble over later."
+    },
+    "Mia": {
+      "day_type": "weekday",
+      "day_scenario": "Mia wakes at 7:00 AM and spends her morning pressing wax crayons into her front pockets so she can draw on any scrap of paper she finds around the living room. She continues sketching vibrant pictures throughout the afternoon, leaving a scattered trail of artwork on the rug before heading to bed at 20:00."
+    }
+  },
+  "changes": [
+    {
+      "t": 7.225,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "tv_room.table_1",
+      "to_semantic": "bedroom_3.bed_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "waking_up",
+      "reason": "As a toddler waking up, Mia might move the toy she finds or has nearby to play with it in her bed. The bed is the primary surface for resting and playing in the bedroom.",
+      "object_handle": null
+    },
+    {
+      "t": 7.478,
+      "label": "pillow_1",
+      "change_type": "move_existing",
+      "object_category": "pillow",
+      "from_semantic": "tv_room.couch_1",
+      "to_semantic": "bedroom_3.bed_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "waking_up",
+      "reason": "The jewelry box is currently on the bed. While Mia is a toddler, she might not interact with jewelry. However, the activity is waking up. She might move the pillow to make herself more comfortable. The pillow is listed in inventory but not in current state, implying it might be on the bed or in the wardrobe. If it's in the wardrobe, she wouldn't move it yet. If it's on the bed, she might adjust it",
+      "object_handle": null
+    },
+    {
+      "t": 7.514,
+      "label": "stool_1",
+      "change_type": "move_existing",
+      "object_category": "stool",
+      "from_semantic": "kitchen.counter_tucked",
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "next_to",
+      "mover": "Alex",
+      "activity": "breakfast",
+      "reason": "Alex is preparing to eat breakfast in the kitchen, so she will pull the stool out from under the counter to use as a seat. She will place it next to the table where the tray and bowl are already located.",
+      "object_handle": null
+    },
+    {
+      "t": 7.813,
+      "label": "toy_1",
+      "change_type": "move_existing",
+      "object_category": "toy",
+      "from_semantic": "bedroom_3.bed_1",
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "playing_with_toys",
+      "reason": "Leo is a toddler who loves building block towers and typically leaves them in the hallway or play area; he would move the single available toy to a flat surface to build. The kitchen table provides a large, accessible, and safe flat surface for a toddler to spread out toys.",
+      "object_handle": null
+    },
+    {
+      "t": 8.34,
+      "label": "toy_2",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "drawing",
+      "reason": "Mia enjoys drawing on any available paper and carries crayons; she will likely bring out a fresh crayon from her pocket or a stash to start her activity. She needs a surface to draw on, and the table in the TV room is the most suitable flat surface available in the scene inventory.",
+      "object_handle": null
+    },
+    {
+      "t": 10.227,
+      "label": "toy_3",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "playing_with_toys",
+      "reason": "Leo loves building block towers and has been building them since 08:30, likely resulting in scattered blocks or the need for more pieces on the play surface. He will move the available toy onto the table to continue his play session.",
+      "object_handle": null
+    },
+    {
+      "t": 11.503,
+      "label": "bowl_2",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "eating",
+      "reason": "Mia is a toddler with low tidiness who enjoys drawing and often carries crayons; she is likely to bring her crayons out to draw while eating. Since she owns no carried items currently listed, we assume she retrieves them or they are implicitly present as part of her habit, but strictly adhering to inventory, she might move a bowl to use it. However, the most salient 'toddler' behavior given her '0",
+      "object_handle": null
+    },
+    {
+      "t": 12.19,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "tv_room.cabinet_1",
+      "to_semantic": "tv_room.couch_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "resting",
+      "reason": "The book is currently on the cabinet; since Mia enjoys drawing and resting, she might pick up the book to read or simply have it nearby as part of her resting setup on the couch.",
+      "object_handle": null
+    },
+    {
+      "t": 12.296,
+      "label": "bowl_3",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on",
+      "mover": "Alex",
+      "activity": "lunch",
+      "reason": "Since the table is currently occupied by used items (bowl_2, tray_1) and Alex is about to eat, she likely needs to clear space or use a fresh bowl for her lunch. Bringing a fresh bowl from the kitchen storage (implied abundant supply) to the table is standard for starting a meal.",
+      "object_handle": null
+    },
+    {
+      "t": 15.351,
+      "label": "toy_4",
+      "change_type": "insert_new",
+      "object_category": "toy",
+      "from_semantic": null,
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "inside",
+      "mover": "Mia",
+      "activity": "playing",
+      "reason": "Mia is playing and often carries crayons, so she likely needs a fresh crayon or drawing material if her pockets are empty or she wants to switch toys. Since she has no carried items listed as 'out' and toys are already on the table, she might retrieve a toy from storage to add to her play session.",
+      "object_handle": null
+    },
+    {
+      "t": 16.16,
+      "label": "book_1",
+      "change_type": "move_existing",
+      "object_category": "book",
+      "from_semantic": "tv_room.couch_1",
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "on",
+      "mover": "Mia",
+      "activity": "drawing",
+      "reason": "Mia might bring a book from the couch to the table to look at pictures while drawing or to use as a reference. The couch is the current location of the book.",
+      "object_handle": null
+    },
+    {
+      "t": 16.871,
+      "label": "bowl_4",
+      "change_type": "insert_new",
+      "object_category": "bowl",
+      "from_semantic": null,
+      "to_semantic": "kitchen.table_1",
+      "target_relationship": "on_top",
+      "mover": "Mia",
+      "activity": "eating",
+      "reason": "Mia needs a bowl to eat from. While bowl_1 is already on the table, toddlers often spill or drop items, and having a dedicated, fresh bowl is practical. Since the inventory lists 'bowl' as a category with count 1 in the scene, and bowl_1 is already present, we look for other candidates. However, the prompt says 'Small everyday items... are ABUNDANT... Prefer bringing a fresh one'. But the scene *b",
+      "object_handle": null
+    },
+    {
+      "t": 19.99,
+      "label": "pillow_1",
+      "change_type": "move_existing",
+      "object_category": "pillow",
+      "from_semantic": "bedroom_3.bed_1",
+      "to_semantic": "bedroom_2.bed_1",
+      "target_relationship": "on",
+      "mover": "Leo",
+      "activity": "sleeping",
+      "reason": "As Leo goes to sleep in bedroom 2, he needs to get comfortable, so he will move the pillow from its storage location in bedroom 3 to the bed in bedroom 2 where he is sleeping.",
+      "object_handle": null
+    },
+    {
+      "t": 21.604,
+      "label": "alex_phone",
+      "change_type": "insert_new",
+      "object_category": "phone",
+      "from_semantic": null,
+      "to_semantic": "tv_room.table_1",
+      "target_relationship": "on",
+      "mover": "Alex",
+      "activity": "reading",
+      "reason": "She is reviewing emails or organizing lunches earlier, but now reading, so she may bring her phone out from being put away to check notifications or use it as a light/reader, placing it on the nearby table for easy access.",
+      "object_handle": null
+    }
+  ],
+  "integrity_stats": {
+    "rejected_unattended": 0,
+    "dropped_noop": 0,
+    "dropped_bad_time": 0,
+    "spawned_from_storage": 6,
+    "rejected_unbacked_anchor": 0,
+    "rejected_unreachable_anchor": 0,
+    "rejected_over_capacity": 0,
+    "dropped_despawn_notout": 0,
+    "rejected_no_seat_in_room": 0,
+    "clutter_rejected_unreachable": 0,
+    "admission_map_used": true
+  }
+}
