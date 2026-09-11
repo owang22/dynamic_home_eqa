@@ -403,9 +403,13 @@ class OracleProgramPosterior(BeliefModel):
         self._logw_t = 0
         self._last = None
         self.n_observations = 0
-        # The base reset registers every context object, which allocates
-        # each object's code grid through _register_object.
         super().reset(context)
+        # Privileged access, oracle only: the base reset leaves the
+        # registry empty for deployable beliefs; this model seeds it from
+        # the full object list, allocating each object's code grid
+        # through _register_object.
+        for obj, cls in context.object_classes.items():
+            self.ensure_object(obj, cls)
 
     def _register_object(self, object_id: str, object_class: str) -> None:
         """Allocate the object's realization grid, re-coded into the

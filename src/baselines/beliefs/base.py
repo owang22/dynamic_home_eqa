@@ -214,13 +214,17 @@ class BeliefModel(abc.ABC):
     # ---------------------------------------------------------------- API
 
     def reset(self, context: EpisodeContext) -> None:
-        """Start a fresh episode: forget all evidence, remember the context."""
+        """Start a fresh episode: forget all evidence, remember the context.
+
+        The context's ``object_classes`` is deliberately NOT read here:
+        deployable beliefs start with an empty registry and discover
+        objects from questions and evidence (open object set). Only the
+        oracle belief seeds its registry from the list — privileged
+        access it opts into in its own reset."""
         self._context = context
         self._history = {}
         self._exclusions = {}
         self._objects = {}
-        for obj, cls in context.object_classes.items():
-            self.ensure_object(obj, cls)
 
     def ensure_object(self, object_id: str, object_class: str) -> None:
         """Register ``object_id`` as a tracked object. Idempotent: a
