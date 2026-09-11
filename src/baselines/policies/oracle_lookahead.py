@@ -6,9 +6,10 @@ values a sense by the current question's one-step value of information
 PLUS the discounted VoI it would buy for every scheduled question inside
 the lookahead window:
 
-    value(r) = voi_now(r)
-             + sum over future questions (o', t') with t < t' <= t + H of
-                   voi(p_o', r) * 2^(-(t' - t) / half_life)
+    w(o', t') = 2^(-(t' - t) / half_life)
+    value(r) = [ voi_now(r) + sum over future (o', t') in (t, t + H] of
+                              w(o', t') * voi(p_o', r) ]
+               / [ 1 + sum of w(o', t') ]
 
 where ``p_o'`` is the belief's CURRENT distribution for the future
 question's object (read through ``predict_readonly`` so scoring the
@@ -18,6 +19,20 @@ the best value-per-cost receptacle while ``value / cost >= lambda``,
 with cost read live through ``context.sense_cost`` (the room-change
 model; the robot's position rides on the context, so ``decide`` keeps
 its signature).
+
+**The denominator is what makes the threshold mean anything.** It is
+constant across receptacles at one decision, so it never changes WHICH
+receptacle is picked — only when to stop. Without it the value is a SUM
+over the window, and at 90 questions/day the window carries ~97
+question-equivalents of weight against the current question's 1: the
+window term measured 490-1650x the current term at real decision points
+and cleared ``lambda = 0.05`` on its own in 99% of them, so the
+threshold never bound and the policy degenerated into "sense until the
+budget guard stops you, at whichever receptacle covers the most
+upcoming objects" — a coverage policy, not a lookahead one. Dividing by
+the total weight makes ``value`` an expected accuracy gain PER question
+in the window, the same scale the single-question ``lambda`` was chosen
+on. Set ``normalize_window=False`` to recover the raw sum.
 
 Greedy over the window — receptacles are picked one step at a time —
 so measured this way the lookahead gain is a LOWER BOUND on the true
@@ -66,8 +81,8 @@ class OracleLookaheadSense(VoIThresholdSense):
                  schedule: Sequence[Question], predict_fn: PredictFn,
                  horizon_days: float = DEFAULT_HORIZON_DAYS,
                  decay_half_life_h: float = DEFAULT_DECAY_HALF_LIFE_H,
-                 reserve_fraction: float = DEFAULT_RESERVE_FRACTION
-                 ) -> None:
+                 reserve_fraction: float = DEFAULT_RESERVE_FRACTION,
+                 normalize_window: bool = True) -> None:
         super().__init__(rng, lam=lam)
         if horizon_days <= 0 or decay_half_life_h <= 0:
             raise ValueError(
@@ -78,6 +93,7 @@ class OracleLookaheadSense(VoIThresholdSense):
                 f"OracleLookaheadSense: reserve_fraction "
                 f"{reserve_fraction} outside [0, 1]")
         self._reserve_fraction = float(reserve_fraction)
+        self._normalize_window = bool(normalize_window)
         self._schedule = sorted(schedule, key=lambda q: q.t_query)
         self._predict_fn = predict_fn
         self._horizon_s = horizon_days * 86_400.0
@@ -130,14 +146,18 @@ class OracleLookaheadSense(VoIThresholdSense):
 
         voi_now = value_of_information(prediction.distribution, untried)
         value = dict(voi_now)
+        total_weight = 1.0
         future_predictions: Dict[str, Prediction] = {}
         for obj, discount in self._future_weights(question):
             if obj not in future_predictions:
                 future_predictions[obj] = self._predict_fn(obj, t)
             future_voi = value_of_information(
                 future_predictions[obj].distribution, untried)
+            total_weight += discount
             for r in untried:
                 value[r] += discount * future_voi[r]
+        if self._normalize_window:
+            value = {r: v / total_weight for r, v in value.items()}
 
         costs = {r: self._cost(r) for r in untried}
         affordable = [r for r in untried if costs[r] <= budget_remaining]
