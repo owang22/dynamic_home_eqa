@@ -18,7 +18,10 @@ and start with its header; a file may hold many episodes):
       cost),
      "home_base_room": str (optional, required with receptacle_rooms:
       the room the robot starts each day in — the room with the most
-      receptacles, ties broken by room id sort order)}
+      receptacles, ties broken by room id sort order),
+     "query_generation": "uniform"|"routine_driven" (optional for old
+      banks, which are all uniform; REQUIRED as soon as any question row
+      carries an "origin" — a routine-driven bank must declare itself)}
 
     {"kind": "truth", "episode_id": str, "object_id": str, "t": int,
      "receptacle_id": str}
@@ -163,9 +166,16 @@ class _EpisodeAccumulator:
                 for k, v in (header.get("receptacle_rooms") or {}).items()}
             raw_home = header.get("home_base_room")
             self.home_base_room = None if raw_home is None else str(raw_home)
+            raw_qg = header.get("query_generation")
+            self.query_generation = None if raw_qg is None else str(raw_qg)
         except (KeyError, TypeError, AttributeError) as err:
             raise BankFormatError(
                 f"{path}:{lineno}: bad episode_header: {err}") from err
+        if self.query_generation not in (None, "uniform", "routine_driven"):
+            raise BankFormatError(
+                f"{path}:{lineno}: query_generation "
+                f"{self.query_generation!r} not in "
+                f"('uniform', 'routine_driven')")
         unknown_roomed = set(self.receptacle_rooms) - set(self.receptacles)
         if unknown_roomed:
             raise BankFormatError(
@@ -226,6 +236,11 @@ class _EpisodeAccumulator:
         else:  # question
             obj = str(row["object_id"])
             self._check(obj in self.object_classes, lineno, f"unknown object {obj!r}")
+            self._check("origin" not in row or self.query_generation is not None,
+                        lineno,
+                        "question carries an origin but the episode header "
+                        "declares no query_generation — a routine-driven "
+                        "bank must say so in its header")
             row_class = row.get("object_class")
             object_class = (str(row_class) if row_class is not None
                             else self.object_classes.get(obj))

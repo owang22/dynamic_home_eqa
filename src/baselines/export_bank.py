@@ -382,7 +382,9 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
            budget_per_sensable_receptacle: Optional[float] = None,
            observation_model: str = "glimpse",
            patrol: str = "round_robin_patrol",
-           visits_per_day: int = 8) -> JsonlBank:
+           visits_per_day: int = 8,
+           query_generation: str = "uniform",
+           query_rules: Optional[pathlib.Path] = None) -> JsonlBank:
     """Write the bank JSONL and return its loader (which re-validates it).
 
     ``observation_model`` selects how the ambient stream is produced:
@@ -399,6 +401,16 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
       sightings, and the same primitive serves an active policy's paid
       sense). ``patrol`` names the schedule and ``visits_per_day`` its
       budget where the schedule takes one.
+
+    ``query_generation`` selects how questions are produced and is
+    recorded in the episode header:
+
+    * ``uniform`` — the existing machinery (``query_mode`` picks its
+      uniform or naturalistic flavour), unchanged.
+    * ``routine_driven`` — questions triggered by the timeline's realized
+      activities under the rules of ``query_rules`` (a YAML file, see
+      :mod:`baselines.query_stream`), plus a small background rate.
+      ``query_mode`` is ignored. Each question row carries an ``origin``.
 
     ``sightings_per_object_day`` and ``budget_per_sensable_receptacle``,
     when set, REPLACE the corresponding absolute setting with a rule
@@ -444,12 +456,25 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
 
     if query_mode not in ("uniform", "naturalistic"):
         raise ValueError(f"unknown query_mode {query_mode!r}")
+    if query_generation not in ("uniform", "routine_driven"):
+        raise ValueError(f"unknown query_generation {query_generation!r}")
+    rule_set = None
+    if query_generation == "routine_driven":
+        from baselines.query_stream import load_query_rules
+        if query_rules is None:
+            raise ValueError("query_generation=routine_driven needs a "
+                             "query_rules file")
+        rule_set = load_query_rules(query_rules)
     header: Dict[str, Any] = {
         "kind": "episode_header", "episode_id": episode_id,
         "household_id": spec["household"], "receptacle_ids": receptacles,
         "object_classes": object_classes, "query_mode": query_mode,
+        "query_generation": query_generation,
         "budget_per_day": budget_per_day, "n_days": n_days,
         "observation_model": observation_model}
+    if rule_set is not None:
+        header["query_rules_file"] = str(query_rules)
+        header["background_query_rate"] = rule_set.background_query_rate
     if observation_model == "room_visit":
         header["patrol"] = patrol
         header["visits_per_day"] = visits_per_day
@@ -496,18 +521,37 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
         logger.info("dropped %d sightings of out-of-house objects "
                     "(unobservable)", unobserved)
     question_number = 0
-    recent: List[str] = []
-    for day in range(first_question_day, n_days):
-        pool: List[str] = []          # uniform mode: fresh no-repeat pool daily
-        for _ in range(questions_per_day):
-            obj, t = _draw_question(query_mode, day, objects, truth, recent,
-                                    rng_questions, pool, awake[day])
-            recent.append(obj)
+    if rule_set is not None:
+        from baselines.query_stream import (activity_instances,
+                                            routine_questions)
+        rng_routine = _derived_rng(seed, "questions", "routine_driven",
+                                   episode_id)
+        stream = routine_questions(
+            activity_instances(timeline), rule_set, object_classes, awake,
+            n_days, first_question_day, questions_per_day, rng_routine)
+        for obj, t, origin in stream:
             rows.append({"kind": "question", "episode_id": episode_id,
                          "question_id": f"q{question_number:04d}",
-                         "object_id": obj, "object_class": object_classes[obj],
-                         "t_query": t, "day_index": day})
+                         "object_id": obj,
+                         "object_class": object_classes[obj],
+                         "t_query": t, "day_index": t // DAY_SECONDS,
+                         "origin": origin})
             question_number += 1
+    else:
+        recent: List[str] = []
+        for day in range(first_question_day, n_days):
+            pool: List[str] = []      # uniform mode: fresh no-repeat pool daily
+            for _ in range(questions_per_day):
+                obj, t = _draw_question(query_mode, day, objects, truth,
+                                        recent, rng_questions, pool,
+                                        awake[day])
+                recent.append(obj)
+                rows.append({"kind": "question", "episode_id": episode_id,
+                             "question_id": f"q{question_number:04d}",
+                             "object_id": obj,
+                             "object_class": object_classes[obj],
+                             "t_query": t, "day_index": day})
+                question_number += 1
 
     out.parent.mkdir(parents=True, exist_ok=True)
     with open(out, "w") as f:
@@ -535,6 +579,11 @@ def main() -> None:
     parser.add_argument("--budget-per-day", type=int, default=2)
     parser.add_argument("--query-mode", default="uniform",
                         choices=("uniform", "naturalistic"))
+    parser.add_argument("--query-generation", default="uniform",
+                        choices=("uniform", "routine_driven"))
+    parser.add_argument("--query-rules", type=pathlib.Path, default=None,
+                        help="rules YAML for --query-generation "
+                             "routine_driven (see baselines.query_stream)")
     parser.add_argument("--no-initial-tour", action="store_true",
                         help="omit the t=0 full snapshot; agents start blind")
     parser.add_argument("--observation-model", default="glimpse",
@@ -551,7 +600,9 @@ def main() -> None:
            args.first_question_day, args.budget_per_day, args.query_mode,
            initial_tour=not args.no_initial_tour,
            observation_model=args.observation_model, patrol=args.patrol,
-           visits_per_day=args.visits_per_day)
+           visits_per_day=args.visits_per_day,
+           query_generation=args.query_generation,
+           query_rules=args.query_rules)
 
 
 if __name__ == "__main__":
