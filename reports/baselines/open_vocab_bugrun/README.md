@@ -40,5 +40,23 @@ query/displacement correlation the routine stream exists to create.
 A handful of other near-zero points in the panels are the same
 phenomenon on objects with few questions; not investigated further.
 
+## Learning curve by prior-sighting bucket
+
+`learning_curve.png` — per question, ambient sightings of the queried
+object delivered strictly before ``t_query`` (tour + scripted
+positives), bucketed 0 / 1 / 2 / 3 / 4-6 / 7+, mean accuracy per bucket
+with counts, pooled across objects and households.
+
+- The 0 bucket is EMPTY by construction: the initial tour sights every
+  in-house object at t = 0 and questions start on day 3, so no question
+  ever arrives with zero evidence on these banks. A no-tour export
+  would be needed to populate it.
+- No bucket sits at chance for any belief — the discovery path never
+  leaves a model unlearned, which is the bug this run existed to catch.
+- The low buckets (n = 9 / 13 / 88) are dominated by rarely-sighted,
+  rarely-moving objects, so their high accuracy is an object-identity
+  confound, not evidence that less data helps; the 4-6 -> 7+ step is
+  the cleaner within-plot comparison and rises for every belief.
+
 Run script and per-object CSV: session scratchpad (`bugrun/`); banks
 regenerable from the export command in the script header.
