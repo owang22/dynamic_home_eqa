@@ -64,6 +64,7 @@ def _run_one(episode: Episode, c: float, oracle: bool,
     rng_p = _derived_rng(seed, "lookahead_policy", tag, str(c),
                          episode.episode_id)
     belief = build_belief(BELIEF_SPEC, rng_b)
+    policy: VoIThresholdSense
     if oracle:
         schedule = [q for day in episode.questions_by_day for q in day]
         policy = OracleLookaheadSense(

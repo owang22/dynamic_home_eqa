@@ -19,10 +19,14 @@ with cost read live through ``context.sense_cost`` (the room-change
 model; the robot's position rides on the context, so ``decide`` keeps
 its signature).
 
-Greedy on both axes — receptacles are picked one step at a time and
-today's budget is not reserved for later questions — so measured this
-way the lookahead gain is a LOWER BOUND on the true optimum; a real
-planner could only widen the gap.
+Greedy over the window — receptacles are picked one step at a time —
+so measured this way the lookahead gain is a LOWER BOUND on the true
+optimum; a real planner could only widen the gap. One budget guard
+keeps the greed from being self-defeating: a sense justified ONLY by
+future questions must leave ``reserve_fraction`` of the day's remaining
+pro-rata budget untouched (without it, morning lookahead burns the
+day's budget and starves the evening questions' own sensing — measured
+at roughly -5 to -10 accuracy points on the routine banks).
 
 Per-question bookkeeping (:attr:`last_question_stats`): every issued
 sense is classified by whether the current question alone justified it
@@ -39,8 +43,8 @@ from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 from baselines.policies.voi_sense import (VoIThresholdSense,
                                           value_of_information)
-from baselines.types import (Action, AnswerNow, Prediction, Question,
-                             Sense, SenseResult)
+from baselines.types import (DAY_SECONDS, Action, AnswerNow, Prediction,
+                             Question, Sense, SenseResult)
 
 PredictFn = Callable[[str, int], Prediction]
 """(object_id, t) -> the belief's current distribution, without side
@@ -48,6 +52,9 @@ effects — wire it to ``belief.predict_readonly``."""
 
 DEFAULT_HORIZON_DAYS = 2.0
 DEFAULT_DECAY_HALF_LIFE_H = 24.0
+DEFAULT_RESERVE_FRACTION = 0.5
+"""Share of the day's remaining pro-rata budget a future-only sense
+must leave untouched."""
 
 
 class OracleLookaheadSense(VoIThresholdSense):
@@ -58,13 +65,19 @@ class OracleLookaheadSense(VoIThresholdSense):
     def __init__(self, rng: random.Random, lam: float,
                  schedule: Sequence[Question], predict_fn: PredictFn,
                  horizon_days: float = DEFAULT_HORIZON_DAYS,
-                 decay_half_life_h: float = DEFAULT_DECAY_HALF_LIFE_H
+                 decay_half_life_h: float = DEFAULT_DECAY_HALF_LIFE_H,
+                 reserve_fraction: float = DEFAULT_RESERVE_FRACTION
                  ) -> None:
         super().__init__(rng, lam=lam)
         if horizon_days <= 0 or decay_half_life_h <= 0:
             raise ValueError(
                 f"OracleLookaheadSense: horizon_days {horizon_days} and "
                 f"decay_half_life_h {decay_half_life_h} must be positive")
+        if not 0.0 <= reserve_fraction <= 1.0:
+            raise ValueError(
+                f"OracleLookaheadSense: reserve_fraction "
+                f"{reserve_fraction} outside [0, 1]")
+        self._reserve_fraction = float(reserve_fraction)
         self._schedule = sorted(schedule, key=lambda q: q.t_query)
         self._predict_fn = predict_fn
         self._horizon_s = horizon_days * 86_400.0
@@ -130,11 +143,23 @@ class OracleLookaheadSense(VoIThresholdSense):
         affordable = [r for r in untried if costs[r] <= budget_remaining]
         if not affordable:
             return AnswerNow()
-        rate = {r: value[r] / costs[r] for r in affordable}
+        # Budget guard: a sense the current question does not justify on
+        # its own must leave the rest of the day its pro-rata share.
+        reserve = (self._reserve_fraction
+                   * (self._context.budget_per_day if self._context else 0)
+                   * ((question.day_index + 1) * DAY_SECONDS - t)
+                   / DAY_SECONDS)
+        candidates = [
+            r for r in affordable
+            if voi_now[r] / costs[r] >= self._lam
+            or budget_remaining - costs[r] >= reserve]
+        if not candidates:
+            return AnswerNow()
+        rate = {r: value[r] / costs[r] for r in candidates}
         best = max(rate.values())
         if best < self._lam:
             return AnswerNow()
-        top = [r for r in affordable if rate[r] == best]
+        top = [r for r in candidates if rate[r] == best]
         if len(top) > 1:
             pmax = max(prediction.distribution.get(r, 0.0) for r in top)
             top = [r for r in top
