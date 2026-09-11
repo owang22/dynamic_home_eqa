@@ -105,6 +105,11 @@ class IndexedObservationLog:
     def room_of(self, receptacle_id: str) -> Optional[str]:
         return self._rooms.get(receptacle_id)
 
+    def ensure_object(self, object_id: str, object_class: str) -> None:
+        """Register an object discovered after construction (open object
+        set). Idempotent; an existing class is never overwritten."""
+        self._object_classes.setdefault(object_id, object_class or "unknown")
+
     # ------------------------------------------------------------ ingest
 
     def ingest(self, evidence: Union[Observation, SenseResult]) -> None:

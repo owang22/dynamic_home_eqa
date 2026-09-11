@@ -270,7 +270,7 @@ class _PerpetuaBase(BeliefModel):
         present = set(evidence.contents)
         for obj in evidence.contents:
             self._sighting(obj, evidence.receptacle_id, evidence.t)
-        for obj in sorted(self._context.object_classes):
+        for obj in sorted(self._objects):
             if obj in present:
                 continue
             edge = self._edges.get(obj, {}).get(evidence.receptacle_id)
@@ -346,12 +346,12 @@ class _PerpetuaBase(BeliefModel):
     def _predict_for_object(self, object_id: str,
                             history: List[Tuple[int, str]],
                             t: int) -> Prediction:
-        """Never-observed objects take the base class's uniform fallback
-        (its only use of the seeded generator); everything else is
-        assembled from the edge beliefs, deterministically."""
+        """Never-observed objects take the base class's cold-start
+        fallback; everything else is assembled from the edge beliefs,
+        deterministically."""
         edges = self._edges.get(object_id, {})
         if not history or not edges:
-            return self._uniform()
+            return self._cold_start(object_id, t)
         beliefs = {rec: self._edge_belief(edge, t)
                    for rec, edge in sorted(edges.items())}
         total = sum(beliefs.values())

@@ -65,11 +65,18 @@ class SenseResult:
     an observation that suppresses the receptacle with a weight decaying
     in age (see :mod:`baselines.beliefs.base` for the pipeline and the
     supersession rule).
+
+    ``object_classes`` maps each object in ``contents`` to its class, so a
+    belief can register an object it has never heard of straight from the
+    sense result. Producers that know the classes fill it; an empty map is
+    legal (hand-built fixtures) and the object is then registered with an
+    unknown class.
     """
 
     receptacle_id: str
     t: int
     contents: Tuple[str, ...]
+    object_classes: Mapping[str, str] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         if self.t < 0:
@@ -83,12 +90,19 @@ class Question:
     ``day_index`` is redundant with ``t_query // DAY_SECONDS`` but is stored
     explicitly because banks group questions by day; the loader verifies the
     two agree.
+
+    ``object_class`` is the queried object's class, carried on the question
+    itself so a belief can register a never-seen object at query time
+    without an object list in its context. The bank loader always fills it
+    (from the question row or the header); the empty-string default exists
+    only for hand-built questions in tests and older consumers.
     """
 
     question_id: str
     object_id: str
     t_query: int
     day_index: int
+    object_class: str = ""
 
     def __post_init__(self) -> None:
         if self.t_query < 0:
@@ -208,14 +222,19 @@ class EpisodeContext:
     the harness-tracked current room and ``room_change_cost`` the
     surcharge ``c`` for sensing outside it; together they give policies
     :meth:`sense_cost` without widening the ``decide`` signature.
+
+    ``object_classes`` is OPTIONAL (default empty): belief models discover
+    objects from questions and sense results and never require the list.
+    It stays populated for the oracle belief and the STAR baseline, which
+    read it by design.
     """
 
     episode_id: str
     household_id: str
     receptacle_ids: Tuple[str, ...]
-    object_classes: Mapping[str, str]
     budget_per_day: int
     n_days: int
+    object_classes: Mapping[str, str] = field(default_factory=dict)
     unsensable_receptacle_ids: Tuple[str, ...] = ()
     receptacle_rooms: Mapping[str, str] = field(default_factory=dict)
     home_base_room: Optional[str] = None

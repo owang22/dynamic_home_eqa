@@ -505,7 +505,8 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
             recent.append(obj)
             rows.append({"kind": "question", "episode_id": episode_id,
                          "question_id": f"q{question_number:04d}",
-                         "object_id": obj, "t_query": t, "day_index": day})
+                         "object_id": obj, "object_class": object_classes[obj],
+                         "t_query": t, "day_index": day})
             question_number += 1
 
     out.parent.mkdir(parents=True, exist_ok=True)

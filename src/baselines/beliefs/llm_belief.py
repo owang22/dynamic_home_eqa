@@ -341,7 +341,7 @@ class LLMBelief(BeliefModel):
                         newest_exclusion, t, self.config)
         messages = build_messages(
             t=t, object_id=object_id,
-            object_class=self._context.object_classes[object_id],
+            object_class=self.object_class_of(object_id),
             receptacle_ids=recs, history=history, exclusions=exclusions,
             config=self.config, rooms=self.rooms)
         self.last_key, self.last_messages = key, messages

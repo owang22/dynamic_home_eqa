@@ -314,6 +314,12 @@ class OracleProgramPosterior(BeliefModel):
     :meth:`reset`. ``eps`` is the per-disagreement weight multiplier;
     ``half_life_h`` the forgetting half-life of every observation's factor
     (None: never forget).
+
+    Unlike the deployable beliefs, this model keeps the full object list:
+    it is an oracle over the household's own program, so it expects
+    ``context.object_classes`` populated and can only track objects the
+    program realizes — the open-object-set contract is deliberately
+    asymmetric here.
     """
 
     consumes_negative_evidence_natively = True
@@ -338,6 +344,7 @@ class OracleProgramPosterior(BeliefModel):
         self._logw_t = 0                      # clock of the log-weights
         self._source = ensemble
         self._ensemble: Optional[RealizationEnsemble] = None
+        self._remap: NDArray[np.uint8] = np.zeros(0, dtype=np.uint8)
         self._codes: Dict[str, NDArray[np.uint8]] = {}   # object -> uint8[S, M]
         self._code_of: Dict[str, int] = {}        # context receptacle -> code
         self._logw: NDArray[np.float64] = np.zeros(0)
@@ -367,7 +374,11 @@ class OracleProgramPosterior(BeliefModel):
     # ------------------------------------------------------------ setup
 
     def reset(self, context: EpisodeContext) -> None:
-        super().reset(context)
+        # This model is an ORACLE: it reads the household's own program,
+        # and it expects the full object list in the context (the open
+        # object set stops at its door — an object it has never been
+        # given can still be registered lazily, but only if the program's
+        # realizations know it; anything else is a hard error).
         ens = (self._source if isinstance(self._source, RealizationEnsemble)
                else self._source(context))
         unknown = set(ens.receptacle_ids) - set(context.receptacle_ids)
@@ -383,16 +394,31 @@ class OracleProgramPosterior(BeliefModel):
                 f"the bank")
         # Re-code the ensemble's receptacles into the context's index space
         # so a prediction is one bincount over the context vocabulary.
-        remap = np.array([context.receptacle_ids.index(r)
-                          for r in ens.receptacle_ids], dtype=np.uint8)
-        self._codes = {obj: remap[ens.grid[obj]]
-                       for obj in context.object_classes}
+        self._remap = np.array([context.receptacle_ids.index(r)
+                                for r in ens.receptacle_ids], dtype=np.uint8)
+        self._codes = {}
         self._code_of = {r: i for i, r in enumerate(context.receptacle_ids)}
         self._ensemble = ens
         self._logw = np.zeros(ens.n_seeds, dtype=np.float64)
         self._logw_t = 0
         self._last = None
         self.n_observations = 0
+        # The base reset registers every context object, which allocates
+        # each object's code grid through _register_object.
+        super().reset(context)
+
+    def _register_object(self, object_id: str, object_class: str) -> None:
+        """Allocate the object's realization grid, re-coded into the
+        context's receptacle index space. Objects the program never
+        realized cannot be tracked by an oracle over that program."""
+        if self._ensemble is None:
+            return
+        if object_id not in self._ensemble.grid:
+            raise ValueError(
+                f"OracleBelief: object {object_id!r} is not in the "
+                f"program's realizations — an oracle over the program "
+                f"cannot track it")
+        self._codes[object_id] = self._remap[self._ensemble.grid[object_id]]
 
     # --------------------------------------------------------- evidence
 
@@ -406,7 +432,7 @@ class OracleProgramPosterior(BeliefModel):
         present = set(evidence.contents)
         for obj in evidence.contents:
             self._weigh(obj, evidence.receptacle_id, evidence.t, present=True)
-        for obj in self._context.object_classes:
+        for obj in self._objects:
             if obj not in present:
                 self._weigh(obj, evidence.receptacle_id, evidence.t,
                             present=False)

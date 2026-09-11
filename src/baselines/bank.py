@@ -34,7 +34,11 @@ and start with its header; a file may hold many episodes):
         observations exist only inside a run.
 
     {"kind": "question", "episode_id": str, "question_id": str,
-     "object_id": str, "t_query": int, "day_index": int}
+     "object_id": str, "t_query": int, "day_index": int,
+     "object_class": str (the queried object's class; optional when the
+      header's object_classes declares the object — the loader backfills
+      from there and rejects a question whose class it cannot determine,
+      or whose row class contradicts the header)}
 
     {"kind": "room_visit", "episode_id": str, "t": int, "room": str,
      "contents": {receptacle_id: [object_id, ...]}}
@@ -222,10 +226,23 @@ class _EpisodeAccumulator:
         else:  # question
             obj = str(row["object_id"])
             self._check(obj in self.object_classes, lineno, f"unknown object {obj!r}")
+            row_class = row.get("object_class")
+            object_class = (str(row_class) if row_class is not None
+                            else self.object_classes.get(obj))
+            self._check(object_class is not None, lineno,
+                        f"question for {obj!r} carries no object_class and "
+                        f"the header declares none")
+            assert object_class is not None
+            header_class = self.object_classes.get(obj)
+            self._check(row_class is None or header_class is None
+                        or object_class == header_class, lineno,
+                        f"question object_class {object_class!r} contradicts "
+                        f"header class {header_class!r} for {obj!r}")
             try:
                 q = Question(
                     question_id=str(row["question_id"]), object_id=obj,
-                    t_query=int(row["t_query"]), day_index=int(row["day_index"]))
+                    t_query=int(row["t_query"]), day_index=int(row["day_index"]),
+                    object_class=object_class)
             except ValueError as err:
                 raise BankFormatError(
                     f"{self._path}:{lineno} (episode {self.episode_id}): {err}"
@@ -263,7 +280,9 @@ class _EpisodeAccumulator:
         explicit = tuple(o for o in self._observations
                          if o.source == "scripted")
         visit_evidence = tuple(
-            SenseResult(receptacle_id=rec, t=t, contents=tuple(objs))
+            SenseResult(receptacle_id=rec, t=t, contents=tuple(objs),
+                        object_classes={o: self.object_classes[o]
+                                        for o in objs})
             for t, contents in sorted(self._room_visits,
                                       key=lambda v: v[0])
             for rec, objs in sorted(contents.items()))

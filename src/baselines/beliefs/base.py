@@ -61,8 +61,8 @@ import abc
 import random
 from typing import Dict, List, Mapping, Optional, Tuple, Union
 
-from baselines.types import (EpisodeContext, Observation, Prediction,
-                             SenseResult)
+from baselines.types import (PROBABILITY_TOLERANCE, EpisodeContext,
+                             Observation, Prediction, SenseResult)
 
 DEFAULT_FLOOR_MASS = 0.02
 """Share of every prediction spread uniformly over all locations (step 2
@@ -73,6 +73,74 @@ DEFAULT_NEGATIVE_HALF_LIFE_H = 24.0
 own (a model with one uses it, see :meth:`BeliefModel.negative_half_life_h`)."""
 
 SECONDS_PER_HOUR = 3600.0
+
+UNKNOWN_CLASS = "unknown"
+"""Class recorded for an object registered without one (e.g. from a
+sense result whose producer carried no class map)."""
+
+COLD_START_HALF_LIFE_H = 24.0
+"""Count-decay half-life of :func:`cold_start_distribution` (the panel's
+frozen 24 h, the same value :class:`~baselines.beliefs.hierarchy_backoff.
+HierarchyBackoff` uses)."""
+
+COLD_START_PSEUDOCOUNT = 5.0
+"""Raw class-evidence count at which the class pool carries half the
+weight against the household-wide pool."""
+
+
+def _normalize_counts(counts: Dict[str, float]) -> Dict[str, float]:
+    total = sum(counts.values())
+    return {r: c / total for r, c in counts.items()} if total else {}
+
+
+def shrink(upper: Dict[str, float], lower: Dict[str, float],
+           upper_count: float, pseudocount: float) -> Dict[str, float]:
+    """Mix ``upper`` toward ``lower`` with weight ``N / (N + pseudocount)``
+    where ``N`` is the RAW evidence count behind ``upper``."""
+    weight = upper_count / (upper_count + pseudocount)
+    mixed = {r: weight * p for r, p in upper.items()}
+    for r, p in lower.items():
+        mixed[r] = mixed.get(r, 0.0) + (1.0 - weight) * p
+    return mixed
+
+
+def cold_start_distribution(
+        object_class: Optional[str],
+        tracked_objects: Mapping[str, Tuple[Optional[str],
+                                            List[Tuple[int, str]]]],
+        receptacle_ids: Tuple[str, ...],
+        t: int,
+        half_life_h: float = COLD_START_HALF_LIFE_H,
+        class_pseudocount: float = COLD_START_PSEUDOCOUNT
+        ) -> Dict[str, float]:
+    """Starting distribution for an object with no sightings of its own.
+
+    ``tracked_objects`` maps every tracked object to ``(class, sighting
+    history)``. Fallback chain: the pooled decayed placement counts of
+    tracked objects sharing ``object_class``, shrunk toward the pooled
+    counts of ALL tracked objects with weight ``N / (N + pseudocount)``
+    (``N`` the raw class event count — the arithmetic of
+    :class:`~baselines.beliefs.hierarchy_backoff.HierarchyBackoff`), and
+    uniform over ``receptacle_ids`` when nothing has been tracked at all.
+    Always sums to 1.
+    """
+    half_life_s = half_life_h * SECONDS_PER_HOUR
+    class_history = [
+        (ot, r) for cls, history in tracked_objects.values()
+        if object_class is not None and cls == object_class
+        for ot, r in history]
+    global_history = [(ot, r) for _, history in tracked_objects.values()
+                      for ot, r in history]
+    global_counts = BeliefModel._weighted_counts(global_history, t,
+                                                 half_life_s)
+    if not global_counts:
+        p = 1.0 / len(receptacle_ids)
+        return {r: p for r in receptacle_ids}
+    class_counts = BeliefModel._weighted_counts(class_history, t,
+                                                half_life_s)
+    return shrink(_normalize_counts(class_counts),
+                  _normalize_counts(global_counts),
+                  float(len(class_history)), class_pseudocount)
 
 
 class BeliefModel(abc.ABC):
@@ -114,6 +182,10 @@ class BeliefModel(abc.ABC):
         self._history: Dict[str, List[Tuple[int, str]]] = {}
         # object_id -> {receptacle_id: newest time O was seen absent from it}
         self._exclusions: Dict[str, Dict[str, int]] = {}
+        # object_id -> class: every object the model tracks. Seeded from
+        # the context's (optional) object list at reset, grown lazily by
+        # ensure_object as questions and sense results introduce objects.
+        self._objects: Dict[str, str] = {}
 
     @property
     def name(self) -> str:
@@ -146,6 +218,35 @@ class BeliefModel(abc.ABC):
         self._context = context
         self._history = {}
         self._exclusions = {}
+        self._objects = {}
+        for obj, cls in context.object_classes.items():
+            self.ensure_object(obj, cls)
+
+    def ensure_object(self, object_id: str, object_class: str) -> None:
+        """Register ``object_id`` as a tracked object. Idempotent: a
+        second registration never changes anything (including the class,
+        so a late unknown-class registration cannot overwrite a real
+        one). The harness calls this for the question's object before
+        every predict and for every object in a sense result; models
+        allocate per-object state lazily in :meth:`_register_object`."""
+        if object_id in self._objects:
+            return
+        self._objects[object_id] = object_class or UNKNOWN_CLASS
+        self._register_object(object_id, self._objects[object_id])
+
+    def _register_object(self, object_id: str, object_class: str) -> None:
+        """Hook for models that allocate per-object state on creation.
+        Called exactly once per object, from :meth:`ensure_object`."""
+
+    def object_class_of(self, object_id: str) -> str:
+        """The registered class of ``object_id`` (:data:`UNKNOWN_CLASS`
+        for an object never registered)."""
+        return self._objects.get(object_id, UNKNOWN_CLASS)
+
+    @property
+    def known_objects(self) -> Dict[str, str]:
+        """Every tracked object and its class (a copy)."""
+        return dict(self._objects)
 
     def update(self, evidence: Union[Observation, SenseResult]) -> None:
         """Fold one piece of evidence into the belief state.
@@ -157,6 +258,7 @@ class BeliefModel(abc.ABC):
         object NOT in its contents.
         """
         if isinstance(evidence, Observation):
+            self.ensure_object(evidence.object_id, evidence.object_class)
             self._add_sighting(evidence.object_id, evidence.t,
                                evidence.receptacle_id)
             return
@@ -164,8 +266,9 @@ class BeliefModel(abc.ABC):
             raise RuntimeError(f"{self.name}: update() before reset()")
         present = set(evidence.contents)
         for obj in evidence.contents:
+            self.ensure_object(obj, evidence.object_classes.get(obj, ""))
             self._add_sighting(obj, evidence.t, evidence.receptacle_id)
-        for obj in self._context.object_classes:
+        for obj in self._objects:
             if obj not in present:
                 by_receptacle = self._exclusions.setdefault(obj, {})
                 previous = by_receptacle.get(evidence.receptacle_id, -1)
@@ -321,7 +424,8 @@ class BeliefModel(abc.ABC):
 
         The default routes a non-empty history to
         :meth:`_predict_from_history` and a never-observed object to the
-        uniform fallback. Models that pool evidence ACROSS objects (and so
+        cold-start fallback (:meth:`_cold_start`). Models that pool
+        evidence ACROSS objects (and so
         can say something useful even about a never-sighted object)
         override this method instead of ``_predict_from_history``; the
         floor, negative evidence, renormalization and the
@@ -329,7 +433,24 @@ class BeliefModel(abc.ABC):
         :meth:`predict` and are never reimplemented.
         """
         return (self._predict_from_history(history, t) if history
-                else self._uniform())
+                else self._cold_start(object_id, t))
+
+    def _cold_start(self, object_id: str, t: int) -> Prediction:
+        """Prediction for an object with no sightings of its own: the
+        pooled :func:`cold_start_distribution` over the tracked objects
+        (uniform when nothing has been tracked, with the uniform
+        fallback's random tie-break so existing behaviour is preserved)."""
+        tracked = {obj: (cls, self._history.get(obj, []))
+                   for obj, cls in self._objects.items()
+                   if obj != object_id}
+        dist = cold_start_distribution(self._objects.get(object_id),
+                                       tracked, self._receptacles(), t)
+        top = max(dist.values())
+        if top - min(dist.values()) <= PROBABILITY_TOLERANCE:
+            return self._uniform()
+        tied = sorted(r for r, p in dist.items()
+                      if p >= top - PROBABILITY_TOLERANCE)
+        return Prediction(distribution=dist, argmax=tied[0])
 
     def _predict_from_history(
             self, history: List[Tuple[int, str]], t: int) -> Prediction:

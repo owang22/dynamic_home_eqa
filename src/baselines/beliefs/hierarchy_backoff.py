@@ -33,7 +33,8 @@ import random
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
 
-from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
+from baselines.beliefs.base import (DEFAULT_FLOOR_MASS, BeliefModel,
+                                    cold_start_distribution, shrink)
 from baselines.types import Prediction
 
 
@@ -90,38 +91,20 @@ class HierarchyBackoff(BeliefModel):
                             t: int) -> Prediction:
         half_life_s = self._cfg.half_life_h * 3600
         assert self._context is not None   # predict() guarantees reset ran
-        object_class = self._context.object_classes.get(object_id)
-        class_history = [
-            (ot, r)
-            for obj, h in self._history.items()
-            if self._context.object_classes.get(obj) == object_class
-            for ot, r in h]
-        global_history = [(ot, r) for h in self._history.values()
-                          for ot, r in h]
-        object_counts = self._weighted_counts(history, t, half_life_s)
-        class_counts = self._weighted_counts(class_history, t, half_life_s)
-        global_counts = self._weighted_counts(global_history, t, half_life_s)
-        if not global_counts:
+        if not any(self._history.values()):
             return self._uniform()
-        lower = _shrink(_normalize(class_counts), _normalize(global_counts),
-                        float(len(class_history)),
-                        self._cfg.class_pseudocount)
-        dist = _shrink(_normalize(object_counts), lower,
-                       float(len(history)),
-                       self._cfg.object_pseudocount)
+        # Class -> global pooling is the shared cold-start arithmetic; the
+        # object's own history is part of the pools, as before.
+        tracked = {obj: (self._objects.get(obj), h)
+                   for obj, h in self._history.items()}
+        lower = cold_start_distribution(
+            self._objects.get(object_id), tracked,
+            self._context.receptacle_ids, t,
+            half_life_h=self._cfg.half_life_h,
+            class_pseudocount=self._cfg.class_pseudocount)
+        object_counts = self._weighted_counts(history, t, half_life_s)
+        total = sum(object_counts.values())
+        dist = shrink({r: c / total for r, c in object_counts.items()}
+                      if total else {}, lower,
+                      float(len(history)), self._cfg.object_pseudocount)
         return self._normalized(dist, tie_break_recency=history)
-
-
-def _normalize(counts: Dict[str, float]) -> Dict[str, float]:
-    total = sum(counts.values())
-    return {r: c / total for r, c in counts.items()} if total else {}
-
-
-def _shrink(upper: Dict[str, float], lower: Dict[str, float],
-            upper_count: float, pseudocount: float) -> Dict[str, float]:
-    """Mix ``upper`` toward ``lower`` with weight N/(N + pseudocount)."""
-    weight = upper_count / (upper_count + pseudocount)
-    mixed = {r: weight * p for r, p in upper.items()}
-    for r, p in lower.items():
-        mixed[r] = mixed.get(r, 0.0) + (1.0 - weight) * p
-    return mixed

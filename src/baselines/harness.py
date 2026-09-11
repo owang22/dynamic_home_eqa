@@ -198,6 +198,9 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
     room_at_query = position.room
     n_senses = same_room_senses = 0
     max_senses = len(context.sensable_receptacle_ids)
+    object_class = (question.object_class
+                    or episode.object_classes.get(question.object_id, ""))
+    agent.belief.ensure_object(question.object_id, object_class)
 
     while True:
         prediction = agent.predict(question)
@@ -239,7 +242,13 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
         contents = episode.receptacle_contents(
             action.receptacle_id, question.t_query)
         result = SenseResult(receptacle_id=action.receptacle_id,
-                             t=question.t_query, contents=contents)
+                             t=question.t_query, contents=contents,
+                             object_classes={
+                                 obj: episode.object_classes.get(obj, "")
+                                 for obj in contents})
+        for obj in contents:
+            agent.belief.ensure_object(
+                obj, episode.object_classes.get(obj, ""))
         agent.observe(result)
         last_sense = result
         if room is not None:
@@ -271,7 +280,7 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
         agent=agent.name, belief=agent.belief.name, policy=agent.policy.name,
         day_index=day_index, question_id=question.question_id,
         object_id=question.object_id,
-        object_class=episode.object_classes[question.object_id],
+        object_class=object_class,
         t_query=question.t_query,
         distribution=dict(prediction.distribution),
         actions=tuple(actions),

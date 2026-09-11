@@ -233,6 +233,11 @@ class StarMemoryLoopPolicy(DecisionPolicy):
         the standard harness never does (see module docstring)."""
         self.memory.ingest(evidence)
 
+    def ensure_object(self, object_id: str, object_class: str) -> None:
+        """Register an object the reset-time log did not know (open
+        object set). Idempotent."""
+        self.memory.ensure_object(object_id, object_class)
+
     # ---------------------------------------------------------- decide
 
     def decide(self, question: Question, prediction: Prediction,
