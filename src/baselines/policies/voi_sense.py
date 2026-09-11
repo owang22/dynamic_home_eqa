@@ -21,10 +21,26 @@ question is at the query instant, so the target is static during the
 search. Cross-question information value (a sense now also sharpens
 later questions) is not modelled.
 
-:class:`VoIThresholdSense` senses the argmax-voi receptacle while
-``max voi >= lambda`` and budget remains, else answers. Under a binding
-per-day cap it runs out and answers from memory; with the cap disabled
-its senses per question trace the price-based cost-accuracy frontier.
+Sensing is not free and need not be uniformly priced: with a room-change
+cost ``c`` in force, sensing a receptacle in the room the robot already
+occupies costs 1 and one anywhere else costs ``1 + c``
+(``context.sense_cost``). ``lambda`` is then a price per unit of cost,
+not per sense, so both policies below
+
+* sense while ``voi(r) >= lambda * cost(r)`` rather than
+  ``voi(r) >= lambda``, and
+* pick the receptacle maximizing ``voi(r) / cost(r)`` rather than
+  ``voi(r)``.
+
+At ``c = 0`` every cost is 1 and both reduce to the plain rules exactly.
+This is the only cost-awareness in the roster: the other policies cannot
+see the price at all.
+
+:class:`VoIThresholdSense` senses the best value-per-cost receptacle
+while ``max voi/cost >= lambda`` and budget remains, else answers. Under
+a binding per-day cap it runs out and answers from memory; with the cap
+disabled its senses per question trace the price-based cost-accuracy
+frontier.
 
 :class:`VoIBudgetPriceSense` is the same rule with ``lambda`` adapted to
 track the budget: after each question
@@ -40,8 +56,9 @@ questions per query day).
 
 Harness contract: budget is checked before every sense, each receptacle
 is sensed at most once per question, and every question ends in
-AnswerNow. Ties among equal-voi receptacles prefer the larger ``p(r)``,
-then the seeded generator. All times are seconds since episode start.
+AnswerNow. Ties among equal value-per-cost receptacles prefer the larger
+``p(r)``, then the seeded generator. All times are seconds since episode
+start.
 """
 
 from __future__ import annotations
@@ -83,7 +100,8 @@ def value_of_information(p: Mapping[str, float],
 
 
 class VoIThresholdSense(DecisionPolicy):
-    """Sense the argmax-voi receptacle while ``max voi >= lambda``."""
+    """Sense the best value-per-cost receptacle while
+    ``max voi/cost >= lambda``."""
 
     def __init__(self, rng: random.Random, lam: float) -> None:
         if lam < 0.0:
@@ -91,6 +109,7 @@ class VoIThresholdSense(DecisionPolicy):
         self._rng = rng
         self._lam = float(lam)
         self._receptacles: Tuple[str, ...] = ()
+        self._context: Optional[EpisodeContext] = None
         self._question_id: Optional[str] = None
         self._tried: Set[str] = set()
         self.last_max_voi = 0.0
@@ -104,9 +123,20 @@ class VoIThresholdSense(DecisionPolicy):
         return self._lam
 
     def reset(self, context: EpisodeContext) -> None:
+        # Held for its live ``sense_cost``: the harness keeps the robot's
+        # room inside this context, so the price is read fresh at every
+        # decision rather than cached here.
+        self._context = context
         self._receptacles = context.sensable_receptacle_ids
         self._question_id = None
         self._tried = set()
+
+    def _cost(self, receptacle_id: str) -> float:
+        """Budget price of sensing ``receptacle_id`` right now (1.0 with
+        no context, i.e. the flat model)."""
+        if self._context is None:
+            return 1.0
+        return self._context.sense_cost(receptacle_id)
 
     def _new_question(self, question: Question) -> None:
         """Hook for per-question bookkeeping (the price controller)."""
@@ -116,7 +146,7 @@ class VoIThresholdSense(DecisionPolicy):
         return self._lam
 
     def decide(self, question: Question, prediction: Prediction,
-               budget_remaining: int, t: int,
+               budget_remaining: float, t: int,
                last_sense: Optional[SenseResult] = None) -> Action:
         if self._question_id != question.question_id:
             self._question_id = question.question_id
@@ -129,11 +159,15 @@ class VoIThresholdSense(DecisionPolicy):
         if not untried:
             return AnswerNow()
         voi = value_of_information(prediction.distribution, untried)
-        best = max(voi.values())
-        self.last_max_voi = best
+        # Value per unit of budget: with a room-change cost the same voi
+        # is worth less when it needs a trip. At c = 0 every cost is 1
+        # and this is voi(r) and the plain threshold, exactly.
+        rate = {r: voi[r] / self._cost(r) for r in untried}
+        best = max(rate.values())
+        self.last_max_voi = max(voi.values())
         if best < self._price():
             return AnswerNow()
-        top = [r for r in untried if voi[r] == best]
+        top = [r for r in untried if rate[r] == best]
         if len(top) > 1:
             pmax = max(prediction.distribution.get(r, 0.0) for r in top)
             top = [r for r in top if prediction.distribution.get(r, 0.0) == pmax]

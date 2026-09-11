@@ -13,14 +13,28 @@ weighting sweep that picks them on the calibration households, and the
 ESS degeneracy gate), `voi_study.py`
 (value-of-information policies, `policies/voi_sense.py`) and
 `delayed_label_study.py` (mined delayed labels for adaptive conformal
-feedback, `conformal/delayed_labels.py`). Outputs under `results/`;
-findings and deviations in `STATUS.md`.
+feedback, `conformal/delayed_labels.py`) and `room_change_cost_study.py`
+(the room-change travel cost swept over the Part B policies at their best
+configurations). Outputs under `results/`; findings and deviations in
+`STATUS.md`.
 
 Agents hold a memory of timestamped object sightings and answer
 object-localization questions ("where is mug_2 right now?") under a
 per-day sensing budget: for each question they either answer from belief
-or spend one budget unit sensing a receptacle (learning its full true
-contents) before answering.
+or spend budget sensing a receptacle (learning its full true contents)
+before answering.
+
+**Sensing cost.** A sense costs 1.0 when the target receptacle is in the
+room the robot is already standing in and `1 + c` when it is anywhere
+else (`room_change_cost`, default 0.0 — at which the model is exactly
+flat, one unit per sense). The harness owns the robot's position: the
+`home_base_room` at the start of each day, then the room of every ambient
+room visit delivered up to `t_query`, then the room of every receptacle
+actively sensed. Policies read the price through
+`EpisodeContext.sense_cost(receptacle_id)`; only the two VoI policies do.
+The passive patrol is fixed and does NOT react to where a policy sent the
+robot, because banks must stay identical across every policy under test.
+See `room_change_cost_study.py` and `results/room_change_cost/`.
 
 All times in this package are **seconds since episode start**; a day is
 86 400 s and `day_index = t // 86400`.
@@ -130,6 +144,13 @@ python -m baselines.cli fleet
 # candidate bake-off under the horizon-controlled passive protocol,
 # on the fleet's gate-passing banks
 python -m baselines.bakeoff
+
+# room-change travel cost: rebuild the banks with room maps, prove the
+# rebuild is header-only, then sweep c over the Part B policies
+python -m baselines.cli fleet --banks-dir banks/baselines/fleet_room_cost \
+    --out-dir reports/baselines/fleet_room_cost
+python -m baselines.room_change_cost_study \
+    --stage verify_banks grid report figures --workers 20
 
 # belief trace for the viewer: what every model believes about every
 # object at every moment, against truth (see "Belief traces" below)
@@ -252,7 +273,9 @@ data-collection quality).
 `episode_header` (ids, receptacles, object classes, budget, n_days,
 optional `household_type` metadata, optional `unsensable_receptacles` —
 legal answers Sense may never target, reachable only by eliminating
-every sensable receptacle), `truth` (piecewise-constant ground
+every sensable receptacle, and the optional pair `receptacle_rooms` +
+`home_base_room` — the room map that prices a room change), `truth`
+(piecewise-constant ground
 truth; every object needs a t=0 row), `observation` (source
 `initial_tour` or `scripted` — the fixed stream; never reports an object
 at an unsensable location), and `question`. The
@@ -261,10 +284,12 @@ the real loader.
 
 **Run log** (one line per question; field-by-field in
 `harness.QuestionRecord`): episode/agent/question ids, the full predicted
-distribution, every action in order (senses embed returned contents),
+distribution, every action in order (senses embed returned contents plus
+the room sensed, what it cost, and whether it needed a room change),
 the answer + confidence, truth, correctness, budget
-before/spent/after plus a `forced_answer` flag, and the full-state
-`belief_state` snapshot.
+before/spent/after (floats: spend is a COST, `n_senses` is the count)
+plus a `forced_answer` flag, `same_room_senses` and
+`robot_room_at_query`, and the full-state `belief_state` snapshot.
 
 ## Synthetic fixtures (`bank.py`)
 
@@ -277,3 +302,8 @@ before/spent/after plus a `forced_answer` flag, and the full-state
 - `write_gate_pass_bank` / `write_gate_fail_static_bank` — engineered to
   PASS all five healthcheck gates / FAIL `not_trivial` (a static world),
   used by `tests/test_baselines_healthcheck.py`.
+- `write_room_cost_bank` — three rooms, a kitchen home base, and one
+  patrol visit per day to a DIFFERENT room, so the day-start reset, the
+  passive move and the active move are each observable on their own
+  (`tests/test_baselines_room_cost.py`). Truth is static: every assertion
+  is about position and price, not about belief dynamics.

@@ -317,23 +317,30 @@ class RecordingAgent:
         return prediction
 
     def decide(self, question: Question, prediction: Prediction,
-               budget_remaining: int, last_sense: Any = None) -> Any:
+               budget_remaining: float, last_sense: Any = None) -> Any:
         return self.policy.decide(question, prediction, budget_remaining,
                                   question.t_query, last_sense)
 
 
 @dataclass(frozen=True)
 class QuestionSummary:
-    """Per-question scalars returned through the pool."""
+    """Per-question scalars returned through the pool.
+
+    ``budget_spent`` is a COST (a sense costs 1 in the robot's room and
+    ``1 + c`` elsewhere), so it parts company with the sense COUNT
+    ``n_senses`` as soon as the room-change cost is non-zero; both are
+    carried because the study reports accuracy against each."""
 
     household_id: str
     day_index: int
     correct: bool
     belief_accuracy: float
-    budget_spent: int
+    budget_spent: float
     forced: bool
     first_confidence: float
     ess: Optional[float] = None
+    n_senses: int = 0
+    same_room_senses: int = 0
 
 
 def summarize(record: QuestionRecord, first_confidence: float,
@@ -341,7 +348,8 @@ def summarize(record: QuestionRecord, first_confidence: float,
     return QuestionSummary(record.household_id, record.day_index,
                            record.correct, record.belief_accuracy,
                            record.budget_spent, record.forced_answer,
-                           first_confidence, ess)
+                           first_confidence, ess, record.n_senses,
+                           record.same_room_senses)
 
 
 def ess_of(belief: BeliefModel) -> Optional[float]:
@@ -364,14 +372,23 @@ class GridTask:
     part_path: str
     fitted: Dict[str, Any] = field(default_factory=dict)
     extra: Dict[str, Any] = field(default_factory=dict)
+    room_change_cost: float = 0.0
 
     @property
     def budget_label(self) -> str:
         return "soft" if self.budget is None else str(self.budget)
 
     @property
-    def cell(self) -> Tuple[str, str, str]:
-        return (self.belief_key, self.policy.slug, self.budget_label)
+    def cost_label(self) -> str:
+        return f"{self.room_change_cost:g}"
+
+    @property
+    def cell(self) -> Tuple[str, str, str, str]:
+        """The grid cell. The room-change cost is the fourth coordinate;
+        studies that do not set it all report "0", and the c = 0 column
+        is what earlier studies' cells mean."""
+        return (self.belief_key, self.policy.slug, self.budget_label,
+                self.cost_label)
 
 
 def make_agent(task: GridTask, episode: Episode
@@ -410,11 +427,20 @@ def run_plain_task(task: GridTask) -> Dict[str, Any]:
     summaries: List[QuestionSummary] = []
     rows: List[Dict[str, Any]] = []
     routine = getattr(belief, "routine_prediction", None)
-    for record in run_episode(agent, episode):   # type: ignore[arg-type]
+    for record in run_episode(
+            agent,          # type: ignore[arg-type]
+            episode, room_change_cost=task.room_change_cost):
         ess = ess_of(belief)
         summaries.append(summarize(record, agent.first_confidence, ess))
         row = record.to_json_dict()
         row["first_confidence"] = agent.first_confidence
+        # The belief's argmax BEFORE this question's senses: what the
+        # robot would have answered on arrival, which is what question 4
+        # ("is the likeliest receptacle in the room I'm standing in?")
+        # is about.
+        first = agent.first_prediction
+        row["first_argmax"] = None if first is None else first.argmax
+        row["room_change_cost"] = task.room_change_cost
         if ess is not None:
             row["ess"] = ess
         if callable(routine):
@@ -473,19 +499,29 @@ def _passive_task(task: Dict[str, Any]) -> Dict[str, Any]:
 
 # ------------------------------------------------------------- aggregates
 
-GRID_FIELDS = ["belief", "policy", "budget", "belief_name", "policy_name",
+GRID_FIELDS = ["belief", "policy", "budget", "room_change_cost",
+               "belief_name", "policy_name",
                "n_households", "n_questions", "task_accuracy",
                "belief_accuracy", "senses_per_question", "senses_per_day",
+               "cost_per_question", "cost_per_day",
+               "same_room_sense_fraction",
                "forced_answer_rate", "median_ess"]
-DAY_FIELDS = ["belief", "policy", "budget", "day_index", "n",
-              "task_accuracy", "belief_accuracy", "senses_per_question"]
+DAY_FIELDS = ["belief", "policy", "budget", "room_change_cost", "day_index",
+              "n", "task_accuracy", "belief_accuracy", "senses_per_question",
+              "cost_per_question"]
 
 
 def aggregate_rows(results: Sequence[Dict[str, Any]]
                    ) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
     """(grid rows, per-day rows) from the pool results, one grid row per
-    cell and one day row per cell x query day."""
-    by_cell: Dict[Tuple[str, str, str], List[Dict[str, Any]]] = {}
+    cell and one day row per cell x query day.
+
+    ``senses_per_question`` counts SENSES and ``cost_per_question`` sums
+    what they cost; the two coincide exactly at ``room_change_cost = 0``,
+    which is what makes a c = 0 column comparable to results produced
+    before the cost model existed.
+    """
+    by_cell: Dict[Tuple[str, ...], List[Dict[str, Any]]] = {}
     for res in results:
         by_cell.setdefault(tuple(res["cell"]), []).append(res)
     grid: List[Dict[str, Any]] = []
@@ -496,17 +532,25 @@ def aggregate_rows(results: Sequence[Dict[str, Any]]
         n = len(summaries)
         day_keys = {(s.household_id, s.day_index) for s in summaries}
         spent = sum(s.budget_spent for s in summaries)
+        senses = sum(s.n_senses for s in summaries)
+        same_room = sum(s.same_room_senses for s in summaries)
         ess = sorted(s.ess for s in summaries if s.ess is not None)
+        cost_label = cell[3] if len(cell) > 3 else "0"
         grid.append({
             "belief": cell[0], "policy": cell[1], "budget": cell[2],
+            "room_change_cost": cost_label,
             "belief_name": group[0]["belief"], "policy_name": group[0]["policy"],
             "n_households": len({s.household_id for s in summaries}),
             "n_questions": n,
             "task_accuracy": round(sum(s.correct for s in summaries) / n, 6),
             "belief_accuracy": round(
                 sum(s.belief_accuracy for s in summaries) / n, 6),
-            "senses_per_question": round(spent / n, 6),
-            "senses_per_day": round(spent / len(day_keys), 6),
+            "senses_per_question": round(senses / n, 6),
+            "senses_per_day": round(senses / len(day_keys), 6),
+            "cost_per_question": round(spent / n, 6),
+            "cost_per_day": round(spent / len(day_keys), 6),
+            "same_room_sense_fraction": (round(same_room / senses, 6)
+                                         if senses else ""),
             "forced_answer_rate": round(sum(s.forced for s in summaries) / n, 6),
             "median_ess": (round(ess[len(ess) // 2], 3) if ess else ""),
         })
@@ -516,11 +560,14 @@ def aggregate_rows(results: Sequence[Dict[str, Any]]
         for day, ss in sorted(per_day.items()):
             days.append({
                 "belief": cell[0], "policy": cell[1], "budget": cell[2],
+                "room_change_cost": cost_label,
                 "day_index": day, "n": len(ss),
                 "task_accuracy": round(sum(s.correct for s in ss) / len(ss), 6),
                 "belief_accuracy": round(
                     sum(s.belief_accuracy for s in ss) / len(ss), 6),
                 "senses_per_question": round(
+                    sum(s.n_senses for s in ss) / len(ss), 6),
+                "cost_per_question": round(
                     sum(s.budget_spent for s in ss) / len(ss), 6)})
     return grid, days
 
@@ -552,11 +599,19 @@ def provenance(out: pathlib.Path, refs: Sequence[EpisodeRef],
     (out / "provenance.json").write_text(json.dumps(doc, indent=2))
 
 
-def part_path(out: pathlib.Path, task_cell: Tuple[str, str, str],
+def part_path(out: pathlib.Path, task_cell: Sequence[str],
               episode_id: str) -> str:
-    belief, policy, budget = task_cell
-    return str(out / "parts" / f"{belief}__{policy}__{budget}"
-               / f"{episode_id}.jsonl.gz")
+    """Where one episode's records for ``task_cell`` are staged.
+
+    A zero room-change cost leaves the name exactly as it was before the
+    cost model existed, so a study that does not use it keeps its
+    ``questions/<belief>__<policy>__<budget>.jsonl.gz`` filenames."""
+    belief, policy, budget = task_cell[0], task_cell[1], task_cell[2]
+    cost = task_cell[3] if len(task_cell) > 3 else "0"
+    stem = f"{belief}__{policy}__{budget}"
+    if cost not in ("", "0"):
+        stem += f"__c{cost}"
+    return str(out / "parts" / stem / f"{episode_id}.jsonl.gz")
 
 
 def merge_parts(out: pathlib.Path) -> None:

@@ -341,6 +341,38 @@ def _room_visit_rows(spec_path: pathlib.Path, timeline: pathlib.Path,
     return stream.visit_rows
 
 
+def _receptacle_rooms(spec_path: pathlib.Path,
+                      receptacles: List[str]) -> Optional[Dict[str, str]]:
+    """receptacle -> room for every in-house receptacle, from the spec.
+
+    Uses the same :class:`~baselines.room_observations.RoomMap` the
+    room-visit patrols are built from, so the header's rooms and the
+    ambient stream's rooms can never disagree. ON_PERSON lives in the
+    person pseudo-room; OUT_OF_HOUSE belongs to no room and is absent.
+    Specs whose receptacles carry no ``room`` field (old glimpse-era
+    schedule specs) yield None: the bank simply carries no room map.
+    """
+    from baselines.room_observations import RoomMap
+
+    try:
+        room_map = RoomMap.from_spec(spec_path)
+    except ValueError:
+        logger.info("spec %s has receptacles without rooms; bank will "
+                    "carry no room map", spec_path)
+        return None
+    return {r: room_map.room_by_receptacle[r] for r in receptacles
+            if r in room_map.room_by_receptacle}
+
+
+def home_base_room(receptacle_rooms: Dict[str, str]) -> str:
+    """The room with the most receptacles, ties broken by room id sort
+    order — where the robot starts each day."""
+    counts: Dict[str, int] = {}
+    for room in receptacle_rooms.values():
+        counts[room] = counts.get(room, 0) + 1
+    return sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]
+
+
 def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
            seed: int, sightings_per_day: int, questions_per_day: int,
            first_question_day: int, budget_per_day: int,
@@ -426,6 +458,10 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
         # discriminative gate; absent from older schedule specs.
         header["household_type"] = str(spec["household_type"])
     header["unsensable_receptacles"] = [OUT_OF_HOUSE]
+    receptacle_rooms = _receptacle_rooms(spec_path, receptacles)
+    if receptacle_rooms is not None:
+        header["receptacle_rooms"] = receptacle_rooms
+        header["home_base_room"] = home_base_room(receptacle_rooms)
     rows: List[Dict[str, Any]] = [header]
     unobserved = 0
     for obj in objects:

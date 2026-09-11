@@ -63,7 +63,7 @@ class FixedSchedule(DecisionPolicy):
         return t - self._last_sense_t >= self._config.every_hours * SECONDS_PER_HOUR
 
     def decide(self, question: Question, prediction: Prediction,
-               budget_remaining: int, t: int,
+               budget_remaining: float, t: int,
                last_sense: Optional[SenseResult] = None) -> Action:
         if budget_remaining > 0 and self._due(t):
             receptacle = self._config.rotation[

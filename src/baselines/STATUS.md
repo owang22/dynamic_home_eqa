@@ -1,5 +1,241 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-09-10: room-change travel cost — a sense outside the robot's room costs 1 + c)
+
+Until now an active sense cost one budget unit wherever the robot stood.
+It now costs 1.0 for a receptacle in the room the robot is already in and
+`1 + c` for one anywhere else — one parameter, distance-free, and at
+`c = 0` exactly the model the package had before. What a sense REVEALS is
+unchanged (`Sense(receptacle_id)` still returns that receptacle's full
+contents), and the passive patrol is unchanged.
+
+**Where it lives.** Bank headers gained `receptacle_rooms` (receptacle ->
+room, every in-house receptacle; OUT_OF_HOUSE is in no room and absent)
+and `home_base_room` (the room with the most receptacles, ties by room id
+sort order); both are optional and the loader rejects one without the
+other. `Episode` and `EpisodeContext` carry them, plus
+`EpisodeContext.sense_cost(receptacle_id)` and a live `RobotPosition` the
+harness owns and mutates — so policies price their options without the
+`decide` signature widening. `harness.run_episode(agent, episode,
+room_change_cost=0.0)` tracks the position (home base at each day start,
+the room of every ambient room visit delivered up to `t_query`, the room
+of every receptacle actively sensed), charges `cost(r)`, and refuses a
+sense whose cost exceeds the remaining budget. Budgets are floats
+throughout (`budget_before/spent/after` and the loop variable);
+`budget_per_day` stays an int in the header. `QuestionRecord` gained
+`n_senses`, `same_room_senses` and `robot_room_at_query`, and sense
+actions log their room, cost and same-room flag. Only
+`VoIThresholdSense` and `VoIBudgetPriceSense` can see the price: they
+sense while `voi(r) >= lambda * cost(r)` and pick the receptacle
+maximizing `voi(r) / cost(r)`. Every other policy is untouched. New:
+`bank.write_room_cost_bank` (fixture), `room_change_cost_study.py`
+(driver), `tests/test_baselines_room_cost.py` (29 tests). `mypy --strict`
+clean on every new and touched file.
+
+**Banks.** All 20 re-exported to `banks/baselines/fleet_room_cost/`,
+leaving `banks/baselines/fleet/` in place. `--stage verify_banks`
+confirms each rebuilt bank is byte identical to its predecessor except
+for the two new header fields (`bank_verification.md`); the fleet
+healthcheck flags are unchanged from the committed summary.
+
+**Run** (`results/room_change_cost/`, 1 500 cells: 3 beliefs x 5 policies
+x 2 budgets x 5 costs x 10 test households, 22 500 questions per grid
+row, ~2 h on 20 workers).
+
+*The c = 0 regression against `results/voi_policies/grid.csv` FAILED, and
+the failure is pre-existing.* 20 of 30 cells match to six decimals —
+every cost-blind cell on all three beliefs, and every LastObservation
+cell. The 10 VoI cells on PeriodicPersistence and PerpetuaStar differ by
+0.0003-0.008. Re-running those cells under the CURRENT COMMITTED CODE,
+unmodified, on the ORIGINAL banks reproduces THIS study's numbers
+exactly (7/7 cells tested, recorded in `head_baseline.json` and rendered
+into `regression.md`) and not the reference csv's. Cause:
+`results/voi_policies/provenance.json` records commit `eb731bcd` with
+`git_dirty: true` at 2026-09-08T20:33, while the Part B commit
+`230a2701` landed 3.6 h later with a different `voi_sense.py`; the
+reference csv was produced by code that was never committed. **Follow-up
+for the owner, outside this brief: `results/voi_policies/`'s VoI rows are
+stale by up to 0.008 and its `findings.md` headline carries the same
+caveat; regenerating that study under committed code would fix both.**
+Owner decision on 2026-09-10 was to interpret the c > 0 results with this
+documented, since the check's purpose — "did this brief change c = 0
+behaviour?" — is answered NO by the stronger HEAD comparison.
+
+*Status of these conclusions (owner, 2026-09-10): PROVISIONAL.* The
+question set is being redrawn to reflect how people actually ask, rather
+than the present uniform draw over objects and awake instants. Findings 4
+and 5 are conditioned on it — finding 4 (where the robot stands when a
+question arrives) is a property of the patrol crossed with the query
+distribution and nothing else, and it is the ceiling on the whole effect
+— so their magnitudes should not be quoted until the queries settle. The
+mechanism findings (2 and 3) are arithmetic on the policies and are not
+at risk. A high-cost arm (c in {0,2,4,6,8,10} with budget scaled by
+1 + c, isolating the price RATIO from starvation) is implemented behind
+`--costs/--compensate-budget` and was deliberately NOT run for the same
+reason; the command is in `results/room_change_cost/findings.md`.
+
+*Headline.* Every policy loses accuracy as c rises (travel eats budget);
+the cost-aware pair loses less. The gap between the best cost-aware and
+best cost-blind policy moves toward cost-awareness in 5 of 6 cells,
+monotonically in 4. The brief's target question — does the advantage
+appear on LastObservation, where VoI lost in Part B — is YES at 90/day
+and it is the largest effect in the study: the gap closes from -0.100 to
+-0.014 across c in [0, 2]. But it is a recovery, not a win (-0.014 is
+still a loss at the 0.01 resolution the sample supports), and the
+mechanism is not the expected one: the gap closes because
+ResolvableMassSense FALLS (-0.109) while VoI barely moves (-0.023).
+The gate spends on the stale-but-confident questions one-step voi will
+not touch, so its accuracy is elastic in how many senses it can afford;
+VoI's was already insensitive to its own sense count because it was
+mis-allocating. The cost-aware advantage is robustness to the price more
+than exploitation of the discount — and much of that robustness is
+inherited from under-spending, which was Part B's weakness. Cost-aware
+policies do take the discount: their same-room sense share roughly
+doubles at the FIRST non-zero price (LastObs@90 VoIThreshold 0.369 ->
+0.713 at c = 0.25) and then plateaus. Cost-blind policies are NOT flat
+across c as predicted — they drift +0.05 to +0.11 — but for a benign
+reason: their choice sequence is identical at every c, and a higher price
+merely truncates it earlier, leaving the prefix where the robot has not
+yet wandered from where the patrol left it. The two signals are
+distinguishable (gradual monotone drift vs a step at the first price).
+The robot's own room contains the queried object's most likely receptacle
+on only 0.183-0.200 of questions — against an INDEPENDENCE baseline of
+0.182-0.184 (per household, the inner product of the robot-room marginal
+with the argmax-room marginal; `1/n_rooms` is the wrong reference because
+rooms are far from equally likely). So position carries essentially no
+information about the answer: LastObs +0.018 above independence, Periodic
++0.007, PerpetuaStar -0.001, exactly on it. That is the ceiling on the
+whole effect and no policy can move it.
+
+*OracleBelief joined the grid* (4 beliefs), at the eps 0.4 /
+half-life 12 h weighting the v2 sweep SELECTED — not the module defaults,
+which are still the whole-episode setting that collapsed at the ESS gate,
+so `belief_spec()` reads `results/oracle_program_posterior/selected.json`
+and refuses if it is missing. Part B never ran the oracle, so its policy
+configuration is the consensus one (the convention `voi_study` already
+used for PerpetuaStar), marked `consensus: true` in `configs.json`. It is
+the strongest confirmation of Part B's thesis in the study: at 90/day the
+cost-aware advantage is +0.115 at c = 0, the largest anywhere here, and
+it DECAYS to +0.038 as c rises — the opposite direction to the other
+three beliefs. On the one genuinely calibrated belief VoI wins outright,
+and the travel cost erodes that win rather than creating it. The
+resolvable-mass gate sits nearly flat at ~0.785 because a calibrated
+belief usually yields a singleton conformal set, so it barely senses.
+Its median ESS is 23.4 under NeverSense (healthy; the gate is defined on
+the passive diet) but ~1.4 under SequentialSearch — see the note on the
+ensemble's evidence appetite below.
+
+One clear practical caveat found by the run: a lambda tuned at c = 0 does
+not survive a change of price scale. VoIThresholdSense at Part B's best
+lambda = 0.2 on PerpetuaStar@24 needs `voi >= 0.6` at c = 2, which almost
+nothing clears; it senses only in its own room (same-room share 1.000),
+leaves three quarters of its budget unspent (cost/q 0.064 against a 0.267
+allowance) and drops to 0.562, below SequentialSearch. Scaling lambda by
+cost makes the rule cost-correct but leaves its calibration
+cost-dependent.
+
+Deviations and design decisions:
+
+1. **The passive patrol does not react to the policy.** A scheduled
+   visit sets the robot's position to its own room regardless of where a
+   sense has just sent it. This is deliberate: the banks must stay frozen
+   and identical across every policy under test, which is impossible if
+   policy actions alter the observation stream. The consequence is that
+   the robot can teleport between a sense and the next ambient visit; the
+   cost model prices the sense, not the patrol.
+2. **The day-start reset is an event at the day boundary.** The harness
+   delivers all evidence with `t < day_start` BEFORE resetting position,
+   so a late visit from yesterday cannot outlive the reset, and a visit
+   at exactly `t = day_start` belongs to the new day. Delivery order to
+   the beliefs is unchanged, so no belief sees anything different.
+3. **The loop bound is the sensable-receptacle count.** The old
+   `budget_remaining + 1` bound does not terminate under fractional
+   costs. A receptacle may not be sensed twice within a question, so that
+   count is already an upper bound for every policy in the roster; the
+   cap logs a warning and forces an answer if it ever fires (it does not
+   for any policy here).
+4. **`VoIBudgetPriceSense`'s controller still counts SENSES, not cost.**
+   The brief specified exactly two changes to the VoI policies and
+   "nothing else changes", so `spend_rate` remains senses per question
+   while `budget_rate` is budget units per question. At `c > 0` these are
+   no longer commensurable and the controller under-measures its own
+   spend by roughly the average cost multiplier. Measured effect: it
+   stops modulating and just runs into the cap — at budget 90 its cost
+   per question is 0.85-1.00 at every c (against VoIThresholdSense's
+   0.55-0.94) and it carries the higher forced-answer rate of the pair
+   (0.10-0.17 vs 0.001-0.066). Its rows are a capped policy's, not a
+   budget-tracking one's. The one-line fix (book `cost` in `_on_sense`)
+   is deliberately NOT made here — it is a change to the experiment, not
+   to its plumbing — but it is the first thing to change if this arm is
+   rerun.
+4b. **Forced-answer rates at c > 0 are largely an artefact** and are
+   non-monotone in c (SequentialSearch@24: 0.000, 0.652, 0.410, 0.038,
+   0.079). Policies guard with `budget_remaining <= 0`, which no longer
+   catches "positive but unaffordable", so the flag measures leftover
+   budget granularity: at c = 0.25 the day ends on leftovers of
+   0.25/0.5/0.75 that buy nothing, while at c = 1 a leftover of exactly 1
+   still buys a same-room look. Accuracy is unaffected. Teaching the
+   cost-blind policies to check affordability would remove the noise but
+   would also give them a form of cost-awareness, so it was not done.
+5. **ON_PERSON sits in the `person_check` pseudo-room** (the existing
+   `RoomMap` convention), and the fleet's `round_robin_patrol` never
+   visits it, so on these banks sensing ON_PERSON always pays the
+   surcharge. Noted rather than special-cased: it is one receptacle of
+   22-38.
+6. **Policy slugs in the study are Part B's own**, hyperparameters and
+   all, because every generator derives from `(seed, belief, policy slug,
+   budget, episode)` — relabelling `..._best` would reseed the
+   tie-breaks and the `c = 0` regression against `results/voi_policies/`
+   would fail for reasons having nothing to do with cost.
+   `VoIBudgetPriceSense` likewise keeps Part B's fixed `lam0 = 0.05`.
+7. **`representative_grid` cells gained a fourth coordinate** (the
+   room-change cost) and the grid csv three columns
+   (`room_change_cost`, `cost_per_question`/`cost_per_day`,
+   `same_room_sense_fraction`). `senses_per_question` now counts SENSES
+   where it used to sum spend; the two coincide at `c = 0`, which is what
+   keeps the regression exact. Part-file names are unchanged at `c = 0`,
+   so the earlier studies' `questions/*.jsonl.gz` paths still resolve.
+8. **OracleBelief's ESS depends on the POLICY, and that is not a bug.**
+   `OracleProgramPosterior` is not the routine oracle: the routine oracle
+   (`routine_oracle.py`) takes no observations, but this belief keeps the
+   same 800-realization ensemble alive and weights each realization by
+   agreement with everything the agent has seen. A paid sense is a full
+   receptacle readout, i.e. one check per KNOWN OBJECT (35 on hh_001),
+   so a sensing policy injects far more evidence per question than the
+   passive diet does, weights concentrate, and ESS falls — 23.4 under
+   NeverSense against ~1.4 under SequentialSearch. The gate is defined on
+   the passive diet, where it passes; the sensing figure is a property of
+   the belief's evidence appetite, and it is worth remembering that under
+   an active policy the oracle is close to a point estimate again.
+
+   A hard "keep every realization NOT INVALIDATED" rule was considered as
+   the alternative to the soft eps weighting and MEASURED on hh_001
+   (24 850 object-level observations x 800 realizations): over the whole
+   episode it leaves ZERO survivors at every one of the 2 250 question
+   times, because the best realization already disagrees with 676
+   observations. Restricted to a trailing window it is bimodal rather
+   than graded — survivors (mean, % of questions with none): 0.5 h 675,
+   5.7%; 1 h 552, 11.0%; 3 h 178, 27.9%; 6 h 95, 54.4%; 12 h 9.7, 89.1%;
+   24 h and beyond 0, 100%. The p10/p90 at 1 h are 0 and 800: the rule
+   almost always returns either the entire prior (uninformative) or
+   nothing (undefined). That bimodality is exactly what the soft
+   multiplier exists to avoid, and it is why the module says "soft, never
+   a hard filter". If the idea is wanted in a well-defined form, the
+   robust variants are rank-based (keep the k least-disagreeing in the
+   window, never empty and never all) or tolerance-based (allow up to m
+   disagreements in window H) — both are two-knob hard filters that
+   interpolate where the pure rule cannot. Not implemented; it is a
+   model change and therefore the owner's call.
+
+9. **Two pre-existing failures, neither touched by this work.** The
+   golden run-log fixture did not reproduce at HEAD on this machine (one
+   ULP in a `LastObservation` distribution) before any change here; it
+   was regenerated along with the schema change this brief does make.
+   `tests/test_baselines_llm_belief.py::test_prompt_and_key_match_the_committed_fixture`
+   fails because `banks/baselines/sweep/visits6/` is gitignored and
+   absent. `mypy --strict` reports one error in `passive_eval.py` from an
+   uncommitted edit that predates this work.
+
 ## Update (2026-09-09: STAR-style indexed memory + LLM decision loop — code landed, runs pending banks)
 
 An exploration per the STAR brief (Chen et al., arXiv:2511.14004): does

@@ -127,7 +127,7 @@ class LoopView:
     question: Question
     object_class: str
     working_memory: Tuple[str, ...]
-    budget_remaining: int
+    budget_remaining: float
     steps_used: int
     recalls_used: int
     max_steps: int
@@ -236,7 +236,7 @@ class StarMemoryLoopPolicy(DecisionPolicy):
     # ---------------------------------------------------------- decide
 
     def decide(self, question: Question, prediction: Prediction,
-               budget_remaining: int, t: int,
+               budget_remaining: float, t: int,
                last_sense: Optional[SenseResult] = None) -> Action:
         if self._context is None:
             raise RuntimeError(f"{self.name}: decide() before reset()")
@@ -278,7 +278,7 @@ class StarMemoryLoopPolicy(DecisionPolicy):
             f"sense {sense.receptacle_id} -> {outcome}")
 
     def _loop(self, question: Question, prediction: Prediction,
-              budget_remaining: int) -> Action:
+              budget_remaining: float) -> Action:
         assert self._context is not None
         failures_this_step = 0
         while True:
@@ -320,7 +320,7 @@ class StarMemoryLoopPolicy(DecisionPolicy):
                                 from_fallback=action.from_fallback)
 
     def _view(self, question: Question, prediction: Prediction,
-              budget_remaining: int) -> LoopView:
+              budget_remaining: float) -> LoopView:
         assert self._context is not None
         return LoopView(
             question=question,
@@ -338,7 +338,7 @@ class StarMemoryLoopPolicy(DecisionPolicy):
             last_recall=self._last_recall)
 
     def _illegal(self, action: StarAction,
-                 budget_remaining: int) -> Optional[str]:
+                 budget_remaining: float) -> Optional[str]:
         """A human-readable objection, or None when the action is legal."""
         assert self._context is not None
         if isinstance(action, RecallCall):

@@ -4,10 +4,24 @@ The harness owns everything that protects result validity:
 
 * **Identical observation streams** — every agent gets the identical stream: the initial
   tour, then per question all scripted observations with ``t <= t_query``
-  not yet delivered, in time order. Sensing is the only divergence.
-* **Budget accounting** — the harness decrements the per-day budget,
-  refuses ``Sense`` at zero (forcing an answer, flagged in the log), and
-  records per-question spend. Policies only ever read ``budget_remaining``.
+  not yet delivered, in time order. Sensing is the only divergence. The
+  passive patrol is FIXED and agent-independent: it does not react to
+  where a policy has sent the robot (see "Robot position" below).
+* **Budget accounting** — the harness decrements the per-day budget by the
+  sense's COST, refuses a ``Sense`` it cannot afford (forcing an answer,
+  flagged in the log), and records per-question spend. Policies only ever
+  read ``budget_remaining``.
+* **Robot position and travel cost** — the harness tracks which room the
+  robot is in and prices each sense from it: 1.0 for a receptacle in the
+  current room, ``1 + room_change_cost`` for one anywhere else. Position
+  is ``home_base_room`` at the start of every day, moves to the room of
+  every ambient room visit delivered up to the question's ``t_query``,
+  and moves to the room of every receptacle actively sensed. The live
+  position rides on the :class:`~baselines.types.EpisodeContext` the
+  agent was reset with, so policies read the price through
+  ``context.sense_cost(receptacle_id)`` without the harness widening the
+  ``decide`` signature. At ``room_change_cost = 0`` (the default) every
+  sense costs 1 and the accounting is exactly what it was before.
 * **Sensability** — a bank may declare receptacles unsensable (legal
   answers that can only be inferred, e.g. OUT_OF_HOUSE). Sensing one is a
   policy contract violation and raises loudly — it is never silently
@@ -39,11 +53,12 @@ from __future__ import annotations
 
 import logging
 from dataclasses import asdict, dataclass
-from typing import Dict, Iterator, List, Tuple, Union
+from typing import Dict, Iterator, List, Optional, Tuple, Union
 
 from baselines.agent import Agent
-from baselines.types import (Answer, AnswerNow, Episode, Observation,
-                             Question, Sense, SenseResult)
+from baselines.types import (DAY_SECONDS, Answer, AnswerNow, Episode,
+                             EpisodeContext, Observation, Question,
+                             RobotPosition, Sense, SenseResult)
 
 logger = logging.getLogger(__name__)
 
@@ -53,8 +68,16 @@ class QuestionRecord:
     """Everything that happened for one question (one run-log line).
 
     ``actions`` holds one entry per policy decision in order; sense entries
-    embed the returned contents. ``forced_answer`` marks that the policy
-    asked to sense with zero budget and was overruled.
+    embed the returned contents, the room sensed and what the sense cost.
+    ``forced_answer`` marks that the policy asked to sense and was
+    overruled because the remaining budget could not cover that sense's
+    cost.
+
+    The three budget fields are floats: a sense costs 1.0 in the robot's
+    current room and ``1 + room_change_cost`` elsewhere, so spend is
+    fractional whenever that surcharge is not a whole number.
+    ``budget_spent`` is therefore a COST, not a count; ``n_senses`` is
+    the count.
     """
 
     episode_id: str
@@ -73,15 +96,23 @@ class QuestionRecord:
     confidence: float
     truth_receptacle: str
     correct: bool
-    budget_before: int
-    budget_spent: int
-    budget_after: int
+    budget_before: float
+    budget_spent: float
+    budget_after: float
     forced_answer: bool
     # Full-state snapshot after this question resolved:
     # object_id -> [object_class, predicted argmax, correct]. The queried
     # object appears here too (post-sense state, same as the answer).
     belief_state: Dict[str, Tuple[str, str, bool]]
     belief_accuracy: float
+    # Room-change cost bookkeeping. ``n_senses`` counts senses where
+    # ``budget_spent`` sums their costs; ``same_room_senses`` counts those
+    # that needed no room change; ``robot_room_at_query`` is where the
+    # robot stood when the question arrived, before any of its own senses.
+    # Defaults keep run logs written before the room-cost model loadable.
+    n_senses: int = 0
+    same_room_senses: int = 0
+    robot_room_at_query: Optional[str] = None
 
     def to_json_dict(self) -> Dict[str, object]:
         """Plain-dict form for JSONL writing."""
@@ -89,50 +120,84 @@ class QuestionRecord:
 
 
 def _stream_until(evidence: Tuple[Union[Observation, SenseResult], ...],
-                  cursor: int, t: int, agent: Agent) -> int:
+                  cursor: int, t: int, agent: Agent,
+                  episode: Episode, position: RobotPosition) -> int:
     """Deliver ambient evidence with ``.t <= t``; return the new cursor.
 
     Evidence is what :meth:`Episode.evidence_stream` yields: plain
     observations for glimpse banks, per-receptacle sense results for
     room-visit banks (whose emptiness is negative evidence the belief
     base class already understands).
+
+    A room-visit sense result also MOVES the robot: the patrol is where
+    the robot physically is between questions. A glimpse ``Observation``
+    does not — it is a disembodied sighting, not a visit.
     """
     while cursor < len(evidence) and evidence[cursor].t <= t:
-        agent.observe(evidence[cursor])
+        item = evidence[cursor]
+        agent.observe(item)
+        if isinstance(item, SenseResult):
+            room = episode.receptacle_rooms.get(item.receptacle_id)
+            if room is not None:
+                position.room = room
         cursor += 1
     return cursor
 
 
-def run_episode(agent: Agent, episode: Episode) -> Iterator[QuestionRecord]:
+def run_episode(agent: Agent, episode: Episode,
+                room_change_cost: float = 0.0) -> Iterator[QuestionRecord]:
     """Replay one episode against one agent, yielding one record per question.
 
-    The per-question decision loop is bounded: each iteration either
-    consumes one budget unit (a sense) or terminates (an answer / a forced
-    answer), so it runs at most ``budget_remaining + 1`` times regardless
-    of policy behaviour.
+    ``room_change_cost`` (``c``) prices a sense outside the robot's
+    current room at ``1 + c`` against 1.0 inside it; at the default 0.0
+    every sense costs 1 and this is the flat-budget model unchanged.
+
+    The per-question decision loop is bounded by
+    ``len(sensable_receptacle_ids)`` senses — a receptacle may not be
+    sensed twice within one question, so that is already an upper bound
+    on any well-behaved policy, and it terminates under fractional costs
+    where a budget-derived bound would not.
     """
-    agent.reset(episode.agent_view())
+    if room_change_cost < 0.0:
+        raise ValueError(f"run_episode: room_change_cost {room_change_cost} "
+                         f"must be >= 0")
+    position = RobotPosition(room=episode.home_base_room)
+    context = episode.agent_view(room_change_cost, position)
+    agent.reset(context)
     for obs in episode.initial_observations:
         agent.observe(obs)
 
     cursor = 0
     evidence = episode.evidence_stream()
     for day_index, day_questions in enumerate(episode.questions_by_day):
-        budget = episode.budget_per_day
+        # Deliver everything that happened before this day begins, THEN
+        # put the robot back at its home base: the reset is an event at
+        # the day boundary, so a late visit from yesterday must not
+        # outlive it. Delivery order to the belief is unchanged.
+        cursor = _stream_until(evidence, cursor, day_index * DAY_SECONDS - 1,
+                               agent, episode, position)
+        position.room = episode.home_base_room
+        budget = float(episode.budget_per_day)
         for question in day_questions:
-            cursor = _stream_until(evidence, cursor, question.t_query, agent)
-            record = _run_question(agent, episode, question, day_index, budget)
+            cursor = _stream_until(evidence, cursor, question.t_query, agent,
+                                   episode, position)
+            record = _run_question(agent, episode, question, day_index,
+                                   budget, context, position)
             budget = record.budget_after
             yield record
 
 
 def _run_question(agent: Agent, episode: Episode, question: Question,
-                  day_index: int, budget: int) -> QuestionRecord:
+                  day_index: int, budget: float, context: EpisodeContext,
+                  position: RobotPosition) -> QuestionRecord:
     """Decision loop for a single question; returns its full record."""
     budget_before = budget
     actions: List[Dict[str, object]] = []
     forced = False
     last_sense: SenseResult | None = None
+    room_at_query = position.room
+    n_senses = same_room_senses = 0
+    max_senses = len(context.sensable_receptacle_ids)
 
     while True:
         prediction = agent.predict(question)
@@ -147,20 +212,41 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
                 f"{action.receptacle_id!r} on {question.question_id} — "
                 f"policies receive the sensable set in their context and "
                 f"must never target an unsensable one")
-        if budget <= 0:
+        cost = context.sense_cost(action.receptacle_id)
+        if cost > budget:
             forced = True
             actions.append({"type": "forced_answer",
+                            "refused_sense": action.receptacle_id,
+                            "cost": cost, "budget_remaining": budget})
+            break
+        if n_senses >= max_senses:
+            # Unreachable for a policy that senses each receptacle at most
+            # once per question (every policy in the roster does); the
+            # bound exists so no policy can loop forever under fractional
+            # costs, where "budget runs out" is not a step bound.
+            logger.warning("%s %s: sense-step cap %d reached; forcing an "
+                           "answer", agent.name, question.question_id,
+                           max_senses)
+            forced = True
+            actions.append({"type": "step_cap_answer",
                             "refused_sense": action.receptacle_id})
             break
-        budget -= 1
+        room = episode.receptacle_rooms.get(action.receptacle_id)
+        same_room = room is not None and room == position.room
+        budget -= cost
+        n_senses += 1
+        same_room_senses += int(same_room)
         contents = episode.receptacle_contents(
             action.receptacle_id, question.t_query)
         result = SenseResult(receptacle_id=action.receptacle_id,
                              t=question.t_query, contents=contents)
         agent.observe(result)
         last_sense = result
+        if room is not None:
+            position.room = room      # the robot travelled there to look
         actions.append({"type": "sense", "receptacle_id": action.receptacle_id,
-                        "contents": list(contents)})
+                        "contents": list(contents), "room": room,
+                        "cost": cost, "same_room": same_room})
 
     answer = Answer(question_id=question.question_id,
                     predicted_receptacle_id=prediction.argmax,
@@ -195,8 +281,10 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
         correct=answer.predicted_receptacle_id == truth,
         budget_before=budget_before, budget_spent=answer.budget_spent,
         budget_after=budget, forced_answer=forced,
-        belief_state=belief_state, belief_accuracy=belief_accuracy)
-    logger.debug("%s %s: %s (truth %s) spent=%d", agent.name,
+        belief_state=belief_state, belief_accuracy=belief_accuracy,
+        n_senses=n_senses, same_room_senses=same_room_senses,
+        robot_room_at_query=room_at_query)
+    logger.debug("%s %s: %s (truth %s) spent=%g", agent.name,
                  question.question_id, answer.predicted_receptacle_id,
                  truth, answer.budget_spent)
     return record

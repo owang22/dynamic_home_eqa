@@ -13,6 +13,6 @@ class NeverSense(DecisionPolicy):
     """Always :class:`~baselines.types.AnswerNow`. The zero-cost floor."""
 
     def decide(self, question: Question, prediction: Prediction,
-               budget_remaining: int, t: int,
+               budget_remaining: float, t: int,
                last_sense: Optional[SenseResult] = None) -> Action:
         return AnswerNow()

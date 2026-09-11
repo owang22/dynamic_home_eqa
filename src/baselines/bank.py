@@ -11,7 +11,14 @@ and start with its header; a file may hold many episodes):
       healthcheck's stratified discriminative gate),
      "unsensable_receptacles": [str, ...] (optional, default none: legal
       ANSWERS that Sense may never target — e.g. OUT_OF_HOUSE; agents can
-      only infer them by eliminating every sensable receptacle)}
+      only infer them by eliminating every sensable receptacle),
+     "receptacle_rooms": {receptacle_id: room_id} (optional: the room
+      holding each in-house receptacle; receptacles outside any room —
+      OUT_OF_HOUSE — are simply absent. Feeds the room-change sense
+      cost),
+     "home_base_room": str (optional, required with receptacle_rooms:
+      the room the robot starts each day in — the room with the most
+      receptacles, ties broken by room id sort order)}
 
     {"kind": "truth", "episode_id": str, "object_id": str, "t": int,
      "receptacle_id": str}
@@ -147,9 +154,28 @@ class _EpisodeAccumulator:
             self.household_type = None if raw_type is None else str(raw_type)
             self.unsensable = tuple(
                 str(r) for r in header.get("unsensable_receptacles", []))
+            self.receptacle_rooms = {
+                str(k): str(v)
+                for k, v in (header.get("receptacle_rooms") or {}).items()}
+            raw_home = header.get("home_base_room")
+            self.home_base_room = None if raw_home is None else str(raw_home)
         except (KeyError, TypeError, AttributeError) as err:
             raise BankFormatError(
                 f"{path}:{lineno}: bad episode_header: {err}") from err
+        unknown_roomed = set(self.receptacle_rooms) - set(self.receptacles)
+        if unknown_roomed:
+            raise BankFormatError(
+                f"{path}:{lineno}: receptacle_rooms keys "
+                f"{sorted(unknown_roomed)} not in receptacle_ids")
+        if self.receptacle_rooms and self.home_base_room is None:
+            raise BankFormatError(
+                f"{path}:{lineno}: receptacle_rooms without home_base_room")
+        if (self.home_base_room is not None
+                and self.home_base_room not in set(
+                    self.receptacle_rooms.values())):
+            raise BankFormatError(
+                f"{path}:{lineno}: home_base_room {self.home_base_room!r} "
+                f"is not a room of any receptacle")
         self._truth: Dict[str, List[Tuple[int, str]]] = {}
         self._observations: List[Observation] = []
         self._questions: List[Question] = []
@@ -256,6 +282,8 @@ class _EpisodeAccumulator:
                           for obj in self.object_classes},
             household_type=self.household_type,
             unsensable_receptacle_ids=self.unsensable,
+            receptacle_rooms=self.receptacle_rooms,
+            home_base_room=self.home_base_room,
             scripted_evidence=evidence)
         logger.debug("loaded episode %s: %d objects, %d questions",
                      episode.episode_id, len(episode.object_classes),
@@ -779,4 +807,71 @@ def write_fast_churn_bank(path: pathlib.Path, seed: int = 7) -> JsonlBank:
     with open(path, "w") as f:
         for row in rows:
             f.write(json.dumps(row) + "\n")
+    return JsonlBank(path=path)
+
+
+# --------------------------------------------------------------------------
+# Room-change-cost fixture bank
+# --------------------------------------------------------------------------
+
+_ROOM_COST_ROOMS: Dict[str, str] = {
+    "counter_k": "kitchen", "sink_k": "kitchen", "table_k": "kitchen",
+    "desk_s": "study",
+    "hook_h": "hall",
+}
+"""Receptacle -> room for :func:`write_room_cost_bank`. The kitchen holds
+three receptacles, so it is the home base by the most-receptacles rule."""
+
+
+def write_room_cost_bank(path: pathlib.Path) -> JsonlBank:
+    """A fixture with rooms, a patrol, and hand-derivable travel costs.
+
+    Layout: kitchen (``counter_k``, ``sink_k``, ``table_k``), study
+    (``desk_s``), hall (``hook_h``); the kitchen is therefore the home
+    base. ``mug_k`` sits on ``counter_k`` forever and ``keys_s`` on
+    ``desk_s`` forever, so truth is trivial and every assertion is about
+    position and cost rather than about belief dynamics.
+
+    Two days, two questions each at 12:00 and 13:00. One room visit per
+    day at 11:00: to the STUDY on day 0 and to the HALL on day 1. So at
+    the day-0 12:00 question the robot stands in the study (a passive
+    visit moved it off the home base), and at the day-1 12:00 question in
+    the hall — while at the instant each day BEGINS it is back in the
+    kitchen, which is what makes the day-start reset observable.
+    """
+    h, episode_id = 3600, "room_cost_ep0"
+    receptacles = [*_ROOM_COST_ROOMS, "OUT_OF_HOUSE"]
+    rows: List[Dict[str, Any]] = [{
+        "kind": "episode_header", "episode_id": episode_id,
+        "household_id": "room_cost_hh", "receptacle_ids": receptacles,
+        "object_classes": {"mug_k": "mug", "keys_s": "keys"},
+        "budget_per_day": 4, "n_days": 2,
+        "unsensable_receptacles": ["OUT_OF_HOUSE"],
+        "receptacle_rooms": dict(_ROOM_COST_ROOMS),
+        "home_base_room": "kitchen"}]
+
+    def add(kind: str, **fields: Any) -> None:
+        rows.append({"kind": kind, "episode_id": episode_id, **fields})
+
+    add("truth", object_id="mug_k", t=0, receptacle_id="counter_k")
+    add("truth", object_id="keys_s", t=0, receptacle_id="desk_s")
+    add("observation", object_id="mug_k", t=0, receptacle_id="counter_k",
+        source="initial_tour")
+    add("observation", object_id="keys_s", t=0, receptacle_id="desk_s",
+        source="initial_tour")
+    add("room_visit", t=11 * h, room="study", contents={"desk_s": ["keys_s"]})
+    add("room_visit", t=DAY_SECONDS + 11 * h, room="hall",
+        contents={"hook_h": []})
+    qn = 0
+    for d in range(2):
+        for obj, hour in (("mug_k", 12), ("keys_s", 13)):
+            add("question", question_id=f"q{qn:03d}", object_id=obj,
+                t_query=d * DAY_SECONDS + hour * h, day_index=d)
+            qn += 1
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with open(path, "w") as f:
+        for row in rows:
+            f.write(json.dumps(row) + "\n")
+    logger.info("wrote room-cost bank: %d rows -> %s", len(rows), path)
     return JsonlBank(path=path)

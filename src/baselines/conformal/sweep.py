@@ -178,7 +178,7 @@ class RecordSummary:
     day_index: int
     correct: bool
     belief_accuracy: float
-    budget_spent: int
+    budget_spent: float
     forced: bool
 
 

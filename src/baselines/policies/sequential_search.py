@@ -75,7 +75,7 @@ class SequentialSearch(DecisionPolicy):
         self._tried = set()
 
     def decide(self, question: Question, prediction: Prediction,
-               budget_remaining: int, t: int,
+               budget_remaining: float, t: int,
                last_sense: Optional[SenseResult] = None) -> Action:
         if self._question_id != question.question_id:
             self._question_id = question.question_id

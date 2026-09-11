@@ -106,14 +106,16 @@ class Answer:
 
     ``confidence`` is the probability the answering belief assigned to the
     predicted receptacle (in [0, 1]; degenerate beliefs may emit constants).
-    ``budget_spent`` is the number of sense actions consumed on this
-    question, filled in by the harness — policies never account budget.
+    ``budget_spent`` is the total sense COST consumed on this question
+    (the number of senses when every sense costs 1; fractional under a
+    room-change cost), filled in by the harness — policies never account
+    budget.
     """
 
     question_id: str
     predicted_receptacle_id: str
     confidence: float
-    budget_spent: int
+    budget_spent: float
 
     def __post_init__(self) -> None:
         if not 0.0 <= self.confidence <= 1.0:
@@ -178,6 +180,20 @@ which is the harness's job by contract.
 """
 
 
+@dataclass
+class RobotPosition:
+    """Mutable holder for the robot's current room, owned by the harness.
+
+    The harness updates ``room`` as passive room visits are delivered and
+    active senses execute (and resets it to the home base at each day
+    start); policies read it only through
+    :meth:`EpisodeContext.sense_cost`. ``None`` means position is unknown
+    (banks without room information), in which case every sense costs 1.
+    """
+
+    room: Optional[str] = None
+
+
 @dataclass(frozen=True)
 class EpisodeContext:
     """The agent-visible slice of an episode. Contains no ground truth.
@@ -185,6 +201,13 @@ class EpisodeContext:
     This is what ``BeliefModel.reset`` receives. It is constructed by
     :meth:`Episode.agent_view` and deliberately lacks any ground-truth
     accessor — isolation by construction, not convention.
+
+    ``receptacle_rooms`` maps each in-house receptacle to its room (empty
+    for banks that carry no room map) and ``home_base_room`` is the room
+    the robot starts each day in. ``robot_position`` is a live view of
+    the harness-tracked current room and ``room_change_cost`` the
+    surcharge ``c`` for sensing outside it; together they give policies
+    :meth:`sense_cost` without widening the ``decide`` signature.
     """
 
     episode_id: str
@@ -194,6 +217,10 @@ class EpisodeContext:
     budget_per_day: int
     n_days: int
     unsensable_receptacle_ids: Tuple[str, ...] = ()
+    receptacle_rooms: Mapping[str, str] = field(default_factory=dict)
+    home_base_room: Optional[str] = None
+    room_change_cost: float = 0.0
+    robot_position: RobotPosition = field(default_factory=RobotPosition)
 
     @property
     def sensable_receptacle_ids(self) -> Tuple[str, ...]:
@@ -203,6 +230,18 @@ class EpisodeContext:
         never observed directly."""
         blocked = set(self.unsensable_receptacle_ids)
         return tuple(r for r in self.receptacle_ids if r not in blocked)
+
+    def sense_cost(self, receptacle_id: str) -> float:
+        """Budget cost of sensing ``receptacle_id`` from the current room:
+        1.0 in the room the robot is already in, ``1.0 + c`` anywhere
+        else. Banks without a room map cost every sense 1.0 (the model
+        degenerates to today's flat accounting)."""
+        if not self.receptacle_rooms:
+            return 1.0
+        room = self.receptacle_rooms.get(receptacle_id)
+        if room is not None and room == self.robot_position.room:
+            return 1.0
+        return 1.0 + self.room_change_cost
 
 
 @dataclass(frozen=True)
@@ -234,6 +273,8 @@ class Episode:
     trajectories: Mapping[str, Tuple[Tuple[int, str], ...]] = field(repr=False)
     household_type: Optional[str] = None
     unsensable_receptacle_ids: Tuple[str, ...] = ()
+    receptacle_rooms: Mapping[str, str] = field(default_factory=dict)
+    home_base_room: Optional[str] = None
     scripted_evidence: Optional[Tuple[Union["Observation", "SenseResult"],
                                       ...]] = None
     """The ambient stream as the beliefs should CONSUME it, time-ordered.
@@ -256,6 +297,17 @@ class Episode:
             raise ValueError(
                 f"Episode {self.episode_id}: unsensable_receptacle_ids "
                 f"{sorted(unknown)} not in receptacle_ids")
+        unknown_roomed = set(self.receptacle_rooms) - recs
+        if unknown_roomed:
+            raise ValueError(
+                f"Episode {self.episode_id}: receptacle_rooms keys "
+                f"{sorted(unknown_roomed)} not in receptacle_ids")
+        if (self.home_base_room is not None
+                and self.home_base_room not in set(
+                    self.receptacle_rooms.values())):
+            raise ValueError(
+                f"Episode {self.episode_id}: home_base_room "
+                f"{self.home_base_room!r} is not a room of any receptacle")
         for obj, traj in self.trajectories.items():
             if not traj or traj[0][0] != 0:
                 raise ValueError(
@@ -313,8 +365,16 @@ class Episode:
             return self.scripted_evidence
         return self.scripted_observations
 
-    def agent_view(self) -> EpisodeContext:
-        """The narrowed, ground-truth-free view handed to agents."""
+    def agent_view(self, room_change_cost: float = 0.0,
+                   robot_position: Optional[RobotPosition] = None
+                   ) -> EpisodeContext:
+        """The narrowed, ground-truth-free view handed to agents.
+
+        ``robot_position`` is the harness's live position tracker; the
+        default (a fresh holder at the home base) serves consumers that
+        replay without position tracking, for whom every sense then
+        costs 1 + c from any room other than the home base — pass the
+        tracker for real cost accounting."""
         return EpisodeContext(
             episode_id=self.episode_id,
             household_id=self.household_id,
@@ -322,4 +382,9 @@ class Episode:
             object_classes=self.object_classes,
             budget_per_day=self.budget_per_day,
             n_days=self.n_days,
-            unsensable_receptacle_ids=self.unsensable_receptacle_ids)
+            unsensable_receptacle_ids=self.unsensable_receptacle_ids,
+            receptacle_rooms=self.receptacle_rooms,
+            home_base_room=self.home_base_room,
+            room_change_cost=room_change_cost,
+            robot_position=(robot_position if robot_position is not None
+                            else RobotPosition(room=self.home_base_room)))

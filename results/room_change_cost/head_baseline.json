@@ -1,0 +1,14 @@
+{
+  "_what": "Cells of results/voi_policies/grid.csv re-derived by running the CURRENT COMMITTED code (git HEAD, unmodified — a clean `git archive HEAD` checkout) on the ORIGINAL banks/baselines/fleet/ banks, same split and seed. Produced while diagnosing the c = 0 regression failure.",
+  "_why": "results/voi_policies/provenance.json records git_commit eb731bcd with git_dirty true, generated 2026-09-08T20:33; the Part B commit 230a2701 landed 3.6 h later and voi_sense.py differs between them. So the reference csv came from an uncommitted working state and no committed code reproduces it. These re-derivations show the divergence is pre-existing and not introduced by the room-change-cost work.",
+  "_method": "python -m ... representative_grid GridTask per test household, aggregate_rows; identical PolicySpec, seed 0, 10 test households, 22500 questions per cell.",
+  "cells": {
+    "PeriodicPersistence@24 VoIThresholdSense_lambda0.05": {"task_accuracy": 0.681422, "senses_per_question": 0.243156},
+    "PeriodicPersistence@90 VoIThresholdSense_lambda0.02": {"task_accuracy": 0.776933, "senses_per_question": 0.851244},
+    "PeriodicPersistence@24 VoIBudgetPriceSense_gamma0.1": {"task_accuracy": 0.668267, "senses_per_question": 0.262489},
+    "PeriodicPersistence@90 VoIBudgetPriceSense_gamma0.1": {"task_accuracy": 0.750267, "senses_per_question": 0.976711},
+    "PerpetuaStar@24 VoIThresholdSense_lambda0.2": {"task_accuracy": 0.631111, "senses_per_question": 0.260578},
+    "PerpetuaStar@24 VoIBudgetPriceSense_gamma0.01": {"task_accuracy": 0.623067, "senses_per_question": 0.262711},
+    "PerpetuaStar@90 VoIThresholdSense_lambda0.05": {"task_accuracy": 0.716711, "senses_per_question": 0.839556}
+  }
+}
