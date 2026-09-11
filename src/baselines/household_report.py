@@ -1322,6 +1322,22 @@ def build(in_dir: pathlib.Path, out_dir: pathlib.Path) -> pathlib.Path:
             "![](stationarity/overall_by_model.png)",
             "",
         ]
+    if (in_dir / "distribution_metrics" / "summary.md").exists():
+        md += [
+            "## Distribution quality: beyond the argmax",
+            "",
+            "Every question scored on the full predicted distribution — "
+            "log-loss and Brier (proper scoring rules), recall@k, "
+            "expected search cost, and calibration of the top-1 and "
+            "rank-2/3 probabilities. Full tables in "
+            "[distribution_metrics/summary.md]"
+            "(distribution_metrics/summary.md).",
+            "",
+            "![](distribution_metrics/scores_by_model.png)",
+            "",
+            "![](distribution_metrics/calibration.png)",
+            "",
+        ]
     md += [
         "Figures are static; every plotted value appears in the tables "
         "above, which are the table view.",

@@ -49,7 +49,8 @@ from __future__ import annotations
 import dataclasses
 import math
 import random
-from typing import Dict, List, Mapping, Optional, Sequence, Tuple
+from typing import (Callable, Dict, List, Mapping, Optional, Sequence,
+                    Tuple)
 
 from baselines.beliefs.base import BeliefModel
 from baselines.types import DAY_SECONDS, Episode, Observation
@@ -251,7 +252,8 @@ def question_ages(episode: Episode, cutoff: Optional[int] = None
 
 
 def evaluate_continuous(episode: Episode, belief: BeliefModel,
-                        config: PassiveProtocolConfig
+                        config: PassiveProtocolConfig,
+                        on_prediction: Optional[Callable] = None
                         ) -> List[ScoredQuestion]:
     """Score one belief on one episode with evidence applied up to each
     query: "how good is the belief right now", as opposed to
@@ -261,7 +263,12 @@ def evaluate_continuous(episode: Episode, belief: BeliefModel,
     by the observation that would make it trivial. ``checkpoint_day`` is
     the query's own day (history length), ``horizon_days`` is
     :data:`CONTINUOUS_HORIZON`, and the age of the object's last
-    sighting is recorded per question."""
+    sighting is recorded per question.
+
+    ``on_prediction(question, prediction, truth)``, when given, is called
+    once per scored question with the belief's full
+    :class:`~baselines.types.Prediction` — the distribution is otherwise
+    discarded after scoring (distribution-quality metrics hook)."""
     belief.reset(episode.agent_view())
     last_sighting: Dict[str, int] = {}
 
@@ -289,6 +296,8 @@ def evaluate_continuous(episode: Episode, belief: BeliefModel,
         prediction = belief.predict_readonly(question.object_id,
                                              question.t_query)
         truth = episode.true_location(question.object_id, question.t_query)
+        if on_prediction is not None:
+            on_prediction(question, prediction, truth)
         p_truth = prediction.distribution.get(truth, 0.0)
         since = (question.t_query - last_sighting[question.object_id]
                  if question.object_id in last_sighting else None)
