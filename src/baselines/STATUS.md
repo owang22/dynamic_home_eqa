@@ -1,5 +1,116 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-09-11, third: absence scoring added; decay recalibrated; disambiguation sensing DOES NOT PAY once the mixture is calibrated)
+
+Adds the absence half of the mixture's scoring, which forced a decay
+recalibration, which reversed the previous trial's headline. The earlier
+"disambiguation looks mildly positive" result was measured on a
+degenerate mixture and does not survive.
+
+### Absence terms in the weighting
+
+`log(1 - p_i(R))` for every object a sense result shows is NOT in R,
+alongside the existing `log p_i(R)` for those that are. This is what
+punishes a confident false positive: a particle certain the mug is in a
+drawer that is then opened and found empty now takes `log(0.02) = -3.9`
+where presence-only scoring charged it nothing. Two corrections, both
+configurable, both measured (`reports/baselines/hypothesis_mixture/
+absence_weight.md`):
+
+- **Selection** (`absence_uniforms`, default 2.0). Only objects on which
+  SOME particle put at least 2x uniform mass on the sensed receptacle are
+  scored. Expressed in multiples of uniform, not as a flat probability —
+  a flat 0.05 is 2x uniform in a 40-location home and five times BELOW
+  uniform in a 4-location one, which a unit test caught. The set is
+  chosen by the max over particles, never by the mixture's weighted mass:
+  absence terms are all <= 0, so a particle handed more of them is
+  penalized merely for holding opinions, and a weight-dependent set would
+  let the current leader pick its own exam. Worth it on hh_002 (final ESS
+  4.53 vs 3.62, passive accuracy 0.571 vs 0.565 against no selection); a
+  wash on hh_001.
+- **Tempering** (`absence_weight`, default 0.25). Absence terms from one
+  look are not independent observations. Set against the SPREAD each half
+  pays across particles (max minus min of cumulative log likelihood —
+  what actually moves a softmax): presence spreads 173/293 nats over 7
+  days, absence spreads `347*w` / `477*w`, so the halves cross near
+  `w = 0.6` and above that the weights are mainly measuring who predicts
+  emptiness best. 0.25 leaves absence at ~40% of presence's
+  discriminating power. **Task accuracy does not discriminate** (0.630 /
+  0.571 presence-only vs 0.632 / 0.571 at w=1) — the default rests on the
+  spread and dependence arguments, not a measured win.
+
+`absence_weight = 0` recovers presence-only scoring exactly.
+
+### Decay is now per EVENT, and had to drop to 0.6
+
+Per-term tempering would apply `decay^40` to a 40-object look. Decay now
+applies once per evidence event. That weakens forgetting, and at the old
+0.95 the mixture COLLAPSED on the real banks (ESS 1.00 on hh_002). Swept
+on both day-0 banks over the full evidence stream: 0.99/0.95/0.90/0.80
+all collapse hh_002 (ESS <= 1.02); 0.6 is the largest value keeping BOTH
+households above ESS 2 (2.27 / 2.17). Default is now 0.6, deliberately
+reactive.
+
+Note the earlier trial ran at ESS ~1-1.5 throughout. Its numbers describe
+a mixture that had degenerated to a single particle and should not be
+cited.
+
+### The headline reverses: disambiguation sensing loses
+
+Re-run of the 2 x 3 x 3 trial under the calibrated mixture
+(`results/hypothesis_mixture_trial/frontier.png`): **the myopic beta=0
+line dominates at every matched budget.** Myopic reaches 0.701 at 22.4
+senses/day; beta=0.5 reaches 0.663 and beta=2 0.660 at 24 senses/day.
+Where disambiguation appears to "win" (lambda=0.2) it is simply spending
+4-7x more budget.
+
+### Why — and this is the part that matters
+
+A new ablation (`--stage value`,
+`reports/baselines/hypothesis_mixture/weight_value.md`) pins the weights
+uniform and re-runs the passive diet. Learned weights are WORSE than
+uniform ones: **-0.0048** on hh_001, **-0.0016** on hh_002. Per-particle
+passive accuracy spans only 0.587-0.637 (hh_001) and 0.529-0.573
+(hh_002), and the learned mixture lands mid-pack, below the best single
+particle in both.
+
+So the value of knowing which hypothesis is right is approximately zero
+here, and a sense spent acquiring that knowledge is a sense not spent
+answering the question. At 24 senses/day against 90 questions/day the
+budget is tight enough that the trade is strictly bad.
+
+**The gate measured the wrong quantity.** The disagreement measurement
+(update above) showed the families PREDICT differently — 0.482 unanimous,
+mean pairwise JSD 0.304 — and that is true. But what a mixture needs is
+dispersion of SKILL, not dispersion of predictions. These models disagree
+about where objects are while being nearly equally accurate, so
+reweighting a 7-way average almost never moves the argmax. A skill-
+dispersion gate (the per-particle accuracy spread above, which takes
+seconds) should have run before any of this was built.
+
+### What would have to change for the line to work
+
+- Particles with genuinely different skill, not just different
+  predictions — e.g. per-object or per-class weights, where one model
+  really is better for keys and another for laundry. Global weights over
+  near-equal-skill models cannot pay.
+- Or a budget regime loose enough that a diverted sense is nearly free;
+  not this one.
+
+### Fat cut
+
+- 2 households, 7 of 28 days, one seed, no intervals. The weight-value
+  ablation is the only result here I would call robust, because its
+  effect (~0) is far from its noise.
+- `daytype_mixture` / `perpetua_star` still out of the default particle
+  list (cost) — the two most-distinct families per the disagreement
+  matrix, so the skill spread measured above is a lower bound.
+- Entropy bonus still computed for the current question's object only.
+- Fleet banks still not re-exported at first_question_day 0.
+- Pre-existing unrelated failure unchanged:
+  `test_baselines_llm_belief.py::test_prompt_and_key_match_the_committed_fixture`.
+
+
 ## Update (2026-09-11, later: questions from day 0; hypothesis mixture + disambiguation sensing, trial run)
 
 Continues past the disagreement STOP at the user's direction (the family

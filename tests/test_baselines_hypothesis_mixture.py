@@ -19,7 +19,7 @@ from baselines.policies.hypothesis_disambiguation import (
     HypothesisDisambiguationSense, entropy, weight_entropy_reduction)
 from baselines.policies.voi_sense import VoIThresholdSense
 from baselines.registry import build_registered_belief
-from baselines.types import EpisodeContext, Observation, Prediction
+from baselines.types import EpisodeContext, Observation, SenseResult
 
 H = 3600
 RECS = ("a", "b", "c", "d")
@@ -110,6 +110,80 @@ def test_single_particle_mixture_predicts_as_the_particle() -> None:
     for rec in RECS:
         assert ours.distribution[rec] == pytest.approx(
             theirs.distribution[rec], abs=1e-9)
+
+
+def _sense(receptacle: str, t: int, contents: tuple[str, ...]) -> SenseResult:
+    return SenseResult(receptacle_id=receptacle, t=t, contents=contents,
+                       object_classes={o: "mug" for o in contents})
+
+
+def test_absence_punishes_a_confident_false_positive() -> None:
+    # Both particles are told the mug is at "a"; only last_observation
+    # then insists on it. A look at "a" that comes back empty must cost
+    # the insistent particle far more than the hedging one.
+    model = _mixture(particle_specs=TWO_PARTICLES, absence_weight=1.0)
+    model.update(_obs("a", 0))
+    model.update(_obs("b", H))
+    model.update(_obs("a", 2 * H))
+    before = model.weights
+    model.update(_sense("a", 3 * H, contents=()))
+    after = model.weights
+    assert after[0] < before[0]        # last_observation, the false positive
+    assert after[1] > before[1]        # most_frequent, which hedged
+    assert model.absence_totals[0] < model.absence_totals[1]
+
+
+def test_absence_weight_zero_is_presence_only_scoring() -> None:
+    def final_weights(absence_weight: float) -> list[float]:
+        model = _mixture(particle_specs=TWO_PARTICLES,
+                         absence_weight=absence_weight)
+        model.update(_obs("a", 0))
+        model.update(_sense("a", H, contents=()))
+        return model.weights
+
+    off = final_weights(0.0)
+    on = final_weights(0.5)
+    assert off[0] > on[0]              # the false positive goes unpunished
+    assert all(total == 0.0 for total
+               in _mixture(particle_specs=TWO_PARTICLES,
+                           absence_weight=0.0).absence_totals)
+
+
+def test_absence_threshold_drops_objects_nobody_placed_there() -> None:
+    # "o" is last seen at "a"; a look at "d" (which no particle favours)
+    # scores no absence term at the default selection, and does at 0.
+    def absence_total(uniforms: float) -> float:
+        model = _mixture(particle_specs=TWO_PARTICLES, absence_weight=1.0,
+                         absence_uniforms=uniforms)
+        model.update(_obs("a", 0))
+        model.update(_sense("d", H, contents=()))
+        return sum(model.absence_totals)
+
+    assert absence_total(2.0) == 0.0
+    assert absence_total(0.0) < 0.0
+
+
+def test_every_particle_is_scored_on_the_same_object_set() -> None:
+    # Absence terms are all <= 0, so a particle handed more of them is
+    # penalized for holding opinions. Each particle must receive exactly
+    # one term per selected object — here, one object over one look.
+    model = _mixture(particle_specs=TWO_PARTICLES, absence_weight=1.0)
+    model.update(_obs("a", 0))
+    model.update(_sense("a", H, contents=()))
+    assert all(total < 0.0 for total in model.absence_totals)
+
+
+def test_decay_applies_once_per_event_not_once_per_object() -> None:
+    # One look reporting three objects must temper the history once. With
+    # per-object tempering the surviving history would be decay^3.
+    model = _mixture(particle_specs=TWO_PARTICLES, decay=0.5,
+                     absence_weight=0.0)
+    model.update(_obs("a", 0))
+    model.update(_obs("a", H))
+    before = list(model._log_weights)
+    model.update(_sense("b", 2 * H, contents=("o", "p", "q")))
+    assert len(model.ess_history) == 3          # three events, three steps
+    assert before != list(model._log_weights)
 
 
 def test_entropy_reduction_is_positive_iff_particles_disagree() -> None:

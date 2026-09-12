@@ -35,20 +35,26 @@ import logging
 import pathlib
 import random
 import statistics
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from baselines.agent import Agent
 from baselines.bank import JsonlBank
-from baselines.beliefs.hypothesis_mixture import HypothesisMixture
+from baselines.beliefs.hypothesis_mixture import (DEFAULT_ABSENCE_UNIFORMS,
+                                                  DEFAULT_PARTICLE_SPECS,
+                                                  HypothesisMixture)
 from baselines.harness import run_episode
 from baselines.policies.hypothesis_disambiguation import (
     HypothesisDisambiguationSense)
 from baselines.policies.voi_sense import VoIThresholdSense
+from baselines.registry import build_registered_belief
 from baselines.types import Episode
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_BANK_DIR = pathlib.Path("banks/baselines/fleet_day0")
+ABSENCE_WEIGHTS = (0.0, 0.1, 0.25, 0.5, 1.0)
+"""Swept to set :data:`~baselines.beliefs.hypothesis_mixture.
+DEFAULT_ABSENCE_WEIGHT`; 0.0 is presence-only scoring."""
 LAMBDAS = (0.02, 0.08, 0.2)
 BETAS = (0.0, 0.5, 2.0)
 """beta 0 is the myopic policy itself; the others price the entropy
@@ -109,6 +115,162 @@ def run_cell(episode: Episode, beta: float, lam: float,
         senses_disambiguation=sum(1 for _, needed in split if not needed),
         final_ess=belief.effective_sample_size,
         ess_series=list(belief.ess_history))
+
+
+# ------------------------------------------------- absence-weight sweep
+
+
+@dataclasses.dataclass(frozen=True)
+class AbsenceCell:
+    """One passive pass at one absence setting."""
+
+    household_id: str
+    absence_weight: float
+    absence_uniforms: float
+    labels: List[str]
+    weights: List[float]
+    ess: float
+    presence_spread: float
+    absence_spread: float
+    passive_accuracy: float
+
+
+def _spread(values: Sequence[float]) -> float:
+    """Max minus min — how much a scoring half discriminates between
+    particles. A half whose spread is near zero is paying everyone the
+    same and cannot move the weights."""
+    return max(values) - min(values) if values else 0.0
+
+
+def run_absence_cell(episode: Episode, absence_weight: float,
+                     absence_uniforms: float, seed: int) -> AbsenceCell:
+    """Passive diet (no sensing), weights scored under one setting, then
+    the mixture's accuracy on the bank's own questions."""
+    belief = HypothesisMixture(random.Random(seed),
+                               absence_weight=absence_weight,
+                               absence_uniforms=absence_uniforms)
+    belief.reset(episode.agent_view())
+    for obs in episode.initial_observations:
+        belief.update(obs)
+    evidence = list(episode.evidence_stream())
+    cursor = 0
+    correct = total = 0
+    for day in episode.questions_by_day:
+        for question in day:
+            while (cursor < len(evidence)
+                   and evidence[cursor].t <= question.t_query):
+                belief.update(evidence[cursor])
+                cursor += 1
+            prediction = belief.predict_readonly(question.object_id,
+                                                 question.t_query)
+            correct += int(prediction.argmax == episode.true_location(
+                question.object_id, question.t_query))
+            total += 1
+    return AbsenceCell(
+        household_id=episode.household_id, absence_weight=absence_weight,
+        absence_uniforms=absence_uniforms,
+        labels=[p.name.split("(")[0] for p in belief.particles],
+        weights=belief.weights, ess=belief.effective_sample_size,
+        presence_spread=_spread(belief.presence_totals),
+        absence_spread=_spread(belief.absence_totals),
+        passive_accuracy=correct / total if total else 0.0)
+
+
+def format_absence_report(cells: Sequence[AbsenceCell]) -> str:
+    labels = cells[0].labels
+    lines = ["# Setting the absence weight", "",
+             "Passive diet, no sensing. `spread` is max-minus-min of the "
+             "cumulative log likelihood each half of the scoring paid out "
+             "across particles: the half with the larger spread is the one "
+             "moving the weights.", ""]
+    for household in sorted({c.household_id for c in cells}):
+        lines += [f"## {household}", "",
+                  "| absence_weight | threshold | ESS | presence spread | "
+                  "absence spread | passive acc | " + " | ".join(labels) + " |",
+                  "|---" * (6 + len(labels)) + "|"]
+        for cell in [c for c in cells if c.household_id == household]:
+            weights = " | ".join(f"{w:.2f}" for w in cell.weights)
+            lines.append(
+                f"| {cell.absence_weight:g} | {cell.absence_uniforms:g} | "
+                f"{cell.ess:.2f} | {cell.presence_spread:.0f} | "
+                f"{cell.absence_spread:.0f} | {cell.passive_accuracy:.3f} | "
+                f"{weights} |")
+        lines.append("")
+    return "\n".join(lines)
+
+
+# ----------------------------------------------- what the weights buy
+
+
+class UniformWeightMixture(HypothesisMixture):
+    """Ablation: the same mixture with its weights pinned uniform.
+
+    Scoring is computed and then discarded, so this is the unweighted
+    average of the identical particles on the identical diet. The gap
+    between it and the real mixture is the entire value of knowing which
+    hypothesis is right — and therefore the ceiling on what any amount of
+    disambiguation sensing could ever buy.
+    """
+
+    def _apply_event(self, log_likelihoods: Sequence[float], t: int) -> None:
+        self.ess_history.append((t, self.effective_sample_size))
+
+
+def passive_accuracy(episode: Episode, belief: Any) -> float:
+    """Argmax accuracy on the bank's questions under the passive diet."""
+    belief.reset(episode.agent_view())
+    for obs in episode.initial_observations:
+        belief.update(obs)
+    evidence = list(episode.evidence_stream())
+    cursor = correct = total = 0
+    for day in episode.questions_by_day:
+        for question in day:
+            while (cursor < len(evidence)
+                   and evidence[cursor].t <= question.t_query):
+                belief.update(evidence[cursor])
+                cursor += 1
+            prediction = belief.predict_readonly(question.object_id,
+                                                 question.t_query)
+            correct += int(prediction.argmax == episode.true_location(
+                question.object_id, question.t_query))
+            total += 1
+    return correct / total if total else 0.0
+
+
+def weight_value(episode: Episode, seed: int) -> Dict[str, float]:
+    """Passive accuracy of the weighted mixture, the uniform-weight
+    ablation, and every particle alone."""
+    rows = {
+        "mixture (learned weights)": passive_accuracy(
+            episode, HypothesisMixture(random.Random(seed))),
+        "mixture (uniform weights)": passive_accuracy(
+            episode, UniformWeightMixture(random.Random(seed)))}
+    for spec in DEFAULT_PARTICLE_SPECS:
+        rows[str(spec["name"])] = passive_accuracy(
+            episode, build_registered_belief(dict(spec), random.Random(seed)))
+    return rows
+
+
+def format_weight_value_report(
+        per_household: Mapping[str, Mapping[str, float]]) -> str:
+    lines = ["# What do the mixture weights actually buy?", "",
+             "Passive diet, no sensing. `learned` minus `uniform` is the "
+             "value of knowing which hypothesis is right, and therefore the "
+             "ceiling on what disambiguation sensing could buy. Particle "
+             "rows show the spread of skill the weights have to work with.",
+             ""]
+    for household, rows in sorted(per_household.items()):
+        lines += [f"## {household}", "", "| belief | passive accuracy |",
+                  "|---|---|"]
+        lines += [f"| {name} | {value:.4f} |" for name, value in rows.items()]
+        delta = (rows["mixture (learned weights)"]
+                 - rows["mixture (uniform weights)"])
+        best = max(v for k, v in rows.items() if not k.startswith("mixture"))
+        lines += ["",
+                  f"learned - uniform: **{delta:+.4f}**",
+                  f"learned - best single particle: "
+                  f"**{rows['mixture (learned weights)'] - best:+.4f}**", ""]
+    return "\n".join(lines)
 
 
 # --------------------------------------------------------------- figures
@@ -226,6 +388,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument("--households", type=int, default=2)
     parser.add_argument("--days", type=int, default=7)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--stage", nargs="+",
+                        default=["absence", "value", "frontier"],
+                        choices=["absence", "value", "frontier"])
     parser.add_argument("--out-dir", type=pathlib.Path,
                         default=pathlib.Path("results/hypothesis_mixture_trial"))
     args = parser.parse_args(argv)
@@ -235,6 +400,48 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     if not banks:
         parser.error(f"no banks under {args.bank_dir}")
     args.out_dir.mkdir(parents=True, exist_ok=True)
+
+    if "absence" in args.stage:
+        absence: List[AbsenceCell] = []
+        for path in banks:
+            episode = truncated(next(JsonlBank(path).episodes()), args.days)
+            # The 0-weight row is presence-only; the 0-uniforms row shows
+            # what dropping the selection rule costs.
+            settings = [(w, DEFAULT_ABSENCE_UNIFORMS)
+                        for w in ABSENCE_WEIGHTS] + [(0.25, 0.0)]
+            for weight, uniforms in settings:
+                row = run_absence_cell(episode, weight, uniforms, args.seed)
+                absence.append(row)
+                logger.info(
+                    "%s absence_weight=%g uniforms=%g: ESS %.2f, "
+                    "presence spread %.0f, absence spread %.0f, acc %.3f",
+                    row.household_id, weight, uniforms, row.ess,
+                    row.presence_spread, row.absence_spread,
+                    row.passive_accuracy)
+        report_dir = pathlib.Path("reports/baselines/hypothesis_mixture")
+        report_dir.mkdir(parents=True, exist_ok=True)
+        (report_dir / "absence_weight.md").write_text(
+            format_absence_report(absence) + "\n")
+        (report_dir / "absence_weight.json").write_text(json.dumps(
+            [dataclasses.asdict(c) for c in absence], indent=2))
+    if "value" in args.stage:
+        per_household = {}
+        for path in banks:
+            episode = truncated(next(JsonlBank(path).episodes()), args.days)
+            rows = weight_value(episode, args.seed)
+            per_household[episode.household_id] = rows
+            logger.info("%s weight value: learned %.4f, uniform %.4f (%+.4f)",
+                        episode.household_id,
+                        rows["mixture (learned weights)"],
+                        rows["mixture (uniform weights)"],
+                        rows["mixture (learned weights)"]
+                        - rows["mixture (uniform weights)"])
+        report_dir = pathlib.Path("reports/baselines/hypothesis_mixture")
+        report_dir.mkdir(parents=True, exist_ok=True)
+        (report_dir / "weight_value.md").write_text(
+            format_weight_value_report(per_household) + "\n")
+    if "frontier" not in args.stage:
+        return 0
 
     cells: List[TrialCell] = []
     for path in banks:

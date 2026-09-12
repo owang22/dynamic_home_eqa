@@ -26,7 +26,9 @@ from baselines.beliefs.daytype_mixture import (DaytypeMixture,
                                                DaytypeMixtureConfig)
 from baselines.beliefs.hierarchy_backoff import (HierarchyBackoff,
                                                  HierarchyBackoffConfig)
-from baselines.beliefs.hypothesis_mixture import (DEFAULT_DECAY,
+from baselines.beliefs.hypothesis_mixture import (DEFAULT_ABSENCE_UNIFORMS,
+                                                  DEFAULT_ABSENCE_WEIGHT,
+                                                  DEFAULT_DECAY,
                                                   HypothesisMixture)
 from baselines.beliefs.last_observation import LastObservation
 from baselines.beliefs.llm_belief import (LLMBelief, LLMBeliefConfig,
@@ -169,11 +171,16 @@ def _build_smoothed_recency(spec: Dict[str, Any],
 def _build_hypothesis_mixture(spec: Dict[str, Any],
                               rng: random.Random) -> BeliefModel:
     """Particles come from the spec's ``particles`` list (registry belief
-    specs; default one representative per family) and ``decay`` is the
-    weight-forgetting factor."""
+    specs; default one representative per family); ``decay`` is the
+    weight-forgetting factor and ``absence_weight`` / ``absence_uniforms``
+    scale and gate the absence half of the scoring."""
     return HypothesisMixture(
         rng, particle_specs=spec.get("particles"),
         decay=float(spec.get("decay", DEFAULT_DECAY)),
+        absence_weight=float(spec.get("absence_weight",
+                                      DEFAULT_ABSENCE_WEIGHT)),
+        absence_uniforms=float(spec.get("absence_uniforms",
+                                        DEFAULT_ABSENCE_UNIFORMS)),
         **_base_kwargs(spec))
 
 
