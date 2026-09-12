@@ -82,7 +82,10 @@ def short_name(model: str) -> str:
 def analyze_bank(task: Dict[str, Any]) -> List[Tuple[Any, ...]]:
     """Per-question distribution rows of every spec on one seed-0 bank."""
     household = task["household"]
-    config = PassiveProtocolConfig(seed=task["rng_seed"])
+    config = PassiveProtocolConfig(
+        seed=task["rng_seed"],
+        location_equivalence=tuple(
+            tuple(g) for g in task.get("location_equivalence", ())))
     bank_dir = task.get("bank_dir")
     path = bank_path(household, 0,
                      pathlib.Path(bank_dir) if bank_dir else None)

@@ -56,11 +56,31 @@ ABSENCE_WEIGHTS = (0.0, 0.1, 0.25, 0.5, 1.0)
 """Swept to set :data:`~baselines.beliefs.hypothesis_mixture.
 DEFAULT_ABSENCE_WEIGHT`; 0.0 is presence-only scoring."""
 LAMBDAS = (0.02, 0.08, 0.2)
-BETAS = (0.0, 0.5, 2.0)
-"""beta 0 is the myopic policy itself; the others price the entropy
-bonus at half and at double the scale of a typical voi increment."""
+BETAS = (0.0, 0.02, 0.05, 0.1, 0.25)
+"""beta 0 is the myopic policy itself. The rest are set against the
+bonus's CEILING: a binary Jensen-Shannon divergence cannot exceed
+``ln 2 = 0.693``, so the bonus contributes at most ``0.693 * beta``,
+while voi runs 0.01-0.1 at these lambdas. The earlier 0.5/2.0 sweep gave
+the bonus up to 1.39 against a voi of ~0.05 and simply drowned the
+question-answering term — visible in that run as beta=2 spending most of
+its budget on disambiguation."""
 
-_HUES = {0.0: "#6f6d64", 0.5: "#2a78d6", 2.0: "#c2503a"}
+ROOM_COST_LEVELS = (0.0, 0.5, 1.0)
+"""Room-change surcharge ``c``: a sense outside the robot's room costs
+``1 + c``. Raising it is the condition under which disambiguation should
+look BEST — cheap in-room looks let the robot pick up weight evidence
+without a trip — so it is the discriminating test, not a robustness
+check."""
+
+BUDGET_SCALE = True
+"""Scale ``budget_per_day`` by ``1 + c`` alongside the room cost, so a
+run at c = 1 can still afford the same number of cross-room senses and
+the comparison is not simply "less budget". Same-room senses stay at
+1.0, so the scaled budget buys strictly more of them — which is the
+asymmetry the sweep is probing."""
+
+_HUES = {0.0: "#6f6d64", 0.02: "#8fb8e8", 0.05: "#2a78d6",
+         0.1: "#1a4f91", 0.25: "#c2503a"}
 _INK = "#33322e"
 _MUTED = "#6f6d64"
 _GRID = "#dddbd2"
@@ -75,23 +95,36 @@ def truncated(episode: Episode, days: int) -> Episode:
 
 @dataclasses.dataclass(frozen=True)
 class TrialCell:
-    """One (household, beta, lambda) run."""
+    """One (household, room cost, beta, lambda) run."""
 
     household_id: str
+    room_cost: float
+    budget_per_day: int
     beta: float
     lam: float
     n_questions: int
     n_days: int
     accuracy: float
     senses_per_day: float
+    same_room_senses: int
     senses_needed: int
     senses_disambiguation: int
     final_ess: float
+    correct: List[bool]
+    """Per-question correctness in bank order. Every cell at one
+    (household, room cost, lambda) sees the identical question sequence,
+    so betas can be compared question-by-question — a paired test, which
+    is far better powered than comparing two independent accuracies."""
     ess_series: List[Tuple[int, float]]
 
 
-def run_cell(episode: Episode, beta: float, lam: float,
-             seed: int) -> TrialCell:
+def with_budget(episode: Episode, budget_per_day: int) -> Episode:
+    """The episode at a different per-day sensing budget."""
+    return dataclasses.replace(episode, budget_per_day=budget_per_day)
+
+
+def run_cell(episode: Episode, beta: float, lam: float, seed: int,
+             room_cost: float = 0.0) -> TrialCell:
     belief = HypothesisMixture(random.Random(seed))
     rng = random.Random(seed + 1)
     policy: VoIThresholdSense
@@ -100,20 +133,24 @@ def run_cell(episode: Episode, beta: float, lam: float,
     else:
         policy = HypothesisDisambiguationSense(rng, lam=lam, belief=belief,
                                                beta=beta)
-    records = list(run_episode(Agent(belief=belief, policy=policy), episode))
+    records = list(run_episode(Agent(belief=belief, policy=policy), episode,
+                               room_change_cost=room_cost))
     n_days = len(episode.questions_by_day)
     split = (policy.sense_split
              if isinstance(policy, HypothesisDisambiguationSense) else [])
     n_senses = sum(r.n_senses for r in records)
     return TrialCell(
-        household_id=episode.household_id, beta=beta, lam=lam,
+        household_id=episode.household_id, room_cost=room_cost,
+        budget_per_day=episode.budget_per_day, beta=beta, lam=lam,
         n_questions=len(records), n_days=n_days,
         accuracy=statistics.mean(float(r.correct) for r in records),
         senses_per_day=n_senses / n_days,
+        same_room_senses=sum(r.same_room_senses for r in records),
         senses_needed=(sum(1 for _, needed in split if needed)
                        if split else n_senses),
         senses_disambiguation=sum(1 for _, needed in split if not needed),
         final_ess=belief.effective_sample_size,
+        correct=[bool(r.correct) for r in records],
         ess_series=list(belief.ess_history))
 
 
@@ -195,6 +232,89 @@ def format_absence_report(cells: Sequence[AbsenceCell]) -> str:
                 f"{cell.ess:.2f} | {cell.presence_spread:.0f} | "
                 f"{cell.absence_spread:.0f} | {cell.passive_accuracy:.3f} | "
                 f"{weights} |")
+        lines.append("")
+    return "\n".join(lines)
+
+
+# ------------------------------------------------------- paired testing
+
+
+BOOTSTRAP_RESAMPLES = 2000
+
+
+def paired_delta(treatment: Sequence[bool], control: Sequence[bool],
+                 seed: int = 0) -> Tuple[float, float, float]:
+    """Mean per-question accuracy difference and a bootstrap interval.
+
+    Both arms answered the SAME questions in the same order, so the unit
+    of analysis is the per-question difference (+1 / 0 / -1) rather than
+    two independent accuracies. Resampling those differences gives an
+    interval that already nets out how hard the questions were, which is
+    most of the variance an unpaired comparison has to fight.
+
+    Returns ``(mean, low, high)`` at the 95% level. An interval straddling
+    0 means this trial cannot sign the effect — which, at trial sizes, is
+    the expected outcome for anything small.
+    """
+    diffs = [float(a) - float(b) for a, b in zip(treatment, control)]
+    if not diffs:
+        return 0.0, 0.0, 0.0
+    mean = statistics.mean(diffs)
+    rng = random.Random(seed)
+    n = len(diffs)
+    means = sorted(
+        statistics.mean([diffs[rng.randrange(n)] for _ in range(n)])
+        for _ in range(BOOTSTRAP_RESAMPLES))
+    low = means[int(0.025 * BOOTSTRAP_RESAMPLES)]
+    high = means[int(0.975 * BOOTSTRAP_RESAMPLES) - 1]
+    return mean, low, high
+
+
+def pooled_correct(cells: Sequence[TrialCell], room_cost: float, lam: float,
+                   beta: float) -> List[bool]:
+    """Per-question correctness for one (room cost, lambda, beta),
+    concatenated over households in a fixed household order so the pairing
+    with another beta lines up question for question."""
+    chosen = sorted((c for c in cells if c.room_cost == room_cost
+                     and c.lam == lam and c.beta == beta),
+                    key=lambda c: c.household_id)
+    return [flag for cell in chosen for flag in cell.correct]
+
+
+def format_paired_report(cells: Sequence[TrialCell], seed: int = 0) -> str:
+    lines = ["# Disambiguation sensing against the myopic policy", "",
+             "Paired per-question comparison against `beta = 0` at the same "
+             "room cost and lambda, bootstrapped over questions (95%). "
+             "`senses/day` and `same-room %` say what the budget bought.", ""]
+    for room_cost in sorted({c.room_cost for c in cells}):
+        budget = next(c.budget_per_day for c in cells
+                      if c.room_cost == room_cost)
+        lines += [f"## room_change_cost c = {room_cost:g} "
+                  f"(budget {budget}/day)", "",
+                  "| lambda | beta | accuracy | delta vs myopic | 95% CI | "
+                  "senses/day | same-room % | disambig senses | ESS |",
+                  "|---|---|---|---|---|---|---|---|---|"]
+        for lam in sorted({c.lam for c in cells}):
+            control = pooled_correct(cells, room_cost, lam, 0.0)
+            for beta in sorted({c.beta for c in cells}):
+                group = [c for c in cells if c.room_cost == room_cost
+                         and c.lam == lam and c.beta == beta]
+                if not group:
+                    continue
+                treatment = pooled_correct(cells, room_cost, lam, beta)
+                mean, low, high = paired_delta(treatment, control, seed)
+                senses = sum(c.senses_per_day * c.n_days for c in group)
+                same_room = (sum(c.same_room_senses for c in group) / senses
+                             if senses else 0.0)
+                marker = "" if beta else " (baseline)"
+                lines.append(
+                    f"| {lam:g} | {beta:g}{marker} | "
+                    f"{statistics.mean(c.accuracy for c in group):.4f} | "
+                    f"{mean:+.4f} | [{low:+.4f}, {high:+.4f}] | "
+                    f"{statistics.mean(c.senses_per_day for c in group):.1f} | "
+                    f"{same_room:.0%} | "
+                    f"{sum(c.senses_disambiguation for c in group)} | "
+                    f"{statistics.mean(c.final_ess for c in group):.2f} |")
         lines.append("")
     return "\n".join(lines)
 
@@ -288,30 +408,37 @@ def _style(ax: Any) -> None:
 
 def render_frontier(cells: Sequence[TrialCell],
                     out_path: pathlib.Path) -> None:
+    """One panel per room-change cost: accuracy against realized senses."""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    fig, ax = plt.subplots(figsize=(7.0, 4.4))
-    for beta in sorted({c.beta for c in cells}):
-        points: Dict[float, Tuple[float, float]] = {}
-        for lam in sorted({c.lam for c in cells}):
-            group = [c for c in cells if c.beta == beta and c.lam == lam]
-            points[lam] = (
-                statistics.mean(c.senses_per_day for c in group),
-                statistics.mean(c.accuracy for c in group))
-        xs = [points[lam][0] for lam in sorted(points, reverse=True)]
-        ys = [points[lam][1] for lam in sorted(points, reverse=True)]
-        label = "myopic (beta=0)" if beta == 0.0 else f"beta={beta:g}"
-        ax.plot(xs, ys, color=_HUES[beta], linewidth=1.8, marker="o",
-                markersize=5, label=label, zorder=2)
-    ax.set_xlabel("realized senses per day (mean over households)",
-                  fontsize=9, color=_INK)
-    ax.set_ylabel("task accuracy", fontsize=9, color=_INK)
-    ax.set_title("Does paying for disambiguation buy accuracy back?",
-                 fontsize=9.5, color=_INK, loc="left")
-    ax.legend(frameon=False, fontsize=8, labelcolor=_INK)
-    _style(ax)
+    costs = sorted({c.room_cost for c in cells})
+    fig, axes = plt.subplots(1, len(costs), figsize=(4.9 * len(costs), 4.3),
+                             squeeze=False, sharey=True)
+    for ax, room_cost in zip(axes[0], costs):
+        here = [c for c in cells if c.room_cost == room_cost]
+        budget = here[0].budget_per_day
+        for beta in sorted({c.beta for c in here}):
+            points: Dict[float, Tuple[float, float]] = {}
+            for lam in sorted({c.lam for c in here}):
+                group = [c for c in here if c.beta == beta and c.lam == lam]
+                points[lam] = (
+                    statistics.mean(c.senses_per_day for c in group),
+                    statistics.mean(c.accuracy for c in group))
+            xs = [points[lam][0] for lam in sorted(points, reverse=True)]
+            ys = [points[lam][1] for lam in sorted(points, reverse=True)]
+            label = "myopic (beta=0)" if beta == 0.0 else f"beta={beta:g}"
+            ax.plot(xs, ys, color=_HUES[beta], linewidth=1.7, marker="o",
+                    markersize=4.5, label=label, zorder=2)
+        ax.set_xlabel("realized senses per day", fontsize=9, color=_INK)
+        ax.set_title(f"c = {room_cost:g}, budget {budget}/day",
+                     fontsize=9.5, color=_INK, loc="left")
+        _style(ax)
+    axes[0][0].set_ylabel("task accuracy", fontsize=9, color=_INK)
+    axes[0][-1].legend(frameon=False, fontsize=8, labelcolor=_INK)
+    fig.suptitle("Does paying for disambiguation buy accuracy back?",
+                 fontsize=10, color=_INK, x=0.01, ha="left")
     fig.tight_layout()
     fig.savefig(out_path, dpi=150)
     plt.close(fig)
@@ -353,22 +480,24 @@ def render_sense_split(cells: Sequence[TrialCell],
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    configs = sorted({(c.beta, c.lam) for c in cells if c.beta > 0.0})
-    labels = [f"b={beta:g}\nl={lam:g}" for beta, lam in configs]
+    configs = sorted({(c.room_cost, c.beta, c.lam)
+                      for c in cells if c.beta > 0.0})
+    labels = [f"c={rc:g}\nb={beta:g}\nl={lam:g}" for rc, beta, lam in configs]
     needed, extra = [], []
-    for beta, lam in configs:
-        group = [c for c in cells if c.beta == beta and c.lam == lam]
+    for rc, beta, lam in configs:
+        group = [c for c in cells if c.room_cost == rc and c.beta == beta
+                 and c.lam == lam]
         needed.append(sum(c.senses_needed for c in group))
         extra.append(sum(c.senses_disambiguation for c in group))
-    fig, ax = plt.subplots(figsize=(1.2 + 0.9 * len(configs), 4.0))
+    fig, ax = plt.subplots(figsize=(1.2 + 0.42 * len(configs), 4.0))
     xs = range(len(configs))
     ax.bar(xs, needed, color=_MUTED, width=0.6,
            label="needed by the question", zorder=2)
     ax.bar(xs, extra, bottom=needed, color="#2a78d6", width=0.6,
            label="taken for disambiguation", zorder=2)
     ax.set_xticks(list(xs))
-    ax.set_xticklabels(labels, fontsize=7.5)
-    ax.set_ylabel("senses (both households)", fontsize=9, color=_INK)
+    ax.set_xticklabels(labels, fontsize=5.5)
+    ax.set_ylabel("senses (all households)", fontsize=9, color=_INK)
     ax.set_title("What the extra budget actually bought", fontsize=9.5,
                  color=_INK, loc="left")
     ax.legend(frameon=False, fontsize=8, labelcolor=_INK)
@@ -445,22 +574,30 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     cells: List[TrialCell] = []
     for path in banks:
-        episode = truncated(next(JsonlBank(path).episodes()), args.days)
-        for beta in BETAS:
-            for lam in LAMBDAS:
-                cell = run_cell(episode, beta, lam, args.seed)
-                cells.append(cell)
-                logger.info(
-                    "%s beta=%g lambda=%g: acc %.3f, %.1f senses/day "
-                    "(%d disambiguation), final ESS %.2f",
-                    cell.household_id, beta, lam, cell.accuracy,
-                    cell.senses_per_day, cell.senses_disambiguation,
-                    cell.final_ess)
+        base = truncated(next(JsonlBank(path).episodes()), args.days)
+        for room_cost in ROOM_COST_LEVELS:
+            budget = (round(base.budget_per_day * (1.0 + room_cost))
+                      if BUDGET_SCALE else base.budget_per_day)
+            episode = with_budget(base, budget)
+            for beta in BETAS:
+                for lam in LAMBDAS:
+                    cell = run_cell(episode, beta, lam, args.seed,
+                                    room_cost=room_cost)
+                    cells.append(cell)
+                    logger.info(
+                        "%s c=%g budget=%d beta=%g lambda=%g: acc %.4f, "
+                        "%.1f senses/day (%d disambiguation), ESS %.2f",
+                        cell.household_id, room_cost, budget, beta, lam,
+                        cell.accuracy, cell.senses_per_day,
+                        cell.senses_disambiguation, cell.final_ess)
 
     mid_lam = sorted(LAMBDAS)[len(LAMBDAS) // 2]
     render_frontier(cells, args.out_dir / "frontier.png")
-    render_ess(cells, mid_lam, args.out_dir / "ess_over_time.png")
+    render_ess([c for c in cells if c.room_cost == ROOM_COST_LEVELS[0]],
+               mid_lam, args.out_dir / "ess_over_time.png")
     render_sense_split(cells, args.out_dir / "sense_split.png")
+    (args.out_dir / "paired_comparison.md").write_text(
+        format_paired_report(cells, args.seed) + "\n")
     (args.out_dir / "trial_results.json").write_text(json.dumps(
         [dataclasses.asdict(c) for c in cells], indent=2))
     return 0

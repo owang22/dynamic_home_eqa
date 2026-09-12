@@ -53,7 +53,8 @@ from typing import (Callable, Dict, List, Mapping, Optional, Sequence,
                     Tuple)
 
 from baselines.beliefs.base import BeliefModel
-from baselines.types import DAY_SECONDS, Episode, Observation
+from baselines.types import (DAY_SECONDS, PROBABILITY_TOLERANCE, Episode,
+                             Observation, Prediction)
 
 BOOTSTRAP_RESAMPLES = 1000
 """Bootstrap resamples over households for aggregate intervals."""
@@ -72,8 +73,33 @@ class PassiveProtocolConfig:
     recency_bin_edges_h: Tuple[float, ...] = (1.0, 6.0, 24.0, 72.0)
     log_loss_epsilon: float = 1e-3
     seed: int = 0
+    location_equivalence: Tuple[Tuple[str, ...], ...] = ()
+    """Groups of receptacle ids scored as ONE location: a prediction's
+    mass on the members is pooled, and the truth is credited if it names
+    any member. Default empty — exact-match scoring, the historical rule.
+
+    Exists for :data:`AWAY_EQUIVALENCE`: the bank labels an object
+    carried by a resident inside the house ``ON_PERSON`` and one that has
+    left with them ``OUT_OF_HOUSE``, but the robot never sights anything
+    at either, so no belief can learn the distinction — under exact
+    match, which of the two a model names on a "not in any receptacle"
+    question is decided by its floor-mass tie-break (list order for the
+    frequency path), and two statistical models were being scored
+    differently for the same unobservable call. Measured on the LLM
+    hypothesis eval (2 households, 4,500 questions): merging moved
+    MostFrequent's top-1 by +3.3 points and every arm's log-loss by
+    0.1–0.14 nats; no qualitative comparison flipped."""
 
     def __post_init__(self) -> None:
+        seen: set = set()
+        for group in self.location_equivalence:
+            if len(group) < 2:
+                raise ValueError("PassiveProtocolConfig: each "
+                                 "location_equivalence group needs >= 2 ids")
+            if seen & set(group):
+                raise ValueError("PassiveProtocolConfig: location_equivalence "
+                                 "groups must be disjoint")
+            seen |= set(group)
         if not self.checkpoint_days or not self.horizons_days:
             raise ValueError("PassiveProtocolConfig: checkpoint_days and "
                              "horizons_days must be non-empty")
@@ -91,6 +117,28 @@ class PassiveProtocolConfig:
             raise ValueError(
                 f"PassiveProtocolConfig: log_loss_epsilon "
                 f"{self.log_loss_epsilon} must be in (0, 1)")
+
+    def score_view(self, prediction: Prediction, truth: str
+                   ) -> Tuple[Prediction, str]:
+        """The (prediction, truth) pair scoring actually sees: identical to
+        the inputs without equivalence groups; with them, each group's
+        members collapse onto the group's first id (mass pooled, argmax
+        and truth relabelled). Callers score the returned pair."""
+        if not self.location_equivalence:
+            return prediction, truth
+        canon = {member: group[0] for group in self.location_equivalence
+                 for member in group}
+        pooled: Dict[str, float] = {}
+        for receptacle, p in prediction.distribution.items():
+            key = canon.get(receptacle, receptacle)
+            pooled[key] = pooled.get(key, 0.0) + p
+        argmax = canon.get(prediction.argmax, prediction.argmax)
+        top = max(pooled.values())
+        if pooled[argmax] < top - PROBABILITY_TOLERANCE:
+            # pooling lifted a group above the original argmax
+            argmax = max(pooled, key=pooled.get)
+        return (Prediction(distribution=pooled, argmax=argmax),
+                canon.get(truth, truth))
 
     def recency_bin(self, time_since_sighting_s: Optional[int]) -> str:
         """Label for a time-since-last-sighting value (seconds)."""
@@ -111,6 +159,13 @@ class PassiveProtocolConfig:
                        for lo, hi in zip(edges, edges[1:]))
         return (*finite, f"[{edges[-1]:g}h,inf)", NEVER_SIGHTED_BIN)
 
+
+
+AWAY_EQUIVALENCE: Tuple[Tuple[str, ...], ...] = (("OUT_OF_HOUSE", "ON_PERSON"),)
+"""The one equivalence group the fleet banks need (see
+:attr:`PassiveProtocolConfig.location_equivalence`): "with a person, not
+in any receptacle". Canonical label ``OUT_OF_HOUSE``. Pass as
+``PassiveProtocolConfig(location_equivalence=AWAY_EQUIVALENCE)``."""
 
 @dataclasses.dataclass(frozen=True)
 class ScoredQuestion:
@@ -197,6 +252,7 @@ def evaluate_checkpoint(episode: Episode, belief: BeliefModel,
                                                  question.t_query)
             truth = episode.true_location(question.object_id,
                                           question.t_query)
+            prediction, truth = config.score_view(prediction, truth)
             p_truth = prediction.distribution.get(truth, 0.0)
             since = (question.t_query - last_sighting[question.object_id]
                      if question.object_id in last_sighting else None)
@@ -296,6 +352,7 @@ def evaluate_continuous(episode: Episode, belief: BeliefModel,
         prediction = belief.predict_readonly(question.object_id,
                                              question.t_query)
         truth = episode.true_location(question.object_id, question.t_query)
+        prediction, truth = config.score_view(prediction, truth)
         if on_prediction is not None:
             on_prediction(question, prediction, truth)
         p_truth = prediction.distribution.get(truth, 0.0)

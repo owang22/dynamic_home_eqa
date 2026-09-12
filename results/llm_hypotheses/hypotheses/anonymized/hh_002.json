@@ -1,0 +1,1120 @@
+{
+ "hypotheses": [
+  {
+   "hypothesis_id": "h1",
+   "rationale": "Single resident works away Mon-Fri; hobby items are left out on the craft table (receptacle_25/26/27) during the day and returned to their rest spots (receptacle_29/18/22) at night.",
+   "distinguishing_prediction": "object_3 is at receptacle_29 at 09:00 on a Tuesday (resident at work, items put away or not yet taken out), but at receptacle_25 at 15:00 on a Saturday (resident home, hobby active).",
+   "rest": {
+    "backpack_leo": "kitchen_table_k1",
+    "backpack_marco": "kitchen_table_k1",
+    "backpack_priya": "kitchen_table_k1",
+    "backpack_sofia": "desk_b3",
+    "blanket_elena": "armchair_l1",
+    "blanket_leo": "couch_l1",
+    "book_elena": "reading_table_l1",
+    "bowl_shared_1": "coffee_table_l1",
+    "charger_shared_1": "coffee_table_l1",
+    "gaming_controller_shared_1": "tv_stand_l1",
+    "gaming_controller_sofia": "couch_l1",
+    "glasses_elena": "reading_table_l1",
+    "hairbrush_priya": "chair_k1",
+    "headphones_sofia": "chair_k1",
+    "jacket_leo": "entry_hook_e1",
+    "jacket_marco": "chair_k1",
+    "jacket_priya": "entry_hook_e1",
+    "jacket_sofia": "chair_k2",
+    "class:keys": "entry_table_e1",
+    "keys_sofia": "desk_b3",
+    "laptop_marco": "desk_b2",
+    "laptop_sofia": "desk_b3",
+    "laundry_basket_shared_1": "bedroom_floor_b2",
+    "lunchbox_leo": "sink_k1",
+    "lunchbox_marco": "counter_k1",
+    "lunchbox_priya": "sink_k1",
+    "makeup_kit_priya": "desk_b2",
+    "medication_bottle_elena_1": "medicine_cabinet_ba1",
+    "mug_elena": "dish_rack_k1",
+    "notebook_elena": "counter_k1",
+    "notebook_leo": "kitchen_table_k1",
+    "notebook_priya": "counter_k1",
+    "notebook_sofia": "desk_b3",
+    "pan_shared_1": "sink_k1",
+    "pen_leo": "kitchen_table_k1",
+    "pen_sofia": "desk_b3",
+    "phone_elena": "reading_table_l1",
+    "class:phone": "counter_k1",
+    "plate_shared_1": "kitchen_table_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_shared_1": "bedroom_floor_b2",
+    "tablet_leo": "kitchen_table_k1",
+    "toy_leo_1": "toy_chest_l1",
+    "umbrella_shared_1": "entry_hook_e1",
+    "vacuum_cleaner_shared_1": "kitchen_table_k1",
+    "wallet_elena": "desk_b1",
+    "wallet_marco": "desk_b2",
+    "wallet_priya": "kitchen_table_k1",
+    "water_bottle_leo": "sink_k1",
+    "water_bottle_marco": "sink_k1",
+    "water_bottle_priya": "chair_k2",
+    "water_bottle_sofia": "sink_k1",
+    "watering_can_elena": "kitchen_table_k1"
+   },
+   "activities": [
+    {
+     "name": "weekday_evening_hobby",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 19.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "backpack_leo",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "backpack_marco",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "backpack_priya",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "jacket_leo",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "jacket_priya",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "keys_elena",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "keys_leo",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "keys_marco",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "keys_priya",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "umbrella_shared_1",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "wallet_priya",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "watering_can_elena",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "weekend_afternoon_hobby",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 11.0,
+     "duration_h": 4.0,
+     "moves": [
+      {
+       "target": "backpack_leo",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "backpack_marco",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "backpack_priya",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "jacket_leo",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "jacket_priya",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "keys_elena",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "keys_leo",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "keys_marco",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "keys_priya",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "umbrella_shared_1",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "wallet_priya",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "watering_can_elena",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "morning_kitchen_quick",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 6.5,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "book_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      },
+      {
+       "target": "glasses_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      },
+      {
+       "target": "phone_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h2",
+   "rationale": "Resident works from home; hobby items are left out on the craft table all day (left where used) and only moved during the active crafting sessions.",
+   "distinguishing_prediction": "object_3 is at receptacle_25 at 09:00 on a Tuesday (left out from previous night or morning setup), whereas in h1 it would be at receptacle_29.",
+   "rest": {
+    "backpack_leo": "kitchen_table_k1",
+    "backpack_marco": "kitchen_table_k1",
+    "backpack_priya": "kitchen_table_k1",
+    "backpack_sofia": "desk_b3",
+    "blanket_elena": "armchair_l1",
+    "blanket_leo": "couch_l1",
+    "book_elena": "reading_table_l1",
+    "bowl_shared_1": "coffee_table_l1",
+    "charger_shared_1": "coffee_table_l1",
+    "gaming_controller_shared_1": "tv_stand_l1",
+    "gaming_controller_sofia": "couch_l1",
+    "glasses_elena": "reading_table_l1",
+    "hairbrush_priya": "chair_k1",
+    "headphones_sofia": "chair_k1",
+    "jacket_leo": "entry_hook_e1",
+    "jacket_marco": "chair_k1",
+    "jacket_priya": "entry_hook_e1",
+    "jacket_sofia": "chair_k2",
+    "class:keys": "entry_table_e1",
+    "keys_sofia": "desk_b3",
+    "laptop_marco": "desk_b2",
+    "laptop_sofia": "desk_b3",
+    "laundry_basket_shared_1": "bedroom_floor_b2",
+    "lunchbox_leo": "sink_k1",
+    "lunchbox_marco": "counter_k1",
+    "lunchbox_priya": "sink_k1",
+    "makeup_kit_priya": "desk_b2",
+    "medication_bottle_elena_1": "medicine_cabinet_ba1",
+    "mug_elena": "dish_rack_k1",
+    "notebook_elena": "counter_k1",
+    "notebook_leo": "kitchen_table_k1",
+    "notebook_priya": "counter_k1",
+    "notebook_sofia": "desk_b3",
+    "pan_shared_1": "sink_k1",
+    "pen_leo": "kitchen_table_k1",
+    "pen_sofia": "desk_b3",
+    "phone_elena": "reading_table_l1",
+    "class:phone": "counter_k1",
+    "plate_shared_1": "kitchen_table_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_shared_1": "bedroom_floor_b2",
+    "tablet_leo": "kitchen_table_k1",
+    "toy_leo_1": "toy_chest_l1",
+    "umbrella_shared_1": "entry_hook_e1",
+    "vacuum_cleaner_shared_1": "kitchen_table_k1",
+    "wallet_elena": "desk_b1",
+    "wallet_marco": "desk_b2",
+    "wallet_priya": "kitchen_table_k1",
+    "water_bottle_leo": "sink_k1",
+    "water_bottle_marco": "sink_k1",
+    "water_bottle_priya": "chair_k2",
+    "water_bottle_sofia": "sink_k1",
+    "watering_can_elena": "kitchen_table_k1"
+   },
+   "activities": [
+    {
+     "name": "weekday_afternoon_craft",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 14.0,
+     "duration_h": 4.0,
+     "moves": [
+      {
+       "target": "backpack_leo",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "backpack_marco",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "backpack_priya",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "jacket_leo",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "jacket_priya",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "keys_elena",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "keys_leo",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "keys_marco",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "keys_priya",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "umbrella_shared_1",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "wallet_priya",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "watering_can_elena",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "weekend_morning_craft",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 9.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "backpack_leo",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "backpack_marco",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "backpack_priya",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "jacket_leo",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "jacket_priya",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "keys_elena",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "keys_leo",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "keys_marco",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "keys_priya",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "umbrella_shared_1",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "wallet_priya",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "watering_can_elena",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "morning_kitchen_quick",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 6.5,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "book_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      },
+      {
+       "target": "glasses_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      },
+      {
+       "target": "phone_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h3",
+   "rationale": "Resident has a fixed evening routine where craft items are brought out at 19:00 and left there overnight; they are not returned to rest until the next morning, leading to sightings at 05:00 the next day.",
+   "distinguishing_prediction": "object_3 is at receptacle_25 at 05:00 on a Tuesday (left there from Monday night), whereas in h1 it would be at receptacle_29 (returned) and in h2 it might be at receptacle_25 but h3 specifically models the 'left overnight' mechanic for all craft items.",
+   "rest": {
+    "backpack_leo": "kitchen_table_k1",
+    "backpack_marco": "kitchen_table_k1",
+    "backpack_priya": "kitchen_table_k1",
+    "backpack_sofia": "desk_b3",
+    "blanket_elena": "armchair_l1",
+    "blanket_leo": "couch_l1",
+    "book_elena": "reading_table_l1",
+    "bowl_shared_1": "coffee_table_l1",
+    "charger_shared_1": "coffee_table_l1",
+    "gaming_controller_shared_1": "tv_stand_l1",
+    "gaming_controller_sofia": "couch_l1",
+    "glasses_elena": "reading_table_l1",
+    "hairbrush_priya": "chair_k1",
+    "headphones_sofia": "chair_k1",
+    "jacket_leo": "entry_hook_e1",
+    "jacket_marco": "chair_k1",
+    "jacket_priya": "entry_hook_e1",
+    "jacket_sofia": "chair_k2",
+    "class:keys": "entry_table_e1",
+    "keys_sofia": "desk_b3",
+    "laptop_marco": "desk_b2",
+    "laptop_sofia": "desk_b3",
+    "laundry_basket_shared_1": "bedroom_floor_b2",
+    "lunchbox_leo": "sink_k1",
+    "lunchbox_marco": "counter_k1",
+    "lunchbox_priya": "sink_k1",
+    "makeup_kit_priya": "desk_b2",
+    "medication_bottle_elena_1": "medicine_cabinet_ba1",
+    "mug_elena": "dish_rack_k1",
+    "notebook_elena": "counter_k1",
+    "notebook_leo": "kitchen_table_k1",
+    "notebook_priya": "counter_k1",
+    "notebook_sofia": "desk_b3",
+    "pan_shared_1": "sink_k1",
+    "pen_leo": "kitchen_table_k1",
+    "pen_sofia": "desk_b3",
+    "phone_elena": "reading_table_l1",
+    "class:phone": "counter_k1",
+    "plate_shared_1": "kitchen_table_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_shared_1": "bedroom_floor_b2",
+    "tablet_leo": "kitchen_table_k1",
+    "toy_leo_1": "toy_chest_l1",
+    "umbrella_shared_1": "entry_hook_e1",
+    "vacuum_cleaner_shared_1": "kitchen_table_k1",
+    "wallet_elena": "desk_b1",
+    "wallet_marco": "desk_b2",
+    "wallet_priya": "kitchen_table_k1",
+    "water_bottle_leo": "sink_k1",
+    "water_bottle_marco": "sink_k1",
+    "water_bottle_priya": "chair_k2",
+    "water_bottle_sofia": "sink_k1",
+    "watering_can_elena": "kitchen_table_k1"
+   },
+   "activities": [
+    {
+     "name": "nightly_craft_session",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "backpack_leo",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "backpack_marco",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "backpack_priya",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "jacket_leo",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "jacket_priya",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "keys_elena",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "keys_leo",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "keys_marco",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "keys_priya",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "umbrella_shared_1",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "wallet_priya",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "watering_can_elena",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "morning_kitchen_quick",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 6.5,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "book_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      },
+      {
+       "target": "glasses_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      },
+      {
+       "target": "phone_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h4",
+   "rationale": "Two residents both work away Mon-Fri 8-17h; they share an evening hobby/craft session (19-22h) on weekdays and a morning session (9-12h) on weekends; kitchen prep is a quick 6-7h routine",
+   "distinguishing_prediction": "object_3 NOT at receptacle_25 at 09h on a weekday (both residents at work, craft table undisturbed); object_3 AT receptacle_25 at 11h on a Saturday (weekend morning hobby); object_1 at receptacle_29 at 12h on a weekday",
+   "rest": {
+    "backpack_leo": "kitchen_table_k1",
+    "backpack_marco": "kitchen_table_k1",
+    "backpack_priya": "kitchen_table_k1",
+    "backpack_sofia": "desk_b3",
+    "blanket_elena": "armchair_l1",
+    "blanket_leo": "couch_l1",
+    "book_elena": "reading_table_l1",
+    "bowl_shared_1": "coffee_table_l1",
+    "charger_shared_1": "coffee_table_l1",
+    "gaming_controller_shared_1": "tv_stand_l1",
+    "gaming_controller_sofia": "couch_l1",
+    "glasses_elena": "reading_table_l1",
+    "hairbrush_priya": "chair_k1",
+    "headphones_sofia": "chair_k1",
+    "jacket_leo": "entry_hook_e1",
+    "jacket_marco": "chair_k1",
+    "jacket_priya": "entry_hook_e1",
+    "jacket_sofia": "chair_k2",
+    "class:keys": "entry_table_e1",
+    "keys_sofia": "desk_b3",
+    "laptop_marco": "desk_b2",
+    "laptop_sofia": "desk_b3",
+    "laundry_basket_shared_1": "bedroom_floor_b2",
+    "lunchbox_leo": "sink_k1",
+    "lunchbox_marco": "counter_k1",
+    "lunchbox_priya": "sink_k1",
+    "makeup_kit_priya": "desk_b2",
+    "medication_bottle_elena_1": "medicine_cabinet_ba1",
+    "mug_elena": "dish_rack_k1",
+    "notebook_elena": "counter_k1",
+    "notebook_leo": "kitchen_table_k1",
+    "notebook_priya": "counter_k1",
+    "notebook_sofia": "desk_b3",
+    "pan_shared_1": "sink_k1",
+    "pen_leo": "kitchen_table_k1",
+    "pen_sofia": "desk_b3",
+    "phone_elena": "reading_table_l1",
+    "class:phone": "counter_k1",
+    "plate_shared_1": "kitchen_table_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_shared_1": "bedroom_floor_b2",
+    "tablet_leo": "kitchen_table_k1",
+    "toy_leo_1": "toy_chest_l1",
+    "umbrella_shared_1": "entry_hook_e1",
+    "vacuum_cleaner_shared_1": "kitchen_table_k1",
+    "wallet_elena": "desk_b1",
+    "wallet_marco": "desk_b2",
+    "wallet_priya": "kitchen_table_k1",
+    "water_bottle_leo": "sink_k1",
+    "water_bottle_marco": "sink_k1",
+    "water_bottle_priya": "chair_k2",
+    "water_bottle_sofia": "sink_k1",
+    "watering_can_elena": "kitchen_table_k1"
+   },
+   "activities": [
+    {
+     "name": "evening_shared_hobby",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 19.5,
+     "duration_h": 2.5,
+     "moves": [
+      {
+       "target": "backpack_leo",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "backpack_marco",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "backpack_priya",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "jacket_leo",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "jacket_priya",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "keys_elena",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "keys_priya",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "umbrella_shared_1",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "watering_can_elena",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "weekend_morning_hobby",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 9.5,
+     "duration_h": 2.5,
+     "moves": [
+      {
+       "target": "backpack_leo",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "backpack_priya",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "jacket_leo",
+       "to": "entry_hook_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "jacket_priya",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "keys_elena",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "keys_priya",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "umbrella_shared_1",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "watering_can_elena",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "morning_kitchen_routine",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 6.5,
+     "duration_h": 0.75,
+     "moves": [
+      {
+       "target": "book_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      },
+      {
+       "target": "glasses_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      },
+      {
+       "target": "phone_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      },
+      {
+       "target": "charger_shared_1",
+       "to": "couch_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h5",
+   "rationale": "Single resident on an irregular/night-shift schedule; the hobby/craft is a constant background activity with objects permanently at the craft table, and the resident works on it at whatever hour they are awake (05h-22h), with no weekday/weekend distinction",
+   "distinguishing_prediction": "object_3 at receptacle_25 at 05h on a weekday (resident is up in the pre-dawn hours working on the craft); object_51 at receptacle_26 at 05h on a weekday; objects are at the craft table at BOTH 05h and 22h on the same day",
+   "rest": {
+    "backpack_leo": "entry_floor_e1",
+    "backpack_marco": "entry_floor_e1",
+    "backpack_priya": "entry_floor_e1",
+    "backpack_sofia": "desk_b3",
+    "blanket_elena": "armchair_l1",
+    "blanket_leo": "couch_l1",
+    "book_elena": "reading_table_l1",
+    "bowl_shared_1": "coffee_table_l1",
+    "charger_shared_1": "coffee_table_l1",
+    "gaming_controller_shared_1": "tv_stand_l1",
+    "gaming_controller_sofia": "couch_l1",
+    "glasses_elena": "reading_table_l1",
+    "hairbrush_priya": "chair_k1",
+    "headphones_sofia": "chair_k1",
+    "jacket_leo": "entry_hook_e1",
+    "jacket_marco": "chair_k1",
+    "jacket_priya": "entry_hook_e1",
+    "jacket_sofia": "chair_k2",
+    "class:keys": "entry_table_e1",
+    "keys_sofia": "desk_b3",
+    "laptop_marco": "desk_b2",
+    "laptop_sofia": "desk_b3",
+    "laundry_basket_shared_1": "bedroom_floor_b2",
+    "lunchbox_leo": "sink_k1",
+    "lunchbox_marco": "counter_k1",
+    "lunchbox_priya": "sink_k1",
+    "makeup_kit_priya": "desk_b2",
+    "medication_bottle_elena_1": "medicine_cabinet_ba1",
+    "mug_elena": "dish_rack_k1",
+    "notebook_elena": "counter_k1",
+    "notebook_leo": "kitchen_table_k1",
+    "notebook_priya": "counter_k1",
+    "notebook_sofia": "desk_b3",
+    "pan_shared_1": "sink_k1",
+    "pen_leo": "kitchen_table_k1",
+    "pen_sofia": "desk_b3",
+    "phone_elena": "reading_table_l1",
+    "class:phone": "counter_k1",
+    "plate_shared_1": "kitchen_table_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_shared_1": "entry_floor_e1",
+    "tablet_leo": "kitchen_table_k1",
+    "toy_leo_1": "toy_chest_l1",
+    "umbrella_shared_1": "entry_hook_e1",
+    "vacuum_cleaner_shared_1": "entry_floor_e1",
+    "wallet_elena": "desk_b1",
+    "wallet_marco": "desk_b2",
+    "wallet_priya": "entry_floor_e1",
+    "water_bottle_leo": "sink_k1",
+    "water_bottle_marco": "sink_k1",
+    "water_bottle_priya": "chair_k2",
+    "water_bottle_sofia": "sink_k1",
+    "watering_can_elena": "entry_floor_e1"
+   },
+   "activities": [
+    {
+     "name": "constant_craft_work",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 5.0,
+     "duration_h": 17.0,
+     "moves": [
+      {
+       "target": "backpack_leo",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "backpack_marco",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "backpack_priya",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "jacket_leo",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "jacket_priya",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "keys_elena",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "keys_leo",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "keys_marco",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "keys_priya",
+       "to": "entry_table_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "suitcase_shared_1",
+       "to": "entry_floor_e1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "umbrella_shared_1",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "wallet_priya",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "watering_can_elena",
+       "to": "entry_floor_e1",
+       "chance": "almost_always",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "morning_kitchen_quick",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 6.5,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "book_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      },
+      {
+       "target": "glasses_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      },
+      {
+       "target": "phone_elena",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "after": "returned"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

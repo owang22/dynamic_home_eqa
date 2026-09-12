@@ -30,7 +30,9 @@ from baselines.beliefs.hypothesis_mixture import (DEFAULT_ABSENCE_UNIFORMS,
                                                   DEFAULT_ABSENCE_WEIGHT,
                                                   DEFAULT_DECAY,
                                                   HypothesisMixture)
+from baselines.beliefs.hypothesis_program import HypothesisProgramBelief
 from baselines.beliefs.last_observation import LastObservation
+from baselines.beliefs.llm_hypothesis_mixture import LLMHypothesisMixture
 from baselines.beliefs.llm_belief import (LLMBelief, LLMBeliefConfig,
                                           PromptCache)
 from baselines.beliefs.markov1 import Markov1, Markov1Config
@@ -184,6 +186,35 @@ def _build_hypothesis_mixture(spec: Dict[str, Any],
         **_base_kwargs(spec))
 
 
+def _build_hypothesis_program(spec: Dict[str, Any],
+                              rng: random.Random) -> BeliefModel:
+    """One LLM-written (or hand-written) hypothesis as a belief. The
+    spec's ``hypothesis`` is the raw description dict; it is validated
+    against the household's tables at reset."""
+    return HypothesisProgramBelief(rng, spec["hypothesis"],
+                                   **_frequency_kwargs(spec))
+
+
+def _build_llm_hypothesis_mixture(spec: Dict[str, Any],
+                                  rng: random.Random) -> BeliefModel:
+    """Mixture over the per-household hypothesis files under the spec's
+    ``hypotheses_dir`` plus ``stat_particles`` (default one
+    ``periodic_persistence``); ``label`` names the run's condition
+    (named / scrambled) in result tables."""
+    from baselines.beliefs.llm_hypothesis_mixture import (
+        DEFAULT_HYPOTHESIS_DECAY)
+    return LLMHypothesisMixture(
+        rng, hypotheses_dir=spec["hypotheses_dir"],
+        stat_specs=spec.get("stat_particles"),
+        decay=float(spec.get("decay", DEFAULT_HYPOTHESIS_DECAY)),
+        absence_weight=float(spec.get("absence_weight",
+                                      DEFAULT_ABSENCE_WEIGHT)),
+        absence_uniforms=float(spec.get("absence_uniforms",
+                                        DEFAULT_ABSENCE_UNIFORMS)),
+        label=spec.get("label"),
+        **_base_kwargs(spec))
+
+
 def _build_hierarchy_backoff(spec: Dict[str, Any],
                              rng: random.Random) -> BeliefModel:
     d = HierarchyBackoffConfig
@@ -280,6 +311,10 @@ BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
                     _build_smoothed_recency),
         BeliefEntry("hypothesis_mixture", "candidate",
                     _build_hypothesis_mixture),
+        BeliefEntry("hypothesis_program", "candidate",
+                    _build_hypothesis_program),
+        BeliefEntry("llm_hypothesis_mixture", "candidate",
+                    _build_llm_hypothesis_mixture),
         BeliefEntry("perpetua", "candidate", _build_perpetua),
         BeliefEntry("perpetua_star", "candidate", _build_perpetua_star),
         BeliefEntry("llm", "candidate", _build_llm),

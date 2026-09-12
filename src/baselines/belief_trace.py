@@ -44,7 +44,11 @@ input every model in the file saw.
 Truth segments come from the BANK (projected receptacles, including the
 ``OUT_OF_HOUSE`` / ``ON_PERSON`` pseudo-receptacles), not from the
 spatialized timeline, so "correct" in the viewer means exactly what it
-means in the harness: identical receptacle ids, exact match.
+means in the harness — with the one equivalence both apply:
+``ON_PERSON`` and ``OUT_OF_HOUSE`` are scored as the same location
+(:data:`baselines.passive_eval.AWAY_EQUIVALENCE`; the robot never sights
+anything at either, so no belief can tell them apart). The viewer's
+``sameLocation`` mirrors it.
 
 Usage:
   python -m baselines.belief_trace --bank banks/baselines/fleet/x_bank.jsonl \\
@@ -246,6 +250,12 @@ def main() -> None:
                         default=DEFAULT_GRID_MINUTES)
     parser.add_argument("--candidates", action="store_true",
                         help="also trace the candidate belief slate")
+    parser.add_argument("--extra-spec", action="append", default=[],
+                        metavar="JSON",
+                        help="one registry belief spec as a JSON object, "
+                             "appended to the traced models; repeatable "
+                             "(how run-specific beliefs such as the LLM "
+                             "hypothesis mixtures reach the viewer)")
     parser.add_argument("--timeline", type=pathlib.Path, default=None,
                         help="household timeline dir; with --spec, adds the "
                              "patrol-comparison and budget-sweep sections")
@@ -259,8 +269,9 @@ def main() -> None:
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO,
                         format="%(levelname)s %(name)s: %(message)s")
-    payload = build_trace(args.bank, args.seed, args.grid_minutes,
-                          resolve_specs(args.candidates),
+    specs = (*resolve_specs(args.candidates),
+             *(json.loads(raw) for raw in args.extra_spec))
+    payload = build_trace(args.bank, args.seed, args.grid_minutes, specs,
                           timeline=args.timeline, spec_path=args.spec,
                           patrol_visits_per_day=args.patrol_visits_per_day,
                           oracle_seeds=args.oracle_seeds)

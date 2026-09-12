@@ -219,6 +219,48 @@ def test_beta_zero_reproduces_the_myopic_voi_policy_exactly(
         assert a.budget_spent == b.budget_spent
 
 
+def test_paired_delta_signs_a_real_difference_and_straddles_zero_otherwise(
+) -> None:
+    from baselines.hypothesis_mixture_study import paired_delta
+
+    # Treatment right on every question the control got wrong: a clear
+    # +0.5 that the interval must exclude 0 for.
+    control = [True, False] * 200
+    treatment = [True] * 400
+    mean, low, high = paired_delta(treatment, control)
+    assert mean == pytest.approx(0.5)
+    assert low > 0.0
+
+    # Identical arms: zero difference, zero-width interval.
+    mean, low, high = paired_delta(control, control)
+    assert (mean, low, high) == (0.0, 0.0, 0.0)
+
+    # A one-question difference in 400 must NOT be called significant.
+    nearly = list(control)
+    nearly[1] = True
+    mean, low, high = paired_delta(nearly, control)
+    assert low <= 0.0 <= high
+
+
+def test_room_cost_makes_the_policy_prefer_the_room_it_is_in(
+        tmp_path) -> None:
+    from baselines.bank import write_room_cost_bank
+    from baselines.hypothesis_mixture_study import run_cell
+
+    write_room_cost_bank(tmp_path / "rooms.jsonl")
+    episode = next(JsonlBank(tmp_path / "rooms.jsonl").episodes())
+    free = run_cell(episode, beta=0.05, lam=0.01, seed=0, room_cost=0.0)
+    priced = run_cell(episode, beta=0.05, lam=0.01, seed=0, room_cost=2.0)
+    assert free.room_cost == 0.0 and priced.room_cost == 2.0
+    # Same-room senses cost 1.0 either way; cross-room ones triple, so the
+    # priced run must not lean on cross-room looks more than the free one.
+    def same_room_share(cell: object) -> float:
+        total = cell.senses_per_day * cell.n_days   # type: ignore[attr-defined]
+        return (cell.same_room_senses / total       # type: ignore[attr-defined]
+                if total else 1.0)
+    assert same_room_share(priced) >= same_room_share(free)
+
+
 def test_positive_beta_can_only_add_senses_and_flags_them(tmp_path) -> None:
     episode = _episode(tmp_path)
     belief = HypothesisMixture(random.Random(7),

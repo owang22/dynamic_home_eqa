@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-09-12T08:09:12+00:00",
+  "git": {
+    "commit": "c11eee99b2775bf667391b584aed9aafbb341d94",
+    "dirty": true
+  },
+  "households": [
+    "hh_001",
+    "hh_002"
+  ],
+  "specs": [
+    {
+      "name": "most_frequent",
+      "half_life_h": 24.0
+    },
+    {
+      "name": "periodic_persistence"
+    },
+    {
+      "name": "llm_hypothesis_mixture",
+      "hypotheses_dir": "/home/oliver/robot/dynamic_home_eqa/results/llm_hypotheses/hypotheses/named",
+      "label": "LLMHyp(named)"
+    },
+    {
+      "name": "llm_hypothesis_mixture",
+      "hypotheses_dir": "/home/oliver/robot/dynamic_home_eqa/results/llm_hypotheses/hypotheses/anonymized",
+      "label": "LLMHyp(anonymized)"
+    },
+    {
+      "name": "llm_hypothesis_mixture",
+      "hypotheses_dir": "/home/oliver/robot/dynamic_home_eqa/results/llm_hypotheses/hypotheses/named",
+      "decay": 1.0,
+      "label": "LLMHyp(named,decay=1.0)"
+    },
+    {
+      "name": "oracle_program_posterior",
+      "eps": 0.4,
+      "half_life_h": 12.0
+    }
+  ],
+  "rng_seed": 0,
+  "log_loss_epsilon": 0.001,
+  "n_households": 2
+}

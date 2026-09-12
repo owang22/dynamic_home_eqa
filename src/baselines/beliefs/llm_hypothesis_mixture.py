@@ -26,13 +26,29 @@ import pathlib
 import random
 from typing import Any, Mapping, Optional, Sequence, Tuple
 
-from baselines.beliefs.hypothesis_mixture import (DEFAULT_DECAY,
+from baselines.beliefs.hypothesis_mixture import (DEFAULT_ABSENCE_UNIFORMS,
+                                                  DEFAULT_ABSENCE_WEIGHT,
                                                   HypothesisMixture)
 from baselines.beliefs.hypothesis_program import HypothesisProgramBelief
 
 DEFAULT_STAT_SPECS: Tuple[Mapping[str, Any], ...] = (
     {"name": "periodic_persistence"},)
 """The plain statistical hypothesis that always rides along."""
+
+DEFAULT_HYPOTHESIS_DECAY = 0.99
+"""Weight-forgetting factor for hypothesis selection, overriding the
+parent's reactive default (0.6, tuned so a disambiguating sense can move
+the weights). This mixture answers a different question — which fixed
+description of the household was right — and that wants memory measured
+in DAYS. Decay is applied per event and the passive diet delivers 30-60
+weighted events per day, so the effective memory ``1 / (1 - decay)`` is
+~2 events at 0.6 and still under one day at 0.95 — both let a partially
+right rival grab the lead for an evening (hh_001 hand-written gate:
+2x-lead on only 13/22 late days at 0.95). At 0.99 the memory is a
+couple of days: the true hypothesis leads 21/21 late days with weakest
+weight 0.945, while sustained regime change can still re-open the
+weights within ~100 events. 1.0 (the pure posterior) collapses by day 3
+and can never recover from early luck."""
 
 
 class LLMHypothesisMixture(HypothesisMixture):
@@ -47,7 +63,9 @@ class LLMHypothesisMixture(HypothesisMixture):
     def __init__(self, rng: random.Random,
                  hypotheses_dir: pathlib.Path | str,
                  stat_specs: Optional[Sequence[Mapping[str, Any]]] = None,
-                 decay: float = DEFAULT_DECAY,
+                 decay: float = DEFAULT_HYPOTHESIS_DECAY,
+                 absence_weight: float = DEFAULT_ABSENCE_WEIGHT,
+                 absence_uniforms: float = DEFAULT_ABSENCE_UNIFORMS,
                  label: Optional[str] = None,
                  floor_mass: float = 0.0,
                  negative_half_life_h: Optional[float] = None) -> None:
@@ -57,6 +75,8 @@ class LLMHypothesisMixture(HypothesisMixture):
         # Parent builds the stat particles now; the hypothesis particles
         # join at reset, when the household is known.
         super().__init__(rng, particle_specs=self._stat_specs, decay=decay,
+                         absence_weight=absence_weight,
+                         absence_uniforms=absence_uniforms,
                          floor_mass=floor_mass,
                          negative_half_life_h=negative_half_life_h)
         self._dir = pathlib.Path(hypotheses_dir)

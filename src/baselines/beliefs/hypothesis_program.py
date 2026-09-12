@@ -97,6 +97,14 @@ START_HOUR_PRIOR_SD_H = 1.5
 START_OBS_SD_H = 0.75
 """Assumed sd of one confirming sighting's time around the true start."""
 
+START_GATE_SD_H = 1.5
+"""How far from the current start estimate a confirming sighting still
+teaches about the START. A sighting deep inside the window says the
+activity is ongoing, not when it began; without this gate, midday
+sightings of an all-day activity drag the fitted start toward noon and
+erode the window that explained them. The update weight is scaled by
+``exp(-((hour - mu) / gate)^2 / 2)``."""
+
 WINDOW_EDGE_SD_H = 0.5
 """Base softness of the active window's edges, added in quadrature to
 the start-hour posterior sd."""
@@ -414,8 +422,11 @@ class HypothesisProgramBelief(BeliefModel):
                 continue
             if receptacle_id == state.rule.to:
                 state.success += weight
-                self._activity_states[state.activity_index].observe(
-                    hour, weight)
+                post = self._activity_states[state.activity_index]
+                gate = math.exp(-0.5 * ((hour - post.mu)
+                                        / START_GATE_SD_H) ** 2)
+                if gate > 1e-3:
+                    post.observe(hour, weight * gate)
             else:
                 state.failure += weight * FAILURE_WEIGHT
 

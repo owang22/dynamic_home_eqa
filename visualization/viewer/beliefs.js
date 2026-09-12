@@ -83,10 +83,18 @@ function lastSighting(object, min) {
   return last;
 }
 
+// Scoring equivalence, mirroring baselines.passive_eval.AWAY_EQUIVALENCE:
+// ON_PERSON (carried by a resident inside the house) and OUT_OF_HOUSE (left
+// with them) are one location for scoring — the robot never sights anything
+// at either, so no belief can learn the difference, and exact match was
+// marking a floor-mass tie-break as a wrong answer.
+const AWAY = new Set(["ON_PERSON", "OUT_OF_HOUSE"]);
+function sameLocation(a, b) { return a === b || (AWAY.has(a) && AWAY.has(b)); }
+
 function houseScore(model, min) {
   let right = 0;
   for (const o of belief.objects)
-    if (beliefAt(model, o, min)[2] === truthAt(o, min)[2]) right++;
+    if (sameLocation(beliefAt(model, o, min)[2], truthAt(o, min)[2])) right++;
   return {right, total: belief.objects.length};
 }
 
@@ -192,7 +200,7 @@ function drawAllObjects(ctx, model) {
   for (const o of belief.objects) {
     if (o === focus) continue;
     const truth = truthAt(o, t)[2], guess = beliefAt(model, o, t)[2];
-    const ok = truth === guess;
+    const ok = sameLocation(truth, guess);
     if (onlyWrong && ok) continue;
     const [tx, ty] = worldToCanvas(...anchorOf(truth, t));
     const [bx, by] = worldToCanvas(...anchorOf(guess, t));
@@ -233,7 +241,7 @@ function draw() {
   const obj = $("object-select").value;
   const truthRec = truthAt(obj, t)[2];
   const guess = beliefAt(model, obj, t);
-  const ok = truthRec === guess[2];
+  const ok = sameLocation(truthRec, guess[2]);
   const [tx, ty] = worldToCanvas(...anchorOf(truthRec, t));
   const [bx, by] = worldToCanvas(...anchorOf(guess[2], t));
 
@@ -323,7 +331,7 @@ function renderSheet(model) {
     const onlyWrong = $("only-wrong").checked;
     const rows = belief.objects.map(o => {
       const truth = truthAt(o, t)[2], g = beliefAt(model, o, t);
-      return {o, truth, guess: g[2], conf: g[3], ok: truth === g[2]};
+      return {o, truth, guess: g[2], conf: g[3], ok: sameLocation(truth, g[2])};
     }).filter(r => !onlyWrong || !r.ok)
       // wrong first: the interesting rows should never need scrolling to
       .sort((a, b) => (a.ok - b.ok) || a.o.localeCompare(b.o));
@@ -352,7 +360,7 @@ function renderSheet(model) {
     scored.map(({m, right, total}) => {
       const obj = $("object-select").value;
       const g = beliefAt(m, obj, t)[2], truth = truthAt(obj, t)[2];
-      const ok = g === truth;
+      const ok = sameLocation(g, truth);
       return `<tr><td>${m.display}</td>` +
              `<td class="muted small">${m.panel}</td>` +
              `<td>${right}/${total}</td>` +

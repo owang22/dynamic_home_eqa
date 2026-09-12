@@ -1,5 +1,100 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-09-11, fourth: beta / room-cost sweep with paired statistics — disambiguation sensing does not beat the myopic frontier)
+
+Re-run of the disambiguation trial at settings chosen to give the idea
+its best shot, with statistics that can actually carry a conclusion.
+
+### What changed in the study
+
+- **Betas 0 / 0.02 / 0.05 / 0.1 / 0.25**, set against the bonus's
+  ceiling (binary JSD <= ln 2 = 0.693, so the bonus contributes at most
+  0.693 * beta) rather than guessed. The earlier 0.5 / 2.0 gave the bonus
+  up to 1.39 against a voi of ~0.05 and drowned the question term.
+- **Room-change cost c in {0, 0.5, 1}** with budget scaled 24 / 36 / 48.
+  This is the condition disambiguation SHOULD favour — cheap in-room looks
+  collect weight evidence without a trip. The cost-awareness works:
+  same-room share of senses rises 25% -> 61% -> 64%.
+- **4 households**, 7 days. 180 cells, `hypothesis_mixture_study.py
+  --stage frontier`.
+- **Paired per-question deltas** against beta=0 at the same (household,
+  c, lambda), bootstrapped over questions
+  (`results/hypothesis_mixture_trial/paired_comparison.md`). Every arm
+  answers the identical question sequence, so this nets out question
+  difficulty — far better powered than comparing two accuracies.
+
+### Result 1: at matched budget, neutral to negative
+
+The lambda=0.02 rows saturate the daily cap in every arm, so senses are
+matched exactly. There: betas 0.02-0.1 are null (all CIs straddle 0,
+per-household signs mixed); beta=0.25 is significantly WORSE at c=0
+(-0.013 [-0.021, -0.005]) and c=1 (-0.015 [-0.025, -0.006], all four
+households negative), null at c=0.5 (-0.004 [-0.013, +0.004]).
+
+### Result 2: the apparent wins were budget
+
+At lambda 0.08 / 0.2, beta=0.25 shows positive significant deltas
+(+0.025 at c=0.5, +0.018 at c=1, +0.010 at c=0). All of them come with
+33-74% more senses per day: the bonus lifts the score so more
+receptacles clear lambda. A delta at unequal budget is not a frontier
+claim.
+
+### Result 3: the one cell that survived that check was a grid artifact
+
+c=0.5, lambda=0.08, beta=0.25 (0.7103 @ 23.4/day) beat myopic at
+lambda=0.02 (0.6825 @ 30.0/day) on ALL FOUR households with fewer senses
+— which looked like strict dominance. A dense lambda grid on both arms
+(`dense_lambda_c0.5.{json,txt}`, 8 lambdas x 2 arms x 4 households)
+shows myopic's own frontier peaks at lambda=0.04-0.06 (0.7052 @
+24.7/day), which the 3-point grid had skipped. Against that:
+
+| senses/day | myopic | beta=0.25 | delta |
+|---|---|---|---|
+| 3 | 0.624 | 0.626 | +0.002 |
+| 10 | 0.655 | 0.653 | -0.002 |
+| 20 | 0.692 | 0.696 | +0.004 |
+| 23 | 0.700 | 0.709 | +0.008 |
+| 25 | 0.705 | 0.707 | +0.002 |
+| 29 | 0.702 | 0.678 | -0.023 |
+
+(interpolated on the pooled curves). Best matched pair, paired:
+**+0.005 [-0.005, +0.016]**. The two frontiers lie on top of each other
+from 2 to 27 senses/day and beta=0.25 falls off at the top.
+
+### Conclusion
+
+Across three room costs, five betas, four households and a dense lambda
+grid, no configuration of disambiguation sensing separates from the
+myopic frontier by more than noise, and the strong-beta configurations
+lose at matched budget. This is a much better-powered null than the
+previous update's, and it holds under the room-cost condition designed
+to favour the idea. Small betas trigger too few disambiguation senses to
+matter (10-66 of ~700); large ones divert budget from questions.
+
+Two lessons for the method, recorded so they are not repeated: compare
+policies at matched realized budget or on interpolated frontiers, never
+by raw delta at a shared lambda (Result 2); and grid the BASELINE at
+least as densely as the treatment before claiming dominance (Result 3).
+
+### Not tried, deliberately
+
+- Multi-object bonus (summing the JSD over every object a look reveals,
+  an upper bound on the true information) — mechanically the right fix
+  for the one-object bonus, but it sharpens acquisition of a quantity
+  whose value on these banks is bounded small by the weight ablation.
+- Cross-question belief value. Left for later by decision.
+- Per-object / per-class weights, which is where a mixture over
+  near-equal-skill particles could still earn something.
+
+### Fat cut
+
+- 4 households, 7 of 28 days, one seed. Dense grid at c=0.5 only.
+- Frontier interpolation is linear between pooled points; no per-
+  household frontier intervals.
+- Pre-existing unrelated failure unchanged:
+  `test_baselines_llm_belief.py::test_prompt_and_key_match_the_committed_fixture`.
+
+
 ## Update (2026-09-11, third: absence scoring added; decay recalibrated; disambiguation sensing DOES NOT PAY once the mixture is calibrated)
 
 Adds the absence half of the mixture's scoring, which forced a decay
@@ -68,25 +163,32 @@ Where disambiguation appears to "win" (lambda=0.2) it is simply spending
 
 A new ablation (`--stage value`,
 `reports/baselines/hypothesis_mixture/weight_value.md`) pins the weights
-uniform and re-runs the passive diet. Learned weights are WORSE than
-uniform ones: **-0.0048** on hh_001, **-0.0016** on hh_002. Per-particle
-passive accuracy spans only 0.587-0.637 (hh_001) and 0.529-0.573
-(hh_002), and the learned mixture lands mid-pack, below the best single
-particle in both.
+uniform and re-runs the passive diet. Learned minus uniform came out at
+**-0.0048** (hh_001) and **-0.0016** (hh_002).
 
-So the value of knowing which hypothesis is right is approximately zero
-here, and a sense spent acquiring that knowledge is a sense not spent
-answering the question. At 24 senses/day against 90 questions/day the
-budget is tight enough that the trade is strictly bad.
+**Read that as "no detectable effect", not "a negative effect."** Two
+households, one seed, ~630 questions each: the per-question binomial
+standard error alone is about 0.019, so both numbers sit well inside
+noise and the sign is not interpretable. An earlier draft of this note
+asserted learned weights were WORSE than uniform; that was over-reading
+an underpowered measurement and is retracted.
 
-**The gate measured the wrong quantity.** The disagreement measurement
-(update above) showed the families PREDICT differently — 0.482 unanimous,
-mean pairwise JSD 0.304 — and that is true. But what a mixture needs is
-dispersion of SKILL, not dispersion of predictions. These models disagree
-about where objects are while being nearly equally accurate, so
-reweighting a 7-way average almost never moves the argmax. A skill-
-dispersion gate (the per-particle accuracy spread above, which takes
-seconds) should have run before any of this was built.
+What the ablation does support is a bound on the magnitude: whatever the
+weights are worth on these two households, it is small relative to what
+a sense is worth. Per-particle passive accuracy spans only 0.587-0.637
+(hh_001) and 0.529-0.573 (hh_002), so the particles are close in skill
+and reweighting a 7-way average rarely moves the argmax. That is a claim
+about effect SIZE, which the data can carry, not about sign, which it
+cannot.
+
+**The gate measured a different quantity than the one that matters.**
+The disagreement measurement (update above) showed the families PREDICT
+differently — 0.482 unanimous, mean pairwise JSD 0.304 — and that is
+true. But what a mixture needs is dispersion of SKILL, not dispersion of
+predictions, and on these households the particles are close in skill
+while disagreeing about individual answers. A skill-dispersion check (the
+per-particle accuracy spread above, seconds to run) belongs alongside the
+prediction-dispersion one.
 
 ### What would have to change for the line to work
 
@@ -99,9 +201,9 @@ seconds) should have run before any of this was built.
 
 ### Fat cut
 
-- 2 households, 7 of 28 days, one seed, no intervals. The weight-value
-  ablation is the only result here I would call robust, because its
-  effect (~0) is far from its noise.
+- 2 households, 7 of 28 days, one seed, no intervals — every number in
+  this update is underpowered, including the weight-value ablation, whose
+  sign should not be read.
 - `daytype_mixture` / `perpetua_star` still out of the default particle
   list (cost) — the two most-distinct families per the disagreement
   matrix, so the skill spread measured above is a lower bound.
