@@ -12,7 +12,11 @@ whenever new sightings have arrived:
    seeded initial assignment; K shrinks to the number of observed days
    when fewer exist).
 2. **Per-type timetables.** For each (day-type, object, time-of-day bin):
-   decayed sighting counts (frozen 24 h half-life), with the usual
+   decayed sighting counts (frozen 24 h half-life), normalized
+   empirically and NOT through the frequency path's Dirichlet prior: a
+   type's weight in the mixture comes from the day-type posterior, so
+   smoothing its timetable by its own sample size would mute exactly the
+   rare regime the model exists to detect. With the usual
    fallbacks — an empty bin falls back to the (type, object) whole-day
    histogram, an object unseen in the type falls back to its global
    decayed histogram.
@@ -41,7 +45,8 @@ import random
 from dataclasses import dataclass
 from typing import Dict, FrozenSet, List, Mapping, Optional, Sequence, Tuple
 
-from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
+from baselines.beliefs.base import (DEFAULT_FLOOR_MASS,
+                                    DEFAULT_FREQUENCY_ALPHA, BeliefModel)
 from baselines.types import DAY_SECONDS, Prediction
 
 HOURS_PER_DAY = 24
@@ -154,9 +159,11 @@ class DaytypeMixture(BeliefModel):
 
     def __init__(self, rng: random.Random, config: DaytypeMixtureConfig,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None) -> None:
+                 negative_half_life_h: Optional[float] = None,
+                 frequency_alpha: float = DEFAULT_FREQUENCY_ALPHA) -> None:
         super().__init__(rng, floor_mass=floor_mass,
-                         negative_half_life_h=negative_half_life_h)
+                         negative_half_life_h=negative_half_life_h,
+                         frequency_alpha=frequency_alpha)
         self._cfg = config
         self._cached_at_count = -1
         self._day_types: Dict[int, int] = {}
@@ -177,7 +184,8 @@ class DaytypeMixture(BeliefModel):
         if not self._day_types:
             counts = self._weighted_counts(history, t,
                                            self._cfg.half_life_h * 3600)
-            return self._normalized(counts, tie_break_recency=history)
+            return self.dirichlet_normalized(counts,
+                                             tie_break_recency=history)
         posterior = self._type_posterior(t)
         mixture: Dict[str, float] = {}
         for day_type, weight in posterior.items():

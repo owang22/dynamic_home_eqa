@@ -1,5 +1,130 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-09-11: Dirichlet prior on the frequency path; belief disagreement measured — GATE PASSES on families, FAILS on parameter variants)
+
+Two sections of the hypothesis-mixture brief. The second ends at a STOP;
+nothing past it (the `hypothesis_mixture` belief, disambiguation sensing)
+is built.
+
+### Dirichlet prior on the frequency fallback
+
+The frequency path turned an object's decayed placement counts into a
+distribution by plain normalization, so ONE sighting gave a one-hot
+histogram that the 0.02 floor mix turned into 0.98 confidence. It now
+goes through `BeliefModel.dirichlet_normalized` — the posterior mean of a
+symmetric Dirichlet over every location, `(count_r + alpha) / (total +
+alpha * n_locations)`. `frequency_alpha` is configurable per belief spec
+(`DEFAULT_FREQUENCY_ALPHA = 0.06`, set so one fresh sighting leaves ~0.40
+on the observed receptacle in a median 27-location fleet household; 0.31
+at a 39-location one). `alpha = 0` restores the empirical histogram
+exactly, which is how the pre-migration smoothed-recency golden fixture
+still runs.
+
+**Which beliefs changed.** `most_frequent`, `timetable`, `markov1`
+(stationary backoff only), `periodic_persistence` (the below-`min_departures`
+degradation path only, as scoped), `smoothed_recency` (its frequency
+component), `daytype_mixture` (its no-day-types fallback only). Models
+already carrying a pseudo-count on counts keep theirs and do NOT stack a
+second prior: the Markov transition row's Laplace alpha,
+`hierarchy_backoff`'s shrinkage toward class and household pools,
+Perpetua's switching prior, and `cold_start_distribution`.
+
+**One reversal, measured.** Smoothing each day-type's timetable in
+`daytype_mixture` took `test_two_regime_daytype_beats_most_frequent` from
+a perfect score to 0.0: a type's weight comes from the day-type
+posterior, so smoothing its timetable by its own sample size mutes
+exactly the rare regime the model exists to detect. Per-type timetables
+were reverted to empirical normalization. Consequence to note:
+`daytype_mixture` is still one-hot off a single observation, because any
+sighting at all creates a day feature and its no-day-types fallback is
+then unreachable.
+
+**Short run** (2 households, first 3 question-bearing days, passive diet,
+769 single-observation (object, question) pairs):
+
+| belief | mean conf. alpha=0 | >0.9 | mean conf. alpha=0.06 | >0.9 |
+|---|---|---|---|---|
+| most_frequent | 0.960 | 93.1% | 0.308 | 0.0% |
+| timetable | 0.960 | 93.1% | 0.308 | 0.0% |
+| markov1 | 0.960 | 93.1% | 0.073 | 0.0% |
+| periodic_persistence | 0.960 | 93.1% | 0.073 | 0.0% |
+| smoothed_recency | 0.969 | 96.9% | 0.058 | 0.0% |
+
+Gate met — nothing sits near 1.0 any more. One line on something odd:
+every single-observation case in these banks is >24 h stale (the initial
+tour is the only sighting and questions start days later), so the "~0.4"
+target is never actually exercised in the fleet. For the beliefs that
+decay counts at 24 h the aged count falls well below `alpha *
+n_locations` and those objects land near uniform (0.058-0.073 vs a 1/40
+floor). Directionally right — stale single evidence IS weak — but it is a
+larger calibration move than "0.98 -> 0.4", and the accuracy cost has not
+been measured.
+
+### Disagreement measurement — the gate
+
+`src/baselines/disagreement.py`, `reports/baselines/disagreement/`. No
+run logs exist on disk, so this is the short run only: passive diet
+(initial tour + scripted evidence, no sensing), every belief predicting
+every bank question, 2 households x full length = 4 500 questions. Per
+question: whether all beliefs share an argmax, and the mean pairwise
+Jensen-Shannon divergence (bits) across their distributions; broken out
+by object volatility tercile (true moves per day, split within household)
+and by hour of day. Plus a per-pair argmax-agreement matrix.
+
+Two panels, because "a hypothesis about household dynamics" means two
+things:
+
+| panel | beliefs | unanimous argmax | mean pairwise JSD |
+|---|---|---|---|
+| family (one per model family) | 9 | **0.482** | **0.304** |
+| parameter (`smoothed_recency` at 1/3/6/12/24/48 h) | 6 | 0.923 | 0.085 |
+
+**Family panel: the gate passes.** Beliefs disagree on the argmax for
+more than half of all questions and the divergence histogram is a broad
+mode centred on 0.30 with essentially no mass below 0.10 — not
+concentrated near zero. There is something for a mixture to operate on
+and something for a sense to resolve. Disagreement tracks volatility the
+way it should: unanimity 0.579 / 0.502 / 0.363 across calm / middle /
+volatile terciles, JSD 0.279 / 0.304 / 0.328. Hour of day is much weaker
+and mostly noise, with the expected quiet-hours effect at the edges
+(23:00 unanimity 0.691 on n=110; 00:00 0.318 on n=22). The pair matrix
+puts `perpetua_star` and `timetable` furthest from everything (0.61
+agreement with each other) and the recency-flavoured group —
+`last_observation`, `smoothed_recency`, `hierarchy_backoff`,
+`periodic_persistence` — tight at 0.93-0.96.
+
+**Parameter panel: the gate fails.** Varying only the smoothing
+half-life over a factor of 48 moves the argmax on 7.7% of questions and
+the divergence mass sits under 0.18 with a mean of 0.085. Terciles are
+flat (0.955 / 0.910 / 0.903). A mixture whose particles are one family at
+different rates has almost nothing to weight, and a disambiguating sense
+would have almost nothing to sharpen. If the mixture is built, its
+particles must differ in the SHAPE of the dynamics, not the rate.
+
+**Figures.** `{family,parameter}_jsd_histogram.png` (figure 1) and
+`{family,parameter}_argmax_agreement.png` (figure 2).
+
+**STOP.** Handing back here as the brief requires.
+
+### Where the fat was cut (this was a "will it work" pass)
+
+- 2 households, as the brief's debugging-run rule says. For a gate this
+  is thin; the family/parameter contrast is 3.6x in JSD, far larger than
+  any plausible between-household wobble, but the absolute numbers are
+  not fleet estimates.
+- One parameter axis only (smoothing half-life). Varying the frequency
+  half-life, or crossing the two, was not tried.
+- `most_frequent`'s undecayed variant, the LLM belief (needs a filled
+  prompt cache) and `oracle_program_posterior` (privileged) are out of
+  both panels.
+- No per-household bootstrap or any interval on these numbers.
+- The Dirichlet's accuracy and log-loss cost was not measured anywhere;
+  only confidence was checked, which is what the brief asked for.
+- Pre-existing unrelated failure, untouched:
+  `test_baselines_llm_belief.py::test_prompt_and_key_match_the_committed_fixture`
+  (missing committed fixture; fails on a clean tree too).
+
+
 ## Update (2026-09-10: room-change travel cost — a sense outside the robot's room costs 1 + c)
 
 Until now an active sense cost one budget unit wherever the robot stood.

@@ -12,7 +12,8 @@ import random
 from dataclasses import dataclass
 from typing import List, Optional, Tuple
 
-from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
+from baselines.beliefs.base import (DEFAULT_FLOOR_MASS,
+                                    DEFAULT_FREQUENCY_ALPHA, BeliefModel)
 from baselines.types import DAY_SECONDS, Prediction
 
 HOURS_PER_DAY = 24
@@ -62,7 +63,8 @@ class TimetableConfig:
 class TimetableLookup(BeliefModel):
     """Predict the modal receptacle among sightings sharing the query's bin.
 
-    The distribution is the bin's sighting-frequency histogram, normalized;
+    The distribution is the Dirichlet posterior mean of the bin's
+    sighting-frequency histogram over every location;
     modal ties break by recency within the bin. An empty bin (including the
     never-observed case, which the base class routes to the uniform
     fallback before this method is reached) degrades gracefully: the whole
@@ -74,9 +76,11 @@ class TimetableLookup(BeliefModel):
     def __init__(self, rng: random.Random, config: TimetableConfig,
                  half_life_h: Optional[float] = None,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None) -> None:
+                 negative_half_life_h: Optional[float] = None,
+                 frequency_alpha: float = DEFAULT_FREQUENCY_ALPHA) -> None:
         super().__init__(rng, floor_mass=floor_mass,
-                         negative_half_life_h=negative_half_life_h)
+                         negative_half_life_h=negative_half_life_h,
+                         frequency_alpha=frequency_alpha)
         if half_life_h is not None and half_life_h <= 0:
             raise ValueError(
                 f"TimetableLookup: half_life_h {half_life_h} must be > 0")
@@ -103,4 +107,4 @@ class TimetableLookup(BeliefModel):
                   if self._config.bin_of(ot) == query_bin]
         pool = in_bin if in_bin else history
         counts = self._weighted_counts(pool, t, self._half_life_s)
-        return self._normalized(counts, tie_break_recency=pool)
+        return self.dirichlet_normalized(counts, tie_break_recency=pool)

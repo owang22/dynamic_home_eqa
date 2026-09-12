@@ -26,7 +26,10 @@ Count floors (few-transition objects degrade to frequency, not garbage):
 ``min_departures`` observed departures; otherwise the object's pooled
 rate (total departures / total exposure) substitutes, and when even the
 pooled history holds fewer than ``min_departures`` departures the model
-returns the plain decayed-frequency distribution outright.
+returns the decayed-frequency distribution under the frequency path's
+Dirichlet prior outright. The return histogram keeps its empirical
+normalization: it is reached only with at least ``min_departures``
+observed departures, and carries only the ``1 - p_stay`` share.
 
 All times are seconds since episode start; a day is 86 400 s.
 Never-observed objects fall back to uniform via the base class.
@@ -39,7 +42,8 @@ import random
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
 
-from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
+from baselines.beliefs.base import (DEFAULT_FLOOR_MASS,
+                                    DEFAULT_FREQUENCY_ALPHA, BeliefModel)
 from baselines.types import DAY_SECONDS, Prediction
 
 HOURS_PER_DAY = 24
@@ -126,9 +130,11 @@ class PeriodicPersistence(BeliefModel):
     def __init__(self, rng: random.Random,
                  config: PeriodicPersistenceConfig,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None) -> None:
+                 negative_half_life_h: Optional[float] = None,
+                 frequency_alpha: float = DEFAULT_FREQUENCY_ALPHA) -> None:
         super().__init__(rng, floor_mass=floor_mass,
-                         negative_half_life_h=negative_half_life_h)
+                         negative_half_life_h=negative_half_life_h,
+                         frequency_alpha=frequency_alpha)
         self._cfg = config
 
     def _default_negative_half_life_h(self) -> float:
@@ -147,7 +153,7 @@ class PeriodicPersistence(BeliefModel):
                                             self._cfg.min_departures)
         if rate is None:
             counts = self._weighted_counts(history, t, half_life_s)
-            return self._normalized(counts, tie_break_recency=history)
+            return self.dirichlet_normalized(counts, tie_break_recency=history)
         t_last, r_last = history[-1]
         p_stay = math.exp(-rate * max(0, t - t_last))
         histogram = self._return_histogram(history, t, half_life_s)

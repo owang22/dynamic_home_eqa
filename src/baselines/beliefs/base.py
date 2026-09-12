@@ -46,6 +46,15 @@ A positive sighting AT the prediction instant short-circuits all of it
 (one-hot on that receptacle): an observation of the object at the query
 instant is ground truth then, and no model prior may outvote it.
 
+**The frequency path.** Several models turn an object's (decayed)
+placement counts into their predictive distribution. That step goes
+through :meth:`BeliefModel.dirichlet_normalized`, the posterior mean of a
+symmetric Dirichlet over every location: ``(count_r + alpha) / (total +
+alpha * n_locations)``. Models carrying their own pseudo-count smoothing
+of counts — the Markov transition row's Laplace alpha, the hierarchy
+backoff's shrinkage toward class and household pools, Perpetua's
+switching prior — keep it and do not stack a second prior on top.
+
 Supersession rule (the single place timestamps are compared, in
 :meth:`negative_observations`): an empty look at R recorded at ``t_ex``
 counts as long as no positive sighting of O anywhere is STRICTLY LATER
@@ -86,6 +95,16 @@ HierarchyBackoff` uses)."""
 COLD_START_PSEUDOCOUNT = 5.0
 """Raw class-evidence count at which the class pool carries half the
 weight against the household-wide pool."""
+
+DEFAULT_FREQUENCY_ALPHA = 0.06
+"""Symmetric Dirichlet concentration on the frequency path (see
+:meth:`BeliefModel.dirichlet_mean`).
+
+Set so that a single sighting leaves roughly 0.4 on the observed
+receptacle in a median fleet household: with 27 locations,
+``(1 + 0.06) / (1 + 0.06 * 27) = 0.40``. The empirical histogram it
+replaces puts 1.0 there, which the floor mix turns into 0.98 confidence
+off one observation. Fixed a priori; never tuned per bank."""
 
 
 def _normalize_counts(counts: Dict[str, float]) -> Dict[str, float]:
@@ -157,7 +176,10 @@ class BeliefModel(abc.ABC):
     model's own arithmetic, and is never what runs). ``negative_half_life_h``
     overrides the model's negative-evidence half-life (default: the
     model's own half-life where it has one, else
-    :data:`DEFAULT_NEGATIVE_HALF_LIFE_H`).
+    :data:`DEFAULT_NEGATIVE_HALF_LIFE_H`). ``frequency_alpha`` is the
+    Dirichlet concentration of the frequency path (default
+    :data:`DEFAULT_FREQUENCY_ALPHA`; 0 restores the empirical histogram
+    it replaced); models without a frequency path ignore it.
     """
 
     consumes_negative_evidence_natively: bool = False
@@ -167,7 +189,8 @@ class BeliefModel(abc.ABC):
 
     def __init__(self, rng: random.Random,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None) -> None:
+                 negative_half_life_h: Optional[float] = None,
+                 frequency_alpha: float = DEFAULT_FREQUENCY_ALPHA) -> None:
         if not 0.0 <= floor_mass < 1.0:
             raise ValueError(
                 f"{type(self).__name__}: floor_mass {floor_mass} outside [0, 1)")
@@ -175,9 +198,14 @@ class BeliefModel(abc.ABC):
             raise ValueError(
                 f"{type(self).__name__}: negative_half_life_h "
                 f"{negative_half_life_h} must be positive")
+        if frequency_alpha < 0:
+            raise ValueError(
+                f"{type(self).__name__}: frequency_alpha {frequency_alpha} "
+                f"must be non-negative")
         self._rng = rng
         self._floor_mass = float(floor_mass)
         self._negative_half_life_override = negative_half_life_h
+        self._frequency_alpha = float(frequency_alpha)
         self._context: EpisodeContext | None = None
         self._history: Dict[str, List[Tuple[int, str]]] = {}
         # object_id -> {receptacle_id: newest time O was seen absent from it}
@@ -496,6 +524,38 @@ class BeliefModel(abc.ABC):
             counts[receptacle] = counts.get(receptacle, 0.0) + weight
         return counts
 
+    @property
+    def frequency_alpha(self) -> float:
+        """Dirichlet concentration of the frequency path."""
+        return self._frequency_alpha
+
+    def dirichlet_mean(self, counts: Mapping[str, float]) -> Dict[str, float]:
+        """Posterior mean of a symmetric Dirichlet over every location.
+
+        ``(count_r + alpha) / (total + alpha * n_locations)``, spread over
+        all locations rather than only those ``counts`` mentions, so an
+        object seen once is not certain of where it lives. Sums to 1.
+        ``alpha`` 0 is the plain empirical histogram (what the frequency
+        path was before the prior); with no mass anywhere the result is
+        uniform.
+        """
+        locations = self._receptacles()
+        alpha = self._frequency_alpha
+        total = sum(counts.values()) + alpha * len(locations)
+        if total <= 0.0:
+            return {r: 1.0 / len(locations) for r in locations}
+        return {r: (counts.get(r, 0.0) + alpha) / total
+                for r in locations
+                if alpha > 0.0 or counts.get(r, 0.0) > 0.0}
+
+    def dirichlet_normalized(self, counts: Mapping[str, float],
+                             tie_break_recency: List[Tuple[int, str]]
+                             ) -> Prediction:
+        """The frequency path: :meth:`dirichlet_mean` of ``counts``, with
+        the recency tie-break of :meth:`_normalized`."""
+        return self._frequency_prediction(self.dirichlet_mean(counts),
+                                          tie_break_recency)
+
     def _normalized(self, counts: Mapping[str, float],
                     tie_break_recency: List[Tuple[int, str]]) -> Prediction:
         """Frequency-normalize ``counts`` into a Prediction.
@@ -505,7 +565,14 @@ class BeliefModel(abc.ABC):
         deterministic, so tied modal locations never consume randomness.
         """
         total = sum(counts.values())
-        dist = {r: c / total for r, c in counts.items()}
+        return self._frequency_prediction(
+            {r: c / total for r, c in counts.items()}, tie_break_recency)
+
+    @staticmethod
+    def _frequency_prediction(dist: Dict[str, float],
+                              tie_break_recency: List[Tuple[int, str]]
+                              ) -> Prediction:
+        """Wrap a normalized distribution, breaking argmax ties by recency."""
         top = max(dist.values())
         tied = [r for r, p in dist.items() if p == top]
         if len(tied) == 1:

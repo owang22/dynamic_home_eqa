@@ -20,7 +20,8 @@ import pathlib
 import random
 from typing import Any, Callable, Dict, Mapping, Tuple
 
-from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
+from baselines.beliefs.base import (DEFAULT_FLOOR_MASS,
+                                    DEFAULT_FREQUENCY_ALPHA, BeliefModel)
 from baselines.beliefs.daytype_mixture import (DaytypeMixture,
                                                DaytypeMixtureConfig)
 from baselines.beliefs.hierarchy_backoff import (HierarchyBackoff,
@@ -79,6 +80,14 @@ def _base_kwargs(spec: Dict[str, Any]) -> Dict[str, Any]:
             "negative_half_life_h": None if raw_hl is None else float(raw_hl)}
 
 
+def _frequency_kwargs(spec: Dict[str, Any]) -> Dict[str, Any]:
+    """:func:`_base_kwargs` plus ``frequency_alpha``, for the models with a
+    frequency path (see :mod:`baselines.beliefs.base`)."""
+    return {**_base_kwargs(spec),
+            "frequency_alpha": float(spec.get("frequency_alpha",
+                                              DEFAULT_FREQUENCY_ALPHA))}
+
+
 def _build_last_observation(spec: Dict[str, Any],
                             rng: random.Random) -> BeliefModel:
     return LastObservation(rng, **_base_kwargs(spec))
@@ -103,14 +112,14 @@ def _build_llm(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
 
 def _build_most_frequent(spec: Dict[str, Any],
                          rng: random.Random) -> BeliefModel:
-    return MostFrequentLocation(rng, **_base_kwargs(spec),
+    return MostFrequentLocation(rng, **_frequency_kwargs(spec),
                                 half_life_h=_optional_half_life(spec))
 
 
 def _build_timetable(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
     cfg = TimetableConfig(bin_hours=int(spec.get("bin_hours", 1)),
                           day_scheme=str(spec.get("day_scheme", "all")))
-    return TimetableLookup(rng, cfg, **_base_kwargs(spec),
+    return TimetableLookup(rng, cfg, **_frequency_kwargs(spec),
                            half_life_h=_optional_half_life(spec))
 
 
@@ -120,7 +129,7 @@ def _build_markov1(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
         mixing_cutoff_h=float(spec.get("mixing_cutoff_h",
                                        Markov1Config.mixing_cutoff_h)),
         half_life_h=float(spec.get("half_life_h", Markov1Config.half_life_h)))
-    return Markov1(rng, cfg, **_base_kwargs(spec))
+    return Markov1(rng, cfg, **_frequency_kwargs(spec))
 
 
 def _build_periodic_persistence(spec: Dict[str, Any],
@@ -130,7 +139,7 @@ def _build_periodic_persistence(spec: Dict[str, Any],
         min_departures=int(spec.get("min_departures", d.min_departures)),
         bin_hours=int(spec.get("bin_hours", d.bin_hours)),
         half_life_h=float(spec.get("half_life_h", d.half_life_h)))
-    return PeriodicPersistence(rng, cfg, **_base_kwargs(spec))
+    return PeriodicPersistence(rng, cfg, **_frequency_kwargs(spec))
 
 
 def _build_daytype_mixture(spec: Dict[str, Any],
@@ -141,7 +150,7 @@ def _build_daytype_mixture(spec: Dict[str, Any],
         bin_hours=int(spec.get("bin_hours", d.bin_hours)),
         half_life_h=float(spec.get("half_life_h", d.half_life_h)),
         kmeans_seed=int(spec.get("kmeans_seed", d.kmeans_seed)))
-    return DaytypeMixture(rng, cfg, **_base_kwargs(spec))
+    return DaytypeMixture(rng, cfg, **_frequency_kwargs(spec))
 
 
 def _build_smoothed_recency(spec: Dict[str, Any],
@@ -152,7 +161,7 @@ def _build_smoothed_recency(spec: Dict[str, Any],
                                              d.smoothing_half_life_h)),
         frequency_half_life_h=float(spec.get("frequency_half_life_h",
                                              d.frequency_half_life_h)))
-    return SmoothedRecency(rng, cfg, **_base_kwargs(spec))
+    return SmoothedRecency(rng, cfg, **_frequency_kwargs(spec))
 
 
 def _build_hierarchy_backoff(spec: Dict[str, Any],

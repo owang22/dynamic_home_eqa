@@ -12,25 +12,29 @@ from __future__ import annotations
 import random
 from typing import List, Optional, Tuple
 
-from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
+from baselines.beliefs.base import (DEFAULT_FLOOR_MASS,
+                                    DEFAULT_FREQUENCY_ALPHA, BeliefModel)
 from baselines.types import Prediction
 
 
 class MostFrequentLocation(BeliefModel):
     """Predict the (optionally decayed) modal receptacle for the object.
 
-    The distribution is the sighting histogram — decayed by
-    ``half_life_h`` hours when set — normalized. Modal ties break by
-    recency (deterministic — no randomness consumed). Never-observed
-    objects fall back to the uniform distribution.
+    The distribution is the Dirichlet posterior mean of the sighting
+    histogram — decayed by ``half_life_h`` hours when set — over every
+    location. Modal ties break by recency (deterministic — no randomness
+    consumed). Never-observed objects fall back to the uniform
+    distribution.
     """
 
     def __init__(self, rng: random.Random,
                  half_life_h: Optional[float] = None,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None) -> None:
+                 negative_half_life_h: Optional[float] = None,
+                 frequency_alpha: float = DEFAULT_FREQUENCY_ALPHA) -> None:
         super().__init__(rng, floor_mass=floor_mass,
-                         negative_half_life_h=negative_half_life_h)
+                         negative_half_life_h=negative_half_life_h,
+                         frequency_alpha=frequency_alpha)
         if half_life_h is not None and half_life_h <= 0:
             raise ValueError(
                 f"MostFrequentLocation: half_life_h {half_life_h} must be > 0")
@@ -51,4 +55,4 @@ class MostFrequentLocation(BeliefModel):
     def _predict_from_history(
             self, history: List[Tuple[int, str]], t: int) -> Prediction:
         counts = self._weighted_counts(history, t, self._half_life_s)
-        return self._normalized(counts, tie_break_recency=history)
+        return self.dirichlet_normalized(counts, tie_break_recency=history)

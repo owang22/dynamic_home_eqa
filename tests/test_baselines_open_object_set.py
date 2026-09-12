@@ -57,8 +57,10 @@ def test_object_registered_by_question_then_moves_on_sighting() -> None:
     assert abs(sum(before.distribution.values()) - 1.0) < 1e-9
     model.update(_obs("keys_1", "keys", "entry_e", 20))
     after = model.predict("keys_1", 30)
+    # One sighting, so the frequency path's Dirichlet prior keeps real
+    # mass on every other receptacle.
     assert after.argmax == "entry_e"
-    assert after.distribution["entry_e"] == pytest.approx(1.0)
+    assert 0.3 < after.distribution["entry_e"] < 1.0
 
 
 def test_object_registered_from_sense_result() -> None:

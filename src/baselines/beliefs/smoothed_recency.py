@@ -17,7 +17,8 @@ is proper throughout, so log loss and calibration are finite and
 meaningful.
 
 The frequency component uses the panel's frozen 24 h count half-life
-(see the registry module docstring). The smoothing half-life was chosen
+(see the registry module docstring) under the frequency path's Dirichlet
+prior, so a single sighting does not make both terms one-hot at once. The smoothing half-life was chosen
 once on a three-household development split (storyfirst hh1/hh2/hh3,
 mean question-set accuracy over the budget-sweep levels, candidates
 {2, 6, 12, 24, 48} h; 6 h won at 0.6371 with 2 h at 0.6359) and then
@@ -35,7 +36,8 @@ import dataclasses
 import random
 from typing import Dict, List, Optional, Tuple
 
-from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
+from baselines.beliefs.base import (DEFAULT_FLOOR_MASS,
+                                    DEFAULT_FREQUENCY_ALPHA, BeliefModel)
 from baselines.types import Prediction
 
 
@@ -66,9 +68,11 @@ class SmoothedRecency(BeliefModel):
 
     def __init__(self, rng: random.Random, config: SmoothedRecencyConfig,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None) -> None:
+                 negative_half_life_h: Optional[float] = None,
+                 frequency_alpha: float = DEFAULT_FREQUENCY_ALPHA) -> None:
         super().__init__(rng, floor_mass=floor_mass,
-                         negative_half_life_h=negative_half_life_h)
+                         negative_half_life_h=negative_half_life_h,
+                         frequency_alpha=frequency_alpha)
         self._config = config
         self._smoothing_s = config.smoothing_half_life_h * 3600
         self._frequency_s = config.frequency_half_life_h * 3600
@@ -85,8 +89,7 @@ class SmoothedRecency(BeliefModel):
     def _frequency_distribution(
             self, history: List[Tuple[int, str]], t: int) -> Dict[str, float]:
         counts = self._weighted_counts(history, t, self._frequency_s)
-        total = sum(counts.values())
-        return {r: c / total for r, c in counts.items()}
+        return self.dirichlet_mean(counts)
 
     def _predict_from_history(
             self, history: List[Tuple[int, str]], t: int) -> Prediction:

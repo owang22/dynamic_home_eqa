@@ -88,8 +88,11 @@ def test_periodic_persistence_few_transitions_degrades_to_frequency():
     belief.update(_obs("obj", 0, "a"))
     belief.update(_obs("obj", 100, "a"))    # zero departures anywhere
     prediction = belief.predict("obj", DAY_SECONDS)
+    # The degradation path is the frequency path, so the two sightings of
+    # a leave the Dirichlet prior's mass on every other receptacle.
     assert prediction.argmax == "a"
-    assert prediction.distribution["a"] == pytest.approx(1.0)
+    assert 0.0 < prediction.distribution["b"] < prediction.distribution["a"]
+    assert prediction.distribution["a"] < 1.0
 
 
 # ---------------------------------------------------------------- markov1
@@ -119,10 +122,12 @@ def test_markov1_backs_off_to_frequency_beyond_cutoff():
     for t, rec in ((0, "a"), (10, "b"), (20, "a")):
         belief.update(_obs("obj", t, rec))
     prediction = belief.predict("obj", 2 * _H + 30)
-    # Beyond the cutoff: the decayed frequency histogram (a twice, b once).
+    # Beyond the cutoff: the decayed frequency histogram (a twice, b once)
+    # under the frequency path's Dirichlet prior, so the never-sighted c
+    # holds the prior's share and nothing more.
     assert prediction.argmax == "a"
     assert prediction.distribution["b"] < prediction.distribution["a"]
-    assert prediction.distribution.get("c", 0.0) == 0.0
+    assert 0.0 < prediction.distribution["c"] < prediction.distribution["b"]
 
 
 # ------------------------------------------------------- hierarchy_backoff

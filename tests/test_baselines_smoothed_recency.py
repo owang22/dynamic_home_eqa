@@ -51,19 +51,32 @@ def test_fresh_sighting_behaves_like_last_observation() -> None:
     assert pred.distribution["b"] > 0.999
 
 
+def _frequency_share(model: SmoothedRecency, count: float) -> float:
+    """The frequency component's mass on a receptacle sighted ``count``
+    times out of three, under the frequency path's Dirichlet prior."""
+    alpha = model.frequency_alpha
+    return (count + alpha) / (3.0 + alpha * len(RECS))
+
+
 def test_stale_sighting_behaves_like_most_frequent() -> None:
-    pred = _model().predict("o", 7200 + 600 * 3600)   # 600 h stale
+    model = _model()
+    pred = model.predict("o", 7200 + 600 * 3600)      # 600 h stale
     assert pred.argmax == "a"
-    assert pred.distribution["a"] == pytest.approx(2 / 3, abs=1e-6)
-    assert pred.distribution["b"] == pytest.approx(1 / 3, abs=1e-6)
+    assert pred.distribution["a"] == pytest.approx(_frequency_share(model, 2),
+                                                   abs=1e-6)
+    assert pred.distribution["b"] == pytest.approx(_frequency_share(model, 1),
+                                                   abs=1e-6)
 
 
 def test_interpolation_at_one_half_life_is_exact() -> None:
     # Elapsed exactly the 6 h smoothing half-life: weight 1/2 on the last
-    # receptacle b, 1/2 on the (a: 2/3, b: 1/3) frequency shares.
-    pred = _model().predict("o", 7200 + 6 * 3600)
-    assert pred.distribution["b"] == pytest.approx(0.5 + 0.5 / 3)
-    assert pred.distribution["a"] == pytest.approx(0.5 * 2 / 3)
+    # receptacle b, 1/2 on the Dirichlet frequency shares.
+    model = _model()
+    pred = model.predict("o", 7200 + 6 * 3600)
+    assert pred.distribution["b"] == pytest.approx(
+        0.5 + 0.5 * _frequency_share(model, 1))
+    assert pred.distribution["a"] == pytest.approx(
+        0.5 * _frequency_share(model, 2))
     assert sum(pred.distribution.values()) == pytest.approx(1.0)
 
 
@@ -83,7 +96,7 @@ def test_positive_path_matches_pre_migration_fixture() -> None:
         episode = next(write_gate_pass_bank(
             pathlib.Path(tmp) / "b.jsonl", seed=0).episodes())
     model = SmoothedRecency(random.Random(0), SmoothedRecencyConfig(),
-                            floor_mass=0.0)
+                            floor_mass=0.0, frequency_alpha=0.0)
     model.reset(episode.agent_view())
     for obs in episode.initial_observations:
         model.update(obs)

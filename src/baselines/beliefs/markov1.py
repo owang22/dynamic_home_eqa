@@ -27,7 +27,8 @@ import random
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
 
-from baselines.beliefs.base import DEFAULT_FLOOR_MASS, BeliefModel
+from baselines.beliefs.base import (DEFAULT_FLOOR_MASS,
+                                    DEFAULT_FREQUENCY_ALPHA, BeliefModel)
 from baselines.types import Prediction
 
 
@@ -53,17 +54,21 @@ class Markov1(BeliefModel):
     """One-step transition propagation from the last sighting.
 
     Within the mixing cutoff: the Laplace-smoothed decayed transition row
-    of the last-sighted receptacle. Beyond it: the decayed
-    sighting-frequency (stationary) distribution. Argmax ties break by
+    of the last-sighted receptacle (its own alpha, so the frequency path's
+    Dirichlet prior is not stacked on top). Beyond it: the decayed
+    sighting-frequency (stationary) distribution under the frequency
+    path's Dirichlet prior. Argmax ties break by
     preferring the last-sighted receptacle, then by receptacle order — no
     randomness consumed.
     """
 
     def __init__(self, rng: random.Random, config: Markov1Config,
                  floor_mass: float = DEFAULT_FLOOR_MASS,
-                 negative_half_life_h: Optional[float] = None) -> None:
+                 negative_half_life_h: Optional[float] = None,
+                 frequency_alpha: float = DEFAULT_FREQUENCY_ALPHA) -> None:
         super().__init__(rng, floor_mass=floor_mass,
-                         negative_half_life_h=negative_half_life_h)
+                         negative_half_life_h=negative_half_life_h,
+                         frequency_alpha=frequency_alpha)
         self._cfg = config
 
     def _default_negative_half_life_h(self) -> float:
@@ -82,7 +87,7 @@ class Markov1(BeliefModel):
         t_last, r_last = history[-1]
         if t - t_last > self._cfg.mixing_cutoff_h * 3600:
             counts = self._weighted_counts(history, t, half_life_s)
-            return self._normalized(counts, tie_break_recency=history)
+            return self.dirichlet_normalized(counts, tie_break_recency=history)
         row = self._transition_row(history, r_last, t, half_life_s)
         return self._row_prediction(row, r_last)
 

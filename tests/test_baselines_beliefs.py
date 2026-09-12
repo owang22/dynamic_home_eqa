@@ -32,6 +32,15 @@ def _obs(rec: str, t: int) -> Observation:
                        t=t, source="scripted")
 
 
+def _dirichlet(model, counts: dict[str, float]) -> dict[str, float]:
+    """The frequency path's expected distribution for a count histogram:
+    (count + alpha) / (total + alpha * |RECS|) over every receptacle."""
+    alpha = model.frequency_alpha
+    denominator = sum(counts.values()) + alpha * len(RECS)
+    return {r: pytest.approx((counts.get(r, 0.0) + alpha) / denominator)
+            for r in RECS}
+
+
 def test_last_observation_tracks_most_recent_sighting() -> None:
     model = LastObservation(random.Random(0), floor_mass=0.0)
     model.reset(_context())
@@ -56,13 +65,13 @@ def test_never_observed_falls_back_to_uniform() -> None:
 def test_most_frequent_prefers_the_mode() -> None:
     model = MostFrequentLocation(random.Random(0), floor_mass=0.0)
     model.reset(_context())
-    # a seen twice, b once: distribution 2/3 vs 1/3, argmax a.
+    # a seen twice, b once; the frequency path's Dirichlet posterior mean
+    # is (count + alpha) / (3 + 3 * alpha), argmax a.
     for rec, t in (("a", 10), ("b", 20), ("a", 30)):
         model.update(_obs(rec, t))
     pred = model.predict("o", 100)
     assert pred.argmax == "a"
-    assert _nonzero(pred) == {"a": pytest.approx(2 / 3),
-                              "b": pytest.approx(1 / 3)}
+    assert _nonzero(pred) == _dirichlet(model, {"a": 2.0, "b": 1.0})
 
 
 def test_most_frequent_breaks_ties_by_recency() -> None:
@@ -108,8 +117,7 @@ def test_timetable_empty_bin_degrades_to_most_frequent() -> None:
     # 15:00 was never observed: the whole history votes, mode is a.
     pred = model.predict("o", DAY_SECONDS + 15 * H)
     assert pred.argmax == "a"
-    assert _nonzero(pred) == {"a": pytest.approx(2 / 3),
-                              "b": pytest.approx(1 / 3)}
+    assert _nonzero(pred) == _dirichlet(model, {"a": 2.0, "b": 1.0})
 
 
 def test_timetable_weekday_weekend_scheme_separates_days() -> None:
