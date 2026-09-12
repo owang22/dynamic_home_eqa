@@ -26,6 +26,8 @@ from baselines.beliefs.daytype_mixture import (DaytypeMixture,
                                                DaytypeMixtureConfig)
 from baselines.beliefs.hierarchy_backoff import (HierarchyBackoff,
                                                  HierarchyBackoffConfig)
+from baselines.beliefs.hypothesis_mixture import (DEFAULT_DECAY,
+                                                  HypothesisMixture)
 from baselines.beliefs.last_observation import LastObservation
 from baselines.beliefs.llm_belief import (LLMBelief, LLMBeliefConfig,
                                           PromptCache)
@@ -164,6 +166,17 @@ def _build_smoothed_recency(spec: Dict[str, Any],
     return SmoothedRecency(rng, cfg, **_frequency_kwargs(spec))
 
 
+def _build_hypothesis_mixture(spec: Dict[str, Any],
+                              rng: random.Random) -> BeliefModel:
+    """Particles come from the spec's ``particles`` list (registry belief
+    specs; default one representative per family) and ``decay`` is the
+    weight-forgetting factor."""
+    return HypothesisMixture(
+        rng, particle_specs=spec.get("particles"),
+        decay=float(spec.get("decay", DEFAULT_DECAY)),
+        **_base_kwargs(spec))
+
+
 def _build_hierarchy_backoff(spec: Dict[str, Any],
                              rng: random.Random) -> BeliefModel:
     d = HierarchyBackoffConfig
@@ -258,6 +271,8 @@ BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
                     _build_hierarchy_backoff),
         BeliefEntry("smoothed_recency", "candidate",
                     _build_smoothed_recency),
+        BeliefEntry("hypothesis_mixture", "candidate",
+                    _build_hypothesis_mixture),
         BeliefEntry("perpetua", "candidate", _build_perpetua),
         BeliefEntry("perpetua_star", "candidate", _build_perpetua_star),
         BeliefEntry("llm", "candidate", _build_llm),

@@ -1,5 +1,108 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-09-11, later: questions from day 0; hypothesis mixture + disambiguation sensing, trial run)
+
+Continues past the disagreement STOP at the user's direction (the family
+panel had passed the gate).
+
+### Questions now start the day of the tour
+
+`configs/fleet.yaml` had `first_question_day: 3` — a three-day warmup
+with observations and no questions. Besides delaying examination, it
+meant no question ever saw a single-sighting object fresh: the tour was
+the only sighting and always days stale by the first query. Now
+`first_question_day: 0`. Trial re-export of hh_001/hh_002 to
+`banks/baselines/fleet_day0/` (90 questions on every day, day 0
+included). The 20-bank fleet under `banks/baselines/fleet/` is NOT
+re-exported — that is a full sweep and the frozen instrument's banks
+should not silently change under it; re-export deliberately when wanted.
+
+### `hypothesis_mixture` belief
+
+`beliefs/hypothesis_mixture.py`, registered as candidate. Particles are
+registry beliefs (default: 7 cheap family representatives;
+`daytype_mixture`/`perpetua_star` cut for speed, addable via the
+`particles` spec). One log weight per particle, uniform at reset. At
+sighting time — BEFORE the sighting is applied — each particle is asked
+for its distribution over the object's location and gains
+`log(p_particle(observed receptacle))`, tempered by
+`log_w = decay * log_w + log p`. Deviation from the brief's letter: the
+predict-before-update hook lives inside `update()` rather than the
+harness — every consumer delivers evidence through `update`, so this
+covers harness, passive eval, replay and traces without widening any
+shared contract. Empty looks update particle evidence but not weights.
+Prediction = weight-normalized average of particle predictions; the
+mixture adds NO second floor and NO second suppression (particles
+already did both; single-particle mixture equals the particle exactly,
+tested). ESS `1/sum w^2` tracked per weight update.
+
+`decay` default 0.95, measured not guessed: the steady-state log-weight
+gap scales as `1/(1-decay)`, and on the gate-pass fixture 1.0 and 0.98
+both collapse (ESS 1.00/1.03) while 0.95 holds ESS 2.4 with a 0.57
+leader. The brief's tests all pass: weights normalized+finite over an
+episode; a badly predicting particle loses weight; decay 1 collapses
+while the default keeps ESS above 1; one-particle equivalence.
+
+### `hypothesis_disambiguation_sense` policy
+
+`policies/hypothesis_disambiguation.py`. Extends `VoIThresholdSense`
+via a new `_sense_values` hook (base class refactor; base behaviour
+byte-identical): sense while `(voi(r) + beta * weight_entropy_reduction(r))
+/ cost(r) >= lambda`. The bonus is the expected Shannon-entropy drop of
+the weight vector over the binary found/not-found outcome for the
+CURRENT question's object (`p_mix(r) = sum w_i p_i(r)`; posterior
+weights one multiply per particle per outcome). At `beta = 0` the bonus
+is never computed and the policy reproduces the myopic VoI policy
+decision-for-decision and draw-for-draw (tested on full episode runs).
+Each issued sense is classified needed-vs-disambiguation by whether raw
+voi alone cleared the price (`sense_split`).
+
+**Coherence gap, noted not fixed:** the bonus values BOTH outcomes of a
+sense, but the mixture only updates weights on positive sightings — a
+disambiguating sense that comes back empty for the queried object never
+actually moves the weights. The policy is paying for information the
+belief then discards half the time. Extending weighting to empty looks
+(likelihood `1 - p_i(r)`) is the obvious follow-up.
+
+### Trial run (2 households, first 7 days, lambdas {0.02, 0.08, 0.2} x betas {0, 0.5, 2})
+
+`hypothesis_mixture_study.py` -> `results/hypothesis_mixture_trial/`
+(frontier.png, ess_over_time.png, sense_split.png, trial_results.json).
+~3 min total.
+
+- **Frontier:** beta=0.5 sits above the myopic line over the whole
+  swept range (e.g. 0.641 vs 0.633 at the low end, 0.660 vs 0.653 at
+  24 senses/day); beta=2 at lambda=0.2 reaches 0.660 at 20.5 senses/day
+  vs myopic 0.646 at 20.9. Direction is positive at matched budget, but
+  the gaps are 0.005-0.015 on ~1 260 questions per config — binomial
+  noise is ~0.013, so the trial shows a consistent trend, NOT a
+  significant win. That is what a trial can show; a fleet run decides.
+- **ESS:** disambiguation sharpens where there is room (hh_001,
+  lambda=0.2: final ESS 1.05 at beta=2 vs 1.52 myopic). hh_002's
+  weights sit near-collapsed (ESS ~1) for every policy — one particle
+  dominates that household outright; not investigated (one line, moved
+  on).
+- **Split:** at beta=0.5 the bonus buys 6-14% of senses; at beta=2,
+  lambda=0.2 over half the senses are disambiguation-only — beta=2
+  spends most of its budget on the weights, and its accuracy at that
+  configuration is the trial's best.
+- Budget saturates at 24 senses/day for lambda <= 0.08, so the low-
+  lambda frontier points bunch at the cap.
+
+### Fat cut (trial-run pass)
+
+- 2 households, 7 of 28 days, one seed, no intervals.
+- Default particle list drops `daytype_mixture` and `perpetua_star`
+  (cost); the two most-distinct families per the disagreement matrix
+  are therefore underrepresented.
+- Entropy bonus computed for the current question's object only; no
+  scan for the most-disambiguating object.
+- Empty-look weighting (the coherence gap above) not implemented.
+- Fleet banks not re-exported at first_question_day 0.
+- Pre-existing unrelated failure unchanged:
+  `test_baselines_llm_belief.py::test_prompt_and_key_match_the_committed_fixture`.
+
+
 ## Update (2026-09-11: Dirichlet prior on the frequency path; belief disagreement measured — GATE PASSES on families, FAILS on parameter variants)
 
 Two sections of the hypothesis-mixture brief. The second ends at a STOP;

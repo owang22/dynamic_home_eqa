@@ -158,7 +158,7 @@ class VoIThresholdSense(DecisionPolicy):
         untried = [r for r in self._receptacles if r not in self._tried]
         if not untried:
             return AnswerNow()
-        voi = value_of_information(prediction.distribution, untried)
+        voi = self._sense_values(question, prediction, untried)
         # Value per unit of budget: with a room-change cost the same voi
         # is worth less when it needs a trip. At c = 0 every cost is 1
         # and this is voi(r) and the plain threshold, exactly.
@@ -175,6 +175,13 @@ class VoIThresholdSense(DecisionPolicy):
         self._tried.add(choice)
         self._on_sense()
         return Sense(receptacle_id=choice)
+
+    def _sense_values(self, question: Question, prediction: Prediction,
+                      untried: Sequence[str]) -> Dict[str, float]:
+        """Value of sensing each untried receptacle. The base rule is the
+        one-step voi of the module docstring; a subclass may add value a
+        sense carries beyond the current question."""
+        return value_of_information(prediction.distribution, untried)
 
     def _on_sense(self) -> None:
         """Hook: a sense was issued for the current question."""

@@ -14,7 +14,11 @@ export:
   patrol: round_robin_patrol
   visits_per_day: 6
   questions_per_day: 90
-  first_question_day: 3
+  # Questions start the day of the initial tour. The old value of 3 gave
+  # beliefs an unexamined warmup, which also meant no question ever saw a
+  # single-sighting object fresh: the tour was the only sighting and it
+  # was always days stale by the first query.
+  first_question_day: 0
   budget_per_day: 24
   query_mode: uniform
   initial_tour: true
