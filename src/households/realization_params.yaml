@@ -71,6 +71,15 @@ carry_on_departure:
   # every household still has a few signature gaps. Per-day forgetting
   # comes from p_misplace, not from this.
   carry_p: 0.85
+  # Per-departure forgetting of a POCKET item (phone, keys, wallet) on
+  # top of the standing omissions above: each pickup of one happens with
+  # probability 1 - forget_p, and a forgotten item stays where it was
+  # (its homecoming rule reaches only what came home on the person).
+  # Non-pocket travellers do not use this: their "not taken this time"
+  # chance is the authored NO_OP mass of their rule on the trip. A
+  # judgment default — one departure in twenty — with no dataset behind
+  # it; 0 disables the draw.
+  forget_p: 0.05
   # Two ELSEWHERE bouts of one resident closer together than this (minutes
   # at home between trips) do NOT re-fire pickup/putdown for items that
   # never moved in between: the person plausibly kept the bag packed.

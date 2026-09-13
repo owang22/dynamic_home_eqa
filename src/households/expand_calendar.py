@@ -216,9 +216,31 @@ def takes_along(household: str, obj: str, activity: str,
 
 AFTER_ONLY_V3 = "after_only_v3"
 
+# Object classes a person keeps ON them whenever they leave the house
+# (the persona prompt promises exactly this: "people who leave the house
+# usually take their phone and keys"). Everything else rides only the
+# trips its own rules name — a yoga mat goes to the gym, not to work.
+POCKET_CLASSES = ("phone", "keys", "wallet")
+
+
+def is_pocket(obj: str) -> bool:
+    """Ids begin with their class ("wallet_mara", "keys_1")."""
+    return any(obj == c or obj.startswith(c + "_") for c in POCKET_CLASSES)
+
+
+# Classes that never leave the house on a person, whatever their rules
+# say: a rule on an away leg (a plate after a work-day `lunch`) fires as
+# an in-house move at homecoming, as any non-traveller's does.
+HOMEBOUND_CLASSES = ("plate", "bowl", "mug", "pot", "pan", "vacuum_cleaner",
+                     "remote", "blanket", "watering_can", "gaming_controller")
+
+
+def is_homebound(obj: str) -> bool:
+    return any(obj == c or obj.startswith(c + "_") for c in HOMEBOUND_CLASSES)
+
 
 def expand(program: dict, carry_on_departure: bool = True,
-           carry_p: float = 0.85) -> tuple[dict, dict]:
+           carry_p: float = 0.85, forget_p: float = 0.0) -> tuple[dict, dict]:
     """routine_program dict -> (acts, motions) for the v1 simulator.
 
     Programs marked `object_semantics: after_only_v3` (stamped by
@@ -317,6 +339,33 @@ def expand(program: dict, carry_on_departure: bool = True,
     # 21 days, same story for phones/keys across both models.
     premerge_away_base: set = {o["activity"] for o in occs
                                if o["at"] == ELSEWHERE}
+    # -- travellers (v3) -------------------------------------------------
+    # obj -> owner id (None for a shared object: it rides whichever
+    # resident's trip its rule names, since nobody else is out with it),
+    # and obj -> the away activities its rules name. An object rides a
+    # trip when one of those is a leg of THAT trip's chain — the yoga mat
+    # goes on the work day that passed the gym, the towel on the
+    # laundromat run — and only pocket items (phone, keys, wallet) ride
+    # every trip of their owner. Homebound classes never ride.
+    owners = program.get("object_owners") or {}
+    travellers: dict[str, str | None] = {}
+    rides: dict[str, set] = {}
+    if v3:
+        for entry_ in placements_of(program):
+            obj_ = entry_["object"]
+            own = owners.get(obj_)
+            own = None if own in (None, "shared") else own
+            acts_ = {renames.get(r_["activity"], r_["activity"])
+                     for r_ in entry_.get("rules") or []}
+            acts_ &= premerge_away_base
+            if is_homebound(obj_):
+                continue
+            if acts_ or (own and is_pocket(obj_)):
+                travellers[obj_] = own
+                rides[obj_] = acts_
+    # A chain leg some traveller rides on changes what the trip carries,
+    # so it distinguishes the trip's VARIANT (see _key below).
+    ridden_legs: set = set().union(*rides.values()) if rides else set()
     # dominant base activity -> every base activity ever merged into it.
     # The trip fires the after-rules of ALL its chain members at
     # homecoming (dominant's rule winning per object): named for one
@@ -349,6 +398,7 @@ def expand(program: dict, carry_on_departure: bool = True,
                 # (the hosted pilot's static wallets); the merge comment
                 # always intended "the trip's own reason".
                 chain = mine[i:j]
+                chain[0]["members"] = []
                 if len(chain) > 1:
                     def _dur(o: dict) -> int:
                         if not o.get("end"):
@@ -359,6 +409,12 @@ def expand(program: dict, carry_on_departure: bool = True,
                     away_chain_bases.setdefault(
                         dom["activity"], set()).update(
                             o["activity"] for o in chain)
+                    # THIS trip's other legs, kept on the survivor: a
+                    # work day that also passed the gym is a different
+                    # trip from a plain work day — its variant carries
+                    # the gym rules, the plain one does not (see _key).
+                    chain[0]["members"] = sorted(
+                        {o["activity"] for o in chain} - {dom["activity"]})
                     for o in chain[1:]:
                         drop_uids.add(o["uid"])
                         merged_away.append(
@@ -385,8 +441,16 @@ def expand(program: dict, carry_on_departure: bool = True,
     # Going OUT also splits per resident, not just per place: leaving the
     # house is the moment a person's carried things go with them, and two
     # people running their own errands must not pick up each other's phone.
+    # A merged trip ALSO splits by the ruled chain legs it absorbed
+    # (v3): "work_away__resident_1+gym" is the work day that passed the
+    # gym, and only that variant carries the gym rules and the objects
+    # that ride them. Keyed on the dominant name alone, two gym days a
+    # month put the yoga mat on every commute.
+    def _extras(o: dict) -> tuple:
+        return tuple(m for m in o.get("members", ()) if m in ridden_legs)
+
     def _key(o: dict) -> tuple:
-        return ((o["at"], o["jitter"], o["resident"])
+        return ((o["at"], o["jitter"], o["resident"], _extras(o))
                 if o["at"] == ELSEWHERE else (o["at"], o["jitter"]))
 
     variants: dict[str, dict[tuple, str]] = {}
@@ -394,17 +458,22 @@ def expand(program: dict, carry_on_departure: bool = True,
         key = _key(o)
         group = variants.setdefault(o["activity"], {})
         if key not in group:
+            extras = _extras(o) if o["at"] == ELSEWHERE else ()
             suffix = (o["resident"] if o["at"] == ELSEWHERE else o["at"])
-            group[key] = (o["activity"] if not group
+            suffix += "".join(f"+{m}" for m in extras)
+            group[key] = (o["activity"] if not group and not extras
                           else f"{o['activity']}__{suffix}")
     activity_info: dict[str, dict] = {}
     away_resident: dict[str, str] = {}      # away variant -> who is out
+    variant_members: dict[str, set] = {}    # away variant -> its base + legs
     for o in occs:
         o["base_activity"] = o["activity"]
         o["activity"] = variants[o["activity"]][_key(o)]
         activity_info[o["activity"]] = {"at": o["at"], "jitter": o["jitter"]}
         if o["at"] == ELSEWHERE:
             away_resident[o["activity"]] = o["resident"]
+            variant_members.setdefault(o["activity"], set()).update(
+                [o["base_activity"], *o.get("members", ())])
 
     # -- linger synthesis (see module docstring) --------------------------
     horizon = days * 1440
@@ -531,25 +600,16 @@ def expand(program: dict, carry_on_departure: bool = True,
     #   (b) home-variant `after` rules get only_from restricted to
     #       receptacles (a person-held or out-of-house object is out of
     #       reach of anyone's home activity);
-    #   (c) person legs are OWNER-AWARE, and an object that rides one kind
-    #       of trip rides ALL its owner's trips (keys go along on the walk,
-    #       not only to work — per-person behaviour, which per-activity
-    #       rules cannot express), with a synthesized homecoming putdown to
-    #       `home` on trips whose activity has no authored after rule.
-    owners = program.get("object_owners") or {}
-    # Pre-merge (see above): an object whose rule names ANY activity of a
-    # trip's chain rides that trip.
-    away_base = premerge_away_base
-    travellers: dict[str, set] = {}       # obj -> owners' ids that carry it
-    if v3:
-        for entry_ in placements_of(program):
-            obj_ = entry_["object"]
-            for r_ in entry_.get("rules") or []:
-                if r_["activity"] in away_base:
-                    own = owners.get(obj_)
-                    if own and own != "shared":
-                        travellers.setdefault(obj_, set()).add(own)
-
+    #   (c) person legs are OWNER-AWARE and PER TRIP (travellers/rides,
+    #       computed above): an object rides the trips its own rules
+    #       name and only those — except POCKET items, which ride ALL
+    #       their owner's trips, subject to a standing per-trip-type
+    #       omission (`takes_along`) on trips no rule named and a
+    #       per-departure `forget_p`. "Rides one, rides all" was meant
+    #       for keys and applied to everything: hh1's suitcase went to
+    #       work daily, its laundry basket on walks. A trip with no
+    #       authored after rule for the object gets a synthesized
+    #       homecoming putdown to `home`.
     for name, act in raw_pivot.items():
         if name == "__orphaned__":
             continue
@@ -567,8 +627,9 @@ def expand(program: dict, carry_on_departure: bool = True,
         # up on return"), not fake movement. Without this, jacket_elias
         # was classed static, then carried, and the v1 lint rightly
         # objected to a moving static.
-        for obj_, rid_set in travellers.items():
-            for rid_ in rid_set:
+        for obj_, own_ in travellers.items():
+            for rid_ in ([own_] if own_ else
+                         [r["id"] for r in program["residents"]]):
                 dests_by_obj.setdefault(obj_, set()).add(f"{PERSON}{rid_}")
     statics = {o for o, d in dests_by_obj.items() if not d - {homes.get(o)}}
     inert = sorted(statics & {e["object"] for e in entries if e.get("rules")})
@@ -686,11 +747,8 @@ def expand(program: dict, carry_on_departure: bool = True,
                 rid = away_resident[name]
                 carrier = f"{PERSON}{rid}"
                 # (c) owner-aware person legs: only the OWNER's variant
-                # carries the object (owner-blind synthesis put keys_elias
-                # on whoever left the house first), and an object that
-                # rides one kind of its owner's trip rides them ALL —
-                # "takes the keys when leaving" is a property of the
-                # person, which no per-activity rule set expresses.
+                # carries an owned object (owner-blind synthesis put
+                # keys_elias on whoever left the house first).
                 # An away variant belongs to ONE resident, but its after
                 # rules are inherited from the BASE activity — shared by
                 # every resident's variant. Unrestricted, roommate B's
@@ -698,40 +756,90 @@ def expand(program: dict, carry_on_departure: bool = True,
                 # was still out (hh9: 4 residents sharing work_away, 516
                 # mid-trip teleports). A variant's after may reach
                 # receptacles, ELSEWHERE, and ITS OWN resident's person —
-                # never someone else's pocket.
+                # never someone else's pocket. A TRAVELLER's homecoming
+                # rule reaches only what came home on this person (plus
+                # ELSEWHERE for the owner: a thing left at the office
+                # comes back with them): a wallet that stayed on the
+                # entry table all day is not "put down by the door" at
+                # 18:00, and a forgotten one stays forgotten.
                 allowed = ([r["id"] for r in program["receptacles"]]
                            + [ELSEWHERE, carrier])
+                members = variant_members.get(name) or {base}
+
+                def _allowed_for(obj: str) -> list:
+                    if obj not in travellers:
+                        return list(allowed)
+                    own_ = travellers[obj]
+                    return ([carrier, ELSEWHERE] if own_ in (None, rid)
+                            else [carrier])
+
                 for obj, rule in entry["after"].items():
+                    ok = _allowed_for(obj)
                     if "only_from" in rule:
-                        kept = [x for x in rule["only_from"] if x in allowed]
-                        rule["only_from"] = kept or list(allowed)
+                        kept = [x for x in rule["only_from"] if x in ok]
+                        rule["only_from"] = kept or ok
                     else:
-                        rule["only_from"] = list(allowed)
-                # Chain-member union (see away_chain_bases): a rule on
-                # any leg of this trip fires at its homecoming, unless
-                # the dominant activity already rules that object.
-                for b_ in sorted(away_chain_bases.get(base, ()) or ()):
-                    if b_ == base:
-                        continue
+                        rule["only_from"] = ok
+                # Chain-member union: a rule on any leg THIS variant
+                # absorbed fires at its homecoming, unless the dominant
+                # activity already rules that object.
+                for b_ in sorted(members - {base}):
                     member_after = (pivoted.get(b_) or {}).get("after") or {}
                     for obj, rule in member_after.items():
                         if obj in entry["after"]:
                             continue
                         r2 = dict(rule)
+                        ok = _allowed_for(obj)
                         if "only_from" in r2:
-                            kept = [x for x in r2["only_from"]
-                                    if x in allowed]
-                            r2["only_from"] = kept or list(allowed)
+                            kept = [x for x in r2["only_from"] if x in ok]
+                            r2["only_from"] = kept or ok
                         else:
-                            r2["only_from"] = list(allowed)
+                            r2["only_from"] = ok
                         entry["after"][obj] = r2
                         chain_inherited.append(f"{obj}@{name}<-{b_}")
-                for obj, rid_set in travellers.items():
-                    if rid not in rid_set:
+                for obj, own_ in travellers.items():
+                    if own_ is not None and own_ != rid:
                         continue
-                    entry["during"].setdefault(obj, carrier)
+                    pocket = own_ is not None and is_pocket(obj)
+                    named = bool(rides[obj] & members)
+                    if not named and not pocket:
+                        continue        # not this object's kind of trip
+                    if not named and not takes_along(program["household"],
+                                                     obj, base, carry_p):
+                        # a standing omission: this person never takes
+                        # this pocket item on this kind of trip
+                        left_behind.append(f"{obj}@{name}")
+                        continue
+                    rule = entry["after"].get(obj)
+                    if pocket:
+                        # NO_OP on a pocket item's homecoming is "stays
+                        # in their pocket through the door" (the authoring
+                        # prompt's own reading); forgetting is a
+                        # per-departure draw on top.
+                        p_carry = 1.0 - forget_p
+                    else:
+                        # For anything else the same NO_OP mass is "this
+                        # trip did not involve the object" — the author
+                        # writing `NO_OP: 0.7` after gym for a yoga mat
+                        # means it goes along three gym days in ten, not
+                        # that it stays in her hand on the sofa. So the
+                        # mass becomes the chance it is NOT taken, and
+                        # the object that did go always gets put down.
+                        p_carry = 1.0 - (rule.pop("noop_p", 0.0) if rule
+                                         else 0.0)
+                    leg: dict | str = carrier
+                    if p_carry < 1.0 or own_ is None:
+                        leg = {"dest": carrier, "p": p_carry}
+                        if own_ is None:
+                            # a shared object already on someone else
+                            # stays there — no handoff by a departure
+                            leg["only_from"] = [
+                                x for x in all_locations
+                                if not str(x).startswith(PERSON)]
+                    entry["during"].setdefault(obj, leg)
                     synthesized_during.append(f"{obj}@{name}")
-                    if obj not in entry["after"]:
+                    picked_up.append(f"{obj}@{name}")
+                    if rule is None:
                         # homecoming putdown for trips whose activity has
                         # no authored after rule: the thing comes off the
                         # person when they walk in, to its usual spot.
@@ -829,6 +937,8 @@ def expand(program: dict, carry_on_departure: bool = True,
     }
     if day_overrides:
         motions["day_overrides"] = day_overrides
+    if v3:
+        motions["person_invariant"] = True
     acts["dropped_sleep_resets"] = sorted(set(dropped_sleep_resets))
     acts["dropped_sleep_fragments"] = sorted(set(dropped_sleep_fragments))
     acts["derived_only_from"] = sorted(set(derived_gates))

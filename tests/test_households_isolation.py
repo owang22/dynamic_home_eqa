@@ -27,8 +27,14 @@ import pytest
 REPO = pathlib.Path(__file__).resolve().parent.parent
 FIXTURE = REPO / "tests" / "fixtures" / "households" / "hh_001"
 
-GOLDEN_EVENTS = 1148
-GOLDEN_SHA = "40201c18938a1582248ae0b18c0b37e6d8f5f5a14f49525cfcc8e32da7d05c86"
+# 2026-09-13: 1148 events / 40201c18... was the vendoring-diff golden.
+# Re-baselined when departures became per-trip (an object rides only the
+# trips its rules name; pocket items ride all, with omissions and
+# forgetting; NO_OP on a non-pocket away rule = not taken) and misplace
+# stopped lifting things off an absent holder — see
+# test_households_travellers.py. Not a vendoring change.
+GOLDEN_EVENTS = 920
+GOLDEN_SHA = "ed54dff506ac67d5fcb62de9f2f7c982a2687c0e4c4e67f5d8f95e479853d37b"
 
 # The old sets live in old_profiles/ (moved there 2026-08-28); the old
 # code tree is src/revamp_v2. All of it goes away for the test's duration.

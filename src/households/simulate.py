@@ -148,7 +148,8 @@ def simulate_program(program: dict, days: int, seed: int,
     acts, motions = xc.expand(
         program,
         carry_on_departure=bool(carry_cfg.get("enabled", True)),
-        carry_p=float(carry_cfg.get("carry_p", 0.85)))
+        carry_p=float(carry_cfg.get("carry_p", 0.85)),
+        forget_p=float(carry_cfg.get("forget_p", 0.0)))
     sa.validate(acts, motions)
 
     hh = program["household"]

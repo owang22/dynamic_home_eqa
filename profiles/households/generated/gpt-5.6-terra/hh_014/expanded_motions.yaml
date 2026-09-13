@@ -1332,161 +1332,54 @@ object_motions:
     at: ELSEWHERE
     jitter: routine
     during:
-      phone_mara: person:resident_1
-      keys_mara: person:resident_1
-      wallet_mara: person:resident_1
+      phone_mara:
+        dest: person:resident_1
+        p: 0.95
+      keys_mara:
+        dest: person:resident_1
+        p: 0.95
+      wallet_mara:
+        dest: person:resident_1
+        p: 0.95
       backpack_mara: person:resident_1
-      pen_mara: person:resident_1
-      water_bottle_mara: person:resident_1
-      glasses_mara: person:resident_1
       jacket_mara: person:resident_1
-      umbrella_mara: person:resident_1
-      lunchbox_mara: person:resident_1
-      medication_bottle_mara: person:resident_1
-      suitcase_mara: person:resident_1
+      umbrella_mara:
+        dest: person:resident_1
+        p: 0.25
     after:
       phone_mara:
         dist: &id025
           entry_table_e1: 0.6
           couch_l1: 0.4
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       backpack_mara:
         dist: &id026
           desk_b1: 0.6
           entry_floor_e1: 0.4
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       jacket_mara:
         dist:
           entry_hook_e1: 0.78
           entry_floor_e1: 0.22
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       umbrella_mara:
         dist: &id027
           entry_floor_e1: 1.0
-        noop_p: 0.75
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       keys_mara:
         dest: entry_hook_e1
         only_from:
         - person:resident_1
       wallet_mara:
         dest: entry_table_e1
-        only_from:
-        - person:resident_1
-      pen_mara:
-        dest: desk_b1
-        only_from:
-        - person:resident_1
-      water_bottle_mara:
-        dest: counter_k1
-        only_from:
-        - person:resident_1
-      glasses_mara:
-        dest: nightstand_b1
-        only_from:
-        - person:resident_1
-      lunchbox_mara:
-        dest: cupboard_k1
-        only_from:
-        - person:resident_1
-      medication_bottle_mara:
-        dest: cupboard_k1
-        only_from:
-        - person:resident_1
-      suitcase_mara:
-        dest: bedroom_floor_b1
         only_from:
         - person:resident_1
   snack:
@@ -1874,137 +1767,41 @@ object_motions:
     at: ELSEWHERE
     jitter: routine
     during:
-      phone_mara: person:resident_1
-      keys_mara: person:resident_1
-      wallet_mara: person:resident_1
-      backpack_mara: person:resident_1
-      pen_mara: person:resident_1
-      water_bottle_mara: person:resident_1
-      glasses_mara: person:resident_1
-      jacket_mara: person:resident_1
-      umbrella_mara: person:resident_1
-      lunchbox_mara: person:resident_1
-      medication_bottle_mara: person:resident_1
-      suitcase_mara: person:resident_1
+      phone_mara:
+        dest: person:resident_1
+        p: 0.95
+      keys_mara:
+        dest: person:resident_1
+        p: 0.95
+      wallet_mara:
+        dest: person:resident_1
+        p: 0.95
+      pen_mara:
+        dest: person:resident_1
+        p: 0.4
     after:
       keys_mara:
         dist:
           entry_hook_e1: 0.88
           entry_table_e1: 0.12
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       wallet_mara:
         dist:
           person:resident_1: 0.65
           entry_table_e1: 0.35
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       pen_mara:
         dist:
           counter_k1: 1.0
-        noop_p: 0.6
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       phone_mara:
         dest: desk_b1
-        only_from:
-        - person:resident_1
-      backpack_mara:
-        dest: desk_b1
-        only_from:
-        - person:resident_1
-      water_bottle_mara:
-        dest: counter_k1
-        only_from:
-        - person:resident_1
-      glasses_mara:
-        dest: nightstand_b1
-        only_from:
-        - person:resident_1
-      jacket_mara:
-        dest: entry_hook_e1
-        only_from:
-        - person:resident_1
-      umbrella_mara:
-        dest: entry_floor_e1
-        only_from:
-        - person:resident_1
-      lunchbox_mara:
-        dest: cupboard_k1
-        only_from:
-        - person:resident_1
-      medication_bottle_mara:
-        dest: cupboard_k1
-        only_from:
-        - person:resident_1
-      suitcase_mara:
-        dest: bedroom_floor_b1
         only_from:
         - person:resident_1
   watch_tv:
@@ -2264,185 +2061,58 @@ object_motions:
     at: ELSEWHERE
     jitter: routine
     during:
-      phone_mara: person:resident_1
-      keys_mara: person:resident_1
-      wallet_mara: person:resident_1
-      backpack_mara: person:resident_1
-      pen_mara: person:resident_1
-      water_bottle_mara: person:resident_1
-      glasses_mara: person:resident_1
+      phone_mara:
+        dest: person:resident_1
+        p: 0.95
+      keys_mara:
+        dest: person:resident_1
+        p: 0.95
+      wallet_mara:
+        dest: person:resident_1
+        p: 0.95
       jacket_mara: person:resident_1
-      umbrella_mara: person:resident_1
-      lunchbox_mara: person:resident_1
-      medication_bottle_mara: person:resident_1
-      suitcase_mara: person:resident_1
+      lunchbox_mara:
+        dest: person:resident_1
+        p: 0.19999999999999996
+      suitcase_mara:
+        dest: person:resident_1
+        p: 0.07999999999999996
     after:
       keys_mara:
         dist: &id019
           entry_hook_e1: 0.7
           entry_floor_e1: 0.3
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       wallet_mara:
         dist: &id020
           entry_table_e1: 0.52
           person:resident_1: 0.48
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       jacket_mara:
         dist: &id021
           entry_hook_e1: 0.63
           entry_floor_e1: 0.37
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       lunchbox_mara:
         dist: &id022
           counter_k1: 1.0
-        noop_p: 0.8
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       suitcase_mara:
         dist: &id023
           bedroom_floor_b1: 1.0
-        noop_p: 0.92
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       phone_mara:
         dest: desk_b1
-        only_from:
-        - person:resident_1
-      backpack_mara:
-        dest: desk_b1
-        only_from:
-        - person:resident_1
-      pen_mara:
-        dest: desk_b1
-        only_from:
-        - person:resident_1
-      water_bottle_mara:
-        dest: counter_k1
-        only_from:
-        - person:resident_1
-      glasses_mara:
-        dest: nightstand_b1
-        only_from:
-        - person:resident_1
-      umbrella_mara:
-        dest: entry_floor_e1
-        only_from:
-        - person:resident_1
-      medication_bottle_mara:
-        dest: cupboard_k1
         only_from:
         - person:resident_1
   pet_care:
@@ -2514,89 +2184,29 @@ object_motions:
     at: ELSEWHERE
     jitter: routine
     during:
-      phone_mara: person:resident_1
-      keys_mara: person:resident_1
-      wallet_mara: person:resident_1
-      backpack_mara: person:resident_1
-      pen_mara: person:resident_1
-      water_bottle_mara: person:resident_1
-      glasses_mara: person:resident_1
-      jacket_mara: person:resident_1
-      umbrella_mara: person:resident_1
-      lunchbox_mara: person:resident_1
-      medication_bottle_mara: person:resident_1
-      suitcase_mara: person:resident_1
+      phone_mara:
+        dest: person:resident_1
+        p: 0.95
+      keys_mara:
+        dest: person:resident_1
+        p: 0.95
+      wallet_mara:
+        dest: person:resident_1
+        p: 0.95
     after:
       keys_mara:
         dist:
           entry_hook_e1: 0.94
           entry_table_e1: 0.06
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       phone_mara:
         dest: desk_b1
         only_from:
         - person:resident_1
       wallet_mara:
         dest: entry_table_e1
-        only_from:
-        - person:resident_1
-      backpack_mara:
-        dest: desk_b1
-        only_from:
-        - person:resident_1
-      pen_mara:
-        dest: desk_b1
-        only_from:
-        - person:resident_1
-      water_bottle_mara:
-        dest: counter_k1
-        only_from:
-        - person:resident_1
-      glasses_mara:
-        dest: nightstand_b1
-        only_from:
-        - person:resident_1
-      jacket_mara:
-        dest: entry_hook_e1
-        only_from:
-        - person:resident_1
-      umbrella_mara:
-        dest: entry_floor_e1
-        only_from:
-        - person:resident_1
-      lunchbox_mara:
-        dest: cupboard_k1
-        only_from:
-        - person:resident_1
-      medication_bottle_mara:
-        dest: cupboard_k1
-        only_from:
-        - person:resident_1
-      suitcase_mara:
-        dest: bedroom_floor_b1
         only_from:
         - person:resident_1
   lie_down:
@@ -2664,113 +2274,30 @@ object_motions:
     at: ELSEWHERE
     jitter: routine
     during:
-      phone_mara: person:resident_1
-      keys_mara: person:resident_1
-      wallet_mara: person:resident_1
-      backpack_mara: person:resident_1
-      pen_mara: person:resident_1
-      water_bottle_mara: person:resident_1
+      keys_mara:
+        dest: person:resident_1
+        p: 0.95
+      wallet_mara:
+        dest: person:resident_1
+        p: 0.95
       glasses_mara: person:resident_1
-      jacket_mara: person:resident_1
-      umbrella_mara: person:resident_1
-      lunchbox_mara: person:resident_1
-      medication_bottle_mara: person:resident_1
-      suitcase_mara: person:resident_1
     after:
       keys_mara:
         dist:
           entry_hook_e1: 0.82
           entry_table_e1: 0.18
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       glasses_mara:
         dist:
           entry_table_e1: 0.45
           desk_b1: 0.55
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
+        - person:resident_1
         - ELSEWHERE
-        - person:resident_1
-      phone_mara:
-        dest: desk_b1
-        only_from:
-        - person:resident_1
       wallet_mara:
         dest: entry_table_e1
-        only_from:
-        - person:resident_1
-      backpack_mara:
-        dest: desk_b1
-        only_from:
-        - person:resident_1
-      pen_mara:
-        dest: desk_b1
-        only_from:
-        - person:resident_1
-      water_bottle_mara:
-        dest: counter_k1
-        only_from:
-        - person:resident_1
-      jacket_mara:
-        dest: entry_hook_e1
-        only_from:
-        - person:resident_1
-      umbrella_mara:
-        dest: entry_floor_e1
-        only_from:
-        - person:resident_1
-      lunchbox_mara:
-        dest: cupboard_k1
-        only_from:
-        - person:resident_1
-      medication_bottle_mara:
-        dest: cupboard_k1
-        only_from:
-        - person:resident_1
-      suitcase_mara:
-        dest: bedroom_floor_b1
         only_from:
         - person:resident_1
   nap:
@@ -2815,49 +2342,38 @@ object_motions:
         - entry_table_e1
         - entry_hook_e1
         - entry_floor_e1
-  night_sleep__resident_1:
+  night_sleep__resident_1+bedtime_routine+night_out+take_medication+walk:
     at: ELSEWHERE
     jitter: routine
     during:
-      phone_mara: person:resident_1
-      keys_mara: person:resident_1
-      wallet_mara: person:resident_1
+      phone_mara:
+        dest: person:resident_1
+        p: 0.95
+      keys_mara:
+        dest: person:resident_1
+        p: 0.95
+      wallet_mara:
+        dest: person:resident_1
+        p: 0.95
       backpack_mara: person:resident_1
-      pen_mara: person:resident_1
-      water_bottle_mara: person:resident_1
       glasses_mara: person:resident_1
       jacket_mara: person:resident_1
-      umbrella_mara: person:resident_1
-      lunchbox_mara: person:resident_1
+      umbrella_mara:
+        dest: person:resident_1
+        p: 0.25
+      lunchbox_mara:
+        dest: person:resident_1
+        p: 0.19999999999999996
       medication_bottle_mara: person:resident_1
-      suitcase_mara: person:resident_1
+      suitcase_mara:
+        dest: person:resident_1
+        p: 0.07999999999999996
     after:
       glasses_mara:
         dist: *id016
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       bowl_shared_1:
         dist: *id017
         only_from:
@@ -2913,431 +2429,103 @@ object_motions:
       keys_mara:
         dist: *id019
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       wallet_mara:
         dist: *id020
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       jacket_mara:
         dist: *id021
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       lunchbox_mara:
         dist: *id022
-        noop_p: 0.8
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       suitcase_mara:
         dist: *id023
-        noop_p: 0.92
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       medication_bottle_mara:
         dist: *id024
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       phone_mara:
         dist: *id025
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       backpack_mara:
         dist: *id026
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       umbrella_mara:
         dist: *id027
-        noop_p: 0.75
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
+        - person:resident_1
         - ELSEWHERE
-        - person:resident_1
-      pen_mara:
-        dest: desk_b1
-        only_from:
-        - person:resident_1
-      water_bottle_mara:
-        dest: counter_k1
-        only_from:
-        - person:resident_1
   errands:
     at: ELSEWHERE
     jitter: routine
     during:
-      phone_mara: person:resident_1
-      keys_mara: person:resident_1
-      wallet_mara: person:resident_1
+      phone_mara:
+        dest: person:resident_1
+        p: 0.95
+      keys_mara:
+        dest: person:resident_1
+        p: 0.95
+      wallet_mara:
+        dest: person:resident_1
+        p: 0.95
       backpack_mara: person:resident_1
-      pen_mara: person:resident_1
       water_bottle_mara: person:resident_1
-      glasses_mara: person:resident_1
-      jacket_mara: person:resident_1
-      umbrella_mara: person:resident_1
-      lunchbox_mara: person:resident_1
-      medication_bottle_mara: person:resident_1
-      suitcase_mara: person:resident_1
+      umbrella_mara:
+        dest: person:resident_1
+        p: 0.30000000000000004
     after:
       phone_mara:
         dist:
           entry_table_e1: 0.7
           desk_b1: 0.3
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       wallet_mara:
         dist:
           person:resident_1: 0.55
           entry_table_e1: 0.45
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       backpack_mara:
         dist:
           entry_floor_e1: 0.55
           desk_b1: 0.45
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       water_bottle_mara:
         dist:
           sink_k1: 0.6
           desk_b1: 0.4
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       umbrella_mara:
         dist:
           entry_floor_e1: 1.0
-        noop_p: 0.7
         only_from:
-        - bed_b1
-        - nightstand_b1
-        - desk_b1
-        - bedroom_floor_b1
-        - couch_l1
-        - coffee_table_l1
-        - tv_stand_l1
-        - bookshelf_l1
-        - armchair_l1
-        - counter_k1
-        - sink_k1
-        - cupboard_k1
-        - dish_rack_k1
-        - kitchen_table_k1
-        - chair_k1
-        - chair_k2
-        - bathroom_shelf_ba1
-        - towel_rack_ba1
-        - entry_table_e1
-        - entry_hook_e1
-        - entry_floor_e1
-        - ELSEWHERE
         - person:resident_1
+        - ELSEWHERE
       keys_mara:
         dest: entry_hook_e1
-        only_from:
-        - person:resident_1
-      pen_mara:
-        dest: desk_b1
-        only_from:
-        - person:resident_1
-      glasses_mara:
-        dest: nightstand_b1
-        only_from:
-        - person:resident_1
-      jacket_mara:
-        dest: entry_hook_e1
-        only_from:
-        - person:resident_1
-      lunchbox_mara:
-        dest: cupboard_k1
-        only_from:
-        - person:resident_1
-      medication_bottle_mara:
-        dest: cupboard_k1
-        only_from:
-        - person:resident_1
-      suitcase_mara:
-        dest: bedroom_floor_b1
         only_from:
         - person:resident_1
   linger_desk_b1:
@@ -3395,3 +2583,4 @@ object_motions:
     jitter: routine
     during: {}
     after: {}
+person_invariant: true

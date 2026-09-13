@@ -339,28 +339,39 @@ function draw() {
  * are trips. This turns "caused by: work_away" into the actual answer.
  *
  * The distinction that matters, and the reason `kind` is carried on every
- * segment: most carries are NOT authored. An object whose rule names any
- * leg of its owner's trips is promoted to a "traveller" and then rides
- * every trip that owner takes — which is why suitcase_elena leaves with
- * work_away on the strength of a rule about study. Reporting the trip's
- * own (nonexistent) rule there would be a fabrication, so a derived move
- * is labelled derived and names the rule that actually qualified it.
+ * segment: most carries are NOT authored. An object rides an outing when
+ * one of its rules names a LEG of that outing — the expander folds
+ * consecutive away blocks into one trip named for its longest leg and
+ * keeps the others in the variant name ("groceries__resident_1+laundry+
+ * walk"), so a book with a `walk` rule leaves on the Saturday errands
+ * that included a walk. Pocket items (phone, keys, wallet) ride every
+ * trip of their owner. Reporting the trip's own (nonexistent) rule there
+ * would be a fabrication, so a derived move is labelled derived and
+ * names the rule and the leg that actually qualified it.
  */
+
+const POCKET_CLASSES = ["phone", "keys", "wallet"];
+function isPocket(obj) {
+  const s = String(obj);
+  return POCKET_CLASSES.some(c => s === c || s.startsWith(c + "_"));
+}
+
+/* The legs of an outing, from its expanded name: the base activity plus
+ * every "+leg" the away-chain merge folded into it. */
+function tripLegs(activity) {
+  const s = String(activity);
+  const cut = s.indexOf("__");
+  if (cut < 0) return [s];
+  return [s.slice(0, cut), ...s.slice(cut + 2).split("+").slice(1)];
+}
+
+function noopMass(rule) {
+  const hit = (rule.dist || []).find(d => d[0] === "NO_OP");
+  return hit ? Number(hit[1]) : 0;
+}
 
 function provenance() { return (trace && trace.provenance) || {}; }
 function objProvenance(obj) { return (provenance().objects || {})[obj] || null; }
-
-/* Trips, as the set of names a rule might use: the expander splits
- * per-person variants ("study__resident_1"), but a rule names the base
- * ("study"), and the same household can run `study` at home too. */
-function tripNames() {
-  const out = new Set();
-  for (const a of provenance().away_activities || []) {
-    out.add(a);
-    out.add(prettyActivity(a));
-  }
-  return out;
-}
 
 /* Matched the way the expander matched it: on the activity base, since
  * rules name `study` while the timeline runs `study__resident_1`. */
@@ -475,32 +486,50 @@ function explainSegment(obj, seg) {
     // describes the homecoming, not the leaving — quoting one here would
     // credit the model with a decision the expander actually made.
     const authored = ruleFor(info, activity, "during");
-    const trips = tripNames();
-    const own = (info.rules || []).filter(r => trips.has(r.activity));
-    // Prefer the rule for THIS trip when it has one: "its own work_away
-    // rule" is a better answer than some other trip that also qualifies.
-    const qualifier = own.find(r => r.activity === activity ||
-                                    r.activity === act) || own[0];
+    const legs = tripLegs(activity);
+    const extra = legs.slice(1);
+    // The rule that put it on THIS outing: the trip's own leg first, then
+    // any folded-in leg it has a rule for.
+    const qualifier = (info.rules || []).find(r => r.activity === legs[0]) ||
+                      (info.rules || []).find(r => legs.includes(r.activity));
+    const outing = `<strong>${escapeHtml(act)}</strong>` +
+      (extra.length
+        ? ` (an outing that also took in ` +
+          `${escapeHtml(extra.join(" and "))})`
+        : ``);
     let html = badge(authored ? "authored" : "derived",
                      authored ? "carried · authored" : "carried · derived") +
-      line(`<strong>${escapeHtml(who)}</strong> took it along on ` +
-           `<strong>${escapeHtml(act)}</strong>.`);
+      line(`<strong>${escapeHtml(who)}</strong> took it along on ${outing}.`);
     if (authored) {
       html += quote(authored.cites || "(no cites on that rule)");
-    } else if (qualifier) {
-      const sameTrip = qualifier.activity === activity ||
-                       qualifier.activity === act;
+    } else if (isPocket(obj) && info.owner) {
       html += line(`No rule says to take it: rules only say where things ` +
-                   `LAND. ${escapeHtml(obj)} is one of ` +
-                   `${escapeHtml(who)}'s <em>travelling</em> things — it has ` +
-                   `a rule about a trip, so it rides <em>every</em> trip ` +
-                   `${escapeHtml(who)} takes` +
-                   (sameTrip
-                     ? `, this one included:`
-                     : `. Here it is riding <strong>${escapeHtml(act)}</strong>` +
-                       ` on the strength of its rule for ` +
-                       `<strong>${escapeHtml(qualifier.activity)}</strong>:`)) +
+                   `LAND. ${escapeHtml(obj)} is a pocket item, and those ` +
+                   `ride <em>every</em> trip their owner takes` +
+                   (qualifier
+                     ? ` — this one has its own rule for ` +
+                       `<strong>${escapeHtml(qualifier.activity)}</strong>:`
+                     : ` (barring a standing omission for this kind of ` +
+                       `trip, or a forgotten one).`));
+      if (qualifier) html += quote(qualifier.cites || "(no cites on that rule)");
+    } else if (qualifier) {
+      const sameLeg = qualifier.activity === legs[0];
+      const noop = noopMass(qualifier);
+      html += line(`No rule says to take it: rules only say where things ` +
+                   `LAND. An object rides an outing when one of its rules ` +
+                   `names a leg of it` +
+                   (sameLeg
+                     ? `, and ${escapeHtml(obj)} has one for ` +
+                       `<strong>${escapeHtml(act)}</strong>:`
+                     : `. This outing included a ` +
+                       `<strong>${escapeHtml(qualifier.activity)}</strong> ` +
+                       `leg, and ${escapeHtml(obj)} has a rule for that:`)) +
               quote(qualifier.cites || "(no cites on that rule)");
+      if (noop > 0)
+        html += line(`<span class="muted">That rule's NO_OP mass ` +
+                     `(${noop.toFixed(2)}) is the chance it stays home; ` +
+                     `it comes along about ${Math.round((1 - noop) * 100)}% ` +
+                     `of such outings.</span>`);
     } else {
       // It travels, but no rule of its own names a trip in the FINAL
       // calendar. That is the chain merge: legs get folded into the trip

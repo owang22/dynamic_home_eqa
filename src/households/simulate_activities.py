@@ -144,9 +144,15 @@ def validate(acts: dict, motions: dict) -> None:
     reachable = {obj: {p["home"]} for obj, p in motions["placements"].items()}
     for name, act in motions["object_motions"].items():
         assert act.get("at") in recs | {ELSEWHERE}, f"{name}: bad at {act.get('at')}"
-        for obj, dest in act.get("during", {}).items():
+        for obj, leg in act.get("during", {}).items():
             assert obj in objs, f"{name}.during: unknown object {obj}"
+            dest = leg["dest"] if isinstance(leg, dict) else leg
             assert dest in locs, f"{name}.during: unknown location {dest}"
+            if isinstance(leg, dict):
+                assert 0.0 <= leg.get("p", 1.0) <= 1.0, \
+                    f"{name}.during.{obj}: p outside [0, 1]"
+                for r in leg.get("only_from", []):
+                    assert r in locs, f"{name}.during.{obj}: unknown location {r}"
             reachable[obj].add(dest)
         for obj, rule in act.get("after", {}).items():
             assert obj in objs, f"{name}.after: unknown object {obj}"
@@ -243,7 +249,18 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
     horizon = days * 1440
     log: list[dict] = []
     stats = {"tidy_bouts": 0, "tidy_moved": 0, "tidy_ran_out_of_time": 0,
-             "blocks": len(blocks)}
+             "blocks": len(blocks), "departures_without_item": 0,
+             "misplace_skipped_absent_holder": 0}
+    # v3 programs (flagged by the expander) hold the person invariant
+    # through misplacement too; unmarked programs keep v1 behaviour.
+    person_invariant = bool(motions.get("person_invariant"))
+    away_spans: dict[str, list[tuple[int, int]]] = {}
+    for b in blocks:
+        if b["at"] == ELSEWHERE:
+            away_spans.setdefault(b["resident"], []).append((b["t0"], b["t1"]))
+
+    def is_away(resident: str, t: float) -> bool:
+        return any(a <= t < b for a, b in away_spans.get(resident, ()))
 
     heap: list = []
     seq = 0
@@ -319,8 +336,20 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
             t, _, _, kind, payload = heapq.heappop(heap)
             if kind == "during":
                 act = motions["object_motions"][payload["activity"]]
-                for obj, dest in act.get("during", {}).items():
-                    move(t, obj, dest, f"activity:{payload['activity']}")
+                for obj, leg in act.get("during", {}).items():
+                    # A dict leg (v3 departures) is a pickup that may
+                    # not happen: `p` is the chance it does, `only_from`
+                    # what it can lift. Plain legs draw nothing, so the
+                    # v1 RNG stream is untouched for unmarked programs.
+                    if isinstance(leg, dict):
+                        if ("only_from" in leg
+                                and pos[obj] not in leg["only_from"]):
+                            continue
+                        if rng.random() >= leg.get("p", 1.0):
+                            stats["departures_without_item"] += 1
+                            continue
+                        leg = leg["dest"]
+                    move(t, obj, leg, f"activity:{payload['activity']}")
                 if "reset_all" in act:
                     plan_tidy(payload, act["reset_all"])
             elif kind == "after":
@@ -340,6 +369,13 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
             else:
                 obj, dest = payload
                 if pos[obj] != ELSEWHERE:      # person-held CAN be set down
+                    if (person_invariant and pos[obj].startswith(PERSON)
+                            and is_away(pos[obj][len(PERSON):], t)):
+                        # ...but not by a holder who is out of the house:
+                        # the wallet in her pocket at work cannot land on
+                        # the kitchen counter at 14:00.
+                        stats["misplace_skipped_absent_holder"] += 1
+                        continue
                     move(t, obj, dest, "misplace")
         if h < days * 24:
             hourly.append({"t": boundary, "stamp": stamp(boundary), **dict(pos)})
