@@ -22,4 +22,10 @@ export:
   budget_per_day: 24
   query_mode: uniform
   initial_tour: true
+  # The installation tour falls at a per-seed random awake instant on
+  # day 0 or 1 (was: t=0, Monday 00:00, every object at its home — which
+  # handed every belief the rest map for free). Evidence and questions
+  # before the tour are not exported; day 0 stays Monday 00:00.
+  tour_start: random
+  tour_max_day: 1
 healthcheck: {}

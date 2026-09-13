@@ -121,7 +121,7 @@ def render(path: pathlib.Path) -> pathlib.Path:
 
 def main() -> None:
     root = DEFAULT_OUT_DIR
-    paths = sorted(glob.glob(str(root / "logs" / "*" / "*.json"))) + sorted(glob.glob(str(root / "cold_start" / "*" / "*" / "revisions" / "*.json")))
+    paths = sorted(glob.glob(str(root / "logs" / "*" / "*.json"))) + sorted(glob.glob(str(root / "tour_start" / "*" / "*" / "revisions" / "*.json")))
     for p in paths:
         dst = render(pathlib.Path(p)); print("wrote", dst.relative_to(root))
 

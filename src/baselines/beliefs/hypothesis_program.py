@@ -451,6 +451,7 @@ class HypothesisProgramBelief(BeliefModel):
         self._rule_states = []
         self._activity_states = []
         self._rules_of = {}
+        self._tour_times: set = set()
         for ai, activity in enumerate(self._hypothesis.activities):
             self._activity_states.append(_ActivityState(
                 mu=activity.start_hour, var=START_HOUR_PRIOR_SD_H ** 2))
@@ -489,6 +490,15 @@ class HypothesisProgramBelief(BeliefModel):
                 * self._window_probability(state, t) * state.chance_mean)
 
     # ------------------------------------------------------------ learning
+
+    def update(self, evidence) -> None:
+        # Remember when the walkthrough happened so provenance can tell a
+        # tour-only history from real sightings (the tour need not be at
+        # t=0: banks exported with tour_start=random install the robot
+        # mid-day).
+        if getattr(evidence, "source", None) == "initial_tour":
+            self._tour_times.add(evidence.t)
+        super().update(evidence)
 
     def _add_sighting(self, object_id: str, t: int,
                       receptacle_id: str) -> None:
@@ -564,6 +574,60 @@ class HypothesisProgramBelief(BeliefModel):
         for receptacle, p in displaced.items():
             dist[receptacle] = dist.get(receptacle, 0.0) + p
         return self._frequency_prediction(dist, history)
+
+    # ---------------------------------------------------------- provenance
+
+    PROVENANCE = ("rule", "rest", "tour", "fallback", "cold")
+    """What produced a prediction's argmax: an activity rule's displaced
+    mass; the STATED rest receptacle's pseudo-count; the fallback with
+    only the opening tour to go on; the fallback proper (decayed real
+    sightings); or nothing at all (never sighted, pooled prior)."""
+
+    def explain(self, object_id: str, t: int) -> str:
+        """Which part of the description is behind the argmax for
+        ``object_id`` at ``t`` — one of :attr:`PROVENANCE`. Mirrors
+        :meth:`_predict_for_object` so the answer is the model's own,
+        not a reconstruction."""
+        history = self._history.get(object_id, [])
+        rule_indices = self._rules_of.get(object_id, ())
+        stated = self.hypothesis.rest.get(object_id)
+        if not history:
+            return "cold"
+        tour_only = all(ot in self._tour_times for ot, _ in history)
+        if not rule_indices and stated is None:
+            return "tour" if tour_only else "fallback"
+        displaced: Dict[str, float] = {}
+        for index in rule_indices:
+            state = self._rule_states[index]
+            displaced[state.rule.to] = (displaced.get(state.rule.to, 0.0)
+                                        + self._displacement(state, t))
+        total = sum(displaced.values())
+        if total > MAX_DISPLACED_MASS:
+            scale = MAX_DISPLACED_MASS / total
+            displaced = {r: p * scale for r, p in displaced.items()}
+            total = MAX_DISPLACED_MASS
+        rest = self._rest_distribution(object_id, history, t)
+        dist = {r: (1.0 - total) * p for r, p in rest.items()}
+        for receptacle, p in displaced.items():
+            dist[receptacle] = dist.get(receptacle, 0.0) + p
+        top = max(dist, key=dist.get)
+        if displaced.get(top, 0.0) >= (1.0 - total) * rest.get(top, 0.0):
+            return "rule"
+        # Rest-dominated: pseudo-count versus decayed real sightings at top.
+        pseudo = REST_PRIOR_COUNT if stated == top else 0.0
+        half_life_s = REST_HALF_LIFE_H * 3600.0
+        real = 0.0
+        for ot, receptacle in history:
+            if receptacle != top:
+                continue
+            explained = max(
+                (self._displacement(self._rule_states[i], ot)
+                 for i in rule_indices
+                 if self._rule_states[i].rule.to == receptacle), default=0.0)
+            real += (1.0 - explained) * 2.0 ** (-max(0, t - ot) / half_life_s)
+        if pseudo >= real and pseudo > 0.0:
+            return "rest"
+        return "tour" if tour_only else "fallback"
 
     # ----------------------------------------------------------- reporting
 

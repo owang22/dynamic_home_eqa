@@ -472,16 +472,36 @@ def per_object_statistics(object_ids: Sequence[str],
     return "\n".join(lines)
 
 
+WEEKDAY_NAMES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+                 "Saturday", "Sunday")
+
+
+def tour_stamp(t: int) -> str:
+    """``14:20 on day 1, a Tuesday`` — day 0 is a Monday everywhere in
+    the bank; the hour is whatever the exporter's tour draw gave."""
+    day, rem = divmod(int(t), DAY_SECONDS)
+    return (f"{rem // 3600:02d}:{rem % 3600 // 60:02d} on day {day}, "
+            f"a {WEEKDAY_NAMES[day % 7]}")
+
+
 def tour_digest(episode: Episode, omap: Mapping[str, str] | None = None,
                 rmap: Mapping[str, str] | None = None) -> str:
-    """The opening walkthrough: one sighting per object, one moment."""
+    """The opening walkthrough: one sighting per sensable object, one
+    moment. Objects out of the house at that moment are not in it, and
+    the digest says so — the model should read their absence."""
     o = omap or {}
     r = rmap or {}
-    lines = ["WALKTHROUGH TOUR (a single pass through the home at 00:00 on "
-             "day 0, a Monday; every object seen once):"]
+    seen = {obs.object_id for obs in episode.initial_observations}
+    missing = sorted(set(episode.object_classes) - seen)
+    lines = [f"WALKTHROUGH TOUR (a single pass through the home at "
+             f"{tour_stamp(episode.tour_t)}; every object the robot could "
+             f"see, seen once):"]
     for obs in sorted(episode.initial_observations, key=lambda x: x.object_id):
         lines.append(f"  {o.get(obs.object_id, obs.object_id)}  at  "
                      f"{r.get(obs.receptacle_id, obs.receptacle_id)}")
+    if missing:
+        lines.append("  NOT FOUND anywhere in the home during the tour: "
+                     + ", ".join(o.get(m, m) for m in missing))
     return "\n".join(lines)
 
 
@@ -490,7 +510,8 @@ OUTPUT_LENGTH_GUIDE = (
     "activity 1-6 moves. The `rest` map is OPTIONAL and should list only "
     "objects whose resting place differs from where the tour found them "
     "or that an activity moves; an object left out of `rest` is assumed "
-    "to rest where the tour saw it. Do not enumerate every object. "
+    "to rest where the tour saw it — so if the tour caught something "
+    "mid-use, say where it really lives. Do not enumerate every object. "
     "Rationale and distinguishing_prediction: one line each.")
 
 SCHEMA_NOTE = (
@@ -499,11 +520,13 @@ SCHEMA_NOTE = (
     "field shapes only, not the scale of the answer you should give.")
 
 
-def cold_start_prompt(episode: Episode, anonymized: bool = False
+def tour_start_prompt(episode: Episode, anonymized: bool = False
                       ) -> Tuple[str, dict]:
-    """The day-zero prompt: vocabulary tables plus the tour, and nothing
-    about routines. Says so directly — the model is to write from what
-    it knows about how homes work, and sightings will settle it."""
+    """The installation prompt: vocabulary tables plus the tour, and
+    nothing about routines. Says so directly — the model is to write from
+    what it knows about how homes work, and sightings will settle it. The
+    tour is a snapshot at the installation instant, which need not be a
+    quiet moment: the prompt names the time and lists what was absent."""
     if anonymized:
         omap, rmap, cmap = build_anonymization_maps(episode)
     else:
@@ -511,7 +534,7 @@ def cold_start_prompt(episode: Episode, anonymized: bool = False
     tables = vocabulary_tables(episode, omap, rmap, cmap)
     tour = tour_digest(episode, omap, rmap)
     schema_text = example_output_text(anonymized)
-    user = f"""A robot has just been installed in a home. It has done ONE walkthrough tour — one sighting of every object at one moment — and nothing else. It has seen no routines, no days, no movements. Below are the home's vocabulary tables and that tour.
+    user = f"""A robot has just been installed in a home. It has done ONE walkthrough tour — one sighting of every object it could find, at one moment — and nothing else. It has seen no routines, no days, no movements. The tour is a snapshot of that moment, not a map of where things rest: an object may have been caught in use, and an object it could not find was out of the house or on someone. Below are the home's vocabulary tables and that tour.
 
 {tables}
 

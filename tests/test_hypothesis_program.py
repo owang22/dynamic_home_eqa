@@ -32,9 +32,9 @@ def _context(n_days: int = 28) -> EpisodeContext:
         unsensable_receptacle_ids=("OUT_OF_HOUSE",))
 
 
-def _obs(obj: str, rec: str, t: int) -> Observation:
+def _obs(obj: str, rec: str, t: int, source: str = "scripted") -> Observation:
     return Observation(object_id=obj, object_class=OBJECTS[obj],
-                       receptacle_id=rec, t=t, source="scripted")
+                       receptacle_id=rec, t=t, source=source)
 
 
 def _at(day: int, hour: float) -> int:
@@ -291,3 +291,29 @@ def test_rest_accepts_list_of_target_at_pairs_and_rejects_other_shapes() -> None
     bad["rest"] = [{"object": "laptop_1", "place": "desk"}]
     with pytest.raises(HypothesisValidationError):
         parse_hypothesis(bad, OBJECTS, RECS)
+
+
+# ------------------------------------------------------------- provenance
+
+def test_explain_names_what_produced_the_prediction() -> None:
+    model = _belief()
+    # The installation tour need not be at t=0 (tour_start=random banks
+    # install the robot mid-day); "tour" provenance follows the source.
+    tour_t = _at(0, 9.5)
+    model.update(_obs("laptop_1", "desk", tour_t, source="initial_tour"))
+    # Inside the weekday work window the rule's displaced mass leads.
+    assert model.explain("laptop_1", _at(0, 13.0)) == "rule"
+    # At night the stated rest (desk, 3 pseudo-sightings) beats one tour sighting.
+    assert model.explain("laptop_1", _at(0, 22.0)) == "rest"
+    # mug_1 has no rule and no stated rest: tour only, then real sightings.
+    model.update(_obs("mug_1", "kitchen_table", tour_t, source="initial_tour"))
+    assert model.explain("mug_1", _at(0, 12.0)) == "tour"
+    for day in range(3):
+        model.update(_obs("mug_1", "kitchen_table", _at(day, 8.0)))
+    assert model.explain("mug_1", _at(3, 12.0)) == "fallback"
+    assert model.explain("towel_1", _at(3, 12.0)) == "cold"
+    # Enough real sightings at the desk outvote the stated rest's pseudo-count.
+    for day in range(1, 4):
+        for hour in (6.0, 20.0, 22.0):
+            model.update(_obs("laptop_1", "desk", _at(day, hour)))
+    assert model.explain("laptop_1", _at(4, 22.0)) == "fallback"

@@ -1,0 +1,27 @@
+DIAGNOSTIC REPORT — households__generated__gpt-5.6-terra__hh_007_bank.jsonl
+  bank:   banks/baselines/fleet/households__generated__gpt-5.6-terra__hh_007_bank.jsonl  (manifest 86fd2ab20f53…)
+  commit: 204be479362b (dirty tree)  seed 0  questions 2441  budget 24/day
+
+  Intrinsic (ground truth only — see `cli bankstats`): modal share 0.547 time-weighted / 0.533 at query times; 92.0 moves/day; displacement median 5.9 h, p90 41.2 h
+
+  Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
+    NeverSense (answer from memory, never look) last_observation 0.648  most_frequent 0.650  timetable 0.572
+    SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
+    SequentialSearch @ real budget              most_frequent 0.687
+
+  Diagnostics (flags mark setups worth a look; nothing here disqualifies a bank):
+    [  ok ] stationarity     measured   0.547  reference <= 0.600
+           mean dwell-weighted modal share; high values mean objects mostly sit at their usual spots — read the per-object distribution before concluding anything
+    [  ok ] solvable         measured   1.000  reference == 1.000
+           unlimited-budget search must find every queried object; failure means a bank or harness BUG, not a data property
+    [  ok ] not_trivial      measured   0.650  reference <= 0.650
+           passive memory alone nearly solves the bank at this observation rate; paid sensing has little to prove
+    [ flag] not_impossible   measured   0.687  reference >= 0.800
+           sensing bought little over passive at the configured budget; may reflect the budget rather than the bank
+    [  ok ] discriminative   measured   0.078  reference > 0.030
+           all passive models answer alike; usually the observation stream is too sparse for them to differ
+    [  ok ] powered          measured 2441.000  reference >= 300.000
+           few questions; small accuracy differences drown in binomial noise
+    stratified discriminative spreads by household_type: college_roommates=0.078
+
+  flagged: not_impossible  (diagnostics, not disqualifiers)

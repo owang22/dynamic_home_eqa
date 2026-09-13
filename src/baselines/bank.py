@@ -32,7 +32,10 @@ and start with its header; a file may hold many episodes):
     {"kind": "observation", "episode_id": str, "object_id": str,
      "receptacle_id": str, "t": int, "source": "initial_tour"|"scripted"}
         The fixed observation stream. Rows with source "initial_tour" are
-        delivered before day 0; "scripted" rows are delivered in time order
+        the installation walkthrough — one sighting per sensable object at
+        the tour instant (t=0 by default; the optional header field
+        "tour_t" records a later instant) — and are delivered before any
+        other evidence; "scripted" rows are delivered in time order
         interleaved with questions. "sense" never appears in a bank — sense
         observations exist only inside a run.
 
@@ -168,6 +171,8 @@ class _EpisodeAccumulator:
             self.home_base_room = None if raw_home is None else str(raw_home)
             raw_qg = header.get("query_generation")
             self.query_generation = None if raw_qg is None else str(raw_qg)
+            raw_tour = header.get("tour_t")
+            self.tour_t = None if raw_tour is None else int(raw_tour)
         except (KeyError, TypeError, AttributeError) as err:
             raise BankFormatError(
                 f"{path}:{lineno}: bad episode_header: {err}") from err
@@ -277,6 +282,12 @@ class _EpisodeAccumulator:
         for q in self._questions:
             by_day[q.day_index].append(q)
         initial = tuple(o for o in self._observations if o.source == "initial_tour")
+        if self.tour_t is not None:
+            stray = sorted({o.t for o in initial} - {self.tour_t})
+            if stray:
+                raise BankFormatError(
+                    f"{self._path} (episode {self.episode_id}): initial_tour "
+                    f"rows at t={stray} but header tour_t={self.tour_t}")
         # Room visits contribute their positive half to scripted_observations
         # (so recency readouts and the viewer keep working unchanged), and
         # their full evidence — one SenseResult per inspected receptacle,

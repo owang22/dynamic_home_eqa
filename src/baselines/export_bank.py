@@ -30,12 +30,26 @@ information about an absent person.
 
 Generated stream and questions (all seeded):
 
-* initial tour (optional, ``--no-initial-tour`` to drop): every object's
-  location at t=0. WITH the tour, a frozen belief starts from a perfect
-  snapshot and scores the world's stationarity (~0.6 on hh_001) with zero
-  learning; WITHOUT it, never-sensed objects sit at the uniform-fallback
-  chance floor (~1/n_receptacles) and every point of accuracy must be
-  earned through sensing.
+* initial tour (optional, ``--no-initial-tour`` to drop): every
+  sensable object's location at the TOUR INSTANT — the moment the robot
+  is installed. ``--tour-start day0`` (the original convention) puts it
+  at t=0, Monday 00:00, when the simulator has just placed every object
+  at its declared home, so the tour hands the agent the rest map for
+  free. ``--tour-start random`` draws the instant per seed
+  (``_derived_rng(seed, "tour", episode_id)``): a day uniform in
+  ``[0, --tour-max-day]`` and a moment uniform in that day's awake
+  time, so the tour catches the home mid-life (mugs at the sink, keys
+  out with their owner) and the weekday/hour of installation vary
+  across seeds. Nothing the robot could not have seen is exported:
+  room visits, drive-by sightings and questions before the tour are
+  dropped, and the header records ``tour_t``. The clock is NOT
+  re-based — day 0 stays Monday 00:00 — so a random tour costs up to
+  ``tour_max_day`` days of evidence and questions. WITH the tour, a
+  frozen belief starts from a snapshot and scores the world's
+  stationarity (~0.6 on hh_001 under ``day0``) with zero learning;
+  WITHOUT it, never-sensed objects sit at the uniform-fallback chance
+  floor (~1/n_receptacles) and every point of accuracy must be earned
+  through sensing.
 * scripted sightings: ``--sightings-per-day`` per day, each a uniformly
   chosen object seen at a uniform instant inside the household's OWN awake
   time (non-sleep resident blocks; see :func:`awake_spans`) at its true
@@ -258,6 +272,35 @@ def load_truth(timeline: pathlib.Path
     return truth, n_days, causes
 
 
+DAY_NAMES = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+
+
+def stamp(t: int) -> str:
+    """``d03 Thu 14:20`` for a bank time in seconds (day 0 is a Monday)."""
+    day, rem = divmod(int(t), DAY_SECONDS)
+    return f"d{day:02d} {DAY_NAMES[day % 7]} {rem // 3600:02d}:{rem % 3600 // 60:02d}"
+
+
+def draw_tour_instant(tour_start: str, tour_max_day: int, n_days: int,
+                      awake: Dict[int, List[Tuple[int, int]]],
+                      rng: random.Random) -> int:
+    """The bank time (seconds) at which the robot is installed and does
+    its walkthrough. ``day0`` is t=0; ``random`` picks a day uniformly
+    in ``[0, tour_max_day]`` and an instant uniformly in that day's
+    awake time (:func:`draw_time`), from a generator seeded for the tour
+    alone so sighting and question streams are unaffected by the choice.
+    """
+    if tour_start == "day0":
+        return 0
+    if tour_start != "random":
+        raise ValueError(f"unknown tour_start {tour_start!r}")
+    if not 0 <= tour_max_day < n_days:
+        raise ValueError(f"tour_max_day {tour_max_day} outside "
+                         f"[0, {n_days - 1}]")
+    day = rng.randint(0, tour_max_day)
+    return draw_time(awake[day], day, rng)
+
+
 def truth_at(traj: List[Tuple[int, str]], t: int) -> str:
     """Location at time t for a sorted change-point list."""
     location = traj[0][1]
@@ -378,6 +421,8 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
            first_question_day: int, budget_per_day: int,
            query_mode: str = "uniform",
            initial_tour: bool = True,
+           tour_start: str = "day0",
+           tour_max_day: int = 1,
            sightings_per_object_day: Optional[float] = None,
            budget_per_sensable_receptacle: Optional[float] = None,
            observation_model: str = "glimpse",
@@ -411,6 +456,11 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
       activities under the rules of ``query_rules`` (a YAML file, see
       :mod:`baselines.query_stream`), plus a small background rate.
       ``query_mode`` is ignored. Each question row carries an ``origin``.
+
+    ``tour_start`` places the installation tour: ``day0`` at t=0 (every
+    object at its home), ``random`` at a per-seed awake instant on a day
+    in ``[0, tour_max_day]`` (see the module docstring). Evidence and
+    questions before the tour instant are not exported.
 
     ``sightings_per_object_day`` and ``budget_per_sensable_receptacle``,
     when set, REPLACE the corresponding absolute setting with a rule
@@ -447,6 +497,9 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
     truth, n_days, causes = load_truth(timeline)
     awake = awake_spans(timeline, n_days)
     episode_id = f"{spec['household']}_{timeline.name}"
+    tour_t = draw_tour_instant(tour_start, tour_max_day, n_days, awake,
+                               _derived_rng(seed, "tour", episode_id))
+    logger.info("tour instant: %s (t=%d)", stamp(tour_t), tour_t)
     # Sightings and questions draw from SEPARATE seeded generators so the
     # question set is invariant under changes to the sighting rate (and
     # vice versa) — each axis can be swept without perturbing the other.
@@ -471,7 +524,8 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
         "object_classes": object_classes, "query_mode": query_mode,
         "query_generation": query_generation,
         "budget_per_day": budget_per_day, "n_days": n_days,
-        "observation_model": observation_model}
+        "observation_model": observation_model,
+        "tour_start": tour_start, "tour_t": tour_t}
     if rule_set is not None:
         header["query_rules_file"] = str(query_rules)
         header["background_query_rate"] = rule_set.background_query_rate
@@ -496,18 +550,29 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
             if causes.get((obj, t)):
                 row["cause"] = causes[(obj, t)]   # provenance; loader ignores
             rows.append(row)
-        if initial_tour and truth[obj][0][1] != OUT_OF_HOUSE:
-            rows.append({"kind": "observation", "episode_id": episode_id,
-                         "object_id": obj, "receptacle_id": truth[obj][0][1],
-                         "t": 0, "source": "initial_tour"})
+        if initial_tour:
+            where = truth_at(truth[obj], tour_t)
+            if where == OUT_OF_HOUSE:
+                unobserved += 1  # out with its owner when the robot arrived
+            else:
+                rows.append({"kind": "observation", "episode_id": episode_id,
+                             "object_id": obj, "receptacle_id": where,
+                             "t": tour_t, "source": "initial_tour"})
     if observation_model == "room_visit":
-        rows += _room_visit_rows(spec_path, timeline, truth, n_days, awake,
-                                 episode_id, patrol, visits_per_day, seed)
+        visit_rows = _room_visit_rows(spec_path, timeline, truth, n_days,
+                                      awake, episode_id, patrol,
+                                      visits_per_day, seed)
+        before_tour = sum(1 for r in visit_rows if r["t"] < tour_t)
+        rows += [r for r in visit_rows if r["t"] >= tour_t]
+        if before_tour:
+            logger.info("dropped %d room visits before the tour", before_tour)
     elif observation_model == "glimpse":
         for day in range(n_days):
             for _ in range(sightings_per_day):
                 obj = rng_sightings.choice(objects)
                 t = draw_time(awake[day], day, rng_sightings)
+                if t < tour_t:
+                    continue  # the robot was not installed yet
                 where = truth_at(truth[obj], t)
                 if where == OUT_OF_HOUSE:
                     unobserved += 1  # you cannot sight what is not there
@@ -530,6 +595,8 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
             activity_instances(timeline), rule_set, object_classes, awake,
             n_days, first_question_day, questions_per_day, rng_routine)
         for obj, t, origin in stream:
+            if t < tour_t:
+                continue
             rows.append({"kind": "question", "episode_id": episode_id,
                          "question_id": f"q{question_number:04d}",
                          "object_id": obj,
@@ -546,6 +613,8 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
                                         recent, rng_questions, pool,
                                         awake[day])
                 recent.append(obj)
+                if t < tour_t:
+                    continue  # drawn (so later seeds' streams stay put), not asked
                 rows.append({"kind": "question", "episode_id": episode_id,
                              "question_id": f"q{question_number:04d}",
                              "object_id": obj,
@@ -585,7 +654,18 @@ def main() -> None:
                         help="rules YAML for --query-generation "
                              "routine_driven (see baselines.query_stream)")
     parser.add_argument("--no-initial-tour", action="store_true",
-                        help="omit the t=0 full snapshot; agents start blind")
+                        help="omit the installation snapshot; agents start "
+                             "blind")
+    parser.add_argument("--tour-start", default="day0",
+                        choices=("day0", "random"),
+                        help="tour at t=0 (objects at their homes) or at a "
+                             "per-seed random awake instant on a day in "
+                             "[0, --tour-max-day]")
+    parser.add_argument("--tour-max-day", type=int, default=1,
+                        help="latest day the random tour may fall on; "
+                             "evidence and questions before the tour are "
+                             "not exported, so each day here costs a day "
+                             "of episode")
     parser.add_argument("--observation-model", default="glimpse",
                         choices=("glimpse", "room_visit"))
     parser.add_argument("--patrol", default="round_robin_patrol",
@@ -599,6 +679,7 @@ def main() -> None:
            args.sightings_per_day, args.questions_per_day,
            args.first_question_day, args.budget_per_day, args.query_mode,
            initial_tour=not args.no_initial_tour,
+           tour_start=args.tour_start, tour_max_day=args.tour_max_day,
            observation_model=args.observation_model, patrol=args.patrol,
            visits_per_day=args.visits_per_day,
            query_generation=args.query_generation,

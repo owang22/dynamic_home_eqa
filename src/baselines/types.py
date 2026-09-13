@@ -347,6 +347,13 @@ class Episode:
         """Number of simulated days (question-list length)."""
         return len(self.questions_by_day)
 
+    @property
+    def tour_t(self) -> int:
+        """When the robot was installed and did its walkthrough: the
+        time of the initial-tour observations (0 when the bank carries no
+        tour, and for every bank exported with ``tour_start=day0``)."""
+        return self.initial_observations[0].t if self.initial_observations else 0
+
     def true_location(self, object_id: str, t: int) -> str:
         """Ground-truth receptacle of ``object_id`` at time ``t`` (seconds).
 

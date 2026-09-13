@@ -92,6 +92,11 @@ class FleetExportConfig:
     observation_model: str = "glimpse"
     patrol: str = "round_robin_patrol"
     visits_per_day: int = 8
+    # Where the installation tour falls (see baselines.export_bank.export):
+    # "day0" is t=0 with every object at its home; "random" draws a
+    # per-seed awake instant on a day in [0, tour_max_day].
+    tour_start: str = "day0"
+    tour_max_day: int = 1
 
 
 @dataclasses.dataclass(frozen=True)
@@ -224,7 +229,9 @@ def _run_one(source: HouseholdSource, export_cfg: FleetExportConfig,
                export_cfg.budget_per_sensable_receptacle),
            observation_model=export_cfg.observation_model,
            patrol=export_cfg.patrol,
-           visits_per_day=export_cfg.visits_per_day)
+           visits_per_day=export_cfg.visits_per_day,
+           tour_start=export_cfg.tour_start,
+           tour_max_day=export_cfg.tour_max_day)
     report = run_healthcheck(bank_path, hc_cfg, None)
     slug_dir = out_dir / "healthchecks" / _bank_name(source).removesuffix(
         "_bank.jsonl")
