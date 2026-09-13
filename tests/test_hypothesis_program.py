@@ -279,3 +279,15 @@ def test_location_equivalence_rejects_overlapping_groups() -> None:
     from baselines.passive_eval import PassiveProtocolConfig
     with pytest.raises(ValueError):
         PassiveProtocolConfig(location_equivalence=(("a", "b"), ("b", "c")))
+
+
+def test_rest_accepts_list_of_target_at_pairs_and_rejects_other_shapes() -> None:
+    as_list = json.loads(json.dumps(WORK_HYPOTHESIS))
+    as_list["rest"] = [{"target": "laptop_1", "at": "desk"},
+                       {"target": "class:towel", "to": "shelf"}]
+    hyp = parse_hypothesis(as_list, OBJECTS, RECS)
+    assert hyp.rest["laptop_1"] == "desk" and hyp.rest["towel_2"] == "shelf"
+    bad = json.loads(json.dumps(WORK_HYPOTHESIS))
+    bad["rest"] = [{"object": "laptop_1", "place": "desk"}]
+    with pytest.raises(HypothesisValidationError):
+        parse_hypothesis(bad, OBJECTS, RECS)

@@ -32,7 +32,7 @@ from __future__ import annotations
 
 import collections
 import json
-from typing import Dict, List, Mapping, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from baselines.beliefs.hypothesis_program import ORDINAL_CENTERS
 from baselines.types import DAY_SECONDS, Episode
@@ -53,7 +53,9 @@ EXAMPLE_OUTPUT = {
          "distinguishing_prediction": "keys_x absent from the entry "
                                       "table on weekday middays, back "
                                       "by 18:00",
-         "rest": {"keys_x": "entry_shelf_1", "class:mug": "cupboard_1"},
+         "distinguishing_check": {"target": "keys_x", "at": "OUT_OF_HOUSE",
+                                  "days": "weekday", "hour": 13.0},
+         "rest": {"class:mug": "cupboard_1"},
          "activities": [
              {"name": "office_day", "days": "weekday",
               "frequency_per_week": 5, "start_hour": 8.0,
@@ -71,7 +73,9 @@ EXAMPLE_OUTPUT = {
          "rationale": "resident mostly works from home; keys stay in",
          "distinguishing_prediction": "keys_x ON the entry table at "
                                       "weekday middays",
-         "rest": {"keys_x": "entry_shelf_1", "class:mug": "desk_1"},
+         "distinguishing_check": {"target": "keys_x", "at": "entry_shelf_1",
+                                  "days": "weekday", "hour": 13.0},
+         "rest": {"class:mug": "desk_1"},
          "activities": [
              {"name": "desk_work", "days": "weekday",
               "frequency_per_week": 5, "start_hour": 9.0,
@@ -94,8 +98,23 @@ HYPOTHESES_SCHEMA = {
                     "hypothesis_id": {"type": "string"},
                     "rationale": {"type": "string"},
                     "distinguishing_prediction": {"type": "string"},
-                    "rest": {"type": "object",
-                             "additionalProperties": {"type": "string"}},
+                    "distinguishing_check": {
+                        "type": "object",
+                        "properties": {
+                            "target": {"type": "string"},
+                            "at": {"type": "string"},
+                            "days": {"type": "string",
+                                     "enum": ["weekday", "weekend", "both"]},
+                            "hour": {"type": "number"}},
+                        "required": ["target", "at", "days", "hour"]},
+                    "rest": {"anyOf": [
+                        {"type": "object",
+                         "additionalProperties": {"type": "string"}},
+                        {"type": "array", "items": {
+                            "type": "object",
+                            "properties": {"target": {"type": "string"},
+                                           "at": {"type": "string"}},
+                            "required": ["target", "at"]}}]},
                     "activities": {
                         "type": "array",
                         "items": {
@@ -213,6 +232,36 @@ def crossref_table(episode: Episode, omap: Mapping[str, str],
     return "\n".join(lines) + "\n"
 
 
+def anonymize_hypothesis(raw: Mapping, omap: Mapping[str, str],
+                         rmap: Mapping[str, str],
+                         cmap: Mapping[str, str]) -> dict:
+    """Translate one real-id hypothesis INTO the anonymized vocabulary —
+    the inverse of :func:`deanonymize_hypothesis`, used when a previous
+    (real-id) hypothesis set is shown back to the model in the
+    anonymized condition. Exact lookups; unknown tokens pass through."""
+    def target(token: str) -> str:
+        if token.startswith("class:"):
+            cls = token[len("class:"):]
+            return "class:" + cmap.get(cls, cls)
+        return omap.get(token, token)
+
+    out = dict(raw)
+    out["rest"] = {target(str(k)): rmap.get(str(v), str(v))
+                   for k, v in dict(raw.get("rest", {})).items()}
+    out["activities"] = [
+        dict(act, moves=[dict(m, target=target(str(m.get("target", ""))),
+                              to=rmap.get(str(m.get("to", "")),
+                                          str(m.get("to", ""))))
+                         for m in act.get("moves", ())])
+        for act in raw.get("activities", ())]
+    check = raw.get("distinguishing_check")
+    if isinstance(check, Mapping) and check:
+        out["distinguishing_check"] = dict(
+            check, target=target(str(check.get("target", ""))),
+            at=rmap.get(str(check.get("at", "")), str(check.get("at", ""))))
+    return out
+
+
 def deanonymize_hypothesis(raw: Mapping, omap: Dict[str, str],
                            rmap: Dict[str, str],
                            cmap: Dict[str, str]) -> dict:
@@ -243,6 +292,11 @@ def deanonymize_hypothesis(raw: Mapping, omap: Dict[str, str],
                         for m in act.get("moves", ())]
         activities.append(act)
     out["activities"] = activities
+    check = raw.get("distinguishing_check")
+    if isinstance(check, Mapping) and check:
+        out["distinguishing_check"] = dict(
+            check, target=target(str(check.get("target", ""))),
+            at=rev_r.get(str(check.get("at", "")), str(check.get("at", ""))))
     return out
 
 
@@ -327,7 +381,11 @@ SYSTEM_PROMPT = (
     "must predict where objects are. You write competing hypotheses; a "
     "downstream statistical system converts them into probabilistic "
     "predictions and weighs them against future sightings. Be concrete "
-    "and decisive; the sightings, not you, will settle who was right.")
+    "and decisive; the sightings, not you, will settle who was right. "
+    "This is not your only chance: you will be shown where each "
+    "hypothesis was wrong and asked to revise it. Commit to sharp, "
+    "different hypotheses now rather than hedging — hedged hypotheses "
+    "all say the same thing and cannot be told apart by data.")
 
 
 def elicitation_prompt(episode: Episode, warmup_days: int,
@@ -365,3 +423,183 @@ Think it through first. Then end your reply with ONE json object, shaped exactly
 
 {schema_text}"""
     return user, {"omap": omap, "rmap": rmap, "cmap": cmap}
+
+
+# ------------------------------------------------- precomputed statistics
+
+def per_object_statistics(object_ids: Sequence[str],
+                          sightings: Sequence[Tuple[int, str, str]],
+                          upto_t: int,
+                          omap: Mapping[str, str] | None = None,
+                          rmap: Mapping[str, str] | None = None) -> str:
+    """One line per object: modal receptacle, share of sighted days it
+    was there, number of distinct receptacles, days never sighted.
+
+    Arithmetic the model would otherwise do by hand, slowly and badly
+    (the first run's reasoning trace opened with a 35-object walk-through
+    of exactly this). ``sightings`` is ``(t, object_id, receptacle_id)``
+    triples — the belief's own record when called mid-episode.
+    """
+    o = omap or {}
+    r = rmap or {}
+    n_days = max(1, upto_t // DAY_SECONDS + 1)
+    by_obj: Dict[str, List[Tuple[int, str]]] = collections.defaultdict(list)
+    for t, obj, rec in sightings:
+        if t <= upto_t:
+            by_obj[obj].append((t, rec))
+    lines = [f"PER-OBJECT STATISTICS over days 0-{n_days - 1} "
+             f"(modal receptacle; share of sighted days it was there; "
+             f"distinct receptacles seen; days with no sighting):"]
+    for obj in sorted(object_ids):
+        rows = by_obj.get(obj, [])
+        if not rows:
+            lines.append(f"  {o.get(obj, obj)}: never sighted")
+            continue
+        day_rec: Dict[int, collections.Counter] = collections.defaultdict(
+            collections.Counter)
+        for t, rec in rows:
+            day_rec[t // DAY_SECONDS][rec] += 1
+        modal = collections.Counter(rec for _, rec in rows).most_common(1)[0][0]
+        days_seen = len(day_rec)
+        days_modal = sum(1 for d in day_rec if day_rec[d].most_common(1)[0][0]
+                         == modal)
+        distinct = len({rec for _, rec in rows})
+        unseen = n_days - days_seen
+        lines.append(f"  {o.get(obj, obj)}: mostly {r.get(modal, modal)} "
+                     f"({days_modal}/{days_seen} sighted days); "
+                     f"{distinct} receptacle{'s' if distinct != 1 else ''}; "
+                     f"unseen {unseen} day{'s' if unseen != 1 else ''}")
+    return "\n".join(lines)
+
+
+def tour_digest(episode: Episode, omap: Mapping[str, str] | None = None,
+                rmap: Mapping[str, str] | None = None) -> str:
+    """The opening walkthrough: one sighting per object, one moment."""
+    o = omap or {}
+    r = rmap or {}
+    lines = ["WALKTHROUGH TOUR (a single pass through the home at 00:00 on "
+             "day 0, a Monday; every object seen once):"]
+    for obs in sorted(episode.initial_observations, key=lambda x: x.object_id):
+        lines.append(f"  {o.get(obs.object_id, obs.object_id)}  at  "
+                     f"{r.get(obs.receptacle_id, obs.receptacle_id)}")
+    return "\n".join(lines)
+
+
+OUTPUT_LENGTH_GUIDE = (
+    "Length: exactly {n} hypotheses. Each needs 3-7 activities, each "
+    "activity 1-6 moves. The `rest` map is OPTIONAL and should list only "
+    "objects whose resting place differs from where the tour found them "
+    "or that an activity moves; an object left out of `rest` is assumed "
+    "to rest where the tour saw it. Do not enumerate every object. "
+    "Rationale and distinguishing_prediction: one line each.")
+
+SCHEMA_NOTE = (
+    "The example below is ABBREVIATED — two hypotheses with one or two "
+    "activities each, from a different, much smaller home — and shows the "
+    "field shapes only, not the scale of the answer you should give.")
+
+
+def cold_start_prompt(episode: Episode, anonymized: bool = False
+                      ) -> Tuple[str, dict]:
+    """The day-zero prompt: vocabulary tables plus the tour, and nothing
+    about routines. Says so directly — the model is to write from what
+    it knows about how homes work, and sightings will settle it."""
+    if anonymized:
+        omap, rmap, cmap = build_anonymization_maps(episode)
+    else:
+        omap, rmap, cmap = {}, {}, {}
+    tables = vocabulary_tables(episode, omap, rmap, cmap)
+    tour = tour_digest(episode, omap, rmap)
+    schema_text = example_output_text(anonymized)
+    user = f"""A robot has just been installed in a home. It has done ONE walkthrough tour — one sighting of every object at one moment — and nothing else. It has seen no routines, no days, no movements. Below are the home's vocabulary tables and that tour.
+
+{tables}
+
+{tour}
+
+You have almost no data. Write your hypotheses from what you know about how homes like this run — who lives here judging by the objects, what they do on weekdays and weekends, which objects leave the house with a person, which get used and left out, which get put away. The robot's sightings over the coming days will settle which hypotheses were right; your job is to give it sharply different candidates to test.
+
+Write exactly {N_HYPOTHESES} competing hypotheses. Each hypothesis describes ACTIVITIES: what happens, which days (weekday, weekend, or both — mark this explicitly), roughly when, how many times per week, and which objects move where; plus an optional `rest` map for objects that do not rest where the tour found them.
+
+Rules that matter:
+
+1. Hypotheses must DISAGREE in ways sightings can settle. Two hypotheses predicting the same object in the same place at the same hour are wasted. Each hypothesis carries a one-line `distinguishing_prediction` naming a concrete observable difference from the others, AND a `distinguishing_check` object giving it in checkable form: {{"target": <object id>, "at": <receptacle id>, "days": weekday|weekend|both, "hour": <number>}}. You will be told whether it came true.
+2. Times and weekly frequencies: state them as numbers with your best guess ("dinner around 19:30" -> start_hour 19.5). They will be corrected by data, so a concrete guess beats a vague one.
+3. Chances: NEVER numbers. Use exactly one of: rarely, sometimes, usually, almost_always.
+4. `after` is "returned" (put back at rest when the activity ends) or "left" (stays where it was used until the next day). Distinguish objects put away after an activity from objects left where they were used.
+5. Known failure modes to avoid: objects are often asked about while displaced, since queries cluster around activities — model the displacements, not just the rest states; the same resident can behave differently on weekdays and weekends; calling everything stationary is unfalsifiable and useless. Objects that leave the house with a person go to {rmap.get("OUT_OF_HOUSE", "OUT_OF_HOUSE")}.
+6. IDs: use ONLY identifiers from the tables above, exactly as printed. Nothing outside the tables is valid. Every JSON field must contain the bare id.
+7. {OUTPUT_LENGTH_GUIDE.format(n=N_HYPOTHESES)}
+
+Think it through first. Then end your reply with ONE json object. {SCHEMA_NOTE}
+
+{schema_text}"""
+    return user, {"omap": omap, "rmap": rmap, "cmap": cmap}
+
+
+def revision_prompt(report: Mapping[str, Any], tables: str,
+                    previous_json: str, omap: Mapping[str, str] | None = None,
+                    rmap: Mapping[str, str] | None = None) -> str:
+    """The re-asking prompt: previous hypotheses with weights, the
+    mismatch report, which rules held, uncovered objects, and each
+    hypothesis's distinguishing-prediction verdict. Asks for repair.
+
+    ``report`` is :meth:`LLMHypothesisMixture.revision_report`. Names in
+    it are real ids; ``omap``/``rmap`` translate them for the anonymized
+    condition at this one point."""
+    o = omap or {}
+    r = rmap or {}
+    def obj(x): return o.get(x, x)
+    def rec(x): return r.get(x, x)
+    day = report["day"]
+    weights = "\n".join(
+        f"  {h['hypothesis_id']}: weight {h['weight']:.2f}"
+        + (f" — distinguishing prediction {h['verdict']}"
+           if h.get("verdict") else "")
+        for h in report["hypotheses"])
+    misses = "\n".join(
+        f"  {obj(m['object'])}: predicted {rec(m['predicted'])}, actually "
+        f"{rec(m['actual'])} — {m['count']}x, e.g. day {m['example_day']} "
+        f"{m['example_hour']:02d}:00"
+        for m in report["worst_objects"]) or "  (none)"
+    held = "\n".join(
+        f"  {h['hypothesis_id']}/{h['activity']}: {obj(h['target'])} -> "
+        f"{rec(h['to'])} held ({h['fitted_chance']:.2f} on "
+        f"{h['evidence']:.0f} sightings)"
+        for h in report["rules_held"]) or "  (none yet)"
+    failed = "\n".join(
+        f"  {h['hypothesis_id']}/{h['activity']}: {obj(h['target'])} -> "
+        f"{rec(h['to'])} failed ({h['fitted_chance']:.2f} on "
+        f"{h['evidence']:.0f} sightings)"
+        for h in report["rules_failed"]) or "  (none)"
+    uncovered = "\n".join(
+        f"  {obj(u['object'])}: {u['summary']}"
+        for u in report["uncovered_objects"]) or "  (none)"
+    return f"""It is now day {day}. The robot has been watching since your hypotheses were written; here is how they did. Revise them — keep what held up, fix what did not, and add at most ONE new hypothesis only if something systematic is unexplained. Do not start over: revised hypotheses keep their hypothesis_id, and a new one gets the next id.
+
+HYPOTHESIS WEIGHTS (share of the mixture each currently earns from the sightings):
+{weights}
+
+MIXTURE'S WORST OBJECTS — where it predicted vs where the object actually was:
+{misses}
+
+RULES THAT HELD UP (object was where the rule said, during its activity):
+{held}
+
+RULES THAT FAILED (object was elsewhere during the rule's activity):
+{failed}
+
+OBJECTS NO HYPOTHESIS COVERS (no rule and no rest entry mentions them), with what the sightings show:
+{uncovered}
+
+{report['statistics']}
+
+The ONLY valid identifiers are these, exactly as printed:
+
+{tables}
+
+YOUR PREVIOUS HYPOTHESES:
+
+{previous_json}
+
+Rules: same output format and the same seven rules as before (ids only from the tables; chances as labels; `rest` optional; every hypothesis carries a distinguishing_prediction and distinguishing_check). Keep {N_HYPOTHESES} hypotheses, or {N_HYPOTHESES + 1} if you add one. Think about what the mismatches imply, then end your reply with ONE json object holding the full revised set."""

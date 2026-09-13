@@ -147,6 +147,18 @@ def build_policy(spec: Dict[str, Any], rng: random.Random) -> DecisionPolicy:
             rooms=spec.get("rooms"),
             max_steps=int(spec.get("max_steps", 8)),
             max_recalls=int(spec.get("max_recalls", 4)))
+    if name == "voi_threshold":
+        from baselines.policies.voi_sense import VoIThresholdSense
+        return VoIThresholdSense(rng, lam=float(spec.get("lam", 0.05)))
+    if name == "random_slice_voi":
+        # Myopic VoI on the unreserved budget plus a uniform random slice
+        # (fraction 0 is exactly the plain VoI arm).
+        from baselines.policies.random_slice_sense import RandomSliceSense
+        from baselines.policies.voi_sense import VoIThresholdSense
+        inner = VoIThresholdSense(random.Random(rng.getrandbits(64)),
+                                  lam=float(spec.get("lam", 0.05)))
+        return RandomSliceSense(rng, inner,
+                                fraction=float(spec.get("fraction", 0.1)))
     raise ValueError(f"unknown policy {name!r}")
 
 

@@ -1,0 +1,605 @@
+{
+ "hypotheses": [
+  {
+   "hypothesis_id": "h1",
+   "rationale": "Single commuter works away on weekdays; entry-area objects (bag, keys) leave to receptacle_2 each morning and return in the evening; evenings are quiet relaxation at receptacle_19; weekends bring kitchen projects.",
+   "distinguishing_prediction": "object_1 absent from receptacle_17 and present at receptacle_2 on weekday mornings (gone with the resident to work)",
+   "distinguishing_check": {
+    "target": "backpack_mara",
+    "at": "OUT_OF_HOUSE",
+    "days": "weekday",
+    "hour": 10.0
+   },
+   "activities": [
+    {
+     "name": "weekday_departure",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 7.5,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "weekday_return",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 17.5,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "entry_hook_e1",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "couch_l1",
+       "chance": "usually",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "evening_relaxation",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "charger_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "weekend_kitchen_project",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 4.0,
+     "moves": [
+      {
+       "target": "bowl_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "mug_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "after": "returned"
+      }
+     ]
+    }
+   ],
+   "rest": {}
+  },
+  {
+   "hypothesis_id": "h2",
+   "rationale": "Work-from-home professional; nothing leaves the house; work materials at receptacle_13 get pulled to receptacle_19 (desk) during the 9-to-5 work block and returned after; weekends shift to a different hobby at receptacle_4.",
+   "distinguishing_prediction": "object_5 displaced from receptacle_13 to receptacle_19 on weekday midday (pulled to the desk for work), but back at receptacle_13 on Saturday",
+   "distinguishing_check": {
+    "target": "bowl_shared_2",
+    "at": "kitchen_table_k1",
+    "days": "weekday",
+    "hour": 12.0
+   },
+   "activities": [
+    {
+     "name": "work_session",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "bowl_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "mug_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "plate_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "plate_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "weekday_lunch",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 12.5,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "headphones_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "cupboard_k1",
+       "chance": "sometimes",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "weekend_hobby",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 5.0,
+     "moves": [
+      {
+       "target": "mug_shared_1",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pot_shared_1",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pan_shared_1",
+       "to": "bathroom_shelf_ba1",
+       "chance": "sometimes",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "evening_reading",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 20.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "lunchbox_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    }
+   ],
+   "rest": {}
+  },
+  {
+   "hypothesis_id": "h3",
+   "rationale": "Two-person household that cooks together daily; objects shuttle between receptacle_13 (prep) and receptacle_19 (cook/dine) at lunch and dinner; items are LEFT OUT after cooking rather than put back; weekends add a longer brunch session.",
+   "distinguishing_prediction": "object_6 displaced from receptacle_19 to receptacle_13 at midday (pulled to prep area for lunch, left there) on both weekdays and weekends",
+   "distinguishing_check": {
+    "target": "charger_mara",
+    "at": "cupboard_k1",
+    "days": "both",
+    "hour": 13.0
+   },
+   "activities": [
+    {
+     "name": "lunch_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 12.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "charger_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "dinner_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 18.5,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "bowl_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "morning_routine",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "hairbrush_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "makeup_kit_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "weekend_brunch",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.5,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "bowl_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "mug_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "mug_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "plate_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    }
+   ],
+   "rest": {}
+  },
+  {
+   "hypothesis_id": "h4",
+   "rationale": "Family with a young child; toys at receptacle_6 get scattered to other rooms during play; one parent commutes (object_2 leaves to receptacle_2); weekday has a structured nap window where toys get put back; weekends are extended chaos with more objects displaced.",
+   "distinguishing_prediction": "object_27 scattered from receptacle_6 to receptacle_19 on weekday mid-morning (child dragged it there), but back at receptacle_6 by 14:00 during nap cleanup",
+   "distinguishing_check": {
+    "target": "suitcase_mara",
+    "at": "kitchen_table_k1",
+    "days": "weekday",
+    "hour": 10.0
+   },
+   "activities": [
+    {
+     "name": "child_play_morning",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 4.0,
+     "moves": [
+      {
+       "target": "laundry_basket_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "suitcase_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "bathroom_shelf_ba1",
+       "chance": "sometimes",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "nap_cleanup",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 13.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "laundry_basket_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "suitcase_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "parent_commute_out",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 7.5,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "blanket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "parent_commute_home",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 17.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "blanket_mara",
+       "to": "couch_l1",
+       "chance": "almost_always",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "weekend_chaos",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "laundry_basket_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "suitcase_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "lunchbox_mara",
+       "to": "cupboard_k1",
+       "chance": "sometimes",
+       "after": "left"
+      }
+     ]
+    }
+   ],
+   "rest": {}
+  },
+  {
+   "hypothesis_id": "h5",
+   "rationale": "Retired resident with a consistent daily leisure routine; nothing leaves the house; craft objects at receptacle_13 get pulled to receptacle_19 in the morning and LEFT OUT; midday gardening moves objects to receptacle_22; afternoon entertainment at receptacle_19; weekday and weekend are nearly identical.",
+   "distinguishing_prediction": "object_8 moved from receptacle_4 to receptacle_22 (garden/outdoor area) at midday and left there, on both weekdays and weekends",
+   "distinguishing_check": {
+    "target": "hairbrush_mara",
+    "at": "towel_rack_ba1",
+    "days": "both",
+    "hour": 13.0
+   },
+   "activities": [
+    {
+     "name": "morning_craft",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 8.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pot_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "plate_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "midday_garden",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 12.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "hairbrush_mara",
+       "to": "towel_rack_ba1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "makeup_kit_mara",
+       "to": "towel_rack_ba1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "towel_rack_ba1",
+       "chance": "sometimes",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "afternoon_entertainment",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 15.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "lunchbox_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "umbrella_mara",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "evening_tea",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 18.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "charger_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    }
+   ],
+   "rest": {}
+  }
+ ]
+}

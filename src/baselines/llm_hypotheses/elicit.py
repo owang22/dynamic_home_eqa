@@ -57,7 +57,8 @@ from baselines.beliefs.hypothesis_program import (HypothesisValidationError,
                                                   parse_hypothesis)
 from baselines.household_analysis import REPO_ROOT, bank_path
 from baselines.llm_hypotheses.prompt import (HYPOTHESES_SCHEMA, N_HYPOTHESES,
-                                             SYSTEM_PROMPT, crossref_table,
+                                             SYSTEM_PROMPT, cold_start_prompt,
+                                             crossref_table,
                                              deanonymize_hypothesis,
                                              elicitation_prompt,
                                              vocabulary_tables)
@@ -272,13 +273,20 @@ Reprint the COMPLETE corrected JSON object (all hypotheses, same shape). Replace
 def elicit_household(client: CachedThinkingClient, episode,
                      condition: str, warmup_days: int, temperature: float,
                      max_tokens: int, llm_seed: int,
-                     reasoning_effort: str = DEFAULT_REASONING_EFFORT
-                     ) -> Dict[str, Any]:
+                     reasoning_effort: str = DEFAULT_REASONING_EFFORT,
+                     cold_start: bool = False) -> Dict[str, Any]:
     """The full pipeline for one (household, condition). Returns the
-    log row; the valid real-ID hypotheses are under ``"hypotheses"``."""
-    anonymized = condition == "anonymized"
-    user, maps = elicitation_prompt(episode, warmup_days,
-                                    anonymized=anonymized)
+    log row; the valid real-ID hypotheses are under ``"hypotheses"``.
+
+    ``cold_start`` sends the walkthrough tour only (no sighting history)
+    — the day-zero protocol; otherwise the first ``warmup_days`` of the
+    passive stream go in."""
+    anonymized = condition.endswith("anonymized")
+    if cold_start:
+        user, maps = cold_start_prompt(episode, anonymized=anonymized)
+    else:
+        user, maps = elicitation_prompt(episode, warmup_days,
+                                        anonymized=anonymized)
     if anonymized:
         omap, rmap, cmap = (maps["omap"], maps["rmap"], maps["cmap"])
         seen_classes = {omap[o]: cmap[c]
@@ -400,6 +408,10 @@ def main() -> None:
     ap.add_argument("--model", default="Qwen/Qwen3.8-27B")
     ap.add_argument("--conditions", nargs="+", default=list(CONDITIONS),
                     choices=CONDITIONS)
+    ap.add_argument("--cold-start", action="store_true",
+                    help="send only the walkthrough tour (no sighting "
+                         "history); outputs go under conditions prefixed "
+                         "cold_ so they never overwrite the history-fed set")
     ap.add_argument("--warmup-days", type=int, default=DEFAULT_WARMUP_DAYS)
     ap.add_argument("--temperature", type=float, default=DEFAULT_TEMPERATURE)
     ap.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS)
@@ -419,9 +431,11 @@ def main() -> None:
             log = elicit_household(client, episode, condition,
                                    args.warmup_days, args.temperature,
                                    args.max_tokens, args.llm_seed,
-                                   args.reasoning_effort)
-            hyp_dir = args.out_dir / "hypotheses" / condition
-            log_dir = args.out_dir / "logs" / condition
+                                   args.reasoning_effort,
+                                   cold_start=args.cold_start)
+            tag = f"cold_{condition}" if args.cold_start else condition
+            hyp_dir = args.out_dir / "hypotheses" / tag
+            log_dir = args.out_dir / "logs" / tag
             hyp_dir.mkdir(parents=True, exist_ok=True)
             log_dir.mkdir(parents=True, exist_ok=True)
             (hyp_dir / f"{episode.household_id}.json").write_text(
@@ -430,7 +444,7 @@ def main() -> None:
                 json.dumps(log, indent=1))
             tokens = sum(r.get("completion_tokens") or 0
                          for r in log["rounds"])
-            cost.append({"household": household, "condition": condition,
+            cost.append({"household": household, "condition": tag,
                          "n_hypotheses": len(log["hypotheses"]),
                          "n_dropped": len(log["dropped"]),
                          "n_calls": len(log["rounds"]),
@@ -438,12 +452,14 @@ def main() -> None:
                          "generation_seconds": log["generation_seconds"],
                          "seconds_per_hypothesis":
                              log["seconds_per_hypothesis"]})
-            print(f"{household} {condition}: {len(log['hypotheses'])} valid "
+            print(f"{household} {tag}: {len(log['hypotheses'])} valid "
                   f"hypotheses, {len(log['dropped'])} dropped, "
                   f"{log['generation_seconds']:.0f}s generation "
                   f"({log['seconds_per_hypothesis']}s per hypothesis, "
                   f"{tokens} output tokens)")
-    (args.out_dir / "generation_cost.json").write_text(json.dumps(
+    cost_name = ("generation_cost_cold.json" if args.cold_start
+                 else "generation_cost.json")
+    (args.out_dir / cost_name).write_text(json.dumps(
         {"model": args.model, "reasoning_effort": args.reasoning_effort,
          "max_tokens": args.max_tokens,
          "live_calls": client.calls, "cache_hits": client.cache_hits,

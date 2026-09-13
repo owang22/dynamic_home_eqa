@@ -200,13 +200,21 @@ def _build_llm_hypothesis_mixture(spec: Dict[str, Any],
     """Mixture over the per-household hypothesis files under the spec's
     ``hypotheses_dir`` plus ``stat_particles`` (default one
     ``periodic_persistence``); ``label`` names the run's condition
-    (named / scrambled) in result tables."""
+    (named / anonymized) in result tables. ``reask`` (a ReaskConfig as a
+    dict) and ``elicitor`` (the callable; a driver puts the object into
+    the spec, as the LLM belief's driver does with its cache) switch on
+    the re-asking layer; without both it is a fixed hypothesis set."""
     from baselines.beliefs.llm_hypothesis_mixture import (
-        DEFAULT_HYPOTHESIS_DECAY)
+        DEFAULT_HYPOTHESIS_DECAY, ReaskConfig)
+    reask_raw = spec.get("reask")
+    reask = (ReaskConfig(**{k: (tuple(v) if k == "scheduled_days" else v)
+                            for k, v in dict(reask_raw).items()})
+             if reask_raw else None)
     return LLMHypothesisMixture(
         rng, hypotheses_dir=spec["hypotheses_dir"],
         stat_specs=spec.get("stat_particles"),
         decay=float(spec.get("decay", DEFAULT_HYPOTHESIS_DECAY)),
+        reask=reask, elicitor=spec.get("elicitor"),
         absence_weight=float(spec.get("absence_weight",
                                       DEFAULT_ABSENCE_WEIGHT)),
         absence_uniforms=float(spec.get("absence_uniforms",

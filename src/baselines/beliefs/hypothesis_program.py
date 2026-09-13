@@ -171,13 +171,42 @@ class Activity:
 
 
 @dataclasses.dataclass(frozen=True)
+class DistinguishingCheck:
+    """The structured half of a hypothesis's distinguishing prediction:
+    ``target`` is at ``at`` around ``hour`` on ``days``. Checkable
+    against sightings, unlike the free-text sentence beside it."""
+
+    target: str                  # resolved object_id
+    at: str                      # receptacle_id
+    days: str                    # "weekday" | "weekend" | "both"
+    hour: float
+
+
+@dataclasses.dataclass(frozen=True)
 class Hypothesis:
-    """One validated household description, IDs fully resolved."""
+    """One validated household description, IDs fully resolved.
+
+    ``distinguishing_prediction`` is the sentence the LLM wrote to say
+    how this hypothesis differs observably from the others; the
+    revision prompt reports back whether it came true, using
+    ``distinguishing_check`` when the LLM supplied the structured form.
+    """
 
     hypothesis_id: str
     rationale: str
     rest: Mapping[str, str]      # object_id -> receptacle_id
     activities: Tuple[Activity, ...]
+    distinguishing_prediction: str = ""
+    distinguishing_check: Optional[DistinguishingCheck] = None
+
+    def covered_objects(self) -> frozenset:
+        """Objects this description says anything about: a rest entry or
+        a move rule. Everything else falls through to statistics."""
+        covered = set(self.rest)
+        for activity in self.activities:
+            for rule in activity.moves:
+                covered.update(rule.targets)
+        return frozenset(covered)
 
 
 def _resolve_target(raw: str, object_classes: Mapping[str, str]
@@ -189,6 +218,33 @@ def _resolve_target(raw: str, object_classes: Mapping[str, str]
         ids = tuple(sorted(o for o, c in object_classes.items() if c == cls))
         return ids or None
     return (raw,) if raw in object_classes else None
+
+
+def _rest_pairs(raw_rest: Any) -> List[Tuple[str, str]]:
+    """The rest map as (target, receptacle) pairs, from either shape an
+    LLM produces: the canonical ``{target: receptacle}`` map, or a list
+    of ``{"target": ..., "at"|"to": ...}`` objects (the shape of
+    ``distinguishing_check``, which models generalize to ``rest`` about
+    half the time). A deterministic re-shaping, not a guess: an entry
+    in any other form is a validation error naming the entry."""
+    if raw_rest is None:
+        return []
+    if isinstance(raw_rest, Mapping):
+        return [(str(k), str(v)) for k, v in raw_rest.items()]
+    if isinstance(raw_rest, (list, tuple)):
+        pairs = []
+        for entry in raw_rest:
+            if (isinstance(entry, Mapping) and "target" in entry
+                    and ("at" in entry or "to" in entry)):
+                pairs.append((str(entry["target"]),
+                              str(entry.get("at", entry.get("to")))))
+            else:
+                raise HypothesisValidationError(
+                    "rest entry must be {target: receptacle} or "
+                    "{\"target\": ..., \"at\": ...}", [str(entry)[:80]])
+        return pairs
+    raise HypothesisValidationError("rest must be a map or a list",
+                                    [str(raw_rest)[:80]])
 
 
 def parse_hypothesis(raw: Mapping[str, Any],
@@ -213,7 +269,7 @@ def parse_hypothesis(raw: Mapping[str, Any],
         return m[key]
 
     rest: Dict[str, str] = {}
-    for target, receptacle in dict(raw.get("rest", {})).items():
+    for target, receptacle in _rest_pairs(raw.get("rest")):
         ids = _resolve_target(str(target), object_classes)
         if ids is None:
             bad.append(str(target))
@@ -275,13 +331,40 @@ def parse_hypothesis(raw: Mapping[str, Any],
             days=days, frequency_per_week=freq, start_hour=start,
             duration_h=duration, moves=tuple(moves)))
 
+    check: Optional[DistinguishingCheck] = None
+    raw_check = raw.get("distinguishing_check")
+    if isinstance(raw_check, Mapping) and raw_check:
+        target = str(raw_check.get("target", ""))
+        at = str(raw_check.get("at", ""))
+        days = str(raw_check.get("days", "both"))
+        ids = _resolve_target(target, object_classes)
+        if ids is None or len(ids) != 1:
+            bad.append(target)
+        elif at not in recs:
+            bad.append(at)
+        elif days not in DAY_KINDS:
+            raise HypothesisValidationError(
+                "distinguishing_check.days must be one of DAY_KINDS", [days])
+        else:
+            try:
+                hour = float(raw_check.get("hour"))
+            except (TypeError, ValueError):
+                raise HypothesisValidationError(
+                    "distinguishing_check.hour must be a number",
+                    [str(raw_check.get("hour"))])
+            check = DistinguishingCheck(target=ids[0], at=at, days=days,
+                                        hour=hour)
+
     if bad:
         raise HypothesisValidationError(
             "unknown object/class/receptacle ids", bad)
     return Hypothesis(
         hypothesis_id=str(raw.get("hypothesis_id", "h?")),
         rationale=str(raw.get("rationale", "")),
-        rest=rest, activities=tuple(activities))
+        rest=rest, activities=tuple(activities),
+        distinguishing_prediction=str(
+            raw.get("distinguishing_prediction", "")),
+        distinguishing_check=check)
 
 
 def _phi(x: float) -> float:
