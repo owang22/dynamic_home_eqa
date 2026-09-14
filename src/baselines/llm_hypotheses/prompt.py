@@ -103,7 +103,9 @@ HYPOTHESES_SCHEMA = {
                             "at": {"type": "string"},
                             "days": {"type": "string",
                                      "enum": ["weekday", "weekend", "both"]},
-                            "hour": {"type": "number"}},
+                            "hour": {"type": "number"},
+                            "if_seen": {"type": "string",
+                                        "enum": ["right", "wrong"]}},
                         "required": ["target", "at", "days", "hour"]},
                     "rest": {"anyOf": [
                         {"type": "object",
@@ -164,6 +166,8 @@ _EXAMPLE_TOKEN_MAP = {
     "desk_1": "receptacle_5",
     "keys_x are on the entry shelf on weekday evenings and gone by 9:00":
         "object_3 is at receptacle_1 on weekday evenings and gone by 9:00",
+    "keys_x are gone from the entry shelf at weekday midday":
+        "object_3 is gone from receptacle_1 at weekday midday",
     "keys_x on the entry shelf at weekday midday":
         "object_3 at receptacle_1 at weekday midday",
 }
@@ -638,11 +642,12 @@ GRAPH_EXAMPLE_OUTPUT = {
         {"leaf_id": "p_a41c",
          "assumes": {"composition": "couple", "weekday_pattern": "works_away"},
          "rationale": "two commuters; the home is empty on weekdays",
-         "distinguishing_prediction": "keys_x are on the entry shelf on "
-                                      "weekday evenings and gone by 9:00",
+         "distinguishing_prediction": "keys_x are gone from the entry "
+                                      "shelf at weekday midday",
          "distinguishing_check": {"target": "keys_x", "at": "entry_shelf_1",
-                                  "days": "weekday", "hour": 19.0},
-         "rest": {"class:mug": "cupboard_1"},
+                                  "days": "weekday", "hour": 13.0,
+                                  "if_seen": "wrong"},
+         "rest": {"class:mug": "cupboard_1", "keys_x": "entry_shelf_1"},
          "activities": [
              {"name": "office_day", "days": "weekday",
               "frequency_per_week": 5, "start_hour": 8.0,
@@ -663,7 +668,8 @@ GRAPH_EXAMPLE_OUTPUT = {
          "distinguishing_prediction": "keys_x on the entry shelf at "
                                       "weekday midday",
          "distinguishing_check": {"target": "keys_x", "at": "entry_shelf_1",
-                                  "days": "weekday", "hour": 13.0},
+                                  "days": "weekday", "hour": 13.0,
+                                  "if_seen": "right"},
          "rest": {"class:mug": "desk_1"},
          "activities": [
              {"name": "desk_work", "days": "weekday",
@@ -718,9 +724,9 @@ OPERATIONS_SCHEMA = {
                 "type": "object",
                 "properties": {
                     "op": {"type": "string",
-                           "enum": ["edit_leaf", "drop_leaf",
-                                    "add_assumption_value", "add_leaf",
-                                    "add_assumption"]},
+                           "enum": ["edit_leaf", "add_assumption_value",
+                                    "add_leaf", "add_assumption",
+                                    "add_activity"]},
                     "leaf_id": {"type": "string"},
                     "reason": {"type": "string"},
                     "assumption": {"type": "string"},
@@ -729,7 +735,9 @@ OPERATIONS_SCHEMA = {
                     "question": {"type": "string"},
                     "values": {"type": "object",
                                "additionalProperties": {"type": "string"}},
-                    "body": _LEAF_SCHEMA},
+                    "body": _LEAF_SCHEMA,
+                    "activity": (_LEAF_SCHEMA["properties"]["activities"]
+                                 ["items"])},
                 "required": ["op"]}}},
     "required": ["operations"],
 }
@@ -781,7 +789,7 @@ def deanonymize_operations(operations: Sequence[Mapping[str, Any]],
 
 GRAPH_RULES = """Rules that matter:
 
-1. Leaves must DISAGREE in ways sightings can settle. Two leaves predicting the same object in the same place at the same hour are wasted. Each leaf carries a one-line `distinguishing_prediction` naming a concrete observable difference from the others, and a `distinguishing_check` in the form {"target": <object id>, "at": <receptacle id>, "days": weekday|weekend|both, "hour": <number>}.
+1. Leaves must DISAGREE in ways sightings can settle. Two leaves predicting the same object in the same place at the same hour are wasted. Each leaf carries a one-line `distinguishing_prediction` naming a concrete observable difference from the others, and a `distinguishing_check` in the form {"target": <object id>, "at": <in-home receptacle id>, "days": weekday|weekend|both, "hour": <number>, "if_seen": right|wrong}: a look at `at` around that hour that finds the target means the leaf is `if_seen`; an empty look means the opposite. `at` must be a receptacle the robot can look into. A leaf whose move sends the target out of the house checks the object's rest with "if_seen": "wrong".
 2. Cover every object, not only the interesting ones: every object id should appear in each leaf's `rest` map (directly or via its class).
 3. Times and weekly frequencies: state them as numbers with your best guess ("dinner around 19:30" -> start_hour 19.5). They will be corrected by data, so a concrete guess beats a vague one.
 4. State how long each object stays where the activity put it. A move lasts the activity's `duration_h` unless you give the move its own `duration_h`; do so whenever it differs.
@@ -793,7 +801,7 @@ Assumptions:
 
 - Name 2 to 3 assumptions. An assumption qualifies only if its different values lead to different observable predictions. If two values would produce leaves that predict the same object in the same place at the same hour, drop the assumption.
 - Write one leaf per combination of assumption values worth testing. Skip combinations that do not fit together, and say which in `leaf_set_rationale`.
-- `OUT_OF_HOUSE` is a location in the tables like any other.
+- `OUT_OF_HOUSE` is a location in the tables like any other, and the one destination a look can never confirm. A move that ends there gains support only from the object failing to turn up at its rest receptacle during the window, so write one only when you can say where the object would be found if the move did not happen (put that receptacle in `rest`), and keep the window narrow enough that the patrol reaches that place inside it.
 - `leaf_id` is an opaque token: `p_` followed by 4 hex characters, chosen at random. Never spell an id from the assumption values. Assumption names, value names, questions and descriptions must not contain any object or receptacle id.
 - At most 3 assumptions and 12 leaves."""
 
@@ -831,7 +839,8 @@ Think it through, then end your reply with one json object. {SCHEMA_NOTE}
 def graph_revision_prompt(report: Mapping[str, Any], tables: str,
                           graph_json: str,
                           omap: Mapping[str, str] | None = None,
-                          rmap: Mapping[str, str] | None = None) -> str:
+                          rmap: Mapping[str, str] | None = None,
+                          call_type: str | None = None) -> str:
     """The graph arm's re-asking prompt: assumption weights, leaf weights
     with their cells, the mismatch report, rules held and failed, the
     uncovered bank and what fired, statistics, tables, the graph as
@@ -844,15 +853,30 @@ def graph_revision_prompt(report: Mapping[str, Any], tables: str,
     def obj(x): return o.get(x, x)
     def rec(x): return r.get(x, x)
     day = report["day"]
+    settled = dict(report.get("settled", {}))
     a_lines = []
     for name, node in report.get("assumptions", {}).items():
         values = ", ".join(f"{v} {w:.2f}" for v, w in node["values"].items())
-        top = max(node["values"].values()) if node["values"] else 0.0
-        state = ("settled" if top >= 0.9 else
-                 "leaning" if top >= 0.6 else "open")
+        if name in settled:
+            state = (f"SETTLED on {settled[name]!r} — not editable in this "
+                     f"call; operations naming it are rejected")
+        else:
+            top = max(node["values"].values()) if node["values"] else 0.0
+            state = "leaning" if top >= 0.6 else "open"
         a_lines.append(f"  {name} ({node['question']}): {values}; entropy "
                        f"{node['entropy']:.2f} nats — {state}")
     assumptions = "\n".join(a_lines) or "  (none)"
+    open_names = [a for a in report.get("assumptions", {}) if a not in settled]
+    checks = report.get("check_outcomes", [])
+    unresolved = [h["hypothesis_id"] for h in report["hypotheses"]
+                  if not h.get("verdict") or "not yet" in str(h.get("verdict"))]
+    bucket_rows = report.get("anomaly_bucket", [])
+    bucket_text = "\n".join(
+        f"  {obj(b['object'])} seen at {rec(b['receptacle'])} around "
+        f"{b['hour_bin'] * 2:02d}:00-{b['hour_bin'] * 2 + 2:02d}:00 on "
+        f"{b['count']} occasions; no leaf gave it more than "
+        f"{b['max_p']:.2f}"
+        for b in bucket_rows) or "  (empty)"
     weights = "\n".join(
         f"  {h['hypothesis_id']}: weight {h['weight']:.2f}, assumes "
         + json.dumps(h.get("assumes", {}))
@@ -887,8 +911,41 @@ def graph_revision_prompt(report: Mapping[str, Any], tables: str,
                      f"day {b['day']})"
                      for b in report.get("uncovered_bank", [])) or "(empty)"
     trigger = report.get("trigger", "scheduled")
-    return f"""It is now day {day}. The robot has been watching since your graph was written; here is how it did. Revise it with OPERATIONS on the graph — leaves you do not mention are kept exactly as they are, with the weight they have earned.
+    def _away_line(a: Mapping[str, Any]) -> str:
+        line = (f"  {obj(a['object'])} during {a['windows']}: looks at its "
+                f"stated rest {rec(a['rest'])} empty {a['empty']}, found "
+                f"{a['found']}")
+        if a.get("modal_empty") is not None:
+            line += (f"; looks at {rec(a['modal'])}, where it is sighted "
+                     f"most, empty {a['modal_empty']}, found "
+                     f"{a['modal_found']}")
+        return line
+    away_looks = "\n".join(_away_line(a) for a in
+                            report.get("away_window_looks", [])) or "  (none)"
+    if call_type == "diversify":
+        lead = f"""It is now day {day}. This is a DIVERSIFY call: the sightings below are ones no leaf predicted, repeatedly, so the graph is missing structure. Add to it — a new assumption, a new value, a new leaf, or a new activity on an existing leaf. Do not edit existing leaves otherwise (edit_leaf is rejected in this call). Leaves you do not mention are kept exactly as they are.
 
+REPEATED SIGHTINGS NO LEAF EXPLAINS (the anomaly bucket):
+{bucket_text}
+
+ASSUMPTIONS STILL OPEN: {', '.join(open_names) or '(none)'}
+LEAVES WHOSE DISTINGUISHING CHECK HAS NEVER RESOLVED: {', '.join(unresolved) or '(none)'}
+"""
+        header_ops = ("Operations allowed in this call: add_assumption, "
+                      "add_assumption_value, add_leaf, add_activity.")
+    elif call_type == "repair":
+        lead = f"""It is now day {day}. This is a REPAIR call: the mixture has been predicting poorly. Fix the leaves the evidence points at — a failed rule is an edit_leaf on that leaf's activities; a value no leaf carries is an add_assumption_value or an add_leaf. Leaves you do not mention are kept exactly as they are, with the weight they have earned.
+"""
+        header_ops = ("Operations allowed in this call: edit_leaf (activities "
+                      "only — rest is not editable), add_assumption_value, "
+                      "add_leaf.")
+    else:
+        lead = f"""It is now day {day}. The robot has been watching since your graph was written; here is how it did. Revise it with OPERATIONS on the graph — leaves you do not mention are kept exactly as they are, with the weight they have earned.
+"""
+        header_ops = ("Operations allowed: add_assumption, "
+                      "add_assumption_value, edit_leaf (activities only — "
+                      "rest is not editable), add_activity, add_leaf.")
+    return f"""{lead}
 ASSUMPTION WEIGHTS (each value's share of the leaf weight, and the node's entropy):
 {assumptions}
 
@@ -912,6 +969,9 @@ This call was triggered by: {trigger}.
 
 {report['statistics']}
 
+UNSEEN DURING MODELED AWAY WINDOWS (for each object some leaf sends out of the house: looks inside that window at its stated rest, and at the receptacle it is sighted at most, that found nothing versus looks that found it. "Seen at X on every sighted day" says nothing about the window; empty looks at X inside the window are the evidence the object is out):
+{away_looks}
+
 The ONLY valid identifiers are these, exactly as printed:
 
 {tables}
@@ -920,21 +980,23 @@ THE CURRENT GRAPH:
 
 {graph_json}
 
-Operations, applied in this order: add_assumption, add_assumption_value, edit_leaf, drop_leaf, add_leaf.
-  {{"op": "edit_leaf", "leaf_id": "p_xxxx", "body": {{...the complete leaf body, with assumes...}}}}
-  {{"op": "drop_leaf", "leaf_id": "p_xxxx", "reason": "..."}}
+{header_ops}
+Operations, applied in this order: add_assumption, add_assumption_value, edit_leaf, add_activity, add_leaf.
+  {{"op": "edit_leaf", "leaf_id": "p_xxxx", "body": {{...the complete leaf body, with assumes, and the rest map EXACTLY as stored...}}}}
+  {{"op": "add_activity", "leaf_id": "p_xxxx", "activity": {{...one complete activity with its moves...}}}}
   {{"op": "add_assumption_value", "assumption": "<name>", "value": "<new value>", "description": "..."}}
   {{"op": "add_leaf", "body": {{...the complete leaf body, with assumes; leaf_id p_ + 4 random hex...}}}}
   {{"op": "add_assumption", "assumption": "<name>", "question": "...", "values": {{"<value>": "..."}}}}
-Every body is a complete leaf, never a partial patch. An add_assumption must come with edit_leaf operations giving every existing leaf a value for it, or it is rejected. A new assumption value is crossed automatically with the values of the other assumptions that still carry weight; you may also add_leaf the combinations you care about yourself.
+Every body is a complete leaf, never a partial patch. There is no operation that removes a leaf: leaves that stop earning weight are pruned automatically. The `rest` map is fit from sightings and is not yours to edit — an edit_leaf whose rest differs from the stored leaf is rejected. Operations that name a SETTLED assumption are rejected. An add_assumption must come with edit_leaf operations giving every existing leaf a value for it, or it is rejected. A new assumption value is crossed automatically with the values of the other assumptions that still carry weight; you may also add_leaf the combinations you care about yourself.
 
 Guidance:
 - Edit at the level the evidence points to. A failed rule inside one leaf is an edit_leaf. An assumption value losing weight across every leaf that depends on it means that premise is wrong, not those leaves individually. An object no leaf accounts for usually means a missing assumption value, not a missing rule.
 - One sighting at a given place and hour is weaker evidence than a repeated one. The statistics section gives, per object, how many distinct receptacles it has been seen in and its share of sighted days at the most common one.
+- Only positive sightings are recorded. An object that leaves the house is invisible while it is out, so "seen at X on every sighted day" is fully consistent with it being taken out most of the day; the "unseen during modeled windows" figure in the statistics is the evidence for a move ending out of the house.
 - Do not propose an assumption whose values make the same observable predictions.
 - Return only operations. Leaves you do not mention are kept exactly as they are.
 
-Rules: ids only from the tables; chances as labels; a move's `duration_h` when it differs from the activity's; every leaf carries a distinguishing_prediction and distinguishing_check; leaf ids are opaque p_xxxx tokens and an existing leaf keeps its id. At most 3 assumptions and 12 leaves. Think about what the mismatches imply, then end your reply with ONE json object of the form {{"operations": [...]}}."""
+Rules: ids only from the tables; chances as labels; a move's `duration_h` when it differs from the activity's; every leaf carries a distinguishing_prediction and a distinguishing_check whose `at` is an in-home receptacle with an `if_seen` direction; leaf ids are opaque p_xxxx tokens and an existing leaf keeps its id. At most 3 assumptions and 12 leaves. Think about what the mismatches imply, then end your reply with ONE json object of the form {{"operations": [...]}}."""
 
 
 def graph_repair_prompt(problems: Sequence[str], tables: str,

@@ -146,6 +146,15 @@ class ReaskConfig:
     new_class_triggers: bool = True
     uncovered_bank_max: int = 4
     uncovered_bank_ramp: bool = True
+    settled_weight: float = 0.9
+    """Rolled-up weight at which an assumption's top value closes the
+    node to revision operations (graph arm)."""
+    anomaly_p: float = 0.05
+    """Anomaly bucket: a sighting no live leaf gave more than this
+    probability enters the bucket (graph arm)."""
+    anomaly_repeats: int = 3
+    """Bucket key ``(object, receptacle, 2-hour bin)`` recurrences that
+    fire a diversify call; single occurrences never fire. 0 disables."""
 
     def __post_init__(self) -> None:
         if self.window < 1 or self.min_gap < 0 or self.max_calls < 0:
@@ -226,6 +235,11 @@ class LLMHypothesisMixture(HypothesisMixture):
         self.edit_log: List[Dict[str, Any]] = []
         self.prune_log: List[Dict[str, Any]] = []
         self.birth_log: List[Dict[str, Any]] = []
+        self.rejected_ops: List[Dict[str, Any]] = []
+        self.check_outcomes: List[Dict[str, Any]] = []
+        self._look_log: List[Tuple[int, str, Tuple[str, ...]]] = []
+        self._anomaly_bucket: Dict[Tuple[str, str, int], Dict[str, Any]] = {}
+        self.bucket_trace: List[Dict[str, Any]] = []
         self._assumption_trace: Dict[int, Dict[str, Any]] = {}
         self._leaf_count_trace: Dict[int, int] = {}
         # Parent builds the stat particles now; the hypothesis particles
@@ -287,6 +301,11 @@ class LLMHypothesisMixture(HypothesisMixture):
         self.edit_log = []
         self.prune_log = []
         self.birth_log = []
+        self.rejected_ops = []
+        self.check_outcomes = []
+        self._look_log = []
+        self._anomaly_bucket = {}
+        self.bucket_trace = []
         self._assumption_trace = {}
         self._leaf_count_trace = {}
 
@@ -330,6 +349,12 @@ class LLMHypothesisMixture(HypothesisMixture):
         classes = ({evidence.object_id: evidence.object_class}
                    if isinstance(evidence, Observation)
                    else dict(evidence.object_classes))
+        if isinstance(evidence, SenseResult):
+            self._look_log.append((evidence.t, evidence.receptacle_id,
+                                   tuple(evidence.contents)))
+        else:
+            self._look_log.append((evidence.t, evidence.receptacle_id,
+                                   (evidence.object_id,)))
         for obj, receptacle in pairs:
             if obj in self._objects:
                 forecast = self.predict_readonly(obj, evidence.t)
@@ -338,11 +363,16 @@ class LLMHypothesisMixture(HypothesisMixture):
                     "t": evidence.t, "object": obj, "actual": receptacle,
                     "predicted": forecast.argmax, "p_actual": p})
                 self._recent.append(math.log(max(p, 1e-12)))
+                self._bucket_sighting(obj, receptacle, evidence.t)
             else:
-                # First sighting of a new object: no forecast to score.
+                # First sighting of a new object: no forecast to score,
+                # but the leaves can still say whether they expected it
+                # there (cold-start / class prior), so the bucket sees it.
                 self._sighting_log.append({
                     "t": evidence.t, "object": obj, "actual": receptacle,
                     "predicted": None, "p_actual": None})
+                self.ensure_object(obj, classes.get(obj, ""))
+                self._bucket_sighting(obj, receptacle, evidence.t)
             if obj not in self._sighted:
                 self._sighted.add(obj)
                 self._consider_uncovered(obj, classes.get(obj, ""),
@@ -352,11 +382,54 @@ class LLMHypothesisMixture(HypothesisMixture):
         day = evidence.t // DAY_SECONDS
         if self._graph is not None:
             self._prune(evidence.t)
+            self._record_check_outcomes(evidence.t)
             from baselines.llm_hypotheses.assumption_graph import (
                 assumption_summary)
             self._assumption_trace[day] = assumption_summary(
                 self._graph, self.leaf_weights)
         self._leaf_count_trace[day] = len(self._raw_hypotheses)
+
+    # ------------------------------------------------------- anomaly bucket
+
+    def _bucket_sighting(self, obj: str, receptacle: str, t: int) -> None:
+        """Graph arm: a sighting that no LIVE leaf predicted (max over
+        leaves below ``anomaly_p``) enters the bucket under its
+        ``(object, receptacle, 2-hour bin)`` key. The max, not the
+        mixture average: a low average with one leaf fitting well is a
+        weighting problem, not a structure problem."""
+        cfg = self._reask
+        if (cfg is None or self._graph is None or cfg.anomaly_repeats <= 0
+                or not self._raw_hypotheses):
+            return
+        n_hyp = len(self._raw_hypotheses)
+        masses = self._claimed_mass(obj, receptacle, t)[:n_hyp]
+        top = max(masses) if masses else 0.0
+        if top >= cfg.anomaly_p:
+            return
+        key = (obj, receptacle, int((t % DAY_SECONDS) // 7200))
+        row = self._anomaly_bucket.setdefault(
+            key, {"object": obj, "receptacle": receptacle, "hour_bin": key[2],
+                  "count": 0, "max_p": 0.0, "first_t": t})
+        row["count"] += 1
+        row["max_p"] = max(row["max_p"], top)
+        self.bucket_trace.append({"t": t, "day": t // DAY_SECONDS,
+                                  "key": list(key), "count": row["count"],
+                                  "max_p": top,
+                                  "bucket_size": len(self._anomaly_bucket)})
+
+    @property
+    def anomaly_bucket(self) -> List[Dict[str, Any]]:
+        return sorted((dict(r) for r in self._anomaly_bucket.values()),
+                      key=lambda r: (-r["count"], r["first_t"]))
+
+    def _anomaly_ready(self) -> Optional[Dict[str, Any]]:
+        cfg = self._reask
+        if cfg is None or cfg.anomaly_repeats <= 0:
+            return None
+        for row in self.anomaly_bucket:
+            if row["count"] >= cfg.anomaly_repeats:
+                return row
+        return None
 
     # ------------------------------------------------------- uncovered bank
 
@@ -437,9 +510,15 @@ class LLMHypothesisMixture(HypothesisMixture):
                 reason = (f"uncovered bank {len(self._uncovered_bank)} >= "
                           f"{bar:.1f}")
                 trigger = "uncovered"
+        since = len(self._sighting_log) - self._last_reask_index
+        if reason is None and since >= cfg.min_gap:
+            hot = self._anomaly_ready()
+            if hot is not None:
+                reason = (f"anomaly {hot['object']}@{hot['receptacle']} "
+                          f"bin {hot['hour_bin']} x{hot['count']}")
+                trigger = "anomaly"
         if reason is None:
             quality = self.recent_quality
-            since = len(self._sighting_log) - self._last_reask_index
             if (quality is not None and quality < cfg.threshold
                     and since >= cfg.min_gap):
                 reason = f"quality {quality:.2f} < {cfg.threshold}"
@@ -448,10 +527,18 @@ class LLMHypothesisMixture(HypothesisMixture):
             return
         self._revise(t, reason, trigger or "scheduled")
 
+    CALL_TYPE_OF_TRIGGER = {"scheduled": "repair", "quality": "repair",
+                            "anomaly": "diversify", "uncovered": "diversify"}
+    """Which revision call a trigger fires (graph arm, when the elicitor
+    honours call types): repair edits what exists, diversify only adds."""
+
     def _revise(self, t: int, reason: str, trigger: str = "scheduled") -> None:
         report = self.revision_report(t)
         report["trigger"] = trigger
         report["reason"] = reason
+        report["call_type"] = self.CALL_TYPE_OF_TRIGGER.get(trigger, "repair")
+        report["anomaly_firing"] = (self._anomaly_ready()
+                                    if trigger == "anomaly" else None)
         before = {"quality": self.recent_quality,
                   "weights": dict(zip(
                       [p.name for p in self._particles], self.weights)),
@@ -482,6 +569,15 @@ class LLMHypothesisMixture(HypothesisMixture):
                                                     [])]
             event["problems"] = list(getattr(result, "problems", []))
             event["operations"] = len(getattr(result, "operations", []))
+            rejected = list(getattr(result, "rejected", []))
+            self.rejected_ops += [{"t": t, "day": t // DAY_SECONDS,
+                                   "trigger": trigger,
+                                   "call_index": self.calls_made, **r}
+                                  for r in rejected]
+            event["rejected"] = len(rejected)
+            event["call_type"] = report["call_type"]
+            if trigger == "anomaly":
+                event["anomaly_key"] = report["anomaly_firing"]
             event["assumptions_after"] = (
                 list(self._graph.assumptions) if self._graph else [])
         else:
@@ -493,6 +589,8 @@ class LLMHypothesisMixture(HypothesisMixture):
         self._last_reask_index = len(self._sighting_log)
         self._recent.clear()
         self._uncovered_bank = []
+        event["bucket_at_fire"] = self.anomaly_bucket
+        self._anomaly_bucket = {}
         event.update({
             "changed": changed,
             "n_hypotheses_after": len(self._raw_hypotheses),
@@ -610,7 +708,7 @@ class LLMHypothesisMixture(HypothesisMixture):
                 "assumes": dict(raw.get("assumes", {})),
                 "distinguishing_prediction": hyp.distinguishing_prediction,
                 "verdict": self._check_verdict(hyp.distinguishing_check,
-                                               sightings)})
+                                               self._look_log)})
         since = self._sighting_log[max(0, self._last_reask_index):]
         misses: Dict[Tuple[str, str, str], List[int]] = collections.defaultdict(list)
         for row in since:
@@ -663,12 +761,105 @@ class LLMHypothesisMixture(HypothesisMixture):
             "uncovered_objects": uncovered,
             "uncovered_bank": self.uncovered_bank,
             "assumptions": self.assumption_weights,
+            "settled": self.settled_assumptions,
             "leaf_weights": self.leaf_weights,
+            "anomaly_bucket": self.anomaly_bucket,
+            "check_outcomes": self.check_outcomes[-40:],
+            "away_window_looks": self.away_window_looks(),
             "statistics": per_object_statistics(
                 sorted(table), sightings, t),
             "recent_quality": self.recent_quality}
 
     # ---------------------------------------------------------------- graph
+
+    def away_window_looks(self) -> List[Dict[str, Any]]:
+        """Per object with a move ending out of the house in any live
+        leaf: looks at its stated rest receptacle inside that move's
+        window, split into empty and found. The absence evidence the
+        positive-only statistics cannot show."""
+        from baselines.beliefs.hypothesis_program import AWAY_DESTINATIONS
+        n_hyp = len(self._raw_hypotheses)
+        windows: Dict[str, Dict[str, Any]] = {}
+        for particle in self._particles[:n_hyp]:
+            if not isinstance(particle, HypothesisProgramBelief) \
+                    or particle._hypothesis is None:
+                continue
+            hyp = particle.hypothesis
+            for activity in hyp.activities:
+                for rule in activity.moves:
+                    if rule.to not in AWAY_DESTINATIONS:
+                        continue
+                    for obj in rule.targets:
+                        rest = hyp.rest.get(obj)
+                        if rest is None:
+                            continue
+                        row = windows.setdefault(obj, {
+                            "object": obj, "rest": rest, "spans": set()})
+                        end = min(24.0, activity.start_hour + rule.duration_h)
+                        row["spans"].add((activity.days, activity.start_hour,
+                                          end))
+        # Where each object has actually been sighted most: the model
+        # reasons from that receptacle, so the looks there inside the
+        # window are the decisive number, whatever rest was stated.
+        modal: Dict[str, str] = {}
+        seen: Dict[str, collections.Counter] = collections.defaultdict(
+            collections.Counter)
+        for row in self._sighting_log:
+            seen[row["object"]][row["actual"]] += 1
+        for obj, counter in seen.items():
+            modal[obj] = counter.most_common(1)[0][0]
+        out = []
+        for obj, row in sorted(windows.items()):
+            places = [row["rest"]]
+            if modal.get(obj) and modal[obj] != row["rest"]:
+                places.append(modal[obj])
+            tallies = {p: [0, 0] for p in places}      # empty, found
+            for t, receptacle, contents in self._look_log:
+                if receptacle not in tallies:
+                    continue
+                day = t // DAY_SECONDS
+                weekend = day % 7 in (5, 6)
+                hour = (t % DAY_SECONDS) / 3600.0
+                inside = any(
+                    (days == "both" or (days == "weekend") == weekend)
+                    and start <= hour < end
+                    for days, start, end in row["spans"])
+                if not inside:
+                    continue
+                tallies[receptacle][1 if obj in contents else 0] += 1
+            spans = "; ".join(f"{d} {s:04.1f}-{e:04.1f}h"
+                              for d, s, e in sorted(row["spans"]))
+            out.append({"object": obj, "rest": row["rest"],
+                        "empty": tallies[row["rest"]][0],
+                        "found": tallies[row["rest"]][1],
+                        "modal": modal.get(obj),
+                        "modal_empty": (tallies[modal[obj]][0]
+                                        if modal.get(obj) in tallies else None),
+                        "modal_found": (tallies[modal[obj]][1]
+                                        if modal.get(obj) in tallies else None),
+                        "windows": spans})
+        return out
+
+    @property
+    def settled_assumptions(self) -> Dict[str, str]:
+        """Assumptions closed to revision: top value at or above
+        ``ReaskConfig.settled_weight``. Empty for a flat file."""
+        if self._graph is None:
+            return {}
+        from baselines.llm_hypotheses.assumption_graph import (
+            settled_assumptions)
+        floor = self._reask.settled_weight if self._reask else 0.9
+        return settled_assumptions(self._graph, self.leaf_weights, floor)
+
+    def weight_spread(self) -> Dict[str, float]:
+        """How much of the final log-weight spread across hypothesis
+        particles came from presence versus absence terms: max minus min
+        of each cumulative total."""
+        n_hyp = len(self._raw_hypotheses)
+        pres = self.presence_totals[:n_hyp] or [0.0]
+        absn = self.absence_totals[:n_hyp] or [0.0]
+        return {"presence": max(pres) - min(pres),
+                "absence": max(absn) - min(absn)}
 
     @property
     def assumption_weights(self) -> Dict[str, Dict[str, Any]]:
@@ -723,22 +914,34 @@ class LLMHypothesisMixture(HypothesisMixture):
             "edit_log": list(self.edit_log),
             "prune_log": list(self.prune_log),
             "birth_log": list(self.birth_log),
+            "rejected_ops": list(self.rejected_ops),
+            "check_outcomes": list(self.check_outcomes),
+            "bucket_trace": list(self.bucket_trace),
+            "weight_spread": self.weight_spread(),
+            "settled": self.settled_assumptions,
             "uncovered_bank": self.uncovered_bank,
             "final_graph": self._graph.to_json() if self._graph else None,
             "leaf_weight_floor": self._leaf_weight_floor,
             "leaf_prune_days": self._leaf_prune_days}
 
     @staticmethod
-    def _check_verdict(check, sightings: Sequence[Tuple[int, str, str]]
-                       ) -> Optional[str]:
-        """"came true k/n" for a structured distinguishing check, judged
-        on the target's sightings within CHECK_WINDOW_H of its hour on
-        matching days; None without a check."""
+    def check_resolutions(check, looks: Sequence[Tuple[int, str, Tuple[str, ...]]]
+                          ) -> List[Tuple[int, bool]]:
+        """Every resolution of a distinguishing check: ``(t, in_favour)``
+        for each look at ``check.at`` within CHECK_WINDOW_H of its hour on
+        matching days. Finding the target resolves in the ``if_seen``
+        direction, an empty look the other way. A sighting of the target
+        anywhere else inside the window counts as an empty look at ``at``
+        (it is demonstrably elsewhere), which is how positive-only banks
+        resolve checks at all."""
         if check is None:
-            return None
-        hits = total = 0
-        for t, obj, rec in sightings:
-            if obj != check.target:
+            return []
+        out: List[Tuple[int, bool]] = []
+        for t, receptacle, contents in looks:
+            # A look at `at` resolves by found / empty; a look elsewhere
+            # that contains the target proves it is not at `at`.
+            elsewhere = receptacle != check.at
+            if elsewhere and check.target not in contents:
                 continue
             day = t // DAY_SECONDS
             weekend = day % 7 in (5, 6)
@@ -749,11 +952,42 @@ class LLMHypothesisMixture(HypothesisMixture):
             hour = (t % DAY_SECONDS) / 3600.0
             if abs(hour - check.hour) > CHECK_WINDOW_H:
                 continue
-            total += 1
-            hits += int(rec == check.at)
-        if total == 0:
-            return "not yet tested (no sightings of the target in that window)"
-        return f"came true {hits}/{total} times"
+            found = (check.target in contents) and not elsewhere
+            in_favour = found == (check.if_seen == "right")
+            out.append((t, in_favour))
+        return out
+
+    @classmethod
+    def _check_verdict(cls, check, looks) -> Optional[str]:
+        """"resolved in favour k/n" for a structured distinguishing
+        check; None without a check."""
+        if check is None:
+            return None
+        rows = cls.check_resolutions(check, looks)
+        if not rows:
+            return "not yet tested (no look at that receptacle in the window)"
+        hits = sum(1 for _, ok in rows if ok)
+        return f"came true {hits}/{len(rows)} times"
+
+    def _record_check_outcomes(self, t: int) -> None:
+        """Append every new check resolution since the last call to
+        ``check_outcomes`` (leaf, day, direction)."""
+        n_hyp = len(self._raw_hypotheses)
+        seen = {(r["leaf_id"], r["t"]) for r in self.check_outcomes}
+        for raw, particle in zip(self._raw_hypotheses, self._particles[:n_hyp]):
+            if not isinstance(particle, HypothesisProgramBelief) \
+                    or particle._hypothesis is None:
+                continue
+            check = particle.hypothesis.distinguishing_check
+            for tt, ok in self.check_resolutions(check, self._look_log):
+                key = (self._particle_key(raw), tt)
+                if key in seen:
+                    continue
+                seen.add(key)
+                self.check_outcomes.append({
+                    "leaf_id": key[0], "t": tt, "day": tt // DAY_SECONDS,
+                    "in_favour": ok, "target": check.target, "at": check.at,
+                    "if_seen": check.if_seen})
 
     def reask_diagnostics(self) -> Dict[str, Any]:
         """The run's record of the re-asking layer: every event, the

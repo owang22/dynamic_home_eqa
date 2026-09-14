@@ -374,12 +374,14 @@ def write_tables(arms, out: pathlib.Path) -> str:
         lines.append(f"| {k.replace('__', ' · ')} | {d['reask']['calls_made']} | {llm.get('live_calls')} | {llm.get('live_generation_seconds')} | {ev} |")
     graph_rows = [(k, a["diag"]["graph"]) for k, a in sorted(arms.items()) if a["diag"].get("graph", {}).get("is_graph")]
     if graph_rows:
-        lines += ["", "## Graph arm: leaves, edits, prunes, births", "", "| arm | leaves by day (first → last) | edits | prunes | born / skipped | final assumptions |", "|---|---|---|---|---|---|"]
+        lines += ["", "## Graph arm: leaves, edits, prunes, births, rejections, checks", "", "| arm | leaves by day (first → last) | applied ops | rejected ops | prunes | born / skipped | checks resolved (in favour) | weight spread presence / absence | settled at end |", "|---|---|---|---|---|---|---|---|---|"]
         for k, g in graph_rows:
             counts = list(g["leaf_count_trace"].values())
             born = sum(1 for b in g["birth_log"] if b.get("kind") == "born"); skipped = len(g["birth_log"]) - born
-            final = g.get("final_graph") or {}
-            lines.append(f"| {k.replace('__', ' · ')} | {counts[0] if counts else '-'} → {counts[-1] if counts else '-'} | {len(g['edit_log'])} | {len(g['prune_log'])} | {born} / {skipped} | {', '.join(final.get('assumptions', {}))} |")
+            checks = g.get("check_outcomes", []); fav = sum(1 for c in checks if c.get("in_favour"))
+            rej = collections.Counter(r.get("op") for r in g.get("rejected_ops", []))
+            spread = g.get("weight_spread", {})
+            lines.append(f"| {k.replace('__', ' · ')} | {counts[0] if counts else '-'} → {counts[-1] if counts else '-'} | {len(g['edit_log'])} | {sum(rej.values())} {dict(rej) if rej else ''} | {len(g['prune_log'])} | {born} / {skipped} | {len(checks)} ({fav}) | {spread.get('presence', float('nan')):.1f} / {spread.get('absence', float('nan')):.1f} | {', '.join(f'{a}={v}' for a, v in (g.get('settled') or {}).items())} |")
     cost_path = STUDY_DIR.parent / "generation_cost_tour.json"
     if cost_path.exists():
         cost = json.loads(cost_path.read_text())

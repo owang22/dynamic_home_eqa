@@ -105,9 +105,12 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
             spec["reask"] = reask
             elicitor_cls = (GraphRevisionElicitor if kind == "graph"
                             else RevisionElicitor)
-            spec["elicitor"] = elicitor_cls(
+            elicitor = elicitor_cls(
                 client, episode, anonymized=condition.endswith("anonymized"),
                 log_dir=log_dir)
+            if kind == "graph":
+                elicitor.call_types = bool(reask.get("call_types", True))
+            spec["elicitor"] = elicitor
         return spec
     raise SystemExit(f"unknown belief kind {kind!r}")
 
@@ -313,6 +316,14 @@ def main() -> None:
                     help="disable the uncovered-bank trigger")
     ap.add_argument("--no-bank-ramp", action="store_true",
                     help="fixed bank threshold instead of the day ramp")
+    ap.add_argument("--anomaly-repeats", type=int, default=3,
+                    help="graph arm: bucket recurrences that fire a "
+                         "diversify call (0 disables the anomaly trigger)")
+    ap.add_argument("--anomaly-p", type=float, default=0.05)
+    ap.add_argument("--settled-weight", type=float, default=0.9)
+    ap.add_argument("--no-call-types", action="store_true",
+                    help="graph arm: one revision call type with every "
+                         "operation but deletion (the phase-1 protocol)")
     ap.add_argument("--rng-seed", type=int, default=0)
     ap.add_argument("--bank-dir", type=pathlib.Path, default=None,
                     help="bank directory (default: the fleet's)")
@@ -327,7 +338,11 @@ def main() -> None:
              "max_calls": args.reask_max_calls, "min_gap": args.reask_window,
              "new_class_triggers": not args.no_new_class_trigger,
              "uncovered_bank_max": args.uncovered_bank_max,
-             "uncovered_bank_ramp": not args.no_bank_ramp}
+             "uncovered_bank_ramp": not args.no_bank_ramp,
+             "anomaly_repeats": args.anomaly_repeats,
+             "anomaly_p": args.anomaly_p,
+             "settled_weight": args.settled_weight,
+             "call_types": not args.no_call_types}
     run_arm(args.household, args.arm, args.endpoint, args.model,
             args.out_dir, reask, args.rng_seed, bank_dir=args.bank_dir,
             bank_seed=args.bank_seed, hyp_subdir=args.hyp_subdir)

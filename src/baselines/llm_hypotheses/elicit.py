@@ -65,7 +65,8 @@ from baselines.bank import JsonlBank
 from baselines.beliefs.hypothesis_program import (HypothesisValidationError,
                                                   parse_hypothesis)
 from baselines.household_analysis import REPO_ROOT, bank_path
-from baselines.llm_hypotheses.assumption_graph import (parse_graph,
+from baselines.llm_hypotheses.assumption_graph import (AWAY_TOKENS,
+                                                       parse_graph,
                                                        truncate_to_caps)
 from baselines.llm_hypotheses.prompt import (GRAPH_SCHEMA, HYPOTHESES_SCHEMA,
                                              N_HYPOTHESES, SYSTEM_PROMPT,
@@ -423,9 +424,11 @@ def elicit_graph_household(client: CachedThinkingClient, episode,
         seen_classes = {omap[o]: cmap[c]
                         for o, c in episode.object_classes.items()}
         seen_receptacles = tuple(rmap[r] for r in episode.receptacle_ids)
+        seen_away = tuple(rmap[r] for r in AWAY_TOKENS if r in rmap)
     else:
         seen_classes = dict(episode.object_classes)
         seen_receptacles = tuple(episode.receptacle_ids)
+        seen_away = AWAY_TOKENS
     tables = vocabulary_tables(episode, omap, rmap, cmap)
     log: Dict[str, Any] = {"household": episode.household_id,
                            "condition": condition, "graph_arm": True,
@@ -468,7 +471,8 @@ def elicit_graph_household(client: CachedThinkingClient, episode,
                                   **_call_stats(raw)})
             envelope = None
 
-    result = parse_graph(envelope or {}, seen_classes, seen_receptacles)
+    result = parse_graph(envelope or {}, seen_classes, seen_receptacles,
+                         unsensable=seen_away)
     log["substitutions"] = list(result.substitutions)
     log["dropped"] = list(result.dropped)
     if result.problems or result.dropped:
@@ -489,7 +493,8 @@ def elicit_graph_household(client: CachedThinkingClient, episode,
                                  **_call_stats(raw2)}
         try:
             envelope2 = extract_json(raw2["payload"])
-            result2 = parse_graph(envelope2, seen_classes, seen_receptacles)
+            result2 = parse_graph(envelope2, seen_classes, seen_receptacles,
+                                  unsensable=seen_away)
             entry["problems"] = list(result2.problems)
             entry["n_dropped"] = len(result2.dropped)
             cap_only = result2.problems and all(
@@ -499,12 +504,14 @@ def elicit_graph_household(client: CachedThinkingClient, episode,
                     # Only the caps were violated: cut deterministically
                     # rather than throw away a valid set.
                     relaxed = parse_graph(envelope2, seen_classes,
-                                          seen_receptacles, enforce_caps=False)
+                                          seen_receptacles, enforce_caps=False,
+                                          unsensable=seen_away)
                     if relaxed.graph is not None:
                         cut, notes = truncate_to_caps(relaxed.graph)
                         entry["truncated"] = notes
                         result2 = parse_graph(cut.to_json(), seen_classes,
-                                              seen_receptacles)
+                                              seen_receptacles,
+                                              unsensable=seen_away)
                 result = result2
                 log["substitutions"] += list(result2.substitutions)
                 log["dropped"] = list(result2.dropped)
@@ -518,7 +525,7 @@ def elicit_graph_household(client: CachedThinkingClient, episode,
         if anonymized:
             graph_json = deanonymize_graph(graph_json, omap, rmap, cmap)
             real = parse_graph(graph_json, episode.object_classes,
-                               episode.receptacle_ids)
+                               episode.receptacle_ids, unsensable=AWAY_TOKENS)
             log["dropped"] += real.dropped
             graph_json = real.graph.to_json() if real.graph else None
         if envelope is not None and "leaf_set_rationale" in envelope \

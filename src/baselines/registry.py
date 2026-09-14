@@ -212,7 +212,8 @@ def _build_llm_hypothesis_mixture(spec: Dict[str, Any],
         DEFAULT_LEAF_WEIGHT_FLOOR, DEFAULT_LLM_ABSENCE_WEIGHT, ReaskConfig)
     reask_raw = spec.get("reask")
     reask = (ReaskConfig(**{k: (tuple(v) if k == "scheduled_days" else v)
-                            for k, v in dict(reask_raw).items()})
+                            for k, v in dict(reask_raw).items()
+                            if k != "call_types"})   # driver-level knob
              if reask_raw else None)
     return LLMHypothesisMixture(
         rng, hypotheses_dir=spec["hypotheses_dir"],

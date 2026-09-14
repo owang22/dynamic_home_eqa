@@ -15,7 +15,8 @@ Everything the description states is a PRIOR, never a fact; sightings
 move every number:
 
 * the rest location is a Dirichlet prior of :data:`REST_PRIOR_COUNT`
-  pseudo-sightings on the stated receptacle, competing with decayed
+  pseudo-sightings on the stated receptacle, itself decaying with
+  half-life :data:`REST_PRIOR_HALF_LIFE_H`, competing with decayed
   real off-window sightings (half-life :data:`REST_HALF_LIFE_H`);
 * each move rule's chance label ("rarely" … "almost_always") maps to a
   Beta prior of strength :data:`CHANCE_PRIOR_STRENGTH` centred on
@@ -87,8 +88,17 @@ elsewhere during the window is ambiguous (already returned, moved by
 something else), seeing it at the destination is not."""
 
 REST_PRIOR_COUNT = 3.0
-"""Pseudo-sightings on a stated rest receptacle. Half a day of
-room-visit sightings elsewhere outvotes it."""
+"""Pseudo-sightings on a stated rest receptacle at the start of the
+episode. Half a day of room-visit sightings elsewhere outvotes it."""
+
+REST_PRIOR_HALF_LIFE_H = 72.0
+"""The stated rest's pseudo-count decays with this half-life from
+episode start, so a wrong day-0 rest is outvoted by the sightings on
+the same clock they accumulate on (a fixed pseudo-count held a wrong
+rest for about a week against a statistical particle that has no
+prior at all, and the leaves lost the weight race). An object never
+sighted keeps the stated rest whatever the count: with no real
+sightings the Dirichlet mean is the prior regardless of its size."""
 
 REST_HALF_LIFE_H = 72.0
 """Decay half-life of real sightings in the rest estimate: rest
@@ -124,6 +134,14 @@ WEEKEND_DAYS = (5, 6)
 """``day_index % 7`` of Saturday and Sunday (day 0 = Monday)."""
 
 DAY_KINDS = ("weekday", "weekend", "both")
+CHECK_DIRECTIONS = ("right", "wrong")
+AWAY_DESTINATIONS = ("OUT_OF_HOUSE", "ON_PERSON")
+"""Destinations a sense can never confirm: a move ending there earns
+support only from the object failing to turn up at its rest."""
+ABSENCE_SUCCESS_CREDIT = 0.5
+"""Success credit a rule with an away destination earns from one empty
+look at the target's rest receptacle inside the rule's window (half a
+confirming sighting: absence is weaker evidence than presence)."""
 CLASS_PREFIX = "class:"
 _MATCHING_DAYS = {"weekday": 5.0, "weekend": 2.0, "both": 7.0}
 _SQRT2 = math.sqrt(2.0)
@@ -177,13 +195,17 @@ class Activity:
 @dataclasses.dataclass(frozen=True)
 class DistinguishingCheck:
     """The structured half of a hypothesis's distinguishing prediction:
-    ``target`` is at ``at`` around ``hour`` on ``days``. Checkable
-    against sightings, unlike the free-text sentence beside it."""
+    a look at ``at`` (an in-home receptacle) around ``hour`` on ``days``
+    resolves the check — finding ``target`` there means the hypothesis
+    is ``if_seen`` ("right" or "wrong"), an empty look means the
+    opposite. A move that ends out of the house is checked at the
+    object's rest with ``if_seen: wrong``."""
 
     target: str                  # resolved object_id
-    at: str                      # receptacle_id
+    at: str                      # receptacle_id, never an away token
     days: str                    # "weekday" | "weekend" | "both"
     hour: float
+    if_seen: str = "right"       # "right" | "wrong"
 
 
 @dataclasses.dataclass(frozen=True)
@@ -253,7 +275,8 @@ def _rest_pairs(raw_rest: Any) -> List[Tuple[str, str]]:
 
 def parse_hypothesis(raw: Mapping[str, Any],
                      object_classes: Mapping[str, str],
-                     receptacle_ids: Sequence[str]) -> Hypothesis:
+                     receptacle_ids: Sequence[str],
+                     unsensable: Sequence[str] = ()) -> Hypothesis:
     """Validate one raw hypothesis dict against the household vocabulary.
 
     Strict by design: any object, class, or receptacle string outside
@@ -262,6 +285,12 @@ def parse_hypothesis(raw: Mapping[str, Any],
     guessed correction silently corrupts everything downstream. Shape
     errors (missing fields, unknown labels, out-of-range numbers) raise
     the same type so the repair round handles one failure mode.
+
+    ``unsensable`` lists receptacles a look can never resolve (the away
+    tokens, in whatever vocabulary the caller speaks); a
+    ``distinguishing_check`` whose ``at`` is one of them is rejected,
+    since it could never be checked. Callers that pass nothing keep the
+    older, laxer behaviour.
     """
     recs = set(receptacle_ids)
     bad: List[str] = []
@@ -354,14 +383,25 @@ def parse_hypothesis(raw: Mapping[str, Any],
         target = str(raw_check.get("target", ""))
         at = str(raw_check.get("at", ""))
         days = str(raw_check.get("days", "both"))
+        if_seen = str(raw_check.get("if_seen", "right"))
         ids = _resolve_target(target, object_classes)
         if ids is None or len(ids) != 1:
             bad.append(target)
         elif at not in recs:
             bad.append(at)
+        elif at in set(unsensable):
+            raise HypothesisValidationError(
+                f"distinguishing_check.at must be an in-home receptacle a "
+                f"look can resolve, not {at}; name where {target} would be "
+                f"found if the move did not happen and set if_seen: wrong",
+                [at])
         elif days not in DAY_KINDS:
             raise HypothesisValidationError(
                 "distinguishing_check.days must be one of DAY_KINDS", [days])
+        elif if_seen not in CHECK_DIRECTIONS:
+            raise HypothesisValidationError(
+                "distinguishing_check.if_seen must be 'right' or 'wrong'",
+                [if_seen])
         else:
             try:
                 hour = float(raw_check.get("hour"))
@@ -370,7 +410,7 @@ def parse_hypothesis(raw: Mapping[str, Any],
                     "distinguishing_check.hour must be a number",
                     [str(raw_check.get("hour"))])
             check = DistinguishingCheck(target=ids[0], at=at, days=days,
-                                        hour=hour)
+                                        hour=hour, if_seen=if_seen)
 
     if bad:
         raise HypothesisValidationError(
@@ -518,7 +558,31 @@ class HypothesisProgramBelief(BeliefModel):
         # mid-day).
         if getattr(evidence, "source", None) == "initial_tour":
             self._tour_times.add(evidence.t)
+        if (self._hypothesis is not None and hasattr(evidence, "contents")):
+            self._credit_absence(evidence.receptacle_id,
+                                 set(evidence.contents), evidence.t)
         super().update(evidence)
+
+    def _credit_absence(self, receptacle_id: str, present: set,
+                        t: int) -> None:
+        """A rule whose destination is an away token can never be
+        confirmed by a sighting. An empty look at the target's rest
+        receptacle inside the rule's window is the evidence it CAN get:
+        :data:`ABSENCE_SUCCESS_CREDIT` times the window weight goes to
+        ``success``; failure handling is untouched."""
+        for index, state in enumerate(self._rule_states):
+            if state.rule.to not in AWAY_DESTINATIONS:
+                continue
+            activity = self.hypothesis.activities[state.activity_index]
+            weight = (activity.occurrence_probability()
+                      * self._window_probability(state, t))
+            if weight < MIN_WINDOW_WEIGHT:
+                continue
+            for obj in state.rule.targets:
+                if obj in present:
+                    continue
+                if self.hypothesis.rest.get(obj) == receptacle_id:
+                    state.success += ABSENCE_SUCCESS_CREDIT * weight
 
     def _add_sighting(self, object_id: str, t: int,
                       receptacle_id: str) -> None:
@@ -545,6 +609,13 @@ class HypothesisProgramBelief(BeliefModel):
 
     # ---------------------------------------------------------- prediction
 
+    @staticmethod
+    def _rest_pseudo_count(t: int) -> float:
+        """The stated rest's pseudo-count at ``t``: REST_PRIOR_COUNT
+        decayed from episode start with REST_PRIOR_HALF_LIFE_H."""
+        return REST_PRIOR_COUNT * 2.0 ** (
+            -max(0, t) / (REST_PRIOR_HALF_LIFE_H * 3600.0))
+
     def _rest_distribution(self, object_id: str,
                            history: List[Tuple[int, str]],
                            t: int) -> Dict[str, float]:
@@ -554,7 +625,7 @@ class HypothesisProgramBelief(BeliefModel):
         counts: Dict[str, float] = {}
         stated = self.hypothesis.rest.get(object_id)
         if stated is not None:
-            counts[stated] = REST_PRIOR_COUNT
+            counts[stated] = self._rest_pseudo_count(t)
         half_life_s = REST_HALF_LIFE_H * 3600.0
         for ot, receptacle in history:
             explained = max(
@@ -634,7 +705,7 @@ class HypothesisProgramBelief(BeliefModel):
         if displaced.get(top, 0.0) >= (1.0 - total) * rest.get(top, 0.0):
             return "rule"
         # Rest-dominated: pseudo-count versus decayed real sightings at top.
-        pseudo = REST_PRIOR_COUNT if stated == top else 0.0
+        pseudo = self._rest_pseudo_count(t) if stated == top else 0.0
         half_life_s = REST_HALF_LIFE_H * 3600.0
         real = 0.0
         for ot, receptacle in history:

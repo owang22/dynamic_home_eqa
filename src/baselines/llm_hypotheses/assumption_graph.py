@@ -16,7 +16,8 @@ parse_hypothesis`, and the mixture stays flat over leaves. The graph is
 metadata that buys three things: weight rollup per assumption
 (:func:`value_weight`, :func:`node_entropy`), edit SCOPING for revisions
 (:func:`apply_operations` — leaves not mentioned stay byte-identical, so
-their weights survive a rebuild), and assumption-targeted sensing
+their weights survive a rebuild; the LLM can neither delete a leaf nor
+edit a rest map, and settled assumptions are closed to it), and assumption-targeted sensing
 (:mod:`baselines.policies.assumption_disambiguation`).
 
 Envelope (what the elicitation writes and the mixture loads)::
@@ -64,7 +65,21 @@ LIVE_FLOOR = 0.10
 the birth rule of ``add_assumption_value``."""
 
 OPERATION_ORDER = ("add_assumption", "add_assumption_value", "edit_leaf",
-                   "drop_leaf", "add_leaf")
+                   "add_activity", "add_leaf")
+"""Operations a revision may return, in application order. Leaf removal
+is never an operation: leaves go only through the mixture's automatic
+prune. ``add_activity`` appends one activity to a named leaf (the
+diversify call's only way to touch an existing leaf)."""
+
+REPAIR_OPS = frozenset({"edit_leaf", "add_assumption_value", "add_leaf"})
+DIVERSIFY_OPS = frozenset({"add_assumption", "add_assumption_value",
+                           "add_leaf", "add_activity"})
+ALL_OPS = frozenset(OPERATION_ORDER)
+SETTLED_WEIGHT = 0.9
+"""Rolled-up weight at which an assumption's top value makes the node
+settled: reported as such and closed to operations."""
+
+AWAY_TOKENS = ("OUT_OF_HOUSE", "ON_PERSON")
 
 
 class GraphValidationError(ValueError):
@@ -239,7 +254,8 @@ def _tokens(text: str) -> List[str]:
 
 def parse_graph(raw: Mapping[str, Any], object_classes: Mapping[str, str],
                 receptacle_ids: Sequence[str],
-                enforce_caps: bool = True) -> ParseResult:
+                enforce_caps: bool = True,
+                unsensable: Sequence[str] = ()) -> ParseResult:
     """Validate one envelope against the household vocabulary, applying
     the module's five rules per leaf in order, then the caps
     (``enforce_caps=False`` skips the caps so an over-sized but otherwise
@@ -317,7 +333,8 @@ def parse_graph(raw: Mapping[str, Any], object_classes: Mapping[str, str],
         body["assumes"] = assumes
         body["hypothesis_id"] = body["leaf_id"]
         try:
-            parse_hypothesis(body, object_classes, receptacle_ids)
+            parse_hypothesis(body, object_classes, receptacle_ids,
+                             unsensable=unsensable)
         except HypothesisValidationError as err:
             dropped.append({"index": index, "leaf": body,
                             "bad_strings": list(err.bad_strings),
@@ -338,11 +355,13 @@ def parse_graph(raw: Mapping[str, Any], object_classes: Mapping[str, str],
 
 
 def validate_graph(graph: AssumptionGraph, object_classes: Mapping[str, str],
-                   receptacle_ids: Sequence[str]) -> List[str]:
+                   receptacle_ids: Sequence[str],
+                   unsensable: Sequence[str] = ()) -> List[str]:
     """Whole-graph check after operations: every problem AND every leaf
     the parser would drop counts (an operation set that leaves any leaf
     invalid is not applied)."""
-    result = parse_graph(graph.to_json(), object_classes, receptacle_ids)
+    result = parse_graph(graph.to_json(), object_classes, receptacle_ids,
+                         unsensable=unsensable)
     problems = list(result.problems)
     for row in result.dropped:
         problems.append(f"leaf {row['leaf'].get('leaf_id', '?')}: "
@@ -469,6 +488,9 @@ class OperationResult:
     problems: List[str] = dataclasses.field(default_factory=list)
     operations: List[Dict[str, Any]] = dataclasses.field(default_factory=list)
     """The operations as received (real ids), for the edit log."""
+    rejected: List[Dict[str, Any]] = dataclasses.field(default_factory=list)
+    """Operations refused one by one (``op``, ``reason``, and what named
+    them) while the rest of the set still applied."""
 
     @property
     def changed_leaf_ids(self) -> List[str]:
@@ -487,23 +509,60 @@ def _body_from(op: Mapping[str, Any]) -> Optional[Dict[str, Any]]:
     return copy.deepcopy(dict(body)) if isinstance(body, Mapping) else None
 
 
+def settled_assumptions(graph: AssumptionGraph,
+                        leaf_weights: Mapping[str, float],
+                        settled_weight: float = SETTLED_WEIGHT
+                        ) -> Dict[str, str]:
+    """Assumptions whose top value holds at least ``settled_weight`` of
+    the rolled-up weight: ``{assumption: top value}``."""
+    out: Dict[str, str] = {}
+    for name in graph.assumptions:
+        weights = value_weights(graph, leaf_weights, name)
+        if not weights:
+            continue
+        top = max(weights, key=lambda v: weights[v])
+        if weights[top] >= settled_weight:
+            out[name] = top
+    return out
+
+
+def _rest_map(body: Mapping[str, Any]) -> Dict[str, str]:
+    """The rest map as a plain dict, whichever shape it was written in."""
+    from baselines.beliefs.hypothesis_program import _rest_pairs
+    try:
+        return dict(_rest_pairs(body.get("rest")))
+    except HypothesisValidationError:
+        return {"<unparseable>": str(body.get("rest"))[:60]}
+
+
 def apply_operations(graph: AssumptionGraph,
                      operations: Sequence[Mapping[str, Any]],
                      leaf_weights: Mapping[str, float],
                      object_classes: Mapping[str, str],
                      receptacle_ids: Sequence[str],
-                     live_floor: float = LIVE_FLOOR) -> OperationResult:
+                     live_floor: float = LIVE_FLOOR,
+                     allowed_ops: Optional[Iterable[str]] = None,
+                     settled: Optional[Mapping[str, str]] = None,
+                     unsensable: Sequence[str] = ()) -> OperationResult:
     """Apply a revision's operations to a copy of ``graph``.
 
     Order: ``add_assumption``, ``add_assumption_value``, ``edit_leaf``,
-    ``drop_leaf``, ``add_leaf``; births from ``add_assumption_value`` are
-    materialized last so a template leaf already carries any value the
-    same response assigned it. The whole set is rejected (``graph``
-    None) when: an operation is malformed or names something that does
-    not exist; an ``add_assumption`` is not accompanied by ``edit_leaf``
-    operations covering every surviving existing leaf; or the resulting
-    graph fails :func:`validate_graph` or the caps. The caller decides
-    whether to run the repair round.
+    ``add_activity``, ``add_leaf``; births from ``add_assumption_value``
+    are materialized last so a template leaf already carries any value
+    the same response assigned it.
+
+    Two kinds of refusal. The WHOLE set is rejected (``graph`` None, so
+    the caller runs the repair round) when an operation is malformed or
+    names something that does not exist, when an ``edit_leaf`` changes
+    the leaf's ``rest`` (rest is fit from sightings and set once at
+    tour start), when an ``add_assumption`` is not accompanied by
+    ``edit_leaf`` operations covering every existing leaf, or when the
+    result fails :func:`validate_graph` or the caps. Single operations
+    are refused and listed in ``rejected`` while the rest still apply
+    when their kind is outside ``allowed_ops`` (a removed ``drop_leaf``,
+    or an edit in a diversify call) or when they touch an assumption in
+    ``settled`` (add a value to it, or assign a leaf a non-settled
+    value of it).
 
     Birth rule: a new value of assumption A is crossed only with LIVE
     values (rolled-up weight >= ``live_floor`` under the pre-operation
@@ -514,12 +573,37 @@ def apply_operations(graph: AssumptionGraph,
     """
     result = OperationResult(graph=None)
     problems = result.problems
+    allowed = set(allowed_ops) if allowed_ops is not None else set(ALL_OPS)
+    settled = dict(settled or {})
     ops_by_kind: Dict[str, List[Mapping[str, Any]]] = {k: []
                                                        for k in OPERATION_ORDER}
     for index, op in enumerate(operations):
         kind = str(op.get("op", "")) if isinstance(op, Mapping) else ""
+        if kind == "drop_leaf":
+            result.rejected.append({"index": index, "op": kind,
+                                    "leaf_id": op.get("leaf_id"),
+                                    "reason": "drop_leaf is not an operation; "
+                                              "leaves go only through the "
+                                              "automatic prune"})
+            continue
         if kind not in ops_by_kind:
             problems.append(f"operation {index}: unknown op {kind!r}")
+            continue
+        if kind not in allowed:
+            result.rejected.append({"index": index, "op": kind,
+                                    "leaf_id": op.get("leaf_id"),
+                                    "reason": f"{kind} is not allowed in "
+                                              f"this call"})
+            continue
+        touched = _settled_touched(op, settled)
+        if touched:
+            result.rejected.append({"index": index, "op": kind,
+                                    "leaf_id": op.get("leaf_id"),
+                                    "assumption": touched,
+                                    "reason": f"assumption {touched!r} is "
+                                              f"settled at "
+                                              f"{settled[touched]!r} and "
+                                              f"closed to operations"})
             continue
         ops_by_kind[kind].append(op)
     if problems:
@@ -530,7 +614,6 @@ def apply_operations(graph: AssumptionGraph,
     pre_assumptions = list(graph.assumptions)
     out = graph.copy()
     existing_ids = set(out.leaf_ids())
-    dropped_ids = {str(op.get("leaf_id")) for op in ops_by_kind["drop_leaf"]}
 
     # add_assumption — with the coverage rule checked up front.
     for op in ops_by_kind["add_assumption"]:
@@ -547,7 +630,7 @@ def apply_operations(graph: AssumptionGraph,
         covered = {str(e.get("leaf_id")) for e in ops_by_kind["edit_leaf"]
                    if isinstance(e.get("body"), Mapping)
                    and name in dict(e["body"].get("assumes") or {})}
-        uncovered = sorted((existing_ids - dropped_ids) - covered)
+        uncovered = sorted(existing_ids - covered)
         if uncovered:
             problems.append(
                 f"add_assumption {name!r} rejected: no edit_leaf gives a "
@@ -559,8 +642,8 @@ def apply_operations(graph: AssumptionGraph,
         result.applied.append({"op": "add_assumption", "assumption": name,
                                "values": sorted(values)})
     if problems:
-        result.problems = problems
-        return OperationResult(graph=None, problems=problems)
+        return OperationResult(graph=None, problems=problems,
+                               rejected=result.rejected)
 
     # add_assumption_value — recorded now, born last.
     pending_births: List[Tuple[str, str, str]] = []
@@ -583,7 +666,8 @@ def apply_operations(graph: AssumptionGraph,
                                "assumption": name, "value": value})
         pending_births.append((name, value, str(op.get("description", ""))))
 
-    # edit_leaf — the id is the identity; the body is replaced whole.
+    # edit_leaf — the id is the identity; the body is replaced whole;
+    # rest must be byte-for-byte what the leaf already holds.
     for op in ops_by_kind["edit_leaf"]:
         leaf_id = str(op.get("leaf_id", ""))
         body = _body_from(op)
@@ -591,21 +675,35 @@ def apply_operations(graph: AssumptionGraph,
             problems.append(f"edit_leaf: unknown leaf {leaf_id!r} or missing "
                             f"body")
             continue
+        stored = out.leaf(leaf_id)
+        old_rest, new_rest = _rest_map(stored), _rest_map(body)
+        if old_rest != new_rest:
+            changed = sorted(k for k in set(old_rest) | set(new_rest)
+                             if old_rest.get(k) != new_rest.get(k))
+            problems.append(
+                f"edit_leaf {leaf_id}: rest is fit from sightings and is "
+                f"not editable; resubmit with the stored rest map "
+                f"(changed keys: {changed})")
+            continue
         body["leaf_id"] = leaf_id
         body["hypothesis_id"] = leaf_id
         out.leaves = [body if l["leaf_id"] == leaf_id else l
                       for l in out.leaves]
         result.applied.append({"op": "edit_leaf", "leaf_id": leaf_id})
 
-    # drop_leaf
-    for op in ops_by_kind["drop_leaf"]:
+    # add_activity — append one activity to a named leaf.
+    for op in ops_by_kind["add_activity"]:
         leaf_id = str(op.get("leaf_id", ""))
-        if leaf_id not in existing_ids:
-            problems.append(f"drop_leaf: unknown leaf {leaf_id!r}")
+        activity = op.get("activity")
+        if leaf_id not in existing_ids or not isinstance(activity, Mapping):
+            problems.append(f"add_activity: unknown leaf {leaf_id!r} or "
+                            f"missing `activity`")
             continue
-        out.leaves = [l for l in out.leaves if l["leaf_id"] != leaf_id]
-        result.applied.append({"op": "drop_leaf", "leaf_id": leaf_id,
-                               "reason": str(op.get("reason", ""))})
+        leaf = out.leaf(leaf_id)
+        leaf["activities"] = list(leaf.get("activities", ())) + [
+            copy.deepcopy(dict(activity))]
+        result.applied.append({"op": "add_activity", "leaf_id": leaf_id,
+                               "activity": str(activity.get("name", ""))})
 
     # add_leaf — a fresh cell; the id is kept when opaque and unused.
     added_cells: Dict[Tuple[Tuple[str, str], ...], str] = {}
@@ -627,7 +725,8 @@ def apply_operations(graph: AssumptionGraph,
         result.applied.append({"op": "add_leaf", "leaf_id": leaf_id,
                                "given_id": given})
     if problems:
-        return OperationResult(graph=None, problems=problems)
+        return OperationResult(graph=None, problems=problems,
+                               rejected=result.rejected)
 
     # Births, against live values only.
     for name, value, description in pending_births:
@@ -686,14 +785,35 @@ def apply_operations(graph: AssumptionGraph,
     if len(out.leaves) > MAX_LEAVES:
         problems.append(f"{len(out.leaves)} leaves exceeds the cap of "
                         f"{MAX_LEAVES}")
-    problems += validate_graph(out, object_classes, receptacle_ids)
+    problems += validate_graph(out, object_classes, receptacle_ids,
+                               unsensable=unsensable)
     if problems:
         return OperationResult(graph=None, applied=result.applied,
                                births=result.births,
                                skipped_births=result.skipped_births,
-                               problems=problems)
+                               problems=problems, rejected=result.rejected)
     result.graph = out
     return result
+
+
+def _settled_touched(op: Mapping[str, Any],
+                     settled: Mapping[str, str]) -> Optional[str]:
+    """The settled assumption an operation would touch, if any: adding a
+    value to it, or giving a leaf a value of it other than the settled
+    one (an add_leaf or edit_leaf that agrees with the settled value is
+    fine)."""
+    if not settled:
+        return None
+    kind = str(op.get("op", ""))
+    if kind == "add_assumption_value" and op.get("assumption") in settled:
+        return str(op["assumption"])
+    body = op.get("body")
+    if kind in ("add_leaf", "edit_leaf") and isinstance(body, Mapping):
+        assumes = body.get("assumes") or {}
+        for name, top in settled.items():
+            if name in assumes and str(assumes[name]) != top:
+                return name
+    return None
 
 
 def _template_leaf(graph: AssumptionGraph, weights: Mapping[str, float],
@@ -780,6 +900,8 @@ __all__ = [
     "Assumption", "AssumptionGraph", "GraphValidationError",
     "LEAF_ID_RE", "LIVE_FLOOR", "MAX_ASSUMPTIONS", "MAX_LEAVES",
     "OperationResult", "ParseResult", "apply_operations",
+    "settled_assumptions", "REPAIR_OPS", "DIVERSIFY_OPS", "ALL_OPS",
+    "SETTLED_WEIGHT", "AWAY_TOKENS",
     "assumption_summary", "is_graph_payload", "live_values",
     "new_leaf_id", "node_entropy", "normalized_leaf_weights",
     "parse_graph", "premise_recovered", "truncate_to_caps",

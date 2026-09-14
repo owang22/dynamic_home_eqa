@@ -178,7 +178,8 @@ def _stats(row: Mapping[str, Any]) -> Dict[str, Any]:
 # ================================================================== graph
 
 from baselines.llm_hypotheses.assumption_graph import (  # noqa: E402
-    AssumptionGraph, OperationResult, apply_operations)
+    ALL_OPS, AWAY_TOKENS, DIVERSIFY_OPS, REPAIR_OPS, AssumptionGraph,
+    OperationResult, apply_operations)
 from baselines.llm_hypotheses.prompt import (  # noqa: E402
     OPERATIONS_SCHEMA, anonymize_graph, deanonymize_operations,
     graph_repair_prompt, graph_revision_prompt)
@@ -207,12 +208,16 @@ class GraphRevisionElicitor(RevisionElicitor):
         if self._anonymized:
             shown = anonymize_graph(shown, self._omap, self._rmap, self._cmap)
         graph_json = json.dumps(shown, indent=1)
+        call_type = report.get("call_type") if self.call_types else None
         user = graph_revision_prompt(report, self._tables, graph_json,
-                                     self._omap, self._rmap)
+                                     self._omap, self._rmap,
+                                     call_type=call_type)
         log: Dict[str, Any] = {"household": self._episode.household_id,
                                "anonymized": self._anonymized, "graph": True,
                                "call_index": index, "day": report["day"],
                                "trigger": report.get("trigger"),
+                               "call_type": call_type,
+                               "settled": dict(report.get("settled", {})),
                                "prompt": user, "rounds": []}
         seed = self._seed + 10 * index
         started = time.monotonic()
@@ -271,6 +276,7 @@ class GraphRevisionElicitor(RevisionElicitor):
             log["rounds"].append(entry)
         log["operations"] = list(result.operations)
         log["applied"] = list(result.applied)
+        log["rejected"] = list(result.rejected)
         log["births"] = list(result.births)
         log["skipped_births"] = list(result.skipped_births)
         log["problems"] = list(result.problems)
@@ -283,6 +289,11 @@ class GraphRevisionElicitor(RevisionElicitor):
                          f"{index}.json").write_text(json.dumps(log, indent=1))
         return result
 
+    call_types: bool = True
+    """Honour the report's ``call_type`` (repair / diversify) by limiting
+    the allowed operations and switching the prompt lead. False runs the
+    phase-1 protocol: one call type, every operation but deletion."""
+
     def _apply(self, graph: AssumptionGraph, operations: List[dict],
                report: Mapping[str, Any], context) -> OperationResult:
         real_ops = (deanonymize_operations(operations, self._omap, self._rmap,
@@ -290,8 +301,14 @@ class GraphRevisionElicitor(RevisionElicitor):
                     if self._anonymized else [dict(op) for op in operations])
         object_classes = (context.object_classes if context is not None
                           else self._episode.object_classes)
+        call_type = report.get("call_type") if self.call_types else None
+        allowed = (REPAIR_OPS if call_type == "repair" else
+                   DIVERSIFY_OPS if call_type == "diversify" else ALL_OPS)
         result = apply_operations(graph, real_ops,
                                   dict(report.get("leaf_weights", {})),
-                                  object_classes, self._episode.receptacle_ids)
+                                  object_classes, self._episode.receptacle_ids,
+                                  allowed_ops=allowed,
+                                  settled=report.get("settled"),
+                                  unsensable=AWAY_TOKENS)
         result.operations = real_ops
         return result

@@ -132,9 +132,18 @@ def test_rollup_sums_leaf_weights_and_entropy_matches_hand_computation():
 
 # ------------------------------------------------- 2 edit scoping, rebuild
 
+WORK = {"name": "work", "days": "weekday", "frequency_per_week": 5,
+        "start_hour": 9.0, "duration_h": 8.0,
+        "moves": [{"target": "laptop_1", "to": "kitchen_table",
+                   "chance": "usually"}]}
+
+
 def test_edit_leaf_leaves_other_leaves_byte_identical_and_keeps_weights(
         tmp_path):
-    edited = _leaf("p_0002", "solo", "works_from_home", "shelf")
+    # Rest stays as stored (rest edits are rejected); the edit adds an
+    # activity, which is the kind of change the LLM is allowed to make.
+    edited = _leaf("p_0002", "solo", "works_from_home", "kitchen_table",
+                   activities=[WORK])
     elicitor = _OpsElicitor([{"op": "edit_leaf", "leaf_id": "p_0002",
                               "body": edited}])
     m = _mixture(tmp_path, _envelope(FOUR_LEAVES),
@@ -295,9 +304,10 @@ def test_reparented_leaf_keeps_its_weight_because_leaf_id_is_unchanged(
     moved = dict(FOUR_LEAVES[0])
     moved["assumes"] = {"composition": "couple",
                         "weekday_pattern": "works_away"}
-    ops = [{"op": "drop_leaf", "leaf_id": "p_0003", "reason": "make room"},
-           {"op": "edit_leaf", "leaf_id": "p_0001", "body": moved}]
-    m = _mixture(tmp_path, _envelope(FOUR_LEAVES),
+    ops = [{"op": "edit_leaf", "leaf_id": "p_0001", "body": moved}]
+    # Three leaves: the (couple, works_away) cell is free for p_0001.
+    m = _mixture(tmp_path, _envelope([FOUR_LEAVES[0], FOUR_LEAVES[1],
+                                      FOUR_LEAVES[3]]),
                  ReaskConfig(window=1000, scheduled_days=(2,), max_calls=1,
                              new_class_triggers=False), _OpsElicitor(ops))
     for day in range(2):
@@ -457,3 +467,193 @@ def test_flat_file_still_loads_as_the_flat_arm(tmp_path):
     assert not m.is_graph and m.assumption_weights == {}
     assert m.value_distributions("laptop_1", 0) == {}
     assert [p.name for p in m.particles][0] == "HypothesisProgram(h1)"
+
+
+# ------------------------------------------------ phase 1: what the LLM may not do
+
+def test_drop_leaf_is_rejected_and_logged_and_only_prune_removes_leaves(
+        tmp_path):
+    ops = [{"op": "drop_leaf", "leaf_id": "p_0003", "reason": "dead"},
+           {"op": "edit_leaf", "leaf_id": "p_0002",
+            "body": _leaf("p_0002", "solo", "works_from_home",
+                          "kitchen_table", activities=[WORK])}]
+    graph = _graph()
+    result = apply_operations(graph, ops, {}, OBJECTS, RECS)
+    assert result.graph is not None, result.problems
+    assert len(result.graph.leaves) == 4          # nothing removed
+    assert result.rejected and result.rejected[0]["op"] == "drop_leaf"
+    assert "automatic prune" in result.rejected[0]["reason"]
+    assert [a["op"] for a in result.applied] == ["edit_leaf"]
+    # Through the mixture: the rejection lands in rejected_ops and the
+    # leaf count moves only when the automatic prune fires.
+    m = _mixture(tmp_path, _envelope(FOUR_LEAVES),
+                 ReaskConfig(window=1000, scheduled_days=(2,), max_calls=1,
+                             new_class_triggers=False), _OpsElicitor(ops),
+                 leaf_prune_days=3)
+    for day in range(3):
+        for hour in (8, 12, 18):
+            m.update(_obs("laptop_1", "desk", day, hour))
+    assert m.rejected_ops and m.rejected_ops[0]["op"] == "drop_leaf"
+    assert m.n_hypotheses == 4
+    for day in range(3, 9):
+        m.update(_obs("laptop_1", "desk", day, 12))
+    assert m.n_hypotheses == 3 and m.prune_log
+
+
+def test_edit_leaf_with_any_rest_change_is_rejected_whole():
+    graph = _graph()
+    changed = _leaf("p_0002", "solo", "works_from_home", "shelf")   # rest moved
+    ops = [{"op": "edit_leaf", "leaf_id": "p_0002", "body": changed},
+           {"op": "add_assumption_value", "assumption": "composition",
+            "value": "family", "description": "kids"}]
+    result = apply_operations(graph, ops, {}, OBJECTS, RECS)
+    assert result.graph is None
+    assert any("rest is fit from sightings" in p and "laptop_1" in p
+               for p in result.problems)
+    # The rest map written as a list of {target, at} but equal in content
+    # is not a change.
+    same = _leaf("p_0002", "solo", "works_from_home", "kitchen_table")
+    same["rest"] = [{"target": "laptop_1", "at": "kitchen_table"},
+                    {"target": "class:mug", "at": "shelf"}]
+    result = apply_operations(graph, [{"op": "edit_leaf", "leaf_id": "p_0002",
+                                       "body": same}], {}, OBJECTS, RECS)
+    assert result.graph is not None, result.problems
+
+
+def test_check_must_name_in_home_receptacle_and_resolves_by_direction(
+        tmp_path):
+    from baselines.beliefs.hypothesis_program import (
+        HypothesisValidationError, parse_hypothesis)
+    from baselines.types import SenseResult
+    away = _leaf("p_0009", "solo", "works_away", "desk")
+    away["distinguishing_check"] = {"target": "laptop_1", "at": "OUT_OF_HOUSE",
+                                    "days": "weekday", "hour": 13.0}
+    with pytest.raises(HypothesisValidationError) as err:
+        parse_hypothesis(away, OBJECTS, RECS, unsensable=("OUT_OF_HOUSE",))
+    assert err.value.bad_strings == ("OUT_OF_HOUSE",)
+    parse_hypothesis(away, OBJECTS, RECS)          # flat arm: still lax
+    # if_seen: wrong at the rest — an empty look is in favour, a find is not.
+    leaf = _leaf("p_0001", "solo", "works_away", "desk")
+    leaf["distinguishing_check"] = {"target": "laptop_1", "at": "desk",
+                                    "days": "weekday", "hour": 13.0,
+                                    "if_seen": "wrong"}
+    m = _mixture(tmp_path, _envelope([leaf] + FOUR_LEAVES[1:]))
+    def look(day, hour, contents):
+        return SenseResult(receptacle_id="desk",
+                           t=int(day * DAY_SECONDS + hour * H),
+                           contents=tuple(contents),
+                           object_classes={o: OBJECTS[o] for o in contents})
+    m.update(look(0, 13, []))                      # Monday 13:00, empty
+    m.update(look(1, 13, ["laptop_1"]))            # Tuesday 13:00, found
+    m.update(look(5, 13, []))                      # Saturday: not a weekday
+    m.update(look(2, 20, []))                      # outside the hour window
+    rows = [r for r in m.check_outcomes if r["leaf_id"] == "p_0001"]
+    assert [(r["day"], r["in_favour"]) for r in rows] == [(0, True), (1, False)]
+    report = m.revision_report(int(3 * DAY_SECONDS))
+    verdict = {h["hypothesis_id"]: h["verdict"] for h in report["hypotheses"]}
+    assert verdict["p_0001"] == "came true 1/2 times"
+
+
+def test_empty_look_at_rest_credits_an_away_move():
+    from baselines.beliefs.hypothesis_program import HypothesisProgramBelief
+    from baselines.types import SenseResult
+    raw = {"hypothesis_id": "h", "rationale": "r",
+           "rest": {"laptop_1": "desk"},
+           "activities": [{"name": "office", "days": "weekday",
+                           "frequency_per_week": 5, "start_hour": 9.0,
+                           "duration_h": 8.0,
+                           "moves": [{"target": "laptop_1",
+                                      "to": "OUT_OF_HOUSE",
+                                      "chance": "usually"}]}]}
+    model = HypothesisProgramBelief(random.Random(0), raw)
+    model.reset(_ctx())
+    state = model._rule_states[0]
+    s0, f0 = state.success, state.failure
+    t = int(0 * DAY_SECONDS + 13 * H)               # Monday, mid-window
+    model.update(SenseResult(receptacle_id="desk", t=t, contents=(),
+                             object_classes={}))
+    assert state.success - s0 == pytest.approx(0.5, abs=0.02)
+    assert state.failure == f0
+    # An empty look elsewhere, or outside the window, credits nothing.
+    model.update(SenseResult(receptacle_id="shelf", t=t, contents=(),
+                             object_classes={}))
+    model.update(SenseResult(receptacle_id="desk",
+                             t=int(0 * DAY_SECONDS + 22 * H), contents=(),
+                             object_classes={}))
+    assert state.success - s0 == pytest.approx(0.5, abs=0.02)
+
+
+def test_operations_naming_a_settled_assumption_are_rejected():
+    graph = _graph()
+    settled = {"composition": "solo"}
+    ops = [{"op": "add_assumption_value", "assumption": "composition",
+            "value": "family", "description": "kids"},
+           {"op": "add_leaf", "body": _leaf("p_0aaa", "couple",
+                                            "works_from_home", "shelf")},
+           {"op": "add_assumption_value", "assumption": "weekday_pattern",
+            "value": "shift_work", "description": "nights"}]
+    result = apply_operations(graph, ops, {"p_0001": 0.95, "p_0002": 0.05},
+                              OBJECTS, RECS, settled=settled)
+    assert result.graph is not None, result.problems
+    assert [r["op"] for r in result.rejected] == ["add_assumption_value",
+                                                  "add_leaf"]
+    assert all(r["assumption"] == "composition" for r in result.rejected)
+    assert [a["op"] for a in result.applied] == ["add_assumption_value"]
+    from baselines.llm_hypotheses.assumption_graph import settled_assumptions
+    assert settled_assumptions(graph, {"p_0001": 0.95, "p_0002": 0.05}) == {
+        "composition": "solo", "weekday_pattern": "works_away"}
+    assert settled_assumptions(graph, {"p_0001": 0.5, "p_0002": 0.3,
+                                       "p_0003": 0.2}) == {}
+
+
+# ------------------------------------------------ phase 2: bucket and call types
+
+def test_anomaly_bucket_fires_on_third_repeat_of_one_key_only(tmp_path):
+    rec = _OpsElicitor([])
+    m = _mixture(tmp_path, _envelope(FOUR_LEAVES),
+                 ReaskConfig(window=1000, scheduled_days=(),
+                             new_class_triggers=False, min_gap=0,
+                             anomaly_p=0.2, anomaly_repeats=3), rec)
+    # Every leaf rests mugs on the shelf, and a long shelf history keeps
+    # each leaf's rest Dirichlet there: a hamper sighting of mug_1 stays
+    # an anomaly for all of them even after it has happened before.
+    for i in range(40):
+        m.update(_obs("mug_1", "shelf", i // 8, 6 + (i % 8) * 2))
+    assert m.bucket_trace == []
+    # The rest Dirichlet absorbs each sighting (about 1 count against
+    # 3 pseudo-counts plus the decayed history), so repeats must come
+    # close together to stay under the threshold: days 5-7 here.
+    m.update(_obs("mug_1", "hamper", 5, 9))        # bin 4
+    m.update(_obs("mug_1", "hamper", 5, 13))       # bin 6: different key
+    m.update(_obs("mug_1", "hamper", 5, 17))       # bin 8: different key
+    assert m.reask_events == []
+    assert {tuple(r["key"]) for r in m.bucket_trace} == {
+        ("mug_1", "hamper", 4), ("mug_1", "hamper", 6),
+        ("mug_1", "hamper", 8)}
+    m.update(_obs("mug_1", "hamper", 6, 9))        # bin 4 again (2)
+    assert m.reask_events == []
+    m.update(_obs("mug_1", "hamper", 7, 9))        # bin 4 third time
+    assert m.reask_events[-1]["trigger"] == "anomaly"
+    assert m.reask_events[-1]["call_type"] == "diversify"
+    assert rec.calls[-1]["call_type"] == "diversify"
+    assert rec.calls[-1]["anomaly_firing"]["count"] == 3
+    assert m.anomaly_bucket == []                  # cleared by the call
+    # A sighting some leaf predicts never enters the bucket.
+    m.update(_obs("laptop_1", "hamper", 10, 9))    # p_0004 rests it there
+    assert m.anomaly_bucket == []
+
+
+def test_diversify_call_rejects_edit_leaf_but_keeps_additions():
+    from baselines.llm_hypotheses.assumption_graph import DIVERSIFY_OPS
+    graph = _graph()
+    ops = [{"op": "edit_leaf", "leaf_id": "p_0002",
+            "body": _leaf("p_0002", "solo", "works_from_home",
+                          "kitchen_table", activities=[WORK])},
+           {"op": "add_activity", "leaf_id": "p_0001", "activity": WORK}]
+    result = apply_operations(graph, ops, {}, OBJECTS, RECS,
+                              allowed_ops=DIVERSIFY_OPS)
+    assert result.graph is not None, result.problems
+    assert [r["op"] for r in result.rejected] == ["edit_leaf"]
+    assert [a["op"] for a in result.applied] == ["add_activity"]
+    assert result.graph.leaf("p_0001")["activities"][0]["name"] == "work"
+    assert result.graph.leaf("p_0002")["activities"] == []
