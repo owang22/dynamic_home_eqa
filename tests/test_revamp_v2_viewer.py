@@ -168,14 +168,18 @@ def test_every_row_names_the_set_it_came_from():
                 f"{parts[3]} · {parts[4]}"
         elif r["trace"].startswith("/casas/"):
             assert r["source"] == "casas (real ADLs)"
-    # two households sharing a number must differ by source
+    # two households sharing a number must differ by source — except the
+    # SAME home under several seeds, which is one household with several
+    # histories (the viewer offers those in its seed picker), so the unit
+    # that must be unique within a source is (household, seed)
     by_household = {}
     for r in rows:
-        by_household.setdefault(r["label"].split(" · ")[0], set()).add(r["source"])
-    for household, sources in by_household.items():
-        assert len(sources) == len([r for r in rows
-                                    if r["label"].startswith(household + " ")]), \
-            f"{household} appears twice within one source"
+        by_household.setdefault(r["label"].split(" · ")[0], set()).add(
+            (r["source"], r["seed"]))
+    for household, keys in by_household.items():
+        assert len(keys) == len([r for r in rows
+                                 if r["label"].startswith(household + " ")]), \
+            f"{household} appears twice within one source and seed"
 
 
 def test_archived_households_never_reach_the_dropdown():

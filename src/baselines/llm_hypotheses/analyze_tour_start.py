@@ -65,9 +65,11 @@ def score(row: Dict[str, Any]) -> Tuple[int, float]:
     return int(argmax == truth), -math.log(max(dist.get(truth, 0.0), EPS))
 
 
-def load(household: str) -> Dict[str, Dict[str, Any]]:
+def load(household: str, study_dir: pathlib.Path = STUDY_DIR) -> Dict[str, Dict[str, Any]]:
     arms = {}
-    for d in sorted((STUDY_DIR / household).iterdir()):
+    root = study_dir / household
+    arms_dir = root / "arms" if (root / "arms").is_dir() else root
+    for d in sorted(arms_dir.iterdir()):
         if not (d / "diagnostics.json").exists() or d.name.endswith("_bug"):
             continue
         rows = [json.loads(l) for l in gzip.open(d / "per_question.jsonl.gz", "rt")]
@@ -113,9 +115,39 @@ def paired_daily_gap(a: Sequence[dict], b: Sequence[dict], key: str, win: int = 
 
 
 def overall(rows: Sequence[dict]) -> Dict[str, float]:
+    if not rows:
+        return {"n": 0, "top1": float("nan"), "top1_se": float("nan"), "ll": float("nan"), "ll_se": float("nan")}
     t = np.array([r["top1"] for r in rows]); l = np.array([r["ll"] for r in rows])
     return {"n": len(rows), "top1": t.mean(), "top1_se": math.sqrt(t.mean() * (1 - t.mean()) / len(t)),
-            "ll": l.mean(), "ll_se": l.std(ddof=1) / math.sqrt(len(l))}
+            "ll": l.mean(), "ll_se": (l.std(ddof=1) / math.sqrt(len(l))) if len(l) > 1 else float("nan")}
+
+
+def late_discovery(rows: Sequence[dict], diag: Dict[str, Any]) -> Dict[str, Dict[str, float]]:
+    """Accuracy restricted to objects first sighted after day 0, and to the
+    rest, reported separately: the random-time tour makes the two strata
+    systematically different, so they are never averaged here."""
+    late = set(diag.get("late_discovered_objects") or [])
+    if not late and not any("late_discovered" in r for r in rows):
+        return {}
+    is_late = lambda r: r.get("late_discovered", r["object_id"] in late)
+    return {"late": overall([r for r in rows if is_late(r)]),
+            "tour_visible": overall([r for r in rows if not is_late(r)])}
+
+
+def assumption_recovery(arms: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Per graph arm: which ground-truth premises (from the bank's
+    ``premises``) the FINAL graph carries a matching assumption value
+    for. The rate over households is what the comparison reports; one
+    run directory holds one household, so this returns one row per arm."""
+    out = []
+    for name, arm in sorted(arms.items()):
+        d = arm["diag"]
+        if not d.get("premises") or "assumption_recovery" not in d:
+            continue
+        rec = d["assumption_recovery"]
+        out.append({"arm": name, "premises": d["premises"], "recovered": rec,
+                    "rate": sum(1 for v in rec.values() if v) / max(1, len(rec))})
+    return out
 
 
 def paired(a: Sequence[dict], b: Sequence[dict], key: str) -> Tuple[float, float, float]:
@@ -132,7 +164,7 @@ def fig_named_vs_anonymized(arms, out: pathlib.Path) -> None:
     if "passive__llm__tour_anonymized" not in arms:
         return fig_named_only(arms, out)
     anon = arms["passive__llm__tour_anonymized"]["rows"]
-    refs = {"Periodic (no-LLM)": (arms["passive__periodic"]["rows"], C["periodic"]),
+    refs = {"MostFrequent 72h (no-LLM)": (arms["passive__mostfreq72"]["rows"], C["periodic"]),
             "Oracle (ceiling)": (arms["passive__oracle"]["rows"], C["oracle"])}
     fig, axes = plt.subplots(2, 3, figsize=(15, 7.4))
     for row, (key, ylabel) in enumerate([("top1", "top-1 accuracy"), ("ll", "log-loss (lower is better)")]):
@@ -178,7 +210,7 @@ def fig_named_only(arms, out: pathlib.Path) -> None:
     only: re-asking vs fixed set against the references."""
     named = arms["passive__llm__tour_named"]["rows"]
     fixed = arms["passive__llm_fixed__tour_named"]["rows"]
-    refs = {"Periodic (no-LLM)": (arms["passive__periodic"]["rows"], C["periodic"]),
+    refs = {"MostFrequent 72h (no-LLM)": (arms["passive__mostfreq72"]["rows"], C["periodic"]),
             "Oracle (ceiling)": (arms["passive__oracle"]["rows"], C["oracle"])}
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.2))
     for row, (key, ylabel) in enumerate([("top1", "top-1 accuracy"), ("ll", "log-loss (lower is better)")]):
@@ -299,7 +331,19 @@ def write_tables(arms, out: pathlib.Path) -> str:
         if not k.startswith("passive"): continue
         o = overall(arms[k]["rows"])
         lines.append(f"| {k.replace('passive__', '').replace('__', ' · ')} | {o['n']} | {o['top1']:.3f} ± {o['top1_se']:.3f} | {o['ll']:.3f} ± {o['ll_se']:.3f} |")
-    lines += ["", "## Active protocol (myopic VoI λ=0.05, random slice f)", "", "| arm | top-1 (answer) | log-loss (pre-sense belief) | senses/day | random senses |", "|---|---|---|---|---|"]
+    lines += ["", "## Late-discovery accuracy (objects first sighted after day 0, apart from the tour-visible stratum)", "", "| arm | late n | late top-1 | late log-loss | tour-visible n | tour-visible top-1 |", "|---|---|---|---|---|---|"]
+    for k in sorted(arms):
+        strata = late_discovery(arms[k]["rows"], arms[k]["diag"])
+        if not strata: continue
+        a, b = strata["late"], strata["tour_visible"]
+        lines.append(f"| {k.replace('__', ' · ')} | {a['n']} | {a['top1']:.3f} ± {a['top1_se']:.3f} | {a['ll']:.3f} ± {a['ll_se']:.3f} | {b['n']} | {b['top1']:.3f} ± {b['top1_se']:.3f} |")
+    recovery = assumption_recovery(arms)
+    if recovery:
+        lines += ["", "## Assumption recovery (final graph holds a value matching the bank's ground-truth premise)", "", "| arm | premises | matched | rate |", "|---|---|---|---|"]
+        for row in recovery:
+            lines.append(f"| {row['arm'].replace('__', ' · ')} | {row['premises']} | {row['recovered']} | {row['rate']:.2f} |")
+        (out / "assumption_recovery.json").write_text(json.dumps(recovery, indent=1))
+    lines += ["", "## Active protocol (myopic VoI λ=0.05, random slice f)", "", "| arm | top-1 (answer) | log-loss (belief at answer time, after that question's senses) | senses/day | random senses |", "|---|---|---|---|---|"]
     for k in sorted(arms):
         if not k.startswith("active"): continue
         rows = arms[k]["rows"]; o = overall(rows); d = arms[k]["diag"]
@@ -310,12 +354,12 @@ def write_tables(arms, out: pathlib.Path) -> str:
              ("passive__llm_fixed__tour_named", "passive__llm_fixed__tour_anonymized", "named − anonymized (fixed set)"),
              ("passive__llm__tour_named", "passive__llm_fixed__tour_named", "re-asking − fixed (named)"),
              ("passive__llm__tour_anonymized", "passive__llm_fixed__tour_anonymized", "re-asking − fixed (anonymized)"),
-             ("passive__llm__tour_named", "passive__periodic", "LLM named − Periodic (no-LLM)"),
+             ("passive__llm__tour_named", "passive__mostfreq72", "LLM named − MostFreq72 (no-LLM)"),
              ("passive__llm__tour_named", "passive__mostfreq", "LLM named − MostFreq"),
              ("active__llm__tour_named__f0.1", "active__llm__tour_named__f0", "random slice 0.1 − 0 (re-asking)"),
              ("active__llm_fixed__tour_named__f0.1", "active__llm_fixed__tour_named__f0", "random slice 0.1 − 0 (fixed set)"),
-             ("active__periodic__f0.1", "active__periodic__f0", "random slice 0.1 − 0 (Periodic)"),
-             ("active__llm__tour_named__f0", "active__periodic__f0", "LLM named − Periodic (active, f0)")]
+             ("active__mostfreq72__f0.1", "active__mostfreq72__f0", "random slice 0.1 − 0 (MostFreq72)"),
+             ("active__llm__tour_named__f0", "active__mostfreq72__f0", "LLM named − MostFreq72 (active, f0)")]
     for a, b, label in pairs:
         if a not in arms or b not in arms: continue
         t = paired(arms[a]["rows"], arms[b]["rows"], "top1"); l = paired(arms[a]["rows"], arms[b]["rows"], "ll")
@@ -325,9 +369,17 @@ def write_tables(arms, out: pathlib.Path) -> str:
     for k, arm in sorted(arms.items()):
         d = arm["diag"]
         if "reask" not in d: continue
-        ev = "; ".join(f"d{e['day']} {e['reason'].split()[0]} → {'revised' if e['changed'] else 'kept'}" for e in d["reask"]["events"])
+        ev = "; ".join(f"d{e['day']} {e.get('trigger', e['reason'].split()[0])} → {'revised' if e['changed'] else 'kept'}" for e in d["reask"]["events"])
         llm = d.get("llm", {})
         lines.append(f"| {k.replace('__', ' · ')} | {d['reask']['calls_made']} | {llm.get('live_calls')} | {llm.get('live_generation_seconds')} | {ev} |")
+    graph_rows = [(k, a["diag"]["graph"]) for k, a in sorted(arms.items()) if a["diag"].get("graph", {}).get("is_graph")]
+    if graph_rows:
+        lines += ["", "## Graph arm: leaves, edits, prunes, births", "", "| arm | leaves by day (first → last) | edits | prunes | born / skipped | final assumptions |", "|---|---|---|---|---|---|"]
+        for k, g in graph_rows:
+            counts = list(g["leaf_count_trace"].values())
+            born = sum(1 for b in g["birth_log"] if b.get("kind") == "born"); skipped = len(g["birth_log"]) - born
+            final = g.get("final_graph") or {}
+            lines.append(f"| {k.replace('__', ' · ')} | {counts[0] if counts else '-'} → {counts[-1] if counts else '-'} | {len(g['edit_log'])} | {len(g['prune_log'])} | {born} / {skipped} | {', '.join(final.get('assumptions', {}))} |")
     cost_path = STUDY_DIR.parent / "generation_cost_tour.json"
     if cost_path.exists():
         cost = json.loads(cost_path.read_text())
@@ -339,8 +391,12 @@ def write_tables(arms, out: pathlib.Path) -> str:
 
 def main() -> None:
     import argparse
-    ap = argparse.ArgumentParser(); ap.add_argument("--household", default="hh_001"); args = ap.parse_args()
-    arms = load(args.household); out = STUDY_DIR / args.household / "figures"; out.mkdir(exist_ok=True)
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--household", default="hh_001__bank0",
+                    help="run directory name under --study-dir (household__bank<seed>)")
+    ap.add_argument("--study-dir", type=pathlib.Path, default=STUDY_DIR / "tl0")
+    args = ap.parse_args()
+    arms = load(args.household, args.study_dir); out = args.study_dir / args.household / "figures"; out.mkdir(exist_ok=True)
     fig_named_vs_anonymized(arms, out); fig_ess_and_reasks(arms, out)
     reports = []
     for name in ("passive__llm__tour_named", "passive__llm__tour_anonymized", "passive__llm_fixed__tour_named", "passive__llm_fixed__tour_anonymized"):

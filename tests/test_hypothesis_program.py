@@ -49,11 +49,11 @@ WORK_HYPOTHESIS = {
         {"name": "work", "days": "weekday", "frequency_per_week": 5,
          "start_hour": 9.0, "duration_h": 8.0,
          "moves": [{"target": "laptop_1", "to": "kitchen_table",
-                    "chance": "usually", "after": "returned"}]},
+                    "chance": "usually"}]},
         {"name": "shower", "days": "both", "frequency_per_week": 7,
          "start_hour": 7.0, "duration_h": 0.5,
          "moves": [{"target": "class:towel", "to": "hamper",
-                    "chance": "sometimes", "after": "left"}]},
+                    "chance": "sometimes", "duration_h": 17.0}]},
     ],
 }
 
@@ -106,13 +106,51 @@ def test_weekend_day_does_not_trigger_weekday_activity() -> None:
     assert midday_saturday.argmax == "desk"
 
 
-def test_left_rule_keeps_object_out_through_the_evening() -> None:
+def test_long_move_duration_keeps_object_out_through_the_evening() -> None:
     model = _belief()
     evening = model.predict("towel_1", _at(0, 21.0))
-    # "sometimes" (0.35) displaced to the hamper, rest of the mass on the
-    # stated shelf: shelf still leads, but the hamper carries real mass.
+    # The shower move states duration_h 17 (until midnight): "sometimes"
+    # (0.35) displaced to the hamper, rest of the mass on the stated
+    # shelf: shelf still leads, but the hamper carries real mass.
     assert evening.argmax == "shelf"
     assert evening.distribution["hamper"] > 0.25
+
+
+def test_move_duration_defaults_to_activity_and_can_be_shorter() -> None:
+    raw = json.loads(json.dumps(WORK_HYPOTHESIS))
+    # Two objects moved by the same activity, back at different times:
+    # the laptop for the whole 8 h work block, the mug for 1 h only.
+    raw["rest"]["mug_1"] = "shelf"
+    raw["activities"][0]["moves"].append(
+        {"target": "mug_1", "to": "kitchen_table", "chance": "usually",
+         "duration_h": 1.0})
+    model = _belief(raw)
+    hyp = model.hypothesis
+    laptop, mug = hyp.activities[0].moves
+    assert laptop.duration_h == 8.0 and not laptop.stated_duration
+    assert mug.duration_h == 1.0 and mug.stated_duration
+    early = model.predict("mug_1", _at(0, 9.5)).distribution["kitchen_table"]
+    late = model.predict("mug_1", _at(0, 13.0)).distribution["kitchen_table"]
+    assert early > 0.2 and late < 0.05   # soft edges: 1 h window at 1.6 h sd
+    # The laptop is still displaced at 13:00: the activity duration held.
+    assert model.predict("laptop_1", _at(0, 13.0)).argmax == "kitchen_table"
+
+
+def test_after_field_is_rejected_with_the_offending_string() -> None:
+    bad = json.loads(json.dumps(WORK_HYPOTHESIS))
+    bad["activities"][0]["moves"][0]["after"] = "returned"
+    with pytest.raises(HypothesisValidationError) as err:
+        parse_hypothesis(bad, OBJECTS, RECS)
+    assert err.value.bad_strings == ("after",)
+
+
+def test_move_reaching_past_midnight_ends_at_midnight() -> None:
+    raw = json.loads(json.dumps(WORK_HYPOTHESIS))
+    raw["activities"][1]["moves"][0]["duration_h"] = 40.0   # wraps
+    model = _belief(raw)
+    late = model.predict("towel_1", _at(0, 23.5)).distribution["hamper"]
+    next_morning = model.predict("towel_1", _at(1, 6.0)).distribution["hamper"]
+    assert late > 0.25 and next_morning < 0.2
 
 
 def test_uncovered_object_falls_back_to_statistics() -> None:
@@ -188,7 +226,7 @@ WRONG_HYPOTHESIS = {
         {"name": "work", "days": "both", "frequency_per_week": 7,
          "start_hour": 14.0, "duration_h": 6.0,
          "moves": [{"target": "laptop_1", "to": "shelf",
-                    "chance": "almost_always", "after": "returned"}]},
+                    "chance": "almost_always"}]},
     ],
 }
 

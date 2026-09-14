@@ -165,6 +165,11 @@ residents:
                            # - "borrows resident_2's charger from the desk
                            #    and rarely returns it"
                            # - "clears everyone's plates and does the dishes after dinner"
+    forgetfulness:         # how often THIS person walks out of the house
+      level: ...           # without their phone/keys/wallet: rarely
+                           # (a checker of pockets), sometimes (an ordinary
+                           # adult), often (scattered, rushed, a child).
+      cites: ...           # one clause tying the level to the persona
 relationships: ...         # 2-3 sentences: who these people are to each
                            # other, and how they divide or share chores,
                            # spaces, and belongings. Include at least one

@@ -6,8 +6,10 @@ source_persona: persona.yaml
 residents:
 - id: resident_1
   jitter_scale: 1.0
+  forget_p: 0.01
 - id: resident_2
   jitter_scale: 1.0
+  forget_p: 0.01
 receptacles:
 - id: bed_b1
   room: bedroom_1
@@ -337,6 +339,7 @@ placements:
     - kitchen_table_k1
     - chair_k1
     - chair_k2
+    bulky: true
   umbrella_shared_1:
     home: entry_hook_e1
     p_misplace: 0.22
@@ -572,7 +575,6 @@ object_motions:
     jitter: routine
     during:
       charger_mara: desk_b2
-      glasses_mara: desk_b2
     after:
       laptop_mara:
         dist: &id001
@@ -759,7 +761,6 @@ object_motions:
     jitter: routine
     during:
       charger_mara: kitchen_table_k1
-      glasses_mara: kitchen_table_k1
     after:
       laptop_mara:
         dist: *id001
@@ -1106,7 +1107,6 @@ object_motions:
     jitter: routine
     during:
       charger_mara: desk_b1
-      glasses_mara: desk_b1
     after:
       laptop_mara:
         dist: *id001
@@ -1283,16 +1283,24 @@ object_motions:
     during:
       phone_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_mara:
         dest: person:resident_1
         p: 0.30000000000000004
+        why: noop
+      glasses_mara:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
     after:
       phone_mara:
         dist: &id033
@@ -1331,6 +1339,10 @@ object_motions:
         - person:resident_1
       wallet_mara:
         dest: entry_hook_e1
+        only_from:
+        - person:resident_1
+      glasses_mara:
+        dest: desk_b2
         only_from:
         - person:resident_1
   tidy_up:
@@ -1700,8 +1712,7 @@ object_motions:
   bedtime_routine:
     at: bathroom_shelf_ba1
     jitter: routine
-    during:
-      glasses_mara: bathroom_shelf_ba1
+    during: {}
     after:
       glasses_mara:
         dist:
@@ -1739,19 +1750,27 @@ object_motions:
     during:
       phone_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       water_bottle_mara: person:resident_1
       headphones_mara: person:resident_1
       notebook_mara: person:resident_1
+      glasses_mara:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
       umbrella_shared_1:
         dest: person:resident_1
         p: 0.30000000000000004
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -1858,6 +1877,10 @@ object_motions:
         dest: entry_hook_e1
         only_from:
         - person:resident_1
+      glasses_mara:
+        dest: desk_b2
+        only_from:
+        - person:resident_1
   video_call:
     at: desk_b1
     jitter: routine
@@ -1961,19 +1984,23 @@ object_motions:
       laptop_leon: person:resident_2
       phone_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       tablet_leon: person:resident_2
       headphones_leon: person:resident_2
       backpack_leon: person:resident_2
       umbrella_shared_1:
         dest: person:resident_2
         p: 0.30000000000000004
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2196,19 +2223,27 @@ object_motions:
     during:
       phone_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       water_bottle_mara: person:resident_1
       headphones_mara: person:resident_1
       notebook_mara: person:resident_1
+      glasses_mara:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
       umbrella_shared_1:
         dest: person:resident_1
         p: 0.25
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2290,6 +2325,10 @@ object_motions:
         - person:resident_1
       wallet_mara:
         dest: entry_hook_e1
+        only_from:
+        - person:resident_1
+      glasses_mara:
+        dest: desk_b2
         only_from:
         - person:resident_1
   put_away_dishes:
@@ -3115,20 +3154,28 @@ object_motions:
     during:
       phone_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       water_bottle_mara: person:resident_1
       headphones_mara: person:resident_1
       notebook_mara: person:resident_1
       jacket_mara: person:resident_1
+      glasses_mara:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
       umbrella_shared_1:
         dest: person:resident_1
         p: 0.25
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3221,6 +3268,10 @@ object_motions:
         dest: entry_hook_e1
         only_from:
         - person:resident_1
+      glasses_mara:
+        dest: desk_b2
+        only_from:
+        - person:resident_1
   night_out__resident_2+traveling:
     at: ELSEWHERE
     jitter: routine
@@ -3228,16 +3279,19 @@ object_motions:
       laptop_leon: person:resident_2
       keys_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       tablet_leon: person:resident_2
       headphones_leon: person:resident_2
       backpack_leon: person:resident_2
       umbrella_shared_1:
         dest: person:resident_2
         p: 0.25
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3429,16 +3483,20 @@ object_motions:
     during:
       phone_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       notebook_leon:
         dest: person:resident_2
         p: 0.44999999999999996
+        why: noop
       jacket_leon: person:resident_2
     after:
       phone_mara:
@@ -3763,13 +3821,20 @@ object_motions:
     during:
       phone_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       jacket_mara:
         dest: person:resident_1
         p: 0.44999999999999996
+        why: noop
+      glasses_mara:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
     after:
       jacket_mara:
         dist: &id047
@@ -3783,6 +3848,10 @@ object_motions:
         - person:resident_1
       wallet_mara:
         dest: entry_hook_e1
+        only_from:
+        - person:resident_1
+      glasses_mara:
+        dest: desk_b2
         only_from:
         - person:resident_1
   take_medication:
@@ -3995,20 +4064,28 @@ object_motions:
       laptop_mara: person:resident_1
       phone_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       water_bottle_mara: person:resident_1
       headphones_mara: person:resident_1
       notebook_mara: person:resident_1
       backpack_mara: person:resident_1
+      glasses_mara:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
       umbrella_shared_1:
         dest: person:resident_1
         p: 0.25
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4104,6 +4181,10 @@ object_motions:
         - person:resident_1
       keys_mara:
         dest: entry_hook_e1
+        only_from:
+        - person:resident_1
+      glasses_mara:
+        dest: desk_b2
         only_from:
         - person:resident_1
   hobby__couch_l1:
@@ -4298,19 +4379,27 @@ object_motions:
     during:
       phone_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_mara:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       water_bottle_mara: person:resident_1
       headphones_mara: person:resident_1
       notebook_mara: person:resident_1
+      glasses_mara:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
       umbrella_shared_1:
         dest: person:resident_1
         p: 0.25
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4412,6 +4501,10 @@ object_motions:
         dest: entry_hook_e1
         only_from:
         - person:resident_1
+      glasses_mara:
+        dest: desk_b2
+        only_from:
+        - person:resident_1
   errands__resident_2+traveling:
     at: ELSEWHERE
     jitter: routine
@@ -4419,13 +4512,16 @@ object_motions:
       laptop_leon: person:resident_2
       phone_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       tablet_leon: person:resident_2
       headphones_leon: person:resident_2
       water_bottle_leon: person:resident_2
@@ -4434,6 +4530,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_2
         p: 0.25
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4660,16 +4757,20 @@ object_motions:
     during:
       phone_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_leon:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       notebook_leon:
         dest: person:resident_2
         p: 0.44999999999999996
+        why: noop
       jacket_leon: person:resident_2
     after:
       phone_mara:
@@ -4725,3 +4826,48 @@ object_motions:
     during: {}
     after: {}
 person_invariant: true
+misplace_model: at_putdown
+object_owners:
+  laptop_mara: resident_1
+  phone_mara: resident_1
+  keys_mara: resident_1
+  wallet_mara: resident_1
+  mug_mara: resident_1
+  water_bottle_mara: resident_1
+  headphones_mara: resident_1
+  notebook_mara: resident_1
+  pen_mara: resident_1
+  book_mara: resident_1
+  charger_mara: resident_1
+  backpack_mara: resident_1
+  jacket_mara: resident_1
+  glasses_mara: resident_1
+  yoga_mat_mara: resident_1
+  laptop_leon: resident_2
+  phone_leon: resident_2
+  keys_leon: resident_2
+  wallet_leon: resident_2
+  tablet_leon: resident_2
+  headphones_leon: resident_2
+  notebook_leon: resident_2
+  pen_leon: resident_2
+  water_bottle_leon: resident_2
+  backpack_leon: resident_2
+  jacket_leon: resident_2
+  gaming_controller_leon: resident_2
+  mug_shared_1: shared
+  bowl_shared_1: shared
+  plate_shared_1: shared
+  pot_shared_1: shared
+  pan_shared_1: shared
+  remote_shared_1: shared
+  blanket_shared_1: shared
+  towel_shared_1: shared
+  laundry_basket_shared_1: shared
+  vacuum_cleaner_shared_1: shared
+  watering_can_shared_1: shared
+  umbrella_shared_1: shared
+misplace:
+  next_room_share: 0.5
+  bulky_needs_forget_p: 0.08
+keep_block_share: 0.6

@@ -52,7 +52,7 @@ def test_anonymization_round_trip_restores_real_ids(episode) -> None:
              "start_hour": 8.0, "duration_h": 8.0,
              "moves": [{"target": omap["keys_mara"],
                         "to": rmap["OUT_OF_HOUSE"],
-                        "chance": "usually", "after": "returned"}]}]}
+                        "chance": "usually"}]}]}
     real = deanonymize_hypothesis(anon_hyp, omap, rmap, cmap)
     assert real["rest"]["laptop_mara"] == "kitchen_table_k1"
     assert real["rest"]["class:" + some_class] == "cupboard_k1"

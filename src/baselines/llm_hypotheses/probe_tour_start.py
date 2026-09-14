@@ -39,6 +39,15 @@ from baselines.household_analysis import bank_path
 from baselines.llm_hypotheses.analyze_tour_start import canon, score
 from baselines.llm_hypotheses.elicit import DEFAULT_OUT_DIR
 from baselines.llm_hypotheses.run_tour_start import STUDY_DIR
+
+RUN_ROOT = STUDY_DIR / "tl0"   # overridden by --study-dir
+
+
+def _arms(household: str) -> pathlib.Path:
+    """Arm directories live under ``<household>/arms/`` (older runs kept
+    them directly under the household directory)."""
+    root = RUN_ROOT / household
+    return root / "arms" if (root / "arms").is_dir() else root
 from baselines.types import DAY_SECONDS
 
 EPS = 1e-3
@@ -50,7 +59,7 @@ def label(name: str) -> str:
 
 
 def load(household: str, arm: str) -> List[dict]:
-    p = STUDY_DIR / household / arm / "per_question.jsonl.gz"
+    p = _arms(household) / arm / "per_question.jsonl.gz"
     return [json.loads(l) for l in gzip.open(p, "rt")] if p.exists() else []
 
 
@@ -145,7 +154,7 @@ def reask_probe(household: str, condition: str) -> Dict[str, Any]:
         elif tr and not tf:
             wk[w]["gained"] += 1; gained[F[q]["object_id"]] += 1
         lldiff[F[q]["object_id"]] += lr - lf
-    diag = json.loads((STUDY_DIR / household / f"passive__llm__tour_{condition}" / "diagnostics.json").read_text())
+    diag = json.loads((_arms(household) / f"passive__llm__tour_{condition}" / "diagnostics.json").read_text())
     rests = []
     for h in diag["final_hypotheses"]:
         r = h.get("rest") or {}
@@ -162,10 +171,10 @@ def reask_probe(household: str, condition: str) -> Dict[str, Any]:
 
 
 def write_probes(household: str) -> str:
-    out = STUDY_DIR / household / "figures"; out.mkdir(exist_ok=True)
+    out = RUN_ROOT / household / "figures"; out.mkdir(exist_ok=True)
     L = [f"# Probes — {household}", ""]
     conds = [c for c in ("tour_named", "tour_anonymized")
-             if (STUDY_DIR / household / f"passive__llm_fixed__{c}").exists()]
+             if (_arms(household) / f"passive__llm_fixed__{c}").exists()]
     L += ["## 1. Is single-winner collapse warranted?", "",
           "Log-loss per question (lower is better), from each particle's own distribution at question time.", ""]
     L += ["| arm | mixture (actual weights) | uniform average | single best particle | per-day oracle pick | per-question oracle pick | day-best changes | median best-vs-2nd gap |",
@@ -174,7 +183,7 @@ def write_probes(household: str) -> str:
     for c in conds:
         for kind in ("llm_fixed", "llm"):
             arm = f"passive__{kind}__{c}"
-            if not (STUDY_DIR / household / arm).exists(): continue
+            if not (RUN_ROOT / household / arm).exists(): continue
             p = weighting_probe(household, arm); probes[arm] = p
             L.append(f"| {arm.replace('passive__', '').replace('__', ' · ')} | {p['mixture']:.3f} | {p['uniform_average']:.3f} | {p['single_best']:.3f} ({p['single_best_particle']}) | {p['per_day_oracle']:.3f} | {p['per_question_oracle']:.3f} | {p['day_best_changes']}/{len(p['day_best_sequence']) - 1} days | {p['median_best_vs_second_gap']:.3f} |")
     L.append("")
@@ -210,5 +219,7 @@ def write_probes(household: str) -> str:
 
 if __name__ == "__main__":
     import argparse
-    ap = argparse.ArgumentParser(); ap.add_argument("--household", default="hh_001")
-    print(write_probes(ap.parse_args().household))
+    ap = argparse.ArgumentParser(); ap.add_argument("--household", default="hh_001__bank0")
+    ap.add_argument("--study-dir", type=pathlib.Path, default=STUDY_DIR / "tl0")
+    a = ap.parse_args(); RUN_ROOT = a.study_dir
+    print(write_probes(a.household))

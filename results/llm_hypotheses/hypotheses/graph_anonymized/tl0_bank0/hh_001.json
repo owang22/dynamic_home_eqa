@@ -1,0 +1,1128 @@
+{
+ "assumptions": {
+  "household_size": {
+   "question": "how many adults live in this home",
+   "values": {
+    "one_adult": "a single adult resident",
+    "two_adults": "two adult residents sharing the home"
+   }
+  },
+  "weekday_presence": {
+   "question": "is the primary resident at home or away during weekday working hours",
+   "values": {
+    "out_nine_to_five": "residents leave around 09:00 and return around 17:00 on weekdays",
+    "home_all_day": "residents are in the house for most of the weekday"
+   }
+  },
+  "evening_meal": {
+   "question": "is dinner prepared in the kitchen or eaten away from home",
+   "values": {
+    "cook_at_home": "dinner is cooked in the kitchen roughly 18:00 to 20:00",
+    "eat_out": "dinner is taken out or delivered; the kitchen stays idle in the evening"
+   }
+  }
+ },
+ "leaves": [
+  {
+   "leaf_id": "p_3a7f",
+   "assumes": {
+    "household_size": "one_adult",
+    "weekday_presence": "out_nine_to_five",
+    "evening_meal": "cook_at_home"
+   },
+   "rationale": "single commuter who cooks dinner; six personal items go out with them, five shared items stay home",
+   "distinguishing_prediction": "object_1 is at the entryway receptacle on a weekday afternoon (out with the resident) and object_4 is moved to the cooking zone at 19:00",
+   "distinguishing_check": {
+    "target": "backpack_mara",
+    "at": "OUT_OF_HOUSE",
+    "days": "weekday",
+    "hour": 15
+   },
+   "rest": {
+    "backpack_mara": "bed_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "desk_b1",
+    "glasses_mara": "dish_rack_k1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "chair_k2",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "desk_b1",
+    "laptop_mara": "dish_rack_k1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "chair_k2",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "entry_hook_e1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "chair_k2",
+    "water_bottle_mara": "desk_b1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_commute_out",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "evening_cook",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 18.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "bowl_shared_1",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "bowl_shared_2",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "makeup_kit_mara",
+       "to": "tv_stand_l1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "tv_stand_l1",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "morning_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "book_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_3a7f"
+  },
+  {
+   "leaf_id": "p_8c21",
+   "assumes": {
+    "household_size": "one_adult",
+    "weekday_presence": "out_nine_to_five",
+    "evening_meal": "eat_out"
+   },
+   "rationale": "single commuter who eats out; kitchen objects never move in the evening",
+   "distinguishing_prediction": "object_4 remains at its shelf receptacle at 19:00 because no cooking happens, while object_1 is at the entryway",
+   "distinguishing_check": {
+    "target": "bowl_shared_1",
+    "at": "entry_table_e1",
+    "days": "both",
+    "hour": 19
+   },
+   "rest": {
+    "backpack_mara": "bed_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "desk_b1",
+    "glasses_mara": "dish_rack_k1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "chair_k2",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "desk_b1",
+    "laptop_mara": "dish_rack_k1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "chair_k2",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "entry_hook_e1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "chair_k2",
+    "water_bottle_mara": "desk_b1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_commute_out",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "morning_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "book_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "weekend_relax",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "laundry_basket_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "suitcase_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_8c21"
+  },
+  {
+   "leaf_id": "p_d4e9",
+   "assumes": {
+    "household_size": "one_adult",
+    "weekday_presence": "home_all_day",
+    "evening_meal": "cook_at_home"
+   },
+   "rationale": "single resident at home all day (WFH or retired) who cooks dinner; personal items stay in the house",
+   "distinguishing_prediction": "object_1 is at its home receptacle on a weekday afternoon (resident is in) and object_4 is moved to the cooking zone at 19:00",
+   "distinguishing_check": {
+    "target": "backpack_mara",
+    "at": "bed_b1",
+    "days": "weekday",
+    "hour": 15
+   },
+   "rest": {
+    "backpack_mara": "bed_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "desk_b1",
+    "glasses_mara": "dish_rack_k1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "chair_k2",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "desk_b1",
+    "laptop_mara": "dish_rack_k1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "chair_k2",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "entry_hook_e1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "chair_k2",
+    "water_bottle_mara": "desk_b1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "evening_cook",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 18.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "bowl_shared_1",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "bowl_shared_2",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "makeup_kit_mara",
+       "to": "tv_stand_l1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "tv_stand_l1",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "morning_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "book_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "afternoon_work",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "jacket_mara",
+       "to": "bed_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "bed_b1",
+       "chance": "usually"
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_d4e9"
+  },
+  {
+   "leaf_id": "p_1b56",
+   "assumes": {
+    "household_size": "one_adult",
+    "weekday_presence": "home_all_day",
+    "evening_meal": "eat_out"
+   },
+   "rationale": "single resident at home all day who does not cook; the quietest kitchen scenario",
+   "distinguishing_prediction": "object_1 is at its home receptacle on a weekday afternoon and object_11 stays at its storage spot (not at the entryway, not in active use)",
+   "distinguishing_check": {
+    "target": "keys_mara",
+    "at": "desk_b1",
+    "days": "weekday",
+    "hour": 15
+   },
+   "rest": {
+    "backpack_mara": "bed_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "desk_b1",
+    "glasses_mara": "dish_rack_k1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "chair_k2",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "desk_b1",
+    "laptop_mara": "dish_rack_k1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "chair_k2",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "entry_hook_e1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "chair_k2",
+    "water_bottle_mara": "desk_b1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "morning_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "book_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "weekend_relax",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "laundry_basket_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "suitcase_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "coffee_table_l1",
+       "chance": "rarely"
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_1b56"
+  },
+  {
+   "leaf_id": "p_7f03",
+   "assumes": {
+    "household_size": "two_adults",
+    "weekday_presence": "out_nine_to_five",
+    "evening_meal": "cook_at_home"
+   },
+   "rationale": "two commuters who cook dinner; all eleven personal items go out with them in the morning",
+   "distinguishing_prediction": "object_11 is at the entryway on a weekday afternoon (second resident's item goes out) and object_4 is at the cooking zone at 19:00",
+   "distinguishing_check": {
+    "target": "keys_mara",
+    "at": "armchair_l1",
+    "days": "weekday",
+    "hour": 15
+   },
+   "rest": {
+    "backpack_mara": "bed_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "desk_b1",
+    "glasses_mara": "dish_rack_k1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "chair_k2",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "bed_b1",
+    "laptop_mara": "desk_b1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "chair_k2",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "dish_rack_k1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_hook_e1",
+    "water_bottle_mara": "chair_k2",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_commute_out",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "keys_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "phone_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "evening_cook",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 18.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "bowl_shared_1",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "bowl_shared_2",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "makeup_kit_mara",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "morning_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "book_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "yoga_mat_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_7f03"
+  },
+  {
+   "leaf_id": "p_e94a",
+   "assumes": {
+    "household_size": "two_adults",
+    "weekday_presence": "out_nine_to_five",
+    "evening_meal": "eat_out"
+   },
+   "rationale": "two commuters who eat out; all personal items go out and the kitchen stays idle in the evening",
+   "distinguishing_prediction": "object_11 is at the entryway on a weekday afternoon (couple) and object_4 stays at its shelf at 19:00 (no cooking)",
+   "distinguishing_check": {
+    "target": "bowl_shared_1",
+    "at": "entry_table_e1",
+    "days": "both",
+    "hour": 19
+   },
+   "rest": {
+    "backpack_mara": "bed_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "desk_b1",
+    "glasses_mara": "dish_rack_k1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "chair_k2",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "bed_b1",
+    "laptop_mara": "desk_b1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "chair_k2",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "dish_rack_k1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_hook_e1",
+    "water_bottle_mara": "chair_k2",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_commute_out",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "keys_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "phone_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "morning_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "book_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "yoga_mat_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "weekend_relax",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "laundry_basket_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "suitcase_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_e94a"
+  },
+  {
+   "leaf_id": "p_2c88",
+   "assumes": {
+    "household_size": "two_adults",
+    "weekday_presence": "home_all_day",
+    "evening_meal": "cook_at_home"
+   },
+   "rationale": "two residents at home all day who cook dinner; all personal items are in the house and kitchen is active",
+   "distinguishing_prediction": "object_11 is at its home receptacle on a weekday afternoon (couple, both home) and object_4 is at the cooking zone at 19:00",
+   "distinguishing_check": {
+    "target": "keys_mara",
+    "at": "bed_b1",
+    "days": "weekday",
+    "hour": 15
+   },
+   "rest": {
+    "backpack_mara": "bed_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "desk_b1",
+    "glasses_mara": "dish_rack_k1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "chair_k2",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "bed_b1",
+    "laptop_mara": "desk_b1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "chair_k2",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "dish_rack_k1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_hook_e1",
+    "water_bottle_mara": "chair_k2",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "evening_cook",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 18.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "bowl_shared_1",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "bowl_shared_2",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "makeup_kit_mara",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "tv_stand_l1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "morning_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "book_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "yoga_mat_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "afternoon_shared_work",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "jacket_mara",
+       "to": "bed_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "bed_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "keys_mara",
+       "to": "bed_b1",
+       "chance": "usually"
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_2c88"
+  },
+  {
+   "leaf_id": "p_5d17",
+   "assumes": {
+    "household_size": "two_adults",
+    "weekday_presence": "home_all_day",
+    "evening_meal": "eat_out"
+   },
+   "rationale": "two residents at home all day who eat out; the busiest household with an idle kitchen",
+   "distinguishing_prediction": "object_11 is at its home receptacle on a weekday afternoon (couple, both home) and object_4 stays at its shelf at 19:00 (no cooking)",
+   "distinguishing_check": {
+    "target": "keys_mara",
+    "at": "bed_b1",
+    "days": "weekday",
+    "hour": 15
+   },
+   "rest": {
+    "backpack_mara": "bed_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "desk_b1",
+    "glasses_mara": "dish_rack_k1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "chair_k2",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "bed_b1",
+    "laptop_mara": "desk_b1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "chair_k2",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "dish_rack_k1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_hook_e1",
+    "water_bottle_mara": "chair_k2",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "morning_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "book_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "yoga_mat_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "afternoon_shared_work",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "jacket_mara",
+       "to": "bed_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "bed_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "keys_mara",
+       "to": "bed_b1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "weekend_relax",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "laundry_basket_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "suitcase_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "coffee_table_l1",
+       "chance": "sometimes"
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_5d17"
+  }
+ ],
+ "leaf_set_rationale": "All eight combinations of the three binary assumptions are physically consistent and produce distinct observable predictions, so none are skipped."
+}

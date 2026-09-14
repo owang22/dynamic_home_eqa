@@ -862,12 +862,25 @@ def generate_movement(slot, persona, persona_text, receptacles, story, days,
 
 # ------------------------------------------------------------ L4 realize --
 
+def forget_fields(resident: dict, params: dict) -> dict:
+    """The persona's forgetfulness rating as the realizer's per-resident
+    `forget_p` (plus its cites, for the viewer). Empty when the persona
+    carries no rating — the realizer then uses the household default."""
+    fg = resident.get("forgetfulness") or {}
+    levels = params.get("carry_on_departure", {}).get("forget_levels") or {}
+    if fg.get("level") not in levels:
+        return {}
+    return {"forget_p": float(levels[fg["level"]]),
+            "forget_cites": str(fg.get("cites") or "")}
+
+
 def assemble_program(slot, persona, receptacles, story, object_rules,
                      days: int) -> dict:
     """The realization input: every story block as a dated entry, plus
     the movement rules. Timing variation is not added here — the story
     already wrote each day differently."""
-    jitter = sim.load_params()["jitter_scale"]
+    params = sim.load_params()
+    jitter = params["jitter_scale"]
     scale = round(min(max(1.0, jitter["min"]), jitter["max"]), 2)
     dated = []
     for day in story:
@@ -886,7 +899,8 @@ def assemble_program(slot, persona, receptacles, story, object_rules,
         "object_owners": {o["id"]: o["owner"]
                           for o in persona["object_inventory"]},
         "days": days, "day0": "Monday",
-        "residents": [{"id": r["id"], "jitter_scale": scale}
+        "residents": [{"id": r["id"], "jitter_scale": scale,
+                       **forget_fields(r, params)}
                       for r in persona["residents"]],
         "receptacles": [dict(r) for r in receptacles],
         "sleep_schedule": [], "weekly_blocks": [],

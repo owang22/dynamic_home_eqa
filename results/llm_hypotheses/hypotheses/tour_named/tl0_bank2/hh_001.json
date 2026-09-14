@@ -1,0 +1,763 @@
+{
+ "hypotheses": [
+  {
+   "hypothesis_id": "h1",
+   "rationale": "Solo resident works from home at the kitchen table on weekdays; it is her desk, and the 22:06 snapshot catches her post-work winding down",
+   "distinguishing_prediction": "laptop_mara sitting at kitchen_table_k1 on a weekday afternoon because the kitchen table is her fixed workstation",
+   "distinguishing_check": {
+    "target": "laptop_mara",
+    "at": "kitchen_table_k1",
+    "days": "weekday",
+    "hour": 14.0
+   },
+   "rest": {
+    "remote_shared_1": "coffee_table_l1",
+    "yoga_mat_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "cupboard_k1",
+    "notebook_mara": "kitchen_table_k1"
+   },
+   "activities": [
+    {
+     "name": "work_session",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 15.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 15.0
+      },
+      {
+       "target": "headphones_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 15.0
+      },
+      {
+       "target": "glasses_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 15.0
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 15.0
+      }
+     ]
+    },
+    {
+     "name": "dinner_cook",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 18.5,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.5
+      },
+      {
+       "target": "plate_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.5
+      },
+      {
+       "target": "plate_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.5
+      },
+      {
+       "target": "pot_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 5.5
+      }
+     ]
+    },
+    {
+     "name": "errand_run",
+     "days": "weekday",
+     "frequency_per_week": 2,
+     "start_hour": 12.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "evening_wind_down",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 20.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "tablet_mara",
+       "to": "coffee_table_l1",
+       "chance": "almost_always",
+       "duration_h": 4.0
+      },
+      {
+       "target": "blanket_mara",
+       "to": "couch_l1",
+       "chance": "usually",
+       "duration_h": 4.0
+      }
+     ]
+    },
+    {
+     "name": "morning_routine",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "counter_k1",
+       "chance": "almost_always",
+       "duration_h": 17.0
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "counter_k1",
+       "chance": "almost_always",
+       "duration_h": 17.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h2",
+   "rationale": "Mara commutes to an office on weekdays; the kitchen table is an evening work station she uses after getting home around 18:00",
+   "distinguishing_prediction": "keys_mara absent from the entry table on a weekday midday because Mara is at her office",
+   "distinguishing_check": {
+    "target": "keys_mara",
+    "at": "OUT_OF_HOUSE",
+    "days": "weekday",
+    "hour": 13.0
+   },
+   "rest": {
+    "remote_shared_1": "coffee_table_l1",
+    "yoga_mat_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "cupboard_k1",
+    "notebook_mara": "kitchen_table_k1"
+   },
+   "activities": [
+    {
+     "name": "commute_to_office",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 8.5,
+     "duration_h": 9.0,
+     "moves": [
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "evening_kitchen_work",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 19.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.0
+      },
+      {
+       "target": "headphones_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 5.0
+      },
+      {
+       "target": "glasses_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 5.0
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 5.0
+      }
+     ]
+    },
+    {
+     "name": "dinner",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 18.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 6.0
+      },
+      {
+       "target": "plate_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 6.0
+      },
+      {
+       "target": "plate_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 6.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_couch_work",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 4.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually",
+       "duration_h": 14.0
+      },
+      {
+       "target": "tablet_mara",
+       "to": "coffee_table_l1",
+       "chance": "sometimes",
+       "duration_h": 14.0
+      }
+     ]
+    },
+    {
+     "name": "morning_routine",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "counter_k1",
+       "chance": "almost_always",
+       "duration_h": 17.0
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "counter_k1",
+       "chance": "almost_always",
+       "duration_h": 17.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h3",
+   "rationale": "Mara works at the bedroom desk on weekdays; the kitchen table is strictly for meals, and the 22:06 laptop there is just a post-dinner browsing session",
+   "distinguishing_prediction": "laptop_mara at desk_b1 on a weekday afternoon because the desk is her true workstation, not the kitchen table",
+   "distinguishing_check": {
+    "target": "laptop_mara",
+    "at": "desk_b1",
+    "days": "weekday",
+    "hour": 14.0
+   },
+   "rest": {
+    "laptop_mara": "desk_b1",
+    "remote_shared_1": "coffee_table_l1",
+    "yoga_mat_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "cupboard_k1",
+    "notebook_mara": "desk_b1"
+   },
+   "activities": [
+    {
+     "name": "desk_work",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "desk_b1",
+       "chance": "almost_always",
+       "duration_h": 15.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "desk_b1",
+       "chance": "almost_always",
+       "duration_h": 15.0
+      },
+      {
+       "target": "headphones_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 15.0
+      },
+      {
+       "target": "glasses_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 15.0
+      },
+      {
+       "target": "notebook_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 15.0
+      },
+      {
+       "target": "pen_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 15.0
+      }
+     ]
+    },
+    {
+     "name": "lunch_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 12.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "lunchbox_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 12.0
+      },
+      {
+       "target": "mug_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 12.0
+      }
+     ]
+    },
+    {
+     "name": "dinner_cook",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 18.5,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.5
+      },
+      {
+       "target": "plate_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.5
+      },
+      {
+       "target": "plate_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.5
+      },
+      {
+       "target": "pot_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 5.5
+      },
+      {
+       "target": "bowl_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 5.5
+      }
+     ]
+    },
+    {
+     "name": "evening_browse",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 20.5,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 3.5
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 3.5
+      }
+     ]
+    },
+    {
+     "name": "weekend_yoga",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 9.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "yoga_mat_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "almost_always",
+       "duration_h": 15.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h4",
+   "rationale": "Two-person household; the partner works away on weekdays, and the shared kitchen items plus two plates at dinner reflect two residents using the space",
+   "distinguishing_prediction": "remote_shared_1 on the coffee table on a weekend afternoon because both residents are home and watching TV together",
+   "distinguishing_check": {
+    "target": "remote_shared_1",
+    "at": "coffee_table_l1",
+    "days": "weekend",
+    "hour": 15.0
+   },
+   "rest": {
+    "remote_shared_1": "coffee_table_l1",
+    "yoga_mat_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "cupboard_k1",
+    "notebook_mara": "kitchen_table_k1"
+   },
+   "activities": [
+    {
+     "name": "mara_wfh",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 15.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 15.0
+      },
+      {
+       "target": "headphones_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 15.0
+      }
+     ]
+    },
+    {
+     "name": "couple_dinner",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 18.5,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "plate_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.5
+      },
+      {
+       "target": "plate_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.5
+      },
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.5
+      },
+      {
+       "target": "bowl_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 5.5
+      },
+      {
+       "target": "bowl_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 5.5
+      }
+     ]
+    },
+    {
+     "name": "weekend_tv_together",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 15.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "remote_shared_1",
+       "to": "coffee_table_l1",
+       "chance": "almost_always",
+       "duration_h": 9.0
+      },
+      {
+       "target": "tablet_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually",
+       "duration_h": 9.0
+      },
+      {
+       "target": "blanket_mara",
+       "to": "couch_l1",
+       "chance": "usually",
+       "duration_h": 9.0
+      }
+     ]
+    },
+    {
+     "name": "weekday_vacuum",
+     "days": "weekday",
+     "frequency_per_week": 3,
+     "start_hour": 10.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "bedroom_floor_b1",
+       "chance": "almost_always",
+       "duration_h": 14.0
+      }
+     ]
+    },
+    {
+     "name": "morning_two_mugs",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "counter_k1",
+       "chance": "almost_always",
+       "duration_h": 17.0
+      },
+      {
+       "target": "mug_shared_1",
+       "to": "counter_k1",
+       "chance": "usually",
+       "duration_h": 17.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h5",
+   "rationale": "Mara is an irregular freelancer or student with no fixed desk; her laptop migrates between rooms and the suitcase signals frequent short trips",
+   "distinguishing_prediction": "laptop_mara on the coffee table on a weekend afternoon because she works wherever she happens to be, not at a fixed station",
+   "distinguishing_check": {
+    "target": "laptop_mara",
+    "at": "coffee_table_l1",
+    "days": "weekend",
+    "hour": 14.0
+   },
+   "rest": {
+    "laptop_mara": "coffee_table_l1",
+    "remote_shared_1": "coffee_table_l1",
+    "yoga_mat_mara": "bedroom_floor_b1",
+    "lunchbox_mara": "cupboard_k1",
+    "notebook_mara": "kitchen_table_k1"
+   },
+   "activities": [
+    {
+     "name": "work_burst_couch",
+     "days": "both",
+     "frequency_per_week": 3,
+     "start_hour": 10.0,
+     "duration_h": 4.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "couch_l1",
+       "chance": "sometimes",
+       "duration_h": 14.0
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "couch_l1",
+       "chance": "sometimes",
+       "duration_h": 14.0
+      }
+     ]
+    },
+    {
+     "name": "work_burst_kitchen",
+     "days": "both",
+     "frequency_per_week": 2,
+     "start_hour": 14.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      }
+     ]
+    },
+    {
+     "name": "travel_day",
+     "days": "weekday",
+     "frequency_per_week": 2,
+     "start_hour": 7.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "suitcase_mara",
+       "to": "entry_table_e1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "yoga_anytime",
+     "days": "both",
+     "frequency_per_week": 3,
+     "start_hour": 17.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "yoga_mat_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "duration_h": 7.0
+      }
+     ]
+    },
+    {
+     "name": "dinner_make_it",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 5.0
+      },
+      {
+       "target": "plate_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "duration_h": 5.0
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

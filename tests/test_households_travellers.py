@@ -40,6 +40,7 @@ def program() -> dict:
                       {"id": "resident_2", "jitter_scale": 1.0}],
         "receptacles": [{"id": "table_a", "room": "living"},
                         {"id": "shelf_b", "room": "living"},
+                        {"id": "couch_c", "room": "living"},
                         {"id": "bed_b1", "room": "bedroom"},
                         {"id": "sink_k", "room": "kitchen"}],
         "object_owners": {"keys_1": "resident_1", "laptop_1": "resident_1",
@@ -216,7 +217,6 @@ def test_person_invariant_holds_through_realization_including_misplace():
            and e["to"] != xc.ELSEWHERE
            and any(a < e["t"] < b for a, b in trips)]
     assert bad == [], bad[:3]
-    assert stats["misplace_skipped_absent_holder"] > 0
     # the yoga mat only ever leaves on a gym day, and comes back
     mat = [e for e in log if e["object"] == "yoga_mat_1"
            and e["to"] == "person:resident_1"]
@@ -231,3 +231,163 @@ def test_unmarked_program_gets_none_of_this():
     assert "person_invariant" not in motions
     for entry in motions["object_motions"].values():
         assert all(not isinstance(v, dict) for v in entry["during"].values())
+
+
+# ---------------------------------------------------------------------------
+# Forgetting is per person; drift follows the person; left-behind is logged.
+
+def test_forget_rate_comes_from_the_resident():
+    p = program()
+    p["residents"][0]["forget_p"] = 0.2          # a scattered owner
+    _, motions = xc.expand(p, forget_p=0.05, carry_p=1.0)
+    leg = _away_variants(motions)["walk"]["during"]["keys_1"]
+    assert abs(leg["p"] - 0.8) < 1e-9 and leg["why"] == "forget"
+    # a non-pocket leg carries the NO_OP-derived reason
+    mat = _away_variants(motions)["work_away__resident_1+gym"]["during"]["yoga_mat_1"]
+    assert mat["why"] == "noop"
+    # no rating on the resident: the household default applies
+    _, motions = xc.expand(program(), forget_p=0.05, carry_p=1.0)
+    assert abs(_away_variants(motions)["walk"]["during"]["keys_1"]["p"] - 0.95) < 1e-9
+
+
+def test_persona_rating_maps_to_forget_p():
+    import households.generate as g
+    params = sim.load_params()
+    levels = params["carry_on_departure"]["forget_levels"]
+    r = {"id": "resident_1", "forgetfulness": {"level": "often", "cites": "c"}}
+    assert g.forget_fields(r, params) == {"forget_p": levels["often"],
+                                          "forget_cites": "c"}
+    assert g.forget_fields({"id": "resident_1"}, params) == {}
+
+
+def test_left_behind_departures_are_logged_not_moved():
+    p = program()
+    p["residents"][0]["forget_p"] = 0.5
+    log, hourly, blocks, stats, acts, motions = sim.simulate_program(p, 14, 0)
+    oms = stats["omissions"]
+    assert oms and stats["departures_without_item"] == len(oms)
+    forgot = [o for o in oms if o["why"] == "forget"]
+    assert forgot and all(o["object"] == "keys_1" for o in forgot)
+    for o in forgot:
+        assert o["resident"] == "resident_1" and abs(o["p"] - 0.5) < 1e-9
+        # the keys really did stay put: no pickup at that minute
+        assert not any(e["object"] == "keys_1" and e["t"] == o["t"]
+                       and e["to"] == "person:resident_1" for e in log)
+    assert any(o["why"] == "noop" for o in oms)
+
+
+def _misplace_program():
+    """Keys drift at (nearly) every putdown; a bulky yoga mat has a draw
+    too, which only a scattered resident may use."""
+    p = program()
+    p["object_rules"][0]["p_misplace"] = 0.9          # keys
+    p["object_rules"][0]["misplace_set"] = ["sink_k", "bed_b1"]
+    p["object_rules"][2]["p_misplace"] = 0.9          # yoga mat (bulky)
+    p["object_rules"][2]["misplace_set"] = ["sink_k", "bed_b1"]
+    # a daily putdown for the mat, so the bulky rule has draws to refuse
+    p["object_rules"][2]["rules"].append(
+        {"cites": "c", "activity": "dinner", "phase": "after",
+         "dist": _dist(("shelf_b", 0.5), ("table_a", 0.5))})
+    return p
+
+
+def test_misplacement_is_a_failed_putdown_into_a_nearby_room():
+    p = _misplace_program()
+    log, hourly, blocks, stats, acts, motions = sim.simulate_program(p, 14, 0)
+    assert motions["misplace_model"] == "at_putdown"
+    room = {r["id"]: r["room"] for r in motions["receptacles"]}
+    mine = sorted((b for b in blocks if b["resident"] == "resident_1"),
+                  key=lambda b: b["t0"])
+    drifts = [e for e in log if e["by"] == "misplace"]
+    assert drifts and stats["misplaced_at_putdown"] == len(drifts)
+    for e in drifts:
+        assert e["object"] == "keys_1"
+        assert e["actor"] == "resident_1"
+        # fired at the END of the activity it names, i.e. at a block end
+        b = next(b for b in mine if b["activity"] == e["during"]
+                 and b["t1"] == e["t"])
+        # and landed in that block's room or the next home block's room
+        nxt = next((n for n in mine if n["t0"] >= b["t1"] and n is not b), None)
+        rooms = {room.get(b["at"])}
+        if nxt and nxt["at"] != xc.ELSEWHERE:
+            rooms.add(room[nxt["at"]])
+        assert room[e["to"]] in rooms, (e, b, nxt)
+        # not where the rule meant it to go
+        assert e["to"] != e["instead_of"]
+    # nothing drifts at a random minute any more: every misplace is at a
+    # block boundary of its actor
+    ends = {b["t1"] for b in mine}
+    assert all(e["t"] in ends for e in drifts)
+
+
+def test_bulky_objects_are_misplaced_only_by_the_scattered():
+    p = _misplace_program()
+    log, *_ = sim.simulate_program(p, 14, 0)
+    assert not any(e["by"] == "misplace" and e["object"] == "yoga_mat_1"
+                   for e in log)
+    p["residents"][0]["forget_p"] = 0.08              # rated "often"
+    log, hourly, blocks, stats, acts, motions = sim.simulate_program(p, 14, 0)
+    assert motions["placements"]["yoga_mat_1"]["bulky"] is True
+    assert any(e["by"] == "misplace" and e["object"] == "yoga_mat_1"
+               for e in log)
+
+
+def test_unmarked_program_keeps_fixed_set_drift():
+    p = program()
+    del p["object_semantics"]
+    p["object_rules"][3]["p_misplace"] = 0.9          # towel: mobile without v3
+    p["object_rules"][3]["misplace_set"] = ["sink_k"]
+    log, *_ = sim.simulate_program(p, 7, 0)
+    drifts = [e for e in log if e["by"] == "misplace"]
+    assert drifts and all(e["to"] == "sink_k" and "actor" not in e for e in drifts)
+
+
+def test_blocks_keep_a_share_of_their_authored_length():
+    """Independent per-block jitter used to collapse a short block
+    between two disagreeing draws to a minute; v3 floors it."""
+    p = program()
+    # a 15-minute home stop between two away blocks, every weekday
+    p["weekly_blocks"][2] = _block("resident_1", "work_away", WEEKDAYS,
+                                   "12:30", "16:00", "ELSEWHERE", "external")
+    p["weekly_blocks"].insert(3, _block("resident_1", "snack", WEEKDAYS,
+                                        "16:00", "16:15", "sink_k", "routine"))
+    p["weekly_blocks"][4] = _block("resident_1", "gym", WEEKDAYS, "16:15",
+                                   "17:30", "ELSEWHERE", "routine")
+    params = sim.load_params()
+    keep = params["jitter_scale"]["keep_block_share"]
+    assert keep > 0
+    _, _, blocks, *_ = sim.simulate_program(p, 14, 0, params=params)
+    snacks = [b["t1"] - b["t0"] for b in blocks if b["activity"] == "snack"]
+    assert snacks and min(snacks) >= keep * 15
+    # v1 behaviour when the floor is off: some snack gets squashed
+    params["jitter_scale"]["keep_block_share"] = 0.0
+    _, _, blocks, *_ = sim.simulate_program(p, 14, 0, params=params)
+    snacks0 = [b["t1"] - b["t0"] for b in blocks if b["activity"] == "snack"]
+    assert min(snacks0) < keep * 15
+    # unmarked programs never get the floor
+    del p["object_semantics"]
+    _, _, _, _, _, motions = sim.simulate_program(p, 7, 0)
+    assert "keep_block_share" not in motions
+
+
+
+def test_laundry_gets_a_stop_at_home_before_the_next_outing():
+    """hh1 d5: laundry -> walk -> groceries with no home block, so the
+    basket rode the whole morning. Laundry is an in-building errand;
+    a short stop at home is inserted so the chain merge cannot absorb
+    it into the outing that follows."""
+    p = program()
+    # Sunday: the laundromat run (10:00-11:00) straight into a walk
+    p["weekly_blocks"][7] = _block("resident_1", "walk", ["Su"], "11:00",
+                                   "12:00", "ELSEWHERE", "loose")
+    acts, motions = xc.expand(p)
+    assert len(acts["home_stops"]) == 2          # two Sundays in 14 days
+    assert any(s.startswith("laundry->linger_") for s in acts["home_stops"])
+    sun = [e for e in acts["calendar"] if e["weekday"] == "Sun"][0]
+    names = [i["a"] for i in sun["activities"] if i["r"] == "resident_1"]
+    i = names.index("laundry")
+    assert names[i + 1].startswith("linger_") and names[i + 2] == "walk"
+    # the towel rides the laundry trip only, and the walk is its own trip
+    assert "towel_1" in motions["object_motions"]["laundry"]["during"]
+    assert "towel_1" not in motions["object_motions"]["walk"]["during"]
+    assert not any("laundry" in m for m in acts["merged_away_blocks"])

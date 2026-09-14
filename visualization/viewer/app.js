@@ -15,7 +15,9 @@ const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const ROOM_FILLS = ["#3d5a80", "#5a8a5e", "#8a5a72", "#7a6a3d", "#5a7a8a",
                     "#6a5a8a", "#8a6a4a"];
 const SEG = {T0: 0, T1: 1, REC: 2, ROOM: 3, REL: 4, X: 5, Z: 6, CAUSE: 7,
-             KIND: 8};
+             KIND: 8, ACTOR: 9, DURING: 10, INSTEAD: 11};
+// departures that left the object behind: [t, resident, activity, why, p, at]
+const OM = {T: 0, RES: 1, ACT: 2, WHY: 3, P: 4, AT: 5};
 // resident tracks are shorter: no placement relation, and the last field is
 // the activity they are doing rather than what caused a move
 const RSEG = {T0: 0, T1: 1, REC: 2, ROOM: 3, X: 4, Z: 5, ACT: 6};
@@ -59,6 +61,16 @@ function transitionsOf(obj) {
   for (let i = 1; i < segs.length; i++)
     if (segs[i][SEG.REC] !== segs[i - 1][SEG.REC]) times.push(segs[i][SEG.T0]);
   return times;
+}
+
+/* Departures that left this object behind while the segment at `time`
+ * was current — the log holds only moves, so "she left without it" is
+ * carried separately (trace.omissions) and shown on the segment it
+ * happened in. */
+function omissionsOf(obj) { return ((trace && trace.omissions) || {})[obj] || []; }
+
+function omissionsIn(obj, seg) {
+  return omissionsOf(obj).filter(o => o[OM.T] >= seg[SEG.T0] && o[OM.T] < seg[SEG.T1]);
 }
 
 function segmentAt(obj, time) {
@@ -256,6 +268,51 @@ function drawResidents(ctx) {
   }
 }
 
+/* What the selected resident has on them RIGHT NOW, drawn as a tag beside
+ * their diamond: one small gold disc with the carried (green) ring per
+ * object, then the names. The panel's "carrying" row says the same thing,
+ * but a tag on the map keeps the answer next to the person while you
+ * watch them cross the house, instead of glancing away to the sidebar. */
+function drawCarriedTag(ctx) {
+  const res = currentResident();
+  const seg = residentSegmentAt(res, t);
+  if (!seg) return;
+  const held = carriedBy(res, t);
+  if (!held.length) return;
+  const dpr = window.devicePixelRatio || 1;
+  const [cx, cy] = worldToCanvas(seg[RSEG.X], seg[RSEG.Z]);
+  const r = 3.5 * dpr, gap = 4 * dpr, pad = 6 * dpr;
+  const text = held.join(", ");
+  ctx.font = `600 ${10 * dpr}px system-ui`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  const discsW = held.length * (2 * r + gap);
+  const w = pad + discsW + ctx.measureText(text).width + pad;
+  const h = 18 * dpr;
+  // to the right of the diamond; flip to the left near the canvas edge
+  let x = cx + 14 * dpr;
+  if (x + w > ctx.canvas.width - 4 * dpr) x = cx - 14 * dpr - w;
+  const y = cy - h / 2;
+  ctx.fillStyle = "rgba(20,22,26,0.88)";
+  ctx.strokeStyle = "#7ee08a";
+  ctx.lineWidth = 1 * dpr;
+  ctx.beginPath();
+  if (ctx.roundRect) ctx.roundRect(x, y, w, h, 4 * dpr);
+  else ctx.rect(x, y, w, h);                  // older browsers: square corners
+  ctx.fill(); ctx.stroke();
+  let dx = x + pad + r;
+  for (let i = 0; i < held.length; i++) {
+    ctx.fillStyle = "#ffb84d";
+    ctx.strokeStyle = "#7ee08a";
+    ctx.lineWidth = 1.5 * dpr;
+    ctx.beginPath(); ctx.arc(dx, cy, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    dx += 2 * r + gap;
+  }
+  ctx.fillStyle = "#c9f7d0";
+  ctx.fillText(text, x + pad + discsW, cy);
+  ctx.textBaseline = "alphabetic";
+}
+
 function drawResidentPath(ctx) {
   const res = currentResident();
   const segs = residentTracks()[res] || [];
@@ -326,6 +383,7 @@ function draw() {
       if (o !== obj) drawMarker(ctx, segmentAt(o, t), true, null);
 
   drawMarker(ctx, segmentAt(obj, t), false, obj);
+  if ($("show-carried").checked) drawCarriedTag(ctx);
   updateReadout();
 }
 
@@ -445,17 +503,35 @@ function explainSegment(obj, seg) {
       objectNote(info);
 
   if (kind === "misplace") {
-    // Once per day, at a random waking minute, into a random member of the
-    // object's misplace_set — see the drift block in
-    // profiles/revamp_v1/simulate_activities.py. Not tied to an activity,
-    // which is exactly why the cause column reads "misplace" and no rule
-    // can be quoted for it.
     const p = info.p_misplace;
     const set = info.misplace_set || [];
+    const pTxt = `<strong>${p == null ? "small" : Number(p).toFixed(2)}</strong>`;
+    if (trace.misplace_model === "at_putdown") {
+      // A failed putdown: the activity ended, the rule chose a slot, and
+      // the object did not get there — left in the room the person was
+      // in, or carried absent-mindedly into the room they went to next.
+      const actor = seg[SEG.ACTOR], during = seg[SEG.DURING];
+      const meant = seg[SEG.INSTEAD];
+      const who = actor ? residentName(actor) : "someone";
+      const rule = during ? ruleFor(info, during, "after") : null;
+      return badge("chance", "misplaced") +
+        line(`<strong>${escapeHtml(who)}</strong> finished ` +
+             `<strong>${escapeHtml(prettyActivity(during || "?"))}</strong> at ` +
+             `<strong>${escapeHtml(fmtTime(seg[SEG.T0]))}</strong> and the rule ` +
+             `meant to put it at <strong>${escapeHtml(meant || "its slot")}</strong>` +
+             ` — but it did not get there. ${escapeHtml(obj)} has a ${pTxt} ` +
+             `chance of that at every putdown, and this time it was left at ` +
+             `<strong>${escapeHtml(landed)}</strong> in the ` +
+             `<strong>${escapeHtml(seg[SEG.ROOM] || "?")}</strong>` +
+             (rule ? ` instead of where the rule sends it:` : `.`)) +
+        (rule ? distTable(rule, meant) : "") +
+        objectNote(info);
+    }
+    // Older traces: once per day, at a random waking minute, into a random
+    // member of the object's misplace_set, untied to anyone's whereabouts.
     return badge("chance", "chance drift") +
       line(`No rule and no activity put it here. ${escapeHtml(obj)} is ` +
-           `absent-minded: on any given day it has a ` +
-           `<strong>${p == null ? "small" : Number(p).toFixed(2)}</strong> ` +
+           `absent-minded: on any given day it has a ${pTxt} ` +
            `chance of being set down at a random waking moment somewhere ` +
            `other than home. Today it was, so it is at ` +
            `<strong>${escapeHtml(landed)}</strong> instead of ` +
@@ -502,10 +578,15 @@ function explainSegment(obj, seg) {
       line(`<strong>${escapeHtml(who)}</strong> took it along on ${outing}.`);
     if (authored) {
       html += quote(authored.cites || "(no cites on that rule)");
-    } else if (isPocket(obj) && info.owner) {
+    } else if ((isPocket(obj) || info.carried) && info.owner) {
       html += line(`No rule says to take it: rules only say where things ` +
-                   `LAND. ${escapeHtml(obj)} is a pocket item, and those ` +
-                   `ride <em>every</em> trip their owner takes` +
+                   `LAND. ${escapeHtml(obj)} ` +
+                   (info.carried
+                     ? `goes out on ${escapeHtml(who)} — the persona says ` +
+                       `<em>“${escapeHtml(info.carried)}”</em> — so it`
+                     : `is a pocket item, and those`) +
+                   ` ride${info.carried ? "s" : ""} <em>every</em> trip ` +
+                   `${escapeHtml(who)} takes` +
                    (qualifier
                      ? ` — this one has its own rule for ` +
                        `<strong>${escapeHtml(qualifier.activity)}</strong>:`
@@ -602,6 +683,32 @@ function householdPlan() {
          `</summary>${quote(why)}</details>`;
 }
 
+/* "She left without it": every departure inside this segment that rolled
+ * the object's not-taken branch. A pocket item's is the owner's own
+ * forgetting rate (persona-rated); anything else's is the NO_OP mass of
+ * its rule on that trip. Stated loudly — a missing pickup is otherwise
+ * invisible, and it is exactly what a belief about the object gets wrong. */
+function leftBehind(obj, seg) {
+  const oms = omissionsIn(obj, seg);
+  if (!oms.length) return "";
+  return oms.map(o => {
+    const who = o[OM.RES] ? residentName(o[OM.RES]) : "its owner";
+    const pct = o[OM.P] == null ? "" : ` (a ${Math.round(o[OM.P] * 100)}% draw)`;
+    const why = o[OM.WHY] === "forget"
+      ? `<strong>forgot it</strong>${pct}`
+      : o[OM.WHY] === "noop"
+        ? `<strong>did not take it this time</strong>${pct} — its rule's NO_OP share`
+        : `left it${pct}`;
+    return `<div class="why-line why-omission">` +
+      badge("chance", "left behind") +
+      ` <strong>${escapeHtml(who)}</strong> left for ` +
+      `<strong>${escapeHtml(prettyActivity(o[OM.ACT]))}</strong> at ` +
+      `<strong>${escapeHtml(fmtTime(o[OM.T]))}</strong> and ${why}; ` +
+      `it stayed at <strong>${escapeHtml(o[OM.AT] || seg[SEG.REC])}</strong>.` +
+      `</div>`;
+  }).join("");
+}
+
 function updateWhy() {
   const section = $("why-section");
   if (!section) return;
@@ -612,7 +719,9 @@ function updateWhy() {
   // state is remembered here rather than lost on every slider tick.
   const open = section.querySelector("details");
   const wasOpen = open ? open.open : false;
-  $("why").innerHTML = explainSegment(obj, segmentAt(obj, t)) + householdPlan();
+  const seg = segmentAt(obj, t);
+  $("why").innerHTML = explainSegment(obj, seg) + leftBehind(obj, seg) +
+                       householdPlan();
   const now = section.querySelector("details");
   if (now) now.open = wasOpen;
 }
@@ -671,6 +780,17 @@ function updateResidentReadout() {
   $("rs-carrying").textContent = held.length ? held.join(", ") : "nothing";
 }
 
+/* Time -> x on the event strip, lined up with the SLIDER THUMB'S CENTRE.
+ * The thumb does not travel edge to edge: at min it sits half a thumb in
+ * from the left, at max half a thumb in from the right (14px thumb, fixed
+ * in style.css). Mapping over the full canvas width put the ticks up to
+ * 7px off the thumb at either end — exact only at the midpoint. */
+const SLIDER_THUMB_PX = 14;
+function stripX(minute, strip) {
+  const pad = (SLIDER_THUMB_PX / 2) * (window.devicePixelRatio || 1);
+  return pad + (minute / horizon) * (strip.width - 2 * pad);
+}
+
 function drawEventStrip() {
   const strip = $("event-strip");
   const dpr = window.devicePixelRatio || 1;
@@ -680,16 +800,22 @@ function drawEventStrip() {
   ctx.clearRect(0, 0, strip.width, strip.height);
   // day boundaries
   for (let d = 0; d <= trace.days; d++) {
-    const x = (d * 1440 / horizon) * strip.width;
+    const x = stripX(d * 1440, strip);
     ctx.fillStyle = d % 7 >= 5 ? "#5a5340" : "#2c313a";   // weekend tint
-    ctx.fillRect(x, 0, 1.5, strip.height);
+    ctx.fillRect(x - (1.5) / 2, 0, 1.5, strip.height);
   }
   // upper half: one tick per receptacle change of the selected object
   ctx.fillStyle = "#6ec1ff";
   const moves = transitionsOf(currentObject());
   for (const t0 of moves) {
-    const x = (t0 / horizon) * strip.width;
-    ctx.fillRect(x, 2 * dpr, 1.5 * dpr, 5 * dpr);
+    const x = stripX(t0, strip);
+    ctx.fillRect(x - (1.5 * dpr) / 2, 2 * dpr, 1.5 * dpr, 5 * dpr);
+  }
+  // left-behind departures: a red tick on the object's row
+  ctx.fillStyle = "#ff6b6b";
+  for (const o of omissionsOf(currentObject())) {
+    const x = stripX(o[OM.T], strip);
+    ctx.fillRect(x - (2 * dpr) / 2, 1 * dpr, 2 * dpr, 6 * dpr);
   }
   if (!moves.length) {
     ctx.fillStyle = "#8b93a1";
@@ -703,8 +829,8 @@ function drawEventStrip() {
   ctx.fillStyle = "#7ee08a";
   for (const s of residentTracks()[currentResident()] || []) {
     if (!s[RSEG.T0]) continue;
-    const x = (s[RSEG.T0] / horizon) * strip.width;
-    ctx.fillRect(x, 7 * dpr, 1.5 * dpr, 5 * dpr);
+    const x = stripX(s[RSEG.T0], strip);
+    ctx.fillRect(x - (1.5 * dpr) / 2, 7 * dpr, 1.5 * dpr, 5 * dpr);
   }
 }
 
@@ -1142,16 +1268,25 @@ async function boot() {
     renderRoster(); drawEventStrip(); draw(); });
   $("jump-what").addEventListener("change", draw);
   for (const id of ["show-path", "show-res-path", "show-trace", "show-others",
-                    "show-recs", "show-all-res", "show-why"])
+                    "show-recs", "show-all-res", "show-why", "show-carried"])
     $(id).addEventListener("change", draw);
   $("play").addEventListener("click", () => togglePlay());
   $("prev-event").addEventListener("click", () => jumpEvent(-1));
   $("next-event").addEventListener("click", () => jumpEvent(+1));
   window.addEventListener("resize", () => { computeView(); drawEventStrip(); draw(); });
   document.addEventListener("keydown", e => {
+    const legend = $("legend");
+    if (e.key === "Escape" && legend && legend.open) { legend.open = false; return; }
+    // space on the focused legend button toggles the legend, not playback
+    if (e.key === " " && e.target.tagName === "SUMMARY") return;
     if (e.key === " ") { e.preventDefault(); togglePlay(); }
     if (e.key === "ArrowRight") jumpEvent(+1);
     if (e.key === "ArrowLeft") jumpEvent(-1);
+  });
+  // click anywhere off the legend sheet closes it
+  document.addEventListener("click", e => {
+    const legend = $("legend");
+    if (legend && legend.open && !legend.contains(e.target)) legend.open = false;
   });
 
   computeView();

@@ -43,7 +43,7 @@ def _summarize(h: Dict[str, Any]) -> List[str]:
     for a in h.get("activities", []):
         out.append(f"- **{a.get('name')}** ({a.get('days')}, {a.get('frequency_per_week')}×/week, {a.get('start_hour')}h for {a.get('duration_h')}h)")
         for m in a.get("moves", []):
-            out.append(f"  - {m.get('target')} → {m.get('to')} ({m.get('chance')}, {m.get('after')})")
+            out.append(f"  - {m.get('target')} → {m.get('to')} ({m.get('chance')}" + (f", {m['duration_h']}h" if m.get('duration_h') is not None else "") + ")")
     out.append("")
     return out
 

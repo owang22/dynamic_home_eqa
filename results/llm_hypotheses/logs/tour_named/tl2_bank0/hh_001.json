@@ -1,0 +1,878 @@
+{
+ "household": "hh_001",
+ "condition": "named",
+ "prompt": "A robot was installed in a home and made ONE walkthrough tour: every object it could see, once, at one moment. It has seen nothing else \u2014 no routines, no days, no movements. The tour is a snapshot, not a map of where things rest: an object may have been caught in use, and an object it could not find was out of the house or on a person.\n\nRECEPTACLES (valid `to` and rest locations):\n  bed_b1\n  nightstand_b1\n  desk_b1\n  bedroom_floor_b1\n  couch_l1\n  coffee_table_l1\n  tv_stand_l1\n  bookshelf_l1\n  armchair_l1\n  counter_k1\n  sink_k1\n  cupboard_k1\n  dish_rack_k1\n  kitchen_table_k1\n  chair_k1\n  chair_k2\n  bathroom_shelf_ba1\n  towel_rack_ba1\n  entry_table_e1\n  entry_hook_e1\n  entry_floor_e1\n  ON_PERSON\n  OUT_OF_HOUSE  [never directly observable]\n\nOBJECTS (valid `target` ids, with class):\n  backpack_mara  (class: backpack)\n  blanket_mara  (class: blanket)\n  book_mara  (class: book)\n  bowl_shared_1  (class: bowl)\n  bowl_shared_2  (class: bowl)\n  charger_mara  (class: charger)\n  glasses_mara  (class: glasses)\n  hairbrush_mara  (class: hairbrush)\n  headphones_mara  (class: headphones)\n  jacket_mara  (class: jacket)\n  keys_mara  (class: keys)\n  laptop_mara  (class: laptop)\n  laundry_basket_mara  (class: laundry_basket)\n  lunchbox_mara  (class: lunchbox)\n  makeup_kit_mara  (class: makeup_kit)\n  medication_bottle_mara  (class: medication_bottle)\n  mug_mara  (class: mug)\n  mug_shared_1  (class: mug)\n  notebook_mara  (class: notebook)\n  pan_shared_1  (class: pan)\n  pen_mara  (class: pen)\n  phone_mara  (class: phone)\n  plate_shared_1  (class: plate)\n  plate_shared_2  (class: plate)\n  pot_shared_1  (class: pot)\n  remote_shared_1  (class: remote)\n  suitcase_mara  (class: suitcase)\n  tablet_mara  (class: tablet)\n  towel_mara  (class: towel)\n  umbrella_mara  (class: umbrella)\n  vacuum_cleaner_shared_1  (class: vacuum_cleaner)\n  wallet_mara  (class: wallet)\n  water_bottle_mara  (class: water_bottle)\n  watering_can_mara  (class: watering_can)\n  yoga_mat_mara  (class: yoga_mat)\n\nCLASSES (valid as `class:<name>` targets): backpack, blanket, book, bowl, charger, glasses, hairbrush, headphones, jacket, keys, laptop, laundry_basket, lunchbox, makeup_kit, medication_bottle, mug, notebook, pan, pen, phone, plate, pot, remote, suitcase, tablet, towel, umbrella, vacuum_cleaner, wallet, water_bottle, watering_can, yoga_mat\n\nWALKTHROUGH TOUR (a single pass through the home at 20:11 on day 0, a Monday; every object the robot could see, seen once):\n  backpack_mara  at  entry_hook_e1\n  blanket_mara  at  couch_l1\n  book_mara  at  bookshelf_l1\n  bowl_shared_1  at  counter_k1\n  bowl_shared_2  at  kitchen_table_k1\n  charger_mara  at  kitchen_table_k1\n  glasses_mara  at  kitchen_table_k1\n  hairbrush_mara  at  bathroom_shelf_ba1\n  headphones_mara  at  kitchen_table_k1\n  jacket_mara  at  entry_hook_e1\n  keys_mara  at  entry_table_e1\n  laptop_mara  at  kitchen_table_k1\n  laundry_basket_mara  at  bedroom_floor_b1\n  lunchbox_mara  at  counter_k1\n  makeup_kit_mara  at  bathroom_shelf_ba1\n  medication_bottle_mara  at  bathroom_shelf_ba1\n  mug_mara  at  counter_k1\n  mug_shared_1  at  cupboard_k1\n  notebook_mara  at  kitchen_table_k1\n  pan_shared_1  at  kitchen_table_k1\n  pen_mara  at  kitchen_table_k1\n  phone_mara  at  nightstand_b1\n  plate_shared_1  at  kitchen_table_k1\n  plate_shared_2  at  counter_k1\n  pot_shared_1  at  cupboard_k1\n  remote_shared_1  at  coffee_table_l1\n  suitcase_mara  at  bedroom_floor_b1\n  tablet_mara  at  coffee_table_l1\n  towel_mara  at  towel_rack_ba1\n  umbrella_mara  at  entry_floor_e1\n  vacuum_cleaner_shared_1  at  bedroom_floor_b1\n  wallet_mara  at  entry_table_e1\n  water_bottle_mara  at  kitchen_table_k1\n  watering_can_mara  at  sink_k1\n  yoga_mat_mara  at  couch_l1\n\nWrite exactly 5 competing hypotheses about how this home runs, from what you know about homes like it: who lives here judging by the objects, weekday vs weekend routines, which objects leave the house with a person, which get used and left out, which get put away. Each hypothesis lists ACTIVITIES \u2014 which days (weekday, weekend, or both), roughly when, how many times per week, and which objects move where \u2014 plus an optional `rest` map for objects that do not rest where the tour found them.\n\nRules:\n\n1. Hypotheses must DISAGREE in ways sightings can settle. Each carries a one-line `distinguishing_prediction` and a checkable `distinguishing_check`: {\"target\": <object id>, \"at\": <receptacle id>, \"days\": weekday|weekend|both, \"hour\": <number>}.\n2. Times and weekly frequencies are numbers (\"dinner around 19:30\" -> start_hour 19.5). A concrete guess beats a vague one; sightings correct them.\n3. Chances are labels, never numbers: rarely, sometimes, usually, almost_always.\n4. `after` is \"returned\" (put back at rest when the activity ends) or \"left\" (stays where used until the next day).\n5. Objects that leave the house with a person go to OUT_OF_HOUSE. Model displacements, not only rest states; calling everything stationary is unfalsifiable.\n6. IDs: only identifiers from the tables above, exactly as printed. Every JSON field holds the bare id.\n7. Length: exactly 5 hypotheses, each with 3-7 activities of 1-6 moves. `rest` is optional: list only objects that do not rest where the tour found them or that an activity moves. Rationale and distinguishing_prediction are one line each.\n\nThink it through, then end your reply with ONE json object. The example below is ABBREVIATED \u2014 two hypotheses with one or two activities each, from a different, much smaller home \u2014 and shows the field shapes only, not the scale of the answer you should give.\n\n{\n \"hypotheses\": [\n  {\n   \"hypothesis_id\": \"h1\",\n   \"rationale\": \"single resident works away on weekdays; carry items leave the house with them\",\n   \"distinguishing_prediction\": \"keys_x absent from the entry table on weekday middays, back by 18:00\",\n   \"distinguishing_check\": {\n    \"target\": \"keys_x\",\n    \"at\": \"OUT_OF_HOUSE\",\n    \"days\": \"weekday\",\n    \"hour\": 13.0\n   },\n   \"rest\": {\n    \"class:mug\": \"cupboard_1\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"office_day\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 8.0,\n     \"duration_h\": 9.0,\n     \"moves\": [\n      {\n       \"target\": \"keys_x\",\n       \"to\": \"OUT_OF_HOUSE\",\n       \"chance\": \"almost_always\",\n       \"after\": \"returned\"\n      }\n     ]\n    },\n    {\n     \"name\": \"morning_coffee\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 6,\n     \"start_hour\": 6.5,\n     \"duration_h\": 0.5,\n     \"moves\": [\n      {\n       \"target\": \"class:mug\",\n       \"to\": \"counter_1\",\n       \"chance\": \"usually\",\n       \"after\": \"left\"\n      }\n     ]\n    }\n   ]\n  },\n  {\n   \"hypothesis_id\": \"h2\",\n   \"rationale\": \"resident mostly works from home; keys stay in\",\n   \"distinguishing_prediction\": \"keys_x ON the entry table at weekday middays\",\n   \"distinguishing_check\": {\n    \"target\": \"keys_x\",\n    \"at\": \"entry_shelf_1\",\n    \"days\": \"weekday\",\n    \"hour\": 13.0\n   },\n   \"rest\": {\n    \"class:mug\": \"desk_1\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"desk_work\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 9.0,\n     \"duration_h\": 7.0,\n     \"moves\": [\n      {\n       \"target\": \"class:mug\",\n       \"to\": \"desk_1\",\n       \"chance\": \"usually\",\n       \"after\": \"left\"\n      }\n     ]\n    }\n   ]\n  }\n ]\n}",
+ "rounds": [
+  {
+   "kind": "initial",
+   "think": "Let me analyze the walkthrough tour carefully to understand this home.\n\n**Objects and their locations at 20:11 Monday:**\n\n- backpack_mara: entry_hook_e1\n- blanket_mara: couch_l1\n- book_mara: bookshelf_l1\n- bowl_shared_1: counter_k1\n- bowl_shared_2: kitchen_table_k1\n- charger_mara: kitchen_table_k1\n- glasses_mara: kitchen_table_k1\n- hairbrush_mara: bathroom_shelf_ba1\n- headphones_mara: kitchen_table_k1\n- jacket_mara: entry_hook_e1\n- keys_mara: entry_table_e1\n- laptop_mara: kitchen_table_k1\n- laundry_basket_mara: bedroom_floor_b1\n- lunchbox_mara: counter_k1\n- makeup_kit_mara: bathroom_shelf_ba1\n- medication_bottle_mara: bathroom_shelf_ba1\n- mug_mara: counter_k1\n- mug_shared_1: cupboard_k1\n- notebook_mara: kitchen_table_k1\n- pan_shared_1: kitchen_table_k1\n- pen_mara: kitchen_table_k1\n- phone_mara: nightstand_b1\n- plate_shared_1: kitchen_table_k1\n- plate_shared_2: counter_k1\n- pot_shared_1: cupboard_k1\n- remote_shared_1: coffee_table_l1\n- suitcase_mara: bedroom_floor_b1\n- tablet_mara: coffee_table_l1\n- towel_mara: towel_rack_ba1\n- umbrella_mara: entry_floor_e1\n- vacuum_cleaner_shared_1: bedroom_floor_b1\n- wallet_mara: entry_table_e1\n- water_bottle_mara: kitchen_table_k1\n- watering_can_mara: sink_k1\n- yoga_mat_mara: couch_l1\n\n**Key observations:**\n\n1. **Who lives here?** The objects are heavily \"mara\" branded - this is Mara's home. There are \"shared\" objects (bowls, mugs, plates, pot, pan, remote, vacuum) suggesting a partner or family member, but most personal items belong to Mara. The medication bottle, makeup kit, hairbrush suggest an adult woman. The suitcase on the bedroom floor is interesting - could be travel prep or just stored.\n\n2. **The kitchen table is a mess/workstation:** laptop, notebook, pen, headphones, charger, glasses, water bottle, bowl, plate, pan are ALL on the kitchen table. This is clearly Mara's workspace/dining area. At 20:11 on a Monday, this suggests she's working or has been working at the kitchen table.\n\n3. **Entry area:** backpack, jacket, keys, wallet, umbrella - these are \"going out\" items. At 20:11, having them at the entry suggests she's home (or just got home). The jacket and backpack on the hook suggest she came in and hung them.\n\n4. **Bedroom:** phone on nightstand (charging?), laundry basket, suitcase, vacuum cleaner on bedroom floor. The suitcase is notable - maybe she travels, or it's just stored there.\n\n5. **Living room:** blanket on couch, yoga mat on couch, tablet and remote on coffee table, book on bookshelf.\n\n6. **Bathroom:** hairbrush, makeup kit, medication bottle on shelf; towel on rack.\n\n7. **Kitchen:** bowls, mug, lunchbox, plate on counter; pot and mug in cupboard; watering can in sink (odd - maybe for plants?); pan on kitchen table.\n\n**Key questions for hypotheses:**\n\n- Does Mara go to work on weekdays? (laptop, charger, notebook, pen on kitchen table suggest work-from-home, but backpack at entry could mean she goes out)\n- Is the kitchen table her permanent workspace or is it clutter from a meal?\n- Does she have a partner? (shared items exist but no second person's personal items are visible)\n- The suitcase - travel?\n- The watering can in the sink - plants?\n- The yoga mat on the couch - does she do yoga?\n- The medication bottle - regular medication?\n\n**Let me design 5 competing hypotheses that DISAGREE in checkable ways:**\n\n**H1: Mara works from home at the kitchen table on weekdays; the kitchen table is her permanent workspace.**\n- Laptop, notebook, pen, charger, headphones stay on kitchen table during work hours\n- She doesn't leave the house on weekdays (or rarely)\n- Distinguishing: laptop at kitchen_table on weekday at 13:00\n- The \"shared\" items suggest a partner who is away during the day (or it's just shared household items)\n\n**H2: Mara goes to an office on weekdays; the kitchen table items are from a meal/prep she left in a hurry.**\n- Laptop, charger, notebook, pen, backpack, keys, wallet, jacket all leave the house\n- At 20:11 she's home, having just returned\n- Distinguishing: laptop at OUT_OF_HOUSE on weekday at 13:00\n- The kitchen table mess is because she left in a rush in the morning\n\n**H3: Mara works from home but the kitchen table is a dining table; work items are temporarily there because she's been eating and working simultaneously (clutter pattern).**\n- The laptop IS her workspace but she moves it; the \"rest\" location for laptop is actually the desk_b1\n- Distinguishing: laptop at desk_b1 on weekend at 14:00 (she moves it to the proper desk on weekends)\n- Actually, wait - desk_b1 is in the bedroom. Let me reconsider.\n\nLet me reconsider the layout:\n- Bedroom: bed, nightstand, desk, floor\n- Living room: couch, coffee table, tv stand, bookshelf, armchair\n- Kitchen: counter, sink, cupboard, dish rack, kitchen table, chairs\n- Bathroom: shelf, towel rack\n- Entry: table, hook, floor\n\nThe desk_b1 is in the bedroom. So there IS a proper desk. The laptop being on the kitchen table at 20:11 could mean:\n- H1: She works at the kitchen table (no desk use)\n- H2: She works at the desk but brought laptop to kitchen table for dinner/work\n- H3: The desk is her workspace, kitchen table is for meals, and the laptop is there because she's working late at the table\n\nLet me restructure:\n\n**H1: Kitchen table is Mara's primary workspace (WFH). She rarely leaves on weekdays.**\n- Laptop, charger, notebook, pen, headphones rest at kitchen_table\n- Keys, wallet, jacket at entry (she's home)\n- Distinguishing: laptop at kitchen_table_k1, weekday, 13:00\n\n**H2: Mara commutes to an office. The kitchen table is a dining table; items are morning prep remnants.**\n- Laptop, charger, notebook, pen, backpack, keys, wallet, jacket \u2192 OUT_OF_HOUSE on weekday mornings\n- At 20:11 she just got home and put things back\n- Distinguishing: laptop at OUT_OF_HOUSE, weekday, 12:00\n\n**H3: Mara works at the bedroom desk. The kitchen table is for meals only. The laptop is there because she's been working at the table after dinner (unusual pattern).**\n- Laptop rests at desk_b1\n- On weekdays, laptop goes to desk_b1 in the morning, comes to kitchen_table in the evening for casual work\n- Distinguishing: laptop at desk_b1, weekday, 10:00\n\n**H4: The home has two residents (Mara + partner). The partner is out during the day (work). The \"shared\" items are for both. Mara works from home.**\n- The shared items (bowls, plates, mugs, pot, pan) are for two people\n- Partner's absence explains why only Mara's personal items are visible\n- Distinguishing: mug_shared_1 at counter_k1, weekday, 12:00 (partner's mug is out during lunch)\n- Actually, let me think about what's checkable. The partner would have their own items. But we only see \"shared\" items and \"mara\" items. Maybe the partner's personal items are just not in the object list.\n- Let me focus on: the shared items get used by two people. The partner is home on weekends.\n- Distinguishing: pot_shared_1 at counter_k1 on weekend at 12:00 (cooking for two on weekends) vs weekday (partner not home, less cooking)\n\n**H5: Mara is a student or freelancer with irregular hours. The kitchen table is a general-purpose surface. The suitcase suggests frequent travel.**\n- Laptop moves between kitchen table, desk, and OUT_OF_HOUSE\n- The suitcase is used regularly (travel)\n- Distinguishing: suitcase_mara at OUT_OF_HOUSE, weekday, 10:00 (she travels on weekdays)\n\nWait, let me reconsider. The suitcase being in the bedroom floor at 20:11 Monday - it could be:\n- Just stored there (not travel-related)\n- She's about to travel\n- She just returned from travel\n- She travels frequently\n\nLet me also think about the watering can in the sink. That's unusual. Maybe she has plants and the watering can is stored in the sink area. Or maybe it's for the garden and she just used it.\n\nThe yoga mat on the couch - she does yoga. The blanket on the couch - she relaxes there.\n\nLet me finalize my 5 hypotheses with clear disagreements:\n\n**H1: Mara is a WFH professional. Kitchen table = office. She stays home on weekdays.**\n- Laptop, charger, notebook, pen, headphones: rest at kitchen_table_k1\n- Keys, wallet: stay at entry_table_e1 (she doesn't go out)\n- Jacket, backpack: at entry_hook (she put them on in the morning but came back, or they're just stored)\n- Actually if she's WFH, why would jacket and backpack be at the entry? Maybe she goes out for errands but not work.\n- Distinguishing: laptop at kitchen_table_k1, weekday, 13:00\n\n**H2: Mara commutes to an office 9-5. Kitchen table = dining table. The mess is from morning prep.**\n- Laptop, charger, notebook, pen, backpack, keys, wallet, jacket \u2192 OUT_OF_HOUSE weekday 8-17\n- At 20:11 she's home, has put things back\n- Distinguishing: laptop at OUT_OF_HOUSE, weekday, 12.0\n\n**H3: Mara works at the bedroom desk. Kitchen table is strictly for meals. The laptop at the kitchen table at 20:11 is because she's doing casual evening work/entertainment at the table.**\n- Laptop rests at desk_b1\n- Weekday: laptop at desk_b1 during work hours (9-17), at kitchen_table in evening\n- Distinguishing: laptop at desk_b1, weekday, 10.0\n\n**H4: Two-person household (Mara + partner). Partner works away on weekdays. Shared items get used by both. Mara works from home at kitchen table.**\n- The \"shared\" items are for two people\n- Partner is OUT_OF_HOUSE on weekdays 8-17\n- On weekends, partner is home, shared items get used more\n- Distinguishing: pot_shared_1 at counter_k1, weekend, 12.0 (cooking for two)\n- Actually, I need to think about what's observable. The partner's personal items aren't in our list. But the shared items' usage pattern would differ.\n- Let me focus on: on weekends, more shared items are out (cooking for two, more dishes)\n- Distinguishing: plate_shared_2 at kitchen_table_k1, weekend, 13.0 (dinner for two on weekend) vs weekday (plate back in cupboard)\n\n**H5: Mara is a freelancer/student with irregular schedule. The suitcase indicates regular travel (maybe a few times per month). The kitchen table is a general surface that gets cluttered.**\n- Laptop moves: kitchen_table \u2192 OUT_OF_HOUSE (travel) \u2192 kitchen_table\n- Suitcase: bedroom_floor \u2192 OUT_OF_HOUSE (travel) \u2192 bedroom_floor\n- Less structured than H1-H4\n- Distinguishing: suitcase_mara at OUT_OF_HOUSE, weekday, 10.0\n\nNow let me think about the `rest` maps. The tour shows where things ARE at 20:11 Monday. The rest map should show where things REST (their home location) if different from where the tour found them.\n\nFor H1 (kitchen table = office):\n- Most items at kitchen table are at their rest location\n- Jacket at entry_hook might not be rest (rest might be closet? but closet isn't a receptacle... entry_hook is fine)\n- Actually, the jacket's rest might be entry_hook_e1 (hung up). That's where the tour found it.\n- Suitcase at bedroom_floor - rest location? Maybe it's stored there.\n- I'll keep rest minimal for H1.\n\nFor H2 (commuter):\n- Laptop rests at... where? If she commutes, the laptop goes with her. Its \"rest\" at home might be desk_b1 or kitchen_table. Let's say desk_b1 (she stores it there when home).\n- Actually, if she commutes, the laptop is OUT_OF_HOUSE during the day. At night it's home. Where does it rest at home? Maybe desk_b1 or kitchen_table.\n- Keys rest at entry_table (that's where the tour found them - she put them back)\n- The \"rest\" for H2: laptop rests at desk_b1 (not kitchen_table where tour found it)\n\nFor H3 (desk worker):\n- Laptop rests at desk_b1\n- The tour found it at kitchen_table (evening casual use)\n- rest: laptop_mara \u2192 desk_b1\n\nFor H4 (two-person):\n- Most rest locations same as tour\n- Maybe some shared items rest differently\n- Actually, I'll say the shared mugs/plates rest in cupboard, and the tour caught them in use\n- rest: mug_shared_1 \u2192 cupboard_k1 (tour found it there, so that IS its rest)\n- Hmm, the tour found mug_shared_1 at cupboard_k1 and pot_shared_1 at cupboard_k1. Those are their rest locations.\n- bowl_shared_1 at counter_k1, bowl_shared_2 at kitchen_table_k1, plate_shared_1 at kitchen_table_k1, plate_shared_2 at counter_k1 - these might be \"in use\" positions\n- For H4, I'll say the plates and bowls rest in cupboard but are out during meal times\n\nFor H5 (freelancer/traveler):\n- Laptop rests at kitchen_table (general surface)\n- Suitcase rests at bedroom_floor\n- Less structured rest\n\nNow let me write the activities for each:\n\n**H1 Activities:**\n1. wfh_day: weekday, 5/week, 9:00-17:00. Laptop, charger, notebook, pen, headphones at kitchen_table. After: left (stays there).\n2. morning_prep: both, 7/week, 7:00-8:00. Mug to counter, water_bottle to kitchen_table. After: left.\n3. evening_relax: both, 7/week, 19:00-22:00. Tablet to coffee_table, blanket to couch, yoga_mat to couch. After: left.\n4. errand_run: weekday, 2/week, 12:00-14:00. Keys, wallet, jacket, backpack \u2192 OUT_OF_HOUSE. After: returned.\n5. cooking_dinner: both, 6/week, 18:00-20:00. Pot to counter, pan to kitchen_table, bowls to kitchen_table. After: left.\n\n**H2 Activities:**\n1. commute_day: weekday, 5/week, 8:00-17:30. Laptop, charger, notebook, pen, backpack, keys, wallet, jacket \u2192 OUT_OF_HOUSE. After: returned.\n2. morning_rush: weekday, 5/week, 7:00-8:00. Water_bottle, lunchbox to counter. After: left.\n3. evening_dinner: both, 6/week, 18:30-20:00. Pot, pan, bowls, plates to kitchen_table. After: left.\n4. evening_work: weekday, 3/week, 20:00-22:00. Laptop to kitchen_table (catching up). After: left.\n5. weekend_yoga: weekend, 1/week, 9:00-10:00. Yoga_mat to bedroom_floor. After: returned.\n\n**H3 Activities:**\n1. desk_work: weekday, 5/week, 9:00-17:00. Laptop, charger, notebook, pen to desk_b1. After: left.\n2. evening_table_work: weekday, 4/week, 19:00-21:00. Laptop to kitchen_table. After: left.\n3. cooking: both, 6/week, 18:00-19:30. Pot, pan, bowls to kitchen_table/counter. After: left.\n4. morning: both, 7/week, 7:00-8:00. Mug to counter, water_bottle to kitchen_table. After: left.\n5. errand: weekday, 1/week, 12:00-13:30. Keys, wallet, jacket \u2192 OUT_OF_HOUSE. After: returned.\n\n**H4 Activities:**\n1. partner_work: weekday, 5/week, 8:00-17:00. (Partner is out - but we can't track partner's items since they're not in our list. Let me focus on what IS observable.)\n   - Actually, I should focus on shared items. When partner is out, fewer shared items are in use.\n   - Let me reframe: On weekdays, only Mara uses the kitchen. On weekends, both use it.\n2. wfh_mara: weekday, 5/week, 9:00-17:00. Laptop, charger, notebook, pen, headphones at kitchen_table. After: left.\n3. weekend_cooking: weekend, 2/week, 11:00-13:00. Pot, pan, bowls, plates, mugs to kitchen_table. After: left.\n4. weekday_cooking: weekday, 5/week, 18:00-19:30. Pot, pan, one bowl, one plate to kitchen_table. After: left.\n5. evening_relax: both, 7/week, 19:30-22:00. Tablet, remote to coffee_table. Blanket to couch. After: left.\n6. morning_prep: both, 7/week, 7:00-8:00. Mugs to counter, water_bottle to kitchen_table. After: left.\n\n**H5 Activities:**\n1. irregular_work: both, 4/week, 10:00-15:00. Laptop, charger, notebook at kitchen_table. After: left.\n2. travel: weekday, 1/week, 8:00-18:00. Suitcase, laptop, charger, backpack, keys, wallet \u2192 OUT_OF_HOUSE. After: returned.\n3. cooking: both, 5/week, 18:00-19:30. Pot, pan, bowls to kitchen_table. After: left.\n4. yoga: weekend, 1/week, 9:00-10:00. Yoga_mat to bedroom_floor. After: returned.\n5. evening_entertainment: both, 6/week, 20:00-22:00. Tablet, remote to coffee_table. After: left.\n\nNow let me refine the distinguishing predictions and checks to make them truly discriminating:\n\n- H1 vs H2: laptop at kitchen_table (H1) vs OUT_OF_HOUSE (H2) on weekday at 12:00\n- H1 vs H3: laptop at kitchen_table (H1) vs desk_b1 (H3) on weekday at 10:00\n- H4: plate_shared_2 at kitchen_table on weekend at 13:00 (H4: two people eating) vs in cupboard (others: one person)\n- H5: suitcase at OUT_OF_HOUSE on weekday at 10:00 (H5: travel) vs bedroom_floor (others: stored)\n\nLet me make sure each hypothesis has a UNIQUE distinguishing check:\n- H1: laptop at kitchen_table_k1, weekday, 12.0\n- H2: laptop at OUT_OF_HOUSE, weekday, 12.0\n- H3: laptop at desk_b1, weekday, 10.0\n- H4: plate_shared_2 at kitchen_table_k1, weekend, 13.0\n- H5: suitcase_mara at OUT_OF_HOUSE, weekday, 10.0\n\nThese are all different and checkable. Good.\n\nNow let me make sure the activities have 1-6 moves each, and each hypothesis has 3-7 activities.\n\nLet me also think about the `rest` field more carefully. The rest map should list objects whose rest location differs from where the tour found them, OR objects that an activity moves.\n\nH1: Kitchen table IS the rest for work items. Most things are at rest. \n- Maybe: jacket_mara rests at entry_hook_e1 (tour found it there - same, no need)\n- Actually for H1, almost everything is at rest. Maybe I don't need a rest map, or it's minimal.\n- Wait, the rules say \"list only objects that do not rest where the tour found them or that an activity moves.\" So if an activity moves an object, I should list it in rest with its TRUE rest location.\n- For H1, the errand activity moves keys, wallet, jacket, backpack. Their rest is entry_table/entry_hook. The tour found them there. So no discrepancy.\n- I'll leave rest empty or minimal for H1.\n\nH2: Laptop rests at desk_b1 (not kitchen_table where tour found it).\n- rest: laptop_mara \u2192 desk_b1\n- Also, the commute activity moves many items. Their rest at home: keys\u2192entry_table, wallet\u2192entry_table, jacket\u2192entry_hook, backpack\u2192entry_hook. Tour found them there. OK.\n- rest: {\"laptop_mara\": \"desk_b1\"}\n\nH3: Laptop rests at desk_b1.\n- rest: {\"laptop_mara\": \"desk_b1\"}\n- Also, the evening_table_work moves laptop to kitchen_table. Its rest is desk_b1.\n\nH4: \n- Plates and bowls rest in cupboard but are out during meals.\n- rest: {\"plate_shared_1\": \"cupboard_k1\", \"plate_shared_2\": \"cupboard_k1\", \"bowl_shared_1\": \"cupboard_k1\", \"bowl_shared_2\": \"cupboard_k1\"}\n- Wait, the tour found plate_shared_1 at kitchen_table_k1, plate_shared_2 at counter_k1, bowl_shared_1 at counter_k1, bowl_shared_2 at kitchen_table_k1. If their rest is cupboard, that's different from tour.\n- Actually, is cupboard a valid rest for plates? Yes, cupboard_k1 is a receptacle.\n- But wait - for H4, the weekday cooking activity puts them out. The tour is at 20:11, after dinner. So they might be \"left\" from dinner. Their REST is cupboard.\n- rest: {\"plate_shared_1\": \"cupboard_k1\", \"plate_shared_2\": \"cupboard_k1\", \"bowl_shared_1\": \"cupboard_k1\", \"bowl_shared_2\": \"cupboard_k1\", \"pan_shared_1\": \"cupboard_k1\"}\n- Pan is at kitchen_table in tour. Its rest might be cupboard.\n- Actually, let me not overdo it. I'll include the ones that are clearly \"in use\" positions.\n\nH5: \n- Laptop rests at kitchen_table (general surface)\n- Suitcase rests at bedroom_floor\n- Most things are at rest per tour\n- rest: maybe minimal\n\nLet me now write the final JSON. I need to be careful with:\n- Exactly 5 hypotheses\n- Each with 3-7 activities\n- Each activity with 1-6 moves\n- Times as numbers\n- Chances as labels\n- after as \"returned\" or \"left\"\n- IDs exactly as printed\n- One-line rationale and distinguishing_prediction\n\nLet me draft this carefully:\n\nH1: \"Mara is a work-from-home professional; the kitchen table is her permanent office and she rarely leaves on weekdays\"\n- Distinguishing: \"laptop_mara at kitchen_table_k1 on a weekday at noon, never at a desk\"\n- Check: laptop_mara, kitchen_table_k1, weekday, 12.0\n- Rest: {} (everything at rest per tour, or minimal)\n  - Actually, the jacket and backpack at entry_hook - if she's WFH, why are they there? Maybe she goes out for errands. Their rest IS entry_hook. Fine.\n  - I'll add: \"jacket_mara\": \"entry_hook_e1\" (it's at rest there, but an activity moves it)\n  - Hmm, the rule says \"list only objects that do not rest where the tour found them OR that an activity moves.\" So if an activity moves jacket to OUT_OF_HOUSE, I should list its rest.\n  - rest: {\"jacket_mara\": \"entry_hook_e1\", \"backpack_mara\": \"entry_hook_e1\", \"keys_mara\": \"entry_table_e1\", \"wallet_mara\": \"entry_table_e1\"}\n  - Wait, those ARE where the tour found them. The rule says \"do not rest where the tour found them OR that an activity moves.\" The second condition is \"that an activity moves\" - so I list them because an activity moves them, even if rest = tour location.\n  - Actually re-reading: \"list only objects that do not rest where the tour found them or that an activity moves\" - this is an OR. So I list objects where (rest \u2260 tour location) OR (an activity moves them).\n  - For H1, the errand activity moves keys, wallet, jacket, backpack. So I list them with their rest locations (which happen to match tour).\n  - rest: {\"jacket_mara\": \"entry_hook_e1\", \"backpack_mara\": \"entry_hook_e1\", \"keys_mara\": \"entry_table_e1\", \"wallet_mara\": \"entry_table_e1\"}\n\nActivities for H1:\n1. wfh_day: weekday, 5/week, 9.0, 8.0h\n   - laptop_mara \u2192 kitchen_table_k1, usually, left\n   - charger_mara \u2192 kitchen_table_k1, usually, left\n   - notebook_mara \u2192 kitchen_table_k1, usually, left\n   - pen_mara \u2192 kitchen_table_k1, usually, left\n   - headphones_mara \u2192 kitchen_table_k1, sometimes, left\n   (5 moves)\n\n2. errand_run: weekday, 2/week, 12.0, 1.5h\n   - keys_mara \u2192 OUT_OF_HOUSE, usually, returned\n   - wallet_mara \u2192 OUT_OF_HOUSE, usually, returned\n   - jacket_mara \u2192 OUT_OF_HOUSE, usually, returned\n   - backpack_mara \u2192 OUT_OF_HOUSE, sometimes, returned\n   (4 moves)\n\n3. cooking_dinner: both, 6/week, 18.0, 1.5h\n   - pot_shared_1 \u2192 counter_k1, usually, left\n   - pan_shared_1 \u2192 kitchen_table_k1, usually, left\n   - bowl_shared_1 \u2192 kitchen_table_k1, usually, left\n   (3 moves)\n\n4. evening_relax: both, 7/week, 19.5, 3.0h\n   - tablet_mara \u2192 coffee_table_l1, usually, left\n   - remote_shared_1 \u2192 coffee_table_l1, usually, left\n   - blanket_mara \u2192 couch_l1, usually, left\n   (3 moves)\n\n5. morning_prep: both, 7/week, 7.0, 1.0h\n   - mug_mara \u2192 counter_k1, usually, left\n   - water_bottle_mara \u2192 kitchen_table_k1, usually, left\n   (2 moves)\n\nThat's 5 activities. Good.\n\nH2: \"Mara commutes to an office on weekdays; the kitchen table is a dining table and the items there are morning-prep remnants she left in a rush\"\n- Distinguishing: \"laptop_mara OUT_OF_HOUSE on a weekday at noon, back at the kitchen table only after 18:00\"\n- Check: laptop_mara, OUT_OF_HOUSE, weekday, 12.0\n- Rest: {\"laptop_mara\": \"desk_b1\", \"charger_mara\": \"desk_b1\", \"notebook_mara\": \"desk_b1\", \"pen_mara\": \"desk_b1\"}\n  - Wait, if she commutes, where does the laptop rest at home? Maybe desk_b1. The tour found it at kitchen_table (she just got home and put it there temporarily, or it's where she does evening work).\n  - Actually, let me say its rest is desk_b1. The tour caught it at kitchen_table because she just got home.\n  - rest: {\"laptop_mara\": \"desk_b1\", \"charger_mara\": \"desk_b1\", \"notebook_mara\": \"desk_b1\", \"pen_mara\": \"desk_b1\", \"keys_mara\": \"entry_table_e1\", \"wallet_mara\": \"entry_table_e1\", \"jacket_mara\": \"entry_hook_e1\", \"backpack_mara\": \"entry_hook_e1\"}\n\nActivities for H2:\n1. commute_day: weekday, 5/week, 8.0, 9.5h\n   - laptop_mara \u2192 OUT_OF_HOUSE, almost_always, returned\n   - charger_mara \u2192 OUT_OF_HOUSE, almost_always, returned\n   - notebook_mara \u2192 OUT_OF_HOUSE, almost_always, returned\n   - pen_mara \u2192 OUT_OF_HOUSE, usually, returned\n   - keys_mara \u2192 OUT_OF_HOUSE, almost_always, returned\n   - wallet_mara \u2192 OUT_OF_HOUSE, almost_always, returned\n   (6 moves)\n\n2. morning_rush: weekday, 5/week, 7.0, 1.0h\n   - water_bottle_mara \u2192 kitchen_table_k1, usually, left\n   - lunchbox_mara \u2192 counter_k1, usually, left\n   - jacket_mara \u2192 OUT_OF_HOUSE, almost_always, returned\n   - backpack_mara \u2192 OUT_OF_HOUSE, almost_always, returned\n   (4 moves)\n\n3. evening_dinner: both, 6/week, 18.5, 1.5h\n   - pot_shared_1 \u2192 counter_k1, usually, left\n   - pan_shared_1 \u2192 kitchen_table_k1, usually, left\n   - bowl_shared_2 \u2192 kitchen_table_k1, usually, left\n   - plate_shared_1 \u2192 kitchen_table_k1, usually, left\n   (4 moves)\n\n4. evening_catchup: weekday, 3/week, 20.0, 2.0h\n   - laptop_mara \u2192 kitchen_table_k1, usually, left\n   - headphones_mara \u2192 kitchen_table_k1, sometimes, left\n   (2 moves)\n\n5. weekend_yoga: weekend, 1/week, 9.0, 1.0h\n   - yoga_mat_mara \u2192 bedroom_floor_b1, usually, returned\n   (1 move)\n\nThat's 5 activities. Good.\n\nH3: \"Mara works at the bedroom desk on weekdays; the kitchen table is strictly for meals and the laptop there at 20:11 is from casual evening browsing\"\n- Distinguishing: \"laptop_mara at desk_b1 on a weekday at 10:00, not at the kitchen table during work hours\"\n- Check: laptop_mara, desk_b1, weekday, 10.0\n- Rest: {\"laptop_mara\": \"desk_b1\", \"charger_mara\": \"desk_b1\", \"notebook_mara\": \"desk_b1\", \"pen_mara\": \"desk_b1\", \"headphones_mara\": \"desk_b1\"}\n\nActivities for H3:\n1. desk_work: weekday, 5/week, 9.0, 8.0h\n   - laptop_mara \u2192 desk_b1, almost_always, left\n   - charger_mara \u2192 desk_b1, almost_always, left\n   - notebook_mara \u2192 desk_b1, usually, left\n   - pen_mara \u2192 desk_b1, usually, left\n   - headphones_mara \u2192 desk_b1, sometimes, left\n   (5 moves)\n\n2. evening_table_browse: weekday, 4/week, 19.5, 2.0h\n   - laptop_mara \u2192 kitchen_table_k1, usually, left\n   - water_bottle_mara \u2192 kitchen_table_k1, usually, left\n   (2 moves)\n\n3. cooking: both, 6/week, 18.0, 1.5h\n   - pot_shared_1 \u2192 counter_k1, usually, left\n   - pan_shared_1 \u2192 kitchen_table_k1, usually, left\n   - bowl_shared_1 \u2192 kitchen_table_k1, usually, left\n   - plate_shared_2 \u2192 kitchen_table_k1, usually, left\n   (4 moves)\n\n4. morning: both, 7/week, 7.0, 1.0h\n   - mug_mara \u2192 counter_k1, usually, left\n   - water_bottle_mara \u2192 kitchen_table_k1, usually, left\n   (2 moves)\n\n5. errand: weekday, 1/week, 12.0, 1.5h\n   - keys_mara \u2192 OUT_OF_HOUSE, usually, returned\n   - wallet_mara \u2192 OUT_OF_HOUSE, usually, returned\n   - jacket_mara \u2192 OUT_OF_HOUSE, usually, returned\n   (3 moves)\n\nThat's 5 activities. Good.\n\nH4: \"Two-person household: Mara works from home at the kitchen table while her partner commutes on weekdays; shared dishes are for two and get used more on weekends\"\n- Distinguishing: \"plate_shared_2 at kitchen_table_k1 on a weekend at 13:00 (brunch for two), back in cupboard on weekday evenings\"\n- Check: plate_shared_2, kitchen_table_k1, weekend, 13.0\n- Rest: {\"plate_shared_1\": \"cupboard_k1\", \"plate_shared_2\": \"cupboard_k1\", \"bowl_shared_1\": \"cupboard_k1\", \"bowl_shared_2\": \"cupboard_k1\", \"pan_shared_1\": \"cupboard_k1\", \"mug_shared_1\": \"cupboard_k1\"}\n  - The tour found mug_shared_1 at cupboard_k1 (its rest). But plate_shared_1 at kitchen_table, plate_shared_2 at counter, bowls at counter/table, pan at kitchen_table. These are \"in use\" or \"left from dinner\" positions.\n  - Actually, for H4, the tour is at 20:11 Monday (weekday). Partner is home by then. So dinner for two just happened. Plates and bowls are out from dinner.\n  - rest: {\"plate_shared_1\": \"cupboard_k1\", \"plate_shared_2\": \"cupboard_k1\", \"bowl_shared_1\": \"cupboard_k1\", \"bowl_shared_2\": \"cupboard_k1\", \"pan_shared_1\": \"cupboard_k1\"}\n\nActivities for H4:\n1. wfh_mara: weekday, 5/week, 9.0, 8.0h\n   - laptop_mara \u2192 kitchen_table_k1, almost_always, left\n   - charger_mara \u2192 kitchen_table_k1, almost_always, left\n   - notebook_mara \u2192 kitchen_table_k1, usually, left\n   - headphones_mara \u2192 kitchen_table_k1, sometimes, left\n   (4 moves)\n\n2. weekend_brunch: weekend, 2/week, 11.0, 2.0h\n   - pot_shared_1 \u2192 counter_k1, usually, left\n   - pan_shared_1 \u2192 kitchen_table_k1, usually, left\n   - plate_shared_1 \u2192 kitchen_table_k1, almost_always, left\n   - plate_shared_2 \u2192 kitchen_table_k1, almost_always, left\n   - bowl_shared_1 \u2192 kitchen_table_k1, usually, left\n   - bowl_shared_2 \u2192 kitchen_table_k1, usually, left\n   (6 moves)\n\n3. weekday_dinner: weekday, 5/week, 18.5, 1.5h\n   - pot_shared_1 \u2192 counter_k1, usually, left\n   - pan_shared_1 \u2192 kitchen_table_k1, usually, left\n   - plate_shared_1 \u2192 kitchen_table_k1, usually, left\n   - plate_shared_2 \u2192 counter_k1, usually, left\n   (4 moves)\n\n4. morning_prep: both, 7/week, 7.0, 1.0h\n   - mug_mara \u2192 counter_k1, usually, left\n   - mug_shared_1 \u2192 counter_k1, usually, left\n   - water_bottle_mara \u2192 kitchen_table_k1, usually, left\n   (3 moves)\n\n5. evening_relax: both, 7/week, 19.5, 3.0h\n   - tablet_mara \u2192 coffee_table_l1, usually, left\n   - remote_shared_1 \u2192 coffee_table_l1, usually, left\n   - blanket_mara \u2192 couch_l1, usually, left\n   (3 moves)\n\nThat's 5 activities. Good.\n\nH5: \"Mara is a freelancer with an irregular schedule who travels once a month; the kitchen table is a general-purpose surface and the suitcase is packed for an upcoming trip\"\n- Distinguishing: \"suitcase_mara OUT_OF_HOUSE on a weekday at 10:00 (she's traveling), not in the bedroom\"\n- Check: suitcase_mara, OUT_OF_HOUSE, weekday, 10.0\n- Rest: {\"laptop_mara\": \"kitchen_table_k1\", \"suitcase_mara\": \"bedroom_floor_b1\", \"keys_mara\": \"entry_table_e1\", \"wallet_mara\": \"entry_table_e1\", \"jacket_mara\": \"entry_hook_e1\", \"backpack_mara\": \"entry_hook_e1\"}\n  - Laptop rests at kitchen_table (its general surface). Tour found it there. Same.\n  - But the travel activity moves it, so I list it.\n  - Actually, let me think. For H5, the laptop's rest IS kitchen_table. The tour found it there. The travel activity moves it to OUT_OF_HOUSE. So I list it in rest because an activity moves it.\n\nActivities for H5:\n1. irregular_work: both, 4/week, 10.0, 5.0h\n   - laptop_mara \u2192 kitchen_table_k1, usually, left\n   - charger_mara \u2192 kitchen_table_k1, usually, left\n   - notebook_mara \u2192 kitchen_table_k1, sometimes, left\n   - pen_mara \u2192 kitchen_table_k1, sometimes, left\n   (4 moves)\n\n2. travel_day: weekday, 1/week, 8.0, 10.0h\n   - suitcase_mara \u2192 OUT_OF_HOUSE, usually, returned\n   - laptop_mara \u2192 OUT_OF_HOUSE, usually, returned\n   - charger_mara \u2192 OUT_OF_HOUSE, usually, returned\n   - keys_mara \u2192 OUT_OF_HOUSE, almost_always, returned\n   - wallet_mara \u2192 OUT_OF_HOUSE, almost_always, returned\n   - jacket_mara \u2192 OUT_OF_HOUSE, usually, returned\n   (6 moves)\n\n3. cooking: both, 5/week, 18.0, 1.5h\n   - pot_shared_1 \u2192 counter_k1, usually, left\n   - pan_shared_1 \u2192 kitchen_table_k1, usually, left\n   - bowl_shared_1 \u2192 kitchen_table_k1, usually, left\n   (3 moves)\n\n4. weekend_yoga: weekend, 1/week, 9.0, 1.0h\n   - yoga_mat_mara \u2192 bedroom_floor_b1, usually, returned\n   (1 move)\n\n5. evening_entertainment: both, 6/week, 20.0, 2.5h\n   - tablet_mara \u2192 coffee_table_l1, usually, left\n   - remote_shared_1 \u2192 coffee_table_l1, usually, left\n   - blanket_mara \u2192 couch_l1, usually, left\n   (3 moves)\n\nThat's 5 activities. Good.\n\nLet me double-check all constraints:\n- 5 hypotheses \u2713\n- Each has 3-7 activities: H1=5, H2=5, H3=5, H4=5, H5=5 \u2713\n- Each activity has 1-6 moves: checking... all good \u2713\n- Times are numbers \u2713\n- Chances are labels (rarely, sometimes, usually, almost_always) \u2713\n- after is \"returned\" or \"left\" \u2713\n- IDs exactly as printed \u2713\n- One-line rationale \u2713\n- One-line distinguishing_prediction \u2713\n- Distinguishing checks are all different \u2713\n\nLet me verify the distinguishing checks are truly discriminating:\n- H1: laptop at kitchen_table_k1, weekday, 12.0 \u2192 If true, supports H1 (WFH at kitchen table)\n- H2: laptop at OUT_OF_HOUSE, weekday, 12.0 \u2192 If true, supports H2 (commuter)\n- H3: laptop at desk_b1, weekday, 10.0 \u2192 If true, supports H3 (desk worker)\n- H4: plate_shared_2 at kitchen_table_k1, weekend, 13.0 \u2192 If true, supports H4 (two-person, weekend brunch)\n- H5: suitcase at OUT_OF_HOUSE, weekday, 10.0 \u2192 If true, supports H5 (traveler)\n\nThese are all mutually exclusive in a meaningful way. H1, H2, H3 disagree on where the laptop is on a weekday. H4 makes a different prediction about plates on weekends. H5 makes a different prediction about the suitcase.\n\nOne issue: H4's check is about a weekend, while the tour was on a weekday. That's fine - the check is a PREDICTION for a future observation.\n\nLet me also make sure I'm not using any invalid receptacles or object IDs. Let me scan:\n- kitchen_table_k1 \u2713\n- desk_b1 \u2713\n- OUT_OF_HOUSE \u2713\n- counter_k1 \u2713\n- cupboard_k1 \u2713\n- coffee_table_l1 \u2713\n- couch_l1 \u2713\n- bedroom_floor_b1 \u2713\n- entry_table_e1 \u2713\n- entry_hook_e1 \u2713\n- nightstand_b1 \u2713\n- bathroom_shelf_ba1 \u2713\n- towel_rack_ba1 \u2713\n- bookshelf_l1 \u2713\n- sink_k1 \u2713\n- entry_floor_e1 \u2713\n\nAll object IDs look correct. Let me finalize.\n\nActually, wait - I need to double-check: in H2, the commute_day activity has 6 moves. Let me count: laptop, charger, notebook, pen, keys, wallet = 6. That's at the limit (1-6). OK.\n\nIn H4, weekend_brunch has 6 moves: pot, pan, plate_1, plate_2, bowl_1, bowl_2 = 6. At the limit. OK.\n\nIn H5, travel_day has 6 moves: suitcase, laptop, charger, keys, wallet, jacket = 6. At the limit. OK.\n\nAll good. Let me write the final JSON.",
+   "payload": "Looking at this tour, I can see a home dominated by \"mara\" personal items with some \"shared\" household objects. The kitchen table is heavily loaded with work items (laptop, charger, notebook, pen, headphones) alongside dining items (bowls, plate, pan, water bottle) at 20:11 on a Monday. The entry area has going-out items (jacket, backpack, keys, wallet, umbrella). The bedroom has a suitcase and vacuum on the floor. The living room has a yoga mat, blanket, and tablet. This snapshot is ambiguous: is the kitchen table a permanent office, a dining table with morning clutter, or a general-purpose surface? Does Mara leave the house on weekdays or work from home? Is there a partner? Does the suitcase indicate travel?\n\n{\n  \"hypotheses\": [\n    {\n      \"hypothesis_id\": \"h1\",\n      \"rationale\": \"Mara is a work-from-home professional; the kitchen table is her permanent office and she rarely leaves on weekdays except for brief errands\",\n      \"distinguishing_prediction\": \"laptop_mara at kitchen_table_k1 on a weekday at noon, never relocated to a desk\",\n      \"distinguishing_check\": {\n        \"target\": \"laptop_mara\",\n        \"at\": \"kitchen_table_k1\",\n        \"days\": \"weekday\",\n        \"hour\": 12.0\n      },\n      \"rest\": {\n        \"jacket_mara\": \"entry_hook_e1\",\n        \"backpack_mara\": \"entry_hook_e1\",\n        \"keys_mara\": \"entry_table_e1\",\n        \"wallet_mara\": \"entry_table_e1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"wfh_day\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 8.0,\n          \"moves\": [\n            {\"target\": \"laptop_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"almost_always\", \"after\": \"left\"},\n            {\"target\": \"charger_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"almost_always\", \"after\": \"left\"},\n            {\"target\": \"notebook_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"pen_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"headphones_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"sometimes\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"errand_run\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 12.0,\n          \"duration_h\": 1.5,\n          \"moves\": [\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\", \"after\": \"returned\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\", \"after\": \"returned\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\", \"after\": \"returned\"},\n            {\"target\": \"backpack_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"sometimes\", \"after\": \"returned\"}\n          ]\n        },\n        {\n          \"name\": \"cooking_dinner\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 6,\n          \"start_hour\": 18.0,\n          \"duration_h\": 1.5,\n          \"moves\": [\n            {\"target\": \"pot_shared_1\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"pan_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"bowl_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"evening_relax\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 19.5,\n          \"duration_h\": 3.0,\n          \"moves\": [\n            {\"target\": \"tablet_mara\", \"to\": \"coffee_table_l1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"remote_shared_1\", \"to\": \"coffee_table_l1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"blanket_mara\", \"to\": \"couch_l1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"morning_prep\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\"target\": \"mug_mara\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"water_bottle_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h2\",\n      \"rationale\": \"Mara commutes to an office on weekdays; the kitchen table is a dining table and the work items there are morning-prep remnants she left in a rush before heading out\",\n      \"distinguishing_prediction\": \"laptop_mara OUT_OF_HOUSE on a weekday at noon, returning home only after 18:00\",\n      \"distinguishing_check\": {\n        \"target\": \"laptop_mara\",\n        \"at\": \"OUT_OF_HOUSE\",\n        \"days\": \"weekday\",\n        \"hour\": 12.0\n      },\n      \"rest\": {\n        \"laptop_mara\": \"desk_b1\",\n        \"charger_mara\": \"desk_b1\",\n        \"notebook_mara\": \"desk_b1\",\n        \"pen_mara\": \"desk_b1\",\n        \"keys_mara\": \"entry_table_e1\",\n        \"wallet_mara\": \"entry_table_e1\",\n        \"jacket_mara\": \"entry_hook_e1\",\n        \"backpack_mara\": \"entry_hook_e1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"commute_day\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 8.0,\n          \"duration_h\": 9.5,\n          \"moves\": [\n            {\"target\": \"laptop_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\", \"after\": \"returned\"},\n            {\"target\": \"charger_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\", \"after\": \"returned\"},\n            {\"target\": \"notebook_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\", \"after\": \"returned\"},\n            {\"target\": \"pen_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\", \"after\": \"returned\"},\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\", \"after\": \"returned\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\", \"after\": \"returned\"}\n          ]\n        },\n        {\n          \"name\": \"morning_rush\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 7.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\"target\": \"water_bottle_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"lunchbox_mara\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\", \"after\": \"returned\"},\n            {\"target\": \"backpack_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\", \"after\": \"returned\"}\n          ]\n        },\n        {\n          \"name\": \"evening_dinner\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 6,\n          \"start_hour\": 18.5,\n          \"duration_h\": 1.5,\n          \"moves\": [\n            {\"target\": \"pot_shared_1\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"pan_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"bowl_shared_2\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"plate_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"evening_catchup\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 3,\n          \"start_hour\": 20.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\"target\": \"laptop_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"headphones_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"sometimes\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"weekend_yoga\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 1,\n          \"start_hour\": 9.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\"target\": \"yoga_mat_mara\", \"to\": \"bedroom_floor_b1\", \"chance\": \"usually\", \"after\": \"returned\"}\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h3\",\n      \"rationale\": \"Mara works at the bedroom desk on weekdays; the kitchen table is strictly for meals and the laptop there at 20:11 is from casual evening browsing after dinner\",\n      \"distinguishing_prediction\": \"laptop_mara at desk_b1 on a weekday at 10:00, not at the kitchen table during work hours\",\n      \"distinguishing_check\": {\n        \"target\": \"laptop_mara\",\n        \"at\": \"desk_b1\",\n        \"days\": \"weekday\",\n        \"hour\": 10.0\n      },\n      \"rest\": {\n        \"laptop_mara\": \"desk_b1\",\n        \"charger_mara\": \"desk_b1\",\n        \"notebook_mara\": \"desk_b1\",\n        \"pen_mara\": \"desk_b1\",\n        \"headphones_mara\": \"desk_b1\",\n        \"keys_mara\": \"entry_table_e1\",\n        \"wallet_mara\": \"entry_table_e1\",\n        \"jacket_mara\": \"entry_hook_e1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"desk_work\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 8.0,\n          \"moves\": [\n            {\"target\": \"laptop_mara\", \"to\": \"desk_b1\", \"chance\": \"almost_always\", \"after\": \"left\"},\n            {\"target\": \"charger_mara\", \"to\": \"desk_b1\", \"chance\": \"almost_always\", \"after\": \"left\"},\n            {\"target\": \"notebook_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"pen_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"headphones_mara\", \"to\": \"desk_b1\", \"chance\": \"sometimes\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"evening_table_browse\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 4,\n          \"start_hour\": 19.5,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\"target\": \"laptop_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"water_bottle_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"cooking\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 6,\n          \"start_hour\": 18.0,\n          \"duration_h\": 1.5,\n          \"moves\": [\n            {\"target\": \"pot_shared_1\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"pan_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"bowl_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"plate_shared_2\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"morning\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\"target\": \"mug_mara\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"water_bottle_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"errand\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 1,\n          \"start_hour\": 12.0,\n          \"duration_h\": 1.5,\n          \"moves\": [\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\", \"after\": \"returned\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\", \"after\": \"returned\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\", \"after\": \"returned\"}\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h4\",\n      \"rationale\": \"Two-person household where Mara works from home at the kitchen table while her partner commutes on weekdays; shared dishes serve two and are out more on weekends\",\n      \"distinguishing_prediction\": \"plate_shared_2 at kitchen_table_k1 on a weekend at 13:00 (brunch for two), whereas on weekday evenings it is back in the cupboard\",\n      \"distinguishing_check\": {\n        \"target\": \"plate_shared_2\",\n        \"at\": \"kitchen_table_k1\",\n        \"days\": \"weekend\",\n        \"hour\": 13.0\n      },\n      \"rest\": {\n        \"plate_shared_1\": \"cupboard_k1\",\n        \"plate_shared_2\": \"cupboard_k1\",\n        \"bowl_shared_1\": \"cupboard_k1\",\n        \"bowl_shared_2\": \"cupboard_k1\",\n        \"pan_shared_1\": \"cupboard_k1\",\n        \"mug_shared_1\": \"cupboard_k1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"wfh_mara\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 8.0,\n          \"moves\": [\n            {\"target\": \"laptop_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"almost_always\", \"after\": \"left\"},\n            {\"target\": \"charger_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"almost_always\", \"after\": \"left\"},\n            {\"target\": \"notebook_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"headphones_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"sometimes\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"weekend_brunch\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 11.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\"target\": \"pot_shared_1\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"pan_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"plate_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"almost_always\", \"after\": \"left\"},\n            {\"target\": \"plate_shared_2\", \"to\": \"kitchen_table_k1\", \"chance\": \"almost_always\", \"after\": \"left\"},\n            {\"target\": \"bowl_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"bowl_shared_2\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"weekday_dinner\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 18.5,\n          \"duration_h\": 1.5,\n          \"moves\": [\n            {\"target\": \"pot_shared_1\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"pan_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"plate_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"plate_shared_2\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"morning_prep\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\"target\": \"mug_mara\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"mug_shared_1\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"water_bottle_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"evening_relax\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 19.5,\n          \"duration_h\": 3.0,\n          \"moves\": [\n            {\"target\": \"tablet_mara\", \"to\": \"coffee_table_l1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"remote_shared_1\", \"to\": \"coffee_table_l1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"blanket_mara\", \"to\": \"couch_l1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h5\",\n      \"rationale\": \"Mara is a freelancer with an irregular schedule who travels roughly once a month; the kitchen table is a general-purpose surface and the suitcase is packed for an upcoming trip\",\n      \"distinguishing_prediction\": \"suitcase_mara OUT_OF_HOUSE on a weekday at 10:00 (she is traveling), not sitting in the bedroom\",\n      \"distinguishing_check\": {\n        \"target\": \"suitcase_mara\",\n        \"at\": \"OUT_OF_HOUSE\",\n        \"days\": \"weekday\",\n        \"hour\": 10.0\n      },\n      \"rest\": {\n        \"laptop_mara\": \"kitchen_table_k1\",\n        \"suitcase_mara\": \"bedroom_floor_b1\",\n        \"keys_mara\": \"entry_table_e1\",\n        \"wallet_mara\": \"entry_table_e1\",\n        \"jacket_mara\": \"entry_hook_e1\",\n        \"backpack_mara\": \"entry_hook_e1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"irregular_work\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 4,\n          \"start_hour\": 10.0,\n          \"duration_h\": 5.0,\n          \"moves\": [\n            {\"target\": \"laptop_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"charger_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"notebook_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"sometimes\", \"after\": \"left\"},\n            {\"target\": \"pen_mara\", \"to\": \"kitchen_table_k1\", \"chance\": \"sometimes\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"travel_day\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 1,\n          \"start_hour\": 8.0,\n          \"duration_h\": 10.0,\n          \"moves\": [\n            {\"target\": \"suitcase_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\", \"after\": \"returned\"},\n            {\"target\": \"laptop_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\", \"after\": \"returned\"},\n            {\"target\": \"charger_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\", \"after\": \"returned\"},\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\", \"after\": \"returned\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\", \"after\": \"returned\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\", \"after\": \"returned\"}\n          ]\n        },\n        {\n          \"name\": \"cooking\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 18.0,\n          \"duration_h\": 1.5,\n          \"moves\": [\n            {\"target\": \"pot_shared_1\", \"to\": \"counter_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"pan_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"bowl_shared_1\", \"to\": \"kitchen_table_k1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        },\n        {\n          \"name\": \"weekend_yoga\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 1,\n          \"start_hour\": 9.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\"target\": \"yoga_mat_mara\", \"to\": \"bedroom_floor_b1\", \"chance\": \"usually\", \"after\": \"returned\"}\n          ]\n        },\n        {\n          \"name\": \"evening_entertainment\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 6,\n          \"start_hour\": 20.0,\n          \"duration_h\": 2.5,\n          \"moves\": [\n            {\"target\": \"tablet_mara\", \"to\": \"coffee_table_l1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"remote_shared_1\", \"to\": \"coffee_table_l1\", \"chance\": \"usually\", \"after\": \"left\"},\n            {\"target\": \"blanket_mara\", \"to\": \"couch_l1\", \"chance\": \"usually\", \"after\": \"left\"}\n          ]\n        }\n      ]\n    }\n  ]\n}",
+   "n_hypotheses": 5,
+   "generation_seconds": 662.32,
+   "completion_tokens": 15908,
+   "prompt_tokens": 2404,
+   "finish_reason": "stop",
+   "think_closed": true,
+   "cached": false
+  }
+ ],
+ "dropped": [],
+ "hypotheses": [
+  {
+   "hypothesis_id": "h1",
+   "rationale": "Mara is a work-from-home professional; the kitchen table is her permanent office and she rarely leaves on weekdays except for brief errands",
+   "distinguishing_prediction": "laptop_mara at kitchen_table_k1 on a weekday at noon, never relocated to a desk",
+   "distinguishing_check": {
+    "target": "laptop_mara",
+    "at": "kitchen_table_k1",
+    "days": "weekday",
+    "hour": 12.0
+   },
+   "rest": {
+    "jacket_mara": "entry_hook_e1",
+    "backpack_mara": "entry_hook_e1",
+    "keys_mara": "entry_table_e1",
+    "wallet_mara": "entry_table_e1"
+   },
+   "activities": [
+    {
+     "name": "wfh_day",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "charger_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pen_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "errand_run",
+     "days": "weekday",
+     "frequency_per_week": 2,
+     "start_hour": 12.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "cooking_dinner",
+     "days": "both",
+     "frequency_per_week": 6,
+     "start_hour": 18.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "pot_shared_1",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "bowl_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "evening_relax",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.5,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "tablet_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "remote_shared_1",
+       "to": "coffee_table_l1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "couch_l1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "morning_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h2",
+   "rationale": "Mara commutes to an office on weekdays; the kitchen table is a dining table and the work items there are morning-prep remnants she left in a rush before heading out",
+   "distinguishing_prediction": "laptop_mara OUT_OF_HOUSE on a weekday at noon, returning home only after 18:00",
+   "distinguishing_check": {
+    "target": "laptop_mara",
+    "at": "OUT_OF_HOUSE",
+    "days": "weekday",
+    "hour": 12.0
+   },
+   "rest": {
+    "laptop_mara": "desk_b1",
+    "charger_mara": "desk_b1",
+    "notebook_mara": "desk_b1",
+    "pen_mara": "desk_b1",
+    "keys_mara": "entry_table_e1",
+    "wallet_mara": "entry_table_e1",
+    "jacket_mara": "entry_hook_e1",
+    "backpack_mara": "entry_hook_e1"
+   },
+   "activities": [
+    {
+     "name": "commute_day",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 8.0,
+     "duration_h": 9.5,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "pen_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "morning_rush",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 7.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "water_bottle_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "lunchbox_mara",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "evening_dinner",
+     "days": "both",
+     "frequency_per_week": 6,
+     "start_hour": 18.5,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "pot_shared_1",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "bowl_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "plate_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "evening_catchup",
+     "days": "weekday",
+     "frequency_per_week": 3,
+     "start_hour": 20.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "weekend_yoga",
+     "days": "weekend",
+     "frequency_per_week": 1,
+     "start_hour": 9.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "yoga_mat_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "after": "returned"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h3",
+   "rationale": "Mara works at the bedroom desk on weekdays; the kitchen table is strictly for meals and the laptop there at 20:11 is from casual evening browsing after dinner",
+   "distinguishing_prediction": "laptop_mara at desk_b1 on a weekday at 10:00, not at the kitchen table during work hours",
+   "distinguishing_check": {
+    "target": "laptop_mara",
+    "at": "desk_b1",
+    "days": "weekday",
+    "hour": 10.0
+   },
+   "rest": {
+    "laptop_mara": "desk_b1",
+    "charger_mara": "desk_b1",
+    "notebook_mara": "desk_b1",
+    "pen_mara": "desk_b1",
+    "headphones_mara": "desk_b1",
+    "keys_mara": "entry_table_e1",
+    "wallet_mara": "entry_table_e1",
+    "jacket_mara": "entry_hook_e1"
+   },
+   "activities": [
+    {
+     "name": "desk_work",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "desk_b1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "charger_mara",
+       "to": "desk_b1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pen_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "desk_b1",
+       "chance": "sometimes",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "evening_table_browse",
+     "days": "weekday",
+     "frequency_per_week": 4,
+     "start_hour": 19.5,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "cooking",
+     "days": "both",
+     "frequency_per_week": 6,
+     "start_hour": 18.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "pot_shared_1",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "bowl_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "plate_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "morning",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "errand",
+     "days": "weekday",
+     "frequency_per_week": 1,
+     "start_hour": 12.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "returned"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h4",
+   "rationale": "Two-person household where Mara works from home at the kitchen table while her partner commutes on weekdays; shared dishes serve two and are out more on weekends",
+   "distinguishing_prediction": "plate_shared_2 at kitchen_table_k1 on a weekend at 13:00 (brunch for two), whereas on weekday evenings it is back in the cupboard",
+   "distinguishing_check": {
+    "target": "plate_shared_2",
+    "at": "kitchen_table_k1",
+    "days": "weekend",
+    "hour": 13.0
+   },
+   "rest": {
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "cupboard_k1",
+    "bowl_shared_1": "cupboard_k1",
+    "bowl_shared_2": "cupboard_k1",
+    "pan_shared_1": "cupboard_k1",
+    "mug_shared_1": "cupboard_k1"
+   },
+   "activities": [
+    {
+     "name": "wfh_mara",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "charger_mara",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "weekend_brunch",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 11.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "pot_shared_1",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "plate_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "plate_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "almost_always",
+       "after": "left"
+      },
+      {
+       "target": "bowl_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "bowl_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "weekday_dinner",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 18.5,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "pot_shared_1",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "plate_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "plate_shared_2",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "morning_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "mug_shared_1",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "evening_relax",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.5,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "tablet_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "remote_shared_1",
+       "to": "coffee_table_l1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "couch_l1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h5",
+   "rationale": "Mara is a freelancer with an irregular schedule who travels roughly once a month; the kitchen table is a general-purpose surface and the suitcase is packed for an upcoming trip",
+   "distinguishing_prediction": "suitcase_mara OUT_OF_HOUSE on a weekday at 10:00 (she is traveling), not sitting in the bedroom",
+   "distinguishing_check": {
+    "target": "suitcase_mara",
+    "at": "OUT_OF_HOUSE",
+    "days": "weekday",
+    "hour": 10.0
+   },
+   "rest": {
+    "laptop_mara": "kitchen_table_k1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "keys_mara": "entry_table_e1",
+    "wallet_mara": "entry_table_e1",
+    "jacket_mara": "entry_hook_e1",
+    "backpack_mara": "entry_hook_e1"
+   },
+   "activities": [
+    {
+     "name": "irregular_work",
+     "days": "both",
+     "frequency_per_week": 4,
+     "start_hour": 10.0,
+     "duration_h": 5.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "charger_mara",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "after": "left"
+      },
+      {
+       "target": "pen_mara",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "travel_day",
+     "days": "weekday",
+     "frequency_per_week": 1,
+     "start_hour": 8.0,
+     "duration_h": 10.0,
+     "moves": [
+      {
+       "target": "suitcase_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "returned"
+      },
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "after": "returned"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "cooking",
+     "days": "both",
+     "frequency_per_week": 5,
+     "start_hour": 18.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "pot_shared_1",
+       "to": "counter_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "pan_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "bowl_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    },
+    {
+     "name": "weekend_yoga",
+     "days": "weekend",
+     "frequency_per_week": 1,
+     "start_hour": 9.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "yoga_mat_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "after": "returned"
+      }
+     ]
+    },
+    {
+     "name": "evening_entertainment",
+     "days": "both",
+     "frequency_per_week": 6,
+     "start_hour": 20.0,
+     "duration_h": 2.5,
+     "moves": [
+      {
+       "target": "tablet_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "remote_shared_1",
+       "to": "coffee_table_l1",
+       "chance": "usually",
+       "after": "left"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "couch_l1",
+       "chance": "usually",
+       "after": "left"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "generation_seconds": 662.32,
+ "seconds_per_hypothesis": 132.46
+}

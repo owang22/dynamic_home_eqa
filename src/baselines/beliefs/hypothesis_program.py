@@ -1,9 +1,9 @@
 """One LLM-written household hypothesis, converted into a belief model.
 
 A hypothesis is a set of ACTIVITIES ("dinner, weekdays, around 19:30 for
-an hour, usually moves mug_mara to kitchen_table_k1 and leaves it
-there"), plus a REST map saying where objects sit when nothing is going
-on. :func:`parse_hypothesis` turns the JSON an LLM (or a test) writes
+an hour, usually moves mug_mara to kitchen_table_k1, where it stays
+for three hours"), plus a REST map saying where objects sit when
+nothing is going on. :func:`parse_hypothesis` turns the JSON an LLM (or a test) writes
 into a validated :class:`Hypothesis`; :class:`HypothesisProgramBelief`
 is the converter proper — it turns that description into a
 :class:`~baselines.beliefs.base.BeliefModel` whose ``predict`` answers
@@ -35,18 +35,21 @@ Prediction semantics for object O at time t, under one hypothesis: each
 rule moving O contributes ``p(activity happens today) * p(t inside the
 rule's active window) * E[chance]`` on its destination; the active
 window has Gaussian edges (posterior start-hour uncertainty plus
-:data:`WINDOW_EDGE_SD_H`), runs for the stated duration when the object
-is ``returned`` afterwards and until midnight when it is ``left``.
+:data:`WINDOW_EDGE_SD_H`) and closes after the MOVE's duration — each
+move may state its own ``duration_h`` (how long the object stays where
+the activity put it), defaulting to the activity's. A window reaching
+past midnight closes at midnight.
 Displaced mass is capped at :data:`MAX_DISPLACED_MASS`; the remainder
 sits on the rest distribution. Objects the hypothesis never mentions
 fall back to the base class's frequency/cold-start behaviour, so an
 incomplete description degrades to a statistical model instead of
 breaking.
 
-Deliberate v1 simplifications (documented, not hidden): an object
-``left`` out overnight is back at rest the next morning unless the
-activity recurs; the days-per-week frequency is used as stated (the
-chance Beta absorbs occurrence error); misplacement noise is left to
+Deliberate v1 simplifications (documented, not hidden): a move whose
+window reaches past midnight ends at midnight, so the object is back at
+rest the next morning unless the activity recurs (windows that wrap
+across day indices are out of scope); the days-per-week frequency is
+used as stated (the chance Beta absorbs occurrence error); misplacement noise is left to
 the floor mix and the rest Dirichlet.
 
 Day convention (matches the banks and ``timetable.py``): day 0 is
@@ -121,7 +124,6 @@ WEEKEND_DAYS = (5, 6)
 """``day_index % 7`` of Saturday and Sunday (day 0 = Monday)."""
 
 DAY_KINDS = ("weekday", "weekend", "both")
-AFTER_KINDS = ("returned", "left")
 CLASS_PREFIX = "class:"
 _MATCHING_DAYS = {"weekday": 5.0, "weekend": 2.0, "both": 7.0}
 _SQRT2 = math.sqrt(2.0)
@@ -141,13 +143,15 @@ class HypothesisValidationError(ValueError):
 @dataclasses.dataclass(frozen=True)
 class MoveRule:
     """During its activity, ``targets`` are at ``to`` with the labelled
-    chance; ``after`` says whether they go back to rest when it ends."""
+    chance, for ``duration_h`` hours from the activity's start (the
+    activity's own duration unless the move stated its own)."""
 
     targets: Tuple[str, ...]     # resolved object_ids, never classes
     raw_target: str              # what the description said (id or class:x)
     to: str
     chance: str                  # key of ORDINAL_CENTERS
-    after: str                   # "returned" | "left"
+    duration_h: float            # hours displaced, from the activity start
+    stated_duration: bool = False  # True when the move gave its own number
 
 
 @dataclasses.dataclass(frozen=True)
@@ -308,15 +312,27 @@ def parse_hypothesis(raw: Mapping[str, Any],
             target = str(_field(move, "target", "move"))
             to = str(_field(move, "to", "move"))
             chance = str(_field(move, "chance", "move"))
-            after = str(_field(move, "after", "move"))
             if chance not in ORDINAL_CENTERS:
                 raise HypothesisValidationError(
                     f"move of {target!r}: chance must be one of "
                     f"{tuple(ORDINAL_CENTERS)}", [chance])
-            if after not in AFTER_KINDS:
+            if "after" in move:
                 raise HypothesisValidationError(
-                    f"move of {target!r}: after must be one of "
-                    f"{AFTER_KINDS}", [after])
+                    f"move of {target!r}: `after` is not a field; give the "
+                    f"move a duration_h instead", ["after"])
+            stated_duration = move.get("duration_h") is not None
+            move_duration = duration
+            if stated_duration:
+                try:
+                    move_duration = float(move["duration_h"])
+                except (TypeError, ValueError):
+                    raise HypothesisValidationError(
+                        f"move of {target!r}: duration_h must be a number",
+                        [str(move.get("duration_h"))])
+                if move_duration <= 0.0:
+                    raise HypothesisValidationError(
+                        f"move of {target!r}: duration_h > 0",
+                        [f"duration_h={move_duration}"])
             ids = _resolve_target(target, object_classes)
             if ids is None:
                 bad.append(target)
@@ -325,7 +341,8 @@ def parse_hypothesis(raw: Mapping[str, Any],
                 bad.append(to)
                 continue
             moves.append(MoveRule(targets=ids, raw_target=target, to=to,
-                                  chance=chance, after=after))
+                                  chance=chance, duration_h=move_duration,
+                                  stated_duration=stated_duration))
         activities.append(Activity(
             name=str(act.get("name", f"activity_{len(activities)}")),
             days=days, frequency_per_week=freq, start_hour=start,
@@ -470,7 +487,11 @@ class HypothesisProgramBelief(BeliefModel):
 
     def _window_probability(self, state: _RuleState, t: int) -> float:
         """P(the rule's object is displaced at ``t`` | activity happened
-        today): Gaussian-edged membership of the active window."""
+        today): Gaussian-edged membership of the window from the fitted
+        start to start plus the move's duration. The effective duration
+        is clamped to ``24 - start``: a move reaching past midnight ends
+        at midnight (no closing edge inside the day), and the object is
+        back at rest the next morning."""
         activity = self.hypothesis.activities[state.activity_index]
         if not activity.matches_day(t // DAY_SECONDS):
             return 0.0
@@ -478,9 +499,8 @@ class HypothesisProgramBelief(BeliefModel):
         post = self._activity_states[state.activity_index]
         sd = math.sqrt(post.var + WINDOW_EDGE_SD_H ** 2)
         rise = _phi((hour - post.mu) / sd)
-        if state.rule.after == "left":
-            return rise  # out until midnight; back at rest next morning
-        fall = _phi((hour - (post.mu + activity.duration_h)) / sd)
+        end = post.mu + min(state.rule.duration_h, 24.0 - post.mu)
+        fall = _phi((hour - end) / sd) if end < 24.0 else 0.0
         return rise * (1.0 - fall)
 
     def _displacement(self, state: _RuleState, t: int) -> float:
@@ -642,6 +662,7 @@ class HypothesisProgramBelief(BeliefModel):
                 "target": state.rule.raw_target,
                 "to": state.rule.to,
                 "stated_chance": state.rule.chance,
+                "duration_h": state.rule.duration_h,
                 "prior_chance": ORDINAL_CENTERS[state.rule.chance],
                 "fitted_chance": state.chance_mean,
                 "evidence": state.success + state.failure

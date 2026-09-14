@@ -6,10 +6,13 @@ source_persona: persona.yaml
 residents:
 - id: resident_1
   jitter_scale: 1.0
+  forget_p: 0.01
 - id: resident_2
   jitter_scale: 1.0
+  forget_p: 0.03
 - id: resident_3
   jitter_scale: 1.0
+  forget_p: 0.08
 receptacles:
 - id: bed_b1
   room: bedroom_1
@@ -262,6 +265,7 @@ placements:
     - dish_rack_k1
     - kitchen_table_k1
     - chair_k1
+    bulky: true
   hairbrush_priya:
     home: bathroom_shelf_ba1
     p_misplace: 0.18
@@ -292,6 +296,7 @@ placements:
     - dish_rack_k1
     - kitchen_table_k1
     - chair_k1
+    bulky: true
   water_bottle_noa:
     home: coffee_table_l1
     p_misplace: 0.3
@@ -927,19 +932,23 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_priya: person:resident_2
       lunchbox_priya: person:resident_2
       water_bottle_priya: person:resident_2
       tablet_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -973,6 +982,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -1006,6 +1016,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -1743,13 +1754,16 @@ object_motions:
     during:
       phone_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       laptop_elias: person:resident_1
       charger_elias: person:resident_1
       backpack_elias: person:resident_1
@@ -1759,6 +1773,7 @@ object_motions:
       tablet_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -1792,6 +1807,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -1825,6 +1841,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2021,6 +2038,7 @@ object_motions:
       tablet_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2054,6 +2072,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2087,6 +2106,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2280,18 +2300,22 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_priya: person:resident_2
       jacket_priya: person:resident_2
       tablet_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2325,6 +2349,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2358,6 +2383,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3025,13 +3051,16 @@ object_motions:
     during:
       phone_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       tablet_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3065,6 +3094,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3098,6 +3128,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3519,19 +3550,23 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_priya: person:resident_2
       lunchbox_priya: person:resident_2
       water_bottle_priya: person:resident_2
       tablet_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3565,6 +3600,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3598,6 +3634,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3824,17 +3861,21 @@ object_motions:
     during:
       phone_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_elias: person:resident_1
       tablet_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3868,6 +3909,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3901,6 +3943,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4054,14 +4097,17 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_priya: person:resident_2
       tablet_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4095,6 +4141,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4128,6 +4175,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4504,13 +4552,16 @@ object_motions:
     during:
       phone_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       laptop_elias: person:resident_1
       charger_elias: person:resident_1
       backpack_elias: person:resident_1
@@ -4520,6 +4571,7 @@ object_motions:
       tablet_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4553,6 +4605,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4586,6 +4639,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4895,16 +4949,20 @@ object_motions:
     during:
       phone_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       tablet_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4938,6 +4996,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4971,6 +5030,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5004,6 +5064,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5156,14 +5217,17 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_priya: person:resident_2
       tablet_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5197,6 +5261,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5230,6 +5295,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5263,6 +5329,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5414,6 +5481,7 @@ object_motions:
       tablet_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5447,6 +5515,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5480,6 +5549,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5513,6 +5583,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5764,13 +5835,16 @@ object_motions:
     during:
       phone_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       umbrella_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5829,17 +5903,21 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       jacket_priya: person:resident_2
       umbrella_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5900,6 +5978,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -6614,16 +6693,20 @@ object_motions:
     during:
       phone_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       tablet_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -6657,6 +6740,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -6690,6 +6774,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -6723,6 +6808,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -6834,14 +6920,17 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_priya: person:resident_2
       tablet_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -6875,6 +6964,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -6908,6 +6998,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -6941,6 +7032,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7054,6 +7146,7 @@ object_motions:
       tablet_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7087,6 +7180,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7120,6 +7214,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7153,6 +7248,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7398,13 +7494,16 @@ object_motions:
     during:
       phone_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       tablet_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7438,6 +7537,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7471,6 +7571,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7504,6 +7605,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7647,18 +7749,22 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_priya: person:resident_2
       jacket_priya: person:resident_2
       tablet_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7692,6 +7798,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7725,6 +7832,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7758,6 +7866,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7909,6 +8018,7 @@ object_motions:
       tablet_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7942,6 +8052,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -7975,6 +8086,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -8008,6 +8120,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -8220,13 +8333,16 @@ object_motions:
     during:
       phone_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       laptop_elias: person:resident_1
       charger_elias: person:resident_1
       backpack_elias: person:resident_1
@@ -8236,6 +8352,7 @@ object_motions:
       tablet_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -8269,6 +8386,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -8302,6 +8420,7 @@ object_motions:
       umbrella_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -8335,6 +8454,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -8569,13 +8689,16 @@ object_motions:
     during:
       phone_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_elias:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       tablet_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -8609,6 +8732,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -8642,6 +8766,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -8785,14 +8910,17 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_priya:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_priya: person:resident_2
       tablet_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -8826,6 +8954,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -8859,6 +8988,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -9001,6 +9131,7 @@ object_motions:
       tablet_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -9034,6 +9165,7 @@ object_motions:
       charger_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -9067,6 +9199,7 @@ object_motions:
       suitcase_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -9291,3 +9424,50 @@ object_motions:
     during: {}
     after: {}
 person_invariant: true
+misplace_model: at_putdown
+object_owners:
+  phone_elias: resident_1
+  keys_elias: resident_1
+  wallet_elias: resident_1
+  laptop_elias: resident_1
+  charger_elias: resident_1
+  backpack_elias: resident_1
+  mug_elias: resident_1
+  water_bottle_elias: resident_1
+  notebook_elias: resident_1
+  pen_elias: resident_1
+  headphones_elias: resident_1
+  jacket_elias: resident_1
+  phone_priya: resident_2
+  keys_priya: resident_2
+  wallet_priya: resident_2
+  backpack_priya: resident_2
+  lunchbox_priya: resident_2
+  water_bottle_priya: resident_2
+  mug_priya: resident_2
+  jacket_priya: resident_2
+  yoga_mat_priya: resident_2
+  hairbrush_priya: resident_2
+  makeup_kit_priya: resident_2
+  blanket_noa: resident_3
+  water_bottle_noa: resident_3
+  backpack_noa: resident_3
+  toy_noa: resident_3
+  book_noa: resident_3
+  towel_noa: resident_3
+  medication_bottle_noa: resident_3
+  plate_shared_1: shared
+  bowl_shared_1: shared
+  pot_shared_1: shared
+  pan_shared_1: shared
+  remote_shared_1: shared
+  tablet_shared_1: shared
+  charger_shared_1: shared
+  laundry_basket_shared_1: shared
+  vacuum_cleaner_shared_1: shared
+  umbrella_shared_1: shared
+  suitcase_shared_1: shared
+misplace:
+  next_room_share: 0.5
+  bulky_needs_forget_p: 0.08
+keep_block_share: 0.6

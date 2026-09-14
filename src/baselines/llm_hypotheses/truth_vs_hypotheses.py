@@ -115,14 +115,16 @@ def _chance_word(p: float) -> str:
 
 # ------------------------------------------------------------- hypotheses
 
-def load_hypothesis_sets(household: str, condition: str,
-                         arm: Optional[str]) -> List[Tuple[str, List[dict]]]:
+def load_hypothesis_sets(household: str, condition: str, arm: Optional[str],
+                         hyp_subdir: str = "", run_dir: Optional[pathlib.Path] = None,
+                         bank_dir: Optional[pathlib.Path] = None, bank_seed: int = 0
+                         ) -> List[Tuple[str, List[dict]]]:
     """(label, hypotheses) for day 0 and, with ``arm``, each recorded
     revision — real ids, validated."""
-    episode = next(JsonlBank(bank_path(household, 0)).episodes())
-    sets = [("day 0", json.loads((DEFAULT_OUT_DIR / "hypotheses" / condition / f"{household}.json").read_text())["hypotheses"])]
+    episode = next(JsonlBank(bank_path(household, bank_seed, bank_dir)).episodes())
+    sets = [("day 0", json.loads((DEFAULT_OUT_DIR / "hypotheses" / condition / hyp_subdir / f"{household}.json").read_text())["hypotheses"])]
     if arm:
-        rev_dir = STUDY_DIR / household / arm / "revisions"
+        rev_dir = (run_dir or STUDY_DIR / household) / arm / "revisions"
         anonymized = "anonymized" in condition
         omap, rmap, cmap = build_anonymization_maps(episode) if anonymized else ({}, {}, {})
         for path in sorted(rev_dir.glob(f"{household}_revision_*.json")):
@@ -165,7 +167,7 @@ def side_by_side(household: str, truth: Dict[str, Any], label: str,
         L += [f"### Activity schedule — {hid}: {hyps[ids.index(hid)].get('rationale', '')[:120]}", "",
               "| activity | days | start | length | moves |", "|---|---|---|---|---|"]
         for a in sorted(hp.activities, key=lambda x: x.start_hour):
-            mv = [f"{m.raw_target}→{m.to} ({m.chance}, {m.after})" for m in a.moves]
+            mv = [f"{m.raw_target}→{m.to} ({m.chance}, {m.duration_h:g}h)" for m in a.moves]
             L.append(f"| {a.name} | {a.days} ({a.frequency_per_week:g}×/wk) | {a.start_hour:.1f}h | {a.duration_h:.1f}h | {'; '.join(mv[:5])}{' …' if len(mv) > 5 else ''} |")
         L.append("")
     # -- per-object table
@@ -182,7 +184,7 @@ def side_by_side(household: str, truth: Dict[str, Any], label: str,
             if obj in hp.rest: parts.append(f"rest {hp.rest[obj]}")
             for act in hp.activities:
                 for m in act.moves:
-                    if obj in m.targets: parts.append(f"{act.name}→{m.to} ({m.chance[:4]},{m.after[:3]})")
+                    if obj in m.targets: parts.append(f"{act.name}→{m.to} ({m.chance[:4]},{m.duration_h:g}h)")
             row.append("<br>".join(parts) if parts else "— *(fallback)*")
         L.append("| " + " | ".join(row) + " |")
     L.append("")
@@ -220,9 +222,10 @@ class _ScriptedElicitor:
         return self._queue.pop(0) if self._queue else previous
 
 
-def provenance_grid(household: str, condition: str, sets, reask: bool):
-    episode = next(JsonlBank(bank_path(household, 0)).episodes())
-    m = LLMHypothesisMixture(random.Random(0), DEFAULT_OUT_DIR / "hypotheses" / condition,
+def provenance_grid(household: str, condition: str, sets, reask: bool,
+                    hyp_subdir: str = "", bank_dir=None, bank_seed: int = 0):
+    episode = next(JsonlBank(bank_path(household, bank_seed, bank_dir)).episodes())
+    m = LLMHypothesisMixture(random.Random(0), DEFAULT_OUT_DIR / "hypotheses" / condition / hyp_subdir,
                              reask=ReaskConfig(window=10 ** 6, scheduled_days=(3, 7), max_calls=len(sets) - 1) if reask else None,
                              elicitor=_ScriptedElicitor(sets) if reask else None)
     m.reset(episode.agent_view())
@@ -252,8 +255,9 @@ def provenance_grid(household: str, condition: str, sets, reask: bool):
     return objects, grids
 
 
-def provenance_heatmap(household: str, condition: str, sets, reask: bool, out: pathlib.Path) -> Dict[str, Any]:
-    objects, grids = provenance_grid(household, condition, sets, reask)
+def provenance_heatmap(household: str, condition: str, sets, reask: bool, out: pathlib.Path,
+                       hyp_subdir: str = "", bank_dir=None, bank_seed: int = 0) -> Dict[str, Any]:
+    objects, grids = provenance_grid(household, condition, sets, reask, hyp_subdir, bank_dir, bank_seed)
     labels = list(grids)
     cmap = ListedColormap([PROV_COLOR[k] for k in PROV_ORDER])
     fig, axes = plt.subplots(1, len(labels), figsize=(3.1 * len(labels) + 2.2, 0.22 * len(objects) + 1.9), sharey=True)
@@ -282,18 +286,25 @@ def main() -> None:
     ap.add_argument("--household", default="hh_001")
     ap.add_argument("--condition", default="tour_named")
     ap.add_argument("--arm", default=None, help="re-asking arm dir name, to include its revisions")
+    ap.add_argument("--hyp-subdir", default="tl0_bank0")
+    ap.add_argument("--bank-dir", type=pathlib.Path, default=REPO_ROOT / "banks" / "baselines" / "tour_start_day0" / "tl0")
+    ap.add_argument("--bank-seed", type=int, default=0)
+    ap.add_argument("--run-dir", type=pathlib.Path, default=None,
+                    help="the household__bank<seed> run directory (default: <study>/tl0/<household>__bank<seed>)")
     args = ap.parse_args()
-    episode = next(JsonlBank(bank_path(args.household, 0)).episodes())
+    run_dir = args.run_dir or STUDY_DIR / "tl0" / f"{args.household}__bank{args.bank_seed}"
+    episode = next(JsonlBank(bank_path(args.household, args.bank_seed, args.bank_dir)).episodes())
     truth = load_truth(args.household)
-    sets = load_hypothesis_sets(args.household, args.condition, args.arm)
-    out = STUDY_DIR / args.household / "figures"; out.mkdir(parents=True, exist_ok=True)
-    md = [f"# Ground truth vs hypotheses — {args.household} ({truth['household_type']}) · {args.condition}", "",
+    sets = load_hypothesis_sets(args.household, args.condition, args.arm, args.hyp_subdir, run_dir, args.bank_dir, args.bank_seed)
+    out = run_dir / "figures"; out.mkdir(parents=True, exist_ok=True)
+    md = [f"# Ground truth vs hypotheses — {args.household} ({truth['household_type']}) · {args.condition} · {args.hyp_subdir}", "",
           "Truth from the bank's program: activity blocks per day, what each object does during and after each activity, and its home. Hypotheses in the same layout. Objects are the join key; activity names differ by construction.", ""]
     for label, hyps in sets:
         md.append(side_by_side(args.household, truth, label, hyps, episode))
-    heat = [provenance_heatmap(args.household, args.condition, sets[:1], False, out)]
+    kw = dict(hyp_subdir=args.hyp_subdir, bank_dir=args.bank_dir, bank_seed=args.bank_seed)
+    heat = [provenance_heatmap(args.household, args.condition, sets[:1], False, out, **kw)]
     if len(sets) > 1:
-        heat.append(provenance_heatmap(args.household, args.condition, sets, True, out))
+        heat.append(provenance_heatmap(args.household, args.condition, sets, True, out, **kw))
     md += ["## Prediction provenance (share of object-days)", "", "| set | panel | " + " | ".join(PROV_LABEL[k] for k in PROV_ORDER) + " |", "|---|---|" + "---|" * len(PROV_ORDER)]
     for h, tag in zip(heat, ("fixed", "re-asking")):
         for lab, sh in h["shares"].items():

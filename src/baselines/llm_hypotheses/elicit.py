@@ -38,6 +38,15 @@ Outputs under ``--out-dir`` (default ``results/llm_hypotheses``):
 Usage:
   python -m baselines.llm_hypotheses.elicit --households hh_001 hh_002 \
       --endpoint http://127.0.0.1:8300 --model Qwen/Qwen3.8-27B
+  python -m baselines.llm_hypotheses.elicit --households hh_001 --graph \
+      --conditions named            # graph arm: hypotheses/graph_named/
+
+``--graph`` elicits the assumption-graph envelope from the tour
+(:func:`elicit_graph_household`) — assumptions with named values and
+one leaf per tested combination — validated by
+:func:`~baselines.llm_hypotheses.assumption_graph.parse_graph`; the
+flat tour-start path is unchanged and the two are compared on the same
+episodes.
 """
 
 from __future__ import annotations
@@ -56,11 +65,17 @@ from baselines.bank import JsonlBank
 from baselines.beliefs.hypothesis_program import (HypothesisValidationError,
                                                   parse_hypothesis)
 from baselines.household_analysis import REPO_ROOT, bank_path
-from baselines.llm_hypotheses.prompt import (HYPOTHESES_SCHEMA, N_HYPOTHESES,
-                                             SYSTEM_PROMPT, tour_start_prompt,
+from baselines.llm_hypotheses.assumption_graph import (parse_graph,
+                                                       truncate_to_caps)
+from baselines.llm_hypotheses.prompt import (GRAPH_SCHEMA, HYPOTHESES_SCHEMA,
+                                             N_HYPOTHESES, SYSTEM_PROMPT,
                                              crossref_table,
+                                             deanonymize_graph,
                                              deanonymize_hypothesis,
                                              elicitation_prompt,
+                                             graph_repair_prompt,
+                                             graph_tour_start_prompt,
+                                             tour_start_prompt,
                                              vocabulary_tables)
 
 DEFAULT_OUT_DIR = REPO_ROOT / "results" / "llm_hypotheses"
@@ -388,6 +403,136 @@ def elicit_household(client: CachedThinkingClient, episode,
     return log
 
 
+def elicit_graph_household(client: CachedThinkingClient, episode,
+                           condition: str, temperature: float,
+                           max_tokens: int, llm_seed: int,
+                           reasoning_effort: str = DEFAULT_REASONING_EFFORT
+                           ) -> Dict[str, Any]:
+    """The graph arm's tour-start elicitation for one (household,
+    condition): one thinking call for the envelope, salvage through the
+    envelope grammar when no JSON arrived, strict parsing
+    (:func:`~baselines.llm_hypotheses.assumption_graph.parse_graph`),
+    ONE repair round naming every problem and dropped leaf, and a
+    deterministic cut if the repair still overshoots the caps. Returns
+    the log row; the real-id envelope is under ``"graph"`` (None when
+    nothing usable came back)."""
+    anonymized = condition.endswith("anonymized")
+    user, maps = graph_tour_start_prompt(episode, anonymized=anonymized)
+    omap, rmap, cmap = maps["omap"], maps["rmap"], maps["cmap"]
+    if anonymized:
+        seen_classes = {omap[o]: cmap[c]
+                        for o, c in episode.object_classes.items()}
+        seen_receptacles = tuple(rmap[r] for r in episode.receptacle_ids)
+    else:
+        seen_classes = dict(episode.object_classes)
+        seen_receptacles = tuple(episode.receptacle_ids)
+    tables = vocabulary_tables(episode, omap, rmap, cmap)
+    log: Dict[str, Any] = {"household": episode.household_id,
+                           "condition": condition, "graph_arm": True,
+                           "prompt": user, "rounds": []}
+    envelope: Optional[dict] = None
+    payload = ""
+    total_seconds = 0.0
+    for attempt in range(3):
+        row = client.generate(SYSTEM_PROMPT, user, seed=llm_seed + attempt,
+                              temperature=temperature, max_tokens=max_tokens,
+                              reasoning_effort=reasoning_effort)
+        payload, think = row["payload"], row["think"]
+        total_seconds += row.get("generation_seconds") or 0.0
+        try:
+            parsed = extract_json(payload)
+        except json.JSONDecodeError as err:
+            log["rounds"].append({"kind": "shape_failure", "error": str(err),
+                                  "payload": payload, "think": think,
+                                  **_call_stats(row)})
+            continue
+        envelope = parsed if isinstance(parsed, dict) else None
+        log["rounds"].append({"kind": "initial", "think": think,
+                              "payload": payload,
+                              "n_leaves": len((envelope or {}).get(
+                                  "leaves", [])),
+                              **_call_stats(row)})
+        break
+    if envelope is None:
+        raw = client.generate(SYSTEM_PROMPT, salvage_prompt(user, payload),
+                              seed=llm_seed + 21, temperature=temperature,
+                              max_tokens=max_tokens, schema=GRAPH_SCHEMA)
+        total_seconds += raw.get("generation_seconds") or 0.0
+        try:
+            envelope = extract_json(raw["payload"])
+            log["rounds"].append({"kind": "salvage", "payload": raw["payload"],
+                                  **_call_stats(raw)})
+        except json.JSONDecodeError as err:
+            log["rounds"].append({"kind": "salvage_failed", "error": str(err),
+                                  "payload": raw["payload"],
+                                  **_call_stats(raw)})
+            envelope = None
+
+    result = parse_graph(envelope or {}, seen_classes, seen_receptacles)
+    log["substitutions"] = list(result.substitutions)
+    log["dropped"] = list(result.dropped)
+    if result.problems or result.dropped:
+        problems = list(result.problems) + [
+            f"leaf {d['index']} ({d['leaf'].get('leaf_id', '?')}): "
+            f"{d['error']}" + (f"; invalid strings: {d['bad_strings']}"
+                               if d["bad_strings"] else "")
+            for d in result.dropped]
+        user2 = graph_repair_prompt(problems, tables,
+                                    json.dumps(envelope, indent=1))
+        raw2 = client.generate(SYSTEM_PROMPT, user2, seed=llm_seed + 7,
+                               temperature=temperature, max_tokens=max_tokens,
+                               reasoning_effort=reasoning_effort)
+        total_seconds += raw2.get("generation_seconds") or 0.0
+        entry: Dict[str, Any] = {"kind": "repair", "prompt": user2,
+                                 "think": raw2["think"],
+                                 "payload": raw2["payload"],
+                                 **_call_stats(raw2)}
+        try:
+            envelope2 = extract_json(raw2["payload"])
+            result2 = parse_graph(envelope2, seen_classes, seen_receptacles)
+            entry["problems"] = list(result2.problems)
+            entry["n_dropped"] = len(result2.dropped)
+            cap_only = result2.problems and all(
+                "exceeds the cap" in p for p in result2.problems)
+            if result2.graph is not None or cap_only:
+                if result2.graph is None:
+                    # Only the caps were violated: cut deterministically
+                    # rather than throw away a valid set.
+                    relaxed = parse_graph(envelope2, seen_classes,
+                                          seen_receptacles, enforce_caps=False)
+                    if relaxed.graph is not None:
+                        cut, notes = truncate_to_caps(relaxed.graph)
+                        entry["truncated"] = notes
+                        result2 = parse_graph(cut.to_json(), seen_classes,
+                                              seen_receptacles)
+                result = result2
+                log["substitutions"] += list(result2.substitutions)
+                log["dropped"] = list(result2.dropped)
+        except json.JSONDecodeError as err:
+            entry["error"] = str(err)   # keep the round-0 parse
+        log["rounds"].append(entry)
+
+    graph_json: Optional[dict] = None
+    if result.graph is not None:
+        graph_json = result.graph.to_json()
+        if anonymized:
+            graph_json = deanonymize_graph(graph_json, omap, rmap, cmap)
+            real = parse_graph(graph_json, episode.object_classes,
+                               episode.receptacle_ids)
+            log["dropped"] += real.dropped
+            graph_json = real.graph.to_json() if real.graph else None
+        if envelope is not None and "leaf_set_rationale" in envelope \
+                and graph_json is not None:
+            graph_json["leaf_set_rationale"] = envelope["leaf_set_rationale"]
+    log["graph"] = graph_json
+    log["problems"] = list(result.problems)
+    n_leaves = len(graph_json["leaves"]) if graph_json else 0
+    log["generation_seconds"] = round(total_seconds, 2)
+    log["seconds_per_hypothesis"] = (round(total_seconds / n_leaves, 2)
+                                     if n_leaves else None)
+    return log
+
+
 def _call_stats(row: Mapping[str, Any]) -> Dict[str, Any]:
     """The per-call cost record: how long generation took, how many
     tokens it spent, and whether the reasoning block actually closed
@@ -412,6 +557,10 @@ def main() -> None:
                     help="send only the walkthrough tour (no sighting "
                          "history); outputs go under conditions prefixed "
                          "tour_ so they never overwrite the history-fed set")
+    ap.add_argument("--graph", action="store_true",
+                    help="graph arm: elicit an assumption-graph envelope "
+                         "from the tour (implies --tour-start); outputs go "
+                         "under conditions prefixed graph_")
     ap.add_argument("--warmup-days", type=int, default=DEFAULT_WARMUP_DAYS)
     ap.add_argument("--temperature", type=float, default=DEFAULT_TEMPERATURE)
     ap.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS)
@@ -419,27 +568,44 @@ def main() -> None:
     ap.add_argument("--reasoning-effort", default=DEFAULT_REASONING_EFFORT,
                     choices=("low", "medium", "xhigh"))
     ap.add_argument("--out-dir", type=pathlib.Path, default=DEFAULT_OUT_DIR)
+    ap.add_argument("--bank-dir", type=pathlib.Path, default=None,
+                    help="bank directory (default: the fleet's)")
+    ap.add_argument("--hyp-subdir", default="",
+                    help="subdirectory under hypotheses/<condition>/ and "
+                         "logs/<condition>/ — one per bank when several "
+                         "banks of one household are elicited")
     args = ap.parse_args()
 
     client = CachedThinkingClient(args.endpoint, args.model,
                                   args.out_dir / "cache")
     cost: List[Dict[str, Any]] = []
     for household in args.households:
-        episode = next(JsonlBank(bank_path(household, args.seed)).episodes())
+        episode = next(JsonlBank(bank_path(household, args.seed,
+                                           args.bank_dir)).episodes())
         _write_crossref(episode, args.out_dir)
         for condition in args.conditions:
-            log = elicit_household(client, episode, condition,
-                                   args.warmup_days, args.temperature,
-                                   args.max_tokens, args.llm_seed,
-                                   args.reasoning_effort,
-                                   tour_start=args.tour_start)
-            tag = f"tour_{condition}" if args.tour_start else condition
-            hyp_dir = args.out_dir / "hypotheses" / tag
-            log_dir = args.out_dir / "logs" / tag
+            if args.graph:
+                log = elicit_graph_household(
+                    client, episode, condition, args.temperature,
+                    args.max_tokens, args.llm_seed, args.reasoning_effort)
+                log["hypotheses"] = (log["graph"] or {}).get("leaves", [])
+                tag = f"graph_{condition}"
+                payload_out: Dict[str, Any] = log["graph"] or {
+                    "assumptions": {}, "leaves": []}
+            else:
+                log = elicit_household(client, episode, condition,
+                                       args.warmup_days, args.temperature,
+                                       args.max_tokens, args.llm_seed,
+                                       args.reasoning_effort,
+                                       tour_start=args.tour_start)
+                tag = f"tour_{condition}" if args.tour_start else condition
+                payload_out = {"hypotheses": log["hypotheses"]}
+            hyp_dir = args.out_dir / "hypotheses" / tag / args.hyp_subdir
+            log_dir = args.out_dir / "logs" / tag / args.hyp_subdir
             hyp_dir.mkdir(parents=True, exist_ok=True)
             log_dir.mkdir(parents=True, exist_ok=True)
             (hyp_dir / f"{episode.household_id}.json").write_text(
-                json.dumps({"hypotheses": log["hypotheses"]}, indent=1))
+                json.dumps(payload_out, indent=1))
             (log_dir / f"{episode.household_id}.json").write_text(
                 json.dumps(log, indent=1))
             tokens = sum(r.get("completion_tokens") or 0
@@ -457,7 +623,8 @@ def main() -> None:
                   f"{log['generation_seconds']:.0f}s generation "
                   f"({log['seconds_per_hypothesis']}s per hypothesis, "
                   f"{tokens} output tokens)")
-    cost_name = ("generation_cost_tour.json" if args.tour_start
+    cost_name = ("generation_cost_graph.json" if args.graph else
+                 "generation_cost_tour.json" if args.tour_start
                  else "generation_cost.json")
     (args.out_dir / cost_name).write_text(json.dumps(
         {"model": args.model, "reasoning_effort": args.reasoning_effort,

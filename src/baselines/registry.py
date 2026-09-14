@@ -203,9 +203,13 @@ def _build_llm_hypothesis_mixture(spec: Dict[str, Any],
     (named / anonymized) in result tables. ``reask`` (a ReaskConfig as a
     dict) and ``elicitor`` (the callable; a driver puts the object into
     the spec, as the LLM belief's driver does with its cache) switch on
-    the re-asking layer; without both it is a fixed hypothesis set."""
+    the re-asking layer; without both it is a fixed hypothesis set. A
+    file holding an assumption-graph envelope makes it the graph arm
+    (``leaf_weight_floor`` / ``leaf_prune_days`` tune its automatic
+    pruning); a flat file is the flat arm, unchanged."""
     from baselines.beliefs.llm_hypothesis_mixture import (
-        DEFAULT_HYPOTHESIS_DECAY, ReaskConfig)
+        DEFAULT_HYPOTHESIS_DECAY, DEFAULT_LEAF_PRUNE_DAYS,
+        DEFAULT_LEAF_WEIGHT_FLOOR, DEFAULT_LLM_ABSENCE_WEIGHT, ReaskConfig)
     reask_raw = spec.get("reask")
     reask = (ReaskConfig(**{k: (tuple(v) if k == "scheduled_days" else v)
                             for k, v in dict(reask_raw).items()})
@@ -216,10 +220,14 @@ def _build_llm_hypothesis_mixture(spec: Dict[str, Any],
         decay=float(spec.get("decay", DEFAULT_HYPOTHESIS_DECAY)),
         reask=reask, elicitor=spec.get("elicitor"),
         absence_weight=float(spec.get("absence_weight",
-                                      DEFAULT_ABSENCE_WEIGHT)),
+                                      DEFAULT_LLM_ABSENCE_WEIGHT)),
         absence_uniforms=float(spec.get("absence_uniforms",
                                         DEFAULT_ABSENCE_UNIFORMS)),
         label=spec.get("label"),
+        leaf_weight_floor=float(spec.get("leaf_weight_floor",
+                                         DEFAULT_LEAF_WEIGHT_FLOOR)),
+        leaf_prune_days=int(spec.get("leaf_prune_days",
+                                     DEFAULT_LEAF_PRUNE_DAYS)),
         **_base_kwargs(spec))
 
 

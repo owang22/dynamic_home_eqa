@@ -22,7 +22,7 @@ matched to real furniture — the viewer only needs stable, distinct spots).
 
 Usage:
   python -m households.make_viewer_configs [--slug gpt-5.6-terra] \
-      [--household hh_001] [--spatialize]
+      [--household hh_001] [--seed N] [--spatialize]   # default: all seeds
   # then: (cd visualization && python serve.py) -> http://127.0.0.1:8710/
 """
 from __future__ import annotations
@@ -133,7 +133,10 @@ def main() -> None:
                          "(default: all found)")
     ap.add_argument("--household", default=None,
                     help="one household id, e.g. hh_001 (default: all)")
-    ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--seed", type=int, default=None,
+                    help="one seed's timeline_seed<N> (default: every "
+                         "timeline_seed* dir the household has, so all "
+                         "seeds reach the viewer's seed picker)")
     ap.add_argument("--spatialize", action="store_true",
                     help="also write trace.json for each timeline, which "
                          "is what publishes it to the viewer")
@@ -152,14 +155,24 @@ def main() -> None:
             if not (hh_dir / "program.yaml").exists():
                 continue
             cfg = make_config(hh_dir)
-            timeline = hh_dir / f"timeline_seed{args.seed}"
-            note = ""
-            if not timeline.exists():
-                note = " (no timeline yet)"
-            elif args.spatialize:
-                spatialize(cfg, timeline)
-                note = " -> trace.json"
-            print(f"{hh_dir.name}: {cfg.name}{note}")
+            # Every seed gets its own trace.json: the viewer's seed picker
+            # offers exactly the seeds that have one, so spatializing only
+            # seed 0 left the other realizations invisible.
+            if args.seed is not None:
+                timelines = [hh_dir / f"timeline_seed{args.seed}"]
+            else:
+                timelines = sorted(hh_dir.glob("timeline_seed*"))
+            if not any(t.exists() for t in timelines):
+                print(f"{hh_dir.name}: {cfg.name} (no timeline yet)")
+                continue
+            for timeline in timelines:
+                note = ""
+                if not timeline.exists():
+                    note = " (no timeline yet)"
+                elif args.spatialize:
+                    spatialize(cfg, timeline)
+                    note = " -> trace.json"
+                print(f"{hh_dir.name}/{timeline.name}: {cfg.name}{note}")
 
 
 if __name__ == "__main__":

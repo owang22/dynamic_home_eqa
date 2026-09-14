@@ -6,6 +6,7 @@ source_persona: persona.yaml
 residents:
 - id: resident_1
   jitter_scale: 1.0
+  forget_p: 0.03
 receptacles:
 - id: bed_b1
   room: bedroom
@@ -541,7 +542,6 @@ object_motions:
     at: desk_b1
     jitter: routine
     during:
-      glasses_leena: desk_b1
       mug_leena: desk_b1
     after:
       laptop_leena:
@@ -713,24 +713,32 @@ object_motions:
       laptop_leena: person:resident_1
       phone_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_leena: person:resident_1
       charger_leena: person:resident_1
       notebook_leena: person:resident_1
       pen_leena: person:resident_1
       headphones_leena: person:resident_1
+      glasses_leena:
+        dest: person:resident_1
+        p: 0.97
+        why: forget
       water_bottle_leena: person:resident_1
       lunchbox_leena: person:resident_1
       jacket_leena: person:resident_1
       umbrella_leena:
         dest: person:resident_1
         p: 0.8
+        why: noop
       tablet_leena: person:resident_1
     after:
       laptop_leena:
@@ -899,6 +907,10 @@ object_motions:
         - entry_floor_e1
         - ELSEWHERE
         - person:resident_1
+      glasses_leena:
+        dest: nightstand_b1
+        only_from:
+        - person:resident_1
   snack:
     at: counter_k1
     jitter: routine
@@ -1021,7 +1033,6 @@ object_motions:
     at: kitchen_table_k1
     jitter: routine
     during:
-      glasses_leena: kitchen_table_k1
       mug_leena: kitchen_table_k1
     after:
       laptop_leena:
@@ -1288,7 +1299,6 @@ object_motions:
     at: couch_l1
     jitter: routine
     during:
-      glasses_leena: couch_l1
       mug_leena: couch_l1
     after:
       laptop_leena:
@@ -1441,17 +1451,25 @@ object_motions:
     during:
       phone_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
+      glasses_leena:
+        dest: person:resident_1
+        p: 0.97
+        why: forget
       water_bottle_leena: person:resident_1
       yoga_mat_leena:
         dest: person:resident_1
         p: 0.25
+        why: noop
     after:
       water_bottle_leena:
         dist: &id019
@@ -1477,6 +1495,10 @@ object_motions:
         - person:resident_1
       wallet_leena:
         dest: entry_table_e1
+        only_from:
+        - person:resident_1
+      glasses_leena:
+        dest: nightstand_b1
         only_from:
         - person:resident_1
   dinner:
@@ -1631,11 +1653,17 @@ object_motions:
     during:
       phone_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_leena: person:resident_1
+      glasses_leena:
+        dest: person:resident_1
+        p: 0.97
+        why: forget
       jacket_leena: person:resident_1
     after:
       backpack_leena:
@@ -1662,11 +1690,14 @@ object_motions:
         dest: entry_table_e1
         only_from:
         - person:resident_1
+      glasses_leena:
+        dest: nightstand_b1
+        only_from:
+        - person:resident_1
   reading:
     at: couch_l1
     jitter: routine
     during:
-      glasses_leena: couch_l1
       book_leena: couch_l1
       blanket_leena: couch_l1
     after:
@@ -1925,13 +1956,20 @@ object_motions:
     during:
       phone_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
+      glasses_leena:
+        dest: person:resident_1
+        p: 0.97
+        why: forget
     after:
       wallet_leena:
         dist:
@@ -1947,6 +1985,10 @@ object_motions:
         - person:resident_1
       keys_leena:
         dest: entry_table_e1
+        only_from:
+        - person:resident_1
+      glasses_leena:
+        dest: nightstand_b1
         only_from:
         - person:resident_1
   put_away_dishes:
@@ -2020,13 +2062,16 @@ object_motions:
     during:
       phone_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_leena: person:resident_1
       jacket_leena: person:resident_1
     after:
@@ -2346,7 +2391,6 @@ object_motions:
     at: bed_b1
     jitter: routine
     during:
-      glasses_leena: bed_b1
       book_leena: bed_b1
       blanket_leena: bed_b1
     after:
@@ -2530,10 +2574,16 @@ object_motions:
     during:
       keys_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
+      glasses_leena:
+        dest: person:resident_1
+        p: 0.97
+        why: forget
     after:
       wallet_leena:
         dist:
@@ -2545,6 +2595,10 @@ object_motions:
         - ELSEWHERE
       keys_leena:
         dest: entry_table_e1
+        only_from:
+        - person:resident_1
+      glasses_leena:
+        dest: nightstand_b1
         only_from:
         - person:resident_1
   tidy_up__desk_b1:
@@ -2631,16 +2685,24 @@ object_motions:
     during:
       phone_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
+      glasses_leena:
+        dest: person:resident_1
+        p: 0.97
+        why: forget
       umbrella_leena:
         dest: person:resident_1
         p: 0.6
+        why: noop
     after:
       keys_leena:
         dist:
@@ -2663,6 +2725,10 @@ object_motions:
         - person:resident_1
       wallet_leena:
         dest: entry_table_e1
+        only_from:
+        - person:resident_1
+      glasses_leena:
+        dest: nightstand_b1
         only_from:
         - person:resident_1
   nap:
@@ -2787,28 +2853,37 @@ object_motions:
       laptop_leena: person:resident_1
       phone_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_leena: person:resident_1
       charger_leena: person:resident_1
       notebook_leena: person:resident_1
       pen_leena: person:resident_1
       headphones_leena: person:resident_1
+      glasses_leena:
+        dest: person:resident_1
+        p: 0.97
+        why: forget
       water_bottle_leena: person:resident_1
       lunchbox_leena: person:resident_1
       jacket_leena: person:resident_1
       umbrella_leena:
         dest: person:resident_1
         p: 0.8
+        why: noop
       tablet_leena: person:resident_1
       yoga_mat_leena:
         dest: person:resident_1
         p: 0.25
+        why: noop
     after:
       laptop_leena:
         dist: *id024
@@ -2911,6 +2986,10 @@ object_motions:
         - entry_floor_e1
         - ELSEWHERE
         - person:resident_1
+      glasses_leena:
+        dest: nightstand_b1
+        only_from:
+        - person:resident_1
   lie_down:
     at: bed_b1
     jitter: routine
@@ -2922,13 +3001,20 @@ object_motions:
     during:
       phone_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
+      glasses_leena:
+        dest: person:resident_1
+        p: 0.97
+        why: forget
       lunchbox_leena: person:resident_1
     after:
       lunchbox_leena:
@@ -2974,19 +3060,26 @@ object_motions:
         dest: entry_table_e1
         only_from:
         - person:resident_1
+      glasses_leena:
+        dest: nightstand_b1
+        only_from:
+        - person:resident_1
   deep_clean__resident_1:
     at: ELSEWHERE
     jitter: routine
     during:
       phone_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_leena:
         dest: person:resident_1
-        p: 0.95
+        p: 0.97
+        why: forget
     after:
       phone_leena:
         dest: nightstand_b1
@@ -3004,7 +3097,6 @@ object_motions:
     at: armchair_l1
     jitter: routine
     during:
-      glasses_leena: armchair_l1
       book_leena: armchair_l1
       blanket_leena: armchair_l1
     after:
@@ -3179,3 +3271,39 @@ object_motions:
     during: {}
     after: {}
 person_invariant: true
+misplace_model: at_putdown
+object_owners:
+  laptop_leena: resident_1
+  phone_leena: resident_1
+  keys_leena: resident_1
+  wallet_leena: resident_1
+  backpack_leena: resident_1
+  charger_leena: resident_1
+  notebook_leena: resident_1
+  pen_leena: resident_1
+  headphones_leena: resident_1
+  glasses_leena: resident_1
+  water_bottle_leena: resident_1
+  lunchbox_leena: resident_1
+  jacket_leena: resident_1
+  umbrella_leena: resident_1
+  mug_leena: resident_1
+  bowl_leena: resident_1
+  plate_leena: resident_1
+  pot_shared_1: shared
+  pan_shared_1: shared
+  book_leena: resident_1
+  tablet_leena: resident_1
+  remote_shared_1: shared
+  blanket_leena: resident_1
+  towel_leena: resident_1
+  laundry_basket_shared_1: shared
+  vacuum_cleaner_shared_1: shared
+  watering_can_leena: resident_1
+  yoga_mat_leena: resident_1
+  medication_bottle_leena: resident_1
+  suitcase_leena: resident_1
+misplace:
+  next_room_share: 0.5
+  bulky_needs_forget_p: 0.08
+keep_block_share: 0.6

@@ -1,0 +1,898 @@
+{
+ "household": "hh_001",
+ "anonymized": true,
+ "graph": true,
+ "call_index": 2,
+ "day": 7,
+ "trigger": "scheduled",
+ "prompt": "It is now day 7. The robot has been watching since your graph was written; here is how it did. Revise it with OPERATIONS on the graph \u2014 leaves you do not mention are kept exactly as they are, with the weight they have earned.\n\nASSUMPTION WEIGHTS (each value's share of the leaf weight, and the node's entropy):\n  household_size (how many adults live in this home): one_adult 0.49, two_adults 0.51; entropy 0.69 nats \u2014 open\n  weekday_presence (is the primary resident at home or away during weekday working hours): out_nine_to_five 0.95, home_all_day 0.05; entropy 0.20 nats \u2014 settled\n  evening_meal (is dinner prepared in the kitchen or eaten away from home): cook_at_home 0.34, eat_out 0.66; entropy 0.64 nats \u2014 leaning\n\nLEAF WEIGHTS (share of the mixture each leaf currently earns from the sightings):\n  p_3a7f: weight 0.00, assumes {\"household_size\": \"one_adult\", \"weekday_presence\": \"out_nine_to_five\", \"evening_meal\": \"cook_at_home\"} \u2014 distinguishing prediction not yet tested (no sightings of the target in that window)\n  p_8c21: weight 0.00, assumes {\"household_size\": \"one_adult\", \"weekday_presence\": \"out_nine_to_five\", \"evening_meal\": \"eat_out\"} \u2014 distinguishing prediction came true 3/3 times\n  p_1b56: weight 0.00, assumes {\"household_size\": \"one_adult\", \"weekday_presence\": \"home_all_day\", \"evening_meal\": \"eat_out\"} \u2014 distinguishing prediction not yet tested (no sightings of the target in that window)\n  p_7f03: weight 0.00, assumes {\"household_size\": \"two_adults\", \"weekday_presence\": \"out_nine_to_five\", \"evening_meal\": \"cook_at_home\"} \u2014 distinguishing prediction not yet tested (no sightings of the target in that window)\n  p_e94a: weight 0.00, assumes {\"household_size\": \"two_adults\", \"weekday_presence\": \"out_nine_to_five\", \"evening_meal\": \"eat_out\"} \u2014 distinguishing prediction came true 3/3 times\n  (a plain statistical model with no hypotheses \u2014 each object where it was most often seen \u2014 competes for the same weight and currently holds 1.00; weight it holds is weight your leaves failed to earn)\n\nMIXTURE'S WORST OBJECTS \u2014 where it predicted vs where the object actually was:\n  object_3: predicted receptacle_7, actually receptacle_20 \u2014 2x, e.g. day 3 12:00\n  object_21: predicted receptacle_19, actually receptacle_12 \u2014 2x, e.g. day 4 14:00\n  object_20: predicted receptacle_21, actually receptacle_19 \u2014 2x, e.g. day 4 14:00\n  object_12: predicted receptacle_14, actually receptacle_22 \u2014 1x, e.g. day 3 05:00\n  object_32: predicted receptacle_17, actually receptacle_22 \u2014 1x, e.g. day 3 05:00\n  object_10: predicted receptacle_2, actually receptacle_17 \u2014 1x, e.g. day 3 08:00\n  object_11: predicted receptacle_13, actually receptacle_18 \u2014 1x, e.g. day 3 08:00\n  object_22: predicted receptacle_3, actually receptacle_20 \u2014 1x, e.g. day 3 12:00\n  object_11: predicted receptacle_18, actually receptacle_9 \u2014 1x, e.g. day 3 18:00\n  object_16: predicted receptacle_4, actually receptacle_12 \u2014 1x, e.g. day 3 18:00\n  object_17: predicted receptacle_15, actually receptacle_12 \u2014 1x, e.g. day 3 18:00\n  object_19: predicted receptacle_2, actually receptacle_13 \u2014 1x, e.g. day 3 18:00\n\nRULES THAT HELD UP (object was where the rule said, during its activity; tagged leaf/activity):\n  (none yet)\n\nRULES THAT FAILED (object was elsewhere during the rule's activity; tagged leaf/activity):\n  (none)\n\nOBJECTS NO LEAF COVERS (no rule and no rest entry mentions them), with what the sightings show:\n  (none)\n\nUncovered bank (objects of classes no leaf models, seen since the last revision): (empty)\nThis call was triggered by: scheduled.\n\nPER-OBJECT STATISTICS over days 0-7 (modal receptacle; share of sighted days it was there; distinct receptacles seen; days with no sighting):\n  backpack_mara: mostly entry_hook_e1 (4/4 sighted days); 2 receptacles; unseen 4 days\n  blanket_mara: mostly couch_l1 (7/7 sighted days); 1 receptacle; unseen 1 day\n  book_mara: mostly bookshelf_l1 (2/6 sighted days); 4 receptacles; unseen 2 days\n  bowl_shared_1: mostly entry_table_e1 (7/7 sighted days); 1 receptacle; unseen 1 day\n  bowl_shared_2: mostly kitchen_table_k1 (4/7 sighted days); 3 receptacles; unseen 1 day\n  charger_mara: mostly kitchen_table_k1 (4/4 sighted days); 1 receptacle; unseen 4 days\n  glasses_mara: mostly kitchen_table_k1 (3/4 sighted days); 3 receptacles; unseen 4 days\n  hairbrush_mara: mostly bathroom_shelf_ba1 (6/7 sighted days); 2 receptacles; unseen 1 day\n  headphones_mara: mostly kitchen_table_k1 (3/4 sighted days); 2 receptacles; unseen 4 days\n  jacket_mara: mostly entry_hook_e1 (2/4 sighted days); 4 receptacles; unseen 4 days\n  keys_mara: mostly entry_table_e1 (4/5 sighted days); 3 receptacles; unseen 3 days\n  laptop_mara: mostly kitchen_table_k1 (1/4 sighted days); 3 receptacles; unseen 4 days\n  laundry_basket_mara: mostly bedroom_floor_b1 (7/7 sighted days); 1 receptacle; unseen 1 day\n  lunchbox_mara: mostly counter_k1 (2/5 sighted days); 5 receptacles; unseen 3 days\n  makeup_kit_mara: mostly bathroom_shelf_ba1 (6/7 sighted days); 2 receptacles; unseen 1 day\n  medication_bottle_mara: mostly bathroom_shelf_ba1 (6/7 sighted days); 2 receptacles; unseen 1 day\n  mug_mara: mostly counter_k1 (4/7 sighted days); 6 receptacles; unseen 1 day\n  mug_shared_1: mostly cupboard_k1 (5/7 sighted days); 2 receptacles; unseen 1 day\n  notebook_mara: mostly counter_k1 (2/5 sighted days); 4 receptacles; unseen 3 days\n  pan_shared_1: mostly sink_k1 (3/7 sighted days); 3 receptacles; unseen 1 day\n  pen_mara: mostly counter_k1 (3/7 sighted days); 4 receptacles; unseen 1 day\n  phone_mara: mostly nightstand_b1 (3/4 sighted days); 2 receptacles; unseen 4 days\n  plate_shared_1: mostly kitchen_table_k1 (4/7 sighted days); 4 receptacles; unseen 1 day\n  plate_shared_2: mostly counter_k1 (5/7 sighted days); 3 receptacles; unseen 1 day\n  pot_shared_1: mostly sink_k1 (4/7 sighted days); 2 receptacles; unseen 1 day\n  remote_shared_1: mostly coffee_table_l1 (5/7 sighted days); 2 receptacles; unseen 1 day\n  suitcase_mara: mostly bedroom_floor_b1 (7/7 sighted days); 1 receptacle; unseen 1 day\n  tablet_mara: mostly coffee_table_l1 (6/7 sighted days); 2 receptacles; unseen 1 day\n  towel_mara: mostly towel_rack_ba1 (5/6 sighted days); 2 receptacles; unseen 2 days\n  umbrella_mara: mostly entry_floor_e1 (7/7 sighted days); 1 receptacle; unseen 1 day\n  vacuum_cleaner_shared_1: mostly bedroom_floor_b1 (7/7 sighted days); 1 receptacle; unseen 1 day\n  wallet_mara: mostly entry_table_e1 (3/5 sighted days); 4 receptacles; unseen 3 days\n  water_bottle_mara: mostly couch_l1 (3/5 sighted days); 2 receptacles; unseen 3 days\n  watering_can_mara: mostly sink_k1 (7/7 sighted days); 1 receptacle; unseen 1 day\n  yoga_mat_mara: mostly couch_l1 (7/7 sighted days); 1 receptacle; unseen 1 day\n\nThe ONLY valid identifiers are these, exactly as printed:\n\nRECEPTACLES:\n  receptacle_5\n  receptacle_20\n  receptacle_14\n  receptacle_6\n  receptacle_11\n  receptacle_10\n  receptacle_23\n  receptacle_7\n  receptacle_3\n  receptacle_12\n  receptacle_21\n  receptacle_13\n  receptacle_15\n  receptacle_19\n  receptacle_8\n  receptacle_9\n  receptacle_4\n  receptacle_22\n  receptacle_18\n  receptacle_17\n  receptacle_16\n  receptacle_2\n\nOBJECTS:\n  object_1  (class: class_1)\n  object_2  (class: class_2)\n  object_3  (class: class_3)\n  object_4  (class: class_4)\n  object_5  (class: class_4)\n  object_6  (class: class_5)\n  object_7  (class: class_6)\n  object_8  (class: class_7)\n  object_9  (class: class_8)\n  object_10  (class: class_9)\n  object_11  (class: class_10)\n  object_12  (class: class_11)\n  object_13  (class: class_12)\n  object_14  (class: class_13)\n  object_15  (class: class_14)\n  object_16  (class: class_15)\n  object_17  (class: class_16)\n  object_18  (class: class_16)\n  object_19  (class: class_17)\n  object_20  (class: class_18)\n  object_21  (class: class_19)\n  object_22  (class: class_20)\n  object_23  (class: class_21)\n  object_24  (class: class_21)\n  object_25  (class: class_22)\n  object_26  (class: class_23)\n  object_27  (class: class_24)\n  object_28  (class: class_25)\n  object_29  (class: class_26)\n  object_30  (class: class_27)\n  object_31  (class: class_28)\n  object_32  (class: class_29)\n  object_33  (class: class_30)\n  object_34  (class: class_31)\n  object_35  (class: class_32)\n\nCLASSES (usable as `class:<name>` targets): class_1, class_2, class_3, class_4, class_5, class_6, class_7, class_8, class_9, class_10, class_11, class_12, class_13, class_14, class_15, class_16, class_17, class_18, class_19, class_20, class_21, class_22, class_23, class_24, class_25, class_26, class_27, class_28, class_29, class_30, class_31, class_32\n\nTHE CURRENT GRAPH:\n\n{\n \"assumptions\": {\n  \"household_size\": {\n   \"question\": \"how many adults live in this home\",\n   \"values\": {\n    \"one_adult\": \"a single adult resident\",\n    \"two_adults\": \"two adult residents sharing the home\"\n   }\n  },\n  \"weekday_presence\": {\n   \"question\": \"is the primary resident at home or away during weekday working hours\",\n   \"values\": {\n    \"out_nine_to_five\": \"residents leave around 09:00 and return around 17:00 on weekdays\",\n    \"home_all_day\": \"residents are in the house for most of the weekday\"\n   }\n  },\n  \"evening_meal\": {\n   \"question\": \"is dinner prepared in the kitchen or eaten away from home\",\n   \"values\": {\n    \"cook_at_home\": \"dinner is cooked in the kitchen roughly 18:00 to 20:00\",\n    \"eat_out\": \"dinner is taken out or delivered; the kitchen stays idle in the evening\"\n   }\n  }\n },\n \"leaves\": [\n  {\n   \"leaf_id\": \"p_3a7f\",\n   \"assumes\": {\n    \"household_size\": \"one_adult\",\n    \"weekday_presence\": \"out_nine_to_five\",\n    \"evening_meal\": \"cook_at_home\"\n   },\n   \"rationale\": \"single commuter who cooks dinner; six personal items go out with them, five shared items stay home\",\n   \"distinguishing_prediction\": \"object_1 is at the entryway receptacle on a weekday afternoon (out with the resident) and object_4 is moved to the cooking zone at 19:00\",\n   \"distinguishing_check\": {\n    \"target\": \"object_1\",\n    \"at\": \"receptacle_2\",\n    \"days\": \"weekday\",\n    \"hour\": 15\n   },\n   \"rest\": {\n    \"object_1\": \"receptacle_5\",\n    \"object_2\": \"receptacle_11\",\n    \"object_3\": \"receptacle_7\",\n    \"object_4\": \"receptacle_18\",\n    \"object_5\": \"receptacle_19\",\n    \"object_6\": \"receptacle_14\",\n    \"object_7\": \"receptacle_15\",\n    \"object_8\": \"receptacle_20\",\n    \"object_9\": \"receptacle_9\",\n    \"object_10\": \"receptacle_17\",\n    \"object_11\": \"receptacle_14\",\n    \"object_12\": \"receptacle_15\",\n    \"object_13\": \"receptacle_6\",\n    \"object_14\": \"receptacle_12\",\n    \"object_15\": \"receptacle_4\",\n    \"object_16\": \"receptacle_4\",\n    \"object_17\": \"receptacle_8\",\n    \"object_18\": \"receptacle_13\",\n    \"object_19\": \"receptacle_9\",\n    \"object_20\": \"receptacle_21\",\n    \"object_21\": \"receptacle_19\",\n    \"object_22\": \"receptacle_17\",\n    \"object_23\": \"receptacle_13\",\n    \"object_24\": \"receptacle_12\",\n    \"object_25\": \"receptacle_13\",\n    \"object_26\": \"receptacle_10\",\n    \"object_27\": \"receptacle_6\",\n    \"object_28\": \"receptacle_10\",\n    \"object_29\": \"receptacle_22\",\n    \"object_30\": \"receptacle_16\",\n    \"object_31\": \"receptacle_6\",\n    \"object_32\": \"receptacle_9\",\n    \"object_33\": \"receptacle_14\",\n    \"object_34\": \"receptacle_21\",\n    \"object_35\": \"receptacle_11\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"weekday_commute_out\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 9.0,\n     \"duration_h\": 8.0,\n     \"moves\": [\n      {\n       \"target\": \"object_1\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_6\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_7\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_9\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_10\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_19\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"usually\"\n      }\n     ]\n    },\n    {\n     \"name\": \"evening_cook\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 7,\n     \"start_hour\": 18.0,\n     \"duration_h\": 2.0,\n     \"moves\": [\n      {\n       \"target\": \"object_4\",\n       \"to\": \"receptacle_23\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_5\",\n       \"to\": \"receptacle_23\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_15\",\n       \"to\": \"receptacle_23\",\n       \"chance\": \"sometimes\"\n      },\n      {\n       \"target\": \"object_16\",\n       \"to\": \"receptacle_23\",\n       \"chance\": \"sometimes\"\n      }\n     ]\n    },\n    {\n     \"name\": \"morning_prep\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 7,\n     \"start_hour\": 7.0,\n     \"duration_h\": 1.5,\n     \"moves\": [\n      {\n       \"target\": \"object_3\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_2\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      }\n     ]\n    }\n   ],\n   \"hypothesis_id\": \"p_3a7f\"\n  },\n  {\n   \"leaf_id\": \"p_8c21\",\n   \"assumes\": {\n    \"household_size\": \"one_adult\",\n    \"weekday_presence\": \"out_nine_to_five\",\n    \"evening_meal\": \"eat_out\"\n   },\n   \"rationale\": \"single commuter who eats out; kitchen objects never move in the evening\",\n   \"distinguishing_prediction\": \"object_4 remains at its shelf receptacle at 19:00 because no cooking happens, while object_1 is at the entryway\",\n   \"distinguishing_check\": {\n    \"target\": \"object_4\",\n    \"at\": \"receptacle_18\",\n    \"days\": \"both\",\n    \"hour\": 19\n   },\n   \"rest\": {\n    \"object_1\": \"receptacle_5\",\n    \"object_2\": \"receptacle_11\",\n    \"object_3\": \"receptacle_7\",\n    \"object_4\": \"receptacle_18\",\n    \"object_5\": \"receptacle_19\",\n    \"object_6\": \"receptacle_14\",\n    \"object_7\": \"receptacle_15\",\n    \"object_8\": \"receptacle_20\",\n    \"object_9\": \"receptacle_9\",\n    \"object_10\": \"receptacle_17\",\n    \"object_11\": \"receptacle_14\",\n    \"object_12\": \"receptacle_15\",\n    \"object_13\": \"receptacle_6\",\n    \"object_14\": \"receptacle_12\",\n    \"object_15\": \"receptacle_4\",\n    \"object_16\": \"receptacle_4\",\n    \"object_17\": \"receptacle_8\",\n    \"object_18\": \"receptacle_13\",\n    \"object_19\": \"receptacle_9\",\n    \"object_20\": \"receptacle_21\",\n    \"object_21\": \"receptacle_19\",\n    \"object_22\": \"receptacle_17\",\n    \"object_23\": \"receptacle_13\",\n    \"object_24\": \"receptacle_12\",\n    \"object_25\": \"receptacle_13\",\n    \"object_26\": \"receptacle_10\",\n    \"object_27\": \"receptacle_6\",\n    \"object_28\": \"receptacle_10\",\n    \"object_29\": \"receptacle_22\",\n    \"object_30\": \"receptacle_16\",\n    \"object_31\": \"receptacle_6\",\n    \"object_32\": \"receptacle_9\",\n    \"object_33\": \"receptacle_14\",\n    \"object_34\": \"receptacle_21\",\n    \"object_35\": \"receptacle_11\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"weekday_commute_out\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 9.0,\n     \"duration_h\": 8.0,\n     \"moves\": [\n      {\n       \"target\": \"object_1\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_6\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_7\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_9\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_10\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_19\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"usually\"\n      }\n     ]\n    },\n    {\n     \"name\": \"morning_prep\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 7,\n     \"start_hour\": 7.0,\n     \"duration_h\": 1.5,\n     \"moves\": [\n      {\n       \"target\": \"object_3\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_2\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      }\n     ]\n    },\n    {\n     \"name\": \"weekend_relax\",\n     \"days\": \"weekend\",\n     \"frequency_per_week\": 2,\n     \"start_hour\": 10.0,\n     \"duration_h\": 3.0,\n     \"moves\": [\n      {\n       \"target\": \"object_13\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      },\n      {\n       \"target\": \"object_27\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      }\n     ]\n    }\n   ],\n   \"hypothesis_id\": \"p_8c21\"\n  },\n  {\n   \"leaf_id\": \"p_1b56\",\n   \"assumes\": {\n    \"household_size\": \"one_adult\",\n    \"weekday_presence\": \"home_all_day\",\n    \"evening_meal\": \"eat_out\"\n   },\n   \"rationale\": \"single resident at home all day who does not cook; the quietest kitchen scenario\",\n   \"distinguishing_prediction\": \"object_1 is at its home receptacle on a weekday afternoon and object_11 stays at its storage spot (not at the entryway, not in active use)\",\n   \"distinguishing_check\": {\n    \"target\": \"object_11\",\n    \"at\": \"receptacle_14\",\n    \"days\": \"weekday\",\n    \"hour\": 15\n   },\n   \"rest\": {\n    \"object_1\": \"receptacle_5\",\n    \"object_2\": \"receptacle_11\",\n    \"object_3\": \"receptacle_7\",\n    \"object_4\": \"receptacle_18\",\n    \"object_5\": \"receptacle_19\",\n    \"object_6\": \"receptacle_14\",\n    \"object_7\": \"receptacle_15\",\n    \"object_8\": \"receptacle_20\",\n    \"object_9\": \"receptacle_9\",\n    \"object_10\": \"receptacle_17\",\n    \"object_11\": \"receptacle_14\",\n    \"object_12\": \"receptacle_15\",\n    \"object_13\": \"receptacle_6\",\n    \"object_14\": \"receptacle_12\",\n    \"object_15\": \"receptacle_4\",\n    \"object_16\": \"receptacle_4\",\n    \"object_17\": \"receptacle_8\",\n    \"object_18\": \"receptacle_13\",\n    \"object_19\": \"receptacle_9\",\n    \"object_20\": \"receptacle_21\",\n    \"object_21\": \"receptacle_19\",\n    \"object_22\": \"receptacle_17\",\n    \"object_23\": \"receptacle_13\",\n    \"object_24\": \"receptacle_12\",\n    \"object_25\": \"receptacle_13\",\n    \"object_26\": \"receptacle_10\",\n    \"object_27\": \"receptacle_6\",\n    \"object_28\": \"receptacle_10\",\n    \"object_29\": \"receptacle_22\",\n    \"object_30\": \"receptacle_16\",\n    \"object_31\": \"receptacle_6\",\n    \"object_32\": \"receptacle_9\",\n    \"object_33\": \"receptacle_14\",\n    \"object_34\": \"receptacle_21\",\n    \"object_35\": \"receptacle_11\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"morning_prep\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 7,\n     \"start_hour\": 7.0,\n     \"duration_h\": 1.5,\n     \"moves\": [\n      {\n       \"target\": \"object_3\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_2\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      }\n     ]\n    },\n    {\n     \"name\": \"weekend_relax\",\n     \"days\": \"weekend\",\n     \"frequency_per_week\": 2,\n     \"start_hour\": 10.0,\n     \"duration_h\": 3.0,\n     \"moves\": [\n      {\n       \"target\": \"object_13\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      },\n      {\n       \"target\": \"object_27\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      },\n      {\n       \"target\": \"object_31\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"rarely\"\n      }\n     ]\n    }\n   ],\n   \"hypothesis_id\": \"p_1b56\"\n  },\n  {\n   \"leaf_id\": \"p_7f03\",\n   \"assumes\": {\n    \"household_size\": \"two_adults\",\n    \"weekday_presence\": \"out_nine_to_five\",\n    \"evening_meal\": \"cook_at_home\"\n   },\n   \"rationale\": \"two commuters who cook dinner; all eleven personal items go out with them in the morning\",\n   \"distinguishing_prediction\": \"object_11 is at the entryway on a weekday afternoon (second resident's item goes out) and object_4 is at the cooking zone at 19:00\",\n   \"distinguishing_check\": {\n    \"target\": \"object_11\",\n    \"at\": \"receptacle_3\",\n    \"days\": \"weekday\",\n    \"hour\": 15\n   },\n   \"rest\": {\n    \"object_1\": \"receptacle_5\",\n    \"object_2\": \"receptacle_11\",\n    \"object_3\": \"receptacle_7\",\n    \"object_4\": \"receptacle_18\",\n    \"object_5\": \"receptacle_19\",\n    \"object_6\": \"receptacle_14\",\n    \"object_7\": \"receptacle_15\",\n    \"object_8\": \"receptacle_20\",\n    \"object_9\": \"receptacle_9\",\n    \"object_10\": \"receptacle_17\",\n    \"object_11\": \"receptacle_5\",\n    \"object_12\": \"receptacle_14\",\n    \"object_13\": \"receptacle_6\",\n    \"object_14\": \"receptacle_12\",\n    \"object_15\": \"receptacle_4\",\n    \"object_16\": \"receptacle_4\",\n    \"object_17\": \"receptacle_8\",\n    \"object_18\": \"receptacle_13\",\n    \"object_19\": \"receptacle_9\",\n    \"object_20\": \"receptacle_21\",\n    \"object_21\": \"receptacle_19\",\n    \"object_22\": \"receptacle_15\",\n    \"object_23\": \"receptacle_13\",\n    \"object_24\": \"receptacle_12\",\n    \"object_25\": \"receptacle_13\",\n    \"object_26\": \"receptacle_10\",\n    \"object_27\": \"receptacle_6\",\n    \"object_28\": \"receptacle_10\",\n    \"object_29\": \"receptacle_22\",\n    \"object_30\": \"receptacle_16\",\n    \"object_31\": \"receptacle_6\",\n    \"object_32\": \"receptacle_17\",\n    \"object_33\": \"receptacle_9\",\n    \"object_34\": \"receptacle_21\",\n    \"object_35\": \"receptacle_11\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"weekday_commute_out\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 9.0,\n     \"duration_h\": 8.0,\n     \"moves\": [\n      {\n       \"target\": \"object_1\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_6\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_7\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_9\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_10\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_11\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_12\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_19\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_22\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"sometimes\"\n      },\n      {\n       \"target\": \"object_32\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"sometimes\"\n      },\n      {\n       \"target\": \"object_33\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"sometimes\"\n      }\n     ]\n    },\n    {\n     \"name\": \"evening_cook\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 7,\n     \"start_hour\": 18.0,\n     \"duration_h\": 2.0,\n     \"moves\": [\n      {\n       \"target\": \"object_4\",\n       \"to\": \"receptacle_23\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_5\",\n       \"to\": \"receptacle_23\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_15\",\n       \"to\": \"receptacle_23\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_16\",\n       \"to\": \"receptacle_23\",\n       \"chance\": \"usually\"\n      }\n     ]\n    },\n    {\n     \"name\": \"morning_prep\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 7,\n     \"start_hour\": 7.0,\n     \"duration_h\": 1.5,\n     \"moves\": [\n      {\n       \"target\": \"object_3\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_2\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_35\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      }\n     ]\n    }\n   ],\n   \"hypothesis_id\": \"p_7f03\"\n  },\n  {\n   \"assumes\": {\n    \"household_size\": \"two_adults\",\n    \"weekday_presence\": \"out_nine_to_five\",\n    \"evening_meal\": \"eat_out\"\n   },\n   \"rationale\": \"two commuters who eat out; all personal items go out and the kitchen stays idle in the evening; rest locations updated to match observed quiescent-hour sightings\",\n   \"distinguishing_prediction\": \"object_11 is at the entryway on a weekday afternoon (couple) and object_4 stays at its shelf at 19:00 (no cooking)\",\n   \"distinguishing_check\": {\n    \"target\": \"object_4\",\n    \"at\": \"receptacle_18\",\n    \"days\": \"both\",\n    \"hour\": 19\n   },\n   \"rest\": {\n    \"object_1\": \"receptacle_5\",\n    \"object_2\": \"receptacle_11\",\n    \"object_3\": \"receptacle_7\",\n    \"object_4\": \"receptacle_18\",\n    \"object_5\": \"receptacle_19\",\n    \"object_6\": \"receptacle_14\",\n    \"object_7\": \"receptacle_10\",\n    \"object_8\": \"receptacle_4\",\n    \"object_9\": \"receptacle_9\",\n    \"object_10\": \"receptacle_17\",\n    \"object_11\": \"receptacle_13\",\n    \"object_12\": \"receptacle_14\",\n    \"object_13\": \"receptacle_6\",\n    \"object_14\": \"receptacle_21\",\n    \"object_15\": \"receptacle_4\",\n    \"object_16\": \"receptacle_4\",\n    \"object_17\": \"receptacle_8\",\n    \"object_18\": \"receptacle_13\",\n    \"object_19\": \"receptacle_8\",\n    \"object_20\": \"receptacle_12\",\n    \"object_21\": \"receptacle_15\",\n    \"object_22\": \"receptacle_15\",\n    \"object_23\": \"receptacle_13\",\n    \"object_24\": \"receptacle_19\",\n    \"object_25\": \"receptacle_13\",\n    \"object_26\": \"receptacle_10\",\n    \"object_27\": \"receptacle_6\",\n    \"object_28\": \"receptacle_10\",\n    \"object_29\": \"receptacle_22\",\n    \"object_30\": \"receptacle_16\",\n    \"object_31\": \"receptacle_6\",\n    \"object_32\": \"receptacle_17\",\n    \"object_33\": \"receptacle_9\",\n    \"object_34\": \"receptacle_21\",\n    \"object_35\": \"receptacle_11\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"weekday_commute_out\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 9.0,\n     \"duration_h\": 8.0,\n     \"moves\": [\n      {\n       \"target\": \"object_1\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_6\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_7\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_9\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_10\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"almost_always\"\n      },\n      {\n       \"target\": \"object_11\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_12\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_19\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_22\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"sometimes\"\n      },\n      {\n       \"target\": \"object_32\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"sometimes\"\n      },\n      {\n       \"target\": \"object_33\",\n       \"to\": \"receptacle_3\",\n       \"chance\": \"sometimes\"\n      }\n     ]\n    },\n    {\n     \"name\": \"morning_prep\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 7,\n     \"start_hour\": 7.0,\n     \"duration_h\": 1.5,\n     \"moves\": [\n      {\n       \"target\": \"object_3\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_2\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"usually\"\n      },\n      {\n       \"target\": \"object_35\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      }\n     ]\n    },\n    {\n     \"name\": \"weekend_relax\",\n     \"days\": \"weekend\",\n     \"frequency_per_week\": 2,\n     \"start_hour\": 10.0,\n     \"duration_h\": 3.0,\n     \"moves\": [\n      {\n       \"target\": \"object_13\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      },\n      {\n       \"target\": \"object_27\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      },\n      {\n       \"target\": \"object_31\",\n       \"to\": \"receptacle_10\",\n       \"chance\": \"sometimes\"\n      }\n     ]\n    }\n   ],\n   \"hypothesis_id\": \"p_e94a\",\n   \"leaf_id\": \"p_e94a\"\n  }\n ]\n}\n\nOperations, applied in this order: add_assumption, add_assumption_value, edit_leaf, drop_leaf, add_leaf.\n  {\"op\": \"edit_leaf\", \"leaf_id\": \"p_xxxx\", \"body\": {...the complete leaf body, with assumes...}}\n  {\"op\": \"drop_leaf\", \"leaf_id\": \"p_xxxx\", \"reason\": \"...\"}\n  {\"op\": \"add_assumption_value\", \"assumption\": \"<name>\", \"value\": \"<new value>\", \"description\": \"...\"}\n  {\"op\": \"add_leaf\", \"body\": {...the complete leaf body, with assumes; leaf_id p_ + 4 random hex...}}\n  {\"op\": \"add_assumption\", \"assumption\": \"<name>\", \"question\": \"...\", \"values\": {\"<value>\": \"...\"}}\nEvery body is a complete leaf, never a partial patch. An add_assumption must come with edit_leaf operations giving every existing leaf a value for it, or it is rejected. A new assumption value is crossed automatically with the values of the other assumptions that still carry weight; you may also add_leaf the combinations you care about yourself.\n\nGuidance:\n- Edit at the level the evidence points to. A failed rule inside one leaf is an edit_leaf. An assumption value losing weight across every leaf that depends on it means that premise is wrong, not those leaves individually. An object no leaf accounts for usually means a missing assumption value, not a missing rule.\n- One sighting at a given place and hour is weaker evidence than a repeated one. The statistics section gives, per object, how many distinct receptacles it has been seen in and its share of sighted days at the most common one.\n- Do not propose an assumption whose values make the same observable predictions.\n- Return only operations. Leaves you do not mention are kept exactly as they are.\n\nRules: ids only from the tables; chances as labels; a move's `duration_h` when it differs from the activity's; every leaf carries a distinguishing_prediction and distinguishing_check; leaf ids are opaque p_xxxx tokens and an existing leaf keeps its id. At most 3 assumptions and 12 leaves. Think about what the mismatches imply, then end your reply with ONE json object of the form {\"operations\": [...]}.",
+ "rounds": [
+  {
+   "kind": "revision",
+   "think": "Let me analyze the current state carefully.\n\n**Current Situation:**\n- All 5 leaves have weight 0.00\n- The plain statistical model holds 1.00 weight\n- No rules have held up or failed (none yet)\n- The mixture's predictions are consistently wrong\n\n**Key Observations from the data:**\n\nLooking at the per-object statistics, I can see clear patterns:\n- Many objects have very stable locations (7/7 or 6/7 sighted days at one receptacle)\n- Some objects move around more (lunchbox_mara: 5 receptacles, mug_mara: 6 receptacles, book_mara: 4 receptacles)\n\nThe \"worst objects\" section shows the model predicted wrong receptacles. But the key issue is that ALL leaves have 0 weight - the statistical model is winning everything.\n\nLet me look at the object statistics more carefully to understand what's actually happening:\n\nStable objects (1 receptacle, 7/7 or 6/7):\n- blanket_mara: couch_l1 (7/7)\n- bowl_shared_1: entry_table_e1 (7/7)\n- laundry_basket_mara: bedroom_floor_b1 (7/7)\n- suitcase_mara: bedroom_floor_b1 (7/7)\n- umbrella_mara: entry_floor_e1 (7/7)\n- vacuum_cleaner_shared_1: bedroom_floor_b1 (7/7)\n- watering_can_mara: sink_k1 (7/7)\n- yoga_mat_mara: couch_l1 (7/7)\n- hairbrush_mara: bathroom_shelf_ba1 (6/7)\n- makeup_kit_mara: bathroom_shelf_ba1 (6/7)\n- medication_bottle_mara: bathroom_shelf_ba1 (6/7)\n- tablet_mara: coffee_table_l1 (6/7)\n\nThese are clearly \"rest\" locations that barely change. The model should be predicting these.\n\nNow, the critical issue: the leaves all have weight 0.00. This means their predictions are no better than (or worse than) the plain statistical model. The statistical model just says \"each object goes where it was most often seen.\"\n\nLooking at the worst objects:\n- object_3: predicted receptacle_7, actually receptacle_20 (2x)\n- object_21: predicted receptacle_19, actually receptacle_12 (2x)\n- object_20: predicted receptacle_21, actually receptacle_19 (2x)\n- object_12: predicted receptacle_14, actually receptacle_22 (1x)\n- object_32: predicted receptacle_17, actually receptacle_22 (1x)\n- object_10: predicted receptacle_2, actually receptacle_17 (1x)\n- object_11: predicted receptacle_13, actually receptacle_18 (1x)\n- object_22: predicted receptacle_3, actually receptacle_20 (1x)\n- object_11: predicted receptacle_18, actually receptacle_9 (1x)\n- object_16: predicted receptacle_4, actually receptacle_12 (1x)\n- object_17: predicted receptacle_15, actually receptacle_12 (1x)\n- object_19: predicted receptacle_2, actually receptacle_13 (1x)\n\nThese are the places where the model (mixture of leaves + statistical) predicted wrong. Since all leaves have 0 weight, these are all from the statistical model's predictions being wrong.\n\nWait, actually re-reading: \"MIXTURE'S WORST OBJECTS \u2014 where it predicted vs where the object actually was\" - this is the combined prediction. Since all leaves have 0 weight, it's purely the statistical model.\n\nThe statistical model just predicts the modal receptacle. So these \"worst\" predictions are cases where the object was NOT at its modal receptacle.\n\nNow, the key question: what should I do to make the leaves earn weight?\n\nThe leaves need to make predictions that are BETTER than just \"modal receptacle.\" They need to capture temporal patterns - when objects move to different places during specific activities.\n\nLet me look at the object statistics for objects that move:\n- book_mara: mostly bookshelf_l1 (2/6), 4 receptacles - moves a lot\n- bowl_shared_2: mostly kitchen_table_k1 (4/7), 3 receptacles\n- charger_mara: mostly kitchen_table_k1 (4/4), 1 receptacle - stable\n- glasses_mara: mostly kitchen_table_k1 (3/4), 3 receptacles\n- headphones_mara: mostly kitchen_table_k1 (3/4), 2 receptacles\n- jacket_mara: mostly entry_hook_e1 (2/4), 4 receptacles - moves a lot\n- keys_mara: mostly entry_table_e1 (4/5), 3 receptacles\n- laptop_mara: mostly kitchen_table_k1 (1/4), 3 receptacles - very mobile\n- lunchbox_mara: mostly counter_k1 (2/5), 5 receptacles - very mobile\n- mug_mara: mostly counter_k1 (4/7), 6 receptacles - very mobile\n- notebook_mara: mostly counter_k1 (2/5), 4 receptacles\n- pan_shared_1: mostly sink_k1 (3/7), 3 receptacles\n- pen_mara: mostly counter_k1 (3/7), 4 receptacles\n- phone_mara: mostly nightstand_b1 (3/4), 2 receptacles\n- plate_shared_1: mostly kitchen_table_k1 (4/7), 4 receptacles\n- plate_shared_2: mostly counter_k1 (5/7), 3 receptacles\n- pot_shared_1: mostly sink_k1 (4/7), 2 receptacles\n- remote_shared_1: mostly coffee_table_l1 (5/7), 2 receptacles\n- towel_mara: mostly towel_rack_ba1 (5/6), 2 receptacles\n- water_bottle_mara: mostly couch_l1 (3/5), 2 receptacles\n- wallet_mara: mostly entry_table_e1 (3/5), 4 receptacles\n\nNow, the problem is that I don't have detailed per-hour sightings. I only have the \"worst objects\" which tell me specific times when predictions were wrong. Let me use those:\n\n- object_3 at day 3 12:00 was at receptacle_20 (not receptacle_7)\n- object_21 at day 4 14:00 was at receptacle_12 (not receptacle_19)\n- object_20 at day 4 14:00 was at receptacle_19 (not receptacle_21)\n- object_12 at day 3 05:00 was at receptacle_22 (not receptacle_14)\n- object_32 at day 3 05:00 was at receptacle_22 (not receptacle_17)\n- object_10 at day 3 08:00 was at receptacle_17 (not receptacle_2)\n- object_11 at day 3 08:00 was at receptacle_18 (not receptacle_13)\n- object_22 at day 3 12:00 was at receptacle_20 (not receptacle_3)\n- object_11 at day 3 18:00 was at receptacle_9 (not receptacle_18)\n- object_16 at day 3 18:00 was at receptacle_12 (not receptacle_4)\n- object_17 at day 3 18:00 was at receptacle_12 (not receptacle_4)\n- object_19 at day 3 18:00 was at receptacle_13 (not receptacle_2)\n\nThese are interesting! Let me see what patterns emerge:\n\nAt 05:00 (early morning):\n- object_12 at receptacle_22\n- object_32 at receptacle_22\nBoth at receptacle_22 at 5am. This could be a \"pre-dawn\" or \"early morning\" activity.\n\nAt 08:00 (morning):\n- object_10 at receptacle_17\n- object_11 at receptacle_18\nThese are in the morning, before the 9am commute.\n\nAt 12:00 (noon):\n- object_3 at receptacle_20\n- object_22 at receptacle_20\nBoth at receptacle_20 at noon.\n\nAt 14:00 (afternoon):\n- object_21 at receptacle_12\n- object_20 at receptacle_19\n\nAt 18:00 (evening):\n- object_11 at receptacle_9\n- object_16 at receptacle_12\n- object_17 at receptacle_12\n- object_19 at receptacle_13\n\nThe 18:00 cluster is interesting - objects 16 and 17 are both at receptacle_12, which could be a kitchen/cooking area. Object 19 is at receptacle_13.\n\nNow, the big problem: ALL leaves have 0 weight. The statistical model (just modal receptacle) is beating everything. This means the leaves' rest locations and activity moves are not adding value over simply saying \"it's where it usually is.\"\n\nThe key insight: the leaves need to have rest locations that match the actual modal locations, AND they need activity moves that correctly predict when objects are NOT at their modal location.\n\nLooking at the current rest locations in the leaves vs the actual statistics:\n- The leaves use receptacle_5, receptacle_11, receptacle_7, etc.\n- The statistics use named locations like \"couch_l1\", \"entry_table_e1\", \"kitchen_table_k1\", etc.\n\nWait - the receptacles in the graph are numbered (receptacle_1 through receptacle_23), while the statistics use named locations. I need to figure out the mapping.\n\nActually, I don't have an explicit mapping. The statistics are given in terms of named locations (couch_l1, kitchen_table_k1, etc.) while the graph uses receptacle_N identifiers. I'll have to work with what I have.\n\nThe fundamental problem is that the leaves' predictions are no better than the statistical model. This could mean:\n1. The rest locations are wrong (don't match where objects actually are)\n2. The activity moves are wrong (predict moves that don't happen)\n3. The activities don't capture the actual temporal patterns\n\nGiven that I can't see the actual per-hour data (only the \"worst\" predictions), I need to be strategic.\n\nLet me think about what would make a leaf earn weight:\n- If a leaf's rest location for an object matches the modal location, it's no better than the statistical model (neutral)\n- If a leaf's activity correctly predicts an object being at a non-modal location during a specific time window, it earns weight\n- If a leaf's activity incorrectly predicts a move, it loses weight\n\nThe \"worst objects\" tell me where the statistical model was wrong. If I can build activities that predict those non-modal locations at those times, I can earn weight.\n\nBut wait - the \"worst objects\" are where the MIXTURE was wrong. Since all leaves have 0 weight, it's purely the statistical model. So these are cases where the object was NOT at its modal location.\n\nLet me focus on the most repeated errors:\n- object_3: 2x at receptacle_20 (instead of receptacle_7) - day 3 12:00\n- object_21: 2x at receptacle_12 (instead of receptacle_19) - day 4 14:00\n- object_20: 2x at receptacle_19 (instead of receptacle_21) - day 4 14:00\n\nThese repeated errors suggest consistent temporal patterns.\n\nNow, the question is: what should I actually DO?\n\nGiven that all leaves have 0 weight and the statistical model has 1.00, I think the best strategy is:\n\n1. **Fix the rest locations** to better match observed modal locations. The current rest locations seem arbitrary (receptacle_5, receptacle_11, etc.) and may not match where objects actually are.\n\n2. **Simplify or fix activities** to only include moves that are actually supported by evidence.\n\n3. **Consider dropping weak leaves** that can't be distinguished from each other.\n\nActually, wait. Let me re-read the problem. The leaves have weight 0.00, meaning they earned NO weight from the sightings. The statistical model earned all the weight. This means the leaves' predictions were consistently worse than just \"predict the modal location.\"\n\nThis is a serious problem. It means the leaves' rest locations are probably wrong (they predict objects at non-modal locations when they should be at modal locations), and/or their activities are predicting moves that don't happen.\n\nSince I can't see the full per-hour data, I need to be conservative. The safest approach:\n\n1. Update rest locations to match the most common observed locations (which is what the statistical model does well)\n2. Only keep activities where I have specific evidence of the move happening\n3. Drop leaves that are redundant or can't be distinguished\n\nBut I don't have the mapping between receptacle_N and the named locations in the statistics! This is a fundamental problem.\n\nWait, let me look more carefully. The \"worst objects\" section uses receptacle_N identifiers. So I can at least see where objects were NOT at their predicted (modal) location.\n\nFor the rest locations, I should try to set them to where objects are most often seen. But I only have the named locations in the statistics, not the receptacle_N mapping.\n\nHmm, actually, I think the receptacle_N in the graph IS the actual receptacle identifier used by the robot. The named locations in the statistics (couch_l1, kitchen_table_k1, etc.) are just descriptive names for the same receptacles. The robot reports sightings in terms of receptacle_N.\n\nSo when the statistics say \"blanket_mara: mostly couch_l1 (7/7)\", that means blanket_mara was at whatever receptacle_N corresponds to couch_l1 on 7/7 days.\n\nThe problem is I don't know which receptacle_N is couch_l1, which is kitchen_table_k1, etc.\n\nBut I DO know from the \"worst objects\" section:\n- object_3's modal is receptacle_7 (that's what the model predicted), but it was actually at receptacle_20 on day 3 12:00\n- object_21's modal is receptacle_19, but was at receptacle_12 on day 4 14:00\n- object_20's modal is receptacle_21, but was at receptacle_19 on day 4 14:00\n\nSo the \"predicted\" locations in the worst objects section ARE the modal locations (what the statistical model predicts). This gives me the modal receptacle for each of those objects.\n\nFrom the worst objects:\n- object_3: modal = receptacle_7\n- object_21: modal = receptacle_19\n- object_20: modal = receptacle_21\n- object_12: modal = receptacle_14\n- object_32: modal = receptacle_17\n- object_10: modal = receptacle_2\n- object_11: modal = receptacle_13 (from first entry) or receptacle_18 (from second entry - wait, it says \"predicted receptacle_13, actually receptacle_18\" AND \"predicted receptacle_18, actually receptacle_9\")\n\nHmm, object_11 appears twice with different predicted locations. That's odd. Maybe the modal changed, or maybe there are two different time windows.\n\nActually wait - looking more carefully:\n- object_11: predicted receptacle_13, actually receptacle_18 \u2014 1x, e.g. day 3 08:00\n- object_11: predicted receptacle_18, actually receptacle_9 \u2014 1x, e.g. day 3 18:00\n\nSo at 08:00, the model predicted receptacle_13 but object_11 was at receptacle_18.\nAt 18:00, the model predicted receptacle_18 but object_11 was at receptacle_9.\n\nThis means object_11's modal might be receptacle_13 (the statistical model's prediction), but it was seen at receptacle_18 at 8am and receptacle_9 at 6pm.\n\nOK so I think the key issue is:\n\nThe leaves' rest locations need to match the actual modal locations. Currently, the leaves have rest locations that may not match. For example, in leaf p_3a7f:\n- object_1: receptacle_5\n- object_2: receptacle_11\n- object_3: receptacle_7\n- etc.\n\nAnd from the worst objects, object_3's modal is receptacle_7 (matches!), object_10's modal is receptacle_2 (but leaf says receptacle_17!), object_11's modal seems to be receptacle_13 (leaf says receptacle_14!).\n\nSo some rest locations are wrong. Let me check which ones I can verify:\n\nFrom worst objects (modal = predicted by statistical model):\n- object_3: receptacle_7 \u2713 (leaf p_3a7f has receptacle_7)\n- object_21: receptacle_19 \u2713 (leaf p_3a7f has receptacle_19)\n- object_20: receptacle_21 \u2713 (leaf p_3a7f has receptacle_21)\n- object_12: receptacle_14 \u2713 (leaf p_3a7f has receptacle_15... wait, let me check)\n\nActually in p_3a7f: object_12: receptacle_15. But the statistical model predicted receptacle_14. So the leaf is WRONG for object_12.\n\n- object_32: receptacle_17 (leaf p_3a7f has receptacle_9... wait, let me recheck)\n\nIn p_3a7f: object_32: receptacle_9. But statistical model predicted receptacle_17. WRONG.\n\n- object_10: receptacle_2 (leaf p_3a7f has receptacle_17). WRONG.\n- object_11: receptacle_13 (leaf p_3a7f has receptacle_14). WRONG.\n- object_22: receptacle_3 (leaf p_3a7f has receptacle_17). WRONG.\n- object_16: receptacle_4 (leaf p_3a7f has receptacle_4). \u2713\n- object_17: receptacle_15 (leaf p_3a7f has receptacle_8). WRONG.\n- object_19: receptacle_2 (leaf p_3a7f has receptacle_9). WRONG.\n\nSo the rest locations in the leaves are significantly wrong for many objects! This explains why the leaves earn 0 weight - they're predicting objects at the wrong places most of the time.\n\nThe fix: update rest locations to match the actual modal locations (which the statistical model gets right).\n\nBut I can only verify the modal locations for objects that appear in the \"worst objects\" list. For the others, I have to use the named statistics.\n\nWait, but I don't have the mapping from named locations to receptacle_N! Unless...\n\nActually, let me reconsider. The \"worst objects\" section tells me the statistical model's prediction (which is the modal receptacle) and where the object actually was. So for those objects, I know the modal receptacle_N.\n\nFor objects NOT in the worst list, the statistical model got them right, meaning the object was at its modal location. But I still don't know what that modal receptacle_N is.\n\nHmm, this is a real limitation. Let me focus on what I CAN fix:\n\nObjects where I know the modal receptacle (from worst objects):\n- object_3: receptacle_7\n- object_21: receptacle_19\n- object_20: receptacle_21\n- object_12: receptacle_14\n- object_32: receptacle_17\n- object_10: receptacle_2\n- object_11: receptacle_13 (from first entry)\n- object_16: receptacle_4\n- object_17: receptacle_15\n- object_19: receptacle_2\n\nWait, object_19's modal is receptacle_2? And object_10's modal is also receptacle_2? That's possible if they're both \"entry\" items.\n\nNow, for the rest of the objects, I need to figure out their modal receptacles from the named statistics. But I don't have the mapping...\n\nUnless I can infer it. Let me think about what the named locations might map to:\n\nLooking at the objects and their stable locations:\n- entry_hook_e1: backpack_mara (4/4), jacket_mara (2/4)\n- couch_l1: blanket_mara (7/7), yoga_mat_mara (7/7), water_bottle_mara (3/5)\n- bookshelf_l1: book_mara (2/6)\n- entry_table_e1: bowl_shared_1 (7/7), keys_mara (4/5), wallet_mara (3/5)\n- kitchen_table_k1: bowl_shared_2 (4/7), charger_mara (4/4), glasses_mara (3/4), headphones_mara (3/4), laptop_mara (1/4), plate_shared_1 (4/7)\n- bathroom_shelf_ba1: hairbrush_mara (6/7), makeup_kit_mara (6/7), medication_bottle_mara (6/7)\n- bedroom_floor_b1: laundry_basket_mara (7/7), suitcase_mara (7/7), vacuum_cleaner_shared_1 (7/7)\n- counter_k1: lunchbox_mara (2/5), mug_mara (4/7), notebook_mara (2/5), pen_mara (3/7), plate_shared_2 (5/7)\n- nightstand_b1: phone_mara (3/4)\n- sink_k1: pan_shared_1 (3/7), pot_shared_1 (4/7), watering_can_mara (7/7)\n- coffee_table_l1: remote_shared_1 (5/7), tablet_mara (6/7)\n- towel_rack_ba1: towel_mara (5/6)\n- entry_floor_e1: umbrella_mara (7/7)\n- cupboard_k1: mug_shared_1 (5/7)\n\nNow, from the worst objects, I know:\n- object_10's modal is receptacle_2\n- object_19's modal is receptacle_2\n\nBoth at receptacle_2. Looking at the named stats, which objects could be at the same receptacle? The \"entry\" items: entry_table_e1 has bowl_shared_1, keys_mara, wallet_mara. entry_hook_e1 has backpack_mara, jacket_mara. entry_floor_e1 has umbrella_mara.\n\nHmm, but I can't definitively map receptacle_N to named locations without more information.\n\nLet me take a different approach. Since I can't fully fix all rest locations, let me focus on:\n\n1. Fixing the rest locations I CAN verify (from worst objects)\n2. Making the activities more conservative (only keep moves I have evidence for)\n3. Possibly dropping leaves that are too similar\n\nActually, wait. Let me re-read the problem statement more carefully.\n\n\"MIXTURE'S WORST OBJECTS \u2014 where it predicted vs where the object actually was\"\n\nThis is the MIXTURE's prediction. Since all leaves have 0 weight, the mixture IS the statistical model. So \"predicted\" = statistical model's prediction = modal receptacle.\n\nOK so my analysis is correct. The leaves' rest locations are wrong for several objects, which is why they earn 0 weight.\n\nLet me now plan my operations:\n\n**Strategy:**\n1. Fix rest locations in all leaves for objects where I know the correct modal (from worst objects)\n2. Simplify activities to only include well-supported moves\n3. Consider whether to drop any leaves\n\nFor the rest locations I can fix:\n- object_3: receptacle_7 (already correct in most leaves)\n- object_10: receptacle_2 (currently receptacle_17 in p_3a7f, p_8c21, p_1b56; receptacle_17 in p_7f03; receptacle_17 in p_e94a)\n- object_11: receptacle_13 (currently receptacle_14 in p_3a7f, p_8c21, p_1b56; receptacle_5 in p_7f03; receptacle_13 in p_e94a)\n- object_12: receptacle_14 (currently receptacle_15 in p_3a7f, p_8c21, p_1b56; receptacle_14 in p_7f03; receptacle_14 in p_e94a)\n- object_16: receptacle_4 (currently receptacle_4 in all - correct!)\n- object_17: receptacle_15 (currently receptacle_8 in p_3a7f, p_8c21, p_1b56; receptacle_8 in p_7f03; receptacle_8 in p_e94a)\n- object_19: receptacle_2 (currently receptacle_9 in p_3a7f, p_8c21, p_1b56; receptacle_9 in p_7f03; receptacle_8 in p_e94a)\n- object_20: receptacle_21 (currently receptacle_21 in all - correct!)\n- object_21: receptacle_19 (currently receptacle_19 in p_3a7f, p_8c21, p_1b56; receptacle_19 in p_7f03; receptacle_15 in p_e94a)\n- object_22: receptacle_3 (currently receptacle_17 in p_3a7f, p_8c21, p_1b56; receptacle_15 in p_7f03; receptacle_15 in p_e94a)\n- object_32: receptacle_17 (currently receptacle_9 in p_3a7f, p_8c21, p_1b56; receptacle_17 in p_7f03; receptacle_17 in p_e94a)\n\nWait, I need to be more careful. Let me re-read the worst objects:\n\n\"object_22: predicted receptacle_3, actually receptacle_20 \u2014 1x, e.g. day 3 12:00\"\n\nSo object_22's modal is receptacle_3. But in p_3a7f, object_22 is at receptacle_17. That's wrong.\n\n\"object_32: predicted receptacle_17, actually receptacle_22 \u2014 1x, e.g. day 3 05:00\"\n\nobject_32's modal is receptacle_17. In p_3a7f, it's at receptacle_9. Wrong.\n\nOK let me now think about what to do with the activities. The current activities predict moves during commute (9-17), evening cook (18-20), and morning prep (7-8.5). \n\nThe \"worst objects\" at specific times:\n- 05:00: object_12 at receptacle_22, object_32 at receptacle_22\n- 08:00: object_10 at receptacle_17, object_11 at receptacle_18\n- 12:00: object_3 at receptacle_20, object_22 at receptacle_20\n- 14:00: object_21 at receptacle_12, object_20 at receptacle_19\n- 18:00: object_11 at receptacle_9, object_16 at receptacle_12, object_17 at receptacle_12, object_19 at receptacle_13\n\nThe 05:00 sightings are BEFORE any current activity starts (morning_prep starts at 7:00). So objects 12 and 32 being at receptacle_22 at 5am is not covered by any current activity. This might be a \"pre-dawn\" thing or just their actual rest location.\n\nWait - if object_12's modal is receptacle_14 but it was at receptacle_22 at 5am, and object_32's modal is receptacle_17 but it was at receptacle_22 at 5am... maybe receptacle_22 is where they go very early in the morning? Or maybe the \"modal\" is based on all sightings and 5am is an exception.\n\nThe 08:00 sightings:\n- object_10 at receptacle_17 (modal is receptacle_2)\n- object_11 at receptacle_18 (modal is receptacle_13)\nThese are during the morning_prep window (7:00-8:30). The current morning_prep moves object_3 to receptacle_10 and object_2 to receptacle_10. It doesn't move object_10 or object_11.\n\nThe 12:00 sightings:\n- object_3 at receptacle_20 (modal is receptacle_7)\n- object_22 at receptacle_20 (modal is receptacle_3)\nThese are during the commute window (9-17). The current commute moves object_1, 6, 7, 9, 10, 19 to receptacle_2 or 3. It doesn't move object_3 or object_22.\n\nThe 14:00 sightings:\n- object_21 at receptacle_12 (modal is receptacle_19)\n- object_20 at receptacle_19 (modal is receptacle_21)\nAlso during commute.\n\nThe 18:00 sightings:\n- object_11 at receptacle_9 (modal is receptacle_13)\n- object_16 at receptacle_12 (modal is receptacle_4)\n- object_17 at receptacle_12 (modal is receptacle_15)\n- object_19 at receptacle_13 (modal is receptacle_2)\nThese are at the start of the evening_cook window (18:00-20:00). The current evening_cook moves object_4, 5, 15, 16 to receptacle_23.\n\nHmm, so the actual evening moves seem to be:\n- object_16 \u2192 receptacle_12 (not receptacle_23)\n- object_17 \u2192 receptacle_12\n- object_11 \u2192 receptacle_9\n- object_19 \u2192 receptacle_13\n\nThis is very different from what the leaves predict! The leaves predict objects going to receptacle_23 (cooking zone) but actually they're going to receptacle_12, receptacle_9, receptacle_13.\n\nOK so I think the main issues are:\n1. Rest locations are wrong for many objects\n2. Activity moves are wrong (wrong targets, wrong destinations)\n3. The activities might be at wrong times\n\nGiven the limited evidence (only 12 \"worst\" data points), I should be conservative. Let me focus on:\n1. Fixing rest locations where I have evidence\n2. Adjusting activities based on the temporal evidence\n3. Keeping the overall structure but making it more accurate\n\nLet me now think about which leaves to keep and which to modify.\n\nThe assumptions:\n- household_size: one_adult 0.49, two_adults 0.51 (essentially 50/50, open)\n- weekday_presence: out_nine_to_five 0.95, home_all_day 0.05 (settled)\n- evening_meal: cook_at_home 0.34, eat_out 0.66 (leaning toward eat_out)\n\nSince weekday_presence is settled at out_nine_to_five, the home_all_day leaf (p_1b56) is very unlikely. I could drop it.\n\nSince evening_meal is leaning toward eat_out (0.66), the cook_at_home leaves (p_3a7f, p_7f03) are less likely but still possible.\n\nThe two_adults vs one_adult is 50/50, so I should keep both.\n\nLet me plan:\n1. Drop p_1b56 (home_all_day, only 5% weight)\n2. Edit remaining leaves to fix rest locations and activities\n\nActually, wait. Let me reconsider. The problem says \"leaves you do not mention are kept exactly as they are, with the weight they have earned.\" All leaves have 0 weight. So keeping them costs nothing, but they also earn nothing.\n\nThe key question: can I make the leaves earn weight by fixing their predictions?\n\nI think the answer is yes, if I:\n1. Set rest locations to the correct modal receptacles\n2. Only include activity moves that I have evidence for\n3. Make the distinguishing checks testable\n\nLet me focus on the most impactful changes.\n\nFor the rest locations, I'll fix the ones I know are wrong:\n- object_10: receptacle_2 (was receptacle_17)\n- object_11: receptacle_13 (was receptacle_14 in some, receptacle_5 in p_7f03)\n- object_12: receptacle_14 (was receptacle_15 in some)\n- object_17: receptacle_15 (was receptacle_8)\n- object_19: receptacle_2 (was receptacle_9 or receptacle_8)\n- object_22: receptacle_3 (was receptacle_17 or receptacle_15)\n- object_32: receptacle_17 (was receptacle_9 in some)\n- object_21: receptacle_19 (was receptacle_15 in p_e94a)\n\nFor the other objects, I'll keep the current values since I can't verify them.\n\nFor activities, based on the evidence:\n- At 18:00: objects 16, 17 go to receptacle_12; object 11 goes to receptacle_9; object 19 goes to receptacle_13\n- At 12:00: objects 3, 22 go to receptacle_20\n- At 08:00: object 10 goes to receptacle_17; object 11 goes to receptacle_18\n- At 05:00: objects 12, 32 go to receptacle_22\n\nThese are single sightings (except the 2x ones), so I should be cautious. But they do suggest patterns.\n\nActually, I realize I need to be more careful. The \"worst objects\" are where the model was WRONG. So:\n- At 12:00, object_3 was at receptacle_20 (NOT at its modal receptacle_7)\n- At 12:00, object_22 was at receptacle_20 (NOT at its modal receptacle_3)\n\nThis means at noon, objects 3 and 22 are at receptacle_20. This could be a \"midday activity\" where they go to a common location.\n\nSimilarly at 18:00:\n- object_16 at receptacle_12 (not modal receptacle_4)\n- object_17 at receptacle_12 (not modal receptacle_15)\n- object_11 at receptacle_9 (not modal receptacle_13)\n- object_19 at receptacle_13 (not modal receptacle_2)\n\nAt 18:00, objects 16 and 17 are together at receptacle_12. This could be an evening kitchen activity.\n\nLet me now design the revised leaves.\n\nI'll:\n1. Drop p_1b56 (home_all_day - only 5% probability)\n2. Edit the remaining 4 leaves to fix rest locations\n3. Adjust activities based on evidence\n\nActually, let me reconsider whether to drop p_1b56. The guidance says \"An assumption value losing weight across every leaf that depends on it means that premise is wrong.\" home_all_day has 0.05 weight, which is very low. But it's not zero. I'll drop it since it's so unlikely and its distinguishing prediction hasn't been tested.\n\nLet me now write out the operations.\n\nFor the rest locations, I'll create a \"corrected\" set based on what I know:\n\nKnown modals (from worst objects):\n- object_3: receptacle_7\n- object_10: receptacle_2\n- object_11: receptacle_13\n- object_12: receptacle_14\n- object_16: receptacle_4\n- object_17: receptacle_15\n- object_19: receptacle_2\n- object_20: receptacle_21\n- object_21: receptacle_19\n- object_22: receptacle_3\n- object_32: receptacle_17\n\nUnknown modals (keep current values from leaves, but they might be wrong):\n- object_1: receptacle_5 (all leaves agree)\n- object_2: receptacle_11 (all leaves agree)\n- object_4: receptacle_18 (all leaves agree)\n- object_5: receptacle_19 (all leaves agree)\n- object_6: receptacle_14 (p_3a7f, p_8c21, p_1b56) or receptacle_14 (p_7f03) or receptacle_14 (p_e94a) - wait, p_e94a has object_6: receptacle_14. OK all agree.\n\nWait, let me recheck p_e94a's rest:\n\"object_6\": \"receptacle_14\" - yes\n\"object_7\": \"receptacle_10\" - different from others (receptacle_15)\n\"object_8\": \"receptacle_4\" - different from others (receptacle_20)\n\"object_11\": \"receptacle_13\" - matches what I derived\n\"object_14\": \"receptacle_21\" - different from others (receptacle_12)\n\"object_19\": \"receptacle_8\" - different\n\"object_20\": \"receptacle_12\" - different from others (receptacle_21)\n\"object_21\": \"receptacle_15\" - different from others (receptacle_19)\n\"object_22\": \"receptacle_15\" - different from others (receptacle_17)\n\"object_24\": \"receptacle_19\" - different from others (receptacle_12)\n\nSo p_e94a has different rest locations for several objects. This is because it was \"updated to match observed quiescent-hour sightings\" according to its rationale.\n\nHmm, but the statistical model (which just uses modal) is beating all leaves. So p_e94a's \"updated\" locations might actually be wrong too.\n\nI think the safest approach is:\n- For objects where I KNOW the modal (from worst objects), set rest to that\n- For objects where I DON'T know, keep the most common value across leaves (or the value from the leaf that seems most evidence-based)\n\nLet me just go with fixing what I can and keeping the rest.\n\nNow for activities:\n\nThe evidence suggests:\n1. At ~12:00 (midday): objects 3, 22 \u2192 receptacle_20\n2. At ~18:00 (evening): objects 16, 17 \u2192 receptacle_12; object 11 \u2192 receptacle_9; object 19 \u2192 receptacle_13\n3. At ~08:00 (morning): object 10 \u2192 receptacle_17; object 11 \u2192 receptacle_18\n4. At ~05:00 (pre-dawn): objects 12, 32 \u2192 receptacle_22\n\nThe current activities:\n- weekday_commute_out (9-17): moves objects 1,6,7,9,10,19 to receptacle_2 or 3\n- evening_cook (18-20): moves objects 4,5,15,16 to receptacle_23\n- morning_prep (7-8.5): moves objects 3,2 to receptacle_10\n\nThe evidence doesn't strongly support the commute moves (I don't have sightings at 9-17 that contradict them, but I also don't have confirmations). The 12:00 sightings show objects 3 and 22 at receptacle_20, which is NOT where the commute moves them.\n\nActually wait - the commute moves object_10 to receptacle_2, but at 08:00 (before commute starts at 9), object_10 was at receptacle_17. And object_10's modal IS receptacle_2. So maybe the commute move is correct (object_10 goes to receptacle_2 during the day), but at 8am it hasn't gone yet.\n\nHmm, but the worst objects section says object_10 was PREDICTED at receptacle_2 (its modal) but was ACTUALLY at receptacle_17 at 08:00. So at 8am, object_10 is NOT at its modal. This means the morning_prep activity (7-8.5) should move object_10 to receptacle_17, not just objects 3 and 2.\n\nWait, but the morning_prep currently moves object_3 to receptacle_10 and object_2 to receptacle_10. It doesn't move object_10. So the model predicts object_10 at its rest location (receptacle_2) at 8am, but it's actually at receptacle_17.\n\nThis suggests I should add object_10 \u2192 receptacle_17 to the morning_prep activity.\n\nSimilarly, object_11 at 8am was at receptacle_18 (not its modal receptacle_13). So I should add object_11 \u2192 receptacle_18 to morning_prep.\n\nFor the 12:00 sightings (during commute window):\n- object_3 at receptacle_20 (not modal receptacle_7)\n- object_22 at receptacle_20 (not modal receptacle_3)\n\nThe commute activity currently doesn't move object_3 or object_22. So I should add them to the commute, going to receptacle_20.\n\nFor the 18:00 sightings (evening):\n- object_16 at receptacle_12 (not modal receptacle_4)\n- object_17 at receptacle_12 (not modal receptacle_15)\n- object_11 at receptacle_9 (not modal receptacle_13)\n- object_19 at receptacle_13 (not modal receptacle_2)\n\nThe evening_cook activity currently moves objects 4, 5, 15, 16 to receptacle_23. But the evidence shows object_16 going to receptacle_12, not receptacle_23. And objects 17, 11, 19 are also moving.\n\nThis suggests the evening activity is different from what's modeled. Maybe it's not \"cooking\" per se but some other evening activity.\n\nGiven that evening_meal is leaning toward eat_out (0.66), maybe the evening activity is \"getting ready to go out\" rather than cooking. Objects 16, 17 going to receptacle_12 could be \"gathering items to take out.\"\n\nOK, I think I have enough to make a reasonable revision. Let me be conservative and only make changes I'm fairly confident about.\n\n**Plan:**\n1. Drop p_1b56 (home_all_day, 5% weight, untested)\n2. Edit p_3a7f: fix rest locations, adjust activities\n3. Edit p_8c21: fix rest locations, adjust activities\n4. Edit p_7f03: fix rest locations, adjust activities\n5. Edit p_e94a: fix rest locations, adjust activities\n\nFor rest locations, I'll use:\n- object_1: receptacle_5 (keep)\n- object_2: receptacle_11 (keep)\n- object_3: receptacle_7 (keep)\n- object_4: receptacle_18 (keep)\n- object_5: receptacle_19 (keep)\n- object_6: receptacle_14 (keep)\n- object_7: receptacle_15 (keep, except p_e94a has receptacle_10)\n- object_8: receptacle_20 (keep, except p_e94a has receptacle_4)\n- object_9: receptacle_9 (keep)\n- object_10: receptacle_2 (FIX from receptacle_17)\n- object_11: receptacle_13 (FIX from receptacle_14 in some)\n- object_12: receptacle_14 (FIX from receptacle_15 in some)\n- object_13: receptacle_6 (keep)\n- object_14: receptacle_12 (keep, except p_e94a has receptacle_21)\n- object_15: receptacle_4 (keep)\n- object_16: receptacle_4 (keep)\n- object_17: receptacle_15 (FIX from receptacle_8)\n- object_18: receptacle_13 (keep)\n- object_19: receptacle_2 (FIX from receptacle_9 or receptacle_8)\n- object_20: receptacle_21 (keep, except p_e94a has receptacle_12)\n- object_21: receptacle_19 (keep, except p_e94a has receptacle_15)\n- object_22: receptacle_3 (FIX from receptacle_17 or receptacle_15)\n- object_23: receptacle_13 (keep)\n- object_24: receptacle_12 (keep, except p_e94a has receptacle_19)\n- object_25: receptacle_13 (keep)\n- object_26: receptacle_10 (keep)\n- object_27: receptacle_6 (keep)\n- object_28: receptacle_10 (keep)\n- object_29: receptacle_22 (keep)\n- object_30: receptacle_16 (keep)\n- object_31: receptacle_6 (keep)\n- object_32: receptacle_17 (FIX from receptacle_9 in some)\n- object_33: receptacle_14 (keep, except p_7f03 has receptacle_9)\n- object_34: receptacle_21 (keep)\n- object_35: receptacle_11 (keep)\n\nFor activities, I'll create:\n1. **morning_prep** (7:00-8:30, both days): \n   - object_3 \u2192 receptacle_10 (usually) [keep, was in original]\n   - object_2 \u2192 receptacle_10 (sometimes) [keep]\n   - object_10 \u2192 receptacle_17 (usually) [NEW, evidence at 8am]\n   - object_11 \u2192 receptacle_18 (usually) [NEW, evidence at 8am]\n\n2. **weekday_commute** (9:00-17:00, weekday):\n   - object_1 \u2192 receptacle_2 (almost_always) [keep]\n   - object_6 \u2192 receptacle_2 (almost_always) [keep]\n   - object_7 \u2192 receptacle_2 (almost_always) [keep]\n   - object_9 \u2192 receptacle_3 (usually) [keep]\n   - object_10 \u2192 receptacle_2 (almost_always) [keep - wait, but at 8am it was at receptacle_17, and its modal is receptacle_2. So during the day it's at receptacle_2? That makes sense - it goes to the entry area during the day]\n   \n   Actually wait. If object_10's modal is receptacle_2, and at 8am it's at receptacle_17, then during the commute (9-17) it should be at receptacle_2. That's consistent with the commute move.\n   \n   - object_3 \u2192 receptacle_20 (usually) [NEW, evidence at 12:00]\n   - object_22 \u2192 receptacle_20 (usually) [NEW, evidence at 12:00]\n   - object_19 \u2192 receptacle_2 (usually) [keep]\n\n   Hmm, but I only have ONE sighting of object_3 at receptacle_20 (day 3 12:00). And one of object_22 at receptacle_20. That's weak evidence. Let me use \"sometimes\" instead of \"usually.\"\n\n3. **evening_activity** (18:00-20:00, both days):\n   - object_16 \u2192 receptacle_12 (usually) [NEW, evidence at 18:00]\n   - object_17 \u2192 receptacle_12 (usually) [NEW, evidence at 18:00]\n   - object_11 \u2192 receptacle_9 (sometimes) [NEW, evidence at 18:00]\n   - object_19 \u2192 receptacle_13 (sometimes) [NEW, evidence at 18:00]\n   \n   For cook_at_home leaves, I'll also keep:\n   - object_4 \u2192 receptacle_23 (sometimes) [reduced from \"usually\" since no evidence]\n   - object_5 \u2192 receptacle_23 (sometimes) [reduced]\n\n   Actually, I have NO evidence for objects 4, 5, 15 going to receptacle_23. The only evening evidence is objects 16, 17, 11, 19. Let me be very conservative and only include what I have evidence for.\n\n   But wait - the evening_cook activity is what distinguishes cook_at_home from eat_out. If I remove the cooking moves, the two become indistinguishable. Let me keep a minimal cooking move but with low confidence.\n\n   For cook_at_home: object_4 \u2192 receptacle_23 (sometimes)\n   For eat_out: no evening kitchen moves\n\n4. **pre_dawn** (5:00-6:00, both days):\n   - object_12 \u2192 receptacle_22 (sometimes) [NEW, evidence at 5am]\n   - object_32 \u2192 receptacle_22 (sometimes) [NEW, evidence at 5am]\n\n   Actually, this is only 1 sighting each. Very weak. Maybe I should skip this.\n\nLet me be more conservative. I'll only include moves with at least some pattern:\n- 18:00: objects 16 AND 17 both at receptacle_12 (2 objects, same time, same place) - this is a pattern\n- 12:00: objects 3 AND 22 both at receptacle_20 (2 objects, same time, same place) - this is a pattern\n- 08:00: objects 10 at receptacle_17, 11 at receptacle_18 (different places, weaker pattern)\n- 05:00: objects 12 AND 32 both at receptacle_22 (2 objects, same time, same place) - pattern\n\nOK let me now write the actual operations. I'll edit 4 leaves and drop 1.\n\nWait, I need to think about the distinguishing predictions and checks. Each leaf needs a distinguishing prediction that tests what makes it different from the others.\n\nFor the 4 remaining leaves:\n- p_3a7f: one_adult, out_9-5, cook_at_home\n- p_8c21: one_adult, out_9-5, eat_out\n- p_7f03: two_adults, out_9-5, cook_at_home\n- p_e94a: two_adults, out_9-5, eat_out\n\nThe distinguishing features:\n- one_adult vs two_adults: whether object_11 (second person's item) goes out during commute\n- cook_at_home vs eat_out: whether kitchen objects move in the evening\n\nFor one_adult: object_11 stays at home during commute (at receptacle_13)\nFor two_adults: object_11 goes out during commute (to receptacle_3)\n\nFor cook_at_home: object_4 moves to receptacle_23 in evening\nFor eat_out: object_4 stays at receptacle_18 in evening\n\nThese are the same distinguishing predictions as before, which is fine.\n\nLet me now write the operations. I'll try to be concise but complete.\n\nActually, I realize I should also think about whether the \"weekday_commute\" moves for objects 1, 6, 7, 9, 10, 19 are actually supported. I have:\n- object_10's modal is receptacle_2 (entry area) - consistent with being \"out\" during the day\n- object_19's modal is receptacle_2 (entry area) - same\n\nBut I don't have direct evidence of the commute moves happening. The only evidence I have is:\n- At 8am, object_10 is at receptacle_17 (NOT at receptacle_2 yet)\n- At 12pm, object_3 is at receptacle_20, object_22 is at receptacle_20\n\nThe 8am evidence is BEFORE the commute (9am start), so it's consistent with the commute happening later.\n\nI'll keep the commute moves but maybe reduce confidence to \"usually\" instead of \"almost_always\" since I don't have direct confirmation.\n\nActually, you know what, let me step back and think about this differently.\n\nThe fundamental problem is: all leaves have 0 weight. The statistical model (modal receptacle) is winning. For a leaf to earn weight, it needs to predict objects at NON-modal locations at specific times, AND those predictions need to be correct.\n\nThe \"worst objects\" section tells me where the statistical model was wrong. If I can build activities that predict those exact non-modal locations at those exact times, I'll earn weight.\n\nThe non-modal sightings I have:\n1. Day 3, 12:00: object_3 at receptacle_20, object_22 at receptacle_20\n2. Day 4, 14:00: object_21 at receptacle_12, object_20 at receptacle_19\n3. Day 3, 05:00: object_12 at receptacle_22, object_32 at receptacle_22\n4. Day 3, 08:00: object_10 at receptacle_17, object_11 at receptacle_18\n5. Day 3, 18:00: object_11 at receptacle_9, object_16 at receptacle_12, object_17 at receptacle_12, object_19 at receptacle_13\n\nIf I create activities that predict these locations at these times, the leaf will be correct where the statistical model is wrong, earning weight.\n\nBut I need to be careful: if I predict a move and the object ISN'T there on other days, I lose weight. Since I only have 1-2 data points per move, I should use \"sometimes\" or \"usually\" (not \"almost_always\").\n\nLet me finalize my plan:\n\n**Activities to include (common to all leaves):**\n\n1. **morning_routine** (7:00-8:30, both days):\n   - object_10 \u2192 receptacle_17 (usually)\n   - object_11 \u2192 receptacle_18 (usually)\n   - object_3 \u2192 receptacle_10 (sometimes) [keep from before]\n\n2. **weekday_out** (9:00-17:00, weekday):\n   - object_1 \u2192 receptacle_2 (usually)\n   - object_6 \u2192 receptacle_2 (usually)\n   - object_7 \u2192 receptacle_2 (usually)\n   - object_9 \u2192 receptacle_3 (usually)\n   - object_10 \u2192 receptacle_2 (usually)\n   - object_19 \u2192 receptacle_2 (usually)\n   - object_3 \u2192 receptacle_20 (sometimes)\n   - object_22 \u2192 receptacle_20 (sometimes)\n   - object_21 \u2192 receptacle_12 (sometimes)\n   - object_20 \u2192 receptacle_19 (sometimes)\n\n   For two_adults leaves, add:\n   - object_11 \u2192 receptacle_3 (usually)\n   - object_12 \u2192 receptacle_3 (usually)\n\n3. **evening_activity** (18:00-20:00, both days):\n   - object_16 \u2192 receptacle_12 (usually)\n   - object_17 \u2192 receptacle_12 (usually)\n   - object_11 \u2192 receptacle_9 (sometimes)\n   - object_19 \u2192 receptacle_13 (sometimes)\n\n   For cook_at_home leaves, add:\n   - object_4 \u2192 receptacle_23 (sometimes)\n   - object_5 \u2192 receptacle_23 (sometimes)\n\n4. **early_morning** (5:00-6:00, both days):\n   - object_12 \u2192 receptacle_22 (sometimes)\n   - object_32 \u2192 receptacle_22 (sometimes)\n\nNow, for the distinguishing checks:\n- one_adult vs two_adults: check if object_11 is at receptacle_3 (entry) during weekday afternoon \u2192 two_adults; at receptacle_13 (home) \u2192 one_adult\n- cook_at_home vs eat_out: check if object_4 is at receptacle_23 at 19:00 \u2192 cook; at receptacle_18 \u2192 eat_out\n\nThese are the same as before, which is fine.\n\nLet me now write the actual JSON operations.\n\nOne more thought: should I keep the \"weekend_relax\" activity? I have no evidence for it. I'll drop it to keep things simple.\n\nAlso, I should note that for the \"weekday_out\" activity, I'm including moves for objects 3, 22, 21, 20 going to receptacle_20, 12, 19. But these might not happen every weekday. I'll use \"sometimes\" for these.\n\nActually, wait. Let me reconsider the 14:00 sightings:\n- object_21 at receptacle_12 (day 4 14:00)\n- object_20 at receptacle_19 (day 4 14:00)\n\nobject_20's modal is receptacle_21, and it was at receptacle_19. object_21's modal is receptacle_19, and it was at receptacle_12. Interesting - they seem to have swapped or moved to each other's general area.\n\nThis is only 1 sighting each, so I'll use \"sometimes.\"\n\nOK, let me write the operations now. I'll drop p_1b56 and edit the other 4.\n\nLet me make sure I have the right structure for each leaf. Each leaf needs:\n- leaf_id\n- assumes (all 3 assumptions)\n- rationale\n- distinguishing_prediction\n- distinguishing_check\n- rest (all 35 objects)\n- activities (array)\n- hypothesis_id\n\nLet me write them out.",
+   "payload": "{\"operations\": [\n  {\"op\": \"drop_leaf\", \"leaf_id\": \"p_1b56\", \"reason\": \"weekday_presence=home_all_day has only 0.05 weight (settled at out_nine_to_five 0.95); distinguishing prediction untested; no evidence supports all-day presence\"},\n\n  {\"op\": \"edit_leaf\", \"leaf_id\": \"p_3a7f\", \"body\": {\n    \"leaf_id\": \"p_3a7f\",\n    \"assumes\": {\n      \"household_size\": \"one_adult\",\n      \"weekday_presence\": \"out_nine_to_five\",\n      \"evening_meal\": \"cook_at_home\"\n    },\n    \"rationale\": \"single commuter who cooks dinner; personal items go out during the day; evening sees kitchen items move to prep area\",\n    \"distinguishing_prediction\": \"object_4 is at receptacle_23 (cooking zone) at 19:00 on a weekday evening, while object_11 stays at receptacle_13 (home, no second resident)\",\n    \"distinguishing_check\": {\n      \"target\": \"object_4\",\n      \"at\": \"receptacle_23\",\n      \"days\": \"weekday\",\n      \"hour\": 19\n    },\n    \"rest\": {\n      \"object_1\": \"receptacle_5\",\n      \"object_2\": \"receptacle_11\",\n      \"object_3\": \"receptacle_7\",\n      \"object_4\": \"receptacle_18\",\n      \"object_5\": \"receptacle_19\",\n      \"object_6\": \"receptacle_14\",\n      \"object_7\": \"receptacle_15\",\n      \"object_8\": \"receptacle_20\",\n      \"object_9\": \"receptacle_9\",\n      \"object_10\": \"receptacle_2\",\n      \"object_11\": \"receptacle_13\",\n      \"object_12\": \"receptacle_14\",\n      \"object_13\": \"receptacle_6\",\n      \"object_14\": \"receptacle_12\",\n      \"object_15\": \"receptacle_4\",\n      \"object_16\": \"receptacle_4\",\n      \"object_17\": \"receptacle_15\",\n      \"object_18\": \"receptacle_13\",\n      \"object_19\": \"receptacle_2\",\n      \"object_20\": \"receptacle_21\",\n      \"object_21\": \"receptacle_19\",\n      \"object_22\": \"receptacle_3\",\n      \"object_23\": \"receptacle_13\",\n      \"object_24\": \"receptacle_12\",\n      \"object_25\": \"receptacle_13\",\n      \"object_26\": \"receptacle_10\",\n      \"object_27\": \"receptacle_6\",\n      \"object_28\": \"receptacle_10\",\n      \"object_29\": \"receptacle_22\",\n      \"object_30\": \"receptacle_16\",\n      \"object_31\": \"receptacle_6\",\n      \"object_32\": \"receptacle_17\",\n      \"object_33\": \"receptacle_14\",\n      \"object_34\": \"receptacle_21\",\n      \"object_35\": \"receptacle_11\"\n    },\n    \"activities\": [\n      {\n        \"name\": \"morning_routine\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 7.0,\n        \"duration_h\": 1.5,\n        \"moves\": [\n          {\"target\": \"object_10\", \"to\": \"receptacle_17\", \"chance\": \"usually\"},\n          {\"target\": \"object_11\", \"to\": \"receptacle_18\", \"chance\": \"usually\"},\n          {\"target\": \"object_3\", \"to\": \"receptacle_10\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_2\", \"to\": \"receptacle_10\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"weekday_out\",\n        \"days\": \"weekday\",\n        \"frequency_per_week\": 5,\n        \"start_hour\": 9.0,\n        \"duration_h\": 8.0,\n        \"moves\": [\n          {\"target\": \"object_1\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_6\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_7\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_9\", \"to\": \"receptacle_3\", \"chance\": \"usually\"},\n          {\"target\": \"object_10\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_19\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_3\", \"to\": \"receptacle_20\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_22\", \"to\": \"receptacle_20\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_21\", \"to\": \"receptacle_12\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_20\", \"to\": \"receptacle_19\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"evening_cook\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 18.0,\n        \"duration_h\": 2.0,\n        \"moves\": [\n          {\"target\": \"object_16\", \"to\": \"receptacle_12\", \"chance\": \"usually\"},\n          {\"target\": \"object_17\", \"to\": \"receptacle_12\", \"chance\": \"usually\"},\n          {\"target\": \"object_11\", \"to\": \"receptacle_9\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_19\", \"to\": \"receptacle_13\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_4\", \"to\": \"receptacle_23\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_5\", \"to\": \"receptacle_23\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"early_morning\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 5.0,\n        \"duration_h\": 1.0,\n        \"moves\": [\n          {\"target\": \"object_12\", \"to\": \"receptacle_22\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_32\", \"to\": \"receptacle_22\", \"chance\": \"sometimes\"}\n        ]\n      }\n    ],\n    \"hypothesis_id\": \"p_3a7f\"\n  }},\n\n  {\"op\": \"edit_leaf\", \"leaf_id\": \"p_8c21\", \"body\": {\n    \"leaf_id\": \"p_8c21\",\n    \"assumes\": {\n      \"household_size\": \"one_adult\",\n      \"weekday_presence\": \"out_nine_to_five\",\n      \"evening_meal\": \"eat_out\"\n    },\n    \"rationale\": \"single commuter who eats out; kitchen stays idle in evening; only entry and shared items move during the day\",\n    \"distinguishing_prediction\": \"object_4 remains at receptacle_18 at 19:00 (no cooking) and object_11 stays at receptacle_13 (no second resident goes out)\",\n    \"distinguishing_check\": {\n      \"target\": \"object_4\",\n      \"at\": \"receptacle_18\",\n      \"days\": \"both\",\n      \"hour\": 19\n    },\n    \"rest\": {\n      \"object_1\": \"receptacle_5\",\n      \"object_2\": \"receptacle_11\",\n      \"object_3\": \"receptacle_7\",\n      \"object_4\": \"receptacle_18\",\n      \"object_5\": \"receptacle_19\",\n      \"object_6\": \"receptacle_14\",\n      \"object_7\": \"receptacle_15\",\n      \"object_8\": \"receptacle_20\",\n      \"object_9\": \"receptacle_9\",\n      \"object_10\": \"receptacle_2\",\n      \"object_11\": \"receptacle_13\",\n      \"object_12\": \"receptacle_14\",\n      \"object_13\": \"receptacle_6\",\n      \"object_14\": \"receptacle_12\",\n      \"object_15\": \"receptacle_4\",\n      \"object_16\": \"receptacle_4\",\n      \"object_17\": \"receptacle_15\",\n      \"object_18\": \"receptacle_13\",\n      \"object_19\": \"receptacle_2\",\n      \"object_20\": \"receptacle_21\",\n      \"object_21\": \"receptacle_19\",\n      \"object_22\": \"receptacle_3\",\n      \"object_23\": \"receptacle_13\",\n      \"object_24\": \"receptacle_12\",\n      \"object_25\": \"receptacle_13\",\n      \"object_26\": \"receptacle_10\",\n      \"object_27\": \"receptacle_6\",\n      \"object_28\": \"receptacle_10\",\n      \"object_29\": \"receptacle_22\",\n      \"object_30\": \"receptacle_16\",\n      \"object_31\": \"receptacle_6\",\n      \"object_32\": \"receptacle_17\",\n      \"object_33\": \"receptacle_14\",\n      \"object_34\": \"receptacle_21\",\n      \"object_35\": \"receptacle_11\"\n    },\n    \"activities\": [\n      {\n        \"name\": \"morning_routine\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 7.0,\n        \"duration_h\": 1.5,\n        \"moves\": [\n          {\"target\": \"object_10\", \"to\": \"receptacle_17\", \"chance\": \"usually\"},\n          {\"target\": \"object_11\", \"to\": \"receptacle_18\", \"chance\": \"usually\"},\n          {\"target\": \"object_3\", \"to\": \"receptacle_10\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_2\", \"to\": \"receptacle_10\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"weekday_out\",\n        \"days\": \"weekday\",\n        \"frequency_per_week\": 5,\n        \"start_hour\": 9.0,\n        \"duration_h\": 8.0,\n        \"moves\": [\n          {\"target\": \"object_1\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_6\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_7\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_9\", \"to\": \"receptacle_3\", \"chance\": \"usually\"},\n          {\"target\": \"object_10\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_19\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_3\", \"to\": \"receptacle_20\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_22\", \"to\": \"receptacle_20\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_21\", \"to\": \"receptacle_12\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_20\", \"to\": \"receptacle_19\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"evening_gather\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 18.0,\n        \"duration_h\": 2.0,\n        \"moves\": [\n          {\"target\": \"object_16\", \"to\": \"receptacle_12\", \"chance\": \"usually\"},\n          {\"target\": \"object_17\", \"to\": \"receptacle_12\", \"chance\": \"usually\"},\n          {\"target\": \"object_11\", \"to\": \"receptacle_9\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_19\", \"to\": \"receptacle_13\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"early_morning\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 5.0,\n        \"duration_h\": 1.0,\n        \"moves\": [\n          {\"target\": \"object_12\", \"to\": \"receptacle_22\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_32\", \"to\": \"receptacle_22\", \"chance\": \"sometimes\"}\n        ]\n      }\n    ],\n    \"hypothesis_id\": \"p_8c21\"\n  }},\n\n  {\"op\": \"edit_leaf\", \"leaf_id\": \"p_7f03\", \"body\": {\n    \"leaf_id\": \"p_7f03\",\n    \"assumes\": {\n      \"household_size\": \"two_adults\",\n      \"weekday_presence\": \"out_nine_to_five\",\n      \"evening_meal\": \"cook_at_home\"\n    },\n    \"rationale\": \"two commuters who cook dinner; both residents' items go out in the morning; evening brings kitchen items to prep area\",\n    \"distinguishing_prediction\": \"object_11 is at receptacle_3 (entryway, second resident's item out) on a weekday afternoon, and object_4 is at receptacle_23 at 19:00\",\n    \"distinguishing_check\": {\n      \"target\": \"object_11\",\n      \"at\": \"receptacle_3\",\n      \"days\": \"weekday\",\n      \"hour\": 15\n    },\n    \"rest\": {\n      \"object_1\": \"receptacle_5\",\n      \"object_2\": \"receptacle_11\",\n      \"object_3\": \"receptacle_7\",\n      \"object_4\": \"receptacle_18\",\n      \"object_5\": \"receptacle_19\",\n      \"object_6\": \"receptacle_14\",\n      \"object_7\": \"receptacle_15\",\n      \"object_8\": \"receptacle_20\",\n      \"object_9\": \"receptacle_9\",\n      \"object_10\": \"receptacle_2\",\n      \"object_11\": \"receptacle_13\",\n      \"object_12\": \"receptacle_14\",\n      \"object_13\": \"receptacle_6\",\n      \"object_14\": \"receptacle_12\",\n      \"object_15\": \"receptacle_4\",\n      \"object_16\": \"receptacle_4\",\n      \"object_17\": \"receptacle_15\",\n      \"object_18\": \"receptacle_13\",\n      \"object_19\": \"receptacle_2\",\n      \"object_20\": \"receptacle_21\",\n      \"object_21\": \"receptacle_19\",\n      \"object_22\": \"receptacle_3\",\n      \"object_23\": \"receptacle_13\",\n      \"object_24\": \"receptacle_12\",\n      \"object_25\": \"receptacle_13\",\n      \"object_26\": \"receptacle_10\",\n      \"object_27\": \"receptacle_6\",\n      \"object_28\": \"receptacle_10\",\n      \"object_29\": \"receptacle_22\",\n      \"object_30\": \"receptacle_16\",\n      \"object_31\": \"receptacle_6\",\n      \"object_32\": \"receptacle_17\",\n      \"object_33\": \"receptacle_14\",\n      \"object_34\": \"receptacle_21\",\n      \"object_35\": \"receptacle_11\"\n    },\n    \"activities\": [\n      {\n        \"name\": \"morning_routine\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 7.0,\n        \"duration_h\": 1.5,\n        \"moves\": [\n          {\"target\": \"object_10\", \"to\": \"receptacle_17\", \"chance\": \"usually\"},\n          {\"target\": \"object_11\", \"to\": \"receptacle_18\", \"chance\": \"usually\"},\n          {\"target\": \"object_3\", \"to\": \"receptacle_10\", \"chance\": \"usually\"},\n          {\"target\": \"object_2\", \"to\": \"receptacle_10\", \"chance\": \"usually\"},\n          {\"target\": \"object_35\", \"to\": \"receptacle_10\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"weekday_out\",\n        \"days\": \"weekday\",\n        \"frequency_per_week\": 5,\n        \"start_hour\": 9.0,\n        \"duration_h\": 8.0,\n        \"moves\": [\n          {\"target\": \"object_1\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_6\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_7\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_9\", \"to\": \"receptacle_3\", \"chance\": \"usually\"},\n          {\"target\": \"object_10\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_11\", \"to\": \"receptacle_3\", \"chance\": \"usually\"},\n          {\"target\": \"object_12\", \"to\": \"receptacle_3\", \"chance\": \"usually\"},\n          {\"target\": \"object_19\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_3\", \"to\": \"receptacle_20\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_22\", \"to\": \"receptacle_20\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_21\", \"to\": \"receptacle_12\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_20\", \"to\": \"receptacle_19\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"evening_cook\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 18.0,\n        \"duration_h\": 2.0,\n        \"moves\": [\n          {\"target\": \"object_16\", \"to\": \"receptacle_12\", \"chance\": \"usually\"},\n          {\"target\": \"object_17\", \"to\": \"receptacle_12\", \"chance\": \"usually\"},\n          {\"target\": \"object_11\", \"to\": \"receptacle_9\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_19\", \"to\": \"receptacle_13\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_4\", \"to\": \"receptacle_23\", \"chance\": \"usually\"},\n          {\"target\": \"object_5\", \"to\": \"receptacle_23\", \"chance\": \"usually\"},\n          {\"target\": \"object_15\", \"to\": \"receptacle_23\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"early_morning\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 5.0,\n        \"duration_h\": 1.0,\n        \"moves\": [\n          {\"target\": \"object_12\", \"to\": \"receptacle_22\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_32\", \"to\": \"receptacle_22\", \"chance\": \"sometimes\"}\n        ]\n      }\n    ],\n    \"hypothesis_id\": \"p_7f03\"\n  }},\n\n  {\"op\": \"edit_leaf\", \"leaf_id\": \"p_e94a\", \"body\": {\n    \"leaf_id\": \"p_e94a\",\n    \"assumes\": {\n      \"household_size\": \"two_adults\",\n      \"weekday_presence\": \"out_nine_to_five\",\n      \"evening_meal\": \"eat_out\"\n    },\n    \"rationale\": \"two commuters who eat out; both residents' items go out; evening is gathering-to-go, kitchen stays idle\",\n    \"distinguishing_prediction\": \"object_11 is at receptacle_3 (entryway, second resident out) on a weekday afternoon, and object_4 stays at receptacle_18 at 19:00 (no cooking)\",\n    \"distinguishing_check\": {\n      \"target\": \"object_4\",\n      \"at\": \"receptacle_18\",\n      \"days\": \"both\",\n      \"hour\": 19\n    },\n    \"rest\": {\n      \"object_1\": \"receptacle_5\",\n      \"object_2\": \"receptacle_11\",\n      \"object_3\": \"receptacle_7\",\n      \"object_4\": \"receptacle_18\",\n      \"object_5\": \"receptacle_19\",\n      \"object_6\": \"receptacle_14\",\n      \"object_7\": \"receptacle_15\",\n      \"object_8\": \"receptacle_20\",\n      \"object_9\": \"receptacle_9\",\n      \"object_10\": \"receptacle_2\",\n      \"object_11\": \"receptacle_13\",\n      \"object_12\": \"receptacle_14\",\n      \"object_13\": \"receptacle_6\",\n      \"object_14\": \"receptacle_12\",\n      \"object_15\": \"receptacle_4\",\n      \"object_16\": \"receptacle_4\",\n      \"object_17\": \"receptacle_15\",\n      \"object_18\": \"receptacle_13\",\n      \"object_19\": \"receptacle_2\",\n      \"object_20\": \"receptacle_21\",\n      \"object_21\": \"receptacle_19\",\n      \"object_22\": \"receptacle_3\",\n      \"object_23\": \"receptacle_13\",\n      \"object_24\": \"receptacle_12\",\n      \"object_25\": \"receptacle_13\",\n      \"object_26\": \"receptacle_10\",\n      \"object_27\": \"receptacle_6\",\n      \"object_28\": \"receptacle_10\",\n      \"object_29\": \"receptacle_22\",\n      \"object_30\": \"receptacle_16\",\n      \"object_31\": \"receptacle_6\",\n      \"object_32\": \"receptacle_17\",\n      \"object_33\": \"receptacle_14\",\n      \"object_34\": \"receptacle_21\",\n      \"object_35\": \"receptacle_11\"\n    },\n    \"activities\": [\n      {\n        \"name\": \"morning_routine\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 7.0,\n        \"duration_h\": 1.5,\n        \"moves\": [\n          {\"target\": \"object_10\", \"to\": \"receptacle_17\", \"chance\": \"usually\"},\n          {\"target\": \"object_11\", \"to\": \"receptacle_18\", \"chance\": \"usually\"},\n          {\"target\": \"object_3\", \"to\": \"receptacle_10\", \"chance\": \"usually\"},\n          {\"target\": \"object_2\", \"to\": \"receptacle_10\", \"chance\": \"usually\"},\n          {\"target\": \"object_35\", \"to\": \"receptacle_10\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"weekday_out\",\n        \"days\": \"weekday\",\n        \"frequency_per_week\": 5,\n        \"start_hour\": 9.0,\n        \"duration_h\": 8.0,\n        \"moves\": [\n          {\"target\": \"object_1\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_6\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_7\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_9\", \"to\": \"receptacle_3\", \"chance\": \"usually\"},\n          {\"target\": \"object_10\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_11\", \"to\": \"receptacle_3\", \"chance\": \"usually\"},\n          {\"target\": \"object_12\", \"to\": \"receptacle_3\", \"chance\": \"usually\"},\n          {\"target\": \"object_19\", \"to\": \"receptacle_2\", \"chance\": \"usually\"},\n          {\"target\": \"object_3\", \"to\": \"receptacle_20\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_22\", \"to\": \"receptacle_20\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_21\", \"to\": \"receptacle_12\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_20\", \"to\": \"receptacle_19\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"evening_gather\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 18.0,\n        \"duration_h\": 2.0,\n        \"moves\": [\n          {\"target\": \"object_16\", \"to\": \"receptacle_12\", \"chance\": \"usually\"},\n          {\"target\": \"object_17\", \"to\": \"receptacle_12\", \"chance\": \"usually\"},\n          {\"target\": \"object_11\", \"to\": \"receptacle_9\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_19\", \"to\": \"receptacle_13\", \"chance\": \"sometimes\"}\n        ]\n      },\n      {\n        \"name\": \"early_morning\",\n        \"days\": \"both\",\n        \"frequency_per_week\": 7,\n        \"start_hour\": 5.0,\n        \"duration_h\": 1.0,\n        \"moves\": [\n          {\"target\": \"object_12\", \"to\": \"receptacle_22\", \"chance\": \"sometimes\"},\n          {\"target\": \"object_32\", \"to\": \"receptacle_22\", \"chance\": \"sometimes\"}\n        ]\n      }\n    ],\n    \"hypothesis_id\": \"p_e94a\"\n  }}\n]}",
+   "n_operations": 5,
+   "generation_seconds": 890.36,
+   "completion_tokens": 21185,
+   "prompt_tokens": 10975,
+   "finish_reason": "stop",
+   "think_closed": true,
+   "cached": false
+  }
+ ],
+ "operations": [
+  {
+   "op": "drop_leaf",
+   "leaf_id": "p_1b56",
+   "reason": "weekday_presence=home_all_day has only 0.05 weight (settled at out_nine_to_five 0.95); distinguishing prediction untested; no evidence supports all-day presence"
+  },
+  {
+   "op": "edit_leaf",
+   "leaf_id": "p_3a7f",
+   "body": {
+    "leaf_id": "p_3a7f",
+    "assumes": {
+     "household_size": "one_adult",
+     "weekday_presence": "out_nine_to_five",
+     "evening_meal": "cook_at_home"
+    },
+    "rationale": "single commuter who cooks dinner; personal items go out during the day; evening sees kitchen items move to prep area",
+    "distinguishing_prediction": "object_4 is at receptacle_23 (cooking zone) at 19:00 on a weekday evening, while object_11 stays at receptacle_13 (home, no second resident)",
+    "distinguishing_check": {
+     "target": "bowl_shared_1",
+     "at": "tv_stand_l1",
+     "days": "weekday",
+     "hour": 19
+    },
+    "rest": {
+     "backpack_mara": "bed_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "desk_b1",
+     "glasses_mara": "dish_rack_k1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "chair_k2",
+     "jacket_mara": "OUT_OF_HOUSE",
+     "keys_mara": "cupboard_k1",
+     "laptop_mara": "desk_b1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "dish_rack_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "OUT_OF_HOUSE",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "armchair_l1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_hook_e1",
+     "water_bottle_mara": "desk_b1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "morning_routine",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 1.5,
+      "moves": [
+       {
+        "target": "jacket_mara",
+        "to": "entry_hook_e1",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "entry_table_e1",
+        "chance": "usually"
+       },
+       {
+        "target": "book_mara",
+        "to": "coffee_table_l1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "blanket_mara",
+        "to": "coffee_table_l1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "weekday_out",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 9.0,
+      "duration_h": 8.0,
+      "moves": [
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "glasses_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "headphones_mara",
+        "to": "armchair_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "book_mara",
+        "to": "nightstand_b1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "phone_mara",
+        "to": "nightstand_b1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "pen_mara",
+        "to": "counter_k1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "pan_shared_1",
+        "to": "kitchen_table_k1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "evening_cook",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 18.0,
+      "duration_h": 2.0,
+      "moves": [
+       {
+        "target": "medication_bottle_mara",
+        "to": "counter_k1",
+        "chance": "usually"
+       },
+       {
+        "target": "mug_mara",
+        "to": "counter_k1",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "chair_k2",
+        "chance": "sometimes"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "cupboard_k1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "bowl_shared_1",
+        "to": "tv_stand_l1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "bowl_shared_2",
+        "to": "tv_stand_l1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "early_morning",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 5.0,
+      "duration_h": 1.0,
+      "moves": [
+       {
+        "target": "laptop_mara",
+        "to": "towel_rack_ba1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "towel_rack_ba1",
+        "chance": "sometimes"
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_3a7f"
+   }
+  },
+  {
+   "op": "edit_leaf",
+   "leaf_id": "p_8c21",
+   "body": {
+    "leaf_id": "p_8c21",
+    "assumes": {
+     "household_size": "one_adult",
+     "weekday_presence": "out_nine_to_five",
+     "evening_meal": "eat_out"
+    },
+    "rationale": "single commuter who eats out; kitchen stays idle in evening; only entry and shared items move during the day",
+    "distinguishing_prediction": "object_4 remains at receptacle_18 at 19:00 (no cooking) and object_11 stays at receptacle_13 (no second resident goes out)",
+    "distinguishing_check": {
+     "target": "bowl_shared_1",
+     "at": "entry_table_e1",
+     "days": "both",
+     "hour": 19
+    },
+    "rest": {
+     "backpack_mara": "bed_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "desk_b1",
+     "glasses_mara": "dish_rack_k1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "chair_k2",
+     "jacket_mara": "OUT_OF_HOUSE",
+     "keys_mara": "cupboard_k1",
+     "laptop_mara": "desk_b1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "dish_rack_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "OUT_OF_HOUSE",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "armchair_l1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_hook_e1",
+     "water_bottle_mara": "desk_b1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "morning_routine",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 1.5,
+      "moves": [
+       {
+        "target": "jacket_mara",
+        "to": "entry_hook_e1",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "entry_table_e1",
+        "chance": "usually"
+       },
+       {
+        "target": "book_mara",
+        "to": "coffee_table_l1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "blanket_mara",
+        "to": "coffee_table_l1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "weekday_out",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 9.0,
+      "duration_h": 8.0,
+      "moves": [
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "glasses_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "headphones_mara",
+        "to": "armchair_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "book_mara",
+        "to": "nightstand_b1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "phone_mara",
+        "to": "nightstand_b1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "pen_mara",
+        "to": "counter_k1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "pan_shared_1",
+        "to": "kitchen_table_k1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "evening_gather",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 18.0,
+      "duration_h": 2.0,
+      "moves": [
+       {
+        "target": "medication_bottle_mara",
+        "to": "counter_k1",
+        "chance": "usually"
+       },
+       {
+        "target": "mug_mara",
+        "to": "counter_k1",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "chair_k2",
+        "chance": "sometimes"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "cupboard_k1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "early_morning",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 5.0,
+      "duration_h": 1.0,
+      "moves": [
+       {
+        "target": "laptop_mara",
+        "to": "towel_rack_ba1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "towel_rack_ba1",
+        "chance": "sometimes"
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_8c21"
+   }
+  },
+  {
+   "op": "edit_leaf",
+   "leaf_id": "p_7f03",
+   "body": {
+    "leaf_id": "p_7f03",
+    "assumes": {
+     "household_size": "two_adults",
+     "weekday_presence": "out_nine_to_five",
+     "evening_meal": "cook_at_home"
+    },
+    "rationale": "two commuters who cook dinner; both residents' items go out in the morning; evening brings kitchen items to prep area",
+    "distinguishing_prediction": "object_11 is at receptacle_3 (entryway, second resident's item out) on a weekday afternoon, and object_4 is at receptacle_23 at 19:00",
+    "distinguishing_check": {
+     "target": "keys_mara",
+     "at": "armchair_l1",
+     "days": "weekday",
+     "hour": 15
+    },
+    "rest": {
+     "backpack_mara": "bed_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "desk_b1",
+     "glasses_mara": "dish_rack_k1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "chair_k2",
+     "jacket_mara": "OUT_OF_HOUSE",
+     "keys_mara": "cupboard_k1",
+     "laptop_mara": "desk_b1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "dish_rack_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "OUT_OF_HOUSE",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "armchair_l1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_hook_e1",
+     "water_bottle_mara": "desk_b1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "morning_routine",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 1.5,
+      "moves": [
+       {
+        "target": "jacket_mara",
+        "to": "entry_hook_e1",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "entry_table_e1",
+        "chance": "usually"
+       },
+       {
+        "target": "book_mara",
+        "to": "coffee_table_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "blanket_mara",
+        "to": "coffee_table_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "yoga_mat_mara",
+        "to": "coffee_table_l1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "weekday_out",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 9.0,
+      "duration_h": 8.0,
+      "moves": [
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "glasses_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "headphones_mara",
+        "to": "armchair_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "armchair_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "laptop_mara",
+        "to": "armchair_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "book_mara",
+        "to": "nightstand_b1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "phone_mara",
+        "to": "nightstand_b1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "pen_mara",
+        "to": "counter_k1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "pan_shared_1",
+        "to": "kitchen_table_k1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "evening_cook",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 18.0,
+      "duration_h": 2.0,
+      "moves": [
+       {
+        "target": "medication_bottle_mara",
+        "to": "counter_k1",
+        "chance": "usually"
+       },
+       {
+        "target": "mug_mara",
+        "to": "counter_k1",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "chair_k2",
+        "chance": "sometimes"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "cupboard_k1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "bowl_shared_1",
+        "to": "tv_stand_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "bowl_shared_2",
+        "to": "tv_stand_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "makeup_kit_mara",
+        "to": "tv_stand_l1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "early_morning",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 5.0,
+      "duration_h": 1.0,
+      "moves": [
+       {
+        "target": "laptop_mara",
+        "to": "towel_rack_ba1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "towel_rack_ba1",
+        "chance": "sometimes"
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_7f03"
+   }
+  },
+  {
+   "op": "edit_leaf",
+   "leaf_id": "p_e94a",
+   "body": {
+    "leaf_id": "p_e94a",
+    "assumes": {
+     "household_size": "two_adults",
+     "weekday_presence": "out_nine_to_five",
+     "evening_meal": "eat_out"
+    },
+    "rationale": "two commuters who eat out; both residents' items go out; evening is gathering-to-go, kitchen stays idle",
+    "distinguishing_prediction": "object_11 is at receptacle_3 (entryway, second resident out) on a weekday afternoon, and object_4 stays at receptacle_18 at 19:00 (no cooking)",
+    "distinguishing_check": {
+     "target": "bowl_shared_1",
+     "at": "entry_table_e1",
+     "days": "both",
+     "hour": 19
+    },
+    "rest": {
+     "backpack_mara": "bed_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "desk_b1",
+     "glasses_mara": "dish_rack_k1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "chair_k2",
+     "jacket_mara": "OUT_OF_HOUSE",
+     "keys_mara": "cupboard_k1",
+     "laptop_mara": "desk_b1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "dish_rack_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "OUT_OF_HOUSE",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "armchair_l1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_hook_e1",
+     "water_bottle_mara": "desk_b1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "morning_routine",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 1.5,
+      "moves": [
+       {
+        "target": "jacket_mara",
+        "to": "entry_hook_e1",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "entry_table_e1",
+        "chance": "usually"
+       },
+       {
+        "target": "book_mara",
+        "to": "coffee_table_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "blanket_mara",
+        "to": "coffee_table_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "yoga_mat_mara",
+        "to": "coffee_table_l1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "weekday_out",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 9.0,
+      "duration_h": 8.0,
+      "moves": [
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "glasses_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "headphones_mara",
+        "to": "armchair_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "armchair_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "laptop_mara",
+        "to": "armchair_l1",
+        "chance": "usually"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "book_mara",
+        "to": "nightstand_b1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "phone_mara",
+        "to": "nightstand_b1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "pen_mara",
+        "to": "counter_k1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "pan_shared_1",
+        "to": "kitchen_table_k1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "evening_gather",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 18.0,
+      "duration_h": 2.0,
+      "moves": [
+       {
+        "target": "medication_bottle_mara",
+        "to": "counter_k1",
+        "chance": "usually"
+       },
+       {
+        "target": "mug_mara",
+        "to": "counter_k1",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "chair_k2",
+        "chance": "sometimes"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "cupboard_k1",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "early_morning",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 5.0,
+      "duration_h": 1.0,
+      "moves": [
+       {
+        "target": "laptop_mara",
+        "to": "towel_rack_ba1",
+        "chance": "sometimes"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "towel_rack_ba1",
+        "chance": "sometimes"
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_e94a"
+   }
+  }
+ ],
+ "applied": [
+  {
+   "op": "edit_leaf",
+   "leaf_id": "p_3a7f"
+  },
+  {
+   "op": "edit_leaf",
+   "leaf_id": "p_8c21"
+  },
+  {
+   "op": "edit_leaf",
+   "leaf_id": "p_7f03"
+  },
+  {
+   "op": "edit_leaf",
+   "leaf_id": "p_e94a"
+  },
+  {
+   "op": "drop_leaf",
+   "leaf_id": "p_1b56",
+   "reason": "weekday_presence=home_all_day has only 0.05 weight (settled at out_nine_to_five 0.95); distinguishing prediction untested; no evidence supports all-day presence"
+  }
+ ],
+ "births": [],
+ "skipped_births": [],
+ "problems": [],
+ "generation_seconds": 890.37,
+ "outcome": "revised",
+ "n_valid": 4
+}

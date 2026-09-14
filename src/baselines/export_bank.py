@@ -94,7 +94,7 @@ import logging
 import math
 import pathlib
 import random
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Mapping, Optional, Tuple
 
 import yaml
 
@@ -416,6 +416,64 @@ def home_base_room(receptacle_rooms: Dict[str, str]) -> str:
     return sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[0][0]
 
 
+PREMISES_BY_HOUSEHOLD_TYPE: Dict[str, Dict[str, str]] = {
+    "working_professional_solo": {"composition": "solo",
+                                  "work_pattern": "works_away"},
+    "single_adult_wfh": {"composition": "solo",
+                         "work_pattern": "works_from_home"},
+    "single_senior_solo": {"composition": "solo",
+                           "work_pattern": "no_fixed_work"},
+    "working_couple_no_children": {"composition": "couple",
+                                   "work_pattern": "works_away"},
+    "remote_worker_couple": {"composition": "couple",
+                             "work_pattern": "works_from_home"},
+    "retired_couple": {"composition": "couple",
+                       "work_pattern": "no_fixed_work"},
+    "couple_with_toddler": {"composition": "family_with_children",
+                            "work_pattern": "works_away"},
+    "family_teen_and_child": {"composition": "family_with_children",
+                              "work_pattern": "works_away"},
+    "single_parent_teens": {"composition": "family_with_children",
+                            "work_pattern": "works_away"},
+    "college_roommates": {"composition": "roommates",
+                          "work_pattern": "no_fixed_work"},
+    "multigenerational_family": {"composition": "multigenerational",
+                                 "work_pattern": "works_away"},
+    "researcher_household": {"composition": "couple",
+                             "work_pattern": "works_away"},
+}
+"""Ground-truth premise labels per generated household type: what the
+generator assumed about composition and the primary work pattern. The
+schedule suffix of a type (``__night_shift``, ``__rotating_shift``,
+``__irregular_gig``, ``__opposite_schedules``) overrides the work
+pattern (see :func:`premise_labels`). A persona or spec may also state
+``premises`` explicitly, which wins."""
+
+_SUFFIX_WORK_PATTERN = {
+    "night_shift": "shift_work", "rotating_shift": "shift_work",
+    "irregular_gig": "no_fixed_work",
+    "opposite_schedules": "opposite_schedules"}
+
+
+def premise_labels(spec: Mapping[str, Any],
+                   profile: Mapping[str, Any]) -> Dict[str, str]:
+    """The bank's ground-truth premise labels: explicit ``premises`` on
+    the spec or persona if present, else derived from the household
+    type. Empty when nothing is known."""
+    explicit = spec.get("premises") or profile.get("premises")
+    if isinstance(explicit, Mapping) and explicit:
+        return {str(k): str(v) for k, v in explicit.items()}
+    household_type = str(spec.get("household_type")
+                         or profile.get("household_type") or "")
+    if not household_type:
+        return {}
+    base, _, suffix = household_type.partition("__")
+    labels = dict(PREMISES_BY_HOUSEHOLD_TYPE.get(base, {}))
+    if suffix in _SUFFIX_WORK_PATTERN and labels:
+        labels["work_pattern"] = _SUFFIX_WORK_PATTERN[suffix]
+    return labels
+
+
 def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
            seed: int, sightings_per_day: int, questions_per_day: int,
            first_question_day: int, budget_per_day: int,
@@ -525,7 +583,8 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
         "query_generation": query_generation,
         "budget_per_day": budget_per_day, "n_days": n_days,
         "observation_model": observation_model,
-        "tour_start": tour_start, "tour_t": tour_t}
+        "tour_start": tour_start, "tour_t": tour_t,
+        "first_question_day": first_question_day}
     if rule_set is not None:
         header["query_rules_file"] = str(query_rules)
         header["background_query_rate"] = rule_set.background_query_rate
@@ -536,6 +595,9 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
         # Optional metadata consumed by the healthcheck's stratified
         # discriminative gate; absent from older schedule specs.
         header["household_type"] = str(spec["household_type"])
+    premises = premise_labels(spec, profile)
+    if premises:
+        header["premises"] = premises
     header["unsensable_receptacles"] = [OUT_OF_HOUSE]
     receptacle_rooms = _receptacle_rooms(spec_path, receptacles)
     if receptacle_rooms is not None:

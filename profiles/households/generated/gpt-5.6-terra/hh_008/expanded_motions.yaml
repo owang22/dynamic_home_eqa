@@ -6,10 +6,13 @@ source_persona: persona.yaml
 residents:
 - id: resident_1
   jitter_scale: 1.0
+  forget_p: 0.01
 - id: resident_2
   jitter_scale: 1.0
+  forget_p: 0.08
 - id: resident_3
   jitter_scale: 1.0
+  forget_p: 0.01
 receptacles:
 - id: bed_b1
   room: bedroom_1
@@ -452,10 +455,12 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_priya: person:resident_3
     after:
       backpack_priya:
@@ -1033,13 +1038,16 @@ object_motions:
       laptop_mateo: person:resident_2
       phone_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       keys_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       wallet_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       backpack_mateo: person:resident_2
       headphones_mateo: person:resident_2
       jacket_mateo: person:resident_2
@@ -1183,13 +1191,16 @@ object_motions:
       laptop_nia: person:resident_1
       phone_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_nia: person:resident_1
       notebook_nia: person:resident_1
       jacket_nia: person:resident_1
@@ -1686,13 +1697,16 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_priya: person:resident_3
       water_bottle_priya: person:resident_3
       jacket_priya: person:resident_3
@@ -1948,13 +1962,16 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_priya: person:resident_3
       umbrella_priya: person:resident_3
     after:
@@ -2056,16 +2073,20 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       laundry_basket_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2407,13 +2428,16 @@ object_motions:
     during:
       phone_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       water_bottle_nia: person:resident_1
     after:
       water_bottle_nia:
@@ -2744,13 +2768,16 @@ object_motions:
       laptop_mateo: person:resident_2
       phone_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       keys_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       wallet_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       backpack_mateo: person:resident_2
       headphones_mateo: person:resident_2
       jacket_mateo: person:resident_2
@@ -2828,13 +2855,16 @@ object_motions:
       laptop_nia: person:resident_1
       phone_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_nia: person:resident_1
       notebook_nia: person:resident_1
       jacket_nia: person:resident_1
@@ -3069,13 +3099,16 @@ object_motions:
     during:
       phone_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
     after:
       umbrella_priya:
         dist: &id028
@@ -3101,13 +3134,16 @@ object_motions:
     during:
       phone_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       keys_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       wallet_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
     after:
       umbrella_priya:
         dist: *id028
@@ -3132,13 +3168,16 @@ object_motions:
       laptop_nia: person:resident_1
       phone_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_nia: person:resident_1
       notebook_nia: person:resident_1
       jacket_nia: person:resident_1
@@ -3733,13 +3772,16 @@ object_motions:
     during:
       phone_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       keys_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       wallet_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
     after:
       keys_nia:
         dist: *id034
@@ -3851,18 +3893,22 @@ object_motions:
     during:
       phone_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_nia: person:resident_1
       laundry_basket_nia: person:resident_1
       laundry_basket_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3947,15 +3993,18 @@ object_motions:
     during:
       keys_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_nia: person:resident_1
       laundry_basket_nia: person:resident_1
       laundry_basket_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4058,13 +4107,16 @@ object_motions:
     during:
       keys_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       wallet_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       laundry_basket_shared_1:
         dest: person:resident_2
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4522,10 +4574,12 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_priya: person:resident_3
     after:
       jacket_mateo:
@@ -4951,13 +5005,16 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_priya: person:resident_3
     after:
       jacket_nia:
@@ -4992,13 +5049,16 @@ object_motions:
     during:
       phone_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       keys_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       wallet_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
     after:
       jacket_nia:
         dist: *id048
@@ -5030,13 +5090,16 @@ object_motions:
     during:
       phone_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       jacket_nia: person:resident_1
     after:
       jacket_nia:
@@ -5294,13 +5357,16 @@ object_motions:
       laptop_mateo: person:resident_2
       phone_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       keys_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       wallet_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       backpack_mateo: person:resident_2
       headphones_mateo: person:resident_2
       jacket_mateo: person:resident_2
@@ -5381,17 +5447,21 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_priya: person:resident_3
       laundry_basket_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -5467,13 +5537,16 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_priya: person:resident_3
       water_bottle_priya: person:resident_3
       jacket_priya: person:resident_3
@@ -5758,13 +5831,16 @@ object_motions:
     during:
       phone_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       keys_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       wallet_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       jacket_mateo: person:resident_2
     after:
       jacket_mateo:
@@ -5794,13 +5870,16 @@ object_motions:
     during:
       phone_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
     after:
       jacket_mateo:
         dist: *id057
@@ -5829,13 +5908,16 @@ object_motions:
       laptop_mateo: person:resident_2
       phone_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       keys_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       wallet_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       backpack_mateo: person:resident_2
       headphones_mateo: person:resident_2
       jacket_mateo: person:resident_2
@@ -5922,13 +6004,16 @@ object_motions:
       laptop_nia: person:resident_1
       phone_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_nia: person:resident_1
       notebook_nia: person:resident_1
       jacket_nia: person:resident_1
@@ -6014,13 +6099,16 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_priya: person:resident_3
       umbrella_priya: person:resident_3
     after:
@@ -6069,10 +6157,12 @@ object_motions:
     during:
       keys_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       wallet_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
     after:
       water_bottle_nia:
         dist: *id021
@@ -6096,14 +6186,17 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       umbrella_priya: person:resident_3
       laundry_basket_shared_1:
         dest: person:resident_3
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -6249,10 +6342,12 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_priya: person:resident_3
     after:
       backpack_priya:
@@ -6274,13 +6369,16 @@ object_motions:
     during:
       phone_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       keys_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
       wallet_mateo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.92
+        why: forget
     after:
       backpack_priya:
         dist: *id004
@@ -6304,13 +6402,16 @@ object_motions:
     during:
       phone_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_priya:
         dest: person:resident_3
-        p: 0.95
+        p: 0.99
+        why: forget
       umbrella_priya: person:resident_3
     after:
       keys_nia:
@@ -6349,13 +6450,16 @@ object_motions:
     during:
       phone_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_nia:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
     after:
       backpack_priya:
         dist: *id004
@@ -6509,3 +6613,55 @@ object_motions:
     during: {}
     after: {}
 person_invariant: true
+misplace_model: at_putdown
+object_owners:
+  laptop_nia: resident_1
+  phone_nia: resident_1
+  keys_nia: resident_1
+  wallet_nia: resident_1
+  backpack_nia: resident_1
+  water_bottle_nia: resident_1
+  notebook_nia: resident_1
+  pen_nia: resident_1
+  mug_nia: resident_1
+  book_nia: resident_1
+  blanket_nia: resident_1
+  charger_nia: resident_1
+  jacket_nia: resident_1
+  laundry_basket_nia: resident_1
+  laptop_mateo: resident_2
+  phone_mateo: resident_2
+  keys_mateo: resident_2
+  wallet_mateo: resident_2
+  backpack_mateo: resident_2
+  headphones_mateo: resident_2
+  notebook_mateo: resident_2
+  pen_mateo: resident_2
+  mug_mateo: resident_2
+  gaming_controller_mateo: resident_2
+  charger_mateo: resident_2
+  jacket_mateo: resident_2
+  phone_priya: resident_3
+  keys_priya: resident_3
+  wallet_priya: resident_3
+  backpack_priya: resident_3
+  water_bottle_priya: resident_3
+  jacket_priya: resident_3
+  umbrella_priya: resident_3
+  yoga_mat_priya: resident_3
+  lunchbox_priya: resident_3
+  hairbrush_priya: resident_3
+  medication_bottle_priya: resident_3
+  bowl_shared_1: shared
+  plate_shared_1: shared
+  plate_shared_2: shared
+  pot_shared_1: shared
+  pan_shared_1: shared
+  remote_shared_1: shared
+  vacuum_cleaner_shared_1: shared
+  towel_shared_1: shared
+  laundry_basket_shared_1: shared
+misplace:
+  next_room_share: 0.5
+  bulky_needs_forget_p: 0.08
+keep_block_share: 0.6

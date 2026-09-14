@@ -38,6 +38,15 @@ ELSEWHERE = "ELSEWHERE"
 PERSON = "person:"
 LINGER_PREFIX = "linger_"
 LINGER_JITTER = "routine"
+# Away activities that are really in-building errands the person comes
+# straight back from (the laundry room downstairs), so they never run
+# INTO another outing: when the story writes one back-to-back with other
+# away blocks, a short stop at home is inserted between them before the
+# away-chain merge. Measured on hh1 d5: laundry -> walk -> groceries
+# with no home block, so the laundry basket rode the whole morning and
+# went to the shop.
+RETURNS_HOME_AFTER = ("laundry",)
+HOME_STOP_MIN = 5
 
 
 def _minutes(text: str) -> int:
@@ -223,6 +232,7 @@ AFTER_ONLY_V3 = "after_only_v3"
 POCKET_CLASSES = ("phone", "keys", "wallet")
 
 
+
 def is_pocket(obj: str) -> bool:
     """Ids begin with their class ("wallet_mara", "keys_1")."""
     return any(obj == c or obj.startswith(c + "_") for c in POCKET_CLASSES)
@@ -237,6 +247,19 @@ HOMEBOUND_CLASSES = ("plate", "bowl", "mug", "pot", "pan", "vacuum_cleaner",
 
 def is_homebound(obj: str) -> bool:
     return any(obj == c or obj.startswith(c + "_") for c in HOMEBOUND_CLASSES)
+
+
+# Things too big to be set down absent-mindedly on the way to the next
+# room: only a scattered person (forgetfulness rated "often" — a
+# disorganized adult, a small child) misplaces these; everyone else's
+# putdowns of them always land. Everything else in the vocabulary (a
+# book, a jacket, a phone, a mug) can be carried off and left by anyone.
+BULKY_CLASSES = ("laundry_basket", "vacuum_cleaner", "suitcase", "yoga_mat",
+                 "watering_can", "pot", "pan", "blanket")
+
+
+def is_bulky(obj: str) -> bool:
+    return any(obj == c or obj.startswith(c + "_") for c in BULKY_CLASSES)
 
 
 def expand(program: dict, carry_on_departure: bool = True,
@@ -329,6 +352,66 @@ def expand(program: dict, carry_on_departure: bool = True,
     # programs keep v1 behaviour byte for byte.
     merged_away: list[str] = []
     skipped_away_lingers: list[str] = []
+    home_stops: list[str] = []
+    if v3:
+        # -- in-building errands get a stop at home (see RETURNS_HOME_AFTER)
+        by_res0: dict[str, list[dict]] = {}
+        for o in occs:
+            by_res0.setdefault(o["resident"], []).append(o)
+        extra: list[dict] = []
+        for rid in sorted(by_res0):
+            mine = sorted(by_res0[rid], key=lambda o: o["abs"])
+            for i, o in enumerate(mine):
+                if o["at"] != ELSEWHERE or o["activity"] not in RETURNS_HOME_AFTER:
+                    continue
+                # where she stops: the last receptacle she was at before
+                # the errand (else the first after it)
+                site = next((m["at"] for m in reversed(mine[:i])
+                             if m["at"] != ELSEWHERE), None) or \
+                    next((m["at"] for m in mine[i + 1:]
+                          if m["at"] != ELSEWHERE), None)
+                if site is None:
+                    continue
+                end_abs = None
+                if o.get("end"):
+                    end_abs = o["day"] * 1440 + _minutes(o["end"])
+                    while end_abs <= o["abs"]:
+                        end_abs += 1440
+                nxt = mine[i + 1] if i + 1 < len(mine) else None
+                prv = mine[i - 1] if i > 0 else None
+                length = (end_abs - o["abs"]) if end_abs else \
+                    ((nxt["abs"] - o["abs"]) if nxt else 0)
+                gap = max(1, min(HOME_STOP_MIN, length // 2))
+                name = f"{LINGER_PREFIX}{site}"
+                # errand runs INTO another outing: stop at home after it,
+                # carved out of the errand's own end
+                if nxt and nxt["at"] == ELSEWHERE and end_abs \
+                        and nxt["abs"] <= end_abs:
+                    stop_abs = end_abs - gap
+                    o["end"] = _fmt(stop_abs % 1440) + \
+                        ("+1" if stop_abs // 1440 > o["day"] else "")
+                    extra.append({
+                        "day": stop_abs // 1440, "uid": f"{o['uid']}H",
+                        "resident": rid, "activity": name,
+                        "t": _fmt(stop_abs % 1440), "note": "",
+                        "skip_p": 0.0, "end": None, "at": site,
+                        "jitter": LINGER_JITTER, "abs": stop_abs})
+                    home_stops.append(f"{o['activity']}->{name}@d{o['day']}")
+                # another outing runs INTO the errand: stop at home
+                # before it, carved out of the errand's own start
+                if prv and prv["at"] == ELSEWHERE:
+                    stop_abs = o["abs"]
+                    o["abs"] += gap
+                    o["t"] = _fmt(o["abs"] % 1440) + \
+                        ("+1" if o["abs"] // 1440 > o["day"] else "")
+                    extra.append({
+                        "day": stop_abs // 1440, "uid": f"{o['uid']}h",
+                        "resident": rid, "activity": name,
+                        "t": _fmt(stop_abs % 1440), "note": "",
+                        "skip_p": 0.0, "end": None, "at": site,
+                        "jitter": LINGER_JITTER, "abs": stop_abs})
+                    home_stops.append(f"{name}->{o['activity']}@d{o['day']}")
+        occs += extra
     # Away activities as AUTHORED, captured BEFORE the merge: traveller
     # detection must see the whole chain, not just its first block. The
     # story arm writes realistic commutes (traveling -> work_away ->
@@ -348,6 +431,17 @@ def expand(program: dict, carry_on_departure: bool = True,
     # laundromat run — and only pocket items (phone, keys, wallet) ride
     # every trip of their owner. Homebound classes never ride.
     owners = program.get("object_owners") or {}
+    resident_forget = {r["id"]: float(r["forget_p"])
+                       for r in program["residents"]
+                       if r.get("forget_p") is not None}
+    # Objects the persona author designated as going out ON the person
+    # whenever they go out ("worn on her face", "around his neck", "worn
+    # by Mara"): program `carried`, object -> the author's phrase, curated
+    # per household. Treated exactly like the pocket classes.
+    carried_by_author = set(program.get("carried") or {})
+
+    def is_carried(obj: str) -> bool:
+        return is_pocket(obj) or obj in carried_by_author
     travellers: dict[str, str | None] = {}
     rides: dict[str, set] = {}
     if v3:
@@ -360,7 +454,7 @@ def expand(program: dict, carry_on_departure: bool = True,
             acts_ &= premerge_away_base
             if is_homebound(obj_):
                 continue
-            if acts_ or (own and is_pocket(obj_)):
+            if acts_ or (own and is_carried(obj_)):
                 travellers[obj_] = own
                 rides[obj_] = acts_
     # A chain leg some traveller rides on changes what the trip carries,
@@ -800,14 +894,18 @@ def expand(program: dict, carry_on_departure: bool = True,
                 for obj, own_ in travellers.items():
                     if own_ is not None and own_ != rid:
                         continue
-                    pocket = own_ is not None and is_pocket(obj)
+                    pocket = own_ is not None and is_carried(obj)
                     named = bool(rides[obj] & members)
                     if not named and not pocket:
                         continue        # not this object's kind of trip
-                    if not named and not takes_along(program["household"],
-                                                     obj, base, carry_p):
+                    if (not named and obj not in carried_by_author
+                            and not takes_along(program["household"],
+                                                obj, base, carry_p)):
                         # a standing omission: this person never takes
-                        # this pocket item on this kind of trip
+                        # this pocket item on this kind of trip. Never
+                        # for an object the persona author designated as
+                        # going out on the person — that would overrule
+                        # the author with a hash.
                         left_behind.append(f"{obj}@{name}")
                         continue
                     rule = entry["after"].get(obj)
@@ -815,8 +913,11 @@ def expand(program: dict, carry_on_departure: bool = True,
                         # NO_OP on a pocket item's homecoming is "stays
                         # in their pocket through the door" (the authoring
                         # prompt's own reading); forgetting is a
-                        # per-departure draw on top.
-                        p_carry = 1.0 - forget_p
+                        # per-departure draw on top, at the OWNER's own
+                        # rate (persona-authored `forget_p` on the
+                        # resident, else the household default).
+                        p_carry = 1.0 - resident_forget.get(rid, forget_p)
+                        why = "forget"
                     else:
                         # For anything else the same NO_OP mass is "this
                         # trip did not involve the object" — the author
@@ -827,9 +928,10 @@ def expand(program: dict, carry_on_departure: bool = True,
                         # the object that did go always gets put down.
                         p_carry = 1.0 - (rule.pop("noop_p", 0.0) if rule
                                          else 0.0)
+                        why = "noop"
                     leg: dict | str = carrier
                     if p_carry < 1.0 or own_ is None:
-                        leg = {"dest": carrier, "p": p_carry}
+                        leg = {"dest": carrier, "p": p_carry, "why": why}
                         if own_ is None:
                             # a shared object already on someone else
                             # stays there — no handoff by a departure
@@ -939,6 +1041,23 @@ def expand(program: dict, carry_on_departure: bool = True,
         motions["day_overrides"] = day_overrides
     if v3:
         motions["person_invariant"] = True
+        # Misplacement is a failed putdown (see simulate_activities):
+        # the derived misplace_set above still satisfies the v1 lint's
+        # reachability contract, but the draw happens when an after-rule
+        # fires, and the object lands in the room the person was in or
+        # goes to next.
+        motions["misplace_model"] = "at_putdown"
+        motions["object_owners"] = dict(owners)
+        motions["carried"] = {o: str(c) for o, c in
+                              (program.get("carried") or {}).items()}
+        for obj_, pl_ in motions["placements"].items():
+            if is_bulky(obj_) and "p_misplace" in pl_:
+                pl_["bulky"] = True
+        for r_ in motions["residents"]:
+            fp_ = next((x.get("forget_p") for x in program["residents"]
+                        if x["id"] == r_["id"]), None)
+            if fp_ is not None:
+                r_["forget_p"] = float(fp_)
     acts["dropped_sleep_resets"] = sorted(set(dropped_sleep_resets))
     acts["dropped_sleep_fragments"] = sorted(set(dropped_sleep_fragments))
     acts["derived_only_from"] = sorted(set(derived_gates))
@@ -950,6 +1069,7 @@ def expand(program: dict, carry_on_departure: bool = True,
     acts["carried_putdowns_at_start"] = sorted(set(putdown_normalized))
     acts["synthesized_during"] = sorted(set(synthesized_during))
     acts["merged_away_blocks"] = sorted(merged_away) if v3 else []
+    acts["home_stops"] = sorted(home_stops)
     acts["chain_inherited_after"] = sorted(chain_inherited)
     acts["skipped_away_lingers"] = sorted(set(skipped_away_lingers))
     return acts, motions

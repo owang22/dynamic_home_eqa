@@ -150,6 +150,11 @@ def simulate_program(program: dict, days: int, seed: int,
         carry_on_departure=bool(carry_cfg.get("enabled", True)),
         carry_p=float(carry_cfg.get("carry_p", 0.85)),
         forget_p=float(carry_cfg.get("forget_p", 0.0)))
+    if motions.get("misplace_model"):
+        motions["misplace"] = dict(params.get("misplace", {}) or {})
+    if motions.get("person_invariant"):        # v3 only
+        motions["keep_block_share"] = float(
+            params.get("jitter_scale", {}).get("keep_block_share", 0.0))
     sa.validate(acts, motions)
 
     hh = program["household"]
@@ -204,6 +209,7 @@ def simulate_program(program: dict, days: int, seed: int,
     # v3 accounting, previously computed but never surfaced in meta.json
     stats["synthesized_during"] = acts.get("synthesized_during", [])
     stats["merged_away_blocks"] = acts.get("merged_away_blocks", [])
+    stats["home_stops"] = acts.get("home_stops", [])
     stats["skipped_away_lingers"] = acts.get("skipped_away_lingers", [])
     stats["skips_per_activity"] = dict(sorted(skips.items()))
     stats["fragment_bouts_per_activity"] = dict(sorted(frag_stats.items()))

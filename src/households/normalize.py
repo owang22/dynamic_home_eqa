@@ -56,6 +56,9 @@ HOUSEHOLD_KEYS = [
     "quirks",
 ]
 RESIDENT_KEYS = ["id", "name", "age", "occupation", "personality", "habits"]
+# Added 2026-09-13; personas built before it have none, and one that
+# lacks it is still valid (the realizer falls back to a default rate).
+RESIDENT_OPTIONAL_KEYS = ["forgetfulness"]
 OBJECT_KEYS = ["id", "class", "owner", "role"]
 FOLDED_KEYS = {"relationships", "home_layout_notes", "daily_life_summary", "quirks"}
 
@@ -91,15 +94,19 @@ Dumper.add_representer(
 )
 
 
-def reorder(mapping: dict, keys: list[str], where: str) -> dict:
-    """Return mapping with `keys` first, in order. Unknown keys are an error."""
-    extra = set(mapping) - set(keys)
+def reorder(mapping: dict, keys: list[str], where: str,
+            optional: list[str] = ()) -> dict:
+    """Return mapping with `keys` first, in order, then any `optional`
+    keys present. Unknown keys are an error."""
+    extra = set(mapping) - set(keys) - set(optional)
     if extra:
         raise ValueError(f"{where}: unexpected keys {sorted(extra)}")
     missing = [k for k in keys if k not in mapping]
     if missing:
         raise ValueError(f"{where}: missing keys {missing}")
-    return {k: mapping[k] for k in keys}
+    out = {k: mapping[k] for k in keys}
+    out.update({k: mapping[k] for k in optional if k in mapping})
+    return out
 
 
 def canonicalize(data: dict, log: list[str], where: str) -> dict:
@@ -116,7 +123,14 @@ def canonicalize(data: dict, log: list[str], where: str) -> dict:
 
     residents = []
     for i, resident in enumerate(out["residents"]):
-        r = reorder(resident, RESIDENT_KEYS, f"{where}.residents[{i}]")
+        r = reorder(resident, RESIDENT_KEYS, f"{where}.residents[{i}]",
+                    optional=RESIDENT_OPTIONAL_KEYS)
+        if "forgetfulness" in r:
+            fg = reorder(dict(r["forgetfulness"]), ["level", "cites"],
+                         f"{where}.residents[{i}].forgetfulness")
+            fg["cites"] = Text(fix_text(fg["cites"],
+                                        f"residents[{i}].forgetfulness.cites"))
+            r["forgetfulness"] = fg
         r["occupation"] = Text(fix_text(r["occupation"], f"residents[{i}].occupation"))
         r["personality"] = Text(fix_text(r["personality"], f"residents[{i}].personality"))
         r["habits"] = [

@@ -294,6 +294,11 @@ class Episode:
     unsensable_receptacle_ids: Tuple[str, ...] = ()
     receptacle_rooms: Mapping[str, str] = field(default_factory=dict)
     home_base_room: Optional[str] = None
+    premises: Mapping[str, str] = field(default_factory=dict)
+    """Ground-truth premise labels of the generating process, for banks
+    whose generator knows them (``{"composition": "solo", "work_pattern":
+    "works_away"}``). Metadata for the assumption-recovery metric;
+    agents never see it."""
     scripted_evidence: Optional[Tuple[Union["Observation", "SenseResult"],
                                       ...]] = None
     """The ambient stream as the beliefs should CONSUME it, time-ordered.

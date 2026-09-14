@@ -55,6 +55,7 @@ import argparse
 import csv
 import heapq
 import json
+import math
 import pathlib
 import random
 
@@ -190,6 +191,16 @@ def realize(acts: dict, motions: dict, rng: random.Random,
                  item["a"], item.get("note", "")))
 
     blocks: list[dict] = []
+    # A block keeps at least this share of its AUTHORED length (v3,
+    # `keep_block_share` from realization_params; 0 = v1 behaviour).
+    # Jitter is drawn per block with a sigma (30 min for "routine") far
+    # larger than the 10-15 min blocks the story writes, so two
+    # disagreeing draws collapsed the block between them to one minute
+    # — 108 of hh1's 475 blocks were <= 2 min (a 1-minute shower, a
+    # 1-minute breakfast, a 1-minute stop at home between work and the
+    # gym). With the floor, a shifted block pushes its successors
+    # instead of eating them; every draw is unchanged.
+    keep = float(motions.get("keep_block_share", 0.0) or 0.0)
     # Deterministic resident order; each resident draws from the shared rng
     # in that order, so runs stay reproducible.
     for rid in sorted(per_resident):
@@ -203,7 +214,10 @@ def realize(acts: dict, motions: dict, rng: random.Random,
             # Clamp into the open interval between this resident's
             # neighbours: the authored sequence is the story and must
             # survive jitter intact.
-            lo = mine[-1]["t0"] + 1 if mine else 0
+            floor = 1
+            if mine and keep > 0:
+                floor = max(1, math.ceil(keep * (t0 - raw[i - 1][0])))
+            lo = mine[-1]["t0"] + floor if mine else 0
             hi = raw[i + 1][0] - 1 if i + 1 < len(raw) else days * 1440
             mine.append({"activity": name, "note": note, "resident": rid,
                          "t0": max(lo, min(hi, t0 + offset))})
@@ -250,7 +264,11 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
     log: list[dict] = []
     stats = {"tidy_bouts": 0, "tidy_moved": 0, "tidy_ran_out_of_time": 0,
              "blocks": len(blocks), "departures_without_item": 0,
-             "misplace_skipped_absent_holder": 0}
+             "misplace_skipped_absent_holder": 0,
+             "misplaced_at_putdown": 0, "misplaced_in_next_room": 0}
+    # Departures that left an item behind, for the viewer: the log holds
+    # only moves, and "she left without her keys" is the absence of one.
+    omissions: list[dict] = []
     # v3 programs (flagged by the expander) hold the person invariant
     # through misplacement too; unmarked programs keep v1 behaviour.
     person_invariant = bool(motions.get("person_invariant"))
@@ -262,6 +280,64 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
     def is_away(resident: str, t: float) -> bool:
         return any(a <= t < b for a, b in away_spans.get(resident, ()))
 
+    # Misplacement as a FAILED PUTDOWN (v3, `misplace_model: at_putdown`):
+    # when an activity ends and its after-rule would return the object to
+    # one of its designated slots, with probability p_misplace it does
+    # not get there — it is left on a random surface in the room the
+    # person was in for the activity or, `next_room_share` of the time,
+    # in the room they go to next (the book carried absent-mindedly from
+    # the sofa to the kitchen). Nothing else drifts: an object nobody is
+    # putting down stays where it is. The v1 model instead drew a random
+    # awake minute per day and a member of a fixed six-surface set,
+    # untied to anyone's whereabouts.
+    putdown_drift = motions.get("misplace_model") == "at_putdown"
+    misplace_cfg = motions.get("misplace", {}) or {}
+    next_room_share = float(misplace_cfg.get("next_room_share", 0.5))
+    bulky_needs = float(misplace_cfg.get("bulky_needs_forget_p", 0.08))
+    scattered = {r["id"] for r in motions["residents"]
+                 if float(r.get("forget_p", 0.0)) >= bulky_needs}
+    room_of_rec = {r["id"]: r.get("room") for r in motions["receptacles"]}
+    recs_in_room: dict[str, list[str]] = {}
+    for r in motions["receptacles"]:
+        recs_in_room.setdefault(r.get("room"), []).append(r["id"])
+    by_res_blocks: dict[str, list[dict]] = {}
+    for b in blocks:
+        by_res_blocks.setdefault(b["resident"], []).append(b)
+    for lst in by_res_blocks.values():
+        lst.sort(key=lambda b: b["t0"])
+
+    def next_home_block(block: dict):
+        """The resident's next block that is at home and awake, if it
+        starts within the hour — where an absent-minded carry ends up."""
+        mine = by_res_blocks.get(block["resident"], ())
+        for b in mine:
+            if b["t0"] >= block["t1"] and b is not block:
+                if (b["at"] == ELSEWHERE
+                        or any(k in b["activity"] for k in SLEEP_ACTIVITIES)
+                        or b["t0"] - block["t1"] > 60):
+                    return None
+                return b
+        return None
+
+    def misplace_instead(block: dict, obj: str, dest: str, targets: set):
+        """Where a failed putdown at the end of `block` leaves `obj`
+        instead of `dest`: (spot, room_kind) or None when no surface
+        in reach differs from the rule's own slots."""
+        rooms = []
+        here = room_of_rec.get(block["at"])
+        nxt = next_home_block(block)
+        nxt_room = room_of_rec.get(nxt["at"]) if nxt else None
+        if nxt_room and (here is None or rng.random() < next_room_share):
+            rooms.append((nxt_room, "next"))
+        if here:
+            rooms.append((here, "here"))
+        for room, kind in rooms:
+            spots = [r for r in recs_in_room.get(room, [])
+                     if r != pos[obj] and r not in targets]
+            if spots:
+                return rng.choice(spots), kind
+        return None
+
     heap: list = []
     seq = 0
 
@@ -270,10 +346,10 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
         heapq.heappush(heap, (t, order, seq, kind, payload))
         seq += 1
 
-    def move(t, obj, dest, by):
+    def move(t, obj, dest, by, **extra):
         if dest is not None and pos[obj] != dest:
             log.append({"t": int(t), "stamp": stamp(t), "object": obj,
-                        "from": pos[obj], "to": dest, "by": by})
+                        "from": pos[obj], "to": dest, "by": by, **extra})
             pos[obj] = dest
 
     obj_order = {o: i for i, o in enumerate(placements)}
@@ -324,6 +400,8 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
         for obj, p in placements.items():
             if p.get("static") or "p_misplace" not in p or not spans:
                 continue
+            if putdown_drift:
+                continue            # drawn at each putdown instead
             if rng.random() < p["p_misplace"]:
                 a, b = rng.choice(spans)
                 push(rng.randrange(a, b), 2, "misplace",
@@ -347,6 +425,15 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
                             continue
                         if rng.random() >= leg.get("p", 1.0):
                             stats["departures_without_item"] += 1
+                            omissions.append({
+                                "t": int(t), "stamp": stamp(t), "object": obj,
+                                "resident": leg["dest"][len(PERSON):]
+                                if str(leg["dest"]).startswith(PERSON)
+                                else None,
+                                "activity": payload["activity"],
+                                "why": leg.get("why", "chance"),
+                                "p": round(1.0 - float(leg.get("p", 1.0)), 4),
+                                "at": pos[obj]})
                             continue
                         leg = leg["dest"]
                     move(t, obj, leg, f"activity:{payload['activity']}")
@@ -360,7 +447,27 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
                 for obj, rule in rules.items():
                     if "only_from" in rule and pos[obj] not in rule["only_from"]:
                         continue
-                    move(t, obj, sample_after(rule, rng), f"activity:{name}")
+                    dest = sample_after(rule, rng)
+                    p_mis = placements[obj].get("p_misplace", 0.0)
+                    if (placements[obj].get("bulky")
+                            and payload["resident"] not in scattered):
+                        p_mis = 0.0     # too big to leave behind, for them
+                    if (putdown_drift and p_mis > 0 and dest is not None
+                            and dest != pos[obj] and dest in room_of_rec
+                            and rng.random() < p_mis):
+                        targets = (set(rule["dist"]) if "dist" in rule
+                                   else {rule.get("dest"), rule.get("else")})
+                        got = misplace_instead(payload, obj, dest, targets)
+                        if got is not None:
+                            spot, kind = got
+                            stats["misplaced_at_putdown"] += 1
+                            if kind == "next":
+                                stats["misplaced_in_next_room"] += 1
+                            move(t, obj, spot, "misplace",
+                                 actor=payload["resident"], during=name,
+                                 instead_of=dest)
+                            continue
+                    move(t, obj, dest, f"activity:{name}")
             elif kind == "tidy":
                 obj, home, name = payload
                 if pos[obj] not in (ELSEWHERE, home) and not pos[obj].startswith(PERSON):
@@ -379,6 +486,7 @@ def simulate(acts: dict, motions: dict, days: int, seed: int):
                     move(t, obj, dest, "misplace")
         if h < days * 24:
             hourly.append({"t": boundary, "stamp": stamp(boundary), **dict(pos)})
+    stats["omissions"] = omissions
     return log, hourly, blocks, stats
 
 
@@ -388,6 +496,13 @@ def write_outputs(out: pathlib.Path, motions: dict, log, hourly, blocks,
     with open(out / "events.jsonl", "w") as f:
         for e in log:
             f.write(json.dumps(e) + "\n")
+    # Non-events the viewer needs: departures that left an item behind.
+    # Popped from stats so meta.json keeps counts, not the list.
+    stats = dict(stats)
+    omissions = stats.pop("omissions", [])
+    with open(out / "omissions.jsonl", "w") as f:
+        for o in omissions:
+            f.write(json.dumps(o) + "\n")
     objects = list(motions["placements"])
     with open(out / "hourly.csv", "w", newline="") as f:
         w = csv.writer(f)

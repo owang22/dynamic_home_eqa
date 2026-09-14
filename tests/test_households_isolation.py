@@ -33,8 +33,14 @@ FIXTURE = REPO / "tests" / "fixtures" / "households" / "hh_001"
 # forgetting; NO_OP on a non-pocket away rule = not taken) and misplace
 # stopped lifting things off an absent holder — see
 # test_households_travellers.py. Not a vendoring change.
-GOLDEN_EVENTS = 920
-GOLDEN_SHA = "ed54dff506ac67d5fcb62de9f2f7c982a2687c0e4c4e67f5d8f95e479853d37b"
+# Re-baselined again the same day (920 -> 855) when misplacement became
+# a failed putdown at the end of an activity (at_putdown model, into the
+# room the person was in or goes to next; bulky things only by the
+# scattered) and forgetting became per resident; the fixture's residents
+# carry no rating, so the household default applies. Then once more
+# (855 -> 855) for the block-length floor (jitter_scale.keep_block_share), and
+GOLDEN_EVENTS = 855
+GOLDEN_SHA = "75ff07987a7e910622c89aa603d7112844ce68b6c5228375ee3c03a2a31cde73"
 
 # The old sets live in old_profiles/ (moved there 2026-08-28); the old
 # code tree is src/revamp_v2. All of it goes away for the test's duration.

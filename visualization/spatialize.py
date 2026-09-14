@@ -313,6 +313,9 @@ def _provenance(timeline: pathlib.Path, spec: dict) -> dict:
             "misplace_set": placed.get("misplace_set") or [],
             "owner": owners.get(entry["object"]),
             "rules": rules,
+            # the persona author's phrase when the object goes out ON the
+            # person whenever they do ("worn on her face"); absent otherwise
+            "carried": (spec.get("carried") or {}).get(entry["object"]),
         }
 
     # Trips, by their FULL expanded names: `study` can be a home activity
@@ -389,16 +392,22 @@ def main() -> None:
     # rule-driven move from a carry or a random misplace, and those are
     # three different answers to "why did this move" (an authored rule, a
     # traveller riding its owner's trip, and no reason at all).
-    opened = {o: (0, "initial", "initial") for o in state}
+    # A misplacement under the at_putdown model also records WHO set it
+    # down, at the end of what (`actor`, `during`) and where the rule
+    # meant it to go (`instead_of`); older traces have none of these.
+    opened = {o: (0, "initial", "initial", None, None, None) for o in state}
     for e in events:
         o = e["object"]
-        t0, cause, kind = opened[o]
-        segments[o].append((t0, e["t"], state[o], cause, kind))
+        t0, cause, kind, actor, during, instead = opened[o]
+        segments[o].append((t0, e["t"], state[o], cause, kind, actor, during,
+                            instead))
         state[o] = e["to"]
-        opened[o] = (e["t"], e["by"], e.get("kind") or "rule")
+        opened[o] = (e["t"], e["by"], e.get("kind") or "rule",
+                     e.get("actor"), e.get("during"), e.get("instead_of"))
     for o in state:
-        t0, cause, kind = opened[o]
-        segments[o].append((t0, horizon, state[o], cause, kind))
+        t0, cause, kind, actor, during, instead = opened[o]
+        segments[o].append((t0, horizon, state[o], cause, kind, actor, during,
+                            instead))
 
     # Object classes come from the persona/profile the spec points at:
     # object_motions files say `source_persona`, retired schedule specs said
@@ -411,9 +420,10 @@ def main() -> None:
 
     for o, segs in segments.items():
         out = []
-        for t0, t1, rec, cause, kind in segs:
+        for t0, t1, rec, cause, kind, actor, during, instead in segs:
             if t1 <= t0:
                 continue
+            tail = [cause, kind, actor, during, instead]
             if rec.startswith(PERSON):
                 # carried: the object is wherever its carrier is, so split
                 # the symbolic segment at every carrier position change
@@ -424,12 +434,25 @@ def main() -> None:
                 for s0, s1 in slices:
                     room, rel, pos = locate(rec, o, world, cfg, tracks, s0)
                     out.append([s0, s1, rec, room, rel, pos[0], pos[1],
-                                cause, kind])
+                                *tail])
             else:
                 room, rel, pos = locate(rec, o, world, cfg)
-                out.append([t0, t1, rec, room, rel, pos[0], pos[1],
-                            cause, kind])
+                out.append([t0, t1, rec, room, rel, pos[0], pos[1], *tail])
         objects[o] = {"class": classes.get(o, "?"), "segments": out}
+
+    # ---- departures that left an item behind (omissions.jsonl): the
+    # event log holds only moves, and "she left without her keys" is the
+    # absence of one — the viewer shows these on the object's timeline.
+    omissions: dict[str, list] = {}
+    om_path = args.timeline / "omissions.jsonl"
+    if om_path.exists():
+        for line in om_path.open():
+            if not line.strip():
+                continue
+            om = json.loads(line)
+            omissions.setdefault(om["object"], []).append(
+                [om["t"], om.get("resident"), om.get("activity"),
+                 om.get("why"), om.get("p"), om.get("at")])
 
     trace = {
         "household": spec["household"],
@@ -459,6 +482,11 @@ def main() -> None:
         # per-object and per-rule `cites` behind every segment's cause.
         # {} for sets built before the movement pass wrote any.
         "provenance": _provenance(args.timeline, spec),
+        "omissions": omissions,
+        # how chance drift happens: "at_putdown" (a failed putdown at the
+        # end of an activity, into the room the person was in or goes to
+        # next) or the older random-minute fixed-set draw when absent.
+        "misplace_model": spec.get("misplace_model"),
     }
     (args.timeline / "trace.json").write_text(json.dumps(trace))
 

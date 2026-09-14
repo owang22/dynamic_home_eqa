@@ -648,6 +648,17 @@ function accuracyFor(model) {
   return accuracySeries[model.name];
 }
 
+/* Time -> x on the event strip, lined up with the SLIDER THUMB'S CENTRE.
+ * The thumb does not travel edge to edge: at min it sits half a thumb in
+ * from the left, at max half a thumb in from the right (14px thumb, fixed
+ * in style.css). Mapping over the full canvas width put the ticks up to
+ * 7px off the thumb at either end — exact only at the midpoint. */
+const SLIDER_THUMB_PX = 14;
+function stripX(minute, strip) {
+  const pad = (SLIDER_THUMB_PX / 2) * (window.devicePixelRatio || 1);
+  return pad + (minute / horizon) * (strip.width - 2 * pad);
+}
+
 function drawEventStrip() {
   const strip = $("event-strip");
   const dpr = window.devicePixelRatio || 1;
@@ -657,9 +668,9 @@ function drawEventStrip() {
   ctx.fillStyle = "#191c22";
   ctx.fillRect(0, 0, strip.width, strip.height);
   for (let d = 0; d <= trace.days; d++) {
-    const x = (d * 1440 / horizon) * strip.width;
+    const x = stripX(d * 1440, strip);
     ctx.fillStyle = d % 7 >= 5 ? "#5a5340" : "#2c313a";
-    ctx.fillRect(x, 0, 1.5, strip.height);
+    ctx.fillRect(x - (1.5) / 2, 0, 1.5, strip.height);
   }
   const model = currentModel();
   const series = accuracyFor(model);
@@ -667,7 +678,7 @@ function drawEventStrip() {
   ctx.lineWidth = 1.2 * dpr;
   ctx.beginPath();
   series.forEach((v, i) => {
-    const x = (i * belief.grid_minutes / horizon) * strip.width;
+    const x = stripX(i * belief.grid_minutes, strip);
     const y = strip.height - v * strip.height;
     i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
   });
@@ -679,8 +690,8 @@ function drawEventStrip() {
   const obj = $("object-select").value;
   ctx.fillStyle = TRUTH;
   for (const [minute] of (belief.sightings || {})[obj] || []) {
-    const x = (minute / horizon) * strip.width;
-    ctx.fillRect(x, strip.height - 4 * dpr, 1.5 * dpr, 4 * dpr);
+    const x = stripX(minute, strip);
+    ctx.fillRect(x - (1.5 * dpr) / 2, strip.height - 4 * dpr, 1.5 * dpr, 4 * dpr);
   }
 }
 

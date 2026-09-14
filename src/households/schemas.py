@@ -50,13 +50,30 @@ def _judgment(prompt: str, max_length: int = 2000) -> dict:
             "description": prompt}
 
 
+FORGET_LEVELS = ("rarely", "sometimes", "often")
+
+
+def forgetfulness_schema() -> dict:
+    """How often this person leaves the house without a pocket item —
+    a persona judgment the realizer maps to a per-departure probability
+    (realization_params `forget_levels`)."""
+    return {
+        "type": "object", "additionalProperties": False,
+        "required": ["level", "cites"],
+        "properties": {
+            "level": {"enum": list(FORGET_LEVELS)},
+            "cites": {"type": "string", "maxLength": 200},
+        },
+    }
+
+
 def build_persona_schema(household_id: str, household_type: str,
                          n_residents: int, vocabulary: list[str]) -> dict:
     resident_ids = [f"resident_{i + 1}" for i in range(n_residents)]
     resident = {
         "type": "object", "additionalProperties": False,
         "required": ["id", "name", "age", "occupation", "personality",
-                     "habits"],
+                     "habits", "forgetfulness"],
         "properties": {
             "id": {"enum": resident_ids},
             "name": {"type": "string", "minLength": 2, "maxLength": 60},
@@ -65,6 +82,7 @@ def build_persona_schema(household_id: str, household_type: str,
             "personality": {"type": "string", "maxLength": 300},
             "habits": {"type": "array", "minItems": 5, "maxItems": 8,
                        "items": {"type": "string", "maxLength": 300}},
+            "forgetfulness": forgetfulness_schema(),
         },
     }
     obj = {

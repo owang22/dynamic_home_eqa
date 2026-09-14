@@ -13,6 +13,34 @@
   <select id="seed-select" title="which realization (seed) of this household"></select>
   <span id="run-label" class="muted"></span>
   <span style="margin-left:auto"><a id="beliefs-link" href="beliefs.html" style="color:var(--accent2)">belief vs truth ▸</a></span>
+  <details id="legend" title="what the map and timeline strip show">
+    <summary>? legend</summary>
+    <div class="legend-sheet">
+      <h3>timeline strip <span class="muted">(above the slider)</span></h3>
+      <ul>
+        <li><i class="sw tick blue"></i><b>blue tick, upper row</b> — the selected <b>object</b> changes receptacle (every move it makes). ◀/▶ jump between these when the dropdown says <em>object moves</em>.</li>
+        <li><i class="sw tick red"></i><b>red tick, upper row</b> — a <b>left-behind departure</b>: the resident went out on a trip this object usually joins, but it was not taken this time (the "why it moved" box explains it).</li>
+        <li><i class="sw tick green"></i><b>green tick, lower row</b> — the selected <b>resident</b> starts a new activity. Read the two rows against each other: a blue tick beside a green one is a move caused by that activity; a blue tick with nothing under it drifted while they were out.</li>
+        <li><i class="sw bar grey"></i><b>thin grey line</b> — midnight, one per day.</li>
+        <li><i class="sw bar wknd"></i><b>tan line</b> — a weekend midnight (Sat / Sun boundaries), so weekly rhythm is visible at a glance.</li>
+        <li><i class="sw bar amber"></i><b>slider</b> — the current sim time, in 5-minute steps; the clock top-left reads it out. <kbd>space</kbd> play/pause, <kbd>←</kbd>/<kbd>→</kbd> jump events.</li>
+      </ul>
+      <h3>map</h3>
+      <ul>
+        <li><i class="sw disc obj"></i><b>gold disc</b> — the selected object, resting <b>on a surface</b> (table, counter, shelf).</li>
+        <li><i class="sw square obj"></i><b>gold square</b> — the object is on the <b>floor</b>.</li>
+        <li><i class="sw tri obj"></i><b>gold triangle</b> — the object is on a <b>hook</b>.</li>
+        <li><i class="sw disc obj carried"></i><b>green ring</b> around it — the object is being <b>carried</b>; it sits at the resident's position.</li>
+        <li><i class="sw disc grey"></i><b>grey disc</b> at the dashed <b>AWAY</b> circle — the object left the house (in a bag, at work, in the car).</li>
+        <li><i class="sw diamond res"></i><b>green diamond</b> — a resident; the selected one is drawn larger and opaque, others half-faded; the label reads <em>R1·activity</em>.</li>
+        <li><i class="sw tag"></i><b>green-edged tag</b> beside the selected resident — <em>carried items</em>: what they have on them right now, one ringed disc per object plus its name.</li>
+        <li><i class="sw line blue"></i><b>blue polyline</b> — <em>object path</em>: every receptacle the object has visited so far, in order.</li>
+        <li><i class="sw line green"></i><b>green dashed line</b> — <em>resident path</em>: the selected resident's route so far.</li>
+        <li><i class="sw disc faint"></i><b>faint gold discs</b> — <em>trace build-up</em>: where the object has spent its time; radius ∝ √(minutes dwelt), so its usual spots grow.</li>
+        <li><i class="sw cross"></i><b>grey cross</b> — a receptacle anchor (a surface or floor spot objects can be placed on); room polygons are tinted per room and labelled with their symbolic id + real region name.</li>
+      </ul>
+    </div>
+  </details>
 </header>
 
 <main>
@@ -73,6 +101,9 @@
       <div class="row">
         <label class="chk"><input type="checkbox" id="show-all-res" checked> all residents</label>
         <label class="chk"><input type="checkbox" id="show-recs" checked> receptacles</label>
+      </div>
+      <div class="row">
+        <label class="chk" title="tag beside the selected resident listing what they have on them right now"><input type="checkbox" id="show-carried" checked> carried items</label>
       </div>
       <div class="row">
         <label class="chk" title="the authored rule and cites behind the move that put this object where it is now"><input type="checkbox" id="show-why" checked> why it moved</label>

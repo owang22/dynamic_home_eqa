@@ -1,0 +1,770 @@
+{
+ "hypotheses": [
+  {
+   "hypothesis_id": "h1",
+   "rationale": "Single WFH professional; objects cluster at a desk (receptacle_4) and work shelf (receptacle_13) during weekday work hours, and unobserved items sit in a work bag at receptacle_5.",
+   "distinguishing_prediction": "object_15 stays at receptacle_4 through weekday midday but is moved to receptacle_22 by Saturday morning when the resident relaxes.",
+   "distinguishing_check": {
+    "target": "makeup_kit_mara",
+    "at": "bathroom_shelf_ba1",
+    "days": "weekday",
+    "hour": 11.0
+   },
+   "rest": {
+    "backpack_mara": "bed_b1",
+    "charger_mara": "bed_b1",
+    "glasses_mara": "bed_b1",
+    "headphones_mara": "bed_b1",
+    "jacket_mara": "bed_b1",
+    "keys_mara": "bed_b1",
+    "laptop_mara": "bed_b1",
+    "notebook_mara": "bed_b1",
+    "phone_mara": "bed_b1",
+    "wallet_mara": "bed_b1",
+    "water_bottle_mara": "bed_b1"
+   },
+   "activities": [
+    {
+     "name": "work_day",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "makeup_kit_mara",
+       "to": "bathroom_shelf_ba1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "bathroom_shelf_ba1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "mug_shared_1",
+       "to": "cupboard_k1",
+       "chance": "usually"
+      },
+      {
+       "target": "plate_shared_1",
+       "to": "cupboard_k1",
+       "chance": "usually"
+      },
+      {
+       "target": "pot_shared_1",
+       "to": "cupboard_k1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "evening_wind_down",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 18.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "makeup_kit_mara",
+       "to": "towel_rack_ba1",
+       "chance": "usually",
+       "duration_h": 10.0
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "towel_rack_ba1",
+       "chance": "usually",
+       "duration_h": 10.0
+      },
+      {
+       "target": "class:bowl",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "duration_h": 12.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_relax",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "makeup_kit_mara",
+       "to": "towel_rack_ba1",
+       "chance": "almost_always",
+       "duration_h": 14.0
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "towel_rack_ba1",
+       "chance": "almost_always",
+       "duration_h": 14.0
+      },
+      {
+       "target": "backpack_mara",
+       "to": "desk_b1",
+       "chance": "sometimes",
+       "duration_h": 12.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h2",
+   "rationale": "Family with school-age children; kids' personal items (the 11 unobserved objects) ride in backpacks at receptacle_3 during school hours and are unpacked at receptacle_12 after 15:30.",
+   "distinguishing_prediction": "object_6 is at receptacle_3 (backpack zone) on a weekday at 10:00 but appears at receptacle_12 by 17:00 after school.",
+   "distinguishing_check": {
+    "target": "charger_mara",
+    "at": "armchair_l1",
+    "days": "weekday",
+    "hour": 10.0
+   },
+   "rest": {
+    "backpack_mara": "armchair_l1",
+    "charger_mara": "armchair_l1",
+    "glasses_mara": "armchair_l1",
+    "headphones_mara": "armchair_l1",
+    "jacket_mara": "armchair_l1",
+    "keys_mara": "armchair_l1",
+    "laptop_mara": "armchair_l1",
+    "notebook_mara": "armchair_l1",
+    "phone_mara": "armchair_l1",
+    "wallet_mara": "armchair_l1",
+    "water_bottle_mara": "armchair_l1"
+   },
+   "activities": [
+    {
+     "name": "school_morning",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 7.5,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "charger_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "keys_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      }
+     ]
+    },
+    {
+     "name": "after_school_unpack",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 15.5,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "charger_mara",
+       "to": "counter_k1",
+       "chance": "usually",
+       "duration_h": 10.0
+      },
+      {
+       "target": "glasses_mara",
+       "to": "counter_k1",
+       "chance": "usually",
+       "duration_h": 10.0
+      },
+      {
+       "target": "headphones_mara",
+       "to": "couch_l1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "jacket_mara",
+       "to": "couch_l1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "keys_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "laptop_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_play",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 9.0,
+     "duration_h": 10.0,
+     "moves": [
+      {
+       "target": "charger_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 8.0
+      },
+      {
+       "target": "glasses_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 8.0
+      },
+      {
+       "target": "backpack_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 8.0
+      },
+      {
+       "target": "notebook_mara",
+       "to": "bookshelf_l1",
+       "chance": "sometimes",
+       "duration_h": 8.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "bookshelf_l1",
+       "chance": "sometimes",
+       "duration_h": 8.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h3",
+   "rationale": "Couple who go out on weekday evenings; their going-out items (the 11 unobserved objects) are stored in a closet at receptacle_9 and brought to the entryway (receptacle_3) around 17:00 for departure.",
+   "distinguishing_prediction": "object_1 is at receptacle_9 on a weekday at 12:00 (stowed) but moves to receptacle_3 by 18:00 when the couple heads out.",
+   "distinguishing_check": {
+    "target": "backpack_mara",
+    "at": "chair_k2",
+    "days": "weekday",
+    "hour": 12.0
+   },
+   "rest": {
+    "backpack_mara": "chair_k2",
+    "charger_mara": "chair_k2",
+    "glasses_mara": "chair_k2",
+    "headphones_mara": "chair_k2",
+    "jacket_mara": "chair_k2",
+    "keys_mara": "chair_k2",
+    "laptop_mara": "chair_k2",
+    "notebook_mara": "chair_k2",
+    "phone_mara": "chair_k2",
+    "wallet_mara": "chair_k2",
+    "water_bottle_mara": "chair_k2"
+   },
+   "activities": [
+    {
+     "name": "weekday_evening_prep",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 17.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always",
+       "duration_h": 4.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always",
+       "duration_h": 4.0
+      },
+      {
+       "target": "glasses_mara",
+       "to": "armchair_l1",
+       "chance": "usually",
+       "duration_h": 4.0
+      },
+      {
+       "target": "headphones_mara",
+       "to": "armchair_l1",
+       "chance": "usually",
+       "duration_h": 4.0
+      },
+      {
+       "target": "jacket_mara",
+       "to": "armchair_l1",
+       "chance": "usually",
+       "duration_h": 4.0
+      },
+      {
+       "target": "keys_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "duration_h": 4.0
+      },
+      {
+       "target": "laptop_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "duration_h": 4.0
+      },
+      {
+       "target": "notebook_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "duration_h": 4.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "duration_h": 4.0
+      },
+      {
+       "target": "wallet_mara",
+       "to": "armchair_l1",
+       "chance": "rarely",
+       "duration_h": 4.0
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "armchair_l1",
+       "chance": "rarely",
+       "duration_h": 4.0
+      }
+     ]
+    },
+    {
+     "name": "weekday_evening_return",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 21.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "chair_k2",
+       "chance": "almost_always"
+      },
+      {
+       "target": "charger_mara",
+       "to": "chair_k2",
+       "chance": "almost_always"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "chair_k2",
+       "chance": "usually"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "chair_k2",
+       "chance": "usually"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "chair_k2",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "weekend_home",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "desk_b1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "desk_b1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "notebook_mara",
+       "to": "entry_floor_e1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "entry_floor_e1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h4",
+   "rationale": "Household with a Saturday-morning errand routine; the 11 unobserved objects are stored in a garage/shed at receptacle_17 and brought to the car-loading area (receptacle_2) on Saturday, while weekday objects stay in their observed spots.",
+   "distinguishing_prediction": "object_19 is at receptacle_17 on a weekday at 14:00 but appears at receptacle_2 on a Saturday at 10:00 during the errand run.",
+   "distinguishing_check": {
+    "target": "notebook_mara",
+    "at": "entry_hook_e1",
+    "days": "weekday",
+    "hour": 14.0
+   },
+   "rest": {
+    "backpack_mara": "entry_hook_e1",
+    "charger_mara": "entry_hook_e1",
+    "glasses_mara": "entry_hook_e1",
+    "headphones_mara": "entry_hook_e1",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "entry_hook_e1",
+    "laptop_mara": "entry_hook_e1",
+    "notebook_mara": "entry_hook_e1",
+    "phone_mara": "entry_hook_e1",
+    "wallet_mara": "entry_hook_e1",
+    "water_bottle_mara": "entry_hook_e1"
+   },
+   "activities": [
+    {
+     "name": "saturday_errands",
+     "days": "weekend",
+     "frequency_per_week": 1,
+     "start_hour": 8.0,
+     "duration_h": 4.0,
+     "moves": [
+      {
+       "target": "notebook_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "duration_h": 5.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "duration_h": 5.0
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "duration_h": 5.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "duration_h": 5.0
+      },
+      {
+       "target": "glasses_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "headphones_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "rarely",
+       "duration_h": 5.0
+      },
+      {
+       "target": "laptop_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "rarely",
+       "duration_h": 5.0
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "rarely",
+       "duration_h": 5.0
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "rarely",
+       "duration_h": 5.0
+      }
+     ]
+    },
+    {
+     "name": "post_errand_return",
+     "days": "weekend",
+     "frequency_per_week": 1,
+     "start_hour": 13.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "notebook_mara",
+       "to": "entry_hook_e1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "entry_hook_e1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "entry_hook_e1",
+       "chance": "usually"
+      },
+      {
+       "target": "charger_mara",
+       "to": "entry_hook_e1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "weekday_kitchen_use",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 12.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "class:bowl",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "bowl_shared_1",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "duration_h": 3.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h5",
+   "rationale": "Two-person household with complementary schedules: Person A is active in the morning (objects at receptacle_14) and Person B in the afternoon (objects at receptacle_15); the 11 unobserved objects are split between the two personal zones.",
+   "distinguishing_prediction": "object_1 is at receptacle_14 on a weekday at 8:00 (Person A's morning zone) but at receptacle_15 on a weekday at 16:00 (Person B's afternoon zone).",
+   "distinguishing_check": {
+    "target": "backpack_mara",
+    "at": "desk_b1",
+    "days": "weekday",
+    "hour": 8.0
+   },
+   "rest": {
+    "backpack_mara": "desk_b1",
+    "charger_mara": "desk_b1",
+    "glasses_mara": "desk_b1",
+    "headphones_mara": "desk_b1",
+    "jacket_mara": "dish_rack_k1",
+    "keys_mara": "dish_rack_k1",
+    "laptop_mara": "dish_rack_k1",
+    "notebook_mara": "dish_rack_k1",
+    "phone_mara": "dish_rack_k1",
+    "wallet_mara": "desk_b1",
+    "water_bottle_mara": "dish_rack_k1"
+   },
+   "activities": [
+    {
+     "name": "person_a_morning",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 6.5,
+     "duration_h": 5.5,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "desk_b1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "charger_mara",
+       "to": "desk_b1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "desk_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "desk_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "desk_b1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "couch_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "yoga_mat_mara",
+       "to": "couch_l1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "person_b_afternoon",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 13.0,
+     "duration_h": 6.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "dish_rack_k1",
+       "chance": "usually",
+       "duration_h": 6.0
+      },
+      {
+       "target": "jacket_mara",
+       "to": "dish_rack_k1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "keys_mara",
+       "to": "dish_rack_k1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "dish_rack_k1",
+       "chance": "usually"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "dish_rack_k1",
+       "chance": "usually"
+      },
+      {
+       "target": "phone_mara",
+       "to": "dish_rack_k1",
+       "chance": "usually"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "dish_rack_k1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "makeup_kit_mara",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually"
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "shared_evening",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "towel_rack_ba1",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "towel_rack_ba1",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "jacket_mara",
+       "to": "towel_rack_ba1",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "notebook_mara",
+       "to": "towel_rack_ba1",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "class:bowl",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 4.0
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

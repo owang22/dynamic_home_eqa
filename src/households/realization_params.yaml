@@ -23,6 +23,13 @@ jitter_scale:
   # observed across real homes").
   min: 0.5
   max: 2.0
+  # A realized block keeps at least this share of its authored length
+  # (v3 programs only). Jitter is drawn per block; with sigma 30 min on
+  # 10-15 min blocks, neighbouring draws collapsed 1 block in 4 to a
+  # minute or two (hh1: 108 of 475). The floor makes a shifted block
+  # push the next one instead — order and every draw unchanged. 0.6 is
+  # a judgment default: a 15-min snack keeps at least 9 minutes.
+  keep_block_share: 0.6
 
 skip:
   # Per-realization block drop, applied BEFORE jitter, counted per activity
@@ -76,10 +83,18 @@ carry_on_departure:
   # probability 1 - forget_p, and a forgotten item stays where it was
   # (its homecoming rule reaches only what came home on the person).
   # Non-pocket travellers do not use this: their "not taken this time"
-  # chance is the authored NO_OP mass of their rule on the trip. A
-  # judgment default — one departure in twenty — with no dataset behind
-  # it; 0 disables the draw.
-  forget_p: 0.05
+  # chance is the authored NO_OP mass of their rule on the trip.
+  # The rate is PER PERSON: the persona pass rates each resident's
+  # forgetfulness (rarely / sometimes / often, with a cites line) and
+  # `forget_levels` maps that to a probability, stored on the program's
+  # resident as `forget_p`. `forget_p` here is only the fallback for a
+  # resident with no rating. Judgment defaults — no dataset observes who
+  # walks out without their keys; 0 disables the draw.
+  forget_p: 0.03
+  forget_levels:
+    rarely: 0.01
+    sometimes: 0.03
+    often: 0.08
   # Two ELSEWHERE bouts of one resident closer together than this (minutes
   # at home between trips) do NOT re-fire pickup/putdown for items that
   # never moved in between: the person plausibly kept the bag packed.
@@ -92,3 +107,24 @@ carry_on_departure:
   # re-packing pocket items is the realistic reading. Suppressed pairs are
   # counted in meta.json (carry_rehome_suppressed), never silent.
   carry_rehome_min: 90
+
+misplace:
+  # Chance drift under v3 (`misplace_model: at_putdown`) is a FAILED
+  # PUTDOWN: when an activity ends and the object's after-rule would
+  # return it to one of its designated slots, with probability
+  # `p_misplace` (authored per object, now read per putdown rather than
+  # per day) it is left on a random other surface instead — in the room
+  # the person was in for the activity, or `next_room_share` of the time
+  # in the room they go to next (the book carried absent-mindedly from
+  # the sofa to the kitchen; only when that next block is at home,
+  # awake, and within the hour). Objects nobody is putting down do not
+  # drift, and bulky classes (expand_calendar.BULKY_CLASSES) never do.
+  # The v1 model drew a random awake minute per day into a fixed
+  # six-surface set: every drift in hh1 landed in the kitchen, 8 of 126
+  # while nobody was home. 0.5 is a judgment default.
+  next_room_share: 0.5
+  # Bulky classes (expand_calendar.BULKY_CLASSES: a suitcase, a laundry
+  # basket, a yoga mat) are only misplaced by a person whose forgetting
+  # rate is at least this — the "often" level above: a scattered adult,
+  # a small child. Everyone else's putdowns of them always land.
+  bulky_needs_forget_p: 0.08

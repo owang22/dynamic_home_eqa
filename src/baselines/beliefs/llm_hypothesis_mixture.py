@@ -37,6 +37,21 @@ fitted rather than fresh; a hypothesis that keeps its id keeps its log
 weight, a new one enters at the mean log weight. The ``elicitor`` is a
 callable ``(report, previous_hypotheses, context) -> hypotheses`` so the
 belief stays testable without a server.
+
+**Graph arm.** When the household file is an assumption-graph envelope
+(:mod:`baselines.llm_hypotheses.assumption_graph`), the same mixture
+holds the graph alongside the leaf bodies: leaves are the particles,
+weights roll up to assumption values, revisions arrive as OPERATIONS
+(the ``elicitor`` is then ``(report, graph, context) -> OperationResult``)
+and leaves not mentioned keep their bodies and therefore their weights
+through :meth:`_rebuild`, which keys on ``leaf_id``. Two more trigger
+sources join the scheduled days (checked in this order): the UNCOVERED
+BANK — first sightings of classes no live leaf models, fired when the
+bank reaches a threshold that ramps with the day — and the prediction-
+quality trigger as before. Leaves whose weight stays under
+``leaf_weight_floor`` for ``leaf_prune_days`` are pruned automatically
+(never below 3 leaves), with no LLM call. The flat arm is untouched: a
+flat file loads exactly as before.
 """
 
 from __future__ import annotations
@@ -47,19 +62,42 @@ import json
 import math
 import pathlib
 import random
-from typing import (Any, Callable, Deque, Dict, List, Mapping, Optional,
-                    Sequence, Tuple, Union)
+from typing import (TYPE_CHECKING, Any, Callable, Deque, Dict, List, Mapping,
+                    Optional, Sequence, Tuple, Union)
 
 from baselines.beliefs.hypothesis_mixture import (DEFAULT_ABSENCE_UNIFORMS,
                                                   DEFAULT_ABSENCE_WEIGHT,
                                                   HypothesisMixture)
 from baselines.beliefs.hypothesis_program import (CHANCE_PRIOR_STRENGTH,
+                                                   CLASS_PREFIX,
                                                    HypothesisProgramBelief)
 from baselines.types import DAY_SECONDS, Observation, SenseResult
 
+if TYPE_CHECKING:
+    from baselines.llm_hypotheses.assumption_graph import AssumptionGraph
+
+DEFAULT_LEAF_WEIGHT_FLOOR = 0.02
+DEFAULT_LEAF_PRUNE_DAYS = 3
+MIN_LEAVES_AFTER_PRUNE = 3
+UNCOVERED_BANK_START = 2
+"""Bank size that fires on day 0 when the ramp is on; it rises linearly
+to ``ReaskConfig.uncovered_bank_max`` by the last day."""
+
 DEFAULT_STAT_SPECS: Tuple[Mapping[str, Any], ...] = (
-    {"name": "periodic_persistence"},)
-"""The plain statistical hypothesis that always rides along."""
+    {"name": "most_frequent", "half_life_h": 72.0},)
+"""The plain statistical hypothesis that always rides along: most-
+frequent location with a 72 h half-life, the best-scoring statistical
+model on the slate (pooled hh_001+hh_002, merged scoring: log-loss 1.52
+against periodic_persistence's 2.10 at equal top-1) and the same decay
+the converter's own fallback uses. Also the no-LLM comparison arm."""
+
+DEFAULT_LLM_ABSENCE_WEIGHT = 1.0
+"""Absence half of the sighting likelihood at FULL weight for this
+mixture (the parent keeps 0.25). Absence is the only channel through
+which a "left the house" prediction can earn credit — nothing is ever
+sighted at OUT_OF_HOUSE — and the measured weights had been collapsing
+onto the one hypothesis that never predicted it. Set here, not on the
+parent, so the disambiguation studies keep their default."""
 
 DEFAULT_HYPOTHESIS_DECAY = 0.99
 """Weight-forgetting factor for hypothesis selection, overriding the
@@ -92,6 +130,12 @@ class ReaskConfig:
     ``max_calls``: hard cap per household on LLM revisions.
     ``min_gap``: sightings that must pass after a revision before the
     quality trigger may fire again (the window refills first).
+    ``new_class_triggers``: fire on first sightings of classes no live
+    hypothesis models (the uncovered bank).
+    ``uncovered_bank_max``: surprises accumulated before firing.
+    ``uncovered_bank_ramp``: raise the bar linearly with the day index,
+    from :data:`UNCOVERED_BANK_START` on day 0 to ``uncovered_bank_max``
+    on the last day, so early days fire readily and late days do not.
     """
 
     window: int = 40
@@ -99,11 +143,25 @@ class ReaskConfig:
     scheduled_days: Tuple[int, ...] = (3, 7)
     max_calls: int = 4
     min_gap: int = 40
+    new_class_triggers: bool = True
+    uncovered_bank_max: int = 4
+    uncovered_bank_ramp: bool = True
 
     def __post_init__(self) -> None:
         if self.window < 1 or self.min_gap < 0 or self.max_calls < 0:
             raise ValueError("ReaskConfig: window >= 1, min_gap >= 0, "
                              "max_calls >= 0")
+        if self.uncovered_bank_max < 1:
+            raise ValueError("ReaskConfig: uncovered_bank_max >= 1")
+
+    def bank_threshold(self, day: int, n_days: int) -> float:
+        """Bank size at which the uncovered trigger fires on ``day``."""
+        if not self.uncovered_bank_ramp:
+            return float(self.uncovered_bank_max)
+        span = max(1, n_days - 1)
+        frac = min(1.0, max(0.0, day / span))
+        return (UNCOVERED_BANK_START
+                + (self.uncovered_bank_max - UNCOVERED_BANK_START) * frac)
 
 
 Elicitor = Callable[[Mapping[str, Any], List[dict], Any], List[dict]]
@@ -136,19 +194,24 @@ class LLMHypothesisMixture(HypothesisMixture):
                  hypotheses_dir: pathlib.Path | str,
                  stat_specs: Optional[Sequence[Mapping[str, Any]]] = None,
                  decay: float = DEFAULT_HYPOTHESIS_DECAY,
-                 absence_weight: float = DEFAULT_ABSENCE_WEIGHT,
+                 absence_weight: float = DEFAULT_LLM_ABSENCE_WEIGHT,
                  absence_uniforms: float = DEFAULT_ABSENCE_UNIFORMS,
                  label: Optional[str] = None,
                  reask: Optional[ReaskConfig] = None,
                  elicitor: Optional[Elicitor] = None,
                  floor_mass: float = 0.0,
-                 negative_half_life_h: Optional[float] = None) -> None:
+                 negative_half_life_h: Optional[float] = None,
+                 leaf_weight_floor: float = DEFAULT_LEAF_WEIGHT_FLOOR,
+                 leaf_prune_days: int = DEFAULT_LEAF_PRUNE_DAYS) -> None:
         self._stat_specs = [dict(s) for s in
                             (stat_specs if stat_specs is not None
                              else DEFAULT_STAT_SPECS)]
         self._reask = reask
         self._elicitor = elicitor
         self._raw_hypotheses: List[dict] = []
+        self._graph: Optional["AssumptionGraph"] = None   # graph mode
+        self._leaf_weight_floor = float(leaf_weight_floor)
+        self._leaf_prune_days = int(leaf_prune_days)
         self._evidence_log: List[Union[Observation, SenseResult]] = []
         self._sighting_log: List[Dict[str, Any]] = []
         self._recent: Deque[float] = collections.deque(
@@ -157,6 +220,14 @@ class LLMHypothesisMixture(HypothesisMixture):
         self._last_reask_index = -10 ** 9
         self.reask_events: List[Dict[str, Any]] = []
         self.calls_made = 0
+        self._sighted: set = set()
+        self._uncovered_bank: List[Dict[str, Any]] = []
+        self._below_since: Dict[str, int] = {}
+        self.edit_log: List[Dict[str, Any]] = []
+        self.prune_log: List[Dict[str, Any]] = []
+        self.birth_log: List[Dict[str, Any]] = []
+        self._assumption_trace: Dict[int, Dict[str, Any]] = {}
+        self._leaf_count_trace: Dict[int, int] = {}
         # Parent builds the stat particles now; the hypothesis particles
         # join at reset, when the household is known.
         super().__init__(rng, particle_specs=self._stat_specs, decay=decay,
@@ -180,8 +251,15 @@ class LLMHypothesisMixture(HypothesisMixture):
                 f"{self.name}: no hypotheses file for household "
                 f"{context.household_id!r} at {path}")
         payload = json.loads(path.read_text())
-        hypotheses = (payload["hypotheses"] if isinstance(payload, Mapping)
-                      else payload)
+        from baselines.llm_hypotheses.assumption_graph import (
+            AssumptionGraph, is_graph_payload)
+        if is_graph_payload(payload):
+            self._graph = AssumptionGraph.from_json(payload)
+            hypotheses = self._graph.leaf_bodies()
+        else:
+            self._graph = None
+            hypotheses = (payload["hypotheses"]
+                          if isinstance(payload, Mapping) else payload)
         if not hypotheses:
             raise ValueError(f"{self.name}: {path} holds no hypotheses")
         from baselines.registry import build_registered_belief
@@ -203,6 +281,40 @@ class LLMHypothesisMixture(HypothesisMixture):
         self._last_reask_index = -10 ** 9
         self.reask_events = []
         self.calls_made = 0
+        self._sighted = set()
+        self._uncovered_bank = []
+        self._below_since = {}
+        self.edit_log = []
+        self.prune_log = []
+        self.birth_log = []
+        self._assumption_trace = {}
+        self._leaf_count_trace = {}
+
+    @property
+    def graph(self) -> Optional["AssumptionGraph"]:
+        """The assumption graph (None for a flat file)."""
+        return self._graph
+
+    @property
+    def is_graph(self) -> bool:
+        return self._graph is not None
+
+    @property
+    def n_hypotheses(self) -> int:
+        return len(self._raw_hypotheses)
+
+    @property
+    def leaf_weights(self) -> Dict[str, float]:
+        """Mixture weight per hypothesis particle, keyed by leaf id
+        (graph) or hypothesis id (flat); statistical particles excluded
+        and their weight left outside the map."""
+        weights = self.weights
+        return {self._particle_key(raw): weights[i]
+                for i, raw in enumerate(self._raw_hypotheses)}
+
+    @staticmethod
+    def _particle_key(raw: Mapping[str, Any]) -> str:
+        return str(raw.get("leaf_id") or raw.get("hypothesis_id"))
 
     # ------------------------------------------------------------ re-asking
 
@@ -215,6 +327,9 @@ class LLMHypothesisMixture(HypothesisMixture):
         else:
             pairs = [(obj, evidence.receptacle_id)
                      for obj in evidence.contents]
+        classes = ({evidence.object_id: evidence.object_class}
+                   if isinstance(evidence, Observation)
+                   else dict(evidence.object_classes))
         for obj, receptacle in pairs:
             if obj in self._objects:
                 forecast = self.predict_readonly(obj, evidence.t)
@@ -228,8 +343,69 @@ class LLMHypothesisMixture(HypothesisMixture):
                 self._sighting_log.append({
                     "t": evidence.t, "object": obj, "actual": receptacle,
                     "predicted": None, "p_actual": None})
+            if obj not in self._sighted:
+                self._sighted.add(obj)
+                self._consider_uncovered(obj, classes.get(obj, ""),
+                                         evidence.t)
         super().update(evidence)
         self._maybe_reask(evidence.t)
+        day = evidence.t // DAY_SECONDS
+        if self._graph is not None:
+            self._prune(evidence.t)
+            from baselines.llm_hypotheses.assumption_graph import (
+                assumption_summary)
+            self._assumption_trace[day] = assumption_summary(
+                self._graph, self.leaf_weights)
+        self._leaf_count_trace[day] = len(self._raw_hypotheses)
+
+    # ------------------------------------------------------- uncovered bank
+
+    def _modeled_classes(self) -> set:
+        """Classes some live hypothesis says anything about: the class of
+        any object it covers (rest or move), or a ``class:`` target."""
+        table = dict(self._context.object_classes) if (
+            self._context is not None and self._context.object_classes) else {}
+        table.update(self._objects)
+        classes: set = set()
+        n_hyp = len(self._raw_hypotheses)
+        for raw, particle in zip(self._raw_hypotheses,
+                                 self._particles[:n_hyp]):
+            if isinstance(particle, HypothesisProgramBelief) \
+                    and particle._hypothesis is not None:
+                for obj in particle.hypothesis.covered_objects():
+                    if obj in table:
+                        classes.add(table[obj])
+            rest = raw.get("rest")
+            keys = (list(rest) if isinstance(rest, Mapping) else
+                    [e.get("target", "") for e in rest]
+                    if isinstance(rest, (list, tuple)) else [])
+            for act in raw.get("activities", ()):
+                keys += [str(m.get("target", "")) for m in act.get("moves", ())]
+            for key in keys:
+                key = str(key)
+                if key.startswith(CLASS_PREFIX):
+                    classes.add(key[len(CLASS_PREFIX):])
+                elif key in table:
+                    classes.add(table[key])
+        return classes
+
+    def _consider_uncovered(self, obj: str, cls: str, t: int) -> None:
+        """First sighting of ``obj``: enter the bank if its class is one
+        no live hypothesis models. A new object of a modeled class does
+        not enter."""
+        cfg = self._reask
+        if cfg is None or not cfg.new_class_triggers or not cls:
+            return
+        if cls in self._modeled_classes():
+            return
+        if any(row["class"] == cls for row in self._uncovered_bank):
+            return   # the class is already banked; one entry per class
+        self._uncovered_bank.append({"object": obj, "class": cls, "t": t,
+                                     "day": t // DAY_SECONDS})
+
+    @property
+    def uncovered_bank(self) -> List[Dict[str, Any]]:
+        return [dict(row) for row in self._uncovered_bank]
 
     @property
     def recent_quality(self) -> Optional[float]:
@@ -247,42 +423,133 @@ class LLMHypothesisMixture(HypothesisMixture):
             return
         day = t // DAY_SECONDS
         reason = None
+        trigger = None
         for scheduled in cfg.scheduled_days:
             if day >= scheduled and scheduled not in self._fired_days:
                 self._fired_days.add(scheduled)
-                reason = f"scheduled day {scheduled}"
+                reason, trigger = f"scheduled day {scheduled}", "scheduled"
                 break
+        if reason is None and cfg.new_class_triggers and self._uncovered_bank:
+            n_days = (self._context.n_days if self._context is not None
+                      else 28)
+            bar = cfg.bank_threshold(day, n_days)
+            if len(self._uncovered_bank) >= bar:
+                reason = (f"uncovered bank {len(self._uncovered_bank)} >= "
+                          f"{bar:.1f}")
+                trigger = "uncovered"
         if reason is None:
             quality = self.recent_quality
             since = len(self._sighting_log) - self._last_reask_index
             if (quality is not None and quality < cfg.threshold
                     and since >= cfg.min_gap):
                 reason = f"quality {quality:.2f} < {cfg.threshold}"
+                trigger = "quality"
         if reason is None:
             return
-        self._revise(t, reason)
+        self._revise(t, reason, trigger or "scheduled")
 
-    def _revise(self, t: int, reason: str) -> None:
+    def _revise(self, t: int, reason: str, trigger: str = "scheduled") -> None:
         report = self.revision_report(t)
+        report["trigger"] = trigger
+        report["reason"] = reason
         before = {"quality": self.recent_quality,
                   "weights": dict(zip(
                       [p.name for p in self._particles], self.weights)),
-                  "n_hypotheses": len(self._raw_hypotheses)}
+                  "n_hypotheses": len(self._raw_hypotheses),
+                  "uncovered_bank": self.uncovered_bank}
         self.calls_made += 1
-        revised = self._elicitor(report, [dict(h) for h in self._raw_hypotheses],
-                                 self._context)
-        changed = revised is not None and revised != self._raw_hypotheses
-        if changed:
-            self._rebuild(revised)
+        assert self._elicitor is not None
+        event: Dict[str, Any] = {
+            "t": t, "day": t // DAY_SECONDS, "reason": reason,
+            "trigger": trigger, "call_index": self.calls_made,
+            "before": before}
+        if self._graph is not None:
+            result = self._elicitor(report, self._graph, self._context)
+            graph = getattr(result, "graph", None)
+            applied = list(getattr(result, "applied", []))
+            births = list(getattr(result, "births", []))
+            changed = graph is not None and bool(applied or births)
+            stamp = {"t": t, "day": t // DAY_SECONDS, "trigger": trigger,
+                     "call_index": self.calls_made}
+            if changed:
+                self._graph = graph
+                self._rebuild(graph.leaf_bodies())
+                self.edit_log += [{**stamp, **op} for op in applied]
+                self.birth_log += [{**stamp, "kind": "born", **b}
+                                   for b in births]
+                self.birth_log += [{**stamp, "kind": "skipped", **b}
+                                   for b in getattr(result, "skipped_births",
+                                                    [])]
+            event["problems"] = list(getattr(result, "problems", []))
+            event["operations"] = len(getattr(result, "operations", []))
+            event["assumptions_after"] = (
+                list(self._graph.assumptions) if self._graph else [])
+        else:
+            revised = self._elicitor(
+                report, [dict(h) for h in self._raw_hypotheses], self._context)
+            changed = revised is not None and revised != self._raw_hypotheses
+            if changed:
+                self._rebuild(revised)
         self._last_reask_index = len(self._sighting_log)
         self._recent.clear()
-        self.reask_events.append({
-            "t": t, "day": t // DAY_SECONDS, "reason": reason,
-            "call_index": self.calls_made, "before": before,
+        self._uncovered_bank = []
+        event.update({
             "changed": changed,
             "n_hypotheses_after": len(self._raw_hypotheses),
-            "hypothesis_ids_after": [h.get("hypothesis_id")
+            "hypothesis_ids_after": [self._particle_key(h)
                                      for h in self._raw_hypotheses]})
+        self.reask_events.append(event)
+
+    # -------------------------------------------------------------- pruning
+
+    def _prune(self, t: int) -> None:
+        """Drop leaves whose weight has sat below the floor for
+        ``leaf_prune_days`` consecutive days, never below
+        :data:`MIN_LEAVES_AFTER_PRUNE` leaves. No LLM call; logged."""
+        if self._graph is None or self._leaf_prune_days <= 0:
+            return
+        day = t // DAY_SECONDS
+        weights = self.weights
+        n_hyp = len(self._raw_hypotheses)
+        victims: List[int] = []
+        for i in range(n_hyp):
+            key = self._particle_key(self._raw_hypotheses[i])
+            if weights[i] < self._leaf_weight_floor:
+                since = self._below_since.setdefault(key, day)
+                if day - since >= self._leaf_prune_days:
+                    victims.append(i)
+            else:
+                self._below_since.pop(key, None)
+        if not victims:
+            return
+        # Lowest weight first, and stop when the floor count is reached.
+        victims.sort(key=lambda i: weights[i])
+        keep = set(range(len(self._particles)))
+        hyp_indices = set(range(n_hyp))
+        for i in victims:
+            if len(keep & hyp_indices) <= MIN_LEAVES_AFTER_PRUNE:
+                break
+            keep.discard(i)
+            key = self._particle_key(self._raw_hypotheses[i])
+            self.prune_log.append({
+                "t": t, "day": day, "leaf_id": key, "weight": weights[i],
+                "below_since_day": self._below_since.get(key)})
+            self._below_since.pop(key, None)
+        if len(keep) == len(self._particles):
+            return
+        order = sorted(keep)
+        pruned = {self._particle_key(self._raw_hypotheses[i])
+                  for i in range(n_hyp) if i not in keep}
+        self._particles = [self._particles[i] for i in order]
+        self._log_weights = [self._log_weights[i] for i in order]
+        self.presence_totals = [self.presence_totals[i] for i in order]
+        self.absence_totals = [self.absence_totals[i] for i in order]
+        self._raw_hypotheses = [h for h in self._raw_hypotheses
+                                if self._particle_key(h) not in pruned]
+        self._graph.leaves = [l for l in self._graph.leaves
+                              if l["leaf_id"] not in pruned]
+        top = max(self._log_weights)
+        self._log_weights = [lw - top for lw in self._log_weights]
 
     def _rebuild(self, revised: List[dict]) -> None:
         """Swap in the revised hypothesis set, keeping every stat particle
@@ -291,8 +558,8 @@ class LLMHypothesisMixture(HypothesisMixture):
         the mean log weight of the hypothesis particles."""
         old_weight = {}
         n_hyp = len(self._raw_hypotheses)
-        for particle, lw in zip(self._particles[:n_hyp], self._log_weights):
-            old_weight[particle.name] = lw
+        for raw, lw in zip(self._raw_hypotheses, self._log_weights[:n_hyp]):
+            old_weight[self._particle_key(raw)] = lw
         hyp_weights = list(self._log_weights[:n_hyp]) or [0.0]
         mean_lw = sum(hyp_weights) / len(hyp_weights)
         stat_particles = self._particles[n_hyp:]
@@ -310,7 +577,8 @@ class LLMHypothesisMixture(HypothesisMixture):
             for event in self._evidence_log:
                 particle.update(event)
             new_particles.append(particle)
-            new_weights.append(old_weight.get(particle.name, mean_lw))
+            new_weights.append(old_weight.get(self._particle_key(raw),
+                                              mean_lw))
         self._raw_hypotheses = [dict(h) for h in revised]
         self._particles = new_particles + list(stat_particles)
         self._log_weights = new_weights + list(stat_weights)
@@ -334,10 +602,12 @@ class LLMHypothesisMixture(HypothesisMixture):
         sightings = [(row["t"], row["object"], row["actual"])
                      for row in self._sighting_log]
         hypotheses = []
-        for particle, weight in zip(hyp_particles, weights):
+        for raw, particle, weight in zip(self._raw_hypotheses, hyp_particles,
+                                         weights):
             hyp = particle.hypothesis
             hypotheses.append({
                 "hypothesis_id": hyp.hypothesis_id, "weight": weight,
+                "assumes": dict(raw.get("assumes", {})),
                 "distinguishing_prediction": hyp.distinguishing_prediction,
                 "verdict": self._check_verdict(hyp.distinguishing_check,
                                                sightings)})
@@ -384,14 +654,79 @@ class LLMHypothesisMixture(HypothesisMixture):
                            f"({n}); {len(recs)} receptacle"
                            f"{'s' if len(recs) != 1 else ''}")
             uncovered.append({"object": obj, "summary": summary})
+        stat_weight = float(sum(weights[n_hyp:])) if len(weights) > n_hyp else None
         return {
             "day": t // DAY_SECONDS, "t": t,
             "hypotheses": hypotheses, "worst_objects": worst_objects,
+            "statistical_weight": stat_weight,
             "rules_held": held[:15], "rules_failed": failed[:15],
             "uncovered_objects": uncovered,
+            "uncovered_bank": self.uncovered_bank,
+            "assumptions": self.assumption_weights,
+            "leaf_weights": self.leaf_weights,
             "statistics": per_object_statistics(
                 sorted(table), sightings, t),
             "recent_quality": self.recent_quality}
+
+    # ---------------------------------------------------------------- graph
+
+    @property
+    def assumption_weights(self) -> Dict[str, Dict[str, Any]]:
+        """Per assumption: question, rolled-up value weights, entropy.
+        Empty for a flat file. Read-only; the policy reads this."""
+        if self._graph is None:
+            return {}
+        from baselines.llm_hypotheses.assumption_graph import (
+            assumption_summary)
+        return assumption_summary(self._graph, self.leaf_weights)
+
+    def value_distributions(self, object_id: str, t: int
+                            ) -> Dict[str, Dict[str, Tuple[float, Dict[str, float]]]]:
+        """For the policy: per assumption, per value, ``(rolled-up weight,
+        the leaves' weighted predictive distribution for object_id at t
+        under that value)``. Leaf distributions are read once; no
+        generator is perturbed."""
+        if self._graph is None:
+            return {}
+        n_hyp = len(self._raw_hypotheses)
+        dists = self.particle_distributions(object_id, t)[:n_hyp]
+        leaf_w = self.leaf_weights
+        total = sum(leaf_w.values()) or 1.0
+        out: Dict[str, Dict[str, Tuple[float, Dict[str, float]]]] = {}
+        for name, assumption in self._graph.assumptions.items():
+            per_value: Dict[str, Tuple[float, Dict[str, float]]] = {}
+            for value in assumption.values:
+                mass = 0.0
+                mixed: Dict[str, float] = {}
+                for raw, dist in zip(self._raw_hypotheses, dists):
+                    if raw.get("assumes", {}).get(name) != value:
+                        continue
+                    w = leaf_w[self._particle_key(raw)] / total
+                    mass += w
+                    for rec, p in dist.items():
+                        mixed[rec] = mixed.get(rec, 0.0) + w * p
+                if mass > 0.0:
+                    mixed = {r: p / mass for r, p in mixed.items()}
+                per_value[value] = (mass, mixed)
+            out[name] = per_value
+        return out
+
+    def graph_diagnostics(self) -> Dict[str, Any]:
+        """The graph arm's per-episode record: assumption trace, edit
+        log, prune log, birth log, leaf count trace, final graph."""
+        return {
+            "is_graph": self._graph is not None,
+            "assumption_trace": {str(d): v for d, v in
+                                 sorted(self._assumption_trace.items())},
+            "leaf_count_trace": {str(d): n for d, n in
+                                 sorted(self._leaf_count_trace.items())},
+            "edit_log": list(self.edit_log),
+            "prune_log": list(self.prune_log),
+            "birth_log": list(self.birth_log),
+            "uncovered_bank": self.uncovered_bank,
+            "final_graph": self._graph.to_json() if self._graph else None,
+            "leaf_weight_floor": self._leaf_weight_floor,
+            "leaf_prune_days": self._leaf_prune_days}
 
     @staticmethod
     def _check_verdict(check, sightings: Sequence[Tuple[int, str, str]]

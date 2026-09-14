@@ -37,6 +37,11 @@ from baselines.beliefs.llm_hypothesis_mixture import LLMHypothesisMixture
 from baselines.household_analysis import bank_path
 from baselines.types import DAY_SECONDS
 
+TRUE_PREMISES = {"composition": "solo", "work_pattern": "works_away"}
+"""The generating process behind hh_001 (persona: one working
+professional at an office on weekdays) — the ground-truth premise labels
+the assumption-recovery metric checks a graph against."""
+
 TRUE_HYPOTHESIS = {
     "hypothesis_id": "h_true",
     "rationale": "single working professional: weekday office days take "
@@ -59,47 +64,47 @@ TRUE_HYPOTHESIS = {
          "start_hour": 8.0, "duration_h": 8.5,
          "moves": [
              {"target": "keys_mara", "to": "OUT_OF_HOUSE",
-              "chance": "almost_always", "after": "returned"},
+              "chance": "almost_always"},
              {"target": "wallet_mara", "to": "OUT_OF_HOUSE",
-              "chance": "almost_always", "after": "returned"},
+              "chance": "almost_always"},
              {"target": "backpack_mara", "to": "OUT_OF_HOUSE",
-              "chance": "almost_always", "after": "returned"},
+              "chance": "almost_always"},
              {"target": "jacket_mara", "to": "OUT_OF_HOUSE",
-              "chance": "usually", "after": "returned"},
+              "chance": "usually"},
              {"target": "phone_mara", "to": "OUT_OF_HOUSE",
-              "chance": "usually", "after": "returned"},
+              "chance": "usually"},
          ]},
         {"name": "breakfast", "days": "both", "frequency_per_week": 7,
          "start_hour": 6.2, "duration_h": 0.8,
          "moves": [
              {"target": "class:bowl", "to": "kitchen_table_k1",
-              "chance": "sometimes", "after": "left"},
+              "chance": "sometimes", "duration_h": 17.8},
              {"target": "class:pan", "to": "kitchen_table_k1",
-              "chance": "sometimes", "after": "left"},
+              "chance": "sometimes", "duration_h": 17.8},
          ]},
         {"name": "coffee", "days": "both", "frequency_per_week": 5,
          "start_hour": 6.1, "duration_h": 0.5,
          "moves": [
              {"target": "mug_mara", "to": "counter_k1",
-              "chance": "usually", "after": "left"},
+              "chance": "usually", "duration_h": 17.9},
          ]},
         {"name": "dinner", "days": "both", "frequency_per_week": 7,
          "start_hour": 17.5, "duration_h": 1.2,
          "moves": [
              {"target": "class:plate", "to": "kitchen_table_k1",
-              "chance": "usually", "after": "left"},
+              "chance": "usually", "duration_h": 6.5},
              {"target": "class:pan", "to": "kitchen_table_k1",
-              "chance": "sometimes", "after": "left"},
+              "chance": "sometimes", "duration_h": 6.5},
          ]},
         {"name": "weekend_reading", "days": "weekend",
          "frequency_per_week": 2, "start_hour": 14.0, "duration_h": 2.5,
          "moves": [
              {"target": "glasses_mara", "to": "couch_l1",
-              "chance": "usually", "after": "left"},
+              "chance": "usually", "duration_h": 10.0},
              {"target": "book_mara", "to": "couch_l1",
-              "chance": "usually", "after": "returned"},
+              "chance": "usually"},
              {"target": "mug_mara", "to": "coffee_table_l1",
-              "chance": "sometimes", "after": "left"},
+              "chance": "sometimes", "duration_h": 10.0},
          ]},
     ],
 }
@@ -123,25 +128,25 @@ WRONG_HYPOTHESIS = {
          "start_hour": 10.0, "duration_h": 7.0,
          "moves": [
              {"target": "laptop_mara", "to": "desk_b1",
-              "chance": "almost_always", "after": "left"},
+              "chance": "almost_always", "duration_h": 14.0},
              {"target": "phone_mara", "to": "desk_b1",
-              "chance": "usually", "after": "left"},
+              "chance": "usually", "duration_h": 14.0},
              {"target": "mug_mara", "to": "desk_b1",
-              "chance": "usually", "after": "left"},
+              "chance": "usually", "duration_h": 14.0},
          ]},
         {"name": "late_dinner", "days": "both", "frequency_per_week": 7,
          "start_hour": 21.0, "duration_h": 1.0,
          "moves": [
              {"target": "class:plate", "to": "couch_l1",
-              "chance": "usually", "after": "left"},
+              "chance": "usually", "duration_h": 3.0},
          ]},
         {"name": "evening_reading", "days": "weekday",
          "frequency_per_week": 5, "start_hour": 22.0, "duration_h": 1.0,
          "moves": [
              {"target": "book_mara", "to": "bed_b1",
-              "chance": "usually", "after": "left"},
+              "chance": "usually", "duration_h": 2.0},
              {"target": "glasses_mara", "to": "bed_b1",
-              "chance": "usually", "after": "left"},
+              "chance": "usually", "duration_h": 2.0},
          ]},
     ],
 }

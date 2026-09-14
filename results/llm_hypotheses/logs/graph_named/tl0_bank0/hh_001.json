@@ -1,0 +1,2743 @@
+{
+ "household": "hh_001",
+ "condition": "named",
+ "graph_arm": true,
+ "prompt": "A home robot has just been installed. Its only observation so far is one walkthrough of the home at 15:08 on day 0, a Monday. Below are the home's receptacles and objects; where the walkthrough saw an object, its row says so.\n\nRECEPTACLES:\n  bed_b1\n  nightstand_b1\n  desk_b1\n  bedroom_floor_b1\n  couch_l1\n  coffee_table_l1\n  tv_stand_l1\n  bookshelf_l1\n  armchair_l1\n  counter_k1\n  sink_k1\n  cupboard_k1\n  dish_rack_k1\n  kitchen_table_k1\n  chair_k1\n  chair_k2\n  bathroom_shelf_ba1\n  towel_rack_ba1\n  entry_table_e1\n  entry_hook_e1\n  entry_floor_e1\n  OUT_OF_HOUSE\n\nOBJECTS, with where the tour saw each one:\n  backpack_mara  (class: backpack)\n  blanket_mara  (class: blanket)  at couch_l1\n  book_mara  (class: book)  at bookshelf_l1\n  bowl_shared_1  (class: bowl)  at entry_table_e1\n  bowl_shared_2  (class: bowl)  at kitchen_table_k1\n  charger_mara  (class: charger)\n  glasses_mara  (class: glasses)\n  hairbrush_mara  (class: hairbrush)  at nightstand_b1\n  headphones_mara  (class: headphones)\n  jacket_mara  (class: jacket)\n  keys_mara  (class: keys)\n  laptop_mara  (class: laptop)\n  laundry_basket_mara  (class: laundry_basket)  at bedroom_floor_b1\n  lunchbox_mara  (class: lunchbox)  at counter_k1\n  makeup_kit_mara  (class: makeup_kit)  at bathroom_shelf_ba1\n  medication_bottle_mara  (class: medication_bottle)  at bathroom_shelf_ba1\n  mug_mara  (class: mug)  at chair_k1\n  mug_shared_1  (class: mug)  at cupboard_k1\n  notebook_mara  (class: notebook)\n  pan_shared_1  (class: pan)  at sink_k1\n  pen_mara  (class: pen)  at kitchen_table_k1\n  phone_mara  (class: phone)\n  plate_shared_1  (class: plate)  at cupboard_k1\n  plate_shared_2  (class: plate)  at counter_k1\n  pot_shared_1  (class: pot)  at cupboard_k1\n  remote_shared_1  (class: remote)  at coffee_table_l1\n  suitcase_mara  (class: suitcase)  at bedroom_floor_b1\n  tablet_mara  (class: tablet)  at coffee_table_l1\n  towel_mara  (class: towel)  at towel_rack_ba1\n  umbrella_mara  (class: umbrella)  at entry_floor_e1\n  vacuum_cleaner_shared_1  (class: vacuum_cleaner)  at bedroom_floor_b1\n  wallet_mara  (class: wallet)\n  water_bottle_mara  (class: water_bottle)\n  watering_can_mara  (class: watering_can)  at sink_k1\n  yoga_mat_mara  (class: yoga_mat)  at couch_l1\n\nCLASSES (usable as `class:<name>` targets): backpack, blanket, book, bowl, charger, glasses, hairbrush, headphones, jacket, keys, laptop, laundry_basket, lunchbox, makeup_kit, medication_bottle, mug, notebook, pan, pen, phone, plate, pot, remote, suitcase, tablet, towel, umbrella, vacuum_cleaner, wallet, water_bottle, watering_can, yoga_mat\n\nWrite competing hypotheses about this home's weekly routine, organised as a small graph. The upper level is a set of ASSUMPTIONS: named latent facts about the household, each with a short list of named values (for example who lives here, or where the primary resident is on weekdays). The lower level is LEAVES: one full hypothesis per combination of assumption values you think worth testing, each with an `assumes` map naming one value of every assumption. A leaf is a set of ACTIVITIES: a name, which days (weekday, weekend, or both), roughly when it starts (start_hour, a number), how long it lasts (duration_h), how many times a week it happens (frequency_per_week), and its moves \u2014 which object (or class:<name>) goes to which receptacle, with a chance and, when it differs from the activity's, its own `duration_h`. A leaf may also give a `rest` map: receptacles where objects sit when nothing is happening.\n\nRules that matter:\n\n1. Leaves must DISAGREE in ways sightings can settle. Two leaves predicting the same object in the same place at the same hour are wasted. Each leaf carries a one-line `distinguishing_prediction` naming a concrete observable difference from the others, and a `distinguishing_check` in the form {\"target\": <object id>, \"at\": <receptacle id>, \"days\": weekday|weekend|both, \"hour\": <number>}.\n2. Cover every object, not only the interesting ones: every object id should appear in each leaf's `rest` map (directly or via its class).\n3. Times and weekly frequencies: state them as numbers with your best guess (\"dinner around 19:30\" -> start_hour 19.5). They will be corrected by data, so a concrete guess beats a vague one.\n4. State how long each object stays where the activity put it. A move lasts the activity's `duration_h` unless you give the move its own `duration_h`; do so whenever it differs.\n5. Chances: NEVER numbers. Use exactly one of: rarely, sometimes, usually, almost_always.\n6. IDs: use ONLY identifiers from the tables above, exactly as printed. Nothing outside the tables is valid. Every JSON field must contain the bare id.\n7. One line of `rationale` per leaf.\n\nAssumptions:\n\n- Name 2 to 3 assumptions. An assumption qualifies only if its different values lead to different observable predictions. If two values would produce leaves that predict the same object in the same place at the same hour, drop the assumption.\n- Write one leaf per combination of assumption values worth testing. Skip combinations that do not fit together, and say which in `leaf_set_rationale`.\n- `OUT_OF_HOUSE` is a location in the tables like any other.\n- `leaf_id` is an opaque token: `p_` followed by 4 hex characters, chosen at random. Never spell an id from the assumption values. Assumption names, value names, questions and descriptions must not contain any object or receptacle id.\n- At most 3 assumptions and 12 leaves.\n\nThink it through, then end your reply with one json object. The example below shows the field shapes only; it is abbreviated and is about a different, smaller home.\n\n{\n \"assumptions\": {\n  \"composition\": {\n   \"question\": \"how many people live here and who\",\n   \"values\": {\n    \"solo\": \"one adult resident\",\n    \"couple\": \"two adults, no children\"\n   }\n  },\n  \"weekday_pattern\": {\n   \"question\": \"where is the primary resident on weekdays\",\n   \"values\": {\n    \"works_away\": \"out of the house 9 to 6\",\n    \"works_from_home\": \"at the desk most of the day\"\n   }\n  }\n },\n \"leaf_set_rationale\": \"solo + works_from_home is skipped: with one resident at home all day the tour would have found the laptop out, and it was not\",\n \"leaves\": [\n  {\n   \"leaf_id\": \"p_a41c\",\n   \"assumes\": {\n    \"composition\": \"couple\",\n    \"weekday_pattern\": \"works_away\"\n   },\n   \"rationale\": \"two commuters; the home is empty on weekdays\",\n   \"distinguishing_prediction\": \"keys_x are on the entry shelf on weekday evenings and gone by 9:00\",\n   \"distinguishing_check\": {\n    \"target\": \"keys_x\",\n    \"at\": \"entry_shelf_1\",\n    \"days\": \"weekday\",\n    \"hour\": 19.0\n   },\n   \"rest\": {\n    \"class:mug\": \"cupboard_1\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"office_day\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 8.0,\n     \"duration_h\": 9.0,\n     \"moves\": [\n      {\n       \"target\": \"keys_x\",\n       \"to\": \"OUT_OF_HOUSE\",\n       \"chance\": \"almost_always\"\n      }\n     ]\n    },\n    {\n     \"name\": \"morning_coffee\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 6,\n     \"start_hour\": 6.5,\n     \"duration_h\": 0.5,\n     \"moves\": [\n      {\n       \"target\": \"class:mug\",\n       \"to\": \"counter_1\",\n       \"chance\": \"usually\",\n       \"duration_h\": 4.0\n      }\n     ]\n    }\n   ]\n  },\n  {\n   \"leaf_id\": \"p_9f02\",\n   \"assumes\": {\n    \"composition\": \"couple\",\n    \"weekday_pattern\": \"works_from_home\"\n   },\n   \"rationale\": \"one partner commutes, the other works at the desk\",\n   \"distinguishing_prediction\": \"keys_x on the entry shelf at weekday midday\",\n   \"distinguishing_check\": {\n    \"target\": \"keys_x\",\n    \"at\": \"entry_shelf_1\",\n    \"days\": \"weekday\",\n    \"hour\": 13.0\n   },\n   \"rest\": {\n    \"class:mug\": \"desk_1\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"desk_work\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 9.0,\n     \"duration_h\": 7.0,\n     \"moves\": [\n      {\n       \"target\": \"class:mug\",\n       \"to\": \"desk_1\",\n       \"chance\": \"usually\",\n       \"duration_h\": 12.0\n      }\n     ]\n    }\n   ]\n  }\n ]\n}",
+ "rounds": [
+  {
+   "kind": "initial",
+   "think": "Let me analyze the home walkthrough to build hypotheses about this household's weekly routine.\n\n**What I observe at 15:08 on a Monday (weekday):**\n\nObjects seen:\n- blanket_mara at couch_l1\n- book_mara at bookshelf_l1\n- bowl_shared_1 at entry_table_e1\n- bowl_shared_2 at kitchen_table_k1\n- hairbrush_mara at nightstand_b1\n- laundry_basket_mara at bedroom_floor_b1\n- lunchbox_mara at counter_k1\n- makeup_kit_mara at bathroom_shelf_ba1\n- medication_bottle_mara at bathroom_shelf_ba1\n- mug_mara at chair_k1\n- mug_shared_1 at cupboard_k1\n- pan_shared_1 at sink_k1\n- pen_mara at kitchen_table_k1\n- plate_shared_1 at cupboard_k1\n- plate_shared_2 at counter_k1\n- pot_shared_1 at cupboard_k1\n- remote_shared_1 at coffee_table_l1\n- suitcase_mara at bedroom_floor_b1\n- tablet_mara at coffee_table_l1\n- towel_mara at towel_rack_ba1\n- umbrella_mara at entry_floor_e1\n- vacuum_cleaner_shared_1 at bedroom_floor_b1\n- water_bottle_mara at sink_k1\n- watering_can_mara at sink_k1\n- yoga_mat_mara at couch_l1\n\nObjects NOT seen (no location given):\n- backpack_mara\n- charger_mara\n- glasses_mara\n- headphones_mara\n- jacket_mara\n- keys_mara\n- laptop_mara\n- notebook_mara\n- phone_mara\n- wallet_mara\n- water_bottle_mara (wait, it IS at sink_k1)\n\nWait, let me re-read. Objects without a location:\n- backpack_mara\n- charger_mara\n- glasses_mara\n- headphones_mara\n- jacket_mara\n- keys_mara\n- laptop_mara\n- notebook_mara\n- phone_mara\n- wallet_mara\n\nThese 10 objects were NOT seen during the walkthrough. This is very telling.\n\n**Key observations:**\n\n1. The objects NOT seen are all personal carry items: backpack, charger, glasses, headphones, jacket, keys, laptop, notebook, phone, wallet. These are items a person would carry with them when going out.\n\n2. The objects that ARE seen are \"home\" items: blankets, books, bowls, hairbrush, laundry, lunchbox, makeup, medication, mugs, pans, plates, pots, remote, suitcase, tablet, towel, umbrella, vacuum, water bottle, watering can, yoga mat.\n\n3. There's a suitcase at bedroom_floor_b1 - this could indicate travel plans.\n\n4. The lunchbox is at counter_k1 - suggesting lunch prep or that lunch was packed.\n\n5. The tablet is at coffee_table_l1 (not the laptop which is missing) - suggesting the person uses the tablet at home but took the laptop with them.\n\n6. The yoga mat is at couch_l1 - not rolled up and stored, suggesting recent or planned use.\n\n7. The umbrella is at entry_floor_e1 - ready for use going out.\n\n8. The pen is at kitchen_table_k1 - interesting, not at a desk.\n\n9. The mug_mara is at chair_k1 - someone was sitting at the kitchen table.\n\n10. The water_bottle_mara is at sink_k1 - being filled or just used.\n\n11. The watering_can_mara is at sink_k1 - being filled for plants.\n\n12. The vacuum_cleaner_shared_1 is at bedroom_floor_b1 - unusual location, maybe being stored or just used.\n\n**Hypotheses to form:**\n\nThe main question is: where is Mara (the primary resident) at 15:08 on a Monday?\n\nThe missing items (backpack, charger, glasses, headphones, jacket, keys, laptop, notebook, phone, wallet) strongly suggest Mara is OUT of the house. She took her laptop, phone, keys, wallet, etc.\n\nBut wait - could she be in the house but in a room not covered by the walkthrough? The walkthrough covers all rooms, so if she were home, her phone, laptop, keys, etc. would likely be somewhere visible.\n\nActually, let me reconsider. The walkthrough is at 15:08. If Mara is out:\n- She'd have her keys, phone, wallet, laptop, backpack, charger, glasses, headphones, jacket, notebook\n- She left the tablet at home (on coffee table)\n- The lunchbox is at the counter (maybe she packed it before leaving, or it's for tomorrow)\n- The umbrella is at the entry (she might need it if she comes back in rain)\n\nAlternative: Mara is home but in the bathroom (not fully visible?) or the items are in a bag somewhere. But the walkthrough seems comprehensive.\n\nLet me think about what assumptions would create different observable predictions:\n\n**Assumption 1: Mara's weekday presence**\n- \"out_all_day\": Mara is out of the house most of the weekday (work, errands)\n- \"out_afternoon\": Mara is out only in the afternoon (part-time work, classes)\n- \"home_afternoon\": Mara is home in the afternoon (works mornings only, or WFH)\n\nWait, but if she's home in the afternoon, her keys, phone, laptop etc. should be visible. They're not. So \"home_afternoon\" seems unlikely given the data. But the hypothesis should still be testable - if she IS home, where would these items be?\n\nActually, let me reconsider. The walkthrough is at 15:08. If Mara is home, her phone could be in her pocket, her keys on a hook, her laptop at the desk... but the desk_b1 is listed as a receptacle and nothing is there. The entry_hook_e1 is listed and nothing is there.\n\nSo the data strongly suggests she's out. But I need to create competing hypotheses.\n\n**Assumption 2: What Mara does when out**\n- \"work_commute\": She goes to an office (laptop, notebook, charger, backpack all go OUT_OF_HOUSE)\n- \"errands_only\": She goes out for errands but leaves laptop at home (laptop would be at desk)\n\nWait, but the laptop is NOT seen anywhere. So if she's out for errands but leaves the laptop, the laptop should be at desk_b1. It's not. This suggests the laptop went with her.\n\nHmm, but actually the walkthrough might not have seen the laptop if it was in a drawer or under the desk. But the receptacles listed are specific surfaces/locations. If the laptop were at desk_b1, it would have been seen.\n\nSo the laptop is either OUT_OF_HOUSE or in a location not covered. Given the receptacles listed, I think OUT_OF_HOUSE is the best explanation.\n\n**Assumption 3: The suitcase**\n- \"travel_planned\": The suitcase is packed for an upcoming trip\n- \"just_returned\": The suitcase is from a recent trip and hasn't been put away\n- \"regular_storage\": The suitcase is just stored there\n\nThis affects whether we expect the suitcase to move soon.\n\nLet me also consider:\n- The vacuum_cleaner at bedroom_floor_b1 is odd. Usually vacuums are in a closet or garage. Its presence on the bedroom floor suggests it was just used or is being stored temporarily.\n- The blanket at couch_l1 and yoga mat at couch_l1 suggest the couch is a multi-use space.\n\nLet me structure my assumptions:\n\n**Assumption 1: weekday_presence** - Where is Mara on weekday afternoons?\n- \"out_of_house\": Mara is out (work, errands) - explains missing carry items\n- \"home_desk\": Mara is at home working at desk - would expect laptop, notebook, phone at desk_b1\n\n**Assumption 2: carry_pattern** - What does Mara take out with her?\n- \"full_carry\": Takes laptop, phone, keys, wallet, backpack, charger, glasses, headphones, jacket, notebook (all missing items go OUT_OF_HOUSE)\n- \"light_carry\": Takes only keys, phone, wallet, jacket (laptop, notebook, charger stay at home at desk)\n\nWait, but if she's home at the desk (assumption 1 = home_desk), then the carry pattern is less relevant for the afternoon. Let me restructure.\n\nActually, let me think about what creates genuinely different predictions:\n\nIf Mara is OUT:\n- keys_mara, phone_mara, wallet_mara, laptop_mara, backpack_mara, charger_mara, glasses_mara, headphones_mara, jacket_mara, notebook_mara \u2192 OUT_OF_HOUSE\n- The tablet stays at coffee_table_l1 (she uses it at home)\n- The lunchbox at counter_k1 is packed for the next day or she ate before leaving\n\nIf Mara is HOME (at desk):\n- laptop_mara at desk_b1\n- notebook_mara at desk_b1\n- phone_mara at desk_b1 or nightstand_b1\n- keys_mara at entry_hook_e1 or desk_b1\n- wallet_mara at desk_b1 or entry_table_e1\n- backpack_mara at bedroom_floor_b1 or entry_floor_e1\n- charger_mara at desk_b1\n- glasses_mara at desk_b1 or nightstand_b1\n- headphones_mara at desk_b1\n- jacket_mara at bedroom_floor_b1 or entry_hook_e1\n\nThese are very different predictions! The tour at 15:08 would show the desk area very differently.\n\n**Assumption 3: travel_status** - Is the suitcase for an upcoming trip?\n- \"trip_upcoming\": Suitcase is packed, Mara will travel soon (weekend?)\n- \"trip_returned\": Mara just got back, suitcase not yet put away\n- \"storage\": Suitcase is just stored in the bedroom\n\nThis affects whether we expect the suitcase to move to OUT_OF_HOUSE on a weekend, or whether it stays.\n\nLet me finalize:\n\n**Assumption 1: weekday_presence**\n- \"out_afternoon\": Mara is out of the house during weekday afternoons (work/errands)\n- \"home_desk\": Mara is at home working at the desk during weekday afternoons\n\n**Assumption 2: carry_scope** (only relevant if out_afternoon)\n- \"full_carry\": She takes all her personal electronics and documents (laptop, phone, charger, glasses, headphones, notebook, backpack)\n- \"essentials_only\": She takes only keys, phone, wallet, jacket; leaves laptop and notebook at home\n\nWait, if she's out but leaves the laptop at home, where is it? At desk_b1. But the tour didn't see it at desk_b1. So \"essentials_only\" + \"out_afternoon\" would predict laptop at desk_b1, which contradicts the tour.\n\nHmm, but the tour is at 15:08. Maybe she left before and the laptop was at the desk but got moved? No, that doesn't make sense.\n\nActually, I think the cleanest hypotheses are:\n\n1. Mara is out with everything (full carry) - explains all missing items\n2. Mara is out with essentials only, laptop is at desk - but contradicts tour (laptop not at desk)\n3. Mara is home at desk - contradicts tour (laptop, phone, keys not at desk)\n\nSince hypothesis 2 and 3 contradict the tour, they're less likely but still worth testing (maybe the tour missed them, or they're in a drawer).\n\nActually wait - the tour saw objects at specific receptacles. If the laptop were at desk_b1, it would be listed as \"at desk_b1\". Since it's not listed with any location, it wasn't seen. This means either:\n- It's OUT_OF_HOUSE\n- It's in a location the tour didn't check (but the tour seems comprehensive)\n- It's hidden/in a drawer (not a listed receptacle)\n\nI'll go with: the tour is comprehensive, so if an object isn't listed, it's either OUT_OF_HOUSE or in a non-receptacle location (which I'll treat as OUT_OF_HOUSE for simplicity, or I can add a \"hidden\" state).\n\nLet me simplify to 2 assumptions and create leaves:\n\n**Assumption 1: weekday_presence** (Where is Mara on weekday afternoons?)\n- \"out\": Out of the house (work, errands, classes)\n- \"home\": At home (working at desk, relaxing)\n\n**Assumption 2: weekend_routine** (What happens on weekends?)\n- \"active_weekend\": Mara does yoga, errands, social activities on weekends\n- \"quiet_weekend\": Mara stays in, reads, uses tablet, minimal movement\n\n**Assumption 3: travel** (The suitcase situation)\n- \"pre_trip\": Suitcase is packed for an upcoming weekend trip\n- \"post_trip\": Suitcase is from a recent trip, will be put away\n- \"stored\": Suitcase is just stored, no imminent travel\n\nLet me think about which combinations create different predictions:\n\nLeaf 1: out + active_weekend + pre_trip\n- Weekday afternoon: all carry items OUT_OF_HOUSE\n- Weekend: yoga mat gets used (moved to bedroom_floor or out), suitcase goes OUT_OF_HOUSE\n- Distinguishing: suitcase at OUT_OF_HOUSE on Saturday\n\nLeaf 2: out + active_weekend + post_trip\n- Weekday afternoon: all carry items OUT_OF_HOUSE\n- Weekend: yoga mat used, suitcase stays or gets put away\n- Distinguishing: suitcase at bedroom_floor_b1 on Saturday (not going out)\n\nLeaf 3: out + active_weekend + stored\n- Weekday afternoon: all carry items OUT_OF_HOUSE\n- Weekend: yoga mat used, suitcase stays at bedroom_floor_b1\n- Distinguishing: suitcase at bedroom_floor_b1 on Saturday\n\nHmm, leaves 2 and 3 are similar. Let me reconsider.\n\nActually, let me think about what's most testable:\n\nThe key question from the tour is: is Mara home or not on weekday afternoons?\n\nIf she's OUT:\n- keys_mara \u2192 OUT_OF_HOUSE (or entry_hook if she just left)\n- phone_mara \u2192 OUT_OF_HOUSE\n- laptop_mara \u2192 OUT_OF_HOUSE\n- wallet_mara \u2192 OUT_OF_HOUSE\n- backpack_mara \u2192 OUT_OF_HOUSE\n- charger_mara \u2192 OUT_OF_HOUSE\n- glasses_mara \u2192 OUT_OF_HOUSE\n- headphones_mara \u2192 OUT_OF_HOUSE\n- jacket_mara \u2192 OUT_OF_HOUSE\n- notebook_mara \u2192 OUT_OF_HOUSE\n\nIf she's HOME at desk:\n- laptop_mara \u2192 desk_b1\n- notebook_mara \u2192 desk_b1\n- phone_mara \u2192 desk_b1 or nightstand_b1\n- keys_mara \u2192 entry_hook_e1 or desk_b1\n- wallet_mara \u2192 desk_b1 or entry_table_e1\n- backpack_mara \u2192 bedroom_floor_b1 or entry_floor_e1\n- charger_mara \u2192 desk_b1\n- glasses_mara \u2192 desk_b1 or nightstand_b1\n- headphones_mara \u2192 desk_b1\n- jacket_mara \u2192 bedroom_floor_b1 or entry_hook_e1\n\nThese are VERY different predictions. The distinguishing check would be: laptop_mara at desk_b1 on a weekday at hour 15.\n\nFor the second assumption, let me think about what's observable:\n- If she does yoga on weekends, the yoga_mat moves from couch_l1 to bedroom_floor_b1 or OUT_OF_HOUSE\n- If she's quiet, the yoga_mat stays at couch_l1\n\nFor the suitcase:\n- If pre-trip, suitcase goes to OUT_OF_HOUSE on weekend\n- If post-trip, suitcase stays at bedroom_floor_b1 (or gets moved to a closet, but there's no closet receptacle... maybe it stays)\n- If stored, suitcase stays at bedroom_floor_b1\n\nActually, post-trip and stored are hard to distinguish observationally since both predict the suitcase stays. Let me merge those.\n\nLet me go with:\n\n**Assumption 1: weekday_presence**\n- \"out\": Mara is out of the house on weekday afternoons\n- \"home_desk\": Mara is at home at the desk on weekday afternoons\n\n**Assumption 2: weekend_activity**\n- \"active\": Mara does yoga, errands, and social activities on weekends\n- \"sedentary\": Mara stays in, reads, uses tablet\n\n**Assumption 3: suitcase_status**\n- \"pre_trip\": Suitcase is packed for an upcoming trip (will leave with Mara)\n- \"stored\": Suitcase is stored in the bedroom (won't move soon)\n\nThat gives 2 \u00d7 2 \u00d7 2 = 8 leaves. Let me see which are worth keeping.\n\n- out + active + pre_trip: Mara out weekdays, active weekends, suitcase leaves on weekend\n- out + active + stored: Mara out weekdays, active weekends, suitcase stays\n- out + sedentary + pre_trip: Mara out weekdays, quiet weekends, suitcase leaves\n- out + sedentary + stored: Mara out weekdays, quiet weekends, suitcase stays\n- home_desk + active + pre_trip: Mara home weekdays, active weekends, suitcase leaves\n- home_desk + active + stored: Mara home weekdays, active weekends, suitcase stays\n- home_desk + sedentary + pre_trip: Mara home weekdays, quiet weekends, suitcase leaves\n- home_desk + sedentary + stored: Mara home weekdays, quiet weekends, suitcase stays\n\nI think all 8 are valid. But let me check: do any of these produce the same predictions?\n\nThe main difference between \"out\" and \"home_desk\" is where the 10 missing items are on weekday afternoons. That's a huge difference.\n\nThe difference between \"active\" and \"sedentary\" is whether yoga_mat, water_bottle, etc. move on weekends.\n\nThe difference between \"pre_trip\" and \"stored\" is whether the suitcase moves to OUT_OF_HOUSE on a weekend.\n\nThese are all independently observable. Good.\n\nBut 8 leaves is a lot. Let me see if I can trim. The problem says \"at most 12 leaves\" so 8 is fine. But let me make sure each leaf has a clear distinguishing prediction.\n\nActually, let me reconsider. The \"home_desk\" hypothesis is pretty strongly contradicted by the tour (laptop, phone, keys, etc. not at desk). But it's still worth testing because maybe the tour missed them, or maybe the pattern changes. I'll keep it but note it's less likely.\n\nLet me also think about what \"rest\" means. The rest map says where objects sit when nothing is happening. This is the baseline state.\n\nFor the \"out\" leaves, the rest state should reflect where things are when Mara is home (since the \"out\" activity moves them away). For the \"home_desk\" leaves, the rest state is the desk.\n\nWait, I need to think about this more carefully. The rest map is the default location. Activities override it.\n\nLet me define rest as the \"home\" position of each object:\n- blanket_mara: couch_l1 (seen there)\n- book_mara: bookshelf_l1 (seen there)\n- bowl_shared_1: entry_table_e1 (seen there)\n- bowl_shared_2: kitchen_table_k1 (seen there)\n- hairbrush_mara: nightstand_b1 (seen there)\n- laundry_basket_mara: bedroom_floor_b1 (seen there)\n- lunchbox_mara: counter_k1 (seen there)\n- makeup_kit_mara: bathroom_shelf_ba1 (seen there)\n- medication_bottle_mara: bathroom_shelf_ba1 (seen there)\n- mug_mara: chair_k1 (seen there)\n- mug_shared_1: cupboard_k1 (seen there)\n- pan_shared_1: sink_k1 (seen there)\n- pen_mara: kitchen_table_k1 (seen there)\n- plate_shared_1: cupboard_k1 (seen there)\n- plate_shared_2: counter_k1 (seen there)\n- pot_shared_1: cupboard_k1 (seen there)\n- remote_shared_1: coffee_table_l1 (seen there)\n- suitcase_mara: bedroom_floor_b1 (seen there)\n- tablet_mara: coffee_table_l1 (seen there)\n- towel_mara: towel_rack_ba1 (seen there)\n- umbrella_mara: entry_floor_e1 (seen there)\n- vacuum_cleaner_shared_1: bedroom_floor_b1 (seen there)\n- water_bottle_mara: sink_k1 (seen there)\n- watering_can_mara: sink_k1 (seen there)\n- yoga_mat_mara: couch_l1 (seen there)\n\nFor the missing items, I need to assign rest locations:\n- backpack_mara: bedroom_floor_b1 (or entry_floor_e1)\n- charger_mara: desk_b1 (or nightstand_b1)\n- glasses_mara: nightstand_b1 (or desk_b1)\n- headphones_mara: desk_b1 (or nightstand_b1)\n- jacket_mara: bedroom_floor_b1 (or entry_hook_e1)\n- keys_mara: entry_hook_e1 (or entry_table_e1)\n- laptop_mara: desk_b1\n- notebook_mara: desk_b1 (or nightstand_b1)\n- phone_mara: nightstand_b1 (or desk_b1)\n- wallet_mara: entry_table_e1 (or desk_b1)\n\nNow, for the \"out\" hypothesis, the activity moves these to OUT_OF_HOUSE. For \"home_desk\", they stay at their rest positions (desk, nightstand, entry).\n\nLet me now write the leaves. I'll aim for 6-8 leaves.\n\nLet me pick 2 assumptions to keep it manageable, or 3 with fewer combinations.\n\nActually, let me go with 3 assumptions but skip some combinations:\n\nAssumption 1: weekday_presence (out, home_desk)\nAssumption 2: weekend_activity (active, sedentary)  \nAssumption 3: suitcase_status (pre_trip, stored)\n\nI'll do all 8 combinations. Let me write them out.\n\nWait, I need to be careful about the \"distinguishing_prediction\" and \"distinguishing_check\". Each leaf needs to name a CONCRETE observable difference from the OTHER leaves. So each leaf's check should be something that, if observed, would support that leaf and contradict others.\n\nLet me think about what distinguishes each:\n\n1. out + active + pre_trip: \n   - Distinguishing: suitcase at OUT_OF_HOUSE on Saturday (vs stored leaves) AND yoga_mat at bedroom_floor_b1 on Saturday (vs sedentary) AND laptop at OUT_OF_HOUSE on Monday (vs home_desk)\n   - Check: suitcase_mara at OUT_OF_HOUSE on weekend at hour 10\n\n2. out + active + stored:\n   - Distinguishing: yoga_mat at bedroom_floor_b1 on Saturday (vs sedentary) AND laptop at OUT_OF_HOUSE on Monday (vs home_desk) AND suitcase at bedroom_floor_b1 on Saturday (vs pre_trip)\n   - Check: yoga_mat_mara at bedroom_floor_b1 on weekend at hour 10\n\n3. out + sedentary + pre_trip:\n   - Distinguishing: suitcase at OUT_OF_HOUSE on Saturday (vs stored) AND laptop at OUT_OF_HOUSE on Monday (vs home_desk) AND yoga_mat at couch_l1 on Saturday (vs active)\n   - Check: yoga_mat_mara at couch_l1 on weekend at hour 10\n\n4. out + sedentary + stored:\n   - Distinguishing: laptop at OUT_OF_HOUSE on Monday (vs home_desk) AND yoga_mat at couch_l1 on Saturday (vs active) AND suitcase at bedroom_floor_b1 on Saturday (vs pre_trip)\n   - Check: laptop_mara at OUT_OF_HOUSE on weekday at hour 15\n\n5. home_desk + active + pre_trip:\n   - Distinguishing: laptop at desk_b1 on Monday (vs out) AND suitcase at OUT_OF_HOUSE on Saturday\n   - Check: laptop_mara at desk_b1 on weekday at hour 15\n\n6. home_desk + active + stored:\n   - Distinguishing: laptop at desk_b1 on Monday (vs out) AND yoga_mat at bedroom_floor_b1 on Saturday (vs sedentary)\n   - Check: laptop_mara at desk_b1 on weekday at hour 15\n\n7. home_desk + sedentary + pre_trip:\n   - Distinguishing: laptop at desk_b1 on Monday (vs out) AND suitcase at OUT_OF_HOUSE on Saturday (vs stored)\n   - Check: laptop_mara at desk_b1 on weekday at hour 15\n\n8. home_desk + sedentary + stored:\n   - Distinguishing: laptop at desk_b1 on Monday (vs out) AND yoga_mat at couch_l1 on Saturday (vs active)\n   - Check: laptop_mara at desk_b1 on weekday at hour 15\n\nHmm, leaves 5-8 all have the same distinguishing check (laptop at desk_b1). That's not great. Let me make them more specific.\n\nActually, the rule says \"naming a concrete observable difference from the others.\" So each leaf should be distinguishable from ALL others. Let me make the checks more specific:\n\n1. out + active + pre_trip: check suitcase_mara at OUT_OF_HOUSE, weekend, hour 10\n2. out + active + stored: check yoga_mat_mara at bedroom_floor_b1, weekend, hour 10\n3. out + sedentary + pre_trip: check yoga_mat_mara at couch_l1, weekend, hour 10 (while suitcase is OUT)\n   - Actually this is hard to check with one target. Let me use: suitcase_mara at OUT_OF_HOUSE, weekend, hour 10 (same as 1?)\n   \nHmm, I need each leaf to have a UNIQUE distinguishing check. Let me think differently.\n\nThe key observable differences are:\n- Weekday afternoon: are the carry items at OUT_OF_HOUSE or at desk/entry?\n- Weekend: is the yoga mat used (moved) or not?\n- Weekend: does the suitcase leave or stay?\n\nSo:\n- Leaves 1-4 (out): carry items at OUT_OF_HOUSE on weekday\n- Leaves 5-8 (home_desk): carry items at desk/entry on weekday\n- Leaves 1,2,5,6 (active): yoga mat moves on weekend\n- Leaves 3,4,7,8 (sedentary): yoga mat stays on weekend\n- Leaves 1,3,5,7 (pre_trip): suitcase leaves on weekend\n- Leaves 2,4,6,8 (stored): suitcase stays on weekend\n\nFor distinguishing checks, I need one specific observation per leaf that, if confirmed, would support that leaf over others:\n\n1. out+active+pre_trip: \"suitcase_mara at OUT_OF_HOUSE on weekend at 10\" \u2192 distinguishes from 2,4,6,8 (stored)\n   But also need to distinguish from 3,5,7 (other pre_trip). The active part means yoga_mat moves. So maybe: \"yoga_mat_mara at bedroom_floor_b1 on weekend at 10\" \u2192 distinguishes from 3,4,7,8 (sedentary)\n   Combined: this leaf is the only one with BOTH suitcase OUT AND yoga_mat moved on weekend.\n   Check: I'll use suitcase_mara at OUT_OF_HOUSE, weekend, 10. This distinguishes from 2,4,6,8. To distinguish from 3,5,7 I'd need the yoga mat too, but I can only have one check. Let me pick the most distinctive one.\n\nActually, re-reading the rules: \"Each leaf carries a one-line distinguishing_prediction naming a concrete observable difference from the others, and a distinguishing_check in the form...\"\n\nSo the distinguishing_prediction is a sentence, and the distinguishing_check is one specific observation. The check should be something that, if observed, would be strong evidence for this leaf. It doesn't have to be unique to this leaf (other leaves might also predict it), but it should be a key differentiator.\n\nLet me assign:\n1. out+active+pre_trip: check = suitcase_mara at OUT_OF_HOUSE, weekend, 10 (key: suitcase leaves)\n2. out+active+stored: check = yoga_mat_mara at bedroom_floor_b1, weekend, 10 (key: yoga on weekend, suitcase stays)\n3. out+sedentary+pre_trip: check = laptop_mara at OUT_OF_HOUSE, weekday, 15 (key: out on weekday, and the combo of sedentary+pre_trip means no yoga but suitcase leaves)\n   Hmm, but laptop at OUT_OF_HOUSE is predicted by leaves 1,2,3,4. Not very distinguishing.\n   \nLet me reconsider. Maybe I should use different objects for different checks:\n\n1. out+active+pre_trip: suitcase_mara at OUT_OF_HOUSE, weekend, 10\n2. out+active+stored: yoga_mat_mara at bedroom_floor_b1, weekend, 10\n3. out+sedentary+pre_trip: keys_mara at OUT_OF_HOUSE, weekday, 15 (out on weekday + pre_trip)\n4. out+sedentary+stored: tablet_mara at coffee_table_l1, weekend, 14 (sedentary: tablet used on couch/coffee table, not going out)\n   Actually tablet is already at coffee_table_l1 in rest. Hmm.\n   Let me use: water_bottle_mara at sink_k1, weekend, 10 (sedentary: not out, so water bottle stays at sink)\n   But water_bottle is at sink in rest for all leaves...\n   \nThis is getting complicated. Let me simplify.\n\nThe most powerful distinguishing observations are:\n- Weekday 15:00: laptop_mara at OUT_OF_HOUSE (out) vs desk_b1 (home_desk)\n- Weekend 10:00: yoga_mat_mara at bedroom_floor_b1 (active) vs couch_l1 (sedentary)\n- Weekend 10:00: suitcase_mara at OUT_OF_HOUSE (pre_trip) vs bedroom_floor_b1 (stored)\n\nSo:\n1. out+active+pre_trip: All three \"away\" signals. Check: suitcase_mara at OUT_OF_HOUSE, weekend, 10\n2. out+active+stored: Two \"away\" + one \"stay\". Check: yoga_mat_mara at bedroom_floor_b1, weekend, 10\n3. out+sedentary+pre_trip: Two \"away\" + one \"stay\". Check: laptop_mara at OUT_OF_HOUSE, weekday, 15\n4. out+sedentary+stored: One \"away\" + two \"stay\". Check: laptop_mara at OUT_OF_HOUSE, weekday, 15\n   Hmm, 3 and 4 have the same check. Let me differentiate.\n   \nFor 3: the distinguishing feature vs 4 is the suitcase. So check: suitcase_mara at OUT_OF_HOUSE, weekend, 10\nFor 4: the distinguishing feature vs 3 is the suitcase staying. So check: suitcase_mara at bedroom_floor_b1, weekend, 10\n\nBut wait, 2 also has suitcase at bedroom_floor_b1 on weekend. The difference between 2 and 4 is the yoga mat.\n\nOK let me just assign unique checks:\n1. suitcase_mara at OUT_OF_HOUSE, weekend, 10 \u2192 \"suitcase is gone on Saturday morning\"\n2. yoga_mat_mara at bedroom_floor_b1, weekend, 10 \u2192 \"yoga mat is out on the floor Saturday morning\"\n3. laptop_mara at OUT_OF_HOUSE, weekday, 15 \u2192 \"laptop is gone on Monday afternoon\" (and the leaf is sedentary+pre_trip, so also suitcase goes but no yoga)\n4. tablet_mara at coffee_table_l1, weekend, 14 \u2192 \"tablet is on the coffee table Saturday afternoon\" (sedentary: she's home using tablet; stored: suitcase stays)\n   Actually, tablet is at coffee_table_l1 in ALL leaves' rest. So this doesn't distinguish.\n   \nLet me try:\n4. water_bottle_mara at sink_k1, weekend, 10 \u2192 \"water bottle is at the sink Saturday morning\" (she's home, not out)\n   But water_bottle is at sink in rest for all... unless the \"out\" activity moves it.\n   \nHmm, I think the issue is that for the \"out\" leaves, the water_bottle might go OUT_OF_HOUSE (she takes it with her). For \"home_desk\" leaves, it stays at sink.\n\nLet me reconsider what objects move:\n- When Mara goes out: backpack, charger, glasses, headphones, jacket, keys, laptop, notebook, phone, wallet \u2192 OUT_OF_HOUSE\n- She might also take: water_bottle (for the day), umbrella (if raining)\n- She leaves: tablet (for home use), lunchbox (packed for next day or at work)\n\nActually, the water_bottle_mara is at sink_k1 in the tour. If she's out, she might have taken it. But it's at the sink, suggesting it was just filled or is being stored. Maybe she fills it in the morning and takes it, but at 15:08 it's back at the sink (she came home briefly?) or it's a spare.\n\nI think for simplicity, I'll say the water_bottle stays at sink_k1 as its rest position, and it only goes OUT_OF_HOUSE if she's out AND it's morning (she fills it and takes it). By afternoon, it might be back.\n\nLet me simplify my approach. I'll focus on the clearly distinguishable objects:\n\nFor \"out\" vs \"home_desk\": laptop_mara, keys_mara, phone_mara\nFor \"active\" vs \"sedentary\": yoga_mat_mara\nFor \"pre_trip\" vs \"stored\": suitcase_mara\n\nLet me assign:\n1. out+active+pre_trip: check = suitcase_mara at OUT_OF_HOUSE, weekend, 10\n2. out+active+stored: check = yoga_mat_mara at bedroom_floor_b1, weekend, 10\n3. out+sedentary+pre_trip: check = keys_mara at OUT_OF_HOUSE, weekday, 15\n4. out+sedentary+stored: check = phone_mara at OUT_OF_HOUSE, weekday, 15\n5. home_desk+active+pre_trip: check = laptop_mara at desk_b1, weekday, 15\n6. home_desk+active+stored: check = notebook_mara at desk_b1, weekday, 15\n7. home_desk+sedentary+pre_trip: check = keys_mara at entry_hook_e1, weekday, 15\n8. home_desk+sedentary+stored: check = wallet_mara at entry_table_e1, weekday, 15\n\nThis way each leaf has a unique check. Good.\n\nNow let me write the full JSON. I need to be careful about:\n- Every object appears in rest (directly or via class)\n- Activities have proper structure\n- Chances use only: rarely, sometimes, usually, almost_always\n- Times are numbers\n- IDs are exact\n\nLet me list all objects and their rest positions:\n\nSeen objects (rest = where seen):\n- blanket_mara: couch_l1\n- book_mara: bookshelf_l1\n- bowl_shared_1: entry_table_e1\n- bowl_shared_2: kitchen_table_k1\n- hairbrush_mara: nightstand_b1\n- laundry_basket_mara: bedroom_floor_b1\n- lunchbox_mara: counter_k1\n- makeup_kit_mara: bathroom_shelf_ba1\n- medication_bottle_mara: bathroom_shelf_ba1\n- mug_mara: chair_k1\n- mug_shared_1: cupboard_k1\n- pan_shared_1: sink_k1\n- pen_mara: kitchen_table_k1\n- plate_shared_1: cupboard_k1\n- plate_shared_2: counter_k1\n- pot_shared_1: cupboard_k1\n- remote_shared_1: coffee_table_l1\n- suitcase_mara: bedroom_floor_b1\n- tablet_mara: coffee_table_l1\n- towel_mara: towel_rack_ba1\n- umbrella_mara: entry_floor_e1\n- vacuum_cleaner_shared_1: bedroom_floor_b1\n- water_bottle_mara: sink_k1\n- watering_can_mara: sink_k1\n- yoga_mat_mara: couch_l1\n\nUnseen objects (I need to assign rest):\n- backpack_mara: bedroom_floor_b1\n- charger_mara: nightstand_b1\n- glasses_mara: nightstand_b1\n- headphones_mara: desk_b1\n- jacket_mara: entry_hook_e1\n- keys_mara: entry_hook_e1\n- laptop_mara: desk_b1\n- notebook_mara: desk_b1\n- phone_mara: nightstand_b1\n- wallet_mara: entry_table_e1\n\nNow for the \"out\" leaves, the weekday activity moves these to OUT_OF_HOUSE.\nFor the \"home_desk\" leaves, they stay at rest.\n\nLet me also think about other activities:\n- Morning routine: filling water bottle, watering plants, making coffee\n- Evening: dinner, dishes\n- Weekend yoga (for active leaves)\n- Weekend trip (for pre_trip leaves)\n- Daily: taking out trash, etc.\n\nLet me keep activities focused on what's testable.\n\nFor the \"out\" activity:\n- Name: \"weekday_out\"\n- Days: weekday\n- Frequency: 5\n- Start: 8.0 (leaves at 8)\n- Duration: 9.0 (back at 17)\n- Moves: all carry items to OUT_OF_HOUSE\n\nFor the \"home_desk\" activity:\n- Name: \"desk_work\"\n- Days: weekday\n- Frequency: 5\n- Start: 9.0\n- Duration: 7.0\n- Moves: laptop, notebook, phone, charger to desk_b1 (they're already there in rest, so maybe this is just confirming they stay)\n  Actually, if rest is desk_b1, then no move is needed. The desk_work activity just means they're at the desk. But I should still have an activity that explains why they're there.\n  \n  Hmm, actually the rest map IS the default. If the rest position is desk_b1 for laptop, then the laptop is at desk_b1 unless an activity moves it. So for \"home_desk\" leaves, I don't need a specific activity to put the laptop at the desk - it's just there by default.\n\n  But I should have some activity that characterizes the \"home_desk\" pattern. Maybe \"morning_at_home\" where she's at the desk from 9-5.\n\nFor weekend yoga (active):\n- Name: \"weekend_yoga\"\n- Days: weekend\n- Frequency: 2\n- Start: 9.0\n- Duration: 1.0\n- Moves: yoga_mat_mara to bedroom_floor_b1, water_bottle_mara to bedroom_floor_b1\n\nFor pre_trip:\n- Name: \"weekend_trip\"\n- Days: weekend\n- Frequency: 1 (once per week, on Saturday)\n- Start: 8.0\n- Duration: 12.0\n- Moves: suitcase_mara to OUT_OF_HOUSE, jacket_mara to OUT_OF_HOUSE, etc.\n\nLet me now write this out properly. I'll aim for 8 leaves.\n\nActually, wait. Let me reconsider whether 8 leaves is too many. The problem says \"at most 12\" so 8 is fine. But I want each to be meaningfully different.\n\nLet me also make sure I'm not violating rule 1: \"Two leaves predicting the same object in the same place at the same hour are wasted.\"\n\nLeaves 1-4 all predict the carry items at OUT_OF_HOUSE on weekday afternoon. That's the same prediction. But they differ on weekend behavior (yoga, suitcase). So they're not \"wasted\" - they disagree on weekend observations.\n\nLeaves 5-8 all predict the carry items at their rest positions on weekday afternoon. They differ on weekend behavior.\n\nLeaves 1,2,5,6 (active) predict yoga_mat at bedroom_floor_b1 on weekend.\nLeaves 3,4,7,8 (sedentary) predict yoga_mat at couch_l1 on weekend.\nLeaves 1,3,5,7 (pre_trip) predict suitcase at OUT_OF_HOUSE on weekend.\nLeaves 2,4,6,8 (stored) predict suitcase at bedroom_floor_b1 on weekend.\n\nSo each leaf is in a unique cell of the 2\u00d72\u00d72 grid. Good.\n\nNow let me write the JSON. I'll use random hex for leaf_ids:\np_3a7f, p_8c21, p_d4e9, p_1b5c, p_7f03, p_a9d2, p_e614, p_4c88\n\nLet me write this out now. This is going to be long.\n\nFor the rest map, I need to cover ALL objects. Let me use individual IDs for all of them.\n\nActually, I realize I should double-check: the problem says \"every object id should appear in each leaf's rest map (directly or via its class).\" So I can use \"class:mug\" to cover both mug_mara and mug_shared_1. But since they're at different locations (chair_k1 vs cupboard_k1), I can't use a class for them. I'll use individual IDs.\n\nLet me write the full rest map (same for all leaves since it's the baseline):\n{\n  \"backpack_mara\": \"bedroom_floor_b1\",\n  \"blanket_mara\": \"couch_l1\",\n  \"book_mara\": \"bookshelf_l1\",\n  \"bowl_shared_1\": \"entry_table_e1\",\n  \"bowl_shared_2\": \"kitchen_table_k1\",\n  \"charger_mara\": \"nightstand_b1\",\n  \"glasses_mara\": \"nightstand_b1\",\n  \"hairbrush_mara\": \"nightstand_b1\",\n  \"headphones_mara\": \"desk_b1\",\n  \"jacket_mara\": \"entry_hook_e1\",\n  \"keys_mara\": \"entry_hook_e1\",\n  \"laundry_basket_mara\": \"bedroom_floor_b1\",\n  \"laptop_mara\": \"desk_b1\",\n  \"lunchbox_mara\": \"counter_k1\",\n  \"makeup_kit_mara\": \"bathroom_shelf_ba1\",\n  \"medication_bottle_mara\": \"bathroom_shelf_ba1\",\n  \"mug_mara\": \"chair_k1\",\n  \"mug_shared_1\": \"cupboard_k1\",\n  \"notebook_mara\": \"desk_b1\",\n  \"pan_shared_1\": \"sink_k1\",\n  \"pen_mara\": \"kitchen_table_k1\",\n  \"phone_mara\": \"nightstand_b1\",\n  \"plate_shared_1\": \"cupboard_k1\",\n  \"plate_shared_2\": \"counter_k1\",\n  \"pot_shared_1\": \"cupboard_k1\",\n  \"remote_shared_1\": \"coffee_table_l1\",\n  \"suitcase_mara\": \"bedroom_floor_b1\",\n  \"tablet_mara\": \"coffee_table_l1\",\n  \"towel_mara\": \"towel_rack_ba1\",\n  \"umbrella_mara\": \"entry_floor_e1\",\n  \"vacuum_cleaner_shared_1\": \"bedroom_floor_b1\",\n  \"wallet_mara\": \"entry_table_e1\",\n  \"water_bottle_mara\": \"sink_k1\",\n  \"watering_can_mara\": \"sink_k1\",\n  \"yoga_mat_mara\": \"couch_l1\"\n}\n\nThat's 33 objects. Let me count the objects in the problem:\nbackpack_mara, blanket_mara, book_mara, bowl_shared_1, bowl_shared_2, charger_mara, glasses_mara, hairbrush_mara, headphones_mara, jacket_mara, keys_mara, laptop_mara, laundry_basket_mara, lunchbox_mara, makeup_kit_mara, medication_bottle_mara, mug_mara, mug_shared_1, notebook_mara, pan_shared_1, pen_mara, phone_mara, plate_shared_1, plate_shared_2, pot_shared_1, remote_shared_1, suitcase_mara, tablet_mara, towel_mara, umbrella_mara, vacuum_cleaner_shared_1, wallet_mara, water_bottle_mara, watering_can_mara, yoga_mat_mara\n\nThat's 35 objects. Let me recount my rest map... I have 33. Let me check which I'm missing.\n\nLooking at my list:\n1. backpack_mara \u2713\n2. blanket_mara \u2713\n3. book_mara \u2713\n4. bowl_shared_1 \u2713\n5. bowl_shared_2 \u2713\n6. charger_mara \u2713\n7. glasses_mara \u2713\n8. hairbrush_mara \u2713\n9. headphones_mara \u2713\n10. jacket_mara \u2713\n11. keys_mara \u2713\n12. laptop_mara \u2713\n13. laundry_basket_mara \u2713\n14. lunchbox_mara \u2713\n15. makeup_kit_mara \u2713\n16. medication_bottle_mara \u2713\n17. mug_mara \u2713\n18. mug_shared_1 \u2713\n19. notebook_mara \u2713\n20. pan_shared_1 \u2713\n21. pen_mara \u2713\n22. phone_mara \u2713\n23. plate_shared_1 \u2713\n24. plate_shared_2 \u2713\n25. pot_shared_1 \u2713\n26. remote_shared_1 \u2713\n27. suitcase_mara \u2713\n28. tablet_mara \u2713\n29. towel_mara \u2713\n30. umbrella_mara \u2713\n31. vacuum_cleaner_shared_1 \u2713\n32. wallet_mara \u2713\n33. water_bottle_mara \u2713\n34. watering_can_mara \u2713\n35. yoga_mat_mara \u2713\n\nOK I have all 35. Good.\n\nNow let me write the activities for each leaf type.\n\nFor \"out\" leaves:\nActivity: \"weekday_out\"\n- days: weekday\n- frequency_per_week: 5\n- start_hour: 8.0\n- duration_h: 9.0 (leaves at 8, back at 17)\n- moves:\n  - keys_mara \u2192 OUT_OF_HOUSE, almost_always\n  - phone_mara \u2192 OUT_OF_HOUSE, almost_always\n  - wallet_mara \u2192 OUT_OF_HOUSE, almost_always\n  - laptop_mara \u2192 OUT_OF_HOUSE, almost_always\n  - backpack_mara \u2192 OUT_OF_HOUSE, usually\n  - charger_mara \u2192 OUT_OF_HOUSE, usually\n  - glasses_mara \u2192 OUT_OF_HOUSE, usually\n  - headphones_mara \u2192 OUT_OF_HOUSE, sometimes\n  - jacket_mara \u2192 OUT_OF_HOUSE, usually\n  - notebook_mara \u2192 OUT_OF_HOUSE, usually\n  - umbrella_mara \u2192 OUT_OF_HOUSE, sometimes (only if raining)\n\nFor \"home_desk\" leaves:\nActivity: \"desk_work\"\n- days: weekday\n- frequency_per_week: 5\n- start_hour: 9.0\n- duration_h: 7.0\n- moves:\n  - laptop_mara \u2192 desk_b1, almost_always (it's already there in rest, so this is confirming)\n  - notebook_mara \u2192 desk_b1, usually\n  - phone_mara \u2192 desk_b1, sometimes (or nightstand)\n  - charger_mara \u2192 desk_b1, usually (plugging in laptop)\n  \n  Actually, if rest is already desk_b1 for laptop, then no move is needed. The activity just means \"she's at the desk.\" But I should have some moves to make the activity meaningful.\n  \n  Maybe:\n  - mug_mara \u2192 desk_b1, usually, duration_h 2.0 (she brings coffee to desk)\n  - phone_mara \u2192 desk_b1, sometimes, duration_h 1.0 (she checks phone at desk)\n  \n  Hmm, but mug_mara's rest is chair_k1. If she moves it to desk_b1 during work, that's a valid move.\n\nFor \"active\" weekend:\nActivity: \"weekend_yoga\"\n- days: weekend\n- frequency_per_week: 2\n- start_hour: 9.0\n- duration_h: 1.0\n- moves:\n  - yoga_mat_mara \u2192 bedroom_floor_b1, almost_always, duration_h 2.0\n  - water_bottle_mara \u2192 bedroom_floor_b1, usually, duration_h 1.0\n\nFor \"pre_trip\":\nActivity: \"weekend_trip\"\n- days: weekend\n- frequency_per_week: 1\n- start_hour: 8.0\n- duration_h: 12.0\n- moves:\n  - suitcase_mara \u2192 OUT_OF_HOUSE, almost_always\n  - jacket_mara \u2192 OUT_OF_HOUSE, usually\n  - keys_mara \u2192 OUT_OF_HOUSE, almost_always\n  - phone_mara \u2192 OUT_OF_HOUSE, almost_always\n  - wallet_mara \u2192 OUT_OF_HOUSE, almost_always\n\nFor \"sedentary\" weekend:\nActivity: \"weekend_read\"\n- days: weekend\n- frequency_per_week: 2\n- start_hour: 10.0\n- duration_h: 3.0\n- moves:\n  - tablet_mara \u2192 couch_l1, usually, duration_h 3.0 (she uses tablet on couch)\n  - book_mara \u2192 couch_l1, sometimes, duration_h 2.0 (she reads on couch)\n\nFor \"stored\" - no special activity, suitcase just stays.\n\nLet me also add a common morning activity:\nActivity: \"morning_routine\"\n- days: both\n- frequency_per_week: 7\n- start_hour: 7.0\n- duration_h: 1.0\n- moves:\n  - water_bottle_mara \u2192 sink_k1, usually (filling it) - wait, it's already at sink. Maybe it goes from nightstand to sink?\n  - watering_can_mara \u2192 sink_k1, usually (filling for plants)\n  - mug_mara \u2192 kitchen_table_k1 or chair_k1, usually\n\nHmm, I'm overcomplicating this. Let me focus on the key distinguishing activities and keep it clean.\n\nLet me finalize my 8 leaves:\n\nLeaf 1 (p_3a7f): out + active + pre_trip\nLeaf 2 (p_8c21): out + active + stored\nLeaf 3 (p_d4e9): out + sedentary + pre_trip\nLeaf 4 (p_1b5c): out + sedentary + stored\nLeaf 5 (p_7f03): home_desk + active + pre_trip\nLeaf 6 (p_a9d2): home_desk + active + stored\nLeaf 7 (p_e614): home_desk + sedentary + pre_trip\nLeaf 8 (p_4c88): home_desk + sedentary + stored\n\nNow let me write the JSON. I'll be thorough but concise.\n\nOne more thought: for the \"out\" leaves, the duration of the move to OUT_OF_HOUSE should be the same as the activity duration (9 hours). When she comes back, the items come back to their rest positions. The activity ending implies they return.\n\nFor the \"pre_trip\" activity, the suitcase goes OUT_OF_HOUSE for 12 hours (a day trip) or maybe 24 hours (overnight). Let me say 12 hours for a day trip.\n\nActually, for a trip, it might be longer. Let me say duration_h: 14.0 (leaves at 8, back at 22) or even 24.0 for overnight. I'll go with 14.0.\n\nLet me also think about the \"home_desk\" leaves. If Mara is home at the desk, what's different from the \"out\" leaves?\n- The carry items are at their rest positions (desk, nightstand, entry)\n- She might have a mug at the desk\n- The laptop is at the desk (being used)\n- The tablet might be at the desk too (or stays at coffee table)\n\nFor the \"home_desk\" leaves, I'll add an activity that moves a few things to the desk:\n- laptop_mara \u2192 desk_b1 (already rest, so maybe just confirm)\n- mug_mara \u2192 desk_b1, usually, duration_h 3.0 (coffee at desk)\n- phone_mara \u2192 desk_b1, sometimes, duration_h 2.0\n\nOK I think I have enough to write this. Let me compose the final JSON.\n\nWait, one more consideration: the problem says \"A leaf may also give a rest map: receptacles where objects sit when nothing is happening.\" So rest is optional but I should include it to cover all objects (rule 2).\n\nAlso, I need to make sure my leaf_set_rationale explains any skipped combinations. I'm not skipping any (all 8 are included), so I'll just say all combinations are included.\n\nLet me write it now.",
+   "payload": "{\n  \"assumptions\": {\n    \"weekday_presence\": {\n      \"question\": \"Is Mara out of the house or at her desk during weekday afternoons?\",\n      \"values\": {\n        \"out\": \"Mara is out of the house from roughly 08:00 to 17:00 on weekdays; her carry items (laptop, phone, keys, wallet, backpack, charger, glasses, headphones, jacket, notebook) are with her\",\n        \"home_desk\": \"Mara is at home working at the desk on weekday afternoons; her laptop, notebook, and charger are at the desk, keys at the entry hook, phone at the nightstand\"\n      }\n    },\n    \"weekend_activity\": {\n      \"question\": \"Does Mara do physical activity (yoga) on weekends or stay sedentary?\",\n      \"values\": {\n        \"active\": \"Mara does a yoga session on weekend mornings; the yoga mat and water bottle move to the bedroom floor\",\n        \"sedentary\": \"Mara stays in on weekends reading and using the tablet on the couch; the yoga mat remains rolled on the couch\"\n      }\n    },\n    \"suitcase_status\": {\n      \"question\": \"Is the suitcase packed for an upcoming trip or simply stored?\",\n      \"values\": {\n        \"pre_trip\": \"The suitcase is packed and Mara will take it out of the house on a weekend day trip\",\n        \"stored\": \"The suitcase is stored in the bedroom with no imminent travel; it will not move this week\"\n      }\n    }\n  },\n  \"leaf_set_rationale\": \"All 8 combinations of the three binary assumptions are included; none are internally contradictory. The out + home_desk split is the primary discriminator (ten objects at OUT_OF_HOUSE vs. at desk/nightstand/entry), the active/sedentary split is visible via the yoga mat on weekends, and the pre_trip/stored split is visible via the suitcase on weekends.\",\n  \"leaves\": [\n    {\n      \"leaf_id\": \"p_3a7f\",\n      \"assumes\": {\n        \"weekday_presence\": \"out\",\n        \"weekend_activity\": \"active\",\n        \"suitcase_status\": \"pre_trip\"\n      },\n      \"rationale\": \"Mara commutes out on weekdays, does weekend yoga, and has a packed suitcase for a Saturday trip\",\n      \"distinguishing_prediction\": \"The suitcase is at OUT_OF_HOUSE on Saturday morning at 10:00 while the yoga mat is on the bedroom floor\",\n      \"distinguishing_check\": {\n        \"target\": \"suitcase_mara\",\n        \"at\": \"OUT_OF_HOUSE\",\n        \"days\": \"weekend\",\n        \"hour\": 10.0\n      },\n      \"rest\": {\n        \"backpack_mara\": \"bedroom_floor_b1\",\n        \"blanket_mara\": \"couch_l1\",\n        \"book_mara\": \"bookshelf_l1\",\n        \"bowl_shared_1\": \"entry_table_e1\",\n        \"bowl_shared_2\": \"kitchen_table_k1\",\n        \"charger_mara\": \"nightstand_b1\",\n        \"glasses_mara\": \"nightstand_b1\",\n        \"hairbrush_mara\": \"nightstand_b1\",\n        \"headphones_mara\": \"desk_b1\",\n        \"jacket_mara\": \"entry_hook_e1\",\n        \"keys_mara\": \"entry_hook_e1\",\n        \"laundry_basket_mara\": \"bedroom_floor_b1\",\n        \"laptop_mara\": \"desk_b1\",\n        \"lunchbox_mara\": \"counter_k1\",\n        \"makeup_kit_mara\": \"bathroom_shelf_ba1\",\n        \"medication_bottle_mara\": \"bathroom_shelf_ba1\",\n        \"mug_mara\": \"chair_k1\",\n        \"mug_shared_1\": \"cupboard_k1\",\n        \"notebook_mara\": \"desk_b1\",\n        \"pan_shared_1\": \"sink_k1\",\n        \"pen_mara\": \"kitchen_table_k1\",\n        \"phone_mara\": \"nightstand_b1\",\n        \"plate_shared_1\": \"cupboard_k1\",\n        \"plate_shared_2\": \"counter_k1\",\n        \"pot_shared_1\": \"cupboard_k1\",\n        \"remote_shared_1\": \"coffee_table_l1\",\n        \"suitcase_mara\": \"bedroom_floor_b1\",\n        \"tablet_mara\": \"coffee_table_l1\",\n        \"towel_mara\": \"towel_rack_ba1\",\n        \"umbrella_mara\": \"entry_floor_e1\",\n        \"vacuum_cleaner_shared_1\": \"bedroom_floor_b1\",\n        \"wallet_mara\": \"entry_table_e1\",\n        \"water_bottle_mara\": \"sink_k1\",\n        \"watering_can_mara\": \"sink_k1\",\n        \"yoga_mat_mara\": \"couch_l1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"weekday_commute_out\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 8.0,\n          \"duration_h\": 9.0,\n          \"moves\": [\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"phone_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"laptop_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"backpack_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"charger_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"glasses_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"headphones_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"sometimes\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"notebook_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"umbrella_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"sometimes\"}\n          ]\n        },\n        {\n          \"name\": \"weekend_yoga\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 9.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\"target\": \"yoga_mat_mara\", \"to\": \"bedroom_floor_b1\", \"chance\": \"almost_always\", \"duration_h\": 2.0},\n            {\"target\": \"water_bottle_mara\", \"to\": \"bedroom_floor_b1\", \"chance\": \"usually\", \"duration_h\": 1.0}\n          ]\n        },\n        {\n          \"name\": \"weekend_day_trip\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 1,\n          \"start_hour\": 8.0,\n          \"duration_h\": 14.0,\n          \"moves\": [\n            {\"target\": \"suitcase_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"phone_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"backpack_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"}\n          ]\n        },\n        {\n          \"name\": \"morning_watering\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 0.5,\n          \"moves\": [\n            {\"target\": \"watering_can_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5},\n            {\"target\": \"water_bottle_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5}\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_8c21\",\n      \"assumes\": {\n        \"weekday_presence\": \"out\",\n        \"weekend_activity\": \"active\",\n        \"suitcase_status\": \"stored\"\n      },\n      \"rationale\": \"Mara commutes out on weekdays and does weekend yoga, but the suitcase is just stored with no trip planned\",\n      \"distinguishing_prediction\": \"The yoga mat is on the bedroom floor Saturday morning at 10:00 while the suitcase remains on the bedroom floor\",\n      \"distinguishing_check\": {\n        \"target\": \"yoga_mat_mara\",\n        \"at\": \"bedroom_floor_b1\",\n        \"days\": \"weekend\",\n        \"hour\": 10.0\n      },\n      \"rest\": {\n        \"backpack_mara\": \"bedroom_floor_b1\",\n        \"blanket_mara\": \"couch_l1\",\n        \"book_mara\": \"bookshelf_l1\",\n        \"bowl_shared_1\": \"entry_table_e1\",\n        \"bowl_shared_2\": \"kitchen_table_k1\",\n        \"charger_mara\": \"nightstand_b1\",\n        \"glasses_mara\": \"nightstand_b1\",\n        \"hairbrush_mara\": \"nightstand_b1\",\n        \"headphones_mara\": \"desk_b1\",\n        \"jacket_mara\": \"entry_hook_e1\",\n        \"keys_mara\": \"entry_hook_e1\",\n        \"laundry_basket_mara\": \"bedroom_floor_b1\",\n        \"laptop_mara\": \"desk_b1\",\n        \"lunchbox_mara\": \"counter_k1\",\n        \"makeup_kit_mara\": \"bathroom_shelf_ba1\",\n        \"medication_bottle_mara\": \"bathroom_shelf_ba1\",\n        \"mug_mara\": \"chair_k1\",\n        \"mug_shared_1\": \"cupboard_k1\",\n        \"notebook_mara\": \"desk_b1\",\n        \"pan_shared_1\": \"sink_k1\",\n        \"pen_mara\": \"kitchen_table_k1\",\n        \"phone_mara\": \"nightstand_b1\",\n        \"plate_shared_1\": \"cupboard_k1\",\n        \"plate_shared_2\": \"counter_k1\",\n        \"pot_shared_1\": \"cupboard_k1\",\n        \"remote_shared_1\": \"coffee_table_l1\",\n        \"suitcase_mara\": \"bedroom_floor_b1\",\n        \"tablet_mara\": \"coffee_table_l1\",\n        \"towel_mara\": \"towel_rack_ba1\",\n        \"umbrella_mara\": \"entry_floor_e1\",\n        \"vacuum_cleaner_shared_1\": \"bedroom_floor_b1\",\n        \"wallet_mara\": \"entry_table_e1\",\n        \"water_bottle_mara\": \"sink_k1\",\n        \"watering_can_mara\": \"sink_k1\",\n        \"yoga_mat_mara\": \"couch_l1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"weekday_commute_out\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 8.0,\n          \"duration_h\": 9.0,\n          \"moves\": [\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"phone_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"laptop_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"backpack_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"charger_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"glasses_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"headphones_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"sometimes\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"notebook_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"umbrella_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"sometimes\"}\n          ]\n        },\n        {\n          \"name\": \"weekend_yoga\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 9.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\"target\": \"yoga_mat_mara\", \"to\": \"bedroom_floor_b1\", \"chance\": \"almost_always\", \"duration_h\": 2.0},\n            {\"target\": \"water_bottle_mara\", \"to\": \"bedroom_floor_b1\", \"chance\": \"usually\", \"duration_h\": 1.0}\n          ]\n        },\n        {\n          \"name\": \"morning_watering\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 0.5,\n          \"moves\": [\n            {\"target\": \"watering_can_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5},\n            {\"target\": \"water_bottle_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5}\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_d4e9\",\n      \"assumes\": {\n        \"weekday_presence\": \"out\",\n        \"weekend_activity\": \"sedentary\",\n        \"suitcase_status\": \"pre_trip\"\n      },\n      \"rationale\": \"Mara is out on weekdays, stays in on weekends reading, but has a packed suitcase for a Saturday trip\",\n      \"distinguishing_prediction\": \"The keys are at OUT_OF_HOUSE on a weekday at 15:00 and the yoga mat stays on the couch on Saturday\",\n      \"distinguishing_check\": {\n        \"target\": \"keys_mara\",\n        \"at\": \"OUT_OF_HOUSE\",\n        \"days\": \"weekday\",\n        \"hour\": 15.0\n      },\n      \"rest\": {\n        \"backpack_mara\": \"bedroom_floor_b1\",\n        \"blanket_mara\": \"couch_l1\",\n        \"book_mara\": \"bookshelf_l1\",\n        \"bowl_shared_1\": \"entry_table_e1\",\n        \"bowl_shared_2\": \"kitchen_table_k1\",\n        \"charger_mara\": \"nightstand_b1\",\n        \"glasses_mara\": \"nightstand_b1\",\n        \"hairbrush_mara\": \"nightstand_b1\",\n        \"headphones_mara\": \"desk_b1\",\n        \"jacket_mara\": \"entry_hook_e1\",\n        \"keys_mara\": \"entry_hook_e1\",\n        \"laundry_basket_mara\": \"bedroom_floor_b1\",\n        \"laptop_mara\": \"desk_b1\",\n        \"lunchbox_mara\": \"counter_k1\",\n        \"makeup_kit_mara\": \"bathroom_shelf_ba1\",\n        \"medication_bottle_mara\": \"bathroom_shelf_ba1\",\n        \"mug_mara\": \"chair_k1\",\n        \"mug_shared_1\": \"cupboard_k1\",\n        \"notebook_mara\": \"desk_b1\",\n        \"pan_shared_1\": \"sink_k1\",\n        \"pen_mara\": \"kitchen_table_k1\",\n        \"phone_mara\": \"nightstand_b1\",\n        \"plate_shared_1\": \"cupboard_k1\",\n        \"plate_shared_2\": \"counter_k1\",\n        \"pot_shared_1\": \"cupboard_k1\",\n        \"remote_shared_1\": \"coffee_table_l1\",\n        \"suitcase_mara\": \"bedroom_floor_b1\",\n        \"tablet_mara\": \"coffee_table_l1\",\n        \"towel_mara\": \"towel_rack_ba1\",\n        \"umbrella_mara\": \"entry_floor_e1\",\n        \"vacuum_cleaner_shared_1\": \"bedroom_floor_b1\",\n        \"wallet_mara\": \"entry_table_e1\",\n        \"water_bottle_mara\": \"sink_k1\",\n        \"watering_can_mara\": \"sink_k1\",\n        \"yoga_mat_mara\": \"couch_l1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"weekday_commute_out\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 8.0,\n          \"duration_h\": 9.0,\n          \"moves\": [\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"phone_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"laptop_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"backpack_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"charger_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"glasses_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"headphones_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"sometimes\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"notebook_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"umbrella_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"sometimes\"}\n          ]\n        },\n        {\n          \"name\": \"weekend_read_couch\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 10.0,\n          \"duration_h\": 3.0,\n          \"moves\": [\n            {\"target\": \"tablet_mara\", \"to\": \"couch_l1\", \"chance\": \"usually\", \"duration_h\": 3.0},\n            {\"target\": \"book_mara\", \"to\": \"couch_l1\", \"chance\": \"sometimes\", \"duration_h\": 2.0}\n          ]\n        },\n        {\n          \"name\": \"weekend_day_trip\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 1,\n          \"start_hour\": 8.0,\n          \"duration_h\": 14.0,\n          \"moves\": [\n            {\"target\": \"suitcase_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"phone_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"backpack_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"}\n          ]\n        },\n        {\n          \"name\": \"morning_watering\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 0.5,\n          \"moves\": [\n            {\"target\": \"watering_can_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5},\n            {\"target\": \"water_bottle_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5}\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_1b5c\",\n      \"assumes\": {\n        \"weekday_presence\": \"out\",\n        \"weekend_activity\": \"sedentary\",\n        \"suitcase_status\": \"stored\"\n      },\n      \"rationale\": \"Mara is out on weekdays, stays in on weekends, and the suitcase is just stored with no trip\",\n      \"distinguishing_prediction\": \"The phone is at OUT_OF_HOUSE on a weekday at 15:00 and the yoga mat remains on the couch on Saturday\",\n      \"distinguishing_check\": {\n        \"target\": \"phone_mara\",\n        \"at\": \"OUT_OF_HOUSE\",\n        \"days\": \"weekday\",\n        \"hour\": 15.0\n      },\n      \"rest\": {\n        \"backpack_mara\": \"bedroom_floor_b1\",\n        \"blanket_mara\": \"couch_l1\",\n        \"book_mara\": \"bookshelf_l1\",\n        \"bowl_shared_1\": \"entry_table_e1\",\n        \"bowl_shared_2\": \"kitchen_table_k1\",\n        \"charger_mara\": \"nightstand_b1\",\n        \"glasses_mara\": \"nightstand_b1\",\n        \"hairbrush_mara\": \"nightstand_b1\",\n        \"headphones_mara\": \"desk_b1\",\n        \"jacket_mara\": \"entry_hook_e1\",\n        \"keys_mara\": \"entry_hook_e1\",\n        \"laundry_basket_mara\": \"bedroom_floor_b1\",\n        \"laptop_mara\": \"desk_b1\",\n        \"lunchbox_mara\": \"counter_k1\",\n        \"makeup_kit_mara\": \"bathroom_shelf_ba1\",\n        \"medication_bottle_mara\": \"bathroom_shelf_ba1\",\n        \"mug_mara\": \"chair_k1\",\n        \"mug_shared_1\": \"cupboard_k1\",\n        \"notebook_mara\": \"desk_b1\",\n        \"pan_shared_1\": \"sink_k1\",\n        \"pen_mara\": \"kitchen_table_k1\",\n        \"phone_mara\": \"nightstand_b1\",\n        \"plate_shared_1\": \"cupboard_k1\",\n        \"plate_shared_2\": \"counter_k1\",\n        \"pot_shared_1\": \"cupboard_k1\",\n        \"remote_shared_1\": \"coffee_table_l1\",\n        \"suitcase_mara\": \"bedroom_floor_b1\",\n        \"tablet_mara\": \"coffee_table_l1\",\n        \"towel_mara\": \"towel_rack_ba1\",\n        \"umbrella_mara\": \"entry_floor_e1\",\n        \"vacuum_cleaner_shared_1\": \"bedroom_floor_b1\",\n        \"wallet_mara\": \"entry_table_e1\",\n        \"water_bottle_mara\": \"sink_k1\",\n        \"watering_can_mara\": \"sink_k1\",\n        \"yoga_mat_mara\": \"couch_l1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"weekday_commute_out\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 8.0,\n          \"duration_h\": 9.0,\n          \"moves\": [\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"phone_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"laptop_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"backpack_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"charger_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"glasses_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"headphones_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"sometimes\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"notebook_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"umbrella_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"sometimes\"}\n          ]\n        },\n        {\n          \"name\": \"weekend_read_couch\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 10.0,\n          \"duration_h\": 3.0,\n          \"moves\": [\n            {\"target\": \"tablet_mara\", \"to\": \"couch_l1\", \"chance\": \"usually\", \"duration_h\": 3.0},\n            {\"target\": \"book_mara\", \"to\": \"couch_l1\", \"chance\": \"sometimes\", \"duration_h\": 2.0}\n          ]\n        },\n        {\n          \"name\": \"morning_watering\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 0.5,\n          \"moves\": [\n            {\"target\": \"watering_can_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5},\n            {\"target\": \"water_bottle_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5}\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_7f03\",\n      \"assumes\": {\n        \"weekday_presence\": \"home_desk\",\n        \"weekend_activity\": \"active\",\n        \"suitcase_status\": \"pre_trip\"\n      },\n      \"rationale\": \"Mara works from the desk on weekdays, does weekend yoga, and has a packed suitcase for a Saturday trip\",\n      \"distinguishing_prediction\": \"The laptop is at the desk on a weekday at 15:00 and the suitcase is at OUT_OF_HOUSE on Saturday\",\n      \"distinguishing_check\": {\n        \"target\": \"laptop_mara\",\n        \"at\": \"desk_b1\",\n        \"days\": \"weekday\",\n        \"hour\": 15.0\n      },\n      \"rest\": {\n        \"backpack_mara\": \"bedroom_floor_b1\",\n        \"blanket_mara\": \"couch_l1\",\n        \"book_mara\": \"bookshelf_l1\",\n        \"bowl_shared_1\": \"entry_table_e1\",\n        \"bowl_shared_2\": \"kitchen_table_k1\",\n        \"charger_mara\": \"nightstand_b1\",\n        \"glasses_mara\": \"nightstand_b1\",\n        \"hairbrush_mara\": \"nightstand_b1\",\n        \"headphones_mara\": \"desk_b1\",\n        \"jacket_mara\": \"entry_hook_e1\",\n        \"keys_mara\": \"entry_hook_e1\",\n        \"laundry_basket_mara\": \"bedroom_floor_b1\",\n        \"laptop_mara\": \"desk_b1\",\n        \"lunchbox_mara\": \"counter_k1\",\n        \"makeup_kit_mara\": \"bathroom_shelf_ba1\",\n        \"medication_bottle_mara\": \"bathroom_shelf_ba1\",\n        \"mug_mara\": \"chair_k1\",\n        \"mug_shared_1\": \"cupboard_k1\",\n        \"notebook_mara\": \"desk_b1\",\n        \"pan_shared_1\": \"sink_k1\",\n        \"pen_mara\": \"kitchen_table_k1\",\n        \"phone_mara\": \"nightstand_b1\",\n        \"plate_shared_1\": \"cupboard_k1\",\n        \"plate_shared_2\": \"counter_k1\",\n        \"pot_shared_1\": \"cupboard_k1\",\n        \"remote_shared_1\": \"coffee_table_l1\",\n        \"suitcase_mara\": \"bedroom_floor_b1\",\n        \"tablet_mara\": \"coffee_table_l1\",\n        \"towel_mara\": \"towel_rack_ba1\",\n        \"umbrella_mara\": \"entry_floor_e1\",\n        \"vacuum_cleaner_shared_1\": \"bedroom_floor_b1\",\n        \"wallet_mara\": \"entry_table_e1\",\n        \"water_bottle_mara\": \"sink_k1\",\n        \"watering_can_mara\": \"sink_k1\",\n        \"yoga_mat_mara\": \"couch_l1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"weekday_desk_work\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 7.0,\n          \"moves\": [\n            {\"target\": \"laptop_mara\", \"to\": \"desk_b1\", \"chance\": \"almost_always\"},\n            {\"target\": \"notebook_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\"},\n            {\"target\": \"charger_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\", \"duration_h\": 7.0},\n            {\"target\": \"mug_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\", \"duration_h\": 3.0},\n            {\"target\": \"phone_mara\", \"to\": \"desk_b1\", \"chance\": \"sometimes\", \"duration_h\": 2.0}\n          ]\n        },\n        {\n          \"name\": \"weekend_yoga\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 9.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\"target\": \"yoga_mat_mara\", \"to\": \"bedroom_floor_b1\", \"chance\": \"almost_always\", \"duration_h\": 2.0},\n            {\"target\": \"water_bottle_mara\", \"to\": \"bedroom_floor_b1\", \"chance\": \"usually\", \"duration_h\": 1.0}\n          ]\n        },\n        {\n          \"name\": \"weekend_day_trip\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 1,\n          \"start_hour\": 8.0,\n          \"duration_h\": 14.0,\n          \"moves\": [\n            {\"target\": \"suitcase_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"phone_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"backpack_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"}\n          ]\n        },\n        {\n          \"name\": \"morning_watering\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 0.5,\n          \"moves\": [\n            {\"target\": \"watering_can_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5},\n            {\"target\": \"water_bottle_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5}\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_a9d2\",\n      \"assumes\": {\n        \"weekday_presence\": \"home_desk\",\n        \"weekend_activity\": \"active\",\n        \"suitcase_status\": \"stored\"\n      },\n      \"rationale\": \"Mara works from the desk on weekdays, does weekend yoga, and the suitcase is just stored\",\n      \"distinguishing_prediction\": \"The notebook is at the desk on a weekday at 15:00 and the yoga mat is on the bedroom floor on Saturday\",\n      \"distinguishing_check\": {\n        \"target\": \"notebook_mara\",\n        \"at\": \"desk_b1\",\n        \"days\": \"weekday\",\n        \"hour\": 15.0\n      },\n      \"rest\": {\n        \"backpack_mara\": \"bedroom_floor_b1\",\n        \"blanket_mara\": \"couch_l1\",\n        \"book_mara\": \"bookshelf_l1\",\n        \"bowl_shared_1\": \"entry_table_e1\",\n        \"bowl_shared_2\": \"kitchen_table_k1\",\n        \"charger_mara\": \"nightstand_b1\",\n        \"glasses_mara\": \"nightstand_b1\",\n        \"hairbrush_mara\": \"nightstand_b1\",\n        \"headphones_mara\": \"desk_b1\",\n        \"jacket_mara\": \"entry_hook_e1\",\n        \"keys_mara\": \"entry_hook_e1\",\n        \"laundry_basket_mara\": \"bedroom_floor_b1\",\n        \"laptop_mara\": \"desk_b1\",\n        \"lunchbox_mara\": \"counter_k1\",\n        \"makeup_kit_mara\": \"bathroom_shelf_ba1\",\n        \"medication_bottle_mara\": \"bathroom_shelf_ba1\",\n        \"mug_mara\": \"chair_k1\",\n        \"mug_shared_1\": \"cupboard_k1\",\n        \"notebook_mara\": \"desk_b1\",\n        \"pan_shared_1\": \"sink_k1\",\n        \"pen_mara\": \"kitchen_table_k1\",\n        \"phone_mara\": \"nightstand_b1\",\n        \"plate_shared_1\": \"cupboard_k1\",\n        \"plate_shared_2\": \"counter_k1\",\n        \"pot_shared_1\": \"cupboard_k1\",\n        \"remote_shared_1\": \"coffee_table_l1\",\n        \"suitcase_mara\": \"bedroom_floor_b1\",\n        \"tablet_mara\": \"coffee_table_l1\",\n        \"towel_mara\": \"towel_rack_ba1\",\n        \"umbrella_mara\": \"entry_floor_e1\",\n        \"vacuum_cleaner_shared_1\": \"bedroom_floor_b1\",\n        \"wallet_mara\": \"entry_table_e1\",\n        \"water_bottle_mara\": \"sink_k1\",\n        \"watering_can_mara\": \"sink_k1\",\n        \"yoga_mat_mara\": \"couch_l1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"weekday_desk_work\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 7.0,\n          \"moves\": [\n            {\"target\": \"laptop_mara\", \"to\": \"desk_b1\", \"chance\": \"almost_always\"},\n            {\"target\": \"notebook_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\"},\n            {\"target\": \"charger_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\", \"duration_h\": 7.0},\n            {\"target\": \"mug_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\", \"duration_h\": 3.0},\n            {\"target\": \"phone_mara\", \"to\": \"desk_b1\", \"chance\": \"sometimes\", \"duration_h\": 2.0}\n          ]\n        },\n        {\n          \"name\": \"weekend_yoga\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 9.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\"target\": \"yoga_mat_mara\", \"to\": \"bedroom_floor_b1\", \"chance\": \"almost_always\", \"duration_h\": 2.0},\n            {\"target\": \"water_bottle_mara\", \"to\": \"bedroom_floor_b1\", \"chance\": \"usually\", \"duration_h\": 1.0}\n          ]\n        },\n        {\n          \"name\": \"morning_watering\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 0.5,\n          \"moves\": [\n            {\"target\": \"watering_can_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5},\n            {\"target\": \"water_bottle_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5}\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_e614\",\n      \"assumes\": {\n        \"weekday_presence\": \"home_desk\",\n        \"weekend_activity\": \"sedentary\",\n        \"suitcase_status\": \"pre_trip\"\n      },\n      \"rationale\": \"Mara works from the desk on weekdays, stays in on weekends, and has a packed suitcase for a Saturday trip\",\n      \"distinguishing_prediction\": \"The keys are at the entry hook on a weekday at 15:00 (not OUT_OF_HOUSE) and the suitcase is at OUT_OF_HOUSE on Saturday\",\n      \"distinguishing_check\": {\n        \"target\": \"keys_mara\",\n        \"at\": \"entry_hook_e1\",\n        \"days\": \"weekday\",\n        \"hour\": 15.0\n      },\n      \"rest\": {\n        \"backpack_mara\": \"bedroom_floor_b1\",\n        \"blanket_mara\": \"couch_l1\",\n        \"book_mara\": \"bookshelf_l1\",\n        \"bowl_shared_1\": \"entry_table_e1\",\n        \"bowl_shared_2\": \"kitchen_table_k1\",\n        \"charger_mara\": \"nightstand_b1\",\n        \"glasses_mara\": \"nightstand_b1\",\n        \"hairbrush_mara\": \"nightstand_b1\",\n        \"headphones_mara\": \"desk_b1\",\n        \"jacket_mara\": \"entry_hook_e1\",\n        \"keys_mara\": \"entry_hook_e1\",\n        \"laundry_basket_mara\": \"bedroom_floor_b1\",\n        \"laptop_mara\": \"desk_b1\",\n        \"lunchbox_mara\": \"counter_k1\",\n        \"makeup_kit_mara\": \"bathroom_shelf_ba1\",\n        \"medication_bottle_mara\": \"bathroom_shelf_ba1\",\n        \"mug_mara\": \"chair_k1\",\n        \"mug_shared_1\": \"cupboard_k1\",\n        \"notebook_mara\": \"desk_b1\",\n        \"pan_shared_1\": \"sink_k1\",\n        \"pen_mara\": \"kitchen_table_k1\",\n        \"phone_mara\": \"nightstand_b1\",\n        \"plate_shared_1\": \"cupboard_k1\",\n        \"plate_shared_2\": \"counter_k1\",\n        \"pot_shared_1\": \"cupboard_k1\",\n        \"remote_shared_1\": \"coffee_table_l1\",\n        \"suitcase_mara\": \"bedroom_floor_b1\",\n        \"tablet_mara\": \"coffee_table_l1\",\n        \"towel_mara\": \"towel_rack_ba1\",\n        \"umbrella_mara\": \"entry_floor_e1\",\n        \"vacuum_cleaner_shared_1\": \"bedroom_floor_b1\",\n        \"wallet_mara\": \"entry_table_e1\",\n        \"water_bottle_mara\": \"sink_k1\",\n        \"watering_can_mara\": \"sink_k1\",\n        \"yoga_mat_mara\": \"couch_l1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"weekday_desk_work\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 7.0,\n          \"moves\": [\n            {\"target\": \"laptop_mara\", \"to\": \"desk_b1\", \"chance\": \"almost_always\"},\n            {\"target\": \"notebook_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\"},\n            {\"target\": \"charger_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\", \"duration_h\": 7.0},\n            {\"target\": \"mug_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\", \"duration_h\": 3.0},\n            {\"target\": \"phone_mara\", \"to\": \"desk_b1\", \"chance\": \"sometimes\", \"duration_h\": 2.0}\n          ]\n        },\n        {\n          \"name\": \"weekend_read_couch\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 10.0,\n          \"duration_h\": 3.0,\n          \"moves\": [\n            {\"target\": \"tablet_mara\", \"to\": \"couch_l1\", \"chance\": \"usually\", \"duration_h\": 3.0},\n            {\"target\": \"book_mara\", \"to\": \"couch_l1\", \"chance\": \"sometimes\", \"duration_h\": 2.0}\n          ]\n        },\n        {\n          \"name\": \"weekend_day_trip\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 1,\n          \"start_hour\": 8.0,\n          \"duration_h\": 14.0,\n          \"moves\": [\n            {\"target\": \"suitcase_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"jacket_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"},\n            {\"target\": \"keys_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"phone_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"wallet_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"almost_always\"},\n            {\"target\": \"backpack_mara\", \"to\": \"OUT_OF_HOUSE\", \"chance\": \"usually\"}\n          ]\n        },\n        {\n          \"name\": \"morning_watering\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 0.5,\n          \"moves\": [\n            {\"target\": \"watering_can_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5},\n            {\"target\": \"water_bottle_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5}\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_4c88\",\n      \"assumes\": {\n        \"weekday_presence\": \"home_desk\",\n        \"weekend_activity\": \"sedentary\",\n        \"suitcase_status\": \"stored\"\n      },\n      \"rationale\": \"Mara works from the desk on weekdays, stays in on weekends reading, and the suitcase is just stored\",\n      \"distinguishing_prediction\": \"The wallet is at the entry table on a weekday at 15:00 and the yoga mat stays on the couch on Saturday\",\n      \"distinguishing_check\": {\n        \"target\": \"wallet_mara\",\n        \"at\": \"entry_table_e1\",\n        \"days\": \"weekday\",\n        \"hour\": 15.0\n      },\n      \"rest\": {\n        \"backpack_mara\": \"bedroom_floor_b1\",\n        \"blanket_mara\": \"couch_l1\",\n        \"book_mara\": \"bookshelf_l1\",\n        \"bowl_shared_1\": \"entry_table_e1\",\n        \"bowl_shared_2\": \"kitchen_table_k1\",\n        \"charger_mara\": \"nightstand_b1\",\n        \"glasses_mara\": \"nightstand_b1\",\n        \"hairbrush_mara\": \"nightstand_b1\",\n        \"headphones_mara\": \"desk_b1\",\n        \"jacket_mara\": \"entry_hook_e1\",\n        \"keys_mara\": \"entry_hook_e1\",\n        \"laundry_basket_mara\": \"bedroom_floor_b1\",\n        \"laptop_mara\": \"desk_b1\",\n        \"lunchbox_mara\": \"counter_k1\",\n        \"makeup_kit_mara\": \"bathroom_shelf_ba1\",\n        \"medication_bottle_mara\": \"bathroom_shelf_ba1\",\n        \"mug_mara\": \"chair_k1\",\n        \"mug_shared_1\": \"cupboard_k1\",\n        \"notebook_mara\": \"desk_b1\",\n        \"pan_shared_1\": \"sink_k1\",\n        \"pen_mara\": \"kitchen_table_k1\",\n        \"phone_mara\": \"nightstand_b1\",\n        \"plate_shared_1\": \"cupboard_k1\",\n        \"plate_shared_2\": \"counter_k1\",\n        \"pot_shared_1\": \"cupboard_k1\",\n        \"remote_shared_1\": \"coffee_table_l1\",\n        \"suitcase_mara\": \"bedroom_floor_b1\",\n        \"tablet_mara\": \"coffee_table_l1\",\n        \"towel_mara\": \"towel_rack_ba1\",\n        \"umbrella_mara\": \"entry_floor_e1\",\n        \"vacuum_cleaner_shared_1\": \"bedroom_floor_b1\",\n        \"wallet_mara\": \"entry_table_e1\",\n        \"water_bottle_mara\": \"sink_k1\",\n        \"watering_can_mara\": \"sink_k1\",\n        \"yoga_mat_mara\": \"couch_l1\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"weekday_desk_work\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 7.0,\n          \"moves\": [\n            {\"target\": \"laptop_mara\", \"to\": \"desk_b1\", \"chance\": \"almost_always\"},\n            {\"target\": \"notebook_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\"},\n            {\"target\": \"charger_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\", \"duration_h\": 7.0},\n            {\"target\": \"mug_mara\", \"to\": \"desk_b1\", \"chance\": \"usually\", \"duration_h\": 3.0},\n            {\"target\": \"phone_mara\", \"to\": \"desk_b1\", \"chance\": \"sometimes\", \"duration_h\": 2.0}\n          ]\n        },\n        {\n          \"name\": \"weekend_read_couch\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 10.0,\n          \"duration_h\": 3.0,\n          \"moves\": [\n            {\"target\": \"tablet_mara\", \"to\": \"couch_l1\", \"chance\": \"usually\", \"duration_h\": 3.0},\n            {\"target\": \"book_mara\", \"to\": \"couch_l1\", \"chance\": \"sometimes\", \"duration_h\": 2.0}\n          ]\n        },\n        {\n          \"name\": \"morning_watering\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 0.5,\n          \"moves\": [\n            {\"target\": \"watering_can_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5},\n            {\"target\": \"water_bottle_mara\", \"to\": \"sink_k1\", \"chance\": \"usually\", \"duration_h\": 0.5}\n          ]\n        }\n      ]\n    }\n  ]\n}",
+   "n_leaves": 8,
+   "generation_seconds": 895.49,
+   "completion_tokens": 23756,
+   "prompt_tokens": 2482,
+   "finish_reason": "stop",
+   "think_closed": true,
+   "cached": false
+  }
+ ],
+ "substitutions": [],
+ "dropped": [],
+ "graph": {
+  "assumptions": {
+   "weekday_presence": {
+    "question": "Is Mara out of the house or at her desk during weekday afternoons?",
+    "values": {
+     "out": "Mara is out of the house from roughly 08:00 to 17:00 on weekdays; her carry items (laptop, phone, keys, wallet, backpack, charger, glasses, headphones, jacket, notebook) are with her",
+     "home_desk": "Mara is at home working at the desk on weekday afternoons; her laptop, notebook, and charger are at the desk, keys at the entry hook, phone at the nightstand"
+    }
+   },
+   "weekend_activity": {
+    "question": "Does Mara do physical activity (yoga) on weekends or stay sedentary?",
+    "values": {
+     "active": "Mara does a yoga session on weekend mornings; the yoga mat and water bottle move to the bedroom floor",
+     "sedentary": "Mara stays in on weekends reading and using the tablet on the couch; the yoga mat remains rolled on the couch"
+    }
+   },
+   "suitcase_status": {
+    "question": "Is the suitcase packed for an upcoming trip or simply stored?",
+    "values": {
+     "pre_trip": "The suitcase is packed and Mara will take it out of the house on a weekend day trip",
+     "stored": "The suitcase is stored in the bedroom with no imminent travel; it will not move this week"
+    }
+   }
+  },
+  "leaves": [
+   {
+    "leaf_id": "p_3a7f",
+    "assumes": {
+     "weekday_presence": "out",
+     "weekend_activity": "active",
+     "suitcase_status": "pre_trip"
+    },
+    "rationale": "Mara commutes out on weekdays, does weekend yoga, and has a packed suitcase for a Saturday trip",
+    "distinguishing_prediction": "The suitcase is at OUT_OF_HOUSE on Saturday morning at 10:00 while the yoga mat is on the bedroom floor",
+    "distinguishing_check": {
+     "target": "suitcase_mara",
+     "at": "OUT_OF_HOUSE",
+     "days": "weekend",
+     "hour": 10.0
+    },
+    "rest": {
+     "backpack_mara": "bedroom_floor_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "nightstand_b1",
+     "glasses_mara": "nightstand_b1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "desk_b1",
+     "jacket_mara": "entry_hook_e1",
+     "keys_mara": "entry_hook_e1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "laptop_mara": "desk_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "desk_b1",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "nightstand_b1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_table_e1",
+     "water_bottle_mara": "sink_k1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "weekday_commute_out",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 8.0,
+      "duration_h": 9.0,
+      "moves": [
+       {
+        "target": "keys_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "phone_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "laptop_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "glasses_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "headphones_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "sometimes"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "umbrella_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "weekend_yoga",
+      "days": "weekend",
+      "frequency_per_week": 2,
+      "start_hour": 9.0,
+      "duration_h": 1.0,
+      "moves": [
+       {
+        "target": "yoga_mat_mara",
+        "to": "bedroom_floor_b1",
+        "chance": "almost_always",
+        "duration_h": 2.0
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "bedroom_floor_b1",
+        "chance": "usually",
+        "duration_h": 1.0
+       }
+      ]
+     },
+     {
+      "name": "weekend_day_trip",
+      "days": "weekend",
+      "frequency_per_week": 1,
+      "start_hour": 8.0,
+      "duration_h": 14.0,
+      "moves": [
+       {
+        "target": "suitcase_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "phone_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       }
+      ]
+     },
+     {
+      "name": "morning_watering",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 0.5,
+      "moves": [
+       {
+        "target": "watering_can_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_3a7f"
+   },
+   {
+    "leaf_id": "p_8c21",
+    "assumes": {
+     "weekday_presence": "out",
+     "weekend_activity": "active",
+     "suitcase_status": "stored"
+    },
+    "rationale": "Mara commutes out on weekdays and does weekend yoga, but the suitcase is just stored with no trip planned",
+    "distinguishing_prediction": "The yoga mat is on the bedroom floor Saturday morning at 10:00 while the suitcase remains on the bedroom floor",
+    "distinguishing_check": {
+     "target": "yoga_mat_mara",
+     "at": "bedroom_floor_b1",
+     "days": "weekend",
+     "hour": 10.0
+    },
+    "rest": {
+     "backpack_mara": "bedroom_floor_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "nightstand_b1",
+     "glasses_mara": "nightstand_b1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "desk_b1",
+     "jacket_mara": "entry_hook_e1",
+     "keys_mara": "entry_hook_e1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "laptop_mara": "desk_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "desk_b1",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "nightstand_b1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_table_e1",
+     "water_bottle_mara": "sink_k1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "weekday_commute_out",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 8.0,
+      "duration_h": 9.0,
+      "moves": [
+       {
+        "target": "keys_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "phone_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "laptop_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "glasses_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "headphones_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "sometimes"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "umbrella_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "weekend_yoga",
+      "days": "weekend",
+      "frequency_per_week": 2,
+      "start_hour": 9.0,
+      "duration_h": 1.0,
+      "moves": [
+       {
+        "target": "yoga_mat_mara",
+        "to": "bedroom_floor_b1",
+        "chance": "almost_always",
+        "duration_h": 2.0
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "bedroom_floor_b1",
+        "chance": "usually",
+        "duration_h": 1.0
+       }
+      ]
+     },
+     {
+      "name": "morning_watering",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 0.5,
+      "moves": [
+       {
+        "target": "watering_can_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_8c21"
+   },
+   {
+    "leaf_id": "p_d4e9",
+    "assumes": {
+     "weekday_presence": "out",
+     "weekend_activity": "sedentary",
+     "suitcase_status": "pre_trip"
+    },
+    "rationale": "Mara is out on weekdays, stays in on weekends reading, but has a packed suitcase for a Saturday trip",
+    "distinguishing_prediction": "The keys are at OUT_OF_HOUSE on a weekday at 15:00 and the yoga mat stays on the couch on Saturday",
+    "distinguishing_check": {
+     "target": "keys_mara",
+     "at": "OUT_OF_HOUSE",
+     "days": "weekday",
+     "hour": 15.0
+    },
+    "rest": {
+     "backpack_mara": "bedroom_floor_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "nightstand_b1",
+     "glasses_mara": "nightstand_b1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "desk_b1",
+     "jacket_mara": "entry_hook_e1",
+     "keys_mara": "entry_hook_e1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "laptop_mara": "desk_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "desk_b1",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "nightstand_b1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_table_e1",
+     "water_bottle_mara": "sink_k1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "weekday_commute_out",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 8.0,
+      "duration_h": 9.0,
+      "moves": [
+       {
+        "target": "keys_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "phone_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "laptop_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "glasses_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "headphones_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "sometimes"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "umbrella_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "weekend_read_couch",
+      "days": "weekend",
+      "frequency_per_week": 2,
+      "start_hour": 10.0,
+      "duration_h": 3.0,
+      "moves": [
+       {
+        "target": "tablet_mara",
+        "to": "couch_l1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "book_mara",
+        "to": "couch_l1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     },
+     {
+      "name": "weekend_day_trip",
+      "days": "weekend",
+      "frequency_per_week": 1,
+      "start_hour": 8.0,
+      "duration_h": 14.0,
+      "moves": [
+       {
+        "target": "suitcase_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "phone_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       }
+      ]
+     },
+     {
+      "name": "morning_watering",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 0.5,
+      "moves": [
+       {
+        "target": "watering_can_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_d4e9"
+   },
+   {
+    "leaf_id": "p_1b5c",
+    "assumes": {
+     "weekday_presence": "out",
+     "weekend_activity": "sedentary",
+     "suitcase_status": "stored"
+    },
+    "rationale": "Mara is out on weekdays, stays in on weekends, and the suitcase is just stored with no trip",
+    "distinguishing_prediction": "The phone is at OUT_OF_HOUSE on a weekday at 15:00 and the yoga mat remains on the couch on Saturday",
+    "distinguishing_check": {
+     "target": "phone_mara",
+     "at": "OUT_OF_HOUSE",
+     "days": "weekday",
+     "hour": 15.0
+    },
+    "rest": {
+     "backpack_mara": "bedroom_floor_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "nightstand_b1",
+     "glasses_mara": "nightstand_b1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "desk_b1",
+     "jacket_mara": "entry_hook_e1",
+     "keys_mara": "entry_hook_e1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "laptop_mara": "desk_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "desk_b1",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "nightstand_b1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_table_e1",
+     "water_bottle_mara": "sink_k1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "weekday_commute_out",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 8.0,
+      "duration_h": 9.0,
+      "moves": [
+       {
+        "target": "keys_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "phone_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "laptop_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "glasses_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "headphones_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "sometimes"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "umbrella_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "sometimes"
+       }
+      ]
+     },
+     {
+      "name": "weekend_read_couch",
+      "days": "weekend",
+      "frequency_per_week": 2,
+      "start_hour": 10.0,
+      "duration_h": 3.0,
+      "moves": [
+       {
+        "target": "tablet_mara",
+        "to": "couch_l1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "book_mara",
+        "to": "couch_l1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     },
+     {
+      "name": "morning_watering",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 0.5,
+      "moves": [
+       {
+        "target": "watering_can_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_1b5c"
+   },
+   {
+    "leaf_id": "p_7f03",
+    "assumes": {
+     "weekday_presence": "home_desk",
+     "weekend_activity": "active",
+     "suitcase_status": "pre_trip"
+    },
+    "rationale": "Mara works from the desk on weekdays, does weekend yoga, and has a packed suitcase for a Saturday trip",
+    "distinguishing_prediction": "The laptop is at the desk on a weekday at 15:00 and the suitcase is at OUT_OF_HOUSE on Saturday",
+    "distinguishing_check": {
+     "target": "laptop_mara",
+     "at": "desk_b1",
+     "days": "weekday",
+     "hour": 15.0
+    },
+    "rest": {
+     "backpack_mara": "bedroom_floor_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "nightstand_b1",
+     "glasses_mara": "nightstand_b1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "desk_b1",
+     "jacket_mara": "entry_hook_e1",
+     "keys_mara": "entry_hook_e1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "laptop_mara": "desk_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "desk_b1",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "nightstand_b1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_table_e1",
+     "water_bottle_mara": "sink_k1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "weekday_desk_work",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 9.0,
+      "duration_h": 7.0,
+      "moves": [
+       {
+        "target": "laptop_mara",
+        "to": "desk_b1",
+        "chance": "almost_always"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "desk_b1",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "desk_b1",
+        "chance": "usually",
+        "duration_h": 7.0
+       },
+       {
+        "target": "mug_mara",
+        "to": "desk_b1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "phone_mara",
+        "to": "desk_b1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     },
+     {
+      "name": "weekend_yoga",
+      "days": "weekend",
+      "frequency_per_week": 2,
+      "start_hour": 9.0,
+      "duration_h": 1.0,
+      "moves": [
+       {
+        "target": "yoga_mat_mara",
+        "to": "bedroom_floor_b1",
+        "chance": "almost_always",
+        "duration_h": 2.0
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "bedroom_floor_b1",
+        "chance": "usually",
+        "duration_h": 1.0
+       }
+      ]
+     },
+     {
+      "name": "weekend_day_trip",
+      "days": "weekend",
+      "frequency_per_week": 1,
+      "start_hour": 8.0,
+      "duration_h": 14.0,
+      "moves": [
+       {
+        "target": "suitcase_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "phone_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       }
+      ]
+     },
+     {
+      "name": "morning_watering",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 0.5,
+      "moves": [
+       {
+        "target": "watering_can_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_7f03"
+   },
+   {
+    "leaf_id": "p_a9d2",
+    "assumes": {
+     "weekday_presence": "home_desk",
+     "weekend_activity": "active",
+     "suitcase_status": "stored"
+    },
+    "rationale": "Mara works from the desk on weekdays, does weekend yoga, and the suitcase is just stored",
+    "distinguishing_prediction": "The notebook is at the desk on a weekday at 15:00 and the yoga mat is on the bedroom floor on Saturday",
+    "distinguishing_check": {
+     "target": "notebook_mara",
+     "at": "desk_b1",
+     "days": "weekday",
+     "hour": 15.0
+    },
+    "rest": {
+     "backpack_mara": "bedroom_floor_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "nightstand_b1",
+     "glasses_mara": "nightstand_b1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "desk_b1",
+     "jacket_mara": "entry_hook_e1",
+     "keys_mara": "entry_hook_e1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "laptop_mara": "desk_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "desk_b1",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "nightstand_b1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_table_e1",
+     "water_bottle_mara": "sink_k1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "weekday_desk_work",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 9.0,
+      "duration_h": 7.0,
+      "moves": [
+       {
+        "target": "laptop_mara",
+        "to": "desk_b1",
+        "chance": "almost_always"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "desk_b1",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "desk_b1",
+        "chance": "usually",
+        "duration_h": 7.0
+       },
+       {
+        "target": "mug_mara",
+        "to": "desk_b1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "phone_mara",
+        "to": "desk_b1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     },
+     {
+      "name": "weekend_yoga",
+      "days": "weekend",
+      "frequency_per_week": 2,
+      "start_hour": 9.0,
+      "duration_h": 1.0,
+      "moves": [
+       {
+        "target": "yoga_mat_mara",
+        "to": "bedroom_floor_b1",
+        "chance": "almost_always",
+        "duration_h": 2.0
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "bedroom_floor_b1",
+        "chance": "usually",
+        "duration_h": 1.0
+       }
+      ]
+     },
+     {
+      "name": "morning_watering",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 0.5,
+      "moves": [
+       {
+        "target": "watering_can_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_a9d2"
+   },
+   {
+    "leaf_id": "p_e614",
+    "assumes": {
+     "weekday_presence": "home_desk",
+     "weekend_activity": "sedentary",
+     "suitcase_status": "pre_trip"
+    },
+    "rationale": "Mara works from the desk on weekdays, stays in on weekends, and has a packed suitcase for a Saturday trip",
+    "distinguishing_prediction": "The keys are at the entry hook on a weekday at 15:00 (not OUT_OF_HOUSE) and the suitcase is at OUT_OF_HOUSE on Saturday",
+    "distinguishing_check": {
+     "target": "keys_mara",
+     "at": "entry_hook_e1",
+     "days": "weekday",
+     "hour": 15.0
+    },
+    "rest": {
+     "backpack_mara": "bedroom_floor_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "nightstand_b1",
+     "glasses_mara": "nightstand_b1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "desk_b1",
+     "jacket_mara": "entry_hook_e1",
+     "keys_mara": "entry_hook_e1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "laptop_mara": "desk_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "desk_b1",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "nightstand_b1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_table_e1",
+     "water_bottle_mara": "sink_k1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "weekday_desk_work",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 9.0,
+      "duration_h": 7.0,
+      "moves": [
+       {
+        "target": "laptop_mara",
+        "to": "desk_b1",
+        "chance": "almost_always"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "desk_b1",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "desk_b1",
+        "chance": "usually",
+        "duration_h": 7.0
+       },
+       {
+        "target": "mug_mara",
+        "to": "desk_b1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "phone_mara",
+        "to": "desk_b1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     },
+     {
+      "name": "weekend_read_couch",
+      "days": "weekend",
+      "frequency_per_week": 2,
+      "start_hour": 10.0,
+      "duration_h": 3.0,
+      "moves": [
+       {
+        "target": "tablet_mara",
+        "to": "couch_l1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "book_mara",
+        "to": "couch_l1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     },
+     {
+      "name": "weekend_day_trip",
+      "days": "weekend",
+      "frequency_per_week": 1,
+      "start_hour": 8.0,
+      "duration_h": 14.0,
+      "moves": [
+       {
+        "target": "suitcase_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "jacket_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       },
+       {
+        "target": "keys_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "phone_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "wallet_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "almost_always"
+       },
+       {
+        "target": "backpack_mara",
+        "to": "OUT_OF_HOUSE",
+        "chance": "usually"
+       }
+      ]
+     },
+     {
+      "name": "morning_watering",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 0.5,
+      "moves": [
+       {
+        "target": "watering_can_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_e614"
+   },
+   {
+    "leaf_id": "p_4c88",
+    "assumes": {
+     "weekday_presence": "home_desk",
+     "weekend_activity": "sedentary",
+     "suitcase_status": "stored"
+    },
+    "rationale": "Mara works from the desk on weekdays, stays in on weekends reading, and the suitcase is just stored",
+    "distinguishing_prediction": "The wallet is at the entry table on a weekday at 15:00 and the yoga mat stays on the couch on Saturday",
+    "distinguishing_check": {
+     "target": "wallet_mara",
+     "at": "entry_table_e1",
+     "days": "weekday",
+     "hour": 15.0
+    },
+    "rest": {
+     "backpack_mara": "bedroom_floor_b1",
+     "blanket_mara": "couch_l1",
+     "book_mara": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "charger_mara": "nightstand_b1",
+     "glasses_mara": "nightstand_b1",
+     "hairbrush_mara": "nightstand_b1",
+     "headphones_mara": "desk_b1",
+     "jacket_mara": "entry_hook_e1",
+     "keys_mara": "entry_hook_e1",
+     "laundry_basket_mara": "bedroom_floor_b1",
+     "laptop_mara": "desk_b1",
+     "lunchbox_mara": "counter_k1",
+     "makeup_kit_mara": "bathroom_shelf_ba1",
+     "medication_bottle_mara": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "notebook_mara": "desk_b1",
+     "pan_shared_1": "sink_k1",
+     "pen_mara": "kitchen_table_k1",
+     "phone_mara": "nightstand_b1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "pot_shared_1": "cupboard_k1",
+     "remote_shared_1": "coffee_table_l1",
+     "suitcase_mara": "bedroom_floor_b1",
+     "tablet_mara": "coffee_table_l1",
+     "towel_mara": "towel_rack_ba1",
+     "umbrella_mara": "entry_floor_e1",
+     "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+     "wallet_mara": "entry_table_e1",
+     "water_bottle_mara": "sink_k1",
+     "watering_can_mara": "sink_k1",
+     "yoga_mat_mara": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "weekday_desk_work",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 9.0,
+      "duration_h": 7.0,
+      "moves": [
+       {
+        "target": "laptop_mara",
+        "to": "desk_b1",
+        "chance": "almost_always"
+       },
+       {
+        "target": "notebook_mara",
+        "to": "desk_b1",
+        "chance": "usually"
+       },
+       {
+        "target": "charger_mara",
+        "to": "desk_b1",
+        "chance": "usually",
+        "duration_h": 7.0
+       },
+       {
+        "target": "mug_mara",
+        "to": "desk_b1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "phone_mara",
+        "to": "desk_b1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     },
+     {
+      "name": "weekend_read_couch",
+      "days": "weekend",
+      "frequency_per_week": 2,
+      "start_hour": 10.0,
+      "duration_h": 3.0,
+      "moves": [
+       {
+        "target": "tablet_mara",
+        "to": "couch_l1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "book_mara",
+        "to": "couch_l1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     },
+     {
+      "name": "morning_watering",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 7.0,
+      "duration_h": 0.5,
+      "moves": [
+       {
+        "target": "watering_can_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       },
+       {
+        "target": "water_bottle_mara",
+        "to": "sink_k1",
+        "chance": "usually",
+        "duration_h": 0.5
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_4c88"
+   }
+  ],
+  "leaf_set_rationale": "All 8 combinations of the three binary assumptions are included; none are internally contradictory. The out + home_desk split is the primary discriminator (ten objects at OUT_OF_HOUSE vs. at desk/nightstand/entry), the active/sedentary split is visible via the yoga mat on weekends, and the pre_trip/stored split is visible via the suitcase on weekends."
+ },
+ "problems": [],
+ "generation_seconds": 895.49,
+ "seconds_per_hypothesis": 111.94,
+ "hypotheses": [
+  {
+   "leaf_id": "p_3a7f",
+   "assumes": {
+    "weekday_presence": "out",
+    "weekend_activity": "active",
+    "suitcase_status": "pre_trip"
+   },
+   "rationale": "Mara commutes out on weekdays, does weekend yoga, and has a packed suitcase for a Saturday trip",
+   "distinguishing_prediction": "The suitcase is at OUT_OF_HOUSE on Saturday morning at 10:00 while the yoga mat is on the bedroom floor",
+   "distinguishing_check": {
+    "target": "suitcase_mara",
+    "at": "OUT_OF_HOUSE",
+    "days": "weekend",
+    "hour": 10.0
+   },
+   "rest": {
+    "backpack_mara": "bedroom_floor_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "nightstand_b1",
+    "glasses_mara": "nightstand_b1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "desk_b1",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "entry_hook_e1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "laptop_mara": "desk_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "desk_b1",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "nightstand_b1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_table_e1",
+    "water_bottle_mara": "sink_k1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_commute_out",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 8.0,
+     "duration_h": 9.0,
+     "moves": [
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "umbrella_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "weekend_yoga",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 9.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "yoga_mat_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "almost_always",
+       "duration_h": 2.0
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "duration_h": 1.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_day_trip",
+     "days": "weekend",
+     "frequency_per_week": 1,
+     "start_hour": 8.0,
+     "duration_h": 14.0,
+     "moves": [
+      {
+       "target": "suitcase_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "morning_watering",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "watering_can_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_3a7f"
+  },
+  {
+   "leaf_id": "p_8c21",
+   "assumes": {
+    "weekday_presence": "out",
+    "weekend_activity": "active",
+    "suitcase_status": "stored"
+   },
+   "rationale": "Mara commutes out on weekdays and does weekend yoga, but the suitcase is just stored with no trip planned",
+   "distinguishing_prediction": "The yoga mat is on the bedroom floor Saturday morning at 10:00 while the suitcase remains on the bedroom floor",
+   "distinguishing_check": {
+    "target": "yoga_mat_mara",
+    "at": "bedroom_floor_b1",
+    "days": "weekend",
+    "hour": 10.0
+   },
+   "rest": {
+    "backpack_mara": "bedroom_floor_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "nightstand_b1",
+    "glasses_mara": "nightstand_b1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "desk_b1",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "entry_hook_e1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "laptop_mara": "desk_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "desk_b1",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "nightstand_b1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_table_e1",
+    "water_bottle_mara": "sink_k1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_commute_out",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 8.0,
+     "duration_h": 9.0,
+     "moves": [
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "umbrella_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "weekend_yoga",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 9.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "yoga_mat_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "almost_always",
+       "duration_h": 2.0
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "duration_h": 1.0
+      }
+     ]
+    },
+    {
+     "name": "morning_watering",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "watering_can_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_8c21"
+  },
+  {
+   "leaf_id": "p_d4e9",
+   "assumes": {
+    "weekday_presence": "out",
+    "weekend_activity": "sedentary",
+    "suitcase_status": "pre_trip"
+   },
+   "rationale": "Mara is out on weekdays, stays in on weekends reading, but has a packed suitcase for a Saturday trip",
+   "distinguishing_prediction": "The keys are at OUT_OF_HOUSE on a weekday at 15:00 and the yoga mat stays on the couch on Saturday",
+   "distinguishing_check": {
+    "target": "keys_mara",
+    "at": "OUT_OF_HOUSE",
+    "days": "weekday",
+    "hour": 15.0
+   },
+   "rest": {
+    "backpack_mara": "bedroom_floor_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "nightstand_b1",
+    "glasses_mara": "nightstand_b1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "desk_b1",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "entry_hook_e1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "laptop_mara": "desk_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "desk_b1",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "nightstand_b1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_table_e1",
+    "water_bottle_mara": "sink_k1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_commute_out",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 8.0,
+     "duration_h": 9.0,
+     "moves": [
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "umbrella_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "weekend_read_couch",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "tablet_mara",
+       "to": "couch_l1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "book_mara",
+       "to": "couch_l1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_day_trip",
+     "days": "weekend",
+     "frequency_per_week": 1,
+     "start_hour": 8.0,
+     "duration_h": 14.0,
+     "moves": [
+      {
+       "target": "suitcase_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "morning_watering",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "watering_can_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_d4e9"
+  },
+  {
+   "leaf_id": "p_1b5c",
+   "assumes": {
+    "weekday_presence": "out",
+    "weekend_activity": "sedentary",
+    "suitcase_status": "stored"
+   },
+   "rationale": "Mara is out on weekdays, stays in on weekends, and the suitcase is just stored with no trip",
+   "distinguishing_prediction": "The phone is at OUT_OF_HOUSE on a weekday at 15:00 and the yoga mat remains on the couch on Saturday",
+   "distinguishing_check": {
+    "target": "phone_mara",
+    "at": "OUT_OF_HOUSE",
+    "days": "weekday",
+    "hour": 15.0
+   },
+   "rest": {
+    "backpack_mara": "bedroom_floor_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "nightstand_b1",
+    "glasses_mara": "nightstand_b1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "desk_b1",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "entry_hook_e1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "laptop_mara": "desk_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "desk_b1",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "nightstand_b1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_table_e1",
+    "water_bottle_mara": "sink_k1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_commute_out",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 8.0,
+     "duration_h": 9.0,
+     "moves": [
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "umbrella_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes"
+      }
+     ]
+    },
+    {
+     "name": "weekend_read_couch",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "tablet_mara",
+       "to": "couch_l1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "book_mara",
+       "to": "couch_l1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    },
+    {
+     "name": "morning_watering",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "watering_can_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_1b5c"
+  },
+  {
+   "leaf_id": "p_7f03",
+   "assumes": {
+    "weekday_presence": "home_desk",
+    "weekend_activity": "active",
+    "suitcase_status": "pre_trip"
+   },
+   "rationale": "Mara works from the desk on weekdays, does weekend yoga, and has a packed suitcase for a Saturday trip",
+   "distinguishing_prediction": "The laptop is at the desk on a weekday at 15:00 and the suitcase is at OUT_OF_HOUSE on Saturday",
+   "distinguishing_check": {
+    "target": "laptop_mara",
+    "at": "desk_b1",
+    "days": "weekday",
+    "hour": 15.0
+   },
+   "rest": {
+    "backpack_mara": "bedroom_floor_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "nightstand_b1",
+    "glasses_mara": "nightstand_b1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "desk_b1",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "entry_hook_e1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "laptop_mara": "desk_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "desk_b1",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "nightstand_b1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_table_e1",
+    "water_bottle_mara": "sink_k1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_desk_work",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 7.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "desk_b1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "desk_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "charger_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 7.0
+      },
+      {
+       "target": "mug_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "desk_b1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_yoga",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 9.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "yoga_mat_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "almost_always",
+       "duration_h": 2.0
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "duration_h": 1.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_day_trip",
+     "days": "weekend",
+     "frequency_per_week": 1,
+     "start_hour": 8.0,
+     "duration_h": 14.0,
+     "moves": [
+      {
+       "target": "suitcase_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "morning_watering",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "watering_can_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_7f03"
+  },
+  {
+   "leaf_id": "p_a9d2",
+   "assumes": {
+    "weekday_presence": "home_desk",
+    "weekend_activity": "active",
+    "suitcase_status": "stored"
+   },
+   "rationale": "Mara works from the desk on weekdays, does weekend yoga, and the suitcase is just stored",
+   "distinguishing_prediction": "The notebook is at the desk on a weekday at 15:00 and the yoga mat is on the bedroom floor on Saturday",
+   "distinguishing_check": {
+    "target": "notebook_mara",
+    "at": "desk_b1",
+    "days": "weekday",
+    "hour": 15.0
+   },
+   "rest": {
+    "backpack_mara": "bedroom_floor_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "nightstand_b1",
+    "glasses_mara": "nightstand_b1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "desk_b1",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "entry_hook_e1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "laptop_mara": "desk_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "desk_b1",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "nightstand_b1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_table_e1",
+    "water_bottle_mara": "sink_k1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_desk_work",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 7.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "desk_b1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "desk_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "charger_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 7.0
+      },
+      {
+       "target": "mug_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "desk_b1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_yoga",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 9.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "yoga_mat_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "almost_always",
+       "duration_h": 2.0
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "duration_h": 1.0
+      }
+     ]
+    },
+    {
+     "name": "morning_watering",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "watering_can_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_a9d2"
+  },
+  {
+   "leaf_id": "p_e614",
+   "assumes": {
+    "weekday_presence": "home_desk",
+    "weekend_activity": "sedentary",
+    "suitcase_status": "pre_trip"
+   },
+   "rationale": "Mara works from the desk on weekdays, stays in on weekends, and has a packed suitcase for a Saturday trip",
+   "distinguishing_prediction": "The keys are at the entry hook on a weekday at 15:00 (not OUT_OF_HOUSE) and the suitcase is at OUT_OF_HOUSE on Saturday",
+   "distinguishing_check": {
+    "target": "keys_mara",
+    "at": "entry_hook_e1",
+    "days": "weekday",
+    "hour": 15.0
+   },
+   "rest": {
+    "backpack_mara": "bedroom_floor_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "nightstand_b1",
+    "glasses_mara": "nightstand_b1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "desk_b1",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "entry_hook_e1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "laptop_mara": "desk_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "desk_b1",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "nightstand_b1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_table_e1",
+    "water_bottle_mara": "sink_k1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_desk_work",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 7.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "desk_b1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "desk_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "charger_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 7.0
+      },
+      {
+       "target": "mug_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "desk_b1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_read_couch",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "tablet_mara",
+       "to": "couch_l1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "book_mara",
+       "to": "couch_l1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_day_trip",
+     "days": "weekend",
+     "frequency_per_week": 1,
+     "start_hour": 8.0,
+     "duration_h": 14.0,
+     "moves": [
+      {
+       "target": "suitcase_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      },
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "morning_watering",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "watering_can_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_e614"
+  },
+  {
+   "leaf_id": "p_4c88",
+   "assumes": {
+    "weekday_presence": "home_desk",
+    "weekend_activity": "sedentary",
+    "suitcase_status": "stored"
+   },
+   "rationale": "Mara works from the desk on weekdays, stays in on weekends reading, and the suitcase is just stored",
+   "distinguishing_prediction": "The wallet is at the entry table on a weekday at 15:00 and the yoga mat stays on the couch on Saturday",
+   "distinguishing_check": {
+    "target": "wallet_mara",
+    "at": "entry_table_e1",
+    "days": "weekday",
+    "hour": 15.0
+   },
+   "rest": {
+    "backpack_mara": "bedroom_floor_b1",
+    "blanket_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "charger_mara": "nightstand_b1",
+    "glasses_mara": "nightstand_b1",
+    "hairbrush_mara": "nightstand_b1",
+    "headphones_mara": "desk_b1",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "entry_hook_e1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "laptop_mara": "desk_b1",
+    "lunchbox_mara": "counter_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "notebook_mara": "desk_b1",
+    "pan_shared_1": "sink_k1",
+    "pen_mara": "kitchen_table_k1",
+    "phone_mara": "nightstand_b1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "pot_shared_1": "cupboard_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "suitcase_mara": "bedroom_floor_b1",
+    "tablet_mara": "coffee_table_l1",
+    "towel_mara": "towel_rack_ba1",
+    "umbrella_mara": "entry_floor_e1",
+    "vacuum_cleaner_shared_1": "bedroom_floor_b1",
+    "wallet_mara": "entry_table_e1",
+    "water_bottle_mara": "sink_k1",
+    "watering_can_mara": "sink_k1",
+    "yoga_mat_mara": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekday_desk_work",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 7.0,
+     "moves": [
+      {
+       "target": "laptop_mara",
+       "to": "desk_b1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "desk_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "charger_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 7.0
+      },
+      {
+       "target": "mug_mara",
+       "to": "desk_b1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "desk_b1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_read_couch",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "tablet_mara",
+       "to": "couch_l1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "book_mara",
+       "to": "couch_l1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    },
+    {
+     "name": "morning_watering",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "watering_can_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 0.5
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_4c88"
+  }
+ ]
+}

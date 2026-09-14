@@ -162,6 +162,8 @@ class _EpisodeAccumulator:
             self.n_days = int(header["n_days"])
             raw_type = header.get("household_type")
             self.household_type = None if raw_type is None else str(raw_type)
+            self.premises: Dict[str, str] = {
+                str(k): str(v) for k, v in dict(header.get("premises") or {}).items()}
             self.unsensable = tuple(
                 str(r) for r in header.get("unsensable_receptacles", []))
             self.receptacle_rooms = {
@@ -326,6 +328,7 @@ class _EpisodeAccumulator:
             trajectories={obj: tuple(sorted(self._truth[obj]))
                           for obj in self.object_classes},
             household_type=self.household_type,
+            premises=self.premises,
             unsensable_receptacle_ids=self.unsensable,
             receptacle_rooms=self.receptacle_rooms,
             home_base_room=self.home_base_room,

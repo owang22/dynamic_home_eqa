@@ -114,7 +114,7 @@ def test_rebuild_keeps_weight_for_kept_id_and_replays_history(tmp_path):
     m.update(_obs("laptop_1", "desk", 2, 8))          # fires the ask
     names = [p.name for p in m.particles]
     assert names[:2] == ["HypothesisProgram(h1)", "HypothesisProgram(h3)"]
-    assert names[-1].startswith("PeriodicPersistence")
+    assert names[-1].startswith("MostFrequentLocation")
     w_after = dict(zip(names, m.weights))
     # h1 kept its lead; the newcomer did not inherit it.
     assert w_after["HypothesisProgram(h1)"] > w_after["HypothesisProgram(h3)"]

@@ -1,0 +1,790 @@
+{
+ "household": "hh_001",
+ "condition": "anonymized",
+ "prompt": "A home robot has just been installed. Its only observation so far is one walkthrough of the home at 15:08 on day 0, a Monday. Below are the home's receptacles and objects; where the walkthrough saw an object, its row says so.\n\nRECEPTACLES:\n  receptacle_5\n  receptacle_20\n  receptacle_14\n  receptacle_6\n  receptacle_11\n  receptacle_10\n  receptacle_23\n  receptacle_7\n  receptacle_3\n  receptacle_12\n  receptacle_21\n  receptacle_13\n  receptacle_15\n  receptacle_19\n  receptacle_8\n  receptacle_9\n  receptacle_4\n  receptacle_22\n  receptacle_18\n  receptacle_17\n  receptacle_16\n  receptacle_2\n\nOBJECTS, with where the tour saw each one:\n  object_1  (class: class_1)\n  object_2  (class: class_2)  at receptacle_11\n  object_3  (class: class_3)  at receptacle_7\n  object_4  (class: class_4)  at receptacle_18\n  object_5  (class: class_4)  at receptacle_19\n  object_6  (class: class_5)\n  object_7  (class: class_6)\n  object_8  (class: class_7)  at receptacle_20\n  object_9  (class: class_8)\n  object_10  (class: class_9)\n  object_11  (class: class_10)\n  object_12  (class: class_11)\n  object_13  (class: class_12)  at receptacle_6\n  object_14  (class: class_13)  at receptacle_12\n  object_15  (class: class_14)  at receptacle_4\n  object_16  (class: class_15)  at receptacle_4\n  object_17  (class: class_16)  at receptacle_8\n  object_18  (class: class_16)  at receptacle_13\n  object_19  (class: class_17)\n  object_20  (class: class_18)  at receptacle_21\n  object_21  (class: class_19)  at receptacle_19\n  object_22  (class: class_20)\n  object_23  (class: class_21)  at receptacle_13\n  object_24  (class: class_21)  at receptacle_12\n  object_25  (class: class_22)  at receptacle_13\n  object_26  (class: class_23)  at receptacle_10\n  object_27  (class: class_24)  at receptacle_6\n  object_28  (class: class_25)  at receptacle_10\n  object_29  (class: class_26)  at receptacle_22\n  object_30  (class: class_27)  at receptacle_16\n  object_31  (class: class_28)  at receptacle_6\n  object_32  (class: class_29)\n  object_33  (class: class_30)\n  object_34  (class: class_31)  at receptacle_21\n  object_35  (class: class_32)  at receptacle_11\n\nCLASSES (usable as `class:<name>` targets): class_1, class_2, class_3, class_4, class_5, class_6, class_7, class_8, class_9, class_10, class_11, class_12, class_13, class_14, class_15, class_16, class_17, class_18, class_19, class_20, class_21, class_22, class_23, class_24, class_25, class_26, class_27, class_28, class_29, class_30, class_31, class_32\n\nWrite 5 competing hypotheses about this home's weekly routine. Each hypothesis is a set of ACTIVITIES: a name, which days (weekday, weekend, or both), roughly when it starts (start_hour, a number), how long it lasts (duration_h), how many times a week it happens (frequency_per_week), and its moves \u2014 which object (or class:<name>) goes to which receptacle, with a chance (rarely, sometimes, usually, almost_always) and, when it differs from the activity's, its own `duration_h` \u2014 how long the object stays where the activity put it. A hypothesis may also give a `rest` map: receptacles where objects sit when nothing is happening. Each hypothesis carries a one-line `distinguishing_prediction` and a `distinguishing_check` in the form {\"target\": <object id>, \"at\": <receptacle id>, \"days\": weekday|weekend|both, \"hour\": <number>}.\n\nUse only ids from the tables above, exactly as printed. Each hypothesis has a one-line rationale, a one-line distinguishing_prediction with its distinguishing_check, an optional rest map, and as many activities as its routine needs.\n\nThink it through, then end your reply with one json object. The example below shows the field shapes only; it is abbreviated and is about a different, smaller home.\n\n{\n \"hypotheses\": [\n  {\n   \"hypothesis_id\": \"h1\",\n   \"rationale\": \"one resident who is at an office on weekdays\",\n   \"distinguishing_prediction\": \"object_3 is at receptacle_1 on weekday evenings and gone by 9:00\",\n   \"distinguishing_check\": {\n    \"target\": \"object_3\",\n    \"at\": \"receptacle_1\",\n    \"days\": \"weekday\",\n    \"hour\": 19.0\n   },\n   \"rest\": {\n    \"class:class_2\": \"receptacle_4\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"office_day\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 8.0,\n     \"duration_h\": 9.0,\n     \"moves\": [\n      {\n       \"target\": \"object_3\",\n       \"to\": \"receptacle_9\",\n       \"chance\": \"almost_always\"\n      }\n     ]\n    },\n    {\n     \"name\": \"morning_coffee\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 6,\n     \"start_hour\": 6.5,\n     \"duration_h\": 0.5,\n     \"moves\": [\n      {\n       \"target\": \"class:class_2\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"usually\",\n       \"duration_h\": 4.0\n      }\n     ]\n    }\n   ]\n  },\n  {\n   \"hypothesis_id\": \"h2\",\n   \"rationale\": \"one resident who works at the desk at home\",\n   \"distinguishing_prediction\": \"object_3 at receptacle_1 at weekday midday\",\n   \"distinguishing_check\": {\n    \"target\": \"object_3\",\n    \"at\": \"receptacle_1\",\n    \"days\": \"weekday\",\n    \"hour\": 13.0\n   },\n   \"rest\": {\n    \"class:class_2\": \"receptacle_5\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"desk_work\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 9.0,\n     \"duration_h\": 7.0,\n     \"moves\": [\n      {\n       \"target\": \"class:class_2\",\n       \"to\": \"receptacle_5\",\n       \"chance\": \"usually\",\n       \"duration_h\": 12.0\n      }\n     ]\n    }\n   ]\n  }\n ]\n}",
+ "rounds": [
+  {
+   "kind": "initial",
+   "think": "Let me analyze the home layout and objects to create 5 competing hypotheses about the weekly routine.\n\nFirst, let me catalog what was observed at day 0, 15:08 (Monday afternoon):\n\nObjects at receptacles:\n- object_2 (class_2) at receptacle_11\n- object_3 (class_3) at receptacle_7\n- object_4 (class_4) at receptacle_18\n- object_5 (class_4) at receptacle_19\n- object_8 (class_7) at receptacle_20\n- object_13 (class_12) at receptacle_6\n- object_14 (class_13) at receptacle_12\n- object_15 (class_14) at receptacle_4\n- object_16 (class_15) at receptacle_4\n- object_17 (class_16) at receptacle_8\n- object_18 (class_16) at receptacle_13\n- object_20 (class_18) at receptacle_21\n- object_21 (class_19) at receptacle_19\n- object_23 (class_21) at receptacle_13\n- object_24 (class_21) at receptacle_12\n- object_25 (class_22) at receptacle_13\n- object_26 (class_23) at receptacle_10\n- object_27 (class_24) at receptacle_6\n- object_28 (class_25) at receptacle_10\n- object_29 (class_26) at receptacle_22\n- object_30 (class_27) at receptacle_16\n- object_31 (class_28) at receptacle_6\n- object_34 (class_31) at receptacle_21\n- object_35 (class_32) at receptacle_11\n\nObjects NOT observed (no receptacle listed):\n- object_1 (class_1)\n- object_6 (class_5)\n- object_7 (class_6)\n- object_9 (class_8)\n- object_10 (class_9)\n- object_11 (class_10)\n- object_12 (class_11)\n- object_19 (class_17)\n- object_22 (class_20)\n- object_32 (class_29)\n- object_33 (class_30)\n\nReceptacles used: 11, 7, 18, 19, 20, 6, 12, 4, 8, 13, 21, 10, 22, 16\nReceptacles NOT used: 5, 14, 3, 9, 2, 15, 17, 1\n\nLet me think about what makes sense for a home routine:\n\nKey observations:\n- Two objects of class_4 (object_4 at receptacle_18, object_5 at receptacle_19) - these could be dishes, cups, etc.\n- Two objects of class_16 (object_17 at receptacle_8, object_18 at receptacle_13) - could be similar items\n- Two objects of class_21 (object_23 at receptacle_13, object_24 at receptacle_12) - similar items\n- Three objects at receptacle_6: object_13 (class_12), object_27 (class_24), object_31 (class_28)\n- Three objects at receptacle_13: object_18 (class_16), object_23 (class_21), object_25 (class_22)\n- Two objects at receptacle_4: object_15 (class_14), object_16 (class_15)\n- Two objects at receptacle_10: object_26 (class_23), object_28 (class_25)\n- Two objects at receptacle_19: object_5 (class_4), object_21 (class_19)\n- Two objects at receptacle_21: object_20 (class_18), object_34 (class_31)\n- Two objects at receptacle_11: object_2 (class_2), object_35 (class_32)\n\nThe time is 15:08 on a Monday. This is mid-afternoon. Objects not seen could be in use, carried, or in locations the robot didn't check.\n\nLet me design 5 hypotheses:\n\n**H1: Single professional working from home on weekdays**\n- During work hours (9-17), certain objects are at a \"desk\" area\n- In the evening, objects move to kitchen/living areas\n- Weekend: more relaxed, objects in different positions\n- The unobserved objects (object_1, 6, 7, 9, 10, 11, 12, 19, 22, 32, 33) could be in a bag, on a person, or in a location not visible\n\n**H2: Family with kids, school days vs weekends**\n- Weekdays: kids' items are in backpacks/bags (not visible)\n- Evenings: homework at a table\n- Weekends: items scattered differently\n- The unobserved objects are in backpacks during school hours\n\n**H3: Couple with evening social life**\n- Weekday evenings: objects move to a \"going out\" area\n- The unobserved objects are in a closet/bag for evening plans\n- Weekends: different pattern\n\n**H4: Home office with regular delivery/errand routine**\n- Certain objects are regularly moved for errands\n- The unobserved objects are in a car/garage area\n- Regular weekly pattern\n\n**H5: Two-person household with complementary schedules**\n- One person home in morning, other in afternoon\n- Objects shift between \"morning person\" and \"afternoon person\" zones\n- The 15:08 observation catches the transition\n\nLet me now flesh these out with specific activities:\n\nFor H1 (WFH professional):\n- Work activity: 9:00-17:00 weekdays. Objects at desk area.\n- The objects at receptacle_4 (object_15, object_16) could be at a desk\n- Objects at receptacle_13 (object_18, object_23, object_25) could be at a shelf/cabinet\n- Unobserved objects: in a bag or on person\n- Evening: objects move to kitchen area\n\nFor H2 (Family with kids):\n- School morning: 7:30-15:30 weekdays\n- Kids' items in backpacks (unobserved objects)\n- After school: items come out\n- Weekend: items in different spots\n\nFor H3 (Couple with social evening):\n- Evening prep: 17:00-19:00 weekdays\n- Objects move to entryway/closet\n- Unobserved objects are in closet/bag\n- Weekend: different\n\nFor H4 (Errand routine):\n- Weekly errand: Saturday morning\n- Objects moved to car/garage\n- Unobserved objects are in storage\n\nFor H5 (Two-person complementary):\n- Morning person active 6:00-12:00\n- Afternoon person active 12:00-20:00\n- Objects shift between zones\n- The 15:08 catches afternoon person's territory\n\nLet me write these out properly now.\n\nActually, let me reconsider. The key constraint is that I need to explain:\n1. Where observed objects are (at 15:08 Monday)\n2. Where unobserved objects are (they must be somewhere)\n3. How the routine changes over the week\n\nThe unobserved objects at 15:08 Monday:\n- object_1 (class_1)\n- object_6 (class_5)\n- object_7 (class_6)\n- object_9 (class_8)\n- object_10 (class_9)\n- object_11 (class_10)\n- object_12 (class_11)\n- object_19 (class_17)\n- object_22 (class_20)\n- object_32 (class_29)\n- object_33 (class_30)\n\nThat's 11 objects not seen. They could be:\n- In a bag/backpack\n- On a person\n- In a location the robot didn't scan\n- In a car/garage\n- In a closet\n\nLet me make sure my hypotheses are truly competing and distinguishable. The distinguishing checks should target different objects at different times/places.\n\nLet me refine:\n\n**H1: Single WFH professional, objects at desk during work hours**\n- Rationale: One person works from home Mon-Fri, objects cluster at desk (receptacle_4, receptacle_13) during work\n- Distinguishing: object_15 at receptacle_4 on weekday at 11:00 (during work) vs moved to receptacle_22 on weekend\n- Rest: unobserved objects in a \"bag\" receptacle (receptacle_5)\n- Activities: work_day (9-17), evening_wind_down (18-21), weekend_relax\n\n**H2: Family with school-age kids, items in backpacks during school**\n- Rationale: Kids' items are in backpacks (unobserved) during school hours, come out after 15:30\n- Distinguishing: object_6 at receptacle_5 (backpack area) on weekday at 10:00, but at receptacle_12 on weekday at 17:00\n- Rest: various\n- Activities: school_morning, after_school, weekend_play\n\n**H3: Couple preparing for evening out on weekdays**\n- Rationale: Objects move to entryway/closet for evening plans\n- Distinguishing: object_9 at receptacle_3 (closet) on weekday at 18:00\n- Rest: various\n- Activities: evening_prep, weekend_stay_home\n\n**H4: Regular Saturday errand routine**\n- Rationale: Objects are moved to a car/garage area on Saturday morning\n- Distinguishing: object_19 at receptacle_17 (garage) on weekend at 10:00\n- Rest: various\n- Activities: saturday_errands, weekday_home\n\n**H5: Two-person household with morning/afternoon split**\n- Rationale: One person's objects are active in morning, other's in afternoon\n- Distinguishing: object_1 at receptacle_9 on weekday at 8:00 (morning person) vs object_1 at receptacle_14 on weekday at 16:00 (afternoon person's zone)\n- Rest: various\n- Activities: morning_routine, afternoon_routine\n\nLet me now write the full JSON. I need to be careful to only use IDs from the tables.\n\nReceptacles available: 5, 20, 14, 6, 11, 10, 23, 7, 3, 12, 21, 13, 15, 19, 8, 9, 4, 22, 18, 17, 16, 2\n\nLet me assign roles to receptacles (my interpretation):\n- receptacle_4: desk/table (has object_15, object_16)\n- receptacle_6: shelf (has object_13, object_27, object_31)\n- receptacle_7: counter (has object_3)\n- receptacle_8: cabinet (has object_17)\n- receptacle_10: counter (has object_26, object_28)\n- receptacle_11: shelf (has object_2, object_35)\n- receptacle_12: table (has object_14, object_24)\n- receptacle_13: cabinet/shelf (has object_18, object_23, object_25)\n- receptacle_16: counter (has object_30)\n- receptacle_18: counter (has object_4)\n- receptacle_19: counter (has object_5, object_21)\n- receptacle_20: shelf (has object_8)\n- receptacle_21: table (has object_20, object_34)\n- receptacle_22: counter (has object_29)\n\nUnobserved receptacles: 5, 14, 3, 9, 2, 15, 17, 1 (wait, receptacle_1 isn't in the list)\n\nLet me recheck: receptacle_5, receptacle_14, receptacle_3, receptacle_9, receptacle_2, receptacle_15, receptacle_17\n\nOK let me write the final JSON now. I'll make sure each hypothesis is distinct and has a clear distinguishing prediction.",
+   "payload": "{\n  \"hypotheses\": [\n    {\n      \"hypothesis_id\": \"h1\",\n      \"rationale\": \"Single WFH professional; objects cluster at a desk (receptacle_4) and work shelf (receptacle_13) during weekday work hours, and unobserved items sit in a work bag at receptacle_5.\",\n      \"distinguishing_prediction\": \"object_15 stays at receptacle_4 through weekday midday but is moved to receptacle_22 by Saturday morning when the resident relaxes.\",\n      \"distinguishing_check\": {\n        \"target\": \"object_15\",\n        \"at\": \"receptacle_4\",\n        \"days\": \"weekday\",\n        \"hour\": 11.0\n      },\n      \"rest\": {\n        \"object_1\": \"receptacle_5\",\n        \"object_6\": \"receptacle_5\",\n        \"object_7\": \"receptacle_5\",\n        \"object_9\": \"receptacle_5\",\n        \"object_10\": \"receptacle_5\",\n        \"object_11\": \"receptacle_5\",\n        \"object_12\": \"receptacle_5\",\n        \"object_19\": \"receptacle_5\",\n        \"object_22\": \"receptacle_5\",\n        \"object_32\": \"receptacle_5\",\n        \"object_33\": \"receptacle_5\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"work_day\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 8.0,\n          \"moves\": [\n            {\n              \"target\": \"object_15\",\n              \"to\": \"receptacle_4\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_16\",\n              \"to\": \"receptacle_4\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_18\",\n              \"to\": \"receptacle_13\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_23\",\n              \"to\": \"receptacle_13\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_25\",\n              \"to\": \"receptacle_13\",\n              \"chance\": \"usually\"\n            }\n          ]\n        },\n        {\n          \"name\": \"evening_wind_down\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 18.0,\n          \"duration_h\": 3.0,\n          \"moves\": [\n            {\n              \"target\": \"object_15\",\n              \"to\": \"receptacle_22\",\n              \"chance\": \"usually\",\n              \"duration_h\": 10.0\n            },\n            {\n              \"target\": \"object_16\",\n              \"to\": \"receptacle_22\",\n              \"chance\": \"usually\",\n              \"duration_h\": 10.0\n            },\n            {\n              \"target\": \"class:class_4\",\n              \"to\": \"receptacle_19\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 12.0\n            }\n          ]\n        },\n        {\n          \"name\": \"weekend_relax\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 10.0,\n          \"duration_h\": 8.0,\n          \"moves\": [\n            {\n              \"target\": \"object_15\",\n              \"to\": \"receptacle_22\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 14.0\n            },\n            {\n              \"target\": \"object_16\",\n              \"to\": \"receptacle_22\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 14.0\n            },\n            {\n              \"target\": \"object_1\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 12.0\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h2\",\n      \"rationale\": \"Family with school-age children; kids' personal items (the 11 unobserved objects) ride in backpacks at receptacle_3 during school hours and are unpacked at receptacle_12 after 15:30.\",\n      \"distinguishing_prediction\": \"object_6 is at receptacle_3 (backpack zone) on a weekday at 10:00 but appears at receptacle_12 by 17:00 after school.\",\n      \"distinguishing_check\": {\n        \"target\": \"object_6\",\n        \"at\": \"receptacle_3\",\n        \"days\": \"weekday\",\n        \"hour\": 10.0\n      },\n      \"rest\": {\n        \"object_1\": \"receptacle_3\",\n        \"object_6\": \"receptacle_3\",\n        \"object_7\": \"receptacle_3\",\n        \"object_9\": \"receptacle_3\",\n        \"object_10\": \"receptacle_3\",\n        \"object_11\": \"receptacle_3\",\n        \"object_12\": \"receptacle_3\",\n        \"object_19\": \"receptacle_3\",\n        \"object_22\": \"receptacle_3\",\n        \"object_32\": \"receptacle_3\",\n        \"object_33\": \"receptacle_3\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"school_morning\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 7.5,\n          \"duration_h\": 8.0,\n          \"moves\": [\n            {\n              \"target\": \"object_6\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_7\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_9\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_10\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_11\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_12\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_19\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_22\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_32\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_33\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\"\n            }\n          ]\n        },\n        {\n          \"name\": \"after_school_unpack\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 15.5,\n          \"duration_h\": 1.5,\n          \"moves\": [\n            {\n              \"target\": \"object_6\",\n              \"to\": \"receptacle_12\",\n              \"chance\": \"usually\",\n              \"duration_h\": 10.0\n            },\n            {\n              \"target\": \"object_7\",\n              \"to\": \"receptacle_12\",\n              \"chance\": \"usually\",\n              \"duration_h\": 10.0\n            },\n            {\n              \"target\": \"object_9\",\n              \"to\": \"receptacle_11\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 10.0\n            },\n            {\n              \"target\": \"object_10\",\n              \"to\": \"receptacle_11\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 10.0\n            },\n            {\n              \"target\": \"object_11\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 10.0\n            },\n            {\n              \"target\": \"object_12\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 10.0\n            }\n          ]\n        },\n        {\n          \"name\": \"weekend_play\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 9.0,\n          \"duration_h\": 10.0,\n          \"moves\": [\n            {\n              \"target\": \"object_6\",\n              \"to\": \"receptacle_21\",\n              \"chance\": \"usually\",\n              \"duration_h\": 8.0\n            },\n            {\n              \"target\": \"object_7\",\n              \"to\": \"receptacle_21\",\n              \"chance\": \"usually\",\n              \"duration_h\": 8.0\n            },\n            {\n              \"target\": \"object_1\",\n              \"to\": \"receptacle_21\",\n              \"chance\": \"usually\",\n              \"duration_h\": 8.0\n            },\n            {\n              \"target\": \"object_19\",\n              \"to\": \"receptacle_7\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 8.0\n            },\n            {\n              \"target\": \"object_22\",\n              \"to\": \"receptacle_7\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 8.0\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h3\",\n      \"rationale\": \"Couple who go out on weekday evenings; their going-out items (the 11 unobserved objects) are stored in a closet at receptacle_9 and brought to the entryway (receptacle_3) around 17:00 for departure.\",\n      \"distinguishing_prediction\": \"object_1 is at receptacle_9 on a weekday at 12:00 (stowed) but moves to receptacle_3 by 18:00 when the couple heads out.\",\n      \"distinguishing_check\": {\n        \"target\": \"object_1\",\n        \"at\": \"receptacle_9\",\n        \"days\": \"weekday\",\n        \"hour\": 12.0\n      },\n      \"rest\": {\n        \"object_1\": \"receptacle_9\",\n        \"object_6\": \"receptacle_9\",\n        \"object_7\": \"receptacle_9\",\n        \"object_9\": \"receptacle_9\",\n        \"object_10\": \"receptacle_9\",\n        \"object_11\": \"receptacle_9\",\n        \"object_12\": \"receptacle_9\",\n        \"object_19\": \"receptacle_9\",\n        \"object_22\": \"receptacle_9\",\n        \"object_32\": \"receptacle_9\",\n        \"object_33\": \"receptacle_9\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"weekday_evening_prep\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 17.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\n              \"target\": \"object_1\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_6\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_7\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"usually\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_9\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"usually\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_10\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"usually\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_11\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_12\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_19\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_22\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_32\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"rarely\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_33\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"rarely\",\n              \"duration_h\": 4.0\n            }\n          ]\n        },\n        {\n          \"name\": \"weekday_evening_return\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 21.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\n              \"target\": \"object_1\",\n              \"to\": \"receptacle_9\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_6\",\n              \"to\": \"receptacle_9\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_7\",\n              \"to\": \"receptacle_9\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_9\",\n              \"to\": \"receptacle_9\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_10\",\n              \"to\": \"receptacle_9\",\n              \"chance\": \"usually\"\n            }\n          ]\n        },\n        {\n          \"name\": \"weekend_home\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 10.0,\n          \"duration_h\": 8.0,\n          \"moves\": [\n            {\n              \"target\": \"object_1\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 10.0\n            },\n            {\n              \"target\": \"object_6\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 10.0\n            },\n            {\n              \"target\": \"object_19\",\n              \"to\": \"receptacle_16\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 10.0\n            },\n            {\n              \"target\": \"object_22\",\n              \"to\": \"receptacle_16\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 10.0\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h4\",\n      \"rationale\": \"Household with a Saturday-morning errand routine; the 11 unobserved objects are stored in a garage/shed at receptacle_17 and brought to the car-loading area (receptacle_2) on Saturday, while weekday objects stay in their observed spots.\",\n      \"distinguishing_prediction\": \"object_19 is at receptacle_17 on a weekday at 14:00 but appears at receptacle_2 on a Saturday at 10:00 during the errand run.\",\n      \"distinguishing_check\": {\n        \"target\": \"object_19\",\n        \"at\": \"receptacle_17\",\n        \"days\": \"weekday\",\n        \"hour\": 14.0\n      },\n      \"rest\": {\n        \"object_1\": \"receptacle_17\",\n        \"object_6\": \"receptacle_17\",\n        \"object_7\": \"receptacle_17\",\n        \"object_9\": \"receptacle_17\",\n        \"object_10\": \"receptacle_17\",\n        \"object_11\": \"receptacle_17\",\n        \"object_12\": \"receptacle_17\",\n        \"object_19\": \"receptacle_17\",\n        \"object_22\": \"receptacle_17\",\n        \"object_32\": \"receptacle_17\",\n        \"object_33\": \"receptacle_17\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"saturday_errands\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 1,\n          \"start_hour\": 8.0,\n          \"duration_h\": 4.0,\n          \"moves\": [\n            {\n              \"target\": \"object_19\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_22\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_1\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"usually\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_6\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"usually\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_7\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_9\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_10\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_11\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"rarely\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_12\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"rarely\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_32\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"rarely\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_33\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"rarely\",\n              \"duration_h\": 5.0\n            }\n          ]\n        },\n        {\n          \"name\": \"post_errand_return\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 1,\n          \"start_hour\": 13.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\n              \"target\": \"object_19\",\n              \"to\": \"receptacle_17\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_22\",\n              \"to\": \"receptacle_17\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_1\",\n              \"to\": \"receptacle_17\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_6\",\n              \"to\": \"receptacle_17\",\n              \"chance\": \"usually\"\n            }\n          ]\n        },\n        {\n          \"name\": \"weekday_kitchen_use\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 12.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\n              \"target\": \"class:class_4\",\n              \"to\": \"receptacle_19\",\n              \"chance\": \"usually\",\n              \"duration_h\": 3.0\n            },\n            {\n              \"target\": \"object_4\",\n              \"to\": \"receptacle_18\",\n              \"chance\": \"usually\",\n              \"duration_h\": 3.0\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h5\",\n      \"rationale\": \"Two-person household with complementary schedules: Person A is active in the morning (objects at receptacle_14) and Person B in the afternoon (objects at receptacle_15); the 11 unobserved objects are split between the two personal zones.\",\n      \"distinguishing_prediction\": \"object_1 is at receptacle_14 on a weekday at 8:00 (Person A's morning zone) but at receptacle_15 on a weekday at 16:00 (Person B's afternoon zone).\",\n      \"distinguishing_check\": {\n        \"target\": \"object_1\",\n        \"at\": \"receptacle_14\",\n        \"days\": \"weekday\",\n        \"hour\": 8.0\n      },\n      \"rest\": {\n        \"object_1\": \"receptacle_14\",\n        \"object_6\": \"receptacle_14\",\n        \"object_7\": \"receptacle_14\",\n        \"object_9\": \"receptacle_14\",\n        \"object_10\": \"receptacle_15\",\n        \"object_11\": \"receptacle_15\",\n        \"object_12\": \"receptacle_15\",\n        \"object_19\": \"receptacle_15\",\n        \"object_22\": \"receptacle_15\",\n        \"object_32\": \"receptacle_14\",\n        \"object_33\": \"receptacle_15\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"person_a_morning\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 6.5,\n          \"duration_h\": 5.5,\n          \"moves\": [\n            {\n              \"target\": \"object_1\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_6\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_7\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_9\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_32\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"sometimes\"\n            },\n            {\n              \"target\": \"object_2\",\n              \"to\": \"receptacle_11\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_35\",\n              \"to\": \"receptacle_11\",\n              \"chance\": \"usually\"\n            }\n          ]\n        },\n        {\n          \"name\": \"person_b_afternoon\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 13.0,\n          \"duration_h\": 6.0,\n          \"moves\": [\n            {\n              \"target\": \"object_1\",\n              \"to\": \"receptacle_15\",\n              \"chance\": \"usually\",\n              \"duration_h\": 6.0\n            },\n            {\n              \"target\": \"object_10\",\n              \"to\": \"receptacle_15\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_11\",\n              \"to\": \"receptacle_15\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_12\",\n              \"to\": \"receptacle_15\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_19\",\n              \"to\": \"receptacle_15\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_22\",\n              \"to\": \"receptacle_15\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_33\",\n              \"to\": \"receptacle_15\",\n              \"chance\": \"sometimes\"\n            },\n            {\n              \"target\": \"object_15\",\n              \"to\": \"receptacle_4\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_16\",\n              \"to\": \"receptacle_4\",\n              \"chance\": \"usually\"\n            }\n          ]\n        },\n        {\n          \"name\": \"shared_evening\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 19.0,\n          \"duration_h\": 3.0,\n          \"moves\": [\n            {\n              \"target\": \"object_1\",\n              \"to\": \"receptacle_22\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_6\",\n              \"to\": \"receptacle_22\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_10\",\n              \"to\": \"receptacle_22\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_19\",\n              \"to\": \"receptacle_22\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"class:class_4\",\n              \"to\": \"receptacle_19\",\n              \"chance\": \"usually\",\n              \"duration_h\": 4.0\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}",
+   "n_hypotheses": 5,
+   "generation_seconds": 383.74,
+   "completion_tokens": 10148,
+   "prompt_tokens": 2037,
+   "finish_reason": "stop",
+   "think_closed": true,
+   "cached": false
+  }
+ ],
+ "dropped": [],
+ "hypotheses": [
+  {
+   "hypothesis_id": "h1",
+   "rationale": "Single WFH professional; objects cluster at a desk (receptacle_4) and work shelf (receptacle_13) during weekday work hours, and unobserved items sit in a work bag at receptacle_5.",
+   "distinguishing_prediction": "object_15 stays at receptacle_4 through weekday midday but is moved to receptacle_22 by Saturday morning when the resident relaxes.",
+   "distinguishing_check": {
+    "target": "makeup_kit_mara",
+    "at": "bathroom_shelf_ba1",
+    "days": "weekday",
+    "hour": 11.0
+   },
+   "rest": {
+    "backpack_mara": "bed_b1",
+    "charger_mara": "bed_b1",
+    "glasses_mara": "bed_b1",
+    "headphones_mara": "bed_b1",
+    "jacket_mara": "bed_b1",
+    "keys_mara": "bed_b1",
+    "laptop_mara": "bed_b1",
+    "notebook_mara": "bed_b1",
+    "phone_mara": "bed_b1",
+    "wallet_mara": "bed_b1",
+    "water_bottle_mara": "bed_b1"
+   },
+   "activities": [
+    {
+     "name": "work_day",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "makeup_kit_mara",
+       "to": "bathroom_shelf_ba1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "bathroom_shelf_ba1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "mug_shared_1",
+       "to": "cupboard_k1",
+       "chance": "usually"
+      },
+      {
+       "target": "plate_shared_1",
+       "to": "cupboard_k1",
+       "chance": "usually"
+      },
+      {
+       "target": "pot_shared_1",
+       "to": "cupboard_k1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "evening_wind_down",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 18.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "makeup_kit_mara",
+       "to": "towel_rack_ba1",
+       "chance": "usually",
+       "duration_h": 10.0
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "towel_rack_ba1",
+       "chance": "usually",
+       "duration_h": 10.0
+      },
+      {
+       "target": "class:bowl",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "duration_h": 12.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_relax",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "makeup_kit_mara",
+       "to": "towel_rack_ba1",
+       "chance": "almost_always",
+       "duration_h": 14.0
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "towel_rack_ba1",
+       "chance": "almost_always",
+       "duration_h": 14.0
+      },
+      {
+       "target": "backpack_mara",
+       "to": "desk_b1",
+       "chance": "sometimes",
+       "duration_h": 12.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h2",
+   "rationale": "Family with school-age children; kids' personal items (the 11 unobserved objects) ride in backpacks at receptacle_3 during school hours and are unpacked at receptacle_12 after 15:30.",
+   "distinguishing_prediction": "object_6 is at receptacle_3 (backpack zone) on a weekday at 10:00 but appears at receptacle_12 by 17:00 after school.",
+   "distinguishing_check": {
+    "target": "charger_mara",
+    "at": "armchair_l1",
+    "days": "weekday",
+    "hour": 10.0
+   },
+   "rest": {
+    "backpack_mara": "armchair_l1",
+    "charger_mara": "armchair_l1",
+    "glasses_mara": "armchair_l1",
+    "headphones_mara": "armchair_l1",
+    "jacket_mara": "armchair_l1",
+    "keys_mara": "armchair_l1",
+    "laptop_mara": "armchair_l1",
+    "notebook_mara": "armchair_l1",
+    "phone_mara": "armchair_l1",
+    "wallet_mara": "armchair_l1",
+    "water_bottle_mara": "armchair_l1"
+   },
+   "activities": [
+    {
+     "name": "school_morning",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 7.5,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "charger_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "keys_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always"
+      }
+     ]
+    },
+    {
+     "name": "after_school_unpack",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 15.5,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "charger_mara",
+       "to": "counter_k1",
+       "chance": "usually",
+       "duration_h": 10.0
+      },
+      {
+       "target": "glasses_mara",
+       "to": "counter_k1",
+       "chance": "usually",
+       "duration_h": 10.0
+      },
+      {
+       "target": "headphones_mara",
+       "to": "couch_l1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "jacket_mara",
+       "to": "couch_l1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "keys_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "laptop_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_play",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 9.0,
+     "duration_h": 10.0,
+     "moves": [
+      {
+       "target": "charger_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 8.0
+      },
+      {
+       "target": "glasses_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 8.0
+      },
+      {
+       "target": "backpack_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 8.0
+      },
+      {
+       "target": "notebook_mara",
+       "to": "bookshelf_l1",
+       "chance": "sometimes",
+       "duration_h": 8.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "bookshelf_l1",
+       "chance": "sometimes",
+       "duration_h": 8.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h3",
+   "rationale": "Couple who go out on weekday evenings; their going-out items (the 11 unobserved objects) are stored in a closet at receptacle_9 and brought to the entryway (receptacle_3) around 17:00 for departure.",
+   "distinguishing_prediction": "object_1 is at receptacle_9 on a weekday at 12:00 (stowed) but moves to receptacle_3 by 18:00 when the couple heads out.",
+   "distinguishing_check": {
+    "target": "backpack_mara",
+    "at": "chair_k2",
+    "days": "weekday",
+    "hour": 12.0
+   },
+   "rest": {
+    "backpack_mara": "chair_k2",
+    "charger_mara": "chair_k2",
+    "glasses_mara": "chair_k2",
+    "headphones_mara": "chair_k2",
+    "jacket_mara": "chair_k2",
+    "keys_mara": "chair_k2",
+    "laptop_mara": "chair_k2",
+    "notebook_mara": "chair_k2",
+    "phone_mara": "chair_k2",
+    "wallet_mara": "chair_k2",
+    "water_bottle_mara": "chair_k2"
+   },
+   "activities": [
+    {
+     "name": "weekday_evening_prep",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 17.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always",
+       "duration_h": 4.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "armchair_l1",
+       "chance": "almost_always",
+       "duration_h": 4.0
+      },
+      {
+       "target": "glasses_mara",
+       "to": "armchair_l1",
+       "chance": "usually",
+       "duration_h": 4.0
+      },
+      {
+       "target": "headphones_mara",
+       "to": "armchair_l1",
+       "chance": "usually",
+       "duration_h": 4.0
+      },
+      {
+       "target": "jacket_mara",
+       "to": "armchair_l1",
+       "chance": "usually",
+       "duration_h": 4.0
+      },
+      {
+       "target": "keys_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "duration_h": 4.0
+      },
+      {
+       "target": "laptop_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "duration_h": 4.0
+      },
+      {
+       "target": "notebook_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "duration_h": 4.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "armchair_l1",
+       "chance": "sometimes",
+       "duration_h": 4.0
+      },
+      {
+       "target": "wallet_mara",
+       "to": "armchair_l1",
+       "chance": "rarely",
+       "duration_h": 4.0
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "armchair_l1",
+       "chance": "rarely",
+       "duration_h": 4.0
+      }
+     ]
+    },
+    {
+     "name": "weekday_evening_return",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 21.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "chair_k2",
+       "chance": "almost_always"
+      },
+      {
+       "target": "charger_mara",
+       "to": "chair_k2",
+       "chance": "almost_always"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "chair_k2",
+       "chance": "usually"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "chair_k2",
+       "chance": "usually"
+      },
+      {
+       "target": "jacket_mara",
+       "to": "chair_k2",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "weekend_home",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "desk_b1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "desk_b1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "notebook_mara",
+       "to": "entry_floor_e1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "entry_floor_e1",
+       "chance": "sometimes",
+       "duration_h": 10.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h4",
+   "rationale": "Household with a Saturday-morning errand routine; the 11 unobserved objects are stored in a garage/shed at receptacle_17 and brought to the car-loading area (receptacle_2) on Saturday, while weekday objects stay in their observed spots.",
+   "distinguishing_prediction": "object_19 is at receptacle_17 on a weekday at 14:00 but appears at receptacle_2 on a Saturday at 10:00 during the errand run.",
+   "distinguishing_check": {
+    "target": "notebook_mara",
+    "at": "entry_hook_e1",
+    "days": "weekday",
+    "hour": 14.0
+   },
+   "rest": {
+    "backpack_mara": "entry_hook_e1",
+    "charger_mara": "entry_hook_e1",
+    "glasses_mara": "entry_hook_e1",
+    "headphones_mara": "entry_hook_e1",
+    "jacket_mara": "entry_hook_e1",
+    "keys_mara": "entry_hook_e1",
+    "laptop_mara": "entry_hook_e1",
+    "notebook_mara": "entry_hook_e1",
+    "phone_mara": "entry_hook_e1",
+    "wallet_mara": "entry_hook_e1",
+    "water_bottle_mara": "entry_hook_e1"
+   },
+   "activities": [
+    {
+     "name": "saturday_errands",
+     "days": "weekend",
+     "frequency_per_week": 1,
+     "start_hour": 8.0,
+     "duration_h": 4.0,
+     "moves": [
+      {
+       "target": "notebook_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "duration_h": 5.0
+      },
+      {
+       "target": "phone_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "duration_h": 5.0
+      },
+      {
+       "target": "backpack_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "duration_h": 5.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "usually",
+       "duration_h": 5.0
+      },
+      {
+       "target": "glasses_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "headphones_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "jacket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "keys_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "rarely",
+       "duration_h": 5.0
+      },
+      {
+       "target": "laptop_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "rarely",
+       "duration_h": 5.0
+      },
+      {
+       "target": "wallet_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "rarely",
+       "duration_h": 5.0
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "rarely",
+       "duration_h": 5.0
+      }
+     ]
+    },
+    {
+     "name": "post_errand_return",
+     "days": "weekend",
+     "frequency_per_week": 1,
+     "start_hour": 13.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "notebook_mara",
+       "to": "entry_hook_e1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "phone_mara",
+       "to": "entry_hook_e1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "backpack_mara",
+       "to": "entry_hook_e1",
+       "chance": "usually"
+      },
+      {
+       "target": "charger_mara",
+       "to": "entry_hook_e1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "weekday_kitchen_use",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 12.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "class:bowl",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "bowl_shared_1",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "duration_h": 3.0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h5",
+   "rationale": "Two-person household with complementary schedules: Person A is active in the morning (objects at receptacle_14) and Person B in the afternoon (objects at receptacle_15); the 11 unobserved objects are split between the two personal zones.",
+   "distinguishing_prediction": "object_1 is at receptacle_14 on a weekday at 8:00 (Person A's morning zone) but at receptacle_15 on a weekday at 16:00 (Person B's afternoon zone).",
+   "distinguishing_check": {
+    "target": "backpack_mara",
+    "at": "desk_b1",
+    "days": "weekday",
+    "hour": 8.0
+   },
+   "rest": {
+    "backpack_mara": "desk_b1",
+    "charger_mara": "desk_b1",
+    "glasses_mara": "desk_b1",
+    "headphones_mara": "desk_b1",
+    "jacket_mara": "dish_rack_k1",
+    "keys_mara": "dish_rack_k1",
+    "laptop_mara": "dish_rack_k1",
+    "notebook_mara": "dish_rack_k1",
+    "phone_mara": "dish_rack_k1",
+    "wallet_mara": "desk_b1",
+    "water_bottle_mara": "dish_rack_k1"
+   },
+   "activities": [
+    {
+     "name": "person_a_morning",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 6.5,
+     "duration_h": 5.5,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "desk_b1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "charger_mara",
+       "to": "desk_b1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "glasses_mara",
+       "to": "desk_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "headphones_mara",
+       "to": "desk_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "wallet_mara",
+       "to": "desk_b1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "blanket_mara",
+       "to": "couch_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "yoga_mat_mara",
+       "to": "couch_l1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "person_b_afternoon",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 13.0,
+     "duration_h": 6.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "dish_rack_k1",
+       "chance": "usually",
+       "duration_h": 6.0
+      },
+      {
+       "target": "jacket_mara",
+       "to": "dish_rack_k1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "keys_mara",
+       "to": "dish_rack_k1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "laptop_mara",
+       "to": "dish_rack_k1",
+       "chance": "usually"
+      },
+      {
+       "target": "notebook_mara",
+       "to": "dish_rack_k1",
+       "chance": "usually"
+      },
+      {
+       "target": "phone_mara",
+       "to": "dish_rack_k1",
+       "chance": "usually"
+      },
+      {
+       "target": "water_bottle_mara",
+       "to": "dish_rack_k1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "makeup_kit_mara",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually"
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually"
+      }
+     ]
+    },
+    {
+     "name": "shared_evening",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "backpack_mara",
+       "to": "towel_rack_ba1",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "charger_mara",
+       "to": "towel_rack_ba1",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "jacket_mara",
+       "to": "towel_rack_ba1",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "notebook_mara",
+       "to": "towel_rack_ba1",
+       "chance": "sometimes",
+       "duration_h": 5.0
+      },
+      {
+       "target": "class:bowl",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 4.0
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "generation_seconds": 383.74,
+ "seconds_per_hypothesis": 76.75
+}

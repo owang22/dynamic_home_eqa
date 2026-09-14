@@ -173,3 +173,125 @@ def _stats(row: Mapping[str, Any]) -> Dict[str, Any]:
             "finish_reason": row.get("finish_reason"),
             "think_closed": row.get("think_closed"),
             "cached": row.get("cached")}
+
+
+# ================================================================== graph
+
+from baselines.llm_hypotheses.assumption_graph import (  # noqa: E402
+    AssumptionGraph, OperationResult, apply_operations)
+from baselines.llm_hypotheses.prompt import (  # noqa: E402
+    OPERATIONS_SCHEMA, anonymize_graph, deanonymize_operations,
+    graph_repair_prompt, graph_revision_prompt)
+
+
+class GraphRevisionElicitor(RevisionElicitor):
+    """``(report, graph, context) -> OperationResult`` for the graph arm.
+
+    Same call discipline as the flat elicitor (one cached thinking call,
+    grammar salvage, one repair round, full log), but the model returns
+    OPERATIONS which are applied with :func:`~baselines.llm_hypotheses.
+    assumption_graph.apply_operations` in real-id space. Leaves the model
+    does not mention stay byte-identical. If the applied set fails
+    whole-graph validation the repair prompt runs once with the exact
+    problems; if that fails too, the result carries ``graph=None`` and
+    the mixture logs ``changed: False``.
+
+    The report must carry ``leaf_weights`` (real leaf ids -> mixture
+    weight) — the birth rule reads them.
+    """
+
+    def __call__(self, report: Mapping[str, Any],  # type: ignore[override]
+                 graph: AssumptionGraph, context) -> OperationResult:
+        index = len(self.calls) + 1
+        shown = graph.to_json()
+        if self._anonymized:
+            shown = anonymize_graph(shown, self._omap, self._rmap, self._cmap)
+        graph_json = json.dumps(shown, indent=1)
+        user = graph_revision_prompt(report, self._tables, graph_json,
+                                     self._omap, self._rmap)
+        log: Dict[str, Any] = {"household": self._episode.household_id,
+                               "anonymized": self._anonymized, "graph": True,
+                               "call_index": index, "day": report["day"],
+                               "trigger": report.get("trigger"),
+                               "prompt": user, "rounds": []}
+        seed = self._seed + 10 * index
+        started = time.monotonic()
+        row = self._client.generate(SYSTEM_PROMPT, user, seed=seed,
+                                    temperature=self._temperature,
+                                    max_tokens=self._max_tokens,
+                                    reasoning_effort=self._effort)
+        payload, think = row["payload"], row["think"]
+        operations: List[dict] = []
+        try:
+            operations = list(extract_json(payload).get("operations", []))
+            log["rounds"].append({"kind": "revision", "think": think,
+                                  "payload": payload,
+                                  "n_operations": len(operations),
+                                  **_stats(row)})
+        except json.JSONDecodeError as err:
+            log["rounds"].append({"kind": "shape_failure", "error": str(err),
+                                  "payload": payload, "think": think,
+                                  **_stats(row)})
+            raw = self._client.generate(
+                SYSTEM_PROMPT, salvage_prompt(user, payload), seed=seed + 1,
+                temperature=self._temperature, max_tokens=self._max_tokens,
+                schema=OPERATIONS_SCHEMA)
+            try:
+                operations = list(extract_json(raw["payload"]).get(
+                    "operations", []))
+                payload = raw["payload"]
+                log["rounds"].append({"kind": "salvage",
+                                      "payload": raw["payload"],
+                                      "n_operations": len(operations),
+                                      **_stats(raw)})
+            except json.JSONDecodeError as err2:
+                log["rounds"].append({"kind": "salvage_failed",
+                                      "error": str(err2), **_stats(raw)})
+        result = self._apply(graph, operations, report, context)
+        if result.graph is None and operations:
+            user2 = graph_repair_prompt(result.problems, self._tables,
+                                        payload, kind="operations")
+            raw2 = self._client.generate(
+                SYSTEM_PROMPT, user2, seed=seed + 2,
+                temperature=self._temperature, max_tokens=self._max_tokens,
+                reasoning_effort=self._effort)
+            entry: Dict[str, Any] = {"kind": "repair", "prompt": user2,
+                                     "think": raw2["think"],
+                                     "payload": raw2["payload"],
+                                     "problems_before": list(result.problems),
+                                     **_stats(raw2)}
+            try:
+                operations2 = list(extract_json(raw2["payload"]).get(
+                    "operations", []))
+                result2 = self._apply(graph, operations2, report, context)
+                entry["problems_after"] = list(result2.problems)
+                result = result2
+            except json.JSONDecodeError as err:
+                entry["error"] = str(err)
+            log["rounds"].append(entry)
+        log["operations"] = list(result.operations)
+        log["applied"] = list(result.applied)
+        log["births"] = list(result.births)
+        log["skipped_births"] = list(result.skipped_births)
+        log["problems"] = list(result.problems)
+        log["generation_seconds"] = round(time.monotonic() - started, 2)
+        log["outcome"] = "revised" if result.graph is not None else "kept_previous"
+        log["n_valid"] = len(result.graph.leaves) if result.graph else None
+        self.calls.append({k: log[k] for k in ("call_index", "day", "n_valid",
+                                               "generation_seconds", "outcome")})
+        (self._log_dir / f"{self._episode.household_id}_revision_"
+                         f"{index}.json").write_text(json.dumps(log, indent=1))
+        return result
+
+    def _apply(self, graph: AssumptionGraph, operations: List[dict],
+               report: Mapping[str, Any], context) -> OperationResult:
+        real_ops = (deanonymize_operations(operations, self._omap, self._rmap,
+                                           self._cmap)
+                    if self._anonymized else [dict(op) for op in operations])
+        object_classes = (context.object_classes if context is not None
+                          else self._episode.object_classes)
+        result = apply_operations(graph, real_ops,
+                                  dict(report.get("leaf_weights", {})),
+                                  object_classes, self._episode.receptacle_ids)
+        result.operations = real_ops
+        return result

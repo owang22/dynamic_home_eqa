@@ -6,8 +6,10 @@ source_persona: persona.yaml
 residents:
 - id: resident_1
   jitter_scale: 1.0
+  forget_p: 0.01
 - id: resident_2
   jitter_scale: 1.0
+  forget_p: 0.01
 receptacles:
 - id: bed_b1
   room: bedroom_1
@@ -349,13 +351,16 @@ object_motions:
     during:
       phone_imani:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_imani:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_imani:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       water_bottle_imani: person:resident_2
       charger_imani: person:resident_2
       backpack_imani: person:resident_2
@@ -853,13 +858,16 @@ object_motions:
       laptop_marie: person:resident_1
       phone_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       water_bottle_marie: person:resident_1
       charger_marie: person:resident_1
       backpack_marie: person:resident_1
@@ -2356,10 +2364,12 @@ object_motions:
     during:
       keys_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
     after:
       keys_marie:
         dest: entry_table_e1
@@ -2375,17 +2385,21 @@ object_motions:
     during:
       phone_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_marie: person:resident_1
       notebook_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2589,13 +2603,16 @@ object_motions:
     during:
       phone_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       towel_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2626,6 +2643,7 @@ object_motions:
       towel_shared_2:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2656,6 +2674,7 @@ object_motions:
       laundry_basket_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2813,13 +2832,16 @@ object_motions:
     during:
       phone_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
     after:
       phone_marie:
         dest: nightstand_b1
@@ -2990,13 +3012,16 @@ object_motions:
     during:
       phone_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
     after:
       keys_imani:
         dist: &id040
@@ -3028,13 +3053,16 @@ object_motions:
     during:
       phone_imani:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_imani:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_imani:
         dest: person:resident_2
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_imani: person:resident_2
     after:
       keys_imani:
@@ -3259,10 +3287,12 @@ object_motions:
     during:
       phone_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       jacket_marie: person:resident_1
     after:
       wallet_marie:
@@ -3289,17 +3319,21 @@ object_motions:
     during:
       phone_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marie:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_marie: person:resident_1
       notebook_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3330,6 +3364,7 @@ object_motions:
       towel_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3360,6 +3395,7 @@ object_motions:
       towel_shared_2:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3390,6 +3426,7 @@ object_motions:
       laundry_basket_shared_1:
         dest: person:resident_1
         p: 1.0
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -3517,3 +3554,47 @@ object_motions:
     during: {}
     after: {}
 person_invariant: true
+misplace_model: at_putdown
+object_owners:
+  mug_marie: resident_1
+  mug_imani: resident_2
+  bowl_shared_1: shared
+  bowl_shared_2: shared
+  plate_shared_1: shared
+  plate_shared_2: shared
+  laptop_marie: resident_1
+  phone_marie: resident_1
+  phone_imani: resident_2
+  keys_marie: resident_1
+  keys_imani: resident_2
+  wallet_marie: resident_1
+  wallet_imani: resident_2
+  water_bottle_marie: resident_1
+  water_bottle_imani: resident_2
+  charger_marie: resident_1
+  charger_imani: resident_2
+  backpack_marie: resident_1
+  backpack_imani: resident_2
+  jacket_marie: resident_1
+  jacket_imani: resident_2
+  headphones_marie: resident_1
+  headphones_imani: resident_2
+  notebook_shared_1: shared
+  pen_shared_1: shared
+  lunchbox_marie: resident_1
+  lunchbox_imani: resident_2
+  blanket_shared_1: shared
+  towel_shared_1: shared
+  towel_shared_2: shared
+  laundry_basket_shared_1: shared
+  vacuum_cleaner_shared_1: shared
+  pot_shared_1: shared
+  pan_shared_1: shared
+  tablet_imani: resident_2
+  book_marie: resident_1
+  medication_bottle_imani: resident_2
+  remote_shared_1: shared
+misplace:
+  next_room_share: 0.5
+  bulky_needs_forget_p: 0.08
+keep_block_share: 0.6

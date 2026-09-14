@@ -48,13 +48,11 @@ N_HYPOTHESES = 5
 EXAMPLE_OUTPUT = {
     "hypotheses": [
         {"hypothesis_id": "h1",
-         "rationale": "single resident works away on weekdays; carry "
-                      "items leave the house with them",
-         "distinguishing_prediction": "keys_x absent from the entry "
-                                      "table on weekday middays, back "
-                                      "by 18:00",
-         "distinguishing_check": {"target": "keys_x", "at": "OUT_OF_HOUSE",
-                                  "days": "weekday", "hour": 13.0},
+         "rationale": "one resident who is at an office on weekdays",
+         "distinguishing_prediction": "keys_x are on the entry shelf on "
+                                      "weekday evenings and gone by 9:00",
+         "distinguishing_check": {"target": "keys_x", "at": "entry_shelf_1",
+                                  "days": "weekday", "hour": 19.0},
          "rest": {"class:mug": "cupboard_1"},
          "activities": [
              {"name": "office_day", "days": "weekday",
@@ -62,17 +60,17 @@ EXAMPLE_OUTPUT = {
               "duration_h": 9.0,
               "moves": [
                   {"target": "keys_x", "to": "OUT_OF_HOUSE",
-                   "chance": "almost_always", "after": "returned"}]},
+                   "chance": "almost_always"}]},
              {"name": "morning_coffee", "days": "both",
               "frequency_per_week": 6, "start_hour": 6.5,
               "duration_h": 0.5,
               "moves": [
                   {"target": "class:mug", "to": "counter_1",
-                   "chance": "usually", "after": "left"}]}]},
+                   "chance": "usually", "duration_h": 4.0}]}]},
         {"hypothesis_id": "h2",
-         "rationale": "resident mostly works from home; keys stay in",
-         "distinguishing_prediction": "keys_x ON the entry table at "
-                                      "weekday middays",
+         "rationale": "one resident who works at the desk at home",
+         "distinguishing_prediction": "keys_x on the entry shelf at "
+                                      "weekday midday",
          "distinguishing_check": {"target": "keys_x", "at": "entry_shelf_1",
                                   "days": "weekday", "hour": 13.0},
          "rest": {"class:mug": "desk_1"},
@@ -82,7 +80,7 @@ EXAMPLE_OUTPUT = {
               "duration_h": 7.0,
               "moves": [
                   {"target": "class:mug", "to": "desk_1",
-                   "chance": "usually", "after": "left"}]}]},
+                   "chance": "usually", "duration_h": 12.0}]}]},
     ]
 }
 
@@ -138,11 +136,10 @@ HYPOTHESES_SCHEMA = {
                                                 "type": "string",
                                                 "enum": list(
                                                     ORDINAL_CHANCE_LABELS)},
-                                            "after": {"type": "string",
-                                                      "enum": ["returned",
-                                                               "left"]}},
-                                        "required": ["target", "to", "chance",
-                                                     "after"]}}},
+                                            "duration_h": {
+                                                "type": "number"}},
+                                        "required": ["target", "to",
+                                                     "chance"]}}},
                             "required": ["name", "days",
                                          "frequency_per_week", "start_hour",
                                          "duration_h", "moves"]}}},
@@ -152,8 +149,8 @@ HYPOTHESES_SCHEMA = {
 }
 """Guided-decoding schema for the structured-output stage.
 
-Constrains SHAPE and the closed vocabularies (day kinds, chance labels,
-``after`` kinds) — everything a grammar can enforce. It deliberately
+Constrains SHAPE and the closed vocabularies (day kinds, chance
+labels) — everything a grammar can enforce. It deliberately
 cannot constrain IDs: those are per-household and are checked by
 :func:`~baselines.beliefs.hypothesis_program.parse_hypothesis`, which
 reports exact offending strings for the repair round. Shape from the
@@ -165,11 +162,10 @@ _EXAMPLE_TOKEN_MAP = {
     "entry_shelf_1": "receptacle_1", "cupboard_1": "receptacle_4",
     "OUT_OF_HOUSE": "receptacle_9", "counter_1": "receptacle_2",
     "desk_1": "receptacle_5",
-    "keys_x absent from the entry table on weekday middays, back by 18:00":
-        "object_3 absent from receptacle_1 on weekday middays, back by "
-        "18:00",
-    "keys_x ON the entry table at weekday middays":
-        "object_3 AT receptacle_1 at weekday middays",
+    "keys_x are on the entry shelf on weekday evenings and gone by 9:00":
+        "object_3 is at receptacle_1 on weekday evenings and gone by 9:00",
+    "keys_x on the entry shelf at weekday midday":
+        "object_3 at receptacle_1 at weekday midday",
 }
 """The example rewritten for the anonymized condition: an example that
 showed semantic tokens (OUT_OF_HOUSE, keys_x) would teach the model
@@ -305,25 +301,32 @@ def deanonymize_hypothesis(raw: Mapping, omap: Dict[str, str],
 def vocabulary_tables(episode: Episode,
                       omap: Mapping[str, str] | None = None,
                       rmap: Mapping[str, str] | None = None,
-                      cmap: Mapping[str, str] | None = None) -> str:
-    """The valid-ID tables the prompt states are the ONLY vocabulary."""
+                      cmap: Mapping[str, str] | None = None,
+                      tour: bool = False) -> str:
+    """The id tables. Plain lists: receptacles, then objects with their
+    class and — with ``tour`` — the receptacle the tour saw each one at.
+    An object the tour did not see simply has no location on its row.
+    ON_PERSON is left out: scoring folds it into OUT_OF_HOUSE."""
     o = omap or {}
     r = rmap or {}
     c = cmap or {}
-    lines = ["RECEPTACLES (valid `to` and rest locations):"]
+    lines = ["RECEPTACLES:"]
     for rec in episode.receptacle_ids:
-        note = ""
-        if rec in episode.unsensable_receptacle_ids:
-            note = "  [never directly observable]"
-        lines.append(f"  {r.get(rec, rec)}{note}")
+        if rec == "ON_PERSON":
+            continue
+        lines.append(f"  {r.get(rec, rec)}")
     lines.append("")
-    lines.append("OBJECTS (valid `target` ids, with class):")
+    seen = {obs.object_id: obs.receptacle_id for obs in episode.initial_observations}
+    lines.append("OBJECTS" + (", with where the tour saw each one:" if tour else ":"))
     for obj in sorted(episode.object_classes):
         cls = episode.object_classes[obj]
-        lines.append(f"  {o.get(obj, obj)}  (class: {c.get(cls, cls)})")
+        row = f"  {o.get(obj, obj)}  (class: {c.get(cls, cls)})"
+        if tour and obj in seen:
+            row += f"  at {r.get(seen[obj], seen[obj])}"
+        lines.append(row)
     lines.append("")
     classes = sorted(set(episode.object_classes.values()))
-    lines.append("CLASSES (valid as `class:<name>` targets): "
+    lines.append("CLASSES (usable as `class:<name>` targets): "
                  + ", ".join(c.get(cls, cls) for cls in classes))
     return "\n".join(lines)
 
@@ -377,15 +380,10 @@ def sighting_digest(episode: Episode, warmup_days: int,
 # ----------------------------------------------------------------- prompt
 
 SYSTEM_PROMPT = (
-    "You are modelling how one household runs, for a home robot that "
-    "must predict where objects are. You write competing hypotheses; a "
-    "downstream statistical system converts them into probabilistic "
-    "predictions and weighs them against future sightings. Be concrete "
-    "and decisive; the sightings, not you, will settle who was right. "
-    "This is not your only chance: you will be shown where each "
-    "hypothesis was wrong and asked to revise it. Commit to sharp, "
-    "different hypotheses now rather than hedging — hedged hypotheses "
-    "all say the same thing and cannot be told apart by data.")
+    "You model how one household runs, so that a home robot can predict "
+    "where its objects are. You write several competing hypotheses; the "
+    "robot's sightings over the following days decide between them, and "
+    "you will later be shown how each one did and asked to revise it.")
 
 
 def elicitation_prompt(episode: Episode, warmup_days: int,
@@ -414,7 +412,7 @@ Rules that matter:
 2. Cover every object, not only the interesting ones: every object id should appear in each hypothesis's `rest` map (directly or via its class).
 3. Times and weekly frequencies: state them as numbers with your best guess ("dinner around 19:30" -> start_hour 19.5). They will be corrected by data, so a concrete guess beats a vague one.
 4. Chances: NEVER numbers. Use exactly one of: rarely, sometimes, usually, almost_always.
-5. `after` is "returned" (put back at rest when the activity ends) or "left" (stays where it was used until the next day). Distinguish objects put away after an activity from objects left where they were used.
+5. State how long each object stays where the activity put it. A move lasts the activity's `duration_h` unless you give the move its own `duration_h`; do so whenever it differs (an object put away when the activity ends versus one that stays where it was used for the rest of the evening).
 6. Known failure modes to avoid: objects are often asked about while displaced, since queries cluster around activities — model the displacements, not just the rest states; the same resident can behave differently on weekdays and weekends; calling everything stationary is unfalsifiable and useless.
 7. IDs: use ONLY identifiers from the tables above, exactly as printed. Nothing outside the tables is valid. You may put a short nickname in a parenthetical in your reasoning text, but every JSON field must contain the bare id.
 8. One line of `rationale` per hypothesis.
@@ -506,55 +504,41 @@ def tour_digest(episode: Episode, omap: Mapping[str, str] | None = None,
 
 
 OUTPUT_LENGTH_GUIDE = (
-    "Length: exactly {n} hypotheses. Each needs 3-7 activities, each "
-    "activity 1-6 moves. The `rest` map is OPTIONAL and should list only "
-    "objects whose resting place differs from where the tour found them "
-    "or that an activity moves; an object left out of `rest` is assumed "
-    "to rest where the tour saw it — so if the tour caught something "
-    "mid-use, say where it really lives. Do not enumerate every object. "
-    "Rationale and distinguishing_prediction: one line each.")
+    "Each hypothesis has a one-line rationale, a one-line "
+    "distinguishing_prediction with its distinguishing_check, an optional "
+    "rest map, and as many activities as its routine needs.")
 
 SCHEMA_NOTE = (
-    "The example below is ABBREVIATED — two hypotheses with one or two "
-    "activities each, from a different, much smaller home — and shows the "
-    "field shapes only, not the scale of the answer you should give.")
+    "The example below shows the field shapes only; it is abbreviated and "
+    "is about a different, smaller home.")
 
 
-def tour_start_prompt(episode: Episode, anonymized: bool = False
-                      ) -> Tuple[str, dict]:
-    """The installation prompt: vocabulary tables plus the tour, and
-    nothing about routines. Says so directly — the model is to write from
-    what it knows about how homes work, and sightings will settle it. The
-    tour is a snapshot at the installation instant, which need not be a
-    quiet moment: the prompt names the time and lists what was absent."""
+def tour_start_prompt(episode: Episode, anonymized: bool = False,
+                      graph: bool = False) -> Tuple[str, dict]:
+    """The installation prompt: the id tables with the tour's sightings
+    on the object rows, the tour's time, the task, and the output
+    format. Nothing about how homes work, what kinds of objects exist,
+    or what a hypothesis should look like beyond its fields.
+
+    ``graph`` asks for the assumption-graph envelope instead of the flat
+    list (:func:`graph_tour_start_prompt`)."""
+    if graph:
+        return graph_tour_start_prompt(episode, anonymized=anonymized)
     if anonymized:
         omap, rmap, cmap = build_anonymization_maps(episode)
     else:
         omap, rmap, cmap = {}, {}, {}
-    tables = vocabulary_tables(episode, omap, rmap, cmap)
-    tour = tour_digest(episode, omap, rmap)
+    tables = vocabulary_tables(episode, omap, rmap, cmap, tour=True)
     schema_text = example_output_text(anonymized)
-    user = f"""A robot has just been installed in a home. It has done ONE walkthrough tour — one sighting of every object it could find, at one moment — and nothing else. It has seen no routines, no days, no movements. The tour is a snapshot of that moment, not a map of where things rest: an object may have been caught in use, and an object it could not find was out of the house or on someone. Below are the home's vocabulary tables and that tour.
+    user = f"""A home robot has just been installed. Its only observation so far is one walkthrough of the home at {tour_stamp(episode.tour_t)}. Below are the home's receptacles and objects; where the walkthrough saw an object, its row says so.
 
 {tables}
 
-{tour}
+Write {N_HYPOTHESES} competing hypotheses about this home's weekly routine. Each hypothesis is a set of ACTIVITIES: a name, which days (weekday, weekend, or both), roughly when it starts (start_hour, a number), how long it lasts (duration_h), how many times a week it happens (frequency_per_week), and its moves — which object (or class:<name>) goes to which receptacle, with a chance (rarely, sometimes, usually, almost_always) and, when it differs from the activity's, its own `duration_h` — how long the object stays where the activity put it. A hypothesis may also give a `rest` map: receptacles where objects sit when nothing is happening. Each hypothesis carries a one-line `distinguishing_prediction` and a `distinguishing_check` in the form {{"target": <object id>, "at": <receptacle id>, "days": weekday|weekend|both, "hour": <number>}}.
 
-You have almost no data. Write your hypotheses from what you know about how homes like this run — who lives here judging by the objects, what they do on weekdays and weekends, which objects leave the house with a person, which get used and left out, which get put away. The robot's sightings over the coming days will settle which hypotheses were right; your job is to give it sharply different candidates to test.
+Use only ids from the tables above, exactly as printed. {OUTPUT_LENGTH_GUIDE}
 
-Write exactly {N_HYPOTHESES} competing hypotheses. Each hypothesis describes ACTIVITIES: what happens, which days (weekday, weekend, or both — mark this explicitly), roughly when, how many times per week, and which objects move where; plus an optional `rest` map for objects that do not rest where the tour found them.
-
-Rules that matter:
-
-1. Hypotheses must DISAGREE in ways sightings can settle. Two hypotheses predicting the same object in the same place at the same hour are wasted. Each hypothesis carries a one-line `distinguishing_prediction` naming a concrete observable difference from the others, AND a `distinguishing_check` object giving it in checkable form: {{"target": <object id>, "at": <receptacle id>, "days": weekday|weekend|both, "hour": <number>}}. You will be told whether it came true.
-2. Times and weekly frequencies: state them as numbers with your best guess ("dinner around 19:30" -> start_hour 19.5). They will be corrected by data, so a concrete guess beats a vague one.
-3. Chances: NEVER numbers. Use exactly one of: rarely, sometimes, usually, almost_always.
-4. `after` is "returned" (put back at rest when the activity ends) or "left" (stays where it was used until the next day). Distinguish objects put away after an activity from objects left where they were used.
-5. Known failure modes to avoid: objects are often asked about while displaced, since queries cluster around activities — model the displacements, not just the rest states; the same resident can behave differently on weekdays and weekends; calling everything stationary is unfalsifiable and useless. Objects that leave the house with a person go to {rmap.get("OUT_OF_HOUSE", "OUT_OF_HOUSE")}.
-6. IDs: use ONLY identifiers from the tables above, exactly as printed. Nothing outside the tables is valid. Every JSON field must contain the bare id.
-7. {OUTPUT_LENGTH_GUIDE.format(n=N_HYPOTHESES)}
-
-Think it through first. Then end your reply with ONE json object. {SCHEMA_NOTE}
+Think it through, then end your reply with one json object. {SCHEMA_NOTE}
 
 {schema_text}"""
     return user, {"omap": omap, "rmap": rmap, "cmap": cmap}
@@ -580,6 +564,12 @@ def revision_prompt(report: Mapping[str, Any], tables: str,
         + (f" — distinguishing prediction {h['verdict']}"
            if h.get("verdict") else "")
         for h in report["hypotheses"])
+    if report.get("statistical_weight") is not None:
+        weights += (f"\n  (a plain statistical model with no hypotheses — "
+                    f"each object where it was most often seen — competes "
+                    f"for the same weight and currently holds "
+                    f"{report['statistical_weight']:.2f}; weight it holds is "
+                    f"weight your hypotheses failed to earn)")
     misses = "\n".join(
         f"  {obj(m['object'])}: predicted {rec(m['predicted'])}, actually "
         f"{rec(m['actual'])} — {m['count']}x, e.g. day {m['example_day']} "
@@ -626,3 +616,346 @@ YOUR PREVIOUS HYPOTHESES:
 {previous_json}
 
 Rules: same output format and the same seven rules as before (ids only from the tables; chances as labels; `rest` optional; every hypothesis carries a distinguishing_prediction and distinguishing_check). Keep {N_HYPOTHESES} hypotheses, or {N_HYPOTHESES + 1} if you add one. Think about what the mismatches imply, then end your reply with ONE json object holding the full revised set."""
+
+
+# ================================================================== graph
+
+GRAPH_EXAMPLE_OUTPUT = {
+    "assumptions": {
+        "composition": {
+            "question": "how many people live here and who",
+            "values": {"solo": "one adult resident",
+                       "couple": "two adults, no children"}},
+        "weekday_pattern": {
+            "question": "where is the primary resident on weekdays",
+            "values": {"works_away": "out of the house 9 to 6",
+                       "works_from_home": "at the desk most of the day"}},
+    },
+    "leaf_set_rationale": "solo + works_from_home is skipped: with one "
+                          "resident at home all day the tour would have "
+                          "found the laptop out, and it was not",
+    "leaves": [
+        {"leaf_id": "p_a41c",
+         "assumes": {"composition": "couple", "weekday_pattern": "works_away"},
+         "rationale": "two commuters; the home is empty on weekdays",
+         "distinguishing_prediction": "keys_x are on the entry shelf on "
+                                      "weekday evenings and gone by 9:00",
+         "distinguishing_check": {"target": "keys_x", "at": "entry_shelf_1",
+                                  "days": "weekday", "hour": 19.0},
+         "rest": {"class:mug": "cupboard_1"},
+         "activities": [
+             {"name": "office_day", "days": "weekday",
+              "frequency_per_week": 5, "start_hour": 8.0,
+              "duration_h": 9.0,
+              "moves": [
+                  {"target": "keys_x", "to": "OUT_OF_HOUSE",
+                   "chance": "almost_always"}]},
+             {"name": "morning_coffee", "days": "both",
+              "frequency_per_week": 6, "start_hour": 6.5,
+              "duration_h": 0.5,
+              "moves": [
+                  {"target": "class:mug", "to": "counter_1",
+                   "chance": "usually", "duration_h": 4.0}]}]},
+        {"leaf_id": "p_9f02",
+         "assumes": {"composition": "couple",
+                     "weekday_pattern": "works_from_home"},
+         "rationale": "one partner commutes, the other works at the desk",
+         "distinguishing_prediction": "keys_x on the entry shelf at "
+                                      "weekday midday",
+         "distinguishing_check": {"target": "keys_x", "at": "entry_shelf_1",
+                                  "days": "weekday", "hour": 13.0},
+         "rest": {"class:mug": "desk_1"},
+         "activities": [
+             {"name": "desk_work", "days": "weekday",
+              "frequency_per_week": 5, "start_hour": 9.0,
+              "duration_h": 7.0,
+              "moves": [
+                  {"target": "class:mug", "to": "desk_1",
+                   "chance": "usually", "duration_h": 12.0}]}]},
+    ]
+}
+"""The envelope example. Leaf ids are opaque ``p_xxxx`` tokens on
+purpose — an id spelled from the assumption path would be re-derived
+by the model on every revision and break weight carry-over."""
+
+
+_LEAF_SCHEMA = dict(HYPOTHESES_SCHEMA["properties"]["hypotheses"]["items"])
+_LEAF_SCHEMA["properties"] = {
+    "leaf_id": {"type": "string"},
+    "assumes": {"type": "object", "additionalProperties": {"type": "string"}},
+    **{k: v for k, v in _LEAF_SCHEMA["properties"].items()
+       if k != "hypothesis_id"}}
+_LEAF_SCHEMA["required"] = ["leaf_id", "assumes", "rationale", "rest",
+                            "activities"]
+
+GRAPH_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "assumptions": {
+            "type": "object",
+            "additionalProperties": {
+                "type": "object",
+                "properties": {
+                    "question": {"type": "string"},
+                    "values": {"type": "object",
+                               "additionalProperties": {"type": "string"}}},
+                "required": ["question", "values"]}},
+        "leaf_set_rationale": {"type": "string"},
+        "leaves": {"type": "array", "items": _LEAF_SCHEMA},
+    },
+    "required": ["assumptions", "leaves"],
+}
+"""Guided-decoding schema for the graph envelope (salvage stage). Shape
+only; ids, the assumption rules, and the caps are checked by
+:func:`~baselines.llm_hypotheses.assumption_graph.parse_graph`."""
+
+OPERATIONS_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "operations": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "op": {"type": "string",
+                           "enum": ["edit_leaf", "drop_leaf",
+                                    "add_assumption_value", "add_leaf",
+                                    "add_assumption"]},
+                    "leaf_id": {"type": "string"},
+                    "reason": {"type": "string"},
+                    "assumption": {"type": "string"},
+                    "value": {"type": "string"},
+                    "description": {"type": "string"},
+                    "question": {"type": "string"},
+                    "values": {"type": "object",
+                               "additionalProperties": {"type": "string"}},
+                    "body": _LEAF_SCHEMA},
+                "required": ["op"]}}},
+    "required": ["operations"],
+}
+"""Guided-decoding schema for a revision's operation list."""
+
+_GRAPH_EXAMPLE_TOKEN_MAP = dict(_EXAMPLE_TOKEN_MAP)
+
+
+def graph_example_output_text(anonymized: bool) -> str:
+    text = json.dumps(GRAPH_EXAMPLE_OUTPUT, indent=1)
+    if anonymized:
+        for token in sorted(_GRAPH_EXAMPLE_TOKEN_MAP, key=len, reverse=True):
+            text = text.replace(token, _GRAPH_EXAMPLE_TOKEN_MAP[token])
+    return text
+
+
+def anonymize_graph(envelope: Mapping[str, Any], omap: Mapping[str, str],
+                    rmap: Mapping[str, str], cmap: Mapping[str, str]) -> dict:
+    """Envelope with every leaf body translated INTO the anonymized
+    vocabulary. Assumption names, value names, questions and
+    descriptions are model-authored free text with no vocabulary ids in
+    them (the parser enforces that), so they pass through untouched."""
+    out = dict(envelope)
+    out["leaves"] = [anonymize_hypothesis(leaf, omap, rmap, cmap)
+                     for leaf in envelope.get("leaves", ())]
+    return out
+
+
+def deanonymize_graph(envelope: Mapping[str, Any], omap: Dict[str, str],
+                      rmap: Dict[str, str], cmap: Dict[str, str]) -> dict:
+    out = dict(envelope)
+    out["leaves"] = [deanonymize_hypothesis(leaf, omap, rmap, cmap)
+                     for leaf in envelope.get("leaves", ())]
+    return out
+
+
+def deanonymize_operations(operations: Sequence[Mapping[str, Any]],
+                           omap: Dict[str, str], rmap: Dict[str, str],
+                           cmap: Dict[str, str]) -> List[dict]:
+    """Operations with any ``body`` translated back to real ids."""
+    out = []
+    for op in operations:
+        op = dict(op)
+        if isinstance(op.get("body"), Mapping):
+            op["body"] = deanonymize_hypothesis(op["body"], omap, rmap, cmap)
+        out.append(op)
+    return out
+
+
+GRAPH_RULES = """Rules that matter:
+
+1. Leaves must DISAGREE in ways sightings can settle. Two leaves predicting the same object in the same place at the same hour are wasted. Each leaf carries a one-line `distinguishing_prediction` naming a concrete observable difference from the others, and a `distinguishing_check` in the form {"target": <object id>, "at": <receptacle id>, "days": weekday|weekend|both, "hour": <number>}.
+2. Cover every object, not only the interesting ones: every object id should appear in each leaf's `rest` map (directly or via its class).
+3. Times and weekly frequencies: state them as numbers with your best guess ("dinner around 19:30" -> start_hour 19.5). They will be corrected by data, so a concrete guess beats a vague one.
+4. State how long each object stays where the activity put it. A move lasts the activity's `duration_h` unless you give the move its own `duration_h`; do so whenever it differs.
+5. Chances: NEVER numbers. Use exactly one of: rarely, sometimes, usually, almost_always.
+6. IDs: use ONLY identifiers from the tables above, exactly as printed. Nothing outside the tables is valid. Every JSON field must contain the bare id.
+7. One line of `rationale` per leaf.
+
+Assumptions:
+
+- Name 2 to 3 assumptions. An assumption qualifies only if its different values lead to different observable predictions. If two values would produce leaves that predict the same object in the same place at the same hour, drop the assumption.
+- Write one leaf per combination of assumption values worth testing. Skip combinations that do not fit together, and say which in `leaf_set_rationale`.
+- `OUT_OF_HOUSE` is a location in the tables like any other.
+- `leaf_id` is an opaque token: `p_` followed by 4 hex characters, chosen at random. Never spell an id from the assumption values. Assumption names, value names, questions and descriptions must not contain any object or receptacle id.
+- At most 3 assumptions and 12 leaves."""
+
+
+def graph_tour_start_prompt(episode: Episode, anonymized: bool = False
+                            ) -> Tuple[str, dict]:
+    """The installation prompt for the graph arm: the same tables and
+    tour as the flat one, plus the envelope format and the assumption
+    rules. Nothing about what the tour did or did not capture, how
+    sightings are recorded, or how objects end up in odd places — the
+    move duration is how the model says an object stays somewhere."""
+    if anonymized:
+        omap, rmap, cmap = build_anonymization_maps(episode)
+    else:
+        omap, rmap, cmap = {}, {}, {}
+    tables = vocabulary_tables(episode, omap, rmap, cmap, tour=True)
+    schema_text = graph_example_output_text(anonymized)
+    rules = GRAPH_RULES
+    if anonymized:
+        rules = rules.replace("`OUT_OF_HOUSE`", f"`{rmap['OUT_OF_HOUSE']}`")
+    user = f"""A home robot has just been installed. Its only observation so far is one walkthrough of the home at {tour_stamp(episode.tour_t)}. Below are the home's receptacles and objects; where the walkthrough saw an object, its row says so.
+
+{tables}
+
+Write competing hypotheses about this home's weekly routine, organised as a small graph. The upper level is a set of ASSUMPTIONS: named latent facts about the household, each with a short list of named values (for example who lives here, or where the primary resident is on weekdays). The lower level is LEAVES: one full hypothesis per combination of assumption values you think worth testing, each with an `assumes` map naming one value of every assumption. A leaf is a set of ACTIVITIES: a name, which days (weekday, weekend, or both), roughly when it starts (start_hour, a number), how long it lasts (duration_h), how many times a week it happens (frequency_per_week), and its moves — which object (or class:<name>) goes to which receptacle, with a chance and, when it differs from the activity's, its own `duration_h`. A leaf may also give a `rest` map: receptacles where objects sit when nothing is happening.
+
+{rules}
+
+Think it through, then end your reply with one json object. {SCHEMA_NOTE}
+
+{schema_text}"""
+    return user, {"omap": omap, "rmap": rmap, "cmap": cmap}
+
+
+def graph_revision_prompt(report: Mapping[str, Any], tables: str,
+                          graph_json: str,
+                          omap: Mapping[str, str] | None = None,
+                          rmap: Mapping[str, str] | None = None) -> str:
+    """The graph arm's re-asking prompt: assumption weights, leaf weights
+    with their cells, the mismatch report, rules held and failed, the
+    uncovered bank and what fired, statistics, tables, the graph as
+    JSON — and a request for OPERATIONS, not a replacement set.
+
+    ``report`` is :meth:`LLMHypothesisMixture.revision_report` in graph
+    mode (it carries ``assumptions`` and ``uncovered_bank``)."""
+    o = omap or {}
+    r = rmap or {}
+    def obj(x): return o.get(x, x)
+    def rec(x): return r.get(x, x)
+    day = report["day"]
+    a_lines = []
+    for name, node in report.get("assumptions", {}).items():
+        values = ", ".join(f"{v} {w:.2f}" for v, w in node["values"].items())
+        top = max(node["values"].values()) if node["values"] else 0.0
+        state = ("settled" if top >= 0.9 else
+                 "leaning" if top >= 0.6 else "open")
+        a_lines.append(f"  {name} ({node['question']}): {values}; entropy "
+                       f"{node['entropy']:.2f} nats — {state}")
+    assumptions = "\n".join(a_lines) or "  (none)"
+    weights = "\n".join(
+        f"  {h['hypothesis_id']}: weight {h['weight']:.2f}, assumes "
+        + json.dumps(h.get("assumes", {}))
+        + (f" — distinguishing prediction {h['verdict']}"
+           if h.get("verdict") else "")
+        for h in report["hypotheses"])
+    if report.get("statistical_weight") is not None:
+        weights += (f"\n  (a plain statistical model with no hypotheses — "
+                    f"each object where it was most often seen — competes "
+                    f"for the same weight and currently holds "
+                    f"{report['statistical_weight']:.2f}; weight it holds is "
+                    f"weight your leaves failed to earn)")
+    misses = "\n".join(
+        f"  {obj(m['object'])}: predicted {rec(m['predicted'])}, actually "
+        f"{rec(m['actual'])} — {m['count']}x, e.g. day {m['example_day']} "
+        f"{m['example_hour']:02d}:00"
+        for m in report["worst_objects"]) or "  (none)"
+    held = "\n".join(
+        f"  {h['hypothesis_id']}/{h['activity']}: {obj(h['target'])} -> "
+        f"{rec(h['to'])} held ({h['fitted_chance']:.2f} on "
+        f"{h['evidence']:.0f} sightings)"
+        for h in report["rules_held"]) or "  (none yet)"
+    failed = "\n".join(
+        f"  {h['hypothesis_id']}/{h['activity']}: {obj(h['target'])} -> "
+        f"{rec(h['to'])} failed ({h['fitted_chance']:.2f} on "
+        f"{h['evidence']:.0f} sightings)"
+        for h in report["rules_failed"]) or "  (none)"
+    uncovered = "\n".join(
+        f"  {obj(u['object'])}: {u['summary']}"
+        for u in report["uncovered_objects"]) or "  (none)"
+    bank = ", ".join(f"{obj(b['object'])} (class {b['class']}, first seen "
+                     f"day {b['day']})"
+                     for b in report.get("uncovered_bank", [])) or "(empty)"
+    trigger = report.get("trigger", "scheduled")
+    return f"""It is now day {day}. The robot has been watching since your graph was written; here is how it did. Revise it with OPERATIONS on the graph — leaves you do not mention are kept exactly as they are, with the weight they have earned.
+
+ASSUMPTION WEIGHTS (each value's share of the leaf weight, and the node's entropy):
+{assumptions}
+
+LEAF WEIGHTS (share of the mixture each leaf currently earns from the sightings):
+{weights}
+
+MIXTURE'S WORST OBJECTS — where it predicted vs where the object actually was:
+{misses}
+
+RULES THAT HELD UP (object was where the rule said, during its activity; tagged leaf/activity):
+{held}
+
+RULES THAT FAILED (object was elsewhere during the rule's activity; tagged leaf/activity):
+{failed}
+
+OBJECTS NO LEAF COVERS (no rule and no rest entry mentions them), with what the sightings show:
+{uncovered}
+
+Uncovered bank (objects of classes no leaf models, seen since the last revision): {bank}
+This call was triggered by: {trigger}.
+
+{report['statistics']}
+
+The ONLY valid identifiers are these, exactly as printed:
+
+{tables}
+
+THE CURRENT GRAPH:
+
+{graph_json}
+
+Operations, applied in this order: add_assumption, add_assumption_value, edit_leaf, drop_leaf, add_leaf.
+  {{"op": "edit_leaf", "leaf_id": "p_xxxx", "body": {{...the complete leaf body, with assumes...}}}}
+  {{"op": "drop_leaf", "leaf_id": "p_xxxx", "reason": "..."}}
+  {{"op": "add_assumption_value", "assumption": "<name>", "value": "<new value>", "description": "..."}}
+  {{"op": "add_leaf", "body": {{...the complete leaf body, with assumes; leaf_id p_ + 4 random hex...}}}}
+  {{"op": "add_assumption", "assumption": "<name>", "question": "...", "values": {{"<value>": "..."}}}}
+Every body is a complete leaf, never a partial patch. An add_assumption must come with edit_leaf operations giving every existing leaf a value for it, or it is rejected. A new assumption value is crossed automatically with the values of the other assumptions that still carry weight; you may also add_leaf the combinations you care about yourself.
+
+Guidance:
+- Edit at the level the evidence points to. A failed rule inside one leaf is an edit_leaf. An assumption value losing weight across every leaf that depends on it means that premise is wrong, not those leaves individually. An object no leaf accounts for usually means a missing assumption value, not a missing rule.
+- One sighting at a given place and hour is weaker evidence than a repeated one. The statistics section gives, per object, how many distinct receptacles it has been seen in and its share of sighted days at the most common one.
+- Do not propose an assumption whose values make the same observable predictions.
+- Return only operations. Leaves you do not mention are kept exactly as they are.
+
+Rules: ids only from the tables; chances as labels; a move's `duration_h` when it differs from the activity's; every leaf carries a distinguishing_prediction and distinguishing_check; leaf ids are opaque p_xxxx tokens and an existing leaf keeps its id. At most 3 assumptions and 12 leaves. Think about what the mismatches imply, then end your reply with ONE json object of the form {{"operations": [...]}}."""
+
+
+def graph_repair_prompt(problems: Sequence[str], tables: str,
+                        raw_json: str, kind: str = "graph") -> str:
+    """Repair round for an envelope (``kind="graph"``) or an operation
+    set (``kind="operations"``): the exact problems, the tables, the
+    previous JSON, and a request to reprint the whole object."""
+    listed = "\n".join(f"- {p}" for p in problems) or "- (none)"
+    what = ("the COMPLETE corrected envelope (assumptions and all leaves)"
+            if kind == "graph" else
+            "the COMPLETE corrected operation list")
+    return f"""Your previous output had these problems:
+
+{listed}
+
+The ONLY valid identifiers are these, exactly as printed:
+
+{tables}
+
+Here is your previous JSON:
+
+{raw_json}
+
+Reprint {what}, same shape. Fix every problem listed: replace invalid strings with valid identifiers from the tables (or remove the entry if nothing valid expresses it), give every leaf a value for every assumption, keep leaf ids opaque (p_ plus 4 hex characters), and stay within 3 assumptions and 12 leaves. Do not change parts that were already valid. End your reply with the JSON object only."""

@@ -6,8 +6,10 @@ source_persona: persona.yaml
 residents:
 - id: resident_1
   jitter_scale: 1.0
+  forget_p: 0.01
 - id: resident_2
   jitter_scale: 1.0
+  forget_p: 0.03
 receptacles:
 - id: bed_b1
   room: bedroom_1
@@ -367,6 +369,7 @@ placements:
     - dish_rack_k1
     - kitchen_table_k1
     - chair_k1
+    bulky: true
   blanket_theo:
     home: armchair_l1
     p_misplace: 0.13
@@ -377,6 +380,7 @@ placements:
     - dish_rack_k1
     - kitchen_table_k1
     - chair_k1
+    bulky: true
   towel_shared_1:
     home: towel_rack_ba1
     p_misplace: 0.15
@@ -407,6 +411,7 @@ placements:
     - dish_rack_k1
     - kitchen_table_k1
     - chair_k1
+    bulky: true
   vacuum_cleaner_shared_1:
     home: entry_floor_e1
     static: true
@@ -420,6 +425,7 @@ placements:
     - kitchen_table_k1
     - chair_k1
     - chair_k2
+    bulky: true
   pan_shared_1:
     home: counter_k1
     p_misplace: 0.1
@@ -430,6 +436,7 @@ placements:
     - kitchen_table_k1
     - chair_k1
     - chair_k2
+    bulky: true
   watering_can_marian:
     home: entry_floor_e1
     p_misplace: 0.1
@@ -440,6 +447,7 @@ placements:
     - dish_rack_k1
     - kitchen_table_k1
     - chair_k1
+    bulky: true
   yoga_mat_theo:
     home: armchair_l1
     p_misplace: 0.14
@@ -450,6 +458,7 @@ placements:
     - dish_rack_k1
     - kitchen_table_k1
     - chair_k1
+    bulky: true
 object_motions:
   night_sleep:
     at: bed_b1
@@ -684,7 +693,6 @@ object_motions:
     during:
       mug_marian: armchair_l1
       book_theo: armchair_l1
-      glasses_theo: armchair_l1
       blanket_marian: armchair_l1
     after:
       mug_marian:
@@ -917,7 +925,6 @@ object_motions:
     jitter: routine
     during:
       book_theo: counter_k1
-      glasses_theo: counter_k1
       pan_shared_1: counter_k1
     after:
       book_theo:
@@ -1350,8 +1357,7 @@ object_motions:
   work_home:
     at: kitchen_table_k1
     jitter: routine
-    during:
-      glasses_marian: kitchen_table_k1
+    during: {}
     after:
       laptop_marian:
         dist:
@@ -1590,17 +1596,25 @@ object_motions:
     during:
       phone_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_theo: person:resident_2
+      glasses_theo:
+        dest: person:resident_2
+        p: 0.97
+        why: forget
       umbrella_shared_1:
         dest: person:resident_2
         p: 0.30000000000000004
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -1701,6 +1715,10 @@ object_motions:
         only_from:
         - person:resident_2
         - ELSEWHERE
+      glasses_theo:
+        dest: armchair_l1
+        only_from:
+        - person:resident_2
   phone_time:
     at: counter_k1
     jitter: routine
@@ -1744,19 +1762,27 @@ object_motions:
     during:
       phone_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       water_bottle_marian: person:resident_1
       backpack_marian: person:resident_1
       jacket_marian: person:resident_1
+      glasses_marian:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
       umbrella_shared_1:
         dest: person:resident_1
         p: 0.30000000000000004
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -1838,6 +1864,10 @@ object_motions:
         only_from:
         - person:resident_1
         - ELSEWHERE
+      glasses_marian:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_1
   snack:
     at: kitchen_table_k1
     jitter: routine
@@ -1991,7 +2021,6 @@ object_motions:
     during:
       mug_marian: couch_l1
       book_theo: couch_l1
-      glasses_theo: couch_l1
       blanket_marian: couch_l1
     after:
       mug_marian:
@@ -2415,19 +2444,23 @@ object_motions:
     during:
       phone_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       water_bottle_theo: person:resident_2
       backpack_theo: person:resident_2
       jacket_theo: person:resident_2
       umbrella_shared_1:
         dest: person:resident_2
         p: 0.35
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2536,17 +2569,25 @@ object_motions:
     during:
       phone_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_marian: person:resident_1
+      glasses_marian:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
       umbrella_shared_1:
         dest: person:resident_1
         p: 0.35
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -2626,6 +2667,10 @@ object_motions:
         only_from:
         - person:resident_1
         - ELSEWHERE
+      glasses_marian:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_1
   put_away_dishes:
     at: cupboard_k1
     jitter: routine
@@ -3009,15 +3054,22 @@ object_motions:
       laptop_marian: person:resident_1
       phone_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       book_marian: person:resident_1
       backpack_marian: person:resident_1
+      glasses_marian:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
     after:
       laptop_marian:
         dist:
@@ -3061,20 +3113,31 @@ object_motions:
         only_from:
         - person:resident_1
         - ELSEWHERE
+      glasses_marian:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_1
   groceries:
     at: ELSEWHERE
     jitter: routine
     during:
       phone_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_theo: person:resident_2
+      glasses_theo:
+        dest: person:resident_2
+        p: 0.97
+        why: forget
     after:
       phone_marian:
         dist: &id042
@@ -3132,6 +3195,10 @@ object_motions:
         dist: &id050
           kitchen_table_k1: 0.7
           counter_k1: 0.3
+        only_from:
+        - person:resident_2
+      glasses_theo:
+        dest: armchair_l1
         only_from:
         - person:resident_2
   watch_tv:
@@ -3278,14 +3345,21 @@ object_motions:
     during:
       phone_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_marian: person:resident_1
+      glasses_marian:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
       pen_marian: person:resident_1
     after:
       phone_marian:
@@ -3329,6 +3403,10 @@ object_motions:
         only_from:
         - person:resident_1
         - ELSEWHERE
+      glasses_marian:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_1
   laundry__bedroom_floor_b1:
     at: bedroom_floor_b1
     jitter: routine
@@ -3836,7 +3914,6 @@ object_motions:
     at: bathroom_shelf_ba1
     jitter: routine
     during:
-      glasses_marian: bathroom_shelf_ba1
       medication_bottle_theo: bathroom_shelf_ba1
     after:
       glasses_marian:
@@ -4260,7 +4337,6 @@ object_motions:
     during:
       mug_marian: bed_b1
       book_theo: bed_b1
-      glasses_theo: bed_b1
       blanket_marian: bed_b1
     after:
       mug_marian:
@@ -4614,14 +4690,21 @@ object_motions:
     during:
       phone_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       backpack_marian: person:resident_1
+      glasses_marian:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
     after:
       phone_marian:
         dist: &id065
@@ -4675,25 +4758,37 @@ object_motions:
           entry_table_e1: 0.34
         only_from:
         - person:resident_1
+      glasses_marian:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_1
   walk__resident_2+errands:
     at: ELSEWHERE
     jitter: routine
     during:
       phone_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       water_bottle_theo: person:resident_2
       backpack_theo: person:resident_2
       jacket_theo: person:resident_2
+      glasses_theo:
+        dest: person:resident_2
+        p: 0.97
+        why: forget
       umbrella_shared_1:
         dest: person:resident_2
         p: 0.30000000000000004
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4783,6 +4878,10 @@ object_motions:
         only_from:
         - person:resident_2
         - ELSEWHERE
+      glasses_theo:
+        dest: armchair_l1
+        only_from:
+        - person:resident_2
   deep_clean:
     at: couch_l1
     jitter: routine
@@ -4794,14 +4893,21 @@ object_motions:
     during:
       phone_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       keys_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       backpack_theo: person:resident_2
+      glasses_theo:
+        dest: person:resident_2
+        p: 0.97
+        why: forget
     after:
       phone_marian:
         dist: *id065
@@ -4839,25 +4945,37 @@ object_motions:
         only_from:
         - person:resident_2
         - ELSEWHERE
+      glasses_theo:
+        dest: armchair_l1
+        only_from:
+        - person:resident_2
   errands__resident_1+walk:
     at: ELSEWHERE
     jitter: routine
     during:
       phone_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       keys_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       wallet_marian:
         dest: person:resident_1
-        p: 0.95
+        p: 0.99
+        why: forget
       water_bottle_marian: person:resident_1
       backpack_marian: person:resident_1
       jacket_marian: person:resident_1
+      glasses_marian:
+        dest: person:resident_1
+        p: 0.99
+        why: forget
       umbrella_shared_1:
         dest: person:resident_1
         p: 0.35
+        why: noop
         only_from:
         - bed_b1
         - nightstand_b1
@@ -4947,6 +5065,10 @@ object_motions:
         only_from:
         - person:resident_1
         - ELSEWHERE
+      glasses_marian:
+        dest: kitchen_table_k1
+        only_from:
+        - person:resident_1
   socialise_home__kitchen_table_k1:
     at: kitchen_table_k1
     jitter: routine
@@ -5688,16 +5810,23 @@ object_motions:
     during:
       phone_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       tablet_theo: person:resident_2
       keys_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       wallet_theo:
         dest: person:resident_2
-        p: 0.95
+        p: 0.97
+        why: forget
       water_bottle_theo: person:resident_2
       backpack_theo: person:resident_2
+      glasses_theo:
+        dest: person:resident_2
+        p: 0.97
+        why: forget
       yoga_mat_theo: person:resident_2
     after:
       phone_theo:
@@ -5735,6 +5864,10 @@ object_motions:
         only_from:
         - person:resident_2
         - ELSEWHERE
+      glasses_theo:
+        dest: armchair_l1
+        only_from:
+        - person:resident_2
   deep_clean__counter_k1:
     at: counter_k1
     jitter: routine
@@ -5791,3 +5924,49 @@ object_motions:
     during: {}
     after: {}
 person_invariant: true
+misplace_model: at_putdown
+object_owners:
+  mug_marian: resident_1
+  mug_theo: resident_2
+  bowl_shared_1: shared
+  plate_shared_1: shared
+  laptop_marian: resident_1
+  phone_marian: resident_1
+  phone_theo: resident_2
+  tablet_theo: resident_2
+  keys_marian: resident_1
+  keys_theo: resident_2
+  wallet_marian: resident_1
+  wallet_theo: resident_2
+  book_marian: resident_1
+  book_theo: resident_2
+  water_bottle_marian: resident_1
+  water_bottle_theo: resident_2
+  remote_shared_1: shared
+  charger_marian: resident_1
+  charger_theo: resident_2
+  backpack_marian: resident_1
+  backpack_theo: resident_2
+  jacket_marian: resident_1
+  jacket_theo: resident_2
+  glasses_marian: resident_1
+  glasses_theo: resident_2
+  notebook_marian: resident_1
+  notebook_theo: resident_2
+  pen_marian: resident_1
+  medication_bottle_marian: resident_1
+  medication_bottle_theo: resident_2
+  blanket_marian: resident_1
+  blanket_theo: resident_2
+  towel_shared_1: shared
+  umbrella_shared_1: shared
+  laundry_basket_shared_1: shared
+  vacuum_cleaner_shared_1: shared
+  pot_shared_1: shared
+  pan_shared_1: shared
+  watering_can_marian: resident_1
+  yoga_mat_theo: resident_2
+misplace:
+  next_room_share: 0.5
+  bulky_needs_forget_p: 0.08
+keep_block_share: 0.6

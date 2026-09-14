@@ -30,6 +30,65 @@ header select:disabled { opacity: .6; }   /* only one dataset published */
 .muted { color: var(--muted); }
 .small { font-size: 12px; }
 
+/* ---- legend: a <details> in the header that drops a sheet over the map.
+   No JS: the browser owns open/close, and the sheet is positioned off the
+   header so it never pushes the map down. */
+#legend { position: relative; }
+#legend summary {
+  list-style: none; cursor: pointer; user-select: none;
+  background: var(--panel); color: var(--muted); border: 1px solid var(--edge);
+  border-radius: 6px; padding: 5px 10px; font-size: 13px; white-space: nowrap;
+}
+#legend summary::-webkit-details-marker { display: none; }
+#legend summary:hover, #legend[open] summary { color: var(--fg); border-color: var(--accent); }
+.legend-sheet {
+  position: absolute; right: 0; top: calc(100% + 6px); z-index: 20;
+  width: 460px; max-width: calc(100vw - 32px); max-height: calc(100vh - 80px);
+  overflow-y: auto; background: rgba(29,32,38,.97); border: 1px solid var(--edge);
+  border-radius: 8px; padding: 12px 14px; box-shadow: 0 8px 24px rgba(0,0,0,.5);
+  font-size: 12.5px; line-height: 1.45;
+}
+.legend-sheet h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted); margin: 6px 0 6px; font-weight: 600; }
+.legend-sheet h3 + ul { margin-bottom: 10px; }
+.legend-sheet ul { list-style: none; }
+.legend-sheet li { display: flex; gap: 9px; align-items: flex-start; margin-bottom: 5px; }
+.legend-sheet kbd { font: 11px/1 ui-monospace, monospace; background: var(--bg);
+  border: 1px solid var(--edge); border-radius: 3px; padding: 1px 4px; }
+/* swatches: drawn the way the canvas draws them */
+.sw { flex: 0 0 auto; display: inline-block; width: 18px; height: 14px; margin-top: 2px;
+  position: relative; }
+.sw.tick::before { content: ""; position: absolute; left: 8px; width: 2px; height: 8px; }
+.sw.tick.blue::before  { background: #6ec1ff; top: 0; }
+.sw.tick.red::before   { background: #ff6b6b; top: 0; }
+.sw.tick.green::before { background: #7ee08a; top: 6px; }
+.sw.bar::before { content: ""; position: absolute; left: 8px; top: 0; width: 2px; height: 14px; }
+.sw.bar.grey::before  { background: #2c313a; box-shadow: 0 0 0 1px #3a404a; }
+.sw.bar.wknd::before  { background: #5a5340; }
+.sw.bar.amber::before { background: var(--accent); width: 4px; left: 7px; border-radius: 2px; }
+.sw.disc, .sw.square, .sw.tri { width: 14px; height: 14px; margin: 2px 2px 0; }
+.sw.disc { border-radius: 50%; border: 1.5px solid var(--bg); }
+.sw.square { border: 1.5px solid var(--bg); }
+.sw.obj { background: var(--accent); }
+.sw.grey { background: var(--muted); }
+.sw.res { background: var(--res); }
+.sw.faint { background: rgba(255,184,77,.25); border-color: rgba(255,184,77,.5); }
+.sw.disc.carried { border: 2.5px solid var(--res); }
+.sw.diamond { width: 11px; height: 11px; margin: 3px 3px 0; transform: rotate(45deg);
+  border: 1.5px solid #e6ffe9; }
+.sw.tag { width: 18px; height: 12px; margin-top: 3px; border: 1px solid var(--res);
+  border-radius: 3px; background: rgba(20,22,26,.9); }
+.sw.tag::before { content: ""; position: absolute; left: 3px; top: 3px; width: 4px; height: 4px;
+  border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 1px var(--res); }
+.sw.tri { width: 0; height: 0; border-left: 7px solid transparent; border-right: 7px solid transparent;
+  border-bottom: 13px solid var(--accent); background: none; }
+.sw.line::before { content: ""; position: absolute; left: 0; right: 0; top: 6px; height: 0; }
+.sw.line.blue::before  { border-top: 2px solid rgba(110,193,255,.8); }
+.sw.line.green::before { border-top: 2px dashed rgba(126,224,138,.8); }
+.sw.cross::before, .sw.cross::after { content: ""; position: absolute; background: #aab2c0; }
+.sw.cross::before { left: 8px; top: 2px; width: 2px; height: 10px; }
+.sw.cross::after  { left: 4px; top: 6px; width: 10px; height: 2px; }
+
 main { flex: 1; display: flex; min-height: 0; }
 #map-wrap { flex: 1; position: relative; min-width: 0; }
 #map { width: 100%; height: 100%; display: block; }
@@ -86,7 +145,14 @@ footer {
   border-radius: 6px; padding: 6px; font: inherit; }
 #slider-stack { flex: 1; display: flex; flex-direction: column; gap: 2px; }
 #event-strip { width: 100%; height: 14px; display: block; }
-#time { width: 100%; accent-color: var(--accent); }
+/* The thumb width is FIXED so the event strip above can line its ticks up
+   with the thumb's centre: a range thumb travels from half a thumb in from
+   the left edge to half a thumb in from the right, not edge to edge, so a
+   strip mapped over the full width drifts up to 7px off at either end.
+   The strips pad by --thumb/2 (kept in step with SLIDER_THUMB_PX in the js). */
+#time { width: 100%; accent-color: var(--accent); --thumb: 14px; margin: 0; }
+#time::-webkit-slider-thumb { width: var(--thumb); height: var(--thumb); }
+#time::-moz-range-thumb { width: var(--thumb); height: var(--thumb); box-sizing: border-box; }
 
 /* transient note when the viewer follows a change on disk */
 #live-note {
@@ -194,6 +260,11 @@ svg.chart { display: block; width: 100%; height: auto;
   border-left: 2px solid var(--edge); padding: 2px 0 2px 8px; margin: 5px 0;
 }
 #why .why-line { margin: 4px 0; }
+/* A departure that left the object behind is not a move, so it gets no
+ * segment of its own — it is called out on the segment it fell in. */
+#why .why-omission {
+  border-left: 3px solid #ff6b6b; padding: 3px 0 3px 8px; margin: 6px 0;
+}
 /* The draw the simulator actually made: the chosen destination is the one
  * worth spotting, so it is the only row that is not muted. */
 #why table.dist { width: 100%; border-collapse: collapse; margin: 4px 0 2px; }
