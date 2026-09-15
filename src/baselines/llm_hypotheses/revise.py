@@ -30,8 +30,8 @@ from baselines.llm_hypotheses.elicit import (DEFAULT_MAX_TOKENS,
                                              DEFAULT_REASONING_EFFORT,
                                              DEFAULT_TEMPERATURE,
                                              CachedThinkingClient,
-                                             extract_json, repair_prompt,
-                                             salvage_prompt,
+                                             extract_json, output_budget,
+                                             repair_prompt, salvage_prompt,
                                              validate_hypotheses)
 from baselines.llm_hypotheses.prompt import (HYPOTHESES_SCHEMA,
                                              SYSTEM_PROMPT,
@@ -382,21 +382,43 @@ class TreeRevisionElicitor(RevisionElicitor):
             log["rounds"].append({"kind": "shape_failure", "error": str(err),
                                   "payload": payload, "think": think,
                                   **_stats(row)})
+            # The model fixes its own reply first (thinking on, the exact
+            # parser message); the grammar salvage is the last resort.
+            user_fix = tree_repair_prompt(
+                [f"the JSON at the end of your reply failed to parse: {err}"],
+                self._tables, payload, kind="operations")
             raw = self._client.generate(
-                SYSTEM_PROMPT, salvage_prompt(user, payload), seed=seed + 1,
+                SYSTEM_PROMPT, user_fix, seed=seed + 1,
                 temperature=self._temperature, max_tokens=self._max_tokens,
-                schema=TREE_OPERATIONS_SCHEMA)
+                reasoning_effort=self._effort)
             try:
                 operations = list(extract_json(raw["payload"]).get(
                     "operations", []))
                 payload = raw["payload"]
-                log["rounds"].append({"kind": "salvage",
+                log["rounds"].append({"kind": "self_repair", "prompt": user_fix,
+                                      "think": raw["think"],
                                       "payload": raw["payload"],
                                       "n_operations": len(operations),
                                       **_stats(raw)})
             except json.JSONDecodeError as err2:
-                log["rounds"].append({"kind": "salvage_failed",
-                                      "error": str(err2), **_stats(raw)})
+                log["rounds"].append({"kind": "self_repair_failed",
+                                      "error": str(err2), "think": raw["think"],
+                                      "payload": raw["payload"], **_stats(raw)})
+                raw = self._client.generate(
+                    SYSTEM_PROMPT, salvage_prompt(user, payload), seed=seed + 3,
+                    temperature=self._temperature, max_tokens=self._max_tokens,
+                    schema=TREE_OPERATIONS_SCHEMA)
+                try:
+                    operations = list(extract_json(raw["payload"]).get(
+                        "operations", []))
+                    payload = raw["payload"]
+                    log["rounds"].append({"kind": "salvage",
+                                          "payload": raw["payload"],
+                                          "n_operations": len(operations),
+                                          **_stats(raw)})
+                except json.JSONDecodeError as err3:
+                    log["rounds"].append({"kind": "salvage_failed",
+                                          "error": str(err3), **_stats(raw)})
         result = self._apply_tree(tree, operations, report)
         if result.tree is None and operations:
             user2 = tree_repair_prompt(result.problems, self._tables, payload,
@@ -445,3 +467,143 @@ class TreeRevisionElicitor(RevisionElicitor):
                                        unsensable=AWAY_TOKENS)
         result.operations = real_ops
         return result
+
+
+# =============================================================== longleaf
+
+from baselines.llm_hypotheses.longleaf import (  # noqa: E402
+    MAX_LIBRARY, accept_literal_away_tokens, anonymize_document,
+    deanonymize_document, parse_documents, read_ids, revive_ids)
+from baselines.llm_hypotheses.longleaf_prompt import (  # noqa: E402
+    longleaf_repair_prompt, longleaf_revision_prompt)
+
+
+class LongLeafRevisionElicitor(RevisionElicitor):
+    """``(report, live_raws, context) -> {"new": [raw...], "revive":
+    [ids], "dropped": [...], "problems": [...]}``. One thinking call; the
+    documents are parsed in the vocabulary the model saw; one repair
+    round reprints only the failed ones; anonymized documents are
+    translated to real ids in their structured fields (prose stays as
+    written). Never a replacement set: only additions and revivals."""
+
+    def __call__(self, report: Mapping[str, Any],  # type: ignore[override]
+                 previous: List[dict], context) -> Dict[str, Any]:
+        index = len(self.calls) + 1
+        self._set_vocabulary(report.get("known_objects")
+                             or self._episode.object_classes)
+        user = longleaf_revision_prompt(report, self._tables, self._omap,
+                                        self._rmap)
+        log: Dict[str, Any] = {"household": self._episode.household_id,
+                               "anonymized": self._anonymized,
+                               "longleaf": True, "call_index": index,
+                               "day": report["day"],
+                               "trigger": report.get("trigger"),
+                               "prompt": user, "rounds": []}
+        seed = self._seed + 10 * index
+        started = time.monotonic()
+        budget = output_budget(user, self._max_tokens, SYSTEM_PROMPT)
+        log_budget = budget
+        row = self._client.generate(SYSTEM_PROMPT, user, seed=seed,
+                                    temperature=self._temperature,
+                                    max_tokens=budget,
+                                    reasoning_effort=self._effort,
+                                    keep_content=True)
+        payload, think = row.get("content", row["payload"]), row["think"]
+        if self._anonymized:
+            payload = accept_literal_away_tokens(payload, self._rmap)
+        taken = [str(r.get("hypothesis_id")) for r in previous] + [
+            d["hypothesis_id"] for d in report.get("library", [])]
+        seen_away = (tuple(self._rmap[r] for r in AWAY_TOKENS if r in self._rmap)
+                     if self._anonymized else AWAY_TOKENS)
+        # Parents for forks, in the vocabulary the model writes in.
+        parents = {d["hypothesis_id"]: (anonymize_document(d, self._omap, self._rmap, self._cmap)
+                                        if self._anonymized else d)
+                   for d in report.get("library_raws", [])}
+        valid, dropped = parse_documents(payload, self._seen_classes,
+                                         self._seen_receptacles, taken=taken,
+                                         unsensable=seen_away, parents=parents)
+        wanted = read_ids(payload)
+        log["rounds"].append({"kind": "revision" if valid else "read_request",
+                              "think": think, "payload": payload,
+                              "n_valid": len(valid), "n_dropped": len(dropped),
+                              "read": wanted, **_stats(row)})
+        if not valid and wanted:
+            # Phase two: the same prompt with the requested documents.
+            by_id = {d["hypothesis_id"]: d for d in report.get("library", [])}
+            fetched = [by_id[i] for i in wanted if i in by_id]
+            user2 = longleaf_revision_prompt(report, self._tables, self._omap,
+                                             self._rmap, fetched=fetched)
+            budget2 = output_budget(user2, self._max_tokens, SYSTEM_PROMPT)
+            row2 = self._client.generate(SYSTEM_PROMPT, user2, seed=seed + 1,
+                                         temperature=self._temperature,
+                                         max_tokens=budget2,
+                                         reasoning_effort=self._effort,
+                                         keep_content=True)
+            payload, think = row2.get("content", row2["payload"]), row2["think"]
+            if self._anonymized:
+                payload = accept_literal_away_tokens(payload, self._rmap)
+            valid, dropped = parse_documents(payload, self._seen_classes,
+                                             self._seen_receptacles, taken=taken,
+                                             unsensable=seen_away, parents=parents)
+            log["rounds"].append({"kind": "revision", "prompt": user2,
+                                  "fetched": [d["hypothesis_id"] for d in fetched],
+                                  "think": think, "payload": payload,
+                                  "n_valid": len(valid), "n_dropped": len(dropped),
+                                  **_stats(row2)})
+        if dropped:
+            log["dropped_before_repair"] = list(dropped)
+            problems = [f"document {d['index']}: {d['error']}" for d in dropped]
+            user2 = longleaf_repair_prompt(
+                problems, self._tables,
+                "\n\n".join(d["document"] for d in dropped))
+            raw2 = self._client.generate(
+                SYSTEM_PROMPT, user2, seed=seed + 2,
+                temperature=self._temperature,
+                max_tokens=output_budget(user2, self._max_tokens, SYSTEM_PROMPT),
+                reasoning_effort=self._effort, keep_content=True)
+            text2 = raw2.get("content", raw2["payload"])
+            if self._anonymized:
+                text2 = accept_literal_away_tokens(text2, self._rmap)
+            fixed, still = parse_documents(
+                text2, self._seen_classes, self._seen_receptacles,
+                taken=taken + [v["hypothesis_id"] for v in valid],
+                unsensable=seen_away, parents=parents)
+            log["rounds"].append({"kind": "repair", "prompt": user2,
+                                  "think": raw2["think"],
+                                  "payload": raw2.get("content", raw2["payload"]),
+                                  "n_valid": len(fixed), "n_dropped": len(still),
+                                  **_stats(raw2)})
+            valid += fixed
+            dropped = still
+        if self._anonymized:
+            translated = [deanonymize_document(v, self._omap, self._rmap,
+                                               self._cmap) for v in valid]
+            real_valid = []
+            for raw in translated:
+                try:
+                    from baselines.beliefs.timetable_hypothesis import parse_timetable
+                    parse_timetable(raw, self._known, self._episode.receptacle_ids,
+                                    unsensable=AWAY_TOKENS)
+                    real_valid.append(raw)
+                except Exception as err:      # noqa: BLE001 - logged, never guessed
+                    dropped.append({"index": -1, "error": f"real-id check: {err}",
+                                    "bad_strings": [], "document": raw.get("markdown", "")[:2000]})
+            valid = real_valid
+        revive = revive_ids(payload)
+        problems: List[str] = []
+        n_total = len(report.get("library", [])) + len(valid)
+        if n_total > MAX_LIBRARY:
+            problems.append(f"library would hold {n_total} documents, above the "
+                            f"cap of {MAX_LIBRARY}; response rejected")
+            valid = []
+        log.update({"n_valid": len(valid), "dropped": dropped,
+                    "revive": revive, "problems": problems,
+                    "output_budget": log_budget,
+                    "generation_seconds": round(time.monotonic() - started, 2),
+                    "outcome": "revised" if (valid or revive) else "kept_previous"})
+        self.calls.append({k: log[k] for k in ("call_index", "day", "n_valid",
+                                               "generation_seconds", "outcome")})
+        (self._log_dir / f"{self._episode.household_id}_revision_"
+                         f"{index}.json").write_text(json.dumps(log, indent=1))
+        return {"new": valid, "revive": revive, "dropped": dropped,
+                "problems": problems}

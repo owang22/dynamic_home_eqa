@@ -278,9 +278,8 @@ class LLMHypothesisMixture(HypothesisMixture):
         from baselines.registry import build_registered_belief
         self._raw_hypotheses = [dict(h) for h in hypotheses]
         particles = [
-            HypothesisProgramBelief(
-                random.Random(self._rng.getrandbits(64)), raw,
-                vocabulary=self._vocabulary)
+            self._make_particle(raw, random.Random(self._rng.getrandbits(64)),
+                                self._vocabulary)
             for raw in hypotheses]
         particles += [
             build_registered_belief(
@@ -308,6 +307,12 @@ class LLMHypothesisMixture(HypothesisMixture):
         self.bucket_trace = []
         self._assumption_trace = {}
         self._leaf_count_trace = {}
+
+    def _make_particle(self, raw: Mapping[str, Any], rng: random.Random,
+                       vocabulary: Optional[Mapping[str, str]]):
+        """One particle for a raw hypothesis dict (subclasses swap the
+        converter)."""
+        return HypothesisProgramBelief(rng, raw, vocabulary=vocabulary)
 
     def _load_payload(self, payload: Any) -> List[dict]:
         """The hypothesis bodies a household file holds: graph leaves,
@@ -732,9 +737,9 @@ class LLMHypothesisMixture(HypothesisMixture):
         new_particles: List[HypothesisProgramBelief] = []
         new_weights: List[float] = []
         for raw in revised:
-            particle = HypothesisProgramBelief(
-                random.Random(self._rng.getrandbits(64)), raw,
-                vocabulary=self.known_objects)
+            particle = self._make_particle(
+                raw, random.Random(self._rng.getrandbits(64)),
+                self.known_objects)
             particle.reset(self._context)
             for obj, cls in self._objects.items():
                 particle.ensure_object(obj, cls)

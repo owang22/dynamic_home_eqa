@@ -62,6 +62,7 @@ from baselines.harness import run_episode
 from baselines.household_analysis import REPO_ROOT, bank_path
 from baselines.llm_hypotheses.elicit import DEFAULT_OUT_DIR, CachedThinkingClient
 from baselines.llm_hypotheses.revise import (GraphRevisionElicitor,
+                                             LongLeafRevisionElicitor,
                                              RevisionElicitor,
                                              TreeRevisionElicitor)
 from baselines.passive_eval import (AWAY_EQUIVALENCE, PassiveProtocolConfig,
@@ -96,6 +97,12 @@ fixed across every arm so differences come from the belief."""
 
 
 TREE_SCHEDULED_DAYS = [3]
+LONGLEAF_SCHEDULED_DAYS: List[int] = []
+"""treeLongLeaf revisions are event-driven: a weighted document's claim
+going against it, the anomaly bucket, prediction quality. No scheduled
+days. Calls are cheap (index + fetched documents, cached prefix), so
+the cap is generous."""
+LONGLEAF_MAX_CALLS = 12
 """The tree arm's only scheduled revision (Phase 3 brief): the graph
 arm's day-0/1 calls on almost no evidence hurt it."""
 
@@ -127,7 +134,7 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
             cfg = json.loads(SELECTED_ACTIVE.read_text())
         return {"name": "oracle_program_posterior", "eps": cfg["eps"],
                 "half_life_h": cfg["half_life_h"]}
-    if kind in ("log_reader", "log_reader_notes"):
+    if kind in ("log_reader", "log_reader_notes", "log_reader_aided"):
         assert condition in ("named", "anonymized"), \
             "log_reader arms take a condition: named | anonymized"
         assert client is not None, "the log reader needs a served model"
@@ -138,18 +145,22 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
         else:
             omap, rmap, cmap = {}, {}, {}
         brain = LogReaderBrain(client, notes=(kind == "log_reader_notes"),
+                               aided=(kind == "log_reader_aided"),
                                omap=omap, rmap=rmap, cmap=cmap,
                                log_dir=log_dir.parent / "notes")
+        label = {"log_reader_notes": "LogReaderNotes",
+                 "log_reader_aided": "LogReaderAided"}.get(kind, "LogReader")
         return {"name": "log_reader", "brain": brain,
-                "label": f"{'LogReaderNotes' if kind == 'log_reader_notes' else 'LogReader'}({condition})"}
+                "label": f"{label}({condition})"}
     if kind in ("llm", "llm_fixed", "graph", "graph_fixed", "tree",
-                "tree_fixed"):
+                "tree_fixed", "longleaf", "longleaf_fixed"):
         assert condition, ("llm arms need a condition (tour_named/"
                            "tour_anonymized; graph_named/graph_anonymized; "
                            "tree_named/tree_anonymized)")
-        reasking = kind in ("llm", "graph", "tree")
+        reasking = kind in ("llm", "graph", "tree", "longleaf")
         spec: Dict[str, Any] = {
             "name": ("tree_hypothesis_mixture" if kind.startswith("tree")
+                     else "longleaf_mixture" if kind.startswith("longleaf")
                      else "llm_hypothesis_mixture"),
             "hypotheses_dir": str(DEFAULT_OUT_DIR / "hypotheses" / condition
                                   / hyp_subdir),
@@ -161,9 +172,17 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
                 # then quality. No uncovered-bank trigger, one call type.
                 reask = {**reask, "scheduled_days": TREE_SCHEDULED_DAYS,
                          "new_class_triggers": False, "call_types": False}
+            if kind == "longleaf":
+                # Library triggers: scheduled days 3, 7, 14; anomaly;
+                # quality. No uncovered bank; one call type.
+                reask = {**reask, "scheduled_days": LONGLEAF_SCHEDULED_DAYS,
+                         "new_class_triggers": False, "call_types": False,
+                         "max_calls": max(int(reask.get("max_calls", 0)),
+                                          LONGLEAF_MAX_CALLS)}
             spec["reask"] = reask
             elicitor_cls = (GraphRevisionElicitor if kind == "graph"
                             else TreeRevisionElicitor if kind == "tree"
+                            else LongLeafRevisionElicitor if kind == "longleaf"
                             else RevisionElicitor)
             elicitor = elicitor_cls(
                 client, episode, anonymized=condition.endswith("anonymized"),
@@ -253,8 +272,7 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
             f"day on)")
     episode = next(JsonlBank(path=path).episodes())
     client = (CachedThinkingClient(endpoint, model, DEFAULT_OUT_DIR / "cache")
-              if kind in ("llm", "graph", "tree", "log_reader",
-                          "log_reader_notes")
+              if kind in ("llm", "graph", "tree", "longleaf") or kind.startswith("log_reader")
               else None)
     late = set(tour_absent_objects(episode))
     spec = belief_spec(kind, condition, household, client, episode,
@@ -287,7 +305,7 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
     else:
         policy_rng = _derived_rng(rng_seed, "tour_start_policy", arm,
                                   episode.episode_id)
-        if kind in ("log_reader", "log_reader_notes"):
+        if kind.startswith("log_reader"):
             from baselines.llm_hypotheses.log_reader import LogReaderPolicy
             policy = LogReaderPolicy(spec["brain"])
         elif beta is not None and kind.startswith("tree"):
@@ -347,6 +365,11 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
         diagnostics["assumption_recovery"] = (
             premise_recovered(belief.graph, episode.premises)
             if belief.graph is not None else None)
+    if hasattr(belief, "library_diagnostics"):
+        from baselines.llm_hypotheses.longleaf import write_library
+        diagnostics["library"] = belief.library_diagnostics()
+        write_library(out_dir / "library", belief.library_documents(),
+                      belief.library_status())
     if hasattr(belief, "tree_diagnostics"):
         from baselines.llm_hypotheses.hypothesis_tree import label_recovered
         diagnostics["tree"] = belief.tree_diagnostics()

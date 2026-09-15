@@ -104,6 +104,7 @@ class LogReaderBrain:
     """
 
     def __init__(self, client: Any, notes: bool = False,
+                 aided: bool = False,
                  omap: Optional[Mapping[str, str]] = None,
                  rmap: Optional[Mapping[str, str]] = None,
                  cmap: Optional[Mapping[str, str]] = None,
@@ -111,6 +112,11 @@ class LogReaderBrain:
                  temperature: float = 0.2, seed: int = 5) -> None:
         self.client = client
         self.notes_enabled = notes
+        self.aided = aided
+        """The same help the treeLongLeaf prompts give: the out-of-house
+        mechanics paragraph in the prefix, and a per-object table of
+        weekday-daytime looks at each object's usual place (found versus
+        found nothing) after the log."""
         self._omap = dict(omap or {})
         self._rmap = dict(rmap or {})
         self._cmap = dict(cmap or {})
@@ -137,6 +143,8 @@ class LogReaderBrain:
         self.generation_seconds = 0.0
         self.decisions: List[Dict[str, Any]] = []
         self.invalid_decisions = 0
+        self._seen: Dict[str, Dict[str, int]] = {}      # real obj -> rec -> n
+        self._looks: List[Tuple[int, str, Tuple[str, ...]]] = []
         self._question_key: Optional[Tuple[str, int]] = None
         self._sensed_this_question: List[str] = []
         self._last: Optional[Dict[str, Any]] = None
@@ -162,12 +170,19 @@ class LogReaderBrain:
         t = evidence.t
         if isinstance(evidence, Observation):
             self.known.setdefault(evidence.object_id, evidence.object_class)
+            c = self._seen.setdefault(evidence.object_id, {})
+            c[evidence.receptacle_id] = c.get(evidence.receptacle_id, 0) + 1
+            self._looks.append((t, evidence.receptacle_id, (evidence.object_id,)))
             tag = " [walkthrough]" if evidence.source == "initial_tour" else ""
             self.log.append(f"{stamp(t)}{tag} {self.obj(evidence.object_id)} "
                             f"at {self.rec(evidence.receptacle_id)}")
         else:
             for o in evidence.contents:
                 self.known.setdefault(o, evidence.object_classes.get(o, ""))
+                c = self._seen.setdefault(o, {})
+                c[evidence.receptacle_id] = c.get(evidence.receptacle_id, 0) + 1
+            self._looks.append((t, evidence.receptacle_id,
+                                tuple(evidence.contents)))
             inside = (", ".join(self.obj(o) for o in evidence.contents)
                       or "(nothing)")
             self.log.append(f"{stamp(t)} look {self.rec(evidence.receptacle_id)}"
@@ -200,11 +215,48 @@ SENSING: one look inspects one receptacle and reports every object inside it. Ea
 SCORING: an answer scores one point if its first ranked receptacle is where the object actually is at the question's time, and zero otherwise.
 
 OUTPUT: one JSON object. Either {{"action": "sense", "receptacle": "<receptacle id>", "why": "..."}} or {{"action": "answer", "ranked": ["<most likely receptacle>", "...up to 5..."], "why": "..."}}. Use receptacle ids exactly as listed."""
+        if self.aided:
+            text += ("\n\nOBJECTS LEAVE THE HOUSE: residents take things with "
+                     "them to work, to school, to the gym, on errands and on "
+                     "trips; an object that is out is invisible to every look "
+                     "while it is out, and the walkthrough happened at one "
+                     "instant, so anything that was out with someone then is "
+                     "missing from the walkthrough and first appears in the "
+                     "log later. A sighting anywhere in the house says the "
+                     "object is in; an empty look at its usual place, at an "
+                     "hour it is usually there, is weak evidence it is out. "
+                     "After the log you get, per object, a count of weekday "
+                     "daytime looks at its usual place that found it versus "
+                     "found nothing.")
         if self.notes_enabled:
             text += (f"\n\nYOUR NOTES (a file you wrote for yourself, "
                      f"rewritten once a day; empty until you write it):\n"
                      f"{self.notes or '(empty)'}")
         return text
+
+    def _absence_block(self, start_h: float = 9.0, end_h: float = 17.0) -> str:
+        """Per sighted object: usual place, and weekday ``start_h``-``end_h``
+        looks there split into found / found nothing. From the robot's
+        own looks only."""
+        lines = [f"WEEKDAY {start_h:g}:00-{end_h:g}:00 LOOKS AT EACH OBJECT'S "
+                 f"USUAL PLACE (found it / found nothing):"]
+        for obj in sorted(self._seen):
+            modal = max(self._seen[obj], key=self._seen[obj].get)
+            found = empty = 0
+            for t, rec, contents in self._looks:
+                if rec != modal or (t // DAY_SECONDS) % 7 in (5, 6):
+                    continue
+                hour = (t % DAY_SECONDS) / 3600.0
+                if not start_h <= hour < end_h:
+                    continue
+                if obj in contents:
+                    found += 1
+                else:
+                    empty += 1
+            lines.append(f"  {self.obj(obj)}: usually {self.rec(modal)} "
+                         f"({sum(self._seen[obj].values())} sightings); "
+                         f"found {found}, found nothing {empty}")
+        return "\n".join(lines)
 
     def _objects_block(self) -> str:
         lines = [f"  {self.obj(o)}  (class: {self._cmap.get(c, c)})"
@@ -247,9 +299,14 @@ OUTPUT: one JSON object. Either {{"action": "sense", "receptacle": "<receptacle 
         sensable = [r for r in self.context.sensable_receptacle_ids
                     if r not in self._sensed_this_question]
         looks_left = len(sensable)
-        user = "\n\n".join([self._stable_prefix(), self._objects_block(),
-                            "LOG:\n" + "\n".join(self.log),
-                            self._question_block(object_id, t, looks_left)])
+        parts = [self._stable_prefix(), self._objects_block(),
+                 "LOG:\n" + "\n".join(self.log)]
+        if self.aided:
+            # After the log, so the cached prefix through the log survives
+            # the table changing with every sighting.
+            parts.append(self._absence_block())
+        parts.append(self._question_block(object_id, t, looks_left))
+        user = "\n\n".join(parts)
         started = time.monotonic()
         row = self.client.generate(SYSTEM_PROMPT, user, seed=self._seed,
                                    temperature=self._temperature,
@@ -269,7 +326,12 @@ OUTPUT: one JSON object. Either {{"action": "sense", "receptacle": "<receptacle 
         decision["raw"] = parsed if decision.get("invalid") else None
         decision["prompt_chars"] = len(user)
         decision["prompt_tokens"] = row.get("prompt_tokens")
-        decision["seconds"] = round(time.monotonic() - started, 2)
+        # A cache hit replays in no time; report what generation cost
+        # when it was live, and say it was a hit.
+        decision["seconds"] = round(
+            (row.get("generation_seconds") or 0.0) if row.get("cached")
+            else time.monotonic() - started, 2)
+        decision["cached"] = bool(row.get("cached"))
         self.decisions.append(decision)
         self._last = decision
         self._log_call(user, row, decision)

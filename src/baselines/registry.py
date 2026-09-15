@@ -262,6 +262,36 @@ def _build_tree_hypothesis_mixture(spec: Dict[str, Any],
         **_base_kwargs(spec))
 
 
+def _build_longleaf_mixture(spec: Dict[str, Any],
+                            rng: random.Random) -> BeliefModel:
+    """treeLongLeaf: the library mixture over a household file written
+    by ``elicit --longleaf``; same knobs as ``llm_hypothesis_mixture``."""
+    from baselines.beliefs.llm_hypothesis_mixture import (
+        DEFAULT_HYPOTHESIS_DECAY, DEFAULT_LEAF_PRUNE_DAYS,
+        DEFAULT_LEAF_WEIGHT_FLOOR, DEFAULT_LLM_ABSENCE_WEIGHT, ReaskConfig)
+    from baselines.beliefs.longleaf_mixture import LongLeafMixture
+    reask_raw = spec.get("reask")
+    reask = (ReaskConfig(**{k: (tuple(v) if k == "scheduled_days" else v)
+                            for k, v in dict(reask_raw).items()
+                            if k != "call_types"})
+             if reask_raw else None)
+    return LongLeafMixture(
+        rng, hypotheses_dir=spec["hypotheses_dir"],
+        stat_specs=spec.get("stat_particles"),
+        decay=float(spec.get("decay", DEFAULT_HYPOTHESIS_DECAY)),
+        reask=reask, elicitor=spec.get("elicitor"),
+        absence_weight=float(spec.get("absence_weight",
+                                      DEFAULT_LLM_ABSENCE_WEIGHT)),
+        absence_uniforms=float(spec.get("absence_uniforms",
+                                        DEFAULT_ABSENCE_UNIFORMS)),
+        label=spec.get("label"),
+        leaf_weight_floor=float(spec.get("leaf_weight_floor",
+                                         DEFAULT_LEAF_WEIGHT_FLOOR)),
+        leaf_prune_days=int(spec.get("leaf_prune_days",
+                                     DEFAULT_LEAF_PRUNE_DAYS)),
+        **_base_kwargs(spec))
+
+
 def _build_log_reader(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
     """The log-reader arm: the driver puts a built ``brain`` in the spec
     (it holds the served client and the token maps)."""
@@ -372,6 +402,7 @@ BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
         BeliefEntry("log_reader", "candidate", _build_log_reader),
         BeliefEntry("tree_hypothesis_mixture", "candidate",
                     _build_tree_hypothesis_mixture),
+        BeliefEntry("longleaf_mixture", "candidate", _build_longleaf_mixture),
         BeliefEntry("perpetua", "candidate", _build_perpetua),
         BeliefEntry("perpetua_star", "candidate", _build_perpetua_star),
         BeliefEntry("llm", "candidate", _build_llm),

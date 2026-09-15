@@ -83,6 +83,26 @@ from baselines.types import DAY_SECONDS
 
 DEFAULT_OUT_DIR = REPO_ROOT / "results" / "llm_hypotheses"
 DEFAULT_WARMUP_DAYS = 7
+CONTEXT_TOKENS = 65536
+"""The served context (``serve_llm --max-model-len``). A call's prompt
+plus its output budget must fit inside it or the server refuses the
+request outright (HTTP 400)."""
+CHARS_PER_TOKEN = 2.5
+"""Prompt-size estimate for :func:`output_budget`. Measured on a day-3
+library prompt: 91,402 chars tokenized to 33,935 tokens (2.7 chars per
+token; ids with underscores and JSON punctuation tokenize densely)."""
+
+
+def output_budget(user: str, wanted: int, system: str = "") -> int:
+    """The output budget a prompt of this size can afford: ``wanted``,
+    cut so that prompt + output stays under :data:`CONTEXT_TOKENS` with
+    a margin. Library prompts carry the whole document set and can run
+    to 25k tokens; a fixed 40k output budget then overflows the context
+    and the call fails before the model sees it."""
+    estimate = int((len(user) + len(system)) / CHARS_PER_TOKEN) + 2048
+    return max(2048, min(wanted, CONTEXT_TOKENS - estimate))
+
+
 DEFAULT_MAX_TOKENS = 40000
 """Output budget per call. This task needs a big one and the budget is
 what actually governs success; measured on hh_001, both failure modes
@@ -143,17 +163,22 @@ class CachedThinkingClient:
     def generate(self, system: str, user: str, seed: int,
                  temperature: float, max_tokens: int,
                  reasoning_effort: str = DEFAULT_REASONING_EFFORT,
-                 schema: Optional[Mapping[str, Any]] = None
-                 ) -> Dict[str, Any]:
+                 schema: Optional[Mapping[str, Any]] = None,
+                 keep_content: bool = False) -> Dict[str, Any]:
         """Return the full record: payload, think, usage, timing.
 
         With ``schema``, decoding is grammar-constrained and thinking is
         disabled (the two cannot be combined on this stack) — the
-        structured-output salvage stage.
+        structured-output salvage stage. ``payload`` is the reply's
+        FIRST fenced block when there is one (the single-JSON callers);
+        ``keep_content=True`` also returns the whole reply after the
+        think block as ``content``, for callers that read several
+        documents from one reply, and is part of the cache key.
         """
         key = hashlib.sha256(json.dumps(
             [self._model, system, user, seed, temperature, max_tokens,
-             reasoning_effort, schema], sort_keys=True).encode()).hexdigest()
+             reasoning_effort, schema] + ([True] if keep_content else []),
+            sort_keys=True).encode()).hexdigest()
         path = self._dir / f"{key}.json"
         if path.exists():
             self.cache_hits += 1
@@ -178,7 +203,12 @@ class CachedThinkingClient:
         started = time.monotonic()
         response = requests.post(f"{self._endpoint}/v1/chat/completions",
                                  json=body, timeout=self._timeout)
-        response.raise_for_status()
+        if response.status_code >= 400:
+            # The server's reason (context overflow, bad schema, ...) is
+            # in the body; surface it instead of a bare status line.
+            raise requests.HTTPError(
+                f"{response.status_code} from {self._endpoint}: "
+                f"{response.text[:600]}", response=response)
         elapsed = time.monotonic() - started
         data = response.json()
         message = data["choices"][0]["message"]
@@ -191,11 +221,13 @@ class CachedThinkingClient:
         if not think and "</think>" in payload:
             think, payload = payload.rsplit("</think>", 1)
             think = think.replace("<think>", "").strip()
+        content = payload
         fence = re.search(r"```(?:json)?\s*(.*?)```", payload, re.S)
         if fence:
             payload = fence.group(1)
         usage = data.get("usage", {})
         row = {"payload": payload.strip(), "think": think,
+               **({"content": content.strip()} if keep_content else {}),
                "model": self._model, "seed": seed,
                "temperature": temperature,
                "reasoning_effort": reasoning_effort,
@@ -690,6 +722,112 @@ def elicit_tree_household(client: CachedThinkingClient, episode,
     return log
 
 
+def elicit_longleaf_household(client: CachedThinkingClient, episode,
+                              condition: str, temperature: float,
+                              max_tokens: int, llm_seed: int,
+                              reasoning_effort: str = DEFAULT_REASONING_EFFORT
+                              ) -> Dict[str, Any]:
+    """treeLongLeaf installation: one thinking call for a library of
+    documents, strict per-document parsing, one repair round reprinting
+    the failed documents, up to two more full calls when fewer than
+    :data:`~baselines.llm_hypotheses.longleaf.MIN_ELICITED` survive
+    (additional documents accumulate). Returns the log row; the real-id
+    library index is under ``"library"``."""
+    from baselines.beliefs.timetable_hypothesis import parse_timetable
+    from baselines.llm_hypotheses.longleaf import (
+        AWAY_TOKENS as LL_AWAY, MIN_ELICITED, accept_literal_away_tokens,
+        deanonymize_document, library_index, parse_documents)
+    from baselines.llm_hypotheses.longleaf_prompt import (
+        longleaf_repair_prompt, longleaf_tour_start_prompt)
+    anonymized = condition.endswith("anonymized")
+    user, maps = longleaf_tour_start_prompt(episode, anonymized=anonymized)
+    omap, rmap, cmap = maps["omap"], maps["rmap"], maps["cmap"]
+    vocabulary = known_objects(episode, tour_only=True)
+    if anonymized:
+        seen_classes = {omap[o]: cmap[c] for o, c in vocabulary.items()}
+        seen_receptacles = tuple(rmap[r] for r in episode.receptacle_ids)
+        seen_away = tuple(rmap[r] for r in LL_AWAY if r in rmap)
+    else:
+        seen_classes = dict(vocabulary)
+        seen_receptacles = tuple(episode.receptacle_ids)
+        seen_away = LL_AWAY
+    tables = vocabulary_tables(episode, omap, rmap, cmap, objects=vocabulary)
+    log: Dict[str, Any] = {"household": episode.household_id,
+                           "condition": condition, "longleaf": True,
+                           "prompt": user, "rounds": [], "dropped": []}
+    valid: List[Dict[str, Any]] = []
+    total_seconds = 0.0
+    for attempt in range(3):
+        row = client.generate(SYSTEM_PROMPT, user, seed=llm_seed + attempt,
+                              temperature=temperature,
+                              max_tokens=output_budget(user, max_tokens, SYSTEM_PROMPT),
+                              reasoning_effort=reasoning_effort,
+                              keep_content=True)
+        total_seconds += row.get("generation_seconds") or 0.0
+        taken = [v["hypothesis_id"] for v in valid]
+        text = row.get("content", row["payload"])
+        if anonymized:
+            text = accept_literal_away_tokens(text, rmap)
+        got, dropped = parse_documents(text, seen_classes,
+                                       seen_receptacles, taken=taken,
+                                       unsensable=seen_away)
+        log["rounds"].append({"kind": "initial", "attempt": attempt,
+                              "think": row["think"],
+                              "payload": row.get("content", row["payload"]),
+                              "n_valid": len(got), "n_dropped": len(dropped),
+                              **_call_stats(row)})
+        if dropped:
+            log.setdefault("dropped_before_repair", []).extend(dropped)
+            problems = [f"document {d['index']}: {d['error']}" for d in dropped]
+            user2 = longleaf_repair_prompt(
+                problems, tables, "\n\n".join(d["document"] for d in dropped))
+            raw2 = client.generate(SYSTEM_PROMPT, user2,
+                                   seed=llm_seed + 7 + attempt,
+                                   temperature=temperature,
+                                   max_tokens=max_tokens,
+                                   reasoning_effort=reasoning_effort,
+                                   keep_content=True)
+            total_seconds += raw2.get("generation_seconds") or 0.0
+            fixed, still = parse_documents(
+                raw2.get("content", raw2["payload"]), seen_classes, seen_receptacles,
+                taken=taken + [v["hypothesis_id"] for v in got],
+                unsensable=seen_away)
+            log["rounds"].append({"kind": "repair", "prompt": user2,
+                                  "think": raw2["think"],
+                                  "payload": raw2.get("content", raw2["payload"]),
+                                  "n_valid": len(fixed), "n_dropped": len(still),
+                                  **_call_stats(raw2)})
+            got += fixed
+            dropped = still
+        log["dropped"] += dropped
+        valid += got
+        if len(valid) >= MIN_ELICITED:
+            break
+    if anonymized:
+        real: List[Dict[str, Any]] = []
+        for raw in valid:
+            translated = deanonymize_document(raw, omap, rmap, cmap)
+            try:
+                parse_timetable(translated, vocabulary, episode.receptacle_ids,
+                                unsensable=LL_AWAY)
+                real.append(translated)
+            except Exception as err:      # noqa: BLE001 - logged, never guessed
+                log["dropped"].append({"index": -1,
+                                       "error": f"real-id check: {err}",
+                                       "bad_strings": [],
+                                       "document": raw.get("markdown", "")[:2000]})
+        valid = real
+    log["library"] = library_index(valid, vocabulary) if valid else None
+    log["hypotheses"] = valid
+    log["vocabulary"] = dict(vocabulary)
+    log["problems"] = ([] if len(valid) >= MIN_ELICITED else
+                       [f"only {len(valid)} valid documents"])
+    log["generation_seconds"] = round(total_seconds, 2)
+    log["seconds_per_hypothesis"] = (round(total_seconds / len(valid), 2)
+                                     if valid else None)
+    return log
+
+
 def _call_stats(row: Mapping[str, Any]) -> Dict[str, Any]:
     """The per-call cost record: how long generation took, how many
     tokens it spent, and whether the reasoning block actually closed
@@ -718,6 +856,10 @@ def main() -> None:
                     help="graph arm: elicit an assumption-graph envelope "
                          "from the tour (implies --tour-start); outputs go "
                          "under conditions prefixed graph_")
+    ap.add_argument("--longleaf", action="store_true",
+                    help="treeLongLeaf arm: elicit a library of 12-20 "
+                         "timetable documents; outputs go under conditions "
+                         "prefixed longleaf_")
     ap.add_argument("--tree", action="store_true",
                     help="tree arm: elicit 3-5 root hypotheses from the "
                          "tour; outputs go under conditions prefixed tree_")
@@ -744,7 +886,19 @@ def main() -> None:
                                            args.bank_dir)).episodes())
         _write_crossref(episode, args.out_dir)
         for condition in args.conditions:
-            if args.tree:
+            if args.longleaf:
+                from baselines.llm_hypotheses.longleaf import write_library
+                log = elicit_longleaf_household(
+                    client, episode, condition, args.temperature,
+                    args.max_tokens, args.llm_seed, args.reasoning_effort)
+                tag = f"longleaf_{condition}"
+                payload_out = log["library"] or {"format": "longleaf",
+                                                 "hypotheses": [],
+                                                 "vocabulary": log["vocabulary"]}
+                write_library(args.out_dir / "hypotheses" / tag
+                              / args.hyp_subdir / episode.household_id,
+                              log["hypotheses"])
+            elif args.tree:
                 log = elicit_tree_household(
                     client, episode, condition, args.temperature,
                     args.max_tokens, args.llm_seed, args.reasoning_effort)
@@ -791,7 +945,8 @@ def main() -> None:
                   f"{log['generation_seconds']:.0f}s generation "
                   f"({log['seconds_per_hypothesis']}s per hypothesis, "
                   f"{tokens} output tokens)")
-    cost_name = ("generation_cost_tree.json" if args.tree else
+    cost_name = ("generation_cost_longleaf.json" if args.longleaf else
+                 "generation_cost_tree.json" if args.tree else
                  "generation_cost_graph.json" if args.graph else
                  "generation_cost_tour.json" if args.tour_start
                  else "generation_cost.json")

@@ -35,7 +35,7 @@ class _Stub:
         self.notes_calls = 0
 
     def generate(self, system, user, seed, temperature, max_tokens,
-                 reasoning_effort="medium", schema=None):
+                 reasoning_effort="medium", schema=None, keep_content=False):
         self.prompts.append(user)
         if schema is None:                      # notes rewrite
             self.notes_calls += 1
@@ -66,14 +66,15 @@ def _episode(tmp_path):
     return next(JsonlBank(tmp_path / "bank.jsonl").episodes())
 
 
-def _run(tmp_path, stub, notes=False, anonymized=False, episode=None):
+def _run(tmp_path, stub, notes=False, anonymized=False, episode=None,
+         aided=False):
     episode = episode or _episode(tmp_path)
     if anonymized:
         omap, rmap, cmap = build_anonymization_maps(episode)
     else:
         omap, rmap, cmap = {}, {}, {}
-    brain = LogReaderBrain(stub, notes=notes, omap=omap, rmap=rmap, cmap=cmap,
-                           log_dir=tmp_path / "notes")
+    brain = LogReaderBrain(stub, notes=notes, aided=aided, omap=omap, rmap=rmap,
+                           cmap=cmap, log_dir=tmp_path / "notes")
     belief = LogReaderBelief(random.Random(0), brain)
     records = list(run_episode(Agent(belief, LogReaderPolicy(brain)), episode))
     return episode, brain, records
@@ -202,7 +203,7 @@ def test_rejected_notes_keep_the_previous_file(tmp_path):
         def __init__(self):
             super().__init__(); self.n = 0
         def generate(self, system, user, seed, temperature, max_tokens,
-                     reasoning_effort="medium", schema=None):
+                     reasoning_effort="medium", schema=None, keep_content=False):
             if schema is None:
                 self.n += 1
                 if self.n == 2:      # second day: unclosed think block
@@ -221,3 +222,25 @@ def test_rejected_notes_keep_the_previous_file(tmp_path):
     assert statuses[:2] == ["ok", "rejected"]
     assert brain.notes_versions[1]["notes"] == "NOTES v1"     # kept
     assert brain.stats()["notes_rejected"] == 1
+
+
+def test_aided_variant_adds_out_of_house_help_after_the_log_and_keeps_prefix(tmp_path):
+    stub = _Stub()
+    episode, brain, records = _run(tmp_path, stub, aided=True)
+    prompts = [p for p in stub.prompts if "QUESTION: where is" in p]
+    assert all("OBJECTS LEAVE THE HOUSE" in p for p in prompts)
+    assert all("LOOKS AT EACH OBJECT'S USUAL PLACE" in p for p in prompts)
+    # The table sits after the log, so the prefix through the log is
+    # unchanged by it, and it names only objects the robot has seen.
+    for p in prompts:
+        head, tail = p.split("\n\nWEEKDAY 9:00-17:00 LOOKS", 1)
+        assert head.rstrip().endswith(head.rstrip().split("\n")[-1])
+        assert "LOG:\n" in head and "QUESTION:" in tail
+        seen_block = p.split("OBJECTS the robot has seen so far:\n", 1)[1].split("\n\n", 1)[0]
+        for line in tail.split("\n"):
+            if line.startswith("  ") and ": usually " in line:
+                assert line.strip().split(":")[0] in seen_block
+    # The unaided prompt has neither.
+    stub2 = _Stub()
+    _, _, _ = _run(tmp_path / "b", stub2) if (tmp_path / "b").mkdir() is None else None
+    assert not any("OBJECTS LEAVE THE HOUSE" in p for p in stub2.prompts)
