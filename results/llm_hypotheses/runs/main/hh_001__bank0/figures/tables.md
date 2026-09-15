@@ -15,6 +15,7 @@ Scoring: top-1 and log-loss are EXACT (ON_PERSON and OUT_OF_HOUSE distinct); the
 | longleaf_fixed · longleaf_anonymized | 2472 | 0.712 ± 0.009 (0.712) | 1.091 ± 0.026 (1.091) |
 | longleaf_fixed · longleaf_named | 2472 | 0.713 ± 0.009 (0.713) | 1.093 ± 0.026 (1.093) |
 | mostfreq72 | 2472 | 0.721 ± 0.009 (0.721) | 1.102 ± 0.030 (1.102) |
+| perpetua | 2472 | 0.669 ± 0.009 (0.669) | 1.701 ± 0.051 (1.701) |
 | routine_posterior | 2472 | 0.758 ± 0.009 (0.758) | 0.714 ± 0.023 (0.714) |
 | tree · tree_anonymized | 2472 | 0.709 ± 0.009 (0.709) | 1.093 ± 0.026 (1.093) |
 | tree · tree_named | 2472 | 0.714 ± 0.009 (0.714) | 1.076 ± 0.026 (1.076) |
@@ -38,6 +39,7 @@ Scoring: top-1 and log-loss are EXACT (ON_PERSON and OUT_OF_HOUSE distinct); the
 | active · longleaf_fixed · longleaf_anonymized · f0 | 765 | 0.495 ± 0.018 (0.542) | 1.619 ± 0.058 | 1707 | 0.882 ± 0.008 (0.883) |
 | active · longleaf_fixed · longleaf_named · f0 | 765 | 0.495 ± 0.018 (0.544) | 1.644 ± 0.059 | 1707 | 0.882 ± 0.008 (0.883) |
 | active · mostfreq72 · f0 | 765 | 0.493 ± 0.018 (0.622) | 1.497 ± 0.058 | 1707 | 0.873 ± 0.008 (0.882) |
+| active · perpetua · f0 | 765 | 0.480 ± 0.018 (0.480) | 3.357 ± 0.118 | 1707 | 0.858 ± 0.008 (0.858) |
 | active · routine_posterior · f0 | 765 | 0.731 ± 0.016 (0.731) | 0.880 ± 0.046 | 1707 | 0.845 ± 0.009 (0.845) |
 | active · tree · tree_anonymized · f0 | 765 | 0.495 ± 0.018 (0.542) | 1.630 ± 0.058 | 1707 | 0.876 ± 0.008 (0.879) |
 | active · tree · tree_named · f0 | 765 | 0.498 ± 0.018 (0.540) | 1.678 ± 0.060 | 1707 | 0.886 ± 0.008 (0.886) |
@@ -53,6 +55,7 @@ Scoring: top-1 and log-loss are EXACT (ON_PERSON and OUT_OF_HOUSE distinct); the
 | passive · longleaf_fixed · longleaf_anonymized | 765 | 0.459 ± 0.018 (0.459) | 1.878 ± 0.052 | 1707 | 0.825 ± 0.009 (0.825) |
 | passive · longleaf_fixed · longleaf_named | 765 | 0.459 ± 0.018 (0.459) | 1.878 ± 0.052 | 1707 | 0.827 ± 0.009 (0.827) |
 | passive · mostfreq72 | 765 | 0.482 ± 0.018 (0.482) | 1.837 ± 0.058 | 1707 | 0.828 ± 0.009 (0.828) |
+| passive · perpetua | 765 | 0.376 ± 0.018 (0.376) | 3.456 ± 0.105 | 1707 | 0.800 ± 0.010 (0.800) |
 | passive · routine_posterior | 765 | 0.648 ± 0.017 (0.648) | 1.104 ± 0.052 | 1707 | 0.807 ± 0.010 (0.807) |
 | passive · tree · tree_anonymized | 765 | 0.458 ± 0.018 (0.458) | 1.881 ± 0.052 | 1707 | 0.821 ± 0.009 (0.821) |
 | passive · tree · tree_named | 765 | 0.461 ± 0.018 (0.461) | 1.880 ± 0.053 | 1707 | 0.827 ± 0.009 (0.827) |
@@ -108,6 +111,7 @@ Scoring: top-1 and log-loss are EXACT (ON_PERSON and OUT_OF_HOUSE distinct); the
 | longleaf_fixed · longleaf_anonymized · f0 | 0.763 ± 0.009 (0.778) | 0.858 ± 0.027 | 24.0 | 0 |
 | longleaf_fixed · longleaf_named · f0 | 0.763 ± 0.009 (0.778) | 0.862 ± 0.027 | 24.0 | 0 |
 | mostfreq72 · f0 | 0.755 ± 0.009 (0.801) | 0.837 ± 0.028 | 24.0 | 0 |
+| perpetua · f0 | 0.741 ± 0.009 (0.741) | 1.608 ± 0.055 | 24.0 | 0 |
 | routine_posterior · f0 | 0.809 ± 0.008 (0.810) | 0.592 ± 0.021 | 24.0 | 0 |
 | tree · tree_anonymized · f0 | 0.758 ± 0.009 (0.775) | 0.869 ± 0.027 | 24.0 | 0 |
 | tree · tree_named · f0 | 0.766 ± 0.009 (0.779) | 0.867 ± 0.027 | 24.0 | 0 |

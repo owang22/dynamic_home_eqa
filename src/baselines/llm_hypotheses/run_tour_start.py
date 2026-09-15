@@ -119,6 +119,8 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
         return {"name": "periodic_persistence"}
     if kind == "mostfreq":
         return {"name": "most_frequent", "half_life_h": 24.0}
+    if kind == "perpetua":
+        return {"name": "perpetua"}
     if kind == "mostfreq72":
         # The no-LLM comparison arm and the mixture's own statistical
         # particle: best of the statistical slate under merged scoring.
