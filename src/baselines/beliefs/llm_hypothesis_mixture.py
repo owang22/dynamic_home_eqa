@@ -218,6 +218,7 @@ class LLMHypothesisMixture(HypothesisMixture):
         self._reask = reask
         self._elicitor = elicitor
         self._raw_hypotheses: List[dict] = []
+        self._vocabulary: Optional[Dict[str, str]] = None
         self._graph: Optional["AssumptionGraph"] = None   # graph mode
         self._leaf_weight_floor = float(leaf_weight_floor)
         self._leaf_prune_days = int(leaf_prune_days)
@@ -265,22 +266,21 @@ class LLMHypothesisMixture(HypothesisMixture):
                 f"{self.name}: no hypotheses file for household "
                 f"{context.household_id!r} at {path}")
         payload = json.loads(path.read_text())
-        from baselines.llm_hypotheses.assumption_graph import (
-            AssumptionGraph, is_graph_payload)
-        if is_graph_payload(payload):
-            self._graph = AssumptionGraph.from_json(payload)
-            hypotheses = self._graph.leaf_bodies()
-        else:
-            self._graph = None
-            hypotheses = (payload["hypotheses"]
-                          if isinstance(payload, Mapping) else payload)
+        hypotheses = self._load_payload(payload)
         if not hypotheses:
             raise ValueError(f"{self.name}: {path} holds no hypotheses")
+        # The objects the LLM had been shown when it wrote the file. A
+        # file without one (hand-written, or pre-leak-fix) falls back to
+        # the context's full table.
+        self._vocabulary = (dict(payload.get("vocabulary"))
+                            if isinstance(payload, Mapping)
+                            and payload.get("vocabulary") else None)
         from baselines.registry import build_registered_belief
         self._raw_hypotheses = [dict(h) for h in hypotheses]
         particles = [
             HypothesisProgramBelief(
-                random.Random(self._rng.getrandbits(64)), raw)
+                random.Random(self._rng.getrandbits(64)), raw,
+                vocabulary=self._vocabulary)
             for raw in hypotheses]
         particles += [
             build_registered_belief(
@@ -309,6 +309,36 @@ class LLMHypothesisMixture(HypothesisMixture):
         self._assumption_trace = {}
         self._leaf_count_trace = {}
 
+    def _load_payload(self, payload: Any) -> List[dict]:
+        """The hypothesis bodies a household file holds: graph leaves,
+        or the flat list. (The tree mixture overrides this.)"""
+        from baselines.llm_hypotheses.assumption_graph import (
+            AssumptionGraph, is_graph_payload)
+        if is_graph_payload(payload):
+            self._graph = AssumptionGraph.from_json(payload)
+            return self._graph.leaf_bodies()
+        self._graph = None
+        return (payload["hypotheses"] if isinstance(payload, Mapping)
+                else payload)
+
+    @property
+    def known_objects(self) -> Dict[str, str]:
+        """The object table the LLM may be shown now: what it was shown at
+        elicitation plus every object registered since (sighted, or
+        asked about)."""
+        if self._vocabulary is None:
+            # No vocabulary on file (hand-written or pre-leak-fix): the
+            # converter fell back to the context table, so the report
+            # does too — the old, leaky behaviour, kept for such files.
+            table = dict(self._context.object_classes) if (
+                self._context is not None and self._context.object_classes
+            ) else {}
+        else:
+            table = dict(self._vocabulary)
+        table.update({o: c for o, c in self._objects.items()
+                      if o not in table})
+        return table
+
     @property
     def graph(self) -> Optional["AssumptionGraph"]:
         """The assumption graph (None for a flat file)."""
@@ -333,7 +363,14 @@ class LLMHypothesisMixture(HypothesisMixture):
 
     @staticmethod
     def _particle_key(raw: Mapping[str, Any]) -> str:
-        return str(raw.get("leaf_id") or raw.get("hypothesis_id"))
+        return str(raw.get("leaf_id") or raw.get("node_id")
+                   or raw.get("hypothesis_id"))
+
+    @property
+    def has_structure(self) -> bool:
+        """Graph or tree mode: the modes with automatic pruning, check
+        outcomes and the anomaly bucket. False for a flat file."""
+        return self._graph is not None
 
     # ------------------------------------------------------------ re-asking
 
@@ -380,9 +417,10 @@ class LLMHypothesisMixture(HypothesisMixture):
         super().update(evidence)
         self._maybe_reask(evidence.t)
         day = evidence.t // DAY_SECONDS
-        if self._graph is not None:
+        if self.has_structure:
             self._prune(evidence.t)
             self._record_check_outcomes(evidence.t)
+        if self._graph is not None:
             from baselines.llm_hypotheses.assumption_graph import (
                 assumption_summary)
             self._assumption_trace[day] = assumption_summary(
@@ -398,7 +436,7 @@ class LLMHypothesisMixture(HypothesisMixture):
         mixture average: a low average with one leaf fitting well is a
         weighting problem, not a structure problem."""
         cfg = self._reask
-        if (cfg is None or self._graph is None or cfg.anomaly_repeats <= 0
+        if (cfg is None or not self.has_structure or cfg.anomaly_repeats <= 0
                 or not self._raw_hypotheses):
             return
         n_hyp = len(self._raw_hypotheses)
@@ -422,6 +460,16 @@ class LLMHypothesisMixture(HypothesisMixture):
         return sorted((dict(r) for r in self._anomaly_bucket.values()),
                       key=lambda r: (-r["count"], r["first_t"]))
 
+    @property
+    def anomaly_bucket_fired(self) -> List[Dict[str, Any]]:
+        """Bucket keys that reached ``anomaly_repeats`` — the only ones a
+        revision prompt may show. One-off sightings stay in the bucket
+        (and in ``bucket_at_fire`` for the log) but never reach the
+        model: it would explain them."""
+        cfg = self._reask
+        bar = cfg.anomaly_repeats if cfg is not None else 1
+        return [r for r in self.anomaly_bucket if r["count"] >= max(1, bar)]
+
     def _anomaly_ready(self) -> Optional[Dict[str, Any]]:
         cfg = self._reask
         if cfg is None or cfg.anomaly_repeats <= 0:
@@ -436,9 +484,7 @@ class LLMHypothesisMixture(HypothesisMixture):
     def _modeled_classes(self) -> set:
         """Classes some live hypothesis says anything about: the class of
         any object it covers (rest or move), or a ``class:`` target."""
-        table = dict(self._context.object_classes) if (
-            self._context is not None and self._context.object_classes) else {}
-        table.update(self._objects)
+        table = self.known_objects
         classes: set = set()
         n_hyp = len(self._raw_hypotheses)
         for raw, particle in zip(self._raw_hypotheses,
@@ -550,6 +596,25 @@ class LLMHypothesisMixture(HypothesisMixture):
             "t": t, "day": t // DAY_SECONDS, "reason": reason,
             "trigger": trigger, "call_index": self.calls_made,
             "before": before}
+        changed = self._apply_revision(report, t, trigger, event)
+        self._last_reask_index = len(self._sighting_log)
+        self._recent.clear()
+        self._uncovered_bank = []
+        event["bucket_at_fire"] = self.anomaly_bucket
+        self._anomaly_bucket = {}
+        event.update({
+            "changed": changed,
+            "n_hypotheses_after": len(self._raw_hypotheses),
+            "hypothesis_ids_after": [self._particle_key(h)
+                                     for h in self._raw_hypotheses]})
+        self.reask_events.append(event)
+
+    def _apply_revision(self, report: Dict[str, Any], t: int, trigger: str,
+                        event: Dict[str, Any]) -> bool:
+        """Call the elicitor and install what it returns; True when the
+        hypothesis set changed. Graph mode applies operations, flat mode
+        swaps the list. (The tree mixture overrides this.)"""
+        assert self._elicitor is not None
         if self._graph is not None:
             result = self._elicitor(report, self._graph, self._context)
             graph = getattr(result, "graph", None)
@@ -580,23 +645,13 @@ class LLMHypothesisMixture(HypothesisMixture):
                 event["anomaly_key"] = report["anomaly_firing"]
             event["assumptions_after"] = (
                 list(self._graph.assumptions) if self._graph else [])
-        else:
-            revised = self._elicitor(
-                report, [dict(h) for h in self._raw_hypotheses], self._context)
-            changed = revised is not None and revised != self._raw_hypotheses
-            if changed:
-                self._rebuild(revised)
-        self._last_reask_index = len(self._sighting_log)
-        self._recent.clear()
-        self._uncovered_bank = []
-        event["bucket_at_fire"] = self.anomaly_bucket
-        self._anomaly_bucket = {}
-        event.update({
-            "changed": changed,
-            "n_hypotheses_after": len(self._raw_hypotheses),
-            "hypothesis_ids_after": [self._particle_key(h)
-                                     for h in self._raw_hypotheses]})
-        self.reask_events.append(event)
+            return changed
+        revised = self._elicitor(
+            report, [dict(h) for h in self._raw_hypotheses], self._context)
+        changed = revised is not None and revised != self._raw_hypotheses
+        if changed:
+            self._rebuild(revised)
+        return changed
 
     # -------------------------------------------------------------- pruning
 
@@ -635,17 +690,27 @@ class LLMHypothesisMixture(HypothesisMixture):
             self._below_since.pop(key, None)
         if len(keep) == len(self._particles):
             return
-        order = sorted(keep)
         pruned = {self._particle_key(self._raw_hypotheses[i])
                   for i in range(n_hyp) if i not in keep}
-        self._particles = [self._particles[i] for i in order]
-        self._log_weights = [self._log_weights[i] for i in order]
-        self.presence_totals = [self.presence_totals[i] for i in order]
-        self.absence_totals = [self.absence_totals[i] for i in order]
-        self._raw_hypotheses = [h for h in self._raw_hypotheses
-                                if self._particle_key(h) not in pruned]
         self._graph.leaves = [l for l in self._graph.leaves
                               if l["leaf_id"] not in pruned]
+        self._remove_hypothesis_particles(pruned)
+
+    def _remove_hypothesis_particles(self, pruned: set) -> None:
+        """Drop the hypothesis particles with these keys, keeping every
+        other particle's weight slot and totals in order."""
+        n_hyp = len(self._raw_hypotheses)
+        keep = [i for i in range(len(self._particles))
+                if i >= n_hyp
+                or self._particle_key(self._raw_hypotheses[i]) not in pruned]
+        self._particles = [self._particles[i] for i in keep]
+        self._log_weights = [self._log_weights[i] for i in keep]
+        self.presence_totals = [self.presence_totals[i] for i in keep]
+        self.absence_totals = [self.absence_totals[i] for i in keep]
+        self._raw_hypotheses = [h for h in self._raw_hypotheses
+                                if self._particle_key(h) not in pruned]
+        for key in pruned:
+            self._below_since.pop(key, None)
         top = max(self._log_weights)
         self._log_weights = [lw - top for lw in self._log_weights]
 
@@ -668,7 +733,8 @@ class LLMHypothesisMixture(HypothesisMixture):
         new_weights: List[float] = []
         for raw in revised:
             particle = HypothesisProgramBelief(
-                random.Random(self._rng.getrandbits(64)), raw)
+                random.Random(self._rng.getrandbits(64)), raw,
+                vocabulary=self.known_objects)
             particle.reset(self._context)
             for obj, cls in self._objects.items():
                 particle.ensure_object(obj, cls)
@@ -735,10 +801,9 @@ class LLMHypothesisMixture(HypothesisMixture):
         covered: set = set()
         for particle in hyp_particles:
             covered |= particle.hypothesis.covered_objects()
-        # The LLM was given the full object table; report against it,
-        # so an object never yet sighted still shows up as uncovered.
-        table = (self._context.object_classes if self._context is not None
-                 and self._context.object_classes else self._objects)
+        # Report against the objects the LLM has been shown — never the
+        # bank's inventory, which would name objects it has not seen.
+        table = self.known_objects
         uncovered = []
         for obj in sorted(table):
             if obj in covered:
@@ -763,9 +828,10 @@ class LLMHypothesisMixture(HypothesisMixture):
             "assumptions": self.assumption_weights,
             "settled": self.settled_assumptions,
             "leaf_weights": self.leaf_weights,
-            "anomaly_bucket": self.anomaly_bucket,
+            "anomaly_bucket": self.anomaly_bucket_fired,
             "check_outcomes": self.check_outcomes[-40:],
             "away_window_looks": self.away_window_looks(),
+            "known_objects": self.known_objects,
             "statistics": per_object_statistics(
                 sorted(table), sightings, t),
             "recent_quality": self.recent_quality}

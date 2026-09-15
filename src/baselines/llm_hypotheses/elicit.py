@@ -76,8 +76,10 @@ from baselines.llm_hypotheses.prompt import (GRAPH_SCHEMA, HYPOTHESES_SCHEMA,
                                              elicitation_prompt,
                                              graph_repair_prompt,
                                              graph_tour_start_prompt,
+                                             known_objects,
                                              tour_start_prompt,
                                              vocabulary_tables)
+from baselines.types import DAY_SECONDS
 
 DEFAULT_OUT_DIR = REPO_ROOT / "results" / "llm_hypotheses"
 DEFAULT_WARMUP_DAYS = 7
@@ -300,19 +302,20 @@ def elicit_household(client: CachedThinkingClient, episode,
     anonymized = condition.endswith("anonymized")
     if tour_start:
         user, maps = tour_start_prompt(episode, anonymized=anonymized)
+        vocabulary = known_objects(episode, tour_only=True)
     else:
         user, maps = elicitation_prompt(episode, warmup_days,
                                         anonymized=anonymized)
+        vocabulary = known_objects(episode, upto_t=warmup_days * DAY_SECONDS)
     if anonymized:
         omap, rmap, cmap = (maps["omap"], maps["rmap"], maps["cmap"])
-        seen_classes = {omap[o]: cmap[c]
-                        for o, c in episode.object_classes.items()}
+        seen_classes = {omap[o]: cmap[c] for o, c in vocabulary.items()}
         seen_receptacles = tuple(rmap[r] for r in episode.receptacle_ids)
     else:
-        seen_classes = dict(episode.object_classes)
+        seen_classes = dict(vocabulary)
         seen_receptacles = tuple(episode.receptacle_ids)
     tables = vocabulary_tables(
-        episode, maps["omap"], maps["rmap"], maps["cmap"])
+        episode, maps["omap"], maps["rmap"], maps["cmap"], objects=vocabulary)
 
     log: Dict[str, Any] = {"household": episode.household_id,
                            "condition": condition, "prompt": user,
@@ -394,10 +397,11 @@ def elicit_household(client: CachedThinkingClient, episode,
                       for h in valid]
         # Belt and braces: everything must also validate in real space.
         real_valid, real_failed = validate_hypotheses(
-            translated, episode.object_classes, episode.receptacle_ids)
+            translated, vocabulary, episode.receptacle_ids)
         log["dropped"] += real_failed
         valid = real_valid
     log["hypotheses"] = valid
+    log["vocabulary"] = dict(vocabulary)
     log["generation_seconds"] = round(total_seconds, 2)
     log["seconds_per_hypothesis"] = (round(total_seconds / len(valid), 2)
                                      if valid else None)
@@ -420,16 +424,16 @@ def elicit_graph_household(client: CachedThinkingClient, episode,
     anonymized = condition.endswith("anonymized")
     user, maps = graph_tour_start_prompt(episode, anonymized=anonymized)
     omap, rmap, cmap = maps["omap"], maps["rmap"], maps["cmap"]
+    vocabulary = known_objects(episode, tour_only=True)
     if anonymized:
-        seen_classes = {omap[o]: cmap[c]
-                        for o, c in episode.object_classes.items()}
+        seen_classes = {omap[o]: cmap[c] for o, c in vocabulary.items()}
         seen_receptacles = tuple(rmap[r] for r in episode.receptacle_ids)
         seen_away = tuple(rmap[r] for r in AWAY_TOKENS if r in rmap)
     else:
-        seen_classes = dict(episode.object_classes)
+        seen_classes = dict(vocabulary)
         seen_receptacles = tuple(episode.receptacle_ids)
         seen_away = AWAY_TOKENS
-    tables = vocabulary_tables(episode, omap, rmap, cmap)
+    tables = vocabulary_tables(episode, omap, rmap, cmap, objects=vocabulary)
     log: Dict[str, Any] = {"household": episode.household_id,
                            "condition": condition, "graph_arm": True,
                            "prompt": user, "rounds": []}
@@ -524,19 +528,165 @@ def elicit_graph_household(client: CachedThinkingClient, episode,
         graph_json = result.graph.to_json()
         if anonymized:
             graph_json = deanonymize_graph(graph_json, omap, rmap, cmap)
-            real = parse_graph(graph_json, episode.object_classes,
+            real = parse_graph(graph_json, vocabulary,
                                episode.receptacle_ids, unsensable=AWAY_TOKENS)
             log["dropped"] += real.dropped
             graph_json = real.graph.to_json() if real.graph else None
+        if graph_json is not None:
+            graph_json["vocabulary"] = dict(vocabulary)
         if envelope is not None and "leaf_set_rationale" in envelope \
                 and graph_json is not None:
             graph_json["leaf_set_rationale"] = envelope["leaf_set_rationale"]
     log["graph"] = graph_json
+    log["vocabulary"] = dict(vocabulary)
     log["problems"] = list(result.problems)
     n_leaves = len(graph_json["leaves"]) if graph_json else 0
     log["generation_seconds"] = round(total_seconds, 2)
     log["seconds_per_hypothesis"] = (round(total_seconds / n_leaves, 2)
                                      if n_leaves else None)
+    return log
+
+
+def elicit_tree_household(client: CachedThinkingClient, episode,
+                          condition: str, temperature: float,
+                          max_tokens: int, llm_seed: int,
+                          reasoning_effort: str = DEFAULT_REASONING_EFFORT
+                          ) -> Dict[str, Any]:
+    """The tree arm's installation elicitation: 3 to 5 roots. Same
+    discipline as the graph one — thinking call, grammar salvage, strict
+    parse (:func:`~baselines.llm_hypotheses.hypothesis_tree.parse_tree`
+    with ``roots_only``), one repair round, a deterministic cut when the
+    repair still overshoots the root cap. The real-id tree is under
+    ``"tree"`` (None when nothing usable came back)."""
+    from baselines.llm_hypotheses.hypothesis_tree import (
+        AWAY_TOKENS as TREE_AWAY, parse_tree, truncate_roots)
+    from baselines.llm_hypotheses.tree_prompt import (
+        TREE_SCHEMA, deanonymize_tree, tree_repair_prompt,
+        tree_tour_start_prompt)
+    anonymized = condition.endswith("anonymized")
+    user, maps = tree_tour_start_prompt(episode, anonymized=anonymized)
+    omap, rmap, cmap = maps["omap"], maps["rmap"], maps["cmap"]
+    vocabulary = known_objects(episode, tour_only=True)
+    if anonymized:
+        seen_classes = {omap[o]: cmap[c] for o, c in vocabulary.items()}
+        seen_receptacles = tuple(rmap[r] for r in episode.receptacle_ids)
+        seen_away = tuple(rmap[r] for r in TREE_AWAY if r in rmap)
+    else:
+        seen_classes = dict(vocabulary)
+        seen_receptacles = tuple(episode.receptacle_ids)
+        seen_away = TREE_AWAY
+    tables = vocabulary_tables(episode, omap, rmap, cmap, objects=vocabulary)
+    log: Dict[str, Any] = {"household": episode.household_id,
+                           "condition": condition, "tree_arm": True,
+                           "prompt": user, "rounds": []}
+    payload_obj: Optional[dict] = None
+    payload = ""
+    total_seconds = 0.0
+    for attempt in range(3):
+        row = client.generate(SYSTEM_PROMPT, user, seed=llm_seed + attempt,
+                              temperature=temperature, max_tokens=max_tokens,
+                              reasoning_effort=reasoning_effort)
+        payload, think = row["payload"], row["think"]
+        total_seconds += row.get("generation_seconds") or 0.0
+        try:
+            parsed = extract_json(payload)
+        except json.JSONDecodeError as err:
+            log["rounds"].append({"kind": "shape_failure", "error": str(err),
+                                  "payload": payload, "think": think,
+                                  **_call_stats(row)})
+            continue
+        payload_obj = parsed if isinstance(parsed, dict) else None
+        log["rounds"].append({"kind": "initial", "think": think,
+                              "payload": payload,
+                              "n_nodes": len((payload_obj or {}).get(
+                                  "nodes", [])),
+                              **_call_stats(row)})
+        break
+    if payload_obj is None:
+        raw = client.generate(SYSTEM_PROMPT, salvage_prompt(user, payload),
+                              seed=llm_seed + 21, temperature=temperature,
+                              max_tokens=max_tokens, schema=TREE_SCHEMA)
+        total_seconds += raw.get("generation_seconds") or 0.0
+        try:
+            payload_obj = extract_json(raw["payload"])
+            log["rounds"].append({"kind": "salvage", "payload": raw["payload"],
+                                  **_call_stats(raw)})
+        except json.JSONDecodeError as err:
+            log["rounds"].append({"kind": "salvage_failed", "error": str(err),
+                                  "payload": raw["payload"],
+                                  **_call_stats(raw)})
+            payload_obj = None
+
+    def _parse(obj, caps=True):
+        return parse_tree(obj or {}, seen_classes, seen_receptacles,
+                          enforce_caps=caps, roots_only=True,
+                          unsensable=seen_away)
+
+    result = _parse(payload_obj)
+    log["substitutions"] = list(result.substitutions)
+    log["dropped"] = list(result.dropped)
+    if result.problems or result.dropped:
+        problems = list(result.problems) + [
+            f"node {d['index']} ({d['node'].get('node_id', '?')}): "
+            f"{d['error']}" + (f"; invalid strings: {d['bad_strings']}"
+                               if d["bad_strings"] else "")
+            for d in result.dropped]
+        user2 = tree_repair_prompt(problems, tables,
+                                   json.dumps(payload_obj, indent=1))
+        raw2 = client.generate(SYSTEM_PROMPT, user2, seed=llm_seed + 7,
+                               temperature=temperature, max_tokens=max_tokens,
+                               reasoning_effort=reasoning_effort)
+        total_seconds += raw2.get("generation_seconds") or 0.0
+        entry: Dict[str, Any] = {"kind": "repair", "prompt": user2,
+                                 "think": raw2["think"],
+                                 "payload": raw2["payload"],
+                                 **_call_stats(raw2)}
+        try:
+            obj2 = extract_json(raw2["payload"])
+            result2 = _parse(obj2)
+            entry["problems"] = list(result2.problems)
+            entry["n_dropped"] = len(result2.dropped)
+            cap_only = result2.problems and all(
+                "roots" in p or "exceeds the cap" in p for p in result2.problems)
+            if result2.tree is not None or cap_only:
+                if result2.tree is None:
+                    relaxed = _parse(obj2, caps=False)
+                    if relaxed.tree is not None:
+                        cut, notes = truncate_roots(relaxed.tree)
+                        entry["truncated"] = notes
+                        result2 = _parse(cut.to_json())
+                if result2.tree is not None:
+                    result = result2
+                    log["substitutions"] += list(result2.substitutions)
+                    log["dropped"] = list(result2.dropped)
+        except json.JSONDecodeError as err:
+            entry["error"] = str(err)
+        log["rounds"].append(entry)
+    if result.tree is None and payload_obj is not None:
+        # Too few roots after repair: keep what parsed rather than nothing.
+        relaxed = _parse(payload_obj, caps=False)
+        if relaxed.tree is not None and relaxed.tree.nodes:
+            log["cap_relaxed"] = list(result.problems)
+            result = relaxed
+
+    tree_json: Optional[dict] = None
+    if result.tree is not None:
+        tree_json = result.tree.to_json()
+        if anonymized:
+            tree_json = deanonymize_tree(tree_json, omap, rmap, cmap)
+            real = parse_tree(tree_json, vocabulary, episode.receptacle_ids,
+                              enforce_caps=False, unsensable=TREE_AWAY)
+            log["dropped"] += real.dropped
+            tree_json = real.tree.to_json() if real.tree else None
+        if tree_json is not None:
+            tree_json["vocabulary"] = dict(vocabulary)
+    log["tree"] = tree_json
+    log["vocabulary"] = dict(vocabulary)
+    log["problems"] = list(result.problems)
+    n_nodes = len(tree_json["nodes"]) if tree_json else 0
+    log["generation_seconds"] = round(total_seconds, 2)
+    log["seconds_per_hypothesis"] = (round(total_seconds / n_nodes, 2)
+                                     if n_nodes else None)
     return log
 
 
@@ -568,6 +718,9 @@ def main() -> None:
                     help="graph arm: elicit an assumption-graph envelope "
                          "from the tour (implies --tour-start); outputs go "
                          "under conditions prefixed graph_")
+    ap.add_argument("--tree", action="store_true",
+                    help="tree arm: elicit 3-5 root hypotheses from the "
+                         "tour; outputs go under conditions prefixed tree_")
     ap.add_argument("--warmup-days", type=int, default=DEFAULT_WARMUP_DAYS)
     ap.add_argument("--temperature", type=float, default=DEFAULT_TEMPERATURE)
     ap.add_argument("--max-tokens", type=int, default=DEFAULT_MAX_TOKENS)
@@ -591,7 +744,14 @@ def main() -> None:
                                            args.bank_dir)).episodes())
         _write_crossref(episode, args.out_dir)
         for condition in args.conditions:
-            if args.graph:
+            if args.tree:
+                log = elicit_tree_household(
+                    client, episode, condition, args.temperature,
+                    args.max_tokens, args.llm_seed, args.reasoning_effort)
+                log["hypotheses"] = (log["tree"] or {}).get("nodes", [])
+                tag = f"tree_{condition}"
+                payload_out = log["tree"] or {"nodes": []}
+            elif args.graph:
                 log = elicit_graph_household(
                     client, episode, condition, args.temperature,
                     args.max_tokens, args.llm_seed, args.reasoning_effort)
@@ -606,7 +766,8 @@ def main() -> None:
                                        args.reasoning_effort,
                                        tour_start=args.tour_start)
                 tag = f"tour_{condition}" if args.tour_start else condition
-                payload_out = {"hypotheses": log["hypotheses"]}
+                payload_out = {"hypotheses": log["hypotheses"],
+                               "vocabulary": log["vocabulary"]}
             hyp_dir = args.out_dir / "hypotheses" / tag / args.hyp_subdir
             log_dir = args.out_dir / "logs" / tag / args.hyp_subdir
             hyp_dir.mkdir(parents=True, exist_ok=True)
@@ -630,7 +791,8 @@ def main() -> None:
                   f"{log['generation_seconds']:.0f}s generation "
                   f"({log['seconds_per_hypothesis']}s per hypothesis, "
                   f"{tokens} output tokens)")
-    cost_name = ("generation_cost_graph.json" if args.graph else
+    cost_name = ("generation_cost_tree.json" if args.tree else
+                 "generation_cost_graph.json" if args.graph else
                  "generation_cost_tour.json" if args.tour_start
                  else "generation_cost.json")
     (args.out_dir / cost_name).write_text(json.dumps(

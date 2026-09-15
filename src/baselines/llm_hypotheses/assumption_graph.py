@@ -71,7 +71,11 @@ is never an operation: leaves go only through the mixture's automatic
 prune. ``add_activity`` appends one activity to a named leaf (the
 diversify call's only way to touch an existing leaf)."""
 
-REPAIR_OPS = frozenset({"edit_leaf", "add_assumption_value", "add_leaf"})
+REPAIR_OPS = frozenset({"edit_leaf", "add_activity", "add_assumption_value",
+                        "add_leaf"})
+"""A repair call edits what exists: ``add_activity`` is an ``edit_leaf``
+that appends one activity, so it belongs here too (the model reaches
+for it when new objects need a move)."""
 DIVERSIFY_OPS = frozenset({"add_assumption", "add_assumption_value",
                            "add_leaf", "add_activity"})
 ALL_OPS = frozenset(OPERATION_ORDER)
@@ -575,6 +579,34 @@ def apply_operations(graph: AssumptionGraph,
     problems = result.problems
     allowed = set(allowed_ops) if allowed_ops is not None else set(ALL_OPS)
     settled = dict(settled or {})
+    diversify = allowed == set(DIVERSIFY_OPS)
+    if diversify:
+        # A diversify call must add structure: an edit written to every
+        # leaf cannot move relative weight, so a response made only of
+        # add_activity does nothing. Reject it whole so the repair round
+        # asks again; and one activity name may go to one leaf only.
+        kinds = [str(op.get("op", "")) for op in operations
+                 if isinstance(op, Mapping)]
+        if not any(k in ("add_leaf", "add_assumption_value", "add_assumption")
+                   for k in kinds):
+            problems.append(
+                "diversify call rejected: it must contain at least one "
+                "add_leaf or add_assumption_value (an add_activity written "
+                "to every leaf cannot move any weight)")
+        names: Dict[str, List[str]] = {}
+        for op in operations:
+            if isinstance(op, Mapping) and op.get("op") == "add_activity" \
+                    and isinstance(op.get("activity"), Mapping):
+                names.setdefault(str(op["activity"].get("name", "")), []
+                                 ).append(str(op.get("leaf_id")))
+        for name, leaves in names.items():
+            if len(leaves) > 1:
+                problems.append(
+                    f"diversify call rejected: activity {name!r} added to "
+                    f"{len(leaves)} leaves {leaves}; one activity name may "
+                    f"be added to at most one leaf per call")
+        if problems:
+            return result
     ops_by_kind: Dict[str, List[Mapping[str, Any]]] = {k: []
                                                        for k in OPERATION_ORDER}
     for index, op in enumerate(operations):
@@ -587,7 +619,11 @@ def apply_operations(graph: AssumptionGraph,
                                               "automatic prune"})
             continue
         if kind not in ops_by_kind:
-            problems.append(f"operation {index}: unknown op {kind!r}")
+            result.rejected.append({"index": index, "op": kind,
+                                    "leaf_id": op.get("leaf_id"),
+                                    "reason": f"unknown op {kind!r}; the "
+                                              f"operations are "
+                                              f"{', '.join(OPERATION_ORDER)}"})
             continue
         if kind not in allowed:
             result.rejected.append({"index": index, "op": kind,
@@ -651,12 +687,16 @@ def apply_operations(graph: AssumptionGraph,
         name = str(op.get("assumption", ""))
         value = str(op.get("value", "")).strip()
         if name not in out.assumptions:
-            problems.append(f"add_assumption_value: unknown assumption "
-                            f"{name!r}")
+            result.rejected.append({
+                "op": "add_assumption_value", "assumption": name,
+                "reason": f"unknown assumption {name!r} (existing: "
+                          f"{list(out.assumptions)}); a new assumption "
+                          f"needs add_assumption with edit_leaf coverage"})
             continue
         if not value or value in out.assumptions[name].values:
-            problems.append(f"add_assumption_value {name!r}: missing or "
-                            f"duplicate value {value!r}")
+            result.rejected.append({
+                "op": "add_assumption_value", "assumption": name,
+                "reason": f"missing or duplicate value {value!r}"})
             continue
         a = out.assumptions[name]
         out.assumptions[name] = Assumption(
@@ -696,8 +736,9 @@ def apply_operations(graph: AssumptionGraph,
         leaf_id = str(op.get("leaf_id", ""))
         activity = op.get("activity")
         if leaf_id not in existing_ids or not isinstance(activity, Mapping):
-            problems.append(f"add_activity: unknown leaf {leaf_id!r} or "
-                            f"missing `activity`")
+            result.rejected.append({
+                "op": "add_activity", "leaf_id": leaf_id,
+                "reason": f"unknown leaf {leaf_id!r} or missing `activity`"})
             continue
         leaf = out.leaf(leaf_id)
         leaf["activities"] = list(leaf.get("activities", ())) + [
@@ -710,7 +751,9 @@ def apply_operations(graph: AssumptionGraph,
     for op in ops_by_kind["add_leaf"]:
         body = _body_from(op)
         if body is None or not isinstance(body.get("assumes"), Mapping):
-            problems.append("add_leaf: body with `assumes` required")
+            result.rejected.append({
+                "op": "add_leaf", "reason": "body with a complete `assumes` "
+                                            "map is required"})
             continue
         given = str(body.get("leaf_id", ""))
         taken = set(out.leaf_ids())
@@ -865,19 +908,39 @@ loose word matching over value NAME plus DESCRIPTION: the labels are
 ours, the vocabulary is the model's."""
 
 
+PREMISE_AXES: Mapping[str, Tuple[str, ...]] = {
+    "composition": ("composition", "household", "size", "member", "people",
+                    "person", "resident", "live", "who", "occupant",
+                    "family", "partner", "roommate"),
+    "work_pattern": ("work", "weekday", "presence", "schedule", "commute",
+                     "office", "job", "shift", "daytime", "routine", "away",
+                     "home during"),
+}
+"""Words an assumption's NAME or QUESTION must contain for it to count
+as being about a given premise axis. A value that happens to read like
+a work pattern under a household-size assumption is not a recovery of
+the work-pattern premise."""
+
+
 def premise_recovered(graph: Optional[AssumptionGraph],
                       premises: Mapping[str, str]) -> Dict[str, Optional[str]]:
     """For each ground-truth premise (``{"composition": "solo",
     "work_pattern": "works_away"}``), the ``assumption=value`` of the
-    final graph that matches it, or None. A match is any synonym of the
-    label appearing in a value's name or description."""
+    final graph that matches it, or None. A match needs BOTH: an
+    assumption whose name or question is about that axis
+    (:data:`PREMISE_AXES`), and a value of it whose name or description
+    carries a synonym of the label."""
     out: Dict[str, Optional[str]] = {}
     for premise, label in premises.items():
         needles = [label.lower().replace("_", " ")] + [
             s.lower() for s in PREMISE_SYNONYMS.get(label, ())]
+        axis_words = PREMISE_AXES.get(premise, (premise.replace("_", " "),))
         hit = None
         if graph is not None:
             for name, a in graph.assumptions.items():
+                about = f"{name} {a.question}".lower().replace("_", " ")
+                if not any(w in about for w in axis_words):
+                    continue
                 for value, description in a.values.items():
                     hay = f"{value} {description}".lower().replace("_", " ")
                     if any(n in hay for n in needles):

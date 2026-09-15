@@ -130,11 +130,11 @@ def test_exporter_projects_person_away_and_drops_absent_sightings(
                   first_question_day=1, budget_per_day=2,
                   query_mode="uniform")
     episode = next(bank.episodes())
-    assert episode.unsensable_receptacle_ids == (OUT,)
+    assert episode.unsensable_receptacle_ids == (OUT, "ON_PERSON")
     # The carried phone is OUT while r1 is away, ON_PERSON otherwise.
     assert episode.true_location("obj_p", 9 * 3600) == "ON_PERSON"
     assert episode.true_location("obj_p", 12 * 3600) == OUT
     assert episode.true_location("obj_p", 20 * 3600) == "ON_PERSON"
     # No observation ever reports an out-of-house object.
     for obs in episode.initial_observations + episode.scripted_observations:
-        assert obs.receptacle_id != OUT
+        assert obs.receptacle_id not in (OUT, "ON_PERSON")   # neither is ever sighted

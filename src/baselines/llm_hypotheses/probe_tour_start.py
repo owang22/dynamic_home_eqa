@@ -40,14 +40,24 @@ from baselines.llm_hypotheses.analyze_tour_start import canon, score
 from baselines.llm_hypotheses.elicit import DEFAULT_OUT_DIR
 from baselines.llm_hypotheses.run_tour_start import STUDY_DIR
 
-RUN_ROOT = STUDY_DIR / "tl0"   # overridden by --study-dir
+RUN_ROOT = STUDY_DIR / "main"   # overridden by --study-dir
 
 
-def _arms(household: str) -> pathlib.Path:
-    """Arm directories live under ``<household>/arms/`` (older runs kept
-    them directly under the household directory)."""
+class _ArmLookup:
+    """``_arms(household) / arm`` resolves an arm directory wherever it
+    sits: under ``arms/<group>/`` (current layout) or ``arms/`` (older)."""
+
+    def __init__(self, root: pathlib.Path) -> None:
+        self.root = root
+
+    def __truediv__(self, arm: str) -> pathlib.Path:
+        hits = [p for p in self.root.rglob(arm) if p.is_dir()]
+        return hits[0] if hits else self.root / arm
+
+
+def _arms(household: str) -> _ArmLookup:
     root = RUN_ROOT / household
-    return root / "arms" if (root / "arms").is_dir() else root
+    return _ArmLookup(root / "arms" if (root / "arms").is_dir() else root)
 from baselines.types import DAY_SECONDS
 
 EPS = 1e-3
@@ -220,6 +230,6 @@ def write_probes(household: str) -> str:
 if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser(); ap.add_argument("--household", default="hh_001__bank0")
-    ap.add_argument("--study-dir", type=pathlib.Path, default=STUDY_DIR / "tl0")
+    ap.add_argument("--study-dir", type=pathlib.Path, default=STUDY_DIR / "main")
     a = ap.parse_args(); RUN_ROOT = a.study_dir
     print(write_probes(a.household))

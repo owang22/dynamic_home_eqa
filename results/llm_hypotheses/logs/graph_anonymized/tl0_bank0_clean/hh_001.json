@@ -1,0 +1,1085 @@
+{
+ "household": "hh_001",
+ "condition": "anonymized",
+ "graph_arm": true,
+ "prompt": "A home robot has just been installed. Its only observation so far is one walkthrough of the home at 15:08 on day 0, a Monday. Below are the home's receptacles and the objects the walkthrough saw, each with where it was. The home may hold objects the walkthrough did not see; the robot knows nothing about them yet, and you cannot name them. Objects it meets later join your `class:<name>` rules and rest entries automatically if their class matches.\n\nRECEPTACLES:\n  receptacle_5\n  receptacle_20\n  receptacle_14\n  receptacle_6\n  receptacle_11\n  receptacle_10\n  receptacle_23\n  receptacle_7\n  receptacle_3\n  receptacle_12\n  receptacle_21\n  receptacle_13\n  receptacle_15\n  receptacle_19\n  receptacle_8\n  receptacle_9\n  receptacle_4\n  receptacle_22\n  receptacle_18\n  receptacle_17\n  receptacle_16\n  receptacle_2\n\nOBJECTS the robot has seen, with where the tour saw each one:\n  object_2  (class: class_2)  at receptacle_11\n  object_3  (class: class_3)  at receptacle_7\n  object_4  (class: class_4)  at receptacle_18\n  object_5  (class: class_4)  at receptacle_19\n  object_8  (class: class_7)  at receptacle_20\n  object_13  (class: class_12)  at receptacle_6\n  object_14  (class: class_13)  at receptacle_12\n  object_15  (class: class_14)  at receptacle_4\n  object_16  (class: class_15)  at receptacle_4\n  object_17  (class: class_16)  at receptacle_8\n  object_18  (class: class_16)  at receptacle_13\n  object_20  (class: class_18)  at receptacle_21\n  object_21  (class: class_19)  at receptacle_19\n  object_23  (class: class_21)  at receptacle_13\n  object_24  (class: class_21)  at receptacle_12\n  object_25  (class: class_22)  at receptacle_13\n  object_26  (class: class_23)  at receptacle_10\n  object_27  (class: class_24)  at receptacle_6\n  object_28  (class: class_25)  at receptacle_10\n  object_29  (class: class_26)  at receptacle_22\n  object_30  (class: class_27)  at receptacle_16\n  object_31  (class: class_28)  at receptacle_6\n  object_34  (class: class_31)  at receptacle_21\n  object_35  (class: class_32)  at receptacle_11\n\nCLASSES (usable as `class:<name>` targets): class_2, class_3, class_4, class_7, class_12, class_13, class_14, class_15, class_16, class_18, class_19, class_21, class_22, class_23, class_24, class_25, class_26, class_27, class_28, class_31, class_32\n\nWrite competing hypotheses about this home's weekly routine, organised as a small graph. The upper level is a set of ASSUMPTIONS: named latent facts about the household, each with a short list of named values (for example who lives here, or where the primary resident is on weekdays). The lower level is LEAVES: one full hypothesis per combination of assumption values you think worth testing, each with an `assumes` map naming one value of every assumption. A leaf is a set of ACTIVITIES: a name, which days (weekday, weekend, or both), roughly when it starts (start_hour, a number), how long it lasts (duration_h), how many times a week it happens (frequency_per_week), and its moves \u2014 which object (or class:<name>) goes to which receptacle, with a chance and, when it differs from the activity's, its own `duration_h`. A leaf may also give a `rest` map: receptacles where objects sit when nothing is happening.\n\nRules that matter:\n\n1. Leaves must DISAGREE in ways sightings can settle. Two leaves predicting the same object in the same place at the same hour are wasted. Each leaf carries a one-line `distinguishing_prediction` naming a concrete observable difference from the others, and a `distinguishing_check` in the form {\"target\": <object id>, \"at\": <in-home receptacle id>, \"days\": weekday|weekend|both, \"hour\": <number>, \"if_seen\": right|wrong}: a look at `at` around that hour that finds the target means the leaf is `if_seen`; an empty look means the opposite. `at` must be a receptacle the robot can look into. A leaf whose move sends the target out of the house checks the object's rest with \"if_seen\": \"wrong\".\n2. Cover every object, not only the interesting ones: every object id should appear in each leaf's `rest` map (directly or via its class).\n3. Times and weekly frequencies: state them as numbers with your best guess (\"dinner around 19:30\" -> start_hour 19.5). They will be corrected by data, so a concrete guess beats a vague one.\n4. State how long each object stays where the activity put it. A move lasts the activity's `duration_h` unless you give the move its own `duration_h`; do so whenever it differs.\n5. Chances: NEVER numbers. Use exactly one of: rarely, sometimes, usually, almost_always.\n6. IDs: use ONLY identifiers from the tables above, exactly as printed. Nothing outside the tables is valid. Every JSON field must contain the bare id.\n7. One line of `rationale` per leaf.\n\nAssumptions:\n\n- Name 2 to 3 assumptions. An assumption qualifies only if its different values lead to different observable predictions. If two values would produce leaves that predict the same object in the same place at the same hour, drop the assumption.\n- Write one leaf per combination of assumption values worth testing. Skip combinations that do not fit together, and say which in `leaf_set_rationale`.\n- `receptacle_2` is a location in the tables like any other, and the one destination a look can never confirm. A move that ends there gains support only from the object failing to turn up at its rest receptacle during the window, so write one only when you can say where the object would be found if the move did not happen (put that receptacle in `rest`), and keep the window narrow enough that the patrol reaches that place inside it.\n- `leaf_id` is an opaque token: `p_` followed by 4 hex characters, chosen at random. Never spell an id from the assumption values. Assumption names, value names, questions and descriptions must not contain any object or receptacle id.\n- At most 3 assumptions and 12 leaves.\n\nThink it through, then end your reply with one json object. The example below shows the field shapes only; it is abbreviated and is about a different, smaller home.\n\n{\n \"assumptions\": {\n  \"composition\": {\n   \"question\": \"how many people live here and who\",\n   \"values\": {\n    \"solo\": \"one adult resident\",\n    \"couple\": \"two adults, no children\"\n   }\n  },\n  \"weekday_pattern\": {\n   \"question\": \"where is the primary resident on weekdays\",\n   \"values\": {\n    \"works_away\": \"out of the house 9 to 6\",\n    \"works_from_home\": \"at the desk most of the day\"\n   }\n  }\n },\n \"leaf_set_rationale\": \"solo + works_from_home is skipped: with one resident at home all day the tour would have found the laptop out, and it was not\",\n \"leaves\": [\n  {\n   \"leaf_id\": \"p_a41c\",\n   \"assumes\": {\n    \"composition\": \"couple\",\n    \"weekday_pattern\": \"works_away\"\n   },\n   \"rationale\": \"two commuters; the home is empty on weekdays\",\n   \"distinguishing_prediction\": \"object_3 is gone from receptacle_1 at weekday midday\",\n   \"distinguishing_check\": {\n    \"target\": \"object_3\",\n    \"at\": \"receptacle_1\",\n    \"days\": \"weekday\",\n    \"hour\": 13.0,\n    \"if_seen\": \"wrong\"\n   },\n   \"rest\": {\n    \"class:class_2\": \"receptacle_4\",\n    \"object_3\": \"receptacle_1\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"office_day\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 8.0,\n     \"duration_h\": 9.0,\n     \"moves\": [\n      {\n       \"target\": \"object_3\",\n       \"to\": \"receptacle_9\",\n       \"chance\": \"almost_always\"\n      }\n     ]\n    },\n    {\n     \"name\": \"morning_coffee\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 6,\n     \"start_hour\": 6.5,\n     \"duration_h\": 0.5,\n     \"moves\": [\n      {\n       \"target\": \"class:class_2\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"usually\",\n       \"duration_h\": 4.0\n      }\n     ]\n    }\n   ]\n  },\n  {\n   \"leaf_id\": \"p_9f02\",\n   \"assumes\": {\n    \"composition\": \"couple\",\n    \"weekday_pattern\": \"works_from_home\"\n   },\n   \"rationale\": \"one partner commutes, the other works at the desk\",\n   \"distinguishing_prediction\": \"object_3 at receptacle_1 at weekday midday\",\n   \"distinguishing_check\": {\n    \"target\": \"object_3\",\n    \"at\": \"receptacle_1\",\n    \"days\": \"weekday\",\n    \"hour\": 13.0,\n    \"if_seen\": \"right\"\n   },\n   \"rest\": {\n    \"class:class_2\": \"receptacle_5\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"desk_work\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 9.0,\n     \"duration_h\": 7.0,\n     \"moves\": [\n      {\n       \"target\": \"class:class_2\",\n       \"to\": \"receptacle_5\",\n       \"chance\": \"usually\",\n       \"duration_h\": 12.0\n      }\n     ]\n    }\n   ]\n  }\n ]\n}",
+ "rounds": [
+  {
+   "kind": "initial",
+   "think": "Let me analyze the home layout and objects to create meaningful hypotheses about weekly routines.\n\nObjects and their locations:\n- object_2 (class_2) at receptacle_11\n- object_3 (class_3) at receptacle_7\n- object_4 (class_4) at receptacle_18\n- object_5 (class_4) at receptacle_19\n- object_8 (class_7) at receptacle_20\n- object_13 (class_12) at receptacle_6\n- object_14 (class_13) at receptacle_12\n- object_15 (class_14) at receptacle_4\n- object_16 (class_15) at receptacle_4\n- object_17 (class_16) at receptacle_8\n- object_18 (class_16) at receptacle_13\n- object_20 (class_18) at receptacle_21\n- object_21 (class_19) at receptacle_19\n- object_23 (class_21) at receptacle_13\n- object_24 (class_21) at receptacle_12\n- object_25 (class_22) at receptacle_13\n- object_26 (class_23) at receptacle_10\n- object_27 (class_24) at receptacle_6\n- object_28 (class_25) at receptacle_10\n- object_29 (class_26) at receptacle_22\n- object_30 (class_27) at receptacle_16\n- object_31 (class_28) at receptacle_6\n- object_34 (class_31) at receptacle_21\n- object_35 (class_32) at receptacle_11\n\nLet me group by receptacle to understand the home:\n- receptacle_4: object_15 (class_14), object_16 (class_15) \u2014 maybe a kitchen counter or desk\n- receptacle_6: object_13 (class_12), object_27 (class_24), object_31 (class_28) \u2014 maybe a living room shelf\n- receptacle_7: object_3 (class_3) \u2014 single item\n- receptacle_8: object_17 (class_16) \u2014 single item\n- receptacle_10: object_26 (class_23), object_28 (class_25) \u2014 maybe a bathroom or utility area\n- receptacle_11: object_2 (class_2), object_35 (class_32) \u2014 maybe an entryway or hallway\n- receptacle_12: object_14 (class_13), object_24 (class_21) \u2014 maybe a bedroom\n- receptacle_13: object_18 (class_16), object_23 (class_21), object_25 (class_22) \u2014 maybe another bedroom or office\n- receptacle_16: object_30 (class_27) \u2014 single item\n- receptacle_18: object_4 (class_4) \u2014 single item\n- receptacle_19: object_5 (class_4), object_21 (class_19) \u2014 maybe a kitchen\n- receptacle_20: object_8 (class_7) \u2014 single item\n- receptacle_21: object_20 (class_18), object_34 (class_31) \u2014 maybe a garage or utility\n- receptacle_22: object_29 (class_26) \u2014 single item\n\nNow I need to think about what assumptions would create genuinely different observable predictions.\n\nKey observations:\n- class_4 has two objects (object_4 at receptacle_18, object_5 at receptacle_19) \u2014 these are in different places, suggesting they're used in different contexts\n- class_16 has two objects (object_17 at receptacle_8, object_18 at receptacle_13) \u2014 different locations\n- class_21 has two objects (object_23 at receptacle_13, object_24 at receptacle_12) \u2014 different locations\n\nLet me think about meaningful assumptions:\n\n1. **Resident presence pattern**: Is the primary resident at home during the day (works from home / stays home) or away (commutes to work)?\n   - If away: objects that are \"in use\" during the day would be at their rest positions at midday\n   - If present: objects might be moved to active locations\n\n2. **Weekend vs weekday activity level**: Does the household have a distinct weekend routine (e.g., cooking, cleaning, entertaining) vs weekday routine?\n   - Weekend: more kitchen activity, objects moved around\n   - Weekday: more structured, objects stay put\n\n3. **Multi-resident vs single-resident**: Does the household have multiple people who use different objects?\n   - This affects whether class objects (like class_4, class_16, class_21) are in different places because different people use them in different rooms\n\nLet me refine:\n\nAssumption 1: \"weekday_presence\" - where the primary resident is on weekdays\n- \"away\": out 8-17\n- \"present\": at home during the day\n\nAssumption 2: \"weekend_cooking\" - whether there's a distinct weekend cooking/prep routine\n- \"active\": weekend cooking moves kitchen objects\n- \"passive\": no special weekend kitchen activity\n\nAssumption 3: \"shared_use\" - whether objects of the same class are used by different residents in different rooms\n- \"shared\": class objects are split across rooms by different users\n- \"single_user\": class objects are kept together or one is a spare\n\nWait, let me reconsider. I need assumptions where different values lead to different observable predictions.\n\nLet me think about what's most testable:\n\n1. **weekday_presence**: If the resident is away, objects at \"active\" locations (like a desk, kitchen counter) would be at rest. If present, they'd be in use.\n   - Testable: Check if object_15/object_16 (at receptacle_4, maybe a kitchen counter) are there at weekday midday or not.\n\n2. **weekend_routine**: Weekend has a distinct activity (like meal prep, cleaning) that moves objects.\n   - Testable: Check if certain objects are at different locations on weekend vs weekday.\n\n3. **class_split**: For classes with multiple objects (class_4, class_16, class_21), are they used in different rooms by different people, or are they kept together?\n   - Testable: Check if object_4 and object_5 are in the same or different receptacles.\n\nActually, let me reconsider assumption 3. The objects are already in different places. The question is whether they STAY in different places or get consolidated.\n\nLet me simplify to 2-3 assumptions:\n\nAssumption 1: \"weekday_presence\" \n- \"commuter\": primary resident out 8-17 on weekdays\n- \"home\": primary resident at home on weekdays\n\nAssumption 2: \"weekend_kitchen\"\n- \"prep\": weekend morning involves cooking/prep that moves kitchen objects\n- \"quiet\": no special weekend kitchen activity\n\nAssumption 3: \"class_object_placement\"\n- \"split\": objects of the same class stay in different rooms (different users)\n- \"consolidated\": objects of the same class get brought to one location during use\n\nLet me think about what receptacles might be:\n- receptacle_4: kitchen counter (object_15, object_16)\n- receptacle_6: living room shelf (object_13, object_27, object_31)\n- receptacle_7: maybe a hallway hook\n- receptacle_8: maybe a bathroom\n- receptacle_10: utility/bathroom (object_26, object_28)\n- receptacle_11: entryway (object_2, object_35)\n- receptacle_12: bedroom (object_14, object_24)\n- receptacle_13: office/second bedroom (object_18, object_23, object_25)\n- receptacle_16: maybe a garage shelf\n- receptacle_18: kitchen (object_4)\n- receptacle_19: kitchen (object_5, object_21)\n- receptacle_20: maybe a study\n- receptacle_21: garage/utility (object_20, object_34)\n- receptacle_22: maybe a closet\n\nNow let me design the leaves:\n\nLeaf 1: commuter + quiet + split\n- Weekday: resident away, objects at rest\n- Weekend: no special kitchen activity\n- Class objects stay in different rooms\n- Distinguishing: object_15 at receptacle_4 on weekday midday (it's at rest because resident is away)\n\nLeaf 2: home + quiet + split\n- Weekday: resident present, objects in use\n- Weekend: no special kitchen activity\n- Class objects stay in different rooms\n- Distinguishing: object_15 NOT at receptacle_4 on weekday midday (it's being used)\n\nLeaf 3: commuter + prep + split\n- Weekday: resident away\n- Weekend: cooking moves objects\n- Class objects stay in different rooms\n- Distinguishing: object_5 at receptacle_19 on weekend morning (it's at rest because no cooking yet... wait, prep would move it)\n\nHmm, let me reconsider. If \"prep\" means weekend cooking, then on weekend mornings objects would be MOVED from their rest positions. So:\n- commuter + prep: on weekend, object_5 is moved from receptacle_19 to somewhere during prep\n- commuter + quiet: on weekend, object_5 stays at receptacle_19\n\nLeaf 4: home + prep + split\n- Weekday: resident present\n- Weekend: cooking\n- Distinguishing: different from leaf 3 because on weekday the objects are already in use\n\nLeaf 5: commuter + quiet + consolidated\n- Class objects get brought together\n- Distinguishing: object_4 and object_5 end up in same receptacle\n\nLeaf 6: home + quiet + consolidated\n- Distinguishing: different from leaf 2 because class objects consolidate\n\nLet me pick 4-6 leaves that are most distinguishable.\n\nActually, let me be more careful. I have 24 objects to cover in rest maps. Let me assign rest positions:\n\nRest positions (where objects sit when nothing is happening):\n- object_2 (class_2): receptacle_11\n- object_3 (class_3): receptacle_7\n- object_4 (class_4): receptacle_18\n- object_5 (class_4): receptacle_19\n- object_8 (class_7): receptacle_20\n- object_13 (class_12): receptacle_6\n- object_14 (class_13): receptacle_12\n- object_15 (class_14): receptacle_4\n- object_16 (class_15): receptacle_4\n- object_17 (class_16): receptacle_8\n- object_18 (class_16): receptacle_13\n- object_20 (class_18): receptacle_21\n- object_21 (class_19): receptacle_19\n- object_23 (class_21): receptacle_13\n- object_24 (class_21): receptacle_12\n- object_25 (class_22): receptacle_13\n- object_26 (class_23): receptacle_10\n- object_27 (class_24): receptacle_6\n- object_28 (class_25): receptacle_10\n- object_29 (class_26): receptacle_22\n- object_30 (class_27): receptacle_16\n- object_31 (class_28): receptacle_6\n- object_34 (class_31): receptacle_21\n- object_35 (class_32): receptacle_11\n\nNow, for the \"consolidated\" assumption, class_4 objects would both go to one place, class_16 objects to one place, class_21 objects to one place.\n\nLet me finalize my assumptions:\n\n1. \"weekday_presence\": \n   - \"commuter\": out of house 8:00-17:00 weekdays\n   - \"home\": at home during weekday daytime\n\n2. \"weekend_kitchen\":\n   - \"prep\": weekend morning (7-10) involves cooking that moves kitchen objects\n   - \"quiet\": no special weekend kitchen activity\n\n3. \"class_placement\":\n   - \"split\": same-class objects remain in separate rooms\n   - \"together\": same-class objects are brought to one location during use\n\nThat's 2\u00d72\u00d72 = 8 possible combinations. Let me pick the most interesting ones.\n\nActually, I'll do all 8 or maybe 6. Let me think about which are most distinguishable.\n\nThe key distinguishing objects:\n- For weekday_presence: object_15 (class_14) at receptacle_4. If commuter, it's at rest (receptacle_4) during weekday midday. If home, it might be moved to another receptacle during a \"use\" activity.\n- For weekend_kitchen: object_5 (class_4) at receptacle_19. If prep, on weekend morning it's moved. If quiet, it stays.\n- For class_placement: object_4 (class_4) at receptacle_18 vs object_5 (class_4) at receptacle_19. If split, they stay separate. If together, they end up in same place.\n\nLet me design 6 leaves (skip 2 that are less interesting):\n\n1. p_a3f1: commuter + quiet + split\n2. p_b7c2: commuter + quiet + together\n3. p_c9d3: commuter + prep + split\n4. p_d1e4: home + quiet + split\n5. p_e5f6: home + quiet + together\n6. p_f8a7: home + prep + split\n\nI'll skip:\n- commuter + prep + together (similar to 3 and 2 combined, less distinguishable)\n- home + prep + together (similar to 5 and 6 combined)\n\nWait, actually let me reconsider. The rule says \"Skip combinations that do not fit together.\" Let me think about whether any don't fit:\n- \"home\" + \"prep\" makes sense (resident is home to do prep)\n- \"commuter\" + \"prep\" makes sense (resident comes home early or does prep before leaving... actually if they're out 8-17, weekend prep at 7-10 makes sense)\n- \"together\" + \"split\" are just different assumptions\n\nAll combinations seem valid. Let me do 6 leaves.\n\nNow let me think about activities:\n\nFor \"commuter\":\n- Activity: \"commute\" - weekday, 8:00-17:00, objects at rest (no moves needed, or maybe a \"leave\" activity)\n- Actually, the key is that during commute, objects are AT REST. So the distinguishing check would be: object_15 IS at receptacle_4 (its rest) at weekday 13:00.\n\nFor \"home\":\n- Activity: \"daytime_use\" - weekday, maybe 9:00-16:00, object_15 gets moved from receptacle_4 to somewhere (like receptacle_6 or receptacle_7)\n- Distinguishing check: object_15 is NOT at receptacle_4 at weekday 13:00.\n\nFor \"prep\":\n- Activity: \"weekend_prep\" - weekend, 7:00-10:00, moves kitchen objects (class_4, class_19, etc.)\n- object_5 moves from receptacle_19 to receptacle_4 (or another kitchen receptacle)\n- Distinguishing check: object_5 NOT at receptacle_19 on weekend 8:00.\n\nFor \"quiet\":\n- No weekend kitchen activity\n- object_5 stays at receptacle_19 on weekend\n- Distinguishing check: object_5 IS at receptacle_19 on weekend 8:00.\n\nFor \"split\":\n- class_4 objects stay in separate rooms (object_4 at receptacle_18, object_5 at receptacle_19)\n- class_16 objects stay separate (object_17 at receptacle_8, object_18 at receptacle_13)\n- class_21 objects stay separate (object_23 at receptacle_13, object_24 at receptacle_12)\n\nFor \"together\":\n- class_4 objects get brought to one place during use (both to receptacle_19, or both to receptacle_4)\n- class_16 objects get brought to one place\n- class_21 objects get brought to one place\n\nLet me now write the full JSON. I need to be careful about:\n- Every object in rest map\n- Activities with proper moves\n- Distinguishing predictions that are concrete\n- Chances: rarely, sometimes, usually, almost_always\n- Times as numbers\n- Only valid IDs\n\nLet me structure the rest maps. For \"split\", the rest is just where each object was seen. For \"together\", the rest might be different for class objects (they'd rest at the consolidated location).\n\nActually wait - \"rest\" is where objects sit when nothing is happening. If the assumption is \"together,\" then during use they're together, but at rest they might still be in separate places (they get brought together during an activity, then returned). Or maybe \"together\" means they rest together. Let me think...\n\nIf \"together\" means the household habit is to keep same-class objects in one place, then:\n- Rest: class_4 both at receptacle_19 (or receptacle_18)\n- No activity needed to move them (they're already together)\n\nIf \"split\" means they stay in separate rooms:\n- Rest: object_4 at receptacle_18, object_5 at receptacle_19\n- No activity moves them (they stay put)\n\nThe distinction is: in \"together\" world, you'd find both class_4 objects at the same receptacle. In \"split\" world, they're at different receptacles.\n\nBut wait - the walkthrough saw them at different places. So if \"together\" is the truth, then the walkthrough caught them in a transitional state, or the \"together\" location is one of the places and the other is a temporary spot.\n\nHmm, let me reconsider. Maybe:\n- \"split\": objects of same class have different permanent homes (different rooms)\n- \"together\": objects of same class share a home, and being in different places is temporary (one was borrowed/moved)\n\nFor the \"together\" hypothesis:\n- Rest for class_4: both at receptacle_19 (the shared home)\n- The fact that object_4 was at receptacle_18 is because it was temporarily there\n- An activity \"return_shared_items\" would bring object_4 back to receptacle_19\n\nFor the \"split\" hypothesis:\n- Rest for object_4: receptacle_18\n- Rest for object_5: receptacle_19\n- They stay in their respective rooms\n\nThis is cleaner. Let me go with this.\n\nNow let me write the leaves:\n\n**Leaf 1: p_a3f1 - commuter + quiet + split**\n- Weekday: resident away 8-17, all objects at rest\n- Weekend: no special activity, objects at rest\n- Class objects in separate rooms\n- Distinguishing: object_15 at receptacle_4 on weekday 13:00 (it's at rest, resident away)\n- Check: target object_15, at receptacle_4, weekday, hour 13, if_seen: right\n\n**Leaf 2: p_b7c2 - commuter + quiet + together**\n- Weekday: resident away 8-17\n- Weekend: no special activity\n- Class objects share a home\n- Distinguishing: object_4 at receptacle_19 on weekday 13:00 (it's at its shared rest with object_5)\n- Check: target object_4, at receptacle_19, weekday, hour 13, if_seen: right\n\nWait, but if the resident is away, would the objects be at rest? Yes. And if \"together\" means they rest together, then object_4 rests at receptacle_19 (same as object_5). The walkthrough caught it at receptacle_18 because it was temporarily there.\n\n**Leaf 3: p_c9d3 - commuter + prep + split**\n- Weekday: resident away\n- Weekend: prep activity 7-10 moves kitchen objects\n- Class objects in separate rooms\n- Distinguishing: object_5 NOT at receptacle_19 on weekend 8:00 (moved during prep)\n- Check: target object_5, at receptacle_19, weekend, hour 8, if_seen: wrong\n\n**Leaf 4: p_d1e4 - home + quiet + split**\n- Weekday: resident present, uses objects\n- Weekend: no special activity\n- Class objects in separate rooms\n- Distinguishing: object_15 NOT at receptacle_4 on weekday 13:00 (being used by resident)\n- Check: target object_15, at receptacle_4, weekday, hour 13, if_seen: wrong\n\n**Leaf 5: p_e5f6 - home + quiet + together**\n- Weekday: resident present\n- Weekend: no special activity\n- Class objects share a home\n- Distinguishing: object_4 at receptacle_19 on weekday 13:00 (at shared rest, or being used there)\n- Check: target object_4, at receptacle_19, weekday, hour 13, if_seen: right\n\nHmm, but leaf 2 and leaf 5 would both predict object_4 at receptacle_19 on weekday 13:00. That's a problem - they'd give the same prediction at that time.\n\nLet me differentiate:\n- Leaf 2 (commuter + together): object_4 at receptacle_19 because resident is away and it's at rest\n- Leaf 5 (home + together): object_4 at receptacle_19 because... hmm, if resident is home and using objects, maybe object_4 is moved to a different place during use?\n\nActually, let me reconsider. If \"home\" means the resident is present and using objects, then:\n- object_15 gets moved from receptacle_4 to somewhere (active use)\n- object_4 might get moved from receptacle_19 to somewhere\n\nIf \"commuter\" means resident is away:\n- All objects at rest\n- object_15 at receptacle_4\n- object_4 at receptacle_19 (if together) or receptacle_18 (if split)\n\nSo for \"home + together\":\n- During weekday use, object_4 might be at receptacle_4 (kitchen counter where it's being used)\n- Rest is receptacle_19 but during the day it's moved\n\nLet me redesign:\n\nFor \"home\" leaves, the activity is \"daytime_use\" (weekday 9-16) that moves:\n- object_15 from receptacle_4 to receptacle_6 (or wherever)\n- object_4 from receptacle_19 to receptacle_4 (being used at counter)\n- Maybe other objects\n\nFor \"commuter\" leaves, no such activity, objects stay at rest.\n\nThis way:\n- Leaf 2 (commuter + together): object_4 at receptacle_19 at weekday 13 (rest)\n- Leaf 5 (home + together): object_4 at receptacle_4 at weekday 13 (being used)\n\nThat distinguishes them!\n\nLet me also make sure leaf 4 and leaf 5 are distinguished:\n- Leaf 4 (home + split): object_4 at receptacle_18 at weekday 13 (rest, because split means it stays in its room)\n  - Wait, but if resident is home, wouldn't they use it? Maybe not all objects get used.\n  - Actually, for \"split,\" the objects stay in their rooms. The \"daytime_use\" activity might only move certain objects (like object_15) but not class_4 objects.\n  \nHmm, this is getting complicated. Let me simplify.\n\nLet me define the \"daytime_use\" activity for \"home\" leaves as moving specific objects:\n- object_15: receptacle_4 \u2192 receptacle_6 (used in living room)\n- object_16: receptacle_4 \u2192 receptacle_7 (used in hallway)\n- object_5: receptacle_19 \u2192 receptacle_4 (used at counter)\n\nFor \"split\" leaves, class_4 objects don't get consolidated, so object_4 stays at receptacle_18.\nFor \"together\" leaves, object_4 also gets moved to receptacle_4 during use (consolidated with object_5).\n\nSo:\n- Leaf 4 (home + split): object_4 at receptacle_18 at weekday 13 (stays in its room)\n- Leaf 5 (home + together): object_4 at receptacle_4 at weekday 13 (brought to counter)\n- Leaf 2 (commuter + together): object_4 at receptacle_19 at weekday 13 (at rest, shared home)\n\nThese are all different! Good.\n\nNow let me also think about the weekend_prep activity:\n- Moves object_5: receptacle_19 \u2192 receptacle_4 (or receptacle_22)\n- Moves object_21: receptacle_19 \u2192 receptacle_4\n- Maybe moves object_4: receptacle_18 \u2192 receptacle_19 (for split) or receptacle_4 (for together)\n\nFor \"prep\" + \"split\": object_5 moves to receptacle_4, object_4 stays at receptacle_18\nFor \"prep\" + \"together\": object_5 moves to receptacle_4, object_4 also moves to receptacle_4\n\nOK let me finalize my 6 leaves:\n\n1. **p_a3f1**: commuter + quiet + split\n   - Rest: all objects at their seen locations\n   - No significant activities (maybe just a \"evening\" activity)\n   - Distinguishing: object_15 at receptacle_4, weekday 13, if_seen: right\n\n2. **p_b7c2**: commuter + quiet + together\n   - Rest: class_4 both at receptacle_19, class_16 both at receptacle_13, class_21 both at receptacle_13\n   - Distinguishing: object_4 at receptacle_19, weekday 13, if_seen: right\n\n3. **p_c9d3**: commuter + prep + split\n   - Rest: all objects at seen locations (split)\n   - Activity: weekend_prep (weekend, 7-10, moves object_5 to receptacle_4)\n   - Distinguishing: object_5 NOT at receptacle_19, weekend 8, if_seen: wrong\n\n4. **p_d1e4**: home + quiet + split\n   - Rest: all objects at seen locations\n   - Activity: daytime_use (weekday 9-16, moves object_15 to receptacle_6)\n   - Distinguishing: object_15 NOT at receptacle_4, weekday 13, if_seen: wrong\n\n5. **p_e5f6**: home + quiet + together\n   - Rest: class_4 both at receptacle_19, class_16 both at receptacle_13, class_21 both at receptacle_13\n   - Activity: daytime_use (weekday 9-16, moves object_15 to receptacle_6, object_4 to receptacle_4)\n   - Distinguishing: object_4 at receptacle_4, weekday 13, if_seen: right\n\n6. **p_f8a7**: home + prep + split\n   - Rest: all objects at seen locations\n   - Activities: daytime_use (weekday), weekend_prep (weekend)\n   - Distinguishing: object_5 NOT at receptacle_19, weekend 8, if_seen: wrong\n\nWait, leaves 3 and 6 have the same distinguishing check (object_5 not at receptacle_19, weekend 8). That's a problem - they'd give the same prediction at that time.\n\nLet me change leaf 6's distinguishing check. For \"home + prep + split\":\n- On weekday, object_15 is NOT at receptacle_4 (being used)\n- On weekend, object_5 is NOT at receptacle_19 (prep)\n\nThe distinguishing prediction should be unique. Let me use:\n- Leaf 3 (commuter + prep + split): object_15 IS at receptacle_4, weekend 8, if_seen: right (resident away, no use)\n  - Wait, but on weekend the resident might be home even if they're a \"commuter\" on weekdays. Hmm.\n  \nActually, \"commuter\" means out on weekdays. On weekends they're home. So:\n- commuter + prep: on weekend, resident is home and does prep. object_15 might be moved during prep too.\n- home + prep: on both weekday and weekend, resident is home.\n\nLet me reconsider. The \"commuter\" assumption is about WEEKDAYS. On weekends, the resident is home regardless.\n\nSo:\n- commuter: weekday 8-17 away, weekend home\n- home: weekday and weekend home\n\nFor \"commuter + prep\":\n- Weekday: away, objects at rest\n- Weekend: home, does prep 7-10\n- Distinguishing from \"commuter + quiet\": on weekend 8, object_5 is NOT at receptacle_19 (moved by prep)\n- Distinguishing from \"home + prep\": on weekday 13, object_15 IS at receptacle_4 (resident away)\n\nFor \"home + prep\":\n- Weekday: home, uses objects\n- Weekend: home, does prep\n- Distinguishing from \"home + quiet\": on weekend 8, object_5 NOT at receptacle_19\n- Distinguishing from \"commuter + prep\": on weekday 13, object_15 NOT at receptacle_4\n\nOK so:\n- Leaf 3 (commuter + prep + split): check object_15 at receptacle_4, weekday 13, if_seen: right\n  - This distinguishes from leaf 4 (home + quiet + split) where object_15 is NOT at receptacle_4\n  - But wait, leaf 1 (commuter + quiet + split) also has object_15 at receptacle_4 on weekday 13!\n  \nHmm, leaf 1 and leaf 3 would both predict object_15 at receptacle_4 on weekday 13. The difference is on the weekend.\n\nLet me make leaf 3's distinguishing check about the weekend:\n- Leaf 3: object_5 NOT at receptacle_19, weekend 8, if_seen: wrong\n- Leaf 1: object_5 IS at receptacle_19, weekend 8, if_seen: right (no prep, it stays)\n\nThat works! Leaf 1 and leaf 3 are distinguished by weekend object_5 location.\n\nAnd leaf 3 vs leaf 6:\n- Leaf 3 (commuter + prep): weekday 13, object_15 at receptacle_4 (away)\n- Leaf 6 (home + prep): weekday 13, object_15 NOT at receptacle_4 (home, using it)\n\nSo leaf 6's distinguishing check: object_15 NOT at receptacle_4, weekday 13, if_seen: wrong\nBut that's the same as leaf 4's check!\n\nHmm. Let me think differently.\n\nThe distinguishing_prediction should name a CONCRETE OBSERVABLE DIFFERENCE from the OTHERS. It doesn't have to be unique in isolation - it just needs to be the thing that separates this leaf from the others.\n\nActually re-reading the rules: \"Each leaf carries a one-line distinguishing_prediction naming a concrete observable difference from the others, and a distinguishing_check...\"\n\nSo the check is what you'd observe to confirm THIS leaf vs the others. It should be a prediction that is TRUE for this leaf and FALSE (or different) for at least some others.\n\nLet me re-approach:\n\nLeaf 1 (commuter + quiet + split):\n- Weekday 13: object_15 at receptacle_4, object_5 at receptacle_19, object_4 at receptacle_18\n- Weekend 8: object_15 at receptacle_4, object_5 at receptacle_19, object_4 at receptacle_18\n- Distinguishing: object_5 at receptacle_19 on weekend 8 (no prep) AND object_15 at receptacle_4 on weekday 13 (commuter)\n- Check: object_5 at receptacle_19, weekend, 8, if_seen: right\n  - This is wrong for leaves 3 and 6 (prep moves it)\n  - This is right for leaves 2, 4, 5 (no prep or different)\n  - Wait, leaf 4 (home + quiet + split): on weekend, is object_5 at receptacle_19? Yes, no prep.\n  - Leaf 5 (home + quiet + together): on weekend, object_5 at receptacle_19? Yes.\n  - So this check doesn't distinguish leaf 1 from leaves 4 and 5.\n\nHmm, I need a check that's unique to each leaf. Let me think about what's unique:\n\nLeaf 1 (commuter + quiet + split): \n- Unique combo: weekday object_15 at receptacle_4 (commuter) + weekend object_5 at receptacle_19 (quiet) + object_4 at receptacle_18 (split)\n- Best single check: object_4 at receptacle_18, weekday 13, if_seen: right\n  - Leaf 2 (together): object_4 at receptacle_19 \u2192 different \u2713\n  - Leaf 3 (prep): object_4 at receptacle_18 on weekday (commuter, no prep on weekday) \u2192 same! \u2717\n  \nHmm, leaf 1 and leaf 3 both have object_4 at receptacle_18 on weekday 13.\n\nOK let me try: object_15 at receptacle_4, weekday 13, if_seen: right\n- Leaf 2 (commuter + together): object_15 at receptacle_4 \u2192 same \u2717\n\nThis is tricky. Let me think about what's truly unique to each leaf.\n\nThe three assumptions give 3 binary dimensions. Each leaf is a point in 3D space. To distinguish a leaf, I need a check that's different from at least one other leaf.\n\nActually, re-reading the rules: \"Two leaves predicting the same object in the same place at the same hour are wasted.\" This means I should avoid having two leaves make the same prediction. But the distinguishing_check just needs to be a check that, when performed, supports or refutes THIS leaf.\n\nLet me re-read: \"a look at `at` around that hour that finds the target means the leaf is `if_seen`; an empty look means the opposite\"\n\nSo the check is: if I look at receptacle X at hour Y on day Z:\n- If I see the target \u2192 this leaf is confirmed (if if_seen=right) or refuted (if if_seen=wrong)\n- If I don't see it \u2192 the opposite\n\nThe check should be designed so that THIS leaf predicts one outcome and OTHER leaves predict the opposite.\n\nLet me try again:\n\nLeaf 1 (commuter + quiet + split):\n- Predicts: object_15 at receptacle_4 weekday 13 (commuter \u2192 at rest)\n- Leaf 4 (home + quiet + split) predicts: object_15 NOT at receptacle_4 weekday 13 (home \u2192 in use)\n- Check: object_15 at receptacle_4, weekday, 13, if_seen: right\n- This distinguishes from leaf 4. But leaf 2 (commuter + together) also has object_15 at receptacle_4 weekday 13.\n- However, the rule says the check should distinguish from \"the others\" - it doesn't need to be unique to this leaf vs ALL others, just a concrete difference.\n\nActually I think the intent is that each leaf's check should be a prediction that, if confirmed, supports this leaf over at least some alternatives. It doesn't need to be the ONLY leaf that makes that prediction. But ideally it should narrow things down.\n\nLet me just make sure no two leaves have the EXACT same check (same target, same receptacle, same days, same hour, same if_seen). That's the \"wasted\" rule.\n\nLet me assign:\n- Leaf 1: object_15 at receptacle_4, weekday, 13, if_seen: right\n- Leaf 2: object_4 at receptacle_19, weekday, 13, if_seen: right\n- Leaf 3: object_5 at receptacle_19, weekend, 8, if_seen: wrong\n- Leaf 4: object_15 at receptacle_4, weekday, 13, if_seen: wrong\n- Leaf 5: object_4 at receptacle_4, weekday, 13, if_seen: right\n- Leaf 6: object_5 at receptacle_19, weekend, 8, if_seen: wrong\n\nWait, leaves 3 and 6 have the same check! Let me fix leaf 6.\n\nLeaf 6 (home + prep + split):\n- On weekday: object_15 NOT at receptacle_4 (home, in use)\n- On weekend: object_5 NOT at receptacle_19 (prep)\n- Distinguishing from leaf 4 (home + quiet + split): weekend object_5 location\n- Distinguishing from leaf 3 (commuter + prep + split): weekday object_15 location\n- Check: object_15 at receptacle_4, weekday, 13, if_seen: wrong\n  - But that's the same as leaf 4!\n\nOK so leaves 4 and 6 both predict object_15 NOT at receptacle_4 on weekday 13. They're distinguished by weekend behavior.\n\nLet me change leaf 6's check to: object_15 at receptacle_6, weekday, 13, if_seen: right\n- This says: on weekday 13, look at receptacle_6, if you see object_15 there, this leaf is right.\n- Leaf 4 (home + quiet + split): does it also move object_15 to receptacle_6? Yes! Same activity.\n- So this doesn't distinguish from leaf 4.\n\nHmm. The difference between leaf 4 and leaf 6 is the weekend prep. So the check should be about weekend:\n- Leaf 6: object_5 at receptacle_4, weekend, 8, if_seen: right (prep moved it there)\n- Leaf 4: object_5 at receptacle_19, weekend, 8, if_seen: right (no prep, stays)\n\nSo leaf 6 check: object_5 at receptacle_4, weekend, 8, if_seen: right\nAnd leaf 3 check: object_5 at receptacle_19, weekend, 8, if_seen: wrong\n\nThese are different! Leaf 3 says \"look at receptacle_19, don't see object_5 \u2192 right.\" Leaf 6 says \"look at receptacle_4, see object_5 \u2192 right.\"\n\nBut wait - if prep moves object_5 from receptacle_19 to receptacle_4, then:\n- Leaf 3 (commuter + prep): on weekend 8, object_5 is at receptacle_4 (moved by prep). Check: at receptacle_19, if_seen: wrong. \u2713\n- Leaf 6 (home + prep): on weekend 8, object_5 is at receptacle_4 (moved by prep). Check: at receptacle_4, if_seen: right. \u2713\n\nBoth are consistent with prep moving object_5 to receptacle_4. Good.\n\nBut do leaves 3 and 6 have the same prediction? They both predict object_5 at receptacle_4 on weekend 8. The rule says \"Two leaves predicting the same object in the same place at the same hour are wasted.\" \n\nHmm, but they're distinguished by weekday behavior. The rule might mean that if two leaves make the SAME prediction for the SAME check, that's wasted. But if they make the same prediction for a different object/time, that's fine.\n\nActually re-reading: \"Two leaves predicting the same object in the same place at the same hour are wasted.\" I think this means if two leaves both predict \"object X at receptacle Y at hour Z\" as their distinguishing prediction, that's redundant. But if they happen to agree on some prediction while disagreeing on others, that's fine.\n\nI think the key constraint is that the distinguishing_check should be different for each leaf (different combination of target/receptacle/days/hour/if_seen). Let me make sure all 6 are different:\n\n1. object_15, receptacle_4, weekday, 13, right\n2. object_4, receptacle_19, weekday, 13, right\n3. object_5, receptacle_19, weekend, 8, wrong\n4. object_15, receptacle_4, weekday, 13, wrong\n5. object_4, receptacle_4, weekday, 13, right\n6. object_5, receptacle_4, weekend, 8, right\n\nAll 6 are different! Good.\n\nNow let me verify the logic:\n- Leaf 1 (commuter+quiet+split): object_15 at receptacle_4 weekday 13? YES (at rest, no activity). if_seen: right \u2713\n- Leaf 2 (commuter+quiet+together): object_4 at receptacle_19 weekday 13? YES (at rest, shared home). if_seen: right \u2713\n- Leaf 3 (commuter+prep+split): object_5 at receptacle_19 weekend 8? NO (prep moved it to receptacle_4). if_seen: wrong \u2713\n- Leaf 4 (home+quiet+split): object_15 at receptacle_4 weekday 13? NO (daytime_use moved it to receptacle_6). if_seen: wrong \u2713\n- Leaf 5 (home+quiet+together): object_4 at receptacle_4 weekday 13? YES (daytime_use moved it to receptacle_4). if_seen: right \u2713\n- Leaf 6 (home+prep+split): object_5 at receptacle_4 weekend 8? YES (prep moved it there). if_seen: right \u2713\n\nNow let me make sure the activities are consistent:\n\nFor \"commuter\" leaves (1, 2, 3):\n- Weekday 8-17: resident away, no moves\n- Weekend: resident home\n\nFor \"home\" leaves (4, 5, 6):\n- Weekday 9-16: daytime_use activity\n- Weekend: resident home\n\nFor \"quiet\" leaves (1, 2, 4, 5):\n- No weekend kitchen activity\n\nFor \"prep\" leaves (3, 6):\n- Weekend 7-10: weekend_prep activity\n\nFor \"split\" leaves (1, 3, 4, 6):\n- class_4: object_4 at receptacle_18, object_5 at receptacle_19\n- class_16: object_17 at receptacle_8, object_18 at receptacle_13\n- class_21: object_23 at receptacle_13, object_24 at receptacle_12\n\nFor \"together\" leaves (2, 5):\n- class_4: both at receptacle_19\n- class_16: both at receptacle_13\n- class_21: both at receptacle_13\n\nNow let me define the activities:\n\n**daytime_use** (for \"home\" leaves):\n- days: weekday\n- frequency_per_week: 5\n- start_hour: 9.0\n- duration_h: 7.0\n- moves:\n  - object_15: to receptacle_6, chance: usually\n  - object_16: to receptacle_7, chance: sometimes\n  - (for \"together\" leaves): object_4: to receptacle_4, chance: usually\n  - (for \"together\" leaves): object_18: to receptacle_8, chance: sometimes\n\n**weekend_prep** (for \"prep\" leaves):\n- days: weekend\n- frequency_per_week: 2\n- start_hour: 7.0\n- duration_h: 3.0\n- moves:\n  - object_5: to receptacle_4, chance: usually\n  - object_21: to receptacle_4, chance: usually\n  - (for \"split\" leaves): object_4: to receptacle_19, chance: sometimes (brought to kitchen)\n  - (for \"together\" leaves): object_4: to receptacle_4, chance: usually (brought to counter)\n\nWait, for leaf 3 (commuter + prep + split): on weekend, the resident is home (commuter only means weekday away). So the prep activity happens. object_5 moves from receptacle_19 to receptacle_4.\n\nFor leaf 6 (home + prep + split): same weekend prep. But on weekday, there's also daytime_use.\n\nLet me also add a simple \"evening\" activity for completeness, or maybe just keep it simple.\n\nActually, I should also think about what happens with the other objects. The rule says \"Cover every object, not only the interesting ones: every object id should appear in each leaf's rest map (directly or via its class).\"\n\nSo I need rest entries for all 24 objects. Let me use class entries where possible:\n- class_2: receptacle_11 (object_2)\n- class_3: receptacle_7 (object_3)\n- class_4: depends on split/together\n- class_7: receptacle_20 (object_8)\n- class_12: receptacle_6 (object_13)\n- class_13: receptacle_12 (object_14)\n- class_14: receptacle_4 (object_15)\n- class_15: receptacle_4 (object_16)\n- class_16: depends on split/together\n- class_18: receptacle_21 (object_20)\n- class_19: receptacle_19 (object_21)\n- class_21: depends on split/together\n- class_22: receptacle_13 (object_25)\n- class_23: receptacle_10 (object_26)\n- class_24: receptacle_6 (object_27)\n- class_25: receptacle_10 (object_28)\n- class_26: receptacle_22 (object_29)\n- class_27: receptacle_16 (object_30)\n- class_28: receptacle_6 (object_31)\n- class_31: receptacle_21 (object_34)\n- class_32: receptacle_11 (object_35)\n\nFor \"split\":\n- class_4: can't use a single class entry since they're in different places. Need individual entries:\n  - object_4: receptacle_18\n  - object_5: receptacle_19\n- class_16:\n  - object_17: receptacle_8\n  - object_18: receptacle_13\n- class_21:\n  - object_23: receptacle_13\n  - object_24: receptacle_12\n\nFor \"together\":\n- class_4: receptacle_19 (both rest here)\n- class_16: receptacle_13 (both rest here)\n- class_21: receptacle_13 (both rest here)\n\nWait, but if class_21 both rest at receptacle_13, and object_25 (class_22) also rests at receptacle_13, that's fine - multiple objects can be at the same receptacle.\n\nNow let me write the full JSON. Let me be careful with the leaf_set_rationale to explain which combinations I'm skipping.\n\nI'm doing 6 out of 8 possible combinations. I'm skipping:\n- commuter + prep + together\n- home + prep + together\n\nReason: with \"together\" placement, the prep activity's effect on class_4 objects is the same as the daytime_use effect (they all go to receptacle_4), making the prep assumption less distinguishable. The two \"together\" leaves (commuter+quiet and home+quiet) already test the class_placement dimension sufficiently.\n\nLet me now write it all out properly.\n\nActually wait - I need to double-check: for \"together\" leaves, the rest for class_4 is receptacle_19. But the walkthrough saw object_4 at receptacle_18. This means in the \"together\" hypothesis, object_4 was temporarily at receptacle_18 during the walkthrough. That's fine - the rest position is where it normally is, and the walkthrough caught it in a transitional state.\n\nLet me also make sure my activities have proper duration_h for moves. The rule says: \"State how long each object stays where the activity put it. A move lasts the activity's duration_h unless you give the move its own duration_h.\"\n\nFor daytime_use (7 hours): objects moved there stay for 7 hours (the duration of the activity). That makes sense.\nFor weekend_prep (3 hours): objects moved there stay for 3 hours. Then they'd need to be returned. But I don't have a \"return\" activity. Hmm.\n\nActually, I think the model is: the move puts the object at the new location for the duration, and after that it returns to rest. Or maybe the move is permanent until another activity moves it. Let me just set the duration to match the activity duration, which is the default.\n\nFor the prep activity, if object_5 moves to receptacle_4 for 3 hours, then after 10:00 it's back at receptacle_19. That makes sense for a cooking session.\n\nOK let me finalize. I'll write the JSON now.\n\nOne more thing: the \"chance\" field. I need to use exactly one of: rarely, sometimes, usually, almost_always.\n\nLet me assign:\n- object_15 to receptacle_6 during daytime_use: usually (the resident regularly uses it)\n- object_16 to receptacle_7 during daytime_use: sometimes (less regular)\n- object_4 to receptacle_4 during daytime_use (together leaves): usually\n- object_5 to receptacle_4 during weekend_prep: usually\n- object_21 to receptacle_4 during weekend_prep: usually\n- object_4 to receptacle_19 during weekend_prep (split leaves): sometimes\n\nLet me write the final JSON now. I'll be very careful with IDs.\n\nActually, I realize I should double-check: the distinguishing_check says \"at\" must be \"a receptacle the robot can look into.\" All receptacles in the list should be lookable. And \"receptacle_2 is a location in the tables like any other, and the one destination a look can never confirm.\" So I should avoid using receptacle_2 as a check target. I'm not using it, so that's fine.\n\nLet me also make sure I'm not using any IDs not in the tables. Let me verify:\n- All object IDs: object_2, object_3, object_4, object_5, object_8, object_13, object_14, object_15, object_16, object_17, object_18, object_20, object_21, object_23, object_24, object_25, object_26, object_27, object_28, object_29, object_30, object_31, object_34, object_35 \u2713\n- All receptacle IDs: receptacle_2 through receptacle_23 (specifically: 2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23) \u2713\n- All class IDs: class_2, class_3, class_4, class_7, class_12, class_13, class_14, class_15, class_16, class_18, class_19, class_21, class_22, class_23, class_24, class_25, class_26, class_27, class_28, class_31, class_32 \u2713\n\nNow writing the JSON:",
+   "payload": "{\n  \"assumptions\": {\n    \"weekday_presence\": {\n      \"question\": \"Is the primary resident at home during weekday daytime hours?\",\n      \"values\": {\n        \"commuter\": \"out of the house roughly 08:00 to 17:00 on weekdays\",\n        \"home\": \"at home during weekday daytime, using household objects\"\n      }\n    },\n    \"weekend_kitchen\": {\n      \"question\": \"Is there a distinct weekend morning cooking or prep routine that relocates kitchen objects?\",\n      \"values\": {\n        \"quiet\": \"no special weekend kitchen activity; objects stay in place\",\n        \"prep\": \"weekend morning session roughly 07:00 to 10:00 moves kitchen items to the work counter\"\n      }\n    },\n    \"class_placement\": {\n      \"question\": \"Are objects of the same class kept in one shared location or stored in separate rooms?\",\n      \"values\": {\n        \"split\": \"same-class objects have separate permanent homes in different rooms\",\n        \"together\": \"same-class objects share one home and are brought together during use\"\n      }\n    }\n  },\n  \"leaf_set_rationale\": \"Skipped commuter+prep+together and home+prep+together: under 'together' placement the prep and daytime_use activities both send class_4 objects to the same receptacle, making the prep assumption indistinguishable from the presence assumption for those objects; the two together-leaves (quiet variants) already test the placement dimension.\",\n  \"leaves\": [\n    {\n      \"leaf_id\": \"p_a3f1\",\n      \"assumes\": {\n        \"weekday_presence\": \"commuter\",\n        \"weekend_kitchen\": \"quiet\",\n        \"class_placement\": \"split\"\n      },\n      \"rationale\": \"Single commuter household; no weekend cooking; each class object lives in its own room and stays there all week.\",\n      \"distinguishing_prediction\": \"object_15 sits at its rest receptacle on a weekday afternoon because the resident is away and no weekend prep is needed\",\n      \"distinguishing_check\": {\n        \"target\": \"object_15\",\n        \"at\": \"receptacle_4\",\n        \"days\": \"weekday\",\n        \"hour\": 13.0,\n        \"if_seen\": \"right\"\n      },\n      \"rest\": {\n        \"class:class_2\": \"receptacle_11\",\n        \"class:class_3\": \"receptacle_7\",\n        \"object_4\": \"receptacle_18\",\n        \"object_5\": \"receptacle_19\",\n        \"class:class_7\": \"receptacle_20\",\n        \"class:class_12\": \"receptacle_6\",\n        \"class:class_13\": \"receptacle_12\",\n        \"class:class_14\": \"receptacle_4\",\n        \"class:class_15\": \"receptacle_4\",\n        \"object_17\": \"receptacle_8\",\n        \"object_18\": \"receptacle_13\",\n        \"class:class_18\": \"receptacle_21\",\n        \"class:class_19\": \"receptacle_19\",\n        \"object_23\": \"receptacle_13\",\n        \"object_24\": \"receptacle_12\",\n        \"class:class_22\": \"receptacle_13\",\n        \"class:class_23\": \"receptacle_10\",\n        \"class:class_24\": \"receptacle_6\",\n        \"class:class_25\": \"receptacle_10\",\n        \"class:class_26\": \"receptacle_22\",\n        \"class:class_27\": \"receptacle_16\",\n        \"class:class_28\": \"receptacle_6\",\n        \"class:class_31\": \"receptacle_21\",\n        \"class:class_32\": \"receptacle_11\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"evening_wind_down\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 19.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\n              \"target\": \"class:class_14\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 2.0\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_b7c2\",\n      \"assumes\": {\n        \"weekday_presence\": \"commuter\",\n        \"weekend_kitchen\": \"quiet\",\n        \"class_placement\": \"together\"\n      },\n      \"rationale\": \"Commuter household where same-class items share a single home; the walkthrough caught object_4 in a temporary spot.\",\n      \"distinguishing_prediction\": \"object_4 rests at the shared class_4 receptacle on a weekday afternoon, not in its separate room\",\n      \"distinguishing_check\": {\n        \"target\": \"object_4\",\n        \"at\": \"receptacle_19\",\n        \"days\": \"weekday\",\n        \"hour\": 13.0,\n        \"if_seen\": \"right\"\n      },\n      \"rest\": {\n        \"class:class_2\": \"receptacle_11\",\n        \"class:class_3\": \"receptacle_7\",\n        \"class:class_4\": \"receptacle_19\",\n        \"class:class_7\": \"receptacle_20\",\n        \"class:class_12\": \"receptacle_6\",\n        \"class:class_13\": \"receptacle_12\",\n        \"class:class_14\": \"receptacle_4\",\n        \"class:class_15\": \"receptacle_4\",\n        \"class:class_16\": \"receptacle_13\",\n        \"class:class_18\": \"receptacle_21\",\n        \"class:class_19\": \"receptacle_19\",\n        \"class:class_21\": \"receptacle_13\",\n        \"class:class_22\": \"receptacle_13\",\n        \"class:class_23\": \"receptacle_10\",\n        \"class:class_24\": \"receptacle_6\",\n        \"class:class_25\": \"receptacle_10\",\n        \"class:class_26\": \"receptacle_22\",\n        \"class:class_27\": \"receptacle_16\",\n        \"class:class_28\": \"receptacle_6\",\n        \"class:class_31\": \"receptacle_21\",\n        \"class:class_32\": \"receptacle_11\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"evening_wind_down\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 19.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\n              \"target\": \"class:class_14\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 2.0\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_c9d3\",\n      \"assumes\": {\n        \"weekday_presence\": \"commuter\",\n        \"weekend_kitchen\": \"prep\",\n        \"class_placement\": \"split\"\n      },\n      \"rationale\": \"Commuter who comes home early on weekends to cook; class objects remain in separate rooms.\",\n      \"distinguishing_prediction\": \"object_5 is absent from its rest receptacle on a weekend morning because the prep session relocated it to the counter\",\n      \"distinguishing_check\": {\n        \"target\": \"object_5\",\n        \"at\": \"receptacle_19\",\n        \"days\": \"weekend\",\n        \"hour\": 8.0,\n        \"if_seen\": \"wrong\"\n      },\n      \"rest\": {\n        \"class:class_2\": \"receptacle_11\",\n        \"class:class_3\": \"receptacle_7\",\n        \"object_4\": \"receptacle_18\",\n        \"object_5\": \"receptacle_19\",\n        \"class:class_7\": \"receptacle_20\",\n        \"class:class_12\": \"receptacle_6\",\n        \"class:class_13\": \"receptacle_12\",\n        \"class:class_14\": \"receptacle_4\",\n        \"class:class_15\": \"receptacle_4\",\n        \"object_17\": \"receptacle_8\",\n        \"object_18\": \"receptacle_13\",\n        \"class:class_18\": \"receptacle_21\",\n        \"class:class_19\": \"receptacle_19\",\n        \"object_23\": \"receptacle_13\",\n        \"object_24\": \"receptacle_12\",\n        \"class:class_22\": \"receptacle_13\",\n        \"class:class_23\": \"receptacle_10\",\n        \"class:class_24\": \"receptacle_6\",\n        \"class:class_25\": \"receptacle_10\",\n        \"class:class_26\": \"receptacle_22\",\n        \"class:class_27\": \"receptacle_16\",\n        \"class:class_28\": \"receptacle_6\",\n        \"class:class_31\": \"receptacle_21\",\n        \"class:class_32\": \"receptacle_11\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"weekend_prep\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 7.0,\n          \"duration_h\": 3.0,\n          \"moves\": [\n            {\n              \"target\": \"object_5\",\n              \"to\": \"receptacle_4\",\n              \"chance\": \"usually\",\n              \"duration_h\": 3.0\n            },\n            {\n              \"target\": \"class:class_19\",\n              \"to\": \"receptacle_4\",\n              \"chance\": \"usually\",\n              \"duration_h\": 3.0\n            },\n            {\n              \"target\": \"object_4\",\n              \"to\": \"receptacle_19\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 3.0\n            }\n          ]\n        },\n        {\n          \"name\": \"evening_wind_down\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 19.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\n              \"target\": \"class:class_14\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 2.0\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_d1e4\",\n      \"assumes\": {\n        \"weekday_presence\": \"home\",\n        \"weekend_kitchen\": \"quiet\",\n        \"class_placement\": \"split\"\n      },\n      \"rationale\": \"Resident is home on weekdays and actively uses objects during the day; no special weekend cooking; class objects stay in separate rooms.\",\n      \"distinguishing_prediction\": \"object_15 is not at its rest receptacle on a weekday afternoon because the resident has moved it for daytime use\",\n      \"distinguishing_check\": {\n        \"target\": \"object_15\",\n        \"at\": \"receptacle_4\",\n        \"days\": \"weekday\",\n        \"hour\": 13.0,\n        \"if_seen\": \"wrong\"\n      },\n      \"rest\": {\n        \"class:class_2\": \"receptacle_11\",\n        \"class:class_3\": \"receptacle_7\",\n        \"object_4\": \"receptacle_18\",\n        \"object_5\": \"receptacle_19\",\n        \"class:class_7\": \"receptacle_20\",\n        \"class:class_12\": \"receptacle_6\",\n        \"class:class_13\": \"receptacle_12\",\n        \"class:class_14\": \"receptacle_4\",\n        \"class:class_15\": \"receptacle_4\",\n        \"object_17\": \"receptacle_8\",\n        \"object_18\": \"receptacle_13\",\n        \"class:class_18\": \"receptacle_21\",\n        \"class:class_19\": \"receptacle_19\",\n        \"object_23\": \"receptacle_13\",\n        \"object_24\": \"receptacle_12\",\n        \"class:class_22\": \"receptacle_13\",\n        \"class:class_23\": \"receptacle_10\",\n        \"class:class_24\": \"receptacle_6\",\n        \"class:class_25\": \"receptacle_10\",\n        \"class:class_26\": \"receptacle_22\",\n        \"class:class_27\": \"receptacle_16\",\n        \"class:class_28\": \"receptacle_6\",\n        \"class:class_31\": \"receptacle_21\",\n        \"class:class_32\": \"receptacle_11\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"daytime_use\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 7.0,\n          \"moves\": [\n            {\n              \"target\": \"class:class_14\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"usually\",\n              \"duration_h\": 7.0\n            },\n            {\n              \"target\": \"class:class_15\",\n              \"to\": \"receptacle_7\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 7.0\n            }\n          ]\n        },\n        {\n          \"name\": \"evening_wind_down\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 19.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\n              \"target\": \"class:class_14\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 2.0\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_e5f6\",\n      \"assumes\": {\n        \"weekday_presence\": \"home\",\n        \"weekend_kitchen\": \"quiet\",\n        \"class_placement\": \"together\"\n      },\n      \"rationale\": \"Resident is home on weekdays; same-class items are brought to the work counter together during the day.\",\n      \"distinguishing_prediction\": \"object_4 is at the shared work-counter receptacle on a weekday afternoon, having been brought there alongside its class-mate\",\n      \"distinguishing_check\": {\n        \"target\": \"object_4\",\n        \"at\": \"receptacle_4\",\n        \"days\": \"weekday\",\n        \"hour\": 13.0,\n        \"if_seen\": \"right\"\n      },\n      \"rest\": {\n        \"class:class_2\": \"receptacle_11\",\n        \"class:class_3\": \"receptacle_7\",\n        \"class:class_4\": \"receptacle_19\",\n        \"class:class_7\": \"receptacle_20\",\n        \"class:class_12\": \"receptacle_6\",\n        \"class:class_13\": \"receptacle_12\",\n        \"class:class_14\": \"receptacle_4\",\n        \"class:class_15\": \"receptacle_4\",\n        \"class:class_16\": \"receptacle_13\",\n        \"class:class_18\": \"receptacle_21\",\n        \"class:class_19\": \"receptacle_19\",\n        \"class:class_21\": \"receptacle_13\",\n        \"class:class_22\": \"receptacle_13\",\n        \"class:class_23\": \"receptacle_10\",\n        \"class:class_24\": \"receptacle_6\",\n        \"class:class_25\": \"receptacle_10\",\n        \"class:class_26\": \"receptacle_22\",\n        \"class:class_27\": \"receptacle_16\",\n        \"class:class_28\": \"receptacle_6\",\n        \"class:class_31\": \"receptacle_21\",\n        \"class:class_32\": \"receptacle_11\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"daytime_use\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 7.0,\n          \"moves\": [\n            {\n              \"target\": \"class:class_14\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"usually\",\n              \"duration_h\": 7.0\n            },\n            {\n              \"target\": \"class:class_15\",\n              \"to\": \"receptacle_7\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 7.0\n            },\n            {\n              \"target\": \"class:class_4\",\n              \"to\": \"receptacle_4\",\n              \"chance\": \"usually\",\n              \"duration_h\": 7.0\n            },\n            {\n              \"target\": \"class:class_16\",\n              \"to\": \"receptacle_8\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 7.0\n            }\n          ]\n        },\n        {\n          \"name\": \"evening_wind_down\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 19.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\n              \"target\": \"class:class_14\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 2.0\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"leaf_id\": \"p_f8a7\",\n      \"assumes\": {\n        \"weekday_presence\": \"home\",\n        \"weekend_kitchen\": \"prep\",\n        \"class_placement\": \"split\"\n      },\n      \"rationale\": \"Resident is home all week and also runs a weekend cooking session; class objects remain in their separate rooms.\",\n      \"distinguishing_prediction\": \"object_5 is found at the work-counter receptacle on a weekend morning because the prep session brought it there from its separate room\",\n      \"distinguishing_check\": {\n        \"target\": \"object_5\",\n        \"at\": \"receptacle_4\",\n        \"days\": \"weekend\",\n        \"hour\": 8.0,\n        \"if_seen\": \"right\"\n      },\n      \"rest\": {\n        \"class:class_2\": \"receptacle_11\",\n        \"class:class_3\": \"receptacle_7\",\n        \"object_4\": \"receptacle_18\",\n        \"object_5\": \"receptacle_19\",\n        \"class:class_7\": \"receptacle_20\",\n        \"class:class_12\": \"receptacle_6\",\n        \"class:class_13\": \"receptacle_12\",\n        \"class:class_14\": \"receptacle_4\",\n        \"class:class_15\": \"receptacle_4\",\n        \"object_17\": \"receptacle_8\",\n        \"object_18\": \"receptacle_13\",\n        \"class:class_18\": \"receptacle_21\",\n        \"class:class_19\": \"receptacle_19\",\n        \"object_23\": \"receptacle_13\",\n        \"object_24\": \"receptacle_12\",\n        \"class:class_22\": \"receptacle_13\",\n        \"class:class_23\": \"receptacle_10\",\n        \"class:class_24\": \"receptacle_6\",\n        \"class:class_25\": \"receptacle_10\",\n        \"class:class_26\": \"receptacle_22\",\n        \"class:class_27\": \"receptacle_16\",\n        \"class:class_28\": \"receptacle_6\",\n        \"class:class_31\": \"receptacle_21\",\n        \"class:class_32\": \"receptacle_11\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"daytime_use\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 7.0,\n          \"moves\": [\n            {\n              \"target\": \"class:class_14\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"usually\",\n              \"duration_h\": 7.0\n            },\n            {\n              \"target\": \"class:class_15\",\n              \"to\": \"receptacle_7\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 7.0\n            }\n          ]\n        },\n        {\n          \"name\": \"weekend_prep\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 7.0,\n          \"duration_h\": 3.0,\n          \"moves\": [\n            {\n              \"target\": \"object_5\",\n              \"to\": \"receptacle_4\",\n              \"chance\": \"usually\",\n              \"duration_h\": 3.0\n            },\n            {\n              \"target\": \"class:class_19\",\n              \"to\": \"receptacle_4\",\n              \"chance\": \"usually\",\n              \"duration_h\": 3.0\n            },\n            {\n              \"target\": \"object_4\",\n              \"to\": \"receptacle_19\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 3.0\n            }\n          ]\n        },\n        {\n          \"name\": \"evening_wind_down\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 19.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\n              \"target\": \"class:class_14\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 2.0\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}",
+   "n_leaves": 6,
+   "generation_seconds": 638.05,
+   "completion_tokens": 17879,
+   "prompt_tokens": 2720,
+   "finish_reason": "stop",
+   "think_closed": true,
+   "cached": false
+  }
+ ],
+ "substitutions": [],
+ "dropped": [],
+ "graph": {
+  "assumptions": {
+   "weekday_presence": {
+    "question": "Is the primary resident at home during weekday daytime hours?",
+    "values": {
+     "commuter": "out of the house roughly 08:00 to 17:00 on weekdays",
+     "home": "at home during weekday daytime, using household objects"
+    }
+   },
+   "weekend_kitchen": {
+    "question": "Is there a distinct weekend morning cooking or prep routine that relocates kitchen objects?",
+    "values": {
+     "quiet": "no special weekend kitchen activity; objects stay in place",
+     "prep": "weekend morning session roughly 07:00 to 10:00 moves kitchen items to the work counter"
+    }
+   },
+   "class_placement": {
+    "question": "Are objects of the same class kept in one shared location or stored in separate rooms?",
+    "values": {
+     "split": "same-class objects have separate permanent homes in different rooms",
+     "together": "same-class objects share one home and are brought together during use"
+    }
+   }
+  },
+  "leaves": [
+   {
+    "leaf_id": "p_a3f1",
+    "assumes": {
+     "weekday_presence": "commuter",
+     "weekend_kitchen": "quiet",
+     "class_placement": "split"
+    },
+    "rationale": "Single commuter household; no weekend cooking; each class object lives in its own room and stays there all week.",
+    "distinguishing_prediction": "object_15 sits at its rest receptacle on a weekday afternoon because the resident is away and no weekend prep is needed",
+    "distinguishing_check": {
+     "target": "makeup_kit_mara",
+     "at": "bathroom_shelf_ba1",
+     "days": "weekday",
+     "hour": 13.0,
+     "if_seen": "right"
+    },
+    "rest": {
+     "class:blanket": "couch_l1",
+     "class:book": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "class:hairbrush": "nightstand_b1",
+     "class:laundry_basket": "bedroom_floor_b1",
+     "class:lunchbox": "counter_k1",
+     "class:makeup_kit": "bathroom_shelf_ba1",
+     "class:medication_bottle": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "class:pan": "sink_k1",
+     "class:pen": "kitchen_table_k1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "class:pot": "cupboard_k1",
+     "class:remote": "coffee_table_l1",
+     "class:suitcase": "bedroom_floor_b1",
+     "class:tablet": "coffee_table_l1",
+     "class:towel": "towel_rack_ba1",
+     "class:umbrella": "entry_floor_e1",
+     "class:vacuum_cleaner": "bedroom_floor_b1",
+     "class:watering_can": "sink_k1",
+     "class:yoga_mat": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "evening_wind_down",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 19.0,
+      "duration_h": 2.0,
+      "moves": [
+       {
+        "target": "class:makeup_kit",
+        "to": "bedroom_floor_b1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_a3f1"
+   },
+   {
+    "leaf_id": "p_b7c2",
+    "assumes": {
+     "weekday_presence": "commuter",
+     "weekend_kitchen": "quiet",
+     "class_placement": "together"
+    },
+    "rationale": "Commuter household where same-class items share a single home; the walkthrough caught object_4 in a temporary spot.",
+    "distinguishing_prediction": "object_4 rests at the shared class_4 receptacle on a weekday afternoon, not in its separate room",
+    "distinguishing_check": {
+     "target": "bowl_shared_1",
+     "at": "kitchen_table_k1",
+     "days": "weekday",
+     "hour": 13.0,
+     "if_seen": "right"
+    },
+    "rest": {
+     "class:blanket": "couch_l1",
+     "class:book": "bookshelf_l1",
+     "class:bowl": "kitchen_table_k1",
+     "class:hairbrush": "nightstand_b1",
+     "class:laundry_basket": "bedroom_floor_b1",
+     "class:lunchbox": "counter_k1",
+     "class:makeup_kit": "bathroom_shelf_ba1",
+     "class:medication_bottle": "bathroom_shelf_ba1",
+     "class:mug": "cupboard_k1",
+     "class:pan": "sink_k1",
+     "class:pen": "kitchen_table_k1",
+     "class:plate": "cupboard_k1",
+     "class:pot": "cupboard_k1",
+     "class:remote": "coffee_table_l1",
+     "class:suitcase": "bedroom_floor_b1",
+     "class:tablet": "coffee_table_l1",
+     "class:towel": "towel_rack_ba1",
+     "class:umbrella": "entry_floor_e1",
+     "class:vacuum_cleaner": "bedroom_floor_b1",
+     "class:watering_can": "sink_k1",
+     "class:yoga_mat": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "evening_wind_down",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 19.0,
+      "duration_h": 2.0,
+      "moves": [
+       {
+        "target": "class:makeup_kit",
+        "to": "bedroom_floor_b1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_b7c2"
+   },
+   {
+    "leaf_id": "p_c9d3",
+    "assumes": {
+     "weekday_presence": "commuter",
+     "weekend_kitchen": "prep",
+     "class_placement": "split"
+    },
+    "rationale": "Commuter who comes home early on weekends to cook; class objects remain in separate rooms.",
+    "distinguishing_prediction": "object_5 is absent from its rest receptacle on a weekend morning because the prep session relocated it to the counter",
+    "distinguishing_check": {
+     "target": "bowl_shared_2",
+     "at": "kitchen_table_k1",
+     "days": "weekend",
+     "hour": 8.0,
+     "if_seen": "wrong"
+    },
+    "rest": {
+     "class:blanket": "couch_l1",
+     "class:book": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "class:hairbrush": "nightstand_b1",
+     "class:laundry_basket": "bedroom_floor_b1",
+     "class:lunchbox": "counter_k1",
+     "class:makeup_kit": "bathroom_shelf_ba1",
+     "class:medication_bottle": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "class:pan": "sink_k1",
+     "class:pen": "kitchen_table_k1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "class:pot": "cupboard_k1",
+     "class:remote": "coffee_table_l1",
+     "class:suitcase": "bedroom_floor_b1",
+     "class:tablet": "coffee_table_l1",
+     "class:towel": "towel_rack_ba1",
+     "class:umbrella": "entry_floor_e1",
+     "class:vacuum_cleaner": "bedroom_floor_b1",
+     "class:watering_can": "sink_k1",
+     "class:yoga_mat": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "weekend_prep",
+      "days": "weekend",
+      "frequency_per_week": 2,
+      "start_hour": 7.0,
+      "duration_h": 3.0,
+      "moves": [
+       {
+        "target": "bowl_shared_2",
+        "to": "bathroom_shelf_ba1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "class:pen",
+        "to": "bathroom_shelf_ba1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "bowl_shared_1",
+        "to": "kitchen_table_k1",
+        "chance": "sometimes",
+        "duration_h": 3.0
+       }
+      ]
+     },
+     {
+      "name": "evening_wind_down",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 19.0,
+      "duration_h": 2.0,
+      "moves": [
+       {
+        "target": "class:makeup_kit",
+        "to": "bedroom_floor_b1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_c9d3"
+   },
+   {
+    "leaf_id": "p_d1e4",
+    "assumes": {
+     "weekday_presence": "home",
+     "weekend_kitchen": "quiet",
+     "class_placement": "split"
+    },
+    "rationale": "Resident is home on weekdays and actively uses objects during the day; no special weekend cooking; class objects stay in separate rooms.",
+    "distinguishing_prediction": "object_15 is not at its rest receptacle on a weekday afternoon because the resident has moved it for daytime use",
+    "distinguishing_check": {
+     "target": "makeup_kit_mara",
+     "at": "bathroom_shelf_ba1",
+     "days": "weekday",
+     "hour": 13.0,
+     "if_seen": "wrong"
+    },
+    "rest": {
+     "class:blanket": "couch_l1",
+     "class:book": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "class:hairbrush": "nightstand_b1",
+     "class:laundry_basket": "bedroom_floor_b1",
+     "class:lunchbox": "counter_k1",
+     "class:makeup_kit": "bathroom_shelf_ba1",
+     "class:medication_bottle": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "class:pan": "sink_k1",
+     "class:pen": "kitchen_table_k1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "class:pot": "cupboard_k1",
+     "class:remote": "coffee_table_l1",
+     "class:suitcase": "bedroom_floor_b1",
+     "class:tablet": "coffee_table_l1",
+     "class:towel": "towel_rack_ba1",
+     "class:umbrella": "entry_floor_e1",
+     "class:vacuum_cleaner": "bedroom_floor_b1",
+     "class:watering_can": "sink_k1",
+     "class:yoga_mat": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "daytime_use",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 9.0,
+      "duration_h": 7.0,
+      "moves": [
+       {
+        "target": "class:makeup_kit",
+        "to": "bedroom_floor_b1",
+        "chance": "usually",
+        "duration_h": 7.0
+       },
+       {
+        "target": "class:medication_bottle",
+        "to": "bookshelf_l1",
+        "chance": "sometimes",
+        "duration_h": 7.0
+       }
+      ]
+     },
+     {
+      "name": "evening_wind_down",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 19.0,
+      "duration_h": 2.0,
+      "moves": [
+       {
+        "target": "class:makeup_kit",
+        "to": "bedroom_floor_b1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_d1e4"
+   },
+   {
+    "leaf_id": "p_e5f6",
+    "assumes": {
+     "weekday_presence": "home",
+     "weekend_kitchen": "quiet",
+     "class_placement": "together"
+    },
+    "rationale": "Resident is home on weekdays; same-class items are brought to the work counter together during the day.",
+    "distinguishing_prediction": "object_4 is at the shared work-counter receptacle on a weekday afternoon, having been brought there alongside its class-mate",
+    "distinguishing_check": {
+     "target": "bowl_shared_1",
+     "at": "bathroom_shelf_ba1",
+     "days": "weekday",
+     "hour": 13.0,
+     "if_seen": "right"
+    },
+    "rest": {
+     "class:blanket": "couch_l1",
+     "class:book": "bookshelf_l1",
+     "class:bowl": "kitchen_table_k1",
+     "class:hairbrush": "nightstand_b1",
+     "class:laundry_basket": "bedroom_floor_b1",
+     "class:lunchbox": "counter_k1",
+     "class:makeup_kit": "bathroom_shelf_ba1",
+     "class:medication_bottle": "bathroom_shelf_ba1",
+     "class:mug": "cupboard_k1",
+     "class:pan": "sink_k1",
+     "class:pen": "kitchen_table_k1",
+     "class:plate": "cupboard_k1",
+     "class:pot": "cupboard_k1",
+     "class:remote": "coffee_table_l1",
+     "class:suitcase": "bedroom_floor_b1",
+     "class:tablet": "coffee_table_l1",
+     "class:towel": "towel_rack_ba1",
+     "class:umbrella": "entry_floor_e1",
+     "class:vacuum_cleaner": "bedroom_floor_b1",
+     "class:watering_can": "sink_k1",
+     "class:yoga_mat": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "daytime_use",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 9.0,
+      "duration_h": 7.0,
+      "moves": [
+       {
+        "target": "class:makeup_kit",
+        "to": "bedroom_floor_b1",
+        "chance": "usually",
+        "duration_h": 7.0
+       },
+       {
+        "target": "class:medication_bottle",
+        "to": "bookshelf_l1",
+        "chance": "sometimes",
+        "duration_h": 7.0
+       },
+       {
+        "target": "class:bowl",
+        "to": "bathroom_shelf_ba1",
+        "chance": "usually",
+        "duration_h": 7.0
+       },
+       {
+        "target": "class:mug",
+        "to": "chair_k1",
+        "chance": "sometimes",
+        "duration_h": 7.0
+       }
+      ]
+     },
+     {
+      "name": "evening_wind_down",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 19.0,
+      "duration_h": 2.0,
+      "moves": [
+       {
+        "target": "class:makeup_kit",
+        "to": "bedroom_floor_b1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_e5f6"
+   },
+   {
+    "leaf_id": "p_f8a7",
+    "assumes": {
+     "weekday_presence": "home",
+     "weekend_kitchen": "prep",
+     "class_placement": "split"
+    },
+    "rationale": "Resident is home all week and also runs a weekend cooking session; class objects remain in their separate rooms.",
+    "distinguishing_prediction": "object_5 is found at the work-counter receptacle on a weekend morning because the prep session brought it there from its separate room",
+    "distinguishing_check": {
+     "target": "bowl_shared_2",
+     "at": "bathroom_shelf_ba1",
+     "days": "weekend",
+     "hour": 8.0,
+     "if_seen": "right"
+    },
+    "rest": {
+     "class:blanket": "couch_l1",
+     "class:book": "bookshelf_l1",
+     "bowl_shared_1": "entry_table_e1",
+     "bowl_shared_2": "kitchen_table_k1",
+     "class:hairbrush": "nightstand_b1",
+     "class:laundry_basket": "bedroom_floor_b1",
+     "class:lunchbox": "counter_k1",
+     "class:makeup_kit": "bathroom_shelf_ba1",
+     "class:medication_bottle": "bathroom_shelf_ba1",
+     "mug_mara": "chair_k1",
+     "mug_shared_1": "cupboard_k1",
+     "class:pan": "sink_k1",
+     "class:pen": "kitchen_table_k1",
+     "plate_shared_1": "cupboard_k1",
+     "plate_shared_2": "counter_k1",
+     "class:pot": "cupboard_k1",
+     "class:remote": "coffee_table_l1",
+     "class:suitcase": "bedroom_floor_b1",
+     "class:tablet": "coffee_table_l1",
+     "class:towel": "towel_rack_ba1",
+     "class:umbrella": "entry_floor_e1",
+     "class:vacuum_cleaner": "bedroom_floor_b1",
+     "class:watering_can": "sink_k1",
+     "class:yoga_mat": "couch_l1"
+    },
+    "activities": [
+     {
+      "name": "daytime_use",
+      "days": "weekday",
+      "frequency_per_week": 5,
+      "start_hour": 9.0,
+      "duration_h": 7.0,
+      "moves": [
+       {
+        "target": "class:makeup_kit",
+        "to": "bedroom_floor_b1",
+        "chance": "usually",
+        "duration_h": 7.0
+       },
+       {
+        "target": "class:medication_bottle",
+        "to": "bookshelf_l1",
+        "chance": "sometimes",
+        "duration_h": 7.0
+       }
+      ]
+     },
+     {
+      "name": "weekend_prep",
+      "days": "weekend",
+      "frequency_per_week": 2,
+      "start_hour": 7.0,
+      "duration_h": 3.0,
+      "moves": [
+       {
+        "target": "bowl_shared_2",
+        "to": "bathroom_shelf_ba1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "class:pen",
+        "to": "bathroom_shelf_ba1",
+        "chance": "usually",
+        "duration_h": 3.0
+       },
+       {
+        "target": "bowl_shared_1",
+        "to": "kitchen_table_k1",
+        "chance": "sometimes",
+        "duration_h": 3.0
+       }
+      ]
+     },
+     {
+      "name": "evening_wind_down",
+      "days": "both",
+      "frequency_per_week": 7,
+      "start_hour": 19.0,
+      "duration_h": 2.0,
+      "moves": [
+       {
+        "target": "class:makeup_kit",
+        "to": "bedroom_floor_b1",
+        "chance": "sometimes",
+        "duration_h": 2.0
+       }
+      ]
+     }
+    ],
+    "hypothesis_id": "p_f8a7"
+   }
+  ],
+  "vocabulary": {
+   "blanket_mara": "blanket",
+   "book_mara": "book",
+   "bowl_shared_1": "bowl",
+   "bowl_shared_2": "bowl",
+   "hairbrush_mara": "hairbrush",
+   "laundry_basket_mara": "laundry_basket",
+   "lunchbox_mara": "lunchbox",
+   "makeup_kit_mara": "makeup_kit",
+   "medication_bottle_mara": "medication_bottle",
+   "mug_mara": "mug",
+   "mug_shared_1": "mug",
+   "pan_shared_1": "pan",
+   "pen_mara": "pen",
+   "plate_shared_1": "plate",
+   "plate_shared_2": "plate",
+   "pot_shared_1": "pot",
+   "remote_shared_1": "remote",
+   "suitcase_mara": "suitcase",
+   "tablet_mara": "tablet",
+   "towel_mara": "towel",
+   "umbrella_mara": "umbrella",
+   "vacuum_cleaner_shared_1": "vacuum_cleaner",
+   "watering_can_mara": "watering_can",
+   "yoga_mat_mara": "yoga_mat"
+  },
+  "leaf_set_rationale": "Skipped commuter+prep+together and home+prep+together: under 'together' placement the prep and daytime_use activities both send class_4 objects to the same receptacle, making the prep assumption indistinguishable from the presence assumption for those objects; the two together-leaves (quiet variants) already test the placement dimension."
+ },
+ "vocabulary": {
+  "blanket_mara": "blanket",
+  "book_mara": "book",
+  "bowl_shared_1": "bowl",
+  "bowl_shared_2": "bowl",
+  "hairbrush_mara": "hairbrush",
+  "laundry_basket_mara": "laundry_basket",
+  "lunchbox_mara": "lunchbox",
+  "makeup_kit_mara": "makeup_kit",
+  "medication_bottle_mara": "medication_bottle",
+  "mug_mara": "mug",
+  "mug_shared_1": "mug",
+  "pan_shared_1": "pan",
+  "pen_mara": "pen",
+  "plate_shared_1": "plate",
+  "plate_shared_2": "plate",
+  "pot_shared_1": "pot",
+  "remote_shared_1": "remote",
+  "suitcase_mara": "suitcase",
+  "tablet_mara": "tablet",
+  "towel_mara": "towel",
+  "umbrella_mara": "umbrella",
+  "vacuum_cleaner_shared_1": "vacuum_cleaner",
+  "watering_can_mara": "watering_can",
+  "yoga_mat_mara": "yoga_mat"
+ },
+ "problems": [],
+ "generation_seconds": 638.05,
+ "seconds_per_hypothesis": 106.34,
+ "hypotheses": [
+  {
+   "leaf_id": "p_a3f1",
+   "assumes": {
+    "weekday_presence": "commuter",
+    "weekend_kitchen": "quiet",
+    "class_placement": "split"
+   },
+   "rationale": "Single commuter household; no weekend cooking; each class object lives in its own room and stays there all week.",
+   "distinguishing_prediction": "object_15 sits at its rest receptacle on a weekday afternoon because the resident is away and no weekend prep is needed",
+   "distinguishing_check": {
+    "target": "makeup_kit_mara",
+    "at": "bathroom_shelf_ba1",
+    "days": "weekday",
+    "hour": 13.0,
+    "if_seen": "right"
+   },
+   "rest": {
+    "class:blanket": "couch_l1",
+    "class:book": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "class:hairbrush": "nightstand_b1",
+    "class:laundry_basket": "bedroom_floor_b1",
+    "class:lunchbox": "counter_k1",
+    "class:makeup_kit": "bathroom_shelf_ba1",
+    "class:medication_bottle": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "class:pan": "sink_k1",
+    "class:pen": "kitchen_table_k1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "class:pot": "cupboard_k1",
+    "class:remote": "coffee_table_l1",
+    "class:suitcase": "bedroom_floor_b1",
+    "class:tablet": "coffee_table_l1",
+    "class:towel": "towel_rack_ba1",
+    "class:umbrella": "entry_floor_e1",
+    "class:vacuum_cleaner": "bedroom_floor_b1",
+    "class:watering_can": "sink_k1",
+    "class:yoga_mat": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "evening_wind_down",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "class:makeup_kit",
+       "to": "bedroom_floor_b1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_a3f1"
+  },
+  {
+   "leaf_id": "p_b7c2",
+   "assumes": {
+    "weekday_presence": "commuter",
+    "weekend_kitchen": "quiet",
+    "class_placement": "together"
+   },
+   "rationale": "Commuter household where same-class items share a single home; the walkthrough caught object_4 in a temporary spot.",
+   "distinguishing_prediction": "object_4 rests at the shared class_4 receptacle on a weekday afternoon, not in its separate room",
+   "distinguishing_check": {
+    "target": "bowl_shared_1",
+    "at": "kitchen_table_k1",
+    "days": "weekday",
+    "hour": 13.0,
+    "if_seen": "right"
+   },
+   "rest": {
+    "class:blanket": "couch_l1",
+    "class:book": "bookshelf_l1",
+    "class:bowl": "kitchen_table_k1",
+    "class:hairbrush": "nightstand_b1",
+    "class:laundry_basket": "bedroom_floor_b1",
+    "class:lunchbox": "counter_k1",
+    "class:makeup_kit": "bathroom_shelf_ba1",
+    "class:medication_bottle": "bathroom_shelf_ba1",
+    "class:mug": "cupboard_k1",
+    "class:pan": "sink_k1",
+    "class:pen": "kitchen_table_k1",
+    "class:plate": "cupboard_k1",
+    "class:pot": "cupboard_k1",
+    "class:remote": "coffee_table_l1",
+    "class:suitcase": "bedroom_floor_b1",
+    "class:tablet": "coffee_table_l1",
+    "class:towel": "towel_rack_ba1",
+    "class:umbrella": "entry_floor_e1",
+    "class:vacuum_cleaner": "bedroom_floor_b1",
+    "class:watering_can": "sink_k1",
+    "class:yoga_mat": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "evening_wind_down",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "class:makeup_kit",
+       "to": "bedroom_floor_b1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_b7c2"
+  },
+  {
+   "leaf_id": "p_c9d3",
+   "assumes": {
+    "weekday_presence": "commuter",
+    "weekend_kitchen": "prep",
+    "class_placement": "split"
+   },
+   "rationale": "Commuter who comes home early on weekends to cook; class objects remain in separate rooms.",
+   "distinguishing_prediction": "object_5 is absent from its rest receptacle on a weekend morning because the prep session relocated it to the counter",
+   "distinguishing_check": {
+    "target": "bowl_shared_2",
+    "at": "kitchen_table_k1",
+    "days": "weekend",
+    "hour": 8.0,
+    "if_seen": "wrong"
+   },
+   "rest": {
+    "class:blanket": "couch_l1",
+    "class:book": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "class:hairbrush": "nightstand_b1",
+    "class:laundry_basket": "bedroom_floor_b1",
+    "class:lunchbox": "counter_k1",
+    "class:makeup_kit": "bathroom_shelf_ba1",
+    "class:medication_bottle": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "class:pan": "sink_k1",
+    "class:pen": "kitchen_table_k1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "class:pot": "cupboard_k1",
+    "class:remote": "coffee_table_l1",
+    "class:suitcase": "bedroom_floor_b1",
+    "class:tablet": "coffee_table_l1",
+    "class:towel": "towel_rack_ba1",
+    "class:umbrella": "entry_floor_e1",
+    "class:vacuum_cleaner": "bedroom_floor_b1",
+    "class:watering_can": "sink_k1",
+    "class:yoga_mat": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "weekend_prep",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 7.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "bowl_shared_2",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "class:pen",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "bowl_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "duration_h": 3.0
+      }
+     ]
+    },
+    {
+     "name": "evening_wind_down",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "class:makeup_kit",
+       "to": "bedroom_floor_b1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_c9d3"
+  },
+  {
+   "leaf_id": "p_d1e4",
+   "assumes": {
+    "weekday_presence": "home",
+    "weekend_kitchen": "quiet",
+    "class_placement": "split"
+   },
+   "rationale": "Resident is home on weekdays and actively uses objects during the day; no special weekend cooking; class objects stay in separate rooms.",
+   "distinguishing_prediction": "object_15 is not at its rest receptacle on a weekday afternoon because the resident has moved it for daytime use",
+   "distinguishing_check": {
+    "target": "makeup_kit_mara",
+    "at": "bathroom_shelf_ba1",
+    "days": "weekday",
+    "hour": 13.0,
+    "if_seen": "wrong"
+   },
+   "rest": {
+    "class:blanket": "couch_l1",
+    "class:book": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "class:hairbrush": "nightstand_b1",
+    "class:laundry_basket": "bedroom_floor_b1",
+    "class:lunchbox": "counter_k1",
+    "class:makeup_kit": "bathroom_shelf_ba1",
+    "class:medication_bottle": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "class:pan": "sink_k1",
+    "class:pen": "kitchen_table_k1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "class:pot": "cupboard_k1",
+    "class:remote": "coffee_table_l1",
+    "class:suitcase": "bedroom_floor_b1",
+    "class:tablet": "coffee_table_l1",
+    "class:towel": "towel_rack_ba1",
+    "class:umbrella": "entry_floor_e1",
+    "class:vacuum_cleaner": "bedroom_floor_b1",
+    "class:watering_can": "sink_k1",
+    "class:yoga_mat": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "daytime_use",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 7.0,
+     "moves": [
+      {
+       "target": "class:makeup_kit",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "duration_h": 7.0
+      },
+      {
+       "target": "class:medication_bottle",
+       "to": "bookshelf_l1",
+       "chance": "sometimes",
+       "duration_h": 7.0
+      }
+     ]
+    },
+    {
+     "name": "evening_wind_down",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "class:makeup_kit",
+       "to": "bedroom_floor_b1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_d1e4"
+  },
+  {
+   "leaf_id": "p_e5f6",
+   "assumes": {
+    "weekday_presence": "home",
+    "weekend_kitchen": "quiet",
+    "class_placement": "together"
+   },
+   "rationale": "Resident is home on weekdays; same-class items are brought to the work counter together during the day.",
+   "distinguishing_prediction": "object_4 is at the shared work-counter receptacle on a weekday afternoon, having been brought there alongside its class-mate",
+   "distinguishing_check": {
+    "target": "bowl_shared_1",
+    "at": "bathroom_shelf_ba1",
+    "days": "weekday",
+    "hour": 13.0,
+    "if_seen": "right"
+   },
+   "rest": {
+    "class:blanket": "couch_l1",
+    "class:book": "bookshelf_l1",
+    "class:bowl": "kitchen_table_k1",
+    "class:hairbrush": "nightstand_b1",
+    "class:laundry_basket": "bedroom_floor_b1",
+    "class:lunchbox": "counter_k1",
+    "class:makeup_kit": "bathroom_shelf_ba1",
+    "class:medication_bottle": "bathroom_shelf_ba1",
+    "class:mug": "cupboard_k1",
+    "class:pan": "sink_k1",
+    "class:pen": "kitchen_table_k1",
+    "class:plate": "cupboard_k1",
+    "class:pot": "cupboard_k1",
+    "class:remote": "coffee_table_l1",
+    "class:suitcase": "bedroom_floor_b1",
+    "class:tablet": "coffee_table_l1",
+    "class:towel": "towel_rack_ba1",
+    "class:umbrella": "entry_floor_e1",
+    "class:vacuum_cleaner": "bedroom_floor_b1",
+    "class:watering_can": "sink_k1",
+    "class:yoga_mat": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "daytime_use",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 7.0,
+     "moves": [
+      {
+       "target": "class:makeup_kit",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "duration_h": 7.0
+      },
+      {
+       "target": "class:medication_bottle",
+       "to": "bookshelf_l1",
+       "chance": "sometimes",
+       "duration_h": 7.0
+      },
+      {
+       "target": "class:bowl",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually",
+       "duration_h": 7.0
+      },
+      {
+       "target": "class:mug",
+       "to": "chair_k1",
+       "chance": "sometimes",
+       "duration_h": 7.0
+      }
+     ]
+    },
+    {
+     "name": "evening_wind_down",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "class:makeup_kit",
+       "to": "bedroom_floor_b1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_e5f6"
+  },
+  {
+   "leaf_id": "p_f8a7",
+   "assumes": {
+    "weekday_presence": "home",
+    "weekend_kitchen": "prep",
+    "class_placement": "split"
+   },
+   "rationale": "Resident is home all week and also runs a weekend cooking session; class objects remain in their separate rooms.",
+   "distinguishing_prediction": "object_5 is found at the work-counter receptacle on a weekend morning because the prep session brought it there from its separate room",
+   "distinguishing_check": {
+    "target": "bowl_shared_2",
+    "at": "bathroom_shelf_ba1",
+    "days": "weekend",
+    "hour": 8.0,
+    "if_seen": "right"
+   },
+   "rest": {
+    "class:blanket": "couch_l1",
+    "class:book": "bookshelf_l1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "class:hairbrush": "nightstand_b1",
+    "class:laundry_basket": "bedroom_floor_b1",
+    "class:lunchbox": "counter_k1",
+    "class:makeup_kit": "bathroom_shelf_ba1",
+    "class:medication_bottle": "bathroom_shelf_ba1",
+    "mug_mara": "chair_k1",
+    "mug_shared_1": "cupboard_k1",
+    "class:pan": "sink_k1",
+    "class:pen": "kitchen_table_k1",
+    "plate_shared_1": "cupboard_k1",
+    "plate_shared_2": "counter_k1",
+    "class:pot": "cupboard_k1",
+    "class:remote": "coffee_table_l1",
+    "class:suitcase": "bedroom_floor_b1",
+    "class:tablet": "coffee_table_l1",
+    "class:towel": "towel_rack_ba1",
+    "class:umbrella": "entry_floor_e1",
+    "class:vacuum_cleaner": "bedroom_floor_b1",
+    "class:watering_can": "sink_k1",
+    "class:yoga_mat": "couch_l1"
+   },
+   "activities": [
+    {
+     "name": "daytime_use",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 7.0,
+     "moves": [
+      {
+       "target": "class:makeup_kit",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "duration_h": 7.0
+      },
+      {
+       "target": "class:medication_bottle",
+       "to": "bookshelf_l1",
+       "chance": "sometimes",
+       "duration_h": 7.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_prep",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 7.0,
+     "duration_h": 3.0,
+     "moves": [
+      {
+       "target": "bowl_shared_2",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "class:pen",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually",
+       "duration_h": 3.0
+      },
+      {
+       "target": "bowl_shared_1",
+       "to": "kitchen_table_k1",
+       "chance": "sometimes",
+       "duration_h": 3.0
+      }
+     ]
+    },
+    {
+     "name": "evening_wind_down",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 19.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "class:makeup_kit",
+       "to": "bedroom_floor_b1",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    }
+   ],
+   "hypothesis_id": "p_f8a7"
+  }
+ ]
+}

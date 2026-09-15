@@ -47,8 +47,9 @@ def test_room_map_partitions_receptacles(household):
               for r in room_map.by_room[room]]
     # every receptacle in exactly one physical room, none invented
     assert sorted(mapped) == sorted(declared)
-    assert room_map.by_room[PERSON_CHECK_ROOM] == ("ON_PERSON",)
-    assert PERSON_CHECK_ROOM not in room_map.physical_rooms
+    # ON_PERSON is unsensable: no room holds it, so no patrol reaches it.
+    assert PERSON_CHECK_ROOM not in room_map.by_room
+    assert "ON_PERSON" not in room_map.room_by_receptacle
 
 
 def test_room_map_requires_a_room_field(tmp_path):

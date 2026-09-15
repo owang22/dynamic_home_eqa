@@ -1,0 +1,575 @@
+{
+ "household": "hh_001",
+ "condition": "anonymized",
+ "prompt": "A home robot has just been installed. Its only observation so far is one walkthrough of the home at 15:08 on day 0, a Monday. Below are the home's receptacles and the objects the walkthrough saw, each with where it was. The home may hold objects the walkthrough did not see; the robot knows nothing about them yet, and you cannot name them.\n\nRECEPTACLES:\n  receptacle_5\n  receptacle_20\n  receptacle_14\n  receptacle_6\n  receptacle_11\n  receptacle_10\n  receptacle_23\n  receptacle_7\n  receptacle_3\n  receptacle_12\n  receptacle_21\n  receptacle_13\n  receptacle_15\n  receptacle_19\n  receptacle_8\n  receptacle_9\n  receptacle_4\n  receptacle_22\n  receptacle_18\n  receptacle_17\n  receptacle_16\n  receptacle_2\n\nOBJECTS the robot has seen, with where the tour saw each one:\n  object_2  (class: class_2)  at receptacle_11\n  object_3  (class: class_3)  at receptacle_7\n  object_4  (class: class_4)  at receptacle_18\n  object_5  (class: class_4)  at receptacle_19\n  object_8  (class: class_7)  at receptacle_20\n  object_13  (class: class_12)  at receptacle_6\n  object_14  (class: class_13)  at receptacle_12\n  object_15  (class: class_14)  at receptacle_4\n  object_16  (class: class_15)  at receptacle_4\n  object_17  (class: class_16)  at receptacle_8\n  object_18  (class: class_16)  at receptacle_13\n  object_20  (class: class_18)  at receptacle_21\n  object_21  (class: class_19)  at receptacle_19\n  object_23  (class: class_21)  at receptacle_13\n  object_24  (class: class_21)  at receptacle_12\n  object_25  (class: class_22)  at receptacle_13\n  object_26  (class: class_23)  at receptacle_10\n  object_27  (class: class_24)  at receptacle_6\n  object_28  (class: class_25)  at receptacle_10\n  object_29  (class: class_26)  at receptacle_22\n  object_30  (class: class_27)  at receptacle_16\n  object_31  (class: class_28)  at receptacle_6\n  object_34  (class: class_31)  at receptacle_21\n  object_35  (class: class_32)  at receptacle_11\n\nCLASSES (usable as `class:<name>` targets): class_2, class_3, class_4, class_7, class_12, class_13, class_14, class_15, class_16, class_18, class_19, class_21, class_22, class_23, class_24, class_25, class_26, class_27, class_28, class_31, class_32\n\nWrite 5 competing hypotheses about this home's weekly routine. Each hypothesis is a set of ACTIVITIES: a name, which days (weekday, weekend, or both), roughly when it starts (start_hour, a number), how long it lasts (duration_h), how many times a week it happens (frequency_per_week), and its moves \u2014 which object (or class:<name>) goes to which receptacle, with a chance (rarely, sometimes, usually, almost_always) and, when it differs from the activity's, its own `duration_h` \u2014 how long the object stays where the activity put it. A hypothesis may also give a `rest` map: receptacles where objects sit when nothing is happening. Each hypothesis carries a one-line `distinguishing_prediction` and a `distinguishing_check` in the form {\"target\": <object id>, \"at\": <receptacle id>, \"days\": weekday|weekend|both, \"hour\": <number>}.\n\nUse only ids from the tables above, exactly as printed. Each hypothesis has a one-line rationale, a one-line distinguishing_prediction with its distinguishing_check, an optional rest map, and as many activities as its routine needs.\n\nThink it through, then end your reply with one json object. The example below shows the field shapes only; it is abbreviated and is about a different, smaller home.\n\n{\n \"hypotheses\": [\n  {\n   \"hypothesis_id\": \"h1\",\n   \"rationale\": \"one resident who is at an office on weekdays\",\n   \"distinguishing_prediction\": \"object_3 is at receptacle_1 on weekday evenings and gone by 9:00\",\n   \"distinguishing_check\": {\n    \"target\": \"object_3\",\n    \"at\": \"receptacle_1\",\n    \"days\": \"weekday\",\n    \"hour\": 19.0\n   },\n   \"rest\": {\n    \"class:class_2\": \"receptacle_4\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"office_day\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 8.0,\n     \"duration_h\": 9.0,\n     \"moves\": [\n      {\n       \"target\": \"object_3\",\n       \"to\": \"receptacle_9\",\n       \"chance\": \"almost_always\"\n      }\n     ]\n    },\n    {\n     \"name\": \"morning_coffee\",\n     \"days\": \"both\",\n     \"frequency_per_week\": 6,\n     \"start_hour\": 6.5,\n     \"duration_h\": 0.5,\n     \"moves\": [\n      {\n       \"target\": \"class:class_2\",\n       \"to\": \"receptacle_2\",\n       \"chance\": \"usually\",\n       \"duration_h\": 4.0\n      }\n     ]\n    }\n   ]\n  },\n  {\n   \"hypothesis_id\": \"h2\",\n   \"rationale\": \"one resident who works at the desk at home\",\n   \"distinguishing_prediction\": \"object_3 at receptacle_1 at weekday midday\",\n   \"distinguishing_check\": {\n    \"target\": \"object_3\",\n    \"at\": \"receptacle_1\",\n    \"days\": \"weekday\",\n    \"hour\": 13.0\n   },\n   \"rest\": {\n    \"class:class_2\": \"receptacle_5\"\n   },\n   \"activities\": [\n    {\n     \"name\": \"desk_work\",\n     \"days\": \"weekday\",\n     \"frequency_per_week\": 5,\n     \"start_hour\": 9.0,\n     \"duration_h\": 7.0,\n     \"moves\": [\n      {\n       \"target\": \"class:class_2\",\n       \"to\": \"receptacle_5\",\n       \"chance\": \"usually\",\n       \"duration_h\": 12.0\n      }\n     ]\n    }\n   ]\n  }\n ]\n}",
+ "rounds": [
+  {
+   "kind": "initial",
+   "think": "Let me analyze the home layout and objects to create 5 competing hypotheses about the weekly routine.\n\nFirst, let me organize what I see:\n\nReceptacles: 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23\n\nObjects seen at 15:08 on Monday (day 0):\n- object_2 (class_2) at receptacle_11\n- object_3 (class_3) at receptacle_7\n- object_4 (class_4) at receptacle_18\n- object_5 (class_4) at receptacle_19\n- object_8 (class_7) at receptacle_20\n- object_13 (class_12) at receptacle_6\n- object_14 (class_13) at receptacle_12\n- object_15 (class_14) at receptacle_4\n- object_16 (class_15) at receptacle_4\n- object_17 (class_16) at receptacle_8\n- object_18 (class_16) at receptacle_13\n- object_20 (class_18) at receptacle_21\n- object_21 (class_19) at receptacle_19\n- object_23 (class_21) at receptacle_13\n- object_24 (class_21) at receptacle_12\n- object_25 (class_22) at receptacle_13\n- object_26 (class_23) at receptacle_10\n- object_27 (class_24) at receptacle_6\n- object_28 (class_25) at receptacle_10\n- object_29 (class_26) at receptacle_22\n- object_30 (class_27) at receptacle_16\n- object_31 (class_28) at receptacle_6\n- object_34 (class_31) at receptacle_21\n- object_35 (class_32) at receptacle_11\n\nLet me group by receptacle:\n- receptacle_4: object_15 (class_14), object_16 (class_15)\n- receptacle_6: object_13 (class_12), object_27 (class_24), object_31 (class_28)\n- receptacle_7: object_3 (class_3)\n- receptacle_8: object_17 (class_16)\n- receptacle_10: object_26 (class_23), object_28 (class_25)\n- receptacle_11: object_2 (class_2), object_35 (class_32)\n- receptacle_12: object_14 (class_13), object_24 (class_21)\n- receptacle_13: object_18 (class_16), object_23 (class_21), object_25 (class_22)\n- receptacle_16: object_30 (class_27)\n- receptacle_18: object_4 (class_4)\n- receptacle_19: object_5 (class_4), object_21 (class_19)\n- receptacle_20: object_8 (class_7)\n- receptacle_21: object_20 (class_18), object_34 (class_31)\n- receptacle_22: object_29 (class_26)\n\nEmpty receptacles: 2, 3, 5, 9, 14, 15, 17, 23\n\nNow let me think about what kinds of routines might exist. I need to create 5 competing hypotheses. Let me think about different life patterns:\n\n1. **Office worker hypothesis**: Resident leaves in the morning, comes home in the evening. Objects that are \"work tools\" get moved to a bag/car area in the morning and back in the evening. The 15:08 observation on a Monday would show the resident is home (or just left/arriving). Actually at 15:08 on a Monday, if they work 9-5, they'd be at work. But the walkthrough shows objects in their \"home\" positions. So maybe the objects are in their resting positions because the resident is at work.\n\n2. **Stay-at-home parent hypothesis**: Resident is home all day. Objects are in active use positions during the day. The 15:08 snapshot shows mid-afternoon activity positions.\n\n3. **Remote worker hypothesis**: Resident works from home. Some objects are at a \"work station\" during weekday hours. The 15:08 snapshot might catch them mid-work or on a break.\n\n4. **Weekend-focused household**: Most activity happens on weekends. Weekdays are quiet. Objects are in storage/rest positions on weekdays.\n\n5. **Two-person household with staggered schedules**: One person is home in the morning, another in the evening. Objects get moved around throughout the day.\n\nLet me think about which objects might move and where. I need to be creative but grounded in the observed positions.\n\nLet me think about classes:\n- class_2: object_2 at receptacle_11\n- class_3: object_3 at receptacle_7\n- class_4: object_4 at receptacle_18, object_5 at receptacle_19 (two objects of same class in different places - interesting)\n- class_7: object_8 at receptacle_20\n- class_12: object_13 at receptacle_6\n- class_13: object_14 at receptacle_12\n- class_14: object_15 at receptacle_4\n- class_15: object_16 at receptacle_4\n- class_16: object_17 at receptacle_8, object_18 at receptacle_13 (two of same class, different locations)\n- class_18: object_20 at receptacle_21\n- class_19: object_21 at receptacle_19\n- class_21: object_23 at receptacle_13, object_24 at receptacle_12 (two of same class)\n- class_22: object_25 at receptacle_13\n- class_23: object_26 at receptacle_10\n- class_24: object_27 at receptacle_6\n- class_25: object_28 at receptacle_10\n- class_26: object_29 at receptacle_22\n- class_27: object_30 at receptacle_16\n- class_28: object_31 at receptacle_6\n- class_31: object_34 at receptacle_21\n- class_32: object_35 at receptacle_11\n\nInteresting patterns:\n- receptacle_4 has two objects (class_14, class_15) - maybe a kitchen counter or shelf\n- receptacle_6 has three objects (class_12, class_24, class_28) - maybe a bathroom or utility area\n- receptacle_13 has three objects (class_16, class_21, class_22) - maybe a desk or work area\n- receptacle_10 has two objects (class_23, class_25) - maybe a shelf\n- receptacle_11 has two objects (class_2, class_32) - maybe an entryway\n- receptacle_12 has two objects (class_13, class_21) - maybe a shelf\n- receptacle_19 has two objects (class_4, class_19) - maybe a counter\n- receptacle_21 has two objects (class_18, class_31) - maybe a shelf\n\nLet me design 5 hypotheses:\n\n**H1: Office worker (weekday 8-17)**\n- Resident leaves at 8, returns at 17\n- During work hours, some objects (like a laptop/bag) are at a \"car/entry\" receptacle\n- At 15:08 Monday, resident is at work, so objects are in their \"home\" resting positions\n- Distinguishing: On weekday mornings (say 9:00), object_2 (class_2) would be at receptacle_2 (entry/car area) instead of receptacle_11\n- Rest positions are where we see them at 15:08\n\n**H2: Stay-at-home, active midday**\n- Resident is home all day, active 8-18\n- Objects get moved to \"active\" locations during the day\n- At 15:08, we see objects in their active mid-afternoon positions\n- Distinguishing: On weekday mornings (7:00), objects would be in different \"rest\" positions\n- E.g., object_13 (class_12) at receptacle_6 at 15:08 but at receptacle_3 in the morning\n\n**H3: Remote worker with dedicated workspace**\n- Resident works from home 9-17 on weekdays\n- Objects at receptacle_13 (which has 3 objects) are \"work\" objects that get set up in the morning\n- At 15:08, they're in their work positions\n- Distinguishing: On weekend mornings, object_23 (class_21) would NOT be at receptacle_13\n\n**H4: Weekend-focused household**\n- Most activity on weekends\n- Weekdays are quiet, objects in storage\n- At 15:08 Monday, objects are in their weekday rest positions\n- Distinguishing: On Saturday, object_4 (class_4) would move from receptacle_18 to receptacle_5 (active area)\n\n**H5: Two-person staggered schedule**\n- Person A home 6-14, Person B home 14-22\n- Objects get moved between their \"zones\"\n- At 15:08, Person B just arrived and objects are transitioning\n- Distinguishing: On weekday evenings (20:00), object_17 (class_16) would be at receptacle_13 instead of receptacle_8\n\nLet me refine these and make sure they use valid IDs and make sense.\n\nLet me be more specific:\n\n**H1: Office worker**\n- Rationale: Single resident works at an office Mon-Fri 8-17\n- At 15:08 Monday, resident is at work, objects in home resting positions\n- Activity: \"commute\" - weekday, starts 7:50, lasts 1h (getting ready + leaving), moves some objects to entry\n- Activity: \"return\" - weekday, starts 17:00, lasts 0.5h, objects come back\n- Actually, let me think about what objects would move. Maybe a bag (class_2?) goes to the car. Or maybe objects that are \"work tools\" get packed.\n- Let me say object_2 (class_2) is a work bag that goes to receptacle_2 (entry/car) in the morning\n- And object_35 (class_32) is keys that go to receptacle_2 in the morning\n- Rest: most objects stay where we see them\n- Distinguishing: object_2 at receptacle_2 on weekday at 9:00 (instead of receptacle_11)\n\n**H2: Stay-at-home, cooking/cleaning routine**\n- Rationale: Resident is home all day, does cooking and cleaning\n- At 15:08, mid-afternoon, objects are in their \"active\" positions\n- Activity: \"morning_prep\" - both days, 7:00, 1h, moves kitchen objects\n- Activity: \"afternoon_tidy\" - both days, 14:00, 2h, moves objects to their afternoon positions\n- Activity: \"evening_wind_down\" - both days, 19:00, 1h, objects go to night positions\n- Distinguishing: object_13 (class_12) at receptacle_3 on weekday at 7:00 (morning position) vs receptacle_6 at 15:08\n\n**H3: Remote worker**\n- Rationale: Resident works from home at a desk (receptacle_13 area)\n- At 15:08, work objects are at the desk\n- Activity: \"work_setup\" - weekday, 8:30, 0.5h, moves work objects to receptacle_13\n- Activity: \"work_session\" - weekday, 9:00, 8h, objects stay at receptacle_13\n- Activity: \"work_teardown\" - weekday, 17:00, 0.5h, objects move away\n- Distinguishing: object_23 (class_21) NOT at receptacle_13 on weekend at 10:00\n\n**H4: Weekend hobbyist**\n- Rationale: Resident works at office on weekdays, does hobbies on weekends\n- At 15:08 Monday, objects are in weekday storage\n- Activity: \"weekend_project\" - weekend, 10:00, 4h, moves hobby objects to active area\n- Activity: \"weekend_cooking\" - weekend, 12:00, 2h, moves kitchen objects\n- Distinguishing: object_4 (class_4) at receptacle_5 on weekend at 11:00 (vs receptacle_18 on weekday)\n\n**H5: Two-person household**\n- Rationale: Two residents with staggered home times\n- At 15:08, transition period\n- Activity: \"morning_routine\" - both, 6:30, 1.5h\n- Activity: \"afternoon_routine\" - both, 14:00, 2h\n- Activity: \"evening_routine\" - both, 18:00, 2h\n- Distinguishing: object_17 (class_16) at receptacle_13 on weekday at 20:00 (evening position) vs receptacle_8 at 15:08\n\nNow let me write these up properly with all the required fields. I need to make sure:\n- All receptacle IDs are from the list\n- All object IDs are from the list\n- All class names are from the list\n- The format matches the example\n\nLet me finalize:\n\nH1: Office worker\n- rest: objects stay where seen at 15:08 (that's their \"home\" position when resident is away)\n- Activity \"morning_departure\": weekday, 7:30, 1h, moves object_2 to receptacle_2 (car/entry), object_35 to receptacle_2\n- Activity \"evening_return\": weekday, 17:00, 1h, moves object_2 back to receptacle_11, object_35 back to receptacle_11\n- distinguishing_check: object_2 at receptacle_2, weekday, hour 9.0\n\nH2: Stay-at-home active household\n- rest: objects in \"night\" positions (different from 15:08)\n- Activity \"morning_routine\": both, 7:00, 1h, moves object_13 to receptacle_3, object_27 to receptacle_3\n- Activity \"midday_activity\": both, 12:00, 3h, moves objects to their 15:08 positions\n- Activity \"evening_cleanup\": both, 19:00, 1h, moves objects to night positions\n- distinguishing_check: object_13 at receptacle_3, weekday, hour 7.5\n\nH3: Remote worker\n- rest: objects in \"off-work\" positions\n- Activity \"work_setup\": weekday, 8:30, 0.5h, moves object_23 to receptacle_13, object_25 to receptacle_13\n- Activity \"work_session\": weekday, 9:00, 8h, objects at receptacle_13\n- Activity \"work_teardown\": weekday, 17:00, 0.5h, moves object_23 to receptacle_14, object_25 to receptacle_14\n- distinguishing_check: object_23 at receptacle_14, weekend, hour 10.0\n\nH4: Weekend hobbyist\n- rest: weekday positions (what we see at 15:08)\n- Activity \"weekend_project\": weekend, 10:00, 4h, moves object_4 to receptacle_5, object_5 to receptacle_5\n- Activity \"weekend_meal\": weekend, 12:00, 2h, moves object_15 to receptacle_9, object_16 to receptacle_9\n- distinguishing_check: object_4 at receptacle_5, weekend, hour 11.0\n\nH5: Two-person staggered\n- rest: base positions\n- Activity \"morning_person_a\": both, 6:30, 1.5h, moves object_17 to receptacle_9\n- Activity \"afternoon_person_b\": both, 14:00, 2h, moves object_17 to receptacle_8 (the 15:08 position)\n- Activity \"evening_shared\": both, 18:00, 2h, moves object_17 to receptacle_13\n- distinguishing_check: object_17 at receptacle_13, weekday, hour 20.0\n\nWait, I need to double-check my receptacle choices. Let me make sure receptacle_2, receptacle_3, receptacle_5, receptacle_9, receptacle_14 are valid. Yes, they're all in the list.\n\nLet me also make sure the \"rest\" maps make sense. The rest map shows where objects sit when nothing is happening. \n\nFor H1 (office worker): At 15:08 Monday, the resident is at work. So the objects are in their \"rest\" positions. The rest map should reflect what we see. But actually, the rest map is for when NO activity is happening. If the resident is at work, no home activity is happening, so objects are at rest. So rest positions = what we see at 15:08.\n\nFor H2 (stay-at-home): At 15:08, an activity IS happening (midday_activity). So the 15:08 positions are NOT rest positions. Rest positions would be different (night positions).\n\nFor H3 (remote worker): At 15:08, work_session is happening. So 15:08 positions are NOT rest. Rest = off-work positions.\n\nFor H4 (weekend hobbyist): At 15:08 Monday, no weekend activity is happening. So 15:08 positions ARE rest positions.\n\nFor H5 (two-person): At 15:08, afternoon_person_b is happening. So 15:08 positions are NOT rest.\n\nLet me refine the rest maps accordingly.\n\nActually, I realize I should be more careful. The rest map shows where objects sit when no activity is active. Let me think about what \"no activity\" means for each hypothesis.\n\nH1: No activity = resident is at work (weekday 8-17) or it's a quiet weekend. Rest = 15:08 positions.\nH2: No activity = night (say 22-7). Rest = night positions (different from 15:08).\nH3: No activity = off-work hours or weekend. Rest = off-work positions (different from 15:08).\nH4: No activity = weekday. Rest = 15:08 positions.\nH5: No activity = gaps between routines (e.g., 12-14 on weekdays). Rest = some base positions.\n\nLet me write the final JSON now. I'll keep it focused and make sure all IDs are correct.\n\nActually, let me reconsider the structure. The \"rest\" map maps class or object to a receptacle. Let me use specific objects where I can, and classes where it makes sense.\n\nLet me finalize my 5 hypotheses:",
+   "payload": "{\n  \"hypotheses\": [\n    {\n      \"hypothesis_id\": \"h1\",\n      \"rationale\": \"Single resident works at an office Mon-Fri 8-17; at 15:08 Monday they are away, so all objects are in their home rest positions\",\n      \"distinguishing_prediction\": \"object_2 (work bag) is packed at the entry (receptacle_2) on weekday mornings before the resident leaves\",\n      \"distinguishing_check\": {\n        \"target\": \"object_2\",\n        \"at\": \"receptacle_2\",\n        \"days\": \"weekday\",\n        \"hour\": 9.0\n      },\n      \"rest\": {\n        \"object_2\": \"receptacle_11\",\n        \"object_35\": \"receptacle_11\",\n        \"object_3\": \"receptacle_7\",\n        \"object_13\": \"receptacle_6\",\n        \"object_23\": \"receptacle_13\",\n        \"object_25\": \"receptacle_13\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"morning_departure\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 7.5,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\n              \"target\": \"object_2\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 9.5\n            },\n            {\n              \"target\": \"object_35\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 9.5\n            },\n            {\n              \"target\": \"object_3\",\n              \"to\": \"receptacle_2\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 9.5\n            }\n          ]\n        },\n        {\n          \"name\": \"evening_return\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 17.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\n              \"target\": \"object_2\",\n              \"to\": \"receptacle_11\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_35\",\n              \"to\": \"receptacle_11\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_3\",\n              \"to\": \"receptacle_7\",\n              \"chance\": \"sometimes\"\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h2\",\n      \"rationale\": \"Stay-at-home resident active 7-21 daily; at 15:08 objects are in their mid-afternoon active positions, not their overnight rest positions\",\n      \"distinguishing_prediction\": \"object_13 (class_12) is at receptacle_3 in the early morning before the midday activity relocates it to receptacle_6\",\n      \"distinguishing_check\": {\n        \"target\": \"object_13\",\n        \"at\": \"receptacle_3\",\n        \"days\": \"weekday\",\n        \"hour\": 7.5\n      },\n      \"rest\": {\n        \"object_13\": \"receptacle_3\",\n        \"object_27\": \"receptacle_3\",\n        \"object_31\": \"receptacle_3\",\n        \"object_15\": \"receptacle_5\",\n        \"object_16\": \"receptacle_5\",\n        \"object_4\": \"receptacle_18\",\n        \"object_5\": \"receptacle_18\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"morning_prep\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 7.0,\n          \"duration_h\": 1.5,\n          \"moves\": [\n            {\n              \"target\": \"object_15\",\n              \"to\": \"receptacle_9\",\n              \"chance\": \"usually\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_16\",\n              \"to\": \"receptacle_9\",\n              \"chance\": \"usually\",\n              \"duration_h\": 5.0\n            },\n            {\n              \"target\": \"object_4\",\n              \"to\": \"receptacle_18\",\n              \"chance\": \"usually\",\n              \"duration_h\": 8.0\n            }\n          ]\n        },\n        {\n          \"name\": \"midday_activity\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 12.0,\n          \"duration_h\": 4.0,\n          \"moves\": [\n            {\n              \"target\": \"object_13\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"usually\",\n              \"duration_h\": 6.0\n            },\n            {\n              \"target\": \"object_27\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"usually\",\n              \"duration_h\": 6.0\n            },\n            {\n              \"target\": \"object_31\",\n              \"to\": \"receptacle_6\",\n              \"chance\": \"usually\",\n              \"duration_h\": 6.0\n            },\n            {\n              \"target\": \"object_5\",\n              \"to\": \"receptacle_19\",\n              \"chance\": \"usually\",\n              \"duration_h\": 6.0\n            }\n          ]\n        },\n        {\n          \"name\": \"evening_wind_down\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 20.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\n              \"target\": \"object_13\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_27\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_31\",\n              \"to\": \"receptacle_3\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_15\",\n              \"to\": \"receptacle_5\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_16\",\n              \"to\": \"receptacle_5\",\n              \"chance\": \"usually\"\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h3\",\n      \"rationale\": \"Remote worker with a dedicated desk at receptacle_13; weekday 9-17 work sessions place work objects there, and at 15:08 Monday they are mid-session\",\n      \"distinguishing_prediction\": \"object_23 (class_21) is stored at receptacle_14 on Saturday morning, not at the work desk\",\n      \"distinguishing_check\": {\n        \"target\": \"object_23\",\n        \"at\": \"receptacle_14\",\n        \"days\": \"weekend\",\n        \"hour\": 10.0\n      },\n      \"rest\": {\n        \"object_23\": \"receptacle_14\",\n        \"object_25\": \"receptacle_14\",\n        \"object_18\": \"receptacle_15\",\n        \"object_17\": \"receptacle_8\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"work_setup\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 8.5,\n          \"duration_h\": 0.5,\n          \"moves\": [\n            {\n              \"target\": \"object_23\",\n              \"to\": \"receptacle_13\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 8.5\n            },\n            {\n              \"target\": \"object_25\",\n              \"to\": \"receptacle_13\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 8.5\n            },\n            {\n              \"target\": \"object_18\",\n              \"to\": \"receptacle_13\",\n              \"chance\": \"usually\",\n              \"duration_h\": 8.5\n            }\n          ]\n        },\n        {\n          \"name\": \"work_session\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 9.0,\n          \"duration_h\": 8.0,\n          \"moves\": [\n            {\n              \"target\": \"object_23\",\n              \"to\": \"receptacle_13\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 8.0\n            },\n            {\n              \"target\": \"object_25\",\n              \"to\": \"receptacle_13\",\n              \"chance\": \"almost_always\",\n              \"duration_h\": 8.0\n            }\n          ]\n        },\n        {\n          \"name\": \"work_teardown\",\n          \"days\": \"weekday\",\n          \"frequency_per_week\": 5,\n          \"start_hour\": 17.0,\n          \"duration_h\": 0.5,\n          \"moves\": [\n            {\n              \"target\": \"object_23\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_25\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"almost_always\"\n            },\n            {\n              \"target\": \"object_18\",\n              \"to\": \"receptacle_15\",\n              \"chance\": \"usually\"\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h4\",\n      \"rationale\": \"Resident works at an office on weekdays (so 15:08 Monday shows quiet storage positions) but does hands-on hobbies and cooking on weekends that relocate objects\",\n      \"distinguishing_prediction\": \"object_4 (class_4) is at receptacle_5 during a Saturday morning hobby session, not at its weekday storage spot receptacle_18\",\n      \"distinguishing_check\": {\n        \"target\": \"object_4\",\n        \"at\": \"receptacle_5\",\n        \"days\": \"weekend\",\n        \"hour\": 11.0\n      },\n      \"rest\": {\n        \"object_4\": \"receptacle_18\",\n        \"object_5\": \"receptacle_19\",\n        \"object_15\": \"receptacle_4\",\n        \"object_16\": \"receptacle_4\",\n        \"object_8\": \"receptacle_20\",\n        \"object_29\": \"receptacle_22\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"weekend_project\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 10.0,\n          \"duration_h\": 4.0,\n          \"moves\": [\n            {\n              \"target\": \"object_4\",\n              \"to\": \"receptacle_5\",\n              \"chance\": \"usually\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_5\",\n              \"to\": \"receptacle_5\",\n              \"chance\": \"usually\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_8\",\n              \"to\": \"receptacle_5\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 4.0\n            }\n          ]\n        },\n        {\n          \"name\": \"weekend_meal_prep\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 12.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\n              \"target\": \"object_15\",\n              \"to\": \"receptacle_9\",\n              \"chance\": \"usually\",\n              \"duration_h\": 2.0\n            },\n            {\n              \"target\": \"object_16\",\n              \"to\": \"receptacle_9\",\n              \"chance\": \"usually\",\n              \"duration_h\": 2.0\n            },\n            {\n              \"target\": \"object_29\",\n              \"to\": \"receptacle_9\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 2.0\n            }\n          ]\n        },\n        {\n          \"name\": \"weekend_cleanup\",\n          \"days\": \"weekend\",\n          \"frequency_per_week\": 2,\n          \"start_hour\": 16.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\n              \"target\": \"object_4\",\n              \"to\": \"receptacle_18\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_5\",\n              \"to\": \"receptacle_19\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_8\",\n              \"to\": \"receptacle_20\",\n              \"chance\": \"sometimes\"\n            },\n            {\n              \"target\": \"object_15\",\n              \"to\": \"receptacle_4\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_16\",\n              \"to\": \"receptacle_4\",\n              \"chance\": \"usually\"\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"hypothesis_id\": \"h5\",\n      \"rationale\": \"Two residents with staggered home times (Person A: 6-14, Person B: 14-22); at 15:08 Monday Person B has just arrived and objects are in the afternoon transition zone\",\n      \"distinguishing_prediction\": \"object_17 (class_16) is at receptacle_13 during the shared evening (20:00) after Person B brings it from the afternoon zone at receptacle_8\",\n      \"distinguishing_check\": {\n        \"target\": \"object_17\",\n        \"at\": \"receptacle_13\",\n        \"days\": \"weekday\",\n        \"hour\": 20.0\n      },\n      \"rest\": {\n        \"object_17\": \"receptacle_14\",\n        \"object_18\": \"receptacle_14\",\n        \"object_20\": \"receptacle_21\",\n        \"object_34\": \"receptacle_21\",\n        \"object_26\": \"receptacle_10\",\n        \"object_28\": \"receptacle_10\"\n      },\n      \"activities\": [\n        {\n          \"name\": \"morning_person_a\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 6.5,\n          \"duration_h\": 1.5,\n          \"moves\": [\n            {\n              \"target\": \"object_17\",\n              \"to\": \"receptacle_9\",\n              \"chance\": \"usually\",\n              \"duration_h\": 7.0\n            },\n            {\n              \"target\": \"object_26\",\n              \"to\": \"receptacle_10\",\n              \"chance\": \"usually\",\n              \"duration_h\": 7.0\n            },\n            {\n              \"target\": \"object_28\",\n              \"to\": \"receptacle_10\",\n              \"chance\": \"usually\",\n              \"duration_h\": 7.0\n            }\n          ]\n        },\n        {\n          \"name\": \"afternoon_person_b\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 14.0,\n          \"duration_h\": 2.0,\n          \"moves\": [\n            {\n              \"target\": \"object_17\",\n              \"to\": \"receptacle_8\",\n              \"chance\": \"usually\",\n              \"duration_h\": 6.0\n            },\n            {\n              \"target\": \"object_20\",\n              \"to\": \"receptacle_21\",\n              \"chance\": \"usually\",\n              \"duration_h\": 6.0\n            },\n            {\n              \"target\": \"object_34\",\n              \"to\": \"receptacle_21\",\n              \"chance\": \"usually\",\n              \"duration_h\": 6.0\n            }\n          ]\n        },\n        {\n          \"name\": \"evening_shared\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 18.0,\n          \"duration_h\": 2.5,\n          \"moves\": [\n            {\n              \"target\": \"object_17\",\n              \"to\": \"receptacle_13\",\n              \"chance\": \"usually\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_18\",\n              \"to\": \"receptacle_13\",\n              \"chance\": \"usually\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_26\",\n              \"to\": \"receptacle_17\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 4.0\n            },\n            {\n              \"target\": \"object_28\",\n              \"to\": \"receptacle_17\",\n              \"chance\": \"sometimes\",\n              \"duration_h\": 4.0\n            }\n          ]\n        },\n        {\n          \"name\": \"night_storage\",\n          \"days\": \"both\",\n          \"frequency_per_week\": 7,\n          \"start_hour\": 22.0,\n          \"duration_h\": 1.0,\n          \"moves\": [\n            {\n              \"target\": \"object_17\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_18\",\n              \"to\": \"receptacle_14\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_26\",\n              \"to\": \"receptacle_10\",\n              \"chance\": \"usually\"\n            },\n            {\n              \"target\": \"object_28\",\n              \"to\": \"receptacle_10\",\n              \"chance\": \"usually\"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}",
+   "n_hypotheses": 5,
+   "generation_seconds": 362.75,
+   "completion_tokens": 9610,
+   "prompt_tokens": 1858,
+   "finish_reason": "stop",
+   "think_closed": true,
+   "cached": false
+  }
+ ],
+ "dropped": [],
+ "hypotheses": [
+  {
+   "hypothesis_id": "h1",
+   "rationale": "Single resident works at an office Mon-Fri 8-17; at 15:08 Monday they are away, so all objects are in their home rest positions",
+   "distinguishing_prediction": "object_2 (work bag) is packed at the entry (receptacle_2) on weekday mornings before the resident leaves",
+   "distinguishing_check": {
+    "target": "blanket_mara",
+    "at": "OUT_OF_HOUSE",
+    "days": "weekday",
+    "hour": 9.0
+   },
+   "rest": {
+    "blanket_mara": "couch_l1",
+    "yoga_mat_mara": "couch_l1",
+    "book_mara": "bookshelf_l1",
+    "laundry_basket_mara": "bedroom_floor_b1",
+    "plate_shared_1": "cupboard_k1",
+    "pot_shared_1": "cupboard_k1"
+   },
+   "activities": [
+    {
+     "name": "morning_departure",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 7.5,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "blanket_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "duration_h": 9.5
+      },
+      {
+       "target": "yoga_mat_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "almost_always",
+       "duration_h": 9.5
+      },
+      {
+       "target": "book_mara",
+       "to": "OUT_OF_HOUSE",
+       "chance": "sometimes",
+       "duration_h": 9.5
+      }
+     ]
+    },
+    {
+     "name": "evening_return",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 17.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "blanket_mara",
+       "to": "couch_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "yoga_mat_mara",
+       "to": "couch_l1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "book_mara",
+       "to": "bookshelf_l1",
+       "chance": "sometimes"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h2",
+   "rationale": "Stay-at-home resident active 7-21 daily; at 15:08 objects are in their mid-afternoon active positions, not their overnight rest positions",
+   "distinguishing_prediction": "object_13 (class_12) is at receptacle_3 in the early morning before the midday activity relocates it to receptacle_6",
+   "distinguishing_check": {
+    "target": "laundry_basket_mara",
+    "at": "armchair_l1",
+    "days": "weekday",
+    "hour": 7.5
+   },
+   "rest": {
+    "laundry_basket_mara": "armchair_l1",
+    "suitcase_mara": "armchair_l1",
+    "vacuum_cleaner_shared_1": "armchair_l1",
+    "makeup_kit_mara": "bed_b1",
+    "medication_bottle_mara": "bed_b1",
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "entry_table_e1"
+   },
+   "activities": [
+    {
+     "name": "morning_prep",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 7.0,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "makeup_kit_mara",
+       "to": "chair_k2",
+       "chance": "usually",
+       "duration_h": 5.0
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "chair_k2",
+       "chance": "usually",
+       "duration_h": 5.0
+      },
+      {
+       "target": "bowl_shared_1",
+       "to": "entry_table_e1",
+       "chance": "usually",
+       "duration_h": 8.0
+      }
+     ]
+    },
+    {
+     "name": "midday_activity",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 12.0,
+     "duration_h": 4.0,
+     "moves": [
+      {
+       "target": "laundry_basket_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "duration_h": 6.0
+      },
+      {
+       "target": "suitcase_mara",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "duration_h": 6.0
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "bedroom_floor_b1",
+       "chance": "usually",
+       "duration_h": 6.0
+      },
+      {
+       "target": "bowl_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "usually",
+       "duration_h": 6.0
+      }
+     ]
+    },
+    {
+     "name": "evening_wind_down",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 20.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "laundry_basket_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "suitcase_mara",
+       "to": "armchair_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "vacuum_cleaner_shared_1",
+       "to": "armchair_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "makeup_kit_mara",
+       "to": "bed_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "bed_b1",
+       "chance": "usually"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h3",
+   "rationale": "Remote worker with a dedicated desk at receptacle_13; weekday 9-17 work sessions place work objects there, and at 15:08 Monday they are mid-session",
+   "distinguishing_prediction": "object_23 (class_21) is stored at receptacle_14 on Saturday morning, not at the work desk",
+   "distinguishing_check": {
+    "target": "plate_shared_1",
+    "at": "desk_b1",
+    "days": "weekend",
+    "hour": 10.0
+   },
+   "rest": {
+    "plate_shared_1": "desk_b1",
+    "pot_shared_1": "desk_b1",
+    "mug_shared_1": "dish_rack_k1",
+    "mug_mara": "chair_k1"
+   },
+   "activities": [
+    {
+     "name": "work_setup",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 8.5,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "plate_shared_1",
+       "to": "cupboard_k1",
+       "chance": "almost_always",
+       "duration_h": 8.5
+      },
+      {
+       "target": "pot_shared_1",
+       "to": "cupboard_k1",
+       "chance": "almost_always",
+       "duration_h": 8.5
+      },
+      {
+       "target": "mug_shared_1",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "duration_h": 8.5
+      }
+     ]
+    },
+    {
+     "name": "work_session",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 9.0,
+     "duration_h": 8.0,
+     "moves": [
+      {
+       "target": "plate_shared_1",
+       "to": "cupboard_k1",
+       "chance": "almost_always",
+       "duration_h": 8.0
+      },
+      {
+       "target": "pot_shared_1",
+       "to": "cupboard_k1",
+       "chance": "almost_always",
+       "duration_h": 8.0
+      }
+     ]
+    },
+    {
+     "name": "work_teardown",
+     "days": "weekday",
+     "frequency_per_week": 5,
+     "start_hour": 17.0,
+     "duration_h": 0.5,
+     "moves": [
+      {
+       "target": "plate_shared_1",
+       "to": "desk_b1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "pot_shared_1",
+       "to": "desk_b1",
+       "chance": "almost_always"
+      },
+      {
+       "target": "mug_shared_1",
+       "to": "dish_rack_k1",
+       "chance": "usually"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h4",
+   "rationale": "Resident works at an office on weekdays (so 15:08 Monday shows quiet storage positions) but does hands-on hobbies and cooking on weekends that relocate objects",
+   "distinguishing_prediction": "object_4 (class_4) is at receptacle_5 during a Saturday morning hobby session, not at its weekday storage spot receptacle_18",
+   "distinguishing_check": {
+    "target": "bowl_shared_1",
+    "at": "bed_b1",
+    "days": "weekend",
+    "hour": 11.0
+   },
+   "rest": {
+    "bowl_shared_1": "entry_table_e1",
+    "bowl_shared_2": "kitchen_table_k1",
+    "makeup_kit_mara": "bathroom_shelf_ba1",
+    "medication_bottle_mara": "bathroom_shelf_ba1",
+    "hairbrush_mara": "nightstand_b1",
+    "towel_mara": "towel_rack_ba1"
+   },
+   "activities": [
+    {
+     "name": "weekend_project",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 10.0,
+     "duration_h": 4.0,
+     "moves": [
+      {
+       "target": "bowl_shared_1",
+       "to": "bed_b1",
+       "chance": "usually",
+       "duration_h": 4.0
+      },
+      {
+       "target": "bowl_shared_2",
+       "to": "bed_b1",
+       "chance": "usually",
+       "duration_h": 4.0
+      },
+      {
+       "target": "hairbrush_mara",
+       "to": "bed_b1",
+       "chance": "sometimes",
+       "duration_h": 4.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_meal_prep",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 12.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "makeup_kit_mara",
+       "to": "chair_k2",
+       "chance": "usually",
+       "duration_h": 2.0
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "chair_k2",
+       "chance": "usually",
+       "duration_h": 2.0
+      },
+      {
+       "target": "towel_mara",
+       "to": "chair_k2",
+       "chance": "sometimes",
+       "duration_h": 2.0
+      }
+     ]
+    },
+    {
+     "name": "weekend_cleanup",
+     "days": "weekend",
+     "frequency_per_week": 2,
+     "start_hour": 16.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "bowl_shared_1",
+       "to": "entry_table_e1",
+       "chance": "usually"
+      },
+      {
+       "target": "bowl_shared_2",
+       "to": "kitchen_table_k1",
+       "chance": "usually"
+      },
+      {
+       "target": "hairbrush_mara",
+       "to": "nightstand_b1",
+       "chance": "sometimes"
+      },
+      {
+       "target": "makeup_kit_mara",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually"
+      },
+      {
+       "target": "medication_bottle_mara",
+       "to": "bathroom_shelf_ba1",
+       "chance": "usually"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "hypothesis_id": "h5",
+   "rationale": "Two residents with staggered home times (Person A: 6-14, Person B: 14-22); at 15:08 Monday Person B has just arrived and objects are in the afternoon transition zone",
+   "distinguishing_prediction": "object_17 (class_16) is at receptacle_13 during the shared evening (20:00) after Person B brings it from the afternoon zone at receptacle_8",
+   "distinguishing_check": {
+    "target": "mug_mara",
+    "at": "cupboard_k1",
+    "days": "weekday",
+    "hour": 20.0
+   },
+   "rest": {
+    "mug_mara": "desk_b1",
+    "mug_shared_1": "desk_b1",
+    "pan_shared_1": "sink_k1",
+    "watering_can_mara": "sink_k1",
+    "remote_shared_1": "coffee_table_l1",
+    "tablet_mara": "coffee_table_l1"
+   },
+   "activities": [
+    {
+     "name": "morning_person_a",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 6.5,
+     "duration_h": 1.5,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "chair_k2",
+       "chance": "usually",
+       "duration_h": 7.0
+      },
+      {
+       "target": "remote_shared_1",
+       "to": "coffee_table_l1",
+       "chance": "usually",
+       "duration_h": 7.0
+      },
+      {
+       "target": "tablet_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually",
+       "duration_h": 7.0
+      }
+     ]
+    },
+    {
+     "name": "afternoon_person_b",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 14.0,
+     "duration_h": 2.0,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "chair_k1",
+       "chance": "usually",
+       "duration_h": 6.0
+      },
+      {
+       "target": "pan_shared_1",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 6.0
+      },
+      {
+       "target": "watering_can_mara",
+       "to": "sink_k1",
+       "chance": "usually",
+       "duration_h": 6.0
+      }
+     ]
+    },
+    {
+     "name": "evening_shared",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 18.0,
+     "duration_h": 2.5,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "duration_h": 4.0
+      },
+      {
+       "target": "mug_shared_1",
+       "to": "cupboard_k1",
+       "chance": "usually",
+       "duration_h": 4.0
+      },
+      {
+       "target": "remote_shared_1",
+       "to": "entry_hook_e1",
+       "chance": "sometimes",
+       "duration_h": 4.0
+      },
+      {
+       "target": "tablet_mara",
+       "to": "entry_hook_e1",
+       "chance": "sometimes",
+       "duration_h": 4.0
+      }
+     ]
+    },
+    {
+     "name": "night_storage",
+     "days": "both",
+     "frequency_per_week": 7,
+     "start_hour": 22.0,
+     "duration_h": 1.0,
+     "moves": [
+      {
+       "target": "mug_mara",
+       "to": "desk_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "mug_shared_1",
+       "to": "desk_b1",
+       "chance": "usually"
+      },
+      {
+       "target": "remote_shared_1",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      },
+      {
+       "target": "tablet_mara",
+       "to": "coffee_table_l1",
+       "chance": "usually"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "vocabulary": {
+  "blanket_mara": "blanket",
+  "book_mara": "book",
+  "bowl_shared_1": "bowl",
+  "bowl_shared_2": "bowl",
+  "hairbrush_mara": "hairbrush",
+  "laundry_basket_mara": "laundry_basket",
+  "lunchbox_mara": "lunchbox",
+  "makeup_kit_mara": "makeup_kit",
+  "medication_bottle_mara": "medication_bottle",
+  "mug_mara": "mug",
+  "mug_shared_1": "mug",
+  "pan_shared_1": "pan",
+  "pen_mara": "pen",
+  "plate_shared_1": "plate",
+  "plate_shared_2": "plate",
+  "pot_shared_1": "pot",
+  "remote_shared_1": "remote",
+  "suitcase_mara": "suitcase",
+  "tablet_mara": "tablet",
+  "towel_mara": "towel",
+  "umbrella_mara": "umbrella",
+  "vacuum_cleaner_shared_1": "vacuum_cleaner",
+  "watering_can_mara": "watering_can",
+  "yoga_mat_mara": "yoga_mat"
+ },
+ "generation_seconds": 362.75,
+ "seconds_per_hypothesis": 72.55
+}

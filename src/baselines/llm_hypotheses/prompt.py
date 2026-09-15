@@ -302,34 +302,69 @@ def deanonymize_hypothesis(raw: Mapping, omap: Dict[str, str],
 
 # ----------------------------------------------------------------- tables
 
+AWAY_SENTENCES = (
+    "`ON_PERSON` means a resident who is in the house is carrying the "
+    "object. `OUT_OF_HOUSE` means the object is not in the house. Neither "
+    "can be chosen as the target of a look.")
+"""The only thing any prompt says about the two away tokens: what they
+mean and that a look cannot target them. Mechanics, no advice."""
+
+
+def known_objects(episode: Episode, upto_t: Optional[int] = None,
+                  tour_only: bool = False) -> Dict[str, str]:
+    """The objects the robot has actually sighted: the tour's, or every
+    object sighted in the ambient stream up to ``upto_t``. THIS is the
+    object table any LLM prompt may show. The bank's full inventory is
+    never shown: with a mid-day tour, the objects the tour did not see
+    are exactly the ones out of the house, and a row with no location
+    would hand the model the carry list."""
+    seen: Dict[str, str] = {obs.object_id: episode.object_classes[obs.object_id]
+                            for obs in episode.initial_observations}
+    if tour_only:
+        return seen
+    for event in episode.evidence_stream():
+        if upto_t is not None and event.t > upto_t:
+            break
+        objs = ([event.object_id] if hasattr(event, "object_id")
+                else list(event.contents))
+        for obj in objs:
+            seen.setdefault(obj, episode.object_classes.get(obj, ""))
+    return seen
+
+
 def vocabulary_tables(episode: Episode,
                       omap: Mapping[str, str] | None = None,
                       rmap: Mapping[str, str] | None = None,
                       cmap: Mapping[str, str] | None = None,
-                      tour: bool = False) -> str:
-    """The id tables. Plain lists: receptacles, then objects with their
-    class and — with ``tour`` — the receptacle the tour saw each one at.
-    An object the tour did not see simply has no location on its row.
-    ON_PERSON is left out: scoring folds it into OUT_OF_HOUSE."""
+                      tour: bool = False,
+                      objects: Mapping[str, str] | None = None) -> str:
+    """The id tables. Plain lists: receptacles, then the KNOWN objects
+    with their class and — with ``tour`` — the receptacle the tour saw
+    each one at. ``objects`` is the known-object table (default: the
+    tour's sightings); the bank's full inventory is never listed (see
+    :func:`known_objects`). Both away tokens are listed, with the two
+    mechanics sentences that define them."""
     o = omap or {}
     r = rmap or {}
     c = cmap or {}
+    table = dict(objects) if objects is not None else known_objects(
+        episode, tour_only=True)
     lines = ["RECEPTACLES:"]
     for rec in episode.receptacle_ids:
-        if rec == "ON_PERSON":
-            continue
         lines.append(f"  {r.get(rec, rec)}")
+    lines.append(AWAY_SENTENCES.replace("`ON_PERSON`", f"`{r.get('ON_PERSON', 'ON_PERSON')}`")
+                 .replace("`OUT_OF_HOUSE`", f"`{r.get('OUT_OF_HOUSE', 'OUT_OF_HOUSE')}`"))
     lines.append("")
     seen = {obs.object_id: obs.receptacle_id for obs in episode.initial_observations}
-    lines.append("OBJECTS" + (", with where the tour saw each one:" if tour else ":"))
-    for obj in sorted(episode.object_classes):
-        cls = episode.object_classes[obj]
+    lines.append("OBJECTS the robot has seen" + (", with where the tour saw each one:" if tour else ":"))
+    for obj in sorted(table):
+        cls = table[obj]
         row = f"  {o.get(obj, obj)}  (class: {c.get(cls, cls)})"
         if tour and obj in seen:
             row += f"  at {r.get(seen[obj], seen[obj])}"
         lines.append(row)
     lines.append("")
-    classes = sorted(set(episode.object_classes.values()))
+    classes = sorted(set(table.values()))
     lines.append("CLASSES (usable as `class:<name>` targets): "
                  + ", ".join(c.get(cls, cls) for cls in classes))
     return "\n".join(lines)
@@ -360,7 +395,7 @@ def sighting_digest(episode: Episode, warmup_days: int,
             per_object[evidence.object_id][day].append(
                 (hour, evidence.receptacle_id))
     lines: List[str] = []
-    for obj in sorted(episode.object_classes):
+    for obj in sorted(per_object):
         lines.append(f"{o.get(obj, obj)}:")
         days = per_object.get(obj, {})
         if not days:
@@ -397,7 +432,9 @@ def elicitation_prompt(episode: Episode, warmup_days: int,
         omap, rmap, cmap = build_anonymization_maps(episode)
     else:
         omap, rmap, cmap = {}, {}, {}
-    tables = vocabulary_tables(episode, omap, rmap, cmap)
+    tables = vocabulary_tables(
+        episode, omap, rmap, cmap,
+        objects=known_objects(episode, upto_t=warmup_days * DAY_SECONDS))
     digest = sighting_digest(episode, warmup_days, omap, rmap)
     schema_text = example_output_text(anonymized)
     user = f"""A robot patrols a home a few times a day and records which objects it sees where. Below are the home's vocabulary tables and the first {warmup_days} days of its sighting log.
@@ -433,9 +470,11 @@ def per_object_statistics(object_ids: Sequence[str],
                           sightings: Sequence[Tuple[int, str, str]],
                           upto_t: int,
                           omap: Mapping[str, str] | None = None,
-                          rmap: Mapping[str, str] | None = None) -> str:
+                          rmap: Mapping[str, str] | None = None,
+                          unsighted_label: str = "never sighted") -> str:
     """One line per object: modal receptacle, share of sighted days it
     was there, number of distinct receptacles, days never sighted.
+    ``unsighted_label`` is the wording for an object with no sighting.
 
     Arithmetic the model would otherwise do by hand, slowly and badly
     (the first run's reasoning trace opened with a 35-object walk-through
@@ -455,7 +494,7 @@ def per_object_statistics(object_ids: Sequence[str],
     for obj in sorted(object_ids):
         rows = by_obj.get(obj, [])
         if not rows:
-            lines.append(f"  {o.get(obj, obj)}: never sighted")
+            lines.append(f"  {o.get(obj, obj)}: {unsighted_label}")
             continue
         day_rec: Dict[int, collections.Counter] = collections.defaultdict(
             collections.Counter)
@@ -486,27 +525,6 @@ def tour_stamp(t: int) -> str:
             f"a {WEEKDAY_NAMES[day % 7]}")
 
 
-def tour_digest(episode: Episode, omap: Mapping[str, str] | None = None,
-                rmap: Mapping[str, str] | None = None) -> str:
-    """The opening walkthrough: one sighting per sensable object, one
-    moment. Objects out of the house at that moment are not in it, and
-    the digest says so — the model should read their absence."""
-    o = omap or {}
-    r = rmap or {}
-    seen = {obs.object_id for obs in episode.initial_observations}
-    missing = sorted(set(episode.object_classes) - seen)
-    lines = [f"WALKTHROUGH TOUR (a single pass through the home at "
-             f"{tour_stamp(episode.tour_t)}; every object the robot could "
-             f"see, seen once):"]
-    for obs in sorted(episode.initial_observations, key=lambda x: x.object_id):
-        lines.append(f"  {o.get(obs.object_id, obs.object_id)}  at  "
-                     f"{r.get(obs.receptacle_id, obs.receptacle_id)}")
-    if missing:
-        lines.append("  NOT FOUND anywhere in the home during the tour: "
-                     + ", ".join(o.get(m, m) for m in missing))
-    return "\n".join(lines)
-
-
 OUTPUT_LENGTH_GUIDE = (
     "Each hypothesis has a one-line rationale, a one-line "
     "distinguishing_prediction with its distinguishing_check, an optional "
@@ -534,7 +552,7 @@ def tour_start_prompt(episode: Episode, anonymized: bool = False,
         omap, rmap, cmap = {}, {}, {}
     tables = vocabulary_tables(episode, omap, rmap, cmap, tour=True)
     schema_text = example_output_text(anonymized)
-    user = f"""A home robot has just been installed. Its only observation so far is one walkthrough of the home at {tour_stamp(episode.tour_t)}. Below are the home's receptacles and objects; where the walkthrough saw an object, its row says so.
+    user = f"""A home robot has just been installed. Its only observation so far is one walkthrough of the home at {tour_stamp(episode.tour_t)}. Below are the home's receptacles and the objects the walkthrough saw, each with where it was. The home may hold objects the walkthrough did not see; the robot knows nothing about them yet, and you cannot name them.
 
 {tables}
 
@@ -801,7 +819,7 @@ Assumptions:
 
 - Name 2 to 3 assumptions. An assumption qualifies only if its different values lead to different observable predictions. If two values would produce leaves that predict the same object in the same place at the same hour, drop the assumption.
 - Write one leaf per combination of assumption values worth testing. Skip combinations that do not fit together, and say which in `leaf_set_rationale`.
-- `OUT_OF_HOUSE` is a location in the tables like any other, and the one destination a look can never confirm. A move that ends there gains support only from the object failing to turn up at its rest receptacle during the window, so write one only when you can say where the object would be found if the move did not happen (put that receptacle in `rest`), and keep the window narrow enough that the patrol reaches that place inside it.
+- A move whose destination is `OUT_OF_HOUSE` or `ON_PERSON` is supported by looks at the object's `rest` receptacle inside the window that find nothing, and weakened by looks that find it there; it is checked with a `distinguishing_check` at that rest with `if_seen: wrong`.
 - `leaf_id` is an opaque token: `p_` followed by 4 hex characters, chosen at random. Never spell an id from the assumption values. Assumption names, value names, questions and descriptions must not contain any object or receptacle id.
 - At most 3 assumptions and 12 leaves."""
 
@@ -822,7 +840,7 @@ def graph_tour_start_prompt(episode: Episode, anonymized: bool = False
     rules = GRAPH_RULES
     if anonymized:
         rules = rules.replace("`OUT_OF_HOUSE`", f"`{rmap['OUT_OF_HOUSE']}`")
-    user = f"""A home robot has just been installed. Its only observation so far is one walkthrough of the home at {tour_stamp(episode.tour_t)}. Below are the home's receptacles and objects; where the walkthrough saw an object, its row says so.
+    user = f"""A home robot has just been installed. Its only observation so far is one walkthrough of the home at {tour_stamp(episode.tour_t)}. Below are the home's receptacles and the objects the walkthrough saw, each with where it was. The home may hold objects the walkthrough did not see; the robot knows nothing about them yet, and you cannot name them. Objects it meets later join your `class:<name>` rules and rest entries automatically if their class matches.
 
 {tables}
 

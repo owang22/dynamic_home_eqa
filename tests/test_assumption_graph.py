@@ -645,15 +645,148 @@ def test_anomaly_bucket_fires_on_third_repeat_of_one_key_only(tmp_path):
 
 def test_diversify_call_rejects_edit_leaf_but_keeps_additions():
     from baselines.llm_hypotheses.assumption_graph import DIVERSIFY_OPS
-    graph = _graph()
+    graph = _graph([FOUR_LEAVES[0], FOUR_LEAVES[1], FOUR_LEAVES[3]])
+    new_value = {"op": "add_assumption_value", "assumption": "composition",
+                 "value": "family", "description": "with a child"}
     ops = [{"op": "edit_leaf", "leaf_id": "p_0002",
             "body": _leaf("p_0002", "solo", "works_from_home",
                           "kitchen_table", activities=[WORK])},
-           {"op": "add_activity", "leaf_id": "p_0001", "activity": WORK}]
-    result = apply_operations(graph, ops, {}, OBJECTS, RECS,
-                              allowed_ops=DIVERSIFY_OPS)
+           {"op": "add_activity", "leaf_id": "p_0001", "activity": WORK},
+           new_value]
+    result = apply_operations(graph, ops, {"p_0001": 0.6, "p_0002": 0.4},
+                              OBJECTS, RECS, allowed_ops=DIVERSIFY_OPS)
     assert result.graph is not None, result.problems
     assert [r["op"] for r in result.rejected] == ["edit_leaf"]
-    assert [a["op"] for a in result.applied] == ["add_activity"]
+    assert [a["op"] for a in result.applied] == ["add_assumption_value",
+                                                 "add_activity"]
     assert result.graph.leaf("p_0001")["activities"][0]["name"] == "work"
     assert result.graph.leaf("p_0002")["activities"] == []
+    # A3: a diversify call made only of add_activity is rejected whole,
+    # and one activity name may reach one leaf only.
+    only_edits = [{"op": "add_activity", "leaf_id": "p_0001", "activity": WORK}]
+    result = apply_operations(graph, only_edits, {}, OBJECTS, RECS,
+                              allowed_ops=DIVERSIFY_OPS)
+    assert result.graph is None and "at least one add_leaf" in result.problems[0]
+    twice = [new_value,
+             {"op": "add_activity", "leaf_id": "p_0001", "activity": WORK},
+             {"op": "add_activity", "leaf_id": "p_0002", "activity": WORK}]
+    result = apply_operations(graph, twice, {}, OBJECTS, RECS,
+                              allowed_ops=DIVERSIFY_OPS)
+    assert result.graph is None and "at most one leaf" in result.problems[0]
+    # A repair call has no such rule.
+    from baselines.llm_hypotheses.assumption_graph import REPAIR_OPS
+    result = apply_operations(graph, [{"op": "edit_leaf", "leaf_id": "p_0002",
+                                       "body": _leaf("p_0002", "solo", "works_from_home",
+                                                     "kitchen_table", activities=[WORK])}],
+                              {}, OBJECTS, RECS, allowed_ops=REPAIR_OPS)
+    assert result.graph is not None, result.problems
+
+
+# ------------------------------------------------------------ the object leak
+
+def test_prompts_never_name_objects_the_robot_has_not_seen():
+    """With a mid-day tour, the objects the tour did not see are the ones
+    out of the house: naming them (even with no location) hands the model
+    the carry list. Every table the LLM sees is built from sightings."""
+    from baselines.bank import JsonlBank
+    from baselines.household_analysis import bank_path
+    from baselines.llm_hypotheses.prompt import (graph_tour_start_prompt,
+                                                 known_objects,
+                                                 tour_start_prompt)
+    import pathlib as _pl
+    bank = bank_path("hh_001", 0, _pl.Path("banks/baselines/tour_start_day0/tl0"))
+    if not bank.exists():
+        pytest.skip("tl0 bank not exported on this machine")
+    episode = next(JsonlBank(bank).episodes())
+    seen = known_objects(episode, tour_only=True)
+    unseen = sorted(set(episode.object_classes) - set(seen))
+    assert unseen, "the tour saw everything; the leak cannot be tested here"
+    for build in (tour_start_prompt, graph_tour_start_prompt):
+        user, _ = build(episode)
+        for obj in unseen:
+            assert obj not in user, f"{build.__name__} names unseen {obj}"
+        for obj in seen:
+            assert obj in user
+    # Classes present only on unseen objects are not offered either.
+    unseen_only = {episode.object_classes[o] for o in unseen} - set(seen.values())
+    user, _ = graph_tour_start_prompt(episode)
+    for cls in unseen_only:
+        assert f"class: {cls}" not in user and f", {cls}," not in user
+
+
+def test_revision_vocabulary_is_the_sighted_objects_and_grows(tmp_path):
+    rec = _OpsElicitor([])
+    env = _envelope(FOUR_LEAVES)
+    env["vocabulary"] = {"laptop_1": "laptop", "mug_1": "mug"}   # tour saw two
+    m = _mixture(tmp_path, env,
+                 ReaskConfig(window=1000, scheduled_days=(1,), max_calls=1,
+                             new_class_triggers=False), rec)
+    assert m.known_objects == {"laptop_1": "laptop", "mug_1": "mug"}
+    m.update(_obs("towel_1", "hamper", 0, 9))          # first sighting
+    m.update(_obs("laptop_1", "desk", 1, 9))           # fires the ask
+    report = rec.calls[-1]
+    assert report["known_objects"] == {"laptop_1": "laptop", "mug_1": "mug",
+                                       "towel_1": "towel"}
+    # The uncovered list is drawn from the known objects only: keys_1
+    # and mug_2 exist in the bank but the robot has never seen them.
+    assert {u["object"] for u in report["uncovered_objects"]} == {"towel_1"}
+    assert "keys_1" not in report["statistics"]
+    # A file with no vocabulary keeps the old behaviour: the context table.
+    (tmp_path / "old").mkdir()
+    m2 = _mixture(tmp_path / "old", _envelope(FOUR_LEAVES))
+    assert m2.known_objects == dict(OBJECTS)
+
+
+def test_class_rules_pick_up_objects_registered_later():
+    from baselines.beliefs.hypothesis_program import HypothesisProgramBelief
+    raw = {"hypothesis_id": "h", "rationale": "r",
+           "rest": {"class:mug": "shelf"},
+           "activities": [{"name": "coffee", "days": "both",
+                           "frequency_per_week": 7, "start_hour": 8.0,
+                           "duration_h": 2.0,
+                           "moves": [{"target": "class:mug",
+                                      "to": "kitchen_table",
+                                      "chance": "usually"}]}]}
+    # Written when only mug_1 was known: mug_2 is not in the vocabulary.
+    model = HypothesisProgramBelief(random.Random(0), raw,
+                                    vocabulary={"mug_1": "mug",
+                                                "laptop_1": "laptop"})
+    model.reset(_ctx())
+    assert model.hypothesis.activities[0].moves[0].targets == ("mug_1",)
+    model.ensure_object("mug_2", "mug")               # first sighting later
+    at_coffee = model.predict("mug_2", int(0 * DAY_SECONDS + 9 * H))
+    at_night = model.predict("mug_2", int(0 * DAY_SECONDS + 22 * H))
+    assert at_coffee.distribution["kitchen_table"] > 0.3
+    assert at_coffee.distribution["kitchen_table"] > \
+        at_night.distribution["kitchen_table"] + 0.3
+    assert at_night.argmax == "shelf"
+    assert "mug_2" in model._rules_of and model._rest["mug_2"] == "shelf"
+    # Identical to an object the hypothesis was written against.
+    assert at_coffee.distribution == model.predict(
+        "mug_1", int(0 * DAY_SECONDS + 9 * H)).distribution
+    # An object of an unmodeled class stays on the statistical fallback.
+    model.ensure_object("towel_1", "towel")
+    assert model.explain("towel_1", int(9 * H)) == "cold"
+
+
+def test_premise_recovery_needs_the_assumption_to_be_about_that_axis():
+    # A5: a value reading like a work pattern under a household-size
+    # assumption does not recover the work-pattern premise.
+    env = _envelope(FOUR_LEAVES)
+    env["assumptions"] = {
+        "household_size": {"question": "how many people live here",
+                           "values": {"present": "someone is home on weekdays",
+                                      "solo": "one adult"}},
+        "weekday_pattern": {"question": "where is the resident on weekdays",
+                            "values": {"works_away": "out 9 to 6",
+                                       "works_from_home": "at home working"}}}
+    from baselines.llm_hypotheses.assumption_graph import AssumptionGraph
+    graph = AssumptionGraph.from_json(env)
+    hit = premise_recovered(graph, {"composition": "solo",
+                                    "work_pattern": "works_away"})
+    assert hit == {"composition": "household_size=solo",
+                   "work_pattern": "weekday_pattern=works_away"}
+    env["assumptions"].pop("weekday_pattern")
+    graph = AssumptionGraph.from_json(env)
+    assert premise_recovered(graph, {"work_pattern": "works_away"}) == {
+        "work_pattern": None}

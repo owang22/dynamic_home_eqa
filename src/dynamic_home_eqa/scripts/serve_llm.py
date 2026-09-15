@@ -62,6 +62,14 @@ def main() -> None:
                          "burns the whole max_tokens budget after '{\"scores\": [' — "
                          "observed with Qwen3.6-35B-A3B, poisoning judge scores to "
                          "the 0.0 fallback.")
+    ap.add_argument("--prefix-caching", action="store_true",
+                    help="Enable vLLM prefix caching, with --mamba-cache-mode "
+                         "align for hybrid-attention models (Qwen3.8), which "
+                         "vLLM otherwise leaves OFF by default. Essential for "
+                         "workloads that resend a long shared prefix per call "
+                         "(the log-reader arm: 3000 calls over one growing "
+                         "log); without it every call re-prefills the whole "
+                         "prompt and the hit rate reads 0.0%.")
     ap.add_argument("--trust-remote-code", action="store_true")
     args = ap.parse_args()
 
@@ -91,6 +99,8 @@ def main() -> None:
         # config validation ("only supported for xgrammar and guidance").
         cmd += ["--structured-outputs-config",
                 '{"backend": "xgrammar", "disable_any_whitespace": true}']
+    if args.prefix_caching:
+        cmd += ["--enable-prefix-caching", "--mamba-cache-mode", "align"]
     if args.trust_remote_code:
         cmd.append("--trust-remote-code")
 

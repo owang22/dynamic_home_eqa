@@ -469,27 +469,40 @@ class HypothesisProgramBelief(BeliefModel):
     moved, so runs can log what the LLM wrote and what the fit made of
     it separately.
 
-    The hypothesis is written against the household's object table, so
-    reset reads ``context.object_classes`` to expand class targets —
-    the same privileged-but-legitimate access the oracle belief takes:
-    the table was in the LLM's prompt, hiding it from the converter
-    would be theatre.
+    The hypothesis is written against the objects the LLM had been
+    shown — ``vocabulary``, the objects sighted by the time it was
+    written — and that is the table the converter validates and expands
+    class targets against. Objects registered later (first sighted
+    after the hypothesis was written, or asked about before any
+    sighting) join ``class:`` rules and ``class:`` rest entries at
+    registration; an object no rule or rest entry names falls through
+    to the statistical fallback. Without a ``vocabulary`` the converter
+    falls back to the context's full table, which is privileged access
+    fit for hand-written gates and tests, not for the LLM arms.
     """
 
     def __init__(self, rng: random.Random,
                  hypothesis_raw: Mapping[str, Any],
                  floor_mass: float = DEFAULT_FLOOR_MASS,
                  negative_half_life_h: Optional[float] = None,
-                 frequency_alpha: float = DEFAULT_FREQUENCY_ALPHA) -> None:
+                 frequency_alpha: float = DEFAULT_FREQUENCY_ALPHA,
+                 vocabulary: Optional[Mapping[str, str]] = None) -> None:
         super().__init__(rng, floor_mass=floor_mass,
                          negative_half_life_h=negative_half_life_h,
                          frequency_alpha=frequency_alpha)
         self._raw = dict(hypothesis_raw)
+        self._vocabulary = (dict(vocabulary) if vocabulary is not None
+                            else None)
         self._hypothesis: Optional[Hypothesis] = None
         self._rule_states: List[_RuleState] = []
         self._activity_states: List[_ActivityState] = []
         # object_id -> indices into _rule_states
         self._rules_of: Dict[str, List[int]] = {}
+        # Live views that grow as objects register: the rest map and each
+        # rule's target set (the parsed Hypothesis stays frozen).
+        self._rest: Dict[str, str] = {}
+        self._class_rest: Dict[str, str] = {}
+        self._rule_targets: List[set] = []
 
     @property
     def name(self) -> str:
@@ -501,13 +514,25 @@ class HypothesisProgramBelief(BeliefModel):
             raise RuntimeError(f"{self.name}: hypothesis before reset()")
         return self._hypothesis
 
+    @property
+    def vocabulary(self) -> Optional[Mapping[str, str]]:
+        return self._vocabulary
+
     def reset(self, context) -> None:
         super().reset(context)
+        table = (self._vocabulary if self._vocabulary is not None
+                 else context.object_classes)
         self._hypothesis = parse_hypothesis(
-            self._raw, context.object_classes, context.receptacle_ids)
+            self._raw, table, context.receptacle_ids)
         self._rule_states = []
         self._activity_states = []
         self._rules_of = {}
+        self._rule_targets = []
+        self._rest = dict(self._hypothesis.rest)
+        self._class_rest = {
+            str(k)[len(CLASS_PREFIX):]: str(v)
+            for k, v in _rest_pairs(self._raw.get("rest"))
+            if str(k).startswith(CLASS_PREFIX)}
         self._tour_times: set = set()
         for ai, activity in enumerate(self._hypothesis.activities):
             self._activity_states.append(_ActivityState(
@@ -520,8 +545,26 @@ class HypothesisProgramBelief(BeliefModel):
                     failure=(1.0 - center) * CHANCE_PRIOR_STRENGTH)
                 index = len(self._rule_states)
                 self._rule_states.append(state)
+                self._rule_targets.append(set(rule.targets))
                 for obj in rule.targets:
                     self._rules_of.setdefault(obj, []).append(index)
+
+    def _register_object(self, object_id: str, object_class: str) -> None:
+        """An object first seen (or asked about) after the hypothesis
+        was written joins the ``class:`` rules and rest entry of its
+        class; an object the description never covers stays on the
+        statistical fallback."""
+        super()._register_object(object_id, object_class)
+        if self._hypothesis is None or not object_class:
+            return
+        if object_id not in self._rest and object_class in self._class_rest:
+            self._rest[object_id] = self._class_rest[object_class]
+        wanted = CLASS_PREFIX + object_class
+        for index, state in enumerate(self._rule_states):
+            if (state.rule.raw_target == wanted
+                    and object_id not in self._rule_targets[index]):
+                self._rule_targets[index].add(object_id)
+                self._rules_of.setdefault(object_id, []).append(index)
 
     # ------------------------------------------------------------- windows
 
@@ -578,10 +621,10 @@ class HypothesisProgramBelief(BeliefModel):
                       * self._window_probability(state, t))
             if weight < MIN_WINDOW_WEIGHT:
                 continue
-            for obj in state.rule.targets:
+            for obj in self._rule_targets[index]:
                 if obj in present:
                     continue
-                if self.hypothesis.rest.get(obj) == receptacle_id:
+                if self._rest.get(obj) == receptacle_id:
                     state.success += ABSENCE_SUCCESS_CREDIT * weight
 
     def _add_sighting(self, object_id: str, t: int,
@@ -623,7 +666,7 @@ class HypothesisProgramBelief(BeliefModel):
         plus decayed off-window sightings (a sighting explained by a rule
         counts toward rest only with its unexplained share)."""
         counts: Dict[str, float] = {}
-        stated = self.hypothesis.rest.get(object_id)
+        stated = self._rest.get(object_id)
         if stated is not None:
             counts[stated] = self._rest_pseudo_count(t)
         half_life_s = REST_HALF_LIFE_H * 3600.0
@@ -642,7 +685,7 @@ class HypothesisProgramBelief(BeliefModel):
                             history: List[Tuple[int, str]],
                             t: int) -> Prediction:
         rule_indices = self._rules_of.get(object_id, ())
-        stated_rest = self.hypothesis.rest.get(object_id)
+        stated_rest = self._rest.get(object_id)
         if not rule_indices and stated_rest is None:
             # Not covered by the description: base statistical behaviour.
             if history:
@@ -681,7 +724,7 @@ class HypothesisProgramBelief(BeliefModel):
         not a reconstruction."""
         history = self._history.get(object_id, [])
         rule_indices = self._rules_of.get(object_id, ())
-        stated = self.hypothesis.rest.get(object_id)
+        stated = self._rest.get(object_id)
         if not history:
             return "cold"
         tour_only = all(ot in self._tour_times for ot, _ in history)

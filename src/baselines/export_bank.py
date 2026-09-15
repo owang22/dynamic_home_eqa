@@ -23,10 +23,11 @@ robot cannot look outside the house, so "it's out" can only be inferred
 For the same reason neither the initial tour nor drive-by sightings ever
 report an object whose true location is unsensable (you cannot see what
 is not there); such sightings are dropped and the drop count logged.
-``ON_PERSON`` stays sensable — the robot may look at what a resident who
-is HOME is carrying, and while they are away their carried objects are
-OUT_OF_HOUSE by the projection above, so sensing ON_PERSON never leaks
-information about an absent person.
+``ON_PERSON`` is unsensable too (since 2026-09-14): a look inspects a
+receptacle the robot can stand next to, and a person is not one. Before
+this, ON_PERSON sat in a pseudo-room the active policy could target and
+so returned pocket contents without the robot locating anyone. Neither
+the tour nor a drive-by sighting reports an object at either token.
 
 Generated stream and questions (all seeded):
 
@@ -106,6 +107,10 @@ logger = logging.getLogger(__name__)
 
 OUT_OF_HOUSE = "OUT_OF_HOUSE"
 ON_PERSON = "ON_PERSON"
+UNSENSABLE = (OUT_OF_HOUSE, ON_PERSON)
+"""Locations a look can never inspect: outside the house, and on a
+person. Declared in every bank header; sightings there are never
+exported."""
 AWAKE_WINDOW_S = (8 * 3600, 22 * 3600)
 """Fallback awake window (seconds into the day) for timelines that carry no
 resident blocks. Real households use their OWN awake time — see
@@ -390,8 +395,8 @@ def _receptacle_rooms(spec_path: pathlib.Path,
 
     Uses the same :class:`~baselines.room_observations.RoomMap` the
     room-visit patrols are built from, so the header's rooms and the
-    ambient stream's rooms can never disagree. ON_PERSON lives in the
-    person pseudo-room; OUT_OF_HOUSE belongs to no room and is absent.
+    ambient stream's rooms can never disagree. Neither ON_PERSON nor
+    OUT_OF_HOUSE appears: both are unsensable and belong to no room.
     Specs whose receptacles carry no ``room`` field (old glimpse-era
     schedule specs) yield None: the bank simply carries no room map.
     """
@@ -403,8 +408,11 @@ def _receptacle_rooms(spec_path: pathlib.Path,
         logger.info("spec %s has receptacles without rooms; bank will "
                     "carry no room map", spec_path)
         return None
+    # ON_PERSON's pseudo-room is a scheduling device for the follow-person
+    # patrol, not a place the robot can stand next to: it stays out of the
+    # header, so no policy can target it.
     return {r: room_map.room_by_receptacle[r] for r in receptacles
-            if r in room_map.room_by_receptacle}
+            if r in room_map.room_by_receptacle and r != ON_PERSON}
 
 
 def home_base_room(receptacle_rooms: Dict[str, str]) -> str:
@@ -545,9 +553,10 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
         sightings_per_day = math.ceil(
             sightings_per_object_day * len(object_classes))
     if budget_per_sensable_receptacle is not None:
-        # OUT_OF_HOUSE is unsensable; every other receptacle is a target.
+        # OUT_OF_HOUSE and ON_PERSON are unsensable; every other
+        # receptacle is a target.
         budget_per_day = math.ceil(
-            budget_per_sensable_receptacle * (len(receptacles) - 1))
+            budget_per_sensable_receptacle * (len(receptacles) - len(UNSENSABLE)))
     logger.info("export sizing: %d objects, %d receptacles -> %d "
                 "sightings/day, budget %d/day", len(object_classes),
                 len(receptacles), sightings_per_day, budget_per_day)
@@ -598,7 +607,7 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
     premises = premise_labels(spec, profile)
     if premises:
         header["premises"] = premises
-    header["unsensable_receptacles"] = [OUT_OF_HOUSE]
+    header["unsensable_receptacles"] = list(UNSENSABLE)
     receptacle_rooms = _receptacle_rooms(spec_path, receptacles)
     if receptacle_rooms is not None:
         header["receptacle_rooms"] = receptacle_rooms
@@ -614,8 +623,8 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
             rows.append(row)
         if initial_tour:
             where = truth_at(truth[obj], tour_t)
-            if where == OUT_OF_HOUSE:
-                unobserved += 1  # out with its owner when the robot arrived
+            if where in UNSENSABLE:
+                unobserved += 1  # out, or in a pocket, when the robot arrived
             else:
                 rows.append({"kind": "observation", "episode_id": episode_id,
                              "object_id": obj, "receptacle_id": where,
@@ -636,7 +645,7 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
                 if t < tour_t:
                     continue  # the robot was not installed yet
                 where = truth_at(truth[obj], t)
-                if where == OUT_OF_HOUSE:
+                if where in UNSENSABLE:
                     unobserved += 1  # you cannot sight what is not there
                     continue
                 rows.append({"kind": "observation", "episode_id": episode_id,
@@ -645,8 +654,8 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
     else:
         raise ValueError(f"unknown observation_model {observation_model!r}")
     if unobserved:
-        logger.info("dropped %d sightings of out-of-house objects "
-                    "(unobservable)", unobserved)
+        logger.info("dropped %d sightings of out-of-house or carried "
+                    "objects (unobservable)", unobserved)
     question_number = 0
     if rule_set is not None:
         from baselines.query_stream import (activity_instances,

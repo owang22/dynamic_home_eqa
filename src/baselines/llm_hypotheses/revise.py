@@ -72,20 +72,32 @@ class RevisionElicitor:
                 episode)
         else:
             self._omap, self._rmap, self._cmap = {}, {}, {}
-        self._tables = vocabulary_tables(episode, self._omap, self._rmap,
-                                         self._cmap)
+        self._tables = ""          # built per call from the known objects
+        self._seen_classes: Dict[str, str] = {}
         if anonymized:
-            self._seen_classes = {self._omap[o]: self._cmap[c]
-                                  for o, c in episode.object_classes.items()}
             self._seen_receptacles = tuple(self._rmap[r]
                                            for r in episode.receptacle_ids)
         else:
-            self._seen_classes = dict(episode.object_classes)
             self._seen_receptacles = tuple(episode.receptacle_ids)
+
+    def _set_vocabulary(self, known: Mapping[str, str]) -> None:
+        """Per call: the tables and the validation vocabulary are the
+        objects the mixture has been shown so far, in the vocabulary the
+        model speaks. Never the bank's inventory."""
+        self._known = dict(known)
+        if self._anonymized:
+            self._seen_classes = {self._omap[o]: self._cmap[c]
+                                  for o, c in known.items()}
+        else:
+            self._seen_classes = dict(known)
+        self._tables = vocabulary_tables(self._episode, self._omap, self._rmap,
+                                         self._cmap, objects=known)
 
     def __call__(self, report: Mapping[str, Any], previous: List[dict],
                  context) -> List[dict]:
         index = len(self.calls) + 1
+        self._set_vocabulary(report.get("known_objects")
+                             or self._episode.object_classes)
         shown = ([anonymize_hypothesis(h, self._omap, self._rmap, self._cmap)
                   for h in previous] if self._anonymized else previous)
         previous_json = json.dumps({"hypotheses": shown}, indent=1)
@@ -152,8 +164,7 @@ class RevisionElicitor:
             translated = [deanonymize_hypothesis(h, self._omap, self._rmap,
                                                  self._cmap) for h in valid]
             valid, real_failed = validate_hypotheses(
-                translated, self._episode.object_classes,
-                self._episode.receptacle_ids)
+                translated, self._known, self._episode.receptacle_ids)
             failed = failed + real_failed
         log["dropped"] = failed
         log["generation_seconds"] = round(time.monotonic() - started, 2)
@@ -204,6 +215,8 @@ class GraphRevisionElicitor(RevisionElicitor):
     def __call__(self, report: Mapping[str, Any],  # type: ignore[override]
                  graph: AssumptionGraph, context) -> OperationResult:
         index = len(self.calls) + 1
+        self._set_vocabulary(report.get("known_objects")
+                             or self._episode.object_classes)
         shown = graph.to_json()
         if self._anonymized:
             shown = anonymize_graph(shown, self._omap, self._rmap, self._cmap)
@@ -299,8 +312,7 @@ class GraphRevisionElicitor(RevisionElicitor):
         real_ops = (deanonymize_operations(operations, self._omap, self._rmap,
                                            self._cmap)
                     if self._anonymized else [dict(op) for op in operations])
-        object_classes = (context.object_classes if context is not None
-                          else self._episode.object_classes)
+        object_classes = dict(report.get("known_objects") or self._known)
         call_type = report.get("call_type") if self.call_types else None
         allowed = (REPAIR_OPS if call_type == "repair" else
                    DIVERSIFY_OPS if call_type == "diversify" else ALL_OPS)
@@ -310,5 +322,126 @@ class GraphRevisionElicitor(RevisionElicitor):
                                   allowed_ops=allowed,
                                   settled=report.get("settled"),
                                   unsensable=AWAY_TOKENS)
+        result.operations = real_ops
+        return result
+
+
+# =================================================================== tree
+
+from baselines.llm_hypotheses.hypothesis_tree import (  # noqa: E402
+    HypothesisTree, TreeOperationResult)
+from baselines.llm_hypotheses.hypothesis_tree import (  # noqa: E402
+    apply_operations as apply_tree_operations)
+from baselines.llm_hypotheses.tree_prompt import (  # noqa: E402
+    TREE_OPERATIONS_SCHEMA, anonymize_tree, deanonymize_tree_operations,
+    tree_repair_prompt, tree_revision_prompt)
+
+
+class TreeRevisionElicitor(RevisionElicitor):
+    """``(report, tree, context) -> TreeOperationResult`` for the tree
+    arm: one cached thinking call, grammar salvage when no JSON arrived,
+    the operations applied in real-id space
+    (:func:`~baselines.llm_hypotheses.hypothesis_tree.apply_operations`
+    — add_child / add_root only, rejected whole otherwise), one repair
+    round naming the exact problems, full log. One call type: the
+    report's trigger is shown, the operations are the same."""
+
+    def __call__(self, report: Mapping[str, Any],  # type: ignore[override]
+                 tree: HypothesisTree, context) -> TreeOperationResult:
+        index = len(self.calls) + 1
+        self._set_vocabulary(report.get("known_objects")
+                             or self._episode.object_classes)
+        shown = tree.to_json()
+        if self._anonymized:
+            shown = anonymize_tree(shown, self._omap, self._rmap, self._cmap)
+        tree_json = json.dumps(shown, indent=1)
+        user = tree_revision_prompt(report, self._tables, tree_json,
+                                    self._omap, self._rmap)
+        log: Dict[str, Any] = {"household": self._episode.household_id,
+                               "anonymized": self._anonymized, "tree": True,
+                               "call_index": index, "day": report["day"],
+                               "trigger": report.get("trigger"),
+                               "settled_labels": dict(
+                                   report.get("settled_labels", {})),
+                               "prompt": user, "rounds": []}
+        seed = self._seed + 10 * index
+        started = time.monotonic()
+        row = self._client.generate(SYSTEM_PROMPT, user, seed=seed,
+                                    temperature=self._temperature,
+                                    max_tokens=self._max_tokens,
+                                    reasoning_effort=self._effort)
+        payload, think = row["payload"], row["think"]
+        operations: List[dict] = []
+        try:
+            operations = list(extract_json(payload).get("operations", []))
+            log["rounds"].append({"kind": "revision", "think": think,
+                                  "payload": payload,
+                                  "n_operations": len(operations),
+                                  **_stats(row)})
+        except json.JSONDecodeError as err:
+            log["rounds"].append({"kind": "shape_failure", "error": str(err),
+                                  "payload": payload, "think": think,
+                                  **_stats(row)})
+            raw = self._client.generate(
+                SYSTEM_PROMPT, salvage_prompt(user, payload), seed=seed + 1,
+                temperature=self._temperature, max_tokens=self._max_tokens,
+                schema=TREE_OPERATIONS_SCHEMA)
+            try:
+                operations = list(extract_json(raw["payload"]).get(
+                    "operations", []))
+                payload = raw["payload"]
+                log["rounds"].append({"kind": "salvage",
+                                      "payload": raw["payload"],
+                                      "n_operations": len(operations),
+                                      **_stats(raw)})
+            except json.JSONDecodeError as err2:
+                log["rounds"].append({"kind": "salvage_failed",
+                                      "error": str(err2), **_stats(raw)})
+        result = self._apply_tree(tree, operations, report)
+        if result.tree is None and operations:
+            user2 = tree_repair_prompt(result.problems, self._tables, payload,
+                                       kind="operations")
+            raw2 = self._client.generate(
+                SYSTEM_PROMPT, user2, seed=seed + 2,
+                temperature=self._temperature, max_tokens=self._max_tokens,
+                reasoning_effort=self._effort)
+            entry: Dict[str, Any] = {"kind": "repair", "prompt": user2,
+                                     "think": raw2["think"],
+                                     "payload": raw2["payload"],
+                                     "problems_before": list(result.problems),
+                                     **_stats(raw2)}
+            try:
+                operations2 = list(extract_json(raw2["payload"]).get(
+                    "operations", []))
+                result2 = self._apply_tree(tree, operations2, report)
+                entry["problems_after"] = list(result2.problems)
+                # Keep the first round's rejections in the log too.
+                result2.rejected = list(result.rejected) + list(result2.rejected)
+                result = result2
+            except json.JSONDecodeError as err:
+                entry["error"] = str(err)
+            log["rounds"].append(entry)
+        log["operations"] = list(result.operations)
+        log["applied"] = list(result.applied)
+        log["rejected"] = list(result.rejected)
+        log["problems"] = list(result.problems)
+        log["generation_seconds"] = round(time.monotonic() - started, 2)
+        log["outcome"] = "revised" if result.tree is not None else "kept_previous"
+        log["n_valid"] = len(result.tree.nodes) if result.tree else None
+        self.calls.append({k: log[k] for k in ("call_index", "day", "n_valid",
+                                               "generation_seconds", "outcome")})
+        (self._log_dir / f"{self._episode.household_id}_revision_"
+                         f"{index}.json").write_text(json.dumps(log, indent=1))
+        return result
+
+    def _apply_tree(self, tree: HypothesisTree, operations: List[dict],
+                    report: Mapping[str, Any]) -> TreeOperationResult:
+        real_ops = (deanonymize_tree_operations(operations, self._omap,
+                                                self._rmap, self._cmap)
+                    if self._anonymized else [dict(op) for op in operations])
+        object_classes = dict(report.get("known_objects") or self._known)
+        result = apply_tree_operations(tree, real_ops, object_classes,
+                                       self._episode.receptacle_ids,
+                                       unsensable=AWAY_TOKENS)
         result.operations = real_ops
         return result

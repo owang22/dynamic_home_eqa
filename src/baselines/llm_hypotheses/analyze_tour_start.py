@@ -55,26 +55,41 @@ def canon(rec: str) -> str:
     return "OUT_OF_HOUSE" if rec in AWAY else rec
 
 
-def score(row: Dict[str, Any]) -> Tuple[int, float]:
-    """(top-1 correct, log-loss) under the merged rule."""
-    dist: Dict[str, float] = collections.defaultdict(float)
+def score(row: Dict[str, Any], merged: bool = True) -> Tuple[int, float]:
+    """(top-1 correct, log-loss). ``merged`` folds ON_PERSON into
+    OUT_OF_HOUSE (the 2026-09-12 rule, kept as the secondary number);
+    unmerged is exact match and is the number reported going forward."""
+    if not merged:
+        dist = dict(row["dist"]); truth = row["truth"]
+        argmax = max(dist, key=dist.get) if dist else row["argmax"]
+        return int(argmax == truth), -math.log(max(dist.get(truth, 0.0), EPS))
+    dist2: Dict[str, float] = collections.defaultdict(float)
     for k, v in row["dist"].items():
-        dist[canon(k)] += v
+        dist2[canon(k)] += v
     truth = canon(row["truth"])
-    argmax = max(dist, key=dist.get) if dist else row["argmax"]
-    return int(argmax == truth), -math.log(max(dist.get(truth, 0.0), EPS))
+    argmax = max(dist2, key=dist2.get) if dist2 else row["argmax"]
+    return int(argmax == truth), -math.log(max(dist2.get(truth, 0.0), EPS))
 
 
 def load(household: str, study_dir: pathlib.Path = STUDY_DIR) -> Dict[str, Dict[str, Any]]:
     arms = {}
     root = study_dir / household
     arms_dir = root / "arms" if (root / "arms").is_dir() else root
-    for d in sorted(arms_dir.iterdir()):
-        if not (d / "diagnostics.json").exists() or d.name.endswith("_bug"):
+    # Arms may sit directly under arms/ (older runs) or under a group
+    # folder (active/ passive/ anonymized/ incomplete/); incomplete runs
+    # are kept for their logs and never enter the tables.
+    candidates = [d for d in sorted(arms_dir.rglob("diagnostics.json"))
+                  if "incomplete" not in d.relative_to(arms_dir).parts[:-1]]
+    for diag_path in candidates:
+        d = diag_path.parent
+        if d.name.endswith("_bug") or d.name.startswith("_"):
+            continue
+        if not (d / "per_question.jsonl.gz").exists():
             continue
         rows = [json.loads(l) for l in gzip.open(d / "per_question.jsonl.gz", "rt")]
         for r in rows:
-            r["top1"], r["ll"] = score(r)
+            r["top1"], r["ll"] = score(r, merged=False)     # exact: the number
+            r["top1m"], r["llm"] = score(r, merged=True)    # merged: beside it
             r["day"] = r["t_query"] // DAY_SECONDS
         arms[d.name] = {"rows": rows,
                         "diag": json.loads((d / "diagnostics.json").read_text())}
@@ -118,20 +133,28 @@ def overall(rows: Sequence[dict]) -> Dict[str, float]:
     if not rows:
         return {"n": 0, "top1": float("nan"), "top1_se": float("nan"), "ll": float("nan"), "ll_se": float("nan")}
     t = np.array([r["top1"] for r in rows]); l = np.array([r["ll"] for r in rows])
+    tm = np.array([r.get("top1m", r["top1"]) for r in rows]); lm = np.array([r.get("llm", r["ll"]) for r in rows])
     return {"n": len(rows), "top1": t.mean(), "top1_se": math.sqrt(t.mean() * (1 - t.mean()) / len(t)),
-            "ll": l.mean(), "ll_se": (l.std(ddof=1) / math.sqrt(len(l))) if len(l) > 1 else float("nan")}
+            "ll": l.mean(), "ll_se": (l.std(ddof=1) / math.sqrt(len(l))) if len(l) > 1 else float("nan"),
+            "top1_merged": tm.mean(), "ll_merged": lm.mean()}
 
 
-def late_discovery(rows: Sequence[dict], diag: Dict[str, Any]) -> Dict[str, Dict[str, float]]:
-    """Accuracy restricted to objects first sighted after day 0, and to the
-    rest, reported separately: the random-time tour makes the two strata
-    systematically different, so they are never averaged here."""
-    late = set(diag.get("late_discovered_objects") or [])
-    if not late and not any("late_discovered" in r for r in rows):
+def tour_absent_strata(rows: Sequence[dict], diag: Dict[str, Any]) -> Dict[str, Dict[str, float]]:
+    """Accuracy on the TOUR-ABSENT objects (the ones the installation tour
+    did not see; membership is defined by the tour, nothing else) versus
+    the tour-visible ones, reported separately: the mid-day tour makes
+    the two strata systematically different, so they are never averaged.
+    (Was called "late-discovered", a name for something that had not
+    happened yet when the stratum was fixed.)"""
+    absent = set(diag.get("tour_absent_objects") or diag.get("late_discovered_objects") or [])
+    if not absent and not any("tour_absent" in r or "late_discovered" in r for r in rows):
         return {}
-    is_late = lambda r: r.get("late_discovered", r["object_id"] in late)
-    return {"late": overall([r for r in rows if is_late(r)]),
-            "tour_visible": overall([r for r in rows if not is_late(r)])}
+    is_absent = lambda r: r.get("tour_absent", r.get("late_discovered", r["object_id"] in absent))
+    return {"late": overall([r for r in rows if is_absent(r)]),
+            "tour_visible": overall([r for r in rows if not is_absent(r)])}
+
+
+late_discovery = tour_absent_strata   # old name, kept for callers
 
 
 def assumption_recovery(arms: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -145,6 +168,9 @@ def assumption_recovery(arms: Dict[str, Dict[str, Any]]) -> List[Dict[str, Any]]
         if not d.get("premises") or "assumption_recovery" not in d:
             continue
         rec = d["assumption_recovery"]
+        if rec is None:
+            out.append({"arm": name, "premises": d["premises"], "recovered": "N/A (no assumptions)", "rate": float("nan")})
+            continue
         out.append({"arm": name, "premises": d["premises"], "recovered": rec,
                     "rate": sum(1 for v in rec.values() if v) / max(1, len(rec))})
     return out
@@ -165,7 +191,7 @@ def fig_named_vs_anonymized(arms, out: pathlib.Path) -> None:
         return fig_named_only(arms, out)
     anon = arms["passive__llm__tour_anonymized"]["rows"]
     refs = {"MostFrequent 72h (no-LLM)": (arms["passive__mostfreq72"]["rows"], C["periodic"]),
-            "Oracle (ceiling)": (arms["passive__oracle"]["rows"], C["oracle"])}
+            "Routine posterior (ceiling on routine knowledge)": (arms["passive__routine_posterior"]["rows"], C["oracle"])}
     fig, axes = plt.subplots(2, 3, figsize=(15, 7.4))
     for row, (key, ylabel) in enumerate([("top1", "top-1 accuracy"), ("ll", "log-loss (lower is better)")]):
         ax = axes[row, 0]
@@ -211,7 +237,7 @@ def fig_named_only(arms, out: pathlib.Path) -> None:
     named = arms["passive__llm__tour_named"]["rows"]
     fixed = arms["passive__llm_fixed__tour_named"]["rows"]
     refs = {"MostFrequent 72h (no-LLM)": (arms["passive__mostfreq72"]["rows"], C["periodic"]),
-            "Oracle (ceiling)": (arms["passive__oracle"]["rows"], C["oracle"])}
+            "Routine posterior (ceiling on routine knowledge)": (arms["passive__routine_posterior"]["rows"], C["oracle"])}
     fig, axes = plt.subplots(2, 2, figsize=(11, 7.2))
     for row, (key, ylabel) in enumerate([("top1", "top-1 accuracy"), ("ll", "log-loss (lower is better)")]):
         ax = axes[row, 0]
@@ -325,30 +351,32 @@ def fig_per_object(report: Dict[str, Any], out: pathlib.Path) -> None:
 
 
 def write_tables(arms, out: pathlib.Path) -> str:
-    lines = ["# Tour start + re-asking — hh_001", "", "Scoring: ON_PERSON ≡ OUT_OF_HOUSE. ± is one standard error.", ""]
-    lines += ["## Passive protocol (fixed patrol, no policy)", "", "| arm | n | top-1 | log-loss |", "|---|---|---|---|"]
+    lines = ["# Tour start + re-asking — hh_001", "", "Scoring: top-1 and log-loss are EXACT (ON_PERSON and OUT_OF_HOUSE distinct); the merged number (ON_PERSON ≡ OUT_OF_HOUSE, the older rule) follows in brackets. ± is one standard error.", ""]
+    lines += ["## Passive protocol (fixed patrol, no policy)", "", "| arm | n | top-1 (merged) | log-loss (merged) |", "|---|---|---|---|"]
     for k in sorted(arms):
         if not k.startswith("passive"): continue
         o = overall(arms[k]["rows"])
-        lines.append(f"| {k.replace('passive__', '').replace('__', ' · ')} | {o['n']} | {o['top1']:.3f} ± {o['top1_se']:.3f} | {o['ll']:.3f} ± {o['ll_se']:.3f} |")
-    lines += ["", "## Late-discovery accuracy (objects first sighted after day 0, apart from the tour-visible stratum)", "", "| arm | late n | late top-1 | late log-loss | tour-visible n | tour-visible top-1 |", "|---|---|---|---|---|---|"]
+        lines.append(f"| {k.replace('passive__', '').replace('__', ' · ')} | {o['n']} | {o['top1']:.3f} ± {o['top1_se']:.3f} ({o['top1_merged']:.3f}) | {o['ll']:.3f} ± {o['ll_se']:.3f} ({o['ll_merged']:.3f}) |")
+    lines += ["", "## Tour-absent accuracy (objects the installation tour did not see, apart from the tour-visible stratum)", "", "| arm | tour-absent n | tour-absent top-1 (merged) | tour-absent log-loss | tour-visible n | tour-visible top-1 (merged) |", "|---|---|---|---|---|---|"]
     for k in sorted(arms):
-        strata = late_discovery(arms[k]["rows"], arms[k]["diag"])
+        strata = tour_absent_strata(arms[k]["rows"], arms[k]["diag"])
         if not strata: continue
         a, b = strata["late"], strata["tour_visible"]
-        lines.append(f"| {k.replace('__', ' · ')} | {a['n']} | {a['top1']:.3f} ± {a['top1_se']:.3f} | {a['ll']:.3f} ± {a['ll_se']:.3f} | {b['n']} | {b['top1']:.3f} ± {b['top1_se']:.3f} |")
+        lines.append(f"| {k.replace('__', ' · ')} | {a['n']} | {a['top1']:.3f} ± {a['top1_se']:.3f} ({a['top1_merged']:.3f}) | {a['ll']:.3f} ± {a['ll_se']:.3f} | {b['n']} | {b['top1']:.3f} ± {b['top1_se']:.3f} ({b['top1_merged']:.3f}) |")
     recovery = assumption_recovery(arms)
     if recovery:
         lines += ["", "## Assumption recovery (final graph holds a value matching the bank's ground-truth premise)", "", "| arm | premises | matched | rate |", "|---|---|---|---|"]
         for row in recovery:
-            lines.append(f"| {row['arm'].replace('__', ' · ')} | {row['premises']} | {row['recovered']} | {row['rate']:.2f} |")
+            rate = "N/A" if row["rate"] != row["rate"] else f"{row['rate']:.2f}"
+            lines.append(f"| {row['arm'].replace('__', ' · ')} | {row['premises']} | {row['recovered']} | {rate} |")
         (out / "assumption_recovery.json").write_text(json.dumps(recovery, indent=1))
-    lines += ["", "## Active protocol (myopic VoI λ=0.05, random slice f)", "", "| arm | top-1 (answer) | log-loss (belief at answer time, after that question's senses) | senses/day | random senses |", "|---|---|---|---|---|"]
+    lines += ["", "## Active protocol (myopic VoI λ=0.05, random slice f)", "", "| arm | top-1 (merged) | log-loss (belief at answer time, after that question's senses) | senses/day | random senses |", "|---|---|---|---|---|"]
     for k in sorted(arms):
         if not k.startswith("active"): continue
         rows = arms[k]["rows"]; o = overall(rows); d = arms[k]["diag"]
         spd = sum(r.get("n_senses", 0) for r in rows) / 28
-        lines.append(f"| {k.replace('active__', '').replace('__', ' · ')} | {o['top1']:.3f} ± {o['top1_se']:.3f} | {o['ll']:.3f} ± {o['ll_se']:.3f} | {spd:.1f} | {d.get('random_senses')} |")
+        ll = "n/a (ranked answer)" if d.get("log_loss_valid") is False else f"{o['ll']:.3f} ± {o['ll_se']:.3f}"
+        lines.append(f"| {k.replace('active__', '').replace('__', ' · ')} | {o['top1']:.3f} ± {o['top1_se']:.3f} ({o['top1_merged']:.3f}) | {ll} | {spd:.1f} | {d.get('random_senses')} |")
     lines += ["", "## Paired comparisons (A − B over the same questions, 95% bootstrap CI)", "", "| comparison | top-1 | log-loss |", "|---|---|---|"]
     pairs = [("passive__llm__tour_named", "passive__llm__tour_anonymized", "named − anonymized (re-asking)"),
              ("passive__llm_fixed__tour_named", "passive__llm_fixed__tour_anonymized", "named − anonymized (fixed set)"),
@@ -372,6 +400,14 @@ def write_tables(arms, out: pathlib.Path) -> str:
         ev = "; ".join(f"d{e['day']} {e.get('trigger', e['reason'].split()[0])} → {'revised' if e['changed'] else 'kept'}" for e in d["reask"]["events"])
         llm = d.get("llm", {})
         lines.append(f"| {k.replace('__', ' · ')} | {d['reask']['calls_made']} | {llm.get('live_calls')} | {llm.get('live_generation_seconds')} | {ev} |")
+    tree_rows = [(k, a["diag"]) for k, a in sorted(arms.items()) if a["diag"].get("tree", {}).get("is_tree")]
+    if tree_rows:
+        lines += ["", "## Tree arms: label recovery (name-matched: a label whose text carries a synonym of the bank's premise value; its share of node weight in brackets), settled labels, final size", "", "| arm | premises | matched | settled labels | nodes / max depth | revisions applied / rejected |", "|---|---|---|---|---|---|"]
+        for k, d in tree_rows:
+            rec = d.get("label_recovery") or {}
+            matched = "; ".join(f"{p}={v['label']} ({v['weight']:.2f})" for p, v in rec.items() if v) or "none"
+            t = d["tree"]; trace = t["tree_trace"]; last = trace[max(trace, key=int)] if trace else {"n_nodes": "-", "max_depth": "-"}
+            lines.append(f"| {k.replace('__', ' · ')} | {d.get('premises')} | {matched} | {', '.join(t['settled_labels']) or 'none'} | {last['n_nodes']} / {last['max_depth']} | {len(t['edit_log'])} / {len(t['rejected_ops'])} |")
     graph_rows = [(k, a["diag"]["graph"]) for k, a in sorted(arms.items()) if a["diag"].get("graph", {}).get("is_graph")]
     if graph_rows:
         lines += ["", "## Graph arm: leaves, edits, prunes, births, rejections, checks", "", "| arm | leaves by day (first → last) | applied ops | rejected ops | prunes | born / skipped | checks resolved (in favour) | weight spread presence / absence | settled at end |", "|---|---|---|---|---|---|---|---|---|"]
@@ -382,6 +418,13 @@ def write_tables(arms, out: pathlib.Path) -> str:
             rej = collections.Counter(r.get("op") for r in g.get("rejected_ops", []))
             spread = g.get("weight_spread", {})
             lines.append(f"| {k.replace('__', ' · ')} | {counts[0] if counts else '-'} → {counts[-1] if counts else '-'} | {len(g['edit_log'])} | {sum(rej.values())} {dict(rej) if rej else ''} | {len(g['prune_log'])} | {born} / {skipped} | {len(checks)} ({fav}) | {spread.get('presence', float('nan')):.1f} / {spread.get('absence', float('nan')):.1f} | {', '.join(f'{a}={v}' for a, v in (g.get('settled') or {}).items())} |")
+    lr = [(k, a["diag"]) for k, a in sorted(arms.items()) if "log_reader" in a["diag"]]
+    if lr:
+        lines += ["", "## Log reader: cost next to accuracy", "", "| arm | top-1 | late top-1 | LLM calls | prompt tokens | completion tokens | live generation s | wall s | invalid decisions | notes versions |", "|---|---|---|---|---|---|---|---|---|---|"]
+        for k, d in lr:
+            s = d["log_reader"]; o = overall(arms[k]["rows"]); strata = late_discovery(arms[k]["rows"], d)
+            late = f"{strata['late']['top1']:.3f}" if strata else "-"
+            lines.append(f"| {k.replace('__', ' · ')} | {o['top1']:.3f} ± {o['top1_se']:.3f} | {late} | {s['calls']} | {s['prompt_tokens']} | {s['completion_tokens']} | {s['generation_seconds']} | {d.get('wall_seconds')} | {s['invalid_decisions']} | {s['notes_versions']} |")
     cost_path = STUDY_DIR.parent / "generation_cost_tour.json"
     if cost_path.exists():
         cost = json.loads(cost_path.read_text())
@@ -396,7 +439,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--household", default="hh_001__bank0",
                     help="run directory name under --study-dir (household__bank<seed>)")
-    ap.add_argument("--study-dir", type=pathlib.Path, default=STUDY_DIR / "tl0")
+    ap.add_argument("--study-dir", type=pathlib.Path, default=STUDY_DIR / "main")
     args = ap.parse_args()
     arms = load(args.household, args.study_dir); out = args.study_dir / args.household / "figures"; out.mkdir(exist_ok=True)
     fig_named_vs_anonymized(arms, out); fig_ess_and_reasks(arms, out)

@@ -27,7 +27,8 @@ Arms: ``passive:<belief>[:<condition>]`` or
 ``active:<belief>[:<condition>]:f<fraction>[:b<beta>]`` with belief in
 ``llm`` (re-asking), ``llm_fixed`` (no re-asking), ``graph`` (the
 assumption-graph arm, re-asking with operations), ``graph_fixed``,
-``periodic``, ``mostfreq``, ``oracle``. Graph conditions are
+``periodic``, ``mostfreq``, ``routine_posterior`` (the routine-knowledge
+ceiling, formerly ``oracle``). Graph conditions are
 ``graph_named`` / ``graph_anonymized`` (the elicit ``--graph`` output).
 ``b<beta>`` on an active graph arm swaps the random-slice VoI policy
 for :class:`~baselines.policies.assumption_disambiguation.
@@ -36,9 +37,9 @@ policy, decision for decision).
 
 Diagnostics additionally carry the graph arm's traces
 (``graph_diagnostics``), the bank's ``premises`` with the assumption-
-recovery verdict, and ``late_discovered_objects`` (objects first
-sighted after day 0) so the analysis can report late-discovery accuracy
-apart from the tour-visible stratum.
+recovery verdict, and ``tour_absent_objects`` (objects the tour did not
+see) so the analysis can report that stratum apart from the tour-visible
+one.
 """
 
 from __future__ import annotations
@@ -61,7 +62,8 @@ from baselines.harness import run_episode
 from baselines.household_analysis import REPO_ROOT, bank_path
 from baselines.llm_hypotheses.elicit import DEFAULT_OUT_DIR, CachedThinkingClient
 from baselines.llm_hypotheses.revise import (GraphRevisionElicitor,
-                                             RevisionElicitor)
+                                             RevisionElicitor,
+                                             TreeRevisionElicitor)
 from baselines.passive_eval import (AWAY_EQUIVALENCE, PassiveProtocolConfig,
                                     evaluate_continuous)
 from baselines.registry import build_registered_belief
@@ -69,16 +71,43 @@ from baselines.types import DAY_SECONDS as DAY_SECONDS_
 
 logger = logging.getLogger(__name__)
 
-STUDY_DIR = DEFAULT_OUT_DIR / "tour_start"
+STUDY_DIR = DEFAULT_OUT_DIR / "runs"
+"""Where runs live: ``runs/<run>/<household>__bank<seed>/``. Inside,
+``arms/`` is grouped so the directory reads by importance —
+``arms/active/`` (the arms that matter: the robot senses),
+``arms/passive/`` (fixed patrol, no policy), ``arms/anonymized/`` (the
+name-ablation condition, either protocol) and ``arms/incomplete/``
+(stopped or broken runs, kept for their logs) — with ``figures/`` and
+a ``README.md`` at the top. Superseded runs go to ``archive/``."""
+
+ARM_GROUPS = ("active", "passive", "anonymized", "incomplete")
+
+
+def arm_group(arm_dirname: str) -> str:
+    """Which ``arms/`` subfolder an arm belongs in, from its name."""
+    if arm_dirname.startswith("_"):
+        return "incomplete"
+    if "anonymized" in arm_dirname:
+        return "anonymized"
+    return "active" if arm_dirname.startswith("active") else "passive"
 VOI_LAMBDA = 0.05
 """Myopic VoI price, the convention across the repo's studies; held
 fixed across every arm so differences come from the belief."""
 
 
+TREE_SCHEDULED_DAYS = [3]
+"""The tree arm's only scheduled revision (Phase 3 brief): the graph
+arm's day-0/1 calls on almost no evidence hurt it."""
+
+SELECTED_ACTIVE = SELECTED.with_name("selected_active.json")
+"""eps / half-life re-selected under the active protocol (24 senses a
+day), on a household other than the one reported."""
+
+
 def belief_spec(kind: str, condition: Optional[str], household: str,
                 client: Optional[CachedThinkingClient], episode,
                 log_dir: pathlib.Path, reask: Dict[str, Any],
-                hyp_subdir: str = "") -> Dict[str, Any]:
+                hyp_subdir: str = "", protocol: str = "passive") -> Dict[str, Any]:
     if kind == "periodic":
         return {"name": "periodic_persistence"}
     if kind == "mostfreq":
@@ -87,23 +116,54 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
         # The no-LLM comparison arm and the mixture's own statistical
         # particle: best of the statistical slate under merged scoring.
         return {"name": "most_frequent", "half_life_h": 72.0}
-    if kind == "oracle":
+    if kind == "routine_posterior":
+        # A ceiling on ROUTINE knowledge only: a posterior over
+        # re-realizations of the household program, with no per-object
+        # learning from sightings — a model that reads sightings can beat
+        # it. eps / half-life are selected per protocol (the passive
+        # selection is worse than passive on the active stream).
         cfg = json.loads(SELECTED.read_text())
+        if protocol == "active" and SELECTED_ACTIVE.exists():
+            cfg = json.loads(SELECTED_ACTIVE.read_text())
         return {"name": "oracle_program_posterior", "eps": cfg["eps"],
                 "half_life_h": cfg["half_life_h"]}
-    if kind in ("llm", "llm_fixed", "graph", "graph_fixed"):
+    if kind in ("log_reader", "log_reader_notes"):
+        assert condition in ("named", "anonymized"), \
+            "log_reader arms take a condition: named | anonymized"
+        assert client is not None, "the log reader needs a served model"
+        from baselines.llm_hypotheses.log_reader import LogReaderBrain
+        from baselines.llm_hypotheses.prompt import build_anonymization_maps
+        if condition == "anonymized":
+            omap, rmap, cmap = build_anonymization_maps(episode)
+        else:
+            omap, rmap, cmap = {}, {}, {}
+        brain = LogReaderBrain(client, notes=(kind == "log_reader_notes"),
+                               omap=omap, rmap=rmap, cmap=cmap,
+                               log_dir=log_dir.parent / "notes")
+        return {"name": "log_reader", "brain": brain,
+                "label": f"{'LogReaderNotes' if kind == 'log_reader_notes' else 'LogReader'}({condition})"}
+    if kind in ("llm", "llm_fixed", "graph", "graph_fixed", "tree",
+                "tree_fixed"):
         assert condition, ("llm arms need a condition (tour_named/"
-                           "tour_anonymized; graph_named/graph_anonymized)")
-        reasking = kind in ("llm", "graph")
+                           "tour_anonymized; graph_named/graph_anonymized; "
+                           "tree_named/tree_anonymized)")
+        reasking = kind in ("llm", "graph", "tree")
         spec: Dict[str, Any] = {
-            "name": "llm_hypothesis_mixture",
+            "name": ("tree_hypothesis_mixture" if kind.startswith("tree")
+                     else "llm_hypothesis_mixture"),
             "hypotheses_dir": str(DEFAULT_OUT_DIR / "hypotheses" / condition
                                   / hyp_subdir),
             "label": f"LLMHyp({condition}{',reask' if reasking else ',fixed'})"}
         if reasking:
             assert client is not None, "re-asking arm needs a served model"
+            if kind == "tree":
+                # Tree triggers: scheduled day 3 only, the anomaly bucket,
+                # then quality. No uncovered-bank trigger, one call type.
+                reask = {**reask, "scheduled_days": TREE_SCHEDULED_DAYS,
+                         "new_class_triggers": False, "call_types": False}
             spec["reask"] = reask
             elicitor_cls = (GraphRevisionElicitor if kind == "graph"
+                            else TreeRevisionElicitor if kind == "tree"
                             else RevisionElicitor)
             elicitor = elicitor_cls(
                 client, episode, anonymized=condition.endswith("anonymized"),
@@ -132,26 +192,22 @@ def parse_arm(arm: str):
         raise SystemExit(f"arm {arm!r}: protocol must be passive|active")
     if protocol == "active" and fraction is None:
         raise SystemExit(f"arm {arm!r}: active arms need f<fraction>")
-    if beta is not None and not kind.startswith("graph"):
-        raise SystemExit(f"arm {arm!r}: b<beta> needs a graph belief")
+    if kind.startswith("log_reader") and protocol != "active":
+        raise SystemExit(f"arm {arm!r}: the log reader is a policy; run it "
+                         f"as active:<kind>:<condition>:f0")
+    if beta is not None and not kind.startswith(("graph", "tree")):
+        raise SystemExit(f"arm {arm!r}: b<beta> needs a graph or tree belief")
     return protocol, kind, condition, fraction, beta
 
 
-def late_discovered_objects(episode) -> List[str]:
-    """Objects whose first sighting in the ambient stream (tour included)
-    falls after day 0 — the stratum the random-time tour makes
-    systematically different from the tour-visible objects."""
-    first: Dict[str, int] = {}
-    for obs in episode.initial_observations:
-        first.setdefault(obs.object_id, obs.t)
-    for event in episode.evidence_stream():
-        objs = ([event.object_id] if hasattr(event, "object_id")
-                else list(event.contents))
-        for obj in objs:
-            if obj not in first or event.t < first[obj]:
-                first[obj] = event.t
-    return sorted(obj for obj in episode.object_classes
-                  if obj not in first or first[obj] >= DAY_SECONDS_)
+def tour_absent_objects(episode) -> List[str]:
+    """Objects the installation tour did not see — membership is defined
+    by the tour alone. The mid-day tour makes this stratum systematically
+    different from the tour-visible objects, so it is reported apart.
+    (Was ``late_discovered_objects``, which named the stratum for
+    something that had not happened when it was fixed.)"""
+    seen = {obs.object_id for obs in episode.initial_observations}
+    return sorted(o for o in episode.object_classes if o not in seen)
 
 
 def _ess(belief) -> Optional[float]:
@@ -178,10 +234,13 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
             rng_seed: int = 0, bank_dir: Optional[pathlib.Path] = None,
             bank_seed: int = 0, hyp_subdir: str = "") -> pathlib.Path:
     protocol, kind, condition, fraction, beta = parse_arm(arm)
-    # <study>/<household>__bank<seed>/arms/<arm>/ — arms under one folder so
-    # the household directory itself holds only figures and tables.
+    if kind == "oracle":          # retired name
+        raise SystemExit("arm kind 'oracle' is now 'routine_posterior'")
+    # <run>/<household>__bank<seed>/arms/<group>/<arm>/ — grouped by what
+    # the arm is, so the household directory reads by importance.
+    arm_dirname = arm.replace(":", "__")
     out_dir = (out_root / f"{household}__bank{bank_seed}" / "arms"
-               / arm.replace(":", "__"))
+               / arm_group(arm_dirname) / arm_dirname)
     out_dir.mkdir(parents=True, exist_ok=True)
     path = bank_path(household, bank_seed, bank_dir)
     with open(path) as fh:
@@ -194,10 +253,13 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
             f"day on)")
     episode = next(JsonlBank(path=path).episodes())
     client = (CachedThinkingClient(endpoint, model, DEFAULT_OUT_DIR / "cache")
-              if kind in ("llm", "graph") else None)
-    late = set(late_discovered_objects(episode))
+              if kind in ("llm", "graph", "tree", "log_reader",
+                          "log_reader_notes")
+              else None)
+    late = set(tour_absent_objects(episode))
     spec = belief_spec(kind, condition, household, client, episode,
-                       out_dir / "revisions", reask, hyp_subdir)
+                       out_dir / "revisions", reask, hyp_subdir,
+                       protocol=protocol)
     rng = _derived_rng(rng_seed, "tour_start", arm, episode.episode_id)
     belief = build_registered_belief(dict(spec), rng)
     rows: List[Dict[str, Any]] = []
@@ -217,7 +279,7 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
                          prediction.distribution.items() if v > 1e-6},
                 "particles": _particle_rows(belief, question.object_id,
                                             question.t_query),
-                "late_discovered": question.object_id in late,
+                "tour_absent": question.object_id in late,
                 "ess": _ess(belief)})
 
         evaluate_continuous(episode, belief, config, on_prediction=capture)
@@ -225,7 +287,15 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
     else:
         policy_rng = _derived_rng(rng_seed, "tour_start_policy", arm,
                                   episode.episode_id)
-        if beta is not None:
+        if kind in ("log_reader", "log_reader_notes"):
+            from baselines.llm_hypotheses.log_reader import LogReaderPolicy
+            policy = LogReaderPolicy(spec["brain"])
+        elif beta is not None and kind.startswith("tree"):
+            from baselines.policies.label_disambiguation import (
+                LabelDisambiguationSense)
+            policy = LabelDisambiguationSense(
+                policy_rng, lam=VOI_LAMBDA, belief=belief, beta=beta)
+        elif beta is not None:
             from baselines.policies.assumption_disambiguation import (
                 AssumptionDisambiguationSense)
             policy = AssumptionDisambiguationSense(
@@ -248,7 +318,7 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
                 "belief_state": record.belief_state,
                 "particles": _particle_rows(belief, record.object_id,
                                             record.t_query),
-                "late_discovered": record.object_id in late,
+                "tour_absent": record.object_id in late,
                 "ess": _ess(belief)})
         policy_info = {"policy": policy.name, "fraction": fraction,
                        "beta": beta, "lambda": VOI_LAMBDA,
@@ -261,15 +331,27 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
     diagnostics: Dict[str, Any] = {
         "arm": arm, "household": household, "belief": belief.name,
         "protocol": protocol, **policy_info,
-        "late_discovered_objects": sorted(late),
+        "tour_absent_objects": sorted(late),
         "premises": dict(episode.premises),
         "wall_seconds": round(time.monotonic() - started, 1)}
+    if hasattr(belief, "brain"):
+        diagnostics["log_reader"] = belief.brain.stats()
+        diagnostics["log_loss_valid"] = False
+        diagnostics["decisions"] = belief.brain.decisions
+        diagnostics["notes_versions"] = belief.brain.notes_versions
     if hasattr(belief, "graph_diagnostics"):
         from baselines.llm_hypotheses.assumption_graph import (
             premise_recovered)
         diagnostics["graph"] = belief.graph_diagnostics()
-        diagnostics["assumption_recovery"] = premise_recovered(
-            belief.graph, episode.premises)
+        # Flat arms have no assumptions to match: N/A, not 0.
+        diagnostics["assumption_recovery"] = (
+            premise_recovered(belief.graph, episode.premises)
+            if belief.graph is not None else None)
+    if hasattr(belief, "tree_diagnostics"):
+        from baselines.llm_hypotheses.hypothesis_tree import label_recovered
+        diagnostics["tree"] = belief.tree_diagnostics()
+        diagnostics["label_recovery"] = label_recovered(
+            belief.tree, belief.leaf_weights, episode.premises)
     if hasattr(belief, "reask_diagnostics"):
         diagnostics["reask"] = belief.reask_diagnostics()
         diagnostics["ess_history"] = list(belief.ess_history)
@@ -290,8 +372,8 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
         .isoformat(timespec="seconds"),
         "git": dict(zip(("commit", "dirty"), git_state(REPO_ROOT))),
         "arm": arm, "spec": {k: v for k, v in spec.items()
-                             if k != "elicitor"},
-        "reask": reask, "rng_seed": rng_seed,
+                             if k not in ("elicitor", "brain")},
+        "reask": spec.get("reask", reask), "rng_seed": rng_seed,
         "location_equivalence": [list(g) for g in AWAY_EQUIVALENCE]},
         indent=1))
     logger.info("arm %s done: %d questions -> %s", arm, len(rows), out_dir)

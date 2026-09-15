@@ -72,9 +72,11 @@ from baselines.types import DAY_SECONDS
 logger = logging.getLogger(__name__)
 
 PERSON_CHECK_ROOM = "person_check"
-"""Pseudo-room whose only receptacle is ON_PERSON. Visitable only while
-the followed resident is home; OUT_OF_HOUSE belongs to no room and is
-never visitable, preserving the existing unsensability rule."""
+"""Retired pseudo-room (2026-09-14). ON_PERSON is unsensable like
+OUT_OF_HOUSE: a look inspects a receptacle the robot can stand next to,
+and a person is not one. The name survives only so old schedules that
+carry the visit are skipped by :func:`realize`; no room map contains it
+and no schedule emits it."""
 
 _H = 3600
 
@@ -88,8 +90,8 @@ class RoomMap:
     """Receptacle-to-room structure for one household.
 
     ``rooms`` preserves spec order (stable across runs); ``by_room`` maps
-    room -> tuple of receptacle ids. ON_PERSON belongs to the pseudo-room
-    :data:`PERSON_CHECK_ROOM`; OUT_OF_HOUSE belongs to no room.
+    room -> tuple of receptacle ids. Neither ON_PERSON nor OUT_OF_HOUSE
+    belongs to any room: both are unsensable.
     """
 
     by_room: Dict[str, Tuple[str, ...]]
@@ -107,7 +109,6 @@ class RoomMap:
                     f"{spec_path}: receptacle {entry.get('id')!r} has no "
                     f"'room'; the room-visit observation model needs one")
             by_room.setdefault(str(entry["room"]), []).append(str(entry["id"]))
-        by_room[PERSON_CHECK_ROOM] = [ON_PERSON]
         return RoomMap(
             by_room={k: tuple(v) for k, v in by_room.items()},
             rooms=tuple(by_room),
@@ -116,7 +117,7 @@ class RoomMap:
 
     @property
     def physical_rooms(self) -> Tuple[str, ...]:
-        """Rooms a patrol may visit (everything but the person pseudo-room)."""
+        """Rooms a patrol may visit (every room; kept as the name callers use)."""
         return tuple(r for r in self.rooms if r != PERSON_CHECK_ROOM)
 
     def room_of(self, receptacle_id: str) -> Optional[str]:
@@ -263,16 +264,14 @@ def _resident_room_lookup(timeline: pathlib.Path, resident: str,
 def follow_the_person(room_map: RoomMap, n_days: int,
                       awake: Dict[int, List[Tuple[int, int]]],
                       timeline: pathlib.Path, visits_per_day: int,
-                      seed: int, resident: Optional[str] = None,
-                      check_person: bool = True) -> List[RoomVisit]:
+                      seed: int, resident: Optional[str] = None) -> List[RoomVisit]:
     """Visits the room the followed resident occupies at each sampled time.
 
     Resident blocks are anchored at receptacles, so the occupied room is
     that receptacle's room. Sampled instants where the resident is away
     fall back to a random room: the companion robot wanders when its
-    person is out. With ``check_person``, each at-home visit is paired with
-    a person-check visit at the same instant, so carried objects are
-    observed exactly when the robot is with the carrier.
+    person is out. Carried objects are never observed: ON_PERSON is
+    unsensable.
     """
     rng = random.Random(seed)
     followed = resident or _first_resident(timeline)
@@ -291,8 +290,6 @@ def follow_the_person(room_map: RoomMap, n_days: int,
                 visits.append(RoomVisit(t=t, room=rng.choice(physical)))
                 continue
             visits.append(RoomVisit(t=t, room=room))
-            if check_person:
-                visits.append(RoomVisit(t=t, room=PERSON_CHECK_ROOM))
     return sorted(visits, key=lambda v: v.t)
 
 
@@ -323,9 +320,8 @@ class RealizedStream:
     negative-evidence machinery in the belief base class applies with no
     new belief code. ``sightings`` is kept for stream statistics and for
     consumers that only need the positive half.
-    ``dropped_person_visits`` counts person-checks scheduled while the
-    followed resident was away, matching the existing convention that an
-    absent person cannot be inspected.
+    ``dropped_person_visits`` counts visits to the retired person
+    pseudo-room found in an old schedule (none is emitted any more).
     """
 
     sightings: List[Dict[str, object]] = field(default_factory=list)
@@ -344,15 +340,14 @@ def realize(visits: Sequence[RoomVisit], room_map: RoomMap,
     receptacles and the objects found. Objects at OUT_OF_HOUSE are never
     observed anywhere, preserving the unsensability rule.
 
-    A person-check is dropped only when NOBODY is home (from ``away``);
-    a check on a resident who is home but carrying nothing is kept, since
-    "nothing is on the person right now" is exactly the negative evidence
-    the room-visit primitive exists to record.
+    Objects at ON_PERSON are likewise never observed (2026-09-14); a
+    visit to the retired person pseudo-room in an old schedule is skipped
+    and counted. ``away`` is accepted for callers that still pass it.
     """
     stream = RealizedStream()
     objects = sorted(truth)
     for visit in visits:
-        if visit.room == PERSON_CHECK_ROOM and _nobody_home(away, visit.t):
+        if visit.room == PERSON_CHECK_ROOM:      # retired pseudo-room
             stream.dropped_person_visits += 1
             continue
         receptacles = room_map.by_room[visit.room]
@@ -369,18 +364,6 @@ def realize(visits: Sequence[RoomVisit], room_map: RoomMap,
             "kind": "room_visit", "episode_id": episode_id,
             "t": visit.t, "room": visit.room, "contents": contents})
     return stream
-
-
-def _nobody_home(away: Optional[Dict[str, List[Tuple[int, int]]]],
-                 t: int) -> bool:
-    """True when every resident with recorded absences is out at ``t``.
-
-    Without away information (stub timelines) the house counts as
-    occupied, matching the exporter's always-ON_PERSON fallback.
-    """
-    if not away:
-        return False
-    return all(any(a <= t < b for a, b in spans) for spans in away.values())
 
 
 # ---------------------------------------------------------------------------

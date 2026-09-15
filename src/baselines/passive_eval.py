@@ -78,17 +78,19 @@ class PassiveProtocolConfig:
     mass on the members is pooled, and the truth is credited if it names
     any member. Default empty — exact-match scoring, the historical rule.
 
-    Exists for :data:`AWAY_EQUIVALENCE`: the bank labels an object
-    carried by a resident inside the house ``ON_PERSON`` and one that has
-    left with them ``OUT_OF_HOUSE``, but the robot never sights anything
-    at either, so no belief can learn the distinction — under exact
-    match, which of the two a model names on a "not in any receptacle"
-    question is decided by its floor-mass tie-break (list order for the
-    frequency path), and two statistical models were being scored
-    differently for the same unobservable call. Measured on the LLM
-    hypothesis eval (2 households, 4,500 questions): merging moved
-    MostFrequent's top-1 by +3.3 points and every arm's log-loss by
-    0.1–0.14 nats; no qualitative comparison flipped."""
+    Exists for :data:`AWAY_EQUIVALENCE`, and is now the SECONDARY
+    number. The bank labels an object carried by a resident inside the
+    house ``ON_PERSON`` and one that has left with them ``OUT_OF_HOUSE``.
+    The robot never sights anything at either, so the statistical models
+    only ever name one of them by floor-mass tie-break, and merging was
+    introduced (2026-09-12) to stop two such models being scored
+    differently for the same unobservable call. But the two are not the
+    same fact: "she took it" and "she is holding it in the kitchen" are
+    different answers, a belief that models occupancy CAN tell them apart
+    (a person home versus out is inferable from which objects move), and
+    merging marked "gone" correct when the resident was in the house.
+    Since 2026-09-14 the unmerged (exact) number is the one reported
+    going forward, with the merged number beside it for continuity."""
 
     def __post_init__(self) -> None:
         seen: set = set()
