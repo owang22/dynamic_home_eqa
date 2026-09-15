@@ -443,3 +443,27 @@ def test_literal_away_tokens_are_accepted_in_the_anonymized_condition():
     out = accept_literal_away_tokens(text, rmap)
     assert '"at": "receptacle_2"' in out and '"expect": "receptacle_3"' in out
     assert "OUT_OF_HOUSE_x" in out            # whole words only
+
+
+def test_library_cap_counts_live_documents_and_keeps_what_fits(tmp_path):
+    from baselines.llm_hypotheses.longleaf import MAX_LIBRARY
+    from baselines.llm_hypotheses.revise import LongLeafRevisionElicitor
+    write_gate_pass_bank(tmp_path / "bank.jsonl", seed=0)
+    episode = next(JsonlBank(tmp_path / "bank.jsonl").episodes())
+    recs = list(episode.receptacle_ids)
+    def doc(i, at):
+        return _doc(f"p_{i:04x}", f"d{i}", {"keys_shift": [{"days": "both", "from": 0, "to": 24, "at": at, "chance": "usually"}]},
+                    check={"target": "keys_shift", "at": at, "days": "both", "hour": 9, "if_seen": "right"})
+    reply = DELIMITER + "\n" + doc(900, recs[0]) + DELIMITER + "\n" + doc(901, recs[1])
+    class _Client:
+        def generate(self, *a, **k):
+            return {"payload": reply, "content": reply, "think": "", "prompt_tokens": 1,
+                    "completion_tokens": 1, "generation_seconds": 0.1, "finish_reason": "stop"}
+    el = LongLeafRevisionElicitor(_Client(), episode, anonymized=False, log_dir=tmp_path / "rev")
+    library = [{"hypothesis_id": f"p_{i:04x}", "title": "x", "status": "live" if i < MAX_LIBRARY - 1 else "retired day 3",
+                "weight": 0.01, "claims": [], "markdown": ""} for i in range(MAX_LIBRARY + 5)]
+    report = {"day": 5, "trigger": "claim", "known_objects": dict(episode.object_classes), "library": library,
+              "rules_held": [], "rules_failed": [], "worst_objects": [], "uncovered_objects": [], "statistics": "",
+              "object_table": [], "claims_against": [], "anomaly_bucket": [], "statistical_weight": 0.1}
+    out = el(report, [], None)
+    assert len(out["new"]) == 1 and out["problems"]      # 39 live: room for one of the two

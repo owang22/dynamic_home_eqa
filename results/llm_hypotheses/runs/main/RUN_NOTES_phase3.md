@@ -182,3 +182,16 @@ limit, not the count. So this arm changes the family and the count together.
   rounds' drop reasons are kept. The claim trigger waits a full day since the episode
   start or the last call as well as 40 sightings (an active arm met the sighting gap on the
   tour afternoon).
+- Library cap: was 40 on live + retired and rejected an overflowing reply whole; the
+  first full run hit it from call 7 (anonymized, day 14) and call 9 (named, day 11) and
+  wasted the remaining calls. Now 40 LIVE documents, and a reply keeps as many documents
+  as there is room for (the rest are logged as `left_out`). Both active arms relaunched
+  11:39 with the request cache replaying their earlier calls.
+
+### treeLongLeaf result (2026-09-15 12:50)
+
+Active named 0.790 exact (tour-absent 0.586); fixed library 0.763 (0.495); anonymized
+0.759 (0.502); aided log reader 0.753 (0.566). Paired: named library +0.028 [+0.019,
++0.036] over its fixed set, +0.019 [+0.008, +0.030] over most-frequent, −0.019 [−0.038,
+0.000] against the routine posterior. The passive re-asking arms were stopped on request
+(GPU contention) and sit under `arms/incomplete/_stopped_*`.

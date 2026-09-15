@@ -50,8 +50,9 @@ TARGET_ELICITED = (12, 20)
 """What the installation prompt asks for."""
 REVISION_TARGET = (3, 8)
 MAX_LIBRARY = 40
-"""Hard cap on live + retired documents (a revision beyond it is
-rejected whole)."""
+"""Cap on LIVE documents (retired ones cost nothing and stay on file). A
+revision that would overshoot keeps as many of its documents as there
+is room for, in the order written."""
 AWAY_TOKENS = ("OUT_OF_HOUSE", "ON_PERSON")
 _HEADING = re.compile(r"^#\s*(p_[0-9a-f]{4})?\s*[—–-]?\s*(.*)$", re.M)
 _FORK = re.compile(r"\(\s*fork(?:ed)?\s+of\s+(p_[0-9a-f]{4})\s*\)", re.I)

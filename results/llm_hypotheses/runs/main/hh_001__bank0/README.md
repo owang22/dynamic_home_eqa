@@ -1,4 +1,4 @@
-# hh_001 · timeline seed 0 · bank seed 0 — Phase 3 (hypothesis tree), 2026-09-14
+# hh_001 · timeline seed 0 · bank seed 0 — Phase 3 (hypothesis tree) and treeLongLeaf, 2026-09-14/15
 
 World: owner-room drift + per-resident forgetfulness. Bank re-exported today with ON_PERSON
 unsensable (question list unchanged from the Phase 2 bank). Prompts show only objects the
@@ -13,6 +13,10 @@ tour never saw). Design choices and deviations: `../RUN_NOTES_phase3.md`.
 | arm | top-1 exact (merged) | tour-absent | what it is |
 |---|---|---|---|
 | routine posterior | **0.809** (0.810) | **0.731** | ceiling on routine knowledge: posterior over 800 re-realizations of the program; eps 0.7 / half-life 6 h, re-selected on hh_002 under exact scoring |
+| **treeLongLeaf, named** | **0.790** (0.804) | **0.586** | library of 11 → 55 timetable documents, revised on claim triggers (12 calls, days 1–19; 37 forks, 7 fresh) |
+| treeLongLeaf, fixed library | 0.763 (0.778) | 0.495 | the 11 elicited documents, never revised |
+| treeLongLeaf, anonymized | 0.759 (0.776) | 0.502 | 16 → 68 documents, 12 calls; names replaced by tokens |
+| log reader, aided | 0.753 (0.753) | 0.566 | log reader with the same out-of-house paragraph and absence table |
 | flat LLM, fixed set (anonymized) | 0.767 (0.780) | 0.498 | 5 hypotheses, never revised |
 | tree LLM, fixed roots | 0.766 (0.780) | 0.495 | 4 root hypotheses with labels, no revision |
 | tree LLM, fixed roots, β 0.5 | 0.766 (0.782) | 0.505 | same, label-targeted sensing bonus |
@@ -24,16 +28,49 @@ tour never saw). Design choices and deviations: `../RUN_NOTES_phase3.md`.
 
 Reading:
 
-- Every LLM arm sits 0.75–0.77 (the log reader too, at 0.773 and ~400× the cost), inside
-  about one standard error of each other and of the no-LLM baseline; tree re-asking and tree fixed are identical to three decimals. The tree
-  is not buying accuracy at this horizon. Its structure behaves as designed (below), which
-  is the thing Phase 3 was built to test before a tree could be blamed or credited.
+- **treeLongLeaf named is the first LLM arm to clear the pack.** Paired over the same
+  questions: +0.028 [+0.019, +0.036] over its own fixed library, +0.019 [+0.008, +0.030]
+  over most-frequent, +0.024 over the best other LLM arm, +0.018 [+0.002, +0.035] over the
+  log reader at a small fraction of its cost (12 calls vs 2,783). On the tour-absent
+  objects — the ones that leave the house — it gains +0.090 over its fixed library and
+  +0.050 over most-frequent (0.586 vs ~0.50): the out-of-house paragraph, the daytime
+  absence table and the claim-driven revisions did what they were meant to. It still
+  trails the routine posterior by 0.019 [−0.038, 0.000] overall and by 0.145 on tour-absent
+  objects.
+- The anonymized library (0.759) gains nothing over its fixed set: with names replaced by
+  tokens the revisions could not tell the resident's things from the shared ones, and its
+  68 documents ended with 30 live at ≤ 0.10 weight each. Naming matters for this arm.
+- Every other LLM arm sits 0.75–0.77 (the log reader too, at 0.773 and ~400× the cost),
+  inside about one standard error of each other and of the no-LLM baseline; tree re-asking
+  and tree fixed are identical to three decimals. The tree's structure behaves as designed
+  (below), which is what Phase 3 was built to test before a tree could be blamed or credited.
+- All arms, most-frequent and the routine posterior included, score lower in weeks 3–4
+  than in week 2 (e.g. treeLongLeaf named 0.78 / 0.84 / 0.79 / 0.75): the world gets
+  harder, not the libraries worse.
 - **The merged score was flattering most-frequent** by 4.6 points overall and 13 points on
   tour-absent objects: it answers OUT_OF_HOUSE for carried objects, which merged scoring
   called correct whenever the truth was ON_PERSON. Under exact scoring the LLM arms lead
   most-frequent by +0.007 [−0.002, +0.016] (paired, active); passive most-frequent still
   leads by 0.017.
 - Routine posterior is the only arm that handles tour-absent objects (0.73 vs ~0.50).
+
+## What treeLongLeaf did (`arms/active/active__longleaf__longleaf_named__f0/`)
+
+- Elicitation: 11 documents in one call (13 written, 2 dropped for a chance word the
+  parser now maps); each covers all 21 tour-seen targets as timetables with ≥ 3 falsifiable
+  claims; 10 of 11 send objects out on a stated schedule.
+- Revisions fire on a weighted document's claim going against it (≥ 2 looks, more against
+  than for, a day and 40 sightings since the last call): 12 calls on days 1, 2, 3, 6–12,
+  15, 19. Each call reads the index (~7k tokens), asks for 1–3 documents in full, and
+  writes 2–5 new ones — 37 forks (parent kept, only the contradicted block or claim
+  changed) and 7 fresh; nothing dropped after repair. The first fork on day 1 already
+  said "Mara works from the kitchen table; the bedroom desk is a spare" from the absence
+  table (laptop / charger / headphones: found 1, found nothing 3 at the table in working
+  hours).
+- 55 documents at the end, 26 live; documents added from day 14 on hold 0.31 of the
+  weight; the statistical particle holds 0. `library/INDEX.md` lists every document with
+  weight, status and lineage; `revisions/*.json` hold every prompt, thinking trace and
+  reply.
 
 ## What the tree did (from `figures/tree_report.md`)
 

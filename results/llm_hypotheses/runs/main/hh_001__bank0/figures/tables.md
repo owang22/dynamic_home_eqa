@@ -33,6 +33,8 @@ Scoring: top-1 and log-loss are EXACT (ON_PERSON and OUT_OF_HOUSE distinct); the
 | active · llm_fixed · tour_named · f0 | 765 | 0.502 ± 0.018 (0.552) | 1.667 ± 0.059 | 1707 | 0.880 ± 0.008 (0.880) |
 | active · log_reader · named · f0 | 765 | 0.525 ± 0.018 (0.525) | 2.515 ± 0.092 | 1707 | 0.883 ± 0.008 (0.883) |
 | active · log_reader_aided · named · f0 | 765 | 0.566 ± 0.018 (0.567) | 2.359 ± 0.091 | 1707 | 0.837 ± 0.009 (0.837) |
+| active · longleaf · longleaf_anonymized · f0 | 765 | 0.502 ± 0.018 (0.546) | 1.637 ± 0.059 | 1707 | 0.874 ± 0.008 (0.879) |
+| active · longleaf · longleaf_named · f0 | 765 | 0.586 ± 0.018 (0.627) | 1.420 ± 0.052 | 1707 | 0.882 ± 0.008 (0.883) |
 | active · longleaf_fixed · longleaf_anonymized · f0 | 765 | 0.495 ± 0.018 (0.542) | 1.619 ± 0.058 | 1707 | 0.882 ± 0.008 (0.883) |
 | active · longleaf_fixed · longleaf_named · f0 | 765 | 0.495 ± 0.018 (0.544) | 1.644 ± 0.059 | 1707 | 0.882 ± 0.008 (0.883) |
 | active · mostfreq72 · f0 | 765 | 0.493 ± 0.018 (0.622) | 1.497 ± 0.058 | 1707 | 0.873 ± 0.008 (0.882) |
@@ -67,6 +69,8 @@ Scoring: top-1 and log-loss are EXACT (ON_PERSON and OUT_OF_HOUSE distinct); the
 | active · llm · tour_named · f0 | {'composition': 'solo', 'work_pattern': 'works_away'} | N/A (no assumptions) | N/A |
 | active · llm_fixed · tour_anonymized · f0 | {'composition': 'solo', 'work_pattern': 'works_away'} | N/A (no assumptions) | N/A |
 | active · llm_fixed · tour_named · f0 | {'composition': 'solo', 'work_pattern': 'works_away'} | N/A (no assumptions) | N/A |
+| active · longleaf · longleaf_anonymized · f0 | {'composition': 'solo', 'work_pattern': 'works_away'} | N/A (no assumptions) | N/A |
+| active · longleaf · longleaf_named · f0 | {'composition': 'solo', 'work_pattern': 'works_away'} | N/A (no assumptions) | N/A |
 | active · longleaf_fixed · longleaf_anonymized · f0 | {'composition': 'solo', 'work_pattern': 'works_away'} | N/A (no assumptions) | N/A |
 | active · longleaf_fixed · longleaf_named · f0 | {'composition': 'solo', 'work_pattern': 'works_away'} | N/A (no assumptions) | N/A |
 | active · tree · tree_anonymized · f0 | {'composition': 'solo', 'work_pattern': 'works_away'} | N/A (no assumptions) | N/A |
@@ -99,6 +103,8 @@ Scoring: top-1 and log-loss are EXACT (ON_PERSON and OUT_OF_HOUSE distinct); the
 | llm_fixed · tour_named · f0 | 0.763 ± 0.009 (0.778) | 0.881 ± 0.027 | 24.0 | 0 |
 | log_reader · named · f0 | 0.773 ± 0.008 (0.773) | n/a (ranked answer) | 18.9 | None |
 | log_reader_aided · named · f0 | 0.753 ± 0.009 (0.753) | n/a (ranked answer) | 22.8 | None |
+| longleaf · longleaf_anonymized · f0 | 0.759 ± 0.009 (0.776) | 0.879 ± 0.027 | 24.0 | 0 |
+| longleaf · longleaf_named · f0 | 0.790 ± 0.008 (0.804) | 0.796 ± 0.024 | 24.0 | 0 |
 | longleaf_fixed · longleaf_anonymized · f0 | 0.763 ± 0.009 (0.778) | 0.858 ± 0.027 | 24.0 | 0 |
 | longleaf_fixed · longleaf_named · f0 | 0.763 ± 0.009 (0.778) | 0.862 ± 0.027 | 24.0 | 0 |
 | mostfreq72 · f0 | 0.755 ± 0.009 (0.801) | 0.837 ± 0.028 | 24.0 | 0 |
@@ -130,6 +136,8 @@ Scoring: top-1 and log-loss are EXACT (ON_PERSON and OUT_OF_HOUSE distinct); the
 | active · llm · tour_named · f0 | 4 | 4 | 2724.2 | d0 uncovered → revised; d2 uncovered → revised; d3 scheduled → revised; d7 scheduled → revised |
 | active · llm_fixed · tour_anonymized · f0 | 0 | None | None |  |
 | active · llm_fixed · tour_named · f0 | 0 | None | None |  |
+| active · longleaf · longleaf_anonymized · f0 | 12 | 12 | 2995.6 | d1 claim → revised; d2 claim → revised; d3 claim → revised; d7 claim → revised; d8 claim → revised; d11 claim → revised; d14 claim → revised; d15 claim → revised; d16 claim → revised; d22 claim → revised; d24 claim → revised; d25 claim → revised |
+| active · longleaf · longleaf_named · f0 | 12 | 7 | 3514.9 | d1 claim → revised; d2 claim → revised; d3 claim → revised; d6 claim → revised; d7 claim → revised; d8 claim → revised; d9 claim → revised; d10 claim → revised; d11 claim → revised; d12 claim → revised; d15 claim → revised; d19 claim → revised |
 | active · longleaf_fixed · longleaf_anonymized · f0 | 0 | None | None |  |
 | active · longleaf_fixed · longleaf_named · f0 | 0 | None | None |  |
 | active · tree · tree_anonymized · f0 | 2 | 2 | 1124.8 | d3 scheduled → revised; d14 anomaly → revised |

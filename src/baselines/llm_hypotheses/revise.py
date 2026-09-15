@@ -591,11 +591,14 @@ class LongLeafRevisionElicitor(RevisionElicitor):
             valid = real_valid
         revive = revive_ids(payload)
         problems: List[str] = []
-        n_total = len(report.get("library", [])) + len(valid)
-        if n_total > MAX_LIBRARY:
-            problems.append(f"library would hold {n_total} documents, above the "
-                            f"cap of {MAX_LIBRARY}; response rejected")
-            valid = []
+        live = sum(1 for d in report.get("library", []) if d.get("status") == "live")
+        room = max(0, MAX_LIBRARY - live - len(revive))
+        if len(valid) > room:
+            problems.append(f"{live} live documents plus {len(revive)} revived: "
+                            f"room for {room} of the {len(valid)} written; the "
+                            f"rest are logged and left out")
+            log["left_out"] = [v["hypothesis_id"] for v in valid[room:]]
+            valid = valid[:room]
         log.update({"n_valid": len(valid), "dropped": dropped,
                     "revive": revive, "problems": problems,
                     "output_budget": log_budget,
