@@ -201,6 +201,11 @@ def build_anonymization_maps(episode: Episode) -> Tuple[Dict[str, str],
             for i, obj in enumerate(sorted(episode.object_classes), 1)}
     rmap = {rec: f"receptacle_{i}"
             for i, rec in enumerate(sorted(episode.receptacle_ids), 1)}
+    # Residents ride in the receptacle map: it is the map every prompt,
+    # log line and decision parser already applies to look targets and
+    # locations, and a resident is a look target.
+    rmap.update({res: f"person_{i}"
+                 for i, res in enumerate(sorted(episode.resident_ids), 1)})
     classes = sorted(set(episode.object_classes.values()))
     cmap = {cls: f"class_{i}" for i, cls in enumerate(classes, 1)}
     return omap, rmap, cmap
@@ -226,6 +231,12 @@ def crossref_table(episode: Episode, omap: Mapping[str, str],
     for rec in sorted(episode.receptacle_ids,
                       key=lambda r: int(rmap[r].split("_")[1])):
         lines.append(f"| {rmap[rec]} | {rec} |")
+    if episode.resident_ids:
+        lines += ["", "## Residents", "", "| token | real resident id |",
+                  "|---|---|"]
+        for res in sorted(episode.resident_ids,
+                          key=lambda x: int(rmap[x].split("_")[1])):
+            lines.append(f"| {rmap[res]} | {res} |")
     lines += ["", "## Classes", "", "| token | real class |", "|---|---|"]
     for cls in sorted(cmap, key=lambda c: int(cmap[c].split("_")[1])):
         lines.append(f"| {cmap[cls]} | {cls} |")
@@ -305,9 +316,22 @@ def deanonymize_hypothesis(raw: Mapping, omap: Dict[str, str],
 AWAY_SENTENCES = (
     "`ON_PERSON` means a resident who is in the house is carrying the "
     "object. `OUT_OF_HOUSE` means the object is not in the house. Neither "
-    "can be chosen as the target of a look.")
+    "can be chosen as the target of a look. A look at a receptacle also "
+    "shows which residents are in that room. Looking at a resident shows "
+    "what they are carrying, and is only possible after a look in the "
+    "room they are in.")
 """The only thing any prompt says about the two away tokens: what they
-mean and that a look cannot target them. Mechanics, no advice."""
+mean, that a look cannot target them, and how residents are seen and
+looked at. Mechanics, no advice."""
+
+
+def away_sentences(rmap: Mapping[str, str] | None = None) -> str:
+    """:data:`AWAY_SENTENCES` in the model's vocabulary (the two tokens
+    through ``rmap`` when anonymized)."""
+    r = rmap or {}
+    return (AWAY_SENTENCES
+            .replace("`ON_PERSON`", f"`{r.get('ON_PERSON', 'ON_PERSON')}`")
+            .replace("`OUT_OF_HOUSE`", f"`{r.get('OUT_OF_HOUSE', 'OUT_OF_HOUSE')}`"))
 
 
 def known_objects(episode: Episode, upto_t: Optional[int] = None,
@@ -352,8 +376,13 @@ def vocabulary_tables(episode: Episode,
     lines = ["RECEPTACLES:"]
     for rec in episode.receptacle_ids:
         lines.append(f"  {r.get(rec, rec)}")
-    lines.append(AWAY_SENTENCES.replace("`ON_PERSON`", f"`{r.get('ON_PERSON', 'ON_PERSON')}`")
-                 .replace("`OUT_OF_HOUSE`", f"`{r.get('OUT_OF_HOUSE', 'OUT_OF_HOUSE')}`"))
+    lines.append(away_sentences(r))
+    if episode.person_sensing and episode.resident_ids:
+        lines.append("")
+        lines.append("RESIDENTS (each can be the target of a look once a "
+                     "look has shown the room they are in):")
+        for res in episode.resident_ids:
+            lines.append(f"  {r.get(res, res)}")
     lines.append("")
     seen = {obs.object_id: obs.receptacle_id for obs in episode.initial_observations}
     lines.append("OBJECTS the robot has seen" + (", with where the tour saw each one:" if tour else ":"))
@@ -511,6 +540,55 @@ def per_object_statistics(object_ids: Sequence[str],
                      f"{distinct} receptacle{'s' if distinct != 1 else ''}; "
                      f"unseen {unseen} day{'s' if unseen != 1 else ''}")
     return "\n".join(lines)
+
+
+PRESENCE_ROWS_SHOWN = 60
+"""Most recent presence listings a revision prompt shows in full."""
+
+
+def person_sensing_sections(report: Mapping[str, Any],
+                            omap: Mapping[str, str] | None = None,
+                            rmap: Mapping[str, str] | None = None) -> str:
+    """The person-sensing evidence for a revision prompt, or "" on a bank
+    without it: residents seen by looks (time, room, residents), looks at
+    residents (time, resident, room, what they carried), and every
+    person sighting as time, object, ON_PERSON, resident, room. Rooms
+    are printed as they are; residents and the token go through
+    ``rmap``."""
+    if not report.get("person_sensing"):
+        return ""
+    o = omap or {}
+    r = rmap or {}
+    def obj(x): return o.get(x, x)
+    def rec(x): return r.get(x, x)
+    def day_stamp(t: int) -> str:
+        day, rem = divmod(int(t), DAY_SECONDS)
+        return (f"d{day:02d} {WEEKDAY_NAMES[day % 7][:3]} "
+                f"{rem // 3600:02d}:{rem % 3600 // 60:02d}")
+    presence = list(report.get("presence", []))
+    shown = presence[-PRESENCE_ROWS_SHOWN:]
+    head = (f"most recent {len(shown)} of {len(presence)}"
+            if len(presence) > len(shown) else f"{len(presence)} so far")
+    presence_lines = "\n".join(
+        f"  {day_stamp(p['t'])} {p['room']}: "
+        + (", ".join(rec(x) for x in p["residents"]) or "nobody")
+        for p in shown) or "  (none yet)"
+    look_lines = "\n".join(
+        f"  {day_stamp(l['t'])} {rec(l['resident'])} in {l['room']}: "
+        + (", ".join(obj(x) for x in l["contents"]) or "(nothing)")
+        for l in report.get("person_looks", [])) or "  (none yet)"
+    sighting_lines = "\n".join(
+        f"  {day_stamp(x['t'])} {obj(x['object'])} {rec('ON_PERSON')} "
+        f"{rec(x['resident'])} {x['room']}"
+        for x in report.get("person_sightings", [])) or "  (none yet)"
+    return f"""RESIDENTS SEEN BY LOOKS (time, room, residents in that room; {head}):
+{presence_lines}
+
+LOOKS AT RESIDENTS (time, resident, room, everything they were carrying):
+{look_lines}
+
+PERSON SIGHTINGS (time, object, {rec('ON_PERSON')}, resident, room):
+{sighting_lines}"""
 
 
 WEEKDAY_NAMES = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday",

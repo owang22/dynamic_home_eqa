@@ -11,6 +11,7 @@ from typing import Any, Mapping, Sequence
 from baselines.llm_hypotheses.longleaf import (DELIMITER, MAX_FETCH,
                                                REVISION_TARGET, TARGET_ELICITED)
 from baselines.llm_hypotheses.prompt import (build_anonymization_maps,
+                                             person_sensing_sections,
                                              tour_stamp, vocabulary_tables)
 from baselines.types import Episode
 
@@ -151,6 +152,8 @@ def longleaf_revision_prompt(report: Mapping[str, Any], tables: str,
         mechanics = (mechanics.replace("`OUT_OF_HOUSE`", f"`{rec('OUT_OF_HOUSE')}`")
                      .replace("`ON_PERSON`", f"`{rec('ON_PERSON')}`"))
     lo, hi = REVISION_TARGET
+    people = person_sensing_sections(report, o, r)
+    people = f"\n{people}\n" if people else ""
     docs = ""
     if fetched:
         docs = ("\n\nTHE DOCUMENTS YOU ASKED TO READ:\n\n"
@@ -199,7 +202,7 @@ BLOCKS THAT HELD UP (object was where the block said, inside its hours; tagged d
 
 BLOCKS THAT FAILED (object was elsewhere inside the block's hours):
 {failed}
-
+{people}
 {ask}"""
 
 

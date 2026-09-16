@@ -1,5 +1,81 @@
 # STATUS — basic baselines for the sense-or-answer study
 
+## Update (2026-09-15: person sensing — ON_PERSON is observable through the residents; OUT_OF_HOUSE is the only location left to elimination)
+
+A new bank version (`person_sensing: true` in the episode header; the
+cold-start fleet config sets it) makes `ON_PERSON` observable the way
+receptacles are, in two steps: **find the resident, then look at
+them.** Truth labels are unchanged — `ON_PERSON` is still "carried by a
+resident who is in the house", `OUT_OF_HOUSE` everything else not at a
+receptacle (`_project_segment`). Banks without the header field load,
+run and score exactly as before; the fleet export with `fleet.yaml` is
+byte-identical.
+
+Mechanics:
+
+- **Export** (`export_bank.export(..., person_sensing=True)`): the
+  header carries `resident_ids`; every `ON_PERSON` truth row names its
+  `carrier`; one `resident` row stream per resident holds the room
+  trajectory `(t, room-or-AWAY)` from residents.jsonl through
+  `_resident_room_lookup` (block `at` receptacle -> its room, ELSEWHERE
+  -> AWAY, and before the first block the room of that first block).
+  All of it is harness-only, like object trajectories: `agent_view`
+  never sees it.
+- **Presence listing.** Every receptacle sense result carries
+  `residents_present`: who was in that receptacle's room at `t_query`.
+  Ambient room visits carry it too on these banks.
+- **Person sense** (`SensePerson(resident_id)`): legal only for a
+  resident an earlier sense of the same question listed; costs the
+  same-room price (1.0); leaves the robot where it stands; returns a
+  `PersonSenseResult` — a `SenseResult` at `ON_PERSON` with the
+  resident, their room and everything they carry at `t_query`. An
+  unlisted resident raises, like an unsensable receptacle. Logged as a
+  `sense_person` action. `ON_PERSON` and `OUT_OF_HOUSE` stay
+  non-targetable answer tokens for `Sense`.
+- **Beliefs** (`beliefs/base.py`): an object in a person sense result is
+  a positive sighting at `ON_PERSON`, recorded with resident and room. A
+  resident looked at without the object is an empty look at `ON_PERSON`
+  for that resident only; `ON_PERSON` as a whole is suppressed once
+  every resident has been cleared at the same instant — looked at
+  empty, or shown out of the house by a full sweep of every room at
+  that instant listing them nowhere. That last clause is the base
+  class's one use of presence listings (it decides who can be carrying,
+  never where anything is); listings are kept and exposed for models
+  that want more. Models that ingest empty looks natively (Perpetua,
+  the oracle posterior, the hypothesis mixture) go through
+  `absence_location`, so one resident's empty pockets never exclude
+  `ON_PERSON` in a multi-resident home.
+- **Search**: `SequentialSearch` sweeps receptacles as before and then
+  looks at every resident the sweep listed; a resident found carrying
+  the object answers `ON_PERSON`; otherwise the belief's remainder is
+  `OUT_OF_HOUSE`. `solvable` = **1.000** on the hh_001 cold-start bank
+  for all three panel beliefs (it was 0.976 there and 0.948 on the
+  fleet.yaml bank after ON_PERSON became unsensable on 09-14: an
+  unobservable ON_PERSON/OUT_OF_HOUSE tie broken by the floor). The
+  check's definition is untouched.
+- **Prompts and logs**: the shared away sentence (`AWAY_SENTENCES`, also
+  used by the log reader) now says how residents are seen and looked
+  at; the log reader's log renders presence on every look and person
+  looks as `look <resident> in <room>: <objects>`, offers listed
+  residents as look targets, and parses a resident target back to
+  `SensePerson`; the longleaf and tree revision prompts get three
+  sections (residents seen by looks; looks at residents; person
+  sightings as time, object, ON_PERSON, resident, room). Residents
+  ride in the receptacle anonymization map as `person_N`.
+
+Reading (hh_001 cold-start bank, one `SequentialSearch` run at
+unlimited budget over 672 questions): 20 person senses, every one of
+them finding the object; 20 questions whose truth is `ON_PERSON`, 11
+`OUT_OF_HOUSE`; 2103 receptacle senses.
+
+One interpretation to know about: the brief gated a person sense on a
+listing "in the robot's current room". The sweep-then-residents order
+it also asked for ends with the robot in the last room swept, so that
+gate would have made every resident listed elsewhere unreachable and
+`solvable` < 1. The gate implemented is "listed by an earlier sense of
+this question" (which is a look made in the room the resident is in);
+the cost stays 1.0 and the robot does not move.
+
 ## Update (2026-09-11, fourth: beta / room-cost sweep with paired statistics — disambiguation sensing does not beat the myopic frontier)
 
 Re-run of the disambiguation trial at settings chosen to give the idea
@@ -618,11 +694,13 @@ Deviations and design decisions:
    still buys a same-room look. Accuracy is unaffected. Teaching the
    cost-blind policies to check affordability would remove the noise but
    would also give them a form of cost-awareness, so it was not done.
-5. **ON_PERSON sits in the `person_check` pseudo-room** (the existing
-   `RoomMap` convention), and the fleet's `round_robin_patrol` never
-   visits it, so on these banks sensing ON_PERSON always pays the
-   surcharge. Noted rather than special-cased: it is one receptacle of
-   22-38.
+5. **ON_PERSON sat in the `person_check` pseudo-room** at the time (the
+   `RoomMap` convention then), and the fleet's `round_robin_patrol`
+   never visited it, so on these banks sensing ON_PERSON always paid
+   the surcharge. Noted rather than special-cased: it was one
+   receptacle of 22-38. (Retired 2026-09-14; since 2026-09-15 ON_PERSON
+   is reached through a person sense on the resident, priced at the
+   same-room cost — see the update at the top.)
 6. **Policy slugs in the study are Part B's own**, hyperparameters and
    all, because every generator derives from `(seed, belief, policy slug,
    budget, episode)` — relabelling `..._best` would reseed the
@@ -1785,7 +1863,10 @@ past probability 1.0, which the strict Answer contract rejects).
    sweep's blind no-tour bank (task 1.0000 x3; full-state at unlimited
    0.959/0.858/0.848). Multi-stage journeys and person-coupled absences
    did not break findability: OUT_OF_HOUSE answers are proven by
-   elimination (single unsensable receptacle — keep it single).
+   elimination (single unsensable receptacle — keep it single; since
+   2026-09-15 ON_PERSON is the second unsensable RECEPTACLE but is
+   observable through person sensing, so OUT_OF_HOUSE stays the only
+   location inferred by elimination).
 2. *Day 22*: intended dynamics, not an artifact. Day 20 (Sunday) rolled
    every probabilistic block cold — tidy, wash, outing all skipped
    (8 events vs ~21 typical) — displacement compounded, Monday's 4-item
@@ -1815,16 +1896,21 @@ unsensable location is reached by ELIMINATION — sweep everything, miss
 everywhere, and the exclusion redistribution concentrates the remaining
 mass on it. With exactly ONE unsensable receptacle this is exact, so
 solvable stays 1.0 (verified: 1.0000 on the 28-day bank); keep it at
-one unless the invariant is deliberately renegotiated.
+one unless the invariant is deliberately renegotiated. (2026-09-14 made
+ON_PERSON a second unsensable receptacle, which broke the tie — solvable
+0.948 on hh_001; 2026-09-15 restored the invariant by making ON_PERSON
+observable through person sensing on banks that declare it, see the
+update at the top.)
 
 Consequences implemented with it:
 
 - The exporter projects person-carried objects time-dependently: while
   the carrier is away (residents.jsonl ELSEWHERE blocks), person:X ->
   OUT_OF_HOUSE, not ON_PERSON — the phone in her pocket at work is out
-  of the house. ON_PERSON stays sensable (looking at what a HOME
-  resident carries), and sensing it while she is away leaks nothing
-  because nothing is ON_PERSON then.
+  of the house. ON_PERSON stayed sensable then (looking at what a HOME
+  resident carries), and sensing it while she is away leaked nothing
+  because nothing is ON_PERSON then. (Unsensable as a receptacle since
+  2026-09-14; observable through a person sense since 2026-09-15.)
 - Neither the tour nor drive-by sightings ever report an object whose
   true location is unsensable (you cannot see what is not there);
   dropped sightings are counted and logged.

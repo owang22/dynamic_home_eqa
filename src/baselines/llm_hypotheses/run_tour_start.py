@@ -28,7 +28,10 @@ Arms: ``passive:<belief>[:<condition>]`` or
 ``llm`` (re-asking), ``llm_fixed`` (no re-asking), ``graph`` (the
 assumption-graph arm, re-asking with operations), ``graph_fixed``,
 ``periodic``, ``mostfreq``, ``routine_posterior`` (the routine-knowledge
-ceiling, formerly ``oracle``). Graph conditions are
+ceiling, formerly ``oracle``), ``log_reader*`` and ``notebook_mixture``
+(both active-only, ``:named|anonymized:f0``; the notebook mixture
+writes its notebooks and look/forecast/population logs into the arm
+folder). Graph conditions are
 ``graph_named`` / ``graph_anonymized`` (the elicit ``--graph`` output).
 ``b<beta>`` on an active graph arm swaps the random-slice VoI policy
 for :class:`~baselines.policies.assumption_disambiguation.
@@ -154,6 +157,23 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
                  "log_reader_aided": "LogReaderAided"}.get(kind, "LogReader")
         return {"name": "log_reader", "brain": brain,
                 "label": f"{label}({condition})"}
+    if kind == "notebook_mixture":
+        assert condition in ("named", "anonymized"), \
+            "notebook_mixture takes a condition: named | anonymized"
+        assert client is not None, "the notebook mixture needs a served model"
+        from baselines.llm_hypotheses.notebook_mixture import (
+            NotebookMixtureBrain)
+        from baselines.llm_hypotheses.prompt import build_anonymization_maps
+        if condition == "anonymized":
+            omap, rmap, cmap = build_anonymization_maps(episode)
+        else:
+            omap, rmap, cmap = {}, {}, {}
+        # The brain writes straight into the arm folder: notebooks/,
+        # looks.jsonl, forecasts.jsonl, population.jsonl, calls.jsonl.
+        brain = NotebookMixtureBrain(client, omap=omap, rmap=rmap, cmap=cmap,
+                                     log_dir=log_dir.parent)
+        return {"name": "notebook_mixture", "brain": brain,
+                "label": f"NotebookMixture({condition})"}
     if kind in ("llm", "llm_fixed", "graph", "graph_fixed", "tree",
                 "tree_fixed", "longleaf", "longleaf_fixed"):
         assert condition, ("llm arms need a condition (tour_named/"
@@ -216,6 +236,9 @@ def parse_arm(arm: str):
     if kind.startswith("log_reader") and protocol != "active":
         raise SystemExit(f"arm {arm!r}: the log reader is a policy; run it "
                          f"as active:<kind>:<condition>:f0")
+    if kind == "notebook_mixture" and protocol != "active":
+        raise SystemExit(f"arm {arm!r}: the notebook mixture chooses its own "
+                         f"looks; run it as active:notebook_mixture:<condition>:f0")
     if beta is not None and not kind.startswith(("graph", "tree")):
         raise SystemExit(f"arm {arm!r}: b<beta> needs a graph or tree belief")
     return protocol, kind, condition, fraction, beta
@@ -253,7 +276,8 @@ def _particle_rows(belief, object_id: str, t: int) -> Optional[Dict[str, Dict[st
 def run_arm(household: str, arm: str, endpoint: str, model: str,
             out_root: pathlib.Path, reask: Dict[str, Any],
             rng_seed: int = 0, bank_dir: Optional[pathlib.Path] = None,
-            bank_seed: int = 0, hyp_subdir: str = "") -> pathlib.Path:
+            bank_seed: int = 0, hyp_subdir: str = "",
+            days: Optional[int] = None) -> pathlib.Path:
     protocol, kind, condition, fraction, beta = parse_arm(arm)
     if kind == "oracle":          # retired name
         raise SystemExit("arm kind 'oracle' is now 'routine_posterior'")
@@ -273,8 +297,14 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
             f"exported with --first-question-day 0 (questions from the tour "
             f"day on)")
     episode = next(JsonlBank(path=path).episodes())
+    if days is not None:
+        # A short run for a cost or behaviour check: the first `days`
+        # days of questions, everything else about the bank unchanged.
+        episode = dataclasses.replace(
+            episode, questions_by_day=episode.questions_by_day[:days])
     client = (CachedThinkingClient(endpoint, model, DEFAULT_OUT_DIR / "cache")
-              if kind in ("llm", "graph", "tree", "longleaf") or kind.startswith("log_reader")
+              if kind in ("llm", "graph", "tree", "longleaf", "notebook_mixture")
+              or kind.startswith("log_reader")
               else None)
     late = set(tour_absent_objects(episode))
     spec = belief_spec(kind, condition, household, client, episode,
@@ -310,6 +340,10 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
         if kind.startswith("log_reader"):
             from baselines.llm_hypotheses.log_reader import LogReaderPolicy
             policy = LogReaderPolicy(spec["brain"])
+        elif kind == "notebook_mixture":
+            from baselines.llm_hypotheses.notebook_mixture import (
+                NotebookMixturePolicy)
+            policy = NotebookMixturePolicy(spec["brain"])
         elif beta is not None and kind.startswith("tree"):
             from baselines.policies.label_disambiguation import (
                 LabelDisambiguationSense)
@@ -340,6 +374,9 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
                                             record.t_query),
                 "tour_absent": record.object_id in late,
                 "ess": _ess(belief)})
+        if kind == "notebook_mixture":
+            # The last day's end-of-day review and the final notebooks.
+            spec["brain"].finish()
         policy_info = {"policy": policy.name, "fraction": fraction,
                        "beta": beta, "lambda": VOI_LAMBDA,
                        "random_senses": getattr(policy, "random_senses", None),
@@ -350,11 +387,14 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
             fh.write(json.dumps(row) + "\n")
     diagnostics: Dict[str, Any] = {
         "arm": arm, "household": household, "belief": belief.name,
-        "protocol": protocol, **policy_info,
+        "protocol": protocol, "days": episode.n_days, **policy_info,
         "tour_absent_objects": sorted(late),
         "premises": dict(episode.premises),
         "wall_seconds": round(time.monotonic() - started, 1)}
-    if hasattr(belief, "brain"):
+    if kind == "notebook_mixture":
+        diagnostics["notebook_mixture"] = belief.brain.diagnostics()
+        diagnostics["log_loss_valid"] = True
+    elif hasattr(belief, "brain"):
         diagnostics["log_reader"] = belief.brain.stats()
         diagnostics["log_loss_valid"] = False
         diagnostics["decisions"] = belief.brain.decisions
@@ -439,6 +479,8 @@ def main() -> None:
     ap.add_argument("--hyp-subdir", default="",
                     help="subdirectory under hypotheses/<condition>/ holding "
                          "this bank's elicitation")
+    ap.add_argument("--days", type=int, default=None,
+                    help="run only the first N days of questions")
     args = ap.parse_args()
     reask = {"window": args.reask_window, "threshold": args.reask_threshold,
              "scheduled_days": list(args.reask_days),
@@ -452,7 +494,8 @@ def main() -> None:
              "call_types": not args.no_call_types}
     run_arm(args.household, args.arm, args.endpoint, args.model,
             args.out_dir, reask, args.rng_seed, bank_dir=args.bank_dir,
-            bank_seed=args.bank_seed, hyp_subdir=args.hyp_subdir)
+            bank_seed=args.bank_seed, hyp_subdir=args.hyp_subdir,
+            days=args.days)
 
 
 if __name__ == "__main__":

@@ -299,6 +299,14 @@ def _build_log_reader(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
     return LogReaderBelief(rng, spec["brain"], label=spec.get("label"))
 
 
+def _build_notebook_mixture(spec: Dict[str, Any],
+                            rng: random.Random) -> BeliefModel:
+    """The notebook-mixture arm: like the log reader, the driver puts a
+    built ``brain`` (client, token maps, population) in the spec."""
+    from baselines.llm_hypotheses.notebook_mixture import NotebookMixtureBelief
+    return NotebookMixtureBelief(rng, spec["brain"], label=spec.get("label"))
+
+
 def _build_hierarchy_backoff(spec: Dict[str, Any],
                              rng: random.Random) -> BeliefModel:
     d = HierarchyBackoffConfig
@@ -400,6 +408,7 @@ BELIEF_REGISTRY: Mapping[str, BeliefEntry] = {
         BeliefEntry("llm_hypothesis_mixture", "candidate",
                     _build_llm_hypothesis_mixture),
         BeliefEntry("log_reader", "candidate", _build_log_reader),
+        BeliefEntry("notebook_mixture", "candidate", _build_notebook_mixture),
         BeliefEntry("tree_hypothesis_mixture", "candidate",
                     _build_tree_hypothesis_mixture),
         BeliefEntry("longleaf_mixture", "candidate", _build_longleaf_mixture),

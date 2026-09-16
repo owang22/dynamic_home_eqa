@@ -21,13 +21,30 @@ and start with its header; a file may hold many episodes):
       receptacles, ties broken by room id sort order),
      "query_generation": "uniform"|"routine_driven" (optional for old
       banks, which are all uniform; REQUIRED as soon as any question row
-      carries an "origin" — a routine-driven bank must declare itself)}
+      carries an "origin" — a routine-driven bank must declare itself),
+     "person_sensing": bool (optional, default false: the bank lets a
+      policy look at a resident — see "resident" rows and the "carrier"
+      field below; a bank without it loads, runs and scores exactly as
+      before the field existed),
+     "resident_ids": [str, ...] (optional; required with person_sensing:
+      the household roster, vocabulary the agent may see)}
 
     {"kind": "truth", "episode_id": str, "object_id": str, "t": int,
-     "receptacle_id": str}
+     "receptacle_id": str, "carrier": str (optional; on a person_sensing
+      bank REQUIRED whenever receptacle_id is ON_PERSON: the resident
+      carrying the object from t on. Ground truth, harness-only)}
         Piecewise-constant ground truth: object is at receptacle from t
         until its next truth row. Every object needs a t=0 row. Times are
         seconds since episode start (as everywhere in this package).
+
+    {"kind": "resident", "episode_id": str, "resident_id": str, "t": int,
+     "room": str}
+        Piecewise-constant ground truth of where a resident is: a room of
+        the receptacle map, or "AWAY" while out. Every resident needs a
+        t=0 row. Harness-only, like truth rows: it feeds the presence
+        listing a receptacle sense returns and what a person sense finds,
+        and never reaches an agent's context. Only person_sensing banks
+        carry these rows.
 
     {"kind": "observation", "episode_id": str, "object_id": str,
      "receptacle_id": str, "t": int, "source": "initial_tour"|"scripted"}
@@ -67,6 +84,7 @@ changes against it.
 
 from __future__ import annotations
 
+import bisect
 import hashlib
 import json
 import logging
@@ -76,8 +94,8 @@ from dataclasses import dataclass
 from typing import (Any, Dict, Iterator, List, Protocol, Tuple,
                     Union)
 
-from baselines.types import (DAY_SECONDS, Episode, Observation, Question,
-                             SenseResult)
+from baselines.types import (AWAY, DAY_SECONDS, ON_PERSON, Episode,
+                             Observation, Question, SenseResult)
 
 logger = logging.getLogger(__name__)
 
@@ -136,7 +154,7 @@ class JsonlBank:
                         f"{self.path}:{lineno}: {kind!r} row before any "
                         f"episode_header")
                 elif kind in ("truth", "observation", "question",
-                              "room_visit"):
+                              "room_visit", "resident"):
                     current.add(kind, row, lineno)
                 else:
                     raise BankFormatError(
@@ -175,6 +193,9 @@ class _EpisodeAccumulator:
             self.query_generation = None if raw_qg is None else str(raw_qg)
             raw_tour = header.get("tour_t")
             self.tour_t = None if raw_tour is None else int(raw_tour)
+            self.person_sensing = bool(header.get("person_sensing", False))
+            self.resident_ids = tuple(
+                str(r) for r in header.get("resident_ids", []))
         except (KeyError, TypeError, AttributeError) as err:
             raise BankFormatError(
                 f"{path}:{lineno}: bad episode_header: {err}") from err
@@ -197,7 +218,12 @@ class _EpisodeAccumulator:
             raise BankFormatError(
                 f"{path}:{lineno}: home_base_room {self.home_base_room!r} "
                 f"is not a room of any receptacle")
+        if self.person_sensing and not self.resident_ids:
+            raise BankFormatError(
+                f"{path}:{lineno}: person_sensing without resident_ids")
         self._truth: Dict[str, List[Tuple[int, str]]] = {}
+        self._carriers: Dict[Tuple[str, int], str] = {}
+        self._resident_rooms: Dict[str, List[Tuple[int, str]]] = {}
         self._observations: List[Observation] = []
         self._questions: List[Question] = []
         self._room_visits: List[Tuple[int, Dict[str, List[str]]]] = []
@@ -215,6 +241,23 @@ class _EpisodeAccumulator:
             self._check(obj in self.object_classes, lineno, f"unknown object {obj!r}")
             self._check(rec in self.receptacles, lineno, f"unknown receptacle {rec!r}")
             self._truth.setdefault(obj, []).append((t, rec))
+            carrier = row.get("carrier")
+            if carrier is not None:
+                self._check(rec == ON_PERSON, lineno,
+                            f"carrier on a truth row at {rec!r} (only "
+                            f"{ON_PERSON} rows carry one)")
+                self._check(str(carrier) in self.resident_ids, lineno,
+                            f"unknown carrier {carrier!r}")
+                self._carriers[(obj, t)] = str(carrier)
+        elif kind == "resident":
+            res = str(row["resident_id"])
+            self._check(res in self.resident_ids, lineno,
+                        f"unknown resident {res!r}")
+            room = str(row["room"])
+            self._check(room == AWAY or room in set(self.receptacle_rooms.values()),
+                        lineno, f"unknown room {room!r}")
+            self._resident_rooms.setdefault(res, []).append(
+                (int(row["t"]), room))
         elif kind == "observation":
             source = str(row["source"])
             self._check(source in _BANK_SOURCES, lineno,
@@ -307,10 +350,31 @@ class _EpisodeAccumulator:
              *visit_positives), key=lambda o: o.t))
         explicit = tuple(o for o in self._observations
                          if o.source == "scripted")
+        resident_rooms = {res: tuple(sorted(traj))
+                          for res, traj in self._resident_rooms.items()}
+        for res, traj in resident_rooms.items():
+            if traj[0][0] != 0:
+                raise BankFormatError(
+                    f"{self._path} (episode {self.episode_id}): resident "
+                    f"{res!r} has no t=0 room row")
+        if self.person_sensing:
+            missing = sorted(set(self.resident_ids) - set(resident_rooms))
+            if missing:
+                raise BankFormatError(
+                    f"{self._path} (episode {self.episode_id}): "
+                    f"person_sensing bank has no room rows for residents "
+                    f"{missing}")
+        # Under person_sensing an ambient visit also lists who was in the
+        # room: the same presence listing a paid sense returns. Older
+        # banks carry no roster and get the empty default.
+        presence = _PresenceLookup(self.resident_ids, resident_rooms)
         visit_evidence = tuple(
             SenseResult(receptacle_id=rec, t=t, contents=tuple(objs),
                         object_classes={o: self.object_classes[o]
-                                        for o in objs})
+                                        for o in objs},
+                        residents_present=(
+                            presence.in_room(self.receptacle_rooms.get(rec), t)
+                            if self.person_sensing else ()))
             for t, contents in sorted(self._room_visits,
                                       key=lambda v: v[0])
             for rec, objs in sorted(contents.items()))
@@ -318,25 +382,58 @@ class _EpisodeAccumulator:
                                                          *visit_evidence]
         merged.sort(key=lambda e: e.t)
         evidence = tuple(merged)
-        episode = Episode(
-            episode_id=self.episode_id, household_id=self.household_id,
-            receptacle_ids=self.receptacles, object_classes=self.object_classes,
-            initial_observations=initial, scripted_observations=scripted,
-            questions_by_day=tuple(
-                tuple(sorted(day, key=lambda q: q.t_query)) for day in by_day),
-            budget_per_day=self.budget_per_day,
-            trajectories={obj: tuple(sorted(self._truth[obj]))
-                          for obj in self.object_classes},
-            household_type=self.household_type,
-            premises=self.premises,
-            unsensable_receptacle_ids=self.unsensable,
-            receptacle_rooms=self.receptacle_rooms,
-            home_base_room=self.home_base_room,
-            scripted_evidence=evidence)
+        try:
+            episode = Episode(
+                episode_id=self.episode_id, household_id=self.household_id,
+                receptacle_ids=self.receptacles, object_classes=self.object_classes,
+                initial_observations=initial, scripted_observations=scripted,
+                questions_by_day=tuple(
+                    tuple(sorted(day, key=lambda q: q.t_query)) for day in by_day),
+                budget_per_day=self.budget_per_day,
+                trajectories={obj: tuple(sorted(self._truth[obj]))
+                              for obj in self.object_classes},
+                household_type=self.household_type,
+                premises=self.premises,
+                unsensable_receptacle_ids=self.unsensable,
+                receptacle_rooms=self.receptacle_rooms,
+                home_base_room=self.home_base_room,
+                scripted_evidence=evidence,
+                person_sensing=self.person_sensing,
+                resident_ids=self.resident_ids,
+                resident_rooms=resident_rooms,
+                carriers=dict(self._carriers))
+        except ValueError as err:
+            raise BankFormatError(
+                f"{self._path} (episode {self.episode_id}): {err}") from err
         logger.debug("loaded episode %s: %d objects, %d questions",
                      episode.episode_id, len(episode.object_classes),
                      sum(len(d) for d in episode.questions_by_day))
         return episode
+
+
+class _PresenceLookup:
+    """Who is in which room at ``t``, from the resident room rows: the
+    loader's own copy of :meth:`Episode.residents_in_room`, used before
+    the Episode exists to stamp presence on ambient visits."""
+
+    def __init__(self, resident_ids: Tuple[str, ...],
+                 resident_rooms: Dict[str, Tuple[Tuple[int, str], ...]]
+                 ) -> None:
+        self._ids = resident_ids
+        self._rooms = resident_rooms
+
+    def room_of(self, resident_id: str, t: int) -> Union[str, None]:
+        traj = self._rooms.get(resident_id)
+        if not traj:
+            return None
+        idx = bisect.bisect_right([p[0] for p in traj], t) - 1
+        room = traj[idx][1]
+        return None if room == AWAY else room
+
+    def in_room(self, room: Union[str, None], t: int) -> Tuple[str, ...]:
+        if room is None:
+            return ()
+        return tuple(r for r in self._ids if self.room_of(r, t) == room)
 
 
 # --------------------------------------------------------------------------

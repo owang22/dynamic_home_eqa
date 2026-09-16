@@ -16,7 +16,24 @@ The design, in three sentences:
 3. There is no elimination rule anywhere: fresh empty looks crush sensed
    receptacles' mass, OUT_OF_HOUSE can never receive negative evidence
    (it cannot be looked at), so its floor mass survives renormalization
-   and wins exactly when everything else has been seen empty.
+   and wins exactly when everything else has been seen empty. It is the
+   ONLY location inferred that way.
+
+ON_PERSON, the other answer token, is not looked at as a receptacle but
+is observable on a person-sensing bank through the residents: a
+receptacle look lists who is in that room, and a look at a listed
+resident (:class:`~baselines.types.PersonSenseResult`) returns what they
+carry. An object in that result is a positive sighting at ON_PERSON,
+recorded with the resident and room. A resident looked at WITHOUT the
+object is an empty look at ON_PERSON for that resident only: with one
+resident in the house this is an ordinary empty look at ON_PERSON; with
+several, ON_PERSON is suppressed only once every resident is cleared at
+the same instant — looked at empty, or shown to be out of the house by
+a full sweep of every room at that instant listing them nowhere. That
+last clause is the one use the base class makes of presence listings
+(who was in which room when): it decides who CAN be carrying, never
+where anything is. Listings are kept and exposed
+(:meth:`BeliefModel.presence_listings`) for models that want more.
 
 Shared bookkeeping lives here so concrete models stay single-idea. The
 base class maintains, per object, the chronological list of positive
@@ -70,8 +87,9 @@ import abc
 import random
 from typing import Dict, List, Mapping, Optional, Tuple, Union
 
-from baselines.types import (PROBABILITY_TOLERANCE, EpisodeContext,
-                             Observation, Prediction, SenseResult)
+from baselines.types import (ON_PERSON, PROBABILITY_TOLERANCE,
+                             EpisodeContext, Observation, PersonSenseResult,
+                             Prediction, SenseResult)
 
 DEFAULT_FLOOR_MASS = 0.02
 """Share of every prediction spread uniformly over all locations (step 2
@@ -210,6 +228,19 @@ class BeliefModel(abc.ABC):
         self._history: Dict[str, List[Tuple[int, str]]] = {}
         # object_id -> {receptacle_id: newest time O was seen absent from it}
         self._exclusions: Dict[str, Dict[str, int]] = {}
+        # object_id -> {resident_id: newest time that resident was looked
+        # at and was NOT carrying O} (person senses; see module docstring)
+        self._person_looks: Dict[str, Dict[str, int]] = {}
+        # (t, object_id) of a person-sense sighting -> (resident, room)
+        self._person_sightings: Dict[Tuple[int, str], Tuple[str, Optional[str]]] = {}
+        # every person sense in order: (t, resident, room, carried objects)
+        self._person_look_log: List[Tuple[int, str, Optional[str],
+                                          Tuple[str, ...]]] = []
+        # presence listings: t -> {receptacle_id: residents present}
+        self._presence: Dict[int, Dict[str, Tuple[str, ...]]] = {}
+        # t -> who was home, for every t whose listings cover every room
+        # (a full sweep); maintained as listings arrive
+        self._full_sweeps: Dict[int, Tuple[str, ...]] = {}
         # object_id -> class: every object the model tracks. Seeded from
         # the context's (optional) object list at reset, grown lazily by
         # ensure_object as questions and sense results introduce objects.
@@ -252,6 +283,11 @@ class BeliefModel(abc.ABC):
         self._context = context
         self._history = {}
         self._exclusions = {}
+        self._person_looks = {}
+        self._person_sightings = {}
+        self._person_look_log = []
+        self._presence = {}
+        self._full_sweeps = {}
         self._objects = {}
 
     def ensure_object(self, object_id: str, object_class: str) -> None:
@@ -300,11 +336,138 @@ class BeliefModel(abc.ABC):
         for obj in evidence.contents:
             self.ensure_object(obj, evidence.object_classes.get(obj, ""))
             self._add_sighting(obj, evidence.t, evidence.receptacle_id)
+        if isinstance(evidence, PersonSenseResult):
+            self._person_look_log.append((evidence.t, evidence.resident_id,
+                                          evidence.room, tuple(evidence.contents)))
+            for obj in evidence.contents:
+                self._person_sightings[(evidence.t, obj)] = (
+                    evidence.resident_id, evidence.room)
+            for obj in self._objects:
+                if obj not in present:
+                    by_resident = self._person_looks.setdefault(obj, {})
+                    previous = by_resident.get(evidence.resident_id, -1)
+                    by_resident[evidence.resident_id] = max(previous,
+                                                            evidence.t)
+            return
+        if evidence.residents_present or (self._context.person_sensing
+                                          and self._context.receptacle_rooms):
+            self._presence.setdefault(evidence.t, {})[
+                evidence.receptacle_id] = tuple(evidence.residents_present)
+            home = self._residents_home_from_listings(evidence.t)
+            if home is not None:
+                self._full_sweeps[evidence.t] = home
         for obj in self._objects:
             if obj not in present:
                 by_receptacle = self._exclusions.setdefault(obj, {})
                 previous = by_receptacle.get(evidence.receptacle_id, -1)
                 by_receptacle[evidence.receptacle_id] = max(previous, evidence.t)
+
+    # ------------------------------------------------- person sensing
+
+    def presence_listings(self) -> Dict[int, Dict[str, Tuple[str, ...]]]:
+        """t -> {receptacle looked at: residents listed in its room}, for
+        every receptacle sense that carried a listing (a copy). The base
+        class reads it only to tell who was in the house at an instant
+        (:meth:`residents_home_at`)."""
+        return {t: dict(rows) for t, rows in self._presence.items()}
+
+    def person_sightings(self) -> Dict[Tuple[int, str], Tuple[str, Optional[str]]]:
+        """(t, object) -> (resident, room) for every object found on a
+        resident by a person sense (a copy)."""
+        return dict(self._person_sightings)
+
+    def person_look_log(self) -> List[Tuple[int, str, Optional[str],
+                                            Tuple[str, ...]]]:
+        """Every person sense so far, in order: (t, resident, room, what
+        they carried) (a copy)."""
+        return list(self._person_look_log)
+
+    def person_looks(self, object_id: str) -> Dict[str, int]:
+        """resident -> newest time that resident was looked at without
+        ``object_id`` (a copy)."""
+        return dict(self._person_looks.get(object_id, {}))
+
+    def residents(self) -> Tuple[str, ...]:
+        """The household roster: the context's, else every resident any
+        listing or person sense has named (hand-built contexts)."""
+        assert self._context is not None
+        if self._context.resident_ids:
+            return self._context.resident_ids
+        seen: Dict[str, None] = {}
+        for rows in self._presence.values():
+            for names in rows.values():
+                for name in names:
+                    seen.setdefault(name, None)
+        for by_resident in self._person_looks.values():
+            for name in by_resident:
+                seen.setdefault(name, None)
+        for res, _ in self._person_sightings.values():
+            seen.setdefault(res, None)
+        return tuple(seen)
+
+    def residents_home_at(self, t: int) -> Optional[Tuple[str, ...]]:
+        """Who was in the house at exactly ``t``, when the listings at
+        ``t`` cover every room of the receptacle map: the residents
+        listed anywhere. None when some room was not looked at then (an
+        unlisted resident might be in it), or the bank has no room map."""
+        return self._full_sweeps.get(t)
+
+    def _residents_home_from_listings(self, t: int
+                                      ) -> Optional[Tuple[str, ...]]:
+        assert self._context is not None
+        rooms = self._context.receptacle_rooms
+        listings = self._presence.get(t)
+        if not rooms or not listings:
+            return None
+        covered = {rooms[rec] for rec in listings if rec in rooms}
+        if covered != set(rooms.values()):
+            return None
+        home: Dict[str, None] = {}
+        for names in listings.values():
+            for name in names:
+                home.setdefault(name, None)
+        return tuple(home)
+
+    def on_person_cleared_at(self, object_id: str, t: int) -> Optional[int]:
+        """The newest instant ``t_ex <= t`` at which every resident was
+        cleared of carrying ``object_id``: looked at without it, or shown
+        out of the house by a full sweep at ``t_ex``. None when no such
+        instant exists. This is the empty look at ON_PERSON as a whole
+        (module docstring)."""
+        roster = self.residents()
+        if not roster:
+            return None
+        looks = self._person_looks.get(object_id, {})
+        candidates = {t_ex for t_ex in looks.values() if t_ex <= t}
+        candidates |= {t_ex for t_ex in self._full_sweeps if t_ex <= t}
+        for t_ex in sorted(candidates, reverse=True):
+            home = self.residents_home_at(t_ex)
+            if all(looks.get(res) == t_ex
+                   or (home is not None and res not in home)
+                   for res in roster):
+                return t_ex
+        return None
+
+    def absence_location(self, evidence: SenseResult) -> Optional[str]:
+        """Where an object ABSENT from ``evidence`` was shown not to be,
+        for models that ingest empty looks themselves: the receptacle of
+        a receptacle sense; ON_PERSON for a person sense once every
+        resident is cleared at its instant (this sense's resident counts
+        as looked at whether or not the base update has run yet); None
+        for a person sense that clears only some residents, which says
+        nothing about ON_PERSON as a whole."""
+        if not isinstance(evidence, PersonSenseResult):
+            return evidence.receptacle_id
+        roster = self.residents()
+        if evidence.resident_id not in roster:
+            roster = (*roster, evidence.resident_id)
+        looked = {res for obj_looks in self._person_looks.values()
+                  for res, t_ex in obj_looks.items() if t_ex == evidence.t}
+        looked.add(evidence.resident_id)
+        home = self.residents_home_at(evidence.t)
+        cleared = all(res in looked or (home is not None and res not in home)
+                      for res in roster)
+        return ON_PERSON if roster and cleared else None
 
     def last_prediction_diagnostics(self) -> Union[Dict[str, float], None]:
         """Optional side channel: numbers about the most recent
@@ -333,10 +496,17 @@ class BeliefModel(abc.ABC):
     def negative_observations(self, object_id: str, t: int) -> Dict[str, int]:
         """Receptacle -> time of its newest empty look for ``object_id``
         that counts at ``t``: looks at or before ``t`` not superseded by a
-        strictly later positive sighting (module docstring). Models that
-        want negative evidence read this; the pipeline's step 3 is built
-        from it. Empty when nothing has been looked at."""
-        recorded = self._exclusions.get(object_id)
+        strictly later positive sighting (module docstring). ON_PERSON
+        appears when every resident has been cleared at one instant
+        (:meth:`on_person_cleared_at`). Models that want negative
+        evidence read this; the pipeline's step 3 is built from it.
+        Empty when nothing has been looked at."""
+        recorded = dict(self._exclusions.get(object_id, {}))
+        cleared = (self.on_person_cleared_at(object_id, t)
+                   if self._person_looks.get(object_id) or self._full_sweeps
+                   else None)
+        if cleared is not None:
+            recorded[ON_PERSON] = max(recorded.get(ON_PERSON, -1), cleared)
         if not recorded:
             return {}
         newest_positive = max(
@@ -399,18 +569,19 @@ class BeliefModel(abc.ABC):
         return self.consumes_negative_evidence_natively
 
     def negative_factors(self, object_id: str, t: int) -> Dict[str, float]:
-        """Step 3's multipliers: sensable receptacle -> ``1 - w(age)`` for
-        every empty look that counts at ``t`` (see
-        :meth:`negative_observations`); receptacles without one are
-        absent (factor 1). Unsensable locations never appear."""
+        """Step 3's multipliers: location -> ``1 - w(age)`` for every
+        empty look that counts at ``t`` (see
+        :meth:`negative_observations`); locations without one are absent
+        (factor 1). Sensable receptacles, plus ON_PERSON when person
+        senses have cleared it; OUT_OF_HOUSE never appears."""
         looks = self.negative_observations(object_id, t)
         if not looks:
             return {}
         assert self._context is not None
-        sensable = set(self._context.sensable_receptacle_ids)
+        allowed = set(self._context.sensable_receptacle_ids) | {ON_PERSON}
         half_life_s = self.negative_half_life_h * SECONDS_PER_HOUR
         return {rec: 1.0 - 2.0 ** (-max(0, t - t_obs) / half_life_s)
-                for rec, t_obs in looks.items() if rec in sensable}
+                for rec, t_obs in looks.items() if rec in allowed}
 
     def _compose(self, object_id: str, t: int, base: Prediction) -> Prediction:
         """Steps 2-4 of the pipeline on the model's distribution ``base``.
@@ -428,7 +599,8 @@ class BeliefModel(abc.ABC):
                 + floor for r in receptacles}
         if not self._consumes_negative_evidence_natively():
             for rec, factor in self.negative_factors(object_id, t).items():
-                dist[rec] *= factor
+                if rec in dist:
+                    dist[rec] *= factor
         total = sum(dist.values())
         if total <= 0.0:
             return self._uniform()

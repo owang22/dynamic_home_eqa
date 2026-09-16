@@ -23,11 +23,25 @@ robot cannot look outside the house, so "it's out" can only be inferred
 For the same reason neither the initial tour nor drive-by sightings ever
 report an object whose true location is unsensable (you cannot see what
 is not there); such sightings are dropped and the drop count logged.
-``ON_PERSON`` is unsensable too (since 2026-09-14): a look inspects a
-receptacle the robot can stand next to, and a person is not one. Before
-this, ON_PERSON sat in a pseudo-room the active policy could target and
-so returned pocket contents without the robot locating anyone. Neither
-the tour nor a drive-by sighting reports an object at either token.
+``ON_PERSON`` is unsensable as a RECEPTACLE (since 2026-09-14): a look
+inspects a receptacle the robot can stand next to, and a person is not
+one. Before this, ON_PERSON sat in a pseudo-room the active policy could
+target and so returned pocket contents without the robot locating
+anyone. Neither the tour nor a drive-by sighting reports an object at
+either token.
+
+With ``person_sensing`` (2026-09-15) ``ON_PERSON`` becomes observable
+the way receptacles are, in two steps: a look at a receptacle also lists
+the residents in that room, and a policy may then spend a sense on a
+listed resident, which returns everything they carry. To support that
+the bank carries, harness-side only: a ``resident`` row stream per
+resident — ``(t, room-or-AWAY)`` change-points from residents.jsonl
+(the block's ``at`` receptacle mapped to its room; ELSEWHERE is AWAY;
+before a resident's first block they are in the room of that first
+block) — and a ``carrier`` on every ``ON_PERSON`` truth row naming the
+resident. Truth labels are unchanged: ``ON_PERSON`` still means carried
+by someone who is home, ``OUT_OF_HOUSE`` everything else. A bank
+without the header field is exported byte-for-byte as before.
 
 Generated stream and questions (all seeded):
 
@@ -101,12 +115,10 @@ import yaml
 
 from baselines.bank import JsonlBank
 from baselines.cli import _derived_rng
-from baselines.types import DAY_SECONDS
+from baselines.types import AWAY, DAY_SECONDS, ON_PERSON, OUT_OF_HOUSE
 
 logger = logging.getLogger(__name__)
 
-OUT_OF_HOUSE = "OUT_OF_HOUSE"
-ON_PERSON = "ON_PERSON"
 UNSENSABLE = (OUT_OF_HOUSE, ON_PERSON)
 """Locations a look can never inspect: outside the house, and on a
 person. Declared in every bank header; sightings there are never
@@ -242,6 +254,18 @@ def load_truth(timeline: pathlib.Path
     events.jsonl; person-carried dwells are split by the carrier's away
     intervals. Consecutive same-receptacle change-points are merged.
     """
+    truth, n_days, causes, _ = load_truth_with_carriers(timeline)
+    return truth, n_days, causes
+
+
+def load_truth_with_carriers(timeline: pathlib.Path
+                             ) -> Tuple[Dict[str, List[Tuple[int, str]]], int,
+                                        Dict[Tuple[str, int], str],
+                                        Dict[Tuple[str, int], str]]:
+    """:func:`load_truth` plus ``carriers``: (object, t) of every
+    ``ON_PERSON`` change-point -> the resident carrying the object from
+    then on (the ``person:<resident>`` of the raw dwell). Feeds the
+    ``carrier`` field of person-sensing banks."""
     with open(timeline / "hourly.csv") as f:
         rows = list(csv.DictReader(f))
     objects = [k for k in rows[0] if k not in ("t", "stamp")]
@@ -260,6 +284,7 @@ def load_truth(timeline: pathlib.Path
                 causes[(e["object"], e["t"] * 60)] = str(e.get("by", ""))
 
     truth: Dict[str, List[Tuple[int, str]]] = {}
+    carriers: Dict[Tuple[str, int], str] = {}
     horizon = n_days * DAY_SECONDS
     for obj, segments in raw.items():
         points: List[Tuple[int, str]] = []
@@ -268,13 +293,42 @@ def load_truth(timeline: pathlib.Path
             for t, receptacle in _project_segment(location, t0, t1, away):
                 if not points or points[-1][1] != receptacle:
                     points.append((t, receptacle))
+                    if receptacle == ON_PERSON:
+                        carriers[(obj, t)] = location.split(":", 1)[1]
                     if (obj, t) not in causes:
                         # A synthesized boundary: the carrier left/returned.
                         causes[(obj, t)] = ("person_departure"
                                             if receptacle == OUT_OF_HOUSE
                                             else "person_return") if t else ""
         truth[obj] = points
-    return truth, n_days, causes
+    return truth, n_days, causes, carriers
+
+
+def resident_room_trajectories(spec_path: pathlib.Path,
+                               timeline: pathlib.Path
+                               ) -> Dict[str, List[Tuple[int, str]]]:
+    """resident -> ``(t, room)`` change-points (seconds, from t=0) with
+    :data:`~baselines.types.AWAY` while out, from residents.jsonl through
+    :func:`~baselines.room_observations._resident_room_lookup` (a
+    block's ``at`` receptacle names its room; ELSEWHERE is away). Before
+    a resident's first block they are in the room of that first block;
+    consecutive same-room points are merged."""
+    from baselines.room_observations import (RoomMap, _resident_room_lookup,
+                                             residents_of)
+
+    room_map = RoomMap.from_spec(spec_path)
+    out: Dict[str, List[Tuple[int, str]]] = {}
+    for resident in residents_of(timeline):
+        blocks = _resident_room_lookup(timeline, resident, room_map)
+        points: List[Tuple[int, str]] = []
+        first_room = blocks[0][2]
+        points.append((0, AWAY if first_room is None else first_room))
+        for t0, _, room in blocks:
+            label = AWAY if room is None else room
+            if points[-1][1] != label:
+                points.append((max(t0, 0), label))
+        out[resident] = points
+    return out
 
 
 DAY_NAMES = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
@@ -503,8 +557,15 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
            patrol: str = "round_robin_patrol",
            visits_per_day: int = 8,
            query_generation: str = "uniform",
-           query_rules: Optional[pathlib.Path] = None) -> JsonlBank:
+           query_rules: Optional[pathlib.Path] = None,
+           person_sensing: bool = False) -> JsonlBank:
     """Write the bank JSONL and return its loader (which re-validates it).
+
+    ``person_sensing`` writes the bank version on which a policy can look
+    at a resident (module docstring): the header declares it with the
+    roster, every ``ON_PERSON`` truth row names its carrier, and one
+    ``resident`` row stream per resident carries the room trajectory.
+    Off (the default) nothing about the file changes.
 
     ``observation_model`` selects how the ambient stream is produced:
 
@@ -569,9 +630,15 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
                 "sightings/day, budget %d/day", len(object_classes),
                 len(receptacles), sightings_per_day, budget_per_day)
 
-    truth, n_days, causes = load_truth(timeline)
+    truth, n_days, causes, carriers = load_truth_with_carriers(timeline)
     awake = awake_spans(timeline, n_days)
     episode_id = f"{spec['household']}_{timeline.name}"
+    resident_rooms: Dict[str, List[Tuple[int, str]]] = {}
+    if person_sensing:
+        resident_rooms = resident_room_trajectories(spec_path, timeline)
+        if not resident_rooms:
+            raise ValueError(f"{timeline}: person_sensing needs "
+                             f"residents.jsonl")
     tour_t = draw_tour_instant(tour_start, tour_max_day, n_days, awake,
                                _derived_rng(seed, "tour", episode_id))
     logger.info("tour instant: %s (t=%d)", stamp(tour_t), tour_t)
@@ -620,6 +687,9 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
     if receptacle_rooms is not None:
         header["receptacle_rooms"] = receptacle_rooms
         header["home_base_room"] = home_base_room(receptacle_rooms)
+    if person_sensing:
+        header["person_sensing"] = True
+        header["resident_ids"] = sorted(resident_rooms)
     rows: List[Dict[str, Any]] = [header]
     unobserved = 0
     for obj in objects:
@@ -628,6 +698,8 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
                    "object_id": obj, "t": t, "receptacle_id": receptacle}
             if causes.get((obj, t)):
                 row["cause"] = causes[(obj, t)]   # provenance; loader ignores
+            if person_sensing and receptacle == ON_PERSON:
+                row["carrier"] = carriers[(obj, t)]
             rows.append(row)
         if initial_tour:
             where = truth_at(truth[obj], tour_t)
@@ -637,6 +709,10 @@ def export(timeline: pathlib.Path, spec_path: pathlib.Path, out: pathlib.Path,
                 rows.append({"kind": "observation", "episode_id": episode_id,
                              "object_id": obj, "receptacle_id": where,
                              "t": tour_t, "source": "initial_tour"})
+    for resident in sorted(resident_rooms):
+        for t, room in resident_rooms[resident]:
+            rows.append({"kind": "resident", "episode_id": episode_id,
+                         "resident_id": resident, "t": t, "room": room})
     if observation_model == "room_visit":
         visit_rows = _room_visit_rows(spec_path, timeline, truth, n_days,
                                       awake, episode_id, patrol,

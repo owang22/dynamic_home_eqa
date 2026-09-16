@@ -52,9 +52,11 @@ import time
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from baselines.beliefs.base import BeliefModel
+from baselines.llm_hypotheses.prompt import away_sentences
 from baselines.policies.base import DecisionPolicy
-from baselines.types import (DAY_SECONDS, Action, AnswerNow, EpisodeContext,
-                             Observation, Prediction, Question, Sense,
+from baselines.types import (DAY_SECONDS, ON_PERSON, Action, AnswerNow,
+                             EpisodeContext, Observation, PersonSenseResult,
+                             Prediction, Question, Sense, SensePerson,
                              SenseResult)
 
 WEEKDAY_NAMES = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
@@ -147,6 +149,10 @@ class LogReaderBrain:
         self._looks: List[Tuple[int, str, Tuple[str, ...]]] = []
         self._question_key: Optional[Tuple[str, int]] = None
         self._sensed_this_question: List[str] = []
+        # residents this question's own looks listed -> the room; only
+        # these may be looked at (the harness enforces the same rule)
+        self._listed_this_question: Dict[str, Optional[str]] = {}
+        self._awaiting_sense = False
         self._last: Optional[Dict[str, Any]] = None
         if self._log_dir:
             self._log_dir.mkdir(parents=True, exist_ok=True)
@@ -166,7 +172,10 @@ class LogReaderBrain:
 
     def observe(self, evidence: Any) -> None:
         """Append one evidence event to the log, in the model's
-        vocabulary. The tour's entries are tagged as the walkthrough."""
+        vocabulary. The tour's entries are tagged as the walkthrough. A
+        receptacle look on a person-sensing bank also names the residents
+        in that room; a person look lists what the resident carries (each
+        listed object is at ON_PERSON with that resident, in that room)."""
         t = evidence.t
         if isinstance(evidence, Observation):
             self.known.setdefault(evidence.object_id, evidence.object_class)
@@ -176,17 +185,42 @@ class LogReaderBrain:
             tag = " [walkthrough]" if evidence.source == "initial_tour" else ""
             self.log.append(f"{stamp(t)}{tag} {self.obj(evidence.object_id)} "
                             f"at {self.rec(evidence.receptacle_id)}")
-        else:
-            for o in evidence.contents:
-                self.known.setdefault(o, evidence.object_classes.get(o, ""))
-                c = self._seen.setdefault(o, {})
-                c[evidence.receptacle_id] = c.get(evidence.receptacle_id, 0) + 1
-            self._looks.append((t, evidence.receptacle_id,
-                                tuple(evidence.contents)))
-            inside = (", ".join(self.obj(o) for o in evidence.contents)
-                      or "(nothing)")
-            self.log.append(f"{stamp(t)} look {self.rec(evidence.receptacle_id)}"
-                            f": {inside}")
+            return
+        for o in evidence.contents:
+            self.known.setdefault(o, evidence.object_classes.get(o, ""))
+            c = self._seen.setdefault(o, {})
+            c[evidence.receptacle_id] = c.get(evidence.receptacle_id, 0) + 1
+        self._looks.append((t, evidence.receptacle_id,
+                            tuple(evidence.contents)))
+        inside = (", ".join(self.obj(o) for o in evidence.contents)
+                  or "(nothing)")
+        if isinstance(evidence, PersonSenseResult):
+            where = f" in {evidence.room}" if evidence.room else ""
+            self.log.append(f"{stamp(t)} look {self.rec(evidence.resident_id)}"
+                            f"{where}: {inside}")
+            self._awaiting_sense = False
+            return
+        line = f"{stamp(t)} look {self.rec(evidence.receptacle_id)}: {inside}"
+        if self._person_sensing():
+            who = ", ".join(self.rec(r) for r in evidence.residents_present)
+            line += f"; residents here: {who or 'nobody'}"
+        if self._awaiting_sense and self._question_key is not None \
+                and t == self._question_key[1]:
+            room = (self.context.receptacle_rooms or {}).get(
+                evidence.receptacle_id) if self.context else None
+            for r in evidence.residents_present:
+                self._listed_this_question[r] = room
+        self._awaiting_sense = False
+        self.log.append(line)
+
+    def _person_sensing(self) -> bool:
+        return bool(self.context is not None and self.context.person_sensing)
+
+    def _lookable_residents(self) -> List[str]:
+        """Residents this question's looks listed and the model has not
+        looked at yet (real ids)."""
+        return [r for r in self._listed_this_question
+                if r not in self._sensed_this_question]
 
     # ------------------------------------------------------------- prompt
 
@@ -198,23 +232,40 @@ class LogReaderBrain:
         for r in ctx.receptacle_ids:
             room = rooms.get(r)
             rec_lines.append(f"  {self.rec(r)}" + (f"  in {room}" if room else ""))
-        away = (f"{self.rec('ON_PERSON')} means a resident who is in the house "
-                f"is carrying the object. {self.rec('OUT_OF_HOUSE')} means the "
-                f"object is not in the house. Neither can be chosen as the "
-                f"target of a look.")
-        rec_lines.append(away)
+        rec_lines.append(away_sentences(self._rmap).replace("`", ""))
+        person = self._person_sensing()
+        if person and ctx.resident_ids:
+            rec_lines.append("")
+            rec_lines.append("RESIDENTS:")
+            rec_lines += [f"  {self.rec(r)}" for r in ctx.resident_ids]
+        person_format = (
+            ' On a look at a receptacle, "; residents here: <residents>" '
+            'names who was in that room at that moment. "dNN Day HH:MM look '
+            '<resident> in <room>: <objects>" lists everything that resident '
+            f'was carrying at that moment: each listed object was at '
+            f'{self.rec(ON_PERSON)}, with that resident, in that room.'
+            if person else "")
+        person_sensing = (
+            " A look at a resident reports every object they are carrying; "
+            "it costs the same as a look at a receptacle and is possible "
+            "only for a resident that one of this question's looks has "
+            "shown in a room." if person else "")
+        person_output = (
+            ' A resident id, exactly as listed, is also a valid "receptacle" '
+            'for a sense once a look this question has shown them in a room.'
+            if person else "")
         text = f"""A home robot patrols a home and records what it sees. You will be given its log, then one question. Decide whether to look inside one receptacle first, or to answer now.
 
 RECEPTACLES (every place an object can be):
 {chr(10).join(rec_lines)}
 
-LOG FORMAT: one line per event, oldest first. "dNN Day HH:MM <object> at <receptacle>" is a sighting; "dNN Day HH:MM look <receptacle>: <objects>" lists everything found inside that receptacle at that moment. Lines tagged [walkthrough] are from the robot's installation tour. The log lists what the robot saw; it is the only information there is.
+LOG FORMAT: one line per event, oldest first. "dNN Day HH:MM <object> at <receptacle>" is a sighting; "dNN Day HH:MM look <receptacle>: <objects>" lists everything found inside that receptacle at that moment.{person_format} Lines tagged [walkthrough] are from the robot's installation tour. The log lists what the robot saw; it is the only information there is.
 
-SENSING: one look inspects one receptacle and reports every object inside it. Each look costs from a daily budget of {ctx.budget_per_day} that resets at midnight. A look answers the current question and also stays in the log for every later question, so a look can be spent on learning rather than on the question at hand. There is no penalty for spending budget beyond not having it later.
+SENSING: one look inspects one receptacle and reports every object inside it.{person_sensing} Each look costs from a daily budget of {ctx.budget_per_day} that resets at midnight. A look answers the current question and also stays in the log for every later question, so a look can be spent on learning rather than on the question at hand. There is no penalty for spending budget beyond not having it later.
 
 SCORING: an answer scores one point if its first ranked receptacle is where the object actually is at the question's time, and zero otherwise.
 
-OUTPUT: one JSON object. Either {{"action": "sense", "receptacle": "<receptacle id>", "why": "..."}} or {{"action": "answer", "ranked": ["<most likely receptacle>", "...up to 5..."], "why": "..."}}. Use receptacle ids exactly as listed."""
+OUTPUT: one JSON object. Either {{"action": "sense", "receptacle": "<receptacle id>", "why": "..."}} or {{"action": "answer", "ranked": ["<most likely receptacle>", "...up to 5..."], "why": "..."}}. Use receptacle ids exactly as listed.{person_output}"""
         if self.aided:
             text += ("\n\nOBJECTS LEAVE THE HOUSE: residents take things with "
                      "them to work, to school, to the gym, on errands and on "
@@ -268,12 +319,21 @@ OUTPUT: one JSON object. Either {{"action": "sense", "receptacle": "<receptacle 
         remaining = max(0.0, (self.context.budget_per_day if self.context
                               else 0) - self.spent_today)
         sensed = [self.rec(r) for r in self._sensed_this_question]
+        lookable = self._lookable_residents()
+        residents = ""
+        if lookable:
+            residents = ("\nRESIDENTS this question's looks have shown, each "
+                         "a valid look target now: " + ", ".join(
+                             self.rec(r) + (f" (in {self._listed_this_question[r]})"
+                                            if self._listed_this_question[r] else "")
+                             for r in lookable))
         return (f"QUESTION: where is {self.obj(object_id)} right now?\n"
                 f"NOW: {stamp(t)}\n"
                 f"BUDGET: {remaining:g} looks left today"
                 + (f"; already looked this question at {', '.join(sensed)}"
                    if sensed else "")
-                + f"; at most {looks_left} more looks on this question.")
+                + f"; at most {looks_left} more looks on this question."
+                + residents)
 
     # ----------------------------------------------------------- decision
 
@@ -296,9 +356,11 @@ OUTPUT: one JSON object. Either {{"action": "sense", "receptacle": "<receptacle 
         if key != self._question_key:
             self._question_key = key
             self._sensed_this_question = []
+            self._listed_this_question = {}
+            self._awaiting_sense = False
         sensable = [r for r in self.context.sensable_receptacle_ids
                     if r not in self._sensed_this_question]
-        looks_left = len(sensable)
+        looks_left = len(sensable) + len(self._lookable_residents())
         parts = [self._stable_prefix(), self._objects_block(),
                  "LOG:\n" + "\n".join(self.log)]
         if self.aided:
@@ -364,6 +426,8 @@ OUTPUT: one JSON object. Either {{"action": "sense", "receptacle": "<receptacle 
         remaining = self.context.budget_per_day - self.spent_today
         if action == "sense":
             target = self.real_rec(str(parsed.get("receptacle", "")))
+            if target in self._lookable_residents() and 1.0 <= remaining:
+                return {"action": "sense", "resident": target}
             cost = self.context.sense_cost(target) if target in sensable else None
             if target in sensable and cost is not None and cost <= remaining:
                 return {"action": "sense", "receptacle": target}
@@ -379,22 +443,25 @@ OUTPUT: one JSON object. Either {{"action": "sense", "receptacle": "<receptacle 
                 "invalid": f"unusable answer {parsed!r}"[:120]}
 
     def _fallback(self, object_id: str) -> List[str]:
-        """Last receptacle the log has the object at, else the first
-        receptacle: only for output the model got wrong."""
-        token = self.obj(object_id)
-        for line in reversed(self.log):
-            if f" {token} at " in line:
-                return [self.real_rec(line.split(" at ", 1)[1].strip())]
-            if line.split(": ", 1)[-1].find(token) >= 0 and " look " in line:
-                rec = line.split(" look ", 1)[1].split(":", 1)[0]
-                return [self.real_rec(rec)]
+        """Last location the log has the object at (ON_PERSON for a
+        person look that found it), else the first receptacle: only for
+        output the model got wrong."""
+        for _, receptacle, contents in reversed(self._looks):
+            if object_id in contents:
+                return [receptacle]
         assert self.context is not None
         return [self.context.receptacle_ids[0]]
 
-    def note_sense(self, receptacle_id: str) -> None:
+    def note_sense(self, target: str) -> None:
+        """Account a look the policy is about to make: a receptacle, or
+        a listed resident (same-room price)."""
         assert self.context is not None
-        self.spent_today += self.context.sense_cost(receptacle_id)
-        self._sensed_this_question.append(receptacle_id)
+        if target in self._listed_this_question:
+            self.spent_today += 1.0
+        else:
+            self.spent_today += self.context.sense_cost(target)
+        self._sensed_this_question.append(target)
+        self._awaiting_sense = True
 
     # --------------------------------------------------------------- notes
 
@@ -583,6 +650,11 @@ class LogReaderPolicy(DecisionPolicy):
         last = self.brain._last
         if (last is None or last.get("object") != question.object_id
                 or last.get("t") != question.t_query):
+            return AnswerNow()
+        if last["action"] == "sense" and "resident" in last:
+            if 1.0 <= budget_remaining:
+                self.brain.note_sense(last["resident"])
+                return SensePerson(last["resident"])
             return AnswerNow()
         if last["action"] == "sense":
             target = last["receptacle"]

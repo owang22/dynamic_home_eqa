@@ -103,6 +103,10 @@ class FleetExportConfig:
     # (a YAML path, resolved against the repo cwd like every other path).
     query_generation: str = "uniform"
     query_rules: Optional[str] = None
+    # Person sensing (see baselines.export_bank): the bank version on
+    # which a receptacle look lists the residents in its room and a
+    # policy may look at a listed resident. Off, the export is unchanged.
+    person_sensing: bool = False
 
 
 @dataclasses.dataclass(frozen=True)
@@ -238,7 +242,8 @@ def export_one(source: HouseholdSource, export_cfg: FleetExportConfig,
            tour_max_day=export_cfg.tour_max_day,
            query_generation=export_cfg.query_generation,
            query_rules=(None if export_cfg.query_rules is None
-                        else pathlib.Path(export_cfg.query_rules)))
+                        else pathlib.Path(export_cfg.query_rules)),
+           person_sensing=export_cfg.person_sensing)
 
 
 def _run_one(source: HouseholdSource, export_cfg: FleetExportConfig,

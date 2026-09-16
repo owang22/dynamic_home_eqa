@@ -290,6 +290,11 @@ def _fleet_command(args: argparse.Namespace) -> int:
     export_cfg, hc_cfg = fleet.load_fleet_config(args.config)
     sources = fleet.discover_households(
         tuple(args.roots), timeline_dirname=f"timeline_seed{args.seed}")
+    if args.only:
+        sources = [s for s in sources
+                   if any(s.slug.endswith(name) for name in args.only)]
+        if not sources:
+            raise SystemExit(f"fleet: no household matches --only {args.only}")
     rows = fleet.run_fleet(sources, export_cfg, hc_cfg, args.banks_dir,
                            args.out_dir)
     provenance = fleet.provenance_block(args.config, export_cfg.seed)
@@ -356,6 +361,9 @@ def main() -> None:
         help="which realization of each household to scan "
              "(timeline_seed<N>); the export RNG seed stays the "
              "config's own")
+    fleet_parser.add_argument(
+        "--only", nargs="+", default=None, metavar="HH",
+        help="household folder names to run (e.g. hh_001); default all")
     fleet_parser.add_argument(
         "--config", type=pathlib.Path,
         default=pathlib.Path("src/baselines/configs/fleet.yaml"))

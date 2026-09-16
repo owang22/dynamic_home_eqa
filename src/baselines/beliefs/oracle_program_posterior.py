@@ -436,10 +436,12 @@ class OracleProgramPosterior(BeliefModel):
         present = set(evidence.contents)
         for obj in evidence.contents:
             self._weigh(obj, evidence.receptacle_id, evidence.t, present=True)
+        absent_at = self.absence_location(evidence)   # None: one resident
+        if absent_at is None:                         # of several cleared
+            return
         for obj in self._objects:
             if obj not in present:
-                self._weigh(obj, evidence.receptacle_id, evidence.t,
-                            present=False)
+                self._weigh(obj, absent_at, evidence.t, present=False)
 
     def _weigh(self, object_id: str, receptacle_id: str, t: int,
                present: bool) -> None:

@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import bisect
 from dataclasses import dataclass, field
-from typing import Mapping, Optional, Tuple, Union
+from typing import Dict, Mapping, Optional, Tuple, Union
 
 DAY_SECONDS = 86_400
 """Length of one simulated day, in seconds."""
@@ -26,6 +26,19 @@ OBSERVATION_SOURCES = ("initial_tour", "sense", "scripted")
 
 PROBABILITY_TOLERANCE = 1e-6
 """Slack allowed when checking that a distribution sums to one."""
+
+ON_PERSON = "ON_PERSON"
+"""Location token: carried by a resident who is in the house. An answer
+token, never a Sense target; observable only through a person sense
+(:class:`PersonSenseResult`) on banks that declare ``person_sensing``."""
+
+OUT_OF_HOUSE = "OUT_OF_HOUSE"
+"""Location token: the object is not in the house (at a receptacle
+outside, or carried by a resident who is out). The only location no
+sense of any kind can reach; it is inferred by elimination."""
+
+AWAY = "AWAY"
+"""Room token in a resident's room trajectory: the resident is out."""
 
 
 @dataclass(frozen=True)
@@ -71,16 +84,52 @@ class SenseResult:
     sense result. Producers that know the classes fill it; an empty map is
     legal (hand-built fixtures) and the object is then registered with an
     unknown class.
+
+    ``residents_present`` is the presence listing: every resident who was
+    in the sensed receptacle's room at ``t``. Filled on banks that declare
+    ``person_sensing``; empty everywhere else (and on every bank written
+    before it existed), where it changes nothing.
     """
 
     receptacle_id: str
     t: int
     contents: Tuple[str, ...]
     object_classes: Mapping[str, str] = field(default_factory=dict)
+    residents_present: Tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if self.t < 0:
             raise ValueError(f"SenseResult({self.receptacle_id}): negative t {self.t}")
+
+
+@dataclass(frozen=True)
+class PersonSenseResult(SenseResult):
+    """What one resident is carrying at ``t``: the result of a person
+    sense (:class:`SensePerson`).
+
+    A :class:`SenseResult` whose ``receptacle_id`` is always
+    :data:`ON_PERSON`, so every consumer that already understands a
+    receptacle sense sees each carried object as a positive sighting at
+    ``ON_PERSON``. Absence from ``contents`` is negative evidence about
+    THIS resident only: the object may still be on another resident, so
+    ``ON_PERSON`` as a whole is excluded only once every resident in the
+    house is cleared at the same instant (see
+    :mod:`baselines.beliefs.base`). ``room`` is where the resident was
+    listed (and looked at). The fields default only because dataclass
+    inheritance demands it; a result without a resident is rejected.
+    """
+
+    resident_id: str = ""
+    room: Optional[str] = None
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        if self.receptacle_id != ON_PERSON:
+            raise ValueError(
+                f"PersonSenseResult({self.resident_id}): receptacle_id must "
+                f"be {ON_PERSON!r}, got {self.receptacle_id!r}")
+        if not self.resident_id:
+            raise ValueError("PersonSenseResult: empty resident_id")
 
 
 @dataclass(frozen=True)
@@ -185,7 +234,22 @@ class Sense:
     receptacle_id: str
 
 
-Action = Union[AnswerNow, Sense]
+@dataclass(frozen=True)
+class SensePerson:
+    """Policy decision: look at what ``resident_id`` is carrying.
+
+    Legal only on a ``person_sensing`` bank, and only for a resident an
+    earlier sense of the SAME question listed as present (the listing is
+    how the robot knows where the resident is). Costs the same-room
+    price (1.0) and leaves the robot where it stands; the harness raises
+    on an unlisted resident exactly as it does for an unsensable
+    receptacle.
+    """
+
+    resident_id: str
+
+
+Action = Union[AnswerNow, Sense, SensePerson]
 """What a :class:`~baselines.policies.base.DecisionPolicy` may return.
 
 The policy signals *answer now* rather than constructing an
@@ -227,6 +291,12 @@ class EpisodeContext:
     objects from questions and sense results and never require the list.
     It stays populated for the oracle belief and the STAR baseline, which
     read it by design.
+
+    ``resident_ids`` is the household roster and ``person_sensing`` says
+    whether the bank lets a policy look at a resident (see
+    :class:`SensePerson`). The roster is vocabulary, like the receptacle
+    list; where each resident IS at any instant is ground truth and
+    stays on the :class:`Episode`.
     """
 
     episode_id: str
@@ -240,6 +310,17 @@ class EpisodeContext:
     home_base_room: Optional[str] = None
     room_change_cost: float = 0.0
     robot_position: RobotPosition = field(default_factory=RobotPosition)
+    resident_ids: Tuple[str, ...] = ()
+    person_sensing: bool = False
+
+    @property
+    def rooms(self) -> Tuple[str, ...]:
+        """Every room that holds a receptacle, in first-seen order
+        (empty for banks without a room map)."""
+        seen: Dict[str, None] = {}
+        for room in self.receptacle_rooms.values():
+            seen.setdefault(room, None)
+        return tuple(seen)
 
     @property
     def sensable_receptacle_ids(self) -> Tuple[str, ...]:
@@ -299,6 +380,22 @@ class Episode:
     whose generator knows them (``{"composition": "solo", "work_pattern":
     "works_away"}``). Metadata for the assumption-recovery metric;
     agents never see it."""
+    person_sensing: bool = False
+    """Whether this bank lets a policy sense a resident (header field
+    ``person_sensing``). False for every bank written before the field
+    existed; those banks load, run and score exactly as they always did."""
+    resident_ids: Tuple[str, ...] = ()
+    resident_rooms: Mapping[str, Tuple[Tuple[int, str], ...]] = field(
+        default_factory=dict, repr=False)
+    """resident_id -> ``(t, room)`` change-points sorted by ``t`` (the
+    first at t=0), ``room`` being a room of the receptacle map or
+    :data:`AWAY`. Ground truth, harness-only, exactly like
+    ``trajectories``: never part of :meth:`agent_view`."""
+    carriers: Mapping[Tuple[str, int], str] = field(default_factory=dict,
+                                                     repr=False)
+    """``(object_id, t)`` of an ``ON_PERSON`` trajectory change-point ->
+    the resident carrying the object from then on. Ground truth,
+    harness-only; the label itself stays ``ON_PERSON``."""
     scripted_evidence: Optional[Tuple[Union["Observation", "SenseResult"],
                                       ...]] = None
     """The ambient stream as the beliefs should CONSUME it, time-ordered.
@@ -346,6 +443,45 @@ class Episode:
                     raise ValueError(
                         f"Episode {self.episode_id}: trajectory for {obj} uses "
                         f"unknown receptacle {rec!r}")
+        rooms = set(self.receptacle_rooms.values())
+        unknown_res = set(self.resident_rooms) - set(self.resident_ids)
+        if unknown_res:
+            raise ValueError(
+                f"Episode {self.episode_id}: resident_rooms for "
+                f"{sorted(unknown_res)} not in resident_ids")
+        for res, traj in self.resident_rooms.items():
+            if not traj or traj[0][0] != 0:
+                raise ValueError(
+                    f"Episode {self.episode_id}: room trajectory for {res} "
+                    f"must start at t=0 (got {traj[:1]})")
+            if [t for t, _ in traj] != sorted(t for t, _ in traj):
+                raise ValueError(
+                    f"Episode {self.episode_id}: room trajectory for {res} "
+                    f"not sorted")
+            for _, room in traj:
+                if room != AWAY and room not in rooms:
+                    raise ValueError(
+                        f"Episode {self.episode_id}: room trajectory for "
+                        f"{res} uses unknown room {room!r}")
+        for (obj, t), res in self.carriers.items():
+            if res not in self.resident_ids:
+                raise ValueError(
+                    f"Episode {self.episode_id}: carrier {res!r} of {obj} at "
+                    f"t={t} not in resident_ids")
+        if self.person_sensing:
+            if not self.resident_ids:
+                raise ValueError(
+                    f"Episode {self.episode_id}: person_sensing needs a "
+                    f"resident roster")
+            missing = sorted(
+                f"{obj}@{t}" for obj, traj in self.trajectories.items()
+                for t, rec in traj
+                if rec == ON_PERSON and (obj, t) not in self.carriers)
+            if missing:
+                raise ValueError(
+                    f"Episode {self.episode_id}: person_sensing bank has "
+                    f"ON_PERSON change-points without a carrier: "
+                    f"{missing[:5]}")
 
     @property
     def n_days(self) -> int:
@@ -370,6 +506,46 @@ class Episode:
         traj = self.trajectories[object_id]
         idx = bisect.bisect_right([p[0] for p in traj], t) - 1
         return traj[idx][1]
+
+    def carried_by(self, object_id: str, t: int) -> Optional[str]:
+        """The resident carrying ``object_id`` at ``t``; None when the
+        object is not ``ON_PERSON`` then (or the bank records no
+        carriers). Harness-only."""
+        traj = self.trajectories[object_id]
+        idx = bisect.bisect_right([p[0] for p in traj], t) - 1
+        if traj[idx][1] != ON_PERSON:
+            return None
+        return self.carriers.get((object_id, traj[idx][0]))
+
+    def carried_objects(self, resident_id: str, t: int) -> Tuple[str, ...]:
+        """Every object ``resident_id`` carries at ``t``, sorted: what a
+        person sense returns. Harness-only."""
+        if resident_id not in self.resident_ids:
+            raise KeyError(
+                f"Episode {self.episode_id}: unknown resident {resident_id!r}")
+        return tuple(sorted(
+            obj for obj in self.trajectories
+            if self.carried_by(obj, t) == resident_id))
+
+    def resident_room(self, resident_id: str, t: int) -> Optional[str]:
+        """Ground-truth room of ``resident_id`` at ``t``; None while the
+        resident is out (:data:`AWAY`) or when the bank carries no room
+        trajectory for them. Harness-only."""
+        traj = self.resident_rooms.get(resident_id)
+        if not traj:
+            return None
+        idx = bisect.bisect_right([p[0] for p in traj], t) - 1
+        room = traj[idx][1]
+        return None if room == AWAY else room
+
+    def residents_in_room(self, room: Optional[str], t: int) -> Tuple[str, ...]:
+        """Residents whose ground-truth room at ``t`` is ``room``, in
+        roster order: the presence listing a receptacle sense in that
+        room returns. Empty for ``room`` None. Harness-only."""
+        if room is None:
+            return ()
+        return tuple(res for res in self.resident_ids
+                     if self.resident_room(res, t) == room)
 
     def receptacle_contents(self, receptacle_id: str, t: int) -> Tuple[str, ...]:
         """All object_ids truly inside ``receptacle_id`` at ``t``, sorted.
@@ -418,4 +594,6 @@ class Episode:
             home_base_room=self.home_base_room,
             room_change_cost=room_change_cost,
             robot_position=(robot_position if robot_position is not None
-                            else RobotPosition(room=self.home_base_room)))
+                            else RobotPosition(room=self.home_base_room)),
+            resident_ids=self.resident_ids,
+            person_sensing=self.person_sensing)

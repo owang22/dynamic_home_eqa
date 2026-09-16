@@ -72,11 +72,16 @@ from baselines.types import DAY_SECONDS
 logger = logging.getLogger(__name__)
 
 PERSON_CHECK_ROOM = "person_check"
-"""Retired pseudo-room (2026-09-14). ON_PERSON is unsensable like
-OUT_OF_HOUSE: a look inspects a receptacle the robot can stand next to,
-and a person is not one. The name survives only so old schedules that
-carry the visit are skipped by :func:`realize`; no room map contains it
-and no schedule emits it."""
+"""Retired pseudo-room (2026-09-14). A look inspects a receptacle the
+robot can stand next to, and a person is not one, so ON_PERSON is never
+a receptacle target. What replaced the pseudo-room (2026-09-15) is
+person sensing on banks that declare it: a receptacle look lists the
+residents in its room, and a policy may then spend a sense on a listed
+resident (:class:`~baselines.types.SensePerson`) — the robot locates
+someone before it can see their pockets, where the pseudo-room returned
+pocket contents from nowhere. The name survives only so old schedules
+that carry the visit are skipped by :func:`realize`; no room map contains
+it and no schedule emits it."""
 
 _H = 3600
 
@@ -293,11 +298,19 @@ def follow_the_person(room_map: RoomMap, n_days: int,
     return sorted(visits, key=lambda v: v.t)
 
 
+def residents_of(timeline: pathlib.Path) -> List[str]:
+    """Every resident id with a block in residents.jsonl, sorted (empty
+    when the timeline carries no resident blocks)."""
+    path = timeline / "residents.jsonl"
+    if not path.exists():
+        return []
+    with open(path) as f:
+        return sorted({str(json.loads(line)["resident"]) for line in f})
+
+
 def _first_resident(timeline: pathlib.Path) -> str:
     """The lowest-numbered resident id in the timeline (stable default)."""
-    with open(timeline / "residents.jsonl") as f:
-        residents = {str(json.loads(line)["resident"]) for line in f}
-    return sorted(residents)[0]
+    return residents_of(timeline)[0]
 
 
 # ---------------------------------------------------------------------------

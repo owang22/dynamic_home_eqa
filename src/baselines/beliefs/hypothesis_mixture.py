@@ -294,10 +294,15 @@ class HypothesisMixture(BeliefModel):
             self._add_presence(totals, obj, receptacle, t)
         if self._absence_weight <= 0.0:
             return totals
+        # A person sense clears one resident; it excludes ON_PERSON as a
+        # whole only once every resident is cleared (base class rule).
+        absent_at = self.absence_location(evidence)
+        if absent_at is None:
+            return totals
         present = set(evidence.contents)
         for obj in sorted(self._objects):
             if obj not in present:
-                self._add_absence(totals, obj, receptacle, t)
+                self._add_absence(totals, obj, absent_at, t)
         return totals
 
     def _add_presence(self, totals: List[float], object_id: str,

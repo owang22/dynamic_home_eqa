@@ -21,6 +21,7 @@ from baselines.llm_hypotheses.prompt import (SCHEMA_NOTE,
                                              anonymize_hypothesis,
                                              build_anonymization_maps,
                                              deanonymize_hypothesis,
+                                             person_sensing_sections,
                                              tour_stamp, vocabulary_tables)
 from baselines.types import Episode
 
@@ -383,6 +384,8 @@ def tree_revision_prompt(report: Mapping[str, Any], tables: str,
         return line
     away_looks = "\n".join(_away_line(a) for a in
                             report.get("away_window_looks", [])) or "  (none)"
+    people = person_sensing_sections(report, o, r)
+    people = f"\n{people}\n" if people else ""
     trigger = report.get("trigger", "scheduled")
     mechanics = MECHANICS
     if r:
@@ -416,7 +419,7 @@ OBJECTS OUTSIDE EVERY NODE (no rule and no rest entry mentions them), with what 
 
 EMPTY LOOKS DURING MODELED AWAY WINDOWS (for each object some node sends out of the house: looks inside that window at its stated rest, and at the receptacle it is sighted at most, that found nothing versus looks that found it; only positive sightings appear in the statistics above, so this is the evidence for a move ending out of the house):
 {away_looks}
-
+{people}
 The valid identifiers are these, exactly as printed:
 
 {tables}

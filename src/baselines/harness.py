@@ -26,6 +26,19 @@ The harness owns everything that protects result validity:
   answers that can only be inferred, e.g. OUT_OF_HOUSE). Sensing one is a
   policy contract violation and raises loudly — it is never silently
   refused, because a policy that tries has misread its context.
+* **Person sensing** — on a bank whose header declares ``person_sensing``
+  every receptacle sense result also lists the residents in that
+  receptacle's room at ``t_query`` (``residents_present``), and a policy
+  may return :class:`~baselines.types.SensePerson` for a resident an
+  earlier sense of the SAME question listed. The result is a
+  :class:`~baselines.types.PersonSenseResult`: everything that resident
+  carries at ``t_query``, at ``ON_PERSON``. It costs the same-room price
+  (1.0), leaves the robot where it is, and is logged as a ``sense_person``
+  action. A person sense for a resident no sense of this question has
+  listed is a contract violation and raises, exactly like an unsensable
+  receptacle; on a bank without ``person_sensing`` every person sense
+  raises. ``ON_PERSON`` and ``OUT_OF_HOUSE`` remain answer tokens no
+  :class:`~baselines.types.Sense` may target.
 * **Ground-truth isolation** — agents are reset with
   :meth:`~baselines.types.Episode.agent_view`, which has no ground-truth
   accessor; only harness code touches ``true_location``.
@@ -56,9 +69,10 @@ from dataclasses import asdict, dataclass
 from typing import Dict, Iterator, List, Optional, Tuple, Union
 
 from baselines.agent import Agent
-from baselines.types import (DAY_SECONDS, Answer, AnswerNow, Episode,
-                             EpisodeContext, Observation, Question,
-                             RobotPosition, Sense, SenseResult)
+from baselines.types import (DAY_SECONDS, ON_PERSON, Answer, AnswerNow,
+                             Episode, EpisodeContext, Observation,
+                             PersonSenseResult, Question, RobotPosition,
+                             Sense, SensePerson, SenseResult)
 
 logger = logging.getLogger(__name__)
 
@@ -68,10 +82,12 @@ class QuestionRecord:
     """Everything that happened for one question (one run-log line).
 
     ``actions`` holds one entry per policy decision in order; sense entries
-    embed the returned contents, the room sensed and what the sense cost.
-    ``forced_answer`` marks that the policy asked to sense and was
-    overruled because the remaining budget could not cover that sense's
-    cost.
+    embed the returned contents, the room sensed and what the sense cost
+    (plus ``residents_present`` on a person-sensing bank), and
+    ``sense_person`` entries the resident, their room, what they carried
+    and the cost. ``forced_answer`` marks that the policy asked to sense
+    and was overruled because the remaining budget could not cover that
+    sense's cost.
 
     The three budget fields are floats: a sense costs 1.0 in the robot's
     current room and ``1 + room_change_cost`` elsewhere, so spend is
@@ -153,10 +169,11 @@ def run_episode(agent: Agent, episode: Episode,
     every sense costs 1 and this is the flat-budget model unchanged.
 
     The per-question decision loop is bounded by
-    ``len(sensable_receptacle_ids)`` senses — a receptacle may not be
-    sensed twice within one question, so that is already an upper bound
-    on any well-behaved policy, and it terminates under fractional costs
-    where a budget-derived bound would not.
+    ``len(sensable_receptacle_ids)`` senses (plus one per resident on a
+    person-sensing bank) — a receptacle or resident may not be sensed
+    twice within one question, so that is already an upper bound on any
+    well-behaved policy, and it terminates under fractional costs where
+    a budget-derived bound would not.
     """
     if room_change_cost < 0.0:
         raise ValueError(f"run_episode: room_change_cost {room_change_cost} "
@@ -198,6 +215,12 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
     room_at_query = position.room
     n_senses = same_room_senses = 0
     max_senses = len(context.sensable_receptacle_ids)
+    if episode.person_sensing:
+        max_senses += len(episode.resident_ids)
+    # Residents listed by this question's receptacle senses -> the room
+    # they were listed in. A person sense is legal only for a listed
+    # resident: the listing is how the robot knows where they are.
+    listed: Dict[str, Optional[str]] = {}
     object_class = (question.object_class
                     or episode.object_classes.get(question.object_id, ""))
     agent.belief.ensure_object(question.object_id, object_class)
@@ -208,18 +231,36 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
         if isinstance(action, AnswerNow):
             actions.append({"type": "answer"})
             break
-        assert isinstance(action, Sense)
-        if action.receptacle_id in episode.unsensable_receptacle_ids:
-            raise ValueError(
-                f"{agent.name} asked to sense unsensable receptacle "
-                f"{action.receptacle_id!r} on {question.question_id} — "
-                f"policies receive the sensable set in their context and "
-                f"must never target an unsensable one")
-        cost = context.sense_cost(action.receptacle_id)
+        if isinstance(action, SensePerson):
+            target: str = action.resident_id
+            if not episode.person_sensing:
+                raise ValueError(
+                    f"{agent.name} asked to sense resident {target!r} on "
+                    f"{question.question_id}, but the bank declares no "
+                    f"person_sensing — policies read it off their context")
+            if target not in listed:
+                raise ValueError(
+                    f"{agent.name} asked to sense resident {target!r} on "
+                    f"{question.question_id} before any sense of this "
+                    f"question listed them — a resident can be looked at "
+                    f"only after a look in the room they are in")
+            cost = 1.0                    # the same-room price; no travel
+            room = listed[target]
+        else:
+            assert isinstance(action, Sense)
+            target = action.receptacle_id
+            if target in episode.unsensable_receptacle_ids:
+                raise ValueError(
+                    f"{agent.name} asked to sense unsensable receptacle "
+                    f"{target!r} on {question.question_id} — "
+                    f"policies receive the sensable set in their context and "
+                    f"must never target an unsensable one")
+            cost = context.sense_cost(target)
+            room = episode.receptacle_rooms.get(target)
         if cost > budget:
             forced = True
             actions.append({"type": "forced_answer",
-                            "refused_sense": action.receptacle_id,
+                            "refused_sense": target,
                             "cost": cost, "budget_remaining": budget})
             break
         if n_senses >= max_senses:
@@ -232,30 +273,49 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
                            max_senses)
             forced = True
             actions.append({"type": "step_cap_answer",
-                            "refused_sense": action.receptacle_id})
+                            "refused_sense": target})
             break
-        room = episode.receptacle_rooms.get(action.receptacle_id)
-        same_room = room is not None and room == position.room
         budget -= cost
         n_senses += 1
-        same_room_senses += int(same_room)
-        contents = episode.receptacle_contents(
-            action.receptacle_id, question.t_query)
-        result = SenseResult(receptacle_id=action.receptacle_id,
-                             t=question.t_query, contents=contents,
-                             object_classes={
-                                 obj: episode.object_classes.get(obj, "")
-                                 for obj in contents})
+        if isinstance(action, SensePerson):
+            same_room_senses += 1
+            contents = episode.carried_objects(target, question.t_query)
+            result: SenseResult = PersonSenseResult(
+                receptacle_id=ON_PERSON, t=question.t_query,
+                contents=contents,
+                object_classes={obj: episode.object_classes.get(obj, "")
+                                for obj in contents},
+                resident_id=target, room=room)
+            entry: Dict[str, object] = {
+                "type": "sense_person", "resident_id": target,
+                "room": room, "contents": list(contents), "cost": cost}
+        else:
+            same_room = room is not None and room == position.room
+            same_room_senses += int(same_room)
+            contents = episode.receptacle_contents(target, question.t_query)
+            present = (episode.residents_in_room(room, question.t_query)
+                       if episode.person_sensing else ())
+            result = SenseResult(receptacle_id=target, t=question.t_query,
+                                 contents=contents,
+                                 object_classes={
+                                     obj: episode.object_classes.get(obj, "")
+                                     for obj in contents},
+                                 residents_present=present)
+            entry = {"type": "sense", "receptacle_id": target,
+                     "contents": list(contents), "room": room,
+                     "cost": cost, "same_room": same_room}
+            if episode.person_sensing:
+                entry["residents_present"] = list(present)
+                for res in present:
+                    listed[res] = room
+            if room is not None:
+                position.room = room  # the robot travelled there to look
         for obj in contents:
             agent.belief.ensure_object(
                 obj, episode.object_classes.get(obj, ""))
         agent.observe(result)
         last_sense = result
-        if room is not None:
-            position.room = room      # the robot travelled there to look
-        actions.append({"type": "sense", "receptacle_id": action.receptacle_id,
-                        "contents": list(contents), "room": room,
-                        "cost": cost, "same_room": same_room})
+        actions.append(entry)
 
     answer = Answer(question_id=question.question_id,
                     predicted_receptacle_id=prediction.argmax,

@@ -1,0 +1,72 @@
+{
+  "provenance": {
+    "config_path": "src/baselines/configs/cold_start.yaml",
+    "config_hash": "ce84943004393578f8f43a940453e7cb1d446847a112681cccfa50c00be8a9ee",
+    "git_commit": "de96b5b2886306a00c9d080aea5a1136a5ec2100",
+    "git_dirty": true,
+    "seed": 0,
+    "timestamp": "2026-09-16T06:05:58.654468+00:00"
+  },
+  "banks": [
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_001",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_001_bank.jsonl",
+      "bank_manifest_hash": "b3c6586c8e6de85ad863bdaa8204de8469eaf09acb9b2a8b03a717aef363303e",
+      "household_type": "working_professional_solo",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": true,
+          "measured": 0.6115525793650793,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.043154761904761904,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.5491071428571429,
+          "threshold": 0.19315476190476188
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.0029761904761904726,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "stationarity",
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.043154761904761904,
+        "most_frequent": 0.041666666666666664,
+        "timetable": 0.04017857142857143
+      },
+      "search_real_budget": {
+        "belief": "last_observation",
+        "budget_per_day": 8,
+        "task_accuracy": 0.5491071428571429
+      },
+      "modal_share_time": 0.6115525793650793,
+      "modal_share_questions": 0.6711309523809523,
+      "moves_per_day": 38.642857142857146,
+      "displaced_time_share": 0.38844742063492066,
+      "displacement_median_h": 13.233333333333333
+    }
+  ]
+}

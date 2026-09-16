@@ -758,6 +758,36 @@ class LLMHypothesisMixture(HypothesisMixture):
 
     # -------------------------------------------------------------- report
 
+    def _person_sensing_report(self) -> Dict[str, Any]:
+        """The person-sensing evidence for the prompts, real ids: every
+        person sighting (t, object, resident, room), every look at a
+        resident, and the presence listings (t, room, residents) — all
+        only on a person-sensing bank, so older prompts are untouched."""
+        if not (self._context and self._context.person_sensing):
+            return {}
+        rooms = self._context.receptacle_rooms
+        presence: Dict[Tuple[int, str], List[str]] = {}
+        for t_l, rows in sorted(self.presence_listings().items()):
+            for rec, names in rows.items():
+                key = (t_l, rooms.get(rec, rec))
+                for name in names:
+                    if name not in presence.setdefault(key, []):
+                        presence[key].append(name)
+        return {
+            "person_sensing": True,
+            "person_sightings": [
+                {"t": t_s, "object": obj, "resident": res, "room": room}
+                for (t_s, obj), (res, room) in sorted(
+                    self.person_sightings().items())],
+            "person_looks": [
+                {"t": t_l, "resident": res, "room": room,
+                 "contents": list(contents)}
+                for t_l, res, room, contents in self.person_look_log()],
+            "presence": [
+                {"t": t_l, "room": room, "residents": names}
+                for (t_l, room), names in sorted(presence.items())],
+        }
+
     def revision_report(self, t: int) -> Dict[str, Any]:
         """Everything the revision prompt needs, from the belief's own
         records: weights, the mixture's worst objects, rules that held
@@ -825,6 +855,7 @@ class LLMHypothesisMixture(HypothesisMixture):
         stat_weight = float(sum(weights[n_hyp:])) if len(weights) > n_hyp else None
         return {
             "day": t // DAY_SECONDS, "t": t,
+            **self._person_sensing_report(),
             "hypotheses": hypotheses, "worst_objects": worst_objects,
             "statistical_weight": stat_weight,
             "rules_held": held[:15], "rules_failed": failed[:15],

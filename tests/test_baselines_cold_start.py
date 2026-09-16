@@ -46,7 +46,8 @@ def test_cold_start_config_differs_from_fleet_only_where_intended() -> None:
            "visits_per_day": 0, "initial_tour": False,
            "tour_start": "day0",
            "query_generation": "routine_driven",
-           "query_rules": str(CONFIGS / "query_rules_cold_start.yaml")})
+           "query_rules": str(CONFIGS / "query_rules_cold_start.yaml"),
+           "person_sensing": True})
 
 
 def test_cold_start_rules_are_v1_with_a_lower_background_rate() -> None:

@@ -270,10 +270,13 @@ class _PerpetuaBase(BeliefModel):
         present = set(evidence.contents)
         for obj in evidence.contents:
             self._sighting(obj, evidence.receptacle_id, evidence.t)
+        absent_at = self.absence_location(evidence)   # None: one resident
+        if absent_at is None:                         # of several cleared
+            return
         for obj in sorted(self._objects):
             if obj in present:
                 continue
-            edge = self._edges.get(obj, {}).get(evidence.receptacle_id)
+            edge = self._edges.get(obj, {}).get(absent_at)
             if edge is not None:
                 self._observe(edge, False, evidence.t)
 
