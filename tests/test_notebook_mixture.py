@@ -75,6 +75,7 @@ class _Stub:
         self.schemas: List[str] = []
         self.script = list(script or [])
         self.carrier, self.carrier_room = carrier, carrier_room
+        self.decide_action, self.decide_target = "answer", ""
 
     @staticmethod
     def _anchor(user: str) -> Optional[str]:
@@ -91,7 +92,9 @@ class _Stub:
                 else "question" if schema is nm.QUESTION_FORECAST_SCHEMA
                 else "look" if schema is nm.LOOK_FORECAST_SCHEMA
                 else "follow_up" if schema is nm.FOLLOWUP_SCHEMA
-                else "fork" if schema is nm.FORK_SCHEMA else "other")
+                else "fork" if schema is nm.FORK_SCHEMA
+                else "decide" if schema is nm.DECIDE_SCHEMA
+                else "birth" if schema is nm.BIRTH_SCHEMA else "other")
         self.schemas.append(kind)
         if self.script:
             payload = self.script.pop(0)
@@ -120,6 +123,12 @@ class _Stub:
         elif kind == "fork":
             a = self._anchor(user) or RECS[1]
             payload = {"beliefs": f"anchor: {a}\nReviewed.", "why": "review"}
+        elif kind == "decide":
+            payload = {"action": self.decide_action, "target": self.decide_target,
+                       "why": "dispatcher says so"}
+        elif kind == "birth":
+            payload = {"guess": "fresh guess",
+                       "beliefs": f"anchor: {RECS[3]}\nFresh contrasting document."}
         else:
             payload = {"scratch": "trimmed"}
         return {"payload": json.dumps(payload), "think": "", "prompt_tokens": 10,
@@ -500,3 +509,226 @@ def test_full_stub_run_over_two_days_writes_every_output(tmp_path):
         forked = [e for e in events if e["event"] == "fork"][0]
         text = (out / "notebooks" / forked["agent"] / "v1.md").read_text()
         assert f"parent: {forked['parent']}" in text
+
+
+# ------------------------------------------------ 6 notebook_voi / llmDecide
+
+
+def _voi_brain(stub, tmp_path=None, **over) -> NotebookMixtureBrain:
+    cfg = dataclasses.replace(nm.NOTEBOOK_VOI, **over)
+    brain = NotebookMixtureBrain(stub, log_dir=tmp_path, config=cfg)
+    brain.reset(_context())
+    return brain
+
+
+def test_configs_are_the_documented_variants():
+    assert nm.CONFIGS["notebook_mixture"] == nm.NotebookConfig()
+    v = nm.CONFIGS["notebook_voi"]
+    assert (v.look_rule, v.beta, v.invalid_look, v.review,
+            v.use_it_or_lose_it) == ("voi", 0.3, "neutral", "top_fresh", True)
+    d = nm.CONFIGS["notebook_llmDecide"]
+    assert d == dataclasses.replace(v, look_rule="llm", label="notebook_llmDecide")
+
+
+def test_beta_tempers_the_weight_update():
+    pop = Population()
+    pop.add_initial([("g", "A"), ("g", "B")], 0)
+    pop.update_log_weights({"a01": 0.0, "a02": -4.0}, 1, "x", beta=0.5)
+    w = pop.weights
+    assert abs(w["a01"] / w["a02"] - math.exp(2.0)) < 1e-9
+    assert pop.events[-1]["beta"] == 0.5
+
+
+def test_blank_look_forecast_is_scored_at_the_population_average(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o", "table_k"))
+    brain = _voi_brain(stub, tmp_path)
+    brain.decide("keys", 100)
+    # two valid forecasts and one blank, scored by hand
+    look = {"receptacle": "counter_k", "room": "kitchen", "t": 100,
+            "forecasts": {"a01": {"keys": 0.9}, "a02": {"keys": 0.5},
+                          "a03": {}},
+            "invalid": ["a03"],
+            "weights_before": {"a01": 0.5, "a02": 0.25, "a03": 0.25}}
+    brain._look_procedure(look, "counter_k", "kitchen", ("keys",), (), "line",
+                          100)
+    row = json.loads((tmp_path / "looks.jsonl").read_text().splitlines()[-1])
+    s1 = nm.look_score({"keys": 0.9}, ("keys",), brain._known_objects())
+    s2 = nm.look_score({"keys": 0.5}, ("keys",), brain._known_objects())
+    assert abs(row["scores"]["a03"] - (0.5 * s1 + 0.25 * s2) / 0.75) < 1e-3
+    assert row["neutral_scored"] and row["invalid"] == ["a03"]
+    assert row["beta"] == 0.3
+    # the blank agent's follow-up says so
+    blank_prompt = [p for p in stub.prompts if "was blank" in p]
+    assert blank_prompt and "population's average" in blank_prompt[0]
+
+
+def test_voi_rule_looks_at_the_best_receptacle_and_stops_below_lambda():
+    # Two agents split between two receptacles: the mixture is ~0.45 /
+    # 0.45, one look is worth ~0.45, far above lambda -> look at one of them.
+    stub = _Stub(anchors=("counter_k", "desk_o"))
+    brain = _voi_brain(stub, use_it_or_lose_it=False)
+    d = brain.decide("keys", 100)
+    assert d["action"] == "sense" and d["receptacle"] in ("counter_k", "desk_o")
+    assert d["reason"].startswith("voi") and d["voi"]["best"] == d["receptacle"]
+    assert "draw" not in d
+    # Everyone agrees at 0.9: the best look gains ~0.1 - still above 0.05;
+    # raise lambda and it answers.
+    stub = _Stub(anchors=("counter_k", "counter_k"))
+    brain = _voi_brain(stub, use_it_or_lose_it=False, voi_lambda=0.5)
+    d = brain.decide("keys", 100)
+    assert d["action"] == "answer" and "below 0.5" in d["reason"]
+
+
+def test_use_it_or_lose_it_spends_spare_looks():
+    stub = _Stub(anchors=("counter_k", "counter_k"))
+    # lambda so high the voi rule alone would never look; 4 looks left,
+    # 2 questions per day and this is the first -> 1 question left -> spend.
+    brain = _voi_brain(stub, voi_lambda=5.0, questions_per_day=2.0)
+    d = brain.decide("keys", 100)
+    assert d["action"] == "sense" and d["reason"].startswith("spare looks")
+    # with more questions left than looks, no spare
+    brain = _voi_brain(stub, voi_lambda=5.0, questions_per_day=30.0)
+    d = brain.decide("keys", 100)
+    assert d["action"] == "answer"
+
+
+def test_voi_candidates_include_a_listed_resident_for_on_person():
+    stub = _Stub(anchors=(ON_PERSON, ON_PERSON), carrier="alice",
+                 carrier_room="office")
+    brain = _voi_brain(stub, use_it_or_lose_it=False, voi_lambda=0.01)
+    brain.decide("keys", 100)
+    brain._listed_this_question["alice"] = "office"
+    d = brain.decide("keys", 100)
+    # ON_PERSON at ~0.86 for everyone: a look there gains the runner-up's
+    # share (~0.03, the miss case) - the best available, above 0.01.
+    assert d["action"] == "sense" and d["resident"] == "alice"
+    assert d["voi"]["best"] == ON_PERSON
+
+
+def test_llm_decide_reads_the_verdict_and_falls_back_on_an_illegal_target():
+    stub = _Stub(anchors=("counter_k", "desk_o"))
+    brain = _voi_brain(stub, look_rule="llm", use_it_or_lose_it=False)
+    stub.decide_action, stub.decide_target = "answer", ""
+    d = brain.decide("keys", 100)
+    assert d["action"] == "answer" and d["reason"].startswith("dispatcher:")
+    briefing = [p for p in stub.prompts if "VALUE OF INFORMATION" in p][-1]
+    for line in ("QUESTION: where is keys", "looks left 4 of 4",
+                 "questions so far today 1 of about 24", "PANEL FORECAST",
+                 "AGENTS' TOP SPOTS", "LEGAL LOOK TARGETS NOW"):
+        assert line in briefing, line
+    stub.decide_action, stub.decide_target = "look", "desk_o"
+    d = brain.decide("keys", 200)
+    assert d["action"] == "sense" and d["receptacle"] == "desk_o"
+    assert d["dispatch"]["target"] == "desk_o"
+    stub.decide_action, stub.decide_target = "look", "no_such_place"
+    d = brain.decide("keys", 300)
+    assert d["action"] == "sense" and d["receptacle"] == d["voi"]["best"]
+    assert d["dispatch_corrected"] == "no_such_place"
+    assert brain.decide_corrected == 1
+
+
+def test_top_fresh_review_skips_without_looks_and_otherwise_forks_top_births_fresh(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o", "table_k"))
+    brain = _voi_brain(stub, tmp_path)
+    brain.decide("keys", 100)
+    brain._end_of_day_review(0)
+    events = [json.loads(l) for l in (tmp_path / "population.jsonl").read_text().splitlines()]
+    review = [e for e in events if e["event"] == "review"][-1]
+    assert review["skipped"] == "no looks today" and review["candidate"] is None
+    assert brain.population.size == 3
+    # one look today: a01 wins it
+    look = {"receptacle": "counter_k", "room": "kitchen", "t": 100,
+            "forecasts": {"a01": {"keys": 0.9}, "a02": {"keys": 0.1},
+                          "a03": {"keys": 0.3}},
+            "invalid": [], "weights_before": brain.population.weights}
+    brain._today_look_lines.append("d00 Mon 00:01 look at counter_k: keys")
+    brain._look_procedure(look, "counter_k", "kitchen", ("keys",), (), "line",
+                          100)
+    assert brain.population.top() == "a01" and brain.population.lowest() == "a02"
+    brain._end_of_day_review(0)
+    events = [json.loads(l) for l in (tmp_path / "population.jsonl").read_text().splitlines()]
+    review = [e for e in events if e["event"] == "review"][-1]
+    assert review["candidate"] == "a01" and review["retire"] == "a02"
+    kinds = [e["event"] for e in events]
+    assert "retire" in kinds
+    births = [e for e in events if e["event"] == "birth" and e.get("origin") == "review"]
+    assert len(births) == 1
+    pop = brain.population
+    fresh = births[0]["agent"]
+    assert fresh in pop.agents and "a02" in pop.retired
+    # fair entry: the newcomer holds exactly 1/N
+    assert abs(pop.weights[fresh] - 1.0 / pop.size) < 1e-9
+    assert abs(sum(pop.weights.values()) - 1.0) < 1e-9
+    # the fork of the top agent exists with half of a real weight
+    forks = [e for e in events if e["event"] == "fork"]
+    assert forks and forks[-1]["parent"] == "a01"
+    birth_prompt = [p for p in stub.prompts if "CONTRASTS" in p][-1]
+    assert "WHAT TODAY'S LOOKS SHOWED" in birth_prompt and "counter_k: keys" in birth_prompt
+
+
+def test_scratch_versions_are_logged_at_birth_fork_and_follow_up(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o"), fork_p=1.0)
+    brain = _voi_brain(stub, tmp_path)
+    brain.decide("keys", 100)
+    look = {"receptacle": "counter_k", "room": "kitchen", "t": 100,
+            "forecasts": {"a01": {"keys": 0.9}, "a02": {"keys": 0.1}},
+            "invalid": [], "weights_before": brain.population.weights}
+    brain._look_procedure(look, "counter_k", "kitchen", ("keys",), (), "line",
+                          100)
+    rows = [json.loads(l) for l in (tmp_path / "scratch_versions.jsonl").read_text().splitlines()]
+    origins = [(r["agent"], r["origin"]) for r in rows]
+    assert origins[:2] == [("a01", "birth"), ("a02", "birth")]
+    assert ("a01", "follow_up") in origins and ("a02", "follow_up") in origins
+    assert any(o.startswith("fork:follow_up") for _, o in origins)
+    for r in rows:
+        assert set(r) == {"agent", "t", "stamp", "origin", "words", "scratch"}
+    followups = [r for r in rows if r["origin"] == "follow_up"]
+    assert all(r["scratch"] == "saw something" for r in followups)
+
+
+@needs_bank
+@pytest.mark.parametrize("kind", ["notebook_voi", "notebook_llmDecide"])
+def test_full_stub_run_of_the_variants(tmp_path, kind):
+    episode = next(JsonlBank(path=COLD_START_BANK).episodes())
+    episode = dataclasses.replace(episode,
+                                  questions_by_day=episode.questions_by_day[:2])
+    recs = episode.agent_view().sensable_receptacle_ids
+    stub = _Stub(anchors=(recs[0], recs[5], ON_PERSON, OUT_OF_HOUSE),
+                 fork_p=0.15, carrier=episode.resident_ids[0],
+                 carrier_room=episode.receptacle_rooms[recs[0]])
+    stub.decide_action, stub.decide_target = "look", "somewhere_illegal"
+    out = tmp_path / "arm"
+    cfg = dataclasses.replace(nm.CONFIGS[kind], questions_per_day=float(
+        len(episode.questions_by_day[0])))
+    brain = NotebookMixtureBrain(stub, log_dir=out, config=cfg)
+    belief = NotebookMixtureBelief(random.Random(0), brain)
+    records = list(run_episode(Agent(belief, NotebookMixturePolicy(brain)),
+                               episode))
+    brain.finish()
+    assert len(records) == sum(len(d) for d in episode.questions_by_day)
+    by_day: Dict[int, float] = {}
+    for r in records:
+        by_day[r.day_index] = by_day.get(r.day_index, 0.0) + r.budget_spent
+    assert all(v <= episode.budget_per_day for v in by_day.values())
+    assert brain.n_looks > 0
+    diag = brain.diagnostics()
+    assert diag["config"]["label"] == kind
+    assert set(diag["looks_per_day"]) <= {"0", "1"}
+    events = [json.loads(l) for l in (out / "population.jsonl").read_text().splitlines()]
+    reviews = [e for e in events if e["event"] == "review"]
+    assert len(reviews) == 2 and all(r["mode"] == "top_fresh" for r in reviews)
+    ran = [r for r in reviews if not r.get("skipped")]
+    if ran:
+        assert any(e["event"] == "birth" and e.get("origin") == "review"
+                   for e in events)
+        assert any(e["event"] == "retire" for e in events)
+    rows = [json.loads(l) for l in (out / "scratch_versions.jsonl").read_text().splitlines()]
+    assert rows and {r["origin"] for r in rows} >= {"birth"}
+    calls = [json.loads(l) for l in (out / "calls.jsonl").read_text().splitlines()]
+    types = {c["type"] for c in calls}
+    if kind == "notebook_llmDecide":
+        assert "decide" in types and brain.decide_corrected > 0
+    else:
+        assert "decide" not in types
+    fc = [json.loads(l) for l in (out / "forecasts.jsonl").read_text().splitlines()]
+    assert all("voi" in r for r in fc if r["reason"] != "no budget")
