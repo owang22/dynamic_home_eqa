@@ -1,0 +1,28 @@
+# Cold-start variant of fleet.yaml: the robot arrives at t=0 with NO
+# installation tour and NO patrol, so every bank starts with zero
+# sightings of every object; the only evidence a policy ever holds is
+# what its own 8 looks/day buy. Questions come from the household's
+# realized routine (24/day, routine-driven under
+# query_rules_cold_start.yaml, background floor 1.6/day) instead of the
+# uniform draw. Everything else is fleet.yaml verbatim; per-bank tuning
+# stays prohibited.
+export:
+  seed: 0
+  sightings_per_day: 10          # used only by the glimpse model
+  observation_model: room_visit
+  patrol: round_robin_patrol
+  visits_per_day: 0              # no patrol: zero ambient sightings
+  questions_per_day: 24
+  first_question_day: 0
+  budget_per_day: 8
+  query_mode: uniform            # ignored under routine_driven
+  initial_tour: false
+  # Installed at t=0 (Monday 00:00) with no tour: nothing is dropped
+  # before an installation instant, so every day carries its full
+  # question quota. (fleet.yaml draws a random tour instant on day 0/1;
+  # a random instant here would silently cut day 0's questions.)
+  tour_start: day0
+  tour_max_day: 1
+  query_generation: routine_driven
+  query_rules: src/baselines/configs/query_rules_cold_start.yaml
+healthcheck: {}

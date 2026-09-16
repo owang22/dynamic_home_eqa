@@ -1,0 +1,86 @@
+# Routine-driven query rules, shared across the fleet (see
+# baselines.query_stream for the schema and matching rules). Objects are
+# named by CLASS so one file serves every household; a household lacking
+# a class simply never fires that entry. Activity keys match realized
+# block names up to the realizer's "__<location>" variant suffix.
+#
+# The shape encodes when people actually ask "where is X": departure
+# prep (before leaving), task setup (before or during the task), and
+# consumption (during meals / leisure). background_query_rate keeps a
+# small unpredictable floor so the stream is never fully forecastable.
+background_query_rate: 1.6
+rules:
+  work_away:
+    trigger: before
+    offset_minutes: {mean: 20, sd: 8}
+    objects: [keys, wallet, phone, backpack, jacket, laptop, lunchbox,
+              water_bottle, headphones, umbrella]
+  school:
+    trigger: before
+    offset_minutes: {mean: 15, sd: 6}
+    objects: [backpack, lunchbox, water_bottle, jacket]
+  walk:
+    trigger: before
+    offset_minutes: {mean: 10, sd: 4}
+    objects: [keys, jacket, dog_leash, phone, headphones]
+  work_home:
+    trigger: before
+    offset_minutes: {mean: 10, sd: 5}
+    objects: [laptop, charger, notebook, pen, glasses, headphones]
+  homework:
+    trigger: before
+    offset_minutes: {mean: 10, sd: 5}
+    objects: [notebook, pen, tablet, backpack]
+  reading:
+    trigger: before
+    offset_minutes: {mean: 5, sd: 3}
+    objects: [book, glasses]
+  gaming:
+    trigger: before
+    offset_minutes: {mean: 5, sd: 3}
+    objects: [gaming_controller, headphones, remote]
+  take_medication:
+    trigger: before
+    offset_minutes: {mean: 5, sd: 3}
+    objects: [medication_bottle]
+  laundry:
+    trigger: before
+    offset_minutes: {mean: 10, sd: 5}
+    objects: [laundry_basket]
+  phone_time:
+    trigger: before
+    offset_minutes: {mean: 3, sd: 2}
+    objects: [phone, charger]
+  meal_prep:
+    trigger: during
+    objects: [pot, pan, bowl, plate]
+  breakfast:
+    trigger: during
+    objects: [mug, bowl, plate, phone]
+  lunch:
+    trigger: during
+    objects: [plate, bowl, water_bottle]
+  dinner:
+    trigger: during
+    objects: [plate, bowl, remote]
+  coffee:
+    trigger: during
+    objects: [mug]
+  watch_tv:
+    trigger: during
+    objects: [remote, blanket]
+  get_ready:
+    trigger: during
+    objects: [hairbrush, makeup_kit, glasses, phone, keys]
+  bedtime_routine:
+    trigger: during
+    objects: [phone, charger, book, glasses]
+  shower:
+    trigger: during
+    objects: [towel]
+  tidy_up:
+    trigger: during
+    objects: [vacuum_cleaner, laundry_basket]
+  play_with_kids:
+    trigger: during
+    objects: [toy, blanket]

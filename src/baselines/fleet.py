@@ -97,6 +97,12 @@ class FleetExportConfig:
     # per-seed awake instant on a day in [0, tour_max_day].
     tour_start: str = "day0"
     tour_max_day: int = 1
+    # Question generation (see baselines.export_bank.export): "uniform"
+    # is the existing draw; "routine_driven" triggers questions from the
+    # timeline's realized activities under the rules in `query_rules`
+    # (a YAML path, resolved against the repo cwd like every other path).
+    query_generation: str = "uniform"
+    query_rules: Optional[str] = None
 
 
 @dataclasses.dataclass(frozen=True)
@@ -215,11 +221,9 @@ def run_fleet(sources: List[HouseholdSource], export_cfg: FleetExportConfig,
     return rows
 
 
-def _run_one(source: HouseholdSource, export_cfg: FleetExportConfig,
-             hc_cfg: HealthcheckConfig, banks_dir: pathlib.Path,
-             out_dir: pathlib.Path) -> Dict[str, Any]:
-    """Export one bank, run its healthcheck, write its report dir."""
-    bank_path = banks_dir / _bank_name(source)
+def export_one(source: HouseholdSource, export_cfg: FleetExportConfig,
+               bank_path: pathlib.Path) -> None:
+    """Export one household's bank under the shared fleet settings."""
     export(source.timeline, source.spec, bank_path, export_cfg.seed,
            export_cfg.sightings_per_day, export_cfg.questions_per_day,
            export_cfg.first_question_day, export_cfg.budget_per_day,
@@ -231,7 +235,18 @@ def _run_one(source: HouseholdSource, export_cfg: FleetExportConfig,
            patrol=export_cfg.patrol,
            visits_per_day=export_cfg.visits_per_day,
            tour_start=export_cfg.tour_start,
-           tour_max_day=export_cfg.tour_max_day)
+           tour_max_day=export_cfg.tour_max_day,
+           query_generation=export_cfg.query_generation,
+           query_rules=(None if export_cfg.query_rules is None
+                        else pathlib.Path(export_cfg.query_rules)))
+
+
+def _run_one(source: HouseholdSource, export_cfg: FleetExportConfig,
+             hc_cfg: HealthcheckConfig, banks_dir: pathlib.Path,
+             out_dir: pathlib.Path) -> Dict[str, Any]:
+    """Export one bank, run its healthcheck, write its report dir."""
+    bank_path = banks_dir / _bank_name(source)
+    export_one(source, export_cfg, bank_path)
     report = run_healthcheck(bank_path, hc_cfg, None)
     slug_dir = out_dir / "healthchecks" / _bank_name(source).removesuffix(
         "_bank.jsonl")

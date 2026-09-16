@@ -374,6 +374,14 @@ def _room_visit_rows(spec_path: pathlib.Path, timeline: pathlib.Path,
     from baselines.room_observations import (RoomMap, build_schedules,
                                              realize)
 
+    if visits_per_day < 0:
+        raise ValueError(f"visits_per_day {visits_per_day} must be >= 0")
+    if visits_per_day == 0:
+        # No patrol at all (the cold-start recipe): the ambient stream is
+        # empty and every sighting a policy ever holds is one it paid for.
+        logger.info("patrol %s: visits_per_day=0, no ambient sightings",
+                    patrol)
+        return []
     room_map = RoomMap.from_spec(spec_path)
     schedules = build_schedules(room_map, n_days, awake, timeline,
                                 visits_per_day, seed)
