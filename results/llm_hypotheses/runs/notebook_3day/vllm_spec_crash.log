@@ -1,0 +1,239 @@
+(APIServer pid=2327775) INFO 09-16 13:52:58 [utils.py:299] 
+(APIServer pid=2327775) INFO 09-16 13:52:58 [utils.py:299]        █     █     █▄   ▄█
+(APIServer pid=2327775) INFO 09-16 13:52:58 [utils.py:299]  ▄▄ ▄█ █     █     █ ▀▄▀ █  version 0.20.0
+(APIServer pid=2327775) INFO 09-16 13:52:58 [utils.py:299]   █▄█▀ █     █     █     █  model   Qwen/Qwen3.8-27B
+(APIServer pid=2327775) INFO 09-16 13:52:58 [utils.py:299]    ▀▀  ▀▀▀▀▀ ▀▀▀▀▀ ▀     ▀
+(APIServer pid=2327775) INFO 09-16 13:52:58 [utils.py:299] 
+(APIServer pid=2327775) INFO 09-16 13:52:58 [utils.py:233] non-default args: {'model_tag': 'Qwen/Qwen3.8-27B', 'host': '127.0.0.1', 'port': 8300, 'model': 'Qwen/Qwen3.8-27B', 'max_model_len': 32768, 'gpu_memory_utilization': 0.9, 'enable_prefix_caching': True, 'max_num_seqs': 16, 'speculative_config': {'method': 'ngram', 'num_speculative_tokens': 5, 'prompt_lookup_max': 5, 'prompt_lookup_min': 2}, 'structured_outputs_config': StructuredOutputsConfig(backend='xgrammar', disable_any_whitespace=True, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False)}
+(APIServer pid=2327775) INFO 09-16 13:52:58 [arg_utils.py:718] HF_HUB_OFFLINE is True, replace model_id [Qwen/Qwen3.8-27B] to model_path [/mnt/nvme/oliver/robot/models/hub/models--Qwen--Qwen3.8-27B/snapshots/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0]
+(APIServer pid=2327775) INFO 09-16 13:52:58 [model.py:555] Resolved architecture: Qwen3_5ForConditionalGeneration
+(APIServer pid=2327775) INFO 09-16 13:52:58 [model.py:1680] Using max model len 32768
+(APIServer pid=2327775) INFO 09-16 13:52:58 [scheduler.py:239] Chunked prefill is enabled with max_num_batched_tokens=8192.
+(APIServer pid=2327775) WARNING 09-16 13:52:58 [config.py:367] Mamba cache mode is set to 'align' for Qwen3_5ForConditionalGeneration by default when prefix caching is enabled
+(APIServer pid=2327775) INFO 09-16 13:52:58 [config.py:387] Warning: Prefix caching in Mamba cache 'align' mode is currently enabled. Its support for Mamba layers is experimental. Please report any issues you may observe.
+(APIServer pid=2327775) WARNING 09-16 13:52:58 [vllm.py:815] Async scheduling not supported with ngram-based speculative decoding and will be disabled.
+(APIServer pid=2327775) INFO 09-16 13:52:58 [vllm.py:840] Asynchronous scheduling is disabled.
+(APIServer pid=2327775) INFO 09-16 13:52:58 [kernel.py:205] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'])
+(APIServer pid=2327775) INFO 09-16 13:53:00 [nixl_utils.py:20] Setting UCX_RCACHE_MAX_UNRELEASED to '1024' to avoid a rare memory leak in UCX when using NIXL.
+(APIServer pid=2327775) WARNING 09-16 13:53:00 [nixl_utils.py:34] NIXL is not available
+(APIServer pid=2327775) WARNING 09-16 13:53:00 [nixl_utils.py:44] NIXL agent config is not available
+(APIServer pid=2327775) `Qwen2VLImageProcessorFast` is deprecated. The `Fast` suffix for image processors has been removed; use `Qwen2VLImageProcessor` instead.
+(APIServer pid=2327775) The `use_fast` parameter is deprecated and will be removed in a future version. Use `backend="torchvision"` instead of `use_fast=True`, or `backend="pil"` instead of `use_fast=False`.
+(EngineCore pid=2327925) INFO 09-16 13:53:09 [core.py:109] Initializing a V1 LLM engine (v0.20.0) with config: model='/mnt/nvme/oliver/robot/models/hub/models--Qwen--Qwen3.8-27B/snapshots/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0', speculative_config=SpeculativeConfig(method='ngram', model=None, num_spec_tokens=5), tokenizer='/mnt/nvme/oliver/robot/models/hub/models--Qwen--Qwen3.8-27B/snapshots/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0', skip_tokenizer_init=False, tokenizer_mode=auto, revision=None, tokenizer_revision=None, trust_remote_code=False, dtype=torch.bfloat16, max_seq_len=32768, download_dir=None, load_format=auto, tensor_parallel_size=1, pipeline_parallel_size=1, data_parallel_size=1, decode_context_parallel_size=1, dcp_comm_backend=ag_rs, disable_custom_all_reduce=False, quantization=None, quantization_config=None, enforce_eager=False, enable_return_routed_experts=False, kv_cache_dtype=auto, device_config=cuda, structured_outputs_config=StructuredOutputsConfig(backend='xgrammar', disable_any_whitespace=True, disable_additional_properties=False, reasoning_parser='', reasoning_parser_plugin='', enable_in_reasoning=False), observability_config=ObservabilityConfig(show_hidden_metrics_for_version=None, otlp_traces_endpoint=None, collect_detailed_traces=None, kv_cache_metrics=False, kv_cache_metrics_sample=0.01, cudagraph_metrics=False, enable_layerwise_nvtx_tracing=False, enable_mfu_metrics=False, enable_mm_processor_stats=False, enable_logging_iteration_details=False), seed=0, served_model_name=/mnt/nvme/oliver/robot/models/hub/models--Qwen--Qwen3.8-27B/snapshots/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0, enable_prefix_caching=True, enable_chunked_prefill=True, pooler_config=None, compilation_config={'mode': <CompilationMode.VLLM_COMPILE: 3>, 'debug_dump_path': None, 'cache_dir': '', 'compile_cache_save_format': 'binary', 'backend': 'inductor', 'custom_ops': ['none'], 'ir_enable_torch_wrap': True, 'splitting_ops': ['vllm::unified_attention_with_output', 'vllm::unified_mla_attention_with_output', 'vllm::mamba_mixer2', 'vllm::mamba_mixer', 'vllm::short_conv', 'vllm::linear_attention', 'vllm::plamo2_mamba_mixer', 'vllm::gdn_attention_core', 'vllm::gdn_attention_core_xpu', 'vllm::olmo_hybrid_gdn_full_forward', 'vllm::kda_attention', 'vllm::sparse_attn_indexer', 'vllm::rocm_aiter_sparse_attn_indexer', 'vllm::deepseek_v4_attention', 'vllm::unified_kv_cache_update', 'vllm::unified_mla_kv_cache_update'], 'compile_mm_encoder': False, 'cudagraph_mm_encoder': False, 'encoder_cudagraph_token_budgets': [], 'encoder_cudagraph_max_vision_items_per_batch': 0, 'encoder_cudagraph_max_frames_per_batch': None, 'compile_sizes': [], 'compile_ranges_endpoints': [8192], 'inductor_compile_config': {'enable_auto_functionalized_v2': False, 'size_asserts': False, 'alignment_asserts': False, 'scalar_asserts': False, 'combo_kernels': True, 'benchmark_combo_kernel': True}, 'inductor_passes': {}, 'cudagraph_mode': <CUDAGraphMode.FULL_AND_PIECEWISE: (2, 1)>, 'cudagraph_num_of_warmups': 1, 'cudagraph_capture_sizes': [1, 2, 4, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192], 'cudagraph_copy_inputs': False, 'cudagraph_specialize_lora': True, 'use_inductor_graph_partition': False, 'pass_config': {'fuse_norm_quant': False, 'fuse_act_quant': False, 'fuse_attn_quant': False, 'enable_sp': False, 'fuse_gemm_comms': False, 'fuse_allreduce_rms': False}, 'max_cudagraph_capture_size': 192, 'dynamic_shapes_config': {'type': <DynamicShapesType.BACKED: 'backed'>, 'evaluate_guards': False, 'assume_32_bit_indexing': False}, 'local_cache_dir': None, 'fast_moe_cold_start': False, 'static_all_moe_layers': []}, kernel_config=KernelConfig(ir_op_priority=IrOpPriorityConfig(rms_norm=['native']), enable_flashinfer_autotune=True, moe_backend='auto')
+(EngineCore pid=2327925) WARNING 09-16 13:53:09 [nixl_utils.py:34] NIXL is not available
+(EngineCore pid=2327925) WARNING 09-16 13:53:09 [nixl_utils.py:44] NIXL agent config is not available
+(EngineCore pid=2327925) `Qwen2VLImageProcessorFast` is deprecated. The `Fast` suffix for image processors has been removed; use `Qwen2VLImageProcessor` instead.
+(EngineCore pid=2327925) INFO 09-16 13:53:10 [parallel_state.py:1402] world_size=1 rank=0 local_rank=0 distributed_init_method=tcp://172.17.31.231:36661 backend=nccl
+(EngineCore pid=2327925) INFO 09-16 13:53:10 [parallel_state.py:1715] rank 0 in world size 1 is assigned as DP rank 0, PP rank 0, PCP rank 0, TP rank 0, EP rank N/A, EPLB rank N/A
+(EngineCore pid=2327925) WARNING 09-16 13:53:11 [__init__.py:206] min_p and logit_bias parameters won't work with speculative decoding.
+(EngineCore pid=2327925) The `use_fast` parameter is deprecated and will be removed in a future version. Use `backend="torchvision"` instead of `use_fast=True`, or `backend="pil"` instead of `use_fast=False`.
+(EngineCore pid=2327925) INFO 09-16 13:53:15 [gpu_model_runner.py:4777] Starting to load model /mnt/nvme/oliver/robot/models/hub/models--Qwen--Qwen3.8-27B/snapshots/1d4bf0f2ff6012fd82039f2fa52739d0dd7c60c0...
+(EngineCore pid=2327925) INFO 09-16 13:53:15 [cuda.py:423] Using backend AttentionBackendEnum.FLASH_ATTN for vit attention
+(EngineCore pid=2327925) INFO 09-16 13:53:15 [mm_encoder_attention.py:230] Using AttentionBackendEnum.FLASH_ATTN for MMEncoderAttention.
+(EngineCore pid=2327925) INFO 09-16 13:53:15 [gdn_linear_attn.py:153] Using Triton/FLA GDN prefill kernel
+(EngineCore pid=2327925) Failed to get device capability: SM 12.x requires CUDA >= 12.9.
+(EngineCore pid=2327925) Failed to get device capability: SM 12.x requires CUDA >= 12.9.
+(EngineCore pid=2327925) INFO 09-16 13:53:15 [cuda.py:368] Using FLASH_ATTN attention backend out of potential backends: ['FLASH_ATTN', 'FLASHINFER', 'TRITON_ATTN', 'FLEX_ATTENTION'].
+(EngineCore pid=2327925) INFO 09-16 13:53:15 [flash_attn.py:646] Using FlashAttention version 2
+(EngineCore pid=2327925) INFO 09-16 13:53:16 [weight_utils.py:904] Filesystem type for checkpoints: EXT4. Checkpoint size: 51.75 GiB. Available RAM: 175.55 GiB.
+(EngineCore pid=2327925) INFO 09-16 13:53:16 [weight_utils.py:927] Auto-prefetch is disabled because the filesystem (EXT4) is not a recognized network FS (NFS/Lustre). If you want to force prefetching, start vLLM with --safetensors-load-strategy=prefetch.
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:   0% Completed | 0/18 [00:00<?, ?it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:   6% Completed | 1/18 [00:00<00:11,  1.50it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  11% Completed | 2/18 [00:01<00:09,  1.72it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  17% Completed | 3/18 [00:01<00:07,  1.96it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  22% Completed | 4/18 [00:02<00:07,  1.75it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  28% Completed | 5/18 [00:02<00:06,  2.02it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  33% Completed | 6/18 [00:03<00:06,  1.82it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  39% Completed | 7/18 [00:03<00:05,  2.04it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  44% Completed | 8/18 [00:04<00:05,  1.84it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  50% Completed | 9/18 [00:04<00:04,  2.05it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  56% Completed | 10/18 [00:05<00:04,  1.85it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  61% Completed | 11/18 [00:05<00:03,  2.06it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  67% Completed | 12/18 [00:06<00:03,  1.86it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  72% Completed | 13/18 [00:06<00:02,  2.06it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  78% Completed | 14/18 [00:07<00:02,  1.86it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  83% Completed | 15/18 [00:07<00:01,  2.06it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  89% Completed | 16/18 [00:08<00:01,  1.86it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards:  94% Completed | 17/18 [00:08<00:00,  2.06it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards: 100% Completed | 18/18 [00:09<00:00,  2.14it/s]
+(EngineCore pid=2327925) Loading safetensors checkpoint shards: 100% Completed | 18/18 [00:09<00:00,  1.96it/s]
+(EngineCore pid=2327925) 
+(EngineCore pid=2327925) INFO 09-16 13:53:25 [default_loader.py:384] Loading weights took 9.22 seconds
+(EngineCore pid=2327925) INFO 09-16 13:53:25 [gpu_model_runner.py:4801] Loading drafter model...
+(EngineCore pid=2327925) INFO 09-16 13:53:26 [gpu_model_runner.py:4879] Model loading took 51.1 GiB memory and 9.806444 seconds
+(EngineCore pid=2327925) INFO 09-16 13:53:26 [interface.py:606] Setting attention block size to 816 tokens to ensure that attention page size is >= mamba page size.
+(EngineCore pid=2327925) INFO 09-16 13:53:26 [interface.py:630] Padding mamba page size by 0.99% to ensure that mamba page size and attention page size are exactly equal.
+(EngineCore pid=2327925) INFO 09-16 13:53:26 [gpu_model_runner.py:5820] Encoder cache will be initialized with a budget of 16384 tokens, and profiled with 1 image items of the maximum feature size.
+(EngineCore pid=2327925) INFO 09-16 13:53:31 [backends.py:1069] Using cache directory: /home/oliver/.cache/vllm/torch_compile_cache/e19a64fb97/rank_0_0/backbone for vLLM's torch.compile
+(EngineCore pid=2327925) INFO 09-16 13:53:31 [backends.py:1128] Dynamo bytecode transform time: 4.67 s
+(EngineCore pid=2327925) INFO 09-16 13:53:33 [backends.py:376] Cache the graph of compile range (1, 8192) for later use
+(EngineCore pid=2327925) INFO 09-16 13:53:50 [backends.py:391] Compiling a graph for compile range (1, 8192) takes 18.19 s
+(EngineCore pid=2327925) INFO 09-16 13:53:52 [decorators.py:668] saved AOT compiled function to /home/oliver/.cache/vllm/torch_compile_cache/torch_aot_compile/a9b68d16aec6fb81cabc85eff40cb8a9cbb2ac1e04bbab7a6cc998dccc7d368d/rank_0_0/model
+(EngineCore pid=2327925) INFO 09-16 13:53:52 [monitor.py:53] torch.compile took 25.76 s in total
+(EngineCore pid=2327925) INFO 09-16 13:54:27 [monitor.py:81] Initial profiling/warmup run took 35.20 s
+(EngineCore pid=2327925) INFO 09-16 13:54:32 [gpu_model_runner.py:5963] Profiling CUDA graph memory: PIECEWISE=25 (largest=192), FULL=13 (largest=96)
+(EngineCore pid=2327925) INFO 09-16 13:54:35 [gpu_model_runner.py:6042] Estimated CUDA graph memory: 0.39 GiB total
+(EngineCore pid=2327925) INFO 09-16 13:54:36 [gpu_worker.py:440] Available KV cache memory: 31.88 GiB
+(EngineCore pid=2327925) INFO 09-16 13:54:36 [gpu_worker.py:455] CUDA graph memory profiling is enabled (default since v0.21.0). The current --gpu-memory-utilization=0.9000 is equivalent to --gpu-memory-utilization=0.8959 without CUDA graph memory profiling. To maintain the same effective KV cache size as before, increase --gpu-memory-utilization to 0.9041. To disable, set VLLM_MEMORY_PROFILER_ESTIMATE_CUDAGRAPHS=0.
+(EngineCore pid=2327925) INFO 09-16 13:54:36 [kv_cache_utils.py:1711] GPU KV cache size: 130,560 tokens
+(EngineCore pid=2327925) INFO 09-16 13:54:36 [kv_cache_utils.py:1716] Maximum concurrency for 32,768 tokens per request: 10.32x
+(EngineCore pid=2327925) 2026-09-16 13:54:36,059 - INFO - autotuner.py:457 - flashinfer.jit: [Autotuner]: Autotuning process starts ...
+(EngineCore pid=2327925) 2026-09-16 13:54:36,069 - INFO - autotuner.py:466 - flashinfer.jit: [Autotuner]: Autotuning process ends
+(EngineCore pid=2327925) Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):   0%|          | 0/25 [00:00<?, ?it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):   8%|▊         | 2/25 [00:00<00:01, 16.95it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  16%|█▌        | 4/25 [00:00<00:01, 17.05it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  24%|██▍       | 6/25 [00:00<00:01, 17.11it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  32%|███▏      | 8/25 [00:00<00:00, 17.12it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  40%|████      | 10/25 [00:00<00:00, 17.41it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  48%|████▊     | 12/25 [00:00<00:00, 17.81it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  56%|█████▌    | 14/25 [00:00<00:00, 18.21it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  64%|██████▍   | 16/25 [00:00<00:00, 18.47it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  72%|███████▏  | 18/25 [00:01<00:00, 18.63it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  80%|████████  | 20/25 [00:01<00:00, 18.90it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  88%|████████▊ | 22/25 [00:01<00:00, 19.08it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE):  96%|█████████▌| 24/25 [00:01<00:00, 19.26it/s]Capturing CUDA graphs (mixed prefill-decode, PIECEWISE): 100%|██████████| 25/25 [00:01<00:00, 18.41it/s]
+(EngineCore pid=2327925) Capturing CUDA graphs (decode, FULL):   0%|          | 0/13 [00:00<?, ?it/s]Capturing CUDA graphs (decode, FULL):   8%|▊         | 1/13 [00:00<00:03,  3.32it/s]Capturing CUDA graphs (decode, FULL):  15%|█▌        | 2/13 [00:00<00:03,  3.35it/s]Capturing CUDA graphs (decode, FULL):  31%|███       | 4/13 [00:00<00:01,  6.67it/s]Capturing CUDA graphs (decode, FULL):  46%|████▌     | 6/13 [00:00<00:00,  9.30it/s]Capturing CUDA graphs (decode, FULL):  62%|██████▏   | 8/13 [00:00<00:00, 11.40it/s]Capturing CUDA graphs (decode, FULL):  77%|███████▋  | 10/13 [00:01<00:00, 13.07it/s]Capturing CUDA graphs (decode, FULL):  92%|█████████▏| 12/13 [00:01<00:00, 14.44it/s]Capturing CUDA graphs (decode, FULL): 100%|██████████| 13/13 [00:01<00:00,  9.81it/s]
+(EngineCore pid=2327925) INFO 09-16 13:54:40 [gpu_model_runner.py:6133] Graph capturing finished in 4 secs, took 0.35 GiB
+(EngineCore pid=2327925) INFO 09-16 13:54:40 [gpu_worker.py:599] CUDA graph pool memory: 0.35 GiB (actual), 0.39 GiB (estimated), difference: 0.04 GiB (10.6%).
+(EngineCore pid=2327925) INFO 09-16 13:54:40 [core.py:299] init engine (profile, create kv cache, warmup model) took 74.34 s (compilation: 25.76 s)
+(EngineCore pid=2327925) INFO 09-16 13:54:40 [vllm.py:840] Asynchronous scheduling is disabled.
+(EngineCore pid=2327925) INFO 09-16 13:54:40 [kernel.py:205] Final IR op priority after setting platform defaults: IrOpPriorityConfig(rms_norm=['native'])
+(APIServer pid=2327775) INFO 09-16 13:54:41 [api_server.py:598] Supported tasks: ['generate']
+(APIServer pid=2327775) WARNING 09-16 13:54:41 [model.py:1437] Default vLLM sampling parameters have been overridden by the model's `generation_config.json`: `{'temperature': 1.0, 'top_k': 20, 'top_p': 0.95}`. If this is not intended, please relaunch vLLM instance with `--generation-config vllm`.
+(APIServer pid=2327775) INFO 09-16 13:54:42 [hf.py:314] Detected the chat template content format to be 'string'. You can set `--chat-template-content-format` to override this.
+(APIServer pid=2327775) INFO 09-16 13:54:46 [base.py:233] Multi-modal warmup completed in 3.718s
+(APIServer pid=2327775) INFO 09-16 13:54:49 [base.py:233] Readonly multi-modal warmup completed in 3.745s
+(APIServer pid=2327775) INFO 09-16 13:54:49 [api_server.py:602] Starting vLLM server on http://127.0.0.1:8300
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:37] Available routes are:
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /openapi.json, Methods: HEAD, GET
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /docs, Methods: HEAD, GET
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /docs/oauth2-redirect, Methods: HEAD, GET
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /redoc, Methods: HEAD, GET
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /tokenize, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /detokenize, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /load, Methods: GET
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /version, Methods: GET
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /health, Methods: GET
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /metrics, Methods: GET
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /v1/models, Methods: GET
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /ping, Methods: GET
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /ping, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /invocations, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /v1/chat/completions, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /v1/chat/completions/batch, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /v1/responses, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /v1/responses/{response_id}, Methods: GET
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /v1/responses/{response_id}/cancel, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /v1/completions, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /v1/messages, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /v1/messages/count_tokens, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /inference/v1/generate, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /scale_elastic_ep, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /is_scaling_elastic_ep, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /generative_scoring, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /v1/chat/completions/render, Methods: POST
+(APIServer pid=2327775) INFO 09-16 13:54:49 [launcher.py:46] Route: /v1/completions/render, Methods: POST
+(APIServer pid=2327775) INFO:     Started server process [2327775]
+(APIServer pid=2327775) INFO:     Waiting for application startup.
+(APIServer pid=2327775) INFO:     Application startup complete.
+(APIServer pid=2327775) INFO:     127.0.0.1:45476 - "GET /v1/models HTTP/1.1" 200 OK
+(APIServer pid=2327775) INFO 09-16 13:55:10 [loggers.py:271] Engine 000: Avg prompt throughput: 233.3 tokens/s, Avg generation throughput: 0.1 tokens/s, Running: 1 reqs, Waiting: 0 reqs, GPU KV cache usage: 3.8%, Prefix cache hit rate: 0.0%
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138] EngineCore encountered a fatal error.
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138] Traceback (most recent call last):
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 1129, in run_engine_core
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     engine_core.run_busy_loop()
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 1170, in run_busy_loop
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     self._process_engine_step()
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 1209, in _process_engine_step
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     outputs, model_executed = self.step_fn()
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]                               ~~~~~~~~~~~~^^
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 413, in step
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     scheduler_output = self.scheduler.schedule()
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/core/sched/scheduler.py", line 467, in schedule
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     new_blocks = self.kv_cache_manager.allocate_slots(
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]         request,
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]         num_new_tokens,
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]         num_lookahead_tokens=self.num_lookahead_tokens,
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     )
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/core/kv_cache_manager.py", line 411, in allocate_slots
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     new_blocks = self.coordinator.allocate_new_blocks(
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]         request.request_id,
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     ...<2 lines>...
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]         num_encoder_tokens,
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     )
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/core/kv_cache_coordinator.py", line 176, in allocate_new_blocks
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     return tuple(
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]         manager.allocate_new_blocks(
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     ...<6 lines>...
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]         for manager in self.single_type_managers
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     )
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/core/kv_cache_coordinator.py", line 177, in <genexpr>
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     manager.allocate_new_blocks(
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]         request_id,
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]         ^^^^^^^^^^^
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     ...<3 lines>...
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]         num_tokens_main_model,
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]         ^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     )
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     ^
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/core/single_type_kv_cache_manager.py", line 982, in allocate_new_blocks
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]     assert num_required_blocks > len(req_blocks), (
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=2327925) ERROR 09-16 13:55:13 [core.py:1138] AssertionError: num_required_blocks 8 < len(req_blocks) 9
+(APIServer pid=2327775) ERROR 09-16 13:55:13 [async_llm.py:699] AsyncLLM output_handler failed.
+(APIServer pid=2327775) ERROR 09-16 13:55:13 [async_llm.py:699] Traceback (most recent call last):
+(APIServer pid=2327775) ERROR 09-16 13:55:13 [async_llm.py:699]   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/engine/async_llm.py", line 655, in output_handler
+(APIServer pid=2327775) ERROR 09-16 13:55:13 [async_llm.py:699]     outputs = await engine_core.get_output_async()
+(APIServer pid=2327775) ERROR 09-16 13:55:13 [async_llm.py:699]               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=2327775) ERROR 09-16 13:55:13 [async_llm.py:699]   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/engine/core_client.py", line 998, in get_output_async
+(APIServer pid=2327775) ERROR 09-16 13:55:13 [async_llm.py:699]     raise self._format_exception(outputs) from None
+(APIServer pid=2327775) ERROR 09-16 13:55:13 [async_llm.py:699] vllm.v1.engine.exceptions.EngineDeadError: EngineCore encountered an issue. See stack trace (above) for the root cause.
+(APIServer pid=2327775) INFO:     127.0.0.1:52674 - "POST /v1/chat/completions HTTP/1.1" 500 Internal Server Error
+(APIServer pid=2327775) INFO:     Shutting down
+(EngineCore pid=2327925) Process EngineCore:
+(EngineCore pid=2327925) Traceback (most recent call last):
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/multiprocessing/process.py", line 313, in _bootstrap
+(EngineCore pid=2327925)     self.run()
+(EngineCore pid=2327925)     ~~~~~~~~^^
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/multiprocessing/process.py", line 108, in run
+(EngineCore pid=2327925)     self._target(*self._args, **self._kwargs)
+(EngineCore pid=2327925)     ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 1140, in run_engine_core
+(EngineCore pid=2327925)     raise e
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 1129, in run_engine_core
+(EngineCore pid=2327925)     engine_core.run_busy_loop()
+(EngineCore pid=2327925)     ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 1170, in run_busy_loop
+(EngineCore pid=2327925)     self._process_engine_step()
+(EngineCore pid=2327925)     ~~~~~~~~~~~~~~~~~~~~~~~~~^^
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 1209, in _process_engine_step
+(EngineCore pid=2327925)     outputs, model_executed = self.step_fn()
+(EngineCore pid=2327925)                               ~~~~~~~~~~~~^^
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/engine/core.py", line 413, in step
+(EngineCore pid=2327925)     scheduler_output = self.scheduler.schedule()
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/core/sched/scheduler.py", line 467, in schedule
+(EngineCore pid=2327925)     new_blocks = self.kv_cache_manager.allocate_slots(
+(EngineCore pid=2327925)         request,
+(EngineCore pid=2327925)         num_new_tokens,
+(EngineCore pid=2327925)         num_lookahead_tokens=self.num_lookahead_tokens,
+(EngineCore pid=2327925)     )
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/core/kv_cache_manager.py", line 411, in allocate_slots
+(EngineCore pid=2327925)     new_blocks = self.coordinator.allocate_new_blocks(
+(EngineCore pid=2327925)         request.request_id,
+(EngineCore pid=2327925)     ...<2 lines>...
+(EngineCore pid=2327925)         num_encoder_tokens,
+(EngineCore pid=2327925)     )
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/core/kv_cache_coordinator.py", line 176, in allocate_new_blocks
+(EngineCore pid=2327925)     return tuple(
+(EngineCore pid=2327925)         manager.allocate_new_blocks(
+(EngineCore pid=2327925)     ...<6 lines>...
+(EngineCore pid=2327925)         for manager in self.single_type_managers
+(EngineCore pid=2327925)     )
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/core/kv_cache_coordinator.py", line 177, in <genexpr>
+(EngineCore pid=2327925)     manager.allocate_new_blocks(
+(EngineCore pid=2327925)     ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+(EngineCore pid=2327925)         request_id,
+(EngineCore pid=2327925)         ^^^^^^^^^^^
+(EngineCore pid=2327925)     ...<3 lines>...
+(EngineCore pid=2327925)         num_tokens_main_model,
+(EngineCore pid=2327925)         ^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=2327925)     )
+(EngineCore pid=2327925)     ^
+(EngineCore pid=2327925)   File "/home/oliver/miniconda3/lib/python3.13/site-packages/vllm/v1/core/single_type_kv_cache_manager.py", line 982, in allocate_new_blocks
+(EngineCore pid=2327925)     assert num_required_blocks > len(req_blocks), (
+(EngineCore pid=2327925)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(EngineCore pid=2327925) AssertionError: num_required_blocks 8 < len(req_blocks) 9
+(APIServer pid=2327775) INFO:     Waiting for application shutdown.
+(APIServer pid=2327775) INFO:     Application shutdown complete.
+(APIServer pid=2327775) INFO:     Finished server process [2327775]

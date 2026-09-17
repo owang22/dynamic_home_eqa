@@ -1,27 +1,27 @@
 DIAGNOSTIC REPORT — households__generated__gpt-5.6-terra__hh_018_bank.jsonl
-  bank:   banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_018_bank.jsonl  (manifest b7dd62254b64…)
-  commit: 4a1e59dc43c3 (dirty tree)  seed 0  questions 672  budget 8/day
+  bank:   banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_018_bank.jsonl  (manifest 50ecb4eefb92…)
+  commit: 606e2eec2464 (dirty tree)  seed 0  questions 672  budget 8/day
 
-  Intrinsic (ground truth only — see `cli bankstats`): modal share 0.608 time-weighted / 0.490 at query times; 71.0 moves/day; displacement median 11.2 h, p90 36.4 h
+  Intrinsic (ground truth only — see `cli bankstats`): modal share 0.590 time-weighted / 0.491 at query times; 69.4 moves/day; displacement median 11.6 h, p90 40.5 h
 
   Panel — task accuracy (fraction of questions whose answered receptacle is exactly right):
-    NeverSense (answer from memory, never look) last_observation 0.043  most_frequent 0.025  timetable 0.045
+    NeverSense (answer from memory, never look) last_observation 0.039  most_frequent 0.030  timetable 0.036
     SequentialSearch @ unlimited budget         last_observation 1.000  most_frequent 1.000  timetable 1.000
-    SequentialSearch @ real budget              timetable 0.518
+    SequentialSearch @ real budget              last_observation 0.463
 
   Diagnostics (flags mark setups worth a look; nothing here disqualifies a bank):
-    [ flag] stationarity     measured   0.608  reference <= 0.600
+    [  ok ] stationarity     measured   0.590  reference <= 0.600
            mean dwell-weighted modal share; high values mean objects mostly sit at their usual spots — read the per-object distribution before concluding anything
     [  ok ] solvable         measured   1.000  reference == 1.000
            unlimited-budget search must find every queried object; failure means a bank or harness BUG, not a data property
-    [  ok ] not_trivial      measured   0.045  reference <= 0.650
+    [  ok ] not_trivial      measured   0.039  reference <= 0.650
            passive memory alone nearly solves the bank at this observation rate; paid sensing has little to prove
-    [  ok ] not_impossible   measured   0.518  reference >= 0.195
+    [  ok ] not_impossible   measured   0.463  reference >= 0.189
            sensing bought little over passive at the configured budget; may reflect the budget rather than the bank
-    [ flag] discriminative   measured   0.019  reference > 0.030
+    [ flag] discriminative   measured   0.009  reference > 0.030
            all passive models answer alike; usually the observation stream is too sparse for them to differ
     [  ok ] powered          measured 672.000  reference >= 300.000
            few questions; small accuracy differences drown in binomial noise
-    stratified discriminative spreads by household_type: working_couple_no_children=0.019
+    stratified discriminative spreads by household_type: working_couple_no_children=0.009
 
-  flagged: stationarity, discriminative  (diagnostics, not disqualifiers)
+  flagged: discriminative  (diagnostics, not disqualifiers)

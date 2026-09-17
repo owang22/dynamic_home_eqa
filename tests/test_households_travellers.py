@@ -256,6 +256,7 @@ def test_persona_rating_maps_to_forget_p():
     levels = params["carry_on_departure"]["forget_levels"]
     r = {"id": "resident_1", "forgetfulness": {"level": "often", "cites": "c"}}
     assert g.forget_fields(r, params) == {"forget_p": levels["often"],
+                                          "forget_level": "often",
                                           "forget_cites": "c"}
     assert g.forget_fields({"id": "resident_1"}, params) == {}
 
@@ -391,3 +392,37 @@ def test_laundry_gets_a_stop_at_home_before_the_next_outing():
     assert "towel_1" in motions["object_motions"]["laundry"]["during"]
     assert "towel_1" not in motions["object_motions"]["walk"]["during"]
     assert not any("laundry" in m for m in acts["merged_away_blocks"])
+
+
+def test_p_misplace_is_scaled_by_the_owners_forgetfulness_rating():
+    # keys_1 (owner resident_1) authored at 0.4; resident_1 rated rarely,
+    # resident_2 often; the shared plate takes the mean of the two.
+    p = program()
+    p["object_rules"][0]["p_misplace"] = 0.4
+    p["object_rules"][0]["misplace_set"] = ["shelf_b", "sink_k"]
+    p["residents"][0]["forget_level"] = "rarely"
+    p["residents"][1]["forget_level"] = "often"
+    params = sim.load_params()
+    table = params["misplace"]["by_forgetfulness"]
+    assert table["rarely"] < table["sometimes"] < table["often"]
+    _, _, _, _, _, motions = sim.simulate_program(p, 14, 0, params=params)
+    keys = motions["placements"]["keys_1"]
+    assert keys["p_misplace_authored"] == 0.4
+    assert keys["misplace_scale"] == table["rarely"]
+    assert abs(keys["p_misplace"] - 0.4 * table["rarely"]) < 1e-9
+    # an unrated resident counts as `sometimes`; the authored value is untouched
+    q = program()
+    q["object_rules"][0]["p_misplace"] = 0.4
+    q["object_rules"][0]["misplace_set"] = ["shelf_b", "sink_k"]
+    _, _, _, _, _, motions = sim.simulate_program(q, 14, 0, params=params)
+    assert abs(motions["placements"]["keys_1"]["p_misplace"] - 0.4 * table["sometimes"]) < 1e-9
+    # a shared object: mean over residents
+    r = program()
+    r["object_rules"][0]["p_misplace"] = 0.4
+    r["object_rules"][0]["misplace_set"] = ["shelf_b", "sink_k"]
+    r["object_owners"]["keys_1"] = "shared"
+    r["residents"][0]["forget_level"] = "rarely"
+    r["residents"][1]["forget_level"] = "often"
+    _, _, _, _, _, motions = sim.simulate_program(r, 14, 0, params=params)
+    assert abs(motions["placements"]["keys_1"]["p_misplace"]
+               - 0.4 * (table["rarely"] + table["often"]) / 2) < 1e-9

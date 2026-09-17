@@ -1,6 +1,6 @@
 {
   "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_006_bank.jsonl",
-  "bank_manifest_hash": "012ba5c08578a6a2aa558417296f22306d7036ebb4532e0f0f1940c8fc455422",
+  "bank_manifest_hash": "c17cd443243b372d1563bc22093bb7ea852b7fcaf40f5266098e3d773ee722e3",
   "config": {
     "seed": 0,
     "budget": null,
@@ -12,10 +12,10 @@
     "powered_min_questions": 300
   },
   "config_hash": "fbf2c99847e1194a778cd0b90c7e37f0d9f142c58846fc0cc63dd5b3662a94ed",
-  "git_commit": "4a1e59dc43c3167abc6f411b38e99c6542f682eb",
+  "git_commit": "606e2eec24649b304d0c1c034af8e8b735ebea44",
   "git_dirty": true,
   "seed": 0,
-  "timestamp": "2026-09-17T00:19:47.582220+00:00",
+  "timestamp": "2026-09-17T00:51:45.823393+00:00",
   "n_questions": 672,
   "real_budget_per_day": 8,
   "belief_panel": [
@@ -39,46 +39,46 @@
     "n_receptacles": 23,
     "n_days": 28,
     "n_questions": 672,
-    "modal_share_time": 0.556764880952381,
-    "modal_share_questions": 0.6458333333333334,
-    "moves_per_day": 32.142857142857146,
-    "displacement_median_h": 12.666666666666666,
-    "displacement_p90_h": 61.35,
-    "displaced_time_share": 0.44323511904761903,
+    "modal_share_time": 0.5816498015873016,
+    "modal_share_questions": 0.5714285714285714,
+    "moves_per_day": 32.285714285714285,
+    "displacement_median_h": 16.7,
+    "displacement_p90_h": 53.016666666666666,
+    "displaced_time_share": 0.4183501984126984,
     "max_repeats_per_day": 8,
     "per_object_modal_share": {
       "phone_marie": 0.2251,
-      "keys_marie": 0.7125,
-      "wallet_marie": 0.3201,
-      "laptop_marie": 0.6396,
-      "charger_marie": 0.5263,
-      "backpack_marie": 0.6043,
-      "jacket_marie": 0.3272,
-      "water_bottle_marie": 0.2367,
-      "mug_marie": 0.564,
+      "keys_marie": 0.7378,
+      "wallet_marie": 0.4011,
+      "laptop_marie": 0.6192,
+      "charger_marie": 0.4814,
+      "backpack_marie": 0.5246,
+      "jacket_marie": 0.3972,
+      "water_bottle_marie": 0.3121,
+      "mug_marie": 0.4785,
       "bowl_marie": 1.0,
-      "plate_marie": 0.4925,
-      "pot_shared_1": 0.83,
-      "pan_shared_1": 0.3814,
-      "book_marie": 0.6892,
-      "notebook_marie": 0.3064,
-      "pen_marie": 0.2709,
-      "headphones_marie": 0.4235,
-      "remote_shared_1": 0.4949,
-      "blanket_marie": 0.6726,
-      "yoga_mat_marie": 0.5049,
+      "plate_marie": 0.4991,
+      "pot_shared_1": 0.8092,
+      "pan_shared_1": 0.4268,
+      "book_marie": 0.4949,
+      "notebook_marie": 0.4153,
+      "pen_marie": 0.3568,
+      "headphones_marie": 0.4663,
+      "remote_shared_1": 0.6257,
+      "blanket_marie": 0.6778,
+      "yoga_mat_marie": 0.8014,
       "towel_marie": 0.5079,
-      "laundry_basket_marie": 0.9279,
-      "hairbrush_marie": 0.7663,
-      "umbrella_marie": 0.4949,
+      "laundry_basket_marie": 0.9493,
+      "hairbrush_marie": 0.8961,
+      "umbrella_marie": 0.4378,
       "suitcase_marie": 1.0
     }
   },
   "panel": {
     "never_sense_task_accuracy": {
-      "last_observation": 0.044642857142857144,
-      "most_frequent": 0.043154761904761904,
-      "timetable": 0.041666666666666664
+      "last_observation": 0.05803571428571429,
+      "most_frequent": 0.04017857142857143,
+      "timetable": 0.03869047619047619
     },
     "sequential_search_unlimited_task_accuracy": {
       "last_observation": 1.0,
@@ -88,17 +88,17 @@
     "sequential_search_real_budget": {
       "belief": "last_observation",
       "budget_per_day": 8,
-      "task_accuracy": 0.5714285714285714
+      "task_accuracy": 0.5297619047619048
     }
   },
   "stratified_discriminative": {
-    "working_professional_solo__irregular_gig": 0.0029761904761904795
+    "working_professional_solo__irregular_gig": 0.019345238095238096
   },
   "diagnostics": [
     {
       "name": "stationarity",
       "flagged": false,
-      "measured": 0.556764880952381,
+      "measured": 0.5816498015873016,
       "threshold": 0.6,
       "comparison": "<=",
       "rationale": "mean dwell-weighted modal share; high values mean objects mostly sit at their usual spots \u2014 read the per-object distribution before concluding anything",
@@ -116,7 +116,7 @@
     {
       "name": "not_trivial",
       "flagged": false,
-      "measured": 0.044642857142857144,
+      "measured": 0.05803571428571429,
       "threshold": 0.65,
       "comparison": "<=",
       "rationale": "passive memory alone nearly solves the bank at this observation rate; paid sensing has little to prove",
@@ -125,8 +125,8 @@
     {
       "name": "not_impossible",
       "flagged": false,
-      "measured": 0.5714285714285714,
-      "threshold": 0.19464285714285715,
+      "measured": 0.5297619047619048,
+      "threshold": 0.20803571428571427,
       "comparison": ">=",
       "rationale": "sensing bought little over passive at the configured budget; may reflect the budget rather than the bank",
       "is_bug_check": false
@@ -134,7 +134,7 @@
     {
       "name": "discriminative",
       "flagged": true,
-      "measured": 0.0029761904761904795,
+      "measured": 0.019345238095238096,
       "threshold": 0.03,
       "comparison": ">",
       "rationale": "all passive models answer alike; usually the observation stream is too sparse for them to differ",

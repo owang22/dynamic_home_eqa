@@ -1,6 +1,6 @@
 {
   "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_016_bank.jsonl",
-  "bank_manifest_hash": "219607a6e1975865ba9094f5b87a1d38c895ac08b3196f96398c31f6aa6df918",
+  "bank_manifest_hash": "956e86aaf24ea9c77b6ffa80fc30df984d4b5bfa86195841fab49288c6db1651",
   "config": {
     "seed": 0,
     "budget": null,
@@ -12,10 +12,10 @@
     "powered_min_questions": 300
   },
   "config_hash": "fbf2c99847e1194a778cd0b90c7e37f0d9f142c58846fc0cc63dd5b3662a94ed",
-  "git_commit": "4a1e59dc43c3167abc6f411b38e99c6542f682eb",
+  "git_commit": "606e2eec24649b304d0c1c034af8e8b735ebea44",
   "git_dirty": true,
   "seed": 0,
-  "timestamp": "2026-09-17T00:20:42.520250+00:00",
+  "timestamp": "2026-09-17T00:52:36.752913+00:00",
   "n_questions": 672,
   "real_budget_per_day": 8,
   "belief_panel": [
@@ -39,50 +39,50 @@
     "n_receptacles": 25,
     "n_days": 28,
     "n_questions": 672,
-    "modal_share_time": 0.6110772156084656,
-    "modal_share_questions": 0.43452380952380953,
-    "moves_per_day": 47.785714285714285,
-    "displacement_median_h": 3.9,
-    "displacement_p90_h": 48.766666666666666,
-    "displaced_time_share": 0.3889227843915344,
+    "modal_share_time": 0.6088458994708995,
+    "modal_share_questions": 0.43005952380952384,
+    "moves_per_day": 48.5,
+    "displacement_median_h": 3.3,
+    "displacement_p90_h": 51.333333333333336,
+    "displaced_time_share": 0.3911541005291005,
     "max_repeats_per_day": 7,
     "per_object_modal_share": {
-      "mug_marie": 0.4406,
-      "mug_1": 0.3561,
-      "bowl_marie": 0.655,
-      "plate_1": 0.6294,
+      "mug_marie": 0.4842,
+      "mug_1": 0.3817,
+      "bowl_marie": 0.6618,
+      "plate_1": 0.5022,
       "laptop_marie": 0.994,
-      "phone_marie": 0.2765,
-      "tablet_marie": 0.7147,
-      "keys_marie": 0.5945,
-      "wallet_marie": 0.4554,
-      "book_marie": 0.5285,
-      "book_1": 0.5925,
-      "water_bottle_marie": 0.421,
-      "remote_marie": 0.5676,
-      "charger_marie": 0.8693,
-      "backpack_marie": 0.5823,
-      "jacket_marie": 0.6089,
-      "glasses_marie": 0.5765,
-      "notebook_marie": 0.6676,
-      "pen_marie": 0.2116,
-      "medication_bottle_marie": 0.4757,
-      "blanket_marie": 0.833,
-      "towel_marie": 0.4293,
-      "gaming_controller_marie": 0.3918,
-      "umbrella_marie": 0.6566,
-      "laundry_basket_marie": 0.8211,
+      "phone_marie": 0.3525,
+      "tablet_marie": 0.7114,
+      "keys_marie": 0.7878,
+      "wallet_marie": 0.7161,
+      "book_marie": 0.5914,
+      "book_1": 0.6218,
+      "water_bottle_marie": 0.7192,
+      "remote_marie": 0.6087,
+      "charger_marie": 0.6765,
+      "backpack_marie": 0.5688,
+      "jacket_marie": 0.5672,
+      "glasses_marie": 0.4396,
+      "notebook_marie": 0.5117,
+      "pen_marie": 0.2694,
+      "medication_bottle_marie": 0.4885,
+      "blanket_marie": 0.7136,
+      "towel_marie": 0.6863,
+      "gaming_controller_marie": 0.8396,
+      "umbrella_marie": 0.4764,
+      "laundry_basket_marie": 0.4318,
       "vacuum_cleaner_1": 1.0,
-      "pot_1": 0.5719,
-      "pan_1": 0.5936,
+      "pot_1": 0.458,
+      "pan_1": 0.482,
       "suitcase_marie": 1.0,
-      "watering_can_marie": 0.8173
+      "watering_can_marie": 0.5233
     }
   },
   "panel": {
     "never_sense_task_accuracy": {
-      "last_observation": 0.041666666666666664,
-      "most_frequent": 0.04017857142857143,
+      "last_observation": 0.03571428571428571,
+      "most_frequent": 0.03571428571428571,
       "timetable": 0.049107142857142856
     },
     "sequential_search_unlimited_task_accuracy": {
@@ -93,17 +93,17 @@
     "sequential_search_real_budget": {
       "belief": "timetable",
       "budget_per_day": 8,
-      "task_accuracy": 0.47767857142857145
+      "task_accuracy": 0.47023809523809523
     }
   },
   "stratified_discriminative": {
-    "single_senior_solo": 0.008928571428571425
+    "single_senior_solo": 0.013392857142857144
   },
   "diagnostics": [
     {
       "name": "stationarity",
       "flagged": true,
-      "measured": 0.6110772156084656,
+      "measured": 0.6088458994708995,
       "threshold": 0.6,
       "comparison": "<=",
       "rationale": "mean dwell-weighted modal share; high values mean objects mostly sit at their usual spots \u2014 read the per-object distribution before concluding anything",
@@ -130,7 +130,7 @@
     {
       "name": "not_impossible",
       "flagged": false,
-      "measured": 0.47767857142857145,
+      "measured": 0.47023809523809523,
       "threshold": 0.19910714285714284,
       "comparison": ">=",
       "rationale": "sensing bought little over passive at the configured budget; may reflect the budget rather than the bank",
@@ -139,7 +139,7 @@
     {
       "name": "discriminative",
       "flagged": true,
-      "measured": 0.008928571428571425,
+      "measured": 0.013392857142857144,
       "threshold": 0.03,
       "comparison": ">",
       "rationale": "all passive models answer alike; usually the observation stream is too sparse for them to differ",

@@ -871,6 +871,7 @@ def forget_fields(resident: dict, params: dict) -> dict:
     if fg.get("level") not in levels:
         return {}
     return {"forget_p": float(levels[fg["level"]]),
+            "forget_level": str(fg["level"]),
             "forget_cites": str(fg.get("cites") or "")}
 
 

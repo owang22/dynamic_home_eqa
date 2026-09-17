@@ -135,6 +135,31 @@ def fragment_blocks(blocks: list[dict], motions: dict, rng: random.Random,
     return out
 
 
+def scale_misplace_by_forgetfulness(program: dict, motions: dict) -> None:
+    """Scale each placement's authored `p_misplace` by its owner's persona
+    forgetfulness rating (`misplace.by_forgetfulness` in the params; a
+    shared object takes the mean over the residents; an unrated resident
+    counts as `sometimes`). The authored value is kept alongside as
+    `p_misplace_authored` so the viewer and the report can show both."""
+    table = (motions.get("misplace") or {}).get("by_forgetfulness") or {}
+    if not table:
+        return
+    default = float(table.get("sometimes", 1.0))
+    levels = {r["id"]: str(r.get("forget_level") or "")
+              for r in program.get("residents", [])}
+    factor = {rid: float(table.get(level, default))
+              for rid, level in levels.items()}
+    mean = (sum(factor.values()) / len(factor)) if factor else default
+    owners = motions.get("object_owners") or {}
+    for obj, pl in (motions.get("placements") or {}).items():
+        if "p_misplace" not in pl:
+            continue
+        f = factor.get(owners.get(obj), mean)
+        pl["p_misplace_authored"] = float(pl["p_misplace"])
+        pl["misplace_scale"] = f
+        pl["p_misplace"] = round(float(pl["p_misplace"]) * f, 4)
+
+
 def simulate_program(program: dict, days: int, seed: int,
                      sa=None, params: dict | None = None):
     """(log, hourly, blocks, stats, acts, motions) for one realization."""
@@ -152,6 +177,7 @@ def simulate_program(program: dict, days: int, seed: int,
         forget_p=float(carry_cfg.get("forget_p", 0.0)))
     if motions.get("misplace_model"):
         motions["misplace"] = dict(params.get("misplace", {}) or {})
+        scale_misplace_by_forgetfulness(program, motions)
     if motions.get("person_invariant"):        # v3 only
         motions["keep_block_share"] = float(
             params.get("jitter_scale", {}).get("keep_block_share", 0.0))

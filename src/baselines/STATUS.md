@@ -2310,3 +2310,30 @@ per-rule asking-rate weights, rules for the uncovered activities — would
 re-draw every question in every bank, so they are deferred; results on
 the current stream stay comparable. For look-pacing questions prefer
 hh_009 or hh_007 over hh_001.
+
+## Update (2026-09-16, evening): misplacement rate now follows the persona's forgetfulness — timelines and cold-start banks re-realized
+
+hh_001's persona rates Mara "methodical … forgetfulness: rarely", yet
+her things were misplaced 4.4 times a day (wallet every third day, pen
+at 0.35/day): the object-rule author writes `p_misplace` 0.1–0.4 for
+every carried item without seeing the person, and the resident's rating
+only ever gated bulky objects. Now `realization_params.yaml
+misplace.by_forgetfulness` (rarely 0.3, sometimes 1.0, often 1.6 —
+judgment defaults) scales each object's authored rate by its OWNER's
+rating (`forget_level` on the program resident, migrated from every
+persona; shared objects take the mean; unrated = sometimes). Applied in
+`simulate_program` after expansion; `expanded_motions.yaml` keeps
+`p_misplace_authored` and `misplace_scale` beside the scaled value.
+
+All 20 households re-realized at seed 0 (byte-deterministic apart from
+the draws the new rates change), spatialized, and re-exported to
+`banks/baselines/cold_start/`. Misplacements/day: fleet 6.2 → 4.4;
+hh_001 4.4 → 1.2; the two-"rarely" couples (hh_004, 005, 011) 6–7 → 2;
+households with an "often" resident up slightly (hh_009 8.2 → 10.3).
+
+Consequences: every other bank set (`fleet`, `fleet_routine*`,
+`fleet_day0`, `fleet_room_cost`) and `oracle_realizations` are now
+STALE relative to the timelines and must be re-exported before use; the
+notebook results in `results/llm_hypotheses/runs/notebook_3day` were
+run on the previous hh_001 bank (kept as-is; re-run to compare). The
+morning-heavy question stream (previous note) is unchanged.

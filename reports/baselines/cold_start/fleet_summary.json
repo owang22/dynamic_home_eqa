@@ -2,23 +2,23 @@
   "provenance": {
     "config_path": "src/baselines/configs/cold_start.yaml",
     "config_hash": "ce84943004393578f8f43a940453e7cb1d446847a112681cccfa50c00be8a9ee",
-    "git_commit": "4a1e59dc43c3167abc6f411b38e99c6542f682eb",
+    "git_commit": "606e2eec24649b304d0c1c034af8e8b735ebea44",
     "git_dirty": true,
     "seed": 0,
-    "timestamp": "2026-09-17T00:21:01.103721+00:00"
+    "timestamp": "2026-09-17T00:52:53.691618+00:00"
   },
   "banks": [
     {
       "household": "profiles/households/generated/gpt-5.6-terra/hh_001",
       "status": "ok",
       "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_001_bank.jsonl",
-      "bank_manifest_hash": "b3c6586c8e6de85ad863bdaa8204de8469eaf09acb9b2a8b03a717aef363303e",
+      "bank_manifest_hash": "9750a9bdd02613613b666f42b81237e707ca4b3daff363cf706cdf01bd331cfc",
       "household_type": "working_professional_solo",
       "n_questions": 672,
       "diagnostics": {
         "stationarity": {
           "flagged": true,
-          "measured": 0.6115525793650793,
+          "measured": 0.653139880952381,
           "threshold": 0.6
         },
         "solvable": {
@@ -28,17 +28,17 @@
         },
         "not_trivial": {
           "flagged": false,
-          "measured": 0.043154761904761904,
+          "measured": 0.052083333333333336,
           "threshold": 0.65
         },
         "not_impossible": {
           "flagged": false,
-          "measured": 0.5491071428571429,
-          "threshold": 0.19315476190476188
+          "measured": 0.5863095238095238,
+          "threshold": 0.20208333333333334
         },
         "discriminative": {
           "flagged": true,
-          "measured": 0.0029761904761904726,
+          "measured": 0.011904761904761904,
           "threshold": 0.03
         },
         "powered": {
@@ -53,32 +53,91 @@
       ],
       "solvable_ok": true,
       "never_sense_accuracy": {
-        "last_observation": 0.043154761904761904,
-        "most_frequent": 0.041666666666666664,
+        "last_observation": 0.052083333333333336,
+        "most_frequent": 0.046130952380952384,
         "timetable": 0.04017857142857143
       },
       "search_real_budget": {
         "belief": "last_observation",
         "budget_per_day": 8,
-        "task_accuracy": 0.5491071428571429
+        "task_accuracy": 0.5863095238095238
       },
-      "modal_share_time": 0.6115525793650793,
-      "modal_share_questions": 0.6711309523809523,
-      "moves_per_day": 38.642857142857146,
-      "displaced_time_share": 0.38844742063492066,
-      "displacement_median_h": 13.233333333333333
+      "modal_share_time": 0.653139880952381,
+      "modal_share_questions": 0.7217261904761905,
+      "moves_per_day": 39.07142857142857,
+      "displaced_time_share": 0.34686011904761904,
+      "displacement_median_h": 11.416666666666666
     },
     {
       "household": "profiles/households/generated/gpt-5.6-terra/hh_002",
       "status": "ok",
       "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_002_bank.jsonl",
-      "bank_manifest_hash": "eeb1ab44b67b6decff8aa1463ff10189f4b84f56818e3ab9b6471421ba0a55f8",
+      "bank_manifest_hash": "69f9f57223c87980aaeb557bba1ab8b48fa71a04a725bcd1639659c36a5faea6",
       "household_type": "multigenerational_family",
       "n_questions": 672,
       "diagnostics": {
         "stationarity": {
           "flagged": false,
-          "measured": 0.5364570932539683,
+          "measured": 0.5589054232804233,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.03422619047619048,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.39880952380952384,
+          "threshold": 0.1842261904761905
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.011904761904761908,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.026785714285714284,
+        "most_frequent": 0.03422619047619048,
+        "timetable": 0.022321428571428572
+      },
+      "search_real_budget": {
+        "belief": "most_frequent",
+        "budget_per_day": 8,
+        "task_accuracy": 0.39880952380952384
+      },
+      "modal_share_time": 0.5589054232804233,
+      "modal_share_questions": 0.47172619047619047,
+      "moves_per_day": 124.60714285714286,
+      "displaced_time_share": 0.44109457671957675,
+      "displacement_median_h": 7.266666666666667
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_003",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_003_bank.jsonl",
+      "bank_manifest_hash": "16693b94932d6d72d2394ee5f49ce29c0a3a7b535eb944387c462a2d9e1cbfb4",
+      "household_type": "single_parent_teens__rotating_shift",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": true,
+          "measured": 0.6333763227513227,
           "threshold": 0.6
         },
         "solvable": {
@@ -93,8 +152,900 @@
         },
         "not_impossible": {
           "flagged": false,
-          "measured": 0.39880952380952384,
+          "measured": 0.5148809523809523,
           "threshold": 0.18273809523809523
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.011904761904761908,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "stationarity",
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.03273809523809524,
+        "most_frequent": 0.020833333333333332,
+        "timetable": 0.020833333333333332
+      },
+      "search_real_budget": {
+        "belief": "last_observation",
+        "budget_per_day": 8,
+        "task_accuracy": 0.5148809523809523
+      },
+      "modal_share_time": 0.6333763227513227,
+      "modal_share_questions": 0.5342261904761905,
+      "moves_per_day": 71.60714285714286,
+      "displaced_time_share": 0.3666236772486773,
+      "displacement_median_h": 7.783333333333333
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_004",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_004_bank.jsonl",
+      "bank_manifest_hash": "76b741a499fca87c18326850384c37def4f2f51fc668990b5baee71c09c3e863",
+      "household_type": "working_couple_no_children__night_shift",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": true,
+          "measured": 0.6177305242272348,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.046130952380952384,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.47470238095238093,
+          "threshold": 0.19613095238095238
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.0029761904761904795,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "stationarity",
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.046130952380952384,
+        "most_frequent": 0.046130952380952384,
+        "timetable": 0.043154761904761904
+      },
+      "search_real_budget": {
+        "belief": "last_observation",
+        "budget_per_day": 8,
+        "task_accuracy": 0.47470238095238093
+      },
+      "modal_share_time": 0.6177305242272348,
+      "modal_share_questions": 0.6130952380952381,
+      "moves_per_day": 100.92857142857143,
+      "displaced_time_share": 0.38226947577276515,
+      "displacement_median_h": 6.866666666666666
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_005",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_005_bank.jsonl",
+      "bank_manifest_hash": "def98a5b1c5c46e8ce9bfce4efbe6e55fa150b6f0a862b3e99c37c5affec9597",
+      "household_type": "working_couple_no_children__opposite_schedules",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": false,
+          "measured": 0.53724327005577,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.04017857142857143,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.5104166666666666,
+          "threshold": 0.19017857142857142
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.007440476190476192,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.03422619047619048,
+        "most_frequent": 0.04017857142857143,
+        "timetable": 0.03273809523809524
+      },
+      "search_real_budget": {
+        "belief": "most_frequent",
+        "budget_per_day": 8,
+        "task_accuracy": 0.5104166666666666
+      },
+      "modal_share_time": 0.53724327005577,
+      "modal_share_questions": 0.5491071428571429,
+      "moves_per_day": 64.03571428571429,
+      "displaced_time_share": 0.46275672994423,
+      "displacement_median_h": 11.183333333333334
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_006",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_006_bank.jsonl",
+      "bank_manifest_hash": "c17cd443243b372d1563bc22093bb7ea852b7fcaf40f5266098e3d773ee722e3",
+      "household_type": "working_professional_solo__irregular_gig",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": false,
+          "measured": 0.5816498015873016,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.05803571428571429,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.5297619047619048,
+          "threshold": 0.20803571428571427
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.019345238095238096,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.05803571428571429,
+        "most_frequent": 0.04017857142857143,
+        "timetable": 0.03869047619047619
+      },
+      "search_real_budget": {
+        "belief": "last_observation",
+        "budget_per_day": 8,
+        "task_accuracy": 0.5297619047619048
+      },
+      "modal_share_time": 0.5816498015873016,
+      "modal_share_questions": 0.5714285714285714,
+      "moves_per_day": 32.285714285714285,
+      "displaced_time_share": 0.4183501984126984,
+      "displacement_median_h": 16.7
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_007",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_007_bank.jsonl",
+      "bank_manifest_hash": "a7a7018e622fa85c5faa32806ca78ac58540df4dc2633417884f5fc1931eac6e",
+      "household_type": "college_roommates",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": false,
+          "measured": 0.5942544868326118,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.046130952380952384,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.45089285714285715,
+          "threshold": 0.19613095238095238
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.014880952380952384,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.046130952380952384,
+        "most_frequent": 0.03720238095238095,
+        "timetable": 0.03125
+      },
+      "search_real_budget": {
+        "belief": "last_observation",
+        "budget_per_day": 8,
+        "task_accuracy": 0.45089285714285715
+      },
+      "modal_share_time": 0.5942544868326118,
+      "modal_share_questions": 0.46279761904761907,
+      "moves_per_day": 88.21428571428571,
+      "displaced_time_share": 0.40574551316738816,
+      "displacement_median_h": 5.733333333333333
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_008",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_008_bank.jsonl",
+      "bank_manifest_hash": "17d0905efb055d1001f421b7fd6f653708b92685fa97b36e299eba140386c762",
+      "household_type": "college_roommates__irregular_gig",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": false,
+          "measured": 0.581270488267771,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.041666666666666664,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.3586309523809524,
+          "threshold": 0.19166666666666665
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.011904761904761904,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.02976190476190476,
+        "most_frequent": 0.041666666666666664,
+        "timetable": 0.04017857142857143
+      },
+      "search_real_budget": {
+        "belief": "most_frequent",
+        "budget_per_day": 8,
+        "task_accuracy": 0.3586309523809524
+      },
+      "modal_share_time": 0.581270488267771,
+      "modal_share_questions": 0.5401785714285714,
+      "moves_per_day": 99.78571428571429,
+      "displaced_time_share": 0.41872951173222905,
+      "displacement_median_h": 6.266666666666667
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_009",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_009_bank.jsonl",
+      "bank_manifest_hash": "a3b76496a916d7693211f6fab207ac3846fe8ec49e9411a9396768274a6e4c5e",
+      "household_type": "couple_with_toddler",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": false,
+          "measured": 0.5417822057684862,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.03720238095238095,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.36904761904761907,
+          "threshold": 0.18720238095238095
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.013392857142857144,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.03720238095238095,
+        "most_frequent": 0.025297619047619048,
+        "timetable": 0.023809523809523808
+      },
+      "search_real_budget": {
+        "belief": "last_observation",
+        "budget_per_day": 8,
+        "task_accuracy": 0.36904761904761907
+      },
+      "modal_share_time": 0.5417822057684862,
+      "modal_share_questions": 0.5208333333333334,
+      "moves_per_day": 103.71428571428571,
+      "displaced_time_share": 0.45821779423151376,
+      "displacement_median_h": 6.066666666666666
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_010",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_010_bank.jsonl",
+      "bank_manifest_hash": "a85f23e1734e4843a43862f680471ee21befae6632939032b3f1100781667eda",
+      "household_type": "family_teen_and_child",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": false,
+          "measured": 0.5359016754850088,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.03571428571428571,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.43601190476190477,
+          "threshold": 0.18571428571428572
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.007440476190476188,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.03422619047619048,
+        "most_frequent": 0.03571428571428571,
+        "timetable": 0.028273809523809524
+      },
+      "search_real_budget": {
+        "belief": "most_frequent",
+        "budget_per_day": 8,
+        "task_accuracy": 0.43601190476190477
+      },
+      "modal_share_time": 0.5359016754850088,
+      "modal_share_questions": 0.5074404761904762,
+      "moves_per_day": 128.57142857142858,
+      "displaced_time_share": 0.4640983245149912,
+      "displacement_median_h": 9.15
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_011",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_011_bank.jsonl",
+      "bank_manifest_hash": "821281e76e70dd9ef6c4e905e06cac226c7cb3a99117a1a7e598315d15e89ab3",
+      "household_type": "remote_worker_couple",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": true,
+          "measured": 0.6689414173789173,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.041666666666666664,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.53125,
+          "threshold": 0.19166666666666665
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.010416666666666664,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "stationarity",
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.03125,
+        "most_frequent": 0.03720238095238095,
+        "timetable": 0.041666666666666664
+      },
+      "search_real_budget": {
+        "belief": "timetable",
+        "budget_per_day": 8,
+        "task_accuracy": 0.53125
+      },
+      "modal_share_time": 0.6689414173789173,
+      "modal_share_questions": 0.49255952380952384,
+      "moves_per_day": 67.71428571428571,
+      "displaced_time_share": 0.3310585826210827,
+      "displacement_median_h": 2.3333333333333335
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_012",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_012_bank.jsonl",
+      "bank_manifest_hash": "13932811f3c464d912237692817e0b5b4f4471cb3ec1fa86078680b19e9015a8",
+      "household_type": "researcher_household",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": false,
+          "measured": 0.5185391865079365,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.043154761904761904,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.43005952380952384,
+          "threshold": 0.19315476190476188
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.011904761904761904,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.043154761904761904,
+        "most_frequent": 0.03125,
+        "timetable": 0.03422619047619048
+      },
+      "search_real_budget": {
+        "belief": "last_observation",
+        "budget_per_day": 8,
+        "task_accuracy": 0.43005952380952384
+      },
+      "modal_share_time": 0.5185391865079365,
+      "modal_share_questions": 0.35119047619047616,
+      "moves_per_day": 41.57142857142857,
+      "displaced_time_share": 0.4814608134920635,
+      "displacement_median_h": 14.916666666666666
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_013",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_013_bank.jsonl",
+      "bank_manifest_hash": "862bea99af82626257cade38c3b018888de9ef6e5a13c93a927956605def4807",
+      "household_type": "retired_couple",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": true,
+          "measured": 0.6483785962301587,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.03422619047619048,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.5059523809523809,
+          "threshold": 0.1842261904761905
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.013392857142857147,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "stationarity",
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.020833333333333332,
+        "most_frequent": 0.03422619047619048,
+        "timetable": 0.025297619047619048
+      },
+      "search_real_budget": {
+        "belief": "most_frequent",
+        "budget_per_day": 8,
+        "task_accuracy": 0.5059523809523809
+      },
+      "modal_share_time": 0.6483785962301587,
+      "modal_share_questions": 0.5952380952380952,
+      "moves_per_day": 97.71428571428571,
+      "displaced_time_share": 0.3516214037698413,
+      "displacement_median_h": 2.6166666666666667
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_014",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_014_bank.jsonl",
+      "bank_manifest_hash": "11c73ef0c1de3f55d9c1635ae50d9561ecc7385b46dfb96f47327b0743dbec0c",
+      "household_type": "single_adult_wfh",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": true,
+          "measured": 0.7184733072916667,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.0625,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": true,
+          "measured": 0.19940476190476192,
+          "threshold": 0.2125
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.025297619047619048,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "stationarity",
+        "not_impossible",
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.05357142857142857,
+        "most_frequent": 0.0625,
+        "timetable": 0.03720238095238095
+      },
+      "search_real_budget": {
+        "belief": "most_frequent",
+        "budget_per_day": 8,
+        "task_accuracy": 0.19940476190476192
+      },
+      "modal_share_time": 0.7184733072916667,
+      "modal_share_questions": 0.5744047619047619,
+      "moves_per_day": 35.642857142857146,
+      "displaced_time_share": 0.2815266927083333,
+      "displacement_median_h": 3.15
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_015",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_015_bank.jsonl",
+      "bank_manifest_hash": "b93ac724841c3e61ca005616b60b90fa7c506abd2e33c461a6072fffa64f1446",
+      "household_type": "single_parent_teens",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": false,
+          "measured": 0.5537571053196053,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.03422619047619048,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.46130952380952384,
+          "threshold": 0.1842261904761905
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.014880952380952384,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.028273809523809524,
+        "most_frequent": 0.019345238095238096,
+        "timetable": 0.03422619047619048
+      },
+      "search_real_budget": {
+        "belief": "timetable",
+        "budget_per_day": 8,
+        "task_accuracy": 0.46130952380952384
+      },
+      "modal_share_time": 0.5537571053196053,
+      "modal_share_questions": 0.4494047619047619,
+      "moves_per_day": 76.03571428571429,
+      "displaced_time_share": 0.4462428946803947,
+      "displacement_median_h": 8.133333333333333
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_016",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_016_bank.jsonl",
+      "bank_manifest_hash": "956e86aaf24ea9c77b6ffa80fc30df984d4b5bfa86195841fab49288c6db1651",
+      "household_type": "single_senior_solo",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": true,
+          "measured": 0.6088458994708995,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.049107142857142856,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.47023809523809523,
+          "threshold": 0.19910714285714284
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.013392857142857144,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "stationarity",
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.03571428571428571,
+        "most_frequent": 0.03571428571428571,
+        "timetable": 0.049107142857142856
+      },
+      "search_real_budget": {
+        "belief": "timetable",
+        "budget_per_day": 8,
+        "task_accuracy": 0.47023809523809523
+      },
+      "modal_share_time": 0.6088458994708995,
+      "modal_share_questions": 0.43005952380952384,
+      "moves_per_day": 48.5,
+      "displaced_time_share": 0.3911541005291005,
+      "displacement_median_h": 3.3
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_017",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_017_bank.jsonl",
+      "bank_manifest_hash": "2eb337e10b5529858adc07718d3f4d09043f0c44a35d54e72be8356fe66d3fda",
+      "household_type": "working_couple_no_children",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": false,
+          "measured": 0.5889820460704607,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.03571428571428571,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.45089285714285715,
+          "threshold": 0.18571428571428572
+        },
+        "discriminative": {
+          "flagged": true,
+          "measured": 0.008928571428571428,
+          "threshold": 0.03
+        },
+        "powered": {
+          "flagged": false,
+          "measured": 672.0,
+          "threshold": 300.0
+        }
+      },
+      "flags": [
+        "discriminative"
+      ],
+      "solvable_ok": true,
+      "never_sense_accuracy": {
+        "last_observation": 0.03571428571428571,
+        "most_frequent": 0.026785714285714284,
+        "timetable": 0.02976190476190476
+      },
+      "search_real_budget": {
+        "belief": "last_observation",
+        "budget_per_day": 8,
+        "task_accuracy": 0.45089285714285715
+      },
+      "modal_share_time": 0.5889820460704607,
+      "modal_share_questions": 0.43005952380952384,
+      "moves_per_day": 72.28571428571429,
+      "displaced_time_share": 0.4110179539295393,
+      "displacement_median_h": 7.85
+    },
+    {
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_018",
+      "status": "ok",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_018_bank.jsonl",
+      "bank_manifest_hash": "50ecb4eefb9293cce60986afe011c7af10b6f70c05501a86229fc862af2bc6e8",
+      "household_type": "working_couple_no_children",
+      "n_questions": 672,
+      "diagnostics": {
+        "stationarity": {
+          "flagged": false,
+          "measured": 0.5897522203325775,
+          "threshold": 0.6
+        },
+        "solvable": {
+          "flagged": false,
+          "measured": 1.0,
+          "threshold": 1.0
+        },
+        "not_trivial": {
+          "flagged": false,
+          "measured": 0.03869047619047619,
+          "threshold": 0.65
+        },
+        "not_impossible": {
+          "flagged": false,
+          "measured": 0.46279761904761907,
+          "threshold": 0.1886904761904762
         },
         "discriminative": {
           "flagged": true,
@@ -112,32 +1063,32 @@
       ],
       "solvable_ok": true,
       "never_sense_accuracy": {
-        "last_observation": 0.028273809523809524,
-        "most_frequent": 0.03273809523809524,
-        "timetable": 0.023809523809523808
+        "last_observation": 0.03869047619047619,
+        "most_frequent": 0.02976190476190476,
+        "timetable": 0.03571428571428571
       },
       "search_real_budget": {
-        "belief": "most_frequent",
+        "belief": "last_observation",
         "budget_per_day": 8,
-        "task_accuracy": 0.39880952380952384
+        "task_accuracy": 0.46279761904761907
       },
-      "modal_share_time": 0.5364570932539683,
-      "modal_share_questions": 0.49404761904761907,
-      "moves_per_day": 127.67857142857143,
-      "displaced_time_share": 0.4635429067460317,
-      "displacement_median_h": 7.016666666666667
+      "modal_share_time": 0.5897522203325775,
+      "modal_share_questions": 0.49107142857142855,
+      "moves_per_day": 69.35714285714286,
+      "displaced_time_share": 0.41024777966742254,
+      "displacement_median_h": 11.566666666666666
     },
     {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_003",
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_019",
       "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_003_bank.jsonl",
-      "bank_manifest_hash": "639b3eb195ec8026b88b259136ff4b179ca0e4c87901c61796d6a1811d16f64e",
-      "household_type": "single_parent_teens__rotating_shift",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_019_bank.jsonl",
+      "bank_manifest_hash": "24cd544b48828e4f77a9a013052416c05ddc699ac4eae240484d8529948fa5dd",
+      "household_type": "working_professional_solo",
       "n_questions": 672,
       "diagnostics": {
         "stationarity": {
           "flagged": true,
-          "measured": 0.6327171516754849,
+          "measured": 0.6150359623015873,
           "threshold": 0.6
         },
         "solvable": {
@@ -147,17 +1098,17 @@
         },
         "not_trivial": {
           "flagged": false,
-          "measured": 0.03571428571428571,
+          "measured": 0.05952380952380952,
           "threshold": 0.65
         },
         "not_impossible": {
           "flagged": false,
-          "measured": 0.33035714285714285,
-          "threshold": 0.18571428571428572
+          "measured": 0.5654761904761905,
+          "threshold": 0.2095238095238095
         },
         "discriminative": {
           "flagged": true,
-          "measured": 0.007440476190476188,
+          "measured": 0.008928571428571425,
           "threshold": 0.03
         },
         "powered": {
@@ -172,150 +1123,32 @@
       ],
       "solvable_ok": true,
       "never_sense_accuracy": {
-        "last_observation": 0.028273809523809524,
-        "most_frequent": 0.03422619047619048,
-        "timetable": 0.03571428571428571
-      },
-      "search_real_budget": {
-        "belief": "timetable",
-        "budget_per_day": 8,
-        "task_accuracy": 0.33035714285714285
-      },
-      "modal_share_time": 0.6327171516754849,
-      "modal_share_questions": 0.5431547619047619,
-      "moves_per_day": 71.75,
-      "displaced_time_share": 0.3672828483245151,
-      "displacement_median_h": 7.783333333333333
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_004",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_004_bank.jsonl",
-      "bank_manifest_hash": "905ccd528eeb09b7fde3bd2ddfdf1065ae1312230ab2bf8790985d9cce32b785",
-      "household_type": "working_couple_no_children__night_shift",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": false,
-          "measured": 0.5676078216374268,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.041666666666666664,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.4732142857142857,
-          "threshold": 0.19166666666666665
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.008928571428571425,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.03273809523809524,
-        "most_frequent": 0.041666666666666664,
-        "timetable": 0.03571428571428571
+        "last_observation": 0.050595238095238096,
+        "most_frequent": 0.05952380952380952,
+        "timetable": 0.05505952380952381
       },
       "search_real_budget": {
         "belief": "most_frequent",
         "budget_per_day": 8,
-        "task_accuracy": 0.4732142857142857
+        "task_accuracy": 0.5654761904761905
       },
-      "modal_share_time": 0.5676078216374268,
-      "modal_share_questions": 0.5625,
-      "moves_per_day": 101.75,
-      "displaced_time_share": 0.43239217836257315,
-      "displacement_median_h": 7.466666666666667
+      "modal_share_time": 0.6150359623015873,
+      "modal_share_questions": 0.6592261904761905,
+      "moves_per_day": 51.964285714285715,
+      "displaced_time_share": 0.3849640376984127,
+      "displacement_median_h": 8.133333333333333
     },
     {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_005",
+      "household": "profiles/households/generated/gpt-5.6-terra/hh_020",
       "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_005_bank.jsonl",
-      "bank_manifest_hash": "6643fa5b46bccc647e650694c00954967ac489d9cf7dc8fc89187e41c265f95f",
-      "household_type": "working_couple_no_children__opposite_schedules",
+      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_020_bank.jsonl",
+      "bank_manifest_hash": "335cd8d51a2ef92ad3667cb8aea7479bc9b6ab4fc58949f2d270ad358f740023",
+      "household_type": "working_professional_solo__night_shift",
       "n_questions": 672,
       "diagnostics": {
         "stationarity": {
-          "flagged": false,
-          "measured": 0.501637575075075,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.04017857142857143,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.4791666666666667,
-          "threshold": 0.19017857142857142
-        },
-        "discriminative": {
           "flagged": true,
-          "measured": 0.0029761904761904795,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.04017857142857143,
-        "most_frequent": 0.03720238095238095,
-        "timetable": 0.03720238095238095
-      },
-      "search_real_budget": {
-        "belief": "last_observation",
-        "budget_per_day": 8,
-        "task_accuracy": 0.4791666666666667
-      },
-      "modal_share_time": 0.501637575075075,
-      "modal_share_questions": 0.5029761904761905,
-      "moves_per_day": 68.96428571428571,
-      "displaced_time_share": 0.498362424924925,
-      "displacement_median_h": 11.383333333333333
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_006",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_006_bank.jsonl",
-      "bank_manifest_hash": "012ba5c08578a6a2aa558417296f22306d7036ebb4532e0f0f1940c8fc455422",
-      "household_type": "working_professional_solo__irregular_gig",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": false,
-          "measured": 0.556764880952381,
+          "measured": 0.6031671626984126,
           "threshold": 0.6
         },
         "solvable": {
@@ -335,302 +1168,7 @@
         },
         "discriminative": {
           "flagged": true,
-          "measured": 0.0029761904761904795,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.044642857142857144,
-        "most_frequent": 0.043154761904761904,
-        "timetable": 0.041666666666666664
-      },
-      "search_real_budget": {
-        "belief": "last_observation",
-        "budget_per_day": 8,
-        "task_accuracy": 0.5714285714285714
-      },
-      "modal_share_time": 0.556764880952381,
-      "modal_share_questions": 0.6458333333333334,
-      "moves_per_day": 32.142857142857146,
-      "displaced_time_share": 0.44323511904761903,
-      "displacement_median_h": 12.666666666666666
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_007",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_007_bank.jsonl",
-      "bank_manifest_hash": "c4ef3e847b0698a4b10626e59dc041ef9343a09ba30074c61f593ef2ee8f3fda",
-      "household_type": "college_roommates",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": false,
-          "measured": 0.5961134785353536,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.043154761904761904,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.45535714285714285,
-          "threshold": 0.19315476190476188
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.004464285714285712,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.043154761904761904,
-        "most_frequent": 0.04017857142857143,
-        "timetable": 0.03869047619047619
-      },
-      "search_real_budget": {
-        "belief": "last_observation",
-        "budget_per_day": 8,
-        "task_accuracy": 0.45535714285714285
-      },
-      "modal_share_time": 0.5961134785353536,
-      "modal_share_questions": 0.49404761904761907,
-      "moves_per_day": 84.67857142857143,
-      "displaced_time_share": 0.40388652146464643,
-      "displacement_median_h": 7.016666666666667
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_008",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_008_bank.jsonl",
-      "bank_manifest_hash": "e9e1d4042a4682e712781735dc3f9953a5b5b76f3c3b3cc38067959ab380149d",
-      "household_type": "college_roommates__irregular_gig",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": false,
-          "measured": 0.5565540890269152,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.04017857142857143,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.37351190476190477,
-          "threshold": 0.19017857142857142
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.016369047619047623,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.04017857142857143,
-        "most_frequent": 0.025297619047619048,
-        "timetable": 0.023809523809523808
-      },
-      "search_real_budget": {
-        "belief": "last_observation",
-        "budget_per_day": 8,
-        "task_accuracy": 0.37351190476190477
-      },
-      "modal_share_time": 0.5565540890269152,
-      "modal_share_questions": 0.4270833333333333,
-      "moves_per_day": 99.32142857142857,
-      "displaced_time_share": 0.44344591097308483,
-      "displacement_median_h": 7.466666666666667
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_009",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_009_bank.jsonl",
-      "bank_manifest_hash": "1ed92a6411e531229949709f551546f8e4661db6a7dbb0c355d9cb0f21801a0a",
-      "household_type": "couple_with_toddler",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": false,
-          "measured": 0.5468314459930314,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.03571428571428571,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.3556547619047619,
-          "threshold": 0.18571428571428572
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.011904761904761904,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.03571428571428571,
-        "most_frequent": 0.03125,
-        "timetable": 0.023809523809523808
-      },
-      "search_real_budget": {
-        "belief": "last_observation",
-        "budget_per_day": 8,
-        "task_accuracy": 0.3556547619047619
-      },
-      "modal_share_time": 0.5468314459930314,
-      "modal_share_questions": 0.5267857142857143,
-      "moves_per_day": 103.64285714285714,
-      "displaced_time_share": 0.45316855400696865,
-      "displacement_median_h": 6.333333333333333
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_010",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_010_bank.jsonl",
-      "bank_manifest_hash": "113c96a34ad08765a1fdc04a386f05f5a91097a9617313da5a57179ab1b26ab5",
-      "household_type": "family_teen_and_child",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": false,
-          "measured": 0.5339492394179894,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.04017857142857143,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.43898809523809523,
-          "threshold": 0.19017857142857142
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.010416666666666671,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.04017857142857143,
-        "most_frequent": 0.03273809523809524,
-        "timetable": 0.02976190476190476
-      },
-      "search_real_budget": {
-        "belief": "last_observation",
-        "budget_per_day": 8,
-        "task_accuracy": 0.43898809523809523
-      },
-      "modal_share_time": 0.5339492394179894,
-      "modal_share_questions": 0.5372023809523809,
-      "moves_per_day": 124.67857142857143,
-      "displaced_time_share": 0.46605076058201056,
-      "displacement_median_h": 9.15
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_011",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_011_bank.jsonl",
-      "bank_manifest_hash": "2a06251e3c54e23791d8b658064053f58b3bc5f28b093c30cd3bf709957292ca",
-      "household_type": "remote_worker_couple",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": true,
-          "measured": 0.6183951465201465,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.04017857142857143,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.5148809523809523,
-          "threshold": 0.19017857142857142
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.011904761904761908,
+          "measured": 0.01636904761904762,
           "threshold": 0.03
         },
         "powered": {
@@ -641,560 +1179,24 @@
       },
       "flags": [
         "stationarity",
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.03720238095238095,
-        "most_frequent": 0.04017857142857143,
-        "timetable": 0.028273809523809524
-      },
-      "search_real_budget": {
-        "belief": "most_frequent",
-        "budget_per_day": 8,
-        "task_accuracy": 0.5148809523809523
-      },
-      "modal_share_time": 0.6183951465201465,
-      "modal_share_questions": 0.5520833333333334,
-      "moves_per_day": 65.03571428571429,
-      "displaced_time_share": 0.3816048534798535,
-      "displacement_median_h": 3.4833333333333334
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_012",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_012_bank.jsonl",
-      "bank_manifest_hash": "04c6e0a64db3ab4b0a4018bc5496b7d7dced7363b40604960b66dec435244657",
-      "household_type": "researcher_household",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": false,
-          "measured": 0.5207903439153438,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.047619047619047616,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.4255952380952381,
-          "threshold": 0.1976190476190476
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.008928571428571425,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.047619047619047616,
-        "most_frequent": 0.041666666666666664,
-        "timetable": 0.03869047619047619
-      },
-      "search_real_budget": {
-        "belief": "last_observation",
-        "budget_per_day": 8,
-        "task_accuracy": 0.4255952380952381
-      },
-      "modal_share_time": 0.5207903439153438,
-      "modal_share_questions": 0.36607142857142855,
-      "moves_per_day": 41.17857142857143,
-      "displaced_time_share": 0.47920965608465615,
-      "displacement_median_h": 16.8
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_013",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_013_bank.jsonl",
-      "bank_manifest_hash": "2d336dc86481661ad54e91122e920905e5e5261e1a465d34257a4de4d8f58149",
-      "household_type": "retired_couple",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": true,
-          "measured": 0.6072873263888889,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.03422619047619048,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.4880952380952381,
-          "threshold": 0.1842261904761905
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.008928571428571432,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "stationarity",
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.03273809523809524,
-        "most_frequent": 0.03422619047619048,
-        "timetable": 0.025297619047619048
-      },
-      "search_real_budget": {
-        "belief": "most_frequent",
-        "budget_per_day": 8,
-        "task_accuracy": 0.4880952380952381
-      },
-      "modal_share_time": 0.6072873263888889,
-      "modal_share_questions": 0.5074404761904762,
-      "moves_per_day": 100.03571428571429,
-      "displaced_time_share": 0.39271267361111106,
-      "displacement_median_h": 3.3333333333333335
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_014",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_014_bank.jsonl",
-      "bank_manifest_hash": "0238f3d83d90225f18808cfc39b38b89067727d502552099877410d514acff76",
-      "household_type": "single_adult_wfh",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": true,
-          "measured": 0.6736645895337302,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.05952380952380952,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.3273809523809524,
-          "threshold": 0.2095238095238095
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.01934523809523809,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "stationarity",
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.050595238095238096,
-        "most_frequent": 0.05952380952380952,
-        "timetable": 0.04017857142857143
-      },
-      "search_real_budget": {
-        "belief": "most_frequent",
-        "budget_per_day": 8,
-        "task_accuracy": 0.3273809523809524
-      },
-      "modal_share_time": 0.6736645895337302,
-      "modal_share_questions": 0.5476190476190477,
-      "moves_per_day": 35.357142857142854,
-      "displaced_time_share": 0.3263354104662698,
-      "displacement_median_h": 5.616666666666666
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_015",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_015_bank.jsonl",
-      "bank_manifest_hash": "fcbb3af73794ab899c356c364be49c845b189ec70d2a4d46f3d9338fdfa743e7",
-      "household_type": "single_parent_teens",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": false,
-          "measured": 0.5311099045474046,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.028273809523809524,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.45535714285714285,
-          "threshold": 0.17827380952380953
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.002976190476190476,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
         "discriminative"
       ],
       "solvable_ok": true,
       "never_sense_accuracy": {
         "last_observation": 0.028273809523809524,
-        "most_frequent": 0.025297619047619048,
-        "timetable": 0.028273809523809524
-      },
-      "search_real_budget": {
-        "belief": "last_observation",
-        "budget_per_day": 8,
-        "task_accuracy": 0.45535714285714285
-      },
-      "modal_share_time": 0.5311099045474046,
-      "modal_share_questions": 0.44345238095238093,
-      "moves_per_day": 74.39285714285714,
-      "displaced_time_share": 0.4688900954525954,
-      "displacement_median_h": 8.516666666666667
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_016",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_016_bank.jsonl",
-      "bank_manifest_hash": "219607a6e1975865ba9094f5b87a1d38c895ac08b3196f96398c31f6aa6df918",
-      "household_type": "single_senior_solo",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": true,
-          "measured": 0.6110772156084656,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.049107142857142856,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.47767857142857145,
-          "threshold": 0.19910714285714284
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.008928571428571425,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "stationarity",
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.041666666666666664,
-        "most_frequent": 0.04017857142857143,
-        "timetable": 0.049107142857142856
-      },
-      "search_real_budget": {
-        "belief": "timetable",
-        "budget_per_day": 8,
-        "task_accuracy": 0.47767857142857145
-      },
-      "modal_share_time": 0.6110772156084656,
-      "modal_share_questions": 0.43452380952380953,
-      "moves_per_day": 47.785714285714285,
-      "displaced_time_share": 0.3889227843915344,
-      "displacement_median_h": 3.9
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_017",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_017_bank.jsonl",
-      "bank_manifest_hash": "01092b8018fa398a1482b70f6a91863bfb0e549c7fdb6c95c6ccec14b847c8ed",
-      "household_type": "working_couple_no_children",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": false,
-          "measured": 0.5808743466898955,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.03869047619047619,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.4732142857142857,
-          "threshold": 0.1886904761904762
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.007440476190476192,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.03869047619047619,
-        "most_frequent": 0.03422619047619048,
-        "timetable": 0.03125
-      },
-      "search_real_budget": {
-        "belief": "last_observation",
-        "budget_per_day": 8,
-        "task_accuracy": 0.4732142857142857
-      },
-      "modal_share_time": 0.5808743466898955,
-      "modal_share_questions": 0.47172619047619047,
-      "moves_per_day": 72.85714285714286,
-      "displaced_time_share": 0.41912565331010454,
-      "displacement_median_h": 7.15
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_018",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_018_bank.jsonl",
-      "bank_manifest_hash": "b7dd62254b641db09b292ec10897f66415d7702594d515a6ce2eaab4e5c19fb3",
-      "household_type": "working_couple_no_children",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": true,
-          "measured": 0.6080705546107332,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.044642857142857144,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.5178571428571429,
-          "threshold": 0.19464285714285715
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.019345238095238096,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "stationarity",
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.043154761904761904,
-        "most_frequent": 0.025297619047619048,
-        "timetable": 0.044642857142857144
-      },
-      "search_real_budget": {
-        "belief": "timetable",
-        "budget_per_day": 8,
-        "task_accuracy": 0.5178571428571429
-      },
-      "modal_share_time": 0.6080705546107332,
-      "modal_share_questions": 0.4895833333333333,
-      "moves_per_day": 71.0,
-      "displaced_time_share": 0.3919294453892668,
-      "displacement_median_h": 11.216666666666667
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_019",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_019_bank.jsonl",
-      "bank_manifest_hash": "ee512785e309b34439bb45b6c713c46a666d5c48c55e84ec5005a3fb55e17e58",
-      "household_type": "working_professional_solo",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": false,
-          "measured": 0.5759905133928571,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.06845238095238096,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.3080357142857143,
-          "threshold": 0.21845238095238095
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.017857142857142863,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.050595238095238096,
-        "most_frequent": 0.06845238095238096,
-        "timetable": 0.052083333333333336
+        "most_frequent": 0.044642857142857144,
+        "timetable": 0.041666666666666664
       },
       "search_real_budget": {
         "belief": "most_frequent",
         "budget_per_day": 8,
-        "task_accuracy": 0.3080357142857143
+        "task_accuracy": 0.5714285714285714
       },
-      "modal_share_time": 0.5759905133928571,
-      "modal_share_questions": 0.5431547619047619,
-      "moves_per_day": 53.857142857142854,
-      "displaced_time_share": 0.4240094866071429,
-      "displacement_median_h": 8.683333333333334
-    },
-    {
-      "household": "profiles/households/generated/gpt-5.6-terra/hh_020",
-      "status": "ok",
-      "bank_path": "banks/baselines/cold_start/households__generated__gpt-5.6-terra__hh_020_bank.jsonl",
-      "bank_manifest_hash": "0bb11d4720b732075ce30c12ede3836c80e6202abc6bf4564eed27be3255f83c",
-      "household_type": "working_professional_solo__night_shift",
-      "n_questions": 672,
-      "diagnostics": {
-        "stationarity": {
-          "flagged": true,
-          "measured": 0.6035044642857144,
-          "threshold": 0.6
-        },
-        "solvable": {
-          "flagged": false,
-          "measured": 1.0,
-          "threshold": 1.0
-        },
-        "not_trivial": {
-          "flagged": false,
-          "measured": 0.049107142857142856,
-          "threshold": 0.65
-        },
-        "not_impossible": {
-          "flagged": false,
-          "measured": 0.5,
-          "threshold": 0.19910714285714284
-        },
-        "discriminative": {
-          "flagged": true,
-          "measured": 0.019345238095238096,
-          "threshold": 0.03
-        },
-        "powered": {
-          "flagged": false,
-          "measured": 672.0,
-          "threshold": 300.0
-        }
-      },
-      "flags": [
-        "stationarity",
-        "discriminative"
-      ],
-      "solvable_ok": true,
-      "never_sense_accuracy": {
-        "last_observation": 0.02976190476190476,
-        "most_frequent": 0.049107142857142856,
-        "timetable": 0.03571428571428571
-      },
-      "search_real_budget": {
-        "belief": "most_frequent",
-        "budget_per_day": 8,
-        "task_accuracy": 0.5
-      },
-      "modal_share_time": 0.6035044642857144,
-      "modal_share_questions": 0.46279761904761907,
-      "moves_per_day": 40.42857142857143,
-      "displaced_time_share": 0.39649553571428564,
-      "displacement_median_h": 14.916666666666666
+      "modal_share_time": 0.6031671626984126,
+      "modal_share_questions": 0.4181547619047619,
+      "moves_per_day": 40.0,
+      "displaced_time_share": 0.39683283730158736,
+      "displacement_median_h": 10.5
     }
   ]
 }

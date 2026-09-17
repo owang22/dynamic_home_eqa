@@ -128,3 +128,14 @@ misplace:
   # rate is at least this — the "often" level above: a scattered adult,
   # a small child. Everyone else's putdowns of them always land.
   bulky_needs_forget_p: 0.08
+  # The authored per-object `p_misplace` is scaled by its OWNER's
+  # persona forgetfulness rating (the program resident's `forget_level`;
+  # a shared object takes the mean over the residents). Added 2026-09-16:
+  # the object-rule author writes 0.1-0.4 for every carried item with no
+  # sight of the person, so hh_001's "methodical, rarely forgetful"
+  # resident was misplacing 4.3 things a day, her wallet every third day.
+  # Judgment defaults; a missing rating scales by `sometimes`.
+  by_forgetfulness:
+    rarely: 0.3
+    sometimes: 1.0
+    often: 1.6
