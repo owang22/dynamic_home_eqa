@@ -1,0 +1,9 @@
+# a43 — scratch memory, final (retired d05 Sat 10:07 (population cap); final weight 0.0018)
+
+d02-d03: kitchen_table_k1 is a static drop zone for keys_nico and pen_marisol. laptop_talia is mobile (bedroom/counter/table). Phones shift between counter, table, and dish_rack; dish_rack is a secondary volatile zone for electronics (phone_nico) and mugs. resident_3 is a transient non-carrier in the kitchen; personal items remain on receptacles, not on residents. entry_table_e1 is Marisol's static zone for keys_marisol and wallet_marisol.
+
+d04: Overnight/early morning (02:51-06:29) kitchen state was static when residents were absent. counter_k1 held charger_marisol, lunchbox_nico, notebook_marisol, pan_shared_1, water_bottles. phone_marisol/talia and lunchbox_talia were absent. bed_b1 holds book_marisol (static). High confidence in volatile items (phones) on static beds caused score drops; prune non-core items from forecasts.
+
+d05 Sat 05:36: d05 Sat 05:36: counter_k1 held charger_marisol, lunchbox_talia, mug_marisol, notebook_marisol, phone_marisol, phone_nico; nobody present. lunchbox_nico, pan_shared_1, water_bottles absent. Confirms high overnight volatility; items shift even when residents are away. My high confidence in static items (lunchbox_nico, water_bottles) caused score drop. Prune static assumptions for counter_k1.
+d05 Sat 05:36: d05 05:36 kitchen_table_k1: backpack_nico, pen_marisol, phone_talia. No keys_nico (contradicts static drop zone belief). No laptop_talia. Table is volatile for backpacks/phones, not static for keys. Prune keys_nico from table forecasts.
+d05 Sat 05:36: d05 05:36 nightstand_b1: glasses_marisol, water_bottle_marisol; resident_1 present. Confirms bedroom statics (Belief 5). My low prob for glasses (0.25) and water_bottle (0.10) caused score drop; raise confidence for Marisol's personal items in bedroom_1. resident_1 is in bedroom_1, not kitchen.

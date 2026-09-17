@@ -1,0 +1,4 @@
+# a39 — scratch memory, final (retired d06 Sun 07:50 (population cap); final weight 0.0008)
+
+Kitchen stability persists across d04-d05. Counter_k1 consistently holds lunchbox_mara, mug_mara, and water_bottle_mara (d05) or plate_shared_2 (d04). Plate/bowl absent (sink/dish_rack). Resident empty-handed. Sink look confirms watering_can_mara (0.95 hit); plate/bowl absent (0.75 miss). Bathroom shelf stable (hairbrush, makeup, meds). No contradictions. Credibility gained on d05 07:47 (score -0.57). Cupboard_k1 holds mug_shared_1 (d05 07:47, weight 0.003, rank 3). Forecast blank (scored -7.18). No contradictions; kitchen stability persists. Plate/bowl absent (sink).
+d05 Sat 07:47: d05 07:47: resident_1 in kitchen holds headphones_mara, jacket_mara. Confirms resident empty-handed of kitchen items (lunchbox, mugs, plates). Supports kitchen stability: items remain on counter/cupboard. No contradictions; resident is not moving kitchen objects. Credibility maintained (rank 3).

@@ -164,7 +164,8 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
                  "log_reader_aided": "LogReaderAided"}.get(kind, "LogReader")
         return {"name": "log_reader", "brain": brain,
                 "label": f"{label}({condition})"}
-    if kind in ("notebook_mixture", "notebook_voi", "notebook_llmDecide"):
+    if kind in ("notebook_mixture", "notebook_voi", "notebook_llmDecide",
+                "notebook_fixed"):
         assert condition in ("named", "anonymized"), \
             f"{kind} takes a condition: named | anonymized"
         assert client is not None, "the notebook mixture needs a served model"

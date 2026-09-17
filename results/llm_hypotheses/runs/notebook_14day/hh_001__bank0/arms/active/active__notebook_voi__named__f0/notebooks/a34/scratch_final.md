@@ -1,0 +1,7 @@
+# a34 — scratch memory, final (retired d06 Sun 10:22 (population cap); final weight 0.0000)
+
+Kitchen stable: Counter holds lunchbox, mug, water_bottle; plate absent (moved). Sink holds watering_can; bowl absent. Bathroom shelf stable (hairbrush, makeup, meds). No residents. d05 Sat 07:14: Bathroom shelf stable (hairbrush, makeup, meds). No residents. Kitchen counter holds lunchbox, mug, water_bottle; plate absent. Sink holds watering_can; bowl absent. No contradictions to current beliefs. Score -14.15 reflects low confidence in absent items. Beliefs unchanged.
+d05 Sat 07:47: d05 Sat 07:47 counter_k1: lunchbox, mug, water_bottle present; resident_1 here. Confirms stable kitchen state. No contradictions to beliefs. Score -0.62, above panel avg. Weight 0.035, rank 2.
+d05 Sat 07:47: d05 Sat 07:47: Look at cupboard_k1 revealed mug_shared_1 and resident_1. Confirms mug presence in kitchen storage. No contradictions to existing beliefs. Score -5.92, above panel average. Weight increased to 0.050, rank 2. Beliefs unchanged.
+d05 Sat 07:47: d05 Sat 07:47: Look at resident_1 in kitchen revealed headphones_mara, jacket_mara. Confirms resident presence and carried items. No contradictions to existing beliefs. Score -9.57, above panel average. Weight increased to 0.051, rank 2. Beliefs unchanged.
+d06 Sun 06:46: d06 Sun 06:46: bathroom_shelf_ba1 stable (hairbrush, makeup, meds). No residents. Confirms prior state. Score -9.93, below panel avg. Weight 0.005, rank 3. No contradictions to beliefs.

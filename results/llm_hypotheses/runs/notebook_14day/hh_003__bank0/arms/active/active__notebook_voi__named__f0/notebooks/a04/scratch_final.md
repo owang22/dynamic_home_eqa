@@ -1,0 +1,6 @@
+# a04 — scratch memory, final (retired d00 Mon 06:22 (population cap); final weight 0.0167)
+
+d00 Mon 06:06: d00 Mon 06:06: nightstand_b1 holds book_marisol, glasses_marisol. No residents present. Confirms personal items (glasses) stay in bedroom nightstand at 06:06, supporting belief 8. Forecast missed book_marisol; adjust weights to include books in nightstand predictions.
+d00 Mon 06:06: d00 Mon 06:06: desk_b1 empty, no residents. Confirms Marisol (resident_1) is not in bedroom_1 at 06:06, contradicting belief 4/5. Personal items (charger, phone) are not on the desk. Suggests residents may be in common areas or bathroom early morning, or items are elsewhere.
+d00 Mon 06:06: d00 Mon 06:06: bed_b1 empty, no residents. Confirms Marisol (resident_1) is not in bedroom_1 at 06:06. Combined with empty desk_b1/nightstand_b1, suggests resident_1 is in common areas or bathroom early morning, contradicting belief 4/5. Personal items are not in bedroom_1 receptacles at this hour.
+d00 Mon 06:16: d00 Mon 06:16: counter_k1 holds 12 items (chargers, lunchboxes, mugs, phones, water bottles, notebook, pen) and resident_1. Confirms kitchen is the morning hub for personal items, contradicting belief 8 (nightstand/desk). resident_1 is active in kitchen at 06:16, not bedroom_1.

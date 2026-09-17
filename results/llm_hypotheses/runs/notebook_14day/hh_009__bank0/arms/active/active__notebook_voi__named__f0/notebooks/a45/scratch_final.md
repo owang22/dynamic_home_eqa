@@ -1,0 +1,10 @@
+# a45 — scratch memory, final (retired d04 Fri 07:15 (population cap); final weight 0.0443)
+
+d02-d04 Morning Patterns (05:33-07:32):
+- Entry (entry_hook_e1): Static cluster for Priya (jacket_priya, wallet_priya) and Noa (backpack_noa). Elias's outerwear/bag absent (he is in bedroom_1). Priya's backpack is NOT here; it is mobile.
+- Kitchen (counter_k1): Static cluster for Priya (lunchbox_priya, mug_priya, phone_priya, water_bottle_priya). Items remain here even when Priya is in bathroom/bedroom. Do not forecast these ON_PERSON.
+- Bedroom 1 (desk_b1): Static cluster for Elias (charger_elias, notebook_elias, water_bottle_elias). water_bottle_elias confirmed static (d04). headphones_elias is mobile/absent (d04). laptop_elias, phone_elias, pen_elias are NOT at desk. Elias is stationary here with empty hands.
+- Bedroom 1 (bedroom_floor_b1): Contains backpack_priya, suitcase_shared_1, vacuum_cleaner_shared_1. Confirms Priya's backpack is mobile (not at entry). Shared items static on floor. Elias/Priya co-located in bedroom_1 (d04).
+- Bathroom (bathroom_shelf_ba1): UNRELIABLE. Observed empty multiple times (d03 06:46, 07:32) despite Priya present. Do not forecast hairbrush_priya/makeup_kit_priya here without explicit recent observation. They are likely mobile or in a bag.
+- General: Residents are stationary at specific receptacles during morning routine. Assume empty hands (ON_PERSON) for all residents unless explicitly observed carrying items. Priya's location varies (bathroom, kitchen, bedroom_1). Noa is stationary in bedroom_2 or entry. Elias is stationary in bedroom_1.
+d04 Fri 07:09: d04 07:09 counter_k1: charger_shared_1, lunchbox_priya, mug_priya, phone_priya present; water_bottle_priya ABSENT. resident_3 (Noa) in kitchen. My 0.90 for water_bottle_priya was a major error; it is not static here. Noa's presence contradicts 'stationary in bedroom_2' belief.

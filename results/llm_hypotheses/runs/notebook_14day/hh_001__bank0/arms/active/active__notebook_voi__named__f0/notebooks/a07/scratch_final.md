@@ -1,0 +1,4 @@
+# a07 — scratch memory, final (retired d00 Mon 04:43 (population cap); final weight 0.0032)
+
+d00 Mon 04:42: d00 Mon 04:42: nightstand_b1 held phone_mara; resident_1 present. Confirms nightstand as active tech hub. High probability of other bedroom items (book, notebook, glasses) being here was wrong; they are likely on bed_b1 or desk_b1. Adjust future forecasts to lower nightstand probability for non-tech bedroom items.
+d00 Mon 04:42: d00 Mon 04:42: Look at resident_1 in bedroom revealed nothing carried. This contradicts the assumption that tech items (phone_mara) are frequently ON_PERSON during early morning hours. Resident is likely asleep or stationary. Adjust forecasts to favor static home bases (nightstand_b1/desk_b1) for tech items until resident movement is observed. High probability of 'empty' ON_PERSON state for early morning looks.

@@ -1,0 +1,6 @@
+# a08 — scratch memory, final (retired d01 Tue 06:14 (population cap); final weight 0.0014)
+
+d00 Mon 06:06: d00 Mon 06:06: nightstand_b1 held book_marisol, glasses_marisol. No residents present. Confirms Marisol's items cluster in bedroom_1 furniture. Forecast missed book; glasses probability was low. Adjusting belief: Marisol's personal items (book, glasses) are high-probability in nightstand_b1 or desk_b1, not just medication.
+d00 Mon 06:06: d00 Mon 06:06: desk_b1 empty, no residents. Marisol's items (book, glasses) confirmed in nightstand_b1, not desk_b1. Adjusting: Marisol's personal items cluster in nightstand_b1, not desk_b1. Charging/phone less likely in desk_b1 for Marisol.
+d00 Mon 06:06: d00 Mon 06:06: bed_b1 empty, no residents. Marisol's items (medication, phone) not on bed. Confirms nightstand_b1 is primary storage for personal items, not bed. Adjusting: bed_b1 low probability for Marisol's personal effects; nightstand_b1 remains high.
+d00 Mon 06:16: d00 Mon 06:16: counter_k1 held 12 items (chargers, lunchboxes, mugs, phones, bottles, notebook, pen) and resident_1. This contradicts 'low-order' belief; counter_k1 is a high-entropy dumping ground for personal and shared items, not just kitchenware. resident_1 is active in kitchen early morning.

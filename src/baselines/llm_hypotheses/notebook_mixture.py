@@ -125,6 +125,15 @@ and both arms spent the day's eight looks within the first hour (one
 question took all eight). So: ``population_cap`` 5; follow-ups only for
 agents at ``followup_min_weight`` or in the top 3 (everyone is still
 graded at every look); ``max_looks_per_question`` 3.
+
+Third revision (2026-09-16, for the multi-household 14/28-day runs):
+question forecasts list at most 6 spots and look forecasts at most 8
+objects (an omission scores exactly like 0.01, and look replies were
+listing all 35 objects); with ``followup_mode: append`` a follow-up
+adds ONE dated line (<= 60 words) to scratch memory instead of
+rewriting it, and the memory is condensed by one call only when an
+append would pass the cap. Agents can no longer reorganise their notes
+mid-day; the review's fork still condenses the top agent's notes.
 """
 
 from __future__ import annotations
@@ -133,6 +142,7 @@ import concurrent.futures
 import json
 import math
 import pathlib
+import re
 import random
 import time
 import dataclasses
@@ -172,7 +182,7 @@ FORK_MAX_TOKENS = 4000
 INITIAL_MAX_TOKENS = 14000
 
 CALL_TYPES = ("initial", "question_forecast", "look_forecast", "follow_up",
-              "fork", "review", "birth", "decide")
+              "fork", "review", "birth", "decide", "condense")
 """``fork`` is the retry of a follow-up whose fork document broke the
 beliefs cap (a condensed rewrite); ``review`` is the end-of-day forced
 fork; ``birth`` the review's fresh contrasting document (``top_fresh``
@@ -197,6 +207,7 @@ class NotebookConfig:
     followup_min_weight: float = 0.0  # follow-ups only for agents at this weight or in the top 3 (everyone is graded)
     max_looks_per_question: int = 0  # 0: no cap
     tell_questions_per_day: bool = True  # False: the dispatcher learns the day's length from yesterday's ledger
+    followup_mode: str = "rewrite"   # rewrite: full scratch each look | append: one dated line, condense on overflow
     label: str = "notebook_mixture"
 
 
@@ -205,18 +216,31 @@ NOTEBOOK_VOI = NotebookConfig(look_rule="voi", beta=0.3, invalid_look="neutral",
                               fork_gate=True, review_every_looks=12,
                               skip_below=0.01, parallel=8, population_cap=5,
                               followup_min_weight=0.05, max_looks_per_question=3,
+                              followup_mode="append",
                               label="notebook_voi")
 NOTEBOOK_LLM_DECIDE = dataclasses.replace(NOTEBOOK_VOI, look_rule="llm",
                                           tell_questions_per_day=False,
                                           label="notebook_llmDecide")
+NOTEBOOK_FIXED = dataclasses.replace(NOTEBOOK_VOI, followup_mode="none",
+                                     review="none", label="notebook_fixed")
+"""The cold-start documents as a fixed mixture of experts: reweighted at
+every look, never revised, no forks, births or reviews (the cheap check
+that the revisions are worth their cost)."""
 CONFIGS = {"notebook_mixture": NotebookConfig(), "notebook_voi": NOTEBOOK_VOI,
-           "notebook_llmDecide": NOTEBOOK_LLM_DECIDE}
+           "notebook_llmDecide": NOTEBOOK_LLM_DECIDE,
+           "notebook_fixed": NOTEBOOK_FIXED}
 
 # minItems 1: on the 3-day hh_001 run 19 of 491 question forecasts came
 # back as "spots": [] (the why described an answer the list left out),
 # which the floor turns into a uniform forecast. The grammar now asks
 # for at least one entry.
-_SPOT_LIST = {"type": "array", "minItems": 1, "items": {
+QUESTION_MAX_SPOTS = 6
+LOOK_MAX_OBJECTS = 8
+# maxItems (2026-09-16): an omitted spot or object is read at P_MIN
+# exactly as an explicit 0.01 is, and look forecasts were listing all 35
+# objects (646 tokens) for a reply worth ~150. The caps change nothing
+# the method computes.
+_SPOT_LIST = {"type": "array", "minItems": 1, "maxItems": QUESTION_MAX_SPOTS, "items": {
     "type": "object",
     "properties": {"spot": {"type": "string"}, "p": {"type": "number"}},
     "required": ["spot", "p"]}}
@@ -234,7 +258,7 @@ QUESTION_FORECAST_SCHEMA = {
 LOOK_FORECAST_SCHEMA = {
     "type": "object",
     "properties": {
-        "objects": {"type": "array", "minItems": 1, "items": {
+        "objects": {"type": "array", "minItems": 1, "maxItems": LOOK_MAX_OBJECTS, "items": {
             "type": "object",
             "properties": {"object": {"type": "string"},
                            "p": {"type": "number"}},
@@ -251,6 +275,18 @@ FOLLOWUP_SCHEMA = {
     "properties": {"scratch": {"type": "string"}, "fork": _FORK_SCHEMA},
     "required": ["scratch"],
 }
+FOLLOWUP_APPEND_SCHEMA = {
+    "type": "object",
+    "properties": {"note": {"type": "string"}, "fork": _FORK_SCHEMA},
+    "required": ["note"],
+}
+CONDENSE_SCHEMA = {
+    "type": "object",
+    "properties": {"scratch": {"type": "string"}},
+    "required": ["scratch"],
+}
+FOLLOWUP_APPEND_MAX_TOKENS = 2500
+NOTE_MAX_WORDS = 60
 FORK_SCHEMA = _FORK_SCHEMA
 BIRTH_SCHEMA = {
     "type": "object",
@@ -286,6 +322,7 @@ SYSTEM_PROMPT = f"""You are one agent in a small population that keeps notebooks
 Your notebook has two sections.
 BELIEFS: your account of how this household lives and how its objects move — patterns, rules, conjectures, dependencies between objects — each with a short why that cites the evidence behind it. This section stays fixed for the life of an agent. To change it you propose a FORK: a new agent whose BELIEFS are a rewrite of yours together with a why for the change, while you keep running unchanged. BELIEFS holds at most {BELIEFS_MAX_WORDS} words, so a fork that would grow past that is written as a condensed rewrite.
 SCRATCH MEMORY: free text you may add to, rewrite or trim at any time, at most {SCRATCH_MAX_WORDS} words; when it grows past that you trim it.
+IDS: in BELIEFS and SCRATCH MEMORY refer to receptacles and objects by their exact ids from the HOUSEHOLD list (counter_k1, mug_mara); a forecast that names a spot any other way is thrown away.
 
 Your forecasts are scored by the log of the probability you gave to what the robot actually saw: an object found where you said, and equally an object absent from a spot or a spot found empty. Your weight in the population rises and falls with that score.
 
@@ -574,6 +611,61 @@ def normalize_question_forecast(spots: Mapping[str, float],
     return {s: v / z for s, v in raw.items()}
 
 
+_ID_SUFFIX = re.compile(r"_[a-z]{1,3}\d+$")
+
+
+def _norm_name(name: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "_", name.strip().lower()).strip("_")
+
+
+def resolve_id(name: str, ids: Sequence[str],
+               rooms: Optional[Mapping[str, str]] = None) -> Optional[str]:
+    """Map a model-written name to one of ``ids``: exact, then the same
+    base (id without its ``_k1``-style suffix) after room words are
+    stripped, then a unique id whose base is contained in the name.
+    ``None`` when nothing matches or several do (a bare room name).
+
+    Added 2026-09-16: over a 14-day run, descendant agents wrote
+    ``kitchen_counter_k1``, ``Bathroom Shelf``, ``bed``, ``living`` ...
+    (copied from their own notebooks), 14% of all spots; each was dropped
+    and the forecasts collapsed onto ON_PERSON / OUT_OF_HOUSE."""
+    if name in ids:
+        return name
+    n = _norm_name(name)
+    if not n:
+        return None
+    lower = {i.lower(): i for i in ids}
+    if n in lower:
+        return lower[n]
+    base = {i: _ID_SUFFIX.sub("", i.lower()) for i in ids}
+    room_words = set((rooms or {}).values()) | {"room", "the"}
+    named_rooms = {w for w in n.split("_") if w in (rooms or {}).values()}
+    n_full = _ID_SUFFIX.sub("", n)
+    n_core = _ID_SUFFIX.sub("", "_".join(w for w in n.split("_")
+                                         if w not in room_words))
+
+    def ok(i: str) -> bool:
+        # a room named in the text must be the receptacle's own room
+        return not named_rooms or not rooms or rooms.get(i) in named_rooms
+
+    for cand in (n_full, n_core):
+        if not cand:
+            continue
+        hits = [i for i, b in base.items() if b == cand and ok(i)]
+        if len(hits) == 1:
+            return hits[0]
+    if n_core:
+        hits = [i for i, b in base.items()
+                if b and (b in n_core or n_core in b) and ok(i)]
+        if len(hits) == 1:
+            return hits[0]
+        if len(hits) > 1:
+            exact = [i for i in hits if f"_{base[i]}_" in f"_{n_core}_"]
+            if len(exact) == 1:
+                return exact[0]
+    return None
+
+
 def argmax_spot(dist: Mapping[str, float], order: Sequence[str]) -> str:
     """The top spot; exact ties go to the earlier spot in ``order``."""
     return max(order, key=lambda s: (dist.get(s, 0.0), -order.index(s)))
@@ -636,6 +728,9 @@ class NotebookMixtureBrain:
         self.budget_exhausted_at: Dict[int, Optional[str]] = {}
         self.population_size_per_day: Dict[int, int] = {}
         self.invalid_forecasts = 0
+        self.unresolved_spots = 0
+        self.unresolved_objects = 0
+        self._unresolved_samples: List[str] = []
         self.scratch_truncated = 0
         self.forks_rejected = 0
         self.reviews_failed = 0
@@ -746,13 +841,15 @@ class NotebookMixtureBrain:
 
     def _question_request(self, object_id: str) -> str:
         return (f"REQUEST: where is {self.obj(object_id)} right now? Give a "
-                f"probability for every spot you consider possible — "
-                f"receptacles, {self.rec(ON_PERSON)}, {self.rec(OUT_OF_HOUSE)} "
-                f"— summing to 1; spots you leave out are taken as very "
-                f"unlikely. If {self.rec(ON_PERSON)} gets any probability, "
-                f"also give carrier (the resident id) and carrier_room (the "
-                f"room you think that resident is in now). One sentence why. "
-                f"Use ids exactly as listed.")
+                f"probability for up to {QUESTION_MAX_SPOTS} spots you consider "
+                f"possible — receptacles, {self.rec(ON_PERSON)}, "
+                f"{self.rec(OUT_OF_HOUSE)} — summing to 1; spots you leave out "
+                f"are taken as very unlikely. If {self.rec(ON_PERSON)} gets any "
+                f"probability, also give carrier (the resident id) and "
+                f"carrier_room (the room you think that resident is in now). "
+                f"Why: at most 15 words. Name spots by their exact ids from "
+                f"ROOMS AND RECEPTACLES above; a room name, a paraphrase or an "
+                f"id that is not in that list is thrown away.")
 
     def _look_request(self, look: Mapping[str, Any]) -> str:
         if "resident" in look:
@@ -761,11 +858,12 @@ class NotebookMixtureBrain:
         else:
             target = (f"receptacle {self.rec(look['receptacle'])} "
                       f"(in {look.get('room') or 'its room'})")
-        return (f"REQUEST: the robot is about to look at {target}. For every "
-                f"object you think is there right now, give the probability "
-                f"that it is there — each object is its own yes/no "
-                f"probability. Objects you leave out are taken as very "
-                f"unlikely to be there. Use ids exactly as listed.")
+        return (f"REQUEST: the robot is about to look at {target}. For up to "
+                f"{LOOK_MAX_OBJECTS} objects you think may be there right now, "
+                f"give the probability that it is there — each object is its "
+                f"own yes/no probability. Objects you leave out are taken as "
+                f"very unlikely to be there. Name objects by their exact ids "
+                f"from OBJECTS; a class name or a paraphrase is thrown away.")
 
     # ---------------------------------------------------------------- LLM
 
@@ -940,16 +1038,23 @@ class NotebookMixtureBrain:
         for agent_id in asked:
             parsed = replies[agent_id]
             given: Dict[str, float] = {}
+            unresolved: List[str] = []
             for item in (parsed or {}).get("spots", []) or []:
                 if not isinstance(item, dict):
                     continue
-                spot = self.real_rec(str(item.get("spot", "")))
+                spot = self._resolve_spot(str(item.get("spot", "")))
                 try:
                     p = float(item.get("p", 0.0))
                 except (TypeError, ValueError):
                     continue
-                if spot in spots and p > 0:
+                if spot is None:
+                    unresolved.append(str(item.get("spot", ""))[:40])
+                    continue
+                if p > 0:
                     given[spot] = given.get(spot, 0.0) + p
+            if unresolved:
+                self.unresolved_spots += len(unresolved)
+                self._unresolved_samples.append(unresolved[0])
             if not given:
                 self.invalid_forecasts += 1
             dist = normalize_question_forecast(given, spots)
@@ -963,8 +1068,25 @@ class NotebookMixtureBrain:
                 or None,
                 "why": str((parsed or {}).get("why", ""))[:400],
                 "raw": {s: round(p, 4) for s, p in given.items()},
+                "unresolved": unresolved,
                 "invalid": not given}
         return out
+
+    def _resolve_spot(self, token: str) -> Optional[str]:
+        real = self.real_rec(token)
+        assert self.context is not None
+        return resolve_id(real, self._spots(), self.context.receptacle_rooms)
+
+    def _resolve_object(self, token: str) -> Optional[str]:
+        real = self.real_obj(token)
+        objs = list(self.objects)
+        got = resolve_id(real, objs)
+        if got is not None:
+            return got
+        # a bare class name ("mug") resolves only when one object has it
+        cls = _norm_name(real)
+        same = [o for o, c in self.objects.items() if c and _norm_name(c) == cls]
+        return same[0] if len(same) == 1 else None
 
     def _look_forecasts(self, look: Mapping[str, Any], t: int
                         ) -> Dict[str, Dict[str, float]]:
@@ -985,13 +1107,15 @@ class NotebookMixtureBrain:
             for item in (parsed or {}).get("objects", []) or []:
                 if not isinstance(item, dict):
                     continue
-                o = self.real_obj(str(item.get("object", "")))
+                o = self._resolve_object(str(item.get("object", "")))
                 try:
                     p = float(item.get("p", 0.0))
                 except (TypeError, ValueError):
                     continue
-                if o in self.objects:
-                    given[o] = p
+                if o is None:
+                    self.unresolved_objects += 1
+                    continue
+                given[o] = p
             if parsed is None or not given:
                 self.invalid_forecasts += 1
                 self._invalid_look_agents.append(agent_id)
@@ -1067,7 +1191,8 @@ class NotebookMixtureBrain:
             "forecasts": {a: {"spots": f["raw"], "top": f["top"],
                               "carrier": f["carrier"],
                               "carrier_room": f["carrier_room"],
-                              "why": f["why"], "invalid": f["invalid"]}
+                              "why": f["why"], "invalid": f["invalid"],
+                              "unresolved": f.get("unresolved", [])}
                           for a, f in forecasts.items()},
             "mixture": {s: round(p, 6) for s, p in mixture.items() if p > 1e-6},
             "skipped": list(self._skipped_last),
@@ -1404,6 +1529,9 @@ class NotebookMixtureBrain:
         self._flush_population_events()
         # Follow-ups, one per agent alive at the look (forks born in this
         # round get no follow-up of their own).
+        if self.config.followup_mode == "none":
+            self._flush_population_events()
+            return
         wsum = sum(before.get(a, 0.0) for a in scores) or 1.0
         panel_avg = sum(before.get(a, 0.0) * scores[a] for a in scores) / wsum
         jobs: List[Tuple[str, str, bool]] = []
@@ -1415,8 +1543,11 @@ class NotebookMixtureBrain:
                     blank=agent_id in invalid, panel_avg=panel_avg,
                     weight_before=before.get(agent_id, 0.0), all_scores=scores)
                 jobs.append((agent_id, user, may_fork))
+        append = self.config.followup_mode == "append"
         replies = self._calls("follow_up", [(a, u) for a, u, _ in jobs],
-                              FOLLOWUP_SCHEMA, FOLLOWUP_MAX_TOKENS, t)
+                              FOLLOWUP_APPEND_SCHEMA if append else FOLLOWUP_SCHEMA,
+                              FOLLOWUP_APPEND_MAX_TOKENS if append else FOLLOWUP_MAX_TOKENS,
+                              t)
         for agent_id, user, may_fork in jobs:
             self._apply_follow_up(agent_id, replies[agent_id], user, may_fork,
                                   scores[agent_id], panel_avg, t)
@@ -1488,6 +1619,19 @@ class NotebookMixtureBrain:
         else:
             fork_text = ("You may propose a FORK (new BELIEFS as a complete "
                          "rewrite of yours, plus why).")
+        if self.config.followup_mode == "append":
+            action = (f"Add ONE dated line (at most {NOTE_MAX_WORDS} words) to "
+                      f"your SCRATCH MEMORY: what this look showed and what it "
+                      f"changes; an empty note adds nothing. {fork_text} "
+                      f"Reply as JSON: {{\"note\": \"...\", \"fork\": "
+                      f"{{\"beliefs\": \"...\", \"why\": \"...\"}}}}; leave "
+                      f"fork out to keep your beliefs as they are.")
+        else:
+            action = (f"You may rewrite your SCRATCH MEMORY (return its full "
+                      f"new text; return the current text to keep it as is). "
+                      f"{fork_text} Reply as JSON: {{\"scratch\": \"...\", "
+                      f"\"fork\": {{\"beliefs\": \"...\", \"why\": \"...\"}}}}; "
+                      f"leave fork out to keep your beliefs as they are.")
         user = "\n\n".join([
             self._household_block(), self._notebook_block(agent),
             f"RESULT OF THE LOOK\n{line}\n"
@@ -1495,11 +1639,7 @@ class NotebookMixtureBrain:
             f"{score_line}\n"
             f"YOUR WEIGHT is now {w:.3f}, rank {rank} of "
             f"{self.population.size}.",
-            f"You may rewrite your SCRATCH MEMORY (return its full new text; "
-            f"return the current text to keep it as is). {fork_text} "
-            f"Reply as JSON: {{\"scratch\": \"...\", \"fork\": {{\"beliefs\": "
-            f"\"...\", \"why\": \"...\"}}}}; leave fork out to keep your "
-            f"beliefs as they are."])
+            action])
         return user, may_fork
 
     def _apply_follow_up(self, agent_id: str, parsed: Optional[Dict[str, Any]],
@@ -1508,7 +1648,10 @@ class NotebookMixtureBrain:
         if parsed is None or agent_id not in self.population.agents:
             return
         agent = self.population.agents[agent_id]
-        self._apply_scratch(agent, str(parsed.get("scratch", "")), user, t)
+        if self.config.followup_mode == "append":
+            self._append_scratch(agent, str(parsed.get("note", "")), t)
+        else:
+            self._apply_scratch(agent, str(parsed.get("scratch", "")), user, t)
         fork = parsed.get("fork")
         if isinstance(fork, dict) and str(fork.get("beliefs", "")).strip():
             if not may_fork:
@@ -1522,6 +1665,38 @@ class NotebookMixtureBrain:
                                      str(fork.get("why", "")), t, "follow_up")
             if child is not None:
                 agent.last_fork_day = self.day
+
+    def _append_scratch(self, agent: NotebookAgent, note: str, t: int) -> None:
+        """Append one dated line; when that would pass the cap, one call
+        condenses the memory first (keeping what still matters), and a
+        condensed text still over the cap is cut at it."""
+        note = " ".join(note.split())
+        if not note:
+            return
+        note = " ".join(note.split()[:NOTE_MAX_WORDS])
+        line = f"{stamp(t)}: {note}"
+        current = agent.notebook.scratch.strip()
+        merged = f"{current}\n{line}" if current else line
+        if word_count(merged) <= SCRATCH_MAX_WORDS:
+            agent.notebook.scratch = merged
+            self._log_scratch(agent, t, "follow_up")
+            return
+        user = "\n\n".join([
+            self._household_block(), self._notebook_block(agent),
+            f"Your SCRATCH MEMORY is full ({word_count(current)} words; the cap "
+            f"is {SCRATCH_MAX_WORDS}) and this line is to be added:\n{line}\n\n"
+            f"Condense the memory to at most {SCRATCH_MAX_WORDS // 2} words: "
+            f"merge dated entries into the patterns they show, keep what "
+            f"still matters, drop what the BELIEFS already say, and end with "
+            f"the new line. Reply as JSON: {{\"scratch\": \"...\"}}."])
+        parsed, _ = self._call("condense", agent.agent_id, user, CONDENSE_SCHEMA,
+                               FOLLOWUP_MAX_TOKENS, t)
+        text = str((parsed or {}).get("scratch", "")).strip() or merged
+        if word_count(text) > SCRATCH_MAX_WORDS:
+            text = " ".join(text.split()[:SCRATCH_MAX_WORDS])
+            self.scratch_truncated += 1
+        agent.notebook.scratch = text
+        self._log_scratch(agent, t, "follow_up_condensed")
 
     def _apply_scratch(self, agent: NotebookAgent, text: str, user: str,
                        t: int) -> None:
@@ -1596,6 +1771,14 @@ class NotebookMixtureBrain:
         lowest agent is retired for a fresh contrasting document born at
         the equal share."""
         t = (day + 1) * DAY_SECONDS - 1
+        if self.config.review == "none":
+            self.population.events.append({
+                "t": t, "event": "review", "day": day,
+                "population": self.population.size, "candidate": None,
+                "mode": "none", "skipped": "fixed population",
+                "weights": {a: round(w, 6) for a, w in self.population.weights.items()}})
+            self._flush_population_events()
+            return
         if self.config.review == "top_fresh":
             self._review_top_fresh(day, t)
             return
@@ -1730,6 +1913,10 @@ class NotebookMixtureBrain:
                                  t)
             self._write_notebook(born)
             self._log_scratch(born, t, "birth:review")
+            if pop.size > pop.cap:      # the cap holds for births as for forks
+                victim = min((a for a in pop.agents if a != born.agent_id),
+                             key=lambda a: pop.agents[a].log_weight)
+                self._write_final_notebook(pop.retire(victim, t, "population cap"))
             break
         if born is None:
             self.reviews_failed += 1
@@ -1818,6 +2005,9 @@ class NotebookMixtureBrain:
             "reviews_failed": self.reviews_failed,
             "scratch_truncated": self.scratch_truncated,
             "invalid_forecasts": self.invalid_forecasts,
+            "unresolved_spots": self.unresolved_spots,
+            "unresolved_objects": self.unresolved_objects,
+            "unresolved_samples": self._unresolved_samples[:20],
             "looks": self.n_looks, "question_rounds": self.n_question_rounds,
             "final_weights": {a: round(w, 6) for a, w in pop.weights.items()},
             "agents": {a: {"parent": ag.parent_id, "generation": ag.generation,

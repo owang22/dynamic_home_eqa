@@ -77,6 +77,7 @@ class _Stub:
         self.script = list(script or [])
         self.carrier, self.carrier_room = carrier, carrier_room
         self.decide_action, self.decide_target = "answer", ""
+        self.note = "saw something"
 
     @staticmethod
     def _anchor(user: str) -> Optional[str]:
@@ -93,6 +94,8 @@ class _Stub:
                 else "question" if schema is nm.QUESTION_FORECAST_SCHEMA
                 else "look" if schema is nm.LOOK_FORECAST_SCHEMA
                 else "follow_up" if schema is nm.FOLLOWUP_SCHEMA
+                else "follow_up_append" if schema is nm.FOLLOWUP_APPEND_SCHEMA
+                else "condense" if schema is nm.CONDENSE_SCHEMA
                 else "fork" if schema is nm.FORK_SCHEMA
                 else "decide" if schema is nm.DECIDE_SCHEMA
                 else "birth" if schema is nm.BIRTH_SCHEMA else "other")
@@ -115,8 +118,9 @@ class _Stub:
                     for line in user.split("OBJECTS")[1].split("\n\n")[0]
                     .split("\n")[1:] if line.strip()]
             payload = {"objects": [{"object": o, "p": 0.5} for o in objs[:2]]}
-        elif kind == "follow_up":
-            payload = {"scratch": "saw something"}
+        elif kind in ("follow_up", "follow_up_append"):
+            payload = ({"note": self.note} if kind == "follow_up_append"
+                       else {"scratch": "saw something"})
             if self.rng.random() < self.fork_p:
                 a = self.rng.choice(self.anchors)
                 payload["fork"] = {"beliefs": f"anchor: {a}\nMoved my anchor.",
@@ -127,6 +131,8 @@ class _Stub:
         elif kind == "decide":
             payload = {"action": self.decide_action, "target": self.decide_target,
                        "why": "dispatcher says so", "note": "plan: save looks"}
+        elif kind == "condense":
+            payload = {"scratch": "condensed memory"}
         elif kind == "birth":
             payload = {"guess": "fresh guess",
                        "beliefs": f"anchor: {RECS[3]}\nFresh contrasting document."}
@@ -710,7 +716,9 @@ def test_scratch_versions_are_logged_at_birth_fork_and_follow_up(tmp_path):
     for r in rows:
         assert set(r) == {"agent", "t", "stamp", "origin", "words", "scratch"}
     followups = [r for r in rows if r["origin"] == "follow_up"]
-    assert all(r["scratch"] == "saw something" for r in followups)
+    # append mode: one dated line per look
+    assert all(r["scratch"].endswith(": saw something") for r in followups)
+    assert all(r["scratch"].startswith("d00 ") for r in followups)
 
 
 @needs_bank
@@ -818,7 +826,8 @@ def test_review_waits_for_enough_looks_and_spares_the_newborn(tmp_path):
     review = [e for e in events if e["event"] == "review"][-1]
     assert review["candidate"] == "a01" and review["retire"] is None
     assert not any(e["event"] == "retire" for e in events)
-    assert brain.population.size == n_before + 2 and brain.looks_since_review == 0
+    assert brain.population.size == min(n_before + 2, brain.population.cap)
+    assert brain.looks_since_review == 0
     newborn = [e for e in events if e["event"] == "birth" and e.get("origin") == "review"][-1]["agent"]
     # next cycle: two more looks; the newborn and the fork (born at the
     # review) are eligible now, a02 is still the lowest
@@ -899,3 +908,89 @@ def test_population_cap_from_config():
     stub = _Stub(anchors=("counter_k", "desk_o", "table_k", "shelf_o"))
     brain = _voi_brain(stub, population_cap=5)
     assert brain.population.cap == 5
+
+
+def test_append_follow_up_adds_one_dated_line_and_condenses_on_overflow(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o"))
+    brain = _voi_brain(stub, tmp_path)
+    assert brain.config.followup_mode == "append"
+    brain.decide("keys", 100)
+    _one_look(brain, {"a01": {"keys": 0.9}, "a02": {"keys": 0.1}})
+    a01 = brain.population.agents["a01"]
+    assert a01.notebook.scratch == "d00 Mon 00:01: saw something"
+    # the follow-up prompt asks for a note, not a rewrite; the caps are in the prompts
+    fu = [p for p in stub.prompts if "Add ONE dated line" in p]
+    assert fu and "at most 60 words" in fu[0]
+    qf = [p for p in stub.prompts if "REQUEST: where is keys" in p][0]
+    assert f"up to {nm.QUESTION_MAX_SPOTS} spots" in qf and "at most 15 words" in qf
+    assert nm.QUESTION_FORECAST_SCHEMA["properties"]["spots"]["maxItems"] == nm.QUESTION_MAX_SPOTS
+    assert nm.LOOK_FORECAST_SCHEMA["properties"]["objects"]["maxItems"] == nm.LOOK_MAX_OBJECTS
+    # a second look appends a second line
+    _one_look(brain, {"a01": {"keys": 0.9}, "a02": {"keys": 0.1}})
+    assert a01.notebook.scratch.count("saw something") == 2
+    # a note longer than the cap is cut to NOTE_MAX_WORDS words
+    stub.note = " ".join(["w"] * 200)
+    _one_look(brain, {"a01": {"keys": 0.9}, "a02": {"keys": 0.1}})
+    last = a01.notebook.scratch.splitlines()[-1]
+    assert len(last.split()) == nm.NOTE_MAX_WORDS + 3   # "d00 Mon 00:01:" + words
+    # near the cap, the next append triggers one condense call
+    a01.notebook.scratch = " ".join(["x"] * (nm.SCRATCH_MAX_WORDS - 5))
+    stub.note = "one more thing"
+    _one_look(brain, {"a01": {"keys": 0.9}, "a02": {"keys": 0.1}})
+    assert a01.notebook.scratch == "condensed memory"
+    calls = [json.loads(l) for l in (tmp_path / "calls.jsonl").read_text().splitlines()]
+    assert sum(1 for c in calls if c["type"] == "condense") == 1
+    rows = [json.loads(l) for l in (tmp_path / "scratch_versions.jsonl").read_text().splitlines()]
+    assert [r["agent"] for r in rows if r["origin"] == "follow_up_condensed"] == ["a01"]
+
+
+def test_resolve_id_maps_paraphrases_and_refuses_ambiguity():
+    ids = list(RECS)
+    rooms = dict(ROOMS)
+    assert nm.resolve_id("counter_k", ids, rooms) == "counter_k"
+    assert nm.resolve_id("Kitchen Counter", ids, rooms) == "counter_k"
+    assert nm.resolve_id("kitchen_counter_k", ids, rooms) == "counter_k"
+    assert nm.resolve_id("the desk", ids, rooms) == "desk_o"
+    assert nm.resolve_id("On Person", ids, rooms) == ON_PERSON
+    assert nm.resolve_id("office_counter", ids, rooms) is None      # wrong room
+    assert nm.resolve_id("kitchen", ids, rooms) is None             # a room
+    assert nm.resolve_id("", ids, rooms) is None
+
+
+def test_unresolved_spot_names_are_counted_not_silently_dropped(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o", "table_k", "shelf_o"), script=[
+        None,
+        {"spots": [{"spot": "Kitchen Counter", "p": 0.6}, {"spot": "garage", "p": 0.3},
+                   {"spot": "ON_PERSON", "p": 0.1}], "why": "x"},
+        {"spots": [{"spot": "the desk", "p": 0.9}], "why": "y"},
+    ])
+    stub.script[0] = {"documents": [{"guess": str(i), "beliefs": f"anchor: {a}"}
+                                    for i, a in enumerate(stub.anchors)]}
+    brain = _voi_brain(stub, tmp_path, parallel=1)
+    d = brain.decide("keys", 100)
+    row = json.loads((tmp_path / "forecasts.jsonl").read_text().splitlines()[-1])
+    a01, a02 = row["forecasts"]["a01"], row["forecasts"]["a02"]
+    assert a01["spots"] == {"counter_k": 0.6, ON_PERSON: 0.1} and a01["unresolved"] == ["garage"]
+    assert a02["spots"] == {"desk_o": 0.9} and a02["unresolved"] == []
+    assert brain.unresolved_spots == 1 and brain.diagnostics()["unresolved_samples"] == ["garage"]
+    # the id rule is in the system prompt and the request names an example id
+    assert "exact ids" in nm.SYSTEM_PROMPT
+    assert "exact ids from ROOMS AND RECEPTACLES" in [p for p in stub.prompts if "REQUEST: where is keys" in p][0]
+
+
+def test_fixed_population_never_revises(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o", "table_k", "shelf_o"), fork_p=1.0)
+    cfg = dataclasses.replace(nm.NOTEBOOK_FIXED)
+    brain = NotebookMixtureBrain(stub, log_dir=tmp_path, config=cfg)
+    brain.reset(_context())
+    brain.decide("keys", 100)
+    _one_look(brain, {"a01": {"keys": 0.9}, "a02": {"keys": 0.1},
+                      "a03": {"keys": 0.3}, "a04": {"keys": 0.2}})
+    brain._end_of_day_review(0)
+    calls = [json.loads(l) for l in (tmp_path / "calls.jsonl").read_text().splitlines()]
+    assert {c["type"] for c in calls} == {"initial", "question_forecast"}
+    assert brain.population.size == 4 and brain.population.n_forks == 0
+    events = [json.loads(l) for l in (tmp_path / "population.jsonl").read_text().splitlines()]
+    assert events[-1]["event"] == "review" and events[-1]["skipped"] == "fixed population"
+    w = brain.population.weights
+    assert w["a01"] > w["a03"] > w["a02"]      # reweighted by the look, nothing else

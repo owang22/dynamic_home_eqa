@@ -1,0 +1,6 @@
+# a06 — scratch memory, final (retired d00 Mon 06:16 (population cap); final weight 0.0343)
+
+d00 Mon 06:06: d00 Mon 06:06: nightstand_b1 held book_marisol, glasses_marisol. No residents. My forecast missed book_marisol (p~0) and over-weighted keys/wallet/phone. Glasses were there (p=0.05). Update: book_marisol is a stable nightstand_b1 item; keys/wallet/phone less likely there at 06:06.
+d00 Mon 06:06: d00 Mon 06:06: desk_b1 empty, no residents. Confirms Marisol is not at desk_b1 at 06:06. My forecast over-weighted desk_b1 for personal items; they are more likely in nightstand_b1 or ON_PERSON at this hour. Adjust future forecasts to lower desk_b1 probability for Marisol's items during early morning.
+d00 Mon 06:06: d00 Mon 06:06: bed_b1 empty, no residents. Confirms Marisol is not in bed at 06:06. Combined with empty nightstand/desk, Marisol is likely ON_PERSON or OUT_OF_HOUSE. Adjust forecasts to lower bedroom_1 receptacle probabilities for Marisol's personal items during early morning.
+d00 Mon 06:16: d00 Mon 06:16: counter_k1 held 12 items incl. Marisol's charger, mug, notebook, pen, water_bottle, phone_nico/talia. resident_1 present. My forecast missed 10/12 items (score -51.27). Belief 7 (personal items in nightstand/desk) is contradicted for early morning; items cluster in kitchen. resident_1 is active in kitchen at 06:16.

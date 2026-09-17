@@ -1,0 +1,5 @@
+# a48 — scratch memory, final (retired d09 Wed 23:59 (review: lowest at end of day); final weight 0.2382)
+
+d08-d09 Patterns: counter_k1 is the stable active anchor for mug_mara and tablet_mara; lunchbox_mara is transient, often absent or moved to sink_k1. sink_k1 consistently holds watering_can_mara (invariant) and frequently accumulates plates (plate_shared_1/2) and lunchbox_mara during cleaning/prep phases. entry_table_e1 is the anchor for wallet_mara, keys_mara, and bowl_shared_1. nightstand_b1 holds phone_mara. bathroom_shelf_ba1 holds hairbrush_mara, makeup_kit_mara, medication_bottle_mara. resident_1 is often present in kitchen during active phases but carries nothing ('empty hands').
+
+d09 Wed 06:12: sink_k1 holds lunchbox_mara, plate_shared_1, watering_can_mara; resident_1 present. Confirms watering_can_mara invariant. lunchbox_mara remains in sink (predicted 0.85), consistent with 06:11. plate_shared_1 present (0.75). No deviations. Score -1.19 (above panel avg -1.51). Weight 0.475, rank 1.

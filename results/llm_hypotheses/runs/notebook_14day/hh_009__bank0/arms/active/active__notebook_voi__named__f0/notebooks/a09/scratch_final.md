@@ -1,0 +1,8 @@
+# a09 — scratch memory, final (retired d01 Tue 05:19 (population cap); final weight 0.0486)
+
+d00 Mon 05:43: d00 Mon 05:43 entry_hook_e1: backpack_elias, backpack_noa, backpack_priya, jacket_elias, jacket_priya, keys_priya, wallet_priya. No residents. All three backpacks and both adult jackets/keys/wallets clustered here at dawn, contradicting 'bedroom home' belief for these items.
+d00 Mon 05:43: d00 Mon 05:43 desk_b1: charger_elias, headphones_elias, laptop_elias, notebook_elias, pen_elias; resident_1 present. Elias's tech cluster is at desk_b1, not entry_hook_e1. Entry holds only carry-aways (backpacks/jackets/keys).
+d00 Mon 05:43: d00 Mon 05:43: resident_1 (Elias) in bedroom_1 carrying nothing. Confirms tech cluster at desk_b1 and carry-aways at entry_hook_e1. Elias is home but not carrying items, consistent with 'desk/entry' separation. No belief change.
+d00 Mon 05:55: d00 Mon 05:55 desk_b1: charger_elias, headphones_elias, laptop_elias, notebook_elias, pen_elias; resident_1 present. Confirms tech cluster location. Score -0.96 due to low prior on absent items (mug, water, phone). No belief change; patterns hold.
+d00 Mon 05:55: d00 Mon 05:55: resident_1 (Elias) in bedroom_1 carrying nothing. Confirms tech cluster at desk_b1 and carry-aways at entry_hook_e1. Elias is home but not carrying items, consistent with 'desk/entry' separation. No belief change.
+d00 Mon 05:55: d00 Mon 05:55 nightstand_b1: wallet_elias; resident_1 present. Elias's wallet is at nightstand_b1, not entry_hook_e1. Contradicts 'carry-aways at entry' belief for wallets. Score -5.96 due to low prior on wallet and high prior on absent tech items.
