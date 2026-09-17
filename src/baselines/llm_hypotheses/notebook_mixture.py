@@ -63,8 +63,19 @@ sequential; only one runs at a time.
 (every beliefs document, with parent and why), ``looks.jsonl``,
 ``forecasts.jsonl``, ``population.jsonl``, ``calls.jsonl``,
 ``scratch_versions.jsonl`` (every scratch memory an agent ever held,
-with the instant and the event that wrote it), and the brain's
+with the instant and the event that wrote it), ``decisions.jsonl``
+(every dispatcher briefing and reply, ``llm`` look rule), and the brain's
 :meth:`~NotebookMixtureBrain.diagnostics` for ``diagnostics.json``.
+
+**Speed** (2026-09-16). The per-agent calls of one round are independent
+(each agent sees only its own notebook), so ``parallel`` of them are
+sent at once and vLLM decodes them together (continuous batching: a
+27B model's decode is bound by reading the weights, which one batch
+does once for every stream); replies are accounted and applied in
+agent order, so logs and forks are as sequential. An agent under
+``skip_below`` weight gives no question forecast (it contributes
+nothing to the mixture) but is still graded at every look, so it can
+recover. Scratch memory is capped at 600 words (was 800).
 
 **Variants** (:class:`NotebookConfig`, selected by arm kind). The
 description above is ``notebook_mixture``, the first run's design. The
@@ -87,17 +98,38 @@ revisions answer that:
   day without looks, and otherwise the TOP agent condenses its scratch
   into a revised BELIEFS (a fork with half of a real weight) and the
   lowest agent is retired in favour of one fresh contrasting document
-  born at the equal share ``1/N`` (fair entry).
+  born at the equal share ``1/N`` (fair entry). Two rules added after
+  the first ``notebook_voi`` attempt (every agent forked at the first
+  look because a log score is always negative and read as failure, so
+  the population hit 10 in three looks): a follow-up fork is accepted
+  only from an agent that scored below the panel's weighted-average
+  score on that look and has not forked today (``fork_gate``); the
+  review runs at a day's end only once ``review_every_looks`` looks
+  have accumulated since the last review, and never retires an agent
+  born since that review.
 * ``notebook_llmDecide``: ``notebook_voi`` with the look decision made
   by one further LLM call per round, the dispatcher, which reads the
   question, the clock, the looks and questions left today, the mixture
-  forecast, the agents' split, the value-of-information verdict and
-  this question's looks so far, and returns look-or-answer with a
-  target and a reason. The VoI number is advice; the dispatcher decides.
+  forecast, the agents' split, the one-step gain of each candidate
+  look, this question's looks so far, TODAY'S LEDGER (every decision so
+  far today with its gain and what the look found) and its own NOTE (a
+  short memory it rewrites on every call), and returns look-or-answer
+  with a target, a reason and the new note. No threshold is given: the
+  first run showed the dispatcher agreeing with the stated 0.05 rule
+  on 37 of 37 decisions and citing it in every reason.
+
+Second revision (2026-09-16, after both variants ran at 0.61 / 0.62):
+the effective number of agents was ~2 throughout (top two held 83-94%
+of the weight) while ten notebooks paid for forecasts and follow-ups,
+and both arms spent the day's eight looks within the first hour (one
+question took all eight). So: ``population_cap`` 5; follow-ups only for
+agents at ``followup_min_weight`` or in the top 3 (everyone is still
+graded at every look); ``max_looks_per_question`` 3.
 """
 
 from __future__ import annotations
 
+import concurrent.futures
 import json
 import math
 import pathlib
@@ -129,13 +161,13 @@ the only correction there is: everything else stays uncorrected so
 overreactions are visible."""
 
 BELIEFS_MAX_WORDS = 1200
-SCRATCH_MAX_WORDS = 800
+SCRATCH_MAX_WORDS = 600   # was 800 until 2026-09-16: the follow-up was the costliest call
 POPULATION_CAP = 10
 INITIAL_AGENTS = 4
 
 QUESTION_FORECAST_MAX_TOKENS = 1200
 LOOK_FORECAST_MAX_TOKENS = 1200
-FOLLOWUP_MAX_TOKENS = 6000
+FOLLOWUP_MAX_TOKENS = 4000
 FORK_MAX_TOKENS = 4000
 INITIAL_MAX_TOKENS = 14000
 
@@ -157,13 +189,25 @@ class NotebookConfig:
     voi_lambda: float = 0.05
     use_it_or_lose_it: bool = False
     questions_per_day: float = 24.0  # for use-it-or-lose-it and the dispatcher
+    fork_gate: bool = False          # follow-up forks only from below-average scorers, once a day
+    review_every_looks: int = 0      # 0: nightly; else at day end once this many looks since the last review
+    skip_below: float = 0.0          # agents under this weight give no question forecast (looks still grade them)
+    parallel: int = 1                # per-agent LLM calls in flight at once (vLLM batches them)
+    population_cap: int = POPULATION_CAP
+    followup_min_weight: float = 0.0  # follow-ups only for agents at this weight or in the top 3 (everyone is graded)
+    max_looks_per_question: int = 0  # 0: no cap
+    tell_questions_per_day: bool = True  # False: the dispatcher learns the day's length from yesterday's ledger
     label: str = "notebook_mixture"
 
 
 NOTEBOOK_VOI = NotebookConfig(look_rule="voi", beta=0.3, invalid_look="neutral",
                               review="top_fresh", use_it_or_lose_it=True,
+                              fork_gate=True, review_every_looks=12,
+                              skip_below=0.01, parallel=8, population_cap=5,
+                              followup_min_weight=0.05, max_looks_per_question=3,
                               label="notebook_voi")
 NOTEBOOK_LLM_DECIDE = dataclasses.replace(NOTEBOOK_VOI, look_rule="llm",
+                                          tell_questions_per_day=False,
                                           label="notebook_llmDecide")
 CONFIGS = {"notebook_mixture": NotebookConfig(), "notebook_voi": NOTEBOOK_VOI,
            "notebook_llmDecide": NOTEBOOK_LLM_DECIDE}
@@ -216,8 +260,9 @@ BIRTH_SCHEMA = {
 DECIDE_SCHEMA = {
     "type": "object",
     "properties": {"action": {"type": "string", "enum": ["look", "answer"]},
-                   "target": {"type": "string"}, "why": {"type": "string"}},
-    "required": ["action", "why"],
+                   "target": {"type": "string"}, "why": {"type": "string"},
+                   "note": {"type": "string"}},
+    "required": ["action", "why", "note"],
 }
 DECIDE_MAX_TOKENS = 1500
 BIRTH_MAX_TOKENS = 8000
@@ -247,7 +292,8 @@ Your forecasts are scored by the log of the probability you gave to what the rob
 {MISPLACEMENT_SENTENCE}"""
 
 
-DISPATCH_SYSTEM_PROMPT = f"""You are the dispatcher of a home robot. The robot is asked, many times a day, where one object is right now. A panel of agents has just given its forecast; you decide whether the robot answers now or first spends one of today's looks (opening one receptacle, or checking one resident it has listed). Looks are the panel's only source of learning: a look grades every agent on everything it predicted, so a look also pays off on later questions. Unspent looks are lost at midnight. A one-step value-of-information verdict is given as advice: it is the gain in the chance of answering this question right, and nothing more. Weigh it against the time of day, the looks and questions left, and what earlier looks on this question showed. Reply as JSON: {{"action": "look" | "answer", "target": "<receptacle or resident id, for a look>", "why": "<one sentence>"}}.
+DISPATCH_NOTE_MAX_WORDS = 120
+DISPATCH_SYSTEM_PROMPT = f"""You are the dispatcher of a home robot. The robot is asked, many times a day, where one object is right now. A panel of agents has just given its forecast; you decide whether the robot answers now or first spends one of today's looks (opening one receptacle, or checking one resident it has listed). Looks are the panel's only source of learning: a look grades every agent on everything it predicted, so a look also pays off on later questions. Unspent looks are lost at midnight, and a day has far more questions than looks, so looks are rationed across the day: what a gain is worth depends on what other gains this day is likely to offer. For each candidate look you are told the one-step gain: how much the chance of answering THIS question right would rise. You also see today's ledger (every decision so far today and what each look found) and your own NOTE, which is your only memory: rewrite it on every call (at most {DISPATCH_NOTE_MAX_WORDS} words) with what gains have been typical, when looks paid off, and how you plan to spend the rest of the day. Reply as JSON: {{"action": "look" | "answer", "target": "<receptacle or resident id, for a look>", "why": "<one sentence>", "note": "<your rewritten note>"}}.
 
 {MISPLACEMENT_SENTENCE}"""
 
@@ -341,6 +387,7 @@ class NotebookAgent:
     retired_t: Optional[int] = None
     retired_reason: str = ""
     n_forks: int = 0
+    last_fork_day: int = -1
 
     @property
     def live(self) -> bool:
@@ -557,6 +604,8 @@ class NotebookMixtureBrain:
                  config: NotebookConfig = NotebookConfig()) -> None:
         self.client = client
         self.config = config
+        if config.population_cap:
+            cap = config.population_cap
         self._omap = dict(omap or {})
         self._rmap = dict(rmap or {})
         self._cmap = dict(cmap or {})
@@ -593,6 +642,9 @@ class NotebookMixtureBrain:
         self.n_looks = 0
         self.n_question_rounds = 0
         self.looks_per_day: Dict[int, int] = {}
+        self.looks_since_review = 0
+        self.last_review_t = -1
+        self.forks_gated = 0
         self.decide_corrected = 0
         self.decisions: List[Dict[str, Any]] = []
         self._question_key: Optional[Tuple[str, int]] = None
@@ -601,7 +653,11 @@ class NotebookMixtureBrain:
         self._seen_lines: List[str] = []           # this question's results
         self._pending_look: Optional[Dict[str, Any]] = None
         self._invalid_look_agents: List[str] = []
+        self._skipped_last: List[str] = []
         self._today_look_lines: List[str] = []
+        self._dispatch_ledger: List[Dict[str, Any]] = []   # today's decisions
+        self._dispatch_note: str = ""                       # the dispatcher's memory
+        self._days_seen: List[Tuple[int, int, int]] = []    # (day, questions, looks)
         self._last: Optional[Dict[str, Any]] = None
         self._finished = False
         if self._log_dir:
@@ -713,18 +769,27 @@ class NotebookMixtureBrain:
 
     # ---------------------------------------------------------------- LLM
 
-    def _call(self, call_type: str, agent_id: Optional[str], user: str,
-              schema: Mapping[str, Any], max_tokens: int, t: int,
-              seed_offset: int = 0, system: str = SYSTEM_PROMPT
-              ) -> Tuple[Optional[Dict[str, Any]], Dict[str, Any]]:
-        """One sequential LLM call. Returns ``(parsed JSON or None,
-        row)`` and accounts it under ``call_type`` and the day."""
+    def _generate(self, system: str, user: str, schema: Mapping[str, Any],
+                  max_tokens: int, seed_offset: int) -> Tuple[Dict[str, Any], float]:
+        """The network part of a call (thread-safe): the client's row and
+        the wall seconds it took."""
         started = time.monotonic()
         row = self.client.generate(system, user,
                                    seed=self._seed + seed_offset,
                                    temperature=self._temperature,
                                    max_tokens=max_tokens, schema=schema)
-        elapsed = time.monotonic() - started
+        return row, time.monotonic() - started
+
+    def _call(self, call_type: str, agent_id: Optional[str], user: str,
+              schema: Mapping[str, Any], max_tokens: int, t: int,
+              seed_offset: int = 0, system: str = SYSTEM_PROMPT,
+              done: Optional[Tuple[Dict[str, Any], float]] = None
+              ) -> Tuple[Optional[Dict[str, Any]], Dict[str, Any]]:
+        """One LLM call: generate (unless ``done`` carries a reply already
+        fetched in parallel), then account it under ``call_type`` and the
+        day, in order. Returns ``(parsed JSON or None, row)``."""
+        row, elapsed = done if done is not None else self._generate(
+            system, user, schema, max_tokens, seed_offset)
         seconds = ((row.get("generation_seconds") or 0.0) if row.get("cached")
                    else elapsed)
         self.calls += 1
@@ -765,6 +830,27 @@ class NotebookMixtureBrain:
                               f"{system}\n\n## user\n\n{user}\n\n"
                               f"## reply\n\n{row.get('payload')}\n")
         return parsed, row
+
+    def _calls(self, call_type: str, jobs: Sequence[Tuple[str, str]],
+               schema: Mapping[str, Any], max_tokens: int, t: int,
+               system: str = SYSTEM_PROMPT
+               ) -> Dict[str, Optional[Dict[str, Any]]]:
+        """``jobs`` = ``(agent_id, user)`` pairs, fetched ``parallel`` at a
+        time and accounted in the given order. Returns parsed by agent."""
+        n = max(1, int(self.config.parallel))
+        fetched: Dict[str, Tuple[Dict[str, Any], float]] = {}
+        if n > 1 and len(jobs) > 1:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=n) as pool:
+                futures = {a: pool.submit(self._generate, system, user, schema,
+                                          max_tokens, 0) for a, user in jobs}
+                for a, fut in futures.items():
+                    fetched[a] = fut.result()
+        out: Dict[str, Optional[Dict[str, Any]]] = {}
+        for a, user in jobs:
+            parsed, _ = self._call(call_type, a, user, schema, max_tokens, t,
+                                   done=fetched.get(a))
+            out[a] = parsed
+        return out
 
     # ----------------------------------------------------------- lifecycle
 
@@ -818,10 +904,13 @@ class NotebookMixtureBrain:
             return
         if self.day >= 0:
             self._end_of_day_review(self.day)
+        if self.day >= 0:
+            self._days_seen.append((self.day, self.asked_today, self.looks_today))
         self.day = day
         self.spent_today = 0.0
         self.asked_today = 0
         self.looks_today = 0
+        self._dispatch_ledger = []
         self.budget_exhausted_at.setdefault(day, None)
 
     # ----------------------------------------------------------- forecasts
@@ -833,15 +922,23 @@ class NotebookMixtureBrain:
         ``carrier_room``, ``why``, ``raw`` (the spots as given)."""
         spots = self._spots()
         out: Dict[str, Dict[str, Any]] = {}
-        for agent_id in list(self.population.agents):
+        weights = self.population.weights
+        asked = [a for a in self.population.agents
+                 if weights[a] >= self.config.skip_below]
+        if not asked:
+            asked = [self.population.top()]
+        self._skipped_last = [a for a in self.population.agents if a not in asked]
+        jobs = []
+        for agent_id in asked:
             agent = self.population.agents[agent_id]
-            user = "\n\n".join([self._household_block(),
-                                self._notebook_block(agent),
-                                self._now_block(t),
-                                self._question_request(object_id)])
-            parsed, _ = self._call("question_forecast", agent_id, user,
-                                   QUESTION_FORECAST_SCHEMA,
-                                   QUESTION_FORECAST_MAX_TOKENS, t)
+            jobs.append((agent_id, "\n\n".join([
+                self._household_block(), self._notebook_block(agent),
+                self._now_block(t), self._question_request(object_id)])))
+        replies = self._calls("question_forecast", jobs,
+                              QUESTION_FORECAST_SCHEMA,
+                              QUESTION_FORECAST_MAX_TOKENS, t)
+        for agent_id in asked:
+            parsed = replies[agent_id]
             given: Dict[str, float] = {}
             for item in (parsed or {}).get("spots", []) or []:
                 if not isinstance(item, dict):
@@ -874,15 +971,16 @@ class NotebookMixtureBrain:
         """One call per live agent, before the look is revealed:
         ``agent -> {real object: p}`` (objects left out are absent)."""
         out: Dict[str, Dict[str, float]] = {}
+        jobs = []
         for agent_id in list(self.population.agents):
             agent = self.population.agents[agent_id]
-            user = "\n\n".join([self._household_block(),
-                                self._notebook_block(agent),
-                                self._now_block(t),
-                                self._look_request(look)])
-            parsed, _ = self._call("look_forecast", agent_id, user,
-                                   LOOK_FORECAST_SCHEMA,
-                                   LOOK_FORECAST_MAX_TOKENS, t)
+            jobs.append((agent_id, "\n\n".join([
+                self._household_block(), self._notebook_block(agent),
+                self._now_block(t), self._look_request(look)])))
+        replies = self._calls("look_forecast", jobs, LOOK_FORECAST_SCHEMA,
+                              LOOK_FORECAST_MAX_TOKENS, t)
+        for agent_id, _user in jobs:
+            parsed = replies[agent_id]
             given: Dict[str, float] = {}
             for item in (parsed or {}).get("objects", []) or []:
                 if not isinstance(item, dict):
@@ -972,6 +1070,7 @@ class NotebookMixtureBrain:
                               "why": f["why"], "invalid": f["invalid"]}
                           for a, f in forecasts.items()},
             "mixture": {s: round(p, 6) for s, p in mixture.items() if p > 1e-6},
+            "skipped": list(self._skipped_last),
             "answer": answer, "action": decision["action"],
             "reason": decision.get("reason"), "draw": decision.get("draw"),
             "voi": decision.get("voi"), "dispatch": decision.get("dispatch"),
@@ -1015,6 +1114,10 @@ class NotebookMixtureBrain:
                        mixture: Mapping[str, float], t: int) -> None:
         """The ``voi`` rule, and the ``llm`` rule that reads its verdict."""
         cfg = self.config
+        if (cfg.max_looks_per_question
+                and len(self._sensed_this_question) >= cfg.max_looks_per_question):
+            decision["reason"] = f"question look cap {cfg.max_looks_per_question}"
+            return
         cands = self._look_candidates(forecasts)
         if not cands:
             decision["reason"] = "no legal look"
@@ -1022,7 +1125,11 @@ class NotebookMixtureBrain:
         voi = value_of_information(mixture, list(cands))
         rate = {s: voi[s] / cands[s]["cost"] for s in cands}
         best = max(rate, key=lambda s: (rate[s], mixture.get(s, 0.0)))
-        questions_left = max(0.0, cfg.questions_per_day - self.asked_today)
+        if cfg.tell_questions_per_day:
+            per_day = cfg.questions_per_day
+        else:
+            per_day = float(self._days_seen[-1][1]) if self._days_seen else 0.0
+        questions_left = max(0.0, per_day - self.asked_today)
         spare = (cfg.use_it_or_lose_it and voi[best] > 0.0
                  and self._remaining() >= questions_left + 1.0)
         verdict = {"best": best, "voi": round(voi[best], 4),
@@ -1067,21 +1174,40 @@ class NotebookMixtureBrain:
                     else self.rec(s))
             voi_lines.append(f"  look at {name}: chance of a right answer "
                              f"{p_now:.0%} -> {min(1.0, p_now + v):.0%} "
-                             f"(gain {v:.3f}; the rule other robots use looks "
-                             f"when the gain is at least {cfg.voi_lambda:g})")
+                             f"(gain {v:.3f})")
         seen = ("\n".join(f"  {line}" for line in self._seen_lines)
                 or "  nothing yet")
         legal = ", ".join(
             (self.rec(c["resident"]) if "resident" in c else self.rec(s))
             for s, c in cands.items())
+        ledger = "\n".join(
+            f"  {e['stamp'][4:]} {self.obj(e['object'])}: sure {e['p_now']:.0%}, "
+            f"best gain {e['gain']:+.3f} -> "
+            + (f"looked at {e['target']}: {e.get('found', 'result pending')}"
+               if e['action'] == 'look' else "answered")
+            for e in self._dispatch_ledger) or "  (first decision of the day)"
+        cap_line = (f" At most {cfg.max_looks_per_question} looks per question; "
+                    f"this question has used {len(self._sensed_this_question)}."
+                    if cfg.max_looks_per_question else "")
         user = "\n\n".join([
             f"QUESTION: where is {self.obj(decision['object'])} right now? "
             f"Asked at {stamp(t)}; the robot is in "
             f"{self.context.robot_position.room or 'an unknown room'}.",
             f"TODAY: looks left {self._remaining():g} of "
             f"{self.context.budget_per_day}; questions so far today "
-            f"{self.asked_today} of about {cfg.questions_per_day:g}; looks "
-            f"used today {self.looks_today}.",
+            f"{self.asked_today}"
+            + (f" of about {cfg.questions_per_day:g}" if cfg.tell_questions_per_day
+               else "")
+            + f"; looks used today {self.looks_today}.{cap_line}"
+            + ("" if cfg.tell_questions_per_day else
+               (f"\nPREVIOUS DAYS: " + "; ".join(
+                   f"{WEEKDAY_NAMES[d % 7]} {q} questions, {l} looks used"
+                   for d, q, l in self._days_seen[-7:])
+                if self._days_seen else
+                "\nPREVIOUS DAYS: none yet - how many questions a day brings "
+                "is for you to find out.")),
+            f"TODAY'S LEDGER:\n{ledger}",
+            f"YOUR NOTE:\n{self._dispatch_note or '(empty)'}",
             "PANEL FORECAST (share of belief): " + ", ".join(
                 f"{self.rec(s)} {p:.0%}" for s, p in top) +
             f".\nAGENTS' TOP SPOTS (by credibility): {split_lines}.",
@@ -1092,6 +1218,14 @@ class NotebookMixtureBrain:
             "Decide: answer now, or look (name the target). One sentence why."])
         parsed, _ = self._call("decide", None, user, DECIDE_SCHEMA,
                                DECIDE_MAX_TOKENS, t, system=DISPATCH_SYSTEM_PROMPT)
+        # every briefing and reply, verbatim, for the replay
+        self._write_row("decisions.jsonl", {
+            "t": t, "stamp": stamp(t), "object": decision["object"],
+            "round": decision["round"], "briefing": user, "reply": parsed})
+        note = str((parsed or {}).get("note", "")).strip()
+        if note:
+            words = note.split()
+            self._dispatch_note = " ".join(words[:DISPATCH_NOTE_MAX_WORDS])
         action = str((parsed or {}).get("action", "answer")).strip().lower()
         why = str((parsed or {}).get("why", ""))[:300]
         target = str((parsed or {}).get("target", "")).strip()
@@ -1106,13 +1240,20 @@ class NotebookMixtureBrain:
                 chosen = verdict["best"]
                 self.decide_corrected += 1
                 decision["dispatch_corrected"] = target
-        decision["dispatch"] = {"action": action, "target": target, "why": why}
+        decision["dispatch"] = {"action": action, "target": target, "why": why,
+                                "note": self._dispatch_note}
+        entry = {"stamp": stamp(t), "object": decision["object"],
+                 "p_now": p_now, "gain": verdict["voi"],
+                 "action": "look" if chosen is not None else "answer"}
         if chosen is not None:
             decision.update({k: v for k, v in cands[chosen].items() if k != "cost"})
             decision["action"] = "sense"
             decision["reason"] = f"dispatcher: {why}"
+            entry["target"] = self.rec(cands[chosen].get("resident")
+                                       or cands[chosen]["receptacle"])
         else:
             decision["reason"] = f"dispatcher: {why}"
+        self._dispatch_ledger.append(entry)
 
     def choose_look(self, forecast: Mapping[str, Any]) -> Optional[Dict[str, Any]]:
         """The look one drawn agent picks from its top spot, or None when
@@ -1220,6 +1361,8 @@ class NotebookMixtureBrain:
                 else "receptacle") != target:
             return
         self._today_look_lines.append(line)
+        if self._dispatch_ledger and self._dispatch_ledger[-1]["action"] == "look":
+            self._dispatch_ledger[-1]["found"] = inside
         self._look_procedure(pending, target, room, contents, listed, line, t)
 
     def _look_procedure(self, look: Dict[str, Any], target: str,
@@ -1242,6 +1385,7 @@ class NotebookMixtureBrain:
                                                    beta=self.config.beta)
         self.n_looks += 1
         self.looks_today += 1
+        self.looks_since_review += 1
         self.looks_per_day[self.day] = self.looks_per_day.get(self.day, 0) + 1
         self._write_row("looks.jsonl", {
             "t": t, "stamp": stamp(t), "n": self.n_looks,
@@ -1253,22 +1397,49 @@ class NotebookMixtureBrain:
                           for a, f in forecasts.items()},
             "scores": {a: round(s, 4) for a, s in scores.items()},
             "beta": self.config.beta, "invalid": invalid,
+            "follow_ups": self._follow_up_set(after),
             "neutral_scored": bool(invalid and self.config.invalid_look == "neutral"),
             "weights_before": {a: round(w, 6) for a, w in before.items()},
             "weights_after": {a: round(w, 6) for a, w in after.items()}})
         self._flush_population_events()
         # Follow-ups, one per agent alive at the look (forks born in this
         # round get no follow-up of their own).
+        wsum = sum(before.get(a, 0.0) for a in scores) or 1.0
+        panel_avg = sum(before.get(a, 0.0) * scores[a] for a in scores) / wsum
+        jobs: List[Tuple[str, str, bool]] = []
+        active = self._follow_up_set(after)
         for agent_id in list(forecasts):
-            if agent_id in self.population.agents:
-                self._follow_up(agent_id, look, line, forecasts[agent_id],
-                                scores[agent_id], t,
-                                blank=agent_id in invalid)
+            if agent_id in self.population.agents and agent_id in active:
+                user, may_fork = self._follow_up_prompt(
+                    agent_id, line, forecasts[agent_id], scores[agent_id],
+                    blank=agent_id in invalid, panel_avg=panel_avg,
+                    weight_before=before.get(agent_id, 0.0), all_scores=scores)
+                jobs.append((agent_id, user, may_fork))
+        replies = self._calls("follow_up", [(a, u) for a, u, _ in jobs],
+                              FOLLOWUP_SCHEMA, FOLLOWUP_MAX_TOKENS, t)
+        for agent_id, user, may_fork in jobs:
+            self._apply_follow_up(agent_id, replies[agent_id], user, may_fork,
+                                  scores[agent_id], panel_avg, t)
         self._flush_population_events()
 
-    def _follow_up(self, agent_id: str, look: Mapping[str, Any], line: str,
-                   forecast: Mapping[str, float], score: float, t: int,
-                   blank: bool = False) -> None:
+    def _follow_up_set(self, weights: Mapping[str, float]) -> List[str]:
+        """Agents that get a follow-up after a look: at
+        ``followup_min_weight`` or in the top 3 by weight (0: everyone)."""
+        thr = self.config.followup_min_weight
+        if not thr:
+            return list(self.population.agents)
+        ranked = sorted(self.population.agents, key=lambda a: -weights.get(a, 0.0))
+        return [a for a in ranked if weights.get(a, 0.0) >= thr or ranked.index(a) < 3]
+
+    def _follow_up_prompt(self, agent_id: str, line: str,
+                          forecast: Mapping[str, float], score: float,
+                          blank: bool = False,
+                          panel_avg: Optional[float] = None,
+                          weight_before: Optional[float] = None,
+                          all_scores: Optional[Mapping[str, float]] = None
+                          ) -> Tuple[str, bool]:
+        """The follow-up prompt for one agent after a look, and whether a
+        fork from it would be accepted (the gate)."""
         agent = self.population.agents[agent_id]
         given = ", ".join(f"{self.obj(o)} {p:.2f}" for o, p in forecast.items()) \
             or "(nothing listed)"
@@ -1285,6 +1456,38 @@ class NotebookMixtureBrain:
         if self.config.beta != 1.0:
             score_line += (f" Weights move by {self.config.beta:g} times the "
                            f"score.")
+        gate = self.config.fork_gate
+        may_fork = True
+        if gate:
+            below = panel_avg is not None and score < panel_avg
+            may_fork = below and agent.last_fork_day != self.day
+        if all_scores:
+            board = ", ".join(
+                f"{a} {sc:.2f}{' (you)' if a == agent_id else ''}"
+                for a, sc in sorted(all_scores.items(), key=lambda kv: -kv[1]))
+            score_line += f"\nPANEL SCORES on this look, best first: {board}."
+        if panel_avg is not None:
+            moved = ("" if weight_before is None else
+                     (" You gained credibility on it." if w > weight_before + 1e-9
+                      else " You lost credibility on it." if w < weight_before - 1e-9
+                      else ""))
+            score_line += (f" Scores are log probabilities, so every score is "
+                           f"negative; the panel's average on this look was "
+                           f"{panel_avg:.2f}, and yours is "
+                           f"{'above' if score >= panel_avg else 'below'} it."
+                           f"{moved}")
+        if gate:
+            fork_text = (
+                "Scratch memory is for detail and dated observations; a FORK is "
+                "for a belief this look CONTRADICTED. " +
+                ("You may propose a FORK (new BELIEFS as a complete rewrite of "
+                 "yours, plus why)." if may_fork else
+                 "You scored at or above the panel's average on this look, or "
+                 "have already forked today, so no fork this time: rewrite "
+                 "SCRATCH MEMORY only."))
+        else:
+            fork_text = ("You may propose a FORK (new BELIEFS as a complete "
+                         "rewrite of yours, plus why).")
         user = "\n\n".join([
             self._household_block(), self._notebook_block(agent),
             f"RESULT OF THE LOOK\n{line}\n"
@@ -1293,20 +1496,32 @@ class NotebookMixtureBrain:
             f"YOUR WEIGHT is now {w:.3f}, rank {rank} of "
             f"{self.population.size}.",
             f"You may rewrite your SCRATCH MEMORY (return its full new text; "
-            f"return the current text to keep it as is), and you may propose "
-            f"a FORK (new BELIEFS as a complete rewrite of yours, plus why). "
+            f"return the current text to keep it as is). {fork_text} "
             f"Reply as JSON: {{\"scratch\": \"...\", \"fork\": {{\"beliefs\": "
             f"\"...\", \"why\": \"...\"}}}}; leave fork out to keep your "
             f"beliefs as they are."])
-        parsed, _ = self._call("follow_up", agent_id, user, FOLLOWUP_SCHEMA,
-                               FOLLOWUP_MAX_TOKENS, t)
-        if parsed is None:
+        return user, may_fork
+
+    def _apply_follow_up(self, agent_id: str, parsed: Optional[Dict[str, Any]],
+                         user: str, may_fork: bool, score: float,
+                         panel_avg: Optional[float], t: int) -> None:
+        if parsed is None or agent_id not in self.population.agents:
             return
+        agent = self.population.agents[agent_id]
         self._apply_scratch(agent, str(parsed.get("scratch", "")), user, t)
         fork = parsed.get("fork")
         if isinstance(fork, dict) and str(fork.get("beliefs", "")).strip():
-            self._apply_fork(agent_id, str(fork["beliefs"]),
-                             str(fork.get("why", "")), t, "follow_up")
+            if not may_fork:
+                self.forks_gated += 1
+                self.population.events.append(
+                    {"t": t, "event": "fork_gated", "parent": agent_id,
+                     "score": round(score, 4),
+                     "panel_avg": round(panel_avg, 4) if panel_avg is not None else None})
+                return
+            child = self._apply_fork(agent_id, str(fork["beliefs"]),
+                                     str(fork.get("why", "")), t, "follow_up")
+            if child is not None:
+                agent.last_fork_day = self.day
 
     def _apply_scratch(self, agent: NotebookAgent, text: str, user: str,
                        t: int) -> None:
@@ -1424,27 +1639,43 @@ class NotebookMixtureBrain:
         pop = self.population
         n = pop.size
         looks_today = self.looks_per_day.get(day, 0)
+        since = self.looks_since_review
+        need = self.config.review_every_looks
         weights = {a: round(w, 6) for a, w in pop.weights.items()}
-        if looks_today == 0 or n == 0:
+        skipped = None
+        if n == 0 or since == 0:
+            skipped = "no looks since the last review"
+        elif need and since < need:
+            skipped = f"{since} looks since the last review, review at {need}"
+        if skipped:
             pop.events.append({
                 "t": t, "event": "review", "day": day, "population": n,
-                "candidate": None, "mode": "top_fresh",
-                "skipped": "no looks today", "weights": weights})
+                "candidate": None, "mode": "top_fresh", "skipped": skipped,
+                "looks_since_review": since, "weights": weights})
             self._flush_population_events()
             return
         top = pop.top()
-        low = pop.lowest()
+        # Grace period: never retire an agent born since the last review
+        # (before the first review: born before today).
+        cutoff = (self.last_review_t if self.last_review_t >= 0
+                  else day * DAY_SECONDS)
+        eligible = [a for a, ag in pop.agents.items()
+                    if (ag.born_t <= cutoff if self.last_review_t >= 0
+                        else ag.born_t < cutoff)]
+        low = min(eligible, key=lambda a: pop.agents[a].log_weight) if eligible else None
         pop.events.append({
             "t": t, "event": "review", "day": day, "population": n,
             "candidate": top, "mode": "top_fresh", "retire": low,
-            "looks_today": looks_today, "weights": weights})
+            "looks_today": looks_today, "looks_since_review": since,
+            "weights": weights})
+        self.looks_since_review = 0
         # (a) the top agent condenses its scratch into revised beliefs
         agent = pop.agents[top]
         user = "\n\n".join([
             self._household_block(), self._notebook_block(agent),
             f"END OF DAY {stamp(t)[:3]} REVIEW. Your weight is "
             f"{pop.weights[top]:.3f}, the highest of {n} agents, after "
-            f"{looks_today} look{'s' if looks_today != 1 else ''} today. "
+            f"{since} look{'s' if since != 1 else ''} since the last review. "
             f"Condense what your SCRATCH MEMORY has taught you into a fork: "
             f"new BELIEFS as a complete rewrite of yours that keeps what the "
             f"looks confirmed, drops what they contradicted, and states the "
@@ -1465,8 +1696,10 @@ class NotebookMixtureBrain:
         if child is None:
             self.reviews_failed += 1
             pop.events.append({"t": t, "event": "review_failed", "agent": top})
-        # (b) retire the lowest (never the newborn) for a fresh document
-        if low in pop.agents and pop.size > 1 and (child is None or low != child.agent_id):
+        # (b) retire the lowest eligible (never the newborn, never an agent
+        # born since the last review) for a fresh document
+        if low is not None and low in pop.agents and pop.size > 1 and (
+                child is None or low != child.agent_id):
             retired = pop.retire(low, t, "review: lowest at end of day")
             self._write_final_notebook(retired)
         guesses = "\n".join(f"  {a}: {ag.guess}" for a, ag in pop.agents.items())
@@ -1477,7 +1710,7 @@ class NotebookMixtureBrain:
             f"END OF DAY {stamp(t)[:3]} REVIEW: a new agent joins the "
             f"population with the equal share of the weight.",
             f"THE OTHER AGENTS' GUESSES ABOUT THIS HOUSEHOLD:\n{guesses}",
-            f"WHAT TODAY'S LOOKS SHOWED:\n{looks}",
+            f"WHAT THE LOOKS SINCE THE LAST REVIEW SHOWED:\n{looks}",
             f"Write one new BELIEFS document (at most {BELIEFS_MAX_WORDS} "
             f"words) built on a guess about how this household lives that "
             f"CONTRASTS with the guesses above, and is consistent with what "
@@ -1502,6 +1735,7 @@ class NotebookMixtureBrain:
             self.reviews_failed += 1
             pop.events.append({"t": t, "event": "birth_failed"})
         self._today_look_lines = []
+        self.last_review_t = t
         self._flush_population_events()
 
     # ------------------------------------------------------------- output
@@ -1568,6 +1802,7 @@ class NotebookMixtureBrain:
             "calls": self.calls,
             "looks_per_day": {str(d): n for d, n in sorted(self.looks_per_day.items())},
             "decide_corrected": self.decide_corrected,
+            "forks_gated": self.forks_gated,
             "call_totals": {k: {**v, "seconds": round(v["seconds"], 1)}
                             for k, v in self.call_totals.items()},
             "calls_per_day": {str(d): {k: {**v, "seconds": round(v["seconds"], 1)}

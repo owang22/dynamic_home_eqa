@@ -13,6 +13,7 @@ import json
 import math
 import pathlib
 import random
+import time
 from typing import Dict, List, Optional
 
 import pytest
@@ -125,7 +126,7 @@ class _Stub:
             payload = {"beliefs": f"anchor: {a}\nReviewed.", "why": "review"}
         elif kind == "decide":
             payload = {"action": self.decide_action, "target": self.decide_target,
-                       "why": "dispatcher says so"}
+                       "why": "dispatcher says so", "note": "plan: save looks"}
         elif kind == "birth":
             payload = {"guess": "fresh guess",
                        "beliefs": f"anchor: {RECS[3]}\nFresh contrasting document."}
@@ -419,8 +420,12 @@ def test_size_caps_enforce_trim_or_fork(tmp_path):
             "forecasts": {a: {} for a in brain.population.agents},
             "weights_before": brain.population.weights}
     brain._question_key = ("keys", 0)
-    # only a01 gets the scripted follow-up; a02's uses the default reply
-    brain._follow_up("a01", look, "look at counter_k: (nothing)", {}, -0.1, 0)
+    # only a01 gets the scripted follow-up
+    user, may_fork = brain._follow_up_prompt("a01", "look at counter_k: (nothing)",
+                                             {}, -0.1)
+    parsed = brain._calls("follow_up", [("a01", user)], nm.FOLLOWUP_SCHEMA,
+                          nm.FOLLOWUP_MAX_TOKENS, 0)["a01"]
+    brain._apply_follow_up("a01", parsed, user, may_fork, -0.1, None, 0)
     a01 = brain.population.agents["a01"]
     assert len(a01.notebook.scratch.split()) == SCRATCH_MAX_WORDS
     assert brain.scratch_truncated == 1
@@ -526,8 +531,10 @@ def test_configs_are_the_documented_variants():
     v = nm.CONFIGS["notebook_voi"]
     assert (v.look_rule, v.beta, v.invalid_look, v.review,
             v.use_it_or_lose_it) == ("voi", 0.3, "neutral", "top_fresh", True)
+    assert (v.population_cap, v.followup_min_weight, v.max_looks_per_question) == (5, 0.05, 3)
     d = nm.CONFIGS["notebook_llmDecide"]
-    assert d == dataclasses.replace(v, look_rule="llm", label="notebook_llmDecide")
+    assert d == dataclasses.replace(v, look_rule="llm", tell_questions_per_day=False,
+                                    label="notebook_llmDecide")
 
 
 def test_beta_tempers_the_weight_update():
@@ -607,35 +614,55 @@ def test_voi_candidates_include_a_listed_resident_for_on_person():
 
 def test_llm_decide_reads_the_verdict_and_falls_back_on_an_illegal_target():
     stub = _Stub(anchors=("counter_k", "desk_o"))
-    brain = _voi_brain(stub, look_rule="llm", use_it_or_lose_it=False)
+    brain = _voi_brain(stub, look_rule="llm", use_it_or_lose_it=False,
+                       tell_questions_per_day=False)
     stub.decide_action, stub.decide_target = "answer", ""
     d = brain.decide("keys", 100)
     assert d["action"] == "answer" and d["reason"].startswith("dispatcher:")
     briefing = [p for p in stub.prompts if "VALUE OF INFORMATION" in p][-1]
     for line in ("QUESTION: where is keys", "looks left 4 of 4",
-                 "questions so far today 1 of about 24", "PANEL FORECAST",
-                 "AGENTS' TOP SPOTS", "LEGAL LOOK TARGETS NOW"):
+                 "questions so far today 1;", "PREVIOUS DAYS: none yet",
+                 "PANEL FORECAST",
+                 "AGENTS' TOP SPOTS", "LEGAL LOOK TARGETS NOW",
+                 "TODAY'S LEDGER", "(first decision of the day)",
+                 "YOUR NOTE:\n(empty)", "At most 3 looks per question"):
         assert line in briefing, line
+    assert "0.05" not in briefing and "threshold" not in briefing
+    assert "about 24" not in briefing
     stub.decide_action, stub.decide_target = "look", "desk_o"
     d = brain.decide("keys", 200)
     assert d["action"] == "sense" and d["receptacle"] == "desk_o"
     assert d["dispatch"]["target"] == "desk_o"
+    # the note persisted and the ledger carries the earlier decision
+    briefing = [p for p in stub.prompts if "VALUE OF INFORMATION" in p][-1]
+    assert "YOUR NOTE:\nplan: save looks" in briefing
+    assert "keys: sure" in briefing and "-> answered" in briefing
+    assert d["dispatch"]["note"] == "plan: save looks"
     stub.decide_action, stub.decide_target = "look", "no_such_place"
     d = brain.decide("keys", 300)
     assert d["action"] == "sense" and d["receptacle"] == d["voi"]["best"]
     assert d["dispatch_corrected"] == "no_such_place"
     assert brain.decide_corrected == 1
+    # the next day the briefing carries yesterday's counts and a fresh ledger
+    brain.decide("keys", DAY_SECONDS + 100)
+    briefing = [p for p in stub.prompts if "VALUE OF INFORMATION" in p][-1]
+    assert "PREVIOUS DAYS: Mon 3 questions, 0 looks used" in briefing
+    assert "(first decision of the day)" in briefing
 
 
 def test_top_fresh_review_skips_without_looks_and_otherwise_forks_top_births_fresh(tmp_path):
     stub = _Stub(anchors=("counter_k", "desk_o", "table_k"))
-    brain = _voi_brain(stub, tmp_path)
+    # review_every_looks 0: nightly whenever there were looks; agents born
+    # on day 0 are in their grace period at the day-0 review, so run the
+    # review as day 1 to exercise the retirement.
+    brain = _voi_brain(stub, tmp_path, review_every_looks=0)
     brain.decide("keys", 100)
     brain._end_of_day_review(0)
     events = [json.loads(l) for l in (tmp_path / "population.jsonl").read_text().splitlines()]
     review = [e for e in events if e["event"] == "review"][-1]
-    assert review["skipped"] == "no looks today" and review["candidate"] is None
+    assert review["skipped"] == "no looks since the last review" and review["candidate"] is None
     assert brain.population.size == 3
+    brain.day = 1
     # one look today: a01 wins it
     look = {"receptacle": "counter_k", "room": "kitchen", "t": 100,
             "forecasts": {"a01": {"keys": 0.9}, "a02": {"keys": 0.1},
@@ -645,7 +672,7 @@ def test_top_fresh_review_skips_without_looks_and_otherwise_forks_top_births_fre
     brain._look_procedure(look, "counter_k", "kitchen", ("keys",), (), "line",
                           100)
     assert brain.population.top() == "a01" and brain.population.lowest() == "a02"
-    brain._end_of_day_review(0)
+    brain._end_of_day_review(1)
     events = [json.loads(l) for l in (tmp_path / "population.jsonl").read_text().splitlines()]
     review = [e for e in events if e["event"] == "review"][-1]
     assert review["candidate"] == "a01" and review["retire"] == "a02"
@@ -663,12 +690,12 @@ def test_top_fresh_review_skips_without_looks_and_otherwise_forks_top_births_fre
     forks = [e for e in events if e["event"] == "fork"]
     assert forks and forks[-1]["parent"] == "a01"
     birth_prompt = [p for p in stub.prompts if "CONTRASTS" in p][-1]
-    assert "WHAT TODAY'S LOOKS SHOWED" in birth_prompt and "counter_k: keys" in birth_prompt
+    assert "LOOKS SINCE THE LAST REVIEW" in birth_prompt and "counter_k: keys" in birth_prompt
 
 
 def test_scratch_versions_are_logged_at_birth_fork_and_follow_up(tmp_path):
     stub = _Stub(anchors=("counter_k", "desk_o"), fork_p=1.0)
-    brain = _voi_brain(stub, tmp_path)
+    brain = _voi_brain(stub, tmp_path, fork_gate=False)
     brain.decide("keys", 100)
     look = {"receptacle": "counter_k", "room": "kitchen", "t": 100,
             "forecasts": {"a01": {"keys": 0.9}, "a02": {"keys": 0.1}},
@@ -728,7 +755,147 @@ def test_full_stub_run_of_the_variants(tmp_path, kind):
     types = {c["type"] for c in calls}
     if kind == "notebook_llmDecide":
         assert "decide" in types and brain.decide_corrected > 0
+        dec = [json.loads(l) for l in (out / "decisions.jsonl").read_text().splitlines()]
+        assert dec and all("VALUE OF INFORMATION" in d["briefing"] for d in dec)
+        assert len(dec) == sum(1 for c in calls if c["type"] == "decide")
     else:
         assert "decide" not in types
     fc = [json.loads(l) for l in (out / "forecasts.jsonl").read_text().splitlines()]
     assert all("voi" in r for r in fc if r["reason"] != "no budget")
+
+
+def _one_look(brain, forecasts, found=("keys",)):
+    look = {"receptacle": "counter_k", "room": "kitchen", "t": 100,
+            "forecasts": forecasts, "invalid": [],
+            "weights_before": brain.population.weights}
+    brain._look_procedure(look, "counter_k", "kitchen", tuple(found), (),
+                          "line", 100)
+
+
+def test_fork_gate_admits_only_below_average_scorers_once_a_day(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o"), fork_p=1.0)
+    brain = _voi_brain(stub, tmp_path)
+    brain.decide("keys", 100)
+    # a01 predicts the look well, a02 badly: only a02's fork is accepted
+    _one_look(brain, {"a01": {"keys": 0.9}, "a02": {"keys": 0.1}})
+    events = [json.loads(l) for l in (tmp_path / "population.jsonl").read_text().splitlines()]
+    forks = [e for e in events if e["event"] == "fork"]
+    gated = [e for e in events if e["event"] == "fork_gated"]
+    assert [f["parent"] for f in forks] == ["a02"]
+    assert [g["parent"] for g in gated] == ["a01"] and brain.forks_gated == 1
+    winner_prompt = [p for p in stub.prompts if "no fork this time" in p]
+    assert winner_prompt and "above it" in winner_prompt[0]
+    loser_prompt = [p for p in stub.prompts if "You may propose a FORK" in p and "below it" in p]
+    assert loser_prompt and "lost credibility" in loser_prompt[0]
+    # a02 already forked today: a second bad look gates it again; its
+    # child a03 (below average, never forked) is the only fork
+    _one_look(brain, {"a01": {"keys": 0.9}, "a02": {"keys": 0.1}, "a03": {"keys": 0.5}})
+    events = [json.loads(l) for l in (tmp_path / "population.jsonl").read_text().splitlines()]
+    assert [e["parent"] for e in events if e["event"] == "fork"] == ["a02", "a03"]
+    assert [e["parent"] for e in events if e["event"] == "fork_gated"] == ["a01", "a01", "a02"]
+    # every follow-up shows the panel's scoreboard with the agent marked
+    boards = [p for p in stub.prompts if "PANEL SCORES on this look" in p]
+    assert len(boards) == 5 and all("(you)" in b for b in boards)
+
+
+def test_review_waits_for_enough_looks_and_spares_the_newborn(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o", "table_k"))
+    brain = _voi_brain(stub, tmp_path, review_every_looks=2)
+    brain.decide("keys", 100)
+    _one_look(brain, {"a01": {"keys": 0.9}, "a02": {"keys": 0.1}, "a03": {"keys": 0.3}})
+    brain._end_of_day_review(0)
+    events = [json.loads(l) for l in (tmp_path / "population.jsonl").read_text().splitlines()]
+    review = [e for e in events if e["event"] == "review"][-1]
+    assert review["skipped"].startswith("1 looks since the last review, review at 2")
+    assert brain.looks_since_review == 1
+    # a second look: the review runs, but on day 0 every agent was born
+    # today, so nobody is eligible for retirement - fork + fresh birth only
+    brain.day = 0
+    _one_look(brain, {"a01": {"keys": 0.9}, "a02": {"keys": 0.1}, "a03": {"keys": 0.3}})
+    n_before = brain.population.size
+    brain._end_of_day_review(0)
+    events = [json.loads(l) for l in (tmp_path / "population.jsonl").read_text().splitlines()]
+    review = [e for e in events if e["event"] == "review"][-1]
+    assert review["candidate"] == "a01" and review["retire"] is None
+    assert not any(e["event"] == "retire" for e in events)
+    assert brain.population.size == n_before + 2 and brain.looks_since_review == 0
+    newborn = [e for e in events if e["event"] == "birth" and e.get("origin") == "review"][-1]["agent"]
+    # next cycle: two more looks; the newborn and the fork (born at the
+    # review) are eligible now, a02 is still the lowest
+    brain.day = 1
+    fc = {a: {"keys": 0.5} for a in brain.population.agents}; fc["a02"] = {"keys": 0.05}
+    _one_look(brain, fc); _one_look(brain, fc)
+    brain._end_of_day_review(1)
+    events = [json.loads(l) for l in (tmp_path / "population.jsonl").read_text().splitlines()]
+    review = [e for e in events if e["event"] == "review"][-1]
+    assert review["retire"] == "a02"
+    assert newborn in brain.population.agents
+
+
+def test_parallel_calls_are_accounted_in_agent_order(tmp_path):
+    import threading
+    class _Slow(_Stub):
+        # later agents reply first, so order in the log must come from the
+        # brain, not from arrival
+        def generate(self, system, user, *a, **kw):
+            n = len(self.prompts)
+            with self._lock:
+                self.prompts.append(user)
+            time.sleep(0.05 * (4 - min(n, 3)))
+            return super().generate(system, user, *a, **kw)
+    stub = _Slow(anchors=("counter_k", "desk_o", "table_k", "shelf_o"))
+    stub._lock = threading.Lock()
+    brain = _voi_brain(stub, tmp_path, parallel=8)
+    started = time.monotonic()
+    d = brain.decide("keys", 100)
+    assert set(d["distribution"]) == set(RECS)
+    calls = [json.loads(l) for l in (tmp_path / "calls.jsonl").read_text().splitlines()]
+    qf = [c["agent"] for c in calls if c["type"] == "question_forecast"]
+    assert qf == ["a01", "a02", "a03", "a04"]
+    assert [c["n"] for c in calls] == list(range(1, len(calls) + 1))
+    # the four slow replies overlapped (sequential would be >= 0.2+0.15+0.1+0.05 s)
+    assert time.monotonic() - started < 0.45
+
+
+def test_skip_below_drops_negligible_agents_from_questions_not_looks(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o", "table_k"))
+    brain = _voi_brain(stub, tmp_path, skip_below=0.05)
+    brain.decide("keys", 100)
+    brain.population.update_log_weights({"a01": 0.0, "a02": 0.0, "a03": -6.0}, 100, "x")
+    assert brain.population.weights["a03"] < 0.05
+    d = brain.decide("keys", 200)
+    fc = [json.loads(l) for l in (tmp_path / "forecasts.jsonl").read_text().splitlines()][-1]
+    assert set(fc["forecasts"]) == {"a01", "a02"} and fc["skipped"] == ["a03"]
+    assert abs(sum(d["distribution"].values()) - 1.0) < 1e-6
+    # a look still asks and grades everyone
+    brain.note_sense("counter_k")
+    assert set(brain._pending_look["forecasts"]) == {"a01", "a02", "a03"}
+
+
+def test_per_question_look_cap_and_follow_up_set(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o", "table_k", "shelf_o"))
+    brain = _voi_brain(stub, tmp_path, use_it_or_lose_it=False, voi_lambda=0.0,
+                       max_looks_per_question=2, beta=1.0)
+    brain.decide("keys", 100)
+    brain._sensed_this_question = ["counter_k", "desk_o"]
+    d = brain.decide("keys", 100)
+    assert d["action"] == "answer" and d["reason"] == "question look cap 2"
+    # follow-up set: everyone at >= 5% or in the top 3
+    w = {"a01": 0.6, "a02": 0.3, "a03": 0.06, "a04": 0.04}
+    assert brain._follow_up_set(w) == ["a01", "a02", "a03"]
+    w = {"a01": 0.97, "a02": 0.01, "a03": 0.01, "a04": 0.01}
+    assert brain._follow_up_set(w) == ["a01", "a02", "a03"]
+    # after a look only the active set gets a follow-up call; all are graded
+    _one_look(brain, {"a01": {"keys": 0.9}, "a02": {"keys": 0.5},
+                      "a03": {"keys": 0.1}, "a04": {"keys": 0.01}})
+    look = json.loads((tmp_path / "looks.jsonl").read_text().splitlines()[-1])
+    assert set(look["scores"]) == {"a01", "a02", "a03", "a04"}
+    assert len(look["follow_ups"]) == 3
+    calls = [json.loads(l) for l in (tmp_path / "calls.jsonl").read_text().splitlines()]
+    assert sorted(c["agent"] for c in calls if c["type"] == "follow_up") == sorted(look["follow_ups"])
+
+
+def test_population_cap_from_config():
+    stub = _Stub(anchors=("counter_k", "desk_o", "table_k", "shelf_o"))
+    brain = _voi_brain(stub, population_cap=5)
+    assert brain.population.cap == 5

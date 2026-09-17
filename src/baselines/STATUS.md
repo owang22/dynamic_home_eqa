@@ -2293,3 +2293,20 @@ episode start; `day_index = t // 86400`.
 - The accuracy-vs-budget "curve" currently has one point per run (the
   bank's single budget level); sweeping budgets is a config-per-level
   affair by design.
+
+## Note (2026-09-16): the routine-driven question stream is morning-heavy — noted, not changed
+
+All 20 cold-start banks (`banks/baselines/cold_start/`, `cold_start.yaml`,
+`query_rules_cold_start.yaml`): fleet-wide 39% of questions fall before
+08:00, 30% in 08–16, 25% after 16:00; five households (hh_001, 012, 017,
+018, 019 — the commuters) put ≥50% before 08:00. Cause is not the
+`before` offsets (29% of questions) but that `routine_questions` draws
+each activity question by picking one rule-matching activity INSTANCE
+with equal weight: the wake-up routine is six short activities in two
+hours, a 2-minute `coffee` weighs as much as a 3-hour `watch_tv`, and
+the commonest afternoon/evening activities (`linger_*`, `wash_dishes`,
+`snack`, `relax`, `hobby`, `nap`) have no rule at all. Possible fixes —
+per-rule asking-rate weights, rules for the uncovered activities — would
+re-draw every question in every bank, so they are deferred; results on
+the current stream stay comparable. For look-pacing questions prefer
+hh_009 or hh_007 over hh_001.

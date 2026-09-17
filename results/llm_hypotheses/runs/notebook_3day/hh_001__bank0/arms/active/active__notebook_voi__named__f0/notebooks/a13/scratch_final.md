@@ -1,0 +1,36 @@
+# a13 — scratch memory, final (live at the end; final weight 0.2257)
+
+d02 Wed 06:01: Looked at dish_rack_k1. Result: pen_mara, wallet_mara; residents here: resident_1.
+- SCORE: -9.77 (rank 2/5). Above panel avg (-9.93). Gained weight (0.226, rank 2/5).
+- CONFIRMED LOCATIONS (06:01):
+  - dish_rack_k1: pen_mara, wallet_mara.
+  - resident_1: IN KITCHEN (at dish_rack_k1).
+  - counter_k1: mug_mara, notebook_mara (from 05:49).
+  - bed_b1, desk_b1: EMPTY (from 05:49).
+- REVISED LOCATIONS (06:01):
+  - resident_1: Kitchen (1.0).
+  - pen_mara: dish_rack_k1 (1.0).
+  - wallet_mara: dish_rack_k1 (1.0).
+  - mug_mara: counter_k1 (1.0).
+  - notebook_mara: counter_k1 (1.0).
+  - lunchbox_mara: NOT on counter, NOT in dish rack. Likely ON_PERSON (0.5), entry_table_e1 (0.3), or OUT_OF_HOUSE (0.2).
+  - water_bottle_mara: NOT on counter, NOT in dish rack. Likely sink_k1 (0.4), ON_PERSON (0.3), or entry_table_e1 (0.3).
+  - phone_mara, keys_mara: NOT on counter, NOT in dish rack. Likely ON_PERSON (0.5), nightstand_b1 (0.3), or entry_table_e1 (0.2).
+  - laptop_mara, charger_mara, tablet_mara: NOT on counter, NOT in dish rack. Likely bedroom_floor_b1 (0.4), nightstand_b1 (0.3), or ON_PERSON (0.3).
+  - headphones_mara, book_mara: NOT on counter, NOT in dish rack. Likely bedroom_floor_b1 (0.4), nightstand_b1 (0.3), or ON_PERSON (0.3).
+  - hairbrush_mara, makeup_kit_mara, medication_bottle_mara: bathroom_shelf_ba1 (1.0) [Confirmed 05:07].
+  - jacket_mara, umbrella_mara, backpack_mara: entry_hook_e1 (0.5), bedroom_floor_b1 (0.3), ON_PERSON (0.2).
+  - blanket_mara, yoga_mat_mara: bedroom_floor_b1 (0.5), living (0.3).
+- STRATEGY:
+  - It is 06:01. Resident is in Kitchen.
+  - Desk, Bed, Counter, Dish Rack are checked. Do NOT guess these for unconfirmed items.
+  - If asked for pen/wallet, say dish_rack_k1.
+  - If asked for mug/notebook, say counter_k1.
+  - If asked for lunchbox/water_bottle, say ON_PERSON or entry_table_e1.
+  - If asked for phone/keys, say ON_PERSON (primary) or nightstand_b1 (secondary).
+  - If asked for laptop/charger/tablet, say bedroom_floor_b1 (primary) or nightstand_b1 (secondary).
+  - If asked for hairbrush/makeup/meds, say bathroom_shelf_ba1.
+  - If asked for resident location, say Kitchen.
+  - If asked for jacket/umbrella, say entry_hook_e1.
+  - If asked for blanket/yoga_mat, say bedroom_floor_b1.
+- LESSON: The Dish Rack holds small personal items (pen, wallet) in the morning, likely after washing or as a temporary drop spot. The resident is present in the Kitchen. The absence of lunchbox/water bottle from both Counter and Dish Rack suggests they are either carried or already at the entry point.
