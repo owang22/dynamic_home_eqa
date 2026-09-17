@@ -1,0 +1,14 @@
+# a13 — scratch memory, final (live at the end; final weight 0.0000)
+
+d02 Wed 05:49: Looked at nightstand_b1. Found: phone_mara. Residents: nobody.
+- **Forecast Error**: Score -2.36. I assigned 0.45 to phone_mara (correct) but 0.35 to keys_mara and 0.25 to wallet_mara (both absent). The penalty is driven by the high probability assigned to keys/wallet on the nightstand, which were not there.
+- **Key Insight**: The nightstand is a 'phone dock' but not a 'keys/wallet' spot. Resident_1 is NOT in the bedroom (nobody listed). It is 05:49 AM. Resident is likely in the kitchen (early riser) or living room. Given the previous look at 04:05 showed entry empty of people, and now bedroom is empty, the resident is likely up and about.
+- **Object Locations Update**:
+  - phone_mara: nightstand_b1 (confirmed).
+  - keys_mara/wallet_mara: Absent from nightstand. Likely ON_PERSON (if resident is up) or in entry_hook_e1 (if resident is elsewhere). Since resident is not in bedroom, they might be carrying them.
+  - charger_mara: entry_hook_e1 (from 04:05 look).
+  - jacket_mara/backpack_mara: entry_hook_e1 (from 04:05 look).
+- **Strategy Update**:
+  1. **Resident Location**: Bedroom is clear. Next likely location is kitchen (counter_k1 or sink_k1) or living (couch_l1). Kitchen is more likely for 05:49 AM (coffee/water).
+  2. **Next Look**: Check counter_k1. This will reveal if resident is in kitchen. If yes, I can look at them next to see keys/wallet. If no, I see if dishes/other items are there.
+  3. **Belief Refinement**: Nightstand is for phone/meds, not keys/wallet. Keys/wallet are either ON_PERSON or at entry. Do not assign high prob to keys/wallet on nightstand.

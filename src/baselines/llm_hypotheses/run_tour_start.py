@@ -27,7 +27,7 @@ Arms: ``passive:<belief>[:<condition>]`` or
 ``active:<belief>[:<condition>]:f<fraction>[:b<beta>]`` with belief in
 ``llm`` (re-asking), ``llm_fixed`` (no re-asking), ``graph`` (the
 assumption-graph arm, re-asking with operations), ``graph_fixed``,
-``periodic``, ``mostfreq``, ``routine_posterior`` (the routine-knowledge
+``periodic``, ``lastobs``, ``mostfreq``, ``perpetua``, ``routine_posterior`` (the routine-knowledge
 ceiling, formerly ``oracle``), ``log_reader*`` and ``notebook_mixture``
 (both active-only, ``:named|anonymized:f0``; the notebook mixture
 writes its notebooks and look/forecast/population logs into the arm
@@ -125,6 +125,8 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
                 hyp_subdir: str = "", protocol: str = "passive") -> Dict[str, Any]:
     if kind == "periodic":
         return {"name": "periodic_persistence"}
+    if kind == "lastobs":
+        return {"name": "last_observation"}
     if kind == "mostfreq":
         return {"name": "most_frequent", "half_life_h": 24.0}
     if kind == "perpetua":

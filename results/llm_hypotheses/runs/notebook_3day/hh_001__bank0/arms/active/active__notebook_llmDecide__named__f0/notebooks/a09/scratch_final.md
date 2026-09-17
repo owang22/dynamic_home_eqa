@@ -1,0 +1,12 @@
+# a09 — scratch memory, final (retired d01 Tue 23:59 (population cap); final weight 0.0644)
+
+d01 Tue 06:15: Looked at bed_b1. Found: nothing. Residents: nobody.
+- **Critical Error**: I forecast blanket_mara at 0.95. It was absent. This is a massive penalty (-3.44 score). My belief that the blanket resides on the bed when the resident is away is flawed. The resident is not in the bedroom, and the bed is empty. This suggests the blanket is either ON_PERSON (if resident is in house), in the laundry, or folded away in a closet/drawer not visible from the bed look (though 'nothing' implies the bed surface is clear). More likely, the blanket is not a static 'bed item' but a mobile comfort item or currently in use elsewhere.
+- **Resident Location**: Still not in bedroom. Previous look at bedroom_floor_b1 showed laundry_basket, suitcase, vacuum. Entry look (06:13) showed keys/charger/backpack staged. Resident is likely in kitchen or bathroom.
+- **Object States**:
+  - bed_b1: Empty. No blanket, no phone, no books.
+  - bedroom_floor_b1: laundry_basket_mara, suitcase_mara, vacuum_cleaner_shared_1.
+  - entry_hook_e1: keys_mara, charger_mara, backpack_mara (from 06:13 look).
+- **Strategy**: I have 0 looks left (used 8/8: entry_hook, bedroom_floor, bed_b1... wait, let's recount. The prompt says 'LOOK BUDGET: 8 looks per day'. The scratch memory from the previous turn said '7/8 used. 1 remaining.' and I planned to look at kitchen_table_k1. But the result says 'look at bed_b1'. This implies the robot chose bed_b1 instead of my suggested kitchen_table_k1, or I am misinterpreting the budget. The prompt says 'RESULT OF THE LOOK d01 Tue 06:15 look at bed_b1'. This was the 8th look? Or did I use the last look on bed_b1? The previous scratch said 'Next Target: kitchen_table_k1'. The robot looked at bed_b1. This is a mismatch. Regardless, the look happened. If this was the 8th look, I am out of budget. If not, I need to know. The prompt says 'LOOK BUDGET: 8 looks per day'. The previous state was 7 used. This look makes it 8. I am out of looks for the day.
+- **Correction**: My belief about the blanket is wrong. It is not reliably on the bed. I must lower the prior for blanket_mara on bed_b1 significantly. The bed is a 'sleeping' spot, not a 'storage' spot for the blanket when the resident is active.
+- **Future**: No more looks today. I must rely on inference. Resident is likely in kitchen/bathroom. Items staged at entry. Bed is empty.
