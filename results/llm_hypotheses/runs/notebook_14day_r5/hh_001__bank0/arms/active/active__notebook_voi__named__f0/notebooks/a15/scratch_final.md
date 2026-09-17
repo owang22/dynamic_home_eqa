@@ -1,0 +1,11 @@
+# a15 — scratch memory, final (retired d03 Thu 23:59 (review: lowest at end of day); final weight 0.2960)
+
+d02-d03 Kitchen: counter_k1 is a stable hub for bowl_shared_1, plate_shared_2, medication_bottle_mara, and mug_mara. pen_mara and lunchbox_mara are variable; lunchbox cycles between counter_k1, sink_k1, and entry_table_e1. sink_k1 stores bowl_shared_2, plate_shared_1, and watering_can_mara. cupboard_k1 holds pot_shared_1, mug_shared_1, and headphones_mara (new stable resident).
+
+d03 Bathroom: Care Zone (bathroom_shelf_ba1) stability is context-dependent. When resident_1 is absent, the shelf is sparse (often only makeup_kit_mara). When resident_1 is present/active, hairbrush_mara, makeup_kit_mara, and medication_bottle_mara are reliably present (0.85+ confidence). towel_mara is consistently on towel_rack_ba1.
+
+d03 Entry: entry_hook_e1 is sparse when resident_1 is absent; backpack_mara is the only stable item. keys_mara, charger_mara, and jacket_mara are frequently absent from the hook during absence, contradicting prior high-confidence beliefs. Treat hook contents as low-confidence when resident_1 is not in the house.
+
+d03 Thu 05:57: d03 Thu 05:57: bathroom_shelf_ba1 held hairbrush_mara, makeup_kit_mara, medication_bottle_mara; resident_1 present. Confirms Care Zone stability when resident is active. My low probs for hairbrush (0.35) and meds (0.15) were penalized; these items are reliably on the shelf during morning routines. Update: raise confidence for shelf cluster to 0.85+ when resident_1 is in bathroom.
+d03 Thu 05:59: d03 Thu 05:59: nightstand_b1 held only phone_mara; nobody present. My 0.15 prob for phone was too low (panel avg ~0.8). At 05:59, phone is reliably on nightstand_b1 even if resident is elsewhere. Update: raise phone_mara nightstand_b1 confidence to 0.85+ during early morning hours (05:00-07:00).
+d03 Thu 06:09: d03 Thu 06:09: counter_k1 held bowl_shared_1, lunchbox_mara, plate_shared_2; resident_1 present. My 0.35 for lunchbox was too low (it is a stable counter item when resident is active). medication_bottle_mara and mug_mara were absent, contradicting my 0.70/0.65 beliefs. Update: When resident_1 is in kitchen, lunchbox_mara is highly likely on counter_k1 (0.8+). medication_bottle_mara and mug_mara are not stable counter residents; lower confidence to

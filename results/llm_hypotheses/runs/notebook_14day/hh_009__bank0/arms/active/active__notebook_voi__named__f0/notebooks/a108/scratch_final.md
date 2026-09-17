@@ -1,0 +1,4 @@
+# a108 — scratch memory, final (retired d13 Sun 23:59 (review: lowest at end of day); final weight 0.1686)
+
+d13 Sun 10:35: counter_k1 holds lunchbox_priya, medication_bottle_noa, mug_elias, mug_priya, pan_shared_1, phone_priya; residents 1,2,3 present. My p=0.15 for mug_elias was too low (it returned from sink). All 6 items present; my low priors for absent items (water_bottle_priya, bowl_shared_1) were correct. Score -3.69 due to under-weighting present items. Future: raise prior for mug_elias at counter_k1 when residents present.
+d13 Sun 10:35: d13 Sun 10:35: sink_k1 held only water_bottle_priya; residents 1,2,3 present. My p=0.15 for water_bottle_priya was too low (score -3.01). All other forecast items absent. Future: raise prior for water_bottle_priya at sink_k1 when residents present; lower priors for other items at sink_k1.

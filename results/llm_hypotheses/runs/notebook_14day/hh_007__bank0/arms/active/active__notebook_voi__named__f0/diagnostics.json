@@ -1,0 +1,1708 @@
+{
+ "arm": "active:notebook_voi:named:f0",
+ "household": "hh_007",
+ "belief": "notebook_voi(named)",
+ "protocol": "active",
+ "days": 14,
+ "policy": "NotebookMixturePolicy",
+ "fraction": 0.0,
+ "beta": null,
+ "lambda": 0.05,
+ "random_senses": null,
+ "sense_split": null,
+ "tour_absent_objects": [
+  "backpack_leo",
+  "backpack_mara",
+  "backpack_sofia",
+  "blanket_1",
+  "book_sofia",
+  "bowl_leo",
+  "charger_leo",
+  "charger_sofia",
+  "gaming_controller_leo",
+  "glasses_mara",
+  "hairbrush_sofia",
+  "headphones_leo",
+  "jacket_leo",
+  "jacket_mara",
+  "jacket_sofia",
+  "keys_leo",
+  "keys_mara",
+  "keys_sofia",
+  "laptop_leo",
+  "laptop_mara",
+  "laundry_basket_1",
+  "lunchbox_sofia",
+  "makeup_kit_sofia",
+  "medication_bottle_sofia",
+  "mug_leo",
+  "mug_mara",
+  "notebook_leo",
+  "notebook_mara",
+  "pan_1",
+  "pen_mara",
+  "phone_leo",
+  "phone_mara",
+  "phone_sofia",
+  "plate_1",
+  "plate_2",
+  "pot_1",
+  "remote_1",
+  "umbrella_mara",
+  "vacuum_cleaner_1",
+  "wallet_leo",
+  "wallet_mara",
+  "wallet_sofia",
+  "water_bottle_mara",
+  "water_bottle_sofia"
+ ],
+ "premises": {
+  "composition": "roommates",
+  "work_pattern": "no_fixed_work"
+ },
+ "wall_seconds": 6650.4,
+ "notebook_mixture": {
+  "config": {
+   "look_rule": "voi",
+   "beta": 0.3,
+   "invalid_look": "neutral",
+   "review": "top_fresh",
+   "voi_lambda": 0.05,
+   "use_it_or_lose_it": true,
+   "questions_per_day": 24.0,
+   "fork_gate": true,
+   "review_every_looks": 12,
+   "skip_below": 0.01,
+   "parallel": 8,
+   "population_cap": 5,
+   "followup_min_weight": 0.05,
+   "max_looks_per_question": 3,
+   "tell_questions_per_day": true,
+   "followup_mode": "append",
+   "label": "notebook_voi"
+  },
+  "calls": 3095,
+  "looks_per_day": {
+   "0": 8,
+   "1": 8,
+   "2": 8,
+   "3": 8,
+   "4": 8,
+   "5": 8,
+   "6": 8,
+   "7": 8,
+   "8": 8,
+   "9": 8,
+   "10": 8,
+   "11": 8,
+   "12": 8,
+   "13": 8
+  },
+  "decide_corrected": 0,
+  "forks_gated": 50,
+  "call_totals": {
+   "initial": {
+    "calls": 1,
+    "prompt_tokens": 1210,
+    "completion_tokens": 2302,
+    "seconds": 56.6
+   },
+   "question_forecast": {
+    "calls": 2018,
+    "prompt_tokens": 4832590,
+    "completion_tokens": 228901,
+    "seconds": 12634.1
+   },
+   "look_forecast": {
+    "calls": 559,
+    "prompt_tokens": 1340984,
+    "completion_tokens": 81746,
+    "seconds": 4138.4
+   },
+   "follow_up": {
+    "calls": 468,
+    "prompt_tokens": 1244693,
+    "completion_tokens": 88291,
+    "seconds": 4272.6
+   },
+   "fork": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   },
+   "review": {
+    "calls": 7,
+    "prompt_tokens": 16441,
+    "completion_tokens": 3952,
+    "seconds": 189.7
+   },
+   "birth": {
+    "calls": 7,
+    "prompt_tokens": 13627,
+    "completion_tokens": 7687,
+    "seconds": 338.4
+   },
+   "decide": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   },
+   "condense": {
+    "calls": 35,
+    "prompt_tokens": 105433,
+    "completion_tokens": 11250,
+    "seconds": 517.6
+   }
+  },
+  "calls_per_day": {
+   "0": {
+    "initial": {
+     "calls": 1,
+     "prompt_tokens": 1210,
+     "completion_tokens": 2302,
+     "seconds": 56.6
+    },
+    "question_forecast": {
+     "calls": 154,
+     "prompt_tokens": 343606,
+     "completion_tokens": 19332,
+     "seconds": 1023.5
+    },
+    "look_forecast": {
+     "calls": 39,
+     "prompt_tokens": 78235,
+     "completion_tokens": 5995,
+     "seconds": 270.3
+    },
+    "follow_up": {
+     "calls": 37,
+     "prompt_tokens": 83538,
+     "completion_tokens": 7596,
+     "seconds": 340.6
+    }
+   },
+   "1": {
+    "question_forecast": {
+     "calls": 160,
+     "prompt_tokens": 349838,
+     "completion_tokens": 19960,
+     "seconds": 999.6
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 102869,
+     "completion_tokens": 6033,
+     "seconds": 309.8
+    },
+    "follow_up": {
+     "calls": 38,
+     "prompt_tokens": 106430,
+     "completion_tokens": 7809,
+     "seconds": 374.6
+    },
+    "condense": {
+     "calls": 5,
+     "prompt_tokens": 14625,
+     "completion_tokens": 1837,
+     "seconds": 64.2
+    },
+    "review": {
+     "calls": 1,
+     "prompt_tokens": 1906,
+     "completion_tokens": 576,
+     "seconds": 19.7
+    },
+    "birth": {
+     "calls": 1,
+     "prompt_tokens": 1848,
+     "completion_tokens": 1161,
+     "seconds": 49.3
+    }
+   },
+   "2": {
+    "question_forecast": {
+     "calls": 145,
+     "prompt_tokens": 371755,
+     "completion_tokens": 13896,
+     "seconds": 750.0
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 92037,
+     "completion_tokens": 5351,
+     "seconds": 272.0
+    },
+    "follow_up": {
+     "calls": 37,
+     "prompt_tokens": 94036,
+     "completion_tokens": 6593,
+     "seconds": 300.3
+    }
+   },
+   "3": {
+    "question_forecast": {
+     "calls": 160,
+     "prompt_tokens": 367549,
+     "completion_tokens": 17690,
+     "seconds": 896.9
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 90692,
+     "completion_tokens": 5625,
+     "seconds": 262.2
+    },
+    "follow_up": {
+     "calls": 35,
+     "prompt_tokens": 87741,
+     "completion_tokens": 4479,
+     "seconds": 229.2
+    },
+    "condense": {
+     "calls": 5,
+     "prompt_tokens": 14562,
+     "completion_tokens": 1522,
+     "seconds": 59.7
+    },
+    "review": {
+     "calls": 1,
+     "prompt_tokens": 2245,
+     "completion_tokens": 420,
+     "seconds": 15.2
+    },
+    "birth": {
+     "calls": 1,
+     "prompt_tokens": 1982,
+     "completion_tokens": 575,
+     "seconds": 20.0
+    }
+   },
+   "4": {
+    "question_forecast": {
+     "calls": 101,
+     "prompt_tokens": 215900,
+     "completion_tokens": 10564,
+     "seconds": 514.2
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 91123,
+     "completion_tokens": 5640,
+     "seconds": 268.6
+    },
+    "follow_up": {
+     "calls": 27,
+     "prompt_tokens": 70829,
+     "completion_tokens": 3281,
+     "seconds": 141.0
+    },
+    "condense": {
+     "calls": 2,
+     "prompt_tokens": 5800,
+     "completion_tokens": 247,
+     "seconds": 7.6
+    }
+   },
+   "5": {
+    "question_forecast": {
+     "calls": 83,
+     "prompt_tokens": 164730,
+     "completion_tokens": 9089,
+     "seconds": 364.1
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 88686,
+     "completion_tokens": 5780,
+     "seconds": 270.3
+    },
+    "follow_up": {
+     "calls": 24,
+     "prompt_tokens": 55692,
+     "completion_tokens": 2856,
+     "seconds": 126.8
+    },
+    "condense": {
+     "calls": 1,
+     "prompt_tokens": 2651,
+     "completion_tokens": 273,
+     "seconds": 10.9
+    },
+    "review": {
+     "calls": 1,
+     "prompt_tokens": 2301,
+     "completion_tokens": 447,
+     "seconds": 17.4
+    },
+    "birth": {
+     "calls": 1,
+     "prompt_tokens": 2046,
+     "completion_tokens": 1660,
+     "seconds": 59.3
+    }
+   },
+   "6": {
+    "question_forecast": {
+     "calls": 149,
+     "prompt_tokens": 371584,
+     "completion_tokens": 16911,
+     "seconds": 876.2
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 104577,
+     "completion_tokens": 5872,
+     "seconds": 275.3
+    },
+    "follow_up": {
+     "calls": 29,
+     "prompt_tokens": 83262,
+     "completion_tokens": 4794,
+     "seconds": 196.6
+    },
+    "condense": {
+     "calls": 3,
+     "prompt_tokens": 8834,
+     "completion_tokens": 1059,
+     "seconds": 45.2
+    }
+   },
+   "7": {
+    "question_forecast": {
+     "calls": 160,
+     "prompt_tokens": 382835,
+     "completion_tokens": 16038,
+     "seconds": 734.2
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 89394,
+     "completion_tokens": 5228,
+     "seconds": 218.8
+    },
+    "follow_up": {
+     "calls": 37,
+     "prompt_tokens": 89742,
+     "completion_tokens": 4892,
+     "seconds": 218.0
+    },
+    "condense": {
+     "calls": 1,
+     "prompt_tokens": 2901,
+     "completion_tokens": 297,
+     "seconds": 14.5
+    },
+    "review": {
+     "calls": 1,
+     "prompt_tokens": 2531,
+     "completion_tokens": 268,
+     "seconds": 9.9
+    },
+    "birth": {
+     "calls": 1,
+     "prompt_tokens": 1839,
+     "completion_tokens": 1135,
+     "seconds": 41.3
+    }
+   },
+   "8": {
+    "question_forecast": {
+     "calls": 150,
+     "prompt_tokens": 348660,
+     "completion_tokens": 18345,
+     "seconds": 1005.8
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 108010,
+     "completion_tokens": 6212,
+     "seconds": 298.6
+    },
+    "follow_up": {
+     "calls": 36,
+     "prompt_tokens": 108581,
+     "completion_tokens": 9256,
+     "seconds": 378.9
+    },
+    "condense": {
+     "calls": 5,
+     "prompt_tokens": 15367,
+     "completion_tokens": 2057,
+     "seconds": 90.7
+    }
+   },
+   "9": {
+    "question_forecast": {
+     "calls": 150,
+     "prompt_tokens": 390281,
+     "completion_tokens": 16818,
+     "seconds": 1033.2
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 91297,
+     "completion_tokens": 5986,
+     "seconds": 231.5
+    },
+    "follow_up": {
+     "calls": 35,
+     "prompt_tokens": 88689,
+     "completion_tokens": 9161,
+     "seconds": 370.7
+    },
+    "review": {
+     "calls": 1,
+     "prompt_tokens": 2456,
+     "completion_tokens": 805,
+     "seconds": 50.4
+    },
+    "birth": {
+     "calls": 1,
+     "prompt_tokens": 1998,
+     "completion_tokens": 798,
+     "seconds": 48.5
+    }
+   },
+   "10": {
+    "question_forecast": {
+     "calls": 155,
+     "prompt_tokens": 382253,
+     "completion_tokens": 18075,
+     "seconds": 1258.0
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 107311,
+     "completion_tokens": 6059,
+     "seconds": 443.7
+    },
+    "follow_up": {
+     "calls": 37,
+     "prompt_tokens": 110586,
+     "completion_tokens": 8416,
+     "seconds": 561.4
+    },
+    "condense": {
+     "calls": 5,
+     "prompt_tokens": 16275,
+     "completion_tokens": 1747,
+     "seconds": 105.6
+    }
+   },
+   "11": {
+    "question_forecast": {
+     "calls": 151,
+     "prompt_tokens": 417532,
+     "completion_tokens": 17843,
+     "seconds": 1166.6
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 105641,
+     "completion_tokens": 6032,
+     "seconds": 352.4
+    },
+    "follow_up": {
+     "calls": 32,
+     "prompt_tokens": 95119,
+     "completion_tokens": 7510,
+     "seconds": 402.4
+    },
+    "condense": {
+     "calls": 1,
+     "prompt_tokens": 3103,
+     "completion_tokens": 417,
+     "seconds": 22.5
+    },
+    "review": {
+     "calls": 1,
+     "prompt_tokens": 2945,
+     "completion_tokens": 755,
+     "seconds": 43.0
+    },
+    "birth": {
+     "calls": 1,
+     "prompt_tokens": 1929,
+     "completion_tokens": 1195,
+     "seconds": 68.6
+    }
+   },
+   "12": {
+    "question_forecast": {
+     "calls": 145,
+     "prompt_tokens": 354986,
+     "completion_tokens": 16534,
+     "seconds": 1046.6
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 89811,
+     "completion_tokens": 5994,
+     "seconds": 345.6
+    },
+    "follow_up": {
+     "calls": 31,
+     "prompt_tokens": 77986,
+     "completion_tokens": 6033,
+     "seconds": 336.2
+    },
+    "condense": {
+     "calls": 3,
+     "prompt_tokens": 9382,
+     "completion_tokens": 546,
+     "seconds": 33.2
+    }
+   },
+   "13": {
+    "question_forecast": {
+     "calls": 155,
+     "prompt_tokens": 371081,
+     "completion_tokens": 17806,
+     "seconds": 965.1
+    },
+    "look_forecast": {
+     "calls": 40,
+     "prompt_tokens": 101301,
+     "completion_tokens": 5939,
+     "seconds": 319.4
+    },
+    "follow_up": {
+     "calls": 33,
+     "prompt_tokens": 92462,
+     "completion_tokens": 5615,
+     "seconds": 295.7
+    },
+    "condense": {
+     "calls": 4,
+     "prompt_tokens": 11933,
+     "completion_tokens": 1248,
+     "seconds": 63.5
+    },
+    "review": {
+     "calls": 1,
+     "prompt_tokens": 2057,
+     "completion_tokens": 681,
+     "seconds": 34.1
+    },
+    "birth": {
+     "calls": 1,
+     "prompt_tokens": 1985,
+     "completion_tokens": 1163,
+     "seconds": 51.4
+    }
+   }
+  },
+  "budget_exhausted_at": {
+   "0": "d00 Mon 07:39",
+   "1": "d01 Tue 07:55",
+   "2": "d02 Wed 07:54",
+   "3": "d03 Thu 07:27",
+   "4": "d04 Fri 07:19",
+   "5": "d05 Sat 10:28",
+   "6": "d06 Sun 10:24",
+   "7": "d07 Mon 07:06",
+   "8": "d08 Tue 07:29",
+   "9": "d09 Wed 07:27",
+   "10": "d10 Thu 07:34",
+   "11": "d11 Fri 07:37",
+   "12": "d12 Sat 11:25",
+   "13": "d13 Sun 10:00"
+  },
+  "population_size_per_day": {
+   "0": 4,
+   "1": 5,
+   "2": 5,
+   "3": 5,
+   "4": 5,
+   "5": 5,
+   "6": 5,
+   "7": 5,
+   "8": 5,
+   "9": 5,
+   "10": 5,
+   "11": 5,
+   "12": 5,
+   "13": 5
+  },
+  "population_final": 5,
+  "forks": 92,
+  "retirements": 98,
+  "forks_rejected": 0,
+  "reviews_failed": 0,
+  "scratch_truncated": 0,
+  "invalid_forecasts": 12,
+  "unresolved_spots": 309,
+  "unresolved_objects": 316,
+  "unresolved_samples": [
+   "bedroom_2",
+   "backpack_leo",
+   "desk_k1",
+   "bedroom_1",
+   "drawer_b1",
+   "drawer_b2",
+   "backpack_leo",
+   "vanity_b3",
+   "bedroom_3",
+   "backpack_leo",
+   "bedroom_3",
+   "backpack_leo",
+   "backpack_leo",
+   "bedroom_2",
+   "bedroom_2",
+   "bedroom_2",
+   "bedroom_2",
+   "bedroom_2",
+   "bedroom_1",
+   "bedroom_2"
+  ],
+  "looks": 112,
+  "question_rounds": 429,
+  "final_weights": {
+   "a93": 0.233583,
+   "a97": 0.221089,
+   "a99": 0.130913,
+   "a102": 0.233583,
+   "a103": 0.180831
+  },
+  "agents": {
+   "a93": {
+    "parent": "a83",
+    "generation": 10,
+    "born": "d12 Sat 11:16",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 166,
+    "scratch_words": 232,
+    "weight": 0.233583
+   },
+   "a97": {
+    "parent": "a93",
+    "generation": 11,
+    "born": "d13 Sun 09:50",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 143,
+    "scratch_words": 257,
+    "weight": 0.221089
+   },
+   "a99": {
+    "parent": "a98",
+    "generation": 13,
+    "born": "d13 Sun 09:56",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 153,
+    "scratch_words": 257,
+    "weight": 0.130913
+   },
+   "a102": {
+    "parent": "a93",
+    "generation": 11,
+    "born": "d13 Sun 23:59",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 305,
+    "scratch_words": 232,
+    "weight": 0.233583
+   },
+   "a103": {
+    "parent": null,
+    "generation": 1,
+    "born": "d13 Sun 23:59",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 701,
+    "scratch_words": 0,
+    "weight": 0.180831
+   },
+   "a03": {
+    "parent": null,
+    "generation": 1,
+    "born": "d00 Mon 07:33",
+    "retired": "d00 Mon 07:35",
+    "retired_reason": "population cap",
+    "beliefs_words": 278,
+    "scratch_words": 41,
+    "weight": 0.090969
+   },
+   "a01": {
+    "parent": null,
+    "generation": 1,
+    "born": "d00 Mon 07:33",
+    "retired": "d00 Mon 07:35",
+    "retired_reason": "population cap",
+    "beliefs_words": 360,
+    "scratch_words": 59,
+    "weight": 0.11916
+   },
+   "a04": {
+    "parent": null,
+    "generation": 1,
+    "born": "d00 Mon 07:33",
+    "retired": "d00 Mon 07:35",
+    "retired_reason": "population cap",
+    "beliefs_words": 296,
+    "scratch_words": 72,
+    "weight": 0.130226
+   },
+   "a06": {
+    "parent": "a01",
+    "generation": 2,
+    "born": "d00 Mon 07:35",
+    "retired": "d00 Mon 07:35",
+    "retired_reason": "population cap",
+    "beliefs_words": 181,
+    "scratch_words": 97,
+    "weight": 0.077325
+   },
+   "a09": {
+    "parent": "a06",
+    "generation": 3,
+    "born": "d00 Mon 07:35",
+    "retired": "d00 Mon 07:35",
+    "retired_reason": "population cap",
+    "beliefs_words": 186,
+    "scratch_words": 140,
+    "weight": 0.031857
+   },
+   "a10": {
+    "parent": "a09",
+    "generation": 4,
+    "born": "d00 Mon 07:35",
+    "retired": "d00 Mon 07:38",
+    "retired_reason": "population cap",
+    "beliefs_words": 148,
+    "scratch_words": 140,
+    "weight": 0.037366
+   },
+   "a08": {
+    "parent": "a02",
+    "generation": 2,
+    "born": "d00 Mon 07:35",
+    "retired": "d00 Mon 07:38",
+    "retired_reason": "population cap",
+    "beliefs_words": 277,
+    "scratch_words": 243,
+    "weight": 0.051761
+   },
+   "a02": {
+    "parent": null,
+    "generation": 1,
+    "born": "d00 Mon 07:33",
+    "retired": "d00 Mon 07:38",
+    "retired_reason": "population cap",
+    "beliefs_words": 256,
+    "scratch_words": 346,
+    "weight": 0.081729
+   },
+   "a11": {
+    "parent": "a08",
+    "generation": 3,
+    "born": "d00 Mon 07:38",
+    "retired": "d00 Mon 07:39",
+    "retired_reason": "population cap",
+    "beliefs_words": 209,
+    "scratch_words": 388,
+    "weight": 0.115297
+   },
+   "a07": {
+    "parent": "a04",
+    "generation": 2,
+    "born": "d00 Mon 07:35",
+    "retired": "d01 Tue 00:35",
+    "retired_reason": "population cap",
+    "beliefs_words": 305,
+    "scratch_words": 363,
+    "weight": 0.076865
+   },
+   "a15": {
+    "parent": "a07",
+    "generation": 3,
+    "born": "d01 Tue 00:35",
+    "retired": "d01 Tue 00:35",
+    "retired_reason": "population cap",
+    "beliefs_words": 138,
+    "scratch_words": 363,
+    "weight": 0.083265
+   },
+   "a14": {
+    "parent": "a11",
+    "generation": 4,
+    "born": "d00 Mon 07:39",
+    "retired": "d01 Tue 00:35",
+    "retired_reason": "population cap",
+    "beliefs_words": 95,
+    "scratch_words": 482,
+    "weight": 0.056731
+   },
+   "a16": {
+    "parent": "a13",
+    "generation": 4,
+    "born": "d01 Tue 00:35",
+    "retired": "d01 Tue 00:35",
+    "retired_reason": "population cap",
+    "beliefs_words": 192,
+    "scratch_words": 411,
+    "weight": 0.04951
+   },
+   "a17": {
+    "parent": "a14",
+    "generation": 5,
+    "born": "d01 Tue 00:35",
+    "retired": "d01 Tue 00:42",
+    "retired_reason": "population cap",
+    "beliefs_words": 115,
+    "scratch_words": 482,
+    "weight": 0.055589
+   },
+   "a18": {
+    "parent": "a16",
+    "generation": 5,
+    "born": "d01 Tue 00:35",
+    "retired": "d01 Tue 00:42",
+    "retired_reason": "population cap",
+    "beliefs_words": 103,
+    "scratch_words": 411,
+    "weight": 0.071937
+   },
+   "a20": {
+    "parent": "a12",
+    "generation": 4,
+    "born": "d01 Tue 00:42",
+    "retired": "d01 Tue 00:42",
+    "retired_reason": "population cap",
+    "beliefs_words": 176,
+    "scratch_words": 461,
+    "weight": 0.066465
+   },
+   "a21": {
+    "parent": "a20",
+    "generation": 5,
+    "born": "d01 Tue 00:42",
+    "retired": "d01 Tue 00:42",
+    "retired_reason": "population cap",
+    "beliefs_words": 234,
+    "scratch_words": 508,
+    "weight": 0.033586
+   },
+   "a22": {
+    "parent": "a21",
+    "generation": 6,
+    "born": "d01 Tue 00:42",
+    "retired": "d01 Tue 07:55",
+    "retired_reason": "population cap",
+    "beliefs_words": 248,
+    "scratch_words": 508,
+    "weight": 0.02125
+   },
+   "a23": {
+    "parent": "a19",
+    "generation": 4,
+    "born": "d01 Tue 07:55",
+    "retired": "d01 Tue 23:59",
+    "retired_reason": "population cap",
+    "beliefs_words": 208,
+    "scratch_words": 207,
+    "weight": 0.117762
+   },
+   "a05": {
+    "parent": "a03",
+    "generation": 2,
+    "born": "d00 Mon 07:33",
+    "retired": "d01 Tue 23:59",
+    "retired_reason": "review: lowest at end of day",
+    "beliefs_words": 99,
+    "scratch_words": 37,
+    "weight": 0.180546
+   },
+   "a13": {
+    "parent": "a07",
+    "generation": 3,
+    "born": "d00 Mon 07:38",
+    "retired": "d02 Wed 06:49",
+    "retired_reason": "population cap",
+    "beliefs_words": 209,
+    "scratch_words": 245,
+    "weight": 0.107293
+   },
+   "a25": {
+    "parent": null,
+    "generation": 1,
+    "born": "d01 Tue 23:59",
+    "retired": "d02 Wed 06:49",
+    "retired_reason": "population cap",
+    "beliefs_words": 562,
+    "scratch_words": 87,
+    "weight": 0.106938
+   },
+   "a26": {
+    "parent": "a13",
+    "generation": 4,
+    "born": "d02 Wed 06:49",
+    "retired": "d02 Wed 06:49",
+    "retired_reason": "population cap",
+    "beliefs_words": 244,
+    "scratch_words": 289,
+    "weight": 0.06406
+   },
+   "a28": {
+    "parent": "a26",
+    "generation": 5,
+    "born": "d02 Wed 06:49",
+    "retired": "d02 Wed 06:49",
+    "retired_reason": "population cap",
+    "beliefs_words": 272,
+    "scratch_words": 289,
+    "weight": 0.046738
+   },
+   "a27": {
+    "parent": "a25",
+    "generation": 2,
+    "born": "d02 Wed 06:49",
+    "retired": "d02 Wed 07:19",
+    "retired_reason": "population cap",
+    "beliefs_words": 74,
+    "scratch_words": 272,
+    "weight": 0.084472
+   },
+   "a30": {
+    "parent": "a27",
+    "generation": 3,
+    "born": "d02 Wed 07:19",
+    "retired": "d02 Wed 07:19",
+    "retired_reason": "population cap",
+    "beliefs_words": 75,
+    "scratch_words": 316,
+    "weight": 0.045969
+   },
+   "a31": {
+    "parent": "a30",
+    "generation": 4,
+    "born": "d02 Wed 07:19",
+    "retired": "d03 Thu 07:03",
+    "retired_reason": "population cap",
+    "beliefs_words": 75,
+    "scratch_words": 360,
+    "weight": 0.028019
+   },
+   "a12": {
+    "parent": "a05",
+    "generation": 3,
+    "born": "d00 Mon 07:38",
+    "retired": "d03 Thu 07:04",
+    "retired_reason": "population cap",
+    "beliefs_words": 109,
+    "scratch_words": 385,
+    "weight": 0.033705
+   },
+   "a29": {
+    "parent": "a12",
+    "generation": 4,
+    "born": "d02 Wed 06:49",
+    "retired": "d03 Thu 07:27",
+    "retired_reason": "population cap",
+    "beliefs_words": 101,
+    "scratch_words": 294,
+    "weight": 0.011425
+   },
+   "a34": {
+    "parent": "a29",
+    "generation": 5,
+    "born": "d03 Thu 07:27",
+    "retired": "d03 Thu 23:59",
+    "retired_reason": "population cap",
+    "beliefs_words": 112,
+    "scratch_words": 294,
+    "weight": 0.011688
+   },
+   "a24": {
+    "parent": "a12",
+    "generation": 4,
+    "born": "d01 Tue 23:59",
+    "retired": "d03 Thu 23:59",
+    "retired_reason": "review: lowest at end of day",
+    "beliefs_words": 275,
+    "scratch_words": 233,
+    "weight": 0.016649
+   },
+   "a33": {
+    "parent": "a12",
+    "generation": 4,
+    "born": "d03 Thu 07:04",
+    "retired": "d04 Fri 07:10",
+    "retired_reason": "population cap",
+    "beliefs_words": 136,
+    "scratch_words": 433,
+    "weight": 0.011839
+   },
+   "a37": {
+    "parent": "a36",
+    "generation": 2,
+    "born": "d04 Fri 07:10",
+    "retired": "d05 Sat 00:13",
+    "retired_reason": "population cap",
+    "beliefs_words": 104,
+    "scratch_words": 85,
+    "weight": 0.0
+   },
+   "a32": {
+    "parent": "a24",
+    "generation": 5,
+    "born": "d03 Thu 07:03",
+    "retired": "d05 Sat 10:01",
+    "retired_reason": "population cap",
+    "beliefs_words": 17,
+    "scratch_words": 545,
+    "weight": 0.0
+   },
+   "a36": {
+    "parent": null,
+    "generation": 1,
+    "born": "d03 Thu 23:59",
+    "retired": "d05 Sat 10:28",
+    "retired_reason": "population cap",
+    "beliefs_words": 249,
+    "scratch_words": 461,
+    "weight": 5.2e-05
+   },
+   "a19": {
+    "parent": "a05",
+    "generation": 3,
+    "born": "d01 Tue 00:42",
+    "retired": "d05 Sat 23:59",
+    "retired_reason": "population cap",
+    "beliefs_words": 166,
+    "scratch_words": 192,
+    "weight": 0.002183
+   },
+   "a39": {
+    "parent": "a19",
+    "generation": 4,
+    "born": "d05 Sat 10:01",
+    "retired": "d05 Sat 23:59",
+    "retired_reason": "population cap",
+    "beliefs_words": 206,
+    "scratch_words": 233,
+    "weight": 0.006206
+   },
+   "a40": {
+    "parent": "a38",
+    "generation": 3,
+    "born": "d05 Sat 10:28",
+    "retired": "d06 Sun 00:28",
+    "retired_reason": "population cap",
+    "beliefs_words": 44,
+    "scratch_words": 202,
+    "weight": 0.002501
+   },
+   "a38": {
+    "parent": "a36",
+    "generation": 2,
+    "born": "d05 Sat 00:13",
+    "retired": "d06 Sun 00:28",
+    "retired_reason": "population cap",
+    "beliefs_words": 27,
+    "scratch_words": 202,
+    "weight": 0.002635
+   },
+   "a42": {
+    "parent": null,
+    "generation": 1,
+    "born": "d05 Sat 23:59",
+    "retired": "d06 Sun 10:20",
+    "retired_reason": "population cap",
+    "beliefs_words": 771,
+    "scratch_words": 33,
+    "weight": 0.037635
+   },
+   "a43": {
+    "parent": "a42",
+    "generation": 2,
+    "born": "d06 Sun 00:28",
+    "retired": "d07 Mon 00:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 804,
+    "scratch_words": 122,
+    "weight": 0.040947
+   },
+   "a35": {
+    "parent": "a19",
+    "generation": 4,
+    "born": "d03 Thu 23:59",
+    "retired": "d07 Mon 00:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 108,
+    "scratch_words": 190,
+    "weight": 0.084093
+   },
+   "a44": {
+    "parent": "a41",
+    "generation": 6,
+    "born": "d06 Sun 00:28",
+    "retired": "d07 Mon 00:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 120,
+    "scratch_words": 348,
+    "weight": 0.056923
+   },
+   "a46": {
+    "parent": "a41",
+    "generation": 6,
+    "born": "d07 Mon 00:37",
+    "retired": "d07 Mon 00:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 146,
+    "scratch_words": 239,
+    "weight": 0.03608
+   },
+   "a49": {
+    "parent": "a46",
+    "generation": 7,
+    "born": "d07 Mon 00:37",
+    "retired": "d07 Mon 00:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 155,
+    "scratch_words": 239,
+    "weight": 0.03633
+   },
+   "a48": {
+    "parent": "a44",
+    "generation": 7,
+    "born": "d07 Mon 00:37",
+    "retired": "d07 Mon 00:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 76,
+    "scratch_words": 415,
+    "weight": 0.090119
+   },
+   "a50": {
+    "parent": "a48",
+    "generation": 8,
+    "born": "d07 Mon 00:37",
+    "retired": "d07 Mon 00:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 22,
+    "scratch_words": 451,
+    "weight": 0.049522
+   },
+   "a52": {
+    "parent": "a50",
+    "generation": 9,
+    "born": "d07 Mon 00:37",
+    "retired": "d07 Mon 23:59",
+    "retired_reason": "population cap",
+    "beliefs_words": 22,
+    "scratch_words": 511,
+    "weight": 0.050097
+   },
+   "a41": {
+    "parent": "a35",
+    "generation": 5,
+    "born": "d05 Sat 23:59",
+    "retired": "d07 Mon 23:59",
+    "retired_reason": "review: lowest at end of day",
+    "beliefs_words": 208,
+    "scratch_words": 386,
+    "weight": 0.126831
+   },
+   "a53": {
+    "parent": "a45",
+    "generation": 8,
+    "born": "d07 Mon 23:59",
+    "retired": "d08 Tue 00:23",
+    "retired_reason": "population cap",
+    "beliefs_words": 77,
+    "scratch_words": 422,
+    "weight": 0.014383
+   },
+   "a55": {
+    "parent": "a54",
+    "generation": 2,
+    "born": "d08 Tue 00:23",
+    "retired": "d08 Tue 00:23",
+    "retired_reason": "population cap",
+    "beliefs_words": 349,
+    "scratch_words": 41,
+    "weight": 0.034903
+   },
+   "a54": {
+    "parent": null,
+    "generation": 1,
+    "born": "d07 Mon 23:59",
+    "retired": "d08 Tue 00:24",
+    "retired_reason": "population cap",
+    "beliefs_words": 577,
+    "scratch_words": 41,
+    "weight": 0.041684
+   },
+   "a56": {
+    "parent": "a45",
+    "generation": 8,
+    "born": "d08 Tue 00:23",
+    "retired": "d08 Tue 00:24",
+    "retired_reason": "population cap",
+    "beliefs_words": 157,
+    "scratch_words": 529,
+    "weight": 0.049852
+   },
+   "a58": {
+    "parent": "a56",
+    "generation": 9,
+    "born": "d08 Tue 00:24",
+    "retired": "d08 Tue 00:39",
+    "retired_reason": "population cap",
+    "beliefs_words": 169,
+    "scratch_words": 529,
+    "weight": 0.055163
+   },
+   "a59": {
+    "parent": "a51",
+    "generation": 7,
+    "born": "d08 Tue 00:39",
+    "retired": "d08 Tue 00:39",
+    "retired_reason": "population cap",
+    "beliefs_words": 217,
+    "scratch_words": 520,
+    "weight": 0.075295
+   },
+   "a60": {
+    "parent": "a59",
+    "generation": 8,
+    "born": "d08 Tue 00:39",
+    "retired": "d08 Tue 07:27",
+    "retired_reason": "population cap",
+    "beliefs_words": 214,
+    "scratch_words": 555,
+    "weight": 0.092629
+   },
+   "a61": {
+    "parent": "a57",
+    "generation": 7,
+    "born": "d08 Tue 07:27",
+    "retired": "d08 Tue 07:29",
+    "retired_reason": "population cap",
+    "beliefs_words": 178,
+    "scratch_words": 181,
+    "weight": 0.088638
+   },
+   "a45": {
+    "parent": "a44",
+    "generation": 7,
+    "born": "d06 Sun 10:20",
+    "retired": "d09 Wed 00:20",
+    "retired_reason": "population cap",
+    "beliefs_words": 125,
+    "scratch_words": 246,
+    "weight": 0.069541
+   },
+   "a63": {
+    "parent": "a45",
+    "generation": 8,
+    "born": "d09 Wed 00:20",
+    "retired": "d09 Wed 00:20",
+    "retired_reason": "population cap",
+    "beliefs_words": 148,
+    "scratch_words": 246,
+    "weight": 0.074738
+   },
+   "a57": {
+    "parent": "a47",
+    "generation": 6,
+    "born": "d08 Tue 00:24",
+    "retired": "d09 Wed 00:20",
+    "retired_reason": "population cap",
+    "beliefs_words": 253,
+    "scratch_words": 184,
+    "weight": 0.086616
+   },
+   "a65": {
+    "parent": "a57",
+    "generation": 7,
+    "born": "d09 Wed 00:20",
+    "retired": "d09 Wed 00:20",
+    "retired_reason": "population cap",
+    "beliefs_words": 203,
+    "scratch_words": 184,
+    "weight": 0.091132
+   },
+   "a47": {
+    "parent": "a35",
+    "generation": 5,
+    "born": "d07 Mon 00:37",
+    "retired": "d09 Wed 07:19",
+    "retired_reason": "population cap",
+    "beliefs_words": 86,
+    "scratch_words": 312,
+    "weight": 0.024066
+   },
+   "a66": {
+    "parent": "a47",
+    "generation": 6,
+    "born": "d09 Wed 00:20",
+    "retired": "d09 Wed 07:23",
+    "retired_reason": "population cap",
+    "beliefs_words": 223,
+    "scratch_words": 337,
+    "weight": 0.03047
+   },
+   "a67": {
+    "parent": "a66",
+    "generation": 7,
+    "born": "d09 Wed 07:19",
+    "retired": "d09 Wed 07:27",
+    "retired_reason": "population cap",
+    "beliefs_words": 191,
+    "scratch_words": 337,
+    "weight": 0.027982
+   },
+   "a68": {
+    "parent": "a62",
+    "generation": 9,
+    "born": "d09 Wed 07:23",
+    "retired": "d09 Wed 07:27",
+    "retired_reason": "population cap",
+    "beliefs_words": 175,
+    "scratch_words": 407,
+    "weight": 0.050947
+   },
+   "a69": {
+    "parent": "a68",
+    "generation": 10,
+    "born": "d09 Wed 07:27",
+    "retired": "d09 Wed 07:27",
+    "retired_reason": "population cap",
+    "beliefs_words": 265,
+    "scratch_words": 447,
+    "weight": 0.029433
+   },
+   "a71": {
+    "parent": "a69",
+    "generation": 11,
+    "born": "d09 Wed 07:27",
+    "retired": "d09 Wed 23:59",
+    "retired_reason": "population cap",
+    "beliefs_words": 274,
+    "scratch_words": 447,
+    "weight": 0.030325
+   },
+   "a51": {
+    "parent": "a47",
+    "generation": 6,
+    "born": "d07 Mon 00:37",
+    "retired": "d09 Wed 23:59",
+    "retired_reason": "review: lowest at end of day",
+    "beliefs_words": 86,
+    "scratch_words": 429,
+    "weight": 0.279276
+   },
+   "a64": {
+    "parent": "a51",
+    "generation": 7,
+    "born": "d09 Wed 00:20",
+    "retired": "d10 Thu 00:27",
+    "retired_reason": "population cap",
+    "beliefs_words": 102,
+    "scratch_words": 449,
+    "weight": 0.059579
+   },
+   "a74": {
+    "parent": "a64",
+    "generation": 8,
+    "born": "d10 Thu 00:27",
+    "retired": "d10 Thu 00:27",
+    "retired_reason": "population cap",
+    "beliefs_words": 310,
+    "scratch_words": 449,
+    "weight": 0.063353
+   },
+   "a73": {
+    "parent": null,
+    "generation": 1,
+    "born": "d09 Wed 23:59",
+    "retired": "d10 Thu 00:27",
+    "retired_reason": "population cap",
+    "beliefs_words": 450,
+    "scratch_words": 26,
+    "weight": 0.014658
+   },
+   "a75": {
+    "parent": "a70",
+    "generation": 9,
+    "born": "d10 Thu 00:27",
+    "retired": "d10 Thu 00:27",
+    "retired_reason": "population cap",
+    "beliefs_words": 258,
+    "scratch_words": 500,
+    "weight": 0.075189
+   },
+   "a77": {
+    "parent": "a75",
+    "generation": 10,
+    "born": "d10 Thu 00:27",
+    "retired": "d10 Thu 07:29",
+    "retired_reason": "population cap",
+    "beliefs_words": 265,
+    "scratch_words": 500,
+    "weight": 0.081154
+   },
+   "a76": {
+    "parent": "a62",
+    "generation": 9,
+    "born": "d10 Thu 00:27",
+    "retired": "d10 Thu 07:29",
+    "retired_reason": "population cap",
+    "beliefs_words": 120,
+    "scratch_words": 246,
+    "weight": 0.103954
+   },
+   "a78": {
+    "parent": "a72",
+    "generation": 9,
+    "born": "d10 Thu 07:29",
+    "retired": "d10 Thu 07:29",
+    "retired_reason": "population cap",
+    "beliefs_words": 393,
+    "scratch_words": 154,
+    "weight": 0.082197
+   },
+   "a80": {
+    "parent": "a78",
+    "generation": 10,
+    "born": "d10 Thu 07:29",
+    "retired": "d10 Thu 07:34",
+    "retired_reason": "population cap",
+    "beliefs_words": 160,
+    "scratch_words": 185,
+    "weight": 0.03547
+   },
+   "a81": {
+    "parent": "a80",
+    "generation": 11,
+    "born": "d10 Thu 07:34",
+    "retired": "d10 Thu 07:34",
+    "retired_reason": "population cap",
+    "beliefs_words": 131,
+    "scratch_words": 185,
+    "weight": 0.036151
+   },
+   "a79": {
+    "parent": "a76",
+    "generation": 10,
+    "born": "d10 Thu 07:29",
+    "retired": "d11 Fri 06:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 155,
+    "scratch_words": 305,
+    "weight": 0.040962
+   },
+   "a82": {
+    "parent": "a79",
+    "generation": 11,
+    "born": "d10 Thu 07:34",
+    "retired": "d11 Fri 06:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 155,
+    "scratch_words": 305,
+    "weight": 0.046723
+   },
+   "a84": {
+    "parent": "a72",
+    "generation": 9,
+    "born": "d11 Fri 06:37",
+    "retired": "d11 Fri 06:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 381,
+    "scratch_words": 128,
+    "weight": 0.001543
+   },
+   "a72": {
+    "parent": "a64",
+    "generation": 8,
+    "born": "d09 Wed 23:59",
+    "retired": "d11 Fri 07:21",
+    "retired_reason": "population cap",
+    "beliefs_words": 373,
+    "scratch_words": 128,
+    "weight": 0.000807
+   },
+   "a86": {
+    "parent": "a62",
+    "generation": 9,
+    "born": "d11 Fri 07:21",
+    "retired": "d11 Fri 07:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 224,
+    "scratch_words": 540,
+    "weight": 0.029742
+   },
+   "a87": {
+    "parent": "a86",
+    "generation": 10,
+    "born": "d11 Fri 07:37",
+    "retired": "d11 Fri 07:37",
+    "retired_reason": "population cap",
+    "beliefs_words": 237,
+    "scratch_words": 540,
+    "weight": 0.01547
+   },
+   "a85": {
+    "parent": "a83",
+    "generation": 10,
+    "born": "d11 Fri 06:37",
+    "retired": "d11 Fri 23:59",
+    "retired_reason": "population cap",
+    "beliefs_words": 250,
+    "scratch_words": 204,
+    "weight": 0.052622
+   },
+   "a62": {
+    "parent": "a61",
+    "generation": 8,
+    "born": "d08 Tue 07:29",
+    "retired": "d11 Fri 23:59",
+    "retired_reason": "review: lowest at end of day",
+    "beliefs_words": 189,
+    "scratch_words": 593,
+    "weight": 0.232708
+   },
+   "a90": {
+    "parent": null,
+    "generation": 1,
+    "born": "d11 Fri 23:59",
+    "retired": "d12 Sat 09:22",
+    "retired_reason": "population cap",
+    "beliefs_words": 634,
+    "scratch_words": 0,
+    "weight": 0.032316
+   },
+   "a89": {
+    "parent": "a70",
+    "generation": 9,
+    "born": "d11 Fri 23:59",
+    "retired": "d12 Sat 11:16",
+    "retired_reason": "population cap",
+    "beliefs_words": 339,
+    "scratch_words": 121,
+    "weight": 0.048333
+   },
+   "a88": {
+    "parent": "a85",
+    "generation": 11,
+    "born": "d11 Fri 07:37",
+    "retired": "d12 Sat 11:16",
+    "retired_reason": "population cap",
+    "beliefs_words": 263,
+    "scratch_words": 283,
+    "weight": 0.034946
+   },
+   "a70": {
+    "parent": "a64",
+    "generation": 8,
+    "born": "d09 Wed 07:27",
+    "retired": "d12 Sat 11:25",
+    "retired_reason": "population cap",
+    "beliefs_words": 218,
+    "scratch_words": 261,
+    "weight": 0.054909
+   },
+   "a92": {
+    "parent": "a70",
+    "generation": 9,
+    "born": "d12 Sat 11:16",
+    "retired": "d12 Sat 11:25",
+    "retired_reason": "population cap",
+    "beliefs_words": 133,
+    "scratch_words": 215,
+    "weight": 0.044918
+   },
+   "a94": {
+    "parent": "a91",
+    "generation": 11,
+    "born": "d12 Sat 11:25",
+    "retired": "d12 Sat 11:25",
+    "retired_reason": "population cap",
+    "beliefs_words": 182,
+    "scratch_words": 400,
+    "weight": 0.039768
+   },
+   "a96": {
+    "parent": "a94",
+    "generation": 12,
+    "born": "d12 Sat 11:25",
+    "retired": "d13 Sun 09:50",
+    "retired_reason": "population cap",
+    "beliefs_words": 143,
+    "scratch_words": 400,
+    "weight": 0.017821
+   },
+   "a91": {
+    "parent": "a89",
+    "generation": 10,
+    "born": "d12 Sat 09:22",
+    "retired": "d13 Sun 09:56",
+    "retired_reason": "population cap",
+    "beliefs_words": 191,
+    "scratch_words": 404,
+    "weight": 0.031462
+   },
+   "a98": {
+    "parent": "a97",
+    "generation": 12,
+    "born": "d13 Sun 09:56",
+    "retired": "d13 Sun 09:56",
+    "retired_reason": "population cap",
+    "beliefs_words": 142,
+    "scratch_words": 182,
+    "weight": 0.093561
+   },
+   "a83": {
+    "parent": "a70",
+    "generation": 9,
+    "born": "d11 Fri 06:37",
+    "retired": "d13 Sun 10:00",
+    "retired_reason": "population cap",
+    "beliefs_words": 251,
+    "scratch_words": 179,
+    "weight": 0.073978
+   },
+   "a95": {
+    "parent": "a92",
+    "generation": 10,
+    "born": "d12 Sat 11:25",
+    "retired": "d13 Sun 10:00",
+    "retired_reason": "population cap",
+    "beliefs_words": 183,
+    "scratch_words": 538,
+    "weight": 0.071585
+   },
+   "a101": {
+    "parent": "a95",
+    "generation": 11,
+    "born": "d13 Sun 10:00",
+    "retired": "d13 Sun 23:59",
+    "retired_reason": "population cap",
+    "beliefs_words": 242,
+    "scratch_words": 538,
+    "weight": 0.077105
+   },
+   "a100": {
+    "parent": "a83",
+    "generation": 10,
+    "born": "d13 Sun 10:00",
+    "retired": "d13 Sun 23:59",
+    "retired_reason": "population cap",
+    "beliefs_words": 233,
+    "scratch_words": 204,
+    "weight": 0.078331
+   }
+  }
+ },
+ "log_loss_valid": true,
+ "llm": {
+  "live_calls": 2993,
+  "cache_hits": 102,
+  "live_generation_seconds": 21314.9
+ }
+}

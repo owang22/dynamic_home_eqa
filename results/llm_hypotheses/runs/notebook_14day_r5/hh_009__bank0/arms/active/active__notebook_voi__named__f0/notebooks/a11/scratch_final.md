@@ -1,0 +1,7 @@
+# a11 — scratch memory, final (retired d00 Mon 06:04 (population cap); final weight 0.0352)
+
+d00 Mon 05:43: d00 Mon 05:43: entry_hook_e1 holds all 3 backpacks, 2 jackets, keys_priya, wallet_priya. No residents. Confirms hook as primary drop zone for outerwear/bags. Elias's keys absent here; likely desk_b1 or ON_PERSON. Priya's keys/wallet present, consistent with 'home' state.
+d00 Mon 05:43: d00 Mon 05:43: entry_table_e1 holds keys_elias, phone_elias. No residents. Contradicts belief that Elias's keys/phone are at desk_b1 or ON_PERSON. Suggests entry_table_e1 is a secondary drop zone for Elias's personal items, similar to entry_hook_e1 for outerwear.
+d00 Mon 05:55: d00 Mon 05:55: entry_table_e1 confirmed holding keys_elias, phone_elias. No residents. High confidence in this location for Elias's personal items when home. Scratch memory updated to reflect this stable state.
+d00 Mon 05:57: d00 Mon 05:57: counter_k1 holds charger_shared_1, lunchbox_priya, mug_elias, mug_priya, phone_priya, tablet_shared_1; resident_2 present. Confirms kitchen as active break/work zone for Priya and shared device hub. Elias's mug here, not desk_b1, suggesting he is also in kitchen or items were moved for shared use.
+d00 Mon 06:04: d00 Mon 06:04: counter_k1 holds charger_shared_1, lunchbox_priya, phone_priya, tablet_shared_1; resident_2 present. mug_elias and mug_priya ABSENT. Contradicts 05:57 observation. Mugs likely moved to sink_k1 or ON_PERSON. Priya's items remain on counter.

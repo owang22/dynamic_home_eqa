@@ -1,0 +1,5 @@
+# a09 — scratch memory, final (retired d01 Tue 06:20 (population cap); final weight 0.0000)
+
+d00 Mon 06:06: d00 Mon 06:06: nightstand_b1 holds book_marisol, glasses_marisol. No residents present. Confirms Marisol's items are at her nightstand early morning, not kitchen/entry as time-based model suggests. Activity-based model (relaxing/reading) fits better for Marisol's item placement at 06:06.
+d00 Mon 06:06: d00 Mon 06:06: counter_k1 holds 12 items (chargers, lunchboxes, mugs, phones, water bottles, notebook, pen) + resident_1. Time-based model (kitchen/entry) fits perfectly. Activity-based (cooking) fits resident_1. Marisol's items are NOT at nightstand; she is at counter. Previous nightstand observation was likely a different time or error.
+d00 Mon 06:06: d00 Mon 06:06: Look at resident_1 in kitchen shows phone_marisol. Confirms Marisol is at counter_k1 (not nightstand). Activity-based model (cooking) fits: keys/wallet on counter, phone in hand. Time-based model (kitchen/entry) also fits. Previous nightstand observation was likely error or different time. Marisol's items are NOT at nightstand at 06:06.

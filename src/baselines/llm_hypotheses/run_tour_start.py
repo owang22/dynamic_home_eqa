@@ -165,7 +165,7 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
         return {"name": "log_reader", "brain": brain,
                 "label": f"{label}({condition})"}
     if kind in ("notebook_mixture", "notebook_voi", "notebook_llmDecide",
-                "notebook_fixed"):
+                "notebook_fixed", "notebook_notes"):
         assert condition in ("named", "anonymized"), \
             f"{kind} takes a condition: named | anonymized"
         assert client is not None, "the notebook mixture needs a served model"
@@ -182,7 +182,8 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
         qpd = (sum(len(d) for d in days) / len(days)) if days else 24.0
         config = dataclasses.replace(CONFIGS[kind], questions_per_day=qpd)
         brain = NotebookMixtureBrain(client, omap=omap, rmap=rmap, cmap=cmap,
-                                     log_dir=log_dir.parent, config=config)
+                                     log_dir=log_dir.parent, config=config,
+                                     resident_names=_resident_first_names(household))
         return {"name": "notebook_mixture", "brain": brain,
                 "label": f"{config.label}({condition})"}
     if kind in ("llm", "llm_fixed", "graph", "graph_fixed", "tree",
@@ -225,6 +226,23 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
             spec["elicitor"] = elicitor
         return spec
     raise SystemExit(f"unknown belief kind {kind!r}")
+
+
+def _resident_first_names(household: str) -> Dict[str, str]:
+    """resident id -> first name from the household's persona (the bank
+    carries ids only; objects are named after their owners, e.g.
+    ``phone_sofia``, so the agents need the link)."""
+    import glob
+    import yaml
+    for p in glob.glob(f"../profiles/households/*/*/{household}/persona.yaml") + \
+            glob.glob(f"profiles/households/*/*/{household}/persona.yaml"):
+        try:
+            persona = yaml.safe_load(open(p))
+            return {r["id"]: str(r.get("name", "")).split()[0]
+                    for r in persona.get("residents", []) if r.get("name")}
+        except Exception:      # a persona we cannot read is no names
+            return {}
+    return {}
 
 
 def parse_arm(arm: str):

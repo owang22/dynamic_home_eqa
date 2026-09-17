@@ -1,0 +1,13 @@
+# a80 — scratch memory, final (retired d08 Tue 05:51 (population cap); final weight 0.0502)
+
+d06-d08: counter_k1 is the primary stable hub for shared items (charger_shared_1, pan_shared_1, tablet_shared_1) and Priya’s mug (mug_priya). These items persist even when owners are absent. Elias’s personal items (mug_elias, pen_elias, water_bottle_elias) are highly mobile; they appear and disappear from counter_k1 frequently, so forecasts for them here should be low unless recently observed. Priya’s lunchbox is also mobile, not static on the counter.
+
+Entry_hook_e1 remains a multi-resident departure buffer. It holds backpacks, jackets, keys, and wallets for all residents simultaneously. Valuables are rarely carried indoors; they reside at the entry or are OUT_OF_HOUSE. Residents do not keep wallets/keys on their bodies while moving between rooms.
+
+Bedroom_2 is transient. Noa’s items (book_noa, blanket_noa, toy_noa) are not static on bed_b2 or bedroom_floor_b2. Observations show these spots empty or containing only temporary items (like book_noa on the floor) that move quickly. Noa is often active pre-dawn in the bedroom but carries nothing on person; her items are in transit or elsewhere. Forecasts for Noa’s objects in bedroom_2 should be near-zero unless recent movement is observed.
+
+Bathroom is a transient zone. towel_rack_ba1 is consistently empty even when residents are present. Noa’s towel and water bottle are not stored here. Elias is active pre-dawn in the bathroom, but it is not a storage hub for personal effects.
+
+d08 Tue 05:51: counter_k1 holds charger_shared_1, mug_priya, pan_shared_1, tablet_shared_1; resident_2 present. pen_elias, water_bottle_elias, water_bottle_priya, mug_elias absent. Confirms counter_k1 as stable hub for shared items (charger, pan, tablet) and Priya's mug. Elias's items are mobile, not static here. Adjusts forecasts: high prob for shared/Priya items, low for Elias's personal items at this spot.
+d08 Tue 05:51: d08 Tue 05:51: Look at resident_2 (Priya) in kitchen revealed nothing on person. Confirms BELIEFS: residents do not carry keys, wallets, phones, or mugs while moving between rooms. Items remain at hubs (counter_k1, entry_hook_e1) or are OUT_OF_HOUSE. No change to static forecasts for shared/Priya items at counter_k1; reinforces low probability for personal items on person.
+d08 Tue 05:51: d08 Tue 05:51: entry_hook_e1 holds backpack_elias, backpack_priya, jacket_elias, jacket_priya, keys_priya, wallet_priya. Noa's items absent. Elias's keys/wallet absent (likely on person or elsewhere). Confirms entry as primary buffer for outerwear/backpacks, but not for all residents' valuables simultaneously.

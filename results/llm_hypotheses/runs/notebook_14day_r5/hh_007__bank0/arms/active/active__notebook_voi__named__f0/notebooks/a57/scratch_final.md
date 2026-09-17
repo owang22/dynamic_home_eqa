@@ -1,0 +1,11 @@
+# a57 — scratch memory, final (retired d09 Wed 07:27 (population cap); final weight 0.0000)
+
+d07-d08: Kitchen (counter_k1) is a transient staging area; held Sofia's items (backpack, lunchbox, phone, water) on d07 00:37 but was empty of Leo's wallet. wallet_leo consistently absent from counter_k1, likely in sink_k1 or on-person. nightstand_b1 (Leo) and nightstand_b2 (Sofia's sibling? No, resident_2 is Leo? Wait, residents: 1=Mara, 2=Leo, 3=Sofia. Scratch says resident_2 in b2. Beliefs say Leo is resident_1? Let's check Beliefs: 'Leo's (resident_1)'. Scratch says 'resident_2 in bedroom_2'. Contradiction in resident ID mapping in scratch vs beliefs? Beliefs: resident_1 (Mara), resident_2 (Leo), resident_3 (Sofia). Wait, Beliefs text: 'RESIDENTS: resident_1 (Mara), resident_2 (Leo), resident_3 (Sofia)'. But Beliefs also say 'Leo's (resident_1)'. This is a conflict in the provided text. I will stick to the explicit 'RESIDENTS' list: 1=Mara, 2=Leo, 3=Sofia. However, Beliefs section says 'Leo's (resident_1)'. I will assume the Beliefs section has a typo and follow the RESIDENTS list, or vice versa? The scratch entries refer to 'resident_2' in 'bedroom_2'. If resident_2 is Leo, then Leo is in b2. If resident_1 is Leo, he is in b1. Scratch d07 07:06: resident_2 in b2. Scratch d07 00:37: nightstand_b1 empty. Beliefs say 'Leo's (resident_1) personal items...'. This is messy. I will generalize: Leo's nightstand (b1 or b2) is empty. Sofia's nightstand (b3) is stable. 
+
+Sofia (resident_3, b3): nightstand_b3 is stable storage for charger_sofia, medication_bottle_sofia, and phone_sofia (phone migrates here overnight, confirmed d08). desk_b3 is stable storage for hairbrush_sofia, makeup_kit_sofia. bed_b3 is empty. 
+
+Leo (resident_2 or 1): Nightstand (b1 or b2) is empty. wallet_leo is elusive, rarely in counter_k1. 
+
+Mara (resident_1 or 2): No specific data. 
+
+New line: d08 Tue 00:39: bed_b3 empty; nobody present. Confirms bed_b3 serves no storage function for Sofia's items, consistent with existing beliefs. No belief contradiction; scratch updated.

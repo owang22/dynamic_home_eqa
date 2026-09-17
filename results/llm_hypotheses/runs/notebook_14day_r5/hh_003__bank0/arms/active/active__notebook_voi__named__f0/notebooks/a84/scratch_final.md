@@ -1,0 +1,6 @@
+# a84 — scratch memory, final (retired d11 Fri 06:23 (population cap); final weight 0.0768)
+
+d11 Fri 00:00: counter_k1 held 9 items incl. phone_marisol, water_bottle_marisol, notebook_marisol, charger_nico, lunchbox_talia. Absent: phone_nico, phone_talia, water_bottle_nico, mug_marisol, charger_marisol, dog_leash_shared_1, keys_nico. resident_1 present. Overnight reset confirms high-entropy flux; previous d10 static state invalidated.
+d11 Fri 00:00: d11 Fri 00:00: entry_hook_e1 held only jacket_marisol. Confirms Belief 3 (static storage). No other items present, validating low probability for keys/umbrella. Score -0.76 due to overconfidence in absence of other items, but core belief holds.
+d11 Fri 06:23: d11 Fri 06:23 counter_k1: charger_marisol, charger_nico, dog_leash_shared_1, lunchbox_talia, mug_marisol, notebook_marisol, water_bottle_nico. Absent: phone_marisol, water_bottle_marisol. High-entropy flux confirmed; personal items migrate rapidly. No residents present.
+d11 Fri 06:23: d11 Fri 06:23 sink_k1: bowl_shared_1, pan_shared_1, phone_nico, pot_shared_1. No residents. Phone_nico in sink contradicts Belief 6 (phones on counter). Shared dishware (bowl, pan, pot) clustered here, not just plate. High entropy in sink confirmed.

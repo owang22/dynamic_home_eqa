@@ -994,3 +994,55 @@ def test_fixed_population_never_revises(tmp_path):
     assert events[-1]["event"] == "review" and events[-1]["skipped"] == "fixed population"
     w = brain.population.weights
     assert w["a01"] > w["a03"] > w["a02"]      # reweighted by the look, nothing else
+
+
+def test_resident_names_residents_today_and_room_spread(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o", "table_k", "shelf_o"), script=[
+        None,
+        {"spots": [{"spot": "office", "p": 0.6}, {"spot": "counter_k", "p": 0.4}], "why": "x"},
+        {"spots": [{"spot": "desk_o", "p": 1.0}], "why": "y"},
+        {"spots": [{"spot": "desk_o", "p": 1.0}], "why": "y"},
+        {"spots": [{"spot": "desk_o", "p": 1.0}], "why": "y"},
+    ])
+    stub.script[0] = {"documents": [{"guess": str(i), "beliefs": f"anchor: {a}"}
+                                    for i, a in enumerate(stub.anchors)]}
+    brain = _voi_brain(stub, tmp_path, parallel=1)
+    brain._resident_names = {"alice": "Alice", "bob": "Bob"}
+    brain.decide("keys", 100)
+    prompt = [p for p in stub.prompts if "REQUEST: where is keys" in p][0]
+    assert "RESIDENTS: alice (Alice), bob (Bob)" in prompt
+    assert "RESIDENTS TODAY (from the robot's looks):" in prompt
+    assert "alice: not seen today" in prompt and "bob: not seen today" in prompt
+    # room spread: "office" (a room) -> desk_o and shelf_o get 0.3 each
+    row = json.loads((tmp_path / "forecasts.jsonl").read_text().splitlines()[-1])
+    a01 = row["forecasts"]["a01"]["spots"]
+    assert abs(a01["desk_o"] - 0.3) < 1e-9 and abs(a01["shelf_o"] - 0.3) < 1e-9 and a01["counter_k"] == 0.4
+    assert brain.room_spread == 1 and brain.unresolved_spots == 0
+    # a look that lists alice in the kitchen, then one that finds nobody in the office
+    from baselines.types import SenseResult
+    brain._question_key = ("keys", 100)
+    brain.observe(SenseResult(receptacle_id="counter_k", t=100, contents=("mug",),
+                              object_classes={"mug": "mug"}, residents_present=("alice",)))
+    brain.observe(SenseResult(receptacle_id="desk_o", t=100, contents=(),
+                              object_classes={}, residents_present=()))
+    block = brain._residents_today_block(200)
+    assert "alice: kitchen 00:01 · last seen 00:01 in kitchen" in block
+    assert "bob: not seen today" in block
+    assert "rooms looked at with nobody there: office 00:01" in block
+    brain._new_day(DAY_SECONDS + 5)
+    assert "alice: not seen today" in brain._residents_today_block(DAY_SECONDS + 5)
+
+
+def test_notes_arm_keeps_beliefs_frozen_but_writes_notes(tmp_path):
+    stub = _Stub(anchors=("counter_k", "desk_o"), fork_p=1.0)
+    brain = NotebookMixtureBrain(stub, log_dir=tmp_path, config=nm.NOTEBOOK_NOTES)
+    brain.reset(_context())
+    brain.decide("keys", 100)
+    _one_look(brain, {"a01": {"keys": 0.9}, "a02": {"keys": 0.1}})
+    brain._end_of_day_review(0)
+    assert brain.population.n_forks == 0 and brain.population.size == 2
+    assert brain.population.agents["a02"].notebook.scratch.endswith(": saw something")
+    fu = [p for p in stub.prompts if "RESULT OF THE LOOK" in p]
+    assert fu and all("BELIEFS are fixed for this study" in p for p in fu)
+    calls = [json.loads(l) for l in (tmp_path / "calls.jsonl").read_text().splitlines()]
+    assert {c["type"] for c in calls} == {"initial", "question_forecast", "follow_up"}

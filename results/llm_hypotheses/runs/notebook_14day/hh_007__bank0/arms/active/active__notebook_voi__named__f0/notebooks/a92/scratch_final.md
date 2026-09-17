@@ -1,0 +1,8 @@
+# a92 — scratch memory, final (retired d12 Sat 11:25 (population cap); final weight 0.0449)
+
+d12 Sat 09:22: counter_k1 holds backpack_sofia, jacket_leo, water_bottle_sofia; resident_2 present. Confirms counter stability for these items. water_bottle_mara absent (0.35 penalty); likely consumed or moved. No belief contradiction; counter remains stable for backpacks/jackets/bottles, volatile for phones/mugs.
+d12 Sat 10:06: d12 10:06 counter_k1: backpack_sofia, jacket_leo, mug_leo, mug_mara, water_bottle_sofia; resident_2 present. Mugs stable on counter (belief 3). water_bottle_mara absent (0.15). No contradictions.
+d12 Sat 10:10: d12 Sat 10:10: game_shelf_l1 holds gaming_controller_leo; room empty. Confirms belief 6 (desks/floors empty) and specific storage for gaming gear. No contradictions; controller stable on shelf.
+d12 Sat 11:16: d12 Sat 11:16: dish_rack_k1 holds lunchbox_sofia, mug_mara, pot_1; residents 1, 3 present. High score penalty (-11.50) due to low prior for pot_1 and mug_mara. Dish rack is a volatile zone for mugs/pots, not just lunchboxes. Update: mug_mara and pot_1 likely here after use.
+d12 Sat 11:16: d12 Sat 11:16: counter_k1 holds backpack_sofia, jacket_leo, water_bottle_mara, water_bottle_sofia; residents 1, 3 present. water_bottle_mara returned (prior 0.15 penalty). Mugs absent (moved to dish_rack per 11:16 look). Counter remains stable for backpacks/jackets/bottles; volatile for mugs.
+d12 Sat 11:25: d12 Sat 11:25: counter_k1 holds backpack_sofia, jacket_leo, water_bottle_mara, water_bottle_sofia; residents 1, 3 present. Confirms counter stability for these items. Mugs absent (moved to dish_rack). Score -1.98 due to overconfidence in stable items and underestimation of absence probabilities for volatile items like mugs.

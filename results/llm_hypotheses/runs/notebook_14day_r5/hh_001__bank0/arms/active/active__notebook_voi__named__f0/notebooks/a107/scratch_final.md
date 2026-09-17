@@ -1,0 +1,7 @@
+# a107 — scratch memory, final (live at the end; final weight 0.0001)
+
+d12 Sat 07:23: dish_rack_k1 held mug_shared_1, pot_shared_1; resident_1 present. plate_shared_1, pen_mara absent. Confirms core dishware anchor; plate_shared_1/pen_mara are not stable co-occurers here. Score -2.70 (above avg). No belief change; scratch updated to reflect 2-item core and absence of plates/pens.
+d12 Sat 07:24: d12 Sat 07:24: dish_rack_k1 held mug_shared_1, pot_shared_1; resident_1 present. plate_shared_1, pen_mara absent. Confirms 2-item core anchor; plate/pen are not stable co-occurers. Score -0.90 (below avg). No belief change; scratch updated to reflect 2-item core and absence of plates/pens.
+d13 Sun 07:23: d13 Sun 07:23: dish_rack_k1 held only mug_shared_1; resident_1 present. pot_shared_1 absent (contradicts 0.85 forecast). Confirms dish_rack_k1 is highly volatile for shared items, not a stable anchor for pot_shared_1. Score -2.80.
+d13 Sun 07:31: d13 Sun 07:31: counter_k1 held lunchbox_mara, mug_mara, tablet_mara; resident_1 present. plate_shared_2, pan_shared_1, water_bottle_mara, phone_mara, keys_mara absent. Confirms core 3-item staging set. Score -3.25 (below avg). No belief change; scratch updated to reflect 3-item core and absence of plate/pan.
+d13 Sun 07:39: d13 Sun 07:39: dish_rack_k1 held only mug_shared_1; resident_1 present. pot_shared_1 absent. Confirms high volatility of dish_rack_k1 for shared items; pot_shared_1 is not a stable anchor here. Score -1.17. No belief change; scratch updated to reflect single-item presence and absence of pot.

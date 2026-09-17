@@ -1,0 +1,17 @@
+# a92 — scratch memory, final (retired d11 Fri 06:57 (population cap); final weight 0.0611)
+
+Kitchen Volatility: counter_k1 is highly dynamic; items swap within hours. Do not assume persistence without fresh look. However, if items are unchanged in the last 10 mins, assign 0.95+ priors (d10 06:07-06:14 showed stability over short intervals). Early AM (05:26-06:14) typically lacks mug_elias, pen_elias, and tablet_shared_1; assign <0.15 priors for these. Priya (resident_2) is the primary early AM kitchen user; she carries nothing on person, leaving personal items (phone, keys, wallet) at counter_k1 or elsewhere. Do not forecast ON_PERSON for Priya early AM.
+
+Static Zones: cupboard_k1 reliably holds medication_bottle_noa and pot_shared_1. bathroom_shelf_ba1 reliably holds hairbrush_priya, makeup_kit_priya, and towel_noa. bedroom_floor_b1 holds vacuum_cleaner_shared_1 permanently. desk_b1 holds Elias's cluster (headphones, laptop, notebook) stably; assign 0.95+ if unchanged.
+
+Noa's Items: Noa's cluster (book, toy, blanket, water_bottle, medication, towel, backpack) is NOT in bedroom_2 early AM (bed/floor/nightstand empty, confirmed d08-d11). NOT on person early AM. Likely static in living room or elsewhere. Do not forecast in bedroom_2 or on person without fresh look. Noa (resident_3) is in bedroom_2 early AM but carries nothing.
+
+Elias's Mobility: Elias (resident_1) moves from bedroom_1 to kitchen/bathroom early AM (d09: bathroom 06:25, kitchen 06:46). His personal cluster (phone, keys, wallet, pen) is NOT on person early AM. pen_elias is highly mobile; do not assume presence at counter_k1 or desk_b1 without fresh look.
+
+Forecasting Rule: Prioritize resident location over item persistence. If resident is in kitchen, they may have moved items. Assign low priors (<0.3) to specific items at counter_k1 unless confirmed in last 30 mins. If items unchanged in last 10 mins, raise priors to 0.95+.
+
+d11 Fri 05:26: nightstand_b2 empty; resident_3 present. Confirms Noa's cluster (medication, water_bottle, book, toy, blanket, towel, backpack) is NOT in bedroom_2 early AM. My 0.01 priors were well-calibrated for absence. Noa carries nothing. Do not forecast Noa's items in bedroom_2 receptacles without fresh look.
+d11 Fri 05:26: d11 Fri 05:26: bathroom_shelf_ba1 confirmed static (hairbrush_priya, makeup_kit_priya, towel_noa). resident_2 present, carrying nothing. Confirms early AM pattern: Priya in bathroom, no personal items on person. Noa's items absent from shelf as expected.
+d11 Fri 05:53: d11 Fri 05:53: counter_k1 holds lunchbox_priya, mug_elias, mug_priya, pan_shared_1, tablet_shared_1. Residents 2 & 3 present. Contradicts 'low prior' rule for tablet/mugs; assign 0.95+ if seen <10 mins ago. Noa (r3) in kitchen, not bedroom_2. Priya (r2) in kitchen, not bathroom. Update mobility: Noa moves to kitchen early AM.
+d11 Fri 06:57: d11 Fri 06:57: desk_b1 holds book_noa, notebook_elias. Elias's cluster (headphones, laptop) absent. Noa's book moved to desk_b1. My 0.95 priors for Elias items were wrong; he is not at desk. Noa's items are mobile, not static in bedroom_2.
+d11 Fri 06:57: d11 Fri 06:57: counter_k1 holds lunchbox_priya, medication_bottle_noa, mug_priya, pan_shared_1, tablet_shared_1. Residents 1 & 2 present. mug_elias absent (was 0.95). medication_bottle_noa moved from cupboard_k1 to counter_k1. Noa's items are mobile, not static. Update: Noa (r3) not in kitchen at 06:57 despite 05:53 presence.

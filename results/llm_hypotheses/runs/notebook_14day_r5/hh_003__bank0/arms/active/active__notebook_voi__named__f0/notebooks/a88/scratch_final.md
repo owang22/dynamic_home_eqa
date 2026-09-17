@@ -1,0 +1,15 @@
+# a88 — scratch memory, final (retired d13 Sun 23:59 (review: lowest at end of day); final weight 0.2422)
+
+d12-d13: counter_k1 is the primary static staging hub for personal prep items (chargers, mugs, water bottles, lunchboxes, notebooks). Items remain static overnight and during resident presence until final departure. charger_nico and phone_talia have shown intermittent absence, suggesting they are carried or moved more frequently than other staged goods. mug_talia appeared on counter d13 07:28, indicating dynamic addition to the staging zone.
+
+sink_k1 serves as the static zone for shared cookware (pan_shared_1, pot_shared_1, plate_shared_1, bowl_shared_1). However, pan_shared_1 moved from sink to counter d13 05:13, indicating that shared items are not strictly confined to the sink and may migrate to the counter for active use or staging. bowl_shared_1 has been absent from sink in recent looks, likely in use or stored elsewhere.
+
+cupboard_k1 is the static storage location for backpack_nico. This confirms that personal bags are stowed in kitchen storage rather than left on the counter, distinguishing 'staging' (counter) from 'storage' (cupboard).
+
+bathroom_shelf_ba1 is the static zone for Marisol's personal care items (glasses_marisol, hairbrush_marisol, medication_bottle_marisol). medication_bottle_marisol moved to counter_k1 on d12 12:13 but returned to the shelf by d13 07:15, supporting the model that items return to their functional zones after temporary use or staging. This confirms functional zoning over chaotic movement.
+
+bedroom_floor_b1 was empty at d13 08:34, confirming that bedroom floors are not active staging zones for morning routines. Personal items remain in specific receptacles (counter, shelf, cupboard) or are carried, rather than being left on floors.
+
+Residents (Marisol, Talia) are often present in the kitchen with items staged on the counter but not actively carrying them. This supports the belief that presence in the kitchen does not imply immediate departure or active carrying; items remain static until the final exit.
+
+d13 Sun 08:34: d13 Sun 08:34: bathroom_shelf_ba1 holds glasses_marisol, hairbrush_marisol, medication_bottle_marisol; nobody present. Confirms shelf as static zone for Marisol's personal care items. medication_bottle_marisol remains here (was on counter d12), supporting functional zoning. No belief contradiction; scratch update only.

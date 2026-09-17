@@ -1,0 +1,10 @@
+# a10 — scratch memory, final (retired d00 Mon 07:39 (population cap); final weight 0.0460)
+
+d00 Mon 07:33: d00 Mon 07:33: nightstand_b3 contains charger_sofia, phone_sofia; resident_3 present. Confirms Sofia's nightstand holds her phone and charger. No fork needed.
+d00 Mon 07:35: d00 Mon 07:35: entry_table_e1 contains keys_leo only. No wallets or phones. Confirms Leo's keys are at the entry table, not on person. Mara/Sofia keys absent here.
+d00 Mon 07:35: d00 Mon 07:35: nightstand_b1 contains glasses_mara, phone_mara; resident_1 present. Confirms Mara's nightstand holds her phone and glasses. No fork needed.
+d00 Mon 07:35: d00 Mon 07:35: Look at resident_1 (Mara) in bedroom_1 revealed nothing on person. Confirms Mara is not carrying keys, wallet, jacket, water_bottle, pen, umbrella, phone, or glasses. These items are likely in her bedroom receptacles (nightstand_b1, desk_b1) or elsewhere in the house, not on her body.
+d00 Mon 07:38: d00 Mon 07:38: nightstand_b3 confirmed holding charger_sofia, phone_sofia. No medication, water, makeup, or hairbrush. Sofia's personal items are concentrated here, not scattered. No fork needed.
+d00 Mon 07:38: d00 Mon 07:38: Look at resident_3 (Sofia) in bedroom_3 revealed nothing on person. Confirms Sofia is not carrying phone, charger, keys, wallet, jacket, water_bottle, lunchbox, or makeup_kit. These items are in her bedroom receptacles (nightstand_b3, desk_b3) or elsewhere, not on her body.
+d00 Mon 07:38: d00 Mon 07:38: desk_b3 contains book_sofia; resident_3 present. Confirms Sofia's desk holds her book. No other personal items (water, makeup, hairbrush, medication, lunchbox, keys, wallet, jacket) found here. Sofia's items remain concentrated in nightstand_b3 and desk_b3, not on person.
+d00 Mon 07:39: d00 Mon 07:39: nightstand_b3 contains charger_sofia, phone_sofia; resident_3 present. Confirms Sofia's nightstand holds her phone and charger. No medication, water, makeup, or hairbrush. Sofia's personal items are concentrated here, not scattered. No fork needed.

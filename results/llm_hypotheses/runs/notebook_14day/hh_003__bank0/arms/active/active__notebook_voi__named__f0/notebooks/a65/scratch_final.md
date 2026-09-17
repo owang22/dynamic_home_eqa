@@ -1,0 +1,6 @@
+# a65 — scratch memory, final (retired d08 Tue 06:41 (population cap); final weight 0.0346)
+
+d06-d07: Counter/Table staging confirmed. Counter holds high-volatility items (phones, mugs, chargers); Table holds larger items (backpacks, laptops). Items move between counter and dish_rack during active use. Bedroom_1 and bathroom_shelf are stable storage; medication moved from bathroom to counter on d07 07:16 (take-to-go event). Pre-dawn staging occurs without residents (d07 05:58-06:11), but table stability was overestimated.
+d08 06:30: Table volatility confirmed. backpack_nico, laptop_talia, notebook_marisol absent from table (forecast 0.60-0.65). Only pen_marisol, phone_talia remained. My high confidence in table stability was wrong.
+d08 06:30: counter_k1: charger_marisol, lunchbox_nico, medication_bottle_marisol, mug_marisol, notebook_marisol, phone_nico, water_bottle_marisol; nobody present. phone_marisol absent (forecast 0.85, penalty). lunchbox_nico present (new). phone_talia, lunchbox_talia absent. High volatility persists pre-dawn.
+d08 Tue 06:41: d08 06:41: counter_k1 identical to 06:30 (11 min stability). resident_3 (Talia) present. My 0.55 uniform forecast was poor; items are sticky short-term. Update: counter items persist ~15-30 min pre-dawn. resident_3 presence correlates with counter activity, not removal.

@@ -1,0 +1,10 @@
+# a58 — scratch memory, final (retired d07 Mon 05:41 (population cap); final weight 0.0001)
+
+d06-d07: Kitchen counter_k1 is a high-entropy hub for mixed-owner items (mugs, chargers, water bottles). Items appear/disappear rapidly; absence indicates transit, not storage. Residents (e.g., Priya) are often present in the kitchen but carry nothing, confirming objects are decoupled from owners and left as transient caches.
+
+d06-d07: Entry_hook_e1 acts as a stable 'ghost' cache for transit items (backpacks, jackets, keys, wallets). Unlike the kitchen, it is low-entropy; items cluster here when residents are absent. I overestimated the probability of specific items being here, suggesting base rates for 'likely' items in static caches should be lowered.
+
+d06-d07: Bedroom floors (b1/b2) are sparse, transient caches for bulky or transitional items (yoga mats, vacuums, books). They are not piles; often only one item persists (e.g., book_noa on bedroom_floor_b2). I repeatedly overestimated the probability of 'known' items being on the floor (e.g., 0.55 for book_noa, 0.65 for blanket_noa on bed_b2). Floors are low-entropy spots where items linger briefly before moving; base rates for specific items should be lower than for high-traffic hubs like the kitchen.
+
+d07 Mon 05:05: d07 Mon 05:05: bedroom_floor_b2 held only book_noa; resident_3 present. My 0.55 prob for book_noa was penalized (-1.51 score) despite being the top guess. The floor is a sparse cache, not a pile; I overestimated the probability of the 'known' item. Need to lower base rates for specific items in low-entropy spots like floors where only one item persists.
+d07 Mon 05:05: d07 Mon 05:05: Look at resident_3 in bedroom_2 revealed nothing carried. Confirms Noa is not transporting items; objects like book_noa remain in receptacles (bedroom_floor_b2) rather than ON_PERSON. My 0.05 prob for absence was correct. Reinforces that 'presence in room' does not imply 'carrying object'; residents are often stationary while items sit in nearby caches. Maintain low base rates for ON_PERSON

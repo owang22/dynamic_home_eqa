@@ -1,0 +1,14 @@
+# a33 — scratch memory, final (retired d04 Fri 05:33 (population cap); final weight 0.1133)
+
+d00-d01: entry_table_e1 stable for Elias keys/phone/wallet; entry_hook_e1 volatile for small items, stable for bulky outerwear. counter_k1 is the active hub for mugs/keys/pens; mugs often migrate to sink_k1.
+
+d02: Elias's phone moved to towel_rack_ba1 (05:20) then back to entry_table_e1 (06:22), showing morning mobility. Priya's items (lunchbox, water_bottle) persist at sink_k1 (05:44-06:16). counter_k1 held mug_elias at 05:44 but it was absent by 06:16, confirming its volatility. entry_hook_e1 held backpacks/jackets (06:13), not small electronics.
+
+d03: Priya's grooming items (hairbrush, makeup) staged at bathroom_shelf_ba1 at 05:33 but were absent by 07:32, refuting late-morning shelf residency. entry_table_e1 held only keys_elias at 06:55; phone/wallet/mug absent, validating low probabilities for non-key items. Priya carried nothing at 07:32, refuting the belief that she carries grooming items during late-morning bathroom visits.
+
+d03 Thu 07:32: counter_k1 holds lunchbox_priya, mug_priya, phone_priya, water_bottle_elias, water_bottle_priya; nobody present. Confirms Priya's items (lunchbox, mug, phone) stage at counter_k1 by late morning, not sink_k1. Elias's water_bottle also present, refuting entry_table_e1 stability for this item. My low prob for lunchbox (0.25) and high for keys_priya (0.75) were poor; keys likely moved.
+d03 Thu 07:33: d03 Thu 07:33: bed_b2 empty; no residents. Confirms Noa's items (blanket, toy, book) are not on the bed at this hour. My high prob for blanket (0.85) was a miss; likely in bedroom_2 floor or closet. Noa absent from bedroom_2.
+d03 Thu 07:33: d03 Thu 07:33: bedroom_floor_b2 empty; no residents. Confirms Noa's items (blanket, toy, book) are not on the floor at this hour. My high prob for blanket (0.45) was a miss; likely in bedroom_2 closet or OUT_OF_HOUSE. Noa absent from bedroom_2.
+d03 Thu 07:33: d03 Thu 07:33: bed_b1 held suitcase_shared_1; nobody present. Confirms suitcase is not in bedroom_2 or living areas at this hour. My low prob (0.05) for Noa's items was correct. Suitcase likely staged for travel or storage, not daily use. Noa absent from bedroom_1.
+d04 Fri 05:33: d04 Fri 05:33: entry_hook_e1 held backpack_noa, jacket_priya, wallet_priya. Confirms Priya stages outerwear/wallet here pre-departure. Elias's jacket/backpack absent, refuting my 0.65/0.45 probs; likely in bedroom_1 or on person. Noa's backpack present, contradicting low prob for bedroom_2 items. Hook is a shared drop zone for bulky items, not small electronics.
+d04 Fri 05:33: d04 Fri 05:33: bedroom_floor_b1 held backpack_priya, suitcase_shared_1, vacuum_cleaner_shared_1; residents 1 & 2 present. Confirms floor_b1 is a staging area for bulky items (suitcase, vacuum) and Priya's backpack. Elias's items absent, validating low probs. Noa's items not here.

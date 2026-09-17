@@ -1,0 +1,6 @@
+# a105 — scratch memory, final (retired d11 Fri 23:59 (population cap); final weight 0.0363)
+
+Elias's electronics (charger_elias, headphones_elias, laptop_elias) are mobile; do not forecast them at desk_b1 or nightstand_b1 without recent confirmation. Elias carries no personal items on his person. Noa uses desk_b1 (book_noa found there). Shared items (chargers, water bottles) are mobile; do not assume static placement at counter_k1. Cupboard_k1 is a static home for medication_bottle_noa and pot_shared_1. Desk_b1 is not a static hub for Elias's tech.
+d11 Fri 06:57: d11 06:57 bed_b1: suitcase_shared_1 only. No Elias items. Confirms Elias's personal gear (notebook, charger, etc.) is not on the bed. Suitcase is transient; do not assume static placement. Elias likely in kitchen or bedroom_1 floor/desk.
+d11 Fri 06:57: d11 06:57 counter_k1: lunchbox_priya, medication_bottle_noa, mug_priya, pan_shared_1, tablet_shared_1. Absent: charger_shared_1, water_bottle_priya, mug_elias, water_bottle_elias, pen_elias. medication_bottle_noa is mobile, not static in cupboard_k1. Elias/Priya present.
+d11 Fri 07:17: d11 Fri 07:17 desk_b1: book_noa, notebook_elias. No laptop, charger, or headphones. Elias's tech is NOT static at desk_b1. notebook_elias is present. book_noa is transient here. Elias absent from room.

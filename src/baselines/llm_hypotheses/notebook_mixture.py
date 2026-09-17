@@ -208,6 +208,9 @@ class NotebookConfig:
     max_looks_per_question: int = 0  # 0: no cap
     tell_questions_per_day: bool = True  # False: the dispatcher learns the day's length from yesterday's ledger
     followup_mode: str = "rewrite"   # rewrite: full scratch each look | append: one dated line, condense on overflow
+    allow_forks: bool = True         # False: beliefs frozen for life (the notes-only ablation)
+    residents_today: bool = False    # a code-kept block of today's resident sightings in every prompt
+    room_spread: bool = False        # a room named as a spot spreads its mass over the room's receptacles
     label: str = "notebook_mixture"
 
 
@@ -216,19 +219,24 @@ NOTEBOOK_VOI = NotebookConfig(look_rule="voi", beta=0.3, invalid_look="neutral",
                               fork_gate=True, review_every_looks=12,
                               skip_below=0.01, parallel=8, population_cap=5,
                               followup_min_weight=0.05, max_looks_per_question=3,
-                              followup_mode="append",
+                              followup_mode="append", residents_today=True,
+                              room_spread=True,
                               label="notebook_voi")
 NOTEBOOK_LLM_DECIDE = dataclasses.replace(NOTEBOOK_VOI, look_rule="llm",
                                           tell_questions_per_day=False,
                                           label="notebook_llmDecide")
 NOTEBOOK_FIXED = dataclasses.replace(NOTEBOOK_VOI, followup_mode="none",
                                      review="none", label="notebook_fixed")
+NOTEBOOK_NOTES = dataclasses.replace(NOTEBOOK_VOI, allow_forks=False,
+                                     review="none", label="notebook_notes")
+"""Frozen BELIEFS with scratch notes: the cold-start documents keep a
+sighting log but are never revised (isolates the revisions' worth)."""
 """The cold-start documents as a fixed mixture of experts: reweighted at
 every look, never revised, no forks, births or reviews (the cheap check
 that the revisions are worth their cost)."""
 CONFIGS = {"notebook_mixture": NotebookConfig(), "notebook_voi": NOTEBOOK_VOI,
            "notebook_llmDecide": NOTEBOOK_LLM_DECIDE,
-           "notebook_fixed": NOTEBOOK_FIXED}
+           "notebook_fixed": NOTEBOOK_FIXED, "notebook_notes": NOTEBOOK_NOTES}
 
 # minItems 1: on the 3-day hh_001 run 19 of 491 question forecasts came
 # back as "spots": [] (the why described an answer the list left out),
@@ -693,9 +701,11 @@ class NotebookMixtureBrain:
                  log_dir: Optional[pathlib.Path] = None,
                  temperature: float = 0.2, seed: int = 5,
                  cap: int = POPULATION_CAP,
-                 config: NotebookConfig = NotebookConfig()) -> None:
+                 config: NotebookConfig = NotebookConfig(),
+                 resident_names: Optional[Mapping[str, str]] = None) -> None:
         self.client = client
         self.config = config
+        self._resident_names = dict(resident_names or {})
         if config.population_cap:
             cap = config.population_cap
         self._omap = dict(omap or {})
@@ -730,6 +740,7 @@ class NotebookMixtureBrain:
         self.invalid_forecasts = 0
         self.unresolved_spots = 0
         self.unresolved_objects = 0
+        self.room_spread = 0
         self._unresolved_samples: List[str] = []
         self.scratch_truncated = 0
         self.forks_rejected = 0
@@ -750,6 +761,8 @@ class NotebookMixtureBrain:
         self._invalid_look_agents: List[str] = []
         self._skipped_last: List[str] = []
         self._today_look_lines: List[str] = []
+        self._res_today: Dict[str, List[Tuple[int, str]]] = {}   # resident -> [(t, room)] from looks
+        self._empty_today: List[Tuple[int, str]] = []             # rooms looked at with nobody there
         self._dispatch_ledger: List[Dict[str, Any]] = []   # today's decisions
         self._dispatch_note: str = ""                       # the dispatcher's memory
         self._days_seen: List[Tuple[int, int, int]] = []    # (day, questions, looks)
@@ -818,8 +831,10 @@ class NotebookMixtureBrain:
                 f"{self.rec(ON_PERSON)} and {self.rec(OUT_OF_HOUSE)}. "
                 f"{away_sentences(self._rmap).replace('`', '')}")
         if ctx.resident_ids:
-            text += ("\n\nRESIDENTS: "
-                     + ", ".join(self.rec(r) for r in ctx.resident_ids))
+            def named(r: str) -> str:
+                n = self._resident_names.get(r)
+                return f"{self.rec(r)} ({n})" if n and not self._rmap else self.rec(r)
+            text += "\n\nRESIDENTS: " + ", ".join(named(r) for r in ctx.resident_ids)
         text += (f"\n\nLOOK BUDGET: {ctx.budget_per_day} looks per day, "
                  f"reset at midnight.")
         return text
@@ -832,12 +847,35 @@ class NotebookMixtureBrain:
         room = self.context.robot_position.room
         text = f"NOW: {stamp(t)}. The robot is in {room or 'an unknown room'}."
         text += f" Looks left today: {self._remaining():g}."
+        if self.config.residents_today and self._person_sensing():
+            text += "\n" + self._residents_today_block(t)
         if self._seen_lines:
             text += ("\nSEEN SO FAR ON THIS QUESTION:\n"
                      + "\n".join(f"  {line}" for line in self._seen_lines))
         else:
             text += "\nSEEN SO FAR ON THIS QUESTION: nothing yet."
         return text
+
+    def _residents_today_block(self, t: int) -> str:
+        """What the robot's looks have shown about the residents today:
+        every sighting (room and time), each resident's last known room,
+        and the rooms looked at with nobody there. Code-kept, so every
+        agent has the same record without writing it down."""
+        assert self.context is not None
+        hm = lambda tt: f"{tt % 86400 // 3600:02d}:{tt % 3600 // 60:02d}"
+        lines = []
+        for rid in self.context.resident_ids:
+            seen = self._res_today.get(rid, [])
+            if seen:
+                spots = ", ".join(f"{room} {hm(tt)}" for tt, room in seen)
+                last_t, last_room = seen[-1]
+                lines.append(f"  {self.rec(rid)}: {spots} · last seen {hm(last_t)} in {last_room}")
+            else:
+                lines.append(f"  {self.rec(rid)}: not seen today")
+        if self._empty_today:
+            lines.append("  rooms looked at with nobody there: "
+                         + ", ".join(f"{room} {hm(tt)}" for tt, room in self._empty_today))
+        return "RESIDENTS TODAY (from the robot's looks):\n" + "\n".join(lines)
 
     def _question_request(self, object_id: str) -> str:
         return (f"REQUEST: where is {self.obj(object_id)} right now? Give a "
@@ -1009,6 +1047,8 @@ class NotebookMixtureBrain:
         self.asked_today = 0
         self.looks_today = 0
         self._dispatch_ledger = []
+        self._res_today = {}
+        self._empty_today = []
         self.budget_exhausted_at.setdefault(day, None)
 
     # ----------------------------------------------------------- forecasts
@@ -1048,6 +1088,13 @@ class NotebookMixtureBrain:
                 except (TypeError, ValueError):
                     continue
                 if spot is None:
+                    room_recs = self._room_receptacles(str(item.get("spot", "")))
+                    if room_recs and p > 0:
+                        # "somewhere in bedroom_2": spread over its receptacles
+                        self.room_spread += 1
+                        for r in room_recs:
+                            given[r] = given.get(r, 0.0) + p / len(room_recs)
+                        continue
                     unresolved.append(str(item.get("spot", ""))[:40])
                     continue
                 if p > 0:
@@ -1071,6 +1118,15 @@ class NotebookMixtureBrain:
                 "unresolved": unresolved,
                 "invalid": not given}
         return out
+
+    def _room_receptacles(self, token: str) -> List[str]:
+        """The sensable receptacles of a room named as a spot (``room_spread``)."""
+        if not self.config.room_spread or self.context is None:
+            return []
+        rooms = self.context.receptacle_rooms or {}
+        n = _norm_name(self.real_rec(token))
+        return [r for r, room in rooms.items()
+                if room and _norm_name(room) == n and r in self.context.sensable_receptacle_ids]
 
     def _resolve_spot(self, token: str) -> Optional[str]:
         real = self.real_rec(token)
@@ -1465,6 +1521,8 @@ class NotebookMixtureBrain:
             line = (f"{stamp(t)} look at resident {self.rec(target)}"
                     f"{f' in {room}' if room else ''}: {inside}")
             listed: Tuple[str, ...] = ()
+            if room:
+                self._res_today.setdefault(target, []).append((t, room))
         else:
             target = evidence.receptacle_id
             room = (self.context.receptacle_rooms or {}).get(target) \
@@ -1474,6 +1532,13 @@ class NotebookMixtureBrain:
             if self._person_sensing():
                 who = ", ".join(self.rec(r) for r in listed) or "nobody"
                 line += f"; residents here: {who}"
+                if room:
+                    for r in listed:
+                        prev = self._res_today.setdefault(r, [])
+                        if not prev or prev[-1] != (t, room):
+                            prev.append((t, room))
+                    if not listed and (t, room) not in self._empty_today:
+                        self._empty_today.append((t, room))
             if self._question_key is not None and t == self._question_key[1]:
                 for r in listed:
                     self._listed_this_question[r] = room
@@ -1588,8 +1653,8 @@ class NotebookMixtureBrain:
             score_line += (f" Weights move by {self.config.beta:g} times the "
                            f"score.")
         gate = self.config.fork_gate
-        may_fork = True
-        if gate:
+        may_fork = self.config.allow_forks
+        if gate and may_fork:
             below = panel_avg is not None and score < panel_avg
             may_fork = below and agent.last_fork_day != self.day
         if all_scores:
@@ -1607,7 +1672,10 @@ class NotebookMixtureBrain:
                            f"{panel_avg:.2f}, and yours is "
                            f"{'above' if score >= panel_avg else 'below'} it."
                            f"{moved}")
-        if gate:
+        if not self.config.allow_forks:
+            fork_text = ("Your BELIEFS are fixed for this study: scratch memory is "
+                         "the one place to record what this look showed.")
+        elif gate:
             fork_text = (
                 "Scratch memory is for detail and dated observations; a FORK is "
                 "for a belief this look CONTRADICTED. " +
@@ -2006,6 +2074,7 @@ class NotebookMixtureBrain:
             "scratch_truncated": self.scratch_truncated,
             "invalid_forecasts": self.invalid_forecasts,
             "unresolved_spots": self.unresolved_spots,
+            "room_spread": self.room_spread,
             "unresolved_objects": self.unresolved_objects,
             "unresolved_samples": self._unresolved_samples[:20],
             "looks": self.n_looks, "question_rounds": self.n_question_rounds,

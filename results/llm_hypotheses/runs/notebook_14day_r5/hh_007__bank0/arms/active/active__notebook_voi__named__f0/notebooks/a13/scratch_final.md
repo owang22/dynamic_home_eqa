@@ -1,0 +1,13 @@
+# a13 — scratch memory, final (retired d01 Tue 00:35 (population cap); final weight 0.0554)
+
+d00 Mon 07:33: d00 Mon 07:33: nightstand_b3 contains charger_sofia, phone_sofia; resident_3 present. Confirms Sofia's nightstand holds her phone and charger. No fork needed.
+d00 Mon 07:35: d00 Mon 07:35: entry_table_e1 contains keys_leo only. No wallets or phones. Confirms Leo's keys are at the entry table, not on person. Mara/Sofia keys absent here.
+d00 Mon 07:35: d00 Mon 07:35: nightstand_b1 contains glasses_mara, phone_mara; resident_1 present. Confirms Mara's nightstand holds her phone and glasses. No fork needed.
+d00 Mon 07:35: d00 Mon 07:35: Look at resident_1 (Mara) in bedroom_1 revealed nothing on person. Confirms Mara is not carrying keys, wallet, jacket, water_bottle, pen, umbrella, phone, or glasses. These items are likely in her bedroom receptacles (nightstand_b1, desk_b1) or elsewhere in the house, not on her body.
+d00 Mon 07:38: d00 Mon 07:38: nightstand_b3 confirmed holding charger_sofia, phone_sofia. No medication, water, makeup, or hairbrush. Sofia's personal items are concentrated here, not scattered. No fork needed.
+d00 Mon 07:38: d00 Mon 07:38: Look at resident_3 (Sofia) in bedroom_3 revealed nothing on person. Confirms Sofia is not carrying phone, charger, keys, wallet, jacket, water_bottle, lunchbox, or makeup_kit. These items are in her bedroom receptacles (nightstand_b3, desk_b3) or elsewhere, not on her body.
+d00 Mon 07:38: d00 Mon 07:38: desk_b3 contains book_sofia only. Confirms Sofia's book is at her desk, not on person or nightstand. No other items present. No fork needed.
+d00 Mon 07:39: d00 Mon 07:39: nightstand_b3 confirmed holding charger_sofia, phone_sofia. No medication, water, makeup, or hairbrush. Sofia's personal items are concentrated here, not scattered. No fork needed.
+d01 Tue 00:35: d01 Tue 00:35: nightstand_b2 is empty. Leo is present in bedroom_2. Contradicts belief that Leo's phone/charger are on his nightstand. Likely on person or elsewhere. No fork; update scratch only.
+d01 Tue 00:35: d01 Tue 00:35: Look at resident_2 (Leo) in bedroom_2 revealed nothing on person. Confirms Leo is not carrying phone_leo, charger_leo, keys_leo, wallet_leo, jacket_leo, headphones_leo, gaming_controller_leo, or laptop_leo. These items are likely in his bedroom receptacles (nightstand_b2, desk_b2) or elsewhere, not on his body.
+d01 Tue 00:35: d01 Tue 00:35: desk_b2 is empty. Leo is present in bedroom_2. Confirms Leo's items (phone, charger, laptop, etc.) are not on his desk. Combined with empty nightstand_b2 and empty person, his items are likely in backpack_leo or OUT_OF_HOUSE. No fork needed.

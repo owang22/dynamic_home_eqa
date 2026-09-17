@@ -1,0 +1,7 @@
+# a29 — scratch memory, final (retired d03 Thu 07:27 (population cap); final weight 0.0082)
+
+Sofia: nightstand_b3 is the stable hub for electronics (phone/charger); desk_b3 is the stable hub for non-electronic personal gear (book, hairbrush, makeup). Mobile items (backpack, lunchbox, water) migrate to counter_k1. She rarely carries items on person.
+Leo: Bedroom_2 receptacles (nightstand, desk) are consistently empty. He is rarely carrying items on person. His personal items (phone, laptop) are likely misplaced or in communal areas (living/kitchen), not in his bedroom.
+Mara: Static items (glasses) found on nightstand_b1. Mobile items (notebook) found on counter_k1. She is rarely carrying items on person.
+General: Entry_table_e1 is often empty; residents do not deposit keys/wallets here. Counter_k1 is the primary hub for mobile personal items across all residents, but contents fluctuate rapidly (mugs/notebooks appear/disappear within minutes). If items are not in predicted high-probability spots, assume random distribution in unobserved receptacles.
+d03 Thu 07:04: desk_b3 holds book_sofia, hairbrush_sofia, makeup_kit_sofia; resident_3 present. Contradicts scratch note 'Desk_b3 is a dead spot'. Sofia's static personal items (book, hairbrush, makeup) are here, not nightstand_b3. Nightstand_b3 holds electronics (phone/charger). Desk_b3 is a stable hub for non-electronic personal gear.

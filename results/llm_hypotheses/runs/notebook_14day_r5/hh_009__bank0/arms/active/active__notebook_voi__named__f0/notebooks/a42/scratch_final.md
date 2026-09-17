@@ -1,0 +1,7 @@
+# a42 — scratch memory, final (retired d04 Fri 07:15 (population cap); final weight 0.0871)
+
+d04 Fri 05:33: d04 05:33 entry_hook_e1: backpack_noa, jacket_priya, wallet_priya present; nobody in entry. Elias's items (backpack_elias, jacket_elias) absent, contradicting d02 pattern of them being here. Priya's wallet is new here. Noa's backpack persists.
+d04 Fri 05:33: d04 05:33 bedroom_floor_b1: backpack_priya, suitcase_shared_1, vacuum_cleaner_shared_1; residents: resident_1, resident_2. Elias/Priya present. Elias's items absent from floor, contradicting 'bedroom storage' belief. Priya's backpack here, not entry. Suitcase persists on floor, not bed.
+d04 Fri 05:33: d04 Fri 05:33: Look at resident_1 in bedroom_1 revealed nothing. resident_1 is likely Elias (given Priya's items are on floor/entry). Elias is present but not wearing/carrying his usual items (backpack/jacket/wallet). This confirms 'Pre-Departure' items are left at entry or floor, not on person, even when resident is in bedroom.
+d04 Fri 07:15: d04 Fri 07:15 counter_k1: mug_priya present; resident_3 here. Elias/Noa items absent. Priya active in kitchen, consistent with pre-departure staging. resident_3 likely Priya.
+d04 Fri 07:15: d04 Fri 07:15: Look at resident_3 in kitchen revealed nothing. resident_3 is likely Priya (mug_priya at counter_k1). She is present but not carrying phone/keys/wallet. Confirms 'Pre-Departure' items are left at receptacles (entry/counter), not on person, even when resident is active in the room. My forecast of low probability for carried items was correct.

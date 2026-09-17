@@ -1,0 +1,16 @@
+# a96 — scratch memory, final (retired d10 Thu 06:07 (population cap); final weight 0.0520)
+
+Kitchen Volatility: counter_k1 staging is highly dynamic; items swap within hours/days. Do not assume persistence without fresh look. Recent patterns: d09 showed rapid swaps (mug_priya returned, lunchbox/pen/water_bottle_elias volatile). d10 (05:57-06:01) confirmed high volatility: mug_elias present at 05:57 but absent by 06:01; pen_elias and tablet_shared_1 consistently absent early AM despite prior priors. Priya (resident_2) is the primary early AM kitchen user.
+
+Static Zones: cupboard_k1 reliably holds medication_bottle_noa and pot_shared_1 (confirmed d09). bathroom_shelf_ba1 reliably holds hairbrush_priya, makeup_kit_priya, and towel_noa (confirmed d09); low priors for these were too conservative. bedroom_floor_b1 holds vacuum_cleaner_shared_1 permanently.
+
+Noa's Items: Noa's cluster (book, toy, blanket, water_bottle, medication, towel, backpack) is NOT in bedroom_2 early AM (bed/floor empty, confirmed d08/d09). NOT on person early AM (confirmed d09). Likely static in living room or elsewhere; do not forecast in bedroom_2 or on person without fresh look.
+
+Elias's Mobility: Elias (resident_1) moves from bedroom_1 to kitchen/bathroom early AM. d09 showed him in bathroom (06:25) then kitchen (06:46). His personal cluster (headphones, phone, keys, etc.) is NOT on person early AM. pen_elias is highly mobile (moved desk_b1 to counter_k1 on d08, absent d09/d10 early AM).
+
+Forecasting Rule: Assign low priors (<0.3) to specific items at counter_k1 unless confirmed in last 30 mins. Prioritize resident location over item persistence. If resident is in kitchen, they may have moved items. Pen/Tablet are sporadic; do not assume presence.
+
+d10 Thu 06:01: counter_k1 holds charger_shared_1, lunchbox_priya, mug_priya, water_bottle_elias, water_bottle_priya; resident_2 present. Absent: mug_elias, pen_elias, tablet_shared_1. My priors for mug_elias (0.65) and pen_elias (0.25) were miscalibrated; mug_elias is volatile, pen_elias is rarely here early AM. Kitchen staging remains highly dynamic; do not assume persistence of specific items across short intervals without fresh look.
+d10 Thu 06:01: d10 06:01: resident_2 (Priya) in kitchen carries nothing. Confirms she leaves personal items (phone, keys, wallet) at counter_k1 or elsewhere, not on person. Adjust priors: lower ON_PERSON probability for Priya's cluster early AM; increase likelihood they remain at counter_k1 or are OUT_OF_HOUSE if not seen in kitchen receptacles.
+d10 Thu 06:01: d10 Thu 06:01: nightstand_b2 is empty; resident_3 (Noa) present. Confirms Noa's items (medication, water_bottle, book, toy, blanket, towel, backpack) are NOT in bedroom_2 early AM. My 0.05 priors were too high for an empty spot; adjust to <0.01 for Noa's cluster in bedroom_2 receptacles without fresh look. Noa is in bedroom_2 but carries nothing.
+d10 Thu 06:07: d10 06:07: counter_k1 unchanged from 06:01 (5 items, resident_2). My 0.55 priors were too low for stable items; 0.15 for mug_elias was too high. Kitchen staging is static over 6 mins. Raise priors for confirmed items to 0.9+, keep absent items <0.1.

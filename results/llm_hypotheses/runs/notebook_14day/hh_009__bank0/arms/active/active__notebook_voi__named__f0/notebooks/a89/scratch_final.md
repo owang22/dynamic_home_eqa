@@ -1,0 +1,6 @@
+# a89 — scratch memory, final (retired d10 Thu 06:01 (population cap); final weight 0.1184)
+
+d10 Thu 05:57: d10 05:57 counter_k1: charger_shared_1, lunchbox_priya, mug_elias, mug_priya, water_bottle_elias, water_bottle_priya; resident_2 present. pen_elias and tablet_shared_1 absent. water_bottle_priya appeared. Confirms counter as dynamic hub for shared/personal items; resident_2 active.
+d10 Thu 06:01: d10 06:01 counter_k1: charger_shared_1, lunchbox_priya, mug_priya, water_bottle_elias, water_bottle_priya; resident_2 present. mug_elias, pen_elias, tablet_shared_1 absent. Confirms counter as dynamic hub; resident_2 active. Items shift rapidly.
+d10 Thu 06:01: d10 Thu 06:01: resident_2 in kitchen carries nothing. Contradicts assumption that 'priya' items (mug, lunchbox) are on resident_2. Resident_2 is present but hands-free; items remain on counter_k1. Suggests resident_2 is not the primary carrier of 'priya' labeled goods, or they are left behind during brief kitchen visits.
+d10 Thu 06:01: d10 Thu 06:01: nightstand_b2 empty; resident_3 present. Confirms resident_3 isolated in bedroom_2. No 'noa' items here, supporting belief that noa's items (medication, towel) are in bathroom/cupboard, not bedroom_2. Resident_3 remains hands-free and stationary.

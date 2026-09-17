@@ -1,0 +1,103 @@
+# call 800 (look_forecast, agent a02) at d05 Sat 10:01
+
+## system
+
+You are one agent in a small population that keeps notebooks about one household on behalf of a home robot. The robot is asked, many times a day, where one object is right now, and it may spend a limited number of looks per day: a look opens one receptacle (it reveals everything inside and lists the residents in that room), or checks one resident the robot has just listed (it reveals everything they have on them).
+
+Your notebook has two sections.
+BELIEFS: your account of how this household lives and how its objects move — patterns, rules, conjectures, dependencies between objects — each with a short why that cites the evidence behind it. This section stays fixed for the life of an agent. To change it you propose a FORK: a new agent whose BELIEFS are a rewrite of yours together with a why for the change, while you keep running unchanged. BELIEFS holds at most 1200 words, so a fork that would grow past that is written as a condensed rewrite.
+SCRATCH MEMORY: free text you may add to, rewrite or trim at any time, at most 600 words; when it grows past that you trim it.
+IDS: in BELIEFS and SCRATCH MEMORY refer to receptacles and objects by their exact ids from the HOUSEHOLD list (counter_k1, mug_mara); a forecast that names a spot any other way is thrown away.
+
+Your forecasts are scored by the log of the probability you gave to what the robot actually saw: an object found where you said, and equally an object absent from a spot or a spot found empty. Your weight in the population rises and falls with that score.
+
+Household objects are sometimes misplaced, forgotten, or moved for no reason.
+
+## user
+
+HOUSEHOLD
+OBJECTS (id (class)):
+  backpack_leo (backpack)
+  backpack_mara (backpack)
+  backpack_sofia (backpack)
+  blanket_1 (blanket)
+  book_sofia (book)
+  bowl_leo (bowl)
+  charger_leo (charger)
+  charger_sofia (charger)
+  gaming_controller_leo (gaming_controller)
+  glasses_mara (glasses)
+  hairbrush_sofia (hairbrush)
+  headphones_leo (headphones)
+  jacket_leo (jacket)
+  jacket_mara (jacket)
+  jacket_sofia (jacket)
+  keys_leo (keys)
+  keys_mara (keys)
+  keys_sofia (keys)
+  laptop_leo (laptop)
+  laptop_mara (laptop)
+  laundry_basket_1 (laundry_basket)
+  lunchbox_sofia (lunchbox)
+  makeup_kit_sofia (makeup_kit)
+  medication_bottle_sofia (medication_bottle)
+  mug_leo (mug)
+  mug_mara (mug)
+  notebook_leo (notebook)
+  notebook_mara (notebook)
+  pan_1 (pan)
+  pen_mara (pen)
+  phone_leo (phone)
+  phone_mara (phone)
+  phone_sofia (phone)
+  plate_1 (plate)
+  plate_2 (plate)
+  pot_1 (pot)
+  remote_1 (remote)
+  umbrella_mara (umbrella)
+  vacuum_cleaner_1 (vacuum_cleaner)
+  wallet_leo (wallet)
+  wallet_mara (wallet)
+  wallet_sofia (wallet)
+  water_bottle_mara (water_bottle)
+  water_bottle_sofia (water_bottle)
+
+ROOMS AND RECEPTACLES:
+  bedroom_1: bed_b1, nightstand_b1, desk_b1, bedroom_floor_b1
+  bedroom_2: bed_b2, nightstand_b2, desk_b2, bedroom_floor_b2
+  bedroom_3: bed_b3, nightstand_b3, desk_b3, bedroom_floor_b3
+  living: couch_l1, coffee_table_l1, tv_stand_l1, bookshelf_l1, armchair_l1, game_shelf_l1
+  kitchen: counter_k1, sink_k1, cupboard_k1, dish_rack_k1, kitchen_table_k1, chair_k1, chair_k2
+  bathroom: bathroom_shelf_ba1, towel_rack_ba1
+  entry: entry_table_e1, entry_hook_e1, entry_floor_e1
+Answer spots are every receptacle above plus ON_PERSON and OUT_OF_HOUSE. ON_PERSON means a resident who is in the house is carrying the object. OUT_OF_HOUSE means the object is not in the house. Neither can be chosen as the target of a look. A look at a receptacle also shows which residents are in that room. Looking at a resident shows what they are carrying, and is only possible after a look in the room they are in.
+
+RESIDENTS: resident_1 (Mara), resident_2 (Leo), resident_3 (Sofia)
+
+LOOK BUDGET: 8 looks per day, reset at midnight.
+
+YOUR NOTEBOOK (agent a02)
+## BELIEFS
+BELIEFS: The household operates on a 'shared living hub' model. The living room (couch_l1, coffee_table_l1, tv_stand_l1, bookshelf_l1, armchair_l1, game_shelf_l1) is the primary location for all personal items when residents are home. Bedrooms are used only for sleeping and storing rarely used items. Why: This model assumes that residents spend most of their time in the living room and leave their items there. Evidence: None yet, but this is a common pattern in households with young children or those who prefer communal living. If an object is missing from the living room, it is likely in the owner's bedroom or ON_PERSON. If a personal item is found in a bedroom, it is likely being stored or forgotten. The kitchen (counter_k1, sink_k1, cupboard_k1, dish_rack_k1, kitchen_table_k1, chair_k1, chair_k2) is the primary location for food-related items and occasionally personal items like phones or mugs. The entry (entry_table_e1, entry_hook_e1, entry_floor_e1) is the primary drop zone for keys, wallets, and jackets upon arrival/departure. The bathroom (bathroom_shelf_ba1, towel_rack_ba1) is the primary drop zone for hairbrushes, makeup kits, and medication bottles. Bedrooms (bed_b1, nightstand_b1, desk_b1, bedroom_floor_b1, etc.) are the primary drop zone for blankets, pillows, and occasionally forgotten items like phones or glasses. Why: This model allows the robot to prioritize looks in the living room for most personal items. For example, if asked for 'phone_leo', the robot should first check coffee_table_l1, then tv_stand_l1, then ON_PERSON (if Leo is home), then desk_b2, then nightstand_b2. If asked for 'keys_mara', the robot should first check entry_table_e1, then ON_PERSON (if Mara is home), then coffee_table_l1, then desk_b1. This strategy maximizes the probability of finding the object in the first look, assuming that residents leave their items in the living room.
+
+## SCRATCH MEMORY
+d02-d04: Kitchen (counter_k1) shows high-entropy mix during morning prep. Static core (backpack_sofia, bowl_leo, lunchbox_sofia, pan_1, wallet_sofia, water_bottles) stable but variable. resident_2 (Leo) active in kitchen, not living room; adjust 'shared hub' bias for Leo's items. Score penalties (-2.32, -2.24) from overconfidence in static items; lower static probs to 0.75, raise variable to 0.70. Do not anchor on static patterns.
+
+d05 Sat 00:11-00:13: nightstand_b3 holds charger_sofia, medication_bottle_sofia. resident_3 absent. Confirms d03 pattern: Sofia's nightstand is for charger/meds, not phone/wallet. Score -1.47 due to -0.87. Lesson: Low-prob absent items still penalize log-loss if present; keep core high (0.85), ensure absent items truly low (<0.05).
+
+d05 Sat 08:58: nightstand_b3 held charger_sofia, medication_bottle_sofia; resident_3 present. Confirms d03/d05 pattern: Sofia's nightstand is a stable storage spot for charger/meds, even when she is in the room. Phone/wallet absent. Score -0.87. Keep charger/meds high (0.85), phone/wallet low (0.05). No change to beliefs.
+d05 Sat 09:00: d05 Sat 09:00: nightstand_b3 confirmed charger_sofia, medication_bottle_sofia; resident_3 present. Score -0.87. Pattern stable: Sofia's nightstand is a fixed storage spot for these two items. Keep probs high (0.85) for these, low (<0.05) for others. No belief change needed.
+
+NOW: d05 Sat 10:01. The robot is in bedroom_3. Looks left today: 3.
+RESIDENTS TODAY (from the robot's looks):
+  resident_1: not seen today
+  resident_2: not seen today
+  resident_3: bedroom_3 08:58, bedroom_3 09:00 · last seen 09:00 in bedroom_3
+  rooms looked at with nobody there: bedroom_3 00:11, bedroom_3 00:13
+SEEN SO FAR ON THIS QUESTION: nothing yet.
+
+REQUEST: the robot is about to look at receptacle entry_table_e1 (in entry). For up to 8 objects you think may be there right now, give the probability that it is there — each object is its own yes/no probability. Objects you leave out are taken as very unlikely to be there. Name objects by their exact ids from OBJECTS; a class name or a paraphrase is thrown away.
+
+## reply
+
+{"objects": [{"object": "keys_mara", "p": 0.65}, {"object": "keys_leo", "p": 0.55}, {"object": "keys_sofia", "p": 0.50}, {"object": "wallet_mara", "p": 0.45}, {"object": "wallet_leo", "p": 0.40}, {"object": "wallet_sofia", "p": 0.35}, {"object": "jacket_mara", "p": 0.30}, {"object": "jacket_leo", "p": 0.25}]}

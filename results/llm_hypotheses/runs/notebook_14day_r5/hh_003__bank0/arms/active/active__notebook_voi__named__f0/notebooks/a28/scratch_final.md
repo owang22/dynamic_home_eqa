@@ -1,0 +1,6 @@
+# a28 — scratch memory, final (retired d04 Fri 02:51 (population cap); final weight 0.0039)
+
+d02-d03 Kitchen: High entropy confirmed. Counter/sink volatile; items (chargers, lunchboxes, phones, mugs) shift rapidly. Cupboard static for shared cookware (pot, plate). Residents use kitchen as transient utility space; personal items (wallets, pens) often left behind rather than carried.
+d02-d03 Bedrooms: Personal enclaves (bedroom_1) static for core items (book_marisol, glasses_marisol). Transient items (water_bottle_marisol) move out. Marisol carries phone_marisol but leaves keys/wallet in enclave.
+d03 06:08-06:19: Short-term stability windows (5-10 mins) observed in sink/counter despite overall chaos. However, scores indicate overconfidence in static persistence for <2min intervals. Adjusted probabilities: 0.85 for 5-10min static, 0.75 for <2min static, 0.05 for absent items in <2min windows. resident_3 frequently present in kitchen during morning hours.
+d03 Thu 06:19: d03 Thu 06:19: sink_k1 static (mug_marisol, pot_shared_1; resident_3). 1-min stability confirmed. Score -1.28 due to overconfidence in absence of bowl/plate. Adjusting: lower prob for absent items in <2min windows to 0.05. Kitchen entropy model holds; no fork.

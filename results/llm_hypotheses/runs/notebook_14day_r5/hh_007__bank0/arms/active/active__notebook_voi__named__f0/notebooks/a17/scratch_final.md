@@ -1,0 +1,6 @@
+# a17 — scratch memory, final (retired d02 Wed 06:49 (population cap); final weight 0.0361)
+
+d01 Tue 00:42: d01 Tue 00:42: desk_b2 empty; Leo present. Confirms Leo's items are not in bedroom_2 (nightstand_b2, desk_b2). Leo is strictly localized to high-traffic areas (entry_table_e1, counter_k1). Assign near-zero probability to Leo's objects in bedroom_2 receptacles.
+d01 Tue 07:55: d01 Tue 07:55: nightstand_b3 holds charger_sofia, medication_bottle_sofia; resident_3 present. Confirms Sofia's strict localization to bedroom_3. Prioritize nightstand_b3/desk_b3 for Sofia's items. No contradiction to current model.
+d01 Tue 07:55: d01 Tue 07:55: desk_b3 empty; resident_3 present. Confirms Sofia's items are strictly in nightstand_b3 (charger, medication). Assign near-zero probability to Sofia's objects in desk_b3. Prioritize nightstand_b3 for future Sofia item searches.
+d02 Wed 06:49: d02 Wed 06:49: counter_k1 holds backpack_sofia, lunchbox_sofia, water_bottle_sofia, notebook_mara; resident_2 present. Confirms kitchen as a high-traffic drop zone for multiple residents. Sofia's items are not strictly localized to bedroom_3; she uses counter_k1 for daily items. Mara's notebook is also here. Prioritize counter_k1 for Sofia/Mara items.

@@ -1,0 +1,484 @@
+{
+ "arm": "active:notebook_fixed:named:f0",
+ "household": "hh_003",
+ "belief": "notebook_fixed(named)",
+ "protocol": "active",
+ "days": 14,
+ "policy": "NotebookMixturePolicy",
+ "fraction": 0.0,
+ "beta": null,
+ "lambda": 0.05,
+ "random_senses": null,
+ "sense_split": null,
+ "tour_absent_objects": [
+  "backpack_nico",
+  "backpack_talia",
+  "blanket_talia",
+  "book_marisol",
+  "bowl_shared_1",
+  "charger_marisol",
+  "charger_nico",
+  "dog_leash_shared_1",
+  "gaming_controller_shared_1",
+  "glasses_marisol",
+  "hairbrush_marisol",
+  "headphones_nico",
+  "headphones_talia",
+  "jacket_marisol",
+  "jacket_nico",
+  "keys_marisol",
+  "keys_nico",
+  "keys_talia",
+  "laptop_talia",
+  "laundry_basket_shared_1",
+  "lunchbox_nico",
+  "lunchbox_talia",
+  "medication_bottle_marisol",
+  "mug_marisol",
+  "mug_talia",
+  "notebook_marisol",
+  "notebook_talia",
+  "pan_shared_1",
+  "pen_marisol",
+  "pen_talia",
+  "phone_marisol",
+  "phone_nico",
+  "phone_talia",
+  "plate_shared_1",
+  "pot_shared_1",
+  "remote_shared_1",
+  "towel_marisol",
+  "umbrella_shared_1",
+  "vacuum_cleaner_shared_1",
+  "wallet_marisol",
+  "wallet_nico",
+  "wallet_talia",
+  "water_bottle_marisol",
+  "water_bottle_nico",
+  "water_bottle_talia"
+ ],
+ "premises": {
+  "composition": "family_with_children",
+  "work_pattern": "shift_work"
+ },
+ "wall_seconds": 3982.5,
+ "notebook_mixture": {
+  "config": {
+   "look_rule": "voi",
+   "beta": 0.3,
+   "invalid_look": "neutral",
+   "review": "none",
+   "voi_lambda": 0.05,
+   "use_it_or_lose_it": true,
+   "questions_per_day": 24.0,
+   "fork_gate": true,
+   "review_every_looks": 12,
+   "skip_below": 0.01,
+   "parallel": 8,
+   "population_cap": 5,
+   "followup_min_weight": 0.05,
+   "max_looks_per_question": 3,
+   "tell_questions_per_day": true,
+   "followup_mode": "none",
+   "label": "notebook_fixed"
+  },
+  "calls": 1122,
+  "looks_per_day": {
+   "0": 8,
+   "1": 8,
+   "2": 8,
+   "3": 8,
+   "4": 8,
+   "5": 8,
+   "6": 8,
+   "7": 8,
+   "8": 8,
+   "9": 8,
+   "10": 8,
+   "11": 8,
+   "12": 8,
+   "13": 8
+  },
+  "decide_corrected": 0,
+  "forks_gated": 0,
+  "call_totals": {
+   "initial": {
+    "calls": 1,
+    "prompt_tokens": 1221,
+    "completion_tokens": 1852,
+    "seconds": 41.1
+   },
+   "question_forecast": {
+    "calls": 673,
+    "prompt_tokens": 1142807,
+    "completion_tokens": 91339,
+    "seconds": 5104.5
+   },
+   "look_forecast": {
+    "calls": 448,
+    "prompt_tokens": 763992,
+    "completion_tokens": 64725,
+    "seconds": 3599.5
+   },
+   "follow_up": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   },
+   "fork": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   },
+   "review": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   },
+   "birth": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   },
+   "decide": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   },
+   "condense": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   }
+  },
+  "calls_per_day": {
+   "0": {
+    "initial": {
+     "calls": 1,
+     "prompt_tokens": 1221,
+     "completion_tokens": 1852,
+     "seconds": 41.1
+    },
+    "question_forecast": {
+     "calls": 116,
+     "prompt_tokens": 200550,
+     "completion_tokens": 15179,
+     "seconds": 1012.8
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54776,
+     "completion_tokens": 4575,
+     "seconds": 294.1
+    }
+   },
+   "1": {
+    "question_forecast": {
+     "calls": 70,
+     "prompt_tokens": 119714,
+     "completion_tokens": 9476,
+     "seconds": 658.4
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54260,
+     "completion_tokens": 4533,
+     "seconds": 332.3
+    }
+   },
+   "2": {
+    "question_forecast": {
+     "calls": 62,
+     "prompt_tokens": 105470,
+     "completion_tokens": 8374,
+     "seconds": 511.8
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54584,
+     "completion_tokens": 4613,
+     "seconds": 305.7
+    }
+   },
+   "3": {
+    "question_forecast": {
+     "calls": 61,
+     "prompt_tokens": 103975,
+     "completion_tokens": 8095,
+     "seconds": 440.6
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54840,
+     "completion_tokens": 4628,
+     "seconds": 252.2
+    }
+   },
+   "4": {
+    "question_forecast": {
+     "calls": 85,
+     "prompt_tokens": 144530,
+     "completion_tokens": 11513,
+     "seconds": 705.1
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54504,
+     "completion_tokens": 4558,
+     "seconds": 311.6
+    }
+   },
+   "5": {
+    "question_forecast": {
+     "calls": 34,
+     "prompt_tokens": 57339,
+     "completion_tokens": 4627,
+     "seconds": 262.1
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54624,
+     "completion_tokens": 4773,
+     "seconds": 277.0
+    }
+   },
+   "6": {
+    "question_forecast": {
+     "calls": 30,
+     "prompt_tokens": 50363,
+     "completion_tokens": 4150,
+     "seconds": 245.5
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54480,
+     "completion_tokens": 4618,
+     "seconds": 268.9
+    }
+   },
+   "7": {
+    "question_forecast": {
+     "calls": 32,
+     "prompt_tokens": 53799,
+     "completion_tokens": 4462,
+     "seconds": 212.4
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54680,
+     "completion_tokens": 4758,
+     "seconds": 264.0
+    }
+   },
+   "8": {
+    "question_forecast": {
+     "calls": 31,
+     "prompt_tokens": 52050,
+     "completion_tokens": 4345,
+     "seconds": 192.1
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54584,
+     "completion_tokens": 4576,
+     "seconds": 268.5
+    }
+   },
+   "9": {
+    "question_forecast": {
+     "calls": 32,
+     "prompt_tokens": 53775,
+     "completion_tokens": 4566,
+     "seconds": 193.6
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54560,
+     "completion_tokens": 4644,
+     "seconds": 209.2
+    }
+   },
+   "10": {
+    "question_forecast": {
+     "calls": 30,
+     "prompt_tokens": 50324,
+     "completion_tokens": 4198,
+     "seconds": 170.5
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54696,
+     "completion_tokens": 4718,
+     "seconds": 194.8
+    }
+   },
+   "11": {
+    "question_forecast": {
+     "calls": 32,
+     "prompt_tokens": 53769,
+     "completion_tokens": 4261,
+     "seconds": 193.9
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54548,
+     "completion_tokens": 4634,
+     "seconds": 200.6
+    }
+   },
+   "12": {
+    "question_forecast": {
+     "calls": 29,
+     "prompt_tokens": 48558,
+     "completion_tokens": 4037,
+     "seconds": 157.7
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54404,
+     "completion_tokens": 4596,
+     "seconds": 222.9
+    }
+   },
+   "13": {
+    "question_forecast": {
+     "calls": 29,
+     "prompt_tokens": 48591,
+     "completion_tokens": 4056,
+     "seconds": 147.9
+    },
+    "look_forecast": {
+     "calls": 32,
+     "prompt_tokens": 54452,
+     "completion_tokens": 4501,
+     "seconds": 197.6
+    }
+   }
+  },
+  "budget_exhausted_at": {
+   "0": "d00 Mon 06:27",
+   "1": "d01 Tue 06:21",
+   "2": "d02 Wed 06:06",
+   "3": "d03 Thu 06:18",
+   "4": "d04 Fri 06:29",
+   "5": "d05 Sat 09:52",
+   "6": "d06 Sun 09:53",
+   "7": "d07 Mon 06:11",
+   "8": "d08 Tue 07:20",
+   "9": "d09 Wed 06:29",
+   "10": "d10 Thu 06:57",
+   "11": "d11 Fri 06:40",
+   "12": "d12 Sat 08:03",
+   "13": "d13 Sun 07:28"
+  },
+  "population_size_per_day": {
+   "0": 4,
+   "1": 4,
+   "2": 4,
+   "3": 4,
+   "4": 4,
+   "5": 4,
+   "6": 4,
+   "7": 4,
+   "8": 4,
+   "9": 4,
+   "10": 4,
+   "11": 4,
+   "12": 4,
+   "13": 4
+  },
+  "population_final": 4,
+  "forks": 0,
+  "retirements": 0,
+  "forks_rejected": 0,
+  "reviews_failed": 0,
+  "scratch_truncated": 0,
+  "invalid_forecasts": 41,
+  "unresolved_spots": 105,
+  "unresolved_objects": 1081,
+  "unresolved_samples": [
+   "bedroom_1",
+   "bedroom_1",
+   "bedroom_2",
+   "bedroom_1",
+   "bedroom_1",
+   "bedroom_1",
+   "bedroom_1",
+   "bedroom_1",
+   "bedroom_1",
+   "bedroom_1",
+   "bedroom_1",
+   "bedroom_1",
+   "bedroom_3",
+   "bedroom_2",
+   "bedroom_1",
+   "living",
+   "living",
+   "bedroom_2",
+   "living",
+   "living"
+  ],
+  "looks": 112,
+  "question_rounds": 425,
+  "final_weights": {
+   "a01": 0.0,
+   "a02": 1.0,
+   "a03": 0.0,
+   "a04": 0.0
+  },
+  "agents": {
+   "a01": {
+    "parent": null,
+    "generation": 1,
+    "born": "d00 Mon 06:06",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 204,
+    "scratch_words": 0,
+    "weight": 0.0
+   },
+   "a02": {
+    "parent": null,
+    "generation": 1,
+    "born": "d00 Mon 06:06",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 193,
+    "scratch_words": 0,
+    "weight": 1.0
+   },
+   "a03": {
+    "parent": null,
+    "generation": 1,
+    "born": "d00 Mon 06:06",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 178,
+    "scratch_words": 0,
+    "weight": 0.0
+   },
+   "a04": {
+    "parent": null,
+    "generation": 1,
+    "born": "d00 Mon 06:06",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 183,
+    "scratch_words": 0,
+    "weight": 0.0
+   }
+  }
+ },
+ "log_loss_valid": true,
+ "llm": {
+  "live_calls": 1106,
+  "cache_hits": 16,
+  "live_generation_seconds": 8600.6
+ }
+}

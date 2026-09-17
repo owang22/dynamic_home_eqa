@@ -1,0 +1,8 @@
+# a56 — scratch memory, final (retired d05 Sat 23:59 (population cap); final weight 0.0042)
+
+d04 Fri: Entry (05:33) held Noa's backpack, Priya's jacket/wallet; no residents. Bedroom_1 floor (05:33) held Priya's backpack, suitcase, vacuum; Elias/Priya present but hands-free. Kitchen counter (07:09-07:31) showed high volatility: Priya's phone/lunchbox/charger appeared then vanished within 15 mins; only mug_priya persisted. Sink held shared cookware. Confirmed kitchen is a temporary drop zone, not stable storage.
+
+d05 Sat: Bedroom_1 floor (06:21-06:28) held vacuum, yoga_mat_priya; Elias present but hands-free. Suitcase absent (contradicting prior forecast). Elias's daily items (backpack/jacket/wallet) consistently absent from floor, confirming they are hidden or out of house. Bedroom_2 floor (02:08-06:28) held only book_noa; Noa present. Noa's floor is sparse/static, lacking toys/bottles/blankets, supporting selective storage over clutter. Noa remains in her room, not kitchen/entry.
+
+d05 Sat 06:28: d05 Sat 06:28: bedroom_floor_b2 contained only book_noa; resident_3 present. Confirms Noa's floor is a sparse, static storage zone (Belief 3). Absence of toy/bottle/blanket supports selective storage, not clutter. Noa is in her room, not kitchen/entry. Score -0.79 (above avg), weight up.
+d05 Sat 06:31: d05 Sat 06:31: counter_k1 held charger_shared_1, mug_priya, phone_priya, water_bottle_elias; resident_3 present. High volatility confirmed: items appear/disappear rapidly. water_bottle_elias on counter contradicts 'hidden' belief; Elias's items are mobile, not static. Score -9.12, weight down.

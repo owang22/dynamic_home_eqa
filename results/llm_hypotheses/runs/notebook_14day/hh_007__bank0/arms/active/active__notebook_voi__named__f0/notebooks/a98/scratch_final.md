@@ -1,0 +1,7 @@
+# a98 — scratch memory, final (retired d13 Sun 09:56 (population cap); final weight 0.0936)
+
+d10-d13: Nightstands (b1, b3) are stable homes for personal electronics/meds (phone, charger, glasses, meds) when residents are absent or present. Desks hold only books. Residents rarely carry items on person.
+d11-d13: Kitchen counter (counter_k1) is a stable drop zone for personal gear (backpacks, jackets, water bottles). Mugs are volatile; they appear/disappear frequently during the day. Sink holds stable cookware (pans, plates, pots). Dish_rack holds volatile personal items (mugs, lunchboxes) and stable cookware. Entry hook holds jackets when residents are absent.
+d12: Game_shelf_l1 is the stable home for gaming controllers. Specialized items stay in designated living room spots.
+d13: Bedroom floors are generally not storage locations for personal gear (jackets/backpacks/bottles); they are empty unless a resident is actively using the space. However, transient items like wallets may be temporarily placed on floors during activity. Floors are not stable storage but can hold volatile, short-term items.
+New: d13 Sun 09:56: bedroom_floor_b3 holds wallet_sofia; resident_3 present. Contradicts belief 5 (floors empty). Wallets are volatile personal items that may be temporarily placed on floors during activity. Floors are not stable storage but can hold transient items.

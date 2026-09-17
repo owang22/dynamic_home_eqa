@@ -1,0 +1,11 @@
+# a18 — scratch memory, final (retired d03 Thu 07:33 (population cap); final weight 0.0743)
+
+d00-d03 Entry Patterns: entry_table_e1 is moderately stable for Elias's keys (observed d02 06:22, d03 06:55), but phone_elias and wallet_elias are volatile, often moving to ON_PERSON, OUT_OF_HOUSE, or the bathroom (d02 05:20). entry_hook_e1 is primarily for bulky outerwear/backpacks (d02 06:13), not small electronics or wallets, which are better found at counter_k1 or entry_table_e1.
+
+d00-d03 Kitchen Patterns: counter_k1 is the primary active hub for daily carry items (mugs, water bottles, keys, lunchboxes, pens), but contents are volatile. Items like keys_priya, pen_elias, and charger_shared_1 appear and disappear between looks (d02 vs d03). Mugs and water bottles frequently migrate between counter_k1 and sink_k1 (d02 05:44, d03 07:32). Priya’s items (lunchbox, water bottle, phone) show high mobility, often shifting between counter_k1, sink_k1, and ON_PERSON.
+
+d00-d03 Bathroom Patterns: bathroom_shelf_ba1 is NOT stable storage for Priya’s grooming items (hairbrush_priya, makeup_kit_priya). They were present on d02/d03 mornings but absent by d03 07:32, likely moved to ON_PERSON or bedroom_2. Treat all Priya’s personal items as mobile, not fixed to specific receptacles. Noa’s items remain consistently absent from shared spaces, consistent with bedroom_2 storage.
+
+d03 Thu 07:32: counter_k1 holds lunchbox_priya, mug_priya, phone_priya, water_bottle_elias, water_bottle_priya; nobody present. Confirms counter_k1 as active hub for Priya's carry items and shared water bottles. Absence of keys_priya/pen_elias/charger_shared_1/pan_shared_1 contradicts d02 stability; these items are volatile, not fixed to counter_k1. Elias's water bottle remains here, consistent with staging pattern.
+d03 Thu 07:33: d03 Thu 07:33: bed_b2 empty. Noa's items (blanket, toy, book, towel, backpack, med, water) all absent. Confirms Noa's items are not staged on bed_b2; likely in closet or under bed. My high prior for bed_b2 was wrong; Noa's items are not reliably there.
+d03 Thu 07:33: d03 Thu 07:33: bedroom_floor_b2 empty. Noa's items (blanket, toy, book, towel, backpack, med, water) absent. Confirms Noa's items are not staged on floor or bed; likely in closet or under bed. My prior for floor was low, but absence confirms they are hidden/stowed, not loose in bedroom_2.

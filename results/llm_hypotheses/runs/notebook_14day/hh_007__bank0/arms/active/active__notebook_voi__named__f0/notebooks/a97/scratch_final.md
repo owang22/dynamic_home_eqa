@@ -1,0 +1,9 @@
+# a97 — scratch memory, final (live at the end; final weight 0.2211)
+
+d10-d13: Nightstands (b1, b3) are stable homes for personal electronics/meds (phones, chargers, glasses, meds) when residents are absent or present. Desks hold only books. Residents rarely carry items on person.
+d11-d13: Kitchen counter (counter_k1) is a stable drop zone for bulky personal gear (backpacks, jackets, water bottles). Mugs are volatile drop-zone items, appearing frequently during the day but not stable. Sink holds stable cookware (pans, plates, pots); dish_rack holds volatile personal items (mugs, lunchboxes) and stable cookware (pots). Entry hook holds jackets when residents are absent.
+d12: Game_shelf_l1 is the stable home for gaming controllers. Specialized items stay in designated living room spots.
+d13: Bedroom floors are stable-empty for bulky gear (backpacks/jackets/bottles) but volatile for small personal items (wallets/keys) which can be dropped or placed there. This refines the belief that floors are not storage; they are not for bulky gear but can hold small items.
+d13 Sun 09:56: d13 Sun 09:56: bedroom_floor_b3 held wallet_sofia; resident_3 present. Contradicts belief 5 (floors not storage). Wallets are small, portable items that can be dropped or placed on floors, unlike bulky gear. Floors are volatile for small personal items (wallets/keys) but stable-empty for bulky gear (backpacks/jackets).
+d13 Sun 10:00: d13 Sun 10:00: bedroom_floor_b3 held wallet_sofia; resident_3 present. Confirms floors are volatile for small personal items (wallets/keys) but stable-empty for bulky gear. No belief change; reinforces existing scratch memory refinement.
+d13 Sun 10:00: d13 Sun 10:00: bedroom_floor_b1 empty; resident_1 present. Confirms floors are stable-empty for bulky gear and volatile for small items (wallets/keys). No belief change; reinforces existing scratch memory refinement.

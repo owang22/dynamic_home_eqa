@@ -1,0 +1,18 @@
+# a46 — scratch memory, final (retired d05 Sat 06:21 (population cap); final weight 0.1062)
+
+d00-d01: entry_table_e1 stable for Elias keys/phone/wallet (05:37-06:05). entry_hook_e1 volatile; bulky items d00, small electronics d01. counter_k1 primary hub for mugs/bottles/keys. Mugs migrate counter->sink (d01 06:01). Priya items shift between hook and counter.
+
+d02: 05:20 phone_elias at towel_rack_ba1 (bathroom routine). 05:44 sink_k1 holds lunchbox_priya/water_bottle_priya; counter_k1 holds mugs/keys/pens. 06:13 entry_hook_e1 holds backpacks/jackets only; small electronics absent. 06:16 sink_k1 persists with lunchbox/bottle. 06:22 phone_elias returns to entry_table_e1. 06:38 bathroom_shelf_ba1 holds hairbrush_priya/makeup_kit_priya.
+
+d03: 05:33 bathroom_shelf_ba1 still holds Priya grooming items. 06:55 entry_table_e1 holds keys_elias only; phone/wallet migrated. 07:32 bathroom_shelf_ba1 empty; Priya present, carrying nothing. Grooming items not stable overnight. 07:32 counter_k1 holds lunchbox_priya, mug_priya, phone_priya, water_bottle_elias, water_bottle_priya; nobody present. Confirms counter_k1 as stable hub for Priya's daily carry. Absence of keys_priya/wallet_priya refutes co-location here. 07:33 bed_b2, bedroom_floor_b2, bed_b1 empty of Noa items. bedroom_2 is low-yield for Noa's personal objects pre-08:00.
+
+d04 Fri 05:33: entry_hook_e1 holds backpack_noa, jacket_priya, wallet_priya. bedroom_floor_b1 holds backpack_priya, suitcase_shared_1, vacuum_cleaner_shared_1; residents_1 & 2 present. Elias in bedroom_1 carrying nothing; items remain at entry_table_e1.
+
+d04 Fri 07:09: counter_k1 holds charger_shared_1, lunchbox_priya, mug_priya, phone_priya; resident_3 present. Noa in kitchen.
+
+d04 Fri 07:15: counter_k1 holds ONLY mug_priya; resident_3 present. phone_priya, lunchbox_priya, charger_shared_1 ABSENT. Noa in kitchen carrying nothing. Items likely moved to sink_k1 or OUT_OF_HOUSE.
+
+d04 Fri 07:15: sink_k1 holds pan_shared_1, plate_shared_1; resident_3 present. phone_priya, lunchbox_priya, charger_shared_1 ABSENT. Contradicts belief 1 migration hypothesis. Items likely OUT_OF_HOUSE or moved to other receptacles (counter_k1, cupboard_k1). Noa present but not carrying. Adjust priors: sink_k1 is low-yield for Priya's electronics/food items during 07:15 window.
+d04 Fri 07:31: d04 Fri 07:31: counter_k1 holds ONLY mug_priya; nobody present. Confirms mug_priya is the sole stable item at counter_k1 during 07:15-07:31 window. Other items (phone_priya, lunchbox_priya, charger_shared_1, water_bottles) remain absent. Noa has left kitchen. Prior for mug_priya at counter_k1 remains high; all other items low.
+d05 Sat 02:08: d05 Sat 02:08: bedroom_floor_b2 holds book_noa; nobody present. Contradicts belief 5 (Noa items absent from bedroom_2 pre-08:00). Noa items can be on bedroom_floor_b2 at night. Update prior: book_noa likely here overnight.
+d05 Sat 06:21: d05 Sat 06:21: bedroom_floor_b1 holds vacuum_cleaner_shared_1, yoga_mat_priya; resident_1 present. Confirms Elias in bedroom_1. yoga_mat_priya stable here overnight. vacuum_cleaner_shared_1 persists. backpack_priya/suitcase_shared_1 absent (moved).

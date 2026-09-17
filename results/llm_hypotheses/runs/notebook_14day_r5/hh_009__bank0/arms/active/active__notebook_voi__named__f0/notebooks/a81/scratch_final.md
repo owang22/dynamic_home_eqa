@@ -1,0 +1,6 @@
+# a81 — scratch memory, final (retired d08 Tue 05:51 (population cap); final weight 0.1221)
+
+d08 Tue 05:27: d08 05:27: towel_rack_ba1 empty; resident_2 present. Confirms 'Clean Zone' belief: bathroom items are transient, not parked. Noa's towel likely in bedroom_2 or laundry. Priya's items (hairbrush/makeup) not here, consistent with kitchen/bedroom drift. Empty rack is a strong negative signal for bathroom-specific items.
+d08 Tue 05:27: d08 Tue 05:27: bedroom_floor_b2 empty; resident_3 present. Contradicts d07 pattern where book_noa was on floor. Noa's items are not currently in bedroom_2 receptacles. Likely ON_PERSON (though resident check not done) or drifted to entry_hook_e1/bed_b2. Floor is not a reliable anchor for Noa's items on d08.
+d08 Tue 05:27: d08 Tue 05:27: bed_b2 empty; resident_3 present. Confirms bedroom_2 is currently 'clean' of Noa's items. Combined with empty floor/rack, Noa's items are likely ON_PERSON or OUT_OF_HOUSE. Drift model holds: items are not anchored to bed/floor when resident is active elsewhere or carrying them.
+d08 Tue 05:51: d08 05:51 counter_k1: charger_shared_1, mug_priya, pan_shared_1, tablet_shared_1; resident_2 present. Elias items (mug, bottle, pen) absent despite high prior. Priya items present. Shared items persist. Drift model holds: items stay where last touched; absence is informative. Noa items not here.
