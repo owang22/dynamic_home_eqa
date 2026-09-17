@@ -1,20 +1,31 @@
-# a02 — scratch memory, final (retired d01 Tue 23:59 (review: lowest at end of day); final weight 0.1598)
+# a02 — scratch memory, final (retired d01 Tue 23:59 (review: lowest at end of day); final weight 0.1979)
 
-d01 Tue 05:58 Looked at counter_k1. Found: lunchbox_mara, mug_mara, notebook_mara, pen_mara. Residents: resident_1.
+d01 Tue 06:06 Looked at counter_k1. Found: bowl_shared_1, mug_mara, plate_shared_2, water_bottle_mara. Residents: resident_1.
+d01 Tue 06:06 Looked at cupboard_k1. Found: mug_shared_1, pot_shared_1. Residents: resident_1.
 
-OBSERVATION: The kitchen counter is a 'work surface' for Mara, not just a dish dump. It holds personal items (notebook, pen, lunchbox) alongside mugs. This contradicts the 'kitchen clutter' belief that only dishes/mugs belong there. Resident_1 moved from bathroom to kitchen, likely for breakfast/prep.
+STATUS: Weight 0.178 (Rank 4/5). Score -8.38 (Panel avg -7.11). I underperformed the panel significantly on this look.
 
-SCORING LESSON: Score -13.66 (panel avg -14.31). I outperformed the panel. The penalty came from assigning p=0.05 to ~30 irrelevant objects (hairbrush, meds, vacuum, etc.). Even small probabilities on absent items accumulate negative log-likelihood. I also underestimated the presence of notebook/pen/lunchbox (p=0.05) while overestimating plates/bowls (p=0.35) which were absent.
+KEY LEARNINGS & CORRECTIONS:
+1. **Cupboard is a Storage Zone, not a Dumping Ground:** My previous belief that 'high-traffic' zones (counter/coffee table) are the primary locations for misplaced items was too broad. The cupboard_k1 contains specific storage items: mug_shared_1 and pot_shared_1. These are not 'clutter' but stored cookware/drinkware. I assigned 0.02 to mug_shared_1 and pot_shared_1, which was a massive error (log(0.02) ≈ -3.9 each). I should have assigned higher probability (0.5-0.8) to items that fit the 'storage' class of the receptacle.
+2. **Medication Bottle:** I assigned 0.15 to medication_bottle_mara in the cupboard. It was absent. This confirms that medication is likely kept in a more secure or specific spot (bathroom_shelf, nightstand, or ON_PERSON), not in the general kitchen cupboard. Lower this probability for kitchen receptacles.
+3. **Resident Location:** Resident_1 is in the kitchen. This correlates with the presence of water_bottle_mara and mug_mara on the counter (active use) and mug_shared_1/pot_shared_1 in the cupboard (storage). The resident is likely preparing food or drinks.
+4. **Absence Penalty:** The penalty for overestimating absent items is severe. However, the penalty for *underestimating* present items is also severe. My 'Zero-Noise' policy (0.01-0.02 for non-contextual) failed because I failed to identify the *correct* contextual items for the cupboard. Context for cupboard = stored pots, pans, mugs, maybe baking supplies. Context for counter = active dishes, drinks, food prep.
 
-REFINED STRATEGY:
-1. Aggressive Sparsity: Assign p=0.001 to objects with no contextual link to the receptacle. Do not spread probability thinly. If an object isn't in the top 3-5 likely candidates, it is absent.
-2. Contextual Anchoring:
-   - Bathroom Shelf: Hairbrush, Makeup, Meds (p>0.8). Everything else (p~0).
-   - Kitchen Counter: Mugs (p>0.5), Personal Work Items (Notebook, Pen, Laptop, Phone) (p>0.3), Lunchbox (p>0.3). Dishes (Plates/Bowls) are less likely if not currently in use (p<0.2).
-   - Living Room: Remote, Laptop, Tablet, Books (p>0.5).
-   - Nightstand: Phone, Charger, Glasses (p>0.5).
-3. Carry Items: In the kitchen, resident_1 is likely holding phone_mara or keys_mara (p~0.3). Wallet is less likely unless leaving.
-4. Next Steps: Resident_1 is in the kitchen. Likely next move: Living Room (relax) or Bedroom (rest). Monitor coffee_table_l1 for remote/laptop. Check entry_table_e1 for keys/wallet if they leave. The counter is now 'clean' of dishes, suggesting they were washed or moved.
-5. Calibration: Be conservative with high probabilities. Only assign p>0.5 if evidence is strong. For 'carry' items, distribute probability evenly among likely candidates (phone, keys) rather than betting heavily on one.
+STRATEGY REVISION:
+- **Receptacle-Specific Context:**
+  - **Cupboard_k1:** High prob for pot_shared_1, pan_shared_1, mug_shared_1, bowl_shared_1/2 (if stored), maybe lunchbox_mara. Low prob for tech, personal items, active dishes.
+  - **Counter_k1:** High prob for active dishes (plate/bowl), mugs (mug_mara), water_bottle_mara, food prep items. Low prob for stored pots/pans.
+  - **Coffee_table_l1:** High prob for remote_shared_1, book_mara, notebook_mara, phone_mara (if not on person), glasses_mara. Low prob for kitchen items.
+  - **Bedroom:** High prob for laptop, tablet, charger, blanket, pillow (if existed), clothes (jacket, towel).
+  - **Entry:** High prob for keys, wallet, jacket, umbrella, backpack.
+- **Probability Calibration:**
+  - If an item fits the *class* of the receptacle (e.g., pot in cupboard), assign 0.5-0.8.
+  - If an item is in its 'home spot' (e.g., keys in entry), assign 0.6-0.8.
+  - If an item is in a 'high-traffic' zone but doesn't fit the class (e.g., laptop on counter), assign 0.1-0.2.
+  - If an item is in a random other receptacle, assign 0.01-0.05.
+- **Resident Tracking:** Resident_1 is in the kitchen. Monitor for movement. If they move to living, check if phone/keys move to ON_PERSON or coffee_table. If they move to bedroom, check if laptop/charger move to bed/desk.
 
-KEY INSIGHT: The counter is a multi-use surface. Personal items (notebook, pen) are common there. Dishes are not always present. Adjust priors accordingly: Counter = Mugs + Personal Tech/Stationery + Food Prep. Not just dishes.
+NEXT STEPS:
+- Update beliefs to distinguish between 'active use' zones (counter, coffee table) and 'storage' zones (cupboard, bedroom, entry).
+- Be more precise about which items belong in which storage zone.
+- Continue to track resident_1's location to predict movement of personal items (phone, keys, wallet).

@@ -1,4 +1,4 @@
-# call 200 (question_forecast, agent a04) at d00 Mon 06:41
+# call 200 (question_forecast, agent a02) at d00 Mon 06:25
 
 ## system
 
@@ -64,34 +64,46 @@ RESIDENTS: resident_1
 
 LOOK BUDGET: 8 looks per day, reset at midnight.
 
-YOUR NOTEBOOK (agent a04)
+YOUR NOTEBOOK (agent a02)
 ## BELIEFS
-BELIEFS: The household is unpredictable. There are no reliable patterns or routines. Object locations are random. 1. Uniform Distribution: Each object has an equal probability of being in any receptacle, ON_PERSON, or OUT_OF_HOUSE. 2. No Home Spots: There are no 'home' spots for objects. An object can be anywhere. 3. Resident Behavior: Resident_1 is equally likely to be in any room or OUT_OF_HOUSE. 4. Probabilities: 1/35 chance an object is in a specific receptacle. 1/35 chance it is ON_PERSON. 1/35 chance it is OUT_OF_HOUSE. 5. Strategy: The robot should use its look budget to check the most likely receptacles based on the object's class (e.g., check kitchen for dishes, bedroom for personal items) but should not rely on this. Why: This model is the most conservative. It assumes no knowledge and treats all locations as equally likely. It is the least efficient but the most robust to unexpected changes. It is a baseline for comparison.
+BELIEFS: The household is disorganized. Objects tend to accumulate in the 'center of gravity' of the house, which is the living room and kitchen counter. 1. High-Traffic Zones: coffee_table_l1, counter_k1, and couch_l1 are the most likely locations for any object. 2. Bedroom as Storage: The bedroom is used for long-term storage or sleeping only. Items like laptop_mara, phone_mara, and tablet_mara are often left on bed_b1 or bedroom_floor_b1 after use. 3. Kitchen Clutter: Dishes (plate_shared_1, plate_shared_2, bowl_shared_1, bowl_shared_2) are often left on counter_k1 or kitchen_table_k1, not in the sink. Mugs (mug_mara, mug_shared_1) are on counter_k1. 4. Entry Neglect: entry_table_e1 and entry_hook_e1 are used only for keys_mara and wallet_mara. Jacket_mara and umbrella_mara are often forgotten in the living room or bedroom. 5. Movement Rules: Objects move randomly. There is no strict return-to-home rule. An object used in the kitchen might end up in the living room. 6. Probabilities: 40% chance an object is in its 'home' spot. 40% chance it is in a high-traffic zone (coffee_table_l1, counter_k1, couch_l1). 20% chance it is in a random other receptacle. 7. Resident Behavior: Resident_1 is often ON_PERSON with phone_mara, keys_mara, or wallet_mara. Why: This model accounts for human laziness and clutter. It is more robust to 'misplaced' items. It sacrifices precision for recall, assuming that if an object isn't in its home spot, it's likely in a central area.
 
 ## SCRATCH MEMORY
-d00 Mon 04:42-06:14: Observed strong class-receptacle correlations. Bathroom shelf: hairbrush, makeup, meds. Counter: lunchbox, mug, water bottle, pen, plate (high entropy/flow zone). Sink: pan, watering can (wet/cleaning items). Cupboard: shared mugs, plates, pots (static storage). Nightstand: phone. Desk: empty.
+d00 Mon 06:14: Looked at counter_k1. Found: lunchbox_mara, pen_mara, plate_shared_2, water_bottle_mara. Residents: resident_1. Mug_mara absent (forecast error). Resident in kitchen.
 
-Key Lessons:
-1. Static vs. Flow: Cupboard and Bathroom Shelf are 'home spots' (high prob 0.3-0.5 for class-appropriate items). Counter and Sink are 'flow zones' (moderate prob 0.1-0.2 for wide range of small items; do not assume persistence between looks 25 mins apart).
-2. Resident Correlation: Resident_1 in kitchen correlates with active items (food, drink) on counter/sink. Resident in bedroom correlates with personal tech on nightstand/desk.
-3. Error Analysis: Over-predicted mug_mara on counter (moved away). Under-predicted shared dishes in cupboard (treated as transient). Under-predicted laundry/vacuum/suitcase on bedroom floor.
+d00 Mon 06:14: Looked at dish_rack_k1. Found: NOTHING. Residents: resident_1.
+- **Key Observation**: Dish rack is empty. This contradicts the assumption that dirty dishes go there. Plate_shared_2 is on counter_k1, not in rack. Mug_mara is not in rack.
+- **Resident Status**: resident_1 is in the kitchen (confirmed by both looks). They are active.
+- **Mug_mara Location**: Not on counter, not in rack. Likely ON_PERSON (being drunk from) or in sink_k1. Probability of ON_PERSON is high given resident activity.
+- **Dish Pattern**: Dishes (plate_shared_2) are left on counter_k1, not moved to sink/rack immediately. This supports 'kitchen clutter' belief but refines it: counter is the primary dirty dish spot, not the rack.
+- **Score Impact**: -0.88. Above panel average (-0.99). Weight 0.364 (Rank 1). Credibility gained.
+- **Strategy Update**:
+  1. **Mug_mara**: Prioritize ON_PERSON > sink_k1 > counter_k1. If asked, bet on ON_PERSON.
+  2. **Resident Check**: Next best move is look at resident_1. Resolves mug, phone, keys, wallet. High info gain.
+  3. **Kitchen Clutter**: Counter_k1 is the 'active' zone for dishes and personal items (lunchbox, pen, water). Sink/rack are underutilized.
+  4. **Next Targets**:
+     - Look at resident_1 (in kitchen): Resolves portable items.
+     - sink_k1: If resident not holding mug, it's likely here.
+     - entry_table_e1: If resident leaving, keys/wallet/jacket might be here.
+- **Decision**: Look at resident_1. Most efficient way to resolve portable items and understand activity (eating, packing, leaving).
 
-New Strategy:
-- Bedroom Floor: High probability for bulky/laundry items (laundry_basket, suitcase, vacuum_cleaner, yoga_mat, blanket). These are 'overflow' or 'storage' items not fitting in closets/beds. Assign 0.1-0.2 to these classes.
-- Cupboard: High probability (0.3-0.5) for shared dishware (mugs, plates, pots, bowls).
-- Counter: Moderate probability (0.1-0.2) for small personal/kitchen items (mugs, bottles, lunchboxes, pens, plates). Avoid high confidence on specific items seen recently.
-- Sink: Moderate probability (0.1-0.2) for wet/cleaning items (pans, watering cans, dishes).
-- Bathroom Shelf: High probability (0.3-0.5) for bathroom personal care items.
-- Nightstand/Desk: High probability (0.3-0.5) for personal tech (phone, charger, laptop, tablet).
-- Entry: High probability (0.3-0.5) for keys, wallet, umbrella, jacket.
+d00 Mon 06:14: Looked at sink_k1. Found: pan_shared_1, watering_can_mara. Residents: resident_1.
+- **Forecast Error**: I assigned 0.05 to pan_shared_1 and 0.01 to watering_can_mara. The actual presence of these items, especially the watering can in a kitchen sink, was a significant miss. My model underweights 'odd' items in the sink.
+- **Mug_mara Status**: Still not found. Not on counter, not in rack, not in sink. Given resident_1 is in the kitchen, ON_PERSON is now the dominant hypothesis (prob > 0.6). Sink_k1 is now a low-probability spot for the mug.
+- **Kitchen Receptacle Roles**:
+  - counter_k1: Active workspace (lunchbox, pen, water, plate_shared_2).
+  - sink_k1: Storage for non-dish items (pan_shared_1, watering_can_mara). NOT for dirty dishes (rack is empty, counter has dirty plate).
+  - dish_rack_k1: Empty. Avoid forecasting dishes here unless explicitly washed.
+- **Resident_1**: In kitchen. Likely holding mug_mara. Also likely holding phone_mara, keys_mara, wallet_mara if they are preparing to leave or just arrived.
+- **Next Move**: Look at resident_1. This is the highest information gain action. It will resolve the location of mug_mara and likely other portable items (phone, keys, wallet, charger).
+- **Belief Refinement**: The 'Kitchen Clutter' belief needs nuance. The sink is not just for washing; it's a dumping ground for tools (pan, watering can). The counter is for 'in-progress' items. The rack is ignored.
+- **Score Impact**: -8.83. Below panel average (-8.72). Weight dropped to 0.349 (Rank 2). The low probability assigned to the watering can in the sink hurt significantly. Future forecasts for sink_k1 should include higher base rates for non-dish objects like pans, pots, and gardening tools.
 
-Current Status: Weight 0.052, Rank 3. Scored -13.55 on bedroom floor look (above panel avg -13.80). Gained credibility. Focus on calibrating 'overflow' items on floors and static storage in cupboards/shelves. Do not assume objects stay in 'flow' zones. Update probabilities based on class and receptacle type, not just recent observation.
-
-NOW: d00 Mon 06:41. The robot is in bedroom. Looks left today: 0.
+NOW: d00 Mon 06:25. The robot is in kitchen. Looks left today: 0.
 SEEN SO FAR ON THIS QUESTION: nothing yet.
 
-REQUEST: where is phone_mara right now? Give a probability for every spot you consider possible — receptacles, ON_PERSON, OUT_OF_HOUSE — summing to 1; spots you leave out are taken as very unlikely. If ON_PERSON gets any probability, also give carrier (the resident id) and carrier_room (the room you think that resident is in now). One sentence why. Use ids exactly as listed.
+REQUEST: where is headphones_mara right now? Give a probability for every spot you consider possible — receptacles, ON_PERSON, OUT_OF_HOUSE — summing to 1; spots you leave out are taken as very unlikely. If ON_PERSON gets any probability, also give carrier (the resident id) and carrier_room (the room you think that resident is in now). One sentence why. Use ids exactly as listed.
 
 ## reply
 
-{"spots": [{"spot": "nightstand_b1", "p": 0.35}, {"spot": "desk_b1", "p": 0.15}, {"spot": "ON_PERSON", "p": 0.15}, {"spot": "bed_b1", "p": 0.10}, {"spot": "OUT_OF_HOUSE", "p": 0.05}, {"spot": "counter_k1", "p": 0.05}, {"spot": "couch_l1", "p": 0.05}, {"spot": "bedroom_floor_b1", "p": 0.05}, {"spot": "coffee_table_l1", "p": 0.03}, {"spot": "tv_stand_l1", "p": 0.02}, {"spot": "armchair_l1", "p": 0.02}, {"spot": "bookshelf_l1", "p": 0.01}, {"spot": "sink_k1", "p": 0.01}, {"spot": "cupboard_k1", "p": 0.01}, {"spot": "dish_rack_k1", "p": 0.01}, {"spot": "kitchen_table_k1", "p": 0.01}, {"spot": "chair_k1", "p": 0.01}, {"spot": "chair_k2", "p": 0.01}, {"spot": "bathroom_shelf_ba1", "p": 0.01}, {"spot": "towel_rack_ba1", "p": 0.01}, {"spot": "entry_table_e1", "p": 0.01}, {"spot": "entry_hook_e1", "p": 0.01}, {"spot": "entry_floor_e1", "p": 0.01}], "carrier": "resident_1", "carrier_room": "bedroom", "why": "Phone is a personal tech item with a strong 'home spot' correlation to the nightstand (0.35) or desk (0.15) in the bedroom, where the robot is currently located, with a moderate chance it is being carried by the resident in the same room."}
+{"spots": [{"spot": "ON_PERSON", "p": 0.45}, {"spot": "counter_k1", "p": 0.15}, {"spot": "coffee_table_l1", "p": 0.10}, {"spot": "couch_l1", "p": 0.08}, {"spot": "bed_b1", "p": 0.07}, {"spot": "desk_b1", "p": 0.05}, {"spot": "bedroom_floor_b1", "p": 0.04}, {"spot": "nightstand_b1", "p": 0.03}, {"spot": "tv_stand_l1", "p": 0.02}, {"spot": "bookshelf_l1", "p": 0.02}, {"spot": "armchair_l1", "p": 0.02}, {"spot": "kitchen_table_k1", "p": 0.02}, {"spot": "chair_k1", "p": 0.01}, {"spot": "chair_k2", "p": 0.01}, {"spot": "cupboard_k1", "p": 0.01}, {"spot": "dish_rack_k1", "p": 0.01}, {"spot": "sink_k1", "p": 0.01}, {"spot": "bathroom_shelf_ba1", "p": 0.01}, {"spot": "towel_rack_ba1", "p": 0.01}, {"spot": "entry_table_e1", "p": 0.01}, {"spot": "entry_hook_e1", "p": 0.01}, {"spot": "entry_floor_e1", "p": 0.01}, {"spot": "OUT_OF_HOUSE", "p": 0.01}], "carrier": "resident_1", "carrier_room": "kitchen", "why": "Headphones are a portable item likely carried by the active resident in the kitchen, with a significant chance they are left on the high-traffic kitchen counter or living room surfaces."}

@@ -1,19 +1,18 @@
-# a04 — scratch memory, final (retired d01 Tue 05:34 (population cap); final weight 0.0560)
+# a04 — scratch memory, final (retired d00 Mon 05:49 (population cap); final weight 0.0339)
 
-d01 Tue 05:34 look at towel_rack_ba1: Found towel_mara. Resident_1 present.
+d00 Mon 04:42: Looked at nightstand_b1. Found: phone_mara. Residents: resident_1.
+d00 Mon 04:42: Looked at desk_b1. Found: (nothing). Residents: resident_1.
+d00 Mon 04:42: Looked at bathroom_shelf_ba1. Found: hairbrush_mara, makeup_kit_mara, medication_bottle_mara. Residents: nobody.
+d00 Mon 05:27: Looked at towel_rack_ba1. Found: towel_mara. Residents: resident_1.
+d00 Mon 05:49: Looked at counter_k1. Found: lunchbox_mara, mug_mara, water_bottle_mara. Residents: resident_1.
 
 Analysis:
-1. Towel Location: Confirmed towel_mara is on the rack. This is a strong 'home' spot. Prior 0.45 was reasonable but perhaps slightly low given the functional association. Score penalty (-1.19) was driven by the cumulative log-prob of all absent items, but the main error was not assigning higher confidence to the towel or lower to the hairbrush (0.05 was okay, but the aggregate penalty hit hard).
-2. Resident Presence: Resident_1 is in the bathroom. This is a key data point. In the previous look (05:06), the bathroom was empty. The resident moved into the bathroom between 05:06 and 05:34.
-3. Hairbrush Update: Since the resident is now in the bathroom, the hairbrush is likely ON_PERSON or in the sink (if used). It is NOT on the shelf (confirmed absent at 05:06) and NOT on the rack (confirmed absent at 05:34). The probability mass for hairbrush should shift heavily to ON_PERSON (if resident is grooming) or sink_k1.
-4. Strategy Refinement: 
-   - Towel: High confidence (0.6-0.7) on towel_rack_ba1.
-   - Hairbrush: If resident is in bathroom, check ON_PERSON first (0.4), then sink_k1 (0.3). Shelf is low (0.1).
-   - Resident Tracking: Resident_1 is currently in the bathroom. This affects where 'active' items (phone, keys, wallet) might be. They are likely ON_PERSON or in the bathroom receptacles.
-5. Weight: 0.056, Rank 5. I am underperforming. I need to be more precise with 'home' spots. The uniform distribution belief is too vague. I am effectively using a 'functional home' model in scratch, but my beliefs say 'uniform'. This mismatch is hurting my score because I am not committing to the functional patterns I am observing.
-
-Next Steps:
-- If asked for towel: towel_rack_ba1.
-- If asked for hairbrush: ON_PERSON (resident in bath) or sink_k1.
-- If asked for resident_1: bathroom.
-- Monitor if resident leaves bathroom; if so, hairbrush might move to bedroom or stay in bath.
+- My uniform model (1/35) is failing badly. Score -11.49 vs panel avg -9.69.
+- The counter_k1 look revealed 3 items: lunchbox, mug, water_bottle. These are 'kitchen/food/drink' items.
+- I assigned 0.03 to each. The log penalty for missing these high-probability items was severe.
+- Resident_1 is in the kitchen. This correlates with the presence of personal food/drink items (lunchbox, water_bottle) and a personal mug.
+- Pattern emerging: Receptacles hold class-appropriate items. Kitchen counter holds food/drink. Bathroom shelf holds hygiene/meds. Bathroom rack holds towels. Bedroom nightstand holds phone.
+- The 'Uniform' belief is contradicted by the strong class-location correlation.
+- I am ranked 5th (weight 0.068). I must fork to a Class-Conditional model to survive.
+- Fork Rationale: The uniform model assumes independence between object class and location. The data shows strong dependency. A model that boosts probability for class-matched locations (e.g., P(mug|kitchen) >> P(mug|bedroom)) will score much better on hits and misses.
+- New Beliefs will assign higher base probabilities to 'home' spots based on object class and lower probabilities elsewhere. It will also account for resident presence: if resident is in a room, personal items are more likely to be in that room's receptacles or ON_PERSON.

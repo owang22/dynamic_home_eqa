@@ -10,7 +10,8 @@ Household objects are sometimes misplaced, forgotten, or moved for no reason.
 
 QUESTION: where is medication_bottle_mara right now? Asked at d00 Mon 04:42; the robot is in kitchen.
 
-TODAY: looks left 8 of 8; questions so far today 1 of about 24; looks used today 0. At most 3 looks per question; this question has used 0.
+TODAY: looks left 8 of 8; questions so far today 1; looks used today 0. At most 3 looks per question; this question has used 0.
+PREVIOUS DAYS: none yet - how many questions a day brings is for you to find out.
 
 TODAY'S LEDGER:
   (first decision of the day)
@@ -37,4 +38,4 @@ Decide: answer now, or look (name the target). One sentence why.
 
 ## reply
 
-{"action": "look", "target": "nightstand_b1", "why": "It is the top forecast location with the highest one-step gain, and it is the first look of the day, so learning its state is valuable for future questions.", "note": "Day 00, 04:42. First question: medication_bottle_mara. Panel top: nightstand_b1 (30%), bathroom_shelf_ba1 (12%). Gains: nightstand/bathroom ~0.123, others <0.07. Strategy: Spend first look on highest gain target to establish baseline accuracy and update beliefs for the 23 remaining questions. 8 looks left."}
+{"action": "look", "target": "nightstand_b1", "why": "Highest one-step gain (0.123) and top agent credibility; first look of the day to establish baseline value.", "note": "Day 1, Q1. 8 looks left. Top gain 0.123 (nightstand/bathroom). Agents split 50/50. Plan: spend looks on high-gain targets (>0.10) to maximize learning; save looks for later if gains drop. First look: nightstand_b1."}

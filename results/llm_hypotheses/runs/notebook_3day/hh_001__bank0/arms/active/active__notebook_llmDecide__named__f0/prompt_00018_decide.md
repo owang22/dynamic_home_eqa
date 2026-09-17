@@ -10,13 +10,14 @@ Household objects are sometimes misplaced, forgotten, or moved for no reason.
 
 QUESTION: where is medication_bottle_mara right now? Asked at d00 Mon 04:42; the robot is in bedroom.
 
-TODAY: looks left 7 of 8; questions so far today 1 of about 24; looks used today 1. At most 3 looks per question; this question has used 1.
+TODAY: looks left 7 of 8; questions so far today 1; looks used today 1. At most 3 looks per question; this question has used 1.
+PREVIOUS DAYS: none yet - how many questions a day brings is for you to find out.
 
 TODAY'S LEDGER:
   Mon 04:42 medication_bottle_mara: sure 30%, best gain +0.123 -> looked at nightstand_b1: phone_mara
 
 YOUR NOTE:
-Day 00, 04:42. First question: medication_bottle_mara. Panel top: nightstand_b1 (30%), bathroom_shelf_ba1 (12%). Gains: nightstand/bathroom ~0.123, others <0.07. Strategy: Spend first look on highest gain target to establish baseline accuracy and update beliefs for the 23 remaining questions. 8 looks left.
+Day 1, Q1. 8 looks left. Top gain 0.123 (nightstand/bathroom). Agents split 50/50. Plan: spend looks on high-gain targets (>0.10) to maximize learning; save looks for later if gains drop. First look: nightstand_b1.
 
 PANEL FORECAST (share of belief): bathroom_shelf_ba1 17%, desk_b1 14%, nightstand_b1 10%, bed_b1 6%, counter_k1 5%.
 AGENTS' TOP SPOTS (by credibility): desk_b1 39%, bathroom_shelf_ba1 36%, bed_b1 23%, nightstand_b1 2%.
@@ -37,4 +38,4 @@ Decide: answer now, or look (name the target). One sentence why.
 
 ## reply
 
-{"action": "look", "target": "desk_b1", "why": "The nightstand look was a miss, so I must spend my second allowed look on the highest-gain target (desk_b1, +0.140) to maximize the chance of finding the medication before answering.", "note": "Day 00, 04:42. Q1: medication_bottle_mara. Look 1 (nightstand_b1) found phone_mara, not med. Panel updated: desk_b1 (14%) and bathroom_shelf_ba1 (17%) are top candidates. Gains for both are 0.140. I have 1 look left for this question (max 3). Strategy: Use look 2 on desk_b1 (highest credibility agent support 39% + high gain). If found, answer. If not, answer with best remaining guess (bathroom_shelf_ba1). 7 looks left for day."}
+{"action": "look", "target": "desk_b1", "why": "Highest one-step gain (0.140) and high agent credibility (39%) justify spending a look to resolve the top uncertainty.", "note": "Day 1, Q1. 7 looks left. Nightstand_b1 checked (phone_mara). Top gains 0.140 (desk_b1, bathroom_shelf_ba1). Agents split: desk_b1 39%, bathroom_shelf_ba1 36%. Plan: Look at desk_b1 now. If found, answer. If not, look at bathroom_shelf_ba1. Save remaining looks for later questions if gains drop below 0.10."}

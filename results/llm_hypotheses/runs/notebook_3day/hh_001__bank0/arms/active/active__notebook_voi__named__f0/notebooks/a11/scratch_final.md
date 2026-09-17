@@ -1,12 +1,13 @@
-# a11 — scratch memory, final (retired d01 Tue 05:49 (population cap); final weight 0.1021)
+# a11 — scratch memory, final (retired d02 Wed 05:26 (population cap); final weight 0.0647)
 
-d01 Tue 05:40: Looked at resident_1 in bathroom. Found: wallet_mara ONLY.
-- Observation: Resident is carrying only the wallet. This is a significant deviation from the 'bundling' hypothesis (keys+wallet+phone). 
-- Score Analysis: -4.25. I over-penalized the absence of glasses (0.45), phone (0.35), and keys (0.25). The resident is in the bathroom at 05:40, likely mid-grooming. It is highly probable they left keys/phone on the bedroom nightstand or desk and only grabbed the wallet (perhaps for a quick errand or just habit). The 'Stored' belief for small items held up (hairbrush/makeup/meds on shelf), but the 'Active' prediction for electronics/keys was too aggressive.
-- State Update:
-  - Resident_1: Bathroom (1.0).
-  - ON_PERSON: wallet_mara (1.0).
-  - Bathroom Shelf: hairbrush_mara, makeup_kit_mara, medication_bottle_mara (1.0).
-  - Bathroom Rack: towel_mara (0.9).
-  - Keys/Phone/Glasses: Likely in Bedroom (Nightstand/Desk) or ON_PERSON (if they grab them next). Given they are in Bathroom, they haven't left yet. If they leave, they will likely go to Bedroom to grab keys/phone, or they are already on the person (but look says no). So, Bedroom is the primary candidate for keys/phone/glasses.
-- Next Steps: Resident likely moves to Kitchen or Bedroom. If Kitchen, they might grab water bottle. If Bedroom, they will grab keys/phone. Watch for movement. The 'bundling' assumption is weak; items are often separated by location of last use.
+d02 Wed 05:26 Looked at towel_rack_ba1. Found: towel_mara. Residents: resident_1.
+
+Analysis:
+1. Score -0.57 (Panel avg -0.50). I ranked 4th. The penalty is driven by overestimating the probability of other items being on the rack. I assigned 0.05 to hairbrush_mara and 0.02 to makeup_kit_mara/medication_bottle_mara. The rack is strictly for towels. Bathroom items like brushes and makeup are on the shelf (bathroom_shelf_ba1), not the rack.
+2. Resident Location: resident_1 is in the bathroom. This confirms they are likely performing a morning routine (brushing teeth, washing face, etc.).
+3. Implications for other objects:
+   - glasses_mara: If resident is in bathroom, glasses are likely ON_PERSON or on the bathroom_shelf_ba1 (if they took them off to wash face). Low chance on rack.
+   - phone_mara: Likely ON_PERSON or in bedroom (if they went to bathroom from bed).
+   - keys_mara/wallet_mara: Still missing from entry_hook_e1 (seen at 04:05). If resident is in bathroom, they might be carrying them, or they are in the bedroom. The 'drop zone' theory for entry hook is weak if they are not in the entry.
+4. Correction: My belief that 'bathroom_shelf_ba1' holds makeup/meds/brush is correct, but I must ensure I don't bleed those probabilities into the towel_rack. The rack is a single-purpose receptacle.
+5. Strategy: For towel_rack_ba1, assign >0.95 to towel_mara and <0.01 to everything else. For bathroom_shelf_ba1, maintain high confidence in makeup/meds/brush. For ON_PERSON, increase probability of glasses/phone/keys if resident is in bathroom/bedroom.
