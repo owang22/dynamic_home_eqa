@@ -1,0 +1,114 @@
+# Activity templates and per-role daily schedules for situation_sim.
+# Activity fields:
+#   room: activity room (kitchen, living, bathroom, entry, bedroom (owner's),
+#         workspace (office desk if the house has one, else owner's bedroom
+#         desk), ELSEWHERE)
+#   surface: receptacle kind where used objects are put down when the
+#            resident leaves them where they were used
+#   uses: object classes (or groups: pocket, outdoor, bag, gym) the activity
+#         fetches at its start
+#   jitter: jitter class (see timing_constants.JITTER_CLASSES_MIN)
+#   mean_bouts: fragmentation (defaults to 1)
+#   tidies: true if the activity's end returns misplaced objects to their
+#           primary slot; tidy_rooms lists the rooms the pass covers
+activities:
+  morning_routine: {room: bathroom, surface: bathroom_shelf, uses: [phone, glasses], jitter: routine}
+  breakfast:       {room: kitchen, surface: kitchen_table, uses: [phone, mug], jitter: routine}
+  commute_work:    {room: ELSEWHERE, uses: [pocket, outdoor, bag], jitter: external}
+  work_session:    {room: workspace, surface: desk, uses: [laptop, charger, notebook, headphones, mug, phone, glasses], jitter: routine, mean_bouts: 2}
+  lunch:           {room: kitchen, surface: kitchen_table, uses: [phone], jitter: routine}
+  lunch_out:       {room: ELSEWHERE, uses: [pocket, outdoor], jitter: flexible}
+  walk:            {room: ELSEWHERE, uses: [pocket, outdoor, headphones], jitter: flexible}
+  gym:             {room: ELSEWHERE, uses: [pocket, outdoor, gym], jitter: flexible}
+  errands:         {room: ELSEWHERE, uses: [pocket, outdoor, bag_leader], jitter: loose}
+  chores:          {room: kitchen, surface: counter, uses: [phone, watering_can], jitter: loose, mean_bouts: 3, tidies: true, tidy_rooms: [kitchen]}
+  tidy:            {room: living, surface: coffee_table, uses: [], jitter: routine, tidies: true, tidy_rooms: [living, kitchen, entry]}
+  cook_dinner:     {room: kitchen, surface: counter, uses: [phone], jitter: routine}
+  dinner:          {room: dining_or_kitchen, surface: dining_or_kitchen_table, uses: [phone, water_bottle], jitter: routine}
+  evening_tv:      {room: living, surface: coffee_table, uses: [remote, phone, blanket, mug, glasses], jitter: flexible, mean_bouts: 2}
+  read:            {room: bedroom, surface: bed, uses: [book, glasses, phone], jitter: flexible}
+  host_guest:      {room: living, surface: coffee_table, uses: [phone, mug], jitter: routine}
+  unpack_groceries: {room: kitchen, surface: kitchen_table, uses: [water_bottle], jitter: routine}
+  laundry:         {room: bathroom, surface: bathroom_shelf, uses: [laundry_basket, towel, blanket, phone], jitter: flexible}
+  rest_couch:      {room: living, surface: coffee_table, uses: [laptop, charger, headphones, glasses, mug, medication, book, phone, blanket, water_bottle], jitter: loose}
+  sleep:           {room: bedroom, surface: nightstand, uses: [], jitter: routine}
+
+# Per-role schedules. start "HH:MM", duration minutes, skip_p optional.
+# Blocks are authored in order; jitter and event edits may reorder nothing
+# (a shifted block pushes the next one).
+schedules:
+  worker_out:
+    weekday:
+      - {activity: morning_routine, start: "07:00", duration: 25}
+      - {activity: breakfast, start: "07:30", duration: 25}
+      - {activity: commute_work, start: "08:10", duration: 570}
+      - {activity: walk, start: "17:50", duration: 35, skip_p: 0.5}
+      - {activity: cook_dinner, start: "18:35", duration: 35}
+      - {activity: dinner, start: "19:15", duration: 40}
+      - {activity: evening_tv, start: "20:05", duration: 95}
+      - {activity: read, start: "21:50", duration: 30, skip_p: 0.3}
+      - {activity: sleep, start: "22:30", duration: 90}
+    weekend:
+      - {activity: morning_routine, start: "08:50", duration: 25}
+      - {activity: breakfast, start: "09:20", duration: 35}
+      - {activity: chores, start: "10:15", duration: 80, skip_p: 0.3}
+      - {activity: errands, start: "12:00", duration: 120, skip_p: 0.3}
+      - {activity: lunch, start: "14:15", duration: 40}
+      - {activity: read, start: "15:15", duration: 60, skip_p: 0.3}
+      - {activity: gym, start: "16:30", duration: 80, skip_p: 0.6}
+      - {activity: cook_dinner, start: "18:35", duration: 40}
+      - {activity: dinner, start: "19:20", duration: 45}
+      - {activity: evening_tv, start: "20:15", duration: 110}
+      - {activity: sleep, start: "23:00", duration: 60}
+  worker_home:
+    weekday:
+      - {activity: morning_routine, start: "07:30", duration: 25}
+      - {activity: breakfast, start: "08:00", duration: 30}
+      - {activity: work_session, start: "09:00", duration: 200, mean_bouts: 2}
+      - {activity: lunch, start: "12:30", duration: 40}
+      - {activity: lunch_out, start: "12:30", duration: 60, skip_p: 0.7}
+      - {activity: work_session, start: "13:30", duration: 230, mean_bouts: 2}
+      - {activity: walk, start: "17:30", duration: 40, skip_p: 0.4}
+      - {activity: gym, start: "17:30", duration: 80, skip_p: 0.7}
+      - {activity: cook_dinner, start: "18:40", duration: 35}
+      - {activity: dinner, start: "19:20", duration: 40}
+      - {activity: evening_tv, start: "20:10", duration: 90}
+      - {activity: read, start: "21:50", duration: 30, skip_p: 0.4}
+      - {activity: sleep, start: "22:40", duration: 80}
+    weekend:
+      - {activity: morning_routine, start: "09:00", duration: 25}
+      - {activity: breakfast, start: "09:30", duration: 35}
+      - {activity: chores, start: "10:30", duration: 80, skip_p: 0.3}
+      - {activity: errands, start: "12:15", duration: 110, skip_p: 0.4}
+      - {activity: lunch, start: "14:15", duration: 40}
+      - {activity: work_session, start: "15:00", duration: 90, skip_p: 0.6}
+      - {activity: walk, start: "16:45", duration: 45, skip_p: 0.4}
+      - {activity: cook_dinner, start: "18:35", duration: 40}
+      - {activity: dinner, start: "19:20", duration: 45}
+      - {activity: evening_tv, start: "20:15", duration: 110}
+      - {activity: read, start: "22:10", duration: 30, skip_p: 0.4}
+      - {activity: sleep, start: "23:00", duration: 60}
+  retired:
+    weekday:
+      - {activity: morning_routine, start: "07:15", duration: 30}
+      - {activity: breakfast, start: "07:50", duration: 40}
+      - {activity: walk, start: "09:15", duration: 50, skip_p: 0.3}
+      - {activity: chores, start: "10:30", duration: 90, skip_p: 0.3, mean_bouts: 3}
+      - {activity: lunch, start: "12:30", duration: 45}
+      - {activity: read, start: "13:45", duration: 75}
+      - {activity: errands, start: "15:15", duration: 90, skip_p: 0.5}
+      - {activity: cook_dinner, start: "17:45", duration: 45}
+      - {activity: dinner, start: "18:35", duration: 45}
+      - {activity: evening_tv, start: "19:45", duration: 120}
+      - {activity: sleep, start: "22:00", duration: 120}
+    weekend:
+      - {activity: morning_routine, start: "07:45", duration: 30}
+      - {activity: breakfast, start: "08:20", duration: 45}
+      - {activity: walk, start: "09:45", duration: 60, skip_p: 0.3}
+      - {activity: chores, start: "11:00", duration: 60, skip_p: 0.5}
+      - {activity: lunch, start: "12:30", duration: 45}
+      - {activity: read, start: "14:00", duration: 90}
+      - {activity: cook_dinner, start: "17:45", duration: 45}
+      - {activity: dinner, start: "18:35", duration: 50}
+      - {activity: evening_tv, start: "19:45", duration: 120}
+      - {activity: sleep, start: "22:00", duration: 120}

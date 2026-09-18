@@ -1,0 +1,19 @@
+wrote ../data/situation_sim/hh_s0_wed-sun/trace.md, events.jsonl, hidden_state.json
+
+=== checkpoint checks ===
+[1] causes per day: {'Wednesday': 2, 'Thursday': 3, 'Friday': 4, 'Saturday': 3, 'Sunday': 4} -> PASS
+[2] distinct objects moved per cause:
+       12  guest_visit
+        9  rain
+        5  late_work:resident_1
+        5  sick_day:resident_2
+        3  distracted:resident_1
+        3  laundry_day
+        1  low_energy:resident_2
+      (causes that moved nothing: late_work:resident_2, running_late:resident_1, running_late:resident_2)
+    max = 12 -> PASS
+[3] whim: 26 of 192 placement decisions = 13.5% (of the 156 decisions that moved something: 16.7%) -> PASS
+[4] second run at seed 0 byte-identical: PASS
+[5] truth rows: 341; rows outside the object's allowed set: 0; ON_PERSON rows without carrier: 0 -> PASS
+[+] baselines.bank loader: loaded 1 episode(s), 29 object trajectories
+=== overall: PASS ===
