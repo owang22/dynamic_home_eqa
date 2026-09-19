@@ -218,17 +218,18 @@ function render(){
 function renderHousehold(){
   const H=hh(), el=document.getElementById('v-household');
   const res = Object.values(H.residents).sort((a,b)=>a.id.localeCompare(b.id));
-  const roleWords={worker_out:'works outside the home', worker_home:'works from home', retired:'retired'};
+  const roleWords={worker_out:'works outside the home', worker_home:'works from home', retired:'retired', student:'student, classes out', shift_worker:'afternoon-to-night shift'};
   const bar=(v,cls='')=>`<div class="bar ${cls}" title="${v}"><i style="width:${Math.round(v*100)}%"></i></div>`;
-  let html = `<p class="sub">${esc(H.id)} · ${esc(H.household_type)} · ${H.rooms.length} rooms · ${Object.keys(H.objects).length} objects · seed ${H.seed}. Everything below is sampled from code; traits are hidden from any agent and only the generator sees them.</p>`;
+  const nStatic=Object.values(H.objects).filter(o=>o.static).length;
+  let html = `<p class="sub">${esc(H.id)} · ${esc(H.household_type)} · ${H.rooms.length} rooms · ${Object.keys(H.objects).length} objects (${nStatic} fixtures that never move)${H.pet?` · a ${H.pet}, looked after mainly by ${cap(H.residents[H.carer].name)}`:''} · seed ${H.seed}. Everything below is generator-side ground truth; an agent never sees traits, habits or home slots.</p>`;
   html += `<div class="stack"><div class="panel"><h2>Residents</h2><div class="tablewrap"><table><thead><tr><th>Resident</th><th>Role</th><th>Tidiness</th><th>Punctuality</th><th>Forgets pocket items</th><th>Mood sensitivity</th><th>Sleeps / works</th></tr></thead><tbody>`;
-  for(const r of res){ html += `<tr><td><b>${cap(r.name)}</b><br><span class="small">${r.id}</span></td><td>${roleWords[r.role]}</td><td>${bar(r.tidiness)}<span class="small">${r.tidiness.toFixed(2)}</span></td><td><span class="small">jitter × ${r.jitter_scale.toFixed(2)}</span></td><td>${r.forget_level} <span class="small">(p ${r.forget_p})</span></td><td>${bar(r.mood_sensitivity,'rose')}<span class="small">${r.mood_sensitivity.toFixed(2)}</span></td><td><span class="id rec">${r.bedroom}</span> / <span class="id rec">${r.workspace}</span></td></tr>`; }
+  for(const r of res){ html += `<tr><td><b>${cap(r.name)}</b><br><span class="small">${r.id}</span></td><td>${roleWords[r.role]||r.role}<br><span class="small">hobbies: ${(r.hobbies||[]).join(', ')||'none'}<br>chores: ${(r.chores||[]).join(', ')||'none'}</span></td><td>${bar(r.tidiness)}<span class="small">${r.tidiness.toFixed(2)}</span></td><td><span class="small">jitter × ${r.jitter_scale.toFixed(2)}</span></td><td>${r.forget_level} <span class="small">(p ${r.forget_p})</span></td><td>${bar(r.mood_sensitivity,'rose')}<span class="small">${r.mood_sensitivity.toFixed(2)}</span></td><td><span class="id rec">${r.bedroom}</span> / <span class="id rec">${r.workspace}</span></td></tr>`; }
   html += `</tbody></table></div></div>`;
   html += `<div class="panel"><h2>Rooms and receptacles</h2><p class="small">Number in parentheses is the capacity; a full receptacle pushes a placement to the next home slot or a neighbour in the same room.</p><dl class="kv">`;
   for(const room of H.rooms){ const recs=Object.values(H.receptacles).filter(r=>r.room===room).sort((a,b)=>a.id.localeCompare(b.id)); html += `<dt>${room}</dt><dd class="chips">${recs.map(r=>`<span class="id rec" style="border-bottom:2px solid ${recColor(r.id)}">${r.id} <span class="small">(${r.capacity})</span></span>`).join('')}</dd>`; }
   html += `</dl></div>`;
   html += `<div class="panel"><h2>Objects and their usual places</h2><p class="small">Primary slot first. "Used → sink" marks dishes that go to the sink after use. Click any object id anywhere on this page to open its track.</p><div class="tablewrap"><table><thead><tr><th>Owner</th><th>Object</th><th>Home slots</th><th>Notes</th></tr></thead><tbody>`;
-  for(const owner of res.map(r=>r.id).concat([null])){ const objs=Object.values(H.objects).filter(o=>o.owner===owner).sort((a,b)=>a.id.localeCompare(b.id)); objs.forEach((o,i)=>{ const notes=[]; if(o.pocket) notes.push('pocket item'); if(o.outdoor) notes.push('worn on trips'); if(o.group) notes.push('rides in '+H.groups[o.group].leader.replace(/_.*/,'')+' ('+o.group+')'); if(o.after_use) notes.push('used → '+o.after_use); html += `<tr><td>${i===0?(owner?cap(H.residents[owner].name):'Shared'):''}</td><td><span class="id obj" data-obj="${o.id}">${o.id}</span></td><td>${o.home.map(h=>`<span class="id rec">${h}</span>`).join(' ')}</td><td class="small">${notes.join('; ')}</td></tr>`; }); }
+  for(const owner of res.map(r=>r.id).concat([null])){ const objs=Object.values(H.objects).filter(o=>o.owner===owner).sort((a,b)=>a.id.localeCompare(b.id)); objs.forEach((o,i)=>{ const notes=[]; if(o.static) notes.push('fixture, never moves'); if(o.pocket) notes.push('pocket item'); if(o.outdoor) notes.push('worn on trips'); if(o.group) notes.push('rides in '+H.groups[o.group].leader.replace(/_.*/,'')+' ('+o.group+')'); if(o.after_use) notes.push('used → '+o.after_use); html += `<tr><td>${i===0?(owner?cap(H.residents[owner].name):'Shared'):''}</td><td><span class="id obj" data-obj="${o.id}">${o.id}</span></td><td>${o.home.map(h=>`<span class="id rec">${h}</span>`).join(' ')}</td><td class="small">${notes.join('; ')}</td></tr>`; }); }
   html += `</tbody></table></div></div>`;
   const groups=Object.values(H.groups).sort((a,b)=>a.name.localeCompare(b.name));
   if(groups.length){ html += `<div class="panel"><h2>Object groups</h2><p class="small">Things that travel together. Members ride inside the leader on trips unless a cause separates them (a sick day keeps the laptop home; the next activity needing the laptop takes it out of the bag).</p><ul>`; for(const g of groups) html += `<li><span class="id obj" data-obj="${g.leader}">${g.leader}</span> carries ${g.members.length?g.members.map(m=>`<span class="id obj" data-obj="${m}">${m}</span>`).join(', '):'<span class="small">nothing in particular</span>'} on ${g.kind==='bag'?'work trips and errands':'gym trips'}</li>`; html += `</ul></div>`; }
@@ -305,7 +306,7 @@ function refreshSyncBadge(){ const b=document.getElementById('syncBadge'); if(!b
 (async()=>{ try{ if(window.claude && window.claude.use){ DB = await window.claude.use('db'); } }catch(e){ DB=null; } SYNC = DB?'synced':'local'; DB_READY=true; await loadPersisted(); if(S.view==='quiz') render(); else refreshSyncBadge(); })();
 // documents delivered by the artifact db are frozen: clone them before mutating
 const thaw = x => x==null ? x : JSON.parse(JSON.stringify(x));
-async function loadPersisted(){ const notes=await loadDoc('notes/s'+S.seed, 'ssi-notes-'+S.seed); S.notes = thaw((notes&&notes.entries)||[]); const play=await loadDoc('chrono/s'+S.seed, 'ssi-play-'+S.seed); S.play.doc = thaw(play)||null; S.play.loaded=true; }
+async function loadPersisted(){ const notes=await loadDoc('notes/g2s'+S.seed, 'ssi-notes-g2-'+S.seed); S.notes = thaw((notes&&notes.entries)||[]); const play=await loadDoc('chrono/g2s'+S.seed, 'ssi-play-g2-'+S.seed); S.play.doc = thaw(play)||null; S.play.loaded=true; }
 
 // ---------- observations (sparse, generated from truth) ----------
 let _obsCache={};
@@ -346,10 +347,14 @@ const BASE_NAMES=['Last seen','Most frequent','Same hour, earlier days','Walkthr
 
 // ---------- chronological play ----------
 function rng32(seed){ let a=seed>>>0; return ()=>{ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
-function movingPool(){ const H=hh(); const p=Object.keys(H.objects).sort().filter(o=>rowsFor(o).filter(r=>r.cause!=='initial').length>=3); return p.length?p:Object.keys(H.objects).sort(); }
-function playSequence(perDay){ const r=rng32(7919*(+S.seed+1)+perDay), pool=movingPool(), nDays=run().state.days.length, qs=[]; let prev=null;
+function activityWeight(o){ // distinct activities that brought/picked up/put down this object over the run
+  const acts=new Set(); for(const r of rowsFor(o)){ const m=/^(bring|pickup|trip|carry):(.+)$/.exec(r.cause||''); if(m) acts.add(m[2]); } return acts.size; }
+function weightedPool(){ const H=hh(); const items=Object.keys(H.objects).sort().filter(o=>!H.objects[o].static).map(o=>[o, activityWeight(o)+ (rowsFor(o).length>=4?1:0)]).filter(x=>x[1]>0); return items.length?items:Object.keys(H.objects).sort().map(o=>[o,1]); }
+function pickWeighted(items, r){ const tot=items.reduce((a,x)=>a+x[1],0); let u=r()*tot; for(const [o,w] of items){ u-=w; if(u<=0) return o; } return items[items.length-1][0]; }
+function movingPool(){ return weightedPool().map(x=>x[0]); }
+function playSequence(perDay){ const r=rng32(7919*(+S.seed+1)+perDay), pool=weightedPool(), nDays=run().state.days.length, qs=[]; let prev=null;
   for(let d=1; d<nDays; d++){ const mins=[]; for(let i=0;i<perDay;i++) mins.push(7*60+Math.floor(r()*(16*60))); mins.sort((a,b)=>a-b);
-    for(const minute of mins){ let obj=pool[Math.floor(r()*pool.length)]; if(obj===prev && pool.length>1) obj=pool[Math.floor(r()*pool.length)]; prev=obj; qs.push({obj, day:d, minute, t:d*DAY+minute*60}); } }
+    for(const minute of mins){ let obj=pickWeighted(pool, r); if(obj===prev && pool.length>1) obj=pickWeighted(pool, r); prev=obj; qs.push({obj, day:d, minute, t:d*DAY+minute*60}); } }
   return qs; }
 function playDoc(){ if(!S.play.doc) S.play.doc={perDay:6, visits:6, looks:3, answers:[], started:new Date().toISOString()}; return S.play.doc; }
 function lookObsFrom(doc){ const H=hh(), out=[]; for(const a of doc.answers) for(const tr of a.tried){ if(!H.receptacles[tr.rec]) continue; const c={}; c[tr.rec]=tr.contents||[]; out.push({t:a.t, room:H.receptacles[tr.rec].room, contents:c, kind:'look'}); } return out; }
@@ -365,11 +370,10 @@ S.play = S.play || {doc:null, loaded:false, tried:[], done:false};
 S.notes = S.notes || [];
 function cutoffFor(q){ const dayStart=q.day*DAY; switch(S.quiz.cutoff){ case 'yesterday': return dayStart-1; case 'morning': return Math.min(q.t, dayStart+8*3600); case 'hour': return q.t-3600; default: return q.t; } }
 function newQuestion(){
-  const H=hh(), objs=Object.keys(H.objects).sort().filter(o=>{ const n=rowsFor(o).filter(r=>r.cause!=='initial').length; if(S.quiz.pool==='moving') return n>=3; if(S.quiz.pool==='nonpocket') return n>=3 && !H.objects[o].pocket; return true; });
-  const pool = objs.length?objs:Object.keys(H.objects).sort();
+  const H=hh(); let items=weightedPool(); if(S.quiz.pool==='nonpocket') items=items.filter(x=>!H.objects[x[0]].pocket); if(S.quiz.pool==='all') items=Object.keys(H.objects).sort().filter(o=>!H.objects[o].static).map(o=>[o,1]);
   const nDays=run().state.days.length;
   const day = 1+Math.floor(Math.random()*(nDays-1)), minute = 7*60+Math.floor(Math.random()*(16.5*60));
-  const obj = pool[Math.floor(Math.random()*pool.length)];
+  const obj = pickWeighted(items, Math.random);
   S.quiz.q = {obj, day, minute, t: day*DAY+minute*60}; S.quiz.tried=[]; S.quiz.done=false;
 }
 function ageWords(from, to){ const s=to-from; if(s<0) return 'later'; if(s<3600) return Math.round(s/60)+' min ago'; if(s<DAY) return (s/3600).toFixed(1)+' h ago'; return (s/DAY).toFixed(1)+' d ago'; }
@@ -424,7 +428,7 @@ function notepadHtml(){ const ctx=S.quiz.mode==='play'&&S.play.q?`Q${S.play.inde
   return `<div class="panel"><h3>Household notes · ${hh().id}</h3><p class="small" id="syncBadge"></p><textarea id="noteText" rows="3" placeholder="General observations about this home: what its dynamics seem to be, what felt unrealistic or unfair, what the sim or the trace should change." style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;resize:vertical">${esc(S.noteDraft||'')}</textarea>
     <div class="row" style="margin-top:6px;justify-content:space-between"><span class="small">tagged with: ${esc(ctx||'no question')}</span><button class="btn primary" id="saveNote">Save note</button></div>
     ${S.notes.length?`<div class="hist">${S.notes.slice().reverse().map(n=>`<div><span class="small">${esc((n.ts||'').slice(0,16).replace('T',' '))} · ${esc(n.ctx||'')}</span><br>${esc(n.text)}</div>`).join('')}</div>`:'<p class="small">No notes yet on this household.</p>'}</div>`; }
-function wireNotepad(el){ const btn=el.querySelector('#saveNote'); if(!btn) return; refreshSyncBadge(); const ta0=el.querySelector('#noteText'); ta0.addEventListener('input', ()=>{ S.noteDraft=ta0.value; }); btn.addEventListener('click', async ()=>{ const ta=el.querySelector('#noteText'); const text=ta.value.trim(); if(!text) return; S.noteDraft=''; const ctx=S.quiz.mode==='play'&&S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}${S.play.done?' (answered)':''}`:(S.quiz.q?`free: ${S.quiz.q.obj} ${wd3(S.quiz.q.day)} ${fmtMin(S.quiz.q.minute)}`:''); S.notes.push({ts:new Date().toISOString(), ctx, text, household:hh().id}); ta.value=''; btn.disabled=true; await saveDoc('notes/s'+S.seed, 'ssi-notes-'+S.seed, {household:hh().id, entries:S.notes}); renderQuiz(); }); }
+function wireNotepad(el){ const btn=el.querySelector('#saveNote'); if(!btn) return; refreshSyncBadge(); const ta0=el.querySelector('#noteText'); ta0.addEventListener('input', ()=>{ S.noteDraft=ta0.value; }); btn.addEventListener('click', async ()=>{ const ta=el.querySelector('#noteText'); const text=ta.value.trim(); if(!text) return; S.noteDraft=''; const ctx=S.quiz.mode==='play'&&S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}${S.play.done?' (answered)':''}`:(S.quiz.q?`free: ${S.quiz.q.obj} ${wd3(S.quiz.q.day)} ${fmtMin(S.quiz.q.minute)}`:''); S.notes.push({ts:new Date().toISOString(), ctx, text, household:hh().id}); ta.value=''; btn.disabled=true; await saveDoc('notes/g2s'+S.seed, 'ssi-notes-g2-'+S.seed, {household:hh().id, entries:S.notes}); renderQuiz(); }); }
 
 function renderQuiz(){ const el=document.getElementById('v-quiz'); let html=`<div class="daytabs"><button data-mode="play" aria-selected="${S.quiz.mode==='play'}">Chronological</button><button data-mode="free" aria-selected="${S.quiz.mode==='free'}">Free questions</button></div>`;
   html += S.quiz.mode==='play' ? renderPlay() : renderFree();
@@ -471,7 +475,7 @@ async function finishPlayInner(found){ const doc=playDoc(), q=S.play.q, K=doc.lo
   const base=baselinesObs(q,q.t,K,visits).map(b=>[b.ranked[0]===truth, b.ranked.includes(truth)]);
   const nLooks=S.play.tried.filter(t=>t.kind!=='guess').length, guessed=S.play.tried.some(t=>t.kind==='guess');
   doc.answers.push({i:S.play.index, obj:q.obj, day:q.day, minute:q.minute, t:q.t, truth, tried:S.play.tried, found, looksUsed: nLooks, guessed, base, whim: !!rowAt(q.obj,q.t).whim, note:(S.play.draft||'').trim(), ts:new Date().toISOString()}); S.play.noteDirty=false;
-  doc.household=hh().id; doc.updated=new Date().toISOString(); S.play.done=true; renderQuiz(); await saveDoc('chrono/s'+S.seed, 'ssi-play-'+S.seed, doc); }
+  doc.household=hh().id; doc.updated=new Date().toISOString(); S.play.done=true; renderQuiz(); await saveDoc('chrono/g2s'+S.seed, 'ssi-play-g2-'+S.seed, doc); }
 function wirePlay(el){ const H=hh(); const q=S.play.q;
   const look=el.querySelector('#pLook'); if(look) look.addEventListener('click', ()=>{ const rec=el.querySelector('#pAns').value; if(!rec||S.play.done) return; const hit=doAction('look', rec, q, S.play.tried); if(hit) finishPlay(true); else renderQuiz(); });
   const guess=(rec)=>{ if(!rec||S.play.done) return; const hit=doAction('guess', rec, q, S.play.tried); finishPlay(hit); };
@@ -480,9 +484,9 @@ function wirePlay(el){ const H=hh(); const q=S.play.q;
   const g3=el.querySelector('#pGuessOn'); if(g3) g3.addEventListener('click', ()=>guess('ON_PERSON'));
   const nx=el.querySelector('#pNext'); if(nx) nx.addEventListener('click', ()=>{ S.play.tried=[]; S.play.done=false; S.play.error=null; S.play.draft=''; S.play.noteDirty=false; renderQuiz(); });
   const qn=el.querySelector('#qNote'); if(qn) qn.addEventListener('input', ()=>{ S.play.draft=qn.value; if(S.play.done){ S.play.noteDirty=true; const st=el.querySelector('#qNoteState'); if(st) st.textContent='edited, not saved'; } });
-  const qs=el.querySelector('#qNoteSave'); if(qs) qs.addEventListener('click', async ()=>{ const doc=playDoc(); const last=doc.answers[doc.answers.length-1]; if(!last) return; last.note=(S.play.draft||'').trim(); S.play.noteDirty=false; qs.disabled=true; await saveDoc('chrono/s'+S.seed, 'ssi-play-'+S.seed, doc); renderQuiz(); });
-  const rs=el.querySelector('#resetPlay'); if(rs) rs.addEventListener('click', async ()=>{ if(!confirm('Restart this household? Your answers on it are cleared (notes are kept).')) return; const old=playDoc(); S.play.doc={perDay:old.perDay, visits:old.visits, looks:old.looks, answers:[], started:new Date().toISOString()}; S.play.tried=[]; S.play.done=false; renderQuiz(); await saveDoc('chrono/s'+S.seed, 'ssi-play-'+S.seed, S.play.doc); });
-  const restartWith=async (patch)=>{ if(playDoc().answers.length && !confirm('Changing this restarts the segment for this household. Continue?')) { renderQuiz(); return; } const old=playDoc(); S.play.doc=Object.assign({perDay:old.perDay, visits:old.visits, looks:old.looks}, patch, {answers:[], started:new Date().toISOString()}); S.play.tried=[]; S.play.done=false; renderQuiz(); await saveDoc('chrono/s'+S.seed, 'ssi-play-'+S.seed, S.play.doc); };
+  const qs=el.querySelector('#qNoteSave'); if(qs) qs.addEventListener('click', async ()=>{ const doc=playDoc(); const last=doc.answers[doc.answers.length-1]; if(!last) return; last.note=(S.play.draft||'').trim(); S.play.noteDirty=false; qs.disabled=true; await saveDoc('chrono/g2s'+S.seed, 'ssi-play-g2-'+S.seed, doc); renderQuiz(); });
+  const rs=el.querySelector('#resetPlay'); if(rs) rs.addEventListener('click', async ()=>{ if(!confirm('Restart this household? Your answers on it are cleared (notes are kept).')) return; const old=playDoc(); S.play.doc={perDay:old.perDay, visits:old.visits, looks:old.looks, answers:[], started:new Date().toISOString()}; S.play.tried=[]; S.play.done=false; renderQuiz(); await saveDoc('chrono/g2s'+S.seed, 'ssi-play-g2-'+S.seed, S.play.doc); });
+  const restartWith=async (patch)=>{ if(playDoc().answers.length && !confirm('Changing this restarts the segment for this household. Continue?')) { renderQuiz(); return; } const old=playDoc(); S.play.doc=Object.assign({perDay:old.perDay, visits:old.visits, looks:old.looks}, patch, {answers:[], started:new Date().toISOString()}); S.play.tried=[]; S.play.done=false; renderQuiz(); await saveDoc('chrono/g2s'+S.seed, 'ssi-play-g2-'+S.seed, S.play.doc); };
   const pv=el.querySelector('#pVisits'); if(pv) pv.addEventListener('change', e=>restartWith({visits:+e.target.value}));
   const pl=el.querySelector('#pLooks'); if(pl) pl.addEventListener('change', e=>restartWith({looks:+e.target.value}));
 }
@@ -495,7 +499,7 @@ function renderFree(){ const H=hh(); ensureScore(); if(!S.quiz.q) newQuestion();
   html += `<div class="controls"><label class="field">you know sightings up to <select id="cutSel">${[['yesterday','end of the previous day'],['morning','08:00 that morning'],['hour','one hour before'],['now','the moment itself']].map(([v,l])=>`<option value="${v}" ${S.quiz.cutoff===v?'selected':''}>${l}</option>`).join('')}</select></label>
     <label class="field">looks per question <select id="looksSel">${[1,2,3,5].map(v=>`<option ${S.quiz.looks===v?'selected':''}>${v}</option>`).join('')}</select></label>
     <label class="field">patrol visits per day <select id="visitsSel">${[2,4,6,8,12].map(v=>`<option ${S.quiz.visits===v?'selected':''}>${v}</option>`).join('')}</select></label>
-    <label class="field">objects asked about <select id="poolSel">${[['moving','things that move (3+ moves)'],['nonpocket','moving, no phone/keys/wallet'],['all','everything']].map(([v,l])=>`<option value="${v}" ${S.quiz.pool===v?'selected':''}>${l}</option>`).join('')}</select></label></div>`;
+    <label class="field">objects asked about <select id="poolSel">${[['moving','things activities touch (weighted)'],['nonpocket','same, no phone/keys/wallet'],['all','everything except fixtures']].map(([v,l])=>`<option value="${v}" ${S.quiz.pool===v?'selected':''}>${l}</option>`).join('')}</select></label></div>`;
   html += `<div class="q noclick">Where is <span class="id" style="font-size:17px">${q.obj}</span> on ${DAYS[q.day]} at ${fmtMin(q.minute)}?</div>`;
   html += actionRow('f', S.quiz.tried, K, S.quiz.done) + `<div class="row" style="margin-top:6px"><button class="btn ${S.quiz.done?'primary':''}" id="next">${S.quiz.done?'Next question':'Skip this question'}</button></div>`;
   html += looksHtml(S.quiz.tried);

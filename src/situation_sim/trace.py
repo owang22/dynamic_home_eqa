@@ -13,7 +13,7 @@ from situation_sim.situation import (DaySituation, STATE_CARRYOVER, STATE_NOISE_
                                      THRESH_LOW_ENERGY, THRESH_HURRIED, THRESH_DISTRACTED)
 
 ROLE_WORDS = {"worker_out": "works outside the home", "worker_home": "works from home",
-              "retired": "retired"}
+              "retired": "retired", "student": "a student with classes out", "shift_worker": "works an afternoon-to-night shift"}
 
 
 def _trait_words(r) -> str:
@@ -41,12 +41,19 @@ def write_trace(path: pathlib.Path, hh: Household, res: RunResult, events: Dict[
     out.append(f"Type: {hh.household_type}. Rooms: {', '.join(hh.rooms)}.\n")
     out.append("Residents:\n")
     for r in sorted(hh.residents.values(), key=lambda r: r.id):
-        out.append(f"- **{r.name.capitalize()}** ({r.id}): {_trait_words(r)}")
-    out.append("\nObjects and their usual place (primary slot first):\n")
+        out.append(f"- **{r.name.capitalize()}** ({r.id}): {_trait_words(r)}. Hobbies: "
+                   f"{', '.join(r.hobbies) or 'none'}. Chores they take on: {', '.join(r.chores) or 'none'}.")
+    if hh.pet:
+        out.append(f"\nPet: a {hh.pet}, mainly looked after by {hh.residents[hh.carer].name.capitalize()}.")
+    n_static = sum(1 for o in hh.objects.values() if o.static)
+    out.append(f"\nObjects ({len(hh.objects)}, of which {n_static} are fixtures that never move) and their usual place, primary slot first:\n")
     for r_id in sorted(hh.residents) + [None]:
-        objs = hh.objects_of(r_id)
+        objs = [o for o in hh.objects_of(r_id) if not o.static]
         owner = hh.residents[r_id].name.capitalize() + "'s" if r_id else "Shared"
         out.append(f"- {owner}: " + "; ".join(f"{o.id} → {' / '.join(o.home)}" for o in objs))
+    statics = [o for o in hh.objects.values() if o.static]
+    if statics:
+        out.append("- Fixtures: " + "; ".join(f"{o.id} at {o.home[0]}" for o in sorted(statics, key=lambda o: o.id)))
     if hh.groups:
         out.append("\nObject groups (things that travel together):\n")
         for g in sorted(hh.groups.values(), key=lambda g: g.name):

@@ -24,14 +24,7 @@ from situation_sim.situation import DaySituation
 AWAY = "AWAY"
 DAY_SECONDS = 86_400
 
-TRIP_WORDS = {"commute_work": "work", "walk": "a walk", "gym": "the gym",
-              "errands": "errands", "lunch_out": "lunch out"}
-ACT_WORDS = {"morning_routine": "morning routine", "breakfast": "breakfast",
-             "work_session": "work session", "lunch": "lunch", "chores": "chores",
-             "tidy": "tidying up", "cook_dinner": "cooking dinner", "dinner": "dinner",
-             "evening_tv": "evening TV", "read": "reading", "host_guest": "hosting the guests",
-             "unpack_groceries": "unpacking groceries", "laundry": "laundry",
-             "rest_couch": "resting on the couch", "sleep": "bed", "break": "a short break"}
+WORDS: Dict[str, str] = {}   # activity -> plain words, filled from activities.yaml at init
 
 
 def hhmm(minute: int) -> str:
@@ -40,7 +33,7 @@ def hhmm(minute: int) -> str:
 
 
 def words(activity: str) -> str:
-    return ACT_WORDS.get(activity, TRIP_WORDS.get(activity, activity))
+    return WORDS.get(activity, activity.replace("_", " "))
 
 
 @dataclass
@@ -67,6 +60,9 @@ class Simulator:
         self.sits = sits
         self.events = events
         self.acts = acts
+        for name, tmpl in acts["activities"].items():
+            WORDS[name] = tmpl.get("words", name.replace("_", " "))
+        self.took_out: Dict[str, str] = {}   # object -> resident who carried it out
         self.seed = seed
         self.episode_id = episode_id
         self.rng = random.Random(f"simulate:{seed}")
@@ -134,7 +130,7 @@ class Simulator:
             if tok == "pocket":
                 out += [o for o in own if o.pocket]
             elif tok == "outdoor":
-                out += [o for o in own if o.outdoor and (o.cls != "umbrella" or "umbrella" in extra_carry)]
+                out += [o for o in own if o.outdoor and (not o.rain_only or o.cls in extra_carry)]
             elif tok in ("bag", "gym", "bag_leader"):
                 kind = "bag" if tok != "gym" else "gym"
                 for g in sorted(hh.groups.values(), key=lambda g: g.name):
@@ -143,8 +139,12 @@ class Simulator:
                         if tok != "bag_leader":
                             out += [hh.objects[m] for m in g.members]
             else:
-                mine = [o for o in own if o.cls == tok]
-                out += mine if mine else [o for o in shared if o.cls == tok]
+                for alt in tok.split("|"):        # "laptop|tablet": first one the resident has
+                    mine = [o for o in own if o.cls == alt]
+                    found = mine if mine else [o for o in shared if o.cls == alt]
+                    if found:
+                        out += found
+                        break
         seen = set()
         uniq = []
         for o in out:
@@ -271,6 +271,8 @@ class Simulator:
         txt = f"{who} — {words(b.activity)} in the {b.room}{frag}"
         if b.added_by:
             txt += f" [because of {b.added_by}]"
+        elif b.habit and b.habit != "pet":
+            txt += f" ({b.habit} habit)"
         elif b.edited_by:
             txt += f" [shifted by {', '.join(sorted(set(b.edited_by)))}]"
         if brought:
@@ -290,7 +292,8 @@ class Simulator:
                 continue
             if where == ON_PERSON and self.carrier[o.id] != b.resident:
                 continue
-            if o.pocket and self.standing_omission(o, b.activity):
+            optional = o.pocket or (o.outdoor and o.cls not in ("shoes", "jacket", "running_shoes") and not o.rain_only)
+            if optional and self.standing_omission(o, b.activity):
                 omitted.append(o.id)
                 continue
             if o.pocket and where != ON_PERSON:
@@ -306,6 +309,7 @@ class Simulator:
             if b.added_by:
                 causes.append(b.added_by)
             self.move(o.id, day, b.start, OUT_OF_HOUSE, f"trip:{b.activity}", causes)
+            self.took_out[o.id] = b.resident
             taken.append(o.id)
         self.in_use[b.resident] = []
         trip = words(b.activity)
@@ -372,7 +376,7 @@ class Simulator:
                 arrive = "entry"
             self.resident_at(b.resident, day, b.end, arrive)
             back = sorted(o for o in hh.objects if self.loc[o] == OUT_OF_HOUSE
-                          and hh.objects[o].owner == b.resident)
+                          and self.took_out.get(o) == b.resident)
             order = sorted(back, key=lambda o: (0 if self.is_leader(o) else 1, o))
             placed_leader: Dict[str, Decision] = {}
             for oid in order:
@@ -422,7 +426,9 @@ class Simulator:
             stray = sorted(o for o, r in self.loc.items()
                            if r not in (ON_PERSON, OUT_OF_HOUSE) and o not in handled
                            and hh.receptacles[r].room in b.tidy_rooms
-                           and r != hh.objects[o].home[0])
+                           and r != hh.objects[o].home[0]
+                           and not hh.objects[o].static
+                           and (not b.tidy_sizes or hh.objects[o].size in b.tidy_sizes))
             for oid in stray:
                 self.place(oid, b.resident, b, nxt, sit, world, sub, src_note=True)
         if kept and nxt is not None and nxt.away:

@@ -96,6 +96,27 @@ def run_checks(out: pathlib.Path, seed: int, n_days: int) -> bool:
         print("      ", b)
     ok &= not bad and not nocarrier
 
+    # extra: density stats (how much evidence a home offers)
+    H = state["household"]
+    n_obj = len(H["objects"]); n_static = sum(1 for o in H["objects"].values() if o.get("static"))
+    spots = [r for r in H["receptacles"]]
+    by_obj = {}
+    for r in truth:
+        by_obj.setdefault(r["object_id"], []).append(r)
+    import bisect
+    def loc_at(obj, t):
+        rs = by_obj[obj]; ts = [x["t"] for x in rs]; i = bisect.bisect_right(ts, t) - 1
+        return rs[i]["receptacle_id"] if i >= 0 else None
+    samples = [d * 86400 + h * 3600 for d in range(n_days) for h in range(7, 23, 3)]
+    occ = []
+    for t in samples:
+        held = set(loc_at(o, t) for o in by_obj)
+        occ.append(sum(1 for sp in spots if sp in held) / len(spots))
+    moves = [r for r in truth if r["cause"] != "initial" and r["receptacle_id"] not in ("ON_PERSON",)]
+    movers = {o for o in by_obj if sum(1 for r in by_obj[o] if r["cause"] != "initial") >= 3}
+    print(f"[i] {n_obj} objects ({n_static} fixtures), {len(spots)} spots in {len(H['rooms'])} rooms; "
+          f"{len(moves) / n_days:.0f} object moves/day; {len(movers)} objects move 3+ times; "
+          f"{100 * sum(occ) / len(occ):.0f}% of spots hold something (sampled 07-22h)")
     # extra: bank loader
     try:
         from baselines.bank import JsonlBank  # type: ignore

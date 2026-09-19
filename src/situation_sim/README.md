@@ -16,11 +16,12 @@ day's hurriedness.
 
 | file | what |
 |---|---|
-| `household.py` | samples residents, rooms, receptacles (old bank id conventions), objects, traits, object groups; the `ACCEPTS` table of what each receptacle kind can hold |
+| `objects.yaml` | the object class catalogue (~95 classes): size class, home spots, after-use spot, pocket/outdoor flags, hobby/pet/role gating, fixtures that never move; plus which spot kinds hold which size classes |
+| `household.py` | samples residents (5 roles), rooms and spots (old bank id conventions), traits, hobbies and chores per resident, an optional dog, objects from the catalogue, bag and gym-bag groups |
 | `situation.py` | per-day causes: event rolls from `events.yaml` + internal states with carryover; extreme bands become active causes |
 | `events.yaml` | the six hand-written event types (schedule edits, blocked receptacles, placement rules, rates) |
-| `activities.yaml` | activity templates and per-role weekday/weekend schedules |
-| `schedule.py` | realizes bouts: event edits, skip, jitter (copied sigmas × punctuality), anchor commutes, fragmentation with kitchen breaks |
+| `activities.yaml` | ~60 activity templates (meals, work, chores, hobbies, pet care, trips), the habit library (22 hobbies, 5 chores, dog routine), slot defaults, per-role weekday/weekend schedules with free slots |
+| `schedule.py` | realizes bouts: habit-filled slots (once per resident per day; household chores once per home), pet routine, event edits incl. removed slots, skip (chores scale with tidiness), jitter (copied sigmas × punctuality), anchor trips, fragmentation with kitchen breaks |
 | `placement.py` | the placement decision function + `compute_allowed` (the rule set check 5 verifies against) |
 | `simulate.py` | the loop: bring objects to activity surfaces, decide where they go afterwards, trips out, tidy passes, group riding |
 | `trace.py` | writers for `trace.md`, `events.jsonl`, `hidden_state.json` |
@@ -36,8 +37,21 @@ cd src && python3 -m situation_sim.run --seed 0 --out ../data/situation_sim/hh_s
 Outputs: `trace.md` (human, day by day), `events.jsonl` (bank-format
 `episode_header` + `truth` + `resident` rows, plus extra `cause`/`causes`/
 `whim`/`reason` fields on truth rows), `hidden_state.json` (household,
-per-day causes and states, placement parameters, timing constants, stats).
+per-day causes and states, placement parameters, timing constants, stats),
+`trace.json` (structured trace for the inspection page).
 Same seed → byte-identical files.
+
+Inspection page: `python3 -m situation_sim.inspect_page --seeds 0 1 2 3 4 5
+--out ../data/situation_sim` regenerates `runs/hh_s*` and
+`inspect/index.html` (published as a claude.ai artifact).
+
+## Scale (revision 2, 2026-09-19)
+
+75–105 objects per home (12–18 of them fixtures that never move), 33–46
+spots in 6–9 rooms, 120–190 object moves a day, 60–85 % of spots holding
+something at a random daytime hour. Residents have 2–4 hobbies and a few
+chores each; a home may have a dog. Nothing is tied to a fixed weekday:
+habits fire with per-day probabilities (weekday/weekend split only).
 
 ## Object model
 

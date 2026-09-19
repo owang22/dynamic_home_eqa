@@ -37,9 +37,13 @@ PARAMS = {
     "carry_next_distract": 0.30,
 }
 
-# entry receptacle a dumped object lands on, by object class
-_DUMP_KIND = {"jacket": "entry_hook", "backpack": "entry_floor", "handbag": "entry_table",
-              "shoes": "entry_floor", "umbrella": "entry_floor", "gym_bag": "entry_floor"}
+# entry spot a dumped object lands on, by object size class (class overrides first)
+_DUMP_KIND = {"jacket": "entry_hook", "scarf": "entry_hook", "hat": "entry_hook", "handbag": "entry_table",
+              "shoes": "entry_floor", "running_shoes": "entry_floor", "umbrella": "entry_floor"}
+_DUMP_SIZE = {"wearable": "entry_floor", "bag": "entry_floor", "bulky": "entry_floor",
+              "dish": "entry_table", "small": "entry_table", "device": "entry_table",
+              "paper": "entry_table", "toiletry": "entry_table", "textile": "entry_hook",
+              "kitchen_tool": "entry_table"}
 
 
 @dataclass
@@ -138,7 +142,7 @@ def decide(hh: Household, obj: Obj, res: Resident, ended: Bout, nxt: Optional[Bo
         p_base = PARAMS["dump_untidy"] * (1 - res.tidiness)
         p_hurry = PARAMS["dump_hurry"] * mood if sit.has_flag(res.id, "running_late") else 0.0
         u = rng.random()
-        dump_kind = _DUMP_KIND.get(obj.cls, "entry_table")
+        dump_kind = _DUMP_KIND.get(obj.cls, _DUMP_SIZE.get(obj.size, "entry_table"))
         dump_rec = hh.rec_of_kind(dump_kind, "entry")
         if (u < p_base + p_hurry and dump_rec is not None and dump_rec != home
                 and dump_rec in obj.allowed):
@@ -210,54 +214,72 @@ def decide(hh: Household, obj: Obj, res: Resident, ended: Bout, nxt: Optional[Bo
     return d
 
 
+def _res_activities(hh: Household, res, acts: dict, events: Dict[str, dict]) -> List[str]:
+    """Every activity this resident could perform: template blocks, slot
+    defaults, their habits (and follow-ups), pet routine, event-added, break."""
+    names = set()
+    for dt in ("weekday", "weekend"):
+        for b in acts["schedules"][res.role][dt]:
+            if "activity" in b:
+                names.add(b["activity"])
+    for opts in acts["slot_defaults"].values():
+        names.update(o["activity"] for o in opts if o["activity"] != "none")
+    hob, cho = acts["habits"]["hobbies"], acts["habits"]["chores"]
+    for h in res.hobbies:
+        names.add(hob[h]["activity"])
+    for c in res.chores:
+        names.add(cho[c]["activity"])
+        if cho[c].get("then"):
+            names.add(cho[c]["then"])
+    if hh.pet:
+        names.update(b["activity"] for b in acts["habits"]["pet"][hh.pet]["blocks"])
+    for ev in events.values():
+        for add in ev.get("schedule", {}).get("add", []):
+            names.add(add["activity"])
+    names.add("break")
+    return sorted(names)
+
+
+def uses_obj(tmpl_uses: List[str], obj: Obj, hh: Household) -> bool:
+    for tok in tmpl_uses:
+        alts = tok.split("|")
+        if obj.cls in alts:
+            return True
+    if obj.pocket and "pocket" in tmpl_uses:
+        return True
+    if obj.outdoor and "outdoor" in tmpl_uses:
+        return True
+    if obj.group:
+        g = hh.groups[obj.group]
+        if g.kind in tmpl_uses:
+            return True
+        if "bag_leader" in tmpl_uses and g.kind == "bag" and g.leader == obj.id:
+            return True
+    return False
+
+
 def compute_allowed(hh: Household, acts: dict, events: Dict[str, dict]) -> None:
-    """Fill ``obj.allowed`` for every object: every receptacle in the rooms
-    where the object lives or is used, plus event-rule destinations, plus
-    ON_PERSON / OUT_OF_HOUSE. Written to hidden_state.json and used by the
-    independent check that no object lands somewhere its rules forbid."""
-    from situation_sim.schedule import resolve_room, resolve_surface
+    """Fill ``obj.allowed``: every spot that accepts the object's class in the
+    rooms where it lives or is used, plus event-rule destinations, plus
+    ON_PERSON / OUT_OF_HOUSE. Static objects are allowed only at home.
+    Written to hidden_state.json and used by the independent check that no
+    object lands somewhere its rules forbid."""
+    from situation_sim.schedule import resolve_room
     templates = acts["activities"]
-    # activities each resident can do (both daytypes + every event-added one)
-    res_acts: Dict[str, List[str]] = {}
-    for res in hh.residents.values():
-        names = set()
-        for dt in ("weekday", "weekend"):
-            names.update(b["activity"] for b in acts["schedules"][res.role][dt])
-        for ev in events.values():
-            for add in ev.get("schedule", {}).get("add", []):
-                names.add(add["activity"])
-        names.add("break")
-        res_acts[res.id] = sorted(names)
-
-    def uses(tmpl_uses: List[str], obj: Obj) -> bool:
-        if obj.cls in tmpl_uses:
-            return True
-        if obj.pocket and "pocket" in tmpl_uses:
-            return True
-        if obj.outdoor and "outdoor" in tmpl_uses:
-            return True
-        if obj.group:
-            g = hh.groups[obj.group]
-            if g.kind in tmpl_uses:
-                return True
-            if "bag_leader" in tmpl_uses and g.kind == "bag" and g.leader == obj.id:
-                return True
-        return False
-
+    res_acts = {r.id: _res_activities(hh, r, acts, events) for r in hh.residents.values()}
     for obj in sorted(hh.objects.values(), key=lambda o: o.id):
+        if obj.static:
+            obj.allowed = list(obj.home)
+            continue
         rooms = {hh.receptacles[r].room for r in obj.home}
         users = [hh.residents[obj.owner]] if obj.owner else sorted(hh.residents.values(), key=lambda r: r.id)
         for res in users:
             for name in res_acts[res.id]:
-                if name == "break":
-                    tmpl = {"room": "kitchen", "uses": ["phone"]}
-                else:
-                    tmpl = templates[name]
-                if uses(tmpl.get("uses", []), obj):
+                tmpl = templates[name]
+                if uses_obj(tmpl.get("uses", []), obj, hh):
                     room = resolve_room(tmpl["room"], res, hh)
                     if room != ELSEWHERE:
                         rooms.add(room)
-            # event rule destinations
             for ev in events.values():
                 for rule in ev.get("placement", []):
                     if rule["class"] == obj.cls and rule["to"] != "home":
@@ -271,12 +293,10 @@ def compute_allowed(hh: Household, acts: dict, events: Dict[str, dict]) -> None:
         recs = sorted(r.id for r in hh.receptacles.values()
                       if r.room in rooms and (accepts(r.kind, obj.cls) or r.id in obj.home))
         obj.allowed = recs + [ON_PERSON, OUT_OF_HOUSE]
-    # a grouped object can be carried wherever its leader goes
     for g in hh.groups.values():
         lead = set(hh.objects[g.leader].allowed)
         for m in g.members:
             o = hh.objects[m]
             o.allowed = sorted(set(o.allowed) | lead)
-    # a home slot is always allowed
     for obj in hh.objects.values():
         obj.allowed = sorted(set(obj.allowed) | set(obj.home))

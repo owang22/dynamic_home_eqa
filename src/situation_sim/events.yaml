@@ -23,7 +23,7 @@ events:
     description: "It rains for most of the day."
     trace_words: "no walk; wet shoes, jackets and umbrellas get dropped at the entry instead of being put away"
     schedule:
-      remove: [walk]
+      remove: [walk, run, cycle, photo_walk]
       shorten: {errands: 0.6}
     carry: [umbrella]
     placement:
@@ -44,7 +44,7 @@ events:
         - {activity: tidy, room: living, start: "17:40", duration: 30, who: all_home}
         - {activity: host_guest, start: "20:30", duration: 120, who: all}
       delay: {cook_dinner: 30, dinner: 30}
-      remove: [evening_tv, read, gym]
+      remove: [evening_tv, read, gym, "slot:evening"]
     block:
       - {receptacle: couch, during: host_guest}
     placement:
@@ -52,16 +52,18 @@ events:
       - {class: blanket, after: [tidy, host_guest], to: armchair, note: "folded onto the armchair to free the couch"}
       - {class: mug, after: [host_guest], to: sink, note: "mugs collected into the sink after the guests"}
       - {class: book, after: [tidy], to: bookshelf, note: "books shelved for the guests"}
+      - {class: board_game, after: [host_guest], to: coffee_table, note: "game left out after the guests"}
+      - {class: glass, after: [host_guest], to: sink, note: "glasses collected into the sink after the guests"}
 
   late_work:
     scope: resident
-    roles: [worker_out, worker_home]
+    roles: [worker_out, worker_home, student, shift_worker]
     p_day: {weekday: 0.24, weekend: 0.0}
     description: "A long day at work; home two hours late."
     trace_words: "gets home late and hurried; the evening walk and cooking are dropped and things are dumped at the door"
     schedule:
-      extend: {commute_work: 120, work_session: 90}
-      remove: [walk, gym, cook_dinner, read]
+      extend: {commute_work: 120, work_session: 90, classes: 90, shift: 60}
+      remove: [walk, gym, cook_dinner, read, "slot:late_afternoon"]
       shorten: {evening_tv: 0.5}
     internal: {hurriedness: 0.35, energy: -0.25}
     placement:
@@ -100,12 +102,12 @@ events:
 
   sick_day:
     scope: resident
-    roles: [worker_out, worker_home, retired]
+    roles: [worker_out, worker_home, retired, student, shift_worker]
     p_day: {weekday: 0.08, weekend: 0.06}
     description: "Off sick, resting on the couch all day."
     trace_words: "no work or trips out; laptop, mug, medication, book and blanket all migrate to the couch and coffee table"
     schedule:
-      remove: [commute_work, work_session, walk, gym, errands, chores, lunch, lunch_out]
+      remove: [commute_work, classes, shift, work_session, study, video_call, walk, run, gym, cycle, errands, groceries, chores, vacuum, lunch, lunch_out, visit_friends, photo_walk, "slot:morning", "slot:late_afternoon", "slot:weekend_morning", "slot:weekend_afternoon"]
       add:
         - {activity: rest_couch, room: living, start: "09:30", duration: 480, who: owner, mean_bouts: 3}
     internal: {energy: -0.5, hurriedness: -0.3}

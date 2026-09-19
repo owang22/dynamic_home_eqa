@@ -1,7 +1,6 @@
-"""Daily schedule realization: role templates, event edits, jitter, bouts.
+"""Daily schedule realization: role templates, habit-filled slots, pet
+routines, event edits, jitter, anchors, fragmentation with kitchen breaks.
 
-The placement function needs "what activity just ended" and "what the
-resident does next", so each resident gets a realized list of bouts per day.
 Timing constants are the copied values in ``timing_constants``.
 """
 from __future__ import annotations
@@ -38,15 +37,17 @@ def _hhmm(s: str) -> int:
 class Bout:
     resident: str
     activity: str
-    start: int                 # minutes from the day's midnight
+    start: int
     end: int
-    room: str                  # room id or ELSEWHERE
-    surface: Optional[str]     # receptacle id where used objects are left
-    uses: List[str]            # object classes / group tokens fetched at start
+    room: str
+    surface: Optional[str]
+    uses: List[str]
     tidies: bool = False
     tidy_rooms: List[str] = field(default_factory=list)
-    added_by: Optional[str] = None     # cause id that added the block
-    edited_by: List[str] = field(default_factory=list)  # causes that delayed/shortened/extended it
+    tidy_sizes: List[str] = field(default_factory=list)
+    added_by: Optional[str] = None
+    edited_by: List[str] = field(default_factory=list)
+    habit: Optional[str] = None
     bout_index: int = 0
     n_bouts: int = 1
 
@@ -58,13 +59,11 @@ class Bout:
 def resolve_room(token: str, res: Resident, hh: Household) -> str:
     if token == ELSEWHERE:
         return ELSEWHERE
-    if token == "bedroom":
-        return res.bedroom
-    if token == "workspace":
-        return res.workspace
-    if token == "dining_or_kitchen":
-        return hh.has_room("dining") or "kitchen"
-    return token
+    room = hh.resolve_room(token, res)
+    if room is None:
+        # room kind missing in this home: fall back to living
+        return "living" if token not in ("kitchen", "bathroom", "entry") else token
+    return room
 
 
 def resolve_surface(token: Optional[str], room: str, hh: Household) -> Optional[str]:
@@ -72,11 +71,12 @@ def resolve_surface(token: Optional[str], room: str, hh: Household) -> Optional[
         return None
     if token == "dining_or_kitchen_table":
         token = "dining_table" if room.startswith("dining") else "kitchen_table"
+    if token == "balcony_or_side_table":
+        token = "balcony_table" if room.startswith("balcony") else "side_table"
     return hh.rec_of_kind(token, room)
 
 
 def _poisson(rng: random.Random, lam: float) -> int:
-    # Knuth; lam is small here
     L = math.exp(-lam)
     k, p = 0, 1.0
     while True:
@@ -87,64 +87,139 @@ def _poisson(rng: random.Random, lam: float) -> int:
 
 
 def _home_at(blocks: List[dict], minute: int) -> bool:
-    """Is a resident with these (nominal) blocks at home at ``minute``?"""
     for b in blocks:
         if b["_room"] == ELSEWHERE and b["start"] <= minute < b["start"] + b["duration"]:
             return False
     return True
 
 
+def _mk(activity: str, start: int, duration: int, res: Resident, hh: Household, templates: dict, **kw) -> dict:
+    tmpl = templates[activity]
+    b = {"activity": activity, "start": start, "duration": duration,
+         "_room": resolve_room(tmpl["room"], res, hh), "_edited": [], "_added_by": None,
+         "_habit": None, "skip_p": 0.0}
+    b.update(kw)
+    return b
+
+
+def fill_slot(block: dict, res: Resident, hh: Household, acts: dict, daytype: str,
+              rng: random.Random, used: set, hh_used: set) -> List[dict]:
+    """Choose what a resident does in a free slot from their habits. A habit
+    fires at most once per resident per day; a household_once chore at most
+    once per home per day."""
+    templates = acts["activities"]
+    slot = block["slot"]
+    start, dur = _hhmm(block["start"]), int(block["duration"])
+    hob, cho = acts["habits"]["hobbies"], acts["habits"]["chores"]
+    cands = []
+    for h in res.hobbies:
+        spec = hob[h]
+        if slot in spec["slots"] and h not in used:
+            cands.append((h, spec, spec["p"][daytype]))
+    for c in res.chores:
+        spec = cho[c]
+        if slot in spec["slots"] and c not in used and not (spec.get("household_once") and c in hh_used):
+            cands.append((c, spec, spec["p"][daytype] * (0.4 + res.tidiness)))
+    # needs_shared: the home must own that shared object
+    cands = [(n, s, p) for n, s, p in cands
+             if not s.get("needs_shared") or any(o.cls == s["needs_shared"] for o in hh.objects.values())]
+    cands.sort(key=lambda x: x[0])
+    rng.shuffle(cands)
+    for name, spec, p in cands:
+        if rng.random() < p:
+            used.add(name)
+            if spec.get("household_once"):
+                hh_used.add(name)
+            d = min(int(spec["duration"]), dur)
+            out = [_mk(spec["activity"], start, d, res, hh, templates, _habit=name)]
+            if spec.get("then") and start + d < start + dur + 30:
+                out.append(_mk(spec["then"], start + d, 15, res, hh, templates, _habit=name))
+            return out
+    # default
+    opts = acts["slot_defaults"][slot]
+    u = rng.random() * sum(o["w"] for o in opts)
+    acc = 0.0
+    for o in opts:
+        acc += o["w"]
+        if u <= acc:
+            if o["activity"] == "none":
+                return []
+            return [_mk(o["activity"], start, dur, res, hh, templates)]
+    return []
+
+
 def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
               acts: dict, seed: int) -> List[Bout]:
-    """Realize every resident's bouts for one day; returns them sorted by start."""
     rng = random.Random(f"schedule:{seed}:{sit.day_index}")
     templates = acts["activities"]
     daytype = "weekend" if sit.is_weekend else "weekday"
     residents = sorted(hh.residents.values(), key=lambda r: r.id)
 
-    # 1. nominal blocks per resident with event edits (remove/delay/shorten/extend)
+    # 1. nominal blocks: template + slots + pet routine, then skip, then event edits
     nominal: Dict[str, List[dict]] = {}
+    hh_used: set = set()
     for res in residents:
-        blocks = copy.deepcopy(acts["schedules"][res.role][daytype])
-        for b in blocks:
-            b["start"] = _hhmm(b["start"])
-            b["_room"] = resolve_room(templates[b["activity"]]["room"], res, hh)
-            b["_edited"] = []
-            b["_added_by"] = None
-        # per-realization block drop, BEFORE jitter and before event edits
-        # (so an event that adds a block for "whoever is home" sees the
-        # blocks that actually happen)
+        blocks: List[dict] = []
+        used: set = set()
+        # an event may take a whole free slot away ("slot:evening" in its remove list)
+        gone_slots = {tok[5:] for c in sit.events_for(res.id)
+                      for tok in events[c.event].get("schedule", {}).get("remove", []) if tok.startswith("slot:")}
+        for raw in acts["schedules"][res.role][daytype]:
+            if "slot" in raw:
+                if raw["slot"] in gone_slots:
+                    continue
+                blocks += fill_slot(raw, res, hh, acts, daytype, rng, used, hh_used)
+                continue
+            b = _mk(raw["activity"], _hhmm(raw["start"]), int(raw["duration"]), res, hh, templates)
+            for k in ("skip_p", "mean_bouts"):
+                if k in raw:
+                    b[k] = raw[k]
+            if raw.get("skip_by_tidiness"):
+                b["skip_p"] = 0.8 * (1 - res.tidiness)
+            blocks.append(b)
+        nominal[res.id] = blocks
+    if hh.pet:
+        pet_cfg = acts["habits"]["pet"][hh.pet]
+        others = [r.id for r in residents if r.id != hh.carer]
+        for raw in pet_cfg["blocks"]:
+            who = hh.carer
+            if raw["who"] == "carer_or_other" and others and rng.random() < 0.4:
+                who = others[rng.randrange(len(others))]
+            res = hh.residents[who]
+            b = _mk(raw["activity"], _hhmm(raw["start"]), int(raw["duration"]), res, hh, templates,
+                    skip_p=float(raw.get("skip_p", 0.0)), _habit="pet")
+            nominal[who].append(b)
+    for res in residents:
         kept = []
-        for b in blocks:
-            skip_p = min(b.get("skip_p", 0.0), tc.MAX_SKIP_P)
+        for b in nominal[res.id]:
+            skip_p = min(float(b.get("skip_p", 0.0)), tc.MAX_SKIP_P)
             if skip_p and rng.random() < skip_p:
                 continue
             kept.append(b)
-        blocks = kept
-        # lunch_out replaces lunch when both survive the skip draw
-        if any(b["activity"] == "lunch_out" for b in blocks):
-            blocks = [b for b in blocks if b["activity"] != "lunch"]
+        if any(b["activity"] == "lunch_out" for b in kept):
+            kept = [b for b in kept if b["activity"] != "lunch"]
+        # event edits
         for c in sit.events_for(res.id):
             sch = events[c.event].get("schedule", {})
-            blocks = [b for b in blocks if b["activity"] not in sch.get("remove", [])]
+            kept = [b for b in kept if b["activity"] not in sch.get("remove", [])]
             for act, mins in sorted(sch.get("delay", {}).items()):
-                for b in blocks:
+                for b in kept:
                     if b["activity"] == act:
                         b["start"] += mins
                         b["_edited"].append(c.id)
             for act, factor in sorted(sch.get("shorten", {}).items()):
-                for b in blocks:
+                for b in kept:
                     if b["activity"] == act:
                         b["duration"] = int(round(b["duration"] * factor))
                         b["_edited"].append(c.id)
             for act, mins in sorted(sch.get("extend", {}).items()):
-                matches = [b for b in blocks if b["activity"] == act]
-                if matches:            # only the last block of that activity runs long
+                matches = [b for b in kept if b["activity"] == act]
+                if matches:
                     matches[-1]["duration"] += mins
                     matches[-1]["_edited"].append(c.id)
-        nominal[res.id] = blocks
+        nominal[res.id] = kept
 
-    # 2. event-added blocks, with "who" resolved against nominal schedules
+    # 2. event-added blocks with "who" resolved against nominal schedules
     for c in sorted(sit.causes, key=lambda c: c.id):
         if c.kind != "event":
             continue
@@ -162,7 +237,6 @@ def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
                 if home:
                     targets = [home[0]]
                 elif who == "first_home":
-                    # whoever gets back first after the start
                     def back(rid: str) -> int:
                         ends = [b["start"] + b["duration"] for b in nominal[rid]
                                 if b["_room"] == ELSEWHERE and b["start"] <= start]
@@ -175,37 +249,24 @@ def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
             for rid in targets:
                 res = hh.residents[rid]
                 tmpl = templates[add["activity"]]
-                room = add.get("room", tmpl["room"])
-                nominal[rid].append({
-                    "activity": add["activity"], "start": start,
-                    "duration": add["duration"],
-                    "mean_bouts": add.get("mean_bouts", tmpl.get("mean_bouts", 1)),
-                    "_room": resolve_room(room, res, hh), "_edited": [],
-                    "_added_by": c.id, "skip_p": 0.0,
-                })
+                b = _mk(add["activity"], start, int(add["duration"]), res, hh, templates,
+                        mean_bouts=add.get("mean_bouts", tmpl.get("mean_bouts", 1)))
+                b["_room"] = resolve_room(add.get("room", tmpl["room"]), res, hh)
+                b["_added_by"] = c.id
+                nominal[rid].append(b)
 
-    # 3. skip, jitter, overlap resolution, fragmentation
+    # 3. jitter, anchors, fragmentation
     out: List[Bout] = []
     for res in residents:
-        blocks = nominal[res.id]
-        kept = sorted(blocks, key=lambda b: (b["start"], b["activity"]))
+        kept = sorted(nominal[res.id], key=lambda b: (b["start"], b["activity"]))
         realized = []
-        dropped: List[str] = []
         for b in kept:
             tmpl = templates[b["activity"]]
             sigma = tc.JITTER_CLASSES_MIN[tmpl["jitter"]] * res.jitter_scale
             start = int(round(b["start"] + rng.gauss(0, sigma)))
-            dur = int(b["duration"])
-            realized.append((start, dur, b))
-        # authored order is kept (jitter never reorders blocks); a shifted
-        # block pushes the next one; the pushed block keeps at
-        # least KEEP_BLOCK_SHARE of its length if it has to be trimmed to
-        # fit before the following block
-        # `external`-class blocks (a commute) are anchors: they are never
-        # pushed; the block before them is trimmed to end at the anchor,
-        # and dropped if it would keep less than KEEP_BLOCK_SHARE of itself.
+            realized.append((start, int(b["duration"]), b))
         cursor = 0
-        placed = []
+        placed: List[list] = []
         for start, dur, b in realized:
             is_anchor = templates[b["activity"]]["jitter"] == "external"
             if is_anchor:
@@ -215,7 +276,6 @@ def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
                         placed[-1][1] = start
                         break
                     placed.pop()
-                    dropped.append(pb["activity"])
             else:
                 start = max(start, cursor)
             placed.append([start, start + dur, b])
@@ -235,43 +295,38 @@ def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
             if mean_bouts > 1.0:
                 n = max(1, _poisson(rng, mean_bouts))
             window = e - s
-            # each bout and each gap at least MIN_BOUT_MINUTES
             while n > 1 and window < (2 * n - 1) * tc.MIN_BOUT_MINUTES:
                 n -= 1
-            pieces = []
             if n == 1:
                 pieces = [(s, e)]
             else:
-                # split window into n bouts separated by gaps taking ~30% of it
                 gap_total = int(window * 0.3)
                 bout_total = window - gap_total
                 cuts = sorted(rng.random() for _ in range(n - 1))
-                lens = []
-                prev = 0.0
+                lens, prev = [], 0.0
                 for c in cuts + [1.0]:
                     lens.append(c - prev)
                     prev = c
                 bout_lens = [max(tc.MIN_BOUT_MINUTES, int(bout_total * l)) for l in lens]
                 gap = max(tc.MIN_BOUT_MINUTES, gap_total // (n - 1))
-                t = s
+                pieces, t = [], s
                 for bl in bout_lens:
                     pieces.append((t, min(t + bl, e)))
                     t += bl + gap
                 pieces = [(a, bb) for a, bb in pieces if bb - a >= tc.MIN_BOUT_MINUTES and a < e]
                 n = len(pieces)
+            common = dict(tidies=bool(tmpl.get("tidies", False)),
+                          tidy_rooms=[r for r in tmpl.get("tidy_rooms", [room]) if r in hh.rooms],
+                          tidy_sizes=list(tmpl.get("tidy_sizes", [])),
+                          added_by=b["_added_by"], edited_by=list(b["_edited"]), habit=b.get("_habit"))
             for i, (a, bb) in enumerate(pieces):
-                out.append(Bout(res.id, b["activity"], a, bb, room, surface,
-                                list(tmpl.get("uses", [])), bool(tmpl.get("tidies", False)),
-                                list(tmpl.get("tidy_rooms", [room])),
-                                b["_added_by"], list(b["_edited"]), i, n))
+                out.append(Bout(res.id, b["activity"], a, bb, room, surface, list(tmpl.get("uses", [])),
+                                bout_index=i, n_bouts=n, **common))
                 if i + 1 < len(pieces) and room != ELSEWHERE:
-                    # the gap between two bouts is a short break in the
-                    # kitchen (a drink, a snack): used objects get put down
-                    # and fetched again, which is where drift comes from
                     ga, gb = bb, pieces[i + 1][0]
                     if gb - ga >= tc.MIN_BOUT_MINUTES:
                         out.append(Bout(res.id, "break", ga, gb, "kitchen",
-                                        hh.rec_of_kind("counter", "kitchen"), ["phone"],
-                                        False, [], b["_added_by"], [], 0, 1))
+                                        hh.rec_of_kind("counter", "kitchen"), list(templates["break"]["uses"]),
+                                        added_by=b["_added_by"], habit=b.get("_habit")))
     out.sort(key=lambda b: (b.start, b.resident, b.activity))
     return out

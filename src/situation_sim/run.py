@@ -21,7 +21,7 @@ def generate(seed: int, out: pathlib.Path, n_days: int = 5) -> None:
     out.mkdir(parents=True, exist_ok=True)
     events = load_events()
     acts = load_activities()
-    hh = sample_household(seed)
+    hh = sample_household(seed, acts)
     compute_allowed(hh, acts, events)
     sits = sample_situations(hh, seed, n_days, events)
     episode_id = f"{hh.id}_situation_seed{seed}"
