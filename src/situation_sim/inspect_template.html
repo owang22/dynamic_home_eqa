@@ -326,20 +326,21 @@ function knowledge(obj, cut, visits){ // what the observations say about obj up 
   if(last){ for(const v of visits){ if(v.t<=last.t) continue; if(v.t>cut) break; if(last.rec in v.contents && !v.contents[last.rec].includes(obj)){ gone=v.t; break; } } }
   return {seen, last, gone};
 }
-function baselinesObs(q, cut, k, visits){ const H=hh(), o=H.objects[q.obj], kn=knowledge(q.obj,cut,visits);
+function baselinesObs(q, cut, k, visits){ const kn=knowledge(q.obj,cut,visits);
   const counts={}; for(const s of kn.seen) counts[s.rec]=(counts[s.rec]||0)+1;
   const byCount=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]||a.localeCompare(b));
   const same={}; for(const s of kn.seen){ const clock=(s.t%DAY)/60, dm=Math.abs(clock-q.minute); if(Math.floor(s.t/DAY)<q.day && dm<=90) same[s.rec]=(same[s.rec]||0)+1; }
   const bySame=Object.keys(same).sort((a,b)=>same[b]-same[a]||a.localeCompare(b));
-  const fill=(first)=>{ const out=[]; for(const r of [...first, ...byCount, ...o.home]) if(r && !out.includes(r)) out.push(r); return out.slice(0,k); };
+  const tour=kn.seen.find(s=>s.kind==='tour');
+  const fill=(first)=>{ const out=[]; for(const r of [...first, ...byCount, ...(tour?[tour.rec]:[])]) if(r && !out.includes(r)) out.push(r); return out.slice(0,k); };
   return [
-    {name:'Last seen', desc:'the last sighting, then the usual places', ranked: fill(kn.last?[kn.last.rec]:[])},
+    {name:'Last seen', desc:'the last sighting, then the most-seen places', ranked: fill(kn.last?[kn.last.rec]:[])},
     {name:'Most frequent', desc:'places it was sighted, most often first', ranked: fill(byCount)},
     {name:'Same hour, earlier days', desc:'sightings within 90 min of this clock time on earlier days', ranked: fill(bySame)},
-    {name:'Home slots', desc:'the object\'s home slots in order', ranked: fill(o.home)},
+    {name:'Walkthrough spot', desc:'where the Wednesday walkthrough saw it, then the most-seen places', ranked: fill(tour?[tour.rec]:[])},
   ];
 }
-const BASE_NAMES=['Last seen','Most frequent','Same hour, earlier days','Home slots'];
+const BASE_NAMES=['Last seen','Most frequent','Same hour, earlier days','Walkthrough spot'];
 
 // ---------- chronological play ----------
 function rng32(seed){ let a=seed>>>0; return ()=>{ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
@@ -383,8 +384,9 @@ function baselineTable(q, cut, K, visits, tried, found){ const truth=rowAt(q.obj
   html += `<tr><td><b>You</b></td><td>${tried.map(t=>`<span class="id rec">${t.rec}</span>`).join(' ')||'<span class="small">gave up</span>'}</td><td class="mark ${tried[0]&&tried[0].hit?'ok':'bad'}">${tried[0]&&tried[0].hit?'✓':'✗'}</td><td class="mark ${found?'ok':'bad'}">${found?'✓':'✗'}</td></tr>`;
   for(const b of baselinesObs(q,cut,K,visits)) html += `<tr><td>${b.name}<br><span class="small">${b.desc}</span></td><td>${b.ranked.map(r=>`<span class="id rec">${r}</span>`).join(' ')}</td><td class="mark ${b.ranked[0]===truth?'ok':'bad'}">${b.ranked[0]===truth?'✓':'✗'}</td><td class="mark ${b.ranked.includes(truth)?'ok':'bad'}">${b.ranked.includes(truth)?'✓':'✗'}</td></tr>`;
   return html+`</tbody></table></div>`; }
-function evidenceHtml(q, cut, visits){ const H=hh(), o=H.objects[q.obj], kn=knowledge(q.obj,cut,visits);
-  let html = `<div class="panel evid"><h3>What you know about <span class="id" style="text-transform:none;letter-spacing:0">${q.obj}</span></h3><p class="small">${esc(o.cls)}, ${o.owner?cap(H.residents[o.owner].name)+"'s":'shared'}; home slots ${o.home.map(h=>`<span class="id rec">${h}</span>`).join(' ')}${o.group?'; rides in '+esc(o.group):''}${o.pocket?'; a pocket item (goes out with its owner)':''}${o.outdoor?'; worn on trips out':''}. Sightings up to ${cut<0?'nothing yet':fmtT(cut)}.</p>`;
+function evidenceHtml(q, cut, visits){ const H=hh(), kn=knowledge(q.obj,cut,visits);
+  const counts={}; for(const s2 of kn.seen) counts[s2.rec]=(counts[s2.rec]||0)+1; const often=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]||a.localeCompare(b)).slice(0,4);
+  let html = `<div class="panel evid"><h3>What you know about <span class="id" style="text-transform:none;letter-spacing:0">${q.obj}</span></h3><p class="small">Sightings up to ${cut<0?'nothing yet':fmtT(cut)}: ${kn.seen.length}.${often.length?' Most often seen at '+often.map(r=>`<span class="id rec">${r}</span> <span class="small">×${counts[r]}</span>`).join(', ')+'.':''}${kn.last?' Last seen at <span class="id rec">'+kn.last.rec+'</span> ('+ageWords(kn.last.t,q.t)+').':''}</p>`;
   if(S.reveal){ const dcs=run().state.days[q.day].causes; html += `<details open><summary>Today's hidden causes (revealed by the header switch)</summary>${dcs.length?dcs.map(c=>`<div class="cause ${c.kind}">${causeWords(c)}</div>`).join(''):'<p class="small">none</p>'}</details>`; }
   if(!kn.seen.length) html += `<p class="small">Never sighted before the cutoff.</p>`;
   else { html += `<div class="timeline">`; let lastRec=null; const evs=[];
