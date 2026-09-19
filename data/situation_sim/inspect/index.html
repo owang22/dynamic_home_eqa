@@ -435,12 +435,15 @@ function renderQuiz(){ const el=document.getElementById('v-quiz'); let html=`<di
 // ---------- play mode ----------
 function renderPlay(){ const H=hh();
   if(!S.play.loaded) return `<p class="sub">Loading your progress…</p>`;
-  const doc=playDoc(), K=doc.looks, seq=playSequence(doc.perDay), i=doc.answers.length; S.play.index=i;
+  const doc=playDoc(), K=doc.looks, seq=playSequence(doc.perDay);
+  // while a just-answered question is on screen, keep showing IT (not the next one)
+  const i = S.play.done ? doc.answers.length-1 : doc.answers.length; S.play.index=i;
   const visits=allVisits(doc.visits, lookObsFrom(doc));
   let html = `<p class="sub">One household, Thursday to Sunday, questions in the order they happen, so you learn the home's dynamics as the week unfolds. At each question you know everything the patrol saw up to that moment (${doc.visits} visits a day after a Wednesday-evening walkthrough) plus what your own earlier looks showed. Answers are saved, so you can stop and come back.</p>`;
   html += `<div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack">`;
   if(i>=seq.length){ const sc=scoreFromAnswers(doc.answers, K); html += `<div class="panel"><div class="q">End of the segment — ${seq.length} questions on this household.</div>${scoreTable(sc,K,'Final score')}<div class="row" style="margin-top:10px"><button class="btn" id="resetPlay">Restart this household</button></div></div>`; html += notepadHtml(); html += `</div><div class="stack"><div class="panel"><h3>Every answer</h3>${historyHtml(doc)}</div></div></div>`; return html; }
   const q=seq[i], cut=q.t, truthRow=rowAt(q.obj,q.t), truth=truthRow.receptacle_id; S.play.q=q;
+  if(S.play.done && doc.answers[i]) S.play.tried=doc.answers[i].tried;
   const prevT = i>0 ? seq[i-1].t : -1; const fresh=visits.filter(v=>v.t>prevT && v.t<=cut && v.kind!=='look');
   const pct=Math.round(100*i/seq.length);
   html += `<div class="panel"><div class="controls" style="justify-content:space-between"><span>Question ${i+1} of ${seq.length} · ${K} look${K===1?'':'s'}</span><span>${DAYS[q.day]} ${fmtMin(q.minute)}</span></div><div class="bar" style="margin-bottom:10px"><i style="width:${pct}%"></i></div>`;
