@@ -303,7 +303,9 @@ async function loadDoc(path, lsKey){ if(DB){ try{ const snap=await DB.doc(path).
 async function saveDoc(path, lsKey, data){ lsSet(lsKey, data); if(DB){ try{ await DB.doc(path).set(data); SYNC='synced'; }catch(e){ SYNC='error'; } } refreshSyncBadge(); }
 function refreshSyncBadge(){ const b=document.getElementById('syncBadge'); if(!b) return; b.textContent = SYNC==='synced'?'notes and answers saved to the artifact (Claude can read them)': SYNC==='local'?'saved in this browser only — Claude cannot read these': SYNC==='error'?'saving to the artifact failed; kept in this browser':'connecting…'; }
 (async()=>{ try{ if(window.claude && window.claude.use){ DB = await window.claude.use('db'); } }catch(e){ DB=null; } SYNC = DB?'synced':'local'; DB_READY=true; await loadPersisted(); if(S.view==='quiz') render(); else refreshSyncBadge(); })();
-async function loadPersisted(){ const notes=await loadDoc('notes/s'+S.seed, 'ssi-notes-'+S.seed); S.notes = (notes&&notes.entries)||[]; const play=await loadDoc('chrono/s'+S.seed, 'ssi-play-'+S.seed); S.play.doc = play||null; S.play.loaded=true; }
+// documents delivered by the artifact db are frozen: clone them before mutating
+const thaw = x => x==null ? x : JSON.parse(JSON.stringify(x));
+async function loadPersisted(){ const notes=await loadDoc('notes/s'+S.seed, 'ssi-notes-'+S.seed); S.notes = thaw((notes&&notes.entries)||[]); const play=await loadDoc('chrono/s'+S.seed, 'ssi-play-'+S.seed); S.play.doc = thaw(play)||null; S.play.loaded=true; }
 
 // ---------- observations (sparse, generated from truth) ----------
 let _obsCache={};
@@ -437,13 +439,13 @@ function renderPlay(){ const H=hh();
   if(!S.play.loaded) return `<p class="sub">Loading your progress…</p>`;
   const doc=playDoc(), K=doc.looks, seq=playSequence(doc.perDay);
   // while a just-answered question is on screen, keep showing IT (not the next one)
-  const i = S.play.done ? doc.answers.length-1 : doc.answers.length; S.play.index=i;
+  const i = (S.play.done && !S.play.error) ? doc.answers.length-1 : doc.answers.length; S.play.index=i;
   const visits=allVisits(doc.visits, lookObsFrom(doc));
   let html = `<p class="sub">One household, Thursday to Sunday, questions in the order they happen, so you learn the home's dynamics as the week unfolds. At each question you know everything the patrol saw up to that moment (${doc.visits} visits a day after a Wednesday-evening walkthrough) plus what your own earlier looks showed. Answers are saved, so you can stop and come back.</p>`;
   html += `<div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack">`;
   if(i>=seq.length){ const sc=scoreFromAnswers(doc.answers, K); html += `<div class="panel"><div class="q">End of the segment — ${seq.length} questions on this household.</div>${scoreTable(sc,K,'Final score')}<div class="row" style="margin-top:10px"><button class="btn" id="resetPlay">Restart this household</button></div></div>`; html += notepadHtml(); html += `</div><div class="stack"><div class="panel"><h3>Every answer</h3>${historyHtml(doc)}</div></div></div>`; return html; }
   const q=seq[i], cut=q.t, truthRow=rowAt(q.obj,q.t), truth=truthRow.receptacle_id; S.play.q=q;
-  if(S.play.done && doc.answers[i]) S.play.tried=doc.answers[i].tried;
+  if(S.play.done && !S.play.error && doc.answers[i]) S.play.tried=doc.answers[i].tried;
   const prevT = i>0 ? seq[i-1].t : -1; const fresh=visits.filter(v=>v.t>prevT && v.t<=cut && v.kind!=='look');
   const pct=Math.round(100*i/seq.length);
   html += `<div class="panel"><div class="controls" style="justify-content:space-between"><span>Question ${i+1} of ${seq.length} · ${K} look${K===1?'':'s'}</span><span>${DAYS[q.day]} ${fmtMin(q.minute)}</span></div><div class="bar" style="margin-bottom:10px"><i style="width:${pct}%"></i></div>`;
@@ -451,6 +453,7 @@ function renderPlay(){ const H=hh();
   html += actionRow('p', S.play.tried, K, S.play.done);
   html += looksHtml(S.play.tried);
   html += `<div style="margin-top:12px"><h3>Your thinking on this question</h3><textarea id="qNote" rows="3" placeholder="What are you using to decide? Update it after each look. Saved with the answer." style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;resize:vertical">${esc(S.play.draft||'')}</textarea>${S.play.done?`<div class="row" style="margin-top:6px;justify-content:space-between"><span class="small" id="qNoteState">${S.play.noteDirty?'edited, not saved':'saved with the answer'}</span><button class="btn" id="qNoteSave">Save note</button></div>`:'<p class="small" style="margin:4px 0 0">Kept while you look; stored when the question ends.</p>'}</div>`;
+  if(S.play.error) html += `<div class="verdict bad">Saving this answer failed (${esc(S.play.error)}). The result is shown below but was not recorded.</div>`;
   if(S.play.done){ const found=S.play.tried.some(t=>t.hit); html += truthHtml(q,cut,truthRow,found,S.play.tried); html += baselineTable(q,cut,K,visits,S.play.tried,found); }
   html += `</div>`;
   // new since last question
@@ -463,7 +466,8 @@ function renderPlay(){ const H=hh();
   html += `</div><div class="stack">` + evidenceHtml(q, cut, visits) + `</div></div>`;
   return html; }
 function historyHtml(doc){ return `<div class="hist">${doc.answers.slice().reverse().map(a=>`<div>${a.found?'<span class="mark ok">✓'+a.looksUsed+'</span>':'<span class="mark bad">✗</span>'} Q${a.i+1} <span class="id">${a.obj}</span> ${wd3(a.day)} ${fmtMin(a.minute)} → <span class="id rec">${a.truth}</span> <span class="small">you: ${a.tried.map(t=>t.rec+(t.kind==='guess'?' (guess)':'')).join(', ')} · baselines 1st: ${a.base.map((b,k)=>b[0]?BASE_NAMES[k].split(',')[0]:null).filter(Boolean).join(', ')||'none'}</span>${a.note?`<br><span class="small" style="color:var(--ink)">“${esc(a.note)}”</span>`:''}</div>`).join('')}</div>`; }
-async function finishPlay(found){ const doc=playDoc(), q=S.play.q, K=doc.looks, visits=allVisits(doc.visits, lookObsFrom(doc)), truth=rowAt(q.obj,q.t).receptacle_id;
+async function finishPlay(found){ try{ await finishPlayInner(found); }catch(e){ console.error(e); S.play.done=true; S.play.error=String(e&&e.message||e); renderQuiz(); } }
+async function finishPlayInner(found){ const doc=playDoc(), q=S.play.q, K=doc.looks, visits=allVisits(doc.visits, lookObsFrom(doc)), truth=rowAt(q.obj,q.t).receptacle_id;
   const base=baselinesObs(q,q.t,K,visits).map(b=>[b.ranked[0]===truth, b.ranked.includes(truth)]);
   const nLooks=S.play.tried.filter(t=>t.kind!=='guess').length, guessed=S.play.tried.some(t=>t.kind==='guess');
   doc.answers.push({i:S.play.index, obj:q.obj, day:q.day, minute:q.minute, t:q.t, truth, tried:S.play.tried, found, looksUsed: nLooks, guessed, base, whim: !!rowAt(q.obj,q.t).whim, note:(S.play.draft||'').trim(), ts:new Date().toISOString()}); S.play.noteDirty=false;
@@ -474,7 +478,7 @@ function wirePlay(el){ const H=hh(); const q=S.play.q;
   const g1=el.querySelector('#pGuess'); if(g1) g1.addEventListener('click', ()=>guess(el.querySelector('#pAns').value));
   const g2=el.querySelector('#pGuessOut'); if(g2) g2.addEventListener('click', ()=>guess('OUT_OF_HOUSE'));
   const g3=el.querySelector('#pGuessOn'); if(g3) g3.addEventListener('click', ()=>guess('ON_PERSON'));
-  const nx=el.querySelector('#pNext'); if(nx) nx.addEventListener('click', ()=>{ S.play.tried=[]; S.play.done=false; S.play.draft=''; S.play.noteDirty=false; renderQuiz(); });
+  const nx=el.querySelector('#pNext'); if(nx) nx.addEventListener('click', ()=>{ S.play.tried=[]; S.play.done=false; S.play.error=null; S.play.draft=''; S.play.noteDirty=false; renderQuiz(); });
   const qn=el.querySelector('#qNote'); if(qn) qn.addEventListener('input', ()=>{ S.play.draft=qn.value; if(S.play.done){ S.play.noteDirty=true; const st=el.querySelector('#qNoteState'); if(st) st.textContent='edited, not saved'; } });
   const qs=el.querySelector('#qNoteSave'); if(qs) qs.addEventListener('click', async ()=>{ const doc=playDoc(); const last=doc.answers[doc.answers.length-1]; if(!last) return; last.note=(S.play.draft||'').trim(); S.play.noteDirty=false; qs.disabled=true; await saveDoc('chrono/s'+S.seed, 'ssi-play-'+S.seed, doc); renderQuiz(); });
   const rs=el.querySelector('#resetPlay'); if(rs) rs.addEventListener('click', async ()=>{ if(!confirm('Restart this household? Your answers on it are cleared (notes are kept).')) return; const old=playDoc(); S.play.doc={perDay:old.perDay, visits:old.visits, looks:old.looks, answers:[], started:new Date().toISOString()}; S.play.tried=[]; S.play.done=false; renderQuiz(); await saveDoc('chrono/s'+S.seed, 'ssi-play-'+S.seed, S.play.doc); });
