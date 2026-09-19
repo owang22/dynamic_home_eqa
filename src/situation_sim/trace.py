@@ -131,3 +131,57 @@ def write_hidden_state(path: pathlib.Path, hh: Household, sits: List[DaySituatio
         "stats": res.stats,
     }
     path.write_text(json.dumps(state, indent=1, sort_keys=True) + "\n")
+
+
+# ---------------------------------------------------------------------------
+# Structured trace for the inspection page
+# ---------------------------------------------------------------------------
+import re as _re
+
+_TAG_RE = _re.compile(r" \[(?:because of |shifted by )?([^\]]+)\]")
+
+
+def _line_kind(text: str, indent: bool) -> str:
+    if indent:
+        if "WHIM" in text:
+            return "whim"
+        if text.startswith("keeps "):
+            return "keep"
+        if text.startswith("forgets "):
+            return "forget"
+        if "→" in text:
+            return "move"
+        return "note"
+    if " leaves for " in text:
+        return "trip"
+    if " is back from " in text:
+        return "back"
+    if " finishes " in text:
+        return "end"
+    return "start"
+
+
+def write_trace_json(path: pathlib.Path, hh: Household, res: RunResult) -> None:
+    """Same content as trace.md, but one record per line with the cause tags
+    split out (so a viewer can hide them) and the object ids mentioned."""
+    obj_ids = sorted(hh.objects, key=len, reverse=True)
+    obj_re = _re.compile(r"\b(" + "|".join(_re.escape(o) for o in obj_ids) + r")\b")
+    rec_re = _re.compile(r"\b(" + "|".join(_re.escape(r) for r in sorted(hh.receptacles, key=len, reverse=True)) + r")\b")
+    days = []
+    for sit, lines in res.trace_days:
+        recs = []
+        for l in lines:
+            tags: List[str] = []
+            for m in _TAG_RE.finditer(l.text):
+                tags += [t.strip() for t in m.group(1).split(",")]
+            text = _TAG_RE.sub("", l.text)
+            recs.append({
+                "minute": l.minute, "indent": l.indent, "text": text,
+                "kind": _line_kind(text, l.indent), "tags": tags,
+                "objects": sorted(set(obj_re.findall(text))),
+                "receptacles": sorted(set(rec_re.findall(text))),
+                "resident": next((r.id for r in sorted(hh.residents.values(), key=lambda r: r.id)
+                                  if not l.indent and text.startswith(r.name.capitalize() + " ")), None),
+            })
+        days.append({"day_index": sit.day_index, "weekday": sit.weekday, "lines": recs})
+    path.write_text(json.dumps({"days": days}, indent=None, sort_keys=True) + "\n")

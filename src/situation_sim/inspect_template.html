@@ -1,0 +1,378 @@
+<title>Situation Sim Inspector</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:wght@600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --bg:#f5f7f4; --panel:#ffffff; --panel2:#eef2ee; --ink:#1b2321; --muted:#5f6d68; --line:#d6ddd8; --line2:#e7ece8;
+  --accent:#137068; --accent-ink:#ffffff; --accent-soft:#d9eeea;
+  --whim:#b6741a; --whim-soft:#f6e9d2;
+  --event:#5f4bb0; --event-soft:#e6e1f5;
+  --internal:#a8475a; --internal-soft:#f3dfe3;
+  --ok:#2c7a4b; --ok-soft:#d8eedf; --bad:#b3352b; --bad-soft:#f4dcd9;
+  --seg-l:62%;
+  --sans:"Source Sans 3",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141917; --panel:#1b2220; --panel2:#222b28; --ink:#e4eae6; --muted:#98a69f; --line:#2c3733; --line2:#232d2a;
+    --accent:#4dc0b0; --accent-ink:#0f1716; --accent-soft:#193a36;
+    --whim:#e0a24a; --whim-soft:#3a2d16;
+    --event:#a695e8; --event-soft:#2a2440;
+    --internal:#e08496; --internal-soft:#3d2228;
+    --ok:#6fcf97; --ok-soft:#1d3527; --bad:#ef8a80; --bad-soft:#3d2320;
+    --seg-l:46%;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141917; --panel:#1b2220; --panel2:#222b28; --ink:#e4eae6; --muted:#98a69f; --line:#2c3733; --line2:#232d2a;
+  --accent:#4dc0b0; --accent-ink:#0f1716; --accent-soft:#193a36;
+  --whim:#e0a24a; --whim-soft:#3a2d16;
+  --event:#a695e8; --event-soft:#2a2440;
+  --internal:#e08496; --internal-soft:#3d2228;
+  --ok:#6fcf97; --ok-soft:#1d3527; --bad:#ef8a80; --bad-soft:#3d2320;
+  --seg-l:46%;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45;margin:0}
+button,select,input{font:inherit;color:inherit}
+a{color:var(--accent)}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding-block:10px}
+h1{font-family:var(--serif);font-weight:600;font-size:20px;margin:0;letter-spacing:.01em}
+.tabs{display:flex;gap:4px;flex-wrap:wrap}
+.tabs button{background:transparent;border:1px solid transparent;border-radius:6px;padding:5px 11px;cursor:pointer;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--panel);border-color:var(--line);color:var(--ink);font-weight:600}
+.tabs button:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.spacer{flex:1}
+.seed{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px}
+.seed select{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+.switch{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none}
+.switch input{accent-color:var(--accent);width:16px;height:16px;margin:0}
+main{padding-block:18px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 14px}
+h2{font-size:16px;margin:0 0 10px;font-weight:700}
+h3{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;font-weight:600}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.grid2{display:grid;grid-template-columns:320px 1fr;gap:16px;align-items:start}
+@media (max-width:860px){.grid2{grid-template-columns:1fr}}
+.stack{display:flex;flex-direction:column;gap:14px}
+.sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + 62px)}
+@media (max-width:860px){.sticky{position:static}}
+.id{font-family:var(--mono);font-size:12.5px;padding:0 4px;border-radius:4px;background:var(--panel2);white-space:nowrap}
+.id.obj{cursor:pointer;border-bottom:1px solid var(--accent)}
+.id.obj:hover{background:var(--accent-soft)}
+.id.rec{color:var(--muted)}
+.tag{display:inline-block;font-size:11.5px;padding:1px 7px;border-radius:999px;margin-left:4px;font-family:var(--mono);vertical-align:middle}
+.tag.event{background:var(--event-soft);color:var(--event)}
+.tag.internal{background:var(--internal-soft);color:var(--internal)}
+.tag.whim{background:var(--whim-soft);color:var(--whim);font-family:var(--sans);font-weight:600}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line2);vertical-align:top}
+th{font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.tablewrap{overflow-x:auto}
+.bar{height:6px;border-radius:3px;background:var(--line2);position:relative;min-width:70px}
+.bar>i{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--accent)}
+.bar.rose>i{background:var(--internal)}
+.bar.amber>i{background:var(--whim)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:14px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.daytabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px}
+.daytabs button{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 12px;cursor:pointer}
+.daytabs button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.cause{padding:8px 10px;border-radius:8px;margin-bottom:6px;font-size:14px;border-left:3px solid var(--event);background:var(--event-soft)}
+.cause.internal{border-left-color:var(--internal);background:var(--internal-soft)}
+.cause .id{background:transparent;padding:0;font-weight:500}
+.hiddenbox{border:1px dashed var(--line);border-radius:8px;padding:12px;color:var(--muted);font-size:14px;text-align:center}
+.hiddenbox button{margin-top:8px}
+.btn{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 12px;cursor:pointer}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.btn:disabled{opacity:.5;cursor:default}
+.controls{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-bottom:10px;font-size:13px;color:var(--muted)}
+.controls input[type=text],.controls select,.field select,.field input{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+.timeline{font-size:14px}
+.tl{display:grid;grid-template-columns:52px 1fr;gap:0 10px;padding:3px 0;border-bottom:1px solid var(--line2)}
+.tl .t{font-family:var(--mono);font-size:12.5px;color:var(--muted);padding-top:2px}
+.tl.indent{grid-template-columns:52px 1fr;border-bottom:none;padding:1px 0}
+.tl.indent .t{visibility:hidden}
+.tl.indent .x{padding-left:18px;color:var(--ink)}
+.tl.whim .x{background:var(--whim-soft);border-radius:4px;padding:2px 6px 2px 18px}
+.tl.head .x{font-weight:600}
+.tl.trip .x,.tl.back .x{font-weight:600;color:var(--accent)}
+.tl.dim{opacity:.32}
+.tl.hit .x{background:var(--accent-soft);border-radius:4px;padding:2px 6px}
+.tl.indent.hit .x{padding-left:18px}
+.tl.future{opacity:.25;filter:blur(1.5px)}
+.strip{display:flex;flex-direction:column;gap:3px;margin:10px 0}
+.strow{display:grid;grid-template-columns:36px 1fr;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
+.strow .segs{display:flex;height:18px;border-radius:4px;overflow:hidden;background:var(--panel2)}
+.seg{height:100%;min-width:1px}
+.seg.person{background:repeating-linear-gradient(45deg,var(--muted) 0 3px,transparent 3px 6px)}
+.seg.out{background:var(--muted);opacity:.55}
+.hours{display:grid;grid-template-columns:36px 1fr;gap:8px;font-size:11px;color:var(--muted)}
+.hours .h{display:flex;justify-content:space-between;font-family:var(--mono)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12.5px;margin-top:6px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:10px}
+.stat{background:var(--panel2);border-radius:8px;padding:8px 10px}
+.stat b{display:block;font-size:20px;font-variant-numeric:tabular-nums;font-weight:600}
+.stat span{font-size:12px;color:var(--muted)}
+.q{font-size:20px;font-family:var(--serif);margin:6px 0 12px;text-wrap:balance}
+.field{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}
+.verdict{border-radius:8px;padding:10px 12px;margin-top:12px;font-size:14px}
+.verdict.ok{background:var(--ok-soft);border-left:3px solid var(--ok)}
+.verdict.bad{background:var(--bad-soft);border-left:3px solid var(--bad)}
+.verdict.none{background:var(--panel2);border-left:3px solid var(--muted)}
+.mark{font-weight:700}
+.mark.ok{color:var(--ok)}.mark.bad{color:var(--bad)}
+.small{font-size:13px;color:var(--muted)}
+.evid .tl{grid-template-columns:82px 1fr}
+.evid .tl .t{visibility:visible}
+details{margin-top:8px}
+summary{cursor:pointer;color:var(--muted);font-size:13px}
+.hist{font-size:13px;margin-top:8px}
+.hist div{padding:3px 0;border-bottom:1px solid var(--line2)}
+@media (prefers-reduced-motion:no-preference){.tl.hit .x{transition:background .2s}}
+</style>
+
+<header class="top"><div class="wrap">
+  <h1>Situation Sim Inspector</h1>
+  <nav class="tabs" role="tablist" id="tabs">
+    <button role="tab" data-view="household">Household</button>
+    <button role="tab" data-view="days">Days</button>
+    <button role="tab" data-view="objects">Objects</button>
+    <button role="tab" data-view="quiz">Quiz</button>
+  </nav>
+  <span class="spacer"></span>
+  <label class="seed">household <select id="seedSel"></select></label>
+  <label class="switch"><input type="checkbox" id="reveal"> reveal hidden causes</label>
+</div></header>
+
+<main class="wrap">
+  <section id="v-household" hidden></section>
+  <section id="v-days" hidden></section>
+  <section id="v-objects" hidden></section>
+  <section id="v-quiz" hidden></section>
+</main>
+
+<script type="application/json" id="data">/*__RUNS_JSON__*/</script>
+<script>
+(function(){
+"use strict";
+const DATA = JSON.parse(document.getElementById('data').textContent);
+const RUNS = DATA.runs, EVENTS = DATA.events;
+const DAYS = ["Wednesday","Thursday","Friday","Saturday","Sunday"];
+const DAY = 86400;
+const S = {seed: Object.keys(RUNS).sort((a,b)=>+a-+b)[0], view:'days', day:0, reveal:false, filter:'', movesOnly:false,
+           obj:null, quiz:{cutoff:'yesterday', pool:'moving', q:null, answered:false, score:null, hist:[]}};
+try{ const saved = JSON.parse(localStorage.getItem('ssi-state')||'{}'); Object.assign(S, {view:saved.view||S.view, seed: RUNS[saved.seed]?saved.seed:S.seed, day: saved.day||0}); }catch(e){}
+
+// ---------- data helpers ----------
+const run = () => RUNS[S.seed];
+const hh = () => run().state.household;
+const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
+const resName = id => hh().residents[id] ? cap(hh().residents[id].name) : id;
+const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtMin = m => `${String(Math.floor(Math.min(m,1439)/60)).padStart(2,'0')}:${String(Math.min(m,1439)%60).padStart(2,'0')}`;
+const fmtT = t => { const d=Math.floor(t/DAY), m=Math.floor((t%DAY)/60); return `${DAYS[d]||('day '+d)} ${fmtMin(m)}`; };
+const wd3 = d => (DAYS[d]||'').slice(0,3);
+let _rowsCache = {};
+function rowsFor(obj){ const k=S.seed+'|'+obj; if(!_rowsCache[k]) _rowsCache[k]=run().truth.filter(r=>r.object_id===obj).sort((a,b)=>a.t-b.t); return _rowsCache[k]; }
+function rowAt(obj, t){ const rs=rowsFor(obj); let lo=0,hi=rs.length-1,ans=null; while(lo<=hi){const mid=(lo+hi)>>1; if(rs[mid].t<=t){ans=rs[mid];lo=mid+1;} else hi=mid-1;} return ans; }
+function locAt(obj,t){ const r=rowAt(obj,t); return r?r.receptacle_id:null; }
+function timeWeighted(obj, until){ const rs=rowsFor(obj), acc={}; for(let i=0;i<rs.length;i++){ const a=rs[i].t, b=Math.min(i+1<rs.length?rs[i+1].t:Infinity, until); if(b<=a) continue; acc[rs[i].receptacle_id]=(acc[rs[i].receptacle_id]||0)+(b-a);} return acc; }
+function argmax(o){ let best=null,bv=-1; for(const k of Object.keys(o).sort()){ if(o[k]>bv){bv=o[k];best=k;} } return best; }
+function causeKind(id){ return id.startsWith('low_energy:')||id.startsWith('running_late:')||id.startsWith('distracted:')?'internal':'event'; }
+function causeWords(c){ if(c.kind==='event'){ const ev=EVENTS[c.event]||{}; const who=c.resident?resName(c.resident):'household'; return `<span class="id">${esc(c.id)}</span> <span class="small">(${who})</span> — ${esc(ev.description||'')} ${esc(ev.trace_words||'')}.`; } return `<span class="id">${esc(c.id)}</span> — ${esc(c.words)}.`; }
+function recColor(rec){ if(rec==='ON_PERSON'||rec==='OUT_OF_HOUSE') return null; let h=0; for(const ch of rec) h=(h*31+ch.charCodeAt(0))>>>0; return `hsl(${h%360} 48% var(--seg-l))`; }
+function linkIds(text){ // wrap object / receptacle ids
+  const objs = Object.keys(hh().objects).sort((a,b)=>b.length-a.length), recs=Object.keys(hh().receptacles).concat(['ON_PERSON','OUT_OF_HOUSE']).sort((a,b)=>b.length-a.length);
+  const re = new RegExp('\\b('+objs.concat(recs).map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\\b','g');
+  return esc(text).replace(re, m => hh().objects[m] ? `<span class="id obj" data-obj="${m}">${m}</span>` : `<span class="id rec">${m}</span>`);
+}
+function tagsHtml(tags){ if(!S.reveal||!tags.length) return ''; return tags.map(t=>`<span class="tag ${causeKind(t)}">${esc(t)}</span>`).join(''); }
+function save(){ try{ localStorage.setItem('ssi-state', JSON.stringify({view:S.view, seed:S.seed, day:S.day})); }catch(e){} }
+
+// ---------- shell ----------
+const seedSel = document.getElementById('seedSel');
+for(const k of Object.keys(RUNS).sort((a,b)=>+a-+b)){ const st=RUNS[k].state.household; const o=document.createElement('option'); o.value=k; o.textContent=`${st.id} · ${st.household_type} · ${Object.values(st.residents).map(r=>cap(r.name)).join(', ')}`; seedSel.appendChild(o); }
+seedSel.value=S.seed;
+seedSel.addEventListener('change', ()=>{ S.seed=seedSel.value; S.obj=null; S.quiz.q=null; S.quiz.answered=false; _rowsCache={}; save(); render(); });
+document.getElementById('reveal').addEventListener('change', e=>{ S.reveal=e.target.checked; render(); });
+document.getElementById('tabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; S.view=b.dataset.view; save(); render(); });
+document.addEventListener('click', e=>{ const el=e.target.closest('.id.obj'); if(el && !e.target.closest('.noclick')){ S.obj=el.dataset.obj; S.view='objects'; save(); render(); } });
+
+function render(){
+  for(const b of document.querySelectorAll('#tabs button')) b.setAttribute('aria-selected', b.dataset.view===S.view);
+  for(const v of ['household','days','objects','quiz']) document.getElementById('v-'+v).hidden = v!==S.view;
+  document.getElementById('reveal').checked = S.reveal;
+  ({household:renderHousehold, days:renderDays, objects:renderObjects, quiz:renderQuiz})[S.view]();
+}
+
+// ---------- household ----------
+function renderHousehold(){
+  const H=hh(), el=document.getElementById('v-household');
+  const res = Object.values(H.residents).sort((a,b)=>a.id.localeCompare(b.id));
+  const roleWords={worker_out:'works outside the home', worker_home:'works from home', retired:'retired'};
+  const bar=(v,cls='')=>`<div class="bar ${cls}" title="${v}"><i style="width:${Math.round(v*100)}%"></i></div>`;
+  let html = `<p class="sub">${esc(H.id)} · ${esc(H.household_type)} · ${H.rooms.length} rooms · ${Object.keys(H.objects).length} objects · seed ${H.seed}. Everything below is sampled from code; traits are hidden from any agent and only the generator sees them.</p>`;
+  html += `<div class="stack"><div class="panel"><h2>Residents</h2><div class="tablewrap"><table><thead><tr><th>Resident</th><th>Role</th><th>Tidiness</th><th>Punctuality</th><th>Forgets pocket items</th><th>Mood sensitivity</th><th>Sleeps / works</th></tr></thead><tbody>`;
+  for(const r of res){ html += `<tr><td><b>${cap(r.name)}</b><br><span class="small">${r.id}</span></td><td>${roleWords[r.role]}</td><td>${bar(r.tidiness)}<span class="small">${r.tidiness.toFixed(2)}</span></td><td><span class="small">jitter × ${r.jitter_scale.toFixed(2)}</span></td><td>${r.forget_level} <span class="small">(p ${r.forget_p})</span></td><td>${bar(r.mood_sensitivity,'rose')}<span class="small">${r.mood_sensitivity.toFixed(2)}</span></td><td><span class="id rec">${r.bedroom}</span> / <span class="id rec">${r.workspace}</span></td></tr>`; }
+  html += `</tbody></table></div></div>`;
+  html += `<div class="panel"><h2>Rooms and receptacles</h2><p class="small">Number in parentheses is the capacity; a full receptacle pushes a placement to the next home slot or a neighbour in the same room.</p><dl class="kv">`;
+  for(const room of H.rooms){ const recs=Object.values(H.receptacles).filter(r=>r.room===room).sort((a,b)=>a.id.localeCompare(b.id)); html += `<dt>${room}</dt><dd class="chips">${recs.map(r=>`<span class="id rec" style="border-bottom:2px solid ${recColor(r.id)}">${r.id} <span class="small">(${r.capacity})</span></span>`).join('')}</dd>`; }
+  html += `</dl></div>`;
+  html += `<div class="panel"><h2>Objects and their usual places</h2><p class="small">Primary slot first. "Used → sink" marks dishes that go to the sink after use. Click any object id anywhere on this page to open its track.</p><div class="tablewrap"><table><thead><tr><th>Owner</th><th>Object</th><th>Home slots</th><th>Notes</th></tr></thead><tbody>`;
+  for(const owner of res.map(r=>r.id).concat([null])){ const objs=Object.values(H.objects).filter(o=>o.owner===owner).sort((a,b)=>a.id.localeCompare(b.id)); objs.forEach((o,i)=>{ const notes=[]; if(o.pocket) notes.push('pocket item'); if(o.outdoor) notes.push('worn on trips'); if(o.group) notes.push('rides in '+H.groups[o.group].leader.replace(/_.*/,'')+' ('+o.group+')'); if(o.after_use) notes.push('used → '+o.after_use); html += `<tr><td>${i===0?(owner?cap(H.residents[owner].name):'Shared'):''}</td><td><span class="id obj" data-obj="${o.id}">${o.id}</span></td><td>${o.home.map(h=>`<span class="id rec">${h}</span>`).join(' ')}</td><td class="small">${notes.join('; ')}</td></tr>`; }); }
+  html += `</tbody></table></div></div>`;
+  const groups=Object.values(H.groups).sort((a,b)=>a.name.localeCompare(b.name));
+  if(groups.length){ html += `<div class="panel"><h2>Object groups</h2><p class="small">Things that travel together. Members ride inside the leader on trips unless a cause separates them (a sick day keeps the laptop home; the next activity needing the laptop takes it out of the bag).</p><ul>`; for(const g of groups) html += `<li><span class="id obj" data-obj="${g.leader}">${g.leader}</span> carries ${g.members.length?g.members.map(m=>`<span class="id obj" data-obj="${m}">${m}</span>`).join(', '):'<span class="small">nothing in particular</span>'} on ${g.kind==='bag'?'work trips and errands':'gym trips'}</li>`; html += `</ul></div>`; }
+  html += `</div>`;
+  el.innerHTML = html;
+}
+
+// ---------- days ----------
+function causesPanel(dayIdx, revealed){
+  const d = run().state.days[dayIdx];
+  const causes = d.causes.slice().sort((a,b)=>(a.kind+a.id).localeCompare(b.kind+b.id));
+  let html = `<h3>Hidden causes · ${DAYS[dayIdx]}</h3>`;
+  if(!revealed){ html += `<div class="hiddenbox">${causes.length} active cause${causes.length===1?'':'s'} today (${causes.filter(c=>c.kind==='event').length} external, ${causes.filter(c=>c.kind==='internal').length} internal).<br>Hidden so you can judge predictability from the visible trace alone.<br><button class="btn" data-act="reveal">Reveal</button></div>`; return html; }
+  if(!causes.length) html += `<p class="small">No active cause today.</p>`;
+  for(const c of causes) html += `<div class="cause ${c.kind}">${causeWords(c)}</div>`;
+  html += `<h3 style="margin-top:14px">Internal states</h3>`;
+  for(const rid of Object.keys(d.states).sort()){ const st=d.states[rid]; html += `<div class="small" style="margin-top:4px"><b>${resName(rid)}</b></div><dl class="kv" style="font-size:13px">`; for(const k of ['energy','hurriedness','distraction']){ const flagged=(d.flags[rid]||[]).some(f=>({energy:'low_energy',hurriedness:'running_late',distraction:'distracted'})[k]===f); html += `<dt>${k}</dt><dd><div class="bar ${flagged?'amber':''}"><i style="width:${Math.round(st[k]*100)}%"></i></div><span class="small">${st[k].toFixed(2)}${flagged?' · active':''}</span></dd>`; } html += `</dl>`; }
+  return html;
+}
+function lineHtml(l, opts={}){
+  const cls=['tl']; if(l.indent) cls.push('indent'); if(l.kind==='whim') cls.push('whim'); if(!l.indent) cls.push(l.kind==='trip'?'trip':l.kind==='back'?'back':'head');
+  if(opts.dim) cls.push('dim'); if(opts.hit) cls.push('hit'); if(opts.future) cls.push('future');
+  const whimTag = l.kind==='whim' ? '<span class="tag whim">whim</span>' : '';
+  return `<div class="${cls.join(' ')}"><span class="t">${opts.abs!==undefined?wd3(opts.abs)+' ':''}${fmtMin(l.minute)}</span><span class="x">${linkIds(l.text)}${whimTag}${tagsHtml(l.tags)}</span></div>`;
+}
+function renderDays(){
+  const el=document.getElementById('v-days'), day=run().trace[S.day];
+  let html = `<div class="daytabs">${DAYS.map((d,i)=>`<button data-day="${i}" aria-selected="${i===S.day}">${d}</button>`).join('')}</div>`;
+  html += `<div class="grid2"><aside class="panel sticky">${causesPanel(S.day, S.reveal)}</aside><div class="panel">`;
+  html += `<div class="controls"><input type="text" id="filter" placeholder="filter: object id, receptacle or resident name" value="${esc(S.filter)}" style="min-width:260px"><label class="switch"><input type="checkbox" id="movesOnly" ${S.movesOnly?'checked':''}> moves only</label><span>${day.lines.filter(l=>l.kind==='move'||l.kind==='whim').length} moves · ${day.lines.filter(l=>l.kind==='whim').length} whims · ${day.lines.filter(l=>l.kind==='trip').length} trips out</span></div>`;
+  html += `<div class="timeline">`;
+  const f=S.filter.trim().toLowerCase();
+  const matches = l => !f || l.text.toLowerCase().includes(f) || (l.resident && resName(l.resident).toLowerCase().includes(f));
+  for(const l of day.lines){ if(S.movesOnly && !(l.kind==='move'||l.kind==='whim'||l.kind==='trip'||l.kind==='back'||l.kind==='forget')) continue; html += lineHtml(l,{dim: f && !matches(l), hit: f && matches(l)}); }
+  html += `</div></div></div>`;
+  el.innerHTML = html;
+  el.querySelector('.daytabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if(b){ S.day=+b.dataset.day; save(); renderDays(); } });
+  el.querySelector('[data-act="reveal"]')?.addEventListener('click', ()=>{ S.reveal=true; render(); });
+  const fi=el.querySelector('#filter'); fi.addEventListener('input', ()=>{ S.filter=fi.value; const pos=fi.selectionStart; renderDays(); const nf=el.querySelector('#filter'); nf.focus(); nf.setSelectionRange(pos,pos); });
+  el.querySelector('#movesOnly').addEventListener('change', e=>{ S.movesOnly=e.target.checked; renderDays(); });
+}
+
+// ---------- objects ----------
+function renderObjects(){
+  const el=document.getElementById('v-objects'), H=hh();
+  const objs=Object.keys(H.objects).sort();
+  if(!S.obj||!H.objects[S.obj]) S.obj = objs.map(o=>[o, rowsFor(o).length]).sort((a,b)=>b[1]-a[1])[0][0];
+  const o=H.objects[S.obj], rows=rowsFor(S.obj), nDays=run().state.days.length, total=nDays*DAY;
+  const moves=rows.filter(r=>r.cause!=='initial'), whims=moves.filter(r=>r.whim);
+  const tw=timeWeighted(S.obj,total), homeShare=(tw[o.home[0]]||0)/total, distinct=Object.keys(tw).length;
+  let html = `<div class="controls"><label class="field">object <select id="objSel">${objs.map(x=>`<option ${x===S.obj?'selected':''}>${x}</option>`).join('')}</select></label>
+    <span>${esc(o.cls)} · ${o.owner?cap(H.residents[o.owner].name)+"'s":'shared'} · home ${o.home.map(h=>`<span class="id rec">${h}</span>`).join(' ')}${o.group?' · rides in '+esc(o.group):''}${o.after_use?' · used → <span class="id rec">'+o.after_use+'</span>':''}</span></div>`;
+  html += `<div class="stats"><div class="stat"><b>${moves.length}</b><span>moves over ${nDays} days</span></div><div class="stat"><b>${whims.length}</b><span>of them whims</span></div><div class="stat"><b>${distinct}</b><span>distinct places</span></div><div class="stat"><b>${Math.round(homeShare*100)}%</b><span>of time at primary slot</span></div><div class="stat"><b>${Math.round(((tw.OUT_OF_HOUSE||0)/total)*100)}%</b><span>of time out of the house</span></div></div>`;
+  html += `<div class="panel"><h3>Where it was, hour by hour</h3><div class="strip">`;
+  const used = new Set();
+  for(let d=0; d<nDays; d++){ let segs=''; const start=d*DAY, end=(d+1)*DAY; let t=start; let r=rowAt(S.obj,t); let idx=rows.indexOf(r);
+    while(t<end){ const nxt = idx+1<rows.length ? Math.min(rows[idx+1].t,end) : end; const w=(nxt-t)/DAY*100; const rec=r.receptacle_id; used.add(rec); const col=recColor(rec); segs += `<div class="seg ${rec==='ON_PERSON'?'person':rec==='OUT_OF_HOUSE'?'out':''}" style="width:${w}%;${col?'background:'+col:''}" title="${fmtT(t)}–${fmtT(nxt-1)} ${rec}"></div>`; t=nxt; if(idx+1<rows.length && rows[idx+1].t<=t){ idx++; r=rows[idx]; } }
+    html += `<div class="strow"><span>${wd3(d)}</span><div class="segs">${segs}</div></div>`; }
+  html += `</div><div class="hours"><span></span><div class="h"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div></div><div class="legend">${[...used].sort().map(rec=>`<span><i style="${recColor(rec)?'background:'+recColor(rec):rec==='ON_PERSON'?'background:repeating-linear-gradient(45deg,var(--muted) 0 3px,transparent 3px 6px)':'background:var(--muted);opacity:.55'}"></i>${rec}</span>`).join('')}</div></div>`;
+  html += `<div class="panel" style="margin-top:14px"><h3>Every move, with the generator's reason</h3><div class="tablewrap"><table><thead><tr><th>When</th><th>To</th><th>Step</th><th>Why</th></tr></thead><tbody>`;
+  for(const r of rows){ const step=r.cause.replace(':',' · '); html += `<tr class="${r.whim?'whim':''}"><td class="small" style="white-space:nowrap">${fmtT(r.t)}</td><td><span class="id rec">${r.receptacle_id}</span>${r.carrier?' <span class="small">('+resName(r.carrier)+')</span>':''}</td><td class="small">${esc(step)}</td><td>${r.whim?'<span class="tag whim" style="margin:0 6px 0 0">whim</span>was heading for <span class="id rec">'+r.intended+'</span>. ':''}${esc(r.reason||'')}${S.reveal?(r.causes||[]).map(c=>`<span class="tag ${causeKind(c)}">${esc(c)}</span>`).join(''):((r.causes||[]).length?' <span class="small">[cause hidden]</span>':'')}</td></tr>`; }
+  html += `</tbody></table></div></div>`;
+  el.innerHTML = html;
+  el.querySelector('#objSel').addEventListener('change', e=>{ S.obj=e.target.value; renderObjects(); });
+}
+
+// ---------- quiz ----------
+function cutoffFor(q){ const dayStart=q.day*DAY; switch(S.quiz.cutoff){ case 'yesterday': return dayStart-1; case 'morning': return Math.min(q.t, dayStart+8*3600); case 'hour': return q.t-3600; default: return q.t; } }
+function newQuestion(){
+  const H=hh(), objs=Object.keys(H.objects).sort().filter(o=>{ const n=rowsFor(o).filter(r=>r.cause!=='initial').length; if(S.quiz.pool==='moving') return n>=3; if(S.quiz.pool==='nonpocket') return n>=3 && !H.objects[o].pocket; return true; });
+  const pool = objs.length?objs:Object.keys(H.objects).sort();
+  const nDays=run().state.days.length;
+  const day = 1+Math.floor(Math.random()*(nDays-1)), minute = 7*60+Math.floor(Math.random()*(16.5*60));
+  const obj = pool[Math.floor(Math.random()*pool.length)];
+  S.quiz.q = {obj, day, minute, t: day*DAY+minute*60}; S.quiz.answered=false; S.quiz.given=null;
+}
+function baselines(q){ const c=cutoffFor(q), H=hh(), o=H.objects[q.obj];
+  const same={}; for(let d=0; d<q.day; d++){ const t=d*DAY+q.minute*60; if(t<=c){ const l=locAt(q.obj,t); if(l) same[l]=(same[l]||0)+1; } }
+  return [
+    {name:'Last seen', desc:'where the visible trace last put it', ans: locAt(q.obj, c)},
+    {name:'Most frequent', desc:'time-weighted mode of its places before the cutoff', ans: argmax(timeWeighted(q.obj, c))},
+    {name:'Same hour, earlier days', desc:'its usual place at this clock time on the days already seen', ans: Object.keys(same).length?argmax(same):null},
+    {name:'Primary home slot', desc:'the object\'s first home slot', ans: o.home[0]},
+  ];
+}
+function ensureScore(){ if(!S.quiz.score||S.quiz.score.seed!==S.seed){ S.quiz.score={seed:S.seed, n:0, you:0, dk:0, base:[0,0,0,0]}; S.quiz.hist=[]; } }
+function renderQuiz(){
+  const el=document.getElementById('v-quiz'), H=hh(); ensureScore();
+  if(!S.quiz.q) newQuestion();
+  const q=S.quiz.q, cut=cutoffFor(q), truthRow=rowAt(q.obj,q.t), truth=truthRow.receptacle_id, o=H.objects[q.obj];
+  let html = `<p class="sub">You are the agent. Pick what you are allowed to know, read the evidence, answer where the object is. Baselines answer with the same evidence. Toggle "reveal hidden causes" in the header to also see the day's situation.</p>`;
+  html += `<div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack"><div class="panel">`;
+  html += `<div class="controls"><label class="field">you know everything up to <select id="cutSel">${[['yesterday','end of the previous day'],['morning','08:00 that morning'],['hour','one hour before'],['now','the moment itself']].map(([v,l])=>`<option value="${v}" ${S.quiz.cutoff===v?'selected':''}>${l}</option>`).join('')}</select></label>
+    <label class="field">objects asked about <select id="poolSel">${[['moving','things that move (3+ moves)'],['nonpocket','moving, no phone/keys/wallet'],['all','everything']].map(([v,l])=>`<option value="${v}" ${S.quiz.pool===v?'selected':''}>${l}</option>`).join('')}</select></label></div>`;
+  html += `<div class="q noclick">Where is <span class="id" style="font-size:17px">${q.obj}</span> on ${DAYS[q.day]} at ${fmtMin(q.minute)}?</div>`;
+  const rooms=H.rooms.slice(); const recsByRoom = room => Object.values(H.receptacles).filter(r=>r.room===room).sort((a,b)=>a.id.localeCompare(b.id));
+  html += `<div class="row"><label class="field">your answer <select id="ansSel" ${S.quiz.answered?'disabled':''}><option value="">— choose a place —</option>${rooms.map(room=>`<optgroup label="${room}">${recsByRoom(room).map(r=>`<option value="${r.id}" ${S.quiz.given===r.id?'selected':''}>${r.id}</option>`).join('')}</optgroup>`).join('')}<optgroup label="elsewhere"><option value="ON_PERSON" ${S.quiz.given==='ON_PERSON'?'selected':''}>ON_PERSON (someone is carrying it)</option><option value="OUT_OF_HOUSE" ${S.quiz.given==='OUT_OF_HOUSE'?'selected':''}>OUT_OF_HOUSE</option></optgroup><optgroup label="pass"><option value="__dk" ${S.quiz.given==='__dk'?'selected':''}>don't know</option></optgroup></select></label>
+    <button class="btn primary" id="submit" ${S.quiz.answered?'disabled':''}>Check</button><button class="btn" id="next">${S.quiz.answered?'Next question':'Skip'}</button></div>`;
+  if(S.quiz.answered){
+    const given=S.quiz.given, ok=given===truth, dk=given==='__dk';
+    html += `<div class="verdict ${dk?'none':ok?'ok':'bad'}"><b>${dk?'Passed.':ok?'Correct.':'Not there.'}</b> It is at <span class="id rec">${truth}</span>${truthRow.carrier?' (carried by '+resName(truthRow.carrier)+')':''}.
+      <div class="small" style="margin-top:6px">Last move before then: ${fmtT(truthRow.t)} · ${esc(truthRow.cause.replace(':',' · '))}${truthRow.reason?' · '+esc(truthRow.reason):''}${truthRow.whim?' <span class="tag whim">whim</span> (was heading for <span class="id rec">'+truthRow.intended+'</span>)':''}${(truthRow.causes||[]).length?(S.reveal?(truthRow.causes).map(c=>`<span class="tag ${causeKind(c)}">${esc(c)}</span>`).join(''):' · attributed to a hidden cause'):''}</div></div>`;
+    html += `<div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>Answerer</th><th>Answer</th><th></th></tr></thead><tbody>`;
+    html += `<tr><td><b>You</b></td><td>${dk?'<span class="small">don\'t know</span>':'<span class="id rec">'+esc(given)+'</span>'}</td><td class="mark ${ok?'ok':'bad'}">${dk?'—':ok?'✓':'✗'}</td></tr>`;
+    for(const b of baselines(q)) html += `<tr><td>${b.name}<br><span class="small">${b.desc}</span></td><td>${b.ans?'<span class="id rec">'+b.ans+'</span>':'<span class="small">no answer</span>'}</td><td class="mark ${b.ans===truth?'ok':'bad'}">${b.ans===truth?'✓':'✗'}</td></tr>`;
+    html += `</tbody></table></div>`;
+  }
+  html += `</div>`;
+  const sc=S.quiz.score;
+  html += `<div class="panel"><h3>Score on this household · ${sc.n} question${sc.n===1?'':'s'}</h3><div class="tablewrap"><table><thead><tr><th>Answerer</th><th class="num">Correct</th><th class="num">Accuracy</th></tr></thead><tbody>
+    <tr><td><b>You</b> <span class="small">(${sc.dk} passed)</span></td><td class="num">${sc.you}</td><td class="num">${sc.n?Math.round(100*sc.you/sc.n)+'%':'—'}</td></tr>
+    ${['Last seen','Most frequent','Same hour, earlier days','Primary home slot'].map((n,i)=>`<tr><td>${n}</td><td class="num">${sc.base[i]}</td><td class="num">${sc.n?Math.round(100*sc.base[i]/sc.n)+'%':'—'}</td></tr>`).join('')}</tbody></table></div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="resetScore">Reset score</button></div>
+    ${S.quiz.hist.length?`<div class="hist">${S.quiz.hist.slice(-8).reverse().map(h=>`<div>${h.ok?'<span class="mark ok">✓</span>':h.dk?'—':'<span class="mark bad">✗</span>'} <span class="id">${h.obj}</span> ${wd3(h.day)} ${fmtMin(h.minute)} → <span class="id rec">${h.truth}</span>${h.whim?' <span class="tag whim">whim</span>':''}</div>`).join('')}</div>`:''}</div>`;
+  // own query
+  html += `<div class="panel"><h3>Ask your own</h3><div class="row"><label class="field">object <select id="ownObj">${Object.keys(H.objects).sort().map(x=>`<option ${x===(S.quiz.own?.obj||q.obj)?'selected':''}>${x}</option>`).join('')}</select></label><label class="field">day <select id="ownDay">${DAYS.slice(0,run().state.days.length).map((d,i)=>`<option value="${i}" ${i===(S.quiz.own?.day??q.day)?'selected':''}>${d}</option>`).join('')}</select></label><label class="field">time <input type="time" id="ownTime" value="${fmtMin(S.quiz.own?.minute??q.minute)}"></label><button class="btn" id="ownGo">Look up</button></div><div id="ownOut">${S.quiz.own?ownAnswer(S.quiz.own):''}</div></div>`;
+  html += `</div>`;
+  // evidence
+  html += `<div class="panel evid"><h3>Evidence you may use</h3><p class="small">Object: ${esc(o.cls)}, ${o.owner?cap(H.residents[o.owner].name)+"'s":'shared'}; usual places ${o.home.map(h=>`<span class="id rec">${h}</span>`).join(' ')}${o.group?'; rides in '+esc(o.group):''}. Cutoff: ${cut<0?'nothing yet':fmtT(cut)}.</p>`;
+  if(S.reveal){ const dcs=run().state.days[q.day].causes; html += `<details open><summary>Today's hidden causes (revealed)</summary>${dcs.length?dcs.map(c=>`<div class="cause ${c.kind}">${causeWords(c)}</div>`).join(''):'<p class="small">none</p>'}</details>`; }
+  const showAll = !!S.quiz.showAll;
+  html += `<div class="controls"><label class="switch"><input type="checkbox" id="showAll" ${showAll?'checked':''}> show every line, not only this object's</label></div><div class="timeline">`;
+  let shown=0;
+  for(let d=0; d<=q.day; d++){ const lines=run().trace[d].lines; let any=false, block='';
+    for(const l of lines){ const at=d*DAY+l.minute*60; const mine=l.objects.includes(q.obj); if(!showAll && !mine) continue; if(at>cut){ if(S.quiz.answered && at<=q.t && mine){ block += lineHtml(l,{abs:d, future:true}); } continue; } block += lineHtml(l,{abs:d, hit: showAll && mine}); any=true; shown++; }
+    if(any||block) html += `<div class="small" style="margin:8px 0 2px;font-weight:600">${DAYS[d]}</div>`+block; }
+  if(!shown) html += `<p class="small">Nothing about this object is visible before the cutoff. Only the household facts above are known.</p>`;
+  if(S.quiz.answered) html += `<p class="small" style="margin-top:8px">Blurred lines happened after your cutoff and before the question time; they are the part you had to predict.</p>`;
+  html += `</div></div></div>`;
+  el.innerHTML = html;
+  el.querySelector('#cutSel').addEventListener('change', e=>{ S.quiz.cutoff=e.target.value; renderQuiz(); });
+  el.querySelector('#poolSel').addEventListener('change', e=>{ S.quiz.pool=e.target.value; newQuestion(); renderQuiz(); });
+  el.querySelector('#ansSel').addEventListener('change', e=>{ S.quiz.given=e.target.value||null; });
+  el.querySelector('#submit').addEventListener('click', ()=>{ if(!S.quiz.given) return; S.quiz.answered=true; const dk=S.quiz.given==='__dk', ok=S.quiz.given===truth; sc.n++; if(ok) sc.you++; if(dk) sc.dk++; baselines(q).forEach((b,i)=>{ if(b.ans===truth) sc.base[i]++; }); S.quiz.hist.push({obj:q.obj, day:q.day, minute:q.minute, truth, ok, dk, whim: !!truthRow.whim}); renderQuiz(); });
+  el.querySelector('#next').addEventListener('click', ()=>{ newQuestion(); renderQuiz(); });
+  el.querySelector('#resetScore').addEventListener('click', ()=>{ S.quiz.score=null; S.quiz.hist=[]; renderQuiz(); });
+  el.querySelector('#showAll').addEventListener('change', e=>{ S.quiz.showAll=e.target.checked; renderQuiz(); });
+  el.querySelector('#ownGo').addEventListener('click', ()=>{ const [h,m]=el.querySelector('#ownTime').value.split(':').map(Number); S.quiz.own={obj:el.querySelector('#ownObj').value, day:+el.querySelector('#ownDay').value, minute:h*60+m}; renderQuiz(); });
+}
+function ownAnswer(own){ const t=own.day*DAY+own.minute*60, r=rowAt(own.obj,t); if(!r) return ''; const dayRows=rowsFor(own.obj).filter(x=>Math.floor(x.t/DAY)===own.day);
+  let html=`<div class="verdict none" style="margin-top:10px"><span class="id">${own.obj}</span> at ${fmtT(t)} is at <span class="id rec">${r.receptacle_id}</span>${r.carrier?' (carried by '+resName(r.carrier)+')':''}. <span class="small">Since ${fmtT(r.t)} · ${esc(r.cause.replace(':',' · '))}${r.reason?' · '+esc(r.reason):''}${r.whim?' <span class="tag whim">whim</span>':''}${S.reveal?(r.causes||[]).map(c=>`<span class="tag ${causeKind(c)}">${esc(c)}</span>`).join(''):''}</span></div>`;
+  if(dayRows.length) html += `<div class="small" style="margin-top:6px">That day: ${dayRows.map(x=>`${fmtMin(Math.floor((x.t%DAY)/60))} → <span class="id rec">${x.receptacle_id}</span>`).join(' · ')}</div>`;
+  return html; }
+
+render();
+})();
+</script>

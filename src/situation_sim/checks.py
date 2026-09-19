@@ -78,7 +78,7 @@ def run_checks(out: pathlib.Path, seed: int, n_days: int) -> bool:
     try:
         generate(seed, tmp, n_days)
         same = all(_sha(out / f) == _sha(tmp / f)
-                   for f in ("trace.md", "events.jsonl", "hidden_state.json"))
+                   for f in ("trace.md", "events.jsonl", "hidden_state.json", "trace.json"))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     print(f"[4] second run at seed {seed} byte-identical: {'PASS' if same else 'FAIL'}")
