@@ -62,6 +62,7 @@ h3{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 @media (max-width:860px){.sticky{position:static}}
 .id{font-family:var(--mono);font-size:12.5px;padding:0 4px;border-radius:4px;background:var(--panel2);white-space:nowrap}
 .id.obj{cursor:pointer;border-bottom:1px solid var(--accent)}
+#v-quiz .id.rec{cursor:pointer}
 .id.obj:hover{background:var(--accent-soft)}
 .id.rec{color:var(--muted)}
 .tag{display:inline-block;font-size:11.5px;padding:1px 7px;border-radius:999px;margin-left:4px;font-family:var(--mono);vertical-align:middle}
@@ -202,10 +203,12 @@ function save(){ try{ localStorage.setItem('ssi-state', JSON.stringify({view:S.v
 const seedSel = document.getElementById('seedSel');
 for(const k of Object.keys(RUNS).sort((a,b)=>+a-+b)){ const st=RUNS[k].state.household; const o=document.createElement('option'); o.value=k; o.textContent=`${st.id} · ${st.household_type} · ${Object.values(st.residents).map(r=>cap(r.name)).join(', ')}`; seedSel.appendChild(o); }
 seedSel.value=S.seed;
-seedSel.addEventListener('change', async ()=>{ S.seed=seedSel.value; S.obj=null; S.quiz.q=null; S.quiz.tried=[]; S.quiz.done=false; S.play={doc:null, loaded:false, tried:[], done:false}; _rowsCache={}; save(); render(); if(DB_READY){ await loadPersisted(); render(); } });
+seedSel.addEventListener('change', async ()=>{ S.seed=seedSel.value; S.obj=null; S.play={doc:null, loaded:false, done:false}; S.mem={tab:'object', obj:null, place:null}; _rowsCache={}; save(); render(); if(DB_READY){ await loadPersisted(); render(); } });
 document.getElementById('reveal').addEventListener('change', e=>{ S.reveal=e.target.checked; render(); });
 document.getElementById('tabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; S.view=b.dataset.view; save(); render(); });
-document.addEventListener('click', e=>{ const el=e.target.closest('.id.obj'); if(el && !e.target.closest('.noclick')){ S.obj=el.dataset.obj; S.view='objects'; save(); render(); } });
+document.addEventListener('click', e=>{ if(e.target.closest('.noclick')) return; const el=e.target.closest('.id.obj'); const rc=e.target.closest('.id.rec');
+  if(el){ const id=el.dataset.obj||el.textContent.trim(); if(S.view==='quiz'){ S.mem.tab='object'; S.mem.obj=id; renderQuiz(); } else { S.obj=id; S.view='objects'; save(); render(); } }
+  else if(rc && S.view==='quiz'){ const id=rc.textContent.trim(); if(hh().receptacles[id]){ S.mem.tab='place'; S.mem.place=id; renderQuiz(); } } });
 
 function render(){
   for(const b of document.querySelectorAll('#tabs button')) b.setAttribute('aria-selected', b.dataset.view===S.view);
@@ -225,7 +228,7 @@ function renderHousehold(){
   html += `<div class="stack"><div class="panel"><h2>Residents</h2><div class="tablewrap"><table><thead><tr><th>Resident</th><th>Role</th><th>Tidiness</th><th>Punctuality</th><th>Forgets pocket items</th><th>Mood sensitivity</th><th>Sleeps / works</th></tr></thead><tbody>`;
   for(const r of res){ html += `<tr><td><b>${cap(r.name)}</b><br><span class="small">${r.id}</span></td><td>${roleWords[r.role]||r.role}<br><span class="small">hobbies: ${(r.hobbies||[]).join(', ')||'none'}<br>chores: ${(r.chores||[]).join(', ')||'none'}</span></td><td>${bar(r.tidiness)}<span class="small">${r.tidiness.toFixed(2)}</span></td><td><span class="small">jitter × ${r.jitter_scale.toFixed(2)}</span></td><td>${r.forget_level} <span class="small">(p ${r.forget_p})</span></td><td>${bar(r.mood_sensitivity,'rose')}<span class="small">${r.mood_sensitivity.toFixed(2)}</span></td><td><span class="id rec">${r.bedroom}</span> / <span class="id rec">${r.workspace}</span></td></tr>`; }
   html += `</tbody></table></div></div>`;
-  html += `<div class="panel"><h2>Rooms and receptacles</h2><p class="small">Number in parentheses is the capacity; a full receptacle pushes a placement to the next home slot or a neighbour in the same room.</p><dl class="kv">`;
+  html += `<div class="panel"><h2>Rooms and spots</h2><p class="small">Number in parentheses is the capacity; a full spot pushes a placement to the next home slot or a neighbour in the same room.</p><dl class="kv">`;
   for(const room of H.rooms){ const recs=Object.values(H.receptacles).filter(r=>r.room===room).sort((a,b)=>a.id.localeCompare(b.id)); html += `<dt>${room}</dt><dd class="chips">${recs.map(r=>`<span class="id rec" style="border-bottom:2px solid ${recColor(r.id)}">${r.id} <span class="small">(${r.capacity})</span></span>`).join('')}</dd>`; }
   html += `</dl></div>`;
   html += `<div class="panel"><h2>Objects and their usual places</h2><p class="small">Primary slot first. "Used → sink" marks dishes that go to the sink after use. Click any object id anywhere on this page to open its track.</p><div class="tablewrap"><table><thead><tr><th>Owner</th><th>Object</th><th>Home slots</th><th>Notes</th></tr></thead><tbody>`;
@@ -259,7 +262,7 @@ function renderDays(){
   const el=document.getElementById('v-days'), day=run().trace[S.day];
   let html = `<div class="daytabs">${DAYS.map((d,i)=>`<button data-day="${i}" aria-selected="${i===S.day}">${d}</button>`).join('')}</div>`;
   html += `<div class="grid2"><aside class="panel sticky">${causesPanel(S.day, S.reveal)}</aside><div class="panel">`;
-  html += `<div class="controls"><input type="text" id="filter" placeholder="filter: object id, receptacle or resident name" value="${esc(S.filter)}" style="min-width:260px"><label class="switch"><input type="checkbox" id="movesOnly" ${S.movesOnly?'checked':''}> moves only</label><span>ground truth · ${day.lines.filter(l=>l.kind==='move'||l.kind==='whim').length} moves · ${day.lines.filter(l=>l.kind==='whim').length} whims · ${day.lines.filter(l=>l.kind==='trip').length} trips out</span></div>`;
+  html += `<div class="controls"><input type="text" id="filter" placeholder="filter: object id, spot or resident name" value="${esc(S.filter)}" style="min-width:260px"><label class="switch"><input type="checkbox" id="movesOnly" ${S.movesOnly?'checked':''}> moves only</label><span>ground truth · ${day.lines.filter(l=>l.kind==='move'||l.kind==='whim').length} moves · ${day.lines.filter(l=>l.kind==='whim').length} whims · ${day.lines.filter(l=>l.kind==='trip').length} trips out</span></div>`;
   html += `<div class="timeline">`;
   const f=S.filter.trim().toLowerCase();
   const matches = l => !f || l.text.toLowerCase().includes(f) || (l.resident && resName(l.resident).toLowerCase().includes(f));
@@ -298,240 +301,227 @@ function renderObjects(){
 
 // ---------- persistence (artifact db when granted, else this browser only) ----------
 let DB=null, DB_READY=false, SYNC='connecting';
+const GEN='g3';   // storage generation: bump when households or the task change
 const lsGet=(k,d)=>{ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } };
 const lsSet=(k,v)=>{ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} };
+const thaw = x => x==null ? x : JSON.parse(JSON.stringify(x));   // db snapshots are frozen
 async function loadDoc(path, lsKey){ if(DB){ try{ const snap=await DB.doc(path).get(); if(snap.exists) return snap.data(); return null; }catch(e){ SYNC='error'; } } return lsGet(lsKey, null); }
 async function saveDoc(path, lsKey, data){ lsSet(lsKey, data); if(DB){ try{ await DB.doc(path).set(data); SYNC='synced'; }catch(e){ SYNC='error'; } } refreshSyncBadge(); }
-function refreshSyncBadge(){ const b=document.getElementById('syncBadge'); if(!b) return; b.textContent = SYNC==='synced'?'notes and answers saved to the artifact (Claude can read them)': SYNC==='local'?'saved in this browser only — Claude cannot read these': SYNC==='error'?'saving to the artifact failed; kept in this browser':'connecting…'; }
+function refreshSyncBadge(){ for(const b of document.querySelectorAll('.syncBadge')) b.textContent = SYNC==='synced'?'saved to the artifact (Claude can read it)': SYNC==='local'?'saved in this browser only — Claude cannot read this': SYNC==='error'?'saving to the artifact failed; kept in this browser':'connecting…'; }
 (async()=>{ try{ if(window.claude && window.claude.use){ DB = await window.claude.use('db'); } }catch(e){ DB=null; } SYNC = DB?'synced':'local'; DB_READY=true; await loadPersisted(); if(S.view==='quiz') render(); else refreshSyncBadge(); })();
-// documents delivered by the artifact db are frozen: clone them before mutating
-const thaw = x => x==null ? x : JSON.parse(JSON.stringify(x));
-async function loadPersisted(){ const notes=await loadDoc('notes/g2s'+S.seed, 'ssi-notes-g2-'+S.seed); S.notes = thaw((notes&&notes.entries)||[]); const play=await loadDoc('chrono/g2s'+S.seed, 'ssi-play-g2-'+S.seed); S.play.doc = thaw(play)||null; S.play.loaded=true; }
+const docPath = kind => `${kind}/${GEN}s${S.seed}`;
+const lsKey = kind => `ssi-${kind}-${GEN}-${S.seed}`;
+async function loadPersisted(){ const notes=await loadDoc(docPath('notes'), lsKey('notes')); S.notes = thaw((notes&&notes.entries)||[]); const run_=await loadDoc(docPath('chrono'), lsKey('chrono')); S.play.doc = thaw(run_)||null; S.play.loaded=true; }
+const saveRun = () => saveDoc(docPath('chrono'), lsKey('chrono'), runDoc());
 
-// ---------- observations (sparse, generated from truth) ----------
-let _obsCache={};
-function buildObs(V){ const key=S.seed+'|'+V; if(_obsCache[key]) return _obsCache[key];
-  const H=hh(), rooms=H.rooms.slice().sort(), nDays=run().state.days.length, visits=[];
-  const recsIn = room => Object.values(H.receptacles).filter(r=>r.room===room).map(r=>r.id).sort();
-  const objs=Object.keys(H.objects).sort();
-  const visit=(room,t,kind)=>{ const contents={}; for(const rec of recsIn(room)) contents[rec]=objs.filter(o=>locAt(o,t)===rec); return {t, room, contents, kind}; };
-  const tourT=18*3600;                      // day-0 walkthrough at 18:00: every room once
-  for(const room of rooms) visits.push(visit(room,tourT,'tour'));
-  let k=0;
-  for(let d=0; d<nDays; d++) for(let i=0;i<V;i++){ const t=d*DAY + 7*3600 + Math.round(i*(15*3600)/Math.max(1,V-1)) + (V===1?5*3600:0); const room=rooms[k%rooms.length]; k++; if(d===0 && t<=tourT) continue; visits.push(visit(room,t,'patrol')); }
-  visits.sort((a,b)=>a.t-b.t);
-  return _obsCache[key]={visits};
-}
-function allVisits(V, extra){ const v=buildObs(V).visits; return extra&&extra.length ? v.concat(extra).sort((a,b)=>a.t-b.t) : v; }
-function knowledge(obj, cut, visits){ // what the observations say about obj up to cut
-  const seen=[]; for(const v of visits){ if(v.t>cut) break; for(const rec of Object.keys(v.contents)) if(v.contents[rec].includes(obj)) seen.push({t:v.t, rec, room:v.room, kind:v.kind}); }
+// ---------- the task: what the agent (you) can see and do ----------
+// Knowledge = the Wednesday 18:00 walkthrough (every room, contents and
+// people) + the looks you made or scheduled. No free patrol. A look is at
+// ROOM level: it reports every spot in the room and who is standing there.
+// Cost: LOOK_COST per look + TRAVEL when the robot has to change room;
+// each day has a budget. Verdicts are hidden until the day is over.
+S.play = S.play || {doc:null, loaded:false, done:false};
+S.notes = S.notes || [];
+S.mem = S.mem || {tab:'object', obj:null, place:null};
+const TOUR_T = 18*3600;
+function runDoc(){ if(!S.play.doc) S.play.doc={perDay:6, budget:12, travel:3, lookCost:1, answers:[], looks:[], pending:[], robot:homeBase(), showVerdicts:false, started:new Date().toISOString()}; return S.play.doc; }
+function homeBase(){ const H=hh(); const counts={}; for(const r of Object.values(H.receptacles)) counts[r.room]=(counts[r.room]||0)+1; return Object.keys(counts).sort((a,b)=>counts[b]-counts[a]||a.localeCompare(b))[0]; }
+function roomAt(res, t){ const rows=run().residents.filter(r=>r.resident_id===res).sort((a,b)=>a.t-b.t); let cur=null; for(const r of rows){ if(r.t<=t) cur=r.room; else break; } return cur; }
+function peopleIn(room, t){ return Object.keys(hh().residents).sort().filter(r=>roomAt(r,t)===room); }
+function roomVisit(room, t, kind, extra){ const H=hh(); const contents={}; for(const rec of Object.values(H.receptacles).filter(r=>r.room===room).map(r=>r.id).sort()) contents[rec]=Object.keys(H.objects).sort().filter(o=>locAt(o,t)===rec); return Object.assign({t, room, contents, people: peopleIn(room,t), kind}, extra||{}); }
+function walkthrough(){ return hh().rooms.slice().sort().map(room=>roomVisit(room, TOUR_T, 'tour')); }
+function knowledgeVisits(){ const doc=runDoc(); const v=walkthrough().concat(doc.looks.filter(l=>!l.failed).map(l=>Object.assign({}, l, {kind:'look'}))); v.sort((a,b)=>a.t-b.t); return v; }
+function knowledge(obj, cut, visits){ const seen=[]; for(const v of visits){ if(v.t>cut) break; for(const rec of Object.keys(v.contents)) if(v.contents[rec].includes(obj)) seen.push({t:v.t, rec, room:v.room, kind:v.kind}); }
   const last=seen.length?seen[seen.length-1]:null; let gone=null;
   if(last){ for(const v of visits){ if(v.t<=last.t) continue; if(v.t>cut) break; if(last.rec in v.contents && !v.contents[last.rec].includes(obj)){ gone=v.t; break; } } }
-  return {seen, last, gone};
-}
-function baselinesObs(q, cut, k, visits){ const kn=knowledge(q.obj,cut,visits);
+  return {seen, last, gone}; }
+// patrol baseline: its own fixed round-robin stream, 6 visits/day, never shown to you
+let _patrolCache={};
+function patrolVisits(){ const key=S.seed; if(_patrolCache[key]) return _patrolCache[key]; const rooms=hh().rooms.slice().sort(), nDays=run().state.days.length, out=walkthrough(); let k=0;
+  for(let d=0; d<nDays; d++) for(let i=0;i<6;i++){ const t=d*DAY+7*3600+i*3*3600; if(d===0 && t<=TOUR_T) continue; out.push(roomVisit(rooms[k%rooms.length], t, 'patrol')); k++; }
+  out.sort((a,b)=>a.t-b.t); return _patrolCache[key]=out; }
+const BASE_NAMES=['Last seen','Most frequent','Same hour, earlier days','Walkthrough spot','Round-robin patrol (last seen)'];
+function baselines(q, cut, k, visits){ const kn=knowledge(q.obj,cut,visits);
   const counts={}; for(const s of kn.seen) counts[s.rec]=(counts[s.rec]||0)+1;
   const byCount=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]||a.localeCompare(b));
-  const same={}; for(const s of kn.seen){ const clock=(s.t%DAY)/60, dm=Math.abs(clock-q.minute); if(Math.floor(s.t/DAY)<q.day && dm<=90) same[s.rec]=(same[s.rec]||0)+1; }
+  const same={}; for(const s of kn.seen){ const clock=(s.t%DAY)/60; if(Math.floor(s.t/DAY)<q.day && Math.abs(clock-q.minute)<=90) same[s.rec]=(same[s.rec]||0)+1; }
   const bySame=Object.keys(same).sort((a,b)=>same[b]-same[a]||a.localeCompare(b));
   const tour=kn.seen.find(s=>s.kind==='tour');
   const fill=(first)=>{ const out=[]; for(const r of [...first, ...byCount, ...(tour?[tour.rec]:[])]) if(r && !out.includes(r)) out.push(r); return out.slice(0,k); };
+  const pk=knowledge(q.obj, cut, patrolVisits()); const pcounts={}; for(const s of pk.seen) pcounts[s.rec]=(pcounts[s.rec]||0)+1; const pby=Object.keys(pcounts).sort((a,b)=>pcounts[b]-pcounts[a]||a.localeCompare(b));
+  const pfill=(first)=>{ const out=[]; for(const r of [...first, ...pby]) if(r && !out.includes(r)) out.push(r); return out.slice(0,k); };
   return [
-    {name:'Last seen', desc:'the last sighting, then the most-seen places', ranked: fill(kn.last?[kn.last.rec]:[])},
-    {name:'Most frequent', desc:'places it was sighted, most often first', ranked: fill(byCount)},
-    {name:'Same hour, earlier days', desc:'sightings within 90 min of this clock time on earlier days', ranked: fill(bySame)},
-    {name:'Walkthrough spot', desc:'where the Wednesday walkthrough saw it, then the most-seen places', ranked: fill(tour?[tour.rec]:[])},
-  ];
-}
-const BASE_NAMES=['Last seen','Most frequent','Same hour, earlier days','Walkthrough spot'];
+    {name:BASE_NAMES[0], desc:'your sightings: the last one, then the most-seen spots', ranked: fill(kn.last?[kn.last.rec]:[])},
+    {name:BASE_NAMES[1], desc:'your sightings: spots seen most often first', ranked: fill(byCount)},
+    {name:BASE_NAMES[2], desc:'your sightings within 90 min of this clock time on earlier days', ranked: fill(bySame)},
+    {name:BASE_NAMES[3], desc:'where the walkthrough saw it, then the most-seen spots', ranked: fill(tour?[tour.rec]:[])},
+    {name:BASE_NAMES[4], desc:'a fixed tour of one room every 3 hours (6 a day) that you do NOT get; last sighting first', ranked: pfill(pk.last?[pk.last.rec]:[])},
+  ]; }
 
-// ---------- chronological play ----------
+// ---------- question sequence ----------
 function rng32(seed){ let a=seed>>>0; return ()=>{ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
-function activityWeight(o){ // distinct activities that brought/picked up/put down this object over the run
-  const acts=new Set(); for(const r of rowsFor(o)){ const m=/^(bring|pickup|trip|carry):(.+)$/.exec(r.cause||''); if(m) acts.add(m[2]); } return acts.size; }
-function weightedPool(){ const H=hh(); const items=Object.keys(H.objects).sort().filter(o=>!H.objects[o].static).map(o=>[o, activityWeight(o)+ (rowsFor(o).length>=4?1:0)]).filter(x=>x[1]>0); return items.length?items:Object.keys(H.objects).sort().map(o=>[o,1]); }
+function activityWeight(o){ const acts=new Set(); for(const r of rowsFor(o)){ const m=/^(bring|pickup|trip|carry):(.+)$/.exec(r.cause||''); if(m) acts.add(m[2]); } return acts.size; }
+function weightedPool(){ const H=hh(); const items=Object.keys(H.objects).sort().filter(o=>!H.objects[o].static).map(o=>[o, activityWeight(o)+(rowsFor(o).length>=4?1:0)]).filter(x=>x[1]>0); return items.length?items:Object.keys(H.objects).sort().map(o=>[o,1]); }
 function pickWeighted(items, r){ const tot=items.reduce((a,x)=>a+x[1],0); let u=r()*tot; for(const [o,w] of items){ u-=w; if(u<=0) return o; } return items[items.length-1][0]; }
-function movingPool(){ return weightedPool().map(x=>x[0]); }
-function playSequence(perDay){ const r=rng32(7919*(+S.seed+1)+perDay), pool=weightedPool(), nDays=run().state.days.length, qs=[]; let prev=null;
+function questionSequence(perDay){ const r=rng32(7919*(+S.seed+1)+perDay), pool=weightedPool(), nDays=run().state.days.length, qs=[]; let prev=null;
   for(let d=1; d<nDays; d++){ const mins=[]; for(let i=0;i<perDay;i++) mins.push(7*60+Math.floor(r()*(16*60))); mins.sort((a,b)=>a-b);
     for(const minute of mins){ let obj=pickWeighted(pool, r); if(obj===prev && pool.length>1) obj=pickWeighted(pool, r); prev=obj; qs.push({obj, day:d, minute, t:d*DAY+minute*60}); } }
   return qs; }
-function playDoc(){ if(!S.play.doc) S.play.doc={perDay:6, visits:6, looks:3, answers:[], started:new Date().toISOString()}; return S.play.doc; }
-function lookObsFrom(doc){ const H=hh(), out=[]; for(const a of doc.answers) for(const tr of a.tried){ if(!H.receptacles[tr.rec]) continue; const c={}; c[tr.rec]=tr.contents||[]; out.push({t:a.t, room:H.receptacles[tr.rec].room, contents:c, kind:'look'}); } return out; }
-function ensureScore(){ if(!S.quiz.score||S.quiz.score.seed!==S.seed||S.quiz.score.k!==S.quiz.looks){ S.quiz.score={seed:S.seed, k:S.quiz.looks, n:0, you1:0, youK:0, looksUsed:0, gaveUp:0, base:[[0,0],[0,0],[0,0],[0,0]]}; S.quiz.hist=[]; } }
-function scoreFromAnswers(answers, k){ const sc={n:0,you1:0,youK:0,looksUsed:0,gaveUp:0,base:[[0,0],[0,0],[0,0],[0,0]]}; for(const a of answers){ sc.n++; if(a.found&&a.tried[0]&&a.tried[0].hit) sc.you1++; if(a.found){ sc.youK++; sc.looksUsed+=a.looksUsed; } else sc.gaveUp++; a.base.forEach((b,i)=>{ sc.base[i][0]+=b[0]?1:0; sc.base[i][1]+=b[1]?1:0; }); } sc.k=k; return sc; }
-function scoreTable(sc, K, title){ return `<h3>${title}</h3><div class="tablewrap"><table><thead><tr><th>Answerer</th><th class="num">Right on 1st action</th><th class="num">Right in the end</th></tr></thead><tbody>
-    <tr><td><b>You</b> <span class="small">(${sc.gaveUp} wrong${sc.youK?'; '+(sc.looksUsed/sc.youK).toFixed(2)+' looks when right':''})</span></td><td class="num">${sc.you1} ${sc.n?'<span class="small">('+Math.round(100*sc.you1/sc.n)+'%)</span>':''}</td><td class="num">${sc.youK} ${sc.n?'<span class="small">('+Math.round(100*sc.youK/sc.n)+'%)</span>':''}</td></tr>
-    ${BASE_NAMES.map((n,i)=>`<tr><td>${n}</td><td class="num">${sc.base[i][0]} ${sc.n?'<span class="small">('+Math.round(100*sc.base[i][0]/sc.n)+'%)</span>':''}</td><td class="num">${sc.base[i][1]} ${sc.n?'<span class="small">('+Math.round(100*sc.base[i][1]/sc.n)+'%)</span>':''}</td></tr>`).join('')}</tbody></table></div>`; }
 
-// ---------- quiz (shared pieces) ----------
-Object.assign(S.quiz, {visits: S.quiz.visits||6, looks: S.quiz.looks||3, tried: [], done:false, own:null, mode: S.quiz.mode||'play'});
-S.play = S.play || {doc:null, loaded:false, tried:[], done:false};
-S.notes = S.notes || [];
-function cutoffFor(q){ const dayStart=q.day*DAY; switch(S.quiz.cutoff){ case 'yesterday': return dayStart-1; case 'morning': return Math.min(q.t, dayStart+8*3600); case 'hour': return q.t-3600; default: return q.t; } }
-function newQuestion(){
-  const H=hh(); let items=weightedPool(); if(S.quiz.pool==='nonpocket') items=items.filter(x=>!H.objects[x[0]].pocket); if(S.quiz.pool==='all') items=Object.keys(H.objects).sort().filter(o=>!H.objects[o].static).map(o=>[o,1]);
-  const nDays=run().state.days.length;
-  const day = 1+Math.floor(Math.random()*(nDays-1)), minute = 7*60+Math.floor(Math.random()*(16.5*60));
-  const obj = pickWeighted(items, Math.random);
-  S.quiz.q = {obj, day, minute, t: day*DAY+minute*60}; S.quiz.tried=[]; S.quiz.done=false;
-}
-function ageWords(from, to){ const s=to-from; if(s<0) return 'later'; if(s<3600) return Math.round(s/60)+' min ago'; if(s<DAY) return (s/3600).toFixed(1)+' h ago'; return (s/DAY).toFixed(1)+' d ago'; }
-function recOptions(triedSet){ const H=hh(); const recsByRoom = room => Object.values(H.receptacles).filter(r=>r.room===room).sort((a,b)=>a.id.localeCompare(b.id));
-  return `<option value="">— choose a receptacle —</option>${H.rooms.map(room=>`<optgroup label="${room}">${recsByRoom(room).map(r=>`<option value="${r.id}" ${triedSet.has(r.id)?'disabled':''}>${r.id}${triedSet.has(r.id)?' (looked)':''}</option>`).join('')}</optgroup>`).join('')}`; }
-function looksHtml(tried){ if(!tried.length) return ''; let n=0; return `<div style="margin-top:10px">`+tried.map(tr=>{ const isGuess=tr.kind==='guess'; if(!isGuess) n++; const label=isGuess?'Your answer':`Look ${n}`; let body;
-    if(isGuess){ body = tr.hit ? (tr.rec==='OUT_OF_HOUSE'?'Right, it is out of the house.':tr.rec==='ON_PERSON'?`Right, ${tr.carrier?resName(tr.carrier)+' has it on them':'someone is carrying it'}.`:'Right.') : 'Wrong.'; }
-    else body = tr.hit ? 'Found it.' : `Not there. It holds ${tr.contents.length?tr.contents.map(x=>`<span class="id obj">${x}</span>`).join(', '):'nothing'}.`;
-    return `<div class="verdict ${tr.hit?'ok':'bad'}" style="margin-top:6px"><b>${label}: <span class="id rec">${tr.rec}</span>.</b> ${body}</div>`; }).join('')+`</div>`; }
-function actionRow(prefix, tried, K, done){ const looks=tried.filter(t=>t.kind!=='guess').length, left=K-looks, triedSet=new Set(tried.filter(t=>t.kind!=='guess').map(t=>t.rec));
-  return `<div class="row"><label class="field">receptacle <select id="${prefix}Ans" ${done?'disabled':''}>${recOptions(triedSet)}</select></label>
-    <button class="btn primary" id="${prefix}Look" ${done||left<=0?'disabled':''} title="sense this receptacle: you see what it holds">Look <span class="small">(${left} left)</span></button>
-    <button class="btn" id="${prefix}Guess" ${done?'disabled':''} title="commit this receptacle as your final answer">Guess it is here</button>
-    <button class="btn" id="${prefix}GuessOut" ${done?'disabled':''}>Guess: out of the house</button>
-    <button class="btn" id="${prefix}GuessOn" ${done?'disabled':''}>Guess: on someone</button>
-    ${prefix==='p'&&done?'<button class="btn primary" id="pNext">Next question</button>':''}</div>${!done&&left<=0?'<p class="small" style="margin:6px 0 0">No looks left. Give your answer with one of the Guess buttons.</p>':'<p class="small" style="margin:6px 0 0">A look shows what a receptacle holds and ends the question if the object is there. A guess is your final answer and ends the question either way.</p>'}`; }
-function doAction(kind, rec, q, tried){ const H=hh(), tr=rowAt(q.obj,q.t), truth=tr.receptacle_id, hit=rec===truth;
-  const entry={kind, rec, hit}; if(kind==='look') entry.contents=Object.keys(H.objects).sort().filter(x=>locAt(x,q.t)===rec); if(hit&&rec==='ON_PERSON') entry.carrier=tr.carrier; tried.push(entry); return hit; }
-function truthHtml(q, cut, truthRow, found, tried){ const truth=truthRow.receptacle_id; let html=`<div class="verdict ${found?'ok':'none'}" style="margin-top:10px"><b>${found?(tried[tried.length-1].kind==='guess'?'Right.':`Found on look ${tried.length}.`):'Wrong.'}</b> It is at <span class="id rec">${truth}</span>${truthRow.carrier?' (carried by '+resName(truthRow.carrier)+')':''}.</div>`;
-  const path=rowsFor(q.obj).filter(r=>r.t>cut && r.t<=q.t); const before=rowAt(q.obj, Math.max(cut,0));
-  html += `<details style="margin-top:8px"><summary>What actually happened (ground truth)</summary><div class="small" style="margin-top:6px">At your cutoff it was at <span class="id rec">${before?before.receptacle_id:'?'}</span>.</div>`;
-  if(!path.length) html += `<div class="small">It did not move between the cutoff and the question time.</div>`;
-  for(const r of path) html += `<div class="tl indent" style="grid-template-columns:82px 1fr"><span class="t" style="visibility:visible">${wd3(Math.floor(r.t/DAY))} ${fmtMin(Math.floor((r.t%DAY)/60))}</span><span class="x" style="padding-left:0">→ <span class="id rec">${r.receptacle_id}</span>${r.carrier?' ('+resName(r.carrier)+')':''} <span class="small">${esc(r.cause.replace(':',' · '))}${r.reason?' · '+esc(r.reason):''}</span>${r.whim?'<span class="tag whim">whim</span>':''}${(r.causes||[]).length?(S.reveal?r.causes.map(c=>`<span class="tag ${causeKind(c)}">${esc(c)}</span>`).join(''):' <span class="small">[hidden cause]</span>'):''}</span></div>`;
-  return html+`</details>`; }
-function baselineTable(q, cut, K, visits, tried, found){ const truth=rowAt(q.obj,q.t).receptacle_id; let html=`<div class="tablewrap" style="margin-top:10px"><table><thead><tr><th>Answerer</th><th>Actions, in order (baselines: ${K} looks)</th><th>1st</th><th>end</th></tr></thead><tbody>`;
-  html += `<tr><td><b>You</b></td><td>${tried.map(t=>`<span class="id rec">${t.rec}</span>${t.kind==='guess'?' <span class="small">(guess)</span>':''}`).join(' ')}</td><td class="mark ${tried[0]&&tried[0].hit?'ok':'bad'}">${tried[0]&&tried[0].hit?'✓':'✗'}</td><td class="mark ${found?'ok':'bad'}">${found?'✓':'✗'}</td></tr>`;
-  for(const b of baselinesObs(q,cut,K,visits)) html += `<tr><td>${b.name}<br><span class="small">${b.desc}</span></td><td>${b.ranked.map(r=>`<span class="id rec">${r}</span>`).join(' ')}</td><td class="mark ${b.ranked[0]===truth?'ok':'bad'}">${b.ranked[0]===truth?'✓':'✗'}</td><td class="mark ${b.ranked.includes(truth)?'ok':'bad'}">${b.ranked.includes(truth)?'✓':'✗'}</td></tr>`;
-  return html+`</tbody></table></div>`; }
-function evidenceHtml(q, cut, visits){ const H=hh(), kn=knowledge(q.obj,cut,visits);
-  const counts={}; for(const s2 of kn.seen) counts[s2.rec]=(counts[s2.rec]||0)+1; const often=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]||a.localeCompare(b)).slice(0,4);
-  let html = `<div class="panel evid"><h3>What you know about <span class="id" style="text-transform:none;letter-spacing:0">${q.obj}</span></h3><p class="small">Sightings up to ${cut<0?'nothing yet':fmtT(cut)}: ${kn.seen.length}.${often.length?' Most often seen at '+often.map(r=>`<span class="id rec">${r}</span> <span class="small">×${counts[r]}</span>`).join(', ')+'.':''}${kn.last?' Last seen at <span class="id rec">'+kn.last.rec+'</span> ('+ageWords(kn.last.t,q.t)+').':''}</p>`;
-  if(S.reveal){ const dcs=run().state.days[q.day].causes; html += `<details open><summary>Today's hidden causes (revealed by the header switch)</summary>${dcs.length?dcs.map(c=>`<div class="cause ${c.kind}">${causeWords(c)}</div>`).join(''):'<p class="small">none</p>'}</details>`; }
-  if(!kn.seen.length) html += `<p class="small">Never sighted before the cutoff.</p>`;
-  else { html += `<div class="timeline">`; let lastRec=null; const evs=[];
-    for(const v of visits){ if(v.t>cut) break; const here=Object.keys(v.contents).find(rec=>v.contents[rec].includes(q.obj)); if(here){ evs.push({t:v.t, kind:'seen', rec:here, look:v.kind==='look'}); lastRec=here; } else if(lastRec && (lastRec in v.contents)){ evs.push({t:v.t, kind:'gone', rec:lastRec, look:v.kind==='look'}); lastRec=null; } }
-    for(const e of evs){ const clock=(e.t%DAY)/60, similar=Math.abs(clock-q.minute)<=90 && Math.floor(e.t/DAY)<q.day; html += `<div class="tl ${similar?'hit':''}" style="grid-template-columns:82px 1fr"><span class="t">${wd3(Math.floor(e.t/DAY))} ${fmtMin(Math.floor((e.t%DAY)/60))}</span><span class="x" style="${similar?'':'padding:0'}">${e.kind==='seen'?`seen at <span class="id rec">${e.rec}</span>`:`<span class="small">no longer at <span class="id rec">${e.rec}</span></span>`}${e.look?' <span class="small">· your look</span>':''}${similar?' <span class="small">· similar time of day</span>':''}</span></div>`; }
-    html += `</div>`; }
-  html += `</div><div class="panel"><h3>Last sighting of every object</h3><p class="small">Age is relative to the question time. "gone by" means that receptacle was checked later and it was not there any more. Owners' pocket and outdoor items vanishing together usually means that person is out.</p><div class="tablewrap"><table><thead><tr><th>Object</th><th>Last seen at</th><th>When</th><th>Status</th></tr></thead><tbody>`;
-  const owners=Object.values(H.residents).sort((a,b)=>a.id.localeCompare(b.id)).map(r=>r.id).concat([null]);
-  for(const owner of owners){ const objs=Object.values(H.objects).filter(x=>x.owner===owner).sort((a,b)=>a.id.localeCompare(b.id)); objs.forEach((x,i)=>{ const k2=knowledge(x.id,cut,visits); const mine=x.id===q.obj;
-      html += `<tr style="${mine?'background:var(--accent-soft)':''}"><td>${i===0?`<span class="small">${owner?cap(H.residents[owner].name):'Shared'}</span><br>`:''}<span class="id ${mine?'':'obj'}">${x.id}</span></td><td>${k2.last?`<span class="id rec">${k2.last.rec}</span>`:'<span class="small">never</span>'}</td><td class="small" style="white-space:nowrap">${k2.last?wd3(Math.floor(k2.last.t/DAY))+' '+fmtMin(Math.floor((k2.last.t%DAY)/60))+'<br>'+ageWords(k2.last.t,q.t):''}</td><td class="small">${k2.last?(k2.gone?`<span class="mark bad">gone</span> by ${wd3(Math.floor(k2.gone/DAY))} ${fmtMin(Math.floor((k2.gone%DAY)/60))}`:'no later check of that spot'):''}</td></tr>`; }); }
-  html += `</tbody></table></div></div>`;
-  const vis=visits.filter(v=>v.t<=cut);
-  html += `<div class="panel"><details><summary>Full observation log up to the cutoff (${vis.length} room visits and looks)</summary><div class="timeline" style="margin-top:8px">${visitLog(vis, q.obj)}</div></details></div>`;
-  return html; }
-function visitLog(vis, focus){ let html='', lastDay=-1; for(const v of vis){ const d=Math.floor(v.t/DAY); if(d!==lastDay){ html += `<div class="small" style="margin:8px 0 2px;font-weight:600">${DAYS[d]}</div>`; lastDay=d; }
-    const parts=Object.keys(v.contents).sort().filter(rec=>v.contents[rec].length).map(rec=>`<span class="id rec">${rec}</span> ${v.contents[rec].map(x=>`<span class="id ${x===focus?'':'obj'}" ${x===focus?'style="background:var(--accent-soft)"':''}>${x}</span>`).join(' ')}`);
-    const empties=Object.keys(v.contents).filter(rec=>!v.contents[rec].length);
-    html += `<div class="tl" style="grid-template-columns:52px 1fr"><span class="t">${fmtMin(Math.floor((v.t%DAY)/60))}</span><span class="x"><b>${v.kind==='look'?Object.keys(v.contents)[0]:v.room}</b>${v.kind==='tour'?' <span class="small">(walkthrough)</span>':v.kind==='look'?' <span class="small">(your look)</span>':''}: ${parts.length?parts.join(' · '):'<span class="small">empty</span>'}${parts.length&&empties.length?` <span class="small">· ${empties.length} empty</span>`:''}</span></div>`; }
-  return html; }
-function notepadHtml(){ const ctx=S.quiz.mode==='play'&&S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}`:(S.quiz.q?`free: ${S.quiz.q.obj} ${wd3(S.quiz.q.day)} ${fmtMin(S.quiz.q.minute)}`:'');
-  return `<div class="panel"><h3>Household notes · ${hh().id}</h3><p class="small" id="syncBadge"></p><textarea id="noteText" rows="3" placeholder="General observations about this home: what its dynamics seem to be, what felt unrealistic or unfair, what the sim or the trace should change." style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;resize:vertical">${esc(S.noteDraft||'')}</textarea>
+// ---------- budget, looks, scheduling ----------
+function spentOn(day){ return runDoc().looks.filter(l=>Math.floor(l.t/DAY)===day && !l.failed).reduce((a,l)=>a+l.cost,0); }
+function budgetLeft(day){ return runDoc().budget - spentOn(day); }
+function lookCost(room){ const doc=runDoc(); return doc.lookCost + (room===doc.robot?0:doc.travel); }
+function doLook(room, t, src, qi){ const doc=runDoc(); const cost=lookCost(room); const day=Math.floor(t/DAY);
+  if(cost>budgetLeft(day)){ doc.looks.push({t, room, cost, src, qi, failed:true, reason:'no budget left that day'}); return null; }
+  const v=roomVisit(room, t, 'look', {cost, src, qi}); doc.looks.push(v); doc.robot=room; return v; }
+function runPending(uptoT){ // execute scheduled looks whose time has come, in time order
+  const doc=runDoc(); const due=doc.pending.filter(p=>p.t<=uptoT).sort((a,b)=>a.t-b.t); if(!due.length) return false;
+  for(const p of due) doLook(p.room, p.t, 'scheduled', null);
+  doc.pending=doc.pending.filter(p=>p.t>uptoT); return true; }
+function roomDiff(v){ // what changed in this room since it was last seen (before v.t)
+  const prev=knowledgeVisits().filter(x=>x.room===v.room && x.t<v.t).pop(); if(!prev) return null;
+  const now=new Set(), before=new Set(); for(const rec of Object.keys(v.contents)) for(const o of v.contents[rec]) now.add(o+'@'+rec); for(const rec of Object.keys(prev.contents)) for(const o of prev.contents[rec]) before.add(o+'@'+rec);
+  const added=[...now].filter(x=>!before.has(x)), gone=[...before].filter(x=>!now.has(x));
+  return {prevT: prev.t, added, gone, samePeople: JSON.stringify(prev.people)===JSON.stringify(v.people)}; }
+function visitHtml(v, focus, withDiff){ const parts=Object.keys(v.contents).sort().filter(rec=>v.contents[rec].length).map(rec=>`<span class="id rec">${rec}</span> ${v.contents[rec].map(x=>`<span class="id obj" ${x===focus?'style="background:var(--accent-soft)"':''}>${x}</span>`).join(' ')}`);
+  const empties=Object.keys(v.contents).filter(rec=>!v.contents[rec].length);
+  const who=v.people&&v.people.length?`<b>${v.people.map(resName).join(' and ')} ${v.people.length>1?'are':'is'} here.</b> `:'<span class="small">nobody here.</span> ';
+  let html=`<div class="tl" style="grid-template-columns:82px 1fr"><span class="t">${wd3(Math.floor(v.t/DAY))} ${fmtMin(Math.floor((v.t%DAY)/60))}</span><span class="x"><b>${v.room}</b>${v.kind==='tour'?' <span class="small">(walkthrough)</span>':v.src==='scheduled'?' <span class="small">(scheduled look)</span>':''} · ${who}`;
+  if(withDiff){ const d=roomDiff(v); if(d){ const fmt=x=>{ const [o,rec]=x.split('@'); return `<span class="id obj">${o}</span><span class="small">@${rec}</span>`; };
+      html += `<span class="small">since ${wd3(Math.floor(d.prevT/DAY))} ${fmtMin(Math.floor((d.prevT%DAY)/60))}:</span> ${d.added.length?'<span class="mark ok">+</span> '+d.added.map(fmt).join(', '):''}${d.added.length&&d.gone.length?' · ':''}${d.gone.length?'<span class="mark bad">−</span> '+d.gone.map(fmt).join(', '):''}${!d.added.length&&!d.gone.length?'<span class="small">no object changes</span>':''}`;
+      html += `<details><summary>everything in the room</summary>${parts.join(' · ')||'<span class="small">empty</span>'}${empties.length?` <span class="small">· ${empties.length} empty spots</span>`:''}</details>`; }
+    else html += `${parts.join(' · ')||'<span class="small">empty</span>'}${empties.length?` <span class="small">· ${empties.length} empty spots</span>`:''}`; }
+  else html += `${parts.join(' · ')||'<span class="small">empty</span>'}${empties.length?` <span class="small">· ${empties.length} empty spots</span>`:''}`;
+  return html+`</span></div>`; }
+
+// ---------- memory panels (the tools an agent would get too) ----------
+function memoryHtml(cut, visits, focusObj){ const H=hh(); const tab=S.mem.tab;
+  let html=`<div class="panel"><h3>Memory</h3><div class="daytabs" style="margin-bottom:8px"><button data-mem="object" aria-selected="${tab==='object'}">By object</button><button data-mem="place" aria-selected="${tab==='place'}">By place</button><button data-mem="person" aria-selected="${tab==='person'}">By person</button><button data-mem="all" aria-selected="${tab==='all'}">Every object</button></div>`;
+  if(tab==='object'){ const obj=S.mem.obj||focusObj; html += `<div class="controls"><select id="memObj">${Object.keys(H.objects).sort().map(o=>`<option ${o===obj?'selected':''}>${o}</option>`).join('')}</select></div>`;
+    const kn=knowledge(obj,cut,visits); const counts={}; for(const s of kn.seen) counts[s.rec]=(counts[s.rec]||0)+1; const often=Object.keys(counts).sort((a,b)=>counts[b]-counts[a]||a.localeCompare(b));
+    html += `<p class="small">${kn.seen.length} sighting${kn.seen.length===1?'':'s'}.${often.length?' Most often at '+often.slice(0,4).map(r=>`<span class="id rec">${r}</span> <span class="small">×${counts[r]}</span>`).join(', ')+'.':''}${kn.last?' Last at <span class="id rec">'+kn.last.rec+'</span>'+(kn.gone?', <span class="mark bad">gone</span> by '+fmtT(kn.gone):'')+'.':''}</p>`;
+    let lastRec=null; const evs=[]; for(const v of visits){ if(v.t>cut) break; const here=Object.keys(v.contents).find(rec=>v.contents[rec].includes(obj)); if(here){ evs.push({t:v.t, kind:'seen', rec:here, people:v.people}); lastRec=here; } else if(lastRec && (lastRec in v.contents)){ evs.push({t:v.t, kind:'gone', rec:lastRec, people:v.people}); lastRec=null; } }
+    html += `<div class="timeline">${evs.map(e=>`<div class="tl" style="grid-template-columns:82px 1fr"><span class="t">${wd3(Math.floor(e.t/DAY))} ${fmtMin(Math.floor((e.t%DAY)/60))}</span><span class="x" style="padding:0">${e.kind==='seen'?`at <span class="id rec">${e.rec}</span>`:`<span class="small">no longer at <span class="id rec">${e.rec}</span></span>`}${e.people&&e.people.length?` <span class="small">· ${e.people.map(resName).join(', ')} there</span>`:''}</span></div>`).join('')||'<p class="small">never sighted</p>'}</div>`; }
+  else if(tab==='place'){ const place=S.mem.place||Object.keys(H.receptacles).sort()[0]; html += `<div class="controls"><select id="memPlace">${H.rooms.map(room=>`<optgroup label="${room}">${Object.values(H.receptacles).filter(r=>r.room===room).sort((a,b)=>a.id.localeCompare(b.id)).map(r=>`<option ${r.id===place?'selected':''}>${r.id}</option>`).join('')}</optgroup>`).join('')}</select></div>`;
+    const evs=visits.filter(v=>v.t<=cut && (place in v.contents)); const everSeen=new Set(); for(const v of evs) for(const o of v.contents[place]) everSeen.add(o);
+    html += `<p class="small">${evs.length} check${evs.length===1?'':'s'} of this spot. Ever seen here: ${everSeen.size?[...everSeen].sort().map(o=>`<span class="id obj">${o}</span>`).join(' '):'nothing'}.</p>`;
+    html += `<div class="timeline">${evs.map(v=>`<div class="tl" style="grid-template-columns:82px 1fr"><span class="t">${wd3(Math.floor(v.t/DAY))} ${fmtMin(Math.floor((v.t%DAY)/60))}</span><span class="x" style="padding:0">${v.contents[place].length?v.contents[place].map(o=>`<span class="id obj">${o}</span>`).join(' '):'<span class="small">empty</span>'}</span></div>`).join('')}</div>`; }
+  else if(tab==='person'){ for(const rid of Object.keys(H.residents).sort()){ const sightings=visits.filter(v=>v.t<=cut && v.people.includes(rid)); const last=sightings[sightings.length-1];
+      html += `<div style="margin-bottom:8px"><b>${resName(rid)}</b> <span class="small">${last?`last seen in the ${last.room} at ${fmtT(last.t)}`:'never seen'}</span><div class="small">${sightings.slice(-8).map(v=>`${wd3(Math.floor(v.t/DAY))} ${fmtMin(Math.floor((v.t%DAY)/60))} ${v.room}`).join(' · ')}</div></div>`; }
+    html += `<p class="small">A look only tells you who is in that room. Someone not seen may be elsewhere in the house or out.</p>`; }
+  else { html += `<p class="small">Last sighting of each object; age relative to now. "gone" = that spot was checked later and it was not there.</p><div class="tablewrap"><table><thead><tr><th>Object</th><th>Last seen at</th><th>When</th><th></th></tr></thead><tbody>`;
+    const owners=Object.keys(H.residents).sort().concat([null]);
+    for(const owner of owners){ const objs=Object.values(H.objects).filter(x=>x.owner===owner && !x.static).sort((a,b)=>a.id.localeCompare(b.id)); objs.forEach((x,i)=>{ const k2=knowledge(x.id,cut,visits); const mine=x.id===focusObj;
+        html += `<tr style="${mine?'background:var(--accent-soft)':''}"><td>${i===0?`<span class="small">${owner?resName(owner):'Shared'}</span><br>`:''}<span class="id obj">${x.id}</span></td><td>${k2.last?`<span class="id rec">${k2.last.rec}</span>`:'<span class="small">never</span>'}</td><td class="small" style="white-space:nowrap">${k2.last?wd3(Math.floor(k2.last.t/DAY))+' '+fmtMin(Math.floor((k2.last.t%DAY)/60)):''}</td><td class="small">${k2.gone?`<span class="mark bad">gone</span> by ${wd3(Math.floor(k2.gone/DAY))} ${fmtMin(Math.floor((k2.gone%DAY)/60))}`:''}</td></tr>`; }); }
+    html += `</tbody></table></div>`; }
+  return html+`</div>`; }
+
+// ---------- notes ----------
+function notepadHtml(){ const ctx=S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}`:'';
+  return `<div class="panel"><h3>Household notes · ${hh().id}</h3><p class="small syncBadge"></p><textarea id="noteText" rows="3" placeholder="General observations about this home: its dynamics, what felt unrealistic or unfair, what the sim or the tools should change." style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;resize:vertical">${esc(S.noteDraft||'')}</textarea>
     <div class="row" style="margin-top:6px;justify-content:space-between"><span class="small">tagged with: ${esc(ctx||'no question')}</span><button class="btn primary" id="saveNote">Save note</button></div>
     ${S.notes.length?`<div class="hist">${S.notes.slice().reverse().map(n=>`<div><span class="small">${esc((n.ts||'').slice(0,16).replace('T',' '))} · ${esc(n.ctx||'')}</span><br>${esc(n.text)}</div>`).join('')}</div>`:'<p class="small">No notes yet on this household.</p>'}</div>`; }
-function wireNotepad(el){ const btn=el.querySelector('#saveNote'); if(!btn) return; refreshSyncBadge(); const ta0=el.querySelector('#noteText'); ta0.addEventListener('input', ()=>{ S.noteDraft=ta0.value; }); btn.addEventListener('click', async ()=>{ const ta=el.querySelector('#noteText'); const text=ta.value.trim(); if(!text) return; S.noteDraft=''; const ctx=S.quiz.mode==='play'&&S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}${S.play.done?' (answered)':''}`:(S.quiz.q?`free: ${S.quiz.q.obj} ${wd3(S.quiz.q.day)} ${fmtMin(S.quiz.q.minute)}`:''); S.notes.push({ts:new Date().toISOString(), ctx, text, household:hh().id}); ta.value=''; btn.disabled=true; await saveDoc('notes/g2s'+S.seed, 'ssi-notes-g2-'+S.seed, {household:hh().id, entries:S.notes}); renderQuiz(); }); }
+function wireNotepad(el){ const btn=el.querySelector('#saveNote'); if(!btn) return; refreshSyncBadge(); const ta0=el.querySelector('#noteText'); ta0.addEventListener('input', ()=>{ S.noteDraft=ta0.value; }); btn.addEventListener('click', async ()=>{ const text=ta0.value.trim(); if(!text) return; S.noteDraft=''; const ctx=S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}${S.play.done?' (answered)':''}`:''; S.notes.push({ts:new Date().toISOString(), ctx, text, household:hh().id}); btn.disabled=true; await saveDoc(docPath('notes'), lsKey('notes'), {household:hh().id, entries:S.notes}); renderQuiz(); }); }
 
-function renderQuiz(){ const el=document.getElementById('v-quiz'); let html=`<div class="daytabs"><button data-mode="play" aria-selected="${S.quiz.mode==='play'}">Chronological</button><button data-mode="free" aria-selected="${S.quiz.mode==='free'}">Free questions</button></div>`;
-  html += S.quiz.mode==='play' ? renderPlay() : renderFree();
-  el.innerHTML = html;
-  el.querySelector('.daytabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if(b){ S.quiz.mode=b.dataset.mode; renderQuiz(); } });
-  wireNotepad(el);
-  (S.quiz.mode==='play'?wirePlay:wireFree)(el);
-}
+// ---------- the chronological run ----------
+function revealedDay(doc, seq, i){ // verdicts are shown for days strictly before the current question's day (or everything when done / toggled)
+  if(doc.showVerdicts) return 99; if(i>=seq.length) return 99; return seq[i].day - 1; }
+function scoreFrom(answers, upToDay){ const sc={n:0,you1:0,base:BASE_NAMES.map(()=>[0,0]), looks:0, cost:0, hidden:0}; for(const a of answers){ if(a.day>upToDay){ sc.hidden++; continue; } sc.n++; if(a.hit) sc.you1++; sc.looks+=a.looksUsed; sc.cost+=a.costUsed; a.base.forEach((b,i)=>{ if(sc.base[i]){ sc.base[i][0]+=b[0]?1:0; sc.base[i][1]+=b[1]?1:0; } }); } return sc; }
+function scoreTable(sc, title){ return `<h3>${title}</h3><div class="tablewrap"><table><thead><tr><th>Answerer</th><th class="num">Right</th><th class="num">Right in top 3</th></tr></thead><tbody>
+    <tr><td><b>You</b> <span class="small">(${sc.looks} looks, ${sc.cost} budget spent on these)</span></td><td class="num">${sc.you1} ${sc.n?'<span class="small">('+Math.round(100*sc.you1/sc.n)+'%)</span>':''}</td><td class="num small">—</td></tr>
+    ${BASE_NAMES.map((n,i)=>`<tr><td>${n}</td><td class="num">${sc.base[i][0]} ${sc.n?'<span class="small">('+Math.round(100*sc.base[i][0]/sc.n)+'%)</span>':''}</td><td class="num">${sc.base[i][1]} ${sc.n?'<span class="small">('+Math.round(100*sc.base[i][1]/sc.n)+'%)</span>':''}</td></tr>`).join('')}</tbody></table></div>${sc.hidden?`<p class="small">${sc.hidden} answer${sc.hidden===1?'':'s'} from the current day still sealed.</p>`:''}`; }
+function historyHtml(doc, upToDay){ return `<div class="hist">${doc.answers.slice().reverse().map(a=>{ const shown=a.day<=upToDay; return `<div>${shown?(a.hit?'<span class="mark ok">✓</span>':'<span class="mark bad">✗</span>'):'<span class="small">sealed</span>'} Q${a.i+1} <span class="id">${a.obj}</span> ${wd3(a.day)} ${fmtMin(a.minute)} → you said <span class="id rec">${a.guess}</span>${shown?` · it was <span class="id rec">${a.truth}</span>${a.whim?' <span class="tag whim">whim</span>':''} · baselines right: ${a.base.map((b,k)=>b[0]?BASE_NAMES[k].split(' (')[0]:null).filter(Boolean).join(', ')||'none'}`:''} <span class="small">· ${a.looksUsed} look${a.looksUsed===1?'':'s'}</span>${a.note?`<br><span class="small" style="color:var(--ink)">“${esc(a.note)}”</span>`:''}</div>`; }).join('')}</div>`; }
+function truthHtml(a){ const path=rowsFor(a.obj).filter(r=>r.t>a.cutFrom && r.t<=a.t); let html=`<details><summary>What actually happened to ${a.obj} (ground truth)</summary>`;
+  if(!path.length) html+=`<div class="small">It did not move in the window before the question.</div>`;
+  for(const r of path) html += `<div class="tl indent" style="grid-template-columns:82px 1fr"><span class="t" style="visibility:visible">${wd3(Math.floor(r.t/DAY))} ${fmtMin(Math.floor((r.t%DAY)/60))}</span><span class="x" style="padding-left:0">→ <span class="id rec">${r.receptacle_id}</span>${r.carrier?' ('+resName(r.carrier)+')':''} <span class="small">${esc(r.cause.replace(':',' · '))}${r.reason?' · '+esc(r.reason):''}</span>${r.whim?'<span class="tag whim">whim</span>':''}${(r.causes||[]).length?(S.reveal?r.causes.map(c=>`<span class="tag ${causeKind(c)}">${esc(c)}</span>`).join(''):' <span class="small">[hidden cause]</span>'):''}</span></div>`;
+  return html+`</details>`; }
 
-// ---------- play mode ----------
-function renderPlay(){ const H=hh();
-  if(!S.play.loaded) return `<p class="sub">Loading your progress…</p>`;
-  const doc=playDoc(), K=doc.looks, seq=playSequence(doc.perDay);
-  // while a just-answered question is on screen, keep showing IT (not the next one)
-  const i = (S.play.done && !S.play.error) ? doc.answers.length-1 : doc.answers.length; S.play.index=i;
-  const visits=allVisits(doc.visits, lookObsFrom(doc));
-  let html = `<p class="sub">One household, Thursday to Sunday, questions in the order they happen, so you learn the home's dynamics as the week unfolds. At each question you know everything the patrol saw up to that moment (${doc.visits} visits a day after a Wednesday-evening walkthrough) plus what your own earlier looks showed. Answers are saved, so you can stop and come back.</p>`;
+function renderQuiz(){ const el=document.getElementById('v-quiz'); const H=hh();
+  if(!S.play.loaded){ el.innerHTML=`<p class="sub">Loading your progress…</p>`; return; }
+  const doc=runDoc(), seq=questionSequence(doc.perDay);
+  // current question index: the answered one stays on screen until Next
+  const i = (S.play.done) ? doc.answers.length-1 : doc.answers.length; S.play.index=i;
+  const upTo=revealedDay(doc, seq, S.play.done?i+1:i);
+  let html='';
+  if(i>=seq.length){ const sc=scoreFrom(doc.answers, 99); html += `<p class="sub">Segment finished: ${seq.length} questions on ${H.id}.</p><div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack"><div class="panel">${scoreTable(sc,'Final score')}<div class="row" style="margin-top:10px"><button class="btn" id="resetRun">Restart this household</button></div></div>${notepadHtml()}</div><div class="stack"><div class="panel"><h3>Every answer</h3>${historyHtml(doc, 99)}</div></div></div>`; el.innerHTML=html; wireNotepad(el); wireRun(el, null); return; }
+  const q=seq[i]; S.play.q=q;
+  let changed=false; if(!S.play.done) changed=runPending(q.t);
+  const visits=knowledgeVisits(); const cut=q.t; const day=q.day;
+  const prevT = i>0 ? seq[i-1].t : -1;
+  const fresh=visits.filter(v=>v.t>prevT && v.t<=cut && v.kind!=='tour' && !(v.src==='question' && v.qi===i));
+  const failed=doc.looks.filter(l=>l.failed && l.t>prevT && l.t<=cut);
+  const myLooks=doc.looks.filter(l=>l.src==='question' && l.qi===i && !l.failed);
+  const left=budgetLeft(day);
+  html += `<p class="sub">One household, Thursday to Sunday, questions in the order they happen. You start with a walkthrough of every room on Wednesday at 18:00 and nothing else. A look is a room: you see every spot in it and who is standing there. Each day has a budget of ${doc.budget}; a look costs ${doc.lookCost}, plus ${doc.travel} when the robot has to move rooms. You can also schedule looks for later. Your verdicts stay sealed until the day is over.</p>`;
   html += `<div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack">`;
-  if(i>=seq.length){ const sc=scoreFromAnswers(doc.answers, K); html += `<div class="panel"><div class="q">End of the segment — ${seq.length} questions on this household.</div>${scoreTable(sc,K,'Final score')}<div class="row" style="margin-top:10px"><button class="btn" id="resetPlay">Restart this household</button></div></div>`; html += notepadHtml(); html += `</div><div class="stack"><div class="panel"><h3>Every answer</h3>${historyHtml(doc)}</div></div></div>`; return html; }
-  const q=seq[i], cut=q.t, truthRow=rowAt(q.obj,q.t), truth=truthRow.receptacle_id; S.play.q=q;
-  if(S.play.done && !S.play.error && doc.answers[i]) S.play.tried=doc.answers[i].tried;
-  const prevT = i>0 ? seq[i-1].t : -1; const fresh=visits.filter(v=>v.t>prevT && v.t<=cut && v.kind!=='look');
+  // ---- question card
   const pct=Math.round(100*i/seq.length);
-  html += `<div class="panel"><div class="controls" style="justify-content:space-between"><span>Question ${i+1} of ${seq.length} · ${K} look${K===1?'':'s'}</span><span>${DAYS[q.day]} ${fmtMin(q.minute)}</span></div><div class="bar" style="margin-bottom:10px"><i style="width:${pct}%"></i></div>`;
+  html += `<div class="panel"><div class="controls" style="justify-content:space-between"><span>Question ${i+1} of ${seq.length}</span><span>${DAYS[q.day]} ${fmtMin(q.minute)} · robot in the <b>${doc.robot}</b> · budget left today <b>${left}</b> of ${doc.budget}</span></div><div class="bar" style="margin-bottom:10px"><i style="width:${pct}%"></i></div>`;
   html += `<div class="q noclick">Where is <span class="id" style="font-size:17px">${q.obj}</span> right now, ${DAYS[q.day]} at ${fmtMin(q.minute)}?</div>`;
-  html += actionRow('p', S.play.tried, K, S.play.done);
-  html += looksHtml(S.play.tried);
-  html += `<div style="margin-top:12px"><h3>Your thinking on this question</h3><textarea id="qNote" rows="3" placeholder="What are you using to decide? Update it after each look. Saved with the answer." style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;resize:vertical">${esc(S.play.draft||'')}</textarea>${S.play.done?`<div class="row" style="margin-top:6px;justify-content:space-between"><span class="small" id="qNoteState">${S.play.noteDirty?'edited, not saved':'saved with the answer'}</span><button class="btn" id="qNoteSave">Save note</button></div>`:'<p class="small" style="margin:4px 0 0">Kept while you look; stored when the question ends.</p>'}</div>`;
-  if(S.play.error) html += `<div class="verdict bad">Saving this answer failed (${esc(S.play.error)}). The result is shown below but was not recorded.</div>`;
-  if(S.play.done){ const found=S.play.tried.some(t=>t.hit); html += truthHtml(q,cut,truthRow,found,S.play.tried); html += baselineTable(q,cut,K,visits,S.play.tried,found); }
+  const rooms=H.rooms.slice().sort();
+  const roomCost = r => lookCost(r);
+  html += `<div class="row"><label class="field">look in a room <select id="lookRoom" ${S.play.done?'disabled':''}>${rooms.map(r=>`<option value="${r}" ${r===doc.robot?'selected':''}>${r} (cost ${roomCost(r)})</option>`).join('')}</select></label><button class="btn primary" id="lookNow" ${S.play.done?'disabled':''}>Look now</button><span class="small">reports every spot in the room and who is there</span></div>`;
+  html += `<div class="row" style="margin-top:8px"><label class="field">your answer: a spot <select id="guessSpot" ${S.play.done?'disabled':''}><option value="">— choose a spot —</option>${rooms.map(room=>`<optgroup label="${room}">${Object.values(H.receptacles).filter(r=>r.room===room).sort((a,b)=>a.id.localeCompare(b.id)).map(r=>`<option value="${r.id}">${r.id}</option>`).join('')}</optgroup>`).join('')}</select></label><button class="btn" id="guessSpotBtn" ${S.play.done?'disabled':''}>Guess it is here</button><button class="btn" id="guessOut" ${S.play.done?'disabled':''}>Guess: out of the house</button><button class="btn" id="guessOn" ${S.play.done?'disabled':''}>Guess: on someone</button>${S.play.done?'<button class="btn primary" id="nextQ">Next question</button>':''}</div>`;
+  if(myLooks.length){ html += `<div style="margin-top:10px"><h3>Your looks for this question</h3><div class="timeline">${myLooks.map(v=>visitHtml(v, q.obj, true)).join('')}</div></div>`; }
+  html += `<div style="margin-top:12px"><h3>Your thinking on this question</h3><textarea id="qNote" rows="3" placeholder="What are you using to decide? Update it after each look. Saved with the answer." style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;resize:vertical">${esc(S.play.draft||'')}</textarea>${S.play.done?`<div class="row" style="margin-top:6px;justify-content:space-between"><span class="small" id="qNoteState">${S.play.noteDirty?'edited, not saved':'saved with the answer'}</span><button class="btn" id="qNoteSave">Save note</button></div>`:'<p class="small" style="margin:4px 0 0">Kept while you look; stored when you answer.</p>'}</div>`;
+  if(S.play.done){ const a=doc.answers[i]; const shown=a.day<=upTo;
+    html += `<div class="verdict ${shown?(a.hit?'ok':'bad'):'none'}" style="margin-top:10px"><b>${shown?(a.hit?'Right.':'Wrong.'):'Answer recorded.'}</b> You said <span class="id rec">${a.guess}</span>.${shown?` It is at <span class="id rec">${a.truth}</span>.`:` The verdict is sealed until ${DAYS[a.day]} is over.`}</div>`;
+    if(shown) html += truthHtml(a); }
   html += `</div>`;
-  // new since last question
+  // ---- schedule looks
+  const pend=doc.pending.slice().sort((a,b)=>a.t-b.t);
+  html += `<div class="panel"><h3>Schedule a look</h3><p class="small">Spend budget without a question: the robot goes to a room at a time of your choosing and reports what it sees. Useful when you want to catch a routine (who is home at 18:00? what is on the counter before dinner?). Costs are charged on that day; if that day's budget is gone, the look is skipped.</p>
+    <div class="row"><label class="field">room <select id="schedRoom">${rooms.map(r=>`<option>${r}</option>`).join('')}</select></label><label class="field">day <select id="schedDay">${DAYS.slice(q.day, run().state.days.length).map((d,k)=>`<option value="${q.day+k}">${d}</option>`).join('')}</select></label><label class="field">time <input type="time" id="schedTime" value="${fmtMin(Math.min(q.minute+60,1439))}"></label><button class="btn" id="schedBtn">Schedule</button></div>
+    ${pend.length?`<div class="hist">${pend.map((p,k)=>`<div>${fmtT(p.t)} · ${p.room} <button class="btn" data-cancel="${k}" style="padding:1px 8px;margin-left:8px">cancel</button></div>`).join('')}</div>`:'<p class="small">Nothing scheduled.</p>'}</div>`;
+  // ---- new since last question
   html += `<div class="panel"><h3>New since your last question</h3>`;
-  if(i===0) html += `<p class="small">Everything before this question is new: the Wednesday walkthrough and the patrol so far. Skim the log in the right column.</p>`;
-  html += fresh.length?`<div class="timeline">${visitLog(fresh, q.obj)}</div>`:`<p class="small">The patrol has not visited any room since your last question.</p>`;
+  if(i===0) html += `<p class="small">Only the Wednesday walkthrough so far; it is in the memory panel and the log on the right.</p>`;
+  html += fresh.length?`<div class="timeline">${fresh.map(v=>visitHtml(v, q.obj, true)).join('')}</div>`:(i>0?`<p class="small">No scheduled looks ran since the last question.</p>`:'');
+  if(failed.length) html += `<p class="small mark bad">${failed.length} scheduled look${failed.length===1?'':'s'} skipped: ${failed.map(f=>fmtT(f.t)+' '+f.room+' ('+f.reason+')').join('; ')}</p>`;
   html += `</div>`;
-  const sc=scoreFromAnswers(doc.answers, K); html += `<div class="panel">${scoreTable(sc,K,`Score so far · ${sc.n} answered`)}${doc.answers.length?`<details><summary>Every answer so far</summary>${historyHtml(doc)}</details>`:''}<div class="row" style="margin-top:8px"><button class="btn" id="resetPlay">Restart this household</button><span class="small">Patrol ${doc.visits}/day · ${K} looks. Changing these restarts the segment.</span><select id="pVisits">${[2,4,6,8,12].map(v=>`<option ${doc.visits===v?'selected':''}>${v}</option>`).join('')}</select><select id="pLooks">${[1,2,3,5].map(v=>`<option ${K===v?'selected':''}>${v}</option>`).join('')}</select></div></div>`;
+  // ---- score + settings
+  const sc=scoreFrom(doc.answers, upTo);
+  html += `<div class="panel">${scoreTable(sc, `Score so far · ${sc.n} revealed of ${doc.answers.length} answered`)}${doc.answers.length?`<details><summary>Every answer so far</summary>${historyHtml(doc, upTo)}</details>`:''}
+    <div class="row" style="margin-top:8px;align-items:center"><label class="switch"><input type="checkbox" id="showVerdicts" ${doc.showVerdicts?'checked':''}> show verdicts immediately (not recommended)</label></div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="resetRun">Restart this household</button><span class="small">budget/day</span><select id="cfgBudget">${[6,9,12,16,24].map(v=>`<option ${doc.budget===v?'selected':''}>${v}</option>`).join('')}</select><span class="small">travel cost</span><select id="cfgTravel">${[1,2,3,5].map(v=>`<option ${doc.travel===v?'selected':''}>${v}</option>`).join('')}</select><span class="small">changing these restarts the segment</span></div></div>`;
   html += notepadHtml();
-  html += `</div><div class="stack">` + evidenceHtml(q, cut, visits) + `</div></div>`;
-  return html; }
-function historyHtml(doc){ return `<div class="hist">${doc.answers.slice().reverse().map(a=>`<div>${a.found?'<span class="mark ok">✓'+a.looksUsed+'</span>':'<span class="mark bad">✗</span>'} Q${a.i+1} <span class="id">${a.obj}</span> ${wd3(a.day)} ${fmtMin(a.minute)} → <span class="id rec">${a.truth}</span> <span class="small">you: ${a.tried.map(t=>t.rec+(t.kind==='guess'?' (guess)':'')).join(', ')} · baselines 1st: ${a.base.map((b,k)=>b[0]?BASE_NAMES[k].split(',')[0]:null).filter(Boolean).join(', ')||'none'}</span>${a.note?`<br><span class="small" style="color:var(--ink)">“${esc(a.note)}”</span>`:''}</div>`).join('')}</div>`; }
-async function finishPlay(found){ try{ await finishPlayInner(found); }catch(e){ console.error(e); S.play.done=true; S.play.error=String(e&&e.message||e); renderQuiz(); } }
-async function finishPlayInner(found){ const doc=playDoc(), q=S.play.q, K=doc.looks, visits=allVisits(doc.visits, lookObsFrom(doc)), truth=rowAt(q.obj,q.t).receptacle_id;
-  const base=baselinesObs(q,q.t,K,visits).map(b=>[b.ranked[0]===truth, b.ranked.includes(truth)]);
-  const nLooks=S.play.tried.filter(t=>t.kind!=='guess').length, guessed=S.play.tried.some(t=>t.kind==='guess');
-  doc.answers.push({i:S.play.index, obj:q.obj, day:q.day, minute:q.minute, t:q.t, truth, tried:S.play.tried, found, looksUsed: nLooks, guessed, base, whim: !!rowAt(q.obj,q.t).whim, note:(S.play.draft||'').trim(), ts:new Date().toISOString()}); S.play.noteDirty=false;
-  doc.household=hh().id; doc.updated=new Date().toISOString(); S.play.done=true; renderQuiz(); await saveDoc('chrono/g2s'+S.seed, 'ssi-play-g2-'+S.seed, doc); }
-function wirePlay(el){ const H=hh(); const q=S.play.q;
-  const look=el.querySelector('#pLook'); if(look) look.addEventListener('click', ()=>{ const rec=el.querySelector('#pAns').value; if(!rec||S.play.done) return; const hit=doAction('look', rec, q, S.play.tried); if(hit) finishPlay(true); else renderQuiz(); });
-  const guess=(rec)=>{ if(!rec||S.play.done) return; const hit=doAction('guess', rec, q, S.play.tried); finishPlay(hit); };
-  const g1=el.querySelector('#pGuess'); if(g1) g1.addEventListener('click', ()=>guess(el.querySelector('#pAns').value));
-  const g2=el.querySelector('#pGuessOut'); if(g2) g2.addEventListener('click', ()=>guess('OUT_OF_HOUSE'));
-  const g3=el.querySelector('#pGuessOn'); if(g3) g3.addEventListener('click', ()=>guess('ON_PERSON'));
-  const nx=el.querySelector('#pNext'); if(nx) nx.addEventListener('click', ()=>{ S.play.tried=[]; S.play.done=false; S.play.error=null; S.play.draft=''; S.play.noteDirty=false; renderQuiz(); });
+  html += `</div><div class="stack">`;
+  // ---- right column: memory + full log
+  html += memoryHtml(cut, visits, q.obj);
+  const seenSoFar=visits.filter(v=>v.t<=cut);
+  html += `<div class="panel"><details><summary>Full observation log up to now (${seenSoFar.length} room visits)</summary><div class="timeline" style="margin-top:8px">${seenSoFar.map(v=>visitHtml(v, q.obj, false)).join('')}</div></details></div>`;
+  html += `</div></div>`;
+  el.innerHTML = html;
+  wireNotepad(el); wireRun(el, q);
+  if(changed) saveRun();
+}
+function recordAnswer(guess){ const doc=runDoc(), q=S.play.q, i=S.play.index, visits=knowledgeVisits(), tr=rowAt(q.obj,q.t), truth=tr.receptacle_id;
+  const base=baselines(q,q.t,3,visits).map(b=>[b.ranked[0]===truth, b.ranked.includes(truth)]);
+  const mine=doc.looks.filter(l=>l.src==='question' && l.qi===i && !l.failed);
+  const prevT = i>0 ? questionSequence(doc.perDay)[i-1].t : 0;
+  doc.answers.push({i, obj:q.obj, day:q.day, minute:q.minute, t:q.t, cutFrom:prevT, truth, guess, hit:guess===truth, carrier: truth==='ON_PERSON'?tr.carrier:undefined, looksUsed:mine.length, costUsed:mine.reduce((a,l)=>a+l.cost,0), base, whim:!!tr.whim, note:(S.play.draft||'').trim(), ts:new Date().toISOString()});
+  doc.household=hh().id; doc.updated=new Date().toISOString(); S.play.done=true; S.play.noteDirty=false; renderQuiz(); saveRun(); }
+function wireRun(el, q){ const doc=runDoc();
+  const rs=el.querySelector('#resetRun'); if(rs) rs.addEventListener('click', async ()=>{ if(!confirm('Restart this household? Your answers and looks on it are cleared (notes are kept).')) return; S.play.doc={perDay:doc.perDay, budget:doc.budget, travel:doc.travel, lookCost:doc.lookCost, answers:[], looks:[], pending:[], robot:homeBase(), showVerdicts:doc.showVerdicts, started:new Date().toISOString()}; S.play.done=false; S.play.draft=''; renderQuiz(); await saveRun(); });
+  const restartWith=async (patch)=>{ if(doc.answers.length && !confirm('Changing this restarts the segment for this household. Continue?')){ renderQuiz(); return; } S.play.doc=Object.assign({perDay:doc.perDay, budget:doc.budget, travel:doc.travel, lookCost:doc.lookCost, showVerdicts:doc.showVerdicts}, patch, {answers:[], looks:[], pending:[], robot:homeBase(), started:new Date().toISOString()}); S.play.done=false; S.play.draft=''; renderQuiz(); await saveRun(); };
+  const cb=el.querySelector('#cfgBudget'); if(cb) cb.addEventListener('change', e=>restartWith({budget:+e.target.value}));
+  const ct=el.querySelector('#cfgTravel'); if(ct) ct.addEventListener('change', e=>restartWith({travel:+e.target.value}));
+  const sv=el.querySelector('#showVerdicts'); if(sv) sv.addEventListener('change', async e=>{ doc.showVerdicts=e.target.checked; renderQuiz(); await saveRun(); });
+  for(const b of el.querySelectorAll('[data-mem]')) b.addEventListener('click', ()=>{ S.mem.tab=b.dataset.mem; renderQuiz(); });
+  const mo=el.querySelector('#memObj'); if(mo) mo.addEventListener('change', e=>{ S.mem.obj=e.target.value; renderQuiz(); });
+  const mp=el.querySelector('#memPlace'); if(mp) mp.addEventListener('change', e=>{ S.mem.place=e.target.value; renderQuiz(); });
+  if(!q) return;
+  const ln=el.querySelector('#lookNow'); if(ln) ln.addEventListener('click', async ()=>{ if(S.play.done) return; const room=el.querySelector('#lookRoom').value; const v=doLook(room, q.t, 'question', S.play.index); if(!v){ alert('Not enough budget left today for that look ('+lookCost(room)+' needed, '+budgetLeft(q.day)+' left).'); doc.looks.pop(); return; } renderQuiz(); await saveRun(); });
+  const gs=el.querySelector('#guessSpotBtn'); if(gs) gs.addEventListener('click', ()=>{ const rec=el.querySelector('#guessSpot').value; if(!rec||S.play.done) return; recordAnswer(rec); });
+  const go=el.querySelector('#guessOut'); if(go) go.addEventListener('click', ()=>{ if(!S.play.done) recordAnswer('OUT_OF_HOUSE'); });
+  const gp=el.querySelector('#guessOn'); if(gp) gp.addEventListener('click', ()=>{ if(!S.play.done) recordAnswer('ON_PERSON'); });
+  const nx=el.querySelector('#nextQ'); if(nx) nx.addEventListener('click', ()=>{ S.play.done=false; S.play.draft=''; S.play.noteDirty=false; renderQuiz(); });
+  const sb=el.querySelector('#schedBtn'); if(sb) sb.addEventListener('click', async ()=>{ const room=el.querySelector('#schedRoom').value, d=+el.querySelector('#schedDay').value, [h,m]=el.querySelector('#schedTime').value.split(':').map(Number); const t=d*DAY+(h*60+m)*60; if(t<=q.t){ alert('Schedule a time after the current question ('+fmtT(q.t)+').'); return; } doc.pending.push({t, room}); renderQuiz(); await saveRun(); });
+  for(const b of el.querySelectorAll('[data-cancel]')) b.addEventListener('click', async ()=>{ const pend=doc.pending.slice().sort((a,b)=>a.t-b.t); const p=pend[+b.dataset.cancel]; doc.pending=doc.pending.filter(x=>x!==p); renderQuiz(); await saveRun(); });
   const qn=el.querySelector('#qNote'); if(qn) qn.addEventListener('input', ()=>{ S.play.draft=qn.value; if(S.play.done){ S.play.noteDirty=true; const st=el.querySelector('#qNoteState'); if(st) st.textContent='edited, not saved'; } });
-  const qs=el.querySelector('#qNoteSave'); if(qs) qs.addEventListener('click', async ()=>{ const doc=playDoc(); const last=doc.answers[doc.answers.length-1]; if(!last) return; last.note=(S.play.draft||'').trim(); S.play.noteDirty=false; qs.disabled=true; await saveDoc('chrono/g2s'+S.seed, 'ssi-play-g2-'+S.seed, doc); renderQuiz(); });
-  const rs=el.querySelector('#resetPlay'); if(rs) rs.addEventListener('click', async ()=>{ if(!confirm('Restart this household? Your answers on it are cleared (notes are kept).')) return; const old=playDoc(); S.play.doc={perDay:old.perDay, visits:old.visits, looks:old.looks, answers:[], started:new Date().toISOString()}; S.play.tried=[]; S.play.done=false; renderQuiz(); await saveDoc('chrono/g2s'+S.seed, 'ssi-play-g2-'+S.seed, S.play.doc); });
-  const restartWith=async (patch)=>{ if(playDoc().answers.length && !confirm('Changing this restarts the segment for this household. Continue?')) { renderQuiz(); return; } const old=playDoc(); S.play.doc=Object.assign({perDay:old.perDay, visits:old.visits, looks:old.looks}, patch, {answers:[], started:new Date().toISOString()}); S.play.tried=[]; S.play.done=false; renderQuiz(); await saveDoc('chrono/g2s'+S.seed, 'ssi-play-g2-'+S.seed, S.play.doc); };
-  const pv=el.querySelector('#pVisits'); if(pv) pv.addEventListener('change', e=>restartWith({visits:+e.target.value}));
-  const pl=el.querySelector('#pLooks'); if(pl) pl.addEventListener('change', e=>restartWith({looks:+e.target.value}));
+  const qs=el.querySelector('#qNoteSave'); if(qs) qs.addEventListener('click', async ()=>{ const last=doc.answers[doc.answers.length-1]; if(!last) return; last.note=(S.play.draft||'').trim(); S.play.noteDirty=false; qs.disabled=true; await saveRun(); renderQuiz(); });
 }
-
-// ---------- free mode (random questions, adjustable cutoff) ----------
-function renderFree(){ const H=hh(); ensureScore(); if(!S.quiz.q) newQuestion();
-  const q=S.quiz.q, cut=cutoffFor(q), truthRow=rowAt(q.obj,q.t), truth=truthRow.receptacle_id, sc=S.quiz.score, K=S.quiz.looks, visits=allVisits(S.quiz.visits, []);
-  let html = `<p class="sub">Random questions with an adjustable cutoff. Nothing here is saved; the chronological run is the recorded one.</p>`;
-  html += `<div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack"><div class="panel">`;
-  html += `<div class="controls"><label class="field">you know sightings up to <select id="cutSel">${[['yesterday','end of the previous day'],['morning','08:00 that morning'],['hour','one hour before'],['now','the moment itself']].map(([v,l])=>`<option value="${v}" ${S.quiz.cutoff===v?'selected':''}>${l}</option>`).join('')}</select></label>
-    <label class="field">looks per question <select id="looksSel">${[1,2,3,5].map(v=>`<option ${S.quiz.looks===v?'selected':''}>${v}</option>`).join('')}</select></label>
-    <label class="field">patrol visits per day <select id="visitsSel">${[2,4,6,8,12].map(v=>`<option ${S.quiz.visits===v?'selected':''}>${v}</option>`).join('')}</select></label>
-    <label class="field">objects asked about <select id="poolSel">${[['moving','things activities touch (weighted)'],['nonpocket','same, no phone/keys/wallet'],['all','everything except fixtures']].map(([v,l])=>`<option value="${v}" ${S.quiz.pool===v?'selected':''}>${l}</option>`).join('')}</select></label></div>`;
-  html += `<div class="q noclick">Where is <span class="id" style="font-size:17px">${q.obj}</span> on ${DAYS[q.day]} at ${fmtMin(q.minute)}?</div>`;
-  html += actionRow('f', S.quiz.tried, K, S.quiz.done) + `<div class="row" style="margin-top:6px"><button class="btn ${S.quiz.done?'primary':''}" id="next">${S.quiz.done?'Next question':'Skip this question'}</button></div>`;
-  html += looksHtml(S.quiz.tried);
-  if(S.quiz.done){ const found=S.quiz.tried.some(t=>t.hit); html += truthHtml(q,cut,truthRow,found,S.quiz.tried); html += baselineTable(q,cut,K,visits,S.quiz.tried,found); }
-  html += `</div><div class="panel">${scoreTable(sc,K,`Score on this household · ${sc.n} question${sc.n===1?'':'s'}`)}<div class="row" style="margin-top:8px"><button class="btn" id="resetScore">Reset score</button></div>
-    ${S.quiz.hist.length?`<div class="hist">${S.quiz.hist.slice(-8).reverse().map(h=>`<div>${h.found?'<span class="mark ok">✓'+h.looksUsed+'</span>':'<span class="mark bad">✗</span>'} <span class="id">${h.obj}</span> ${wd3(h.day)} ${fmtMin(h.minute)} → <span class="id rec">${h.truth}</span>${h.whim?' <span class="tag whim">whim</span>':''}</div>`).join('')}</div>`:''}</div>`;
-  html += `<div class="panel"><h3>Ask your own (ground truth)</h3><div class="row"><label class="field">object <select id="ownObj">${Object.keys(H.objects).sort().map(x=>`<option ${x===(S.quiz.own?S.quiz.own.obj:q.obj)?'selected':''}>${x}</option>`).join('')}</select></label><label class="field">day <select id="ownDay">${DAYS.slice(0,run().state.days.length).map((d,i)=>`<option value="${i}" ${i===(S.quiz.own?S.quiz.own.day:q.day)?'selected':''}>${d}</option>`).join('')}</select></label><label class="field">time <input type="time" id="ownTime" value="${fmtMin(S.quiz.own?S.quiz.own.minute:q.minute)}"></label><button class="btn" id="ownGo">Look up</button></div><div id="ownOut">${S.quiz.own?ownAnswer(S.quiz.own):''}</div></div>`;
-  html += notepadHtml();
-  html += `</div><div class="stack">` + evidenceHtml(q, cut, visits) + `</div></div>`;
-  return html; }
-function finishFree(found){ const q=S.quiz.q, sc=S.quiz.score, cut=cutoffFor(q), truth=rowAt(q.obj,q.t).receptacle_id, visits=allVisits(S.quiz.visits, []); const looksUsed=S.quiz.tried.filter(t=>t.kind!=='guess').length;
-  sc.n++; if(found && S.quiz.tried[0].hit) sc.you1++; if(found) sc.youK++; if(found) sc.looksUsed+=looksUsed; else sc.gaveUp++;
-  baselinesObs(q, cut, S.quiz.looks, visits).forEach((b,i)=>{ if(b.ranked[0]===truth) sc.base[i][0]++; if(b.ranked.includes(truth)) sc.base[i][1]++; });
-  S.quiz.hist.push({obj:q.obj, day:q.day, minute:q.minute, truth, found, looksUsed, whim: !!rowAt(q.obj,q.t).whim}); S.quiz.done=true; }
-function wireFree(el){ const H=hh(), q=S.quiz.q, K=S.quiz.looks, truth=rowAt(q.obj,q.t).receptacle_id;
-  el.querySelector('#cutSel').addEventListener('change', e=>{ S.quiz.cutoff=e.target.value; S.quiz.tried=[]; S.quiz.done=false; renderQuiz(); });
-  el.querySelector('#looksSel').addEventListener('change', e=>{ S.quiz.looks=+e.target.value; S.quiz.tried=[]; S.quiz.done=false; renderQuiz(); });
-  el.querySelector('#visitsSel').addEventListener('change', e=>{ S.quiz.visits=+e.target.value; S.quiz.tried=[]; S.quiz.done=false; renderQuiz(); });
-  el.querySelector('#poolSel').addEventListener('change', e=>{ S.quiz.pool=e.target.value; newQuestion(); renderQuiz(); });
-  el.querySelector('#fLook').addEventListener('click', ()=>{ const rec=el.querySelector('#fAns').value; if(!rec||S.quiz.done) return; const hit=doAction('look', rec, q, S.quiz.tried); if(hit) finishFree(true); renderQuiz(); });
-  const guess=(rec)=>{ if(!rec||S.quiz.done) return; const hit=doAction('guess', rec, q, S.quiz.tried); finishFree(hit); renderQuiz(); };
-  el.querySelector('#fGuess').addEventListener('click', ()=>guess(el.querySelector('#fAns').value));
-  el.querySelector('#fGuessOut').addEventListener('click', ()=>guess('OUT_OF_HOUSE'));
-  el.querySelector('#fGuessOn').addEventListener('click', ()=>guess('ON_PERSON'));
-  el.querySelector('#next').addEventListener('click', ()=>{ newQuestion(); renderQuiz(); });
-  el.querySelector('#resetScore').addEventListener('click', ()=>{ S.quiz.score=null; S.quiz.hist=[]; renderQuiz(); });
-  el.querySelector('#ownGo').addEventListener('click', ()=>{ const [h,m]=el.querySelector('#ownTime').value.split(':').map(Number); S.quiz.own={obj:el.querySelector('#ownObj').value, day:+el.querySelector('#ownDay').value, minute:h*60+m}; renderQuiz(); });
-}
-function ownAnswer(own){ const t=own.day*DAY+own.minute*60, r=rowAt(own.obj,t); if(!r) return ''; const dayRows=rowsFor(own.obj).filter(x=>Math.floor(x.t/DAY)===own.day);
-  let html=`<div class="verdict none" style="margin-top:10px"><span class="id">${own.obj}</span> at ${fmtT(t)} is at <span class="id rec">${r.receptacle_id}</span>${r.carrier?' (carried by '+resName(r.carrier)+')':''}. <span class="small">Since ${fmtT(r.t)} · ${esc(r.cause.replace(':',' · '))}${r.reason?' · '+esc(r.reason):''}${r.whim?' <span class="tag whim">whim</span>':''}${S.reveal?(r.causes||[]).map(c=>`<span class="tag ${causeKind(c)}">${esc(c)}</span>`).join(''):''}</span></div>`;
-  if(dayRows.length) html += `<div class="small" style="margin-top:6px">That day: ${dayRows.map(x=>`${fmtMin(Math.floor((x.t%DAY)/60))} → <span class="id rec">${x.receptacle_id}</span>`).join(' · ')}</div>`;
-  return html; }
 
 render();
 })();
