@@ -27,8 +27,17 @@ import yaml
 
 from situation_sim.household import Household
 
-WEEKDAYS = ["Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+WEEKDAYS = ["Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]   # the old five-day default
 WEEKEND = {"Saturday", "Sunday"}
+DEFAULT_DAY0 = "Wednesday"
+
+
+def weekday_of(day_index: int, day0: str = DEFAULT_DAY0) -> str:
+    """Calendar weekday of day ``day_index`` when day 0 is ``day0``."""
+    return WEEK[(WEEK.index(day0) + day_index) % 7]
+
+
 MIN_PER_DAY = 1440
 WAKE_MINUTE = 6 * 60 + 30      # "wake" in an episode window
 
@@ -186,7 +195,8 @@ def _eligible(spec: dict, r) -> bool:
 
 def sample_situations(hh: Household, seed: int, n_days: int,
                       events: Dict[str, dict],
-                      episodes: Optional[Dict[str, dict]] = None) -> List[DaySituation]:
+                      episodes: Optional[Dict[str, dict]] = None,
+                      day0: str = DEFAULT_DAY0) -> List[DaySituation]:
     episodes = load_episodes() if episodes is None else episodes
     rng = random.Random(f"situation:{seed}")
     ep_rng = random.Random(f"episodes:{seed}")
@@ -196,7 +206,7 @@ def sample_situations(hh: Household, seed: int, n_days: int,
     # phases already rolled for later days: day -> episodes
     scheduled: Dict[int, List[Episode]] = {}
     for d in range(n_days):
-        weekday = WEEKDAYS[d % len(WEEKDAYS)]
+        weekday = weekday_of(d, day0)
         is_we = weekday in WEEKEND
         rate_key = "weekend" if is_we else "weekday"
         causes: List[Cause] = []

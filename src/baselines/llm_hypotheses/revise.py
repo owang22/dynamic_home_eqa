@@ -474,6 +474,7 @@ class TreeRevisionElicitor(RevisionElicitor):
 from baselines.llm_hypotheses.longleaf import (  # noqa: E402
     MAX_LIBRARY, accept_literal_away_tokens, anonymize_document,
     deanonymize_document, parse_documents, read_ids, revive_ids)
+from baselines.llm_hypotheses import protocol_text as _PT
 from baselines.llm_hypotheses.longleaf_prompt import (  # noqa: E402
     longleaf_repair_prompt, longleaf_revision_prompt)
 
@@ -491,8 +492,9 @@ class LongLeafRevisionElicitor(RevisionElicitor):
         index = len(self.calls) + 1
         self._set_vocabulary(report.get("known_objects")
                              or self._episode.object_classes)
+        notes = _PT.household_notes(getattr(self._episode, "protocol", None), int(report["day"]))
         user = longleaf_revision_prompt(report, self._tables, self._omap,
-                                        self._rmap)
+                                        self._rmap, notes=notes)
         log: Dict[str, Any] = {"household": self._episode.household_id,
                                "anonymized": self._anonymized,
                                "longleaf": True, "call_index": index,
@@ -532,7 +534,7 @@ class LongLeafRevisionElicitor(RevisionElicitor):
             by_id = {d["hypothesis_id"]: d for d in report.get("library", [])}
             fetched = [by_id[i] for i in wanted if i in by_id]
             user2 = longleaf_revision_prompt(report, self._tables, self._omap,
-                                             self._rmap, fetched=fetched)
+                                             self._rmap, fetched=fetched, notes=notes)
             budget2 = output_budget(user2, self._max_tokens, SYSTEM_PROMPT)
             row2 = self._client.generate(SYSTEM_PROMPT, user2, seed=seed + 1,
                                          temperature=self._temperature,

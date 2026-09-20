@@ -174,6 +174,9 @@ class RoomLook:
     travel_cost: float = 3.0
     person_sensing: bool = False
     looked: Set[str] = field(default_factory=set)   # rooms looked at in the open question
+    max_looks: Optional[int] = None
+    """The patrol protocol's cap: at most this many looks per question (one).
+    None keeps the budget as the only limit."""
 
 
 @dataclass(frozen=True)
@@ -309,6 +312,12 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
             actions.append({"type": "forced_answer",
                             "refused_sense": target,
                             "cost": cost, "budget_remaining": budget})
+            break
+        if (room_look is not None and room_look.max_looks is not None
+                and n_senses >= room_look.max_looks):
+            # the patrol protocol: the free look is used up for this question
+            actions.append({"type": "look_cap_answer", "refused_sense": target,
+                            "max_looks": room_look.max_looks})
             break
         if n_senses >= max_senses:
             # Unreachable for a policy that senses each receptacle at most

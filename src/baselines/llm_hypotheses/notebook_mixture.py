@@ -213,6 +213,7 @@ class NotebookConfig:
     allow_forks: bool = True         # False: beliefs frozen for life (the notes-only ablation)
     residents_today: bool = False    # a code-kept block of today's resident sightings in every prompt
     room_spread: bool = False        # a room named as a spot spreads its mass over the room's receptacles
+    free_look: bool = False          # the patrol protocol: one free room look per question, no budget
     label: str = "notebook_mixture"
 
 
@@ -227,6 +228,18 @@ NOTEBOOK_VOI = NotebookConfig(look_rule="voi", beta=0.3, invalid_look="neutral",
 NOTEBOOK_LLM_DECIDE = dataclasses.replace(NOTEBOOK_VOI, look_rule="llm",
                                           tell_questions_per_day=False,
                                           label="notebook_llmDecide")
+NOTEBOOK_LLM_DECIDE_FREE = dataclasses.replace(NOTEBOOK_LLM_DECIDE, free_look=True,
+                                               max_looks_per_question=1,
+                                               use_it_or_lose_it=False,
+                                               label="notebook_llmDecide_free")
+"""The patrol protocol: the dispatcher decides whether to take the one free
+look; nothing to ration."""
+NOTEBOOK_VOI_FREE = dataclasses.replace(NOTEBOOK_VOI, free_look=True,
+                                        max_looks_per_question=1,
+                                        use_it_or_lose_it=False, voi_lambda=0.0,
+                                        label="notebook_voi_free")
+"""The patrol protocol without the dispatcher: always take the free look at
+the VoI-argmax spot (lambda 0)."""
 NOTEBOOK_FIXED = dataclasses.replace(NOTEBOOK_VOI, followup_mode="none",
                                      review="none", label="notebook_fixed")
 NOTEBOOK_NOTES = dataclasses.replace(NOTEBOOK_VOI, allow_forks=False,
@@ -238,6 +251,8 @@ every look, never revised, no forks, births or reviews (the cheap check
 that the revisions are worth their cost)."""
 CONFIGS = {"notebook_mixture": NotebookConfig(), "notebook_voi": NOTEBOOK_VOI,
            "notebook_llmDecide": NOTEBOOK_LLM_DECIDE,
+           "notebook_llmDecide_free": NOTEBOOK_LLM_DECIDE_FREE,
+           "notebook_voi_free": NOTEBOOK_VOI_FREE,
            "notebook_fixed": NOTEBOOK_FIXED, "notebook_notes": NOTEBOOK_NOTES}
 
 # minItems 1: on the 3-day hh_001 run 19 of 491 question forecasts came
@@ -776,6 +791,12 @@ class NotebookMixtureBrain:
         self._invalid_look_agents: List[str] = []
         self._skipped_last: List[str] = []
         self._today_look_lines: List[str] = []
+        # the patrol stream (free-look banks): latest listing per room, the
+        # object's last listed spot, and per-pass movement lines not yet
+        # flushed into the day's look lines
+        self._latest_room: Dict[str, Dict[str, Any]] = {}
+        self._last_spot: Dict[str, str] = {}
+        self._pass_moves: Dict[int, List[str]] = {}
         self._res_today: Dict[str, List[Tuple[int, str]]] = {}   # resident -> [(t, room)] from looks
         self._empty_today: List[Tuple[int, str]] = []             # rooms looked at with nobody there
         self._dispatch_ledger: List[Dict[str, Any]] = []   # today's decisions
@@ -823,6 +844,9 @@ class NotebookMixtureBrain:
 
     def _remaining(self) -> float:
         assert self.context is not None
+        if self.config.free_look:
+            # the patrol protocol: the one free look, until it is used
+            return 0.0 if self._sensed_this_question else 1.0
         return max(0.0, self.context.budget_per_day - self.spent_today)
 
     # ------------------------------------------------------------- prompt
@@ -851,6 +875,10 @@ class NotebookMixtureBrain:
                 return f"{self.rec(r)} ({n})" if n and not self._rmap else self.rec(r)
             text += "\n\nRESIDENTS: " + ", ".join(named(r) for r in ctx.resident_ids)
         text += "\n\n" + PT.budget_sentences(ctx.protocol, ctx.budget_per_day, ctx.home_base_room)
+        # messages up to the current day (self.day is -1 before the first question: cards only)
+        notes = PT.household_notes(ctx.protocol, max(self.day, 0))
+        if notes:
+            text += "\n\n" + notes
         return text
 
     def _notebook_block(self, agent: NotebookAgent) -> str:
@@ -860,9 +888,15 @@ class NotebookMixtureBrain:
         assert self.context is not None
         room = self.context.robot_position.room
         text = f"NOW: {stamp(t)}. The robot is in {room or 'an unknown room'}."
-        text += f" Looks left today: {self._remaining():g}."
+        if self.config.free_look:
+            text += (" The free look for this question is still available."
+                     if self._remaining() > 0 else " The free look for this question has been used.")
+        else:
+            text += f" Looks left today: {self._remaining():g}."
         if self.config.residents_today and self._person_sensing():
             text += "\n" + self._residents_today_block(t)
+        if self.config.free_look:
+            text += "\n" + self._patrol_block()
         if self._seen_lines:
             text += ("\nSEEN SO FAR ON THIS QUESTION:\n"
                      + "\n".join(f"  {line}" for line in self._seen_lines))
@@ -1213,6 +1247,8 @@ class NotebookMixtureBrain:
         ``{"distribution", "argmax", "action": "answer" |
         "sense", ["receptacle" | "resident"]}``."""
         assert self.context is not None
+        if self.config.free_look:
+            self._flush_passes(t)
         self._new_day(t)
         self._ensure_started(t)
         # after the cold start, so day 0 reads 4 rather than 0
@@ -1242,7 +1278,7 @@ class NotebookMixtureBrain:
             "n_sensed": len(self._sensed_this_question)}
         remaining = self._remaining()
         if remaining < 1.0:
-            decision["reason"] = "no budget"
+            decision["reason"] = "free look used" if self.config.free_look else "no budget"
         elif self.config.look_rule in ("voi", "llm"):
             self._decide_by_voi(decision, forecasts, mixture, t)
         else:
@@ -1299,11 +1335,14 @@ class NotebookMixtureBrain:
         ctx = self.context
         remaining = self._remaining()
         out: Dict[str, Dict[str, Any]] = {}
+        free = self.config.free_look
         for r in ctx.sensable_receptacle_ids:
-            if r in self._sensed_this_question or ctx.sense_cost(r) > remaining:
+            if r in (ON_PERSON, OUT_OF_HOUSE):
                 continue
-            out[r] = {"receptacle": r, "room": ctx.receptacle_rooms.get(r),
-                      "cost": ctx.sense_cost(r)}
+            cost = 1.0 if free else ctx.sense_cost(r)
+            if r in self._sensed_this_question or cost > remaining:
+                continue
+            out[r] = {"receptacle": r, "room": ctx.receptacle_rooms.get(r), "cost": cost}
         if self._person_sensing() and remaining >= 1.0:
             listed = [r for r in self._listed_this_question
                       if r not in self._sensed_this_question]
@@ -1538,6 +1577,16 @@ class NotebookMixtureBrain:
         alone."""
         if isinstance(evidence, Observation):
             self.objects.setdefault(evidence.object_id, evidence.object_class)
+            if self.config.free_look and self.context is not None:
+                # the walkthrough's positive sightings: part of the first listing
+                room = (self.context.receptacle_rooms or {}).get(evidence.receptacle_id)
+                if room:
+                    snap = self._latest_room.setdefault(room, {"t": evidence.t, "contents": {}, "residents": []})
+                    if snap["t"] != evidence.t:
+                        snap = {"t": evidence.t, "contents": {}, "residents": []}
+                        self._latest_room[room] = snap
+                    snap["contents"].setdefault(evidence.receptacle_id, []).append(evidence.object_id)
+                    self._last_spot[evidence.object_id] = evidence.receptacle_id
             return
         for o in evidence.contents:
             self.objects.setdefault(o, evidence.object_classes.get(o, ""))
@@ -1558,6 +1607,8 @@ class NotebookMixtureBrain:
                 if self.context else None
             line = f"{stamp(t)} look at {self.rec(target)}: {inside}"
             listed = tuple(evidence.residents_present)
+            if self.config.free_look and room:
+                self._record_listing(t, room, target, contents, listed)
             if self._person_sensing():
                 who = ", ".join(self.rec(r) for r in listed) or "nobody"
                 line += f"; residents here: {who}"
@@ -1583,6 +1634,49 @@ class NotebookMixtureBrain:
         if self._dispatch_ledger and self._dispatch_ledger[-1]["action"] == "look":
             self._dispatch_ledger[-1]["found"] = inside
         self._look_procedure(pending, target, room, contents, listed, line, t)
+
+    def _record_listing(self, t: int, room: str, target: str,
+                        contents: Tuple[str, ...], listed: Tuple[str, ...]) -> None:
+        """Keep the latest listing of every room and note each object that
+        turned up on a new spot (one movement line per patrol pass)."""
+        snap = self._latest_room.get(room)
+        if snap is None or snap["t"] != t:
+            snap = {"t": t, "contents": {}, "residents": []}
+            self._latest_room[room] = snap
+        if contents or target not in snap["contents"]:
+            snap["contents"][target] = list(contents)
+        for r in listed:
+            if r not in snap["residents"]:
+                snap["residents"].append(r)
+        for o in contents:
+            prev = self._last_spot.get(o)
+            if prev != target:
+                self._pass_moves.setdefault(t, []).append(
+                    f"{self.obj(o)}: {self.rec(prev) if prev else 'first seen'} -> {self.rec(target)}")
+                self._last_spot[o] = target
+
+    def _flush_passes(self, before_t: int) -> None:
+        """Turn completed patrol passes into one line each of the day's
+        look lines (what the reviews read)."""
+        for t in sorted(self._pass_moves):
+            if t >= before_t:
+                continue
+            moves = self._pass_moves.pop(t)
+            if moves:
+                self._today_look_lines.append(f"{stamp(t)} patrol: " + "; ".join(moves[:25])
+                                              + (f"; +{len(moves) - 25} more" if len(moves) > 25 else ""))
+
+    def _patrol_block(self) -> str:
+        if not self._latest_room:
+            return "LATEST PATROL LISTING: none yet."
+        lines = []
+        for room in sorted(self._latest_room):
+            snap = self._latest_room[room]
+            who = ", ".join(self.rec(r) for r in snap["residents"]) or "nobody"
+            spots = "; ".join(f"{self.rec(rec)}: {', '.join(self.obj(o) for o in objs) if objs else 'empty'}"
+                              for rec, objs in sorted(snap["contents"].items()))
+            lines.append(f"  {room} ({stamp(snap['t'])}; present: {who}): {spots}")
+        return "LATEST PATROL LISTING OF EACH ROOM:\n" + "\n".join(lines)
 
     def _look_procedure(self, look: Dict[str, Any], target: str,
                         room: Optional[str], contents: Tuple[str, ...],

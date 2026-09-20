@@ -1,0 +1,102 @@
+<title>Patrol Run Explorer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{color-scheme:light;--page:#f5f4ef;--surface:#fdfcf9;--ink:#15140f;--ink2:#54524a;--muted:#8b8980;--grid:#e2e0d6;--line:#c6c4b8;
+--accent:#1f6f78;--wash:rgba(31,111,120,.10);--shift:rgba(31,111,120,.13);--good:#2f7d4a;--bad:#b9432c;--warn:#b8860b;
+--h0:#f7ede6;--h1:#e9c9b3;--h2:#c9a58b;--h3:#8fb5a8;--h4:#3f8a86;--h5:#1c5c62;--ins:rgba(47,125,74,.22);--del:rgba(185,67,44,.18)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--page:#101110;--surface:#1a1b19;--ink:#f2f1ea;--ink2:#c4c2b6;--muted:#8b8980;--grid:#2b2c29;--line:#3b3c38;
+--accent:#6fbfc6;--wash:rgba(111,191,198,.14);--shift:rgba(111,191,198,.16);--good:#6cc48a;--bad:#e07a62;--warn:#d9a83a;
+--h0:#24201c;--h1:#4a3a2e;--h2:#6b5a48;--h3:#3e6e66;--h4:#3e9a95;--h5:#8fd6d2;--ins:rgba(108,196,138,.28);--del:rgba(224,122,98,.24)}}
+:root[data-theme="dark"]{color-scheme:dark;--page:#101110;--surface:#1a1b19;--ink:#f2f1ea;--ink2:#c4c2b6;--muted:#8b8980;--grid:#2b2c29;--line:#3b3c38;
+--accent:#6fbfc6;--wash:rgba(111,191,198,.14);--shift:rgba(111,191,198,.16);--good:#6cc48a;--bad:#e07a62;--warn:#d9a83a;
+--h0:#24201c;--h1:#4a3a2e;--h2:#6b5a48;--h3:#3e6e66;--h4:#3e9a95;--h5:#8fd6d2;--ins:rgba(108,196,138,.28);--del:rgba(224,122,98,.24)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:14px/1.45 "IBM Plex Sans",system-ui,sans-serif;padding-block:0 32px}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 470px;min-height:100vh}
+main{padding:16px 24px;min-width:0}
+aside{background:var(--surface);border-left:1px solid var(--grid);padding:16px;position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow-y:auto}
+h1{font-size:19px;margin:0 0 2px;letter-spacing:-.01em;font-weight:600}
+.sub{color:var(--muted);font-size:12px;margin-bottom:12px;max-width:80ch}
+h2{font-size:11px;margin:18px 0 6px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink2);font-weight:600}
+section.panel{background:var(--surface);border:1px solid var(--grid);border-radius:4px;padding:14px 16px;margin-bottom:16px}
+section.panel h3{margin:0 0 2px;font-size:14px;font-weight:600}
+.note{font-size:12px;color:var(--muted);margin-bottom:10px;max-width:90ch}
+.toolbar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-bottom:8px}
+select,button{font:12px "IBM Plex Sans",system-ui;padding:3px 7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:3px}
+button{cursor:pointer}button.on{background:var(--wash);border-color:var(--accent);color:var(--ink)}
+label.row{display:flex;gap:6px;align-items:center;cursor:pointer}label.row input{margin:0;accent-color:var(--accent)}
+.scroll{overflow-x:auto}
+svg{display:block;max-width:none}
+svg text{fill:var(--ink2);font-family:"IBM Plex Sans",system-ui,sans-serif}
+svg .cell{cursor:pointer}svg .cell:hover rect{stroke:var(--ink);stroke-width:1.4}svg .cell.sel rect{stroke:var(--ink);stroke-width:1.8}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin:6px 0}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.kpis{display:flex;gap:22px;flex-wrap:wrap;margin:6px 0 12px}
+.kpi b{display:block;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}.kpi span{font-size:12px;color:var(--muted)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px}
+.events{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;margin:4px 0 8px}
+.events span{padding:1px 7px;border-radius:9px;background:var(--wash);color:var(--ink2)}
+.events span.shift{background:var(--shift);color:var(--ink);font-weight:500}
+.res{font-size:12.5px;color:var(--ink2);margin:4px 0 8px;max-width:95ch}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--page);font-size:12px;padding:6px 9px;border-radius:3px;max-width:380px;z-index:9;display:none;line-height:1.35}
+.qwrap{overflow-x:auto}.qlist{font-size:11.5px;border-collapse:collapse;width:100%}
+.qlist th{text-align:left;font-weight:500;color:var(--muted);border-bottom:1px solid var(--grid);padding:3px 4px}
+.qlist td{padding:3px 4px;border-bottom:1px solid var(--grid);vertical-align:top;font-variant-numeric:tabular-nums}
+.qlist tr.q{cursor:pointer}.qlist tr.q:hover td{background:var(--wash)}.qlist tr.sel td{background:var(--wash)}
+.ok{color:var(--good);font-weight:600}.no{color:var(--bad);font-weight:600}.ab{color:var(--warn);font-weight:600}
+.prose{font-size:12.5px;white-space:pre-wrap;line-height:1.5;max-width:75ch;font-family:"IBM Plex Sans",system-ui,sans-serif}
+.prompt{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;white-space:pre-wrap;line-height:1.45;background:var(--page);border:1px solid var(--grid);border-radius:3px;padding:8px 10px;margin:6px 0}
+.compl{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11.5px;white-space:pre-wrap;background:var(--wash);border-radius:3px;padding:6px 10px;margin:4px 0 10px}
+ins{background:var(--ins);text-decoration:none}del{background:var(--del);text-decoration:line-through;opacity:.75}
+.notes2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.notes2 h4{margin:0 0 4px;font-size:12px;font-weight:600;color:var(--ink2)}
+.hint{font-size:12px;background:var(--shift);padding:6px 9px;border-radius:3px;margin:6px 0}
+.pill{display:inline-block;padding:0 6px;border-radius:9px;font-size:11px;background:var(--wash);color:var(--ink2)}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+@media (max-width:1000px){.wrap{grid-template-columns:1fr}aside{position:static;height:auto;border-left:0;border-top:1px solid var(--grid)}main{padding:16px}.notes2{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div class="wrap">
+<main>
+  <h1>Patrol run explorer</h1>
+  <div class="sub">situation_sim, 8-day episodes (Tuesday walkthrough, Wednesday to Tuesday scored), robot patrol every 4 h, 32 questions a day. Every agent on the same bank; classical beliefs with the look off and with the one-step VoI look; LLM agents (Qwen3.8-27B, no thinking) with three memories × told / not told × look on / off. Nothing here is a reasoning trace: the LLM answers a fixed JSON schema; the routine-summary agent's daily notes are the only text it writes.</div>
+  <div class="kpis" id="kpis"></div>
+  <div class="toolbar">
+    <span>household</span><select id="hh"></select>
+    <span>agents</span>
+    <button id="gClassical" class="on">classical</button><button id="gVoi" class="on">classical + look</button><button id="gLlm" class="on">LLM</button>
+    <label class="row"><input type="checkbox" id="spotOnly"> in-house spot truths only</label>
+  </div>
+  <div class="events" id="events"></div>
+  <div class="res" id="residents"></div>
+
+  <section class="panel">
+    <h3>Accuracy by day, this household</h3>
+    <div class="note">One row per agent, one column per scored day. Shaded columns are this household's shift days (weekend, guests, illness). Click a cell to list its questions on the right. The last column is the household's paired shift effect: accuracy on its shift days minus its other days.</div>
+    <div class="legend" id="legendA"></div>
+    <div class="scroll" id="grid"></div>
+  </section>
+
+  <section class="panel">
+    <h3>Paired shift effect across households</h3>
+    <div class="note">Each dot is one household: its own shift-day accuracy minus its own non-shift-day accuracy, for that agent. The bar is the mean over households. Negative means the routine change cost accuracy in that home. Use the "spot truths only" toggle above to remove the OUT_OF_HOUSE mix (few things leave the house on weekends).</div>
+    <div class="scroll" id="paired"></div>
+  </section>
+
+  <section class="panel">
+    <h3>Routine notes of the summary agent, day by day</h3>
+    <div class="note">The routine-summary agent rewrites its notes once a day from the day's movements plus the previous notes. Told and not-told arms side by side (look on); additions against the previous day are marked <ins>like this</ins>, removals <del>like this</del>. The resident message of a shift day is shown where the told arm received it.</div>
+    <div class="toolbar"><span>day</span><select id="noteDay"></select><span>arm</span><select id="noteLook"><option value="lookon">look on</option><option value="lookoff">look off</option></select><label class="row"><input type="checkbox" id="showDiff" checked> mark changes vs previous day</label></div>
+    <div id="hintBox"></div>
+    <div class="notes2" id="notes"></div>
+  </section>
+</main>
+<aside>
+  <h2>Questions in the selected cell</h2>
+  <div id="qhead" class="note">Click a cell in the day grid.</div>
+  <div class="qwrap" id="qlist"></div>
+  <h2>Prompt and answer</h2>
+  <div id="qdoc" class="note">Prompts are bundled for the routine-summary told look-on arm (all households) and the naive told look-on arm (hh_s0). Other arms show the record only.</div>
+</aside>
+</div>
+<div id="tip"></div>

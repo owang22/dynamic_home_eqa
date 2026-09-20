@@ -166,7 +166,8 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
         return {"name": "log_reader", "brain": brain,
                 "label": f"{label}({condition})"}
     if kind in ("notebook_mixture", "notebook_voi", "notebook_llmDecide",
-                "notebook_fixed", "notebook_notes"):
+                "notebook_fixed", "notebook_notes", "notebook_llmDecide_free",
+                "notebook_voi_free"):
         assert condition in ("named", "anonymized"), \
             f"{kind} takes a condition: named | anonymized"
         assert client is not None, "the notebook mixture needs a served model"
@@ -182,9 +183,13 @@ def belief_spec(kind: str, condition: Optional[str], household: str,
         days = [d for d in episode.questions_by_day if d]
         qpd = (sum(len(d) for d in days) / len(days)) if days else 24.0
         config = dataclasses.replace(CONFIGS[kind], questions_per_day=qpd)
+        names = _resident_first_names(household)
+        if not names and episode.protocol.get("residents"):
+            # patrol banks carry the names on their intro cards
+            names = {c["resident_id"]: c["name"] for c in episode.protocol["residents"]}
         brain = NotebookMixtureBrain(client, omap=omap, rmap=rmap, cmap=cmap,
                                      log_dir=log_dir.parent, config=config,
-                                     resident_names=_resident_first_names(household))
+                                     resident_names=names)
         return {"name": "notebook_mixture", "brain": brain,
                 "label": f"{config.label}({condition})"}
     if kind in ("llm", "llm_fixed", "graph", "graph_fixed", "tree",
@@ -316,13 +321,19 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
             out_root: pathlib.Path, reask: Dict[str, Any],
             rng_seed: int = 0, bank_dir: Optional[pathlib.Path] = None,
             bank_seed: int = 0, hyp_subdir: str = "",
-            days: Optional[int] = None, room_look: bool = False) -> pathlib.Path:
+            days: Optional[int] = None, room_look: bool = False,
+            free_look: bool = False, told: bool = False,
+            look_mode: str = "voi") -> pathlib.Path:
+    """``free_look``: the patrol protocol (one free room look per question,
+    no budget; belief arms look with :class:`FreeRoomLook` in ``look_mode``).
+    ``told``: the residents' dated messages from the bank header reach the
+    prompts (``protocol.hint_messages``); otherwise they are stripped."""
     protocol, kind, condition, fraction, beta, search = parse_arm(arm)
     if kind == "oracle":          # retired name
         raise SystemExit("arm kind 'oracle' is now 'routine_posterior'")
     # <run>/<household>__bank<seed>/arms/<group>/<arm>/ — grouped by what
     # the arm is, so the household directory reads by importance.
-    arm_dirname = arm.replace(":", "__")
+    arm_dirname = arm.replace(":", "__") + (f"__{'told' if told else 'nottold'}" if free_look else "")
     out_dir = (out_root / f"{household}__bank{bank_seed}" / "arms"
                / arm_group(arm_dirname) / arm_dirname)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -337,6 +348,15 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
             f"exported with --first-question-day 0 (questions from the tour "
             f"day on)")
     episode = next(JsonlBank(path=path).episodes())
+    if free_look:
+        # the bank's budget is a placeholder under the free look; the cap is
+        # one look per question (RoomLook.max_looks); the told arm carries
+        # the header's messages on the protocol block the prompts read
+        proto = {k: v for k, v in episode.protocol.items() if k != "hint_messages"}
+        proto["free_look"] = True
+        if told:
+            proto["hint_messages"] = list(header.get("hint_messages", []))
+        episode = dataclasses.replace(episode, protocol=proto, budget_per_day=10 ** 6)
     if days is not None:
         # A short run for a cost or behaviour check: the first `days`
         # days of questions, everything else about the bank unchanged.
@@ -396,12 +416,17 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
                 policy_rng, lam=VOI_LAMBDA, belief=belief, beta=beta)
         elif search:
             policy = build_policy({"name": "sequential_search"}, policy_rng)
+        elif free_look:
+            from baselines.policies.free_room_look import FreeRoomLook
+            policy = FreeRoomLook(look_mode)
         else:
             policy = build_policy({"name": "random_slice_voi",
                                    "lam": VOI_LAMBDA, "fraction": fraction},
                                   policy_rng)
         rl = None
-        if room_look:
+        if free_look:
+            rl = RoomLook(look_cost=1.0, travel_cost=0.0, person_sensing=False, max_looks=1)
+        elif room_look:
             pr = episode.protocol
             rl = RoomLook(look_cost=float(pr.get("look_cost", 1)),
                           travel_cost=float(pr.get("travel_cost", 3)),
@@ -429,6 +454,7 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
             spec["brain"].finish()
         policy_info = {"policy": policy.name, "fraction": fraction,
                        "beta": beta, "lambda": VOI_LAMBDA,
+                       "free_look": free_look, "told": told,
                        "random_senses": getattr(policy, "random_senses", None),
                        "sense_split": getattr(policy, "sense_split", None)}
 
@@ -534,6 +560,12 @@ def main() -> None:
                          "whole room, priced by the bank's protocol block")
     ap.add_argument("--days", type=int, default=None,
                     help="run only the first N days of questions")
+    ap.add_argument("--free-look", action="store_true",
+                    help="the patrol protocol: one free room look per question, no budget")
+    ap.add_argument("--told", action="store_true",
+                    help="patrol banks: the residents' dated messages reach the prompts")
+    ap.add_argument("--look-mode", default="voi", choices=("voi", "top"),
+                    help="free-look room choice for belief arms")
     args = ap.parse_args()
     reask = {"window": args.reask_window, "threshold": args.reask_threshold,
              "scheduled_days": list(args.reask_days),
@@ -548,7 +580,8 @@ def main() -> None:
     run_arm(args.household, args.arm, args.endpoint, args.model,
             args.out_dir, reask, args.rng_seed, bank_dir=args.bank_dir,
             bank_seed=args.bank_seed, hyp_subdir=args.hyp_subdir,
-            days=args.days, room_look=args.room_look)
+            days=args.days, room_look=args.room_look or args.free_look,
+            free_look=args.free_look, told=args.told, look_mode=args.look_mode)
 
 
 if __name__ == "__main__":

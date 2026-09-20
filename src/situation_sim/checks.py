@@ -31,7 +31,7 @@ def _sha(path: pathlib.Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def run_checks(out: pathlib.Path, seed: int, n_days: int) -> bool:
+def run_checks(out: pathlib.Path, seed: int, n_days: int, day0: str = "Wednesday") -> bool:
     ok = True
     state = json.loads((out / "hidden_state.json").read_text())
     rows = _rows(out / "events.jsonl")
@@ -77,7 +77,7 @@ def run_checks(out: pathlib.Path, seed: int, n_days: int) -> bool:
     from situation_sim.run import generate
     tmp = pathlib.Path(tempfile.mkdtemp(prefix="situation_sim_det_"))
     try:
-        generate(seed, tmp, n_days)
+        generate(seed, tmp, n_days, day0)
         same = all(_sha(out / f) == _sha(tmp / f)
                    for f in ("trace.md", "events.jsonl", "hidden_state.json", "trace.json"))
     finally:

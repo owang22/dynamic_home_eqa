@@ -31,7 +31,8 @@ def _trait_words(r) -> str:
 
 def write_trace(path: pathlib.Path, hh: Household, res: RunResult, events: Dict[str, dict]) -> None:
     out: List[str] = []
-    out.append(f"# Household {hh.id} — five days, Wednesday to Sunday\n")
+    days = [sit for sit, _ in res.trace_days]
+    out.append(f"# Household {hh.id} — {len(days)} days, {days[0].weekday} to {days[-1].weekday}\n")
     out.append("Seed-generated household. Times are clock times; ids are the receptacle and "
                "object ids used in events.jsonl. A line indented under an activity says where an "
                "object went when the activity ended and why. WHIM marks a placement that landed "

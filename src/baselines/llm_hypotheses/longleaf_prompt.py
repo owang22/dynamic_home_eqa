@@ -10,6 +10,7 @@ from typing import Any, Mapping, Sequence
 
 from baselines.llm_hypotheses.longleaf import (DELIMITER, MAX_FETCH,
                                                REVISION_TARGET, TARGET_ELICITED)
+from baselines.llm_hypotheses import protocol_text as PT
 from baselines.llm_hypotheses.prompt import (build_anonymization_maps,
                                              person_sensing_sections,
                                              tour_stamp, vocabulary_tables)
@@ -66,9 +67,14 @@ def longleaf_tour_start_prompt(episode: Episode, anonymized: bool = False):
             mechanics = mechanics.replace(f"`{real}`", f"`{tok}`")
             example = example.replace(real, tok)
     lo, hi = TARGET_ELICITED
+    # patrol banks: the resident intro cards (what a deployment is told) and the
+    # patrol schedule; other banks add nothing here
+    notes = PT.household_notes(episode.protocol, day=0)
+    patrol = PT.patrol_sentence(episode.protocol)
+    extra = ("\n\n" + notes if notes else "") + ("\n\n" + patrol if patrol else "")
     user = f"""A home robot has just been installed. Its only observation so far is one walkthrough of the home at {tour_stamp(episode.tour_t)}. Below are the home's receptacles and the objects the walkthrough saw, each with where it was. The home may hold further objects the walkthrough missed; those join your `class:<name>` blocks automatically once the robot meets them, so the ids below are the complete vocabulary for now.
 
-{tables}
+{tables}{extra}
 
 Write a LIBRARY of {lo} to {hi} competing hypotheses about how this home runs, each a complete weekly model: for every object the walkthrough saw (directly or through its class), where it is across the week. Make the library wide: different household compositions, work patterns, evening and weekend habits, and different guesses about which objects travel and which stay. Each document differs from every other in something the robot's looks can settle, and says so in its prose. The robot's sightings over the following weeks will weight the documents; you will then be shown the library with its weights and asked to add to it.
 
@@ -89,7 +95,8 @@ def _verdict(v: Any) -> str:
 
 def longleaf_revision_prompt(report: Mapping[str, Any], tables: str,
                              omap=None, rmap=None,
-                             fetched: Sequence[Mapping[str, Any]] = ()) -> str:
+                             fetched: Sequence[Mapping[str, Any]] = (),
+                             notes: str = "") -> str:
     """The revision prompt, in two phases over one layout. Stable parts
     first (mechanics, tables), then the library INDEX (weights, claim
     tallies), then the documents the model asked to read (``fetched``;
@@ -175,7 +182,7 @@ def longleaf_revision_prompt(report: Mapping[str, Any], tables: str,
 
 The valid identifiers are these, exactly as printed:
 
-{tables}
+{tables}{chr(10) + chr(10) + notes if notes else ""}
 
 It is now day {day}. This call was triggered by: {report.get('trigger', 'scheduled')}. Two ways to write a new document:
 - FORK an existing one: copy it whole, give it a fresh id, put `(fork of p_xxxx)` at the end of the heading, change only what the evidence points at (a block, a claim, a travelling object), and say in the prose what changed and why. The parent stays with its weight; the fork starts at the weight its own replay of the log earns and competes with it.

@@ -10,7 +10,16 @@ home and what a look costs. Those mechanics differ by bank:
   ``protocol.room_level_looks``): a look is a whole ROOM, costs
   ``look_cost`` in the robot's current room and ``look_cost + travel_cost``
   anywhere else, budget resets at midnight with the robot back in its home
-  base room, and pockets are never seen.
+  base room, and pockets are never seen;
+* the patrol protocol (``patrol`` banks, header ``protocol.free_look``): the
+  robot patrols every room every ``patrol_hours`` hours, and before answering
+  a question it may look at ONE room for free. No budget, no travel, no
+  carry-over between questions.
+
+The patrol banks also carry a resident intro card per resident
+(``protocol.residents``) and, in the told arm, dated resident messages
+(``protocol.hint_messages``); :func:`household_notes` renders both for any
+prompt.
 
 The bank header's ``protocol`` block (carried on ``EpisodeContext.protocol``)
 selects the wording. With no block, every function below returns exactly
@@ -74,6 +83,50 @@ def is_room_look(protocol: Optional[Mapping[str, Any]]) -> bool:
     return bool(protocol and protocol.get("room_level_looks"))
 
 
+def is_free_look(protocol: Optional[Mapping[str, Any]]) -> bool:
+    """The patrol protocol: one free room look per question."""
+    return bool(protocol and protocol.get("free_look"))
+
+
+def patrol_sentence(protocol: Optional[Mapping[str, Any]]) -> str:
+    """How the fixed patrol observes the home (patrol banks only)."""
+    if not is_free_look(protocol):
+        return ""
+    h = protocol.get("patrol_hours")
+    every = f"every {h:g} hour{'s' if h != 1 else ''}" if h else "on a fixed schedule"
+    return (f"The robot patrols every room {every}, listing what is on every "
+            f"receptacle and who is in the room; those listings arrive on their "
+            f"own, whether or not a question is asked.")
+
+
+def household_notes(protocol: Optional[Mapping[str, Any]],
+                    day: Optional[int] = None,
+                    names: Optional[Mapping[str, str]] = None) -> str:
+    """The resident intro cards and, when the bank carries them (the told
+    arm), the residents' dated messages up to ``day`` (all of them when
+    ``day`` is None). Empty for banks without cards."""
+    if not protocol:
+        return ""
+    cards = protocol.get("residents") or []
+    lines = []
+    if cards:
+        lines.append("WHO LIVES HERE:")
+        for c in cards:
+            s = (f"  {c['name']} (in their {c['age_band']}) {c['occupation']}. "
+                 f"{c['weekday']} {c['weekend']}")
+            if c.get("hobbies"):
+                s += f" Hobbies: {', '.join(c['hobbies'])}."
+            if c.get("pet"):
+                s += f" {c['name']} {c['pet']}."
+            lines.append(s)
+    msgs = [m for m in (protocol.get("hint_messages") or [])
+            if day is None or int(m.get("day_index", 0)) <= day]
+    if msgs:
+        lines.append("MESSAGES FROM THE RESIDENTS (dated):")
+        lines += [f"  {m['text']}" for m in msgs]
+    return "\n".join(lines)
+
+
 def _costs(protocol: Mapping[str, Any]):
     look = float(protocol.get("look_cost", 1))
     travel = float(protocol.get("travel_cost", 3))
@@ -96,7 +149,6 @@ def away_sentences(protocol: Optional[Mapping[str, Any]] = None,
     if not is_room_look(protocol):
         return (CLASSIC_AWAY_SENTENCES.replace("`ON_PERSON`", f"`{on}`")
                 .replace("`OUT_OF_HOUSE`", f"`{out}`"))
-    look, away = _costs(protocol)
     people = ("A look also lists who is standing in that room — the residents "
               "by name, and visitors as a count of guests. What people carry "
               "is never visible: a resident cannot be looked at, so whether "
@@ -119,6 +171,10 @@ def budget_sentences(protocol: Optional[Mapping[str, Any]],
     for any prompt that states the budget."""
     if not is_room_look(protocol):
         return f"LOOK BUDGET: {budget_per_day:g} looks per day, reset at midnight."
+    if is_free_look(protocol):
+        return (f"FREE LOOK: before answering each question the robot may look at "
+                f"ONE room, at no cost. There is no daily budget and nothing carries "
+                f"over between questions. {patrol_sentence(protocol)}")
     look, away = _costs(protocol)
     qpd = protocol.get("questions_per_day")
     base = (f" The robot starts every day in the {home_base_room}."
@@ -139,6 +195,12 @@ def notebook_looks_clause(protocol: Optional[Mapping[str, Any]]) -> str:
     """The clause in the notebook agents' system prompt after 'the robot ...'."""
     if not is_room_look(protocol):
         return CLASSIC_NOTEBOOK_LOOKS
+    if is_free_look(protocol):
+        return ("it patrols every room on a fixed schedule (its listings arrive "
+                "on their own) and, before answering each question, it may look "
+                "at ONE room for free: a look reveals every receptacle in that "
+                "room and everything on them, and lists who is in the room. "
+                "Nobody's pockets can be looked into")
     look, away = _costs(protocol)
     return (f"it may spend a limited budget per day on looks: a look is a whole "
             f"room (it reveals every receptacle in that room and everything on "
@@ -151,6 +213,12 @@ def dispatch_looks_clause(protocol: Optional[Mapping[str, Any]]) -> str:
     """The clause in the dispatcher's system prompt."""
     if not is_room_look(protocol):
         return CLASSIC_DISPATCH_LOOKS
+    if is_free_look(protocol):
+        return ("you decide whether the robot answers now or first takes its one "
+                "free look for this question. A look is a whole room: it reveals "
+                "every receptacle in it and who is there, and costs nothing. "
+                "Pockets cannot be looked into: whether an object is on a person "
+                "is inferred, never seen")
     look, away = _costs(protocol)
     return (f"you decide whether the robot answers now or first spends part of "
             f"today's budget on a look. A look is a whole room: it reveals every "
@@ -168,6 +236,11 @@ def dispatch_rationing_clause(protocol: Optional[Mapping[str, Any]],
                 "questions than looks, so looks are rationed across the day: "
                 "what a gain is worth depends on what other gains this day is "
                 "likely to offer.")
+    if is_free_look(protocol):
+        return ("The look is free and there is exactly one per question, so "
+                "nothing is saved by answering without it: take the look whenever "
+                "any room could change the answer or grade the panel; answer "
+                "without looking only when no room could tell you anything.")
     look, away = _costs(protocol)
     qpd = protocol.get("questions_per_day")
     q = f" against about {qpd:g} questions" if qpd else ""
