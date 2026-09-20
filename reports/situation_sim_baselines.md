@@ -3,6 +3,25 @@
 Living document: one section per tick of the monitor. Newest first. Numbers come from
 `results/situation_sim/<hh>/summary.md` (`python3 -m baselines.situation_eval --run data/situation_sim/runs/<hh> --out results/situation_sim/<hh>`).
 
+## 2026-09-20 · LLM arms on hh_s11 (current world), Qwen3.8-27B
+
+Both arms ran under the inspector protocol (`baselines.situation_llm`; prompts in `reports/prompt_review_hh_s11.md`; outputs under `results/situation_sim/llm/hh_s11/study/`). Same 24 questions the page asks on the *current* hh_s11; Oliver's finished run was on the pre-fix hh_s11 (18/24 questions overlap) and he is replaying the current one, so the human column is pending.
+
+| agent | right | looks | budget | spot (20 q) | ON_PERSON (3) | OUT (1) |
+|---|---|---|---|---|---|---|
+| walkthrough-only floor (NeverSense) | 13/24 | 0 | 0 | 13/20 | 0 | 0 |
+| best classical (HierarchyBackoff+VoI 0.05) | 14/24 | 12 | — | 14/20 | 0 | 0 |
+| **treeLongLeaf** (14-doc library, 3 revisions) | **12/24** | 7 | 7 | 12/20 | 0/3 | 0/1 |
+| **notebook_llmDecide** (4 agents + LLM dispatcher) | **10/24** | 13 | 43 | 7/20 | **3/3** | 0/1 |
+
+**treeLongLeaf.** Elicitation from the Wednesday 18:00 walkthrough alone (40k output tokens, 24 min) produced 14 plausible but mostly wrong households; only 2 of 14 put Hana on an evening/night shift (the truth — she was at work during the walkthrough, which no document reasoned from). The mixture collapsed to one document after Thursday's looks (0.996 on "doggy daycare; both work 9-to-5"), was repaired twice (claim / quality triggers), and collapsed again onto the new favourite each time. It looked only 7 times, always in the kitchen (the robot's home base: cost 1), and answered the three phone questions with `desk_b2`. Net: it did not beat answering from the walkthrough.
+
+**notebook_llmDecide.** The dispatcher's reasoning reads well and follows the protocol correctly — it weighs gain against the 1/4 cost, notices "robot in storage, budget 3 left", refuses to spend 4 units for a 0.145 gain late on Sunday — and it produced the first correct ON_PERSON answers of the whole study: it looked at Hana's bedroom, found every spot empty, and answered "on her" (the human's own move). But the agents' notebooks encode a blunt prior — a per-resident "carry set" (phone, keys, wallet… ON_PERSON/OUT during the day) — so the same logic answered ON_PERSON for `wallet_priya` twice and `glass_hana` once, although the walkthrough had shown Priya's wallet on the entry table and it never moved (Priya is retired; her wallet lives there). It never looked at the entry for the wallet. Spot accuracy 7/20 is below the floor: it *over-thinks* stable objects. Population weights ended flat at 0.25 each — looks graded the agents too rarely to separate them. Thursday it spent 9 of 12 units on the first two questions (kitchen + dining, storage) and then sat in the storage room answering from the prior.
+
+**Read against Oliver (71% on the pre-fix hh_s11):** he got the ON_PERSON phones the same way the notebook did (look, see empties + presence, infer), but he also knew when *not* to reason — stable objects stayed where the walkthrough saw them. The LLM arms lack that calibration: longleaf commits to a story, the notebook applies a carry-set rule regardless of the object's history. Neither used presence ("Priya is here") as evidence.
+
+**Costs:** longleaf 4 LLM calls (~50 min of generation at 28 tok/s single-stream); notebook 27 dispatcher decisions plus agent forecasts/follow-ups (~1.5 h with batching).
+
 ## 2026-09-20 · tick 6 · regenerated world (pocket-item fixes); LLM arms starting
 
 The two simulator fixes of the evening (a habitually-untaken pocket item is put down before its owner leaves — it used to stay ON_PERSON through a 9-hour shift; phone/keys are never a standing omission) changed every household's truth, so all classical numbers were re-run on hh_s6–11 (`results/situation_sim/`, 144 q). The world got harder for the models: OUT_OF_HOUSE truths 17 → 19, ON_PERSON 12 → 14, and the pooled agent accuracy on those is still **0% / 2%**.

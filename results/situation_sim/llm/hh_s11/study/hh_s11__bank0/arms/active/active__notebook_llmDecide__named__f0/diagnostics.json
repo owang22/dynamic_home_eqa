@@ -1,0 +1,280 @@
+{
+ "arm": "active:notebook_llmDecide:named:f0",
+ "household": "hh_s11",
+ "belief": "notebook_llmDecide(named)",
+ "protocol": "active",
+ "days": 5,
+ "policy": "NotebookMixturePolicy",
+ "fraction": 0.0,
+ "beta": null,
+ "lambda": 0.05,
+ "random_senses": null,
+ "sense_split": null,
+ "tour_absent_objects": [
+  "handbag_hana",
+  "hat_hana",
+  "jacket_hana",
+  "keys_hana",
+  "pen_hana",
+  "phone_hana",
+  "scarf_hana",
+  "shoes_hana",
+  "wallet_hana",
+  "water_bottle_hana"
+ ],
+ "premises": {},
+ "wall_seconds": 642.9,
+ "notebook_mixture": {
+  "config": {
+   "look_rule": "llm",
+   "beta": 0.3,
+   "invalid_look": "neutral",
+   "review": "top_fresh",
+   "voi_lambda": 0.05,
+   "use_it_or_lose_it": true,
+   "questions_per_day": 6.0,
+   "fork_gate": true,
+   "review_every_looks": 12,
+   "skip_below": 0.01,
+   "parallel": 8,
+   "population_cap": 5,
+   "followup_min_weight": 0.05,
+   "max_looks_per_question": 3,
+   "tell_questions_per_day": false,
+   "followup_mode": "append",
+   "allow_forks": true,
+   "residents_today": true,
+   "room_spread": true,
+   "label": "notebook_llmDecide"
+  },
+  "calls": 208,
+  "looks_per_day": {},
+  "decide_corrected": 0,
+  "forks_gated": 0,
+  "call_totals": {
+   "initial": {
+    "calls": 1,
+    "prompt_tokens": 1832,
+    "completion_tokens": 3045,
+    "seconds": 107.7
+   },
+   "question_forecast": {
+    "calls": 128,
+    "prompt_tokens": 345736,
+    "completion_tokens": 16716,
+    "seconds": 864.1
+   },
+   "look_forecast": {
+    "calls": 52,
+    "prompt_tokens": 137795,
+    "completion_tokens": 7710,
+    "seconds": 384.0
+   },
+   "follow_up": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   },
+   "fork": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   },
+   "review": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   },
+   "birth": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   },
+   "decide": {
+    "calls": 27,
+    "prompt_tokens": 33633,
+    "completion_tokens": 5688,
+    "seconds": 206.1
+   },
+   "condense": {
+    "calls": 0,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "seconds": 0.0
+   }
+  },
+  "calls_per_day": {
+   "1": {
+    "initial": {
+     "calls": 1,
+     "prompt_tokens": 1832,
+     "completion_tokens": 3045,
+     "seconds": 107.7
+    },
+    "question_forecast": {
+     "calls": 36,
+     "prompt_tokens": 98275,
+     "completion_tokens": 4486,
+     "seconds": 235.5
+    },
+    "decide": {
+     "calls": 9,
+     "prompt_tokens": 10793,
+     "completion_tokens": 1898,
+     "seconds": 68.7
+    },
+    "look_forecast": {
+     "calls": 16,
+     "prompt_tokens": 42956,
+     "completion_tokens": 2389,
+     "seconds": 119.0
+    }
+   },
+   "2": {
+    "question_forecast": {
+     "calls": 28,
+     "prompt_tokens": 74977,
+     "completion_tokens": 3726,
+     "seconds": 191.6
+    },
+    "decide": {
+     "calls": 7,
+     "prompt_tokens": 8419,
+     "completion_tokens": 1522,
+     "seconds": 55.0
+    },
+    "look_forecast": {
+     "calls": 12,
+     "prompt_tokens": 31417,
+     "completion_tokens": 1746,
+     "seconds": 87.3
+    }
+   },
+   "3": {
+    "question_forecast": {
+     "calls": 32,
+     "prompt_tokens": 86176,
+     "completion_tokens": 4279,
+     "seconds": 219.2
+    },
+    "decide": {
+     "calls": 3,
+     "prompt_tokens": 3847,
+     "completion_tokens": 689,
+     "seconds": 24.9
+    },
+    "look_forecast": {
+     "calls": 12,
+     "prompt_tokens": 31993,
+     "completion_tokens": 1780,
+     "seconds": 88.7
+    }
+   },
+   "4": {
+    "question_forecast": {
+     "calls": 32,
+     "prompt_tokens": 86308,
+     "completion_tokens": 4225,
+     "seconds": 217.8
+    },
+    "decide": {
+     "calls": 8,
+     "prompt_tokens": 10574,
+     "completion_tokens": 1579,
+     "seconds": 57.4
+    },
+    "look_forecast": {
+     "calls": 12,
+     "prompt_tokens": 31429,
+     "completion_tokens": 1795,
+     "seconds": 89.0
+    }
+   }
+  },
+  "budget_exhausted_at": {
+   "1": null,
+   "2": null,
+   "3": "d03 Sat 11:42",
+   "4": "d04 Sun 20:15"
+  },
+  "population_size_per_day": {
+   "1": 4,
+   "2": 4,
+   "3": 4,
+   "4": 4
+  },
+  "population_final": 4,
+  "forks": 0,
+  "retirements": 0,
+  "forks_rejected": 0,
+  "reviews_failed": 0,
+  "scratch_truncated": 0,
+  "invalid_forecasts": 1,
+  "unresolved_spots": 1,
+  "room_spread": 0,
+  "unresolved_objects": 11,
+  "unresolved_samples": [
+   "bedroom_1"
+  ],
+  "looks": 0,
+  "question_rounds": 32,
+  "final_weights": {
+   "a01": 0.25,
+   "a02": 0.25,
+   "a03": 0.25,
+   "a04": 0.25
+  },
+  "agents": {
+   "a01": {
+    "parent": null,
+    "generation": 1,
+    "born": "d01 Thu 08:09",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 298,
+    "scratch_words": 0,
+    "weight": 0.25
+   },
+   "a02": {
+    "parent": null,
+    "generation": 1,
+    "born": "d01 Thu 08:09",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 378,
+    "scratch_words": 0,
+    "weight": 0.25
+   },
+   "a03": {
+    "parent": null,
+    "generation": 1,
+    "born": "d01 Thu 08:09",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 317,
+    "scratch_words": 0,
+    "weight": 0.25
+   },
+   "a04": {
+    "parent": null,
+    "generation": 1,
+    "born": "d01 Thu 08:09",
+    "retired": null,
+    "retired_reason": null,
+    "beliefs_words": 287,
+    "scratch_words": 0,
+    "weight": 0.25
+   }
+  }
+ },
+ "log_loss_valid": true,
+ "llm": {
+  "live_calls": 208,
+  "cache_hits": 0,
+  "live_generation_seconds": 1561.7
+ }
+}
