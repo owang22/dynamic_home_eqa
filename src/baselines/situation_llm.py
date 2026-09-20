@@ -31,7 +31,7 @@ from baselines.household_analysis import MODEL_SLUG, REPO_ROOT
 from baselines.situation_eval import build_bank
 
 ENDPOINT = os.environ.get("GENERATION_ENDPOINT", "http://127.0.0.1:8300")
-MODEL = os.environ.get("GENERATION_MODEL", "Qwen/Qwen3.6-35B-A3B")
+MODEL = os.environ.get("SITUATION_LLM_MODEL", "Qwen/Qwen3.8-27B")   # the drivers' default; GENERATION_MODEL is the generator's
 ARMS = {"longleaf": "active:longleaf:longleaf_named:f0",
         "notebook_llmDecide": "active:notebook_llmDecide:named:f0",
         "notebook_voi": "active:notebook_voi:named:f0",
