@@ -157,6 +157,7 @@ summary{cursor:pointer;color:var(--muted);font-size:13px}
     <button role="tab" data-view="days">Days</button>
     <button role="tab" data-view="objects">Objects</button>
     <button role="tab" data-view="quiz">Quiz</button>
+    <button role="tab" data-view="runs">Runs</button>
   </nav>
   <span class="spacer"></span>
   <label class="seed">household <select id="seedSel"></select></label>
@@ -168,6 +169,7 @@ summary{cursor:pointer;color:var(--muted);font-size:13px}
   <section id="v-days" hidden></section>
   <section id="v-objects" hidden></section>
   <section id="v-quiz" hidden></section>
+  <section id="v-runs" hidden></section>
 </main>
 
 <script type="application/json" id="data">/*__RUNS_JSON__*/</script>
@@ -225,7 +227,7 @@ function render(){
   for(const b of document.querySelectorAll('#tabs button')) b.setAttribute('aria-selected', b.dataset.view===S.view);
   for(const v of ['household','days','objects','quiz']) document.getElementById('v-'+v).hidden = v!==S.view;
   document.getElementById('reveal').checked = S.reveal;
-  ({household:renderHousehold, days:renderDays, objects:renderObjects, quiz:renderQuiz})[S.view]();
+  ({household:renderHousehold, days:renderDays, objects:renderObjects, quiz:renderQuiz, runs:renderRuns})[S.view]();
 }
 
 // ---------- household ----------
@@ -324,6 +326,12 @@ const docPath = kind => `${kind}/${GEN}s${S.seed}`;
 const lsKey = kind => `ssi-${kind}-${GEN}-${S.seed}`;
 async function loadPersisted(){ const notes=await loadDoc(docPath('notes'), lsKey('notes')); S.notes = thaw((notes&&notes.entries)||[]); const run_=await loadDoc(docPath('chrono'), lsKey('chrono')); S.play.doc = thaw(run_)||null; S.play.loaded=true; }
 const saveRun = () => saveDoc(docPath('chrono'), lsKey('chrono'), runDoc());
+async function archiveRun(doc, why){ // keep a timestamped copy of every run that had answers
+  if(!doc || !doc.answers || !doc.answers.length) return;
+  const id=`${GEN}s${S.seed}__${(doc.started||new Date().toISOString()).replace(/[:.]/g,'-')}`;
+  const copy=Object.assign({}, doc, {household:hh().id, seed:S.seed, gen:GEN, archived:new Date().toISOString(), archived_why:why, n_questions:questionSequence(doc.perDay||6).length});
+  lsSet(lsKey('runs:'+id), copy);
+  if(DB){ try{ await DB.doc('runs/'+id).set(copy); }catch(e){ SYNC='error'; refreshSyncBadge(); } } }
 
 // ---------- the task: what the agent (you) can see and do ----------
 // Knowledge = the Wednesday 18:00 walkthrough (every room, contents and
@@ -335,7 +343,7 @@ S.play = S.play || {doc:null, loaded:false, done:false};
 S.notes = S.notes || [];
 S.mem = S.mem || {tab:'object', obj:null, place:null};
 const TOUR_T = 18*3600;
-function runDoc(){ if(!S.play.doc) S.play.doc={perDay:6, budget:12, travel:3, lookCost:1, answers:[], looks:[], pending:[], robot:homeBase(), showVerdicts:false, started:new Date().toISOString()}; return S.play.doc; }
+function runDoc(){ if(!S.play.doc) S.play.doc={perDay:6, budget:12, travel:3, lookCost:1, answers:[], looks:[], pending:[], robot:homeBase(), showVerdicts:false, started:new Date().toISOString(), player:lsGet('ssi-player','')||''}; return S.play.doc; }
 function homeBase(){ const H=hh(); const counts={}; for(const r of Object.values(H.receptacles)) counts[r.room]=(counts[r.room]||0)+1; return Object.keys(counts).sort((a,b)=>counts[b]-counts[a]||a.localeCompare(b))[0]; }
 function roomAt(res, t){ const rows=run().residents.filter(r=>r.resident_id===res).sort((a,b)=>a.t-b.t); let cur=null; for(const r of rows){ if(r.t<=t) cur=r.room; else break; } return cur; }
 function peopleIn(room, t){ const out=Object.keys(hh().residents).sort().filter(r=>roomAt(r,t)===room);
@@ -482,6 +490,19 @@ function truthHtml(a, open){ const path=rowsFor(a.obj).filter(r=>r.t>a.cutFrom &
   for(const r of path) html += `<div class="tl indent" style="grid-template-columns:82px 1fr"><span class="t" style="visibility:visible">${wd3(Math.floor(r.t/DAY))} ${fmtMin(Math.floor((r.t%DAY)/60))}</span><span class="x" style="padding-left:0">→ <span class="id rec">${r.receptacle_id}</span>${r.carrier?' ('+resName(r.carrier)+')':''} <span class="small">${esc(r.cause.replace(':',' · '))}${r.reason?' · '+esc(r.reason):''}</span>${r.whim?'<span class="tag whim">whim</span>':''}${(r.causes||[]).length?(S.reveal?r.causes.map(c=>`<span class="tag ${causeKind(c)}">${esc(c)}</span>`).join(''):' <span class="small">[hidden cause]</span>'):''}</span></div>`;
   return html+`</details>`; }
 
+async function renderRuns(){ const el=document.getElementById('v-runs');
+  el.innerHTML=`<p class="sub">Every quiz run stored in this artifact: the live run of each household plus archived runs (finished, restarted or settings changed). Scores are shown only for finished runs.</p><div class="panel" id="runsPanel"><p class="small">Loading…</p></div>`;
+  const rows=[];
+  const add=(id, d, src)=>{ if(!d) return; const n=(d.answers||[]).length, total=d.n_questions||((d.perDay||6)*4), hits=(d.answers||[]).filter(a=>a.hit).length, looks=(d.looks||[]).filter(l=>!l.failed).length;
+    rows.push({id, src, household:d.household||('seed '+(d.seed??'?')), player:d.player||'', started:d.started||'', updated:d.updated||d.archived||'', n, total, hits, looks, finished:n>=total, why:d.archived_why||''}); };
+  if(DB){ try{ const [cur, arch]=await Promise.all([DB.collection('chrono').get(), DB.collection('runs').get()]);
+      for(const s of cur.docs) add(s.id, s.data(), 'live'); for(const s of arch.docs) add(s.id, s.data(), 'archived'); }
+    catch(e){ el.querySelector('#runsPanel').innerHTML=`<p class="small mark bad">Could not read the artifact store: ${esc(e.message||e)}</p>`; return; } }
+  else { add(docPath('chrono'), lsGet(lsKey('chrono'),null), 'this browser'); }
+  rows.sort((a,b)=>(b.updated||b.started).localeCompare(a.updated||a.started));
+  const fmt=s=>s?esc(s.slice(0,16).replace('T',' ')):'';
+  el.querySelector('#runsPanel').innerHTML = rows.length ? `<div class="tablewrap"><table><thead><tr><th>started</th><th>last activity</th><th>household</th><th>player</th><th>progress</th><th class="num">score</th><th class="num">looks</th><th>status</th><th>id</th></tr></thead><tbody>${rows.map(r=>`<tr><td class="small" style="white-space:nowrap">${fmt(r.started)}</td><td class="small" style="white-space:nowrap">${fmt(r.updated)}</td><td><span class="id">${esc(r.household)}</span></td><td>${esc(r.player)||'<span class="small">—</span>'}</td><td>${r.n}/${r.total}</td><td class="num">${r.finished?`${r.hits}/${r.n} <span class="small">(${Math.round(100*r.hits/Math.max(1,r.n))}%)</span>`:'<span class="small">sealed</span>'}</td><td class="num">${r.looks}</td><td class="small">${r.src}${r.why?' · '+esc(r.why):''}${r.finished?' · finished':' · in progress'}</td><td><span class="id" style="font-size:11px">${esc(r.id)}</span></td></tr>`).join('')}</tbody></table></div>` : '<p class="small">No runs yet.</p>';
+}
 function renderQuiz(){ const el=document.getElementById('v-quiz'); const H=hh();
   if(!S.play.loaded){ el.innerHTML=`<p class="sub">Loading your progress…</p>`; return; }
   const doc=runDoc(), seq=questionSequence(doc.perDay);
@@ -489,7 +510,7 @@ function renderQuiz(){ const el=document.getElementById('v-quiz'); const H=hh();
   const i = (S.play.done) ? doc.answers.length-1 : doc.answers.length; S.play.index=i;
   const upTo=revealedDay(doc, seq, S.play.done?i+1:i);
   let html='';
-  if(i>=seq.length){ const sc=scoreFrom(doc.answers, 99); html += `<p class="sub">Segment finished: ${seq.length} questions on ${H.id}.</p><div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack"><div class="panel">${scoreTable(sc,'Final score')}<div class="row" style="margin-top:10px"><button class="btn" id="resetRun">Restart this household</button></div></div><div class="panel"><h3>Hidden causes</h3><p class="small">${S.reveal?'The events and internal states that were driving each day. Turn off “reveal hidden causes” in the header to hide them again.':'Each day had events (rain, guests, a sick day…) and internal states (running late, low energy…) you could not see. Now that the run is over you can reveal them here or with the switch in the header.'}</p><div class="daytabs" style="margin-bottom:8px">${run().state.days.map((d,k)=>`<button data-fday="${k}" aria-selected="${(S.finDay??1)===k}">${DAYS[k]}</button>`).join('')}</div>${causesPanel(S.finDay??1, S.reveal)}</div>${notepadHtml()}</div><div class="stack"><div class="panel"><h3>Every answer</h3>${historyHtml(doc, 99)}</div><div class="panel"><h3>What actually happened</h3><p class="small">${S.reveal?'Cause tags on a move show which hidden cause produced it; the chips after each question are the causes active that day.':'Moves driven by a hidden cause show <span class="small">[hidden cause]</span>; flip “reveal hidden causes” to name them.'}</p>${doc.answers.map(a=>{ const dc=run().state.days[a.day].causes; return `<div style="margin-bottom:10px"><span class="small">Q${a.i+1}</span> <span class="id">${a.obj}</span> ${wd3(a.day)} ${fmtMin(a.minute)} · ${placeWords(a.truth,a.carrier)} ${a.hit?'<span class="mark ok">✓</span>':'<span class="mark bad">✗ you said '+placeWords(a.guess)+'</span>'}${S.reveal&&dc.length?`<div class="chips" style="margin-top:3px">${dc.map(c=>`<span class="tag ${c.kind}" title="${esc(c.words)}">${esc(c.id)}</span>`).join('')}</div>`:''}${truthHtml(a, true)}</div>`; }).join('')}</div></div></div>`; el.innerHTML=html; wireNotepad(el); wireRun(el, null); for(const b of el.querySelectorAll('[data-fday]')) b.addEventListener('click', ()=>{ S.finDay=+b.dataset.fday; renderQuiz(); }); const rv=el.querySelector('[data-act="reveal"]'); if(rv) rv.addEventListener('click', ()=>{ S.reveal=true; document.getElementById('reveal').checked=true; render(); }); return; }
+  if(i>=seq.length){ const sc=scoreFrom(doc.answers, 99); html += `<p class="sub">Segment finished: ${seq.length} questions on ${H.id}${doc.player?` · played by ${esc(doc.player)}`:''} · started ${esc((doc.started||'').slice(0,16).replace('T',' '))}.</p><div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack"><div class="panel">${scoreTable(sc,'Final score')}<div class="row" style="margin-top:10px"><button class="btn" id="resetRun">Restart this household</button></div></div><div class="panel"><h3>Hidden causes</h3><p class="small">${S.reveal?'The events and internal states that were driving each day. Turn off “reveal hidden causes” in the header to hide them again.':'Each day had events (rain, guests, a sick day…) and internal states (running late, low energy…) you could not see. Now that the run is over you can reveal them here or with the switch in the header.'}</p><div class="daytabs" style="margin-bottom:8px">${run().state.days.map((d,k)=>`<button data-fday="${k}" aria-selected="${(S.finDay??1)===k}">${DAYS[k]}</button>`).join('')}</div>${causesPanel(S.finDay??1, S.reveal)}</div>${notepadHtml()}</div><div class="stack"><div class="panel"><h3>Every answer</h3>${historyHtml(doc, 99)}</div><div class="panel"><h3>What actually happened</h3><p class="small">${S.reveal?'Cause tags on a move show which hidden cause produced it; the chips after each question are the causes active that day.':'Moves driven by a hidden cause show <span class="small">[hidden cause]</span>; flip “reveal hidden causes” to name them.'}</p>${doc.answers.map(a=>{ const dc=run().state.days[a.day].causes; return `<div style="margin-bottom:10px"><span class="small">Q${a.i+1}</span> <span class="id">${a.obj}</span> ${wd3(a.day)} ${fmtMin(a.minute)} · ${placeWords(a.truth,a.carrier)} ${a.hit?'<span class="mark ok">✓</span>':'<span class="mark bad">✗ you said '+placeWords(a.guess)+'</span>'}${S.reveal&&dc.length?`<div class="chips" style="margin-top:3px">${dc.map(c=>`<span class="tag ${c.kind}" title="${esc(c.words)}">${esc(c.id)}</span>`).join('')}</div>`:''}${truthHtml(a, true)}</div>`; }).join('')}</div></div></div>`; el.innerHTML=html; wireNotepad(el); wireRun(el, null); for(const b of el.querySelectorAll('[data-fday]')) b.addEventListener('click', ()=>{ S.finDay=+b.dataset.fday; renderQuiz(); }); const rv=el.querySelector('[data-act="reveal"]'); if(rv) rv.addEventListener('click', ()=>{ S.reveal=true; document.getElementById('reveal').checked=true; render(); }); return; }
   const q=seq[i]; S.play.q=q;
   if(S.mem.forQ!==i){ S.mem.forQ=i; S.mem.obj=null; S.mem.tab='object'; }   // a new question: memory opens on its object
   let changed=false; if(!S.play.done) changed=runPending(q.t);
@@ -503,7 +524,7 @@ function renderQuiz(){ const el=document.getElementById('v-quiz'); const H=hh();
   html += `<div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack">`;
   // ---- question card
   const pct=Math.round(100*i/seq.length);
-  html += `<div class="panel"><div class="controls" style="justify-content:space-between"><span>Question ${i+1} of ${seq.length}</span><span>${DAYS[q.day]} ${fmtMin(q.minute)} · robot in the <b>${doc.robot}</b> · budget left today <b>${left}</b> of ${doc.budget}</span></div><div class="bar" style="margin-bottom:10px"><i style="width:${pct}%"></i></div>`;
+  html += `<div class="panel"><div class="controls" style="justify-content:space-between"><span>Question ${i+1} of ${seq.length} <label class="field" style="display:inline-flex;flex-direction:row;align-items:center;gap:6px;margin-left:10px">player <input type="text" id="playerName" value="${esc(doc.player||'')}" placeholder="your name" style="width:120px"></label></span><span>${DAYS[q.day]} ${fmtMin(q.minute)} · robot in the <b>${doc.robot}</b> · budget left today <b>${left}</b> of ${doc.budget}</span></div><div class="bar" style="margin-bottom:10px"><i style="width:${pct}%"></i></div>`;
   html += `<div class="q noclick">Where is <span class="id" style="font-size:17px">${q.obj}</span> right now, ${DAYS[q.day]} at ${fmtMin(q.minute)}?</div>`;
   const rooms=H.rooms.slice().sort();
   const roomCost = r => lookCost(r);
@@ -544,16 +565,17 @@ function recordAnswer(guess){ const doc=runDoc(), q=S.play.q, i=S.play.index, vi
   const mine=doc.looks.filter(l=>l.src==='question' && l.qi===i && !l.failed);
   const prevT = i>0 ? questionSequence(doc.perDay)[i-1].t : 0;
   doc.answers.push({i, obj:q.obj, day:q.day, minute:q.minute, t:q.t, cutFrom:prevT, truth, guess, hit:guess===truth, carrier: truth==='ON_PERSON'?tr.carrier:undefined, looksUsed:mine.length, costUsed:mine.reduce((a,l)=>a+l.cost,0), base, whim:!!tr.whim, note:(S.play.draft||'').trim(), ts:new Date().toISOString()});
-  doc.household=hh().id; doc.updated=new Date().toISOString(); S.play.done=true; S.play.noteDirty=false; renderQuiz(); saveRun(); }
+  doc.household=hh().id; doc.updated=new Date().toISOString(); S.play.done=true; S.play.noteDirty=false; renderQuiz(); saveRun(); if(doc.answers.length>=questionSequence(doc.perDay).length) archiveRun(doc,'finished'); }
 function wireRun(el, q){ const doc=runDoc();
-  const rs=el.querySelector('#resetRun'); if(rs) rs.addEventListener('click', async ()=>{ if(!confirm('Restart this household? Your answers and looks on it are cleared (notes are kept).')) return; S.play.doc={perDay:doc.perDay, budget:doc.budget, travel:doc.travel, lookCost:doc.lookCost, answers:[], looks:[], pending:[], robot:homeBase(), showVerdicts:doc.showVerdicts, started:new Date().toISOString()}; S.play.done=false; S.play.draft=''; renderQuiz(); await saveRun(); });
-  const restartWith=async (patch)=>{ if(doc.answers.length && !confirm('Changing this restarts the segment for this household. Continue?')){ renderQuiz(); return; } S.play.doc=Object.assign({perDay:doc.perDay, budget:doc.budget, travel:doc.travel, lookCost:doc.lookCost, showVerdicts:doc.showVerdicts}, patch, {answers:[], looks:[], pending:[], robot:homeBase(), started:new Date().toISOString()}); S.play.done=false; S.play.draft=''; renderQuiz(); await saveRun(); };
+  const rs=el.querySelector('#resetRun'); if(rs) rs.addEventListener('click', async ()=>{ if(!confirm('Restart this household? Your answers and looks on it are cleared (notes are kept; the run is archived under Runs).')) return; await archiveRun(doc,'restarted'); S.play.doc={perDay:doc.perDay, budget:doc.budget, travel:doc.travel, lookCost:doc.lookCost, answers:[], looks:[], pending:[], robot:homeBase(), showVerdicts:doc.showVerdicts, started:new Date().toISOString(), player:doc.player||''}; S.play.done=false; S.play.draft=''; renderQuiz(); await saveRun(); });
+  const restartWith=async (patch)=>{ if(doc.answers.length && !confirm('Changing this restarts the segment for this household. Continue?')){ renderQuiz(); return; } await archiveRun(doc,'settings changed'); S.play.doc=Object.assign({perDay:doc.perDay, budget:doc.budget, travel:doc.travel, lookCost:doc.lookCost, showVerdicts:doc.showVerdicts, player:doc.player||''}, patch, {answers:[], looks:[], pending:[], robot:homeBase(), started:new Date().toISOString()}); S.play.done=false; S.play.draft=''; renderQuiz(); await saveRun(); };
   const cb=el.querySelector('#cfgBudget'); if(cb) cb.addEventListener('change', e=>restartWith({budget:+e.target.value}));
   const ct=el.querySelector('#cfgTravel'); if(ct) ct.addEventListener('change', e=>restartWith({travel:+e.target.value}));
     for(const b of el.querySelectorAll('[data-mem]')) b.addEventListener('click', ()=>{ S.mem.tab=b.dataset.mem; renderQuiz(); });
   const mo=el.querySelector('#memObj'); if(mo) mo.addEventListener('change', e=>{ S.mem.obj=e.target.value; renderQuiz(); });
   const mb=el.querySelector('#memBack'); if(mb) mb.addEventListener('click', ()=>{ S.mem.obj=null; renderQuiz(); });
   const mp=el.querySelector('#memPlace'); if(mp) mp.addEventListener('change', e=>{ S.mem.place=e.target.value; renderQuiz(); });
+  const pn=el.querySelector('#playerName'); if(pn) pn.addEventListener('change', async ()=>{ doc.player=pn.value.trim(); lsSet('ssi-player', doc.player); await saveRun(); });
   if(!q) return;
   const ln=el.querySelector('#lookNow'); if(ln) ln.addEventListener('click', async ()=>{ if(S.play.done) return; const room=el.querySelector('#lookRoom').value; const v=doLook(room, q.t, 'question', S.play.index); if(!v){ alert('Not enough budget left today for that look ('+lookCost(room)+' needed, '+budgetLeft(q.day)+' left).'); doc.looks.pop(); return; } renderQuiz(); await saveRun(); });
   const gs=el.querySelector('#guessSpotBtn'); if(gs) gs.addEventListener('click', ()=>{ const rec=el.querySelector('#guessSpot').value; if(!rec||S.play.done) return; recordAnswer(rec); });
