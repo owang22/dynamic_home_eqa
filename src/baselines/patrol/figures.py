@@ -29,10 +29,10 @@ def short(a: str) -> str:
 
 
 # The MAIN figure roster: three classical beliefs that behave differently (recency, frequency, periodicity)
-# and the three LLM memories in the told arm. The other classical beliefs sit within a point or two of
-# these and only add overlapping lines; told vs not-told is fig 3's own comparison. --all restores everyone.
+# and two LLM memories (naive, summary), each told and not told. The other classical beliefs sit within a
+# point or two of these and only add overlapping lines; "recent" tracks naive. --all restores everyone.
 MAIN_CLASSICAL = ("LastObservation", "MostFrequentLocation", "PeriodicPersistence(min_dep=2,bin=1h,hl=24h)")
-MAIN_LLM_PREFIX = ("llm_naive/told/", "llm_recent/told/", "llm_summary/told/")
+MAIN_LLM_PREFIX = ("llm_naive/told/", "llm_naive/not_told/", "llm_summary/told/", "llm_summary/not_told/")
 COLORS = {"LastObservation": "#1f77b4", "MostFrequentLocation": "#2ca02c", "PeriodicPersistence(min_dep=2,bin=1h,hl=24h)": "#9467bd",
           "llm_naive": "#d62728", "llm_recent": "#ff7f0e", "llm_summary": "#8c564b"}
 
@@ -40,6 +40,18 @@ COLORS = {"LastObservation": "#1f77b4", "MostFrequentLocation": "#2ca02c", "Peri
 def in_main(agent: str) -> bool:
     return agent in MAIN_CLASSICAL or any(agent.startswith(p) for p in MAIN_LLM_PREFIX) \
         or (agent.startswith("llm_") and "/not_told/" not in agent and "/told/" not in agent)
+
+
+def style(agent: str) -> str:
+    """Classical solid; LLM told dashed, not-told dotted."""
+    if not agent.startswith("llm_"):
+        return "-"
+    return ":" if "/not_told/" in agent else "--"
+
+
+def label(agent: str) -> str:
+    s = short(agent)
+    return s.replace("/not_told", " (not told)").replace("/told", " (told)")
 
 
 def color(agent: str):
@@ -98,12 +110,12 @@ def main(argv=None) -> int:
                 for d in days:
                     rs = [r for r in sub if r["agent"] == ag and r["day_index"] == d and (kinds is None or truth_kind(r["truth"]) in kinds)]
                     ys.append(sum(r["correct"] for r in rs) / len(rs) if rs else float("nan"))
-                ax.plot(range(len(days)), ys, marker="o", ms=4, lw=1.8, label=short(ag).replace("/told", ""), color=color(ag), ls="--" if ag.startswith("llm") else "-")
+                ax.plot(range(len(days)), ys, marker="o", ms=4, lw=1.8, label=label(ag), color=color(ag), ls=style(ag))
             shade(ax)
             ax.set_xticks(range(len(days))); ax.set_xticklabels(labels); ax.set_ylim(0.5, 1.0); ax.grid(alpha=0.3)
             ax.set_title(f"accuracy per day, patrol every {a.density} h, look {'/'.join(look_set)} — {title}")
         axes[1].legend(fontsize=8, ncol=1, loc="lower left")
-        fig.text(0.01, 0.01, "* every household shifts that day (weekend, grey); ° some households (guests / illness)" + ("" if a.all else "; LLM lines are the told arm"), fontsize=8)
+        fig.text(0.01, 0.01, "* every household shifts that day (weekend, grey); ° some households (guests / illness); LLM dashed = told the residents' messages, dotted = not told", fontsize=8)
         fig.tight_layout(); fig.savefig(a.out / fname, dpi=130); plt.close(fig)
 
     # 2. accuracy vs density: classical agents at every density; LLM agents only where they ran at
@@ -116,8 +128,7 @@ def main(argv=None) -> int:
             dens = sorted({d for (a, d) in cells if a == ag})
             if len(dens) < 2:
                 continue
-            ax.plot(dens, [cells[(ag, d)].acc_all for d in dens], marker="o", lw=1.8, label=short(ag).replace("/told", ""), color=color(ag),
-                    ls="--" if ag.startswith("llm") else "-")
+            ax.plot(dens, [cells[(ag, d)].acc_all for d in dens], marker="o", lw=1.8, label=label(ag), color=color(ag), ls=style(ag))
         all_dens = sorted({r["patrol_hours"] for r in sub})
         ax.set_xscale("log", base=2); ax.set_xticks(all_dens); ax.set_xticklabels([f"every {d} h" for d in all_dens])
         ax.set_title(f"accuracy vs patrol density, look {'/'.join(lks)}"); ax.grid(alpha=0.3); ax.set_ylim(0.6, 1.0)
@@ -151,12 +162,14 @@ def main(argv=None) -> int:
             for ag in agents:
                 if thr is None and not ag.startswith("llm"):
                     continue
-                lab = short(ag).replace("/told", "") + ("" if thr else " (outright ABSTAIN only)")
-                axes[0].plot(range(len(days)), [cells.get((ag, d), Cell()).abstain_rate for d in days], marker="o", ms=4, lw=1.8, ls=ls, color=color(ag), label=lab)
-                axes[1].plot(range(len(days)), [cells.get((ag, d), Cell()).acc_answered for d in days], marker="o", ms=4, lw=1.8, ls=ls, color=color(ag), label=lab)
-        for ax, t in zip(axes, ("abstain rate per day\nsolid: abstain when top probability < 0.5 · dotted: the LLM's own ABSTAIN answers", "accuracy among the questions actually answered")):
+                if thr is None and "/not_told/" in ag:
+                    continue      # the outright-ABSTAIN overlay once per memory (told arm) keeps the panel readable
+                lab = label(ag) + ("" if thr else " · outright ABSTAIN only")
+                axes[0].plot(range(len(days)), [cells.get((ag, d), Cell()).abstain_rate for d in days], marker="o", ms=4, lw=1.8, ls=(style(ag) if thr else "-."), color=color(ag), label=lab, alpha=1 if thr else .7)
+                axes[1].plot(range(len(days)), [cells.get((ag, d), Cell()).acc_answered for d in days], marker="o", ms=4, lw=1.8, ls=(style(ag) if thr else "-."), color=color(ag), label=lab, alpha=1 if thr else .7)
+        for ax, t in zip(axes, ("abstain rate per day (abstain when top probability < 0.5)\nLLM dashed = told, dotted = not told; dash-dot = the LLM's own ABSTAIN answers only", "accuracy among the questions actually answered")):
             shade(ax); ax.set_xticks(range(len(days))); ax.set_xticklabels(labels); ax.grid(alpha=0.3); ax.set_title(t, fontsize=10)
-        axes[0].legend(fontsize=8, ncol=1, loc="upper right")
+        axes[0].legend(fontsize=8, ncol=1, loc="center")
         fig.tight_layout(); fig.savefig(a.out / "fig4_abstain_per_day.png", dpi=130); plt.close(fig)
     print(f"wrote figures to {a.out}")
     return 0
