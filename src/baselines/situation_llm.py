@@ -47,6 +47,7 @@ def main(argv=None) -> int:
     ap.add_argument("--model", default=MODEL)
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--out-dir", type=pathlib.Path, default=None)
+    ap.add_argument("--hyp-subdir", default="situation", help="elicitation output subdir (one per bank of a household)")
     a = ap.parse_args(argv)
     hh = a.run.name
     out = a.out_dir or (REPO_ROOT / "results" / "situation_sim" / "llm" / hh)
@@ -63,13 +64,13 @@ def main(argv=None) -> int:
     if "longleaf" in a.arms:
         cmds.append([sys.executable, "-m", "baselines.llm_hypotheses.elicit", "--longleaf",
                      "--households", hh, "--bank-dir", str(bank_dir), "--conditions", "named",
-                     "--hyp-subdir", "situation", "--endpoint", a.endpoint, "--model", a.model])
+                     "--hyp-subdir", a.hyp_subdir, "--endpoint", a.endpoint, "--model", a.model])
     for arm in a.arms:
         cmd = [sys.executable, "-m", "baselines.llm_hypotheses.run_tour_start", "--household", hh,
                "--arm", ARMS[arm], "--bank-dir", str(bank_dir), "--room-look",
                "--endpoint", a.endpoint, "--model", a.model, "--out-dir", str(out / "study")]
         if arm == "longleaf":
-            cmd += ["--hyp-subdir", "situation"]
+            cmd += ["--hyp-subdir", a.hyp_subdir]
         if a.days:
             cmd += ["--days", str(a.days)]
         cmds.append(cmd)

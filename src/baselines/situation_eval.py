@@ -363,6 +363,12 @@ def main(argv=None) -> int:
     if a.human and a.human.exists():
         doc = json.loads(a.human.read_text())["run"]
         ans = doc.get("answers", [])
+        # the human must have answered THESE questions: the sequence depends on the
+        # truth log, so a regenerated household is a different quiz
+        mismatch = [i for i, (q, x) in enumerate(zip(qs, ans)) if q["obj"] != x.get("obj") or q["minute"] != x.get("minute")]
+        if mismatch or len(ans) != len(qs):
+            raise SystemExit(f"--human run answered a different question sequence ({len(mismatch)} of {len(qs)} differ); "
+                             f"run against the data the human played (data/situation_sim/as_played/...)")
         human = {"n": len(ans), "correct": sum(1 for x in ans if x.get("hit")), "acc": (sum(1 for x in ans if x.get("hit")) / len(ans)) if ans else 0.0,
                  "looks": sum(1 for l in doc.get("looks", []) if not l.get("failed")),
                  "budget": sum(l.get("cost", 0) for l in doc.get("looks", []) if not l.get("failed"))}
