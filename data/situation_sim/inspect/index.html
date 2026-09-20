@@ -228,7 +228,7 @@ document.addEventListener('click', e=>{ if(e.target.closest('.noclick')) return;
 
 function render(){
   for(const b of document.querySelectorAll('#tabs button')) b.setAttribute('aria-selected', b.dataset.view===S.view);
-  for(const v of ['household','days','objects','quiz']) document.getElementById('v-'+v).hidden = v!==S.view;
+  for(const v of ['household','days','objects','quiz','runs']) document.getElementById('v-'+v).hidden = v!==S.view;
   document.getElementById('reveal').checked = S.reveal;
   ({household:renderHousehold, days:renderDays, objects:renderObjects, quiz:renderQuiz, runs:renderRuns})[S.view]();
 }
