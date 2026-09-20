@@ -218,7 +218,17 @@ const seedSel = document.getElementById('seedSel');
 for(const k of Object.keys(RUNS).sort((a,b)=>+a-+b)){ const st=RUNS[k].state.household; const o=document.createElement('option'); o.value=k; o.textContent=`${st.id} · ${st.household_type} · ${Object.values(st.residents).map(r=>cap(r.name)).join(', ')}`; seedSel.appendChild(o); }
 seedSel.value=S.seed;
 const playerSel=document.getElementById('playerSel'); playerSel.value=S.player;
-playerSel.addEventListener('change', async ()=>{ S.player=playerSel.value.trim(); lsSet('ssi-player', S.player); S.play={doc:null, loaded:false, done:false}; S.mem={tab:'object', obj:null, place:null}; render(); if(DB_READY){ await loadPersisted(); render(); } });
+playerSel.addEventListener('change', async ()=>{
+  const prev=S.play.doc, prevPlayer=S.player, prevNotes=S.notes;
+  S.player=playerSel.value.trim(); lsSet('ssi-player', S.player);
+  // a run in progress under the old name (or no name) moves with you instead of restarting
+  let carry=null, carryNotes=null;
+  if(prev && prev.answers && prev.answers.length && S.player && S.player!==prevPlayer
+     && confirm(`Move your run in progress on this household (${prev.answers.length} answered) to the name "${S.player}"? Cancel to leave it under "${prevPlayer||'no name'}" and start fresh.`)){ carry=Object.assign({}, prev, {player:S.player}); carryNotes=prevNotes; }
+  S.play={doc:null, loaded:false, done:false}; S.mem={tab:'object', obj:null, place:null}; render();
+  if(DB_READY){ await loadPersisted(); }
+  if(carry && !(S.play.doc && S.play.doc.answers && S.play.doc.answers.length)){ S.play.doc=carry; S.play.loaded=true; await saveRun(); if(carryNotes&&carryNotes.length){ S.notes=carryNotes.map(n=>Object.assign({}, n, {player:S.player})); await saveDoc(docPath('notes'), lsKey('notes'), {household:hh().id, entries:S.notes}); } }
+  render(); });
 seedSel.addEventListener('change', async ()=>{ S.seed=seedSel.value; S.obj=null; S.play={doc:null, loaded:false, done:false}; S.mem={tab:'object', obj:null, place:null}; _rowsCache={}; save(); render(); if(DB_READY){ await loadPersisted(); render(); } });
 document.getElementById('reveal').addEventListener('change', e=>{ S.reveal=e.target.checked; render(); });
 document.getElementById('tabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; S.view=b.dataset.view; save(); render(); });
@@ -427,10 +437,14 @@ function memoryHtml(cut, visits, focusObj){ const H=hh(); const tab=S.mem.tab;
     html += `<p class="small">${kn.seen.length} sighting${kn.seen.length===1?'':'s'}.${often.length?' Most often at '+often.slice(0,4).map(r=>`<span class="id rec">${r}</span> <span class="small">×${counts[r]}</span>`).join(', ')+'.':''}${kn.last?' Last at <span class="id rec">'+kn.last.rec+'</span>'+(kn.gone?', <span class="mark bad">gone</span> by '+fmtT(kn.gone):'')+'.':''}</p>`;
     let lastRec=null; const evs=[]; for(const v of visits){ if(v.t>cut) break; const here=Object.keys(v.contents).find(rec=>v.contents[rec].includes(obj)); if(here){ evs.push({t:v.t, kind:'seen', rec:here, people:v.people}); lastRec=here; } else if(lastRec && (lastRec in v.contents)){ evs.push({t:v.t, kind:'gone', rec:lastRec, people:v.people}); lastRec=null; } }
     html += `<div class="timeline">${evs.map(e=>`<div class="tl" style="grid-template-columns:82px 1fr"><span class="t">${wd3(Math.floor(e.t/DAY))} ${fmtMin(Math.floor((e.t%DAY)/60))}</span><span class="x" style="padding:0">${e.kind==='seen'?`at <span class="id rec">${e.rec}</span>`:`<span class="small">no longer at <span class="id rec">${e.rec}</span></span>`}${e.people&&e.people.length?` <span class="small">· ${e.people.map(resName).join(', ')} there</span>`:''}</span></div>`).join('')||'<p class="small">never sighted</p>'}</div>`; }
-  else if(tab==='place'){ const place=S.mem.place||Object.keys(H.receptacles).sort()[0]; html += `<div class="controls"><select id="memPlace">${H.rooms.map(room=>`<optgroup label="${room}">${Object.values(H.receptacles).filter(r=>r.room===room).sort((a,b)=>a.id.localeCompare(b.id)).map(r=>`<option ${r.id===place?'selected':''}>${r.id}</option>`).join('')}</optgroup>`).join('')}</select></div>`;
-    const evs=visits.filter(v=>v.t<=cut && (place in v.contents)); const everSeen=new Set(); for(const v of evs) for(const o of v.contents[place]) everSeen.add(o);
-    html += `<p class="small">${evs.length} check${evs.length===1?'':'s'} of this spot. Ever seen here: ${everSeen.size?[...everSeen].sort().map(o=>`<span class="id obj">${o}</span>`).join(' '):'nothing'}.</p>`;
-    html += `<div class="timeline">${evs.map(v=>`<div class="tl" style="grid-template-columns:82px 1fr"><span class="t">${wd3(Math.floor(v.t/DAY))} ${fmtMin(Math.floor((v.t%DAY)/60))}</span><span class="x" style="padding:0">${v.contents[place].length?v.contents[place].map(o=>`<span class="id obj">${o}</span>`).join(' '):'<span class="small">empty</span>'}</span></div>`).join('')}</div>`; }
+  else if(tab==='place'){ const rooms=H.rooms.slice().sort(); const room=(S.mem.place&&rooms.includes(S.mem.place))?S.mem.place:rooms[0];
+    html += `<div class="controls"><label class="field">room <select id="memPlace">${rooms.map(r=>`<option ${r===room?'selected':''}>${r}</option>`).join('')}</select></label></div>`;
+    const recs=Object.values(H.receptacles).filter(r=>r.room===room).map(r=>r.id).sort();
+    const evs=visits.filter(v=>v.t<=cut && v.room===room);
+    const everSeen={}; for(const v of evs) for(const rec of recs) for(const o of (v.contents[rec]||[])) (everSeen[rec]=everSeen[rec]||new Set()).add(o);
+    html += `<p class="small">${evs.length} look${evs.length===1?'':'s'} at the ${room}. Every spot, newest look first; the object of this question is highlighted.</p>`;
+    html += `<div class="timeline">${evs.slice().reverse().map(v=>`<div class="tl visit" style="grid-template-columns:82px 1fr"><span class="t">${wd3(Math.floor(v.t/DAY))} ${fmtMin(Math.floor((v.t%DAY)/60))}</span><span class="x">${v.people&&v.people.length?`<b>${v.people.map(resName).join(' and ')} ${v.people.length>1?'were':'was'} here.</b>`:'<span class="small">nobody here.</span>'}<div class="spots">${recs.map(rec=>`<span class="id rec">${rec}</span><span class="spotobjs">${(v.contents[rec]||[]).length?v.contents[rec].map(o=>`<span class="id obj" ${o===focusObj?'style="background:var(--accent-soft)"':''}>${o}</span>`).join(' '):'<span class="small">empty</span>'}</span>`).join('')}</div></span></div>`).join('')||'<p class="small">never looked at</p>'}</div>`;
+    html += `<p class="small" style="margin-top:8px">Ever seen in this room: ${recs.map(rec=>everSeen[rec]?`<span class="id rec">${rec}</span> ${[...everSeen[rec]].sort().map(o=>`<span class="id obj">${o}</span>`).join(' ')}`:'').filter(Boolean).join(' · ')||'nothing'}</p>`; }
   else if(tab==='person'){ for(const rid of Object.keys(H.residents).sort()){ const sightings=visits.filter(v=>v.t<=cut && v.people.includes(rid)); const last=sightings[sightings.length-1];
       html += `<div style="margin-bottom:8px"><b>${resName(rid)}</b> <span class="small">${last?`last seen in the ${last.room} at ${fmtT(last.t)}`:'never seen'}</span><div class="small">${sightings.slice(-8).map(v=>`${wd3(Math.floor(v.t/DAY))} ${fmtMin(Math.floor((v.t%DAY)/60))} ${v.room}`).join(' · ')}</div></div>`; }
     html += `<p class="small">A look only tells you who is in that room. Someone not seen may be elsewhere in the house or out.</p>`; }
@@ -497,7 +511,31 @@ function truthHtml(a, open){ const path=rowsFor(a.obj).filter(r=>r.t>a.cutFrom &
   return html+`</details>`; }
 
 async function renderRuns(){ const el=document.getElementById('v-runs');
-  el.innerHTML=`<p class="sub">Every quiz run stored in this artifact: the live run of each household plus archived runs (finished, restarted or settings changed). Scores are shown only for finished runs.</p><div class="panel" id="runsPanel"><p class="small">Loading…</p></div>`;
+  const cur=S.play.doc; const curN=cur&&cur.answers?cur.answers.length:0;
+  el.innerHTML=`<p class="sub">Every quiz run stored in this artifact: the live run of each household plus archived runs (finished, restarted or settings changed). Scores are shown only for finished runs.</p>
+  <div class="panel"><h3>Export / import</h3><p class="small">A player who cannot write to the artifact store (a link visitor) still has their run in their own browser: they export it here and send the file or text to the owner, who imports it below. Imports land in the store under the run's player name.</p>
+    <div class="row"><button class="btn" id="exportRun" ${curN?'':'disabled'}>Download my current run (${hh().id}${S.player?' · '+esc(S.player):''}, ${curN} answered)</button><button class="btn" id="exportShow" ${curN?'':'disabled'}>Show as text to copy</button></div>
+    <textarea id="exportText" rows="3" hidden style="width:100%;margin-top:6px;font:12px var(--mono);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px"></textarea>
+    <div class="row" style="margin-top:10px"><label class="field" style="flex:1">import a run (paste the exported JSON)<textarea id="importText" rows="3" placeholder='{"kind":"ssi-run", ...}' style="width:100%;font:12px var(--mono);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px"></textarea></label></div>
+    <div class="row" style="margin-top:6px"><button class="btn primary" id="importRun">Import into the store</button><span class="small" id="importMsg"></span></div></div>
+  <div class="panel" id="runsPanel"><p class="small">Loading…</p></div>`;
+  const pack=()=>JSON.stringify({kind:'ssi-run', gen:GEN, seed:S.seed, household:hh().id, player:S.player||'', exported:new Date().toISOString(), run:S.play.doc, notes:S.notes});
+  const ex=el.querySelector('#exportRun'); if(ex) ex.addEventListener('click', async ()=>{ const fname=`ssi-run_${hh().id}_${playerSlug()||'anonymous'}_${new Date().toISOString().slice(0,16).replace(/[:T]/g,'-')}.json`;
+    let dl=null; try{ dl=(window.claude&&window.claude.use)?await window.claude.use('downloads'):null; }catch(e){ dl=null; }
+    if(dl){ try{ await dl.save({filename:fname, data:pack()}); return; }catch(e){} }
+    const t=el.querySelector('#exportText'); t.hidden=false; t.value=pack(); t.select(); });
+  const es=el.querySelector('#exportShow'); if(es) es.addEventListener('click', ()=>{ const t=el.querySelector('#exportText'); t.hidden=false; t.value=pack(); t.select(); try{ document.execCommand('copy'); }catch(e){} });
+  const im=el.querySelector('#importRun'); if(im) im.addEventListener('click', async ()=>{ const msg=el.querySelector('#importMsg'); let d; try{ d=JSON.parse(el.querySelector('#importText').value); }catch(e){ msg.textContent='not valid JSON'; return; }
+    if(!d||d.kind!=='ssi-run'||!d.run||!Array.isArray(d.run.answers)){ msg.textContent='not an exported run'; return; }
+    if(!DB){ msg.textContent='the artifact store is not connected in this browser; only a writer can import'; return; }
+    const slugOf=s=>(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,24);
+    const ps=slugOf(d.player)||'anonymous'; const run=Object.assign({}, d.run, {player:d.player||'', household:d.household, imported:new Date().toISOString(), imported_by:S.player||''});
+    const total=(run.perDay||6)*4; const finished=run.answers.length>=total;
+    const id=finished?`${d.gen||GEN}s${d.seed}__${ps}__${(run.started||d.exported).replace(/[:.]/g,'-')}`:`${d.gen||GEN}s${d.seed}__${ps}`;
+    try{ await DB.doc((finished?'runs/':'chrono/')+id).set(finished?Object.assign(run,{seed:d.seed, gen:d.gen||GEN, archived:new Date().toISOString(), archived_why:'imported', n_questions:total}):run);
+      if(d.notes&&d.notes.length) await DB.doc(`notes/${d.gen||GEN}s${d.seed}__${ps}`).set({household:d.household, entries:d.notes});
+      msg.textContent=`imported as ${finished?'runs/':'chrono/'}${id}`; renderRuns(); }
+    catch(e){ msg.textContent='store refused the write: '+(e.message||e); } });
   const rows=[];
   const add=(id, d, src)=>{ if(!d) return; const n=(d.answers||[]).length, total=d.n_questions||((d.perDay||6)*4), hits=(d.answers||[]).filter(a=>a.hit).length, looks=(d.looks||[]).filter(l=>!l.failed).length;
     rows.push({id, src, household:d.household||(id.match(/s(\d+)/)?'hh_s'+id.match(/s(\d+)/)[1]:'?'), player:d.player||(id.includes('__')?id.split('__')[1].split('__')[0]:''), started:d.started||'', updated:d.updated||d.archived||'', n, total, hits, looks, finished:n>=total, why:d.archived_why||''}); };
@@ -535,7 +573,9 @@ function renderQuiz(){ const el=document.getElementById('v-quiz'); const H=hh();
   const rooms=H.rooms.slice().sort();
   const roomCost = r => lookCost(r);
   html += `<div class="row"><label class="field">look in a room <select id="lookRoom" ${S.play.done?'disabled':''}>${rooms.map(r=>`<option value="${r}" ${r===doc.robot?'selected':''}>${r} (cost ${roomCost(r)})</option>`).join('')}</select></label><button class="btn primary" id="lookNow" ${S.play.done?'disabled':''}>Look now</button><span class="small">reports every spot in the room and who is there</span></div>`;
-  html += `<div class="row" style="margin-top:8px"><label class="field">your answer: a spot <select id="guessSpot" ${S.play.done?'disabled':''}><option value="">— choose a spot —</option>${rooms.map(room=>`<optgroup label="${room}">${Object.values(H.receptacles).filter(r=>r.room===room).sort((a,b)=>a.id.localeCompare(b.id)).map(r=>`<option value="${r.id}">${r.id}</option>`).join('')}</optgroup>`).join('')}</select></label><button class="btn" id="guessSpotBtn" ${S.play.done?'disabled':''}>Guess it is here</button><button class="btn" id="guessOut" ${S.play.done?'disabled':''}>Guess: out of the house</button><button class="btn" id="guessOn" ${S.play.done?'disabled':''}>Guess: on someone</button>${S.play.done?'<button class="btn primary" id="nextQ">Next question</button>':''}</div>`;
+  // the newest look of this question that shows the object: preselect that spot
+  let foundAt=null, foundIn=null; for(const v of myLooks.slice().reverse()){ const rec=Object.keys(v.contents).find(r=>v.contents[r].includes(q.obj)); if(rec){ foundAt=rec; foundIn=v.room; break; } }
+  html += `<div class="row" style="margin-top:8px"><label class="field">your answer: a spot <select id="guessSpot" ${S.play.done?'disabled':''} ${foundAt?'style="border-color:var(--ok);background:var(--ok-soft)"':''}><option value="">— choose a spot —</option>${rooms.map(room=>`<optgroup label="${room}">${Object.values(H.receptacles).filter(r=>r.room===room).sort((a,b)=>a.id.localeCompare(b.id)).map(r=>`<option value="${r.id}" ${r.id===foundAt?'selected':''}>${r.id}</option>`).join('')}</optgroup>`).join('')}</select></label><button class="btn ${foundAt&&!S.play.done?'primary':''}" id="guessSpotBtn" ${S.play.done?'disabled':''}>Guess it is here</button>${foundAt&&!S.play.done?`<span class="small mark ok">seen at ${foundAt} in your look of the ${foundIn}</span>`:''}<button class="btn" id="guessOut" ${S.play.done?'disabled':''}>Guess: out of the house</button><button class="btn" id="guessOn" ${S.play.done?'disabled':''}>Guess: on someone</button>${S.play.done?'<button class="btn primary" id="nextQ">Next question</button>':''}</div>`;
   if(myLooks.length){ html += `<div style="margin-top:10px"><h3>Your looks for this question</h3><div class="timeline">${myLooks.map(v=>visitHtml(v, q.obj, true)).join('')}</div></div>`; }
   html += `<div style="margin-top:12px"><h3>Your thinking on this question</h3><textarea id="qNote" rows="3" placeholder="What are you using to decide? Update it after each look. Saved with the answer." style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;resize:vertical">${esc(S.play.draft||'')}</textarea>${S.play.done?`<div class="row" style="margin-top:6px;justify-content:space-between"><span class="small" id="qNoteState">${S.play.noteDirty?'edited, not saved':'saved with the answer'}</span><button class="btn" id="qNoteSave">Save note</button></div>`:'<p class="small" style="margin:4px 0 0">Kept while you look; stored when you answer.</p>'}</div>`;
   if(S.play.done){ const a=doc.answers[i];
