@@ -74,11 +74,16 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=pathlib.Path, required=True)
     ap.add_argument("--density", type=int, default=4, help="patrol density for the per-day figures")
     ap.add_argument("--all", action="store_true", help="every agent in the logs (default: the MAIN roster only)")
+    ap.add_argument("--spot-only", action="store_true",
+                    help="score only questions whose truth is an in-house spot (drop ON_PERSON / OUT_OF_HOUSE truths, which no look can reach)")
     a = ap.parse_args(argv)
     a.out.mkdir(parents=True, exist_ok=True)
     rows = load_logs([p for pat in a.logs for p in glob.glob(pat)])
     if not a.all:
         rows = [r for r in rows if in_main(r.get("agent") or r["belief"])]
+    if a.spot_only:
+        rows = [r for r in rows if truth_kind(r["truth"]) == "spot"]
+    scope = " · in-house spot truths only" if a.spot_only else ""
     shift, names, moved = shift_days_from_banks([p for pat in a.banks for p in glob.glob(pat)])
     for r in rows:
         r["agent"] = r.get("agent") or r["belief"]
@@ -103,8 +108,9 @@ def main(argv=None) -> int:
             continue
         agents = sorted({r["agent"] for r in sub})
         cells = group(sub, ("agent", "day_index"), None)
-        fig, axes = plt.subplots(1, 2, figsize=(13, 5), sharey=False)
-        for ax, kinds, title in ((axes[0], None, "all questions"), (axes[1], ("spot",), "in-house spot truths only")):
+        panels = ((None, "in-house spot truths only"),) if a.spot_only else ((None, "all questions"), (("spot",), "in-house spot truths only"))
+        fig, axes = plt.subplots(1, len(panels), figsize=(6.5 * len(panels), 5), sharey=False, squeeze=False); axes = axes[0]
+        for ax, (kinds, title) in zip(axes, panels):
             for ag in agents:
                 ys = []
                 for d in days:
@@ -113,8 +119,8 @@ def main(argv=None) -> int:
                 ax.plot(range(len(days)), ys, marker="o", ms=4, lw=1.8, label=label(ag), color=color(ag), ls=style(ag))
             shade(ax)
             ax.set_xticks(range(len(days))); ax.set_xticklabels(labels); ax.set_ylim(0.5, 1.0); ax.grid(alpha=0.3)
-            ax.set_title(f"accuracy per day, patrol every {a.density} h, look {'/'.join(look_set)} — {title}")
-        axes[1].legend(fontsize=8, ncol=1, loc="lower left")
+            ax.set_title(f"accuracy per day, patrol every {a.density} h, look {'/'.join(look_set)} — {title}", fontsize=10)
+        axes[-1].legend(fontsize=8, ncol=1, loc="lower left")
         fig.text(0.01, 0.01, "* every household shifts that day (weekend, grey); ° some households (guests / illness); LLM dashed = told the residents' messages, dotted = not told", fontsize=8)
         fig.tight_layout(); fig.savefig(a.out / fname, dpi=130); plt.close(fig)
 
@@ -131,7 +137,7 @@ def main(argv=None) -> int:
             ax.plot(dens, [cells[(ag, d)].acc_all for d in dens], marker="o", lw=1.8, label=label(ag), color=color(ag), ls=style(ag))
         all_dens = sorted({r["patrol_hours"] for r in sub})
         ax.set_xscale("log", base=2); ax.set_xticks(all_dens); ax.set_xticklabels([f"every {d} h" for d in all_dens])
-        ax.set_title(f"accuracy vs patrol density, look {'/'.join(lks)}"); ax.grid(alpha=0.3); ax.set_ylim(0.6, 1.0)
+        ax.set_title(f"accuracy vs patrol density, look {'/'.join(lks)}{scope}", fontsize=10); ax.grid(alpha=0.3); ax.set_ylim(0.6, 1.0)
         ax.legend(fontsize=8, ncol=1)
     fig.tight_layout(); fig.savefig(a.out / "fig2_accuracy_vs_density.png", dpi=130); plt.close(fig)
 
@@ -139,6 +145,8 @@ def main(argv=None) -> int:
     rows_all = load_logs([p for pat in a.logs for p in glob.glob(pat)])
     for r in rows_all:
         r["agent"] = r.get("agent") or r["belief"]
+    if a.spot_only:
+        rows_all = [r for r in rows_all if truth_kind(r["truth"]) == "spot"]
     told = sorted({r["agent"] for r in rows_all if "/told/" in r["agent"] and r["look"] in ("llm",)})
     if told:
         fig, ax = plt.subplots(figsize=(9, 5))
@@ -149,7 +157,7 @@ def main(argv=None) -> int:
             ax.plot(range(len(days)), [cells.get((ag, d), Cell()).acc_all for d in days], marker="o", lw=1.8, color=c, label=short(ag).replace("/told", "") + " told")
             ax.plot(range(len(days)), [cells.get((nt, d), Cell()).acc_all for d in days], marker="x", ls="--", lw=1.4, color=c, label=short(nt).replace("/not_told", "") + " not told")
         shade(ax); ax.set_xticks(range(len(days))); ax.set_xticklabels(labels); ax.grid(alpha=0.3); ax.legend(fontsize=7, ncol=2)
-        ax.set_title("told vs not told, accuracy per day (LLM agents, look on, pooled households)")
+        ax.set_title(f"told vs not told, accuracy per day (LLM agents, look on, pooled households){scope}", fontsize=10)
         fig.tight_layout(); fig.savefig(a.out / "fig3_told_vs_not_told.png", dpi=130); plt.close(fig)
 
     # 4. abstain rate and answered accuracy per day at threshold 0.5 (look voi / llm)
@@ -167,7 +175,7 @@ def main(argv=None) -> int:
                 lab = label(ag) + ("" if thr else " · outright ABSTAIN only")
                 axes[0].plot(range(len(days)), [cells.get((ag, d), Cell()).abstain_rate for d in days], marker="o", ms=4, lw=1.8, ls=(style(ag) if thr else "-."), color=color(ag), label=lab, alpha=1 if thr else .7)
                 axes[1].plot(range(len(days)), [cells.get((ag, d), Cell()).acc_answered for d in days], marker="o", ms=4, lw=1.8, ls=(style(ag) if thr else "-."), color=color(ag), label=lab, alpha=1 if thr else .7)
-        for ax, t in zip(axes, ("abstain rate per day (abstain when top probability < 0.5)\nLLM dashed = told, dotted = not told; dash-dot = the LLM's own ABSTAIN answers only", "accuracy among the questions actually answered")):
+        for ax, t in zip(axes, ("abstain rate per day (abstain when top probability < 0.5)\nLLM dashed = told, dotted = not told; dash-dot = the LLM's own ABSTAIN answers only", f"accuracy among the questions actually answered{scope}")):
             shade(ax); ax.set_xticks(range(len(days))); ax.set_xticklabels(labels); ax.grid(alpha=0.3); ax.set_title(t, fontsize=10)
         axes[0].legend(fontsize=8, ncol=1, loc="center")
         fig.tight_layout(); fig.savefig(a.out / "fig4_abstain_per_day.png", dpi=130); plt.close(fig)
