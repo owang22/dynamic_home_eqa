@@ -3,6 +3,29 @@
 Living document: one section per tick of the monitor. Newest first. Numbers come from
 `results/situation_sim/<hh>/summary.md` (`python3 -m baselines.situation_eval --run data/situation_sim/runs/<hh> --out results/situation_sim/<hh>`).
 
+## 2026-09-20 · tick 4 · Oliver's hh_s11 run vs the agents; reserve-pacing ablation
+
+**Oliver on hh_s11 (Hana, shift worker; Priya, retired; dog): 17/24 = 71%, 17 looks, budget 44.** Thu 6/6, Fri 4/6, Sat 2/6, Sun 5/6. Export: `data/situation_sim/human_runs/hh_s11_g4s11_2026-09-20.json`.
+The page's "Last seen" line (18/24) is a hindsight baseline computed from *his* looks; the agents choosing their own looks under the same protocol top out at **15/24** on this household (HierarchyBackoff+VoI 0.05, Markov1+Search, Timetable+Search). He beat all 70 and was alone in getting the ON_PERSON phone questions (2/2 when he said "on someone"; agents 0–2/70 on those).
+
+Where he lost (all Fri evening–Sat): he correctly learned Hana's routine in two days (shift 13:45–22:50 Wed/Thu/Fri; his note "hana goes out a lot in the evenings") and then extrapolated it into **Saturday, the one day three hidden causes stacked**: `sick_day:hana` (home all day → shoes on the rack, phone on her), `guest_visit` (tidy pass put the spatula in the drawer), `laundry_day` (blanket airing on the bed). He spent 3 looks on Saturday against 6 on Thursday — confidence from the routine made him stop buying confirmation exactly when the routine broke. Design note for the LLM agent: the human had a routine but no explicit "is today a routine day?" check; one cheap entry look on Saturday would have contradicted the routine (Hana's shoes present at 17:00).
+
+Strategies from his notes (for the LLM design log): entry-hall looks as a cheap "who is home" probe; pocket items follow presence ("keys and shoes here → she is home → phone on her"); object co-location as evidence of activity (tablet on the counter → "on her tablet at lunch"); saving budget late in the day; treating the first two days as routine-learning, then answering from routine.
+
+**Reserve-pacing ablation** (`--reserve 1.0`: a look is refused if it would leave less than 1 unit per remaining question of the day; six households, 144 q):
+
+| policy (5 beliefs pooled) | unpaced | paced |
+|---|---|---|
+| Timetable + SequentialSearch | 62.5% | **69.4%** |
+| MostFrequent + SequentialSearch | 62.5% | 68.8% |
+| MostFrequent + VoIBudgetPrice(γ=0.5) | 63.9% | 68.8% |
+| HierarchyBackoff + VoIBudgetPrice(γ=0.5) | 63.9% | 68.1% |
+| HierarchyBackoff + VoI(λ=0.02) | 66.7% | 64.6% |
+
+Pacing fixes the overspending policies (+5–6 points, forced answers gone) and does nothing for the λ-threshold VoI which already spends slowly. New best agent under the protocol: **69.4%** — about where Oliver landed on hh_s11 (71%), below his 79% on hh_s0. The gap that remains is not budget management; it is the 20% of questions whose answer is a person or the outside.
+
+**Not run yet** (asked; awaiting priority): ConformalSense/ACISense (need calibrated score tables), ResolvableMassSense, hypothesis/label/assumption-disambiguation VoI (need hypothesis sets), OracleLookahead, LLM-backed beliefs (endpoint + cost).
+
 ## 2026-09-19 · tick 2 · six households (hh_s6–11), 144 questions; λ sweep; Perpetua diagnosis
 
 **Oliver**: no g4 run in the DB yet.

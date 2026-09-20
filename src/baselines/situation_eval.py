@@ -191,8 +191,42 @@ BELIEFS: Tuple[Dict[str, object], ...] = (
 )
 
 
+class ReservePacing:
+    """Wraps a policy: a look is allowed only if, after paying for it, at least
+    ``reserve`` budget per remaining question of the day is left. The human's
+    own heuristic ("save my budget of 2 for later"); the roster has no pacing
+    rule that looks at the question count."""
+
+    def __init__(self, inner, per_day: int, reserve: float = 1.0) -> None:
+        self._inner = inner; self._per_day = per_day; self._reserve = reserve
+        self._day = None; self._k = 0; self._qid = None; self._ctx = None
+
+    @property
+    def name(self) -> str:
+        return f"Reserve({self._reserve:g})[{self._inner.name}]"
+
+    def reset(self, context) -> None:
+        self._ctx = context; self._inner.reset(context); self._day = None; self._k = 0; self._qid = None
+
+    def decide(self, question, prediction, budget_remaining, t, last_sense=None):
+        if question.question_id != self._qid:
+            self._qid = question.question_id
+            if question.day_index != self._day:
+                self._day, self._k = question.day_index, 0
+            else:
+                self._k += 1
+        action = self._inner.decide(question, prediction, budget_remaining, t, last_sense)
+        from baselines.types import Sense
+        if isinstance(action, Sense) and self._ctx is not None:
+            remaining_after = self._per_day - self._k - 1
+            if budget_remaining - self._ctx.sense_cost(action.receptacle_id) < self._reserve * remaining_after:
+                from baselines.types import AnswerNow
+                return AnswerNow()
+        return action
+
+
 def policies(rng: random.Random, budget: int, per_day: int, lams: Sequence[float],
-             gammas: Sequence[float]):
+             gammas: Sequence[float], reserve: Optional[float] = None):
     out = [("never", lambda: NeverSense()),
            ("search", lambda: SequentialSearch(rng, confidence_threshold=0.9))]
     for lam in lams:
@@ -200,17 +234,19 @@ def policies(rng: random.Random, budget: int, per_day: int, lams: Sequence[float
     for g in gammas:
         out.append((f"voiprice{g:g}", (lambda g=g: VoIBudgetPriceSense(rng, gamma=g, budget_per_day=budget,
                                                                         questions_per_day=per_day))))
+    if reserve is not None:
+        out = [(f"{n}+reserve", (lambda mk=mk: ReservePacing(mk(), per_day, reserve))) for n, mk in out if n != "never"]
     return out
 
 
 def run_all(bank_path: pathlib.Path, out_dir: pathlib.Path, beliefs=BELIEFS, lams=(0.02, 0.05, 0.1),
             gammas=(0.5, 1.0), seed: int = 0, budget: int = 12, per_day: int = 6,
-            pockets: bool = False) -> List[QuestionRecord]:
+            pockets: bool = False, reserve: Optional[float] = None) -> List[QuestionRecord]:
     bank = JsonlBank(bank_path)
     episode = next(iter(bank.episodes()))
     records: List[QuestionRecord] = []
     for bspec in beliefs:
-        for pname, mk in policies(random.Random(seed), budget, per_day, lams, gammas):
+        for pname, mk in policies(random.Random(seed), budget, per_day, lams, gammas, reserve):
             rng = random.Random(f"{seed}:{bspec}:{pname}")
             try:
                 belief = build_registered_belief(dict(bspec), rng)
@@ -302,11 +338,12 @@ def main(argv=None) -> int:
     ap.add_argument("--lams", nargs="*", type=float, default=[0.02, 0.05, 0.1])
     ap.add_argument("--gammas", nargs="*", type=float, default=[0.5, 1.0])
     ap.add_argument("--human", type=pathlib.Path, default=None, help="an exported human run json to print alongside")
+    ap.add_argument("--reserve", type=float, default=None, help="wrap policies in ReservePacing(reserve per remaining question)")
     a = ap.parse_args(argv)
     a.out.mkdir(parents=True, exist_ok=True)
     bank_path, qs = build_bank(a.run, a.out / "bank.jsonl", a.budget, a.per_day)
     beliefs = tuple(b for b in BELIEFS if a.beliefs is None or b["name"] in a.beliefs)
-    records = run_all(bank_path, a.out, beliefs, a.lams, a.gammas, budget=a.budget, per_day=a.per_day, pockets=a.pockets)
+    records = run_all(bank_path, a.out, beliefs, a.lams, a.gammas, budget=a.budget, per_day=a.per_day, pockets=a.pockets, reserve=a.reserve)
     human = None
     if a.human and a.human.exists():
         doc = json.loads(a.human.read_text())["run"]

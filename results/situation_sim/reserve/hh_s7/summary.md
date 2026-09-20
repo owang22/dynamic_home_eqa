@@ -1,0 +1,55 @@
+# situation_sim baselines · hh_s7
+
+20 agents (belief x policy), 24 questions, room-level looks (1 + 3 travel), budget 12/day, walkthrough Wed 18:00.
+
+| agent | right | acc | looks | budget | forced | Thu | Fri | Sat | Sun | spot | on_person | out |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 18/24 | 75% | 21 | 45.0 | 0 | 4/6 | 5/6 | 5/6 | 4/6 | 18/19 | 0/1 | 0/4 |
+| MostFrequentLocation+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 18/24 | 75% | 21 | 45.0 | 0 | 4/6 | 5/6 | 5/6 | 4/6 | 18/19 | 0/1 | 0/4 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 18/24 | 75% | 21 | 45.0 | 0 | 4/6 | 5/6 | 5/6 | 4/6 | 18/19 | 0/1 | 0/4 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 17/24 | 71% | 14 | 23.0 | 0 | 4/6 | 5/6 | 5/6 | 3/6 | 17/19 | 0/1 | 0/4 |
+| MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 17/24 | 71% | 15 | 24.0 | 0 | 4/6 | 5/6 | 5/6 | 3/6 | 17/19 | 0/1 | 0/4 |
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 17/24 | 71% | 16 | 25.0 | 0 | 4/6 | 5/6 | 5/6 | 3/6 | 17/19 | 0/1 | 0/4 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[SequentialSearch] | 17/24 | 71% | 16 | 40.0 | 0 | 3/6 | 5/6 | 5/6 | 4/6 | 17/19 | 0/1 | 0/4 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 17/24 | 71% | 16 | 25.0 | 0 | 4/6 | 5/6 | 5/6 | 3/6 | 17/19 | 0/1 | 0/4 |
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 17/24 | 71% | 17 | 26.0 | 0 | 4/6 | 5/6 | 5/6 | 3/6 | 17/19 | 0/1 | 0/4 |
+| MostFrequentLocation+Reserve(1)[SequentialSearch] | 17/24 | 71% | 18 | 42.0 | 0 | 3/6 | 5/6 | 5/6 | 4/6 | 17/19 | 0/1 | 0/4 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[SequentialSearch] | 17/24 | 71% | 18 | 42.0 | 0 | 3/6 | 5/6 | 5/6 | 4/6 | 17/19 | 0/1 | 0/4 |
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 17/24 | 71% | 20 | 23.0 | 0 | 3/6 | 5/6 | 5/6 | 4/6 | 17/19 | 0/1 | 0/4 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 17/24 | 71% | 20 | 41.0 | 0 | 3/6 | 5/6 | 5/6 | 4/6 | 17/19 | 0/1 | 0/4 |
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 17/24 | 71% | 23 | 41.0 | 0 | 3/6 | 5/6 | 5/6 | 4/6 | 17/19 | 0/1 | 0/4 |
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 16/24 | 67% | 15 | 18.0 | 0 | 3/6 | 5/6 | 5/6 | 3/6 | 16/19 | 0/1 | 0/4 |
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[SequentialSearch] | 16/24 | 67% | 17 | 41.0 | 0 | 3/6 | 5/6 | 5/6 | 3/6 | 16/19 | 0/1 | 0/4 |
+| MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 15/24 | 62% | 14 | 17.0 | 0 | 3/6 | 4/6 | 5/6 | 3/6 | 15/19 | 0/1 | 0/4 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 14/24 | 58% | 15 | 18.0 | 0 | 3/6 | 4/6 | 5/6 | 2/6 | 14/19 | 0/1 | 0/4 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 13/24 | 54% | 14 | 32.0 | 0 | 3/6 | 4/6 | 3/6 | 3/6 | 13/19 | 0/1 | 0/4 |
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[SequentialSearch] | 11/24 | 46% | 13 | 40.0 | 0 | 2/6 | 4/6 | 3/6 | 2/6 | 11/19 | 0/1 | 0/4 |
+
+## Question difficulty (agents that got it right)
+
+| q | object | truth | solved by |
+|---|---|---|---|
+| q01 | jacket_hana | entry_hook_e1 | 20/20 |
+| q02 | mug_hana | kitchen_table_k1 | 19/20 |
+| q03 | pot_shared | cupboard_k1 | 20/20 |
+| q04 | phone_hana | OUT_OF_HOUSE | 0/20 |
+| q05 | pen_dana | desk_o1 | 0/20 |
+| q06 | hat_dana | shoe_rack_e1 | 8/20 |
+| q07 | cutting_board_shared | sink_k1 | 17/20 |
+| q08 | plate_dana | dish_rack_k1 | 20/20 |
+| q09 | umbrella_hana | entry_floor_e1 | 20/20 |
+| q10 | water_bottle_dana | dish_rack_k1 | 19/20 |
+| q11 | jacket_hana | OUT_OF_HOUSE | 0/20 |
+| q12 | umbrella_hana | entry_floor_e1 | 20/20 |
+| q13 | jacket_hana | entry_hook_e1 | 20/20 |
+| q14 | recipe_book_shared | counter_k1 | 20/20 |
+| q15 | shopping_bag_shared | pantry_shelf_k1 | 20/20 |
+| q16 | glass_dana | counter_k1 | 18/20 |
+| q17 | mug_hana | cupboard_k1 | 18/20 |
+| q18 | wallet_hana | OUT_OF_HOUSE | 0/20 |
+| q19 | glass_dana | counter_k1 | 19/20 |
+| q20 | shoes_dana | OUT_OF_HOUSE | 0/20 |
+| q21 | kitchen_knife_shared | drawer_k_k1 | 19/20 |
+| q22 | phone_hana | ON_PERSON | 0/20 |
+| q23 | water_bottle_dana | sink_k1 | 9/20 |
+| q24 | keys_hana | entry_table_e1 | 20/20 |

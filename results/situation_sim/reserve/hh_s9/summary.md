@@ -1,0 +1,55 @@
+# situation_sim baselines · hh_s9
+
+20 agents (belief x policy), 24 questions, room-level looks (1 + 3 travel), budget 12/day, walkthrough Wed 18:00.
+
+| agent | right | acc | looks | budget | forced | Thu | Fri | Sat | Sun | spot | on_person | out |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[SequentialSearch] | 17/24 | 71% | 15 | 39.0 | 0 | 6/6 | 4/6 | 4/6 | 3/6 | 17/21 | 0/2 | 0/1 |
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[SequentialSearch] | 17/24 | 71% | 16 | 43.0 | 0 | 5/6 | 5/6 | 4/6 | 3/6 | 16/21 | 0/2 | 1/1 |
+| MostFrequentLocation+Reserve(1)[SequentialSearch] | 17/24 | 71% | 16 | 40.0 | 0 | 6/6 | 4/6 | 4/6 | 3/6 | 17/21 | 0/2 | 0/1 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[SequentialSearch] | 17/24 | 71% | 16 | 40.0 | 0 | 6/6 | 4/6 | 4/6 | 3/6 | 17/21 | 0/2 | 0/1 |
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 16/24 | 67% | 11 | 20.0 | 0 | 5/6 | 4/6 | 3/6 | 4/6 | 14/21 | 2/2 | 0/1 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[SequentialSearch] | 16/24 | 67% | 14 | 41.0 | 0 | 6/6 | 4/6 | 4/6 | 2/6 | 16/21 | 0/2 | 0/1 |
+| MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 16/24 | 67% | 16 | 28.0 | 0 | 5/6 | 4/6 | 4/6 | 3/6 | 16/21 | 0/2 | 0/1 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 16/24 | 67% | 16 | 28.0 | 0 | 5/6 | 4/6 | 4/6 | 3/6 | 16/21 | 0/2 | 0/1 |
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 16/24 | 67% | 18 | 33.0 | 0 | 6/6 | 4/6 | 3/6 | 3/6 | 16/21 | 0/2 | 0/1 |
+| MostFrequentLocation+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 16/24 | 67% | 20 | 44.0 | 0 | 5/6 | 4/6 | 4/6 | 3/6 | 16/21 | 0/2 | 0/1 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 16/24 | 67% | 20 | 44.0 | 0 | 5/6 | 4/6 | 4/6 | 3/6 | 16/21 | 0/2 | 0/1 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 15/24 | 62% | 13 | 22.0 | 0 | 5/6 | 3/6 | 4/6 | 3/6 | 15/21 | 0/2 | 0/1 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 15/24 | 62% | 20 | 41.0 | 0 | 5/6 | 4/6 | 3/6 | 3/6 | 15/21 | 0/2 | 0/1 |
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 15/24 | 62% | 22 | 43.0 | 0 | 5/6 | 4/6 | 3/6 | 3/6 | 15/21 | 0/2 | 0/1 |
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 14/24 | 58% | 11 | 11.0 | 0 | 5/6 | 4/6 | 3/6 | 2/6 | 14/21 | 0/2 | 0/1 |
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 14/24 | 58% | 16 | 37.0 | 0 | 6/6 | 4/6 | 2/6 | 2/6 | 14/21 | 0/2 | 0/1 |
+| MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 13/24 | 54% | 8 | 8.0 | 0 | 5/6 | 3/6 | 3/6 | 2/6 | 13/21 | 0/2 | 0/1 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 13/24 | 54% | 8 | 8.0 | 0 | 5/6 | 3/6 | 3/6 | 2/6 | 13/21 | 0/2 | 0/1 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 13/24 | 54% | 9 | 9.0 | 0 | 5/6 | 3/6 | 3/6 | 2/6 | 13/21 | 0/2 | 0/1 |
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 13/24 | 54% | 18 | 42.0 | 0 | 6/6 | 3/6 | 3/6 | 1/6 | 13/21 | 0/2 | 0/1 |
+
+## Question difficulty (agents that got it right)
+
+| q | object | truth | solved by |
+|---|---|---|---|
+| q01 | headphones_ines | dresser_b1 | 20/20 |
+| q02 | sunglasses_ines | entry_table_e1 | 20/20 |
+| q03 | shoes_ines | shoe_rack_e1 | 20/20 |
+| q04 | razor_hana | sink_ba_ba1 | 20/20 |
+| q05 | glasses_yuki | nightstand_b1 | 7/20 |
+| q06 | tablet_yuki | nightstand_b1 | 20/20 |
+| q07 | kitchen_knife_shared | drawer_k_k1 | 20/20 |
+| q08 | keys_ines | OUT_OF_HOUSE | 1/20 |
+| q09 | plate_yuki | dish_rack_k1 | 14/20 |
+| q10 | remote_shared | coffee_table_l1 | 1/20 |
+| q11 | shoes_yuki | shoe_rack_e1 | 20/20 |
+| q12 | razor_yuki | sink_ba_ba1 | 20/20 |
+| q13 | phone_hana | nightstand_b2 | 0/20 |
+| q14 | keys_ines | entry_table_e1 | 20/20 |
+| q15 | sunglasses_yuki | entry_table_e1 | 20/20 |
+| q16 | shoes_yuki | entry_floor_e1 | 13/20 |
+| q17 | towel_hana | bathroom_shelf_ba1 | 2/20 |
+| q18 | glass_yuki | cupboard_k1 | 14/20 |
+| q19 | sunglasses_hana | entry_table_e1 | 20/20 |
+| q20 | phone_yuki | entry_floor_e1 | 13/20 |
+| q21 | phone_ines | ON_PERSON | 1/20 |
+| q22 | headphones_ines | couch_l1 | 1/20 |
+| q23 | phone_hana | ON_PERSON | 1/20 |
+| q24 | plate_ines | cupboard_k1 | 17/20 |
