@@ -1,0 +1,98 @@
+# hh_s0 · anonymous · run g3s0
+
+started 2026-09-19 18:45 · last activity 2026-09-19 20:40 · 24/24 answered · 18 looks · budget 42 · **19/24 right**
+
+## Per-question thinking
+
+**Q1 Thu 13:48 `phone_yuki` → ON_PERSON** ✓ · 2 look(s)
+> checking the entryway to see if yuki is home. i see that they're probably home because their shoes and wallet and keys are here. let's just guess on person and move on.
+
+**Q2 Thu 14:18 `umbrella_yuki` → entry_floor_e1** ✓ · 0 look(s)
+> i saw the umbrella less than an hour earlier, so i think its still there.
+
+**Q3 Thu 16:31 `jacket_yuki` → entry_hook_e1** ✓ · 1 look(s)
+> now it's probably still at the entry hook, let's check to be sure.
+
+**Q4 Thu 18:45 `book_nora` → bed_b2** ✓ · 1 look(s)
+> i don't know much about nora, but let's check the last seen location.
+
+**Q5 Thu 19:56 `phone_nora` → ON_PERSON** ✗ (truth OUT_OF_HOUSE) · 0 look(s)
+> nora is probably home now. i should save budget and answer. i never saw the phone, probably on her person.
+
+**Q6 Thu 22:11 `jacket_yuki` → entry_hook_e1** ✓ · 0 look(s)
+> it's late now, i dont think yuki goes out at night, so let's guess the entry hook.
+
+**Q7 Fri 10:32 `blanket_shared` → coffee_table_l1** ✓ · 1 look(s)
+> probably still at the couch but let's go check.
+
+**Q8 Fri 11:00 `shoes_yuki` → shoe_rack_e1** ✓ · 1 look(s)
+> yesterday yuki was probably in the house at this time, but let's check again to ensure since they could've come home early by chance and i have budget left. ok both people's shoes are home , though i see special running shoes also as a category. this breaks my assumption that people only have one pair of shoes. their keys are home though. they don't leave the home?
+
+**Q9 Fri 11:46 `phone_nora` → ON_PERSON** ✓ · 0 look(s)
+> probably on nora's person right now. i don't know where nora is, but i saw nora in the living room an hour ago. however, i'm running low on budget. let's just guess.
+
+**Q10 Fri 17:27 `keys_yuki` → entry_table_e1** ✓ · 1 look(s)
+> i think that yuki is probably still home tonight, though i'm already at the entryway. so it's cheap to check, but if i check then i will not be able to afford moving away from the entryway anymore for the rest of the night. i think its worth checking to learn habits like if yuki works night shift or goes out friday nights for fun. nope, all still home.
+
+**Q11 Fri 19:09 `running_shoes_yuki` → shoe_rack_e1** ✓ · 1 look(s)
+> probably still at the shoe rack, going to run in the evening is not likely. can check cheaply i guess. okay, still here with no change to the area!
+
+**Q12 Fri 22:00 `phone_nora` → ON_PERSON** ✓ · 0 look(s)
+> probably still on nora's person at night.
+
+**Q13 Sat 07:52 `jacket_yuki` → wardrobe_b1** ✓ · 2 look(s)
+> i checked the entry since its cheap and that's where the jacket was last seen. i don't see it here. i see nora possibly ready to leave? then jacket is probably where yuki is, likely still in their room. go check, yes i see it there. i see a gym bag too, make a note of that.
+
+**Q14 Sat 09:29 `phone_yuki` → nightstand_b1** ✓ · 1 look(s)
+> since i'm already in yuki's bedroom, let's check. i see that the phone was on yuki's nightstand earlier, probably still here so its cheap. yep, yuki's still here.
+
+**Q15 Sat 10:19 `water_bottle_yuki` → dish_rack_k1** ✓ · 1 look(s)
+> it's no longer at yuki's desk as of less than an hour ago, even though yuki was home. then possibly, the bottle has been taken to the sink to be washed? i consider the gym but again yuki didn't leave the house. yes, it's being dried on the dish rack. this is my first look at the kitchen in a while, let me study the info i got. seems like they store a lot of dishware/glassware in the sink while washing. dog food confirms dog. unusual to have the dog bowl on the counter and not the floor but possible. nora has a lunchbox, probably leaves for work or school?
+
+**Q16 Sat 14:59 `shoes_nora` → shoe_rack_e1** ✓ · 0 look(s)
+> its now the afternoon. oh, i can't check the entryway anymore to see if the shoes are there. i'd better save my budget of 2. if i had to guess, i think nora probably is still in the house. so the shoes probably are still at the shoe rack.
+
+**Q17 Sat 19:41 `wallet_yuki` → entry_floor_e1** ✗ (truth entry_table_e1) · 0 look(s)
+> yuki's wallet i've only ever seen at the entry floor. yesterday it was also at the entry floor, so i think its a fair guess on low budget. i don't think yuki goes out of the house much.
+
+**Q18 Sat 21:12 `shoes_nora` → shoe_rack_e1** ✓ · 0 look(s)
+> still not sure if nora is in the house or not, but it's quite late at night. if i had to guess, i'd say nora is probably home. so the shoes are at the shoe rack.
+
+**Q19 Sun 11:28 `phone_nora` → ON_PERSON** ✗ (truth nightstand_b2) · 2 look(s)
+
+**Q20 Sun 14:23 `charger_yuki` → nightstand_b1** ✗ (truth desk_b1) · 1 look(s)
+> saw the charger yesterday at nightstand. let's check the entryway to see if yukis left the house. yuki is probably still home. guess nightstand again.
+
+**Q21 Sun 14:55 `phone_yuki` → nightstand_b1** ✗ (truth ON_PERSON) · 0 look(s)
+> it's the afternoon now, i think yuki is still home. i'm not sure if the phone is on person or still at nightstand, though. if i go check, i won't be able to check any info about the entry way for the rest of the night. let's stay here and guess nightstand, because i dont expect much about the entryway to have changed since last observation.
+
+**Q22 Sun 19:03 `gym_bag_yuki` → bedroom_floor_b1** ✓ · 1 look(s)
+> okay, it was on the entry floor on thursday afternoon, but showed up in yuki's room in the morning yesterday. worth a cheap check here at the entry way, low possibility its here and could tell us if yuki is out (eg. to the gym in the evening). not here, though nora's shoes and keys are gone! probably still in bedroom floor then.
+
+**Q23 Sun 19:20 `plate_yuki` → cupboard_k1** ✓ · 1 look(s)
+> i saw the plate in the cupboard a few times before. however, it's pretty much dinnertime now. it's possible they eat out, but it's also likely that the plate has been moved to the dining table or other active area. let's go check since i have a bit of budget left. okay, still in the cupboard! nothing on the kitchen table, not clear if people are eating right now! maybe they eat out. the sink has been cleared of dishware though.
+
+**Q24 Sun 20:40 `glass_yuki` → kitchen_table_k1** ✓ · 1 look(s)
+> i just saw it in the cupboard, but i have free budget and i'm in the kitchen already. may as well check. ok, the kitchen has people in it now!  and a lot of stuff on the kitchen table, looks like they're eating a late dinner together, but they did cook it themselves with the pan.
+
+## Household notes
+
+- 2026-09-19 20:08 · Q3 jacket_yuki Thu 16:31 — yuki is porbably not outside the house during thursday afternoon?
+- 2026-09-19 20:11 · Q7 blanket_shared Fri 10:32 — a lot of nora's stuff is in the living room.
+- 2026-09-19 20:12 · Q8 shoes_yuki Fri 11:00 — people can have multiple pairs of shoes to wear
+- 2026-09-19 20:13 · Q8 shoes_yuki Fri 11:00 — both residents seem to stay in the house throughout the day, not regular 9-5 or student schedule.
+- 2026-09-19 20:16 · Q10 keys_yuki Fri 17:27 — there's a dog leash, probably evidence of one dog.
+- 2026-09-19 20:19 · Q13 jacket_yuki Sat 07:52 — nora leaving the house early saturday morning
+- 2026-09-19 20:19 · Q13 jacket_yuki Sat 07:52 — yuki goes to the gym
+- 2026-09-19 20:21 · Q14 phone_yuki Sat 09:29 — yuki didn't leave their room early in the morning
+- 2026-09-19 20:24 · Q15 water_bottle_yuki Sat 10:19 — nora has a lunchbox, probably leaves for work or school? at least some days.
+- 2026-09-19 20:25 · Q15 water_bottle_yuki Sat 10:19 — nora came back saturday morning from whatever short outing they were on.
+- 2026-09-19 20:31 · Q19 phone_nora Sun 11:28 — the outside is cold enough for a scarf, possibly wintertime?
+- 2026-09-19 20:36 · Q22 gym_bag_yuki Sun 19:03 — nora left house sunday evening.
+- 2026-09-19 20:40 · Q24 glass_yuki Sun 20:40 — eat late dinner together!
+- 2026-09-19 05:00 · Q5 mug_leo Thu 19:56 (answered) — nora gets home from work earlier than leo, probably. leo comes home and puts his laptop, headphones and charger on his desk?
+- 2026-09-19 05:03 · Q8 shoes_nora Fri 11:00 (answered) — nora's shoes are still in the house friday morning/noontime. could be that she doesn't wear this pair out, or is it that she's not out today?
+- 2026-09-19 05:05 · Q9 mug_leo Fri 11:46 (answered) — leo mug set down on kitchen table or in sink
+- 2026-09-19 05:09 · Q12 mug_leo Fri 22:00 — fri night nora hangs out by the coffee table with the tv remote
+- 2026-09-19 05:17 · Q15 watering_can_shared Sat 10:19 — leo leaves a lot of personal items/work items just on the floor of the entryway, messy!
+- 2026-09-19 05:26 · Q21 mug_nora Sun 14:55 — nora works from home in the office, i think!

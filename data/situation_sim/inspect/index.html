@@ -160,6 +160,7 @@ summary{cursor:pointer;color:var(--muted);font-size:13px}
     <button role="tab" data-view="runs">Runs</button>
   </nav>
   <span class="spacer"></span>
+  <label class="seed">player <input type="text" id="playerSel" placeholder="your name" style="width:110px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:4px 8px"></label>
   <label class="seed">household <select id="seedSel"></select></label>
   <label class="switch"><input type="checkbox" id="reveal"> reveal hidden causes</label>
 </div></header>
@@ -216,6 +217,8 @@ function save(){ try{ localStorage.setItem('ssi-state', JSON.stringify({view:S.v
 const seedSel = document.getElementById('seedSel');
 for(const k of Object.keys(RUNS).sort((a,b)=>+a-+b)){ const st=RUNS[k].state.household; const o=document.createElement('option'); o.value=k; o.textContent=`${st.id} · ${st.household_type} · ${Object.values(st.residents).map(r=>cap(r.name)).join(', ')}`; seedSel.appendChild(o); }
 seedSel.value=S.seed;
+const playerSel=document.getElementById('playerSel'); playerSel.value=S.player;
+playerSel.addEventListener('change', async ()=>{ S.player=playerSel.value.trim(); lsSet('ssi-player', S.player); S.play={doc:null, loaded:false, done:false}; S.mem={tab:'object', obj:null, place:null}; render(); if(DB_READY){ await loadPersisted(); render(); } });
 seedSel.addEventListener('change', async ()=>{ S.seed=seedSel.value; S.obj=null; S.play={doc:null, loaded:false, done:false}; S.mem={tab:'object', obj:null, place:null}; _rowsCache={}; save(); render(); if(DB_READY){ await loadPersisted(); render(); } });
 document.getElementById('reveal').addEventListener('change', e=>{ S.reveal=e.target.checked; render(); });
 document.getElementById('tabs').addEventListener('click', e=>{ const b=e.target.closest('button'); if(!b) return; S.view=b.dataset.view; save(); render(); });
@@ -322,8 +325,11 @@ async function loadDoc(path, lsKey){ if(DB){ try{ const snap=await DB.doc(path).
 async function saveDoc(path, lsKey, data){ lsSet(lsKey, data); if(DB){ try{ await DB.doc(path).set(data); SYNC='synced'; }catch(e){ SYNC='error'; } } refreshSyncBadge(); }
 function refreshSyncBadge(){ for(const b of document.querySelectorAll('.syncBadge')) b.textContent = SYNC==='synced'?'saved to the artifact (Claude can read it)': SYNC==='local'?'not connected to the artifact store: kept in this browser for now': SYNC==='error'?'saving to the artifact failed; kept in this browser':'connecting…'; }
 (async()=>{ await null; /* let the rest of the script initialise before touching docPath */ try{ if(window.claude && window.claude.use){ DB = await window.claude.use('db'); } }catch(e){ DB=null; } SYNC = DB?'synced':'local'; DB_READY=true; await loadPersisted(); if(S.view==='quiz') render(); else refreshSyncBadge(); })();
-const docPath = kind => `${kind}/${GEN}s${S.seed}`;
-const lsKey = kind => `ssi-${kind}-${GEN}-${S.seed}`;
+S.player = lsGet('ssi-player','') || '';
+const playerSlug = () => (S.player||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,24);
+// one live run per (household, player); notes are shared per household and tagged with the player
+const docPath = kind => kind==='notes' ? `notes/${GEN}s${S.seed}` : `chrono/${GEN}s${S.seed}${playerSlug()?'__'+playerSlug():''}`;
+const lsKey = kind => `ssi-${kind}-${GEN}-${S.seed}${kind==='notes'?'':'-'+playerSlug()}`;
 async function loadPersisted(){ const notes=await loadDoc(docPath('notes'), lsKey('notes')); S.notes = thaw((notes&&notes.entries)||[]); const run_=await loadDoc(docPath('chrono'), lsKey('chrono')); S.play.doc = thaw(run_)||null; S.play.loaded=true; }
 const saveRun = () => saveDoc(docPath('chrono'), lsKey('chrono'), runDoc());
 async function archiveRun(doc, why){ // keep a timestamped copy of every run that had answers
@@ -343,7 +349,7 @@ S.play = S.play || {doc:null, loaded:false, done:false};
 S.notes = S.notes || [];
 S.mem = S.mem || {tab:'object', obj:null, place:null};
 const TOUR_T = 18*3600;
-function runDoc(){ if(!S.play.doc) S.play.doc={perDay:6, budget:12, travel:3, lookCost:1, answers:[], looks:[], pending:[], robot:homeBase(), showVerdicts:false, started:new Date().toISOString(), player:lsGet('ssi-player','')||''}; return S.play.doc; }
+function runDoc(){ if(!S.play.doc) S.play.doc={perDay:6, budget:12, travel:3, lookCost:1, answers:[], looks:[], pending:[], robot:homeBase(), showVerdicts:false, started:new Date().toISOString(), player:S.player||''}; if(S.player && !S.play.doc.player) S.play.doc.player=S.player; return S.play.doc; }
 function homeBase(){ const H=hh(); const counts={}; for(const r of Object.values(H.receptacles)) counts[r.room]=(counts[r.room]||0)+1; return Object.keys(counts).sort((a,b)=>counts[b]-counts[a]||a.localeCompare(b))[0]; }
 function roomAt(res, t){ const rows=run().residents.filter(r=>r.resident_id===res).sort((a,b)=>a.t-b.t); let cur=null; for(const r of rows){ if(r.t<=t) cur=r.room; else break; } return cur; }
 function peopleIn(room, t){ const out=Object.keys(hh().residents).sort().filter(r=>roomAt(r,t)===room);
@@ -439,8 +445,8 @@ function memoryHtml(cut, visits, focusObj){ const H=hh(); const tab=S.mem.tab;
 function notepadHtml(){ const ctx=S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}`:'';
   return `<div class="panel"><h3>Household notes · ${hh().id}</h3><p class="small syncBadge"></p><textarea id="noteText" rows="3" placeholder="General observations about this home: its dynamics, what felt unrealistic or unfair, what the sim or the tools should change." style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;resize:vertical">${esc(S.noteDraft||'')}</textarea>
     <div class="row" style="margin-top:6px;justify-content:space-between"><span class="small">tagged with: ${esc(ctx||'no question')}</span><button class="btn primary" id="saveNote">Save note</button></div>
-    ${S.notes.length?`<div class="hist">${S.notes.slice().reverse().map(n=>`<div><span class="small">${esc((n.ts||'').slice(0,16).replace('T',' '))} · ${esc(n.ctx||'')}</span><br>${esc(n.text)}</div>`).join('')}</div>`:'<p class="small">No notes yet on this household.</p>'}</div>`; }
-function wireNotepad(el){ const btn=el.querySelector('#saveNote'); if(!btn) return; refreshSyncBadge(); const ta0=el.querySelector('#noteText'); ta0.addEventListener('input', ()=>{ S.noteDraft=ta0.value; }); btn.addEventListener('click', async ()=>{ const text=ta0.value.trim(); if(!text) return; S.noteDraft=''; const ctx=S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}${S.play.done?' (answered)':''}`:''; S.notes.push({ts:new Date().toISOString(), ctx, text, household:hh().id}); btn.disabled=true; await saveDoc(docPath('notes'), lsKey('notes'), {household:hh().id, entries:S.notes}); renderQuiz(); }); }
+    ${S.notes.length?`<div class="hist">${S.notes.slice().reverse().map(n=>`<div><span class="small">${esc((n.ts||'').slice(0,16).replace('T',' '))}${n.player?' · '+esc(n.player):''} · ${esc(n.ctx||'')}</span><br>${esc(n.text)}</div>`).join('')}</div>`:'<p class="small">No notes yet on this household.</p>'}</div>`; }
+function wireNotepad(el){ const btn=el.querySelector('#saveNote'); if(!btn) return; refreshSyncBadge(); const ta0=el.querySelector('#noteText'); ta0.addEventListener('input', ()=>{ S.noteDraft=ta0.value; }); btn.addEventListener('click', async ()=>{ const text=ta0.value.trim(); if(!text) return; S.noteDraft=''; const ctx=S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}${S.play.done?' (answered)':''}`:''; S.notes.push({ts:new Date().toISOString(), ctx, text, household:hh().id, player:S.player||''}); btn.disabled=true; await saveDoc(docPath('notes'), lsKey('notes'), {household:hh().id, entries:S.notes}); renderQuiz(); }); }
 
 // ---------- observation log: stays open across re-renders, filterable ----------
 const LOG_DEFAULT = {open:true, room:'', obj:'', day:'', from:'', to:'', text:''};
@@ -494,7 +500,7 @@ async function renderRuns(){ const el=document.getElementById('v-runs');
   el.innerHTML=`<p class="sub">Every quiz run stored in this artifact: the live run of each household plus archived runs (finished, restarted or settings changed). Scores are shown only for finished runs.</p><div class="panel" id="runsPanel"><p class="small">Loading…</p></div>`;
   const rows=[];
   const add=(id, d, src)=>{ if(!d) return; const n=(d.answers||[]).length, total=d.n_questions||((d.perDay||6)*4), hits=(d.answers||[]).filter(a=>a.hit).length, looks=(d.looks||[]).filter(l=>!l.failed).length;
-    rows.push({id, src, household:d.household||('seed '+(d.seed??'?')), player:d.player||'', started:d.started||'', updated:d.updated||d.archived||'', n, total, hits, looks, finished:n>=total, why:d.archived_why||''}); };
+    rows.push({id, src, household:d.household||(id.match(/s(\d+)/)?'hh_s'+id.match(/s(\d+)/)[1]:'?'), player:d.player||(id.includes('__')?id.split('__')[1].split('__')[0]:''), started:d.started||'', updated:d.updated||d.archived||'', n, total, hits, looks, finished:n>=total, why:d.archived_why||''}); };
   if(DB){ try{ const [cur, arch]=await Promise.all([DB.collection('chrono').get(), DB.collection('runs').get()]);
       for(const s of cur.docs) add(s.id, s.data(), 'live'); for(const s of arch.docs) add(s.id, s.data(), 'archived'); }
     catch(e){ el.querySelector('#runsPanel').innerHTML=`<p class="small mark bad">Could not read the artifact store: ${esc(e.message||e)}</p>`; return; } }
@@ -524,7 +530,7 @@ function renderQuiz(){ const el=document.getElementById('v-quiz'); const H=hh();
   html += `<div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack">`;
   // ---- question card
   const pct=Math.round(100*i/seq.length);
-  html += `<div class="panel"><div class="controls" style="justify-content:space-between"><span>Question ${i+1} of ${seq.length} <label class="field" style="display:inline-flex;flex-direction:row;align-items:center;gap:6px;margin-left:10px">player <input type="text" id="playerName" value="${esc(doc.player||'')}" placeholder="your name" style="width:120px"></label></span><span>${DAYS[q.day]} ${fmtMin(q.minute)} · robot in the <b>${doc.robot}</b> · budget left today <b>${left}</b> of ${doc.budget}</span></div><div class="bar" style="margin-bottom:10px"><i style="width:${pct}%"></i></div>`;
+  html += `<div class="panel"><div class="controls" style="justify-content:space-between"><span>Question ${i+1} of ${seq.length} ${doc.player?`<span class="small">· ${esc(doc.player)}</span>`:'<span class="small mark bad">· no player name set (top bar)</span>'} <button class="btn" id="newRun" style="padding:2px 8px;margin-left:8px" title="archive this run and start over on this household">New run</button></span><span>${DAYS[q.day]} ${fmtMin(q.minute)} · robot in the <b>${doc.robot}</b> · budget left today <b>${left}</b> of ${doc.budget}</span></div><div class="bar" style="margin-bottom:10px"><i style="width:${pct}%"></i></div>`;
   html += `<div class="q noclick">Where is <span class="id" style="font-size:17px">${q.obj}</span> right now, ${DAYS[q.day]} at ${fmtMin(q.minute)}?</div>`;
   const rooms=H.rooms.slice().sort();
   const roomCost = r => lookCost(r);
@@ -575,7 +581,7 @@ function wireRun(el, q){ const doc=runDoc();
   const mo=el.querySelector('#memObj'); if(mo) mo.addEventListener('change', e=>{ S.mem.obj=e.target.value; renderQuiz(); });
   const mb=el.querySelector('#memBack'); if(mb) mb.addEventListener('click', ()=>{ S.mem.obj=null; renderQuiz(); });
   const mp=el.querySelector('#memPlace'); if(mp) mp.addEventListener('change', e=>{ S.mem.place=e.target.value; renderQuiz(); });
-  const pn=el.querySelector('#playerName'); if(pn) pn.addEventListener('change', async ()=>{ doc.player=pn.value.trim(); lsSet('ssi-player', doc.player); await saveRun(); });
+  const nr=el.querySelector('#newRun'); if(nr) nr.addEventListener('click', async ()=>{ if(!confirm('Start a new run on this household? The current one is archived under Runs.')) return; await archiveRun(doc,'new run'); S.play.doc={perDay:doc.perDay, budget:doc.budget, travel:doc.travel, lookCost:doc.lookCost, answers:[], looks:[], pending:[], robot:homeBase(), showVerdicts:false, started:new Date().toISOString(), player:S.player||''}; S.play.done=false; S.play.draft=''; S.log=Object.assign({}, LOG_DEFAULT); renderQuiz(); await saveRun(); });
   if(!q) return;
   const ln=el.querySelector('#lookNow'); if(ln) ln.addEventListener('click', async ()=>{ if(S.play.done) return; const room=el.querySelector('#lookRoom').value; const v=doLook(room, q.t, 'question', S.play.index); if(!v){ alert('Not enough budget left today for that look ('+lookCost(room)+' needed, '+budgetLeft(q.day)+' left).'); doc.looks.pop(); return; } renderQuiz(); await saveRun(); });
   const gs=el.querySelector('#guessSpotBtn'); if(gs) gs.addEventListener('click', ()=>{ const rec=el.querySelector('#guessSpot').value; if(!rec||S.play.done) return; recordAnswer(rec); });
