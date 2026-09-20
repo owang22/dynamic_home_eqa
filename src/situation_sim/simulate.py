@@ -398,6 +398,11 @@ class Simulator:
             else:
                 arrive = "entry"
             self.resident_at(b.resident, day, b.end, arrive)
+            if arrive == "entry" and (nxt is None or nxt.start - b.end > 5):
+                # nobody stands in the hallway for an hour: after putting
+                # things down they settle somewhere until the next activity
+                settle = "living" if "living" in hh.rooms else hh.residents[b.resident].bedroom
+                self.resident_at(b.resident, day, min(b.end + 5, 1439), settle)
             back = sorted(o for o in hh.objects if self.loc[o] == OUT_OF_HOUSE
                           and self.took_out.get(o) == b.resident)
             order = sorted(back, key=lambda o: (0 if self.is_leader(o) else 1, o))
