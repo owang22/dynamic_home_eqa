@@ -65,8 +65,8 @@ All times are seconds since episode start.
 from __future__ import annotations
 
 import logging
-from dataclasses import asdict, dataclass
-from typing import Dict, Iterator, List, Optional, Tuple, Union
+from dataclasses import asdict, dataclass, field, fields
+from typing import Dict, Iterator, List, Optional, Set, Tuple, Union
 
 from baselines.agent import Agent
 from baselines.types import (DAY_SECONDS, ON_PERSON, Answer, AnswerNow,
@@ -160,8 +160,42 @@ def _stream_until(evidence: Tuple[Union[Observation, SenseResult], ...],
     return cursor
 
 
+@dataclass
+class RoomLook:
+    """Room-level sensing, the human inspector's protocol: a Sense of any
+    receptacle is executed as a LOOK at its whole room, which reports every
+    sensable receptacle in that room (and who is standing there) for
+    ``look_cost``, plus ``travel_cost`` when the robot has to change rooms.
+    A room already looked at within the same question is free again.
+    ``person_sensing`` False (the default) hides pockets: the human could see
+    who was in a room but never what they carried, so policies get a context
+    that declares no person sensing."""
+    look_cost: float = 1.0
+    travel_cost: float = 3.0
+    person_sensing: bool = False
+    looked: Set[str] = field(default_factory=set)   # rooms looked at in the open question
+
+
+@dataclass(frozen=True)
+class RoomLookContext(EpisodeContext):
+    """EpisodeContext whose ``sense_cost`` follows :class:`RoomLook`."""
+    room_look: Optional[RoomLook] = None
+
+    def sense_cost(self, receptacle_id: str) -> float:
+        rl = self.room_look
+        assert rl is not None
+        room = self.receptacle_rooms.get(receptacle_id)
+        if room is None or room == self.robot_position.room:
+            return rl.look_cost
+        # A room already looked at in this question is actually free again
+        # (the harness charges 0); the quoted price stays look_cost so that
+        # value-per-cost policies never divide by zero on a useless re-look.
+        return rl.look_cost + rl.travel_cost
+
+
 def run_episode(agent: Agent, episode: Episode,
-                room_change_cost: float = 0.0) -> Iterator[QuestionRecord]:
+                room_change_cost: float = 0.0,
+                room_look: Optional[RoomLook] = None) -> Iterator[QuestionRecord]:
     """Replay one episode against one agent, yielding one record per question.
 
     ``room_change_cost`` (``c``) prices a sense outside the robot's
@@ -180,6 +214,10 @@ def run_episode(agent: Agent, episode: Episode,
                          f"must be >= 0")
     position = RobotPosition(room=episode.home_base_room)
     context = episode.agent_view(room_change_cost, position)
+    if room_look is not None:
+        base = {f.name: getattr(context, f.name) for f in fields(EpisodeContext)}
+        base["person_sensing"] = bool(room_look.person_sensing and episode.person_sensing)
+        context = RoomLookContext(**base, room_look=room_look)
     agent.reset(context)
     for obs in episode.initial_observations:
         agent.observe(obs)
@@ -199,16 +237,19 @@ def run_episode(agent: Agent, episode: Episode,
             cursor = _stream_until(evidence, cursor, question.t_query, agent,
                                    episode, position)
             record = _run_question(agent, episode, question, day_index,
-                                   budget, context, position)
+                                   budget, context, position, room_look)
             budget = record.budget_after
             yield record
 
 
 def _run_question(agent: Agent, episode: Episode, question: Question,
                   day_index: int, budget: float, context: EpisodeContext,
-                  position: RobotPosition) -> QuestionRecord:
+                  position: RobotPosition,
+                  room_look: Optional[RoomLook] = None) -> QuestionRecord:
     """Decision loop for a single question; returns its full record."""
     budget_before = budget
+    if room_look is not None:
+        room_look.looked.clear()
     actions: List[Dict[str, object]] = []
     forced = False
     last_sense: SenseResult | None = None
@@ -233,6 +274,10 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
             break
         if isinstance(action, SensePerson):
             target: str = action.resident_id
+            if room_look is not None and not context.person_sensing:
+                # the human protocol: people are seen, pockets are not
+                actions.append({"type": "person_sense_refused", "resident_id": target})
+                break
             if not episode.person_sensing:
                 raise ValueError(
                     f"{agent.name} asked to sense resident {target!r} on "
@@ -257,6 +302,8 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
                     f"must never target an unsensable one")
             cost = context.sense_cost(target)
             room = episode.receptacle_rooms.get(target)
+            if room_look is not None and room is not None and room in room_look.looked:
+                cost = 0.0
         if cost > budget:
             forced = True
             actions.append({"type": "forced_answer",
@@ -289,6 +336,39 @@ def _run_question(agent: Agent, episode: Episode, question: Question,
             entry: Dict[str, object] = {
                 "type": "sense_person", "resident_id": target,
                 "room": room, "contents": list(contents), "cost": cost}
+        elif room_look is not None:
+            # a look at the whole room: every sensable receptacle in it
+            same_room = room is not None and room == position.room
+            same_room_senses += int(same_room)
+            recs = ([r for r in context.sensable_receptacle_ids
+                     if episode.receptacle_rooms.get(r) == room] if room is not None else [target])
+            present = (episode.residents_in_room(room, question.t_query)
+                       if episode.person_sensing else ())
+            seen: Dict[str, List[str]] = {}
+            result = None
+            for rec in recs:
+                rc = episode.receptacle_contents(rec, question.t_query)
+                seen[rec] = list(rc)
+                res_ = SenseResult(receptacle_id=rec, t=question.t_query, contents=rc,
+                                   object_classes={obj: episode.object_classes.get(obj, "")
+                                                   for obj in rc},
+                                   residents_present=present)
+                for obj in rc:
+                    agent.belief.ensure_object(obj, episode.object_classes.get(obj, ""))
+                if rec != target:
+                    agent.observe(res_)
+                else:
+                    result = res_
+            assert result is not None
+            contents = result.contents
+            entry = {"type": "look_room", "room": room, "asked_for": target,
+                     "receptacles": recs, "contents": seen, "cost": cost,
+                     "same_room": same_room, "residents_present": list(present)}
+            for res in present:
+                listed[res] = room
+            if room is not None:
+                position.room = room
+                room_look.looked.add(room)
         else:
             same_room = room is not None and room == position.room
             same_room_senses += int(same_room)
