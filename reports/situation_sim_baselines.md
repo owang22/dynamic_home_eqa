@@ -3,6 +3,19 @@
 Living document: one section per tick of the monitor. Newest first. Numbers come from
 `results/situation_sim/<hh>/summary.md` (`python3 -m baselines.situation_eval --run data/situation_sim/runs/<hh> --out results/situation_sim/<hh>`).
 
+## 2026-09-20 · tick 6 · regenerated world (pocket-item fixes); LLM arms starting
+
+The two simulator fixes of the evening (a habitually-untaken pocket item is put down before its owner leaves — it used to stay ON_PERSON through a 9-hour shift; phone/keys are never a standing omission) changed every household's truth, so all classical numbers were re-run on hh_s6–11 (`results/situation_sim/`, 144 q). The world got harder for the models: OUT_OF_HOUSE truths 17 → 19, ON_PERSON 12 → 14, and the pooled agent accuracy on those is still **0% / 2%**.
+
+| | floor (NeverSense) | best unpaced | best reserve-paced |
+|---|---|---|---|
+| before the fixes | 45.8% | 66.7% (HierarchyBackoff+VoI 0.02) | 69.4% (Timetable+Search) |
+| after the fixes | **44.4%** | **59.7%** (Perpetua\*+VoI 0.02, 36 looks/hh mostly free re-looks) | **64.6%** (MostFrequent+Search) |
+
+Policy marginals: VoI(0.02) 54.5% ≈ VoIBudgetPrice 53.5–54.0% ≈ Search 53.6% ≫ VoI(0.05) 49.2% > VoI(0.1) 48.1% > never 44.4%. Reserve pacing is again worth +5–7 points for Search. Oliver's hh_s11 run (71%) was played on the pre-fix hh_s11; on that data the best agent was 15/24, on the re-run hh_s11 it is 17/24 (Timetable+VoIBudgetPrice) — same 24 questions, slightly different truths.
+
+**LLM arms** (`baselines.situation_llm`, Qwen3.6-35B-A3B served locally): treeLongLeaf (`longleaf`) and the notebook mixture with the LLM dispatcher (`notebook_llmDecide`), on hh_s11 only, same protocol and questions, prompts reviewed in `reports/prompt_review_hh_s11.md`. Running; decisions logged for side-by-side reading against Oliver's notes.
+
 ## 2026-09-20 · tick 4 · Oliver's hh_s11 run vs the agents; reserve-pacing ablation
 
 **Oliver on hh_s11 (Hana, shift worker; Priya, retired; dog): 17/24 = 71%, 17 looks, budget 44.** Thu 6/6, Fri 4/6, Sat 2/6, Sun 5/6. Export: `data/situation_sim/human_runs/hh_s11_g4s11_2026-09-20.json`.

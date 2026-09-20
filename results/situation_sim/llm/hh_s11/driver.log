@@ -1,0 +1,23 @@
+$ /home/oliver/miniconda3/bin/python3 -m baselines.llm_hypotheses.elicit --longleaf --households hh_s11 --bank-dir /home/oliver/robot/dynamic_home_eqa/banks/situation --conditions named --hyp-subdir situation --endpoint http://127.0.0.1:8300 --model Qwen/Qwen3.6-35B-A3B
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/oliver/robot/dynamic_home_eqa/src/baselines/llm_hypotheses/elicit.py", line 981, in <module>
+    main()
+    ~~~~^^
+  File "/home/oliver/robot/dynamic_home_eqa/src/baselines/llm_hypotheses/elicit.py", line 893, in main
+    log = elicit_longleaf_household(
+        client, episode, condition, args.temperature,
+        args.max_tokens, args.llm_seed, args.reasoning_effort)
+  File "/home/oliver/robot/dynamic_home_eqa/src/baselines/llm_hypotheses/elicit.py", line 784, in elicit_longleaf_household
+    raw2 = client.generate(SYSTEM_PROMPT, user2,
+                           seed=llm_seed + 7 + attempt,
+    ...<2 lines>...
+                           reasoning_effort=reasoning_effort,
+                           keep_content=True)
+  File "/home/oliver/robot/dynamic_home_eqa/src/baselines/llm_hypotheses/elicit.py", line 209, in generate
+    raise requests.HTTPError(
+        f"{response.status_code} from {self._endpoint}: "
+        f"{response.text[:600]}", response=response)
+requests.exceptions.HTTPError: 400 from http://127.0.0.1:8300: {"error":{"message":"This model's maximum context length is 65536 tokens. However, you requested 40000 output tokens and your prompt contains at least 25537 input tokens, for a total of at least 65537 tokens. Please reduce the length of the input prompt or the number of requested output tokens. (parameter=input_tokens, value=25537)","type":"BadRequestError","param":"input_tokens","code":400}}
+!! exit 1

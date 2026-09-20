@@ -1,43 +1,123 @@
 {
  "agents": [
   {
-   "agent": "MostFrequentLocation+Reserve(1)[SequentialSearch]",
-   "belief": "MostFrequentLocation",
+   "agent": "SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[SequentialSearch]",
+   "belief": "SmoothedRecency(hl=6h,freq=24h)",
    "policy": "Reserve(1)[SequentialSearch]",
    "n": 24,
-   "correct": 17,
-   "acc": 0.708,
-   "looks": 17,
+   "correct": 15,
+   "acc": 0.625,
+   "looks": 14,
    "budget": 41.0,
    "forced": 0,
    "refused_person": 0,
    "by_day": {
     "Thu": "2/6",
-    "Fri": "6/6",
+    "Fri": "5/6",
     "Sat": "4/6",
-    "Sun": "5/6"
+    "Sun": "4/6"
    },
    "by_truth_kind": {
+    "on_person": "0/1",
     "out": "0/6",
-    "spot": "17/18"
+    "spot": "15/17"
    },
    "wrong": [
     {
      "q": "q03",
      "obj": "shoes_yuki",
-     "said": "sideboard_d1",
+     "said": "shoe_rack_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q04",
      "obj": "handbag_omar",
-     "said": "desk_b1",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q05",
      "obj": "scarf_omar",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q06",
+     "obj": "shoes_omar",
+     "said": "bookshelf_l1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
+     "q": "q17",
+     "obj": "phone_yuki",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q18",
+     "obj": "jacket_yuki",
+     "said": "shoe_rack_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "sideboard_d1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
      "said": "counter_k1",
+     "truth": "ON_PERSON"
+    }
+   ]
+  },
+  {
+   "agent": "MostFrequentLocation+Reserve(1)[SequentialSearch]",
+   "belief": "MostFrequentLocation",
+   "policy": "Reserve(1)[SequentialSearch]",
+   "n": 24,
+   "correct": 15,
+   "acc": 0.625,
+   "looks": 15,
+   "budget": 42.0,
+   "forced": 0,
+   "refused_person": 0,
+   "by_day": {
+    "Thu": "2/6",
+    "Fri": "5/6",
+    "Sat": "4/6",
+    "Sun": "4/6"
+   },
+   "by_truth_kind": {
+    "on_person": "0/1",
+    "out": "0/6",
+    "spot": "15/17"
+   },
+   "wrong": [
+    {
+     "q": "q03",
+     "obj": "shoes_yuki",
+     "said": "shoe_rack_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q04",
+     "obj": "handbag_omar",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q05",
+     "obj": "scarf_omar",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -47,9 +127,94 @@
      "truth": "OUT_OF_HOUSE"
     },
     {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
      "q": "q17",
      "obj": "phone_yuki",
-     "said": "side_table_l1",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q18",
+     "obj": "jacket_yuki",
+     "said": "shoe_rack_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "chair_d_d1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "counter_k1",
+     "truth": "ON_PERSON"
+    }
+   ]
+  },
+  {
+   "agent": "TimetableLookup(bin=1h,days=all)+Reserve(1)[SequentialSearch]",
+   "belief": "TimetableLookup(bin=1h,days=all)",
+   "policy": "Reserve(1)[SequentialSearch]",
+   "n": 24,
+   "correct": 15,
+   "acc": 0.625,
+   "looks": 15,
+   "budget": 42.0,
+   "forced": 0,
+   "refused_person": 0,
+   "by_day": {
+    "Thu": "2/6",
+    "Fri": "5/6",
+    "Sat": "4/6",
+    "Sun": "4/6"
+   },
+   "by_truth_kind": {
+    "on_person": "0/1",
+    "out": "0/6",
+    "spot": "15/17"
+   },
+   "wrong": [
+    {
+     "q": "q03",
+     "obj": "shoes_yuki",
+     "said": "shoe_rack_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q04",
+     "obj": "handbag_omar",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q05",
+     "obj": "scarf_omar",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q06",
+     "obj": "shoes_omar",
+     "said": "dining_table_d1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
+     "q": "q17",
+     "obj": "phone_yuki",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -61,37 +226,129 @@
     {
      "q": "q20",
      "obj": "scarf_omar",
-     "said": "entry_hook_e1",
+     "said": "office_chair_o1",
      "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "counter_k1",
+     "truth": "ON_PERSON"
     }
    ]
   },
   {
-   "agent": "TimetableLookup(bin=1h,days=all)+Reserve(1)[SequentialSearch]",
-   "belief": "TimetableLookup(bin=1h,days=all)",
-   "policy": "Reserve(1)[SequentialSearch]",
+   "agent": "MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.02)]",
+   "belief": "MostFrequentLocation",
+   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.02)]",
    "n": 24,
-   "correct": 17,
-   "acc": 0.708,
-   "looks": 17,
+   "correct": 14,
+   "acc": 0.583,
+   "looks": 14,
    "budget": 41.0,
    "forced": 0,
    "refused_person": 0,
    "by_day": {
     "Thu": "2/6",
-    "Fri": "6/6",
+    "Fri": "5/6",
     "Sat": "4/6",
-    "Sun": "5/6"
+    "Sun": "3/6"
    },
    "by_truth_kind": {
+    "on_person": "0/1",
     "out": "0/6",
-    "spot": "17/18"
+    "spot": "14/17"
    },
    "wrong": [
     {
      "q": "q03",
      "obj": "shoes_yuki",
-     "said": "dresser_b1",
+     "said": "shoe_rack_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q04",
+     "obj": "handbag_omar",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q05",
+     "obj": "scarf_omar",
+     "said": "bathroom_shelf_ba1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q06",
+     "obj": "shoes_omar",
+     "said": "sideboard_d1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
+     "q": "q17",
+     "obj": "phone_yuki",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q18",
+     "obj": "jacket_yuki",
+     "said": "office_chair_o1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "entry_hook_e1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "nightstand_b1",
+     "truth": "ON_PERSON"
+    }
+   ]
+  },
+  {
+   "agent": "MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.01)]",
+   "belief": "MostFrequentLocation",
+   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.01)]",
+   "n": 24,
+   "correct": 14,
+   "acc": 0.583,
+   "looks": 15,
+   "budget": 39.0,
+   "forced": 0,
+   "refused_person": 0,
+   "by_day": {
+    "Thu": "2/6",
+    "Fri": "5/6",
+    "Sat": "4/6",
+    "Sun": "3/6"
+   },
+   "by_truth_kind": {
+    "on_person": "0/1",
+    "out": "0/6",
+    "spot": "14/17"
+   },
+   "wrong": [
+    {
+     "q": "q03",
+     "obj": "shoes_yuki",
+     "said": "coffee_table_l1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -109,583 +366,25 @@
     {
      "q": "q06",
      "obj": "shoes_omar",
-     "said": "desk_o1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q17",
-     "obj": "phone_yuki",
-     "said": "side_table_l1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q18",
-     "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q20",
-     "obj": "scarf_omar",
-     "said": "entry_hook_e1",
-     "truth": "wardrobe_b1"
-    }
-   ]
-  },
-  {
-   "agent": "HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)]",
-   "belief": "HierarchyBackoff(po=5,pc=5,hl=24h)",
-   "policy": "Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)]",
-   "n": 24,
-   "correct": 17,
-   "acc": 0.708,
-   "looks": 20,
-   "budget": 44.0,
-   "forced": 0,
-   "refused_person": 0,
-   "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "4/6",
-    "Sun": "5/6"
-   },
-   "by_truth_kind": {
-    "out": "0/6",
-    "spot": "17/18"
-   },
-   "wrong": [
-    {
-     "q": "q03",
-     "obj": "shoes_yuki",
-     "said": "nightstand_b1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q04",
-     "obj": "handbag_omar",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q05",
-     "obj": "scarf_omar",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q06",
-     "obj": "shoes_omar",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q17",
-     "obj": "phone_yuki",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q18",
-     "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q20",
-     "obj": "scarf_omar",
-     "said": "bathroom_shelf_ba1",
-     "truth": "wardrobe_b1"
-    }
-   ]
-  },
-  {
-   "agent": "MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.02)]",
-   "belief": "MostFrequentLocation",
-   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.02)]",
-   "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 13,
-   "budget": 25.0,
-   "forced": 0,
-   "refused_person": 0,
-   "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "3/6",
-    "Sun": "5/6"
-   },
-   "by_truth_kind": {
-    "out": "0/6",
-    "spot": "16/18"
-   },
-   "wrong": [
-    {
-     "q": "q03",
-     "obj": "shoes_yuki",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q04",
-     "obj": "handbag_omar",
-     "said": "nightstand_b1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q05",
-     "obj": "scarf_omar",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q06",
-     "obj": "shoes_omar",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q13",
-     "obj": "pen_omar",
-     "said": "bathroom_shelf_ba1",
-     "truth": "entry_hook_e1"
-    },
-    {
-     "q": "q17",
-     "obj": "phone_yuki",
-     "said": "bed_b1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q18",
-     "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q19",
-     "obj": "wallet_yuki",
-     "said": "entry_table_e1",
-     "truth": "entry_floor_e1"
-    }
-   ]
-  },
-  {
-   "agent": "SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)]",
-   "belief": "SmoothedRecency(hl=6h,freq=24h)",
-   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.02)]",
-   "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 13,
-   "budget": 25.0,
-   "forced": 0,
-   "refused_person": 0,
-   "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "3/6",
-    "Sun": "5/6"
-   },
-   "by_truth_kind": {
-    "out": "0/6",
-    "spot": "16/18"
-   },
-   "wrong": [
-    {
-     "q": "q03",
-     "obj": "shoes_yuki",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q04",
-     "obj": "handbag_omar",
-     "said": "nightstand_b1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q05",
-     "obj": "scarf_omar",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q06",
-     "obj": "shoes_omar",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q13",
-     "obj": "pen_omar",
-     "said": "bathroom_shelf_ba1",
-     "truth": "entry_hook_e1"
-    },
-    {
-     "q": "q17",
-     "obj": "phone_yuki",
-     "said": "bathroom_shelf_ba1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q18",
-     "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q19",
-     "obj": "wallet_yuki",
-     "said": "entry_table_e1",
-     "truth": "entry_floor_e1"
-    }
-   ]
-  },
-  {
-   "agent": "Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[SequentialSearch]",
-   "belief": "Markov1(a=1,cut=24h,hl=24h)",
-   "policy": "Reserve(1)[SequentialSearch]",
-   "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 14,
-   "budget": 41.0,
-   "forced": 0,
-   "refused_person": 0,
-   "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "4/6",
-    "Sun": "4/6"
-   },
-   "by_truth_kind": {
-    "out": "0/6",
-    "spot": "16/18"
-   },
-   "wrong": [
-    {
-     "q": "q03",
-     "obj": "shoes_yuki",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q04",
-     "obj": "handbag_omar",
-     "said": "entry_hook_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q05",
-     "obj": "scarf_omar",
-     "said": "entry_hook_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q06",
-     "obj": "shoes_omar",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q17",
-     "obj": "phone_yuki",
-     "said": "side_table_l1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q18",
-     "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q20",
-     "obj": "scarf_omar",
-     "said": "entry_hook_e1",
-     "truth": "wardrobe_b1"
-    },
-    {
-     "q": "q24",
-     "obj": "wallet_yuki",
-     "said": "entry_floor_e1",
-     "truth": "entry_table_e1"
-    }
-   ]
-  },
-  {
-   "agent": "MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.01)]",
-   "belief": "MostFrequentLocation",
-   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.01)]",
-   "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 14,
-   "budget": 26.0,
-   "forced": 0,
-   "refused_person": 0,
-   "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "3/6",
-    "Sun": "5/6"
-   },
-   "by_truth_kind": {
-    "out": "0/6",
-    "spot": "16/18"
-   },
-   "wrong": [
-    {
-     "q": "q03",
-     "obj": "shoes_yuki",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q04",
-     "obj": "handbag_omar",
-     "said": "nightstand_b1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q05",
-     "obj": "scarf_omar",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q06",
-     "obj": "shoes_omar",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q13",
-     "obj": "pen_omar",
-     "said": "bathroom_shelf_ba1",
-     "truth": "entry_hook_e1"
-    },
-    {
-     "q": "q17",
-     "obj": "phone_yuki",
-     "said": "bed_b1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q18",
-     "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q19",
-     "obj": "wallet_yuki",
-     "said": "entry_table_e1",
-     "truth": "entry_floor_e1"
-    }
-   ]
-  },
-  {
-   "agent": "TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.02)]",
-   "belief": "TimetableLookup(bin=1h,days=all)",
-   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.02)]",
-   "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 14,
-   "budget": 26.0,
-   "forced": 0,
-   "refused_person": 0,
-   "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "3/6",
-    "Sun": "5/6"
-   },
-   "by_truth_kind": {
-    "out": "0/6",
-    "spot": "16/18"
-   },
-   "wrong": [
-    {
-     "q": "q03",
-     "obj": "shoes_yuki",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q04",
-     "obj": "handbag_omar",
-     "said": "nightstand_b1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q05",
-     "obj": "scarf_omar",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q06",
-     "obj": "shoes_omar",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q13",
-     "obj": "pen_omar",
-     "said": "bathroom_shelf_ba1",
-     "truth": "entry_hook_e1"
-    },
-    {
-     "q": "q17",
-     "obj": "phone_yuki",
-     "said": "bed_b1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q18",
-     "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q19",
-     "obj": "wallet_yuki",
-     "said": "entry_table_e1",
-     "truth": "entry_floor_e1"
-    }
-   ]
-  },
-  {
-   "agent": "Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)]",
-   "belief": "Markov1(a=1,cut=24h,hl=24h)",
-   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.02)]",
-   "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 15,
-   "budget": 27.0,
-   "forced": 0,
-   "refused_person": 0,
-   "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "3/6",
-    "Sun": "5/6"
-   },
-   "by_truth_kind": {
-    "out": "0/6",
-    "spot": "16/18"
-   },
-   "wrong": [
-    {
-     "q": "q03",
-     "obj": "shoes_yuki",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q04",
-     "obj": "handbag_omar",
-     "said": "entry_hook_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q05",
-     "obj": "scarf_omar",
-     "said": "bathroom_shelf_ba1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q06",
-     "obj": "shoes_omar",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q13",
-     "obj": "pen_omar",
-     "said": "bathroom_shelf_ba1",
-     "truth": "entry_hook_e1"
-    },
-    {
-     "q": "q17",
-     "obj": "phone_yuki",
-     "said": "bathroom_shelf_ba1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q18",
-     "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q19",
-     "obj": "wallet_yuki",
-     "said": "entry_table_e1",
-     "truth": "entry_floor_e1"
-    }
-   ]
-  },
-  {
-   "agent": "SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[SequentialSearch]",
-   "belief": "SmoothedRecency(hl=6h,freq=24h)",
-   "policy": "Reserve(1)[SequentialSearch]",
-   "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 15,
-   "budget": 39.0,
-   "forced": 0,
-   "refused_person": 0,
-   "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "4/6",
-    "Sun": "4/6"
-   },
-   "by_truth_kind": {
-    "out": "0/6",
-    "spot": "16/18"
-   },
-   "wrong": [
-    {
-     "q": "q03",
-     "obj": "shoes_yuki",
-     "said": "chair_d_d1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q04",
-     "obj": "handbag_omar",
-     "said": "armchair_l1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q05",
-     "obj": "scarf_omar",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q06",
-     "obj": "shoes_omar",
      "said": "coffee_table_l1",
      "truth": "OUT_OF_HOUSE"
     },
     {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
      "q": "q17",
      "obj": "phone_yuki",
-     "said": "side_table_l1",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q18",
      "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
+     "said": "desk_o1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -695,33 +394,40 @@
      "truth": "wardrobe_b1"
     },
     {
-     "q": "q24",
-     "obj": "wallet_yuki",
-     "said": "entry_floor_e1",
-     "truth": "entry_table_e1"
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "nightstand_b1",
+     "truth": "ON_PERSON"
     }
    ]
   },
   {
-   "agent": "TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.01)]",
-   "belief": "TimetableLookup(bin=1h,days=all)",
-   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.01)]",
+   "agent": "HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[SequentialSearch]",
+   "belief": "HierarchyBackoff(po=5,pc=5,hl=24h)",
+   "policy": "Reserve(1)[SequentialSearch]",
    "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 15,
-   "budget": 27.0,
+   "correct": 14,
+   "acc": 0.583,
+   "looks": 16,
+   "budget": 43.0,
    "forced": 0,
    "refused_person": 0,
    "by_day": {
     "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "3/6",
-    "Sun": "5/6"
+    "Fri": "5/6",
+    "Sat": "4/6",
+    "Sun": "3/6"
    },
    "by_truth_kind": {
+    "on_person": "0/1",
     "out": "0/6",
-    "spot": "16/18"
+    "spot": "14/17"
    },
    "wrong": [
     {
@@ -733,116 +439,56 @@
     {
      "q": "q04",
      "obj": "handbag_omar",
-     "said": "nightstand_b1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q05",
-     "obj": "scarf_omar",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q06",
-     "obj": "shoes_omar",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q13",
-     "obj": "pen_omar",
-     "said": "bathroom_shelf_ba1",
-     "truth": "entry_hook_e1"
-    },
-    {
-     "q": "q17",
-     "obj": "phone_yuki",
-     "said": "bed_b1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q18",
-     "obj": "jacket_yuki",
      "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
-     "q": "q19",
-     "obj": "wallet_yuki",
-     "said": "entry_table_e1",
-     "truth": "entry_floor_e1"
-    }
-   ]
-  },
-  {
-   "agent": "Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)]",
-   "belief": "Markov1(a=1,cut=24h,hl=24h)",
-   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.01)]",
-   "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 16,
-   "budget": 28.0,
-   "forced": 0,
-   "refused_person": 0,
-   "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "3/6",
-    "Sun": "5/6"
-   },
-   "by_truth_kind": {
-    "out": "0/6",
-    "spot": "16/18"
-   },
-   "wrong": [
-    {
-     "q": "q03",
-     "obj": "shoes_yuki",
-     "said": "shoe_rack_e1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q04",
-     "obj": "handbag_omar",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
-    },
-    {
      "q": "q05",
      "obj": "scarf_omar",
-     "said": "counter_k1",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q06",
      "obj": "shoes_omar",
-     "said": "shoe_rack_e1",
+     "said": "bathroom_shelf_ba1",
      "truth": "OUT_OF_HOUSE"
     },
     {
-     "q": "q13",
-     "obj": "pen_omar",
+     "q": "q07",
+     "obj": "phone_yuki",
      "said": "bathroom_shelf_ba1",
-     "truth": "entry_hook_e1"
+     "truth": "coffee_table_l1"
     },
     {
      "q": "q17",
      "obj": "phone_yuki",
-     "said": "ON_PERSON",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q18",
      "obj": "jacket_yuki",
-     "said": "side_table_l1",
+     "said": "shoe_rack_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
-     "q": "q19",
-     "obj": "wallet_yuki",
-     "said": "chair_d_d1",
-     "truth": "entry_floor_e1"
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "bathroom_shelf_ba1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "entry_hook_e1",
+     "truth": "ON_PERSON"
     }
    ]
   },
@@ -851,21 +497,22 @@
    "belief": "SmoothedRecency(hl=6h,freq=24h)",
    "policy": "Reserve(1)[VoIThresholdSense(lambda=0.01)]",
    "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 17,
-   "budget": 29.0,
+   "correct": 14,
+   "acc": 0.583,
+   "looks": 16,
+   "budget": 40.0,
    "forced": 0,
    "refused_person": 0,
    "by_day": {
     "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "3/6",
-    "Sun": "5/6"
+    "Fri": "5/6",
+    "Sat": "4/6",
+    "Sun": "3/6"
    },
    "by_truth_kind": {
+    "on_person": "0/1",
     "out": "0/6",
-    "spot": "16/18"
+    "spot": "14/17"
    },
    "wrong": [
     {
@@ -877,44 +524,56 @@
     {
      "q": "q04",
      "obj": "handbag_omar",
-     "said": "nightstand_b1",
+     "said": "floor_o_o1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q05",
      "obj": "scarf_omar",
-     "said": "counter_k1",
+     "said": "bathroom_shelf_ba1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q06",
      "obj": "shoes_omar",
-     "said": "shoe_rack_e1",
+     "said": "floor_l_l1",
      "truth": "OUT_OF_HOUSE"
     },
     {
-     "q": "q13",
-     "obj": "pen_omar",
+     "q": "q07",
+     "obj": "phone_yuki",
      "said": "bathroom_shelf_ba1",
-     "truth": "entry_hook_e1"
+     "truth": "coffee_table_l1"
     },
     {
      "q": "q17",
      "obj": "phone_yuki",
-     "said": "bathroom_shelf_ba1",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q18",
      "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
+     "said": "shoe_rack_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
-     "q": "q19",
-     "obj": "wallet_yuki",
-     "said": "entry_table_e1",
-     "truth": "entry_floor_e1"
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "entry_hook_e1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "nightstand_b1",
+     "truth": "ON_PERSON"
     }
    ]
   },
@@ -923,33 +582,34 @@
    "belief": "HierarchyBackoff(po=5,pc=5,hl=24h)",
    "policy": "Reserve(1)[VoIThresholdSense(lambda=0.02)]",
    "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 18,
-   "budget": 30.0,
+   "correct": 14,
+   "acc": 0.583,
+   "looks": 19,
+   "budget": 43.0,
    "forced": 0,
    "refused_person": 0,
    "by_day": {
     "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "3/6",
-    "Sun": "5/6"
+    "Fri": "5/6",
+    "Sat": "4/6",
+    "Sun": "3/6"
    },
    "by_truth_kind": {
+    "on_person": "0/1",
     "out": "0/6",
-    "spot": "16/18"
+    "spot": "14/17"
    },
    "wrong": [
     {
      "q": "q03",
      "obj": "shoes_yuki",
-     "said": "shoe_rack_e1",
+     "said": "bathroom_shelf_ba1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q04",
      "obj": "handbag_omar",
-     "said": "nightstand_b1",
+     "said": "counter_k1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -961,19 +621,195 @@
     {
      "q": "q06",
      "obj": "shoes_omar",
-     "said": "shoe_rack_e1",
+     "said": "bathroom_shelf_ba1",
      "truth": "OUT_OF_HOUSE"
     },
     {
-     "q": "q13",
-     "obj": "pen_omar",
+     "q": "q07",
+     "obj": "phone_yuki",
      "said": "bathroom_shelf_ba1",
-     "truth": "entry_hook_e1"
+     "truth": "coffee_table_l1"
     },
     {
      "q": "q17",
      "obj": "phone_yuki",
      "said": "bathroom_shelf_ba1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q18",
+     "obj": "jacket_yuki",
+     "said": "shoe_rack_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "entry_hook_e1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "nightstand_b1",
+     "truth": "ON_PERSON"
+    }
+   ]
+  },
+  {
+   "agent": "HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)]",
+   "belief": "HierarchyBackoff(po=5,pc=5,hl=24h)",
+   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.01)]",
+   "n": 24,
+   "correct": 14,
+   "acc": 0.583,
+   "looks": 20,
+   "budget": 44.0,
+   "forced": 0,
+   "refused_person": 0,
+   "by_day": {
+    "Thu": "2/6",
+    "Fri": "5/6",
+    "Sat": "4/6",
+    "Sun": "3/6"
+   },
+   "by_truth_kind": {
+    "on_person": "0/1",
+    "out": "0/6",
+    "spot": "14/17"
+   },
+   "wrong": [
+    {
+     "q": "q03",
+     "obj": "shoes_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q04",
+     "obj": "handbag_omar",
+     "said": "counter_k1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q05",
+     "obj": "scarf_omar",
+     "said": "counter_k1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q06",
+     "obj": "shoes_omar",
+     "said": "bathroom_shelf_ba1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
+     "q": "q17",
+     "obj": "phone_yuki",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q18",
+     "obj": "jacket_yuki",
+     "said": "shoe_rack_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "entry_hook_e1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "counter_k1",
+     "truth": "ON_PERSON"
+    },
+    {
+     "q": "q23",
+     "obj": "glass_yuki",
+     "said": "cupboard_k1",
+     "truth": "sink_k1"
+    }
+   ]
+  },
+  {
+   "agent": "TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.01)]",
+   "belief": "TimetableLookup(bin=1h,days=all)",
+   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.01)]",
+   "n": 24,
+   "correct": 13,
+   "acc": 0.542,
+   "looks": 13,
+   "budget": 34.0,
+   "forced": 0,
+   "refused_person": 0,
+   "by_day": {
+    "Thu": "2/6",
+    "Fri": "4/6",
+    "Sat": "4/6",
+    "Sun": "3/6"
+   },
+   "by_truth_kind": {
+    "on_person": "0/1",
+    "out": "0/6",
+    "spot": "13/17"
+   },
+   "wrong": [
+    {
+     "q": "q03",
+     "obj": "shoes_yuki",
+     "said": "office_shelf_o1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q04",
+     "obj": "handbag_omar",
+     "said": "towel_rack_ba1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q05",
+     "obj": "scarf_omar",
+     "said": "counter_k1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q06",
+     "obj": "shoes_omar",
+     "said": "chair_k1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
+     "q": "q11",
+     "obj": "glass_yuki",
+     "said": "counter_k1",
+     "truth": "cupboard_k1"
+    },
+    {
+     "q": "q17",
+     "obj": "phone_yuki",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -983,33 +819,46 @@
      "truth": "OUT_OF_HOUSE"
     },
     {
-     "q": "q19",
-     "obj": "wallet_yuki",
-     "said": "entry_table_e1",
-     "truth": "entry_floor_e1"
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "entry_hook_e1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "nightstand_b1",
+     "truth": "ON_PERSON"
     }
    ]
   },
   {
-   "agent": "Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)]",
-   "belief": "Markov1(a=1,cut=24h,hl=24h)",
-   "policy": "Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)]",
+   "agent": "SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)]",
+   "belief": "SmoothedRecency(hl=6h,freq=24h)",
+   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.02)]",
    "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 18,
-   "budget": 42.0,
+   "correct": 13,
+   "acc": 0.542,
+   "looks": 14,
+   "budget": 38.0,
    "forced": 0,
    "refused_person": 0,
    "by_day": {
     "Thu": "2/6",
-    "Fri": "6/6",
-    "Sat": "3/6",
-    "Sun": "5/6"
+    "Fri": "4/6",
+    "Sat": "4/6",
+    "Sun": "3/6"
    },
    "by_truth_kind": {
+    "on_person": "0/1",
     "out": "0/6",
-    "spot": "16/18"
+    "spot": "13/17"
    },
    "wrong": [
     {
@@ -1021,44 +870,62 @@
     {
      "q": "q04",
      "obj": "handbag_omar",
-     "said": "counter_k1",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q05",
      "obj": "scarf_omar",
-     "said": "dining_table_d1",
+     "said": "bathroom_shelf_ba1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q06",
      "obj": "shoes_omar",
-     "said": "shoe_rack_e1",
+     "said": "nightstand_b1",
      "truth": "OUT_OF_HOUSE"
     },
     {
-     "q": "q13",
-     "obj": "pen_omar",
+     "q": "q07",
+     "obj": "phone_yuki",
      "said": "bathroom_shelf_ba1",
-     "truth": "entry_hook_e1"
+     "truth": "coffee_table_l1"
+    },
+    {
+     "q": "q11",
+     "obj": "glass_yuki",
+     "said": "dish_rack_k1",
+     "truth": "cupboard_k1"
     },
     {
      "q": "q17",
      "obj": "phone_yuki",
-     "said": "side_table_l1",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q18",
      "obj": "jacket_yuki",
-     "said": "pantry_shelf_k1",
+     "said": "shoe_rack_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
-     "q": "q19",
-     "obj": "wallet_yuki",
-     "said": "sideboard_d1",
-     "truth": "entry_floor_e1"
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "entry_hook_e1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "nightstand_b1",
+     "truth": "ON_PERSON"
     }
    ]
   },
@@ -1067,27 +934,34 @@
    "belief": "MostFrequentLocation",
    "policy": "Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)]",
    "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 19,
-   "budget": 43.0,
+   "correct": 13,
+   "acc": 0.542,
+   "looks": 21,
+   "budget": 45.0,
    "forced": 0,
    "refused_person": 0,
    "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
+    "Thu": "1/6",
+    "Fri": "5/6",
     "Sat": "4/6",
-    "Sun": "4/6"
+    "Sun": "3/6"
    },
    "by_truth_kind": {
+    "on_person": "0/1",
     "out": "0/6",
-    "spot": "16/18"
+    "spot": "13/17"
    },
    "wrong": [
     {
+     "q": "q01",
+     "obj": "wallet_omar",
+     "said": "entry_table_e1",
+     "truth": "entry_floor_e1"
+    },
+    {
      "q": "q03",
      "obj": "shoes_yuki",
-     "said": "sideboard_d1",
+     "said": "medicine_cabinet_ba1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -1105,32 +979,44 @@
     {
      "q": "q06",
      "obj": "shoes_omar",
-     "said": "ON_PERSON",
+     "said": "office_shelf_o1",
      "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
     },
     {
      "q": "q17",
      "obj": "phone_yuki",
-     "said": "ON_PERSON",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q18",
      "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
+     "said": "shoe_rack_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q20",
      "obj": "scarf_omar",
-     "said": "bathroom_shelf_ba1",
+     "said": "armchair_l1",
      "truth": "wardrobe_b1"
     },
     {
-     "q": "q24",
-     "obj": "wallet_yuki",
-     "said": "entry_floor_e1",
-     "truth": "entry_table_e1"
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "counter_k1",
+     "truth": "ON_PERSON"
     }
    ]
   },
@@ -1139,33 +1025,40 @@
    "belief": "TimetableLookup(bin=1h,days=all)",
    "policy": "Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)]",
    "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 19,
-   "budget": 43.0,
+   "correct": 13,
+   "acc": 0.542,
+   "looks": 21,
+   "budget": 45.0,
    "forced": 0,
    "refused_person": 0,
    "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
+    "Thu": "1/6",
+    "Fri": "5/6",
     "Sat": "4/6",
-    "Sun": "4/6"
+    "Sun": "3/6"
    },
    "by_truth_kind": {
+    "on_person": "0/1",
     "out": "0/6",
-    "spot": "16/18"
+    "spot": "13/17"
    },
    "wrong": [
     {
+     "q": "q01",
+     "obj": "wallet_omar",
+     "said": "entry_table_e1",
+     "truth": "entry_floor_e1"
+    },
+    {
      "q": "q03",
      "obj": "shoes_yuki",
-     "said": "sideboard_d1",
+     "said": "towel_rack_ba1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q04",
      "obj": "handbag_omar",
-     "said": "dresser_b1",
+     "said": "towel_rack_ba1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -1177,13 +1070,19 @@
     {
      "q": "q06",
      "obj": "shoes_omar",
-     "said": "sink_k1",
+     "said": "medicine_cabinet_ba1",
      "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
     },
     {
      "q": "q17",
      "obj": "phone_yuki",
-     "said": "bathroom_shelf_ba1",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -1195,14 +1094,20 @@
     {
      "q": "q20",
      "obj": "scarf_omar",
-     "said": "bathroom_shelf_ba1",
+     "said": "floor_l_l1",
      "truth": "wardrobe_b1"
     },
     {
-     "q": "q24",
-     "obj": "wallet_yuki",
-     "said": "entry_floor_e1",
-     "truth": "entry_table_e1"
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "counter_k1",
+     "truth": "ON_PERSON"
     }
    ]
   },
@@ -1211,33 +1116,40 @@
    "belief": "SmoothedRecency(hl=6h,freq=24h)",
    "policy": "Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)]",
    "n": 24,
-   "correct": 16,
-   "acc": 0.667,
-   "looks": 21,
-   "budget": 42.0,
+   "correct": 13,
+   "acc": 0.542,
+   "looks": 23,
+   "budget": 44.0,
    "forced": 0,
    "refused_person": 0,
    "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
+    "Thu": "1/6",
+    "Fri": "5/6",
     "Sat": "4/6",
-    "Sun": "4/6"
+    "Sun": "3/6"
    },
    "by_truth_kind": {
+    "on_person": "0/1",
     "out": "0/6",
-    "spot": "16/18"
+    "spot": "13/17"
    },
    "wrong": [
     {
+     "q": "q01",
+     "obj": "wallet_omar",
+     "said": "entry_table_e1",
+     "truth": "entry_floor_e1"
+    },
+    {
      "q": "q03",
      "obj": "shoes_yuki",
-     "said": "sideboard_d1",
+     "said": "ON_PERSON",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q04",
      "obj": "handbag_omar",
-     "said": "dish_rack_k1",
+     "said": "sink_k1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -1249,19 +1161,310 @@
     {
      "q": "q06",
      "obj": "shoes_omar",
-     "said": "tv_stand_l1",
+     "said": "chair_d_d1",
      "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
     },
     {
      "q": "q17",
      "obj": "phone_yuki",
-     "said": "side_table_l1",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q18",
      "obj": "jacket_yuki",
+     "said": "shoe_rack_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "nightstand_b1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "counter_k1",
+     "truth": "ON_PERSON"
+    }
+   ]
+  },
+  {
+   "agent": "TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.02)]",
+   "belief": "TimetableLookup(bin=1h,days=all)",
+   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.02)]",
+   "n": 24,
+   "correct": 12,
+   "acc": 0.5,
+   "looks": 11,
+   "budget": 32.0,
+   "forced": 0,
+   "refused_person": 0,
+   "by_day": {
+    "Thu": "2/6",
+    "Fri": "3/6",
+    "Sat": "4/6",
+    "Sun": "3/6"
+   },
+   "by_truth_kind": {
+    "on_person": "0/1",
+    "out": "0/6",
+    "spot": "12/17"
+   },
+   "wrong": [
+    {
+     "q": "q03",
+     "obj": "shoes_yuki",
+     "said": "shoe_rack_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q04",
+     "obj": "handbag_omar",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q05",
+     "obj": "scarf_omar",
+     "said": "bathroom_shelf_ba1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q06",
+     "obj": "shoes_omar",
+     "said": "wardrobe_b1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
+     "q": "q11",
+     "obj": "glass_yuki",
+     "said": "counter_k1",
+     "truth": "cupboard_k1"
+    },
+    {
+     "q": "q12",
+     "obj": "pot_shared",
      "said": "pantry_shelf_k1",
+     "truth": "cupboard_k1"
+    },
+    {
+     "q": "q17",
+     "obj": "phone_yuki",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q18",
+     "obj": "jacket_yuki",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "entry_hook_e1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "nightstand_b1",
+     "truth": "ON_PERSON"
+    }
+   ]
+  },
+  {
+   "agent": "Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)]",
+   "belief": "Markov1(a=1,cut=24h,hl=24h)",
+   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.02)]",
+   "n": 24,
+   "correct": 12,
+   "acc": 0.5,
+   "looks": 14,
+   "budget": 32.0,
+   "forced": 0,
+   "refused_person": 0,
+   "by_day": {
+    "Thu": "2/6",
+    "Fri": "3/6",
+    "Sat": "4/6",
+    "Sun": "3/6"
+   },
+   "by_truth_kind": {
+    "on_person": "0/1",
+    "out": "0/6",
+    "spot": "12/17"
+   },
+   "wrong": [
+    {
+     "q": "q03",
+     "obj": "shoes_yuki",
+     "said": "bookshelf_l1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q04",
+     "obj": "handbag_omar",
+     "said": "chair_k1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q05",
+     "obj": "scarf_omar",
+     "said": "counter_k1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q06",
+     "obj": "shoes_omar",
+     "said": "floor_l_l1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
+     "q": "q11",
+     "obj": "glass_yuki",
+     "said": "dish_rack_k1",
+     "truth": "cupboard_k1"
+    },
+    {
+     "q": "q12",
+     "obj": "pot_shared",
+     "said": "counter_k1",
+     "truth": "cupboard_k1"
+    },
+    {
+     "q": "q17",
+     "obj": "phone_yuki",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q18",
+     "obj": "jacket_yuki",
+     "said": "shoe_rack_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "entry_hook_e1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "nightstand_b1",
+     "truth": "ON_PERSON"
+    }
+   ]
+  },
+  {
+   "agent": "HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)]",
+   "belief": "HierarchyBackoff(po=5,pc=5,hl=24h)",
+   "policy": "Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)]",
+   "n": 24,
+   "correct": 12,
+   "acc": 0.5,
+   "looks": 24,
+   "budget": 45.0,
+   "forced": 0,
+   "refused_person": 0,
+   "by_day": {
+    "Thu": "1/6",
+    "Fri": "5/6",
+    "Sat": "4/6",
+    "Sun": "2/6"
+   },
+   "by_truth_kind": {
+    "on_person": "0/1",
+    "out": "0/6",
+    "spot": "12/17"
+   },
+   "wrong": [
+    {
+     "q": "q01",
+     "obj": "wallet_omar",
+     "said": "entry_table_e1",
+     "truth": "entry_floor_e1"
+    },
+    {
+     "q": "q03",
+     "obj": "shoes_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q04",
+     "obj": "handbag_omar",
+     "said": "counter_k1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q05",
+     "obj": "scarf_omar",
+     "said": "counter_k1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q06",
+     "obj": "shoes_omar",
+     "said": "bathroom_shelf_ba1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
+     "q": "q17",
+     "obj": "phone_yuki",
+     "said": "counter_k1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q18",
+     "obj": "jacket_yuki",
+     "said": "shoe_rack_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -1271,45 +1474,161 @@
      "truth": "wardrobe_b1"
     },
     {
-     "q": "q24",
-     "obj": "wallet_yuki",
-     "said": "entry_floor_e1",
-     "truth": "entry_table_e1"
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "counter_k1",
+     "truth": "ON_PERSON"
+    },
+    {
+     "q": "q23",
+     "obj": "glass_yuki",
+     "said": "cupboard_k1",
+     "truth": "sink_k1"
     }
    ]
   },
   {
-   "agent": "HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[SequentialSearch]",
-   "belief": "HierarchyBackoff(po=5,pc=5,hl=24h)",
+   "agent": "Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[SequentialSearch]",
+   "belief": "Markov1(a=1,cut=24h,hl=24h)",
    "policy": "Reserve(1)[SequentialSearch]",
    "n": 24,
-   "correct": 15,
-   "acc": 0.625,
-   "looks": 16,
-   "budget": 40.0,
+   "correct": 11,
+   "acc": 0.458,
+   "looks": 13,
+   "budget": 46.0,
    "forced": 0,
    "refused_person": 0,
    "by_day": {
     "Thu": "2/6",
-    "Fri": "6/6",
+    "Fri": "3/6",
     "Sat": "4/6",
-    "Sun": "3/6"
+    "Sun": "2/6"
    },
    "by_truth_kind": {
+    "on_person": "0/1",
     "out": "0/6",
-    "spot": "15/18"
+    "spot": "11/17"
    },
    "wrong": [
     {
      "q": "q03",
      "obj": "shoes_yuki",
-     "said": "nightstand_b1",
+     "said": "shoe_rack_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q04",
      "obj": "handbag_omar",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q05",
+     "obj": "scarf_omar",
+     "said": "entry_hook_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q06",
+     "obj": "shoes_omar",
+     "said": "dish_rack_k1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
+     "q": "q09",
+     "obj": "glass_omar",
+     "said": "cupboard_k1",
+     "truth": "sink_k1"
+    },
+    {
+     "q": "q11",
+     "obj": "glass_yuki",
      "said": "counter_k1",
+     "truth": "cupboard_k1"
+    },
+    {
+     "q": "q17",
+     "obj": "phone_yuki",
+     "said": "coffee_table_l1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q18",
+     "obj": "jacket_yuki",
+     "said": "shoe_rack_e1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q20",
+     "obj": "scarf_omar",
+     "said": "bed_b1",
+     "truth": "wardrobe_b1"
+    },
+    {
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "coffee_table_l1",
+     "truth": "ON_PERSON"
+    },
+    {
+     "q": "q23",
+     "obj": "glass_yuki",
+     "said": "cupboard_k1",
+     "truth": "sink_k1"
+    }
+   ]
+  },
+  {
+   "agent": "Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)]",
+   "belief": "Markov1(a=1,cut=24h,hl=24h)",
+   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.01)]",
+   "n": 24,
+   "correct": 11,
+   "acc": 0.458,
+   "looks": 16,
+   "budget": 34.0,
+   "forced": 0,
+   "refused_person": 0,
+   "by_day": {
+    "Thu": "2/6",
+    "Fri": "3/6",
+    "Sat": "4/6",
+    "Sun": "2/6"
+   },
+   "by_truth_kind": {
+    "on_person": "0/1",
+    "out": "0/6",
+    "spot": "11/17"
+   },
+   "wrong": [
+    {
+     "q": "q03",
+     "obj": "shoes_yuki",
+     "said": "floor_o_o1",
+     "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q04",
+     "obj": "handbag_omar",
+     "said": "bathroom_shelf_ba1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -1321,73 +1640,104 @@
     {
      "q": "q06",
      "obj": "shoes_omar",
-     "said": "counter_k1",
+     "said": "cupboard_k1",
      "truth": "OUT_OF_HOUSE"
+    },
+    {
+     "q": "q07",
+     "obj": "phone_yuki",
+     "said": "bathroom_shelf_ba1",
+     "truth": "coffee_table_l1"
+    },
+    {
+     "q": "q11",
+     "obj": "glass_yuki",
+     "said": "dish_rack_k1",
+     "truth": "cupboard_k1"
+    },
+    {
+     "q": "q12",
+     "obj": "pot_shared",
+     "said": "counter_k1",
+     "truth": "cupboard_k1"
     },
     {
      "q": "q17",
      "obj": "phone_yuki",
-     "said": "side_table_l1",
+     "said": "entry_hook_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q18",
      "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
+     "said": "shoe_rack_e1",
      "truth": "OUT_OF_HOUSE"
-    },
-    {
-     "q": "q19",
-     "obj": "wallet_yuki",
-     "said": "entry_table_e1",
-     "truth": "entry_floor_e1"
     },
     {
      "q": "q20",
      "obj": "scarf_omar",
-     "said": "bathroom_shelf_ba1",
+     "said": "entry_hook_e1",
      "truth": "wardrobe_b1"
     },
     {
-     "q": "q24",
-     "obj": "wallet_yuki",
-     "said": "entry_floor_e1",
-     "truth": "entry_table_e1"
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "nightstand_b1",
+     "truth": "ON_PERSON"
+    },
+    {
+     "q": "q23",
+     "obj": "glass_yuki",
+     "said": "desk_o1",
+     "truth": "sink_k1"
     }
    ]
   },
   {
-   "agent": "HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)]",
-   "belief": "HierarchyBackoff(po=5,pc=5,hl=24h)",
-   "policy": "Reserve(1)[VoIThresholdSense(lambda=0.01)]",
+   "agent": "Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)]",
+   "belief": "Markov1(a=1,cut=24h,hl=24h)",
+   "policy": "Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)]",
    "n": 24,
-   "correct": 15,
-   "acc": 0.625,
-   "looks": 18,
-   "budget": 42.0,
+   "correct": 11,
+   "acc": 0.458,
+   "looks": 19,
+   "budget": 40.0,
    "forced": 0,
    "refused_person": 0,
    "by_day": {
-    "Thu": "2/6",
-    "Fri": "6/6",
+    "Thu": "1/6",
+    "Fri": "4/6",
     "Sat": "4/6",
-    "Sun": "3/6"
+    "Sun": "2/6"
    },
    "by_truth_kind": {
-    "out": "0/6",
-    "spot": "15/18"
+    "on_person": "0/1",
+    "out": "1/6",
+    "spot": "10/17"
    },
    "wrong": [
     {
+     "q": "q01",
+     "obj": "wallet_omar",
+     "said": "entry_table_e1",
+     "truth": "entry_floor_e1"
+    },
+    {
      "q": "q03",
      "obj": "shoes_yuki",
-     "said": "nightstand_b1",
+     "said": "shoe_rack_e1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q04",
      "obj": "handbag_omar",
-     "said": "entry_hook_e1",
+     "said": "counter_k1",
      "truth": "OUT_OF_HOUSE"
     },
     {
@@ -1403,34 +1753,52 @@
      "truth": "OUT_OF_HOUSE"
     },
     {
-     "q": "q17",
-     "obj": "phone_yuki",
-     "said": "counter_k1",
-     "truth": "OUT_OF_HOUSE"
+     "q": "q11",
+     "obj": "glass_yuki",
+     "said": "dish_rack_k1",
+     "truth": "cupboard_k1"
     },
     {
-     "q": "q18",
-     "obj": "jacket_yuki",
-     "said": "entry_hook_e1",
+     "q": "q12",
+     "obj": "pot_shared",
+     "said": "counter_k1",
+     "truth": "cupboard_k1"
+    },
+    {
+     "q": "q13",
+     "obj": "pen_omar",
+     "said": "coffee_table_l1",
+     "truth": "entry_hook_e1"
+    },
+    {
+     "q": "q17",
+     "obj": "phone_yuki",
+     "said": "coffee_table_l1",
      "truth": "OUT_OF_HOUSE"
     },
     {
      "q": "q19",
      "obj": "wallet_yuki",
-     "said": "entry_table_e1",
-     "truth": "entry_floor_e1"
-    },
-    {
-     "q": "q20",
-     "obj": "scarf_omar",
-     "said": "bathroom_shelf_ba1",
-     "truth": "wardrobe_b1"
-    },
-    {
-     "q": "q24",
-     "obj": "wallet_yuki",
-     "said": "entry_floor_e1",
+     "said": "floor_l_l1",
      "truth": "entry_table_e1"
+    },
+    {
+     "q": "q21",
+     "obj": "razor_yuki",
+     "said": "sink_ba_ba1",
+     "truth": "bathroom_shelf_ba1"
+    },
+    {
+     "q": "q22",
+     "obj": "phone_yuki",
+     "said": "dining_table_d1",
+     "truth": "ON_PERSON"
+    },
+    {
+     "q": "q23",
+     "obj": "glass_yuki",
+     "said": "cupboard_k1",
+     "truth": "sink_k1"
     }
    ]
   }
@@ -1438,14 +1806,14 @@
  "questions": [
   {
    "q": "q01",
-   "obj": "vitamins_omar",
-   "truth": "kitchen_table_k1",
-   "solved_by": "20/20"
+   "obj": "wallet_omar",
+   "truth": "entry_floor_e1",
+   "solved_by": "15/20"
   },
   {
    "q": "q02",
-   "obj": "skincare_omar",
-   "truth": "bathroom_shelf_ba1",
+   "obj": "snack_bowl_shared",
+   "truth": "counter_k1",
    "solved_by": "20/20"
   },
   {
@@ -1474,9 +1842,9 @@
   },
   {
    "q": "q07",
-   "obj": "plate_omar",
-   "truth": "cupboard_k1",
-   "solved_by": "20/20"
+   "obj": "phone_yuki",
+   "truth": "coffee_table_l1",
+   "solved_by": "1/20"
   },
   {
    "q": "q08",
@@ -1486,33 +1854,33 @@
   },
   {
    "q": "q09",
-   "obj": "glass_yuki",
+   "obj": "glass_omar",
    "truth": "sink_k1",
-   "solved_by": "20/20"
+   "solved_by": "19/20"
   },
   {
    "q": "q10",
-   "obj": "remote_shared",
-   "truth": "tv_stand_l1",
+   "obj": "razor_yuki",
+   "truth": "sink_ba_ba1",
    "solved_by": "20/20"
   },
   {
    "q": "q11",
-   "obj": "glasses_omar",
-   "truth": "nightstand_b1",
-   "solved_by": "20/20"
+   "obj": "glass_yuki",
+   "truth": "cupboard_k1",
+   "solved_by": "13/20"
   },
   {
    "q": "q12",
    "obj": "pot_shared",
    "truth": "cupboard_k1",
-   "solved_by": "20/20"
+   "solved_by": "16/20"
   },
   {
    "q": "q13",
    "obj": "pen_omar",
    "truth": "entry_hook_e1",
-   "solved_by": "10/20"
+   "solved_by": "19/20"
   },
   {
    "q": "q14",
@@ -1542,43 +1910,43 @@
    "q": "q18",
    "obj": "jacket_yuki",
    "truth": "OUT_OF_HOUSE",
-   "solved_by": "0/20"
+   "solved_by": "1/20"
   },
   {
    "q": "q19",
    "obj": "wallet_yuki",
-   "truth": "entry_floor_e1",
-   "solved_by": "8/20"
+   "truth": "entry_table_e1",
+   "solved_by": "19/20"
   },
   {
    "q": "q20",
    "obj": "scarf_omar",
    "truth": "wardrobe_b1",
-   "solved_by": "10/20"
+   "solved_by": "1/20"
   },
   {
    "q": "q21",
-   "obj": "remote_shared",
-   "truth": "tv_stand_l1",
-   "solved_by": "20/20"
+   "obj": "razor_yuki",
+   "truth": "bathroom_shelf_ba1",
+   "solved_by": "4/20"
   },
   {
    "q": "q22",
-   "obj": "plate_omar",
-   "truth": "cupboard_k1",
-   "solved_by": "20/20"
+   "obj": "phone_yuki",
+   "truth": "ON_PERSON",
+   "solved_by": "0/20"
   },
   {
    "q": "q23",
    "obj": "glass_yuki",
    "truth": "sink_k1",
-   "solved_by": "20/20"
+   "solved_by": "15/20"
   },
   {
    "q": "q24",
    "obj": "wallet_yuki",
    "truth": "entry_table_e1",
-   "solved_by": "13/20"
+   "solved_by": "20/20"
   }
  ],
  "n_agents": 20

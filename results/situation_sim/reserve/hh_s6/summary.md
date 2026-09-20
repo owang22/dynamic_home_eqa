@@ -4,52 +4,52 @@
 
 | agent | right | acc | looks | budget | forced | Thu | Fri | Sat | Sun | spot | on_person | out |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| MostFrequentLocation+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 16/24 | 67% | 20 | 44.0 | 0 | 2/6 | 4/6 | 5/6 | 5/6 | 15/16 | 0/2 | 1/6 |
-| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 16/24 | 67% | 20 | 44.0 | 0 | 2/6 | 4/6 | 5/6 | 5/6 | 15/16 | 0/2 | 1/6 |
-| MostFrequentLocation+Reserve(1)[SequentialSearch] | 15/24 | 62% | 15 | 45.0 | 0 | 1/6 | 4/6 | 6/6 | 4/6 | 15/16 | 0/2 | 0/6 |
-| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 15/24 | 62% | 15 | 33.0 | 0 | 1/6 | 4/6 | 5/6 | 5/6 | 15/16 | 0/2 | 0/6 |
-| TimetableLookup(bin=1h,days=all)+Reserve(1)[SequentialSearch] | 15/24 | 62% | 15 | 45.0 | 0 | 1/6 | 4/6 | 6/6 | 4/6 | 15/16 | 0/2 | 0/6 |
-| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 15/24 | 62% | 20 | 44.0 | 0 | 1/6 | 4/6 | 5/6 | 5/6 | 15/16 | 0/2 | 0/6 |
-| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 15/24 | 62% | 21 | 45.0 | 0 | 1/6 | 4/6 | 5/6 | 5/6 | 15/16 | 0/2 | 0/6 |
-| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 15/24 | 62% | 22 | 46.0 | 0 | 1/6 | 4/6 | 5/6 | 5/6 | 15/16 | 0/2 | 0/6 |
-| MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 14/24 | 58% | 12 | 24.0 | 0 | 1/6 | 4/6 | 5/6 | 4/6 | 14/16 | 0/2 | 0/6 |
-| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[SequentialSearch] | 14/24 | 58% | 13 | 43.0 | 0 | 1/6 | 4/6 | 5/6 | 4/6 | 14/16 | 0/2 | 0/6 |
-| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 14/24 | 58% | 13 | 25.0 | 0 | 1/6 | 4/6 | 5/6 | 4/6 | 14/16 | 0/2 | 0/6 |
-| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[SequentialSearch] | 14/24 | 58% | 13 | 43.0 | 0 | 1/6 | 4/6 | 5/6 | 4/6 | 14/16 | 0/2 | 0/6 |
-| MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 14/24 | 58% | 15 | 30.0 | 0 | 1/6 | 4/6 | 4/6 | 5/6 | 14/16 | 0/2 | 0/6 |
-| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 14/24 | 58% | 17 | 32.0 | 0 | 1/6 | 4/6 | 4/6 | 5/6 | 14/16 | 0/2 | 0/6 |
-| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 14/24 | 58% | 18 | 33.0 | 0 | 1/6 | 4/6 | 5/6 | 4/6 | 14/16 | 0/2 | 0/6 |
-| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[SequentialSearch] | 13/24 | 54% | 15 | 42.0 | 0 | 0/6 | 4/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
-| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 13/24 | 54% | 16 | 31.0 | 0 | 1/6 | 3/6 | 4/6 | 5/6 | 13/16 | 0/2 | 0/6 |
-| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 13/24 | 54% | 17 | 38.0 | 0 | 1/6 | 4/6 | 4/6 | 4/6 | 13/16 | 0/2 | 0/6 |
-| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 12/24 | 50% | 13 | 25.0 | 0 | 1/6 | 3/6 | 4/6 | 4/6 | 12/16 | 0/2 | 0/6 |
-| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 12/24 | 50% | 15 | 39.0 | 0 | 1/6 | 4/6 | 3/6 | 4/6 | 12/16 | 0/2 | 0/6 |
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 15/24 | 62% | 20 | 41.0 | 0 | 1/6 | 4/6 | 5/6 | 5/6 | 15/16 | 0/2 | 0/6 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 14/24 | 58% | 13 | 31.0 | 0 | 0/6 | 4/6 | 6/6 | 4/6 | 14/16 | 0/2 | 0/6 |
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 14/24 | 58% | 19 | 43.0 | 0 | 1/6 | 2/6 | 5/6 | 6/6 | 13/16 | 1/2 | 0/6 |
+| MostFrequentLocation+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 14/24 | 58% | 21 | 45.0 | 0 | 2/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 1/6 |
+| MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 13/24 | 54% | 10 | 10.0 | 0 | 1/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[SequentialSearch] | 13/24 | 54% | 12 | 42.0 | 0 | 1/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[SequentialSearch] | 13/24 | 54% | 12 | 42.0 | 0 | 1/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 13/24 | 54% | 12 | 12.0 | 0 | 1/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 13/24 | 54% | 13 | 13.0 | 0 | 1/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
+| MostFrequentLocation+Reserve(1)[SequentialSearch] | 13/24 | 54% | 13 | 43.0 | 0 | 1/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
+| MostFrequentLocation+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 13/24 | 54% | 15 | 27.0 | 0 | 1/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIThresholdSense(lambda=0.02)] | 13/24 | 54% | 16 | 16.0 | 0 | 1/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 13/24 | 54% | 17 | 32.0 | 0 | 1/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 13/24 | 54% | 20 | 44.0 | 0 | 1/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
+| HierarchyBackoff(po=5,pc=5,hl=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 13/24 | 54% | 23 | 47.0 | 0 | 1/6 | 3/6 | 5/6 | 4/6 | 13/16 | 0/2 | 0/6 |
+| Markov1(a=1,cut=24h,hl=24h)+Reserve(1)[SequentialSearch] | 12/24 | 50% | 13 | 40.0 | 0 | 0/6 | 3/6 | 5/6 | 4/6 | 12/16 | 0/2 | 0/6 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[SequentialSearch] | 12/24 | 50% | 13 | 43.0 | 0 | 1/6 | 2/6 | 5/6 | 4/6 | 12/16 | 0/2 | 0/6 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIThresholdSense(lambda=0.01)] | 12/24 | 50% | 16 | 28.0 | 0 | 1/6 | 2/6 | 5/6 | 4/6 | 12/16 | 0/2 | 0/6 |
+| SmoothedRecency(hl=6h,freq=24h)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 12/24 | 50% | 21 | 45.0 | 0 | 1/6 | 2/6 | 5/6 | 4/6 | 12/16 | 0/2 | 0/6 |
+| TimetableLookup(bin=1h,days=all)+Reserve(1)[VoIBudgetPriceSense(gamma=0.5,lambda0=0.05)] | 12/24 | 50% | 21 | 45.0 | 0 | 1/6 | 2/6 | 4/6 | 5/6 | 11/16 | 1/2 | 0/6 |
 
 ## Question difficulty (agents that got it right)
 
 | q | object | truth | solved by |
 |---|---|---|---|
 | q01 | charger_omar | OUT_OF_HOUSE | 0/20 |
-| q02 | bowl_omar | sink_k1 | 19/20 |
-| q03 | phone_omar | OUT_OF_HOUSE | 2/20 |
+| q02 | bowl_omar | kitchen_table_k1 | 18/20 |
+| q03 | phone_omar | OUT_OF_HOUSE | 1/20 |
 | q04 | keys_leo | OUT_OF_HOUSE | 0/20 |
 | q05 | shoes_omar | OUT_OF_HOUSE | 0/20 |
 | q06 | phone_leo | ON_PERSON | 0/20 |
-| q07 | kitchen_knife_shared | drawer_k_k1 | 20/20 |
-| q08 | jacket_leo | OUT_OF_HOUSE | 0/20 |
+| q07 | laptop_leo | desk_b1 | 7/20 |
+| q08 | jacket_omar | OUT_OF_HOUSE | 0/20 |
 | q09 | phone_leo | OUT_OF_HOUSE | 0/20 |
-| q10 | water_bottle_omar | dish_rack_k1 | 18/20 |
-| q11 | snack_bowl_shared | cupboard_k1 | 20/20 |
-| q12 | razor_omar | bathroom_shelf_ba1 | 20/20 |
+| q10 | water_bottle_omar | dish_rack_k1 | 17/20 |
+| q11 | snack_bowl_shared | cupboard_k1 | 15/20 |
+| q12 | razor_omar | bathroom_shelf_ba1 | 18/20 |
 | q13 | shoes_omar | shoe_rack_e1 | 20/20 |
-| q14 | mug_leo | kitchen_table_k1 | 20/20 |
-| q15 | charger_omar | desk_b1 | 9/20 |
+| q14 | mug_omar | kitchen_table_k1 | 19/20 |
+| q15 | charger_omar | nightstand_b1 | 1/20 |
 | q16 | umbrella_omar | entry_floor_e1 | 20/20 |
-| q17 | spatula_shared | counter_k1 | 8/20 |
-| q18 | shopping_bag_shared | counter_k1 | 18/20 |
-| q19 | keys_omar | entry_table_e1 | 20/20 |
-| q20 | phone_omar | ON_PERSON | 0/20 |
-| q21 | spatula_shared | drawer_k_k1 | 20/20 |
-| q22 | vitamins_omar | counter_k1 | 14/20 |
-| q23 | towel_leo | towel_rack_ba1 | 20/20 |
-| q24 | dog_leash_shared | entry_floor_e1 | 15/20 |
+| q17 | sunglasses_omar | entry_table_e1 | 20/20 |
+| q18 | shopping_bag_shared | pantry_shelf_k1 | 20/20 |
+| q19 | kitchen_knife_shared | drawer_k_k1 | 20/20 |
+| q20 | phone_omar | ON_PERSON | 2/20 |
+| q21 | spatula_shared | kitchen_table_k1 | 20/20 |
+| q22 | vitamins_omar | kitchen_table_k1 | 20/20 |
+| q23 | towel_leo | bathroom_shelf_ba1 | 2/20 |
+| q24 | dog_leash_shared | entry_hook_e1 | 20/20 |
