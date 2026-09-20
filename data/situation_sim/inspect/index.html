@@ -327,9 +327,9 @@ function refreshSyncBadge(){ for(const b of document.querySelectorAll('.syncBadg
 (async()=>{ await null; /* let the rest of the script initialise before touching docPath */ try{ if(window.claude && window.claude.use){ DB = await window.claude.use('db'); } }catch(e){ DB=null; } SYNC = DB?'synced':'local'; DB_READY=true; await loadPersisted(); if(S.view==='quiz') render(); else refreshSyncBadge(); })();
 S.player = lsGet('ssi-player','') || '';
 const playerSlug = () => (S.player||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,24);
-// one live run per (household, player); notes are shared per household and tagged with the player
-const docPath = kind => kind==='notes' ? `notes/${GEN}s${S.seed}` : `chrono/${GEN}s${S.seed}${playerSlug()?'__'+playerSlug():''}`;
-const lsKey = kind => `ssi-${kind}-${GEN}-${S.seed}${kind==='notes'?'':'-'+playerSlug()}`;
+// one live run AND one notes document per (household, player): nobody sees another player's notes
+const docPath = kind => `${kind}/${GEN}s${S.seed}${playerSlug()?'__'+playerSlug():''}`;
+const lsKey = kind => `ssi-${kind}-${GEN}-${S.seed}-${playerSlug()}`;
 async function loadPersisted(){ const notes=await loadDoc(docPath('notes'), lsKey('notes')); S.notes = thaw((notes&&notes.entries)||[]); const run_=await loadDoc(docPath('chrono'), lsKey('chrono')); S.play.doc = thaw(run_)||null; S.play.loaded=true; }
 const saveRun = () => saveDoc(docPath('chrono'), lsKey('chrono'), runDoc());
 async function archiveRun(doc, why){ // keep a timestamped copy of every run that had answers
@@ -443,7 +443,7 @@ function memoryHtml(cut, visits, focusObj){ const H=hh(); const tab=S.mem.tab;
 
 // ---------- notes ----------
 function notepadHtml(){ const ctx=S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}`:'';
-  return `<div class="panel"><h3>Household notes · ${hh().id}</h3><p class="small syncBadge"></p><textarea id="noteText" rows="3" placeholder="General observations about this home: its dynamics, what felt unrealistic or unfair, what the sim or the tools should change." style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;resize:vertical">${esc(S.noteDraft||'')}</textarea>
+  return `<div class="panel"><h3>Your notes on ${hh().id}${S.player?` · ${esc(S.player)}`:''}</h3><p class="small syncBadge"></p><textarea id="noteText" rows="3" placeholder="General observations about this home: its dynamics, what felt unrealistic or unfair, what the sim or the tools should change." style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;resize:vertical">${esc(S.noteDraft||'')}</textarea>
     <div class="row" style="margin-top:6px;justify-content:space-between"><span class="small">tagged with: ${esc(ctx||'no question')}</span><button class="btn primary" id="saveNote">Save note</button></div>
     ${S.notes.length?`<div class="hist">${S.notes.slice().reverse().map(n=>`<div><span class="small">${esc((n.ts||'').slice(0,16).replace('T',' '))}${n.player?' · '+esc(n.player):''} · ${esc(n.ctx||'')}</span><br>${esc(n.text)}</div>`).join('')}</div>`:'<p class="small">No notes yet on this household.</p>'}</div>`; }
 function wireNotepad(el){ const btn=el.querySelector('#saveNote'); if(!btn) return; refreshSyncBadge(); const ta0=el.querySelector('#noteText'); ta0.addEventListener('input', ()=>{ S.noteDraft=ta0.value; }); btn.addEventListener('click', async ()=>{ const text=ta0.value.trim(); if(!text) return; S.noteDraft=''; const ctx=S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}${S.play.done?' (answered)':''}`:''; S.notes.push({ts:new Date().toISOString(), ctx, text, household:hh().id, player:S.player||''}); btn.disabled=true; await saveDoc(docPath('notes'), lsKey('notes'), {household:hh().id, entries:S.notes}); renderQuiz(); }); }
