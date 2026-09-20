@@ -52,6 +52,7 @@ import time
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from baselines.beliefs.base import BeliefModel
+from baselines.llm_hypotheses.protocol_text import weekday_index as _weekday_index, day0_name as _day0_name
 from baselines.llm_hypotheses.prompt import away_sentences
 from baselines.policies.base import DecisionPolicy
 from baselines.types import (DAY_SECONDS, ON_PERSON, Action, AnswerNow,
@@ -90,7 +91,7 @@ SYSTEM_PROMPT = (
 
 def stamp(t: int) -> str:
     day, rem = divmod(int(t), DAY_SECONDS)
-    return f"d{day:02d} {WEEKDAY_NAMES[day % 7]} {rem // 3600:02d}:{rem % 3600 // 60:02d}"
+    return f"d{day:02d} {WEEKDAY_NAMES[_weekday_index(day)]} {rem // 3600:02d}:{rem % 3600 // 60:02d}"
 
 
 class LogReaderBrain:

@@ -66,7 +66,8 @@ from baselines.agent import Agent
 from baselines.bank import JsonlBank
 from baselines.cli import _derived_rng, build_policy, git_state
 from baselines.distribution_metrics import SELECTED
-from baselines.harness import run_episode
+from baselines.harness import RoomLook, run_episode
+from baselines.llm_hypotheses import protocol_text as _PT
 from baselines.household_analysis import REPO_ROOT, bank_path
 from baselines.llm_hypotheses.elicit import DEFAULT_OUT_DIR, CachedThinkingClient
 from baselines.llm_hypotheses.revise import (GraphRevisionElicitor,
@@ -315,7 +316,7 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
             out_root: pathlib.Path, reask: Dict[str, Any],
             rng_seed: int = 0, bank_dir: Optional[pathlib.Path] = None,
             bank_seed: int = 0, hyp_subdir: str = "",
-            days: Optional[int] = None) -> pathlib.Path:
+            days: Optional[int] = None, room_look: bool = False) -> pathlib.Path:
     protocol, kind, condition, fraction, beta, search = parse_arm(arm)
     if kind == "oracle":          # retired name
         raise SystemExit("arm kind 'oracle' is now 'routine_posterior'")
@@ -328,7 +329,8 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
     path = bank_path(household, bank_seed, bank_dir)
     with open(path) as fh:
         header = json.loads(fh.readline())
-    if header.get("first_question_day") != 0:
+    _PT.set_day0_weekday(header.get("protocol"))
+    if not room_look and header.get("first_question_day") != 0:
         raise SystemExit(
             f"{path}: header first_question_day="
             f"{header.get('first_question_day')!r}; this study needs banks "
@@ -398,8 +400,16 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
             policy = build_policy({"name": "random_slice_voi",
                                    "lam": VOI_LAMBDA, "fraction": fraction},
                                   policy_rng)
-        for record in run_episode(Agent(belief, policy), episode):
+        rl = None
+        if room_look:
+            pr = episode.protocol
+            rl = RoomLook(look_cost=float(pr.get("look_cost", 1)),
+                          travel_cost=float(pr.get("travel_cost", 3)),
+                          person_sensing=bool(pr.get("pockets_visible", False)))
+        for record in run_episode(Agent(belief, policy), episode, room_look=rl):
             rows.append({
+                "actions": list(record.actions),
+                "correct": record.correct,
                 "question_id": record.question_id,
                 "object_id": record.object_id, "t_query": record.t_query,
                 "day_index": record.day_index,
@@ -519,6 +529,9 @@ def main() -> None:
     ap.add_argument("--hyp-subdir", default="",
                     help="subdirectory under hypotheses/<condition>/ holding "
                          "this bank's elicitation")
+    ap.add_argument("--room-look", action="store_true",
+                    help="the human inspector's protocol: a Sense is a look at the "
+                         "whole room, priced by the bank's protocol block")
     ap.add_argument("--days", type=int, default=None,
                     help="run only the first N days of questions")
     args = ap.parse_args()
@@ -535,7 +548,7 @@ def main() -> None:
     run_arm(args.household, args.arm, args.endpoint, args.model,
             args.out_dir, reask, args.rng_seed, bank_dir=args.bank_dir,
             bank_seed=args.bank_seed, hyp_subdir=args.hyp_subdir,
-            days=args.days)
+            days=args.days, room_look=args.room_look)
 
 
 if __name__ == "__main__":

@@ -150,23 +150,38 @@ def build_bank(run_dir: pathlib.Path, out: pathlib.Path, budget: int = 12, per_d
     for rec, room in header["receptacle_rooms"].items():
         if rec != ON_PERSON:
             rooms[room].append(rec)
+    # The walkthrough: positive sightings as ``initial_tour`` observations (what
+    # the LLM prompts' tour tables and every belief's initial evidence read),
+    # plus one room_visit per room carrying only the EMPTY spots, so the
+    # exclusions reach the beliefs without duplicating the sightings.
     visits = []
+    tour_obs = []
     for room in sorted(rooms):
         contents = {rec: sorted(o for o in objects if loc_at(o, tour_t) == rec) for rec in sorted(rooms[room])}
-        visits.append({"kind": "room_visit", "episode_id": eid, "t": tour_t, "room": room, "contents": contents})
+        for rec, objs in contents.items():
+            for o in objs:
+                tour_obs.append({"kind": "observation", "episode_id": eid, "object_id": o,
+                                 "receptacle_id": rec, "t": tour_t, "source": "initial_tour"})
+        empties = {rec: [] for rec, objs in contents.items() if not objs}
+        if empties:
+            visits.append({"kind": "room_visit", "episode_id": eid, "t": tour_t, "room": room, "contents": empties})
     qs = question_sequence(seed, per_day, n_days, objects, truth)
     questions = [{"kind": "question", "episode_id": eid, "question_id": f"q{i + 1:02d}",
                   "object_id": q["obj"], "t_query": q["t"], "day_index": q["day"],
                   "object_class": objects[q["obj"]]["cls"]} for i, q in enumerate(qs)]
     header = dict(header)
     header["budget_per_day"] = budget
+    header["tour_t"] = tour_t
     header["protocol"] = {"walkthrough_t": tour_t, "questions_per_day": per_day, "first_question_day": 1,
-                          "look_cost": 1, "travel_cost": 3, "room_level_looks": True, "pockets_visible": False}
+                          "look_cost": 1, "travel_cost": 3, "room_level_looks": True, "pockets_visible": False,
+                          "day0_weekday": "Wednesday"}
     out.parent.mkdir(parents=True, exist_ok=True)
     with open(out, "w") as f:
         f.write(json.dumps(header) + "\n")
         for r in rows[1:]:
             f.write(json.dumps(r) + "\n")
+        for o in tour_obs:
+            f.write(json.dumps(o) + "\n")
         for v in visits:
             f.write(json.dumps(v) + "\n")
         for q in questions:

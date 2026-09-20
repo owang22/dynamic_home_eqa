@@ -193,6 +193,7 @@ class _EpisodeAccumulator:
             self.query_generation = None if raw_qg is None else str(raw_qg)
             raw_tour = header.get("tour_t")
             self.tour_t = None if raw_tour is None else int(raw_tour)
+            self.protocol = dict(header.get("protocol") or {})
             self.person_sensing = bool(header.get("person_sensing", False))
             self.resident_ids = tuple(
                 str(r) for r in header.get("resident_ids", []))
@@ -401,7 +402,8 @@ class _EpisodeAccumulator:
                 person_sensing=self.person_sensing,
                 resident_ids=self.resident_ids,
                 resident_rooms=resident_rooms,
-                carriers=dict(self._carriers))
+                carriers=dict(self._carriers),
+                protocol=self.protocol)
         except ValueError as err:
             raise BankFormatError(
                 f"{self._path} (episode {self.episode_id}): {err}") from err

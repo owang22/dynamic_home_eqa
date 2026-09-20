@@ -884,6 +884,8 @@ def main() -> None:
     for household in args.households:
         episode = next(JsonlBank(bank_path(household, args.seed,
                                            args.bank_dir)).episodes())
+        from baselines.llm_hypotheses import protocol_text as _PT
+        _PT.set_day0_weekday(episode.protocol)
         _write_crossref(episode, args.out_dir)
         for condition in args.conditions:
             if args.longleaf:

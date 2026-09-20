@@ -34,7 +34,8 @@ MIN_BOUT_MINUTES = 10
 MAX_SKIP_P = 0.9
 
 # Standing (item, trip-type) carry omissions: with 0.85 roughly one pairing
-# in seven is a standing omission.
+# in seven is a standing omission. Never for phone/keys; wallet only on short
+# local trips (see Simulator.standing_omission).
 CARRY_P = 0.85
 # Per-departure forgetting of a pocket item, by the owner's forgetfulness.
 FORGET_LEVELS = {"rarely": 0.01, "sometimes": 0.03, "often": 0.08}

@@ -35,6 +35,7 @@ import json
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 from baselines.beliefs.hypothesis_program import ORDINAL_CENTERS
+from baselines.llm_hypotheses.protocol_text import weekday_index as _weekday_index, day0_name as _day0_name
 from baselines.types import DAY_SECONDS, Episode
 
 ORDINAL_CHANCE_LABELS = tuple(ORDINAL_CENTERS)
@@ -325,13 +326,14 @@ mean, that a look cannot target them, and how residents are seen and
 looked at. Mechanics, no advice."""
 
 
-def away_sentences(rmap: Mapping[str, str] | None = None) -> str:
+def away_sentences(rmap: Mapping[str, str] | None = None,
+                   protocol: Mapping[str, Any] | None = None) -> str:
     """:data:`AWAY_SENTENCES` in the model's vocabulary (the two tokens
-    through ``rmap`` when anonymized)."""
-    r = rmap or {}
-    return (AWAY_SENTENCES
-            .replace("`ON_PERSON`", f"`{r.get('ON_PERSON', 'ON_PERSON')}`")
-            .replace("`OUT_OF_HOUSE`", f"`{r.get('OUT_OF_HOUSE', 'OUT_OF_HOUSE')}`"))
+    through ``rmap`` when anonymized). With a bank ``protocol`` block that
+    declares room-level looks, the room-look wording from
+    :mod:`baselines.llm_hypotheses.protocol_text` instead."""
+    from baselines.llm_hypotheses.protocol_text import away_sentences as _away
+    return _away(protocol, rmap)
 
 
 def known_objects(episode: Episode, upto_t: Optional[int] = None,
@@ -376,7 +378,7 @@ def vocabulary_tables(episode: Episode,
     lines = ["RECEPTACLES:"]
     for rec in episode.receptacle_ids:
         lines.append(f"  {r.get(rec, rec)}")
-    lines.append(away_sentences(r))
+    lines.append(away_sentences(r, getattr(episode, 'protocol', None)))
     if episode.person_sensing and episode.resident_ids:
         lines.append("")
         lines.append("RESIDENTS (each can be the target of a look once a "
@@ -431,7 +433,7 @@ def sighting_digest(episode: Episode, warmup_days: int,
             lines.append("  never sighted in this period")
             continue
         for day in sorted(days):
-            name = WEEKDAY_NAMES[day % 7]
+            name = WEEKDAY_NAMES[_weekday_index(day)]
             runs: List[str] = []
             for hour, rec in sorted(days[day]):
                 token = r.get(rec, rec)
@@ -470,7 +472,7 @@ def elicitation_prompt(episode: Episode, warmup_days: int,
 
 {tables}
 
-SIGHTING LOG, days 0-{warmup_days - 1} (d0 is a Monday; hours are local; only positive sightings are recorded — an object missing from a day's log was simply not seen where the robot looked, which for portable items often means it was out of the house or on a person):
+SIGHTING LOG, days 0-{warmup_days - 1} (d0 is a {_day0_name()}; hours are local; only positive sightings are recorded — an object missing from a day's log was simply not seen where the robot looked, which for portable items often means it was out of the house or on a person):
 
 {digest}
 
@@ -563,7 +565,7 @@ def person_sensing_sections(report: Mapping[str, Any],
     def rec(x): return r.get(x, x)
     def day_stamp(t: int) -> str:
         day, rem = divmod(int(t), DAY_SECONDS)
-        return (f"d{day:02d} {WEEKDAY_NAMES[day % 7][:3]} "
+        return (f"d{day:02d} {WEEKDAY_NAMES[_weekday_index(day)][:3]} "
                 f"{rem // 3600:02d}:{rem % 3600 // 60:02d}")
     presence = list(report.get("presence", []))
     shown = presence[-PRESENCE_ROWS_SHOWN:]
@@ -600,7 +602,7 @@ def tour_stamp(t: int) -> str:
     the bank; the hour is whatever the exporter's tour draw gave."""
     day, rem = divmod(int(t), DAY_SECONDS)
     return (f"{rem // 3600:02d}:{rem % 3600 // 60:02d} on day {day}, "
-            f"a {WEEKDAY_NAMES[day % 7]}")
+            f"a {WEEKDAY_NAMES[_weekday_index(day)]}")
 
 
 OUTPUT_LENGTH_GUIDE = (

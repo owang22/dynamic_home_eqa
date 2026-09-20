@@ -151,7 +151,9 @@ from typing import (Any, Dict, Iterable, List, Mapping, Optional, Sequence,
                     Tuple)
 
 from baselines.beliefs.base import BeliefModel
+from baselines.llm_hypotheses.protocol_text import weekday_index as _weekday_index, day0_name as _day0_name
 from baselines.llm_hypotheses.prompt import away_sentences
+from baselines.llm_hypotheses import protocol_text as PT
 from baselines.policies.base import DecisionPolicy
 from baselines.policies.voi_sense import value_of_information
 from baselines.types import (DAY_SECONDS, ON_PERSON, OUT_OF_HOUSE, Action,
@@ -325,7 +327,10 @@ MISPLACEMENT_SENTENCE = ("Household objects are sometimes misplaced, "
                          "forgotten, or moved for no reason.")
 """The one thing the prompt says about the world (the brief's words)."""
 
-SYSTEM_PROMPT = f"""You are one agent in a small population that keeps notebooks about one household on behalf of a home robot. The robot is asked, many times a day, where one object is right now, and it may spend a limited number of looks per day: a look opens one receptacle (it reveals everything inside and lists the residents in that room), or checks one resident the robot has just listed (it reveals everything they have on them).
+def system_prompt(protocol=None) -> str:
+    """The notebook agents' system prompt; the look mechanics come from
+    :mod:`protocol_text` so they match the bank's protocol."""
+    return f"""You are one agent in a small population that keeps notebooks about one household on behalf of a home robot. The robot is asked, {PT.asked_clause(protocol)}, where one object is right now, and {PT.notebook_looks_clause(protocol)}.
 
 Your notebook has two sections.
 BELIEFS: your account of how this household lives and how its objects move — patterns, rules, conjectures, dependencies between objects — each with a short why that cites the evidence behind it. This section stays fixed for the life of an agent. To change it you propose a FORK: a new agent whose BELIEFS are a rewrite of yours together with a why for the change, while you keep running unchanged. BELIEFS holds at most {BELIEFS_MAX_WORDS} words, so a fork that would grow past that is written as a condensed rewrite.
@@ -337,15 +342,25 @@ Your forecasts are scored by the log of the probability you gave to what the rob
 {MISPLACEMENT_SENTENCE}"""
 
 
+SYSTEM_PROMPT = system_prompt()
+"""The classic-protocol system prompt (kept for callers and tests)."""
+
 DISPATCH_NOTE_MAX_WORDS = 120
-DISPATCH_SYSTEM_PROMPT = f"""You are the dispatcher of a home robot. The robot is asked, many times a day, where one object is right now. A panel of agents has just given its forecast; you decide whether the robot answers now or first spends one of today's looks (opening one receptacle, or checking one resident it has listed). Looks are the panel's only source of learning: a look grades every agent on everything it predicted, so a look also pays off on later questions. Unspent looks are lost at midnight, and a day has far more questions than looks, so looks are rationed across the day: what a gain is worth depends on what other gains this day is likely to offer. For each candidate look you are told the one-step gain: how much the chance of answering THIS question right would rise. You also see today's ledger (every decision so far today and what each look found) and your own NOTE, which is your only memory: rewrite it on every call (at most {DISPATCH_NOTE_MAX_WORDS} words) with what gains have been typical, when looks paid off, and how you plan to spend the rest of the day. Reply as JSON: {{"action": "look" | "answer", "target": "<receptacle or resident id, for a look>", "why": "<one sentence>", "note": "<your rewritten note>"}}.
+
+
+def dispatch_system_prompt(protocol=None, budget_per_day: float = 8) -> str:
+    """The dispatcher's system prompt; mechanics from :mod:`protocol_text`."""
+    return f"""You are the dispatcher of a home robot. The robot is asked, {PT.asked_clause(protocol)}, where one object is right now. A panel of agents has just given its forecast; {PT.dispatch_looks_clause(protocol)}. Looks are the panel's only source of learning: a look grades every agent on everything it predicted, so a look also pays off on later questions. {PT.dispatch_rationing_clause(protocol, budget_per_day)} For each candidate look you are told the one-step gain: how much the chance of answering THIS question right would rise, and its cost. You also see today's ledger (every decision so far today and what each look found) and your own NOTE, which is your only memory: rewrite it on every call (at most {DISPATCH_NOTE_MAX_WORDS} words) with what gains have been typical, when looks paid off, and how you plan to spend the rest of the day. Reply as JSON: {{"action": "look" | "answer", "target": "{PT.dispatch_target_hint(protocol)}", "why": "<one sentence>", "note": "<your rewritten note>"}}.
 
 {MISPLACEMENT_SENTENCE}"""
 
 
+DISPATCH_SYSTEM_PROMPT = dispatch_system_prompt()
+
+
 def stamp(t: int) -> str:
     day, rem = divmod(int(t), DAY_SECONDS)
-    return f"d{day:02d} {WEEKDAY_NAMES[day % 7]} {rem // 3600:02d}:{rem % 3600 // 60:02d}"
+    return f"d{day:02d} {WEEKDAY_NAMES[_weekday_index(day)]} {rem // 3600:02d}:{rem % 3600 // 60:02d}"
 
 
 def word_count(text: str) -> int:
@@ -829,14 +844,13 @@ class NotebookMixtureBrain:
                 f"ROOMS AND RECEPTACLES:\n{chr(10).join(room_lines)}\n"
                 f"Answer spots are every receptacle above plus "
                 f"{self.rec(ON_PERSON)} and {self.rec(OUT_OF_HOUSE)}. "
-                f"{away_sentences(self._rmap).replace('`', '')}")
+                f"{away_sentences(self._rmap, ctx.protocol).replace('`', '')}")
         if ctx.resident_ids:
             def named(r: str) -> str:
                 n = self._resident_names.get(r)
                 return f"{self.rec(r)} ({n})" if n and not self._rmap else self.rec(r)
             text += "\n\nRESIDENTS: " + ", ".join(named(r) for r in ctx.resident_ids)
-        text += (f"\n\nLOOK BUDGET: {ctx.budget_per_day} looks per day, "
-                 f"reset at midnight.")
+        text += "\n\n" + PT.budget_sentences(ctx.protocol, ctx.budget_per_day, ctx.home_base_room)
         return text
 
     def _notebook_block(self, agent: NotebookAgent) -> str:
@@ -905,6 +919,15 @@ class NotebookMixtureBrain:
 
     # ---------------------------------------------------------------- LLM
 
+    def _system(self) -> str:
+        """The agents' system prompt for this bank's protocol."""
+        return system_prompt(self.context.protocol if self.context is not None else None)
+
+    def _dispatch_system(self) -> str:
+        ctx = self.context
+        return dispatch_system_prompt(ctx.protocol if ctx is not None else None,
+                                      ctx.budget_per_day if ctx is not None else 8)
+
     def _generate(self, system: str, user: str, schema: Mapping[str, Any],
                   max_tokens: int, seed_offset: int) -> Tuple[Dict[str, Any], float]:
         """The network part of a call (thread-safe): the client's row and
@@ -918,12 +941,14 @@ class NotebookMixtureBrain:
 
     def _call(self, call_type: str, agent_id: Optional[str], user: str,
               schema: Mapping[str, Any], max_tokens: int, t: int,
-              seed_offset: int = 0, system: str = SYSTEM_PROMPT,
+              seed_offset: int = 0, system: Optional[str] = None,
               done: Optional[Tuple[Dict[str, Any], float]] = None
               ) -> Tuple[Optional[Dict[str, Any]], Dict[str, Any]]:
         """One LLM call: generate (unless ``done`` carries a reply already
         fetched in parallel), then account it under ``call_type`` and the
         day, in order. Returns ``(parsed JSON or None, row)``."""
+        if system is None:
+            system = self._system()
         row, elapsed = done if done is not None else self._generate(
             system, user, schema, max_tokens, seed_offset)
         seconds = ((row.get("generation_seconds") or 0.0) if row.get("cached")
@@ -969,12 +994,14 @@ class NotebookMixtureBrain:
 
     def _calls(self, call_type: str, jobs: Sequence[Tuple[str, str]],
                schema: Mapping[str, Any], max_tokens: int, t: int,
-               system: str = SYSTEM_PROMPT
+               system: Optional[str] = None
                ) -> Dict[str, Optional[Dict[str, Any]]]:
         """``jobs`` = ``(agent_id, user)`` pairs, fetched ``parallel`` at a
         time and accounted in the given order. Returns parsed by agent."""
         n = max(1, int(self.config.parallel))
         fetched: Dict[str, Tuple[Dict[str, Any], float]] = {}
+        if system is None:
+            system = self._system()
         if n > 1 and len(jobs) > 1:
             with concurrent.futures.ThreadPoolExecutor(max_workers=n) as pool:
                 futures = {a: pool.submit(self._generate, system, user, schema,
@@ -1374,15 +1401,17 @@ class NotebookMixtureBrain:
             f"QUESTION: where is {self.obj(decision['object'])} right now? "
             f"Asked at {stamp(t)}; the robot is in "
             f"{self.context.robot_position.room or 'an unknown room'}.",
-            f"TODAY: looks left {self._remaining():g} of "
-            f"{self.context.budget_per_day}; questions so far today "
+            (f"TODAY: budget left {self._remaining():g} of "
+             if PT.is_room_look(self.context.protocol) else
+             f"TODAY: looks left {self._remaining():g} of ")
+            + f"{self.context.budget_per_day}; questions so far today "
             f"{self.asked_today}"
             + (f" of about {cfg.questions_per_day:g}" if cfg.tell_questions_per_day
                else "")
             + f"; looks used today {self.looks_today}.{cap_line}"
             + ("" if cfg.tell_questions_per_day else
                (f"\nPREVIOUS DAYS: " + "; ".join(
-                   f"{WEEKDAY_NAMES[d % 7]} {q} questions, {l} looks used"
+                   f"{WEEKDAY_NAMES[_weekday_index(d)]} {q} questions, {l} looks used"
                    for d, q, l in self._days_seen[-7:])
                 if self._days_seen else
                 "\nPREVIOUS DAYS: none yet - how many questions a day brings "
@@ -1398,7 +1427,7 @@ class NotebookMixtureBrain:
             f"LEGAL LOOK TARGETS NOW: {legal}.",
             "Decide: answer now, or look (name the target). One sentence why."])
         parsed, _ = self._call("decide", None, user, DECIDE_SCHEMA,
-                               DECIDE_MAX_TOKENS, t, system=DISPATCH_SYSTEM_PROMPT)
+                               DECIDE_MAX_TOKENS, t, system=self._dispatch_system())
         # every briefing and reply, verbatim, for the replay
         self._write_row("decisions.jsonl", {
             "t": t, "stamp": stamp(t), "object": decision["object"],

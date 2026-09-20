@@ -438,7 +438,7 @@ Internal states (0–1): Dana energy 0.67, hurriedness 0.57, distraction 0.62; H
           wallet_dana → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
           keeps phone_dana for lunch
 14:44  Dana — lunch in the kitchen; brings plate_dana from cupboard_k1, glass_dana from counter_k1
-15:10  Hana leaves for errands (back 16:50); takes handbag_hana, keys_hana, wallet_hana, jacket_hana, shoes_hana; never takes phone_hana on errands
+15:10  Hana leaves for errands (back 16:50); takes handbag_hana, keys_hana, phone_hana, wallet_hana, jacket_hana, shoes_hana
 15:24  Dana finishes lunch
           glass_dana → sink_k1: used, so it goes in the sink
           plate_dana → sink_k1: used, so it goes in the sink
@@ -453,6 +453,7 @@ Internal states (0–1): Dana energy 0.67, hurriedness 0.57, distraction 0.62; H
           keys_hana → entry_table_e1: put away in its usual place after the trip
           shoes_hana → entry_floor_e1: dropped at the door instead of being put away
           wallet_hana → entry_table_e1: put away in its usual place after the trip
+          keeps phone_hana for lunch
 16:50  Hana — lunch in the kitchen; brings plate_hana from cupboard_k1, glass_hana from cupboard_k1
 17:18  Dana is back from grocery shopping
           hat_dana → entry_hook_e1: put away in its usual place after the trip
@@ -572,7 +573,7 @@ Internal states (0–1): Dana energy 0.61, hurriedness 0.54, distraction 0.63; H
 11:11  Hana finishes vacuuming
           vacuum_cleaner_shared → storage_floor_s1: put back in its usual place
           keeps phone_hana for errands
-11:11  Hana leaves for errands (back 12:11); takes handbag_hana, keys_hana, wallet_hana, jacket_hana, shoes_hana, umbrella_hana; never takes phone_hana on errands
+11:11  Hana leaves for errands (back 12:11); takes handbag_hana, keys_hana, phone_hana, wallet_hana, jacket_hana, shoes_hana, umbrella_hana
 12:01  Dana finishes kitchen chores
           phone_dana → coffee_table_l1: tidied away to its usual place; nightstand_b1 was full, so it went to coffee_table_l1
           bowl_dana (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
@@ -588,6 +589,7 @@ Internal states (0–1): Dana energy 0.61, hurriedness 0.54, distraction 0.63; H
           shoes_hana → entry_floor_e1: wet shoes left on the entry floor to dry [rain]
           umbrella_hana → entry_floor_e1: wet umbrella propped by the door [rain]
           wallet_hana → entry_table_e1: put away in its usual place after the trip
+          keeps phone_hana for lunch
 12:20  Dana — a shower in the bathroom
 12:35  Dana finishes a shower
           towel_dana → towel_rack_ba1: WHIM — was heading for bathroom_shelf_ba1 (left where it was used) but landed on towel_rack_ba1 instead

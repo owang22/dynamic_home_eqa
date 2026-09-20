@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import bisect
 from dataclasses import dataclass, field
-from typing import Dict, Mapping, Optional, Tuple, Union
+from typing import Any, Dict, Mapping, Optional, Tuple, Union
 
 DAY_SECONDS = 86_400
 """Length of one simulated day, in seconds."""
@@ -312,6 +312,11 @@ class EpisodeContext:
     robot_position: RobotPosition = field(default_factory=RobotPosition)
     resident_ids: Tuple[str, ...] = ()
     person_sensing: bool = False
+    protocol: Mapping[str, Any] = field(default_factory=dict)
+    """The bank header's ``protocol`` block, if any: how looks are priced
+    and what they reveal (``room_level_looks``, ``look_cost``,
+    ``travel_cost``, ``pockets_visible``, ``questions_per_day``...).
+    Prompts read it so the mechanics they describe match the harness."""
 
     @property
     def rooms(self) -> Tuple[str, ...]:
@@ -398,6 +403,8 @@ class Episode:
     harness-only; the label itself stays ``ON_PERSON``."""
     scripted_evidence: Optional[Tuple[Union["Observation", "SenseResult"],
                                       ...]] = None
+    protocol: Mapping[str, Any] = field(default_factory=dict)
+    """Header ``protocol`` block (see :attr:`EpisodeContext.protocol`)."""
     """The ambient stream as the beliefs should CONSUME it, time-ordered.
 
     For a room-visit bank this holds one :class:`SenseResult` per
@@ -596,4 +603,5 @@ class Episode:
             robot_position=(robot_position if robot_position is not None
                             else RobotPosition(room=self.home_base_room)),
             resident_ids=self.resident_ids,
-            person_sensing=self.person_sensing)
+            person_sensing=self.person_sensing,
+            protocol=self.protocol)

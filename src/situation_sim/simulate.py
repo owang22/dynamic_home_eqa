@@ -175,8 +175,19 @@ class Simulator:
                         blocked[rec] = c.id
         return blocked
 
+    SHORT_TRIPS = ("walk", "run", "dog_walk", "cycle", "photo_walk")
+
     def standing_omission(self, obj: Obj, activity: str) -> bool:
-        """Stable per (item, trip type): the resident never takes this on that trip."""
+        """Stable per (item, trip type): the resident never takes this on that
+        trip. Phone and keys are never a standing omission (nobody habitually
+        leaves them behind; only the per-departure forgetting applies); the
+        wallet can be one only on short local trips; optional outdoor
+        accessories (hat, scarf, sunglasses, umbrella, headphones...) can be
+        one on any trip."""
+        if obj.cls in ("phone", "keys"):
+            return False
+        if obj.cls == "wallet" and activity not in self.SHORT_TRIPS:
+            return False
         r = random.Random(f"omission:{self.seed}:{obj.id}:{activity}")
         return r.random() >= tc.CARRY_P
 
@@ -311,6 +322,12 @@ class Simulator:
             optional = o.pocket or (o.outdoor and o.cls not in ("shoes", "jacket", "running_shoes") and not o.rain_only)
             if optional and self.standing_omission(o, b.activity):
                 omitted.append(o.id)
+                if where == ON_PERSON and self.carrier[o.id] == b.resident:
+                    # it was in their pocket from the last activity but never
+                    # goes on this kind of trip: put down before leaving
+                    self.move(o.id, day, b.start, o.home[0], f"leave_home:{b.activity}", [],
+                              reason=f"left at home, never taken on {words(b.activity)}")
+                    lines.append(TraceLine(b.start, 1, f"{o.id} → {o.home[0]}: left at home before {words(b.activity)}", True))
                 continue
             if o.pocket and where != ON_PERSON:
                 p_f = res.forget_p
