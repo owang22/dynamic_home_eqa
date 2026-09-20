@@ -28,6 +28,7 @@ def load_run(d: pathlib.Path) -> dict:
     residents = [{k: r[k] for k in ("resident_id", "t", "room")} for r in rows if r["kind"] == "resident"]
     trace = json.loads((d / "trace.json").read_text())
     state.pop("event_library", None)
+    state.pop("episode_library", None)
     return {"state": state, "truth": truth, "residents": residents, "trace": trace["days"]}
 
 
@@ -37,8 +38,11 @@ def build(seeds, out: pathlib.Path, n_days: int = 5) -> pathlib.Path:
         d = out / "runs" / f"hh_s{seed}"
         generate(seed, d, n_days)
         runs[str(seed)] = load_run(d)
-    events = json.loads((out / "runs" / f"hh_s{seeds[0]}" / "hidden_state.json").read_text())["event_library"]
-    payload = json.dumps({"runs": runs, "events": events}, separators=(",", ":"), sort_keys=True)
+    first = json.loads((out / "runs" / f"hh_s{seeds[0]}" / "hidden_state.json").read_text())
+    payload = json.dumps({"runs": runs, "events": first["event_library"],
+                          "episodes": first.get("episode_library", {}),
+                          "default_seed": str(seeds[0])},
+                         separators=(",", ":"), sort_keys=True)
     html = TEMPLATE.read_text()
     assert PLACEHOLDER in html
     page = out / "inspect" / "index.html"

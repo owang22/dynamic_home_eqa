@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Situation Sim Inspector</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:wght@600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
@@ -6,6 +7,7 @@
   --accent:#137068; --accent-ink:#ffffff; --accent-soft:#d9eeea;
   --whim:#b6741a; --whim-soft:#f6e9d2;
   --event:#5f4bb0; --event-soft:#e6e1f5;
+  --episode:#1f6fa8; --episode-soft:#dbe9f5;
   --internal:#a8475a; --internal-soft:#f3dfe3;
   --ok:#2c7a4b; --ok-soft:#d8eedf; --bad:#b3352b; --bad-soft:#f4dcd9;
   --seg-l:62%;
@@ -19,6 +21,7 @@
     --accent:#4dc0b0; --accent-ink:#0f1716; --accent-soft:#193a36;
     --whim:#e0a24a; --whim-soft:#3a2d16;
     --event:#a695e8; --event-soft:#2a2440;
+    --episode:#7fb6e6; --episode-soft:#1c2c3a;
     --internal:#e08496; --internal-soft:#3d2228;
     --ok:#6fcf97; --ok-soft:#1d3527; --bad:#ef8a80; --bad-soft:#3d2320;
     --seg-l:46%;
@@ -29,6 +32,7 @@
   --accent:#4dc0b0; --accent-ink:#0f1716; --accent-soft:#193a36;
   --whim:#e0a24a; --whim-soft:#3a2d16;
   --event:#a695e8; --event-soft:#2a2440;
+  --episode:#7fb6e6; --episode-soft:#1c2c3a;
   --internal:#e08496; --internal-soft:#3d2228;
   --ok:#6fcf97; --ok-soft:#1d3527; --bad:#ef8a80; --bad-soft:#3d2320;
   --seg-l:46%;
@@ -67,6 +71,8 @@ h3{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute
 .id.rec{color:var(--muted)}
 .tag{display:inline-block;font-size:11.5px;padding:1px 7px;border-radius:999px;margin-left:4px;font-family:var(--mono);vertical-align:middle}
 .tag.event{background:var(--event-soft);color:var(--event)}
+.tag.episode{background:var(--episode-soft);color:var(--episode)}
+.cause.episode{border-left-color:var(--episode);background:var(--episode-soft)}
 .tag.internal{background:var(--internal-soft);color:var(--internal)}
 .tag.whim{background:var(--whim-soft);color:var(--whim);font-family:var(--sans);font-weight:600}
 table{border-collapse:collapse;width:100%;font-size:14px}
@@ -132,6 +138,9 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .mark{font-weight:700}
 .mark.ok{color:var(--ok)}.mark.bad{color:var(--bad)}
 .small{font-size:13px;color:var(--muted)}
+.tl.visit{padding:6px 0}
+.spots{display:grid;grid-template-columns:max-content 1fr;gap:3px 10px;margin-top:4px;align-items:baseline}
+.spotobjs{display:flex;flex-wrap:wrap;gap:3px 4px}
 .evid .tl{grid-template-columns:82px 1fr}
 .evid .tl .t{visibility:visible}
 details{margin-top:8px}
@@ -166,10 +175,10 @@ summary{cursor:pointer;color:var(--muted);font-size:13px}
 (function(){
 "use strict";
 const DATA = JSON.parse(document.getElementById('data').textContent);
-const RUNS = DATA.runs, EVENTS = DATA.events;
+const RUNS = DATA.runs, EVENTS = DATA.events, EPISODES = DATA.episodes || {};
 const DAYS = ["Wednesday","Thursday","Friday","Saturday","Sunday"];
 const DAY = 86400;
-const S = {seed: Object.keys(RUNS).sort((a,b)=>+a-+b)[0], view:'days', day:0, reveal:false, filter:'', movesOnly:false,
+const S = {seed: (DATA.default_seed in RUNS) ? DATA.default_seed : Object.keys(RUNS).sort((a,b)=>+a-+b)[0], view:'days', day:0, reveal:false, filter:'', movesOnly:false,
            obj:null, quiz:{cutoff:'yesterday', pool:'moving', q:null, answered:false, score:null, hist:[]}};
 try{ const saved = JSON.parse(localStorage.getItem('ssi-state')||'{}'); Object.assign(S, {view:saved.view||S.view, seed: RUNS[saved.seed]?saved.seed:S.seed, day: saved.day||0}); }catch(e){}
 
@@ -177,7 +186,7 @@ try{ const saved = JSON.parse(localStorage.getItem('ssi-state')||'{}'); Object.a
 const run = () => RUNS[S.seed];
 const hh = () => run().state.household;
 const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
-const resName = id => hh().residents[id] ? cap(hh().residents[id].name) : id;
+const resName = id => hh().residents[id] ? cap(hh().residents[id].name) : (/^guests:(\d+)$/.test(id) ? id.slice(7)+' guests' : id);
 const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmtMin = m => `${String(Math.floor(Math.min(m,1439)/60)).padStart(2,'0')}:${String(Math.min(m,1439)%60).padStart(2,'0')}`;
 const fmtT = t => { const d=Math.floor(t/DAY), m=Math.floor((t%DAY)/60); return `${DAYS[d]||('day '+d)} ${fmtMin(m)}`; };
@@ -188,8 +197,10 @@ function rowAt(obj, t){ const rs=rowsFor(obj); let lo=0,hi=rs.length-1,ans=null;
 function locAt(obj,t){ const r=rowAt(obj,t); return r?r.receptacle_id:null; }
 function timeWeighted(obj, until){ const rs=rowsFor(obj), acc={}; for(let i=0;i<rs.length;i++){ const a=rs[i].t, b=Math.min(i+1<rs.length?rs[i+1].t:Infinity, until); if(b<=a) continue; acc[rs[i].receptacle_id]=(acc[rs[i].receptacle_id]||0)+(b-a);} return acc; }
 function argmax(o){ let best=null,bv=-1; for(const k of Object.keys(o).sort()){ if(o[k]>bv){bv=o[k];best=k;} } return best; }
-function causeKind(id){ return id.startsWith('low_energy:')||id.startsWith('running_late:')||id.startsWith('distracted:')?'internal':'event'; }
-function causeWords(c){ if(c.kind==='event'){ const ev=EVENTS[c.event]||{}; const who=c.resident?resName(c.resident):'household'; return `<span class="id">${esc(c.id)}</span> <span class="small">(${who})</span> — ${esc(ev.description||'')} ${esc(ev.trace_words||'')}.`; } return `<span class="id">${esc(c.id)}</span> — ${esc(c.words)}.`; }
+function causeKind(id){ if(id.startsWith('ep:')) return 'episode'; return id.startsWith('low_energy:')||id.startsWith('running_late:')||id.startsWith('distracted:')?'internal':'event'; }
+function causeWords(c){ if(c.kind==='event'){ const ev=EVENTS[c.event]||{}; const who=c.resident?resName(c.resident):'household'; return `<span class="id">${esc(c.id)}</span> <span class="small">(${who})</span> — ${esc(ev.description||'')} ${esc(ev.trace_words||'')}.`; }
+  if(c.kind==='episode'){ const m=/\((\d\d:\d\d)–(\d\d:\d\d)\)$/.exec(c.words||''); const words=m?c.words.slice(0,m.index).trim():c.words; return `<span class="id">${esc(c.event)}</span> <span class="small">(${resName(c.resident)}${m?' · '+m[1]+'–'+m[2]:''})</span> — ${esc(words)}.`; }
+  return `<span class="id">${esc(c.id)}</span> — ${esc(c.words)}.`; }
 function recColor(rec){ if(rec==='ON_PERSON'||rec==='OUT_OF_HOUSE') return null; let h=0; for(const ch of rec) h=(h*31+ch.charCodeAt(0))>>>0; return `hsl(${h%360} 48% var(--seg-l))`; }
 function linkIds(text){ // wrap object / receptacle ids
   const objs = Object.keys(hh().objects).sort((a,b)=>b.length-a.length), recs=Object.keys(hh().receptacles).concat(['ON_PERSON','OUT_OF_HOUSE']).sort((a,b)=>b.length-a.length);
@@ -245,7 +256,7 @@ function causesPanel(dayIdx, revealed){
   const d = run().state.days[dayIdx];
   const causes = d.causes.slice().sort((a,b)=>(a.kind+a.id).localeCompare(b.kind+b.id));
   let html = `<h3>Hidden causes · ${DAYS[dayIdx]}</h3>`;
-  if(!revealed){ html += `<div class="hiddenbox">${causes.length} active cause${causes.length===1?'':'s'} today (${causes.filter(c=>c.kind==='event').length} external, ${causes.filter(c=>c.kind==='internal').length} internal).<br>Hidden so you can judge predictability from the visible trace alone.<br><button class="btn" data-act="reveal">Reveal</button></div>`; return html; }
+  if(!revealed){ html += `<div class="hiddenbox">${causes.length} active cause${causes.length===1?'':'s'} today (${causes.filter(c=>c.kind==='event').length} external, ${causes.filter(c=>c.kind==='internal').length} internal, ${causes.filter(c=>c.kind==='episode').length} episode${causes.filter(c=>c.kind==='episode').length===1?'':'s'}).<br>Hidden so you can judge predictability from the visible trace alone.<br><button class="btn" data-act="reveal">Reveal</button></div>`; return html; }
   if(!causes.length) html += `<p class="small">No active cause today.</p>`;
   for(const c of causes) html += `<div class="cause ${c.kind}">${causeWords(c)}</div>`;
   html += `<h3 style="margin-top:14px">Internal states</h3>`;
@@ -301,14 +312,14 @@ function renderObjects(){
 
 // ---------- persistence (artifact db when granted, else this browser only) ----------
 let DB=null, DB_READY=false, SYNC='connecting';
-const GEN='g3';   // storage generation: bump when households or the task change
+const GEN='g4';   // storage generation: bump when households or the task change
 const lsGet=(k,d)=>{ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } };
 const lsSet=(k,v)=>{ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} };
 const thaw = x => x==null ? x : JSON.parse(JSON.stringify(x));   // db snapshots are frozen
 async function loadDoc(path, lsKey){ if(DB){ try{ const snap=await DB.doc(path).get(); if(snap.exists) return snap.data(); return null; }catch(e){ SYNC='error'; } } return lsGet(lsKey, null); }
 async function saveDoc(path, lsKey, data){ lsSet(lsKey, data); if(DB){ try{ await DB.doc(path).set(data); SYNC='synced'; }catch(e){ SYNC='error'; } } refreshSyncBadge(); }
-function refreshSyncBadge(){ for(const b of document.querySelectorAll('.syncBadge')) b.textContent = SYNC==='synced'?'saved to the artifact (Claude can read it)': SYNC==='local'?'saved in this browser only — Claude cannot read this': SYNC==='error'?'saving to the artifact failed; kept in this browser':'connecting…'; }
-(async()=>{ try{ if(window.claude && window.claude.use){ DB = await window.claude.use('db'); } }catch(e){ DB=null; } SYNC = DB?'synced':'local'; DB_READY=true; await loadPersisted(); if(S.view==='quiz') render(); else refreshSyncBadge(); })();
+function refreshSyncBadge(){ for(const b of document.querySelectorAll('.syncBadge')) b.textContent = SYNC==='synced'?'saved to the artifact (Claude can read it)': SYNC==='local'?'not connected to the artifact store: kept in this browser for now': SYNC==='error'?'saving to the artifact failed; kept in this browser':'connecting…'; }
+(async()=>{ await null; /* let the rest of the script initialise before touching docPath */ try{ if(window.claude && window.claude.use){ DB = await window.claude.use('db'); } }catch(e){ DB=null; } SYNC = DB?'synced':'local'; DB_READY=true; await loadPersisted(); if(S.view==='quiz') render(); else refreshSyncBadge(); })();
 const docPath = kind => `${kind}/${GEN}s${S.seed}`;
 const lsKey = kind => `ssi-${kind}-${GEN}-${S.seed}`;
 async function loadPersisted(){ const notes=await loadDoc(docPath('notes'), lsKey('notes')); S.notes = thaw((notes&&notes.entries)||[]); const run_=await loadDoc(docPath('chrono'), lsKey('chrono')); S.play.doc = thaw(run_)||null; S.play.loaded=true; }
@@ -327,7 +338,10 @@ const TOUR_T = 18*3600;
 function runDoc(){ if(!S.play.doc) S.play.doc={perDay:6, budget:12, travel:3, lookCost:1, answers:[], looks:[], pending:[], robot:homeBase(), showVerdicts:false, started:new Date().toISOString()}; return S.play.doc; }
 function homeBase(){ const H=hh(); const counts={}; for(const r of Object.values(H.receptacles)) counts[r.room]=(counts[r.room]||0)+1; return Object.keys(counts).sort((a,b)=>counts[b]-counts[a]||a.localeCompare(b))[0]; }
 function roomAt(res, t){ const rows=run().residents.filter(r=>r.resident_id===res).sort((a,b)=>a.t-b.t); let cur=null; for(const r of rows){ if(r.t<=t) cur=r.room; else break; } return cur; }
-function peopleIn(room, t){ return Object.keys(hh().residents).sort().filter(r=>roomAt(r,t)===room); }
+function peopleIn(room, t){ const out=Object.keys(hh().residents).sort().filter(r=>roomAt(r,t)===room);
+  const d=Math.floor(t/DAY), m=Math.floor((t%DAY)/60);
+  for(const v of (run().state.visitors||[])) if(v.day===d && v.room===room && v.start<=m && m<v.end) out.push('guests:'+v.n);
+  return out; }
 function roomVisit(room, t, kind, extra){ const H=hh(); const contents={}; for(const rec of Object.values(H.receptacles).filter(r=>r.room===room).map(r=>r.id).sort()) contents[rec]=Object.keys(H.objects).sort().filter(o=>locAt(o,t)===rec); return Object.assign({t, room, contents, people: peopleIn(room,t), kind}, extra||{}); }
 function walkthrough(){ return hh().rooms.slice().sort().map(room=>roomVisit(room, TOUR_T, 'tour')); }
 function knowledgeVisits(){ const doc=runDoc(); const v=walkthrough().concat(doc.looks.filter(l=>!l.failed).map(l=>Object.assign({}, l, {kind:'look'}))); v.sort((a,b)=>a.t-b.t); return v; }
@@ -384,16 +398,12 @@ function roomDiff(v){ // what changed in this room since it was last seen (befor
   const now=new Set(), before=new Set(); for(const rec of Object.keys(v.contents)) for(const o of v.contents[rec]) now.add(o+'@'+rec); for(const rec of Object.keys(prev.contents)) for(const o of prev.contents[rec]) before.add(o+'@'+rec);
   const added=[...now].filter(x=>!before.has(x)), gone=[...before].filter(x=>!now.has(x));
   return {prevT: prev.t, added, gone, samePeople: JSON.stringify(prev.people)===JSON.stringify(v.people)}; }
-function visitHtml(v, focus, withDiff){ const parts=Object.keys(v.contents).sort().filter(rec=>v.contents[rec].length).map(rec=>`<span class="id rec">${rec}</span> ${v.contents[rec].map(x=>`<span class="id obj" ${x===focus?'style="background:var(--accent-soft)"':''}>${x}</span>`).join(' ')}`);
-  const empties=Object.keys(v.contents).filter(rec=>!v.contents[rec].length);
-  const who=v.people&&v.people.length?`<b>${v.people.map(resName).join(' and ')} ${v.people.length>1?'are':'is'} here.</b> `:'<span class="small">nobody here.</span> ';
-  let html=`<div class="tl" style="grid-template-columns:82px 1fr"><span class="t">${wd3(Math.floor(v.t/DAY))} ${fmtMin(Math.floor((v.t%DAY)/60))}</span><span class="x"><b>${v.room}</b>${v.kind==='tour'?' <span class="small">(walkthrough)</span>':v.src==='scheduled'?' <span class="small">(scheduled look)</span>':''} · ${who}`;
-  if(withDiff){ const d=roomDiff(v); if(d){ const fmt=x=>{ const [o,rec]=x.split('@'); return `<span class="id obj">${o}</span><span class="small">@${rec}</span>`; };
-      html += `<span class="small">since ${wd3(Math.floor(d.prevT/DAY))} ${fmtMin(Math.floor((d.prevT%DAY)/60))}:</span> ${d.added.length?'<span class="mark ok">+</span> '+d.added.map(fmt).join(', '):''}${d.added.length&&d.gone.length?' · ':''}${d.gone.length?'<span class="mark bad">−</span> '+d.gone.map(fmt).join(', '):''}${!d.added.length&&!d.gone.length?'<span class="small">no object changes</span>':''}`;
-      html += `<details><summary>everything in the room</summary>${parts.join(' · ')||'<span class="small">empty</span>'}${empties.length?` <span class="small">· ${empties.length} empty spots</span>`:''}</details>`; }
-    else html += `${parts.join(' · ')||'<span class="small">empty</span>'}${empties.length?` <span class="small">· ${empties.length} empty spots</span>`:''}`; }
-  else html += `${parts.join(' · ')||'<span class="small">empty</span>'}${empties.length?` <span class="small">· ${empties.length} empty spots</span>`:''}`;
-  return html+`</span></div>`; }
+function visitHtml(v, focus, withDiff){ // one row per spot in the room, empties included; no delta
+  const recs=Object.keys(v.contents).sort();
+  const who=v.people&&v.people.length?`<b>${v.people.map(resName).join(' and ')} ${v.people.length>1?'are':'is'} here.</b>`:'<span class="small">nobody here.</span>';
+  const kind=v.kind==='tour'?' <span class="small">(walkthrough)</span>':v.src==='scheduled'?' <span class="small">(scheduled look)</span>':'';
+  const rows=recs.map(rec=>`<span class="id rec">${rec}</span><span class="spotobjs">${v.contents[rec].length?v.contents[rec].map(x=>`<span class="id obj" ${x===focus?'style="background:var(--accent-soft)"':''}>${x}</span>`).join(' '):'<span class="small">empty</span>'}</span>`).join('');
+  return `<div class="tl visit" style="grid-template-columns:82px 1fr"><span class="t">${wd3(Math.floor(v.t/DAY))} ${fmtMin(Math.floor((v.t%DAY)/60))}</span><span class="x"><b>${v.room}</b>${kind} · ${who}<div class="spots">${rows}</div></span></div>`; }
 
 // ---------- memory panels (the tools an agent would get too) ----------
 function memoryHtml(cut, visits, focusObj){ const H=hh(); const tab=S.mem.tab;
@@ -424,15 +434,50 @@ function notepadHtml(){ const ctx=S.play.q?`Q${S.play.index+1} ${S.play.q.obj} $
     ${S.notes.length?`<div class="hist">${S.notes.slice().reverse().map(n=>`<div><span class="small">${esc((n.ts||'').slice(0,16).replace('T',' '))} · ${esc(n.ctx||'')}</span><br>${esc(n.text)}</div>`).join('')}</div>`:'<p class="small">No notes yet on this household.</p>'}</div>`; }
 function wireNotepad(el){ const btn=el.querySelector('#saveNote'); if(!btn) return; refreshSyncBadge(); const ta0=el.querySelector('#noteText'); ta0.addEventListener('input', ()=>{ S.noteDraft=ta0.value; }); btn.addEventListener('click', async ()=>{ const text=ta0.value.trim(); if(!text) return; S.noteDraft=''; const ctx=S.play.q?`Q${S.play.index+1} ${S.play.q.obj} ${wd3(S.play.q.day)} ${fmtMin(S.play.q.minute)}${S.play.done?' (answered)':''}`:''; S.notes.push({ts:new Date().toISOString(), ctx, text, household:hh().id}); btn.disabled=true; await saveDoc(docPath('notes'), lsKey('notes'), {household:hh().id, entries:S.notes}); renderQuiz(); }); }
 
+// ---------- observation log: stays open across re-renders, filterable ----------
+const LOG_DEFAULT = {open:true, room:'', obj:'', day:'', from:'', to:'', text:''};
+S.log = S.log || Object.assign({}, LOG_DEFAULT);
+const hm = s => { const [a,b]=String(s).split(':').map(Number); return a*60+(b||0); };
+function logFilter(visits){ const f=S.log; return visits.filter(v=>{ const d=Math.floor(v.t/DAY), mins=Math.floor((v.t%DAY)/60);
+  if(f.room && v.room!==f.room) return false;
+  if(f.day!=='' && d!==+f.day) return false;
+  if(f.from && mins<hm(f.from)) return false;
+  if(f.to && mins>hm(f.to)) return false;
+  if(f.obj && !Object.values(v.contents).some(a=>a.includes(f.obj))) return false;
+  if(f.text){ const t=f.text.trim().toLowerCase(); if(t){ const hay=[v.room, ...Object.keys(v.contents), ...Object.values(v.contents).flat(), ...(v.people||[]).map(resName), fmtT(v.t)].join(' ').toLowerCase(); if(!hay.includes(t)) return false; } }
+  return true; }); }
+function logPanelHtml(visits){ const H=hh(), f=S.log, rooms=H.rooms.slice().sort(), nDays=run().state.days.length;
+  return `<div class="panel" id="logPanel"><details id="logDetails" ${f.open?'open':''}><summary>Full observation log up to now (${visits.length} room visits)</summary>
+    <div class="controls" style="margin-top:8px">
+      <label class="field">room <select id="lfRoom"><option value="">any</option>${rooms.map(r=>`<option ${f.room===r?'selected':''}>${r}</option>`).join('')}</select></label>
+      <label class="field">object <select id="lfObj"><option value="">any</option>${Object.keys(H.objects).sort().map(o=>`<option ${f.obj===o?'selected':''}>${o}</option>`).join('')}</select></label>
+      <label class="field">day <select id="lfDay"><option value="">any</option>${DAYS.slice(0,nDays).map((d,k)=>`<option value="${k}" ${f.day===String(k)?'selected':''}>${d}</option>`).join('')}</select></label>
+      <label class="field">from <input type="time" id="lfFrom" value="${f.from}"></label>
+      <label class="field">to <input type="time" id="lfTo" value="${f.to}"></label>
+      <label class="field">search <input type="text" id="lfText" value="${esc(f.text)}" placeholder="spot, object, person…"></label>
+      <button class="btn" id="lfClear">clear</button>
+    </div><div id="logBody"></div></details></div>`; }
+function logBodyHtml(visits, focus){ const shown=logFilter(visits), hi=S.log.obj||focus;
+  return `<p class="small" style="margin:6px 0">${shown.length===visits.length?`${visits.length} visits, oldest first`:`${shown.length} of ${visits.length} visits match`}</p><div class="timeline">${shown.map(v=>visitHtml(v, hi, false)).join('')||'<p class="small">nothing matches these filters</p>'}</div>`; }
+function wireLog(el, visits, focus){ const det=el.querySelector('#logDetails'); if(!det) return; const body=el.querySelector('#logBody');
+  const paint=()=>{ body.innerHTML=logBodyHtml(visits, focus); };
+  det.addEventListener('toggle', ()=>{ S.log.open=det.open; });
+  const bind=(id,key,ev)=>{ const n=el.querySelector(id); if(n) n.addEventListener(ev||'change', ()=>{ S.log[key]=n.value; paint(); }); };
+  bind('#lfRoom','room'); bind('#lfObj','obj'); bind('#lfDay','day'); bind('#lfFrom','from','input'); bind('#lfTo','to','input'); bind('#lfText','text','input');
+  const c=el.querySelector('#lfClear'); if(c) c.addEventListener('click', ()=>{ S.log=Object.assign({}, LOG_DEFAULT); el.querySelector('#logPanel').outerHTML=logPanelHtml(visits); wireLog(el, visits, focus); });
+  paint(); }
+
 // ---------- the chronological run ----------
-function revealedDay(doc, seq, i){ // verdicts are shown for days strictly before the current question's day (or everything when done / toggled)
-  if(doc.showVerdicts) return 99; if(i>=seq.length) return 99; return seq[i].day - 1; }
+// a spot id read as a phrase: "at sink_k1", "on Nora", "out of the house"
+function placeWords(rec, carrier){ if(rec==='ON_PERSON') return carrier?`on ${resName(carrier)}`:'on someone'; if(rec==='OUT_OF_HOUSE') return 'out of the house'; return `at <span class="id rec">${rec}</span>`; }
+function revealedDay(doc, seq, i){ // nothing is revealed while the run is in progress: a verdict would change later decisions
+  return i>=seq.length ? 99 : -1; }
 function scoreFrom(answers, upToDay){ const sc={n:0,you1:0,base:BASE_NAMES.map(()=>[0,0]), looks:0, cost:0, hidden:0}; for(const a of answers){ if(a.day>upToDay){ sc.hidden++; continue; } sc.n++; if(a.hit) sc.you1++; sc.looks+=a.looksUsed; sc.cost+=a.costUsed; a.base.forEach((b,i)=>{ if(sc.base[i]){ sc.base[i][0]+=b[0]?1:0; sc.base[i][1]+=b[1]?1:0; } }); } return sc; }
 function scoreTable(sc, title){ return `<h3>${title}</h3><div class="tablewrap"><table><thead><tr><th>Answerer</th><th class="num">Right</th><th class="num">Right in top 3</th></tr></thead><tbody>
     <tr><td><b>You</b> <span class="small">(${sc.looks} looks, ${sc.cost} budget spent on these)</span></td><td class="num">${sc.you1} ${sc.n?'<span class="small">('+Math.round(100*sc.you1/sc.n)+'%)</span>':''}</td><td class="num small">—</td></tr>
     ${BASE_NAMES.map((n,i)=>`<tr><td>${n}</td><td class="num">${sc.base[i][0]} ${sc.n?'<span class="small">('+Math.round(100*sc.base[i][0]/sc.n)+'%)</span>':''}</td><td class="num">${sc.base[i][1]} ${sc.n?'<span class="small">('+Math.round(100*sc.base[i][1]/sc.n)+'%)</span>':''}</td></tr>`).join('')}</tbody></table></div>${sc.hidden?`<p class="small">${sc.hidden} answer${sc.hidden===1?'':'s'} from the current day still sealed.</p>`:''}`; }
-function historyHtml(doc, upToDay){ return `<div class="hist">${doc.answers.slice().reverse().map(a=>{ const shown=a.day<=upToDay; return `<div>${shown?(a.hit?'<span class="mark ok">✓</span>':'<span class="mark bad">✗</span>'):'<span class="small">sealed</span>'} Q${a.i+1} <span class="id">${a.obj}</span> ${wd3(a.day)} ${fmtMin(a.minute)} → you said <span class="id rec">${a.guess}</span>${shown?` · it was <span class="id rec">${a.truth}</span>${a.whim?' <span class="tag whim">whim</span>':''} · baselines right: ${a.base.map((b,k)=>b[0]?BASE_NAMES[k].split(' (')[0]:null).filter(Boolean).join(', ')||'none'}`:''} <span class="small">· ${a.looksUsed} look${a.looksUsed===1?'':'s'}</span>${a.note?`<br><span class="small" style="color:var(--ink)">“${esc(a.note)}”</span>`:''}</div>`; }).join('')}</div>`; }
-function truthHtml(a){ const path=rowsFor(a.obj).filter(r=>r.t>a.cutFrom && r.t<=a.t); let html=`<details><summary>What actually happened to ${a.obj} (ground truth)</summary>`;
+function historyHtml(doc, upToDay){ return `<div class="hist">${doc.answers.slice().reverse().map(a=>{ const shown=a.day<=upToDay; return `<div>${shown?(a.hit?'<span class="mark ok">✓</span>':'<span class="mark bad">✗</span>'):'<span class="small">sealed</span>'} Q${a.i+1} <span class="id">${a.obj}</span> ${wd3(a.day)} ${fmtMin(a.minute)} → you said ${placeWords(a.guess)}${shown?`${a.hit?'':` · it was ${placeWords(a.truth,a.carrier)}`}${a.whim?' <span class="tag whim">whim</span>':''} · baselines right: ${a.base.map((b,k)=>b[0]?BASE_NAMES[k].split(' (')[0]:null).filter(Boolean).join(', ')||'none'}`:''} <span class="small">· ${a.looksUsed} look${a.looksUsed===1?'':'s'}</span>${a.note?`<br><span class="small" style="color:var(--ink)">“${esc(a.note)}”</span>`:''}</div>`; }).join('')}</div>`; }
+function truthHtml(a, open){ const path=rowsFor(a.obj).filter(r=>r.t>a.cutFrom && r.t<=a.t); let html=`<details ${open?'open':''}><summary>What actually happened to ${a.obj} (ground truth)</summary>`;
   if(!path.length) html+=`<div class="small">It did not move in the window before the question.</div>`;
   for(const r of path) html += `<div class="tl indent" style="grid-template-columns:82px 1fr"><span class="t" style="visibility:visible">${wd3(Math.floor(r.t/DAY))} ${fmtMin(Math.floor((r.t%DAY)/60))}</span><span class="x" style="padding-left:0">→ <span class="id rec">${r.receptacle_id}</span>${r.carrier?' ('+resName(r.carrier)+')':''} <span class="small">${esc(r.cause.replace(':',' · '))}${r.reason?' · '+esc(r.reason):''}</span>${r.whim?'<span class="tag whim">whim</span>':''}${(r.causes||[]).length?(S.reveal?r.causes.map(c=>`<span class="tag ${causeKind(c)}">${esc(c)}</span>`).join(''):' <span class="small">[hidden cause]</span>'):''}</span></div>`;
   return html+`</details>`; }
@@ -444,7 +489,7 @@ function renderQuiz(){ const el=document.getElementById('v-quiz'); const H=hh();
   const i = (S.play.done) ? doc.answers.length-1 : doc.answers.length; S.play.index=i;
   const upTo=revealedDay(doc, seq, S.play.done?i+1:i);
   let html='';
-  if(i>=seq.length){ const sc=scoreFrom(doc.answers, 99); html += `<p class="sub">Segment finished: ${seq.length} questions on ${H.id}.</p><div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack"><div class="panel">${scoreTable(sc,'Final score')}<div class="row" style="margin-top:10px"><button class="btn" id="resetRun">Restart this household</button></div></div>${notepadHtml()}</div><div class="stack"><div class="panel"><h3>Every answer</h3>${historyHtml(doc, 99)}</div></div></div>`; el.innerHTML=html; wireNotepad(el); wireRun(el, null); return; }
+  if(i>=seq.length){ const sc=scoreFrom(doc.answers, 99); html += `<p class="sub">Segment finished: ${seq.length} questions on ${H.id}.</p><div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack"><div class="panel">${scoreTable(sc,'Final score')}<div class="row" style="margin-top:10px"><button class="btn" id="resetRun">Restart this household</button></div></div><div class="panel"><h3>Hidden causes</h3><p class="small">${S.reveal?'The events and internal states that were driving each day. Turn off “reveal hidden causes” in the header to hide them again.':'Each day had events (rain, guests, a sick day…) and internal states (running late, low energy…) you could not see. Now that the run is over you can reveal them here or with the switch in the header.'}</p><div class="daytabs" style="margin-bottom:8px">${run().state.days.map((d,k)=>`<button data-fday="${k}" aria-selected="${(S.finDay??1)===k}">${DAYS[k]}</button>`).join('')}</div>${causesPanel(S.finDay??1, S.reveal)}</div>${notepadHtml()}</div><div class="stack"><div class="panel"><h3>Every answer</h3>${historyHtml(doc, 99)}</div><div class="panel"><h3>What actually happened</h3><p class="small">${S.reveal?'Cause tags on a move show which hidden cause produced it; the chips after each question are the causes active that day.':'Moves driven by a hidden cause show <span class="small">[hidden cause]</span>; flip “reveal hidden causes” to name them.'}</p>${doc.answers.map(a=>{ const dc=run().state.days[a.day].causes; return `<div style="margin-bottom:10px"><span class="small">Q${a.i+1}</span> <span class="id">${a.obj}</span> ${wd3(a.day)} ${fmtMin(a.minute)} · ${placeWords(a.truth,a.carrier)} ${a.hit?'<span class="mark ok">✓</span>':'<span class="mark bad">✗ you said '+placeWords(a.guess)+'</span>'}${S.reveal&&dc.length?`<div class="chips" style="margin-top:3px">${dc.map(c=>`<span class="tag ${c.kind}" title="${esc(c.words)}">${esc(c.id)}</span>`).join('')}</div>`:''}${truthHtml(a, true)}</div>`; }).join('')}</div></div></div>`; el.innerHTML=html; wireNotepad(el); wireRun(el, null); for(const b of el.querySelectorAll('[data-fday]')) b.addEventListener('click', ()=>{ S.finDay=+b.dataset.fday; renderQuiz(); }); const rv=el.querySelector('[data-act="reveal"]'); if(rv) rv.addEventListener('click', ()=>{ S.reveal=true; document.getElementById('reveal').checked=true; render(); }); return; }
   const q=seq[i]; S.play.q=q;
   let changed=false; if(!S.play.done) changed=runPending(q.t);
   const visits=knowledgeVisits(); const cut=q.t; const day=q.day;
@@ -453,7 +498,7 @@ function renderQuiz(){ const el=document.getElementById('v-quiz'); const H=hh();
   const failed=doc.looks.filter(l=>l.failed && l.t>prevT && l.t<=cut);
   const myLooks=doc.looks.filter(l=>l.src==='question' && l.qi===i && !l.failed);
   const left=budgetLeft(day);
-  html += `<p class="sub">One household, Thursday to Sunday, questions in the order they happen. You start with a walkthrough of every room on Wednesday at 18:00 and nothing else. A look is a room: you see every spot in it and who is standing there. Each day has a budget of ${doc.budget}; a look costs ${doc.lookCost}, plus ${doc.travel} when the robot has to move rooms. You can also schedule looks for later. Your verdicts stay sealed until the day is over.</p>`;
+  html += `<p class="sub">One household, Thursday to Sunday, questions in the order they happen. You start with a walkthrough of every room on Wednesday at 18:00 and nothing else. A look is a room: you see every spot in it and who is standing there. Each day has a budget of ${doc.budget}; a look costs ${doc.lookCost}, plus ${doc.travel} when the robot has to move rooms. You can also schedule looks for later. Every verdict stays sealed until the whole run is finished; the only way to learn where something is, is to look.</p>`;
   html += `<div class="grid2" style="grid-template-columns:1fr 1fr"><div class="stack">`;
   // ---- question card
   const pct=Math.round(100*i/seq.length);
@@ -465,9 +510,8 @@ function renderQuiz(){ const el=document.getElementById('v-quiz'); const H=hh();
   html += `<div class="row" style="margin-top:8px"><label class="field">your answer: a spot <select id="guessSpot" ${S.play.done?'disabled':''}><option value="">— choose a spot —</option>${rooms.map(room=>`<optgroup label="${room}">${Object.values(H.receptacles).filter(r=>r.room===room).sort((a,b)=>a.id.localeCompare(b.id)).map(r=>`<option value="${r.id}">${r.id}</option>`).join('')}</optgroup>`).join('')}</select></label><button class="btn" id="guessSpotBtn" ${S.play.done?'disabled':''}>Guess it is here</button><button class="btn" id="guessOut" ${S.play.done?'disabled':''}>Guess: out of the house</button><button class="btn" id="guessOn" ${S.play.done?'disabled':''}>Guess: on someone</button>${S.play.done?'<button class="btn primary" id="nextQ">Next question</button>':''}</div>`;
   if(myLooks.length){ html += `<div style="margin-top:10px"><h3>Your looks for this question</h3><div class="timeline">${myLooks.map(v=>visitHtml(v, q.obj, true)).join('')}</div></div>`; }
   html += `<div style="margin-top:12px"><h3>Your thinking on this question</h3><textarea id="qNote" rows="3" placeholder="What are you using to decide? Update it after each look. Saved with the answer." style="width:100%;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px;font:inherit;resize:vertical">${esc(S.play.draft||'')}</textarea>${S.play.done?`<div class="row" style="margin-top:6px;justify-content:space-between"><span class="small" id="qNoteState">${S.play.noteDirty?'edited, not saved':'saved with the answer'}</span><button class="btn" id="qNoteSave">Save note</button></div>`:'<p class="small" style="margin:4px 0 0">Kept while you look; stored when you answer.</p>'}</div>`;
-  if(S.play.done){ const a=doc.answers[i]; const shown=a.day<=upTo;
-    html += `<div class="verdict ${shown?(a.hit?'ok':'bad'):'none'}" style="margin-top:10px"><b>${shown?(a.hit?'Right.':'Wrong.'):'Answer recorded.'}</b> You said <span class="id rec">${a.guess}</span>.${shown?` It is at <span class="id rec">${a.truth}</span>.`:` The verdict is sealed until ${DAYS[a.day]} is over.`}</div>`;
-    if(shown) html += truthHtml(a); }
+  if(S.play.done){ const a=doc.answers[i];
+    html += `<div class="verdict none" style="margin-top:10px"><b>Answer recorded.</b> You said ${placeWords(a.guess)}. Right or wrong is revealed when the run is finished.</div>`; }
   html += `</div>`;
   // ---- schedule looks
   const pend=doc.pending.slice().sort((a,b)=>a.t-b.t);
@@ -476,24 +520,22 @@ function renderQuiz(){ const el=document.getElementById('v-quiz'); const H=hh();
     ${pend.length?`<div class="hist">${pend.map((p,k)=>`<div>${fmtT(p.t)} · ${p.room} <button class="btn" data-cancel="${k}" style="padding:1px 8px;margin-left:8px">cancel</button></div>`).join('')}</div>`:'<p class="small">Nothing scheduled.</p>'}</div>`;
   // ---- new since last question
   html += `<div class="panel"><h3>New since your last question</h3>`;
-  if(i===0) html += `<p class="small">Only the Wednesday walkthrough so far; it is in the memory panel and the log on the right.</p>`;
+  if(i===0) html += `<p class="small">Only the Wednesday walkthrough so far; it is in the memory panel and the observation log on the right; filter the log by room, object, day or time.</p>`;
   html += fresh.length?`<div class="timeline">${fresh.map(v=>visitHtml(v, q.obj, true)).join('')}</div>`:(i>0?`<p class="small">No scheduled looks ran since the last question.</p>`:'');
   if(failed.length) html += `<p class="small mark bad">${failed.length} scheduled look${failed.length===1?'':'s'} skipped: ${failed.map(f=>fmtT(f.t)+' '+f.room+' ('+f.reason+')').join('; ')}</p>`;
   html += `</div>`;
   // ---- score + settings
-  const sc=scoreFrom(doc.answers, upTo);
-  html += `<div class="panel">${scoreTable(sc, `Score so far · ${sc.n} revealed of ${doc.answers.length} answered`)}${doc.answers.length?`<details><summary>Every answer so far</summary>${historyHtml(doc, upTo)}</details>`:''}
-    <div class="row" style="margin-top:8px;align-items:center"><label class="switch"><input type="checkbox" id="showVerdicts" ${doc.showVerdicts?'checked':''}> show verdicts immediately (not recommended)</label></div>
+  html += `<div class="panel"><h3>Progress</h3><p class="small">${doc.answers.length} of ${seq.length} answered · ${doc.looks.filter(l=>!l.failed).length} looks so far. Scores for you and the baselines appear when the run is finished.</p>${doc.answers.length?`<details><summary>Your answers so far (sealed)</summary>${historyHtml(doc, upTo)}</details>`:''}
     <div class="row" style="margin-top:8px"><button class="btn" id="resetRun">Restart this household</button><span class="small">budget/day</span><select id="cfgBudget">${[6,9,12,16,24].map(v=>`<option ${doc.budget===v?'selected':''}>${v}</option>`).join('')}</select><span class="small">travel cost</span><select id="cfgTravel">${[1,2,3,5].map(v=>`<option ${doc.travel===v?'selected':''}>${v}</option>`).join('')}</select><span class="small">changing these restarts the segment</span></div></div>`;
   html += notepadHtml();
   html += `</div><div class="stack">`;
   // ---- right column: memory + full log
   html += memoryHtml(cut, visits, q.obj);
   const seenSoFar=visits.filter(v=>v.t<=cut);
-  html += `<div class="panel"><details><summary>Full observation log up to now (${seenSoFar.length} room visits)</summary><div class="timeline" style="margin-top:8px">${seenSoFar.map(v=>visitHtml(v, q.obj, false)).join('')}</div></details></div>`;
+  html += logPanelHtml(seenSoFar);
   html += `</div></div>`;
   el.innerHTML = html;
-  wireNotepad(el); wireRun(el, q);
+  wireNotepad(el); wireRun(el, q); wireLog(el, seenSoFar, q.obj);
   if(changed) saveRun();
 }
 function recordAnswer(guess){ const doc=runDoc(), q=S.play.q, i=S.play.index, visits=knowledgeVisits(), tr=rowAt(q.obj,q.t), truth=tr.receptacle_id;
@@ -507,8 +549,7 @@ function wireRun(el, q){ const doc=runDoc();
   const restartWith=async (patch)=>{ if(doc.answers.length && !confirm('Changing this restarts the segment for this household. Continue?')){ renderQuiz(); return; } S.play.doc=Object.assign({perDay:doc.perDay, budget:doc.budget, travel:doc.travel, lookCost:doc.lookCost, showVerdicts:doc.showVerdicts}, patch, {answers:[], looks:[], pending:[], robot:homeBase(), started:new Date().toISOString()}); S.play.done=false; S.play.draft=''; renderQuiz(); await saveRun(); };
   const cb=el.querySelector('#cfgBudget'); if(cb) cb.addEventListener('change', e=>restartWith({budget:+e.target.value}));
   const ct=el.querySelector('#cfgTravel'); if(ct) ct.addEventListener('change', e=>restartWith({travel:+e.target.value}));
-  const sv=el.querySelector('#showVerdicts'); if(sv) sv.addEventListener('change', async e=>{ doc.showVerdicts=e.target.checked; renderQuiz(); await saveRun(); });
-  for(const b of el.querySelectorAll('[data-mem]')) b.addEventListener('click', ()=>{ S.mem.tab=b.dataset.mem; renderQuiz(); });
+    for(const b of el.querySelectorAll('[data-mem]')) b.addEventListener('click', ()=>{ S.mem.tab=b.dataset.mem; renderQuiz(); });
   const mo=el.querySelector('#memObj'); if(mo) mo.addEventListener('change', e=>{ S.mem.obj=e.target.value; renderQuiz(); });
   const mp=el.querySelector('#memPlace'); if(mp) mp.addEventListener('change', e=>{ S.mem.place=e.target.value; renderQuiz(); });
   if(!q) return;

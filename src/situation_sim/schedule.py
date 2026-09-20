@@ -48,6 +48,7 @@ class Bout:
     added_by: Optional[str] = None
     edited_by: List[str] = field(default_factory=list)
     habit: Optional[str] = None
+    surface_by: Optional[str] = None      # episode that moved this activity to another surface
     bout_index: int = 0
     n_bouts: int = 1
 
@@ -103,23 +104,30 @@ def _mk(activity: str, start: int, duration: int, res: Resident, hh: Household, 
 
 
 def fill_slot(block: dict, res: Resident, hh: Household, acts: dict, daytype: str,
-              rng: random.Random, used: set, hh_used: set) -> List[dict]:
+              rng: random.Random, used: set, hh_used: set,
+              bias: Optional[Dict[str, float]] = None) -> List[dict]:
     """Choose what a resident does in a free slot from their habits. A habit
     fires at most once per resident per day; a household_once chore at most
-    once per home per day."""
+    once per home per day. ``bias`` (from episodes active when the slot
+    starts) multiplies a habit's or activity's weight by name."""
     templates = acts["activities"]
+    bias = bias or {}
     slot = block["slot"]
     start, dur = _hhmm(block["start"]), int(block["duration"])
     hob, cho = acts["habits"]["hobbies"], acts["habits"]["chores"]
+
+    def tilt(name: str, activity: str, p: float) -> float:
+        return min(1.0, p * bias.get(name, 1.0) * (bias.get(activity, 1.0) if activity != name else 1.0))
+
     cands = []
     for h in res.hobbies:
         spec = hob[h]
         if slot in spec["slots"] and h not in used:
-            cands.append((h, spec, spec["p"][daytype]))
+            cands.append((h, spec, tilt(h, spec["activity"], spec["p"][daytype])))
     for c in res.chores:
         spec = cho[c]
         if slot in spec["slots"] and c not in used and not (spec.get("household_once") and c in hh_used):
-            cands.append((c, spec, spec["p"][daytype] * (0.4 + res.tidiness)))
+            cands.append((c, spec, tilt(c, spec["activity"], spec["p"][daytype] * (0.4 + res.tidiness))))
     # needs_shared: the home must own that shared object
     cands = [(n, s, p) for n, s, p in cands
              if not s.get("needs_shared") or any(o.cls == s["needs_shared"] for o in hh.objects.values())]
@@ -137,15 +145,38 @@ def fill_slot(block: dict, res: Resident, hh: Household, acts: dict, daytype: st
             return out
     # default
     opts = acts["slot_defaults"][slot]
-    u = rng.random() * sum(o["w"] for o in opts)
+    ws = [o["w"] * bias.get(o["activity"], 1.0) for o in opts]
+    u = rng.random() * sum(ws)
     acc = 0.0
-    for o in opts:
-        acc += o["w"]
+    for o, w in zip(opts, ws):
+        acc += w
         if u <= acc:
             if o["activity"] == "none":
                 return []
             return [_mk(o["activity"], start, dur, res, hh, templates)]
     return []
+
+
+def _episode_edits(blocks: List[dict], res: Resident, sit: DaySituation) -> None:
+    """Episode effects on blocks that start inside an active window:
+    extend / shorten / shift / skip_p / surface. In place."""
+    for b in blocks:
+        for ep in sit.episodes_at(res.id, b["start"]):
+            fx = ep.effects
+            act = b["activity"]
+            hit = False
+            if act in fx.get("extend", {}):
+                b["duration"] += int(fx["extend"][act]); hit = True
+            if act in fx.get("shorten", {}):
+                b["duration"] = max(5, int(round(b["duration"] * float(fx["shorten"][act])))); hit = True
+            if act in fx.get("shift", {}):
+                b["start"] += int(fx["shift"][act]); hit = True
+            if act in fx.get("skip_p", {}):
+                b["skip_p"] = min(1.0, float(b.get("skip_p", 0.0)) + float(fx["skip_p"][act])); hit = True
+            if act in fx.get("surface", {}):
+                b["_surface_kind"] = fx["surface"][act]; hit = True
+            if hit and ep.id not in b["_edited"]:
+                b["_edited"].append(ep.id)
 
 
 def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
@@ -168,7 +199,8 @@ def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
             if "slot" in raw:
                 if raw["slot"] in gone_slots:
                     continue
-                blocks += fill_slot(raw, res, hh, acts, daytype, rng, used, hh_used)
+                blocks += fill_slot(raw, res, hh, acts, daytype, rng, used, hh_used,
+                                    bias=sit.slot_bias(res.id, _hhmm(raw["start"])))
                 continue
             b = _mk(raw["activity"], _hhmm(raw["start"]), int(raw["duration"]), res, hh, templates)
             for k in ("skip_p", "mean_bouts"):
@@ -177,6 +209,7 @@ def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
             if raw.get("skip_by_tidiness"):
                 b["skip_p"] = 0.8 * (1 - res.tidiness)
             blocks.append(b)
+        _episode_edits(blocks, res, sit)
         nominal[res.id] = blocks
     if hh.pet:
         pet_cfg = acts["habits"]["pet"][hh.pet]
@@ -254,6 +287,20 @@ def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
                 b["_room"] = resolve_room(add.get("room", tmpl["room"]), res, hh)
                 b["_added_by"] = c.id
                 nominal[rid].append(b)
+    # 2b. episode-added bouts (a snack at onset, an evening work session)
+    for ep in sorted(sit.episodes, key=lambda e: (e.start, e.id)):
+        res = hh.residents[ep.resident]
+        for add in ep.effects.get("add", []):
+            at = add.get("at", 0)
+            start = _hhmm(at) if isinstance(at, str) else ep.start + int(at)
+            if start >= MIN_PER_DAY:
+                continue
+            tmpl = templates[add["activity"]]
+            b = _mk(add["activity"], start, int(add["duration"]), res, hh, templates,
+                    mean_bouts=add.get("mean_bouts", 1))
+            b["_room"] = resolve_room(add.get("room", tmpl["room"]), res, hh)
+            b["_added_by"] = ep.id
+            nominal[ep.resident].append(b)
 
     # 3. jitter, anchors, fragmentation
     out: List[Bout] = []
@@ -288,7 +335,7 @@ def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
                 e = MIN_PER_DAY
             tmpl = templates[b["activity"]]
             room = b["_room"]
-            surface = resolve_surface(tmpl.get("surface"), room, hh)
+            surface = resolve_surface(b.get("_surface_kind") or tmpl.get("surface"), room, hh)
             mean_bouts = max(tc.MIN_MEAN_BOUTS, min(tc.MAX_MEAN_BOUTS,
                                                    float(b.get("mean_bouts", tmpl.get("mean_bouts", 1)))))
             n = 1
@@ -318,7 +365,9 @@ def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
             common = dict(tidies=bool(tmpl.get("tidies", False)),
                           tidy_rooms=[r for r in tmpl.get("tidy_rooms", [room]) if r in hh.rooms],
                           tidy_sizes=list(tmpl.get("tidy_sizes", [])),
-                          added_by=b["_added_by"], edited_by=list(b["_edited"]), habit=b.get("_habit"))
+                          added_by=b["_added_by"], edited_by=list(b["_edited"]), habit=b.get("_habit"),
+                          surface_by=(next((e for e in b["_edited"] if e.startswith("ep:")), None)
+                                      if b.get("_surface_kind") else None))
             for i, (a, bb) in enumerate(pieces):
                 out.append(Bout(res.id, b["activity"], a, bb, room, surface, list(tmpl.get("uses", [])),
                                 bout_index=i, n_bouts=n, **common))

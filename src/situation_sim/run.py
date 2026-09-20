@@ -13,22 +13,23 @@ from situation_sim.household import sample_household
 from situation_sim.placement import compute_allowed
 from situation_sim.schedule import load_activities
 from situation_sim.simulate import Simulator
-from situation_sim.situation import load_events, sample_situations
+from situation_sim.situation import load_episodes, load_events, sample_situations
 from situation_sim.trace import write_events, write_hidden_state, write_trace, write_trace_json
 
 
 def generate(seed: int, out: pathlib.Path, n_days: int = 5) -> None:
     out.mkdir(parents=True, exist_ok=True)
     events = load_events()
+    episodes = load_episodes()
     acts = load_activities()
     hh = sample_household(seed, acts)
     compute_allowed(hh, acts, events)
-    sits = sample_situations(hh, seed, n_days, events)
+    sits = sample_situations(hh, seed, n_days, events, episodes)
     episode_id = f"{hh.id}_situation_seed{seed}"
     res = Simulator(hh, sits, events, acts, seed, episode_id).run()
     write_trace(out / "trace.md", hh, res, events)
     write_events(out / "events.jsonl", hh, res, n_days, episode_id)
-    write_hidden_state(out / "hidden_state.json", hh, sits, res, events, seed)
+    write_hidden_state(out / "hidden_state.json", hh, sits, res, events, seed, episodes)
     write_trace_json(out / "trace.json", hh, res)
 
 

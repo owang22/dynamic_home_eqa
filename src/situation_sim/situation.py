@@ -1,21 +1,27 @@
 """Day situation sampler: the hidden causes active on each day.
 
-Two kinds of cause:
-  * external events from ``events.yaml`` (household- or resident-scoped)
+Three kinds of cause:
+  * external events from ``events.yaml`` (household- or resident-scoped):
+    they rewrite the day's schedule and move many objects at once
   * internal resident states (energy, hurriedness, distraction), resampled
     daily with carryover, and counted as an ACTIVE cause only in their
     extreme band (low energy, running late, distracted). Mild states still
     scale whim size but are not listed as causes.
+  * episodes from ``episodes.yaml``: small moods and intentions that hold
+    for a window of a few hours (``on_a_roll`` 13:40-17:20) and only tilt
+    choices the simulator already makes. An episode may have several
+    phases on consecutive days (a deadline tomorrow -> due today -> relief),
+    so what starts tonight is still true tomorrow.
 
 Nothing here depends on the day index except the weekday/weekend split of
-event rates and schedules.
+event rates and schedules, and the day offsets of episode phases.
 """
 from __future__ import annotations
 
 import pathlib
 import random
 from dataclasses import dataclass, field, asdict
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import yaml
 
@@ -23,13 +29,19 @@ from situation_sim.household import Household
 
 WEEKDAYS = ["Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 WEEKEND = {"Saturday", "Sunday"}
+MIN_PER_DAY = 1440
+WAKE_MINUTE = 6 * 60 + 30      # "wake" in an episode window
 
-# Internal state dynamics (judgment defaults, recorded in hidden_state.json)
+# Internal state dynamics (judgment defaults, recorded in hidden_state.json).
+# Day-long flags are meant to be rare now that episodes carry the
+# within-day moods; the noise is lower than the first checkpoint's 0.22.
 STATE_CARRYOVER = 0.5      # weight of yesterday's value
-STATE_NOISE_SD = 0.22
-THRESH_LOW_ENERGY = 0.30
-THRESH_HURRIED = 0.68
-THRESH_DISTRACTED = 0.68
+STATE_NOISE_SD = 0.14
+THRESH_LOW_ENERGY = 0.25
+THRESH_HURRIED = 0.72
+THRESH_DISTRACTED = 0.72
+FLAGS = ("low_energy", "running_late", "distracted")
+STATE_KEYS = ("energy", "hurriedness", "distraction")
 
 
 def load_events(path: Optional[pathlib.Path] = None) -> Dict[str, dict]:
@@ -38,13 +50,50 @@ def load_events(path: Optional[pathlib.Path] = None) -> Dict[str, dict]:
         return yaml.safe_load(f)["events"]
 
 
+def load_episodes(path: Optional[pathlib.Path] = None) -> Dict[str, dict]:
+    path = path or pathlib.Path(__file__).with_name("episodes.yaml")
+    with open(path) as f:
+        return yaml.safe_load(f)["episodes"]
+
+
+def hhmm(minute: int) -> str:
+    minute = max(0, min(MIN_PER_DAY, minute))
+    return f"{minute // 60:02d}:{minute % 60:02d}"
+
+
+def _hhmm(s: str) -> int:
+    h, m = s.split(":")
+    return int(h) * 60 + int(m)
+
+
 @dataclass
 class Cause:
-    id: str                    # e.g. "rain", "late_work:resident_1", "low_energy:resident_2"
-    kind: str                  # "event" | "internal"
-    event: Optional[str]       # event type name for events
+    id: str                    # e.g. "rain", "late_work:resident_1", "low_energy:resident_2", "ep:on_a_roll:resident_1:d2"
+    kind: str                  # "event" | "internal" | "episode"
+    event: Optional[str]       # event type name for events, episode type name for episodes
     resident: Optional[str]    # None for household scope
     words: str                 # plain words for the trace
+
+
+@dataclass
+class Episode:
+    """One phase of an episode, on one day, for one resident."""
+    id: str                    # "ep:<type>:<resident>:d<day>[:<phase>]"
+    type: str
+    phase: str
+    resident: str
+    day: int
+    start: int                 # minute of day, inclusive
+    end: int                   # minute of day, exclusive
+    effects: dict
+    words: str
+    chain: str                 # shared by every phase of one rolled episode
+
+    def active(self, minute: int) -> bool:
+        return self.start <= minute < self.end
+
+    def to_json(self) -> dict:
+        return asdict(self)
 
 
 @dataclass
@@ -54,33 +103,98 @@ class DaySituation:
     is_weekend: bool
     causes: List[Cause]
     states: Dict[str, Dict[str, float]]   # resident -> {energy, hurriedness, distraction}
-    flags: Dict[str, List[str]] = field(default_factory=dict)  # resident -> active internal flags
+    flags: Dict[str, List[str]] = field(default_factory=dict)  # resident -> day-long internal flags
+    episodes: List[Episode] = field(default_factory=list)
 
     def events_for(self, resident: str) -> List[Cause]:
         """Event causes that apply to this resident (household ones and their own)."""
         return [c for c in self.causes if c.kind == "event"
                 and (c.resident is None or c.resident == resident)]
 
-    def has_flag(self, resident: str, flag: str) -> bool:
-        return flag in self.flags.get(resident, [])
+    # --- time-aware views: minute=None means "the day-long part only" ----
+    def episodes_at(self, resident: str, minute: Optional[int]) -> List[Episode]:
+        if minute is None:
+            return []
+        return [e for e in self.episodes if e.resident == resident and e.active(minute)]
+
+    def has_flag(self, resident: str, flag: str, minute: Optional[int] = None) -> bool:
+        return self.flag_source(resident, flag, minute) is not None
+
+    def flag_source(self, resident: str, flag: str, minute: Optional[int] = None) -> Optional[str]:
+        """The cause id that makes ``flag`` active for this resident at
+        ``minute``: the day-long internal cause, else the first active
+        episode carrying the flag, else None."""
+        if flag in self.flags.get(resident, []):
+            return f"{flag}:{resident}"
+        for e in self.episodes_at(resident, minute):
+            if flag in e.effects.get("flags", []):
+                return e.id
+        return None
+
+    def state_at(self, resident: str, minute: Optional[int] = None) -> Dict[str, float]:
+        st = dict(self.states[resident])
+        for e in self.episodes_at(resident, minute):
+            for k, dv in e.effects.get("state", {}).items():
+                st[k] = st.get(k, 0.0) + float(dv)
+        return {k: round(_clamp(v), 3) for k, v in st.items()}
+
+    def slot_bias(self, resident: str, minute: int) -> Dict[str, float]:
+        out: Dict[str, float] = {}
+        for e in self.episodes_at(resident, minute):
+            for k, f in e.effects.get("slot_bias", {}).items():
+                out[k] = out.get(k, 1.0) * float(f)
+        return out
 
     def to_json(self) -> dict:
         return {"day_index": self.day_index, "weekday": self.weekday,
                 "is_weekend": self.is_weekend,
                 "causes": [asdict(c) for c in self.causes],
-                "states": self.states, "flags": self.flags}
+                "states": self.states, "flags": self.flags,
+                "episodes": [e.to_json() for e in self.episodes]}
 
 
 def _clamp(x: float) -> float:
     return max(0.0, min(1.0, x))
 
 
+def _window(phase: dict, rng: random.Random) -> Tuple[int, int]:
+    start = phase.get("start", "wake")
+    if start == "wake":
+        s = WAKE_MINUTE
+    elif isinstance(start, list):
+        a, b = _hhmm(start[0]), _hhmm(start[1])
+        s = a + int(rng.random() * max(0, b - a))
+    else:
+        s = _hhmm(start)
+    if "until" in phase:
+        e = MIN_PER_DAY if phase["until"] == "sleep" else _hhmm(phase["until"])
+    else:
+        dur = phase.get("duration", 60)
+        if isinstance(dur, list):
+            dur = dur[0] + int(rng.random() * max(0, dur[1] - dur[0]))
+        e = s + int(dur)
+    return s, max(s + 1, min(MIN_PER_DAY, e))
+
+
+def _eligible(spec: dict, r) -> bool:
+    if "roles" in spec and r.role not in spec["roles"]:
+        return False
+    if "needs_hobby" in spec and spec["needs_hobby"] not in r.hobbies:
+        return False
+    return True
+
+
 def sample_situations(hh: Household, seed: int, n_days: int,
-                      events: Dict[str, dict]) -> List[DaySituation]:
+                      events: Dict[str, dict],
+                      episodes: Optional[Dict[str, dict]] = None) -> List[DaySituation]:
+    episodes = load_episodes() if episodes is None else episodes
     rng = random.Random(f"situation:{seed}")
+    ep_rng = random.Random(f"episodes:{seed}")
     days: List[DaySituation] = []
     prev: Dict[str, Dict[str, float]] = {}
     residents = sorted(hh.residents.values(), key=lambda r: r.id)
+    # phases already rolled for later days: day -> episodes
+    scheduled: Dict[int, List[Episode]] = {}
     for d in range(n_days):
         weekday = WEEKDAYS[d % len(WEEKDAYS)]
         is_we = weekday in WEEKEND
@@ -138,5 +252,36 @@ def sample_situations(hh: Household, seed: int, n_days: int,
                                     f"{nm} is distracted ({st['distraction']:.2f}): carries things into the next room absent-mindedly, more likely to forget pocket items"))
             flags[r.id] = fl
         prev = states
-        days.append(DaySituation(d, weekday, is_we, causes, states, flags))
+
+        # --- episodes: roll today's onsets, then collect every phase that
+        #     lands today (rolled today or on an earlier day) ---------------
+        today: List[Episode] = list(scheduled.pop(d, []))
+        busy = {(e.resident, e.type) for e in today}
+        for ename in sorted(episodes):
+            spec = episodes[ename]
+            p = spec["p_day"][rate_key]
+            for r in residents:
+                if not _eligible(spec, r) or (r.id, ename) in busy:
+                    continue
+                if ep_rng.random() >= p:
+                    continue
+                chain = f"ep:{ename}:{r.id}:d{d}"
+                for ph in spec["phases"]:
+                    pd = d + int(ph.get("day", 0))
+                    if pd >= n_days:
+                        continue
+                    s, e = _window(ph, ep_rng)
+                    pid = chain if len(spec["phases"]) == 1 else f"{chain}:{ph['id']}"
+                    words = ph["words"].replace("{name}", r.name.capitalize())
+                    ep = Episode(pid, ename, ph["id"], r.id, pd, s, e,
+                                 ph.get("effects", {}), words, chain)
+                    if pd == d:
+                        today.append(ep)
+                    else:
+                        scheduled.setdefault(pd, []).append(ep)
+        today.sort(key=lambda e: (e.start, e.resident, e.id))
+        for e in today:
+            causes.append(Cause(e.id, "episode", e.type, e.resident,
+                                f"{e.words} ({hhmm(e.start)}–{hhmm(e.end)})"))
+        days.append(DaySituation(d, weekday, is_we, causes, states, flags, today))
     return days

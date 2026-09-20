@@ -108,9 +108,11 @@ def _resolve_kind(hh: Household, kind: str, obj: Obj, res: Resident,
 def decide(hh: Household, obj: Obj, res: Resident, ended: Bout, nxt: Optional[Bout],
            sit: DaySituation, events: Dict[str, dict], world: World,
            rng: random.Random) -> Decision:
-    st = sit.states[res.id]
+    now = ended.end                       # episodes and flags are read at the putdown minute
+    st = sit.state_at(res.id, now)
     mood = res.mood_sensitivity
     d: Optional[Decision] = None
+    active = sit.episodes_at(res.id, now)
 
     # 1. event placement rules (first matching rule of the first matching
     #    event in sorted order wins)
@@ -131,6 +133,25 @@ def decide(hh: Household, obj: Obj, res: Resident, ended: Bout, nxt: Optional[Bo
         if d:
             break
 
+    # 1b. episode placement preferences (windowed, same shape as event rules)
+    if d is None:
+        for ep in active:
+            for rule in ep.effects.get("prefer", []):
+                if rule["class"] != obj.cls:
+                    continue
+                after = rule["after"]
+                hit = (ended.activity in after or "any" in after
+                       or ("any_return" in after and ended.away))
+                if not hit:
+                    continue
+                dest = _resolve_kind(hh, rule["to"], obj, res, ended)
+                if dest is None:
+                    continue
+                d = Decision(dest, rule["note"], [ep.id], rule="episode")
+                break
+            if d:
+                break
+
     # 2. tidy pass: everything goes home
     if d is None and ended.tidies:
         d = Decision(obj.home[0], "tidied away to its usual place",
@@ -140,7 +161,8 @@ def decide(hh: Household, obj: Obj, res: Resident, ended: Bout, nxt: Optional[Bo
     if d is None and ended.away:
         home = obj.home[0]
         p_base = PARAMS["dump_untidy"] * (1 - res.tidiness)
-        p_hurry = PARAMS["dump_hurry"] * mood if sit.has_flag(res.id, "running_late") else 0.0
+        late_src = sit.flag_source(res.id, "running_late", now)
+        p_hurry = PARAMS["dump_hurry"] * mood if late_src else 0.0
         u = rng.random()
         dump_kind = _DUMP_KIND.get(obj.cls, _DUMP_SIZE.get(obj.size, "entry_table"))
         dump_rec = hh.rec_of_kind(dump_kind, "entry")
@@ -151,31 +173,43 @@ def decide(hh: Household, obj: Obj, res: Resident, ended: Bout, nxt: Optional[Bo
                              rule="dump")
             else:
                 d = Decision(dump_rec, "dumped at the door, running late",
-                             [f"running_late:{res.id}"], rule="dump")
+                             [late_src], rule="dump")
         else:
             d = Decision(home, "put away in its usual place after the trip", [], rule="home")
 
     # 4. a home activity ended
     if d is None:
         # distracted: carry it into the next room
-        if (sit.has_flag(res.id, "distracted") and nxt is not None and not nxt.away
+        distracted_src = sit.flag_source(res.id, "distracted", now)
+        if (distracted_src and nxt is not None and not nxt.away
                 and nxt.room != ended.room and nxt.surface is not None
                 and nxt.surface in obj.allowed):
             if rng.random() < PARAMS["carry_next_distract"] * mood:
                 d = Decision(nxt.surface, f"carried along absent-mindedly into the {nxt.room}",
-                             [f"distracted:{res.id}"], rule="carry_next")
+                             [distracted_src], rule="carry_next")
         if d is None:
+            tired_src = sit.flag_source(res.id, "low_energy", now)
             p_base = PARAMS["leave_untidy"] * (1 - res.tidiness)
-            p_tired = PARAMS["leave_low_energy"] * mood if sit.has_flag(res.id, "low_energy") else 0.0
+            p_tired = PARAMS["leave_low_energy"] * mood if tired_src else 0.0
+            # episodes: a per-class nudge, positive (left out) or negative (tidier)
+            ep_leave = [(ep, float(ep.effects["leave_p"][obj.cls])) for ep in active
+                        if obj.cls in ep.effects.get("leave_p", {})]
+            p_ep = sum(v for _, v in ep_leave)
+            if p_ep < 0:                    # a tidy mood eats into the base chance
+                p_base = max(0.0, p_base + p_ep)
+                p_ep = 0.0
             u = rng.random()
             surface = ended.surface
-            if (u < p_base + p_tired and surface is not None and surface in obj.allowed
+            if (u < p_base + p_tired + p_ep and surface is not None and surface in obj.allowed
                     and surface != obj.home[0]):
                 if u < p_base:
                     d = Decision(surface, "left where it was used", [], rule="leave")
-                else:
+                elif u < p_base + p_tired:
                     d = Decision(surface, "left where it was used, too tired to put it away",
-                                 [f"low_energy:{res.id}"], rule="leave")
+                                 [tired_src], rule="leave")
+                else:
+                    ep = max((e for e, v in ep_leave if v > 0), key=lambda e: e.start)
+                    d = Decision(surface, "left where it was used", [ep.id], rule="leave")
             elif obj.after_use and ended.activity not in ("chores", "tidy"):
                 d = Decision(obj.after_use, "used, so it goes in the sink", [], rule="after_use")
             else:
@@ -183,6 +217,10 @@ def decide(hh: Household, obj: Obj, res: Resident, ended: Bout, nxt: Optional[Bo
         if ended.added_by and ended.added_by not in d.causes:
             # the activity itself only exists because of an event
             d.causes.append(ended.added_by)
+
+    # the activity happened somewhere unusual because of an episode (armchair, not couch)
+    if ended.surface_by and d.dest == ended.surface and ended.surface_by not in d.causes:
+        d.causes.append(ended.surface_by)
 
     # 5. usual destination occupied or blocked -> nearest alternative
     if not world.free(d.dest):

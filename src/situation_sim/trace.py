@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 import pathlib
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from situation_sim import timing_constants as tc
 from situation_sim.household import Household, ON_PERSON, OUT_OF_HOUSE
@@ -117,7 +117,8 @@ def _home_base(hh: Household) -> str:
 
 
 def write_hidden_state(path: pathlib.Path, hh: Household, sits: List[DaySituation],
-                       res: RunResult, events: Dict[str, dict], seed: int) -> None:
+                       res: RunResult, events: Dict[str, dict], seed: int,
+                       episodes: Optional[Dict[str, dict]] = None) -> None:
     state = {
         "seed": seed,
         "household": hh.to_json(),
@@ -135,6 +136,8 @@ def write_hidden_state(path: pathlib.Path, hh: Household, sits: List[DaySituatio
             "min_bout_minutes": tc.MIN_BOUT_MINUTES, "max_skip_p": tc.MAX_SKIP_P,
             "carry_p": tc.CARRY_P, "forget_levels": tc.FORGET_LEVELS},
         "event_library": events,
+        "episode_library": episodes or {},
+        "visitors": res.visitors,
         "stats": res.stats,
     }
     path.write_text(json.dumps(state, indent=1, sort_keys=True) + "\n")

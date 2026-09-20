@@ -51,6 +51,7 @@ class RunResult:
     trace_days: List[Tuple[DaySituation, List[TraceLine]]]
     bouts_by_day: List[List[Bout]]
     stats: Dict[str, object] = field(default_factory=dict)
+    visitors: List[dict] = field(default_factory=list)   # guests present: {day, start, end, room, n}
 
 
 class Simulator:
@@ -118,7 +119,8 @@ class Simulator:
     def name(self, res_id: str) -> str:
         return self.hh.residents[res_id].name.capitalize()
 
-    def expand_uses(self, res_id: str, tokens: List[str], sit: DaySituation) -> List[Obj]:
+    def expand_uses(self, res_id: str, tokens: List[str], sit: DaySituation,
+                    bout: Optional[Bout] = None) -> List[Obj]:
         hh = self.hh
         own = hh.objects_of(res_id)
         shared = hh.objects_of(None)
@@ -126,6 +128,12 @@ class Simulator:
         extra_carry = set()
         for c in sit.events_for(res_id):
             extra_carry.update(self.events[c.event].get("carry", []))
+        tokens = list(tokens)
+        if bout is not None:
+            # episodes: extra things brought to this activity (the laptop to dinner)
+            for ep in sit.episodes_at(res_id, bout.start):
+                tokens += [cls for cls in ep.effects.get("bring", {}).get(bout.activity, [])
+                           if cls not in tokens]
         for tok in tokens:
             if tok == "pocket":
                 out += [o for o in own if o.pocket]
@@ -185,18 +193,26 @@ class Simulator:
             self.resident_at(r.id, 0, 0, r.bedroom)
         trace_days = []
         bouts_by_day = []
+        visitors: List[dict] = []
         for sit in self.sits:
             bouts = build_day(hh, sit, self.events, self.acts, self.seed)
             lines = self.run_day(sit, bouts)
             trace_days.append((sit, lines))
             bouts_by_day.append(bouts)
+            hosting = [b for b in bouts if b.activity == "host_guest"]
+            if hosting:
+                # guests are in the hosting room for the whole visit and can be seen there
+                n = 2 + (self.seed + sit.day_index) % 2
+                visitors.append({"day": sit.day_index, "start": min(b.start for b in hosting),
+                                 "end": max(b.end for b in hosting), "room": hosting[0].room,
+                                 "n": n, "cause": hosting[0].added_by})
         stats = {"placement_decisions": self.n_decisions,
                  "placement_moves": self.n_moves,
                  "whims": self.n_whim,
                  "whim_share_of_decisions": round(self.n_whim / max(1, self.n_decisions), 4),
                  "whim_share_of_moves": round(self.n_whim / max(1, self.n_moves), 4),
                  "notes": self.notes}
-        return RunResult(self.truth, self.resident_rows, trace_days, bouts_by_day, stats)
+        return RunResult(self.truth, self.resident_rows, trace_days, bouts_by_day, stats, visitors)
 
     def run_day(self, sit: DaySituation, bouts: List[Bout]) -> List[TraceLine]:
         day = sit.day_index
@@ -232,7 +248,7 @@ class Simulator:
                    lines: List[TraceLine]) -> None:
         day = sit.day_index
         who = self.name(b.resident)
-        needed = self.expand_uses(b.resident, b.uses, sit)
+        needed = self.expand_uses(b.resident, b.uses, sit, b)
         if b.away:
             self.start_trip(sit, b, needed, lines)
             return
@@ -298,8 +314,8 @@ class Simulator:
                 continue
             if o.pocket and where != ON_PERSON:
                 p_f = res.forget_p
-                p_extra = (2 * res.forget_p * res.mood_sensitivity
-                           if sit.has_flag(b.resident, "distracted") else 0.0)
+                distracted_src = sit.flag_source(b.resident, "distracted", b.start)
+                p_extra = 2 * res.forget_p * res.mood_sensitivity if distracted_src else 0.0
                 u = self.rng.random()
                 if u < p_f + p_extra:
                     forgotten.append((o.id, where, u >= p_f))
@@ -325,7 +341,7 @@ class Simulator:
             if distracted:
                 self.notes.append({"object_id": oid, "t": self._t(day, b.start),
                                    "event": "forgotten_on_departure",
-                                   "causes": [f"distracted:{b.resident}"]})
+                                   "causes": [distracted_src]})
 
     def describe_taken(self, taken: List[str]) -> str:
         hh = self.hh
@@ -366,7 +382,14 @@ class Simulator:
         who = self.name(b.resident)
         sub: List[TraceLine] = []
         kept: List[str] = []
-        needed_next = {o.id for o in self.expand_uses(b.resident, nxt.uses, sit)} if nxt else set()
+        needed_next = {o.id for o in self.expand_uses(b.resident, nxt.uses, sit, nxt)} if nxt else set()
+        if nxt is not None:
+            # episodes: classes that stay on the person between activities (the phone on a rough day)
+            keep_cls = {cls for ep in sit.episodes_at(b.resident, b.end) for cls in ep.effects.get("keep", [])}
+            if keep_cls:
+                needed_next |= {o.id for o in hh.objects_of(b.resident) if o.cls in keep_cls
+                                and (self.loc[o.id] == ON_PERSON and self.carrier[o.id] == b.resident
+                                     or o.id in self.in_use.get(b.resident, []))}
         world = World(hh, self.loc, self.blocked_now(bouts, b.end, sit))
         if b.away:
             # everything of this resident's that went out comes back now
