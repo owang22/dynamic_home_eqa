@@ -1,0 +1,14 @@
+arm s14 told exit 1 21:28
+arm s14 nottold exit 1 21:53
+Traceback (most recent call last):
+  File "<stdin>", line 12, in <module>
+  File "/home/oliver/robot/dynamic_home_eqa/src/baselines/patrol/hyp.py", line 61, in convert_passive
+    with gzip.open(arm_dir / "per_question.jsonl.gz", "rt") as fh, open(out, "w") as o:
+         ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/oliver/miniconda3/lib/python3.13/gzip.py", line 66, in open
+    binary_file = GzipFile(filename, gz_mode, compresslevel)
+  File "/home/oliver/miniconda3/lib/python3.13/gzip.py", line 203, in __init__
+    fileobj = self.myfileobj = builtins.open(filename, mode or 'rb')
+                               ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '../results/confidence_shift_2026-09-20/heldout/hyp/study/hh_s14_p2__bank0/arms/passive/passive__longleaf__longleaf_named__told/per_question.jsonl.gz'
+ARMS s14 DONE 21:53

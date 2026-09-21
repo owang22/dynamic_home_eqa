@@ -104,9 +104,15 @@ def patrol_sentence(protocol: Optional[Mapping[str, Any]]) -> str:
         every = "every day at " + ", ".join(times[:-1]) + f" and {times[-1]}" if len(times) > 1 else f"once a day at {times[0]}"
     else:
         every = f"every {h:g} hour{'s' if h != 1 else ''}" if h else "on a fixed schedule"
+    fb = protocol.get("feedback_delay_min")
+    tail = ("" if fb is None else
+            (" At its nightly round the robot is told, for each of the day's questions, where the object "
+             "turned out to be; those count as sightings at the time they were found." if fb < 0 else
+             f" About {fb:g} minutes after each question the resident tells the robot where the object "
+             f"turned out to be, and that counts as a sighting."))
     return (f"The robot patrols every room {every}, listing what is on every "
             f"receptacle and who is in the room; those listings arrive on their "
-            f"own, whether or not a question is asked.")
+            f"own, whether or not a question is asked.{tail}")
 
 
 QUESTIONS_ACTIVITY = (

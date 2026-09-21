@@ -58,6 +58,7 @@ import datetime
 import gzip
 import json
 import logging
+import os
 import pathlib
 import time
 from typing import Any, Dict, List, Optional
@@ -106,7 +107,9 @@ fixed across every arm so differences come from the belief."""
 
 
 TREE_SCHEDULED_DAYS = [3]
-LONGLEAF_SCHEDULED_DAYS: List[int] = []
+LONGLEAF_SCHEDULED_DAYS: List[int] = [int(x) for x in os.environ.get("LONGLEAF_SCHEDULED_DAYS", "").split(",") if x.strip()]
+"""Confidence study: LONGLEAF_SCHEDULED_DAYS=1,2,3,4,5,6,7 makes the library revise at every day's first
+question (a daily review of the day's outcomes); default none (claim / message triggers only)."""
 """treeLongLeaf revisions are event-driven: a weighted document's claim
 going against it, the anomaly bucket, prediction quality. No scheduled
 days. Calls are cheap (index + fetched documents, cached prefix), so

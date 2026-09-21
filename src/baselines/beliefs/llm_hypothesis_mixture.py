@@ -60,6 +60,7 @@ import collections
 import dataclasses
 import json
 import math
+import os
 import pathlib
 import random
 from typing import (TYPE_CHECKING, Any, Callable, Deque, Dict, List, Mapping,
@@ -68,7 +69,8 @@ from typing import (TYPE_CHECKING, Any, Callable, Deque, Dict, List, Mapping,
 from baselines.beliefs.hypothesis_mixture import (DEFAULT_ABSENCE_UNIFORMS,
                                                   DEFAULT_ABSENCE_WEIGHT,
                                                   HypothesisMixture)
-from baselines.beliefs.hypothesis_program import (CHANCE_PRIOR_STRENGTH,
+from baselines.beliefs.hypothesis_program import (
+    HypothesisValidationError, CHANCE_PRIOR_STRENGTH,
                                                    CLASS_PREFIX,
                                                    HypothesisProgramBelief)
 from baselines.types import DAY_SECONDS, Observation, SenseResult
@@ -730,17 +732,44 @@ class LLMHypothesisMixture(HypothesisMixture):
             old_weight[self._particle_key(raw)] = lw
         hyp_weights = list(self._log_weights[:n_hyp]) or [0.0]
         mean_lw = sum(hyp_weights) / len(hyp_weights)
+        if (os.environ.get("HYPOTHESIS_MESSAGE_ENTRY", "") == "parity"
+                and getattr(self, "_entry_trigger", None) == "message"):
+            # Confidence study, told arm: a document written FOR today's message (guests tonight,
+            # a sick day) is not hindsight - it is the resident's own word about today - so it
+            # enters level with the leading document and the mixture hedges between routine and
+            # the announced day. Other triggers keep the entry rule below.
+            mean_lw = max(self._log_weights)
+        elif os.environ.get("HYPOTHESIS_ENTRY", "mean") == "share_cap":
+            # a new document enters with exactly one particle's share of the current mixture
+            mean_lw = max(self._log_weights) - math.log(len(self._log_weights) + 1)
+        elif os.environ.get("HYPOTHESIS_ENTRY", "mean") == "share":
+            # Confidence study: a new document enters with one particle's fair
+            # share of the current mixture (top log weight minus log(n + 1)),
+            # not the mean of the hypothesis particles; once those have all
+            # lost to the statistical particle, the mean is dead on arrival
+            # and no revision can ever matter.
+            mean_lw = max(mean_lw, max(self._log_weights) - math.log(len(self._log_weights) + 1))
         stat_particles = self._particles[n_hyp:]
         stat_weights = self._log_weights[n_hyp:]
         stat_presence = self.presence_totals[n_hyp:]
         stat_absence = self.absence_totals[n_hyp:]
         new_particles: List[HypothesisProgramBelief] = []
         new_weights: List[float] = []
+        kept_raws: List[dict] = []
         for raw in revised:
             particle = self._make_particle(
                 raw, random.Random(self._rng.getrandbits(64)),
                 self.known_objects)
-            particle.reset(self._context)
+            try:
+                particle.reset(self._context)
+            except HypothesisValidationError as err:
+                # A revised document that names an id the particle builder does
+                # not know (e.g. a class never sighted in this home): drop it
+                # and record why, instead of taking the whole arm down.
+                self.rejected_ops.append({"op": "add_hypothesis", "t": None,
+                                          "hypothesis_id": raw.get("hypothesis_id"),
+                                          "reason": f"rebuild: {err}"})
+                continue
             for obj, cls in self._objects.items():
                 particle.ensure_object(obj, cls)
             for event in self._evidence_log:
@@ -748,6 +777,8 @@ class LLMHypothesisMixture(HypothesisMixture):
             new_particles.append(particle)
             new_weights.append(old_weight.get(self._particle_key(raw),
                                               mean_lw))
+            kept_raws.append(raw)
+        revised = kept_raws
         self._raw_hypotheses = [dict(h) for h in revised]
         self._particles = new_particles + list(stat_particles)
         self._log_weights = new_weights + list(stat_weights)

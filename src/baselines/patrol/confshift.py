@@ -52,12 +52,22 @@ CONFIDENCE_FIELD = "top_prob"
 """Which logged number is 'confidence' in the tables: ``top_prob`` (the
 belief's probability on its answer) or ``agreement`` (the share of the
 hypothesis library's weight behind the answer; only the mixture logs it,
-everyone else falls back to top_prob)."""
+everyone else falls back to top_prob), or ``monitored``: top_prob scaled
+by the agent's own running hit rate on the feedback it has already received
+today (Beta-smoothed with weight MONITOR_M towards its hit rate over the
+earlier days). Every agent gets the same monitor; it only uses feedback that
+had arrived (t_query + delay) before the question was asked."""
+MONITOR_M = 8.0
+FEEDBACK_DELAY_S = 600.0
 MAIN_THRESHOLD = 0.7
 DAY_SHORT = {"Monday": "Mon", "Tuesday": "Tue", "Wednesday": "Wed", "Thursday": "Thu",
              "Friday": "Fri", "Saturday": "Sat", "Sunday": "Sun"}
 CLASSICAL = ("last_observation", "most_frequent", "timetable", "periodic_persistence", "perpetua_star")
 AGENT_LABEL = {"LastObservation": "last seen", "MostFrequentLocation": "most frequent",
+               "TimetableLookup(bin=2h,days=weekday_weekend,empty=last_seen@0.3,told": "timetable wd/we, honest empty bin, told",
+               "TimetableLookup(bin=2h,days=weekday_weekend,empty=last_seen": "timetable wd/we, honest empty bin",
+               "TimetableLookup(bin=2h,days=weekday_weekend": "timetable wd/we",
+               "TimetableLookup(bin=2h,days=per_day": "timetable per-day",
                "TimetableLookup": "timetable", "PeriodicPersistence": "periodic",
                "PerpetuaStar": "Perpetua*"}
 
@@ -76,7 +86,12 @@ def load_config(path: pathlib.Path) -> dict:
     cfg.setdefault("patrol_times", None)
     cfg.setdefault("questions", "activity")
     cfg.setdefault("timetable_bin_hours", 1)
+    cfg.setdefault("timetable_day_scheme", "all")   # all | weekday_weekend | per_day (calendar-aware bins)
+    cfg.setdefault("timetable_empty_bin", "history")   # history | last_seen (an empty bin answers last-seen at low confidence)
+    cfg.setdefault("timetable_empty_bin_confidence", 0.3)
     cfg.setdefault("negative_evidence", "off")
+    cfg.setdefault("shift_focus", 0.0)
+    cfg.setdefault("feedback_delay_min", None)
     cfg["sim_dir"] = (path.parent / cfg["sim_dir"]).resolve() if not pathlib.Path(cfg["sim_dir"]).is_absolute() \
         else pathlib.Path(cfg["sim_dir"])
     return cfg
@@ -141,7 +156,9 @@ def bank_for(cfg: dict, seed: int, out_dir: pathlib.Path) -> pathlib.Path:
     times = parse_times(cfg["patrol_times"]) if cfg.get("patrol_times") else None
     label = patrol_label(int(cfg["patrol_hours"]), times)
     return build_bank(cfg["sim_dir"] / f"hh_s{seed}", out_dir / "banks" / f"hh_s{seed}_{label}.jsonl",
-                      int(cfg["patrol_hours"]), times, cfg["questions"], cfg["classes"], int(cfg["per_day"]), int(cfg["oversample"]))
+                      int(cfg["patrol_hours"]), times, cfg["questions"], cfg["classes"], int(cfg["per_day"]), int(cfg["oversample"]),
+                      float(cfg["shift_focus"]),
+                      None if cfg["feedback_delay_min"] in (None, "null") else int(cfg["feedback_delay_min"]))
 
 
 def _one(job: Tuple[pathlib.Path, pathlib.Path, tuple]) -> str:
@@ -162,9 +179,10 @@ def cmd_classical(a) -> int:
     ensure_households(cfg, seeds)
     out_dir = a.out
     names = tuple(a.beliefs or CLASSICAL)
-    beliefs = tuple(({**b, "bin_hours": int(cfg["timetable_bin_hours"])} if b["name"] == "timetable" else b)
-                    for b in BELIEFS if b["name"] in names)
-    if cfg["negative_evidence"] == "off":
+    beliefs = tuple(({**b, "bin_hours": int(cfg["timetable_bin_hours"]), "day_scheme": str(cfg["timetable_day_scheme"]),
+                      "empty_bin": str(cfg["timetable_empty_bin"]), "empty_bin_confidence": float(cfg["timetable_empty_bin_confidence"])}
+                     if b["name"] in ("timetable", "timetable_told") else b) for b in BELIEFS if b["name"] in names)
+    if str(cfg["negative_evidence"]).lower() in ("off", "false", "0", "no"):   # YAML reads a bare `off` as False
         # The pure classical baselines answer from sightings alone: the base pipeline's
         # empty-look suppression (1 - 2^(-age / half-life) per spot) is switched off by a
         # vanishing half-life, so every factor is 1 for any age > 0. Perpetua* handles
@@ -200,10 +218,36 @@ def load_logs(paths: Sequence[str]) -> List[dict]:
         for k, v in AGENT_LABEL.items():
             if r["agent"].startswith(k):
                 r["agent"] = v
+                break
         r["conf"] = float(r.get("top_prob", 0.0))
         if CONFIDENCE_FIELD != "top_prob" and r.get(CONFIDENCE_FIELD) is not None:
             r["conf"] = float(r[CONFIDENCE_FIELD])
+    if CONFIDENCE_FIELD == "monitored":
+        monitored_confidence(rows)
     return rows
+
+
+def monitored_confidence(rows: List[dict]) -> None:
+    """conf = top_prob * (hits_today + M * p_week) / (n_today + M), counting only
+    the feedback that had arrived before the question (t_fb = t_query + delay)."""
+    by = defaultdict(list)
+    for r in rows:
+        by[(r["household"], r["agent"], r.get("look"), r.get("told"))].append(r)
+    for key, rs in by.items():
+        rs.sort(key=lambda r: (r["t_query"], r["question_id"]))
+        week_hits = week_n = 0
+        day = None; today = []
+        for r in rs:
+            if r["day_index"] != day:
+                for q in today:
+                    week_hits += bool(q["correct"]); week_n += 1
+                day = r["day_index"]; today = []
+            p_week = (week_hits + 1.0) / (week_n + 2.0)
+            arrived = [q for q in today if q["t_query"] + FEEDBACK_DELAY_S <= r["t_query"]]
+            hits = sum(bool(q["correct"]) for q in arrived)
+            r["conf"] = float(r.get("top_prob", 0.0)) * (hits + MONITOR_M * p_week) / (len(arrived) + MONITOR_M)
+            r["monitor_n"] = len(arrived)
+            today.append(r)
 
 
 def load_headers(bank_dir: pathlib.Path) -> Dict[str, dict]:
@@ -353,6 +397,76 @@ def strata_table(rows: List[dict], headers: Dict[str, dict]) -> str:
     return "\n".join(L)
 
 
+def moved_since_round(rows: List[dict], bank_dir: pathlib.Path) -> Dict[str, Dict[str, bool]]:
+    """For every (household, question): did the object move since the robot's
+    last full round before the question (the last patrol instant <= t_query)?
+    Defined from the bank's truth rows and patrol times only; no agent involved."""
+    from baselines.patrol.bank import _Truth
+    out: Dict[str, Dict[str, bool]] = {}
+    for p in sorted(bank_dir.glob("*.jsonl")):
+        bank = [json.loads(l) for l in p.read_text().splitlines() if l.strip()]
+        h = bank[0]
+        truth = _Truth([r for r in bank if r["kind"] == "truth"])
+        rounds = sorted({r["t"] for r in bank if r["kind"] == "room_visit"})
+        import bisect
+        d: Dict[str, bool] = {}
+        for q in bank:
+            if q["kind"] != "question":
+                continue
+            i = bisect.bisect_right(rounds, q["t_query"]) - 1
+            t_round = rounds[i] if i >= 0 else h["tour_t"]
+            d[q["question_id"]] = truth.at(q["object_id"], t_round) != truth.at(q["object_id"], q["t_query"])
+        out[h["household_id"]] = d
+    return out
+
+
+def coverage_matched(rows: List[dict], headers: Dict[str, dict], covs=(0.25, 0.5, 0.75)) -> str:
+    """Selective accuracy at the same coverage for every agent, per day: each agent answers
+    its most confident fraction ``cov`` of the day's questions (its own ranking; ties broken by
+    the order in the log). Fair when agents' confidence scales differ."""
+    day_names = {int(k): v for k, v in next(iter(headers.values()))["day_names"].items()}
+    days = sorted({r["day_index"] for r in rows})
+    agents = sorted({r["agent"] for r in rows})
+    out = []
+    for cov in covs:
+        L = [f"| agent (coverage {int(100 * cov)}%) | " + " | ".join(day_label(d, day_names) for d in days) + " | all |",
+             "|" + "---|" * (len(days) + 2)]
+        for ag in agents:
+            cells = []; tot_ok = 0; tot_n = 0
+            for d in days + [None]:
+                rs = [r for r in rows if r["agent"] == ag and (d is None or r["day_index"] == d)]
+                rs = sorted(rs, key=lambda r: -r["conf"])
+                k = max(1, int(round(cov * len(rs)))) if rs else 0
+                sel = rs[:k]
+                cells.append(pct(acc(sel)))
+            L.append(f"| {ag} | " + " | ".join(cells) + " |")
+        out.append("\n".join(L))
+    return "\n\n".join(out)
+
+
+def moved_table(rows: List[dict], headers: Dict[str, dict], moved: Dict[str, Dict[str, bool]], thr: float = MAIN_THRESHOLD) -> str:
+    """Per agent per day: accuracy and mean confidence on questions whose object
+    moved since the last round, and on the rest; plus coverage at ``thr`` on the moved set."""
+    day_names = {int(k): v for k, v in next(iter(headers.values()))["day_names"].items()}
+    days = sorted({r["day_index"] for r in rows})
+    agents = sorted({r["agent"] for r in rows})
+    L = ["| agent | " + " | ".join(f"{day_label(d, day_names)} moved / still" for d in days) + " | moved all | still all |",
+         "|" + "---|" * (len(days) + 3)]
+    for ag in agents:
+        cells = []
+        allm, alls = [], []
+        for d in days:
+            rs = [r for r in rows if r["agent"] == ag and r["day_index"] == d]
+            m = [r for r in rs if moved.get(r["household"], {}).get(r["question_id"])]
+            st = [r for r in rs if r not in m]
+            allm += m; alls += st
+            cm = f"{pct(acc(m))} c{100 * (sum(r['conf'] for r in m) / len(m)):.0f}" if m else "-"
+            cs = f"{pct(acc(st))} c{100 * (sum(r['conf'] for r in st) / len(st)):.0f}" if st else "-"
+            cells.append(f"{cm} / {cs}")
+        L.append(f"| {ag} | " + " | ".join(cells) + f" | {pct(acc(allm))} (n={len(allm)}, cov@{thr} {pct(cover(allm, thr)[0])}, sel {pct(cover(allm, thr)[1])}) | {pct(acc(alls))} |")
+    return "\n".join(L)
+
+
 def class_share(rows: List[dict]) -> str:
     qs = {(r["household"], r["question_id"]): r["object_class"] for r in rows}
     cnt = defaultdict(int)
@@ -456,6 +570,15 @@ def cmd_report(a) -> int:
         L += [f"## Figure 2 (threshold {thr}): coverage / selective accuracy per day", "",
               f"Coverage = share of questions answered with confidence >= {thr}; selective accuracy = accuracy on those.", "",
               per_day_table(rows, headers, thr), ""]
+    L += ["## Coverage-matched selective accuracy (each agent answers its most confident 25 / 50 / 75% of the day's questions)", "",
+          "The fixed thresholds above compare different confidence scales; this compares agents at equal coverage.", "",
+          coverage_matched(rows, headers), ""]
+    moved = moved_since_round(rows, a.banks)
+    share = sum(v for d in moved.values() for v in d.values()) / max(1, sum(len(d) for d in moved.values()))
+    L += [f"## Questions whose object moved since the robot's last round ({100 * share:.0f}% of questions)", "",
+          "The robot's last full look is the patrol round before the question. 'still' questions are answered by "
+          "recency almost by definition; the shift and the learning live in the 'moved' half. Cells: accuracy c=mean confidence.", "",
+          moved_table(rows, headers, moved), ""]
     L += ["## Reliability (stated confidence vs observed accuracy, pooled over the week)", "", reliability_table(rows), ""]
     L += ["## Split by household kind (from the intro cards: any retired resident, or none)", "",
           "Retired residents are home on weekdays too, so the weekend is not a routine shift for their household.", "",
@@ -493,7 +616,7 @@ def main(argv=None) -> int:
     k.add_argument("--json", type=pathlib.Path, default=None)
     k.set_defaults(fn=cmd_criteria)
     for sp in (r, k):
-        sp.add_argument("--confidence", default="top_prob", choices=("top_prob", "agreement"))
+        sp.add_argument("--confidence", default="top_prob", choices=("top_prob", "agreement", "monitored"))
     a = ap.parse_args(argv)
     global CONFIDENCE_FIELD
     CONFIDENCE_FIELD = getattr(a, "confidence", "top_prob")

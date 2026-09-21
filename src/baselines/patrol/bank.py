@@ -252,7 +252,8 @@ def uses_classes(spec: dict) -> List[str]:
 
 def activity_question_rows(seed: int, objects: dict, scored_days: List[int], eid: str, truth: "_Truth",
                            trace: dict, classes: Optional[List[str]] = None, per_day: int = QUESTIONS_PER_DAY,
-                           oversample: int = OVERSAMPLE) -> Tuple[List[dict], dict]:
+                           oversample: int = OVERSAMPLE, shift_focus: float = 0.0,
+                           shift_days: Optional[List[int]] = None) -> Tuple[List[dict], dict]:
     """Questions tied to what the residents are doing: a resident starting an
     activity asks for one of the objects that activity uses (question a few
     minutes around the start); after someone leaves the house the robot is
@@ -267,19 +268,34 @@ def activity_question_rows(seed: int, objects: dict, scored_days: List[int], eid
         if eligible(o):
             by_class[objects[o]["cls"]].append(o)
     chore_classes = sorted({c for a in CHORE_ACTIVITIES for c in uses_classes(acts[a])})
-    rng = random.Random(f"patrol_questions_activity:{seed}")
+    rng = random.Random(f"patrol_questions_activity:{seed}" + (f":focus{shift_focus:g}" if shift_focus else ""))
     days = {int(d["day_index"]): d for d in trace["days"]}
     rows: List[dict] = []
     counts = {}
+    shift_days = set(shift_days or [])
+    # activities each resident does on Wed-Fri (the weekday baseline): a weekend start of an
+    # activity outside this set is a weekend-only activity for that resident
+    weekday_acts: Dict[Optional[str], set] = defaultdict(set)
+    for d in scored_days[:3]:
+        for l in days[d]["lines"]:
+            if l["kind"] == "start":
+                a = activity_of(l["text"], by_words)
+                if a:
+                    weekday_acts[l.get("resident")].add(a)
     for d in scored_days:
         lines = days[d]["lines"]
         starts = []   # (minute, activity, resident)
+        shift_starts = []
         trips = []    # minute
         for l in lines:
             if l["kind"] == "start":
                 a = activity_of(l["text"], by_words)
                 if a and acts[a].get("room") != "ELSEWHERE":
                     starts.append((int(l["minute"]), a, l.get("resident")))
+                    tagged = any(t.split(":")[0] in MAJOR_EVENTS for t in l.get("tags", []))
+                    weekend_only = d in shift_days and a not in weekday_acts.get(l.get("resident"), set())
+                    if tagged or weekend_only:
+                        shift_starts.append((int(l["minute"]), a, l.get("resident")))
             elif l["kind"] == "trip":
                 trips.append(int(l["minute"]))
         cands = []
@@ -293,7 +309,8 @@ def activity_question_rows(seed: int, objects: dict, scored_days: List[int], eid
             else:
                 if not starts:
                     break
-                m0, a, res = rng.choice(starts)
+                pool_starts = shift_starts if (d in shift_days and shift_starts and rng.random() < shift_focus) else starts
+                m0, a, res = rng.choice(pool_starts)
                 pool = [o for c in uses_classes(acts[a]) for o in by_class.get(c, [])
                         if objects[o].get("owner") in (None, res)]
                 minute = m0 + rng.randint(*START_WINDOW)
@@ -307,7 +324,8 @@ def activity_question_rows(seed: int, objects: dict, scored_days: List[int], eid
                 continue
             cands.append((minute, obj, kind))
             n_start += kind != "chore"; n_chore += kind == "chore"
-        counts[d] = {"drawn": oversample, "sensable": len(cands), "start": n_start, "chore": n_chore}
+        counts[d] = {"drawn": oversample, "sensable": len(cands), "start": n_start, "chore": n_chore,
+                     "shift_starts": len(shift_starts)}
         if len(cands) < per_day:
             raise ValueError(f"day {d}: only {len(cands)} sensable candidates of {oversample}; raise oversample")
         keep = sorted(rng.sample(cands, per_day))
@@ -336,7 +354,15 @@ def patrol_label(patrol_hours: int, patrol_times: Optional[List[int]]) -> str:
 def build_bank(run_dir: pathlib.Path, out: pathlib.Path, patrol_hours: int,
                patrol_times: Optional[List[int]] = None, questions: str = "legacy",
                classes: Optional[List[str]] = None, per_day: int = QUESTIONS_PER_DAY,
-               oversample: int = OVERSAMPLE) -> pathlib.Path:
+               oversample: int = OVERSAMPLE, shift_focus: float = 0.0,
+               feedback_delay_min: Optional[int] = None) -> pathlib.Path:
+    """``shift_focus``: on a shift day, the probability that a question moment is drawn
+    from the day's shift activities (starts tagged with a major event, or activities the
+    resident does not do on Wed-Fri) instead of all activities.
+    ``feedback_delay_min``: found-it feedback. ``delay`` minutes after each question the
+    robot learns where the object turned out to be (its true spot at the question instant),
+    as an ordinary sighting every agent receives. None = no feedback; -1 = at the next
+    nightly review (one minute before the 03:00 round)."""
     """``patrol_times`` (minutes of day) replaces the every-``patrol_hours``
     patrol with one pass at each listed clock time every day. ``questions``
     is ``legacy`` (the overnight bank) or ``sensable`` (in-house truths
@@ -386,14 +412,31 @@ def build_bank(run_dir: pathlib.Path, out: pathlib.Path, patrol_hours: int,
                 v = visit(room, t, only_empty=False)
                 if v:
                     patrol_rows.append(v)
+    shift_days, day_causes, hints = shift_info(state, scored_days)
+    feedback_rows: List[dict] = []
     if questions == "sensable":
         question_list, qcounts = sensable_question_rows(seed, objects, scored_days, eid, truth, classes, per_day, oversample)
     elif questions == "activity":
         trace = json.loads((run_dir / "trace.json").read_text())
-        question_list, qcounts = activity_question_rows(seed, objects, scored_days, eid, truth, trace, classes, per_day, oversample)
+        question_list, qcounts = activity_question_rows(seed, objects, scored_days, eid, truth, trace, classes, per_day, oversample,
+                                                        shift_focus, shift_days)
     else:
         question_list, qcounts = question_rows(seed, objects, scored_days, eid), {}
-    shift_days, day_causes, hints = shift_info(state, scored_days)
+    if feedback_delay_min is not None:
+        seen_at: Dict[Tuple[str, int], bool] = {}
+        for q in question_list:
+            if feedback_delay_min < 0:
+                # feedback at the next nightly review: the robot learns the day's outcomes at its 03:00 round
+                night = 3 * 3600
+                t_fb = (q["t_query"] // DAY_SECONDS + 1) * DAY_SECONDS + night - 60
+            else:
+                t_fb = q["t_query"] + feedback_delay_min * 60
+            key = (q["object_id"], t_fb)
+            if key in seen_at:      # two questions at the same moment about the same object: one feedback
+                continue
+            seen_at[key] = True
+            feedback_rows.append({"kind": "observation", "episode_id": eid, "object_id": q["object_id"],
+                                  "receptacle_id": truth.at(q["object_id"], q["t_query"]), "t": t_fb, "source": "scripted"})
     cards = resident_cards(state)
     label = patrol_label(patrol_hours, patrol_times)
     times_text = [f"{m // 60:02d}:{m % 60:02d}" for m in (patrol_times or [])]
@@ -412,12 +455,14 @@ def build_bank(run_dir: pathlib.Path, out: pathlib.Path, patrol_hours: int,
     header["question_mode"] = questions
     header["question_counts"] = {str(k): v for k, v in sorted(qcounts.items())}
     header["question_classes"] = sorted(classes) if classes else None
+    header["shift_focus"] = shift_focus
     header["protocol"] = {
         "walkthrough_t": tour_t, "questions_per_day": per_day, "first_question_day": 1,
         "patrol_hours": header["patrol_hours"], "patrol_times": times_text,
         "free_look": questions == "legacy", "room_level_looks": questions == "legacy",
         "patrol": questions != "legacy",     # the passive patrol stream, no looks (read by llm_hypotheses.protocol_text)
         "question_moments": questions,       # 'activity': questions arise around what residents do (told to the LLM agents)
+        "feedback_delay_min": feedback_delay_min,   # found-it feedback after each question (told to the LLM agents)
         "pockets_visible": False, "day0_weekday": day0,
         "residents": cards,
     }
@@ -426,7 +471,7 @@ def build_bank(run_dir: pathlib.Path, out: pathlib.Path, patrol_hours: int,
         f.write(json.dumps(header, sort_keys=True) + "\n")
         for r in rows[1:]:
             f.write(json.dumps(r, sort_keys=True) + "\n")
-        for r in tour_obs + tour_visits + patrol_rows + question_list:
+        for r in tour_obs + tour_visits + patrol_rows + feedback_rows + question_list:
             f.write(json.dumps(r, sort_keys=True) + "\n")
     return out
 

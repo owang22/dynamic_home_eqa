@@ -76,6 +76,17 @@ WHERE only when its edge weight is at least this (0 = the original rule: any
 sighting inside the soft window counts). With a patrol on the hour, the pass
 at a window's start otherwise re-teaches every in-use window its resting spot."""
 PRIOR_DECAYS = _os.environ.get("TIMETABLE_PRIOR_DECAYS", "1") != "0"
+FALLBACK_BIN_H = float(_os.environ.get("TIMETABLE_FALLBACK_BIN_H", "0"))
+EVIDENCE_BLEND = float(_os.environ.get("TIMETABLE_EVIDENCE_BLEND", "0"))
+EVIDENCE_PSEUDO = float(_os.environ.get("TIMETABLE_EVIDENCE_PSEUDO", "0"))
+"""> 0: instead of the fixed EVIDENCE_BLEND share, the document's own
+distribution counts as EVIDENCE_PSEUDO sightings against the hour bin's
+observed count n: share = n / (n + EVIDENCE_PSEUDO). An empty bin is the
+document; a well-observed bin is the statistics; a document written for
+today competes with a few ordinary-day sightings as a prior should."""
+EVIDENCE_MIN_COUNT = float(_os.environ.get("TIMETABLE_EVIDENCE_MIN_COUNT", "2"))
+RECENCY_HALF_LIFE_H = float(_os.environ.get("TIMETABLE_RECENCY_HALF_LIFE_H", "0"))
+"""Variant knob: hour-bin width of the document fallback statistics (0 = whole history)."""
 """Variant knob: whether the author's stated spot fades with absolute time
 (the original rule) or only against sightings."""
 """Edge weight below which a sighting teaches a block nothing."""
@@ -474,14 +485,27 @@ class TimetableBelief(HypothesisProgramBelief):
 
     # ---------------------------------------------------------- prediction
 
+    def _fallback_counts(self, history: List[Tuple[int, str]], t: int) -> Dict[str, float]:
+        """The document's fallback statistics for hours no block covers. Default:
+        the whole decayed history. Confidence-study variant (env
+        TIMETABLE_FALLBACK_BIN_H = hours): the robot's own time-of-day statistics,
+        i.e. only sightings in the query's hour bin, falling back to the whole
+        history when that bin holds less than one count."""
+        if FALLBACK_BIN_H > 0:
+            b = FALLBACK_BIN_H * 3600
+            same_bin = [(ot, r) for ot, r in history if (ot % DAY_SECONDS) // b == (t % DAY_SECONDS) // b]
+            counts = self._weighted_counts(same_bin, t, REST_HALF_LIFE_H * 3600.0) if same_bin else {}
+            if len(same_bin) >= 1:
+                return counts
+        return self._weighted_counts(history, t, REST_HALF_LIFE_H * 3600.0)
+
     def _predict_for_object(self, object_id: str,
                             history: List[Tuple[int, str]],
                             t: int) -> Prediction:
         stack = self._stack(object_id, t)
         if not stack:
             if history:
-                counts = self._weighted_counts(history, t,
-                                               REST_HALF_LIFE_H * 3600.0)
+                counts = self._fallback_counts(history, t)
                 return self.dirichlet_normalized(counts, history)
             return self._cold_start(object_id, t)
         claimed: Dict[str, float] = {}
@@ -499,10 +523,35 @@ class TimetableBelief(HypothesisProgramBelief):
             claimed = {r: p * scale for r, p in claimed.items()}
             total = MAX_CLAIMED_MASS
         if history:
-            counts = self._weighted_counts(history, t, REST_HALF_LIFE_H * 3600.0)
+            counts = self._fallback_counts(history, t)
             fallback = self.dirichlet_mean(counts)
         else:
             fallback = self._cold_start(object_id, t).distribution
+        if EVIDENCE_BLEND > 0 and FALLBACK_BIN_H > 0 and history:
+            # Confidence study: once the robot has seen the object EVIDENCE_MIN_COUNT times in this hour
+            # bin, its own time-of-day statistics lead and the document is a prior behind them.
+            b = FALLBACK_BIN_H * 3600
+            same_bin = [(ot, r) for ot, r in history if (ot % DAY_SECONDS) // b == (t % DAY_SECONDS) // b]
+            bin_counts = self._weighted_counts(same_bin, t, REST_HALF_LIFE_H * 3600.0) if same_bin else {}
+            if RECENCY_HALF_LIFE_H > 0 and history:
+                # recency where nothing else is known: the latest sighting counts as one more
+                # sighting, fading with its age (half-life RECENCY_HALF_LIFE_H)
+                ot, r = history[-1]
+                bin_counts[r] = bin_counts.get(r, 0.0) + 2.0 ** (-max(0, t - ot) / (RECENCY_HALF_LIFE_H * 3600.0))
+            if len(same_bin) >= EVIDENCE_MIN_COUNT or (RECENCY_HALF_LIFE_H > 0 and bin_counts):
+                evid = self.dirichlet_mean(bin_counts)
+                doc = {r: (1.0 - total) * p for r, p in fallback.items()}
+                for r, p in claimed.items():
+                    doc[r] = doc.get(r, 0.0) + p
+                keys = set(evid) | set(doc)
+                share = EVIDENCE_BLEND
+                if EVIDENCE_PSEUDO > 0:
+                    n_bin = sum(bin_counts.values())
+                    share = n_bin / (n_bin + EVIDENCE_PSEUDO)
+                mixed = {r: share * evid.get(r, 0.0) + (1.0 - share) * doc.get(r, 0.0) for r in keys}
+                z = sum(mixed.values()) or 1.0
+                mixed = {r: v / z for r, v in mixed.items()}
+                return Prediction(distribution=mixed, argmax=max(mixed, key=lambda r: (mixed[r], r)))
         dist = {r: (1.0 - total) * p for r, p in fallback.items()}
         for r, p in claimed.items():
             dist[r] = dist.get(r, 0.0) + p

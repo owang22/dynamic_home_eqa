@@ -103,10 +103,16 @@ class LongLeafMixture(LLMHypothesisMixture):
         weights = self.leaf_weights
         looks = self._recent_looks()
         n_hyp = len(self._raw_hypotheses)
+        # Confidence study: under tempered weights a library of n documents
+        # sits near 1/n each, so a fixed 0.1 floor silences the trigger for
+        # n > 10; the floor becomes half an equal share when that is lower.
+        floor = CLAIM_TRIGGER_WEIGHT
+        if os.environ.get("CLAIM_TRIGGER_RELATIVE", "0") == "1":
+            floor = min(CLAIM_TRIGGER_WEIGHT, 0.5 / max(n_hyp, 1))
         out = []
         for raw, particle in zip(self._raw_hypotheses, self._particles[:n_hyp]):
             key = self._particle_key(raw)
-            if weights.get(key, 0.0) < CLAIM_TRIGGER_WEIGHT:
+            if weights.get(key, 0.0) < floor:
                 continue
             if not isinstance(particle, TimetableBelief) or particle._hypothesis is None:
                 continue
@@ -182,7 +188,9 @@ class LongLeafMixture(LLMHypothesisMixture):
                                       "hypothesis_id": r["hypothesis_id"],
                                       "forked_from": r.get("forked_from"),
                                       "title": r.get("title", "")})
+            self._entry_trigger = trigger   # the parent's entry rule may key on it (message parity)
             self._rebuild(revised)
+            self._entry_trigger = None
         for row in result.get("dropped", []):
             self.rejected_ops.append({**stamp, "op": "add_hypothesis",
                                       "reason": row.get("error", ""),
@@ -210,6 +218,12 @@ class LongLeafMixture(LLMHypothesisMixture):
         particle — which is exactly when a revision is needed."""
         before = set(self.leaf_weights)
         super()._rebuild(revised)
+        if os.environ.get("HYPOTHESIS_ENTRY", "mean") in ("share", "share_cap"):
+            # Confidence study: a revised document is written FROM the evidence, so
+            # its replayed log-likelihood over that evidence is hindsight and (being
+            # untempered) puts it on top by construction; the parent's entry share
+            # applies instead and the document earns weight forward from its birth.
+            return
         n_hyp = len(self._raw_hypotheses)
         if n_hyp >= len(self._particles) or not self._evidence_log:
             return

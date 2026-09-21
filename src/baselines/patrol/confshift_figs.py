@@ -29,17 +29,22 @@ STYLE: Dict[str, dict] = {   # fixed slot per agent family
     "last seen": dict(color="#6b7280", ls="-", lw=1.6),
     "most frequent": dict(color="#2a78d6", ls="-", lw=2),
     "timetable": dict(color="#2a78d6", ls=":", lw=1.6),
+    "timetable wd/we": dict(color="#1b4f9c", ls="-.", lw=1.6),
+    "timetable wd/we, honest empty bin": dict(color="#1b4f9c", ls="-.", lw=1.6),
+    "timetable wd/we, honest empty bin, told": dict(color="#1b4f9c", ls="-", lw=1.6),
     "periodic": dict(color="#6b7280", ls=":", lw=1.4),
     "Perpetua*": dict(color="#4a3aa7", ls="-", lw=1.6),
     "llm_naive/told/look_off": dict(color="#eb6834", ls="-", lw=2),
     "llm_naive/not_told/look_off": dict(color="#eb6834", ls="--", lw=2),
     "llm_longleaf/told/look_off": dict(color="#1baf7a", ls="-", lw=2.2),
     "llm_longleaf/not_told/look_off": dict(color="#1baf7a", ls="--", lw=2.2),
+    "llm_longleaf_msg/told/look_off": dict(color="#0b6b4a", ls="-", lw=2.2, marker="o", ms=3),
     "llm_longleaf_fixed/told/look_off": dict(color="#008300", ls="-", lw=1.6),
     "llm_longleaf_fixed/not_told/look_off": dict(color="#008300", ls="--", lw=1.6),
 }
 NAME = {"llm_naive/told/look_off": "naive LLM, told", "llm_naive/not_told/look_off": "naive LLM, not told",
         "llm_longleaf/told/look_off": "hypothesis mixture, told", "llm_longleaf/not_told/look_off": "hypothesis mixture, not told",
+        "llm_longleaf_msg/told/look_off": "hypothesis mixture, told (message parity)",
         "llm_longleaf_fixed/told/look_off": "hyp. mixture (no re-ask), told",
         "llm_longleaf_fixed/not_told/look_off": "hyp. mixture (no re-ask), not told"}
 
@@ -135,7 +140,7 @@ def main(argv=None) -> int:
     ap.add_argument("--banks", type=pathlib.Path, required=True)
     ap.add_argument("--out", type=pathlib.Path, required=True)
     ap.add_argument("--threshold", type=float, default=0.7)
-    ap.add_argument("--confidence", default="top_prob", choices=("top_prob", "agreement"))
+    ap.add_argument("--confidence", default="top_prob", choices=("top_prob", "agreement", "monitored"))
     a = ap.parse_args(argv)
     import baselines.patrol.confshift as cs
     cs.CONFIDENCE_FIELD = a.confidence

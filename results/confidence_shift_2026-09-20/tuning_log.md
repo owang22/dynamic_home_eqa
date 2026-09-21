@@ -46,3 +46,54 @@ Held-out check with the final config (seeds 10-29, classical only, not used for 
 - The event-day drop vs the day before is ~0 pooled because 'the day before' is itself noisy (32 questions) and a guest evening only touches the last third of a day's questions. Grouped by day type instead, on the accepted households: plain weekdays 60%, sick days 55%, guest days 57%, weekend 54% (last seen). Event rates were raised to sick 0.10 and guest 0.10 per weekday so that most households carry a weekday event; the generator only has weekday/weekend rates, so the event cannot be pinned to Monday.
 - Patrol every 2 h: at 4 h and 8 h the whole range sat lower (47-60) with the same drop; at 1 h the drop shrank to +6-8. Two hours is a realistic round for a home robot and leaves the counters at 52-65%.
 - The 'timetable' agent's bins are set to the patrol spacing (2 h) so each bin holds one pass per day; with 1 h bins it fell back to most-frequent for every question whose hour had no patrol.
+
+## Night of 2026-09-20/21: what was tried after the 8 h re-freeze (Oliver: "do not give up")
+
+All classical-only, seconds to minutes each; numbers are timetable / most frequent / last seen unless stated.
+Scratch outputs under /tmp/claude-1027/.../scratchpad/{density,regular,monday,focus,fb}; the accepted one in
+results/confidence_shift_2026-09-20/{heldout_fb,tuning/frozen_fb}.
+
+| # | change | seeds | result | verdict |
+|---|---|---|---|---|
+| 30 | patrol every 4 h / 8 h / nightly (same questions), affected split by the peer's labels | 10-29 | last seen on fresh-moved vs unaffected: 2 h 51-53 vs 61; 8 h 32/31/35 vs 54; nightly 24-34 vs 50 | 8 h re-frozen (p8); shift visible only on fresh-moved questions |
+| 31 | timetable bins 2 h -> 8 h at the 8 h patrol | 10-29 | timetable 45% either way | kept 8 h bins (correct), no effect |
+| 32 | shift-day questions drawn 60% / 80% from the shift's activities (`shift_focus`) | 10-29 | last seen Wed->Sat 52->44 / 49->43 (from 53->50) | +4-5 points of pooled drop only; not adopted (would rerun LLMs for little) |
+| 33 | simulator regularity variants (jitter x0.5/x0.34, whims off, leave-where-used off, moods off, weekday habits 0.9, all combined), truth-only oracles | 0-9 | same-time-yesterday oracle at best 83% weekdays / 72% Sat; last-8h-pass oracle 83-89% every day and higher on the weekend | no combination lets a patrol-fed counter beat recency, or makes the weekend raise the move rate; rejected |
+| 34 | regular world + activity questions, 8 h and nightly, classical | 10-14 | flat ~50, no rise, no weekend drop | rejected |
+| 35 | Monday start, 9 scored days (4 weekdays before the weekend) | 10-29 | 52/53/50/52 -> 47/47 | no learning for counters; harmless; not adopted |
+| 36 | **found-it feedback** 10 min after each question + nightly patrol (`feedback_delay_min: 10`, `patrol_times: 03:00`) | 0-9 | timetable 50/52/58 -> Sat 47 -> 63 by Tue; most frequent 48/48/53 -> 42; last seen flat 55/52/54 -> 47 | **accepted -> configs/frozen_2026-09-21.yaml** |
+| 37 | same, held-out | 10-29 | pooled: timetable 49/55/56 -> 52/52 -> 61/63 (rise +7, Sat -4); on questions whose object moved since the round: timetable 12/29/42 -> 31/37 -> 55, most frequent 7/15/28 -> 16/20 -> 29, last seen flat 13-22 | replicates: learning and the weekend break live in the moved half (52% of questions); pooled drop diluted by the still half (90%+ for everyone) |
+| 38 | feedback at 60 min; 8 h patrol + feedback (10/60 min) | 0-9 | weaker rise (fresh patrol sightings drown the feedback) | rejected |
+| 39 | feedback + shift_focus 0.6 / 0.8 | 0-9, 10-29 | no extra weekend break for the timetable | rejected |
+| 40 | feedback delivered at the nightly review (`feedback_delay_min: -1`) | 0-9, 10-29 | timetable flat 45%: the bank row carries one time, so night-delivered outcomes land in the 03:00 hour bin and corrupt the timetable | rejected (would need a second timestamp through the loader and every belief) |
+| 41 | 96 questions/day, Tuesday start | 0-9 | timetable 52/55/60 -> 51 -> 65/61 | +1 over 64/day; not adopted (50% more LLM calls) |
+| 42 | (post-freeze, 03:30) calendar-aware timetable: separate weekend bins (`timetable_day_scheme: weekday_weekend`, empty weekend bin falls back to the whole history) | 0-9 | moved half Sat 17% c46 vs frozen 28% c44; Wed-Fri identical; Sun-Tue 40/45/48 vs 46/51/55 | breaks harder on Saturday but at the SAME confidence (the fallback pool is the whole history, so the Dirichlet mean is not lower); not adopted, frozen timetable stands. Logged as an extra agent, not a replacement |
+| 43 | (post-freeze, 03:45) the registry's candidate beliefs on the frozen protocol: daytype_mixture (K=3, 2 h bins, 24 h half-life; infers the day type from the sightings already seen today), hierarchy_backoff, smoothed_recency, markov1 | 0-9 | moved half: daytype 20/14/25 -> 16 -> 36/36/42 at c0.80-0.90 (the 24 h decay forgets the routine; confidence falls through the week, not on shift days); the others sit at 17-20% (recency-shaped) | none adopted; none has a confidence that moves on shift days |
+| 44 | (03:20) mixture v5, told arms only, hh_s14 + hh_s11: documents written for the day's MESSAGE enter at parity with the leading document (`HYPOTHESIS_MESSAGE_ENTRY=parity`); all other triggers keep share_cap | 10-29 (2 hh) | pending; motivation: in v4 the message documents enter at 1/(n+1) of the top weight (0.01-0.02 each, hh_s14 Thursday) and the tempered weights never lift them, so the told arm ignores what it was told and told = not told | stopped 03:40: weights moved (message docs 0.10 vs 0.02) but every answer and confidence identical to v4 on hh_s14 Thursday - the 0.7 evidence blend over day-blind hour bins outvotes the message document's own claims (problems_found #23); partial outputs kept |
+| 45 | (03:35) fixed-arm test bench, hh_s14 with the guest-evening document added to the initial library: pseudo-count blend (`TIMETABLE_EVIDENCE_PSEUDO` 2 / 4: the document counts as K sightings against the hour bin's observed count) instead of the fixed 0.7 evidence share | 10-29 (1 hh, 4 days) | Thu evening (guests) 27% c39-42 vs 31% c30 with the fixed blend; moved half Wed-Fri 11/27/42 (K=2) vs 8/24/45; confidence 0.4-0.5 everywhere (documents' own claims are sharper) but no dip on the guest evening | rejected: sharper, not better calibrated; the message document at one share in nine cannot hedge the evening on its own |
+| 46 | (03:55) calendar-aware timetable with an HONEST empty bin: weekend bins separate (`timetable_day_scheme: weekday_weekend`), and an (hour, day-kind) bin with no sighting answers last-seen at confidence 0.3 with the rest spread over the house (`timetable_empty_bin: last_seen`, `timetable_empty_bin_confidence: 0.3`) instead of the whole-history most-frequent at a full Dirichlet confidence. Three iterations on 0-9 (argmax bug in the mass split, then a few-alternatives bug), then once on 10-29 | 0-9, then 10-29 | held-out, moved half: 17/26/38 -> Sat 14 (last-seen level), Sun 24 -> 43/45 at confidence 33/34/37 -> 32/34 -> 37/40; coverage@0.5 3/7/12 -> 2/5 -> 17/25%; day level 53/56/58 -> 53/51 -> 59/61 (frozen timetable 49/55/56 -> 52/52 -> 61/63) | the one classical agent whose confidence/coverage falls on the weekend, because it knows it has no weekend timetable yet; it pays with Saturday's moved-half accuracy (14 vs 31: the weekday bins are half right on Saturday). Kept as a labelled post-freeze extra line (`heldout_fb/classical_extra/`), not a replacement |
+| 47 | (03:45) told version of #46: every message day that is not a weekend gets its own day-kind bins per message kind ("guest", "sick"; `timetable_told` in run.py, kinds read from the bank's hint_messages), so the first day of a kind is answered last-seen at 0.3 for the whole day | 0-9 | moved half Thu/Fri 21/21 vs 24/31 (not told), Mon/Tue 30/30 vs 43/47; coverage@0.5 on Fri 7% vs 14%; event-day drop vs day before +1 | rejected: being told costs accuracy because a guest evening or a sick day leaves most of the day's questions on the routine (the event touches a few objects for a few hours), so hedging the whole day is the wrong use of the message; the message would have to be mapped to the objects and hours it names. Not run on held-out |
+
+Reading of the accepted protocol on the held-out set (classical): the counters LEARN the weekday routine from the
+outcomes of questions (timetable +24 on moved questions Wed->Fri, most frequent +21), the weekend BREAKS it
+(-6 / -12 on moved questions Fri->Sat; working households -6 / -9 pooled, retired 0), recency agents stay flat
+and confident (last seen 0.98, periodic ~0.75 on moved questions where they score 15-25%). The count-based
+agents hedge on moved questions (confidence ~0.4); "confident and wrong" is the recency agents' behaviour.
+
+## Mixture configuration (v4, 02:02; the arms in `heldout_fb/hyp/`)
+
+Not tuned on accuracy: every setting fixed a measured failure on single questions with the 12 s fixed arm
+(`problems_found.md` #10-#23). Environment in `heldout_fb/run_told_then_nottold_b.sh`:
+
+| setting | value | fixes |
+|---|---|---|
+| `PARTICLE_NEGATIVE_HALF_LIFE_H` | 1e-9 | documents applied the pipeline's empty-look suppression (same defect as the classical agents' #13) |
+| `TIMETABLE_INTERIOR_MIN_EDGE` / `TIMETABLE_PRIOR_DECAYS` | 0.9 / 0 | interior-only blocks, author prior kept (#10) |
+| `HYPOTHESIS_ENTRY` | share_cap | revised documents entered dead at the mean, or on top by hindsight (#20, #21) |
+| `HYPOTHESIS_MIN_LIKELIHOOD` | 1e-3 | one miss no longer kills a document; 0.02 froze the weights (#21, #22) |
+| `HYPOTHESIS_DECAY` / `HYPOTHESIS_LL_TEMPER` | 0.998 / 0.03 | memoryless 0.6 decay; ESS 4-10 instead of collapse (#14, #20) |
+| `CLAIM_TRIGGER_RELATIVE` | 1 | the claim trigger was silent under tempered weights (#20) |
+| `TIMETABLE_FALLBACK_BIN_H` / `TIMETABLE_EVIDENCE_BLEND` / `TIMETABLE_EVIDENCE_MIN_COUNT` | 2 / 0.7 / 1 | documents did not learn from the feedback sightings (#20) |
+| `TIMETABLE_RECENCY_HALF_LIFE_H` | 4 | still half at 70% on mornings (#22) |
+| `LONGLEAF_SCHEDULED_DAYS` | 2-7 | one scheduled review per day plus claim / quality / message triggers |
+| `HYPOTHESIS_MESSAGE_ENTRY` | parity (v5 only) | message documents entered at 1/(n+1) and were ignored (#23) |

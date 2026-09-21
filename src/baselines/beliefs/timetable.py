@@ -35,6 +35,21 @@ class TimetableConfig:
 
     bin_hours: int = 1
     day_scheme: str = "all"
+    day0_weekday: int = 0
+    empty_bin: str = "history"
+    """What an empty bin falls back to: ``history`` (whole-history
+    most-frequent, the original behaviour) or ``last_seen`` (the latest
+    sighting, at confidence ``empty_bin_confidence``): the counter then says
+    that it has no timetable for this kind of day yet."""
+    empty_bin_confidence: float = 0.3
+    event_kinds: Tuple[Tuple[int, str], ...] = ()
+    told: bool = False
+    """(day index, kind) pairs from the residents' messages in a TOLD arm:
+    such a day gets its own day category per kind ("guest", "sick"), so the
+    first day of a kind has empty bins (answered as ``empty_bin`` says) and
+    a second day of the same kind reuses the first one's sightings."""
+    """Weekday index (Monday = 0) of simulated day 0; the patrol banks start
+    on the walkthrough weekday (``protocol.day0_weekday``)."""
 
     def __post_init__(self) -> None:
         if self.bin_hours <= 0 or HOURS_PER_DAY % self.bin_hours != 0:
@@ -50,13 +65,17 @@ class TimetableConfig:
         """(time-of-day bin, day category) for a timestamp in seconds."""
         seconds_into_day = t % DAY_SECONDS
         time_bin = seconds_into_day // (self.bin_hours * 3600)
-        day = t // DAY_SECONDS
+        day_index = t // DAY_SECONDS
+        for d, kind in self.event_kinds:
+            if d == day_index:
+                return int(time_bin), 10 + sorted({k for _, k in self.event_kinds}).index(kind)
+        day = (day_index + self.day0_weekday) % 7
         if self.day_scheme == "all":
             category = 0
         elif self.day_scheme == "weekday_weekend":
-            category = 1 if day % 7 in _WEEKEND_DAYS else 0
+            category = 1 if day in _WEEKEND_DAYS else 0
         else:  # per_day
-            category = day % 7
+            category = day
         return int(time_bin), category
 
 
@@ -97,14 +116,26 @@ class TimetableLookup(BeliefModel):
     def name(self) -> str:
         suffix = ("" if self._half_life_s is None
                   else f",hl={self._half_life_s / 3600:g}h")
+        eb = "" if self._config.empty_bin == "history" else f",empty={self._config.empty_bin}@{self._config.empty_bin_confidence:g}"
+        eb += ",told" if self._config.told else ""
         return (f"TimetableLookup(bin={self._config.bin_hours}h,"
-                f"days={self._config.day_scheme}{suffix})")
+                f"days={self._config.day_scheme}{eb}{suffix})")
 
     def _predict_from_history(
             self, history: List[Tuple[int, str]], t: int) -> Prediction:
         query_bin = self._config.bin_of(t)
         in_bin = [(ot, rec) for ot, rec in history
                   if self._config.bin_of(ot) == query_bin]
+        if not in_bin and self._config.empty_bin == "last_seen":
+            # no sighting in this (hour, day-kind) bin yet: answer where the object was
+            # last seen at exactly the stated confidence; the rest of the mass is spread
+            # over every other spot in the house so no alternative can outrank it
+            last = history[-1][1]
+            c = self._config.empty_bin_confidence
+            others = [r for r in self._receptacles() if r != last]
+            dist = {r: (1.0 - c) / len(others) for r in others} if others else {}
+            dist[last] = 1.0 - sum(dist.values())
+            return Prediction(distribution=dist, argmax=last)
         pool = in_bin if in_bin else history
         counts = self._weighted_counts(pool, t, self._half_life_s)
         return self.dirichlet_normalized(counts, tie_break_recency=pool)

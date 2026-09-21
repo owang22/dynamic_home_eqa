@@ -279,7 +279,8 @@ def patrol_words(patrol_hours: int, patrol_times: Optional[List[str]] = None) ->
 
 def header_lines(t: int, day_names: Dict[int, str], cards: List[dict], rooms: Dict[str, List[str]],
                  patrol_hours: int, look_on: bool, hints: List[str], fmt: str = "rank",
-                 patrol_times: Optional[List[str]] = None, question_moments: str = "") -> List[str]:
+                 patrol_times: Optional[List[str]] = None, question_moments: str = "",
+                 feedback_delay_min: Optional[float] = None) -> List[str]:
     day = t // DAY_SECONDS
     L = [f"Now: {day_names.get(day, 'day ' + str(day))}, {clock(t, day_names)[4:]} (day {day} of the study; "
          f"the walkthrough was on {day_names.get(0, 'day 0')} evening).",
@@ -293,6 +294,11 @@ def header_lines(t: int, day_names: Dict[int, str], cards: List[dict], rooms: Di
     if fmt == "conf" and question_moments == "activity":
         from baselines.llm_hypotheses.protocol_text import QUESTIONS_ACTIVITY
         L += ["", QUESTIONS_ACTIVITY]
+    if fmt == "conf" and feedback_delay_min is not None:
+        L += ["", ("At its nightly round the robot is told, for each of the day's questions, where the object turned "
+                   "out to be; those show up in the sightings below like any other sighting." if feedback_delay_min < 0 else
+                   f"About {feedback_delay_min:g} minutes after each question the resident tells the robot where the "
+                   f"object turned out to be; those show up in the sightings below like any other sighting.")]
     if fmt == "conf":
         L += ["", "Answer with one spot name from the list above (the object is somewhere in the house; if it "
                   "is being used or carried right now, name the spot it is most likely to be at or next to)."]
@@ -340,9 +346,10 @@ def memory_lines(memory: Memory, mem_kind: str, obj: str, day_names: Dict[int, s
 
 def question_messages(memory: Memory, mem_kind: str, q, day_names, cards, rooms, patrol_hours, look_on, hints,
                       notes, look_result: Optional[str], fmt: str = "rank",
-                      patrol_times: Optional[List[str]] = None, question_moments: str = "") -> List[dict]:
+                      patrol_times: Optional[List[str]] = None, question_moments: str = "",
+                      feedback_delay_min: Optional[float] = None) -> List[dict]:
     L = header_lines(q.t_query, day_names, cards, rooms, patrol_hours, look_on and look_result is None, hints, fmt, patrol_times,
-                     question_moments)
+                     question_moments, feedback_delay_min)
     L += ["", f"Question: where is {q.object_id} (a {q.object_class.replace('_', ' ')}) right now?", ""]
     L += memory_lines(memory, mem_kind, q.object_id, day_names, notes)
     if fmt == "conf":
@@ -460,6 +467,7 @@ def run_arm(bank_path: pathlib.Path, mem_kind: str, told: bool, look_on: bool, c
     header = json.loads(bank_path.read_text().splitlines()[0])
     patrol_times = header.get("patrol_times") or None
     question_moments = header.get("protocol", {}).get("question_moments", "")
+    feedback_delay_min = header.get("protocol", {}).get("feedback_delay_min")
     if fmt == "conf":
         look_on = False
     episode: Episode = next(iter(JsonlBank(bank_path).episodes()))
@@ -541,7 +549,7 @@ def run_arm(bank_path: pathlib.Path, mem_kind: str, told: bool, look_on: bool, c
                     if text and text.strip():
                         notes = text.strip()
             msgs = question_messages(memory, mem_kind, q, day_names, cards, rooms, patrol_hours, look_on, hints, notes, None,
-                                     fmt, patrol_times, question_moments)
+                                     fmt, patrol_times, question_moments, feedback_delay_min)
             if fmt == "conf":
                 text, usage = ask(msgs, CONF_SCHEMA, 260, q.question_id, llm_authored=(notes,))
                 loc, conf, why, status = parse_conf(text, allowed)

@@ -42,7 +42,8 @@ ARMS = {"longleaf": "active:longleaf:longleaf_named:f0",
         "notebook": "active:notebook_llmDecide_free:named:f0",
         "notebook_voi": "active:notebook_voi_free:named:f0"}
 LABEL = {"longleaf": "llm_longleaf", "notebook": "llm_notebook_llmDecide", "notebook_voi": "llm_notebook_voi",
-         "longleaf_fixed": "llm_longleaf_fixed"}
+         "longleaf_fixed": "llm_longleaf_fixed",
+         "longleaf_msg": "llm_longleaf_msg"}   # v5: message documents enter at parity (conversion label only)
 
 
 def convert_passive(arm_dir: pathlib.Path, bank: pathlib.Path, header: dict, arm: str, told: bool, out: pathlib.Path) -> int:
@@ -133,7 +134,7 @@ def main(argv=None) -> int:
         header = json.loads(bank.read_text().splitlines()[0])
         hh, ph = header["household_id"], int(header["patrol_hours"])
         # the fleet naming the drivers expect; one "household" per (hh, density)
-        hh_name = f"{hh}_p{ph}"
+        hh_name = f"{hh}_{header.get('patrol_label', f'p{ph}')}"
         link = bank_dir / f"households__generated__{MODEL_SLUG}__{hh_name}_bank.jsonl"
         if link.is_symlink() or link.exists():
             link.unlink()

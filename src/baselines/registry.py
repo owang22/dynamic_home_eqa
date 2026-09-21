@@ -124,7 +124,12 @@ def _build_most_frequent(spec: Dict[str, Any],
 
 def _build_timetable(spec: Dict[str, Any], rng: random.Random) -> BeliefModel:
     cfg = TimetableConfig(bin_hours=int(spec.get("bin_hours", 1)),
-                          day_scheme=str(spec.get("day_scheme", "all")))
+                          day_scheme=str(spec.get("day_scheme", "all")),
+                          day0_weekday=int(spec.get("day0_weekday", 0)),
+                          empty_bin=str(spec.get("empty_bin", "history")),
+                          empty_bin_confidence=float(spec.get("empty_bin_confidence", 0.3)),
+                          event_kinds=tuple((int(d), str(k)) for d, k in spec.get("event_kinds", ())),
+                          told=bool(spec.get("told", False)))
     return TimetableLookup(rng, cfg, **_frequency_kwargs(spec),
                            half_life_h=_optional_half_life(spec))
 

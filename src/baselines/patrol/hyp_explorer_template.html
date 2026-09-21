@@ -3,15 +3,15 @@
 <style>
 :root{
   --paper:#f7f5f0; --panel:#ffffff; --ink:#1c1a17; --muted:#6b6560; --line:#e3ded4; --grid:#ece8e0;
-  --told:#1a9e6f; --nottold:#e0662f; --shift:#f2c46d; --ref:#8a847c; --ref2:#4a3aa7;
-  --good:#1a9e6f; --bad:#c9463d; --tag:#eee9df;
+  --told:#3fae87; --nottold:#e08a5a; --shift:#f3d9a0; --ref:#9a948c; --ref2:#8e7fd0; --tt:#5b8def; --ls:#c9a227;
+  --good:#3fae87; --bad:#cf6b64; --tag:#eee9df;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --paper:#15130f; --panel:#1e1b17; --ink:#ece7de; --muted:#a29b90; --line:#332f29; --grid:#2a2622;
-  --told:#3cc08f; --nottold:#f0834f; --shift:#8a6a1f; --ref:#8f8880; --ref2:#a79df0; --good:#3cc08f; --bad:#e06a61; --tag:#2a2622; } }
+  --paper:#23262b; --panel:#2b2f35; --ink:#e4e2dc; --muted:#a3a49f; --line:#3a3f46; --grid:#33383f;
+  --told:#8fd3b6; --nottold:#f2b48c; --shift:#6b5a35; --ref:#b8b3ad; --ref2:#c9b8f0; --tt:#9bb8f5; --ls:#e0c25a; --good:#8fd3b6; --bad:#e8a0a0; --tag:#33383f; } }
 :root[data-theme="dark"]{
-  --paper:#15130f; --panel:#1e1b17; --ink:#ece7de; --muted:#a29b90; --line:#332f29; --grid:#2a2622;
-  --told:#3cc08f; --nottold:#f0834f; --shift:#8a6a1f; --ref:#8f8880; --ref2:#a79df0; --good:#3cc08f; --bad:#e06a61; --tag:#2a2622; }
+  --paper:#23262b; --panel:#2b2f35; --ink:#e4e2dc; --muted:#a3a49f; --line:#3a3f46; --grid:#33383f;
+  --told:#8fd3b6; --nottold:#f2b48c; --shift:#6b5a35; --ref:#b8b3ad; --ref2:#c9b8f0; --tt:#9bb8f5; --ls:#e0c25a; --good:#8fd3b6; --bad:#e8a0a0; --tag:#33383f; }
 *{box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font-family:"Source Sans 3",system-ui,sans-serif;font-size:15px;line-height:1.45;margin:0}
 .wrap{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
@@ -69,6 +69,7 @@ button.lnk{background:none;border:0;color:var(--ink);text-decoration:underline;c
 <div class="bar">
   <h1>Longleaf Ledger</h1>
   <label class="muted">household <select id="hh"></select></label>
+  <label class="muted">questions <select id="qset"><option value="all">all</option><option value="moved" selected>moved since the robot's last round</option><option value="still">still where the last round saw it</option><option value="shifted">shifted only (object moved by the shift, on the shift day)</option><option value="other">not shifted</option></select></label>
   <div class="legend">
     <span><i class="sw" style="background:var(--told)"></i>told (residents' messages on shift days)</span>
     <span><i class="sw" style="background:var(--nottold)"></i>not told</span>
@@ -77,7 +78,12 @@ button.lnk{background:none;border:0;color:var(--ink);text-decoration:underline;c
     <span><i class="sw" style="background:var(--ref2)"></i>naive LLM</span>
   </div>
 </div>
+<p class="muted" style="margin-block:10px 0;font-size:13px">Companion page: <a href="https://claude.ai/artifact/PMxnzQYbCmFtAFm22hPb4G" style="color:var(--told)">Shift Baselines</a> (the follow-on baselines on the same households).</p>
 <p class="lead">The mixture starts the week with a library of competing weekly models of the home, written from one walkthrough and the residents' intro cards. Each patrol pass re-weights the library; when the evidence goes against a document's claims, the writer is asked to add documents. This page shows which documents carry the belief, how their weights move through the weekend and the event days, and whether being told about a shift changes anything.</p>
+<h2>The shape, pooled over every household on this page</h2>
+<p class="muted" style="font-size:13px;margin:0 0 8px">Accuracy per day on the question set chosen above (the story lives on the <b>moved since the robot's last round</b> half). Lines: <i class="sw" style="background:var(--tt)"></i> timetable &nbsp; <i class="sw" style="background:var(--told)"></i> hypothesis mixture (told) &nbsp; <i class="sw" style="background:var(--ref2)"></i> naive LLM (told) &nbsp; <i class="sw" style="background:var(--ls)"></i> last seen. Saturday and Sunday shaded; weekday event days differ per household (see each household's strip below).</p>
+<div id="overview" class="small"></div>
+<h2>Household</h2>
 <div id="res" class="cards"></div>
 <div id="week" class="week"></div>
 
@@ -118,18 +124,21 @@ function hideTip(){ tip.style.display='none'; }
 
 // deterministic hue per document id
 function hue(id){ let h=0; for (const c of id) h = (h*31 + c.charCodeAt(0)) % 360; return h; }
-function docColor(id, born){ const h = hue(id); return born === 'library' ? `hsl(${h} 45% 58%)` : `hsl(${h} 70% 45%)`; }
+function docColor(id, born){ const h = hue(id); return born === 'library' ? `hsl(${h} 38% 68%)` : `hsl(${h} 50% 60%)`; }
 
 let H = DATA[0];
 const sel = $('#hh');
 DATA.forEach((b,i) => { const o = document.createElement('option'); o.value=i; o.textContent = b.household; sel.appendChild(o); });
 sel.onchange = () => { H = DATA[+sel.value]; render(); };
+let QSET = 'moved';
+const qsel = $('#qset'); qsel.onchange = () => { QSET = qsel.value; render(); };
+function inSet(q){ if (QSET === 'all') return true; if (QSET === 'moved') return !!q.moved; if (QSET === 'still') return !q.moved; return QSET === 'shifted' ? q.kind === 'shifted' : q.kind !== 'shifted'; }
 
 function days(){ return [...new Set(H.questions.map(q=>q.day))].sort((a,b)=>a-b); }
 function perDay(arm){
   const s = H.arms[arm]; if (!s) return null;
   return days().map(d => {
-    const idx = H.questions.map((q,i)=>q.day===d?i:-1).filter(i=>i>=0);
+    const idx = H.questions.map((q,i)=>(q.day===d && inSet(q))?i:-1).filter(i=>i>=0);
     const conf = idx.map(i=>s.conf[i]), ok = idx.map(i=>s.correct[i]);
     const cov = idx.filter(i => s.conf[i] != null && s.conf[i] >= 0.7), answered = idx.filter(i => s.conf[i] != null);
     return { day:d, acc: mean(ok.map(x=>x==null?null:+x)), conf: mean(conf), agree: mean(idx.map(i=>(s.agree||[])[i])), cov: answered.length? cov.length/answered.length : null,
@@ -138,7 +147,7 @@ function perDay(arm){
 }
 function refDay(label, key){
   const r = H.refs[label]; if (!r) return null;
-  return days().map(d => { const idx = H.questions.map((q,i)=>q.day===d?i:-1).filter(i=>i>=0 && r[i]);
+  return days().map(d => { const idx = H.questions.map((q,i)=>(q.day===d && inSet(q))?i:-1).filter(i=>i>=0 && r[i]);
     if (key==='acc') return mean(idx.map(i=>+r[i][2]));
     if (key==='conf') return mean(idx.map(i=>r[i][1]));
     if (key==='cov') return idx.length ? idx.filter(i=>r[i][1]>=0.7).length/idx.length : null;
@@ -171,7 +180,8 @@ function renderSmall(){
     return lineChart({acc:'accuracy, all questions', conf:'mixture probability on its answer', agree:'library weight agreeing with the answer', cov:'share answered at ≥ 0.7', sel:'accuracy on those ≥ 0.7', ess:'effective number of documents'}[key], list, fmt, ymax);
   };
   const essMax = Math.max(4, ...[...(t||[]),...(u||[])].map(r=>r.ess||0));
-  $('#small').innerHTML = S('acc',1,pct) + S('conf',1,pct) + S('agree',1,pct,false) + S('cov',1,pct) + S('sel',1,pct) + S('ess',Math.ceil(essMax),v=>v.toFixed(0),false);
+  const per = days().map(d => H.questions.filter(q=>q.day===d && inSet(q)).length);
+  $('#small').innerHTML = `<div class="muted" style="grid-column:1/-1;font-size:13px">Question set: <b>${QSET}</b> — per day ${per.join(' / ')} questions.</div>` + S('acc',1,pct) + S('conf',1,pct) + S('agree',1,pct,false) + S('cov',1,pct) + S('sel',1,pct) + S('ess',Math.ceil(essMax),v=>v.toFixed(0),false);
 }
 function river(arm){
   const s = H.arms[arm]; const el = $('#river_'+arm); if (!s){ el.innerHTML = '<p class="muted">no run</p>'; return; }
@@ -237,20 +247,53 @@ function renderRevs(){
   for (const arm of ['told','nottold']){ const s=H.arms[arm]; if (!s) continue;
     for (const r of s.revisions||[]){ const born = H.docs.filter(d => d.born!=='library' && d.born_day===r.day+1 && s.weights[d.id]);
       const div = document.createElement('div'); div.className='rev '+arm;
-      div.innerHTML = `<div class="mono"><b>${arm==='told'?'told':'not told'}</b><br>revision ${r.index}<br>day ${r.day} (${short(H.day_names[r.day])})</div><div>trigger <b>${esc(r.trigger)}</b> · ${r.n_valid} document${r.n_valid===1?'':'s'} added · ${r.outcome} · ${Math.round((r.seconds||0)/60)} min${r.revive?.length?' · revived '+r.revive.join(', '):''}${r.dropped_n?' · '+r.dropped_n+' dropped':''}<br>${born.map(d=>`<span class="tag mono">${d.id}</span> ${esc(d.title)}`).join('<br>')}${r.problems?.length?'<br><span class="muted">'+esc(r.problems.join('; '))+'</span>':''}</div>`;
+      const listed = (r.new && r.new.length) ? r.new : born;
+      div.innerHTML = `<div class="mono"><b>${arm==='told'?'told':'not told'}</b><br>revision ${r.index}<br>day ${r.day} (${short(H.day_names[r.day])})</div><div>trigger <b>${esc(r.trigger)}</b> · ${r.n_valid} document${r.n_valid===1?'':'s'} added · ${r.outcome} · ${Math.round((r.seconds||0)/60)} min${r.revive?.length?' · revived '+r.revive.join(', '):''}${r.dropped_n?' · '+r.dropped_n+' dropped':''}<br>${listed.map(d=>`<span class="tag mono">${d.id}</span> ${esc(d.title)}`).join('<br>')}${r.problems?.length?'<br><span class="muted">'+esc(r.problems.join('; '))+'</span>':''}</div>`;
       el.appendChild(div); }
   }
   if (!el.children.length) el.innerHTML = '<p class="muted">no revisions</p>';
 }
 function renderQs(){
   const tb = $('#qs tbody'); tb.innerHTML='';
-  H.questions.forEach((q,i) => { if (!H.shift_days.includes(q.day)) return;
+  H.questions.forEach((q,i) => { if (!H.shift_days.includes(q.day) || !inSet(q)) return;
     const cell = arm => { const s=H.arms[arm]; if (!s || s.answer[i]==null) return '–'; return `<span class="${s.correct[i]?'ok':'no'}">${esc(s.answer[i])}</span> <span class="mono muted">${(100*s.conf[i]).toFixed(0)}%</span>`; };
-    const tr = document.createElement('tr'); tr.innerHTML = `<td>${short(H.day_names[q.day])}</td><td class="mono">${clock(q.t)}</td><td class="mono">${esc(q.object)}</td><td class="muted">${esc(q.moment)}</td><td>${cell('told')}</td><td>${cell('nottold')}</td><td class="mono">${esc(q.truth)}</td>`; tb.appendChild(tr); });
+    const tr = document.createElement('tr'); tr.innerHTML = `<td>${short(H.day_names[q.day])}</td><td class="mono">${clock(q.t)}</td><td class="mono">${esc(q.object)}</td><td class="muted">${esc(q.moment)}${q.kind==='shifted'?' <span class="tag">shifted</span>':''}</td><td>${cell('told')}</td><td>${cell('nottold')}</td><td class="mono">${esc(q.truth)}</td>`; tb.appendChild(tr); });
+}
+function pooledDay(getter){
+  // per day across DATA: mean correctness of the questions in the chosen set, over every household that has the series
+  const ds = [...new Set(DATA.flatMap(h => h.questions.map(q=>q.day)))].sort((a,b)=>a-b);
+  return ds.map(d => { let ok=0, n=0; for (const h of DATA){ const s = getter(h); if (!s) continue;
+      h.questions.forEach((q,i) => { if (q.day!==d || !inSet(q)) return; const c = s(i); if (c==null) return; ok += +c; n++; }); }
+    return n ? ok/n : null; });
+}
+function renderOverview(){
+  const ds = [...new Set(DATA.flatMap(h => h.questions.map(q=>q.day)))].sort((a,b)=>a-b);
+  const names = DATA[0].day_names;
+  const series = [
+    ['timetable', h => h.refs['timetable'] ? (i => h.refs['timetable'][i] ? h.refs['timetable'][i][2] : null) : null, 'var(--tt)', 2],
+    ['hypothesis mixture (told)', h => h.arms.told ? (i => h.arms.told.correct[i]) : null, 'var(--told)', 2.4],
+    ['naive LLM (told)', h => h.refs['naive told'] ? (i => h.refs['naive told'][i] ? h.refs['naive told'][i][2] : null) : null, 'var(--ref2)', 2],
+    ['last seen', h => h.refs['last seen'] ? (i => h.refs['last seen'][i] ? h.refs['last seen'][i][2] : null) : null, 'var(--ls)', 1.6],
+  ].map(([name, g, c, w]) => ({name, v: pooledDay(g), c, w}));
+  const W=640, Hh=260, L=40, R=12, T=12, B=26, n=ds.length, ymax=1;
+  const x = i => L + (W-L-R) * (n===1?0.5:i/(n-1)), y = v => T + (Hh-T-B) * (1 - v/ymax);
+  let g = `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="accuracy per day, pooled">`;
+  ds.forEach((d,i) => { if (/^(Saturday|Sunday)$/.test(names[d]||'')) { const w=(W-L-R)/Math.max(n-1,1); g += `<rect x="${x(i)-w/2}" y="${T}" width="${w}" height="${Hh-T-B}" fill="var(--shift)" opacity=".35"/>`; } });
+  [0,0.25,0.5,0.75,1].forEach(f => { g += `<line x1="${L}" x2="${W-R}" y1="${y(f)}" y2="${y(f)}" stroke="var(--grid)"/><text x="${L-5}" y="${y(f)+4}" text-anchor="end">${pct(f)}</text>`; });
+  ds.forEach((d,i) => g += `<text x="${x(i)}" y="${Hh-8}" text-anchor="middle">${short(names[d])}</text>`);
+  for (const s of series){ const pts = s.v.map((v,i)=> v==null?null:[x(i),y(v)]).filter(Boolean); if (!pts.length) continue;
+    g += `<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="${s.c}" stroke-width="${s.w}" stroke-linejoin="round"/>`;
+    pts.forEach(p => g += `<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="${s.c}" stroke="var(--panel)" stroke-width="1"/>`); }
+  g += '</svg>';
+  const rows = series.map(s => `<tr><td><i class="sw" style="background:${s.c}"></i>${esc(s.name)}</td>${s.v.map(v=>`<td class="num mono">${v==null?'—':pct(v)}</td>`).join('')}</tr>`).join('');
+  const per = ds.map(d => DATA.reduce((a,h)=> a + h.questions.filter(q=>q.day===d && inSet(q)).length, 0));
+  $('#overview').innerHTML = `<div class="panel" style="grid-column:1/-1"><h3>accuracy per day · ${DATA.length} households · question set: ${esc(QSET)} · ${per.join(' / ')} questions per day</h3>${g}
+    <table style="width:100%;margin-top:6px"><thead><tr><th></th>${ds.map(d=>`<th class="num">${short(names[d])}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 function render(){
+  renderOverview();
   $('#res').innerHTML = H.residents.map(c => `<div class="card"><b>${esc(c.name)}</b> (${esc(c.age_band)}) ${esc(c.occupation)}<br><span class="muted">${esc(c.weekday)} ${esc(c.weekend)}${c.hobbies?.length?' Hobbies: '+esc(c.hobbies.join(', '))+'.':''}${c.pet?' '+esc(c.name)+' '+esc(c.pet)+'.':''}</span></div>`).join('')
-    + `<div class="card"><b>${esc(H.household)}</b><br><span class="muted">patrol every ${H.patrol} h · ${H.questions.length} questions · shift days ${H.shift_days.map(d=>short(H.day_names[d])).join(', ')}</span></div>`;
+    + `<div class="card"><b>${esc(H.household)}</b><br><span class="muted">nightly patrol + found-it feedback · ${H.questions.length} questions · shift days ${H.shift_days.map(d=>short(H.day_names[d])).join(', ')}</span><br>${['told','nottold'].map(a=>{const s=H.arms[a]; if(!s) return `<span class="tag">${a==='told'?'told':'not told'}: not started</span>`; return `<span class="tag ${s.in_progress?'':'live'}">${a==='told'?'told':'not told'}: ${s.in_progress?'running, ':'finished, '}${s.answered}/${H.questions.length} answered</span>`;}).join(' ')}</div>`;
   $('#week').innerHTML = days().map(d => { const m = H.messages.find(x=>x.day_index===d); const ev = (H.events[d]||[]).map(e=>e.replace(/:resident_\d+/,'')).join(', ');
     return `<div class="day ${H.shift_days.includes(d)?'shift':''}"><div class="dn">${esc(H.day_names[d])}</div><div class="ev">${ev? 'event: '+esc(ev) : '&nbsp;'}</div>${m?`<div class="msg">“${esc(m.text.replace(/^\w+: /,''))}”</div>`:''}</div>`; }).join('');
   renderSmall(); river('told'); river('nottold'); diverge(); renderDocs(); renderRevs(); renderQs();

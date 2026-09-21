@@ -33,6 +33,7 @@ BELIEFS: Tuple[Dict[str, object], ...] = (
     {"name": "last_observation"},
     {"name": "most_frequent"},
     {"name": "timetable"},
+    {"name": "timetable_told"},   # the timetable in a told arm: message days get their own bins (see run_bank)
     {"name": "markov1"},
     {"name": "periodic_persistence"},
     {"name": "smoothed_recency"},
@@ -165,7 +166,21 @@ def run_bank(bank_path: pathlib.Path, look: str, beliefs=BELIEFS, seed: int = 0,
            "patrol_label": header.get("patrol_label", f"p{header['patrol_hours']}"),
            "seed": int(header.get("seed", seed))}
     out = []
+    weekdays = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
+    day0 = weekdays.index(header["day0_weekday"]) if header.get("day0_weekday") in weekdays else 0
+    weekend = {int(d) for d, n in (header.get("day_names") or {}).items() if n in ("Saturday", "Sunday")}
     for spec in beliefs:
+        if spec["name"] == "timetable":
+            spec = {**spec, "day0_weekday": day0}   # the calendar-aware schemes need the bank's start weekday
+        elif spec["name"] == "timetable_told":
+            # told arm: one day category per message kind on the message days (weekend messages are the calendar's)
+            kinds = []
+            for m in header.get("hint_messages") or []:
+                if int(m["day_index"]) in weekend:
+                    continue
+                text = m.get("text", "").lower()
+                kinds.append((int(m["day_index"]), "sick" if "sick" in text else "guest" if ("friend" in text or "guest" in text or "coming over" in text) else "event"))
+            spec = {**spec, "name": "timetable", "day0_weekday": day0, "event_kinds": kinds, "told": True}
         try:
             recs = run_belief(spec, episode, look, seed, tag, answers)
         except Exception as e:  # a model that cannot build here is reported, not fatal

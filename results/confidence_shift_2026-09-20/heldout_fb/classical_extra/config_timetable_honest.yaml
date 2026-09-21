@@ -1,0 +1,23 @@
+# Frozen 2026-09-21 01:25 (overnight): found-it feedback protocol.
+# Nightly patrol (03:00) keeps the rest spots known; 10 minutes after every question the
+# robot learns where the object turned out to be (a sighting every agent receives). This is
+# the observation channel that samples the world at the moments questions are asked, so a
+# timetable counter can learn the weekday routine and the weekend / event days break it.
+# Tuned on seeds 0-9, classical agents only (tuning_log.md); replicated on seeds 10-29 below.
+name: frozen_2026-09-21
+sim_dir: ../data/situation_sim/confshift/ev10
+day0: Tuesday
+days: 8
+events: {sick_day: {weekday: 0.10, weekend: 0.02}, guest_visit: {weekday: 0.10, weekend: 0.14}}
+patrol_hours: 0
+patrol_times: "03:00"
+questions: activity
+classes: null
+per_day: 64
+oversample: 256
+timetable_bin_hours: 2
+timetable_day_scheme: weekday_weekend
+timetable_empty_bin: last_seen
+timetable_empty_bin_confidence: 0.3
+negative_evidence: off
+feedback_delay_min: 10

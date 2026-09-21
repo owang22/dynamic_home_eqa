@@ -1,0 +1,179 @@
+# p_3d8b — Overnight resting: glasses at nightstand, remote on floor, snack bowl in sink
+
+The 03:00 patrol reveals a consistent overnight pattern that differs from the daytime resting spots. Omar's glass is at nightstand_b1 (a water glass by the bed), Omar's reading glasses are at nightstand_b1 (removed for sleep), Marco's glass is at sink_k1 (washed after evening use and left in the sink), the snack bowl is at sink_k1 (washed after evening TV), and the remote is on floor_l_l1 (dropped after use). By the 18:00 pass every one of these items has returned to its daytime resting place: glasses to cupboard_k1 or desk, remote to tv_stand_l1, snack bowl to cupboard_k1, glasses to their daytime spots. This overnight window (roughly 22:00–07:00) is the only time these items occupy their secondary locations.
+
+This document is distinct from p_79e9, which claims the snack bowl is at cupboard_k1 at all times (a claim that has gone against 13 times) and the remote is at tv_stand_l1 at all times (against 2). It also corrects the mixture's worst-object errors where glass_omar was predicted at cupboard_k1 but found at nightstand_b1, and remote was predicted at tv_stand_l1 but found on floor_l_l1.
+
+What would refute it: a 03:00 (or any 22:00–07:00) look that finds any of these items at its daytime resting spot instead of its overnight spot.
+
+```json
+{
+ "claims": [
+  {
+   "claim": "Omar's glass is at the nightstand overnight",
+   "target": "glass_omar",
+   "expect": "nightstand_b1",
+   "days": "both",
+   "from": 22,
+   "to": 24
+  },
+  {
+   "claim": "Omar's glass is at the nightstand overnight",
+   "target": "glass_omar",
+   "expect": "nightstand_b1",
+   "days": "both",
+   "from": 0,
+   "to": 7
+  },
+  {
+   "claim": "The remote is on the living-room floor overnight",
+   "target": "remote_shared",
+   "expect": "floor_l_l1",
+   "days": "both",
+   "from": 22,
+   "to": 24
+  },
+  {
+   "claim": "The remote is on the living-room floor overnight",
+   "target": "remote_shared",
+   "expect": "floor_l_l1",
+   "days": "both",
+   "from": 0,
+   "to": 7
+  },
+  {
+   "claim": "The snack bowl is in the kitchen sink overnight",
+   "target": "snack_bowl_shared",
+   "expect": "sink_k1",
+   "days": "both",
+   "from": 22,
+   "to": 24
+  },
+  {
+   "claim": "The snack bowl is in the kitchen sink overnight",
+   "target": "snack_bowl_shared",
+   "expect": "sink_k1",
+   "days": "both",
+   "from": 0,
+   "to": 7
+  }
+ ],
+ "targets": {
+  "glass_omar": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "cupboard_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 22,
+    "to": 24,
+    "at": "nightstand_b1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 0,
+    "to": 7,
+    "at": "nightstand_b1",
+    "chance": "usually"
+   }
+  ],
+  "glasses_omar": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "desk_o1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 22,
+    "to": 24,
+    "at": "nightstand_b1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 0,
+    "to": 7,
+    "at": "nightstand_b1",
+    "chance": "usually"
+   }
+  ],
+  "glass_marco": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "cupboard_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 22,
+    "to": 24,
+    "at": "sink_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 0,
+    "to": 7,
+    "at": "sink_k1",
+    "chance": "usually"
+   }
+  ],
+  "snack_bowl_shared": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "cupboard_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 22,
+    "to": 24,
+    "at": "sink_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 0,
+    "to": 7,
+    "at": "sink_k1",
+    "chance": "usually"
+   }
+  ],
+  "remote_shared": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "tv_stand_l1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 22,
+    "to": 24,
+    "at": "floor_l_l1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 0,
+    "to": 7,
+    "at": "floor_l_l1",
+    "chance": "usually"
+   }
+  ]
+ }
+}
+```

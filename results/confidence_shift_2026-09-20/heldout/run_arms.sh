@@ -3,7 +3,7 @@
 cd ~/robot/dynamic_home_eqa/src
 R=../results/confidence_shift_2026-09-20
 # method configuration for the confidence study (see problems_found.md)
-export PARTICLE_NEGATIVE_HALF_LIFE_H=1e-9 TIMETABLE_INTERIOR_MIN_EDGE=0.9 TIMETABLE_PRIOR_DECAYS=0
+export PARTICLE_NEGATIVE_HALF_LIFE_H=1e-9 TIMETABLE_INTERIOR_MIN_EDGE=0.9 TIMETABLE_PRIOR_DECAYS=0 HYPOTHESIS_ENTRY=share HYPOTHESIS_DECAY=0.985 HYPOTHESIS_LL_TEMPER=0.03
 s=$1
 for told in told nottold; do
   extra=""; [ $told = told ] && extra="--told"

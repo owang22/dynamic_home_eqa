@@ -1,0 +1,796 @@
+# p_2b9e — Omar's workspace migrates to the coffee table 11-17
+
+Omar works from home at desk_o1 in the office, but his workspace is not fixed. In the morning (6 to 11) he works at the desk with his laptop, charger, and mug. From about 11 to 17 he pulls his laptop and charger to the coffee table in the living room and works from there, sometimes with his mug. His headphones, mouse, and notebook stay at the desk throughout the day. In the evening (17 to 22) everything returns to the desk. Marco's side of the house runs normally: he is at desk_b1 from 9 to 17:30, and nothing leaves the house.
+
+What sets this hypothesis apart: laptop_omar, charger_omar, and mug_omar are at coffee_table_l1 (not desk_o1) between 11 and 17 on weekdays, while headphones_omar, mouse_omar, and notebook_omar remain at desk_o1. The parent documents (p_a1b2, p_c3d4) put all of Omar's items at desk_o1 all day, which misses the mid-day migration.
+
+What would refute it: laptop_omar sighted at desk_o1 at 14:00 on a weekday, or charger_omar sighted at desk_o1 at 15:00 on a weekday.
+
+```json
+{
+ "claims": [
+  {
+   "claim": "Omar's laptop is at the coffee table during mid-day on weekdays",
+   "target": "laptop_omar",
+   "expect": "coffee_table_l1",
+   "days": "weekday",
+   "from": 13,
+   "to": 16
+  },
+  {
+   "claim": "Omar's charger is at the coffee table during mid-day on weekdays",
+   "target": "charger_omar",
+   "expect": "coffee_table_l1",
+   "days": "weekday",
+   "from": 13,
+   "to": 16
+  },
+  {
+   "claim": "Omar's mug is at the coffee table in the mid-afternoon on weekdays",
+   "target": "mug_omar",
+   "expect": "coffee_table_l1",
+   "days": "weekday",
+   "from": 15,
+   "to": 17
+  },
+  {
+   "claim": "Omar's headphones remain at his desk during the mid-day coffee table window",
+   "target": "headphones_omar",
+   "expect": "desk_o1",
+   "days": "weekday",
+   "from": 13,
+   "to": 16
+  }
+ ],
+ "targets": {
+  "laptop_omar": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "desk_o1",
+    "chance": "usually"
+   },
+   {
+    "days": "weekday",
+    "from": 11,
+    "to": 17,
+    "at": "coffee_table_l1",
+    "chance": "usually"
+   }
+  ],
+  "laptop_marco": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "desk_b1",
+    "chance": "usually"
+   }
+  ],
+  "charger_omar": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "desk_o1",
+    "chance": "usually"
+   },
+   {
+    "days": "weekday",
+    "from": 11,
+    "to": 17,
+    "at": "coffee_table_l1",
+    "chance": "usually"
+   }
+  ],
+  "charger_marco": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "desk_b1",
+    "chance": "usually"
+   }
+  ],
+  "mug_omar": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "cupboard_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "weekday",
+    "from": 9,
+    "to": 11,
+    "at": "desk_o1",
+    "chance": "usually"
+   },
+   {
+    "days": "weekday",
+    "from": 11,
+    "to": 17,
+    "at": "coffee_table_l1",
+    "chance": "sometimes"
+   },
+   {
+    "days": "weekday",
+    "from": 17,
+    "to": 19,
+    "at": "desk_o1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 7.5,
+    "to": 9,
+    "at": "kitchen_table_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 19,
+    "to": 20.5,
+    "at": "dining_table_d1",
+    "chance": "usually"
+   }
+  ],
+  "mug_marco": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "cupboard_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "weekday",
+    "from": 9,
+    "to": 17.5,
+    "at": "desk_b1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 7.5,
+    "to": 9,
+    "at": "kitchen_table_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 19,
+    "to": 20.5,
+    "at": "dining_table_d1",
+    "chance": "usually"
+   }
+  ],
+  "headphones_omar": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "desk_o1",
+    "chance": "almost_always"
+   }
+  ],
+  "mouse_omar": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "desk_o1",
+    "chance": "almost_always"
+   }
+  ],
+  "notebook_omar": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "desk_o1",
+    "chance": "almost_always"
+   }
+  ],
+  "notebook_marco": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "desk_b1",
+    "chance": "usually"
+   }
+  ],
+  "keys_marco": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "entry_table_e1",
+    "chance": "almost_always"
+   }
+  ],
+  "keys_omar": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "entry_table_e1",
+    "chance": "almost_always"
+   }
+  ],
+  "wallet_marco": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "entry_table_e1",
+    "chance": "almost_always"
+   }
+  ],
+  "wallet_omar": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "entry_table_e1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:blanket": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "couch_l1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 20,
+    "to": 22.5,
+    "at": "couch_l1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:remote": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "tv_stand_l1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 20,
+    "to": 22.5,
+    "at": "floor_l_l1",
+    "chance": "usually"
+   }
+  ],
+  "class:snack_bowl": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "cupboard_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 20,
+    "to": 22.5,
+    "at": "coffee_table_l1",
+    "chance": "usually"
+   }
+  ],
+  "class:plate": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "cupboard_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 7.5,
+    "to": 9,
+    "at": "kitchen_table_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 19,
+    "to": 20.5,
+    "at": "dining_table_d1",
+    "chance": "usually"
+   }
+  ],
+  "class:glass": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "cupboard_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 7.5,
+    "to": 9,
+    "at": "kitchen_table_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 19,
+    "to": 20.5,
+    "at": "dining_table_d1",
+    "chance": "usually"
+   }
+  ],
+  "class:towel": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "towel_rack_ba1",
+    "chance": "usually"
+   }
+  ],
+  "class:water_bottle": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "dish_rack_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 8,
+    "to": 10,
+    "at": "desk_b1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 10,
+    "to": 18,
+    "at": "sink_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 19.5,
+    "to": 21,
+    "at": "dining_table_d1",
+    "chance": "usually"
+   }
+  ],
+  "class:cutting_board": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "counter_k1",
+    "chance": "usually"
+   }
+  ],
+  "class:pan": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "cupboard_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 18.5,
+    "to": 20,
+    "at": "counter_k1",
+    "chance": "usually"
+   }
+  ],
+  "class:kitchen_knife": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "drawer_k_k1",
+    "chance": "usually"
+   }
+  ],
+  "class:meditation_cushion": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "bedroom_floor_b1",
+    "chance": "usually"
+   }
+  ],
+  "class:watering_can": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "balcony_floor_y1",
+    "chance": "usually"
+   }
+  ],
+  "class:vacuum_cleaner": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "entry_floor_e1",
+    "chance": "usually"
+   }
+  ],
+  "class:laundry_basket": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "bathroom_shelf_ba1",
+    "chance": "usually"
+   }
+  ],
+  "class:fruit_bowl": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "kitchen_table_k1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:toaster": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "counter_k1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:kettle": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "counter_k1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:knife_block": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "counter_k1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:wall_clock": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "counter_k1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:vitamins": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "counter_k1",
+    "chance": "usually"
+   },
+   {
+    "days": "both",
+    "from": 8,
+    "to": 9.5,
+    "at": "kitchen_table_k1",
+    "chance": "usually"
+   }
+  ],
+  "class:book": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "nightstand_b1",
+    "chance": "usually"
+   }
+  ],
+  "class:glasses": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "nightstand_b1",
+    "chance": "usually"
+   }
+  ],
+  "class:iron": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "wardrobe_b1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:ironing_board": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "bedroom_floor_b1",
+    "chance": "usually"
+   }
+  ],
+  "class:board_game": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "bookshelf_l1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:candle": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "coffee_table_l1",
+    "chance": "usually"
+   }
+  ],
+  "class:tissue_box": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "coffee_table_l1",
+    "chance": "usually"
+   }
+  ],
+  "class:lamp": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "side_table_l1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:cushion": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "couch_l1",
+    "chance": "usually"
+   }
+  ],
+  "class:doormat": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "entry_floor_e1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:umbrella": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "entry_floor_e1",
+    "chance": "usually"
+   }
+  ],
+  "class:hat": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "entry_hook_e1",
+    "chance": "usually"
+   }
+  ],
+  "class:scarf": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "entry_hook_e1",
+    "chance": "usually"
+   }
+  ],
+  "class:sunglasses": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "entry_table_e1",
+    "chance": "usually"
+   }
+  ],
+  "class:vase": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "dining_table_d1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:gardening_gloves": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "balcony_table_y1",
+    "chance": "usually"
+   }
+  ],
+  "class:shopping_bag": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "pantry_shelf_k1",
+    "chance": "usually"
+   }
+  ],
+  "class:recipe_book": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "pantry_shelf_k1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:medication": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "medicine_cabinet_ba1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:first_aid_kit": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "medicine_cabinet_ba1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:skincare": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "bathroom_shelf_ba1",
+    "chance": "usually"
+   }
+  ],
+  "class:detergent": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "bathroom_shelf_ba1",
+    "chance": "usually"
+   }
+  ],
+  "class:hair_dryer": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "bathroom_shelf_ba1",
+    "chance": "usually"
+   }
+  ],
+  "class:razor": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "sink_ba_ba1",
+    "chance": "usually"
+   }
+  ],
+  "class:soap_dispenser": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "sink_ba_ba1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:toothbrush_holder": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "sink_ba_ba1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:pen": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "desk_b1",
+    "chance": "usually"
+   }
+  ],
+  "class:jacket": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "entry_hook_e1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:shoes": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "shoe_rack_e1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:running_shoes": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "shoe_rack_e1",
+    "chance": "almost_always"
+   }
+  ],
+  "class:serving_dish": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "cupboard_k1",
+    "chance": "usually"
+   }
+  ],
+  "class:spatula": [
+   {
+    "days": "both",
+    "from": 0,
+    "to": 24,
+    "at": "drawer_k_k1",
+    "chance": "usually"
+   }
+  ]
+ }
+}
+```

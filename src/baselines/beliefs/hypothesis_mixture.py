@@ -72,6 +72,7 @@ All times are seconds since episode start.
 from __future__ import annotations
 
 import math
+import os as _os
 import random
 from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple, Union
 
@@ -162,7 +163,9 @@ from 0.571 to 0.565: the tail terms are near-identical across particles,
 so they add common-mode pressure toward collapse without adding signal.
 On hh_001 it is a wash (4.46 vs 4.43, accuracy identical)."""
 
-_MIN_LIKELIHOOD = 1e-12
+_MIN_LIKELIHOOD = float(__import__("os").environ.get("HYPOTHESIS_MIN_LIKELIHOOD", "1e-12"))
+"""Floor on a particle's likelihood for one sighting. Confidence study: HYPOTHESIS_MIN_LIKELIHOOD=0.02
+caps a miss at ~3.9 nats (x temper) so one round cannot hand the mixture to a single document."""
 """Floor on a particle's per-term likelihood before the log, so a
 degenerate zero-floor particle cannot send a weight to -inf. Reached only
 by a particle running at ``floor_mass`` 0; the panel's 0.02 floor caps a
@@ -336,7 +339,12 @@ class HypothesisMixture(BeliefModel):
         """Temper by ``decay``, add the event, renormalize (subtracting the
         max — a uniform shift, so it leaves every weight gap untouched
         under the next tempering step too)."""
-        self._log_weights = [self._decay * lw + d for lw, d
+        # Confidence study knobs (env): HYPOTHESIS_DECAY overrides the per-event
+        # forgetting factor; HYPOTHESIS_LL_TEMPER scales each event's log
+        # likelihood (a patrol pass is ~35 events on the same instant).
+        decay = float(_os.environ.get("HYPOTHESIS_DECAY", self._decay))
+        temper = float(_os.environ.get("HYPOTHESIS_LL_TEMPER", "1.0"))
+        self._log_weights = [decay * lw + temper * d for lw, d
                              in zip(self._log_weights, log_likelihoods)]
         top = max(self._log_weights)
         self._log_weights = [lw - top for lw in self._log_weights]
