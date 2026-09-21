@@ -17,6 +17,7 @@ prompt can show it back.
 from __future__ import annotations
 
 import collections
+import os
 from typing import Any, Dict, List, Optional
 
 import math
@@ -47,6 +48,7 @@ class LongLeafMixture(LLMHypothesisMixture):
         self._weight_trace: Dict[int, Dict[str, float]] = {}
         self._library: Dict[str, Dict[str, Any]] = {}   # every doc ever
         self._last_reask_t = -1
+        self._message_days: set = set()
         super().__init__(*args, **kwargs)
 
     @property
@@ -69,7 +71,12 @@ class LongLeafMixture(LLMHypothesisMixture):
         self._last_reask_t = -1
 
     def _make_particle(self, raw, rng, vocabulary):
-        return TimetableBelief(rng, raw, vocabulary=vocabulary)
+        # Confidence study: the document particles take the same empty-look
+        # policy as the classical baselines (PARTICLE_NEGATIVE_HALF_LIFE_H env,
+        # e.g. 1e-9 = off); unset = the package default (24 h).
+        nhl = os.environ.get("PARTICLE_NEGATIVE_HALF_LIFE_H")
+        return TimetableBelief(rng, raw, vocabulary=vocabulary,
+                               negative_half_life_h=float(nhl) if nhl else None)
 
     @property
     def has_structure(self) -> bool:
@@ -109,9 +116,27 @@ class LongLeafMixture(LLMHypothesisMixture):
                     out.append({"hypothesis_id": key, "weight": weights[key], **row})
         return out
 
+    def _todays_messages(self, t: int) -> List[str]:
+        """The residents' dated messages for day ``t`` (the told arm's
+        protocol carries them; the not-told arm's carries none)."""
+        proto = getattr(self._context, "protocol", None) or {}
+        day = t // DAY_SECONDS
+        return [str(m.get("text", "")) for m in (proto.get("hint_messages") or [])
+                if int(m.get("day_index", -1)) == day]
+
     def _maybe_reask(self, t: int) -> None:
         cfg = self._reask
         if cfg is None or self._elicitor is None or self.calls_made >= cfg.max_calls:
+            return
+        # A message from the residents ("it's the weekend", "X is home sick")
+        # is a stated shift: revise once at the day's first question, so the
+        # told arm can act on it the same day instead of waiting for a claim
+        # to fail. Once per message day.
+        day = t // DAY_SECONDS
+        msgs = self._todays_messages(t)
+        if msgs and day not in self._message_days:
+            self._message_days.add(day)
+            self._revise(t, "residents' message today: " + " ".join(msgs)[:120], "message")
             return
         # The gap counts from the episode start as well as from the last
         # call: a claim contradicted by two looks on the tour day is the
@@ -307,6 +332,7 @@ class LongLeafMixture(LLMHypothesisMixture):
                                                   "0 sightings so far")}
             for u in report["uncovered_objects"]]
         report.update({
+            "hourly": self.hourly_profile(),
             "library": library,
             "library_raws": [dict(r) for r in self._library.values()],
             "absence_by_object": self.absence_by_object(),
@@ -316,6 +342,28 @@ class LongLeafMixture(LLMHypothesisMixture):
                 sorted(table), sightings, t,
                 unsighted_label="0 sightings so far")})
         return report
+
+    def hourly_profile(self) -> List[Dict[str, Any]]:
+        """Where each object was seen, by clock hour and weekday / weekend,
+        from the robot's own sightings: the evidence that places an in-use
+        window between two patrol passes. One row per object that has been
+        seen on more than one receptacle."""
+        from baselines.llm_hypotheses.protocol_text import weekday_index
+        prof: Dict[str, Dict[str, Dict[int, collections.Counter]]] = collections.defaultdict(
+            lambda: {"weekday": collections.defaultdict(collections.Counter),
+                     "weekend": collections.defaultdict(collections.Counter)})
+        for row in self._sighting_log:
+            kind = "weekend" if weekday_index(row["t"] // DAY_SECONDS) in (5, 6) else "weekday"
+            prof[row["object"]][kind][(row["t"] % DAY_SECONDS) // 3600][row["actual"]] += 1
+        out = []
+        for obj in sorted(prof):
+            recs = {r for k in prof[obj].values() for c in k.values() for r in c}
+            if len(recs) < 2:
+                continue
+            out.append({"object": obj,
+                        "weekday": {h: dict(c) for h, c in sorted(prof[obj]["weekday"].items())},
+                        "weekend": {h: dict(c) for h, c in sorted(prof[obj]["weekend"].items())}})
+        return out
 
     def object_table(self, t: int) -> List[Dict[str, Any]]:
         """One row per sighted object: modal receptacle, sightings,

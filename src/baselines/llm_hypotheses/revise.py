@@ -492,7 +492,11 @@ class LongLeafRevisionElicitor(RevisionElicitor):
         index = len(self.calls) + 1
         self._set_vocabulary(report.get("known_objects")
                              or self._episode.object_classes)
-        notes = _PT.household_notes(getattr(self._episode, "protocol", None), int(report["day"]))
+        proto = getattr(self._episode, "protocol", None)
+        notes = _PT.household_notes(proto, int(report["day"]))
+        asked = _PT.questions_sentence(proto)
+        if asked:
+            notes = (notes + "\n\n" if notes else "") + asked
         user = longleaf_revision_prompt(report, self._tables, self._omap,
                                         self._rmap, notes=notes)
         log: Dict[str, Any] = {"household": self._episode.household_id,

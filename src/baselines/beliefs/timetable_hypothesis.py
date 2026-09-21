@@ -57,11 +57,27 @@ from baselines.beliefs.hypothesis_program import (
     REST_HALF_LIFE_H, REST_PRIOR_COUNT, REST_PRIOR_HALF_LIFE_H,
     DistinguishingCheck, Hypothesis, HypothesisProgramBelief,
     HypothesisValidationError, _phi, _resolve_target)
+def _is_weekend(day_index: int) -> bool:
+    """Saturday / Sunday under the bank's day-0 weekday (protocol_text keeps
+    it; banks without one keep the old day 0 = Monday convention)."""
+    from baselines.llm_hypotheses.protocol_text import weekday_index
+    return weekday_index(int(day_index)) in (5, 6)
+
+
 from baselines.types import DAY_SECONDS, Prediction
 
 EDGE_SD_H = 0.5
 """Softness of a block's edges, in hours."""
 MIN_BLOCK_WEIGHT = 0.05
+import os as _os
+INTERIOR_ONLY = float(_os.environ.get("TIMETABLE_INTERIOR_MIN_EDGE", "0"))
+"""Variant knob (confidence study): a sighting refines a block's chance and
+WHERE only when its edge weight is at least this (0 = the original rule: any
+sighting inside the soft window counts). With a patrol on the hour, the pass
+at a window's start otherwise re-teaches every in-use window its resting spot."""
+PRIOR_DECAYS = _os.environ.get("TIMETABLE_PRIOR_DECAYS", "1") != "0"
+"""Variant knob: whether the author's stated spot fades with absolute time
+(the original rule) or only against sightings."""
 """Edge weight below which a sighting teaches a block nothing."""
 MAX_CLAIMED_MASS = 0.95
 """Cap on the mass the blocks claim together, so the fallback (and the
@@ -77,7 +93,7 @@ class Block:
     chance: str
 
     def matches_day(self, day_index: int) -> bool:
-        weekend = day_index % 7 in (5, 6)
+        weekend = _is_weekend(day_index)
         return self.days == "both" or (self.days == "weekend") == weekend
 
     def edge_weight(self, t: int) -> float:
@@ -113,7 +129,7 @@ class Claim:
 
     def in_window(self, t: int) -> bool:
         day = t // DAY_SECONDS
-        weekend = day % 7 in (5, 6)
+        weekend = _is_weekend(day)
         if self.days == "weekday" and weekend:
             return False
         if self.days == "weekend" and not weekend:
@@ -322,8 +338,8 @@ class _BlockState:
     def where_distribution(self, object_id: str, t: int,
                            dirichlet_mean) -> Dict[str, float]:
         counts: Dict[str, float] = {
-            self.block.at: REST_PRIOR_COUNT * 2.0 ** (
-                -max(0, t) / (REST_PRIOR_HALF_LIFE_H * 3600.0))}
+            self.block.at: REST_PRIOR_COUNT * (2.0 ** (
+                -max(0, t) / (REST_PRIOR_HALF_LIFE_H * 3600.0)) if PRIOR_DECAYS else 1.0)}
         half = REST_HALF_LIFE_H * 3600.0
         for receptacle, rows in self.where.get(object_id, {}).items():
             for ot, w in rows:
@@ -447,7 +463,7 @@ class TimetableBelief(HypothesisProgramBelief):
         for index, reach in self._stack(object_id, t):
             state = self._states[index]
             w = state.block.edge_weight(t) * reach
-            if w < MIN_BLOCK_WEIGHT:
+            if w < MIN_BLOCK_WEIGHT or state.block.edge_weight(t) < INTERIOR_ONLY:
                 continue
             if receptacle_id == state.block.at:
                 state.success += w

@@ -1,0 +1,259 @@
+<title>Longleaf Ledger</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#f7f5f0; --panel:#ffffff; --ink:#1c1a17; --muted:#6b6560; --line:#e3ded4; --grid:#ece8e0;
+  --told:#1a9e6f; --nottold:#e0662f; --shift:#f2c46d; --ref:#8a847c; --ref2:#4a3aa7;
+  --good:#1a9e6f; --bad:#c9463d; --tag:#eee9df;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --paper:#15130f; --panel:#1e1b17; --ink:#ece7de; --muted:#a29b90; --line:#332f29; --grid:#2a2622;
+  --told:#3cc08f; --nottold:#f0834f; --shift:#8a6a1f; --ref:#8f8880; --ref2:#a79df0; --good:#3cc08f; --bad:#e06a61; --tag:#2a2622; } }
+:root[data-theme="dark"]{
+  --paper:#15130f; --panel:#1e1b17; --ink:#ece7de; --muted:#a29b90; --line:#332f29; --grid:#2a2622;
+  --told:#3cc08f; --nottold:#f0834f; --shift:#8a6a1f; --ref:#8f8880; --ref2:#a79df0; --good:#3cc08f; --bad:#e06a61; --tag:#2a2622; }
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:"Source Sans 3",system-ui,sans-serif;font-size:15px;line-height:1.45;margin:0}
+.wrap{max-width:1100px;margin:0 auto;padding-inline:16px;padding-block:0 48px}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:500;text-wrap:balance;margin:0}
+h1{font-size:30px;line-height:1.1}
+h2{font-size:21px;margin-block:36px 10px}
+h3{font-size:16px}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px}
+.muted{color:var(--muted)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);border-bottom:1px solid var(--line);padding-block:10px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.bar select{font:inherit;padding:4px 8px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:4px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:18px;height:3px;border-radius:2px;display:inline-block}
+.sw.dash{background:repeating-linear-gradient(90deg,currentColor 0 4px,transparent 4px 7px)}
+.lead{max-width:68ch;margin-block:18px 6px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-block:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.card b{font-weight:600}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-block:12px}
+.day{border:1px solid var(--line);border-radius:4px;padding:6px 8px;background:var(--panel);min-height:74px;font-size:13px}
+.day.shift{background:color-mix(in srgb,var(--shift) 28%,var(--panel))}
+.day .dn{font-family:Fraunces,serif;font-size:15px}
+.day .ev{color:var(--muted);font-size:12px}
+.day .msg{margin-top:4px;font-style:italic;font-size:12px}
+.small{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+.panel h3{margin-bottom:4px}
+svg{display:block;max-width:100%;height:auto}
+svg text{font-family:"IBM Plex Mono",monospace;font-size:10.5px;fill:var(--muted)}
+.river{overflow-x:auto}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--paper);padding:6px 9px;border-radius:4px;font-size:12.5px;max-width:320px;z-index:9;display:none}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr.doc{cursor:pointer}
+tr.doc:hover td{background:color-mix(in srgb,var(--tag) 60%,var(--panel))}
+tr.detail td{background:var(--paper)}
+.prose{max-width:72ch;white-space:pre-wrap;font-size:13.5px}
+.tag{display:inline-block;background:var(--tag);border-radius:3px;padding:1px 6px;font-size:11.5px;margin-right:4px}
+.tag.live{color:var(--good)} .tag.ret{color:var(--bad)}
+.tbl{overflow-x:auto}
+.blocks{font-family:"IBM Plex Mono",monospace;font-size:11.5px;white-space:pre-wrap;max-height:220px;overflow:auto;background:var(--panel);border:1px solid var(--line);padding:6px 8px;border-radius:4px}
+.revs{display:grid;gap:8px}
+.rev{display:grid;grid-template-columns:110px 1fr;gap:10px;border-left:3px solid var(--line);padding-left:10px}
+.rev.told{border-color:var(--told)} .rev.nottold{border-color:var(--nottold)}
+.qtable td{font-size:12.5px}
+.ok{color:var(--good)} .no{color:var(--bad)}
+button.lnk{background:none;border:0;color:var(--ink);text-decoration:underline;cursor:pointer;font:inherit;padding:0}
+@media (max-width:640px){ .week{grid-template-columns:repeat(4,1fr)} .rev{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:no-preference){ tr.doc td{transition:background .15s} }
+</style>
+<div class="wrap">
+<div class="bar">
+  <h1>Longleaf Ledger</h1>
+  <label class="muted">household <select id="hh"></select></label>
+  <div class="legend">
+    <span><i class="sw" style="background:var(--told)"></i>told (residents' messages on shift days)</span>
+    <span><i class="sw" style="background:var(--nottold)"></i>not told</span>
+    <span><i class="sw" style="background:var(--shift);height:10px"></i>shift day</span>
+    <span><i class="sw" style="background:var(--ref)"></i>most frequent</span>
+    <span><i class="sw" style="background:var(--ref2)"></i>naive LLM</span>
+  </div>
+</div>
+<p class="lead">The mixture starts the week with a library of competing weekly models of the home, written from one walkthrough and the residents' intro cards. Each patrol pass re-weights the library; when the evidence goes against a document's claims, the writer is asked to add documents. This page shows which documents carry the belief, how their weights move through the weekend and the event days, and whether being told about a shift changes anything.</p>
+<div id="res" class="cards"></div>
+<div id="week" class="week"></div>
+
+<h2>How sure it was, day by day</h2>
+<p class="muted" style="max-width:68ch;margin-top:0">Accuracy on all questions; the mixture's probability on its own answer (what it would state as confidence); the share of the library's weight whose own answer agrees (confidence from the weighting: 100% = every document that matters says the same spot); share of answers at probability ≥ 0.7; and the effective number of documents carrying the mixture (1 = one document has taken over). The reference lines are the most-frequent counter and the naive LLM on the same questions.</p>
+<div id="small" class="small"></div>
+
+<h2>Weight river</h2>
+<p class="muted" style="max-width:68ch;margin-top:0">Every question across the week, left to right; each band is one document's weight. Vertical rules are day boundaries; shaded days are shift days; a ◆ marks a revision (documents added). Hover a band to see the document.</p>
+<div class="panel"><h3 style="color:var(--told)">told</h3><div class="river" id="river_told"></div></div>
+<div class="panel" style="margin-top:10px"><h3 style="color:var(--nottold)">not told</h3><div class="river" id="river_nottold"></div></div>
+<div class="panel" style="margin-top:10px"><h3>Told minus not told</h3><p class="muted" style="margin:2px 0 6px">Total weight moved between the two arms' libraries at each question (half the L1 distance; 0 = identical mixtures). Anything above zero before the first message is a difference in the writer's revisions, not in the evidence.</p><div id="diverge"></div></div>
+
+<h2>The documents</h2>
+<p class="muted" style="max-width:68ch;margin-top:0">Sorted by final weight in the told arm. Sparklines: weight over the week, told (green) and not told (orange). Click a row for the prose, its timetable blocks for the objects that were asked about, and its claims.</p>
+<div class="tbl"><table id="docs"><thead><tr><th>id</th><th>title</th><th>born</th><th>weight over the week</th><th class="num">final told</th><th class="num">final not told</th><th>status</th></tr></thead><tbody></tbody></table></div>
+
+<h2>Revisions</h2>
+<div id="revs" class="revs"></div>
+
+<h2>Questions on shift days</h2>
+<p class="muted" style="max-width:68ch;margin-top:0">Every question asked on a shift day: what the mixture answered with what confidence in each arm, and the truth.</p>
+<div class="tbl"><table id="qs" class="qtable"><thead><tr><th>day</th><th>time</th><th>object</th><th>moment</th><th>told</th><th>not told</th><th>truth</th></tr></thead><tbody></tbody></table></div>
+</div>
+<div class="tip" id="tip"></div>
+<script>
+const DATA = /*DATA*/null;
+const $ = (s, el=document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const short = n => (n||'').slice(0,3);
+const clock = t => { const m = Math.floor((t % 86400)/60); return String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0'); };
+const mean = a => { const v = a.filter(x => x != null); return v.length ? v.reduce((s,x)=>s+x,0)/v.length : null; };
+const pct = x => x == null ? '–' : Math.round(100*x)+'%';
+const tip = $('#tip');
+function showTip(e, html){ tip.innerHTML = html; tip.style.display='block'; tip.style.left = Math.min(e.clientX+14, innerWidth-330)+'px'; tip.style.top = (e.clientY+14)+'px'; }
+function hideTip(){ tip.style.display='none'; }
+
+// deterministic hue per document id
+function hue(id){ let h=0; for (const c of id) h = (h*31 + c.charCodeAt(0)) % 360; return h; }
+function docColor(id, born){ const h = hue(id); return born === 'library' ? `hsl(${h} 45% 58%)` : `hsl(${h} 70% 45%)`; }
+
+let H = DATA[0];
+const sel = $('#hh');
+DATA.forEach((b,i) => { const o = document.createElement('option'); o.value=i; o.textContent = b.household; sel.appendChild(o); });
+sel.onchange = () => { H = DATA[+sel.value]; render(); };
+
+function days(){ return [...new Set(H.questions.map(q=>q.day))].sort((a,b)=>a-b); }
+function perDay(arm){
+  const s = H.arms[arm]; if (!s) return null;
+  return days().map(d => {
+    const idx = H.questions.map((q,i)=>q.day===d?i:-1).filter(i=>i>=0);
+    const conf = idx.map(i=>s.conf[i]), ok = idx.map(i=>s.correct[i]);
+    const cov = idx.filter(i => s.conf[i] != null && s.conf[i] >= 0.7), answered = idx.filter(i => s.conf[i] != null);
+    return { day:d, acc: mean(ok.map(x=>x==null?null:+x)), conf: mean(conf), agree: mean(idx.map(i=>(s.agree||[])[i])), cov: answered.length? cov.length/answered.length : null,
+             sel: mean(cov.map(i=>s.correct[i]==null?null:+s.correct[i])), ess: mean(idx.map(i=>s.ess[i])) };
+  });
+}
+function refDay(label, key){
+  const r = H.refs[label]; if (!r) return null;
+  return days().map(d => { const idx = H.questions.map((q,i)=>q.day===d?i:-1).filter(i=>i>=0 && r[i]);
+    if (key==='acc') return mean(idx.map(i=>+r[i][2]));
+    if (key==='conf') return mean(idx.map(i=>r[i][1]));
+    if (key==='cov') return idx.length ? idx.filter(i=>r[i][1]>=0.7).length/idx.length : null;
+    return null; });
+}
+function lineChart(title, seriesList, yfmt, ymax){
+  const W=300, Hh=150, L=34, R=8, T=10, B=22, ds = days(), n = ds.length;
+  const x = i => L + (W-L-R) * (n===1?0.5:i/(n-1));
+  const y = v => T + (Hh-T-B) * (1 - v/ymax);
+  let g = `<svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="${esc(title)}">`;
+  ds.forEach((d,i) => { if (H.shift_days.includes(d)) { const w=(W-L-R)/Math.max(n-1,1); g += `<rect x="${x(i)-w/2}" y="${T}" width="${w}" height="${Hh-T-B}" fill="var(--shift)" opacity=".35"/>`; } });
+  [0,0.25,0.5,0.75,1].forEach(f => { g += `<line x1="${L}" x2="${W-R}" y1="${y(f*ymax)}" y2="${y(f*ymax)}" stroke="var(--grid)" stroke-width="1"/><text x="${L-4}" y="${y(f*ymax)+3.5}" text-anchor="end">${yfmt(f*ymax)}</text>`; });
+  ds.forEach((d,i) => g += `<text x="${x(i)}" y="${Hh-6}" text-anchor="middle">${short(H.day_names[d])}</text>`);
+  for (const s of seriesList){
+    const pts = s.v.map((v,i)=> v==null?null:[x(i),y(Math.min(v,ymax))]).filter(Boolean);
+    if (!pts.length) continue;
+    g += `<polyline points="${pts.map(p=>p.join(',')).join(' ')}" fill="none" stroke="${s.c}" stroke-width="${s.w||2}" ${s.dash?'stroke-dasharray="4 3"':''} stroke-linejoin="round"/>`;
+    pts.forEach(p => g += `<circle cx="${p[0]}" cy="${p[1]}" r="2.6" fill="${s.c}" stroke="var(--panel)" stroke-width="1"/>`);
+  }
+  return `<div class="panel"><h3>${esc(title)}</h3>${g}</svg></div>`;
+}
+function renderSmall(){
+  const t = perDay('told'), u = perDay('nottold');
+  const S = (key, ymax, fmt, refs=true) => {
+    const list = [];
+    if (refs && H.refs['most frequent'] && key!=='ess') list.push({v: refDay('most frequent', key), c:'var(--ref)', w:1.5});
+    if (refs && H.refs['naive told'] && key!=='ess') list.push({v: refDay('naive told', key), c:'var(--ref2)', w:1.5});
+    if (u) list.push({v: u.map(r=>r[key]), c:'var(--nottold)', dash:true});
+    if (t) list.push({v: t.map(r=>r[key]), c:'var(--told)'});
+    return lineChart({acc:'accuracy, all questions', conf:'mixture probability on its answer', agree:'library weight agreeing with the answer', cov:'share answered at ≥ 0.7', sel:'accuracy on those ≥ 0.7', ess:'effective number of documents'}[key], list, fmt, ymax);
+  };
+  const essMax = Math.max(4, ...[...(t||[]),...(u||[])].map(r=>r.ess||0));
+  $('#small').innerHTML = S('acc',1,pct) + S('conf',1,pct) + S('agree',1,pct,false) + S('cov',1,pct) + S('sel',1,pct) + S('ess',Math.ceil(essMax),v=>v.toFixed(0),false);
+}
+function river(arm){
+  const s = H.arms[arm]; const el = $('#river_'+arm); if (!s){ el.innerHTML = '<p class="muted">no run</p>'; return; }
+  const n = H.questions.length, W = Math.max(700, n*2.2), Hh = 220, T=8, B=20;
+  const ids = Object.keys(s.weights).sort((a,b)=> (s.weights[b][n-1]||0)-(s.weights[a][n-1]||0));
+  const x = i => i*(W/n), yh = Hh-T-B;
+  let g = `<svg viewBox="0 0 ${W} ${Hh}" style="min-width:${W}px" role="img" aria-label="document weights, ${arm}">`;
+  // shift shading + day rules
+  let start = 0; for (let i=1;i<=n;i++){ if (i===n || H.questions[i].day !== H.questions[start].day){ const d = H.questions[start].day;
+      if (H.shift_days.includes(d)) g += `<rect x="${x(start)}" y="${T}" width="${x(i)-x(start)}" height="${yh}" fill="var(--shift)" opacity=".3"/>`;
+      g += `<line x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${T+yh}" stroke="var(--line)"/><text x="${(x(start)+x(i))/2}" y="${Hh-6}" text-anchor="middle">${short(H.day_names[d])}</text>`; start = i; } }
+  // stacked bands
+  const base = new Array(n).fill(0);
+  for (const id of ids){ const w = s.weights[id]; const top = base.map((b,i)=> b + (w[i]||0));
+    const up = [], down = []; for (let i=0;i<n;i++){ if (w[i]==null) continue; up.push(`${x(i)+W/n/2},${T+yh*(1-top[i])}`); down.push(`${x(i)+W/n/2},${T+yh*(1-base[i])}`); }
+    if (up.length){ const doc = H.docs.find(d=>d.id===id) || {title:'?', born:'?'};
+      g += `<polygon points="${up.join(' ')} ${down.reverse().join(' ')}" fill="${docColor(id, doc.born)}" stroke="var(--panel)" stroke-width=".6" data-id="${id}" data-title="${esc(doc.title)}" data-born="${esc(doc.born)} day ${doc.born_day}"/>`; }
+    for (let i=0;i<n;i++) base[i] = top[i]; }
+  // revision markers
+  for (const r of s.revisions||[]){ const i = H.questions.findIndex(q=>q.day===r.day+1); const xi = i>=0 ? x(i) : x(n-1);
+    g += `<text x="${xi}" y="${T+9}" text-anchor="middle" style="fill:var(--ink);font-size:12px">◆</text>`; }
+  el.innerHTML = g + '</svg>';
+  el.querySelectorAll('polygon').forEach(p => { p.onmousemove = e => { const i = Math.floor((e.offsetX)/(W/n)*(p.ownerSVGElement.viewBox.baseVal.width/p.ownerSVGElement.getBoundingClientRect().width)); const w = s.weights[p.dataset.id][Math.max(0,Math.min(n-1,i))];
+      showTip(e, `<b>${p.dataset.id}</b> ${esc(p.dataset.title)}<br><span style="opacity:.8">${p.dataset.born}${w!=null?' · weight '+(100*w).toFixed(1)+'%':''}</span>`); }; p.onmouseleave = hideTip; });
+}
+function diverge(){
+  const t = H.arms.told, u = H.arms.nottold, el = $('#diverge'); if (!t||!u){ el.innerHTML='<p class="muted">needs both arms</p>'; return; }
+  const n = H.questions.length, ids = new Set([...Object.keys(t.weights), ...Object.keys(u.weights)]);
+  const v = []; for (let i=0;i<n;i++){ let d=0; for (const id of ids) d += Math.abs((t.weights[id]?.[i]||0)-(u.weights[id]?.[i]||0)); v.push(d/2); }
+  const W = Math.max(700, n*2.2), Hh=90, T=8, B=20, yh=Hh-T-B, x=i=>i*(W/n);
+  let g = `<svg viewBox="0 0 ${W} ${Hh}" style="min-width:${W}px" role="img" aria-label="told minus not told">`;
+  let start=0; for (let i=1;i<=n;i++){ if (i===n || H.questions[i].day !== H.questions[start].day){ const d=H.questions[start].day; if (H.shift_days.includes(d)) g += `<rect x="${x(start)}" y="${T}" width="${x(i)-x(start)}" height="${yh}" fill="var(--shift)" opacity=".3"/>`; g += `<line x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${T+yh}" stroke="var(--line)"/><text x="${(x(start)+x(i))/2}" y="${Hh-6}" text-anchor="middle">${short(H.day_names[d])}</text>`; start=i; } }
+  const first = (H.messages[0]||{}).day_index; if (first!=null){ const i=H.questions.findIndex(q=>q.day===first); if (i>=0) g += `<line x1="${x(i)}" x2="${x(i)}" y1="${T}" y2="${T+yh}" stroke="var(--told)" stroke-dasharray="3 3"/><text x="${x(i)+3}" y="${T+10}" style="fill:var(--told)">first message</text>`; }
+  g += `<polyline fill="none" stroke="var(--ink)" stroke-width="1.5" points="${v.map((d,i)=>`${x(i)+W/n/2},${T+yh*(1-Math.min(1,d))}`).join(' ')}"/>`;
+  [0,0.5,1].forEach(f => g += `<text x="${W-2}" y="${T+yh*(1-f)+3}" text-anchor="end">${f}</text>`);
+  el.innerHTML = g + '</svg>';
+}
+function spark(id){
+  const W=180, Hh=28; let g = `<svg viewBox="0 0 ${W} ${Hh}" width="${W}" height="${Hh}">`;
+  for (const [arm, c] of [['nottold','var(--nottold)'],['told','var(--told)']]){ const s=H.arms[arm]; if (!s || !s.weights[id]) continue; const w=s.weights[id], n=w.length;
+    const pts = w.map((v,i)=> v==null?null:`${i*(W/n)},${Hh-2-(Hh-4)*v}`).filter(Boolean); if (pts.length) g += `<polyline fill="none" stroke="${c}" stroke-width="1.4" points="${pts.join(' ')}"/>`; }
+  return g+'</svg>';
+}
+function renderDocs(){
+  const tb = $('#docs tbody'); tb.innerHTML='';
+  const fw = (arm,id) => { const s=H.arms[arm]; if (!s) return null; const w=s.weights[id]; if (!w) return null; for (let i=w.length-1;i>=0;i--) if (w[i]!=null) return w[i]; return null; };
+  const st = (arm,id) => (H.arms[arm]?.status?.[id]?.status) || (fw(arm,id)!=null ? 'live' : '—');
+  const docs = [...H.docs].sort((a,b)=> (fw('told',b.id)||0)-(fw('told',a.id)||0));
+  for (const d of docs){
+    const tr = document.createElement('tr'); tr.className='doc';
+    const s1 = st('told',d.id), s2 = st('nottold',d.id);
+    tr.innerHTML = `<td class="mono"><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${docColor(d.id,d.born)};margin-right:5px"></span>${d.id}</td><td>${esc(d.title)}</td><td class="muted">${esc(d.born)}${d.born_day!=null?' · day '+d.born_day+' ('+short(H.day_names[d.born_day])+')':''}</td><td>${spark(d.id)}</td><td class="num mono">${pct(fw('told',d.id))}</td><td class="num mono">${pct(fw('nottold',d.id))}</td><td><span class="tag ${s1.startsWith('live')?'live':'ret'}">told: ${esc(s1)}</span><span class="tag ${s2.startsWith('live')?'live':'ret'}">not told: ${esc(s2)}</span></td>`;
+    const det = document.createElement('tr'); det.className='detail'; det.hidden = true;
+    const blocks = Object.entries(d.targets||{}).map(([o,b]) => `${o}\n` + b.map(x=>`  ${x.days} ${x.from}-${x.to}h  ${x.at}  (${x.chance})`).join('\n')).join('\n') || '(no blocks for the objects that were asked about)';
+    const claims = (d.claims||[]).map(c=>`• ${esc(c.claim)} — expect ${esc(c.expect)} ${esc(c.days)} ${c.from}-${c.to}h`).join('<br>') || '<span class="muted">no claims recorded</span>';
+    det.innerHTML = `<td colspan="7"><div class="prose">${esc(d.prose)}</div><h3 style="margin-top:10px">Timetable blocks for asked-about objects</h3><div class="blocks">${esc(blocks)}</div><h3 style="margin-top:10px">Claims</h3><div style="font-size:13px">${claims}</div></td>`;
+    tr.onclick = () => { det.hidden = !det.hidden; };
+    tb.appendChild(tr); tb.appendChild(det);
+  }
+}
+function renderRevs(){
+  const el = $('#revs'); el.innerHTML='';
+  for (const arm of ['told','nottold']){ const s=H.arms[arm]; if (!s) continue;
+    for (const r of s.revisions||[]){ const born = H.docs.filter(d => d.born!=='library' && d.born_day===r.day+1 && s.weights[d.id]);
+      const div = document.createElement('div'); div.className='rev '+arm;
+      div.innerHTML = `<div class="mono"><b>${arm==='told'?'told':'not told'}</b><br>revision ${r.index}<br>day ${r.day} (${short(H.day_names[r.day])})</div><div>trigger <b>${esc(r.trigger)}</b> · ${r.n_valid} document${r.n_valid===1?'':'s'} added · ${r.outcome} · ${Math.round((r.seconds||0)/60)} min${r.revive?.length?' · revived '+r.revive.join(', '):''}${r.dropped_n?' · '+r.dropped_n+' dropped':''}<br>${born.map(d=>`<span class="tag mono">${d.id}</span> ${esc(d.title)}`).join('<br>')}${r.problems?.length?'<br><span class="muted">'+esc(r.problems.join('; '))+'</span>':''}</div>`;
+      el.appendChild(div); }
+  }
+  if (!el.children.length) el.innerHTML = '<p class="muted">no revisions</p>';
+}
+function renderQs(){
+  const tb = $('#qs tbody'); tb.innerHTML='';
+  H.questions.forEach((q,i) => { if (!H.shift_days.includes(q.day)) return;
+    const cell = arm => { const s=H.arms[arm]; if (!s || s.answer[i]==null) return '–'; return `<span class="${s.correct[i]?'ok':'no'}">${esc(s.answer[i])}</span> <span class="mono muted">${(100*s.conf[i]).toFixed(0)}%</span>`; };
+    const tr = document.createElement('tr'); tr.innerHTML = `<td>${short(H.day_names[q.day])}</td><td class="mono">${clock(q.t)}</td><td class="mono">${esc(q.object)}</td><td class="muted">${esc(q.moment)}</td><td>${cell('told')}</td><td>${cell('nottold')}</td><td class="mono">${esc(q.truth)}</td>`; tb.appendChild(tr); });
+}
+function render(){
+  $('#res').innerHTML = H.residents.map(c => `<div class="card"><b>${esc(c.name)}</b> (${esc(c.age_band)}) ${esc(c.occupation)}<br><span class="muted">${esc(c.weekday)} ${esc(c.weekend)}${c.hobbies?.length?' Hobbies: '+esc(c.hobbies.join(', '))+'.':''}${c.pet?' '+esc(c.name)+' '+esc(c.pet)+'.':''}</span></div>`).join('')
+    + `<div class="card"><b>${esc(H.household)}</b><br><span class="muted">patrol every ${H.patrol} h · ${H.questions.length} questions · shift days ${H.shift_days.map(d=>short(H.day_names[d])).join(', ')}</span></div>`;
+  $('#week').innerHTML = days().map(d => { const m = H.messages.find(x=>x.day_index===d); const ev = (H.events[d]||[]).map(e=>e.replace(/:resident_\d+/,'')).join(', ');
+    return `<div class="day ${H.shift_days.includes(d)?'shift':''}"><div class="dn">${esc(H.day_names[d])}</div><div class="ev">${ev? 'event: '+esc(ev) : '&nbsp;'}</div>${m?`<div class="msg">“${esc(m.text.replace(/^\w+: /,''))}”</div>`:''}</div>`; }).join('');
+  renderSmall(); river('told'); river('nottold'); diverge(); renderDocs(); renderRevs(); renderQs();
+}
+render();
+</script>

@@ -148,7 +148,7 @@ class CachedThinkingClient:
     """
 
     def __init__(self, endpoint: str, model: str,
-                 cache_dir: pathlib.Path, timeout: float = 2400.0) -> None:
+                 cache_dir: pathlib.Path, timeout: float = 7200.0) -> None:
         self._endpoint = endpoint.rstrip("/")
         self._model = model
         self._timeout = timeout

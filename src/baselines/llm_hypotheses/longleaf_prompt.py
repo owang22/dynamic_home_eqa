@@ -71,7 +71,14 @@ def longleaf_tour_start_prompt(episode: Episode, anonymized: bool = False):
     # patrol schedule; other banks add nothing here
     notes = PT.household_notes(episode.protocol, day=0)
     patrol = PT.patrol_sentence(episode.protocol)
-    extra = ("\n\n" + notes if notes else "") + ("\n\n" + patrol if patrol else "")
+    asked = PT.questions_sentence(episode.protocol)
+    if asked:
+        mechanics += ("\n- In-use windows are blocks of their own: for each object say where it is while it is used "
+                      "(the table during meals, the counter while cooking, the desk during work, the coffee table "
+                      "during TV, the bathroom shelf during the morning routine) and at what hours on weekdays and "
+                      "on weekends, above its resting spot. A document with only resting spots is wrong at exactly "
+                      "the moments the robot is asked.")
+    extra = ("\n\n" + notes if notes else "") + ("\n\n" + patrol if patrol else "") + ("\n\n" + asked if asked else "")
     user = f"""A home robot has just been installed. Its only observation so far is one walkthrough of the home at {tour_stamp(episode.tour_t)}. Below are the home's receptacles and the objects the walkthrough saw, each with where it was. The home may hold further objects the walkthrough missed; those join your `class:<name>` blocks automatically once the robot meets them, so the ids below are the complete vocabulary for now.
 
 {tables}{extra}
@@ -137,6 +144,12 @@ def longleaf_revision_prompt(report: Mapping[str, Any], tables: str,
         f"{a['sightings']} sightings); weekday 9-17h looks at {rec(a['modal'])} found it "
         f"{a['found']}, found nothing {a['empty']}"
         for a in report.get("object_table", [])) or "  (none yet)"
+    def _hours(d):
+        return "; ".join(f"{h:02d}:00 " + ", ".join(f"{rec(r)} x{n}" for r, n in sorted(c.items(), key=lambda kv: -kv[1]))
+                         for h, c in d.items()) or "-"
+    hourly = "\n".join(
+        f"  {obj(a['object'])}\n    weekdays: {_hours(a['weekday'])}\n    weekend:  {_hours(a['weekend'])}"
+        for a in report.get("hourly", [])) or "  (no object seen on more than one receptacle yet)"
     bucket = "\n".join(
         f"  {obj(b['object'])} seen at {rec(b['receptacle'])} around "
         f"{b['hour_bin'] * 2:02d}:00-{b['hour_bin'] * 2 + 2:02d}:00 on "
@@ -197,6 +210,9 @@ CLAIMS THAT WENT AGAINST A WEIGHTED DOCUMENT SINCE THE LAST CALL:
 
 PER-OBJECT EVIDENCE (usual place; share of sighted days there; distinct receptacles; sightings; and weekday 9-17h looks at the usual place that found it versus found nothing — only positive sightings count in the first numbers, so an object that is out of the house shows as many empty daytime looks at a place it occupies mornings and evenings):
 {table}
+
+SIGHTINGS BY CLOCK HOUR (every patrol pass so far, for each object seen on more than one receptacle; weekdays and weekend apart). The robot only ever sees the moments between activities, so read the gaps: an object in the cupboard at 18:00 and in the sink at 20:00 and 22:00 was used at the table between 18:00 and 20:00. Place in-use windows in those gaps, at the hours the residents' routine makes likely, and keep the resting spots the passes confirm; a window that covers a pass at which the object was elsewhere is wrong at that pass.
+{hourly}
 
 REPEATED SIGHTINGS THE LIBRARY MISSED (each seen on 3 or more occasions with every document giving it under 0.05):
 {bucket}

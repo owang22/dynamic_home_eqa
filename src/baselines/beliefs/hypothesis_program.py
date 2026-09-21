@@ -68,6 +68,13 @@ from typing import (Any, Dict, List, Mapping, Optional, Sequence, Tuple,
 
 from baselines.beliefs.base import (DEFAULT_FLOOR_MASS,
                                     DEFAULT_FREQUENCY_ALPHA, BeliefModel)
+def _is_weekend(day_index: int) -> bool:
+    """Saturday / Sunday under the bank's day-0 weekday (protocol_text keeps
+    it; banks without one keep the old day 0 = Monday convention)."""
+    from baselines.llm_hypotheses.protocol_text import weekday_index
+    return weekday_index(int(day_index)) in (5, 6)
+
+
 from baselines.types import DAY_SECONDS, Prediction
 
 ORDINAL_CENTERS: Mapping[str, float] = {
@@ -188,7 +195,7 @@ class Activity:
                             / _MATCHING_DAYS[self.days]))
 
     def matches_day(self, day_index: int) -> bool:
-        weekend = day_index % 7 in WEEKEND_DAYS
+        weekend = _is_weekend(day_index)
         return (self.days == "both" or (self.days == "weekend") == weekend)
 
 

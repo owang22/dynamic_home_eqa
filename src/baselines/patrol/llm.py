@@ -65,6 +65,19 @@ ANSWER_SCHEMA: Dict[str, Any] = {
         "confidence": {"type": "number"},
     },
     "required": ["ranking", "confidence"], "additionalProperties": False}
+CONF_SCHEMA: Dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "reasoning": {"type": "string", "maxLength": 600},
+        "location": {"type": "string"},
+        "confidence": {"type": "number"},
+    },
+    "required": ["reasoning", "location", "confidence"], "additionalProperties": False}
+CONF_SCALE = ("Confidence is the probability, from 0 to 1, that the spot you name is right. Low numbers are "
+              "expected when the evidence is thin: about 0.3 means a guess among several plausible spots, "
+              "about 0.6 means it is the most likely spot but it could easily be elsewhere, about 0.9 means "
+              "you have seen it there repeatedly at this time of day and nothing has changed. "
+              "Do not give the same number every time.")
 
 
 # ------------------------------------------------------------------ client --
@@ -256,20 +269,36 @@ def rooms_block(rooms: Dict[str, List[str]]) -> List[str]:
     return [f"- {room}: {', '.join(recs)}" for room, recs in sorted(rooms.items())]
 
 
+def patrol_words(patrol_hours: int, patrol_times: Optional[List[str]] = None) -> str:
+    if patrol_times:
+        if len(patrol_times) == 1:
+            return f"once a day at {patrol_times[0]}"
+        return "every day at " + ", ".join(patrol_times[:-1]) + f" and {patrol_times[-1]}"
+    return f"every {patrol_hours} hour{'s' if patrol_hours != 1 else ''}"
+
+
 def header_lines(t: int, day_names: Dict[int, str], cards: List[dict], rooms: Dict[str, List[str]],
-                 patrol_hours: int, look_on: bool, hints: List[str]) -> List[str]:
+                 patrol_hours: int, look_on: bool, hints: List[str], fmt: str = "rank",
+                 patrol_times: Optional[List[str]] = None, question_moments: str = "") -> List[str]:
     day = t // DAY_SECONDS
     L = [f"Now: {day_names.get(day, 'day ' + str(day))}, {clock(t, day_names)[4:]} (day {day} of the study; "
          f"the walkthrough was on {day_names.get(0, 'day 0')} evening).",
          f"The robot walked through every room on {day_names.get(0, 'day 0')} at 18:00 and since then patrols "
-         f"every room every {patrol_hours} hour{'s' if patrol_hours != 1 else ''}, listing what is on every spot "
+         f"every room {patrol_words(patrol_hours, patrol_times)}, listing what is on every spot "
          f"and who is in the room. Pockets and bags are not looked into."]
     if look_on:
         L.append("Before answering this question the robot may look at ONE room right now, for free.")
     L += ["", "Residents:"] + [f"- {card_sentences(c)}" for c in cards]
     L += ["", "Rooms and spots:"] + rooms_block(rooms)
-    L += ["", f"Answer options: a spot name from the list above; {ON_PERSON}:<name> if a resident is carrying it; "
-              f"{OUT_OF_HOUSE} if it has been taken out of the home; {ABSTAIN} if you would rather not guess."]
+    if fmt == "conf" and question_moments == "activity":
+        from baselines.llm_hypotheses.protocol_text import QUESTIONS_ACTIVITY
+        L += ["", QUESTIONS_ACTIVITY]
+    if fmt == "conf":
+        L += ["", "Answer with one spot name from the list above (the object is somewhere in the house; if it "
+                  "is being used or carried right now, name the spot it is most likely to be at or next to)."]
+    else:
+        L += ["", f"Answer options: a spot name from the list above; {ON_PERSON}:<name> if a resident is carrying it; "
+                  f"{OUT_OF_HOUSE} if it has been taken out of the home; {ABSTAIN} if you would rather not guess."]
     if hints:
         L += ["", "Messages from the residents:"] + [f"- {h}" for h in hints]
     return L
@@ -310,11 +339,17 @@ def memory_lines(memory: Memory, mem_kind: str, obj: str, day_names: Dict[int, s
 
 
 def question_messages(memory: Memory, mem_kind: str, q, day_names, cards, rooms, patrol_hours, look_on, hints,
-                      notes, look_result: Optional[str]) -> List[dict]:
-    L = header_lines(q.t_query, day_names, cards, rooms, patrol_hours, look_on and look_result is None, hints)
+                      notes, look_result: Optional[str], fmt: str = "rank",
+                      patrol_times: Optional[List[str]] = None, question_moments: str = "") -> List[dict]:
+    L = header_lines(q.t_query, day_names, cards, rooms, patrol_hours, look_on and look_result is None, hints, fmt, patrol_times,
+                     question_moments)
     L += ["", f"Question: where is {q.object_id} (a {q.object_class.replace('_', ' ')}) right now?", ""]
     L += memory_lines(memory, mem_kind, q.object_id, day_names, notes)
-    if look_result is not None:
+    if fmt == "conf":
+        L += ["", CONF_SCALE, "",
+              'Reply with JSON: {"reasoning": one or two short sentences on what the sightings, the time of day and '
+              'the residents\' routine suggest, "location": one spot name, "confidence": number from 0 to 1}']
+    elif look_result is not None:
         L += ["", look_result]
         L += ["", 'Reply with JSON: {"ranking": [up to 3 answer options, most likely first], '
                   '"confidence": probability from 0 to 1 that the first one is right}']
@@ -389,11 +424,44 @@ def parse_answer(text: Optional[str], allowed: set, rooms: set) -> Tuple[Optiona
     return names, conf, look, carrier, "ok"
 
 
+def parse_conf(text: Optional[str], allowed: set) -> Tuple[Optional[str], Optional[float], str, str]:
+    """(location normalized, confidence, reasoning, status) for the confidence format."""
+    if not text:
+        return None, None, "", "no_json"
+    try:
+        obj = json.loads(text)
+    except ValueError:
+        start, end = text.find("{"), text.rfind("}")
+        try:
+            obj = json.loads(text[start:end + 1])
+        except ValueError:
+            return None, None, "", "no_json"
+    if not isinstance(obj, dict) or not isinstance(obj.get("location"), str):
+        return None, None, "", "bad_shape"
+    conf = obj.get("confidence")
+    conf = min(1.0, max(0.0, float(conf))) if isinstance(conf, (int, float)) else None
+    why = obj.get("reasoning") if isinstance(obj.get("reasoning"), str) else ""
+    loc = obj["location"].strip()
+    if loc not in allowed:
+        low = {a.lower(): a for a in allowed}
+        loc = low.get(loc.lower(), loc)
+    if loc not in allowed:
+        return None, conf, why, "off_list"
+    return loc, conf, why, "ok"
+
+
 # --------------------------------------------------------------------- run --
 
 def run_arm(bank_path: pathlib.Path, mem_kind: str, told: bool, look_on: bool, client: LLMClient,
-            out_dir: pathlib.Path, max_days: Optional[int] = None) -> List[dict]:
+            out_dir: pathlib.Path, max_days: Optional[int] = None, fmt: str = "rank") -> List[dict]:
+    """``fmt`` ``rank``: the overnight format (ranking, confidence, optional
+    look); ``conf``: one in-house spot plus a confidence, no look, no
+    ON_PERSON / OUT_OF_HOUSE / ABSTAIN."""
     header = json.loads(bank_path.read_text().splitlines()[0])
+    patrol_times = header.get("patrol_times") or None
+    question_moments = header.get("protocol", {}).get("question_moments", "")
+    if fmt == "conf":
+        look_on = False
     episode: Episode = next(iter(JsonlBank(bank_path).episodes()))
     day_names = {int(k): v for k, v in header["day_names"].items()}
     cards = header["protocol"]["residents"]
@@ -407,10 +475,13 @@ def run_arm(bank_path: pathlib.Path, mem_kind: str, told: bool, look_on: bool, c
     rooms = {r: sorted(v) for r, v in rooms.items()}
     rec_room = {rec: room for room, recs in rooms.items() for rec in recs}
     allowed = set(episode.receptacle_ids)
+    if fmt == "conf":
+        allowed = {r for r in allowed if r not in (ON_PERSON, OUT_OF_HOUSE)}
     arm = f"llm_{mem_kind}/{'told' if told else 'not_told'}/look_{'on' if look_on else 'off'}"
     tag = {"household": header["household_id"], "patrol_hours": patrol_hours,
            "look": "llm" if look_on else "off", "agent": arm, "belief": arm, "memory": mem_kind, "told": told}
-    run_dir = out_dir / f"{header['household_id']}_p{patrol_hours}_{mem_kind}_{'told' if told else 'nottold'}_look{'on' if look_on else 'off'}"
+    label = header.get("patrol_label", f"p{patrol_hours}")
+    run_dir = out_dir / f"{header['household_id']}_{label}_{mem_kind}_{'told' if told else 'nottold'}_look{'on' if look_on else 'off'}"
     run_dir.mkdir(parents=True, exist_ok=True)
     calls = open(run_dir / "calls.jsonl", "w")
 
@@ -469,13 +540,22 @@ def run_arm(bank_path: pathlib.Path, mem_kind: str, told: bool, look_on: bool, c
                     text, _ = ask(msgs, None, 900, f"notes day {notes_day}", llm_authored=(notes,))
                     if text and text.strip():
                         notes = text.strip()
-            msgs = question_messages(memory, mem_kind, q, day_names, cards, rooms, patrol_hours, look_on, hints, notes, None)
-            text, usage = ask(msgs, ANSWER_SCHEMA_LOOK if look_on else ANSWER_SCHEMA, 120, q.question_id, llm_authored=(notes,))
-            ranking, conf, look_room, carrier, status = parse_answer(text, allowed, set(rooms))
+            msgs = question_messages(memory, mem_kind, q, day_names, cards, rooms, patrol_hours, look_on, hints, notes, None,
+                                     fmt, patrol_times, question_moments)
+            if fmt == "conf":
+                text, usage = ask(msgs, CONF_SCHEMA, 260, q.question_id, llm_authored=(notes,))
+                loc, conf, why, status = parse_conf(text, allowed)
+                ranking, look_room, carrier = ([loc] if loc else None), None, None
+            else:
+                text, usage = ask(msgs, ANSWER_SCHEMA_LOOK if look_on else ANSWER_SCHEMA, 120, q.question_id, llm_authored=(notes,))
+                ranking, conf, look_room, carrier, status = parse_answer(text, allowed, set(rooms))
+                why = ""
             rec: Dict[str, Any] = {**tag, "day_index": q.day_index, "question_id": q.question_id, "object_id": q.object_id,
-                                   "object_class": q.object_class, "t_query": q.t_query, "prompt_tokens": int(usage.get("prompt_tokens", 0))}
+                                   "object_class": q.object_class, "t_query": q.t_query, "prompt_tokens": int(usage.get("prompt_tokens", 0)),
+                                   "completion_tokens": int(usage.get("completion_tokens", 0)), "reasoning": why,
+                                   "raw_confidence": conf, "patrol_label": label}
             fallback = ranking is None
-            answer = ranking[0] if ranking else (memory.last_spot_real(q.object_id) or OUT_OF_HOUSE)
+            answer = ranking[0] if ranking else (memory.last_spot_real(q.object_id) or (sorted(allowed)[0] if fmt == "conf" else OUT_OF_HOUSE))
             top = conf if conf is not None and not fallback else 0.0
             rec.update({"answer_before_look": answer, "top_prob_before_look": round(top, 3), "status_before_look": status,
                         "asked_look": look_room})
@@ -532,7 +612,10 @@ def main(argv=None) -> int:
     ap.add_argument("--max-days", type=int, default=None, help="stop after this day index (smoke test)")
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--replay-only", action="store_true")
+    ap.add_argument("--format", default="rank", choices=("rank", "conf"))
     a = ap.parse_args(argv)
+    if a.format == "conf":
+        a.look = ["off"]
     client = LLMClient(a.cache or (a.out / "cache"), replay_only=a.replay_only)
     jobs = [(b, m, t == "told", l == "on") for b in a.bank for m in a.memory for t in a.told for l in a.look]
     # token estimate before the batch (local server: $0)
@@ -541,7 +624,7 @@ def main(argv=None) -> int:
           file=sys.stderr, flush=True)
     from concurrent.futures import ThreadPoolExecutor
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
-        futs = [ex.submit(run_arm, b, m, t, l, client, a.out, a.max_days) for b, m, t, l in jobs]
+        futs = [ex.submit(run_arm, b, m, t, l, client, a.out, a.max_days, a.format) for b, m, t, l in jobs]
         failed = 0
         for f, job in zip(futs, jobs):
             try:

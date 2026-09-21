@@ -298,6 +298,15 @@ def tour_absent_objects(episode) -> List[str]:
     return sorted(o for o in episode.object_classes if o not in seen)
 
 
+def _weights(belief) -> Optional[Dict[str, float]]:
+    """Particle weights at this question (the mixture's, by particle name);
+    None for beliefs without particles."""
+    from baselines.beliefs.hypothesis_mixture import HypothesisMixture
+    if not isinstance(belief, HypothesisMixture):
+        return None
+    return {p.name: round(w, 6) for p, w in zip(belief.particles, belief.weights)}
+
+
 def _ess(belief) -> Optional[float]:
     """The mixture's effective sample size, None for beliefs without one
     (the oracle exposes a same-named METHOD over its realizations; only
@@ -333,13 +342,14 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
         raise SystemExit("arm kind 'oracle' is now 'routine_posterior'")
     # <run>/<household>__bank<seed>/arms/<group>/<arm>/ — grouped by what
     # the arm is, so the household directory reads by importance.
-    arm_dirname = arm.replace(":", "__") + (f"__{'told' if told else 'nottold'}" if free_look else "")
-    out_dir = (out_root / f"{household}__bank{bank_seed}" / "arms"
-               / arm_group(arm_dirname) / arm_dirname)
-    out_dir.mkdir(parents=True, exist_ok=True)
     path = bank_path(household, bank_seed, bank_dir)
     with open(path) as fh:
         header = json.loads(fh.readline())
+    patrol_bank = free_look or bool((header.get("protocol") or {}).get("patrol"))
+    arm_dirname = arm.replace(":", "__") + (f"__{'told' if told else 'nottold'}" if patrol_bank else "")
+    out_dir = (out_root / f"{household}__bank{bank_seed}" / "arms"
+               / arm_group(arm_dirname) / arm_dirname)
+    out_dir.mkdir(parents=True, exist_ok=True)
     _PT.set_day0_weekday(header.get("protocol"))
     if not room_look and header.get("first_question_day") != 0:
         raise SystemExit(
@@ -357,6 +367,13 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
         if told:
             proto["hint_messages"] = list(header.get("hint_messages", []))
         episode = dataclasses.replace(episode, protocol=proto, budget_per_day=10 ** 6)
+    elif patrol_bank:
+        # the passive patrol stream (no looks): the told arm carries the
+        # residents' dated messages, the not-told arm never sees them
+        proto = {k: v for k, v in episode.protocol.items() if k != "hint_messages"}
+        if told:
+            proto["hint_messages"] = list(header.get("hint_messages", []))
+        episode = dataclasses.replace(episode, protocol=proto)
     if days is not None:
         # A short run for a cost or behaviour check: the first `days`
         # days of questions, everything else about the bank unchanged.
@@ -379,8 +396,22 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
         config = PassiveProtocolConfig(seed=rng_seed,
                                        location_equivalence=AWAY_EQUIVALENCE)
 
+        live = open(out_dir / "live.jsonl", "w")
+
         def capture(question, prediction, truth) -> None:
             # prediction/truth arrive already under the equivalence rule
+            # a one-line-per-answer stream for watching the run while it runs
+            dist = {k: round(v, 6) for k, v in prediction.distribution.items() if v > 1e-6}
+            ws = _weights(belief) or {}
+            parts = _particle_rows(belief, question.object_id, question.t_query) or {}
+            # each particle's own answer and its probability on it: what the library disagrees about
+            own = {n: (max(d, key=d.get), round(max(d.values()), 3)) for n, d in parts.items() if d}
+            live.write(json.dumps({"question_id": question.question_id, "object_id": question.object_id,
+                                   "t_query": question.t_query, "day": question.t_query // DAY_SECONDS_,
+                                   "truth": truth, "argmax": prediction.argmax, "dist": dist,
+                                   "weights": ws, "own": own, "ess": _ess(belief), "calls": belief.calls_made
+                                   if hasattr(belief, "calls_made") else None}) + "\n")
+            live.flush()
             rows.append({
                 "question_id": question.question_id,
                 "object_id": question.object_id, "t_query": question.t_query,
@@ -389,10 +420,12 @@ def run_arm(household: str, arm: str, endpoint: str, model: str,
                          prediction.distribution.items() if v > 1e-6},
                 "particles": _particle_rows(belief, question.object_id,
                                             question.t_query),
+                "weights": _weights(belief),
                 "tour_absent": question.object_id in late,
                 "ess": _ess(belief)})
 
         evaluate_continuous(episode, belief, config, on_prediction=capture)
+        live.close()
         policy_info: Dict[str, Any] = {"policy": None}
     else:
         policy_rng = _derived_rng(rng_seed, "tour_start_policy", arm,

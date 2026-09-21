@@ -81,8 +81,27 @@ def look_results(episode: Episode, room: str, recs: Sequence[str], t: int) -> Li
     return out
 
 
-def run_belief(spec: dict, episode: Episode, look: str, seed: int, tag: dict) -> List[dict]:
-    """``look`` is ``off``, ``voi`` or ``top``."""
+SPOTS_ONLY = "spots"
+"""Answer set for the confidence study: in-house spots only. The belief's
+distribution is conditioned on the object being in the house (mass on
+ON_PERSON / OUT_OF_HOUSE dropped, the rest renormalized); the answer is
+the argmax of that and the confidence its probability. The raw top
+probability and the dropped mass are logged too."""
+
+
+def spots_only(dist: Dict[str, float]) -> Tuple[Dict[str, float], float]:
+    dropped = sum(v for k, v in dist.items() if k in (ON_PERSON, OUT_OF_HOUSE))
+    kept = {k: v for k, v in dist.items() if k not in (ON_PERSON, OUT_OF_HOUSE)}
+    z = sum(kept.values())
+    if z <= 0:
+        n = len(kept) or 1
+        return {k: 1.0 / n for k in kept}, dropped
+    return {k: v / z for k, v in kept.items()}, dropped
+
+
+def run_belief(spec: dict, episode: Episode, look: str, seed: int, tag: dict, answers: str = "all") -> List[dict]:
+    """``look`` is ``off``, ``voi`` or ``top``; ``answers`` is ``all`` or
+    :data:`SPOTS_ONLY`."""
     rng = random.Random(f"{seed}:{json.dumps(spec, sort_keys=True)}:{look}")
     belief = build_registered_belief(dict(spec), rng)
     context = episode.agent_view()
@@ -124,22 +143,31 @@ def run_belief(spec: dict, episode: Episode, look: str, seed: int, tag: dict) ->
                 pred = belief.predict(q.object_id, q.t_query)
                 rec.update({"look_room": room, "found_in_look": found})
             truth = episode.true_location(q.object_id, q.t_query)
-            rec.update({"answer": pred.argmax, "top_prob": round(pred.distribution.get(pred.argmax, 0.0), 4),
-                        "truth": truth, "correct": pred.argmax == truth,
+            if answers == SPOTS_ONLY:
+                dist, dropped = spots_only(dict(pred.distribution))
+                answer = max(dist, key=lambda r: (dist[r], r)) if dist else pred.argmax
+                rec.update({"raw_top_prob": round(pred.distribution.get(pred.argmax, 0.0), 4),
+                            "raw_answer": pred.argmax, "p_outside": round(dropped, 4),
+                            "answer": answer, "top_prob": round(dist.get(answer, 0.0), 4)})
+            else:
+                answer = pred.argmax
+                rec.update({"answer": answer, "top_prob": round(pred.distribution.get(answer, 0.0), 4)})
+            rec.update({"truth": truth, "correct": answer == truth,
                         "correct_before_look": rec["answer_before_look"] == truth})
             records.append(rec)
     return records
 
 
-def run_bank(bank_path: pathlib.Path, look: str, beliefs=BELIEFS, seed: int = 0) -> List[dict]:
+def run_bank(bank_path: pathlib.Path, look: str, beliefs=BELIEFS, seed: int = 0, answers: str = "all") -> List[dict]:
     header = json.loads(bank_path.read_text().splitlines()[0])
     episode = next(iter(JsonlBank(bank_path).episodes()))
     tag = {"household": header["household_id"], "patrol_hours": header["patrol_hours"], "look": look,
+           "patrol_label": header.get("patrol_label", f"p{header['patrol_hours']}"),
            "seed": int(header.get("seed", seed))}
     out = []
     for spec in beliefs:
         try:
-            recs = run_belief(spec, episode, look, seed, tag)
+            recs = run_belief(spec, episode, look, seed, tag, answers)
         except Exception as e:  # a model that cannot build here is reported, not fatal
             print(f"  skip {spec['name']}: {type(e).__name__}: {e}", file=sys.stderr)
             continue
@@ -156,9 +184,10 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=pathlib.Path, required=True)
     ap.add_argument("--look", default="voi", choices=("off", "voi", "top"))
     ap.add_argument("--beliefs", nargs="*", default=None)
+    ap.add_argument("--answers", default="all", choices=("all", SPOTS_ONLY))
     a = ap.parse_args(argv)
     beliefs = tuple(b for b in BELIEFS if a.beliefs is None or b["name"] in a.beliefs)
-    recs = run_bank(a.bank, a.look, beliefs)
+    recs = run_bank(a.bank, a.look, beliefs, answers=a.answers)
     a.out.parent.mkdir(parents=True, exist_ok=True)
     with open(a.out, "w") as f:
         for r in recs:

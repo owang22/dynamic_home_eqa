@@ -39,6 +39,9 @@ WEEKEND = {"Saturday", "Sunday"}
 MAJOR_EVENTS = ("guest_visit", "sick_day")
 """Generator events that mark a day as a shift (besides the weekend)."""
 QUESTIONS_PER_DAY = 32
+OVERSAMPLE = 60
+"""Candidate questions drawn per day in ``sensable`` mode before the
+OUT_OF_HOUSE / ON_PERSON truths are dropped and 32 are kept."""
 WAKING_MINUTES = (7 * 60, 23 * 60)
 TOUR_MINUTE = 18 * 60
 
@@ -163,6 +166,8 @@ def shift_info(state: dict, scored_days: List[int]) -> Tuple[List[int], Dict[int
 
 
 def question_rows(seed: int, objects: dict, scored_days: List[int], eid: str) -> List[dict]:
+    """The overnight bank's questions: 32 per day, object uniform over movable
+    objects, any truth (OUT_OF_HOUSE and ON_PERSON included)."""
     movable = sorted(o for o, spec in objects.items() if not spec.get("static"))
     rng = random.Random(f"patrol_questions:{seed}")
     rows = []
@@ -176,7 +181,166 @@ def question_rows(seed: int, objects: dict, scored_days: List[int], eid: str) ->
     return rows
 
 
-def build_bank(run_dir: pathlib.Path, out: pathlib.Path, patrol_hours: int) -> pathlib.Path:
+def sensable_question_rows(seed: int, objects: dict, scored_days: List[int], eid: str, truth: "_Truth",
+                           classes: Optional[List[str]] = None, per_day: int = QUESTIONS_PER_DAY,
+                           oversample: int = OVERSAMPLE) -> Tuple[List[dict], dict]:
+    """Questions whose truth is an in-house spot: ``oversample`` candidates
+    per day (object uniform over the eligible classes, minute uniform over
+    waking hours), the OUT_OF_HOUSE / ON_PERSON truths dropped, then
+    ``per_day`` kept by a seeded draw and ordered by time. Returns the rows
+    and a small count summary (per day: drawn, kept after the filter)."""
+    movable = sorted(o for o, spec in objects.items()
+                     if not spec.get("static") and (classes is None or spec["cls"] in classes))
+    if not movable:
+        raise ValueError("no eligible objects")
+    rng = random.Random(f"patrol_questions_sensable:{seed}")
+    rows: List[dict] = []
+    counts = {}
+    for d in scored_days:
+        cands = []
+        for _ in range(oversample):
+            minute = rng.randrange(WAKING_MINUTES[0], WAKING_MINUTES[1])
+            obj = rng.choice(movable)
+            cands.append((minute, obj))
+        ok = [(m, o) for m, o in cands if truth.at(o, d * DAY_SECONDS + m * 60) not in (ON_PERSON, OUT_OF_HOUSE, None)]
+        counts[d] = {"drawn": len(cands), "sensable": len(ok)}
+        if len(ok) < per_day:
+            raise ValueError(f"day {d}: only {len(ok)} sensable candidates of {oversample}; raise oversample")
+        keep = sorted(rng.sample(ok, per_day))
+        for k, (minute, obj) in enumerate(keep):
+            rows.append({"kind": "question", "episode_id": eid, "question_id": f"d{d}q{k + 1:02d}",
+                         "object_id": obj, "t_query": d * DAY_SECONDS + minute * 60, "day_index": d,
+                         "object_class": objects[obj]["cls"]})
+    return rows, counts
+
+
+TOKEN_CLASSES = {"pocket", "outdoor", "bag", "gym", "bag_leader"}
+CHORE_ACTIVITIES = ("vacuum", "dust", "laundry", "iron", "water_plants", "feed_dog", "fix_something", "wash_dishes", "tidy")
+CHORE_SHARE = 0.15
+"""Share of question moments that are chores the robot could do while a
+resident is out (drawn after a trip line), the rest are activity starts."""
+START_WINDOW = (-5, 15)
+"""Minutes around an activity start at which the question lands."""
+CHORE_WINDOW = (10, 90)
+
+
+def load_activities() -> Dict[str, dict]:
+    import yaml
+    path = pathlib.Path(__file__).resolve().parents[2] / "situation_sim" / "activities.yaml"
+    return yaml.safe_load(path.read_text())["activities"]
+
+
+def activity_of(text: str, by_words: List[Tuple[str, str]]) -> Optional[str]:
+    """The activity named in a trace start line ('Name — words in the ...')."""
+    if " — " not in text:
+        return None
+    seg = text.split(" — ", 1)[1]
+    for words, name in by_words:
+        if seg.startswith(words) and (len(seg) == len(words) or not seg[len(words)].isalpha()):
+            return name
+    return None
+
+
+def uses_classes(spec: dict) -> List[str]:
+    out: List[str] = []
+    for u in spec.get("uses", []):
+        for alt in u.split("|"):
+            if alt not in TOKEN_CLASSES and alt not in out:
+                out.append(alt)
+    return out
+
+
+def activity_question_rows(seed: int, objects: dict, scored_days: List[int], eid: str, truth: "_Truth",
+                           trace: dict, classes: Optional[List[str]] = None, per_day: int = QUESTIONS_PER_DAY,
+                           oversample: int = OVERSAMPLE) -> Tuple[List[dict], dict]:
+    """Questions tied to what the residents are doing: a resident starting an
+    activity asks for one of the objects that activity uses (question a few
+    minutes around the start); after someone leaves the house the robot is
+    asked about a chore object. Candidates whose truth is OUT_OF_HOUSE /
+    ON_PERSON are dropped, ``per_day`` kept by a seeded draw, ordered by
+    time. Returns the rows and per-day counts."""
+    acts = load_activities()
+    by_words = sorted(((spec["words"], name) for name, spec in acts.items()), key=lambda w: -len(w[0]))
+    eligible = lambda o: (not objects[o].get("static")) and (classes is None or objects[o]["cls"] in classes)
+    by_class: Dict[str, List[str]] = defaultdict(list)
+    for o in sorted(objects):
+        if eligible(o):
+            by_class[objects[o]["cls"]].append(o)
+    chore_classes = sorted({c for a in CHORE_ACTIVITIES for c in uses_classes(acts[a])})
+    rng = random.Random(f"patrol_questions_activity:{seed}")
+    days = {int(d["day_index"]): d for d in trace["days"]}
+    rows: List[dict] = []
+    counts = {}
+    for d in scored_days:
+        lines = days[d]["lines"]
+        starts = []   # (minute, activity, resident)
+        trips = []    # minute
+        for l in lines:
+            if l["kind"] == "start":
+                a = activity_of(l["text"], by_words)
+                if a and acts[a].get("room") != "ELSEWHERE":
+                    starts.append((int(l["minute"]), a, l.get("resident")))
+            elif l["kind"] == "trip":
+                trips.append(int(l["minute"]))
+        cands = []
+        n_start = n_chore = 0
+        for _ in range(oversample):
+            if trips and rng.random() < CHORE_SHARE:
+                m0 = rng.choice(trips)
+                pool = [o for c in chore_classes for o in by_class.get(c, [])]
+                minute = m0 + rng.randint(*CHORE_WINDOW)
+                kind = "chore"
+            else:
+                if not starts:
+                    break
+                m0, a, res = rng.choice(starts)
+                pool = [o for c in uses_classes(acts[a]) for o in by_class.get(c, [])
+                        if objects[o].get("owner") in (None, res)]
+                minute = m0 + rng.randint(*START_WINDOW)
+                kind = a
+            if not pool:
+                continue
+            minute = min(max(minute, WAKING_MINUTES[0]), WAKING_MINUTES[1] - 1)
+            obj = rng.choice(sorted(pool))
+            t = d * DAY_SECONDS + minute * 60
+            if truth.at(obj, t) in (ON_PERSON, OUT_OF_HOUSE, None):
+                continue
+            cands.append((minute, obj, kind))
+            n_start += kind != "chore"; n_chore += kind == "chore"
+        counts[d] = {"drawn": oversample, "sensable": len(cands), "start": n_start, "chore": n_chore}
+        if len(cands) < per_day:
+            raise ValueError(f"day {d}: only {len(cands)} sensable candidates of {oversample}; raise oversample")
+        keep = sorted(rng.sample(cands, per_day))
+        for k, (minute, obj, kind) in enumerate(keep):
+            rows.append({"kind": "question", "episode_id": eid, "question_id": f"d{d}q{k + 1:02d}",
+                         "object_id": obj, "t_query": d * DAY_SECONDS + minute * 60, "day_index": d,
+                         "object_class": objects[obj]["cls"], "moment": kind})
+    return rows, counts
+
+
+def parse_times(spec: str) -> List[int]:
+    """'03:00,11:00,19:00' -> minutes of day, sorted."""
+    out = []
+    for part in spec.split(","):
+        hh, mm = part.strip().split(":")
+        out.append(int(hh) * 60 + int(mm))
+    return sorted(set(out))
+
+
+def patrol_label(patrol_hours: int, patrol_times: Optional[List[int]]) -> str:
+    if patrol_times:
+        return "t" + "-".join(f"{m // 60:02d}{m % 60:02d}" if m % 60 else f"{m // 60:02d}" for m in patrol_times)
+    return f"p{patrol_hours}"
+
+
+def build_bank(run_dir: pathlib.Path, out: pathlib.Path, patrol_hours: int,
+               patrol_times: Optional[List[int]] = None, questions: str = "legacy",
+               classes: Optional[List[str]] = None, per_day: int = QUESTIONS_PER_DAY,
+               oversample: int = OVERSAMPLE) -> pathlib.Path:
+    """``patrol_times`` (minutes of day) replaces the every-``patrol_hours``
+    patrol with one pass at each listed clock time every day. ``questions``
+    is ``legacy`` (the overnight bank) or ``sensable`` (in-house truths
+    only, see :func:`sensable_question_rows`)."""
     rows = _rows(run_dir / "events.jsonl")
     header = dict(rows[0])
     assert header["kind"] == "episode_header"
@@ -209,33 +373,51 @@ def build_bank(run_dir: pathlib.Path, out: pathlib.Path, patrol_hours: int) -> p
                  "t": tour_t, "source": "initial_tour"}
                 for o in sorted(objects) if truth.at(o, tour_t) not in (ON_PERSON, OUT_OF_HOUSE, None)]
     tour_visits = [v for room in room_list for v in [visit(room, tour_t, only_empty=True)] if v]
-    # patrol: every patrol_hours hours, all rooms at the same instant
+    # patrol instants: every patrol_hours hours, or the listed clock times every day
+    if patrol_times:
+        instants = [d * DAY_SECONDS + m * 60 for d in range(n_days) for m in patrol_times]
+    else:
+        step = patrol_hours * 3600
+        instants = list(range(step, n_days * DAY_SECONDS, step))
     patrol_rows = []
-    step = patrol_hours * 3600
-    t = step
-    while t < n_days * DAY_SECONDS:
+    for t in instants:
         if t > tour_t:
             for room in room_list:
                 v = visit(room, t, only_empty=False)
                 if v:
                     patrol_rows.append(v)
-        t += step
-    questions = question_rows(seed, objects, scored_days, eid)
+    if questions == "sensable":
+        question_list, qcounts = sensable_question_rows(seed, objects, scored_days, eid, truth, classes, per_day, oversample)
+    elif questions == "activity":
+        trace = json.loads((run_dir / "trace.json").read_text())
+        question_list, qcounts = activity_question_rows(seed, objects, scored_days, eid, truth, trace, classes, per_day, oversample)
+    else:
+        question_list, qcounts = question_rows(seed, objects, scored_days, eid), {}
     shift_days, day_causes, hints = shift_info(state, scored_days)
     cards = resident_cards(state)
+    label = patrol_label(patrol_hours, patrol_times)
+    times_text = [f"{m // 60:02d}:{m % 60:02d}" for m in (patrol_times or [])]
 
     header["budget_per_day"] = 1
     header["tour_t"] = tour_t
-    header["patrol_hours"] = patrol_hours
+    header["patrol_hours"] = 0 if patrol_times else patrol_hours
+    header["patrol_times"] = times_text
+    header["patrol_label"] = label
     header["day0_weekday"] = day0
     header["day_names"] = {str(d["day_index"]): d["weekday"] for d in state["days"]}
     header["scored_days"] = scored_days
     header["shift_days"] = shift_days
     header["day_causes"] = {str(k): v for k, v in sorted(day_causes.items())}   # harness-only
     header["hint_messages"] = hints                                              # LLM told arm only
+    header["question_mode"] = questions
+    header["question_counts"] = {str(k): v for k, v in sorted(qcounts.items())}
+    header["question_classes"] = sorted(classes) if classes else None
     header["protocol"] = {
-        "walkthrough_t": tour_t, "questions_per_day": QUESTIONS_PER_DAY, "first_question_day": 1,
-        "patrol_hours": patrol_hours, "free_look": True, "room_level_looks": True,
+        "walkthrough_t": tour_t, "questions_per_day": per_day, "first_question_day": 1,
+        "patrol_hours": header["patrol_hours"], "patrol_times": times_text,
+        "free_look": questions == "legacy", "room_level_looks": questions == "legacy",
+        "patrol": questions != "legacy",     # the passive patrol stream, no looks (read by llm_hypotheses.protocol_text)
+        "question_moments": questions,       # 'activity': questions arise around what residents do (told to the LLM agents)
         "pockets_visible": False, "day0_weekday": day0,
         "residents": cards,
     }
@@ -244,7 +426,7 @@ def build_bank(run_dir: pathlib.Path, out: pathlib.Path, patrol_hours: int) -> p
         f.write(json.dumps(header, sort_keys=True) + "\n")
         for r in rows[1:]:
             f.write(json.dumps(r, sort_keys=True) + "\n")
-        for r in tour_obs + tour_visits + patrol_rows + questions:
+        for r in tour_obs + tour_visits + patrol_rows + question_list:
             f.write(json.dumps(r, sort_keys=True) + "\n")
     return out
 
@@ -254,8 +436,14 @@ def main(argv=None) -> int:
     ap.add_argument("--run", type=pathlib.Path, required=True)
     ap.add_argument("--out", type=pathlib.Path, required=True)
     ap.add_argument("--patrol-hours", type=int, default=4)
+    ap.add_argument("--patrol-times", default=None, help="clock times, e.g. 03:00,11:00,19:00 (replaces --patrol-hours)")
+    ap.add_argument("--questions", default="legacy", choices=("legacy", "sensable", "activity"))
+    ap.add_argument("--classes", nargs="*", default=None, help="eligible object classes (sensable mode)")
+    ap.add_argument("--per-day", type=int, default=QUESTIONS_PER_DAY)
+    ap.add_argument("--oversample", type=int, default=OVERSAMPLE)
     a = ap.parse_args(argv)
-    p = build_bank(a.run, a.out, a.patrol_hours)
+    p = build_bank(a.run, a.out, a.patrol_hours, parse_times(a.patrol_times) if a.patrol_times else None,
+                   a.questions, a.classes, a.per_day, a.oversample)
     print(f"wrote {p}")
     return 0
 

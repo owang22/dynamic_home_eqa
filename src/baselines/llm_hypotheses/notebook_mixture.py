@@ -1440,7 +1440,9 @@ class NotebookMixtureBrain:
             f"QUESTION: where is {self.obj(decision['object'])} right now? "
             f"Asked at {stamp(t)}; the robot is in "
             f"{self.context.robot_position.room or 'an unknown room'}.",
-            (f"TODAY: budget left {self._remaining():g} of "
+            (f"THIS QUESTION: one free look, not used yet; questions so far today "
+             f"{self.asked_today}; looks taken today {self.looks_today}."
+             if cfg.free_look else (            (f"TODAY: budget left {self._remaining():g} of "
              if PT.is_room_look(self.context.protocol) else
              f"TODAY: looks left {self._remaining():g} of ")
             + f"{self.context.budget_per_day}; questions so far today "
@@ -1454,7 +1456,7 @@ class NotebookMixtureBrain:
                    for d, q, l in self._days_seen[-7:])
                 if self._days_seen else
                 "\nPREVIOUS DAYS: none yet - how many questions a day brings "
-                "is for you to find out.")),
+                "is for you to find out.")))),
             f"TODAY'S LEDGER:\n{ledger}",
             f"YOUR NOTE:\n{self._dispatch_note or '(empty)'}",
             "PANEL FORECAST (share of belief): " + ", ".join(

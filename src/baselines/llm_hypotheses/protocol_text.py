@@ -88,15 +88,43 @@ def is_free_look(protocol: Optional[Mapping[str, Any]]) -> bool:
     return bool(protocol and protocol.get("free_look"))
 
 
+def is_patrol(protocol: Optional[Mapping[str, Any]]) -> bool:
+    """A patrol bank: the free-look protocol, or the passive patrol stream
+    (header ``protocol.patrol``, no looks at all)."""
+    return bool(protocol and (protocol.get("free_look") or protocol.get("patrol")))
+
+
 def patrol_sentence(protocol: Optional[Mapping[str, Any]]) -> str:
     """How the fixed patrol observes the home (patrol banks only)."""
-    if not is_free_look(protocol):
+    if not is_patrol(protocol):
         return ""
     h = protocol.get("patrol_hours")
-    every = f"every {h:g} hour{'s' if h != 1 else ''}" if h else "on a fixed schedule"
+    times = protocol.get("patrol_times") or []
+    if times:
+        every = "every day at " + ", ".join(times[:-1]) + f" and {times[-1]}" if len(times) > 1 else f"once a day at {times[0]}"
+    else:
+        every = f"every {h:g} hour{'s' if h != 1 else ''}" if h else "on a fixed schedule"
     return (f"The robot patrols every room {every}, listing what is on every "
             f"receptacle and who is in the room; those listings arrive on their "
             f"own, whether or not a question is asked.")
+
+
+QUESTIONS_ACTIVITY = (
+    "WHEN THE ROBOT IS ASKED: the residents ask where something is when they are about to use it, a few "
+    "minutes around the start of a meal, cooking, a work or study session, evening TV, a shower, bedtime, "
+    "a hobby, and they ask about the things that activity uses (plates, glasses and bottles at meals; pans, "
+    "knives and boards when cooking; laptop, mug, notebook and headphones at work; remote, blanket and "
+    "snack bowl for TV; toiletries in the bathroom). After someone has left the house the robot is asked "
+    "about chore things (vacuum cleaner, laundry basket, dog bowl, watering can). So what matters is where "
+    "each object is WHILE IN USE and just before, at the time of day that use happens on a weekday and on "
+    "a weekend, not only where it rests between uses.")
+
+
+def questions_sentence(protocol: Optional[Mapping[str, Any]]) -> str:
+    """How questions arise (activity-driven banks only)."""
+    if protocol and protocol.get("question_moments") == "activity":
+        return QUESTIONS_ACTIVITY
+    return ""
 
 
 def household_notes(protocol: Optional[Mapping[str, Any]],

@@ -1,0 +1,16 @@
+# Frozen 2026-09-20 17:00 after tuning on seeds 0-9, classical agents only.
+# See results/confidence_shift_2026-09-20/tuning_log.md for every configuration tried.
+name: frozen_2026-09-20
+sim_dir: ../data/situation_sim/confshift/ev10
+day0: Tuesday
+days: 8
+# p_day overrides written into situation_sim/events.yaml; every other event keeps its committed rate
+events: {sick_day: {weekday: 0.10, weekend: 0.02}, guest_visit: {weekday: 0.10, weekend: 0.14}}
+patrol_hours: 2            # one full-house patrol every 2 h (00:00, 02:00, ...), all rooms at the same instant
+patrol_times: null
+questions: activity        # questions land around activity starts (objects the activity uses) + chores after a trip
+classes: null              # every movable class the activities use
+per_day: 64             # raised from 32 at freeze time: 32 gave +-8 points of sampling noise per household-day
+oversample: 256
+timetable_bin_hours: 2     # the timetable's bins match the patrol spacing (one pass per bin per day)
+negative_evidence: off     # empty-look suppression off for the pure classical baselines (Perpetua* keeps its own filter)
