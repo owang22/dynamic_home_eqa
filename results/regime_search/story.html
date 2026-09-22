@@ -48,6 +48,24 @@ svg .lbl{font-family:"Source Sans 3",sans-serif;font-size:11.5px;fill:var(--ink)
 .small{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:10px}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;position:relative}
 .panel p{font-size:13.5px;color:var(--ink2);margin:2px 0 8px}
+/* ONE COLOUR PER METHOD, defined once and read by every chart, legend, bar and swatch. Four focus methods get the
+   four strong hues; everything else is muted grey. Colour never means anything but identity - no green-for-good or
+   red-for-bad overloading anywhere (that overloading produced a real bug on 22 Sept: costs drawn in a variable
+   whose name suggested red and whose value was dark green, so position said loss and colour said win).
+   Both sets validated: four categorical hues, CVD separation, chroma floor, lightness band and contrast all pass
+   against their own surface. Light worst adjacent pair dE 8.4 protan; dark 8.3 deutan. */
+:root{
+  --m-ttfrozen:#2a78d6; --m-tt3d:#eb6834; --m-perpetua:#199e70; --m-longcontext:#7a3aa7;
+  --m-muted:#9a9a93;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --m-ttfrozen:#1671f0; --m-tt3d:#b75c1c; --m-perpetua:#258d61; --m-longcontext:#ad32d6;
+  --m-muted:#6f736d;
+}}
+:root[data-theme="dark"]{
+  --m-ttfrozen:#1671f0; --m-tt3d:#b75c1c; --m-perpetua:#258d61; --m-longcontext:#ad32d6;
+  --m-muted:#6f736d;
+}
 li.fx{margin:0 0 4px;list-style:none;margin-left:-20px}
 details.finding{border-left:2px solid var(--line);padding-left:10px}
 details.finding[open]{border-left-color:var(--s1)}
@@ -55,6 +73,12 @@ details.finding summary{cursor:pointer;font-weight:650;color:var(--ink);line-hei
 details.finding summary::marker{color:var(--muted)}
 details.finding .fbody{padding:4px 0 8px;color:var(--ink2)}
 .allfind{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);cursor:pointer;margin:0 0 8px}
+.resultblock{border-top:2px solid var(--rule);padding-top:18px;margin:0 0 34px}
+.rtitle{font-family:inherit;font-size:20px;line-height:1.3;margin:0 0 6px;max-width:66ch;font-weight:700;text-wrap:balance}
+.rblurb{font-size:15px;color:var(--ink2);max-width:70ch;margin:0 0 18px}
+details.morec{margin-top:10px;border-left:2px solid var(--line);padding-left:12px}
+details.morec summary{cursor:pointer;color:var(--muted);font-size:13px;padding:4px 0}
+details.morec[open]{border-left-color:var(--s1)}
 .claimlist{max-width:78ch;padding-left:1.35em;margin:10px 0 22px}
 .claimlist li{margin:0 0 7px;font-size:15.5px;line-height:1.5}
 .claimlist a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line)}
@@ -112,8 +136,8 @@ td.ece{font-weight:600}
        ~45% to 80-85%   lead-up climb of the timetables          (see panel A / claim 1)
        "about 85% sure" the LLM memories' stated confidence      (see panel K / claim 4)
        "by a quarter"   their accuracy fall at the shift         (see claim 3's numbers table)
-       70% and 43%      the 3-day timetable's ask and miss rates on the first sick days, through the
-                        answer-or-ask gate                       (see the gate charts; EXTRA.classical_askgate)
+       70% and 41%      the 3-day timetable's hand-over and wrong-when-answered rates on the first sick
+                        days                                     (see claim 6; EXTRA.deferral_live.memories.tt3d.per_day)
      IF ANY ARM IS EVER RE-RUN, re-check these four against the charts named beside them before publishing.
      Do not add new figures here without adding them to this list. (Convention agreed 22 Sept: the risk is not
      typed numbers as such, it is typed numbers that LOOK computed -- see uq/problems_found.md 11:35.) -->
@@ -123,12 +147,12 @@ td.ece{font-weight:600}
   <p style="font-size:15.5px;color:var(--ink);max-width:74ch;margin:0 0 10px">Simple counting methods learn the routine well and break the moment it changes, and what they do next depends on how much they forget: a short memory re-learns the sick routine and then breaks again when normal life returns, a memory that never forgets stays wrong throughout but is right again immediately, and one that hedges between memory lengths avoids both breaks.</p>
   <p style="font-size:15.5px;color:var(--ink);max-width:74ch;margin:0 0 10px">Five kinds of language-model memory break by about as much, and left to work it out from evidence alone they never really learn the new routine. What looks like recovery is mostly same-day correction: ask about a thing for the first time that day, before the robot has been told where it actually was, and the apparent recovery largely disappears.</p>
   <p style="font-size:15.5px;color:var(--ink);max-width:74ch;margin:0 0 10px">One sentence telling the robot what changed is worth more than a week of evidence to a plain buffer, and it is applied only to the things belonging to the person who is ill. The same sentence costs them when it is never taken back: they keep believing the old story after life returns to normal, and for the memory that looks things up by time of day that cost is still there a week later. The memory that already writes itself a nightly note of its own mistakes gains nothing measurable from being told — it was recording the same thing already.</p>
-  <p style="font-size:15.5px;color:var(--ink);max-width:74ch;margin:0 0 10px">None of them knows any of this is happening: whatever the day, all five report themselves about 85% sure while the share they answer correctly falls by a quarter, so a robot deciding when to ask for help cannot tell from its own confidence that the world has changed. The counting methods' confidence does move with the stage, which looks like an advantage until it is priced: put through the same answer-or-ask gate, the 3-day timetable is the <em>worst</em> of them all on the first sick days, handing back 70% of the questions and still getting 43% of the rest wrong. Only once it has re-learned the new routine does it become the one method that keeps its promise.</p>
+  <p style="font-size:15.5px;color:var(--ink);max-width:74ch;margin:0 0 10px">None of them knows any of this is happening: whatever the day, all five report themselves about 85% sure while the share they answer correctly falls by a quarter, so a robot deciding when to ask for help cannot tell from its own confidence that the world has changed. The counting methods' confidence does move with the stage, which looks like an advantage until it is priced: put through the same answer-or-ask gate, the 3-day timetable is the <em>worst</em> of them all on the first sick days, handing back 70% of the questions and still getting 41% of the rest wrong. Only once it has re-learned the new routine does it become the one method that keeps its promise.</p>
   <p style="font-size:15.5px;color:var(--ink2);max-width:74ch;margin:0">Two things did not work and are reported as such: a different disruption, friends over every evening, barely troubles these methods because it only moves things for part of the day; and two findings written up earlier in the night were withdrawn once more households showed them to be noise, which is why every comparison here carries the disagreement between households beside it.</p>
 </div>
 
 <h2>What we found</h2>
-<p style="max-width:74ch">Each claim below is shown by one graph, in the same order and numbered to match. The figures behind each graph are one click away under it; nothing in this section needs opening to be read.</p>
+<p style="max-width:74ch">Three results. Each opens with what it says and the one graph that shows it; the supporting results and all the numbers are folded underneath. Scroll once and open nothing and you have the three statements and the three graphs.</p>
 <ol class="claimlist" id="claimlist"></ol>
 <div id="claimgraphs"></div>
 
@@ -513,7 +537,7 @@ function gapSeries(){
   const reg=state.gapReg, mode=state.gapMode; const G = EXTRA.gap && EXTRA.gap.populations[reg]; if(!G) return [];
   const base = SERIES.filter(s=>state.on.has(s.k) && G.methods[s.k] && !G.methods[s.k].live);
   let out = base.map(s=>({s, key:s.k, dash:false}));
-  if(reg==="partial"){ for(const s of base){ for(const ck of (GAP_COMPANION[s.k]||[])){ if(G.methods[ck]) out.push({s:gapSeriesInfo(ck), key:ck, dash:true}); } } }
+  if(reg==="partial"){ for(const s of base){ for(const ck of (GAP_COMPANION[s.k]||[])){ if(G.methods[ck]) out.push({s:gapSeriesInfo(ck), key:ck, dash:false}); } } }
   for(const key of Object.keys(G.methods)){ const M=G.methods[key]; if(!M.live) continue;
     if(mode==="leadcal" && !M.hasLeadcal) continue;   // no lead-day fit yet for this arm -- only show it in "as stated" mode
     out.push({s:{k:key, name:M.name, v:M.v, progress:M.progress}, key, dash:M.dash!==false}); }
@@ -712,11 +736,24 @@ function mergeLLMLive(){
     }
   }
 }
-const BUILT = "Tue 16:22, 22 Sep 2026";
+const BUILT = "Tue 16:32, 22 Sep 2026";
 // ---------------------------------------------------------------------------------------------------------------
 // Small-multiple panels. Each is at most four lines and answers one question. Bands are +-1 STANDARD ERROR across
 // households (sd/sqrt(k)), matching the bar the paired contrasts are judged on; the per-day sd is kept in the hover.
 // The day axis, the sick-spell shading and the y range are identical in every panel so they can be read side by side.
+// The four methods the page is a comparison between. Everything else is secondary: muted, thinner, and off by
+// default. A method keeps its colour whether it appears in one chart or ten.
+const FOCUS = ["ttfrozen", "tt3d", "perpetua", "longcontext"];
+const METHOD_COLOR = {
+  ttfrozen:"--m-ttfrozen", tt3d:"--m-tt3d", perpetua:"--m-perpetua", longcontext:"--m-longcontext",
+};
+// a line names its method; the colour follows from that and nothing picks its own
+function methodOf(key){
+  const k = String(key).split(":").pop().replace(/^llm_/, "").replace(/_(nomsg|startmsg|startend)$/, "");
+  return k;
+}
+function colorFor(key){ return METHOD_COLOR[methodOf(key)] || "--m-muted"; }
+function isFocus(key){ return FOCUS.includes(methodOf(key)); }
 const PANEL_SPLIT_LABEL = {all:"all questions", cold:"cold questions — the first question about a thing each day, before that day's feedback", moved:"only objects that had moved since the night round"};
 const PANELS = [
   {id:"A", group:"The simple learners", title:"How much should a simple learner forget?", pop:"person",
@@ -728,7 +765,7 @@ const PANELS = [
    lines:[{key:"person:llm_naive_nomsg", label:"buffer"},{key:"person:llm_retrieval_nomsg", label:"retrieval"},{key:"person:llm_reflect_nomsg", label:"reflection"},{key:"person:llm_routine7_nomsg", label:"nightly routine table"}]},
   {id:"C2", group:"The LLM memories", title:"What looks like recovery, and what is actually re-learned", pop:"person",
    cap:"Each colour is one memory, twice: solid = scored on every question, dashed = scored only on the first question about a thing each day. The gap between the two is same-day correction — the robot is told where the thing was ten minutes after each question, and the later questions ride on that. Inside the sick spell the upper line climbs back toward its old level while the lower one does not: the buffer answers 66% of all questions but only 41% of cold ones, against a lead-up of 75% — and retrieval 64% against 43%, from a lead-up of 79%. Solid and dashed are distinguishable without colour, so the pairing survives a greyscale print.",
-   lines:[{key:"person:llm_naive_nomsg", label:"buffer — every question", split:"all", col:"--s1"},{key:"person:llm_naive_nomsg", label:"buffer — cold questions only", split:"cold", col:"--s1", dash:true},{key:"person:llm_retrieval_nomsg", label:"retrieval — every question", split:"all", col:"--s5"},{key:"person:llm_retrieval_nomsg", label:"retrieval — cold questions only", split:"cold", col:"--s5", dash:true}]},
+   lines:[{key:"person:llm_naive_nomsg", label:"buffer — every question", split:"all", col:"--s1"},{key:"person:llm_naive_nomsg", label:"buffer — cold questions only", split:"cold", col:"--s1", tint:true},{key:"person:llm_retrieval_nomsg", label:"retrieval — every question", split:"all", col:"--s5"},{key:"person:llm_retrieval_nomsg", label:"retrieval — cold questions only", split:"cold", col:"--s5", tint:true}]},
   {id:"E", group:"What a message does", title:"What a message does to a plain buffer", pop:"person",
    cap:"One sentence buys back most of the break — and costs on the first days back, unless it is retracted.",
    lines:[{key:"person:llm_naive_nomsg", label:"no message"},{key:"person:llm_naive_startmsg", label:"start message"},{key:"person:llm_naive_startend", label:"start + end messages"}]},
@@ -741,15 +778,21 @@ const PANELS = [
   {id:"H", group:"Special populations", title:"Whose things does the message move?", pop:"partial", stagesFrom:"person",
    cap:"One resident is off sick; the robot is asked about everyone's things. Colour is whose things the question was about, and the dashed line is the same run told \u201cYuki is home sick today\u201d. On the sick resident's things the two lines separate the moment the message arrives. On the other resident's they stay together — until the return, when the message is stale and nobody has taken it back.",
    lines:[{src:"owner", key:"llm_naive_nomsg", group:"sick", label:"sick resident's things, no message", col:"--s1"},
-          {src:"owner", key:"llm_naive_startmsg", group:"sick", label:"sick resident's things, told", col:"--s1", dash:true},
+          {src:"owner", key:"llm_naive_startmsg", group:"sick", label:"sick resident's things, told", col:"--s1", tint:true},
           {src:"owner", key:"llm_naive_nomsg", group:"others", label:"other resident's things, no message", col:"--s5"},
-          {src:"owner", key:"llm_naive_startmsg", group:"others", label:"other resident's things, told", col:"--s5", dash:true}]},
+          {src:"owner", key:"llm_naive_startmsg", group:"others", label:"other resident's things, told", col:"--s5", tint:true}]},
+  {id:"ACC4", group:"The four we compare", title:"How often each of the four is right", pop:"person",
+   cap:"The four methods the rest of this page compares, on accuracy alone. Perpetua* sits below both timetables through the settled fortnight \u2014 it is the weakest forecaster of the four \u2014 which is the half of the next claim a reader has to be able to see rather than take on trust.",
+   lines:[{key:"ttfrozen", label:"never-forgets timetable"},
+          {key:"tt3d", label:"3-day timetable"},
+          {key:"perpetua", label:"Perpetua*"},
+          {key:"person:llm_longcontext_nomsg", label:"long-context (3 households)"}]},
   {id:"L", group:"The LLM memories", title:"Given ten days of the new routine, who learns it?", pop:"person",
    cap:"From the first sick days to the end of the spell, every method is living in the new routine and getting corrected on every question. The counter learns it. The language memories barely move.",
-   lines:[{key:"tt3d", label:"3-day timetable (a counter)", col:"--s2"},
-          {key:"person:llm_naive_nomsg", label:"recency buffer", col:"--s1"},
-          {key:"person:llm_retrieval_nomsg", label:"retrieval", col:"--s5"},
-          {key:"person:llm_reflect_nomsg", label:"reflection", col:"--s7"}]},
+   lines:[{key:"tt3d", label:"3-day timetable"},
+          {key:"person:llm_naive_nomsg", label:"recency buffer"},
+          {key:"person:llm_retrieval_nomsg", label:"retrieval"},
+          {key:"person:llm_reflect_nomsg", label:"reflection"}]},
   {id:"D", group:"The LLM memories", title:"Long-context memory on its own", pop:"person",
    cap:"The whole log in every prompt, on three households — too few to settle most questions, and about ten times the compute per question of the others. Shown on its own because it is a different sample from every other LLM panel and must not be read beside them.",
    note:"3 households only — indicative, not settled.",
@@ -828,8 +871,11 @@ function drawPanel(p){
   const drawn = [];
   p.lines.forEach((line,i)=>{
     const S = panelSeries(p, line, flavour, split); if(!S) return;
-    const col = line.col || cols[i%cols.length];
-    const dashed = !!line.dash;
+    const col = line.col || colorFor(line.key);
+    const focus = line.col ? true : isFocus(line.key);
+    // A pair of lines about the SAME method (all questions against cold, say) is distinguished by lightness on
+    // one hue, never by a dash: dashes on this page mean "annotation", not "identity".
+    const tint = !!line.tint;
     let band="", path="", pen=false;
     for(let j=0;j<S.mean.length;j++){ const d=j+1; if(S.mean[j]==null){ pen=false; continue; }
       path += (pen? " L ":" M ") + x(d).toFixed(1) + " " + y(S.mean[j]).toFixed(1); pen=true; }
@@ -840,10 +886,10 @@ function drawPanel(p){
         band += `<polygon points="${up.concat(dn).join(" ")}" fill="var(${col})" opacity="0.13"/>`; } run=[]; };
     for(let j=0;j<S.mean.length;j++){ if(S.mean[j]==null){ flush(); continue; } run.push([j+1,S.mean[j],S.se[j]||0]); }
     flush();
-    g += band + `<path d="${path}" fill="none" stroke="var(${col})" stroke-width="2" stroke-linejoin="round"${dashed?' stroke-dasharray="4 3"':''}/>`;
-    drawn.push({label:line.label, col, S, dashed});
+    g += band + `<path d="${path}" fill="none" stroke="var(${col})" stroke-width="${focus?2.4:1.4}" stroke-linejoin="round" opacity="${tint?0.45:(focus?1:0.75)}"/>`;
+    drawn.push({label:line.label, col, S, tint});
   });
-  const legend = drawn.map(d=>`<span class="pl"><i style="${d.dashed? `background:repeating-linear-gradient(90deg,var(${d.col}) 0 4px,transparent 4px 7px)` : `background:var(${d.col})`}"></i>${d.label}</span>`).join("");
+  const legend = drawn.map(d=>`<span class="pl"><i style="background:var(${d.col});opacity:${d.tint?0.45:1}"></i>${d.label}</span>`).join("");
   const hh = panelHH(p);
   const missing = p.lines.length - drawn.length;
   return `<div class="panel pnl" data-pid="${p.id}">
@@ -858,14 +904,24 @@ function drawPanel(p){
 // The numbered series at the top of the page: a claim, its graph, the numbers behind it, in that order, repeated.
 // Every claim states a result in one sentence and carries no plus-or-minus figures; the numbers sit behind a
 // CLOSED disclosure under its own graph. A reader who opens nothing still gets every claim and sees it shown.
+// Three results, in the order they matter. Each claim names the result it belongs to and whether it is that
+// result's lead graph - the one thing visible before a reader opens anything.
+const RESULTS = [
+  {id:"lost", title:"When the routine changes, the robot cannot tell that it is lost",
+   blurb:"It answers on regardless. The signal it would use to decide when to hand a question over stops working at exactly the moment the world stops matching what it learned."},
+  {id:"learn", title:"These memories learn a household routine and break when it changes",
+   blurb:"The counters climb back over the following days. The language memories, given the same ten days of the new routine and corrected on every question, barely move."},
+  {id:"told", title:"One sentence of explanation is worth more than a week of corrections",
+   blurb:"And a sentence nobody retracts costs you: the robot goes on believing it after it stops being true."},
+];
 const CLAIMS = [
-  {n:1, panel:"A", text:"Every method learns the household routine and breaks the day it changes — and how much it forgets decides what happens next."},
-  {n:2, panel:"L", text:"Given ten days of the new routine to learn from, the counter learns it and the language memories barely move."},
-  {n:3, panel:"E", text:"One sentence telling the robot what changed is worth more than a week of evidence — and costs it when nobody takes the sentence back."},
-  {n:4, panel:"F", text:"That sentence costs a memory that looks things up by time of day far longer than it costs a plain buffer."},
-  {n:5, panel:"K", also:"channels", text:"What the robot needs in order to know when to hand a question over is not in these confidence numbers — even a bar chosen with hindsight does no better."},
-  {n:6, custom:"defer", text:"Every method knows when to ask for help while nothing is changing \u2014 and stops knowing at the one moment it needs to."},
-  {n:7, custom:"perpetua", text:"One method keeps its judgement through the change. It is the least accurate of the three \u2014 being right and knowing when you are wrong turn out to be separable."},
+  {n:1, panel:"A", result:"learn", lead:true, text:"Every method learns the household routine and breaks the day it changes — and how much it forgets decides what happens next."},
+  {n:2, panel:"L", result:"learn", text:"Given ten days of the new routine to learn from, the counter learns it and the language memories barely move."},
+  {n:3, panel:"E", result:"told", lead:true, text:"One sentence telling the robot what changed is worth more than a week of evidence — and costs it when nobody takes the sentence back."},
+  {n:4, panel:"F", result:"told", text:"That sentence costs a memory that looks things up by time of day far longer than it costs a plain buffer."},
+  {n:5, panel:"K", also:"channels", result:"lost", text:"What the robot needs in order to know when to hand a question over is not in these confidence numbers — even a bar chosen with hindsight does no better."},
+  {n:6, custom:"defer", result:"lost", lead:true, text:"Every method knows when to ask for help while nothing is changing \u2014 and stops knowing at the one moment it needs to."},
+  {n:7, custom:"perpetua", result:"lost", text:"One method keeps its judgement through the change. It is the least accurate of the three \u2014 being right and knowing when you are wrong turn out to be separable."},
 ];
 const WIN5 = [["lead","lead-up 9–13"],["d14_16","first sick days 14–16"],["d17_23","rest of spell 17–23"],["d24_26","first days back 24–26"],["d27_31","rest of return 27–31"]];
 const WIN5_DAYS = {lead:[9,10,11,12,13], d14_16:[14,15,16], d17_23:[17,18,19,20,21,22,23], d24_26:[24,25,26], d27_31:[27,28,29,30,31]};
@@ -960,11 +1016,11 @@ function drawChannels(){
 // windows rather than per day, because the gate is a sequential procedure whose rate over a single day would be
 // a handful of decisions; the window is the resolution the number is computed at.
 const GATE_ARMS = [
-  {k:"llm_naive_nomsg", label:"buffer", col:"--s1"},
-  {k:"llm_retrieval_nomsg", label:"retrieval", col:"--s5"},
-  {k:"llm_reflect_nomsg", label:"reflection", col:"--s7"},
-  {k:"llm_routine7_nomsg", label:"nightly routine table", col:"--s9"},
-  {k:"tt3d", label:"3-day timetable (a counter)", col:"--s2", classical:true},
+  {k:"llm_naive_nomsg", label:"buffer", col:"--m-muted"},
+  {k:"llm_retrieval_nomsg", label:"retrieval", col:"--m-muted"},
+  {k:"llm_reflect_nomsg", label:"reflection", col:"--m-muted"},
+  {k:"llm_routine7_nomsg", label:"nightly routine table", col:"--m-muted"},
+  {k:"tt3d", label:"3-day timetable", col:"--m-tt3d", classical:true},
 ];
 function drawGate(field, target, yMax){
   const P = (EXTRA.llm_live && EXTRA.llm_live.person) || {};
@@ -993,9 +1049,9 @@ function drawGate(field, target, yMax){
     a.vals.forEach((v,i)=>{ if(v==null){ pen=false; return; }
       d += (pen?" L ":" M ")+x(i).toFixed(1)+" "+y(v).toFixed(1); pen=true;
       pts += `<circle cx="${x(i).toFixed(1)}" cy="${y(v).toFixed(1)}" r="2.6" fill="var(${a.col})"/>`; });
-    g += `<path d="${d}" fill="none" stroke="var(${a.col})" stroke-width="${a.classical?3:2}" stroke-linejoin="round"${a.classical?' stroke-dasharray="6 3"':''}/>`+pts;
+    g += `<path d="${d}" fill="none" stroke="var(${a.col})" stroke-width="${a.classical?2.8:2}" stroke-linejoin="round"/>`+pts;
   }
-  const legend = series.map(a=>`<span class="pl"><i style="${a.classical? `background:repeating-linear-gradient(90deg,var(${a.col}) 0 6px,transparent 6px 9px);height:4px` : `background:var(${a.col})`}"></i>${a.label}</span>`).join("");
+  const legend = series.map(a=>`<span class="pl"><i style="background:var(${a.col});height:${a.classical?4:3}px"></i>${a.label}</span>`).join("");
   return `<div class="plegend">${legend}</div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="ask gate ${field}">${g}</svg>`;
 }
 function renderGate(){
@@ -1074,11 +1130,11 @@ function renderEffects(){
 // family rather than three timetables. Different sample sizes - long-context is 3 households, the counters 10 -
 // so the long-context line is genuinely jumpier; that is honest and it is not smoothed.
 const DEFER_LINES = [
-  {k:"longcontext", label:"long-context (3 households)", col:"--s1"},
-  {k:"tt3d", label:"3-day timetable", col:"--s2", dash:true},
-  {k:"ttfrozen", label:"never-forgets timetable", col:"--s3", dash:true},
-  {k:"perpetua", label:"Perpetua*", col:"--s7", dash:true},
-];
+  {k:"longcontext", label:"long-context (3 households)"},
+  {k:"tt3d", label:"3-day timetable"},
+  {k:"ttfrozen", label:"never-forgets timetable"},
+  {k:"perpetua", label:"Perpetua*"},
+].map(l => ({...l, col: colorFor(l.k)}));
 function drawDefer(field, target){
   const M = (EXTRA.deferral_live && EXTRA.deferral_live.memories) || {};
   const series = DEFER_LINES.map(L=>{
@@ -1108,9 +1164,9 @@ function drawDefer(field, target){
   for(const sp of series){
     let d0="",pen=false;
     for(const [d,v] of sp.pts){ d0 += (pen?" L ":" M ")+x(d).toFixed(1)+" "+y(v).toFixed(1); pen=true; }
-    g += `<path d="${d0}" fill="none" stroke="var(${sp.col})" stroke-width="${sp.dash?2.6:2}" stroke-linejoin="round"${sp.dash?' stroke-dasharray="6 3"':''}/>`;
+    g += `<path d="${d0}" fill="none" stroke="var(${sp.col})" stroke-width="2.4" stroke-linejoin="round"/>`;
   }
-  const legend = series.map(a=>`<span class="pl"><i style="${a.dash? `background:repeating-linear-gradient(90deg,var(${a.col}) 0 6px,transparent 6px 9px);height:4px` : `background:var(${a.col})`}"></i>${a.label}</span>`).join("");
+  const legend = series.map(a=>`<span class="pl"><i style="background:var(${a.col})"></i>${a.label}</span>`).join("");
   return `<div class="plegend">${legend}</div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="deferral ${field}">${g}</svg>`;
 }
 function deferBlock(){
@@ -1128,8 +1184,25 @@ function deferBlock(){
 }
 function renderClaims(){
   const list=$("#claimlist"), host=$("#claimgraphs"); if(!list||!host) return;
-  list.innerHTML = CLAIMS.map(c=>`<li><a href="#claim${c.n}">${c.text}</a></li>`).join("");
-  host.innerHTML = CLAIMS.map(c=>{
+  list.innerHTML = RESULTS.map((r,i)=>{
+    const lead = CLAIMS.find(c=>c.result===r.id && c.lead);
+    return `<li><a href="#result-${r.id}"><b>${r.title}.</b> ${r.blurb}</a></li>`;
+  }).join("");
+  const one = c => renderOneClaim(c);
+  host.innerHTML = RESULTS.map(r=>{
+    const mine = CLAIMS.filter(c=>c.result===r.id);
+    const lead = mine.find(c=>c.lead) || mine[0];
+    const rest = mine.filter(c=>c!==lead);
+    return `<section class="resultblock" id="result-${r.id}">
+      <h2 class="rtitle">${r.title}</h2>
+      <p class="rblurb">${r.blurb}</p>
+      ${one(lead)}
+      ${rest.length? `<details class="morec"><summary>${rest.length} more result${rest.length===1?"":"s"} behind this one</summary>${rest.map(one).join("")}</details>` : ""}
+    </section>`;
+  }).join("");
+}
+function renderOneClaim(c){
+  return (function(){
     if(c.custom==="perpetua"){
       const M=(EXTRA.deferral_live&&EXTRA.deferral_live.memories)||{};
       const P=M.perpetua||{}, TF=M.ttfrozen||{}, T3=M.tt3d||{};
@@ -1142,6 +1215,11 @@ function renderClaims(){
         <h3><span class="cnum">${c.n}</span>${c.text}</h3>
         <p class="cmeta">10 households · one person sick · same gate, same target, same days as the figure above</p>
         <div class="cbody">
+          ${(()=>{const q=PANELS.find(x=>x.id==="ACC4"); if(!q) return "";
+            const saved=panelState.split; panelState.split="all"; let inner=drawPanel(q); panelState.split=saved;
+            return inner.replace(/^<div class="panel pnl"[^>]*>/,"").replace(/<\/div>\s*$/,"")
+                        .replace(/<h3>.*?<\/h3>/,"")
+                        .replace(/<p class="pmeta">.*?<\/p>/,`<p class="pmeta">Accuracy only, all questions, 10 households (long-context 3). The confidence result is the figure above this one; this is the same four methods on whether they are right.</p>`);})()}
           <p class="pcap" style="max-width:74ch">Perpetua* is on the figure above as the fourth line. <b>It is the least accurate of the three in the settled fortnight \u2014 69% against the timetables' 80 and 81 \u2014 so this is not a better method that also happens to have better uncertainty. It is a worse forecaster whose confidence keeps meaning something when the others' stops.</b> It does not keep the one-in-ten promise either — on the first sick days it still hands back ${d(P,"hand_over")}% of questions and is wrong on ${d(P,"wrong_when_answered")}% of the rest. What it does is keep <em>knowing which of its answers to trust</em> while the routine changes. The questions it answers are ${ps.mean.toFixed(0)} points more accurate than the ones it hands over, measured inside each household and then averaged — <b>and all ${ps.kept_sign} of the ${ps.n_hh} households keep that sign</b>, the smallest being ${ps.per_hh[0]} points. In the settled fortnight the same figure is ${pl? pl.mean.toFixed(0) : "–"}, so the separation does not merely survive the disruption, it widens.</p>
           <p class="pcap" style="max-width:74ch">Beside it, over the same days: the never-forgets timetable is <b>${ts? ts.mean.toFixed(0) : "–"}</b> and keeps the sign in only ${ts? ts.kept_sign : "–"} of ${ts? ts.n_hh : "–"} households, and the 3-day timetable is ${t3? t3.mean.toFixed(0) : "–"} in ${t3? t3.kept_sign : "–"} of ${t3? t3.n_hh : "–"}. So this is not a counter-versus-language-model story. Two counters lose their judgement at the shift and one keeps it.</p>
           <p class="pcap" style="max-width:74ch"><b>What it does differently, in one sentence you can check against the method.</b> A timetable's confidence comes from how <em>regular</em> the past was — how tightly its sightings cluster in a two-hour slot. Perpetua* instead models each object-and-place as something that persists until a survival time runs out, so its confidence comes from how <em>old</em> its evidence is. When a routine changes, the past was at its most regular precisely where things have now moved, which is why a timetable ends up confident and wrong. Evidence, by contrast, goes stale at the same rate whatever the world is doing.</p>
@@ -1215,7 +1293,7 @@ function renderClaims(){
       ${c.also==="channels"? drawChannels() : ""}
       <details class="cnums"><summary>the numbers behind this graph</summary>${claimNumbers(p, split, flavour)}</details>
     </section>`;
-  }).join("");
+  })();
 }
 function renderPanels(){
   const host=$("#panelgrid"); if(!host) return;
