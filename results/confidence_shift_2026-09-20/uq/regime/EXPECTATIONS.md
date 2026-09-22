@@ -404,3 +404,64 @@ a "clears" is weak by the method note's own argument):
 The classical result stands on its own and carries the point: the 1-day timetable has no second break (77 -> 78),
 3-day 79 -> 74 against 81 -> 58 first time, because a bin the normal routine never overwrites keeps the sick-day
 habit. That is the reuse finding; the language memories neither confirm nor deny it at this sample size.
+
+## E36 (22 Sept 11:55) — conformal and agreement as shift signals, on long-context memory
+
+**Runs launched.** (a) `uq_llm --memory longcontext --days 31`, 3 households: per-question verbalized
+confidence, 5-sample agreement, and MCQ letter probabilities on EVERY day (the existing knowno run covers only
+7 sampled days, which cannot make a curve). (b) `llm --memory summary`, no message, 10 households: the nightly
+prose-notes memory, which has never been run on this regime.
+
+**Written before looking.**
+
+1. **Conformal set width on the LLM will behave like the classical one: a late spike, then relaxation.** The
+   classical result (never-forgets timetable) is now measured: coverage craters to 65% on day 14 against a 90%
+   promise, the set balloons to 15 places on days 15-17 — a day LATE — then collapses back to ~1.6 by day 20
+   while the robot is still in the sick spell, and on the SECOND spell it does not react at all (set size 1.4-1.6
+   throughout, coverage 89-97%). Prediction: the LLM version shows the same lag-then-relax shape. If instead it
+   stays wide through the spell, that is a point in favour of LLM-based sets and I will say so.
+
+2. **Sample agreement, referenced to the settled fortnight, WILL move at the shift where stated confidence does
+   not.** Prediction: agreement falls by at least 10 points from its days 9-13 baseline on days 14-16, where
+   stated confidence moves by under 3. If agreement is also flat, then all three channels are dead and the
+   honest conclusion is that this model has no usable internal signal at all — which is a result, not a failure.
+
+3. **Nightly summary will sit between the buffer and the routine table**, and like every other LLM memory will
+   show no improvement on a second spell. Prediction: its spell-2 opening accuracy is within 5 points of its
+   spell-1 opening accuracy.
+
+**The falsifier for the headline.** The claim forming is "conformal set width is a lagging mirror of the base
+learner's error rate, not a change detector". It is WRONG if the set widens before or at the moment accuracy
+drops, or if it stays wide while the learner is still inaccurate. Both are visible on the day curve, so this
+cannot be fudged after the fact.
+
+**Correction to E36 (12:20).** The two-spell regime's FIRST spell is days 14-20, not 14-23; its question stream is
+byte-identical to the one-spell regime only through day 20 and diverges from day 21. The one-spell regime's spell is
+14-23. Any window quoted as "days 20-23, still inside the spell" belongs to the ONE-spell regime only. The graphs
+were right (their shading comes from each regime's own stage map); the prose describing them was not. Source: the
+conformal subagent, which verified the two banks byte-for-byte.
+
+## E37 (22 Sept 14:45) — conformal over the REAL label space, by scoring every receptacle
+
+**Why.** The multiple-choice channel offered 9 spots + "somewhere else" and the model took the catch-all on
+1480/1480 questions; widening it to all spots made the model answer in JSON instead ('{"' wins the first token at
+p=0.98 on two of three households). Both are instrumentation, not findings. And the server caps top_logprobs at 20
+while households have 32-46 receptacles, so a letter-based distribution can never score 26+ of the labels - the
+truth outside the top 20 is uncoverable BY CONSTRUCTION, which would masquerade as "conformal fails to widen".
+
+**What replaces it.** Score every receptacle name as a scored continuation under the same (cached) prefix via
+`prompt_logprobs`, renormalise over the candidate set to get a proper categorical distribution, then build sets with
+BOTH scores: LAC (s = 1 - p) and APS (sorted cumulative mass). APS matters because its whole selling point is that
+set size tracks difficulty - the exact property under test - so testing only LAC would under-test the claim.
+
+**Written before looking. Pilot = 1 household, 2 settled days.**
+1. Argmax of the scored distribution agrees with the model's own greedy free-text answer on >= 50% of questions.
+   Below 30% means the scoring is wrong, not the model - STOP and fix.
+2. Argmax accuracy lands within ~15 points of the free-text accuracy on the same questions (~70-80% on lead days).
+3. The distribution is non-degenerate: mean top-1 share < 0.9, and > 3 distinct argmax spots across the pilot.
+4. p(truth) is higher on questions answered right than wrong. If not, the distribution carries no signal.
+5. On settled days at a 90% target, LAC sets are small (roughly 1-6 of ~38 places), not 1 and not the whole house.
+
+**Falsifiers are checked automatically and the run aborts** rather than completing quietly: identical consecutive
+distributions, a single spot taking the argmax on > 80% of questions, or set size pinned at 1 or at the label-space
+size. A suspiciously constant metric is a bug until proven otherwise (coordinator, 22 Sept).

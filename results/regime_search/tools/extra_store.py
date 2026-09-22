@@ -57,6 +57,7 @@ OWNERS = {
     "gap_extra":              ("gap",),
     "shared_state_extra":     ("shared_state",),
     "affected_windows_extra": ("affected_windows",),
+    "deferral_extra":         ("deferral_live",),
 }
 
 

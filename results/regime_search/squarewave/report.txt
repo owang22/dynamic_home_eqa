@@ -1,0 +1,190 @@
+============================================================================================================
+QUESTION A - the square wave: spell-2 opening (days 28-30) minus spell-1 opening (days 14-16), person2x
+============================================================================================================
+
+A. paired spell-2 opening minus spell-1 opening   [population person2x, split 'all']
+method                     n hh    win A    win B    normal     B-A     SE  B-A/SE
+timetable, never forgets     10    51.2%    69.2%     81.6%   +17.9    4.5   +3.94
+timetable, 3-day             10    57.9%    74.4%     78.6%   +16.5    3.5   +4.73
+timetable, 1-day             10    65.0%    77.9%     77.5%   +12.9    3.2   +4.08
+most-frequent, 3-day         10    43.3%    50.6%     59.0%    +7.3    3.2   +2.31
+periodic persistence         10    62.3%    69.2%     68.4%    +6.9    2.5   +2.70
+perpetua*                    10    55.4%    59.6%     61.1%    +4.2    5.0   +0.83
+last seen                    10    56.7%    59.0%     46.8%    +2.3    2.2   +1.04
+hedge over memory lengths    10    57.5%    70.6%     81.3%   +13.1    4.8   +2.72
+LLM recency buffer            3    53.5%    48.6%     79.8%    -4.9    3.0   -1.61
+LLM retrieval                 3    45.1%    50.0%     85.5%    +4.9    4.2   +1.15
+LLM long context              -   no household has >= 10 answers in both windows (dropped: [])
+LLM reflect                   -   no household has >= 10 answers in both windows (dropped: [])
+LLM routine-7                 -   no household has >= 10 answers in both windows (dropped: [])
+
+A. paired spell-2 opening minus spell-1 opening   [population person2x, split 'cold']
+method                     n hh    win A    win B    normal     B-A     SE  B-A/SE
+timetable, never forgets      9    42.8%    65.4%     84.0%   +22.5    7.5   +2.99   [UNUSABLE window, dropped: hh_s4 n=11/9]
+timetable, 3-day              9    45.7%    69.3%     80.3%   +23.6    5.6   +4.23   [UNUSABLE window, dropped: hh_s4 n=11/9]
+timetable, 1-day              9    51.8%    69.6%     77.3%   +17.7    5.0   +3.52   [UNUSABLE window, dropped: hh_s4 n=11/9]
+most-frequent, 3-day          9    28.9%    37.6%     56.2%    +8.7    3.7   +2.34   [UNUSABLE window, dropped: hh_s4 n=11/9]
+periodic persistence          9    22.1%    41.1%     60.1%   +19.0    5.5   +3.46   [UNUSABLE window, dropped: hh_s4 n=11/9]
+perpetua*                     9    21.5%    39.1%     53.4%   +17.7    8.6   +2.06   [UNUSABLE window, dropped: hh_s4 n=11/9]
+last seen                     9     3.7%     9.2%     14.0%    +5.5    3.0   +1.79   [UNUSABLE window, dropped: hh_s4 n=11/9]
+hedge over memory lengths     9    45.3%    66.9%     84.0%   +21.6    6.7   +3.23   [UNUSABLE window, dropped: hh_s4 n=11/9]
+LLM recency buffer            3    23.1%    25.6%     73.9%    +2.5    1.7   +1.46
+LLM retrieval                 3    21.1%    31.3%     86.6%   +10.2    5.3   +1.93
+LLM long context              -   no household has >= 10 answers in both windows (dropped: [])
+LLM reflect                   -   no household has >= 10 answers in both windows (dropped: [])
+LLM routine-7                 -   no household has >= 10 answers in both windows (dropped: [])
+
+A (matched): the SAME 3 households the LLM arms ran on (hh_s0, hh_s1, hh_s2), so the classical
+             and LLM columns are not comparing different household sets.
+
+  [split 'all']  method                     n hh    win A    win B     B-A     SE  B-A/SE   | pooled-question B-A (+/- binomial SE)
+               timetable, never forgets      3    42.4%    58.3%   +16.0    6.2   +2.59   | +16.0 +/- 5.8
+               timetable, 3-day              3    53.5%    66.0%   +12.5    4.2   +3.00   | +12.5 +/- 5.7
+               timetable, 1-day              3    63.9%    71.5%    +7.6    5.6   +1.37   |  +7.6 +/- 5.5
+               most-frequent, 3-day          3    29.2%    33.3%    +4.2    1.2   +3.46   |  +4.2 +/- 5.5
+               periodic persistence          3    61.8%    61.8%    -0.0    3.6   -0.00   |  +0.0 +/- 5.7
+               perpetua*                     3    58.3%    47.9%   -10.4   11.0   -0.94   | -10.4 +/- 5.8
+               last seen                     3    52.8%    54.2%    +1.4    5.7   +0.24   |  +1.4 +/- 5.9
+               hedge over memory lengths     3    54.9%    59.7%    +4.9    9.6   +0.50   |  +4.9 +/- 5.8
+               LLM recency buffer            3    53.5%    48.6%    -4.9    3.0   -1.61   |  -4.9 +/- 5.9
+               LLM retrieval                 3    45.1%    50.0%    +4.9    4.2   +1.15   |  +4.9 +/- 5.9
+
+  [split 'cold']  method                     n hh    win A    win B     B-A     SE  B-A/SE   | pooled-question B-A (+/- binomial SE)
+               timetable, never forgets      3    34.1%    52.4%   +18.3    9.2   +1.98   | +18.7 +/- 9.7
+               timetable, 3-day              3    38.3%    58.8%   +20.5    7.0   +2.92   | +20.8 +/- 9.7
+               timetable, 1-day              3    40.7%    62.8%   +22.2    8.6   +2.58   | +22.8 +/- 9.7
+               most-frequent, 3-day          3    23.0%    23.4%    +0.4    3.7   +0.10   |  +0.5 +/- 8.5
+               periodic persistence          3    23.5%    26.4%    +2.8    3.5   +0.81   |  +2.5 +/- 8.6
+               perpetua*                     3    31.0%    24.7%    -6.2   12.5   -0.50   |  -7.4 +/- 8.9
+               last seen                     3     4.0%     7.6%    +3.6    5.4   +0.67   |  +4.1 +/- 4.7
+               hedge over memory lengths     3    36.3%    52.4%   +16.1   11.4   +1.41   | +16.7 +/- 9.8
+               LLM recency buffer            3    23.1%    25.6%    +2.5    1.7   +1.46   |  +2.5 +/- 8.6
+               LLM retrieval                 3    21.1%    31.3%   +10.2    5.3   +1.93   | +10.4 +/- 8.8
+
+A: per-household window sizes (spell-1 opening / spell-2 opening), confirming the same households:
+  all  timetable, never forgets   hh_s0:48/48  hh_s1:48/48  hh_s2:48/48  hh_s3:48/48  hh_s4:48/48  hh_s5:48/48  hh_s6:48/48  hh_s7:48/48  hh_s8:48/48  hh_s9:48/48
+  all  LLM recency buffer         hh_s0:48/48  hh_s1:48/48  hh_s2:48/48
+  cold timetable, never forgets   hh_s0:17/17  hh_s1:19/18  hh_s2:15/15  hh_s3:19/18  hh_s5:11/12  hh_s6:16/18  hh_s7:12/14  hh_s8:16/17  hh_s9:12/10
+  cold LLM recency buffer         hh_s0:17/17  hh_s1:19/18  hh_s2:15/15
+
+per-household paired differences (spell2 - spell1, percentage points):
+  all  timetable, never forgets   hh_s0:+19  hh_s1:+25  hh_s2:+4  hh_s3:+46  hh_s4:+4  hh_s5:+23  hh_s6:+35  hh_s7:+6  hh_s8:+8  hh_s9:+8
+  all  timetable, 3-day           hh_s0:+4  hh_s1:+17  hh_s2:+17  hh_s3:+38  hh_s4:+10  hh_s5:+19  hh_s6:+29  hh_s7:+21  hh_s8:+8  hh_s9:+2
+  all  timetable, 1-day           hh_s0:+2  hh_s1:+19  hh_s2:+2  hh_s3:+27  hh_s4:+8  hh_s5:+17  hh_s6:+27  hh_s7:+6  hh_s8:+19  hh_s9:+2
+  all  most-frequent, 3-day       hh_s0:+2  hh_s1:+6  hh_s2:+4  hh_s3:+25  hh_s4:+0  hh_s5:+25  hh_s6:+0  hh_s7:+10  hh_s8:-2  hh_s9:+2
+  all  periodic persistence       hh_s0:+6  hh_s1:-6  hh_s2:+0  hh_s3:+19  hh_s4:+0  hh_s5:+12  hh_s6:+4  hh_s7:+4  hh_s8:+17  hh_s9:+12
+  all  perpetua*                  hh_s0:+10  hh_s1:-27  hh_s2:-15  hh_s3:+8  hh_s4:-6  hh_s5:+27  hh_s6:+10  hh_s7:+15  hh_s8:+4  hh_s9:+15
+  all  last seen                  hh_s0:+12  hh_s1:-2  hh_s2:-6  hh_s3:+12  hh_s4:+2  hh_s5:+0  hh_s6:-2  hh_s7:-6  hh_s8:+4  hh_s9:+8
+  all  hedge over memory lengths  hh_s0:+6  hh_s1:+21  hh_s2:-12  hh_s3:+42  hh_s4:+8  hh_s5:+21  hh_s6:+29  hh_s7:+4  hh_s8:+8  hh_s9:+4
+  all  LLM recency buffer         hh_s0:+0  hh_s1:-4  hh_s2:-10
+  all  LLM retrieval              hh_s0:+12  hh_s1:-2  hh_s2:+4
+  cold timetable, never forgets   hh_s0:+29  hh_s1:+25  hh_s2:+0  hh_s3:+57  hh_s5:+19  hh_s6:+58  hh_s7:+2  hh_s8:-3  hh_s9:+15
+  cold timetable, 3-day           hh_s0:+29  hh_s1:+25  hh_s2:+7  hh_s3:+41  hh_s5:+20  hh_s6:+51  hh_s7:+31  hh_s8:+3  hh_s9:+5
+  cold timetable, 1-day           hh_s0:+24  hh_s1:+36  hh_s2:+7  hh_s3:+19  hh_s5:+28  hh_s6:+40  hh_s7:-1  hh_s8:+3  hh_s9:+5
+  cold most-frequent, 3-day       hh_s0:-6  hh_s1:+7  hh_s2:+0  hh_s3:+12  hh_s5:+30  hh_s6:+0  hh_s7:+20  hh_s8:+4  hh_s9:+10
+  cold periodic persistence       hh_s0:+6  hh_s1:-4  hh_s2:+7  hh_s3:+34  hh_s5:+41  hh_s6:+2  hh_s7:+25  hh_s8:+34  hh_s9:+27
+  cold perpetua*                  hh_s0:+6  hh_s1:-31  hh_s2:+7  hh_s3:+29  hh_s5:+67  hh_s6:+15  hh_s7:+26  hh_s8:+17  hh_s9:+25
+  cold last seen                  hh_s0:+12  hh_s1:+6  hh_s2:-7  hh_s3:+17  hh_s5:-9  hh_s6:+5  hh_s7:+14  hh_s8:+11  hh_s9:+0
+  cold hedge over memory lengths  hh_s0:+29  hh_s1:+25  hh_s2:-7  hh_s3:+41  hh_s5:+19  hh_s6:+58  hh_s7:+17  hh_s8:-3  hh_s9:+15
+  cold LLM recency buffer         hh_s0:+6  hh_s1:+2  hh_s2:+0
+  cold LLM retrieval              hh_s0:+18  hh_s1:+13  hh_s2:+0
+
+A (supplementary) - 'never learn the sick routine at all': WITHIN spell 1, late (days 18-20) minus
+  opening (days 14-16), paired per household. A method that learns the sick routine climbs here.
+
+A-supp. within-spell-1 learning   [population person2x, split 'all']
+method                     n hh    win A    win B     B-A     SE  B-A/SE
+timetable, never forgets     10    51.2%    68.5%   +17.2    2.5   +6.94
+timetable, 3-day             10    57.9%    86.8%   +28.9    3.9   +7.46
+timetable, 1-day             10    65.0%    86.8%   +21.8    3.8   +5.77
+most-frequent, 3-day         10    43.3%    78.2%   +34.9    6.4   +5.49
+periodic persistence         10    62.3%    68.4%    +6.1    3.4   +1.82
+perpetua*                    10    55.4%    72.4%   +17.0    2.8   +6.11
+last seen                    10    56.7%    55.5%    -1.2    1.8   -0.66
+hedge over memory lengths    10    57.5%    73.7%   +16.2    2.7   +6.09
+LLM recency buffer            3    53.5%    60.4%    +6.9    4.6   +1.52
+LLM retrieval                 3    45.1%    54.2%    +9.0    4.9   +1.86
+LLM long context              -   no household has >= 10 answers in both windows (dropped: [])
+LLM reflect                   -   no household has >= 10 answers in both windows (dropped: [])
+LLM routine-7                 -   no household has >= 10 answers in both windows (dropped: [])
+
+A-supp. within-spell-1 learning   [population person2x, split 'cold']
+method                     n hh    win A    win B     B-A     SE  B-A/SE
+timetable, never forgets     10    44.9%    68.1%   +23.2    3.7   +6.25
+timetable, 3-day             10    48.4%    88.3%   +39.9    5.0   +8.04
+timetable, 1-day             10    54.8%    85.6%   +30.8    6.5   +4.71
+most-frequent, 3-day         10    32.3%    67.4%   +35.0    8.0   +4.37
+periodic persistence         10    23.5%    42.3%   +18.8    6.1   +3.07
+perpetua*                    10    24.8%    56.9%   +32.1    6.0   +5.39
+last seen                    10     4.3%     4.6%    +0.3    1.6   +0.21
+hedge over memory lengths    10    47.2%    72.7%   +25.5    4.1   +6.30
+LLM recency buffer            3    23.1%    32.3%    +9.2    4.1   +2.27
+LLM retrieval                 3    21.1%    37.8%   +16.7    2.6   +6.53
+LLM long context              -   no household has >= 10 answers in both windows (dropped: [])
+LLM reflect                   -   no household has >= 10 answers in both windows (dropped: [])
+LLM routine-7                 -   no household has >= 10 answers in both windows (dropped: [])
+
+============================================================================================================
+QUESTION B - indexed forever vs unindexed forever: cold accuracy, lead-up (9-13) vs late return (27-31)
+============================================================================================================
+
+B. paired late return minus settled lead-up   [population person, split 'cold']
+method                     n hh    win A    win B     B-A     SE  B-A/SE
+timetable, never forgets     10    88.2%    84.7%    -3.5    2.7   -1.31
+timetable, 3-day             10    84.8%    79.9%    -4.9    2.5   -1.99
+hedge over memory lengths    10    86.3%    85.1%    -1.2    2.0   -0.61
+LLM recency buffer           10    76.0%    70.4%    -5.6    4.2   -1.33
+LLM retrieval                10    79.6%    79.5%    -0.1    1.9   -0.06
+LLM long context              3    71.1%    60.8%   -10.4    5.6   -1.85
+LLM reflect                  10    68.4%    69.4%    +1.0    5.0   +0.20
+LLM routine-7                10    43.3%    42.8%    -0.5    3.5   -0.14
+
+per-household paired differences (late return - lead-up, cold, percentage points):
+  timetable, never forgets   hh_s0:-14  hh_s1:+4  hh_s2:-9  hh_s3:+8  hh_s4:-11  hh_s5:+0  hh_s6:+0  hh_s7:-15  hh_s8:+7  hh_s9:-6
+  timetable, 3-day           hh_s0:-5  hh_s1:+1  hh_s2:-22  hh_s3:+4  hh_s4:-11  hh_s5:+0  hh_s6:-3  hh_s7:-10  hh_s8:+3  hh_s9:-6
+  hedge over memory lengths  hh_s0:+0  hh_s1:+4  hh_s2:-4  hh_s3:+4  hh_s4:-11  hh_s5:+0  hh_s6:+3  hh_s7:-10  hh_s8:+7  hh_s9:-6
+  LLM recency buffer         hh_s0:-14  hh_s1:-2  hh_s2:+6  hh_s3:-16  hh_s4:-6  hh_s5:-19  hh_s6:-3  hh_s7:+25  hh_s8:-11  hh_s9:-16
+  LLM retrieval              hh_s0:-5  hh_s1:-13  hh_s2:+1  hh_s3:+4  hh_s4:+6  hh_s5:+0  hh_s6:-3  hh_s7:+5  hh_s8:-2  hh_s9:+7
+  LLM long context           hh_s0:+0  hh_s1:-19  hh_s2:-12
+  LLM reflect                hh_s0:+18  hh_s1:-20  hh_s2:-8  hh_s3:+20  hh_s4:-11  hh_s5:-12  hh_s6:+7  hh_s7:+0  hh_s8:+25  hh_s9:-8
+  LLM routine-7              hh_s0:+9  hh_s1:-12  hh_s2:-15  hh_s3:-16  hh_s4:+0  hh_s5:+19  hh_s6:+3  hh_s7:+0  hh_s8:+3  hh_s9:+4
+
+pooled window totals for B (same households per row):
+  timetable, never forgets   lead-up 194/222 =  87.4%    late return 190/224 =  84.8%
+  timetable, 3-day           lead-up 187/222 =  84.2%    late return 179/224 =  79.9%
+  hedge over memory lengths  lead-up 190/222 =  85.6%    late return 191/224 =  85.3%
+  LLM recency buffer         lead-up 166/222 =  74.8%    late return 156/224 =  69.6%
+  LLM retrieval              lead-up 175/222 =  78.8%    late return 175/224 =  78.1%
+  LLM long context           lead-up 49/70 =  70.0%    late return 43/73 =  58.9%
+  LLM reflect                lead-up 152/222 =  68.5%    late return 158/224 =  70.5%
+  LLM routine-7              lead-up 97/222 =  43.7%    late return 95/224 =  42.4%
+
+B (matched): every method restricted to the 3 households long context ran on (hh_s0, hh_s1, hh_s2).
+  method                     n hh  lead-up     late late-lead     SE
+  timetable, never forgets      3    90.9%    84.8%      -6.1    5.3
+  timetable, 3-day              3    86.2%    77.6%      -8.6    6.8
+  hedge over memory lengths     3    86.2%    86.3%      +0.1    2.2
+  LLM recency buffer            3    77.0%    73.7%      -3.3    5.7
+  LLM retrieval                 3    86.5%    80.9%      -5.6    4.1
+  LLM long context              3    71.1%    60.8%     -10.4    5.6
+  LLM reflect                   3    78.6%    75.2%      -3.4   11.3
+  LLM routine-7                 3    52.8%    46.7%      -6.1    7.6
+
+B (difference-of-differences): (late - lead) for the never-forgets timetable MINUS (late - lead) for
+  each LLM arm, paired household by household. A positive number means the LLM lost MORE than the
+  timetable did; this is the quantity the claim needs to be clearly above zero.
+  timetable-forever minus LLM recency buffer       n=10    +2.1 +/-  6.0  (z=+0.34)
+  timetable-forever minus LLM retrieval            n=10    -3.4 +/-  3.8  (z=-0.90)
+  timetable-forever minus LLM long context         n= 3    +4.3 +/- 10.7  (z=+0.40)
+  timetable-forever minus LLM reflect              n=10    -4.5 +/-  5.1  (z=-0.89)
+  timetable-forever minus LLM routine-7            n=10    -3.0 +/-  4.9  (z=-0.62)
+
+per-household window sizes (cold, person) - confirming both windows exist for the same households:
+  timetable, never forgets   hh_s0:22/22  hh_s1:28/29  hh_s2:20/22  hh_s3:25/25  hh_s4:18/18  hh_s5:16/16  hh_s6:29/29  hh_s7:20/20  hh_s8:27/25  hh_s9:17/18
+  LLM recency buffer         hh_s0:22/22  hh_s1:28/29  hh_s2:20/22  hh_s3:25/25  hh_s4:18/18  hh_s5:16/16  hh_s6:29/29  hh_s7:20/20  hh_s8:27/25  hh_s9:17/18
+  LLM retrieval              hh_s0:22/22  hh_s1:28/29  hh_s2:20/22  hh_s3:25/25  hh_s4:18/18  hh_s5:16/16  hh_s6:29/29  hh_s7:20/20  hh_s8:27/25  hh_s9:17/18
+  LLM long context           hh_s0:22/22  hh_s1:28/29  hh_s2:20/22
+  LLM reflect                hh_s0:22/22  hh_s1:28/29  hh_s2:20/22  hh_s3:25/25  hh_s4:18/18  hh_s5:16/16  hh_s6:29/29  hh_s7:20/20  hh_s8:27/25  hh_s9:17/18
+  LLM routine-7              hh_s0:22/22  hh_s1:28/29  hh_s2:20/22  hh_s3:25/25  hh_s4:18/18  hh_s5:16/16  hh_s6:29/29  hh_s7:20/20  hh_s8:27/25  hh_s9:17/18
+
+wrote /home/oliver/robot/dynamic_home_eqa/results/regime_search/squarewave/paired.json

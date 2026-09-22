@@ -1,0 +1,19 @@
+=== sick10_owner: 10 households, MIN_N = 10 ===
+share of questions whose 2 h time-of-day slot had NO lead-up sighting of that object ('new slot'),
+and, inside that, the share where the fallback (overall most-frequent lead-up place) is also wrong.
+
+window                   n  new slot  new slot &  old slot &  tt3d new  tt3d old  ttfrz new  ttfrz old
+                               share     unusual     unusual       acc       acc        acc        acc
+lead-up 9-13           603        0%          0%         35%  unusable 81% (600)   unusable  82% (600)
+sick opening 14-16     480       49%         37%         39% 71% (236) 45% (244)  63% (236)  40% (244)
+sick all 14-23        1598       51%         40%         36% 89% (817) 65% (781)  85% (817)  43% (781)
+return 24-26           349        1%          1%         34%  unusable 61% (344)   unusable  78% (344)
+late return 27-31      608        2%          1%         35%  33% (12) 78% (596)   33% (12)  81% (596)
+
+contamination of the healthy index by the sick spell (10 households, sick10_owner):
+  sick-spell sightings filed into a slot the lead-up also used: 9557/10368 = 92%  (the rest land in slots the healthy routine never queries)
+  late-return questions (days 27-31) whose own (object, slot) cell holds sick-spell evidence: 547/608 = 90%
+
+reading: 'new slot share' is the share of that window's questions landing in a time-of-day slot the
+healthy routine never filled for that object. 'new slot & unusual' is the expensive corner: empty slot
+AND the whole-history fallback is wrong - the only cell where the two routines really collide.

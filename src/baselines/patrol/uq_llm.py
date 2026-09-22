@@ -36,7 +36,8 @@ from baselines.patrol.llm import CONF_SCHEMA, ENDPOINT, MODEL, Memory, parse_con
 from baselines.patrol.run import spots_only
 from baselines.types import ON_PERSON, OUT_OF_HOUSE, Observation, SenseResult
 
-LETTERS = "ABCDEFGHIJ"
+# one single-token label per spot: 26 upper + 26 lower covers the ~38 spots in these houses.
+LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
 
 
 class Client:
@@ -89,9 +90,16 @@ class Client:
                 pass
 
     def chat(self, messages: List[dict], max_tokens: int, temperature: float = 0.0, n: int = 1,
-             schema: Optional[dict] = None, logprobs: bool = False) -> dict:
+             schema: Optional[dict] = None, logprobs: bool = False, choice: Optional[List[str]] = None) -> dict:
         body = {"model": self.model, "messages": messages, "max_tokens": max_tokens, "temperature": temperature, "n": n,
                 "seed": 0, "chat_template_kwargs": {"enable_thinking": False}}
+        if choice is not None:
+            # Constrain the reply to exactly one option letter. Without this the model answers the multiple choice
+            # in the JSON format the surrounding prompt asks for ('{"spot' wins the first token at p=0.98), the
+            # letter mass is never read, and conf_token is 0 -- which is what broke this channel twice (P3, and
+            # again on 22 Sept). NOTE: vLLM's `guided_choice` is silently ignored by this server; only
+            # `structured_outputs.choice` actually constrains. Verified against the live endpoint before use.
+            body["structured_outputs"] = {"choice": list(choice)}
         if schema is not None:
             body["response_format"] = {"type": "json_schema", "json_schema": {"name": "answer", "schema": schema}}
         if logprobs:
@@ -130,7 +138,7 @@ def letter_probs(choice: dict) -> Dict[str, float]:
     first = lp[0]
     out: Dict[str, float] = {}
     for alt in first.get("top_logprobs", []):
-        tok = alt["token"].strip().strip('"').upper()
+        tok = alt["token"].strip().strip('"')          # case-sensitive: 'a' and 'A' are different options now
         if len(tok) == 1 and tok in LETTERS:
             out[tok] = out.get(tok, 0.0) + math.exp(alt["logprob"])
     z = sum(out.values())
@@ -230,25 +238,28 @@ def main(argv=None) -> int:
             cnt = Counter(sampled)
             agree = cnt.get(answer, 0) / len(sampled)
             entropy = -sum(c / len(sampled) * math.log(c / len(sampled)) for c in cnt.values())
-            # (c) multiple-choice token probability
-            dist, _ = spots_only(dict(counter.predict(q.object_id, q.t_query).distribution))
-            options = [s for s, _ in sorted(dist.items(), key=lambda kv: (-kv[1], kv[0]))[:9]]
-            if answer in allowed and answer not in options:
-                options[-1] = answer
+            # (c) multiple-choice token probability, over the FULL spot list.
+            # Until 22 Sept this offered the 9 spots the 24 h counter ranked highest plus "J) somewhere else".
+            # The model then answered "somewhere else" on 1480 of 1480 questions -- including when its own
+            # free-text answer was one of the nine and was correct -- so conf_token was simply P(catch-all)
+            # (mean 0.756) and every conformal set built on it was a set over a bucket, not over places.
+            # With ~38 spots and no catch-all, the letter mass is a real distribution over where the thing is,
+            # which is what a conformal set needs. Labels stay one token each: A-Z then a-z.
+            options = sorted(allowed)
             mcq = msgs[-1]["content"].split("\nReply with JSON")[0] if "Reply with JSON" in msgs[-1]["content"] else msgs[-1]["content"]
             mcq += "\n\nChoose the single most likely spot:\n" + "\n".join(f"{LETTERS[i]}) {s}" for i, s in enumerate(options)) + \
-                   f"\n{LETTERS[9]}) somewhere else\nAnswer with the letter only."
+                   "\nAnswer with the letter only."
             mmsgs = msgs[:-1] + [{"role": "user", "content": mcq}]
             # no JSON schema here: under a JSON-string schema the tokenizer merges the opening quote with the
             # letter ('"A' .. '"I' are single tokens, '"J' is not), so a bare '"' first token forces J = "somewhere
             # else" and the letter mass is never read (uq/problems_found.md P3); the bare letter is its own token
-            d3 = client.chat(mmsgs, 2, 0.0, 1, None, logprobs=True)
+            d3 = client.chat(mmsgs, 2, 0.0, 1, None, logprobs=True, choice=list(LETTERS[:len(options)]))
             ch3 = d3["choices"][0]
-            letter = ch3["message"]["content"].strip().strip('"').strip("*").upper()[:1]
+            letter = (ch3["message"].get("content") or "").strip().strip('"').strip("*")[:1]
             lps = letter_probs(ch3)
-            mcq_answer = options[LETTERS.index(letter)] if letter in LETTERS[:9] else "other"
+            mcq_answer = options[LETTERS.index(letter)] if letter in LETTERS[:len(options)] else "other"
             conf_token = lps.get(letter, 0.0)
-            p_truth_token = lps.get(LETTERS[options.index(truth)], 0.0) if truth in options else lps.get("J", 0.0)
+            p_truth_token = lps.get(LETTERS[options.index(truth)], 0.0) if truth in options else 0.0
             rec = {**tag, **qmeta.get(q.question_id, {}), "day_index": q.day_index, "question_id": q.question_id, "object_id": q.object_id, "object_class": q.object_class,
                    "t_query": q.t_query, "answer": answer, "top_prob": round(conf if conf is not None else 0.0, 4), "truth": truth,
                    "correct": answer == truth, "parse_status": status, "reasoning": why,

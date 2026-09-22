@@ -343,3 +343,36 @@ different properties, and only the second one is what an answer-or-ask gate need
 
 **Rule.** A comparison stated in prose but absent from the charts is an untested claim. Build the chart before
 repeating the sentence — and expect roughly one in three of them to come back the other way, as this one did.
+
+## 15:20 — two bugs in one figure, both found by looking at output rather than at code
+
+**1. Conformal APS emitted EMPTY sets on 26% of questions (64 of 246), and did so hardest where the model was most
+certain.** The set was built as `{y : aps_score(y) <= q}`. Two faults compounded. Structurally, that test drops the
+model's own top answer whenever `q < p(top)` — a set that cannot contain the best guess is not an APS set. And the
+boundary is float-fragile: for a fully confident distribution the cumulative mass sums to **1.0000000002**, which is
+not `<= 1.0`, so a completely certain answer produced *nothing at all*. Logged example: `dist =
+{medicine_cabinet_ba1: 1.0}`, `q = 1.0`, set size 0.
+
+That second fault is the one worth remembering. **The method broke hardest exactly where the model was most
+confident** — the least likely place to look, and invisible in any aggregate that averages over questions. Mean set
+size merely drifted below 1, which reads as a tuning problem rather than as sets containing nothing.
+
+Fixed with the standard prefix rule (add classes in descending probability until the cumulative mass reaches q,
+always keeping the top one) plus a tolerance on the comparison. Verified on three constructed cases. Because every
+row saves its sampled `dist`, both set types are now REPLAYED offline by the chart from the saved distributions, so
+no server time was respent and rows written before the fix are corrected on read. After the fix: zero empty sets,
+APS coverage 50% → 87% against a 90% target. The coordinator replayed it independently with its own prefix rule and
+its own threshold and got 84.6% over 267 rows — consistent, sharing none of the same code.
+
+**Caught by the coordinator watching live rows at day 8 of a 31-day run**, not by any check of mine. The tell was
+mean set size below 1 combined with coverage drifting *down* rather than converging up. An adaptive procedure that
+undercovers by 40 points and is not correcting is a bug, not a tuning matter.
+
+**2. The partial-run guard produced a misleading picture of the partial run.** The same chart shades the sick spell
+with `axvspan(13.5, min(23.5, maxd + .5))`. With data only to day 9 that evaluates to `axvspan(13.5, 9.5)` — drawn
+BACKWARDS, colouring settled days 9–13 as if the resident were already ill. The machinery built to stop anyone
+misreading an in-progress run was itself generating the misreading. Stages are now shaded only once the data
+reaches them.
+
+**Rule.** Both were found by rendering the output and looking at it, not by reading the code — the code looks
+correct in both cases. And a guard is not exempt from the check it enforces.

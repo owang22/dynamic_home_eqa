@@ -205,7 +205,7 @@ td.ece{font-weight:600}
 <p class="note">Every told-vs-untold contrast on the page, in two pictures. Each is a paired measurement: the difference on the SAME household between the two runs, averaged over the households both arms covered. The older grid of numbers is still below, behind the disclosure, as the reference version.</p>
 <div id="effectschart"></div>
 
-<h3 style="margin-top:18px">LLM arms — three ways of reading its confidence, and honest sets on its own answer</h3>
+<h3 style="margin-top:18px">LLM arms — two ways of reading its confidence, and sets on its own answer</h3>
 <p class="note">On a bounded list of days (13 · 14 · 15 · 20 · 24 · 25 · 30 — the end of the lead-up, the shift, mid-spell, the return), three households, every question asked three ways: the plain answer with its stated confidence (<b>verbalized</b>); five answers at temperature 0.7, confidence = the share that agree with the plain one (<b>agreement</b>); and the same question as a multiple choice over the nine most likely places plus "somewhere else", confidence = the probability the model puts on the letter it picks (<b>token probability</b>, KnowNo-style). The <b>honest set</b> is built on those letter probabilities the same way as the classical honest-sets agents (online conformal, 90% target): coverage is the share of questions whose truth was in the set, size the average number of options named (out of 10). First ~20 questions are the conformal warm-up, so day 13's set is not yet meaningful. No new calls beyond this bounded list.</p>
 <div class="tbl"><table id="knownotable"></table></div>
 <p class="note" id="knownonote"></p>
@@ -752,6 +752,12 @@ const PANELS = [
           {src:"owner", key:"llm_naive_startmsg", group:"sick", label:"sick resident's things, told", col:"--s1", dash:true},
           {src:"owner", key:"llm_naive_nomsg", group:"others", label:"other resident's things, no message", col:"--s5"},
           {src:"owner", key:"llm_naive_startmsg", group:"others", label:"other resident's things, told", col:"--s5", dash:true}]},
+  {id:"L", group:"The LLM memories", title:"Given ten days of the new routine, who learns it?", pop:"person",
+   cap:"From the first sick days to the end of the spell, every method is living in the new routine and getting corrected on every question. The counter learns it. The language memories barely move.",
+   lines:[{key:"tt3d", label:"3-day timetable (a counter)", col:"--s2"},
+          {key:"person:llm_naive_nomsg", label:"recency buffer", col:"--s1"},
+          {key:"person:llm_retrieval_nomsg", label:"retrieval", col:"--s5"},
+          {key:"person:llm_reflect_nomsg", label:"reflection", col:"--s7"}]},
   {id:"D", group:"The LLM memories", title:"Long-context memory on its own", pop:"person",
    cap:"The whole log in every prompt, on three households — too few to settle most questions, and about ten times the compute per question of the others. Shown on its own because it is a different sample from every other LLM panel and must not be read beside them.",
    note:"3 households only — indicative, not settled.",
@@ -862,12 +868,12 @@ function drawPanel(p){
 // CLOSED disclosure under its own graph. A reader who opens nothing still gets every claim and sees it shown.
 const CLAIMS = [
   {n:1, panel:"A", text:"Every method learns the household routine and breaks the day it changes — and how much it forgets decides what happens next."},
-  {n:2, panel:"C2", text:"Language-model memories barely re-learn the new routine from evidence: most of what looks like recovery is same-day correction."},
+  {n:2, panel:"L", text:"Given ten days of the new routine to learn from, the counter learns it and the language memories barely move."},
   {n:3, panel:"E", text:"One sentence telling the robot what changed is worth more than a week of evidence — and costs it when nobody takes the sentence back."},
-  {n:4, panel:"K", also:"channels", text:"None of these memories knows when it is wrong: whatever the day, they claim the same confidence while their accuracy falls."},
-  {n:5, panel:"H", text:"A message about one person is applied to that person's things and nothing else — until it goes stale, and then it leaks."},
-  {n:6, panel:"F", text:"A memory that looks things up by time of day carries a disruption long after a plain buffer has moved on."},
-  {n:7, custom:"planning", under:"J", text:"Noticing that the world changed only pays for itself if the robot acts on it."},
+  {n:4, panel:"F", text:"That sentence costs a memory that looks things up by time of day far longer than it costs a plain buffer."},
+  {n:5, panel:"K", also:"channels", text:"What the robot needs in order to know when to hand a question over is not in these confidence numbers — even a bar chosen with hindsight does no better."},
+  {n:6, custom:"defer", text:"Every method knows when to ask for help while nothing is changing \u2014 and stops knowing at the one moment it needs to."},
+  {n:7, custom:"perpetua", text:"One method keeps its judgement through the change. It is the least accurate of the three \u2014 being right and knowing when you are wrong turn out to be separable."},
 ];
 const WIN5 = [["lead","lead-up 9–13"],["d14_16","first sick days 14–16"],["d17_23","rest of spell 17–23"],["d24_26","first days back 24–26"],["d27_31","rest of return 27–31"]];
 const WIN5_DAYS = {lead:[9,10,11,12,13], d14_16:[14,15,16], d17_23:[17,18,19,20,21,22,23], d24_26:[24,25,26], d27_31:[27,28,29,30,31]};
@@ -935,9 +941,11 @@ function drawChannels(){
     if(cur) g+=rect(cur); }
   for(const v of [0,25,50,75,100]) g+=`<line x1="${L}" y1="${y(v).toFixed(1)}" x2="${W-Rr}" y2="${y(v).toFixed(1)}" stroke="var(--line)" stroke-width="1"/><text x="${L-5}" y="${(y(v)+3.5).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--muted)">${v}</text>`;
   for(const d of [1,7,14,21,28]) g+=`<text x="${x(d).toFixed(1)}" y="${H-9}" text-anchor="middle" font-size="9" fill="var(--muted)">${d}</text>`;
+  // The multiple-choice channel that used to be a fourth line here has been WITHDRAWN, not corrected: it offered
+  // nine spots plus "somewhere else" and the model took the catch-all on 1480 of 1480 questions, so its number was
+  // P(catch-all), mean 0.756. See uq/problems_found.md, 22 Sept.
   const SER=[{f:"verbal",label:"what it says when asked outright",col:"--s5",w:1.6},
              {f:"agree",label:"how often five samples agree",col:"--s7",w:1.6},
-             {f:"token",label:"probability on the letter it picks",col:"--s9",w:1.6},
              {f:"acc",label:"how often it is actually right",col:"--s1",w:3}];
   const drawn=[];
   for(const sp of SER){
@@ -950,7 +958,7 @@ function drawChannels(){
   }
   const legend = drawn.map(d=>`<span class="pl"><i style="background:var(${d.col});height:${d.w>2?4:3}px"></i>${d.label}</span>`).join("");
   return `<div class="csupport"><p class="csuphead">The same claim a second way: three ways of asking it how sure it is, against whether it was right</p>
-    <p class="pcap">On a bounded list of days (13, 14, 15, 20, 24, 25, 30) the same questions are put three ways: asked outright, asked five times at temperature 0.7 and scored on how often the answers agree, and asked as a multiple choice and scored on the probability it puts on the letter it picks. On the first sick day the heavy line halves, from ${A.days["13"].acc.toFixed(0)}% to ${A.days["14"].acc.toFixed(0)}%, and not one of the three channels moves with it — they read ${A.days["14"].verbal.toFixed(0)}%, ${A.days["14"].agree.toFixed(0)}% and ${A.days["14"].token.toFixed(0)}%. Self-agreement is the worst of the three: the model is most consistent exactly where it is most wrong.</p>
+    <p class="pcap">On a bounded list of days (13, 14, 15, 20, 24, 25, 30) the same questions are put two ways: asked outright, and asked five times at temperature 0.7 and scored on how often the answers agree. On the first sick day the heavy line halves, from ${A.days["13"].acc.toFixed(0)}% to ${A.days["14"].acc.toFixed(0)}%, and neither channel moves with it — they read ${A.days["14"].verbal.toFixed(0)}% and ${A.days["14"].agree.toFixed(0)}%. Self-agreement is the worse of the two: the model is most consistent exactly where it is most wrong. A third channel, a multiple choice scored on the letter's probability, has been withdrawn — it was measuring the probability of a catch-all &ldquo;somewhere else&rdquo; option that the model chose on every one of 1480 questions.</p>
     <div class="plegend">${legend}</div>
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="three confidence channels against accuracy">${g}</svg>
     <p class="pmeta">${A.n_hh} households · buffer, no message · points are the sampled days only</p></div>`;
@@ -1067,10 +1075,115 @@ function renderEffects(){
       <p class="pcap">The same contrasts on the first question about a thing each day, before that day’s feedback — the honest memory measure. The effects are larger here in both directions, so <b>this chart’s scale is wider than the one beside it</b>: read the numbers on the axis, not the dot positions, when comparing the two.</p>${b}
       <p class="pmeta">Same arms, same households, cold questions only</p></div></div>`;
 }
+// Claim 6's graphs: can the robot tell when to hand the question over? Per DAY, not per window, because the claim
+// is about the moment the routine changes and a five-day window averages that moment away. Both families on one
+// axis. Data from deferral_live, which owns only its own key and never touches llm_live.
+// Long-context leads: it is the language memory this work is about. Beside it one representative per counter
+// family rather than three timetables. Different sample sizes - long-context is 3 households, the counters 10 -
+// so the long-context line is genuinely jumpier; that is honest and it is not smoothed.
+const DEFER_LINES = [
+  {k:"longcontext", label:"long-context (3 households)", col:"--s1"},
+  {k:"tt3d", label:"3-day timetable", col:"--s2", dash:true},
+  {k:"ttfrozen", label:"never-forgets timetable", col:"--s3", dash:true},
+  {k:"perpetua", label:"Perpetua*", col:"--s7", dash:true},
+];
+function drawDefer(field, target){
+  const M = (EXTRA.deferral_live && EXTRA.deferral_live.memories) || {};
+  const series = DEFER_LINES.map(L=>{
+    const pd = (M[L.k]||{}).per_day || {};
+    const pts = Object.keys(pd).map(Number).sort((a,b)=>a-b)
+      .filter(d=>pd[String(d)][field]!=null).map(d=>[d, pd[String(d)][field]]);
+    return {...L, pts};
+  }).filter(x=>x.pts.length>3);
+  if(!series.length) return "";
+  const all = series.flatMap(x=>x.pts.map(p=>p[1]));
+  const top = Math.min(100, Math.max(40, Math.ceil(Math.max(...all)/10)*10+10));
+  const W=470,H=210,L=34,Rr=14,T=12,B=28, nd=32;
+  const x = d => L + (d-1)*(W-L-Rr)/(nd-2), y = v => T + (top-v)*(H-T-B)/top;
+  let g="";
+  const R=DATA.person;
+  if(R&&R.stages){ let cur=null;
+    const rect=c=>{const f=STAGE_FILL[c.name]; return f?`<rect x="${x(c.a).toFixed(1)}" y="${T}" width="${(x(c.b+1)-x(c.a)).toFixed(1)}" height="${H-T-B}" fill="var(${f})" opacity="0.5"/>`:"";};
+    for(let d=1;d<nd;d++){const st=R.stages[String(d)]||"plain"; if(!cur||cur.name!==st){ if(cur) g+=rect(cur); cur={name:st,a:d,b:d};} else cur.b=d;}
+    if(cur) g+=rect(cur); }
+  const ticks=[0,25,50,75,100].filter(t=>t<=top);
+  for(const v of ticks) g+=`<line x1="${L}" y1="${y(v).toFixed(1)}" x2="${W-Rr}" y2="${y(v).toFixed(1)}" stroke="var(--line)"/><text x="${L-5}" y="${(y(v)+3.5).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--muted)">${v}</text>`;
+  for(const d of [1,7,14,21,28]) g+=`<text x="${x(d).toFixed(1)}" y="${H-9}" text-anchor="middle" font-size="9" fill="var(--muted)">${d}</text>`;
+  if(target!=null){
+    g+=`<line x1="${L}" y1="${y(target).toFixed(1)}" x2="${W-Rr}" y2="${y(target).toFixed(1)}" stroke="var(--ink2)" stroke-width="1.5" stroke-dasharray="5 4"/>`
+     + `<text x="${(W-Rr-2).toFixed(1)}" y="${(y(target)+10).toFixed(1)}" text-anchor="end" font-size="9" fill="var(--ink2)">promised: wrong 1 time in 10</text>`;
+  }
+  for(const sp of series){
+    let d0="",pen=false;
+    for(const [d,v] of sp.pts){ d0 += (pen?" L ":" M ")+x(d).toFixed(1)+" "+y(v).toFixed(1); pen=true; }
+    g += `<path d="${d0}" fill="none" stroke="var(${sp.col})" stroke-width="${sp.dash?2.6:2}" stroke-linejoin="round"${sp.dash?' stroke-dasharray="6 3"':''}/>`;
+  }
+  const legend = series.map(a=>`<span class="pl"><i style="${a.dash? `background:repeating-linear-gradient(90deg,var(${a.col}) 0 6px,transparent 6px 9px);height:4px` : `background:var(${a.col})`}"></i>${a.label}</span>`).join("");
+  return `<div class="plegend">${legend}</div><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="deferral ${field}">${g}</svg>`;
+}
+function deferBlock(){
+  const a=drawDefer("hand_over",null), b=drawDefer("wrong_when_answered",10);
+  if(!a&&!b) return "";
+  const M=(EXTRA.deferral_live&&EXTRA.deferral_live.memories)||{};
+  const at=(k,f)=>{const pd=(M[k]||{}).per_day||{}; const v=[14,15,16].map(d=>pd[String(d)]&&pd[String(d)][f]).filter(x=>x!=null); return v.length? (v.reduce((p,c)=>p+c,0)/v.length).toFixed(0) : "\u2013";};
+  return `<div class="panelgrid" style="margin-top:4px">
+   <div class="panel pnl"><h3>How often it hands the question over</h3>
+     <p class="pcap">The robot answers only when its own confidence clears a bar it keeps adjusting as the resident's corrections come in, aiming to be wrong at most one time in ten on the answers it keeps. This is the share it hands back instead \u2014 go and look, or ask.</p>${a}
+     <p class="pmeta">On the first sick days: long-context hands over ${at("longcontext","hand_over")}%, the 3-day timetable ${at("tt3d","hand_over")}%, never-forgets ${at("ttfrozen","hand_over")}%, Perpetua* ${at("perpetua","hand_over")}% \u00b7 counters on 10 households, long-context on 3, so its line is the jumpier one \u00b7 no message</p></div>
+   <div class="panel pnl"><h3>And how often it is wrong on what it keeps</h3>
+     <p class="pcap">Of the questions it chose to answer, the share it got wrong. The dashed line is the promise. Every method breaks it, and it breaks worst exactly where the routine changes.</p>${b}
+     <p class="pmeta">On the first sick days: long-context ${at("longcontext","wrong_when_answered")}%, the 3-day timetable ${at("tt3d","wrong_when_answered")}%, never-forgets ${at("ttfrozen","wrong_when_answered")}%, Perpetua* ${at("perpetua","wrong_when_answered")}% \u00b7 against a promise of 10%</p></div></div>`;
+}
 function renderClaims(){
   const list=$("#claimlist"), host=$("#claimgraphs"); if(!list||!host) return;
   list.innerHTML = CLAIMS.map(c=>`<li><a href="#claim${c.n}">${c.text}</a></li>`).join("");
   host.innerHTML = CLAIMS.map(c=>{
+    if(c.custom==="perpetua"){
+      const M=(EXTRA.deferral_live&&EXTRA.deferral_live.memories)||{};
+      const P=M.perpetua||{}, TF=M.ttfrozen||{}, T3=M.tt3d||{};
+      const eh=(m,w)=>(m.edge_by_household||{})[w]||null;
+      const av=(m,w)=>(m.answered_vs_handed||{})[w]||null;
+      const ps=eh(P,"d14_16"), pl=eh(P,"lead"), ts=eh(TF,"d14_16"), t3=eh(T3,"d14_16");
+      if(!ps) return "";
+      const d=(m,w)=>{const x=(m.per_day)||{}; const v=[14,15,16].map(k=>x[String(k)]&&x[String(k)][w]).filter(y=>y!=null); return v.length?(v.reduce((a,b)=>a+b,0)/v.length).toFixed(0):"–";};
+      return `<section class="claim" id="claim${c.n}">
+        <h3><span class="cnum">${c.n}</span>${c.text}</h3>
+        <p class="cmeta">10 households · one person sick · same gate, same target, same days as the figure above</p>
+        <div class="cbody">
+          <p class="pcap" style="max-width:74ch">Perpetua* is on the figure above as the fourth line. <b>It is the least accurate of the three in the settled fortnight \u2014 69% against the timetables' 80 and 81 \u2014 so this is not a better method that also happens to have better uncertainty. It is a worse forecaster whose confidence keeps meaning something when the others' stops.</b> It does not keep the one-in-ten promise either — on the first sick days it still hands back ${d(P,"hand_over")}% of questions and is wrong on ${d(P,"wrong_when_answered")}% of the rest. What it does is keep <em>knowing which of its answers to trust</em> while the routine changes. The questions it answers are ${ps.mean.toFixed(0)} points more accurate than the ones it hands over, measured inside each household and then averaged — <b>and all ${ps.kept_sign} of the ${ps.n_hh} households keep that sign</b>, the smallest being ${ps.per_hh[0]} points. In the settled fortnight the same figure is ${pl? pl.mean.toFixed(0) : "–"}, so the separation does not merely survive the disruption, it widens.</p>
+          <p class="pcap" style="max-width:74ch">Beside it, over the same days: the never-forgets timetable is <b>${ts? ts.mean.toFixed(0) : "–"}</b> and keeps the sign in only ${ts? ts.kept_sign : "–"} of ${ts? ts.n_hh : "–"} households, and the 3-day timetable is ${t3? t3.mean.toFixed(0) : "–"} in ${t3? t3.kept_sign : "–"} of ${t3? t3.n_hh : "–"}. So this is not a counter-versus-language-model story. Two counters lose their judgement at the shift and one keeps it.</p>
+          <p class="pcap" style="max-width:74ch"><b>What it does differently, in one sentence you can check against the method.</b> A timetable's confidence comes from how <em>regular</em> the past was — how tightly its sightings cluster in a two-hour slot. Perpetua* instead models each object-and-place as something that persists until a survival time runs out, so its confidence comes from how <em>old</em> its evidence is. When a routine changes, the past was at its most regular precisely where things have now moved, which is why a timetable ends up confident and wrong. Evidence, by contrast, goes stale at the same rate whatever the world is doing.</p>
+          <p class="pcap" style="max-width:74ch"><b>The mechanism predicted something we had not looked at, and it held.</b> If regularity-based confidence goes wrong when the world moves away from the pattern a method currently holds, then which moment breaks a method should depend on what it remembers \u2014 and a method whose confidence tracks evidence age should never break at all. Measured on the two-spell households, across five windows nobody had examined: Perpetua* holds its separation at every one of them (+28, +37, +29, +29, +36, keeping the sign in 9 or 10 households each time). The never-forgets timetable inverts at the first sick onset but <em>not</em> the second, because by then it holds both routines at once and is no longer surprised. The 3-day timetable inverts at both onsets and slightly harder the second time, because it keeps forgetting and re-learning and so is surprised every time. Neither inverts on a return: a return leaves its evidence mixed rather than regular, so it is unconfident rather than confidently wrong \u2014 which is the failure behaving as the mechanism says it should.</p>
+          <p class="pmeta">Edge = accuracy of the questions the gate answers minus accuracy of the ones it hands over, computed inside each household and then averaged, ± its standard error. Perpetua* ${ps.mean.toFixed(1)} ± ${ps.se.toFixed(1)} across ${ps.n_hh} households, spread between them ±${ps.sd.toFixed(0)}. The two-spell figures come from a separate population of 10 households.</p>
+        </div>
+        <details class="cnums"><summary>the numbers behind this claim</summary>
+          <table><tr><th>method</th><th class="num">edge, settled</th><th class="num">edge, first sick days</th><th class="num">households keeping the sign</th><th class="num">own accuracy at the shift</th></tr>
+          ${["perpetua","tt3d","ttfrozen"].map(k=>{const m=M[k]||{}; const a=eh(m,"lead"), b=eh(m,"d14_16"), q=av(m,"d14_16");
+            return `<tr><td>${m.name||k}</td><td class="num">${a? (a.mean>0?"+":"")+a.mean.toFixed(0):"–"}</td><td class="num">${b? (b.mean>0?"+":"")+b.mean.toFixed(0):"–"}</td><td class="num">${b? b.kept_sign+" of "+b.n_hh : "–"}</td><td class="num">${q? (100*0+ (q.answered_acc*q.n_answered+q.handed_acc*q.n_handed)/(q.n_answered+q.n_handed)).toFixed(0)+"%" : "–"}</td></tr>`;}).join("")}
+          </table><p class="note" style="margin:8px 0 0">Perpetua* is the least accurate of the three in the settled fortnight, so this is not a case of a better method also having better uncertainty — it is a worse forecaster whose confidence keeps meaning something when the others' stops.</p></details>
+      </section>`;
+    }
+    if(c.custom==="defer"){
+      const M=(EXTRA.deferral_live&&EXTRA.deferral_live.memories)||{};
+      const n_hh = 10;
+      return `<section class="claim" id="claim${c.n}">
+        <h3><span class="cnum">${c.n}</span>${c.text}</h3>
+        <p class="cmeta">${n_hh} households (long-context 3) \u00b7 one person sick \u00b7 every method gated on its own confidence, aiming to be wrong at most one time in ten</p>
+        <p class="pcap" style="max-width:74ch">Through the settled fortnight every method sits close to the promise it made. The gate works while the world is stable. It breaks precisely at the change \u2014 so the failure is not that these methods cannot do uncertainty, it is that the one moment the robot needs to know it is lost is the moment the signal stops working.${(()=>{const M=(EXTRA.deferral_live&&EXTRA.deferral_live.memories)||{};
+          const av=M.ttfrozen&&M.ttfrozen.answered_vs_handed, sh=av&&av.d14_16, ld=av&&av.lead;
+          return (sh&&ld&&sh.inverted)? ` And for one method the signal does not merely stop \u2014 it reverses. Through the settled fortnight the never-forgets timetable answers the questions it gets ${ld.answered_acc.toFixed(0)}% right and hands over ones it would have got ${ld.handed_acc.toFixed(0)}% right, which is a gate doing its job. On the first sick days that turns round: it answers the ones it gets <b>${sh.answered_acc.toFixed(0)}%</b> right and hands over ones it would have got <b>${sh.handed_acc.toFixed(0)}%</b> right. It would do better answering the questions it just refused. A memory that never forgets is surest exactly where the old routine was most regular, which is exactly where the new one has moved things.` : "";})()}</p>
+        <div class="cbody">${deferBlock()}</div>
+        <details class="cnums"><summary>the numbers behind this graph</summary>
+        <table><tr><th>method</th><th class="num">hands over</th><th class="num">wrong on what it keeps</th><th class="num">best fixed bar, with hindsight</th><th class="num">what better calibration would buy</th></tr>
+        ${Object.keys(M).map(k=>{const m=M[k]; const pd=m.per_day||{};
+          const av=f=>{const v=[14,15,16].map(d=>pd[String(d)]&&pd[String(d)][f]).filter(x=>x!=null); return v.length?(v.reduce((p,c)=>p+c,0)/v.length).toFixed(0)+"%":"\u2013";};
+          const dc=(m.decomposition||{}).d14_16;
+          const hs = !dc||dc.miss_hindsight==null? "\u2013" : `${dc.miss_hindsight.toFixed(0)}%` + (dc.separable===false? " *" : "");
+          const gp = !dc||dc.gap==null? "\u2013" : `${dc.gap>0?"":"+"}${(-dc.gap).toFixed(0)} points`;
+          return `<tr><td>${m.name}</td><td class="num">${av("hand_over")}</td><td class="num">${av("wrong_when_answered")}</td><td class="num">${hs}</td><td class="num">${gp}</td></tr>`;}).join("")}
+        </table><p class="note" style="margin:8px 0 0">First three sick days, against a promise of being wrong at most 10% of the time. The hindsight column is the best a single fixed bar could have done on those days if it had been chosen knowing the answers, at the same rate of handing questions over &mdash; an upper bound nobody can reach in deployment. The last column is what that hindsight would have bought; a negative figure means the bar the robot actually adjusts, which moves day to day, already beat any single fixed one. <b>*</b> marks a memory whose confidence values are too tied together for a bar to separate them at all.</p></details>
+      </section>`;
+    }
     if(c.custom==="planning"){
       const P = EXTRA.planning_matched; if(!P) return "";
       const r = P.rows["mart_tt72"], b = P.rows["bma_tt"];
@@ -1188,7 +1301,17 @@ function renderGist(){
   const K=(EXTRA.knowno_live && EXTRA.knowno_live.person && EXTRA.knowno_live.person.llm_naive_nomsg) || null; const k14 = K && K.days["14"];
   const confs = memKinds.filter(([k])=>conf(k,"lead")!=null && conf(k,"d14_16")!=null).map(([k,n])=>`${n} ${f(conf(k,"lead"))}→${f(conf(k,"d14_16"))}%`);
   const AG=P.llm_naive_nomsg && P.llm_naive_nomsg.askgate;
-  items.push(`<b>The LLM never knows when it is wrong.</b> Its stated confidence barely moves between the settled lead-up and the first sick days (${confs.join(", ")}) while its accuracy falls by 20–30 points; the counters' confidence moves with the stage (3-day timetable claims ${f(cconf("tt3d","lead"))}→${f(cconf("tt3d","s1"))}%) — but that tracking does not survive being priced: through the same answer-or-ask gate the timetable is the worst method here on the shift days${(()=>{const C=EXTRA.classical_askgate&&EXTRA.classical_askgate.tt3d; return C&&C.askgate&&C.askgate.d14_16? `, asking ${C.askgate.d14_16.ask_rate.toFixed(0)}% of the time and still missing ${C.askgate.d14_16.miss_rate.toFixed(0)}% of what it answers`:""})()}, and only becomes the one method that keeps the 10% promise once it has re-learned the new routine${(()=>{const C=EXTRA.classical_askgate&&EXTRA.classical_askgate.tt3d; return C&&C.askgate&&C.askgate.d17_23? ` (${C.askgate.d17_23.miss_rate.toFixed(0)}% inside the spell)`:""})()}. After a lead-day calibration that removes each method's own level, the buffer is ${P.llm_naive_nomsg && P.llm_naive_nomsg.windows.d14_16? "+"+f(P.llm_naive_nomsg.windows.d14_16.leadcal_conf - P.llm_naive_nomsg.windows.d14_16.acc) : "?"} points over-confident on the shift days. An answer-or-ask gate on that confidence has to ask ${AG && AG.d14_16? f(AG.d14_16.ask_rate) : "?"}% of the time on the shift days (vs ${AG && AG.lead? f(AG.lead.ask_rate) : "?"}% before) and still misses ${AG && AG.d14_16? f(AG.d14_16.miss_rate) : "?"}% of what it answers (target 10%).${k14 && k14.n>=MIN_N? ` Read three ways on the first sick day, the buffer is ${f(k14.acc)}% right while it says ${f(k14.verbal)}% (verbalized), ${f(k14.agree)}% (self-agreement), ${f(k14.token)}% (token probability) — none of the three channels reads the drop; an honest set on its own probabilities has to name ${k14.set_size.toFixed(1)} of 10 places to cover it ${f(k14.coverage)}% of the time.`:""}`);
+  {
+    const DF = (EXTRA.deferral_live && EXTRA.deferral_live.memories) || {};
+    const dec = (m,w) => (DF[m] && DF[m].decomposition && DF[m].decomposition[w]) || null;
+    const tied = m => { const d=dec(m,"d14_16"); return d && d.separable===false; };
+    const r = m => { const d=dec(m,"d14_16"); return d? d : {}; };
+    const rng = f => { const v=Object.keys(DF).map(k=>r(k)[f]).filter(x=>x!=null);
+                       return v.length? `${Math.min(...v).toFixed(0)}% to ${Math.max(...v).toFixed(0)}%` : "\u2013"; };
+    const nTied = Object.keys(DF).filter(tied).length;
+    items.push(`<b>The information is not in the number.</b> Not &ldquo;the bar is in the wrong place&rdquo; and not &ldquo;it needs recalibrating&rdquo; \u2014 there is nothing in these confidence values to put a bar on. The stated number barely shifts between the settled fortnight and the first sick days (${confs.join(", ")}) while accuracy falls by 20\u201330 points. The obvious reply is that the bar is simply in the wrong place and better calibration would fix it. It would not. <br><br>Let the robot answer only when its confidence clears a bar it keeps adjusting from the resident's corrections, aiming to be wrong at most one time in ten. On the first sick days it ends up wrong on ${rng("miss_achieved")} of what it chooses to answer. Now hand it the answers and let it pick the single best fixed bar for those days with full hindsight, at the same rate of handing questions over: ${rng("miss_hindsight")}. Every method lands within ${(()=>{const v=Object.keys(DF).map(k=>r(k).gap).filter(x=>x!=null).map(Math.abs); return v.length? Math.max(...v).toFixed(0) : "3";})()} points of where it already was. <br><br>So the scalar itself is the problem, not the threshold on it. On ${nTied} of the ${Object.keys(DF).length} memories the confidence values are too tied together for any bar to separate them at all \u2014 long-context is the extreme, stating near-certainty on almost everything (median ${(DF.longcontext&&DF.longcontext.discrimination&&DF.longcontext.discrimination.lead||{}).median}, ${(DF.longcontext&&DF.longcontext.discrimination&&DF.longcontext.discrimination.lead||{}).n_above} of ${(DF.longcontext&&DF.longcontext.discrimination&&DF.longcontext.discrimination.lead||{}).n} questions above it in the settled week), so for that memory no bar exists, with hindsight or without. The counter fails the other way round: its confidence <em>does</em> move with the stage (3-day timetable ${f(cconf("tt3d","lead"))}\u2192${f(cconf("tt3d","s1"))}%), and it is still the worst of the lot here, wrong on ${(r("tt3d").miss_achieved||0).toFixed(0)}% of what it keeps while handing back ${(r("tt3d").ask_rate||0).toFixed(0)}%.`);
+  }
+
   // 5. shared memory interferes
   {
     const OS=(EXTRA.owner_split_live && EXTRA.owner_split_live.partial)||{};
