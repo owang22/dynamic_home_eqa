@@ -68,7 +68,13 @@ def load():
     return rows
 
 
-def per_day(rows, field, warm_ok=True):
+def per_day(rows, field, warm_ok=True, n_hh=None):
+    """A day is plotted only when EVERY household has reached it.
+
+    The 10-answer floor alone is not enough while a run is in flight: the households advance at different speeds,
+    so an unfinished day is whichever household happens to be fastest. On 22 Sept days 12-16 were one household
+    of three and the pooled line would have read as an average of all of them - the chart would have shown the
+    conformal set NARROWING at the shift on the strength of a single house."""
     by = collections.defaultdict(list)
     for r in rows:
         if warm_ok or not r["_warm"]:
@@ -76,6 +82,8 @@ def per_day(rows, field, warm_ok=True):
     out = {}
     for d, g in by.items():
         if len(g) < MIN_N:
+            continue
+        if n_hh is not None and len({x["household"] for x in g}) < n_hh:
             continue
         out[d] = sum(float(x[field]) for x in g) / len(g)
     return out
@@ -90,12 +98,14 @@ def main():
     days = sorted({r["day_index"] for r in rows})
     print(f"{len(rows)} rows, {len(hh)} households, days {min(days)}-{max(days)}")
 
-    acc = per_day(rows, "correct")
-    agr = per_day(rows, "agreement")
-    lac = per_day([r for r in rows if not r["_warm"]], "lac_size")
-    aps = per_day([r for r in rows if not r["_warm"]], "aps_size")
-    cov = per_day([r for r in rows if not r["_warm"]], "lac_covered")
-    covA = per_day([r for r in rows if not r["_warm"]], "aps_covered")
+    NH = len({r["household"] for r in rows})
+    acc = per_day(rows, "correct", n_hh=NH)
+    agr = per_day(rows, "agreement", n_hh=NH)
+    post = [r for r in rows if not r["_warm"]]
+    lac = per_day(post, "lac_size", n_hh=NH)
+    aps = per_day(post, "aps_size", n_hh=NH)
+    cov = per_day(post, "lac_covered", n_hh=NH)
+    covA = per_day(post, "aps_covered", n_hh=NH)
     n_by = collections.Counter(r["day_index"] for r in rows)
 
     lead_a = [acc[d] for d in LEAD if d in acc]
@@ -109,6 +119,7 @@ def main():
                            gridspec_kw={"height_ratios": [1, 1.15]})
     maxd = max(days)
     warm_last = max((r["day_index"] for r in rows if r["_warm"]), default=0)
+    SHIFT_DAY = 14
     for A in ax:
         if warm_last:
             A.axvspan(0.5, warm_last + .5, color="#b0b0b0", alpha=.22, lw=0)
@@ -119,6 +130,8 @@ def main():
         if maxd > 23.5:
             A.axvspan(23.5, maxd + .5, color="#bcdcc8", alpha=.45, lw=0)
         A.grid(alpha=.25)
+        if maxd >= SHIFT_DAY:
+            A.axvline(SHIFT_DAY, color="#c0392b", lw=1.4, ls="-", alpha=.85, zorder=5)
 
     d1 = sorted(acc)
     ax[0].axhline(1.0, color="#888", ls=":", lw=1)
@@ -129,6 +142,10 @@ def main():
     ax[0].set_ylabel("relative to the settled week" if normalised else "raw value (0-1)")
     ax[0].set_title("If the uncertainty signal worked, the red line would fall when the blue one does" if normalised
                     else "Settled week not yet complete - raw values, not yet normalised", fontsize=11)
+    if maxd >= SHIFT_DAY:
+        ax[0].annotate("day 14: the routine changes", xy=(SHIFT_DAY, ax[0].get_ylim()[0]),
+                       xytext=(SHIFT_DAY + 0.6, ax[0].get_ylim()[0] + 0.04 * (ax[0].get_ylim()[1] - ax[0].get_ylim()[0])),
+                       fontsize=9, color="#c0392b")
     ax[0].legend(fontsize=9, loc="lower left")
 
     d2 = sorted(lac)
@@ -174,9 +191,10 @@ def main():
                        ec="#d9a441" if live else "#199e70", lw=1))
     note = f"rebuilt {_t.strftime('%H:%M')}; grey band = the threshold's warm-up, where coverage is not yet meaningful"
     if thin:
-        note += f"; {len(thin)} day(s) with under {MIN_N} answers blanked"
+        note += f"; days blanked unless all {len(hh)} households have reached them"
     note += f"; first {WARMUP} questions per household excluded from the set-size panel (threshold warm-up)"
-    fig.suptitle("Sampling-based uncertainty on long-context memory: does it notice the routine change?", fontsize=12.5)
+    fig.suptitle("Long-context memory, no message, sampled 10 times per question: does its uncertainty notice?",
+                 fontsize=12.5)
     fig.text(0.5, 0.005, note, ha="center", fontsize=8.5, color="#666")
     fig.tight_layout(rect=(0, 0.02, 1, 0.93))
     out = os.path.join(ROOT, "samples_uncertainty.png")
