@@ -238,3 +238,27 @@ lesson is now ON THE PAGE, not only in this file: the method note above the find
 for failing the spread test after being written up on too few households. Standing rule for the rest of this study:
 no cross-arm claim goes on the page without its paired spread and the household count, computed by the extractor
 rather than by hand.
+
+## 05:45 — harness facts from the workshop session, checked against our own runs (3 already held, 1 cost us something)
+5a wrote up four harness gotchas (dynamic_home_eqa_fm/results/fm_memory/tools/README_gotchas.md). Checked rather than
+assumed, against this session's runs:
+- "--workers parallelises across ARMS (bank x memory x told x look), not within one": our invocations are sized
+  correctly by luck of habit — the two-spells pass is 3 banks x 2 memories = 6 arms with --workers 6, and the person
+  passes were 10 banks x 1-2 memories against 30-40 workers. No wasted flag anywhere, but the rule is worth knowing:
+  a single-bank single-memory invocation would have been ONE stream whatever the number said.
+- "static header before the time-varying Now: line or the prefix cache never hits": already true in our prompts —
+  checked a real day-20 prompt, "Now:" sits 80% of the way in, after the whole static header. Server side,
+  --enable-prefix-caching IS on and VLLM_USE_FLASHINFER_SAMPLER=0 is set; measured hit rate 27.3% cumulative
+  (49.3M hit tokens of 180.7M queried).
+- "run message arms in PHASES, not in parallel, so the second replays the shared days from cache": this one cost us.
+  At 04:30 I launched the two-spells no-message and start-message passes concurrently (to fill an idle server, on the
+  coordinator's ask) with a shared cache dir. Days 1-13 are identical between those arms, so run sequentially the
+  second pass would have replayed them; run concurrently both paid. Cost ~600 calls, roughly 16% of one pass. Not
+  worth killing now: they are ~70% done and the remaining work is days 14+, where the prompts genuinely differ, so
+  re-sequencing would waste more than it saves. For comparison the person suite, which WAS phased, replayed 44% and
+  70% of its two told passes from cache.
+- "greedy decoding is not bit-reproducible across batch compositions": matters for us because our degenerate checks
+  and the cache both assume a prompt maps to one answer. It does within the cache (we never re-ask a cached prompt),
+  but a re-run of an uncached arm can differ from the logged one. Any future claim of exact reproducibility should
+  say "same prompts, cached answers", not "same numbers on a re-run".
+(F1 seeds 12 and 15 failing to build banks does not touch us; we use seeds 0-9 throughout.)

@@ -384,3 +384,23 @@ tested as a paired contrast across the 3 households (per household: spell-2 firs
 first-three-days, then mean +- sd), not as a difference of pooled means. If it does not clear its own sd, the line for
 the page and STORY.md is: "the robot's simple learners reuse the first spell; whether the language memories do is
 beyond what three households can tell us" — stated plainly, with no direction implied. Same for the buffer.
+
+### E31b result — 06:35: the pre-registered prediction FAILS; the fallback sentence goes on the page
+Two-spells LLM arms finished 06:08 (buffer and retrieval x no message / start message, 3 households, 1798 questions
+each). Tested exactly as pre-registered — paired within-arm contrast, the second spell's first three days minus the
+first spell's, per household, mean +- sd over the three:
+  buffer, no message     -4.9 +- 5.2   per household [0.0, -4.2, -10.4]   does not clear
+  retrieval, no message  +4.9 +- 7.3   per household [12.5, -2.1, +4.2]   does not clear
+E31b predicted retrieval >= +8 pp untold and the buffer's two breaks within 5 pp. Retrieval's +4.9 is below the
+predicted bar AND does not clear its own spread, so the prediction is not supported. The buffer's -4.9 is the
+predicted size but also does not clear, so it is consistent with the prediction without being evidence for it.
+Page and STORY.md take the fallback sentence written at 02:10: "the robot's simple learners reuse the first spell;
+whether the language memories do is beyond what three households can tell us."
+Two secondary numbers, recorded because they exist, NOT promoted (neither was pre-registered, and at three households
+a "clears" is weak by the method note's own argument):
+  retrieval's reuse minus the buffer's, per household [12.5, 2.1, 14.6] = +9.7 +- 6.7 -> clears
+  retrieval WITH the start message, spell 2 minus spell 1 = +9.7 +- 7.3 -> clears (confounded: the message is given
+    again in the second spell, so this is not a memory-reuse measurement at all)
+The classical result stands on its own and carries the point: the 1-day timetable has no second break (77 -> 78),
+3-day 79 -> 74 against 81 -> 58 first time, because a bin the normal routine never overwrites keeps the sick-day
+habit. That is the reuse finding; the language memories neither confirm nor deny it at this sample size.

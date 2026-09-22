@@ -462,3 +462,11 @@ paper tables as noted in findings; their logs land in heldout_fb/hyp/logs when t
 - Does NOT survive: retrieval's first-days-back damage (−13.1 ± 22.2 — the old headline, now restated as the later, sharper persistence claim);
   retrieval's all-question gains; reflection anywhere (+4.6 ± 9.1); routine table (+3.3 ± 4.7); buffer start+end at 24-26 (−3.6 ± 8.3 = message repaired).
 - Guests dead: evening-only break 15 points, morning after −1. Negative bullet on the page.
+
+## 06:40 — chain complete (78 arms, no failures); E31b not supported
+- Two-spells LLM arms landed 06:08. E31b (pre-registered): retrieval +4.9 ± 7.3, buffer −4.9 ± 5.2 across 3 households — neither clears.
+  Prediction not supported; page says so and claims nothing from it. The classical reuse result stands on its own.
+- Long-context complete on its matched 3 households; its other 7 no-message households abandoned (terminal state in watcher + page).
+- Outstanding: workshop session's end-message contrast on 18 households (phase 1 of 2 running, due ~07:05), which settles how much
+  of the return-day repair the retraction itself is doing.
+- Page v42 published. Commit 03762bbcf pushed at 05:05; another commit due once the end-message number lands.

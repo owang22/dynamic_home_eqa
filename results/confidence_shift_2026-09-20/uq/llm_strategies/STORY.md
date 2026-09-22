@@ -7,13 +7,31 @@ lead-up, one resident off sick for days 14–23, then normal life again) unless 
 memory holds. Live tables (regenerated every 20 min as arms land): `STORY_numbers.md`. The page Oliver reads is
 `results/regime_search/story.html`; its "What we found" box is the short form of this file.
 
-Arms that are still running are marked; their numbers move a little as the last households land.
+Every arm named here has finished.
+
+**How to read the numbers, and a change to the bar made at 07:25 on 22 Sept.** Every comparison between two ways of
+running the same memory is measured household by household, never by setting one arm's overall number beside
+another's. Each figure is written as the average across households ± its own standard error, with n = the number of
+households and the spread between them given separately. Overnight we claimed an effect only when the average beat
+that spread; Oliver asked for the conventional bar instead — the average must be at least twice its standard error,
+which is the spread divided by the square root of n. Be plain about the direction of that change, because the name
+sounds stricter and the arithmetic is not: at ten households the standard error is about a third of the spread, so
+the new bar is the EASIER of the two, and for n ≥ 6 anything clearing one spread clears two standard errors
+automatically. Nothing published overnight lost its standing; the change could only add claims, and what it added is
+a handful of contrasts previously called "no measurable difference" that are now reported as small effects — a
+detected three-point gain is written up here as a small gain, not as an important one, and where a figure passes one
+bar and not the other both are given. With ten households the smallest average we can now call is about 6 points on
+all questions and about 9 on cold ones, against about 10 and 15 under the old bar. The old floor still governs where
+a memory was only affordable on three or five households — the spread is itself estimated from that few numbers, and
+three households agreeing is not unlikely by chance. Anything marked "three households" is
+indicative, worth reporting when it matches a pattern seen on ten, not on its own. Two findings were withdrawn
+overnight for failing this test after being written up on too few households (uq/problems_found.md, 04:45 and 05:15).
 
 ## (a) Every memory breaks at the shift; who re-learns inside it, who breaks again on the return
 
 The break is the size of the routine change, not a property of any one memory: from the settled lead-up (days 9–13)
 to the first three sick days, the 3-day timetable falls 81 → 58%, the never-forgets timetable 82 → 51%, the LLM buffer
-78 → 58%, retrieval memory 81 → 62%, long-context 71 → 65% (still running), reflection 71 → 60% (still running), the
+78 → 58%, retrieval memory 81 → 56%, long-context 74 → 61%, reflection 73 → 66%, the
 7-day routine table 60 → 58% (it never learned the lead-up well: 60% where the buffer reaches 78%).
 
 What happens next separates memories by what they keep:
@@ -24,28 +42,38 @@ What happens next separates memories by what they keep:
   trust to the short memories at the break and back to the long one on the return, so no second break.
 - The LLM buffer with no message recovers slowly (58 → 66 → 74 → 77%) and shows NO second break — but on cold
   questions it is only 41% inside the spell: what looks like recovery is mostly same-day feedback about the same
-  object, not a learned sick routine. Retrieval memory (no message): 62 → 73% in the spell, cold 44% (return not landed
-  yet). Long-context: 65 → 72%, cold 52%.
+  object, not a learned sick routine. Retrieval memory (no message): 56 → 64% in the spell, cold 44%, 76% on the
+  first days back. Long-context: 61 → 71%, cold 52%. Reflection: 66 → 78%, and its rise above its own lead-up is the
+  same day-level effect — cold it is 68 → 35 → 62%, below where it started.
 
 ## (b) What a one-sentence message buys, and costs, per memory kind
 
 Every figure here is a PAIRED contrast — the difference on the same household between the told and untold runs,
-averaged over households, with the spread across households beside it. An effect smaller than that spread is reported
-as no measurable difference rather than as a number with a direction (Oliver's one-standard-deviation rule); the full
-table is in STORY_numbers.md.
+averaged over households and written as that average ± its standard error, with n and the spread between households
+beside it; the full table is in STORY_numbers.md.
 
-Telling the buffer "Yuki is home sick today" is worth +12.9 ± 9.5 points on the first three sick days and +16.3 ± 11.3
-through the rest of the spell; on cold questions +23.5 ± 13.4 and +36.3 ± 18.8 — the sentence does what ten days of
-feedback could not. The cost is the return: −11.3 ± 7.9 on the first days back, cold −20.4 ± 14.5 — told once, it keeps
-believing the sick routine until feedback proves otherwise. Told again on the first day back, the cost is no longer measurable: with both
-messages the first days back come out −3.6 ± 8.3 against never being told. How much of that is the retraction itself
-is undecided — the direct comparison of telling twice against telling once is +7.7 ± 10.2 on all questions and
-+13.4 ± 20.8 on cold ones, inside the noise at ten households. The workshop session is running ten more households on
-those two arms to settle it.
+Telling the buffer "Yuki is home sick today" is worth +12.9 ± 3.0 points (n=10, spread ±9.5) on the first three sick
+days and +16.3 ± 3.6 (n=10, spread ±11.3) through the rest of the spell; on cold questions +23.5 ± 4.2 (n=10) and
++33.3 ± 4.4 (n=18, spread ±18.8) — the sentence does what ten days of feedback could not.
 
-The message is selective by object. On households where only one person is sick but everyone's things are asked (3
-households, the workshop session's partial-shift arms): the buffer with the message moves the sick person's things
-56 → 77% on the first sick days and leaves the other resident's alone (76 → 74%).
+The cost is the return: −7.0 ± 2.2 (n=18, spread ±9.5) on the first days back, cold −12.3 ± 3.9 (n=18, spread ±16.5).
+Both clear the bar, and both are far smaller than the spread between households, so they are real but small: the
+households mostly move the same way rather than any one of them moving far. Told once, the buffer keeps believing the
+sick routine until feedback proves otherwise; a week later there is nothing left of it (−2.8 ± 2.2, n=18).
+
+**The two directions are not the same size, and that is the finding.** What the sentence buys on the way in is large
+and survives a fresh sample — +33.3 cold pooled over eighteen households, where our original ten gave +36.3 and the
+eight added afterwards +29.5. What it costs on the way out is real but about a third as big and confined to the first
+three days back. Both estimates fell when the sample doubled, for the same reason: our first ten households were the
+optimistic half of the draw, and that one hopeful sample showed up once in each direction. It is one sample seen
+twice, not two separate surprises. This is also why the earlier figures in this file read larger: the return cost was
+−11.3 on ten households and is −7.0 on eighteen.
+
+Told again on the first day back, the cost is no longer resolvable: with both messages the first days back come out
+−3.6 ± 2.6 (n=10) against never being told. That is not the same as showing the retraction did the repairing, and the
+two told arms compared head to head do not show it: +4.8 ± 2.9 (n=18) on all questions and +8.9 ± 4.8 (n=18) on cold
+ones, neither clearing the bar. What those two numbers do buy is a bound — a repair larger than about 11 points on
+all questions, or 19 on cold ones, is excluded.
 
 For the routine table the same sentence buys less (58 → 62% on the first sick days, cold 25 → 37%) and costs the same
 on the return (cold 38 → 27%), because the table itself is a weaker memory here.
@@ -53,8 +81,8 @@ on the return (cold 38 → 27%), because the table itself is a weaker memory her
 ## (c) The LLM's stated confidence is flat while the counters' moves with the stage
 
 Every LLM memory says ~0.85–0.90 in every window: buffer 88 → 87% from the lead-up to the first sick days while its
-accuracy falls 78 → 58; retrieval 88 → 85 (accuracy 81 → 62); long-context 89 → 90 (71 → 65); routine table 86 → 87
-(60 → 58). The counters' confidence tracks the stage: the 3-day timetable claims 46% then 37% across the same break.
+accuracy falls 78 → 58; retrieval 88 → 85 (accuracy 81 → 56); long-context 91 → 88 (74 → 61); reflection 81 → 81
+(73 → 66); routine table 86 → 87 (60 → 58). The counters' confidence tracks the stage: the 3-day timetable claims 46% then 37% across the same break.
 The LLM never knows when it is wrong.
 
 Removing each method's own level (a monotone map from stated confidence to accuracy fitted on the lead-up only) leaves
@@ -83,7 +111,9 @@ two at the shift and then recovers; the LLM version starts wider and recovers le
 
 Day-level accuracy flatters every memory that is asked the same object several times a day: the second question
 benefits from the feedback to the first. Cold-only, the buffer with no message holds 41% inside the spell (day-level
-66%), 58% on the return (day-level 74%); retrieval 44% (73%); long-context 52% (72%); the routine table 25% (63%). The
+66%), 58% on the return (day-level 74%); retrieval 44% (73%); long-context 52% (72%); the routine table 25% (63%).
+Every memory's cold lead-up figure is far above this — buffer 75%, retrieval 79%, long-context 70%, reflection 68%,
+routine table 44% — so the cold drop on the first sick days is 30 to 54 points, roughly double the day-level drop. The
 message's effect is largest exactly here (41 → 79%), which is the point: a sentence is what these memories cannot get
 from evidence.
 
@@ -91,11 +121,23 @@ from evidence.
 
 In households where one resident is off sick but the robot is asked about everyone's things (6 households, all arms
 finished; paired per-household contrasts, start message minus no message): telling the buffer "Yuki is home sick
-today" is worth +15.3 ± 9.4 points on the sick resident's own things through the spell (+31.9 ± 8.6 on cold
-questions) and +0.4 ± 5.1 on the other resident's (cold +0.7 ± 5.9) — no measurable difference where it should make
-none. A memory that keeps a separate record per object could not spread it anywhere else in any case.
+today" takes the sick resident's own things 58 → 73% on the first three sick days (+15.0 ± 4.3, n=6) and 70 → 86%
+through the rest of the spell (+15.3 ± 3.8); on cold questions 26 → 47% (+21.8 ± 3.6) and 44 → 76% (+31.9 ± 3.5). The
+other resident's things, on the same households and windows, go 73 → 74% and 67 → 68% — +0.8 ± 2.3 and +0.4 ± 2.1,
+cold +2.2 ± 3.5 and +0.7 ± 2.4, no measurable difference where it should make none. The arm that shows nothing is
+half the claim. (Levels here are means of per-household values, each household weighted equally, over exactly the
+households behind each contrast, so a level can never move one way while its contrast moves the other.)
 
-The nightly routine table behaves the same way on the other resident's things (−5.1 ± 10.5, not measurable) but is
+**The selectivity holds only while the message is true.** On the first three days back, with the message still
+standing and never retracted, the other resident's things fall 72 → 68% — −3.9 ± 1.6 on the five households that
+clear the ten-answer threshold in that cell — while the sick resident's own fall 74 → 64%, −9.9 ± 5.3, which six
+households cannot separate from zero. So while the instruction matches the world, the buffer applies it exactly where
+it belongs; once it is stale it costs a little beyond its target too. That ties this panel to the return cost above:
+it is the same effect seen from the other side. Read the second half carefully — the leak we can actually measure is
+the ~4-point one onto the other resident's things; the estimate on the sick person's own things is larger but
+unresolvable here, so nothing in this file says a stale message costs more away from home than at home.
+
+The nightly routine table behaves the same way on the other resident's things (−5.1 ± 4.3, n=6, not resolvable) but is
 worse everywhere: with no message it answers the sick resident's things 68% against the buffer's 70% and the other
 resident's 53% against 71%, while its stated confidence sits at 82-89% in every window for both residents, message
 or not.
@@ -150,8 +192,24 @@ not luck. The robot's simple learners keep a habit for each hour of the day, and
 replaces the sick-day habit at those hours: in the second spell 53% of the 1-day learner's questions fall in hours
 only the first spell ever filled, and there it is 97% right. Forgetting in these learners is relative within an hour of
 the day — a habit that nothing overwrites is kept for ever. Prediction written down before the language memories land
-(E31b): retrieval, which looks up the same hour of the day, re-learns the second spell faster than the first; the
-buffer, which keeps only recent sightings, does not.
+(E31b): retrieval, which looks up the same hour of the day, would re-learn the second spell faster than the first;
+the buffer, which keeps only recent sightings, would not. Tested as written — paired within-arm, the second spell's
+first three days minus the first spell's, per household over the three (± is the spread across the three households,
+which is the bar that governs below six): retrieval +4.9 ± 7.3, buffer −4.9 ± 5.2.
+Neither clears the disagreement between three households, so the prediction is NOT supported and nothing is claimed
+from it. The counters carry this finding on their own; whether a language memory reuses a remembered episode is
+beyond what three households can tell us. (Recorded but not promoted: the between-memory difference — retrieval's
+reuse minus the buffer's — is +9.7 ± 6.7 and does clear, but it was not pre-registered, and at three households a
+"clears" is weak by the standard set out at the top of this file.)
 
-Still to land tonight: retrieval / reflection with the start and start+end messages (10 / 5 households); long-context
-on 3 households across all three messages; the two-spells LLM arms.
+**What ran.** One-person-sick regime, 10 households, 32 days: buffer, retrieval and a nightly routine table on all 10
+across all three message conditions; reflection on 10 with no message and 5 with each message; long-context on 3
+across all three (it costs ~10x the compute per question, and the other 7 no-message households were abandoned rather
+than finished because they could not improve any comparison). MCQ token-probability channel and honest sets on 3
+households over a bounded day list. Partial-shift arms (one person sick, everyone's things asked): 6 households,
+buffer and routine table, no message and start message. Two-spells regime: classical learners on 10 households,
+buffer and retrieval on 3.
+
+**Outstanding:** the workshop session's 18-household contrast between telling once and telling twice, due ~07:05. It
+drops into the paired-contrast wiring already on the page and settles the one question left open above — how much of
+the return repair is the retraction itself.

@@ -60,14 +60,26 @@ def main():
     known10 = 0
     moving = 0
     stalled = []
-    # paused arms (chain_watch_pause.txt, one glob per line, relative to this dir) are skipped until their calls.jsonl
-    # is newer than the pause file again -- i.e. until they actually resume; so a paused arm never masks a real stall
     import fnmatch
-    pause_path = os.path.join(HERE, "chain_watch_pause.txt")
-    paused_globs = [l.strip() for l in open(pause_path)] if os.path.exists(pause_path) else []
-    pause_t = os.path.getmtime(pause_path) if paused_globs else 0
+    # Two distinct states, deliberately not the same mechanism:
+    #  ABANDONED (chain_watch_abandoned.txt) is TERMINAL — those arms are never stall-checked again, whatever their
+    #    files do. A run we have decided not to finish must not be able to come back as a false stall, because a
+    #    false stall is exactly what hides a real one.
+    #  PAUSED (chain_watch_pause.txt) is temporary — skipped only until the arm's calls.jsonl moves again.
+    def globs(name):
+        path = os.path.join(HERE, name)
+        if not os.path.exists(path):
+            return [], 0
+        gs = [l.strip() for l in open(path) if l.strip() and not l.startswith("#")]
+        return gs, os.path.getmtime(path)
+    abandoned_globs, _ = globs("chain_watch_abandoned.txt")
+    paused_globs, pause_t = globs("chain_watch_pause.txt")
+    def abandoned(arm):
+        return any(fnmatch.fnmatch(arm, g) for g in abandoned_globs)
     def paused(arm):
-        if not any(fnmatch.fnmatch(arm, g) for g in paused_globs if g):
+        if abandoned(arm):
+            return True
+        if not any(fnmatch.fnmatch(arm, g) for g in paused_globs):
             return False
         cj = os.path.join(HERE, arm, "calls.jsonl")
         return not (os.path.exists(cj) and os.path.getmtime(cj) > pause_t)
@@ -86,8 +98,9 @@ def main():
     n_fin = sum(1 for v in counts.values() if v[1])
     rate = total10 / (WINDOW_S / 60) if known10 else float("nan")
     with open(LOG, "a") as f:
-        n_paused = sum(1 for a, v in counts.items() if not v[1] and paused(a))
-        f.write(f"{time.strftime('%H:%M')} watch: {len(active)} arms running, {n_fin} finished, {n_paused} paused, "
+        n_aband = sum(1 for a, v in counts.items() if not v[1] and abandoned(a))
+        n_paused = sum(1 for a, v in counts.items() if not v[1] and paused(a) and not abandoned(a))
+        f.write(f"{time.strftime('%H:%M')} watch: {len(active)} arms running, {n_fin} finished, {n_paused} paused, {n_aband} abandoned, "
                 f"aggregate {rate:.0f} calls/min over last 10 min ({known10} arms with history, {moving} moving)\n")
         for arm in stalled:
             f.write(f"{time.strftime('%H:%M')} VERDICT: STALLED ARM {arm} — 0 new calls in 15 min while {moving} others moved "

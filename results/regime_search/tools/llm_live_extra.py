@@ -54,6 +54,13 @@ MEM_NAME = {"naive": "LLM, naive memory (buffer)", "recent": "LLM, recent-K memo
 MSG_LABEL = {"nomsg": " · no message", "startmsg": " · start message", "startend": " · start + end messages"}
 
 
+# Households whose data exists on disk but is deliberately NOT used, so the page shows a clean household count
+# rather than something half-finished. Long-context costs ~10x the compute per question of the other memories; its
+# told arms were only ever run on hh_s0-s2, so finishing the other seven no-message households could not improve any
+# comparison and the server time went to the two-spells arms instead (coordinator, 05:20).
+ABANDONED = {("person", "longcontext", "nomsg"): {f"hh_s{i}" for i in range(3, 10)}}
+
+
 def msg_tag(told: bool, key_tag) -> str:
     if not told:
         return "nomsg"
@@ -205,6 +212,28 @@ def run_askgate(rows_chrono, alpha=0.10, windows=None):
     return out
 
 
+MIN_N_FOR_SE = 6   # below this the standard error is unreliable, so the old heterogeneity floor still applies
+
+
+def verdict(mean, sd, n_hh, per_hh=None):
+    """Oliver's rule as of 07:25: report mean +- STANDARD ERROR with n as the primary form, keep the sd separately as
+    a measure of how much households disagree, and call an effect DETECTED at |mean| >= 2 se. The earlier bar --
+    |mean| > sd -- asked whether an effect exceeds household-to-household variation, which is a different question
+    from whether it exists; at 18 households a 3.1-se effect was failing it. Below MIN_N_FOR_SE households the se is
+    too unreliable to trust and the old floor is what governs (that is the bar that caught the interference claim)."""
+    se = sd / (n_hh ** 0.5) if n_hh else float("inf")
+    clears_1sd = bool(abs(mean) > sd)
+    detected_2se = bool(se > 0 and abs(mean) >= 2 * se)
+    small_n = n_hh < MIN_N_FOR_SE
+    return {"mean": round(mean, 1), "sd": round(sd, 1), "se": round(se, 2), "n_hh": n_hh,
+            "clears_1sd": clears_1sd, "detected_2se": detected_2se, "small_n": small_n,
+            # the verdict the page uses: 2 se normally, the old heterogeneity floor when n is too small for a se
+            "detected": bool(clears_1sd if small_n else detected_2se),
+            "bars_disagree": bool((not small_n) and (detected_2se != clears_1sd)),
+            "se_ratio": round(abs(mean) / se, 1) if se else None,
+            "per_hh": per_hh}
+
+
 def window_stats(rows, days):
     """rows: list of (day, conf, ok, leadcal, cold). -> n, acc%, conf%, leadcal_conf%, plus the same on cold questions
     only (first question about an object that day, before that day's feedback), over the given day set; or None."""
@@ -247,6 +276,8 @@ def main():
             if not answers:
                 continue
             mtag = msg_tag(told == "told", key_tag)
+            if hh in ABANDONED.get((pop, mem_kind, mtag), ()):
+                continue   # on disk, deliberately unused (see ABANDONED)
             key = f"llm_{mem_kind}_{mtag}"
             arm = populations[pop].setdefault(key, {"mem_kind": mem_kind, "told": told, "key_tag": key_tag, "msg_tag": mtag, "n_total_hh": len(qs), "n_hh_done": {}, "n_hh_total": {}})
             arm["n_hh_total"][hh] = len(qs)   # banks differ in size (287-496 questions per household); "finished" is per household
@@ -320,7 +351,8 @@ def main():
                              "mem_kind": arm["mem_kind"], "msg_tag": arm["msg_tag"], "cells": cells,
                              "n_total_hh": arm["n_total_hh"], "n_hh_done": arm["n_hh_done"], "progress": progress,
                              "complete": complete, "has_leadcal": bool(knots), "windows": windows, "window_labels": WLAB, "askgate": askgate,
-                             "households": [int(h.split("_s")[1]) + 1 for h in hh_sorted]}
+                             "households": [int(h.split("_s")[1]) + 1 for h in hh_sorted],
+                             "abandoned_hh": sorted(int(h.split("_s")[1]) + 1 for h in ABANDONED.get((pop, arm["mem_kind"], arm["msg_tag"]), ()))}
             pop_rows[key] = rows_by_hh
             wtxt = "  ".join(f"{w}: acc {windows[w]['acc'] if windows[w] else 'NA'} conf {windows[w]['conf'] if windows[w] else 'NA'}" for w in WIN)
             if askgate:
@@ -348,8 +380,7 @@ def main():
                 return None
             m = sum(diffs) / len(diffs)
             sd = (sum((d - m) ** 2 for d in diffs) / (len(diffs) - 1)) ** 0.5
-            return {"mean": round(m, 1), "sd": round(sd, 1), "n_hh": len(diffs),
-                    "clears_1sd": bool(abs(m) > sd), "per_hh": [round(d, 1) for d in diffs]}
+            return verdict(m, sd, len(diffs), [round(d, 1) for d in diffs])
 
         # matched-household pass: within each memory kind, restrict every arm to the households present in ALL of
         # that kind's message arms, and store those window stats as windows_matched. A told-vs-untold difference must
@@ -379,8 +410,7 @@ def main():
                     if len(diffs) >= 2:
                         m = sum(diffs) / len(diffs)
                         sd = (sum((d - m) ** 2 for d in diffs) / (len(diffs) - 1)) ** 0.5
-                        pop_out[k]["reuse_paired"] = {"mean": round(m, 1), "sd": round(sd, 1), "n_hh": len(diffs),
-                                                       "clears_1sd": bool(abs(m) > sd), "per_hh": [round(d, 1) for d in diffs]}
+                        pop_out[k]["reuse_paired"] = verdict(m, sd, len(diffs), [round(d, 1) for d in diffs])
                         lines.append(f"reuse {pop}/{k}: second spell's first three days minus the first spell's = "
                                      f"{m:+.1f} +- {sd:.1f} pp across {len(diffs)} households -> "
                                      f"{'CLEARS 1 sd' if abs(m) > sd else 'does NOT clear 1 sd (say: beyond what three households can tell us)'}")
@@ -421,6 +451,45 @@ def main():
         out[pop] = pop_out
     if not any(out.values()):
         lines.append("no live LLM arm directories found yet under any known source")
+
+    # Contrasts measured on households we did not run (the workshop session's fresh replications), dropped in as
+    # JSON so an outside figure can be swapped in without touching page code. Each entry carries its own n_hh and
+    # REPLACES our figure for that arm/window/split; our own number is kept alongside as "ours" so the page can say
+    # what changed. Format: {pop: {arm_key: {"paired_vs_nomsg"|"paired_vs_startmsg": {window: {split: {...}}}}}}
+    pooled_path = f"{ROOT}/pooled_contrasts.json"
+    if os.path.exists(pooled_path):
+        pooled = json.load(open(pooled_path))
+        n_sub = 0
+        for pop, arms in pooled.items():
+            if pop.startswith("_") or not isinstance(arms, dict):
+                continue   # comment keys
+            for key, blocks in arms.items():
+                arm = out.get(pop, {}).get(key)
+                if not arm:
+                    continue
+                for block, wins in blocks.items():
+                    tgt = arm.get(block) or {}
+                    for w, splits in wins.items():
+                        for split, v in splits.items():
+                            v = dict(v)
+                            vv = verdict(v["mean"], v["sd"], v["n_hh"])
+                            if "se" in v:
+                                vv["se"] = v["se"]   # trust the source's own se if it gave one
+                                vv["detected_2se"] = bool(abs(v["mean"]) >= 2 * v["se"])
+                                vv["detected"] = bool(vv["clears_1sd"] if vv["small_n"] else vv["detected_2se"])
+                                vv["se_ratio"] = round(abs(v["mean"]) / v["se"], 1) if v["se"] else None
+                                vv["bars_disagree"] = bool((not vv["small_n"]) and (vv["detected_2se"] != vv["clears_1sd"]))
+                            vv.update({k2: v[k2] for k2 in ("source",) if k2 in v})
+                            v = vv
+                            v["pooled"] = True
+                            prev = (tgt.get(w) or {}).get(split)
+                            if prev:
+                                v["ours"] = {k2: prev[k2] for k2 in ("mean", "sd", "n_hh") if k2 in prev}
+                            tgt.setdefault(w, {})[split] = v
+                            n_sub += 1
+                    arm[block] = tgt
+        if n_sub:
+            lines.append(f"pooled_contrasts.json: {n_sub} figure(s) replaced by outside measurements (see 'ours' for what they replaced)")
 
     knowno = knowno_block(lines)
     owner_split = owner_split_block(bank_cache, lines)
@@ -585,7 +654,7 @@ def owner_split_block(bank_cache, lines):
         A, B = per_arm.get((pop, base)), per_arm.get((pop, told))
         if not (A and B):
             return None
-        diffs = []
+        diffs, base_lv, told_lv = [], [], []
         for h in sorted(set(A["hh"]) & set(B["hh"])):
             vals = []
             for arm in (A, B):
@@ -593,12 +662,20 @@ def owner_split_block(bank_cache, lines):
                 vals.append((len(sel), 100 * sum(r[3] for r in sel) / len(sel)) if sel else (0, None))
             if vals[0][0] >= 5 and vals[1][0] >= 5:
                 diffs.append(vals[1][1] - vals[0][1])
+                base_lv.append(vals[0][1])
+                told_lv.append(vals[1][1])
         if len(diffs) < 2:
             return None
         m = sum(diffs) / len(diffs)
         sd = (sum((d - m) ** 2 for d in diffs) / (len(diffs) - 1)) ** 0.5
-        return {"mean": round(m, 1), "sd": round(sd, 1), "n_hh": len(diffs), "clears_1sd": bool(abs(m) > sd),
-                "per_hh": [round(d, 1) for d in diffs]}
+        v = verdict(m, sd, len(diffs), [round(d, 1) for d in diffs])
+        # Levels beside the contrast, on EXACTLY the households the contrast is computed from and with each household
+        # weighted equally (coordinator, 07:45): pooling over questions instead would let a talkative household move a
+        # level one way while the paired contrast moves the other, which is the thing a reader cannot be asked to spot.
+        # By construction told - base == mean here, so the two numbers can never disagree.
+        v["base"] = round(sum(base_lv) / len(base_lv), 1)
+        v["told"] = round(sum(told_lv) / len(told_lv), 1)
+        return v
 
     out = {}
     for (pop, key), arm in per_arm.items():

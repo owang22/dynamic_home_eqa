@@ -97,15 +97,22 @@ def main():
         L.append("")
     # paired contrasts table, regenerated beside the window tables
     P = extra.get("llm_live", {}).get("person", {})
-    PL = ["", "## Paired told-vs-untold contrasts (per household, told minus no message; mean ± sd across households)", "",
-          "An effect smaller than one paired sd is reported as \"no measurable difference\" on the page. ✓ = clears 1 sd.", "",
+    PL = ["", "## Paired told-vs-untold contrasts (per household, told minus no message)", "",
+          "Each cell is the mean across households ± its standard error, then n = households and the sd = how much those",
+          "households disagree. Since 22 Sept 07:25 an effect is claimed when |mean| >= 2 standard errors (Oliver's rule);",
+          "below 6 households the standard error is estimated from too few numbers to trust, so those rows keep the older",
+          "\"bigger than the sd\" floor. ✓ = claimed under whichever bar governs that row. Note the direction of the change:",
+          "at 6 households or more, clearing 1 sd implies clearing 2 se, so the new bar only ever adds claims.", "",
           "| arm | window | all questions | cold questions |", "|---|---|---|---|"]
     for key in sorted(P, key=lambda k: (P[k]["mem_kind"], P[k]["msg_tag"])):
         pr = P[key].get("paired_vs_nomsg") or {}
         for w in ("d14_16", "d17_23", "d24_26", "d27_31"):
             p = pr.get(w) or {}
             def cell(v):
-                return "–" if not v else (f"**{v['mean']:+.1f} ± {v['sd']:.1f}** ✓" if v["clears_1sd"] else f"{v['mean']:+.1f} ± {v['sd']:.1f}")
+                if not v:
+                    return "–"
+                body = f"{v['mean']:+.1f} ± {v['se']:.1f} (n={v['n_hh']}, sd {v['sd']:.1f})"
+                return f"**{body}** ✓" if v["detected"] else body
             if p:
                 PL.append(f"| {P[key]['name']} | {WL[w]} | {cell(p.get('all'))} | {cell(p.get('cold'))} |")
     L += PL
