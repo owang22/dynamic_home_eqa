@@ -801,6 +801,13 @@ const PANELS = [
           {key:"person:llm_naive_nomsg", label:"recency buffer"},
           {key:"person:llm_retrieval_nomsg", label:"retrieval"},
           {key:"person:llm_reflect_nomsg", label:"reflection"}]},
+  {id:"SAMP", group:"The LLM memories", title:"Asking the same question ten times", pop:"person",
+   cap:"The same long-context memory as \u201cLong-context memory on its own\u201d, but each question put to it ten times at temperature 0.7 instead of once. The faint line is how often those ten answers agree with each other \u2014 the cheap, well-known stand-in for a model that will not give you a usable confidence number. Both lines are the same memory, which is why they are the same hue. Switch the control above to stated confidence and the solid line becomes the number the model says out loud while the faint one stays put, because agreement is neither an accuracy nor a stated confidence and must not change meaning when the toggle moves. Across the sick spell the agreement reading moves +0.5 points with the three households spread 6.6 \u2014 at three households that rules out a large move, not a small one.",
+   note: (EXTRA && EXTRA.samples_live)
+     ? `still running \u2014 ${EXTRA.samples_live.n_rows} answers so far, ${EXTRA.samples_live.k} per question, ${EXTRA.samples_live.n_hh} households, days 1\u2013${EXTRA.samples_live.complete_day}; ${EXTRA.samples_live.running} of the 3 arms still going, and a day is blank until all 3 reach it`
+     : "still running",
+   lines:[{src:"samples", series:"accuracy", key:"person:llm_longcontext_nomsg", label:"long-context, asked 10\u00d7"},
+          {src:"samples", series:"agreement", key:"person:llm_longcontext_nomsg", label:"how often the 10 answers agree", col:"--m-longcontext", tint:true}]},
   {id:"D", group:"The LLM memories", title:"Long-context memory on its own", pop:"person",
    cap:"The whole log in every prompt, on three households — too few to settle most questions, and about ten times the compute per question of the others. Shown on its own because it is a different sample from every other LLM panel and must not be read beside them.",
    note:"3 households only — indicative, not settled.",
@@ -822,6 +829,13 @@ const PANEL_DEFAULT = ["A","C","E","K"];
 const panelState = {on:new Set(PANEL_DEFAULT), split:"all", flavour:"acc"};
 
 function cellsOf(p, line){           // -> {cells:{hh:{split:[[n,ok,sum_conf],..]}}, nd} for one line of one panel
+  if(line.src==="samples"){
+    // The sampling arm keeps its own cells because it is a different run, not a different agent inside DATA.
+    // Same [n, ok, sum_conf] shape, so nothing downstream changes. Its days are already blanked unless all
+    // three households finished them -- see tools/samples_extra.py.
+    const A = EXTRA.samples_live; if(!A || !A.lines || !A.lines[line.series]) return null;
+    return {cells:A.lines[line.series], nd:A.n_days};
+  }
   if(line.src==="owner"){
     const A = (EXTRA.owner_split_live && EXTRA.owner_split_live[p.pop] && EXTRA.owner_split_live[p.pop][line.key]) || null;
     if(!A || !A.cells_by_group) return null;

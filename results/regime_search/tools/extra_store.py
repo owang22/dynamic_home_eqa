@@ -58,6 +58,7 @@ OWNERS = {
     "shared_state_extra":     ("shared_state",),
     "affected_windows_extra": ("affected_windows",),
     "deferral_extra":         ("deferral_live",),
+    "samples_extra":          ("samples_live",),
 }
 
 
