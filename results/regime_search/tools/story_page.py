@@ -38,6 +38,9 @@ p{max-width:72ch} .lead{font-size:17px;color:var(--ink2);margin-block:4px 18px}
 .step.on{border-left-color:var(--s1)} .step:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
 .controls{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding-block:8px 6px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--paper);z-index:4;border-bottom:1px solid var(--line)}
 .controls label{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink2)}
+.paxis{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2);margin:2px 0 6px}
+.paxis select{font-size:12.5px}
+.pmiss{font-size:12px;color:var(--muted);margin:4px 0 0;font-style:italic}
 select{font:inherit;font-size:13.5px;padding:3px 6px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:4px}
 .legend{display:flex;flex-wrap:wrap;gap:6px 10px;margin-block:10px 6px}
 .chip{position:relative;display:inline-flex;align-items:center;gap:7px;padding:4px 10px 4px 8px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:13.5px;cursor:pointer;color:var(--ink)}
@@ -179,8 +182,8 @@ td.ece{font-weight:600}
 </div>
 
 <div class="controls">
-  <label>households <select id="regime"><option value="household">everyone sick · households 1–10</option><option value="household_rep">everyone sick · households 11–20 (replication)</option><option value="person">one person sick · that person's things</option><option value="person2x">one person sick, twice · that person's things</option></select></label>
-  <label>questions <select id="split"><option value="all">all questions</option><option value="moved">only objects that moved since the night round</option></select></label>
+  <label>households <select id="regime"><option value="household">everyone sick · households 1–10</option><option value="household_rep">everyone sick · households 11–20 (replication)</option><option value="person">one person sick · that person's things</option><option value="partial">one person sick · everyone's things asked</option><option value="person2x">one person sick, twice · that person's things</option></select></label>
+  <label>questions <select id="split"><option value="all">all questions</option><option value="cold">cold questions (first about a thing that day)</option><option value="moved">only objects that moved since the night round</option></select></label>
   <label><input type="checkbox" id="bands" checked> show ±1 sd across households</label>
   <label><input type="checkbox" id="more"> more methods</label>
 </div>
@@ -189,9 +192,9 @@ td.ece{font-weight:600}
 
 <h2>The rest of the panels</h2>
 <p>The library: every panel we built, including the ones above. Each is at most four lines and answers one question. The day axis, the shaded sick spell and the scale are the same in every one, so two panels can be read side by side. The shaded band around each line is ±1 standard error across households — the same bar the comparisons in “What we found” are judged on; the spread between households is in the hover.</p>
-<div class="controls" id="panelcontrols">
-  <label>questions <select id="psplit"><option value="all">all questions</option><option value="cold">cold questions (first about a thing that day)</option><option value="moved">only objects that moved since the night round</option></select></label>
-  <label>show <select id="pflavour"><option value="acc">accuracy</option><option value="conf">stated confidence</option></select></label>
+<p class="note">Which methods, which households and which questions are chosen once, in the strip at the top of the page, and every figure here and above obeys that one choice — so two figures are always drawn from the same data. What each figure chooses for itself is only what goes on its own vertical axis. Where a method you have selected is not on a figure, the figure says so underneath instead of quietly leaving the line out.</p>
+<div class="controls" id="panelcontrols" style="position:static;border:0">
+  <span class="muted" style="font-size:13px">Which methods, which households and which questions are set once, at the top of the page. Each figure below chooses only what goes on its own vertical axis.</span>
   <button type="button" id="pall">show every panel</button>
   <button type="button" id="pdef">back to the four</button>
 </div>
@@ -203,7 +206,7 @@ td.ece{font-weight:600}
 <p class="note" id="mainnote"></p>
 
 <h2>Confidence — what does it claim?</h2>
-<p>The same lines, but plotting each method's own stated confidence in its answer instead of whether the answer was right: the top probability in its distribution over places. Toggle a method in the legend above and watch this chart and the accuracy one together — a confidence line that ignores the break in the chart above is a method that does not know it is wrong. (The two “honest sets” methods are not shown here or in the accuracy chart: they pick the never-forgets timetable's own answer, so their accuracy line would sit exactly on top of it — see “Does the method notice?” below for what they actually add, a set size and coverage.)</p>
+<p>The same lines, but plotting each method's own stated confidence in its answer instead of whether the answer was right: the top probability in its distribution over places. Toggle a method in the legend above — it governs every figure on the page, including the library below — and watch this chart and the accuracy one together — a confidence line that ignores the break in the chart above is a method that does not know it is wrong. (The two “honest sets” methods are not shown here or in the accuracy chart: they pick the never-forgets timetable's own answer, so their accuracy line would sit exactly on top of it — see “Does the method notice?” below for what they actually add, a set size and coverage.)</p>
 <div class="chart-wrap"><svg id="confmain" viewBox="0 0 1000 380" role="img" aria-label="claimed confidence per day"></svg><div class="tip" id="conftip"></div></div>
 <p class="note" id="confnote"></p>
 
@@ -211,7 +214,6 @@ td.ece{font-weight:600}
 <p>The gap, in percentage points: mean stated confidence minus accuracy, one line per method per day, pooled over households (±1 sd across households). A flat line near zero through the shift is a method whose confidence can be trusted for deciding where to look; a jump <em>up</em> at day 14 is confident-and-wrong; a line sitting below zero throughout is underconfident by definition, not by tracking.</p>
 <p>Two readings, because a method can be honest about <em>level</em> without being honest about <em>tracking</em>, or the other way round. <b>As stated</b> is the method's own number. <b>Lead-day calibrated</b> fits a monotone translation from stated confidence to observed accuracy using only the lead-up days (1–13), then applies that same translation everywhere — including back onto the lead-up itself, where the gap should now sit near zero by construction. What is left after that translation, especially on days 14–16 and 24–26, is the real signal: does the method's sense of its own accuracy keep up when the routine breaks, or does the translation that worked all lead-up stop working the moment the routine does?</p>
 <div class="controls" style="position:static;border:0;padding-block:0 10px">
-  <label>households <select id="gapreg"><option value="household">everyone sick · households 1–10</option><option value="person">one person sick · that person's things</option><option value="partial">one person sick · everyone's things asked</option><option value="person2x">one person sick, twice</option></select></label>
   <label>confidence <select id="gapmode"><option value="raw">as stated</option><option value="leadcal">lead-day calibrated</option></select></label>
 </div>
 <div class="chart-wrap"><svg id="gap" viewBox="0 0 1000 320" role="img" aria-label="calibration gap per day"></svg><div class="tip" id="gaptip"></div></div>
@@ -288,13 +290,16 @@ const SERIES = [
  {k:"bmaobj", name:"hedge, per object", v:"--s11", core:false, gloss:"The same hedge over memory lengths, but with a separate trust vector for every object instead of one shared vector for the household.", how:"Gains a few points over the shared-vector hedge in the sick spell on objects seen often enough to move their own weights — but most objects are seen only once or twice a day, too rarely for their own weights to shift much inside a ten-day spell, so most of the gain is left on the table."},
  {k:"detectorfrozen", name:"never-forgets timetable + change alarm", v:"--s12", core:false, gloss:"The never-forgets timetable plus the same watchdog as the 3-day version: instead of a short memory forgetting on its own, the watchdog wipes most of the diary the moment it decides the routine has changed.", how:"Sounds on the first sick day even more reliably than the 3-day version (it has no natural forgetting of its own to blur the signal) — but rarely sounds again on the return: the wipe already adapted it to the sick routine, so by the time normal life comes back its recent memory is the sick spell, not the 14 lead days, and the return does not surprise it the same way."},
 ];
+// The four the page compares are on from the start; each step button adds what that step is about.
+const FOCUS_ON = ["ttfrozen","tt3d","perpetua","person:llm_longcontext_nomsg"];
 const STEP_LINES = {learn:["tt3d","ttfrozen","lastseen"], break:["tt3d","ttfrozen","mf3d","lastseen"], relearn:["tt3d","ttfrozen","detector3d","bma"], return:["tt3d","ttfrozen","detector3d","bma","lastseen"]};
 const STEP_NOTE = {learn:"Lead-up (days 1–13): the timetables climb from ~45% to 80–85% as their diaries fill; last seen stays flat.",
  break:"First sick day (day 14): every learner drops by roughly 40 points — that is the size of the routine change, ~4 standard deviations across households. Most-frequent falls furthest.",
  relearn:"Inside the spell (days 14–23): the 3-day timetable is back near 85–90% within a week; the never-forgets timetable crawls; the change alarm's wipe makes the re-learning faster still; the hedge follows the short memories.",
  return:"Return (days 24–31): the adaptive methods break again (down to 55–60% and re-learn); the never-forgets timetable is right immediately; the hedge moves its trust back to it and shows no second break."};
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-const state = {regime:"household", split:"all", bands:true, more:false, on:new Set(STEP_LINES.learn), step:"learn", calibStage:"any", gapReg:"household", gapMode:"raw"};
+const SERIES_BY_KEY = Object.fromEntries(SERIES.map(x => [x.k, x]));
+const state = {regime:"household", split:"all", bands:true, more:false, on:new Set([...FOCUS_ON, ...STEP_LINES.learn]), step:"learn", calibStage:"any", gapMode:"raw"};
 const GAP_EXTRA_SERIES = [
  {k:"bma_person", name:"hedge over memory lengths", v:"--s14", gloss:"The hedge over memory lengths, run with a separate trust vector per resident instead of one shared vector — only meaningful when just one resident's routine actually shifts.", how:"Shown only under the “one person sick · everyone's things asked” population in the calibration-gap panel."},
  {k:"detector3d_person", name:"3-day timetable + change alarm", v:"--s15", gloss:"The change-alarm timetable with a separate diary and alarm per resident.", how:"Shown only under the “one person sick · everyone's things asked” population in the calibration-gap panel."},
@@ -342,7 +347,9 @@ function renderLegend(){
   const L=$("#legend"); L.innerHTML="";
   for(const s of SERIES){ if(!s.core && !state.more) continue; if(!DATA[state.regime].agents[s.k]) continue;
     const chip=document.createElement("label"); chip.className="chip"; chip.innerHTML=`<input type="checkbox" ${state.on.has(s.k)?"checked":""} aria-label="${s.name}"><i class="sw" style="background:var(${s.v})"></i>${s.name}<span class="q" tabindex="0" aria-label="what is ${s.name}">?</span><div class="pop" role="tooltip"><b>${s.name}</b>${s.gloss}<div class="how">On this testbench: ${s.how}</div></div>`;
-    chip.querySelector("input").addEventListener("change", e=>{ if(e.target.checked) state.on.add(s.k); else state.on.delete(s.k); draw(); });
+    chip.querySelector("input").addEventListener("change", e=>{ if(e.target.checked) state.on.add(s.k); else state.on.delete(s.k);
+      // this legend is now the page's ONLY method control, so the library below follows it too
+      draw(); renderPanels(); renderGap(); });
     const toggleChip = e=>{ e.preventDefault(); e.stopPropagation(); const wasOpen=chip.classList.contains("open"); closeAllPops(); if(!wasOpen) chip.classList.add("open"); };
     chip.querySelector(".q").addEventListener("click", toggleChip);
     chip.querySelector(".q").addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" ") toggleChip(e); });
@@ -467,15 +474,17 @@ function renderGloss(){ $("#gloss").innerHTML = SERIES.map(s=>`<div class="g"><b
 function closeAllPops(){ document.querySelectorAll(".chip.open").forEach(c=>c.classList.remove("open")); }
 document.addEventListener("click", e=>{ if(!e.target.closest(".pop")) closeAllPops(); });
 document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeAllPops(); });
-document.querySelectorAll(".step").forEach(b=>b.addEventListener("click",()=>{ document.querySelectorAll(".step").forEach(x=>x.classList.remove("on")); b.classList.add("on"); state.step=b.dataset.step; state.on=new Set(STEP_LINES[state.step]); renderLegend(); draw(); }));
-$("#regime").addEventListener("change",e=>{ state.regime=e.target.value; renderLegend(); draw(); });
-$("#split").addEventListener("change",e=>{ state.split=e.target.value; draw(); });
+document.querySelectorAll(".step").forEach(b=>b.addEventListener("click",()=>{ document.querySelectorAll(".step").forEach(x=>x.classList.remove("on")); b.classList.add("on"); state.step=b.dataset.step; state.on=new Set([...FOCUS_ON, ...STEP_LINES[state.step]]); renderLegend(); draw(); renderPanels(); }));
+// One control, every figure. Anything that reads the population redraws here - a figure that kept its own
+// copy is exactly how a reader ends up comparing two charts drawn from different households.
+$("#regime").addEventListener("change",e=>{ state.regime=e.target.value; try{localStorage.setItem("rst-regime",state.regime);}catch(_){}
+  renderLegend(); draw(); renderPanels(); renderGap(); renderGapConformal(); renderAskgate(); renderGate(); renderKnowno(); });
+$("#split").addEventListener("change",e=>{ state.split=e.target.value; draw(); renderPanels(); });
 $("#bands").addEventListener("change",e=>{ state.bands=e.target.checked; draw(); });
 $("#more").addEventListener("change",e=>{ state.more=e.target.checked; renderLegend(); draw(); });
 $("#main").addEventListener("mousemove",hover); $("#main").addEventListener("mouseleave",()=>{ $("#tip").style.display="none"; const xh=$("#xh"); if(xh) xh.style.display="none"; });
 $("#confmain").addEventListener("mousemove",hoverConf); $("#confmain").addEventListener("mouseleave",()=>{ $("#conftip").style.display="none"; const xh=$("#confxh"); if(xh) xh.style.display="none"; });
 $("#calibstage").addEventListener("change",e=>{ state.calibStage=e.target.value; drawCalib(); });
-$("#gapreg").addEventListener("change",e=>{ state.gapReg=e.target.value; renderGap(); renderGapConformal(); renderAskgate(); renderGate(); renderKnowno(); });
 $("#gapmode").addEventListener("change",e=>{ state.gapMode=e.target.value; renderGap(); });
 $("#gap").addEventListener("mousemove",hoverGap); $("#gap").addEventListener("mouseleave",()=>{ $("#gaptip").style.display="none"; const xh=$("#gapxh"); if(xh) xh.style.display="none"; });
 try{ const saved=localStorage.getItem("rst-regime"); if(saved && DATA[saved]) { state.regime=saved; $("#regime").value=saved; } }catch(e){}
@@ -542,7 +551,7 @@ function dailyGap(reg, key, mode){
   } return {mean, sd, n:nn, k:kk};
 }
 function gapSeries(){
-  const reg=state.gapReg, mode=state.gapMode; const G = EXTRA.gap && EXTRA.gap.populations[reg]; if(!G) return [];
+  const reg=state.regime, mode=state.gapMode; const G = EXTRA.gap && EXTRA.gap.populations[reg]; if(!G) return [];
   const base = SERIES.filter(s=>state.on.has(s.k) && G.methods[s.k] && !G.methods[s.k].live);
   let out = base.map(s=>({s, key:s.k, dash:false}));
   if(reg==="partial"){ for(const s of base){ for(const ck of (GAP_COMPANION[s.k]||[])){ if(G.methods[ck]) out.push({s:gapSeriesInfo(ck), key:ck, dash:false}); } } }
@@ -552,7 +561,7 @@ function gapSeries(){
   return out;
 }
 function renderGap(){
-  const reg=state.gapReg, mode=state.gapMode; const G = EXTRA.gap && EXTRA.gap.populations[reg]; const svg=$("#gap");
+  const reg=state.regime, mode=state.gapMode; const G = EXTRA.gap && EXTRA.gap.populations[reg]; const svg=$("#gap");
   if(!G){ svg.innerHTML=""; $("#gapnote").textContent="No calibration-gap data for this population yet."; $("#gaptable").innerHTML=""; return; }
   const nd=G.days, W=1000,H=320,L=46,Rt=210,T=18,B=36;
   const x=d=>L+(d-1)*(W-L-Rt)/(nd-2);
@@ -594,16 +603,16 @@ function hoverGap(ev){
   const d=Math.round((px-geom.L)/((geom.W-geom.L-geom.Rt)/(geom.nd-2)))+1; const xh=$("#gapxh");
   if(d<1||d>=geom.nd){ $("#gaptip").style.display="none"; if(xh) xh.style.display="none"; return; }
   const xx=geom.L+(d-1)*(geom.W-geom.L-geom.Rt)/(geom.nd-2); xh.setAttribute("x1",xx); xh.setAttribute("x2",xx); xh.style.display="";
-  let st="plain"; for(const s2 of gapStages(state.gapReg)) if(d>=s2.a&&d<=s2.b) st=s2.name;
+  let st="plain"; for(const s2 of gapStages(state.regime)) if(d>=s2.a&&d<=s2.b) st=s2.name;
   let rows=`<div style="margin-bottom:4px"><b>day ${d}</b> · ${STAGE_LABEL[st]||st}</div>`;
-  const reg=state.gapReg, mode=state.gapMode;
+  const reg=state.regime, mode=state.gapMode;
   for(const {s,key} of gapSeries()){ const D=dailyGap(reg,key,mode); if(!D) continue;
     if(D.mean[d-1]==null){ if(D.n[d-1]>0) rows+=`<div class="r"><span><i style="background:var(${s.v})"></i>${s.name}</span><span class="muted">(n=${D.n[d-1]}, too few)</span></div>`; continue; }
     rows+=`<div class="r"><span><i style="background:var(${s.v})"></i>${s.name}</span><span>${D.mean[d-1]>0?"+":""}${D.mean[d-1].toFixed(0)}pp ±${D.sd[d-1].toFixed(0)}</span></div>`; }
   const tip=$("#gaptip"); tip.innerHTML=rows; tip.style.display="block"; const wrap=svg.parentElement.getBoundingClientRect(); let lx=ev.clientX-wrap.left+14; if(lx+230>wrap.width) lx=ev.clientX-wrap.left-240; tip.style.left=lx+"px"; tip.style.top=(ev.clientY-wrap.top+12)+"px";
 }
 function renderGapConformal(){
-  const reg=state.gapReg; const G = EXTRA.gap && EXTRA.gap.populations[reg]; const host=$("#gapconformal"); host.innerHTML="";
+  const reg=state.regime; const G = EXTRA.gap && EXTRA.gap.populations[reg]; const host=$("#gapconformal"); host.innerHTML="";
   if(!G || !G.conformal || !Object.keys(G.conformal).length){ $("#gapconfnote").textContent=""; return; }
   const nd=G.days, W=460,H=170,L=34,T=16,B=26,Rr=10; const x=d=>L+(d-1)*(W-L-Rr)/(nd-2);
   const bands=()=>{ let g=""; for(const st of gapStages(reg)){ const f=STAGE_FILL[st.name]; if(f) g+=`<rect x="${(x(st.a)-6).toFixed(1)}" y="${T}" width="${(x(st.b)-x(st.a)+12).toFixed(1)}" height="${H-T-B}" fill="var(${f})" opacity="0.5"/>`; } return g; };
@@ -627,7 +636,7 @@ function renderGapConformal(){
   $("#gapconfnote").textContent = "Coverage and set size, pooled over households, same population as the chart above.";
 }
 function renderAskgate(){
-  const reg=state.gapReg; const arms=(EXTRA.llm_live && EXTRA.llm_live[reg]) || {}; const T=$("#askgatetable");
+  const reg=state.regime; const arms=(EXTRA.llm_live && EXTRA.llm_live[reg]) || {}; const T=$("#askgatetable");
   const rows = Object.keys(arms).map(k=>arms[k]).filter(a=>a.askgate);
   if(!rows.length){ T.innerHTML=""; $("#askgatenote").textContent = "No LLM arm has an ask-gate computed for this population yet."; return; }
   const WL = rows[0].window_labels || WINDOWS5_JS; const wkeys = Object.keys(WL);
@@ -640,7 +649,7 @@ function renderAskgate(){
 }
 const WINDOWS5_JS = {lead:"lead (9–13)", d14_16:"14–16", d17_23:"17–23", d24_26:"24–26", d27_31:"27–31"};
 function renderKnowno(){
-  const reg=state.gapReg; const arms=(EXTRA.knowno_live && EXTRA.knowno_live[reg]) || {}; const T=$("#knownotable");
+  const reg=state.regime; const arms=(EXTRA.knowno_live && EXTRA.knowno_live[reg]) || {}; const T=$("#knownotable");
   const keys=Object.keys(arms); if(!keys.length){ T.innerHTML=""; $("#knownonote").textContent="No token-probability channel logged for this population yet."; return; }
   const stageOf = d => d<=13?"lead":d<=23?"sick":"return";
   let h=`<thead><tr><th>arm · day</th><th class="num">n</th><th class="num">accuracy</th><th class="num">verbalized</th><th class="num">agreement</th><th class="num">token prob.</th><th class="num">MCQ accuracy</th><th class="num">set coverage</th><th class="num">set size /10</th></tr></thead><tbody>`;
@@ -783,7 +792,7 @@ const PANELS = [
   {id:"G", group:"What a message does", title:"What a message does to the nightly routine table", pop:"person",
    cap:"The same three arms on the memory that rewrites a routine table each night. It gains least of the three, because it learned the lead-up least.",
    lines:[{key:"person:llm_routine7_nomsg", label:"no message"},{key:"person:llm_routine7_startmsg", label:"start message"},{key:"person:llm_routine7_startend", label:"start + end messages"}]},
-  {id:"H", group:"Special populations", title:"Whose things does the message move?", pop:"partial", stagesFrom:"person",
+  {id:"H", group:"Special populations", title:"Whose things does the message move?", pop:"partial", popFixed:true, stagesFrom:"person",
    cap:"One resident is off sick; the robot is asked about everyone's things. Colour is whose things the question was about, and the dashed line is the same run told \u201cYuki is home sick today\u201d. On the sick resident's things the two lines separate the moment the message arrives. On the other resident's they stay together — until the return, when the message is stale and nobody has taken it back.",
    lines:[{src:"owner", key:"llm_naive_nomsg", group:"sick", label:"sick resident's things, no message", col:"--s1"},
           {src:"owner", key:"llm_naive_startmsg", group:"sick", label:"sick resident's things, told", col:"--s1", tint:true},
@@ -801,21 +810,20 @@ const PANELS = [
           {key:"person:llm_naive_nomsg", label:"recency buffer"},
           {key:"person:llm_retrieval_nomsg", label:"retrieval"},
           {key:"person:llm_reflect_nomsg", label:"reflection"}]},
-  {id:"SAMP", group:"The LLM memories", title:"Asking the same question ten times", pop:"person",
-   cap:"The same long-context memory as \u201cLong-context memory on its own\u201d, but each question put to it ten times at temperature 0.7 instead of once. The faint line is how often those ten answers agree with each other \u2014 the cheap, well-known stand-in for a model that will not give you a usable confidence number. Both lines are the same memory, which is why they are the same hue. Switch the control above to stated confidence and the solid line becomes the number the model says out loud while the faint one stays put, because agreement is neither an accuracy nor a stated confidence and must not change meaning when the toggle moves. Across the sick spell the agreement reading moves +0.5 points with the three households spread 6.6 \u2014 at three households that rules out a large move, not a small one.",
+  {id:"SAMP", group:"The LLM memories", title:"Asking the same question ten times", pop:"person", popFixed:true,
+   cap:"The same long-context memory as \u201cLong-context memory on its own\u201d, but each question put to it ten times at temperature 0.7 instead of once. One line, three ways of reading it, on the dropdown below: whether it was right, the confidence it states out loud, and how many of its ten answers came back with a different place. That last one is the cheap, well-known stand-in for a model that will not give you a usable confidence number, and having it on the same line, the same days and the same households as the stated number is the comparison worth having. Across the sick spell the disagreement reading moves \u22120.5 points with the three households spread 6.6 \u2014 at three households that rules out a large move, not a small one.",
    note: (EXTRA && EXTRA.samples_live)
      ? `still running \u2014 ${EXTRA.samples_live.n_rows} answers so far, ${EXTRA.samples_live.k} per question, ${EXTRA.samples_live.n_hh} households, days 1\u2013${EXTRA.samples_live.complete_day}; ${EXTRA.samples_live.running} of the 3 arms still going, and a day is blank until all 3 reach it`
      : "still running",
-   lines:[{src:"samples", series:"accuracy", key:"person:llm_longcontext_nomsg", label:"long-context, asked 10\u00d7"},
-          {src:"samples", series:"agreement", key:"person:llm_longcontext_nomsg", label:"how often the 10 answers agree", col:"--m-longcontext", tint:true}]},
+   lines:[{src:"samples", series:"longcontext", key:"person:llm_longcontext_nomsg", label:"long-context, asked 10\u00d7"}]},
   {id:"D", group:"The LLM memories", title:"Long-context memory on its own", pop:"person",
    cap:"The whole log in every prompt, on three households — too few to settle most questions, and about ten times the compute per question of the others. Shown on its own because it is a different sample from every other LLM panel and must not be read beside them.",
    note:"3 households only — indicative, not settled.",
    lines:[{key:"person:llm_longcontext_nomsg", label:"no message"},{key:"person:llm_longcontext_startmsg", label:"start message"},{key:"person:llm_longcontext_startend", label:"start + end messages"}]},
   {id:"B", group:"The simple learners", title:"One representative per family", pop:"person",
-   cap:"Four different ways of counting. The time-of-day timetable is the only one that really learns this routine. Periodic persistence looks unbreakable only because it never learned much to break: it sits below every timetable in the lead-up and takes a 7-point break where the 3-day timetable takes 23 — but on cold questions it falls to 23% against that timetable's 47%. A caution about all-questions views generally: switch the control above to cold questions and its flatness disappears.",
+   cap:"Four different ways of counting. The time-of-day timetable is the only one that really learns this routine. Periodic persistence looks unbreakable only because it never learned much to break: it sits below every timetable in the lead-up and takes a 7-point break where the 3-day timetable takes 23 — but on cold questions it falls to 23% against that timetable's 47%. A caution about all-questions views generally: set the questions control at the top of the page to cold questions and its flatness disappears.",
    lines:[{key:"tt3d", label:"timetable, 3-day"},{key:"mf3d", label:"most frequent, 3-day"},{key:"periodic", label:"periodic persistence"},{key:"perpetua", label:"Perpetua*"}]},
-  {id:"I", group:"Special populations", title:"When the same week comes back", pop:"person2x",
+  {id:"I", group:"Special populations", title:"When the same week comes back", pop:"person2x", popFixed:true,
    cap:"Two sick spells with a normal week between them. The second break costs these learners almost nothing: nothing during normal days ever overwrites the sick-day habit at those hours.",
    lines:[{key:"tt3d", label:"timetable, 3-day"},{key:"tt1d", label:"timetable, 1-day"},{key:"ttfrozen", label:"never forgets"}]},
   {id:"J", group:"The simple learners", title:"Does anything notice?", pop:"person",
@@ -826,7 +834,44 @@ const PANELS = [
    lines:[{key:"person:llm_naive_nomsg", label:"buffer"},{key:"person:llm_retrieval_nomsg", label:"retrieval"},{key:"person:llm_routine7_nomsg", label:"nightly routine table"},{key:"tt3d", label:"3-day timetable"}]},
 ];
 const PANEL_DEFAULT = ["A","C","E","K"];
-const panelState = {on:new Set(PANEL_DEFAULT), split:"all", flavour:"acc"};
+// The library keeps NO copy of which methods, which households or which questions -- those live in `state`
+// and are set once at the top of the page. What it keeps is which panels are open, each panel's own vertical
+// axis, and a pair of overrides used only by the fixed graphs inside the claims, which must stay on the split
+// and population their claim is about however the reader sets the controls.
+const panelState = {on:new Set(PANEL_DEFAULT), metric:{}, splitOverride:null, popOverride:null, showAllLines:false};
+const METRIC_LABEL = {acc:"accuracy", conf:"stated confidence", dis:"sample disagreement"};
+const METRIC_AXIS  = {acc:"% right", conf:"% confidence claimed", dis:"% of samples that disagreed"};
+// Which vertical axes a panel can actually offer. Only the sampling arm carries a fourth cell slot, so only it
+// can show sample disagreement; everything else says so rather than drawing an empty chart.
+function metricsFor(p){
+  const out = ["acc", "conf"];
+  if(p.lines.some(l => l.src === "samples")) out.push("dis");
+  return out;
+}
+function metricOf(p){
+  const want = panelState.metric[p.id] || p.flavour || "acc";
+  return metricsFor(p).includes(want) ? want : "acc";
+}
+// A panel line is hidden when its method is switched off in the one legend at the top. Lines with no matching
+// entry there (the owner-split pairs) cannot be deselected and always show.
+function selKeyOf(line){
+  if(SERIES_BY_KEY[line.key]) return line.key;
+  const pref = "person:" + String(line.key).replace(/^person:/, "");
+  return SERIES_BY_KEY[pref] ? pref : null;
+}
+// A panel follows the population chosen at the top when it has data there. Panels whose question only exists in
+// one population (the two-spell panel, the owner-split panel) pin it and say which one they are showing.
+function popOf(p){
+  if(panelState.popOverride) return panelState.popOverride;
+  if(p.popFixed) return p.pop;
+  const want = state.regime;
+  if(want === p.pop) return p.pop;
+  // Follow the population chosen at the top only when EVERY line of this figure exists there. "Some" is not
+  // enough: the four-method comparison would silently become a three-method one the moment the reader picked a
+  // population the fourth was never run in, and a figure quietly losing a line is how its point gets lost.
+  const probe = {...p, pop:want};
+  return p.lines.every(l => cellsOf(probe, l)) ? want : p.pop;
+}
 
 function cellsOf(p, line){           // -> {cells:{hh:{split:[[n,ok,sum_conf],..]}}, nd} for one line of one panel
   if(line.src==="samples"){
@@ -853,7 +898,10 @@ function panelSeries(p, line, flavour, split){   // -> {mean, se, sd, n, k} per 
     for(const hh of Object.keys(C.cells)){
       const row = C.cells[hh][split] || C.cells[hh]["all"]; const c = row && row[d];
       if(!c || c[0]<3) continue;
-      vals.push(flavour==="conf" ? 100*c[2]/c[0] : 100*c[1]/c[0]); N+=c[0];
+      // slot 3 is sample disagreement and only the sampling arm carries it; a three-slot cell has no such
+      // reading, and must be skipped rather than silently falling back to accuracy under a different label.
+      if(flavour==="dis" && c.length<4) continue;
+      vals.push(flavour==="dis" ? 100*c[3]/c[0] : flavour==="conf" ? 100*c[2]/c[0] : 100*c[1]/c[0]); N+=c[0];
     }
     if(!vals.length || N<MIN_N){ mean.push(null); se.push(null); sd.push(null); nn.push(N); kk.push(vals.length); continue; }
     const m = vals.reduce((a,b)=>a+b,0)/vals.length;
@@ -867,11 +915,28 @@ function panelHH(p){                 // households behind the panel, for its cap
 }
 const POP_LABEL = {person:"one person sick, that person's things", person2x:"one person sick, twice", household:"everyone sick", partial:"one person sick, everyone's things asked"};
 
-function drawPanel(p){
-  const flavour = p.flavour || panelState.flavour;
-  const split = panelState.split;
+function drawPanel(p0){
+  const flavour = metricOf(p0);
+  const split = panelState.splitOverride || state.split;
+  const p = {...p0, pop: popOf(p0)};
+  // What the reader asked for but is not on this figure, named rather than quietly dropped: a line that is
+  // simply absent is how someone concludes a method is flat when it was never drawn.
+  const missingNotes = [];
+  // The graphs printed inside a claim are that claim's evidence and always show their own lines: a reader who
+  // deselects a method in the library must not thereby delete the line a claim rests on.
+  if(!panelState.showAllLines){
+    const off = p.lines.filter(l => { const k = selKeyOf(l); return k && !state.on.has(k); });
+    if(off.length) missingNotes.push("switched off in the controls at the top: " + off.map(l => l.label).join(", "));
+    p.lines = p.lines.filter(l => { const k = selKeyOf(l); return !k || state.on.has(k); });
+  }
+  const noData = p.lines.filter(l => !cellsOf(p, l));
+  if(noData.length) missingNotes.push("no data for " + (POP_LABEL[p.pop] || p.pop) + ": " + noData.map(l => l.label).join(", "));
+  if(p.pop !== state.regime) missingNotes.push("this figure only exists for " + (POP_LABEL[p.pop] || p.pop));
+  if(!p.lines.length){
+    return `<div class="panel"><h4>${p.title}</h4><p class="pmeta">Nothing to draw here: ${missingNotes.join("; ") || "no method selected"}.</p></div>`;
+  }
   const W=400, H=232, L=32, Rr=10, T=10, B=26;
-  const nd = (()=>{ const C=cellsOf(p,p.lines[0]); return C? C.nd : 32; })();
+  const nd = (()=>{ for(const l of p.lines){ const C=cellsOf(p,l); if(C) return C.nd; } return 32; })();
   const x = d => L + (d-1)*(W-L-Rr)/Math.max(1,(nd-2));
   const y = v => T + (100-v)*(H-T-B)/100;
   let g = "";
@@ -914,12 +979,23 @@ function drawPanel(p){
   const legend = drawn.map(d=>`<span class="pl"><i style="background:var(${d.col});opacity:${d.tint?0.45:1}"></i>${d.label}</span>`).join("");
   const hh = panelHH(p);
   const missing = p.lines.length - drawn.length;
+  if(missing) missingNotes.push(`${missing} line${missing===1?"":"s"} have no data in ${PANEL_SPLIT_LABEL[split]}`);
+  // The only control a figure keeps is its own vertical axis. Which methods, which households and which
+  // questions are set once at the top and read from `state`.
+  const opts = metricsFor(p0).map(m =>
+    `<option value="${m}"${m===flavour?" selected":""}>${METRIC_LABEL[m]}</option>`).join("");
+  const unavailable = ["acc","conf","dis"].filter(m => !metricsFor(p0).includes(m));
+  const axisPick = `<label class="paxis">showing <select data-metric-for="${p.id}">${opts}</select>` +
+    (unavailable.length ? `<span class="muted"> · no ${unavailable.map(m=>METRIC_LABEL[m]).join(" or ")} for these methods</span>` : "") +
+    `</label>`;
   return `<div class="panel pnl" data-pid="${p.id}">
     <h3>${p.title}</h3>
     <p class="pcap">${p.cap}</p>
+    ${axisPick}
     <div class="plegend">${legend}</div>
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${p.title}" data-pid="${p.id}"></svg>
-    <p class="pmeta">${flavour==="conf"?"Stated confidence":"Accuracy"}, ${PANEL_SPLIT_LABEL[split]} · ${hh} household${hh===1?"":"s"} · ${POP_LABEL[p.pop]||p.pop} · shaded band = ±1 standard error across households${p.note? " · "+p.note : ""}${missing? ` · <b>${missing} line(s) have no data in this split</b>`:""}</p>
+    <p class="pmeta">${METRIC_AXIS[flavour]}, ${PANEL_SPLIT_LABEL[split]} · ${hh} household${hh===1?"":"s"} · ${POP_LABEL[p.pop]||p.pop} · shaded band = ±1 standard error across households${p.note? " · "+p.note : ""}</p>
+    ${missingNotes.length? `<p class="pmiss">Not on this figure — ${missingNotes.join("; ")}.</p>` : ""}
   </div>`.replace("></svg>", `>${g}</svg>`);
 }
 // ---------------------------------------------------------------------------------------------------------------
@@ -1238,7 +1314,7 @@ function renderOneClaim(c){
         <p class="cmeta">10 households · one person sick · same gate, same target, same days as the figure above</p>
         <div class="cbody">
           ${(()=>{const q=PANELS.find(x=>x.id==="ACC4"); if(!q) return "";
-            const saved=panelState.split; panelState.split="all"; let inner=drawPanel(q); panelState.split=saved;
+            const saved=panelState.splitOverride; panelState.splitOverride="all"; panelState.showAllLines=true; let inner=drawPanel(q); panelState.splitOverride=saved; panelState.showAllLines=false;
             return inner.replace(/^<div class="panel pnl"[^>]*>/,"").replace(/<\/div>\s*$/,"")
                         .replace(/<h3>.*?<\/h3>/,"")
                         .replace(/<p class="pmeta">.*?<\/p>/,`<p class="pmeta">Accuracy only, all questions, 10 households (long-context 3). The confidence result is the figure above this one; this is the same four methods on whether they are right.</p>`);})()}
@@ -1281,7 +1357,7 @@ function renderOneClaim(c){
       const r = P.rows["mart_tt72"], b = P.rows["bma_tt"];
       const sup = PANELS.find(x=>x.id===c.under);
       let supHtml = "";
-      if(sup){ const saved=panelState.split; panelState.split="all"; let inner=drawPanel(sup); panelState.split=saved;
+      if(sup){ const saved=panelState.splitOverride; panelState.splitOverride="all"; panelState.showAllLines=true; let inner=drawPanel(sup); panelState.splitOverride=saved; panelState.showAllLines=false;
         inner = inner.replace(/^<div class="panel pnl"[^>]*>/,"").replace(/<\/div>\s*$/,"").replace(/<h3>.*?<\/h3>/,"")
                      .replace(/<p class="pmeta">.*?<\/p>/, `<p class="pmeta">Shaded band = ±1 standard error across households</p>`);
         supHtml = `<div class="csupport"><p class="csuphead">And the accuracy behind it — the reset is what makes the saving</p>${inner}</div>`; }
@@ -1301,9 +1377,9 @@ function renderOneClaim(c){
     }
     const p = PANELS.find(x=>x.id===c.panel); if(!p) return "";
     const split = c.split || "all", flavour = p.flavour || "acc";
-    const saved = panelState.split; panelState.split = split;   // each graph is drawn in the split its claim needs
+    const saved = panelState.splitOverride; panelState.splitOverride = split; panelState.showAllLines = true;   // each graph is drawn in the split its claim needs, with its own lines
     const svg = drawPanel(p);
-    panelState.split = saved;
+    panelState.splitOverride = saved; panelState.showAllLines = false;
     const hh = panelHH(p);
     let inner = svg.replace(/^<div class="panel pnl"[^>]*>/, "").replace(/<\/div>\s*$/, "");
     inner = inner.replace(/<h3>.*?<\/h3>/, "");                                  // the claim is the heading
@@ -1321,6 +1397,14 @@ function renderPanels(){
   const host=$("#panelgrid"); if(!host) return;
   const list = PANELS.filter(p=>panelState.on.has(p.id));
   host.innerHTML = list.length? list.map(drawPanel).join("") : `<p class="note">No panel selected — pick one above.</p>`;
+  // Each figure's own vertical axis. Only this one figure redraws, so changing an axis never disturbs the
+  // others and never touches which methods, households or questions are on screen.
+  for(const sel of host.querySelectorAll("select[data-metric-for]")){
+    sel.addEventListener("change", e=>{
+      panelState.metric[e.target.getAttribute("data-metric-for")] = e.target.value;
+      renderPanels();
+    });
+  }
 }
 function renderPanelPicker(){
   const host=$("#panelpick"); if(!host) return;
@@ -1485,10 +1569,7 @@ function renderGist(){
   }).join("");
 }
 for(const o of $("#regime").options){ if(!DATA[o.value]){ o.disabled=true; o.hidden=true; } }   // a population whose data has not been built yet is not selectable
-for(const o of $("#gapreg").options){ if(!(EXTRA.gap && EXTRA.gap.populations[o.value])){ o.disabled=true; o.hidden=true; } }
 mergeLLMLive();
-$("#psplit").addEventListener("change", e=>{ panelState.split=e.target.value; renderPanels(); });
-$("#pflavour").addEventListener("change", e=>{ panelState.flavour=e.target.value; renderPanels(); });
 $("#pall").addEventListener("click", ()=>{ for(const p of PANELS) panelState.on.add(p.id); renderPanelPicker(); renderPanels(); });
 $("#pdef").addEventListener("click", ()=>{ panelState.on=new Set(PANEL_DEFAULT); renderPanelPicker(); renderPanels(); });
 renderPanelPicker(); renderPanels(); renderClaims();

@@ -349,3 +349,83 @@ deferral gate, per day, alpha=0.10 (target: wrong at most 1 in 10 of what it ans
 deferral_extra: wrote ['deferral_live'] | kept from other extractors: ['affected', 'affected_windows', 'classical_askgate', 'gap', 'knowno_live', 'llm_live', 'owner_split_live', 'planning', 'planning_matched', 'samples_live', 'shared_state', 'sweep'] | 1602 KB (+0 bytes) | previous copy: .story_extra_backups/story_extra.20260922-164312.deferral_extra.json
 wrote /home/oliver/robot/dynamic_home_eqa/results/regime_search/story.html 2916 KB
 16:43 refreshed
+1249 rows, 3 households, days 1-31
+wrote /home/oliver/robot/dynamic_home_eqa/results/regime_search/samples_uncertainty.png
+
+  windows, change from the settled week (days 9-13), per household then averaged:
+    day 14       correct         -2.8  sd  14.8   null  s0=-16.2 s1=+13.0 s2=-5.0
+    day 14       agreement       +3.5  sd   6.7   null  s0=+0.5 s1=+11.2 s2=-1.2
+    day 14       lac_size        -0.2  sd   0.3   null  s0=+0.0 s1=-0.6 s2=-0.0
+    day 14       lac_covered    -22.8  sd  11.0  CLAIM (all same sign)  s0=-32.5 s1=-10.8 s2=-25.0
+    days 14-16   correct         -5.5  sd   9.5   null  s0=-14.2 s1=+4.7 s2=-7.1
+    days 14-16   agreement       +1.0  sd   6.5   null  s0=-3.0 s1=+8.5 s2=-2.5
+    days 14-16   lac_size        -0.0  sd   0.5   null  s0=+0.4 s1=-0.6 s2=+0.1
+    days 14-16   lac_covered    -13.0  sd   4.8  CLAIM (all same sign)  s0=-17.9 s1=-12.8 s2=-8.3
+    spell 14-23  correct         -2.5  sd   7.5   null  s0=-6.9 s1=+6.1 s2=-6.9
+    spell 14-23  agreement       +0.5  sd   6.6   null  s0=-3.8 s1=+8.2 s2=-2.7
+    spell 14-23  lac_size        +0.0  sd   0.4   null  s0=+0.3 s1=-0.4 s2=+0.1
+    spell 14-23  lac_covered     -5.2  sd   0.3  CLAIM (all same sign)  s0=-5.6 s1=-5.1 s2=-5.0
+    return 24-31 correct         -2.8  sd   6.5   null  s0=+1.0 s1=+0.9 s2=-10.3
+    return 24-31 agreement       +2.0  sd   5.5   null  s0=+4.4 s1=+6.0 s2=-4.3
+    return 24-31 lac_size        +0.0  sd   0.2   null  s0=+0.1 s1=-0.2 s2=+0.1
+    return 24-31 lac_covered     -0.9  sd   4.0   null  s0=+1.0 s1=-5.5 s2=+1.7
+
+  settled week: accuracy 73%  agreement 0.80
+  set size: settled 1.59 -> spell 1.64
+  coverage: settled 92% -> spell 86%, day 14 69%
+samples_extra: wrote ['samples_live'] | kept from other extractors: ['affected', 'affected_windows', 'classical_askgate', 'deferral_live', 'gap', 'knowno_live', 'llm_live', 'owner_split_live', 'planning', 'planning_matched', 'shared_state', 'sweep'] | 1601 KB (+0 bytes) | previous copy: .story_extra_backups/story_extra.20260922-164812.samples_extra.json
+  1249 rows, 3 households, days through 27 complete, 2 arm(s) running
+deferral gate, per day, alpha=0.10 (target: wrong at most 1 in 10 of what it answers)
+  long-context               14-16: hands over   58%, wrong on   28% | best fixed bar with hindsight   26%  (gap +2)  [confidence too tied to separate]
+  recency buffer             14-16: hands over   55%, wrong on   26% | best fixed bar with hindsight   28%  (gap -2)
+  Perpetua*                  14-16: hands over   53%, wrong on   24% | best fixed bar with hindsight   24%  (gap +0)
+  reflection                 14-16: hands over   43%, wrong on   22% | best fixed bar with hindsight   21%  (gap +1)  [confidence too tied to separate]
+  retrieval                  14-16: hands over   59%, wrong on   32% | best fixed bar with hindsight   32%  (gap +0)  [confidence too tied to separate]
+  routine                    14-16: hands over   60%, wrong on   36% | best fixed bar with hindsight   33%  (gap +3)  [confidence too tied to separate]
+  nightly routine table      14-16: hands over   64%, wrong on   29% | best fixed bar with hindsight   32%  (gap -3)  [confidence too tied to separate]
+  nightly summary            14-16: hands over   72%, wrong on   35% | best fixed bar with hindsight   34%  (gap +0)
+  3-day timetable            14-16: hands over   70%, wrong on   41% | best fixed bar with hindsight   43%  (gap -2)
+  never-forgets timetable    14-16: hands over   71%, wrong on   63% | best fixed bar with hindsight   62%  (gap +1)
+deferral_extra: wrote ['deferral_live'] | kept from other extractors: ['affected', 'affected_windows', 'classical_askgate', 'gap', 'knowno_live', 'llm_live', 'owner_split_live', 'planning', 'planning_matched', 'samples_live', 'shared_state', 'sweep'] | 1601 KB (+0 bytes) | previous copy: .story_extra_backups/story_extra.20260922-164814.deferral_extra.json
+wrote /home/oliver/robot/dynamic_home_eqa/results/regime_search/story.html 2915 KB
+16:48 refreshed
+1280 rows, 3 households, days 1-31
+wrote /home/oliver/robot/dynamic_home_eqa/results/regime_search/samples_uncertainty.png
+
+  windows, change from the settled week (days 9-13), per household then averaged:
+    day 14       correct         -2.8  sd  14.8   null  s0=-16.2 s1=+13.0 s2=-5.0
+    day 14       agreement       +3.5  sd   6.7   null  s0=+0.5 s1=+11.2 s2=-1.2
+    day 14       lac_size        -0.2  sd   0.3   null  s0=+0.0 s1=-0.6 s2=-0.0
+    day 14       lac_covered    -22.8  sd  11.0  CLAIM (all same sign)  s0=-32.5 s1=-10.8 s2=-25.0
+    days 14-16   correct         -5.5  sd   9.5   null  s0=-14.2 s1=+4.7 s2=-7.1
+    days 14-16   agreement       +1.0  sd   6.5   null  s0=-3.0 s1=+8.5 s2=-2.5
+    days 14-16   lac_size        -0.0  sd   0.5   null  s0=+0.4 s1=-0.6 s2=+0.1
+    days 14-16   lac_covered    -13.0  sd   4.8  CLAIM (all same sign)  s0=-17.9 s1=-12.8 s2=-8.3
+    spell 14-23  correct         -2.5  sd   7.5   null  s0=-6.9 s1=+6.1 s2=-6.9
+    spell 14-23  agreement       +0.5  sd   6.6   null  s0=-3.8 s1=+8.2 s2=-2.7
+    spell 14-23  lac_size        +0.0  sd   0.4   null  s0=+0.3 s1=-0.4 s2=+0.1
+    spell 14-23  lac_covered     -5.2  sd   0.3  CLAIM (all same sign)  s0=-5.6 s1=-5.1 s2=-5.0
+    return 24-31 correct         -2.5  sd   5.9   null  s0=+1.0 s1=+0.9 s2=-9.3
+    return 24-31 agreement       +3.1  sd   5.0   null  s0=+6.1 s1=+6.0 s2=-2.6
+    return 24-31 lac_size        -0.0  sd   0.2   null  s0=+0.0 s1=-0.2 s2=+0.1
+    return 24-31 lac_covered     -1.6  sd   3.3   null  s0=+0.4 s1=-5.5 s2=+0.2
+
+  settled week: accuracy 73%  agreement 0.80
+  set size: settled 1.59 -> spell 1.64
+  coverage: settled 92% -> spell 86%, day 14 69%
+samples_extra: wrote ['samples_live'] | kept from other extractors: ['affected', 'affected_windows', 'classical_askgate', 'deferral_live', 'gap', 'knowno_live', 'llm_live', 'owner_split_live', 'planning', 'planning_matched', 'shared_state', 'sweep'] | 1601 KB (+67 bytes) | previous copy: .story_extra_backups/story_extra.20260922-165315.samples_extra.json
+  1280 rows, 3 households, days through 28 complete, 2 arm(s) running
+deferral gate, per day, alpha=0.10 (target: wrong at most 1 in 10 of what it answers)
+  long-context               14-16: hands over   58%, wrong on   28% | best fixed bar with hindsight   26%  (gap +2)  [confidence too tied to separate]
+  recency buffer             14-16: hands over   55%, wrong on   26% | best fixed bar with hindsight   28%  (gap -2)
+  Perpetua*                  14-16: hands over   53%, wrong on   24% | best fixed bar with hindsight   24%  (gap +0)
+  reflection                 14-16: hands over   43%, wrong on   22% | best fixed bar with hindsight   21%  (gap +1)  [confidence too tied to separate]
+  retrieval                  14-16: hands over   59%, wrong on   32% | best fixed bar with hindsight   32%  (gap +0)  [confidence too tied to separate]
+  routine                    14-16: hands over   60%, wrong on   36% | best fixed bar with hindsight   33%  (gap +3)  [confidence too tied to separate]
+  nightly routine table      14-16: hands over   64%, wrong on   29% | best fixed bar with hindsight   32%  (gap -3)  [confidence too tied to separate]
+  nightly summary            14-16: hands over   72%, wrong on   35% | best fixed bar with hindsight   34%  (gap +0)
+  3-day timetable            14-16: hands over   70%, wrong on   41% | best fixed bar with hindsight   43%  (gap -2)
+  never-forgets timetable    14-16: hands over   71%, wrong on   63% | best fixed bar with hindsight   62%  (gap +1)
+deferral_extra: wrote ['deferral_live'] | kept from other extractors: ['affected', 'affected_windows', 'classical_askgate', 'gap', 'knowno_live', 'llm_live', 'owner_split_live', 'planning', 'planning_matched', 'samples_live', 'shared_state', 'sweep'] | 1601 KB (+0 bytes) | previous copy: .story_extra_backups/story_extra.20260922-165316.deferral_extra.json
+wrote /home/oliver/robot/dynamic_home_eqa/results/regime_search/story.html 2921 KB
+16:53 refreshed

@@ -6,15 +6,19 @@
 Writes ONE key, ``samples_live``, through extra_store so it cannot tread on another extractor's keys.
 
 The library draws a line from cells of the form ``cells[household][split][day] = [n, ok, sum_conf]`` and plots
-either ``ok/n`` or ``sum_conf/n`` as a percentage. Nothing here reshapes that. Two lines come out:
+either ``ok/n`` or ``sum_conf/n`` as a percentage. This arm appends a FOURTH slot:
 
-  accuracy    [n, correct, sum of the stated confidence]  - the arm's own accuracy, and under the page's
-              confidence toggle the number the model says out loud
-  agreement   [n, sum of agreement, sum of agreement]     - how often the ten samples land on the same place.
-              The same value sits in both slots on purpose, so the line reads as agreement under BOTH toggle
-              positions: it is neither an accuracy nor a stated confidence, and flipping the toggle must not
-              silently turn it into a different quantity. It is a genuine percentage, so it belongs on the
-              library's 0-100 axis beside the others.
+    [n, correct, sum of stated confidence, sum of sample disagreement]
+
+so the same line can be read three ways from one metric dropdown - accuracy, the confidence the model states out
+loud, and the share of the ten samples that came back with a different place from the one it answered. The third
+is the whole reason the sampling run exists: it is a second, independent reading of the same memory's
+uncertainty, and putting it on the same line, same days and same households as the stated number is what makes
+the two comparable. Everything else on the page has three-slot cells and simply reports that this metric is not
+available for it, rather than drawing nothing.
+
+Disagreement, not agreement, so that on the library's shared 0-100 axis the direction matches the other
+uncertainty readings: higher means less sure.
 
 The day rule is the one the conformal figure needed: a day is emitted only once EVERY household has finished
 it. While the arms run at different speeds an unfinished day is just whichever household is fastest, and the
@@ -72,12 +76,10 @@ def main():
             out[h] = {"all": arr}
         return out
 
-    acc = cells(lambda g: [len(g),
-                           sum(1 for r in g if r.get("correct")),
-                           sum(float(r.get("verbalized") or 0.0) for r in g)])
-    agr = cells(lambda g: [len(g),
-                           sum(float(r.get("agreement") or 0.0) for r in g),
-                           sum(float(r.get("agreement") or 0.0) for r in g)])
+    line = cells(lambda g: [len(g),
+                            sum(1 for r in g if r.get("correct")),
+                            sum(float(r.get("verbalized") or 0.0) for r in g),
+                            sum(1.0 - float(r.get("agreement") or 0.0) for r in g)])
 
     k = rows[0].get("k")
     live = 0
@@ -97,7 +99,8 @@ def main():
         "last_day": max(reached) if reached else 0,
         "complete_day": max(done) if done else 0,   # the last day the panel can actually draw
         "per_hh_last": {h: last[h] for h in hhs},
-        "lines": {"accuracy": acc, "agreement": agr},
+        "lines": {"longcontext": line},
+        "metrics": ["acc", "conf", "dis"],
     }
     print(write_keys("samples_extra", {"samples_live": payload}))
     print(f"  {len(rows)} rows, {len(hhs)} households, days through {max(done) if done else 0} complete, "
