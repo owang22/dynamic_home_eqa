@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
-"""Regime novelty: for every question in a non-lead stage, is the true location different from the LEAD-stage answer
+"""SUPERSEDED 2026-09-22 by tools/break_cells.py: this "novelty/ceiling" measure compares the truth with the lead-up
+answer for that object AT THAT HOUR, and it does not predict the break — it ranks friends-over (30%) above the sick
+spell (26%) while the sick spell breaks the 3-day timetable twice as hard. Use break_cells.py's "somewhere other
+than where it usually lives" share instead (sick +41 pp -> 23-point break, guests +16 -> 11, holiday +7 -> 2). Kept
+for the record and for the per-class/per-owner breakdowns.
+
+Regime novelty: for every question in a non-lead stage, is the true location different from the LEAD-stage answer
 for that (object, 2 h bin) (the mode of truth at lead-stage question times)? Share of 'novel' questions per stage and
 per class = the ceiling of any accuracy drop a perfect lead-regime learner can suffer. Also: which residents' activities
 the shift-stage questions come from (question moment text is not stored, so we use the object's owner)."""

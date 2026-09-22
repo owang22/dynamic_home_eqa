@@ -53,11 +53,17 @@ def leak_pattern() -> re.Pattern:
 
 PATTERN = leak_pattern()
 PROSE_PATTERN = re.compile(r"(?<![A-Za-z0-9_])(" + "|".join(
-    re.escape(t) for t in forbidden_terms() if "_" in t or t in ("cause", "causes", "whim", "reason"))
+    re.escape(t) for t in forbidden_terms() if "_" in t or t == "whim")
     + r")(?![A-Za-z0-9_])|(?<![A-Za-z0-9_])resident_\d+(?![A-Za-z0-9_])")
 """For text the LLM wrote itself (its own routine notes, quoted back into
 a later prompt): plain words such as "rain" or "deadline" are ordinary
-prose there, so only the structural ids and field names count."""
+prose there, so only the structural ids count -- snake_case event and
+field names, resident ids, and "whim". The truth-row field names "cause"
+/ "causes" / "reason" are also everyday English and were tripping this
+on model-written sentences like "the likely cause of the error"
+(2026-09-22, reflection arm hh_s5, day 1): the model never sees those
+fields, so its own use of the words cannot be a leak; they stay
+forbidden in harness-authored text (PATTERN above)."""
 
 
 def find_leaks(text: str, prose: bool = False) -> List[str]:

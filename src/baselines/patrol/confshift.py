@@ -101,6 +101,11 @@ def load_config(path: pathlib.Path) -> dict:
     os.environ["PATROL_QUESTION_MOMENT"] = str(cfg["question_moment"])
     cfg.setdefault("question_min_gap_min", 0)   # regime search: minimum minutes between two questions about the same object
     os.environ["PATROL_QUESTION_MIN_GAP_MIN"] = str(int(cfg["question_min_gap_min"]))
+    cfg.setdefault("question_hours", "")   # regime search: "17-23" asks only in those hours (unset = every hour, as before)
+    if cfg["question_hours"]:
+        os.environ["PATROL_QUESTION_HOURS"] = str(cfg["question_hours"])
+    else:
+        os.environ.pop("PATROL_QUESTION_HOURS", None)
     cfg.setdefault("question_owners", None)    # regime search: list of resident ids whose objects are asked about
     os.environ["PATROL_QUESTION_OWNERS"] = ",".join(cfg["question_owners"] or [])
     cfg.setdefault("feedback_delay_min", None)

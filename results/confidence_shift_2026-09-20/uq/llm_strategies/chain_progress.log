@@ -7,3 +7,771 @@
 00:32 watch: 31 arms running, 0 finished, aggregate nan calls/min over last 10 min (0 arms with history, 0 moving)
 00:32 watch: 31 arms running, 0 finished, aggregate nan calls/min over last 10 min (0 arms with history, 0 moving)
 00:37 watch: 31 arms running, 0 finished, aggregate nan calls/min over last 10 min (0 arms with history, 0 moving)
+00:41 hh_s5/reflect/no-message rerun standalone (pid 937929) after leak_check fix: the arm had CRASHED at 23:35 on 'cause' in its own day-0 notes (LEAK false positive), not hung; llm.py now reports ARM FAILED live
+00:42 watch: 31 arms running, 0 finished, aggregate 62 calls/min over last 10 min (31 arms with history, 31 moving)
+00:47 watch: 31 arms running, 0 finished, aggregate 61 calls/min over last 10 min (31 arms with history, 31 moving)
+00:52 watch: 31 arms running, 0 finished, aggregate 59 calls/min over last 10 min (31 arms with history, 31 moving)
+00:57 watch: 31 arms running, 0 finished, aggregate 58 calls/min over last 10 min (31 arms with history, 31 moving)
+01:02 watch: 31 arms running, 0 finished, aggregate 56 calls/min over last 10 min (31 arms with history, 31 moving)
+01:07 watch: 31 arms running, 0 finished, aggregate 54 calls/min over last 10 min (31 arms with history, 31 moving)
+01:12 watch: 31 arms running, 0 finished, aggregate 53 calls/min over last 10 min (31 arms with history, 31 moving)
+01:17 watch: 31 arms running, 0 finished, aggregate 52 calls/min over last 10 min (31 arms with history, 31 moving)
+01:22 watch: 31 arms running, 0 finished, aggregate 50 calls/min over last 10 min (31 arms with history, 31 moving)
+01:24 knowno_person naive hh_s0 exit=0
+hh_s0.jsonl: 112 questions, coverage 0.929 (target 0.90), mean set size 6.21/10 options
+  day 13: coverage 1.000  set 10.00  accuracy(mcq) 0.00
+  day 14: coverage 0.875  set 7.56  accuracy(mcq) 0.00
+  day 15: coverage 0.938  set 6.56  accuracy(mcq) 0.00
+  day 20: coverage 1.000  set 5.50  accuracy(mcq) 0.00
+  day 24: coverage 0.875  set 4.75  accuracy(mcq) 0.00
+  day 25: coverage 1.000  set 4.69  accuracy(mcq) 0.00
+  day 30: coverage 0.812  set 4.38  accuracy(mcq) 0.00
+wrote ../results/confidence_shift_2026-09-20/uq/llm_strategies/knowno_person/naive_hh_s0/hh_s0_knowno.jsonl
+01:27 watch: 31 arms running, 1 finished, aggregate 47 calls/min over last 10 min (30 arms with history, 30 moving)
+01:32 watch: 31 arms running, 1 finished, aggregate 46 calls/min over last 10 min (30 arms with history, 30 moving)
+01:37 watch: 31 arms running, 1 finished, aggregate 45 calls/min over last 10 min (31 arms with history, 30 moving)
+01:42 watch: 30 arms running, 2 finished, aggregate 45 calls/min over last 10 min (30 arms with history, 29 moving)
+01:42 VERDICT: STALLED ARM knowno_person/naive_hh_s0 — 0 new calls in 15 min while 29 others moved (count 112); this is the 23:35 hang pattern, check the process
+01:47 watch: 30 arms running, 2 finished, aggregate 46 calls/min over last 10 min (30 arms with history, 29 moving)
+01:47 VERDICT: STALLED ARM knowno_person/naive_hh_s0 — 0 new calls in 15 min while 29 others moved (count 112); this is the 23:35 hang pattern, check the process
+01:49 watch: 29 arms running, 3 finished, aggregate 54 calls/min over last 10 min (29 arms with history, 29 moving)
+01:49 NOTE: the 01:42/01:47 STALLED verdicts on knowno_person/naive_hh_s0 were a watcher false positive — that arm finished at 01:24 (exit 0, 112/112 rows); chain_watch now treats stats.json as 'finished' for knowno dirs
+01:50 re-sequenced: told passes now run by run_person_told.sh (reflection on 5 hh; two-spells reduced to buffer+retrieval, last); no-message pass untouched (pid 929420)
+01:52 watch: 29 arms running, 3 finished, aggregate 45 calls/min over last 10 min (29 arms with history, 29 moving)
+01:53 master sequence started (pid 977662): no-message retrieval+reflection first, long-context last on 3 hh
+01:53 long-context PAUSED per coordinator (prefill-bound, starving the server); its 10-hh no-message progress is kept in the cache; resumes last on hh_s0-2 only
+01:53 standalone hh_s5/reflect rerun stopped to avoid two writers on one arm dir; master's no-message pass covers it via cache
+01:55 sick2x_owner counters (E30): second break far smaller than the first even on cold questions, incl. the 1-day forgetter -> bank/measure effect, not reuse; logged as OPEN in problems_found.md
+01:57 watch: 27 arms running, 5 finished, aggregate 78 calls/min over last 10 min (27 arms with history, 27 moving)
+02:00 re-sequenced (master2): ... long-context no-message, start-message (3 hh) -> two-spells no-message (buffer+retrieval, 3 hh) -> long-context start+end -> two-spells start-message; no-message pass untouched
+02:02 watch: 25 arms running, 7 finished, aggregate 104 calls/min over last 10 min (25 arms with history, 22 moving)
+02:07 watch: 25 arms running, 7 finished, aggregate 110 calls/min over last 10 min (25 arms with history, 16 moving)
+02:07 VERDICT: STALLED ARM chain_person/nottold/hh_s3_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 16 others moved (count 325); this is the 23:35 hang pattern, check the process
+02:07 VERDICT: STALLED ARM chain_person/nottold/hh_s4_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 16 others moved (count 337); this is the 23:35 hang pattern, check the process
+02:07 VERDICT: STALLED ARM chain_person/nottold/hh_s6_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 16 others moved (count 334); this is the 23:35 hang pattern, check the process
+02:12 knowno_person naive hh_s1 exit=0
+hh_s1.jsonl: 85 questions, coverage 0.882 (target 0.90), mean set size 5.29/10 options
+  day 13: coverage 1.000  set 10.00  accuracy(mcq) 0.00
+  day 14: coverage 0.938  set 6.19  accuracy(mcq) 0.00
+  day 15: coverage 0.875  set 3.31  accuracy(mcq) 0.00
+  day 20: coverage 0.812  set 3.62  accuracy(mcq) 0.00
+  day 24: coverage 0.833  set 4.67  accuracy(mcq) 0.00
+  day 25: coverage 1.000  set 4.67  accuracy(mcq) 0.00
+  day 30: coverage 0.667  set 4.33  accuracy(mcq) 0.00
+wrote ../results/confidence_shift_2026-09-20/uq/llm_strategies/knowno_person/naive_hh_s1/hh_s1_knowno.jsonl
+02:12 watch: 21 arms running, 12 finished, aggregate 76 calls/min over last 10 min (20 arms with history, 11 moving)
+02:12 VERDICT: STALLED ARM chain_person/nottold/hh_s9_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 11 others moved (count 346); this is the 23:35 hang pattern, check the process
+02:12 VERDICT: STALLED ARM chain_person/nottold/hh_s3_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 11 others moved (count 325); this is the 23:35 hang pattern, check the process
+02:12 VERDICT: STALLED ARM chain_person/nottold/hh_s4_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 11 others moved (count 337); this is the 23:35 hang pattern, check the process
+02:12 VERDICT: STALLED ARM chain_person/nottold/hh_s0_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 11 others moved (count 343); this is the 23:35 hang pattern, check the process
+02:12 VERDICT: STALLED ARM chain_person/nottold/hh_s8_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 11 others moved (count 347); this is the 23:35 hang pattern, check the process
+02:12 VERDICT: STALLED ARM chain_person/nottold/hh_s7_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 11 others moved (count 350); this is the 23:35 hang pattern, check the process
+02:12 VERDICT: STALLED ARM chain_person/nottold/hh_s2_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 11 others moved (count 348); this is the 23:35 hang pattern, check the process
+02:12 VERDICT: STALLED ARM chain_person/nottold/hh_s1_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 11 others moved (count 347); this is the 23:35 hang pattern, check the process
+02:12 VERDICT: STALLED ARM chain_person/nottold/hh_s6_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 11 others moved (count 334); this is the 23:35 hang pattern, check the process
+02:17 watch: 17 arms running, 16 finished, aggregate 48 calls/min over last 10 min (16 arms with history, 7 moving)
+02:17 VERDICT: STALLED ARM chain_person/nottold/hh_s9_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 7 others moved (count 346); this is the 23:35 hang pattern, check the process
+02:17 VERDICT: STALLED ARM chain_person/nottold/hh_s3_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 7 others moved (count 325); this is the 23:35 hang pattern, check the process
+02:17 VERDICT: STALLED ARM chain_person/nottold/hh_s4_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 7 others moved (count 337); this is the 23:35 hang pattern, check the process
+02:17 VERDICT: STALLED ARM chain_person/nottold/hh_s0_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 7 others moved (count 343); this is the 23:35 hang pattern, check the process
+02:17 VERDICT: STALLED ARM chain_person/nottold/hh_s8_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 7 others moved (count 347); this is the 23:35 hang pattern, check the process
+02:17 VERDICT: STALLED ARM chain_person/nottold/hh_s7_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 7 others moved (count 350); this is the 23:35 hang pattern, check the process
+02:17 VERDICT: STALLED ARM chain_person/nottold/hh_s2_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 7 others moved (count 348); this is the 23:35 hang pattern, check the process
+02:17 VERDICT: STALLED ARM chain_person/nottold/hh_s1_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 7 others moved (count 347); this is the 23:35 hang pattern, check the process
+02:17 VERDICT: STALLED ARM chain_person/nottold/hh_s6_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 7 others moved (count 334); this is the 23:35 hang pattern, check the process
+02:22 watch: 17 arms running, 16 finished, aggregate 52 calls/min over last 10 min (17 arms with history, 8 moving)
+02:22 VERDICT: STALLED ARM chain_person/nottold/hh_s9_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 8 others moved (count 346); this is the 23:35 hang pattern, check the process
+02:22 VERDICT: STALLED ARM chain_person/nottold/hh_s3_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 8 others moved (count 325); this is the 23:35 hang pattern, check the process
+02:22 VERDICT: STALLED ARM chain_person/nottold/hh_s4_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 8 others moved (count 337); this is the 23:35 hang pattern, check the process
+02:22 VERDICT: STALLED ARM chain_person/nottold/hh_s0_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 8 others moved (count 343); this is the 23:35 hang pattern, check the process
+02:22 VERDICT: STALLED ARM chain_person/nottold/hh_s8_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 8 others moved (count 347); this is the 23:35 hang pattern, check the process
+02:22 VERDICT: STALLED ARM chain_person/nottold/hh_s7_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 8 others moved (count 350); this is the 23:35 hang pattern, check the process
+02:22 VERDICT: STALLED ARM chain_person/nottold/hh_s2_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 8 others moved (count 348); this is the 23:35 hang pattern, check the process
+02:22 VERDICT: STALLED ARM chain_person/nottold/hh_s1_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 8 others moved (count 347); this is the 23:35 hang pattern, check the process
+02:22 VERDICT: STALLED ARM chain_person/nottold/hh_s6_t03_longcontext_nottold_lookoff — 0 new calls in 15 min while 8 others moved (count 334); this is the 23:35 hang pattern, check the process
+02:25 watch: 8 arms running, 16 finished, 9 paused, aggregate 65 calls/min over last 10 min (8 arms with history, 8 moving)
+02:25 master3: start-message retrieval pass launched now (retrieval no-message complete on 10 hh); reflection's start-message waits for its no-message tail; long-context arms marked paused for the watcher
+02:27 watch: 17 arms running, 17 finished, 9 paused, aggregate 42 calls/min over last 10 min (7 arms with history, 7 moving)
+02:32 watch: 15 arms running, 19 finished, 9 paused, aggregate 28 calls/min over last 10 min (5 arms with history, 5 moving)
+02:37 watch: 12 arms running, 22 finished, 9 paused, aggregate 92 calls/min over last 10 min (12 arms with history, 12 moving)
+02:38 master3: no-message pass (pid 977666) exited
+
+== hh_s0_t03_reflect_nottold_lookoff ==
+  overall 367/496 (74%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:62% d2:88% d3:69% d4:81% d5:100% d6:69% d7:62% d8:94% d9:69% d10:94% d11:56% d12:69% d13:62% d14:44% d15:44% d16:50% d17:69% d18:81% d19:94% d20:88% d21:94% d22:94% d23:81% d24:69% d25:88% d26:75% d27:62% d28:56% d29:75% d30:75% d31:81%
+  prompt_tokens: min 999 mean 1514 max 1803 (n=496)
+  cold (first Q/object/day): 92/152 (61%)   warm (later same day): 275/344 (80%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s0_t03_retrieval_nottold_lookoff ==
+  overall 353/496 (71%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:62% d2:100% d3:81% d4:81% d5:81% d6:75% d7:81% d8:94% d9:81% d10:88% d11:88% d12:100% d13:81% d14:44% d15:31% d16:38% d17:25% d18:50% d19:56% d20:50% d21:44% d22:56% d23:56% d24:75% d25:81% d26:88% d27:94% d28:62% d29:94% d30:81% d31:88%
+  prompt_tokens: min 940 mean 1141 max 1224 (n=496)
+  cold (first Q/object/day): 91/152 (60%)   warm (later same day): 262/344 (76%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s1_t03_reflect_nottold_lookoff ==
+  overall 269/379 (71%)  fallback 0 (0%)  status {'ok': 379}
+  per day: d1:57% d2:44% d3:33% d4:44% d5:56% d6:73% d7:67% d8:89% d9:82% d10:40% d11:100% d12:86% d13:69% d14:75% d15:62% d16:81% d17:75% d18:56% d19:75% d20:88% d21:75% d22:100% d23:75% d24:67% d25:67% d26:56% d27:67% d28:69% d29:94% d30:50% d31:58%
+  prompt_tokens: min 966 mean 1406 max 1672 (n=379)
+  cold (first Q/object/day): 104/176 (59%)   warm (later same day): 165/203 (81%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s1_t03_retrieval_nottold_lookoff ==
+  overall 255/379 (67%)  fallback 0 (0%)  status {'ok': 379}
+  per day: d1:57% d2:44% d3:0% d4:33% d5:78% d6:80% d7:50% d8:67% d9:73% d10:50% d11:78% d12:86% d13:69% d14:75% d15:62% d16:69% d17:69% d18:56% d19:75% d20:69% d21:75% d22:75% d23:75% d24:83% d25:50% d26:44% d27:73% d28:69% d29:88% d30:50% d31:67%
+  prompt_tokens: min 927 mean 1124 max 1244 (n=379)
+  cold (first Q/object/day): 90/176 (51%)   warm (later same day): 165/203 (81%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s2_t03_reflect_nottold_lookoff ==
+  overall 407/496 (82%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:56% d2:94% d3:94% d4:94% d5:81% d6:69% d7:94% d8:75% d9:81% d10:75% d11:75% d12:100% d13:100% d14:38% d15:81% d16:81% d17:81% d18:94% d19:69% d20:81% d21:75% d22:100% d23:81% d24:81% d25:88% d26:69% d27:94% d28:94% d29:81% d30:88% d31:81%
+  prompt_tokens: min 1011 mean 1431 max 1582 (n=496)
+  cold (first Q/object/day): 104/134 (78%)   warm (later same day): 303/362 (84%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s2_t03_retrieval_nottold_lookoff ==
+  overall 372/496 (75%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:94% d3:94% d4:100% d5:88% d6:88% d7:88% d8:75% d9:88% d10:75% d11:94% d12:100% d13:94% d14:31% d15:31% d16:38% d17:44% d18:38% d19:38% d20:50% d21:50% d22:62% d23:56% d24:94% d25:94% d26:88% d27:100% d28:94% d29:100% d30:88% d31:88%
+  prompt_tokens: min 952 mean 1161 max 1236 (n=496)
+  cold (first Q/object/day): 90/134 (67%)   warm (later same day): 282/362 (78%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s3_t03_reflect_nottold_lookoff ==
+  overall 213/305 (70%)  fallback 0 (0%)  status {'ok': 305}
+  per day: d1:14% d2:43% d3:71% d4:83% d5:43% d6:67% d7:62% d8:86% d9:71% d10:100% d11:57% d12:71% d13:62% d14:50% d15:50% d16:69% d17:81% d18:69% d19:81% d20:69% d21:69% d22:88% d23:81% d24:33% d25:100% d26:67% d27:83% d28:86% d29:86% d30:100% d31:78%
+  prompt_tokens: min 1101 mean 1606 max 1836 (n=305)
+  cold (first Q/object/day): 110/165 (67%)   warm (later same day): 103/140 (74%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s3_t03_retrieval_nottold_lookoff ==
+  overall 208/305 (68%)  fallback 0 (0%)  status {'ok': 305}
+  per day: d1:14% d2:29% d3:71% d4:67% d5:57% d6:78% d7:88% d8:100% d9:71% d10:100% d11:71% d12:71% d13:75% d14:56% d15:44% d16:69% d17:62% d18:56% d19:69% d20:69% d21:75% d22:88% d23:69% d24:67% d25:80% d26:50% d27:67% d28:100% d29:71% d30:100% d31:67%
+  prompt_tokens: min 1023 mean 1209 max 1334 (n=305)
+  cold (first Q/object/day): 108/165 (65%)   warm (later same day): 100/140 (71%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s4_t03_reflect_nottold_lookoff ==
+  overall 235/325 (72%)  fallback 0 (0%)  status {'ok': 325}
+  per day: d1:33% d2:45% d3:90% d4:62% d5:40% d6:50% d7:44% d8:75% d9:57% d10:67% d11:83% d12:60% d13:80% d14:62% d15:75% d16:94% d17:81% d18:75% d19:94% d20:81% d21:88% d22:94% d23:88% d24:67% d25:40% d26:100% d27:57% d28:60% d29:70% d30:67% d31:44%
+  prompt_tokens: min 1110 mean 1587 max 1729 (n=325)
+  cold (first Q/object/day): 60/112 (54%)   warm (later same day): 175/213 (82%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s4_t03_retrieval_nottold_lookoff ==
+  overall 237/325 (73%)  fallback 0 (0%)  status {'ok': 325}
+  per day: d1:33% d2:73% d3:90% d4:75% d5:70% d6:0% d7:67% d8:75% d9:86% d10:67% d11:83% d12:70% d13:80% d14:56% d15:75% d16:88% d17:75% d18:75% d19:75% d20:62% d21:88% d22:81% d23:75% d24:78% d25:60% d26:67% d27:57% d28:100% d29:80% d30:78% d31:56%
+  prompt_tokens: min 1033 mean 1252 max 1344 (n=325)
+  cold (first Q/object/day): 68/112 (61%)   warm (later same day): 169/213 (79%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s5_t03_longcontext_nottold_lookoff ==
+  overall 200/287 (70%)  fallback 0 (0%)  status {'ok': 287}
+  per day: d1:20% d2:75% d3:50% d4:75% d5:40% d6:60% d7:57% d8:33% d9:67% d10:60% d11:40% d12:25% d13:83% d14:69% d15:75% d16:75% d17:94% d18:62% d19:62% d20:88% d21:69% d22:69% d23:100% d24:50% d25:67% d26:50% d27:86% d28:67% d29:60% d30:71% d31:100%
+  prompt_tokens: min 1457 mean 12500 max 22527 (n=287)
+  cold (first Q/object/day): 46/101 (46%)   warm (later same day): 154/186 (83%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s5_t03_reflect_nottold_lookoff ==
+  overall 218/287 (76%)  fallback 0 (0%)  status {'ok': 287}
+  per day: d1:40% d2:62% d3:25% d4:25% d5:60% d6:60% d7:43% d8:50% d9:78% d10:100% d11:100% d12:75% d13:50% d14:69% d15:88% d16:94% d17:88% d18:88% d19:88% d20:94% d21:75% d22:81% d23:88% d24:75% d25:67% d26:75% d27:43% d28:67% d29:60% d30:86% d31:100%
+  prompt_tokens: min 1147 mean 1436 max 1585 (n=287)
+  cold (first Q/object/day): 58/101 (57%)   warm (later same day): 160/186 (86%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s5_t03_retrieval_nottold_lookoff ==
+  overall 227/287 (79%)  fallback 0 (0%)  status {'ok': 287}
+  per day: d1:40% d2:62% d3:50% d4:100% d5:60% d6:60% d7:71% d8:100% d9:78% d10:100% d11:100% d12:50% d13:100% d14:75% d15:69% d16:81% d17:88% d18:75% d19:75% d20:88% d21:75% d22:75% d23:81% d24:100% d25:83% d26:100% d27:86% d28:67% d29:100% d30:100% d31:100%
+  prompt_tokens: min 919 mean 1115 max 1194 (n=287)
+  cold (first Q/object/day): 65/101 (64%)   warm (later same day): 162/186 (87%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s6_t03_reflect_nottold_lookoff ==
+  overall 287/458 (63%)  fallback 0 (0%)  status {'ok': 458}
+  per day: d1:56% d2:53% d3:50% d4:86% d5:67% d6:88% d7:67% d8:69% d9:79% d10:33% d11:57% d12:86% d13:71% d14:69% d15:50% d16:56% d17:31% d18:56% d19:62% d20:62% d21:75% d22:56% d23:44% d24:69% d25:60% d26:67% d27:80% d28:71% d29:33% d30:69% d31:69%
+  prompt_tokens: min 1057 mean 1439 max 1551 (n=458)
+  cold (first Q/object/day): 86/183 (47%)   warm (later same day): 201/275 (73%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s6_t03_retrieval_nottold_lookoff ==
+  overall 302/458 (66%)  fallback 0 (0%)  status {'ok': 458}
+  per day: d1:44% d2:60% d3:56% d4:71% d5:53% d6:81% d7:67% d8:56% d9:64% d10:60% d11:71% d12:86% d13:79% d14:56% d15:69% d16:50% d17:62% d18:62% d19:69% d20:62% d21:69% d22:50% d23:75% d24:75% d25:67% d26:67% d27:90% d28:79% d29:56% d30:75% d31:62%
+  prompt_tokens: min 907 mean 1108 max 1217 (n=458)
+  cold (first Q/object/day): 93/183 (51%)   warm (later same day): 209/275 (76%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s7_t03_reflect_nottold_lookoff ==
+  overall 392/496 (79%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:88% d3:100% d4:88% d5:56% d6:88% d7:69% d8:81% d9:69% d10:88% d11:88% d12:75% d13:75% d14:50% d15:75% d16:88% d17:100% d18:81% d19:81% d20:81% d21:100% d22:100% d23:81% d24:56% d25:88% d26:81% d27:69% d28:75% d29:69% d30:75% d31:69%
+  prompt_tokens: min 1062 mean 1463 max 1624 (n=496)
+  cold (first Q/object/day): 88/130 (68%)   warm (later same day): 304/366 (83%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s7_t03_retrieval_nottold_lookoff ==
+  overall 331/496 (67%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:75% d3:88% d4:81% d5:62% d6:88% d7:88% d8:81% d9:62% d10:94% d11:88% d12:88% d13:88% d14:25% d15:38% d16:44% d17:38% d18:44% d19:50% d20:25% d21:25% d22:38% d23:44% d24:62% d25:88% d26:75% d27:75% d28:75% d29:88% d30:94% d31:94%
+  prompt_tokens: min 925 mean 1137 max 1214 (n=496)
+  cold (first Q/object/day): 74/130 (57%)   warm (later same day): 257/366 (70%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s8_t03_reflect_nottold_lookoff ==
+  overall 320/473 (68%)  fallback 0 (0%)  status {'ok': 473}
+  per day: d1:56% d2:42% d3:81% d4:75% d5:56% d6:67% d7:50% d8:62% d9:62% d10:56% d11:83% d12:75% d13:75% d14:56% d15:44% d16:75% d17:69% d18:69% d19:69% d20:75% d21:81% d22:75% d23:75% d24:64% d25:56% d26:62% d27:60% d28:83% d29:67% d30:94% d31:85%
+  prompt_tokens: min 1051 mean 1498 max 1713 (n=473)
+  cold (first Q/object/day): 94/163 (58%)   warm (later same day): 226/310 (73%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s8_t03_retrieval_nottold_lookoff ==
+  overall 326/473 (69%)  fallback 0 (0%)  status {'ok': 473}
+  per day: d1:50% d2:42% d3:75% d4:75% d5:69% d6:67% d7:75% d8:62% d9:69% d10:75% d11:83% d12:75% d13:94% d14:31% d15:62% d16:62% d17:50% d18:75% d19:62% d20:62% d21:62% d22:62% d23:75% d24:86% d25:62% d26:69% d27:80% d28:83% d29:93% d30:69% d31:85%
+  prompt_tokens: min 899 mean 1100 max 1195 (n=473)
+  cold (first Q/object/day): 89/163 (55%)   warm (later same day): 237/310 (76%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s9_t03_reflect_nottold_lookoff ==
+  overall 286/415 (69%)  fallback 0 (0%)  status {'ok': 415}
+  per day: d1:50% d2:82% d3:64% d4:86% d5:75% d6:85% d7:64% d8:55% d9:62% d10:75% d11:69% d12:58% d13:67% d14:62% d15:75% d16:75% d17:62% d18:43% d19:81% d20:81% d21:81% d22:81% d23:75% d24:73% d25:56% d26:73% d27:62% d28:55% d29:45% d30:69% d31:67%
+  prompt_tokens: min 1103 mean 1558 max 1748 (n=415)
+  cold (first Q/object/day): 52/115 (45%)   warm (later same day): 234/300 (78%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s9_t03_retrieval_nottold_lookoff ==
+  overall 320/415 (77%)  fallback 0 (0%)  status {'ok': 415}
+  per day: d1:50% d2:73% d3:64% d4:64% d5:83% d6:85% d7:71% d8:82% d9:77% d10:81% d11:92% d12:75% d13:78% d14:69% d15:62% d16:75% d17:75% d18:57% d19:88% d20:88% d21:94% d22:81% d23:94% d24:64% d25:89% d26:73% d27:77% d28:91% d29:73% d30:85% d31:75%
+  prompt_tokens: min 992 mean 1204 max 1279 (n=415)
+  cold (first Q/object/day): 73/115 (63%)   warm (later same day): 247/300 (82%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+02:42 watch: 16 arms running, 23 finished, 9 paused, aggregate 84 calls/min over last 10 min (11 arms with history, 11 moving)
+02:46 knowno_person naive hh_s2 exit=0
+hh_s2.jsonl: 112 questions, coverage 0.920 (target 0.90), mean set size 6.06/10 options
+  day 13: coverage 1.000  set 10.00  accuracy(mcq) 0.00
+  day 14: coverage 0.938  set 8.25  accuracy(mcq) 0.00
+  day 15: coverage 0.938  set 4.75  accuracy(mcq) 0.00
+  day 20: coverage 0.812  set 4.62  accuracy(mcq) 0.00
+  day 24: coverage 1.000  set 5.31  accuracy(mcq) 0.00
+  day 25: coverage 0.875  set 4.31  accuracy(mcq) 0.00
+  day 30: coverage 0.875  set 5.19  accuracy(mcq) 0.00
+wrote ../results/confidence_shift_2026-09-20/uq/llm_strategies/knowno_person/naive_hh_s2/hh_s2_knowno.jsonl
+02:47 watch: 16 arms running, 24 finished, 9 paused, aggregate 76 calls/min over last 10 min (10 arms with history, 10 moving)
+02:52 watch: 16 arms running, 24 finished, 9 paused, aggregate 100 calls/min over last 10 min (15 arms with history, 15 moving)
+02:57 watch: 13 arms running, 27 finished, 9 paused, aggregate 81 calls/min over last 10 min (13 arms with history, 13 moving)
+03:02 watch: 11 arms running, 29 finished, 9 paused, aggregate 68 calls/min over last 10 min (11 arms with history, 11 moving)
+03:06 person chain told_entry [retrieval] exit=0
+03:07 watch: 6 arms running, 34 finished, 9 paused, aggregate 34 calls/min over last 10 min (6 arms with history, 6 moving)
+03:12 watch: 6 arms running, 34 finished, 9 paused, aggregate 36 calls/min over last 10 min (6 arms with history, 6 moving)
+03:13 lane retrieval: start+end pass launched
+03:13 lane long-context/two-spells: started (3 hh, 3 streams; server had 0 waiting)
+03:13 re-sequenced into three independent lanes (retrieval / reflection / long-context+two-spells); no pass waits on another memory's tail
+03:13 watch: 19 arms running, 34 finished, 6 paused, aggregate 37 calls/min over last 10 min (9 arms with history, 9 moving)
+03:14 watch: 19 arms running, 34 finished, 6 paused, aggregate 39 calls/min over last 10 min (9 arms with history, 9 moving)
+03:17 watch: 19 arms running, 34 finished, 6 paused, aggregate 30 calls/min over last 10 min (9 arms with history, 9 moving)
+03:19 watch: 19 arms running, 34 finished, 6 paused, aggregate 35 calls/min over last 10 min (9 arms with history, 9 moving)
+03:22 watch: 19 arms running, 34 finished, 6 paused, aggregate 24 calls/min over last 10 min (9 arms with history, 9 moving)
+03:24 watch: 19 arms running, 34 finished, 6 paused, aggregate 61 calls/min over last 10 min (19 arms with history, 19 moving)
+03:25 long-context guard: 10-min aggregate 61 calls/min with LC at 3 streams (27-28 running, 0 waiting) -> above the 40/min guard, LC stays; LC arms ~1.8 calls/min each (prefill-bound), no-message pass on hh_s0-2 ~60 min out
+03:27 knowno_person retrieval hh_s0 exit=0
+hh_s0.jsonl: 112 questions, coverage 0.929 (target 0.90), mean set size 6.14/10 options
+  day 13: coverage 1.000  set 10.00  accuracy(mcq) 0.00
+  day 14: coverage 0.875  set 7.69  accuracy(mcq) 0.00
+  day 15: coverage 1.000  set 6.62  accuracy(mcq) 0.00
+  day 20: coverage 0.938  set 4.19  accuracy(mcq) 0.00
+  day 24: coverage 0.812  set 4.62  accuracy(mcq) 0.00
+  day 25: coverage 1.000  set 5.12  accuracy(mcq) 0.00
+  day 30: coverage 0.875  set 4.75  accuracy(mcq) 0.00
+wrote ../results/confidence_shift_2026-09-20/uq/llm_strategies/knowno_person/retrieval_hh_s0/hh_s0_knowno.jsonl
+03:27 watch: 19 arms running, 35 finished, 6 paused, aggregate 58 calls/min over last 10 min (18 arms with history, 18 moving)
+03:32 watch: 14 arms running, 40 finished, 6 paused, aggregate 43 calls/min over last 10 min (13 arms with history, 13 moving)
+03:37 watch: 12 arms running, 42 finished, 6 paused, aggregate 46 calls/min over last 10 min (12 arms with history, 12 moving)
+03:42 watch: 10 arms running, 44 finished, 6 paused, aggregate 41 calls/min over last 10 min (10 arms with history, 10 moving)
+03:47 person chain told_entryreturn [retrieval] exit=0
+
+== hh_s0_t03_retrieval_told_lookoff ==
+  overall 391/496 (79%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:62% d2:100% d3:81% d4:81% d5:81% d6:75% d7:81% d8:94% d9:81% d10:88% d11:88% d12:100% d13:81% d14:56% d15:50% d16:56% d17:56% d18:88% d19:88% d20:75% d21:94% d22:69% d23:81% d24:75% d25:75% d26:81% d27:88% d28:69% d29:94% d30:62% d31:94%
+  prompt_tokens: min 940 mean 1210 max 1388 (n=496)
+  cold (first Q/object/day): 104/152 (68%)   warm (later same day): 287/344 (83%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15, 24])
+
+== hh_s1_t03_retrieval_told_lookoff ==
+  overall 269/379 (71%)  fallback 0 (0%)  status {'ok': 379}
+  per day: d1:57% d2:44% d3:0% d4:33% d5:78% d6:80% d7:50% d8:67% d9:73% d10:50% d11:78% d12:86% d13:69% d14:75% d15:62% d16:62% d17:81% d18:75% d19:75% d20:81% d21:69% d22:94% d23:75% d24:75% d25:67% d26:67% d27:73% d28:92% d29:94% d30:50% d31:67%
+  prompt_tokens: min 927 mean 1192 max 1397 (n=379)
+  cold (first Q/object/day): 106/176 (60%)   warm (later same day): 163/203 (80%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17, 18, 19] (4 false alarms outside [14, 15, 24])
+
+== hh_s2_t03_retrieval_told_lookoff ==
+  overall 430/496 (87%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:94% d3:94% d4:100% d5:88% d6:88% d7:88% d8:75% d9:88% d10:75% d11:94% d12:100% d13:94% d14:69% d15:81% d16:88% d17:75% d18:81% d19:81% d20:75% d21:75% d22:88% d23:94% d24:94% d25:88% d26:81% d27:100% d28:94% d29:100% d30:88% d31:94%
+  prompt_tokens: min 952 mean 1225 max 1388 (n=496)
+  cold (first Q/object/day): 106/134 (79%)   warm (later same day): 324/362 (90%)
+  noticing: 31 days answered, fired on days [15] (0 false alarms outside [14, 15, 24])
+
+== hh_s3_t03_retrieval_told_lookoff ==
+  overall 206/305 (68%)  fallback 0 (0%)  status {'ok': 305}
+  per day: d1:14% d2:29% d3:71% d4:67% d5:57% d6:78% d7:88% d8:100% d9:71% d10:100% d11:71% d12:71% d13:75% d14:50% d15:69% d16:56% d17:75% d18:56% d19:81% d20:69% d21:81% d22:94% d23:62% d24:33% d25:60% d26:50% d27:67% d28:57% d29:57% d30:83% d31:67%
+  prompt_tokens: min 1023 mean 1276 max 1487 (n=305)
+  cold (first Q/object/day): 106/165 (64%)   warm (later same day): 100/140 (71%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s4_t03_retrieval_told_lookoff ==
+  overall 247/325 (76%)  fallback 0 (0%)  status {'ok': 325}
+  per day: d1:33% d2:73% d3:90% d4:75% d5:70% d6:0% d7:67% d8:75% d9:86% d10:67% d11:83% d12:70% d13:80% d14:75% d15:81% d16:88% d17:81% d18:75% d19:88% d20:69% d21:94% d22:88% d23:88% d24:67% d25:60% d26:50% d27:57% d28:100% d29:80% d30:78% d31:56%
+  prompt_tokens: min 1033 mean 1323 max 1508 (n=325)
+  cold (first Q/object/day): 79/112 (71%)   warm (later same day): 168/213 (79%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s5_t03_retrieval_told_lookoff ==
+  overall 230/287 (80%)  fallback 0 (0%)  status {'ok': 287}
+  per day: d1:40% d2:62% d3:50% d4:100% d5:60% d6:60% d7:71% d8:100% d9:78% d10:100% d11:100% d12:50% d13:100% d14:75% d15:81% d16:81% d17:88% d18:81% d19:81% d20:94% d21:69% d22:81% d23:100% d24:100% d25:67% d26:100% d27:71% d28:56% d29:80% d30:100% d31:86%
+  prompt_tokens: min 919 mean 1185 max 1347 (n=287)
+  cold (first Q/object/day): 69/101 (68%)   warm (later same day): 161/186 (87%)
+  noticing: 31 days answered, fired on days [15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s6_t03_retrieval_told_lookoff ==
+  overall 307/458 (67%)  fallback 0 (0%)  status {'ok': 458}
+  per day: d1:44% d2:60% d3:56% d4:71% d5:53% d6:81% d7:67% d8:56% d9:64% d10:60% d11:71% d12:86% d13:79% d14:62% d15:69% d16:50% d17:56% d18:75% d19:75% d20:62% d21:75% d22:75% d23:75% d24:69% d25:67% d26:67% d27:80% d28:71% d29:44% d30:75% d31:69%
+  prompt_tokens: min 907 mean 1172 max 1370 (n=458)
+  cold (first Q/object/day): 102/183 (56%)   warm (later same day): 205/275 (75%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s7_t03_retrieval_told_lookoff ==
+  overall 409/496 (82%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:75% d3:88% d4:81% d5:62% d6:88% d7:88% d8:81% d9:62% d10:94% d11:88% d12:88% d13:88% d14:69% d15:81% d16:75% d17:81% d18:94% d19:88% d20:88% d21:81% d22:100% d23:88% d24:62% d25:88% d26:81% d27:75% d28:75% d29:100% d30:88% d31:94%
+  prompt_tokens: min 925 mean 1201 max 1367 (n=496)
+  cold (first Q/object/day): 93/130 (72%)   warm (later same day): 316/366 (86%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s8_t03_retrieval_told_lookoff ==
+  overall 333/473 (70%)  fallback 0 (0%)  status {'ok': 473}
+  per day: d1:50% d2:42% d3:75% d4:75% d5:69% d6:67% d7:75% d8:62% d9:69% d10:75% d11:83% d12:75% d13:94% d14:38% d15:50% d16:62% d17:62% d18:62% d19:81% d20:69% d21:81% d22:88% d23:81% d24:86% d25:75% d26:62% d27:67% d28:83% d29:67% d30:69% d31:92%
+  prompt_tokens: min 899 mean 1164 max 1348 (n=473)
+  cold (first Q/object/day): 92/163 (56%)   warm (later same day): 241/310 (78%)
+  noticing: 31 days answered, fired on days [15] (0 false alarms outside [14, 15, 24])
+
+== hh_s9_t03_retrieval_told_lookoff ==
+  overall 319/415 (77%)  fallback 0 (0%)  status {'ok': 415}
+  per day: d1:50% d2:73% d3:64% d4:64% d5:83% d6:85% d7:71% d8:82% d9:77% d10:81% d11:92% d12:75% d13:78% d14:69% d15:81% d16:75% d17:81% d18:57% d19:94% d20:94% d21:81% d22:81% d23:81% d24:82% d25:78% d26:73% d27:69% d28:73% d29:73% d30:77% d31:75%
+  prompt_tokens: min 992 mean 1273 max 1443 (n=415)
+  cold (first Q/object/day): 73/115 (63%)   warm (later same day): 246/300 (82%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+03:47 lane retrieval DONE
+03:47 watch: 4 arms running, 50 finished, 6 paused, aggregate 15 calls/min over last 10 min (4 arms with history, 4 moving)
+03:50 lane reflection: start-message pass exited; start+end pass launched
+
+== hh_s0_t03_reflect_told_lookoff ==
+  overall 351/496 (71%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:62% d2:88% d3:69% d4:81% d5:100% d6:69% d7:62% d8:94% d9:69% d10:94% d11:56% d12:69% d13:62% d14:50% d15:56% d16:56% d17:69% d18:69% d19:75% d20:75% d21:69% d22:62% d23:56% d24:69% d25:88% d26:69% d27:81% d28:56% d29:75% d30:69% d31:75%
+  prompt_tokens: min 999 mean 1553 max 1769 (n=496)
+  cold (first Q/object/day): 74/152 (49%)   warm (later same day): 277/344 (81%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s0_t03_retrieval_told_lookoff ==
+  overall 360/496 (73%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:62% d2:100% d3:81% d4:81% d5:81% d6:75% d7:81% d8:94% d9:81% d10:88% d11:88% d12:100% d13:81% d14:56% d15:50% d16:56% d17:56% d18:88% d19:88% d20:75% d21:94% d22:69% d23:81% d24:44% d25:38% d26:38% d27:69% d28:56% d29:75% d30:50% d31:75%
+  prompt_tokens: min 940 mean 1206 max 1370 (n=496)
+  cold (first Q/object/day): 83/152 (55%)   warm (later same day): 277/344 (81%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s1_t03_reflect_told_lookoff ==
+  overall 266/379 (70%)  fallback 0 (0%)  status {'ok': 379}
+  per day: d1:57% d2:44% d3:33% d4:44% d5:56% d6:73% d7:67% d8:89% d9:82% d10:40% d11:100% d12:86% d13:69% d14:69% d15:62% d16:62% d17:94% d18:75% d19:75% d20:75% d21:81% d22:88% d23:75% d24:58% d25:50% d26:67% d27:67% d28:62% d29:88% d30:50% d31:67%
+  prompt_tokens: min 966 mean 1497 max 1784 (n=379)
+  cold (first Q/object/day): 104/176 (59%)   warm (later same day): 162/203 (80%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17, 18, 19] (4 false alarms outside [14, 15])
+
+== hh_s1_t03_retrieval_told_lookoff ==
+  overall 262/379 (69%)  fallback 0 (0%)  status {'ok': 379}
+  per day: d1:57% d2:44% d3:0% d4:33% d5:78% d6:80% d7:50% d8:67% d9:73% d10:50% d11:78% d12:86% d13:69% d14:75% d15:62% d16:62% d17:81% d18:75% d19:75% d20:81% d21:69% d22:94% d23:75% d24:75% d25:33% d26:56% d27:67% d28:77% d29:88% d30:50% d31:67%
+  prompt_tokens: min 927 mean 1188 max 1380 (n=379)
+  cold (first Q/object/day): 102/176 (58%)   warm (later same day): 160/203 (79%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17, 18, 19] (4 false alarms outside [14, 15])
+
+== hh_s2_t03_reflect_told_lookoff ==
+  overall 400/496 (81%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:56% d2:94% d3:94% d4:94% d5:81% d6:69% d7:94% d8:75% d9:81% d10:75% d11:75% d12:100% d13:100% d14:69% d15:81% d16:100% d17:81% d18:100% d19:75% d20:75% d21:75% d22:81% d23:75% d24:69% d25:94% d26:69% d27:69% d28:69% d29:81% d30:62% d31:88%
+  prompt_tokens: min 1011 mean 1517 max 1760 (n=496)
+  cold (first Q/object/day): 97/134 (72%)   warm (later same day): 303/362 (84%)
+  noticing: 31 days answered, fired on days [15] (0 false alarms outside [14, 15])
+
+== hh_s2_t03_retrieval_told_lookoff ==
+  overall 386/496 (78%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:94% d3:94% d4:100% d5:88% d6:88% d7:88% d8:75% d9:88% d10:75% d11:94% d12:100% d13:94% d14:69% d15:81% d16:88% d17:75% d18:81% d19:81% d20:75% d21:75% d22:88% d23:94% d24:44% d25:50% d26:25% d27:62% d28:69% d29:75% d30:75% d31:62%
+  prompt_tokens: min 952 mean 1221 max 1372 (n=496)
+  cold (first Q/object/day): 94/134 (70%)   warm (later same day): 292/362 (81%)
+  noticing: 31 days answered, fired on days [15] (0 false alarms outside [14, 15])
+
+== hh_s3_t03_reflect_told_lookoff ==
+  overall 214/305 (70%)  fallback 0 (0%)  status {'ok': 305}
+  per day: d1:14% d2:43% d3:71% d4:83% d5:43% d6:67% d7:62% d8:86% d9:71% d10:100% d11:57% d12:71% d13:62% d14:44% d15:62% d16:75% d17:69% d18:75% d19:75% d20:75% d21:69% d22:100% d23:75% d24:50% d25:100% d26:67% d27:67% d28:86% d29:71% d30:83% d31:89%
+  prompt_tokens: min 1101 mean 1608 max 1839 (n=305)
+  cold (first Q/object/day): 112/165 (68%)   warm (later same day): 102/140 (73%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15])
+
+== hh_s3_t03_retrieval_told_lookoff ==
+  overall 207/305 (68%)  fallback 0 (0%)  status {'ok': 305}
+  per day: d1:14% d2:29% d3:71% d4:67% d5:57% d6:78% d7:88% d8:100% d9:71% d10:100% d11:71% d12:71% d13:75% d14:50% d15:69% d16:56% d17:75% d18:56% d19:81% d20:69% d21:81% d22:94% d23:62% d24:67% d25:60% d26:50% d27:50% d28:71% d29:43% d30:100% d31:56%
+  prompt_tokens: min 1023 mean 1273 max 1470 (n=305)
+  cold (first Q/object/day): 107/165 (65%)   warm (later same day): 100/140 (71%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15])
+
+== hh_s4_t03_reflect_told_lookoff ==
+  overall 220/325 (68%)  fallback 0 (0%)  status {'ok': 325}
+  per day: d1:33% d2:45% d3:90% d4:62% d5:40% d6:50% d7:44% d8:75% d9:57% d10:67% d11:83% d12:60% d13:80% d14:75% d15:75% d16:88% d17:75% d18:69% d19:88% d20:62% d21:81% d22:81% d23:75% d24:56% d25:20% d26:67% d27:43% d28:40% d29:80% d30:44% d31:67%
+  prompt_tokens: min 1110 mean 1663 max 1897 (n=325)
+  cold (first Q/object/day): 56/112 (50%)   warm (later same day): 164/213 (77%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15])
+
+== hh_s4_t03_retrieval_told_lookoff ==
+  overall 250/325 (77%)  fallback 0 (0%)  status {'ok': 325}
+  per day: d1:33% d2:73% d3:90% d4:75% d5:70% d6:0% d7:67% d8:75% d9:86% d10:67% d11:83% d12:70% d13:80% d14:75% d15:81% d16:88% d17:81% d18:75% d19:88% d20:69% d21:94% d22:88% d23:88% d24:67% d25:80% d26:83% d27:43% d28:100% d29:70% d30:100% d31:56%
+  prompt_tokens: min 1033 mean 1320 max 1490 (n=325)
+  cold (first Q/object/day): 79/112 (71%)   warm (later same day): 171/213 (80%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15])
+
+== hh_s5_t03_retrieval_told_lookoff ==
+  overall 234/287 (82%)  fallback 0 (0%)  status {'ok': 287}
+  per day: d1:40% d2:62% d3:50% d4:100% d5:60% d6:60% d7:71% d8:100% d9:78% d10:100% d11:100% d12:50% d13:100% d14:75% d15:81% d16:81% d17:88% d18:81% d19:81% d20:94% d21:69% d22:81% d23:100% d24:100% d25:100% d26:100% d27:86% d28:56% d29:100% d30:100% d31:86%
+  prompt_tokens: min 919 mean 1182 max 1330 (n=287)
+  cold (first Q/object/day): 72/101 (71%)   warm (later same day): 162/186 (87%)
+  noticing: 31 days answered, fired on days [15, 16, 17] (2 false alarms outside [14, 15])
+
+== hh_s6_t03_retrieval_told_lookoff ==
+  overall 310/458 (68%)  fallback 0 (0%)  status {'ok': 458}
+  per day: d1:44% d2:60% d3:56% d4:71% d5:53% d6:81% d7:67% d8:56% d9:64% d10:60% d11:71% d12:86% d13:79% d14:62% d15:69% d16:50% d17:56% d18:75% d19:75% d20:62% d21:75% d22:75% d23:75% d24:88% d25:67% d26:60% d27:90% d28:71% d29:56% d30:69% d31:69%
+  prompt_tokens: min 907 mean 1168 max 1353 (n=458)
+  cold (first Q/object/day): 103/183 (56%)   warm (later same day): 207/275 (75%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15])
+
+== hh_s7_t03_retrieval_told_lookoff ==
+  overall 362/496 (73%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:75% d3:88% d4:81% d5:62% d6:88% d7:88% d8:81% d9:62% d10:94% d11:88% d12:88% d13:88% d14:69% d15:81% d16:75% d17:81% d18:94% d19:88% d20:88% d21:81% d22:100% d23:88% d24:44% d25:44% d26:19% d27:38% d28:56% d29:44% d30:56% d31:69%
+  prompt_tokens: min 925 mean 1197 max 1350 (n=496)
+  cold (first Q/object/day): 80/130 (62%)   warm (later same day): 282/366 (77%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15])
+
+== hh_s8_t03_retrieval_told_lookoff ==
+  overall 331/473 (70%)  fallback 0 (0%)  status {'ok': 473}
+  per day: d1:50% d2:42% d3:75% d4:75% d5:69% d6:67% d7:75% d8:62% d9:69% d10:75% d11:83% d12:75% d13:94% d14:38% d15:50% d16:62% d17:62% d18:62% d19:81% d20:69% d21:81% d22:88% d23:81% d24:79% d25:56% d26:75% d27:60% d28:92% d29:60% d30:75% d31:92%
+  prompt_tokens: min 899 mean 1160 max 1331 (n=473)
+  cold (first Q/object/day): 90/163 (55%)   warm (later same day): 241/310 (78%)
+  noticing: 31 days answered, fired on days [15] (0 false alarms outside [14, 15])
+
+== hh_s9_t03_retrieval_told_lookoff ==
+  overall 318/415 (77%)  fallback 0 (0%)  status {'ok': 415}
+  per day: d1:50% d2:73% d3:64% d4:64% d5:83% d6:85% d7:71% d8:82% d9:77% d10:81% d11:92% d12:75% d13:78% d14:69% d15:81% d16:75% d17:81% d18:57% d19:94% d20:94% d21:81% d22:81% d23:81% d24:73% d25:78% d26:73% d27:69% d28:82% d29:73% d30:69% d31:75%
+  prompt_tokens: min 992 mean 1269 max 1425 (n=415)
+  cold (first Q/object/day): 72/115 (63%)   warm (later same day): 246/300 (82%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15])
+03:50 lane two-spells: no-message pass launched (buffer+retrieval, 3 hh)
+03:51 watch: 14 arms running, 51 finished, 6 paused, aggregate 16 calls/min over last 10 min (3 arms with history, 3 moving)
+03:53 watch: 14 arms running, 51 finished, 6 paused, aggregate 11 calls/min over last 10 min (3 arms with history, 3 moving)
+03:58 watch: 14 arms running, 51 finished, 6 paused, aggregate 10 calls/min over last 10 min (3 arms with history, 3 moving)
+04:00 lane long-context: no-message pass exited; start-message next
+
+== hh_s0_t03_longcontext_nottold_lookoff ==
+  overall 370/496 (75%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:56% d2:94% d3:81% d4:88% d5:88% d6:75% d7:69% d8:94% d9:62% d10:94% d11:75% d12:81% d13:75% d14:50% d15:44% d16:56% d17:62% d18:69% d19:81% d20:69% d21:81% d22:62% d23:69% d24:75% d25:88% d26:75% d27:88% d28:56% d29:88% d30:75% d31:94%
+  prompt_tokens: min 1403 mean 10822 max 20831 (n=496)
+  cold (first Q/object/day): 88/152 (58%)   warm (later same day): 282/344 (82%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s0_t03_reflect_nottold_lookoff ==
+  overall 367/496 (74%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:62% d2:88% d3:69% d4:81% d5:100% d6:69% d7:62% d8:94% d9:69% d10:94% d11:56% d12:69% d13:62% d14:44% d15:44% d16:50% d17:69% d18:81% d19:94% d20:88% d21:94% d22:94% d23:81% d24:69% d25:88% d26:75% d27:62% d28:56% d29:75% d30:75% d31:81%
+  prompt_tokens: min 999 mean 1514 max 1803 (n=496)
+  cold (first Q/object/day): 92/152 (61%)   warm (later same day): 275/344 (80%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s0_t03_retrieval_nottold_lookoff ==
+  overall 353/496 (71%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:62% d2:100% d3:81% d4:81% d5:81% d6:75% d7:81% d8:94% d9:81% d10:88% d11:88% d12:100% d13:81% d14:44% d15:31% d16:38% d17:25% d18:50% d19:56% d20:50% d21:44% d22:56% d23:56% d24:75% d25:81% d26:88% d27:94% d28:62% d29:94% d30:81% d31:88%
+  prompt_tokens: min 940 mean 1141 max 1224 (n=496)
+  cold (first Q/object/day): 91/152 (60%)   warm (later same day): 262/344 (76%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s1_t03_longcontext_nottold_lookoff ==
+  overall 237/379 (63%)  fallback 0 (0%)  status {'ok': 379}
+  per day: d1:57% d2:33% d3:0% d4:44% d5:56% d6:80% d7:58% d8:78% d9:55% d10:50% d11:44% d12:86% d13:69% d14:75% d15:75% d16:69% d17:69% d18:56% d19:69% d20:69% d21:56% d22:75% d23:75% d24:67% d25:50% d26:33% d27:60% d28:62% d29:69% d30:50% d31:50%
+  prompt_tokens: min 1446 mean 11553 max 20935 (n=379)
+  cold (first Q/object/day): 80/176 (45%)   warm (later same day): 157/203 (77%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s1_t03_reflect_nottold_lookoff ==
+  overall 269/379 (71%)  fallback 0 (0%)  status {'ok': 379}
+  per day: d1:57% d2:44% d3:33% d4:44% d5:56% d6:73% d7:67% d8:89% d9:82% d10:40% d11:100% d12:86% d13:69% d14:75% d15:62% d16:81% d17:75% d18:56% d19:75% d20:88% d21:75% d22:100% d23:75% d24:67% d25:67% d26:56% d27:67% d28:69% d29:94% d30:50% d31:58%
+  prompt_tokens: min 966 mean 1406 max 1672 (n=379)
+  cold (first Q/object/day): 104/176 (59%)   warm (later same day): 165/203 (81%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s1_t03_retrieval_nottold_lookoff ==
+  overall 255/379 (67%)  fallback 0 (0%)  status {'ok': 379}
+  per day: d1:57% d2:44% d3:0% d4:33% d5:78% d6:80% d7:50% d8:67% d9:73% d10:50% d11:78% d12:86% d13:69% d14:75% d15:62% d16:69% d17:69% d18:56% d19:75% d20:69% d21:75% d22:75% d23:75% d24:83% d25:50% d26:44% d27:73% d28:69% d29:88% d30:50% d31:67%
+  prompt_tokens: min 927 mean 1124 max 1244 (n=379)
+  cold (first Q/object/day): 90/176 (51%)   warm (later same day): 165/203 (81%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s2_t03_longcontext_nottold_lookoff ==
+  overall 382/496 (77%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:50% d2:88% d3:94% d4:94% d5:88% d6:75% d7:88% d8:56% d9:81% d10:69% d11:81% d12:81% d13:81% d14:56% d15:56% d16:69% d17:69% d18:94% d19:75% d20:62% d21:69% d22:81% d23:81% d24:69% d25:81% d26:81% d27:81% d28:75% d29:81% d30:88% d31:94%
+  prompt_tokens: min 1344 mean 12636 max 23530 (n=496)
+  cold (first Q/object/day): 84/134 (63%)   warm (later same day): 298/362 (82%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s2_t03_reflect_nottold_lookoff ==
+  overall 407/496 (82%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:56% d2:94% d3:94% d4:94% d5:81% d6:69% d7:94% d8:75% d9:81% d10:75% d11:75% d12:100% d13:100% d14:38% d15:81% d16:81% d17:81% d18:94% d19:69% d20:81% d21:75% d22:100% d23:81% d24:81% d25:88% d26:69% d27:94% d28:94% d29:81% d30:88% d31:81%
+  prompt_tokens: min 1011 mean 1431 max 1582 (n=496)
+  cold (first Q/object/day): 104/134 (78%)   warm (later same day): 303/362 (84%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s2_t03_retrieval_nottold_lookoff ==
+  overall 372/496 (75%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:94% d3:94% d4:100% d5:88% d6:88% d7:88% d8:75% d9:88% d10:75% d11:94% d12:100% d13:94% d14:31% d15:31% d16:38% d17:44% d18:38% d19:38% d20:50% d21:50% d22:62% d23:56% d24:94% d25:94% d26:88% d27:100% d28:94% d29:100% d30:88% d31:88%
+  prompt_tokens: min 952 mean 1161 max 1236 (n=496)
+  cold (first Q/object/day): 90/134 (67%)   warm (later same day): 282/362 (78%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s3_t03_reflect_nottold_lookoff ==
+  overall 213/305 (70%)  fallback 0 (0%)  status {'ok': 305}
+  per day: d1:14% d2:43% d3:71% d4:83% d5:43% d6:67% d7:62% d8:86% d9:71% d10:100% d11:57% d12:71% d13:62% d14:50% d15:50% d16:69% d17:81% d18:69% d19:81% d20:69% d21:69% d22:88% d23:81% d24:33% d25:100% d26:67% d27:83% d28:86% d29:86% d30:100% d31:78%
+  prompt_tokens: min 1101 mean 1606 max 1836 (n=305)
+  cold (first Q/object/day): 110/165 (67%)   warm (later same day): 103/140 (74%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s3_t03_retrieval_nottold_lookoff ==
+  overall 208/305 (68%)  fallback 0 (0%)  status {'ok': 305}
+  per day: d1:14% d2:29% d3:71% d4:67% d5:57% d6:78% d7:88% d8:100% d9:71% d10:100% d11:71% d12:71% d13:75% d14:56% d15:44% d16:69% d17:62% d18:56% d19:69% d20:69% d21:75% d22:88% d23:69% d24:67% d25:80% d26:50% d27:67% d28:100% d29:71% d30:100% d31:67%
+  prompt_tokens: min 1023 mean 1209 max 1334 (n=305)
+  cold (first Q/object/day): 108/165 (65%)   warm (later same day): 100/140 (71%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s4_t03_reflect_nottold_lookoff ==
+  overall 235/325 (72%)  fallback 0 (0%)  status {'ok': 325}
+  per day: d1:33% d2:45% d3:90% d4:62% d5:40% d6:50% d7:44% d8:75% d9:57% d10:67% d11:83% d12:60% d13:80% d14:62% d15:75% d16:94% d17:81% d18:75% d19:94% d20:81% d21:88% d22:94% d23:88% d24:67% d25:40% d26:100% d27:57% d28:60% d29:70% d30:67% d31:44%
+  prompt_tokens: min 1110 mean 1587 max 1729 (n=325)
+  cold (first Q/object/day): 60/112 (54%)   warm (later same day): 175/213 (82%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s4_t03_retrieval_nottold_lookoff ==
+  overall 237/325 (73%)  fallback 0 (0%)  status {'ok': 325}
+  per day: d1:33% d2:73% d3:90% d4:75% d5:70% d6:0% d7:67% d8:75% d9:86% d10:67% d11:83% d12:70% d13:80% d14:56% d15:75% d16:88% d17:75% d18:75% d19:75% d20:62% d21:88% d22:81% d23:75% d24:78% d25:60% d26:67% d27:57% d28:100% d29:80% d30:78% d31:56%
+  prompt_tokens: min 1033 mean 1252 max 1344 (n=325)
+  cold (first Q/object/day): 68/112 (61%)   warm (later same day): 169/213 (79%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s5_t03_longcontext_nottold_lookoff ==
+  overall 200/287 (70%)  fallback 0 (0%)  status {'ok': 287}
+  per day: d1:20% d2:75% d3:50% d4:75% d5:40% d6:60% d7:57% d8:33% d9:67% d10:60% d11:40% d12:25% d13:83% d14:69% d15:75% d16:75% d17:94% d18:62% d19:62% d20:88% d21:69% d22:69% d23:100% d24:50% d25:67% d26:50% d27:86% d28:67% d29:60% d30:71% d31:100%
+  prompt_tokens: min 1457 mean 12500 max 22527 (n=287)
+  cold (first Q/object/day): 46/101 (46%)   warm (later same day): 154/186 (83%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s5_t03_reflect_nottold_lookoff ==
+  overall 218/287 (76%)  fallback 0 (0%)  status {'ok': 287}
+  per day: d1:40% d2:62% d3:25% d4:25% d5:60% d6:60% d7:43% d8:50% d9:78% d10:100% d11:100% d12:75% d13:50% d14:69% d15:88% d16:94% d17:88% d18:88% d19:88% d20:94% d21:75% d22:81% d23:88% d24:75% d25:67% d26:75% d27:43% d28:67% d29:60% d30:86% d31:100%
+  prompt_tokens: min 1147 mean 1436 max 1585 (n=287)
+  cold (first Q/object/day): 58/101 (57%)   warm (later same day): 160/186 (86%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s5_t03_retrieval_nottold_lookoff ==
+  overall 227/287 (79%)  fallback 0 (0%)  status {'ok': 287}
+  per day: d1:40% d2:62% d3:50% d4:100% d5:60% d6:60% d7:71% d8:100% d9:78% d10:100% d11:100% d12:50% d13:100% d14:75% d15:69% d16:81% d17:88% d18:75% d19:75% d20:88% d21:75% d22:75% d23:81% d24:100% d25:83% d26:100% d27:86% d28:67% d29:100% d30:100% d31:100%
+  prompt_tokens: min 919 mean 1115 max 1194 (n=287)
+  cold (first Q/object/day): 65/101 (64%)   warm (later same day): 162/186 (87%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s6_t03_reflect_nottold_lookoff ==
+  overall 287/458 (63%)  fallback 0 (0%)  status {'ok': 458}
+  per day: d1:56% d2:53% d3:50% d4:86% d5:67% d6:88% d7:67% d8:69% d9:79% d10:33% d11:57% d12:86% d13:71% d14:69% d15:50% d16:56% d17:31% d18:56% d19:62% d20:62% d21:75% d22:56% d23:44% d24:69% d25:60% d26:67% d27:80% d28:71% d29:33% d30:69% d31:69%
+  prompt_tokens: min 1057 mean 1439 max 1551 (n=458)
+  cold (first Q/object/day): 86/183 (47%)   warm (later same day): 201/275 (73%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s6_t03_retrieval_nottold_lookoff ==
+  overall 302/458 (66%)  fallback 0 (0%)  status {'ok': 458}
+  per day: d1:44% d2:60% d3:56% d4:71% d5:53% d6:81% d7:67% d8:56% d9:64% d10:60% d11:71% d12:86% d13:79% d14:56% d15:69% d16:50% d17:62% d18:62% d19:69% d20:62% d21:69% d22:50% d23:75% d24:75% d25:67% d26:67% d27:90% d28:79% d29:56% d30:75% d31:62%
+  prompt_tokens: min 907 mean 1108 max 1217 (n=458)
+  cold (first Q/object/day): 93/183 (51%)   warm (later same day): 209/275 (76%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s7_t03_reflect_nottold_lookoff ==
+  overall 392/496 (79%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:88% d3:100% d4:88% d5:56% d6:88% d7:69% d8:81% d9:69% d10:88% d11:88% d12:75% d13:75% d14:50% d15:75% d16:88% d17:100% d18:81% d19:81% d20:81% d21:100% d22:100% d23:81% d24:56% d25:88% d26:81% d27:69% d28:75% d29:69% d30:75% d31:69%
+  prompt_tokens: min 1062 mean 1463 max 1624 (n=496)
+  cold (first Q/object/day): 88/130 (68%)   warm (later same day): 304/366 (83%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s7_t03_retrieval_nottold_lookoff ==
+  overall 331/496 (67%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:75% d3:88% d4:81% d5:62% d6:88% d7:88% d8:81% d9:62% d10:94% d11:88% d12:88% d13:88% d14:25% d15:38% d16:44% d17:38% d18:44% d19:50% d20:25% d21:25% d22:38% d23:44% d24:62% d25:88% d26:75% d27:75% d28:75% d29:88% d30:94% d31:94%
+  prompt_tokens: min 925 mean 1137 max 1214 (n=496)
+  cold (first Q/object/day): 74/130 (57%)   warm (later same day): 257/366 (70%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s8_t03_reflect_nottold_lookoff ==
+  overall 320/473 (68%)  fallback 0 (0%)  status {'ok': 473}
+  per day: d1:56% d2:42% d3:81% d4:75% d5:56% d6:67% d7:50% d8:62% d9:62% d10:56% d11:83% d12:75% d13:75% d14:56% d15:44% d16:75% d17:69% d18:69% d19:69% d20:75% d21:81% d22:75% d23:75% d24:64% d25:56% d26:62% d27:60% d28:83% d29:67% d30:94% d31:85%
+  prompt_tokens: min 1051 mean 1498 max 1713 (n=473)
+  cold (first Q/object/day): 94/163 (58%)   warm (later same day): 226/310 (73%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s8_t03_retrieval_nottold_lookoff ==
+  overall 326/473 (69%)  fallback 0 (0%)  status {'ok': 473}
+  per day: d1:50% d2:42% d3:75% d4:75% d5:69% d6:67% d7:75% d8:62% d9:69% d10:75% d11:83% d12:75% d13:94% d14:31% d15:62% d16:62% d17:50% d18:75% d19:62% d20:62% d21:62% d22:62% d23:75% d24:86% d25:62% d26:69% d27:80% d28:83% d29:93% d30:69% d31:85%
+  prompt_tokens: min 899 mean 1100 max 1195 (n=473)
+  cold (first Q/object/day): 89/163 (55%)   warm (later same day): 237/310 (76%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s9_t03_reflect_nottold_lookoff ==
+  overall 286/415 (69%)  fallback 0 (0%)  status {'ok': 415}
+  per day: d1:50% d2:82% d3:64% d4:86% d5:75% d6:85% d7:64% d8:55% d9:62% d10:75% d11:69% d12:58% d13:67% d14:62% d15:75% d16:75% d17:62% d18:43% d19:81% d20:81% d21:81% d22:81% d23:75% d24:73% d25:56% d26:73% d27:62% d28:55% d29:45% d30:69% d31:67%
+  prompt_tokens: min 1103 mean 1558 max 1748 (n=415)
+  cold (first Q/object/day): 52/115 (45%)   warm (later same day): 234/300 (78%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+
+== hh_s9_t03_retrieval_nottold_lookoff ==
+  overall 320/415 (77%)  fallback 0 (0%)  status {'ok': 415}
+  per day: d1:50% d2:73% d3:64% d4:64% d5:83% d6:85% d7:71% d8:82% d9:77% d10:81% d11:92% d12:75% d13:78% d14:69% d15:62% d16:75% d17:75% d18:57% d19:88% d20:88% d21:94% d22:81% d23:94% d24:64% d25:89% d26:73% d27:77% d28:91% d29:73% d30:85% d31:75%
+  prompt_tokens: min 992 mean 1204 max 1279 (n=415)
+  cold (first Q/object/day): 73/115 (63%)   warm (later same day): 247/300 (82%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15])
+04:03 watch: 15 arms running, 53 finished, 6 paused, aggregate 52 calls/min over last 10 min (12 arms with history, 12 moving)
+04:08 watch: 15 arms running, 53 finished, 6 paused, aggregate 54 calls/min over last 10 min (12 arms with history, 12 moving)
+04:09 knowno_person retrieval hh_s1 exit=0
+hh_s1.jsonl: 85 questions, coverage 0.894 (target 0.90), mean set size 5.14/10 options
+  day 13: coverage 1.000  set 10.00  accuracy(mcq) 0.00
+  day 14: coverage 0.938  set 6.31  accuracy(mcq) 0.00
+  day 15: coverage 0.875  set 3.19  accuracy(mcq) 0.00
+  day 20: coverage 0.875  set 3.50  accuracy(mcq) 0.00
+  day 24: coverage 0.833  set 4.25  accuracy(mcq) 0.00
+  day 25: coverage 1.000  set 4.17  accuracy(mcq) 0.00
+  day 30: coverage 0.667  set 3.83  accuracy(mcq) 0.00
+wrote ../results/confidence_shift_2026-09-20/uq/llm_strategies/knowno_person/retrieval_hh_s1/hh_s1_knowno.jsonl
+04:13 watch: 13 arms running, 56 finished, 6 paused, aggregate 55 calls/min over last 10 min (12 arms with history, 12 moving)
+04:15 watch: 13 arms running, 56 finished, 6 paused, aggregate 71 calls/min over last 10 min (12 arms with history, 12 moving)
+04:18 watch: 13 arms running, 56 finished, 6 paused, aggregate 53 calls/min over last 10 min (12 arms with history, 12 moving)
+04:18 watch: 13 arms running, 56 finished, 6 paused, aggregate 56 calls/min over last 10 min (12 arms with history, 12 moving)
+04:21 watch: 12 arms running, 57 finished, 6 paused, aggregate 68 calls/min over last 10 min (11 arms with history, 11 moving)
+04:23 watch: 12 arms running, 57 finished, 6 paused, aggregate 52 calls/min over last 10 min (12 arms with history, 12 moving)
+04:28 watch: 11 arms running, 58 finished, 6 paused, aggregate 47 calls/min over last 10 min (11 arms with history, 11 moving)
+04:28 person chain told_entryreturn [reflection5] exit=0
+
+== hh_s0_t03_reflect_told_lookoff ==
+  overall 353/496 (71%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:62% d2:88% d3:69% d4:81% d5:100% d6:69% d7:62% d8:94% d9:69% d10:94% d11:56% d12:69% d13:62% d14:50% d15:56% d16:56% d17:69% d18:69% d19:75% d20:75% d21:69% d22:62% d23:56% d24:69% d25:88% d26:69% d27:75% d28:50% d29:81% d30:75% d31:88%
+  prompt_tokens: min 999 mean 1546 max 1769 (n=496)
+  cold (first Q/object/day): 77/152 (51%)   warm (later same day): 276/344 (80%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15, 24])
+
+== hh_s0_t03_retrieval_told_lookoff ==
+  overall 391/496 (79%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:62% d2:100% d3:81% d4:81% d5:81% d6:75% d7:81% d8:94% d9:81% d10:88% d11:88% d12:100% d13:81% d14:56% d15:50% d16:56% d17:56% d18:88% d19:88% d20:75% d21:94% d22:69% d23:81% d24:75% d25:75% d26:81% d27:88% d28:69% d29:94% d30:62% d31:94%
+  prompt_tokens: min 940 mean 1210 max 1388 (n=496)
+  cold (first Q/object/day): 104/152 (68%)   warm (later same day): 287/344 (83%)
+  noticing: 31 days answered, fired on days [] (0 false alarms outside [14, 15, 24])
+
+== hh_s1_t03_reflect_told_lookoff ==
+  overall 266/379 (70%)  fallback 0 (0%)  status {'ok': 379}
+  per day: d1:57% d2:44% d3:33% d4:44% d5:56% d6:73% d7:67% d8:89% d9:82% d10:40% d11:100% d12:86% d13:69% d14:69% d15:62% d16:62% d17:94% d18:75% d19:75% d20:75% d21:81% d22:88% d23:75% d24:58% d25:50% d26:67% d27:67% d28:54% d29:88% d30:67% d31:67%
+  prompt_tokens: min 966 mean 1504 max 1799 (n=379)
+  cold (first Q/object/day): 102/176 (58%)   warm (later same day): 164/203 (81%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17, 18, 19] (4 false alarms outside [14, 15, 24])
+
+== hh_s1_t03_retrieval_told_lookoff ==
+  overall 269/379 (71%)  fallback 0 (0%)  status {'ok': 379}
+  per day: d1:57% d2:44% d3:0% d4:33% d5:78% d6:80% d7:50% d8:67% d9:73% d10:50% d11:78% d12:86% d13:69% d14:75% d15:62% d16:62% d17:81% d18:75% d19:75% d20:81% d21:69% d22:94% d23:75% d24:75% d25:67% d26:67% d27:73% d28:92% d29:94% d30:50% d31:67%
+  prompt_tokens: min 927 mean 1192 max 1397 (n=379)
+  cold (first Q/object/day): 106/176 (60%)   warm (later same day): 163/203 (80%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17, 18, 19] (4 false alarms outside [14, 15, 24])
+
+== hh_s2_t03_reflect_told_lookoff ==
+  overall 411/496 (83%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:56% d2:94% d3:94% d4:94% d5:81% d6:69% d7:94% d8:75% d9:81% d10:75% d11:75% d12:100% d13:100% d14:69% d15:81% d16:100% d17:81% d18:100% d19:75% d20:75% d21:75% d22:81% d23:75% d24:69% d25:88% d26:69% d27:94% d28:94% d29:81% d30:88% d31:88%
+  prompt_tokens: min 1011 mean 1525 max 1791 (n=496)
+  cold (first Q/object/day): 104/134 (78%)   warm (later same day): 307/362 (85%)
+  noticing: 31 days answered, fired on days [15] (0 false alarms outside [14, 15, 24])
+
+== hh_s2_t03_retrieval_told_lookoff ==
+  overall 430/496 (87%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:94% d3:94% d4:100% d5:88% d6:88% d7:88% d8:75% d9:88% d10:75% d11:94% d12:100% d13:94% d14:69% d15:81% d16:88% d17:75% d18:81% d19:81% d20:75% d21:75% d22:88% d23:94% d24:94% d25:88% d26:81% d27:100% d28:94% d29:100% d30:88% d31:94%
+  prompt_tokens: min 952 mean 1225 max 1388 (n=496)
+  cold (first Q/object/day): 106/134 (79%)   warm (later same day): 324/362 (90%)
+  noticing: 31 days answered, fired on days [15] (0 false alarms outside [14, 15, 24])
+
+== hh_s3_t03_reflect_told_lookoff ==
+  overall 210/305 (69%)  fallback 0 (0%)  status {'ok': 305}
+  per day: d1:14% d2:43% d3:71% d4:83% d5:43% d6:67% d7:62% d8:86% d9:71% d10:100% d11:57% d12:71% d13:62% d14:44% d15:62% d16:75% d17:69% d18:75% d19:75% d20:75% d21:69% d22:100% d23:75% d24:50% d25:80% d26:67% d27:33% d28:86% d29:71% d30:100% d31:67%
+  prompt_tokens: min 1101 mean 1609 max 1860 (n=305)
+  cold (first Q/object/day): 109/165 (66%)   warm (later same day): 101/140 (72%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s3_t03_retrieval_told_lookoff ==
+  overall 206/305 (68%)  fallback 0 (0%)  status {'ok': 305}
+  per day: d1:14% d2:29% d3:71% d4:67% d5:57% d6:78% d7:88% d8:100% d9:71% d10:100% d11:71% d12:71% d13:75% d14:50% d15:69% d16:56% d17:75% d18:56% d19:81% d20:69% d21:81% d22:94% d23:62% d24:33% d25:60% d26:50% d27:67% d28:57% d29:57% d30:83% d31:67%
+  prompt_tokens: min 1023 mean 1276 max 1487 (n=305)
+  cold (first Q/object/day): 106/165 (64%)   warm (later same day): 100/140 (71%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s4_t03_reflect_told_lookoff ==
+  overall 210/325 (65%)  fallback 0 (0%)  status {'ok': 325}
+  per day: d1:33% d2:45% d3:90% d4:62% d5:40% d6:50% d7:44% d8:75% d9:57% d10:67% d11:83% d12:60% d13:80% d14:75% d15:75% d16:88% d17:75% d18:69% d19:88% d20:62% d21:81% d22:81% d23:75% d24:56% d25:20% d26:33% d27:43% d28:20% d29:50% d30:33% d31:33%
+  prompt_tokens: min 1110 mean 1665 max 1886 (n=325)
+  cold (first Q/object/day): 51/112 (46%)   warm (later same day): 159/213 (75%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s4_t03_retrieval_told_lookoff ==
+  overall 247/325 (76%)  fallback 0 (0%)  status {'ok': 325}
+  per day: d1:33% d2:73% d3:90% d4:75% d5:70% d6:0% d7:67% d8:75% d9:86% d10:67% d11:83% d12:70% d13:80% d14:75% d15:81% d16:88% d17:81% d18:75% d19:88% d20:69% d21:94% d22:88% d23:88% d24:67% d25:60% d26:50% d27:57% d28:100% d29:80% d30:78% d31:56%
+  prompt_tokens: min 1033 mean 1323 max 1508 (n=325)
+  cold (first Q/object/day): 79/112 (71%)   warm (later same day): 168/213 (79%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s5_t03_retrieval_told_lookoff ==
+  overall 230/287 (80%)  fallback 0 (0%)  status {'ok': 287}
+  per day: d1:40% d2:62% d3:50% d4:100% d5:60% d6:60% d7:71% d8:100% d9:78% d10:100% d11:100% d12:50% d13:100% d14:75% d15:81% d16:81% d17:88% d18:81% d19:81% d20:94% d21:69% d22:81% d23:100% d24:100% d25:67% d26:100% d27:71% d28:56% d29:80% d30:100% d31:86%
+  prompt_tokens: min 919 mean 1185 max 1347 (n=287)
+  cold (first Q/object/day): 69/101 (68%)   warm (later same day): 161/186 (87%)
+  noticing: 31 days answered, fired on days [15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s6_t03_retrieval_told_lookoff ==
+  overall 307/458 (67%)  fallback 0 (0%)  status {'ok': 458}
+  per day: d1:44% d2:60% d3:56% d4:71% d5:53% d6:81% d7:67% d8:56% d9:64% d10:60% d11:71% d12:86% d13:79% d14:62% d15:69% d16:50% d17:56% d18:75% d19:75% d20:62% d21:75% d22:75% d23:75% d24:69% d25:67% d26:67% d27:80% d28:71% d29:44% d30:75% d31:69%
+  prompt_tokens: min 907 mean 1172 max 1370 (n=458)
+  cold (first Q/object/day): 102/183 (56%)   warm (later same day): 205/275 (75%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s7_t03_retrieval_told_lookoff ==
+  overall 409/496 (82%)  fallback 0 (0%)  status {'ok': 496}
+  per day: d1:69% d2:75% d3:88% d4:81% d5:62% d6:88% d7:88% d8:81% d9:62% d10:94% d11:88% d12:88% d13:88% d14:69% d15:81% d16:75% d17:81% d18:94% d19:88% d20:88% d21:81% d22:100% d23:88% d24:62% d25:88% d26:81% d27:75% d28:75% d29:100% d30:88% d31:94%
+  prompt_tokens: min 925 mean 1201 max 1367 (n=496)
+  cold (first Q/object/day): 93/130 (72%)   warm (later same day): 316/366 (86%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+
+== hh_s8_t03_retrieval_told_lookoff ==
+  overall 333/473 (70%)  fallback 0 (0%)  status {'ok': 473}
+  per day: d1:50% d2:42% d3:75% d4:75% d5:69% d6:67% d7:75% d8:62% d9:69% d10:75% d11:83% d12:75% d13:94% d14:38% d15:50% d16:62% d17:62% d18:62% d19:81% d20:69% d21:81% d22:88% d23:81% d24:86% d25:75% d26:62% d27:67% d28:83% d29:67% d30:69% d31:92%
+  prompt_tokens: min 899 mean 1164 max 1348 (n=473)
+  cold (first Q/object/day): 92/163 (56%)   warm (later same day): 241/310 (78%)
+  noticing: 31 days answered, fired on days [15] (0 false alarms outside [14, 15, 24])
+
+== hh_s9_t03_retrieval_told_lookoff ==
+  overall 319/415 (77%)  fallback 0 (0%)  status {'ok': 415}
+  per day: d1:50% d2:73% d3:64% d4:64% d5:83% d6:85% d7:71% d8:82% d9:77% d10:81% d11:92% d12:75% d13:78% d14:69% d15:81% d16:75% d17:81% d18:57% d19:94% d20:94% d21:81% d22:81% d23:81% d24:82% d25:78% d26:73% d27:69% d28:73% d29:73% d30:77% d31:75%
+  prompt_tokens: min 992 mean 1273 max 1443 (n=415)
+  cold (first Q/object/day): 73/115 (63%)   warm (later same day): 246/300 (82%)
+  noticing: 31 days answered, fired on days [14, 15, 16, 17] (2 false alarms outside [14, 15, 24])
+04:28 lane reflection DONE
+04:30 lane long-context: start+end pass launched in parallel with start-message (6 LC streams total)
+04:30 lane two-spells: start-message pass launched in parallel with no-message
+04:33 watch: 19 arms running, 59 finished, 6 paused, aggregate 42 calls/min over last 10 min (10 arms with history, 10 moving)
+04:33 watch: 19 arms running, 59 finished, 6 paused, aggregate 45 calls/min over last 10 min (10 arms with history, 10 moving)
+04:37 watch: 19 arms running, 59 finished, 6 paused, aggregate 60 calls/min over last 10 min (10 arms with history, 10 moving)
+04:38 watch: 19 arms running, 59 finished, 6 paused, aggregate 40 calls/min over last 10 min (10 arms with history, 10 moving)
+04:41 watch: 19 arms running, 59 finished, 6 paused, aggregate 50 calls/min over last 10 min (10 arms with history, 10 moving)
+04:42 watch: 19 arms running, 59 finished, 6 paused, aggregate 51 calls/min over last 10 min (10 arms with history, 10 moving)
+04:43 watch: 19 arms running, 59 finished, 6 paused, aggregate 65 calls/min over last 10 min (19 arms with history, 19 moving)
+04:48 watch: 19 arms running, 59 finished, 6 paused, aggregate 50 calls/min over last 10 min (19 arms with history, 19 moving)
+04:53 watch: 19 arms running, 59 finished, 6 paused, aggregate 47 calls/min over last 10 min (19 arms with history, 19 moving)
+04:58 watch: 19 arms running, 59 finished, 6 paused, aggregate 45 calls/min over last 10 min (19 arms with history, 19 moving)
+05:03 watch: 19 arms running, 59 finished, 6 paused, aggregate 45 calls/min over last 10 min (19 arms with history, 19 moving)

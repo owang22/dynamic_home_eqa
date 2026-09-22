@@ -1,0 +1,22 @@
+calendar:
+- name: lead
+  days:
+  - 0
+  - 13
+  day_kind: weekday
+  suppress_random_events: true
+- name: guests
+  days:
+  - 14
+  - 23
+  day_kind: weekday
+  force_events:
+  - event: guest_visit
+    resident: household
+  suppress_random_events: true
+- name: return
+  days:
+  - 24
+  - 31
+  day_kind: weekday
+  suppress_random_events: true

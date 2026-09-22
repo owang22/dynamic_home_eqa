@@ -74,6 +74,11 @@ td.ece{font-weight:600}
 <h1>Routine Shift Testbench</h1>
 <p class="lead">A home robot answers “where is X?” every day. Ten simulated households run a normal routine for two weeks, then everyone (or one person) is off sick for ten days, then life returns to normal. The question is not whether a method answers well — it is whether it <em>learns</em> the routine, <em>notices</em> when the routine breaks, <em>adapts</em> to the new one, and copes when the old routine comes back. And separately: whether it <em>knows</em> any of that — whether the confidence it states tracks how often it is actually right.</p>
 
+<div class="panel" id="gist" style="margin-block:6px 18px;border-left:4px solid var(--s1)">
+  <h3 style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap"><span>What we found</span><span class="muted" style="font-weight:400" id="gistwhen"></span></h3>
+  <ul id="gistlist" style="margin:6px 0 2px;padding-left:20px;font-size:14.5px;line-height:1.5"></ul>
+</div>
+
 <div class="steps" role="group" aria-label="the story in four steps">
   <button class="step on" data-step="learn"><b>1 · Learn</b><span>Over the first two weeks every learner climbs from ~45% to 80–85%. “Last seen” never learns: it stays at ~50%.</span></button>
   <button class="step" data-step="break"><b>2 · Break</b><span>On the first sick day accuracy falls by 40 points. Things are no longer where the routine puts them.</span></button>
@@ -82,7 +87,7 @@ td.ece{font-weight:600}
 </div>
 
 <div class="controls">
-  <label>households <select id="regime"><option value="household">everyone sick · households 1–10</option><option value="household_rep">everyone sick · households 11–20 (replication)</option><option value="person">one person sick · that person's things</option></select></label>
+  <label>households <select id="regime"><option value="household">everyone sick · households 1–10</option><option value="household_rep">everyone sick · households 11–20 (replication)</option><option value="person">one person sick · that person's things</option><option value="person2x">one person sick, twice · that person's things</option></select></label>
   <label>questions <select id="split"><option value="all">all questions</option><option value="moved">only objects that moved since the night round</option></select></label>
   <label><input type="checkbox" id="bands" checked> show ±1 sd across households</label>
   <label><input type="checkbox" id="more"> more methods</label>
@@ -103,7 +108,7 @@ td.ece{font-weight:600}
 <p>The gap, in percentage points: mean stated confidence minus accuracy, one line per method per day, pooled over households (±1 sd across households). A flat line near zero through the shift is a method whose confidence can be trusted for deciding where to look; a jump <em>up</em> at day 14 is confident-and-wrong; a line sitting below zero throughout is underconfident by definition, not by tracking.</p>
 <p>Two readings, because a method can be honest about <em>level</em> without being honest about <em>tracking</em>, or the other way round. <b>As stated</b> is the method's own number. <b>Lead-day calibrated</b> fits a monotone translation from stated confidence to observed accuracy using only the lead-up days (1–13), then applies that same translation everywhere — including back onto the lead-up itself, where the gap should now sit near zero by construction. What is left after that translation, especially on days 14–16 and 24–26, is the real signal: does the method's sense of its own accuracy keep up when the routine breaks, or does the translation that worked all lead-up stop working the moment the routine does?</p>
 <div class="controls" style="position:static;border:0;padding-block:0 10px">
-  <label>households <select id="gapreg"><option value="household">everyone sick · households 1–10</option><option value="person">one person sick · that person's things</option><option value="partial">one person sick · everyone's things asked</option></select></label>
+  <label>households <select id="gapreg"><option value="household">everyone sick · households 1–10</option><option value="person">one person sick · that person's things</option><option value="partial">one person sick · everyone's things asked</option><option value="person2x">one person sick, twice</option></select></label>
   <label>confidence <select id="gapmode"><option value="raw">as stated</option><option value="leadcal">lead-day calibrated</option></select></label>
 </div>
 <div class="chart-wrap"><svg id="gap" viewBox="0 0 1000 320" role="img" aria-label="calibration gap per day"></svg><div class="tip" id="gaptip"></div></div>
@@ -188,7 +193,8 @@ const GAP_EXTRA_SERIES = [
 ];
 function gapSeriesInfo(k){ return SERIES.find(s=>s.k===k) || GAP_EXTRA_SERIES.find(s=>s.k===k); }
 const GAP_COMPANION = {bma:["bma_person"], detector3d:["detector3d_person","oracle72"]};
-const GAP_STAGES = [{name:"lead",a:1,b:13},{name:"sick",a:14,b:23},{name:"return",a:24,b:31}];
+const GAP_STAGES_DEFAULT = [{name:"lead",a:1,b:13},{name:"sick",a:14,b:23},{name:"return",a:24,b:31}];
+function gapStages(reg){ return (DATA[reg] && DATA[reg].stages) ? stagesOf(reg) : GAP_STAGES_DEFAULT; }
 const $ = s => document.querySelector(s);
 const MIN_N = 10;   // a day (or window) needs at least this many pooled answers before a number is drawn or printed
 
@@ -220,8 +226,8 @@ function eceOf(bins){ if(!bins) return null; let nTot=0; for(const b of bins) nT
 function pooled(reg, key, split, days){ const A=DATA[reg].agents[key]; if(!A) return null; let n=0,ok=0; for(const hh of Object.keys(A)) for(const d of days){ n+=A[hh][split][d][0]; ok+=A[hh][split][d][1]; } return n? 100*ok/n : null; }
 function hhStage(reg, key, split, days){ const A=DATA[reg].agents[key]; if(!A) return null; const vals=[]; for(const hh of Object.keys(A)){ let n=0,ok=0; for(const d of days){ n+=A[hh][split][d][0]; ok+=A[hh][split][d][1]; } if(n) vals.push(100*ok/n);} const m=vals.reduce((a,b)=>a+b,0)/vals.length; const s=vals.length>1?Math.sqrt(vals.reduce((a,b)=>a+(b-m)**2,0)/(vals.length-1)):0; return {m,s,k:vals.length}; }
 function stagesOf(reg){ const R=DATA[reg]; const out=[]; let cur=null; for(let d=1; d<R.days; d++){ const st=R.stages[String(d)]||"plain"; if(!cur||cur.name!==st){ cur={name:st,a:d,b:d}; out.push(cur);} else cur.b=d; } return out; }
-const STAGE_LABEL = {lead:"lead-up (normal routine)", sick:"sick spell", return:"return to normal"};
-const STAGE_FILL = {sick:"--shift", return:"--return"};
+const STAGE_LABEL = {lead:"lead-up (normal routine)", sick:"sick spell", return:"return to normal", sick2:"sick again", return2:"back again"};
+const STAGE_FILL = {sick:"--shift", return:"--return", sick2:"--shift", return2:"--return"};
 
 function renderLegend(){
   const L=$("#legend"); L.innerHTML="";
@@ -448,7 +454,7 @@ function renderGap(){
   ymin=Math.floor((ymin-4)/10)*10; ymax=Math.ceil((ymax+4)/10)*10;
   const y=v=>T+(ymax-v)*(H-T-B)/(ymax-ymin);
   let g="";
-  for(const st of GAP_STAGES){ const f=STAGE_FILL[st.name]; if(f) g+=`<rect x="${(x(st.a)-8).toFixed(1)}" y="${T}" width="${(x(st.b)-x(st.a)+16).toFixed(1)}" height="${H-T-B}" fill="var(${f})" opacity="0.5"/>`;
+  for(const st of gapStages(reg)){ const f=STAGE_FILL[st.name]; if(f) g+=`<rect x="${(x(st.a)-8).toFixed(1)}" y="${T}" width="${(x(st.b)-x(st.a)+16).toFixed(1)}" height="${H-T-B}" fill="var(${f})" opacity="0.5"/>`;
     g+=`<text class="stg" x="${((x(st.a)+x(st.b))/2).toFixed(1)}" y="${T-6}" text-anchor="middle">${STAGE_LABEL[st.name]||st.name}</text>`; }
   const step = (ymax-ymin)>60?20:10;
   for(let v=Math.ceil(ymin/step)*step; v<=ymax; v+=step) g+=`<line class="grid" x1="${L}" x2="${W-Rt}" y1="${y(v).toFixed(1)}" y2="${y(v).toFixed(1)}"/><text x="${L-8}" y="${(y(v)+4).toFixed(1)}" text-anchor="end">${v>0?"+":""}${v}</text>`;
@@ -479,7 +485,7 @@ function hoverGap(ev){
   const d=Math.round((px-geom.L)/((geom.W-geom.L-geom.Rt)/(geom.nd-2)))+1; const xh=$("#gapxh");
   if(d<1||d>=geom.nd){ $("#gaptip").style.display="none"; if(xh) xh.style.display="none"; return; }
   const xx=geom.L+(d-1)*(geom.W-geom.L-geom.Rt)/(geom.nd-2); xh.setAttribute("x1",xx); xh.setAttribute("x2",xx); xh.style.display="";
-  let st="plain"; for(const s2 of GAP_STAGES) if(d>=s2.a&&d<=s2.b) st=s2.name;
+  let st="plain"; for(const s2 of gapStages(state.gapReg)) if(d>=s2.a&&d<=s2.b) st=s2.name;
   let rows=`<div style="margin-bottom:4px"><b>day ${d}</b> · ${STAGE_LABEL[st]||st}</div>`;
   const reg=state.gapReg, mode=state.gapMode;
   for(const {s,key} of gapSeries()){ const D=dailyGap(reg,key,mode); if(!D) continue;
@@ -491,7 +497,7 @@ function renderGapConformal(){
   const reg=state.gapReg; const G = EXTRA.gap && EXTRA.gap.populations[reg]; const host=$("#gapconformal"); host.innerHTML="";
   if(!G || !G.conformal || !Object.keys(G.conformal).length){ $("#gapconfnote").textContent=""; return; }
   const nd=G.days, W=460,H=170,L=34,T=16,B=26,Rr=10; const x=d=>L+(d-1)*(W-L-Rr)/(nd-2);
-  const bands=()=>{ let g=""; for(const st of GAP_STAGES){ const f=STAGE_FILL[st.name]; if(f) g+=`<rect x="${(x(st.a)-6).toFixed(1)}" y="${T}" width="${(x(st.b)-x(st.a)+12).toFixed(1)}" height="${H-T-B}" fill="var(${f})" opacity="0.5"/>`; } return g; };
+  const bands=()=>{ let g=""; for(const st of gapStages(reg)){ const f=STAGE_FILL[st.name]; if(f) g+=`<rect x="${(x(st.a)-6).toFixed(1)}" y="${T}" width="${(x(st.b)-x(st.a)+12).toFixed(1)}" height="${H-T-B}" fill="var(${f})" opacity="0.5"/>`; } return g; };
   const CONF_NAME = {conformal:["honest sets, nudging quantile","--s13"], conformal_person:["honest sets, nudging quantile, per person","--s10"], nexcp:["honest sets, weighted quantile","--s10"]};
   for(const key of Object.keys(G.conformal)){ const cells=G.conformal[key]; const [name,col] = CONF_NAME[key]||[key,"--sv"];
     const days=[...Array(nd-1).keys()].map(i=>i+1);
@@ -515,9 +521,10 @@ function renderAskgate(){
   const reg=state.gapReg; const arms=(EXTRA.llm_live && EXTRA.llm_live[reg]) || {}; const T=$("#askgatetable");
   const rows = Object.keys(arms).map(k=>arms[k]).filter(a=>a.askgate);
   if(!rows.length){ T.innerHTML=""; $("#askgatenote").textContent = "No LLM arm has an ask-gate computed for this population yet."; return; }
-  let h=`<thead><tr><th>arm</th>${Object.keys(WINDOWS5_JS).map(w=>`<th>${WINDOWS5_JS[w]}<br><span class="muted">ask% / miss%</span></th>`).join("")}<th>tightens at shift?</th></tr></thead><tbody>`;
+  const WL = rows[0].window_labels || WINDOWS5_JS; const wkeys = Object.keys(WL);
+  let h=`<thead><tr><th>arm</th>${wkeys.map(w=>`<th>${WL[w]}<br><span class="muted">ask% / miss%</span></th>`).join("")}<th>tightens at shift?</th></tr></thead><tbody>`;
   for(const a of rows){ const g=a.askgate; const tt=g._tighten_at_shift;
-    const cells = Object.keys(WINDOWS5_JS).map(w=>{ const v=g[w]; return (v && v.n>=MIN_N)? `<td class="num">${v.ask_rate}% / ${v.miss_rate==null?"–":v.miss_rate+"%"}</td>` : "<td>–</td>"; }).join("");
+    const cells = wkeys.map(w=>{ const v=g[w]; return (v && v.n>=MIN_N)? `<td class="num">${v.ask_rate}% / ${v.miss_rate==null?"–":v.miss_rate+"%"}</td>` : "<td>–</td>"; }).join("");
     h+=`<tr><td>${a.name}${a.progress?` <span class="muted">${a.progress}</span>`:""}</td>${cells}<td class="num" style="color:${tt.tightened?"var(--good)":"inherit"}">${tt.tightened?"yes":"no"} <span class="muted">(q ${tt.q_lead}→${tt.q_shift})</span></td></tr>`; }
   T.innerHTML = h + "</tbody>";
   $("#askgatenote").textContent = "q = the confidence bar the gate currently requires before it will trust the model's own answer instead of asking; it starts adapting after a 20-question warm-up per arm, so early-lead numbers are noisier than later ones.";
@@ -582,7 +589,7 @@ function renderAffected(){
         h+=`<tr><td class="muted">everyone else's, cold questions only · stated confidence</td>${Object.keys(WINDOWS5_JS).map(w=>`<td class="num muted">${cell(W[w].others_cold)} · ${conf(W[w].others_all)}%</td>`).join("")}</tr>`; }
       h+="</tbody></table></div>";
       host.innerHTML+=`<div class="panel" style="grid-column:span 2"><h3>LLM memories — does a message about one person leak into the other person's things?</h3>`
-        +`<p>Accuracy (%) on the sick resident's own things vs everyone else's, per window, from the workshop session's finished partial-shift arms — ${nhh} households, so read the direction, not the decimals (n per cell in brackets; "–" = fewer than ${MIN_N}). The per-object buffer keeps a separate record per thing, so like the counters it cannot spread the shift by construction. The nightly routine table is ONE shared document: with the start message about the sick person written into it, accuracy on the OTHER resident's things falls through the spell and on the first return days (cold questions fall hardest), while stated confidence sits at 0.82–0.91 everywhere — the interference is invisible to the robot. Without the message the table does not spread.</p>${h}</div>`;
+        +`<p>Accuracy (%) on the sick resident's own things against everyone else's, per window, from the workshop session's partial-shift arms — ${nhh} households, all arms finished (n per cell in brackets; "–" = fewer than ${MIN_N}). Read the comparison between the no-message and start-message rows of the same memory: the message moves the sick resident's things and leaves the other resident's where they were. Differences are measured household by household; anything smaller than the spread across households is not a difference. An earlier version of this panel, on three households, reported that the routine table with a message degraded the other resident's things — with all six households that is a wash (per household in the sick spell: −14, −10, −11, +8, +9, −12), and the claim has been withdrawn.</p>${h}</div>`;
     } else if(!Object.keys(SS.methods).some(k=>k.startsWith("llm")))
       host.innerHTML+=`<div class="panel" style="opacity:0.6"><h3>LLM memory (buffer / nightly summary)</h3><p>Pending — this method also keeps one shared record for the household rather than one per object, so it belongs in this row too. Slot reserved; will appear here once run on these households.</p></div>`;
   }
@@ -601,7 +608,7 @@ function renderPlanning(){
 function mergeLLMLive(){
   if(!EXTRA.llm_live) return;
   const palette=["--s1","--s3","--s5","--s7","--s9","--s2","--s4","--s6"]; let i=0;
-  for(const pop of ["household","person"]){   // the two populations with a real DATA[pop] to plug into
+  for(const pop of ["household","person","person2x"]){   // the populations with a real DATA[pop] to plug into
     if(!DATA[pop]) continue;
     for(const key of Object.keys(EXTRA.llm_live[pop]||{})){
       const arm = EXTRA.llm_live[pop][key]; const col = palette[i++ % palette.length];
@@ -617,7 +624,7 @@ function mergeLLMLive(){
   }
   if(!EXTRA.gap) return;
   let j=0;
-  for(const pop of ["household","partial","person"]){
+  for(const pop of ["household","partial","person","person2x"]){
     const arms = (EXTRA.llm_live && EXTRA.llm_live[pop]) || {}; const G = EXTRA.gap.populations[pop];
     if(!G) continue;
     for(const key of Object.keys(arms)){
@@ -628,9 +635,125 @@ function mergeLLMLive(){
     }
   }
 }
+const BUILT = "/*BUILT*/";
+function renderGist(){
+  const L=$("#gistlist"); if(!L) return; $("#gistwhen").textContent = "as of " + BUILT + " — updated every 20 minutes while the runs go";
+  const P = (EXTRA.llm_live && EXTRA.llm_live.person) || {};
+  const W = k => (P[k] && P[k].windows) || null;
+  // Two families of number deliberately kept apart:
+  //  acc/cold/conf  — one arm on its own households (used only for statements about that arm alone)
+  //  accM/coldM     — the MATCHED windows: the same arm restricted to the households every message arm of that
+  //                   memory kind ran on. Every told-vs-untold comparison uses these, because the arms do not
+  //                   always cover the same households and the per-household spread is several points.
+  const acc = (k,w) => { const v=W(k) && W(k)[w]; return (v && v.n>=MIN_N)? v.acc : null; };
+  const cold = (k,w) => { const v=W(k) && W(k)[w]; return (v && v.n_cold>=MIN_N)? v.acc_cold : null; };
+  const conf = (k,w) => { const v=W(k) && W(k)[w]; return (v && v.n>=MIN_N)? v.conf : null; };
+  const WM = k => (P[k] && (P[k].windows_matched || P[k].windows)) || null;
+  const accM = (k,w) => { const v=WM(k) && WM(k)[w]; return (v && v.n>=MIN_N)? v.acc : null; };
+  const coldM = (k,w) => { const v=WM(k) && WM(k)[w]; return (v && v.n_cold>=MIN_N)? v.acc_cold : null; };
+  // paired told-vs-untold contrast on the SAME households, and Oliver's rule: an effect smaller than one paired
+  // standard deviation is reported as "no measurable difference", never as a number with a direction.
+  const pv = (k,w,split) => { const p=P[k] && P[k].paired_vs_nomsg && P[k].paired_vs_nomsg[w]; return p? p[split||"all"] : null; };
+  const pstr = (k,w,split) => { const v=pv(k,w,split); if(!v) return "not measured";
+    return v.clears_1sd? `${v.mean>0?"+":""}${v.mean.toFixed(0)} ± ${v.sd.toFixed(0)} points` : `no measurable difference (${v.mean>0?"+":""}${v.mean.toFixed(0)} ± ${v.sd.toFixed(0)})`; };
+  // the retraction's own effect: telling twice vs telling once (distinct from either against never being told)
+  const rv = (k,w,split) => { const p=P[k] && P[k].paired_vs_startmsg && P[k].paired_vs_startmsg[w]; return p? p[split||"all"] : null; };
+  const rstr = (k,w,split) => { const v=rv(k,w,split); if(!v) return "not measured";
+    return v.clears_1sd? `${v.mean>0?"+":""}${v.mean.toFixed(0)} ± ${v.sd.toFixed(0)} points` : `${v.mean>0?"+":""}${v.mean.toFixed(0)} ± ${v.sd.toFixed(0)}, inside the noise at ${v.n_hh} households`; };
+  const nhh = k => { const v=pv(k,"d14_16"); return v? v.n_hh : (P[k] && P[k].hh_matched ? P[k].hh_matched.length : 0); };
+  const hhM = k => (P[k] && P[k].hh_matched) ? (P[k].hh_matched.length===10? "all 10 households" : `households ${P[k].hh_matched.join(", ")}`) : "";
+  const f = v => v==null? "…" : v.toFixed(0);
+  const has = (...ks) => ks.every(k=>P[k]);
+  // classical yardsticks on the same population (one person sick), pooled over the 10 households
+  const DAYS = {lead:[9,10,11,12,13], s1:[14,15,16], s2:[17,18,19,20,21,22,23], r1:[24,25,26], r2:[27,28,29,30,31]};
+  const cw = (k,w) => { const v=DATA.person && pooled("person",k,"all",DAYS[w]); return v==null? null : v; };
+  const cconf = (k,w) => { const A=DATA.person && DATA.person.agents[k]; if(!A) return null; let n=0,sc=0; for(const hh of Object.keys(A)) for(const d of DAYS[w]){ const c=A[hh].all[d]; n+=c[0]; sc+=c[2]; } return n? 100*sc/n : null; };
+  const items=[];
+  // 1. everyone breaks (sizes from the data; cold = first question about an object that day)
+  const memKinds=[["llm_naive_nomsg","buffer"],["llm_retrieval_nomsg","retrieval"],["llm_longcontext_nomsg","long-context"],["llm_reflect_nomsg","reflection"],["llm_routine7_nomsg","routine table"]];
+  const drops = memKinds.filter(([k])=>acc(k,"lead")!=null && acc(k,"d14_16")!=null).map(([k,n])=>({n, d:acc(k,"lead")-acc(k,"d14_16"), dc:(cold(k,"lead")!=null&&cold(k,"d14_16")!=null)? cold(k,"lead")-cold(k,"d14_16") : null}));
+  const learned = drops.filter(x=>acc(memKinds.find(m=>m[1]===x.n)[0],"lead")>=65);   // a memory that never learned the lead-up has nothing to lose
+  const dmin = learned.length? learned.reduce((a,b)=>a.d<b.d?a:b) : null, dmax = learned.length? learned.reduce((a,b)=>a.d>b.d?a:b) : null;
+  const cdrops = drops.filter(x=>x.dc!=null); const cmin = cdrops.length? Math.min(...cdrops.map(x=>x.dc)) : null, cmax = cdrops.length? Math.max(...cdrops.map(x=>x.dc)) : null;
+  items.push(`<b>Every memory breaks on the first sick day — by ${dmin? f(dmin.d)+" points ("+dmin.n+")":"…"} to ${dmax? f(dmax.d)+" points ("+dmax.n+")":"…"} on all questions, and by ${cmin!=null? f(cmin)+"–"+f(cmax):"…"} points on cold questions.</b> Counters (settled lead-up → first three sick days): 3-day timetable ${f(cw("tt3d","lead"))}→${f(cw("tt3d","s1"))}%, never-forgets timetable ${f(cw("ttfrozen","lead"))}→${f(cw("ttfrozen","s1"))}%. LLM memories with no message: ${drops.map(x=>`${x.n} ${f(acc(memKinds.find(m=>m[1]===x.n)[0],"lead"))}→${f(acc(memKinds.find(m=>m[1]===x.n)[0],"d14_16"))}`).join(", ")}. The routine table hardly moves only because it never learned the lead-up (${f(acc("llm_routine7_nomsg","lead"))}%). Reflection drops least because it learned the lead-up least of the rest (${f(acc("llm_reflect_nomsg","lead"))}% where the buffer reaches ${f(acc("llm_naive_nomsg","lead"))}%); its later rise above its own lead-up (${f(acc("llm_reflect_nomsg","d17_23"))}% inside the spell) is a day-level effect — on cold questions it is ${f(cold("llm_reflect_nomsg","lead"))}→${f(cold("llm_reflect_nomsg","d14_16"))}→${f(cold("llm_reflect_nomsg","d17_23"))}%, below its lead-up — and the timetables show the same day-level rise (3-day: ${f(cw("tt3d","lead"))}→${f(cw("tt3d","s2"))}%) because the sick routine, once learned, keeps things in fewer places.`);
+  // 2. re-learn vs break again
+  items.push(`<b>Who re-learns inside the spell, and who breaks again when life returns.</b> The 3-day timetable re-learns to ${f(cw("tt3d","s2"))}% inside the spell and breaks again on the return (${f(cw("tt3d","r1"))}%); the never-forgets one stays stuck (${f(cw("ttfrozen","s2"))}%) and is right at once when the old routine is back (${f(cw("ttfrozen","r1"))}%). The LLM buffer with no message recovers slowly (${f(acc("llm_naive_nomsg","s1"===0?"d14_16":"d14_16"))}→${f(accM("llm_naive_nomsg","d17_23"))}→${f(acc("llm_naive_nomsg","d24_26"))}→${f(acc("llm_naive_nomsg","d27_31"))}%) and shows no second break — it breaks again on the return <em>only when it was told</em>: with the start message ${f(accM("llm_naive_startmsg","d17_23"))}% in the spell, then ${f(accM("llm_naive_startmsg","d24_26"))}% on the first days back.${has("llm_retrieval_nomsg")? ` Retrieval memory, no message: ${f(acc("llm_retrieval_nomsg","d14_16"))}→${f(acc("llm_retrieval_nomsg","d17_23"))}→${f(accM("llm_retrieval_nomsg","d24_26"))}%.`:""}${has("llm_longcontext_nomsg")? ` Long-context: ${f(acc("llm_longcontext_nomsg","d14_16"))}→${f(acc("llm_longcontext_nomsg","d17_23"))}→${f(acc("llm_longcontext_nomsg","d24_26"))}%.`:""}${has("llm_reflect_nomsg")? ` Reflection: ${f(acc("llm_reflect_nomsg","d14_16"))}→${f(acc("llm_reflect_nomsg","d17_23"))}→${f(acc("llm_reflect_nomsg","d24_26"))}%.`:""}`);
+  // 3. what a sentence buys and costs
+  const OS=(EXTRA.owner_split_live && EXTRA.owner_split_live.partial)||{};
+  const os=(k,w,g)=>{ const v=OS[k] && OS[k].windows[w] && OS[k].windows[w][g]; return (v && v.n>=MIN_N)? v.acc : null; };
+  items.push(`<b>What one sentence buys — and what it costs.</b> Each figure is the difference on the SAME household between the told and untold runs, averaged over households, with the spread across households beside it; anything smaller than that spread is reported as no measurable difference rather than as a number. Telling the buffer "Yuki is home sick today" is worth ${pstr("llm_naive_startmsg","d14_16")} on the first three sick days and ${pstr("llm_naive_startmsg","d17_23")} through the rest of the spell; on cold questions — the first question about a thing each day, before any feedback — ${pstr("llm_naive_startmsg","d14_16","cold")} and ${pstr("llm_naive_startmsg","d17_23","cold")}. It costs on the return: ${pstr("llm_naive_startmsg","d24_26")} on the first days back, cold ${pstr("llm_naive_startmsg","d24_26","cold")} — told once, it keeps believing the sick routine until feedback proves otherwise. Told again on the first day back, that cost is no longer measurable: with both messages the first days back come out ${pstr("llm_naive_startend","d24_26")} against never being told at all. How much of that is the retraction itself we cannot yet say — comparing telling twice directly against telling once gives, on cold questions, ${rstr("llm_naive_startend","d24_26","cold")}, so the repair is consistent with the numbers but not established by them. The same sentence costs a memory that looks things up by time of day for longer: retrieval is ${pstr("llm_retrieval_startmsg","d24_26")} on the first days back, but still ${pstr("llm_retrieval_startmsg","d27_31")} behind a week later (cold ${pstr("llm_retrieval_startmsg","d27_31","cold")}) — its same-hour lookup keeps handing back the sick-day sightings after the buffer has dropped them — and with the second message that late damage is no longer measurable (${pstr("llm_retrieval_startend","d27_31")} against never being told; telling twice against telling once is, on cold questions, ${rstr("llm_retrieval_startend","d27_31","cold")}, so again the repair is not established). The buffer shows no such lasting cost (${pstr("llm_naive_startmsg","d27_31")} a week after the return). The message is selective by object: where only one person is sick it moves the sick person's things (${f(os("llm_naive_nomsg","d14_16","sick_all"))}→${f(os("llm_naive_startmsg","d14_16","sick_all"))}% on the first sick days) and leaves the other resident's alone (${f(os("llm_naive_nomsg","d14_16","others_all"))}→${f(os("llm_naive_startmsg","d14_16","others_all"))}%).`);
+  // 4. confidence never moves
+  const K=(EXTRA.knowno_live && EXTRA.knowno_live.person && EXTRA.knowno_live.person.llm_naive_nomsg) || null; const k14 = K && K.days["14"];
+  const confs = memKinds.filter(([k])=>conf(k,"lead")!=null && conf(k,"d14_16")!=null).map(([k,n])=>`${n} ${f(conf(k,"lead"))}→${f(conf(k,"d14_16"))}%`);
+  const AG=P.llm_naive_nomsg && P.llm_naive_nomsg.askgate;
+  items.push(`<b>The LLM never knows when it is wrong.</b> Its stated confidence barely moves between the settled lead-up and the first sick days (${confs.join(", ")}) while its accuracy falls by 20–30 points; the counters' confidence moves with the stage (3-day timetable claims ${f(cconf("tt3d","lead"))}→${f(cconf("tt3d","s1"))}%). After a lead-day calibration that removes each method's own level, the buffer is ${P.llm_naive_nomsg && P.llm_naive_nomsg.windows.d14_16? "+"+f(P.llm_naive_nomsg.windows.d14_16.leadcal_conf - P.llm_naive_nomsg.windows.d14_16.acc) : "?"} points over-confident on the shift days. An answer-or-ask gate on that confidence has to ask ${AG && AG.d14_16? f(AG.d14_16.ask_rate) : "?"}% of the time on the shift days (vs ${AG && AG.lead? f(AG.lead.ask_rate) : "?"}% before) and still misses ${AG && AG.d14_16? f(AG.d14_16.miss_rate) : "?"}% of what it answers (target 10%).${k14 && k14.n>=MIN_N? ` Read three ways on the first sick day, the buffer is ${f(k14.acc)}% right while it says ${f(k14.verbal)}% (verbalized), ${f(k14.agree)}% (self-agreement), ${f(k14.token)}% (token probability) — none of the three channels reads the drop; an honest set on its own probabilities has to name ${k14.set_size.toFixed(1)} of 10 places to cover it ${f(k14.coverage)}% of the time.`:""}`);
+  // 5. shared memory interferes
+  {
+    const OS=(EXTRA.owner_split_live && EXTRA.owner_split_live.partial)||{};
+    const op = (k,w,g,sp) => { const p=OS[k] && OS[k].paired_vs_nomsg && OS[k].paired_vs_nomsg[w]; return p? p[`${g}_${sp}`] : null; };
+    const ops = (k,w,g,sp) => { const v=op(k,w,g,sp); if(!v) return "not measured";
+      return v.clears_1sd? `${v.mean>0?"+":""}${v.mean.toFixed(0)} ± ${v.sd.toFixed(0)} points` : `no measurable difference (${v.mean>0?"+":""}${v.mean.toFixed(0)} ± ${v.sd.toFixed(0)})`; };
+    const nhh = (OS.llm_naive_startmsg && OS.llm_naive_startmsg.n_hh) || 0;
+    if(op("llm_naive_startmsg","d17_23","sick","all")) items.push(`<b>A message about one person moves that person's things and leaves the other resident's alone.</b> In households where one resident is off sick but the robot is asked about everyone's things (${nhh} households, every arm finished), telling the buffer "Yuki is home sick today" is worth ${ops("llm_naive_startmsg","d17_23","sick","all")} on the sick resident's own things through the spell — ${ops("llm_naive_startmsg","d17_23","sick","cold")} on cold questions — and on the other resident's things it is ${ops("llm_naive_startmsg","d17_23","others","all")} (cold ${ops("llm_naive_startmsg","d17_23","others","cold")}). The sentence is applied where it belongs, and a memory that keeps a separate record per object could not spread it anywhere else in any case. The nightly routine table behaves the same way (${ops("llm_routine7_startmsg","d17_23","others","all")} on the other resident's things) but is worse everywhere: without any message it answers the sick resident's things ${f((OS.llm_routine7_nomsg||{windows:{}}).windows.d17_23 ? OS.llm_routine7_nomsg.windows.d17_23.sick_all.acc : null)}% against the buffer's ${f((OS.llm_naive_nomsg||{windows:{}}).windows.d17_23 ? OS.llm_naive_nomsg.windows.d17_23.sick_all.acc : null)}%, and the other resident's ${f(OS.llm_routine7_nomsg.windows.d17_23.others_all.acc)}% against ${f(OS.llm_naive_nomsg.windows.d17_23.others_all.acc)}% — while its stated confidence sits between 82 and 89% in every window for both residents, message or no message.`);
+  }
+  // 6. noticing pays only with a reset
+  items.push(`<b>Noticing only pays for itself when it triggers a reset.</b> Simulated search cost at a matched 25% ask rate (one person sick): in the sick spell the 3-day timetable searches 3.08 places per question, the same timetable with a change alarm that wipes the diary when it fires 2.48 (−20%); the hedge over memory lengths, which notices but does not reset, 3.14; the never-forgets timetable 3.66. A method that only knows it is unsure buys nothing at the planner; one that acts on it does.`);
+  // 7. two spells (counters now; LLM arms when they land)
+  if(DATA.person2x){
+    const D2 = {lead:[9,10,11,12,13], s1a:[14,15,16], s1b:[17,18,19,20], r1b:[24,25,26,27], s2a:[28,29,30], s2b:[31,32,33,34]};
+    const c2 = (k,w) => { const v=pooled("person2x",k,"all",D2[w]); return v==null? null : v; };
+    const P2 = (EXTRA.llm_live && EXTRA.llm_live.person2x) || {};
+    const a2 = (k,w) => { const v=P2[k] && P2[k].windows && P2[k].windows[w]; return (v && v.n>=MIN_N)? v.acc : null; };
+    let llm2 = "";
+    for(const [k,n] of [["llm_naive_nomsg","buffer"],["llm_retrieval_nomsg","retrieval"],["llm_naive_startmsg","buffer with the message"],["llm_retrieval_startmsg","retrieval with the message"]]){
+      if(a2(k,"s1a")!=null && a2(k,"s2a")!=null) llm2 += ` ${n}: first break ${f(a2(k,"lead"))}→${f(a2(k,"s1a"))}%, second ${f(a2(k,"r1b"))}→${f(a2(k,"s2a"))}%${a2(k,"s2b")!=null? ` (re-learns to ${f(a2(k,"s1b"))} then ${f(a2(k,"s2b"))}%)`:""}.`; }
+        items.push(`<b>When the same sick week comes back (days 28–34, after a week back to normal), the robot's simple learners keep the sick-day habit — it costs them almost nothing the second time.</b> First break → second break: 3-day timetable ${f(c2("tt3d","lead"))}→${f(c2("tt3d","s1a"))}% then ${f(c2("tt3d","r1b"))}→${f(c2("tt3d","s2a"))}%; 1-day timetable ${f(c2("tt1d","lead"))}→${f(c2("tt1d","s1a"))}% then ${f(c2("tt1d","r1b"))}→${f(c2("tt1d","s2a"))}%; never-forgets ${f(c2("ttfrozen","lead"))}→${f(c2("ttfrozen","s1a"))}% then ${f(c2("ttfrozen","r1b"))}→${f(c2("ttfrozen","s2a"))}%. The second spell is as different from normal life as the first (a plain "last seen" answer does no better the second time), so this is memory, not luck: these learners keep a habit for each hour of the day, and nothing during normal days ever replaces the sick-day habit at those hours — in the second spell, more than half of the questions fall in hours only the first spell ever filled, and there the 1-day learner is 97% right. Forgetting in these learners is relative within an hour of the day; a habit nothing overwrites is kept for ever.${llm2? " LLM memories (3 households):" + llm2 : " LLM memories on the same two spells (buffer, which keeps only recent sightings, vs retrieval, which looks up the same hour of the day): running, lands ~08:00 — the prediction, written down first: retrieval re-learns the second spell faster than the first, the buffer does not."}`);
+  }
+  // 8. what actually makes a disruption break these methods (classical regimes; tools/break_cells.py reproduces
+  // every number, 10 households each; both of our prior hypotheses were tested and refuted first)
+  items.push(`<b>What breaks these methods is things being somewhere they usually are not — not being asked at a new hour.</b> Measure a disruption by how much of the household's stuff is out of its usual place. In a settled week about 35 in every 100 questions ask about something that is not where it normally lives. On the first three sick days that becomes 77 in 100; with friends over every evening, 51 in 100; on a holiday spent at home, 44 in 100 — and the breaks line up: 23, 11 and 2 points for the 3-day timetable. Being asked at an hour the robot has never seen before is harmless on its own: when the hour is new but the thing is in its usual place the robot is right 89–95% of the time in all three, because with nothing for that hour it falls back on where the thing normally lives, and that is normally correct. And the methods do not get worse at the questions they were already facing: the sick spell puts 41 more questions in every 100 into the kind they were always bad at, while their accuracy within each kind actually improves by 18 points.`);
+  // 9. the negative result: a second kind of disruption that does not break these methods
+  items.push(`<b>We tried a second kind of disruption — friends over every evening for ten days — and it does not break these methods.</b> The 3-day timetable falls 77 → 65% on the first three evenings-with-guests and is fully back inside the spell, with no drop when normal evenings return. Asking only in the guest hours makes it worse but not much: 71 → 57%, a 15-point break against the sick spell's 23. Asking only the morning after shows nothing at all (82 → 83%): whatever the guests moved is re-used or tidied away by morning. It fits the measure above — even concentrated on the guest hours, 61 in every 100 questions are about something out of its usual place against 77 in the sick spell, and the evening baseline is already 46 in 100. A disruption has to move a lot of things, for most of the day, to trouble a routine learner.`);
+  // 10. reflection: the memory a message hardly helps, and the one that asks least (matched households only)
+  if(pv("llm_reflect_startmsg","d14_16")){
+    const g = k => { const a=P[k] && P[k].askgate; return (a && a.d14_16 && a.d14_16.n>=MIN_N)? a.d14_16.ask_rate : null; };
+    const refl = pv("llm_reflect_startmsg","d14_16");
+    items.push(`<b>A message makes no measurable difference to the memory that already writes its own corrections each night — while it is worth ${pstr("llm_naive_startmsg","d14_16")} to a plain buffer and ${pstr("llm_retrieval_startmsg","d14_16","cold")} to retrieval on cold questions.</b> Reflection keeps a nightly note of the mistakes it made and what to check instead. Told "Yuki is home sick today", its first three sick days come out ${pstr("llm_reflect_startmsg","d14_16")} and its cold questions ${pstr("llm_reflect_startmsg","d14_16","cold")} — the households disagree more than the effect is worth, across the ${refl.n_hh} households all three of its message arms ran on, so on this evidence the sentence tells it something its own notes were already recording. It is also the least demanding of the four: asked to answer only when it can be wrong no more than one time in ten, it asks the resident on ${f(g("llm_reflect_nomsg"))}% of the shift-day questions where the buffer asks ${f(g("llm_naive_nomsg"))}% and retrieval ${f(g("llm_retrieval_nomsg"))}%.`);
+  }
+
+  if(pv("llm_longcontext_startmsg","d14_16")){
+    const e=pv("llm_longcontext_startmsg","d14_16"), l=pv("llm_longcontext_startmsg","d17_23");
+    const lateOK = l && l.clears_1sd;
+    items.push(`<b>Long-context memory ran on three households only, so read its message arms with care.</b> Putting the whole log into every prompt costs about ten times the compute per question of the other memories, so it was run on three households rather than ten; its no-message shape is in the charts alongside the rest. On the first three sick days the difference the message makes (${e.mean>0?"+":""}${e.mean.toFixed(0)} ± ${e.sd.toFixed(0)} points) is smaller than the disagreement between those three households, so nothing can be concluded from it.${lateOK? ` Through the rest of the spell the message is worth ${pstr("llm_longcontext_startmsg","d17_23")} and on cold questions ${pstr("llm_longcontext_startmsg","d17_23","cold")} — those do clear the three-household spread, but three households is still three households.` : ""}`);
+  }
+
+  // what this many households can resolve, measured rather than asserted: the median paired spread across our
+  // ten-household comparisons (degenerate pairs — arms that are literally the same run before the return day — excluded)
+  const sds = {all:[], cold:[]};
+  for(const k of Object.keys(P)) for(const w of Object.keys(P[k].paired_vs_nomsg||{})) for(const sp of ["all","cold"]){
+    const v = P[k].paired_vs_nomsg[w][sp]; if(v && v.n_hh>=10 && v.sd>0) sds[sp].push(v.sd); }
+  const med = a => { if(!a.length) return null; const b=a.slice().sort((x,y)=>x-y); return b[Math.floor(b.length/2)]; };
+  if(sds.all.length){
+    const note = document.createElement("p");
+    note.className = "note"; note.style.margin = "0 0 8px";
+    note.innerHTML = `<b>What ten households can and cannot tell us.</b> Every comparison below between two ways of running the same memory is measured household by household and reported with the spread across households; an effect smaller than that spread is written as "no measurable difference" rather than as a number with a direction. In practice, with ten households the smallest effect we can call is about ${f(med(sds.all))} points on all questions and about ${f(med(sds.cold))} on cold ones — so a figure like "+5 ± 9" is a genuine no-result, not a small result. Two findings were withdrawn overnight for failing exactly this test after first being written up on too few households: a claim that a memory shared across the household spread one person's disruption onto the other resident's things (three households; with all six it is a wash), and a two-point difference between two ways of running the reflection memory that was measured on different household sets. Both are recorded in the working notes; the numbers on this page are the ones that survived.`;
+    const box = $("#gistlist"); if(box && box.parentNode) box.parentNode.insertBefore(note, box);
+  }
+  // Order: the four findings that survived the spread test lead, in the order they tell the story; everything else
+  // follows. Matching is on a distinctive phrase of each bullet so reordering does not depend on push order.
+  const LEAD = ["What one sentence buys", "A message makes no measurable difference to the memory",
+                "The LLM never knows when it is wrong", "Every memory breaks on the first sick day"];
+  const rank = t => { for(let i=0;i<LEAD.length;i++) if(t.includes(LEAD[i])) return i; return LEAD.length; };
+  items.sort((a,b)=>rank(a)-rank(b));
+  L.innerHTML = items.map(t=>`<li>${t}</li>`).join("");
+}
+for(const o of $("#regime").options){ if(!DATA[o.value]){ o.disabled=true; o.hidden=true; } }   // a population whose data has not been built yet is not selectable
+for(const o of $("#gapreg").options){ if(!(EXTRA.gap && EXTRA.gap.populations[o.value])){ o.disabled=true; o.hidden=true; } }
 mergeLLMLive();
-renderLegend(); renderGloss(); draw(); renderSweep(); renderAffected(); renderPlanning();
+renderGist(); renderLegend(); renderGloss(); draw(); renderSweep(); renderAffected(); renderPlanning();
 </script>
 '''
-open(out, "w").write(HTML.replace("/*DATA*/null", json.dumps(data, separators=(",", ":"))).replace("/*EXTRA*/null", json.dumps(extra, separators=(",", ":"))))
+import datetime as _dt
+open(out, "w").write(HTML.replace("/*DATA*/null", json.dumps(data, separators=(",", ":"))).replace("/*EXTRA*/null", json.dumps(extra, separators=(",", ":")))
+     .replace("/*BUILT*/", _dt.datetime.now().strftime("%a %H:%M, %d %b %Y")))
 print("wrote", out, os.path.getsize(out) // 1024, "KB")

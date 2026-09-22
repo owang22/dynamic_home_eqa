@@ -45,6 +45,49 @@ class Client:
         cache_dir.mkdir(parents=True, exist_ok=True)
         self.stats = {"calls": 0, "cached": 0, "prompt_tokens": 0, "completion_tokens": 0, "seconds": 0.0}
 
+    DEADLINE_S = 900.0   # hard wall-clock cap per attempt (same watchdog as llm.LLMClient._post; urllib's socket
+                         # timeout alone did not fire on a request vLLM lost, 2026-09-22)
+
+    def _post(self, body: dict) -> dict:
+        import http.client
+        import socket
+        import threading
+        import urllib.parse
+        u = urllib.parse.urlsplit(self.endpoint)
+        conn = http.client.HTTPConnection(u.hostname, u.port or 80, timeout=min(600.0, self.DEADLINE_S))
+        done = threading.Event()
+
+        def watchdog():
+            if done.is_set():
+                return
+            try:
+                if conn.sock is not None:
+                    conn.sock.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
+            try:
+                conn.close()
+            except OSError:
+                pass
+
+        timer = threading.Timer(self.DEADLINE_S, watchdog)
+        timer.daemon = True
+        timer.start()
+        try:
+            conn.request("POST", "/v1/chat/completions", body=json.dumps(body).encode(), headers={"Content-Type": "application/json"})
+            resp = conn.getresponse()
+            data = resp.read()
+            if resp.status != 200:
+                raise RuntimeError(f"HTTP {resp.status}: {data[:200]!r}")
+            return json.loads(data)
+        finally:
+            done.set()
+            timer.cancel()
+            try:
+                conn.close()
+            except OSError:
+                pass
+
     def chat(self, messages: List[dict], max_tokens: int, temperature: float = 0.0, n: int = 1,
              schema: Optional[dict] = None, logprobs: bool = False) -> dict:
         body = {"model": self.model, "messages": messages, "max_tokens": max_tokens, "temperature": temperature, "n": n,
@@ -59,11 +102,17 @@ class Client:
         if path.exists():
             self.stats["cached"] += 1
             return json.loads(path.read_text())
-        req = urllib.request.Request(f"{self.endpoint}/v1/chat/completions", data=json.dumps(body).encode(),
-                                     headers={"Content-Type": "application/json"})
         t0 = time.time()
-        with urllib.request.urlopen(req, timeout=600) as r:
-            d = json.load(r)
+        d = None
+        for attempt in range(2):   # one retry; a lost request must fail loudly, not hang the (sequential) channel run
+            try:
+                d = self._post(body)
+                break
+            except Exception as e:  # noqa: BLE001
+                print(f"channel call failed ({attempt + 1}/2, {time.time() - t0:.0f}s in): {type(e).__name__}: {e}", file=sys.stderr, flush=True)
+                time.sleep(2 * (attempt + 1))
+        if d is None:
+            raise RuntimeError("channel call lost after 2 attempts")
         self.stats["calls"] += 1
         self.stats["seconds"] += time.time() - t0
         u = d.get("usage") or {}

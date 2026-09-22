@@ -253,3 +253,134 @@ E29 for each pair, on the unaffected group: accuracy change (global vs person) s
 Wrong direction: the per-person variant showing WORSE unaffected-group numbers than global on either metric — would
 mean the per-person split itself is introducing noise/harm rather than removing collateral effects (plausible given
 the conformal per-person finding of thinner-calibration noise already logged).
+
+## E30 — 2026-09-22 01:00, sick2x_owner classical suite (written before the run)
+Design: sick10_owner's one-person spell twice (lead 0-13, sick 14-20, back 21-27, sick 28-34, back 35-41; 42 days),
+seeds 0-9, classical beliefs only (no server). Question for memories: is the SECOND break smaller and the second
+re-learning faster than the first — i.e. does anything reuse the first spell?
+Expected for the counters (per the one-spell numbers on this population, 3-day timetable lead ~81% -> 58% on days
+14-16 -> ~86% later in the spell -> ~60% on the first return days):
+- 3-day and 1-day timetables / most-frequent: the second break (day 28-30) is the SAME size as the first within the
+  household spread (they forgot the first spell by day 28: 7 return days at a 3-day half-life leave <20% of it) and the
+  second re-learning is no faster. Prediction: |break2 - break1| <= 5 pp for tt3d.
+- never-forgets timetable: NOT a clean repeat. Its bins now hold 7 sick days from the first spell inside 28 days of
+  evidence, so on the second spell it should break LESS (first break ~82->51; second maybe ~80->58-62) and stay a bit
+  higher through it, and be slightly WORSE on return2 than on return1 (14 sick days mixed in). This is "reuse by
+  contamination", not recall — the coordinator's "mixed bins".
+- hedge: two weight swings instead of one; each break like tt3d's; no second-break cancellation is expected on return2
+  either, same as return1.
+- last seen: flat ~50% throughout, both spells.
+Wrong direction / worth a message: any counter whose second break is MORE than 10 pp smaller than its first (that would
+mean the bank, not the memory, made the second spell easier — check the placement stats); lead accuracy not reaching
+~80% by day 13 (a config mistake vs sick10_owner).
+
+## E31 — 2026-09-22 00:56, sick2x_owner LLM arms (queued behind the one-person chain; written before they run)
+buffer(naive) / retrieval / routine table x {no message, start message}, hh_s0-s2, 42 days. The reuse question, stated as
+numbers to check: break1 = lead(9-13) minus sick 14-16; break2 = back 24-27 minus sick again 28-30; relearn1 = sick 17-20,
+relearn2 = sick again 31-34.
+- buffer, no message: break2 about the same as break1 (its context holds recent sightings only; by day 28 the first
+  spell is 8 days gone) — |break2 - break1| <= 5 pp; relearn2 no faster (within 5 pp of relearn1). Cold-question view same.
+- retrieval, no message: this is the arm that COULD reuse — its time-of-day retrieval pulls sightings from the first
+  spell whenever they match the hour; prediction: break2 smaller than break1 by >= 8 pp and relearn2 >= 5 pp above relearn1.
+  If instead it looks like the buffer, retrieval does not reach back far enough (it retrieves the K most recent per
+  object plus same-hour matches; first-spell sightings compete with 8 normal days).
+- routine table, no message: the nightly table rewrites itself; by day 28 the first spell's rows are 8 rewrites old —
+  expected no reuse (break2 ~ break1), unless the table kept a "when sick: ..." line, which would show as break2 < break1.
+- start message: at both breaks the sentence lifts the first sick days (as it did on the one-spell regime: 58 -> 71 for
+  the buffer); the interesting cell is whether the SECOND message lifts MORE than the first (the memory has an episode to
+  attach the sentence to): message2 - nomessage2 > message1 - nomessage1 by >= 5 pp for retrieval and the routine table.
+- stated confidence: flat ~0.85-0.90 in every one of the nine windows, both spells, all three memories (the one finding
+  that should not change).
+Wrong direction: lead accuracy below ~75% on days 9-13 for the buffer (bank problem, compare with the one-spell 78%);
+any arm's second-spell numbers based on < 10 answers (thin tail) — print "-" not a number.
+
+## E31b — 02:10, sharpened two-spells prediction (coordinator + this session, before the LLM arms run)
+retrieval (same-time-of-day sightings) re-learns spell 2 FASTER than spell 1 — its first-three-days accuracy in spell 2
+(days 28-30) at least 8 pp above its first-three-days accuracy in spell 1 (days 14-16), and it does so without a
+message; the buffer (recent sightings only) does not — its two breaks within 5 pp of each other. Mechanism as found for
+the simple learners: what the normal routine never overwrites at those hours is kept, and only a memory indexed by
+when things happen can benefit from that.
+
+## E32 — 03:18, retrieval with start + end messages (written before the pass lands; running since 03:13)
+The end message ("feeling better, back at work" on the first return day) recovered the buffer by +12 on cold questions
+on days 24-26 (38 -> 50; all questions 62 -> 70). Prediction for retrieval: LESS than the buffer — at most +8 cold
+(50 -> <= 58) and at most +6 on all questions (58 -> <= 64) on days 24-26 — because retrieval's same-hour lookup keeps
+returning the sick-day sightings for the return-day hours no matter what it is told, so the sentence has to argue
+against evidence still in the prompt; the buffer's recent-K window drops the sick days on its own within a day or two.
+Days 27-31: retrieval start+end within 3 pp of its start-message arm (69) — the end message should not matter once
+feedback has overwritten the same-hour entries. If retrieval recovers MORE than the buffer, the mechanism story
+(time-indexed memory keeps what feedback has not overwritten) is wrong for this memory and the two-spells reading
+must be re-examined before it goes in the gist.
+
+### E32 result — 03:30: partly wrong, logged as such
+Retrieval start+end vs start only, days 24-26: all 58 -> 74 (+16; predicted <= +6; buffer +8), cold 50 -> 59 (+9; predicted
+<= +8; buffer +12). Days 27-31: 79 vs 69 (+10; predicted within 3 pp; buffer +3). So: on COLD questions retrieval recovers
+a little less than the buffer (as predicted, and the +9 sits just over the bound) — the same-hour lookup does keep
+returning the sick-day sightings; but on all questions and in the late return window the end message helps retrieval
+far MORE than the buffer. Reading: the start-message damage persists longer for a time-indexed memory (27-31: retrieval
+69 vs 82 untold, -13; buffer 72 vs 77, -5) because the sick-day sightings stay in its same-hour lookup — that half of
+the mechanism holds — and a sentence is what lets the model DISCOUNT retrieved evidence it cannot otherwise forget:
+told "back at work", retrieval re-reads the same sick-day sightings as stale and recovers +10 where the buffer, which
+had already dropped them, gains +3. The two-spells reading is not contradicted (a time-indexed memory keeps the episode;
+that is the upside there and the downside here); what E32 got wrong is that language can override retrieved evidence
+on the same day it is given, on warm questions at least. Cold questions stay the honest measure: +9 there.
+
+## E33 — 03:55, guests10 classical scout (CPU only; written before the run)
+Friends over every evening days 14-23, everyone's things, classes mug/glass/book/blanket/laptop/board_game. Expected:
+a SMALLER break than the sick spell on all questions — guests touch only the evening (tidy at 17:40, hosting 20:30-22:30,
+mugs/glasses to the sink after), so morning and daytime questions about the same mugs are unchanged; guess 3-day
+timetable 80 -> 65-70 (a 10-15 pp break), cold 20-25 pp, with evening questions carrying nearly all of it. The
+ceiling (share of questions whose truth differs from the lead-stage answer at that object+hour) should be ~30-40%, vs
+~70% for the sick spell. Stop rule from the coordinator: if the all-question break is under 20 points, report and stop —
+no LLM banks. Wrong direction: a break as large as the sick spell's (would mean the guest evening moves daytime things
+too — check placements), or lead accuracy below 70 (a config mistake).
+
+### E33 result + E34 — 04:00: guests10 as configured fails the bar; evening/morning-concentrated variants
+E33 was right: 3-day timetable lead 77 -> 65 (14-16) -> 78 -> 73 -> 72 on all questions (an 11-12 pp break, full
+recovery inside the spell, no return drop), against ~85 -> 45 with a return drop in the sick regime. Cause is the
+dilution predicted: the guest evening only moves things from ~17:40, so questions asked earlier are unchanged.
+E34 (before the variants run): with questions restricted to the hours the event touches — guests10_eve "17-23"
+(hosting, tidy, mugs/glasses to the sink) and guests10_morn "06-10" (the morning after, when those placements are
+still where the evening left them) — the break should be roughly the dilution factor larger. Evening questions were
+~45% of the guests-stage total, so a 11-12 pp diluted break implies ~25 pp concentrated; prediction: guests10_eve
+3-day timetable lead ~75 -> 50-55 on days 14-16 (a 20-25 pp break) with a visible return drop, guests10_morn a
+smaller break (10-15 pp: the overnight placements persist but the morning routine also re-tidies). Stop rule stands:
+if the evening-concentrated all-question break is under 20 pp, guests is dead and the page says so in one line.
+
+## E35 — 04:35, two hypotheses about what makes a disruption break a time-of-day learner; BOTH refuted
+Stated before the test (tools/break_cells.py), on the record so neither is quietly dropped:
+- Mine (this session, 04:20): the separator is the share of spell questions with NO lead-up answer at that
+  (object, hour) — "empty hours". REFUTED: vacation shifts +22 pp of its questions into new hours and breaks 2
+  points; guests shifts +8 and breaks 11.
+- The coordinator's (04:30): the separator is an empty hour WHERE THE FALLBACK IS ALSO WRONG — the "new hour AND
+  unusual place" cell. REFUTED: guests shifts +7 pp into that cell and breaks 11 points; vacation shifts +10 into it
+  and breaks 2.
+What the data supports instead (the reading already in NOTES.md at 14:55): the share of questions where the object is
+somewhere other than where it usually lives, regardless of hour — sick +41 pp -> break 23, guests +16 -> 11,
+vacation +7 -> 2. Hours are harmless because the empty-bin fallback IS the object's usual place: "new hour, usual
+place" scores 89-95% in all three regimes. And the break is a change in the MIX of questions, not the learner getting
+worse at what it already faced: sick moves +41 pp of questions into the kind it was always bad at while its accuracy
+WITHIN each kind improves by 18 points.
+
+### E34 result — 04:30: guests is dead by the agreed rule; my concentration estimate was too optimistic
+guests10_eve (questions 17-23 only, 10 hh, 492 q/household): 3-day timetable settled lead-up 71 -> 57 on days 14-16 =
+a 15-point break (cold 78 -> 60, 18 points), never-forgets the same 15, 1-day 9. I predicted 20-25 from the dilution
+factor; wrong, and the reason is visible in the new measure: even restricted to the guest hours only 61 in every 100
+questions are about something out of its usual place (evening baseline is already 46 in 100, so the shift is +14 —
+against +41 for the sick spell), and 15 points is what a +14 shift buys. guests10_morn (06-10, the morning after):
+NO break at all, -1 point (83 vs 82), unusual-place shift +3 — the overnight placements are re-used or re-tidied by
+the morning routine, so nothing survives to the next day. Verdict per the agreed rule (under 20 points on all
+questions): guests is dead, one-line negative on the page, no LLM banks. Kept: configs/regime/guests10{,_eve,_morn}.yaml,
+banks and classical logs for all three, and the question_hours knob (default-off, byte-identical proof) which is
+reusable for any future hour-concentrated regime.
+
+## E31b addendum — 05:05, the bar the two-spells result must clear (written before the arms land)
+The 1-sd rule applies to E31b as it does to every other told-vs-untold or window-vs-window claim, and the two-spells
+arms run on 3 households, where that bar is high: the median paired spread on our TEN-household comparisons is ~9 pp
+on all questions and ~14 on cold, and a 3-household spread is typically wider still (long-context, also 3 households:
+13.9 pp on the first sick days). So E31b's prediction — retrieval's first-three-days accuracy in the SECOND spell at
+least 8 pp above the first spell's, without a message, while the buffer's two breaks stay within 5 pp — must be
+tested as a paired contrast across the 3 households (per household: spell-2 first-three-days minus spell-1
+first-three-days, then mean +- sd), not as a difference of pooled means. If it does not clear its own sd, the line for
+the page and STORY.md is: "the robot's simple learners reuse the first spell; whether the language memories do is
+beyond what three households can tell us" — stated plainly, with no direction implied. Same for the buffer.

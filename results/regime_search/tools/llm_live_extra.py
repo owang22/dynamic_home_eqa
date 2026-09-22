@@ -66,6 +66,17 @@ def msg_tag(told: bool, key_tag) -> str:
 # numbers (see PROBLEMS/EXPECTATIONS notes for the check).
 WINDOWS5 = {"lead": set(range(9, 14)), "d14_16": {14, 15, 16}, "d17_23": set(range(17, 24)),
             "d24_26": {24, 25, 26}, "d27_31": set(range(27, 32))}
+WINDOWS5_LABEL = {"lead": "lead (9–13)", "d14_16": "14–16", "d17_23": "17–23", "d24_26": "24–26", "d27_31": "27–31"}
+# the two-spells regime (sick2x_owner: lead 0-13, sick 14-20, back 21-27, sick 28-34, back 35-41): first three days and
+# the rest of every stage, so the second break/re-learning can be read against the first
+WINDOWS2X = {"lead": set(range(9, 14)), "s1a": {14, 15, 16}, "s1b": set(range(17, 21)), "r1a": {21, 22, 23}, "r1b": set(range(24, 28)),
+             "s2a": {28, 29, 30}, "s2b": set(range(31, 35)), "r2a": {35, 36, 37}, "r2b": set(range(38, 42))}
+WINDOWS2X_LABEL = {"lead": "lead (9–13)", "s1a": "sick 14–16", "s1b": "sick 17–20", "r1a": "back 21–23", "r1b": "back 24–27",
+                   "s2a": "sick again 28–30", "s2b": "sick again 31–34", "r2a": "back again 35–37", "r2b": "back again 38–41"}
+
+
+def windows_for(pop):
+    return (WINDOWS2X, WINDOWS2X_LABEL) if pop == "person2x" else (WINDOWS5, WINDOWS5_LABEL)
 
 # (glob pattern for arm dirs, population key, bank dir, key tag [None = plain mem_kind_told key], mem_kind allow-list
 # [None = all]) -- population determines which bank file (and so which truth) an arm's answers are checked against.
@@ -88,6 +99,10 @@ SOURCES = [
     (f"{LLM_DIR}/chain_person/nottold/*", "person", f"{ROOT}/sick10_owner/banks", None, None),
     (f"{LLM_DIR}/chain_person/told_entry/*", "person", f"{ROOT}/sick10_owner/banks", "entry", None),
     (f"{LLM_DIR}/chain_person/told_entryreturn/*", "person", f"{ROOT}/sick10_owner/banks", "entryreturn", None),
+    # the two-spells regime: no message and start message (the bank puts a "home sick today" hint on every sick day of
+    # BOTH spells, so the start-message arm is told at both breaks)
+    (f"{LLM_DIR}/chain_person2x/nottold/*", "person2x", f"{ROOT}/sick2x_owner/banks", None, None),
+    (f"{LLM_DIR}/chain_person2x/told_entry/*", "person2x", f"{ROOT}/sick2x_owner/banks", "entry", None),
 ]
 
 
@@ -158,7 +173,7 @@ class AskGate:
         return decided_answer, missed
 
 
-def run_askgate(rows_chrono, alpha=0.10):
+def run_askgate(rows_chrono, alpha=0.10, windows=None):
     """rows_chrono: [(day, conf, ok), ...] roughly in time order (sorted by day; households interleaved within a
     day, which the gate does not need to get exactly right). -> per-window {n, n_answered, ask_rate, miss_rate,
     q_mean} plus q_before/q_after around day 14 (the "does it tighten at the shift" check)."""
@@ -169,7 +184,7 @@ def run_askgate(rows_chrono, alpha=0.10):
         answered, missed = gate.update(conf, bool(ok))
         decisions.append((day, answered, missed, q_before))
     out = {}
-    for w, days in WINDOWS5.items():
+    for w, days in (windows or WINDOWS5).items():
         sel = [d for d in decisions if d[0] in days]
         n = len(sel)
         if not n:
@@ -191,7 +206,8 @@ def run_askgate(rows_chrono, alpha=0.10):
 
 
 def window_stats(rows, days):
-    """rows: list of (day, conf, ok, leadcal). -> (n, acc%, conf%, leadcal_conf%) over the given day set, or None."""
+    """rows: list of (day, conf, ok, leadcal, cold). -> n, acc%, conf%, leadcal_conf%, plus the same on cold questions
+    only (first question about an object that day, before that day's feedback), over the given day set; or None."""
     sel = [r for r in rows if r[0] in days]
     n = len(sel)
     if not n:
@@ -199,12 +215,16 @@ def window_stats(rows, days):
     ok = sum(r[2] for r in sel)
     conf = sum(r[1] for r in sel)
     lc = sum(r[3] for r in sel)
-    return {"n": n, "acc": round(100 * ok / n, 1), "conf": round(100 * conf / n, 1), "leadcal_conf": round(100 * lc / n, 1)}
+    cold = [r for r in sel if r[4]]
+    nc = len(cold)
+    return {"n": n, "acc": round(100 * ok / n, 1), "conf": round(100 * conf / n, 1), "leadcal_conf": round(100 * lc / n, 1),
+            "n_cold": nc, "acc_cold": round(100 * sum(r[2] for r in cold) / nc, 1) if nc else None,
+            "conf_cold": round(100 * sum(r[1] for r in cold) / nc, 1) if nc else None}
 
 
 def main():
     bank_cache = {}
-    populations = {"household": {}, "partial": {}, "person": {}}
+    populations = {"household": {}, "partial": {}, "person": {}, "person2x": {}}
     all_rows = {}  # (pop, key) -> hh -> [(day, conf, ok, moved), ...] -- kept for the lead-fit and the 5-window report
     n_days_by_hh = {}  # (pop, key, hh) -> bank's own n_days, so cell arrays are sized correctly (not guessed from data)
     for pattern, pop, bank_dir, key_tag, mem_allow in SOURCES:
@@ -228,38 +248,48 @@ def main():
                 continue
             mtag = msg_tag(told == "told", key_tag)
             key = f"llm_{mem_kind}_{mtag}"
-            arm = populations[pop].setdefault(key, {"mem_kind": mem_kind, "told": told, "key_tag": key_tag, "msg_tag": mtag, "n_total_hh": len(qs), "n_hh_done": {}})
+            arm = populations[pop].setdefault(key, {"mem_kind": mem_kind, "told": told, "key_tag": key_tag, "msg_tag": mtag, "n_total_hh": len(qs), "n_hh_done": {}, "n_hh_total": {}})
+            arm["n_hh_total"][hh] = len(qs)   # banks differ in size (287-496 questions per household); "finished" is per household
             rows = all_rows.setdefault((pop, key), {}).setdefault(hh, [])
             n_days_by_hh[(pop, key, hh)] = n_days
             n_hh_done = 0
+            seen_cold = set()
             for qid, (loc, conf) in answers.items():
                 q = qs.get(qid)
                 if not q or loc is None:
                     continue
                 n_hh_done += 1
                 ok = int(loc == q["truth"])
-                rows.append((q["day"], float(conf or 0.0), ok, q["moved"]))
+                cold = (q["day"], q["obj"]) not in seen_cold   # first question about that object that day (file order = time order)
+                seen_cold.add((q["day"], q["obj"]))
+                rows.append((q["day"], float(conf or 0.0), ok, q["moved"], cold))
             arm["n_hh_done"][hh] = n_hh_done
 
     out = {}
     lines = []
     for pop, arms in populations.items():
         pop_out = {}
+        pop_rows = {}   # key -> hh -> rows, used for the matched-household pass below
         for key, arm in arms.items():
             by_hh = all_rows[(pop, key)]
-            lead_pts = [(c, ok) for hh, rows in by_hh.items() for (d, c, ok, mv) in rows if d in LEAD_DAYS]
+            lead_pts = [(c, ok) for hh, rows in by_hh.items() for (d, c, ok, mv, cold) in rows if d in LEAD_DAYS]
             knots = fit_lead_map(lead_pts)
             cells = {}
-            pooled_rows = []  # (day, conf, ok, leadcal) pooled over households, for the 5-window report
+            pooled_rows = []  # (day, conf, ok, leadcal, cold) pooled over households, for the 5-window report
+            rows_by_hh = {}   # hh -> the same tuples, so a told-vs-untold comparison can be restricted to the
+                              # households BOTH arms actually ran on (the banks differ in size and the per-household
+                              # spread is several points, so an unmatched comparison is not a result)
             for hh, rows in by_hh.items():
                 nd = n_days_by_hh[(pop, key, hh)]
                 arr_all = [[0, 0, 0.0, 0.0] for _ in range(nd)]
                 arr_mv = [[0, 0, 0.0, 0.0] for _ in range(nd)]
-                for d, c, ok, mv in rows:
+                hh_rows = rows_by_hh.setdefault(hh, [])
+                for d, c, ok, mv, cold in rows:
                     if d >= nd:
                         continue
                     lc = apply_map(knots, c)
-                    pooled_rows.append((d, c, ok, lc))
+                    pooled_rows.append((d, c, ok, lc, cold))
+                    hh_rows.append((d, c, ok, lc, cold))
                     cell = arr_all[d]
                     cell[0] += 1; cell[1] += ok; cell[2] += c; cell[3] += lc
                     if mv:
@@ -268,24 +298,126 @@ def main():
                 cells[hh] = {"all": arr_all, "moved": arr_mv}
 
             n_hh = len(arm["n_hh_done"])
-            mean_done = round(sum(arm["n_hh_done"].values()) / n_hh) if n_hh else 0
+            done_sum = sum(arm["n_hh_done"].values())
+            total_sum = sum(arm["n_hh_total"].values())
             hh_sorted = sorted(arm["n_hh_done"], key=lambda h: int(h.split("_s")[1]))
-            complete = mean_done >= arm["n_total_hh"]
-            progress = ("(finished, " if complete else "(in progress, ") + f"{mean_done} of {arm['n_total_hh']}, households {', '.join(str(int(h.split('_s')[1]) + 1) for h in hh_sorted)})"
-            windows = {w: window_stats(pooled_rows, days) for w, days in WINDOWS5.items()}
-            gate_rows = sorted(((d, c, ok) for d, c, ok, lc in pooled_rows), key=lambda r: r[0])
-            askgate = run_askgate(gate_rows) if gate_rows else None
+            complete = n_hh > 0 and all(arm["n_hh_done"][h] >= arm["n_hh_total"][h] for h in arm["n_hh_done"])
+            nums = [int(h.split("_s")[1]) + 1 for h in hh_sorted]
+            runs = []
+            for n in nums:
+                if runs and n == runs[-1][1] + 1:
+                    runs[-1][1] = n
+                else:
+                    runs.append([n, n])
+            hh_label = "hh " + ", ".join(str(a) if a == b else f"{a}-{b}" for a, b in runs)
+            progress = (f"(finished, {done_sum} questions, " if complete else f"(in progress, {done_sum} of {total_sum} questions, ") + hh_label + ")"
+            mean_done = round(done_sum / n_hh) if n_hh else 0
+            WIN, WLAB = windows_for(pop)
+            windows = {w: window_stats(pooled_rows, days) for w, days in WIN.items()}
+            gate_rows = sorted(((d, c, ok) for d, c, ok, lc, cold in pooled_rows), key=lambda r: r[0])
+            askgate = run_askgate(gate_rows, windows=WIN) if gate_rows else None
             pop_out[key] = {"name": MEM_NAME.get(arm["mem_kind"], arm["mem_kind"]) + MSG_LABEL[arm["msg_tag"]],
                              "mem_kind": arm["mem_kind"], "msg_tag": arm["msg_tag"], "cells": cells,
                              "n_total_hh": arm["n_total_hh"], "n_hh_done": arm["n_hh_done"], "progress": progress,
-                             "complete": complete, "has_leadcal": bool(knots), "windows": windows, "askgate": askgate}
-            wtxt = "  ".join(f"{w}: acc {windows[w]['acc'] if windows[w] else 'NA'} conf {windows[w]['conf'] if windows[w] else 'NA'}" for w in WINDOWS5)
+                             "complete": complete, "has_leadcal": bool(knots), "windows": windows, "window_labels": WLAB, "askgate": askgate,
+                             "households": [int(h.split("_s")[1]) + 1 for h in hh_sorted]}
+            pop_rows[key] = rows_by_hh
+            wtxt = "  ".join(f"{w}: acc {windows[w]['acc'] if windows[w] else 'NA'} conf {windows[w]['conf'] if windows[w] else 'NA'}" for w in WIN)
             if askgate:
-                gtxt = "  ".join(f"{w}: ask {askgate[w]['ask_rate'] if askgate[w] else 'NA'}% miss {askgate[w]['miss_rate'] if askgate[w] else 'NA'}%" for w in WINDOWS5)
+                gtxt = "  ".join(f"{w}: ask {askgate[w]['ask_rate'] if askgate[w] else 'NA'}% miss {askgate[w]['miss_rate'] if askgate[w] else 'NA'}%" for w in WIN)
                 tt = askgate["_tighten_at_shift"]
                 lines.append(f"{pop}/{key}: {n_hh} households, mean {mean_done}/{arm['n_total_hh']} answered — {progress}\n    {wtxt}\n    askgate {gtxt}  tightened_at_shift={tt['tightened']} (q_lead={tt['q_lead']} q_shift={tt['q_shift']})")
             else:
                 lines.append(f"{pop}/{key}: {n_hh} households, mean {mean_done}/{arm['n_total_hh']} answered — {progress}\n    {wtxt}")
+        # paired told-vs-untold contrasts: per household, (told arm's accuracy on that household) minus (the
+        # no-message arm's), then mean +- sd of that difference ACROSS households. Oliver's standing rule is that an
+        # effect must clear one standard deviation, and for a paired design the sd of the DIFFERENCES is the right
+        # one -- the per-arm sds are dominated by how hard each household is, which cancels in the pairing.
+        def hh_window(rows, days, cold_only=False):
+            sel = [r for r in rows if r[0] in days and (not cold_only or r[4])]
+            return (len(sel), 100 * sum(r[2] for r in sel) / len(sel)) if sel else (0, None)
+
+        def paired(base_key, other_key, days, cold_only=False):
+            diffs = []
+            for h in sorted(set(pop_rows.get(base_key, {})) & set(pop_rows.get(other_key, {}))):
+                nb, ab = hh_window(pop_rows[base_key][h], days, cold_only)
+                no, ao = hh_window(pop_rows[other_key][h], days, cold_only)
+                if nb >= 5 and no >= 5:
+                    diffs.append(ao - ab)
+            if len(diffs) < 2:
+                return None
+            m = sum(diffs) / len(diffs)
+            sd = (sum((d - m) ** 2 for d in diffs) / (len(diffs) - 1)) ** 0.5
+            return {"mean": round(m, 1), "sd": round(sd, 1), "n_hh": len(diffs),
+                    "clears_1sd": bool(abs(m) > sd), "per_hh": [round(d, 1) for d in diffs]}
+
+        # matched-household pass: within each memory kind, restrict every arm to the households present in ALL of
+        # that kind's message arms, and store those window stats as windows_matched. A told-vs-untold difference must
+        # be read off these, never off the full-household numbers, because the arms do not always cover the same set.
+        WIN_p, _ = windows_for(pop)
+        by_mem = {}
+        for key, arm in pop_out.items():
+            by_mem.setdefault(arm["mem_kind"], []).append(key)
+        for mem, keys in by_mem.items():
+            common = set.intersection(*(set(pop_rows[k]) for k in keys)) if keys else set()
+            hh_list = sorted(common, key=lambda h: int(h.split("_s")[1]))
+            for k in keys:
+                rows = [r for h in common for r in pop_rows[k][h]]
+                pop_out[k]["windows_matched"] = {w: window_stats(rows, days) for w, days in WIN_p.items()}
+                pop_out[k]["hh_matched"] = [int(h.split("_s")[1]) + 1 for h in hh_list]
+                pop_out[k]["matched_is_full"] = len(common) == len(pop_rows[k])
+            # two-spells: the reuse question is a paired WITHIN-arm contrast (second spell's first three days minus
+            # the first spell's, per household), and it faces the same 1-sd bar as everything else
+            if pop == "person2x":
+                for k in keys:
+                    diffs = []
+                    for h, rws in pop_rows.get(k, {}).items():
+                        n1, a1 = hh_window(rws, WIN_p["s1a"])
+                        n2, a2 = hh_window(rws, WIN_p["s2a"])
+                        if n1 >= 5 and n2 >= 5:
+                            diffs.append(a2 - a1)
+                    if len(diffs) >= 2:
+                        m = sum(diffs) / len(diffs)
+                        sd = (sum((d - m) ** 2 for d in diffs) / (len(diffs) - 1)) ** 0.5
+                        pop_out[k]["reuse_paired"] = {"mean": round(m, 1), "sd": round(sd, 1), "n_hh": len(diffs),
+                                                       "clears_1sd": bool(abs(m) > sd), "per_hh": [round(d, 1) for d in diffs]}
+                        lines.append(f"reuse {pop}/{k}: second spell's first three days minus the first spell's = "
+                                     f"{m:+.1f} +- {sd:.1f} pp across {len(diffs)} households -> "
+                                     f"{'CLEARS 1 sd' if abs(m) > sd else 'does NOT clear 1 sd (say: beyond what three households can tell us)'}")
+            # the retraction's OWN effect: start+end versus start-only, the contrast that answers "does telling the
+            # robot the disruption is over repair the damage" -- distinct from either arm against never being told
+            se, sm = f"llm_{mem}_startend", f"llm_{mem}_startmsg"
+            if se in pop_out and sm in pop_out:
+                pop_out[se]["paired_vs_startmsg"] = {
+                    w: {"all": paired(sm, se, WIN_p[w]), "cold": paired(sm, se, WIN_p[w], True)} for w in WIN_p}
+                for w in ("d24_26", "d27_31"):
+                    pr = pop_out[se]["paired_vs_startmsg"].get(w) or {}
+                    for split in ("all", "cold"):
+                        v = pr.get(split)
+                        if v:
+                            lines.append(f"retraction {pop}/{mem}, {w} {split}: telling again on the first day back vs telling once = "
+                                         f"{v['mean']:+.1f} +- {v['sd']:.1f} pp across {v['n_hh']} households -> "
+                                         f"{'CLEARS 1 sd' if v['clears_1sd'] else 'does NOT clear 1 sd (undecided)'}")
+            base = f"llm_{mem}_nomsg"
+            if base in pop_out:
+                for k in keys:
+                    if k == base:
+                        continue
+                    pop_out[k]["paired_vs_nomsg"] = {
+                        w: {"all": paired(base, k, WIN_p[w]), "cold": paired(base, k, WIN_p[w], True)}
+                        for w in WIN_p}   # every window we make a claim about, not just the two headline ones
+                    for w, pr in pop_out[k]["paired_vs_nomsg"].items():
+                        if w not in ("d14_16", "d17_23", "d24_26", "d27_31"):
+                            continue
+                        for split in ("all", "cold"):
+                            v = pr[split]
+                            if v:
+                                lines.append(f"paired {pop}/{k} vs no message, {w} {split}: {v['mean']:+.1f} +- {v['sd']:.1f} pp "
+                                             f"across {v['n_hh']} households -> {'CLEARS 1 sd' if v['clears_1sd'] else 'does NOT clear 1 sd (report as no measurable difference)'}")
+            if len(keys) > 1:
+                lines.append(f"matched {pop}/{mem}: {len(keys)} message arms compared on households "
+                             f"{', '.join(str(int(h.split('_s')[1]) + 1) for h in hh_list)} "
+                             f"({'same set as each arm ran on' if all(pop_out[k]['matched_is_full'] for k in keys) else 'INTERSECTION — full-household numbers are not comparable across these arms'})")
         out[pop] = pop_out
     if not any(out.values()):
         lines.append("no live LLM arm directories found yet under any known source")
@@ -443,7 +575,31 @@ def owner_split_block(bank_cache, lines):
                 cold = (q["day"], obj) not in seen
                 seen.add((q["day"], obj))
                 group = "sick" if owners.get(obj) == sick else "others"
-                arm["rows"].append((q["day"], group, cold, int(loc == q["truth"]), float(conf or 0.0)))
+                arm["rows"].append((q["day"], group, cold, int(loc == q["truth"]), float(conf or 0.0), hh))
+    # paired owner-split contrasts: per household, (start message - no message) on the sick resident's things and on
+    # everyone else's, then mean +- sd across households. The 3-household version of this comparison was published as
+    # an interference finding and retracted at 05:10 when all six households made it a wash; nothing here is stated
+    # without its spread again.
+    def owner_paired(pop, mem, w, group, split):
+        base, told = f"llm_{mem}_nomsg", f"llm_{mem}_startmsg"
+        A, B = per_arm.get((pop, base)), per_arm.get((pop, told))
+        if not (A and B):
+            return None
+        diffs = []
+        for h in sorted(set(A["hh"]) & set(B["hh"])):
+            vals = []
+            for arm in (A, B):
+                sel = [r for r in arm["rows"] if r[0] in WINDOWS5[w] and r[1] == group and r[5] == h and (split == "all" or r[2])]
+                vals.append((len(sel), 100 * sum(r[3] for r in sel) / len(sel)) if sel else (0, None))
+            if vals[0][0] >= 5 and vals[1][0] >= 5:
+                diffs.append(vals[1][1] - vals[0][1])
+        if len(diffs) < 2:
+            return None
+        m = sum(diffs) / len(diffs)
+        sd = (sum((d - m) ** 2 for d in diffs) / (len(diffs) - 1)) ** 0.5
+        return {"mean": round(m, 1), "sd": round(sd, 1), "n_hh": len(diffs), "clears_1sd": bool(abs(m) > sd),
+                "per_hh": [round(d, 1) for d in diffs]}
+
     out = {}
     for (pop, key), arm in per_arm.items():
         windows = {}
@@ -456,7 +612,12 @@ def owner_split_block(bank_cache, lines):
                     ww[f"{group}_{split}"] = {"n": n, "acc": round(100 * sum(r[3] for r in sel) / n, 1),
                                              "conf": round(100 * sum(r[4] for r in sel) / n, 1)} if n else None
             windows[w] = ww
-        out.setdefault(pop, {})[key] = {"name": MEM_NAME.get(arm["mem_kind"], arm["mem_kind"]) + MSG_LABEL[arm["msg_tag"]],
+        paired = None
+        if arm["msg_tag"] == "startmsg":
+            paired = {w: {f"{g}_{sp}": owner_paired(pop, arm["mem_kind"], w, g, sp)
+                          for g in ("sick", "others") for sp in ("all", "cold")} for w in WINDOWS5}
+        out.setdefault(pop, {})[key] = {"paired_vs_nomsg": paired,
+                                        "name": MEM_NAME.get(arm["mem_kind"], arm["mem_kind"]) + MSG_LABEL[arm["msg_tag"]],
                                         "mem_kind": arm["mem_kind"], "msg_tag": arm["msg_tag"], "n_hh": len(arm["hh"]),
                                         "households": sorted(arm["hh"]), "windows": windows}
         f = lambda w, g: (f"{windows[w][g]['acc']:.0f}" if windows[w][g] else "–")

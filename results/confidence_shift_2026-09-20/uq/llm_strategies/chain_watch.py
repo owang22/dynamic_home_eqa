@@ -22,11 +22,12 @@ KEEP_S = 60 * 60
 
 def arm_counts():
     out = {}
-    for pat in ("chain_person/*/hh_s*_look*", "knowno_person/*"):
+    for pat in ("chain_person/*/hh_s*_look*", "chain_person2x/*/hh_s*_look*", "knowno_person/*"):
         for d in glob.glob(os.path.join(HERE, pat)):
             if not os.path.isdir(d):
                 continue
-            finished = os.path.exists(os.path.join(d, "run_log.jsonl"))
+            # llm.py arms write run_log.jsonl at the end; uq_llm.py (knowno channel) writes stats.json instead
+            finished = os.path.exists(os.path.join(d, "run_log.jsonl")) or ("knowno" in d and os.path.exists(os.path.join(d, "stats.json")))
             n = 0
             for f in ("calls.jsonl",) if "chain_person" in d else tuple(x for x in os.listdir(d) if x.endswith(".jsonl") and "knowno" not in x):
                 p = os.path.join(d, f)
@@ -59,7 +60,18 @@ def main():
     known10 = 0
     moving = 0
     stalled = []
-    active = {a: v for a, v in counts.items() if not v[1]}   # unfinished arms only
+    # paused arms (chain_watch_pause.txt, one glob per line, relative to this dir) are skipped until their calls.jsonl
+    # is newer than the pause file again -- i.e. until they actually resume; so a paused arm never masks a real stall
+    import fnmatch
+    pause_path = os.path.join(HERE, "chain_watch_pause.txt")
+    paused_globs = [l.strip() for l in open(pause_path)] if os.path.exists(pause_path) else []
+    pause_t = os.path.getmtime(pause_path) if paused_globs else 0
+    def paused(arm):
+        if not any(fnmatch.fnmatch(arm, g) for g in paused_globs if g):
+            return False
+        cj = os.path.join(HERE, arm, "calls.jsonl")
+        return not (os.path.exists(cj) and os.path.getmtime(cj) > pause_t)
+    active = {a: v for a, v in counts.items() if not v[1] and not paused(a)}   # unfinished, not paused
     for arm in active:
         d10 = delta(arm, WINDOW_S)
         if d10 is not None:
@@ -74,7 +86,8 @@ def main():
     n_fin = sum(1 for v in counts.values() if v[1])
     rate = total10 / (WINDOW_S / 60) if known10 else float("nan")
     with open(LOG, "a") as f:
-        f.write(f"{time.strftime('%H:%M')} watch: {len(active)} arms running, {n_fin} finished, "
+        n_paused = sum(1 for a, v in counts.items() if not v[1] and paused(a))
+        f.write(f"{time.strftime('%H:%M')} watch: {len(active)} arms running, {n_fin} finished, {n_paused} paused, "
                 f"aggregate {rate:.0f} calls/min over last 10 min ({known10} arms with history, {moving} moving)\n")
         for arm in stalled:
             f.write(f"{time.strftime('%H:%M')} VERDICT: STALLED ARM {arm} — 0 new calls in 15 min while {moving} others moved "

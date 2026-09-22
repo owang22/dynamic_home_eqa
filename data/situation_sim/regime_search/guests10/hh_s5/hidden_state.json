@@ -1,0 +1,6362 @@
+{
+ "days": [
+  {
+   "causes": [
+    {
+     "event": "tidy_mood",
+     "id": "ep:tidy_mood:resident_1:d0",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong (13:03\u201315:03)"
+    }
+   ],
+   "day_index": 0,
+   "episodes": [
+    {
+     "chain": "ep:tidy_mood:resident_1:d0",
+     "day": 0,
+     "effects": {
+      "add": [
+       {
+        "activity": "tidy",
+        "at": 0,
+        "duration": 25,
+        "room": "living"
+       }
+      ],
+      "leave_p": {
+       "blanket": -0.3,
+       "book": -0.3,
+       "glass": -0.3,
+       "mug": -0.3,
+       "phone": -0.2
+      }
+     },
+     "end": 903,
+     "id": "ep:tidy_mood:resident_1:d0",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 783,
+     "type": "tidy_mood",
+     "words": "Sam is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.13,
+     "energy": 0.544,
+     "hurriedness": 0.248
+    },
+    "resident_2": {
+     "distraction": 0.491,
+     "energy": 0.742,
+     "hurriedness": 0.496
+    }
+   },
+   "weekday": "Monday"
+  },
+  {
+   "causes": [
+    {
+     "event": "tidy_mood",
+     "id": "ep:tidy_mood:resident_1:d1",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong (14:15\u201316:15)"
+    }
+   ],
+   "day_index": 1,
+   "episodes": [
+    {
+     "chain": "ep:tidy_mood:resident_1:d1",
+     "day": 1,
+     "effects": {
+      "add": [
+       {
+        "activity": "tidy",
+        "at": 0,
+        "duration": 25,
+        "room": "living"
+       }
+      ],
+      "leave_p": {
+       "blanket": -0.3,
+       "book": -0.3,
+       "glass": -0.3,
+       "mug": -0.3,
+       "phone": -0.2
+      }
+     },
+     "end": 975,
+     "id": "ep:tidy_mood:resident_1:d1",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 855,
+     "type": "tidy_mood",
+     "words": "Sam is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.0,
+     "energy": 0.545,
+     "hurriedness": 0.225
+    },
+    "resident_2": {
+     "distraction": 0.547,
+     "energy": 0.75,
+     "hurriedness": 0.361
+    }
+   },
+   "weekday": "Tuesday"
+  },
+  {
+   "causes": [
+    {
+     "event": "overslept",
+     "id": "ep:overslept:resident_1:d2",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam overslept: a rushed morning with things dumped at the door, then a normal day (06:30\u201310:30)"
+    },
+    {
+     "event": "on_a_roll",
+     "id": "ep:on_a_roll:resident_2:d2",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (13:00\u201316:12)"
+    }
+   ],
+   "day_index": 2,
+   "episodes": [
+    {
+     "chain": "ep:overslept:resident_1:d2",
+     "day": 2,
+     "effects": {
+      "flags": [
+       "running_late"
+      ],
+      "shorten": {
+       "breakfast": 0.5,
+       "morning_routine": 0.7
+      },
+      "state": {
+       "hurriedness": 0.25
+      }
+     },
+     "end": 630,
+     "id": "ep:overslept:resident_1:d2",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 390,
+     "type": "overslept",
+     "words": "Sam overslept: a rushed morning with things dumped at the door, then a normal day"
+    },
+    {
+     "chain": "ep:on_a_roll:resident_2:d2",
+     "day": 2,
+     "effects": {
+      "extend": {
+       "study": 25,
+       "work_session": 25
+      },
+      "leave_p": {
+       "mug": 0.3,
+       "notebook": 0.15,
+       "water_bottle": 0.2
+      },
+      "shorten": {
+       "break": 0.6
+      },
+      "state": {
+       "distraction": -0.1
+      }
+     },
+     "end": 972,
+     "id": "ep:on_a_roll:resident_2:d2",
+     "phase": "main",
+     "resident": "resident_2",
+     "start": 780,
+     "type": "on_a_roll",
+     "words": "Yuki is on a roll with work: sessions run long, breaks are short, the mug stays on the desk"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.208,
+     "energy": 0.286,
+     "hurriedness": 0.387
+    },
+    "resident_2": {
+     "distraction": 0.469,
+     "energy": 0.838,
+     "hurriedness": 0.336
+    }
+   },
+   "weekday": "Wednesday"
+  },
+  {
+   "causes": [
+    {
+     "event": null,
+     "id": "distracted:resident_2",
+     "kind": "internal",
+     "resident": "resident_2",
+     "words": "Yuki is distracted (0.90): carries things into the next room absent-mindedly, more likely to forget pocket items"
+    },
+    {
+     "event": "early_night",
+     "id": "ep:early_night:resident_1:d3",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam turns in early tonight: a short evening, bed 45 minutes sooner (20:30\u201324:00)"
+    }
+   ],
+   "day_index": 3,
+   "episodes": [
+    {
+     "chain": "ep:early_night:resident_1:d3",
+     "day": 3,
+     "effects": {
+      "shift": {
+       "bedtime": -45,
+       "sleep": -45
+      },
+      "shorten": {
+       "evening_tv": 0.5,
+       "gaming": 0.6,
+       "read": 0.7
+      }
+     },
+     "end": 1440,
+     "id": "ep:early_night:resident_1:d3",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 1230,
+     "type": "early_night",
+     "words": "Sam turns in early tonight: a short evening, bed 45 minutes sooner"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": [
+     "distracted"
+    ]
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.0,
+     "energy": 0.608,
+     "hurriedness": 0.107
+    },
+    "resident_2": {
+     "distraction": 0.903,
+     "energy": 0.652,
+     "hurriedness": 0.164
+    }
+   },
+   "weekday": "Thursday"
+  },
+  {
+   "causes": [],
+   "day_index": 4,
+   "episodes": [],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.192,
+     "energy": 0.776,
+     "hurriedness": 0.265
+    },
+    "resident_2": {
+     "distraction": 0.59,
+     "energy": 0.507,
+     "hurriedness": 0.522
+    }
+   },
+   "weekday": "Friday"
+  },
+  {
+   "causes": [],
+   "day_index": 5,
+   "episodes": [],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.265,
+     "energy": 0.83,
+     "hurriedness": 0.264
+    },
+    "resident_2": {
+     "distraction": 0.416,
+     "energy": 0.57,
+     "hurriedness": 0.619
+    }
+   },
+   "weekday": "Saturday"
+  },
+  {
+   "causes": [
+    {
+     "event": "tidy_mood",
+     "id": "ep:tidy_mood:resident_1:d6",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong (11:26\u201313:26)"
+    },
+    {
+     "event": "deadline",
+     "id": "ep:deadline:resident_1:d6:looming",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam has a deadline tomorrow at noon: works into the evening, eats fast with the laptop at the table (18:00\u201324:00)"
+    }
+   ],
+   "day_index": 6,
+   "episodes": [
+    {
+     "chain": "ep:tidy_mood:resident_1:d6",
+     "day": 6,
+     "effects": {
+      "add": [
+       {
+        "activity": "tidy",
+        "at": 0,
+        "duration": 25,
+        "room": "living"
+       }
+      ],
+      "leave_p": {
+       "blanket": -0.3,
+       "book": -0.3,
+       "glass": -0.3,
+       "mug": -0.3,
+       "phone": -0.2
+      }
+     },
+     "end": 806,
+     "id": "ep:tidy_mood:resident_1:d6",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 686,
+     "type": "tidy_mood",
+     "words": "Sam is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong"
+    },
+    {
+     "chain": "ep:deadline:resident_1:d6",
+     "day": 6,
+     "effects": {
+      "add": [
+       {
+        "activity": "work_session",
+        "at": "20:30",
+        "duration": 60
+       }
+      ],
+      "bring": {
+       "dinner": [
+        "laptop"
+       ]
+      },
+      "extend": {
+       "study": 45,
+       "work_session": 45
+      },
+      "shift": {
+       "bedtime": 30,
+       "sleep": 30
+      },
+      "shorten": {
+       "dinner": 0.7,
+       "evening_tv": 0.5
+      },
+      "state": {
+       "hurriedness": 0.2
+      }
+     },
+     "end": 1440,
+     "id": "ep:deadline:resident_1:d6:looming",
+     "phase": "looming",
+     "resident": "resident_1",
+     "start": 1080,
+     "type": "deadline",
+     "words": "Sam has a deadline tomorrow at noon: works into the evening, eats fast with the laptop at the table"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.59,
+     "energy": 0.697,
+     "hurriedness": 0.079
+    },
+    "resident_2": {
+     "distraction": 0.128,
+     "energy": 0.597,
+     "hurriedness": 0.58
+    }
+   },
+   "weekday": "Sunday"
+  },
+  {
+   "causes": [
+    {
+     "event": null,
+     "id": "low_energy:resident_2",
+     "kind": "internal",
+     "resident": "resident_2",
+     "words": "Yuki has low energy (0.23): leaves things where they were used instead of putting them back"
+    },
+    {
+     "event": "deadline",
+     "id": "ep:deadline:resident_1:d6:due_today",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam's deadline is at noon: a hurried morning, laptop and notebook never out of reach (06:30\u201312:00)"
+    },
+    {
+     "event": "deadline",
+     "id": "ep:deadline:resident_1:d6:relief",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam made the deadline and is running on empty: things get left out, and the evening is TV (12:00\u201324:00)"
+    },
+    {
+     "event": "on_a_roll",
+     "id": "ep:on_a_roll:resident_1:d7",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (14:47\u201318:42)"
+    }
+   ],
+   "day_index": 7,
+   "episodes": [
+    {
+     "chain": "ep:deadline:resident_1:d6",
+     "day": 7,
+     "effects": {
+      "flags": [
+       "running_late"
+      ],
+      "keep": [
+       "laptop",
+       "notebook"
+      ],
+      "slot_bias": {
+       "meditation": 0.3,
+       "read": 0.1,
+       "run": 0.3,
+       "running": 0.3,
+       "walk": 0.3,
+       "yoga": 0.3
+      },
+      "state": {
+       "distraction": 0.1,
+       "hurriedness": 0.3
+      }
+     },
+     "end": 720,
+     "id": "ep:deadline:resident_1:d6:due_today",
+     "phase": "due_today",
+     "resident": "resident_1",
+     "start": 390,
+     "type": "deadline",
+     "words": "Sam's deadline is at noon: a hurried morning, laptop and notebook never out of reach"
+    },
+    {
+     "chain": "ep:deadline:resident_1:d6",
+     "day": 7,
+     "effects": {
+      "flags": [
+       "low_energy"
+      ],
+      "leave_p": {
+       "mug": 0.2,
+       "plate": 0.2
+      },
+      "slot_bias": {
+       "evening_tv": 2.0,
+       "gym": 0.3,
+       "movie": 2.0,
+       "movies": 2.0,
+       "run": 0.3,
+       "running": 0.3
+      },
+      "state": {
+       "energy": -0.25
+      }
+     },
+     "end": 1440,
+     "id": "ep:deadline:resident_1:d6:relief",
+     "phase": "relief",
+     "resident": "resident_1",
+     "start": 720,
+     "type": "deadline",
+     "words": "Sam made the deadline and is running on empty: things get left out, and the evening is TV"
+    },
+    {
+     "chain": "ep:on_a_roll:resident_1:d7",
+     "day": 7,
+     "effects": {
+      "extend": {
+       "study": 25,
+       "work_session": 25
+      },
+      "leave_p": {
+       "mug": 0.3,
+       "notebook": 0.15,
+       "water_bottle": 0.2
+      },
+      "shorten": {
+       "break": 0.6
+      },
+      "state": {
+       "distraction": -0.1
+      }
+     },
+     "end": 1122,
+     "id": "ep:on_a_roll:resident_1:d7",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 887,
+     "type": "on_a_roll",
+     "words": "Sam is on a roll with work: sessions run long, breaks are short, the mug stays on the desk"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": [
+     "low_energy"
+    ]
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.532,
+     "energy": 0.861,
+     "hurriedness": 0.448
+    },
+    "resident_2": {
+     "distraction": 0.593,
+     "energy": 0.231,
+     "hurriedness": 0.693
+    }
+   },
+   "weekday": "Monday"
+  },
+  {
+   "causes": [
+    {
+     "event": "on_a_roll",
+     "id": "ep:on_a_roll:resident_1:d8",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (14:05\u201317:05)"
+    }
+   ],
+   "day_index": 8,
+   "episodes": [
+    {
+     "chain": "ep:on_a_roll:resident_1:d8",
+     "day": 8,
+     "effects": {
+      "extend": {
+       "study": 25,
+       "work_session": 25
+      },
+      "leave_p": {
+       "mug": 0.3,
+       "notebook": 0.15,
+       "water_bottle": 0.2
+      },
+      "shorten": {
+       "break": 0.6
+      },
+      "state": {
+       "distraction": -0.1
+      }
+     },
+     "end": 1025,
+     "id": "ep:on_a_roll:resident_1:d8",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 845,
+     "type": "on_a_roll",
+     "words": "Sam is on a roll with work: sessions run long, breaks are short, the mug stays on the desk"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.144,
+     "energy": 1.0,
+     "hurriedness": 0.466
+    },
+    "resident_2": {
+     "distraction": 0.624,
+     "energy": 0.376,
+     "hurriedness": 0.439
+    }
+   },
+   "weekday": "Tuesday"
+  },
+  {
+   "causes": [
+    {
+     "event": "rough_day_at_work",
+     "id": "ep:rough_day_at_work:resident_1:d9",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam had a rough day at work: goes quiet in the evening, keeps the phone close, the jacket lands on the couch (17:30\u201324:00)"
+    }
+   ],
+   "day_index": 9,
+   "episodes": [
+    {
+     "chain": "ep:rough_day_at_work:resident_1:d9",
+     "day": 9,
+     "effects": {
+      "keep": [
+       "phone"
+      ],
+      "leave_p": {
+       "mug": 0.25
+      },
+      "prefer": [
+       {
+        "after": [
+         "any_return"
+        ],
+        "class": "jacket",
+        "note": "jacket thrown over the couch after a bad day",
+        "to": "couch"
+       }
+      ],
+      "slot_bias": {
+       "call_family": 2.0,
+       "evening_tv": 0.5,
+       "family_calls": 2.0,
+       "listen_music": 2.0,
+       "music": 2.0,
+       "read": 1.5
+      },
+      "state": {
+       "distraction": 0.1,
+       "energy": -0.15
+      }
+     },
+     "end": 1440,
+     "id": "ep:rough_day_at_work:resident_1:d9",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 1050,
+     "type": "rough_day_at_work",
+     "words": "Sam had a rough day at work: goes quiet in the evening, keeps the phone close, the jacket lands on the couch"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.054,
+     "energy": 0.991,
+     "hurriedness": 0.504
+    },
+    "resident_2": {
+     "distraction": 0.641,
+     "energy": 0.658,
+     "hurriedness": 0.175
+    }
+   },
+   "weekday": "Wednesday"
+  },
+  {
+   "causes": [
+    {
+     "event": "restless_evening",
+     "id": "ep:restless_evening:resident_2:d10",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki can't settle this evening and wanders between rooms with things in hand (20:40\u201324:00)"
+    }
+   ],
+   "day_index": 10,
+   "episodes": [
+    {
+     "chain": "ep:restless_evening:resident_2:d10",
+     "day": 10,
+     "effects": {
+      "flags": [
+       "distracted"
+      ],
+      "leave_p": {
+       "book": 0.25,
+       "phone": 0.25
+      },
+      "state": {
+       "distraction": 0.2
+      }
+     },
+     "end": 1440,
+     "id": "ep:restless_evening:resident_2:d10",
+     "phase": "main",
+     "resident": "resident_2",
+     "start": 1240,
+     "type": "restless_evening",
+     "words": "Yuki can't settle this evening and wanders between rooms with things in hand"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.076,
+     "energy": 0.891,
+     "hurriedness": 0.518
+    },
+    "resident_2": {
+     "distraction": 0.556,
+     "energy": 0.933,
+     "hurriedness": 0.119
+    }
+   },
+   "weekday": "Thursday"
+  },
+  {
+   "causes": [
+    {
+     "event": "on_a_roll",
+     "id": "ep:on_a_roll:resident_2:d11",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (13:58\u201317:34)"
+    },
+    {
+     "event": "craving_a_snack",
+     "id": "ep:craving_a_snack:resident_2:d11",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki is craving a snack and fits one in when there is a gap; the bowl and glass tend to be left out (16:26\u201316:56)"
+    }
+   ],
+   "day_index": 11,
+   "episodes": [
+    {
+     "chain": "ep:on_a_roll:resident_2:d11",
+     "day": 11,
+     "effects": {
+      "extend": {
+       "study": 25,
+       "work_session": 25
+      },
+      "leave_p": {
+       "mug": 0.3,
+       "notebook": 0.15,
+       "water_bottle": 0.2
+      },
+      "shorten": {
+       "break": 0.6
+      },
+      "state": {
+       "distraction": -0.1
+      }
+     },
+     "end": 1054,
+     "id": "ep:on_a_roll:resident_2:d11",
+     "phase": "main",
+     "resident": "resident_2",
+     "start": 838,
+     "type": "on_a_roll",
+     "words": "Yuki is on a roll with work: sessions run long, breaks are short, the mug stays on the desk"
+    },
+    {
+     "chain": "ep:craving_a_snack:resident_2:d11",
+     "day": 11,
+     "effects": {
+      "add": [
+       {
+        "activity": "snack",
+        "at": 0,
+        "duration": 20
+       }
+      ],
+      "leave_p": {
+       "bowl": 0.3,
+       "glass": 0.3,
+       "snack_bowl": 0.4
+      }
+     },
+     "end": 1016,
+     "id": "ep:craving_a_snack:resident_2:d11",
+     "phase": "main",
+     "resident": "resident_2",
+     "start": 986,
+     "type": "craving_a_snack",
+     "words": "Yuki is craving a snack and fits one in when there is a gap; the bowl and glass tend to be left out"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.228,
+     "energy": 0.695,
+     "hurriedness": 0.508
+    },
+    "resident_2": {
+     "distraction": 0.244,
+     "energy": 0.883,
+     "hurriedness": 0.198
+    }
+   },
+   "weekday": "Friday"
+  },
+  {
+   "causes": [
+    {
+     "event": "on_a_roll",
+     "id": "ep:on_a_roll:resident_1:d12",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (14:38\u201318:05)"
+    },
+    {
+     "event": "long_call_with_a_friend",
+     "id": "ep:long_call_with_a_friend:resident_2:d12",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki gets a long call from a friend and takes it on the couch; the phone is left there afterwards (20:22\u201321:07)"
+    }
+   ],
+   "day_index": 12,
+   "episodes": [
+    {
+     "chain": "ep:on_a_roll:resident_1:d12",
+     "day": 12,
+     "effects": {
+      "extend": {
+       "study": 25,
+       "work_session": 25
+      },
+      "leave_p": {
+       "mug": 0.3,
+       "notebook": 0.15,
+       "water_bottle": 0.2
+      },
+      "shorten": {
+       "break": 0.6
+      },
+      "state": {
+       "distraction": -0.1
+      }
+     },
+     "end": 1085,
+     "id": "ep:on_a_roll:resident_1:d12",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 878,
+     "type": "on_a_roll",
+     "words": "Sam is on a roll with work: sessions run long, breaks are short, the mug stays on the desk"
+    },
+    {
+     "chain": "ep:long_call_with_a_friend:resident_2:d12",
+     "day": 12,
+     "effects": {
+      "add": [
+       {
+        "activity": "call_family",
+        "at": 0,
+        "duration": 40
+       }
+      ],
+      "leave_p": {
+       "phone": 0.5
+      }
+     },
+     "end": 1267,
+     "id": "ep:long_call_with_a_friend:resident_2:d12",
+     "phase": "main",
+     "resident": "resident_2",
+     "start": 1222,
+     "type": "long_call_with_a_friend",
+     "words": "Yuki gets a long call from a friend and takes it on the couch; the phone is left there afterwards"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.246,
+     "energy": 0.628,
+     "hurriedness": 0.506
+    },
+    "resident_2": {
+     "distraction": 0.47,
+     "energy": 0.645,
+     "hurriedness": 0.148
+    }
+   },
+   "weekday": "Saturday"
+  },
+  {
+   "causes": [],
+   "day_index": 13,
+   "episodes": [],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "lead",
+   "states": {
+    "resident_1": {
+     "distraction": 0.0,
+     "energy": 0.755,
+     "hurriedness": 0.555
+    },
+    "resident_2": {
+     "distraction": 0.287,
+     "energy": 0.507,
+     "hurriedness": 0.153
+    }
+   },
+   "weekday": "Sunday"
+  },
+  {
+   "causes": [
+    {
+     "event": "guest_visit",
+     "id": "guest_visit",
+     "kind": "event",
+     "resident": null,
+     "words": "Friends come over for the evening."
+    },
+    {
+     "event": "rough_day_at_work",
+     "id": "ep:rough_day_at_work:resident_1:d14",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam had a rough day at work: goes quiet in the evening, keeps the phone close, the jacket lands on the couch (17:30\u201324:00)"
+    },
+    {
+     "event": "long_call_with_a_friend",
+     "id": "ep:long_call_with_a_friend:resident_1:d14",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam gets a long call from a friend and takes it on the couch; the phone is left there afterwards (19:13\u201319:58)"
+    }
+   ],
+   "day_index": 14,
+   "episodes": [
+    {
+     "chain": "ep:rough_day_at_work:resident_1:d14",
+     "day": 14,
+     "effects": {
+      "keep": [
+       "phone"
+      ],
+      "leave_p": {
+       "mug": 0.25
+      },
+      "prefer": [
+       {
+        "after": [
+         "any_return"
+        ],
+        "class": "jacket",
+        "note": "jacket thrown over the couch after a bad day",
+        "to": "couch"
+       }
+      ],
+      "slot_bias": {
+       "call_family": 2.0,
+       "evening_tv": 0.5,
+       "family_calls": 2.0,
+       "listen_music": 2.0,
+       "music": 2.0,
+       "read": 1.5
+      },
+      "state": {
+       "distraction": 0.1,
+       "energy": -0.15
+      }
+     },
+     "end": 1440,
+     "id": "ep:rough_day_at_work:resident_1:d14",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 1050,
+     "type": "rough_day_at_work",
+     "words": "Sam had a rough day at work: goes quiet in the evening, keeps the phone close, the jacket lands on the couch"
+    },
+    {
+     "chain": "ep:long_call_with_a_friend:resident_1:d14",
+     "day": 14,
+     "effects": {
+      "add": [
+       {
+        "activity": "call_family",
+        "at": 0,
+        "duration": 40
+       }
+      ],
+      "leave_p": {
+       "phone": 0.5
+      }
+     },
+     "end": 1198,
+     "id": "ep:long_call_with_a_friend:resident_1:d14",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 1153,
+     "type": "long_call_with_a_friend",
+     "words": "Sam gets a long call from a friend and takes it on the couch; the phone is left there afterwards"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "guests",
+   "states": {
+    "resident_1": {
+     "distraction": 0.04,
+     "energy": 0.689,
+     "hurriedness": 0.25
+    },
+    "resident_2": {
+     "distraction": 0.44,
+     "energy": 0.437,
+     "hurriedness": 0.088
+    }
+   },
+   "weekday": "Monday"
+  },
+  {
+   "causes": [
+    {
+     "event": "guest_visit",
+     "id": "guest_visit",
+     "kind": "event",
+     "resident": null,
+     "words": "Friends come over for the evening."
+    }
+   ],
+   "day_index": 15,
+   "episodes": [],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "guests",
+   "states": {
+    "resident_1": {
+     "distraction": 0.154,
+     "energy": 0.632,
+     "hurriedness": 0.28
+    },
+    "resident_2": {
+     "distraction": 0.427,
+     "energy": 0.433,
+     "hurriedness": 0.601
+    }
+   },
+   "weekday": "Tuesday"
+  },
+  {
+   "causes": [
+    {
+     "event": "guest_visit",
+     "id": "guest_visit",
+     "kind": "event",
+     "resident": null,
+     "words": "Friends come over for the evening."
+    }
+   ],
+   "day_index": 16,
+   "episodes": [],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "guests",
+   "states": {
+    "resident_1": {
+     "distraction": 0.358,
+     "energy": 0.438,
+     "hurriedness": 0.313
+    },
+    "resident_2": {
+     "distraction": 0.48,
+     "energy": 0.61,
+     "hurriedness": 0.582
+    }
+   },
+   "weekday": "Wednesday"
+  },
+  {
+   "causes": [
+    {
+     "event": "guest_visit",
+     "id": "guest_visit",
+     "kind": "event",
+     "resident": null,
+     "words": "Friends come over for the evening."
+    },
+    {
+     "event": "long_call_with_a_friend",
+     "id": "ep:long_call_with_a_friend:resident_2:d17",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki gets a long call from a friend and takes it on the couch; the phone is left there afterwards (19:19\u201320:04)"
+    }
+   ],
+   "day_index": 17,
+   "episodes": [
+    {
+     "chain": "ep:long_call_with_a_friend:resident_2:d17",
+     "day": 17,
+     "effects": {
+      "add": [
+       {
+        "activity": "call_family",
+        "at": 0,
+        "duration": 40
+       }
+      ],
+      "leave_p": {
+       "phone": 0.5
+      }
+     },
+     "end": 1204,
+     "id": "ep:long_call_with_a_friend:resident_2:d17",
+     "phase": "main",
+     "resident": "resident_2",
+     "start": 1159,
+     "type": "long_call_with_a_friend",
+     "words": "Yuki gets a long call from a friend and takes it on the couch; the phone is left there afterwards"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "guests",
+   "states": {
+    "resident_1": {
+     "distraction": 0.417,
+     "energy": 0.703,
+     "hurriedness": 0.462
+    },
+    "resident_2": {
+     "distraction": 0.465,
+     "energy": 0.831,
+     "hurriedness": 0.479
+    }
+   },
+   "weekday": "Thursday"
+  },
+  {
+   "causes": [
+    {
+     "event": "guest_visit",
+     "id": "guest_visit",
+     "kind": "event",
+     "resident": null,
+     "words": "Friends come over for the evening."
+    },
+    {
+     "event": "tidy_mood",
+     "id": "ep:tidy_mood:resident_1:d18",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong (11:33\u201313:33)"
+    }
+   ],
+   "day_index": 18,
+   "episodes": [
+    {
+     "chain": "ep:tidy_mood:resident_1:d18",
+     "day": 18,
+     "effects": {
+      "add": [
+       {
+        "activity": "tidy",
+        "at": 0,
+        "duration": 25,
+        "room": "living"
+       }
+      ],
+      "leave_p": {
+       "blanket": -0.3,
+       "book": -0.3,
+       "glass": -0.3,
+       "mug": -0.3,
+       "phone": -0.2
+      }
+     },
+     "end": 813,
+     "id": "ep:tidy_mood:resident_1:d18",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 693,
+     "type": "tidy_mood",
+     "words": "Sam is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "guests",
+   "states": {
+    "resident_1": {
+     "distraction": 0.17,
+     "energy": 0.918,
+     "hurriedness": 0.482
+    },
+    "resident_2": {
+     "distraction": 0.563,
+     "energy": 0.563,
+     "hurriedness": 0.217
+    }
+   },
+   "weekday": "Friday"
+  },
+  {
+   "causes": [
+    {
+     "event": "guest_visit",
+     "id": "guest_visit",
+     "kind": "event",
+     "resident": null,
+     "words": "Friends come over for the evening."
+    },
+    {
+     "event": "sore_back",
+     "id": "ep:sore_back:resident_1:d19",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam has a sore back today and sits in the armchair instead of the couch, so things land on the side table (06:30\u201324:00)"
+    }
+   ],
+   "day_index": 19,
+   "episodes": [
+    {
+     "chain": "ep:sore_back:resident_1:d19",
+     "day": 19,
+     "effects": {
+      "leave_p": {
+       "blanket": 0.25
+      },
+      "surface": {
+       "evening_tv": "armchair",
+       "listen_music": "armchair",
+       "movie": "armchair",
+       "read_living": "armchair"
+      }
+     },
+     "end": 1440,
+     "id": "ep:sore_back:resident_1:d19",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 390,
+     "type": "sore_back",
+     "words": "Sam has a sore back today and sits in the armchair instead of the couch, so things land on the side table"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "guests",
+   "states": {
+    "resident_1": {
+     "distraction": 0.175,
+     "energy": 0.892,
+     "hurriedness": 0.208
+    },
+    "resident_2": {
+     "distraction": 0.501,
+     "energy": 0.347,
+     "hurriedness": 0.492
+    }
+   },
+   "weekday": "Saturday"
+  },
+  {
+   "causes": [
+    {
+     "event": "guest_visit",
+     "id": "guest_visit",
+     "kind": "event",
+     "resident": null,
+     "words": "Friends come over for the evening."
+    },
+    {
+     "event": "on_a_roll",
+     "id": "ep:on_a_roll:resident_2:d20",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (13:33\u201316:56)"
+    },
+    {
+     "event": "afternoon_slump",
+     "id": "ep:afternoon_slump:resident_1:d20",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam hits an afternoon slump: things get left where they were used for a couple of hours (14:15\u201315:49)"
+    },
+    {
+     "event": "restless_evening",
+     "id": "ep:restless_evening:resident_1:d20",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam can't settle this evening and wanders between rooms with things in hand (20:25\u201324:00)"
+    }
+   ],
+   "day_index": 20,
+   "episodes": [
+    {
+     "chain": "ep:on_a_roll:resident_2:d20",
+     "day": 20,
+     "effects": {
+      "extend": {
+       "study": 25,
+       "work_session": 25
+      },
+      "leave_p": {
+       "mug": 0.3,
+       "notebook": 0.15,
+       "water_bottle": 0.2
+      },
+      "shorten": {
+       "break": 0.6
+      },
+      "state": {
+       "distraction": -0.1
+      }
+     },
+     "end": 1016,
+     "id": "ep:on_a_roll:resident_2:d20",
+     "phase": "main",
+     "resident": "resident_2",
+     "start": 813,
+     "type": "on_a_roll",
+     "words": "Yuki is on a roll with work: sessions run long, breaks are short, the mug stays on the desk"
+    },
+    {
+     "chain": "ep:afternoon_slump:resident_1:d20",
+     "day": 20,
+     "effects": {
+      "flags": [
+       "low_energy"
+      ],
+      "slot_bias": {
+       "nap": 3.0,
+       "napping": 3.0,
+       "run": 0.3,
+       "running": 0.3,
+       "walk": 0.5
+      },
+      "state": {
+       "energy": -0.2
+      }
+     },
+     "end": 949,
+     "id": "ep:afternoon_slump:resident_1:d20",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 855,
+     "type": "afternoon_slump",
+     "words": "Sam hits an afternoon slump: things get left where they were used for a couple of hours"
+    },
+    {
+     "chain": "ep:restless_evening:resident_1:d20",
+     "day": 20,
+     "effects": {
+      "flags": [
+       "distracted"
+      ],
+      "leave_p": {
+       "book": 0.25,
+       "phone": 0.25
+      },
+      "state": {
+       "distraction": 0.2
+      }
+     },
+     "end": 1440,
+     "id": "ep:restless_evening:resident_1:d20",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 1225,
+     "type": "restless_evening",
+     "words": "Sam can't settle this evening and wanders between rooms with things in hand"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "guests",
+   "states": {
+    "resident_1": {
+     "distraction": 0.392,
+     "energy": 0.549,
+     "hurriedness": 0.316
+    },
+    "resident_2": {
+     "distraction": 0.68,
+     "energy": 0.531,
+     "hurriedness": 0.486
+    }
+   },
+   "weekday": "Sunday"
+  },
+  {
+   "causes": [
+    {
+     "event": "guest_visit",
+     "id": "guest_visit",
+     "kind": "event",
+     "resident": null,
+     "words": "Friends come over for the evening."
+    },
+    {
+     "event": "craving_a_snack",
+     "id": "ep:craving_a_snack:resident_1:d21",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam is craving a snack and fits one in when there is a gap; the bowl and glass tend to be left out (14:41\u201315:11)"
+    }
+   ],
+   "day_index": 21,
+   "episodes": [
+    {
+     "chain": "ep:craving_a_snack:resident_1:d21",
+     "day": 21,
+     "effects": {
+      "add": [
+       {
+        "activity": "snack",
+        "at": 0,
+        "duration": 20
+       }
+      ],
+      "leave_p": {
+       "bowl": 0.3,
+       "glass": 0.3,
+       "snack_bowl": 0.4
+      }
+     },
+     "end": 911,
+     "id": "ep:craving_a_snack:resident_1:d21",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 881,
+     "type": "craving_a_snack",
+     "words": "Sam is craving a snack and fits one in when there is a gap; the bowl and glass tend to be left out"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "guests",
+   "states": {
+    "resident_1": {
+     "distraction": 0.27,
+     "energy": 0.776,
+     "hurriedness": 0.355
+    },
+    "resident_2": {
+     "distraction": 0.516,
+     "energy": 0.594,
+     "hurriedness": 0.622
+    }
+   },
+   "weekday": "Monday"
+  },
+  {
+   "causes": [
+    {
+     "event": "guest_visit",
+     "id": "guest_visit",
+     "kind": "event",
+     "resident": null,
+     "words": "Friends come over for the evening."
+    }
+   ],
+   "day_index": 22,
+   "episodes": [],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "guests",
+   "states": {
+    "resident_1": {
+     "distraction": 0.233,
+     "energy": 0.858,
+     "hurriedness": 0.618
+    },
+    "resident_2": {
+     "distraction": 0.54,
+     "energy": 0.695,
+     "hurriedness": 0.582
+    }
+   },
+   "weekday": "Tuesday"
+  },
+  {
+   "causes": [
+    {
+     "event": "guest_visit",
+     "id": "guest_visit",
+     "kind": "event",
+     "resident": null,
+     "words": "Friends come over for the evening."
+    },
+    {
+     "event": "afternoon_slump",
+     "id": "ep:afternoon_slump:resident_2:d23",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki hits an afternoon slump: things get left where they were used for a couple of hours (15:07\u201316:42)"
+    },
+    {
+     "event": "rough_day_at_work",
+     "id": "ep:rough_day_at_work:resident_1:d23",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam had a rough day at work: goes quiet in the evening, keeps the phone close, the jacket lands on the couch (17:30\u201324:00)"
+    },
+    {
+     "event": "early_night",
+     "id": "ep:early_night:resident_1:d23",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam turns in early tonight: a short evening, bed 45 minutes sooner (20:30\u201324:00)"
+    }
+   ],
+   "day_index": 23,
+   "episodes": [
+    {
+     "chain": "ep:afternoon_slump:resident_2:d23",
+     "day": 23,
+     "effects": {
+      "flags": [
+       "low_energy"
+      ],
+      "slot_bias": {
+       "nap": 3.0,
+       "napping": 3.0,
+       "run": 0.3,
+       "running": 0.3,
+       "walk": 0.5
+      },
+      "state": {
+       "energy": -0.2
+      }
+     },
+     "end": 1002,
+     "id": "ep:afternoon_slump:resident_2:d23",
+     "phase": "main",
+     "resident": "resident_2",
+     "start": 907,
+     "type": "afternoon_slump",
+     "words": "Yuki hits an afternoon slump: things get left where they were used for a couple of hours"
+    },
+    {
+     "chain": "ep:rough_day_at_work:resident_1:d23",
+     "day": 23,
+     "effects": {
+      "keep": [
+       "phone"
+      ],
+      "leave_p": {
+       "mug": 0.25
+      },
+      "prefer": [
+       {
+        "after": [
+         "any_return"
+        ],
+        "class": "jacket",
+        "note": "jacket thrown over the couch after a bad day",
+        "to": "couch"
+       }
+      ],
+      "slot_bias": {
+       "call_family": 2.0,
+       "evening_tv": 0.5,
+       "family_calls": 2.0,
+       "listen_music": 2.0,
+       "music": 2.0,
+       "read": 1.5
+      },
+      "state": {
+       "distraction": 0.1,
+       "energy": -0.15
+      }
+     },
+     "end": 1440,
+     "id": "ep:rough_day_at_work:resident_1:d23",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 1050,
+     "type": "rough_day_at_work",
+     "words": "Sam had a rough day at work: goes quiet in the evening, keeps the phone close, the jacket lands on the couch"
+    },
+    {
+     "chain": "ep:early_night:resident_1:d23",
+     "day": 23,
+     "effects": {
+      "shift": {
+       "bedtime": -45,
+       "sleep": -45
+      },
+      "shorten": {
+       "evening_tv": 0.5,
+       "gaming": 0.6,
+       "read": 0.7
+      }
+     },
+     "end": 1440,
+     "id": "ep:early_night:resident_1:d23",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 1230,
+     "type": "early_night",
+     "words": "Sam turns in early tonight: a short evening, bed 45 minutes sooner"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "guests",
+   "states": {
+    "resident_1": {
+     "distraction": 0.055,
+     "energy": 0.625,
+     "hurriedness": 0.216
+    },
+    "resident_2": {
+     "distraction": 0.439,
+     "energy": 0.83,
+     "hurriedness": 0.256
+    }
+   },
+   "weekday": "Wednesday"
+  },
+  {
+   "causes": [],
+   "day_index": 24,
+   "episodes": [],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "return",
+   "states": {
+    "resident_1": {
+     "distraction": 0.048,
+     "energy": 0.934,
+     "hurriedness": 0.304
+    },
+    "resident_2": {
+     "distraction": 0.527,
+     "energy": 0.726,
+     "hurriedness": 0.214
+    }
+   },
+   "weekday": "Thursday"
+  },
+  {
+   "causes": [
+    {
+     "event": "overslept",
+     "id": "ep:overslept:resident_1:d25",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam overslept: a rushed morning with things dumped at the door, then a normal day (06:30\u201310:30)"
+    },
+    {
+     "event": "on_a_roll",
+     "id": "ep:on_a_roll:resident_1:d25",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (13:07\u201316:41)"
+    },
+    {
+     "event": "afternoon_slump",
+     "id": "ep:afternoon_slump:resident_2:d25",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki hits an afternoon slump: things get left where they were used for a couple of hours (14:05\u201315:59)"
+    }
+   ],
+   "day_index": 25,
+   "episodes": [
+    {
+     "chain": "ep:overslept:resident_1:d25",
+     "day": 25,
+     "effects": {
+      "flags": [
+       "running_late"
+      ],
+      "shorten": {
+       "breakfast": 0.5,
+       "morning_routine": 0.7
+      },
+      "state": {
+       "hurriedness": 0.25
+      }
+     },
+     "end": 630,
+     "id": "ep:overslept:resident_1:d25",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 390,
+     "type": "overslept",
+     "words": "Sam overslept: a rushed morning with things dumped at the door, then a normal day"
+    },
+    {
+     "chain": "ep:on_a_roll:resident_1:d25",
+     "day": 25,
+     "effects": {
+      "extend": {
+       "study": 25,
+       "work_session": 25
+      },
+      "leave_p": {
+       "mug": 0.3,
+       "notebook": 0.15,
+       "water_bottle": 0.2
+      },
+      "shorten": {
+       "break": 0.6
+      },
+      "state": {
+       "distraction": -0.1
+      }
+     },
+     "end": 1001,
+     "id": "ep:on_a_roll:resident_1:d25",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 787,
+     "type": "on_a_roll",
+     "words": "Sam is on a roll with work: sessions run long, breaks are short, the mug stays on the desk"
+    },
+    {
+     "chain": "ep:afternoon_slump:resident_2:d25",
+     "day": 25,
+     "effects": {
+      "flags": [
+       "low_energy"
+      ],
+      "slot_bias": {
+       "nap": 3.0,
+       "napping": 3.0,
+       "run": 0.3,
+       "running": 0.3,
+       "walk": 0.5
+      },
+      "state": {
+       "energy": -0.2
+      }
+     },
+     "end": 959,
+     "id": "ep:afternoon_slump:resident_2:d25",
+     "phase": "main",
+     "resident": "resident_2",
+     "start": 845,
+     "type": "afternoon_slump",
+     "words": "Yuki hits an afternoon slump: things get left where they were used for a couple of hours"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "return",
+   "states": {
+    "resident_1": {
+     "distraction": 0.13,
+     "energy": 0.838,
+     "hurriedness": 0.272
+    },
+    "resident_2": {
+     "distraction": 0.499,
+     "energy": 0.442,
+     "hurriedness": 0.187
+    }
+   },
+   "weekday": "Friday"
+  },
+  {
+   "causes": [],
+   "day_index": 26,
+   "episodes": [],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "return",
+   "states": {
+    "resident_1": {
+     "distraction": 0.045,
+     "energy": 1.0,
+     "hurriedness": 0.508
+    },
+    "resident_2": {
+     "distraction": 0.564,
+     "energy": 0.651,
+     "hurriedness": 0.271
+    }
+   },
+   "weekday": "Saturday"
+  },
+  {
+   "causes": [
+    {
+     "event": "overslept",
+     "id": "ep:overslept:resident_1:d27",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam overslept: a rushed morning with things dumped at the door, then a normal day (06:30\u201310:30)"
+    }
+   ],
+   "day_index": 27,
+   "episodes": [
+    {
+     "chain": "ep:overslept:resident_1:d27",
+     "day": 27,
+     "effects": {
+      "flags": [
+       "running_late"
+      ],
+      "shorten": {
+       "breakfast": 0.5,
+       "morning_routine": 0.7
+      },
+      "state": {
+       "hurriedness": 0.25
+      }
+     },
+     "end": 630,
+     "id": "ep:overslept:resident_1:d27",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 390,
+     "type": "overslept",
+     "words": "Sam overslept: a rushed morning with things dumped at the door, then a normal day"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "return",
+   "states": {
+    "resident_1": {
+     "distraction": 0.442,
+     "energy": 0.896,
+     "hurriedness": 0.572
+    },
+    "resident_2": {
+     "distraction": 0.432,
+     "energy": 0.721,
+     "hurriedness": 0.283
+    }
+   },
+   "weekday": "Sunday"
+  },
+  {
+   "causes": [
+    {
+     "event": "deadline",
+     "id": "ep:deadline:resident_2:d28:looming",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki has a deadline tomorrow at noon: works into the evening, eats fast with the laptop at the table (18:00\u201324:00)"
+    }
+   ],
+   "day_index": 28,
+   "episodes": [
+    {
+     "chain": "ep:deadline:resident_2:d28",
+     "day": 28,
+     "effects": {
+      "add": [
+       {
+        "activity": "work_session",
+        "at": "20:30",
+        "duration": 60
+       }
+      ],
+      "bring": {
+       "dinner": [
+        "laptop"
+       ]
+      },
+      "extend": {
+       "study": 45,
+       "work_session": 45
+      },
+      "shift": {
+       "bedtime": 30,
+       "sleep": 30
+      },
+      "shorten": {
+       "dinner": 0.7,
+       "evening_tv": 0.5
+      },
+      "state": {
+       "hurriedness": 0.2
+      }
+     },
+     "end": 1440,
+     "id": "ep:deadline:resident_2:d28:looming",
+     "phase": "looming",
+     "resident": "resident_2",
+     "start": 1080,
+     "type": "deadline",
+     "words": "Yuki has a deadline tomorrow at noon: works into the evening, eats fast with the laptop at the table"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "return",
+   "states": {
+    "resident_1": {
+     "distraction": 0.35,
+     "energy": 0.838,
+     "hurriedness": 0.485
+    },
+    "resident_2": {
+     "distraction": 0.614,
+     "energy": 0.617,
+     "hurriedness": 0.305
+    }
+   },
+   "weekday": "Monday"
+  },
+  {
+   "causes": [
+    {
+     "event": "deadline",
+     "id": "ep:deadline:resident_2:d28:due_today",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki's deadline is at noon: a hurried morning, laptop and notebook never out of reach (06:30\u201312:00)"
+    },
+    {
+     "event": "deadline",
+     "id": "ep:deadline:resident_2:d28:relief",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki made the deadline and is running on empty: things get left out, and the evening is TV (12:00\u201324:00)"
+    },
+    {
+     "event": "early_night",
+     "id": "ep:early_night:resident_1:d29",
+     "kind": "episode",
+     "resident": "resident_1",
+     "words": "Sam turns in early tonight: a short evening, bed 45 minutes sooner (20:30\u201324:00)"
+    }
+   ],
+   "day_index": 29,
+   "episodes": [
+    {
+     "chain": "ep:deadline:resident_2:d28",
+     "day": 29,
+     "effects": {
+      "flags": [
+       "running_late"
+      ],
+      "keep": [
+       "laptop",
+       "notebook"
+      ],
+      "slot_bias": {
+       "meditation": 0.3,
+       "read": 0.1,
+       "run": 0.3,
+       "running": 0.3,
+       "walk": 0.3,
+       "yoga": 0.3
+      },
+      "state": {
+       "distraction": 0.1,
+       "hurriedness": 0.3
+      }
+     },
+     "end": 720,
+     "id": "ep:deadline:resident_2:d28:due_today",
+     "phase": "due_today",
+     "resident": "resident_2",
+     "start": 390,
+     "type": "deadline",
+     "words": "Yuki's deadline is at noon: a hurried morning, laptop and notebook never out of reach"
+    },
+    {
+     "chain": "ep:deadline:resident_2:d28",
+     "day": 29,
+     "effects": {
+      "flags": [
+       "low_energy"
+      ],
+      "leave_p": {
+       "mug": 0.2,
+       "plate": 0.2
+      },
+      "slot_bias": {
+       "evening_tv": 2.0,
+       "gym": 0.3,
+       "movie": 2.0,
+       "movies": 2.0,
+       "run": 0.3,
+       "running": 0.3
+      },
+      "state": {
+       "energy": -0.25
+      }
+     },
+     "end": 1440,
+     "id": "ep:deadline:resident_2:d28:relief",
+     "phase": "relief",
+     "resident": "resident_2",
+     "start": 720,
+     "type": "deadline",
+     "words": "Yuki made the deadline and is running on empty: things get left out, and the evening is TV"
+    },
+    {
+     "chain": "ep:early_night:resident_1:d29",
+     "day": 29,
+     "effects": {
+      "shift": {
+       "bedtime": -45,
+       "sleep": -45
+      },
+      "shorten": {
+       "evening_tv": 0.5,
+       "gaming": 0.6,
+       "read": 0.7
+      }
+     },
+     "end": 1440,
+     "id": "ep:early_night:resident_1:d29",
+     "phase": "main",
+     "resident": "resident_1",
+     "start": 1230,
+     "type": "early_night",
+     "words": "Sam turns in early tonight: a short evening, bed 45 minutes sooner"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "return",
+   "states": {
+    "resident_1": {
+     "distraction": 0.166,
+     "energy": 0.949,
+     "hurriedness": 0.419
+    },
+    "resident_2": {
+     "distraction": 0.61,
+     "energy": 0.304,
+     "hurriedness": 0.362
+    }
+   },
+   "weekday": "Tuesday"
+  },
+  {
+   "causes": [
+    {
+     "event": "on_a_roll",
+     "id": "ep:on_a_roll:resident_2:d30",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (14:11\u201317:24)"
+    }
+   ],
+   "day_index": 30,
+   "episodes": [
+    {
+     "chain": "ep:on_a_roll:resident_2:d30",
+     "day": 30,
+     "effects": {
+      "extend": {
+       "study": 25,
+       "work_session": 25
+      },
+      "leave_p": {
+       "mug": 0.3,
+       "notebook": 0.15,
+       "water_bottle": 0.2
+      },
+      "shorten": {
+       "break": 0.6
+      },
+      "state": {
+       "distraction": -0.1
+      }
+     },
+     "end": 1044,
+     "id": "ep:on_a_roll:resident_2:d30",
+     "phase": "main",
+     "resident": "resident_2",
+     "start": 851,
+     "type": "on_a_roll",
+     "words": "Yuki is on a roll with work: sessions run long, breaks are short, the mug stays on the desk"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "return",
+   "states": {
+    "resident_1": {
+     "distraction": 0.229,
+     "energy": 0.801,
+     "hurriedness": 0.364
+    },
+    "resident_2": {
+     "distraction": 0.587,
+     "energy": 0.597,
+     "hurriedness": 0.249
+    }
+   },
+   "weekday": "Wednesday"
+  },
+  {
+   "causes": [
+    {
+     "event": "deadline",
+     "id": "ep:deadline:resident_2:d31:looming",
+     "kind": "episode",
+     "resident": "resident_2",
+     "words": "Yuki has a deadline tomorrow at noon: works into the evening, eats fast with the laptop at the table (18:00\u201324:00)"
+    }
+   ],
+   "day_index": 31,
+   "episodes": [
+    {
+     "chain": "ep:deadline:resident_2:d31",
+     "day": 31,
+     "effects": {
+      "add": [
+       {
+        "activity": "work_session",
+        "at": "20:30",
+        "duration": 60
+       }
+      ],
+      "bring": {
+       "dinner": [
+        "laptop"
+       ]
+      },
+      "extend": {
+       "study": 45,
+       "work_session": 45
+      },
+      "shift": {
+       "bedtime": 30,
+       "sleep": 30
+      },
+      "shorten": {
+       "dinner": 0.7,
+       "evening_tv": 0.5
+      },
+      "state": {
+       "hurriedness": 0.2
+      }
+     },
+     "end": 1440,
+     "id": "ep:deadline:resident_2:d31:looming",
+     "phase": "looming",
+     "resident": "resident_2",
+     "start": 1080,
+     "type": "deadline",
+     "words": "Yuki has a deadline tomorrow at noon: works into the evening, eats fast with the laptop at the table"
+    }
+   ],
+   "flags": {
+    "resident_1": [],
+    "resident_2": []
+   },
+   "is_weekend": false,
+   "roles": {},
+   "stage": "return",
+   "states": {
+    "resident_1": {
+     "distraction": 0.064,
+     "energy": 0.667,
+     "hurriedness": 0.354
+    },
+    "resident_2": {
+     "distraction": 0.45,
+     "energy": 0.76,
+     "hurriedness": 0.363
+    }
+   },
+   "weekday": "Thursday"
+  }
+ ],
+ "episode_library": {
+  "afternoon_slump": {
+   "p_day": {
+    "weekday": 0.07,
+    "weekend": 0.06
+   },
+   "phases": [
+    {
+     "duration": [
+      90,
+      150
+     ],
+     "effects": {
+      "flags": [
+       "low_energy"
+      ],
+      "slot_bias": {
+       "nap": 3.0,
+       "napping": 3.0,
+       "run": 0.3,
+       "running": 0.3,
+       "walk": 0.5
+      },
+      "state": {
+       "energy": -0.2
+      }
+     },
+     "id": "main",
+     "start": [
+      "14:00",
+      "15:30"
+     ],
+     "words": "{name} hits an afternoon slump: things get left where they were used for a couple of hours"
+    }
+   ]
+  },
+  "craving_a_snack": {
+   "p_day": {
+    "weekday": 0.08,
+    "weekend": 0.08
+   },
+   "phases": [
+    {
+     "duration": 30,
+     "effects": {
+      "add": [
+       {
+        "activity": "snack",
+        "at": 0,
+        "duration": 20
+       }
+      ],
+      "leave_p": {
+       "bowl": 0.3,
+       "glass": 0.3,
+       "snack_bowl": 0.4
+      }
+     },
+     "id": "main",
+     "start": [
+      "14:30",
+      "16:30"
+     ],
+     "words": "{name} is craving a snack and fits one in when there is a gap; the bowl and glass tend to be left out"
+    }
+   ]
+  },
+  "deadline": {
+   "p_day": {
+    "weekday": 0.04,
+    "weekend": 0.0
+   },
+   "phases": [
+    {
+     "effects": {
+      "add": [
+       {
+        "activity": "work_session",
+        "at": "20:30",
+        "duration": 60
+       }
+      ],
+      "bring": {
+       "dinner": [
+        "laptop"
+       ]
+      },
+      "extend": {
+       "study": 45,
+       "work_session": 45
+      },
+      "shift": {
+       "bedtime": 30,
+       "sleep": 30
+      },
+      "shorten": {
+       "dinner": 0.7,
+       "evening_tv": 0.5
+      },
+      "state": {
+       "hurriedness": 0.2
+      }
+     },
+     "id": "looming",
+     "start": "18:00",
+     "until": "sleep",
+     "words": "{name} has a deadline tomorrow at noon: works into the evening, eats fast with the laptop at the table"
+    },
+    {
+     "day": 1,
+     "effects": {
+      "flags": [
+       "running_late"
+      ],
+      "keep": [
+       "laptop",
+       "notebook"
+      ],
+      "slot_bias": {
+       "meditation": 0.3,
+       "read": 0.1,
+       "run": 0.3,
+       "running": 0.3,
+       "walk": 0.3,
+       "yoga": 0.3
+      },
+      "state": {
+       "distraction": 0.1,
+       "hurriedness": 0.3
+      }
+     },
+     "id": "due_today",
+     "start": "wake",
+     "until": "12:00",
+     "words": "{name}'s deadline is at noon: a hurried morning, laptop and notebook never out of reach"
+    },
+    {
+     "day": 1,
+     "effects": {
+      "flags": [
+       "low_energy"
+      ],
+      "leave_p": {
+       "mug": 0.2,
+       "plate": 0.2
+      },
+      "slot_bias": {
+       "evening_tv": 2.0,
+       "gym": 0.3,
+       "movie": 2.0,
+       "movies": 2.0,
+       "run": 0.3,
+       "running": 0.3
+      },
+      "state": {
+       "energy": -0.25
+      }
+     },
+     "id": "relief",
+     "start": "12:00",
+     "until": "sleep",
+     "words": "{name} made the deadline and is running on empty: things get left out, and the evening is TV"
+    }
+   ],
+   "roles": [
+    "worker_out",
+    "worker_home",
+    "student"
+   ]
+  },
+  "early_night": {
+   "p_day": {
+    "weekday": 0.06,
+    "weekend": 0.04
+   },
+   "phases": [
+    {
+     "effects": {
+      "shift": {
+       "bedtime": -45,
+       "sleep": -45
+      },
+      "shorten": {
+       "evening_tv": 0.5,
+       "gaming": 0.6,
+       "read": 0.7
+      }
+     },
+     "id": "main",
+     "start": "20:30",
+     "until": "sleep",
+     "words": "{name} turns in early tonight: a short evening, bed 45 minutes sooner"
+    }
+   ]
+  },
+  "long_call_with_a_friend": {
+   "p_day": {
+    "weekday": 0.06,
+    "weekend": 0.08
+   },
+   "phases": [
+    {
+     "duration": 45,
+     "effects": {
+      "add": [
+       {
+        "activity": "call_family",
+        "at": 0,
+        "duration": 40
+       }
+      ],
+      "leave_p": {
+       "phone": 0.5
+      }
+     },
+     "id": "main",
+     "start": [
+      "19:00",
+      "21:00"
+     ],
+     "words": "{name} gets a long call from a friend and takes it on the couch; the phone is left there afterwards"
+    }
+   ]
+  },
+  "new_game_release": {
+   "needs_hobby": "gaming",
+   "p_day": {
+    "weekday": 0.05,
+    "weekend": 0.08
+   },
+   "phases": [
+    {
+     "effects": {
+      "extend": {
+       "gaming": 60
+      },
+      "leave_p": {
+       "controller": 0.4,
+       "glass": 0.3,
+       "headset": 0.4,
+       "snack_bowl": 0.3
+      },
+      "shift": {
+       "bedtime": 30,
+       "sleep": 30
+      },
+      "slot_bias": {
+       "evening_tv": 0.2,
+       "gaming": 4.0,
+       "movie": 0.3,
+       "movies": 0.3,
+       "read": 0.3,
+       "reading_living": 0.3
+      },
+      "state": {
+       "distraction": 0.1
+      }
+     },
+     "id": "tonight",
+     "start": [
+      "18:30",
+      "20:30"
+     ],
+     "until": "sleep",
+     "words": "{name} has a new game: the evening is gaming, and the controller, headset and glass stay by the couch"
+    },
+    {
+     "day": 1,
+     "effects": {
+      "shorten": {
+       "morning_routine": 0.8
+      },
+      "state": {
+       "energy": -0.15
+      }
+     },
+     "id": "next_morning",
+     "start": "wake",
+     "until": "12:00",
+     "words": "{name} is tired after a late night of gaming: a slower, shorter morning"
+    }
+   ]
+  },
+  "on_a_roll": {
+   "p_day": {
+    "weekday": 0.08,
+    "weekend": 0.02
+   },
+   "phases": [
+    {
+     "duration": [
+      180,
+      240
+     ],
+     "effects": {
+      "extend": {
+       "study": 25,
+       "work_session": 25
+      },
+      "leave_p": {
+       "mug": 0.3,
+       "notebook": 0.15,
+       "water_bottle": 0.2
+      },
+      "shorten": {
+       "break": 0.6
+      },
+      "state": {
+       "distraction": -0.1
+      }
+     },
+     "id": "main",
+     "start": [
+      "13:00",
+      "15:00"
+     ],
+     "words": "{name} is on a roll with work: sessions run long, breaks are short, the mug stays on the desk"
+    }
+   ],
+   "roles": [
+    "worker_out",
+    "worker_home",
+    "student"
+   ]
+  },
+  "overslept": {
+   "p_day": {
+    "weekday": 0.06,
+    "weekend": 0.03
+   },
+   "phases": [
+    {
+     "effects": {
+      "flags": [
+       "running_late"
+      ],
+      "shorten": {
+       "breakfast": 0.5,
+       "morning_routine": 0.7
+      },
+      "state": {
+       "hurriedness": 0.25
+      }
+     },
+     "id": "main",
+     "start": "wake",
+     "until": "10:30",
+     "words": "{name} overslept: a rushed morning with things dumped at the door, then a normal day"
+    }
+   ],
+   "roles": [
+    "worker_out",
+    "worker_home",
+    "student"
+   ]
+  },
+  "restless_evening": {
+   "p_day": {
+    "weekday": 0.05,
+    "weekend": 0.05
+   },
+   "phases": [
+    {
+     "effects": {
+      "flags": [
+       "distracted"
+      ],
+      "leave_p": {
+       "book": 0.25,
+       "phone": 0.25
+      },
+      "state": {
+       "distraction": 0.2
+      }
+     },
+     "id": "main",
+     "start": [
+      "20:00",
+      "21:30"
+     ],
+     "until": "sleep",
+     "words": "{name} can't settle this evening and wanders between rooms with things in hand"
+    }
+   ]
+  },
+  "rough_day_at_work": {
+   "p_day": {
+    "weekday": 0.05,
+    "weekend": 0.0
+   },
+   "phases": [
+    {
+     "effects": {
+      "keep": [
+       "phone"
+      ],
+      "leave_p": {
+       "mug": 0.25
+      },
+      "prefer": [
+       {
+        "after": [
+         "any_return"
+        ],
+        "class": "jacket",
+        "note": "jacket thrown over the couch after a bad day",
+        "to": "couch"
+       }
+      ],
+      "slot_bias": {
+       "call_family": 2.0,
+       "evening_tv": 0.5,
+       "family_calls": 2.0,
+       "listen_music": 2.0,
+       "music": 2.0,
+       "read": 1.5
+      },
+      "state": {
+       "distraction": 0.1,
+       "energy": -0.15
+      }
+     },
+     "id": "main",
+     "start": "17:30",
+     "until": "sleep",
+     "words": "{name} had a rough day at work: goes quiet in the evening, keeps the phone close, the jacket lands on the couch"
+    }
+   ],
+   "roles": [
+    "worker_out",
+    "shift_worker"
+   ]
+  },
+  "sore_back": {
+   "p_day": {
+    "weekday": 0.04,
+    "weekend": 0.04
+   },
+   "phases": [
+    {
+     "effects": {
+      "leave_p": {
+       "blanket": 0.25
+      },
+      "surface": {
+       "evening_tv": "armchair",
+       "listen_music": "armchair",
+       "movie": "armchair",
+       "read_living": "armchair"
+      }
+     },
+     "id": "main",
+     "start": "wake",
+     "until": "sleep",
+     "words": "{name} has a sore back today and sits in the armchair instead of the couch, so things land on the side table"
+    }
+   ]
+  },
+  "tidy_mood": {
+   "p_day": {
+    "weekday": 0.04,
+    "weekend": 0.08
+   },
+   "phases": [
+    {
+     "duration": 120,
+     "effects": {
+      "add": [
+       {
+        "activity": "tidy",
+        "at": 0,
+        "duration": 25,
+        "room": "living"
+       }
+      ],
+      "leave_p": {
+       "blanket": -0.3,
+       "book": -0.3,
+       "glass": -0.3,
+       "mug": -0.3,
+       "phone": -0.2
+      }
+     },
+     "id": "main",
+     "start": [
+      "10:00",
+      "16:00"
+     ],
+     "words": "{name} is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong"
+    }
+   ]
+  }
+ },
+ "event_library": {
+  "grocery_delivery": {
+   "block": [
+    {
+     "during": "unpack_groceries",
+     "receptacle": "counter"
+    }
+   ],
+   "description": "A grocery delivery arrives in the early evening.",
+   "p_day": {
+    "weekday": 0.0,
+    "weekend": 0.0
+   },
+   "placement": [
+    {
+     "after": [
+      "unpack_groceries",
+      "any"
+     ],
+     "class": "water_bottle",
+     "note": "counter full of shopping; bottle put on the dish rack",
+     "to": "dish_rack"
+    },
+    {
+     "after": [
+      "any"
+     ],
+     "class": "mug",
+     "note": "counter full of shopping; mug left on the table",
+     "to": "kitchen_table"
+    }
+   ],
+   "schedule": {
+    "add": [
+     {
+      "activity": "unpack_groceries",
+      "duration": 30,
+      "room": "kitchen",
+      "start": "18:05",
+      "who": "first_home"
+     }
+    ],
+    "delay": {
+     "cook_dinner": 20,
+     "dinner": 20
+    }
+   },
+   "scope": "household",
+   "trace_words": "someone unpacks groceries; the kitchen counter is covered with bags, so things that would go there land on the table instead"
+  },
+  "guest_visit": {
+   "block": [
+    {
+     "during": "host_guest",
+     "receptacle": "couch"
+    }
+   ],
+   "description": "Friends come over for the evening.",
+   "p_day": {
+    "weekday": 0.0,
+    "weekend": 0.0
+   },
+   "placement": [
+    {
+     "after": [
+      "tidy",
+      "host_guest"
+     ],
+     "class": "laptop",
+     "note": "cleared away before the guests",
+     "to": "home"
+    },
+    {
+     "after": [
+      "tidy",
+      "host_guest"
+     ],
+     "class": "blanket",
+     "note": "folded onto the armchair to free the couch",
+     "to": "armchair"
+    },
+    {
+     "after": [
+      "host_guest"
+     ],
+     "class": "mug",
+     "note": "mugs collected into the sink after the guests",
+     "to": "sink"
+    },
+    {
+     "after": [
+      "tidy"
+     ],
+     "class": "book",
+     "note": "books shelved for the guests",
+     "to": "bookshelf"
+    },
+    {
+     "after": [
+      "host_guest"
+     ],
+     "class": "board_game",
+     "note": "game left out after the guests",
+     "to": "coffee_table"
+    },
+    {
+     "after": [
+      "host_guest"
+     ],
+     "class": "glass",
+     "note": "glasses collected into the sink after the guests",
+     "to": "sink"
+    }
+   ],
+   "schedule": {
+    "add": [
+     {
+      "activity": "tidy",
+      "duration": 30,
+      "room": "living",
+      "start": "17:40",
+      "who": "all_home"
+     },
+     {
+      "activity": "host_guest",
+      "duration": 120,
+      "start": "20:30",
+      "who": "all"
+     }
+    ],
+    "delay": {
+     "cook_dinner": 30,
+     "dinner": 30
+    },
+    "remove": [
+     "evening_tv",
+     "read",
+     "gym",
+     "slot:evening"
+    ]
+   },
+   "scope": "household",
+   "trace_words": "the living room is tidied beforehand, dinner is late, and the couch is taken by guests all evening"
+  },
+  "late_work": {
+   "description": "A long day at work; home two hours late.",
+   "internal": {
+    "energy": -0.25,
+    "hurriedness": 0.35
+   },
+   "p_day": {
+    "weekday": 0.0,
+    "weekend": 0.0
+   },
+   "placement": [
+    {
+     "after": [
+      "commute_work"
+     ],
+     "class": "backpack",
+     "note": "bag dumped by the door, home late",
+     "to": "entry_floor"
+    },
+    {
+     "after": [
+      "commute_work"
+     ],
+     "class": "handbag",
+     "note": "bag dumped by the door, home late",
+     "to": "entry_floor"
+    },
+    {
+     "after": [
+      "commute_work"
+     ],
+     "class": "jacket",
+     "note": "jacket thrown over the couch, home late",
+     "to": "couch"
+    },
+    {
+     "after": [
+      "work_session",
+      "break"
+     ],
+     "class": "mug",
+     "note": "mug left on the desk, no time to clear up on a hectic day",
+     "to": "desk"
+    }
+   ],
+   "roles": [
+    "worker_out",
+    "worker_home",
+    "student",
+    "shift_worker"
+   ],
+   "schedule": {
+    "extend": {
+     "classes": 90,
+     "commute_work": 120,
+     "shift": 60,
+     "work_session": 90
+    },
+    "remove": [
+     "walk",
+     "gym",
+     "cook_dinner",
+     "read",
+     "slot:late_afternoon"
+    ],
+    "shorten": {
+     "evening_tv": 0.5
+    }
+   },
+   "scope": "resident",
+   "trace_words": "gets home late and hurried; the evening walk and cooking are dropped and things are dumped at the door"
+  },
+  "laundry_day": {
+   "description": "Laundry day.",
+   "p_day": {
+    "weekday": 0.0,
+    "weekend": 0.0
+   },
+   "placement": [
+    {
+     "after": [
+      "laundry"
+     ],
+     "class": "laundry_basket",
+     "note": "basket left in the bedroom while things dry",
+     "to": "bedroom_floor"
+    },
+    {
+     "after": [
+      "laundry"
+     ],
+     "class": "towel",
+     "note": "clean towel folded on the bed",
+     "to": "bed"
+    },
+    {
+     "after": [
+      "laundry"
+     ],
+     "class": "blanket",
+     "note": "washed blanket airing on the bed",
+     "to": "bed"
+    }
+   ],
+   "schedule": {
+    "add": [
+     {
+      "activity": "laundry",
+      "duration": 90,
+      "mean_bouts": 2,
+      "room": "bathroom",
+      "start": "10:30",
+      "who": "one_home"
+     }
+    ]
+   },
+   "scope": "household",
+   "trace_words": "the laundry basket travels, towels and the blanket get washed and end up airing in the bedroom rather than where they live"
+  },
+  "rain": {
+   "carry": [
+    "umbrella"
+   ],
+   "description": "It rains for most of the day.",
+   "p_day": {
+    "weekday": 0.0,
+    "weekend": 0.0
+   },
+   "placement": [
+    {
+     "after": [
+      "any_return"
+     ],
+     "class": "shoes",
+     "note": "wet shoes left on the entry floor to dry",
+     "to": "entry_floor"
+    },
+    {
+     "after": [
+      "any_return"
+     ],
+     "class": "jacket",
+     "note": "wet jacket hung on the hook",
+     "to": "entry_hook"
+    },
+    {
+     "after": [
+      "any_return"
+     ],
+     "class": "umbrella",
+     "note": "wet umbrella propped by the door",
+     "to": "entry_floor"
+    },
+    {
+     "after": [
+      "any_return"
+     ],
+     "class": "backpack",
+     "note": "wet bag left by the door",
+     "to": "entry_floor"
+    },
+    {
+     "after": [
+      "any_return"
+     ],
+     "class": "handbag",
+     "note": "wet bag left by the door",
+     "to": "entry_floor"
+    },
+    {
+     "after": [
+      "any_return"
+     ],
+     "class": "gym_bag",
+     "note": "wet bag left by the door",
+     "to": "entry_floor"
+    }
+   ],
+   "schedule": {
+    "remove": [
+     "walk",
+     "run",
+     "cycle",
+     "photo_walk"
+    ],
+    "shorten": {
+     "errands": 0.6
+    }
+   },
+   "scope": "household",
+   "trace_words": "no walk; wet shoes, jackets and umbrellas get dropped at the entry instead of being put away"
+  },
+  "sick_day": {
+   "description": "Off sick, resting on the couch all day.",
+   "internal": {
+    "energy": -0.5,
+    "hurriedness": -0.3
+   },
+   "p_day": {
+    "weekday": 0.0,
+    "weekend": 0.0
+   },
+   "placement": [
+    {
+     "after": [
+      "rest_couch"
+     ],
+     "class": "laptop",
+     "note": "left on the coffee table between naps",
+     "to": "coffee_table"
+    },
+    {
+     "after": [
+      "rest_couch"
+     ],
+     "class": "charger",
+     "note": "charger stays plugged in by the couch",
+     "to": "coffee_table"
+    },
+    {
+     "after": [
+      "rest_couch"
+     ],
+     "class": "headphones",
+     "note": "headphones left on the couch",
+     "to": "couch"
+    },
+    {
+     "after": [
+      "rest_couch"
+     ],
+     "class": "glasses",
+     "note": "glasses left on the coffee table",
+     "to": "coffee_table"
+    },
+    {
+     "after": [
+      "rest_couch"
+     ],
+     "class": "mug",
+     "note": "tea mug stays by the couch",
+     "to": "coffee_table"
+    },
+    {
+     "after": [
+      "rest_couch"
+     ],
+     "class": "medication",
+     "note": "medication kept within reach",
+     "to": "coffee_table"
+    },
+    {
+     "after": [
+      "rest_couch"
+     ],
+     "class": "book",
+     "note": "book dropped on the couch",
+     "to": "couch"
+    },
+    {
+     "after": [
+      "rest_couch"
+     ],
+     "class": "phone",
+     "note": "phone lost in the couch cushions",
+     "to": "couch"
+    },
+    {
+     "after": [
+      "rest_couch"
+     ],
+     "class": "blanket",
+     "note": "blanket stays on the couch",
+     "to": "couch"
+    }
+   ],
+   "roles": [
+    "worker_out",
+    "worker_home",
+    "retired",
+    "student",
+    "shift_worker"
+   ],
+   "schedule": {
+    "add": [
+     {
+      "activity": "rest_couch",
+      "duration": 480,
+      "mean_bouts": 3,
+      "room": "living",
+      "start": "09:30",
+      "who": "owner"
+     }
+    ],
+    "remove": [
+     "commute_work",
+     "classes",
+     "shift",
+     "work_session",
+     "study",
+     "video_call",
+     "walk",
+     "run",
+     "gym",
+     "cycle",
+     "errands",
+     "groceries",
+     "chores",
+     "vacuum",
+     "lunch",
+     "lunch_out",
+     "visit_friends",
+     "photo_walk",
+     "slot:morning",
+     "slot:late_afternoon",
+     "slot:weekend_morning",
+     "slot:weekend_afternoon"
+    ]
+   },
+   "scope": "resident",
+   "trace_words": "no work or trips out; laptop, mug, medication, book and blanket all migrate to the couch and coffee table"
+  }
+ },
+ "household": {
+  "carer": "resident_1",
+  "groups": {
+   "bag_sam": {
+    "kind": "bag",
+    "leader": "backpack_sam",
+    "members": [
+     "headphones_sam",
+     "notebook_sam",
+     "pen_sam"
+    ],
+    "name": "bag_sam",
+    "owner": "resident_1"
+   },
+   "bag_yuki": {
+    "kind": "bag",
+    "leader": "backpack_yuki",
+    "members": [
+     "charger_yuki",
+     "laptop_yuki",
+     "lunchbox_yuki",
+     "notebook_yuki",
+     "pen_yuki",
+     "water_bottle_yuki"
+    ],
+    "name": "bag_yuki",
+    "owner": "resident_2"
+   },
+   "gym_yuki": {
+    "kind": "gym",
+    "leader": "gym_bag_yuki",
+    "members": [],
+    "name": "gym_yuki",
+    "owner": "resident_2"
+   }
+  },
+  "household_type": "couple",
+  "id": "hh_s5",
+  "objects": {
+   "backpack_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "desk_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "wardrobe_b1"
+    ],
+    "cls": "backpack",
+    "group": "bag_sam",
+    "home": [
+     "entry_hook_e1",
+     "bedroom_floor_b1",
+     "desk_b1"
+    ],
+    "id": "backpack_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "bag",
+    "static": false
+   },
+   "backpack_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "desk_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "wardrobe_b1"
+    ],
+    "cls": "backpack",
+    "group": "bag_yuki",
+    "home": [
+     "entry_hook_e1",
+     "bedroom_floor_b1",
+     "desk_b1"
+    ],
+    "id": "backpack_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "bag",
+    "static": false
+   },
+   "blanket_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bathroom_shelf_ba1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "coffee_table_l1",
+     "couch_l1",
+     "dresser_b1",
+     "floor_l_l1",
+     "towel_rack_ba1",
+     "wardrobe_b1"
+    ],
+    "cls": "blanket",
+    "group": null,
+    "home": [
+     "couch_l1",
+     "armchair_l1",
+     "bed_b1"
+    ],
+    "id": "blanket_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "textile",
+    "static": false
+   },
+   "book_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "desk_b1",
+     "dresser_b1",
+     "floor_l_l1",
+     "nightstand_b1",
+     "side_table_l1",
+     "tv_stand_l1"
+    ],
+    "cls": "book",
+    "group": null,
+    "home": [
+     "nightstand_b1",
+     "bookshelf_l1",
+     "couch_l1"
+    ],
+    "id": "book_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "paper",
+    "static": false
+   },
+   "book_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "desk_b1",
+     "dresser_b1",
+     "floor_l_l1",
+     "nightstand_b1",
+     "side_table_l1",
+     "tv_stand_l1"
+    ],
+    "cls": "book",
+    "group": null,
+    "home": [
+     "nightstand_b1",
+     "bookshelf_l1",
+     "couch_l1"
+    ],
+    "id": "book_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "paper",
+    "static": false
+   },
+   "bowl_sam": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "dish_rack_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sink_k1"
+    ],
+    "cls": "bowl",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "dish_rack_k1",
+     "sink_k1"
+    ],
+    "id": "bowl_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "bowl_yuki": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "dish_rack_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sink_k1"
+    ],
+    "cls": "bowl",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "dish_rack_k1",
+     "sink_k1"
+    ],
+    "id": "bowl_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "candle_shared": {
+    "after_use": null,
+    "allowed": [
+     "coffee_table_l1",
+     "dining_table_d1",
+     "nightstand_b1"
+    ],
+    "cls": "candle",
+    "group": null,
+    "home": [
+     "coffee_table_l1",
+     "dining_table_d1",
+     "nightstand_b1"
+    ],
+    "id": "candle_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "charger_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "desk_b1",
+     "dresser_b1",
+     "floor_l_l1",
+     "nightstand_b1",
+     "side_table_l1",
+     "tv_stand_l1"
+    ],
+    "cls": "charger",
+    "group": null,
+    "home": [
+     "desk_b1",
+     "nightstand_b1"
+    ],
+    "id": "charger_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "device",
+    "static": false
+   },
+   "charger_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "desk_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "floor_l_l1",
+     "nightstand_b1",
+     "side_table_l1",
+     "tv_stand_l1",
+     "wardrobe_b1"
+    ],
+    "cls": "charger",
+    "group": "bag_yuki",
+    "home": [
+     "desk_b1",
+     "nightstand_b1"
+    ],
+    "id": "charger_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "device",
+    "static": false
+   },
+   "coasters_shared": {
+    "after_use": null,
+    "allowed": [
+     "coffee_table_l1",
+     "dining_table_d1"
+    ],
+    "cls": "coasters",
+    "group": null,
+    "home": [
+     "coffee_table_l1",
+     "dining_table_d1"
+    ],
+    "id": "coasters_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "cushion_1_shared": {
+    "after_use": null,
+    "allowed": [
+     "armchair_l1",
+     "bed_b1",
+     "couch_l1"
+    ],
+    "cls": "cushion",
+    "group": null,
+    "home": [
+     "couch_l1",
+     "armchair_l1",
+     "bed_b1"
+    ],
+    "id": "cushion_1_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "cushion_2_shared": {
+    "after_use": null,
+    "allowed": [
+     "armchair_l1",
+     "bed_b1",
+     "couch_l1"
+    ],
+    "cls": "cushion",
+    "group": null,
+    "home": [
+     "armchair_l1",
+     "bed_b1",
+     "couch_l1"
+    ],
+    "id": "cushion_2_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "cutting_board_shared": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "dish_rack_k1",
+     "drawer_k_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sink_k1"
+    ],
+    "cls": "cutting_board",
+    "group": null,
+    "home": [
+     "counter_k1",
+     "dish_rack_k1",
+     "sink_k1"
+    ],
+    "id": "cutting_board_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "kitchen_tool",
+    "static": false
+   },
+   "detergent_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bathroom_shelf_ba1",
+     "counter_k1",
+     "cupboard_k1",
+     "kitchen_table_k1",
+     "medicine_cabinet_ba1",
+     "sink_ba_ba1"
+    ],
+    "cls": "detergent",
+    "group": null,
+    "home": [
+     "bathroom_shelf_ba1",
+     "cupboard_k1"
+    ],
+    "id": "detergent_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "toiletry",
+    "static": false
+   },
+   "dog_bowl_shared": {
+    "after_use": "floor_k_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "dish_rack_k1",
+     "floor_k_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sink_k1"
+    ],
+    "cls": "dog_bowl",
+    "group": null,
+    "home": [
+     "floor_k_k1",
+     "counter_k1",
+     "sink_k1"
+    ],
+    "id": "dog_bowl_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "dog_food_bag_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "chair_k1",
+     "counter_k1",
+     "floor_k_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1"
+    ],
+    "cls": "dog_food_bag",
+    "group": null,
+    "home": [
+     "pantry_shelf_k1",
+     "floor_k_k1"
+    ],
+    "id": "dog_food_bag_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "bag",
+    "static": false
+   },
+   "dog_leash_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "floor_l_l1",
+     "side_table_l1",
+     "tv_stand_l1"
+    ],
+    "cls": "dog_leash",
+    "group": null,
+    "home": [
+     "entry_hook_e1",
+     "entry_table_e1",
+     "couch_l1"
+    ],
+    "id": "dog_leash_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "dog_toy_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "desk_b1",
+     "dresser_b1",
+     "floor_l_l1",
+     "nightstand_b1",
+     "side_table_l1",
+     "tv_stand_l1"
+    ],
+    "cls": "dog_toy",
+    "group": null,
+    "home": [
+     "floor_l_l1",
+     "couch_l1",
+     "bedroom_floor_b1"
+    ],
+    "id": "dog_toy_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "doormat_shared": {
+    "after_use": null,
+    "allowed": [
+     "entry_floor_e1"
+    ],
+    "cls": "doormat",
+    "group": null,
+    "home": [
+     "entry_floor_e1"
+    ],
+    "id": "doormat_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "first_aid_kit_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bathroom_shelf_ba1",
+     "cupboard_k1",
+     "floor_k_k1",
+     "medicine_cabinet_ba1"
+    ],
+    "cls": "first_aid_kit",
+    "group": null,
+    "home": [
+     "medicine_cabinet_ba1",
+     "bathroom_shelf_ba1",
+     "cupboard_k1"
+    ],
+    "id": "first_aid_kit_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "bulky",
+    "static": false
+   },
+   "fruit_bowl_shared": {
+    "after_use": null,
+    "allowed": [
+     "counter_k1",
+     "kitchen_table_k1"
+    ],
+    "cls": "fruit_bowl",
+    "group": null,
+    "home": [
+     "kitchen_table_k1",
+     "counter_k1"
+    ],
+    "id": "fruit_bowl_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "gardening_gloves_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "couch_l1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "floor_l_l1",
+     "shoe_rack_e1"
+    ],
+    "cls": "gardening_gloves",
+    "group": null,
+    "home": [
+     "entry_table_e1"
+    ],
+    "id": "gardening_gloves_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "wearable",
+    "static": false
+   },
+   "glass_sam": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "cupboard_k1",
+     "desk_b1",
+     "dining_table_d1",
+     "dish_rack_k1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "pantry_shelf_k1",
+     "side_table_l1",
+     "sideboard_d1",
+     "sink_k1"
+    ],
+    "cls": "glass",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "dish_rack_k1",
+     "sink_k1"
+    ],
+    "id": "glass_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "glass_yuki": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "cupboard_k1",
+     "desk_b1",
+     "dining_table_d1",
+     "dish_rack_k1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "pantry_shelf_k1",
+     "side_table_l1",
+     "sideboard_d1",
+     "sink_k1"
+    ],
+    "cls": "glass",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "dish_rack_k1",
+     "sink_k1"
+    ],
+    "id": "glass_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "glasses_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bathroom_shelf_ba1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "desk_b1",
+     "dresser_b1",
+     "floor_l_l1",
+     "nightstand_b1",
+     "side_table_l1",
+     "sink_ba_ba1",
+     "tv_stand_l1"
+    ],
+    "cls": "glasses",
+    "group": null,
+    "home": [
+     "nightstand_b1",
+     "desk_b1",
+     "coffee_table_l1"
+    ],
+    "id": "glasses_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "gym_bag_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "desk_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "wardrobe_b1"
+    ],
+    "cls": "gym_bag",
+    "group": "gym_yuki",
+    "home": [
+     "wardrobe_b1",
+     "bedroom_floor_b1",
+     "entry_floor_e1"
+    ],
+    "id": "gym_bag_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "bag",
+    "static": false
+   },
+   "hair_dryer_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bathroom_shelf_ba1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "desk_b1",
+     "dresser_b1",
+     "nightstand_b1"
+    ],
+    "cls": "hair_dryer",
+    "group": null,
+    "home": [
+     "bathroom_shelf_ba1",
+     "dresser_b1",
+     "bedroom_floor_b1"
+    ],
+    "id": "hair_dryer_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "device",
+    "static": false
+   },
+   "hat_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "shoe_rack_e1",
+     "wardrobe_b1"
+    ],
+    "cls": "hat",
+    "group": null,
+    "home": [
+     "entry_hook_e1",
+     "dresser_b1"
+    ],
+    "id": "hat_sam",
+    "outdoor": true,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "wearable",
+    "static": false
+   },
+   "headphones_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "desk_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "floor_l_l1",
+     "nightstand_b1",
+     "side_table_l1",
+     "tv_stand_l1",
+     "wardrobe_b1"
+    ],
+    "cls": "headphones",
+    "group": "bag_sam",
+    "home": [
+     "desk_b1",
+     "nightstand_b1",
+     "coffee_table_l1"
+    ],
+    "id": "headphones_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "device",
+    "static": false
+   },
+   "iron_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "desk_b1",
+     "dresser_b1",
+     "nightstand_b1",
+     "wardrobe_b1"
+    ],
+    "cls": "iron",
+    "group": null,
+    "home": [
+     "wardrobe_b1",
+     "dresser_b1"
+    ],
+    "id": "iron_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "device",
+    "static": false
+   },
+   "ironing_board_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "wardrobe_b1"
+    ],
+    "cls": "ironing_board",
+    "group": null,
+    "home": [
+     "bedroom_floor_b1",
+     "wardrobe_b1"
+    ],
+    "id": "ironing_board_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "bulky",
+    "static": false
+   },
+   "jacket_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "couch_l1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "floor_l_l1",
+     "shoe_rack_e1",
+     "wardrobe_b1"
+    ],
+    "cls": "jacket",
+    "group": null,
+    "home": [
+     "entry_hook_e1",
+     "wardrobe_b1"
+    ],
+    "id": "jacket_sam",
+    "outdoor": true,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "wearable",
+    "static": false
+   },
+   "jacket_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "couch_l1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "floor_l_l1",
+     "shoe_rack_e1",
+     "wardrobe_b1"
+    ],
+    "cls": "jacket",
+    "group": null,
+    "home": [
+     "entry_hook_e1",
+     "wardrobe_b1"
+    ],
+    "id": "jacket_yuki",
+    "outdoor": true,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "wearable",
+    "static": false
+   },
+   "kettle_shared": {
+    "after_use": null,
+    "allowed": [
+     "counter_k1"
+    ],
+    "cls": "kettle",
+    "group": null,
+    "home": [
+     "counter_k1"
+    ],
+    "id": "kettle_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "keys_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "desk_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "nightstand_b1"
+    ],
+    "cls": "keys",
+    "group": null,
+    "home": [
+     "entry_table_e1",
+     "entry_hook_e1",
+     "nightstand_b1"
+    ],
+    "id": "keys_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": true,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "keys_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "desk_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "nightstand_b1"
+    ],
+    "cls": "keys",
+    "group": null,
+    "home": [
+     "entry_table_e1",
+     "entry_hook_e1",
+     "nightstand_b1"
+    ],
+    "id": "keys_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": true,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "kitchen_knife_shared": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "dish_rack_k1",
+     "drawer_k_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sink_k1"
+    ],
+    "cls": "kitchen_knife",
+    "group": null,
+    "home": [
+     "drawer_k_k1",
+     "counter_k1",
+     "sink_k1"
+    ],
+    "id": "kitchen_knife_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "kitchen_tool",
+    "static": false
+   },
+   "knife_block_shared": {
+    "after_use": null,
+    "allowed": [
+     "counter_k1"
+    ],
+    "cls": "knife_block",
+    "group": null,
+    "home": [
+     "counter_k1"
+    ],
+    "id": "knife_block_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "lamp_shared": {
+    "after_use": null,
+    "allowed": [
+     "nightstand_b1",
+     "side_table_l1",
+     "tv_stand_l1"
+    ],
+    "cls": "lamp",
+    "group": null,
+    "home": [
+     "side_table_l1",
+     "tv_stand_l1",
+     "nightstand_b1"
+    ],
+    "id": "lamp_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "laptop_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "chair_d_d1",
+     "coffee_table_l1",
+     "couch_l1",
+     "desk_b1",
+     "dining_table_d1",
+     "dresser_b1",
+     "floor_l_l1",
+     "nightstand_b1",
+     "side_table_l1",
+     "sideboard_d1",
+     "tv_stand_l1"
+    ],
+    "cls": "laptop",
+    "group": null,
+    "home": [
+     "desk_b1",
+     "bookshelf_l1",
+     "dining_table_d1"
+    ],
+    "id": "laptop_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "device",
+    "static": false
+   },
+   "laptop_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "chair_d_d1",
+     "coffee_table_l1",
+     "couch_l1",
+     "desk_b1",
+     "dining_table_d1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "floor_l_l1",
+     "nightstand_b1",
+     "side_table_l1",
+     "sideboard_d1",
+     "tv_stand_l1",
+     "wardrobe_b1"
+    ],
+    "cls": "laptop",
+    "group": "bag_yuki",
+    "home": [
+     "desk_b1",
+     "bookshelf_l1",
+     "dining_table_d1"
+    ],
+    "id": "laptop_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "device",
+    "static": false
+   },
+   "laundry_basket_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bathroom_shelf_ba1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "wardrobe_b1"
+    ],
+    "cls": "laundry_basket",
+    "group": null,
+    "home": [
+     "bathroom_shelf_ba1",
+     "bedroom_floor_b1",
+     "wardrobe_b1"
+    ],
+    "id": "laundry_basket_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "bulky",
+    "static": false
+   },
+   "lunchbox_yuki": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "counter_k1",
+     "cupboard_k1",
+     "desk_b1",
+     "dish_rack_k1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sink_k1",
+     "wardrobe_b1"
+    ],
+    "cls": "lunchbox",
+    "group": "bag_yuki",
+    "home": [
+     "cupboard_k1",
+     "counter_k1",
+     "sink_k1"
+    ],
+    "id": "lunchbox_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "magazine_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "desk_b1",
+     "dresser_b1",
+     "floor_l_l1",
+     "nightstand_b1",
+     "side_table_l1",
+     "tv_stand_l1"
+    ],
+    "cls": "magazine",
+    "group": null,
+    "home": [
+     "coffee_table_l1",
+     "bookshelf_l1",
+     "bed_b1"
+    ],
+    "id": "magazine_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "paper",
+    "static": false
+   },
+   "medication_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bathroom_shelf_ba1",
+     "coffee_table_l1",
+     "counter_k1",
+     "cupboard_k1",
+     "desk_b1",
+     "dresser_b1",
+     "kitchen_table_k1",
+     "medicine_cabinet_ba1",
+     "nightstand_b1",
+     "side_table_l1",
+     "sink_ba_ba1"
+    ],
+    "cls": "medication",
+    "group": null,
+    "home": [
+     "medicine_cabinet_ba1",
+     "nightstand_b1",
+     "counter_k1"
+    ],
+    "id": "medication_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "toiletry",
+    "static": false
+   },
+   "medication_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bathroom_shelf_ba1",
+     "coffee_table_l1",
+     "counter_k1",
+     "cupboard_k1",
+     "desk_b1",
+     "dresser_b1",
+     "kitchen_table_k1",
+     "medicine_cabinet_ba1",
+     "nightstand_b1",
+     "side_table_l1",
+     "sink_ba_ba1"
+    ],
+    "cls": "medication",
+    "group": null,
+    "home": [
+     "medicine_cabinet_ba1",
+     "nightstand_b1",
+     "counter_k1"
+    ],
+    "id": "medication_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "toiletry",
+    "static": false
+   },
+   "meditation_cushion_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "coffee_table_l1",
+     "couch_l1",
+     "dresser_b1",
+     "floor_l_l1",
+     "wardrobe_b1"
+    ],
+    "cls": "meditation_cushion",
+    "group": null,
+    "home": [
+     "bedroom_floor_b1",
+     "floor_l_l1",
+     "wardrobe_b1"
+    ],
+    "id": "meditation_cushion_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "textile",
+    "static": false
+   },
+   "mug_sam": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "cupboard_k1",
+     "desk_b1",
+     "dish_rack_k1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "pantry_shelf_k1",
+     "side_table_l1",
+     "sink_k1"
+    ],
+    "cls": "mug",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "dish_rack_k1",
+     "sink_k1"
+    ],
+    "id": "mug_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "mug_yuki": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "cupboard_k1",
+     "desk_b1",
+     "dish_rack_k1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "pantry_shelf_k1",
+     "side_table_l1",
+     "sink_k1"
+    ],
+    "cls": "mug",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "dish_rack_k1",
+     "sink_k1"
+    ],
+    "id": "mug_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "notebook_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "chair_k1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "desk_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "floor_k_k1",
+     "floor_l_l1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "pantry_shelf_k1",
+     "side_table_l1",
+     "tv_stand_l1",
+     "wardrobe_b1"
+    ],
+    "cls": "notebook",
+    "group": "bag_sam",
+    "home": [
+     "desk_b1",
+     "bookshelf_l1",
+     "kitchen_table_k1"
+    ],
+    "id": "notebook_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "paper",
+    "static": false
+   },
+   "notebook_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "chair_k1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "desk_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "floor_k_k1",
+     "floor_l_l1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "pantry_shelf_k1",
+     "side_table_l1",
+     "tv_stand_l1",
+     "wardrobe_b1"
+    ],
+    "cls": "notebook",
+    "group": "bag_yuki",
+    "home": [
+     "desk_b1",
+     "bookshelf_l1",
+     "kitchen_table_k1"
+    ],
+    "id": "notebook_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "paper",
+    "static": false
+   },
+   "pan_shared": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "dish_rack_k1",
+     "drawer_k_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sink_k1"
+    ],
+    "cls": "pan",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "dish_rack_k1",
+     "sink_k1"
+    ],
+    "id": "pan_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "kitchen_tool",
+    "static": false
+   },
+   "pen_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "counter_k1",
+     "desk_b1",
+     "drawer_k_k1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "floor_k_k1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "pantry_shelf_k1",
+     "wardrobe_b1"
+    ],
+    "cls": "pen",
+    "group": "bag_sam",
+    "home": [
+     "desk_b1",
+     "kitchen_table_k1",
+     "nightstand_b1"
+    ],
+    "id": "pen_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "pen_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "counter_k1",
+     "desk_b1",
+     "drawer_k_k1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "floor_k_k1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "pantry_shelf_k1",
+     "wardrobe_b1"
+    ],
+    "cls": "pen",
+    "group": "bag_yuki",
+    "home": [
+     "desk_b1",
+     "kitchen_table_k1",
+     "nightstand_b1"
+    ],
+    "id": "pen_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "phone_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bathroom_shelf_ba1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "desk_b1",
+     "dining_table_d1",
+     "drawer_k_k1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_table_e1",
+     "floor_k_k1",
+     "floor_l_l1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "pantry_shelf_k1",
+     "side_table_l1",
+     "sideboard_d1",
+     "sink_ba_ba1",
+     "tv_stand_l1"
+    ],
+    "cls": "phone",
+    "group": null,
+    "home": [
+     "nightstand_b1",
+     "coffee_table_l1",
+     "kitchen_table_k1"
+    ],
+    "id": "phone_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": true,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "phone_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bathroom_shelf_ba1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "desk_b1",
+     "dining_table_d1",
+     "drawer_k_k1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_table_e1",
+     "floor_k_k1",
+     "floor_l_l1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "pantry_shelf_k1",
+     "side_table_l1",
+     "sideboard_d1",
+     "sink_ba_ba1",
+     "tv_stand_l1"
+    ],
+    "cls": "phone",
+    "group": null,
+    "home": [
+     "nightstand_b1",
+     "coffee_table_l1",
+     "kitchen_table_k1"
+    ],
+    "id": "phone_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": true,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "picture_frame_shared": {
+    "after_use": null,
+    "allowed": [
+     "bookshelf_l1",
+     "dresser_b1",
+     "tv_stand_l1"
+    ],
+    "cls": "picture_frame",
+    "group": null,
+    "home": [
+     "bookshelf_l1",
+     "tv_stand_l1",
+     "dresser_b1"
+    ],
+    "id": "picture_frame_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "plant_pot_1_shared": {
+    "after_use": null,
+    "allowed": [
+     "bookshelf_l1",
+     "counter_k1",
+     "desk_b1",
+     "side_table_l1"
+    ],
+    "cls": "plant_pot",
+    "group": null,
+    "home": [
+     "side_table_l1",
+     "counter_k1",
+     "desk_b1",
+     "bookshelf_l1"
+    ],
+    "id": "plant_pot_1_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "plant_pot_2_shared": {
+    "after_use": null,
+    "allowed": [
+     "bookshelf_l1",
+     "counter_k1",
+     "desk_b1",
+     "side_table_l1"
+    ],
+    "cls": "plant_pot",
+    "group": null,
+    "home": [
+     "counter_k1",
+     "desk_b1",
+     "bookshelf_l1",
+     "side_table_l1"
+    ],
+    "id": "plant_pot_2_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "plant_pot_3_shared": {
+    "after_use": null,
+    "allowed": [
+     "bookshelf_l1",
+     "counter_k1",
+     "desk_b1",
+     "side_table_l1"
+    ],
+    "cls": "plant_pot",
+    "group": null,
+    "home": [
+     "desk_b1",
+     "bookshelf_l1",
+     "side_table_l1",
+     "counter_k1"
+    ],
+    "id": "plant_pot_3_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "plate_sam": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "dining_table_d1",
+     "dish_rack_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sideboard_d1",
+     "sink_k1"
+    ],
+    "cls": "plate",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "dish_rack_k1",
+     "sink_k1"
+    ],
+    "id": "plate_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "plate_yuki": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "dining_table_d1",
+     "dish_rack_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sideboard_d1",
+     "sink_k1"
+    ],
+    "cls": "plate",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "dish_rack_k1",
+     "sink_k1"
+    ],
+    "id": "plate_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "pot_shared": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "dish_rack_k1",
+     "drawer_k_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sink_k1"
+    ],
+    "cls": "pot",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "dish_rack_k1",
+     "sink_k1"
+    ],
+    "id": "pot_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "kitchen_tool",
+    "static": false
+   },
+   "razor_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bathroom_shelf_ba1",
+     "medicine_cabinet_ba1",
+     "sink_ba_ba1"
+    ],
+    "cls": "razor",
+    "group": null,
+    "home": [
+     "sink_ba_ba1",
+     "bathroom_shelf_ba1",
+     "medicine_cabinet_ba1"
+    ],
+    "id": "razor_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "toiletry",
+    "static": false
+   },
+   "recipe_book_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bookshelf_l1",
+     "chair_k1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "floor_k_k1",
+     "floor_l_l1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "side_table_l1",
+     "tv_stand_l1"
+    ],
+    "cls": "recipe_book",
+    "group": null,
+    "home": [
+     "pantry_shelf_k1",
+     "bookshelf_l1",
+     "counter_k1"
+    ],
+    "id": "recipe_book_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "paper",
+    "static": false
+   },
+   "remote_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "floor_l_l1",
+     "side_table_l1",
+     "tv_stand_l1"
+    ],
+    "cls": "remote",
+    "group": null,
+    "home": [
+     "tv_stand_l1",
+     "coffee_table_l1",
+     "couch_l1"
+    ],
+    "id": "remote_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "scarf_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "shoe_rack_e1",
+     "wardrobe_b1"
+    ],
+    "cls": "scarf",
+    "group": null,
+    "home": [
+     "entry_hook_e1",
+     "wardrobe_b1",
+     "dresser_b1"
+    ],
+    "id": "scarf_yuki",
+    "outdoor": true,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "wearable",
+    "static": false
+   },
+   "shoes_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "shoe_rack_e1",
+     "wardrobe_b1"
+    ],
+    "cls": "shoes",
+    "group": null,
+    "home": [
+     "shoe_rack_e1",
+     "entry_floor_e1",
+     "wardrobe_b1"
+    ],
+    "id": "shoes_sam",
+    "outdoor": true,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "wearable",
+    "static": false
+   },
+   "shoes_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "shoe_rack_e1",
+     "wardrobe_b1"
+    ],
+    "cls": "shoes",
+    "group": null,
+    "home": [
+     "shoe_rack_e1",
+     "entry_floor_e1",
+     "wardrobe_b1"
+    ],
+    "id": "shoes_yuki",
+    "outdoor": true,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "wearable",
+    "static": false
+   },
+   "shopping_bag_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "chair_k1",
+     "counter_k1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "floor_k_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1"
+    ],
+    "cls": "shopping_bag",
+    "group": null,
+    "home": [
+     "pantry_shelf_k1",
+     "entry_hook_e1",
+     "entry_floor_e1"
+    ],
+    "id": "shopping_bag_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "bag",
+    "static": false
+   },
+   "skincare_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bathroom_shelf_ba1",
+     "desk_b1",
+     "dresser_b1",
+     "medicine_cabinet_ba1",
+     "nightstand_b1",
+     "sink_ba_ba1"
+    ],
+    "cls": "skincare",
+    "group": null,
+    "home": [
+     "bathroom_shelf_ba1",
+     "nightstand_b1",
+     "dresser_b1"
+    ],
+    "id": "skincare_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "toiletry",
+    "static": false
+   },
+   "skincare_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bathroom_shelf_ba1",
+     "desk_b1",
+     "dresser_b1",
+     "medicine_cabinet_ba1",
+     "nightstand_b1",
+     "sink_ba_ba1"
+    ],
+    "cls": "skincare",
+    "group": null,
+    "home": [
+     "bathroom_shelf_ba1",
+     "nightstand_b1",
+     "dresser_b1"
+    ],
+    "id": "skincare_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "toiletry",
+    "static": false
+   },
+   "snack_bowl_shared": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "cupboard_k1",
+     "dining_table_d1",
+     "dish_rack_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "side_table_l1",
+     "sideboard_d1",
+     "sink_k1"
+    ],
+    "cls": "snack_bowl",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "coffee_table_l1",
+     "sink_k1"
+    ],
+    "id": "snack_bowl_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "soap_dispenser_shared": {
+    "after_use": null,
+    "allowed": [
+     "sink_ba_ba1",
+     "sink_k1"
+    ],
+    "cls": "soap_dispenser",
+    "group": null,
+    "home": [
+     "sink_ba_ba1",
+     "sink_k1"
+    ],
+    "id": "soap_dispenser_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "spatula_shared": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "dish_rack_k1",
+     "drawer_k_k1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sink_k1"
+    ],
+    "cls": "spatula",
+    "group": null,
+    "home": [
+     "drawer_k_k1",
+     "counter_k1",
+     "sink_k1"
+    ],
+    "id": "spatula_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "kitchen_tool",
+    "static": false
+   },
+   "speaker_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "chair_k1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "desk_b1",
+     "dresser_b1",
+     "floor_k_k1",
+     "floor_l_l1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "side_table_l1",
+     "tv_stand_l1"
+    ],
+    "cls": "speaker",
+    "group": null,
+    "home": [
+     "bookshelf_l1",
+     "kitchen_table_k1",
+     "desk_b1"
+    ],
+    "id": "speaker_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "device",
+    "static": false
+   },
+   "sunglasses_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "desk_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_table_e1",
+     "nightstand_b1"
+    ],
+    "cls": "sunglasses",
+    "group": null,
+    "home": [
+     "entry_table_e1",
+     "dresser_b1",
+     "nightstand_b1"
+    ],
+    "id": "sunglasses_sam",
+    "outdoor": true,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "toaster_shared": {
+    "after_use": null,
+    "allowed": [
+     "counter_k1"
+    ],
+    "cls": "toaster",
+    "group": null,
+    "home": [
+     "counter_k1"
+    ],
+    "id": "toaster_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "toothbrush_holder_shared": {
+    "after_use": null,
+    "allowed": [
+     "bathroom_shelf_ba1",
+     "sink_ba_ba1"
+    ],
+    "cls": "toothbrush_holder",
+    "group": null,
+    "home": [
+     "sink_ba_ba1",
+     "bathroom_shelf_ba1"
+    ],
+    "id": "toothbrush_holder_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "towel_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bathroom_shelf_ba1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "dresser_b1",
+     "towel_rack_ba1",
+     "wardrobe_b1"
+    ],
+    "cls": "towel",
+    "group": null,
+    "home": [
+     "towel_rack_ba1",
+     "bathroom_shelf_ba1",
+     "bed_b1"
+    ],
+    "id": "towel_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": false,
+    "size": "textile",
+    "static": false
+   },
+   "towel_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bathroom_shelf_ba1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "dresser_b1",
+     "towel_rack_ba1",
+     "wardrobe_b1"
+    ],
+    "cls": "towel",
+    "group": null,
+    "home": [
+     "towel_rack_ba1",
+     "bathroom_shelf_ba1",
+     "bed_b1"
+    ],
+    "id": "towel_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "textile",
+    "static": false
+   },
+   "umbrella_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "shoe_rack_e1"
+    ],
+    "cls": "umbrella",
+    "group": null,
+    "home": [
+     "entry_floor_e1",
+     "entry_hook_e1"
+    ],
+    "id": "umbrella_sam",
+    "outdoor": true,
+    "owner": "resident_1",
+    "pocket": false,
+    "rain_only": true,
+    "size": "wearable",
+    "static": false
+   },
+   "umbrella_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "shoe_rack_e1"
+    ],
+    "cls": "umbrella",
+    "group": null,
+    "home": [
+     "entry_floor_e1",
+     "entry_hook_e1"
+    ],
+    "id": "umbrella_yuki",
+    "outdoor": true,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": true,
+    "size": "wearable",
+    "static": false
+   },
+   "vacuum_cleaner_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "entry_floor_e1",
+     "floor_l_l1",
+     "wardrobe_b1"
+    ],
+    "cls": "vacuum_cleaner",
+    "group": null,
+    "home": [
+     "entry_floor_e1",
+     "bedroom_floor_b1"
+    ],
+    "id": "vacuum_cleaner_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "bulky",
+    "static": false
+   },
+   "vase_shared": {
+    "after_use": null,
+    "allowed": [
+     "bookshelf_l1",
+     "dining_table_d1",
+     "sideboard_d1"
+    ],
+    "cls": "vase",
+    "group": null,
+    "home": [
+     "dining_table_d1",
+     "sideboard_d1",
+     "bookshelf_l1"
+    ],
+    "id": "vase_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "vitamins_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "desk_b1",
+     "dresser_b1",
+     "kitchen_table_k1",
+     "nightstand_b1"
+    ],
+    "cls": "vitamins",
+    "group": null,
+    "home": [
+     "counter_k1",
+     "cupboard_k1",
+     "nightstand_b1"
+    ],
+    "id": "vitamins_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "toiletry",
+    "static": false
+   },
+   "wall_clock_shared": {
+    "after_use": null,
+    "allowed": [
+     "bookshelf_l1",
+     "counter_k1"
+    ],
+    "cls": "wall_clock",
+    "group": null,
+    "home": [
+     "counter_k1",
+     "bookshelf_l1"
+    ],
+    "id": "wall_clock_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "static",
+    "static": true
+   },
+   "wallet_sam": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "desk_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_table_e1",
+     "nightstand_b1"
+    ],
+    "cls": "wallet",
+    "group": null,
+    "home": [
+     "entry_table_e1",
+     "nightstand_b1",
+     "desk_b1"
+    ],
+    "id": "wallet_sam",
+    "outdoor": false,
+    "owner": "resident_1",
+    "pocket": true,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "wallet_yuki": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "desk_b1",
+     "dresser_b1",
+     "entry_floor_e1",
+     "entry_table_e1",
+     "nightstand_b1"
+    ],
+    "cls": "wallet",
+    "group": null,
+    "home": [
+     "entry_table_e1",
+     "nightstand_b1",
+     "desk_b1"
+    ],
+    "id": "wallet_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": true,
+    "rain_only": false,
+    "size": "small",
+    "static": false
+   },
+   "water_bottle_yuki": {
+    "after_use": "sink_k1",
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "armchair_l1",
+     "bed_b1",
+     "bedroom_floor_b1",
+     "bookshelf_l1",
+     "coffee_table_l1",
+     "couch_l1",
+     "counter_k1",
+     "cupboard_k1",
+     "desk_b1",
+     "dining_table_d1",
+     "dish_rack_k1",
+     "entry_floor_e1",
+     "entry_hook_e1",
+     "entry_table_e1",
+     "kitchen_table_k1",
+     "nightstand_b1",
+     "pantry_shelf_k1",
+     "side_table_l1",
+     "sideboard_d1",
+     "sink_k1",
+     "wardrobe_b1"
+    ],
+    "cls": "water_bottle",
+    "group": "bag_yuki",
+    "home": [
+     "dish_rack_k1",
+     "counter_k1",
+     "sink_k1",
+     "desk_b1"
+    ],
+    "id": "water_bottle_yuki",
+    "outdoor": false,
+    "owner": "resident_2",
+    "pocket": false,
+    "rain_only": false,
+    "size": "dish",
+    "static": false
+   },
+   "watering_can_shared": {
+    "after_use": null,
+    "allowed": [
+     "ON_PERSON",
+     "OUT_OF_HOUSE",
+     "counter_k1",
+     "cupboard_k1",
+     "dish_rack_k1",
+     "drawer_k_k1",
+     "floor_k_k1",
+     "floor_l_l1",
+     "kitchen_table_k1",
+     "pantry_shelf_k1",
+     "sink_k1"
+    ],
+    "cls": "watering_can",
+    "group": null,
+    "home": [
+     "cupboard_k1",
+     "floor_l_l1"
+    ],
+    "id": "watering_can_shared",
+    "outdoor": false,
+    "owner": null,
+    "pocket": false,
+    "rain_only": false,
+    "size": "kitchen_tool",
+    "static": false
+   }
+  },
+  "pet": "dog",
+  "receptacles": {
+   "armchair_l1": {
+    "capacity": 3,
+    "id": "armchair_l1",
+    "kind": "armchair",
+    "room": "living"
+   },
+   "bathroom_shelf_ba1": {
+    "capacity": 8,
+    "id": "bathroom_shelf_ba1",
+    "kind": "bathroom_shelf",
+    "room": "bathroom"
+   },
+   "bed_b1": {
+    "capacity": 5,
+    "id": "bed_b1",
+    "kind": "bed",
+    "room": "bedroom_1"
+   },
+   "bedroom_floor_b1": {
+    "capacity": 12,
+    "id": "bedroom_floor_b1",
+    "kind": "bedroom_floor",
+    "room": "bedroom_1"
+   },
+   "bookshelf_l1": {
+    "capacity": 14,
+    "id": "bookshelf_l1",
+    "kind": "bookshelf",
+    "room": "living"
+   },
+   "chair_d_d1": {
+    "capacity": 3,
+    "id": "chair_d_d1",
+    "kind": "chair_d",
+    "room": "dining"
+   },
+   "chair_k1": {
+    "capacity": 3,
+    "id": "chair_k1",
+    "kind": "chair",
+    "room": "kitchen"
+   },
+   "coffee_table_l1": {
+    "capacity": 8,
+    "id": "coffee_table_l1",
+    "kind": "coffee_table",
+    "room": "living"
+   },
+   "couch_l1": {
+    "capacity": 6,
+    "id": "couch_l1",
+    "kind": "couch",
+    "room": "living"
+   },
+   "counter_k1": {
+    "capacity": 10,
+    "id": "counter_k1",
+    "kind": "counter",
+    "room": "kitchen"
+   },
+   "cupboard_k1": {
+    "capacity": 16,
+    "id": "cupboard_k1",
+    "kind": "cupboard",
+    "room": "kitchen"
+   },
+   "desk_b1": {
+    "capacity": 8,
+    "id": "desk_b1",
+    "kind": "desk",
+    "room": "bedroom_1"
+   },
+   "dining_table_d1": {
+    "capacity": 10,
+    "id": "dining_table_d1",
+    "kind": "dining_table",
+    "room": "dining"
+   },
+   "dish_rack_k1": {
+    "capacity": 8,
+    "id": "dish_rack_k1",
+    "kind": "dish_rack",
+    "room": "kitchen"
+   },
+   "drawer_k_k1": {
+    "capacity": 8,
+    "id": "drawer_k_k1",
+    "kind": "drawer_k",
+    "room": "kitchen"
+   },
+   "dresser_b1": {
+    "capacity": 8,
+    "id": "dresser_b1",
+    "kind": "dresser",
+    "room": "bedroom_1"
+   },
+   "entry_floor_e1": {
+    "capacity": 12,
+    "id": "entry_floor_e1",
+    "kind": "entry_floor",
+    "room": "entry"
+   },
+   "entry_hook_e1": {
+    "capacity": 6,
+    "id": "entry_hook_e1",
+    "kind": "entry_hook",
+    "room": "entry"
+   },
+   "entry_table_e1": {
+    "capacity": 8,
+    "id": "entry_table_e1",
+    "kind": "entry_table",
+    "room": "entry"
+   },
+   "floor_k_k1": {
+    "capacity": 12,
+    "id": "floor_k_k1",
+    "kind": "floor_k",
+    "room": "kitchen"
+   },
+   "floor_l_l1": {
+    "capacity": 12,
+    "id": "floor_l_l1",
+    "kind": "floor_l",
+    "room": "living"
+   },
+   "kitchen_table_k1": {
+    "capacity": 10,
+    "id": "kitchen_table_k1",
+    "kind": "kitchen_table",
+    "room": "kitchen"
+   },
+   "medicine_cabinet_ba1": {
+    "capacity": 8,
+    "id": "medicine_cabinet_ba1",
+    "kind": "medicine_cabinet",
+    "room": "bathroom"
+   },
+   "nightstand_b1": {
+    "capacity": 5,
+    "id": "nightstand_b1",
+    "kind": "nightstand",
+    "room": "bedroom_1"
+   },
+   "pantry_shelf_k1": {
+    "capacity": 10,
+    "id": "pantry_shelf_k1",
+    "kind": "pantry_shelf",
+    "room": "kitchen"
+   },
+   "shoe_rack_e1": {
+    "capacity": 8,
+    "id": "shoe_rack_e1",
+    "kind": "shoe_rack",
+    "room": "entry"
+   },
+   "side_table_l1": {
+    "capacity": 4,
+    "id": "side_table_l1",
+    "kind": "side_table",
+    "room": "living"
+   },
+   "sideboard_d1": {
+    "capacity": 8,
+    "id": "sideboard_d1",
+    "kind": "sideboard",
+    "room": "dining"
+   },
+   "sink_ba_ba1": {
+    "capacity": 4,
+    "id": "sink_ba_ba1",
+    "kind": "sink_ba",
+    "room": "bathroom"
+   },
+   "sink_k1": {
+    "capacity": 8,
+    "id": "sink_k1",
+    "kind": "sink",
+    "room": "kitchen"
+   },
+   "towel_rack_ba1": {
+    "capacity": 4,
+    "id": "towel_rack_ba1",
+    "kind": "towel_rack",
+    "room": "bathroom"
+   },
+   "tv_stand_l1": {
+    "capacity": 5,
+    "id": "tv_stand_l1",
+    "kind": "tv_stand",
+    "room": "living"
+   },
+   "wardrobe_b1": {
+    "capacity": 14,
+    "id": "wardrobe_b1",
+    "kind": "wardrobe",
+    "room": "bedroom_1"
+   }
+  },
+  "residents": {
+   "resident_1": {
+    "base_distraction": 0.236,
+    "base_energy": 0.71,
+    "base_hurry": 0.44,
+    "bedroom": "bedroom_1",
+    "chores": [
+     "fixing",
+     "grocery_run",
+     "ironing"
+    ],
+    "forget_level": "rarely",
+    "forget_p": 0.01,
+    "hobbies": [
+     "board_games",
+     "meditation",
+     "reading_living"
+    ],
+    "id": "resident_1",
+    "jitter_scale": 0.586,
+    "mood_sensitivity": 0.988,
+    "name": "sam",
+    "role": "worker_out",
+    "tidiness": 0.657,
+    "workspace": "bedroom_1"
+   },
+   "resident_2": {
+    "base_distraction": 0.503,
+    "base_energy": 0.626,
+    "base_hurry": 0.401,
+    "bedroom": "bedroom_1",
+    "chores": [
+     "dusting",
+     "grocery_run",
+     "ironing",
+     "vacuuming"
+    ],
+    "forget_level": "rarely",
+    "forget_p": 0.01,
+    "hobbies": [
+     "gym",
+     "plants",
+     "snacking"
+    ],
+    "id": "resident_2",
+    "jitter_scale": 0.77,
+    "mood_sensitivity": 0.838,
+    "name": "yuki",
+    "role": "worker_out",
+    "tidiness": 0.674,
+    "workspace": "bedroom_1"
+   }
+  },
+  "rooms": [
+   "bathroom",
+   "bedroom_1",
+   "dining",
+   "entry",
+   "kitchen",
+   "living"
+  ],
+  "seed": 5
+ },
+ "internal_state_params": {
+  "carryover": 0.5,
+  "noise_sd": 0.14,
+  "thresh_distracted": 0.72,
+  "thresh_hurried": 0.72,
+  "thresh_low_energy": 0.25
+ },
+ "placement_params": {
+  "carry_next_distract": 0.3,
+  "dump_hurry": 0.4,
+  "dump_untidy": 0.45,
+  "leave_low_energy": 0.3,
+  "leave_untidy": 0.55,
+  "whim_base": 0.04,
+  "whim_distract": 0.08,
+  "whim_hurry": 0.12,
+  "whim_max": 0.35,
+  "whim_min": 0.02,
+  "whim_untidy": 0.12
+ },
+ "seed": 5,
+ "stats": {
+  "notes": [],
+  "placement_decisions": 2987,
+  "placement_moves": 2665,
+  "whim_share_of_decisions": 0.1466,
+  "whim_share_of_moves": 0.1644,
+  "whims": 438
+ },
+ "timing_constants": {
+  "carry_p": 0.85,
+  "forget_levels": {
+   "often": 0.08,
+   "rarely": 0.01,
+   "sometimes": 0.03
+  },
+  "jitter_classes_min": {
+   "external": 10,
+   "flexible": 75,
+   "loose": 110,
+   "routine": 30
+  },
+  "jitter_scale_bounds": [
+   0.5,
+   2.0
+  ],
+  "keep_block_share": 0.6,
+  "max_skip_p": 0.9,
+  "mean_bouts_bounds": [
+   1.0,
+   6.0
+  ],
+  "min_bout_minutes": 10
+ },
+ "visitors": [
+  {
+   "cause": "guest_visit",
+   "day": 14,
+   "end": 1412,
+   "n": 3,
+   "room": "living",
+   "start": 1273
+  },
+  {
+   "cause": "guest_visit",
+   "day": 15,
+   "end": 1392,
+   "n": 2,
+   "room": "living",
+   "start": 1237
+  },
+  {
+   "cause": "guest_visit",
+   "day": 16,
+   "end": 1390,
+   "n": 3,
+   "room": "living",
+   "start": 1251
+  },
+  {
+   "cause": "guest_visit",
+   "day": 17,
+   "end": 1408,
+   "n": 2,
+   "room": "living",
+   "start": 1274
+  },
+  {
+   "cause": "guest_visit",
+   "day": 18,
+   "end": 1381,
+   "n": 3,
+   "room": "living",
+   "start": 1252
+  },
+  {
+   "cause": "guest_visit",
+   "day": 19,
+   "end": 1379,
+   "n": 2,
+   "room": "living",
+   "start": 1254
+  },
+  {
+   "cause": "guest_visit",
+   "day": 20,
+   "end": 1395,
+   "n": 3,
+   "room": "living",
+   "start": 1222
+  },
+  {
+   "cause": "guest_visit",
+   "day": 21,
+   "end": 1369,
+   "n": 2,
+   "room": "living",
+   "start": 1244
+  },
+  {
+   "cause": "guest_visit",
+   "day": 22,
+   "end": 1397,
+   "n": 3,
+   "room": "living",
+   "start": 1262
+  },
+  {
+   "cause": "guest_visit",
+   "day": 23,
+   "end": 1426,
+   "n": 2,
+   "room": "living",
+   "start": 1277
+  }
+ ]
+}

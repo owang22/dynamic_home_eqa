@@ -276,8 +276,18 @@ def activity_question_rows(seed: int, objects: dict, scored_days: List[int], eid
         if eligible(o):
             by_class[objects[o]["cls"]].append(o)
     chore_classes = sorted({c for a in CHORE_ACTIVITIES for c in uses_classes(acts[a])})
+    # regime search: PATROL_QUESTION_HOURS="17-23" keeps only questions whose local hour is in [lo, hi]; unset (the
+    # default) leaves every candidate, so a bank built without it is byte-identical to before this knob existed.
+    hours_env = os.environ.get("PATROL_QUESTION_HOURS", "").strip()
+    hour_lo = hour_hi = None
+    if hours_env:
+        lo_s, _, hi_s = hours_env.partition("-")
+        hour_lo, hour_hi = int(lo_s), int(hi_s or lo_s)
+        if not (0 <= hour_lo <= hour_hi <= 23):
+            raise ValueError(f"PATROL_QUESTION_HOURS={hours_env!r}: want 'LO-HI' with 0 <= LO <= HI <= 23")
     rng = random.Random(f"patrol_questions_activity:{seed}" + (f":focus{shift_focus:g}" if shift_focus else "")
-                        + (f":owners{','.join(owners)}" if owners else ""))
+                        + (f":owners{','.join(owners)}" if owners else "")
+                        + (f":hours{hours_env}" if hours_env else ""))
     days = {int(d["day_index"]): d for d in trace["days"]}
     rows: List[dict] = []
     counts = {}
@@ -342,6 +352,8 @@ def activity_question_rows(seed: int, objects: dict, scored_days: List[int], eid
             if not pool:
                 continue
             minute = min(max(minute, WAKING_MINUTES[0]), WAKING_MINUTES[1] - 1)
+            if hour_lo is not None and not (hour_lo <= minute // 60 <= hour_hi):
+                continue   # regime search: keep only questions asked in the hours the studied event actually touches
             obj = rng.choice(sorted(pool))
             t = d * DAY_SECONDS + minute * 60
             if truth.at(obj, t) in (ON_PERSON, OUT_OF_HOUSE, None):

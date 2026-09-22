@@ -9,6 +9,7 @@ echo "$(date +%H:%M) refresh loop started (pid $$), every 20 min" >> "$LOG"
 while true; do
   python3 tools/llm_live_extra.py >> "$LOG" 2>&1
   python3 tools/story_page.py story.html >> "$LOG" 2>&1
+  python3 tools/story_numbers.py >> "$LOG" 2>&1
   echo "$(date +%H:%M) refreshed" >> "$LOG"
   sleep 1200
 done

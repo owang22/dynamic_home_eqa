@@ -42,6 +42,7 @@ POPULATIONS = {
     "household": "sick10_all",
     "person": "sick10_owner",
     "partial": "sick10_partial",
+    "person2x": "sick2x_owner",   # the one-person spell twice (42 days); lead-day fit still days 1-13
 }
 # extra per-person / oracle agents, present only where roster.sh ran them (sick10_partial today) — mapped to their
 # own gap keys so they sit alongside the global roster rather than colliding with it

@@ -414,3 +414,51 @@ paper tables as noted in findings; their logs land in heldout_fb/hyp/logs when t
 | timetable | 47 / 0.49 / 50|57|54 (n=111) | 40 / 0.44 / 57|48|43 (n=93) | -7 | -9 |
 
 ## 11:40 — ALL ARMS FINISHED. s13 not-told done; 16 mixture logs (told + not-told x 8) once the chain converts group b. Nothing running.
+
+## 02:05 — two-spells anomaly resolved (structural reuse, not a confound)
+- 0a's three checks (no server time): last seen breaks neither time (world not easier); moved-share 26% vs 28% (second spell moves as much);
+  1-day timetable: 53% of its spell-2 questions fall in an hour slot whose only sightings come from spell 1 → 97% right there.
+- Verified in code (uq_agents.py DiscountedTimetable._predict_for_object / timetable.py): half-life only reweights sightings
+  inside a slot; a slot the normal routine never writes keeps the spell-1 placement for ever. Forgetting is relative within a slot.
+- Decision: two-spells buffer+retrieval no-message (3 hh) runs at ~05:00 BEFORE long-context start+end. Prediction on record:
+  retrieval (time-of-day keyed) re-learns spell 2 faster than spell 1; buffer (recency only) does not.
+- Story page v22 published 02:01. Asked 0a to strip "bin/novelty/counters/E30" from the gist wording.
+
+## 02:30 — no-message pass: retrieval done (10 hh), reflection 5/10; red flag on reflection cleared
+- Retrieval no message: 81 → 56 (shift) → 64 → 76 (return) → 82; cold 79 → 28 → 43 → 62 → 78; confidence 87-88 everywhere; gate asks 59% at the shift.
+- Reflection no message: day-level 73 → 66 → 79 (above lead!) → 70 → 70. Checked: cold split 68 → 35 → 62 → 51 → 67 stays below lead;
+  timetables show the same day-level rise on the same questions (sick person's things sit in fewer places) → regime property, not artefact.
+  Notes audit hh_s0-3: no unseen observations, no future days, no "sick"-words in 299 notes. Cleared.
+- Gist bullet 1 reworded by 0a: "every memory breaks on the first sick day — by 7 (reflection) to 25 points (retrieval) on all questions, 30-54 on cold".
+- Revised ETAs: start-message retrieval ~03:20 → start+end ~04:10 → long-context 3 hh ~06:00 → two-spells no-message ~06:40 → long-context start+end ~07:20 → two-spells start-message ~08:00.
+
+## 03:15 — retrieval no-message + start-message complete (10 hh); three independent lanes
+- Retrieval  no message: 81/79 · 56/28 · 64/43 · 76/62 · 82/78 (all/cold; lead | sick 1-3 | rest | return 1-3 | rest); conf 85-88; gate asks 58% at the shift.
+- Retrieval  start msg:  81/79 · 68/40 · 80/67 · 58/50 · 69/58; conf 82-88; lead-cal gap on shift +17 → +1; return costs it 18 points and the gate asks 52%.
+- Buffer for comparison — no msg 78/75 · 58/21 · 66/41 · 74/58 · 77/70; start 78/75 · 71/44 · 83/78 · 62/38 · 72/63.
+- Point for the gist: the start message helps during the sick days and costs on the return; costs time-of-day retrieval the most (same mechanism as two-spells reuse, other side).
+- Lanes: retrieval start+end launched 03:13; reflection waits only on its own start-message tail; long-context lane started at 3 streams with a 40/min rate guard.
+
+## 03:55 — retrieval lane complete; start+end result; two-spells + reflection start+end running; guests scout
+- Retrieval start+end vs start only: return days 24-26 all 58 → 74 (+16, buffer +8), cold 50 → 59 (+9, buffer +12); days 27-31 79 vs 69 (+10).
+  Prediction E32 (≤ +6 all) partly wrong: on cold questions retrieval recovers a little less than the buffer (as predicted),
+  but overall the end message helps retrieval far more — a sentence lets the model discount retrieved evidence it cannot forget.
+  Start-message damage persists longer for a time-indexed memory: days 27-31 retrieval 69 vs 82 untold (−13), buffer 72 vs 77 (−5).
+- Running: reflection start+end (5 hh), two-spells no-message buffer+retrieval (3 hh), long-context no-message (3 hh, ~390/496). Rate 61/min.
+- Guests scout (classical, CPU only): configs/regime/guests10.yaml, expectation E33 = 10-15 pp break all / 20-25 cold, ceiling 30-40%.
+
+## 04:40 — what makes a disruption hard: both hypotheses tested, "unusual place" wins
+- 0a's "questions come at hours never seen" and my "unseen hour AND wrong fallback" were both refuted on three regimes (sick / guests / holiday-at-home).
+- Tracks the break: share of questions where the thing is away from its usual place — sick +41 pp → break 23; guests +16 → 11; holiday +7 → 2.
+- Does not track: new-hour share (holiday shifts most, breaks least). New hour + usual place scores 89-95% everywhere: the empty-hour
+  fallback is the object's usual place, and that is usually right. In the sick spell, unseen hour + unusual place (65%) beats seen hour + unusual place (35%).
+- The break is a change in the MIX of questions, not the methods getting worse: sick cells themselves got easier (−18) while the hard kind grew +41.
+- Page: replace the old (object,hour) novelty "ceiling" with "how much of the household's stuff is out of its usual place".
+
+## 05:00 — paired contrasts (Oliver's 1-sd rule) applied to every LLM claim
+- Matched households first (reflection's cold lead-up moved 9 points between the 10-hh and 5-hh sets), then paired per-household differences ± sd.
+- Survives: buffer's message +12.9 ± 9.5 on the shift days (cold +23.5 ± 13.4), its return cost −11.3 ± 7.9; retrieval's COLD gains +12.8 ± 12.3;
+  retrieval's LATE return damage −11.4 ± 11.3 at days 27-31; long-context rest-of-spell +12.7 ± 4.9 (3 hh).
+- Does NOT survive: retrieval's first-days-back damage (−13.1 ± 22.2 — the old headline, now restated as the later, sharper persistence claim);
+  retrieval's all-question gains; reflection anywhere (+4.6 ± 9.1); routine table (+3.3 ± 4.7); buffer start+end at 24-26 (−3.6 ± 8.3 = message repaired).
+- Guests dead: evening-only break 15 points, morning after −1. Negative bullet on the page.

@@ -1,0 +1,29 @@
+# Regime "guests10" (2026-09-22 scout, CPU only): a perturbation that is not "getting sick". Same calendar shape as
+# sick10_owner — 14 lead weekdays, friends over EVERY evening on days 14-23 (household guest_visit forced), return 24-31,
+# 32 days — questions during activities, everyone's things, classes restricted to what a guest evening actually moves
+# (events.yaml guest_visit placement: mug/glass -> sink after hosting, book -> bookshelf at the tidy, blanket -> armchair,
+# laptop cleared away, board_game left on the coffee table; couch blocked while hosting). Known worry: guests only touch
+# the evening, so daytime questions about the same mugs dilute the break — the scout reports the all-question and cold
+# break sizes so the coordinator can stop here if it is under 20 points.
+name: guests10
+sim_dir: ../../data/situation_sim/regime_search/guests10
+day0: Monday
+days: 32
+events: {rain: {weekday: 0.0, weekend: 0.0}, guest_visit: {weekday: 0.0, weekend: 0.0}, late_work: {weekday: 0.0, weekend: 0.0},
+         grocery_delivery: {weekday: 0.0, weekend: 0.0}, laundry_day: {weekday: 0.0, weekend: 0.0}, sick_day: {weekday: 0.0, weekend: 0.0}}
+calendar:
+  - {name: lead,   days: [0, 13],  day_kind: weekday, suppress_random_events: true}
+  - {name: guests, days: [14, 23], day_kind: weekday, force_events: [{event: guest_visit, resident: household}], suppress_random_events: true}
+  - {name: return, days: [24, 31], day_kind: weekday, suppress_random_events: true}
+patrol_hours: 0
+patrol_times: "03:00"
+questions: activity
+question_moment: during
+classes: [mug, glass, book, blanket, laptop, board_game]
+question_min_gap_min: 30
+per_day: 16
+oversample: 1024
+timetable_bin_hours: 2
+negative_evidence: off
+feedback_delay_min: 10
+extra_beliefs: [{name: timetable, half_life_h: 72}, {name: most_frequent, half_life_h: 72}, {name: timetable, half_life_h: 24}, {name: most_frequent, half_life_h: 24}]

@@ -888,6 +888,17 @@ def main(argv=None) -> int:
     from concurrent.futures import ThreadPoolExecutor
     with ThreadPoolExecutor(max_workers=a.workers) as ex:
         futs = [ex.submit(run_arm, b, m, t, l, client, a.out, a.max_days, a.format) for b, m, t, l in jobs]
+
+        def _report_now(job):
+            # print the moment an arm dies, not when the ordered result loop below reaches it -- a dead arm in the
+            # middle of a 30-arm pass otherwise looks like a hang for an hour (2026-09-22 00:27)
+            def cb(f):
+                e = f.exception()
+                if e is not None:
+                    print(f"ARM FAILED (live) {job[0].name} {job[1:]}: {type(e).__name__}: {e}", file=sys.stderr, flush=True)
+            return cb
+        for f, job in zip(futs, jobs):
+            f.add_done_callback(_report_now(job))
         failed = 0
         for f, job in zip(futs, jobs):
             try:

@@ -77,7 +77,7 @@ def regime(d, label="t03"):
 
 
 def main():
-    regimes = {"household": "sick10_all", "household_rep": "sick10_all_s10_19", "person": "sick10_owner"}
+    regimes = {"household": "sick10_all", "household_rep": "sick10_all_s10_19", "person": "sick10_owner", "person2x": "sick2x_owner"}
     data = {k: regime(f"{ROOT}/{v}") for k, v in regimes.items()}
     json.dump(data, open(f"{ROOT}/story_data.json", "w"), separators=(",", ":"))
     for k, v in data.items():
