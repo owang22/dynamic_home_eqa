@@ -88,6 +88,15 @@ accuracy falls 78 → 58; retrieval 88 → 85 (accuracy 81 → 56); long-context
 (73 → 66); routine table 86 → 87 (60 → 58). The counters' confidence tracks the stage: the 3-day timetable claims 46% then 37% across the same break.
 The LLM never knows when it is wrong.
 
+But the counters' tracking does not survive being priced. Put through the same answer-or-ask gate (same alpha, same
+windows, confidence taken as the top probability of its own distribution), the 3-day timetable is the WORST method
+here on the first sick days: it hands back 70% of the questions and still gets 43% of what it answers wrong, against
+the buffer's 55% / 28% and reflection's 43% / 19%. Only once it has re-learned the sick routine does it become the
+one method that keeps the 10% promise (9% miss through the rest of the spell, best LLM arm 12%). Its confidence
+moves in the right direction but it moves after the break, not during it. An earlier version of this file and of the
+page claimed the counters "do better on that score"; that claim was asserted from the confidence trace alone and is
+withdrawn (see ../problems_found.md, 11:35).
+
 Removing each method's own level (a monotone map from stated confidence to accuracy fitted on the lead-up only) leaves
 the tracking: the buffer is +15 points over-confident on the first sick days, retrieval +17, long-context +16, reflection +4 — and near
 zero on the lead-up by construction. An adaptive answer-or-ask gate on the stated confidence (target 10% wrong among

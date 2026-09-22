@@ -311,3 +311,35 @@ whole suite with the store's PATH redirected to a sandbox copy.
 
 **Rule.** A test that exercises a destructive path points at a copy, never at the artifact. And a guard against
 silent data loss is exactly the kind of code whose tests can cause the loss it prevents.
+
+## 11:35 — "the counters do better at knowing when they're wrong" was asserted, then measured, and it is false
+
+The page's one-minute summary closed on "the counting methods, for all their simplicity, do better on that score",
+meaning at telling from their own confidence that the world had changed. It rested on a real observation — the
+counters' stated confidence moves with the stage (3-day timetable 46% → 37%) where the LLM memories' does not — but
+that observation had never been put through the answer-or-ask gate that prices it. The coordinator asked for the
+counter on the gate charts specifically because the comparison was asserted in prose but not shown.
+
+**Measured, same gate, same alpha, same five windows, confidence = top probability as everywhere else:**
+
+| method | first sick days: ask% / miss% | rest of spell: ask% / miss% |
+|---|---|---|
+| 3-day timetable | 70 / **43** | 30 / **9** |
+| never-forgets timetable | 71 / 64 | 62 / 23 |
+| buffer | 55 / 28 | 48 / 19 |
+| retrieval | 59 / 31 | 47 / 18 |
+| reflection | 43 / 19 | 41 / 12 |
+| nightly routine table | 67 / 31 | 59 / 24 |
+
+So at the break the counter is the WORST of the lot on both axes at once — it hands back 70% of the questions and
+is still wrong on 43% of the rest. The claim was backwards.
+
+**What is true instead.** Its confidence tracks the stage, but it tracks it *after* the break rather than during
+it; and once it has re-learned the sick routine it becomes the only method on the page that keeps the 10% promise
+(9% miss, against the best LLM arm's 12%). Tracking the stage and being usable at the moment it changes are
+different properties, and only the second one is what an answer-or-ask gate needs.
+
+**Fixed** in the one-minute summary and in the confidence finding; the counter is now drawn on both gate charts.
+
+**Rule.** A comparison stated in prose but absent from the charts is an untested claim. Build the chart before
+repeating the sentence — and expect roughly one in three of them to come back the other way, as this one did.

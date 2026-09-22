@@ -105,6 +105,18 @@ td.ece{font-weight:600}
 <h1>Routine Shift Testbench</h1>
 <p class="lead">Whether a memory <em>learns</em> a household routine, <em>notices</em> when it breaks, <em>adapts</em> to the new one, copes when the old one returns — and whether it <em>knows</em> any of that about itself.</p>
 
+<!-- THE ONE-MINUTE SUMMARY IS HAND-WRITTEN, AND ITS FIGURES ARE TYPED ON PURPOSE.
+     Everything else on this page computes its numbers from story_data.json / story_extra.json. This block does
+     not, by design: it is prose meant to be read first, and it was written against runs that have all finished,
+     so the figures cannot drift underneath it. The typed figures are:
+       ~45% to 80-85%   lead-up climb of the timetables          (see panel A / claim 1)
+       "about 85% sure" the LLM memories' stated confidence      (see panel K / claim 4)
+       "by a quarter"   their accuracy fall at the shift         (see claim 3's numbers table)
+       70% and 43%      the 3-day timetable's ask and miss rates on the first sick days, through the
+                        answer-or-ask gate                       (see the gate charts; EXTRA.classical_askgate)
+     IF ANY ARM IS EVER RE-RUN, re-check these four against the charts named beside them before publishing.
+     Do not add new figures here without adding them to this list. (Convention agreed 22 Sept: the risk is not
+     typed numbers as such, it is typed numbers that LOOK computed -- see uq/problems_found.md 11:35.) -->
 <div class="panel" id="oneminute" style="margin-block:14px 6px;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--s3);padding:14px 16px">
   <h3 style="margin-bottom:6px">In one minute</h3>
   <p style="font-size:15.5px;color:var(--ink);max-width:74ch;margin:0 0 10px">A home robot is asked where everyday things are while people are using them, and learns the truth ten minutes later; it settles into a household's routine over two weeks, then one resident is off sick for ten days and their things move, then normal life resumes.</p>
@@ -700,7 +712,7 @@ function mergeLLMLive(){
     }
   }
 }
-const BUILT = "Tue 11:28, 22 Sep 2026";
+const BUILT = "Tue 11:29, 22 Sep 2026";
 // ---------------------------------------------------------------------------------------------------------------
 // Small-multiple panels. Each is at most four lines and answers one question. Bands are +-1 STANDARD ERROR across
 // households (sd/sqrt(k)), matching the bar the paired contrasts are judged on; the per-day sd is kept in the hover.
