@@ -216,7 +216,8 @@ MIN_N_FOR_SE = 6   # below this the standard error is unreliable, so the old het
 
 
 def verdict(mean, sd, n_hh, per_hh=None):
-    """Oliver's rule as of 07:25: report mean +- STANDARD ERROR with n as the primary form, keep the sd separately as
+    """The bar as of 07:25, changed by this session and NOT by Oliver (he set the 1-sd rule below and has not ruled on
+    this replacement; the page says so in its method note): report mean +- STANDARD ERROR with n as the primary form, keep the sd separately as
     a measure of how much households disagree, and call an effect DETECTED at |mean| >= 2 se. The earlier bar --
     |mean| > sd -- asked whether an effect exceeds household-to-household variation, which is a different question
     from whether it exists; at 18 households a 3.1-se effect was failing it. Below MIN_N_FOR_SE households the se is
@@ -362,8 +363,8 @@ def main():
             else:
                 lines.append(f"{pop}/{key}: {n_hh} households, mean {mean_done}/{arm['n_total_hh']} answered — {progress}\n    {wtxt}")
         # paired told-vs-untold contrasts: per household, (told arm's accuracy on that household) minus (the
-        # no-message arm's), then mean +- sd of that difference ACROSS households. Oliver's standing rule is that an
-        # effect must clear one standard deviation, and for a paired design the sd of the DIFFERENCES is the right
+        # no-message arm's), then mean +- sd of that difference ACROSS households. Oliver's rule was that an
+        # effect must clear one standard deviation (still reported, and still the bar below n=6), and for a paired design the sd of the DIFFERENCES is the right
         # one -- the per-arm sds are dominated by how hard each household is, which cancels in the pairing.
         def hh_window(rows, days, cold_only=False):
             sel = [r for r in rows if r[0] in days and (not cold_only or r[4])]

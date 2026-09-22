@@ -99,7 +99,8 @@ def main():
     P = extra.get("llm_live", {}).get("person", {})
     PL = ["", "## Paired told-vs-untold contrasts (per household, told minus no message)", "",
           "Each cell is the mean across households ± its standard error, then n = households and the sd = how much those",
-          "households disagree. Since 22 Sept 07:25 an effect is claimed when |mean| >= 2 standard errors (Oliver's rule);",
+          "households disagree. Since 22 Sept 07:25 an effect is claimed when |mean| >= 2 standard errors -- a change made by",
+          "this session, not by Oliver, who set the 1-sd bar and has not yet ruled on the replacement;",
           "below 6 households the standard error is estimated from too few numbers to trust, so those rows keep the older",
           "\"bigger than the sd\" floor. ✓ = claimed under whichever bar governs that row. Note the direction of the change:",
           "at 6 households or more, clearing 1 sd implies clearing 2 se, so the new bar only ever adds claims.", "",

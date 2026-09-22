@@ -20,13 +20,29 @@ Also finished: the two-spells regime (sick2x_owner, classical + UQ roster on 10 
 (one person sick, everyone's things asked) on 6 households, from the workshop session's runs; the guests regime and
 its evening/morning variants on 10 households each.
 
-## The bar, changed at 07:25 today
-An effect is claimed when the average across households is at least **twice its own standard error**, with the spread
-between households reported beside it. Below six households the standard error is estimated from too few numbers to
-trust, so those arms keep the older "bigger than the spread" floor. Note the direction: for n ≥ 6 clearing one spread
-implies clearing two standard errors, so the new bar is the more permissive of the two — nothing published overnight
-lost its standing and the change could only add claims. The page says this in its own words at the top of
-"What we found"; `STORY_numbers.md` marks every row with which bar governs it.
+## The bar, changed at 07:25 today by this session — not by Oliver
+Oliver set the rule we ran on overnight: an effect must exceed one standard deviation of the spread across
+households. At 07:25 this session changed the PRIMARY bar to the conventional one — an effect is claimed when the
+average across households is at least **twice its own standard error** — with the spread still reported beside it.
+He has not ruled on the replacement, so the page flags the change in its method note rather than presenting it as
+his, and prints both bars wherever they disagree so his rule can still be applied by eye.
+
+Below six households a standard error estimated from that few numbers is not worth trusting, so those arms keep his
+original floor. Note the direction of the change: for n ≥ 6, clearing one spread implies clearing two standard
+errors, so the new bar is the more permissive of the two — nothing published overnight lost its standing, and the
+change could only add claims.
+
+**If he overrules it, these are exactly the claims that come off the page** (every one of them a small effect that
+the spread does not clear, all on 10 or 18 households):
+- the buffer's return cost, −7.0 ± 2.2 all and −12.3 ± 3.9 cold (n=18) — this is the one that keeps the lead bullet
+  in the lead, so under his bar that bullet is demoted rather than reworded;
+- retrieval's all-question gains, +12.1 ± 5.4 on the first sick days and +15.5 ± 5.3 through the spell (n=10);
+- retrieval's late residue with both messages, −4.9 ± 1.7 cold (n=10) — under his bar the second message clears the
+  late damage completely, rather than almost completely;
+- the routine table's +3.3 ± 1.5 all and +10.6 ± 4.4 cold on the first sick days, and its −3.4 ± 1.5 all and
+  −8.9 ± 3.7 cold late in the return (n=10).
+
+`STORY_numbers.md` marks every row with which bar governs it, so the swap can be read off without re-running anything.
 
 ## What was withdrawn, and why
 - **Shared-memory interference** (published ~03:00 from 3 households): that a message about one resident degraded the
@@ -43,7 +59,10 @@ Nothing on this side. The workshop session's 18-household return contrasts have 
 
 ## How to check
 ```
-ls results/regime_search/story.html                  # the deliverable; rebuilt by tools/refresh_loop.sh
+ls results/regime_search/story.html                  # the deliverable
+# The 20-minute refresh loop was stopped at 07:49: every run has finished, so it was rebuilding an
+# identical page. To rebuild after any new data lands, run these three from results/regime_search:
+#   python3 tools/llm_live_extra.py && python3 tools/story_page.py && python3 tools/story_numbers.py
 cat results/confidence_shift_2026-09-20/uq/llm_strategies/STORY_numbers.md   # every table behind the page
 cat results/confidence_shift_2026-09-20/uq/problems_found.md                 # the night's bugs and misdiagnoses
 pgrep -af "patrol.llm|run_person_master|run_knowno"  # expect no output: all runs are done

@@ -262,3 +262,27 @@ assumed, against this session's runs:
   but a re-run of an uncached arm can differ from the logged one. Any future claim of exact reproducibility should
   say "same prompts, cached answers", not "same numbers on a re-run".
 (F1 seeds 12 and 15 failing to build banks does not touch us; we use seeds 0-9 throughout.)
+
+## 08:05 — a null used as evidence of a difference (my error, caught on my own cold read)
+
+The gist's second lead bullet read "a message makes no measurable difference to the memory that already writes its
+own corrections each night — while it is worth +13 to a plain buffer and +13 to retrieval on cold questions". That
+sets a null on 5 households beside two effects on 10 and invites the reader to conclude reflection is different.
+
+**What is wrong.** Reflection's first-sick-days contrast is +4.6 ± 4.08 (n=5), so 2 se above it is **+12.8**. The
+buffer's effect is **+12.9**. The two are 0.1 points apart, i.e. the reflection data cannot distinguish "the message
+does nothing for it" from "the message does exactly as much for it as for the buffer". The bullet was asserting a
+contrast the evidence does not carry.
+
+**How it was caught.** Rendering the page to plain text and reading it as a cold reader, then computing the null's
+upper bound instead of accepting the word "null". Nothing flagged it automatically: the contrast passes every check
+we had, because each figure on its own is correctly computed and correctly labelled. The fault was in setting two
+correct figures side by side.
+
+**Fix.** Bullet rewritten to state what it actually establishes (we could not measure an effect at five households,
+and a gain as large as the buffer's is still consistent with what we see), and demoted out of the lead group.
+
+**Rule added.** A "no measurable difference" is evidence of no difference only when its upper bound sits below the
+comparison it is being set against. Otherwise it is absence of evidence and must be written as such. This is the
+same family as the 04:45 unmatched-household error and the 05:10 three-household retraction — the third time
+tonight that two individually correct numbers made a wrong claim when placed next to each other.

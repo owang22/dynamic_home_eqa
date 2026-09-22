@@ -1,4 +1,4 @@
-# Numbers behind STORY.md — regenerated Tue 22 Sep 2026 07:32
+# Numbers behind STORY.md — regenerated Tue 22 Sep 2026 07:51
 
 Windows: lead = days 9-13 (settled end of the lead-up), 14-16 (first sick days), 17-23 (rest of the spell), 24-26 (first
 days back), 27-31 (rest of the return). Accuracy in %, pooled over households. A window with fewer than 10 answers prints –.
@@ -82,7 +82,8 @@ days back), 27-31 (rest of the return). Accuracy in %, pooled over households. A
 ## Paired told-vs-untold contrasts (per household, told minus no message)
 
 Each cell is the mean across households ± its standard error, then n = households and the sd = how much those
-households disagree. Since 22 Sept 07:25 an effect is claimed when |mean| >= 2 standard errors (Oliver's rule);
+households disagree. Since 22 Sept 07:25 an effect is claimed when |mean| >= 2 standard errors -- a change made by
+this session, not by Oliver, who set the 1-sd bar and has not yet ruled on the replacement;
 below 6 households the standard error is estimated from too few numbers to trust, so those rows keep the older
 "bigger than the sd" floor. ✓ = claimed under whichever bar governs that row. Note the direction of the change:
 at 6 households or more, clearing 1 sd implies clearing 2 se, so the new bar only ever adds claims.

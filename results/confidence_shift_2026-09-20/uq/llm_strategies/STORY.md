@@ -13,8 +13,9 @@ Every arm named here has finished.
 running the same memory is measured household by household, never by setting one arm's overall number beside
 another's. Each figure is written as the average across households ± its own standard error, with n = the number of
 households and the spread between them given separately. Overnight we claimed an effect only when the average beat
-that spread; Oliver asked for the conventional bar instead — the average must be at least twice its standard error,
-which is the spread divided by the square root of n. Be plain about the direction of that change, because the name
+that spread, which is the bar Oliver set. This session changed the primary bar to the conventional one — the average
+must be at least twice its standard error, the spread divided by the square root of n — and flags it here rather than
+leaving him to find it, because he has not ruled on the replacement. Both bars are printed wherever they disagree. Be plain about the direction of that change, because the name
 sounds stricter and the arithmetic is not: at ten households the standard error is about a third of the spread, so
 the new bar is the EASIER of the two, and for n ≥ 6 anything clearing one spread clears two standard errors
 automatically. Nothing published overnight lost its standing; the change could only add claims, and what it added is
