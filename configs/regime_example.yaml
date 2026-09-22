@@ -1,0 +1,23 @@
+# Regime-search example (see results/regime_search/SIM_KNOBS.md): a clean two-week lead-up on the
+# residents' normal schedules, a public holiday, a four-day sick spell, a week of shift work for
+# resident_1, then the return. Everything else as the frozen feedback protocol.
+name: regime_example
+sim_dir: ../data/situation_sim/regime/example
+day0: Monday
+days: 28
+events: {sick_day: {weekday: 0.10, weekend: 0.02}, guest_visit: {weekday: 0.10, weekend: 0.14}}
+calendar:
+  - {name: lead,     days: [0, 13],  suppress_random_events: true}
+  - {name: holiday,  days: [14, 14], day_kind: weekend, suppress_random_events: true}
+  - {name: sick,     days: [15, 18], force_events: [{event: sick_day, resident: resident_1}], suppress_random_events: true}
+  - {name: shifts,   days: [19, 25], roles: {resident_1: shift_worker}, suppress_random_events: true}
+  - {name: return,   days: [26, 27], suppress_random_events: true}
+patrol_hours: 0
+patrol_times: "03:00"
+questions: activity
+classes: null
+per_day: 96
+oversample: 384
+timetable_bin_hours: 2
+negative_evidence: off
+feedback_delay_min: 10

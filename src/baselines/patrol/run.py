@@ -118,6 +118,7 @@ def run_belief(spec: dict, episode: Episode, look: str, seed: int, tag: dict, an
     evidence = episode.evidence_stream()
     cursor = 0
     records = []
+    stages = {int(k): v for k, v in (tag.get("_stages") or {}).items() if v}   # calendar stage per day (regime search)
     for day_questions in episode.questions_by_day:
         for q in day_questions:
             while cursor < len(evidence) and evidence[cursor].t <= q.t_query:
@@ -129,7 +130,8 @@ def run_belief(spec: dict, episode: Episode, look: str, seed: int, tag: dict, an
                 cursor += 1
             belief.ensure_object(q.object_id, q.object_class)
             pred = belief.predict(q.object_id, q.t_query)
-            rec = {**tag, "belief": belief.name, "day_index": q.day_index, "question_id": q.question_id,
+            rec = {**{k: v for k, v in tag.items() if not k.startswith("_")}, "belief": belief.name, "day_index": q.day_index, "question_id": q.question_id,
+                   **({"stage": stages[q.day_index]} if q.day_index in stages else {}),
                    "object_id": q.object_id, "object_class": q.object_class, "t_query": q.t_query,
                    "answer_before_look": pred.argmax,
                    "top_prob_before_look": round(pred.distribution.get(pred.argmax, 0.0), 4)}
@@ -164,6 +166,7 @@ def run_bank(bank_path: pathlib.Path, look: str, beliefs=BELIEFS, seed: int = 0,
     episode = next(iter(JsonlBank(bank_path).episodes()))
     tag = {"household": header["household_id"], "patrol_hours": header["patrol_hours"], "look": look,
            "patrol_label": header.get("patrol_label", f"p{header['patrol_hours']}"),
+           **({"_stages": header["stages"]} if header.get("stages") else {}),
            "seed": int(header.get("seed", seed))}
     out = []
     weekdays = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")

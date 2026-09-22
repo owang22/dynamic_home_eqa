@@ -1,0 +1,104 @@
+calendar:
+- day_kind: weekday
+  days:
+  - 0
+  - 13
+  name: lead
+  suppress_random_events: true
+- day_kind: weekday
+  days:
+  - 14
+  - 18
+  force_events:
+  - event: sick_day
+    resident: all
+  name: sick
+  suppress_random_events: true
+- day_kind: weekday
+  days:
+  - 19
+  - 27
+  name: return
+  suppress_random_events: true
+classes:
+- mug
+- bowl
+- plate
+- glass
+- water_bottle
+- pan
+- pot
+- spatula
+- kitchen_knife
+- serving_dish
+- recipe_book
+- snack_bowl
+- tablet
+- charger
+- remote
+- glasses
+- razor
+- book
+- shopping_bag
+- dog_food_bag
+day0: Monday
+days: 28
+events:
+  grocery_delivery:
+    weekday: 0.0
+    weekend: 0.0
+  guest_visit:
+    weekday: 0.0
+    weekend: 0.0
+  late_work:
+    weekday: 0.0
+    weekend: 0.0
+  laundry_day:
+    weekday: 0.0
+    weekend: 0.0
+  rain:
+    weekday: 0.0
+    weekend: 0.0
+  sick_day:
+    weekday: 0.0
+    weekend: 0.0
+extra_beliefs:
+- half_life_h: 72
+  name: timetable
+- half_life_h: 72
+  name: most_frequent
+feedback_delay_min: 10
+name: sick_all
+negative_evidence: false
+oversample: 256
+patrol_hours: 0
+patrol_times: 03:00
+per_day: 64
+question_moment: during
+question_owners: null
+questions: activity
+rates_in_force:
+  grocery_delivery:
+    weekday: 0.0
+    weekend: 0.0
+  guest_visit:
+    weekday: 0.0
+    weekend: 0.0
+  late_work:
+    weekday: 0.0
+    weekend: 0.0
+  laundry_day:
+    weekday: 0.0
+    weekend: 0.0
+  rain:
+    weekday: 0.0
+    weekend: 0.0
+  sick_day:
+    weekday: 0.0
+    weekend: 0.0
+shift_focus: 0.0
+sim_dir: /home/oliver/robot/dynamic_home_eqa/data/situation_sim/regime_search/sick_all
+timetable_bin_hours: 2
+timetable_day_scheme: all
+timetable_empty_bin: history
+timetable_empty_bin_confidence: 0.3

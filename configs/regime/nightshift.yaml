@@ -1,0 +1,22 @@
+# Regime search R1 "nightshift": routine-group questions asked DURING activities, 28 days from a Monday, no random events,
+# calendar: 14 weekdays lead, resident_1 on shift work days 14-20, 7 weekdays return. Seeds 0-9.
+name: nightshift
+sim_dir: ../../data/situation_sim/regime_search/nightshift
+day0: Monday
+days: 28
+events: {rain: {weekday: 0.0, weekend: 0.0}, guest_visit: {weekday: 0.0, weekend: 0.0}, late_work: {weekday: 0.0, weekend: 0.0},
+         grocery_delivery: {weekday: 0.0, weekend: 0.0}, laundry_day: {weekday: 0.0, weekend: 0.0}, sick_day: {weekday: 0.0, weekend: 0.0}}
+calendar:
+  - {name: lead,   days: [0, 13],  day_kind: weekday, suppress_random_events: true}
+  - {name: shifts, days: [14, 20], day_kind: weekday, roles: {resident_1: shift_worker}, suppress_random_events: true}
+  - {name: return, days: [21, 27], day_kind: weekday, suppress_random_events: true}
+patrol_hours: 0
+patrol_times: "03:00"
+questions: activity
+question_moment: during
+classes: [mug, bowl, plate, glass, water_bottle, pan, pot, spatula, kitchen_knife, serving_dish, recipe_book, snack_bowl, tablet, charger, remote, glasses, razor, book, shopping_bag, dog_food_bag]
+per_day: 64
+oversample: 256
+timetable_bin_hours: 2
+negative_evidence: off
+feedback_delay_min: 10

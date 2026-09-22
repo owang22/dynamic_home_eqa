@@ -1,0 +1,83 @@
+# R3 + forgetting agents (f1): sick_spell banks and roster plus a decayed-count timetable (half-life 3 d and 1 d) and most-frequent (1 d).
+name: sick_spell_hl
+sim_dir: ../../data/situation_sim/regime_search/sick_spell
+day0: Monday
+days: 28
+events:
+  rain:
+    weekday: 0.0
+    weekend: 0.0
+  guest_visit:
+    weekday: 0.0
+    weekend: 0.0
+  late_work:
+    weekday: 0.0
+    weekend: 0.0
+  grocery_delivery:
+    weekday: 0.0
+    weekend: 0.0
+  laundry_day:
+    weekday: 0.0
+    weekend: 0.0
+  sick_day:
+    weekday: 0.0
+    weekend: 0.0
+calendar:
+- name: lead
+  days:
+  - 0
+  - 13
+  day_kind: weekday
+  suppress_random_events: true
+- name: sick
+  days:
+  - 14
+  - 18
+  day_kind: weekday
+  force_events:
+  - event: sick_day
+    resident: resident_1
+  suppress_random_events: true
+- name: return
+  days:
+  - 19
+  - 27
+  day_kind: weekday
+  suppress_random_events: true
+patrol_hours: 0
+patrol_times: 03:00
+questions: activity
+question_moment: during
+classes:
+- mug
+- bowl
+- plate
+- glass
+- water_bottle
+- pan
+- pot
+- spatula
+- kitchen_knife
+- serving_dish
+- recipe_book
+- snack_bowl
+- tablet
+- charger
+- remote
+- glasses
+- razor
+- book
+- shopping_bag
+- dog_food_bag
+per_day: 64
+oversample: 256
+timetable_bin_hours: 2
+negative_evidence: false
+feedback_delay_min: 10
+extra_beliefs:
+- name: timetable
+  half_life_h: 72
+- name: timetable
+  half_life_h: 24
+- name: most_frequent
+  half_life_h: 24

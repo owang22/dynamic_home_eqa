@@ -53,3 +53,11 @@ Started 2026-09-20 ~20:30 PDT. Same households, banks and questions as `../heldo
    Per-kind accuracy at 8 h now reads as it should: event moved 6-22% and weekend moved 12-19% for every agent,
    after shift 62-100% (last seen 100%).
 9. Page palette moved to pastel lines on a softer ground at Oliver's request (eye strain on dark backgrounds).
+10. **(uq roster, 21 Sep 13:50)** Online conformal on the counter: the counter's uniform floor mass (2% spread
+    over ~38 spots, ~0.01 each after renormalization) makes the prediction set bimodal — either the few spots with
+    real evidence or all 37 — and the tracked threshold q_t sits at that boundary (0.97-0.99), so per-question
+    set size flips between ~3 and 37. Coverage is still on target (0.910). A temperature or a smaller floor before
+    wrapping would make set sizes graded; not changed (the counter is the frozen baseline).
+11. **(uq roster)** Pure decaying-step online conformal started at q=0.9 over-covered (0.96) on the synthetic
+    stationary stream: the step decays before q reaches the right quantile. Fixed with a 20-question warm start
+    (conservative empirical quantile), after which coverage is 0.904. Logged as a knob in METHODS.md.

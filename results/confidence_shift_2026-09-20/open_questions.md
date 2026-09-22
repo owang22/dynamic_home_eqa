@@ -71,16 +71,19 @@
     the human-quiz rule of sealed verdicts; for the robot it is stated as part of the protocol, delivered
     identically to every agent, and the sealed 8 h protocol results are kept as a separate section.
 
-12. **No confidence we have tracks the shift day.** The mixture's top_prob (0.22-0.36), its library agreement, the
-    timetable's Dirichlet mean (~0.42), the naive LLM's stated 0.8 and a self-monitoring rescale (top_prob times
-    the agent's running hit rate on the feedback already received today; `--confidence monitored`) all move by at
-    most 3-5 points between a household's plain days and its shift days. The day-level accuracy change is the
-    same size (Fig. 1: 4-8 points), so a calibrated confidence *should* only move that much; the 10-point story
-    lives on the moved-since-round half, where the accuracy change is 10-25 points and the confidence still does
-    not follow because every agent's evidence (clock bins over the week's sightings) is pooled across days. What
-    would follow: a confidence that is conditioned on the day type (calendar for the weekend, the message for
-    the told arm), i.e. separate weekend bins with an honest empty-bin confidence (tuning_log #42 shows the
-    accuracy side of that: Saturday breaks harder; the confidence side needs the empty-bin fallback to say so).
+12. **No confidence we have tracks the shift day, and telling the agent does not help - traced.** The mixture's
+    top_prob (0.22-0.36), its library agreement, the timetable's Dirichlet mean (~0.42), the naive LLM's stated
+    0.8 and a self-monitoring rescale (`--confidence monitored`) all move by at most 3-5 points between a
+    household's plain days and its shift days. Told = not told for both LLM agents, and problems_found #24 traces
+    why on hh_s14's guest evening: the message document is right (board game on the coffee table 18-23 h) but
+    (a) the document format has no "tonight" - a message can only become another weekday model, judged against
+    every ordinary weekday; (b) the questions land on the window's soft edge (22:59 for an 18-23 block), where
+    the claim is halved; (c) the 0.7 evidence blend and (d) the 0.02-0.10 mixture weight finish it. The naive
+    LLM reads the message and still answers the routine at 0.95 ("the game has not been moved from its resting
+    spot"). What would make a message matter: a day-typed representation - documents tied to "days like today"
+    (message kind or calendar) with their own statistics, so a guest document is judged only on guest
+    evenings and enters with a real prior share on the day it was written for; and question moments away from
+    the window edge (or edges that are not softened for a document written for today).
 
 13. **The mixture's confidence scale is compressed** (0.2-0.36 on both halves) because each document blends its
     clock-bin counts with the author prior at 0.7/0.3 and the tempered weights keep 7-10 documents alive; its

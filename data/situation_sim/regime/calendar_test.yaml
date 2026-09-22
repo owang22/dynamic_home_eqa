@@ -1,0 +1,20 @@
+# Regime-search test calendar (hh_s10, day0 Tuesday, 28 days).
+calendar:
+  - name: lead
+    days: [0, 13]
+    suppress_random_events: true          # a clean two-week routine: no random sick days / guests / late work
+  - name: holiday_tuesday
+    days: [14, 14]
+    day_kind: weekend                     # a Tuesday on the weekend schedule (public holiday)
+    suppress_random_events: true
+  - name: sick_spell
+    days: [15, 18]
+    force_events: [{event: sick_day, resident: resident_1}]
+    suppress_random_events: true
+  - name: shifts
+    days: [19, 25]
+    roles: {resident_1: shift_worker}     # resident_1 switches to a shift-worker schedule
+    suppress_random_events: true
+  - name: return
+    days: [26, 27]
+    suppress_random_events: true

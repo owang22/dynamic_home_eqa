@@ -33,6 +33,7 @@ import argparse
 import glob
 import json
 import pathlib
+import os
 import subprocess
 import sys
 from collections import defaultdict
@@ -67,6 +68,9 @@ AGENT_LABEL = {"LastObservation": "last seen", "MostFrequentLocation": "most fre
                "TimetableLookup(bin=2h,days=weekday_weekend,empty=last_seen@0.3,told": "timetable wd/we, honest empty bin, told",
                "TimetableLookup(bin=2h,days=weekday_weekend,empty=last_seen": "timetable wd/we, honest empty bin",
                "TimetableLookup(bin=2h,days=weekday_weekend": "timetable wd/we",
+               "TimetableLookup(bin=2h,days=all,hl=72h": "timetable hl 3d",
+               "TimetableLookup(bin=2h,days=all,hl=24h": "timetable hl 1d",
+               "MostFrequentLocation(hl=24h": "most frequent hl 1d",
                "TimetableLookup(bin=2h,days=per_day": "timetable per-day",
                "TimetableLookup": "timetable", "PeriodicPersistence": "periodic",
                "PerpetuaStar": "Perpetua*"}
@@ -78,6 +82,8 @@ def load_config(path: pathlib.Path) -> dict:
     cfg = yaml.safe_load(path.read_text())
     cfg.setdefault("day0", "Tuesday")
     cfg.setdefault("days", 8)
+    cfg.setdefault("calendar", None)   # regime search: stage list for situation_sim (see SIM_KNOBS.md); None = default generator
+    cfg.setdefault("extra_beliefs", [])   # regime search: extra registry specs added to the roster, e.g. [{name: timetable, half_life_h: 72}]
     cfg.setdefault("events", {})
     cfg.setdefault("classes", None)
     cfg.setdefault("per_day", 32)
@@ -91,6 +97,12 @@ def load_config(path: pathlib.Path) -> dict:
     cfg.setdefault("timetable_empty_bin_confidence", 0.3)
     cfg.setdefault("negative_evidence", "off")
     cfg.setdefault("shift_focus", 0.0)
+    cfg.setdefault("question_moment", "start")   # regime search: start | during | after (bank.QUESTION_MOMENT)
+    os.environ["PATROL_QUESTION_MOMENT"] = str(cfg["question_moment"])
+    cfg.setdefault("question_min_gap_min", 0)   # regime search: minimum minutes between two questions about the same object
+    os.environ["PATROL_QUESTION_MIN_GAP_MIN"] = str(int(cfg["question_min_gap_min"]))
+    cfg.setdefault("question_owners", None)    # regime search: list of resident ids whose objects are asked about
+    os.environ["PATROL_QUESTION_OWNERS"] = ",".join(cfg["question_owners"] or [])
     cfg.setdefault("feedback_delay_min", None)
     cfg["sim_dir"] = (path.parent / cfg["sim_dir"]).resolve() if not pathlib.Path(cfg["sim_dir"]).is_absolute() \
         else pathlib.Path(cfg["sim_dir"])
@@ -137,6 +149,13 @@ def ensure_households(cfg: dict, seeds: Sequence[int]) -> pathlib.Path:
     sim_dir.mkdir(parents=True, exist_ok=True)
     stamp = sim_dir / "rates.json"
     want = {"rates": rates, "day0": cfg["day0"], "days": cfg["days"]}
+    if cfg.get("calendar"):
+        want["calendar"] = cfg["calendar"]   # a changed calendar regenerates every requested seed
+        cal_path = sim_dir / "calendar.yaml"
+        cal_text = yaml.safe_dump({"calendar": cfg["calendar"]}, sort_keys=False)
+        if not cal_path.exists() or cal_path.read_text() != cal_text:
+            sim_dir.mkdir(parents=True, exist_ok=True)
+            cal_path.write_text(cal_text)
     have = json.loads(stamp.read_text()) if stamp.exists() else None
     todo = [s for s in sorted(seeds) if have != want or not (sim_dir / f"hh_s{s}" / "hidden_state.json").exists()]
     if have is not None and have != want:
@@ -144,6 +163,8 @@ def ensure_households(cfg: dict, seeds: Sequence[int]) -> pathlib.Path:
     for s in todo:
         cmd = [sys.executable, "-m", "situation_sim.run", "--seed", str(s), "--out", str(sim_dir / f"hh_s{s}"),
                "--days", str(cfg["days"]), "--day0", cfg["day0"], "--no-checks"]
+        if cfg.get("calendar"):
+            cmd += ["--calendar", str(sim_dir / "calendar.yaml")]
         r = subprocess.run(cmd, cwd=str(REPO / "src"), capture_output=True, text=True)
         if r.returncode:
             raise RuntimeError(f"sim seed {s} failed: {r.stderr[-2000:]}")
@@ -182,6 +203,12 @@ def cmd_classical(a) -> int:
     beliefs = tuple(({**b, "bin_hours": int(cfg["timetable_bin_hours"]), "day_scheme": str(cfg["timetable_day_scheme"]),
                       "empty_bin": str(cfg["timetable_empty_bin"]), "empty_bin_confidence": float(cfg["timetable_empty_bin_confidence"])}
                      if b["name"] in ("timetable", "timetable_told") else b) for b in BELIEFS if b["name"] in names)
+    for extra in cfg.get("extra_beliefs") or []:
+        # extra agents by registry spec; a timetable spec inherits the config's bin width unless it says otherwise
+        spec = dict(extra) if isinstance(extra, dict) else {"name": str(extra)}
+        if spec["name"] == "timetable":
+            spec.setdefault("bin_hours", int(cfg["timetable_bin_hours"]))
+        beliefs = beliefs + (spec,)
     if str(cfg["negative_evidence"]).lower() in ("off", "false", "0", "no"):   # YAML reads a bare `off` as False
         # The pure classical baselines answer from sightings alone: the base pipeline's
         # empty-look suppression (1 - 2^(-age / half-life) per spot) is switched off by a

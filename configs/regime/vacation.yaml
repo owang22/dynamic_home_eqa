@@ -1,0 +1,24 @@
+# Regime search R5 "vacation": 14 working weekdays (lead), then 10 days at home on the weekend schedule (the whole
+# household on holiday), then 7 working weekdays (return). Questions during activities about the schedule-timed
+# personal group (the carriers found in R2/R3). Seeds 0-9.
+name: vacation
+sim_dir: ../../data/situation_sim/regime_search/vacation
+day0: Monday
+days: 32
+events: {rain: {weekday: 0.0, weekend: 0.0}, guest_visit: {weekday: 0.0, weekend: 0.0}, late_work: {weekday: 0.0, weekend: 0.0},
+         grocery_delivery: {weekday: 0.0, weekend: 0.0}, laundry_day: {weekday: 0.0, weekend: 0.0}, sick_day: {weekday: 0.0, weekend: 0.0}}
+calendar:
+  - {name: lead,     days: [0, 13],  day_kind: weekday, suppress_random_events: true}
+  - {name: holiday,  days: [14, 23], day_kind: weekend, suppress_random_events: true}
+  - {name: return,   days: [24, 31], day_kind: weekday, suppress_random_events: true}
+patrol_hours: 0
+patrol_times: "03:00"
+questions: activity
+question_moment: during
+classes: [razor, mug, snack_bowl, book, tablet, recipe_book, glasses, glass, water_bottle, charger]
+per_day: 48
+oversample: 512
+timetable_bin_hours: 2
+negative_evidence: off
+feedback_delay_min: 10
+extra_beliefs: [{name: timetable, half_life_h: 72}, {name: most_frequent, half_life_h: 72}]

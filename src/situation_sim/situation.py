@@ -114,6 +114,12 @@ class DaySituation:
     states: Dict[str, Dict[str, float]]   # resident -> {energy, hurriedness, distraction}
     flags: Dict[str, List[str]] = field(default_factory=dict)  # resident -> day-long internal flags
     episodes: List[Episode] = field(default_factory=list)
+    stage: Optional[str] = None            # calendar stage name (regime search), None outside any stage
+    roles: Dict[str, str] = field(default_factory=dict)   # resident -> role override for this day (calendar)
+
+    def role_of(self, resident) -> str:
+        """The role whose schedule the resident follows today (calendar override or base)."""
+        return self.roles.get(resident.id, resident.role)
 
     def events_for(self, resident: str) -> List[Cause]:
         """Event causes that apply to this resident (household ones and their own)."""
@@ -155,11 +161,15 @@ class DaySituation:
         return out
 
     def to_json(self) -> dict:
-        return {"day_index": self.day_index, "weekday": self.weekday,
-                "is_weekend": self.is_weekend,
-                "causes": [asdict(c) for c in self.causes],
-                "states": self.states, "flags": self.flags,
-                "episodes": [e.to_json() for e in self.episodes]}
+        out = {"day_index": self.day_index, "weekday": self.weekday,
+               "is_weekend": self.is_weekend,
+               "causes": [asdict(c) for c in self.causes],
+               "states": self.states, "flags": self.flags,
+               "episodes": [e.to_json() for e in self.episodes]}
+        if self.stage is not None or self.roles:   # only calendar runs carry these keys
+            out["stage"] = self.stage
+            out["roles"] = dict(self.roles)
+        return out
 
 
 def _clamp(x: float) -> float:
@@ -193,10 +203,58 @@ def _eligible(spec: dict, r) -> bool:
     return True
 
 
+def stage_for(calendar: Optional[List[dict]], day_index: int) -> Optional[dict]:
+    """The calendar stage covering ``day_index`` (inclusive ``days: [a, b]``),
+    the last one listed if several overlap; None outside every stage."""
+    hit = None
+    for st in calendar or []:
+        a, b = st["days"]
+        if int(a) <= day_index <= int(b):
+            hit = st
+    return hit
+
+
+def forced_causes(stage: dict, hh: Household, events: Dict[str, dict]) -> List[Cause]:
+    """``force_events`` of a stage as the same Cause objects the random roll
+    makes: household scope -> id = event name; resident scope -> id =
+    ``event:resident_id`` with the resident's name in the words. ``resident``
+    may be an id, a name, or ``household``/omitted for household scope."""
+    out: List[Cause] = []
+    residents = sorted(hh.residents.values(), key=lambda r: r.id)
+    for fe in stage.get("force_events") or []:
+        ename = fe["event"]
+        ev = events[ename]
+        who = fe.get("resident")
+        if who in (None, "household") or ev["scope"] == "household":
+            out.append(Cause(ename, "event", ename, None, ev["description"]))
+            continue
+        if str(who).lower() == "all":       # regime search: every resident the event can hit
+            for r in residents:
+                if r.role in ev.get("roles", []):
+                    out.append(Cause(f"{ename}:{r.id}", "event", ename, r.id, f"{r.name.capitalize()}: {ev['description']}"))
+            continue
+        r = next((r for r in residents if r.id == who or r.name.lower() == str(who).lower()), None)
+        if r is None:
+            raise ValueError(f"calendar: unknown resident {who!r} for forced event {ename}")
+        out.append(Cause(f"{ename}:{r.id}", "event", ename, r.id,
+                         f"{r.name.capitalize()}: {ev['description']}"))
+    return out
+
+
 def sample_situations(hh: Household, seed: int, n_days: int,
                       events: Dict[str, dict],
                       episodes: Optional[Dict[str, dict]] = None,
-                      day0: str = DEFAULT_DAY0) -> List[DaySituation]:
+                      day0: str = DEFAULT_DAY0,
+                      calendar: Optional[List[dict]] = None) -> List[DaySituation]:
+    """``calendar`` (regime search): a list of stages, each
+    ``{name, days: [a, b], day_kind: weekday|weekend, force_events: [{event, resident}],
+    suppress_random_events: bool, roles: {resident: role}}``. ``day_kind`` overrides
+    the weekend/weekday schedule and rates for the stage's days (the weekday name
+    stays the calendar's); forced events are added as ordinary Cause objects;
+    ``suppress_random_events`` drops the day's randomly rolled events (the rolls are
+    still drawn, so the internal-state stream is the same with or without it);
+    ``roles`` switches a resident's daily schedule template for the stage. With
+    ``calendar=None`` every draw and every output is unchanged."""
     episodes = load_episodes() if episodes is None else episodes
     rng = random.Random(f"situation:{seed}")
     ep_rng = random.Random(f"episodes:{seed}")
@@ -208,6 +266,9 @@ def sample_situations(hh: Household, seed: int, n_days: int,
     for d in range(n_days):
         weekday = weekday_of(d, day0)
         is_we = weekday in WEEKEND
+        stage = stage_for(calendar, d)
+        if stage and stage.get("day_kind") in ("weekday", "weekend"):
+            is_we = stage["day_kind"] == "weekend"
         rate_key = "weekend" if is_we else "weekday"
         causes: List[Cause] = []
 
@@ -223,6 +284,13 @@ def sample_situations(hh: Household, seed: int, n_days: int,
                     if r.role in ev.get("roles", []) and rng.random() < p:
                         causes.append(Cause(f"{ename}:{r.id}", "event", ename, r.id,
                                             f"{r.name.capitalize()}: {ev['description']}"))
+        if stage:
+            if stage.get("suppress_random_events"):
+                causes = []
+            forced = forced_causes(stage, hh, events)
+            have = {c.id for c in causes}
+            causes += [c for c in forced if c.id not in have]
+            causes.sort(key=lambda c: c.id)   # the random path lists events in sorted name order
         # a resident off sick is not also working late
         sick = {c.resident for c in causes if c.event == "sick_day"}
         causes = [c for c in causes if not (c.event == "late_work" and c.resident in sick)]
@@ -293,5 +361,14 @@ def sample_situations(hh: Household, seed: int, n_days: int,
         for e in today:
             causes.append(Cause(e.id, "episode", e.type, e.resident,
                                 f"{e.words} ({hhmm(e.start)}–{hhmm(e.end)})"))
-        days.append(DaySituation(d, weekday, is_we, causes, states, flags, today))
+        sit = DaySituation(d, weekday, is_we, causes, states, flags, today)
+        if stage:
+            sit.stage = stage.get("name") or f"stage{calendar.index(stage)}"
+            sit.roles = {}
+            for who, role in (stage.get("roles") or {}).items():
+                r = next((r for r in residents if r.id == who or r.name.lower() == str(who).lower()), None)
+                if r is None:
+                    raise ValueError(f"calendar: unknown resident {who!r} in roles")
+                sit.roles[r.id] = role
+        days.append(sit)
     return days

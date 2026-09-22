@@ -1,0 +1,32 @@
+calendar:
+- name: lead
+  days:
+  - 0
+  - 13
+  suppress_random_events: true
+- name: holiday
+  days:
+  - 14
+  - 14
+  day_kind: weekend
+  suppress_random_events: true
+- name: sick
+  days:
+  - 15
+  - 18
+  force_events:
+  - event: sick_day
+    resident: resident_1
+  suppress_random_events: true
+- name: shifts
+  days:
+  - 19
+  - 25
+  roles:
+    resident_1: shift_worker
+  suppress_random_events: true
+- name: return
+  days:
+  - 26
+  - 27
+  suppress_random_events: true

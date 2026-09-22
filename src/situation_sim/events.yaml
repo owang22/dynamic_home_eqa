@@ -20,7 +20,7 @@
 events:
   rain:
     scope: household
-    p_day: {weekday: 0.14, weekend: 0.14}
+    p_day: {weekday: 0.0, weekend: 0.0}
     description: "It rains for most of the day."
     trace_words: "no walk; wet shoes, jackets and umbrellas get dropped at the entry instead of being put away"
     schedule:
@@ -37,7 +37,7 @@ events:
 
   guest_visit:
     scope: household
-    p_day: {weekday: 0.1, weekend: 0.14}
+    p_day: {weekday: 0.0, weekend: 0.0}
     description: "Friends come over for the evening."
     trace_words: "the living room is tidied beforehand, dinner is late, and the couch is taken by guests all evening"
     schedule:
@@ -59,7 +59,7 @@ events:
   late_work:
     scope: resident
     roles: [worker_out, worker_home, student, shift_worker]
-    p_day: {weekday: 0.1, weekend: 0.0}
+    p_day: {weekday: 0.0, weekend: 0.0}
     description: "A long day at work; home two hours late."
     trace_words: "gets home late and hurried; the evening walk and cooking are dropped and things are dumped at the door"
     schedule:
@@ -75,7 +75,7 @@ events:
 
   grocery_delivery:
     scope: household
-    p_day: {weekday: 0.08, weekend: 0.1}
+    p_day: {weekday: 0.0, weekend: 0.0}
     description: "A grocery delivery arrives in the early evening."
     trace_words: "someone unpacks groceries; the kitchen counter is covered with bags, so things that would go there land on the table instead"
     schedule:
@@ -90,7 +90,7 @@ events:
 
   laundry_day:
     scope: household
-    p_day: {weekday: 0.08, weekend: 0.22}
+    p_day: {weekday: 0.0, weekend: 0.0}
     description: "Laundry day."
     trace_words: "the laundry basket travels, towels and the blanket get washed and end up airing in the bedroom rather than where they live"
     schedule:
@@ -104,7 +104,7 @@ events:
   sick_day:
     scope: resident
     roles: [worker_out, worker_home, retired, student, shift_worker]
-    p_day: {weekday: 0.1, weekend: 0.02}
+    p_day: {weekday: 0.0, weekend: 0.0}
     description: "Off sick, resting on the couch all day."
     trace_words: "no work or trips out; laptop, mug, medication, book and blanket all migrate to the couch and coffee table"
     schedule:

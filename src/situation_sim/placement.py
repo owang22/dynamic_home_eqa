@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import random
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Optional
+from typing import Callable, Dict, List, Optional, Sequence
 
 from situation_sim.household import Household, Obj, Resident, ON_PERSON, OUT_OF_HOUSE, accepts
 from situation_sim.schedule import Bout, ELSEWHERE
@@ -252,14 +252,17 @@ def decide(hh: Household, obj: Obj, res: Resident, ended: Bout, nxt: Optional[Bo
     return d
 
 
-def _res_activities(hh: Household, res, acts: dict, events: Dict[str, dict]) -> List[str]:
+def _res_activities(hh: Household, res, acts: dict, events: Dict[str, dict],
+                    extra_roles: Sequence[str] = ()) -> List[str]:
     """Every activity this resident could perform: template blocks, slot
-    defaults, their habits (and follow-ups), pet routine, event-added, break."""
+    defaults, their habits (and follow-ups), pet routine, event-added, break.
+    ``extra_roles``: roles the calendar may switch this resident to."""
     names = set()
-    for dt in ("weekday", "weekend"):
-        for b in acts["schedules"][res.role][dt]:
-            if "activity" in b:
-                names.add(b["activity"])
+    for role in [res.role, *extra_roles]:
+        for dt in ("weekday", "weekend"):
+            for b in acts["schedules"][role][dt]:
+                if "activity" in b:
+                    names.add(b["activity"])
     for opts in acts["slot_defaults"].values():
         names.update(o["activity"] for o in opts if o["activity"] != "none")
     hob, cho = acts["habits"]["hobbies"], acts["habits"]["chores"]
@@ -296,7 +299,8 @@ def uses_obj(tmpl_uses: List[str], obj: Obj, hh: Household) -> bool:
     return False
 
 
-def compute_allowed(hh: Household, acts: dict, events: Dict[str, dict]) -> None:
+def compute_allowed(hh: Household, acts: dict, events: Dict[str, dict],
+                    extra_roles: Optional[Dict[str, Sequence[str]]] = None) -> None:
     """Fill ``obj.allowed``: every spot that accepts the object's class in the
     rooms where it lives or is used, plus event-rule destinations, plus
     ON_PERSON / OUT_OF_HOUSE. Static objects are allowed only at home.
@@ -304,7 +308,8 @@ def compute_allowed(hh: Household, acts: dict, events: Dict[str, dict]) -> None:
     object lands somewhere its rules forbid."""
     from situation_sim.schedule import resolve_room
     templates = acts["activities"]
-    res_acts = {r.id: _res_activities(hh, r, acts, events) for r in hh.residents.values()}
+    res_acts = {r.id: _res_activities(hh, r, acts, events, (extra_roles or {}).get(r.id, ()))
+                for r in hh.residents.values()}
     for obj in sorted(hh.objects.values(), key=lambda o: o.id):
         if obj.static:
             obj.allowed = list(obj.home)

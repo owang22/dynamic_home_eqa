@@ -27,6 +27,7 @@ import argparse
 import bisect
 import json
 import pathlib
+import os
 import random
 import sys
 from collections import defaultdict
@@ -149,7 +150,7 @@ def shift_info(state: dict, scored_days: List[int]) -> Tuple[List[int], Dict[int
             continue
         weekday = d["weekday"]
         sentences: List[str] = []
-        if weekday in WEEKEND:
+        if d.get("is_weekend", weekday in WEEKEND):   # a calendar may put a weekday on the weekend schedule
             sentences.append("It's the weekend, so we're off our usual routine and around the house more.")
         for c in sorted(d["causes"], key=lambda c: c["id"]):
             if c["kind"] != "event" or c["event"] not in MAJOR_EVENTS:
@@ -221,6 +222,11 @@ CHORE_SHARE = 0.15
 resident is out (drawn after a trip line), the rest are activity starts."""
 START_WINDOW = (-5, 15)
 """Minutes around an activity start at which the question lands."""
+QUESTION_MOMENT = os.environ.get("PATROL_QUESTION_MOMENT", "start")
+"""Regime search (2026-09-21): where inside an activity the question lands. ``start`` = START_WINDOW
+around the start line (the object is often mid-move); ``during`` = uniformly inside the activity
+(between its start and the resident's next end line, 2 min margins: the object is in use at the
+activity surface); ``after`` = 5-30 min after the end (put back, or left where it was used)."""
 CHORE_WINDOW = (10, 90)
 
 
@@ -262,13 +268,16 @@ def activity_question_rows(seed: int, objects: dict, scored_days: List[int], eid
     time. Returns the rows and per-day counts."""
     acts = load_activities()
     by_words = sorted(((spec["words"], name) for name, spec in acts.items()), key=lambda w: -len(w[0]))
-    eligible = lambda o: (not objects[o].get("static")) and (classes is None or objects[o]["cls"] in classes)
+    owners = [x for x in os.environ.get("PATROL_QUESTION_OWNERS", "").split(",") if x]   # regime search: e.g. resident_1
+    eligible = lambda o: (not objects[o].get("static")) and (classes is None or objects[o]["cls"] in classes) \
+        and (not owners or objects[o].get("owner") in owners)
     by_class: Dict[str, List[str]] = defaultdict(list)
     for o in sorted(objects):
         if eligible(o):
             by_class[objects[o]["cls"]].append(o)
     chore_classes = sorted({c for a in CHORE_ACTIVITIES for c in uses_classes(acts[a])})
-    rng = random.Random(f"patrol_questions_activity:{seed}" + (f":focus{shift_focus:g}" if shift_focus else ""))
+    rng = random.Random(f"patrol_questions_activity:{seed}" + (f":focus{shift_focus:g}" if shift_focus else "")
+                        + (f":owners{','.join(owners)}" if owners else ""))
     days = {int(d["day_index"]): d for d in trace["days"]}
     rows: List[dict] = []
     counts = {}
@@ -287,6 +296,14 @@ def activity_question_rows(seed: int, objects: dict, scored_days: List[int], eid
         starts = []   # (minute, activity, resident)
         shift_starts = []
         trips = []    # minute
+        # end minute of each start: the resident's next end line (the activity's own end)
+        ends: Dict[Tuple[int, Optional[str]], int] = {}
+        pending: Dict[Optional[str], int] = {}
+        for l in lines:
+            if l["kind"] == "start":
+                pending[l.get("resident")] = int(l["minute"])
+            elif l["kind"] == "end" and l.get("resident") in pending:
+                ends[(pending.pop(l.get("resident")), l.get("resident"))] = int(l["minute"])
         for l in lines:
             if l["kind"] == "start":
                 a = activity_of(l["text"], by_words)
@@ -313,7 +330,14 @@ def activity_question_rows(seed: int, objects: dict, scored_days: List[int], eid
                 m0, a, res = rng.choice(pool_starts)
                 pool = [o for c in uses_classes(acts[a]) for o in by_class.get(c, [])
                         if objects[o].get("owner") in (None, res)]
-                minute = m0 + rng.randint(*START_WINDOW)
+                end = ends.get((m0, res))
+                moment = os.environ.get("PATROL_QUESTION_MOMENT", QUESTION_MOMENT)
+                if moment == "during" and end is not None and end - m0 >= 6:
+                    minute = rng.randint(m0 + 2, end - 2)
+                elif moment == "after" and end is not None:
+                    minute = end + rng.randint(5, 30)
+                else:
+                    minute = m0 + rng.randint(*START_WINDOW)
                 kind = a
             if not pool:
                 continue
@@ -328,7 +352,24 @@ def activity_question_rows(seed: int, objects: dict, scored_days: List[int], eid
                      "shift_starts": len(shift_starts)}
         if len(cands) < per_day:
             raise ValueError(f"day {d}: only {len(cands)} sensable candidates of {oversample}; raise oversample")
-        keep = sorted(rng.sample(cands, per_day))
+        # regime search: no two questions about the same object within MIN_GAP minutes (a repeat inside one
+        # activity block is the same question twice, and the found-it feedback of the first answers the second)
+        min_gap = int(os.environ.get("PATROL_QUESTION_MIN_GAP_MIN", "0"))
+        if min_gap > 0:
+            # greedy in time order over a seeded shuffle of ties: keeps the most questions per day
+            order = list(range(len(cands))); rng.shuffle(order); order.sort(key=lambda i: cands[i][0])
+            pool_taken: List[Tuple[int, str, str]] = []
+            last_t: Dict[str, int] = {}
+            for i in order:
+                minute, obj, kind = cands[i]
+                if obj not in last_t or minute - last_t[obj] >= min_gap:
+                    pool_taken.append(cands[i]); last_t[obj] = minute
+            # with a gap the day's natural number of distinct questions may be below per_day: take what there is
+            taken = rng.sample(pool_taken, min(per_day, len(pool_taken)))
+            counts[d]["distinct"] = len(pool_taken)
+            keep = sorted(taken)
+        else:
+            keep = sorted(rng.sample(cands, per_day))
         for k, (minute, obj, kind) in enumerate(keep):
             rows.append({"kind": "question", "episode_id": eid, "question_id": f"d{d}q{k + 1:02d}",
                          "object_id": obj, "t_query": d * DAY_SECONDS + minute * 60, "day_index": d,
@@ -437,6 +478,11 @@ def build_bank(run_dir: pathlib.Path, out: pathlib.Path, patrol_hours: int,
             seen_at[key] = True
             feedback_rows.append({"kind": "observation", "episode_id": eid, "object_id": q["object_id"],
                                   "receptacle_id": truth.at(q["object_id"], q["t_query"]), "t": t_fb, "source": "scripted"})
+    # regime search: the calendar stage of each day (None outside any stage) as a per-question tag
+    stage_of_day = {int(d["day_index"]): d.get("stage") for d in state["days"]}
+    if any(v is not None for v in stage_of_day.values()):
+        for q in question_list:
+            q["stage"] = stage_of_day.get(int(q["day_index"]))
     cards = resident_cards(state)
     label = patrol_label(patrol_hours, patrol_times)
     times_text = [f"{m // 60:02d}:{m % 60:02d}" for m in (patrol_times or [])]
@@ -450,6 +496,9 @@ def build_bank(run_dir: pathlib.Path, out: pathlib.Path, patrol_hours: int,
     header["day_names"] = {str(d["day_index"]): d["weekday"] for d in state["days"]}
     header["scored_days"] = scored_days
     header["shift_days"] = shift_days
+    if any(v is not None for v in stage_of_day.values()):
+        header["stages"] = {str(k): v for k, v in sorted(stage_of_day.items())}       # calendar stage per day
+        header["day_kinds"] = {str(d["day_index"]): ("weekend" if d.get("is_weekend") else "weekday") for d in state["days"]}
     header["day_causes"] = {str(k): v for k, v in sorted(day_causes.items())}   # harness-only
     header["hint_messages"] = hints                                              # LLM told arm only
     header["question_mode"] = questions

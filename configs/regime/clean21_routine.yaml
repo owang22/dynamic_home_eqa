@@ -1,0 +1,21 @@
+# Regime search A2 "clean21_routine": as clean21_during but questions only about the ROUTINE group (objects used in daily
+# activities; moved-since-round >= 70% and timetable >= 60% in week 3 of clean21_during). Same households.
+#: no external events at all, 22 days from a Monday, nightly patrol + found-it feedback,
+# activity questions 64/day over every class. Purpose: the learning-curve ceiling of the cheap agents on a
+# pure weekly routine (weekends are the only recurring shift). Seeds 0-9.
+name: clean21_routine
+sim_dir: ../../data/situation_sim/regime_search/clean21
+day0: Monday
+days: 22
+events: {rain: {weekday: 0.0, weekend: 0.0}, guest_visit: {weekday: 0.0, weekend: 0.0}, late_work: {weekday: 0.0, weekend: 0.0},
+         grocery_delivery: {weekday: 0.0, weekend: 0.0}, laundry_day: {weekday: 0.0, weekend: 0.0}, sick_day: {weekday: 0.0, weekend: 0.0}}
+patrol_hours: 0
+patrol_times: "03:00"
+questions: activity
+classes: [mug, bowl, plate, glass, water_bottle, pan, pot, spatula, kitchen_knife, serving_dish, recipe_book, snack_bowl, tablet, charger, remote, glasses, razor, book, shopping_bag, dog_food_bag]
+per_day: 64
+oversample: 256
+timetable_bin_hours: 2
+negative_evidence: off
+feedback_delay_min: 10
+question_moment: during

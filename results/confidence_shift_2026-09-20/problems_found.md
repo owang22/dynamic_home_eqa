@@ -230,3 +230,27 @@
     pseudo-count blend (tuning_log #45) does not fix it either. What would: day-typed evidence (a message
     document only counts sightings from days of its own kind), i.e. the calendar/message conditioning of
     open_questions.md #12.
+
+24. **Traced (11:50, Oliver's question "why does telling the model a shift happened have no effect?"):**
+    hh_s14 Thursday, message "We have friends coming over this evening", questions from 18:54 to 22:59.
+    The message revision wrote "Friends Evening: Living Room Gathering" with the right claim - board game and
+    snack bowl on the coffee table, `weekday 18-23 usually` - and the truth at 22:59 was the coffee table.
+    Replaying that one document ALONE (no mixture, no evidence blend) gives coffee_table 0.40 at 20:00 but
+    bookshelf 0.31 / coffee_table 0.21 at 22:59. Four layers, in order of size:
+    (a) **the document cannot say "tonight"**: `days` is weekday | weekend | both, so the guest evening is
+        written as a claim about every weekday evening, and Wednesday's ordinary evening (board game on the
+        bookshelf) already counts against it (chance 0.7 -> succ/fail 1.4/0.6) and pulls its WHERE towards the
+        bookshelf;
+    (b) **the questions sit on the window's soft edge**: activity-driven questions are asked at the ends of
+        activities; at 22:59 the block "18-23 h" has edge weight 0.52 (EDGE_SD_H 0.5), so its claim is halved
+        exactly where it is asked, and the rest histogram wins inside the document itself;
+    (c) the evidence blend (0.7 hour-bin statistics) then adds Wednesday's bookshelf sighting to the same
+        clock bin, and (d) the mixture gives the document 0.02 (v4) or 0.10 (v5) of the weight.
+    The message can touch at most the questions about the objects it names inside its windows: 11 of
+    Thursday's 64 (17%) on hh_s14, so even a perfect message document bounds the told/not-told gap at a few
+    points per day. The naive LLM shows the same thing by a different route: its told reasoning at 22:59
+    says "although friends are arriving for an evening gathering ... the game has not been moved from its
+    resting spot" and answers bookshelf at 0.95, told and not told alike; being told even raised its stated
+    confidence on some questions (glass 0.65 told vs 0.40 not told). Both agents receive the message and
+    discount it against three days of routine evidence. Not a bug in the plumbing; a representation that has
+    no "today is different" state (open_questions #12).

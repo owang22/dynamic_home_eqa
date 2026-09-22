@@ -195,7 +195,7 @@ def build_day(hh: Household, sit: DaySituation, events: Dict[str, dict],
         # an event may take a whole free slot away ("slot:evening" in its remove list)
         gone_slots = {tok[5:] for c in sit.events_for(res.id)
                       for tok in events[c.event].get("schedule", {}).get("remove", []) if tok.startswith("slot:")}
-        for raw in acts["schedules"][res.role][daytype]:
+        for raw in acts["schedules"][sit.role_of(res)][daytype]:
             if "slot" in raw:
                 if raw["slot"] in gone_slots:
                     continue

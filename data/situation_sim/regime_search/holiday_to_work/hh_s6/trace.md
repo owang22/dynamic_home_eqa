@@ -1,0 +1,4236 @@
+# Household hh_s6 — 28 days, Monday to Sunday
+
+Seed-generated household. Times are clock times; ids are the receptacle and object ids used in events.jsonl. A line indented under an activity says where an object went when the activity ended and why. WHIM marks a placement that landed somewhere other than where the decision was heading. Text in [brackets] names the hidden cause the decision is attributed to.
+
+## Household
+
+Type: couple. Rooms: bathroom, bedroom_1, entry, kitchen, living, storage.
+
+Residents:
+
+- **Omar** (resident_1): works outside the home; untidy (tidiness 0.43); average timing (jitter scale 0.94); rarely forgets pocket items; mood moderately affects behaviour (sensitivity 0.43); sleeps in bedroom_1, works at the bedroom_1 desk. Hobbies: baking, photography. Chores they take on: dusting, fixing, grocery_run, vacuuming.
+- **Leo** (resident_2): works outside the home; very tidy (tidiness 0.79); average timing (jitter scale 1.13); rarely forgets pocket items; mood barely affects behaviour (sensitivity 0.31); sleeps in bedroom_1, works at the bedroom_1 desk. Hobbies: guitar, movies. Chores they take on: dusting, grocery_run, ironing, vacuuming.
+
+Pet: a dog, mainly looked after by Omar.
+
+Objects (82, of which 13 are fixtures that never move) and their usual place, primary slot first:
+
+- Omar's: backpack_omar → entry_hook_e1 / bedroom_floor_b1 / desk_b1; book_omar → nightstand_b1 / bookshelf_l1 / couch_l1; bowl_omar → cupboard_k1 / dish_rack_k1 / sink_k1; camera_omar → bookshelf_l1 / desk_b1 / dresser_b1; charger_omar → desk_b1 / nightstand_b1; glass_omar → cupboard_k1 / dish_rack_k1 / sink_k1; glasses_omar → nightstand_b1 / desk_b1 / coffee_table_l1; jacket_omar → entry_hook_e1 / wardrobe_b1; keys_omar → entry_table_e1 / entry_hook_e1 / nightstand_b1; laptop_omar → desk_b1 / bookshelf_l1; lunchbox_omar → cupboard_k1 / counter_k1 / sink_k1; mug_omar → cupboard_k1 / dish_rack_k1 / sink_k1; notebook_omar → desk_b1 / bookshelf_l1 / kitchen_table_k1; phone_omar → nightstand_b1 / coffee_table_l1 / kitchen_table_k1; plate_omar → cupboard_k1 / dish_rack_k1 / sink_k1; razor_omar → sink_ba_ba1 / bathroom_shelf_ba1 / medicine_cabinet_ba1; scarf_omar → entry_hook_e1 / wardrobe_b1 / dresser_b1; shoes_omar → shoe_rack_e1 / entry_floor_e1 / wardrobe_b1; skincare_omar → bathroom_shelf_ba1 / nightstand_b1 / dresser_b1; sunglasses_omar → entry_table_e1 / dresser_b1 / nightstand_b1; towel_omar → towel_rack_ba1 / bathroom_shelf_ba1 / bed_b1; umbrella_omar → entry_floor_e1 / entry_hook_e1; vitamins_omar → counter_k1 / cupboard_k1 / nightstand_b1; wallet_omar → entry_table_e1 / nightstand_b1 / desk_b1; water_bottle_omar → dish_rack_k1 / counter_k1 / sink_k1 / desk_b1
+- Leo's: backpack_leo → entry_hook_e1 / bedroom_floor_b1 / desk_b1; book_leo → nightstand_b1 / bookshelf_l1 / couch_l1; bowl_leo → cupboard_k1 / dish_rack_k1 / sink_k1; charger_leo → desk_b1 / nightstand_b1; glass_leo → cupboard_k1 / dish_rack_k1 / sink_k1; guitar_leo → bedroom_floor_b1 / floor_l_l1 / couch_l1; hat_leo → entry_hook_e1 / dresser_b1; jacket_leo → entry_hook_e1 / wardrobe_b1; keys_leo → entry_table_e1 / entry_hook_e1 / nightstand_b1; laptop_leo → desk_b1 / bookshelf_l1; mug_leo → cupboard_k1 / dish_rack_k1 / sink_k1; phone_leo → nightstand_b1 / coffee_table_l1 / kitchen_table_k1; plate_leo → cupboard_k1 / dish_rack_k1 / sink_k1; shoes_leo → shoe_rack_e1 / entry_floor_e1 / wardrobe_b1; skincare_leo → bathroom_shelf_ba1 / nightstand_b1 / dresser_b1; towel_leo → towel_rack_ba1 / bathroom_shelf_ba1 / bed_b1; umbrella_leo → entry_floor_e1 / entry_hook_e1; wallet_leo → entry_table_e1 / nightstand_b1 / desk_b1; water_bottle_leo → dish_rack_k1 / counter_k1 / sink_k1 / desk_b1
+- Shared: baking_tray_shared → pantry_shelf_k1 / cupboard_k1 / sink_k1; blanket_shared → couch_l1 / armchair_l1 / bed_b1; board_game_shared → bookshelf_l1 / coffee_table_l1; cutting_board_shared → counter_k1 / dish_rack_k1 / sink_k1; dog_bowl_shared → floor_k_k1 / counter_k1 / sink_k1; dog_food_bag_shared → pantry_shelf_k1 / floor_k_k1 / storage_floor_s1; dog_leash_shared → entry_hook_e1 / entry_table_e1 / couch_l1; dog_toy_shared → floor_l_l1 / couch_l1 / bedroom_floor_b1; duster_shared → storage_shelf_s1 / cupboard_k1 / bathroom_shelf_ba1; iron_shared → storage_shelf_s1 / wardrobe_b1 / dresser_b1; ironing_board_shared → storage_floor_s1 / bedroom_floor_b1 / wardrobe_b1; kitchen_knife_shared → drawer_k_k1 / counter_k1 / sink_k1; laundry_basket_shared → bathroom_shelf_ba1 / bedroom_floor_b1 / wardrobe_b1; mixing_bowl_shared → pantry_shelf_k1 / cupboard_k1 / sink_k1; pan_shared → cupboard_k1 / dish_rack_k1 / sink_k1; pot_shared → cupboard_k1 / dish_rack_k1 / sink_k1; puzzle_box_shared → bookshelf_l1 / coffee_table_l1; recipe_book_shared → pantry_shelf_k1 / bookshelf_l1 / counter_k1; remote_shared → tv_stand_l1 / coffee_table_l1 / couch_l1; shopping_bag_shared → pantry_shelf_k1 / entry_hook_e1 / entry_floor_e1; snack_bowl_shared → cupboard_k1 / coffee_table_l1 / sink_k1; spatula_shared → drawer_k_k1 / counter_k1 / sink_k1; speaker_shared → bookshelf_l1 / kitchen_table_k1 / desk_b1; toolbox_shared → storage_shelf_s1 / entry_floor_e1 / wardrobe_b1; vacuum_cleaner_shared → storage_floor_s1 / entry_floor_e1 / bedroom_floor_b1
+- Fixtures: candle_shared at coffee_table_l1; cushion_1_shared at couch_l1; cushion_2_shared at armchair_l1; doormat_shared at entry_floor_e1; fruit_bowl_shared at kitchen_table_k1; kettle_shared at counter_k1; knife_block_shared at counter_k1; lamp_shared at side_table_l1; picture_frame_shared at bookshelf_l1; soap_dispenser_shared at sink_ba_ba1; tissue_box_shared at coffee_table_l1; toothbrush_holder_shared at sink_ba_ba1; wall_clock_shared at counter_k1
+
+Object groups (things that travel together):
+
+- backpack_leo carries charger_leo, laptop_leo, water_bottle_leo on trips to work and errands
+- backpack_omar carries charger_omar, laptop_omar, lunchbox_omar, notebook_omar on trips to work and errands
+
+
+## Day 0 — Monday
+
+**Active causes**
+
+- `low_energy:resident_1`: Omar has low energy (0.23): leaves things where they were used instead of putting them back.
+
+Internal states (0–1): Omar energy 0.23, hurriedness 0.00, distraction 0.65; Leo energy 0.71, hurriedness 0.25, distraction 0.31
+
+**Timeline**
+
+```
+06:18  Omar leaves for walking the dog (back 06:43); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+06:43  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+07:10  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+08:04  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, razor_omar from sink_ba_ba1
+08:29  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+08:29  Omar — breakfast in the kitchen; brings mug_omar from cupboard_k1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+08:48  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+09:18  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+09:58  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → pantry_shelf_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on pantry_shelf_k1 instead
+          phone_leo → nightstand_b1: put back in its usual place
+09:58  Leo — dusting in the living (dusting habit); brings duster_shared from storage_shelf_s1
+10:41  Omar — baking in the kitchen (baking habit); brings mixing_bowl_shared from pantry_shelf_k1, baking_tray_shared from pantry_shelf_k1, recipe_book_shared from pantry_shelf_k1
+12:11  Omar finishes baking
+          mixing_bowl_shared → sink_k1: used, so it goes in the sink
+          phone_omar → dresser_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on dresser_b1 instead
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+12:11  Omar — a shower in the bathroom; brings towel_omar from towel_rack_ba1
+12:26  Omar leaves for errands (back 14:16); takes backpack_omar, keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+14:16  Omar is back from errands
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          scarf_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keeps phone_omar for lunch
+14:16  Omar — lunch in the kitchen; brings plate_omar from cupboard_k1, glass_omar from cupboard_k1
+14:33  Leo — lunch in the kitchen; brings phone_leo from nightstand_b1, plate_leo from cupboard_k1, glass_leo from cupboard_k1
+14:56  Omar finishes lunch
+          glass_omar → sink_k1: used, so it goes in the sink
+          plate_omar → sink_k1: used, so it goes in the sink
+15:13  Leo finishes lunch
+          glass_leo → sink_k1: used, so it goes in the sink
+          keeps phone_leo for grocery shopping
+15:13  Leo leaves for grocery shopping (back 16:13); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo, shopping_bag_shared
+15:49  Omar — vacuuming in the living (bout 1/2) (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1
+16:00  Omar finishes vacuuming
+          vacuum_cleaner_shared → bookshelf_l1: WHIM — was heading for floor_l_l1 (left where it was used) but landed on bookshelf_l1 instead
+16:00  Omar — a short break in the kitchen (vacuuming habit)
+16:12  Omar — vacuuming in the living (bout 2/2) (vacuuming habit); brings vacuum_cleaner_shared from bookshelf_l1
+16:13  Leo is back from grocery shopping
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          phone_leo → entry_table_e1: dropped at the door instead of being put away
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keeps shopping_bag_shared for unpacking the shopping
+16:13  Leo — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+16:28  Leo finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+18:24  Leo leaves for walking the dog (back 18:54); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+18:49  Omar — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+18:54  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_leo for dinner
+18:54  Leo — dinner in the kitchen; brings glass_leo from sink_k1, water_bottle_leo from dish_rack_k1
+19:34  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          phone_omar → counter_k1: left where it was used
+          pot_shared → sink_k1: used, so it goes in the sink
+          recipe_book_shared → chair_k1: WHIM — was heading for pantry_shelf_k1 (put back in its usual place) but landed on chair_k1 instead
+          spatula_shared → sink_k1: used, so it goes in the sink
+19:34  Omar — feeding the dog in the kitchen
+19:39  Leo finishes dinner
+          glass_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          water_bottle_leo → counter_k1: used, so it goes in the sink; sink_k1 was full, so it went to counter_k1
+19:44  Omar — dinner in the kitchen; brings plate_omar from sink_k1, glass_omar from sink_k1, phone_omar from counter_k1, water_bottle_omar from dish_rack_k1
+20:29  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → kitchen_table_k1: left where it was used
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → counter_k1: used, so it goes in the sink; sink_k1 was full, so it went to counter_k1
+20:37  Leo — washing up in the kitchen
+20:42  Omar — washing up in the kitchen
+20:52  Leo finishes washing up
+          baking_tray_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          mixing_bowl_shared (from sink_k1) → pantry_shelf_k1: tidied away to its usual place
+          mug_leo (from pantry_shelf_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from counter_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from counter_k1) → dish_rack_k1: tidied away to its usual place
+20:57  Omar — evening TV in the living (bout 1/2); brings remote_shared from tv_stand_l1, phone_omar from kitchen_table_k1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+21:41  Leo — ironing in the bedroom_1 (ironing habit); brings iron_shared from storage_shelf_s1, ironing_board_shared from storage_floor_s1, phone_leo from nightstand_b1
+22:03  Omar finishes evening TV
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+22:03  Omar — a short break in the kitchen
+22:21  Leo finishes ironing
+          ironing_board_shared → storage_floor_s1: put back in its usual place
+22:42  Omar — evening TV in the living (bout 2/2); brings remote_shared from tv_stand_l1, mug_omar from sink_k1
+22:53  Leo — getting ready for bed in the bedroom_1; brings charger_leo from desk_b1, glass_leo from cupboard_k1
+23:06  Omar finishes evening TV
+          blanket_shared → armchair_l1: WHIM — was heading for coffee_table_l1 (left where it was used, too tired to put it away) but landed on armchair_l1 instead [low_energy:resident_1]
+          glasses_omar → nightstand_b1: put back in its usual place
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+23:07  Omar — playing with the dog in the living
+23:08  Leo finishes getting ready for bed
+          charger_leo → wardrobe_b1: WHIM — was heading for desk_b1 (put back in its usual place) but landed on wardrobe_b1 instead
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+23:27  Omar — getting ready for bed in the bedroom_1; brings charger_omar from desk_b1, glass_omar from cupboard_k1
+23:42  Omar finishes getting ready for bed
+          charger_omar → wardrobe_b1: WHIM — was heading for desk_b1 (put back in its usual place) but landed on wardrobe_b1 instead
+          glass_omar → dish_rack_k1: left where it was used; nightstand_b1 was full, so it went to dish_rack_k1
+          phone_omar → nightstand_b1: put back in its usual place
+23:42  Omar — bed in the bedroom_1
+```
+
+## Day 1 — Tuesday
+
+**Active causes**
+
+- `ep:tidy_mood:resident_1:d1`: Omar is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong (14:18–16:18).
+- `distracted:resident_1`: Omar is distracted (0.73): carries things into the next room absent-mindedly, more likely to forget pocket items.
+- `low_energy:resident_1`: Omar has low energy (0.22): leaves things where they were used instead of putting them back.
+
+Internal states (0–1): Omar energy 0.22, hurriedness 0.34, distraction 0.73; Leo energy 0.85, hurriedness 0.52, distraction 0.35
+
+**Timeline**
+
+```
+06:14  Omar leaves for walking the dog (back 06:39); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+06:39  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → entry_table_e1: dropped at the door instead of being put away
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+07:11  Omar — feeding the dog in the kitchen
+07:21  Omar finishes feeding the dog
+          dog_food_bag_shared → chair_k1: WHIM — was heading for pantry_shelf_k1 (put back in its usual place) but landed on chair_k1 instead
+08:01  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+08:16  Omar — morning routine in the bathroom; brings phone_omar from entry_table_e1, glasses_omar from nightstand_b1
+08:41  Omar finishes morning routine
+          razor_omar → sink_ba_ba1: put back in its usual place
+08:49  Omar — breakfast in the kitchen; brings mug_omar from coffee_table_l1, bowl_omar from cupboard_k1
+09:29  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          mug_omar → sink_k1: used, so it goes in the sink
+          vitamins_omar → counter_k1: put back in its usual place
+09:29  Omar — baking in the kitchen (baking habit); brings mixing_bowl_shared from pantry_shelf_k1, baking_tray_shared from pantry_shelf_k1, recipe_book_shared from chair_k1
+09:37  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+10:17  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+10:17  Leo — dusting in the living (dusting habit)
+10:42  Leo finishes dusting
+          duster_shared → storage_shelf_s1: put back in its usual place
+10:42  Leo leaves for errands (back 12:32); takes backpack_leo, keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+10:59  Omar finishes baking
+          mixing_bowl_shared → sink_k1: used, so it goes in the sink
+          phone_omar → counter_k1: left where it was used
+11:25  Omar — a shower in the bathroom
+11:40  Omar finishes a shower
+          towel_omar → towel_rack_ba1: put back in its usual place
+12:32  Leo is back from errands
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for lunch
+13:55  Omar — lunch in the kitchen; brings phone_omar from counter_k1, plate_omar from cupboard_k1, glass_omar from dish_rack_k1
+14:15  Leo — lunch in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1
+14:35  Omar finishes lunch
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+14:35  Omar — tidying up in the living [because of ep:tidy_mood:resident_1:d1]
+14:55  Leo finishes lunch
+          glass_leo → sink_k1: used, so it goes in the sink
+          plate_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+14:55  Leo — vacuuming in the living (vacuuming habit)
+15:00  Omar finishes tidying up
+          baking_tray_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          blanket_shared (from armchair_l1) → couch_l1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          bowl_omar (from sink_k1) → kitchen_table_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on kitchen_table_k1 instead [ep:tidy_mood:resident_1:d1]
+          dog_food_bag_shared (from chair_k1) → kitchen_table_k1: WHIM — was heading for pantry_shelf_k1 (tidied away to its usual place) but landed on kitchen_table_k1 instead [ep:tidy_mood:resident_1:d1]
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          jacket_leo (from entry_floor_e1) → entry_hook_e1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          mixing_bowl_shared (from sink_k1) → pantry_shelf_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          mug_omar (from sink_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          plate_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          plate_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          recipe_book_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          snack_bowl_shared (from sink_k1) → counter_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on counter_k1 instead [ep:tidy_mood:resident_1:d1]
+          vacuum_cleaner_shared (from floor_l_l1) → storage_floor_s1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+          wallet_omar (from entry_floor_e1) → entry_table_e1: tidied away to its usual place [ep:tidy_mood:resident_1:d1]
+15:23  Omar leaves for a photo walk (back 17:03); takes keys_omar, phone_omar, wallet_omar, jacket_omar, shoes_omar, sunglasses_omar, camera_omar; never takes scarf_omar on a photo walk
+15:35  Leo finishes vacuuming
+          keeps phone_leo for a walk
+16:52  Leo leaves for a walk (back 18:02); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:03  Omar is back from a photo walk
+          camera_omar → bookshelf_l1: put away in its usual place after the trip
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar, sunglasses_omar, wallet_omar for grocery shopping
+18:02  Leo is back from a walk
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for dinner
+19:18  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from cupboard_k1, water_bottle_leo from dish_rack_k1
+19:34  Omar leaves for grocery shopping (back 20:34); takes keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar, shopping_bag_shared
+20:03  Leo finishes dinner
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+20:03  Leo — washing up in the kitchen
+20:18  Leo finishes washing up
+          bowl_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          glass_leo (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+20:34  Omar is back from grocery shopping
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          scarf_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+20:34  Omar — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+20:49  Omar finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+20:49  Omar leaves for walking the dog (back 21:19); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+21:19  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_omar for cooking dinner
+21:19  Omar — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+21:51  Leo — reading in the bedroom_1; brings book_leo from nightstand_b1, phone_leo from nightstand_b1
+22:04  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+          pot_shared → sink_k1: used, so it goes in the sink
+22:04  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from kitchen_table_k1
+22:14  Omar — dinner in the kitchen; brings plate_omar from cupboard_k1, glass_omar from cupboard_k1, phone_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+22:59  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+22:59  Omar — evening TV in the living (bout 1/2); brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from bathroom_shelf_ba1, snack_bowl_shared from cupboard_k1
+23:14  Omar finishes evening TV
+          blanket_shared → couch_l1: WHIM — was heading for coffee_table_l1 (left where it was used) but landed on couch_l1 instead
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → counter_k1: carried along absent-mindedly into the kitchen [distracted:resident_1]
+23:14  Omar — a short break in the kitchen
+23:24  Omar — evening TV in the living (bout 2/2); brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_omar from sink_k1, glasses_omar from nightstand_b1, snack_bowl_shared from counter_k1
+23:51  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+          remote_shared → tv_stand_l1: put back in its usual place
+23:59  Leo finishes reading
+          phone_leo → nightstand_b1: put back in its usual place
+```
+
+## Day 2 — Wednesday
+
+**Active causes**
+
+- `ep:overslept:resident_2:d2`: Leo overslept: a rushed morning with things dumped at the door, then a normal day (06:30–10:30).
+- `ep:sore_back:resident_2:d2`: Leo has a sore back today and sits in the armchair instead of the couch, so things land on the side table (06:30–24:00).
+- `low_energy:resident_1`: Omar has low energy (0.09): leaves things where they were used instead of putting them back.
+
+Internal states (0–1): Omar energy 0.09, hurriedness 0.20, distraction 0.66; Leo energy 0.71, hurriedness 0.49, distraction 0.56
+
+**Timeline**
+
+```
+07:23  Omar leaves for walking the dog (back 07:48); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:48  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → entry_table_e1: dropped at the door instead of being put away
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+07:51  Omar — feeding the dog in the kitchen
+08:27  Omar — morning routine in the bathroom; brings phone_omar from entry_table_e1, glasses_omar from nightstand_b1, razor_omar from sink_ba_ba1
+08:36  Leo — morning routine in the bathroom [shifted by ep:overslept:resident_2:d2]; brings phone_leo from nightstand_b1
+08:52  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+08:57  Leo — breakfast in the kitchen [shifted by ep:overslept:resident_2:d2]; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+09:17  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+09:17  Leo — dusting in the living (dusting habit); brings duster_shared from storage_shelf_s1
+09:42  Leo finishes dusting
+          duster_shared → storage_shelf_s1: put back in its usual place
+09:46  Omar — breakfast in the kitchen; brings mug_omar from sink_k1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+10:26  Omar finishes breakfast
+          vitamins_omar → counter_k1: put back in its usual place
+10:26  Omar — vacuuming in the living (bout 1/2) (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1
+10:36  Omar finishes vacuuming
+          vacuum_cleaner_shared → bookshelf_l1: WHIM — was heading for floor_l_l1 (left where it was used, too tired to put it away) but landed on bookshelf_l1 instead [low_energy:resident_1]
+10:36  Omar — a short break in the kitchen (vacuuming habit)
+10:48  Omar — vacuuming in the living (bout 2/2) (vacuuming habit); brings vacuum_cleaner_shared from bookshelf_l1
+11:06  Omar finishes vacuuming
+          phone_omar → nightstand_b1: put back in its usual place
+          vacuum_cleaner_shared → storage_floor_s1: put back in its usual place
+11:26  Omar — a shower in the bathroom; brings towel_omar from towel_rack_ba1
+11:41  Omar finishes a shower
+          towel_omar → towel_rack_ba1: put back in its usual place
+11:52  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+12:07  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+13:22  Omar leaves for errands (back 15:12); takes backpack_omar, keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+15:04  Leo — lunch in the kitchen; brings phone_leo from nightstand_b1, plate_leo from cupboard_k1, glass_leo from cupboard_k1
+15:12  Omar is back from errands
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → shoe_rack_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on shoe_rack_e1 instead
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for lunch
+15:12  Omar — lunch in the kitchen; brings glass_omar from sink_k1
+15:44  Leo finishes lunch
+          glass_leo → sink_k1: used, so it goes in the sink
+          plate_leo → sink_k1: used, so it goes in the sink
+          keeps phone_leo for a walk
+15:44  Leo leaves for a walk (back 17:44); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+15:52  Omar finishes lunch
+          glass_omar → cupboard_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+          plate_omar → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+          keeps phone_omar for grocery shopping
+17:24  Omar leaves for grocery shopping (back 18:24); takes keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar, shopping_bag_shared
+17:44  Leo is back from a walk
+          keeps hat_leo, jacket_leo, keys_leo, phone_leo, shoes_leo, wallet_leo for a walk
+17:44  Leo leaves for a walk (back 18:54); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+18:24  Omar is back from grocery shopping
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (dropped at the door instead of being put away) but landed on entry_floor_e1 instead
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+18:24  Omar — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+18:39  Omar finishes unpacking the shopping
+          shopping_bag_shared → kitchen_table_k1: WHIM — was heading for counter_k1 (left where it was used) but landed on kitchen_table_k1 instead
+18:47  Omar leaves for walking the dog (back 19:17); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+18:54  Leo is back from a walk
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keeps phone_leo for cooking dinner
+18:54  Leo — cooking dinner in the kitchen; brings cutting_board_shared from sink_k1, pot_shared from sink_k1
+19:17  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_omar for cooking dinner
+19:17  Omar — cooking dinner in the kitchen
+19:39  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          phone_leo → counter_k1: left where it was used
+          pot_shared → sink_k1: used, so it goes in the sink
+19:39  Leo — feeding the dog in the kitchen
+19:49  Leo finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+19:49  Leo — dinner in the kitchen; brings plate_leo from sink_k1, glass_leo from sink_k1, phone_leo from counter_k1, water_bottle_leo from dish_rack_k1
+20:02  Omar finishes cooking dinner
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → counter_k1: left where it was used
+          pot_shared → counter_k1: left where it was used
+          recipe_book_shared → kitchen_table_k1: WHIM — was heading for counter_k1 (left where it was used) but landed on kitchen_table_k1 instead
+          spatula_shared → cupboard_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+20:02  Omar — dinner in the kitchen; brings plate_omar from dish_rack_k1, glass_omar from cupboard_k1, water_bottle_omar from sink_k1
+20:34  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+20:34  Leo — evening TV in the living [shifted by ep:sore_back:resident_2:d2]; brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_leo from sink_k1, snack_bowl_shared from coffee_table_l1
+20:47  Omar finishes dinner
+          phone_omar → nightstand_b1: put back in its usual place
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+20:47  Omar — washing up in the kitchen
+21:02  Omar finishes washing up
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → kitchen_table_k1: WHIM — was heading for drawer_k_k1 (tidied away to its usual place) but landed on kitchen_table_k1 instead
+          mug_leo (from armchair_l1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from armchair_l1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from cupboard_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from sink_k1) → dish_rack_k1: tidied away to its usual place
+21:02  Omar — evening TV in the living; brings remote_shared from armchair_l1, phone_omar from nightstand_b1, blanket_shared from armchair_l1, mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+22:44  Leo finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+23:12  Omar finishes evening TV
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → coffee_table_l1: left where it was used
+23:12  Omar — getting ready for bed in the bedroom_1; brings charger_omar from wardrobe_b1, glass_omar from cupboard_k1, glasses_omar from coffee_table_l1
+23:16  Leo — getting ready for bed in the bedroom_1; brings charger_leo from wardrobe_b1, glass_leo from cupboard_k1
+23:27  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          glass_omar → counter_k1: WHIM — was heading for dish_rack_k1 (left where it was used; nightstand_b1 was full, so it went to dish_rack_k1) but landed on counter_k1 instead
+          phone_omar → nightstand_b1: put back in its usual place
+23:27  Omar — bed in the bedroom_1
+23:31  Leo finishes getting ready for bed
+          charger_leo → bed_b1: left where it was used; nightstand_b1 was full, so it went to bed_b1
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+23:31  Leo — bed in the bedroom_1
+```
+
+## Day 3 — Thursday
+
+**Active causes**
+
+- `ep:afternoon_slump:resident_1:d3`: Omar hits an afternoon slump: things get left where they were used for a couple of hours (15:14–16:51).
+- `ep:craving_a_snack:resident_1:d3`: Omar is craving a snack and fits one in when there is a gap; the bowl and glass tend to be left out (14:43–15:13).
+- `low_energy:resident_1`: Omar has low energy (0.08): leaves things where they were used instead of putting them back.
+
+Internal states (0–1): Omar energy 0.08, hurriedness 0.16, distraction 0.69; Leo energy 0.76, hurriedness 0.38, distraction 0.40
+
+**Timeline**
+
+```
+07:20  Omar leaves for walking the dog (back 07:45); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:45  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → entry_table_e1: dropped at the door instead of being put away
+          shoes_omar → entry_floor_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+07:58  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+08:21  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+08:33  Omar — morning routine in the bathroom; brings phone_omar from entry_table_e1, glasses_omar from nightstand_b1
+08:56  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+08:58  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+08:58  Omar — breakfast in the kitchen; brings mug_omar from sink_k1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+09:36  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+09:38  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          mug_omar → sink_k1: used, so it goes in the sink
+09:58  Omar — baking in the kitchen (baking habit); brings mixing_bowl_shared from pantry_shelf_k1, baking_tray_shared from pantry_shelf_k1, recipe_book_shared from kitchen_table_k1
+11:14  Leo — dusting in the living (dusting habit); brings duster_shared from storage_shelf_s1
+11:28  Omar finishes baking
+          baking_tray_shared → sink_k1: used, so it goes in the sink
+          recipe_book_shared → floor_k_k1: WHIM — was heading for pantry_shelf_k1 (put back in its usual place) but landed on floor_k_k1 instead
+          keeps phone_omar for errands
+11:39  Leo finishes dusting
+          duster_shared → storage_shelf_s1: put back in its usual place
+12:05  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+12:20  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+12:20  Leo leaves for errands (back 14:10); takes backpack_leo, keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+14:10  Leo is back from errands
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for lunch
+14:10  Leo — lunch in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1
+14:26  Omar leaves for errands (back 16:16); takes backpack_omar, keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+14:50  Leo finishes lunch
+          glass_leo → sink_k1: used, so it goes in the sink
+          plate_leo → sink_k1: used, so it goes in the sink
+15:26  Leo — playing guitar in the living (guitar habit); brings guitar_leo from bedroom_floor_b1
+16:11  Leo finishes playing guitar
+          guitar_leo → wardrobe_b1: WHIM — was heading for bedroom_floor_b1 (put back in its usual place) but landed on wardrobe_b1 instead
+          keeps phone_leo for a walk
+16:16  Omar is back from errands
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          scarf_omar → bed_b1: WHIM — was heading for wardrobe_b1 (put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1) but landed on bed_b1 instead
+          shoes_omar → entry_floor_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for lunch
+16:16  Omar — lunch in the kitchen; brings plate_omar from cupboard_k1, glass_omar from counter_k1
+16:56  Omar finishes lunch
+          plate_omar → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+16:56  Omar — a snack in the kitchen [because of ep:craving_a_snack:resident_1:d3]; brings snack_bowl_shared from sink_k1, glass_omar from kitchen_table_k1
+17:11  Leo leaves for a walk (back 18:21); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:16  Omar finishes a snack
+          glass_omar → sink_k1: used, so it goes in the sink [ep:craving_a_snack:resident_1:d3]
+17:16  Omar — fixing something in the kitchen (fixing habit); brings toolbox_shared from storage_shelf_s1
+18:01  Omar finishes fixing something
+          toolbox_shared → storage_shelf_s1: put back in its usual place
+18:01  Omar — vacuuming in the living (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1
+18:21  Leo is back from a walk
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for cooking dinner
+18:27  Omar finishes vacuuming
+          keeps phone_omar for walking the dog
+18:41  Omar leaves for walking the dog (back 19:11); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+19:11  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_omar for cooking dinner
+19:11  Omar — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from kitchen_table_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from floor_k_k1
+19:40  Leo — cooking dinner in the kitchen
+19:56  Omar finishes cooking dinner
+          cutting_board_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          kitchen_knife_shared → cupboard_k1: used, so it goes in the sink; sink_k1 was full, so it went to cupboard_k1
+          phone_omar → counter_k1: left where it was used
+          pot_shared → dish_rack_k1: left where it was used; counter_k1 was full, so it went to dish_rack_k1
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+19:56  Omar — feeding the dog in the kitchen
+20:06  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+20:06  Omar — dinner in the kitchen; brings plate_omar from dish_rack_k1, glass_omar from sink_k1, phone_omar from counter_k1, water_bottle_omar from dish_rack_k1
+20:25  Leo finishes cooking dinner
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          recipe_book_shared → counter_k1: left where it was used
+20:25  Leo — dinner in the kitchen; brings plate_leo from sink_k1, glass_leo from sink_k1, water_bottle_leo from dish_rack_k1
+20:51  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → kitchen_table_k1: left where it was used
+          plate_omar → counter_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on counter_k1 instead
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+20:51  Omar — washing up in the kitchen
+21:06  Omar finishes washing up
+          baking_tray_shared (from sink_k1) → dish_rack_k1: WHIM — was heading for pantry_shelf_k1 (tidied away to its usual place) but landed on dish_rack_k1 instead
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from dish_rack_k1) → kitchen_table_k1: WHIM — was heading for counter_k1 (tidied away to its usual place) but landed on kitchen_table_k1 instead
+          glass_leo (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          mixing_bowl_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from kitchen_table_k1) → dish_rack_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on dish_rack_k1 instead
+          pot_shared (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from sink_k1) → dish_rack_k1: tidied away to its usual place
+21:06  Omar — evening TV in the living (bout 1/2); brings phone_omar from kitchen_table_k1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+21:10  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → kitchen_table_k1: left where it was used
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+21:10  Leo — washing up in the kitchen
+21:25  Leo finishes washing up
+          baking_tray_shared (from dish_rack_k1) → pantry_shelf_k1: tidied away to its usual place
+          cutting_board_shared (from kitchen_table_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from counter_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+21:25  Leo — ironing in the bedroom_1 (ironing habit); brings ironing_board_shared from storage_floor_s1, phone_leo from kitchen_table_k1
+21:44  Omar finishes evening TV
+          glasses_omar → desk_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on desk_b1 instead
+          remote_shared → tv_stand_l1: put back in its usual place
+21:44  Omar — a short break in the kitchen
+22:05  Leo finishes ironing
+          iron_shared → storage_shelf_s1: put back in its usual place
+          ironing_board_shared → storage_floor_s1: put back in its usual place
+22:23  Omar — evening TV in the living (bout 2/2); brings remote_shared from tv_stand_l1, mug_omar from cupboard_k1, glasses_omar from desk_b1, snack_bowl_shared from cupboard_k1
+22:51  Leo — getting ready for bed in the bedroom_1; brings charger_leo from bed_b1, glass_leo from cupboard_k1
+23:06  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+23:06  Leo — bed in the bedroom_1
+23:15  Omar finishes evening TV
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+23:16  Omar — getting ready for bed in the bedroom_1; brings charger_omar from desk_b1, glass_omar from cupboard_k1, glasses_omar from coffee_table_l1
+23:31  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+23:49  Omar — bed in the bedroom_1
+```
+
+## Day 4 — Friday
+
+**Active causes**
+
+- `ep:long_call_with_a_friend:resident_2:d4`: Leo gets a long call from a friend and takes it on the couch; the phone is left there afterwards (20:20–21:05).
+- `low_energy:resident_1`: Omar has low energy (0.00): leaves things where they were used instead of putting them back.
+
+Internal states (0–1): Omar energy 0.00, hurriedness 0.07, distraction 0.56; Leo energy 0.43, hurriedness 0.32, distraction 0.28
+
+**Timeline**
+
+```
+06:29  Omar leaves for walking the dog (back 06:54); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+06:54  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → dresser_b1: WHIM — was heading for nightstand_b1 (put away in its usual place after the trip) but landed on dresser_b1 instead
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+07:58  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+08:42  Omar — morning routine in the bathroom; brings phone_omar from dresser_b1, glasses_omar from nightstand_b1, razor_omar from sink_ba_ba1
+09:07  Omar finishes morning routine
+          razor_omar → sink_ba_ba1: put back in its usual place
+09:23  Omar — breakfast in the kitchen; brings mug_omar from coffee_table_l1, bowl_omar from cupboard_k1
+09:44  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+10:03  Omar finishes breakfast
+          mug_omar → pantry_shelf_k1: WHIM — was heading for kitchen_table_k1 (left where it was used, too tired to put it away) but landed on pantry_shelf_k1 instead [low_energy:resident_1]
+          vitamins_omar → counter_k1: put back in its usual place
+10:03  Omar — baking in the kitchen (baking habit); brings mixing_bowl_shared from pantry_shelf_k1, baking_tray_shared from pantry_shelf_k1
+10:09  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+10:49  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+10:49  Leo — dusting in the living (dusting habit); brings duster_shared from storage_shelf_s1
+11:14  Leo finishes dusting
+          duster_shared → storage_shelf_s1: put back in its usual place
+11:33  Omar finishes baking
+          baking_tray_shared → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+11:33  Omar — a shower in the bathroom; brings towel_omar from towel_rack_ba1
+12:17  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+12:32  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+12:32  Leo leaves for errands (back 14:22); takes backpack_leo, keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+13:18  Omar — lunch in the kitchen; brings phone_omar from nightstand_b1, plate_omar from cupboard_k1, glass_omar from sink_k1
+13:58  Omar finishes lunch
+          plate_omar → sink_k1: used, so it goes in the sink
+13:58  Omar — vacuuming in the living (vacuuming habit)
+14:22  Leo is back from errands
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for lunch
+14:22  Leo — lunch in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1
+14:38  Omar finishes vacuuming
+          keeps phone_omar for walking the dog
+15:02  Leo finishes lunch
+          glass_leo → sink_k1: used, so it goes in the sink
+          keeps phone_leo for grocery shopping
+15:18  Leo leaves for grocery shopping (back 16:18); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo, shopping_bag_shared
+16:18  Leo is back from grocery shopping
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keys_leo → entry_hook_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_hook_e1 instead
+          phone_leo → nightstand_b1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+16:18  Leo — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+16:33  Leo finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+16:33  Leo leaves for a walk (back 17:43); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:43  Leo is back from a walk
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for cooking dinner
+18:53  Omar leaves for walking the dog (back 19:23); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+19:08  Leo — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+19:23  Omar is back from walking the dog
+          dog_leash_shared → entry_table_e1: dropped at the door instead of being put away
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_hook_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_hook_e1 instead
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+          keeps phone_omar for cooking dinner
+19:23  Omar — cooking dinner in the kitchen
+19:53  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+19:53  Leo — dinner in the kitchen; brings glass_leo from sink_k1, water_bottle_leo from dish_rack_k1
+20:08  Omar finishes cooking dinner
+          kitchen_knife_shared → cupboard_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+          pan_shared → sink_k1: used, so it goes in the sink
+          phone_omar → counter_k1: left where it was used
+          pot_shared → sink_k1: used, so it goes in the sink
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+20:08  Omar — feeding the dog in the kitchen
+20:18  Omar — dinner in the kitchen; brings plate_omar from sink_k1, phone_omar from counter_k1, water_bottle_omar from dish_rack_k1
+20:38  Leo finishes dinner
+          glass_leo → cupboard_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+          phone_leo → kitchen_table_k1: left where it was used [ep:long_call_with_a_friend:resident_2:d4]
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → counter_k1: used, so it goes in the sink; sink_k1 was full, so it went to counter_k1
+20:38  Leo — washing up in the kitchen
+20:53  Leo finishes washing up
+          baking_tray_shared (from sink_k1) → pantry_shelf_k1: tidied away to its usual place
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from cupboard_k1) → drawer_k_k1: tidied away to its usual place
+          mixing_bowl_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from pantry_shelf_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from counter_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+20:53  Leo — a call with family in the bedroom_1 [because of ep:long_call_with_a_friend:resident_2:d4]; brings phone_leo from kitchen_table_k1
+21:03  Omar finishes dinner
+          glass_omar → kitchen_table_k1: left where it was used
+          phone_omar → kitchen_table_k1: left where it was used
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+21:03  Omar — washing up in the kitchen
+21:18  Omar finishes washing up
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          water_bottle_omar (from sink_k1) → cupboard_k1: WHIM — was heading for dish_rack_k1 (tidied away to its usual place) but landed on cupboard_k1 instead
+21:18  Omar — evening TV in the living (bout 1/3); brings phone_omar from kitchen_table_k1, mug_omar from cupboard_k1, glasses_omar from bathroom_shelf_ba1, snack_bowl_shared from cupboard_k1
+21:28  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+21:28  Omar — a short break in the kitchen
+21:33  Leo — a movie in the living (movies habit); brings blanket_shared from couch_l1, snack_bowl_shared from sink_k1, glass_leo from cupboard_k1
+21:41  Omar — evening TV in the living (bout 2/3); brings mug_omar from sink_k1, glasses_omar from nightstand_b1
+22:20  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+22:20  Omar — a short break in the kitchen
+22:33  Omar — evening TV in the living (bout 3/3); brings blanket_shared from couch_l1, mug_omar from sink_k1
+23:14  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+23:28  Omar — playing with the dog in the living
+23:33  Leo finishes a movie
+          remote_shared → tv_stand_l1: put back in its usual place
+23:33  Leo — getting ready for bed in the bedroom_1; brings charger_leo from desk_b1, glass_leo from coffee_table_l1
+23:48  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          phone_leo → nightstand_b1: put back in its usual place
+23:48  Omar — getting ready for bed in the bedroom_1; brings charger_omar from desk_b1, glass_omar from cupboard_k1, glasses_omar from coffee_table_l1
+23:48  Leo — bed in the bedroom_1
+23:59  Omar finishes getting ready for bed
+          charger_omar → dresser_b1: WHIM — was heading for bed_b1 (left where it was used; nightstand_b1 was full, so it went to bed_b1) but landed on dresser_b1 instead
+          glass_omar → dish_rack_k1: left where it was used; nightstand_b1 was full, so it went to dish_rack_k1
+          phone_omar → nightstand_b1: put back in its usual place
+```
+
+## Day 5 — Saturday
+
+**Active causes**
+
+- `ep:tidy_mood:resident_1:d5`: Omar is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong (10:29–12:29).
+- `low_energy:resident_1`: Omar has low energy (0.14): leaves things where they were used instead of putting them back.
+
+Internal states (0–1): Omar energy 0.14, hurriedness 0.11, distraction 0.46; Leo energy 0.55, hurriedness 0.35, distraction 0.18
+
+**Timeline**
+
+```
+06:22  Omar leaves for walking the dog (back 06:47); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+06:47  Omar is back from walking the dog
+          dog_leash_shared → entry_table_e1: dropped at the door instead of being put away
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+07:12  Omar — feeding the dog in the kitchen
+08:18  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, razor_omar from sink_ba_ba1
+08:32  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+08:43  Omar finishes morning routine
+          glasses_omar → sink_ba_ba1: WHIM — was heading for bathroom_shelf_ba1 (left where it was used) but landed on sink_ba_ba1 instead
+08:43  Omar — breakfast in the kitchen; brings mug_omar from coffee_table_l1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+08:57  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+09:23  Omar finishes breakfast
+          bowl_omar → pantry_shelf_k1: WHIM — was heading for kitchen_table_k1 (left where it was used, too tired to put it away) but landed on pantry_shelf_k1 instead [low_energy:resident_1]
+          mug_omar → pantry_shelf_k1: WHIM — was heading for kitchen_table_k1 (left where it was used) but landed on pantry_shelf_k1 instead
+          vitamins_omar → cupboard_k1: WHIM — was heading for kitchen_table_k1 (left where it was used, too tired to put it away) but landed on cupboard_k1 instead [low_energy:resident_1]
+09:37  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+10:40  Leo — dusting in the living (dusting habit); brings duster_shared from storage_shelf_s1
+10:56  Omar — baking in the kitchen (baking habit); brings mixing_bowl_shared from pantry_shelf_k1, baking_tray_shared from pantry_shelf_k1, recipe_book_shared from pantry_shelf_k1
+11:05  Leo finishes dusting
+          duster_shared → storage_shelf_s1: put back in its usual place
+11:05  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+11:20  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+12:26  Omar finishes baking
+          baking_tray_shared → sink_k1: used, so it goes in the sink
+          mixing_bowl_shared → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+12:26  Omar — tidying up in the living [because of ep:tidy_mood:resident_1:d5]
+12:51  Omar finishes tidying up
+          baking_tray_shared (from sink_k1) → pantry_shelf_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          bowl_omar (from pantry_shelf_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          dog_food_bag_shared (from floor_k_k1) → pantry_shelf_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          dog_leash_shared (from entry_table_e1) → entry_hook_e1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          glass_omar (from dish_rack_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          keys_leo (from entry_floor_e1) → entry_table_e1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          keys_omar (from entry_floor_e1) → entry_table_e1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          mixing_bowl_shared (from sink_k1) → pantry_shelf_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          mug_omar (from pantry_shelf_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          shoes_omar (from entry_floor_e1) → shoe_rack_e1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          snack_bowl_shared (from sink_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          vacuum_cleaner_shared (from floor_l_l1) → storage_floor_s1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          vitamins_omar (from cupboard_k1) → counter_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+          water_bottle_omar (from cupboard_k1) → dish_rack_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d5]
+12:51  Omar leaves for errands (back 14:41); takes backpack_omar, keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+14:29  Leo — lunch in the kitchen; brings phone_leo from nightstand_b1, plate_leo from cupboard_k1, glass_leo from nightstand_b1
+14:41  Omar is back from errands
+          backpack_omar → entry_floor_e1: dropped at the door instead of being put away
+          jacket_omar → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for lunch
+14:41  Omar — lunch in the kitchen; brings plate_omar from cupboard_k1, glass_omar from cupboard_k1
+15:09  Leo finishes lunch
+          glass_leo → sink_k1: used, so it goes in the sink
+          plate_leo → sink_k1: used, so it goes in the sink
+15:21  Omar finishes lunch
+          glass_omar → sink_k1: used, so it goes in the sink
+          keeps phone_omar for a photo walk
+15:21  Omar leaves for a photo walk (back 17:01); takes keys_omar, phone_omar, wallet_omar, jacket_omar, shoes_omar, sunglasses_omar, camera_omar; never takes scarf_omar on a photo walk
+16:04  Leo — playing guitar in the living (guitar habit); brings guitar_leo from wardrobe_b1
+16:49  Leo finishes playing guitar
+          keeps phone_leo for grocery shopping
+17:01  Omar is back from a photo walk
+          camera_omar → side_table_l1: WHIM — was heading for bookshelf_l1 (put away in its usual place after the trip) but landed on side_table_l1 instead
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keeps phone_omar for cooking dinner
+17:48  Omar — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+18:33  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+          pot_shared → sink_k1: used, so it goes in the sink
+          spatula_shared → sink_k1: used, so it goes in the sink
+18:58  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+19:08  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+19:08  Omar — dinner in the kitchen; brings glass_omar from sink_k1, phone_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+19:53  Omar finishes dinner
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → counter_k1: WHIM — was heading for kitchen_table_k1 (left where it was used, too tired to put it away) but landed on counter_k1 instead [low_energy:resident_1]
+20:27  Omar — evening TV in the living (bout 1/2); brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from sink_ba_ba1, snack_bowl_shared from cupboard_k1
+21:27  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+21:27  Omar — a short break in the kitchen
+21:28  Leo leaves for grocery shopping (back 22:28); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo, shopping_bag_shared
+21:46  Omar — evening TV in the living (bout 2/2); brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_omar from sink_k1
+22:14  Omar finishes evening TV
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+22:28  Leo is back from grocery shopping
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          phone_leo → nightstand_b1: put away in its usual place after the trip
+          shoes_leo → entry_floor_e1: dropped at the door instead of being put away
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+22:28  Leo — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+22:43  Leo finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+22:43  Leo leaves for walking the dog (back 23:13); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+22:49  Omar — getting ready for bed in the bedroom_1; brings charger_omar from dresser_b1, glass_omar from kitchen_table_k1, glasses_omar from coffee_table_l1
+23:04  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          phone_omar → nightstand_b1: put back in its usual place
+23:04  Omar — bed in the bedroom_1
+23:13  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_leo for dinner
+23:13  Leo — dinner in the kitchen; brings plate_leo from sink_k1, glass_leo from sink_k1, water_bottle_leo from dish_rack_k1
+23:58  Leo finishes dinner
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+23:58  Leo — washing up in the kitchen
+23:59  Leo finishes washing up
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from kitchen_table_k1) → counter_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on counter_k1 instead
+          kitchen_knife_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          mug_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from sink_k1) → counter_k1: WHIM — was heading for drawer_k_k1 (tidied away to its usual place) but landed on counter_k1 instead
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from counter_k1) → dish_rack_k1: tidied away to its usual place
+```
+
+## Day 6 — Sunday
+
+**Active causes**
+
+
+Internal states (0–1): Omar energy 0.46, hurriedness 0.28, distraction 0.63; Leo energy 0.50, hurriedness 0.46, distraction 0.26
+
+**Timeline**
+
+```
+07:12  Omar leaves for walking the dog (back 07:37); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:37  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+07:44  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+08:00  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+08:55  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1
+09:20  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+09:20  Omar — breakfast in the kitchen; brings mug_omar from cupboard_k1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+10:00  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          mug_omar → sink_k1: used, so it goes in the sink
+          keeps phone_omar for grocery shopping
+10:09  Omar leaves for grocery shopping (back 11:09); takes keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar, shopping_bag_shared
+10:19  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+10:59  Leo finishes breakfast
+          mug_leo → sink_k1: used, so it goes in the sink
+10:59  Leo — vacuuming in the living (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1
+11:09  Omar is back from grocery shopping
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_hook_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_hook_e1 instead
+          phone_omar → entry_table_e1: dropped at the door instead of being put away
+          scarf_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+11:13  Omar — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+11:28  Omar finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+11:28  Omar leaves for errands (back 13:18); takes backpack_omar, keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+11:39  Leo finishes vacuuming
+          phone_leo → nightstand_b1: put back in its usual place
+          vacuum_cleaner_shared → storage_floor_s1: put back in its usual place
+11:39  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+13:18  Omar is back from errands
+          backpack_omar → entry_floor_e1: dropped at the door instead of being put away
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for lunch
+13:51  Leo — lunch in the kitchen; brings phone_leo from nightstand_b1, plate_leo from cupboard_k1, glass_leo from counter_k1
+14:19  Omar — lunch in the kitchen; brings plate_omar from cupboard_k1, glass_omar from nightstand_b1
+14:31  Leo finishes lunch
+          glass_leo → sink_k1: used, so it goes in the sink
+14:59  Omar finishes lunch
+          glass_omar → sink_k1: used, so it goes in the sink
+          keeps phone_omar for a photo walk
+15:18  Leo — evening TV in the living (bout 1/2); brings remote_shared from tv_stand_l1, mug_leo from sink_k1, snack_bowl_shared from cupboard_k1
+15:33  Omar leaves for a photo walk (back 17:13); takes keys_omar, phone_omar, wallet_omar, jacket_omar, shoes_omar, sunglasses_omar, camera_omar; never takes scarf_omar on a photo walk
+15:35  Leo finishes evening TV
+          mug_leo → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+15:35  Leo — a short break in the kitchen
+16:11  Leo — evening TV in the living (bout 2/2); brings remote_shared from tv_stand_l1, mug_leo from sink_k1
+17:13  Omar is back from a photo walk
+          camera_omar → bookshelf_l1: put away in its usual place after the trip
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar, sunglasses_omar, wallet_omar for a walk
+17:13  Omar leaves for a walk (back 18:23); takes keys_omar, phone_omar, wallet_omar, jacket_omar, shoes_omar, sunglasses_omar; never takes scarf_omar on a walk
+17:17  Leo finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          mug_leo → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → counter_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on counter_k1 instead
+          keeps phone_leo for walking the dog
+18:23  Omar is back from a walk
+          jacket_omar → shoe_rack_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on shoe_rack_e1 instead
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for cooking dinner
+18:30  Omar — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, pot_shared from cupboard_k1
+19:13  Leo leaves for walking the dog (back 19:43); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+19:15  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+19:15  Omar — feeding the dog in the kitchen
+19:25  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+19:25  Omar — dinner in the kitchen; brings glass_omar from sink_k1, phone_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+19:43  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → entry_floor_e1: dropped at the door instead of being put away
+          keeps phone_leo for cooking dinner
+19:43  Leo — cooking dinner in the kitchen; brings cutting_board_shared from sink_k1, kitchen_knife_shared from sink_k1, recipe_book_shared from pantry_shelf_k1
+20:10  Omar finishes dinner
+          phone_omar → nightstand_b1: put back in its usual place
+          plate_omar → sink_k1: used, so it goes in the sink
+20:10  Omar — washing up in the kitchen
+20:25  Omar finishes washing up
+          bowl_leo (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from kitchen_table_k1) → pantry_shelf_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on pantry_shelf_k1 instead
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+20:25  Omar — evening TV in the living; brings remote_shared from tv_stand_l1, phone_omar from nightstand_b1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+20:28  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          pot_shared → counter_k1: left where it was used
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+          spatula_shared → sink_k1: used, so it goes in the sink
+20:28  Leo — dinner in the kitchen; brings plate_leo from pantry_shelf_k1, glass_leo from cupboard_k1, water_bottle_leo from dish_rack_k1
+21:13  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → cupboard_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+21:13  Leo — washing up in the kitchen
+21:28  Leo finishes washing up
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → cupboard_k1: WHIM — was heading for drawer_k_k1 (tidied away to its usual place) but landed on cupboard_k1 instead
+          mug_omar (from coffee_table_l1) → kitchen_table_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on kitchen_table_k1 instead
+          pan_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from sink_k1) → cupboard_k1: WHIM — was heading for drawer_k_k1 (tidied away to its usual place) but landed on cupboard_k1 instead
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+21:28  Leo — playing guitar in the living (guitar habit); brings phone_leo from nightstand_b1
+22:13  Leo finishes playing guitar
+          guitar_leo → bedroom_floor_b1: put back in its usual place
+22:33  Leo — getting ready for bed in the bedroom_1; brings charger_leo from desk_b1, glass_leo from cupboard_k1
+22:35  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → bed_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on bed_b1 instead
+          remote_shared → tv_stand_l1: put back in its usual place
+22:48  Leo finishes getting ready for bed
+          charger_leo → bedroom_floor_b1: WHIM — was heading for desk_b1 (put back in its usual place) but landed on bedroom_floor_b1 instead
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+23:09  Leo — bed in the bedroom_1
+23:54  Omar — playing with the dog in the living
+23:59  Omar finishes playing with the dog
+          phone_omar → floor_l_l1: left where it was used
+```
+
+## Day 7 — Monday
+
+**Active causes**
+
+- `ep:on_a_roll:resident_2:d7`: Leo is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (14:53–18:23).
+
+Internal states (0–1): Omar energy 0.32, hurriedness 0.28, distraction 0.53; Leo energy 0.55, hurriedness 0.56, distraction 0.14
+
+**Timeline**
+
+```
+06:52  Omar leaves for walking the dog (back 07:17); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:17  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → entry_floor_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+07:38  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+09:27  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+09:43  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from bed_b1, razor_omar from sink_ba_ba1
+09:52  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+10:08  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+10:08  Omar — breakfast in the kitchen; brings bowl_omar from cupboard_k1
+10:32  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          phone_leo → kitchen_table_k1: left where it was used
+10:48  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          mug_omar → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+10:48  Omar — baking in the kitchen (baking habit); brings mixing_bowl_shared from pantry_shelf_k1, baking_tray_shared from pantry_shelf_k1, recipe_book_shared from pantry_shelf_k1
+11:55  Leo — a shower in the bathroom
+12:10  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+12:10  Leo leaves for errands (back 14:00); takes backpack_leo, keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+12:18  Omar finishes baking
+          baking_tray_shared → kitchen_table_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on kitchen_table_k1 instead
+          mixing_bowl_shared → sink_k1: used, so it goes in the sink
+          phone_omar → dresser_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on dresser_b1 instead
+12:18  Omar — a shower in the bathroom
+12:33  Omar finishes a shower
+          towel_omar → towel_rack_ba1: put back in its usual place
+12:55  Omar leaves for errands (back 14:45); takes backpack_omar, keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+14:00  Leo is back from errands
+          backpack_leo → entry_table_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_table_e1 instead
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for lunch
+14:06  Leo — lunch in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1
+14:45  Omar is back from errands
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_hook_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_hook_e1 instead
+          scarf_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          shoes_omar → entry_floor_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for lunch
+14:45  Omar — lunch in the kitchen; brings plate_omar from cupboard_k1, glass_omar from cupboard_k1
+14:46  Leo finishes lunch
+          glass_leo → sink_k1: used, so it goes in the sink
+          plate_leo → sink_k1: used, so it goes in the sink
+14:49  Leo — playing guitar in the living (guitar habit); brings guitar_leo from bedroom_floor_b1
+15:25  Omar finishes lunch
+          keeps phone_omar for grocery shopping
+15:34  Leo finishes playing guitar
+          guitar_leo → bedroom_floor_b1: put back in its usual place
+          keeps phone_leo for a walk
+17:24  Omar leaves for grocery shopping (back 18:24); takes keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar, shopping_bag_shared
+18:03  Leo leaves for a walk (back 19:13); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+18:24  Omar is back from grocery shopping
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → dresser_b1: WHIM — was heading for nightstand_b1 (put away in its usual place after the trip) but landed on dresser_b1 instead
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+18:24  Omar — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+18:39  Omar — vacuuming in the living (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1, phone_omar from dresser_b1
+19:13  Leo is back from a walk
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps jacket_leo, keys_leo, phone_leo, shoes_leo for walking the dog
+19:13  Leo leaves for walking the dog (back 19:43); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+19:19  Omar finishes vacuuming
+          vacuum_cleaner_shared → storage_floor_s1: put back in its usual place
+19:19  Omar — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from cupboard_k1, spatula_shared from cupboard_k1, pot_shared from cupboard_k1
+19:43  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_leo for dinner
+19:43  Leo — dinner in the kitchen; brings plate_leo from sink_k1, glass_leo from sink_k1, water_bottle_leo from dish_rack_k1
+20:04  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+          spatula_shared → sink_k1: used, so it goes in the sink
+20:04  Omar — feeding the dog in the kitchen
+20:14  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+20:14  Omar — dinner in the kitchen; brings phone_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+20:28  Leo finishes dinner
+          glass_leo → counter_k1: WHIM — was heading for kitchen_table_k1 (left where it was used) but landed on counter_k1 instead
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          water_bottle_leo → counter_k1: used, so it goes in the sink; sink_k1 was full, so it went to counter_k1
+20:28  Leo — washing up in the kitchen
+20:43  Leo finishes washing up
+          baking_tray_shared (from kitchen_table_k1) → pantry_shelf_k1: tidied away to its usual place
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from sink_k1) → counter_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on counter_k1 instead
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from counter_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          mixing_bowl_shared (from sink_k1) → pantry_shelf_k1: tidied away to its usual place
+          pan_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from sink_k1) → counter_k1: WHIM — was heading for drawer_k_k1 (tidied away to its usual place) but landed on counter_k1 instead
+          water_bottle_leo (from counter_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+20:59  Omar finishes dinner
+          glass_omar → kitchen_table_k1: left where it was used
+          phone_omar → bed_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on bed_b1 instead
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → kitchen_table_k1: left where it was used
+20:59  Omar — washing up in the kitchen
+21:14  Omar finishes washing up
+          bowl_omar (from counter_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+21:14  Omar — evening TV in the living; brings remote_shared from tv_stand_l1, phone_omar from bed_b1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+22:44  Leo — ironing in the bedroom_1 (ironing habit); brings iron_shared from storage_shelf_s1, ironing_board_shared from storage_floor_s1, phone_leo from nightstand_b1
+23:24  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+23:24  Leo finishes ironing
+          iron_shared → storage_shelf_s1: put back in its usual place
+          ironing_board_shared → storage_floor_s1: put back in its usual place
+23:24  Omar — getting ready for bed in the bedroom_1; brings charger_omar from desk_b1, glass_omar from cupboard_k1, glasses_omar from coffee_table_l1
+23:24  Leo — getting ready for bed in the bedroom_1; brings charger_leo from bedroom_floor_b1, glass_leo from cupboard_k1
+23:39  Omar finishes getting ready for bed
+          charger_omar → bed_b1: left where it was used; nightstand_b1 was full, so it went to bed_b1
+          glass_omar → sink_k1: used, so it goes in the sink
+          glasses_omar → bed_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on bed_b1 instead
+          phone_omar → nightstand_b1: put back in its usual place
+23:39  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+23:39  Omar — bed in the bedroom_1
+23:39  Leo — bed in the bedroom_1
+```
+
+## Day 8 — Tuesday
+
+**Active causes**
+
+- `ep:long_call_with_a_friend:resident_2:d8`: Leo gets a long call from a friend and takes it on the couch; the phone is left there afterwards (20:56–21:41).
+
+Internal states (0–1): Omar energy 0.52, hurriedness 0.50, distraction 0.68; Leo energy 0.58, hurriedness 0.33, distraction 0.25
+
+**Timeline**
+
+```
+06:21  Omar leaves for walking the dog (back 06:46); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+06:46  Omar is back from walking the dog
+          dog_leash_shared → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (dropped at the door instead of being put away) but landed on entry_floor_e1 instead
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+07:50  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+08:09  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+08:41  Omar — morning routine in the bathroom; brings phone_omar from entry_floor_e1, glasses_omar from bed_b1, razor_omar from sink_ba_ba1
+08:56  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+09:06  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+09:06  Omar — breakfast in the kitchen; brings mug_omar from coffee_table_l1, bowl_omar from cupboard_k1
+09:36  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+09:41  Leo — dusting in the living (dusting habit); brings duster_shared from storage_shelf_s1
+09:46  Omar finishes breakfast
+          mug_omar → sink_k1: used, so it goes in the sink
+10:06  Leo finishes dusting
+          duster_shared → storage_shelf_s1: put back in its usual place
+10:33  Leo leaves for errands (back 12:23); takes backpack_leo, keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+12:22  Omar — vacuuming in the living (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1
+12:23  Leo is back from errands
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for lunch
+13:02  Omar finishes vacuuming
+          vacuum_cleaner_shared → storage_floor_s1: put back in its usual place
+          keeps phone_omar for errands
+13:22  Omar leaves for errands (back 15:12); takes backpack_omar, keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+14:15  Leo — lunch in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1
+14:55  Leo finishes lunch
+          glass_leo → pantry_shelf_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on pantry_shelf_k1 instead
+          plate_leo → sink_k1: used, so it goes in the sink
+          keeps phone_leo for grocery shopping
+14:55  Leo leaves for grocery shopping (back 15:55); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo, shopping_bag_shared
+15:12  Omar is back from errands
+          backpack_omar → entry_floor_e1: dropped at the door instead of being put away
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for lunch
+15:12  Omar — lunch in the kitchen; brings plate_omar from cupboard_k1, glass_omar from sink_k1
+15:52  Omar finishes lunch
+          glass_omar → sink_k1: used, so it goes in the sink
+          plate_omar → counter_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on counter_k1 instead
+15:52  Omar — baking in the kitchen (baking habit); brings mixing_bowl_shared from pantry_shelf_k1, baking_tray_shared from pantry_shelf_k1, recipe_book_shared from pantry_shelf_k1
+15:55  Leo is back from grocery shopping
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          phone_leo → bed_b1: WHIM — was heading for nightstand_b1 (put away in its usual place after the trip) but landed on bed_b1 instead
+          shoes_leo → entry_floor_e1: dropped at the door instead of being put away
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+15:55  Leo — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+16:10  Leo finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+16:52  Leo leaves for a walk (back 18:02); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:22  Omar finishes baking
+          baking_tray_shared → sink_k1: used, so it goes in the sink
+18:02  Leo is back from a walk
+          hat_leo → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps jacket_leo, keys_leo, phone_leo, shoes_leo for walking the dog
+18:45  Omar — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1
+18:45  Leo leaves for walking the dog (back 19:15); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+19:15  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_leo for dinner
+19:30  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: left where it was used; counter_k1 was full, so it went to sink_k1
+          pan_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          phone_omar → counter_k1: left where it was used
+          pot_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+19:30  Omar — feeding the dog in the kitchen
+19:40  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+19:40  Omar — dinner in the kitchen; brings plate_omar from counter_k1, glass_omar from sink_k1, phone_omar from counter_k1, water_bottle_omar from dish_rack_k1
+20:05  Leo — dinner in the kitchen; brings plate_leo from sink_k1, glass_leo from pantry_shelf_k1, water_bottle_leo from dish_rack_k1
+20:25  Omar finishes dinner
+          glass_omar → pantry_shelf_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on pantry_shelf_k1 instead
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+20:25  Omar — evening TV in the living; brings blanket_shared from couch_l1, mug_omar from sink_k1, glasses_omar from nightstand_b1, snack_bowl_shared from sink_k1
+20:50  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          plate_leo → sink_k1: used, so it goes in the sink
+21:41  Leo — ironing in the bedroom_1 (ironing habit); brings iron_shared from storage_shelf_s1, ironing_board_shared from storage_floor_s1
+22:21  Leo finishes ironing
+          iron_shared → storage_shelf_s1: put back in its usual place
+          ironing_board_shared → storage_floor_s1: put back in its usual place
+22:21  Leo — a call with family in the bedroom_1 [because of ep:long_call_with_a_friend:resident_2:d8]
+22:35  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          mug_omar → armchair_l1: WHIM — was heading for coffee_table_l1 (left where it was used) but landed on armchair_l1 instead
+          remote_shared → tv_stand_l1: put back in its usual place
+22:35  Omar — getting ready for bed in the bedroom_1; brings charger_omar from bed_b1, glass_omar from pantry_shelf_k1, glasses_omar from coffee_table_l1
+22:50  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          glasses_omar → desk_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on desk_b1 instead
+          phone_omar → nightstand_b1: put back in its usual place
+22:50  Omar — bed in the bedroom_1
+23:49  Leo — getting ready for bed in the bedroom_1; brings charger_leo from desk_b1, glass_leo from sink_k1
+23:59  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+```
+
+## Day 9 — Wednesday
+
+**Active causes**
+
+
+Internal states (0–1): Omar energy 0.29, hurriedness 0.26, distraction 0.42; Leo energy 0.75, hurriedness 0.49, distraction 0.26
+
+**Timeline**
+
+```
+06:43  Omar leaves for walking the dog (back 07:08); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:08  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → entry_floor_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+07:36  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+07:46  Omar finishes feeding the dog
+          dog_bowl_shared → pantry_shelf_k1: WHIM — was heading for floor_k_k1 (used, so it goes in the sink) but landed on pantry_shelf_k1 instead
+08:14  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+08:52  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from desk_b1, razor_omar from sink_ba_ba1
+09:17  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          skincare_omar → medicine_cabinet_ba1: WHIM — was heading for bathroom_shelf_ba1 (put back in its usual place) but landed on medicine_cabinet_ba1 instead
+09:17  Omar — breakfast in the kitchen; brings mug_omar from armchair_l1
+09:41  Leo — breakfast in the kitchen; brings bowl_leo from sink_k1
+09:57  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          mug_omar → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+09:57  Omar — baking in the kitchen (baking habit); brings baking_tray_shared from sink_k1, recipe_book_shared from pantry_shelf_k1
+10:21  Leo finishes breakfast
+          phone_leo → nightstand_b1: put back in its usual place
+11:27  Omar finishes baking
+          mixing_bowl_shared → sink_k1: used, so it goes in the sink
+          recipe_book_shared → chair_k1: WHIM — was heading for pantry_shelf_k1 (put back in its usual place) but landed on chair_k1 instead
+          keeps phone_omar for errands
+11:41  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+11:56  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+11:57  Omar leaves for errands (back 13:47); takes backpack_omar, keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+13:47  Omar is back from errands
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for lunch
+13:47  Omar — lunch in the kitchen; brings plate_omar from sink_k1, glass_omar from nightstand_b1
+14:00  Leo — lunch in the kitchen; brings phone_leo from nightstand_b1, plate_leo from sink_k1, glass_leo from sink_k1
+14:27  Omar finishes lunch
+          plate_omar → sink_k1: used, so it goes in the sink
+          keeps phone_omar for grocery shopping
+14:40  Leo finishes lunch
+          glass_leo → counter_k1: WHIM — was heading for kitchen_table_k1 (left where it was used) but landed on counter_k1 instead
+          plate_leo → sink_k1: used, so it goes in the sink
+14:40  Leo — evening TV in the living; brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_leo from kitchen_table_k1
+16:04  Omar leaves for grocery shopping (back 17:04); takes keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar, shopping_bag_shared
+16:40  Leo finishes evening TV
+          remote_shared → couch_l1: WHIM — was heading for tv_stand_l1 (put back in its usual place) but landed on couch_l1 instead
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+          keeps phone_leo for a walk
+16:40  Leo leaves for a walk (back 17:50); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:04  Omar is back from grocery shopping
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → entry_table_e1: dropped at the door instead of being put away
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+17:04  Omar — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+17:19  Omar — vacuuming in the living (bout 1/2) (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1, phone_omar from entry_table_e1
+17:29  Omar finishes vacuuming
+          vacuum_cleaner_shared → storage_floor_s1: put back in its usual place
+17:29  Omar — a short break in the kitchen (vacuuming habit)
+17:41  Omar — vacuuming in the living (bout 2/2) (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1
+17:50  Leo is back from a walk
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps jacket_leo, keys_leo, phone_leo, shoes_leo for walking the dog
+17:50  Leo leaves for walking the dog (back 18:20); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+17:59  Omar finishes vacuuming
+          phone_omar → nightstand_b1: put back in its usual place
+          vacuum_cleaner_shared → storage_floor_s1: put back in its usual place
+18:20  Leo is back from walking the dog
+          dog_leash_shared → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_leo for cooking dinner
+18:20  Leo — cooking dinner in the kitchen; brings pan_shared from dish_rack_k1, cutting_board_shared from sink_k1, kitchen_knife_shared from sink_k1, pot_shared from dish_rack_k1, recipe_book_shared from chair_k1
+18:52  Omar — feeding the dog in the kitchen; brings dog_bowl_shared from pantry_shelf_k1
+19:02  Omar finishes feeding the dog
+          dog_bowl_shared → sink_k1: WHIM — was heading for floor_k_k1 (used, so it goes in the sink) but landed on sink_k1 instead
+19:05  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → cupboard_k1: used, so it goes in the sink; sink_k1 was full, so it went to cupboard_k1
+          pan_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+19:14  Omar — dinner in the kitchen; brings plate_omar from sink_k1, phone_omar from nightstand_b1, water_bottle_omar from sink_k1
+19:42  Leo — dinner in the kitchen; brings plate_leo from sink_k1, glass_leo from counter_k1
+19:59  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+19:59  Omar — evening TV in the living (bout 1/4); brings remote_shared from couch_l1, mug_omar from dish_rack_k1, glasses_omar from nightstand_b1, snack_bowl_shared from sink_k1
+20:18  Omar finishes evening TV
+          blanket_shared → armchair_l1: WHIM — was heading for couch_l1 (put back in its usual place) but landed on armchair_l1 instead
+          mug_omar → couch_l1: WHIM — was heading for coffee_table_l1 (left where it was used) but landed on couch_l1 instead
+          remote_shared → side_table_l1: WHIM — was heading for tv_stand_l1 (put back in its usual place) but landed on side_table_l1 instead
+20:18  Omar — a short break in the kitchen
+20:27  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+20:27  Leo — washing up in the kitchen
+20:31  Omar — evening TV in the living (bout 2/4); brings remote_shared from side_table_l1, blanket_shared from armchair_l1, mug_omar from couch_l1
+20:42  Leo finishes washing up
+          baking_tray_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place
+          bowl_leo (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          dog_bowl_shared (from sink_k1) → floor_k_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → dish_rack_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on dish_rack_k1 instead
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from cupboard_k1) → drawer_k_k1: tidied away to its usual place
+          mixing_bowl_shared (from sink_k1) → pantry_shelf_k1: tidied away to its usual place
+          mug_leo (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from sink_k1) → dish_rack_k1: tidied away to its usual place
+21:05  Omar finishes evening TV
+          glasses_omar → nightstand_b1: put back in its usual place
+          remote_shared → side_table_l1: WHIM — was heading for tv_stand_l1 (put back in its usual place) but landed on side_table_l1 instead
+21:05  Omar — a short break in the kitchen
+21:18  Omar — evening TV in the living (bout 3/4); brings remote_shared from side_table_l1, mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+21:28  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → couch_l1: WHIM — was heading for coffee_table_l1 (left where it was used) but landed on couch_l1 instead
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+21:28  Omar — a short break in the kitchen
+21:41  Omar — evening TV in the living (bout 4/4); brings blanket_shared from couch_l1, mug_omar from couch_l1, glasses_omar from nightstand_b1, snack_bowl_shared from sink_k1
+22:09  Omar finishes evening TV
+          mug_omar → sink_k1: used, so it goes in the sink
+22:36  Leo — ironing in the bedroom_1 (ironing habit); brings iron_shared from storage_shelf_s1, ironing_board_shared from storage_floor_s1, phone_leo from nightstand_b1
+22:49  Omar — getting ready for bed in the bedroom_1; brings charger_omar from desk_b1, glass_omar from cupboard_k1, glasses_omar from coffee_table_l1
+23:04  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → desk_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on desk_b1 instead
+23:04  Omar — bed in the bedroom_1
+23:16  Leo finishes ironing
+          iron_shared → storage_shelf_s1: put back in its usual place
+          ironing_board_shared → storage_floor_s1: put back in its usual place
+23:16  Leo — getting ready for bed in the bedroom_1; brings charger_leo from desk_b1, glass_leo from dish_rack_k1
+23:31  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → desk_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on desk_b1 instead
+23:31  Leo — bed in the bedroom_1
+```
+
+## Day 10 — Thursday
+
+**Active causes**
+
+
+Internal states (0–1): Omar energy 0.30, hurriedness 0.32, distraction 0.40; Leo energy 0.82, hurriedness 0.26, distraction 0.15
+
+**Timeline**
+
+```
+07:20  Omar leaves for walking the dog (back 07:45); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:45  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+07:45  Omar — feeding the dog in the kitchen
+07:55  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+08:45  Leo — morning routine in the bathroom; brings phone_leo from desk_b1
+09:04  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, skincare_omar from medicine_cabinet_ba1
+09:10  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+09:29  Omar — breakfast in the kitchen; brings mug_omar from sink_k1, bowl_omar from cupboard_k1
+09:50  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+10:09  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          mug_omar → counter_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on counter_k1 instead
+          phone_omar → nightstand_b1: put back in its usual place
+10:09  Omar — dusting in the living (dusting habit); brings duster_shared from storage_shelf_s1
+10:34  Omar finishes dusting
+          duster_shared → storage_shelf_s1: put back in its usual place
+11:42  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+11:57  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+11:57  Leo leaves for errands (back 13:47); takes backpack_leo, keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+12:12  Omar — a shower in the bathroom; brings towel_omar from towel_rack_ba1
+12:27  Omar leaves for errands (back 14:17); takes backpack_omar, keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+13:47  Leo is back from errands
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for lunch
+13:47  Leo — lunch in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1
+14:17  Omar is back from errands
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          scarf_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for lunch
+14:27  Leo finishes lunch
+          glass_leo → sink_k1: used, so it goes in the sink
+15:12  Omar — lunch in the kitchen; brings plate_omar from cupboard_k1, glass_omar from sink_k1
+15:52  Omar finishes lunch
+          glass_omar → counter_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on counter_k1 instead
+          plate_omar → sink_k1: used, so it goes in the sink
+15:52  Omar — vacuuming in the living (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1
+16:32  Omar finishes vacuuming
+          vacuum_cleaner_shared → storage_floor_s1: put back in its usual place
+          keeps phone_omar for grocery shopping
+16:32  Omar leaves for grocery shopping (back 17:32); takes keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar, shopping_bag_shared
+17:32  Omar is back from grocery shopping
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → entry_table_e1: dropped at the door instead of being put away
+          scarf_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+17:49  Leo — reading in the armchair in the living; brings book_leo from bed_b1
+18:36  Omar — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+18:52  Omar leaves for walking the dog (back 19:22); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+19:22  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → shoe_rack_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on shoe_rack_e1 instead
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_omar for cooking dinner
+19:22  Omar — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+19:49  Leo finishes reading in the armchair
+          book_leo → nightstand_b1: put back in its usual place
+19:49  Leo — cooking dinner in the kitchen
+20:07  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          pot_shared → cupboard_k1: WHIM — was heading for dish_rack_k1 (used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1) but landed on cupboard_k1 instead
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+20:07  Omar — dinner in the kitchen; brings plate_omar from sink_k1, glass_omar from counter_k1, water_bottle_omar from dish_rack_k1
+20:34  Leo finishes cooking dinner
+          pan_shared → pantry_shelf_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on pantry_shelf_k1 instead
+          phone_leo → counter_k1: left where it was used
+          pot_shared → sink_k1: used, so it goes in the sink
+          spatula_shared → cupboard_k1: WHIM — was heading for counter_k1 (left where it was used) but landed on cupboard_k1 instead
+20:34  Leo — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+20:44  Leo finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+20:44  Leo — dinner in the kitchen; brings glass_leo from sink_k1, phone_leo from counter_k1, water_bottle_leo from dish_rack_k1
+20:52  Omar finishes dinner
+          plate_omar → sink_k1: used, so it goes in the sink
+20:52  Omar — reading in the bedroom_1; brings book_omar from nightstand_b1, glasses_omar from bathroom_shelf_ba1
+21:29  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          water_bottle_leo → counter_k1: used, so it goes in the sink; sink_k1 was full, so it went to counter_k1
+21:29  Leo — washing up in the kitchen
+21:44  Leo finishes washing up
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from counter_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from pantry_shelf_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from cupboard_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from counter_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+21:44  Leo — reading in the bedroom_1; brings book_leo from nightstand_b1, phone_leo from nightstand_b1
+23:02  Omar finishes reading
+          book_omar → nightstand_b1: put back in its usual place
+23:02  Omar — getting ready for bed in the bedroom_1; brings charger_omar from desk_b1, glass_omar from cupboard_k1, glasses_omar from bed_b1
+23:17  Omar finishes getting ready for bed
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+23:17  Omar — bed in the bedroom_1
+23:54  Leo finishes reading
+          book_leo → nightstand_b1: put back in its usual place
+23:54  Leo — getting ready for bed in the bedroom_1; brings charger_leo from desk_b1, glass_leo from cupboard_k1
+23:59  Leo finishes getting ready for bed
+          charger_leo → bed_b1: WHIM — was heading for desk_b1 (put back in its usual place) but landed on bed_b1 instead
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → coffee_table_l1: put back in its usual place; nightstand_b1 was full, so it went to coffee_table_l1
+```
+
+## Day 11 — Friday
+
+**Active causes**
+
+- `ep:afternoon_slump:resident_1:d11`: Omar hits an afternoon slump: things get left where they were used for a couple of hours (15:10–17:25).
+- `ep:long_call_with_a_friend:resident_1:d11`: Omar gets a long call from a friend and takes it on the couch; the phone is left there afterwards (20:22–21:07).
+
+Internal states (0–1): Omar energy 0.37, hurriedness 0.13, distraction 0.30; Leo energy 0.89, hurriedness 0.40, distraction 0.30
+
+**Timeline**
+
+```
+07:35  Omar leaves for walking the dog (back 08:00); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+08:00  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+08:00  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+08:03  Leo — morning routine in the bathroom; brings phone_leo from coffee_table_l1
+08:10  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+08:26  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1
+08:51  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+          skincare_omar → medicine_cabinet_ba1: WHIM — was heading for bathroom_shelf_ba1 (put back in its usual place) but landed on medicine_cabinet_ba1 instead
+09:20  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+09:34  Omar — breakfast in the kitchen; brings mug_omar from cupboard_k1, bowl_omar from cupboard_k1
+10:00  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+10:14  Omar finishes breakfast
+          mug_omar → sink_k1: used, so it goes in the sink
+          vitamins_omar → counter_k1: put back in its usual place
+          keeps phone_omar for grocery shopping
+10:14  Omar leaves for grocery shopping (back 11:14); takes keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar, shopping_bag_shared
+10:45  Leo — dusting in the living (dusting habit); brings duster_shared from storage_shelf_s1
+11:10  Leo finishes dusting
+          duster_shared → armchair_l1: WHIM — was heading for bookshelf_l1 (left where it was used) but landed on armchair_l1 instead
+11:14  Omar is back from grocery shopping
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → coffee_table_l1: put away in its usual place after the trip; nightstand_b1 was full, so it went to coffee_table_l1
+          scarf_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+11:14  Omar — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+11:29  Omar — a shower in the bathroom
+11:36  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+11:44  Omar finishes a shower
+          towel_omar → towel_rack_ba1: put back in its usual place
+11:51  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+12:57  Omar — lunch in the kitchen; brings phone_omar from coffee_table_l1, plate_omar from cupboard_k1, glass_omar from sink_k1
+13:22  Leo — lunch in the kitchen; brings phone_leo from nightstand_b1, plate_leo from cupboard_k1, glass_leo from sink_k1
+13:37  Omar finishes lunch
+          glass_omar → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+          plate_omar → dish_rack_k1: WHIM — was heading for kitchen_table_k1 (left where it was used) but landed on dish_rack_k1 instead
+14:02  Leo finishes lunch
+          glass_leo → cupboard_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+14:06  Leo — reading in the armchair in the living; brings book_leo from nightstand_b1
+15:28  Omar — baking in the kitchen (baking habit); brings mixing_bowl_shared from pantry_shelf_k1, baking_tray_shared from pantry_shelf_k1, recipe_book_shared from pantry_shelf_k1
+16:06  Leo finishes reading in the armchair
+          book_leo → nightstand_b1: put back in its usual place
+          keeps phone_leo for walking the dog
+18:00  Leo leaves for walking the dog (back 18:30); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+18:30  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          phone_leo → nightstand_b1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+18:30  Leo — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+18:40  Leo finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+18:40  Leo — dinner in the kitchen; brings glass_leo from cupboard_k1, phone_leo from nightstand_b1, water_bottle_leo from dish_rack_k1
+18:53  Omar — vacuuming in the living (bout 1/2) (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1
+19:04  Omar finishes vacuuming
+          vacuum_cleaner_shared → storage_floor_s1: put back in its usual place
+19:04  Omar — a short break in the kitchen (vacuuming habit)
+19:16  Omar — vacuuming in the living (bout 2/2) (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1
+19:25  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+19:32  Omar finishes vacuuming
+          vacuum_cleaner_shared → storage_shelf_s1: WHIM — was heading for storage_floor_s1 (put back in its usual place) but landed on storage_shelf_s1 instead
+19:33  Omar — dinner in the kitchen; brings plate_omar from dish_rack_k1, glass_omar from dish_rack_k1, water_bottle_omar from dish_rack_k1
+19:40  Leo — washing up in the kitchen
+19:55  Leo finishes washing up
+          baking_tray_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          mixing_bowl_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+20:13  Leo — ironing in the bedroom_1 (ironing habit); brings iron_shared from storage_shelf_s1, ironing_board_shared from storage_floor_s1, phone_leo from nightstand_b1
+20:18  Omar finishes dinner
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → kitchen_table_k1: left where it was used
+20:26  Omar — evening TV in the living (bout 1/2); brings mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+20:53  Leo finishes ironing
+          iron_shared → storage_shelf_s1: put back in its usual place
+          ironing_board_shared → storage_floor_s1: put back in its usual place
+21:24  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+21:24  Omar — a short break in the kitchen
+22:03  Omar — evening TV in the living (bout 2/2); brings blanket_shared from couch_l1, mug_omar from sink_k1, glasses_omar from nightstand_b1, snack_bowl_shared from sink_k1
+22:35  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+22:36  Omar — a call with family in the bedroom_1 [because of ep:long_call_with_a_friend:resident_1:d11]
+23:06  Leo — getting ready for bed in the bedroom_1; brings charger_leo from bed_b1, glass_leo from cupboard_k1
+23:16  Omar — playing with the dog in the living
+23:21  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+          phone_leo → bedroom_floor_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on bedroom_floor_b1 instead
+23:21  Leo — bed in the bedroom_1
+23:36  Omar — getting ready for bed in the bedroom_1; brings glass_omar from cupboard_k1
+23:51  Omar finishes getting ready for bed
+          charger_omar → bed_b1: WHIM — was heading for desk_b1 (put back in its usual place) but landed on bed_b1 instead
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → desk_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on desk_b1 instead
+23:51  Omar — bed in the bedroom_1
+```
+
+## Day 12 — Saturday
+
+**Active causes**
+
+- `ep:early_night:resident_1:d12`: Omar turns in early tonight: a short evening, bed 45 minutes sooner (20:30–24:00).
+
+Internal states (0–1): Omar energy 0.37, hurriedness 0.07, distraction 0.26; Leo energy 0.82, hurriedness 0.57, distraction 0.26
+
+**Timeline**
+
+```
+06:59  Omar leaves for walking the dog (back 07:24); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:24  Omar is back from walking the dog
+          dog_leash_shared → entry_table_e1: dropped at the door instead of being put away
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+07:40  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+09:01  Leo — morning routine in the bathroom; brings phone_leo from bedroom_floor_b1
+09:10  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, skincare_omar from medicine_cabinet_ba1, razor_omar from sink_ba_ba1
+09:32  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+09:35  Omar finishes morning routine
+          razor_omar → medicine_cabinet_ba1: WHIM — was heading for bathroom_shelf_ba1 (left where it was used) but landed on medicine_cabinet_ba1 instead
+09:35  Omar — breakfast in the kitchen; brings mug_omar from sink_k1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+10:12  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+10:15  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          mug_omar → sink_k1: used, so it goes in the sink
+10:20  Omar — baking in the kitchen (baking habit); brings mixing_bowl_shared from pantry_shelf_k1, baking_tray_shared from pantry_shelf_k1
+10:44  Leo — kitchen chores in the kitchen (bout 1/2)
+11:36  Leo finishes kitchen chores
+          baking_tray_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          dog_food_bag_shared (from floor_k_k1) → pantry_shelf_k1: tidied away to its usual place
+          glass_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mixing_bowl_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          recipe_book_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place
+          shopping_bag_shared (from counter_k1) → pantry_shelf_k1: tidied away to its usual place
+          snack_bowl_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          vitamins_omar (from kitchen_table_k1) → counter_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+11:36  Leo — a short break in the kitchen
+11:50  Omar finishes baking
+          baking_tray_shared → sink_k1: used, so it goes in the sink
+          mixing_bowl_shared → sink_k1: used, so it goes in the sink
+          phone_omar → kitchen_table_k1: WHIM — was heading for counter_k1 (left where it was used) but landed on kitchen_table_k1 instead
+11:50  Omar — a shower in the bathroom; brings towel_omar from towel_rack_ba1
+12:03  Leo — kitchen chores in the kitchen (bout 2/2)
+12:13  Leo finishes kitchen chores
+          phone_leo → nightstand_b1: tidied away to its usual place
+          baking_tray_shared (from sink_k1) → kitchen_table_k1: WHIM — was heading for pantry_shelf_k1 (tidied away to its usual place) but landed on kitchen_table_k1 instead
+          mixing_bowl_shared (from sink_k1) → pantry_shelf_k1: tidied away to its usual place
+          phone_omar (from kitchen_table_k1) → nightstand_b1: tidied away to its usual place
+12:14  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+12:23  Omar leaves for errands (back 14:13); takes backpack_omar, keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+12:29  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+12:29  Leo leaves for errands (back 14:19); takes backpack_leo, keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+14:13  Omar is back from errands
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for lunch
+14:13  Omar — lunch in the kitchen; brings plate_omar from cupboard_k1, glass_omar from cupboard_k1
+14:19  Leo is back from errands
+          backpack_leo → entry_table_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_table_e1 instead
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for lunch
+14:19  Leo — lunch in the kitchen; brings plate_leo from cupboard_k1, glass_leo from cupboard_k1
+14:53  Omar finishes lunch
+          glass_omar → sink_k1: used, so it goes in the sink
+14:53  Omar — vacuuming in the living (vacuuming habit); brings vacuum_cleaner_shared from storage_shelf_s1
+14:59  Leo finishes lunch
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+14:59  Leo — dusting in the living (dusting habit); brings duster_shared from armchair_l1
+15:24  Leo finishes dusting
+          duster_shared → storage_shelf_s1: put back in its usual place
+15:33  Omar finishes vacuuming
+          keeps phone_omar for grocery shopping
+17:48  Omar leaves for grocery shopping (back 18:48); takes keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar, shopping_bag_shared
+18:22  Leo leaves for walking the dog (back 18:52); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+18:48  Omar is back from grocery shopping
+          jacket_omar → shoe_rack_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on shoe_rack_e1 instead
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+18:48  Omar — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+18:52  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_leo for dinner
+18:54  Leo — dinner in the kitchen; brings glass_leo from sink_k1, water_bottle_leo from dish_rack_k1
+19:03  Omar finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+19:03  Omar — cooking dinner in the kitchen; brings phone_omar from nightstand_b1, pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+19:39  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+19:48  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → cupboard_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+          pan_shared → sink_k1: used, so it goes in the sink
+          phone_omar → bed_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on bed_b1 instead
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+          spatula_shared → sink_k1: used, so it goes in the sink
+19:48  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+19:58  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+19:58  Omar — dinner in the kitchen; brings glass_omar from sink_k1, phone_omar from bed_b1, water_bottle_omar from dish_rack_k1
+20:43  Omar finishes dinner
+          plate_omar → cupboard_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+20:43  Omar — evening TV in the living (bout 1/5); brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from bathroom_shelf_ba1, snack_bowl_shared from cupboard_k1
+20:53  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+20:53  Omar — a short break in the kitchen
+20:55  Leo — ironing in the bedroom_1 (ironing habit); brings iron_shared from storage_shelf_s1, ironing_board_shared from storage_floor_s1
+21:03  Omar — evening TV in the living (bout 2/5); brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_omar from sink_k1
+21:15  Omar finishes evening TV
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+21:15  Omar — a short break in the kitchen
+21:25  Omar — evening TV in the living (bout 3/5); brings remote_shared from tv_stand_l1, mug_omar from sink_k1, glasses_omar from nightstand_b1
+21:35  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → dresser_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on dresser_b1 instead
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+21:35  Leo finishes ironing
+          iron_shared → storage_shelf_s1: put back in its usual place
+          ironing_board_shared → storage_floor_s1: put back in its usual place
+21:35  Omar — a short break in the kitchen
+21:35  Leo — getting ready for bed in the bedroom_1; brings charger_leo from desk_b1, glass_leo from sink_k1
+21:45  Omar — evening TV in the living (bout 4/5); brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_omar from sink_k1, glasses_omar from dresser_b1
+21:50  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+22:10  Omar finishes evening TV
+          glasses_omar → nightstand_b1: put back in its usual place
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → cupboard_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+22:10  Omar — a short break in the kitchen
+22:20  Omar — evening TV in the living (bout 5/5); brings remote_shared from tv_stand_l1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+22:48  Leo — bed in the bedroom_1
+22:53  Omar finishes evening TV
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+22:53  Omar — getting ready for bed in the bedroom_1 [shifted by ep:early_night:resident_1:d12]; brings charger_omar from bed_b1, glass_omar from kitchen_table_k1, glasses_omar from coffee_table_l1
+23:08  Omar finishes getting ready for bed
+          charger_omar → bed_b1: left where it was used; nightstand_b1 was full, so it went to bed_b1
+          glass_omar → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          phone_omar → bed_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on bed_b1 instead
+23:08  Omar — bed in the bedroom_1 [shifted by ep:early_night:resident_1:d12]
+```
+
+## Day 13 — Sunday
+
+**Active causes**
+
+
+Internal states (0–1): Omar energy 0.81, hurriedness 0.34, distraction 0.64; Leo energy 0.90, hurriedness 0.39, distraction 0.36
+
+**Timeline**
+
+```
+07:01  Omar leaves for walking the dog (back 07:26); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:26  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (dropped at the door instead of being put away) but landed on entry_floor_e1 instead
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+07:26  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+07:36  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+07:40  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+08:12  Omar — morning routine in the bathroom; brings phone_omar from entry_floor_e1, glasses_omar from nightstand_b1, razor_omar from medicine_cabinet_ba1
+08:37  Omar finishes morning routine
+          glasses_omar → desk_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on desk_b1 instead
+          razor_omar → sink_ba_ba1: put back in its usual place
+09:30  Omar — breakfast in the kitchen; brings mug_omar from coffee_table_l1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+09:52  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+10:10  Omar finishes breakfast
+          mug_omar → cupboard_k1: WHIM — was heading for dish_rack_k1 (used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1) but landed on cupboard_k1 instead
+          phone_omar → nightstand_b1: put back in its usual place
+          vitamins_omar → counter_k1: put back in its usual place
+10:30  Omar — dusting in the living (dusting habit); brings duster_shared from storage_shelf_s1
+10:32  Leo finishes breakfast
+          bowl_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          keeps phone_leo for grocery shopping
+10:32  Leo leaves for grocery shopping (back 11:32); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo, shopping_bag_shared
+10:55  Omar finishes dusting
+          duster_shared → storage_shelf_s1: put back in its usual place
+11:32  Leo is back from grocery shopping
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          phone_leo → nightstand_b1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps shopping_bag_shared for unpacking the shopping
+11:32  Leo — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from ON_PERSON
+11:47  Leo finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+11:47  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+12:02  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+12:17  Leo leaves for errands (back 14:07); takes backpack_leo, keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+13:28  Omar — lunch in the kitchen; brings phone_omar from nightstand_b1, plate_omar from cupboard_k1, glass_omar from dish_rack_k1
+14:07  Leo is back from errands
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for lunch
+14:07  Leo — lunch in the kitchen; brings plate_leo from sink_k1, glass_leo from sink_k1
+14:08  Omar finishes lunch
+          glass_omar → sink_k1: used, so it goes in the sink
+          plate_omar → sink_k1: used, so it goes in the sink
+          keeps phone_omar for a photo walk
+14:25  Omar leaves for a photo walk (back 16:05); takes keys_omar, phone_omar, wallet_omar, jacket_omar, shoes_omar, sunglasses_omar, camera_omar; never takes scarf_omar on a photo walk
+14:47  Leo finishes lunch
+          glass_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          plate_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+14:47  Leo — vacuuming in the living (vacuuming habit)
+15:27  Leo finishes vacuuming
+          vacuum_cleaner_shared → storage_floor_s1: put back in its usual place
+          keeps phone_leo for walking the dog
+16:05  Omar is back from a photo walk
+          camera_omar → bookshelf_l1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for cooking dinner
+18:04  Omar — cooking dinner in the kitchen; brings pan_shared from sink_k1, cutting_board_shared from sink_k1, kitchen_knife_shared from cupboard_k1, spatula_shared from sink_k1, recipe_book_shared from pantry_shelf_k1
+18:19  Leo leaves for walking the dog (back 18:49); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+18:49  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+          pot_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+18:49  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_leo for dinner
+19:22  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+19:32  Omar finishes feeding the dog
+          dog_bowl_shared → cupboard_k1: WHIM — was heading for floor_k_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+19:32  Omar — dinner in the kitchen; brings plate_omar from sink_k1, glass_omar from sink_k1, phone_omar from nightstand_b1, water_bottle_omar from sink_k1
+19:56  Leo — dinner in the kitchen; brings plate_leo from dish_rack_k1, glass_leo from dish_rack_k1, water_bottle_leo from sink_k1
+20:17  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → bed_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on bed_b1 instead
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+20:36  Omar — washing up in the kitchen
+20:41  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → kitchen_table_k1: left where it was used
+          plate_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          water_bottle_leo → counter_k1: used, so it goes in the sink; sink_k1 was full, so it went to counter_k1
+20:41  Leo — washing up in the kitchen
+20:51  Omar finishes washing up
+          baking_tray_shared (from kitchen_table_k1) → pantry_shelf_k1: tidied away to its usual place
+          bowl_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          dog_bowl_shared (from cupboard_k1) → floor_k_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          mug_leo (from kitchen_table_k1) → dish_rack_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on dish_rack_k1 instead
+          pan_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → kitchen_table_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on kitchen_table_k1 instead
+          pot_shared (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from counter_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from sink_k1) → dish_rack_k1: tidied away to its usual place
+20:51  Omar — reading in the bedroom_1; brings book_omar from nightstand_b1, glasses_omar from desk_b1, phone_omar from bed_b1
+20:56  Leo finishes washing up
+          mug_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+20:56  Leo — a movie in the living (movies habit); brings remote_shared from tv_stand_l1, snack_bowl_shared from cupboard_k1, glass_leo from cupboard_k1, phone_leo from kitchen_table_k1
+22:56  Leo finishes a movie
+          blanket_shared → couch_l1: put back in its usual place
+          remote_shared → armchair_l1: WHIM — was heading for coffee_table_l1 (left where it was used) but landed on armchair_l1 instead
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+22:56  Leo — getting ready for bed in the bedroom_1; brings charger_leo from desk_b1, glass_leo from coffee_table_l1
+23:01  Omar finishes reading
+          book_omar → nightstand_b1: put back in its usual place
+23:01  Omar — getting ready for bed in the bedroom_1; brings charger_omar from bed_b1, glass_omar from cupboard_k1, glasses_omar from bed_b1
+23:11  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → dish_rack_k1: left where it was used; nightstand_b1 was full, so it went to dish_rack_k1
+          phone_leo → coffee_table_l1: put back in its usual place; nightstand_b1 was full, so it went to coffee_table_l1
+23:16  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          phone_omar → nightstand_b1: put back in its usual place
+23:16  Omar — bed in the bedroom_1
+23:33  Leo — bed in the bedroom_1
+```
+
+## Day 14 — Monday
+
+**Active causes**
+
+
+Internal states (0–1): Omar energy 0.61, hurriedness 0.24, distraction 0.65; Leo energy 0.86, hurriedness 0.58, distraction 0.32
+
+**Timeline**
+
+```
+06:34  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, razor_omar from sink_ba_ba1
+06:51  Leo — morning routine in the bathroom; brings phone_leo from coffee_table_l1
+06:54  Omar finishes morning routine
+          glasses_omar → bedroom_floor_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on bedroom_floor_b1 instead
+          razor_omar → sink_ba_ba1: put back in its usual place
+          keeps phone_omar for walking the dog
+06:54  Omar leaves for walking the dog (back 07:19); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:11  Leo finishes morning routine
+          keeps phone_leo for work
+07:19  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar for work
+08:02  Leo leaves for work (back 17:32); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+08:04  Omar leaves for work (back 17:34); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+17:32  Leo is back from work
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          charger_leo → entry_hook_e1: stays in the backpack
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          laptop_leo → entry_hook_e1: stays in the backpack
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          water_bottle_leo → entry_hook_e1: stays in the backpack
+          keeps jacket_leo, keys_leo, phone_leo, shoes_leo for walking the dog
+17:32  Leo leaves for walking the dog (back 18:02); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+17:34  Omar is back from work
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          charger_omar → entry_hook_e1: stays in the backpack
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          laptop_omar → entry_hook_e1: stays in the backpack
+          lunchbox_omar → entry_hook_e1: stays in the backpack
+          notebook_omar → entry_hook_e1: stays in the backpack
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for dinner
+18:02  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          phone_leo → entry_table_e1: dropped at the door instead of being put away
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+18:29  Leo — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+18:39  Leo finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+19:29  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from dish_rack_k1, phone_leo from entry_table_e1, water_bottle_leo from entry_hook_e1
+20:09  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+20:09  Leo — washing up in the kitchen
+20:24  Leo finishes washing up
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+20:24  Omar — dinner in the kitchen; brings plate_omar from cupboard_k1, glass_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+20:24  Leo — playing guitar in the living (guitar habit); brings guitar_leo from bedroom_floor_b1, phone_leo from nightstand_b1
+21:04  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → kitchen_table_k1: left where it was used
+21:04  Omar — washing up in the kitchen
+21:09  Leo finishes playing guitar
+          guitar_leo → bedroom_floor_b1: put back in its usual place
+21:19  Omar finishes washing up
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+21:19  Omar — evening TV in the living (bout 1/2); brings remote_shared from armchair_l1, phone_omar from kitchen_table_k1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from bedroom_floor_b1, snack_bowl_shared from cupboard_k1
+21:35  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+21:35  Omar — a short break in the kitchen
+22:08  Omar — evening TV in the living (bout 2/2); brings blanket_shared from couch_l1, snack_bowl_shared from sink_k1
+22:14  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_hook_e1, glass_leo from cupboard_k1
+22:29  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → cupboard_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+          phone_leo → nightstand_b1: put back in its usual place
+22:29  Leo — bed in the bedroom_1
+23:08  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          remote_shared → bookshelf_l1: WHIM — was heading for tv_stand_l1 (put back in its usual place) but landed on bookshelf_l1 instead
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+23:09  Omar — getting ready for bed in the bedroom_1; brings charger_omar from entry_hook_e1, glass_omar from cupboard_k1, glasses_omar from coffee_table_l1
+23:24  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          glass_omar → dish_rack_k1: left where it was used; nightstand_b1 was full, so it went to dish_rack_k1
+          phone_omar → nightstand_b1: put back in its usual place
+23:24  Omar — bed in the bedroom_1
+```
+
+## Day 15 — Tuesday
+
+**Active causes**
+
+- `ep:restless_evening:resident_2:d15`: Leo can't settle this evening and wanders between rooms with things in hand (20:14–24:00).
+- `low_energy:resident_1`: Omar has low energy (0.23): leaves things where they were used instead of putting them back.
+
+Internal states (0–1): Omar energy 0.23, hurriedness 0.18, distraction 0.70; Leo energy 0.80, hurriedness 0.33, distraction 0.56
+
+**Timeline**
+
+```
+06:07  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, razor_omar from sink_ba_ba1
+06:27  Omar finishes morning routine
+          razor_omar → medicine_cabinet_ba1: WHIM — was heading for sink_ba_ba1 (put back in its usual place) but landed on medicine_cabinet_ba1 instead
+          keeps phone_omar for walking the dog
+06:36  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+06:47  Omar leaves for walking the dog (back 07:12); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+06:56  Leo finishes morning routine
+          phone_leo → nightstand_b1: put back in its usual place
+07:12  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → dresser_b1: WHIM — was heading for nightstand_b1 (put away in its usual place after the trip) but landed on dresser_b1 instead
+          shoes_omar → entry_floor_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+07:22  Omar — a shower in the bathroom
+07:48  Omar — breakfast in the kitchen; brings phone_omar from dresser_b1, mug_omar from coffee_table_l1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+08:01  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+08:05  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          keeps phone_omar for work
+08:05  Omar leaves for work (back 17:35); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+08:10  Leo leaves for work (back 17:40); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:35  Omar is back from work
+          backpack_omar → entry_table_e1: WHIM — was heading for entry_floor_e1 (dropped at the door instead of being put away) but landed on entry_table_e1 instead
+          charger_omar → entry_table_e1: stays in the backpack
+          laptop_omar → entry_table_e1: stays in the backpack
+          lunchbox_omar → entry_table_e1: stays in the backpack
+          notebook_omar → entry_table_e1: stays in the backpack
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar for walking the dog
+17:40  Leo is back from work
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          charger_leo → entry_hook_e1: stays in the backpack
+          laptop_leo → entry_hook_e1: stays in the backpack
+          water_bottle_leo → entry_hook_e1: stays in the backpack
+          keeps hat_leo, jacket_leo, keys_leo, phone_leo, shoes_leo, wallet_leo for grocery shopping
+17:40  Leo leaves for grocery shopping (back 18:40); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo, shopping_bag_shared
+18:02  Omar leaves for walking the dog (back 18:32); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+18:32  Omar is back from walking the dog
+          dog_leash_shared → entry_table_e1: dropped at the door instead of being put away
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+18:40  Leo is back from grocery shopping
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          shopping_bag_shared → pantry_shelf_k1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for cooking dinner
+18:44  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+18:54  Omar finishes feeding the dog
+          dog_bowl_shared → counter_k1: WHIM — was heading for floor_k_k1 (used, so it goes in the sink) but landed on counter_k1 instead
+18:54  Omar — dinner in the kitchen; brings plate_omar from cupboard_k1, glass_omar from dish_rack_k1, phone_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+19:07  Leo — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+19:34  Omar finishes dinner
+          glass_omar → dish_rack_k1: WHIM — was heading for kitchen_table_k1 (left where it was used) but landed on dish_rack_k1 instead
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+19:42  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+          pot_shared → sink_k1: used, so it goes in the sink
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+          spatula_shared → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+19:42  Leo — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from pantry_shelf_k1
+19:57  Leo finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+19:57  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from cupboard_k1, phone_leo from nightstand_b1, water_bottle_leo from entry_hook_e1
+20:37  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          water_bottle_leo → counter_k1: used, so it goes in the sink; sink_k1 was full, so it went to counter_k1
+20:37  Leo — washing up in the kitchen
+20:38  Omar — reading in the bedroom_1; brings book_omar from nightstand_b1, glasses_omar from bathroom_shelf_ba1
+20:52  Leo finishes washing up
+          bowl_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          dog_bowl_shared (from counter_k1) → floor_k_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          mug_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from dish_rack_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from counter_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from sink_k1) → dish_rack_k1: tidied away to its usual place
+20:52  Leo — evening TV in the living (bout 1/2); brings remote_shared from bookshelf_l1, phone_leo from nightstand_b1, blanket_shared from couch_l1, mug_leo from cupboard_k1, snack_bowl_shared from cupboard_k1
+21:10  Leo finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          mug_leo → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → counter_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on counter_k1 instead
+21:10  Leo — a short break in the kitchen
+21:26  Leo — evening TV in the living (bout 2/2); brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_leo from sink_k1, snack_bowl_shared from counter_k1
+22:17  Leo finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          mug_leo → desk_b1: WHIM — was heading for nightstand_b1 (carried along absent-mindedly into the bedroom_1) but landed on desk_b1 instead [ep:restless_evening:resident_2:d15]
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+22:28  Omar finishes reading
+          book_omar → nightstand_b1: put back in its usual place
+          glasses_omar → nightstand_b1: put back in its usual place
+22:28  Omar — playing with the dog in the living
+22:48  Omar finishes playing with the dog
+          dog_toy_shared → tv_stand_l1: WHIM — was heading for floor_l_l1 (put back in its usual place) but landed on tv_stand_l1 instead
+22:48  Omar — getting ready for bed in the bedroom_1; brings charger_omar from entry_table_e1, glass_omar from cupboard_k1
+23:03  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+23:03  Omar — bed in the bedroom_1
+23:23  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_hook_e1, glass_leo from cupboard_k1
+23:38  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+23:38  Leo — bed in the bedroom_1
+```
+
+## Day 16 — Wednesday
+
+**Active causes**
+
+- `ep:craving_a_snack:resident_1:d16`: Omar is craving a snack and fits one in when there is a gap; the bowl and glass tend to be left out (14:40–15:10).
+
+Internal states (0–1): Omar energy 0.45, hurriedness 0.07, distraction 0.55; Leo energy 0.64, hurriedness 0.63, distraction 0.46
+
+**Timeline**
+
+```
+05:58  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+06:18  Leo finishes morning routine
+          phone_leo → nightstand_b1: put back in its usual place
+07:18  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, razor_omar from medicine_cabinet_ba1
+07:23  Leo — a shower in the bathroom
+07:38  Omar finishes morning routine
+          razor_omar → sink_ba_ba1: put back in its usual place
+          keeps phone_omar for walking the dog
+07:38  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+07:38  Omar leaves for walking the dog (back 08:03); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:38  Leo — breakfast in the kitchen; brings phone_leo from nightstand_b1, mug_leo from desk_b1, bowl_leo from cupboard_k1
+08:01  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          keeps phone_leo for work
+08:01  Leo leaves for work (back 17:31); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+08:03  Omar is back from walking the dog
+          dog_leash_shared → entry_table_e1: dropped at the door instead of being put away
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar for work
+08:07  Omar leaves for work (back 17:37); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+17:31  Leo is back from work
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          charger_leo → entry_hook_e1: stays in the backpack
+          laptop_leo → entry_hook_e1: stays in the backpack
+          water_bottle_leo → entry_hook_e1: stays in the backpack
+          keeps hat_leo, jacket_leo, keys_leo, phone_leo, shoes_leo, wallet_leo for a walk
+17:31  Leo leaves for a walk (back 18:31); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:37  Omar is back from work
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          charger_omar → entry_hook_e1: stays in the backpack
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          laptop_omar → entry_hook_e1: stays in the backpack
+          lunchbox_omar → entry_hook_e1: stays in the backpack
+          notebook_omar → entry_hook_e1: stays in the backpack
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for a snack
+17:37  Omar — a snack in the kitchen [because of ep:craving_a_snack:resident_1:d16]; brings snack_bowl_shared from sink_k1, glass_omar from sink_k1
+17:57  Omar finishes a snack
+          glass_omar → sink_k1: used, so it goes in the sink [ep:craving_a_snack:resident_1:d16]
+          snack_bowl_shared → sink_k1: WHIM — was heading for counter_k1 (left where it was used) but landed on sink_k1 instead [ep:craving_a_snack:resident_1:d16]
+          keeps phone_omar for a walk
+18:15  Omar leaves for a walk (back 19:15); takes keys_omar, phone_omar, wallet_omar, jacket_omar, shoes_omar, sunglasses_omar; never takes scarf_omar on a walk
+18:31  Leo is back from a walk
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for cooking dinner
+18:46  Leo — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+19:15  Omar is back from a walk
+          sunglasses_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar for walking the dog
+19:15  Omar leaves for walking the dog (back 19:45); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+19:21  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          pot_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+19:25  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1, water_bottle_leo from entry_hook_e1
+19:45  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: WHIM — was heading for entry_floor_e1 (dropped at the door instead of being put away) but landed on shoe_rack_e1 instead
+19:45  Omar — feeding the dog in the kitchen
+19:55  Omar — cooking dinner in the kitchen; brings phone_omar from nightstand_b1, pan_shared from sink_k1, cutting_board_shared from sink_k1, kitchen_knife_shared from sink_k1, pot_shared from dish_rack_k1, recipe_book_shared from pantry_shelf_k1
+20:05  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → sink_k1: used, so it goes in the sink
+20:30  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+20:30  Omar — dinner in the kitchen; brings plate_omar from cupboard_k1, glass_omar from sink_k1, water_bottle_omar from dish_rack_k1
+20:52  Leo — washing up in the kitchen
+21:07  Leo finishes washing up
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → dish_rack_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on dish_rack_k1 instead
+          plate_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from counter_k1) → dish_rack_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on dish_rack_k1 instead
+          snack_bowl_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+21:07  Leo — ironing in the bedroom_1 (ironing habit); brings iron_shared from storage_shelf_s1, ironing_board_shared from storage_floor_s1, phone_leo from nightstand_b1
+21:10  Omar finishes dinner
+          glass_omar → kitchen_table_k1: left where it was used
+          phone_omar → dresser_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on dresser_b1 instead
+          plate_omar → kitchen_table_k1: left where it was used
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+21:10  Omar — washing up in the kitchen
+21:25  Omar finishes washing up
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from kitchen_table_k1) → sink_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on sink_k1 instead
+          pot_shared (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          water_bottle_omar (from sink_k1) → dish_rack_k1: tidied away to its usual place
+21:25  Omar — evening TV in the living (bout 1/2); brings remote_shared from tv_stand_l1, phone_omar from dresser_b1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from bathroom_shelf_ba1, snack_bowl_shared from cupboard_k1
+21:47  Leo finishes ironing
+          iron_shared → storage_shelf_s1: put back in its usual place
+          ironing_board_shared → storage_shelf_s1: WHIM — was heading for storage_floor_s1 (put back in its usual place) but landed on storage_shelf_s1 instead
+22:28  Omar finishes evening TV
+          glasses_omar → floor_l_l1: WHIM — was heading for coffee_table_l1 (left where it was used) but landed on floor_l_l1 instead
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+22:28  Omar — a short break in the kitchen
+22:44  Omar — evening TV in the living (bout 2/2); brings remote_shared from tv_stand_l1, mug_omar from sink_k1, glasses_omar from floor_l_l1, snack_bowl_shared from sink_k1
+22:55  Omar finishes evening TV
+          blanket_shared → floor_l_l1: WHIM — was heading for couch_l1 (put back in its usual place) but landed on floor_l_l1 instead
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → armchair_l1: WHIM — was heading for coffee_table_l1 (left where it was used) but landed on armchair_l1 instead
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+23:09  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_hook_e1, glass_leo from cupboard_k1
+23:15  Omar — playing with the dog in the living; brings dog_toy_shared from tv_stand_l1
+23:24  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+23:24  Leo — bed in the bedroom_1
+23:35  Omar — getting ready for bed in the bedroom_1; brings charger_omar from entry_hook_e1, glass_omar from cupboard_k1
+23:50  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+23:50  Omar — bed in the bedroom_1
+```
+
+## Day 17 — Thursday
+
+**Active causes**
+
+- `distracted:resident_1`: Omar is distracted (0.75): carries things into the next room absent-mindedly, more likely to forget pocket items.
+
+Internal states (0–1): Omar energy 0.27, hurriedness 0.18, distraction 0.75; Leo energy 0.58, hurriedness 0.61, distraction 0.32
+
+**Timeline**
+
+```
+06:03  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+06:23  Leo finishes morning routine
+          phone_leo → nightstand_b1: put back in its usual place
+06:38  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, razor_omar from sink_ba_ba1
+06:58  Omar finishes morning routine
+          glasses_omar → dresser_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on dresser_b1 instead
+          razor_omar → sink_ba_ba1: put back in its usual place
+          keeps phone_omar for walking the dog
+06:58  Omar leaves for walking the dog (back 07:23); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:21  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+07:23  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_omar for breakfast
+07:29  Omar — breakfast in the kitchen; brings mug_omar from armchair_l1, bowl_omar from cupboard_k1
+07:36  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+07:36  Leo — breakfast in the kitchen; brings phone_leo from nightstand_b1, mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+07:51  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          keeps phone_leo for work
+07:51  Leo leaves for work (back 17:21); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+07:54  Omar finishes breakfast
+          mug_omar → sink_k1: used, so it goes in the sink
+          phone_omar → kitchen_table_k1: left where it was used
+          vitamins_omar → counter_k1: WHIM — was heading for kitchen_table_k1 (left where it was used) but landed on counter_k1 instead
+07:54  Omar — feeding the dog in the kitchen
+08:12  Omar leaves for work (back 17:42); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+17:21  Leo is back from work
+          backpack_leo → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          charger_leo → entry_floor_e1: stays in the backpack
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          laptop_leo → entry_floor_e1: stays in the backpack
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          water_bottle_leo → entry_floor_e1: stays in the backpack
+          keeps jacket_leo, keys_leo, phone_leo, shoes_leo for walking the dog
+17:42  Omar is back from work
+          backpack_omar → entry_floor_e1: dropped at the door instead of being put away
+          charger_omar → entry_floor_e1: stays in the backpack
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          laptop_omar → entry_floor_e1: stays in the backpack
+          lunchbox_omar → entry_floor_e1: stays in the backpack
+          notebook_omar → entry_floor_e1: stays in the backpack
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+18:07  Omar — feeding the dog in the kitchen
+18:09  Leo leaves for walking the dog (back 18:39); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+18:17  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+18:39  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → shoe_rack_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on shoe_rack_e1 instead
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → entry_floor_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keeps phone_leo for cooking dinner
+19:36  Omar — dinner in the kitchen; brings plate_omar from sink_k1, glass_omar from sink_k1, phone_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+20:00  Leo — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+20:16  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+20:16  Omar — washing up in the kitchen
+20:31  Omar finishes washing up
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          bowl_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_omar (from sink_k1) → dish_rack_k1: tidied away to its usual place
+20:31  Omar — reading in the bedroom_1; brings book_omar from nightstand_b1, glasses_omar from dresser_b1, phone_omar from nightstand_b1
+20:35  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          pot_shared → sink_k1: used, so it goes in the sink
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+          spatula_shared → sink_k1: used, so it goes in the sink
+20:35  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from cupboard_k1, water_bottle_leo from entry_floor_e1
+21:15  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → kitchen_table_k1: left where it was used
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+21:15  Leo — washing up in the kitchen
+21:30  Leo finishes washing up
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          pan_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+21:40  Leo — evening TV in the living; brings phone_leo from kitchen_table_k1, blanket_shared from floor_l_l1, mug_leo from cupboard_k1, snack_bowl_shared from cupboard_k1
+22:21  Omar finishes reading
+          book_omar → dresser_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on dresser_b1 instead
+22:21  Omar — playing with the dog in the living
+22:41  Omar — getting ready for bed in the bedroom_1; brings charger_omar from entry_floor_e1, glass_omar from cupboard_k1, glasses_omar from bed_b1
+22:56  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+22:56  Omar — bed in the bedroom_1
+23:30  Leo finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          remote_shared → side_table_l1: WHIM — was heading for tv_stand_l1 (put back in its usual place) but landed on side_table_l1 instead
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+23:30  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_floor_e1, glass_leo from cupboard_k1
+23:45  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+23:45  Leo — bed in the bedroom_1
+```
+
+## Day 18 — Friday
+
+**Active causes**
+
+- `distracted:resident_1`: Omar is distracted (0.98): carries things into the next room absent-mindedly, more likely to forget pocket items.
+- `low_energy:resident_1`: Omar has low energy (0.20): leaves things where they were used instead of putting them back.
+
+Internal states (0–1): Omar energy 0.20, hurriedness 0.17, distraction 0.98; Leo energy 0.81, hurriedness 0.45, distraction 0.15
+
+**Timeline**
+
+```
+06:31  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+06:51  Leo finishes morning routine
+          phone_leo → nightstand_b1: put back in its usual place
+07:12  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, razor_omar from sink_ba_ba1
+07:26  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+07:32  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+          skincare_omar → sink_ba_ba1: WHIM — was heading for bathroom_shelf_ba1 (put back in its usual place) but landed on sink_ba_ba1 instead
+          keeps phone_omar for walking the dog
+07:41  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+07:53  Omar leaves for walking the dog (back 08:18); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:57  Leo leaves for work (back 17:27); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+08:18  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar for work
+08:21  Omar leaves for work (back 17:51); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+17:27  Leo is back from work
+          backpack_leo → entry_table_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_table_e1 instead
+          charger_leo → entry_table_e1: stays in the backpack
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          laptop_leo → entry_table_e1: stays in the backpack
+          shoes_leo → entry_hook_e1: WHIM — was heading for entry_floor_e1 (dropped at the door instead of being put away) but landed on entry_hook_e1 instead
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          water_bottle_leo → entry_table_e1: stays in the backpack
+          keeps phone_leo for cooking dinner
+17:51  Omar is back from work
+          backpack_omar → entry_floor_e1: dropped at the door instead of being put away
+          charger_omar → entry_floor_e1: stays in the backpack
+          laptop_omar → entry_floor_e1: stays in the backpack
+          lunchbox_omar → entry_floor_e1: stays in the backpack
+          notebook_omar → entry_floor_e1: stays in the backpack
+          keeps jacket_omar, keys_omar, phone_omar, scarf_omar, shoes_omar, sunglasses_omar, wallet_omar for a walk
+          scarf_omar → entry_hook_e1: left at home before a walk
+17:59  Omar leaves for a walk (back 18:59); takes keys_omar, phone_omar, wallet_omar, jacket_omar, shoes_omar, sunglasses_omar; never takes scarf_omar on a walk
+18:59  Omar is back from a walk
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar for walking the dog
+18:59  Omar leaves for walking the dog (back 19:29); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+19:21  Leo — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+19:29  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+19:29  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+19:39  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+19:39  Omar — cooking dinner in the kitchen; brings phone_omar from nightstand_b1
+19:56  Leo finishes cooking dinner
+          cutting_board_shared → kitchen_table_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on kitchen_table_k1 instead
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          pot_shared → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+          spatula_shared → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+19:56  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1, water_bottle_leo from entry_table_e1
+20:14  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → counter_k1: left where it was used
+          pot_shared → sink_k1: used, so it goes in the sink
+          spatula_shared → counter_k1: left where it was used, too tired to put it away [low_energy:resident_1]
+20:14  Omar — dinner in the kitchen; brings plate_omar from cupboard_k1, glass_omar from sink_k1, water_bottle_omar from dish_rack_k1
+20:36  Leo finishes dinner
+          glass_leo → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+20:36  Leo — washing up in the kitchen
+20:51  Leo finishes washing up
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          mug_leo (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+20:54  Omar finishes dinner
+          glass_omar → counter_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on counter_k1 instead
+          phone_omar → kitchen_table_k1: left where it was used
+          plate_omar → kitchen_table_k1: left where it was used
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+20:54  Omar — washing up in the kitchen
+21:09  Omar finishes washing up
+          glass_omar (from counter_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          water_bottle_omar (from sink_k1) → dish_rack_k1: tidied away to its usual place
+21:09  Omar — evening TV in the living (bout 1/2); brings remote_shared from side_table_l1, phone_omar from kitchen_table_k1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+21:16  Leo — playing guitar in the living (guitar habit); brings guitar_leo from bedroom_floor_b1, phone_leo from nightstand_b1
+21:21  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → nightstand_b1: put back in its usual place
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+21:21  Omar — a short break in the kitchen
+21:54  Omar — evening TV in the living (bout 2/2); brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, glasses_omar from nightstand_b1, snack_bowl_shared from sink_k1
+22:01  Leo finishes playing guitar
+          guitar_leo → bedroom_floor_b1: put back in its usual place
+22:43  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_table_e1, glass_leo from cupboard_k1
+22:58  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+22:58  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+22:59  Omar — getting ready for bed in the bedroom_1; brings charger_omar from entry_floor_e1, glass_omar from cupboard_k1, glasses_omar from coffee_table_l1
+23:06  Leo — bed in the bedroom_1
+23:14  Omar finishes getting ready for bed
+          charger_omar → bed_b1: left where it was used; nightstand_b1 was full, so it went to bed_b1
+          glasses_omar → desk_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on desk_b1 instead
+          phone_omar → nightstand_b1: put back in its usual place
+23:14  Omar — bed in the bedroom_1
+```
+
+## Day 19 — Saturday
+
+**Active causes**
+
+- `ep:on_a_roll:resident_1:d19`: Omar is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (14:48–18:44).
+- `distracted:resident_1`: Omar is distracted (0.94): carries things into the next room absent-mindedly, more likely to forget pocket items.
+- `low_energy:resident_1`: Omar has low energy (0.24): leaves things where they were used instead of putting them back.
+
+Internal states (0–1): Omar energy 0.24, hurriedness 0.34, distraction 0.94; Leo energy 0.96, hurriedness 0.24, distraction 0.31
+
+**Timeline**
+
+```
+06:03  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from desk_b1, skincare_omar from sink_ba_ba1, razor_omar from sink_ba_ba1
+06:23  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          keeps phone_omar for walking the dog
+06:46  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+07:06  Leo finishes morning routine
+          keeps phone_leo for work
+07:29  Omar leaves for walking the dog (back 07:54); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:54  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar for work
+08:04  Leo leaves for work (back 17:34); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+08:05  Omar leaves for work (back 17:35); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+17:34  Leo is back from work
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          charger_leo → entry_hook_e1: stays in the backpack
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          laptop_leo → entry_hook_e1: stays in the backpack
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          water_bottle_leo → entry_hook_e1: stays in the backpack
+          keeps phone_leo for vacuuming
+17:35  Omar is back from work
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          charger_omar → entry_hook_e1: stays in the backpack
+          laptop_omar → entry_hook_e1: stays in the backpack
+          lunchbox_omar → entry_hook_e1: stays in the backpack
+          notebook_omar → entry_hook_e1: stays in the backpack
+          scarf_omar → shoe_rack_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on shoe_rack_e1 instead
+          sunglasses_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar for walking the dog
+19:01  Omar leaves for walking the dog (back 19:31); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+19:18  Leo — vacuuming in the living (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1
+19:31  Omar is back from walking the dog
+          dog_leash_shared → entry_table_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_table_e1 instead
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+19:31  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+19:41  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+19:41  Omar — cooking dinner in the kitchen; brings phone_omar from nightstand_b1, pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+19:58  Leo finishes vacuuming
+          vacuum_cleaner_shared → storage_floor_s1: put back in its usual place
+19:58  Leo — cooking dinner in the kitchen
+20:16  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          pot_shared → sink_k1: used, so it goes in the sink
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+20:33  Leo finishes cooking dinner
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pot_shared → pantry_shelf_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on pantry_shelf_k1 instead
+          recipe_book_shared → counter_k1: left where it was used
+          spatula_shared → sink_k1: used, so it goes in the sink
+20:33  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1, water_bottle_leo from entry_hook_e1
+20:50  Omar — dinner in the kitchen; brings plate_omar from cupboard_k1, glass_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+21:13  Leo finishes dinner
+          glass_leo → pantry_shelf_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on pantry_shelf_k1 instead
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → dish_rack_k1: WHIM — was heading for kitchen_table_k1 (left where it was used) but landed on dish_rack_k1 instead
+21:13  Leo — washing up in the kitchen
+21:28  Leo finishes washing up
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from pantry_shelf_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          mug_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from pantry_shelf_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from coffee_table_l1) → dish_rack_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on dish_rack_k1 instead
+          spatula_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+21:30  Omar finishes dinner
+          glass_omar → pantry_shelf_k1: WHIM — was heading for kitchen_table_k1 (left where it was used) but landed on pantry_shelf_k1 instead
+          phone_omar → nightstand_b1: put back in its usual place
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → kitchen_table_k1: left where it was used
+21:30  Omar — washing up in the kitchen
+21:43  Leo — reading in the bedroom_1; brings book_leo from nightstand_b1, phone_leo from nightstand_b1
+21:45  Omar finishes washing up
+          glass_omar (from pantry_shelf_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+21:45  Omar — evening TV in the living (bout 1/4); brings phone_omar from nightstand_b1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+21:55  Omar finishes evening TV
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+21:55  Omar — a short break in the kitchen
+22:06  Omar — evening TV in the living (bout 2/4); brings remote_shared from tv_stand_l1, mug_omar from sink_k1
+22:25  Omar finishes evening TV
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → counter_k1: carried along absent-mindedly into the kitchen [distracted:resident_1]
+22:25  Omar — a short break in the kitchen
+22:36  Omar — evening TV in the living (bout 3/4); brings remote_shared from tv_stand_l1, mug_omar from sink_k1, glasses_omar from nightstand_b1, snack_bowl_shared from counter_k1
+22:46  Omar finishes evening TV
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → couch_l1: WHIM — was heading for coffee_table_l1 (left where it was used) but landed on couch_l1 instead
+          snack_bowl_shared → pantry_shelf_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on pantry_shelf_k1 instead
+22:46  Omar — a short break in the kitchen
+22:57  Omar — evening TV in the living (bout 4/4); brings mug_omar from couch_l1, glasses_omar from nightstand_b1, snack_bowl_shared from pantry_shelf_k1
+23:33  Leo finishes reading
+          book_leo → nightstand_b1: put back in its usual place
+23:33  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_hook_e1, glass_leo from cupboard_k1
+23:35  Omar finishes evening TV
+          remote_shared → tv_stand_l1: put back in its usual place
+23:35  Omar — playing with the dog in the living
+23:48  Leo finishes getting ready for bed
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → dresser_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on dresser_b1 instead
+23:48  Leo — bed in the bedroom_1
+23:55  Omar — getting ready for bed in the bedroom_1; brings charger_omar from entry_hook_e1, glass_omar from cupboard_k1, glasses_omar from coffee_table_l1
+23:59  Omar finishes getting ready for bed
+          charger_omar → dresser_b1: WHIM — was heading for desk_b1 (put back in its usual place) but landed on dresser_b1 instead
+          phone_omar → nightstand_b1: put back in its usual place
+```
+
+## Day 20 — Sunday
+
+**Active causes**
+
+- `ep:craving_a_snack:resident_2:d20`: Leo is craving a snack and fits one in when there is a gap; the bowl and glass tend to be left out (15:35–16:05).
+- `ep:sore_back:resident_1:d20`: Omar has a sore back today and sits in the armchair instead of the couch, so things land on the side table (06:30–24:00).
+- `distracted:resident_1`: Omar is distracted (0.81): carries things into the next room absent-mindedly, more likely to forget pocket items.
+- `low_energy:resident_1`: Omar has low energy (0.19): leaves things where they were used instead of putting them back.
+
+Internal states (0–1): Omar energy 0.19, hurriedness 0.26, distraction 0.81; Leo energy 0.97, hurriedness 0.64, distraction 0.40
+
+**Timeline**
+
+```
+06:23  Leo — morning routine in the bathroom; brings phone_leo from dresser_b1
+07:06  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+07:12  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1
+07:31  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          keeps phone_leo for work
+07:32  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+          keeps phone_omar for walking the dog
+07:32  Omar leaves for walking the dog (back 07:57); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:57  Omar is back from walking the dog
+          dog_leash_shared → entry_table_e1: dropped at the door instead of being put away
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → entry_table_e1: dropped at the door instead of being put away
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+07:57  Omar — a shower in the bathroom
+08:05  Leo leaves for work (back 17:35); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+08:13  Omar leaves for work (back 17:43); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+17:35  Leo is back from work
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          charger_leo → entry_hook_e1: stays in the backpack
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          laptop_leo → entry_hook_e1: stays in the backpack
+          shoes_leo → entry_floor_e1: dropped at the door instead of being put away
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          water_bottle_leo → entry_hook_e1: stays in the backpack
+          keeps phone_leo for a snack
+17:35  Leo — a snack in the kitchen [because of ep:craving_a_snack:resident_2:d20]; brings snack_bowl_shared from coffee_table_l1, glass_leo from sink_k1
+17:43  Omar is back from work
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          charger_omar → entry_hook_e1: stays in the backpack
+          laptop_omar → entry_hook_e1: stays in the backpack
+          lunchbox_omar → entry_hook_e1: stays in the backpack
+          notebook_omar → entry_hook_e1: stays in the backpack
+          keeps jacket_omar, keys_omar, phone_omar, scarf_omar, shoes_omar, sunglasses_omar, wallet_omar for grocery shopping
+17:43  Omar leaves for grocery shopping (back 18:43); takes keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar, shopping_bag_shared
+17:55  Leo finishes a snack
+          glass_leo → sink_k1: used, so it goes in the sink [ep:craving_a_snack:resident_2:d20]
+          snack_bowl_shared → sink_k1: used, so it goes in the sink [ep:craving_a_snack:resident_2:d20]
+          keeps phone_leo for walking the dog
+18:43  Omar is back from grocery shopping
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+          shopping_bag_shared → pantry_shelf_k1: put away in its usual place after the trip
+          sunglasses_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+18:43  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+18:53  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+18:53  Omar — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from pantry_shelf_k1
+18:56  Leo leaves for walking the dog (back 19:26); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+19:08  Omar finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+19:26  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_leo for cooking dinner
+19:26  Leo — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1
+19:47  Omar — dinner in the kitchen; brings plate_omar from cupboard_k1, glass_omar from nightstand_b1, phone_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+20:01  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          pot_shared → cupboard_k1: WHIM — was heading for counter_k1 (left where it was used) but landed on cupboard_k1 instead
+          recipe_book_shared → chair_k1: WHIM — was heading for pantry_shelf_k1 (put back in its usual place) but landed on chair_k1 instead
+          spatula_shared → sink_k1: used, so it goes in the sink
+20:01  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1, water_bottle_leo from entry_hook_e1
+20:27  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+20:27  Omar — reading in the bedroom_1; brings book_omar from dresser_b1, glasses_omar from nightstand_b1
+20:41  Leo finishes dinner
+          glass_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          plate_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          water_bottle_leo → counter_k1: used, so it goes in the sink; sink_k1 was full, so it went to counter_k1
+21:08  Leo — playing guitar in the living (guitar habit); brings guitar_leo from bedroom_floor_b1
+21:53  Leo finishes playing guitar
+          guitar_leo → bedroom_floor_b1: put back in its usual place
+22:07  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_hook_e1, glass_leo from dish_rack_k1
+22:17  Omar finishes reading
+          book_omar → nightstand_b1: put back in its usual place
+22:17  Omar — playing with the dog in the living
+22:22  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          phone_leo → nightstand_b1: put back in its usual place
+22:22  Leo — bed in the bedroom_1
+22:37  Omar finishes playing with the dog
+          dog_toy_shared → side_table_l1: WHIM — was heading for floor_l_l1 (put back in its usual place) but landed on side_table_l1 instead
+22:37  Omar — getting ready for bed in the bedroom_1; brings charger_omar from entry_hook_e1, glass_omar from sink_k1, glasses_omar from bed_b1
+22:52  Omar finishes getting ready for bed
+          charger_omar → bed_b1: left where it was used, too tired to put it away; nightstand_b1 was full, so it went to bed_b1 [low_energy:resident_1]
+          glass_omar → dish_rack_k1: left where it was used; nightstand_b1 was full, so it went to dish_rack_k1
+          phone_omar → nightstand_b1: put back in its usual place
+22:52  Omar — bed in the bedroom_1
+```
+
+## Day 21 — Monday
+
+**Active causes**
+
+- `ep:craving_a_snack:resident_1:d21`: Omar is craving a snack and fits one in when there is a gap; the bowl and glass tend to be left out (14:56–15:26).
+- `ep:on_a_roll:resident_2:d21`: Leo is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (13:59–17:40).
+- `distracted:resident_1`: Omar is distracted (0.77): carries things into the next room absent-mindedly, more likely to forget pocket items.
+- `running_late:resident_2`: Leo is running late all day (0.81): rushed putdowns, things dumped at the door, more whim.
+
+Internal states (0–1): Omar energy 0.36, hurriedness 0.04, distraction 0.77; Leo energy 0.75, hurriedness 0.81, distraction 0.16
+
+**Timeline**
+
+```
+06:55  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, razor_omar from sink_ba_ba1
+07:15  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          skincare_omar → sink_ba_ba1: WHIM — was heading for bathroom_shelf_ba1 (put back in its usual place) but landed on sink_ba_ba1 instead
+          keeps phone_omar for walking the dog
+07:15  Omar leaves for walking the dog (back 07:40); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:40  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → shoe_rack_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on shoe_rack_e1 instead
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+07:40  Omar — a shower in the bathroom
+07:43  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+07:55  Omar finishes a shower
+          towel_omar → towel_rack_ba1: put back in its usual place
+08:00  Omar leaves for work (back 17:30); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+08:03  Leo finishes morning routine
+          phone_leo → bathroom_shelf_ba1: left where it was used
+08:03  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+08:13  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+08:13  Leo leaves for work (back 17:43); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:30  Omar is back from work
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          charger_omar → entry_hook_e1: stays in the backpack
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          laptop_omar → entry_hook_e1: stays in the backpack
+          lunchbox_omar → entry_hook_e1: stays in the backpack
+          notebook_omar → entry_hook_e1: stays in the backpack
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → entry_hook_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_hook_e1 instead
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for a snack
+17:30  Omar — a snack in the kitchen [because of ep:craving_a_snack:resident_1:d21]; brings snack_bowl_shared from sink_k1, glass_omar from dish_rack_k1
+17:43  Leo is back from work
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          charger_leo → entry_hook_e1: stays in the backpack
+          laptop_leo → entry_hook_e1: stays in the backpack
+          water_bottle_leo → entry_hook_e1: stays in the backpack
+          keeps hat_leo, jacket_leo, keys_leo, phone_leo, shoes_leo, wallet_leo for a walk
+17:50  Omar finishes a snack
+          glass_omar → sink_k1: used, so it goes in the sink [ep:craving_a_snack:resident_1:d21]
+          phone_omar → nightstand_b1: put back in its usual place [ep:craving_a_snack:resident_1:d21]
+          snack_bowl_shared → sink_k1: used, so it goes in the sink [ep:craving_a_snack:resident_1:d21]
+18:23  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+18:27  Leo leaves for a walk (back 19:27); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+18:33  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+18:33  Omar — cooking dinner in the kitchen; brings phone_omar from nightstand_b1, pan_shared from sink_k1, cutting_board_shared from sink_k1, kitchen_knife_shared from sink_k1, spatula_shared from sink_k1, pot_shared from cupboard_k1, recipe_book_shared from chair_k1
+19:08  Omar finishes cooking dinner
+          cutting_board_shared → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → pantry_shelf_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on pantry_shelf_k1 instead
+          pot_shared → sink_k1: used, so it goes in the sink
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+19:08  Omar — dinner in the kitchen; brings glass_omar from sink_k1
+19:27  Leo is back from a walk
+          hat_leo → dresser_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to dresser_b1
+          wallet_leo → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keeps jacket_leo, keys_leo, phone_leo, shoes_leo for walking the dog
+19:27  Leo leaves for walking the dog (back 19:57); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+19:48  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          plate_omar → sink_k1: used, so it goes in the sink
+19:48  Omar — evening TV in the living; brings remote_shared from tv_stand_l1, glasses_omar from nightstand_b1, snack_bowl_shared from sink_k1
+19:57  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_leo for cooking dinner
+19:57  Leo — cooking dinner in the kitchen; brings pan_shared from pantry_shelf_k1, cutting_board_shared from dish_rack_k1, kitchen_knife_shared from sink_k1, pot_shared from sink_k1, recipe_book_shared from pantry_shelf_k1
+20:32  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          pot_shared → sink_k1: used, so it goes in the sink
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+20:32  Leo — dinner in the kitchen; brings plate_leo from dish_rack_k1, glass_leo from dish_rack_k1, water_bottle_leo from entry_hook_e1
+21:12  Leo finishes dinner
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          water_bottle_leo → counter_k1: used, so it goes in the sink; sink_k1 was full, so it went to counter_k1
+21:12  Leo — washing up in the kitchen
+21:27  Leo finishes washing up
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+21:27  Leo — ironing in the bedroom_1 (ironing habit); brings iron_shared from storage_shelf_s1, ironing_board_shared from storage_shelf_s1, phone_leo from nightstand_b1
+22:07  Leo finishes ironing
+          iron_shared → storage_shelf_s1: put back in its usual place
+          ironing_board_shared → storage_floor_s1: put back in its usual place
+22:07  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_hook_e1, glass_leo from cupboard_k1
+22:22  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → dresser_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on dresser_b1 instead
+22:33  Omar — getting ready for bed in the bedroom_1; brings charger_omar from entry_hook_e1, glass_omar from cupboard_k1, glasses_omar from coffee_table_l1
+22:48  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          phone_omar → nightstand_b1: put back in its usual place
+22:49  Omar — bed in the bedroom_1
+23:17  Leo — bed in the bedroom_1
+```
+
+## Day 22 — Tuesday
+
+**Active causes**
+
+- `ep:overslept:resident_2:d22`: Leo overslept: a rushed morning with things dumped at the door, then a normal day (06:30–10:30).
+- `ep:rough_day_at_work:resident_1:d22`: Omar had a rough day at work: goes quiet in the evening, keeps the phone close, the jacket lands on the couch (17:30–24:00).
+- `ep:rough_day_at_work:resident_2:d22`: Leo had a rough day at work: goes quiet in the evening, keeps the phone close, the jacket lands on the couch (17:30–24:00).
+- `distracted:resident_1`: Omar is distracted (0.94): carries things into the next room absent-mindedly, more likely to forget pocket items.
+
+Internal states (0–1): Omar energy 0.38, hurriedness 0.16, distraction 0.94; Leo energy 0.76, hurriedness 0.72, distraction 0.31
+
+**Timeline**
+
+```
+06:09  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, skincare_omar from sink_ba_ba1
+06:29  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+          keeps phone_omar for walking the dog
+06:34  Leo — morning routine in the bathroom [shifted by ep:overslept:resident_2:d22]; brings phone_leo from dresser_b1
+06:48  Leo finishes morning routine
+          phone_leo → nightstand_b1: put back in its usual place
+06:55  Leo — a shower in the bathroom; brings towel_leo from towel_rack_ba1
+07:10  Omar leaves for walking the dog (back 07:35); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:35  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → coffee_table_l1: put away in its usual place after the trip; nightstand_b1 was full, so it went to coffee_table_l1
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+07:36  Omar — a shower in the bathroom; brings towel_omar from towel_rack_ba1
+07:47  Leo — breakfast in the kitchen [shifted by ep:overslept:resident_2:d22]; brings phone_leo from nightstand_b1, mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+07:51  Omar finishes a shower
+          towel_omar → towel_rack_ba1: put back in its usual place
+07:57  Omar leaves for work (back 17:27); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+07:59  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          keeps phone_leo for work
+08:00  Leo leaves for work (back 17:30); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:27  Omar is back from work
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          charger_omar → entry_hook_e1: stays in the backpack
+          laptop_omar → entry_hook_e1: stays in the backpack
+          lunchbox_omar → entry_hook_e1: stays in the backpack
+          notebook_omar → entry_hook_e1: stays in the backpack
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar for walking the dog
+17:30  Leo is back from work
+          backpack_leo → entry_table_e1: WHIM — was heading for entry_floor_e1 (dropped at the door instead of being put away) but landed on entry_table_e1 instead
+          charger_leo → entry_table_e1: stays in the backpack
+          laptop_leo → entry_table_e1: stays in the backpack
+          water_bottle_leo → entry_table_e1: stays in the backpack
+          keeps hat_leo, jacket_leo, keys_leo, phone_leo, shoes_leo, wallet_leo for a walk
+17:30  Leo leaves for a walk (back 18:30); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+18:05  Omar leaves for walking the dog (back 18:35); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+18:30  Leo is back from a walk
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → couch_l1: jacket thrown over the couch after a bad day [ep:rough_day_at_work:resident_2:d22]
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → entry_floor_e1: dropped at the door instead of being put away
+          wallet_leo → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keeps phone_leo for cooking dinner
+18:30  Leo — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+18:35  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → couch_l1: jacket thrown over the couch after a bad day [ep:rough_day_at_work:resident_1:d22]
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → bed_b1: WHIM — was heading for nightstand_b1 (put away in its usual place after the trip) but landed on bed_b1 instead
+          shoes_omar → entry_hook_e1: WHIM — was heading for entry_floor_e1 (dropped at the door instead of being put away) but landed on entry_hook_e1 instead
+18:47  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+18:57  Omar — cooking dinner in the kitchen; brings phone_omar from bed_b1
+19:05  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          pot_shared → sink_k1: used, so it goes in the sink
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+          spatula_shared → sink_k1: used, so it goes in the sink
+19:32  Omar finishes cooking dinner
+          cutting_board_shared → drawer_k_k1: WHIM — was heading for dish_rack_k1 (used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1) but landed on drawer_k_k1 instead
+          kitchen_knife_shared → counter_k1: left where it was used
+          pan_shared → kitchen_table_k1: WHIM — was heading for counter_k1 (left where it was used) but landed on kitchen_table_k1 instead
+          pot_shared → counter_k1: left where it was used
+          spatula_shared → counter_k1: left where it was used
+19:33  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1, water_bottle_leo from entry_table_e1
+19:36  Omar — dinner in the kitchen; brings plate_omar from cupboard_k1, glass_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+20:13  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+20:13  Leo — washing up in the kitchen
+20:16  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          plate_omar → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+20:16  Omar — washing up in the kitchen
+20:28  Leo finishes washing up
+          bowl_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from drawer_k_k1) → sink_k1: WHIM — was heading for counter_k1 (tidied away to its usual place) but landed on sink_k1 instead
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+20:31  Omar finishes washing up
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+20:58  Leo — reading in the bedroom_1; brings book_leo from nightstand_b1
+21:32  Omar — reading in the bedroom_1; brings book_omar from nightstand_b1, glasses_omar from nightstand_b1
+22:48  Leo finishes reading
+          book_leo → nightstand_b1: put back in its usual place
+22:48  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_table_e1, glass_leo from cupboard_k1
+23:03  Leo finishes getting ready for bed
+          charger_leo → bedroom_floor_b1: WHIM — was heading for desk_b1 (put back in its usual place) but landed on bedroom_floor_b1 instead
+          glass_leo → sink_k1: used, so it goes in the sink
+23:12  Leo — bed in the bedroom_1
+23:22  Omar finishes reading
+          book_omar → nightstand_b1: put back in its usual place
+23:22  Omar — getting ready for bed in the bedroom_1; brings charger_omar from entry_hook_e1, glass_omar from cupboard_k1, glasses_omar from bed_b1
+23:37  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          glass_omar → desk_b1: WHIM — was heading for nightstand_b1 (left where it was used) but landed on desk_b1 instead
+23:37  Omar — bed in the bedroom_1
+23:59  Omar finishes bed
+          phone_omar → nightstand_b1: put back in its usual place
+23:59  Leo finishes bed
+          phone_leo → nightstand_b1: put back in its usual place
+```
+
+## Day 23 — Wednesday
+
+**Active causes**
+
+- `ep:rough_day_at_work:resident_1:d23`: Omar had a rough day at work: goes quiet in the evening, keeps the phone close, the jacket lands on the couch (17:30–24:00).
+- `ep:sore_back:resident_2:d23`: Leo has a sore back today and sits in the armchair instead of the couch, so things land on the side table (06:30–24:00).
+- `low_energy:resident_1`: Omar has low energy (0.23): leaves things where they were used instead of putting them back.
+- `running_late:resident_2`: Leo is running late all day (0.77): rushed putdowns, things dumped at the door, more whim.
+
+Internal states (0–1): Omar energy 0.23, hurriedness 0.30, distraction 0.53; Leo energy 0.82, hurriedness 0.77, distraction 0.36
+
+**Timeline**
+
+```
+06:27  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+06:38  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, razor_omar from sink_ba_ba1
+06:47  Leo finishes morning routine
+          keeps phone_leo for work
+06:58  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          keeps phone_omar for walking the dog
+06:58  Omar leaves for walking the dog (back 07:23); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:23  Omar is back from walking the dog
+          dog_leash_shared → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → entry_hook_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_hook_e1 instead
+07:23  Omar — a shower in the bathroom; brings towel_omar from towel_rack_ba1
+07:38  Omar — breakfast in the kitchen; brings phone_omar from nightstand_b1, mug_omar from cupboard_k1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+07:58  Leo leaves for work (back 17:28); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+08:03  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+          vitamins_omar → counter_k1: put back in its usual place
+08:06  Omar — feeding the dog in the kitchen
+08:16  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+08:21  Omar leaves for work (back 17:51); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+17:28  Leo is back from work
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          charger_leo → entry_hook_e1: stays in the backpack
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          laptop_leo → entry_hook_e1: stays in the backpack
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          water_bottle_leo → entry_hook_e1: stays in the backpack
+          keeps jacket_leo, keys_leo, phone_leo, shoes_leo for walking the dog
+17:51  Omar is back from work
+          backpack_omar → entry_floor_e1: dropped at the door instead of being put away
+          charger_omar → entry_floor_e1: stays in the backpack
+          jacket_omar → couch_l1: jacket thrown over the couch after a bad day [ep:rough_day_at_work:resident_1:d23]
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          laptop_omar → entry_floor_e1: stays in the backpack
+          lunchbox_omar → entry_floor_e1: stays in the backpack
+          notebook_omar → entry_floor_e1: stays in the backpack
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+18:10  Leo leaves for walking the dog (back 18:40); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+18:40  Leo is back from walking the dog
+          dog_leash_shared → entry_table_e1: dropped at the door instead of being put away
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_leo for dinner
+19:06  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1, water_bottle_leo from entry_hook_e1
+19:08  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+19:18  Omar finishes feeding the dog
+          dog_bowl_shared → counter_k1: WHIM — was heading for floor_k_k1 (used, so it goes in the sink) but landed on counter_k1 instead
+19:25  Omar — dinner in the kitchen; brings plate_omar from cupboard_k1, glass_omar from desk_b1, phone_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+19:46  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → counter_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on counter_k1 instead
+20:05  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          plate_omar → sink_k1: used, so it goes in the sink
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+20:24  Omar — washing up in the kitchen
+20:39  Omar finishes washing up
+          bowl_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          dog_bowl_shared (from counter_k1) → floor_k_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          water_bottle_leo (from counter_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from sink_k1) → dish_rack_k1: tidied away to its usual place
+20:39  Omar — reading in the bedroom_1; brings book_omar from nightstand_b1, glasses_omar from nightstand_b1
+20:55  Leo — reading in the bedroom_1; brings book_leo from nightstand_b1
+22:29  Omar finishes reading
+          book_omar → nightstand_b1: WHIM — was heading for bed_b1 (left where it was used) but landed on nightstand_b1 instead
+22:35  Omar — getting ready for bed in the bedroom_1; brings charger_omar from entry_floor_e1, glass_omar from cupboard_k1, glasses_omar from bed_b1
+22:50  Omar — bed in the bedroom_1
+22:50  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_hook_e1, glass_leo from cupboard_k1
+23:05  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+23:05  Leo — bed in the bedroom_1
+23:59  Omar finishes bed
+          phone_omar → coffee_table_l1: put back in its usual place; nightstand_b1 was full, so it went to coffee_table_l1
+```
+
+## Day 24 — Thursday
+
+**Active causes**
+
+- `ep:deadline:resident_1:d24:looming`: Omar has a deadline tomorrow at noon: works into the evening, eats fast with the laptop at the table (18:00–24:00).
+- `ep:sore_back:resident_1:d24`: Omar has a sore back today and sits in the armchair instead of the couch, so things land on the side table (06:30–24:00).
+- `running_late:resident_2`: Leo is running late all day (0.74): rushed putdowns, things dumped at the door, more whim.
+
+Internal states (0–1): Omar energy 0.37, hurriedness 0.38, distraction 0.61; Leo energy 0.74, hurriedness 0.74, distraction 0.43
+
+**Timeline**
+
+```
+06:44  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+07:11  Omar — morning routine in the bathroom; brings phone_omar from coffee_table_l1, glasses_omar from nightstand_b1
+07:31  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+          keeps phone_omar for walking the dog
+07:31  Omar leaves for walking the dog (back 07:56); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:49  Leo — breakfast in the kitchen; brings mug_leo from cupboard_k1, bowl_leo from cupboard_k1
+07:56  Omar is back from walking the dog
+          dog_leash_shared → entry_table_e1: dropped at the door instead of being put away
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar for work
+08:02  Omar leaves for work (back 17:32); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+08:07  Leo finishes breakfast
+          mug_leo → sink_k1: used, so it goes in the sink
+          keeps phone_leo for work
+08:07  Leo leaves for work (back 17:37); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:32  Omar is back from work
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          charger_omar → entry_hook_e1: stays in the backpack
+          laptop_omar → entry_hook_e1: stays in the backpack
+          lunchbox_omar → entry_hook_e1: stays in the backpack
+          notebook_omar → entry_hook_e1: stays in the backpack
+          keeps jacket_omar, keys_omar, phone_omar, scarf_omar, shoes_omar, sunglasses_omar, wallet_omar for grocery shopping
+17:37  Leo is back from work
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          charger_leo → entry_hook_e1: stays in the backpack
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          laptop_leo → entry_hook_e1: stays in the backpack
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          water_bottle_leo → entry_hook_e1: stays in the backpack
+          keeps jacket_leo, keys_leo, phone_leo, shoes_leo for walking the dog
+18:11  Leo leaves for walking the dog (back 18:41); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+18:41  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_leo for cooking dinner
+19:37  Leo — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+20:05  Omar leaves for grocery shopping (back 21:05); takes keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar, shopping_bag_shared
+20:12  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+          spatula_shared → cupboard_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on cupboard_k1 instead
+20:12  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from sink_k1, water_bottle_leo from entry_hook_e1
+20:52  Leo finishes dinner
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+21:02  Leo — evening TV in the living; brings mug_leo from sink_k1, snack_bowl_shared from cupboard_k1
+21:05  Omar is back from grocery shopping
+          jacket_omar → shoe_rack_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on shoe_rack_e1 instead
+          keys_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          scarf_omar → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          shopping_bag_shared → chair_k1: WHIM — was heading for pantry_shelf_k1 (put away in its usual place after the trip) but landed on chair_k1 instead
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+21:05  Omar — feeding the dog in the kitchen
+21:15  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+21:15  Omar — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from chair_k1
+21:30  Omar finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+21:30  Omar — dinner in the kitchen [shifted by ep:deadline:resident_1:d24:looming]; brings plate_omar from cupboard_k1, glass_omar from nightstand_b1, phone_omar from nightstand_b1, water_bottle_omar from dish_rack_k1, laptop_omar from entry_hook_e1
+21:58  Omar finishes dinner
+          laptop_omar → desk_b1: put back in its usual place
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+21:58  Omar — evening TV in the living [shifted by ep:deadline:resident_1:d24:looming, ep:sore_back:resident_1:d24]; brings remote_shared from coffee_table_l1, blanket_shared from coffee_table_l1, mug_omar from kitchen_table_k1, glasses_omar from nightstand_b1, snack_bowl_shared from coffee_table_l1
+22:52  Leo finishes evening TV
+          blanket_shared → floor_l_l1: WHIM — was heading for couch_l1 (put back in its usual place) but landed on floor_l_l1 instead
+          mug_leo → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+22:52  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_hook_e1, glass_leo from kitchen_table_k1
+22:53  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → nightstand_b1: put back in its usual place
+          remote_shared → couch_l1: WHIM — was heading for armchair_l1 (left where it was used) but landed on couch_l1 instead [ep:sore_back:resident_1:d24]
+22:53  Omar — playing with the dog in the living; brings dog_toy_shared from side_table_l1
+23:07  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+23:07  Leo — bed in the bedroom_1
+23:13  Omar — work session in the bedroom_1 [because of ep:deadline:resident_1:d24:looming]; brings charger_omar from entry_hook_e1, notebook_omar from entry_hook_e1, mug_omar from armchair_l1, water_bottle_omar from sink_k1, glasses_omar from nightstand_b1
+23:59  Omar finishes work session
+          glasses_omar → nightstand_b1: put back in its usual place [ep:deadline:resident_1:d24:looming]
+          phone_omar → nightstand_b1: put back in its usual place [ep:deadline:resident_1:d24:looming]
+          water_bottle_omar → sink_k1: used, so it goes in the sink [ep:deadline:resident_1:d24:looming]
+```
+
+## Day 25 — Friday
+
+**Active causes**
+
+- `ep:deadline:resident_1:d24:due_today`: Omar's deadline is at noon: a hurried morning, laptop and notebook never out of reach (06:30–12:00).
+- `ep:deadline:resident_1:d24:relief`: Omar made the deadline and is running on empty: things get left out, and the evening is TV (12:00–24:00).
+- `ep:tidy_mood:resident_1:d25`: Omar is in a tidying mood for a while: a quick tidy of the living room, and things go back where they belong (12:50–14:50).
+
+Internal states (0–1): Omar energy 0.49, hurriedness 0.42, distraction 0.60; Leo energy 0.71, hurriedness 0.38, distraction 0.29
+
+**Timeline**
+
+```
+05:42  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, razor_omar from sink_ba_ba1
+05:54  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+06:02  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+          keeps phone_omar for walking the dog
+06:14  Leo finishes morning routine
+          phone_leo → nightstand_b1: put back in its usual place
+06:35  Omar leaves for walking the dog (back 07:00); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:00  Omar is back from walking the dog
+          dog_leash_shared → entry_table_e1: dumped at the door, running late [ep:deadline:resident_1:d24:due_today]
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_hook_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_hook_e1 instead
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_omar for breakfast
+07:23  Leo — a shower in the bathroom
+07:52  Omar — breakfast in the kitchen; brings mug_omar from desk_b1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+08:16  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          keeps phone_omar for work
+08:16  Omar leaves for work (back 17:46); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+08:23  Leo leaves for work (back 17:53); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:46  Omar is back from work
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          charger_omar → entry_hook_e1: stays in the backpack
+          jacket_omar → shoe_rack_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on shoe_rack_e1 instead
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          laptop_omar → entry_hook_e1: stays in the backpack
+          lunchbox_omar → entry_hook_e1: stays in the backpack
+          notebook_omar → entry_hook_e1: stays in the backpack
+          phone_omar → bed_b1: WHIM — was heading for nightstand_b1 (put away in its usual place after the trip) but landed on bed_b1 instead
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → entry_floor_e1: dropped at the door instead of being put away
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+17:46  Omar — tidying up in the living [because of ep:tidy_mood:resident_1:d25]
+17:53  Leo is back from work
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          charger_leo → entry_hook_e1: stays in the backpack
+          laptop_leo → entry_hook_e1: stays in the backpack
+          water_bottle_leo → entry_hook_e1: stays in the backpack
+          keeps hat_leo, jacket_leo, keys_leo, phone_leo, shoes_leo, wallet_leo for a walk
+18:11  Omar finishes tidying up
+          bowl_leo (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          charger_leo (from entry_hook_e1) → wardrobe_b1: WHIM — was heading for desk_b1 (tidied away to its usual place) but landed on wardrobe_b1 instead [ep:tidy_mood:resident_1:d25]
+          charger_omar (from entry_hook_e1) → desk_b1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          dog_leash_shared (from entry_table_e1) → entry_hook_e1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          glass_omar (from kitchen_table_k1) → pantry_shelf_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on pantry_shelf_k1 instead [ep:tidy_mood:resident_1:d25]
+          jacket_omar (from shoe_rack_e1) → entry_hook_e1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          kitchen_knife_shared (from dish_rack_k1) → drawer_k_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          laptop_leo (from entry_hook_e1) → wardrobe_b1: WHIM — was heading for desk_b1 (tidied away to its usual place) but landed on wardrobe_b1 instead [ep:tidy_mood:resident_1:d25]
+          laptop_omar (from entry_hook_e1) → nightstand_b1: WHIM — was heading for desk_b1 (tidied away to its usual place) but landed on nightstand_b1 instead [ep:tidy_mood:resident_1:d25]
+          lunchbox_omar (from entry_hook_e1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          mug_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          notebook_omar (from entry_hook_e1) → desk_b1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          pan_shared (from counter_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          plate_leo (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          plate_omar (from kitchen_table_k1) → dish_rack_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on dish_rack_k1 instead [ep:tidy_mood:resident_1:d25]
+          pot_shared (from counter_k1) → cupboard_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          remote_shared (from couch_l1) → armchair_l1: WHIM — was heading for tv_stand_l1 (tidied away to its usual place) but landed on armchair_l1 instead [ep:tidy_mood:resident_1:d25]
+          shoes_omar (from entry_floor_e1) → shoe_rack_e1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          snack_bowl_shared (from sink_k1) → dish_rack_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on dish_rack_k1 instead [ep:tidy_mood:resident_1:d25]
+          spatula_shared (from cupboard_k1) → drawer_k_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          vitamins_omar (from kitchen_table_k1) → counter_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          water_bottle_leo (from entry_hook_e1) → dish_rack_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+          water_bottle_omar (from sink_k1) → dish_rack_k1: tidied away to its usual place [ep:tidy_mood:resident_1:d25]
+18:43  Omar leaves for grocery shopping (back 19:43); takes keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar, shopping_bag_shared
+19:43  Omar is back from grocery shopping
+          jacket_omar → shoe_rack_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on shoe_rack_e1 instead
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → entry_hook_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_hook_e1 instead
+          shopping_bag_shared → pantry_shelf_k1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for cooking dinner
+19:43  Omar — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+20:05  Leo leaves for a walk (back 21:05); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+20:18  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+          pot_shared → sink_k1: used, so it goes in the sink
+          spatula_shared → sink_k1: used, so it goes in the sink
+20:18  Omar — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from pantry_shelf_k1
+20:33  Omar finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+20:33  Omar — dinner in the kitchen; brings plate_omar from dish_rack_k1, glass_omar from pantry_shelf_k1, phone_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+21:05  Leo is back from a walk
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps jacket_leo, keys_leo, phone_leo, shoes_leo for walking the dog
+21:05  Leo leaves for walking the dog (back 21:35); takes phone_leo, keys_leo, jacket_leo, shoes_leo, dog_leash_shared
+21:13  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → kitchen_table_k1: left where it was used
+          plate_omar → cupboard_k1: WHIM — was heading for kitchen_table_k1 (left where it was used, too tired to put it away) but landed on cupboard_k1 instead [ep:deadline:resident_1:d24:relief]
+          water_bottle_omar → sink_k1: used, so it goes in the sink
+21:13  Omar — washing up in the kitchen
+21:28  Omar finishes washing up
+          bowl_omar (from sink_k1) → pantry_shelf_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on pantry_shelf_k1 instead
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          pan_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_omar (from sink_k1) → dish_rack_k1: tidied away to its usual place
+21:35  Leo is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          phone_leo → nightstand_b1: put away in its usual place after the trip
+          shoes_leo → entry_floor_e1: dropped at the door instead of being put away
+21:35  Leo — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+21:40  Omar — evening TV in the living (bout 1/2); brings remote_shared from armchair_l1, phone_omar from kitchen_table_k1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+21:45  Leo finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+21:45  Leo — cooking dinner in the kitchen; brings phone_leo from nightstand_b1, pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1
+22:20  Leo finishes cooking dinner
+          cutting_board_shared → drawer_k_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on drawer_k_k1 instead
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          pot_shared → sink_k1: used, so it goes in the sink
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+          spatula_shared → sink_k1: used, so it goes in the sink
+22:20  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from cupboard_k1, water_bottle_leo from dish_rack_k1
+22:39  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+22:39  Omar — a short break in the kitchen
+23:00  Leo finishes dinner
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → dish_rack_k1: WHIM — was heading for sink_k1 (used, so it goes in the sink) but landed on dish_rack_k1 instead
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+23:00  Leo — washing up in the kitchen
+23:12  Omar — evening TV in the living (bout 2/2); brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_omar from sink_k1, glasses_omar from nightstand_b1
+23:15  Leo finishes washing up
+          bowl_omar (from pantry_shelf_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from drawer_k_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from kitchen_table_k1) → dish_rack_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on dish_rack_k1 instead
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          mug_omar (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from coffee_table_l1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+23:15  Leo — evening TV in the living; brings phone_leo from nightstand_b1, mug_leo from cupboard_k1, snack_bowl_shared from cupboard_k1
+23:29  Omar finishes evening TV
+          glasses_omar → nightstand_b1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+23:30  Omar — playing with the dog in the living
+23:50  Omar — getting ready for bed in the bedroom_1; brings charger_omar from desk_b1, glass_omar from cupboard_k1
+23:59  Omar finishes getting ready for bed
+          charger_omar → bedroom_floor_b1: WHIM — was heading for desk_b1 (put back in its usual place) but landed on bedroom_floor_b1 instead
+          glasses_omar → bed_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on bed_b1 instead
+          phone_omar → nightstand_b1: put back in its usual place
+23:59  Leo finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          phone_leo → coffee_table_l1: left where it was used
+          remote_shared → side_table_l1: WHIM — was heading for tv_stand_l1 (put back in its usual place) but landed on side_table_l1 instead
+```
+
+## Day 26 — Saturday
+
+**Active causes**
+
+- `ep:craving_a_snack:resident_2:d26`: Leo is craving a snack and fits one in when there is a gap; the bowl and glass tend to be left out (14:51–15:21).
+- `ep:long_call_with_a_friend:resident_2:d26`: Leo gets a long call from a friend and takes it on the couch; the phone is left there afterwards (19:34–20:19).
+
+Internal states (0–1): Omar energy 0.39, hurriedness 0.37, distraction 0.70; Leo energy 0.82, hurriedness 0.40, distraction 0.44
+
+**Timeline**
+
+```
+06:48  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from bed_b1, razor_omar from sink_ba_ba1
+06:58  Leo — morning routine in the bathroom; brings phone_leo from coffee_table_l1
+07:08  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+          skincare_omar → sink_ba_ba1: WHIM — was heading for bathroom_shelf_ba1 (put back in its usual place) but landed on sink_ba_ba1 instead
+          keeps phone_omar for walking the dog
+07:08  Omar leaves for walking the dog (back 07:33); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:18  Leo finishes morning routine
+          phone_leo → nightstand_b1: put back in its usual place
+07:33  Omar is back from walking the dog
+          dog_leash_shared → entry_floor_e1: WHIM — was heading for entry_table_e1 (dropped at the door instead of being put away) but landed on entry_floor_e1 instead
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (dropped at the door instead of being put away) but landed on entry_floor_e1 instead
+          shoes_omar → entry_hook_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_hook_e1 instead
+07:33  Omar — a shower in the bathroom
+07:39  Leo — a shower in the bathroom
+07:48  Omar finishes a shower
+          towel_omar → towel_rack_ba1: put back in its usual place
+07:48  Omar — breakfast in the kitchen; brings phone_omar from entry_floor_e1, mug_omar from cupboard_k1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+07:54  Leo finishes a shower
+          towel_leo → towel_rack_ba1: put back in its usual place
+07:54  Leo — breakfast in the kitchen; brings phone_leo from nightstand_b1, mug_leo from coffee_table_l1, bowl_leo from cupboard_k1
+08:06  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          mug_omar → sink_k1: used, so it goes in the sink
+          vitamins_omar → counter_k1: put back in its usual place
+          keeps phone_omar for work
+08:06  Omar leaves for work (back 17:36); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+08:19  Leo finishes breakfast
+          bowl_leo → sink_k1: used, so it goes in the sink
+          mug_leo → sink_k1: used, so it goes in the sink
+          keeps phone_leo for work
+08:20  Leo leaves for work (back 17:50); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+17:36  Omar is back from work
+          backpack_omar → entry_hook_e1: put away in its usual place after the trip
+          charger_omar → entry_hook_e1: stays in the backpack
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          laptop_omar → entry_hook_e1: stays in the backpack
+          lunchbox_omar → entry_hook_e1: stays in the backpack
+          notebook_omar → entry_hook_e1: stays in the backpack
+          scarf_omar → entry_hook_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          sunglasses_omar → entry_table_e1: put away in its usual place after the trip
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps phone_omar for vacuuming
+17:50  Leo is back from work
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          charger_leo → entry_hook_e1: stays in the backpack
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          laptop_leo → entry_hook_e1: stays in the backpack
+          shoes_leo → entry_floor_e1: WHIM — was heading for shoe_rack_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          wallet_leo → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          water_bottle_leo → entry_hook_e1: stays in the backpack
+          keeps phone_leo for a snack
+17:50  Leo — a snack in the kitchen [because of ep:craving_a_snack:resident_2:d26]; brings snack_bowl_shared from sink_k1, glass_leo from dish_rack_k1
+18:10  Leo finishes a snack
+          glass_leo → sink_k1: used, so it goes in the sink [ep:craving_a_snack:resident_2:d26]
+          snack_bowl_shared → sink_k1: used, so it goes in the sink [ep:craving_a_snack:resident_2:d26]
+          keeps phone_leo for grocery shopping
+18:10  Leo leaves for grocery shopping (back 19:10); takes keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo, shopping_bag_shared
+18:55  Omar — vacuuming in the living (bout 1/2) (vacuuming habit); brings vacuum_cleaner_shared from storage_floor_s1
+19:10  Leo is back from grocery shopping
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_hook_e1: put away in its usual place after the trip
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          shopping_bag_shared → pantry_shelf_k1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo for cooking dinner
+19:10  Leo — cooking dinner in the kitchen; brings pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1, recipe_book_shared from pantry_shelf_k1
+19:11  Omar finishes vacuuming
+          vacuum_cleaner_shared → storage_shelf_s1: WHIM — was heading for storage_floor_s1 (put back in its usual place) but landed on storage_shelf_s1 instead
+19:11  Omar — a short break in the kitchen (vacuuming habit)
+19:23  Omar — vacuuming in the living (bout 2/2) (vacuuming habit); brings vacuum_cleaner_shared from storage_shelf_s1
+19:34  Omar finishes vacuuming
+          vacuum_cleaner_shared → storage_shelf_s1: WHIM — was heading for storage_floor_s1 (put back in its usual place) but landed on storage_shelf_s1 instead
+          keeps phone_omar for walking the dog
+19:35  Omar leaves for walking the dog (back 20:05); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+19:45  Leo finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          pan_shared → sink_k1: used, so it goes in the sink
+          phone_leo → counter_k1: left where it was used [ep:long_call_with_a_friend:resident_2:d26]
+          pot_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          recipe_book_shared → pantry_shelf_k1: put back in its usual place
+19:45  Leo — unpacking the shopping in the kitchen (grocery_run habit); brings shopping_bag_shared from pantry_shelf_k1
+20:00  Leo finishes unpacking the shopping
+          shopping_bag_shared → pantry_shelf_k1: put back in its usual place
+20:00  Leo — dinner in the kitchen; brings plate_leo from dish_rack_k1, glass_leo from sink_k1, phone_leo from counter_k1, water_bottle_leo from entry_hook_e1
+20:05  Omar is back from walking the dog
+          dog_leash_shared → entry_hook_e1: put away in its usual place after the trip
+          jacket_omar → wardrobe_b1: put away in its usual place after the trip; entry_hook_e1 was full, so it went to wardrobe_b1
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → entry_table_e1: dropped at the door instead of being put away
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+20:05  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+20:15  Omar finishes feeding the dog
+          dog_food_bag_shared → pantry_shelf_k1: put back in its usual place
+20:15  Omar — cooking dinner in the kitchen; brings phone_omar from entry_table_e1, pan_shared from sink_k1, cutting_board_shared from sink_k1, pot_shared from dish_rack_k1, recipe_book_shared from pantry_shelf_k1
+20:40  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          plate_leo → sink_k1: used, so it goes in the sink
+          water_bottle_leo → sink_k1: used, so it goes in the sink
+20:40  Leo — a call with family in the bedroom_1 [because of ep:long_call_with_a_friend:resident_2:d26]
+20:50  Omar finishes cooking dinner
+          cutting_board_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          pan_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          pot_shared → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          spatula_shared → cupboard_k1: WHIM — was heading for counter_k1 (used, so it goes in the sink; sink_k1 was full, so it went to counter_k1) but landed on cupboard_k1 instead
+20:50  Omar — dinner in the kitchen; brings plate_omar from cupboard_k1, glass_omar from nightstand_b1, water_bottle_omar from dish_rack_k1
+21:20  Leo finishes a call with family
+          phone_leo → nightstand_b1: put back in its usual place [ep:long_call_with_a_friend:resident_2:d26]
+21:20  Leo — washing up in the kitchen
+21:30  Omar finishes dinner
+          glass_omar → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          phone_omar → nightstand_b1: put back in its usual place
+          plate_omar → dish_rack_k1: used, so it goes in the sink; sink_k1 was full, so it went to dish_rack_k1
+          water_bottle_omar → counter_k1: used, so it goes in the sink; sink_k1 was full, so it went to counter_k1
+21:30  Omar — washing up in the kitchen
+21:35  Leo finishes washing up
+          bowl_leo (from sink_k1) → pantry_shelf_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on pantry_shelf_k1 instead
+          bowl_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          cutting_board_shared (from dish_rack_k1) → counter_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          kitchen_knife_shared (from counter_k1) → drawer_k_k1: tidied away to its usual place
+          mug_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pan_shared (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from dish_rack_k1) → cupboard_k1: tidied away to its usual place
+          snack_bowl_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from cupboard_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_leo (from sink_k1) → dish_rack_k1: tidied away to its usual place
+          water_bottle_omar (from counter_k1) → dish_rack_k1: tidied away to its usual place
+21:45  Omar finishes washing up
+          bowl_leo (from pantry_shelf_k1) → cupboard_k1: tidied away to its usual place
+21:45  Omar — evening TV in the living (bout 1/4); brings remote_shared from side_table_l1, phone_omar from nightstand_b1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+22:04  Omar finishes evening TV
+          glasses_omar → nightstand_b1: put back in its usual place
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → armchair_l1: WHIM — was heading for coffee_table_l1 (left where it was used) but landed on armchair_l1 instead
+22:04  Omar — a short break in the kitchen
+22:15  Omar — evening TV in the living (bout 2/4); brings remote_shared from tv_stand_l1, glasses_omar from nightstand_b1, snack_bowl_shared from armchair_l1
+22:49  Omar finishes evening TV
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → side_table_l1: WHIM — was heading for coffee_table_l1 (left where it was used) but landed on side_table_l1 instead
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+22:49  Omar — a short break in the kitchen
+23:00  Omar — evening TV in the living (bout 3/4); brings remote_shared from side_table_l1, mug_omar from sink_k1, glasses_omar from nightstand_b1, snack_bowl_shared from sink_k1
+23:13  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+23:13  Omar — a short break in the kitchen
+23:24  Omar — evening TV in the living (bout 4/4); brings blanket_shared from couch_l1, mug_omar from sink_k1
+23:33  Leo — ironing in the bedroom_1 (ironing habit); brings iron_shared from storage_shelf_s1, ironing_board_shared from storage_floor_s1, phone_leo from nightstand_b1
+23:34  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+23:35  Omar — getting ready for bed in the bedroom_1; brings charger_omar from entry_hook_e1, glass_omar from cupboard_k1, glasses_omar from coffee_table_l1
+23:50  Omar finishes getting ready for bed
+          charger_omar → desk_b1: put back in its usual place
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → nightstand_b1: put back in its usual place
+23:50  Omar — bed in the bedroom_1
+23:59  Leo finishes ironing
+          iron_shared → storage_floor_s1: WHIM — was heading for storage_shelf_s1 (put back in its usual place) but landed on storage_floor_s1 instead
+          ironing_board_shared → storage_floor_s1: put back in its usual place
+          phone_leo → nightstand_b1: put back in its usual place
+```
+
+## Day 27 — Sunday
+
+**Active causes**
+
+- `ep:afternoon_slump:resident_1:d27`: Omar hits an afternoon slump: things get left where they were used for a couple of hours (15:14–17:04).
+- `ep:on_a_roll:resident_2:d27`: Leo is on a roll with work: sessions run long, breaks are short, the mug stays on the desk (14:14–17:53).
+
+Internal states (0–1): Omar energy 0.44, hurriedness 0.39, distraction 0.63; Leo energy 0.91, hurriedness 0.10, distraction 0.23
+
+**Timeline**
+
+```
+05:33  Leo — morning routine in the bathroom; brings phone_leo from nightstand_b1
+05:53  Leo finishes morning routine
+          keeps phone_leo for work
+06:36  Omar — morning routine in the bathroom; brings phone_omar from nightstand_b1, glasses_omar from nightstand_b1, skincare_omar from sink_ba_ba1, razor_omar from sink_ba_ba1
+06:56  Omar finishes morning routine
+          glasses_omar → nightstand_b1: put back in its usual place
+          razor_omar → sink_ba_ba1: put back in its usual place
+          keeps phone_omar for walking the dog
+07:26  Omar leaves for walking the dog (back 07:51); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+07:51  Omar is back from walking the dog
+          dog_leash_shared → entry_table_e1: dropped at the door instead of being put away
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+          keeps phone_omar for breakfast
+07:51  Omar — breakfast in the kitchen; brings mug_omar from sink_k1, bowl_omar from cupboard_k1, vitamins_omar from counter_k1
+08:03  Leo leaves for work (back 17:33); takes backpack_leo (with charger_leo, laptop_leo, water_bottle_leo), keys_leo, phone_leo, wallet_leo, hat_leo, jacket_leo, shoes_leo
+08:06  Omar finishes breakfast
+          bowl_omar → sink_k1: used, so it goes in the sink
+          vitamins_omar → counter_k1: put back in its usual place
+          keeps phone_omar for work
+08:06  Omar leaves for work (back 17:36); takes backpack_omar (with charger_omar, laptop_omar, lunchbox_omar, notebook_omar), keys_omar, phone_omar, wallet_omar, jacket_omar, scarf_omar, shoes_omar, sunglasses_omar
+17:33  Leo is back from work
+          backpack_leo → entry_hook_e1: put away in its usual place after the trip
+          charger_leo → entry_hook_e1: stays in the backpack
+          hat_leo → entry_hook_e1: put away in its usual place after the trip
+          jacket_leo → entry_floor_e1: WHIM — was heading for entry_hook_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          keys_leo → entry_table_e1: put away in its usual place after the trip
+          laptop_leo → entry_hook_e1: stays in the backpack
+          shoes_leo → shoe_rack_e1: put away in its usual place after the trip
+          wallet_leo → entry_table_e1: put away in its usual place after the trip
+          keeps phone_leo, water_bottle_leo for dinner
+17:36  Omar is back from work
+          backpack_omar → entry_floor_e1: dropped at the door instead of being put away
+          charger_omar → entry_floor_e1: stays in the backpack
+          laptop_omar → entry_floor_e1: stays in the backpack
+          lunchbox_omar → entry_floor_e1: stays in the backpack
+          notebook_omar → entry_floor_e1: stays in the backpack
+          keeps jacket_omar, keys_omar, phone_omar, scarf_omar, shoes_omar, sunglasses_omar, wallet_omar for a walk
+          scarf_omar → entry_hook_e1: left at home before a walk
+18:55  Omar leaves for a walk (back 19:55); takes keys_omar, phone_omar, wallet_omar, jacket_omar, shoes_omar, sunglasses_omar; never takes scarf_omar on a walk
+19:18  Leo — dinner in the kitchen; brings plate_leo from cupboard_k1, glass_leo from cupboard_k1, water_bottle_leo from ON_PERSON
+19:55  Omar is back from a walk
+          sunglasses_omar → entry_floor_e1: WHIM — was heading for entry_table_e1 (put away in its usual place after the trip) but landed on entry_floor_e1 instead
+          wallet_omar → entry_table_e1: put away in its usual place after the trip
+          keeps jacket_omar, keys_omar, phone_omar, shoes_omar for walking the dog
+19:55  Omar leaves for walking the dog (back 20:25); takes phone_omar, keys_omar, jacket_omar, shoes_omar, dog_leash_shared
+19:58  Leo finishes dinner
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+          plate_leo → sink_k1: used, so it goes in the sink
+20:13  Leo — washing up in the kitchen
+20:25  Omar is back from walking the dog
+          dog_leash_shared → entry_table_e1: dropped at the door instead of being put away
+          jacket_omar → entry_hook_e1: put away in its usual place after the trip
+          keys_omar → entry_table_e1: put away in its usual place after the trip
+          phone_omar → nightstand_b1: put away in its usual place after the trip
+          shoes_omar → shoe_rack_e1: put away in its usual place after the trip
+20:25  Omar — feeding the dog in the kitchen; brings dog_food_bag_shared from pantry_shelf_k1
+20:28  Leo finishes washing up
+          bowl_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_leo (from sink_k1) → cupboard_k1: tidied away to its usual place
+          glass_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          mug_omar (from kitchen_table_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from sink_k1) → counter_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on counter_k1 instead
+          snack_bowl_shared (from sink_k1) → cupboard_k1: tidied away to its usual place
+          water_bottle_leo (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+20:28  Leo — ironing in the bedroom_1 (ironing habit); brings iron_shared from storage_floor_s1, ironing_board_shared from storage_floor_s1, phone_leo from nightstand_b1
+20:35  Omar — cooking dinner in the kitchen; brings phone_omar from nightstand_b1, pan_shared from cupboard_k1, kitchen_knife_shared from drawer_k_k1, spatula_shared from drawer_k_k1, pot_shared from cupboard_k1
+21:08  Leo finishes ironing
+          iron_shared → storage_shelf_s1: put back in its usual place
+          ironing_board_shared → storage_floor_s1: put back in its usual place
+21:10  Omar finishes cooking dinner
+          cutting_board_shared → sink_k1: used, so it goes in the sink
+          kitchen_knife_shared → sink_k1: used, so it goes in the sink
+          spatula_shared → sink_k1: used, so it goes in the sink
+21:10  Omar — dinner in the kitchen; brings plate_omar from cupboard_k1, glass_omar from cupboard_k1, water_bottle_omar from dish_rack_k1
+21:50  Omar finishes dinner
+          glass_omar → sink_k1: used, so it goes in the sink
+          phone_omar → kitchen_table_k1: left where it was used
+          plate_omar → sink_k1: used, so it goes in the sink
+21:50  Omar — washing up in the kitchen
+22:05  Omar finishes washing up
+          cutting_board_shared (from sink_k1) → counter_k1: tidied away to its usual place
+          glass_omar (from sink_k1) → dish_rack_k1: WHIM — was heading for cupboard_k1 (tidied away to its usual place) but landed on dish_rack_k1 instead
+          kitchen_knife_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          pan_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          plate_leo (from counter_k1) → cupboard_k1: tidied away to its usual place
+          plate_omar (from sink_k1) → cupboard_k1: tidied away to its usual place
+          pot_shared (from counter_k1) → cupboard_k1: tidied away to its usual place
+          spatula_shared (from sink_k1) → drawer_k_k1: tidied away to its usual place
+          water_bottle_omar (from kitchen_table_k1) → dish_rack_k1: tidied away to its usual place
+22:05  Omar — evening TV in the living (bout 1/3); brings phone_omar from kitchen_table_k1, blanket_shared from couch_l1, mug_omar from cupboard_k1, glasses_omar from nightstand_b1, snack_bowl_shared from cupboard_k1
+22:34  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → dresser_b1: WHIM — was heading for nightstand_b1 (put back in its usual place) but landed on dresser_b1 instead
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+22:34  Omar — a short break in the kitchen
+22:50  Omar — evening TV in the living (bout 2/3); brings remote_shared from tv_stand_l1, blanket_shared from couch_l1, mug_omar from sink_k1, glasses_omar from dresser_b1, snack_bowl_shared from sink_k1
+23:00  Omar finishes evening TV
+          glasses_omar → nightstand_b1: put back in its usual place
+          remote_shared → side_table_l1: WHIM — was heading for tv_stand_l1 (put back in its usual place) but landed on side_table_l1 instead
+23:00  Omar — a short break in the kitchen
+23:16  Omar — evening TV in the living (bout 3/3); brings remote_shared from side_table_l1, glasses_omar from nightstand_b1
+23:25  Leo — getting ready for bed in the bedroom_1; brings charger_leo from entry_hook_e1, glass_leo from cupboard_k1
+23:40  Leo finishes getting ready for bed
+          charger_leo → desk_b1: put back in its usual place
+          glass_leo → sink_k1: used, so it goes in the sink
+          phone_leo → nightstand_b1: put back in its usual place
+23:40  Leo — bed in the bedroom_1
+23:55  Omar finishes evening TV
+          blanket_shared → couch_l1: put back in its usual place
+          glasses_omar → nightstand_b1: put back in its usual place
+          mug_omar → sink_k1: used, so it goes in the sink
+          remote_shared → tv_stand_l1: put back in its usual place
+          snack_bowl_shared → sink_k1: used, so it goes in the sink
+23:55  Omar — playing with the dog in the living
+23:59  Omar finishes playing with the dog
+          phone_omar → nightstand_b1: put back in its usual place
+```

@@ -1,0 +1,17 @@
+64 rows; days [13, 14]
+day  n  acc(greedy)  acc(mcq)  verbalized  agreement  token
+ 13  32     91%         78%    0.886      0.875     0.934
+ 14  32     38%         62%    0.873      0.731     0.886
+
+channel: mean on correct vs wrong greedy answers (separation); token channel scored on the mcq answer too
+  top_prob   vs correct    : correct 0.884 (n=41)  wrong 0.872 (n=23)  sep +0.012
+  conf_agree vs correct    : correct 0.873 (n=41)  wrong 0.678 (n=23)  sep +0.195
+  conf_token vs correct    : correct 0.923 (n=41)  wrong 0.887 (n=23)  sep +0.036
+  conf_token vs mcq_correct: correct 0.944 (n=45)  wrong 0.830 (n=19)  sep +0.114
+
+reliability bins (share) per channel
+  top_prob   - | - | 100% (2) | 67% (6) | 64% (58)
+  conf_agree - | 50% (4) | 29% (14) | 30% (10) | 76% (46)
+  conf_token - | - | 67% (3) | 56% (9) | 65% (52)
+
+E9: verbalized day 13 0.886 vs day 14 0.873; agreement 0.875 vs 0.731; token 0.934 vs 0.886; accuracy 91% vs 38%
