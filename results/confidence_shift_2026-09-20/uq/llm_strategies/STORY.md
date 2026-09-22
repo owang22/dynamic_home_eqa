@@ -42,8 +42,8 @@ What happens next separates memories by what they keep:
   trust to the short memories at the break and back to the long one on the return, so no second break.
 - The LLM buffer with no message recovers slowly (58 → 66 → 74 → 77%) and shows NO second break — but on cold
   questions it is only 41% inside the spell: what looks like recovery is mostly same-day feedback about the same
-  object, not a learned sick routine. Retrieval memory (no message): 56 → 64% in the spell, cold 44%, 76% on the
-  first days back. Long-context: 61 → 71%, cold 52%. Reflection: 66 → 78%, and its rise above its own lead-up is the
+  object, not a learned sick routine. Retrieval memory (no message): 56 → 64% in the spell, cold 43%, 76% on the
+  first days back. Long-context: 61 → 71%, cold 49%. Reflection: 66 → 78%, and its rise above its own lead-up is the
   same day-level effect — cold it is 68 → 35 → 62%, below where it started.
 
 ## (b) What a one-sentence message buys, and costs, per memory kind
@@ -75,8 +75,10 @@ two told arms compared head to head do not show it: +4.8 ± 2.9 (n=18) on all qu
 ones, neither clearing the bar. What those two numbers do buy is a bound — a repair larger than about 11 points on
 all questions, or 19 on cold ones, is excluded.
 
-For the routine table the same sentence buys less (58 → 62% on the first sick days, cold 25 → 37%) and costs the same
-on the return (cold 38 → 27%), because the table itself is a weaker memory here.
+For the routine table the same sentence buys less (58 → 62% on the first sick days, cold 14 → 23%) and costs the same
+on the return (cold 38 → 27%), because the table itself is a weaker memory here. Paired, that first-sick-days gain is
++3.3 ± 1.5 on all questions and +10.6 ± 4.4 cold (n=10) — small, but detected, and it was reported as no difference
+before the bar changed.
 
 ## (c) The LLM's stated confidence is flat while the counters' moves with the stage
 
@@ -86,22 +88,22 @@ accuracy falls 78 → 58; retrieval 88 → 85 (accuracy 81 → 56); long-context
 The LLM never knows when it is wrong.
 
 Removing each method's own level (a monotone map from stated confidence to accuracy fitted on the lead-up only) leaves
-the tracking: the buffer is +15 points over-confident on the first sick days, retrieval +12, reflection +8 — and near
+the tracking: the buffer is +15 points over-confident on the first sick days, retrieval +17, long-context +16, reflection +4 — and near
 zero on the lead-up by construction. An adaptive answer-or-ask gate on the stated confidence (target 10% wrong among
 what it answers) has to ask 55% of the time on the shift days (29% before) and still misses 28% of what it answers; the
 gate does tighten at the shift (its confidence bar rises 0.78 → 0.90), it just cannot get ahead of a confidence signal
 that does not move. With the start message the gate asks 41% and misses 18% — the message helps the gate more than
 the confidence ever will.
 
-Read three ways on the first sick day (buffer, no message, 3 households, bounded day list): 31% right while it says
-84% (verbalized), 91% (agreement across five samples), 75% (token probability on a multiple choice). None of the three
+Read three ways on the first sick day (buffer, no message, 3 households, bounded day list): 48% right while it says
+86% (verbalized), 87% (agreement across five samples), 75% (token probability on a multiple choice). None of the three
 channels reads the drop. Sample agreement is the worst of the three: the model is confidently consistent when wrong.
 
 ## (d) What conformal sets on the model's own probabilities do and do not fix
 
 Honest sets built online on the model's multiple-choice probabilities (90% target, same machinery as the classical
-honest-sets agents) do what they promise — coverage 88–100% across the listed days — but on the first sick day they
-need 7.6 of 10 options to do it, shrinking to 5.5 by day 20 and 4.2 on the return. They fix the coverage guarantee, not
+honest-sets agents) do what they promise — coverage 82–100% across the listed days — but on the first sick day they
+need 7.3 of 10 options to do it, shrinking to 4.6 by day 20 and about 4.7 on the return. They fix the coverage guarantee, not
 the informativeness: the set says "I am no longer sure" by getting large, which is honest, but it cannot tell the
 robot WHERE to look, and it inherits the flat probabilities underneath (the token-probability channel is the one
 being calibrated). On the classical side the same construction on the timetable balloons to 15–20 places for a day or
@@ -114,7 +116,7 @@ benefits from the feedback to the first. Cold-only, the buffer with no message h
 66%), 58% on the return (day-level 74%); retrieval 44% (73%); long-context 52% (72%); the routine table 25% (63%).
 Every memory's cold lead-up figure is far above this — buffer 75%, retrieval 79%, long-context 70%, reflection 68%,
 routine table 44% — so the cold drop on the first sick days is 30 to 54 points, roughly double the day-level drop. The
-message's effect is largest exactly here (41 → 79%), which is the point: a sentence is what these memories cannot get
+message's effect is largest exactly here (41 → 78%), which is the point: a sentence is what these memories cannot get
 from evidence.
 
 ## A message about one person is applied to that person's things only
