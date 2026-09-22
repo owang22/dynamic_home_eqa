@@ -1,0 +1,470 @@
+#!/usr/bin/env python3
+"""Live extractor for in-progress and finished LLM-strategy arms: while an arm is still running,
+baselines.patrol.llm only has calls.jsonl (streamed, one line per LLM call) — run_log.jsonl is written once at the
+very end. This script reads whichever is on disk right now for every known arm directory, joins each answered
+question back to the bank's truth (by question_id, exact match — the same id the arm used as its own "where" tag
+on every question call, so the join needs no guessing), and writes per-day [n, ok, sum_raw, sum_leadcal] per
+household per arm into story_extra.json under "llm_live", one block per population this study has LLM arms on:
+"household" (sick10_all, this session's own runs), "partial" (sick10_partial, this session's wide/chain runs and
+the workshop session's partial/partial_told runs), and "person" (sick10_owner, the workshop session's one-person-
+sick runs: run1 "no message", run2_told "start message" (told on the first sick day), run3_toldret "start + end
+messages" (also told on the first return day)). All bank files an arm was actually run against were confirmed
+byte-identical (or, for run3_toldret, identical apart from the header's hint_messages list) to this study's own
+regime banks before wiring the join, so questions/truth need no separate loading per source. On-disk run
+directory names (run1/run2_told/run3_toldret, this session's own chain_person/{nottold,told_entry,
+told_entryreturn}) are kept as they are -- only the user-facing labels and the keys below are "no message" /
+"start message" / "start + end messages", per Oliver's naming decision; msg_tag() below is the one place that maps
+between the two.
+
+sum_leadcal is a real lead-day (days 1-13) calibration fit, same method as gap_extra.py (bin by confidence, then
+pool-adjacent-violators over the ordered bins so the map is monotone), applied per arm pooled across whatever
+households currently have lead-day data for it — reused from gap_extra.py rather than re-implemented.
+
+Safe to re-run at any point, including while arms are still writing: run_log.jsonl is preferred when present
+(clean, authoritative); calls.jsonl is parsed and filtered to rows whose "where" matches a real question_id
+otherwise (notes/noticing calls use different where-tags and are skipped automatically by the join failing).
+
+    python3 tools/llm_live_extra.py  (run from results/regime_search)
+"""
+import glob
+import json
+import os
+import re
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from analyze import load  # noqa
+from gap_extra import fit_lead_map, apply_map, LEAD_DAYS  # noqa
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+LLM_DIR = os.path.join(os.path.dirname(ROOT), "confidence_shift_2026-09-20", "uq", "llm_strategies")
+FM = "/home/oliver/robot/dynamic_home_eqa_fm/results/fm_memory"
+LABEL = "t03"
+ARM_RE = re.compile(r"^(hh_s\d+)_(t\d+)_([a-z0-9]+)_(nottold|told)_look(on|off)$")
+
+MEM_NAME = {"naive": "LLM, naive memory (buffer)", "recent": "LLM, recent-K memory", "summary": "LLM, nightly summary",
+            "routine": "LLM, routine notes", "routine7": "LLM, 7-day routine notes", "retrieval": "LLM, retrieval memory",
+            "longcontext": "LLM, long-context memory", "reflect": "LLM, reflection notes"}
+# Oliver's naming decision: the three told-status arms of every memory kind are "no message" / "start message"
+# (told on the first sick day) / "start + end messages" (also told on the first return day) -- everywhere
+# user-facing (page, tables, EXPECTATIONS/STATUS/REPORT/problems_found, and these story_extra.json keys). On-disk
+# run directory names keep their old "told"/"nottold"/"entry"/"entryreturn" spelling (5a's layout, this session's
+# own chain_person/*); msg_tag() is the one place that maps a (told, key_tag) pair from a directory name to the
+# new key/label vocabulary.
+MSG_LABEL = {"nomsg": " · no message", "startmsg": " · start message", "startend": " · start + end messages"}
+
+
+def msg_tag(told: bool, key_tag) -> str:
+    if not told:
+        return "nomsg"
+    return "startend" if key_tag == "entryreturn" else "startmsg"
+# 5-window report used to validate a join against a partner's own numbers, mirroring gap_extra.py's 3-window
+# REPORT_WINDOWS but split further (14-16 vs the rest of the sick spell; 24-26 vs the rest of the return). "lead"
+# here is the last 5 lead days (9-13, the workshop's and this study's own "last5lead" convention elsewhere, e.g.
+# uq_windows.py/shared_state_extra.py) -- the saturated end of the ramp-up, not the full 1-13 climb; averaging in
+# days 1-8 pulls a ~78% figure down to ~74% and was the one mismatch found while validating this against 5a's
+# numbers (see PROBLEMS/EXPECTATIONS notes for the check).
+WINDOWS5 = {"lead": set(range(9, 14)), "d14_16": {14, 15, 16}, "d17_23": set(range(17, 24)),
+            "d24_26": {24, 25, 26}, "d27_31": set(range(27, 32))}
+
+# (glob pattern for arm dirs, population key, bank dir, key tag [None = plain mem_kind_told key], mem_kind allow-list
+# [None = all]) -- population determines which bank file (and so which truth) an arm's answers are checked against.
+SOURCES = [
+    # the sick10_all ("household") LLM arms were stopped at ~100-120/744 when Oliver redirected this session to
+    # get the one-person suite clean first (see STATUS.md); removed from the page entirely rather than shown as
+    # stale/stopped lines -- the raw logs are untouched on disk (wide/, chain/sick10_all/) if resumed later.
+    (f"{LLM_DIR}/chain/sick10_partial/*", "partial", f"{ROOT}/sick10_partial/banks", None, None),
+    (f"{FM}/partial/*", "partial", f"{ROOT}/sick10_partial/banks", None, None),
+    (f"{FM}/partial_told/*", "partial", f"{ROOT}/sick10_partial/banks", None, None),
+    # one-person-sick population: run1 = "no message"; run2_told = "start message" (told when the person gets
+    # sick, day 14 hint, only); run3_toldret = "start + end messages" (also told on the return, day 24) --
+    # distinct conditions, kept as distinct arms rather than pooled, since an end message should change exactly
+    # the return-window numbers.
+    (f"{FM}/run1/*", "person", f"{ROOT}/sick10_owner/banks", None, {"naive", "routine7"}),
+    (f"{FM}/run2_told/*", "person", f"{ROOT}/sick10_owner/banks", "entry", {"naive", "routine7"}),
+    (f"{FM}/run3_toldret/*", "person", f"{ROOT}/sick10_owner/banks", "entryreturn", {"naive", "routine7"}),
+    # this session's own person-regime chain (retrieval/longcontext/reflect), same bank/cache-reuse pattern as
+    # run1/run2_told/run3_toldret above -- separate --out dirs per told-status, see run_chain_person.sh
+    (f"{LLM_DIR}/chain_person/nottold/*", "person", f"{ROOT}/sick10_owner/banks", None, None),
+    (f"{LLM_DIR}/chain_person/told_entry/*", "person", f"{ROOT}/sick10_owner/banks", "entry", None),
+    (f"{LLM_DIR}/chain_person/told_entryreturn/*", "person", f"{ROOT}/sick10_owner/banks", "entryreturn", None),
+]
+
+
+def arm_answers(arm_dir):
+    """-> {question_id: (location, confidence)}, from run_log.jsonl if finished, else calls.jsonl."""
+    rl = os.path.join(arm_dir, "run_log.jsonl")
+    if os.path.exists(rl):
+        out = {}
+        for l in open(rl):
+            r = json.loads(l)
+            out[r["question_id"]] = (r.get("answer"), r.get("top_prob"))
+        return out
+    cp = os.path.join(arm_dir, "calls.jsonl")
+    if not os.path.exists(cp):
+        return {}
+    out = {}
+    for l in open(cp):
+        try:
+            r = json.loads(l)
+        except ValueError:
+            continue  # a partially-flushed last line while the arm is mid-write
+        qid = r.get("where")
+        if not qid or qid in out:
+            continue
+        try:
+            c = json.loads(r["completion"])
+        except (ValueError, TypeError, KeyError):
+            continue
+        loc = c.get("location")
+        conf = c.get("confidence")
+        if loc is None:
+            continue
+        out[qid] = (loc, float(conf) if isinstance(conf, (int, float)) else 0.0)
+    return out
+
+
+class AskGate:
+    """Adaptive-conformal answer-or-ask gate on a model's OWN stated confidence (Gibbs & Candes-style decaying-step
+    online control, same math as DecayingStepConformal in uq_agents.py, but re-derived for a scalar confidence
+    rather than a candidate set — see uq/problems_found.md for why the two need opposite update signs). q is the
+    MINIMUM confidence required to trust the model's own answer instead of asking the resident; asking always
+    succeeds (found-it feedback gives the truth either way), so a "miss" only exists among answered questions.
+    Target: among questions the gate lets through, roughly `alpha` should be wrong.
+    """
+
+    def __init__(self, alpha: float = 0.10, eta0: float = 0.05, eps: float = 0.1, eta_min: float = 0.005, warm: int = 20):
+        self.alpha, self.eta0, self.eps, self.eta_min, self.warm = alpha, eta0, eps, eta_min, warm
+        self.q = 0.5
+        self.t = 0
+        self._first: list = []
+
+    def decide(self, confidence: float) -> str:
+        return "answer" if confidence >= self.q else "ask"
+
+    def update(self, confidence: float, correct: bool):
+        decided_answer = confidence >= self.q
+        missed = decided_answer and not correct
+        if len(self._first) < self.warm:
+            self._first.append(confidence)
+            if len(self._first) == self.warm:
+                cs = sorted(self._first)
+                self.q = cs[max(0, min(self.warm - 1, int(self.alpha * (self.warm - 1))))]
+            return decided_answer, missed
+        self.t += 1
+        eta = max(self.eta_min, self.eta0 * self.t ** (-0.5 - self.eps))
+        self.q += eta * ((1.0 if missed else 0.0) - self.alpha)
+        self.q = min(max(self.q, 0.0), 1.0)
+        return decided_answer, missed
+
+
+def run_askgate(rows_chrono, alpha=0.10):
+    """rows_chrono: [(day, conf, ok), ...] roughly in time order (sorted by day; households interleaved within a
+    day, which the gate does not need to get exactly right). -> per-window {n, n_answered, ask_rate, miss_rate,
+    q_mean} plus q_before/q_after around day 14 (the "does it tighten at the shift" check)."""
+    gate = AskGate(alpha=alpha)
+    decisions = []  # (day, answered, missed, q_before_decision)
+    for day, conf, ok in rows_chrono:
+        q_before = gate.q
+        answered, missed = gate.update(conf, bool(ok))
+        decisions.append((day, answered, missed, q_before))
+    out = {}
+    for w, days in WINDOWS5.items():
+        sel = [d for d in decisions if d[0] in days]
+        n = len(sel)
+        if not n:
+            out[w] = None
+            continue
+        n_ans = sum(1 for d in sel if d[1])
+        n_miss = sum(1 for d in sel if d[1] and d[2])
+        out[w] = {"n": n, "ask_rate": round(100 * (n - n_ans) / n, 1),
+                   "miss_rate": round(100 * n_miss / n_ans, 1) if n_ans else None,
+                   "q_mean": round(sum(d[3] for d in sel) / n, 3)}
+    pre = [d for d in decisions if d[0] in LEAD_DAYS]
+    post = [d for d in decisions if d[0] in {14, 15, 16}]
+    q_pre = sum(d[3] for d in pre) / len(pre) if pre else None
+    q_post = sum(d[3] for d in post) / len(post) if post else None
+    out["_tighten_at_shift"] = {"q_lead": round(q_pre, 3) if q_pre is not None else None,
+                                 "q_shift": round(q_post, 3) if q_post is not None else None,
+                                 "tightened": bool(q_pre is not None and q_post is not None and q_post > q_pre + 0.01)}
+    return out
+
+
+def window_stats(rows, days):
+    """rows: list of (day, conf, ok, leadcal). -> (n, acc%, conf%, leadcal_conf%) over the given day set, or None."""
+    sel = [r for r in rows if r[0] in days]
+    n = len(sel)
+    if not n:
+        return None
+    ok = sum(r[2] for r in sel)
+    conf = sum(r[1] for r in sel)
+    lc = sum(r[3] for r in sel)
+    return {"n": n, "acc": round(100 * ok / n, 1), "conf": round(100 * conf / n, 1), "leadcal_conf": round(100 * lc / n, 1)}
+
+
+def main():
+    bank_cache = {}
+    populations = {"household": {}, "partial": {}, "person": {}}
+    all_rows = {}  # (pop, key) -> hh -> [(day, conf, ok, moved), ...] -- kept for the lead-fit and the 5-window report
+    n_days_by_hh = {}  # (pop, key, hh) -> bank's own n_days, so cell arrays are sized correctly (not guessed from data)
+    for pattern, pop, bank_dir, key_tag, mem_allow in SOURCES:
+        for arm_dir in sorted(glob.glob(pattern)):
+            base = os.path.basename(arm_dir)
+            m = ARM_RE.match(base)
+            if not m or not os.path.isdir(arm_dir):
+                continue
+            hh, label, mem_kind, told, look = m.groups()
+            if label != LABEL or (mem_allow and mem_kind not in mem_allow):
+                continue
+            bank_path = f"{bank_dir}/{hh}_{label}.jsonl"
+            if not os.path.exists(bank_path):
+                continue
+            if bank_path not in bank_cache:
+                bank_cache[bank_path] = load(bank_path, 2)
+            h, qs = bank_cache[bank_path]
+            n_days = h["n_days"]
+            answers = arm_answers(arm_dir)
+            if not answers:
+                continue
+            mtag = msg_tag(told == "told", key_tag)
+            key = f"llm_{mem_kind}_{mtag}"
+            arm = populations[pop].setdefault(key, {"mem_kind": mem_kind, "told": told, "key_tag": key_tag, "msg_tag": mtag, "n_total_hh": len(qs), "n_hh_done": {}})
+            rows = all_rows.setdefault((pop, key), {}).setdefault(hh, [])
+            n_days_by_hh[(pop, key, hh)] = n_days
+            n_hh_done = 0
+            for qid, (loc, conf) in answers.items():
+                q = qs.get(qid)
+                if not q or loc is None:
+                    continue
+                n_hh_done += 1
+                ok = int(loc == q["truth"])
+                rows.append((q["day"], float(conf or 0.0), ok, q["moved"]))
+            arm["n_hh_done"][hh] = n_hh_done
+
+    out = {}
+    lines = []
+    for pop, arms in populations.items():
+        pop_out = {}
+        for key, arm in arms.items():
+            by_hh = all_rows[(pop, key)]
+            lead_pts = [(c, ok) for hh, rows in by_hh.items() for (d, c, ok, mv) in rows if d in LEAD_DAYS]
+            knots = fit_lead_map(lead_pts)
+            cells = {}
+            pooled_rows = []  # (day, conf, ok, leadcal) pooled over households, for the 5-window report
+            for hh, rows in by_hh.items():
+                nd = n_days_by_hh[(pop, key, hh)]
+                arr_all = [[0, 0, 0.0, 0.0] for _ in range(nd)]
+                arr_mv = [[0, 0, 0.0, 0.0] for _ in range(nd)]
+                for d, c, ok, mv in rows:
+                    if d >= nd:
+                        continue
+                    lc = apply_map(knots, c)
+                    pooled_rows.append((d, c, ok, lc))
+                    cell = arr_all[d]
+                    cell[0] += 1; cell[1] += ok; cell[2] += c; cell[3] += lc
+                    if mv:
+                        cell2 = arr_mv[d]
+                        cell2[0] += 1; cell2[1] += ok; cell2[2] += c; cell2[3] += lc
+                cells[hh] = {"all": arr_all, "moved": arr_mv}
+
+            n_hh = len(arm["n_hh_done"])
+            mean_done = round(sum(arm["n_hh_done"].values()) / n_hh) if n_hh else 0
+            hh_sorted = sorted(arm["n_hh_done"], key=lambda h: int(h.split("_s")[1]))
+            complete = mean_done >= arm["n_total_hh"]
+            progress = ("(finished, " if complete else "(in progress, ") + f"{mean_done} of {arm['n_total_hh']}, households {', '.join(str(int(h.split('_s')[1]) + 1) for h in hh_sorted)})"
+            windows = {w: window_stats(pooled_rows, days) for w, days in WINDOWS5.items()}
+            gate_rows = sorted(((d, c, ok) for d, c, ok, lc in pooled_rows), key=lambda r: r[0])
+            askgate = run_askgate(gate_rows) if gate_rows else None
+            pop_out[key] = {"name": MEM_NAME.get(arm["mem_kind"], arm["mem_kind"]) + MSG_LABEL[arm["msg_tag"]],
+                             "mem_kind": arm["mem_kind"], "msg_tag": arm["msg_tag"], "cells": cells,
+                             "n_total_hh": arm["n_total_hh"], "n_hh_done": arm["n_hh_done"], "progress": progress,
+                             "complete": complete, "has_leadcal": bool(knots), "windows": windows, "askgate": askgate}
+            wtxt = "  ".join(f"{w}: acc {windows[w]['acc'] if windows[w] else 'NA'} conf {windows[w]['conf'] if windows[w] else 'NA'}" for w in WINDOWS5)
+            if askgate:
+                gtxt = "  ".join(f"{w}: ask {askgate[w]['ask_rate'] if askgate[w] else 'NA'}% miss {askgate[w]['miss_rate'] if askgate[w] else 'NA'}%" for w in WINDOWS5)
+                tt = askgate["_tighten_at_shift"]
+                lines.append(f"{pop}/{key}: {n_hh} households, mean {mean_done}/{arm['n_total_hh']} answered — {progress}\n    {wtxt}\n    askgate {gtxt}  tightened_at_shift={tt['tightened']} (q_lead={tt['q_lead']} q_shift={tt['q_shift']})")
+            else:
+                lines.append(f"{pop}/{key}: {n_hh} households, mean {mean_done}/{arm['n_total_hh']} answered — {progress}\n    {wtxt}")
+        out[pop] = pop_out
+    if not any(out.values()):
+        lines.append("no live LLM arm directories found yet under any known source")
+
+    knowno = knowno_block(lines)
+    owner_split = owner_split_block(bank_cache, lines)
+
+    path = f"{ROOT}/story_extra.json"
+    data = json.load(open(path)) if os.path.exists(path) else {}
+    data["llm_live"] = out
+    data["knowno_live"] = knowno
+    data["owner_split_live"] = owner_split
+    json.dump(data, open(path, "w"), separators=(",", ":"))
+    lines.append(f"merged llm_live/knowno_live/owner_split_live into {path}: other keys kept: {[k for k in data if k not in ('llm_live', 'knowno_live', 'owner_split_live')]}")
+    print("\n".join(lines))
+
+
+# ------------------------------------------------------------------ KnowNo / three confidence channels --
+
+KNOWNO_SOURCES = [(f"{LLM_DIR}/knowno_person/*", "person")]
+KNOWNO_RE = re.compile(r"^([a-z0-9]+)_(hh_s\d+)$")
+
+
+def knowno_block(lines):
+    """uq_llm.py channel logs (3 calls/question: verbalized, sample-agreement, MCQ token probability) on a bounded
+    day list, plus a KnowNo conformal set per household built post-hoc from the letter probabilities (same
+    machinery as uq_llm_conformal.py: score = 1 - P(option), decaying-step online quantile, alpha 0.1, one
+    conformal stream per household in file order = time order). Pooled per day over households."""
+    from baselines.patrol.uq_agents import DecayingStepConformal  # src/ is on sys.path via analyze
+    letters = "ABCDEFGHIJ"
+    out = {}
+    for pattern, pop in KNOWNO_SOURCES:
+        pop_out = out.setdefault(pop, {})
+        per_mem = {}
+        for d in sorted(glob.glob(pattern)):
+            m = KNOWNO_RE.match(os.path.basename(d))
+            if not m or not os.path.isdir(d):
+                continue
+            mem, hh = m.groups()
+            logf = os.path.join(d, f"{hh}.jsonl")
+            if not os.path.exists(logf):
+                continue
+            rows = []
+            for l in open(logf):
+                try:
+                    rows.append(json.loads(l))
+                except ValueError:
+                    continue
+            if not rows:
+                continue
+            conformal = DecayingStepConformal(alpha=0.1)
+            days = per_mem.setdefault(mem, {"days": {}, "hh": set(), "n": 0})
+            days["hh"].add(hh)
+            for r in rows:
+                options = list(r.get("mcq_options") or []) + ["other"]
+                lps = r.get("letter_probs") or {}
+                scores = {opt: 1.0 - lps.get(letters[i], 0.0) for i, opt in enumerate(options) if i < len(letters)}
+                cset = conformal.set_of(scores)
+                truth_opt = r["truth"] if r["truth"] in (r.get("mcq_options") or []) else "other"
+                covered = truth_opt in cset
+                conformal.update(not covered, scores.get(truth_opt, 1.0))
+                dd = days["days"].setdefault(str(r["day_index"]), {"n": 0, "ok": 0, "verbal": 0.0, "agree": 0.0, "token": 0.0,
+                                                                     "mcq_ok": 0, "covered": 0, "set_size": 0.0})
+                dd["n"] += 1; dd["ok"] += int(bool(r.get("correct")))
+                dd["verbal"] += float(r.get("top_prob") or 0.0); dd["agree"] += float(r.get("conf_agree") or 0.0)
+                dd["token"] += float(r.get("conf_token") or 0.0); dd["mcq_ok"] += int(bool(r.get("mcq_correct")))
+                dd["covered"] += int(covered); dd["set_size"] += len(cset)
+                days["n"] += 1
+        for mem, agg in per_mem.items():
+            key = f"llm_{mem}_nomsg"
+            day_rows = {}
+            for dstr, dd in agg["days"].items():
+                n = dd["n"]
+                day_rows[dstr] = {"n": n, "acc": round(100 * dd["ok"] / n, 1), "verbal": round(100 * dd["verbal"] / n, 1),
+                                   "agree": round(100 * dd["agree"] / n, 1), "token": round(100 * dd["token"] / n, 1),
+                                   "mcq_acc": round(100 * dd["mcq_ok"] / n, 1), "coverage": round(100 * dd["covered"] / n, 1),
+                                   "set_size": round(dd["set_size"] / n, 2)}
+            pop_out[key] = {"name": MEM_NAME.get(mem, mem) + MSG_LABEL["nomsg"], "mem_kind": mem, "days": day_rows,
+                             "n_hh": len(agg["hh"]), "n": agg["n"], "households": sorted(agg["hh"])}
+            lines.append(f"knowno {pop}/{key}: {len(agg['hh'])} hh, {agg['n']} q; " +
+                         "  ".join(f"d{d}: acc {v['acc']} verbal {v['verbal']} agree {v['agree']} token {v['token']} cov {v['coverage']} set {v['set_size']}"
+                                   for d, v in sorted(day_rows.items(), key=lambda kv: int(kv[0]))))
+    return out
+
+
+# ------------------------------------------------------------ owner split (shared-memory interference) --
+
+OWNER_SPLIT_SOURCES = [(f"{FM}/partial/*", "partial", f"{ROOT}/sick10_partial/banks", None),
+                       (f"{FM}/partial_told/*", "partial", f"{ROOT}/sick10_partial/banks", None),
+                       (f"{LLM_DIR}/chain/sick10_partial/*", "partial", f"{ROOT}/sick10_partial/banks", None)]
+
+
+def bank_owner_info(bank_path):
+    """-> (sick_resident_id, {object_id: owner_id or 'shared'}, {question_id: object_id}) from the bank file."""
+    h = json.loads(open(bank_path).readline())
+    names = {c["name"].lower(): c["resident_id"] for c in h["protocol"]["residents"]}
+    sick = None
+    for causes in (h.get("day_causes") or {}).values():
+        for c in causes:
+            if c.startswith("sick_day:"):
+                sick = c.split(":", 1)[1]
+                break
+        if sick:
+            break
+    owners = {}
+    q_obj = {}
+    for l in open(bank_path):
+        if '"question"' not in l:
+            continue
+        r = json.loads(l)
+        if r.get("kind") != "question":
+            continue
+        o = r["object_id"]
+        q_obj[r["question_id"]] = o
+        owners[o] = names.get(o.rsplit("_", 1)[-1].lower(), "shared")
+    return sick, owners, q_obj
+
+
+def owner_split_block(bank_cache, lines):
+    """Per arm on the partial-shift population: accuracy and stated confidence on the SICK resident's things vs
+    everyone else's (others = not owned by the sick resident, shared objects included), per 5-window, all
+    questions and cold only (first question about an object each day, in file = time order). This is the
+    "does a message about one person leak into the other person's things through a shared memory" number."""
+    info_cache = {}
+    per_arm = {}
+    for pattern, pop, bank_dir, _ in OWNER_SPLIT_SOURCES:
+        for arm_dir in sorted(glob.glob(pattern)):
+            m = ARM_RE.match(os.path.basename(arm_dir))
+            if not m or not os.path.isdir(arm_dir):
+                continue
+            hh, label, mem_kind, told, look = m.groups()
+            if label != LABEL:
+                continue
+            bank_path = f"{bank_dir}/{hh}_{label}.jsonl"
+            if not os.path.exists(bank_path):
+                continue
+            if bank_path not in bank_cache:
+                bank_cache[bank_path] = load(bank_path, 2)
+            if bank_path not in info_cache:
+                info_cache[bank_path] = bank_owner_info(bank_path)
+            h, qs = bank_cache[bank_path]
+            sick, owners, q_obj = info_cache[bank_path]
+            answers = arm_answers(arm_dir)
+            if not answers or not sick:
+                continue
+            key = f"llm_{mem_kind}_{msg_tag(told == 'told', None)}"
+            arm = per_arm.setdefault((pop, key), {"mem_kind": mem_kind, "msg_tag": msg_tag(told == "told", None), "hh": set(), "rows": []})
+            arm["hh"].add(hh)
+            seen = set()
+            for qid, (loc, conf) in answers.items():
+                q = qs.get(qid)
+                if not q or loc is None:
+                    continue
+                obj = q_obj.get(qid, q["obj"])
+                cold = (q["day"], obj) not in seen
+                seen.add((q["day"], obj))
+                group = "sick" if owners.get(obj) == sick else "others"
+                arm["rows"].append((q["day"], group, cold, int(loc == q["truth"]), float(conf or 0.0)))
+    out = {}
+    for (pop, key), arm in per_arm.items():
+        windows = {}
+        for w, days in WINDOWS5.items():
+            ww = {}
+            for group in ("sick", "others"):
+                for split in ("all", "cold"):
+                    sel = [r for r in arm["rows"] if r[0] in days and r[1] == group and (split == "all" or r[2])]
+                    n = len(sel)
+                    ww[f"{group}_{split}"] = {"n": n, "acc": round(100 * sum(r[3] for r in sel) / n, 1),
+                                             "conf": round(100 * sum(r[4] for r in sel) / n, 1)} if n else None
+            windows[w] = ww
+        out.setdefault(pop, {})[key] = {"name": MEM_NAME.get(arm["mem_kind"], arm["mem_kind"]) + MSG_LABEL[arm["msg_tag"]],
+                                        "mem_kind": arm["mem_kind"], "msg_tag": arm["msg_tag"], "n_hh": len(arm["hh"]),
+                                        "households": sorted(arm["hh"]), "windows": windows}
+        f = lambda w, g: (f"{windows[w][g]['acc']:.0f}" if windows[w][g] else "–")
+        lines.append(f"owner-split {pop}/{key} ({len(arm['hh'])} hh): sick person's things " + " | ".join(f(w, "sick_all") for w in WINDOWS5) +
+                     "   others " + " | ".join(f(w, "others_all") for w in WINDOWS5) +
+                     "   others COLD " + " | ".join(f(w, "others_cold") for w in WINDOWS5))
+    return out
+
+
+if __name__ == "__main__":
+    main()

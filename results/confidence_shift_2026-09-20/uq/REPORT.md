@@ -113,6 +113,81 @@ shift day; separation +0.069); token 0.885 → 0.805 → 0.868 (separation +0.05
 standard error of a mean difference is ~0.05-0.07, so both tests are single-household, low-power evidence. Reliability
 (both tests pooled in the summaries): 87-91% of questions sit in the top verbalized bin regardless of correctness.
 
+## Reviewer follow-ups (2026-09-21 evening): a fixed hedge, a planning metric, per-person detection
+
+Four results added after review; expectations for each written first in `uq/regime/EXPECTATIONS.md`, numbers below.
+
+### Fixed-share hedge: the loss function was rewarding calibration, not accuracy
+
+The original hedge (`bma_tt`) scores each memory-length counter by ITS OWN predictive probability of the seen spot
+(log-loss / Bayes mixing) — that rewards a well-calibrated, SMOOTH distribution, not whichever counter is more often
+literally right. On days 19-23 of the spell the 1-day counter (tt24) is 10-15 points more accurate than the frozen
+one, yet the hedge's weight had already drained back to frozen by day 22-23 — the reviewer's suspicion, confirmed.
+Fix (`--score hit`): score each counter 1.0 if ITS OWN argmax equals the seen spot, 0.05 otherwise — plain 0-1 accuracy,
+immune to how a counter spreads its remaining mass. On days 19-23 specifically (10 hh, both banks): `bma_hit` 84.4±3.5
+(sick10_all) / 85.9±4.7 (sick10_owner) vs tt24's own 85.8±3.1 / 87.5±3.9 — within 1.4-1.6 points. Over the full spell
+(14-23, the harder early-readaptation days included) it is close but not quite there: 74.4±5.0 / 77.9±6.4 vs tt24's
+76.9±4.4 / 80.2±4.7 (2.3-2.5 points short); return stays near frozen (78.5±6.4 / 76.8±6.4 vs 79.7±6.7 / 79.0±7.9, 1.2-2.2
+points). Either way, a large gain over the old hedge (66.0→74.4 / 71.1→77.9 in the spell). It genuinely re-adapts, not
+just averages: short-half-life weight snaps 0.79→0.18 the same day the return starts. Alpha sweep {0.02, 0.10, 0.30}:
+the hypothesized tradeoff (higher alpha = faster return, less spell stability) did not appear — 0.02 (the existing
+default) wins on both stages simultaneously; fixed-share pulls toward UNIFORM every step, so a larger alpha just dilutes
+the current leader rather than tracking it faster. `--group person`: a further +0.4-2.4 points on sick10_owner's spell
+(single-owner regime) but not on sick10_all (everyone sick — nothing for per-person grouping to differentiate); the real
+per-person test is the detection section below. Code: `uq_agents.py --score {predictive,hit,tempered}`.
+
+### Planning metric: search cost, rooms, and an ask-or-search policy — with a matched-rate control
+
+For every question of every dist-logging agent: rank of the truth in the agent's own probability order ("places
+searched"), distinct rooms entered by that point, and a policy — search (cost = rank) if confident (top_prob ≥ τ, or
+conformal set ≤ k), else ask a resident at a flat cost c and retrieve directly. Full write-up: `uq/planning/README.md`.
+Raw-confidence table (τ=0.6, k=3): the e-detector+reset (`mart_tt72`) costs LESS on the sick days than its own un-reset
+base (2.04 vs 2.14 at c=2, sick10_all) and than the frozen baseline (3.28) — "ask more, search less" on the days it
+should, "no cost" on plain days (lead costs within hundredths). `last_seen` is the cautionary case: its own confidence
+sits ≥ 0.6 on 100% of questions in every stage (matches the ~98%-claimed finding from the calibration chart), so the
+policy never lets it ask — it pays the full 12-14-place search cost of its bad guesses everywhere. `ocp_tt` (honest
+sets): cost RISES on the sick days at every k tested (1, 2, 3) — it wraps the frozen base unmodified (its places/rooms
+columns are row-for-row identical to `none_tt`'s), and a conformal set-size threshold does not reliably flag "my point
+guess is about to be wrong today" — it is calibrated to a coverage target, a different question.
+**Matched-rate control (the reviewer's check on whether this is a real effect or a threshold-scale artifact):** per
+agent, pick τ/k from LEAD-day data alone so the lead-day ask rate equals a fixed target (25% or 50%), then apply that
+SAME threshold to sick/return. Only `mart_tt72` clears the bar at both rates on both banks — sick10_all sick-stage cost
+3.31→2.55 (25% target) and 2.67→2.25 (50% target); sick10_owner 2.92→2.48 and 2.40→2.30. `bma_tt`, which looked like a
+clear win in the raw table, does NOT clear it — matched cost RISES on sick days at both rates on both banks (e.g.
+sick10_all 3.15→3.55 at 25%): its raw-table win was mostly the scale confound (at τ=0.6 its raw lead ask rate was
+already 68%, far above the other agents', pinning its lead cost near the ask floor already). `none_tt72` (the same
+base with no detector) also fails the matched test. `ocp_tt`'s negative finding is unchanged and now scale-independent.
+**Conclusion: the planning-metric win is specifically about the detector-triggered targeted reset, not about "having an
+uncertainty signal" in general.** Code: `uq_planning.py`, `--match-rates 0.25,0.5`.
+
+### Per-person detection and reset: the "which beliefs should become less trusted" answer
+
+New regime `sick10_partial` (resident_1/Yuki sick days 14-23; questions about EVERYONE's things, 634 q/hh about Yuki vs
+110 about her housemate) is where a shared, household-wide signal cannot tell the two people apart: the frozen
+timetable's own confidence rises on BOTH the affected and unaffected resident's objects during the spell (0.52→0.56 and
+0.49→0.63) — no learner's stated confidence separates them. Built: one e-detector per resident (`--group person` on
+`--agent martingale`), each firing and resetting only that resident's own known object bins, plus a told-oracle upper
+bound (`--detector off --oracle-schedule "14:resident_1,24:resident_1"`). Degenerate checks: `--group global`
+reproduces `mart_tt72`/`mart_tt`/`martw_tt72` to the digit (caught and fixed an RNG-seed regression from the refactor
+before trusting any of this — problems_found.md P4).
+**Specificity: perfect.** Across 10 households, every fire under the per-person detector is tagged `resident_1`;
+resident_2's own detector fires in 0/10 households, ever (the global detector fires day 14 in 5/10, tagged simply
+"global" — it cannot distinguish). Per-person catches resident_1's break in 4/10 households vs the global detector's
+5/10 — a small, real cost of splitting the stream, traded for zero false positives.
+**Collateral damage: real, but on confidence, not accuracy.** resident_2's ACCURACY under the global reset is not
+measurably worse than frozen (75.6→76.2 sick10_partial mean, within noise) — the reset does not make them more often
+WRONG. It does make them measurably less SURE: confidence 36.3→31.8 (sick), 38.1→35.3 (return) — the global reset
+discounts every object's counts, including theirs. Under the per-person reset, resident_2's accuracy AND confidence are
+bit-for-bit identical to frozen in every stage (an exact match, not just close) — the reset never touches them.
+Told-oracle: resident_1 82.2 sick / 73.2 return vs the detected version's 79.4 / 70.4 — 2.8-2.9 points is the cost of
+detection lag; resident_2 exact-match to frozen (scoped only to resident_1, as it should be).
+**Per-person conformal (follow-up):** splitting the online-conformal threshold per resident the same way reduces but
+does not eliminate resident_2's collateral set-size growth on the shift days (9.7→6.7 on day 14, 12.2→8.9 on day 15,
+global vs per-person; verified 0/744 cross-assignment, not a bug) — unlike a discrete reset, an online-conformal
+threshold's calibration quality itself depends on sample size, and resident_2 only has ~110 questions to calibrate on
+(vs 744 for resident_1), so their own per-person threshold is wobblier even in the lead stage (day 12-13 set size 2.6→4.7
+just from the split). Code: `uq_agents.py --group person` now works for `bma`, `martingale`, and `ocp`; `--oracle-schedule`.
+
 ## Three bugs found on the first household (uq/problems_found.md)
 
 P1 — the plain mixture martingale can never fire on a 28-day bank: over ~400 stationary questions its value decays to ~1e-5
@@ -124,6 +199,11 @@ new sighting of the object does not step the detector (the banks were then regen
 P3 — the LLM token-probability channel: under a JSON-string schema Qwen's tokenizer has merged tokens '"A'..'"I' but not
 '"J', so a bare '"' first token forced "J) somewhere else" (4/6 of the first rows, confidence 0.00). Fix: the letter is
 asked without a schema.
+P4 — `DiscountedTimetable.discount()` accepted an `objects=` filter and silently dropped it (never stored, never
+checked), so every "targeted" reset before today was actually global. Harmless until today: every existing caller
+passed `objects=None` anyway. Would have silently broken the per-person reset above had it shipped unfixed. Fixed,
+zero regression confirmed (uq_synth.py all-pass; every degenerate check and every existing mart_tt/mart_tt72 fire-day
+count unchanged to the digit).
 
 ## What each method can and cannot show on this testbench
 
@@ -140,7 +220,19 @@ asked without a schema.
   the weighted quantile reacts one day faster at 1.5-3× the set size, and with a 24 h weight window it over-covers at 16 q/day
   (sets 9-10 in the lead); a 72 h window fixes that.
 - **BMA**: hedges correctly and by construction cannot show the return drop; +5-10 in the spell over the frozen base, −3 to
-  −6 under the 72 h base. Per-object weights are too slow at 1-3 sightings a day.
+  −6 under the 72 h base. Per-object weights are too slow at 1-3 sightings a day. Scored on 0-1 hits instead of log-loss
+  (`--score hit`) it closes most of that gap (within 1.4-1.6 points of the best single memory on the exact days a
+  reviewer flagged) — the original log-loss scoring was rewarding calibration, not accuracy, a distinct failure mode
+  from the return-drop tradeoff.
+- **Planning (search cost / ask-or-search)**: only the detector-triggered reset shows a real, scale-independent
+  "ask more, search less" effect on shift days (confirmed at matched lead-day ask rates of 25% and 50%, both banks);
+  the hedge's apparent win in a naive fixed-threshold comparison was mostly a confound (it asks far more often on
+  ordinary days too), and honest-sets' conformal set size does not, by itself, flag "my answer is about to be wrong."
+- **Per-person detection/reset**: the only mechanism that can tell an affected household member from an unaffected one
+  when a shared confidence signal cannot (0.52→0.56 vs 0.49→0.63, both rising) — 0/10 false fires on the unaffected
+  resident, exact-match accuracy AND confidence preserved for them under a per-person reset, vs a measurable confidence
+  (not accuracy) leak under a global one. A per-person conformal threshold reduces the same leak but not to zero — it
+  is also fighting a sample-size problem (the unaffected group asked about 6× less often here).
 - **LLM channels**: verbalized confidence is uninformative on both tests (flat 0.83-0.89, ~90% of questions in the top
   bin, separation ≤ 0.03); sample agreement separated correct from wrong by +0.195 and fell 0.14 on the shift day in one
   household (sick_owner hh_s0) but only +0.069 and rose on the shift day in the other (sick10_all hh_s0); token probability
@@ -158,10 +250,19 @@ cd .. && python3 $U/make_report.py sick10_owner sick10_all <regime>             
 cd src && python3 -m baselines.patrol.uq_synth                                          # synthetic checks (conformal, martingale, cusum)
 python3 -m baselines.patrol.uq_llm --bank ../results/regime_search/<regime>/banks/hh_s0_t03.jsonl --out ../results/confidence_shift_2026-09-20/uq/llm_channels/<name> --day-list 13,14,24
 python3 ../results/confidence_shift_2026-09-20/uq/llm_channels/summarize.py ../results/confidence_shift_2026-09-20/uq/llm_channels/<name>/hh_s0.jsonl
+
+# hedge scoring/grouping (evening follow-ups)
+AGENTS="bma_hit bma_person" $U/roster.sh <regime> hh_s0 ...                             # --score hit --share 0.02 [--group person]
+# per-person detection / reset / told-oracle (sick10_partial: resident_1 sick, everyone's objects asked)
+AGENTS="detperson_tt72 oracle_tt72 ocpperson_tt" $U/roster.sh sick10_partial hh_s0 ...   # --group person on martingale and ocp; --oracle-schedule "14:resident_1,24:resident_1" --detector off
+# planning metric: search cost / rooms / ask-or-search policy, no new agent runs (reads the dist field already in the logs above)
+python3 -m baselines.patrol.uq_planning --regime <regime> --agents none_tt,none_tt72,none_lastseen,mart_tt72,bma_tt,ocp_tt --tau 0.6 --k 3 --costs 2,4 --match-rates 0.25,0.5 --out ../results/confidence_shift_2026-09-20/uq/planning
 ```
 uq_check prints the E1-E7 lines (E1 = digit check of every `none_*` agent against the classical rows, which must read
 0 mismatches before anything else is believed); the expectations behind them are in $U/EXPECTATIONS.md. Agent definitions
-(one line each) are at the top of roster.sh; `python3 -m baselines.patrol.uq_agents --help` lists every knob. REPORT.md itself
-is hand-written from check.md — the numbers to refresh are the per-stage mean ± sd table, the fire table (the "fire days
-per household" lines of check.md) and the coverage table (the per-day coverage / set size rows).
+(one line each) are at the top of roster.sh; `python3 -m baselines.patrol.uq_agents --help` lists every knob (the evening
+additions: `--score {predictive,hit,tempered}`, `--group {global,object,person}` for `bma`/`martingale`/`ocp`, `--detector
+off` and `--oracle-schedule "day:owner,..."` for a told-upper-bound reset). REPORT.md itself is hand-written from check.md
+and uq/planning/*.md — the numbers to refresh are the per-stage mean ± sd table, the fire table ("fire days per household"
+in check.md), the coverage table, and the planning-metric tables (raw + matched-rate).
 

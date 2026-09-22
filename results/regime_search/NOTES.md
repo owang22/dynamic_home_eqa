@@ -153,3 +153,99 @@ signal; sample agreement noticed the break in one test (+0.195) and not the othe
 Three bugs caught on the first household: a mixture martingale that decays to 1e-5 and can never fire (-> CUSUM e-detector),
 repeated questions double-counted as evidence (-> de-dup; and fixed at the source in the bank), a tokenizer quirk that hid
 the MCQ letter mass. Degenerate checks to the digit on every base.
+
+## 16:45 note from the workshop session (dynamic-home-eqa-5a) — fix before any LLM arm runs on a 32-day bank
+patrol/llm.py clock() renders sighting times as "Fri 10:40" with no day index; on a multi-week bank the model cannot tell
+which week a sighting is from (it reasoned a sighting was "in the future"). Their worktree uses "day 18 Fri 10:40";
+port that to main before running LLM arms on the frozen regime. vLLM is back with --max-num-seqs 64 (restart script:
+dynamic_home_eqa_fm/results/fm_memory/server/restart_vllm_64.sh) — the old cap of 8 was the overnight throughput limit.
+
+## 17:05 reviewer feedback -> today's plan (Oliver: all of it today)
+Critical read: (1) the return, not the first drop, is the memory result — but it is a SURFACE (memory length x spell length),
+not a point: the never-forgets learner wins the return only because 14 lead days > 10 sick days. (2) Partial shift with
+affected/unaffected labels is the untested question 2; granularity = per person (per-object streams are too thin).
+(3) A planning cost from the logged distributions (places searched; ask-or-search policy) closes the loop cheaply.
+(4) Our hedge already is fixed-share and moves fast; the suspicious bit is its weights draining to the never-forgets
+timetable on days 19-23 while the 3-day one is 10-15 points better -> scoring loss / switching rate / per-person weights.
+Launched 17:00 (classical, 4 workers each): sick5_all, sick10_all_hl (7 d agents on the frozen banks), sick20_all (42 days),
+sick10_partial (resident_1 sick, everyone's things asked), sick10_all_natural (weekends + random events). Research agent:
+fixed-share scoring, planning metric from uq logs, per-person detection + told-oracle on sick10_partial.
+
+## 17:35 research agent: hedge fixed (clean positive result) and planning metric done
+Hedge root cause: weights were scored on each counter's predictive log-loss (rewards calibration, not hits) so the smoother
+never-forgets counter out-scored the sharper 1-day one on days 19-23. Scored on hits (`--score hit`, switching rate 0.02):
+spell 74.4±5.0 (sick10_all) / 77.9±6.4 (owner) vs best single memory 76.9 / 80.2 and frozen 60.9 / 64.5; return 78.5 / 76.8
+vs frozen 79.7 / 79.0; it re-snaps to the long memory on day 24 (short weight 0.79 -> 0.18 the same day). Old hedge: 66.0 / 71.1.
+So the hedge is within ~2.5 points of the best memory inside the spell AND within ~1-2 of the never-forgets learner on the
+return — the near-best-of-both result, stated with its 0.3-0.5 pt shortfall of the 2-point bar on the full spell. Higher
+switching rates were strictly worse (fixed-share pulls toward uniform). Per-person grouping helps only where there is a split.
+Planning metric (uq/planning/): places searched in probability order, or ask at cost c when not confident (top_prob >= 0.6
+or set size <= 3). Sick-stage total cost per question at c=2: e-detector+reset 2.04 vs its base 2.14; hedge 2.39 vs frozen
+3.28; lead-stage cost unchanged (no price on plain days). Conformal: its set size only balloons on the first shift day, so
+gating on it does not cut cost (2.98 -> 3.71) — set size is calibrated to coverage, not to "is my guess wrong today":
+an honest negative. Last seen: always confident (top_prob ~0.98), never asks, pays 12-14 places per bad guess.
+Also caught before use: DiscountedTimetable.discount() ignored its objects= filter (P4) — the per-person reset needed it.
+
+## 17:45 partial shift (sick10_partial: resident_1 sick, questions about everyone's things) — affected vs unaffected
+Accuracy ± sd across hh / mean stated confidence, lead | sick | return, affected (the sick person's objects) vs unaffected:
+  frozen timetable   aff 72±9/.52 | 64±20/.56 | 78±9/.63    una 67±7/.49 | 78±9/.63 | 79±12/.66
+  timetable 3 d      aff 72±9/.41 | 76±7/.39  | 70±7/.39    una 68±9/.39 | 78±8/.39 | 76±11/.40
+  most freq 3 d      aff 55/.43   | 68/.46    | 46/.41      una 41/.39   | 43/.40   | 46/.40
+  last seen          aff 43/.98   | 59/.98    | 47/.98      una 35/.98   | 29/.98   | 36/.98
+The break is confined to the affected group (frozen timetable: affected 72 -> 64, unaffected 67 -> 78); the 3-day learner
+re-learns the affected group inside the spell (76) and breaks on them at the return (70) while the unaffected group stays
+put (78 -> 76). But NO classical agent's stated confidence tells the groups apart: the frozen timetable's confidence on the
+affected objects goes UP during the spell (0.52 -> 0.56) as it does on the unaffected ones (0.49 -> 0.63). So "which beliefs
+should become less trusted?" is not answered by the learners' own confidence; it needs a detector at the person level —
+the research agent's per-person e-detector and the told-oracle reset run on these banks now. Question mix note: the sick
+person's rest-day activities generate more questions about their things (sick stage: 1688 affected vs 712 unaffected).
+
+## 18:10 partial shift — per-person detection (research agent, uq/regime/sick10_partial)
+Per-person CUSUM e-detector (one per resident, resetting only that resident's bins): every fire in 10 households is on the
+sick resident; the other resident's detector fires 0/10 ever; catches the sick resident's break on day 14 in 4/10 (global 5/10).
+Per-person reset leaves the unaffected resident bit-for-bit identical to the frozen baseline (accuracy 75.6/74.2, confidence
+.36/.38); the GLOBAL reset does not cost them accuracy (75.6 -> 76.2) but leaks uncertainty (confidence .36 -> .32 in the spell,
+.38 -> .35 on the return). Global conformal leaks the same way: the unaffected resident's set balloons 2.6 -> 9.7 -> 12.2 on
+days 14-15 although nothing in their routine changed (shared threshold). Told-oracle reset (resident_1 on days 14 and 24):
+resident_1 72.1 | 82.2 | 73.2 vs detected 79.4 | 70.4 — detection lag costs ~3 points. So: "which beliefs to distrust" is
+answered at the person level by a per-person detector, not by any learner's own confidence; global mechanisms are safe
+on accuracy but spread doubt to people whose routine did not change.
+
+## 18:20 planning metric, ask-rate-matched control (uq/planning/*_matched{25,50}.md) — a real correction
+At equal lead-day ask rates (25% / 50%), only the detector + targeted reset (mart_tt72) is cheaper on sick days than on its
+own lead days (sick10_all 3.31 -> 2.55 at 25%, 2.67 -> 2.25 at 50%; owner 2.92 -> 2.48, 2.40 -> 2.30). The hedge does NOT
+(3.15 -> 3.55): its raw-tau win was the confidence-scale confound (it already asked 68% of the time on lead days). Conformal
+gating and the plain 3-day counter also fail the matched test. So the planning claim narrows to: a detector-triggered reset
+converts noticing into fewer wasted searches; a lower confidence scale alone does not. Story page text to be corrected.
+
+## 18:30 memory x spell surface complete (sick5_all / sick10_all_hl / sick20_all; story page v4)
+Timetable, return-day drop by memory length x spell length:   5 d spell: 1 d -28, 3 d -11, 7 d +10, never +18
+                                                              10 d spell: 1 d -34, 3 d -34, 7 d -17, never +6
+                                                              20 d spell: 1 d -35, 3 d -42, 7 d -44, never -11
+Spell accuracy: 5 d: 68/59/55/51; 10 d: 77/72/66/61; 20 d: 82/80/77/69 (1 d / 3 d / 7 d / never).
+Reading: the cost of forgetting (return drop) grows with spell length for every finite memory; the cost of remembering
+(spell accuracy gap to the 1-day learner) shrinks as the spell gets long enough to re-teach even a long memory; the
+never-forgets learner's return advantage disappears once the spell (20 d) exceeds the lead (14 d): -11. A law of the
+testbench, not a single point — the reviewer's "return is your result" made quantitative.
+- 18:40 per-person conformal (ocpperson_tt): the unaffected resident's collateral set growth shrinks (day 14: 9.7 -> 6.7;
+  day 15: 12.2 -> 8.9) but does not vanish like the per-person reset did — a per-person threshold calibrates on that
+  person's ~110 questions only, so its lead-stage sets are already larger (2.6 -> 4.7) from small-sample calibration,
+  not contamination. Honest partial fix, logged. uq/REPORT.md (268 lines) now carries all four of today's results.
+
+## 21:15 evening summary and the overnight LLM-strategy chain
+Direction (Oliver, ~19:40): the paper is about whether current LLM-based memory / reasoning / planning strategies cope
+with a temporary routine shift (recognise it, use memory through it, recover on the return) and how their confidence
+calibration compares with trivial learners; classical learners are yardsticks only; in-house methods out of scope.
+Tonight: research agent (dynamic-home-eqa-0a) built retrieval memory (Mem0 / A-Mem style), long-context (whole log),
+error-driven reflection (Reflexion-style) and a daily "has the routine changed?" self-report into llm.py (on the workshop
+worktree's llm.py with dated timestamps); KnowNo-style conformal sets come post-hoc from the logged token probabilities.
+Smoke test clean. Throughput under the shared server is ~15 s per call, so the wide runs are an unattended chain from
+23:30 (uq/llm_strategies/run_chain.sh; progress uq/llm_strategies/chain_progress.log; expectations EXPECTATIONS.md;
+cold read STATUS.md): sick10_all then sick10_partial, not-told then told, hh_s0-s2 x retrieval/long-context/reflection,
+then confidence channels + conformal on retrieval for a 14-day subset. The workshop session (dynamic-home-eqa-5a) runs
+rolling buffer + nightly per-object table, not-told then told, on sick10_partial hh_s0-s2 (results in its worktree,
+dynamic_home_eqa_fm/results/fm_memory/partial*/), landing ~22:45-23:30.
+Morning read: chain_progress.log verdicts, STATUS.md, then per strategy: the four-stage shape vs timetable-3d / last
+seen, the self-report as a detector, calibration (ECE) of each confidence channel vs the timetable, ask-or-search cost,
+and on the partial shift the sick person's things vs everyone else's — the shared-memory slot on the story page fills
+from those numbers.

@@ -97,6 +97,8 @@ def main(argv=None) -> int:
     ap.add_argument("--samples", type=int, default=5)
     ap.add_argument("--endpoint", default=ENDPOINT)
     ap.add_argument("--model", default=MODEL)
+    ap.add_argument("--memory", default="naive", help="mem_kind passed to question_messages (naive, retrieval, longcontext, ...); "
+                     "only kinds that don't need nightly-written notes are usable here (retrieval, longcontext, naive, recent)")
     a = ap.parse_args(argv)
     day_list = {int(x) for x in a.day_list.split(",")} if a.day_list else None
     a.out.mkdir(parents=True, exist_ok=True)
@@ -161,7 +163,7 @@ def main(argv=None) -> int:
             if q.question_id in done or (day_list is not None and q.day_index not in day_list):
                 continue
             counter.ensure_object(q.object_id, q.object_class)
-            msgs = question_messages(memory, "naive", q, day_names, cards, rooms, int(header["patrol_hours"]), False, [], None, None,
+            msgs = question_messages(memory, a.memory, q, day_names, cards, rooms, int(header["patrol_hours"]), False, [], None, None,
                                      "conf", header.get("patrol_times") or None, header.get("protocol", {}).get("question_moments", ""),
                                      header.get("protocol", {}).get("feedback_delay_min"))
             truth = episode.true_location(q.object_id, q.t_query)

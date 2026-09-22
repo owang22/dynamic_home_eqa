@@ -1,0 +1,98 @@
+calendar:
+- days:
+  - 0
+  - 13
+  name: lead
+  suppress_random_events: false
+- days:
+  - 14
+  - 23
+  force_events:
+  - event: sick_day
+    resident: all
+  name: sick
+  suppress_random_events: false
+- days:
+  - 24
+  - 31
+  name: return
+  suppress_random_events: false
+classes:
+- book
+- water_bottle
+- tablet
+- mug
+- charger
+- glasses
+- glass
+- razor
+day0: Monday
+days: 32
+events:
+  grocery_delivery:
+    weekday: 0.08
+    weekend: 0.1
+  guest_visit:
+    weekday: 0.05
+    weekend: 0.14
+  late_work:
+    weekday: 0.1
+    weekend: 0.0
+  laundry_day:
+    weekday: 0.08
+    weekend: 0.22
+  rain:
+    weekday: 0.14
+    weekend: 0.14
+  sick_day:
+    weekday: 0.03
+    weekend: 0.02
+extra_beliefs:
+- half_life_h: 24
+  name: timetable
+- half_life_h: 72
+  name: timetable
+- half_life_h: 168
+  name: timetable
+- half_life_h: 24
+  name: most_frequent
+- half_life_h: 72
+  name: most_frequent
+- half_life_h: 168
+  name: most_frequent
+feedback_delay_min: 10
+name: sick10_all_natural
+negative_evidence: false
+oversample: 1024
+patrol_hours: 0
+patrol_times: 03:00
+per_day: 24
+question_min_gap_min: 30
+question_moment: during
+question_owners: null
+questions: activity
+rates_in_force:
+  grocery_delivery:
+    weekday: 0.0
+    weekend: 0.0
+  guest_visit:
+    weekday: 0.0
+    weekend: 0.0
+  late_work:
+    weekday: 0.0
+    weekend: 0.0
+  laundry_day:
+    weekday: 0.0
+    weekend: 0.0
+  rain:
+    weekday: 0.0
+    weekend: 0.0
+  sick_day:
+    weekday: 0.0
+    weekend: 0.0
+shift_focus: 0.0
+sim_dir: /home/oliver/robot/dynamic_home_eqa/data/situation_sim/regime_search/sick10_all_natural
+timetable_bin_hours: 2
+timetable_day_scheme: all
+timetable_empty_bin: history
+timetable_empty_bin_confidence: 0.3

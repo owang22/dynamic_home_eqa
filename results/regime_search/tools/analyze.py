@@ -13,7 +13,8 @@ WD = "MTWTFSS"
 SHORT = {"LastObservation": "lastseen", "MostFrequentLocation": "mostfreq", "TimetableLookup(bin=2h,days=all)": "timetable",
          "PeriodicPersistence(min_dep=2,bin=1h,hl=24h)": "periodic", "PerpetuaStar(lognormal,K<=3,pm=0.01,a0=0.01/h,g=0.99)": "perpetua",
          "TimetableLookup(bin=2h,days=all,hl=72h)": "timetable_hl3d", "TimetableLookup(bin=2h,days=all,hl=24h)": "timetable_hl1d",
-         "MostFrequentLocation(hl=24h)": "mostfreq_hl1d", "MostFrequentLocation(hl=72h)": "mostfreq_hl3d"}
+         "MostFrequentLocation(hl=24h)": "mostfreq_hl1d", "MostFrequentLocation(hl=72h)": "mostfreq_hl3d",
+         "TimetableLookup(bin=2h,days=all,hl=168h)": "timetable_hl7d", "MostFrequentLocation(hl=168h)": "mostfreq_hl7d"}
 
 
 def load(bank_path, bin_h):
@@ -86,7 +87,7 @@ def main():
     print(f"{a.dir}: {ndays} days from {day0}; accuracy per day (%), then the moved-since-round half\n{'agent':17s} {hdr}")
     for split in ("all", "moved"):
         print(f"--- {split}")
-        for agent in ["oracle:recency", "oracle:yesterday", "oracle:routine", "lastseen", "mostfreq", "mostfreq_hl1d", "mostfreq_hl3d", "timetable", "timetable_hl3d", "timetable_hl1d", "periodic", "perpetua"]:
+        for agent in ["oracle:recency", "oracle:yesterday", "oracle:routine", "lastseen", "mostfreq", "mostfreq_hl1d", "mostfreq_hl3d", "timetable", "timetable_hl7d", "timetable_hl3d", "timetable_hl1d", "periodic", "perpetua"]:
             if agent not in acc: continue
             cells = [acc[agent].get((d, split), [0, 0]) for d in range(1, ndays)]
             print(f"{agent:17s} " + " ".join(f"{100*x[1]/x[0]:3.0f}" if x[0] else "  -" for x in cells))

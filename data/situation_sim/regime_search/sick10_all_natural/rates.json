@@ -1,0 +1,62 @@
+{
+ "calendar": [
+  {
+   "days": [
+    0,
+    13
+   ],
+   "name": "lead",
+   "suppress_random_events": false
+  },
+  {
+   "days": [
+    14,
+    23
+   ],
+   "force_events": [
+    {
+     "event": "sick_day",
+     "resident": "all"
+    }
+   ],
+   "name": "sick",
+   "suppress_random_events": false
+  },
+  {
+   "days": [
+    24,
+    31
+   ],
+   "name": "return",
+   "suppress_random_events": false
+  }
+ ],
+ "day0": "Monday",
+ "days": 32,
+ "rates": {
+  "grocery_delivery": {
+   "weekday": 0.08,
+   "weekend": 0.1
+  },
+  "guest_visit": {
+   "weekday": 0.05,
+   "weekend": 0.14
+  },
+  "late_work": {
+   "weekday": 0.1,
+   "weekend": 0.0
+  },
+  "laundry_day": {
+   "weekday": 0.08,
+   "weekend": 0.22
+  },
+  "rain": {
+   "weekday": 0.14,
+   "weekend": 0.14
+  },
+  "sick_day": {
+   "weekday": 0.03,
+   "weekend": 0.02
+  }
+ }
+}

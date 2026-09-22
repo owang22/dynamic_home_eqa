@@ -114,3 +114,142 @@ Observed: on the frozen base the conformal sets do not grow on the return (days 
 because the frozen base does not break there. On the 72 h base (accuracy 88 -> 54 on day 24) I expect: coverage on day 24
 in [0.65, 0.85] (a one-day miss like day 14's 0.71), set size on days 24-25 >= 2x days 22-23, back below 3 by day 27;
 stage coverage still within [0.85, 0.95].
+
+## added 19:28, before the run — hedge redesign (reviewer task 1): scoring rule, explicit alpha, per-person groups
+Diagnosis to confirm first: on sick10_all/owner days 19-23 (late spell, re-learned), tt24 (best single memory: sick10_all
+76.9±4.4, sick10_owner 80.2±4.7 mean over days 14-23) beats the global hedge (bma_tt: sick10_all 66.0±8.3, sick10_owner
+71.1±12.2) by 10-15 points on those specific days, yet the hedge's weight has already drained back toward the frozen
+(inf) counter by day 22-23 (0.90+ per the trajectory table) rather than toward tt24. Suspicion: `--score predictive`
+(current default) scores each counter by ITS OWN predictive probability of the seen spot (log-loss / Bayes mixing) —
+this rewards calibration, not argmax accuracy, and a broad/smooth counter (the frozen one, mass spread over many
+historically-plausible spots) can score consistently "good enough" while a sharp, fast-adapting counter (tt24) that is
+usually very right but occasionally very wrong (near-zero mass on the true spot) gets punished hard on its misses.
+E15 `--score hit` (0-1 accuracy of each counter's own argmax) on the GLOBAL group should move weight to tt24 specifically
+    on days 19-23 (short-hl weight there >= 0.5, vs bma_tt's current < 0.2) and should raise days-19-23 accuracy to
+    within 2 points of tt24's own (76.9 / 80.2), while KEEPING the return (days 24-31) within 2 points of the frozen
+    base's own (79.7 / 79.0) — this is the reviewer's target: within 2 pts of best-single-memory in the spell AND at the
+    frozen level on the return, simultaneously. If it cannot do both, report which stage it loses and by how much.
+E16 `--score tempered` (gamma in {0.3, 0.5}) should sit between predictive and hit: less aggressive than hit, still an
+    improvement over predictive on days 19-23.
+E17 alpha sweep {0.02, 0.10, 0.30} on whichever score wins E15/E16: higher alpha should shrink the return-recovery lag
+    (fewer days for the weight to move back to frozen after day 24) at the cost of some spell stability (more variance
+    day to day); report both, pick the alpha that clears the 2-point bars in E15 with the fewest side effects.
+E18 `--group person` on the winning (score, alpha): sick10_all (2 owners, "shared" for household-common objects) should
+    let the sick resident's own weight vector move to short memories while the other resident's vector stays on the
+    frozen counter throughout (since nothing in their own history changed) — expect person-hedge accuracy on the
+    UNAFFECTED resident's objects within 1 point of the frozen counter's own in every stage, and on the AFFECTED
+    resident's objects at least as good as the global hedge's E15/E16 result.
+Wrong direction: any score/alpha/group combination that is *worse* than the current bma_tt (66.0 / 71.1 sick-stage) —
+that would mean the scoring change hurt rather than helped, and needs an explanation before moving on.
+
+## added 19:34, before the run — planning metric (reviewer task 2): search cost, rooms, ask-or-search policy
+Post-processing only, no new agent runs beyond `none_lastseen` (just added, degenerate-checked 0/0 vs classical
+LastObservation on hh_s0). Uses the `dist` field already logged by none_tt, none_tt72, none_lastseen, mart_tt72, bma_tt,
+ocp_tt. Definitions: rank = 1-indexed position of the truth receptacle in the agent's distribution sorted descending by
+probability (ties broken the same way `answer` is picked: highest receptacle id wins), i.e. "places searched before
+finding it" if searching in the agent's own probability order; a truth below the logged floor (p < 1e-4, omitted from
+`dist`) gets the worst-case rank = total spot count (~38). rooms = number of distinct rooms entered by that point
+(receptacle -> room from the bank header). Policy: confident = top_prob >= tau (tau = 0.6, a reasonable "pretty sure"
+bar — most methods sit well above it on stable days) or, for ocp_tt, set_size <= k (k = 3); confident -> cost = rank
+(physically search in probability order); not confident -> ask the resident at a flat cost c (c in {2, 4}) and retrieve
+directly. Mean places and mean rooms are reported unconditionally (descriptive); total cost is policy-mixed.
+E19 on shift days (14-15), the adaptive/UQ-aware agents (mart_tt72 after its reset, bma_tt, ocp_tt) should show a LOWER
+    total cost than the frozen baselines (none_tt, none_lastseen) specifically BECAUSE they ask more often there (lower
+    confident-share on the shift days), trading a flat ask cost for what would otherwise be a long physical search —
+    the reviewer's claim to test. On lead/return (plain) days the UQ-aware agents' total cost should be statistically
+    indistinguishable from (not worse than) the frozen baselines' — "no cost on plain days".
+E20 mean places (unconditional) should track accuracy inversely: an agent with mean places near 1 has the truth at/near
+    its own top guess almost always; a large jump in mean places on the shift day (frozen tt: expect several-fold) is
+    the same break the accuracy chart shows, expressed in search-cost terms.
+Wrong direction: a UQ-aware agent whose total cost is HIGHER than the frozen baseline's on the shift days despite a
+lower confident-share — would mean the ask cost c is set too high relative to the search cost it is replacing, or the
+confidence signal is not actually selective; report both c values so the crossover (if any) is visible.
+
+## added 19:41, before the run — per-person detection (reviewer task 3), sick10_partial (resident_1 sick, everyone's objects asked)
+Frozen-baseline digit checks pass (0/0 on all 5 none_* agents, 7189 rows, 10 hh). Coordinator's own check on the classical
+logs: the frozen timetable's stated confidence goes UP on both resident_1's (affected) objects and resident_2's
+(unaffected) objects during the spell (0.52->0.56 affected, 0.49->0.63 unaffected) — its own confidence cannot tell the
+groups apart, so a per-person DETECTOR (not a per-person confidence readout) is the only thing that can. Owner split from
+the earlier check: 634 questions about resident_1's things, 110 about resident_2's per household (~19/day vs ~3.4/day) —
+the unaffected group is thin; report n alongside every unaffected-group number.
+Three variants on the timetable-72h base (matches mart_tt72's base, the best global detector so far):
+  detperson_tt72   `--agent martingale --group person` — one CUSUM detector per resident (+ "shared" for any
+                    unowned-by-suffix object), each fires and resets ONLY that resident's known bins.
+  detperson_tt72_g `--agent martingale --group global` on the SAME tt72 base, for a fair global-vs-per-person
+                    comparison at equal detector settings (mart_tt72 already exists but let's confirm it matches).
+  oracle_tt72       `--agent martingale --detector off --oracle-schedule "14:resident_1,24:resident_1"` — told upper
+                    bound: reset resident_1's bins at the start of day 14 and day 24, nothing else, no detection.
+E21 detperson_tt72: resident_1's own detector should fire on day 14-15 in most households (matching mart_tt72's global
+    rate, since resident_1 carries 85% of the question volume so the global detector was mostly tracking them anyway);
+    resident_2's own detector should NOT fire on day 14-15 in almost every household (nothing in their own error stream
+    changed) — that is the discriminating number the whole task is testing for.
+E22 UNAFFECTED-GROUP HARM CHECK: resident_2's stage accuracy/confidence/set-size under detperson_tt72 must be within
+    1-2 points of the FROZEN (undetected/unreset) baseline on resident_2's own objects, in every stage — a per-person
+    reset must not touch bins it has no reason to touch. Compare against the GLOBAL detector (mart_tt72 or
+    detperson_tt72_g) on the SAME split: if the global detector's reset ALSO discounts resident_2's bins (it does, by
+    construction — one global discount call touches every object), resident_2 should be measurably WORSE under global
+    reset than under per-person reset or the frozen baseline. This is the concrete "does per-person avoid collateral
+    damage" number.
+E23 oracle_tt72 is the upper bound: resident_1's post-day-14 accuracy should be at or above detperson_tt72's own (same
+    reset, but not delayed by detection lag), and resident_2 untouched (no reset ever applied to them) should equal the
+    frozen baseline exactly on their own objects (same base, same beliefs, zero discounts) — an exact-match check, not
+    just "close", since nothing about resident_2's bins is affected at all by an oracle scoped to resident_1.
+Wrong direction: resident_2 accuracy/confidence dropping under detperson_tt72 by more than the frozen baseline's own
+day-to-day noise (~1-2 points) — would mean the "shared" bucket or a naming/suffix mismatch is leaking resident_1's
+reset onto resident_2's objects; check the fires log's `owner` field by hand if so.
+
+## added 19:53, before the run — per-person conformal (coordinator's follow-up to task 3)
+Degenerate check passed: `--group global` (default) reproduces ocp_tt on sick10_partial hh_s0 to the digit (0/744). New
+`ocpperson_tt` = `--agent ocp --base timetable --group person`: one DecayingStepConformal q_t per resident (+"shared"),
+so a coverage miss on resident_1's objects only widens resident_1's own set/threshold.
+E24 resident_2's (unaffected) conformal set size on days 14-15 under ocpperson_tt should be close to its OWN lead-stage
+    baseline (day 12-13, ~2-3, per the earlier finding) — NOT the 9.7/12.2 spike the GLOBAL ocp_tt showed on those same
+    days for resident_2 (collateral leakage, already documented). If per-person removes that leakage, resident_2's
+    day-14/15 set size under ocpperson_tt should sit within ~2x of its own day-12/13 level, well below the global
+    agent's 9.7/12.2.
+E25 resident_1's own set-size response and coverage under ocpperson_tt should be similar to (not worse than) the
+    global agent's, since resident_1 already dominated the global q_t's behavior (85% of question volume).
+Wrong direction: resident_2's set size still ballooning under ocpperson_tt — would mean the group split isn't reaching
+the conformal object (same owner-suffix bug class as before), or resident_2's "shared"-bucket objects are actually
+resident_1's mislabeled ones.
+
+## added 20:06, before the run — windowed affected/unaffected analysis (Oliver's own review), 20 households
+Target: replicate Oliver's own spot check on the frozen timetable (affected 82->48, unaffected 72->75, per-household
+change -34±24 vs +2±14, 7/10 gap>=15) on the full 20 households (sick10_partial + sick10_partial_s10_19 pooled), then
+extend the same 5-window analysis (last5lead d9-13, first3sick d14-16, restsick d17-23, first3return d24-26, restreturn
+d27-31) to none_tt72, detperson_tt72, oracle_tt72, none_mf72, none_lastseen. Digit checks first: none_mf72 (new) and
+none_lastseen/none_tt/none_tt72 against classical on both regimes, both 7189/7045 rows, 0/0. gap = unaffected's change
+minus affected's change (positive = affected suffered more); gap bar = 15 (Oliver's own number), report N/20 clearing it.
+E26 none_tt entry transition should be within a few points of Oliver's 10-household numbers and the clear-bar fraction
+    should hold up (~70%) at 20 households, not regress toward noise.
+E27 none_tt72 should show the SAME one-sided break at the return that Oliver found (85->58 affected, 79->80 unaffected)
+    — since the return isn't the lead-vs-sick comparison, define its reference window as restsick (the settled mid-spell
+    state), not last5lead.
+E28 none_lastseen should show the INVERTED sign Oliver found (affected accuracy goes UP entering the spell, not down) —
+    a qualitatively different finding, not a "does it clear the bar" one; report it as such.
+Wrong direction: the windowed gap failing to clear the bar in a clear majority of households for the entry transition on
+none_tt specifically (that's the one already independently checked by hand) — would mean my windowing/owner-split code
+has a bug, not that the effect is real but small.
+
+## added 20:20, before the run — shared-state vs per-object: does global grouping harm the unaffected resident? (Oliver's correction)
+Correction to the affected/unaffected panel: per-object learners (none_tt, none_tt72, none_mf72, none_lastseen) keep a
+separate record per object by construction, so "unaffected held steady" there is a control, not a finding. The real
+test is on the SHARED-state methods: the hedge (one household-wide weight vector), the conformal threshold (one q_t),
+and the detector+reset (one martingale) — each mixes information across every object, including the unaffected
+resident's. Comparison, same 20 households, same 5 windows, UNAFFECTED group only:
+  hedge:      bma_hit (global, --score hit --share 0.02) vs bma_person (--group person, same score/share)
+  conformal:  ocp_tt (global q_t) vs ocpperson_tt (--group person)
+  reset:      mart_tt72 (global martingale+reset) vs detperson_tt72 (--group person)
+Two metrics per pair: accuracy (does the unaffected resident get MORE WRONG under global grouping?) and confidence/set
+size (does the unaffected resident get LESS SURE / larger sets under global grouping, even if the answer is unchanged
+— the "spreads doubt" question). Already found on the whole-spell means (not windowed): the martingale reset leaks
+confidence not accuracy onto the unaffected resident (36.3->31.8 sick, 38.1->35.3 return) and conformal partially
+leaks set size (9.7->6.7 day14). This run puts those on the same windowed, paired-per-household footing as everything
+else, plus adds the hedge (not checked before).
+E29 for each pair, on the unaffected group: accuracy change (global vs person) should be small/noisy (matches the
+    earlier whole-spell finding of no measurable accuracy harm); confidence/set-size change should show a real,
+    larger gap for the GLOBAL variant specifically on the entry and return windows (the moments the affected
+    resident's own signal is moving hardest) — that is "does it spread doubt."
+Wrong direction: the per-person variant showing WORSE unaffected-group numbers than global on either metric — would
+mean the per-person split itself is introducing noise/harm rather than removing collateral effects (plausible given
+the conformal per-person finding of thinner-calibration noise already logged).

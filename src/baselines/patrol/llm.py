@@ -29,12 +29,15 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import http.client
 import json
 import os
 import pathlib
+import socket
 import sys
 import threading
 import time
+import urllib.parse
 import urllib.request
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Sequence, Tuple
@@ -46,7 +49,10 @@ from baselines.types import DAY_SECONDS, ON_PERSON, OUT_OF_HOUSE, Episode, Obser
 
 ENDPOINT = os.environ.get("PATROL_LLM_ENDPOINT", "http://127.0.0.1:8300")
 MODEL = os.environ.get("PATROL_LLM_MODEL", "Qwen/Qwen3.8-27B")
-MEMORIES = ("naive", "recent", "summary")
+MEMORIES = ("naive", "recent", "summary", "routine", "routine7", "retrieval", "longcontext", "reflect")
+RETRIEVAL_RECENT = 8            # retrieval: most recent sightings shown regardless of time of day
+RETRIEVAL_TOD_WINDOW_S = 5400   # retrieval: "same time of day" = within 90 minutes of the query's time-of-day
+RETRIEVAL_TOD_MAX = 10          # retrieval: cap on same-time-of-day sightings shown (oldest dropped first)
 ABSTAIN = "ABSTAIN"
 WEEK = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
@@ -94,10 +100,54 @@ class LLMClient:
         self.lock = threading.Lock()
         self.stats = {"calls": 0, "cached": 0, "prompt_tokens": 0, "completion_tokens": 0, "seconds": 0.0}
 
+    ATTEMPTS = 2            # one retry
+    DEADLINE_S = 900.0      # hard wall-clock cap per attempt, enforced by a watchdog that kills the socket
+
     def key(self, messages: List[dict], schema: Optional[dict], max_tokens: int) -> str:
         blob = json.dumps({"model": self.model, "messages": messages, "schema": schema,
                            "max_tokens": max_tokens, "temperature": 0, "seed": 0}, sort_keys=True)
         return hashlib.sha256(blob.encode()).hexdigest()
+
+    def _post(self, body: dict) -> dict:
+        """One POST to /v1/chat/completions with a HARD deadline. urllib's socket timeout alone did not fire on a
+        request vLLM lost (2026-09-22 00:27: one arm's thread sat in poll() for an hour, no exception, blocking the
+        pool's shutdown and so the whole chain) — so a watchdog thread shuts the socket down at DEADLINE_S, which
+        makes the blocked recv raise and lets the retry/fallback path run instead of main() hanging."""
+        u = urllib.parse.urlsplit(self.endpoint)
+        conn = http.client.HTTPConnection(u.hostname, u.port or 80, timeout=min(600.0, self.DEADLINE_S))
+        done = threading.Event()
+
+        def watchdog():
+            if done.is_set():
+                return
+            try:
+                if conn.sock is not None:
+                    conn.sock.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
+            try:
+                conn.close()
+            except OSError:
+                pass
+
+        timer = threading.Timer(self.DEADLINE_S, watchdog)
+        timer.daemon = True
+        timer.start()
+        try:
+            conn.request("POST", "/v1/chat/completions", body=json.dumps(body).encode(),
+                         headers={"Content-Type": "application/json"})
+            resp = conn.getresponse()
+            data = resp.read()
+            if resp.status != 200:
+                raise RuntimeError(f"HTTP {resp.status}: {data[:200]!r}")
+            return json.loads(data)
+        finally:
+            done.set()
+            timer.cancel()
+            try:
+                conn.close()
+            except OSError:
+                pass
 
     def complete(self, messages: List[dict], schema: Optional[dict], max_tokens: int) -> Tuple[Optional[str], dict]:
         key = self.key(messages, schema, max_tokens)
@@ -114,20 +164,25 @@ class LLMClient:
                                 "chat_template_kwargs": {"enable_thinking": False}}
         if schema is not None:
             body["response_format"] = {"type": "json_schema", "json_schema": {"name": "answer", "schema": schema}}
-        req = urllib.request.Request(f"{self.endpoint}/v1/chat/completions", data=json.dumps(body).encode(),
-                                     headers={"Content-Type": "application/json"})
         t0 = time.time()
         text, usage = None, {}
-        for attempt in range(4):
+        for attempt in range(self.ATTEMPTS):
             try:
-                with urllib.request.urlopen(req, timeout=600) as r:
-                    d = json.load(r)
+                d = self._post(body)
                 text = d["choices"][0]["message"]["content"]
                 usage = d.get("usage") or {}
                 break
-            except Exception as e:  # noqa: BLE001 - server hiccup: retry, then give up (fallback answer)
-                print(f"llm call failed ({attempt + 1}/4): {type(e).__name__}: {e}", file=sys.stderr, flush=True)
+            except Exception as e:  # noqa: BLE001 - server hiccup or lost request: retry once, then give up (fallback answer)
+                print(f"llm call failed ({attempt + 1}/{self.ATTEMPTS}, {time.time() - t0:.0f}s in): {type(e).__name__}: {e}",
+                      file=sys.stderr, flush=True)
+                with self.lock:
+                    self.stats["failed_attempts"] = self.stats.get("failed_attempts", 0) + 1
                 time.sleep(2 * (attempt + 1))
+        if text is None:
+            with self.lock:
+                self.stats["lost"] = self.stats.get("lost", 0) + 1
+            print(f"llm call LOST after {self.ATTEMPTS} attempts ({time.time() - t0:.0f}s): falling back for this question",
+                  file=sys.stderr, flush=True)
         dt = time.time() - t0
         with self.lock:
             self.stats["calls"] += 1
@@ -147,10 +202,41 @@ class LLMClient:
 
 # ------------------------------------------------------------------ memory --
 
+FLAT_WEEK = False
+"""Set per bank in run_arm: True when the bank's calendar runs the weekday routine on every day (regime banks with
+``day_kind: weekday`` in every stage). Then no weekday name is shown anywhere - timestamps are "day 18 10:40",
+resident cards drop their weekend sentence and messages are dated by day index - so the model is not told it is
+Saturday in a world that is not keeping Saturdays."""
+
+
+def flat_card(card: dict) -> str:
+    """card_sentences without the weekend sentence and with 'Weekdays:' read as every day."""
+    s = (f"{card['name']} (in their {card['age_band']}) {card['occupation']}. "
+         f"{card['weekday'].replace('Weekdays:', 'Every day:')}")
+    if card["hobbies"]:
+        s += f" Hobbies: {', '.join(card['hobbies'])}."
+    if card.get("pet"):
+        s += f" {card['name']} {card['pet']}."
+    return s
+
+
+def day_label(day: int, day_names: Dict[int, str]) -> str:
+    return f"day {day}" if FLAT_WEEK else day_names.get(day, f"day {day}")
+
+
+def hhmm(t: int) -> str:
+    hh, mm = divmod((int(t) % DAY_SECONDS) // 60, 60)
+    return f"{hh:02d}:{mm:02d}"
+
+
 def clock(t: int, day_names: Dict[int, str]) -> str:
-    day, rem = divmod(int(t), DAY_SECONDS)
-    hh, mm = divmod(rem // 60, 60)
-    return f"{day_names.get(day, f'day {day}')[:3]} {hh:02d}:{mm:02d}"
+    """'day 18 Fri 10:40': the day index is part of every timestamp, so a
+    sighting from an earlier week cannot be mistaken for one from today
+    (a multi-week study has four or five of every weekday)."""
+    day = int(t) // DAY_SECONDS
+    if FLAT_WEEK:
+        return f"day {day} {hhmm(t)}"
+    return f"day {day} {day_names.get(day, f'day {day}')[:3]} {hhmm(t)}"
 
 
 class Memory:
@@ -282,18 +368,18 @@ def header_lines(t: int, day_names: Dict[int, str], cards: List[dict], rooms: Di
                  patrol_times: Optional[List[str]] = None, question_moments: str = "",
                  feedback_delay_min: Optional[float] = None) -> List[str]:
     day = t // DAY_SECONDS
-    L = [f"Now: {day_names.get(day, 'day ' + str(day))}, {clock(t, day_names)[4:]} (day {day} of the study; "
-         f"the walkthrough was on {day_names.get(0, 'day 0')} evening).",
-         f"The robot walked through every room on {day_names.get(0, 'day 0')} at 18:00 and since then patrols "
+    # The static part (protocol, residents, rooms, instructions) comes first and the time-varying "Now:" line
+    # last, so every prompt of a household shares a long prefix and the server's prefix cache serves the prefill.
+    L = [f"The robot walked through every room on {day_label(0, day_names)} at 18:00 and since then patrols "
          f"every room {patrol_words(patrol_hours, patrol_times)}, listing what is on every spot "
          f"and who is in the room. Pockets and bags are not looked into."]
     if look_on:
         L.append("Before answering this question the robot may look at ONE room right now, for free.")
-    L += ["", "Residents:"] + [f"- {card_sentences(c)}" for c in cards]
+    L += ["", "Residents:"] + [f"- {flat_card(c) if FLAT_WEEK else card_sentences(c)}" for c in cards]
     L += ["", "Rooms and spots:"] + rooms_block(rooms)
     if fmt == "conf" and question_moments == "activity":
         from baselines.llm_hypotheses.protocol_text import QUESTIONS_ACTIVITY
-        L += ["", QUESTIONS_ACTIVITY]
+        L += ["", QUESTIONS_ACTIVITY.replace(" on a weekday and on a weekend", "") if FLAT_WEEK else QUESTIONS_ACTIVITY]
     if fmt == "conf" and feedback_delay_min is not None:
         L += ["", ("At its nightly round the robot is told, for each of the day's questions, where the object turned "
                    "out to be; those show up in the sightings below like any other sighting." if feedback_delay_min < 0 else
@@ -305,12 +391,25 @@ def header_lines(t: int, day_names: Dict[int, str], cards: List[dict], rooms: Di
     else:
         L += ["", f"Answer options: a spot name from the list above; {ON_PERSON}:<name> if a resident is carrying it; "
                   f"{OUT_OF_HOUSE} if it has been taken out of the home; {ABSTAIN} if you would rather not guess."]
+    if fmt == "conf":
+        L += ["", CONF_SCALE, "",
+              'Reply with JSON: {"reasoning": one or two short sentences on what the sightings, the time of day and '
+              'the residents\' routine suggest, "location": one spot name, "confidence": number from 0 to 1}']
     if hints:
         L += ["", "Messages from the residents:"] + [f"- {h}" for h in hints]
+    L += ["", f"Now: {day_label(day, day_names)}, {hhmm(t)} (day {day} of the study; "
+              f"the walkthrough was on {day_label(0, day_names)} evening)."]
     return L
 
 
-def memory_lines(memory: Memory, mem_kind: str, obj: str, day_names: Dict[int, str], notes: Optional[str]) -> List[str]:
+def _tod_gap(t1: int, t2: int) -> int:
+    """Seconds between two timestamps' time-of-day, taking the shorter way around the clock."""
+    d = abs((t1 % DAY_SECONDS) - (t2 % DAY_SECONDS))
+    return min(d, DAY_SECONDS - d)
+
+
+def memory_lines(memory: Memory, mem_kind: str, obj: str, day_names: Dict[int, str], notes: Optional[str],
+                 query_t: Optional[int] = None) -> List[str]:
     h = memory.history(obj)
     L: List[str] = []
     if mem_kind == "naive":
@@ -331,7 +430,7 @@ def memory_lines(memory: Memory, mem_kind: str, obj: str, day_names: Dict[int, s
             who = f"; present: {', '.join(snap['residents'])}" if snap["residents"] else "; nobody present"
             spots = "; ".join(f"{rec}: {', '.join(objs) if objs else 'empty'}" for rec, objs in sorted(snap["contents"].items()))
             L.append(f"- {room} ({clock(snap['t'], day_names)}{who}): {spots}")
-    elif mem_kind == "summary":
+    elif mem_kind in ("summary", "routine", "routine7"):
         L.append("Your notes on this home (written at the end of each day so far):")
         L.append(notes.strip() if notes else "(no notes yet: only the walkthrough has happened)")
         L += ["", f"Last sightings of {obj} (at most 3):"]
@@ -339,6 +438,47 @@ def memory_lines(memory: Memory, mem_kind: str, obj: str, day_names: Dict[int, s
         chk = memory.checked_lines(obj, day_names, 6)
         if chk:
             L += ["", "Listings since the last sighting that did NOT show it:"] + chk
+    elif mem_kind == "reflect":
+        # Reflexion-style (Shinn et al. 2023): the notes are not a summary of what happened, only of what the
+        # model got WRONG and why (written nightly from that day's found-it feedback) — distinct from routine7's
+        # full sighting-table rewrite, which keeps everything, right or wrong.
+        L.append("Notes on mistakes you have made so far (written each night from that day's corrections):")
+        L.append(notes.strip() if notes else "(no notes yet: no mistakes recorded)")
+        L += ["", f"Last sightings of {obj} (at most 10):"]
+        L += [f"- {clock(t, day_names)}: {r}" for t, r in h[-10:]] or ["- none"]
+        chk = memory.checked_lines(obj, day_names, 6)
+        if chk:
+            L += ["", "Listings since the last sighting that did NOT show it:"] + chk
+    elif mem_kind == "retrieval":
+        # Mem0 / A-Mem style (Chhikara et al. 2025; Xu et al. 2025): pull what is relevant to THIS query instead of
+        # dumping the whole history — relevance here is recency and same-time-of-day (our sightings are structured
+        # (time, receptacle) tuples, not free text, so time-of-day stands in for a semantic-similarity retrieval key).
+        recent = h[-RETRIEVAL_RECENT:]
+        recent_ts = {t for t, _ in recent}
+        if query_t is not None:
+            tod = [(t, r) for t, r in h if t not in recent_ts and _tod_gap(t, query_t) <= RETRIEVAL_TOD_WINDOW_S]
+            tod = tod[-RETRIEVAL_TOD_MAX:]
+        else:
+            tod = []
+        L.append(f"Retrieved sightings of {obj} — most recent (oldest first, at most {RETRIEVAL_RECENT}):")
+        L += [f"- {clock(t, day_names)}: {r}" for t, r in recent] or ["- none"]
+        L += ["", f"Retrieved sightings of {obj} at about this time of day on other days (oldest first, at most {RETRIEVAL_TOD_MAX}):"]
+        L += [f"- {clock(t, day_names)}: {r}" for t, r in tod] or ["- none"]
+        chk = memory.checked_lines(obj, day_names, 10)
+        if chk:
+            L += ["", "Listings since the last sighting that did NOT show it:"] + chk
+    elif mem_kind == "longcontext":
+        # the control nobody has run: the model's whole context is not curated at all — every sighting of this
+        # object AND the household's whole movement log (every object), unclipped; measures whether scale alone
+        # substitutes for a memory architecture (cf. "Lost in the Middle", Liu et al. 2024, on whether long-context
+        # models actually use what is given them).
+        L.append(f"Every sighting of {obj} so far (oldest first, {len(h)} total):")
+        L += [f"- {clock(t, day_names)}: {r}" for t, r in h] or ["- none"]
+        L += ["", "Listings since the last sighting that did NOT show it:"]
+        L += memory.checked_lines(obj, day_names, 200) or ["- none"]
+        L += ["", "Every movement the household's patrol has noticed, any object (oldest first):"]
+        all_moves = [m for day in sorted(memory.moves) for m in memory.moves[day]]
+        L += [f"- {m}" for m in all_moves] or ["- none"]
     else:
         raise ValueError(mem_kind)
     return L
@@ -351,11 +491,9 @@ def question_messages(memory: Memory, mem_kind: str, q, day_names, cards, rooms,
     L = header_lines(q.t_query, day_names, cards, rooms, patrol_hours, look_on and look_result is None, hints, fmt, patrol_times,
                      question_moments, feedback_delay_min)
     L += ["", f"Question: where is {q.object_id} (a {q.object_class.replace('_', ' ')}) right now?", ""]
-    L += memory_lines(memory, mem_kind, q.object_id, day_names, notes)
+    L += memory_lines(memory, mem_kind, q.object_id, day_names, notes, query_t=q.t_query)
     if fmt == "conf":
-        L += ["", CONF_SCALE, "",
-              'Reply with JSON: {"reasoning": one or two short sentences on what the sightings, the time of day and '
-              'the residents\' routine suggest, "location": one spot name, "confidence": number from 0 to 1}']
+        pass   # the confidence scale and the reply format are in the static header (prefix-cache friendly)
     elif look_result is not None:
         L += ["", look_result]
         L += ["", 'Reply with JSON: {"ranking": [up to 3 answer options, most likely first], '
@@ -374,20 +512,107 @@ def notes_messages(memory: Memory, day: int, day_names, cards, rooms, patrol_hou
                    walkthrough: Optional[str]) -> List[dict]:
     t_end = (day + 1) * DAY_SECONDS - 60
     L = header_lines(t_end, day_names, cards, rooms, patrol_hours, False, hints)
-    L += ["", f"It is the end of {day_names.get(day, 'day ' + str(day))}. Update your notes on this home.", ""]
+    L += ["", f"It is the end of {day_label(day, day_names)}. Update your notes on this home.", ""]
     L += ["Your previous notes:", notes.strip() if notes else "(none yet)", ""]
     if walkthrough:
         L += ["What the walkthrough found:", walkthrough, ""]
-    L.append(f"Movements the patrol noticed on {day_names.get(day, 'day ' + str(day))} (an object listed on a new spot, "
+    L.append(f"Movements the patrol noticed on {day_label(day, day_names)} (an object listed on a new spot, "
              f"or not found in any room):")
     L += [f"- {m}" for m in memory.moves.get(day, [])] or ["- none"]
     L += ["", "Who was home at each patrol:"]
     L += [f"- {p}" for p in memory.presence.get(day, [])] or ["- no full patrol yet"]
     L += ["", "Write the updated notes in plain text, at most 350 words: each resident's routine as you now "
-              "understand it (when they are out, where they spend time, by weekday and weekend), and for each "
+              "understand it (when they are out, where they spend time" + (", by weekday and weekend" if not FLAT_WEEK else "") + "), and for each "
               "object that moves, where it usually is by time of day and what tends to take it out of the house. "
               "Keep what is still true from the previous notes, drop what turned out wrong."]
     return [{"role": "system", "content": SYSTEM_NOTES}, {"role": "user", "content": "\n".join(L)}]
+
+
+def routine_messages(memory: Memory, day: int, day_names, cards, rooms, patrol_hours, hints, notes: Optional[str],
+                     window_days: int = 1) -> List[dict]:
+    """Nightly consolidation into a per-object routine table: the day's sightings grouped by object (movers only,
+    i.e. objects seen at more than one spot so far), and the model rewrites the table of where each mover is by
+    time of day. Same information as the ``summary`` notes, presented per object instead of as a movement list."""
+    t_end = (day + 1) * DAY_SECONDS - 60
+    L = header_lines(t_end, day_names, cards, rooms, patrol_hours, False, hints)
+    L += ["", f"It is the end of {day_label(day, day_names)}. Update your routine table for this home.", ""]
+    L += ["Your previous routine table:", notes.strip() if notes else "(none yet)", ""]
+    d0, d1 = max(0, day - window_days + 1) * DAY_SECONDS, (day + 1) * DAY_SECONDS
+    span = "Today's sightings" if window_days == 1 else f"Sightings over the last {window_days} days (one line per object and day)"
+    L.append(f"{span}, per object (only objects that have been seen at more than one spot so far; "
+             f"time: spot, in order; the 03:00 entry is the nightly round):")
+    n = 0
+    for o in sorted(memory.sightings):
+        h = memory.history(o)
+        if len({r for _, r in h}) < 2:
+            continue
+        for dd in range(max(0, day - window_days + 1), day + 1):
+            today = [(t, r) for t, r in h if dd * DAY_SECONDS <= t < (dd + 1) * DAY_SECONDS]
+            if not today:
+                continue
+            n += 1
+            tag = "" if window_days == 1 else (f" day {dd}:" if FLAT_WEEK else f" day {dd} {day_names.get(dd, '')[:3]}:")
+            L.append(f"- {o} ({memory.classes.get(o, '')}):{tag} " + ", ".join(f"{hhmm(t)} {r}" for t, r in today))
+    if n == 0:
+        L.append("- none")
+    L += ["", "Rewrite the routine table in plain text, at most 600 words. One line per object that moves, in the form "
+              "'object: <spot> <time window>; <spot> <time window>; ...' giving where it is through a typical day "
+              "(when it is in use as well as where it rests), and note it when " + ("" if FLAT_WEEK else "weekend days differ or when ")
+              + "the routine has changed recently (say since when). Objects that never move need no line. Keep what is "
+              "still true from the previous table, correct what " + ("these" if window_days > 1 else "today's") + " sightings "
+              "contradict, and drop nothing that they did not contradict."]
+    return [{"role": "system", "content": SYSTEM_NOTES}, {"role": "user", "content": "\n".join(L)}]
+
+
+def reflect_messages(memory: Memory, day: int, day_records: List[dict], day_names, cards, rooms, patrol_hours,
+                     hints, notes: Optional[str]) -> List[dict]:
+    """Reflexion-style (Shinn et al. 2023): notes are written from what the model got WRONG today and the
+    found-it feedback that corrected it, not from the sightings themselves — distinct from a routine-table
+    rewrite, which keeps a full record of right and wrong sightings alike."""
+    t_end = (day + 1) * DAY_SECONDS - 60
+    L = header_lines(t_end, day_names, cards, rooms, patrol_hours, False, hints)
+    L += ["", f"It is the end of {day_label(day, day_names)}. You answered some questions wrong today; the resident's "
+              "found-it feedback told you the truth 10 minutes after each one. Update your notes on your mistakes.", ""]
+    L += ["Your previous mistake notes:", notes.strip() if notes else "(none yet)", ""]
+    wrong = [r for r in day_records if not r.get("correct")]
+    if wrong:
+        L.append(f"Today's wrong answers ({len(wrong)} of {len(day_records)} questions), with what the feedback showed:")
+        for r in wrong:
+            L.append(f"- {clock(r['t_query'], day_names)}: asked where {r['object_id']} was; you said {r['answer']}; "
+                     f"it was actually at {r['truth']}.")
+    else:
+        L.append("Every question today was answered correctly.")
+    L += ["", "Write updated mistake notes in plain text, at most 250 words: for each object or situation you keep "
+              "getting wrong, one line on the pattern (what you assumed, what was actually true, what to check "
+              "instead next time). Keep entries that are still relevant, drop ones today's evidence corrected, add "
+              "new ones only for real, repeated misses — a single one-off is not a pattern."]
+    return [{"role": "system", "content": SYSTEM_NOTES}, {"role": "user", "content": "\n".join(L)}]
+
+
+NOTICING_SCHEMA: Dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "changed": {"type": "boolean"},
+        "who": {"type": ["string", "null"]},
+        "confidence": {"type": "number"},
+    },
+    "required": ["changed", "who", "confidence"], "additionalProperties": False}
+
+
+def noticing_messages(memory: Memory, day: int, day_names, cards, rooms, patrol_hours, hints) -> List[dict]:
+    """Once a day: a direct self-report, independent of mem_kind and asked in every arm — the coordinator's
+    'does the LLM notice' number, scored as a detector (fire days per household, false alarms) against the
+    change alarm run on the classical counters."""
+    t = (day + 1) * DAY_SECONDS - 30
+    L = header_lines(t, day_names, cards, rooms, patrol_hours, False, hints)
+    names = ", ".join(c["name"] for c in cards)
+    L += ["", f"It is the end of {day_label(day, day_names)}. Based only on what the patrol and the found-it "
+              f"feedback have shown you so far, has any resident's daily routine changed in the last day or two "
+              f"— things showing up in different places than their usual pattern, for one person and not the "
+              f"others? Residents: {names}.", "",
+          'Reply with JSON: {"changed": true or false, "who": the resident\'s name if changed else null, '
+          '"confidence": probability from 0 to 1 that you are right}']
+    return [{"role": "system", "content": SYSTEM}, {"role": "user", "content": "\n".join(L)}]
 
 
 # ------------------------------------------------------------------ parsing --
@@ -465,6 +690,9 @@ def run_arm(bank_path: pathlib.Path, mem_kind: str, told: bool, look_on: bool, c
     look); ``conf``: one in-house spot plus a confidence, no look, no
     ON_PERSON / OUT_OF_HOUSE / ABSTAIN."""
     header = json.loads(bank_path.read_text().splitlines()[0])
+    global FLAT_WEEK
+    kinds = set((header.get("day_kinds") or {}).values())
+    FLAT_WEEK = bool(kinds) and kinds == {"weekday"}
     patrol_times = header.get("patrol_times") or None
     question_moments = header.get("protocol", {}).get("question_moments", "")
     feedback_delay_min = header.get("protocol", {}).get("feedback_delay_min")
@@ -476,6 +704,8 @@ def run_arm(bank_path: pathlib.Path, mem_kind: str, told: bool, look_on: bool, c
     names = {c["resident_id"]: c["name"] for c in cards}
     patrol_hours = int(header["patrol_hours"])
     hint_rows = header.get("hint_messages", []) if told else []
+    if FLAT_WEEK:   # "Saturday: Yuki is home sick today." -> "Day 19: Yuki is home sick today."
+        hint_rows = [{**h, "text": f"Day {h['day_index']}: " + h["text"].split(": ", 1)[-1]} for h in hint_rows]
     rooms: Dict[str, List[str]] = defaultdict(list)
     for rec, room in sorted(episode.receptacle_rooms.items()):
         if rec not in (ON_PERSON, OUT_OF_HOUSE):
@@ -524,6 +754,8 @@ def run_arm(bank_path: pathlib.Path, mem_kind: str, told: bool, look_on: bool, c
 
     notes: Optional[str] = None
     notes_day = -1
+    noticing_day = -1
+    noticing: List[dict] = []
     records: List[dict] = []
     n_fallback = 0
     for day_questions in episode.questions_by_day:
@@ -538,14 +770,34 @@ def run_arm(bank_path: pathlib.Path, mem_kind: str, told: bool, look_on: bool, c
                     grp.append(evidence[cursor]); cursor += 1
                 memory.update_group(t, grp, day_names)
             hints = [h["text"] for h in hint_rows if h["day_index"] <= q.day_index]
-            # daily notes for the summary memory: written at the first question of each day for the day before
-            if mem_kind == "summary":
+            # once a day, every arm regardless of mem_kind: a direct self-report ("has the routine changed?"),
+            # scored later as a detector against the change alarm's fire days
+            while noticing_day < q.day_index - 1:
+                noticing_day += 1
+                day_hints = [h["text"] for h in hint_rows if h["day_index"] <= noticing_day]
+                nmsgs = noticing_messages(memory, noticing_day, day_names, cards, rooms, patrol_hours, day_hints)
+                ntext, _ = ask(nmsgs, NOTICING_SCHEMA, 200, f"noticing day {noticing_day}")
+                try:
+                    nobj = json.loads(ntext) if ntext else {}
+                except ValueError:
+                    nobj = {}
+                noticing.append({"day": noticing_day, "changed": bool(nobj.get("changed")), "who": nobj.get("who"),
+                                 "confidence": nobj.get("confidence")})
+            # daily notes: written at the first question of each day for the day before
+            if mem_kind in ("summary", "routine", "routine7", "reflect"):
                 while notes_day < q.day_index - 1:
                     notes_day += 1
                     day_hints = [h["text"] for h in hint_rows if h["day_index"] <= notes_day]
-                    msgs = notes_messages(memory, notes_day, day_names, cards, rooms, patrol_hours, day_hints, notes,
-                                          walkthrough_text if notes_day == 0 else None)
-                    text, _ = ask(msgs, None, 900, f"notes day {notes_day}", llm_authored=(notes,))
+                    if mem_kind in ("routine", "routine7"):
+                        msgs = routine_messages(memory, notes_day, day_names, cards, rooms, patrol_hours, day_hints, notes,
+                                                window_days=7 if mem_kind == "routine7" else 1)
+                    elif mem_kind == "reflect":
+                        day_records = [r for r in records if r["day_index"] == notes_day]
+                        msgs = reflect_messages(memory, notes_day, day_records, day_names, cards, rooms, patrol_hours, day_hints, notes)
+                    else:
+                        msgs = notes_messages(memory, notes_day, day_names, cards, rooms, patrol_hours, day_hints, notes,
+                                              walkthrough_text if notes_day == 0 else None)
+                    text, _ = ask(msgs, None, 1500 if mem_kind.startswith("routine") else 900, f"notes day {notes_day}", llm_authored=(notes,))
                     if text and text.strip():
                         notes = text.strip()
             msgs = question_messages(memory, mem_kind, q, day_names, cards, rooms, patrol_hours, look_on, hints, notes, None,
@@ -604,6 +856,9 @@ def run_arm(bank_path: pathlib.Path, mem_kind: str, told: bool, look_on: bool, c
     with open(run_dir / "run_log.jsonl", "w") as f:
         for r in records:
             f.write(json.dumps(r, sort_keys=True) + "\n")
+    with open(run_dir / "noticing.jsonl", "w") as f:
+        for r in noticing:
+            f.write(json.dumps({**tag, "household": tag["household"], **r}, sort_keys=True) + "\n")
     (run_dir / "stats.json").write_text(json.dumps({"arm": arm, "n": len(records), "right": n_ok, "direct_abstain": n_abs,
                                                      "fallback": n_fallback, "dollars": 0.0, "model": client.model}, indent=1))
     return records

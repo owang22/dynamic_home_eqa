@@ -1,0 +1,23 @@
+# Robustness: natural weekly calendar (weekends in every stage) and the simulator's random small events at default rates, 10-day spell everyone sick
+name: sick10_all_natural
+sim_dir: ../../data/situation_sim/regime_search/sick10_all_natural
+day0: Monday
+days: 32
+events: {rain: {weekday: 0.14, weekend: 0.14}, guest_visit: {weekday: 0.05, weekend: 0.14}, late_work: {weekday: 0.10, weekend: 0.0},
+         grocery_delivery: {weekday: 0.08, weekend: 0.10}, laundry_day: {weekday: 0.08, weekend: 0.22}, sick_day: {weekday: 0.03, weekend: 0.02}}
+calendar:
+  - {name: lead,   days: [0, 13],  suppress_random_events: false}
+  - {name: sick,   days: [14, 23], force_events: [{event: sick_day, resident: all}], suppress_random_events: false}
+  - {name: return, days: [24, 31], suppress_random_events: false}
+patrol_hours: 0
+patrol_times: "03:00"
+questions: activity
+question_moment: during
+classes: [book, water_bottle, tablet, mug, charger, glasses, glass, razor]
+question_min_gap_min: 30
+per_day: 24
+oversample: 1024
+timetable_bin_hours: 2
+negative_evidence: off
+feedback_delay_min: 10
+extra_beliefs: [{name: timetable, half_life_h: 24}, {name: timetable, half_life_h: 72}, {name: timetable, half_life_h: 168}, {name: most_frequent, half_life_h: 24}, {name: most_frequent, half_life_h: 72}, {name: most_frequent, half_life_h: 168}]
