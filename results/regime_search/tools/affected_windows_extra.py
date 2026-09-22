@@ -47,12 +47,9 @@ def main():
 
     block = {"window_order": WINDOWS, "window_label": WINDOW_LABEL, "agents": out_agents}
 
-    path = f"{ROOT}/story_extra.json"
-    data = json.load(open(path)) if os.path.exists(path) else {}
-    data["affected_windows"] = block
-    json.dump(data, open(path, "w"), separators=(",", ":"))
-    print(f"merged affected_windows into {path}: {len(out_agents)} agents, {sum(1 for k in AGENT_INFO if k not in win)} missing, "
-          f"other keys kept: {[k for k in data if k != 'affected_windows']}")
+    from extra_store import write_keys
+    print(f"affected_windows: {len(out_agents)} agents, {sum(1 for k in AGENT_INFO if k not in win)} missing | "
+          + write_keys("affected_windows_extra", {"affected_windows": block}))
 
 
 if __name__ == "__main__":

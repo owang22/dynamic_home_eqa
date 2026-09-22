@@ -286,3 +286,28 @@ and a gain as large as the buffer's is still consistent with what we see), and d
 comparison it is being set against. Otherwise it is absence of evidence and must be written as such. This is the
 same family as the 04:45 unmatched-household error and the 05:10 three-household retraction — the third time
 tonight that two individually correct numbers made a wrong claim when placed next to each other.
+
+## 11:30 — story_extra.json clobbered twice: once by a bug, once by me testing the fix for it
+
+**The bug.** `tools/story_extra.py` built its output from a fresh dict and wrote the whole of `story_extra.json`,
+destroying the keys the other four extractors own (`llm_live`, `knowno_live`, `owner_split_live`, `gap`,
+`shared_state`, `affected_windows`). Nothing errored. It was caught only because the rebuilt page went from
+2753 KB to 1288 KB and I happened to look at the number. Restored by re-running the other four.
+
+**The fix, and what testing it revealed.** All five extractors now write through `tools/extra_store.py`, which
+declares key ownership, refuses a write of another extractor's key, refuses an unknown caller, and reports the
+key list and byte delta every time. The obvious guard — fail if the file shrinks — turns out NOT to catch the
+case that matters: once writes are merged, a key can no longer vanish, so a broken extractor instead writes an
+EMPTY value over a full one. The content is just as gone and the file barely changes size. The guard that works
+is per-key: refuse to overwrite a non-empty value with an empty one, with an explicit `allow_shrink=True`
+override. I found this only because I ran the tests rather than reasoning about whether they would pass.
+
+**My own error, which is the part worth remembering.** I ran those destructive tests against the live
+`story_extra.json` instead of a copy. The first test case wrote an empty `sweep` and `affected` into the real
+file; the second run then reported "not caught" for the wrong reason, because there was no longer anything
+non-empty left to protect — a corrupted file producing a misleading test result. Recovered from a backup taken
+minutes earlier, verified against it key by key (10 keys, 4 sweep regimes, 11 affected agents), then re-ran the
+whole suite with the store's PATH redirected to a sandbox copy.
+
+**Rule.** A test that exercises a destructive path points at a copy, never at the artifact. And a guard against
+silent data loss is exactly the kind of code whose tests can cause the loss it prevents.

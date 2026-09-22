@@ -1,4 +1,4 @@
-# Numbers behind STORY.md — regenerated Tue 22 Sep 2026 07:51
+# Numbers behind STORY.md — regenerated Tue 22 Sep 2026 11:28
 
 Windows: lead = days 9-13 (settled end of the lead-up), 14-16 (first sick days), 17-23 (rest of the spell), 24-26 (first
 days back), 27-31 (rest of the return). Accuracy in %, pooled over households. A window with fewer than 10 answers prints –.

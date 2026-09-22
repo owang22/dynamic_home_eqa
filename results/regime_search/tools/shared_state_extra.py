@@ -32,11 +32,8 @@ def main():
                              "windows": d["windows"], "pairs": d["pairs"]}
 
     block = {"window_order": WINDOWS, "window_label": WINDOW_LABEL, "methods": out_methods}
-    path = f"{ROOT}/story_extra.json"
-    data = json.load(open(path)) if os.path.exists(path) else {}
-    data["shared_state"] = block
-    json.dump(data, open(path, "w"), separators=(",", ":"))
-    print(f"merged shared_state into {path}: {len(out_methods)} methods, other keys kept: {[k for k in data if k != 'shared_state']}")
+    from extra_store import write_keys
+    print(f"shared_state: {len(out_methods)} methods | " + write_keys("shared_state_extra", {"shared_state": block}))
 
 
 if __name__ == "__main__":

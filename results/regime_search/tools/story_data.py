@@ -12,7 +12,7 @@ from analyze import load, SHORT  # noqa
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UQ = os.path.join(os.path.dirname(ROOT), "confidence_shift_2026-09-20", "uq", "regime")
 CLASSICAL = {"timetable_hl3d": "tt3d", "timetable": "ttfrozen", "mostfreq_hl3d": "mf3d", "mostfreq": "mffrozen", "lastseen": "lastseen",
-             "perpetua": "perpetua", "timetable_hl1d": "tt1d", "mostfreq_hl1d": "mf1d"}
+             "perpetua": "perpetua", "timetable_hl1d": "tt1d", "mostfreq_hl1d": "mf1d", "periodic": "periodic"}
 # uq/regime/<regime>/<dir-name>/*.jsonl -> series key. mart_tt72/mart_tt are the change-alarm-with-reset agent on the
 # 3-day and never-forgets timetable bases; bma_tt/bma_obj are the hedge with one shared vs one per-object trust
 # vector; ocp_tt is the nudging honest-sets conformal agent, nexcp_tt the weighted-quantile variant (Barber, Candès,
@@ -20,6 +20,30 @@ CLASSICAL = {"timetable_hl3d": "tt3d", "timetable": "ttfrozen", "mostfreq_hl3d":
 UQA = {"mart_tt72": "detector3d", "mart_tt": "detectorfrozen", "bma_tt": "bma", "bma_obj": "bmaobj",
        "ocp_tt": "conformal", "nexcp_tt": "nexcp"}
 N_BINS = 5
+
+
+def cold_ids(bank_path, qs):
+    """The question_ids that are COLD: the first question about that object on that day, in query-time order.
+
+    Cold is a property of the QUESTION BANK, not of the method — every belief answers exactly the same questions —
+    so it is computed once per household here rather than per agent. This is the honest memory measure: the first
+    time the robot is asked about a thing that day, before any found-it feedback about it has arrived."""
+    tq = {}
+    for l in open(bank_path):
+        if '"question"' in l:
+            r = json.loads(l)
+            if r.get("kind") == "question":
+                tq[r["question_id"]] = r["t_query"]
+    seen, out = set(), set()
+    for qid in sorted(tq, key=lambda q: tq[q]):
+        q = qs.get(qid)
+        if not q:
+            continue
+        k = (q["day"], q["obj"])
+        if k not in seen:
+            seen.add(k)
+            out.add(qid)
+    return out
 
 
 def conf_of(r):
@@ -34,6 +58,7 @@ def regime(d, label="t03"):
     for bp in sorted(glob.glob(f"{d}/banks/hh_s*_{label}.jsonl")):
         hh = os.path.basename(bp).split("_" + label)[0]; h, qs = load(bp, 2)
         out["days"] = h["n_days"]; out["day0"] = h.get("day0_weekday", "Monday"); out["hh"].append(hh)
+        cold = cold_ids(bp, qs)
         for dd, st in (h.get("stages") or {}).items(): out["stages"][str(dd)] = st
         srcs = [(f"{d}/classical/{hh}_{label}.jsonl", None)] + [(f"{UQ}/{os.path.basename(d)}/{a}/{hh}_{label}.jsonl", a) for a in UQA]
         for cp, forced in srcs:
@@ -45,10 +70,12 @@ def regime(d, label="t03"):
                 key = UQA.get(forced) if forced else CLASSICAL.get(SHORT.get(r["belief"], ""))
                 if not key: continue
                 conf = conf_of(r); ok = int(r["correct"])
-                A = out["agents"].setdefault(key, {}).setdefault(hh, {"all": [[0, 0, 0.0] for _ in range(h["n_days"])], "moved": [[0, 0, 0.0] for _ in range(h["n_days"])]})
+                A = out["agents"].setdefault(key, {}).setdefault(hh, {sp: [[0, 0, 0.0] for _ in range(h["n_days"])] for sp in ("all", "moved", "cold")})
                 a0 = A["all"][q["day"]]; a0[0] += 1; a0[1] += ok; a0[2] += conf
                 if q["moved"]:
                     a1 = A["moved"][q["day"]]; a1[0] += 1; a1[1] += ok; a1[2] += conf
+                if r["question_id"] in cold:
+                    a2 = A["cold"][q["day"]]; a2[0] += 1; a2[1] += ok; a2[2] += conf
                 # reliability bins: claimed confidence vs. actual correctness, pooled over households, split by
                 # split (all questions / moved-only) and by stage (lead / sick / return / any = every stage pooled)
                 C = out["calib"].setdefault(key, {})

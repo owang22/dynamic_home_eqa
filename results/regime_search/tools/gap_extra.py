@@ -226,11 +226,8 @@ def main():
                         n += arr[d][0]; ncov += arr[d][1]
             lines.append(f"  {key:20s} (conformal) lead coverage {100*ncov/n:.1f}% (target 90%)" if n else f"  {key} (conformal) no lead data")
 
-    path = f"{ROOT}/story_extra.json"
-    data = json.load(open(path)) if os.path.exists(path) else {}
-    data["gap"] = out
-    json.dump(data, open(path, "w"), separators=(",", ":"))
-    lines.append(f"merged gap into {path}: other keys kept: {[k for k in data if k != 'gap']}")
+    from extra_store import write_keys
+    lines.append(write_keys("gap_extra", {"gap": out}))
     print("\n".join(lines))
 
 

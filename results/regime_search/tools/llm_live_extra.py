@@ -26,6 +26,7 @@ otherwise (notes/noticing calls use different where-tags and are skipped automat
 
     python3 tools/llm_live_extra.py  (run from results/regime_search)
 """
+import collections
 import glob
 import json
 import os
@@ -315,6 +316,7 @@ def main():
                 nd = n_days_by_hh[(pop, key, hh)]
                 arr_all = [[0, 0, 0.0, 0.0] for _ in range(nd)]
                 arr_mv = [[0, 0, 0.0, 0.0] for _ in range(nd)]
+                arr_cold = [[0, 0, 0.0, 0.0] for _ in range(nd)]   # per-day cold, for the panel split
                 hh_rows = rows_by_hh.setdefault(hh, [])
                 for d, c, ok, mv, cold in rows:
                     if d >= nd:
@@ -327,7 +329,10 @@ def main():
                     if mv:
                         cell2 = arr_mv[d]
                         cell2[0] += 1; cell2[1] += ok; cell2[2] += c; cell2[3] += lc
-                cells[hh] = {"all": arr_all, "moved": arr_mv}
+                    if cold:
+                        cell3 = arr_cold[d]
+                        cell3[0] += 1; cell3[1] += ok; cell3[2] += c; cell3[3] += lc
+                cells[hh] = {"all": arr_all, "moved": arr_mv, "cold": arr_cold}
 
             n_hh = len(arm["n_hh_done"])
             done_sum = sum(arm["n_hh_done"].values())
@@ -495,13 +500,14 @@ def main():
     knowno = knowno_block(lines)
     owner_split = owner_split_block(bank_cache, lines)
 
-    path = f"{ROOT}/story_extra.json"
-    data = json.load(open(path)) if os.path.exists(path) else {}
-    data["llm_live"] = out
-    data["knowno_live"] = knowno
-    data["owner_split_live"] = owner_split
-    json.dump(data, open(path, "w"), separators=(",", ":"))
-    lines.append(f"merged llm_live/knowno_live/owner_split_live into {path}: other keys kept: {[k for k in data if k not in ('llm_live', 'knowno_live', 'owner_split_live')]}")
+    cgate = classical_askgate_block()
+    for k, v in sorted(cgate.items()):
+        g = v["askgate"]
+        lines.append(f"classical ask gate {k} ({v['n_hh']} hh): " + "  ".join(
+            f"{w} ask {g[w]['ask_rate']:.0f}% miss {g[w]['miss_rate']:.0f}%" for w in WINDOWS5 if g.get(w) and g[w]["miss_rate"] is not None))
+    from extra_store import write_keys
+    lines.append(write_keys("llm_live_extra", {"llm_live": out, "knowno_live": knowno,
+                                               "owner_split_live": owner_split, "classical_askgate": cgate}))
     print("\n".join(lines))
 
 
@@ -606,6 +612,43 @@ def bank_owner_info(bank_path):
     return sick, owners, q_obj
 
 
+# Counters put through the SAME answer-or-ask gate as the LLM arms, so the page can show the comparison it has
+# been asserting in prose ("the counting methods, for all their simplicity, do better on this score") instead of
+# only stating it. Conditions are deliberately identical and not flattering: same AskGate procedure, same alpha,
+# same five windows, and the counter's confidence read the same way it is read everywhere else on this page --
+# the top probability of its own distribution over places.
+CLASSICAL_GATE_BELIEFS = {
+    "TimetableLookup(bin=2h,days=all,hl=72h)": ("tt3d", "3-day timetable"),
+    "TimetableLookup(bin=2h,days=all)": ("ttfrozen", "never-forgets timetable"),
+}
+
+
+def classical_askgate_block(regime_dir="sick10_owner"):
+    """-> {key: {name, n_hh, askgate}} for the counters, on the same population as the LLM person arms."""
+    rows_by_key = collections.defaultdict(list)   # key -> [(t_query, day, conf, ok)]
+    hh_by_key = collections.defaultdict(set)
+    for cp in sorted(glob.glob(f"{ROOT}/{regime_dir}/classical/hh_s*_{LABEL}.jsonl")):
+        hh = os.path.basename(cp).split("_" + LABEL)[0]
+        for line in open(cp):
+            try:
+                r = json.loads(line)
+            except ValueError:
+                continue
+            ent = CLASSICAL_GATE_BELIEFS.get(r.get("belief"))
+            if not ent:
+                continue
+            key, _ = ent
+            rows_by_key[key].append((r.get("t_query", 0), r["day_index"], float(r.get("top_prob") or 0.0), int(bool(r["correct"]))))
+            hh_by_key[key].add(hh)
+    out = {}
+    for key, rows in rows_by_key.items():
+        rows.sort()                                   # chronological, households interleaved -- as for the LLM arms
+        gate = run_askgate([(d, c, ok) for _, d, c, ok in rows])
+        out[key] = {"name": CLASSICAL_GATE_BELIEFS[[k for k, v in CLASSICAL_GATE_BELIEFS.items() if v[0] == key][0]][1],
+                    "n_hh": len(hh_by_key[key]), "askgate": gate}
+    return out
+
+
 def owner_split_block(bank_cache, lines):
     """Per arm on the partial-shift population: accuracy and stated confidence on the SICK resident's things vs
     everyone else's (others = not owned by the sick resident, shared objects included), per 5-window, all
@@ -694,10 +737,27 @@ def owner_split_block(bank_cache, lines):
         if arm["msg_tag"] == "startmsg":
             paired = {w: {f"{g}_{sp}": owner_paired(pop, arm["mem_kind"], w, g, sp)
                           for g in ("sick", "others") for sp in ("all", "cold")} for w in WINDOWS5}
+        # Per-DAY cells split by whose things the question was about, so the owner split can be drawn as a line
+        # chart (panel H) rather than only read off the five-window table. Same shape as the other arms' cells --
+        # {household: {split: [ [n, ok, sum_conf] per day ]}} -- one set per group. Rows are
+        # (day, group, cold, correct, conf, hh).
+        nd = max((r[0] for r in arm["rows"]), default=-1) + 1
+        cells_by_group = {}
+        for group in ("sick", "others"):
+            g_cells = {}
+            for r in arm["rows"]:
+                if r[1] != group:
+                    continue
+                hh_cells = g_cells.setdefault(r[5], {sp: [[0, 0, 0.0] for _ in range(nd)] for sp in ("all", "cold")})
+                for sp in (("all", "cold") if r[2] else ("all",)):
+                    c = hh_cells[sp][r[0]]
+                    c[0] += 1; c[1] += r[3]; c[2] += r[4]
+            cells_by_group[group] = g_cells
         out.setdefault(pop, {})[key] = {"paired_vs_nomsg": paired,
                                         "name": MEM_NAME.get(arm["mem_kind"], arm["mem_kind"]) + MSG_LABEL[arm["msg_tag"]],
                                         "mem_kind": arm["mem_kind"], "msg_tag": arm["msg_tag"], "n_hh": len(arm["hh"]),
-                                        "households": sorted(arm["hh"]), "windows": windows}
+                                        "households": sorted(arm["hh"]), "windows": windows,
+                                        "n_days": nd, "cells_by_group": cells_by_group}
         f = lambda w, g: (f"{windows[w][g]['acc']:.0f}" if windows[w][g] else "–")
         lines.append(f"owner-split {pop}/{key} ({len(arm['hh'])} hh): sick person's things " + " | ".join(f(w, "sick_all") for w in WINDOWS5) +
                      "   others " + " | ".join(f(w, "others_all") for w in WINDOWS5) +
