@@ -109,6 +109,9 @@ NOTE_NO_BAND = ("The line is a centred three-day average computed within each st
 
 rcParams.update({
     "font.size": 8, "axes.labelsize": 8, "axes.titlesize": 8,
+    # Weight, not size: every piece of type inside an image is bold so it survives reproduction at column
+    # width. Caption files are markdown and unaffected.
+    "font.weight": "bold", "axes.labelweight": "bold", "axes.titleweight": "bold",
     "xtick.labelsize": 7.5, "ytick.labelsize": 7.5, "legend.fontsize": 7,
     "axes.facecolor": "white", "figure.facecolor": "white", "savefig.facecolor": "white",
     "axes.edgecolor": "#444444", "axes.linewidth": 0.8,
@@ -297,7 +300,7 @@ def legend_below(ax, note=None, ncol=2, order=None, inside=None, gap=0.17):
     _ = (note, y0)
 
 
-def finish(ax, ylab, xlab="day", ylim=(30, 100)):
+def finish(ax, ylab, xlab="Day", ylim=(30, 100)):
     ax.set_ylabel(ylab)
     if xlab:
         ax.set_xlabel(xlab)
@@ -489,7 +492,7 @@ def f1(DATA, EXTRA, manifest):
                          "day 23": r2(val(23)), "day 24": r2(val(24)),
                          "break at 24": r2(None if val(23) is None or val(24) is None else val(24) - val(23))}
     boundaries([ax], DATA, pop)
-    finish(ax, "% of questions answered correctly")
+    finish(ax, "Accuracy")
     legend_below(ax, ncol=2)
     save(fig, "F1_learn_break_relearn", manifest, {
         "figure": "F1",
@@ -578,22 +581,22 @@ def f2(DATA, EXTRA, manifest):
         line(ax, S, colour, NAME[m], band=(m == "tt3d"), stage_of=st,
              lw=1.9 if m == "tt3d" else 1.2)
     boundaries([ax], DATA, pop)
-    finish(ax, "% of questions answered correctly")
+    finish(ax, "Accuracy")
     legend_below(ax, ncol=2)
     save(fig, "F2_relearning_inside_the_spell", manifest, {
         "figure": "F2",
         "claim_head": ("The language memories do not behave as one class, and the one that behaves most like "
-                       "a COUNTER is the one built like a counter. Retrieval answers by pulling sightings from "
+                       "a COUNTER is the one built like one. Retrieval answers by pulling sightings from "
                        "the same time of day across the whole history, capped but never aged out \u2014 which "
                        "is the never-forgets timetable's index, plus a recency window. Behaviourally it tracks "
-                       "that counter at a correlation of +0.90 with a mean gap of 4.1 points, where the other "
+                       "the never-forgets timetable at a correlation of +0.90 with a mean gap of 4.1 points, where the other "
                        "language memories track it at +0.55 and 8\u20139 points, and at the return it RISES as "
-                       "that counter does while every adapting method falls. A language memory inherits the "
+                       "the never-forgets timetable does while every adapting method falls. A language memory inherits the "
                        "failure mode of whatever it is indexed by: choosing the retrieval key is choosing which "
                        "disruption the memory will fail on.\n\n" + SPINE + " Retrieval's index is the "
                        "clearest case: same time of day, whole history, no notion of when a sighting stopped "
                        "being informative.\n\n"),
-        "claim": (lambda g: "Given ten days of the new routine the counter re-learns it "
+        "claim": (lambda g: "Given ten days of the new routine the 3-day timetable re-learns it "
                             f"{g['3-day timetable'] / max(g['reflection'], 0.1):.1f} to "
                             f"{g['3-day timetable'] / max(min(g['long-context'], g['retrieval']), 0.1):.1f} times "
                             "as fast as any language memory: "
@@ -605,7 +608,7 @@ def f2(DATA, EXTRA, manifest):
         "band": "±1 standard error across households, on the 3-day timetable only",
         "caption": "Accuracy per day for the 3-day timetable and three language memories. All four break on "
                    "the first sick day. Over the following ten days, during which every method is living in "
-                   "the new routine and is told the right answer after every question, the counter re-learns "
+                   "the new routine and is told the right answer after every question, the 3-day timetable re-learns "
                    "the routine and the language memories recover far less.",
         "look_for": ("The slope between the first sick days and the end of the spell. The 3-day timetable "
                      f"goes from {nums['3-day timetable']['days 14-16']:.1f} to "
@@ -617,18 +620,18 @@ def f2(DATA, EXTRA, manifest):
         "not_shown": ("It does not show that the language memories learn NOTHING: reflection's "
                       f"+{nums['reflection']['re-learning inside the spell']:.1f} is a real gain, about "
                       f"{nums['reflection']['re-learning inside the spell'] / max(nums['3-day timetable']['re-learning inside the spell'], 0.1):.0%} "
-                      "of the counter's. It also does not separate re-learning from same-day "
+                      "of the 3-day timetable's. It also does not separate re-learning from same-day "
                       "feedback, since these are all questions rather than cold ones. Long-context is on "
                       "fewer households than the rest."),
         "history": "This figure asserted until 22 Sept that the language memories \"barely move\". Its own "
-                   "numbers contradicted that — reflection re-learns half as much as the counter, which is not "
+                   "numbers contradicted that — reflection re-learns half as much as the 3-day timetable, which is not "
                    "\"barely\" — so the claim was changed to the ratio it can actually support and the file "
                    "was renamed off `F2_counters_relearn_language_does_not`, which had encoded the overclaim "
                    "in its name.",
         "note": "The counts are per method above; long-context ran on fewer households than the counters. "
                 "The shaded envelope behind the three language memories spans the highest and lowest of "
                 "THEIR OWN three estimates on each day — it is the spread between those methods, not a "
-                "pooled standard error, and it is there so the three read as one class against the counter.",
+                "pooled standard error, and it is there so the three read as one class against the 3-day timetable.",
         "drawing": NOTE_LONG_ACC,
         "provisional": grow and "long-context household count will rise: a larger run is in progress",
         "numbers": nums})
@@ -666,7 +669,7 @@ def f3(DATA, EXTRA, manifest):
     for k, lab, c in reversed(arms):             # most-told at the bottom, never-told on top
         line(ax, S[k], c, lab, clip_from=clip.get(k, 1), stage_of=stage_lookup(DATA, pop))
     boundaries([ax], DATA, pop)
-    finish(ax, "% of questions answered correctly")
+    finish(ax, "Accuracy")
     legend_below(ax, ncol=1, order="reverse")
     nums = {}
     for k, lab, _ in arms:
@@ -676,7 +679,8 @@ def f3(DATA, EXTRA, manifest):
     save(fig, "F3_what_one_sentence_buys", manifest, {
         "figure": "F3",
         "claim": "Ten days of living in the new routine, corrected after every single question, do not teach "
-                 "this memory the new routine. One sentence does. The untold arm is still answering from the "
+                 "long-context memory the new routine. One sentence does. Its untold arm is still answering "
+                 "from the "
                  "old pattern at the end of the spell, while the arm told \u201cYuki is home sick today\u201d "
                  "on the first morning sits above it from that day on. That is the uncomfortable half of the "
                  "accuracy story: what repairs the break is being TOLD, not the evidence, so a memory nobody "
@@ -702,7 +706,7 @@ def f3(DATA, EXTRA, manifest):
                     "drawing choice; the departure days are in the numbers.",
         "not_shown": "At this household count almost nothing here clears our claim bar, and the bands overlap "
                      "heavily — treat the gaps as indicative, not established. It also does not show a cost of "
-                     "the message on the way out for this memory; the buffer and retrieval show that more "
+                     "the message on the way out for long-context; the recency buffer and retrieval show that more "
                      "clearly and on more households.",
         "drawing": NOTE_LONG_ACC,
         "provisional": grow and "household count will rise: a larger run is in progress",
@@ -753,10 +757,11 @@ def f8(DATA, EXTRA, manifest):
     if worst_below:
         d, v, who = worst_below
         ax.plot([d], [v], "o", ms=3.4, color=COL["ttfrozen"], zorder=6)
-        ax.annotate(f"{v:+.1f}: worse than answering nothing", xy=(d, v), xytext=(8, 14),
-                    textcoords="offset points", fontsize=6.2, color=INK, va="bottom",
-                    arrowprops=dict(arrowstyle="-", lw=0.6, color=INK, shrinkA=0, shrinkB=2))
-    finish(ax, "daily score (+1 / \u22121 / 0)", ylim=None)
+        ax.annotate(f"{v:+.1f}: worse than not answering", xy=(d, v), xycoords="data",
+                    xytext=(0.02, 0.13), textcoords="axes fraction",
+                    fontsize=6.2, color=INK, va="bottom", ha="left",
+                    arrowprops=dict(arrowstyle="-", lw=0.6, color=INK, shrinkA=2, shrinkB=3))
+    finish(ax, "Score", ylim=None)
     legend_below(ax, ncol=2)
     save(fig, "F8_decision_score_per_day", manifest, {
         "figure": "F8",
@@ -823,7 +828,7 @@ def f9(DATA, EXTRA, manifest):
     ax.axhline(0, color=INK, lw=0.8, zorder=2)
     ax.set_xticks(range(len(order)))
     ax.set_xticklabels([textwrap.fill(k, 12) for k in order], fontsize=6.4)
-    finish(ax, "points gained by declining", xlab="", ylim=None)
+    finish(ax, "Gain from declining", xlab="", ylim=None)
     ax.grid(True, axis="y", alpha=0.5)
     ax.grid(False, axis="x")
     # two lines. The hindsight caveat stays -- it is what stops this being read as a deployable policy --
@@ -944,20 +949,20 @@ def f4(DATA, EXTRA, manifest):
             "its own confidence moved (points)": conf_shift(DATA, EXTRA, m)}
     boundaries(ax, DATA, "person")
     ax[0].axhline(1.0, color=REF, ls="--", lw=1.0, zorder=2)
-    ax[0].annotate(f"what it promised ({promise:.0f}% wrong)", xy=(0.985, 1.0),
+    ax[0].annotate("what it promised", xy=(0.985, 1.0),
                    xycoords=("axes fraction", "data"), xytext=(0, -4), textcoords="offset points",
                    ha="right", va="top", fontsize=6.2, color=REF)
     # rank the methods ON the plot, worst first, so a reader can tell good from bad without tracing four lines
     peaks.sort(reverse=True)
-    ax[0].annotate("averaged over the first sick days (14\u201316):", xy=(0.03, 0.975),
+    ax[0].annotate("averaged over days 14\u201316:", xy=(0.03, 0.975),
                    xycoords="axes fraction", fontsize=5.9, color="#555555", va="top", style="italic")
     for r, (mx, name, c) in enumerate(peaks):
         ax[0].annotate(f"{mx:.1f}\u00d7  {name}", xy=(0.03, 0.885 - r * 0.098), xycoords="axes fraction",
                        fontsize=6.1, color=c, va="top", fontweight="bold" if r == 0 else "normal")
     top = max(v["mean"][d] for v in (gate_series(D[m], "wrong_when_answered") for m in GATE_ORDER if m in D)
               for d in range(len(v["mean"])) if v["mean"][d] is not None) / promise
-    finish(ax[0], "times its promised\nerror rate", xlab="", ylim=(0, top + 2.4))
-    finish(ax[1], "% handed over", ylim=(0, 100))
+    finish(ax[0], "Error rate \u00f7 promise", xlab="", ylim=(0, top + 2.4))
+    finish(ax[1], "Handed over", ylim=(0, 100))
     save(fig, "F4_reacting_is_not_recovering", manifest, {
         "figure": "F4",
         "claim": (lambda n: "Reacting is not recovering. When the routine changes these gates DO notice \u2014 "
@@ -989,9 +994,9 @@ def f4(DATA, EXTRA, manifest):
                                 f"{abs(n['never-forgets timetable']['its own confidence moved (points)']):.1f} "
                                 f"and {abs(n['3-day timetable']['its own confidence moved (points)']):.1f} "
                                 "points, while long-context's moves "
-                                f"{n['long-context']['its own confidence moved (points)']:+.1f} \u2014 so for "
-                                "the language memory the entire reaction is the controller raising its bar "
-                                "after mistakes have already been made, and none of the four moves its "
+                                f"{n['long-context']['its own confidence moved (points)']:+.1f}. So "
+                                "long-context's entire reaction is the controller raising its bar after "
+                                "mistakes have already been made, and none of the four moves its "
                                 "confidence as far as its accuracy fell. Nor does it show what the questions "
                                 "it hands over would have scored: that is F6, and for one method the answer "
                                 "is worse than what it kept.")(nums),
@@ -1024,10 +1029,8 @@ def f5(DATA, EXTRA, manifest):
                          "gap at day 14": r2(None if g(A, 14) is None or g(C, 14) is None else g(C, 14) - g(A, 14))}
     boundaries([ax[0]], DATA, pop)
     boundaries([ax[1]], DATA, pop)
-    finish(ax[0], "%", ylim=(0, 100))
-    finish(ax[1], "", ylim=(0, 100))
-    ax[0].set_title("is it right?", fontsize=7.5, pad=16)
-    ax[1].set_title("how sure does it say it is?", fontsize=7.5, pad=16)
+    finish(ax[0], "Accuracy", ylim=(0, 100))
+    finish(ax[1], "Confidence", ylim=(0, 100))
     legend_below(ax[0], ncol=3, gap=0.22)
     save(fig, "F5_confidence_against_accuracy", manifest, {
         "figure": "F5",
@@ -1070,8 +1073,8 @@ def f6(DATA, EXTRA, manifest):
     D = EXTRA["deferral_live"]["memories"]
     order = EXTRA["deferral_live"]["memories"]["ttfrozen"]["answered_vs_handed"]
     wins = [w for w in ("lead", "d14_16", "d17_23", "d24_26", "d27_31") if w in order]
-    WLAB = {"lead": "settled", "d14_16": "first\nsick days", "d17_23": "in the\nspell",
-            "d24_26": "first days\nback", "d27_31": "a week\nlater"}
+    WLAB = {"lead": "settled\n9\u201313", "d14_16": "sick\n14\u201316", "d17_23": "spell\n17\u201323",
+            "d24_26": "back\n24\u201326", "d27_31": "later\n27\u201331"}
     meths = ["ttfrozen", "perpetua"]
     fig, ax = plt.subplots(1, 2, figsize=(FULL * 0.72, 2.5), sharey=True, gridspec_kw={"wspace": 0.05})
     nums, hh = {}, {}
@@ -1093,7 +1096,7 @@ def f6(DATA, EXTRA, manifest):
         a.set_xticks(xs)
         a.set_xticklabels([WLAB[w] for w in wins], fontsize=5.9)
         a.set_title(GATE_NAME[m], fontsize=7.5)
-        finish(a, "% right" if m == meths[0] else "", xlab="", ylim=(0, 100))
+        finish(a, "Accuracy" if m == meths[0] else "", xlab="", ylim=(0, 100))
         a.grid(False, axis="x")
         hh[GATE_NAME[m]] = gate_hh(M)
         nums[GATE_NAME[m]] = {WLAB[w].replace("\n", " "): M["answered_vs_handed"][w]["edge"] for w in wins}
@@ -1151,8 +1154,8 @@ def f7(DATA, EXTRA, manifest):
         ax[1].annotate(f"{d14['set_size']:.2f}", xy=(14, d14["set_size"]), xytext=(4, -1),
                        textcoords="offset points", fontsize=6.4, color=INK, va="top")
     boundaries(ax, DATA, "person")
-    finish(ax[0], "% of the time the\ntruth was in the set", xlab="", ylim=(40, 105))
-    finish(ax[1], "places it must name", ylim=(1.0, 2.2))
+    finish(ax[0], "Coverage", xlab="", ylim=(40, 105))
+    finish(ax[1], "Places named", ylim=(1.0, 2.2))
     lead = [C[str(d)]["coverage"] for d in range(9, 14) if str(d) in C]
     spell = [C[str(d)]["coverage"] for d in range(14, 24) if str(d) in C]
     lead_s = [C[str(d)]["set_size"] for d in range(9, 14) if str(d) in C]

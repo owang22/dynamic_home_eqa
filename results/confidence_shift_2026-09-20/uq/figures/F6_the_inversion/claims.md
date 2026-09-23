@@ -18,7 +18,7 @@ Two methods only; the 3-day timetable is close to a wash and long-context never 
 
 Measured on the DAILY values, not read off the plotted line.
 
-| series | settled | first sick days | in the spell | first days back | a week later |
+| series | settled 9–13 | sick 14–16 | spell 17–23 | back 24–26 | later 27–31 |
 |---|---|---|---|---|---|
 | never-forgets timetable | 26.3 | -22.4 | 11.8 | 25.6 | 35.0 |
 | Perpetua* | 33.1 | 37.6 | 29.5 | 28.3 | 37.4 |
