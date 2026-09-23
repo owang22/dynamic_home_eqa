@@ -215,3 +215,16 @@ Headline sentence this supports: the model follows whatever the prompt asserts a
 description is worth +13 overall and +30 cold through the spell, with most of it coming from knowing the STAGE, not the
 location. An appended correction buys the same in the spell but keeps being followed after it stops being true, unless the
 description is also restored.
+
+## Rerun floor for the whole-log-in-the-prompt memory (05:27, hh_s0-2; same days)
+Existing chain_person run -> fresh re-run tonight, prompts verified byte-identical:
+| household | all days (share of answers changed) | largest window move | recent-sightings list, same household, answers changed |
+|---|---|---|---|
+| hh_s0 | 69->69 (4%) | 2-3 points | 4% |
+| hh_s1 | 65->63 (6%) | lead-up 66->62 (10% changed) | 2% |
+| hh_s2 | 74->76 (4%) | days 27-28 78->88 (9% changed) | 4% |
+Mean: 4.7% of answers changed for the whole-log memory vs 3.3% for the recent-sightings list. All-days accuracy moves 0-2 points,
+but single windows move up to 10. Verdict: slightly larger on average, carried by one household (hh_s1: 6% vs 2%), and not
+distinguishable at three households. Neither prediction is confirmed: the coordinator's "larger" points the right way, mine
+"about the same" is within the noise. For the told-vs-untold figure on this memory, the per-window floor is up to ~10 points
+in single households, so a single-window claim on few households needs that margin.
