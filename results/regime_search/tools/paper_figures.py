@@ -857,10 +857,14 @@ def f3(DATA, EXTRA, manifest):
                             "What does clear is the positive form: retracting is worth "
                             f"{c('A & B - A only','first days back 24-26')} points against telling once, and "
                             f"{c('A & B - A only','a week later 27-31')} a week later.\n\n"
-                            "\n\nThe smallest of those four, 6.8 points, is more than 3 times the largest "
-                            "by-window rerun floor measured so far (2.1 points). That is the comparison to "
-                            "make, rather than one against the pooled rerun figure: the floor is not uniform "
-                            "across the run, and every claim here rests on a single window.\n\n"
+                            "\n\nThose four are differences BETWEEN two arms on the SAME household, "
+                            "averaged over ten households and judged against twice their own standard error "
+                            "\u2014 a bar the runs' rerun noise is already inside, since the spread is "
+                            "computed across households from the runs as they happened. What they are not is "
+                            "a licence to read one household's line in one window off this figure: the "
+                            "whole-log memory's rerun floor reaches 10 points in a single household-window, "
+                            "which is larger than three of these four contrasts. The contrast survives that "
+                            "and a single household's level does not.\n\n"
                             + SPINE + " This figure is where it is earned end to end on a single memory, "
                             "because the message is the counterfactual: it holds the memory fixed and changes "
                             "only whether the regime was announced, and then whether the announcement was "
@@ -868,9 +872,8 @@ def f3(DATA, EXTRA, manifest):
         "population": POP_LABEL[pop], "households": {"longcontext (matched across all three arms)": len(matched)},
         "split": "all questions", "band": "±1 standard error across households",
         "prose_numbers_ok": {
-            "2.1": "the largest by-window rerun floor measured by the memory strand, quoted from the floor "
-                   "paragraph below; not a quantity this figure computes",
-            "3": "a multiple, not a measurement: the ratio of this figure's smallest effect to that floor"},
+            "10": "the worst single household-window rerun swing measured by the memory strand on this same "
+                  "memory, quoted from the floor paragraph below; not a quantity this figure computes"},
         "note": "Each told arm is drawn from the day it departs from the arm above it, measured from the data "
                 "rather than taken from the calendar, with the search starting at that arm's own message day. "
                 "Departure days are in the numbers below, and so is any day an arm differed from the one "
@@ -934,36 +937,32 @@ WIN_DAYS = {"settled week 9-13": range(9, 14), "first sick days 14-16": range(14
 # The rerun floor lives in tools/rerun_floor.py, read by the page as well, so the two cannot drift. The
 # paragraph below is BUILT from those values rather than typed beside them -- same rule as computing a table
 # from the line it sits under.
-from rerun_floor import VALUES as _RF, by_window_text as _RF_WIN      # noqa: E402
+from rerun_floor import (VALUES as _RF, by_window_text as _RF_WIN,          # noqa: E402
+                         per_arm_text as _RF_ARMS)
 RERUN_FLOOR = (
     "Some of any difference here is the run having been run again. Identical prompts at temperature zero do "
     "not reproduce on this server, so a repeat of the same arm on the same data does not give the same "
     "answers, and that sets a floor under every effect involving a memory whose answers a language model "
-    f"generates. Measured so far on {_RF['households']} households, by repeating {_RF['measured_on']} over "
-    f"the same data: about {_RF['answers_changed_pct']}% of answers change "
-    f"({_RF['answers_changed_lo']} to {_RF['answers_changed_hi']}% depending on the household and the "
-    f"window), accuracy moves {_RF['typical_points']} points typically and at most "
-    f"{_RF['worst_hh_window']} in a single household-window. Pooled over all three households and every day: "
-    f"mean {_RF['pooled_mean']:.1f}, mean absolute {_RF['pooled_mean_abs']:.1f}, spread "
-    f"{_RF['pooled_spread']:.1f} points.\n\n"
-    "  Two things to do with that, rather than quoting the pooled number and moving on. FIRST, the floor is "
-    f"NOT uniform across the run. By window its mean is {_RF_WIN()} \u2014 so an effect resting on a single "
-    "window has a larger floor under it than the pooled figure suggests, and quoting the pooled number "
-    "beside a one-window effect understates it. SECOND, where it helps a reader, state an effect as a "
-    "multiple of the floor: nineteen points against a floor of one to two is actionable in a way that a "
-    "value with a spread beside it is not.\n\n"
-    "  What this floor does NOT cover: the counting methods \u2014 the timetables and the survival-time "
-    + ("model \u2014 make no model calls and " + str(_RF["classical_reproduced"]) + ".\n\n"
-       if _RF.get("classical_reproduced") else
-       "model \u2014 make no model calls and should reproduce exactly on the same data. That is an argument "
-       "from their implementation rather than a measurement, and it is the same shape of argument that was "
-       "made for the language arms at temperature zero and turned out to be wrong, so it is written here as "
-       "unverified until one of them has actually been re-run and diffed.\n\n")
-    + f"  It is measured on ONE language memory, {_RF['measured_on']}; it is indicative for the others "
-    "rather than measured on them. Rerun noise is symmetric, so it does not bias a paired mean, and every "
-    "spread quoted in these folders is computed across households from the runs as they happened \u2014 the "
-    "noise is already inside each band, and an effect that cleared its bar cleared it with the noise "
-    "included."
+    f"generates. Measured on {_RF['households']} households by re-running each arm over the same data with "
+    f"byte-identical prompts, the share of answers that change is {_RF_ARMS()}. Across all days accuracy "
+    f"moves {_RF['alldays_points']} points.\n\n"
+    f"  But a single window in a single household moved as much as {_RF['window_worst']} points "
+    f"({_RF['window_worst_where']}; {_RF['window_worst_other']}). That is the figure to carry, not the "
+    "all-days one. Every headline result in these folders is stated per window, and a reader who takes the "
+    "all-days floor and applies it to a one-window effect will be badly misled. The honest form of the "
+    f"sentence: across all days the floor is small, and per window on a single household it can reach "
+    f"{_RF['window_worst']}. By window, averaged across households, its mean is {_RF_WIN()}.\n\n"
+    "  No arm inherits another arm's floor. The recent-sightings list's share did not predict the whole-log "
+    f"memory's, the counting methods have none at all, and the variation across windows is larger than the "
+    "variation between memories. The floor is a property of an arm and a window, measured, not a constant "
+    f"for the project. {_RF['longer_prompt_verdict']}.\n\n"
+    "  The counting methods \u2014 the timetables and the survival-time model \u2014 make no model calls "
+    f"and {_RF['classical_reproduced']}.\n\n"
+    "  Rerun noise is symmetric, so it does not bias a paired mean, and every spread quoted in these folders "
+    "is computed across households from the runs as they happened \u2014 the noise is already inside each "
+    "band, and an effect that cleared its bar cleared it with the noise included. What the per-window figure "
+    "rules out is a different reading: taking one household's line in one window off this page and treating "
+    "its level as measured to better than ten points."
 )
 
 

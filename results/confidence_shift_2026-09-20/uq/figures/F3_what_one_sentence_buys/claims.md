@@ -6,7 +6,7 @@
 
 
 
-The smallest of those four, 6.8 points, is more than 3 times the largest by-window rerun floor measured so far (2.1 points). That is the comparison to make, rather than one against the pooled rerun figure: the floor is not uniform across the run, and every claim here rests on a single window.
+Those four are differences BETWEEN two arms on the SAME household, averaged over ten households and judged against twice their own standard error — a bar the runs' rerun noise is already inside, since the spread is computed across households from the runs as they happened. What they are not is a licence to read one household's line in one window off this figure: the whole-log memory's rerun floor reaches 10 points in a single household-window, which is larger than three of these four contrasts. The contrast survives that and a single household's level does not.
 
 These memories can represent the new regime perfectly well — told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. the survival-time model is the exception because how long a thing stays true is precisely what it models. This figure is where it is earned end to end on a single memory, because the message is the counterfactual: it holds the memory fixed and changes only whether the regime was announced, and then whether the announcement was taken back.
 

@@ -99,6 +99,17 @@ Consequences we act on:
 - Rerun noise is symmetric, so it does not bias a paired mean, and every spread we quote is computed across
   households from the runs as they happened — the noise is already inside every bar and every effect that
   cleared the bar did so with it included.
+- **The rerun floor is a property of an arm and a window, measured — not a constant for the project.** It is
+  held in `results/regime_search/tools/rerun_floor.py`, the single source the figure folders and the page both
+  build their sentences from, so updating a measurement is one edit. Two things it must never be used for: no
+  arm inherits another arm's floor (the recent-sightings list's ~3% of answers changing did not predict the
+  whole-log memory's ~5%, and the counting methods have none at all — one household's classical arm was re-run
+  and came back byte-identical, as did its question bank), and the all-days figure must not be applied to a
+  single window. Across all days accuracy moves 0 to 2 points; inside one window of one household it has moved
+  10. Every headline result here is stated per window, so it is the per-window figure that governs.
+- Whether a longer prompt carries a genuinely larger floor is **unresolved**: the whole-log memory's share is
+  slightly larger on average, carried by one household, and not distinguishable from the recent-sightings
+  list's at three households. Recorded as unresolved rather than as a finding in either direction.
 
 ## Trivial-case checks (run before any bank)
 - `none` settings == classical most-frequent log: 0 mismatches.
