@@ -157,12 +157,76 @@ def tracks_correctness(rows_by_method):
     return out
 
 
+def declining_decomposition(rows_by_method, shuffles=60, seed=5):
+    """Split the value of being allowed to decline into the two things it can come from.
+
+      level     what you get from the best ALL-OR-NOTHING choice -- answer everything, or decline everything.
+                This needs no confidence signal at all: it pays whenever a method is wrong more often than
+                right, because then declining beats answering.
+      ordering  what the ORDER of the confidences adds on top of that. This is the only part that requires the
+                confidence to carry information.
+      null      the same ordering term computed on SHUFFLED labels. A threshold chosen with hindsight can
+                always chase noise, so this is the floor: ordering at or below it is not a result.
+
+    The threshold is chosen PER HOUSEHOLD here. That matters and is not the same estimator as the headline
+    bars, which choose one threshold across all ten: one shared threshold has little freedom to chase noise,
+    so its shuffled null sits near 0.01 and every bar clears it. The per-household estimator has real freedom,
+    so its null is large and informative -- which is the whole point of drawing a floor.
+    """
+    import random
+    rnd = random.Random(seed)
+    out = {}
+    for mem, by_hh in rows_by_method.items():
+        per_window = {}
+        for wname, days in WINDOWS.items():
+            lv, od, acc = [], [], []
+            for hh, seq in by_hh.items():
+                sq = [x for x in seq if x[0] in days]
+                if len(sq) < 20:
+                    continue
+                one = {hh: sq}
+                forced = window_score(one, -1.0, days)
+                level = max(forced, 0.0)
+                best = max(window_score(one, b, days) or -99 for b in candidate_bars(one))
+                lv.append(level - forced)
+                od.append(best - level)
+                acc.append(100.0 * st.mean([1 if ok else 0 for _, _, ok in sq]))
+            if len(lv) < 2:
+                continue
+            nulls = []
+            for _ in range(shuffles):
+                v = []
+                for hh, seq in by_hh.items():
+                    sq = [x for x in seq if x[0] in days]
+                    if len(sq) < 20:
+                        continue
+                    oks = [ok for _, _, ok in sq]
+                    rnd.shuffle(oks)
+                    sq = [(d, c, o) for (d, c, _), o in zip(sq, oks)]
+                    one = {hh: sq}
+                    level = max(window_score(one, -1.0, days), 0.0)
+                    v.append(max(window_score(one, b, days) or -99 for b in candidate_bars(one)) - level)
+                nulls.append(st.mean(v))
+            ordering, null = st.mean(od), st.mean(nulls)
+            se = st.stdev(od) / math.sqrt(len(od))
+            per_window[wname] = {
+                "accuracy": round(st.mean(acc), 1), "level": round(st.mean(lv), 2),
+                "ordering": round(ordering, 2), "ordering_se": round(se, 2),
+                "null_ordering": round(null, 2), "excess": round(ordering - null, 2),
+                "beats_noise": ordering - null >= 2 * se,
+                "n_hh": len(od)}
+        out[mem] = per_window
+    return out
+
+
 def main():
     rows = load_rows()
     if not rows:
         print("no decision rows found")
         return 1
     out = {"windows_order": list(WINDOWS), "methods": {},
+           "declining_decomposition": declining_decomposition(
+               {m: {hh: list(seq) for hh, seq in by.items()} for m, by in rows.items()}),
            "confidence_tracks_correctness": tracks_correctness(
                {m: {hh: [(d, c, ok) for d, c, ok in seq] for hh, seq in by.items()}
                 for m, by in rows.items()})}
