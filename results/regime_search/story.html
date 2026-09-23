@@ -905,7 +905,7 @@ function mergeLLMLive(){
     }
   }
 }
-const BUILT = "Tue 17:23, 22 Sep 2026";
+const BUILT = "Tue 17:27, 22 Sep 2026";
 // ---------------------------------------------------------------------------------------------------------------
 // Small-multiple panels. Each is at most four lines and answers one question. Bands are +-1 STANDARD ERROR across
 // households (sd/sqrt(k)), matching the bar the paired contrasts are judged on; the per-day sd is kept in the hover.
@@ -1131,6 +1131,27 @@ function drawPanel(p0){
   // paint the most-told one palest and lowest.
   const armed = p.lines.filter(l => armRank(l.key) >= 0);
   const useArms = new Set(armed.map(l => armOf(l.key))).size > 1;
+  // A told arm is the same run as the arm above it until the day it is told something, so drawing its whole
+  // length just lays an identical line under an identical line. Each told arm is therefore clipped to the first
+  // day it actually departs from the arm ranked above it -- MEASURED here, from the data on screen, not assumed
+  // from the calendar. If an arm departs earlier than its message day that is a real difference in the runs, and
+  // clipping to the measured day shows it rather than hiding it under the line above.
+  const clipFrom = {};
+  if(useArms){
+    const ranked = p.lines.map((l,i)=>({l,i,r:armRank(l.key)})).filter(o=>o.r>=0).sort((a,b)=>a.r-b.r);
+    for(let z=1; z<ranked.length; z++){
+      const me = ranked[z], up = ranked[z-1];
+      const Sme = panelSeries(p, me.l, flavour, split), Sup = panelSeries(p, up.l, flavour, split);
+      if(!Sme || !Sup) continue;
+      let first = null;
+      for(let j=0; j<Sme.mean.length; j++){
+        const x = Sme.mean[j], y = Sup.mean[j];
+        if(x==null && y==null) continue;
+        if(x==null || y==null || Math.abs(x-y) > 1e-9){ first = j+1; break; }
+      }
+      if(first!=null) clipFrom[me.i] = first;
+    }
+  }
   // draw order: highest rank first, so "no message" ends up on top
   const order = p.lines.map((l, i) => i).sort((a, b) => (useArms ? armRank(p.lines[b].key) - armRank(p.lines[a].key) : 0));
   const drawnBy = {};
@@ -1143,26 +1164,29 @@ function drawPanel(p0){
     const tint = !!line.tint;
     const op = useArms && armRank(line.key) >= 0 ? ARM_OPACITY[armRank(line.key)]
              : (tint ? 0.45 : (focus ? 1 : 0.75));
+    const from = clipFrom[i] || 1;
     let band="", path="", pen=false;
-    for(let j=0;j<S.mean.length;j++){ const d=j+1; if(S.mean[j]==null){ pen=false; continue; }
+    for(let j=0;j<S.mean.length;j++){ const d=j+1; if(S.mean[j]==null || d<from){ pen=false; continue; }
       path += (pen? " L ":" M ") + x(d).toFixed(1) + " " + y(S.mean[j]).toFixed(1); pen=true; }
     // +-1 standard error ribbon, drawn as a closed polygon over each unbroken run
     let run=[];
     const flush=()=>{ if(run.length>1){ const up=run.map(([d,m,e])=>`${x(d).toFixed(1)},${y(Math.min(100,m+e)).toFixed(1)}`);
         const dn=run.slice().reverse().map(([d,m,e])=>`${x(d).toFixed(1)},${y(Math.max(0,m-e)).toFixed(1)}`);
         band += `<polygon points="${up.concat(dn).join(" ")}" fill="var(${col})" opacity="0.13"/>`; } run=[]; };
-    for(let j=0;j<S.mean.length;j++){ if(S.mean[j]==null){ flush(); continue; } run.push([j+1,S.mean[j],S.se[j]||0]); }
+    for(let j=0;j<S.mean.length;j++){ if(S.mean[j]==null || j+1<from){ flush(); continue; } run.push([j+1,S.mean[j],S.se[j]||0]); }
     flush();
     g += band + `<path d="${path}" fill="none" stroke="var(${col})" stroke-width="${focus?2.4:1.4}" stroke-linejoin="round" opacity="${op}"/>`;
     drawnBy[i] = {label:line.label, col, S, tint, op};
   });
   // the legend stays in the panel's own order (no message first), whatever order the strokes were laid down in
   p.lines.forEach((l, i) => { if(drawnBy[i]) drawn.push(drawnBy[i]); });
+  const clipTxt = Object.keys(clipFrom).map(i => `${p.lines[i].label} from day ${clipFrom[i]}`).join(", ");
   const armNote = useArms
-    ? "Drawn bottom to top: told twice, told once, never told \u2014 one memory at three lightnesses, not three memories. "
-      + "Until an arm is told something it IS the run above it, so a line that appears partway through is not missing data: "
-      + "it is the day that arm stops being identical to the one drawn over it. The start message emerges on day 14, the "
-      + "retraction on the first day back."
+    ? "One memory told different things: one hue, three lightnesses, drawn bottom to top as told twice, told once, "
+      + "never told. Each told arm is the SAME run as the one above it until the day it is told, so it is drawn only "
+      + "from the day it actually departs \u2014 a line beginning partway through is not missing data, it is that day. "
+      + "The departure days are measured from the data here rather than taken from the calendar, so an arm that "
+      + "separated earlier than its message would show it: " + (clipTxt || "no arm departs at all") + "."
     : "";
   const legend = drawn.map(d=>`<span class="pl"><i style="background:var(${d.col});opacity:${d.op!=null?d.op:(d.tint?0.45:1)}"></i>${d.label}</span>`).join("");
   const hh = panelHH(p);
