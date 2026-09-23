@@ -74,6 +74,26 @@ answer (semantic entropy reduces to this for exact-match answers). Expectation: 
 a flat line at 0.95; (b) and (c) must have positive slope; (c) must separate correct from wrong answers by
 >= 0.2 mean confidence. Budget: ~120 questions x (1 + 5) calls.
 
+## What makes the message arms comparable
+
+The three message arms of a memory (no message; told at A; told at A and again at B) are run as separate
+passes over the same households and the same questions. Before the day an arm is told something its prompts
+are byte-identical to the arm above it, and it gives the same answers — but not because generation is
+deterministic. Identical prompts at temperature zero do NOT reproduce on this server: batching and load make
+greedy decoding vary. Measured on one household, 48 of 48 prompts were byte-identical between two runs and 6
+of the 48 completions differed, 4 of them in the chosen location. The arms match before their message because
+those prompts are served from the prefix cache, which is the guarantee a paired comparison actually needs —
+the same generated answers on both sides until the arms diverge — but it is a property of the cache, not of
+the decoder, and it does not licence any claim of exact reproducibility elsewhere.
+
+Consequences we act on:
+- A cache MISS means a fresh generation, which can differ from the logged one. Two arms can therefore differ
+  on a day before either was told anything. Where that happens it is a rerun artefact, not a design fact, and
+  it is reported rather than drawn (see F3's numbers table and problems_found.md).
+- Rerun noise is symmetric, so it does not bias a paired mean, and every spread we quote is computed across
+  households from the runs as they happened — the noise is already inside every bar and every effect that
+  cleared the bar did so with it included.
+
 ## Trivial-case checks (run before any bank)
 - `none` settings == classical most-frequent log: 0 mismatches.
 - Synthetic stream (`uq_synth.py`): 40 spots, object at spot A with prob 0.85 then, after t = 300, spot B with

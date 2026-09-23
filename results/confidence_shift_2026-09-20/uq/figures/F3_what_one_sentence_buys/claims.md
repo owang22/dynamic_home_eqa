@@ -18,11 +18,11 @@ It does not show that the other language memories behave this way, though all th
 
 Measured on the DAILY values, not read off the plotted line.
 
-| series | days 14-16 | days 24-26 | drawn from day |
-|---|---|---|---|
-| no message | 61.7 | 64.6 | 1 |
-| A only | 72.1 | 56.2 | 14 |
-| A & B | 72.1 | 65.5 | 21 |
-| A only - no message | – | – | – |
-| A & B - no message | – | – | – |
-| A & B - A only | – | – | – |
+| series | days 14-16 | days 24-26 | drawn from day | days it differed BEFORE its message (rerun artefacts) | biggest such difference, points |
+|---|---|---|---|---|---|
+| no message | 61.7 | 64.6 | 1 | none | 0.0 |
+| A only | 72.1 | 56.2 | 14 | none | 0.0 |
+| A & B | 72.1 | 65.5 | 24 | 21, 22 | 0.625 |
+| A only - no message | – | – | – | – | – |
+| A & B - no message | – | – | – | – | – |
+| A & B - A only | – | – | – | – | – |

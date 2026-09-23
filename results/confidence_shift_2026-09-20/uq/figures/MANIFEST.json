@@ -240,8 +240,8 @@
     },
     "split": "all questions",
     "band": "\u00b11 standard error across households",
-    "note": "Each told arm is drawn from the day it measurably departs from the arm above it, computed from the data rather than from the calendar. Departure days are in the numbers below. Each told arm is the same run as the one above it until that day.",
-    "caption": "One the whole-log-in-the-prompt memory told three different things, on the same ten households. The darkest line is never told; the middle line is told \u201cYuki is home sick today\u201d on the first sick day (A); the lightest is told that again and then told on the first day of the return that the resident is back (A & B). Each told arm is the same run as the one above it until the day it is told, so it is drawn only from the day it measurably departs.",
+    "note": "Each told arm is drawn from the day it departs from the arm above it, measured from the data rather than taken from the calendar, with the search starting at that arm's own message day. Departure days are in the numbers below, and so is any day an arm differed from the one above it BEFORE its message. Those earlier differences are rerun artefacts rather than design facts: identical prompts at temperature zero are not reproducible on this server, so the arms are identical before their message because those prompts are cache hits, not because generation is deterministic. A cache miss means a fresh generation, which can differ. The twice-told arm differs on two such days by 0.625 points \u2014 one answer in a hundred and sixty \u2014 and used to be drawn from the first of them, three days before it was told anything.",
+    "caption": "One the whole-log-in-the-prompt memory told three different things, on the same ten households. The darkest line is never told; the middle line is told \u201cYuki is home sick today\u201d on the first sick day (A); the lightest is told that again and then told on the first day of the return that the resident is back (A & B). Each told arm is the same run as the one above it until the day it is told, so it is drawn only from the day it departs after being told.",
     "look_for": "The two rules. At A the told line lifts away from the untold one and stays above it for the whole spell. At B the arm that was told only at A falls BELOW the untold run and stays there \u2014 that gap is the cost of an instruction nobody took back \u2014 while the arm told at both ends returns to the untold line. Every one of those four differences clears the bar on ten households; the per-household figures are in the table.",
     "not_shown": "It does not show that the other language memories behave this way, though all three do move the same direction on the return, which is what made this claim survivable before this run existed. It does not separate what the message teaches from what it merely asserts: a sentence that happens to be true is not evidence the memory could have learned the same thing. And the equivalence at B is a NULL with a bound, not a demonstration that retracting restores things exactly \u2014 it means any residual difference is smaller than the bar, not that it is zero.",
     "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values. On this figure's axis the effect of getting that wrong is concrete: an unbounded window renders the timetable with a three-day memory's 40.8-point fall at day 14 as 6.8.",
@@ -249,17 +249,23 @@
       "no message": {
         "days 14-16": 61.7,
         "days 24-26": 64.6,
-        "drawn from day": 1
+        "drawn from day": 1,
+        "days it differed BEFORE its message (rerun artefacts)": "none",
+        "biggest such difference, points": 0.0
       },
       "A only": {
         "days 14-16": 72.1,
         "days 24-26": 56.2,
-        "drawn from day": 14
+        "drawn from day": 14,
+        "days it differed BEFORE its message (rerun artefacts)": "none",
+        "biggest such difference, points": 0.0
       },
       "A & B": {
         "days 14-16": 72.1,
         "days 24-26": 65.5,
-        "drawn from day": 21
+        "drawn from day": 24,
+        "days it differed BEFORE its message (rerun artefacts)": "21, 22",
+        "biggest such difference, points": 0.625
       },
       "A only - no message": {
         "first sick days 14-16": 10.4,

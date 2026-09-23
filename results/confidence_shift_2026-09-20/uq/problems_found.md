@@ -541,3 +541,36 @@ defined after it, and between f9 and f4 sat four module-level definitions (`GATE
 NameError, which is the lucky case; had the removed code been prose rather than definitions it would have
 failed silently. Slice to the NEXT definition, found by grepping line numbers, never to a marker assumed to be
 adjacent — and read what is between the two, because module-level code lives between functions too.
+
+## 23 Sept — a rerun artefact was setting where a drawn line began
+
+The told-arm figures draw each arm only from the day it departs from the arm above it, and that day is
+*measured* from the data rather than taken from the calendar. The reasoning was that a calendar clip would hide
+a real early departure. It found one: the twice-told arm differed from the once-told arm on days 21 and 22,
+three days before its own message on day 24, and both F3 and the page's panel library drew its line from day 21
+— a picture in which the second message appears to take effect before it was sent.
+
+The difference is 0.625 points across ten households: one answer in a hundred and sixty. Day 20 and day 23 are
+identical again.
+
+The mechanism came from the memory strand. Identical prompts at temperature zero are **not** reproducible on
+this server — measured on one household, 48 of 48 prompts byte-identical between two runs and 6 of the 48
+completions different, 4 of them in the chosen location. The arms match before their message because those
+prompts are prefix-cache hits, not because greedy decoding is deterministic. A cache miss means a fresh
+generation, and a fresh generation can differ. We had already logged three such single-answer divergences and
+guessed "cache miss"; this is the mechanism behind the guess.
+
+What changed:
+- The departure search now starts at the arm's OWN message day. Days it differed earlier are recorded in the
+  numbers table ("days it differed BEFORE its message (rerun artefacts)", with the size of the largest), so the
+  detection survives while a flipped answer no longer decides where a line begins. Same fix in both renderers.
+- Wording everywhere: the arms are identical before their message because those prompts are cache hits, NOT
+  because the server is deterministic. That is still exactly the guarantee a paired comparison needs — the same
+  generated answers on both sides until they diverge — but a reader who assumes determinism will draw wrong
+  conclusions elsewhere. METHODS.md now states this, with the measurement.
+- The number audit gained a three-decimal rendering. It reported 0.625 as stale while the table carried exactly
+  that value, because it only ever formatted table values to two places.
+
+Nothing in any figure's numbers changes. Rerun noise is symmetric, so it does not bias a paired mean, and our
+spreads are computed across households from the runs as they happened — the noise was already inside every bar,
+and every effect that cleared the bar did so with it included.

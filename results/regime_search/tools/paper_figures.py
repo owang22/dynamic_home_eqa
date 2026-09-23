@@ -412,7 +412,11 @@ def audit_prose(entry):
     for row in (entry.get("numbers") or {}).values():
         for v in row.values():
             if isinstance(v, (int, float)):
-                for q in (f"{v:.0f}", f"{v:.1f}", f"{v:.2f}", f"{abs(v):.0f}", f"{abs(v):.1f}", f"{abs(v):.2f}"):
+                # three decimals too: a value the table carries at that precision (a single flipped answer
+                # across ten households is 0.625) was being reported stale because the audit only ever
+                # rendered it to two.
+                for q in (f"{v:.0f}", f"{v:.1f}", f"{v:.2f}", f"{v:.3f}",
+                          f"{abs(v):.0f}", f"{abs(v):.1f}", f"{abs(v):.2f}", f"{abs(v):.3f}"):
                     table.add(q)
     # A literal may also be a PARAMETER of the experiment (a temperature, an alpha) or a live value borrowed
     # from another figure's extractor. Those are declared one at a time with a reason, never suppressed
@@ -776,20 +780,39 @@ def f3(DATA, EXTRA, manifest):
     # effect. Matched here, and the matched count is what the figure states.
     matched = sorted(set.intersection(*(set(complete_hh(DATA, pop, k)) for k, _, _, _ in arms)))
     S = {k: series(DATA, pop, k, only_hh=matched) for k, _, _, _ in arms}
-    # Each told arm is the SAME run as the one above it until the day it is told, so it is drawn only from the
-    # day it measurably departs. Measured here, not taken from the calendar -- on this memory one arm departs
-    # three days before its message, and a calendar clip would have hidden that.
-    clip, prev = {}, None
+    # Each told arm is the same run as the one above it until the day it is told, so it is drawn only from the
+    # day it departs. The departure is MEASURED rather than taken from the calendar, but the search starts at
+    # the arm's own message day, and any difference before that is recorded as a rerun artefact instead of
+    # setting where a line begins.
+    #
+    # This used to search from day 1, on the reasoning that a calendar clip would hide a real early departure.
+    # It found one: the twice-told arm differed from the once-told arm on days 21 and 22, three days before its
+    # message, and the figure drew that line from day 21. The difference is 0.625 points on ten households --
+    # one answer out of a hundred and sixty flipping -- and days 20 and 23 are identical again. Identical
+    # prompts at temperature zero are NOT reproducible on this server; the arms match before their message
+    # because those prompts are cache hits, and a cache miss means a fresh generation that can differ. So the
+    # early departure was a rerun artefact being drawn as a design fact. It is still measured, and now it is
+    # reported in the table instead.
+    edge_day = {x["name"]: x["a"] for x in stages_of(DATA, pop)}
+    arm_msg = {"person:llm_longcontext_startmsg": edge_day.get("sick"),
+               "person:llm_longcontext_startend": edge_day.get("return")}
+    clip, early, early_size, prev = {}, {}, {}, None
     for k, _, _, _ in arms:
         if prev is not None:
-            first = 1
+            told = arm_msg.get(k) or 1
+            diff = []
             for i, d in enumerate(S[k]["days"]):
                 a, b = S[k]["mean"][i], S[prev]["mean"][i]
                 if a is None and b is None:
                     continue
                 if a is None or b is None or abs(a - b) > 1e-9:
-                    first = d; break
-            clip[k] = first
+                    diff.append(d)
+            after = [d for d in diff if d >= told]
+            clip[k] = after[0] if after else told
+            early[k] = [d for d in diff if d < told]
+            gaps = [abs(S[k]["mean"][i] - S[prev]["mean"][i]) for i, d in enumerate(S[k]["days"])
+                    if d in early[k] and S[k]["mean"][i] is not None and S[prev]["mean"][i] is not None]
+            early_size[k] = round(max(gaps), 3) if gaps else 0.0
         prev = k
     fig, ax = plt.subplots(figsize=(SINGLE, 2.5))
     for k, lab, c, mk in reversed(arms):        # most-told at the bottom, never-told on top
@@ -801,7 +824,10 @@ def f3(DATA, EXTRA, manifest):
     for k, lab, _, _ in arms:
         nums[lab] = {"days 14-16": r2(avg([S[k]["mean"][d - 1] for d in range(14, 17) if S[k]["mean"][d - 1] is not None])),
                      "days 24-26": r2(avg([S[k]["mean"][d - 1] for d in range(24, 27) if S[k]["mean"][d - 1] is not None])),
-                     "drawn from day": clip.get(k, 1)}
+                     "drawn from day": clip.get(k, 1),
+                     "days it differed BEFORE its message (rerun artefacts)":
+                         ", ".join(str(d) for d in early.get(k, [])) or "none",
+                     "biggest such difference, points": early_size.get(k, 0.0)}
     # the paired contrasts this figure's claim rests on, computed per household on the matched set so the
     # claim's numbers and the table's cannot disagree
     con = arm_contrasts(DATA, EXTRA, matched)
@@ -832,14 +858,22 @@ def f3(DATA, EXTRA, manifest):
                             "taken back.")(con["get"]),
         "population": POP_LABEL[pop], "households": {"longcontext (matched across all three arms)": len(matched)},
         "split": "all questions", "band": "±1 standard error across households",
-        "note": "Each told arm is drawn from the day it measurably departs from the arm above it, computed from "
-                "the data rather than from the calendar. Departure days are in the numbers below. "
-                "Each told arm is the same run as the one above it until that day.",
+        "note": "Each told arm is drawn from the day it departs from the arm above it, measured from the data "
+                "rather than taken from the calendar, with the search starting at that arm's own message day. "
+                "Departure days are in the numbers below, and so is any day an arm differed from the one "
+                "above it BEFORE its message. Those earlier differences are rerun artefacts rather than "
+                "design facts: identical prompts at temperature zero are not reproducible on this server, so "
+                "the arms are identical before their message because those prompts are cache hits, not "
+                "because generation is deterministic. A cache miss means a fresh generation, which can "
+                "differ. The twice-told arm differs on two such days by 0.625 points \u2014 one answer in a "
+                "hundred and sixty \u2014 and used to be drawn from the first of them, three days before it "
+                "was told anything.",
         "caption": "One the whole-log-in-the-prompt memory told three different things, on the same ten households. The "
                    "darkest line is never told; the middle line is told \u201cYuki is home sick today\u201d on "
                    "the first sick day (A); the lightest is told that again and then told on the first day of "
                    "the return that the resident is back (A & B). Each told arm is the same run as the one "
-                   "above it until the day it is told, so it is drawn only from the day it measurably departs.",
+                   "above it until the day it is told, so it is drawn only from the day it departs after "
+                   "being told.",
         "look_for": (lambda c: "The two rules. At A the told line lifts away from the untold one and stays "
                                "above it for the whole spell. At B the arm that was told only at A falls "
                                "BELOW the untold run and stays there — that gap is the cost of an instruction "

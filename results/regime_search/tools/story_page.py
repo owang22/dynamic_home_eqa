@@ -973,9 +973,11 @@ const METHOD_COLOR = {
   ttfrozen:"--m-ttfrozen", tt3d:"--m-tt3d", perpetua:"--m-perpetua", longcontext:"--m-longcontext",
 };
 // a line names its method; the colour follows from that and nothing picks its own
-// The three message arms of one memory are the SAME run until the day they are told something: no-message and
-// start-message are identical until day 14, and start-message and start+end are identical until the first day
-// back. So they are drawn bottom-to-top as start+end, start, no message. The reader then sees one line through
+// The three message arms of one memory give the SAME answers until the day they are told something: no-message
+// and start-message match until day 14, and start-message and start+end match until the first day back. They
+// match because those prompts are cache hits, not because generation is deterministic -- identical prompts at
+// temperature zero do NOT reproduce on this server. The guarantee a paired comparison needs is the one we
+// have: the same generated answers on both sides until the arms diverge. So they are drawn bottom-to-top as start+end, start, no message. The reader then sees one line through
 // the settled fortnight, the start-message line emerging from under it exactly at day 14, and start+end emerging
 // on the return day -- the divergence points draw themselves. One hue at three lightnesses, never three hues,
 // because it is one memory told different things.
@@ -1187,9 +1189,19 @@ function drawPanel(p0){
   const useArms = new Set(armed.map(l => armOf(l.key))).size > 1;
   // A told arm is the same run as the arm above it until the day it is told something, so drawing its whole
   // length just lays an identical line under an identical line. Each told arm is therefore clipped to the first
-  // day it actually departs from the arm ranked above it -- MEASURED here, from the data on screen, not assumed
-  // from the calendar. If an arm departs earlier than its message day that is a real difference in the runs, and
-  // clipping to the measured day shows it rather than hiding it under the line above.
+  // day it departs from the arm ranked above it -- MEASURED here, from the data on screen, not assumed from the
+  // calendar -- but the search starts at that arm's own message day.
+  //
+  // It used to start at day 1, on the reasoning that an earlier departure would be a real difference worth
+  // showing. It is not. Identical prompts at temperature zero are not reproducible on this server; the arms
+  // match before their message because those prompts are cache hits, and a cache miss means a fresh generation
+  // that can differ. The twice-told arm differed from the once-told one on days 21 and 22 -- three days before
+  // it was told anything -- by 0.625 points, one answer in a hundred and sixty, and the panel drew its line
+  // from day 21 as though the message had arrived early.
+  const armMsgDay = {startmsg:"sick", startend:"return"};
+  const edgeDay = {};
+  if(R && R.stages){ for(let d=1; d<nd; d++){ const nm=R.stages[String(d)]||"plain";
+    if(edgeDay[nm]===undefined) edgeDay[nm]=d; } }
   const clipFrom = {};
   if(useArms){
     const ranked = p.lines.map((l,i)=>({l,i,r:armRank(l.key)})).filter(o=>o.r>=0).sort((a,b)=>a.r-b.r);
@@ -1197,13 +1209,16 @@ function drawPanel(p0){
       const me = ranked[z], up = ranked[z-1];
       const Sme = panelSeries(p, me.l, flavour, split), Sup = panelSeries(p, up.l, flavour, split);
       if(!Sme || !Sup) continue;
+      const told = edgeDay[armMsgDay[armOf(me.l.key)]] || 1;
       let first = null;
       for(let j=0; j<Sme.mean.length; j++){
+        const day = j+1;
+        if(day < told) continue;                 // before its message the two arms are cache hits, not evidence
         const x = Sme.mean[j], y = Sup.mean[j];
         if(x==null && y==null) continue;
-        if(x==null || y==null || Math.abs(x-y) > 1e-9){ first = j+1; break; }
+        if(x==null || y==null || Math.abs(x-y) > 1e-9){ first = day; break; }
       }
-      if(first!=null) clipFrom[me.i] = first;
+      clipFrom[me.i] = (first!=null) ? first : told;
     }
   }
   // draw order: highest rank first, so "no message" ends up on top
@@ -1805,7 +1820,8 @@ function renderGist(){
 
 
   // what this many households can resolve, measured rather than asserted: the median paired spread across our
-  // ten-household comparisons (degenerate pairs — arms that are literally the same run before the return day — excluded)
+  // ten-household comparisons (degenerate pairs excluded -- arms that give the same answers before the return
+  // day because those prompts are cache hits, which would otherwise contribute a spread of exactly zero)
   const sds = {all:[], cold:[]}, ses = {all:[], cold:[]};
   for(const k of Object.keys(P)) for(const w of Object.keys(P[k].paired_vs_nomsg||{})) for(const sp of ["all","cold"]){
     const v = P[k].paired_vs_nomsg[w][sp]; if(v && v.n_hh>=10 && v.sd>0){ sds[sp].push(v.sd); ses[sp].push(v.se); } }
