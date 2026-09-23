@@ -4,8 +4,8 @@ Regenerated with the figure from the same data. Never read a value off the pictu
 
 | series | accuracy day 13 | confidence day 13 | accuracy day 14 | confidence day 14 | gap at day 14 |
 |---|---|---|---|---|---|
-| never-forgets timetable | 87.3 | 63.9 | 40.0 | 50.3 | 10.3 |
-| 3-day timetable | 83.3 | 47.5 | 42.5 | 38.9 | -3.6 |
-| Perpetua* | 69.3 | 71.1 | 44.4 | 69.1 | 24.8 |
-| long-context | 78.5 | 88.8 | 59.4 | 90.9 | 31.5 |
-| last seen | 46.5 | 98.1 | 57.5 | 98.1 | 40.6 |
+| timetable that never forgets | 87.3 | 63.9 | 40.0 | 50.3 | 10.3 |
+| timetable with a three-day memory | 83.3 | 47.5 | 42.5 | 38.9 | -3.6 |
+| survival-time model | 69.3 | 71.1 | 44.4 | 69.1 | 24.8 |
+| whole-log-in-the-prompt memory | 78.5 | 88.8 | 59.4 | 90.9 | 31.5 |
+| follows its own most recent sighting | 46.5 | 98.1 | 57.5 | 98.1 | 40.6 |

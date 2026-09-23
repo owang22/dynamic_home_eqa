@@ -1,6 +1,6 @@
 # Caption for F5
 
-**Double-column figure** — reproduce at full text width, about 5.9 in. Do NOT squeeze it into one column: at single-column width its text lands near 4pt and is unreadable.
+**Double-column figure** — reproduce at full text width, about 7.5 in. Do NOT squeeze it into one column: at single-column width its text lands near 4pt and is unreadable.
 
 **Title line:** _none needed — this figure does not carry its own title; the paper caption is enough._
 
@@ -8,7 +8,7 @@ Paste and edit; written as a caption, not a summary.
 
 ---
 
-The same five methods twice: accuracy per day on the left, the confidence each states in its own answer on the right, on one shared scale. A method whose right-hand line moves with its left-hand one knows when it is in trouble; last seen's, which never moves at all, is the case where the number means nothing.
+The same five methods twice: accuracy per day on the left, the confidence each states in its own answer on the right, on one shared scale. A method whose right-hand line moves with its left-hand one knows when it is in trouble; the memory that follows its last sighting's, which never moves at all, is the case where the number means nothing.
 
 ---
 

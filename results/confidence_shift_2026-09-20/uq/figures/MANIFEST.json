@@ -1,7 +1,7 @@
 [
   {
     "figure": "F1",
-    "claim": "A change in the household's hidden routine costs accuracy TWICE: once when it happens and again when the world goes back to how it was. The second break is the half that is not obvious and it is not the smaller one \u2014 the 3-day timetable loses 41 points at the change and 24 at the return. And the method that survives the return is the one that cannot adapt: the never-forgets timetable gains 3 points on the day every adaptive method breaks, because the routine that returned is the one it never stopped believing. Adaptation is not free; it is paid for at every reversal.\n\nThese memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it models. The return break is that defect seen from the other side: what expired was the sick-day routine, and nothing in these memories dates what they learned during it.",
+    "claim": "A change in the household's hidden routine costs accuracy TWICE: once when it happens and again when the world goes back to how it was. The second break is the half that is not obvious and it is not the smaller one \u2014 the timetable with a three-day memory loses 41 points at the change and 24 at the return. And the method that survives the return is the one that cannot adapt: the timetable that never forgets gains 3 points on the day every adaptive method breaks, because the routine that returned is the one it never stopped believing. Adaptation is not free; it is paid for at every reversal.\n\nThese memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. the survival-time model is the exception because how long a thing stays true is precisely what it models. The return break is that defect seen from the other side: what expired was the sick-day routine, and nothing in these memories dates what they learned during it.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "ttfrozen": 10,
@@ -10,14 +10,14 @@
       "longcontext": 10
     },
     "split": "all questions",
-    "caption": "Accuracy per day for four methods through a routine that changes twice. Every method climbs through the settled fortnight, falls sharply on the first sick day (dotted rule), re-learns the new routine over the following week, and falls again when the old routine returns (second dotted rule). The two timetables break hardest and recover furthest; long-context breaks least and recovers least.",
-    "look_for": "The two dotted rules and what happens at them. The 3-day timetable falls 40.8 points on day 14 and the never-forgets timetable 47.3; by day 23 the 3-day timetable is above where it started the spell. At day 24 both fall again (-24.0 and +2.6), and the never-forgets timetable is the one that recovers immediately, because the old routine is the one it never stopped believing. Long-context's day-14 fall is 19.1 points, the smallest of the four.",
-    "not_shown": "This is accuracy only \u2014 nothing here says whether a method KNOWS it has broken, which is the subject of F8 and F9. Long-context rests on fewer households than the counters (see the count above) and its band is correspondingly wider; do not read a gap between it and a counter as an effect without checking the band. The plotted line is a three-day average, so the visible fall is shallower than the real one: quote the numbers, not the picture.",
+    "caption": "Accuracy per day for four methods through a routine that changes twice. Every method climbs through the settled fortnight, falls sharply on the first sick day (dotted rule), re-learns the new routine over the following week, and falls again when the old routine returns (second dotted rule). The two timetables break hardest and recover furthest; the whole-log-in-the-prompt memory breaks least and recovers least.",
+    "look_for": "The two dotted rules and what happens at them. The timetable with a three-day memory falls 40.8 points on day 14 and the timetable that never forgets 47.3; by day 23 the timetable is above where it started the spell. At day 24 both fall again (-24.0 and +2.6), and the timetable that never forgets is the one that recovers immediately, because the old routine is the one it never stopped believing. The whole-log memory's day-14 fall is 19.1 points, the smallest of the four.",
+    "not_shown": "This is accuracy only \u2014 nothing here says whether a method KNOWS it has broken, which is the subject of F8 and F9. The whole-log-in-the-prompt memory rests on fewer households than the counters (see the count above) and its band is correspondingly wider; do not read a gap between it and a counter as an effect without checking the band. The plotted line is a three-day average, so the visible fall is shallower than the real one: quote the numbers, not the picture.",
     "band": "\u00b11 standard error across households",
-    "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values. On this figure's axis the effect of getting that wrong is concrete: an unbounded window renders the 3-day timetable's 40.8-point fall at day 14 as 6.8.",
+    "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values. On this figure's axis the effect of getting that wrong is concrete: an unbounded window renders the timetable with a three-day memory's 40.8-point fall at day 14 as 6.8.",
     "provisional": false,
     "numbers": {
-      "never-forgets timetable": {
+      "timetable that never forgets": {
         "day 13": 87.3,
         "day 14": 40.0,
         "break at 14": -47.3,
@@ -25,7 +25,7 @@
         "day 24": 79.5,
         "break at 24": 2.6
       },
-      "3-day timetable": {
+      "timetable with a three-day memory": {
         "day 13": 83.3,
         "day 14": 42.5,
         "break at 14": -40.8,
@@ -33,7 +33,7 @@
         "day 24": 63.5,
         "break at 24": -24.0
       },
-      "Perpetua*": {
+      "survival-time model": {
         "day 13": 69.3,
         "day 14": 44.4,
         "break at 14": -25.0,
@@ -41,7 +41,7 @@
         "day 24": 48.3,
         "break at 24": -33.6
       },
-      "long-context": {
+      "whole-log-in-the-prompt memory": {
         "day 13": 78.5,
         "day 14": 59.4,
         "break at 14": -19.1,
@@ -50,8 +50,8 @@
         "break at 24": -14.5
       }
     },
-    "width_inches": 3.15,
-    "column": "single",
+    "width_inches": 3.92,
+    "column": "1.5",
     "files": [
       "F1_learn_break_relearn.png",
       "F1_learn_break_relearn.svg",
@@ -61,8 +61,8 @@
   },
   {
     "figure": "F2",
-    "claim_head": "The language memories do not behave as one class, and the one that behaves most like a COUNTER is the one built like one. Retrieval answers by pulling sightings from the same time of day across the whole history, capped but never aged out \u2014 which is the never-forgets timetable's index, plus a recency window. Behaviourally it tracks the never-forgets timetable at a correlation of +0.90 with a mean gap of 4.1 points, where the other language memories track it at +0.55 and 8\u20139 points, and at the return it RISES as the never-forgets timetable does while every adapting method falls. A language memory inherits the failure mode of whatever it is indexed by: choosing the retrieval key is choosing which disruption the memory will fail on.\n\nThese memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it models. Retrieval's index is the clearest case: same time of day, whole history, no notion of when a sighting stopped being informative.\n\n",
-    "claim": "Given ten days of the new routine the 3-day timetable re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for long-context and +10 for retrieval.",
+    "claim_head": "The language memories do not behave as one class, and the one that behaves most like a COUNTER is the one built like one. Retrieval answers by pulling sightings from the same time of day across the whole history, capped but never aged out \u2014 which is the timetable that never forgets's index, plus a recency window. Behaviourally it tracks the timetable that never forgets at a correlation of +0.90 with a mean gap of 4.1 points, where the other language memories track it at +0.55 and 8\u20139 points, and at the return it RISES as the timetable that never forgets does while every adapting method falls. A language memory inherits the failure mode of whatever it is indexed by: choosing the retrieval key is choosing which disruption the memory will fail on.\n\nThese memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. the survival-time model is the exception because how long a thing stays true is precisely what it models. Retrieval's index is the clearest case: same time of day, whole history, no notion of when a sighting stopped being informative.\n\n",
+    "claim": "Given ten days of the new routine the timetable with a three-day memory re-learns it 2.0 to 3.0 times as fast as any language memory: +31 points from the first sick days to the end of the spell, against +15 for reflection, +12 for the whole-log-in-the-prompt memory and +10 for retrieval.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "tt3d": 10,
@@ -71,37 +71,37 @@
       "retrieval": 10
     },
     "split": "all questions",
-    "band": "\u00b11 standard error across households, on the 3-day timetable only",
-    "caption": "Accuracy per day for the 3-day timetable and three language memories. All four break on the first sick day. Over the following ten days, during which every method is living in the new routine and is told the right answer after every question, the 3-day timetable re-learns the routine and the language memories recover far less.",
-    "look_for": "The slope between the first sick days and the end of the spell. The 3-day timetable goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and long-context 11.5.",
-    "not_shown": "It does not show that the language memories learn NOTHING: reflection's +15.2 is a real gain, about 49% of the 3-day timetable's. It also does not separate re-learning from same-day feedback, since these are all questions rather than cold ones. Long-context is on fewer households than the rest.",
-    "history": "This figure asserted until 22 Sept that the language memories \"barely move\". Its own numbers contradicted that \u2014 reflection re-learns half as much as the 3-day timetable, which is not \"barely\" \u2014 so the claim was changed to the ratio it can actually support and the file was renamed off `F2_counters_relearn_language_does_not`, which had encoded the overclaim in its name.",
-    "note": "The counts are per method above; long-context ran on fewer households than the counters. The shaded envelope behind the three language memories spans the highest and lowest of THEIR OWN three estimates on each day \u2014 it is the spread between those methods, not a pooled standard error, and it is there so the three read as one class against the 3-day timetable.",
-    "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values. On this figure's axis the effect of getting that wrong is concrete: an unbounded window renders the 3-day timetable's 40.8-point fall at day 14 as 6.8.",
+    "band": "\u00b11 standard error across households, on the timetable with a three-day memory only",
+    "caption": "Accuracy per day for the timetable with a three-day memory and three language memories. All four break on the first sick day. Over the following ten days, during which every method is living in the new routine and is told the right answer after every question, the timetable with a three-day memory re-learns the routine and the language memories recover far less.",
+    "look_for": "The slope between the first sick days and the end of the spell. The timetable with a three-day memory goes from 57.9 to 88.8, a gain of 30.8 points. Reflection gains 15.2, retrieval 10.4 and the whole-log-in-the-prompt memory 11.5.",
+    "not_shown": "It does not show that the language memories learn NOTHING: reflection's +15.2 is a real gain, about 49% of the timetable with a three-day memory's. It also does not separate re-learning from same-day feedback, since these are all questions rather than cold ones. The whole-log-in-the-prompt memory is on fewer households than the rest.",
+    "history": "This figure asserted until 22 Sept that the language memories \"barely move\". Its own numbers contradicted that \u2014 reflection re-learns half as much as the timetable with a three-day memory, which is not \"barely\" \u2014 so the claim was changed to the ratio it can actually support and the file was renamed off `F2_counters_relearn_language_does_not`, which had encoded the overclaim in its name.",
+    "note": "The counts are per method above; the whole-log-in-the-prompt memory ran on fewer households than the counters. The shaded envelope behind the three language memories spans the highest and lowest of THEIR OWN three estimates on each day \u2014 it is the spread between those methods, not a pooled standard error, and it is there so the three read as one class against the timetable with a three-day memory.",
+    "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values. On this figure's axis the effect of getting that wrong is concrete: an unbounded window renders the timetable with a three-day memory's 40.8-point fall at day 14 as 6.8.",
     "provisional": false,
     "numbers": {
-      "3-day timetable": {
+      "timetable with a three-day memory": {
         "days 14-16": 57.9,
         "days 20-23": 88.8,
         "re-learning inside the spell": 30.8,
         "spell mean": 77.4,
         "counter re-learns this many times faster": 1.0
       },
-      "reflection": {
+      "nightly self-notes memory": {
         "days 14-16": 66.0,
         "days 20-23": 81.2,
         "re-learning inside the spell": 15.2,
         "spell mean": 74.7,
         "counter re-learns this many times faster": 2.0
       },
-      "long-context": {
+      "whole-log-in-the-prompt memory": {
         "days 14-16": 61.7,
         "days 20-23": 73.1,
         "re-learning inside the spell": 11.5,
         "spell mean": 68.4,
         "counter re-learns this many times faster": 2.7
       },
-      "retrieval": {
+      "same-hour lookup memory": {
         "days 14-16": 55.8,
         "days 20-23": 66.2,
         "re-learning inside the spell": 10.4,
@@ -109,8 +109,8 @@
         "counter re-learns this many times faster": 3.0
       }
     },
-    "width_inches": 3.15,
-    "column": "single",
+    "width_inches": 4.07,
+    "column": "1.5",
     "files": [
       "F2_relearning_inside_the_spell.png",
       "F2_relearning_inside_the_spell.svg",
@@ -120,7 +120,7 @@
   },
   {
     "figure": "F3",
-    "claim": "Ten days of living in the new routine, corrected after every single question, do not teach long-context memory the new routine. One sentence does, and on ten matched households the whole arc of it now clears our bar on this one memory. Told at A it is +10.4 points ahead of the untold run on the first sick days and +9.3 through the rest of the spell. Left standing after the routine reverts, the same sentence COSTS 8.6 points on the first days back and 6.8 a week later. Retracted at B, that cost is gone. The arm told at both ends sits +0.7 against never being told on the first days back and +0.9 a week later, neither of which clears the bar \u2014 so any residual difference is smaller than we can measure, which is a bound and not a proof that it is zero. What does clear is the positive form: retracting is worth +9.2 points against telling once, and +7.7 a week later.\n\nThese memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it models. This figure is where it is earned end to end on a single memory, because the message is the counterfactual: it holds the memory fixed and changes only whether the regime was announced, and then whether the announcement was taken back.",
+    "claim": "Ten days of living in the new routine, corrected after every single question, do not teach the whole-log-in-the-prompt memory the new routine. One sentence does, and on ten matched households the whole arc of it now clears our bar on this one memory. Told at A it is +10.4 points ahead of the untold run on the first sick days and +9.3 through the rest of the spell. Left standing after the routine reverts, the same sentence COSTS 8.6 points on the first days back and 6.8 a week later. Retracted at B, that cost is gone. The arm told at both ends sits +0.7 against never being told on the first days back and +0.9 a week later, neither of which clears the bar \u2014 so any residual difference is smaller than we can measure, which is a bound and not a proof that it is zero. What does clear is the positive form: retracting is worth +9.2 points against telling once, and +7.7 a week later.\n\nThese memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. the survival-time model is the exception because how long a thing stays true is precisely what it models. This figure is where it is earned end to end on a single memory, because the message is the counterfactual: it holds the memory fixed and changes only whether the regime was announced, and then whether the announcement was taken back.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "longcontext (matched across all three arms)": 10
@@ -128,10 +128,10 @@
     "split": "all questions",
     "band": "\u00b11 standard error across households",
     "note": "Each told arm is drawn from the day it measurably departs from the arm above it, computed from the data rather than from the calendar. Departure days are in the numbers below. Each told arm is the same run as the one above it until that day.",
-    "caption": "One long-context memory told three different things, on the same ten households. The darkest line is never told; the middle line is told \u201cYuki is home sick today\u201d on the first sick day (A); the lightest is told that again and then told on the first day of the return that the resident is back (A & B). Each told arm is the same run as the one above it until the day it is told, so it is drawn only from the day it measurably departs.",
+    "caption": "One the whole-log-in-the-prompt memory told three different things, on the same ten households. The darkest line is never told; the middle line is told \u201cYuki is home sick today\u201d on the first sick day (A); the lightest is told that again and then told on the first day of the return that the resident is back (A & B). Each told arm is the same run as the one above it until the day it is told, so it is drawn only from the day it measurably departs.",
     "look_for": "The two rules. At A the told line lifts away from the untold one and stays above it for the whole spell. At B the arm that was told only at A falls BELOW the untold run and stays there \u2014 that gap is the cost of an instruction nobody took back \u2014 while the arm told at both ends returns to the untold line. Every one of those four differences clears the bar on ten households; the per-household figures are in the table.",
     "not_shown": "It does not show that the other language memories behave this way, though all three do move the same direction on the return, which is what made this claim survivable before this run existed. It does not separate what the message teaches from what it merely asserts: a sentence that happens to be true is not evidence the memory could have learned the same thing. And the equivalence at B is a NULL with a bound, not a demonstration that retracting restores things exactly \u2014 it means any residual difference is smaller than the bar, not that it is zero.",
-    "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values. On this figure's axis the effect of getting that wrong is concrete: an unbounded window renders the 3-day timetable's 40.8-point fall at day 14 as 6.8.",
+    "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values. On this figure's axis the effect of getting that wrong is concrete: an unbounded window renders the timetable with a three-day memory's 40.8-point fall at day 14 as 6.8.",
     "numbers": {
       "no message": {
         "days 14-16": 61.7,
@@ -178,26 +178,26 @@
   },
   {
     "figure": "F4",
-    "claim": "Reacting is not recovering. When the routine changes these gates DO notice \u2014 every one of them roughly doubles or triples how often it declines to answer \u2014 and the answers they keep are still wrong 2.4 to 6.3 times more often than the rate they promised. Noticing that something is wrong is not the same as knowing WHICH answers are wrong, and only the second one protects a user.",
+    "claim": "Reacting is not recovering. When the routine changes these rules that decide whether to answer DO notice \u2014 every one of them roughly doubles or triples how often it declines to answer \u2014 and the answers they keep are still wrong 2.4 to 6.3 times more often than the rate they promised. Noticing that something is wrong is not the same as knowing WHICH answers are wrong, and only the second one protects a user.",
     "population": "one resident off sick, that resident's own things",
     "households": {
-      "long-context": 10,
-      "never-forgets timetable": 10,
-      "3-day timetable": 10,
-      "Perpetua*": 10
+      "whole-log-in-the-prompt memory": 10,
+      "timetable that never forgets": 10,
+      "timetable with a three-day memory": 10,
+      "survival-time model": 10
     },
     "split": "all questions",
     "band": "none: these are rates",
     "prose_numbers_ok": {
-      "0.1": "alpha, the error rate the gate was set to hold -- a setting"
+      "0.1": "alpha, the error rate the rule that decides whether to answer was set to hold -- a setting"
     },
-    "note": "The top axis is the miss rate among ANSWERED questions divided by the rate the gate was set to hold (alpha=0.1), so the dashed line at 1 is the promise and 3 means three times as many wrong answers as promised. The lower panel is the evidence that the gate did react.",
-    "caption": "Top: how often each method is wrong on the questions it chose to answer, as a multiple of the error rate its gate was set to hold; the dashed line at 1 is that promise. Bottom: how often it declined to answer. The gates react to the change \u2014 the lower panel roughly doubles \u2014 and the upper panel shows that reacting did not make the kept answers reliable.",
-    "look_for": "The top panel at the first dotted rule, where every line leaves the promise behind. The ranking is printed on the plot: worst is the never-forgets timetable at 6.3 times its promised rate. Then the lower panel, which shows this is not a failure to react: hand-over roughly doubles at the same moment.",
-    "not_shown": "It does not show WHY the gate reacts, which differs by method and is the more interesting half. The last column of the table is that answer: the timetables' own confidence falls at the shift, by 10.1 and 8.6 points, while long-context's moves +0.1. So long-context's entire reaction is the controller raising its bar after mistakes have already been made, and none of the four moves its confidence as far as its accuracy fell. Nor does it show what the questions it hands over would have scored: that is F6, and for one method the answer is worse than what it kept.",
+    "note": "The top axis is the miss rate among ANSWERED questions divided by the rate the rule that decides whether to answer was set to hold (alpha=0.1), so the dashed line at 1 is the promise and 3 means three times as many wrong answers as promised. The lower panel is the evidence that the rule that decides whether to answer did react.",
+    "caption": "Top: how often each method is wrong on the questions it chose to answer, as a multiple of the error rate it was set to hold; the dashed line at 1 is that promise. Bottom: how often it declined to answer. The rule that decides whether to answers react to the change \u2014 the lower panel roughly doubles \u2014 and the upper panel shows that reacting did not make the kept answers reliable.",
+    "look_for": "The top panel at the first dotted rule, where every line leaves the promise behind. The ranking is printed on the plot: worst is the timetable that never timetable at 6.3 times its promised rate. Then the lower panel, which shows this is not a failure to react: hand-over roughly doubles at the same moment.",
+    "not_shown": "It does not show WHY the rule that decides whether to answer reacts, which differs by method and is the more interesting half. The last column of the table is that answer: the timetables' own confidence falls at the shift, by 10.1 and 8.6 points, while the whole-log-in-the-prompt memory's moves +0.1. So whole-log memory's entire reaction is the controller raising its bar after mistakes have already been made, and none of the four moves its confidence as far as its accuracy fell. Nor does it show what the questions it hands over would have scored: that is F6, and for one method the answer is worse than what it kept.",
     "drawing": "The line is a centred three-day average computed within each stage, never across a boundary. These are rates rather than averages over households, so no band is drawn.",
     "numbers": {
-      "long-context": {
+      "whole-log-in-the-prompt memory": {
         "hands over, settled 9-13": 45.5,
         "hands over, days 14-16": 57.9,
         "wrong on what it keeps, settled": 19.0,
@@ -205,7 +205,7 @@
         "times the promised rate, 14-16": 2.8,
         "its own confidence moved (points)": 0.1
       },
-      "never-forgets timetable": {
+      "timetable that never forgets": {
         "hands over, settled 9-13": 21.4,
         "hands over, days 14-16": 70.6,
         "wrong on what it keeps, settled": 12.5,
@@ -213,7 +213,7 @@
         "times the promised rate, 14-16": 6.3,
         "its own confidence moved (points)": -10.1
       },
-      "3-day timetable": {
+      "timetable with a three-day memory": {
         "hands over, settled 9-13": 29.1,
         "hands over, days 14-16": 70.4,
         "wrong on what it keeps, settled": 12.5,
@@ -221,7 +221,7 @@
         "times the promised rate, 14-16": 4.1,
         "its own confidence moved (points)": -8.6
       },
-      "Perpetua*": {
+      "survival-time model": {
         "hands over, settled 9-13": 48.7,
         "hands over, days 14-16": 53.3,
         "wrong on what it keeps, settled": 16.5,
@@ -230,7 +230,7 @@
         "its own confidence moved (points)": -1.3
       }
     },
-    "width_inches": 3.15,
+    "width_inches": 3.27,
     "column": "single",
     "files": [
       "F4_reacting_is_not_recovering.png",
@@ -241,8 +241,8 @@
   },
   {
     "figure": "F5",
-    "claim_head": "A confidence number can be perfectly stable and mean nothing at all. Last seen states near-total confidence every day of the month while being right about half the time, and the timetables hold theirs steady through a 40-point collapse in their own accuracy. Stability in a confidence signal is not evidence it is tracking anything \u2014 it is what a signal looks like when it is ignoring the world. ",
-    "claim": "The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; last seen states 98% while being right 58% of the time, a confidence number carrying no information at all; Perpetua* is the one whose stated confidence tracks its own accuracy through the change.",
+    "claim_head": "A confidence number can be perfectly stable and mean nothing at all. The memory that follows its last sighting states near-total confidence every day of the month while being right about half the time, and the timetables hold theirs steady through a 40-point collapse in their own accuracy. Stability in a confidence signal is not evidence it is tracking anything \u2014 it is what a signal looks like when it is ignoring the world. ",
+    "claim": "The timetables do not move their stated confidence when they break, so the gap between what they claim and what they achieve opens at the shift; the memory that follows its last sighting states 98% while being right 58% of the time, a confidence number carrying no information at all; the survival-time model is the one whose stated confidence tracks its own accuracy through the change.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "ttfrozen": 10,
@@ -253,40 +253,40 @@
     },
     "split": "all questions",
     "band": "\u00b11 standard error across households",
-    "caption": "The same five methods twice: accuracy per day on the left, the confidence each states in its own answer on the right, on one shared scale. A method whose right-hand line moves with its left-hand one knows when it is in trouble; last seen's, which never moves at all, is the case where the number means nothing.",
-    "look_for": "Compare each method's two lines at the first dotted rule. The never-forgets timetable's accuracy falls 47 points between day 13 and day 14 while the confidence it states moves 14. Perpetua*'s two lines move together: its stated-versus-actual gap at day 14 is +24.8 points against the never-forgets timetable's +10.3. Last seen is the reductio: its right-hand line sits near the top of the scale all month at about 98% while its left-hand line sits near 46%.",
-    "not_shown": "Being well-tracked is not being accurate: Perpetua* is the least accurate of the counters here, which is the point of the pairing rather than an inconsistency. The right panel is each method's own number on its own scale, so heights are not comparable between methods \u2014 only each line against its own left-hand partner.",
+    "caption": "The same five methods twice: accuracy per day on the left, the confidence each states in its own answer on the right, on one shared scale. A method whose right-hand line moves with its left-hand one knows when it is in trouble; the memory that follows its last sighting's, which never moves at all, is the case where the number means nothing.",
+    "look_for": "Compare each method's two lines at the first dotted rule. The timetable that never timetable's accuracy falls 47 points between day 13 and day 14 while the confidence it states moves 14. survival-time model's two lines move together: its stated-versus-actual gap at day 14 is +24.8 points against the timetable that never timetable's +10.3. Last follows its last sighting is the reductio: its right-hand line sits near the top of the scale all month at about 98% while its left-hand line sits near 46%.",
+    "not_shown": "Being well-tracked is not being accurate: the survival-time model is the least accurate of the counters here, which is the point of the pairing rather than an inconsistency. The right panel is each method's own number on its own scale, so heights are not comparable between methods \u2014 only each line against its own left-hand partner.",
     "drawing": "The line is a centred three-day average, computed WITHIN each stage so that it never averages across a stage boundary \u2014 a window straddling the boundary borrows the level from the other side and flattens the very change the figure is about. The band, where a figure draws one, is \u00b11 standard error across households computed on the daily values.",
     "numbers": {
-      "never-forgets timetable": {
+      "timetable that never forgets": {
         "accuracy day 13": 87.3,
         "confidence day 13": 63.9,
         "accuracy day 14": 40.0,
         "confidence day 14": 50.3,
         "gap at day 14": 10.3
       },
-      "3-day timetable": {
+      "timetable with a three-day memory": {
         "accuracy day 13": 83.3,
         "confidence day 13": 47.5,
         "accuracy day 14": 42.5,
         "confidence day 14": 38.9,
         "gap at day 14": -3.6
       },
-      "Perpetua*": {
+      "survival-time model": {
         "accuracy day 13": 69.3,
         "confidence day 13": 71.1,
         "accuracy day 14": 44.4,
         "confidence day 14": 69.1,
         "gap at day 14": 24.8
       },
-      "long-context": {
+      "whole-log-in-the-prompt memory": {
         "accuracy day 13": 78.5,
         "confidence day 13": 88.8,
         "accuracy day 14": 59.4,
         "confidence day 14": 90.9,
         "gap at day 14": 31.5
       },
-      "last seen": {
+      "follows its own most recent sighting": {
         "accuracy day 13": 46.5,
         "confidence day 13": 98.1,
         "accuracy day 14": 57.5,
@@ -294,7 +294,7 @@
         "gap at day 14": 40.6
       }
     },
-    "width_inches": 5.94,
+    "width_inches": 7.5,
     "column": "double",
     "files": [
       "F5_confidence_against_accuracy.png",
@@ -305,11 +305,11 @@
   },
   {
     "figure": "F6",
-    "claim": "At the moment the routine changes, the never-forgets timetable's gate runs BACKWARDS: it answers the questions it gets wrong and hands over the ones it would have got right. That is worse than a gate that does nothing at all. Perpetua* keeps the sign the right way round in every window, which is what shows the failure to be a property of the confidence signal rather than of gating as an idea.\n\nThese memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it models. That is why the exception is this method and not a better-tuned gate on one of the others.",
+    "claim": "At the moment the routine changes, the timetable that never forgets's rule for deciding whether to answer runs BACKWARDS: it answers the questions it gets wrong and hands over the ones it would have got right. That is worse than a rule that decides whether to answer that does nothing at all. the survival-time model keeps the sign the right way round in every window, which is what shows the failure to be a property of the confidence signal rather than of gating as an idea.\n\nThese memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. What none of them can do is notice from evidence that the old regime expired, or that an instruction has. Neither a sighting nor a sentence carries a validity window, so language does not fix the problem, it moves it: from failing to notice that sightings went stale to failing to notice that an instruction did. the survival-time model is the exception because how long a thing stays true is precisely what it models. That is why the exception is this method and not a better-tuned gate on one of the others.",
     "population": "one resident off sick, that resident's own things",
     "households": {
-      "never-forgets timetable": 10,
-      "Perpetua*": 10
+      "timetable that never forgets": 10,
+      "survival-time model": 10
     },
     "split": "all questions",
     "band": "none: these are window accuracies",
@@ -318,18 +318,18 @@
       "tint": "the handed-over bars are hatched, not tinted",
       "faded": "the handed-over bars are hatched, not tinted"
     },
-    "caption": "For two methods, the accuracy of the questions the gate chose to answer (solid) against the accuracy of the questions it handed over (hatched), by window. A gate that is working keeps the solid bar above the hatched one. Where it does not, the figure says so.",
-    "look_for": "The never-forgets timetable's first-sick-days pair, where the hatched bar overtakes the solid one, against Perpetua*'s, where it does not. The per-window edge \u2014 kept minus handed over \u2014 is in the numbers.",
-    "not_shown": "Two methods only; the 3-day timetable is close to a wash and long-context never inverts, so neither adds to the contrast. It also does not show how MANY questions each bar rests on, which differs a great deal between the kept and handed-over halves.",
+    "caption": "For two methods, the accuracy of the questions the rule that decides whether to answer chose to answer (solid) against the accuracy of the questions it handed over (hatched), by window. A rule that is working keeps the solid bar above the hatched one. Where it does not, the figure says so.",
+    "look_for": "The timetable that never forgets's first-sick-days pair, where the hatched bar overtakes the solid one, against the survival-time model's, where it does not. The per-window edge \u2014 kept minus handed over \u2014 is in the numbers.",
+    "not_shown": "Two methods only; the timetable with a three-day memory is close to a wash and the whole-log-in-the-prompt memory never inverts, so neither adds to the contrast. It also does not show how MANY questions each bar rests on, which differs a great deal between the kept and handed-over halves.",
     "numbers": {
-      "never-forgets timetable": {
+      "timetable that never forgets": {
         "settled 9\u201313": 26.3,
         "sick 14\u201316": -22.4,
         "spell 17\u201323": 11.8,
         "back 24\u201326": 25.6,
         "later 27\u201331": 35.0
       },
-      "Perpetua*": {
+      "survival-time model": {
         "settled 9\u201313": 33.1,
         "sick 14\u201316": 37.6,
         "spell 17\u201323": 29.5,
@@ -348,23 +348,23 @@
   },
   {
     "figure": "F7",
-    "claim": "The conformal set does not widen when the routine changes. On the first sick day its coverage falls from 92% in the settled week to 69% \u2014 far below the 90% it promises \u2014 while the set it offers gets SMALLER, 1.42 places against 1.59 before. Over the whole spell it averages 1.64, so nothing about its width registers the change.",
+    "claim": "The list of places the rule offers does not widen when the routine changes. On the first sick day its how often the truth is in its list falls from 92% in the settled week to 69% \u2014 far below the 90% it promises \u2014 while the set it offers gets SMALLER, 1.42 places against 1.59 before. Over the whole spell it averages 1.64, so nothing about its width registers the change.",
     "population": "one resident off sick, that resident's own things",
     "households": {
-      "long-context, sampled": 3
+      "the whole-log-in-the-prompt memory, sampled": 3
     },
     "split": "all questions",
     "band": "none: single-day rates pooled over households",
     "prose_numbers_ok": {
       "0.7": "the sampling temperature \u2014 a setting, not a measurement"
     },
-    "note": "Each question was put to the model ten times at temperature 0.7 and the conformal set built from how often each place came back. Each household's first 20 questions are excluded while the threshold warms up, and a day is shown only once all households have finished it.",
-    "caption": "Top: how often the truth was inside the conformal set, against the 90% the method promises (dashed). Bottom: how many places the set contained. At the first sick day the guarantee breaks while the set gets no wider \u2014 narrower, in fact \u2014 so the method's uncertainty does not register the change at all; it simply becomes wrong about it.",
-    "look_for": "Day 14 in both panels, marked: coverage 69% against a 90% promise, with a set of 1.42 places \u2014 NARROWER than the settled-week average of 1.59. A method reacting to the change would have widened it.",
-    "not_shown": "Three households, so treat the levels as indicative. Applying our claim bar to the per-household changes, the coverage fall is the part that survives \u2014 it has the same sign in all three households \u2014 while the set-size change does not differ from zero. This is also one conformal wrapper; four others were tried and are on the page, not here.",
+    "note": "Each question was put to the model ten times at temperature 0.7 and the list of places the rule offers built from how often each place came back. Each household's first 20 questions are excluded while the threshold warms up, and a day is shown only once all households have finished it.",
+    "caption": "Top: how often the truth was inside the list of places the rule offers, against the 90% the method promises (dashed). Bottom: how many places the set contained. At the first sick day the guarantee breaks while the set gets no wider \u2014 narrower, in fact \u2014 so the method's uncertainty does not register the change at all; it simply becomes wrong about it.",
+    "look_for": "Day 14 in both panels, marked: the truth was in the list 69% of the time against a 90% promise, with a set of 1.42 places \u2014 NARROWER than the settled-week average of 1.59. A method reacting to the change would have widened it.",
+    "not_shown": "Three households, so treat the levels as indicative. Applying our claim bar to the per-household changes, the fall in how often the truth was in the list is the part that survives \u2014 it has the same sign in all three households \u2014 while the set-size change does not differ from zero. This is also one way of setting the list size \u2014 the rule that adjusts itself as it goes (adaptive conformal prediction); four others were tried and are on the page, not here.",
     "drawing": "Drawn per day rather than as a three-day average: this figure's claim is about a single day, and even a stage-bounded average pairs day 14 with day 15 and reports 75% where the day itself is 69%.",
     "numbers": {
-      "coverage %": {
+      "how often the truth was in the list, %": {
         "settled week 9-13": 91.6,
         "day 14": 68.8,
         "spell 14-23": 86.3
@@ -375,7 +375,7 @@
         "spell 14-23": 1.64
       }
     },
-    "width_inches": 3.19,
+    "width_inches": 3.27,
     "column": "single",
     "files": [
       "F7_sets_break_rather_than_widen.png",
@@ -386,7 +386,7 @@
   },
   {
     "figure": "F8",
-    "claim": "Scored the way a user would feel it \u2014 +1 for a right answer, \u22121 for a wrong one, 0 for declining \u2014 the ranking inverts at the moment of change: the methods that are most accurate in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the never-forgets timetable scores below zero, meaning it would have done better answering nothing at all. Accuracy in a stable world does not predict value when the world moves.",
+    "claim": "Scored the way a user would feel it \u2014 +1 for a right answer, \u22121 for a wrong one, 0 for declining \u2014 the ranking inverts at the moment of change: the methods that are most accurate in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the timetable that never forgets scores below zero, meaning it would have done better answering nothing at all. Accuracy in a stable world does not predict value when the world moves.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "ttfrozen": 10,
@@ -400,19 +400,19 @@
       "0.95": "an illustrative confidence value, not a measured one",
       "0.5": "the half-way bar the +1/\u22121/0 scoring implies \u2014 a setting"
     },
-    "note": "Each method uses its OWN best fixed threshold, because the comparison would otherwise measure their confidence scales rather than their judgement \u2014 the timetables spread mass over dozens of places and rarely exceed 0.5, long-context says 0.95 to almost everything.",
-    "caption": "Daily decision score under a rule that needs no coverage target to explain: +1 for a right answer, \u22121 for a wrong one, 0 for declining to answer. Each method uses its own best fixed confidence threshold. Both timetables collapse on the first sick day; Perpetua* and long-context do not.",
+    "note": "Each method uses its OWN best fixed threshold, because the comparison would otherwise measure their confidence scales rather than their judgement \u2014 the timetables spread mass over dozens of places and rarely exceed 0.5, the whole-log-in-the-prompt memory says 0.95 to almost everything.",
+    "caption": "Daily decision score under a rule that needs no target to explain: +1 for a right answer, \u22121 for a wrong one, 0 for declining to answer. Each method uses its own best fixed confidence threshold. Both timetables collapse on the first sick day; the survival-time model and the whole-log-in-the-prompt memory do not.",
     "below_zero": [
       14,
       -3.0,
-      "never-forgets timetable"
+      "timetable that never forgets"
     ],
-    "look_for": "The first dotted rule. The never-forgets timetable falls from 7.7 in the settled week to 0.7 on the first sick days and the 3-day timetable from 7.6 to 2.9, while Perpetua* goes 4.6 to 4.6 and long-context 5.4 to 4.5. Note also that Perpetua* sits BELOW both timetables while the world is stable. And on day 14 the never-forgets timetable's daily score is -3.0 \u2014 below zero, meaning it would have scored better answering nothing at all that day. That single day is the sharpest form of this figure's point and the window averages above do not show it.",
+    "look_for": "The first dotted rule. The timetable that never forgets falls from 7.7 in the settled week to 0.7 on the first sick days and the timetable with a three-day memory from 7.6 to 2.9, while the survival-time model goes 4.6 to 4.6 and the whole-log-in-the-prompt memory 5.4 to 4.5. Note also that the survival-time model sits BELOW both timetables while the world is stable. And on day 14 the timetable that never forgets's daily score is -3.0 \u2014 below zero, meaning it would have scored better answering nothing at all that day. That single day is the sharpest form of this figure's point and the window averages above do not show it.",
     "not_shown": "The thresholds are chosen with hindsight for the window being scored, so these are upper bounds, not a policy anyone could run. Each method uses a different threshold, so the lines are not a like-for-like confidence comparison \u2014 that is deliberate, since the confidence scales differ wildly, but it means a reader cannot infer anything about the thresholds themselves from this figure.",
     "caveat": "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy, which makes the negative result stronger: even handed the answers in advance, declining buys the counters almost nothing exactly when it would matter",
     "drawing": "The line is a centred three-day average computed within each stage, never across a boundary. These are rates rather than averages over households, so no band is drawn.",
     "numbers": {
-      "never-forgets timetable": {
+      "timetable that never forgets": {
         "its own best threshold": 0.272,
         "% of questions declined at it": 3.6,
         "settled week 9-13": 7.74,
@@ -422,7 +422,7 @@
         "a week later 27-31": 7.72,
         "worst single day": -3.0
       },
-      "3-day timetable": {
+      "timetable with a three-day memory": {
         "its own best threshold": 0.092,
         "% of questions declined at it": 1.7,
         "settled week 9-13": 7.56,
@@ -432,7 +432,7 @@
         "a week later 27-31": 6.74,
         "worst single day": -2.1
       },
-      "Perpetua*": {
+      "survival-time model": {
         "its own best threshold": 0.542,
         "% of questions declined at it": 28.4,
         "settled week 9-13": 4.58,
@@ -442,7 +442,7 @@
         "a week later 27-31": 4.14,
         "worst single day": -0.6
       },
-      "long-context": {
+      "whole-log-in-the-prompt memory": {
         "its own best threshold": 0.65,
         "% of questions declined at it": 9.5,
         "settled week 9-13": 5.4,
@@ -453,8 +453,8 @@
         "worst single day": 0.9
       }
     },
-    "width_inches": 3.09,
-    "column": "single",
+    "width_inches": 3.92,
+    "column": "1.5",
     "files": [
       "F8_decision_score_per_day.png",
       "F8_decision_score_per_day.svg",
@@ -464,7 +464,7 @@
   },
   {
     "figure": "F9",
-    "claim": "At the shift, being allowed to decline is worth almost nothing to the timetables (+0.3 and +0.4) and a great deal to Perpetua* (+2.8). Perpetua* scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.",
+    "claim": "At the shift, being allowed to decline is worth almost nothing to the timetables (+0.3 and +0.4) and a great deal to the survival-time model (+2.8). the survival-time model scores BELOW both timetables while the world is stable: it is not the better model, it is the only one whose uncertainty is worth acting on.",
     "population": "one resident off sick, that resident's own things",
     "households": {
       "ttfrozen": 10,
@@ -474,10 +474,10 @@
     },
     "split": "all questions",
     "band": "none: bars are a difference of two scores",
-    "note": "Score under the best threshold for that window, minus the score when forced to answer every question. Settled figures for context are in F8's numbers: Perpetua* 4.6 against the timetables' 7.7 and 7.6.",
-    "caption": "What being allowed to decline is worth, by window: the decision score under the best threshold for that window, minus the score when the method is forced to answer every question. Higher bars mean the method's own confidence carries information worth acting on. At the moment the routine changes, only Perpetua* gains materially.",
-    "look_for": "The first-sick-days group. Perpetua* gains 2.8 points from being allowed to decline, against 0.3 for the never-forgets timetable, 0.4 for the 3-day timetable and 0.8 for long-context. On the first days back the pattern repeats: Perpetua* 1.4, everything else at or below 0.4.",
-    "not_shown": "This is not a claim that Perpetua* is the better model \u2014 F8's settled-week numbers show it scoring 4.6 against the timetables' 7.7 and 7.6. The claim is narrower and stranger: it is the worst forecaster of the four and the only one whose uncertainty is worth acting on. The thresholds are also chosen with hindsight, which strengthens the negative half \u2014 even given the answers in advance, declining buys the counters almost nothing exactly when it would matter.",
+    "note": "Score under the best threshold for that window, minus the score when forced to answer every question. Settled figures for context are in F8's numbers: the survival-time model 4.6 against the timetables' 7.7 and 7.6.",
+    "caption": "What being allowed to decline is worth, by window: the decision score under the best threshold for that window, minus the score when the method is forced to answer every question. Higher bars mean the method's own confidence carries information worth acting on. At the moment the routine changes, only the survival-time model gains materially.",
+    "look_for": "The first-sick-days group. the survival-time model gains 2.8 points from being allowed to decline, against 0.3 for the timetable that never forgets, 0.4 for the timetable with a three-day memory and 0.8 for the whole-log-in-the-prompt memory. On the first days back the pattern repeats: the survival-time model 1.4, everything else at or below 1.4.",
+    "not_shown": "This is not a claim that the survival-time model is the better model \u2014 F8's settled-week numbers show it scoring 4.6 against the timetables' 7.7 and 7.6. The claim is narrower and stranger: it is the worst forecaster of the four and the only one whose uncertainty is worth acting on. The thresholds are also chosen with hindsight, which strengthens the negative half \u2014 even given the answers in advance, declining buys the counters almost nothing exactly when it would matter.",
     "caveat": "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy, which makes the negative result stronger: even handed the answers in advance, declining buys the counters nothing at the moment it would matter",
     "prose_numbers_ok": {
       "7.7": "live settled-week score from the same extractor, shown in F8's table",
@@ -486,28 +486,28 @@
       "5.4": "live settled-week score from the same extractor, shown in F8's table"
     },
     "numbers": {
-      "never-forgets timetable": {
+      "timetable that never forgets": {
         "settled week 9-13": 0.04,
         "first sick days 14-16": 0.333,
         "rest of the spell 17-23": 0.186,
         "first days back 24-26": 0.167,
         "a week later 27-31": 0.44
       },
-      "3-day timetable": {
+      "timetable with a three-day memory": {
         "settled week 9-13": 0.1,
         "first sick days 14-16": 0.4,
         "rest of the spell 17-23": 0.057,
         "first days back 24-26": 0.033,
         "a week later 27-31": 0.18
       },
-      "Perpetua*": {
+      "survival-time model": {
         "settled week 9-13": 0.32,
         "first sick days 14-16": 2.833,
         "rest of the spell 17-23": 0.343,
         "first days back 24-26": 1.433,
         "a week later 27-31": 1.5
       },
-      "long-context": {
+      "whole-log-in-the-prompt memory": {
         "settled week 9-13": 0.3,
         "first sick days 14-16": 0.767,
         "rest of the spell 17-23": 0.3,
@@ -515,7 +515,7 @@
         "a week later 27-31": 0.6
       }
     },
-    "width_inches": 3.85,
+    "width_inches": 4.11,
     "column": "1.5",
     "files": [
       "F9_value_of_declining.png",

@@ -67,11 +67,48 @@ REF = INK          # reference lines share the annotation ink; see the note abov
 # asserted: tools/check_figure_colours.py reads the rendered SVG, so a callout colour is compared against the
 # series it actually appears beside, and a figure that adds a series this clashes with will fail the check.
 CALLOUT = "#c92a7a"
+# Plain description leads. The technical name appears ONCE, in parentheses, so a reviewer can map the method
+# to the literature, and never again after that. An outside reader should not have to remember what a label
+# means: if they do, the label is wrong. Every figure, legend, caption and claims file draws from here, so a
+# rename lands everywhere at once -- the same guarantee the A and B labels already have.
 NAME = {
-    "ttfrozen": "never-forgets timetable", "tt3d": "3-day timetable", "perpetua": "Perpetua*",
-    "longcontext": "long-context", "retrieval": "retrieval", "reflect": "reflection",
-    "naive": "recency buffer", "lastseen": "last seen",
+    "ttfrozen":    "timetable that never forgets",
+    "tt3d":        "timetable with a three-day memory",
+    "perpetua":    "survival-time model",
+    "longcontext": "whole-log-in-the-prompt memory",
+    "retrieval":   "same-hour lookup memory",
+    "reflect":     "nightly self-notes memory",
+    "naive":       "recent-sightings list",
+    "routine7":    "nightly routine table",
+    "lastseen":    "follows its own most recent sighting",
 }
+# where the full description will not fit a legend, the LEGEND shortens and the caption carries the full name.
+# Never a third abbreviation that exists nowhere else.
+NAME_LEGEND = {
+    "lastseen":    "follows its last sighting",
+    "longcontext": "whole log in the prompt",
+}
+# the literature name, used once per folder in the caption and then dropped
+NAME_TECH = {
+    "perpetua": "Perpetua*", "longcontext": "long-context", "retrieval": "retrieval-augmented",
+    "reflect": "reflection", "naive": "recency buffer",
+}
+
+
+def nm(key):
+    """Full descriptive name, for captions, claims and prose."""
+    return NAME.get(key, key)
+
+
+def nm_legend(key):
+    """What a legend can carry; falls back to the full name when it fits."""
+    return NAME_LEGEND.get(key, NAME.get(key, key))
+
+
+def nm_first(key):
+    """Full name with the technical one in parentheses -- used once, on first mention in a caption."""
+    t = NAME_TECH.get(key)
+    return f"{NAME.get(key, key)} ({t})" if t else NAME.get(key, key)
 # The stages as a reader meets them, written above the plot, and a letter on each boundary rule. A is the day
 # the routine changes, B the day it changes back. Oliver defines A and B once in the paper and reuses them, so
 # these strings are identical in every figure and every caption: they are an interface, not decoration.
@@ -83,16 +120,16 @@ ARM_LABEL = {"nomsg": "no message", "startmsg": "A only", "startend": "A & B"}
 # The argument these figures are parts of. Stated once here and attached to the claims it actually bears on,
 # with the measurements that support each half, because it is a framing and framings are where overclaiming
 # starts. What it rests on, all of it measured in this set:
-#   told explicitly, these memories adapt AT ONCE -- long-context told on the first sick morning is +6.3 points
+#   told explicitly, these memories adapt AT ONCE -- the whole-log-in-the-prompt memory told on the first sick morning is +6.3 points
 #     that same day and +14.6 by the next, on the households all three arms ran;
 #   when the message stops being true they go on acting on it -- every one of the four told arms sits below its
 #     own untold twin a week after the return, by 2.8 to 11.4 points;
-#   Perpetua* is the exception and its mechanism is in its code: it models how long a sighting stays true.
+#   the survival-time model is the exception and its mechanism is in its code: it models how long a sighting stays true.
 SPINE = ("These memories can represent the new regime perfectly well \u2014 told about it, they adapt at once. "
          "What none of them can do is notice from evidence that the old regime expired, or that an instruction "
          "has. Neither a sighting nor a sentence carries a validity window, so language does not fix the "
          "problem, it moves it: from failing to notice that sightings went stale to failing to notice that an "
-         "instruction did. Perpetua* is the exception because how long a thing stays true is precisely what it "
+         "instruction did. the survival-time model is the exception because how long a thing stays true is precisely what it "
          "models.")
 # The message arms use the same three steps as the language family, for the same reason -- one memory told different things, so one
 # colour. Stepped by measured contrast against white (12.5:1, 7.0:1, 3.9:1) rather than by transparency: the
@@ -109,7 +146,7 @@ NOTE_LONG = ("The line is a centred three-day average, computed WITHIN each stag
              "side and flattens the very change the figure is about. The band, where a figure draws one, is "
              "±1 standard error across households computed on the daily values.")
 NOTE_LONG_ACC = NOTE_LONG + (" On this figure's axis the effect of getting that wrong is concrete: an "
-                             "unbounded window renders the 3-day timetable's 40.8-point fall at day 14 as 6.8.")
+                             "unbounded window renders the timetable with a three-day memory's 40.8-point fall at day 14 as 6.8.")
 NOTE_NO_BAND = ("The line is a centred three-day average computed within each stage, never across a boundary. "
                 "These are rates rather than averages over households, so no band is drawn.")
 
@@ -132,7 +169,7 @@ SINGLE, FULL = 3.4, 7.0            # column widths, inches
 
 
 def growing():
-    """Is a run adding households to the long-context arms right now? A figure that will gain households must
+    """Is a run adding households to the the whole-log-in-the-prompt memory arms right now? A figure that will gain households must
     SAY its current count and that more are coming -- a silent three reads as a settled three, and someone
     writes a caption around it."""
     import subprocess
@@ -253,7 +290,7 @@ def boundaries(ax_list, DATA, pop, label_on=None, pad_frac=1.012):
 def roll3(xs, ys, stage_of=None):
     """Centred three-day mean that NEVER averages across a stage boundary.
 
-    A plain centred window destroys the thing these figures exist to show. Measured on the 3-day timetable: the
+    A plain centred window destroys the thing these figures exist to show. Measured on the timetable with a three-day memory: the
     raw fall at day 14 is 40.8 points, and a window straddling the boundary draws it as 6.8 -- day 13 borrows
     from the first sick day and day 14 borrows back from the last settled day, and a 41-point cliff is rendered
     as a gentle slope. So a day's window is restricted to days in its OWN stage: the boundary days average over
@@ -515,7 +552,7 @@ def f1(DATA, EXTRA, manifest):
     nums, hh = {}, {}
     for key, m in keys:
         S = series(DATA, pop, key, only_hh=complete_hh(DATA, pop, key))
-        line(ax, S, COL[m], NAME[m], stage_of=stage_lookup(DATA, pop))
+        line(ax, S, COL[m], nm_legend(m), stage_of=stage_lookup(DATA, pop))
         hh[m] = S["hh"]
         val = lambda d: (S["mean"][d - 1] if S["mean"][d - 1] is not None else None)
         nums[NAME[m]] = {"day 13": r2(val(13)), "day 14": r2(val(14)),
@@ -529,12 +566,12 @@ def f1(DATA, EXTRA, manifest):
         "figure": "F1",
         "claim": (lambda n: "A change in the household's hidden routine costs accuracy TWICE: once when it "
                             "happens and again when the world goes back to how it was. The second break is the "
-                            "half that is not obvious and it is not the smaller one \u2014 the 3-day timetable "
-                            f"loses {abs(n['3-day timetable']['break at 14']):.0f} points at the change and "
-                            f"{abs(n['3-day timetable']['break at 24']):.0f} at the return. And the method that "
-                            "survives the return is the one that cannot adapt: the never-forgets timetable "
-                            f"{'gains' if n['never-forgets timetable']['break at 24'] > 0 else 'loses'} "
-                            f"{abs(n['never-forgets timetable']['break at 24']):.0f} points on the day every "
+                            "half that is not obvious and it is not the smaller one \u2014 the timetable with a three-day memory "
+                            f"loses {abs(n[nm("tt3d")]['break at 14']):.0f} points at the change and "
+                            f"{abs(n[nm("tt3d")]['break at 24']):.0f} at the return. And the method that "
+                            "survives the return is the one that cannot adapt: the timetable that never forgets "
+                            f"{'gains' if n[nm("ttfrozen")]['break at 24'] > 0 else 'loses'} "
+                            f"{abs(n[nm("ttfrozen")]['break at 24']):.0f} points on the day every "
                             "adaptive method breaks, because the routine that returned is the one it never "
                             "stopped believing. Adaptation is not free; it is paid for at every reversal.\n\n"
                             + SPINE + " The return break is that defect seen from the other side: what expired "
@@ -545,24 +582,24 @@ def f1(DATA, EXTRA, manifest):
                    "climbs through the settled fortnight, falls sharply on the first sick day (dotted rule), "
                    "re-learns the new routine over the following week, and falls again when the old routine "
                    "returns (second dotted rule). The two timetables break hardest and recover furthest; "
-                   "long-context breaks least and recovers least.",
-        "look_for": ("The two dotted rules and what happens at them. The 3-day timetable falls "
-                     f"{abs(nums['3-day timetable']['break at 14']):.1f} points on day 14 and the never-forgets "
-                     f"timetable {abs(nums['never-forgets timetable']['break at 14']):.1f}; by day 23 the 3-day "
+                   "the whole-log-in-the-prompt memory breaks least and recovers least.",
+        "look_for": ("The two dotted rules and what happens at them. The timetable with a three-day memory falls "
+                     f"{abs(nums[nm("tt3d")]['break at 14']):.1f} points on day 14 and the timetable that "
+                     f"never forgets {abs(nums[nm("ttfrozen")]['break at 14']):.1f}; by day 23 the "
                      "timetable is above where it started the spell. At day 24 both fall again "
-                     f"({nums['3-day timetable']['break at 24']:+.1f} and "
-                     f"{nums['never-forgets timetable']['break at 24']:+.1f}), and the never-forgets timetable "
+                     f"({nums[nm("tt3d")]['break at 24']:+.1f} and "
+                     f"{nums[nm("ttfrozen")]['break at 24']:+.1f}), and the timetable that never forgets "
                      "is the one that recovers immediately, because the old routine is the one it never "
-                     "stopped believing. Long-context's day-14 fall is "
-                     f"{abs(nums['long-context']['break at 14']):.1f} points, the smallest of the four."),
+                     "stopped believing. The whole-log memory's day-14 fall is "
+                     f"{abs(nums[nm("longcontext")]['break at 14']):.1f} points, the smallest of the four."),
         "not_shown": "This is accuracy only — nothing here says whether a method KNOWS it has broken, which is "
-                     "the subject of F8 and F9. Long-context rests on fewer households than the counters (see "
+                     "the subject of F8 and F9. The whole-log-in-the-prompt memory rests on fewer households than the counters (see "
                      "the count above) and its band is correspondingly wider; do not read a gap between it and "
                      "a counter as an effect without checking the band. The plotted line is a three-day "
                      "average, so the visible fall is shallower than the real one: quote the numbers, not the "
                      "picture.",
                 "band": "±1 standard error across households", "drawing": NOTE_LONG_ACC,
-        "provisional": grow and "long-context household count will rise: a larger run is in progress", "numbers": nums})
+        "provisional": grow and "the whole-log-in-the-prompt memory household count will rise: a larger run is in progress", "numbers": nums})
 
 
 def f2(DATA, EXTRA, manifest):
@@ -611,7 +648,7 @@ def f2(DATA, EXTRA, manifest):
         ax.fill_between(days_env, lo, hi, color=LANG_FAMILY[1], alpha=0.13, lw=0, zorder=1)
     for key, m, colour, mk in keys:
         S = series(DATA, pop, key, only_hh=complete_hh(DATA, pop, key))
-        line(ax, S, colour, NAME[m], band=(m == "tt3d"), stage_of=st,
+        line(ax, S, colour, nm_legend(m), band=(m == "tt3d"), stage_of=st,
              lw=1.9 if m == "tt3d" else 1.3, marker=mk)
     boundaries([ax], DATA, pop)
     finish(ax, "Accuracy")
@@ -621,52 +658,52 @@ def f2(DATA, EXTRA, manifest):
         "claim_head": ("The language memories do not behave as one class, and the one that behaves most like "
                        "a COUNTER is the one built like one. Retrieval answers by pulling sightings from "
                        "the same time of day across the whole history, capped but never aged out \u2014 which "
-                       "is the never-forgets timetable's index, plus a recency window. Behaviourally it tracks "
-                       "the never-forgets timetable at a correlation of +0.90 with a mean gap of 4.1 points, where the other "
+                       "is the timetable that never forgets's index, plus a recency window. Behaviourally it tracks "
+                       "the timetable that never forgets at a correlation of +0.90 with a mean gap of 4.1 points, where the other "
                        "language memories track it at +0.55 and 8\u20139 points, and at the return it RISES as "
-                       "the never-forgets timetable does while every adapting method falls. A language memory inherits the "
+                       "the timetable that never forgets does while every adapting method falls. A language memory inherits the "
                        "failure mode of whatever it is indexed by: choosing the retrieval key is choosing which "
                        "disruption the memory will fail on.\n\n" + SPINE + " Retrieval's index is the "
                        "clearest case: same time of day, whole history, no notion of when a sighting stopped "
                        "being informative.\n\n"),
-        "claim": (lambda g: "Given ten days of the new routine the 3-day timetable re-learns it "
-                            f"{g['3-day timetable'] / max(g['reflection'], 0.1):.1f} to "
-                            f"{g['3-day timetable'] / max(min(g['long-context'], g['retrieval']), 0.1):.1f} times "
+        "claim": (lambda g: "Given ten days of the new routine the timetable with a three-day memory re-learns it "
+                            f"{g[nm("tt3d")] / max(g[nm("reflect")], 0.1):.1f} to "
+                            f"{g[nm("tt3d")] / max(min(g[nm("longcontext")], g[nm("retrieval")]), 0.1):.1f} times "
                             "as fast as any language memory: "
-                            f"+{g['3-day timetable']:.0f} points from the first sick days to the end of the spell, "
-                            f"against +{g['reflection']:.0f} for reflection, +{g['long-context']:.0f} for "
-                            f"long-context and +{g['retrieval']:.0f} for retrieval."
+                            f"+{g[nm("tt3d")]:.0f} points from the first sick days to the end of the spell, "
+                            f"against +{g[nm("reflect")]:.0f} for reflection, +{g[nm("longcontext")]:.0f} for "
+                            f"the whole-log-in-the-prompt memory and +{g[nm("retrieval")]:.0f} for retrieval."
                   )({k: v["re-learning inside the spell"] for k, v in nums.items()}),
         "population": POP_LABEL[pop], "households": hh, "split": "all questions",
-        "band": "±1 standard error across households, on the 3-day timetable only",
-        "caption": "Accuracy per day for the 3-day timetable and three language memories. All four break on "
+        "band": "±1 standard error across households, on the timetable with a three-day memory only",
+        "caption": "Accuracy per day for the timetable with a three-day memory and three language memories. All four break on "
                    "the first sick day. Over the following ten days, during which every method is living in "
-                   "the new routine and is told the right answer after every question, the 3-day timetable re-learns "
+                   "the new routine and is told the right answer after every question, the timetable with a three-day memory re-learns "
                    "the routine and the language memories recover far less.",
-        "look_for": ("The slope between the first sick days and the end of the spell. The 3-day timetable "
-                     f"goes from {nums['3-day timetable']['days 14-16']:.1f} to "
-                     f"{nums['3-day timetable']['days 20-23']:.1f}, a gain of "
-                     f"{nums['3-day timetable']['re-learning inside the spell']:.1f} points. Reflection gains "
-                     f"{nums['reflection']['re-learning inside the spell']:.1f}, retrieval "
-                     f"{nums['retrieval']['re-learning inside the spell']:.1f} and long-context "
-                     f"{nums['long-context']['re-learning inside the spell']:.1f}."),
+        "look_for": ("The slope between the first sick days and the end of the spell. The timetable with a three-day memory "
+                     f"goes from {nums[nm("tt3d")]['days 14-16']:.1f} to "
+                     f"{nums[nm("tt3d")]['days 20-23']:.1f}, a gain of "
+                     f"{nums[nm("tt3d")]['re-learning inside the spell']:.1f} points. Reflection gains "
+                     f"{nums[nm("reflect")]['re-learning inside the spell']:.1f}, retrieval "
+                     f"{nums[nm("retrieval")]['re-learning inside the spell']:.1f} and the whole-log-in-the-prompt memory "
+                     f"{nums[nm("longcontext")]['re-learning inside the spell']:.1f}."),
         "not_shown": ("It does not show that the language memories learn NOTHING: reflection's "
-                      f"+{nums['reflection']['re-learning inside the spell']:.1f} is a real gain, about "
-                      f"{nums['reflection']['re-learning inside the spell'] / max(nums['3-day timetable']['re-learning inside the spell'], 0.1):.0%} "
-                      "of the 3-day timetable's. It also does not separate re-learning from same-day "
-                      "feedback, since these are all questions rather than cold ones. Long-context is on "
+                      f"+{nums[nm("reflect")]['re-learning inside the spell']:.1f} is a real gain, about "
+                      f"{nums[nm("reflect")]['re-learning inside the spell'] / max(nums[nm("tt3d")]['re-learning inside the spell'], 0.1):.0%} "
+                      "of the timetable with a three-day memory's. It also does not separate re-learning from same-day "
+                      "feedback, since these are all questions rather than cold ones. The whole-log-in-the-prompt memory is on "
                       "fewer households than the rest."),
         "history": "This figure asserted until 22 Sept that the language memories \"barely move\". Its own "
-                   "numbers contradicted that — reflection re-learns half as much as the 3-day timetable, which is not "
+                   "numbers contradicted that — reflection re-learns half as much as the timetable with a three-day memory, which is not "
                    "\"barely\" — so the claim was changed to the ratio it can actually support and the file "
                    "was renamed off `F2_counters_relearn_language_does_not`, which had encoded the overclaim "
                    "in its name.",
-        "note": "The counts are per method above; long-context ran on fewer households than the counters. "
+        "note": "The counts are per method above; the whole-log-in-the-prompt memory ran on fewer households than the counters. "
                 "The shaded envelope behind the three language memories spans the highest and lowest of "
                 "THEIR OWN three estimates on each day — it is the spread between those methods, not a "
-                "pooled standard error, and it is there so the three read as one class against the 3-day timetable.",
+                "pooled standard error, and it is there so the three read as one class against the timetable with a three-day memory.",
         "drawing": NOTE_LONG_ACC,
-        "provisional": grow and "long-context household count will rise: a larger run is in progress",
+        "provisional": grow and "the whole-log-in-the-prompt memory household count will rise: a larger run is in progress",
         "numbers": nums})
 
 
@@ -758,7 +795,7 @@ def f3(DATA, EXTRA, manifest):
     save(fig, "F3_what_one_sentence_buys", manifest, {
         "figure": "F3",
         "claim": (lambda c: "Ten days of living in the new routine, corrected after every single question, do "
-                            "not teach long-context memory the new routine. One sentence does, and on ten "
+                            "not teach the whole-log-in-the-prompt memory the new routine. One sentence does, and on ten "
                             "matched households the whole arc of it now clears our bar on this one memory. "
                             f"Told at A it is {c('A only - no message','first sick days 14-16')} points ahead "
                             "of the untold run on the first sick days and "
@@ -784,7 +821,7 @@ def f3(DATA, EXTRA, manifest):
         "note": "Each told arm is drawn from the day it measurably departs from the arm above it, computed from "
                 "the data rather than from the calendar. Departure days are in the numbers below. "
                 "Each told arm is the same run as the one above it until that day.",
-        "caption": "One long-context memory told three different things, on the same ten households. The "
+        "caption": "One the whole-log-in-the-prompt memory told three different things, on the same ten households. The "
                    "darkest line is never told; the middle line is told \u201cYuki is home sick today\u201d on "
                    "the first sick day (A); the lightest is told that again and then told on the first day of "
                    "the return that the resident is back (A & B). Each told arm is the same run as the one "
@@ -814,8 +851,7 @@ def r2(v):
     return None if v is None else round(v, 1)
 
 
-DEC_NAME = {"ttfrozen": "never-forgets timetable", "tt3d": "3-day timetable",
-            "perpetua": "Perpetua*", "longcontext": "long-context", "lastseen": "last seen"}
+DEC_NAME = NAME          # one source of names, so a rename cannot land in one figure and miss another
 DEC_ORDER = ["ttfrozen", "tt3d", "perpetua", "longcontext"]
 HINDSIGHT = "thresholds chosen with hindsight, so these are upper bounds, not a deployable policy"
 
@@ -832,7 +868,7 @@ def f8(DATA, EXTRA, manifest):
         days = sorted(int(d) for d in M["per_day"])
         S = {"days": days, "mean": [M["per_day"][str(d)] for d in days],
              "se": [0] * len(days), "hh": M["n_hh"]}
-        line(ax, S, COL[m], DEC_NAME[m], band=False, stage_of=stage_lookup(DATA, "person"))
+        line(ax, S, COL[m], nm_legend(m), band=False, stage_of=stage_lookup(DATA, "person"))
         for d, v in M["per_day"].items():
             if v < 0 and (worst_below is None or v < worst_below[1]):
                 worst_below = (int(d), v, DEC_NAME[m])
@@ -861,7 +897,7 @@ def f8(DATA, EXTRA, manifest):
         "claim": "Scored the way a user would feel it — +1 for a right answer, \u22121 for a wrong one, 0 for "
                  "declining — the ranking inverts at the moment of change: the methods that are most accurate "
                  "in the settled world are the ones that collapse, and one goes NEGATIVE. On day 14 the "
-                 "never-forgets timetable scores below zero, meaning it would have done better answering "
+                 "timetable that never forgets scores below zero, meaning it would have done better answering "
                  "nothing at all. Accuracy in a stable world does not predict value when the world moves.",
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: this is a score, not an average with a spread",
@@ -869,19 +905,19 @@ def f8(DATA, EXTRA, manifest):
                              "0.5": "the half-way bar the +1/\u22121/0 scoring implies \u2014 a setting"},
         "note": "Each method uses its OWN best fixed threshold, because the comparison would otherwise measure "
                 "their confidence scales rather than their judgement \u2014 the timetables spread mass over "
-                "dozens of places and rarely exceed 0.5, long-context says 0.95 to almost everything.",
-        "caption": "Daily decision score under a rule that needs no coverage target to explain: +1 for a "
+                "dozens of places and rarely exceed 0.5, the whole-log-in-the-prompt memory says 0.95 to almost everything.",
+        "caption": "Daily decision score under a rule that needs no target to explain: +1 for a "
                    "right answer, −1 for a wrong one, 0 for declining to answer. Each method uses its own best "
-                   "fixed confidence threshold. Both timetables collapse on the first sick day; Perpetua* and "
-                   "long-context do not.",
+                   "fixed confidence threshold. Both timetables collapse on the first sick day; the survival-time model and "
+                   "the whole-log-in-the-prompt memory do not.",
         "below_zero": worst_below,
-        "look_for": (lambda w: "The first dotted rule. The never-forgets timetable falls from "
-                               f"{w('never-forgets timetable', 0):.1f} in the settled week to "
-                               f"{w('never-forgets timetable', 1):.1f} on the first sick days and the 3-day "
-                               f"timetable from {w('3-day timetable', 0):.1f} to {w('3-day timetable', 1):.1f}, "
-                               f"while Perpetua* goes {w('Perpetua*', 0):.1f} to {w('Perpetua*', 1):.1f} and "
-                               f"long-context {w('long-context', 0):.1f} to {w('long-context', 1):.1f}. Note "
-                               "also that Perpetua* sits BELOW both timetables while the world is stable."
+        "look_for": (lambda w: "The first dotted rule. The timetable that never forgets falls from "
+                               f"{w(nm("ttfrozen"), 0):.1f} in the settled week to "
+                               f"{w(nm("ttfrozen"), 1):.1f} on the first sick days and the "
+                               f"timetable with a three-day memory from {w(nm("tt3d"), 0):.1f} to {w(nm("tt3d"), 1):.1f}, "
+                               f"while the survival-time model goes {w(nm("perpetua"), 0):.1f} to {w(nm("perpetua"), 1):.1f} and "
+                               f"the whole-log-in-the-prompt memory {w(nm("longcontext"), 0):.1f} to {w(nm("longcontext"), 1):.1f}. Note "
+                               "also that the survival-time model sits BELOW both timetables while the world is stable."
                      )(lambda m, i: nums[m][list(nums[m])[2 + i]])
                     + (f" And on day {worst_below[0]} the {worst_below[2]}'s daily score is "
                        f"{worst_below[1]:+.1f} — below zero, meaning it would have scored better answering "
@@ -910,7 +946,7 @@ def f9(DATA, EXTRA, manifest):
         M = D[m]
         xs = [j + (i - (len(meths) - 1) / 2) * w for j in range(len(order))]
         ys = [M["windows"].get(k, {}).get("gain", 0.0) for k in order]
-        ax.bar(xs, ys, width=w * 0.92, color=COL[m], label=DEC_NAME[m], zorder=3)
+        ax.bar(xs, ys, width=w * 0.92, color=COL[m], label=nm_legend(m), zorder=3)
         # the value on the bar: a reader quoting "+2.9 against +0.3" should not have to measure against the
         # axis, and the numbers table is not in the paper beside the figure
         for xx, yy in zip(xs, ys):
@@ -930,30 +966,30 @@ def f9(DATA, EXTRA, manifest):
     save(fig, "F9_value_of_declining", manifest, {
         "figure": "F9",
         "claim": (lambda g: "At the shift, being allowed to decline is worth almost nothing to the "
-                            f"timetables (+{g['never-forgets timetable']:.1f} and +{g['3-day timetable']:.1f}) "
-                            f"and a great deal to Perpetua* (+{g['Perpetua*']:.1f}). Perpetua* scores BELOW "
+                            f"timetables (+{g[nm("ttfrozen")]:.1f} and +{g[nm("tt3d")]:.1f}) "
+                            f"and a great deal to the survival-time model (+{g[nm("perpetua")]:.1f}). the survival-time model scores BELOW "
                             "both timetables while the world is stable: it is not the better model, it is the "
                             "only one whose uncertainty is worth acting on."
                   )({k: v["first sick days 14-16"] or 0 for k, v in nums.items()}),
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: bars are a difference of two scores",
         "note": "Score under the best threshold for that window, minus the score when forced to answer every "
-                "question. Settled figures for context are in F8's numbers: Perpetua* 4.6 against the "
+                "question. Settled figures for context are in F8's numbers: the survival-time model 4.6 against the "
                 "timetables' 7.7 and 7.6.",
         "caption": "What being allowed to decline is worth, by window: the decision score under the best "
                    "threshold for that window, minus the score when the method is forced to answer every "
                    "question. Higher bars mean the method's own confidence carries information worth acting "
-                   "on. At the moment the routine changes, only Perpetua* gains materially.",
-        "look_for": (lambda sick, back: "The first-sick-days group. Perpetua* gains "
-                                        f"{sick['Perpetua*']:.1f} points from being allowed to decline, "
-                                        f"against {sick['never-forgets timetable']:.1f} for the never-forgets "
-                                        f"timetable, {sick['3-day timetable']:.1f} for the 3-day timetable and "
-                                        f"{sick['long-context']:.1f} for long-context. On the first days back "
-                                        f"the pattern repeats: Perpetua* {back['Perpetua*']:.1f}, everything "
-                                        f"else at or below {max(v for k, v in back.items() if k != 'Perpetua*'):.1f}."
+                   "on. At the moment the routine changes, only the survival-time model gains materially.",
+        "look_for": (lambda sick, back: "The first-sick-days group. the survival-time model gains "
+                                        f"{sick[nm("perpetua")]:.1f} points from being allowed to decline, "
+                                        f"against {sick[nm("ttfrozen")]:.1f} for the timetable that never "
+                                        f"forgets, {sick[nm("tt3d")]:.1f} for the timetable with a three-day memory and "
+                                        f"{sick[nm("longcontext")]:.1f} for the whole-log-in-the-prompt memory. On the first days back "
+                                        f"the pattern repeats: the survival-time model {back[nm("perpetua")]:.1f}, everything "
+                                        f"else at or below {max(v for k, v in back.items() if k != 'the survival-time model'):.1f}."
                      )({k: v["first sick days 14-16"] or 0 for k, v in nums.items()},
                        {k: v["first days back 24-26"] or 0 for k, v in nums.items()}),
-        "not_shown": (lambda st: "This is not a claim that Perpetua* is the better model — F8's settled-week "
+        "not_shown": (lambda st: "This is not a claim that the survival-time model is the better model — F8's settled-week "
                                  f"numbers show it scoring {st['perpetua']:.1f} against the timetables' "
                                  f"{st['ttfrozen']:.1f} and {st['tt3d']:.1f}. The claim is narrower and stranger: "
                                  "it is the worst forecaster of the four and the only one whose uncertainty "
@@ -970,12 +1006,11 @@ def f9(DATA, EXTRA, manifest):
 
 
 GATE_ORDER = ["longcontext", "ttfrozen", "tt3d", "perpetua"]
-GATE_NAME = {"longcontext": "long-context", "ttfrozen": "never-forgets timetable",
-             "tt3d": "3-day timetable", "perpetua": "Perpetua*"}
+GATE_NAME = NAME
 
 
 def gate_hh(M):
-    """Households behind a gate figure. M["n"] is the QUESTION count -- four thousand of them -- and putting
+    """Households behind a rule that decides whether to answer figure. M["n"] is the QUESTION count -- four thousand of them -- and putting
     that in a field labelled "Households" is how F4 and F6 came to claim 4130 households. The extractor
     records the real count as it loads the rows, because the rows themselves carry no household."""
     n = M.get("n_hh")
@@ -1008,7 +1043,7 @@ def conf_shift(DATA, EXTRA, mem):
 
 
 def f4(DATA, EXTRA, manifest):
-    """Reacting is not recovering: the gate declines far more, and is still wrong several times over."""
+    """Reacting is not recovering: the rule that decides whether to answer declines far more, and is still wrong several times over."""
     D = EXTRA["deferral_live"]["memories"]
     alpha = EXTRA["deferral_live"]["alpha"]
     promise = 100.0 * alpha
@@ -1024,8 +1059,8 @@ def f4(DATA, EXTRA, manifest):
             continue
         mult = gate_series(M, "wrong_when_answered")
         mult["mean"] = [v / promise for v in mult["mean"]]
-        line(ax[0], mult, COL[m], GATE_NAME[m], band=False, stage_of=st)
-        line(ax[1], gate_series(M, "hand_over"), COL[m], GATE_NAME[m], band=False, stage_of=st)
+        line(ax[0], mult, COL[m], nm_legend(m), band=False, stage_of=st)
+        line(ax[1], gate_series(M, "hand_over"), COL[m], nm_legend(m), band=False, stage_of=st)
         hh[GATE_NAME[m]] = gate_hh(M)
         pd = M["per_day"]
         w = lambda f, days: avg([pd[str(d)][f] for d in days if str(d) in pd])
@@ -1037,7 +1072,7 @@ def f4(DATA, EXTRA, manifest):
             "wrong on what it keeps, settled": r2(w("wrong_when_answered", range(9, 14))),
             "wrong on what it keeps, 14-16": r2(sick),
             "times the promised rate, 14-16": round(sick / promise, 1),
-            # the ROUTE: does the gate decline more because the method's own confidence fell, or only because
+            # the ROUTE: does the rule that decides whether to answer decline more because the method's own confidence fell, or only because
             # the controller raised its bar after the fact? This column is the first half of that answer.
             "its own confidence moved (points)": conf_shift(DATA, EXTRA, m)}
     boundaries(ax, DATA, "person")
@@ -1054,11 +1089,11 @@ def f4(DATA, EXTRA, manifest):
                        fontsize=6.1, color=c, va="top", fontweight="bold" if r == 0 else "normal")
     top = max(v["mean"][d] for v in (gate_series(D[m], "wrong_when_answered") for m in GATE_ORDER if m in D)
               for d in range(len(v["mean"])) if v["mean"][d] is not None) / promise
-    finish(ax[0], "Error rate \u00f7 promise", xlab="", ylim=(0, top + 2.4))
-    finish(ax[1], "Handed over", ylim=(0, 100))
+    finish(ax[0], "Wrong answers \u00f7\nwhat it promised", xlab="", ylim=(0, top + 2.4))
+    finish(ax[1], "How often it hands\nthe question over", ylim=(0, 100))
     save(fig, "F4_reacting_is_not_recovering", manifest, {
         "figure": "F4",
-        "claim": (lambda n: "Reacting is not recovering. When the routine changes these gates DO notice \u2014 "
+        "claim": (lambda n: "Reacting is not recovering. When the routine changes these rules that decide whether to answer DO notice \u2014 "
                             "every one of them roughly doubles or triples how often it declines to answer "
                             "\u2014 and the answers they keep are still wrong "
                             f"{min(v['times the promised rate, 14-16'] for v in n.values()):.1f} to "
@@ -1067,28 +1102,28 @@ def f4(DATA, EXTRA, manifest):
                             "same as knowing WHICH answers are wrong, and only the second one protects a user.")(nums),
         "population": POP_LABEL["person"], "households": hh, "split": "all questions",
         "band": "none: these are rates",
-        "prose_numbers_ok": {"0.1": "alpha, the error rate the gate was set to hold -- a setting"},
-        "note": ("The top axis is the miss rate among ANSWERED questions divided by the rate the gate was set "
+        "prose_numbers_ok": {"0.1": "alpha, the error rate the rule that decides whether to answer was set to hold -- a setting"},
+        "note": ("The top axis is the miss rate among ANSWERED questions divided by the rate the rule that decides whether to answer was set "
                  f"to hold (alpha={alpha}), so the dashed line at 1 is the promise and 3 means three times as "
-                 "many wrong answers as promised. The lower panel is the evidence that the gate did react."),
+                 "many wrong answers as promised. The lower panel is the evidence that the rule that decides whether to answer did react."),
         "caption": "Top: how often each method is wrong on the questions it chose to answer, as a multiple of "
-                   "the error rate its gate was set to hold; the dashed line at 1 is that promise. Bottom: how "
-                   "often it declined to answer. The gates react to the change \u2014 the lower panel roughly "
+                   "the error rate it was set to hold; the dashed line at 1 is that promise. Bottom: how "
+                   "often it declined to answer. The rule that decides whether to answers react to the change \u2014 the lower panel roughly "
                    "doubles \u2014 and the upper panel shows that reacting did not make the kept answers "
                    "reliable.",
         "look_for": (lambda n: "The top panel at the first dotted rule, where every line leaves the promise "
-                               "behind. The ranking is printed on the plot: worst is the never-forgets "
+                               "behind. The ranking is printed on the plot: worst is the timetable that never "
                                f"timetable at {max(v['times the promised rate, 14-16'] for v in n.values()):.1f} "
                                "times its promised rate. Then the lower panel, which shows this is not a "
                                "failure to react: hand-over roughly doubles at the same moment.")(nums),
-        "not_shown": (lambda n: "It does not show WHY the gate reacts, which differs by method and is the "
+        "not_shown": (lambda n: "It does not show WHY the rule that decides whether to answer reacts, which differs by method and is the "
                                 "more interesting half. The last column of the table is that answer: the "
                                 "timetables' own confidence falls at the shift, by "
-                                f"{abs(n['never-forgets timetable']['its own confidence moved (points)']):.1f} "
-                                f"and {abs(n['3-day timetable']['its own confidence moved (points)']):.1f} "
-                                "points, while long-context's moves "
-                                f"{n['long-context']['its own confidence moved (points)']:+.1f}. So "
-                                "long-context's entire reaction is the controller raising its bar after "
+                                f"{abs(n[nm("ttfrozen")]['its own confidence moved (points)']):.1f} "
+                                f"and {abs(n[nm("tt3d")]['its own confidence moved (points)']):.1f} "
+                                "points, while the whole-log-in-the-prompt memory's moves "
+                                f"{n[nm("longcontext")]['its own confidence moved (points)']:+.1f}. So "
+                                "whole-log memory's entire reaction is the controller raising its bar after "
                                 "mistakes have already been made, and none of the four moves its "
                                 "confidence as far as its accuracy fell. Nor does it show what the questions "
                                 "it hands over would have scored: that is F6, and for one method the answer "
@@ -1099,7 +1134,7 @@ def f4(DATA, EXTRA, manifest):
 def f5(DATA, EXTRA, manifest):
     """Confidence beside accuracy, per day, for the four."""
     pop = "person"
-    # Last seen is back. It was dropped when its grey separated from Perpetua*'s OLD green by only dE 5.0;
+    # The memory that follows its last sighting is back. It was dropped when its grey separated from the survival-time model's OLD green by only dE 5.0;
     # against the current green the same grey clears at 9.6 under every deficiency, so the figure keeps the
     # case it exists for -- a method stating near-total confidence while right about half the time is the
     # sharpest demonstration that a confidence number can carry no information, and the other four cannot
@@ -1127,34 +1162,34 @@ def f5(DATA, EXTRA, manifest):
     legend_below(ax[0], ncol=3, gap=0.22)
     save(fig, "F5_confidence_against_accuracy", manifest, {
         "figure": "F5",
-        "claim_head": ("A confidence number can be perfectly stable and mean nothing at all. Last seen states "
+        "claim_head": ("A confidence number can be perfectly stable and mean nothing at all. The memory that follows its last sighting states "
                        "near-total confidence every day of the month while being right about half the time, "
                        "and the timetables hold theirs steady through a 40-point collapse in their own "
                        "accuracy. Stability in a confidence signal is not evidence it is tracking anything "
                        "\u2014 it is what a signal looks like when it is ignoring the world. "),
         "claim": (lambda n: "The timetables do not move their stated confidence when they break, so the gap "
-                            "between what they claim and what they achieve opens at the shift; last seen "
-                            f"states {n['last seen']['confidence day 14']:.0f}% while being right "
-                            f"{n['last seen']['accuracy day 14']:.0f}% of the time, a confidence number "
-                            "carrying no information at all; Perpetua* is the one whose stated confidence "
+                            "between what they claim and what they achieve opens at the shift; the memory that follows its last sighting "
+                            f"states {n[nm("lastseen")]['confidence day 14']:.0f}% while being right "
+                            f"{n[nm("lastseen")]['accuracy day 14']:.0f}% of the time, a confidence number "
+                            "carrying no information at all; the survival-time model is the one whose stated confidence "
                             "tracks its own accuracy through the change.")(nums),
         "population": POP_LABEL[pop], "households": hh, "split": "all questions",
         "band": "±1 standard error across households",
         "caption": "The same five methods twice: accuracy per day on the left, the confidence each states in "
                    "its own answer on the right, on one shared scale. A method whose right-hand line moves "
-                   "with its left-hand one knows when it is in trouble; last seen's, which never moves at "
+                   "with its left-hand one knows when it is in trouble; the memory that follows its last sighting's, which never moves at "
                    "all, is the case where the number means nothing.",
-        "look_for": (lambda n: "Compare each method's two lines at the first dotted rule. The never-forgets "
-                               f"timetable's accuracy falls {abs(n['never-forgets timetable']['accuracy day 14'] - n['never-forgets timetable']['accuracy day 13']):.0f} "
+        "look_for": (lambda n: "Compare each method's two lines at the first dotted rule. The timetable that never "
+                               f"timetable's accuracy falls {abs(n[nm("ttfrozen")]['accuracy day 14'] - n[nm("ttfrozen")]['accuracy day 13']):.0f} "
                                "points between day 13 and day 14 while the confidence it states moves "
-                               f"{abs(n['never-forgets timetable']['confidence day 14'] - n['never-forgets timetable']['confidence day 13']):.0f}. "
-                               "Perpetua*'s two lines move together: its stated-versus-actual gap at day 14 is "
-                               f"{n['Perpetua*']['gap at day 14']:+.1f} points against the never-forgets "
-                               f"timetable's {n['never-forgets timetable']['gap at day 14']:+.1f}. Last "
-                               "seen is the reductio: its right-hand line sits near the top of the scale all "
-                               f"month at about {n['last seen']['confidence day 13']:.0f}% while its left-hand "
-                               f"line sits near {n['last seen']['accuracy day 13']:.0f}%.")(nums),
-        "not_shown": "Being well-tracked is not being accurate: Perpetua* is the least accurate of the "
+                               f"{abs(n[nm("ttfrozen")]['confidence day 14'] - n[nm("ttfrozen")]['confidence day 13']):.0f}. "
+                               "survival-time model's two lines move together: its stated-versus-actual gap at day 14 is "
+                               f"{n[nm("perpetua")]['gap at day 14']:+.1f} points against the timetable that never "
+                               f"timetable's {n[nm("ttfrozen")]['gap at day 14']:+.1f}. Last "
+                               "follows its last sighting is the reductio: its right-hand line sits near the top of the scale all "
+                               f"month at about {n[nm("lastseen")]['confidence day 13']:.0f}% while its left-hand "
+                               f"line sits near {n[nm("lastseen")]['accuracy day 13']:.0f}%.")(nums),
+        "not_shown": "Being well-tracked is not being accurate: the survival-time model is the least accurate of the "
                      "counters here, which is the point of the pairing rather than an inconsistency. The right "
                      "panel is each method's own number on its own scale, so heights are not comparable "
                      "between methods — only each line against its own left-hand partner.",
@@ -1162,7 +1197,7 @@ def f5(DATA, EXTRA, manifest):
 
 
 def f6(DATA, EXTRA, manifest):
-    """The inversion: what the gate keeps against what it hands over."""
+    """The inversion: what the rule that decides whether to answer keeps against what it hands over."""
     D = EXTRA["deferral_live"]["memories"]
     order = EXTRA["deferral_live"]["memories"]["ttfrozen"]["answered_vs_handed"]
     wins = [w for w in ("lead", "d14_16", "d17_23", "d24_26", "d27_31") if w in order]
@@ -1188,7 +1223,7 @@ def f6(DATA, EXTRA, manifest):
                            ha="center", fontsize=6.4, color=CALLOUT, fontweight="bold")
         a.set_xticks(xs)
         a.set_xticklabels([WLAB[w] for w in wins], fontsize=5.9)
-        a.set_title(GATE_NAME[m], fontsize=7.5)
+        a.set_title(nm_legend(m), fontsize=7.5)
         finish(a, "Accuracy" if m == meths[0] else "", xlab="", ylim=(0, 100))
         a.grid(False, axis="x")
         hh[GATE_NAME[m]] = gate_hh(M)
@@ -1196,9 +1231,9 @@ def f6(DATA, EXTRA, manifest):
     legend_below(ax[0], ncol=1)
     save(fig, "F6_the_inversion", manifest, {
         "figure": "F6",
-        "claim": "At the moment the routine changes, the never-forgets timetable's gate runs BACKWARDS: it "
+        "claim": "At the moment the routine changes, the timetable that never forgets's rule for deciding whether to answer runs BACKWARDS: it "
                  "answers the questions it gets wrong and hands over the ones it would have got right. That is "
-                 "worse than a gate that does nothing at all. Perpetua* keeps the sign the right way round in "
+                 "worse than a rule that decides whether to answer that does nothing at all. the survival-time model keeps the sign the right way round in "
                  "every window, which is what shows the failure to be a property of the confidence signal "
                  "rather than of gating as an idea.\n\n" + SPINE + " That is why the exception is this "
                  "method and not a better-tuned gate on one of the others.",
@@ -1207,13 +1242,13 @@ def f6(DATA, EXTRA, manifest):
         "encoding_words": {"pale": "the handed-over bars are hatched, not tinted",
                            "tint": "the handed-over bars are hatched, not tinted",
                            "faded": "the handed-over bars are hatched, not tinted"},
-        "caption": "For two methods, the accuracy of the questions the gate chose to answer (solid) against "
-                   "the accuracy of the questions it handed over (hatched), by window. A gate that is working "
+        "caption": "For two methods, the accuracy of the questions the rule that decides whether to answer chose to answer (solid) against "
+                   "the accuracy of the questions it handed over (hatched), by window. A rule that is working "
                    "keeps the solid bar above the hatched one. Where it does not, the figure says so.",
-        "look_for": "The never-forgets timetable's first-sick-days pair, where the hatched bar overtakes the "
-                    "solid one, against Perpetua*'s, where it does not. The per-window edge — kept minus "
+        "look_for": "The timetable that never forgets's first-sick-days pair, where the hatched bar overtakes the "
+                    "solid one, against the survival-time model's, where it does not. The per-window edge — kept minus "
                     "handed over — is in the numbers.",
-        "not_shown": "Two methods only; the 3-day timetable is close to a wash and long-context never inverts, "
+        "not_shown": "Two methods only; the timetable with a three-day memory is close to a wash and the whole-log-in-the-prompt memory never inverts, "
                      "so neither adds to the contrast. It also does not show how MANY questions each bar "
                      "rests on, which differs a great deal between the kept and handed-over halves.",
         "numbers": nums})
@@ -1247,7 +1282,7 @@ def f7(DATA, EXTRA, manifest):
         ax[1].annotate(f"{d14['set_size']:.2f}", xy=(14, d14["set_size"]), xytext=(4, -1),
                        textcoords="offset points", fontsize=6.4, color=INK, va="top")
     boundaries(ax, DATA, "person")
-    finish(ax[0], "Coverage", xlab="", ylim=(40, 105))
+    finish(ax[0], "How often the truth\nwas in the list", xlab="", ylim=(40, 105))
     finish(ax[1], "Places named", ylim=(1.0, 2.2))
     lead = [C[str(d)]["coverage"] for d in range(9, 14) if str(d) in C]
     spell = [C[str(d)]["coverage"] for d in range(14, 24) if str(d) in C]
@@ -1259,33 +1294,33 @@ def f7(DATA, EXTRA, manifest):
         # The claim used to quote the spell-average set size against the settled average, which describes a
         # different window from the day the claim is about -- and in doing so undersold it. On the day the
         # guarantee fails the set is NARROWER than the settled week, which is stronger than "unchanged".
-        "claim": "The conformal set does not widen when the routine changes. On the first sick day its "
-                 f"coverage falls from {avg(lead):.0f}% in the settled week to {d14['coverage']:.0f}% — far "
+        "claim": "The list of places the rule offers does not widen when the routine changes. On the first sick day its "
+                 f"how often the truth is in its list falls from {avg(lead):.0f}% in the settled week to {d14['coverage']:.0f}% — far "
                  "below the 90% it promises — while the set it offers gets SMALLER, "
                  f"{d14['set_size']:.2f} places against {avg(lead_s):.2f} before. Over the whole spell it "
                  f"averages {avg(spell_s):.2f}, so nothing about its width registers the change.",
-        "population": POP_LABEL["person"], "households": {"long-context, sampled": n_hh},
+        "population": POP_LABEL["person"], "households": {"the whole-log-in-the-prompt memory, sampled": n_hh},
         "split": "all questions",
         "band": "none: single-day rates pooled over households",
         "prose_numbers_ok": {"0.7": "the sampling temperature \u2014 a setting, not a measurement"},
-        "note": "Each question was put to the model ten times at temperature 0.7 and the conformal set built "
+        "note": "Each question was put to the model ten times at temperature 0.7 and the list of places the rule offers built "
                 "from how often each place came back. Each household's first 20 questions are excluded while "
                 "the threshold warms up, and a day is shown only once all households have finished it.",
-        "caption": "Top: how often the truth was inside the conformal set, against the 90% the method promises "
+        "caption": "Top: how often the truth was inside the list of places the rule offers, against the 90% the method promises "
                    "(dashed). Bottom: how many places the set contained. At the first sick day the guarantee "
                    "breaks while the set gets no wider — narrower, in fact — so the method's uncertainty does "
                    "not register the change at all; it simply becomes wrong about it.",
-        "look_for": f"Day 14 in both panels, marked: coverage {d14['coverage']:.0f}% against a 90% promise, "
+        "look_for": f"Day 14 in both panels, marked: the truth was in the list {d14['coverage']:.0f}% of the time against a 90% promise, "
                     f"with a set of {d14['set_size']:.2f} places — NARROWER than the settled-week average of "
                     f"{avg(lead_s):.2f}. A method reacting to the change would have widened it.",
         "not_shown": f"Three households, so treat the levels as indicative. Applying our claim bar to the "
-                     "per-household changes, the coverage fall is the part that survives — it has the same "
+                     "per-household changes, the fall in how often the truth was in the list is the part that survives — it has the same "
                      "sign in all three households — while the set-size change does not differ from zero. "
-                     "This is also one conformal wrapper; four others were tried and are on the page, not here.",
+                     "This is also one way of setting the list size \u2014 the rule that adjusts itself as it goes (adaptive conformal prediction); four others were tried and are on the page, not here.",
         "drawing": "Drawn per day rather than as a three-day average: this figure's claim is about a single "
                    "day, and even a stage-bounded average pairs day 14 with day 15 and reports 75% where the "
                    "day itself is 69%.",
-        "numbers": {"coverage %": {"settled week 9-13": r2(avg(lead)), "day 14": r2(d14["coverage"]),
+        "numbers": {"how often the truth was in the list, %": {"settled week 9-13": r2(avg(lead)), "day 14": r2(d14["coverage"]),
                                    "spell 14-23": r2(avg(spell))},
                     "set size (places)": {"settled week 9-13": round(avg(lead_s), 2),
                                           "day 14": round(d14["set_size"], 2),
@@ -1319,7 +1354,7 @@ def main():
                 "No number here or in any figure is typed into the script.\n\n"
                 "**Every number in this file is measured on the DAILY values, not on the smoothed line.** The "
                 "figures plot a centred three-day average, bounded so it never crosses a stage boundary. Even "
-                "bounded, smoothing shrinks a one-day cliff: the 3-day timetable's fall at day 14 is 40.8 "
+                "bounded, smoothing shrinks a one-day cliff: the timetable with a three-day memory's fall at day 14 is 40.8 "
                 "points on the daily values and reads as 30.5 on the plotted line. Quote the numbers here, not "
                 "what the line appears to show.\n\n")
         for e in ordered:

@@ -26,6 +26,10 @@ Memories
   usual format. 3 calls per question. ``debate_oracle``: the same, with the judge alone also shown the
   residents' messages (run on the banks_f1_return header: sick from day 14, back at work day 24) —
   an upper bound on how much of the gap is detecting the stage rather than reasoning over the prompt.
+* ``nocard``  the recent-sightings list with the residents' descriptions removed from the prompt: each
+  resident line becomes "- <name> (a resident)". Every other arm carries a written daily routine
+  ("at the desk at home from 9 to about 5:30") that is never updated when the routine changes; this
+  asks how much of the evidence-overriding comes from that written routine rather than a learned prior.
 ``--days`` answers only the listed days. Exact for memories with no LLM writes (naive, pinned, debate):
 the store's state never depends on the answers.
 """
@@ -81,6 +85,11 @@ class Pinned(Store):
         return head + [""] + base
 
 
+class NoCard(Store):
+    kind, in_house = "nocard", "naive"
+    strip_cards = True
+
+
 class Debate(Store):
     kind, in_house = "debate", "naive"
     oracle = False
@@ -90,20 +99,32 @@ class DebateOracle(Debate):
     kind, oracle = "debate_oracle", True
 
 
-STORES = {c.kind: c for c in (Naive, Pinned, Debate, DebateOracle)}
+STORES = {c.kind: c for c in (Naive, Pinned, NoCard, Debate, DebateOracle)}
+
+
+def strip_cards(lines: List[str], names: Dict[str, str]) -> List[str]:
+    """Replace the 'Residents:' block's description lines with bare names."""
+    i = lines.index("Residents:")
+    j = i + 1
+    while j < len(lines) and lines[j].startswith("- "):
+        j += 1
+    assert j - i - 1 == len(names), (j - i - 1, names)
+    return lines[:i + 1] + [f"- {n} (a resident)" for n in names.values()] + lines[j:]
 
 ADV_SCHEMA: Dict[str, Any] = {
     "type": "object",
     "properties": {"location": {"type": "string"}, "argument": {"type": "string", "maxLength": 500},
                    "confidence": {"type": "number"}},
     "required": ["location", "argument", "confidence"], "additionalProperties": False}
-ROLE_EVIDENCE = ("You are one side of a two-person debate about this question. Your side: argue from the MOST RECENT "
-                 "evidence. Make the strongest case for where the object is right now based on its latest sightings, "
-                 "especially the most recent ones at about this time of day, even where they break the usual routine.")
-ROLE_ROUTINE = ("You are one side of a two-person debate about this question. Your side: argue from the LONG-RUN "
-                "ROUTINE. Make the strongest case for where the object is right now based on where it has usually been "
-                "at this time of day across all the days so far and on what the residents normally do, even where the "
-                "latest sightings disagree.")
+ROLE_EVIDENCE = ("You are one side of a two-sided debate about this question; another assistant argues the other side "
+                 "and a judge decides. YOUR SIDE IS FIXED: name the spot where this object was seen on the MOST RECENT "
+                 "day it was sighted within about an hour of the current time of day, and make the strongest case that it "
+                 "is there now. Do not argue from the usual routine or the residents' descriptions; the other side does that.")
+ROLE_ROUTINE = ("You are one side of a two-sided debate about this question; another assistant argues the other side "
+                "and a judge decides. YOUR SIDE IS FIXED: name the spot where this object has MOST OFTEN been seen at about "
+                "the current time of day across all days so far, and make the strongest case that it is there now, using "
+                "the long-run pattern and what the residents normally do. Do not argue from the latest sightings; the other "
+                "side does that.")
 ADV_REPLY = ('Reply with JSON: {"location": one spot name, "argument": two or three sentences making your side\'s case, '
              '"confidence": number from 0 to 1}')
 
@@ -201,6 +222,8 @@ def run_arm(bank_path: pathlib.Path, kind: str, told: bool, client: L.LLMClient,
                                  "confidence": nobj.get("confidence")})
             Lh = L.header_lines(q.t_query, day_names, cards, rooms, patrol_hours, False, hints, "conf", patrol_times,
                                 question_moments, feedback_delay_min)
+            if getattr(store, "strip_cards", False):
+                Lh = strip_cards(Lh, names)
             Lh += ["", f"Question: where is {q.object_id} (a {q.object_class.replace('_', ' ')}) right now?", ""]
             mem_lines = store.lines(memory, q.object_id, q.t_query)
             msgs = [{"role": "system", "content": L.SYSTEM}, {"role": "user", "content": "\n".join(Lh + mem_lines)}]
