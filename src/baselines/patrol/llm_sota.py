@@ -44,8 +44,12 @@ Memories
   RECENT_CAP sightings + up to 10 empty-listing lines (the recent-sightings list shows 60 sightings).
   Adaptations, stated: ingestion is nightly per day rather than per message; sightings are structured
   already, so there is no entity-extraction step; facts are keyed by object.
-``--days`` answers only the listed days. Exact for memories with no LLM writes (naive, pinned, debate):
-the store's state never depends on the answers.
+``--days`` answers only the listed days. This is exact only where each arm makes it so, NOT a guarantee
+of the harness. Arms with no LLM writes (naive, pinned, nocard, debate) are exact because their state never
+depends on which days were answered. The fact stores are exact because each nightly write filters sightings
+to before the end of its own day; without that filter the writes for skipped days would see later evidence
+(a bug found 2026-09-23 02:45). Any NEW arm that writes must earn exactness the same way: compare a write
+prompt under two different --days settings; it must be byte-identical.
 """
 from __future__ import annotations
 
@@ -188,8 +192,9 @@ class FactStore(Store):
         L0 = L.header_lines((day + 1) * DAY_SECONDS - 60, self.day_names, ctx["cards"], ctx["rooms"], ctx["patrol_hours"],
                             False, ctx["hints"](day))
         movers = []
-        for o in sorted(memory.sightings):
-            h = memory.history(o)
+        cutoff = (day + 1) * DAY_SECONDS      # the night's write sees only what had been seen by the end of that day,
+        for o in sorted(memory.sightings):   # whenever it runs: no later sightings leak in, and --days stays exact
+            h = [(t, r) for t, r in memory.history(o) if t < cutoff]
             if len({r for _, r in h}) < 2:
                 continue
             st = stays(h, day)
