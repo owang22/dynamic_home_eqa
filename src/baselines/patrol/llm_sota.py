@@ -96,6 +96,12 @@ class Naive(Store):
     kind, in_house = "naive", "naive"
 
 
+class LongContext(Store):
+    """passthrough to llm.memory_lines 'longcontext' (every sighting of the object + the whole movement log): used to
+    re-run that arm fresh on a day subset and measure its rerun noise."""
+    kind, in_house = "longcontext", "longcontext"
+
+
 class Pinned(Store):
     kind, in_house = "pinned", "naive"
 
@@ -327,7 +333,7 @@ class FactsStale(FactStore):
     kind, policy = "facts_stale", "stale"
 
 
-STORES = {c.kind: c for c in (Naive, Pinned, NoCard, TrueCard, Debate, DebateOracle, FactsMem0, FactsZep, FactsStale)}
+STORES = {c.kind: c for c in (Naive, LongContext, Pinned, NoCard, TrueCard, Debate, DebateOracle, FactsMem0, FactsZep, FactsStale)}
 
 
 def strip_cards(lines: List[str], names: Dict[str, str]) -> List[str]:

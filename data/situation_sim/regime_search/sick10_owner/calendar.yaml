@@ -1,22 +1,22 @@
 calendar:
-- name: lead
+- day_kind: weekday
   days:
   - 0
   - 13
-  day_kind: weekday
+  name: lead
   suppress_random_events: true
-- name: sick
+- day_kind: weekday
   days:
   - 14
   - 23
-  day_kind: weekday
   force_events:
   - event: sick_day
     resident: resident_1
+  name: sick
   suppress_random_events: true
-- name: return
+- day_kind: weekday
   days:
   - 24
   - 31
-  day_kind: weekday
+  name: return
   suppress_random_events: true

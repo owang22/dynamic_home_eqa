@@ -89,3 +89,31 @@ scores only.
 | 4 | Empty nights: with an unconstrained list, extraction returned {"facts": []} on 4 of 9 nights (days 1, 2, 5, 8); at temperature 0 a retry reproduces it | A store with random missing days: facts stay "current" through days they were never checked, so revision appears to keep stale facts | Listing every extraction call's fact count | The schema requires at least one fact per object listed that night | withdrawn/facts_zep_hh{0,1,2}_empty_nights |
 Irony worth one line: #3 is a memory designed to represent WHEN facts were true, building its early facts from evidence
 that did not exist yet.
+
+## Problem found 02:58: the server is not deterministic at temperature 0; every comparison tonight carries rerun noise
+The corrected card's lead-up prompts on hh_s0 are byte-identical to the workshop session's recent-sightings run, yet
+6 of 48 answers differ (4 in the chosen spot, 2 in confidence only). Same prompt, temperature 0, seed 0, different
+output: the vLLM server is not bitwise deterministic across load and batching, and the workshop run was made under
+different server load (possibly also a different server configuration). Every paired number above compares a FRESH run with that older run,
+so it includes rerun noise. The noise is symmetric, so it should not bias the means, but it widens the spread at n=3.
+Measuring it: the recent-sightings list re-run fresh with the same code and cache on the same days, hh_s0-5
+(results/sota_memory/nottold_rerun, launched 02:58). Its difference from the workshop run is the noise floor; it is also
+a same-session baseline for all arms tonight.
+Noise floor (03:25, hh_s0-2; hh_s3-5 to follow): the recent-sightings list run twice on the same data and days, the
+workshop run vs tonight's fresh run (rerun_noise.py):
+| window | per household (older -> fresh, share of answers changed) | mean diff | mean abs diff | spread | answers changed |
+|---|---|---|---|---|---|
+| lead 11-13 | 83->85 (6%), 72->76 (3%), 90->90 (0%) | +1.8 | 1.8 | 1.7 | 3% |
+| sick 14-16 | 44->44 (2%), 65->62 (4%), 50->50 (6%) | -0.7 | 0.7 | 1.2 | 4% |
+| sick 17,21,22 | 42->44 (4%), 69->69 (0%), 62->60 (2%) | 0.0 | 1.4 | 2.1 | 2% |
+| ret 24-26 | 75->79 (6%), 67->67 (0%), 90->88 (4%) | +0.7 | 2.1 | 3.2 | 3% |
+| ret 27-28 | 75->75, 71->71, 94->88 (9%) | -2.1 | 2.1 | 3.6 | 3% |
+| all days | 63->65, 68->68, 76->74 | 0.0 | 1.2 | 1.8 | 3% |
+Reading: the same memory re-run on the same data changes about 3% of its answers and moves a household-window by up to
+6 points (typically 1-2). That is small against the spell effects (+19 all, +29 cold for card removal), and comparable to
+the effects at the bar (the return cost -8.3 with spread 8.3; the card-removed vs pinned differences). Note: on hh_s0-2
+days 11-13 the fresh re-run's prompts are byte-identical to the corrected-card arm's, so those answers were cache
+hits shared with that arm.
+How it was found, for the methods section: prompts were compared as strings and completions separately. Comparing
+accuracies would have shown two similar numbers and hidden it. A prompt cache silently turns nondeterminism into apparent
+determinism, so a cached arm and a freshly generated arm are not the same kind of measurement even when prompts match.

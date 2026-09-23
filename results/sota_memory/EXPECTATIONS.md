@@ -95,3 +95,10 @@ Predictions (coordinator's recorded as theirs; mine separate):
   again on day 24 (the prompts differ only in the day's card, so any return cost would come from the model's own
   sick-day sightings).
 - Expect shrinkage from three to six households (hh_s0 was +35 alone); report both numbers.
+
+## Rerun noise floor for the whole-log-in-the-prompt memory (written ~03:30, before launch)
+The whole-log memory's no-message arm re-run fresh on hh_s0-2, days 11-17, 21-22, 24-28, compared with the existing
+chain_person run (prompts verified byte-identical, 16/16 on day 11). This arm has no LLM writes, so the day subset is exact.
+- Coordinator (theirs): the floor is LARGER than the recent-sightings list's (~3% of answers changed), because longer
+  prompts give batching more to vary over.
+- Mine: about the same (~3%), because the floor tracks how marginal each decision is more than prompt length.
