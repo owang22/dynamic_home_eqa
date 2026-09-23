@@ -1,0 +1,56 @@
+
+message minus same-session recent-sightings list — ALL questions
+  lead 11-13     n=6  85->85 76->76 90->90 82->82 85->85 93->93 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 0.9 -> 0x floor
+  sick 14-16     n=6  44->60 62->71 50->79 52->56 75->85 73->83 | mean +13.2, se 3.6, spread 8.8 -> detected (>=2 se); floor 0.7 -> 19x floor
+  sick 17,21,22  n=6  44->88 69->83 60->83 77->81 83->88 79->85 | mean +16.0, se 6.3, spread 15.5 -> detected (>=2 se); floor 1.0 -> 15x floor
+  back 24-26     n=6  79->69 67->63 88->69 59->35 60->70 93->79 | mean -10.1, se 4.9, spread 12.0 -> detected (>=2 se); floor 3.2 -> 3x floor
+  back 27-28     n=6  75->72 71->75 88->94 69->46 67->75 62->69 | mean -0.3, se 4.8, spread 11.8 -> not detected; floor 1.0 -> 0x floor
+
+truecard minus same-session recent-sightings list — ALL questions
+  lead 11-13     n=6  85->85 76->76 90->90 82->82 85->85 93->93 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 0.9 -> 0x floor
+  sick 14-16     n=6  44->69 62->69 50->77 52->65 75->83 73->77 | mean +13.9, se 4.0, spread 9.8 -> detected (>=2 se); floor 0.7 -> 20x floor
+  sick 17,21,22  n=6  44->79 69->79 60->81 77->81 83->88 79->81 | mean +12.8, se 5.3, spread 13.0 -> detected (>=2 se); floor 1.0 -> 12x floor
+  back 24-26     n=6  79->79 67->67 88->88 59->59 60->60 93->93 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 3.2 -> 0x floor
+  back 27-28     n=6  75->75 71->71 88->88 69->69 67->67 62->62 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 1.0 -> 0x floor
+
+stagecard minus same-session recent-sightings list — ALL questions
+  lead 11-13     n=6  85->85 76->76 90->90 82->82 85->85 93->93 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 0.9 -> 0x floor
+  sick 14-16     n=6  44->56 62->67 50->77 52->54 75->81 73->81 | mean +10.1, se 3.7, spread 9.1 -> detected (>=2 se); floor 0.7 -> 15x floor
+  sick 17,21,22  n=6  44->73 69->79 60->83 77->83 83->90 79->83 | mean +13.2, se 4.2, spread 10.3 -> detected (>=2 se); floor 1.0 -> 13x floor
+  back 24-26     n=6  79->79 67->67 88->88 59->59 60->60 93->93 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 3.2 -> 0x floor
+  back 27-28     n=6  75->75 71->71 88->88 69->69 67->67 62->62 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 1.0 -> 0x floor
+
+nocard minus same-session recent-sightings list — ALL questions
+  lead 11-13     n=6  85->83 76->83 90->92 82->73 85->73 93->87 | mean -3.4, se 2.9, spread 7.0 -> not detected; floor 0.9 -> 4x floor
+  sick 14-16     n=6  44->48 62->73 50->67 52->50 75->81 73->77 | mean +6.6, se 2.6, spread 6.4 -> detected (>=2 se); floor 0.7 -> 10x floor
+  sick 17,21,22  n=6  44->77 69->73 60->79 77->71 83->85 79->81 | mean +9.0, se 5.9, spread 14.4 -> not detected; floor 1.0 -> 9x floor
+  back 24-26     n=6  79->67 67->67 88->73 59->65 60->65 93->93 | mean -2.7, se 3.6, spread 8.8 -> not detected; floor 3.2 -> 1x floor
+  back 27-28     n=6  75->78 71->71 88->84 69->62 67->58 62->75 | mean -0.6, se 3.2, spread 7.8 -> not detected; floor 1.0 -> 1x floor
+
+message minus same-session recent-sightings list — COLD (first question about an object that day)
+  lead 11-13     n=6  100->100 75->75 83->83 93->93 91->91 89->89 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 2.4 -> 0x floor
+  sick 14-16     n=6  12->41 32->42 20->60 11->26 27->73 18->45 | mean +28.1, se 5.5, spread 13.5 -> detected (>=2 se); floor 1.8 -> 16x floor
+  sick 17,21,22  n=6  13->87 35->88 29->86 75->88 45->73 50->67 | mean +40.0, se 10.1, spread 24.6 -> detected (>=2 se); floor 1.2 -> 34x floor
+  back 24-26     n=6  57->29 50->50 92->46 53->27 44->56 88->75 | mean -17.1, se 8.5, spread 20.9 -> detected (>=2 se); floor 2.3 -> 7x floor
+  back 27-28     n=6  70->60 62->62 100->100 80->50 71->86 43->57 | mean -1.9, se 6.8, spread 16.7 -> not detected; floor 0.0 -> infx floor
+
+truecard minus same-session recent-sightings list — COLD (first question about an object that day)
+  lead 11-13     n=6  100->100 75->75 83->83 93->93 91->91 89->89 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 2.4 -> 0x floor
+  sick 14-16     n=6  12->59 32->32 20->67 11->47 27->55 18->36 | mean +29.3, se 7.4, spread 18.2 -> detected (>=2 se); floor 1.8 -> 17x floor
+  sick 17,21,22  n=6  13->73 35->71 29->79 75->81 45->73 50->42 | mean +28.4, se 10.6, spread 25.9 -> detected (>=2 se); floor 1.2 -> 24x floor
+  back 24-26     n=6  57->57 50->50 92->92 53->53 44->44 88->88 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 2.3 -> 0x floor
+  back 27-28     n=6  70->70 62->62 100->100 80->80 71->71 43->43 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 0.0 -> infx floor
+
+stagecard minus same-session recent-sightings list — COLD (first question about an object that day)
+  lead 11-13     n=6  100->100 75->75 83->83 93->93 91->91 89->89 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 2.4 -> 0x floor
+  sick 14-16     n=6  12->24 32->32 20->53 11->21 27->55 18->55 | mean +19.9, se 5.9, spread 14.5 -> detected (>=2 se); floor 1.8 -> 11x floor
+  sick 17,21,22  n=6  13->47 35->76 29->71 75->94 45->82 50->67 | mean +31.5, se 4.6, spread 11.2 -> detected (>=2 se); floor 1.2 -> 26x floor
+  back 24-26     n=6  57->57 50->50 92->92 53->53 44->44 88->88 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 2.3 -> 0x floor
+  back 27-28     n=6  70->70 62->62 100->100 80->80 71->71 43->43 | mean +0.0, se 0.0, spread 0.0 -> IDENTICAL (byte-identical prompts, shared cache); floor 0.0 -> infx floor
+
+nocard minus same-session recent-sightings list — COLD (first question about an object that day)
+  lead 11-13     n=6  100->92 75->81 83->83 93->80 91->73 89->78 | mean -7.5, se 3.7, spread 9.0 -> detected (>=2 se); floor 2.4 -> 3x floor
+  sick 14-16     n=6  12->18 32->47 20->20 11->11 27->55 18->36 | mean +11.2, se 4.5, spread 11.0 -> detected (>=2 se); floor 1.8 -> 6x floor
+  sick 17,21,22  n=6  13->60 35->53 29->57 75->56 45->64 50->67 | mean +18.2, se 8.7, spread 21.4 -> detected (>=2 se); floor 1.2 -> 15x floor
+  back 24-26     n=6  57->50 50->57 92->38 53->60 44->44 88->88 | mean -7.9, se 9.4, spread 23.1 -> not detected; floor 2.3 -> 3x floor
+  back 27-28     n=6  70->70 62->62 100->88 80->70 71->57 43->57 | mean -3.7, se 4.4, spread 10.8 -> not detected; floor 0.0 -> infx floor

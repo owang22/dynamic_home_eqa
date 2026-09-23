@@ -1,7 +1,7 @@
 """Six-household paired contrasts against the SAME-SESSION baseline (the recent-sightings list re-run tonight,
 nottold_rerun), with the per-window noise floor (that baseline vs the workshop's older run of the same arm).
 Per window: per-household differences, mean, standard error, spread, and |mean| / floor, where floor = mean absolute
-per-household rerun difference in that window. Usage: python3 six.py ARM [ARM2 ...]  (arm = nocard, truecard, pinned)"""
+per-household rerun difference in that window. Usage: python3 six.py ARM [ARM2 ...]  (arm = nocard, truecard, stagecard, pinned, or 'message' = stale card + daily start message, in told/)"""
 import json, sys, statistics as st, os
 FMR = '/home/oliver/robot/dynamic_home_eqa_fm/results/fm_memory/run1'
 W = [("lead 11-13", 11, 13), ("sick 14-16", 14, 16), ("sick 17,21,22", 17, 23), ("back 24-26", 24, 26), ("back 27-28", 27, 28)]
@@ -31,7 +31,7 @@ for cold_only in (False, True):
         for w, a, b in W:
             per = []
             for h in HH:
-                A = load(f'nottold/{h}_t03_{arm}_nottold_lookoff/run_log.jsonl')
+                A = load(f'told/{h}_t03_naive_told_lookoff/run_log.jsonl') if arm == 'message' else load(f'nottold/{h}_t03_{arm}_nottold_lookoff/run_log.jsonl')
                 if not A or not base[h]: continue
                 ids = window(h, a, b, A, cold_only)
                 if ids: per.append((h, acc(base[h], ids), acc(A, ids), len(ids)))

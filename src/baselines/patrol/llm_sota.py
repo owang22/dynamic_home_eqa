@@ -260,12 +260,16 @@ class FactStore(Store):
         pr += ["", 'Reply with JSON: {"new_facts": [{"new": id, "op": ..., "old": old id or null}], '
                    '"old_facts": [{"old": id, "op": ..., "by": new id or null}]}']
         text, _ = self.ask([{"role": "system", "content": L.SYSTEM}, {"role": "user", "content": "\n".join(pr)}],
-                           policy_schema(self.policy), 2500, f"facts revise day {day}",
+                           policy_schema(self.policy), 8000, f"facts revise day {day}",
                            llm_authored=tuple(self.fact_text(f) for f in cur.values()))
         try:
             dec = json.loads(text or "{}")
         except ValueError:
-            dec = {}
+            # a truncated or malformed revision used to pass silently as "no decisions" and drop the night's facts
+            # (6 nights on hh_s0, 2026-09-23); record it loudly and keep the night's new facts as ADDs instead
+            print(f"FACT REVISION UNPARSEABLE day {day} ({len(text or '')} chars)", file=sys.stderr, flush=True)
+            self.log.append({"day": day, "revision_unparseable": True})
+            dec = {"new_facts": [{"new": i, "op": "ADD", "old": None} for i in new_ids], "old_facts": []}
         ops: Dict[str, int] = {}
         for d in dec.get("old_facts", []):
             f = cur.get(d.get("old"))

@@ -110,10 +110,20 @@ named. On all other days the original card. It separates "an accurate card" from
   couch card gave +29); all questions about +5 to +8. Lead-up and return are identical to the baseline by construction.
 - If it matches the couch card, accuracy alone carries the effect. If it matches the stale card, the effect was the
   location information.
-- Coordinator (theirs; written 03:55, AFTER the 03:47 launch and BEFORE any stage-card result was read): the stage-only card
+- Coordinator (theirs; written ~03:48, AFTER the 03:47 launch and BEFORE any stage-card result was read): the stage-only card
   may land near the couch card, by analogy with the whole-log memory's start message (+10.4 first sick days, +26.9 cold,
   against the couch card's +13.9 / +29.3).
-- A closer analogue exists on the SAME memory (noted 03:55, from STORY.md): the recent-sightings list with the start message
+- A closer analogue exists on the SAME memory (noted ~03:48, from STORY.md): the recent-sightings list with the start message
   gave +12.9 (se 3.0, n=10) on the first three sick days and +23.5 cold (n=10). That arm keeps the stale card and ADDS a
   message; the stage card REPLACES the card's line. If the stage card lands near +13 / +24, the message and the card are
   two routes to the same information.
+
+## Stale card + start message, re-run in this session (`naive`, told) — written 03:48, before launch (launched 03:48:56). hh_s0-5, same days.
+The recent-sightings list with the stale card AND the residents' daily "X is home sick today" messages on days 14-23
+(banks_f1 header), generated fresh tonight so it pairs with the card arms on the same households, days and session.
+- Mine: close to the stage-only card (within ~3 points on all questions). The prompt then holds two incompatible assertions
+  about the same person, and the earlier 10-household arm (+12.9) shows the model prefers the newer, specific one.
+- Coordinator (theirs): if the message route and the current-card route agree, the finding is "a stale description can
+  be corrected by appending a correction". If the current card is meaningfully better, the finding is "fix the description".
+- Wording differs across arms. The message and the stage card are OUR wording; the couch card is the simulator's own
+  description. A small difference is not necessarily about the mechanism.

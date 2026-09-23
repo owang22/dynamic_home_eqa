@@ -158,3 +158,60 @@ Reading:
   (large) and holds against no card on all questions in the later spell only (+3.8). The coordinator's "beats no card on
   the return" is not detected. My "cold +30 or more" nearly held (+29.3, +28.4). My "lead-up identical" and "return
   equal" were true by construction (identical prompts), so they were checks, not predictions.
+
+## Fact store with the validity-window policy (Zep/Graphiti-style), hh_s0 only — landed ~04:50. NOT a fair test; see #5.
+STANDS (a direct observation of the mechanism, on nights whose revision parsed): after the first sick day the revision judge had
+56 new facts and the contradicting evidence in front of it and invalidated 0; after day 15, 1; after day 16, 30.
+DOES NOT STAND: the accuracy figures below, including the day 14-16 figure of 27. The store behind them was also missing facts
+from truncated nights (#5). They are unusable as evidence and are kept only as a record. The clean re-run supplies the numbers
+(output moved to withdrawn/facts_zep_hh0_truncated_revisions; re-run launched after the fix).
+Same-session recent-sightings list -> fact store, same questions: lead-up 85->77, first sick days 44->27, later spell
+44->56, first days back 79->75, 27-28 75->69, all 65->60. One household. The rerun floor is 1-3 points, but the spread
+between households is 5-15, so one household can only show a direction.
+Mechanism, read from the store: at the end of the first sick day the revision step checked 56 new facts and
+invalidated NONE (47 marked duplicate, 9 added). It invalidated 1 after day 15 and 30 after day 16. The store kept
+asserting "desk_b1 ... still current" for two nights after the change, and the answers follow it (d15q01: the reasoning
+cites the desk facts and the resident card). This is STALE's finding (old entries judged stale 3.3% of the time) on our task:
+the write-time judge does not recognise an implicit change until it has been contradicted repeatedly.
+Precision: night 13 (the last lead-up night) was also truncated (#5), so the store entered the break missing day 13's facts.
+The lag itself is the judge's: the day-14 and day-15 revisions parsed cleanly and invalidated 0 and 1 facts. But the day 14-16
+accuracy (27) comes from a store with both problems.
+#5 (added to the catalogue; MY harness bug, not a model property): REVISION OUTPUT TRUNCATED. The revision call's
+2,500-token limit cut the JSON mid-list on 6 nights (7, 13, 19, 20, 21, 22). The output did not parse, so NO decisions were
+applied and that night's new facts were DROPPED. Days 19-22 are most of the later spell, so the later-spell number above is
+from a store that stopped updating after day 18. Caught by listing nights with zero operations. Fix: a larger limit, and
+a parse failure must raise, not pass silently. A re-run of hh_s0 is ~90 min on one stream.
+
+## FOUR ARMS, SAME SIX HOUSEHOLDS, SAME DAYS, SAME SESSION, PAIRED (05:05) — how the written routine is corrected
+Baseline: the stale card (the recent-sightings list re-run tonight). The arms: stale card + the daily "X is home sick
+today" message (our wording; never retracted, so the sick-day lines stay in the prompt after day 24); stage-only card (the
+sick person's line replaced by "home sick at the moment; not working", our wording, reverted on day 24); couch card (the
+line replaced by the simulator's own description, naming the couch in the living room, reverted on day 24). Full output:
+four_arm.txt. Detected = mean >= 2 se; "floor" = the baseline's own rerun difference in that window.
+| vs stale card | first sick days, all / cold | later spell, all / cold | first days back 24-26, all / cold | 27-28 all |
+|---|---|---|---|---|
+| + message | **+13.2 / +28.1** | **+16.0 / +40.0** | **-10.1 / -17.1 (both detected)** | -0.3 |
+| stage-only card | **+10.1 / +19.9** | **+13.2 / +31.5** | identical (same prompts) | identical |
+| couch card | **+13.9 / +29.3** | **+12.8 / +28.4** | identical | identical |
+| card removed | **+6.6** / **+11.2** | +9.0 (n.d.) / **+18.2** | -2.7 / -7.9 (n.d.) | -0.6 |
+Lead-up: identical for the three corrections (same prompts before day 14); card removed costs cold -7.5 (detected).
+
+The three questions:
+1. Does appending a correction work? YES in the spell (+13 to +16 all, +28 to +40 cold, 15-34x the floor). But the appended
+   correction is never retracted, and it COSTS on the return: -10.1 all, -17.1 cold, detected on six households. This is the
+   unretracted-message cost again, now on the same memory at n=6 in one session (the earlier 18-household figure was
+   -7.0 all / -12.3 cold).
+2. Does it matter where the correction goes? In the spell, barely. The message is slightly better than the stage card
+   (first sick days -3.1, se 0.5, detected; later spell -2.8, not detected). On the return, the card corrected IN PLACE wins by
+   +10.1 all / +17.1 cold (detected), because it reverts when the routine does. Honest scope: the card's reversion is by
+   construction (we wrote it true for each day); the message arm had no retraction. What this compares is "a description kept
+   current" against "an appended correction never withdrawn", not a card against a message in general.
+3. Knowing the stage, or being told where things are? Naming the couch adds nothing detectable over "home sick": couch minus
+   stage card +3.8 (n.d.) first sick days, -0.3 later spell; cold +9.5 (n.d.) and -3.1. The benefit is knowing the stage.
+Predictions: mine for the stage card ("cold +10 to +15") was WRONG: +19.9 on the first sick days and +31.5 later. The
+coordinator's ("near the couch card") HELD. Mine for the message ("within ~3 points of the stage card in the spell") HELD
+(-3.1, -2.8).
+Headline sentence this supports: the model follows whatever the prompt asserts about the resident's routine. A current
+description is worth +13 overall and +30 cold through the spell, with most of it coming from knowing the STAGE, not the
+location. An appended correction buys the same in the spell but keeps being followed after it stops being true, unless the
+description is also restored.
