@@ -41,6 +41,17 @@ SAMPLES = os.path.join(os.path.dirname(ROOT), "confidence_shift_2026-09-20",
 DAYS = 31
 
 
+def running_arms():
+    """How many sampling processes are still going. Used both for the page's "still running" wording and to
+    decide whether the final day of each household is complete."""
+    try:
+        import subprocess
+        return int(subprocess.run(["bash", "-c", "ps -eo cmd | grep -c '[u]q_llm_samples'"],
+                                  capture_output=True, text=True).stdout.strip() or 0)
+    except Exception:
+        return 0
+
+
 def main():
     rows = []
     for f in sorted(glob.glob(os.path.join(SAMPLES, "hh_s*", "hh_s*.jsonl"))):
@@ -58,7 +69,11 @@ def main():
     hhs = sorted({r["household"] for r in rows})
     last = {h: max(r["day_index"] for r in rows if r["household"] == h) for h in hhs}
     # a day is finished for a household only if that household has moved past it
-    done = {d for d in range(1, DAYS + 1) if all(last[h] > d for h in hhs)}
+    # A day counts as finished for a household once that household has moved PAST it -- except when the run is
+    # over, where the last day it reached is finished too and excluding it would silently drop day 31.
+    live_now = running_arms()
+    done = {d for d in range(1, DAYS + 1)
+            if all((last[h] > d or (live_now == 0 and last[h] >= d)) for h in hhs)}
     reached = {d for d in range(1, DAYS + 1) if all(last[h] >= d for h in hhs)}
 
     by = collections.defaultdict(lambda: collections.defaultdict(list))
@@ -81,14 +96,48 @@ def main():
                             sum(float(r.get("verbalized") or 0.0) for r in g),
                             sum(1.0 - float(r.get("agreement") or 0.0) for r in g)])
 
+    # ---- calibration-gap cells, one set per CONFIDENCE SOURCE -------------------------------------------
+    # The page's calibration figure reads {hh: [[n, ok, sum_conf_raw, sum_conf_leadcal], ...]} indexed by day and
+    # plots (conf - accuracy) in points. Two sources are offered for this arm:
+    #
+    #   stated    the number the model says out loud
+    #   sampling  how often its ten answers AGREE with the one it gave
+    #
+    # Agreement, not disagreement, is what goes in: a confidence source has to rise with confidence, so that the
+    # gap means the same thing for both and the two can share one axis in percentage points. Reporting the
+    # disagreement rate here instead would flip the sign of every gap and make "overconfident" read as its
+    # opposite.
+    #
+    # Each source is fitted SEPARATELY on its own lead days. Carrying the stated number's fit over to the
+    # sampling reading would be calibrating one quantity with another's map; the two have quite different
+    # spreads (the stated number sits in a handful of values near 0.9, agreement ranges over tenths).
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from gap_extra import fit_lead_map, apply_map, LEAD_DAYS
+
+    gap = {}
+    for source, conf_of in (("stated", lambda r: float(r.get("verbalized") or 0.0)),
+                            ("sampling", lambda r: float(r.get("agreement") or 0.0))):
+        lead_pts = [(conf_of(r), 1 if r.get("correct") else 0)
+                    for r in rows if r["day_index"] in LEAD_DAYS]
+        knots = fit_lead_map(lead_pts)
+        cells = {}
+        for h in hhs:
+            arr = [[0, 0, 0.0, 0.0] for _ in range(DAYS + 1)]
+            for d, g in by[h].items():
+                if d not in done or d > DAYS:
+                    continue
+                for r in g:
+                    c = conf_of(r)
+                    cell = arr[d]
+                    cell[0] += 1
+                    cell[1] += 1 if r.get("correct") else 0
+                    cell[2] += c
+                    cell[3] += apply_map(knots, c)
+            cells[h] = arr
+        gap[source] = {"cells": cells, "hasLeadcal": knots is not None}
+
     k = rows[0].get("k")
-    live = 0
-    try:
-        import subprocess
-        live = int(subprocess.run(["bash", "-c", "ps -eo cmd | grep -c '[u]q_llm_samples'"],
-                                  capture_output=True, text=True).stdout.strip() or 0)
-    except Exception:
-        pass
+    live = live_now
 
     payload = {
         "n_days": DAYS + 1,
@@ -100,6 +149,7 @@ def main():
         "complete_day": max(done) if done else 0,   # the last day the panel can actually draw
         "per_hh_last": {h: last[h] for h in hhs},
         "lines": {"longcontext": line},
+        "gap": gap,
         "metrics": ["acc", "conf", "dis"],
     }
     print(write_keys("samples_extra", {"samples_live": payload}))
