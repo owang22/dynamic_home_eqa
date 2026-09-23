@@ -949,10 +949,14 @@ def f4(DATA, EXTRA, manifest):
                    ha="right", va="top", fontsize=6.2, color=REF)
     # rank the methods ON the plot, worst first, so a reader can tell good from bad without tracing four lines
     peaks.sort(reverse=True)
+    ax[0].annotate("averaged over the first sick days (14\u201316):", xy=(0.03, 0.975),
+                   xycoords="axes fraction", fontsize=5.9, color="#555555", va="top", style="italic")
     for r, (mx, name, c) in enumerate(peaks):
-        ax[0].annotate(f"{mx:.1f}\u00d7  {name}", xy=(0.03, 0.96 - r * 0.105), xycoords="axes fraction",
+        ax[0].annotate(f"{mx:.1f}\u00d7  {name}", xy=(0.03, 0.885 - r * 0.098), xycoords="axes fraction",
                        fontsize=6.1, color=c, va="top", fontweight="bold" if r == 0 else "normal")
-    finish(ax[0], "times its promised\nerror rate", xlab="", ylim=(0, max(7, max(p[0] for p in peaks) + 1)))
+    top = max(v["mean"][d] for v in (gate_series(D[m], "wrong_when_answered") for m in GATE_ORDER if m in D)
+              for d in range(len(v["mean"])) if v["mean"][d] is not None) / promise
+    finish(ax[0], "times its promised\nerror rate", xlab="", ylim=(0, top + 2.4))
     finish(ax[1], "% handed over", ylim=(0, 100))
     save(fig, "F4_reacting_is_not_recovering", manifest, {
         "figure": "F4",
