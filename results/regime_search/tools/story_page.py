@@ -38,6 +38,9 @@ p{max-width:72ch} .lead{font-size:17px;color:var(--ink2);margin-block:4px 18px}
 .step.on{border-left-color:var(--s1)} .step:focus-visible{outline:2px solid var(--s1);outline-offset:2px}
 .controls{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;padding-block:8px 6px;position:sticky;top:env(safe-area-inset-top,0px);background:var(--paper);z-index:4;border-bottom:1px solid var(--line)}
 .controls label{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;color:var(--ink2)}
+.chip.unavail{opacity:.5}
+.chip.unavail .na{font-size:11px;color:var(--muted);font-style:italic;margin-left:4px}
+.legendnote{flex-basis:100%;font-size:12.5px;color:var(--muted);margin:6px 0 0}
 .paxis{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink2);margin:2px 0 6px}
 .paxis select{font-size:12.5px}
 .pmiss{font-size:12px;color:var(--muted);margin:4px 0 0;font-style:italic}
@@ -299,7 +302,9 @@ const STEP_NOTE = {learn:"Lead-up (days 1–13): the timetables climb from ~45% 
  return:"Return (days 24–31): the adaptive methods break again (down to 55–60% and re-learn); the never-forgets timetable is right immediately; the hedge moves its trust back to it and shows no second break."};
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const SERIES_BY_KEY = Object.fromEntries(SERIES.map(x => [x.k, x]));
-const state = {regime:"household", split:"all", bands:true, more:false, on:new Set([...FOCUS_ON, ...STEP_LINES.learn]), step:"learn", calibStage:"any", gapMode:"raw"};
+// The page opens on the population where all four compared methods exist. Long-context was run on this one
+// only, so any other default silently hands the reader a different set of language memories.
+const state = {regime:"person", split:"all", bands:true, more:false, on:new Set([...FOCUS_ON, ...STEP_LINES.learn]), step:"learn", calibStage:"any", gapMode:"raw"};
 const GAP_EXTRA_SERIES = [
  {k:"bma_person", name:"hedge over memory lengths", v:"--s14", gloss:"The hedge over memory lengths, run with a separate trust vector per resident instead of one shared vector — only meaningful when just one resident's routine actually shifts.", how:"Shown only under the “one person sick · everyone's things asked” population in the calibration-gap panel."},
  {k:"detector3d_person", name:"3-day timetable + change alarm", v:"--s15", gloss:"The change-alarm timetable with a separate diary and alarm per resident.", how:"Shown only under the “one person sick · everyone's things asked” population in the calibration-gap panel."},
@@ -339,26 +344,84 @@ function eceOf(bins){ if(!bins) return null; let nTot=0; for(const b of bins) nT
   let e=0; for(const [n,ok,sc] of bins){ if(!n) continue; e += (n/nTot)*Math.abs(ok/n - sc/n); } return {ece:100*e, n:nTot}; }
 function pooled(reg, key, split, days){ const A=DATA[reg].agents[key]; if(!A) return null; let n=0,ok=0; for(const hh of Object.keys(A)) for(const d of days){ n+=A[hh][split][d][0]; ok+=A[hh][split][d][1]; } return n? 100*ok/n : null; }
 function hhStage(reg, key, split, days){ const A=DATA[reg].agents[key]; if(!A) return null; const vals=[]; for(const hh of Object.keys(A)){ let n=0,ok=0; for(const d of days){ n+=A[hh][split][d][0]; ok+=A[hh][split][d][1]; } if(n) vals.push(100*ok/n);} const m=vals.reduce((a,b)=>a+b,0)/vals.length; const s=vals.length>1?Math.sqrt(vals.reduce((a,b)=>a+(b-m)**2,0)/(vals.length-1)):0; return {m,s,k:vals.length}; }
+// Which language memories each population was actually run with. Long-context exists in ONE population;
+// everything that offers a method has to say so rather than silently offering a different set.
+const POP_ARMS = {
+  person:        "every language memory: long-context, the recency buffer, retrieval, reflection and the nightly routine table",
+  person2x:      "the recency buffer and retrieval only \u2014 long-context was never run on two sick spells",
+  household:     "no language memory at all \u2014 this population is the counters only",
+  household_rep: "no language memory at all \u2014 this population is the counters only",
+  partial:       "the recency buffer and retrieval, told and untold \u2014 but only inside the owner-split figure, not as series the other figures can draw",
+};
+const LC_KEY = "person:llm_longcontext_nomsg";
+function popHas(reg, key){ return !!(DATA[reg] && DATA[reg].agents[key]); }
+// SERIES holds one entry per population-specific RUN, so a memory run on two populations appears twice -- with
+// "more methods" ticked the buffer and retrieval each showed up two chips apart, one live and one greyed. The
+// control is a list of METHODS. Entries sharing a method collapse into one chip, resolved to the population in
+// force; toggling it moves every run of that method together, so the choice survives a change of population.
+function baseOf(k){ return String(k).replace(/^[a-z0-9_]+:/, ""); }
+function rosterEntries(){
+  const byBase = new Map();
+  for(const s of SERIES){
+    if(!s.core && !state.more) continue;
+    const b = baseOf(s.k);
+    if(!byBase.has(b)) byBase.set(b, []);
+    byBase.get(b).push(s);
+  }
+  const out = [];
+  for(const group of byBase.values()){
+    const here = group.find(x => popHas(state.regime, x.k));
+    out.push({s: here || group[0], keys: group.map(x => x.k), have: !!here});
+  }
+  return out;
+}
+// "one person sick, everyone's things asked" is extracted per arm into EXTRA.owner_split_live rather than per
+// regime, so it has no whole-roster per-day series at all. Every figure that needs one says this instead of
+// throwing on DATA[reg].agents -- which is exactly what it did when this option was added to the control.
+function popMissing(reg){
+  if(DATA[reg]) return null;
+  return reg==="partial"
+    ? "This population is extracted one arm at a time rather than as a whole roster, so there is no per-day series for the methods here. The figure built on it is \u201cWhose things does the message move?\u201d in the library below."
+    : "No data for this population.";
+}
 function stagesOf(reg){ const R=DATA[reg]; const out=[]; let cur=null; for(let d=1; d<R.days; d++){ const st=R.stages[String(d)]||"plain"; if(!cur||cur.name!==st){ cur={name:st,a:d,b:d}; out.push(cur);} else cur.b=d; } return out; }
 const STAGE_LABEL = {lead:"lead-up (normal routine)", sick:"sick spell", return:"return to normal", sick2:"sick again", return2:"back again"};
 const STAGE_FILL = {sick:"--shift", return:"--return", sick2:"--shift", return2:"--return"};
 
 function renderLegend(){
   const L=$("#legend"); L.innerHTML="";
-  for(const s of SERIES){ if(!s.core && !state.more) continue; if(!DATA[state.regime].agents[s.k]) continue;
-    const chip=document.createElement("label"); chip.className="chip"; chip.innerHTML=`<input type="checkbox" ${state.on.has(s.k)?"checked":""} aria-label="${s.name}"><i class="sw" style="background:var(${s.v})"></i>${s.name}<span class="q" tabindex="0" aria-label="what is ${s.name}">?</span><div class="pop" role="tooltip"><b>${s.name}</b>${s.gloss}<div class="how">On this testbench: ${s.how}</div></div>`;
-    chip.querySelector("input").addEventListener("change", e=>{ if(e.target.checked) state.on.add(s.k); else state.on.delete(s.k);
-      // this legend is now the page's ONLY method control, so the library below follows it too
+  // The roster is the SAME list in every population. A method the chosen population was never run with is shown
+  // greyed and says so -- it is not dropped. Building this list from whatever the current population happens to
+  // contain is how long-context disappeared from the controls on three populations out of four, so that a reader
+  // who asked for it was quietly handed the buffer and retrieval instead.
+  const gone = [];
+  for(const {s, keys, have} of rosterEntries()){
+    if(!have) gone.push(s.name);
+    const chip=document.createElement("label"); chip.className="chip"+(have?"":" unavail");
+    if(!have) chip.title = s.name+" was not run on this population";
+    chip.innerHTML=`<input type="checkbox" ${state.on.has(s.k)?"checked":""} ${have?"":"disabled"} aria-label="${s.name}"><i class="sw" style="background:var(${s.v})"></i>${s.name}${have?"":' <span class="na">not run here</span>'}<span class="q" tabindex="0" aria-label="what is ${s.name}">?</span><div class="pop" role="tooltip"><b>${s.name}</b>${s.gloss}<div class="how">On this testbench: ${s.how}</div></div>`;
+    chip.querySelector("input").addEventListener("change", e=>{
+      // every run of this method moves together, so switching population does not silently change the selection
+      for(const k of keys){ if(e.target.checked) state.on.add(k); else state.on.delete(k); }
+      // this legend is the page's ONLY method control, so the library below follows it too
       draw(); renderPanels(); renderGap(); });
     const toggleChip = e=>{ e.preventDefault(); e.stopPropagation(); const wasOpen=chip.classList.contains("open"); closeAllPops(); if(!wasOpen) chip.classList.add("open"); };
     chip.querySelector(".q").addEventListener("click", toggleChip);
     chip.querySelector(".q").addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" ") toggleChip(e); });
     L.appendChild(chip); }
+  const armTxt = POP_ARMS[state.regime];
+  const gapTxt = popMissing(state.regime);
+  const noteHtml = (gapTxt ? gapTxt + " " : "")
+    + (armTxt ? `These households were run with ${armTxt}. ` : "")
+    + (gone.length ? `Greyed out above, and not on any figure while this population is chosen: ${gone.join(", ")}.` : "");
+  if(noteHtml){ const note = document.createElement("p"); note.className = "legendnote"; note.innerHTML = noteHtml; L.appendChild(note); }
 }
 
 function renderLine(svgId, xhId, dataFn, labelSuffix){
   // shared renderer for the two per-day line charts (accuracy, confidence): stage bands, gridlines, day ticks,
   // one line + optional ±1sd band per selected method, end-of-line labels, a hidden crosshair the hover fills in.
+  const gapTxt = popMissing(state.regime);
+  if(gapTxt){ $(svgId).innerHTML = `<text x="500" y="190" text-anchor="middle" fill="var(--muted)" font-size="15">${gapTxt}</text>`; return; }
   const reg=state.regime, R=DATA[reg], nd=R.days, W=1000,H=380,L=44,Rt=215,T=22,B=40;
   const x=d=>L+(d-1)*(W-L-Rt)/(nd-2), y=v=>T+(100-v)*(H-T-B)/100;
   const svg=$(svgId); let g="";
@@ -400,6 +463,8 @@ function draw(){
 function hover(ev){ lineHover(ev,"#main","#tip","#xh",daily); }
 function hoverConf(ev){ lineHover(ev,"#confmain","#conftip","#confxh",dailyConf); }
 function drawCalib(){
+  const gapTxt = popMissing(state.regime);
+  if(gapTxt){ $("#calib").innerHTML=""; $("#calibtable").innerHTML=""; $("#calibnote").textContent=gapTxt; return; }
   const reg=state.regime, R=DATA[reg]; const svg=$("#calib");
   if(!R.calib || !Object.keys(R.calib).length){ svg.innerHTML=""; $("#calibtable").innerHTML=""; $("#calibnote").textContent="Calibration was logged on the two frozen regimes (households 1–10, and the one-person regime); this replication set has accuracy only."; return; }
   const W=440,H=440,L=40,Rr=14,T=12,B=32;
@@ -427,6 +492,8 @@ function drawCalib(){
   $("#calibnote").textContent = `Over ${stageTxt}${state.split==="moved"?", objects that had moved since the night round only":""}, pooled across all ${R.hh.length} households. Above the diagonal: underconfident (righter than claimed). Below: overconfident. ECE (expected calibration error) is the size-weighted average distance from the diagonal, in percentage points — lower is more honest. (The “honest sets” methods aren't in this list — they state a set size, not a point guess; their calibration target is 90% coverage, shown in “Does the method notice?” below, not this diagonal.)`;
 }
 function renderSmall(){
+  const gapTxt = popMissing(state.regime);
+  const host0=$("#small"); if(gapTxt){ host0.innerHTML=`<p class="note">${gapTxt}</p>`; return; }
   const reg=state.regime, R=DATA[reg], nd=R.days, host=$("#small"); host.innerHTML="";
   const hasUQ = R.fires && R.fires.detector3d;
   if(!hasUQ){ host.innerHTML=`<div class="panel"><p>The “noticing” methods were run on households 1–10 and on the one-person regime; this replication set has the learners only.</p></div>`; return; }
@@ -457,6 +524,8 @@ function renderSmall(){
   host.innerHTML+=`<div class="panel"><h3>Hedge — how much trust goes to the short memories</h3><p>The hedge runs timetables with 1-day, 3-day, 1-week and unlimited memory and gives each a share of trust. Line: the share held by the short (1- and 3-day) memories. It jumps at the first sick day, drains back to the unlimited memory during the spell, and stays there on the return — which is why the hedge shows no second break.</p><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="share of trust on short memories per day">${g3}</svg></div>`;
 }
 function renderTable(){
+  const gapTxt = popMissing(state.regime);
+  if(gapTxt){ $("#stagetable").innerHTML = `<tr><td>${gapTxt}</td></tr>`; return; }
   const reg=state.regime, stg=stagesOf(reg); const T=$("#stagetable");
   let h=`<thead><tr><th>method</th>${stg.map(s=>`<th>${STAGE_LABEL[s.name]||s.name} (days ${s.a}–${s.b})</th>`).join("")}<th>break at day 14</th><th>break at day 24</th></tr></thead><tbody>`;
   for(const s of SERIES){ if(!DATA[reg].agents[s.k]) continue; if(!s.core && !state.more) continue;
@@ -477,7 +546,7 @@ document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeAllPops(); }
 document.querySelectorAll(".step").forEach(b=>b.addEventListener("click",()=>{ document.querySelectorAll(".step").forEach(x=>x.classList.remove("on")); b.classList.add("on"); state.step=b.dataset.step; state.on=new Set([...FOCUS_ON, ...STEP_LINES[state.step]]); renderLegend(); draw(); renderPanels(); }));
 // One control, every figure. Anything that reads the population redraws here - a figure that kept its own
 // copy is exactly how a reader ends up comparing two charts drawn from different households.
-$("#regime").addEventListener("change",e=>{ state.regime=e.target.value; try{localStorage.setItem("rst-regime",state.regime);}catch(_){}
+$("#regime").addEventListener("change",e=>{ state.regime=e.target.value; try{localStorage.setItem("rst-regime2",state.regime);}catch(_){}
   renderLegend(); draw(); renderPanels(); renderGap(); renderGapConformal(); renderAskgate(); renderGate(); renderKnowno(); });
 $("#split").addEventListener("change",e=>{ state.split=e.target.value; draw(); renderPanels(); });
 $("#bands").addEventListener("change",e=>{ state.bands=e.target.checked; draw(); });
@@ -487,8 +556,7 @@ $("#confmain").addEventListener("mousemove",hoverConf); $("#confmain").addEventL
 $("#calibstage").addEventListener("change",e=>{ state.calibStage=e.target.value; drawCalib(); });
 $("#gapmode").addEventListener("change",e=>{ state.gapMode=e.target.value; renderGap(); });
 $("#gap").addEventListener("mousemove",hoverGap); $("#gap").addEventListener("mouseleave",()=>{ $("#gaptip").style.display="none"; const xh=$("#gapxh"); if(xh) xh.style.display="none"; });
-try{ const saved=localStorage.getItem("rst-regime"); if(saved && DATA[saved]) { state.regime=saved; $("#regime").value=saved; } }catch(e){}
-$("#regime").addEventListener("change",e=>{ try{ localStorage.setItem("rst-regime", e.target.value); }catch(err){} });
+try{ const saved=localStorage.getItem("rst-regime2"); if(saved && (DATA[saved]||saved==="partial")) { state.regime=saved; $("#regime").value=saved; } else { $("#regime").value=state.regime; } }catch(e){}
 const EXTRA = /*EXTRA*/null;
 const MEM = [["timetable_hl1d","1 day"],["timetable_hl3d","3 days"],["timetable_hl7d","7 days"],["timetable","never forgets"]];
 function renderSweep(){
@@ -932,6 +1000,12 @@ function drawPanel(p0){
   const noData = p.lines.filter(l => !cellsOf(p, l));
   if(noData.length) missingNotes.push("no data for " + (POP_LABEL[p.pop] || p.pop) + ": " + noData.map(l => l.label).join(", "));
   if(p.pop !== state.regime) missingNotes.push("this figure only exists for " + (POP_LABEL[p.pop] || p.pop));
+  // The same treatment a deselected method gets, for a method that was never RUN on the chosen population.
+  // Long-context exists in one population only, so on any other the reader is being shown a different set of
+  // language memories; that has to be said, not left to be inferred from which lines happen to be present.
+  if(p.pop === state.regime && !popHas(state.regime, LC_KEY) && POP_ARMS[state.regime])
+    missingNotes.push("long-context was only run on “" + POP_LABEL["person"] + "”; these households were run with "
+                      + POP_ARMS[state.regime]);
   if(!p.lines.length){
     return `<div class="panel"><h4>${p.title}</h4><p class="pmeta">Nothing to draw here: ${missingNotes.join("; ") || "no method selected"}.</p></div>`;
   }
@@ -1568,7 +1642,13 @@ function renderGist(){
     return `<li class="fx"><details class="finding"><summary>${m[1]}</summary><div class="fbody">${m[2]}</div></details></li>`;
   }).join("");
 }
-for(const o of $("#regime").options){ if(!DATA[o.value]){ o.disabled=true; o.hidden=true; } }   // a population whose data has not been built yet is not selectable
+// A population is selectable when ANY figure on the page can serve it -- not merely when it has a
+// whole-roster DATA entry. "One person sick, everyone's things asked" is extracted per arm into
+// owner_split_live and has no DATA entry, and this line had been hiding it from the control entirely.
+// Figures that cannot serve a population now say so, so hiding the option is both unnecessary and the
+// same mistake as building the method list from whatever the current population happens to contain.
+const POP_SERVED = new Set([...Object.keys(DATA), ...((EXTRA && EXTRA.owner_split_live) ? Object.keys(EXTRA.owner_split_live) : [])]);
+for(const o of $("#regime").options){ if(!POP_SERVED.has(o.value)){ o.disabled=true; o.hidden=true; } }
 mergeLLMLive();
 $("#pall").addEventListener("click", ()=>{ for(const p of PANELS) panelState.on.add(p.id); renderPanelPicker(); renderPanels(); });
 $("#pdef").addEventListener("click", ()=>{ panelState.on=new Set(PANEL_DEFAULT); renderPanelPicker(); renderPanels(); });
